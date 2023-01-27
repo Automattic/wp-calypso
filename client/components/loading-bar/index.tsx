@@ -1,4 +1,6 @@
+import { useDispatch } from '@wordpress/data';
 import { useEffect, useState } from 'react';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import './style.scss';
 
 type LoadingBar = {
@@ -7,8 +9,8 @@ type LoadingBar = {
 };
 
 export function LoadingBar( { className, progress }: LoadingBar ) {
-	// Progress smoothing, works out to be around 40seconds unless step polling dictates otherwise
 	const [ simulatedProgress, setSimulatedProgress ] = useState( progress );
+	const { setProgress } = useDispatch( ONBOARD_STORE );
 
 	useEffect( () => {
 		let timeoutReference: NodeJS.Timeout;
@@ -26,11 +28,13 @@ export function LoadingBar( { className, progress }: LoadingBar ) {
 						return newProgress;
 					} );
 				}
+				// Save our simulated progress to state to persist between step changes
+				setProgress( simulatedProgress );
 			}, 1000 );
 		}
 
 		return () => clearTimeout( timeoutReference );
-	}, [ simulatedProgress, progress ] );
+	}, [ simulatedProgress, progress, setProgress ] );
 
 	return (
 		<div className={ className }>

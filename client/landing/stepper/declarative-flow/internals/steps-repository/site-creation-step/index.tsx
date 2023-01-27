@@ -130,9 +130,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 	}
 
 	useEffect( () => {
-		if ( isWooExpressFlow( flow ) ) {
-			setProgress( 0.2 );
-		}
+		setProgress( 0.1 );
 
 		if ( isMigrationFlow( flow ) ) {
 			setIsMigrateFromWp( true );

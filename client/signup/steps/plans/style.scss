@@ -18,6 +18,31 @@ $plans-2023-large-breakpoint: 1500px;
 	}
 }
 
+@mixin internal-plans-page {
+	max-width: 414px;
+
+	@media ( min-width: $plans-2023-small-breakpoint ) {
+		max-width: 860px;
+	}
+
+	@media ( min-width: $plans-2023-medium-breakpoint ) {
+		max-width: 1320px;
+	}
+
+	@media ( min-width: $plans-2023-large-breakpoint ) {
+		max-width: 1566px;
+	}
+}
+
+.plans-features-main__group.is-2023-pricing-grid {
+	@include onboarding-2023-pricing-grid-plans-breakpoints;
+}
+
+.is-full-width-layout .plans-features-main__group.is-2023-pricing-grid {
+	@include internal-plans-page;
+
+}
+
 .plans-step {
 	margin: 0 auto;
 	max-width: 700px;

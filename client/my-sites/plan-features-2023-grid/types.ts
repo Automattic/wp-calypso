@@ -27,6 +27,8 @@ export type PlanProperties = {
 	isMonthlyPlan: boolean;
 	tagline: string;
 	storageOptions: string[];
+	availableForPurchase: boolean;
+	current?: boolean;
 };
 
 export interface PlanFeature {
