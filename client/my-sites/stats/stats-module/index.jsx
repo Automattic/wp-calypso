@@ -43,6 +43,7 @@ class StatsModule extends Component {
 		statType: PropTypes.string,
 		showSummaryLink: PropTypes.bool,
 		translate: PropTypes.func,
+		metricLabel: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -111,6 +112,7 @@ class StatsModule extends Component {
 			'statsClicks',
 			'statsReferrers',
 			'statsEmailsOpen',
+			'statsEmailsClick',
 		];
 		return summary && includes( summarizedTypes, statType );
 	}
@@ -130,6 +132,7 @@ class StatsModule extends Component {
 			translate,
 			useShortLabel,
 			hideNewModule, // remove when cleaning 'stats/horizontal-bars-everywhere' FF
+			metricLabel,
 		} = this.props;
 
 		const noData = data && this.state.loaded && ! data.length;
@@ -198,6 +201,7 @@ class StatsModule extends Component {
 							useShortLabel={ useShortLabel }
 							title={ this.props.moduleStrings?.title }
 							emptyMessage={ moduleStrings.empty }
+							metricLabel={ metricLabel }
 							showMore={
 								displaySummaryLink && ! summary
 									? {

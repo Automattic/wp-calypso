@@ -63,7 +63,7 @@ export function getCharts( statType ) {
 		],
 		clicks: [
 			{
-				attr: 'clicks',
+				attr: 'clicks_count',
 				legendOptions: [],
 				icon: (
 					<svg
@@ -245,18 +245,19 @@ export function parseEmailLinksData( links ) {
 		return count;
 	}, 0 );
 
-	return [
-		...filteredLinks.map( ( link ) => {
-			return {
-				label: stringMap[ link[ 0 ] ],
-				value: parseInt( link[ 1 ], 10 ),
-			};
-		} ),
-		otherCount
-			? {
-					label: translate( 'Other', { context: 'Email link type' } ),
-					value: otherCount,
-			  }
-			: null,
-	];
+	const mappedLinks = filteredLinks.map( ( link ) => {
+		return {
+			label: stringMap[ link[ 0 ] ],
+			value: parseInt( link[ 1 ], 10 ),
+		};
+	} );
+
+	if ( otherCount ) {
+		mappedLinks.push( {
+			label: translate( 'Other', { context: 'Email link type' } ),
+			value: otherCount,
+		} );
+	}
+
+	return mappedLinks;
 }

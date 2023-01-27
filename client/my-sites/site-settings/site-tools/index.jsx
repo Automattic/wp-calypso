@@ -1,19 +1,15 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { WPCOM_FEATURES_COPY_SITE } from '@automattic/calypso-products';
 import { compose } from '@wordpress/compose';
-import { withDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import withP2HubP2Count from 'calypso/data/p2/with-p2-hub-p2-count';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { withSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import DeleteSiteWarningDialog from 'calypso/my-sites/site-settings/delete-site-warning-dialog';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import {
 	hasLoadedSitePurchasesFromServer,
@@ -25,8 +21,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { isJetpackSite, getSitePlanSlug, getSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite, getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import SiteToolsLink from './link';
 
@@ -51,13 +46,12 @@ class SiteTools extends Component {
 
 	render() {
 		const {
-			canSiteBeCopied,
+			shouldShowSiteCopyItem,
+			startSiteCopy,
 			translate,
 			siteSlug,
 			copySiteUrl,
 			cloneUrl,
-			planSlug,
-			setPlanCartItem,
 			showChangeAddress,
 			showClone,
 			showDeleteContent,
@@ -104,13 +98,11 @@ class SiteTools extends Component {
 						description={ translate( "Register a new domain or change your site's address." ) }
 					/>
 				) }
-				{ isEnabled( 'sites/copy-site' ) && canSiteBeCopied && (
+				{ isEnabled( 'sites/copy-site' ) && shouldShowSiteCopyItem && (
 					<SiteToolsLink
 						href={ copySiteUrl }
 						onClick={ () => {
-							clearSignupDestinationCookie();
-							setPlanCartItem( { product_slug: planSlug } );
-							recordTracksEvent( 'calypso_settings_copy_site_option_click' );
+							startSiteCopy( 'calypso_settings_copy_site_option_click' );
 						} }
 						title={ copyTitle }
 						description={ copyText }
@@ -181,23 +173,16 @@ class SiteTools extends Component {
 export default compose( [
 	connect(
 		( state ) => {
-			const currentUser = getCurrentUser( state );
 			const siteId = getSelectedSiteId( state );
 			const site = getSite( state, siteId );
-			const siteOwner = site?.site_owner;
 			const siteSlug = getSelectedSiteSlug( state );
 			const isAtomic = isSiteAutomatedTransfer( state, siteId );
-			const planSlug = getSitePlanSlug( state, siteId );
 			const isJetpack = isJetpackSite( state, siteId );
 			const isVip = isVipSite( state, siteId );
 			const isP2 = isSiteWPForTeams( state, siteId );
 			const isP2Hub = isSiteP2Hub( state, siteId );
 			const rewindState = getRewindState( state, siteId );
 			const sitePurchasesLoaded = hasLoadedSitePurchasesFromServer( state );
-			const canSiteBeCopied =
-				siteHasFeature( state, siteId, WPCOM_FEATURES_COPY_SITE ) &&
-				planSlug &&
-				currentUser?.ID === siteOwner;
 
 			const cloneUrl = `/start/clone-site/${ siteSlug }`;
 
@@ -206,13 +191,12 @@ export default compose( [
 			} );
 
 			return {
-				canSiteBeCopied,
+				site,
 				isAtomic,
 				copySiteUrl,
 				siteSlug,
 				purchasesError: getPurchasesError( state ),
 				cloneUrl,
-				planSlug,
 				showChangeAddress: ! isJetpack && ! isVip && ! isP2,
 				showClone: 'active' === rewindState.state && ! isAtomic,
 				showDeleteContent: ! isJetpack && ! isVip && ! isP2Hub,
@@ -226,9 +210,4 @@ export default compose( [
 			errorNotice,
 		}
 	),
-	withDispatch( ( dispatch ) => {
-		return {
-			setPlanCartItem: dispatch( ONBOARD_STORE ).setPlanCartItem,
-		};
-	} ),
-] )( localize( withP2HubP2Count( SiteTools ) ) );
+] )( localize( withSiteCopy( withP2HubP2Count( SiteTools ) ) ) );

@@ -7,6 +7,7 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSlugInTerm } from './convert-slug-terms';
 import getParamsFromContext from './get-params-from-context';
+import JetpackCompletePage from './jetpack-complete';
 import { getPlanRecommendationFromContext } from './plan-upgrade/utils';
 import SelectorPage from './selector';
 import { StoragePricing } from './storage-pricing';
@@ -87,6 +88,11 @@ export const productSelect =
 
 		next();
 	};
+
+export function offerJetpackComplete( context: PageJS.Context, next: () => void ): void {
+	context.primary = <JetpackCompletePage />;
+	next();
+}
 
 export function jetpackFreeWelcome( context: PageJS.Context, next: () => void ): void {
 	context.primary = <JetpackFreeWelcomePage />;

@@ -13,6 +13,7 @@ export const FREE_POST_SETUP_FLOW = 'free-post-setup';
 export const MIGRATION_FLOW = 'import-focused';
 export const COPY_SITE_FLOW = 'copy-site';
 export const BUILD_FLOW = 'build';
+export const WRITE_FLOW = 'write';
 
 export const isLinkInBioFlow = ( flowName: string | null ) => {
 	return Boolean(

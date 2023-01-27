@@ -155,6 +155,14 @@ module.exports = {
 		// The sprite is loaded separately in Jetpack.
 		new webpack.NormalModuleReplacementPlugin( /^\.\.\/gridicon$/, '../gridicon/no-asset' ),
 		new webpack.NormalModuleReplacementPlugin( /^\.\/gridicon$/, './gridicon/no-asset' ),
+		new webpack.NormalModuleReplacementPlugin(
+			/^calypso\/components\/jetpack-colophon$/,
+			'calypso/components/jetpack/jetpack-footer'
+		),
+		new webpack.NormalModuleReplacementPlugin(
+			/^calypso\/components\/formatted-header$/,
+			'calypso/components/jetpack/jetpack-header'
+		),
 		shouldEmitStats &&
 			new BundleAnalyzerPlugin( {
 				analyzerMode: 'server',

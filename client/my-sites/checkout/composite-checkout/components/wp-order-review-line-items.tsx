@@ -1,5 +1,6 @@
 import { isJetpackPurchasableItem } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
+import { isCopySiteFlow } from '@automattic/onboarding';
 import {
 	canItemBeRemovedFromCart,
 	getCouponLineItemFromCart,
@@ -16,6 +17,7 @@ import { useState } from 'react';
 import { useExperiment } from 'calypso/lib/explat';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
+import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { ItemVariationPicker } from './item-variation-picker';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { Theme } from '@automattic/composite-checkout';
@@ -177,7 +179,12 @@ function LineItemWrapper( {
 } ) {
 	const isRenewal = isWpComProductRenewal( product );
 	const isWooMobile = isWcMobileApp();
-	const isDeletable = canItemBeRemovedFromCart( product, responseCart ) && ! isWooMobile;
+	let isDeletable = canItemBeRemovedFromCart( product, responseCart ) && ! isWooMobile;
+
+	const signupFlowName = getSignupCompleteFlowName();
+	if ( isCopySiteFlow( signupFlowName ) && ! product.is_domain_registration ) {
+		isDeletable = false;
+	}
 
 	const shouldShowVariantSelector =
 		onChangePlanLength && ! isWooMobile && ! isRenewal && ! hasPartnerCoupon;
