@@ -154,11 +154,6 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 				type: 'Success',
 			} );
 		} );
-
-		it( 'Dismiss notice', async function () {
-			// On mobile viewports the notice banner overlaps with the navtab.
-			await noticeComponent.dismiss( successMessage );
-		} );
 	} );
 
 	describe( 'Permanently delete post', function () {
