@@ -49,16 +49,12 @@ const Title = styled.div`
 	display: flex;
 	align-items: center;
 	column-gap: 5px;
-
 	border: solid 1px #e0e0e0;
 	border-left: none;
 	border-right: none;
-	cursor: pointer;
 
 	@media ( min-width: 880px ) {
-		cursor: default;
 		padding-left: 0;
-		pointer-events: none;
 		border: none;
 		padding: 0;
 
@@ -81,7 +77,11 @@ const Grid = styled.div`
 const Row = styled.div`
 	display: flex;
 	justify-content: space-between;
-	aling-items: center;
+	margin-bottom: -1px;
+
+	&.plan-comparison-grid__group-title-row {
+		cursor: pointer;
+	}
 
 	@media ( min-width: 880px ) {
 		margin: 0 20px;
@@ -89,8 +89,10 @@ const Row = styled.div`
 		border-bottom: 1px solid #eee;
 
 		&.plan-comparison-grid__group-title-row {
+			cursor: default;
 			border-bottom: none;
 			padding: 20px 0 10px;
+			pointer-events: none;
 		}
 	}
 `;
@@ -143,6 +145,19 @@ const RowHead = styled.div`
 	@media ( min-width: 880px ) {
 		display: block;
 		flex: 1;
+	}
+`;
+
+const RowContainer = styled.div`
+	&.is-hidden-mobile .plan-comparison-grid__feature-row {
+		display: none;
+		@media ( min-width: 880px ) {
+			display: flex;
+		}
+	}
+
+	&.is-hidden-mobile ${ Title } .gridicon {
+		transform: rotateZ( 180deg );
 	}
 `;
 
@@ -355,6 +370,9 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 	const isSmallBreakpoint = usePricingBreakpoint( 880 );
 
 	const [ visiblePlans, setVisiblePlans ] = useState< string[] >( [] );
+	const [ visibleFeatureGroups, setVisibleFeatureGroups ] = useState< string[] >( [
+		Object.keys( featureGroupMap )[ 0 ],
+	] );
 
 	useEffect( () => {
 		let newVisiblePlans = displayedPlansProperties.map( ( { planName } ) => planName );
@@ -431,6 +449,21 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		},
 		[ visiblePlans ]
 	);
+
+	const toggleFeatureGroup = useCallback(
+		( featureGroupSlug ) => {
+			const index = visibleFeatureGroups.indexOf( featureGroupSlug );
+			const newVisibleFeatureGroups = [ ...visibleFeatureGroups ];
+			if ( index === -1 ) {
+				newVisibleFeatureGroups.push( featureGroupSlug );
+			} else {
+				newVisibleFeatureGroups.splice( index, 1 );
+			}
+
+			setVisibleFeatureGroups( newVisibleFeatureGroups );
+		},
+		[ visibleFeatureGroups ]
+	);
 	const visiblePlansProperties = visiblePlans.reduce< PlanProperties[] >( ( acc, planName ) => {
 		const plan = displayedPlansProperties.find( ( plan ) => plan.planName === planName );
 		if ( plan ) {
@@ -471,24 +504,26 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 					const features = featureGroup.get2023PricingGridSignupWpcomFeatures();
 					const featureObjects = getPlanFeaturesObject( features );
 
+					const featureGroupClass = `feature-group-title-${ featureGroup.slug }`;
+					const groupClasses = classNames( featureGroupClass, {
+						'is-hidden-mobile': ! visibleFeatureGroups.includes( featureGroup.slug ),
+					} );
 					return (
-						<div key={ `feature-group-title-${ featureGroup.slug }` }>
+						<RowContainer className={ groupClasses }>
 							<Row
-								key={ `feature-group-title-${ featureGroup.slug }` }
+								key={ featureGroupClass }
 								className="plan-comparison-grid__group-title-row"
+								onClick={ () => toggleFeatureGroup( featureGroup.slug ) }
 							>
 								<Title className={ `plan-comparison-grid__group-${ featureGroup.slug }` }>
-									<Gridicon icon="chevron-down" size={ 12 } color="#1E1E1E" />
+									<Gridicon icon="chevron-up" size={ 12 } color="#1E1E1E" />
 									{ featureGroup.getTitle() }
 								</Title>
 							</Row>
 							{ featureObjects.map( ( feature ) => {
 								const featureSlug = feature.getSlug();
 								return (
-									<Row
-										key={ featureSlug }
-										className={ `plan-comparison-grid__feature-row ${ feature.getTitle() }` }
-									>
+									<Row key={ featureSlug } className="plan-comparison-grid__feature-row">
 										<RowHead
 											key="feature-name"
 											className={ `plan-comparison-grid__feature-feature-name ${ feature.getTitle() }` }
@@ -575,7 +610,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 									} ) }
 								</Row>
 							) : null }
-						</div>
+						</RowContainer>
 					);
 				} ) }
 				<PlanComparisonGridHeader
