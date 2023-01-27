@@ -81,6 +81,7 @@ const Grid = styled.div`
 const Row = styled.div`
 	display: flex;
 	justify-content: space-between;
+	aling-items: center;
 
 	@media ( min-width: 880px ) {
 		margin: 0 20px;
@@ -120,9 +121,8 @@ const Cell = styled.div< { textAlign?: string } >`
 	}
 
 	@media ( min-width: 880px ) {
-		max-width: 240px;
 		padding: 0 14px;
-		max-width: 200px;
+		max-width: 180px;
 
 		&:first-of-type {
 			padding-left: 0;
@@ -130,6 +130,10 @@ const Cell = styled.div< { textAlign?: string } >`
 		&:last-of-type {
 			padding-right: 0;
 		}
+	}
+
+	@media ( min-width: 1500px ) {
+		max-width: 200px;
 	}
 `;
 
