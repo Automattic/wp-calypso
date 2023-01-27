@@ -29655,13 +29655,13 @@ resolve@^2.0.0-next.3:
   linkType: hard
 
 "simple-git@npm:^3.5.0":
-  version: 3.7.1
-  resolution: "simple-git@npm:3.7.1"
+  version: 3.16.0
+  resolution: "simple-git@npm:3.16.0"
   dependencies:
     "@kwsites/file-exists": ^1.1.1
     "@kwsites/promise-deferred": ^1.1.1
-    debug: ^4.3.3
-  checksum: e599114a055c4d4684e3cd595dd07eab968f61ae527faba31d8b3a3ec636944821c994e9edb2a0a41ae638e9e352b2432ebaa5f9bda3646ca2954a7712465614
+    debug: ^4.3.4
+  checksum: 6e0beca71ee0de565a7c5bbcdfb093081c08f7461fc24af3687e4fd14892a5103edcf6352d4feec4b99fb8fb84d0f203aa91253fb8ed4a2bf7b8c93327a2e9e7
   languageName: node
   linkType: hard
 
