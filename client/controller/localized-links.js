@@ -27,7 +27,7 @@ export const setLocalizedCanonicalUrl = ( context, next ) => {
 		return;
 	}
 
-	const langParamSlug = context.params.lang;
+	const langParamSlug = context.i18n.getLocaleSlug();
 	const href = getLocalizedCanonicalUrl( context.originalUrl, langParamSlug );
 	const link = {
 		rel: 'canonical',
