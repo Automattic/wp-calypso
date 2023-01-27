@@ -13,6 +13,7 @@ import {
 	hasLoadedSitePurchasesFromServer,
 	isFetchingSitePurchases,
 } from 'calypso/state/purchases/selectors';
+import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
@@ -31,6 +32,7 @@ function useSafeSiteHasFeature( siteId: number, feature: string ) {
 export const useSiteCopy = ( site: SiteExcerptData ) => {
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 	const hasCopySiteFeature = useSafeSiteHasFeature( site.ID, WPCOM_FEATURES_COPY_SITE );
+	const isAtomic = useSelector( ( state ) => isSiteAtomic( state, site.ID ) );
 	const plan = site?.plan;
 	const isSiteOwner = site.site_owner === userId;
 	useQuerySitePurchases( site.ID );
@@ -43,8 +45,8 @@ export const useSiteCopy = ( site: SiteExcerptData ) => {
 	const { setPlanCartItem, setProductCartItems } = useDispatch( ONBOARD_STORE );
 
 	const shouldShowSiteCopyItem = useMemo( () => {
-		return hasCopySiteFeature && isSiteOwner && plan && ! isLoadingPurchase;
-	}, [ hasCopySiteFeature, isSiteOwner, plan, isLoadingPurchase ] );
+		return hasCopySiteFeature && isSiteOwner && plan && isAtomic && ! isLoadingPurchase;
+	}, [ hasCopySiteFeature, isSiteOwner, plan, isLoadingPurchase, isAtomic ] );
 
 	const startSiteCopy = useCallback(
 		//eslint-disable-next-line @typescript-eslint/no-explicit-any

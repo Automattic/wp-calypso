@@ -59,7 +59,7 @@
 
 		@media ( min-width: 385px ) {
 			max-width: 375px;
-			margin: initial;
+			margin: initial auto;
 		}
 
 		@include onboarding-2023-pricing-grid-plans-breakpoints;
