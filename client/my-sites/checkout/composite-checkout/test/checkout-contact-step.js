@@ -534,6 +534,7 @@ describe( 'Checkout contact step', () => {
 		mockGetVatInfoEndpoint( {
 			id: '12345',
 			name: 'Test company',
+			address: '123 Main Street',
 			country: 'GB',
 		} );
 		const cartChanges = { products: [ planWithoutDomain ] };
@@ -554,6 +555,7 @@ describe( 'Checkout contact step', () => {
 			country_code: 'GB',
 			postal_code: '',
 			address: '123 Main Street',
+			country: 'GB',
 		} );
 		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
 		mockGetVatInfoEndpoint( {
