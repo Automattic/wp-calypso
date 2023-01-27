@@ -1,10 +1,10 @@
 import { useFlowProgress, COPY_SITE_FLOW } from '@automattic/onboarding';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
@@ -13,12 +13,51 @@ import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
+import { useSiteCopy } from '../hooks/use-site-copy';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import AutomatedCopySite from './internals/steps-repository/automated-copy-site';
 import DomainsStep from './internals/steps-repository/domains';
 import ProcessingStep, { ProcessingResult } from './internals/steps-repository/processing-step';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import type { Flow, ProvidedDependencies } from './internals/types';
+
+function useIsValidSite() {
+	const urlQueryParams = useQuery();
+	const sourceSlug = urlQueryParams.get( 'sourceSlug' );
+	const [ siteRequestStatus, setSiteRequestStatus ] = useState< 'init' | 'fetching' | 'finished' >(
+		'init'
+	);
+
+	const {
+		isFetching,
+		isFetchingError,
+		site: sourceSite,
+	} = useSelect( ( select ) => {
+		if ( ! sourceSlug ) {
+			return {};
+		}
+		return {
+			isFetchingError: select( SITE_STORE ).getFetchingSiteError(),
+			isFetching: select( SITE_STORE ).isFetchingSiteDetails(),
+			site: select( SITE_STORE ).getSite( sourceSlug ),
+		};
+	} );
+
+	useEffect( () => {
+		if ( isFetching && siteRequestStatus === 'init' ) {
+			setSiteRequestStatus( 'fetching' );
+		} else if ( ( ! isFetching && siteRequestStatus === 'fetching' ) || sourceSite?.ID ) {
+			setSiteRequestStatus( 'finished' );
+		}
+	}, [ isFetching, siteRequestStatus, sourceSite?.ID ] );
+
+	const { shouldShowSiteCopyItem, isLoadingPurchase } = useSiteCopy( sourceSite );
+	return {
+		isValidSite: shouldShowSiteCopyItem,
+		hasFetchedSiteDetails: siteRequestStatus === 'finished' && ! isLoadingPurchase,
+		isFetchingError,
+	};
+}
 
 const copySite: Flow = {
 	name: COPY_SITE_FLOW,
@@ -33,10 +72,11 @@ const copySite: Flow = {
 			recordFullStoryEvent( 'calypso_signup_start_copy_site', { flow: this.name } );
 		}, [] );
 
-		const urlQueryParams = useQuery();
-		const sourceSlug = urlQueryParams.get( 'sourceSlug' );
-		if ( ! sourceSlug ) {
-			window.location.assign( `/sites` );
+		const { isValidSite, hasFetchedSiteDetails, isFetchingError } = useIsValidSite();
+		if ( ! isValidSite ) {
+			if ( hasFetchedSiteDetails || isFetchingError ) {
+				window.location.assign( `/sites` );
+			}
 			return [];
 		}
 
