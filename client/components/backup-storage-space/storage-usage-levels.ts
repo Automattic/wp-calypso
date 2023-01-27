@@ -30,7 +30,7 @@ export const getUsageLevel = (
 		!! planRetentionDays &&
 		!! daysOfBackupsSaved
 	) {
-		// if current allowed days of backups is equal to the minimum, return storage full.
+		// if current days of backups saved is less than or equal to the minimum and storage is overused.
 		if (
 			minDaysOfBackupsAllowed >= daysOfBackupsSaved &&
 			used > 0 &&
