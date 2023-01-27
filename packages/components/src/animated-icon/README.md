@@ -25,10 +25,10 @@ function render() {
 
 ### `icon`
 
-- **Type:** `String`
+- **Type:** `String` or `Object`
 - **Required:** `yes`
 
-The path to the animated icon.
+The path to the animated icon or the animation's imported json.
 
 ### `className`
 
@@ -36,3 +36,11 @@ The path to the animated icon.
 - **Required:** `no`
 
 The values of any additional CSS classes to apply to the icon's wrapper element.
+
+### `playUponViewportEntry`
+
+- **Type:** `Boolean`
+- **Required:** `no`
+- **Default:** `false`
+
+Determines whether the animation will automatically play every time it becomes visible in the browser's viewport. Useful for scenarios where the animation isn't immediately visible upon page load
