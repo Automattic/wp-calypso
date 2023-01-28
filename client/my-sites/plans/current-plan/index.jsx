@@ -225,7 +225,7 @@ class CurrentPlan extends Component {
 					<Card>
 						<img
 							className="current-plan__included-ilustration"
-							alt="Best-in-class hosting"
+							alt="Priority support"
 							src="/calypso/images/plans/wpcom/trial-features/priority-support.svg"
 						/>
 						<p className="current-plan__included-title">Priority support</p>
@@ -238,7 +238,7 @@ class CurrentPlan extends Component {
 					<Card>
 						<img
 							className="current-plan__included-ilustration"
-							alt="Best-in-class hosting"
+							alt="Premium themes"
 							src="/calypso/images/plans/wpcom/trial-features/premium-themes.svg"
 						/>
 						<p className="current-plan__included-title">Premium themes</p>
@@ -251,7 +251,7 @@ class CurrentPlan extends Component {
 					<Card>
 						<img
 							className="current-plan__included-ilustration"
-							alt="Best-in-class hosting"
+							alt="Advanced customization"
 							src="/calypso/images/plans/wpcom/trial-features/advanced-customization.svg"
 						/>
 						<p className="current-plan__included-title">Advanced customization</p>
@@ -264,7 +264,7 @@ class CurrentPlan extends Component {
 					<Card>
 						<img
 							className="current-plan__included-ilustration"
-							alt="Best-in-class hosting"
+							alt="Unlimited products"
 							src="/calypso/images/plans/wpcom/trial-features/unlimited-products.svg"
 						/>
 						<p className="current-plan__included-title">Unlimited products</p>
@@ -277,7 +277,7 @@ class CurrentPlan extends Component {
 					<Card>
 						<img
 							className="current-plan__included-ilustration"
-							alt="Best-in-class hosting"
+							alt="Jetpack features"
 							src="/calypso/images/plans/wpcom/trial-features/jetpack-features.svg"
 						/>
 						<p className="current-plan__included-title">Jetpack features</p>
@@ -290,7 +290,7 @@ class CurrentPlan extends Component {
 					<Card>
 						<img
 							className="current-plan__included-ilustration"
-							alt="Best-in-class hosting"
+							alt="SEO tools"
 							src="/calypso/images/plans/wpcom/trial-features/seo-tools.svg"
 						/>
 						<p className="current-plan__included-title">SEO tools</p>
@@ -303,7 +303,7 @@ class CurrentPlan extends Component {
 					<Card>
 						<img
 							className="current-plan__included-ilustration"
-							alt="Best-in-class hosting"
+							alt="Google Analytics"
 							src="/calypso/images/plans/wpcom/trial-features/google-analytics.svg"
 						/>
 						<p className="current-plan__included-title">Google Analytics</p>
@@ -332,6 +332,102 @@ class CurrentPlan extends Component {
 					<br />
 					Get the most value out of WooCommerce and pick one of our plans.
 				</p>
+
+				<div className="current-plan__more-wrapper">
+					<Card>
+						<img
+							className="current-plan__more-ilustration"
+							alt="Launch your store to the world"
+							src="/calypso/images/plans/wpcom/trial-features/launch.png"
+						/>
+						<div className="current-plan__more-content">
+							<p className="current-plan__more-title">Launch your store to the world</p>
+							<p className="current-plan__more-text">
+								Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio
+								ullamcorper efficitur.
+							</p>
+						</div>
+					</Card>
+
+					<Card>
+						<img
+							className="current-plan__more-ilustration"
+							alt="Get access to more premium themes"
+							src="/calypso/images/plans/wpcom/trial-features/themes.png"
+						/>
+						<div className="current-plan__more-content">
+							<p className="current-plan__more-title">Get access to more premium themes</p>
+							<p className="current-plan__more-text">
+								Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio
+								ullamcorper efficitur.
+							</p>
+						</div>
+					</Card>
+
+					<Card>
+						<img
+							className="current-plan__more-ilustration"
+							alt="Make money with your store"
+							src="/calypso/images/plans/wpcom/trial-features/money.png"
+						/>
+						<div className="current-plan__more-content">
+							<p className="current-plan__more-title">Make money with your store</p>
+							<p className="current-plan__more-text">
+								Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio
+								ullamcorper efficitur.
+							</p>
+						</div>
+					</Card>
+
+					<Card>
+						<img
+							className="current-plan__more-ilustration"
+							alt="Boost your email marketing"
+							src="/calypso/images/plans/wpcom/trial-features/email.png"
+						/>
+						<div className="current-plan__more-content">
+							<p className="current-plan__more-title">Boost your email marketing</p>
+							<p className="current-plan__more-text">
+								Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio
+								ullamcorper efficitur.
+							</p>
+						</div>
+					</Card>
+
+					<Card>
+						<img
+							className="current-plan__more-ilustration"
+							alt="Promote your products"
+							src="/calypso/images/plans/wpcom/trial-features/promote.png"
+						/>
+						<div className="current-plan__more-content">
+							<p className="current-plan__more-title">Promote your products</p>
+							<p className="current-plan__more-text">
+								Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio
+								ullamcorper efficitur.
+							</p>
+						</div>
+					</Card>
+
+					<Card>
+						<img
+							className="current-plan__more-ilustration"
+							alt="Integrate top shipping carriers"
+							src="/calypso/images/plans/wpcom/trial-features/shipping.png"
+						/>
+						<div className="current-plan__more-content">
+							<p className="current-plan__more-title">Integrate top shipping carriers</p>
+							<p className="current-plan__more-text">
+								Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio
+								ullamcorper efficitur.
+							</p>
+						</div>
+					</Card>
+				</div>
+
+				<div className="current-plan__cta-wrapper">
+					<Button className="current-plan__cta">Enhance your store and pick a plan</Button>
+				</div>
 			</>
 		);
 	}

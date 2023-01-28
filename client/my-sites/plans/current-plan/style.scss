@@ -240,4 +240,42 @@ body.is-section-plans {
 			}
 		}
 	}
+
+	.current-plan__more-wrapper {
+		display: flex;
+		flex-flow: row wrap;
+		list-style: none;
+		padding: 20px;
+		margin-top: 30px;
+
+		.card {
+			width: 490px;
+			display: flex;
+			box-shadow: none;
+
+			.current-plan__more-ilustration {
+				width: 130px;
+				height: fit-content;
+			}
+			.current-plan__more-content {
+				padding-left: 25px;
+
+				.current-plan__more-title {
+					font-weight: 600;
+					font-size: 1rem;
+					margin-bottom: 1rem;
+				}
+				.current-plan__more-text {
+					font-weight: 400;
+					font-size: 0.875rem;
+					color: #757575;
+				}
+			}
+		}
+	}
+
+	.current-plan__cta-wrapper {
+		text-align: center;
+		margin-top: 30px;
+	}
 }
