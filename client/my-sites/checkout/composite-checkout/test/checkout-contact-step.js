@@ -314,6 +314,7 @@ describe( 'Checkout contact step', () => {
 				.post( '/rest/v1.1/logstash' )
 				.reply( 200 );
 			nock( 'https://public-api.wordpress.com' )
+				.persist()
 				.get( '/rest/v1.1/me/vat-info' )
 				.optionally()
 				.reply( 200, {} );
@@ -532,11 +533,14 @@ describe( 'Checkout contact step', () => {
 			postal_code: '',
 		} );
 		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
-		nock( 'https://public-api.wordpress.com' ).get( '/rest/v1.1/me/vat-info' ).reply( 200, {
-			id: '12345',
-			name: 'Test company',
-			country: 'GB',
-		} );
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.get( '/rest/v1.1/me/vat-info' )
+			.reply( 200, {
+				id: '12345',
+				name: 'Test company',
+				country: 'GB',
+			} );
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
 
@@ -556,11 +560,14 @@ describe( 'Checkout contact step', () => {
 			postal_code: '',
 		} );
 		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
-		nock( 'https://public-api.wordpress.com' ).get( '/rest/v1.1/me/vat-info' ).reply( 200, {
-			id: '12345',
-			name: 'Test company',
-			country: 'GB',
-		} );
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.get( '/rest/v1.1/me/vat-info' )
+			.reply( 200, {
+				id: '12345',
+				name: 'Test company',
+				country: 'GB',
+			} );
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
 
@@ -613,11 +620,14 @@ describe( 'Checkout contact step', () => {
 		const vatId = '12345';
 		const vatName = 'Test company';
 		const countryCode = 'GB';
-		nock( 'https://public-api.wordpress.com' ).get( '/rest/v1.1/me/vat-info' ).reply( 200, {
-			id: vatId,
-			name: vatName,
-			country: countryCode,
-		} );
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.get( '/rest/v1.1/me/vat-info' )
+			.reply( 200, {
+				id: vatId,
+				name: vatName,
+				country: countryCode,
+			} );
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
