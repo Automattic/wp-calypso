@@ -100,11 +100,7 @@ export const domainProduct: ResponseCartProduct = {
 	currency: 'BRL',
 	extra: {
 		context: 'signup',
-		privacy: true,
-		privacy_available: true,
-		registrar: 'KS_RAM',
 	},
-	free_trial: false,
 	meta: 'foo.cash',
 	product_id: 6,
 	volume: 1,
@@ -289,7 +285,7 @@ export const planLevel2Biannual: ResponseCartProduct = {
 export const fetchStripeConfiguration = async () => stripeConfiguration;
 
 export function mockSetCartEndpointWith( { currency, locale } ): SetCart {
-	return async ( _: number, requestCart: RequestCart ) => {
+	return async ( _: number, requestCart: RequestCart ): Promise< ResponseCart > => {
 		const { products: requestProducts, coupon: requestCoupon } = requestCart;
 		const products = requestProducts.map( convertRequestProductToResponseProduct( currency ) );
 
@@ -308,10 +304,8 @@ export function mockSetCartEndpointWith( { currency, locale } ): SetCart {
 			cart_key: 1234,
 			coupon: requestCoupon,
 			coupon_discounts_integer: [],
-			coupon_savings_total_display: requestCoupon ? 'R$10' : 'R$0',
 			coupon_savings_total_integer: requestCoupon ? 1000 : 0,
 			create_new_blog: false,
-			credits_display: '0',
 			credits_integer: 0,
 			currency,
 			is_coupon_applied: true,
@@ -319,20 +313,16 @@ export function mockSetCartEndpointWith( { currency, locale } ): SetCart {
 			locale,
 			next_domain_is_free: false,
 			products,
-			sub_total_display: 'R$149',
 			sub_total_integer: totalInteger - taxInteger,
-			sub_total_with_taxes_display: 'R$156',
 			sub_total_with_taxes_integer: totalInteger,
 			tax: {
 				location: requestCart.tax?.location ?? {},
 				display_taxes: !! requestCart.tax?.location?.postal_code,
 			},
 			total_cost: 0,
-			total_cost_display: 'R$156',
 			total_cost_integer: totalInteger,
 			total_tax: '',
 			total_tax_breakdown: [],
-			total_tax_display: 'R$7',
 			total_tax_integer: taxInteger,
 			next_domain_condition: '',
 		};
