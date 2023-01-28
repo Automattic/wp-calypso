@@ -19,7 +19,12 @@ import AutomatedCopySite from './internals/steps-repository/automated-copy-site'
 import DomainsStep from './internals/steps-repository/domains';
 import ProcessingStep, { ProcessingResult } from './internals/steps-repository/processing-step';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
-import type { Flow, ProvidedDependencies } from './internals/types';
+import {
+	AssertConditionResult,
+	AssertConditionState,
+	Flow,
+	ProvidedDependencies,
+} from './internals/types';
 
 function useIsValidSite() {
 	const urlQueryParams = useQuery();
@@ -71,14 +76,6 @@ const copySite: Flow = {
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
 			recordFullStoryEvent( 'calypso_signup_start_copy_site', { flow: this.name } );
 		}, [] );
-
-		const { isValidSite, hasFetchedSiteDetails, isFetchingError } = useIsValidSite();
-		if ( ! isValidSite ) {
-			if ( hasFetchedSiteDetails || isFetchingError ) {
-				window.location.assign( `/sites` );
-			}
-			return [];
-		}
 
 		return [
 			{ slug: 'domains', component: DomainsStep },
@@ -171,6 +168,26 @@ const copySite: Flow = {
 		};
 
 		return { goNext, goBack, goToStep, submit };
+	},
+
+	useAssertConditions() {
+		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
+
+		const { isValidSite, hasFetchedSiteDetails, isFetchingError } = useIsValidSite();
+
+		if ( ! isValidSite ) {
+			if ( hasFetchedSiteDetails || isFetchingError ) {
+				window.location.assign( `/sites` );
+				result = {
+					state: AssertConditionState.FAILURE,
+					message: isFetchingError
+						? 'Copy Site flow couldn´t fetch source site details.'
+						: 'Copy Site flow requires a valid source site.',
+				};
+			}
+		}
+
+		return result;
 	},
 };
 
