@@ -1,3 +1,9 @@
+body.is-section-plans {
+	&.theme-default.color-scheme {
+		--color-surface-backdrop: #fff;
+	}
+}
+
 .current-plan__dialog.dialog__backdrop {
 	background-color: rgba(var(--color-neutral-dark-rgb), 0.85);
 	box-shadow: none;
@@ -18,16 +24,14 @@
 	width: 100%;
 	padding: 14px 32px;
 	background-color: var(--color-surface);
-	box-shadow:
-		0 0 0 1px rgba(var(--color-neutral-10-rgb), 0.5),
-		0 1px 2px var(--color-neutral-0);
+	box-shadow: 0 0 0 1px rgba(var(--color-neutral-10-rgb), 0.5), 0 1px 2px var(--color-neutral-0);
 
 	&-main {
 		display: flex;
 	}
 
 	.is-jetpack-free & {
-		@include breakpoint-deprecated( ">800px" ) {
+		@include breakpoint-deprecated(">800px") {
 			display: flex;
 			align-items: center;
 			text-align: left;
@@ -38,7 +42,7 @@
 .current-plan__header-icon {
 	display: none;
 
-	@include breakpoint-deprecated( ">480px" ) {
+	@include breakpoint-deprecated(">480px") {
 		display: flex;
 		flex-shrink: 0;
 		width: 100px;
@@ -79,11 +83,11 @@
 
 	.current-plan__header-heading,
 	.current-plan__header-text {
-		@include placeholder( --color-neutral-10 );
+		@include placeholder(--color-neutral-10);
 
 		display: block;
 
-		@include breakpoint-deprecated( "<660px" ) {
+		@include breakpoint-deprecated("<660px") {
 			margin: 0 auto;
 		}
 	}
@@ -99,7 +103,7 @@
 		margin-top: 15px;
 		width: 90%;
 
-		@include breakpoint-deprecated( ">660px" ) {
+		@include breakpoint-deprecated(">660px") {
 			margin-bottom: 18px;
 			margin-top: 18px;
 		}
@@ -138,7 +142,7 @@
 	margin-left: 16px;
 	min-width: 140px;
 
-	@include breakpoint-deprecated( ">660px" ) {
+	@include breakpoint-deprecated(">660px") {
 		justify-content: flex-end;
 	}
 }
@@ -149,29 +153,52 @@
 	text-align: center;
 }
 
-.current-plan__trial-card {
-	display: flex;
-	padding: 30px;
+.current-plan__content {
 
-	.current-plan__trial-card-content {
-		flex: 1;
-		padding-right: 50px;
-		.badge {
-			border-radius: 0;
-			background-color: #000;
-			color: #fff;
-			font-size: 0.75rem;
+	.section-nav {
+		box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+	}
+
+	.current-plan__trial-card {
+		display: flex;
+		padding: 30px;
+		background-color: #f6f7f799;
+		box-shadow: none;
+
+		.current-plan__trial-card-content {
+			flex: 1;
+			padding-right: 50px;
+			.badge {
+				border-radius: 0;
+				background-color: #000;
+				color: #fff;
+				font-size: 0.75rem;
+			}
+			.current-plan__card-title {
+				font-size: $font-title-medium;
+				font-weight: 400;
+				color: #2f2f2f;
+				margin: 15px 0;
+			}
+			.current-plan__card-subtitle {
+				font-size: 1rem;
+				font-weight: 400;
+				color: #757575;
+			}
 		}
-		h2 {
-			font-size: $font-title-medium;
-			font-weight: 400;
-			color: #2f2f2f;
-			padding: 15px 0;
-		}
-		p {
-			font-size: 1rem;
-			font-weight: 400;
-			color: #757575;
-		}
+	}
+
+	.current-plan__section-title {
+		font-size: $font-title-medium;
+		text-align: center;
+		font-weight: 400;
+		color: #2f2f2f;
+		margin: 40px 0 10px 0;
+	}
+	.current-plan__section-subtitle {
+		text-align: center;
+		font-size: 1rem;
+		color: #757575;
+
 	}
 }

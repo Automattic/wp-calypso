@@ -198,27 +198,35 @@ class CurrentPlan extends Component {
 
 		return (
 			<>
-				<Card>
-					<div className="current-plan__trial-card">
-						<div className="current-plan__trial-card-content">
-							<Badge type="info">{ translate( '5 days left' ) }</Badge>
-							<h2>{ translate( 'You’re in a free trial store' ) }</h2>
-							<p>
-								{ translate(
-									'Your free trial we’ll expire in 5 days. Pick a plan by December, 13th to keep your store running.'
-								) }
-							</p>
-							<Button primary>{ translate( 'Pick a plan' ) }</Button>
-						</div>
-						<div className="current-plan__trial-ilustration">
-							<img
-								width={ 180 }
-								alt="Pick a plan"
-								src="/calypso/images/plans/wpcom/plan-ecommerce-trial.png"
-							/>
-						</div>
+				<Card className="current-plan__trial-card">
+					<div className="current-plan__trial-card-content">
+						<Badge type="info">{ translate( '5 days left' ) }</Badge>
+						<p className="current-plan__card-title">
+							{ translate( 'You’re in a free trial store' ) }
+						</p>
+						<p className="current-plan__card-subtitle">
+							{ translate(
+								'Your free trial we’ll expire in 5 days. Pick a plan by December, 13th to keep your store running.'
+							) }
+						</p>
+						<Button primary>{ translate( 'Pick a plan' ) }</Button>
+					</div>
+					<div className="current-plan__trial-ilustration">
+						<img
+							width={ 180 }
+							alt="Pick a plan"
+							src="/calypso/images/plans/wpcom/plan-ecommerce-trial.png"
+						/>
 					</div>
 				</Card>
+
+				<h2 className="current-plan__section-title">What’s included in your free trial</h2>
+				<h2 className="current-plan__section-title">Do you want more?</h2>
+				<p className="current-plan__section-subtitle">
+					The free trial doesn’t support the following features.
+					<br />
+					Get the most value out of WooCommerce and pick one of our plans.
+				</p>
 			</>
 		);
 	}
