@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import rnaImageComplete from 'calypso/assets/images/jetpack/rna-image-complete.png';
+import rnaImageComplete2xRetina from 'calypso/assets/images/jetpack/rna-image-complete@2x.png';
 import QueryJetpackUserLicensesCounts from 'calypso/components/data/query-jetpack-user-licenses-counts';
 import JetpackRnaDialogCard from 'calypso/components/jetpack/card/jetpack-rna-dialog-card';
 import Main from 'calypso/components/main';
@@ -45,7 +46,10 @@ const JetpackCompletePage: React.FC< Props > = ( {
 			<QueryJetpackUserLicensesCounts />
 			<Main className="jetpack-complete-page__main" wideLayout>
 				<MaybeShowLicenseActivationLink siteId={ siteId } />
-				<JetpackRnaDialogCard cardImage={ rnaImageComplete }>
+				<JetpackRnaDialogCard
+					cardImage={ rnaImageComplete }
+					cardImage2xRetina={ rnaImageComplete2xRetina }
+				>
 					<>
 						{ /* This is just example/fill text here, that should be made into various components */ }
 						<h1

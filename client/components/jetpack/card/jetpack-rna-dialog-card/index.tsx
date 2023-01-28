@@ -5,17 +5,22 @@ import DefaultBackgroundImage from 'calypso/assets/images/jetpack/rna-card-bg.pn
 import './style.scss';
 
 interface RnaDialogCardProps {
-	children?: ReactNode;
+	children: ReactNode;
 	cardImage?: string;
+	cardImage2xRetina?: string;
 	isPlaceholder?: boolean;
 }
 
 const JetpackRnaDialogCard: React.FC< RnaDialogCardProps > = ( {
 	children,
 	cardImage,
+	cardImage2xRetina,
 	isPlaceholder,
 } ) => {
-	const cardDesktopSideImage = cardImage || DefaultBackgroundImage;
+	const cardDesktopSideImage =
+		window.devicePixelRatio > 1 && cardImage2xRetina
+			? cardImage2xRetina
+			: cardImage ?? DefaultBackgroundImage;
 	return (
 		<div
 			className={ classNames( 'jetpack-rna-dialog-card', {
