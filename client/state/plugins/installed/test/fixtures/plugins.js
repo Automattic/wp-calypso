@@ -60,6 +60,39 @@ export const jetpack = {
 	},
 };
 
+export const jetpackWithSites = {
+	id: 'jetpack/jetpack',
+	slug: 'jetpack',
+	name: 'Jetpack by WordPress.com',
+	plugin_url: 'http://jetpack.com',
+	description:
+		'Bring the power of the WordPress.com cloud to your self-hosted WordPress. Jetpack enables you to connect your blog to a WordPress.com account to use the powerful features normally only available to WordPress.com users.',
+	author: 'Automattic',
+	author_url: 'http://jetpack.com',
+	network: false,
+	sites: {
+		54321: {
+			active: true,
+			autoupdate: true,
+			version: '4.1.1',
+			update: {
+				compatibility: {
+					scalar: {
+						scalar: false,
+					},
+				},
+				id: '20101',
+				new_version: '4.2.2',
+				package: 'https://downloads.wordpress.org/plugin/jetpack.4.2.2.zip',
+				plugin: 'jetpack/jetpack.php',
+				slug: 'jetpack',
+				tested: '4.6',
+				url: 'https://wordpress.org/plugins/jetpack/',
+			},
+		},
+	},
+};
+
 export const jetpackUpdated = {
 	id: 'jetpack/jetpack',
 	slug: 'jetpack',
