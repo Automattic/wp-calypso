@@ -43,7 +43,7 @@ export const HelpCenterLaunchpad = () => {
 					handleLaunchpadHelpLinkClick();
 				} }
 			>
-				<CircularProgressBar currentStep={ 0 } numberOfSteps={ 0 } />
+				<CircularProgressBar currentStep={ 1 } numberOfSteps={ 4 } />
 				<span className="inline-help-launchpad-link-text">
 					{ __( 'Continue setting up your site with these next steps.' ) }
 				</span>
