@@ -554,13 +554,12 @@ describe( 'Checkout contact step', () => {
 		mockCachedContactDetailsEndpoint( {
 			country_code: 'GB',
 			postal_code: '',
-			address: '123 Main Street',
-			country: 'GB',
 		} );
 		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
 		mockGetVatInfoEndpoint( {
 			id: '12345',
 			name: 'Test company',
+			address: '123 Main Street',
 			country: 'GB',
 		} );
 		const cartChanges = { products: [ planWithoutDomain ] };
@@ -615,10 +614,12 @@ describe( 'Checkout contact step', () => {
 		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
 		const vatId = '12345';
 		const vatName = 'Test company';
+		const vatAddress = '123 Main Street';
 		const countryCode = 'GB';
 		mockGetVatInfoEndpoint( {
 			id: vatId,
 			name: vatName,
+			address: vatAddress,
 			country: countryCode,
 		} );
 		const user = userEvent.setup();
@@ -634,6 +635,7 @@ describe( 'Checkout contact step', () => {
 		expect( await screen.findByLabelText( 'Add VAT details' ) ).toBeChecked();
 		expect( await screen.findByLabelText( 'VAT Number' ) ).toHaveValue( vatId );
 		expect( await screen.findByLabelText( 'Organization for VAT' ) ).toHaveValue( vatName );
+		expect( await screen.findByLabelText( 'Address for VAT' ) ).toHaveValue( vatAddress );
 
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
 		const mockVatEndpoint = mockSetVatInfoEndpoint();
@@ -645,6 +647,7 @@ describe( 'Checkout contact step', () => {
 		expect( mockVatEndpoint ).toHaveBeenCalledWith( {
 			id: vatId,
 			name: vatName,
+			address: vatAddress,
 			country: cachedContactCountry,
 		} );
 	} );
@@ -705,6 +708,7 @@ describe( 'Checkout contact step', () => {
 	it( 'sends VAT data to the shopping-cart endpoint when completing the step if the box is checked', async () => {
 		const vatId = '12345';
 		const vatName = 'Test company';
+		const vatAddress = '123 Main Street';
 		const countryCode = 'GB';
 		const postalCode = 'NW1 4NP';
 		mockSetVatInfoEndpoint();
@@ -723,6 +727,7 @@ describe( 'Checkout contact step', () => {
 		// Fill in the details
 		await user.type( await screen.findByLabelText( 'VAT Number' ), vatId );
 		await user.type( await screen.findByLabelText( 'Organization for VAT' ), vatName );
+		await user.type( await screen.findByLabelText( 'Address for VAT' ), vatAddress );
 
 		await user.click( screen.getByText( 'Continue' ) );
 		expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
@@ -738,6 +743,7 @@ describe( 'Checkout contact step', () => {
 						subdivision_code: undefined,
 						vat_id: vatId,
 						organization: vatName,
+						address: vatAddress,
 					},
 				},
 			} )
