@@ -188,6 +188,10 @@ const copySite: Flow = {
 					? 'Copy Site flow couldn´t fetch source site details.'
 					: 'Copy Site flow requires a valid source site.',
 			};
+		} else if ( ! hasFetchedSiteDetails ) {
+			result = {
+				state: AssertConditionState.CHECKING,
+			};
 		}
 
 		return result;
