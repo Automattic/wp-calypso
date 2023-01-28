@@ -1,4 +1,4 @@
-import coursesLogo from 'calypso/assets/images/customer-home/courses-logo.png';
+import wpLearnLogo from 'calypso/assets/images/customer-home/learn-logo.png';
 import { TASK_WP_COURSES } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 
@@ -10,7 +10,7 @@ const WPCourses = () => {
 			actionText="Get started here"
 			actionUrl="https://wordpress.com/learn/?utm_source=wordpressdotcom&utm_medium=referral&utm_campaign=learn_launch_myhome"
 			actionTarget="_blank"
-			illustration={ coursesLogo }
+			illustration={ wpLearnLogo }
 			completeOnStart={ true }
 			taskId={ TASK_WP_COURSES }
 		/>
