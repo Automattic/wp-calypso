@@ -3,7 +3,7 @@
  */
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
-import { render, screen, within, waitForElementToBeRemoved } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -235,6 +235,7 @@ describe( 'Checkout contact step', () => {
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
 		// Wait for the cart to load
+		await screen.findByLabelText( 'Continue with the entered contact details' );
 		const countryField = await screen.findByLabelText( 'Country' );
 
 		// Validate that fields are pre-filled
@@ -242,7 +243,6 @@ describe( 'Checkout contact step', () => {
 
 		// Wait for the validation to complete.
 		await screen.findAllByText( 'Please wait…' );
-		await waitForElementToBeRemoved( () => screen.queryAllByText( 'Please wait…' ) );
 
 		expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
 	} );
@@ -541,6 +541,7 @@ describe( 'Checkout contact step', () => {
 		render( <MyCheckout cartChanges={ cartChanges } /> );
 
 		// Wait for checkout to load.
+		await screen.findByLabelText( 'Continue with the entered contact details' );
 		const countryField = await screen.findByLabelText( 'Country' );
 
 		expect( countryField.selectedOptions[ 0 ].value ).toBe( 'GB' );
@@ -564,6 +565,7 @@ describe( 'Checkout contact step', () => {
 		render( <MyCheckout cartChanges={ cartChanges } /> );
 
 		// Wait for checkout to load.
+		await screen.findByLabelText( 'Continue with the entered contact details' );
 		const countryField = await screen.findByLabelText( 'Country' );
 
 		expect( countryField.selectedOptions[ 0 ].value ).toBe( 'GB' );
@@ -587,6 +589,10 @@ describe( 'Checkout contact step', () => {
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
+
+		// Wait for the cart to load
+		await screen.findByLabelText( 'Continue with the entered contact details' );
+
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), countryCode );
 		await user.click( await screen.findByLabelText( 'Add VAT details' ) );
 		await user.type( await screen.findByLabelText( 'VAT Number' ), vatId );
@@ -619,6 +625,7 @@ describe( 'Checkout contact step', () => {
 		render( <MyCheckout cartChanges={ cartChanges } /> );
 
 		// Wait for the cart to load
+		await screen.findByLabelText( 'Continue with the entered contact details' );
 		const countryField = await screen.findByLabelText( 'Country' );
 
 		// Make sure the form has the autocompleted data.
