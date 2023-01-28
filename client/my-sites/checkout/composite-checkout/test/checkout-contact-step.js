@@ -753,6 +753,7 @@ describe( 'Checkout contact step', () => {
 	it( 'does not send VAT data to the shopping-cart endpoint when completing the step if the box is not checked', async () => {
 		const vatId = '12345';
 		const vatName = 'Test company';
+		const vatAddress = '123 Main Street';
 		const countryCode = 'GB';
 		const postalCode = 'NW1 4NP';
 		mockSetVatInfoEndpoint();
@@ -771,6 +772,7 @@ describe( 'Checkout contact step', () => {
 		// Fill in the details
 		await user.type( await screen.findByLabelText( 'VAT Number' ), vatId );
 		await user.type( await screen.findByLabelText( 'Organization for VAT' ), vatName );
+		await user.type( await screen.findByLabelText( 'Address for VAT' ), vatAddress );
 
 		// Uncheck the box
 		await user.click( await screen.findByLabelText( 'Add VAT details' ) );
@@ -790,6 +792,7 @@ describe( 'Checkout contact step', () => {
 	it( 'does not send VAT data to the shopping-cart endpoint when completing the step if the box is checked but the country no longer supports VAT', async () => {
 		const vatId = '12345';
 		const vatName = 'Test company';
+		const vatAddress = '123 Main Street';
 		const countryCode = 'GB';
 		const nonVatCountryCode = 'US';
 		const postalCode = 'NW1 4NP';
@@ -809,6 +812,7 @@ describe( 'Checkout contact step', () => {
 		// Fill in the details
 		await user.type( await screen.findByLabelText( 'VAT Number' ), vatId );
 		await user.type( await screen.findByLabelText( 'Organization for VAT' ), vatName );
+		await user.type( await screen.findByLabelText( 'Address for VAT' ), vatAddress );
 
 		// Change the country to one that does not support VAT
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), nonVatCountryCode );
