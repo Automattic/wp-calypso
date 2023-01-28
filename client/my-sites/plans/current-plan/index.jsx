@@ -221,6 +221,111 @@ class CurrentPlan extends Component {
 				</Card>
 
 				<h2 className="current-plan__section-title">What’s included in your free trial</h2>
+				<div className="current-plan__included-wrapper">
+					<Card>
+						<img
+							className="current-plan__included-ilustration"
+							alt="Best-in-class hosting"
+							src="/calypso/images/plans/wpcom/trial-features/priority-support.svg"
+						/>
+						<p className="current-plan__included-title">Priority support</p>
+						<p className="current-plan__included-text">
+							Need help? Reach out to us anytime, anywhere.
+						</p>
+						<Button className="current-plan__included-link">Ask a question</Button>
+					</Card>
+
+					<Card>
+						<img
+							className="current-plan__included-ilustration"
+							alt="Best-in-class hosting"
+							src="/calypso/images/plans/wpcom/trial-features/premium-themes.svg"
+						/>
+						<p className="current-plan__included-title">Premium themes</p>
+						<p className="current-plan__included-text">
+							Explore a diverse selection of beautifully designed premium themes.
+						</p>
+						<Button className="current-plan__included-link">Browse premium themes</Button>
+					</Card>
+
+					<Card>
+						<img
+							className="current-plan__included-ilustration"
+							alt="Best-in-class hosting"
+							src="/calypso/images/plans/wpcom/trial-features/advanced-customization.svg"
+						/>
+						<p className="current-plan__included-title">Advanced customization</p>
+						<p className="current-plan__included-text">
+							Change your store's appearance in a few clicks!
+						</p>
+						<Button className="current-plan__included-link">Design your store</Button>
+					</Card>
+
+					<Card>
+						<img
+							className="current-plan__included-ilustration"
+							alt="Best-in-class hosting"
+							src="/calypso/images/plans/wpcom/trial-features/unlimited-products.svg"
+						/>
+						<p className="current-plan__included-title">Unlimited products</p>
+						<p className="current-plan__included-text">
+							List as many products or services as you’d like and offer subscriptions.
+						</p>
+						<Button className="current-plan__included-link">Add a product</Button>
+					</Card>
+
+					<Card>
+						<img
+							className="current-plan__included-ilustration"
+							alt="Best-in-class hosting"
+							src="/calypso/images/plans/wpcom/trial-features/jetpack-features.svg"
+						/>
+						<p className="current-plan__included-title">Jetpack features</p>
+						<p className="current-plan__included-text">
+							Get auto real-time backups, malware scans, and spam protection.
+						</p>
+						<Button className="current-plan__included-link">Keep your store safe</Button>
+					</Card>
+
+					<Card>
+						<img
+							className="current-plan__included-ilustration"
+							alt="Best-in-class hosting"
+							src="/calypso/images/plans/wpcom/trial-features/seo-tools.svg"
+						/>
+						<p className="current-plan__included-title">SEO tools</p>
+						<p className="current-plan__included-text">
+							Boost traffic with tools that make your content more findable on search engines.
+						</p>
+						<Button className="current-plan__included-link">Increase visibility</Button>
+					</Card>
+
+					<Card>
+						<img
+							className="current-plan__included-ilustration"
+							alt="Best-in-class hosting"
+							src="/calypso/images/plans/wpcom/trial-features/google-analytics.svg"
+						/>
+						<p className="current-plan__included-title">Google Analytics</p>
+						<p className="current-plan__included-text">
+							Understand visitors and traffic patterns more in depht with Google stats.
+						</p>
+						<Button className="current-plan__included-link">Connect Google Analytics</Button>
+					</Card>
+
+					<Card>
+						<img
+							className="current-plan__included-ilustration"
+							alt="Best-in-class hosting"
+							src="/calypso/images/plans/wpcom/trial-features/best-in-class-hosting.svg"
+						/>
+						<p className="current-plan__included-title">Best-in-class hosting</p>
+						<p className="current-plan__included-text">
+							Hosting is included with your plan, eliminating additional cost and technical hassle.
+						</p>
+					</Card>
+				</div>
+
 				<h2 className="current-plan__section-title">Do you want more?</h2>
 				<p className="current-plan__section-subtitle">
 					The free trial doesn’t support the following features.
