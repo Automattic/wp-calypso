@@ -1,5 +1,6 @@
 import { FEATURE_INSTALL_THEMES, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import PatternAssemblerCta from '@automattic/design-picker';
 import { localize } from 'i18n-calypso';
 import { isEmpty, times } from 'lodash';
 import page from 'page';
@@ -45,6 +46,7 @@ export const ThemesList = ( props ) => {
 
 	return (
 		<div className="themes-list">
+			<PatternAssemblerCta></PatternAssemblerCta>
 			{ props.themes.map( ( theme, index ) => (
 				<ThemeBlock key={ 'theme-block' + index } theme={ theme } index={ index } { ...props } />
 			) ) }
