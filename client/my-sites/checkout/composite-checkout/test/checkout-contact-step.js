@@ -612,12 +612,10 @@ describe( 'Checkout contact step', () => {
 		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
 		const vatId = '12345';
 		const vatName = 'Test company';
-		const vatAddress = '123 Main Street';
 		const countryCode = 'GB';
 		nock( 'https://public-api.wordpress.com' ).get( '/rest/v1.1/me/vat-info' ).reply( 200, {
 			id: vatId,
 			name: vatName,
-			address: vatAddress,
 			country: countryCode,
 		} );
 		const user = userEvent.setup();
@@ -633,17 +631,11 @@ describe( 'Checkout contact step', () => {
 		expect( await screen.findByLabelText( 'Add VAT details' ) ).toBeChecked();
 		expect( await screen.findByLabelText( 'VAT Number' ) ).toHaveValue( vatId );
 		expect( await screen.findByLabelText( 'Organization for VAT' ) ).toHaveValue( vatName );
-		expect( await screen.findByLabelText( 'Address for VAT' ) ).toHaveValue( vatAddress );
 
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
 		const mockVatEndpoint = nock( 'https://public-api.wordpress.com' )
 			.post( '/rest/v1.1/me/vat-info', ( body ) => {
-				if (
-					body.id === vatId &&
-					body.name === vatName &&
-					body.country === cachedContactCountry &&
-					body.address === vatAddress
-				) {
+				if ( body.id === vatId && body.name === vatName && body.country === cachedContactCountry ) {
 					return true;
 				}
 				return false;
