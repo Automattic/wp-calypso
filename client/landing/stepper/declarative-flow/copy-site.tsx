@@ -34,7 +34,7 @@ function useIsValidSite() {
 	);
 
 	const {
-		isFetching,
+		isFetchingSiteDetails,
 		isFetchingError,
 		site: sourceSite,
 	} = useSelect( ( select ) => {
@@ -43,23 +43,26 @@ function useIsValidSite() {
 		}
 		return {
 			isFetchingError: select( SITE_STORE ).getFetchingSiteError(),
-			isFetching: select( SITE_STORE ).isFetchingSiteDetails(),
+			isFetchingSiteDetails: select( SITE_STORE ).isFetchingSiteDetails(),
 			site: select( SITE_STORE ).getSite( sourceSlug ),
 		};
 	} );
 
 	useEffect( () => {
-		if ( isFetching && siteRequestStatus === 'init' ) {
+		if ( isFetchingSiteDetails && siteRequestStatus === 'init' ) {
 			setSiteRequestStatus( 'fetching' );
-		} else if ( ( ! isFetching && siteRequestStatus === 'fetching' ) || sourceSite?.ID ) {
+		} else if (
+			( ! isFetchingSiteDetails && siteRequestStatus === 'fetching' ) ||
+			sourceSite?.ID
+		) {
 			setSiteRequestStatus( 'finished' );
 		}
-	}, [ isFetching, siteRequestStatus, sourceSite?.ID ] );
+	}, [ isFetchingSiteDetails, siteRequestStatus, sourceSite?.ID ] );
 
-	const { shouldShowSiteCopyItem, isLoadingPurchase } = useSiteCopy( sourceSite );
+	const { shouldShowSiteCopyItem, isFetching: isFetchingSiteCopy } = useSiteCopy( sourceSite );
 	return {
 		isValidSite: shouldShowSiteCopyItem,
-		hasFetchedSiteDetails: siteRequestStatus === 'finished' && ! isLoadingPurchase,
+		hasFetchedSiteDetails: siteRequestStatus === 'finished' && ! isFetchingSiteCopy,
 		isFetchingError,
 	};
 }
@@ -173,18 +176,18 @@ const copySite: Flow = {
 	useAssertConditions() {
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 
+		const urlQueryParams = useQuery();
+		const sourceSlug = urlQueryParams.get( 'sourceSlug' );
 		const { isValidSite, hasFetchedSiteDetails, isFetchingError } = useIsValidSite();
 
-		if ( ! isValidSite ) {
-			if ( hasFetchedSiteDetails || isFetchingError ) {
-				window.location.assign( `/sites` );
-				result = {
-					state: AssertConditionState.FAILURE,
-					message: isFetchingError
-						? 'Copy Site flow couldn´t fetch source site details.'
-						: 'Copy Site flow requires a valid source site.',
-				};
-			}
+		if ( ! sourceSlug || isFetchingError || ( ! isValidSite && hasFetchedSiteDetails ) ) {
+			window.location.assign( `/sites` );
+			result = {
+				state: AssertConditionState.FAILURE,
+				message: isFetchingError
+					? 'Copy Site flow couldn´t fetch source site details.'
+					: 'Copy Site flow requires a valid source site.',
+			};
 		}
 
 		return result;

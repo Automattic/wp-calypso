@@ -12,6 +12,7 @@ import {
 	hasLoadedSitePurchasesFromServer,
 	isFetchingSitePurchases,
 } from 'calypso/state/purchases/selectors';
+import getSiteFeatures from 'calypso/state/selectors/get-site-features';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
@@ -38,6 +39,10 @@ export const useSiteCopy = (
 ) => {
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 	const hasCopySiteFeature = useSafeSiteHasFeature( site?.ID, WPCOM_FEATURES_COPY_SITE );
+	const { isRequesting: isRequestingSiteFeatures } = useSelector( ( state ) => {
+		const siteFeatures = getSiteFeatures( state, site?.ID );
+		return siteFeatures ? siteFeatures : { isRequesting: true };
+	} );
 	const isAtomic = useSelect( ( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID ) );
 	const plan = site?.plan;
 	const isSiteOwner = site?.site_owner === userId;
@@ -70,9 +75,9 @@ export const useSiteCopy = (
 		() => ( {
 			shouldShowSiteCopyItem,
 			startSiteCopy,
-			isLoadingPurchase,
+			isFetching: isLoadingPurchase || isRequestingSiteFeatures,
 		} ),
-		[ isLoadingPurchase, shouldShowSiteCopyItem, startSiteCopy ]
+		[ isLoadingPurchase, isRequestingSiteFeatures, shouldShowSiteCopyItem, startSiteCopy ]
 	);
 };
 
