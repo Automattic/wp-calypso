@@ -1134,7 +1134,7 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 				product_slug: data.product_slug,
 				currency: planLevel2.currency,
 				price_integer: getVariantPrice( planLevel2 ),
-				price_before_discounts_integer: getVariantPrice( planLevel2Monthly ),
+				price_before_discounts_integer: getVariantPrice( planLevel2 ),
 				introductory_offer_terms: {},
 			};
 		case planLevel2Biannual.product_slug:
@@ -1144,7 +1144,7 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 				product_slug: data.product_slug,
 				currency: planLevel2Biannual.currency,
 				price_integer: getVariantPrice( planLevel2Biannual ),
-				price_before_discounts_integer: getVariantPrice( planLevel2Monthly ),
+				price_before_discounts_integer: getVariantPrice( planLevel2Biannual ),
 				introductory_offer_terms: {},
 			};
 		case planWithoutDomainMonthly.product_slug:
@@ -1154,7 +1154,7 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 				product_slug: data.product_slug,
 				currency: planWithoutDomainMonthly.currency,
 				price_integer: getVariantPrice( planWithoutDomainMonthly ),
-				price_before_discounts_integer: getVariantPrice( planLevel2Monthly ),
+				price_before_discounts_integer: getVariantPrice( planWithoutDomainMonthly ),
 				introductory_offer_terms: {},
 			};
 		case planWithoutDomain.product_slug:
@@ -1164,7 +1164,7 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 				product_slug: data.product_slug,
 				currency: planWithoutDomain.currency,
 				price_integer: getVariantPrice( planWithoutDomain ),
-				price_before_discounts_integer: getVariantPrice( planLevel2Monthly ),
+				price_before_discounts_integer: getVariantPrice( planWithoutDomain ),
 				introductory_offer_terms: {},
 			};
 		case planWithoutDomainBiannual.product_slug:
@@ -1174,7 +1174,7 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 				product_slug: data.product_slug,
 				currency: planWithoutDomainBiannual.currency,
 				price_integer: getVariantPrice( planWithoutDomainBiannual ),
-				price_before_discounts_integer: getVariantPrice( planLevel2Monthly ),
+				price_before_discounts_integer: getVariantPrice( planWithoutDomainBiannual ),
 				introductory_offer_terms: {},
 			};
 	}
