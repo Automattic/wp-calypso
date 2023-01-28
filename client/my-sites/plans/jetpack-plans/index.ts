@@ -22,7 +22,13 @@ export default function ( rootUrl: string, ...rest: PageJS.Callback[] ): void {
 	// We provide access to the page only when Feature Flag is enabled
 	if ( isEnabled( 'jetpack/offer-complete-after-activation' ) ) {
 		// Offer jetpack complete after Jetpack plugin activation
-		page( `${ rootUrl }/complete/:site?`, ...rest, offerJetpackComplete, makeLayout, clientRender );
+		page(
+			`${ rootUrl }/complete/:site?/:lang?`,
+			...rest,
+			offerJetpackComplete,
+			makeLayout,
+			clientRender
+		);
 	}
 
 	page(
