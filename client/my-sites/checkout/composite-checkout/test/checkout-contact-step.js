@@ -242,9 +242,7 @@ describe( 'Checkout contact step', () => {
 
 		// Validate that fields are pre-filled
 		expect( countryField.selectedOptions[ 0 ].value ).toBe( 'US' );
-
-		// Wait for the validation to complete.
-		await screen.findAllByText( 'Please wait…' );
+		expect( await screen.findByLabelText( 'Postal code' ) ).toHaveValue( '10001' );
 
 		expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
 	} );
