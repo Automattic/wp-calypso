@@ -233,7 +233,7 @@ export function VatForm( {
 					} }
 				/>
 			</div>
-			{ savedVatDetails.id && (
+			{ vatDetailsFromServer.id && (
 				<div>
 					<FormSettingExplanation>
 						{ translate(
