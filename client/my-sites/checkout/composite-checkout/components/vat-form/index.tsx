@@ -67,64 +67,68 @@ export function VatForm( {
 	);
 	const wpcomStoreActions = useDispatch( 'wpcom-checkout' );
 	const setVatDetailsInForm = wpcomStoreActions.setVatDetails as ( vat: VatDetails ) => void;
-	const { vatDetails: savedVatDetails, isLoading: isLoadingVatDetails } = useVatDetails();
+	const { vatDetails: vatDetailsFromServer, isLoading: isLoadingVatDetails } = useVatDetails();
 	const [ isFormActive, setIsFormActive ] = useState< boolean >( false );
 
-	// Pre-populate the fields based on the VAT details endpoint.
-	//
-	// The cached contact details endpoint _does_ store organization, but does not
-	// store vatId, and anyway we have a different endpoint for VAT details which
-	// is what this form should use.
-	//
-	// The exception is the country code because that is not part of this form
-	// and is instead part of the parent's form. Even though there is only one
-	// field, we must store two values: one for the domain contact info and one
-	// for the VAT info. This is because the VAT info sometimes needs a special
-	// country code like `XI` if the Northern Ireland checkbox is checked.
-	//
-	// We therefore must modify the VAT version of the value to match the domain
-	// contact info value any time that changes, and also modify it when the
-	// Northern Ireland checkbox is checked.
-	const didPreFill = useRef( false );
+	// When the form loads or the country code changes, take one of the following
+	// actions.
+	const previousCountryCode = useRef< string >( '' );
 	useEffect( () => {
-		if ( isLoadingVatDetails || ! countryCode ) {
+		if ( ! countryCode || isLoadingVatDetails || countryCode === previousCountryCode.current ) {
 			return;
 		}
-		if ( didPreFill.current ) {
-			return;
-		}
-		didPreFill.current = true;
 
-		setVatDetailsInForm( {
-			...savedVatDetails,
-			// Initialize the VAT country to match the country in the form, which may
-			// differ from the country in the saved VAT details.
-			country: countryCode,
-		} );
-		setIsFormActive( Boolean( savedVatDetails.id ) );
-	}, [ setVatDetailsInForm, savedVatDetails, isLoadingVatDetails, countryCode ] );
-
-	// Make sure that if the parent form's country code changes, we also change
-	// the (hidden) VAT form country code to keep them in sync. This is a one-way
-	// sync though because the Northern Ireland checkbox may change the hidden
-	// VAT form country code.
-	const previousCountryCode = useRef( countryCode );
-	useEffect( () => {
-		if ( ! countryCode || countryCode === previousCountryCode.current ) {
+		if ( ! isVatSupportedFor( previousCountryCode.current ) && isVatSupportedFor( countryCode ) ) {
+			previousCountryCode.current = countryCode;
+			// When the form first loads with a supported country code, pre-fill the
+			// form with data from the VAT details endpoint, if any.
+			//
+			// The exception is the country code because that is not part of this
+			// form and is instead part of the parent's form. Even though there is
+			// only one field, we must store two values: one for the domain contact
+			// info (used by the parent's form and passed in as `countryCode` here)
+			// and one for the VAT info. This is because the VAT info sometimes needs
+			// a special country code (like `XI` if the Northern Ireland checkbox is
+			// checked).
+			setVatDetailsInForm( {
+				...vatDetailsFromServer,
+				// Initialize the VAT country in this form data to match the country in
+				// the parent form, which may differ from the country in the saved VAT
+				// details.
+				country: countryCode,
+			} );
+			// Pre-check the checkbox to show the form when the country is supported
+			// if there are saved VAT details.
+			setIsFormActive( Boolean( vatDetailsFromServer.id ) );
 			return;
 		}
+
 		previousCountryCode.current = countryCode;
-		setVatDetailsInForm( {
-			...vatDetailsInForm,
-			country: countryCode,
-		} );
-	}, [ countryCode, vatDetailsInForm, setVatDetailsInForm ] );
+
+		if ( isVatSupportedFor( countryCode ) ) {
+			// If the country code in the parent form changes from one supported VAT
+			// country to another supported VAT country, set the VAT country code in
+			// this form data to match the new country.
+			setVatDetailsInForm( {
+				...vatDetailsInForm,
+				country: countryCode,
+			} );
+			return;
+		}
+
+		// Clear the VAT form and uncheck the checkbox when the country is not
+		// supported so that the VAT details are not sent to the server.
+		setVatDetailsInForm( {} );
+		setIsFormActive( false );
+	}, [
+		countryCode,
+		vatDetailsInForm,
+		setVatDetailsInForm,
+		vatDetailsFromServer,
+		isLoadingVatDetails,
+	] );
 
 	const reduxDispatch = useReduxDispatch();
-
-	if ( isLoadingVatDetails ) {
-		return null;
-	}
 
 	const toggleVatForm = ( isChecked: boolean ) => {
 		if ( ! isChecked ) {
@@ -134,7 +138,7 @@ export function VatForm( {
 		} else {
 			// Pre-fill the VAT form when the checkbox is checked.
 			setVatDetailsInForm( {
-				...savedVatDetails,
+				...vatDetailsFromServer,
 				// Initialize the VAT country to match the country in the form, which may
 				// differ from the country in the saved VAT details.
 				country: countryCode,
@@ -162,6 +166,10 @@ export function VatForm( {
 	const clickSupport = () => {
 		reduxDispatch( recordTracksEvent( 'calypso_vat_details_support_click' ) );
 	};
+
+	if ( ! countryCode || isLoadingVatDetails || ! isVatSupportedFor( countryCode ) ) {
+		return null;
+	}
 
 	if ( ! isFormActive ) {
 		return (
@@ -216,7 +224,7 @@ export function VatForm( {
 					type="text"
 					label={ String( translate( 'VAT Number' ) ) }
 					value={ vatDetailsInForm.id ?? '' }
-					disabled={ isDisabled || Boolean( savedVatDetails.id ) }
+					disabled={ isDisabled || Boolean( vatDetailsFromServer.id ) }
 					onChange={ ( newValue: string ) => {
 						setVatDetailsInForm( {
 							...vatDetailsInForm,
