@@ -826,6 +826,26 @@ export function createTestReduxStore() {
 	return createStore( rootReducer, applyMiddleware( thunk ) );
 }
 
+export function mockGetVatInfoEndpoint( response ) {
+	nock( 'https://public-api.wordpress.com' )
+		.persist()
+		.get( '/rest/v1.1/me/vat-info' )
+		.optionally()
+		.reply( 200, response );
+}
+
+export function mockSetVatInfoEndpoint() {
+	const endpoint = jest.fn();
+	endpoint.mockReturnValue( true );
+
+	nock( 'https://public-api.wordpress.com' )
+		.post( '/rest/v1.1/me/vat-info', ( body ) => {
+			return endpoint( body );
+		} )
+		.reply( 200 );
+	return endpoint;
+}
+
 export function mockPayPalEndpoint( endpointResponse ) {
 	const endpoint = jest.fn();
 	endpoint.mockReturnValue( true );

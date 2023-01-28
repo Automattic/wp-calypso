@@ -37,6 +37,8 @@ import {
 	mockContactDetailsValidationEndpoint,
 	getBasicCart,
 	mockMatchMediaOnWindow,
+	mockGetVatInfoEndpoint,
+	mockSetVatInfoEndpoint,
 } from './util';
 
 jest.mock( 'calypso/state/sites/selectors' );
@@ -71,11 +73,7 @@ describe( 'Checkout contact step', () => {
 	beforeEach( () => {
 		nock.cleanAll();
 		nock( 'https://public-api.wordpress.com' ).persist().post( '/rest/v1.1/logstash' ).reply( 200 );
-		nock( 'https://public-api.wordpress.com' )
-			.persist()
-			.get( '/rest/v1.1/me/vat-info' )
-			.optionally()
-			.reply( 200, {} );
+		mockGetVatInfoEndpoint( {} );
 
 		const store = createTestReduxStore();
 		const queryClient = new QueryClient();
@@ -317,11 +315,7 @@ describe( 'Checkout contact step', () => {
 				.persist()
 				.post( '/rest/v1.1/logstash' )
 				.reply( 200 );
-			nock( 'https://public-api.wordpress.com' )
-				.persist()
-				.get( '/rest/v1.1/me/vat-info' )
-				.optionally()
-				.reply( 200, {} );
+			mockGetVatInfoEndpoint( {} );
 
 			const messages = ( () => {
 				if ( valid === 'valid' ) {
@@ -537,14 +531,11 @@ describe( 'Checkout contact step', () => {
 			postal_code: '',
 		} );
 		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
-		nock( 'https://public-api.wordpress.com' )
-			.persist()
-			.get( '/rest/v1.1/me/vat-info' )
-			.reply( 200, {
-				id: '12345',
-				name: 'Test company',
-				country: 'GB',
-			} );
+		mockGetVatInfoEndpoint( {
+			id: '12345',
+			name: 'Test company',
+			country: 'GB',
+		} );
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
 
@@ -564,14 +555,11 @@ describe( 'Checkout contact step', () => {
 			postal_code: '',
 		} );
 		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
-		nock( 'https://public-api.wordpress.com' )
-			.persist()
-			.get( '/rest/v1.1/me/vat-info' )
-			.reply( 200, {
-				id: '12345',
-				name: 'Test company',
-				country: 'GB',
-			} );
+		mockGetVatInfoEndpoint( {
+			id: '12345',
+			name: 'Test company',
+			country: 'GB',
+		} );
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
 
@@ -588,14 +576,7 @@ describe( 'Checkout contact step', () => {
 		const vatId = '12345';
 		const vatName = 'Test company';
 		const countryCode = 'GB';
-		const mockVatEndpoint = nock( 'https://public-api.wordpress.com' )
-			.post( '/rest/v1.1/me/vat-info', ( body ) => {
-				if ( body.id === vatId && body.name === vatName && body.country === countryCode ) {
-					return true;
-				}
-				return false;
-			} )
-			.reply( 200 );
+		const mockVatEndpoint = mockSetVatInfoEndpoint();
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
@@ -610,7 +591,11 @@ describe( 'Checkout contact step', () => {
 		await user.type( await screen.findByLabelText( 'Organization for VAT' ), vatName );
 		await user.click( screen.getByText( 'Continue' ) );
 		expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
-		expect( mockVatEndpoint.isDone() ).toBeTruthy();
+		expect( mockVatEndpoint ).toHaveBeenCalledWith( {
+			id: vatId,
+			name: vatName,
+			country: countryCode,
+		} );
 	} );
 
 	it( 'when there is a cached contact country that differs from the cached VAT country, the contact country is sent to the VAT endpoint', async () => {
@@ -624,14 +609,11 @@ describe( 'Checkout contact step', () => {
 		const vatId = '12345';
 		const vatName = 'Test company';
 		const countryCode = 'GB';
-		nock( 'https://public-api.wordpress.com' )
-			.persist()
-			.get( '/rest/v1.1/me/vat-info' )
-			.reply( 200, {
-				id: vatId,
-				name: vatName,
-				country: countryCode,
-			} );
+		mockGetVatInfoEndpoint( {
+			id: vatId,
+			name: vatName,
+			country: countryCode,
+		} );
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
@@ -647,34 +629,24 @@ describe( 'Checkout contact step', () => {
 		expect( await screen.findByLabelText( 'Organization for VAT' ) ).toHaveValue( vatName );
 
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
-		const mockVatEndpoint = nock( 'https://public-api.wordpress.com' )
-			.post( '/rest/v1.1/me/vat-info', ( body ) => {
-				if ( body.id === vatId && body.name === vatName && body.country === cachedContactCountry ) {
-					return true;
-				}
-				return false;
-			} )
-			.reply( 200 );
+		const mockVatEndpoint = mockSetVatInfoEndpoint();
 
 		// Submit the form.
 		await user.click( screen.getByText( 'Continue' ) );
 
 		expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
-		expect( mockVatEndpoint.isDone() ).toBeTruthy();
+		expect( mockVatEndpoint ).toHaveBeenCalledWith( {
+			id: vatId,
+			name: vatName,
+			country: cachedContactCountry,
+		} );
 	} );
 
 	it( 'sends data to the VAT endpoint with Northern Ireland country code when completing the step if the XI box is checked', async () => {
 		const vatId = '12345';
 		const vatName = 'Test company';
 		const countryCode = 'GB';
-		const mockVatEndpoint = nock( 'https://public-api.wordpress.com' )
-			.post( '/rest/v1.1/me/vat-info', ( body ) => {
-				if ( body.id === vatId && body.name === vatName && body.country === 'XI' ) {
-					return true;
-				}
-				return false;
-			} )
-			.reply( 200 );
+		const mockVatEndpoint = mockSetVatInfoEndpoint();
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
@@ -686,16 +658,18 @@ describe( 'Checkout contact step', () => {
 		await user.type( await screen.findByLabelText( 'Organization for VAT' ), vatName );
 		await user.click( screen.getByText( 'Continue' ) );
 		expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
-		expect( mockVatEndpoint.isDone() ).toBeTruthy();
+		expect( mockVatEndpoint ).toHaveBeenCalledWith( {
+			id: vatId,
+			name: vatName,
+			country: 'XI',
+		} );
 	} );
 
 	it( 'does not send data to the VAT endpoint when completing the step if the box is not checked', async () => {
 		const vatId = '12345';
 		const vatName = 'Test company';
 		const countryCode = 'GB';
-		const mockVatEndpoint = nock( 'https://public-api.wordpress.com' )
-			.post( '/rest/v1.1/me/vat-info' )
-			.reply( 200 );
+		const mockVatEndpoint = mockSetVatInfoEndpoint();
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
@@ -713,7 +687,7 @@ describe( 'Checkout contact step', () => {
 
 		await user.click( screen.getByText( 'Continue' ) );
 		expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
-		expect( mockVatEndpoint.isDone() ).toBeFalsy();
+		expect( mockVatEndpoint ).not.toHaveBeenCalled();
 	} );
 
 	it( 'sends VAT data to the shopping-cart endpoint when completing the step if the box is checked', async () => {
@@ -721,7 +695,7 @@ describe( 'Checkout contact step', () => {
 		const vatName = 'Test company';
 		const countryCode = 'GB';
 		const postalCode = 'NW1 4NP';
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/me/vat-info' ).reply( 200 );
+		mockSetVatInfoEndpoint();
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
@@ -763,7 +737,7 @@ describe( 'Checkout contact step', () => {
 		const vatName = 'Test company';
 		const countryCode = 'GB';
 		const postalCode = 'NW1 4NP';
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/me/vat-info' ).reply( 200 );
+		mockSetVatInfoEndpoint();
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
@@ -801,7 +775,7 @@ describe( 'Checkout contact step', () => {
 		const countryCode = 'GB';
 		const nonVatCountryCode = 'US';
 		const postalCode = 'NW1 4NP';
-		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/me/vat-info' ).reply( 200 );
+		mockSetVatInfoEndpoint();
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
