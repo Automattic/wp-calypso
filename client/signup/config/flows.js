@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { isDesktop } from '@automattic/viewport';
 import { get, includes, reject } from 'lodash';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import { getQueryArgs } from 'calypso/lib/query-args';
@@ -108,7 +109,10 @@ function getThankYouNoSiteDestination() {
 }
 
 function getChecklistThemeDestination( { siteSlug, themeParameter } ) {
+	const canGoToAssemblerFlow = isDesktop();
+
 	if (
+		canGoToAssemblerFlow &&
 		themeParameter === 'blank-canvas-3' &&
 		config.isEnabled( 'pattern-assembler/logged-out-showcase' )
 	) {
