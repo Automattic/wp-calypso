@@ -1,16 +1,19 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import PatternAssemblerCta from '@automattic/design-picker';
+// eslint-disable-next-line import/named
+import { PatternAssemblerCta } from '@automattic/design-picker';
 import { localize } from 'i18n-calypso';
 import { isEmpty, times } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import proThemesBanner from 'calypso/assets/images/themes/pro-themes-banner.svg';
 import EmptyContent from 'calypso/components/empty-content';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import Theme from 'calypso/components/theme';
+import { useWindowResizeCallback } from 'calypso/lib/track-element-size';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { upsellCardDisplayed as upsellCardDisplayedAction } from 'calypso/state/themes/actions';
@@ -21,14 +24,38 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';
 
 const noop = () => {};
+const THEME_CARD_WIDTH = 320; // used to calculate the number of column in theme-list
+const THEM_CARD_MARGIN = 16; // used to calculate the max-width of column in theme-list
 
 export const ThemesList = ( props ) => {
+	const [ ctaPosition, setCtaPosition ] = useState( 0 );
+
 	const fetchNextPage = useCallback(
 		( options ) => {
 			props.fetchNextPage( options );
 		},
 		[ props.fetchNextPage ]
 	);
+
+	const handleContentRectChange = useCallback(
+		( contentRect, elementRef ) => {
+			if ( contentRect ) {
+				const rowCount = Math.floor( contentRect.width / THEME_CARD_WIDTH );
+				const relativeCtaPosition =
+					rowCount * 3 - 1 < props.themes.length - 1 ? rowCount * 3 - 1 : props.themes.length - 1;
+				setCtaPosition( relativeCtaPosition );
+				// Set the min-width varible for theme card
+				elementRef.current.style.setProperty(
+					'--theme-list-item-width',
+					`${ contentRect.width / rowCount - THEM_CARD_MARGIN * 2 }px`
+				);
+			}
+		},
+		[ ctaPosition, props.themes.length ]
+	);
+
+	// Subscribe to changes to element size and position.
+	const resizeRef = useWindowResizeCallback( handleContentRectChange );
 
 	if ( ! props.loading && props.themes.length === 0 ) {
 		return (
@@ -45,11 +72,21 @@ export const ThemesList = ( props ) => {
 	}
 
 	return (
-		<div className="themes-list">
-			<PatternAssemblerCta></PatternAssemblerCta>
-			{ props.themes.map( ( theme, index ) => (
-				<ThemeBlock key={ 'theme-block' + index } theme={ theme } index={ index } { ...props } />
-			) ) }
+		<div ref={ resizeRef } className="themes-list">
+			{ props.themes.map( ( theme, index ) => [
+				<ThemeBlock key={ 'theme-block' + index } theme={ theme } index={ index } { ...props } />,
+				...( index === ctaPosition && isEnabled( 'pattern-assembler/logged-out-showcase' )
+					? [
+							<PatternAssemblerCta
+								key="pattern-assembler-cta"
+								onButtonClick={ () =>
+									( window.location.href =
+										'/start/with-theme?ref=calypshowcase&theme=blank-canvas-3' )
+								}
+							></PatternAssemblerCta>,
+					  ]
+					: [] ),
+			] ) }
 			{ props.loading && <LoadingPlaceholders placeholderCount={ props.placeholderCount } /> }
 			{ /* Invisible trailing items keep all elements same width in flexbox grid. */ }
 			<TrailingItems />
