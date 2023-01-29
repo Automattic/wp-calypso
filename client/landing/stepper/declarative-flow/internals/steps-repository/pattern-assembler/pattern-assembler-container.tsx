@@ -1,4 +1,5 @@
 import { BlockRendererProvider, PatternsRendererProvider } from '@automattic/block-renderer';
+import { POST_SITE_ID } from './constants';
 import type { SiteInfo } from '@automattic/block-renderer';
 
 interface Props {
@@ -18,11 +19,11 @@ const PatternAssemblerContainer = ( {
 }: Props ) => (
 	<BlockRendererProvider siteId={ siteId } stylesheet={ stylesheet }>
 		<PatternsRendererProvider
-			// Use theme demo site to render the site-related blocks for now.
-			// For example, site logo, site title, site tagline, posts.
-			siteId={ siteId }
+			// Use this site to render the posts of query patterns.
+			siteId={ POST_SITE_ID }
 			stylesheet={ stylesheet }
 			patternIds={ patternIds }
+			// Use siteInfo for user's site title, and tagline.
 			siteInfo={ siteInfo }
 		>
 			{ children }
