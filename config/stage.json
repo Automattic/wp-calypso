@@ -127,7 +127,7 @@
 		"signup/woo-verify-email": false,
 		"site-indicator": true,
 		"ssr/prefetch-timebox": true,
-		"stats/horizontal-bars-everywhere": false,
+		"stats/horizontal-bars-everywhere": true,
 		"stats/insights-page-grid": false,
 		"stepper-woocommerce-poc": true,
 		"subscriber-csv-upload": true,
