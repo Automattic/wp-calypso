@@ -329,6 +329,9 @@
 		}
 
 		.help-center-contact-page__boxes {
+			max-height: 75px;
+			overflow: hidden;
+			transition: max-height 0.3s ease-out;
 			display: flex;
 			flex-direction: column;
 			justify-content: space-between;
@@ -337,10 +340,6 @@
 			a {
 				text-decoration: none;
 				color: #1d2327;
-			}
-
-			&.is-reversed {
-				flex-direction: column-reverse;
 			}
 
 			.help-center-contact-page__box {
@@ -416,6 +415,23 @@
 					}
 				}
 			}
+
+			&.expanded {
+				max-height: 1000px;
+			}
+
+			.disabled {
+				order: 3;
+			}
+		}
+
+		.help-center-contact-page__more-options {
+			border-bottom: 1px solid var(--studio-gray-5);
+			margin-top: 26px;
+			width: 100%;
+			padding-bottom: 10px;
+			font-weight: 500;
+			color: var(--studio-gray-100);
 		}
 
 		.inline-help__results {
