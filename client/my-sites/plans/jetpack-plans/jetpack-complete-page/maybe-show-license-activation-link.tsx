@@ -27,12 +27,14 @@ function MaybeShowLicenseActivationLink( { siteId }: Props ) {
 	const isMobile = useMobileBreakpoint();
 
 	useEffect( () => {
-		dispatch(
-			recordTracksEvent( 'calypso_post_connection_complete_page_license_link_render', {
-				site_id: siteId,
-			} )
-		);
-	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
+		if ( siteId && hasDetachedLicenses ) {
+			dispatch(
+				recordTracksEvent( 'calypso_post_connection_complete_page_license_link_render', {
+					site_id: siteId,
+				} )
+			);
+		}
+	}, [ dispatch, hasDetachedLicenses, siteId ] );
 
 	const onLinkClick = useCallback( () => {
 		dispatch(
@@ -62,7 +64,7 @@ function MaybeShowLicenseActivationLink( { siteId }: Props ) {
 		);
 	}
 
-	if ( hasDetachedLicenses && siteId ) {
+	if ( siteId && hasDetachedLicenses ) {
 		return (
 			<div className="maybe-show-license-activation-link__container">
 				<div className="maybe-show-license-activation-link">
