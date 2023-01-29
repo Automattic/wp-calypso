@@ -41,7 +41,7 @@
 .wp-admin {
 	// CSS variable overrides.
 	--sidebar-width-max: 160px;
-	--sidebar-width-min: 160px;
+	--sidebar-width-min: 36px;
 
 	& .layout__content,
 	&.theme-default .focus-content .layout__content {
@@ -50,16 +50,10 @@
 	}
 	// Fixed header doesn't work well for WP-Admin, as the masterbar isn't fixed.
 	& .is-section-stats .has-fixed-nav .fixed-navigation-header__header {
-		@media (max-width: 960px) {
-			--sidebar-width-max: 36px;
-			--sidebar-width-min: 36px;
-		}
-
 		@media (max-width: 600px) {
 			position: absolute;
 			width: 100%;
 			left: 0;
-			padding: 0 16px;
 		}
 	}
 	#wpcontent {
