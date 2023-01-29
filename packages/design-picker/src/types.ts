@@ -117,6 +117,7 @@ export interface DesignOptions {
 	styleVariation?: StyleVariation;
 	verticalId?: string;
 	pageTemplate?: string;
+	trimContent?: boolean;
 }
 
 export interface DesignPreviewOptions {
