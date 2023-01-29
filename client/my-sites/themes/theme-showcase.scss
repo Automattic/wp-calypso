@@ -20,6 +20,7 @@ body.is-section-themes {
 		.theme,
 		.themes-list__spacer {
 			width: 320px;
+			min-width: var(--theme-list-item-width);
 		}
 
 		.theme {
