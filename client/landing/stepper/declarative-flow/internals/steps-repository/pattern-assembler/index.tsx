@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { StepContainer } from '@automattic/onboarding';
+import { StepContainer, SITE_SETUP_FLOW, ASSEMBLER_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useEffect } from 'react';
@@ -8,12 +8,13 @@ import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
+import { useQuery } from '../../../../hooks/use-query';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign } from '../../analytics/record-design';
-import { SITE_TAGLINE } from './constants';
+import { SITE_TAGLINE, BLANK_CANVAS_DESIGN } from './constants';
 import PatternLayout from './pattern-layout';
 import PatternSelectorLoader from './pattern-selector-loader';
 import { useAllPatterns } from './patterns-data';
@@ -35,7 +36,7 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 	const { goBack, goNext, submit, goToStep } = navigation;
 	const { setThemeOnSite, runThemeSetupOnSite, createCustomTemplate } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
-	const { setPendingAction } = useDispatch( ONBOARD_STORE );
+	const { setPendingAction, setSelectedDesign } = useDispatch( ONBOARD_STORE );
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 	const site = useSite();
@@ -43,6 +44,7 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const allPatterns = useAllPatterns();
+	const selectedTheme = useQuery().get( 'theme' );
 
 	const largePreviewProps = {
 		placeholder: null,
@@ -59,8 +61,11 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 
 	useEffect( () => {
 		// Require to start the flow from the first step
-		if ( ! selectedDesign ) {
+		if ( ! selectedDesign && flow === SITE_SETUP_FLOW ) {
 			goToStep?.( 'goals' );
+		} else if ( selectedTheme === 'blank-canvas-3' && flow === ASSEMBLER_FLOW ) {
+			// User has selected blank-canvas-3 theme from theme showcase and enter assembler flow
+			setSelectedDesign( BLANK_CANVAS_DESIGN as Design );
 		}
 	}, [] );
 
@@ -371,7 +376,7 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 			<DocumentHead title={ translate( 'Design your home' ) } />
 			<StepContainer
 				stepName="pattern-assembler"
-				hideBack={ showPatternSelectorType !== null }
+				hideBack={ showPatternSelectorType !== null || flow === ASSEMBLER_FLOW }
 				goBack={ onBack }
 				goNext={ goNext }
 				isHorizontalLayout={ false }

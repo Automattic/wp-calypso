@@ -13,6 +13,8 @@ export const MIGRATION_FLOW = 'import-focused';
 export const COPY_SITE_FLOW = 'copy-site';
 export const BUILD_FLOW = 'build';
 export const WRITE_FLOW = 'write';
+export const ASSEMBLER_FLOW = 'assembler';
+export const SITE_SETUP_FLOW = 'site-setup';
 
 export const isLinkInBioFlow = ( flowName: string | null ) => {
 	return Boolean(

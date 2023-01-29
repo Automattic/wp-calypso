@@ -112,7 +112,13 @@ function getChecklistThemeDestination( { siteSlug, themeParameter } ) {
 		themeParameter === 'blank-canvas-3' &&
 		config.isEnabled( 'pattern-assembler/logged-out-showcase' )
 	) {
-		return `/setup/site-setup/patternAssembler?siteSlug=${ siteSlug }`;
+		return addQueryArgs(
+			{
+				theme: themeParameter,
+				siteSlug: siteSlug,
+			},
+			`/setup/assembler`
+		);
 	}
 	return `/home/${ siteSlug }`;
 }
