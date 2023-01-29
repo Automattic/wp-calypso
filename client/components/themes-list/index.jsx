@@ -1,7 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-// eslint-disable-next-line import/named
 import { PatternAssemblerCta } from '@automattic/design-picker';
 import { localize } from 'i18n-calypso';
 import { isEmpty, times } from 'lodash';
