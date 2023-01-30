@@ -835,6 +835,7 @@ export class EditorPage {
 			this.page.waitForNavigation( { url: '**/posts/**' } ),
 			this.page.waitForNavigation( { url: '**/pages/**' } ),
 			this.page.waitForNavigation( { url: '**/wp-admin/edit**' } ),
+			this.page.waitForNavigation( { url: '**/write/launchpad/**' } ),
 		] );
 		const actions: Promise< unknown >[] = [ navigationPromise ];
 
