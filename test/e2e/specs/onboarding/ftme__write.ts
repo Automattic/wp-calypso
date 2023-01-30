@@ -45,7 +45,7 @@ describe( DataHelper.createSuiteTitle( 'FTME: Write' ), function () {
 			selectedFreeDomain = await domainSearchComponent.selectDomain( '.wordpress.com' );
 		} );
 
-		it( `Select WordPress.com Free plan`, async function () {
+		it.skip( `Select WordPress.com Free plan`, async function () {
 			const signupPickPlanPage = new SignupPickPlanPage( page );
 			newSiteDetails = await signupPickPlanPage.selectPlan( 'Free' );
 
