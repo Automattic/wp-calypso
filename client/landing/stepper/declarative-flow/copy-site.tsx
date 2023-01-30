@@ -80,9 +80,16 @@ const copySite: Flow = {
 			recordFullStoryEvent( 'calypso_signup_start_copy_site', { flow: this.name } );
 		}, [] );
 
+		const urlQueryParams = useQuery();
+		const siteSlug = urlQueryParams.get( 'siteSlug' );
+
 		return [
-			{ slug: 'domains', component: DomainsStep },
-			{ slug: 'site-creation-step', component: SiteCreationStep },
+			...( ! siteSlug
+				? [
+						{ slug: 'domains', component: DomainsStep },
+						{ slug: 'site-creation-step', component: SiteCreationStep },
+				  ]
+				: [] ),
 			{ slug: 'processing', component: ProcessingStep },
 			{ slug: 'automated-copy', component: AutomatedCopySite },
 			{
@@ -125,17 +132,18 @@ const copySite: Flow = {
 				}
 
 				case 'processing': {
+					const siteSlug = providedDependencies?.siteSlug || urlQueryParams.get( 'siteSlug' );
 					const destination = addQueryArgs( `/setup/${ this.name }/automated-copy`, {
 						sourceSlug: urlQueryParams.get( 'sourceSlug' ),
-						siteSlug: providedDependencies?.siteSlug,
+						siteSlug: siteSlug,
 					} );
 					persistSignupDestination( destination );
-					setSignupCompleteSlug( providedDependencies?.siteSlug );
+					setSignupCompleteSlug( siteSlug );
 					setSignupCompleteFlowName( flowName );
 					const returnUrl = encodeURIComponent( destination );
 					return window.location.assign(
 						`/checkout/${ encodeURIComponent(
-							( providedDependencies?.siteSlug as string ) ?? ''
+							( siteSlug as string ) ?? ''
 						) }?redirect_to=${ returnUrl }&signup=1`
 					);
 				}
