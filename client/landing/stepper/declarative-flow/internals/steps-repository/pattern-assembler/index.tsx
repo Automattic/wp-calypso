@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { StepContainer, SITE_SETUP_FLOW, ASSEMBLER_FLOW } from '@automattic/onboarding';
+import { StepContainer, SITE_SETUP_FLOW, SITE_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useEffect } from 'react';
@@ -13,7 +13,7 @@ import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign } from '../../analytics/record-design';
-import { SITE_TAGLINE, BLANK_CANVAS_DESIGN } from './constants';
+import { SITE_TAGLINE } from './constants';
 import PatternLayout from './pattern-layout';
 import PatternSelectorLoader from './pattern-selector-loader';
 import { useAllPatterns } from './patterns-data';
@@ -371,7 +371,7 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 			<DocumentHead title={ translate( 'Design your home' ) } />
 			<StepContainer
 				stepName="pattern-assembler"
-				hideBack={ showPatternSelectorType !== null || flow === ASSEMBLER_FLOW }
+				hideBack={ showPatternSelectorType !== null || flow === SITE_ASSEMBLER_FLOW }
 				goBack={ onBack }
 				goNext={ goNext }
 				isHorizontalLayout={ false }
@@ -401,4 +401,3 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 };
 
 export default PatternAssembler;
-export { BLANK_CANVAS_DESIGN };
