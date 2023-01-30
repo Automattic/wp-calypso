@@ -41,7 +41,7 @@ const PlanComparisonHeader = styled.h1`
 	margin: 48px 0;
 `;
 
-const Title = styled.div< { isHiddenInMobile?: boolean } >`
+const Title = styled.div`
 	font-weight: 500;
 	font-size: 20px;
 	padding: 14px;
@@ -49,17 +49,16 @@ const Title = styled.div< { isHiddenInMobile?: boolean } >`
 	display: flex;
 	align-items: center;
 	column-gap: 5px;
+
 	border: solid 1px #e0e0e0;
 	border-left: none;
 	border-right: none;
-
-	.gridicon {
-		transform: ${ ( props ) =>
-			props.isHiddenInMobile ? 'rotateZ( 180deg )' : 'rotateZ( 0deg )' };
-	}
+	cursor: pointer;
 
 	@media ( min-width: 880px ) {
+		cursor: default;
 		padding-left: 0;
+		pointer-events: none;
 		border: none;
 		padding: 0;
 
@@ -79,29 +78,20 @@ const Grid = styled.div`
 		border-radius: 5px;
 	}
 `;
-const Row = styled.div< { isHiddenInMobile?: boolean } >`
+const Row = styled.div`
+	display: flex;
 	justify-content: space-between;
-	margin-bottom: -1px;
-	align-items: center;
-	display: ${ ( props ) => ( props.isHiddenInMobile ? 'none' : 'flex' ) };
+	aling-items: center;
 
 	@media ( min-width: 880px ) {
-		display: flex;
 		margin: 0 20px;
 		padding: 12px 0;
 		border-bottom: 1px solid #eee;
-	}
-`;
 
-const TitleRow = styled( Row )`
-	cursor: pointer;
-	display: flex;
-
-	@media ( min-width: 880px ) {
-		cursor: default;
-		border-bottom: none;
-		padding: 20px 0 10px;
-		pointer-events: none;
+		&.plan-comparison-grid__group-title-row {
+			border-bottom: none;
+			padding: 20px 0 10px;
+		}
 	}
 `;
 
@@ -365,10 +355,6 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 	const isSmallBreakpoint = usePricingBreakpoint( 880 );
 
 	const [ visiblePlans, setVisiblePlans ] = useState< string[] >( [] );
-	const [ firstSetOfFeatures ] = Object.keys( featureGroupMap );
-	const [ visibleFeatureGroups, setVisibleFeatureGroups ] = useState< string[] >( [
-		firstSetOfFeatures,
-	] );
 
 	useEffect( () => {
 		let newVisiblePlans = displayedPlansProperties.map( ( { planName } ) => planName );
@@ -445,18 +431,6 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		},
 		[ visiblePlans ]
 	);
-
-	const toggleFeatureGroup = ( featureGroupSlug: string ) => {
-		const index = visibleFeatureGroups.indexOf( featureGroupSlug );
-		const newVisibleFeatureGroups = [ ...visibleFeatureGroups ];
-		if ( index === -1 ) {
-			newVisibleFeatureGroups.push( featureGroupSlug );
-		} else {
-			newVisibleFeatureGroups.splice( index, 1 );
-		}
-
-		setVisibleFeatureGroups( newVisibleFeatureGroups );
-	};
 	const visiblePlansProperties = visiblePlans.reduce< PlanProperties[] >( ( acc, planName ) => {
 		const plan = displayedPlansProperties.find( ( plan ) => plan.planName === planName );
 		if ( plan ) {
@@ -497,30 +471,23 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 					const features = featureGroup.get2023PricingGridSignupWpcomFeatures();
 					const featureObjects = getPlanFeaturesObject( features );
 
-					const featureGroupClass = `feature-group-title-${ featureGroup.slug }`;
-					const isHiddenInMobile = ! visibleFeatureGroups.includes( featureGroup.slug );
 					return (
-						<div className={ featureGroupClass }>
-							<TitleRow
-								key={ featureGroupClass }
+						<div key={ `feature-group-title-${ featureGroup.slug }` }>
+							<Row
+								key={ `feature-group-title-${ featureGroup.slug }` }
 								className="plan-comparison-grid__group-title-row"
-								onClick={ () => toggleFeatureGroup( featureGroup.slug ) }
 							>
-								<Title
-									isHiddenInMobile={ isHiddenInMobile }
-									className={ `plan-comparison-grid__group-${ featureGroup.slug }` }
-								>
-									<Gridicon icon="chevron-up" size={ 12 } color="#1E1E1E" />
+								<Title className={ `plan-comparison-grid__group-${ featureGroup.slug }` }>
+									<Gridicon icon="chevron-down" size={ 12 } color="#1E1E1E" />
 									{ featureGroup.getTitle() }
 								</Title>
-							</TitleRow>
+							</Row>
 							{ featureObjects.map( ( feature ) => {
 								const featureSlug = feature.getSlug();
 								return (
 									<Row
 										key={ featureSlug }
-										isHiddenInMobile={ isHiddenInMobile }
-										className="plan-comparison-grid__feature-row"
+										className={ `plan-comparison-grid__feature-row ${ feature.getTitle() }` }
 									>
 										<RowHead
 											key="feature-name"
@@ -573,11 +540,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 								);
 							} ) }
 							{ featureGroup.slug === FEATURE_GROUP_GENERAL_FEATURES ? (
-								<Row
-									key="feature-storage"
-									isHiddenInMobile={ isHiddenInMobile }
-									className="plan-comparison-grid__feature-storage"
-								>
+								<Row key="feature-storage" className="plan-comparison-grid__feature-storage">
 									<RowHead
 										key="feature-name"
 										className="plan-comparison-grid__feature-feature-name storage"
