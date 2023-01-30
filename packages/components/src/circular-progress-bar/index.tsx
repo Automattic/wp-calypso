@@ -1,13 +1,18 @@
+import classnames from 'classnames';
 import './style.scss';
 
 const CircularProgressBar = ( {
 	currentStep,
 	numberOfSteps,
+	size,
+	enableMobileScaling = false,
 }: {
 	currentStep: number;
 	numberOfSteps: number;
+	size: number;
+	enableMobileScaling?: boolean;
 } ) => {
-	const SIZE = 40;
+	const SIZE = size;
 	const STROKE_WIDTH = 4;
 	const RADIUS = SIZE / 2 - STROKE_WIDTH / 2;
 	const FULL_ARC = 2 * Math.PI * RADIUS;
@@ -15,7 +20,9 @@ const CircularProgressBar = ( {
 	return (
 		<div
 			role="progressbar"
-			className="circular__progress-bar"
+			className={ classnames( 'circular__progress-bar', {
+				'mobile-scaling': enableMobileScaling,
+			} ) }
 			style={ { width: SIZE, height: SIZE } }
 		>
 			<svg
