@@ -38,7 +38,8 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
  * @param getCalypsoLiveURL String containing the commands to be run in order to obtain the live URL. Only used for Calypso E2E.
  * @param testGroup String corresponding to an existing group defined for Jest Runner Group.
  * @param buildParams Environment variables and other parameters to set for the build.
- * @param buildFeatures Features to enable on top of the default feature set (perfmon, commitStatusPublisher).
+ * @param buildFeatures Features to enable on top of the default feature set (perfmon).
+ * @param enableCommitStatusPublisher Boolean toggle to enable the commit status publisher in Build Features.
  * @param buildTriggers Rules to trigger the build. By default, no triggers are defined.
  * @param buildDepedencies If the build configuration depends on another existing build configuration, define it here.
  */
