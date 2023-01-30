@@ -53,7 +53,7 @@ export default function StatsEmailTopRow( { siteId, postId, statType, className 
 					<>
 						<TopCard
 							heading={ translate( 'Total opens' ) }
-							value={ counts?.total_sends ?? 0 }
+							value={ counts?.total_opens ?? 0 }
 							isLoading={ isRequesting && ! counts?.hasOwnProperty( 'total_opens' ) }
 							icon={ <Gridicon icon="mail" /> }
 						/>

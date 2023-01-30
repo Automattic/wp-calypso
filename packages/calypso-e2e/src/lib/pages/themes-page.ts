@@ -61,7 +61,7 @@ export class ThemesPage {
 		const searchInput = await this.page.waitForSelector( selectors.searchInput );
 		await searchInput.fill( keyword );
 		await Promise.all( [ this.page.waitForNavigation(), searchInput.press( 'Enter' ) ] );
-		await this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } );
+		await this.page.waitForSelector( selectors.placeholder, { state: 'detached' } );
 	}
 
 	/**

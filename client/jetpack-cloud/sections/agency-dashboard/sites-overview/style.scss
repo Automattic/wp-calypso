@@ -286,11 +286,14 @@
 	}
 }
 .sites-overview__status-failed {
+	background-color: var(--studio-red-50);
 	border-color: var(--studio-red-50);
-	color: var(--studio-red-50);
+	color: var(--color-text-inverted);
 }
 .sites-overview__status-warning {
+	background-color: var(--studio-yellow-20);
 	border-color: var(--studio-yellow-20);
+	color: var(--color-warning-80);
 }
 @keyframes highlight-tab-animation {
 	0% {
