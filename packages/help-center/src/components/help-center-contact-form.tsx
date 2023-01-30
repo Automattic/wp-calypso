@@ -340,7 +340,7 @@ export const HelpCenterContactForm = () => {
 					</div>
 				</section>
 			) }
-			<SibylArticles supportSite={ supportSite } message={ message } articleCanNavigateBack />
+			<SibylArticles articleCanNavigateBack />
 		</main>
 	);
 };
