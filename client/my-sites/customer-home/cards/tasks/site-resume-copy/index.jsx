@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import siteCopyIllustration from 'calypso/assets/images/customer-home/illustration--fireworks-v2.svg';
+import siteCopyIllustration from 'calypso/assets/images/customer-home/illustration--import-complete.svg';
 import { preventWidows } from 'calypso/lib/formatting';
 import { TASK_SITE_RESUME_COPY } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
@@ -12,10 +12,10 @@ const SiteResumeCopy = ( { siteSlug } ) => {
 	return (
 		<Task
 			isUrgent
-			title={ translate( 'Resume copying site!' ) }
+			title={ translate( 'Resume copying your site' ) }
 			description={ preventWidows(
 				translate(
-					"You forgot something? Don't worry, we'll guide you through copying your site and launching this site."
+					'You didn’t finish copying your site, but don’t worry, we’ll guide you through the process when you are ready.'
 				)
 			) }
 			actionText={ translate( 'Resume copying' ) }
