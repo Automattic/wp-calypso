@@ -512,9 +512,8 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 					const featureGroupClass = `feature-group-title-${ featureGroup.slug }`;
 					const isHiddenInMobile = ! visibleFeatureGroups.includes( featureGroup.slug );
 					return (
-						<div className={ featureGroupClass }>
+						<div key={ featureGroupClass } className={ featureGroupClass }>
 							<TitleRow
-								key={ featureGroupClass }
 								className="plan-comparison-grid__group-title-row"
 								onClick={ () => toggleFeatureGroup( featureGroup.slug ) }
 							>
