@@ -394,7 +394,14 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		}
 
 		setVisiblePlans( newVisiblePlans );
-	}, [ isLargestBreakpoint, isLargeBreakpoint, isMediumBreakpoint, intervalType ] );
+	}, [
+		isLargestBreakpoint,
+		isLargeBreakpoint,
+		isMediumBreakpoint,
+		intervalType,
+		planProperties,
+		isInSignup,
+	] );
 
 	const restructuredFeatures = useMemo( () => {
 		let previousPlan = null;
