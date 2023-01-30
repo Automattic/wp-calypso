@@ -102,25 +102,25 @@ function getSiteFilters( siteId ) {
 		},
 		{
 			title: i18n.translate( 'Hours' ),
-			path: '/stats/email/opens/' + siteId + '/hour',
+			path: `/stats/email/opens/hour/`,
 			id: 'stats-email-opens-hour',
 			period: 'hour',
 		},
 		{
 			title: i18n.translate( 'Days' ),
-			path: '/stats/email/opens/' + siteId + '/day',
+			path: `/stats/email/opens/day/`,
 			id: 'stats-email-opens-day',
 			period: 'day',
 		},
 		{
 			title: i18n.translate( 'Hours' ),
-			path: '/stats/email/clicks/' + siteId + '/hour',
+			path: `/stats/email/clicks/hour/`,
 			id: 'stats-email-clicks-hour',
 			period: 'hour',
 		},
 		{
 			title: i18n.translate( 'Days' ),
-			path: '/stats/email/clicks/' + siteId + '/day',
+			path: `/stats/email/clicks/day/`,
 			id: 'stats-email-clicks-day',
 			period: 'day',
 		},
@@ -494,7 +494,7 @@ export function emailStats( context, next ) {
 		return next();
 	}
 
-	const validTabs = statType === 'opens' ? [ 'opens_count' ] : [ 'clicks' ];
+	const validTabs = statType === 'opens' ? [ 'opens_count' ] : [ 'clicks_count' ];
 	const chartTab = validTabs.includes( queryOptions.tab ) ? queryOptions.tab : validTabs[ 0 ];
 
 	context.primary = (
@@ -504,6 +504,7 @@ export function emailStats( context, next ) {
 			statType={ statType }
 			chartTab={ chartTab }
 			context={ context }
+			givenSiteId={ givenSiteId }
 			period={ rangeOfPeriod( activeFilter.period, date ) }
 			date={ date }
 			isValidStartDate={ isValidStartDate }

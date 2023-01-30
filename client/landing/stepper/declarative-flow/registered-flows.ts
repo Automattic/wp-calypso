@@ -57,6 +57,11 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 availableFlows[ 'plugin-bundle' ] = () =>
 	import( /* webpackChunkName: "plugin-bundle-flow" */ '../declarative-flow/plugin-bundle-flow' );
 
+if ( config.isEnabled( 'sensei/onboarding' ) ) {
+	availableFlows[ 'sensei' ] = () =>
+		import( /* webpackChunkName: "sensei-flow" */ '../declarative-flow/sensei' );
+}
+
 if ( config.isEnabled( 'sites/copy-site' ) ) {
 	availableFlows[ 'copy-site' ] = () =>
 		import( /* webpackChunkName: "copy-site" */ '../declarative-flow/copy-site' );

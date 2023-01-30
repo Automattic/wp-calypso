@@ -83,8 +83,20 @@
 		// Override WP-Admin styles.
 		float: none;
 	}
+
+	// Jetpack custom styles.
 	.stats > .jp-dashboard-footer {
 		padding-top: 32px;
 		padding-bottom: 32px;
+	}
+	.stats .jetpack-header {
+		padding-bottom: 12px;
+	}
+	.stats-navigation.stats-navigation--modernized .section-nav-tab .section-nav-tab__link {
+		padding-left: 0;
+		padding-right: 0;
+	}
+	.stats-navigation.stats-navigation--modernized .section-nav-tab:not(:first-child) {
+		margin-left: 32px;
 	}
 }
