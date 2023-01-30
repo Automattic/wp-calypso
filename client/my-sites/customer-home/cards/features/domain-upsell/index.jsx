@@ -94,7 +94,7 @@ export function RenderDomainUpsell() {
 				<h3>{ translate( 'Own your online identity with a custom domain' ) }</h3>
 				<p>
 					{ translate(
-						"Find the perfect domain name and stake your claim on your corner of the web with a site address that's easy to find, share, and follow."
+						'Stake your claim on your corner of the web with a site address that’s easy to find, share, and follow.'
 					) }
 				</p>
 
@@ -122,7 +122,7 @@ export function RenderDomainUpsell() {
 						{ translate( 'Search for a domain' ) }
 					</Button>
 					<Button primary onClick={ getCtaClickHandler } busy={ ctaIsBusy }>
-						{ translate( 'Get your custom domain' ) }
+						{ translate( 'Buy this domain' ) }
 					</Button>
 				</div>
 			</div>
