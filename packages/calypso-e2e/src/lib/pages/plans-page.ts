@@ -39,7 +39,10 @@ const selectors = {
 };
 
 /**
- * Page representing the Plans page accessible at Upgrades >> Plans
+ * Page representing the Plans page under `/plans` endpoint.
+ *
+ * Also forms a component of the `SignupPickPlanPage` used in the
+ * signup stepper flow.
  */
 export class PlansPage {
 	private page: Page;
@@ -80,12 +83,9 @@ export class PlansPage {
 	 */
 	async selectPlan( plan: Plans ): Promise< void > {
 		const locator = this.page.locator( selectors.selectPlanButton( plan ) );
-		// In the /plans view, there are two buttons for "Upgrade" on the
-		// plan comparison chart.
-		await Promise.all( [
-			this.page.waitForNavigation( { timeout: 30 * 1000 } ),
-			locator.first().click(),
-		] );
+		// In the `/plans` view, there are two buttons for "Upgrade" on the
+		// plan comparison chart. Select the first one.
+		await locator.first().click();
 	}
 
 	/* Generic */
