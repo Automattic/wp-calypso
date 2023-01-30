@@ -85,6 +85,7 @@ class ThemesSelection extends Component {
 			page_number: query.page,
 			theme_on_page: parseInt( ( resultsRank + 1 ) / query.number ),
 			action: snakeCase( action ),
+			force_site_id: true,
 		} );
 	};
 

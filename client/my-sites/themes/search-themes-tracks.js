@@ -74,6 +74,7 @@ export default function SearchThemesTracks( { query = {}, themes = [], wporgThem
 		actual_count: actualCount,
 		wpcom_result_count: themesCount,
 		wporg_result_count: wporgThemesCount,
+		force_site_id: true,
 	} );
 
 	useEffect( () => {
