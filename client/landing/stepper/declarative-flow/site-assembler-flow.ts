@@ -52,6 +52,7 @@ const siteAssemblerFlow: Flow = {
 
 			switch ( _currentStep ) {
 				case 'processing':
+					window.sessionStorage.setItem( 'wpcom_signup_completed_flow', 'pattern_assembler' );
 					return exitFlow( `/site-editor/${ siteSlug }` );
 
 				case 'patternAssembler': {
