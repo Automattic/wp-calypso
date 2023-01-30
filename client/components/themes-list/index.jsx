@@ -39,7 +39,9 @@ export const ThemesList = ( props ) => {
 	const handleContentRectChange = useCallback(
 		( contentRect, elementRef ) => {
 			if ( contentRect ) {
-				const rowCount = Math.floor( contentRect.width / THEME_CARD_WIDTH );
+				const rowCount = Math.floor(
+					contentRect.width / ( THEME_CARD_WIDTH + THEM_CARD_MARGIN * 2 )
+				);
 				const relativeCtaPosition =
 					rowCount * 3 - 1 < props.themes.length - 1 ? rowCount * 3 - 1 : props.themes.length - 1;
 				setCtaPosition( relativeCtaPosition );
