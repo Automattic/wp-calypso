@@ -9,7 +9,7 @@ The component imports the [Lottie library](https://airbnb.io/lottie/#/), which p
 Pass with an `icon` string to the animation's path:
 
 ```jsx
-import AnimatedIcon from '@automattic/components';
+import AnimatedIcon from 'calypso/components/animated-icon';
 
 function render() {
 	return (
@@ -25,10 +25,10 @@ function render() {
 
 ### `icon`
 
-- **Type:** `String` or `Object`
+- **Type:** `String`
 - **Required:** `yes`
 
-The path to the animated icon or the animation's imported json.
+The path to the animated icon.
 
 ### `className`
 
@@ -36,11 +36,3 @@ The path to the animated icon or the animation's imported json.
 - **Required:** `no`
 
 The values of any additional CSS classes to apply to the icon's wrapper element.
-
-### `playUponViewportEntry`
-
-- **Type:** `Boolean`
-- **Required:** `no`
-- **Default:** `false`
-
-Determines whether the animation will automatically play every time it becomes visible in the browser's viewport. Useful for scenarios where the animation isn't immediately visible upon page load

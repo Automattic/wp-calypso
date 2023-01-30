@@ -5,10 +5,9 @@
 		"checkJs": false,
 		"outDir": "dist/esm",
 		"declarationDir": "dist/types",
-		"rootDir": "src",
-		"resolveJsonModule": true
+		"rootDir": "src"
 	},
-	"include": [ "src", "src/**/*.json" ],
+	"include": [ "src" ],
 	"exclude": [ "**/docs/*", "**/test/*" ],
 	"references": [
 		{ "path": "../calypso-url" },

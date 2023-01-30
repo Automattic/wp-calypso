@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { AnimatedIcon, Card, Button } from '@automattic/components';
+import { Card, Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { compose } from '@wordpress/compose';
 import classnames from 'classnames';
@@ -9,6 +9,7 @@ import QRCode from 'qrcode.react';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import AppImage from 'calypso/assets/images/jetpack/jetpack-app-graphic.png';
+import AnimatedIcon from 'calypso/components/animated-icon';
 import phoneValidation from 'calypso/lib/phone-validation';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import userAgent from 'calypso/lib/user-agent';

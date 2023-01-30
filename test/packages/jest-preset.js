@@ -11,5 +11,4 @@ module.exports = {
 	globals: {
 		__i18n_text_domain__: 'default',
 	},
-	setupFiles: [ 'jest-canvas-mock' ],
 };
