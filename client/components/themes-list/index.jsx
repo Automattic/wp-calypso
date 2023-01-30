@@ -169,7 +169,7 @@ function Footer( props ) {
 				{ translate( "Can't find what you're looking for?" ) }
 			</div>
 			<div className="themes-list__footer-subheading">
-				{ translate( 'Here are a few more options' ) }
+				{ translate( 'Here are a few more options.' ) }
 			</div>
 			<div className="themes-list__footer-action">
 				<Icon className="themes-list__footer-action-icon" icon={ addTemplate } size={ 28 } />
