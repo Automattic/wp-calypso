@@ -8,6 +8,7 @@ import { Switch, Route, Redirect, generatePath, useHistory, useLocation } from '
 import DocumentHead from 'calypso/components/data/document-head';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
+import { recordPageView } from 'calypso/lib/analytics/page-view';
 import SignupHeader from 'calypso/signup/signup-header';
 import { ONBOARD_STORE } from '../../stores';
 import recordStepStart from './analytics/record-step-start';
@@ -79,6 +80,11 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		if ( currentStepRoute ) {
 			recordStepStart( flow.name, kebabCase( currentStepRoute ), { intent } );
 		}
+
+		// Also record page view for data and analytics
+		const pathname = window.location.pathname;
+		const pageTitle = `Setup > ${ flow.name } > ${ currentStepRoute }`;
+		recordPageView( pathname, pageTitle );
 
 		// We leave out intent from the dependency list, due to the ONBOARD_STORE being reset in the exit flow.
 		// This causes the intent to become empty, and thus this event being fired again.
