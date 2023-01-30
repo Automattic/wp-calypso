@@ -8,7 +8,6 @@ import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
-import { useQuery } from '../../../../hooks/use-query';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
@@ -36,7 +35,7 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 	const { goBack, goNext, submit, goToStep } = navigation;
 	const { setThemeOnSite, runThemeSetupOnSite, createCustomTemplate } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
-	const { setPendingAction, setSelectedDesign } = useDispatch( ONBOARD_STORE );
+	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 	const site = useSite();
@@ -44,7 +43,6 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const allPatterns = useAllPatterns();
-	const selectedTheme = useQuery().get( 'theme' );
 
 	const largePreviewProps = {
 		placeholder: null,
@@ -63,9 +61,6 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 		// Require to start the flow from the first step
 		if ( ! selectedDesign && flow === SITE_SETUP_FLOW ) {
 			goToStep?.( 'goals' );
-		} else if ( selectedTheme === 'blank-canvas-3' && flow === ASSEMBLER_FLOW ) {
-			// User has selected blank-canvas-3 theme from theme showcase and enter assembler flow
-			setSelectedDesign( BLANK_CANVAS_DESIGN as Design );
 		}
 	}, [] );
 
@@ -406,3 +401,4 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 };
 
 export default PatternAssembler;
+export { BLANK_CANVAS_DESIGN };

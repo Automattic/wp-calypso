@@ -112,17 +112,20 @@ function getChecklistThemeDestination( { siteSlug, themeParameter } ) {
 	const canGoToAssemblerFlow = isDesktop();
 
 	if (
-		canGoToAssemblerFlow &&
 		themeParameter === 'blank-canvas-3' &&
 		config.isEnabled( 'pattern-assembler/logged-out-showcase' )
 	) {
-		return addQueryArgs(
-			{
-				theme: themeParameter,
-				siteSlug: siteSlug,
-			},
-			`/setup/assembler`
-		);
+		if ( canGoToAssemblerFlow ) {
+			return addQueryArgs(
+				{
+					theme: themeParameter,
+					siteSlug: siteSlug,
+				},
+				`/setup/site-assembler`
+			);
+		}
+
+		return `/site-editor/${ siteSlug }`;
 	}
 	return `/home/${ siteSlug }`;
 }
