@@ -37,6 +37,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { isCloseToExpiration } from 'calypso/lib/purchases';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
@@ -197,7 +198,9 @@ class CurrentPlan extends Component {
 		const { translate } = this.props;
 
 		return (
-			<>
+			<div className="current-plan__trial-wrapper">
+				<BodySectionCssClass bodyClass={ [ 'is-trial-plan' ] } />
+
 				<Card className="current-plan__trial-card">
 					<div className="current-plan__trial-card-content">
 						<Badge type="info">{ translate( '5 days left' ) }</Badge>
@@ -428,7 +431,7 @@ class CurrentPlan extends Component {
 				<div className="current-plan__cta-wrapper">
 					<Button className="current-plan__cta">Enhance your store and pick a plan</Button>
 				</div>
-			</>
+			</div>
 		);
 	}
 
