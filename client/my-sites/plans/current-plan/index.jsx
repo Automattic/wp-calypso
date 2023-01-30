@@ -198,7 +198,7 @@ class CurrentPlan extends Component {
 		const { translate } = this.props;
 
 		return (
-			<div className="current-plan__trial-wrapper">
+			<>
 				<BodySectionCssClass bodyClass={ [ 'is-trial-plan' ] } />
 
 				<Card className="current-plan__trial-card">
@@ -431,7 +431,7 @@ class CurrentPlan extends Component {
 				<div className="current-plan__cta-wrapper">
 					<Button className="current-plan__cta">Enhance your store and pick a plan</Button>
 				</div>
-			</div>
+			</>
 		);
 	}
 
