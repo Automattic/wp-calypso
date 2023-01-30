@@ -206,7 +206,10 @@ function Footer( props ) {
 				<div className="themes-list__footer-action-content">
 					<div className="themes-list__footer-action-text">
 						<div className="themes-list__footer-action-title">
-							{ translate( 'Hire our team of experts to design one for you' ) }
+							{ translate( 'Hire our team of experts to design one for you', {
+								comment:
+									'"One" means a theme in this context (i.e. "Hire our team of experts to design a theme for you")',
+							} ) }
 						</div>
 						<div className="themes-list__footer-action-description">
 							{ translate(
