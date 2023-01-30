@@ -25,6 +25,7 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import PlanFeatures2023GridActions from './actions';
 import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
 import PlanFeatures2023GridHeaderPrice from './header-price';
+import { Plans2023Tooltip } from './plans-2023-tooltip';
 import { PlanProperties } from './types';
 import { usePricingBreakpoint } from './util';
 
@@ -526,7 +527,9 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 											key="feature-name"
 											className={ `plan-comparison-grid__feature-feature-name ${ feature.getTitle() }` }
 										>
-											{ feature.getTitle() }
+											<Plans2023Tooltip text={ feature.getExplanation?.() }>
+												{ feature.getTitle() }
+											</Plans2023Tooltip>
 											{ allJetpackFeatures.has( feature.getSlug() ) ? (
 												<JetpackIconContainer>
 													<JetpackLogo size={ 16 } />
@@ -582,7 +585,11 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 										key="feature-name"
 										className="plan-comparison-grid__feature-feature-name storage"
 									>
-										{ translate( 'Storage' ) }
+										<Plans2023Tooltip
+											text={ translate( 'Space to store your photos, media, and more.' ) }
+										>
+											{ translate( 'Storage' ) }
+										</Plans2023Tooltip>
 									</RowHead>
 									{ ( visiblePlansProperties ?? [] ).map( ( { planName } ) => {
 										const storageFeature = restructuredFeatures.planStorageOptionsMap[ planName ];
