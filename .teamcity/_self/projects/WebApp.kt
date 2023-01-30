@@ -755,7 +755,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildTy
 					}
 					filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
 				}
-			},
+			}
 		},
 		enableCommitStatusPublisher = true,
 		buildTriggers = {
