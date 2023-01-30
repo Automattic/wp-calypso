@@ -18,7 +18,7 @@ const siteAssemblerFlow: Flow = {
 		const selectedTheme = useQuery().get( 'theme' );
 
 		useEffect( () => {
-			if ( selectedTheme === 'blank-canvas-3' && this.name === SITE_ASSEMBLER_FLOW ) {
+			if ( selectedTheme === BLANK_CANVAS_DESIGN.slug && this.name === SITE_ASSEMBLER_FLOW ) {
 				// User has selected blank-canvas-3 theme from theme showcase and enter assembler flow
 				setSelectedDesign( BLANK_CANVAS_DESIGN as Design );
 			}
