@@ -69,20 +69,20 @@ import { FeatureGroupMap } from './types';
 export const featureGroups: Partial< FeatureGroupMap > = {
 	[ FEATURE_GROUP_GENERAL_FEATURES ]: {
 		slug: FEATURE_GROUP_GENERAL_FEATURES,
-		getTitle: () => i18n.translate( 'Essential Features' ),
+		getTitle: () => i18n.translate( 'Essential features' ),
 		get2023PricingGridSignupWpcomFeatures: () => [
 			FEATURE_PAGES,
 			FEATURE_USERS,
 			FEATURE_POST_EDITS_HISTORY,
 			FEATURE_ALWAYS_ONLINE,
-			FEATURE_CONTACT_FORM_JP,
-			FEATURE_STATS_JP,
 			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_BANDWIDTH,
+			FEATURE_STATS_JP,
 			FEATURE_SUPPORT_EMAIL,
 			FEATURE_LIVE_CHAT_SUPPORT,
 			FEATURE_PLUGINS_THEMES,
 			FEATURE_PLUGIN_AUTOUPDATE_JP,
-			FEATURE_BANDWIDTH,
+			FEATURE_CONTACT_FORM_JP,
 			FEATURE_ES_SEARCH_JP,
 			FEATURE_SMART_REDIRECTS,
 		],
@@ -110,7 +110,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 	},
 	[ FEATURE_GROUP_DEVELOPER_TOOLS ]: {
 		slug: FEATURE_GROUP_DEVELOPER_TOOLS,
-		getTitle: () => i18n.translate( 'Developer Tools' ),
+		getTitle: () => i18n.translate( 'Developer tools' ),
 		get2023PricingGridSignupWpcomFeatures: () => [
 			FEATURE_DEV_TOOLS,
 			FEATURE_MULTI_SITE,
@@ -119,7 +119,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 	},
 	[ FEATURE_GROUP_SECURITY_AND_SAFETY ]: {
 		slug: FEATURE_GROUP_SECURITY_AND_SAFETY,
-		getTitle: () => i18n.translate( 'Security and Safety' ),
+		getTitle: () => i18n.translate( 'Security and safety' ),
 		get2023PricingGridSignupWpcomFeatures: () => [
 			FEATURE_SECURITY_BRUTE_FORCE,
 			FEATURE_ISOLATED_INFRA,
@@ -133,7 +133,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 	},
 	[ FEATURE_GROUP_THEMES_AND_CUSTOMIZATION ]: {
 		slug: FEATURE_GROUP_THEMES_AND_CUSTOMIZATION,
-		getTitle: () => i18n.translate( 'Design Customization' ),
+		getTitle: () => i18n.translate( 'Design customization' ),
 		get2023PricingGridSignupWpcomFeatures: () => [
 			FEATURE_BEAUTIFUL_THEMES,
 			FEATURE_STYLE_CUSTOMIZATION,
