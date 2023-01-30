@@ -16,7 +16,6 @@ const REDIRECT_SLUGS: {
 } = {
 	jetpackApple: 'calypso-stats-mobile-cta-jetpack-apple-badge',
 	jetpackGoogle: 'calypso-stats-mobile-cta-jetpack-google-badge',
-	jetpackQRCode: 'calypso-stats-mobile-cta-jetpack-qrcode',
 	wooA8C: 'calypso-stats-mobile-cta-woo-link',
 	wooApple: 'calypso-stats-mobile-cta-woo-apple-badge',
 	wooGoogle: 'calypso-stats-mobile-cta-woo-google-badge',
@@ -151,7 +150,7 @@ export default function AppPromoFullWidth( {
 		return isWoo ? (
 			<img className="promo-qr-code" src={ qrCodeWoo } alt="QR Code for Woo mobile app" />
 		) : (
-			<img className="promo-qr-code" src={ qrCodeJetpack } alt="QR Code for Jetpack mobile app" />
+			<img className="promo-qr-code" src={ qrCodeJetpack } alt="QR Code for Woo mobile app" />
 		);
 	};
 
