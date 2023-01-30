@@ -282,7 +282,6 @@ export default PlanTypeSelector;
 const IntervalTypeToggleWrapper = styled.div< { showingMonthly: boolean; isInSignup: boolean } >`
 	display: ${ ( { isInSignup } ) => ( isInSignup ? 'flex' : 'block' ) };
 	align-content: space-between;
-	justify-content: center;
 
 	> .segmented-control.is-compact:not( .is-signup ) {
 		margin: 8px auto 16px;

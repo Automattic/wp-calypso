@@ -453,7 +453,6 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 
 		if ( isFreePlan( planName ) ) {
 			ownPropsOnUpgradeClick( null );
-			return;
 		}
 
 		const planPath = getPlanPath( planName ) || '';
@@ -780,16 +779,10 @@ const ConnectedPlanFeatures2023Grid = connect(
 )( localize( PlanFeatures2023Grid ) );
 /* eslint-enable wpcalypso/redux-no-bound-selectors */
 
-const WrappedPlanFeatures2023Grid = ( props: PlanFeatures2023GridType ) => {
-	if ( props.isInSignup ) {
-		return <ConnectedPlanFeatures2023Grid { ...props } />;
-	}
+const ShoppingCartWrappedPlanFeatures2023Grid = ( props: PlanFeatures2023GridType ) => (
+	<CalypsoShoppingCartProvider>
+		<ConnectedPlanFeatures2023Grid { ...props } />
+	</CalypsoShoppingCartProvider>
+);
 
-	return (
-		<CalypsoShoppingCartProvider>
-			<ConnectedPlanFeatures2023Grid { ...props } />
-		</CalypsoShoppingCartProvider>
-	);
-};
-
-export default WrappedPlanFeatures2023Grid;
+export default ShoppingCartWrappedPlanFeatures2023Grid;

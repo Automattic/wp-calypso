@@ -178,7 +178,6 @@ class StepWrapper extends Component {
 			headerImageUrl,
 			isHorizontalLayout,
 			customizedActionButtons,
-			isExtraWideLayout,
 		} = this.props;
 
 		const backButton = ! hideBack && this.renderBack();
@@ -191,7 +190,6 @@ class StepWrapper extends Component {
 		const classes = classNames( 'step-wrapper', this.props.className, {
 			'is-horizontal-layout': isHorizontalLayout,
 			'is-wide-layout': isWideLayout,
-			'is-extra-wide-layout': isExtraWideLayout,
 			'is-full-layout': isFullLayout,
 			'is-large-skip-layout': isLargeSkipLayout,
 			'has-navigation': hasNavigation,

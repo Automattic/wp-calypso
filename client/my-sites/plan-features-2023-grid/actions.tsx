@@ -84,10 +84,9 @@ const LaunchPagePlanFeatureActionButton = ( {
 			</Button>
 		);
 	}
-
 	return (
 		<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
-			{ translate( 'Select %(plan)s', {
+			{ translate( 'Get %(plan)s', {
 				args: {
 					plan: planName,
 				},
@@ -236,9 +235,9 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 				} ) }
 			</Button>
 		);
-	} else if ( isLaunchPage ) {
+	} else if ( isInSignup ) {
 		return (
-			<LaunchPagePlanFeatureActionButton
+			<SignupFlowPlanFeatureActionButton
 				freePlan={ freePlan }
 				isPlaceholder={ isPlaceholder }
 				planName={ planName }
@@ -246,9 +245,9 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 				handleUpgradeButtonClick={ handleUpgradeButtonClick }
 			/>
 		);
-	} else if ( isInSignup ) {
+	} else if ( isLaunchPage ) {
 		return (
-			<SignupFlowPlanFeatureActionButton
+			<LaunchPagePlanFeatureActionButton
 				freePlan={ freePlan }
 				isPlaceholder={ isPlaceholder }
 				planName={ planName }
