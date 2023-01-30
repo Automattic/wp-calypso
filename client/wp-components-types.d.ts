@@ -1,3 +1,5 @@
+import '@wordpress/components';
+
 declare module '@wordpress/components' {
 	interface Props {
 		[ key: string ]: unknown;
