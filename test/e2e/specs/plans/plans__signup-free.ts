@@ -60,7 +60,7 @@ describe(
 				selectedFreeDomain = await domainSearchComponent.selectDomain( '.wordpress.com' );
 			} );
 
-			it.skip( 'Select WordPress.com Free plan', async function () {
+			it( 'Select WordPress.com Free plan', async function () {
 				const signupPickPlanPage = new SignupPickPlanPage( page );
 				await signupPickPlanPage.selectPlan( 'Free' );
 			} );
