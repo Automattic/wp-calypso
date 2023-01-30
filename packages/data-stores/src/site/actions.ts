@@ -398,7 +398,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		}
 
 		const themeSetupOptions: ThemeSetupOptions = {
-			trim_content: options?.trimContent !== undefined ? options?.trimContent : true,
+			trim_content: options?.trimContent ?? true,
 		};
 
 		if ( verticalizable ) {

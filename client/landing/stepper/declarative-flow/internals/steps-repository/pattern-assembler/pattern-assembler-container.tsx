@@ -1,5 +1,5 @@
 import { BlockRendererProvider, PatternsRendererProvider } from '@automattic/block-renderer';
-import { POST_SITE_ID } from './constants';
+import { PLACEHOLDER_SITE_ID } from './constants';
 import type { SiteInfo } from '@automattic/block-renderer';
 
 interface Props {
@@ -19,11 +19,12 @@ const PatternAssemblerContainer = ( {
 }: Props ) => (
 	<BlockRendererProvider siteId={ siteId } stylesheet={ stylesheet }>
 		<PatternsRendererProvider
-			// Use this site to render the posts of query patterns.
-			siteId={ POST_SITE_ID }
+			// Site used to render site-related things on the previews,
+			// such as the logo, title, and tagline.
+			siteId={ PLACEHOLDER_SITE_ID }
 			stylesheet={ stylesheet }
 			patternIds={ patternIds }
-			// Use siteInfo for user's site title, and tagline.
+			// Use siteInfo to overwrite site-related things such as title, and tagline.
 			siteInfo={ siteInfo }
 		>
 			{ children }

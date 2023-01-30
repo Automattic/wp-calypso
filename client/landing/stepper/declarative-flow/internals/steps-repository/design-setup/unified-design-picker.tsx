@@ -51,6 +51,7 @@ import type { StarterDesigns } from '@automattic/data-stores';
 import type { Design, StyleVariation } from '@automattic/design-picker';
 
 const SiteIntent = Onboard.SiteIntent;
+const SITE_ASSEMBLER_AVAILABLE_INTENTS: string[] = [ SiteIntent.Build, SiteIntent.Write ];
 
 const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const { goBack, submit, exitFlow } = navigation;
@@ -102,7 +103,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		if ( blankCanvasDesignOffset !== -1 ) {
 			// Extract the blank canvas design first and then insert it into the last one for the build and write intents
 			const blankCanvasDesign = allDesigns.static.designs.splice( blankCanvasDesignOffset, 1 );
-			if ( isEnabled( 'signup/design-picker-pattern-assembler' ) && intent !== SiteIntent.Sell ) {
+			if (
+				isEnabled( 'signup/design-picker-pattern-assembler' ) &&
+				SITE_ASSEMBLER_AVAILABLE_INTENTS.includes( intent )
+			) {
 				allDesigns.static.designs.push( ...blankCanvasDesign );
 			}
 		}
