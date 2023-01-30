@@ -9,7 +9,7 @@ import { useTranslate } from 'i18n-calypso';
 import { isValid } from '../types/wpcom-store-state';
 import CountrySelectMenu from './country-select-menu';
 import { LeftColumn, RightColumn } from './ie-fallback';
-import { VatForm, isVatSupportedFor } from './vat-form';
+import { VatForm } from './vat-form';
 import type {
 	CountryListItem,
 	ManagedContactDetails,
@@ -54,9 +54,7 @@ export default function TaxFields( {
 		countriesList.length && countryCode?.value
 			? getCountryPostalCodeSupport( countriesList, countryCode.value )
 			: false;
-	const isVatSupported =
-		config.isEnabled( 'checkout/vat-form' ) &&
-		Boolean( countryCode?.value && isVatSupportedFor( countryCode.value ) );
+	const isVatSupported = config.isEnabled( 'checkout/vat-form' );
 
 	return (
 		<>
