@@ -1,20 +1,32 @@
 import Search from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { setQueryArgs } from 'calypso/lib/query-args';
+import scrollTo from 'calypso/lib/scroll-to';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import './style.scss';
 
-function pageToSearch( s ) {
-	page.show( page.current ); // Ensures location.href is up to date before setQueryArgs uses it to construct the redirect.
-	setQueryArgs( '' !== s ? { s } : {} );
-}
-
-const SearchBox = ( { isMobile, searchTerm, searchBoxRef, isSearching } ) => {
+const SearchBox = ( { isMobile, searchTerm, searchBoxRef, categoriesRef, isSearching } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+
+	const pageToSearch = useCallback(
+		( s ) => {
+			page.show( page.current ); // Ensures location.href is up to date before setQueryArgs uses it to construct the redirect.
+			setQueryArgs( '' !== s ? { s } : {} );
+			searchBoxRef.current.blur();
+			scrollTo( {
+				x: 0,
+				y:
+					categoriesRef.current?.getBoundingClientRect().y - // Get to the top of categories
+					categoriesRef.current?.getBoundingClientRect().height, // But don't show the categories
+				duration: 300,
+			} );
+		},
+		[ searchBoxRef, categoriesRef ]
+	);
 
 	const recordSearchEvent = ( eventName ) =>
 		dispatch( recordGoogleEvent( 'PluginsBrowser', eventName ) );
@@ -46,6 +58,7 @@ const SearchBoxHeader = ( props ) => {
 		stickySearchBoxRef,
 		isSearching,
 		searchRef,
+		categoriesRef,
 		renderTitleInH1,
 	} = props;
 
@@ -75,6 +88,7 @@ const SearchBoxHeader = ( props ) => {
 					searchTerm={ searchTerm }
 					searchBoxRef={ searchRef }
 					isSearching={ isSearching }
+					categoriesRef={ categoriesRef }
 				/>
 			</div>
 			<div className="search-box-header__sticky-ref" ref={ stickySearchBoxRef }></div>
