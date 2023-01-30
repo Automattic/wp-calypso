@@ -81,8 +81,9 @@ export const ThemesList = ( props ) => {
 							<PatternAssemblerCta
 								key="pattern-assembler-cta"
 								onButtonClick={ () =>
-									( window.location.href =
-										'/start/with-theme?ref=calypshowcase&theme=blank-canvas-3' )
+									window.location.assign(
+										'/start/with-theme?ref=calypshowcase&theme=blank-canvas-3'
+									)
 								}
 							></PatternAssemblerCta>,
 					  ]
