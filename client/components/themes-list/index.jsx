@@ -28,7 +28,7 @@ const THEM_CARD_MARGIN = 16; // used to calculate the max-width of column in the
 
 export const ThemesList = ( props ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const [ ctaPosition, setCtaPosition ] = useState( 0 );
+	const [ patternAssemblerCtaPlacement, setPatternAssemblerCtaPlacement ] = useState( { position: -1, trailing: 0 } );
 
 	const fetchNextPage = useCallback(
 		( options ) => {
@@ -38,22 +38,22 @@ export const ThemesList = ( props ) => {
 	);
 
 	const handleContentRectChange = useCallback(
-		( contentRect, elementRef ) => {
+		( contentRect ) => {
 			if ( contentRect ) {
-				const rowCount = Math.floor(
+				const columnCount = Math.floor(
 					contentRect.width / ( THEME_CARD_WIDTH + THEM_CARD_MARGIN * 2 )
 				);
 				const relativeCtaPosition =
-					rowCount * 3 - 1 < props.themes.length - 1 ? rowCount * 3 - 1 : props.themes.length - 1;
-				setCtaPosition( relativeCtaPosition );
-				// Set the min-width varible for theme card
-				elementRef.current.style.setProperty(
-					'--theme-list-item-width',
-					`${ contentRect.width / rowCount - THEM_CARD_MARGIN * 2 }px`
-				);
+					columnCount * 3 - 1 < props.themes.length - 1 ? columnCount * 3 - 1 : props.themes.length - 1;
+				const trailingSpacersCount = Math.ceil( props.themes.length / columnCount ) * columnCount - props.themes.length;
+				
+				setPatternAssemblerCtaPlacement( {
+					position: relativeCtaPosition,
+					trailing: trailingSpacersCount
+				} );
 			}
 		},
-		[ ctaPosition, props.themes.length ]
+		[ patternAssemblerCtaPlacement, props.themes.length ]
 	);
 
 	// Subscribe to changes to element size and position.
@@ -77,16 +77,17 @@ export const ThemesList = ( props ) => {
 		<div ref={ resizeRef } className="themes-list">
 			{ props.themes.map( ( theme, index ) => [
 				<ThemeBlock key={ 'theme-block' + index } theme={ theme } index={ index } { ...props } />,
-				...( index === ctaPosition && isEnabled( 'pattern-assembler/logged-out-showcase' ) && ! isLoggedIn
+				...( index === patternAssemblerCtaPlacement.position && isEnabled( 'pattern-assembler/logged-out-showcase' ) && ! isLoggedIn
 					? [
-							<PatternAssemblerCta
-								key="pattern-assembler-cta"
-								onButtonClick={ () =>
-									window.location.assign(
-										'/start/with-theme?ref=calypshowcase&theme=blank-canvas-3'
-									)
-								}
-							></PatternAssemblerCta>,
+						<TrailingItems spacersCount={ patternAssemblerCtaPlacement.trailing } />,
+						<PatternAssemblerCta
+							key="pattern-assembler-cta"
+							onButtonClick={ () =>
+								window.location.assign(
+									'/start/with-theme?ref=calypshowcase&theme=blank-canvas-3'
+								)
+							}
+						></PatternAssemblerCta>,
 					  ]
 					: [] ),
 			] ) }
@@ -342,9 +343,10 @@ function LoadingPlaceholders( { placeholderCount } ) {
 	} );
 }
 
-function TrailingItems() {
-	const NUM_SPACERS = 11; // gives enough spacers for a theoretical 12 column layout
-	return times( NUM_SPACERS, function ( i ) {
+function TrailingItems( { spacersCount } ) {
+	const DEFAULT_NUM_SPACERS = 11; // gives enough spacers for a theoretical 12 column layout
+	const numSpacers = spacersCount || DEFAULT_NUM_SPACERS;
+	return times( numSpacers, function ( i ) {
 		return <div className="themes-list__spacer" key={ 'themes-list__spacer-' + i } />;
 	} );
 }

@@ -50,7 +50,7 @@ function rectIsZero( rect: NullableDOMRect ) {
  * @returns The ref to be set on the consumer component.
  */
 export function useWindowResizeCallback(
-	callback: ( boundingClientRect: NullableDOMRect, elementRef: any ) => void
+	callback: ( boundingClientRect: NullableDOMRect ) => void
 ) {
 	const lastRect = useRef< NullableDOMRect >( null );
 	const elementRef = useRef< NullableElement >( null );
@@ -68,7 +68,7 @@ export function useWindowResizeCallback(
 				lastRect.current = rect;
 
 				// Notify consumer of bounding client rect change.
-				callback( rect, elementRef );
+				callback( rect );
 			}
 		};
 
