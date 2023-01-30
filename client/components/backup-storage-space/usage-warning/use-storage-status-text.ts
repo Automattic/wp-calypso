@@ -21,7 +21,7 @@ const useStorageStatusText = (
 				);
 			case StorageUsageLevels.Full:
 				return translate(
-					'You have reached your storage limit with %(daysOfBackupsSaved)d days of backups saved. Backups have been stopped. Please upgrade your storage to resume backups.',
+					'You have reached your storage limit with %(daysOfBackupsSaved)d day(s) of backups saved. Backups have been stopped. Please upgrade your storage to resume backups.',
 					{
 						args: { daysOfBackupsSaved },
 					}
