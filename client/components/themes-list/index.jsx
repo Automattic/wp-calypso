@@ -28,7 +28,10 @@ const THEM_CARD_MARGIN = 16; // used to calculate the max-width of column in the
 
 export const ThemesList = ( props ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const [ patternAssemblerCtaPlacement, setPatternAssemblerCtaPlacement ] = useState( { position: -1, trailing: 0 } );
+	const [ patternAssemblerCtaPlacement, setPatternAssemblerCtaPlacement ] = useState( {
+		position: -1,
+		trailing: 0,
+	} );
 
 	const fetchNextPage = useCallback(
 		( options ) => {
@@ -44,12 +47,15 @@ export const ThemesList = ( props ) => {
 					contentRect.width / ( THEME_CARD_WIDTH + THEM_CARD_MARGIN * 2 )
 				);
 				const relativeCtaPosition =
-					columnCount * 3 - 1 < props.themes.length - 1 ? columnCount * 3 - 1 : props.themes.length - 1;
-				const trailingSpacersCount = Math.ceil( props.themes.length / columnCount ) * columnCount - props.themes.length;
-				
+					columnCount * 3 - 1 < props.themes.length - 1
+						? columnCount * 3 - 1
+						: props.themes.length - 1;
+				const trailingSpacersCount =
+					Math.ceil( props.themes.length / columnCount ) * columnCount - props.themes.length;
+
 				setPatternAssemblerCtaPlacement( {
 					position: relativeCtaPosition,
-					trailing: trailingSpacersCount
+					trailing: trailingSpacersCount,
 				} );
 			}
 		},
@@ -77,17 +83,19 @@ export const ThemesList = ( props ) => {
 		<div ref={ resizeRef } className="themes-list">
 			{ props.themes.map( ( theme, index ) => [
 				<ThemeBlock key={ 'theme-block' + index } theme={ theme } index={ index } { ...props } />,
-				...( index === patternAssemblerCtaPlacement.position && isEnabled( 'pattern-assembler/logged-out-showcase' ) && ! isLoggedIn
+				...( index === patternAssemblerCtaPlacement.position &&
+				isEnabled( 'pattern-assembler/logged-out-showcase' ) &&
+				! isLoggedIn
 					? [
-						<TrailingItems spacersCount={ patternAssemblerCtaPlacement.trailing } />,
-						<PatternAssemblerCta
-							key="pattern-assembler-cta"
-							onButtonClick={ () =>
-								window.location.assign(
-									'/start/with-theme?ref=calypshowcase&theme=blank-canvas-3'
-								)
-							}
-						></PatternAssemblerCta>,
+							<TrailingItems spacersCount={ patternAssemblerCtaPlacement.trailing } />,
+							<PatternAssemblerCta
+								key="pattern-assembler-cta"
+								onButtonClick={ () =>
+									window.location.assign(
+										'/start/with-theme?ref=calypshowcase&theme=blank-canvas-3'
+									)
+								}
+							></PatternAssemblerCta>,
 					  ]
 					: [] ),
 			] ) }
