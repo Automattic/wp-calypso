@@ -173,6 +173,17 @@ body.is-focus-sites {
 			background: var(--color-sidebar-background);
 		}
 
+		&__sites::-webkit-scrollbar {
+			background-color: var(--color-sidebar-background);
+			width: 12px;
+		}
+
+		&__sites::-webkit-scrollbar-thumb {
+			background-color: var(--color-sidebar-text-alternative);
+			border-radius: 4px;
+			-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.11);
+		}
+
 		&__add-new-site {
 			border-color: var(--color-sidebar-border);
 

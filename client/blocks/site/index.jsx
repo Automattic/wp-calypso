@@ -181,7 +181,7 @@ class Site extends Component {
 						defaultIcon={ this.props.isReskinned ? layout : null }
 						site={ site }
 						// eslint-disable-next-line no-nested-ternary
-						size={ this.props.compact ? 24 : this.props.isReskinned ? 50 : 32 }
+						size={ this.props.compact ? 24 : this.props.isReskinned ? 50 : 36 }
 					/>
 					<div className="site__info">
 						<div className="site__title">{ site.title }</div>
