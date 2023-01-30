@@ -409,6 +409,7 @@ export class Theme extends Component {
 		 * and the theme isn't the active theme.
 		 */
 		const showPremiumBadge = isPremiumTheme && isPremiumThemeAvailable && ! active;
+		const isNewCardsOnly = isEnabled( 'themes/showcase-i4/cards-only' );
 		const isNewDetailsAndPreview = isEnabled( 'themes/showcase-i4/details-and-preview' );
 		const popoverContent = this.getUpsellPopoverContent();
 
@@ -418,7 +419,7 @@ export class Theme extends Component {
 					eventName="calypso_upgrade_nudge_impression"
 					eventProperties={ { cta_name: 'theme-upsell', theme: theme.id } }
 				/>
-				{ isNewDetailsAndPreview ? (
+				{ isNewCardsOnly || isNewDetailsAndPreview ? (
 					<>
 						{ ( ! doesThemeBundleSoftwareSet || isExternallyManagedTheme ) && (
 							<PremiumBadge
@@ -513,8 +514,10 @@ export class Theme extends Component {
 			hasPremiumThemesFeature,
 			isPremiumTheme,
 			didPurchaseTheme,
+			isExternallyManagedTheme,
 		} = this.props;
-		const { name, description, screenshot } = theme;
+		const { name, description, screenshot, style_variations = [] } = theme;
+		const isNewCardsOnly = isEnabled( 'themes/showcase-i4/cards-only' );
 		const isNewDetailsAndPreview = isEnabled( 'themes/showcase-i4/details-and-preview' );
 		const isActionable = this.props.screenshotClickUrl || this.props.onScreenshotClick;
 		const themeClass = classNames( 'theme', {
@@ -523,7 +526,7 @@ export class Theme extends Component {
 		} );
 
 		const themeNeedsPurchase = isPremiumTheme && ! hasPremiumThemesFeature && ! didPurchaseTheme;
-		const showUpsell = upsellUrl && isPremiumTheme && ! active;
+		const showUpsell = upsellUrl && ( isPremiumTheme || isExternallyManagedTheme ) && ! active;
 		const priceClass = classNames( 'theme__badge-price', {
 			'theme__badge-price-upgrade': ! themeNeedsPurchase,
 			'theme__badge-price-upsell': showUpsell,
@@ -592,7 +595,7 @@ export class Theme extends Component {
 
 					<div
 						className={ classNames( 'theme__info', {
-							'has-pricing': !! upsellUrl,
+							'has-style-variations': isNewDetailsAndPreview && style_variations.length > 0,
 						} ) }
 					>
 						<h2 className="theme__info-title">{ name }</h2>
@@ -603,17 +606,17 @@ export class Theme extends Component {
 								} ) }
 							</span>
 						) }
-						{ ! isNewDetailsAndPreview && active && (
+						{ ! isNewCardsOnly && ! isNewDetailsAndPreview && active && (
 							<span className={ priceClass }>{ price }</span>
 						) }
+						{ isNewDetailsAndPreview && ! active && this.renderStyleVariations() }
 						{ upsellUrl && // Do not show any pricing related infomation if there's no upsell action link.
 							( showUpsell
 								? this.renderUpsell()
-								: isNewDetailsAndPreview &&
+								: ( isNewCardsOnly || isNewDetailsAndPreview ) &&
 								  ! active && (
 										<span className="theme__info-upsell-description">{ translate( 'Free' ) }</span>
 								  ) ) }
-						{ isNewDetailsAndPreview && ! active && this.renderStyleVariations() }
 						{ this.renderMoreButton() }
 					</div>
 				</div>

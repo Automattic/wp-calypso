@@ -7,7 +7,7 @@ import {
 	getThemeFilterTermFromString,
 	isValidThemeFilterTerm,
 } from 'calypso/state/themes/selectors';
-import { fetchThemeFilters } from './controller';
+import { fetchThemeFilters, redirectToThemeDetails } from './controller';
 
 // Reorder and remove invalid filters to redirect to canonical URL
 export function validateFilters( context, next ) {
@@ -42,7 +42,7 @@ export function validateFilters( context, next ) {
 
 export function validateVertical( context, next ) {
 	performanceMark( context, 'validateVertical' );
-	const { vertical } = context.params;
+	const { vertical, tier, filter, site_id } = context.params;
 	const { store } = context;
 
 	if ( ! vertical ) {
@@ -53,6 +53,18 @@ export function validateVertical( context, next ) {
 		if ( context.isServerSide ) {
 			return next( 'route' );
 		}
+
+		/**
+		 * This applies only for logged-in users since the isomorphic routing is currently disabled on production.
+		 * Because next() doesn't trigger another route path (like we do in index.node.js with next('route')), we will have to do the redirect here.
+		 *
+		 * If the tier and filter are not present, we'll assume the vertical slug might be a theme.
+		 * We need this because we cannot implement a redirect route like in express.
+		 */
+		if ( ! tier && ! filter ) {
+			redirectToThemeDetails( page.redirect, site_id, vertical, null, next );
+		}
+
 		// Client-side: Terminate routing, rely on server-side rendered markup.
 		return;
 	}
@@ -69,7 +81,7 @@ export function validateVertical( context, next ) {
  * prefixed taxonomy:term. Returned terms will
  * keep this prefix.
  *
- * @param {object} context Routing context
+ * @param {Object} context Routing context
  * @param {Array} terms Array of term strings
  * @returns {Array} Sorted array
  */

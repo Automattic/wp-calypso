@@ -1,10 +1,9 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 
 const SiteIntent = Onboard.SiteIntent;
 const MAX_STEPS = 10;
 
-export function useSiteSetupFlowProgress( currentStep: string, intent: string, storeType: string ) {
+export function useSiteSetupFlowProgress( currentStep: string, intent: string ) {
 	const beginningSteps = [ 'goals', 'vertical' ];
 
 	let beginningSegment = ( beginningSteps.length - 1 ) / MAX_STEPS;
@@ -56,52 +55,21 @@ export function useSiteSetupFlowProgress( currentStep: string, intent: string, s
 				case 'options':
 					middleProgress = { progress: 1, count: 8 };
 					break;
-				case 'storeFeatures':
-					middleProgress = { progress: 2, count: 8 };
+			}
+
+			switch ( currentStep ) {
+				case 'goals':
+					middleProgress = { progress: 1, count: 4 };
 					break;
-			}
-			if ( storeType === 'simple' ) {
-				switch ( currentStep ) {
-					case 'designSetup':
-						middleProgress = { progress: 3, count: 8 };
-						break;
-				}
-			} else if ( storeType === 'power' ) {
-				switch ( currentStep ) {
-					case 'storeAddress':
-						middleProgress = { progress: 3, count: 8 };
-						break;
-					case 'businessInfo':
-						middleProgress = { progress: 4, count: 8 };
-						break;
-					case 'wooConfirm':
-					case 'wooInstallPlugins':
-						middleProgress = { progress: 5, count: 8 };
-						break;
-					case 'wooTransfer':
-					case 'editEmail':
-						middleProgress = { progress: 6, count: 8 };
-						break;
-					case 'wooVerifyEmail':
-						middleProgress = { progress: 7, count: 8 };
-						break;
-				}
-			}
-			if ( isEnabled( 'themes/plugin-bundling' ) ) {
-				switch ( currentStep ) {
-					case 'goals':
-						middleProgress = { progress: 1, count: 4 };
-						break;
-					case 'vertical':
-						middleProgress = { progress: 2, count: 4 };
-						break;
-					case 'options':
-						middleProgress = { progress: 3, count: 4 };
-						break;
-					case 'designSetup':
-						middleProgress = { progress: 4, count: 4 };
-						break;
-				}
+				case 'vertical':
+					middleProgress = { progress: 2, count: 4 };
+					break;
+				case 'options':
+					middleProgress = { progress: 3, count: 4 };
+					break;
+				case 'designSetup':
+					middleProgress = { progress: 4, count: 4 };
+					break;
 			}
 
 			break;

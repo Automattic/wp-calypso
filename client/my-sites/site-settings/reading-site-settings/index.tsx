@@ -3,12 +3,18 @@ import { useTranslate } from 'i18n-calypso';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { BlogPagesSetting, BLOG_PAGES_OPTION } from './BlogPagesSetting';
 import { RelatedPostsSetting } from './RelatedPostsSetting';
+import YourHomepageDisplaysSetting from './YourHomepageDisplaysSetting';
 
 type Fields = {
-	posts_per_page?: number;
 	jetpack_relatedposts_enabled?: boolean;
+	jetpack_relatedposts_show_context?: boolean;
+	jetpack_relatedposts_show_date?: boolean;
 	jetpack_relatedposts_show_headline?: boolean;
 	jetpack_relatedposts_show_thumbnails?: boolean;
+	page_for_posts?: string;
+	page_on_front?: string;
+	posts_per_page?: number;
+	show_on_front?: 'posts' | 'page';
 };
 
 type SiteSettingsSectionProps = {
@@ -19,6 +25,7 @@ type SiteSettingsSectionProps = {
 	disabled?: boolean;
 	isRequestingSettings?: boolean;
 	isSavingSettings?: boolean;
+	updateFields: ( fields: Fields ) => void;
 };
 
 export const SiteSettingsSection = ( {
@@ -29,9 +36,10 @@ export const SiteSettingsSection = ( {
 	disabled,
 	isRequestingSettings,
 	isSavingSettings,
+	updateFields,
 }: SiteSettingsSectionProps ) => {
 	const translate = useTranslate();
-	const { posts_per_page } = fields;
+	const { page_for_posts, page_on_front, posts_per_page, show_on_front } = fields;
 
 	return (
 		<>
@@ -43,6 +51,15 @@ export const SiteSettingsSection = ( {
 				disabled={ disabled }
 				isSaving={ isSavingSettings }
 			/>
+			<Card className="site-settings__card">
+				<YourHomepageDisplaysSetting
+					value={ { page_for_posts, page_on_front, show_on_front } }
+					onChange={ ( value ) => {
+						updateFields( value );
+					} }
+					disabled={ disabled }
+				/>
+			</Card>
 			<Card className="site-settings__card">
 				<BlogPagesSetting
 					value={ posts_per_page }

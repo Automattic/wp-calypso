@@ -9,8 +9,10 @@
 	text-align: center;
 	justify-content: center;
 	align-items: center;
-	@include break-large() {
+	@include break-xlarge() {
 		display: block;
+		float: right;
+		margin-inline-end: 30px;
 	}
 }
 .site-actions__actions-small-screen {
@@ -18,7 +20,7 @@
 	position: absolute;
 	right: 16px;
 	display: inline;
-	@include break-large() {
+	@include break-xlarge() {
 		display: none;
 	}
 }

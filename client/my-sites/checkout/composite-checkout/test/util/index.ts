@@ -74,6 +74,21 @@ export const countryList: CountryListItem[] = [
 		name: 'Australia',
 		has_postal_codes: true,
 	},
+	{
+		code: 'ES',
+		name: 'Spain',
+		has_postal_codes: true,
+	},
+	{
+		code: 'CA',
+		name: 'Canada',
+		has_postal_codes: true,
+	},
+	{
+		code: 'GB',
+		name: 'United Kingdom',
+		has_postal_codes: true,
+	},
 ];
 
 export const siteId = 13579;
@@ -364,6 +379,37 @@ export function mockSetCartEndpointWith( { currency, locale } ): SetCart {
 			next_domain_condition: '',
 		};
 	};
+}
+
+export function convertProductSlugToResponseProduct( productSlug: string ) {
+	switch ( productSlug ) {
+		case 'jetpack_backup_t1_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2100,
+				product_name: 'Jetpack VaultPress Backup (10GB)',
+				product_slug: 'jetpack_backup_t1_monthly',
+				currency: 'USD',
+			};
+		case 'jetpack_backup_t1_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2100,
+				product_name: 'Jetpack VaultPress Backup (10GB)',
+				product_slug: 'jetpack_backup_t1_yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_scan':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2106,
+				product_name: 'Jetpack Scan Daily',
+				product_slug: 'jetpack_scan',
+				currency: 'USD',
+			};
+		default:
+			return getEmptyResponseCartProduct();
+	}
 }
 
 function convertRequestProductToResponseProduct(

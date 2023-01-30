@@ -1,15 +1,14 @@
-.subscriber-details {
+.member-details {
 	.people-list-item.card.is-compact {
 		padding: 0;
 	}
 
-	.people-subscriber-details__meta {
-		border-top: 1px solid var(--color-border-subtle);
+	.people-member-details__meta {
 		padding-top: 24px;
 		margin-top: 24px;
 	}
 
-	.people-subscriber-details__meta-item {
+	.people-member-details__meta-item {
 		margin-bottom: 1rem;
 		overflow: hidden;
 		white-space: nowrap;
@@ -19,7 +18,7 @@
 			color: var(--studio-gray-70);
 		}
 
-		.people-subscriber-details__meta-status {
+		.people-member-details__meta-status {
 			&-pending {
 				color: var(--color-warning);
 			}

@@ -7,11 +7,11 @@ const DEFAULT_DISABLED_DATA_SOURCES = [ 'google_photos', 'openverse', 'pexels' ]
 /**
  * Convert the Calypso Media Modal output to the format expected by Gutenberg
  *
- * @param {object} media Calypso media modal output
- * @returns {Array|object} Gutenberg media blocks input
+ * @param {Object} media Calypso media modal output
+ * @returns {Array | Object} Gutenberg media blocks input
  */
 export const mediaCalypsoToGutenberg = ( media ) => {
-	return {
+	const mediaData = {
 		id: get( media, 'ID' ),
 		url: get( media, 'URL' ),
 		alt: get( media, 'alt' ),
@@ -39,6 +39,15 @@ export const mediaCalypsoToGutenberg = ( media ) => {
 		type: get( media, 'mime_type', '' ).split( '/' )[ 0 ],
 		width: get( media, 'width' ),
 	};
+
+	// VideoPress data
+	if ( media.videopress_guid ) {
+		mediaData.allow_download = media.allow_download;
+		mediaData.rating = media.rating;
+		mediaData.videopress_guid = media.videopress_guid;
+	}
+
+	return mediaData;
 };
 
 export const getDisabledDataSources = ( allowedTypes ) => {

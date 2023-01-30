@@ -5,8 +5,8 @@ import 'calypso/state/domains/init';
 /**
  * Returns domains suggestions information for a query.
  *
- * @param   {object}   state                                Global state tree
- * @param   {object}   queryObject                          domain suggestions queryObject
+ * @param   {Object}   state                                Global state tree
+ * @param   {Object}   queryObject                          domain suggestions queryObject
  * @param   {string}   queryObject.query                    domainQuery
  * @param   {number}   queryObject.quantity                 max results
  * @param   {string}   queryObject.vendor                   vendor
@@ -24,8 +24,8 @@ export function getDomainsSuggestions( state, queryObject ) {
 /**
  * Returns true, if we're currently requesting domains suggestions.
  *
- * @param   {object}     state                                Global state tree
- * @param   {object}     queryObject                          domain suggestions queryObject
+ * @param   {Object}     state                                Global state tree
+ * @param   {Object}     queryObject                          domain suggestions queryObject
  * @param   {string}     queryObject.query                    domainQuery
  * @param   {number}     queryObject.quantity                 max results
  * @param   {string}     queryObject.vendor                   vendor
@@ -43,13 +43,13 @@ export function isRequestingDomainsSuggestions( state, queryObject ) {
 /**
  * Returns an error for a given domains suggestions query.
  *
- * @param   {object}     state                                Global state tree
- * @param   {object}     queryObject                          domain suggestions queryObject
+ * @param   {Object}     state                                Global state tree
+ * @param   {Object}     queryObject                          domain suggestions queryObject
  * @param   {string}     queryObject.query                    domainQuery
  * @param   {number}     queryObject.quantity                 max results
  * @param   {string}     queryObject.vendor                   vendor
  * @param   {?boolean}   queryObject.includeSubdomain  adds wordpress subdomain suggestions when true
- * @returns {?object}    error or null
+ * @returns {?Object}    error or null
  */
 export function getDomainsSuggestionsError( state, queryObject ) {
 	const serializedQuery = getSerializedDomainsSuggestionsQuery( queryObject );

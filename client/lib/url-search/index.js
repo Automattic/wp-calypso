@@ -15,7 +15,7 @@ const debug = debugFactory( 'calypso:url-search' );
  *     queryKey: 'q',
  *    } --> 'wordpress.com/read/search?q=reader+is+super+awesome'
  *
- * @param {object} options the options object
+ * @param {Object} options the options object
  * @param {string} options.uri the base uri to modify and add a query to
  * @param {string} options.search the search term
  * @param {string} [options.queryKey = s] the key to place in the url.  defaults to s

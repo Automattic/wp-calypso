@@ -12,9 +12,9 @@ const parentSelector = '.edit-site-global-styles-sidebar';
 const selectors = {
 	menuButton: ( buttonName: string ) =>
 		`${ parentSelector } button.components-navigator-button:has-text("${ buttonName }")`,
-	closeSidebarButton: 'button[aria-label="Close global styles sidebar"]:visible',
+	closeSidebarButton: 'button[aria-expanded="true"][aria-label="Styles"]',
 	backButton: `${ parentSelector } button[aria-label="Navigate to the previous view"]`,
-	moreActionsMenuButton: `${ parentSelector } button[aria-label="More Global Styles Actions"]`,
+	moreActionsMenuButton: `${ parentSelector } button[aria-label="More Styles actions"]`,
 };
 
 export type ColorLocation = 'Background' | 'Text' | 'Links';

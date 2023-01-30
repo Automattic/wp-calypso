@@ -10,7 +10,7 @@ import {
 	envToFeatureKey,
 	RestAPIClient,
 } from '@automattic/calypso-e2e';
-import { Page, Frame, Browser } from 'playwright';
+import { Page, Browser, Locator } from 'playwright';
 import type { LanguageSlug } from '@automattic/languages';
 
 type Translations = {
@@ -284,15 +284,20 @@ describe( 'I18N: Editor', function () {
 			} );
 
 			it( 'Translations for Welcome Guide', async function () {
-				const frame = await editorPage.getEditorHandle();
+				const editorWindowLocator = editorPage.getEditorWindowLocator();
+
 				// We know these are all defined because of the filtering above. Non-null asserting is safe here.
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 				const etkTranslations = translations[ locale ]!.etkPlugin!;
 
 				await editorPage.openEditorOptionsMenu();
-				await frame.locator( etkTranslations.welcomeGuide.openGuideSelector ).click();
-				await frame.waitForSelector( etkTranslations.welcomeGuide.welcomeTitleSelector );
-				await frame.locator( etkTranslations.welcomeGuide.closeButtonSelector ).click();
+				await editorWindowLocator.locator( etkTranslations.welcomeGuide.openGuideSelector ).click();
+				await editorWindowLocator
+					.locator( etkTranslations.welcomeGuide.welcomeTitleSelector )
+					.waitFor();
+				await editorWindowLocator
+					.locator( etkTranslations.welcomeGuide.closeButtonSelector )
+					.click();
 			} );
 		} );
 
@@ -302,7 +307,7 @@ describe( 'I18N: Editor', function () {
 			'Translations for block: $blockName',
 			( ...args ) => {
 				const block = args[ 0 ]; // Makes TS stop complaining about incompatible args type
-				let frame: Page | Frame;
+				let editorWindowLocator: Locator;
 				let editorPage: EditorPage;
 
 				it( 'Insert test block', async function () {
@@ -311,35 +316,48 @@ describe( 'I18N: Editor', function () {
 				} );
 
 				it( 'Render block content translations', async function () {
-					frame = await editorPage.getEditorHandle();
+					editorWindowLocator = editorPage.getEditorWindowLocator();
 					// Ensure block contents are translated as expected.
+					// To deal with multiple potential matches (eg. Jetpack/Business Hours > Add Hours)
+					// the first locator is matched.
 					await Promise.all(
 						block.blockEditorContent.map( ( content ) =>
-							frame.waitForSelector( `${ block.blockEditorSelector } ${ content }` )
+							editorWindowLocator
+								.locator( `${ block.blockEditorSelector } ${ content }` )
+								.first()
+								.waitFor()
 						)
 					);
 				} );
 
 				it( 'Render block title translations', async function () {
 					await editorPage.openSettings();
-					await frame.click( block.blockEditorSelector );
+					await editorWindowLocator.locator( block.blockEditorSelector ).click();
 
 					// Ensure the block is highlighted.
-					await frame.waitForSelector(
-						`:is( ${ block.blockEditorSelector }.is-selected, ${ block.blockEditorSelector }.has-child-selected)`
-					);
+					await editorWindowLocator
+						.locator(
+							`:is( ${ block.blockEditorSelector }.is-selected, ${ block.blockEditorSelector }.has-child-selected)`
+						)
+						.click();
 
 					// If on block insertion, one of the sub-blocks are selected, click on
 					// the first button in the floating toolbar which selects the overall
 					// block.
-					if ( await frame.isVisible( '.block-editor-block-parent-selector__button' ) ) {
-						await frame.click( '.block-editor-block-parent-selector__button' );
+					if (
+						await editorWindowLocator
+							.locator( '.block-editor-block-parent-selector__button:visible' )
+							.count()
+					) {
+						await editorWindowLocator
+							.locator( '.block-editor-block-parent-selector__button' )
+							.click();
 					}
 
 					// Ensure the Settings with the block selected shows the expected title.
-					await frame.waitForSelector(
-						`.block-editor-block-card__title:has-text("${ block.blockPanelTitle }")`
-					);
+					await editorWindowLocator
+						.locator( `.block-editor-block-card__title:has-text("${ block.blockPanelTitle }")` )
+						.waitFor();
 				} );
 			}
 		);

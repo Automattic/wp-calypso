@@ -6,7 +6,7 @@ export default {
 };
 
 const Playground = () => {
-	return <div className={ 'storybook__helpcenter-playground' }></div>;
+	return <div className="storybook__helpcenter-playground"></div>;
 };
 
 const HelpCenterStory = () => {

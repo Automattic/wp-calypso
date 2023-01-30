@@ -2,7 +2,7 @@
 #### This image is not pushed to any repository and it shouldn't be used as base image for any other docker build.
 #### Its main goal is to create a `/calypso/.cache` that can be copied over other images that can benefit from a warm cache.
 #### Note that yarn v3 cache lives in `/calypso/.yarn`
-FROM node:16.17.0-bullseye-slim as cache
+FROM node:18.13.0-bullseye-slim as cache
 
 ARG node_memory=8192
 WORKDIR /calypso
@@ -25,8 +25,8 @@ RUN yarn \
 ENTRYPOINT [ "/bin/bash" ]
 
 #### base image
-#### This image can be used as a base image for other builds, or to uni test and build calypso.
-FROM node:16.17.0-bullseye-slim as base
+#### This image can be used as a base image for other builds, or to test and build calypso.
+FROM node:18.13.0-bullseye-slim as base
 
 ARG node_memory=8192
 ARG user=calypso
@@ -47,12 +47,14 @@ RUN apt-get update \
 	&& echo "$user ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/$user \
 	&& chmod 0440 /etc/sudoers.d/$user \
 	&& chown $UID /calypso \
-	&& rm -rf /var/lib/apt/lists/* \
+	# Remove unnecessary packages
 	&& apt-get autoremove --purge \
-	&& apt-get autoclean
+	&& apt-get autoclean \
+	&& rm -rf /var/lib/apt/lists/* \
+	# Set bash as the default shell
+	&& rm /bin/sh \
+	&& ln -s /bin/bash /bin/sh
 
-# Set bash as the default shell
-RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 # Copy all other caches (webpack, babel, yarn...)
 COPY --from=cache --chown=$UID /calypso/.cache /calypso/.cache
 COPY --from=cache --chown=$UID /calypso/.yarn /calypso/.yarn
@@ -69,27 +71,24 @@ ENV DISPLAY=:99
 
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends \
+		# For wp-calypso-test-results dashboard
 		awscli \
-		fonts-liberation \
 		# Install non-Latin fonts
 		fonts-noto-cjk \
 		fonts-noto-core \
+		# Other required packages
 		git-restore-mtime \
-		gtk2-engines-pixbuf \
-		libappindicator3-1 \
 		libasound2 \
-		libatk-bridge2.0-0 \
 		libatspi2.0-0 \
 		libdbus-glib-1-2 \
 		libgtk-3-0 \
-		libgbm-dev \
+		libgbm1 \
 		libnspr4 \
 		libnss3 \
-		libsecret-1-dev \
+		libsecret-1-0 \
 		libx11-xcb1 \
 		libxss1 \
 		libxtst6 \
-		openjdk-17-jre \
 		openssl \
 		xauth \
 		xvfb \
@@ -117,9 +116,8 @@ RUN wget http://mirrors.kernel.org/ubuntu/pool/main/libf/libffi/libffi6_3.2.1-8_
 	apt-get update && \
  	apt-get upgrade -y && \
 	apt-get install -y php7.4-cli php7.4-xml php7.4-mbstring docker-compose && \
-	composer install
-
-# Install sentry-cli.
-RUN wget -O - https://sentry.io/get-cli/ | bash
+	composer install && \
+	# Install sentry-cli.
+	wget -O - https://sentry.io/get-cli/ | bash
 
 ENTRYPOINT [ "/bin/bash" ]

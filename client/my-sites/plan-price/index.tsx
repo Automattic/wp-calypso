@@ -11,6 +11,7 @@ export class PlanPrice extends Component< PlanPriceProps > {
 		const {
 			currencyCode = 'USD',
 			rawPrice,
+			isSmallestUnit,
 			original,
 			discounted,
 			className,
@@ -21,11 +22,13 @@ export class PlanPrice extends Component< PlanPriceProps > {
 			taxText,
 			omitHeading,
 			is2023OnboardingPricingGrid,
+			isLargeCurrency,
 		} = this.props;
 
 		const classes = classNames( 'plan-price', className, {
 			'is-original': original,
 			'is-discounted': discounted,
+			'is-large-currency': isLargeCurrency,
 		} );
 
 		const tagName = omitHeading ? 'span' : 'h4';
@@ -63,6 +66,7 @@ export class PlanPrice extends Component< PlanPriceProps > {
 					higherPrice={ rawPriceRange[ 1 ] }
 					currencyCode={ currencyCode }
 					className={ classes }
+					isSmallestUnit={ isSmallestUnit }
 				/>
 			);
 		}
@@ -78,6 +82,7 @@ export class PlanPrice extends Component< PlanPriceProps > {
 				displayPerMonthNotation={ displayPerMonthNotation }
 				isOnSale={ isOnSale }
 				is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+				isSmallestUnit={ isSmallestUnit }
 			/>
 		);
 	}
@@ -99,6 +104,14 @@ export interface PlanPriceProps {
 	 * it is an array, in which case `productDisplayPrice` will be ignored.
 	 */
 	rawPrice?: number | [ number, number ];
+
+	/**
+	 * If true, the number(s) in `rawPrice` will be interpreted as integers in
+	 * the currency's smallest unit rather than floating point numbers.
+	 *
+	 * Has no effect if `productDisplayPrice` is being used.
+	 */
+	isSmallestUnit?: boolean;
 
 	/**
 	 * Adds the `is-original` CSS class.
@@ -182,14 +195,27 @@ export interface PlanPriceProps {
 	 * Ignored if `productDisplayPrice` is set and `rawPrice` is not an array.
 	 */
 	is2023OnboardingPricingGrid?: boolean;
+
+	/**
+	 * If true, this renders the price with a smaller font size by adding the `is-large-currency` class.
+	 */
+	isLargeCurrency?: boolean;
 }
 
-function renderBasicPrice( price: number, currencyCode: string ): string {
-	const priceObj = getCurrencyObject( price, currencyCode );
-	if ( ! Number.isInteger( price ) ) {
-		return `${ priceObj.integer }${ priceObj.fraction }`;
+function PriceWithoutHtml( {
+	price,
+	currencyCode,
+	isSmallestUnit,
+}: {
+	price: number;
+	currencyCode: string;
+	isSmallestUnit?: boolean;
+} ) {
+	const priceObj = getCurrencyObject( price, currencyCode, { isSmallestUnit } );
+	if ( priceObj.hasNonZeroFraction ) {
+		return <>{ `${ priceObj.integer }${ priceObj.fraction }` }</>;
 	}
-	return priceObj.integer;
+	return <>{ priceObj.integer }</>;
 }
 
 function FlatPriceDisplay( {
@@ -197,11 +223,13 @@ function FlatPriceDisplay( {
 	higherPrice,
 	currencyCode,
 	className,
+	isSmallestUnit,
 }: {
 	smallerPrice: number;
 	higherPrice?: number;
 	currencyCode: string;
 	className?: string;
+	isSmallestUnit?: boolean;
 } ) {
 	const { symbol: currencySymbol } = getCurrencyObject( smallerPrice, currencyCode );
 	const translate = useTranslate();
@@ -212,7 +240,11 @@ function FlatPriceDisplay( {
 		return (
 			<span className={ className }>
 				{ currencySymbol }
-				{ renderBasicPrice( smallerPrice, currencyCode ) }
+				<PriceWithoutHtml
+					price={ smallerPrice }
+					currencyCode={ currencyCode }
+					isSmallestUnit={ isSmallestUnit }
+				/>
 			</span>
 		);
 	}
@@ -222,8 +254,20 @@ function FlatPriceDisplay( {
 			{ currencySymbol }
 			{ translate( '%(smallerPrice)s-%(higherPrice)s', {
 				args: {
-					smallerPrice: renderBasicPrice( smallerPrice, currencyCode ),
-					higherPrice: renderBasicPrice( higherPrice, currencyCode ),
+					smallerPrice: (
+						<PriceWithoutHtml
+							price={ smallerPrice }
+							currencyCode={ currencyCode }
+							isSmallestUnit={ isSmallestUnit }
+						/>
+					),
+					higherPrice: (
+						<PriceWithoutHtml
+							price={ higherPrice }
+							currencyCode={ currencyCode }
+							isSmallestUnit={ isSmallestUnit }
+						/>
+					),
 				},
 				comment: 'The price range for a particular product',
 			} ) }
@@ -241,6 +285,7 @@ function MultiPriceDisplay( {
 	displayPerMonthNotation,
 	isOnSale,
 	is2023OnboardingPricingGrid,
+	isSmallestUnit,
 }: {
 	tagName: 'h4' | 'span';
 	className?: string;
@@ -251,6 +296,7 @@ function MultiPriceDisplay( {
 	displayPerMonthNotation?: boolean;
 	isOnSale?: boolean;
 	is2023OnboardingPricingGrid?: boolean;
+	isSmallestUnit?: boolean;
 } ) {
 	const { symbol: currencySymbol } = getCurrencyObject( smallerPrice, currencyCode );
 	const translate = useTranslate();
@@ -267,6 +313,7 @@ function MultiPriceDisplay( {
 					price={ smallerPrice }
 					currencyCode={ currencyCode }
 					is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+					isSmallestUnit={ isSmallestUnit }
 				/>
 			) }
 			{ higherPrice &&
@@ -277,6 +324,7 @@ function MultiPriceDisplay( {
 								price={ smallerPrice }
 								currencyCode={ currencyCode }
 								is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+								isSmallestUnit={ isSmallestUnit }
 							/>
 						),
 						higherPrice: (
@@ -284,6 +332,7 @@ function MultiPriceDisplay( {
 								price={ higherPrice }
 								currencyCode={ currencyCode }
 								is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+								isSmallestUnit={ isSmallestUnit }
 							/>
 						),
 					},
@@ -318,19 +367,22 @@ function HtmlPriceDisplay( {
 	price,
 	currencyCode,
 	is2023OnboardingPricingGrid,
+	isSmallestUnit,
 }: {
 	price: number;
 	currencyCode: string;
 	is2023OnboardingPricingGrid?: boolean;
+	isSmallestUnit?: boolean;
 } ) {
-	const hasFraction = ! Number.isInteger( price );
-	const priceObj = getCurrencyObject( price, currencyCode );
+	const priceObj = getCurrencyObject( price, currencyCode, { isSmallestUnit } );
 
 	if ( is2023OnboardingPricingGrid ) {
 		return (
 			<div className="plan-price__integer-fraction">
 				<span className="plan-price__integer">{ priceObj.integer }</span>
-				<sup className="plan-price__fraction">{ hasFraction && priceObj.fraction }</sup>
+				<sup className="plan-price__fraction">
+					{ priceObj.hasNonZeroFraction && priceObj.fraction }
+				</sup>
 			</div>
 		);
 	}
@@ -338,7 +390,9 @@ function HtmlPriceDisplay( {
 	return (
 		<>
 			<span className="plan-price__integer">{ priceObj.integer }</span>
-			<sup className="plan-price__fraction">{ hasFraction && priceObj.fraction }</sup>
+			<sup className="plan-price__fraction">
+				{ priceObj.hasNonZeroFraction && priceObj.fraction }
+			</sup>
 		</>
 	);
 }

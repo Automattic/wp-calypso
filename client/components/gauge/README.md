@@ -8,7 +8,7 @@ This component renders a simple gauge to show a percentage visually.
 import Gauge from 'calypso/components/gauge';
 
 function render() {
-	return <Gauge percentage={ 40 } metric={ 'Visits' } />;
+	return <Gauge percentage={ 40 } metric="Visits" />;
 }
 ```
 

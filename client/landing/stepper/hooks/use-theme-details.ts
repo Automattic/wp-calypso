@@ -6,7 +6,7 @@ type Theme = {
 	name: string;
 	author: string;
 	author_uri: string;
-	demo_uri: string;
+	demo_uri?: string;
 	description: string;
 	date_updated: string;
 	price: string;

@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { MobilePromoCard } from '@automattic/components';
 import { translate } from 'i18n-calypso';
+import page from 'page';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import blazeDropDownIllustration from 'calypso/assets/images/illustrations/blaze-drop-down.svg';
@@ -32,10 +33,14 @@ export default function PromoCards( { isOdysseyStats, slug, pageSlug } ) {
 	);
 	const shouldShowAdvertisingOption = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
 
+	// This is used to show some banner only on annual stats page.
+	const isAnnualStatsPage = page.current.includes( 'annualstats' );
+
 	// Blaze promo is disabled for Odyssey.
-	const showBlazePromo = ! isOdysseyStats && shouldShowAdvertisingOption;
+	const showBlazePromo = isAnnualStatsPage && ! isOdysseyStats && shouldShowAdvertisingOption;
 	// Yoast promo is disabled for Odyssey & self-hosted & non-traffic pages.
-	const showYoastPromo = ! isOdysseyStats && ! jetpackNonAtomic && pageSlug === 'traffic';
+	const showYoastPromo =
+		isAnnualStatsPage && ! isOdysseyStats && ! jetpackNonAtomic && pageSlug === 'traffic';
 
 	const viewEvents = useMemo( () => {
 		const events = [];

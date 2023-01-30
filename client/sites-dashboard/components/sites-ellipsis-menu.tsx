@@ -1,4 +1,6 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
+	WPCOM_FEATURES_COPY_SITE,
 	WPCOM_FEATURES_MANAGE_PLUGINS,
 	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
 } from '@automattic/calypso-products';
@@ -6,11 +8,17 @@ import { Gridicon } from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { DropdownMenu, MenuGroup, MenuItem as CoreMenuItem, Modal } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
+import { addQueryArgs } from '@wordpress/url';
 import { ComponentType, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import SitePreviewLink from 'calypso/components/site-preview-link';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
@@ -47,7 +55,7 @@ const MenuItemLink = MenuItem as ComponentType< MenuItemLinkProps >;
 
 const LaunchItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
-	const dispatch = useDispatch();
+	const dispatch = useReduxDispatch();
 
 	return (
 		<MenuItem
@@ -128,7 +136,7 @@ const modalOverlayClassName = css( {
 } );
 
 function useSafeSiteHasFeature( siteId: number, feature: string ) {
-	const dispatch = useDispatch();
+	const dispatch = useReduxDispatch();
 	useEffect( () => {
 		dispatch( fetchSiteFeatures( siteId ) );
 	}, [ dispatch, siteId ] );
@@ -173,6 +181,36 @@ const PreviewSiteModalItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 				</Modal>
 			) }
 		</>
+	);
+};
+
+const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
+	const { __ } = useI18n();
+	const hasCopySiteFeature = useSafeSiteHasFeature( site.ID, WPCOM_FEATURES_COPY_SITE );
+	const isAtomic = useSelector( ( state ) => isSiteAtomic( state, site.ID ) );
+	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
+	const plan = site.plan;
+	const isSiteOwner = site.site_owner === userId;
+	const { setPlanCartItem } = useDispatch( ONBOARD_STORE );
+
+	if ( ! hasCopySiteFeature || ! isSiteOwner || ! plan || ! isAtomic ) {
+		return null;
+	}
+
+	const copySiteHref = addQueryArgs( `/setup/copy-site`, {
+		sourceSlug: site.slug,
+	} );
+	return (
+		<MenuItemLink
+			href={ copySiteHref }
+			onClick={ () => {
+				clearSignupDestinationCookie();
+				setPlanCartItem( { product_slug: plan.product_slug } );
+				recordTracks( 'calypso_sites_dashboard_site_action_copy_site_click' );
+			} }
+		>
+			{ __( 'Copy site' ) }
+		</MenuItemLink>
 	);
 };
 
@@ -222,7 +260,7 @@ export const SitesEllipsisMenu = ( {
 	className?: string;
 	site: SiteExcerptData;
 } ) => {
-	const dispatch = useDispatch();
+	const dispatch = useReduxDispatch();
 	const { __ } = useI18n();
 	const props: SitesMenuItemProps = {
 		site,
@@ -246,6 +284,7 @@ export const SitesEllipsisMenu = ( {
 					<ManagePluginsItem { ...props } />
 					{ showHosting && <HostingConfigItem { ...props } /> }
 					{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
+					{ isEnabled( 'sites/copy-site' ) && <CopySiteItem { ...props } /> }
 					<WpAdminItem { ...props } />
 				</SiteMenuGroup>
 			) }

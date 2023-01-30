@@ -94,8 +94,9 @@ export function removeExpiredExperimentAssignments(): void {
 					ExperimentAssignments.isAlive(
 						retrieveExperimentAssignment( experimentName ) as ExperimentAssignment
 					)
-				)
+				) {
 					return false;
+				}
 			} catch ( _ ) {}
 			return true;
 		} )

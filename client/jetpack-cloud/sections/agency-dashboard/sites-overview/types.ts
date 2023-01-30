@@ -22,7 +22,9 @@ export interface MonitorSettings {
 	monitor_active: boolean;
 	last_down_time: string;
 	monitor_deferment_time: number;
-	monitor_notify_users_emails: Array< string >;
+	monitor_user_emails: Array< string >;
+	monitor_user_email_notifications: boolean;
+	monitor_user_wp_note_notifications: boolean;
 }
 
 export interface Site {
@@ -40,6 +42,8 @@ export interface Site {
 	is_favorite: boolean;
 	monitor_settings: MonitorSettings;
 	monitor_last_status_change: string;
+	isSelected?: boolean;
+	onSelect?: ( value: boolean ) => void;
 }
 export interface SiteNode {
 	value: Site;
@@ -119,10 +123,18 @@ export type AllowedActionTypes = 'issue_license' | 'view_activity' | 'view_site'
 export type ActionEventNames = {
 	[ key in AllowedActionTypes ]: { small_screen: string; large_screen: string };
 };
-export interface SitesOverviewContextInterface {
+
+export interface DashboardOverviewContextInterface {
 	search: string;
 	currentPage: number;
 	filter: { issueTypes: Array< AgencyDashboardFilterOption >; showOnlyFavorites: boolean };
+}
+
+export interface SitesOverviewContextInterface extends DashboardOverviewContextInterface {
+	isBulkManagementActive: boolean;
+	setIsBulkManagementActive: ( value: boolean ) => void;
+	selectedSites: Array< Site >;
+	setSelectedSites: ( value: Array< Site > ) => void;
 }
 
 export type AgencyDashboardFilterOption =

@@ -225,6 +225,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		isPurchasingItem: isPurchasingDomainItem,
 		siteUrl,
 		themeSlugWithRepo,
+		themeStyleVariation,
 		themeItem,
 		siteAccentColor,
 	} = stepData;
@@ -297,20 +298,16 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 				themeItem,
 			};
 
-			processItemCart(
-				providedDependencies,
-				newCartItems,
-				callback,
-				reduxStore,
-				siteSlug,
+			processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, {
 				isFreeThemePreselected,
-				themeSlugWithRepo
-			);
+				themeSlugWithRepo,
+				themeStyleVariation,
+			} );
 		}
 	);
 }
 
-export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
+export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo, themeStyleVariation } ) {
 	if ( isEmpty( themeSlugWithRepo ) ) {
 		defer( callback );
 		return;
@@ -319,7 +316,10 @@ export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
 	const theme = themeSlugWithRepo.split( '/' )[ 1 ];
 
 	wpcom.req
-		.post( `/sites/${ siteSlug }/themes/mine`, { theme } )
+		.post( `/sites/${ siteSlug }/themes/mine`, {
+			theme,
+			...( themeStyleVariation && { style_variation_slug: themeStyleVariation } ),
+		} )
 		.then( () => callback() )
 		.catch( ( error ) => callback( [ error ] ) );
 }
@@ -345,7 +345,7 @@ function addDIFMLiteProductToCart( callback, dependencies, step, reduxStore ) {
 		cartItem,
 	};
 	const newCartItems = [ cartItem ];
-	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, null, null );
+	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug );
 }
 
 /**
@@ -500,16 +500,9 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 	const providedDependencies = { cartItem };
 	const newCartItems = [ cartItem, emailItem ].filter( ( item ) => item );
 
-	processItemCart(
-		providedDependencies,
-		newCartItems,
-		callback,
-		reduxStore,
-		siteSlug,
-		null,
-		null,
-		lastKnownFlow
-	);
+	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, {
+		lastKnownFlow,
+	} );
 }
 export function addAddOnsToCart(
 	callback,
@@ -531,16 +524,7 @@ export function addAddOnsToCart(
 	}
 
 	const newCartItems = cartItem.filter( ( item ) => item );
-	processItemCart(
-		providedDependencies,
-		newCartItems,
-		callback,
-		reduxStore,
-		slug,
-		null,
-		null,
-		null
-	);
+	processItemCart( providedDependencies, newCartItems, callback, reduxStore, slug );
 }
 
 export function addDomainToCart(
@@ -557,16 +541,7 @@ export function addDomainToCart(
 
 	const newCartItems = [ domainItem, googleAppsCartItem ].filter( ( item ) => item );
 
-	processItemCart(
-		providedDependencies,
-		newCartItems,
-		callback,
-		reduxStore,
-		slug,
-		null,
-		null,
-		null
-	);
+	processItemCart( providedDependencies, newCartItems, callback, reduxStore, slug );
 }
 
 function processItemCart(
@@ -575,9 +550,7 @@ function processItemCart(
 	callback,
 	reduxStore,
 	siteSlug,
-	isFreeThemePreselected,
-	themeSlugWithRepo,
-	lastKnownFlow
+	{ isFreeThemePreselected, themeSlugWithRepo, themeStyleVariation, lastKnownFlow } = {}
 ) {
 	const addToCartAndProceed = async () => {
 		debug( 'preparing to add cart items (if any) from', newCartItems );
@@ -610,11 +583,15 @@ function processItemCart(
 	const userLoggedIn = isUserLoggedIn( reduxStore.getState() );
 
 	if ( ! userLoggedIn && isFreeThemePreselected ) {
-		setThemeOnSite( addToCartAndProceed, { siteSlug, themeSlugWithRepo } );
+		setThemeOnSite( addToCartAndProceed, { siteSlug, themeSlugWithRepo, themeStyleVariation } );
 	} else if ( userLoggedIn && isFreeThemePreselected ) {
 		fetchSitesAndUser(
 			siteSlug,
-			setThemeOnSite.bind( null, addToCartAndProceed, { siteSlug, themeSlugWithRepo } ),
+			setThemeOnSite.bind( null, addToCartAndProceed, {
+				siteSlug,
+				themeSlugWithRepo,
+				themeStyleVariation,
+			} ),
 			reduxStore
 		);
 	} else if ( userLoggedIn && siteSlug ) {

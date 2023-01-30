@@ -9,8 +9,8 @@ import 'calypso/state/themes/init';
  * Return a table of all theme filter terms indexed by
  * full 'taxonomy:term' strings.
  *
- * @param {object} state Global state tree
- * @returns {object} table of 'taxonomy:term' to 'term'
+ * @param {Object} state Global state tree
+ * @returns {Object} table of 'taxonomy:term' to 'term'
  */
 export const getThemeFilterToTermTable = createSelector(
 	( state ) => {

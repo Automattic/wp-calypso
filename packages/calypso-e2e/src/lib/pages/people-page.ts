@@ -16,6 +16,7 @@ const selectors = {
 	deleteConfirmBanner: ':text("Successfully deleted")',
 
 	// Header
+	addPeopleButton: 'a:text("Add a team member")',
 	invitePeopleButton: '.people-list-section-header__add-button',
 
 	// Invites
@@ -122,6 +123,15 @@ export class PeoplePage {
 			this.page.waitForNavigation(),
 			this.page.click( selectors.invitePeopleButton ),
 		] );
+	}
+
+	/**
+	 * Click on the `Invite` button to navigate to the invite user page.
+	 */
+	async clickAddTeamMember(): Promise< void > {
+		await this.waitUntilLoaded();
+
+		await this.page.click( selectors.addPeopleButton );
 	}
 
 	/**

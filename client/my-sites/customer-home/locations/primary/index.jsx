@@ -8,6 +8,7 @@ import {
 	NOTICE_CELEBRATE_SITE_CREATION,
 	NOTICE_CELEBRATE_SITE_LAUNCH,
 	NOTICE_CELEBRATE_SITE_MIGRATION,
+	NOTICE_CELEBRATE_SITE_COPY,
 	NOTICE_CELEBRATE_SITE_SETUP_COMPLETE,
 	TASK_CLOUDFLARE,
 	TASK_CONNECT_ACCOUNTS,
@@ -30,6 +31,7 @@ import {
 	TASK_REACTIVATE_ATOMIC_TRANSFER,
 	TASK_REACTIVATE_RESTORE_BACKUP,
 } from 'calypso/my-sites/customer-home/cards/constants';
+import CelebrateSiteCopy from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-copy';
 import CelebrateSiteCreation from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-creation';
 import CelebrateSiteLaunch from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-launch';
 import CelebrateSiteMigration from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-migration';
@@ -58,6 +60,7 @@ const cardComponents = {
 	[ NOTICE_CELEBRATE_SITE_CREATION ]: CelebrateSiteCreation,
 	[ NOTICE_CELEBRATE_SITE_LAUNCH ]: CelebrateSiteLaunch,
 	[ NOTICE_CELEBRATE_SITE_MIGRATION ]: CelebrateSiteMigration,
+	[ NOTICE_CELEBRATE_SITE_COPY ]: CelebrateSiteCopy,
 	[ NOTICE_CELEBRATE_SITE_SETUP_COMPLETE ]: CelebrateSiteSetupComplete,
 	[ TASK_CLOUDFLARE ]: Cloudflare,
 	[ TASK_CONNECT_ACCOUNTS ]: ConnectAccounts,

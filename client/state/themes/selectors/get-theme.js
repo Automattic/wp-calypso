@@ -5,10 +5,10 @@ import 'calypso/state/themes/init';
 /**
  * Returns a theme object by site ID, theme ID pair.
  *
- * @param  {object}  state   Global state tree
+ * @param  {Object}  state   Global state tree
  * @param  {number}  siteId  Site ID
  * @param  {string}  themeId Theme ID
- * @returns {?object}         Theme object
+ * @returns {?Object}         Theme object
  */
 export const getTheme = createSelector(
 	( state, siteId, themeId ) => {

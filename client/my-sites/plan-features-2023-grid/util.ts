@@ -5,6 +5,7 @@ import {
 	FEATURE_200GB_STORAGE,
 } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
+import { useCallback, useEffect, useState } from 'react';
 
 export const getStorageStringFromFeature = ( storageFeature: string ) => {
 	switch ( storageFeature ) {
@@ -19,4 +20,26 @@ export const getStorageStringFromFeature = ( storageFeature: string ) => {
 		default:
 			return null;
 	}
+};
+
+export const usePricingBreakpoint = ( targetBreakpoint: number ) => {
+	const [ breakpoint, setBreakpoint ] = useState( false );
+
+	const handleResize = useCallback( () => {
+		if ( typeof window === 'undefined' ) {
+			return;
+		}
+		setBreakpoint( window.innerWidth < targetBreakpoint );
+	}, [ targetBreakpoint ] );
+
+	useEffect( () => {
+		window.addEventListener( 'resize', handleResize );
+		return () => window.removeEventListener( 'resize', handleResize );
+	}, [ handleResize ] );
+
+	useEffect( () => {
+		handleResize();
+	}, [] );
+
+	return breakpoint;
 };

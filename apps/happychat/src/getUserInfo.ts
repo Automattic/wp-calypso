@@ -20,18 +20,18 @@ type UserInfo = {
 		region: string;
 		city: string;
 	};
-	cameThrough: string | null;
+	requestSource: string | null;
 };
 
 /**
  * Returns the source where the user came from.
  */
-function getUserCameThrough() {
+function getRequestSource() {
 	const queryArgs = getQueryArgs();
 	const isWCCOM = queryArgs?.ref === 'woocommerce-com';
 
 	if ( isWCCOM ) {
-		return isWcMobileApp() ? 'store setup on Woo mobile app' : 'store setup on Woo browser';
+		return isWcMobileApp() ? 'woo_store_creation_mobile' : 'woo_store_creation_browser';
 	}
 	return null;
 }
@@ -59,7 +59,7 @@ export function getUserInfo(
 		// add user agent
 		userAgent: window.navigator.userAgent,
 		geoLocation,
-		cameThrough: getUserCameThrough(),
+		requestSource: getRequestSource(),
 	};
 	return info;
 }

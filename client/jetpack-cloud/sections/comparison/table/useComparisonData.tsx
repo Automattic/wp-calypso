@@ -281,18 +281,17 @@ export const useComparisonData = () => {
 						icon: SocialIcon,
 						info: {
 							FREE: {
-								content: translate( 'Automated posting' ),
+								content: translate( 'Social Free' ),
 							},
 							BACKUP: {
-								content: translate( 'Automated posting' ),
+								content: translate( 'Social Free' ),
 							},
 							SECURITY: {
-								highlight: true,
-								content: translate( 'Automated and Scheduled posting' ),
+								content: translate( 'Social Free' ),
 							},
 							COMPLETE: {
 								highlight: true,
-								content: translate( 'Automated and Scheduled posting' ),
+								content: translate( 'Social Basic' ),
 							},
 						},
 					},

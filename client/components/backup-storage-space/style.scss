@@ -1,13 +1,22 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .backup-storage-space {
 	margin-top: 1rem;
-	padding: 16px 32px;
+	padding: 32px 24px;
 	background: #fff;
 	box-shadow: 0 0 0 1px var(--color-neutral-5);
 
 	&__loading {
-		@include placeholder( --color-neutral-10 );
+		@include placeholder(--color-neutral-10);
 		height: 24px;
 		box-shadow: none;
+	}
+
+	&__storage-full-icon {
+		color: var(--studio-red-50);
+		margin-right: 4px;
+		vertical-align: middle;
 	}
 }
 
@@ -83,22 +92,111 @@
 }
 
 .backup-storage-space__progress-heading {
-	margin-block-end: 12px;
+	margin-block-end: 24px;
 	white-space: nowrap;
-
+	line-height: 1;
 	font-weight: 600;
-	font-size: $font-body-small;
+	font-size: $font-title-small;
+
+	span {
+		vertical-align: middle;
+	}
 }
 
-.backup-storage-space__progress-usage-text {
-	margin-block-start: 8px;
+.backup-storage-space__progress-usage-container {
+	margin-block-start: 16px;
 	white-space: nowrap;
-
-	font-size: $font-body-extra-small;
-	color: var(--studio-green-50);
-	font-weight: 500;
+	display: flex;
+	font-size: $font-body-small;
+	font-weight: 400;
+	line-height: 20px;
 
 	a {
 		text-decoration: underline;
+	}
+}
+
+.backup-storage-space__progress-storage-usage-text {
+	&.is-storage-full {
+		color: var(--studio-red-50);
+	}
+
+	.used-space__span {
+		font-weight: 700;
+	}
+}
+
+.backup-storage-space__progress-backups-saved-text {
+	margin-left: auto;
+}
+
+.storage-usage-help-tooltip {
+
+	&__tooltip.popover {
+		&.is-right .popover__arrow {
+			border-right-color: #fff;
+		}
+
+		&.is-top-right .popover__arrow {
+			border-top-color: #fff;
+		}
+
+		&.is-bottom-right .popover__arrow {
+			border-bottom-color: #fff;
+		}
+
+		.popover__inner {
+			padding: 16px;
+			color: var(--studio-gray-70);
+			background: #fff;
+			border-radius: 2px;
+			box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
+
+			p {
+				padding-right: 24px;
+				font-size: $font-body;
+				color: var(--studio-gray-60);
+				margin: 0;
+			}
+
+			hr {
+				margin-bottom: 0.25rem;
+			}
+
+			a {
+				font-size: $font-body;
+				text-decoration: underline;
+			}
+		}
+
+		@include break-mobile() {
+			max-width: 270px;
+		}
+	}
+
+	&__toggle-tooltip {
+		vertical-align: middle;
+
+		&.button.is-borderless {
+			padding: 0;
+			height: 20px;
+
+			.gridicon {
+				top: 0;
+				color: var(--studio-gray-60);
+			}
+		}
+	}
+
+	&__close-tooltip {
+		position: absolute;
+		right: 16px;
+		top: 16px;
+		color: var(--studio-gray-40);
+
+		&.button {
+			height: 18px;
+			padding: 0;
+		}
 	}
 }

@@ -61,8 +61,8 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		editorPage = new EditorPage( page, { target: features.siteType } );
 		await editorPage.waitUntilLoaded();
 
-		const editorIframe = await editorPage.getEditorHandle();
-		const pageTemplateModalComponent = new PageTemplateModalComponent( editorIframe, page );
+		const editorWindowLocator = editorPage.getEditorWindowLocator();
+		const pageTemplateModalComponent = new PageTemplateModalComponent( page, editorWindowLocator );
 
 		await pageTemplateModalComponent.selectTemplateCategory( 'About' );
 		await pageTemplateModalComponent.selectTemplate( 'About me' );
@@ -70,8 +70,8 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 	it( 'Template content loads into editor', async function () {
 		// @TODO Consider moving this to EditorPage.
-		const editorIframe = await editorPage.getEditorHandle();
-		await editorIframe.waitForSelector( `h1:text-is("About Me")` );
+		const editorWindowLocator = editorPage.getEditorWindowLocator();
+		await editorWindowLocator.locator( `h1:text-is("About Me")` ).waitFor();
 	} );
 
 	it( 'Open setting sidebar', async function () {

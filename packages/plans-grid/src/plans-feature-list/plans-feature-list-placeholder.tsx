@@ -25,7 +25,7 @@ const PlansFeatureListPlaceholder: React.FunctionComponent< Props > = ( {
 			>
 				{ features.map( ( feature ) => (
 					<li key={ feature } className="plans-feature-list__item">
-						<span className="plans-feature-list__placeholder">{ '' }</span>
+						<span className="plans-feature-list__placeholder"></span>
 					</li>
 				) ) }
 			</ul>

@@ -790,17 +790,19 @@ class ThemeSheet extends Component {
 		if ( ! isLoggedIn ) {
 			plansUrl = localizeUrl( 'https://wordpress.com/pricing' );
 		} else if ( siteSlug ) {
-			plansUrl = plansUrl + `/${ siteSlug }/?plan=value_bundle`;
+			const plan = isExternallyManagedTheme || isBundledSoftwareSet ? PLAN_BUSINESS : PLAN_PREMIUM;
+			plansUrl = plansUrl + `/${ siteSlug }/?plan=${ plan }`;
 		}
 
 		const launchPricing = () => window.open( plansUrl, '_blank' );
 
-		const { canonicalUrl, description, name: themeName } = this.props;
-		const title =
-			themeName &&
-			translate( '%(themeName)s Theme', {
-				args: { themeName },
-			} );
+		const { canonicalUrl, description, name: themeName, seo_title, seo_description } = this.props;
+
+		const title = seo_title
+			? seo_title
+			: translate( '%(themeName)s Theme', {
+					args: { themeName },
+			  } );
 
 		const metas = [
 			{ property: 'og:title', content: title },
@@ -810,11 +812,11 @@ class ThemeSheet extends Component {
 			{ property: 'og:site_name', content: 'WordPress.com' },
 		];
 
-		if ( description ) {
+		if ( seo_description || description ) {
 			metas.push( {
 				name: 'description',
 				property: 'og:description',
-				content: decodeEntities( description ),
+				content: decodeEntities( seo_description || description ),
 			} );
 		}
 
@@ -860,9 +862,12 @@ class ThemeSheet extends Component {
 				( isBundledSoftwareSet && ! isSiteBundleEligible ) ||
 				( isExternallyManagedTheme &&
 					( ! isMarketplaceThemeSubscribed || ! isSiteEligibleForManagedExternalThemes ) );
+
+			const upsellNudgePlan =
+				isExternallyManagedTheme || isBundledSoftwareSet ? PLAN_BUSINESS : PLAN_PREMIUM;
 			pageUpsellBanner = (
 				<UpsellNudge
-					plan={ PLAN_PREMIUM }
+					plan={ upsellNudgePlan }
 					className={ upsellNudgeClasses }
 					title={ this.getBannerUpsellTitle() }
 					description={ preventWidows( this.getBannerUpsellDescription() ) }
@@ -934,7 +939,7 @@ class ThemeSheet extends Component {
 				/>
 				{ this.renderBar() }
 				<QueryActiveTheme siteId={ siteId } />
-				<ThanksModal source="details" />
+				<ThanksModal source="details" themeId={ this.props.themeId } />
 				<AutoLoadingHomepageModal source="details" />
 				{ pageUpsellBanner }
 				<HeaderCake

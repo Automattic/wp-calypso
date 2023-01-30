@@ -11,7 +11,7 @@ let parser;
  *
  * This is need in order to sanitize the content on the server.
  *
- * @param {object} newRoot window-like object to use as root
+ * @param {Object} newRoot window-like object to use as root
  */
 export function overrideSanitizeSectionRoot( newRoot ) {
 	root = newRoot;
@@ -23,7 +23,7 @@ export function overrideSanitizeSectionRoot( newRoot ) {
  *
  * This is need in order to sanitize the content on the server.
  *
- * @returns {object} window-like object used as root
+ * @returns {Object} window-like object used as root
  */
 export function getSanitizeSectionRoot() {
 	return root;

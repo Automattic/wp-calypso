@@ -16,6 +16,11 @@
 		.site-set-favorite__favorite-icon {
 			visibility: visible;
 		}
+
+		.site-select-checkbox input:disabled {
+			background: var(--color-neutral-10);
+			cursor: not-allowed;
+		}
 	}
 	&-disabled {
 		opacity: 0.5;

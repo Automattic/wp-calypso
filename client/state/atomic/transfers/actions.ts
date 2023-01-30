@@ -28,9 +28,9 @@ export interface AtomicTransferError {
  * Initiate Atomic transfer, optionally with software set install.
  *
  * @param {string} siteId Site ID.
- * @param {object} options Transfer options.
+ * @param {Object} options Transfer options.
  * @param {string} options.softwareSet Software set to install.
- * @returns {object} An action object.
+ * @returns {Object} An action object.
  */
 export const initiateAtomicTransfer = (
 	siteId: number,
@@ -46,7 +46,7 @@ export const initiateAtomicTransfer = (
  * Fetch transfer.
  *
  * @param {string} siteId Site ID.
- * @returns {object} An action object.
+ * @returns {Object} An action object.
  */
 export const requestLatestAtomicTransfer = ( siteId: number ) =>
 	( {
@@ -58,8 +58,8 @@ export const requestLatestAtomicTransfer = ( siteId: number ) =>
  * Set the transfer.
  *
  * @param {number} siteId The site id to which the status belongs.
- * @param {object} transfer The new status of the transfer.
- * @returns {object} An action object
+ * @param {Object} transfer The new status of the transfer.
+ * @returns {Object} An action object
  */
 export const setLatestAtomicTransfer = ( siteId: number, transfer: AtomicTransfer ) =>
 	( {

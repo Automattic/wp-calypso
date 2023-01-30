@@ -599,6 +599,11 @@
 		}
 	}
 
+	.reader-sidebar-site_siteicon {
+		min-height: 32px;
+		min-width: 32px;
+	}
+
 	.reader-sidebar-site_sitename {
 		color: var(--color-neutral-100);
 		font-weight: 600;

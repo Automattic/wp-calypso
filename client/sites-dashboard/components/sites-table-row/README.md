@@ -21,5 +21,5 @@ function render() {
 
 ## Props
 
-- `site`: a site data  e.g. SiteExcerptData object.
+- `site`: a site data e.g. SiteExcerptData object.
 - `key`: unique key eg. Site ID.

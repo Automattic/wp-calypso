@@ -358,7 +358,7 @@ export default connect(
 		return {
 			hasLoadedSitePurchasesFromServer: hasLoadedSitePurchasesFromServer( state ),
 			isAtomic: isSiteAutomatedTransfer( state, siteId ),
-			isFreePlan: isFreePlanProduct( site.plan ),
+			isFreePlan: isFreePlanProduct( site?.plan ),
 			siteDomain,
 			siteId,
 			siteSlug,

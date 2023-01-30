@@ -105,7 +105,7 @@ describe(
 			} );
 
 			it( 'Make purchase', async function () {
-				await cartCheckoutPage.purchase();
+				await cartCheckoutPage.purchase( { timeout: 30 * 1000 } );
 			} );
 
 			it( 'Return to My Home dashboard', async function () {

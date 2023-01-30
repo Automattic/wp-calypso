@@ -33,7 +33,7 @@
 }
 
 /* Swap at the larger sizes to the "portrait" image */
-@include break-medium {
+@include break-mobile {
 	.hero-image--container-inner-small-screen {
 		display: none;
 	}
@@ -46,6 +46,7 @@
 		display: block;
 	}
 }
+
 /* For Jetpack Complete - In custom medium breakpoint we are using a different image since actual image is overflowing */
 @media only screen and ( min-width: 821px ) and ( max-width: 1024px ) {
 	.hero-image--container-inner-small-screen {

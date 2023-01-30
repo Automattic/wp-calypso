@@ -1,3 +1,48 @@
+$plans-2023-small-breakpoint: 880px;
+$plans-2023-medium-breakpoint: 1340px;
+$plans-2023-large-breakpoint: 1500px;
+
+@mixin onboarding-2023-pricing-grid-plans-breakpoints {
+	max-width: 414px;
+
+	@media ( min-width: $plans-2023-small-breakpoint ) {
+		max-width: 860px;
+	}
+
+	@media ( min-width: $plans-2023-medium-breakpoint ) {
+		max-width: 1320px;
+	}
+
+	@media ( min-width: $plans-2023-large-breakpoint ) {
+		max-width: 1480px;
+	}
+}
+
+@mixin internal-plans-page {
+	max-width: 414px;
+
+	@media ( min-width: $plans-2023-small-breakpoint ) {
+		max-width: 860px;
+	}
+
+	@media ( min-width: $plans-2023-medium-breakpoint ) {
+		max-width: 1320px;
+	}
+
+	@media ( min-width: $plans-2023-large-breakpoint ) {
+		max-width: 1566px;
+	}
+}
+
+.plans-features-main__group.is-2023-pricing-grid {
+	@include onboarding-2023-pricing-grid-plans-breakpoints;
+}
+
+.is-full-width-layout .plans-features-main__group.is-2023-pricing-grid {
+	@include internal-plans-page;
+
+}
+
 .plans-step {
 	margin: 0 auto;
 	max-width: 700px;
@@ -11,20 +56,13 @@
 		max-width: 1200px;
 	}
 
+	// 2023 has extra wide layout
+	&.is-extra-wide-layout {
+		max-width: 1480px;
+	}
+
 	.is-onboarding-2023-pricing-grid &.is-wide-layout {
-		max-width: 414px;
-
-		@media ( min-width: 880px ) {
-			max-width: 860px;
-		}
-
-		@media ( min-width: 1340px ) {
-			max-width: 1320px;
-		}
-
-		@media ( min-width: 1500px ) {
-			max-width: 1480px;
-		}
+		@include onboarding-2023-pricing-grid-plans-breakpoints;
 	}
 
 	.formatted-header.is-without-subhead {
@@ -36,20 +74,8 @@
 			max-width: 1200px;
 		}
 
-		.is-onboarding-2023-pricing-grid &.is-wide-layout {
-			max-width: 414px;
-
-			@media ( min-width: 880px ) {
-				max-width: 860px;
-			}
-
-			@media ( min-width: 1340px ) {
-				max-width: 1320px;
-			}
-
-			@media ( min-width: 1500px ) {
-				max-width: 1480px;
-			}
+		.is-onboarding-2023-pricing-grid .signup__step &.is-wide-layout {
+			@include onboarding-2023-pricing-grid-plans-breakpoints;
 		}
 	}
 }

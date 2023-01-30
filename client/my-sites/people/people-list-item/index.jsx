@@ -23,10 +23,12 @@ class PeopleListItem extends PureComponent {
 		site: PropTypes.object,
 		invite: PropTypes.object,
 		showStatus: PropTypes.bool,
+		clickableItem: PropTypes.bool,
 		RevokeClearBtn: PropTypes.elementType,
 	};
 
 	static defaultProps = {
+		clickableItem: true,
 		RevokeClearBtn: null,
 	};
 
@@ -60,26 +62,33 @@ class PeopleListItem extends PureComponent {
 	};
 
 	maybeGetCardLink = () => {
-		const { invite, site, type, user } = this.props;
+		const { invite, site, type, user, clickableItem } = this.props;
 
-		if ( 'invite-details' === type ) {
-			return null;
+		if ( ! clickableItem ) {
+			return false;
 		}
 
-		const editLink = this.canLinkToProfile() && `/people/edit/${ site.slug }/${ user.login }`;
-		const inviteLink = invite && `/people/invites/${ site.slug }/${ invite.key }`;
-		const subscriberDetailsLink =
-			this.canLinkToSubscriberProfile() && `/people/subscribers/${ site.slug }/${ user.ID }`;
-
 		switch ( type ) {
-			case 'invite':
-				return inviteLink;
+			case 'invite-details':
+				return null;
 
-			case 'subscriber-details':
-				return subscriberDetailsLink;
+			case 'invite':
+				return invite && `/people/invites/${ site.slug }/${ invite.key }`;
+
+			case 'subscriber-details': {
+				const subscriberType = user.login ? 'wpcom' : 'email';
+
+				return (
+					this.canLinkToSubscriberProfile() &&
+					`/people/subscribers/${ site.slug }/${ subscriberType }-${ user.ID }`
+				);
+			}
+
+			case 'viewer':
+				return `/people/viewers/${ site.slug }/${ user.ID }`;
 
 			default:
-				return editLink;
+				return this.canLinkToProfile() && `/people/edit/${ site.slug }/${ user.login }`;
 		}
 	};
 

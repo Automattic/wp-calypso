@@ -49,9 +49,6 @@ object WPComTests : Project({
 	// Editor Tracking Edge
 	buildType(editorTrackingBuildType("desktop", "c752ca9a-e77d-11ec-8fea-0242ac120002", atomic=false, edge=true));
 
-	buildType(coblocksPlaywrightBuildType("desktop", "08f88b93-993e-4de8-8d80-4a94981d9af4"));
-	buildType(coblocksPlaywrightBuildType("mobile", "cbcd44d5-4d31-4adc-b1b5-97f1225c6a7c"));
-
 	buildType(jetpackPlaywrightBuildType("desktop", "68fe6336-5869-4244-b236-cca23ba03487"));
 	buildType(jetpackPlaywrightBuildType("mobile", "a80b5c10-1fef-4c7f-9e2c-5c5c30d637c8"));
 
@@ -172,51 +169,6 @@ fun editorTrackingBuildType( targetDevice: String, buildUuid: String, atomic: Bo
 				buildFinishedSuccessfully = true
 			}
 		}
-	)
-}
-
-fun coblocksPlaywrightBuildType( targetDevice: String, buildUuid: String ): E2EBuildType {
-    return E2EBuildType (
-		buildId = "WPComTests_coblocks_Playwright_$targetDevice",
-		buildUuid = buildUuid,
-		buildName = "CoBlocks E2E Tests ($targetDevice)",
-		buildDescription = "Runs CoBlocks E2E tests as $targetDevice",
-		testGroup = "coblocks",
-		buildParams = {
-			text(
-				name = "env.CALYPSO_BASE_URL",
-				value = "https://wordpress.com",
-				label = "Test URL",
-				description = "URL to test against",
-				allowEmpty = false
-			)
-			checkbox(
-				name = "env.COBLOCKS_EDGE",
-				value = "false",
-				label = "Use coblocks-edge",
-				description = "Use a blog with coblocks-edge sticker",
-				checked = "true",
-				unchecked = "false"
-			)
-			param("env.AUTHENTICATE_ACCOUNTS", "gutenbergSimpleSiteEdgeUser,gutenbergSimpleSiteUser,coBlocksSimpleSiteEdgeUser")
-			param("env.VIEWPORT_NAME", "$targetDevice")
-		},
-		buildFeatures = {
-			notifications {
-				notifierSettings = slackNotifier {
-					connection = "PROJECT_EXT_11"
-					sendTo = "#gutenberg-e2e"
-					messageFormat = verboseMessageFormat {
-						addBranch = true
-						addStatusText = true
-						maximumNumberOfChanges = 10
-					}
-				}
-				branchFilter = "+:<default>"
-				buildFailed = true
-				buildFinishedSuccessfully = true
-			}
-		},
 	)
 }
 

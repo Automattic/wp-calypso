@@ -4,7 +4,7 @@ import getRequest from 'calypso/state/selectors/get-request';
 /**
  * Returns the loading state for the checklist API call
  *
- * @param  {object}  state  Global state tree
+ * @param  {Object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @returns {boolean}    Whether the checklist is loading
  */

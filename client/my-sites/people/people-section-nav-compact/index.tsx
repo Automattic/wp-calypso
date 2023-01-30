@@ -14,17 +14,19 @@ function PeopleSectionNavCompact( props: Props ) {
 	const _ = useTranslate();
 	const { selectedFilter, searchTerm, filterCount } = props;
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const searchPlaceholder =
+		selectedFilter === 'subscribers' ? _( 'Search by email...' ) : undefined;
 
 	const filters = [
+		{
+			id: 'team',
+			title: _( 'Team' ),
+			path: '/people/team/' + site?.slug,
+		},
 		{
 			id: 'subscribers',
 			title: _( 'Subscribers' ),
 			path: '/people/subscribers/' + site?.slug,
-		},
-		{
-			id: 'team-members',
-			title: _( 'Team' ),
-			path: '/people/team-members/' + site?.slug,
 		},
 	];
 
@@ -46,7 +48,8 @@ function PeopleSectionNavCompact( props: Props ) {
 					);
 				} ) }
 			</NavTabs>
-			<PeopleSearch search={ searchTerm } />
+
+			<PeopleSearch search={ searchTerm } placeholder={ searchPlaceholder } />
 		</>
 	);
 }

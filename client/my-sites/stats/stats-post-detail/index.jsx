@@ -6,10 +6,12 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
+import IllustrationStats from 'calypso/assets/images/stats/illustration-stats.svg';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
 import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
+import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import WebPreview from 'calypso/components/web-preview';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -170,7 +172,7 @@ class StatsPostDetail extends Component {
 							action={ translate( 'Get more traffic!' ) }
 							actionURL="https://wordpress.com/support/getting-more-views-and-traffic/"
 							actionTarget="blank"
-							illustration="calypso/assets/images/stats/illustration-stats.svg"
+							illustration={ IllustrationStats }
 							illustrationWidth={ 150 }
 						/>
 					) }
@@ -181,6 +183,8 @@ class StatsPostDetail extends Component {
 							<PostDetailTableSection siteId={ siteId } postId={ postId } />
 						</>
 					) }
+
+					<JetpackColophon />
 				</div>
 
 				<WebPreview
@@ -221,7 +225,7 @@ class StatsPostDetail extends Component {
 						action={ translate( 'Get more traffic!' ) }
 						actionURL="https://wordpress.com/support/getting-more-views-and-traffic/"
 						actionTarget="blank"
-						illustration="calypso/assets/images/stats/illustration-stats.svg"
+						illustration={ IllustrationStats }
 						illustrationWidth={ 150 }
 					/>
 				) }
@@ -247,6 +251,8 @@ class StatsPostDetail extends Component {
 						<PostWeeks siteId={ siteId } postId={ postId } />
 					</div>
 				) }
+
+				<JetpackColophon />
 
 				<WebPreview
 					showPreview={ this.state.showPreview }

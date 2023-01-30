@@ -1,3 +1,76 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.site-content__large-screen-view {
+	display: none;
+	@include break-xlarge {
+		display: block;
+	}
+}
+
+.site-content__small-screen-view {
+	@include break-xlarge {
+		display: none;
+	}
+}
+
 .site-content__mobile-view {
 	margin-bottom: 1.5rem;
+}
+
+.site-content__bulk-select {
+	margin-block-end: 8px;
+
+	.dashboard-bulk-actions {
+		display: flex;
+		justify-content: end;
+
+		.select-dropdown.is-compact {
+			width: 95%;
+			float: right;
+
+			@include break-mobile {
+				width: auto;
+			}
+		}
+	}
+
+	.dashboard-bulk-actions__edit-button {
+		float: right;
+	}
+
+	.site-bulk-select__bulk-select-label {
+		margin-inline-start: 12px;
+	}
+
+	.site-content__bulk-select-label {
+		color: var(--color-neutral-70);
+		font-size: 0.875rem;
+	}
+
+	@include break-mobile {
+		padding: 12px 16px;
+	}
+
+}
+
+.dashboard-bulk-actions {
+	.select-dropdown.is-compact {
+		width: 95%;
+		float: right;
+
+		@include break-mobile {
+			width: auto;
+		}
+	}
+}
+
+.button .gridicon {
+	color: var(--color-neutral-80);
+	width: 24px;
+	height: 24px;
+}
+
+.select-dropdown__item-text {
+	text-align: start;
 }

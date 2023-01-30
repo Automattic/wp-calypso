@@ -1,0 +1,87 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/typography/styles/variables";
+
+$font-recoleta: Recoleta, $sans;
+
+/**
+ * CSS used to transform existing Segment component to the styles used in the modernized Stats.
+ */
+@mixin navigation-segment-control-buttons( $segment-width: 100px ) {
+	.segmented-control {
+		&.is-primary {
+			.segmented-control__item.is-selected {
+				.segmented-control__link {
+					border-color: var(--color-primary);
+					background-color: var(--color-primary);
+
+					&:hover {
+						background-color: var(--color-primary);
+					}
+				}
+			}
+		}
+
+		.segmented-control__item {
+			&:first-of-type .segmented-control__link {
+				border-top-left-radius: 4px;
+				border-bottom-left-radius: 4px;
+			}
+
+			&:last-of-type .segmented-control__link {
+				border-top-right-radius: 4px;
+				border-bottom-right-radius: 4px;
+			}
+		}
+	}
+
+	.segmented-control__link {
+		font-weight: 500;
+		line-height: 20px;
+		color: var(--studio-black);
+		width: $segment-width;
+		box-sizing: border-box;
+
+		@media ( max-width: $break-mobile ) {
+			width: auto;
+		}
+	}
+
+	// Make the content break line earlier than 660px
+	@media ( max-width: $break-large ) {
+		.segmented-control {
+			width: 100%;
+		}
+
+		.segmented-control__link {
+			width: unset;
+		}
+	}
+}
+
+/*
+ * Align a header and its sibling in one row by applying a flexbox and padding.
+ */
+@mixin section-header-with-siblings {
+	flex: 1;
+	min-width: 320px;
+	padding: 0 24px 0 0;
+	margin: 0;
+
+	@media ( max-width: $break-mobile ) {
+		margin: 16px 0;
+		min-width: unset;
+	}
+}
+
+// TODO: would it be better to have a mixin file in Calypso components?
+
+/*
+ * Styles shared across headers on the Stats page.
+ */
+@mixin section-header {
+	font-weight: 400;
+	font-family: $font-recoleta;
+	font-size: $font-title-large;
+	line-height: 40px;
+	color: var(--studio-gray-100);
+}
