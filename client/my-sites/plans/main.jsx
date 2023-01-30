@@ -274,6 +274,10 @@ class Plans extends Component {
 						</p>
 					</div>
 					<div className="plans__chart-wrapper">
+						<div className="plans__chart" style={ { '--p': '25' } }>
+							5
+						</div>
+						<br />
 						<span className="plans__chart-label">days left in trial</span>
 					</div>
 				</Card>

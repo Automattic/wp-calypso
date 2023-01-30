@@ -112,41 +112,101 @@ body.is-section-plans.is-domain-sidebar-experiment-user {
 }
 
 body.is-section-plans.is-trial-plan {
-    &.theme-default.color-scheme {
-        --color-surface-backdrop: #fff;
-    }
+	&.theme-default.color-scheme {
+		--color-surface-backdrop: #fff;
+	}
 
-    .section-nav {
-        box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.05);
-    }
+	.section-nav {
+		box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+	}
 
-    .plans__trial-card {
-        display: flex;
-        padding: 30px;
-        background-color: #f6f7f799;
-        box-shadow: none;
+	.plans__trial-card {
+		display: flex;
+		padding: 30px;
+		background-color: #f6f7f799;
+		box-shadow: none;
 
-        .plans__trial-card-content {
-            flex: 1;
-            padding-right: 100px;
+		.plans__trial-card-content {
+			flex: 1;
+			padding-right: 100px;
 
-            .badge {
-                border-radius: 0;
-                background-color: #000;
-                color: #fff;
-                font-size: 0.75rem;
-            }
-            .plans__card-title {
-                font-size: $font-title-medium;
-                font-weight: 400;
-                color: #2f2f2f;
-                margin: 15px 0;
-            }
-            .plans__card-subtitle {
-                font-size: 1rem;
-                font-weight: 400;
-                color: #757575;
-            }
-        }
-    }
+			.badge {
+				border-radius: 0;
+				background-color: #000;
+				color: #fff;
+				font-size: 0.75rem;
+			}
+
+			.plans__card-title {
+				font-size: $font-title-medium;
+				font-weight: 400;
+				color: #2f2f2f;
+				margin: 15px 0;
+			}
+
+			.plans__card-subtitle {
+				font-size: 1rem;
+				font-weight: 400;
+				color: #757575;
+			}
+		}
+
+		.plans__chart-wrapper {
+			text-align: center;
+			padding: 0 20px;
+
+			.plans__chart {
+				@property --p {
+					syntax: "<number>";
+					inherits: true;
+					initial-value: 25;
+				}
+
+				--p: 20;
+				--b: 9px;
+				--c: #c9356e;
+				--w: 80px;
+
+				background-color: #fff;
+				width: var(--w);
+				aspect-ratio: 1;
+				position: relative;
+				display: inline-grid;
+				margin: 15px 0;
+				place-content: center;
+				font-size: $font-title-medium;
+				border-radius: 50%;
+				box-shadow: inset 0 0 0 var(--b) #f5e9ed, inset 0 0 0 10px #fff;
+
+				&::before,
+				&::after {
+					content: "";
+					position: absolute;
+					border-radius: 50%;
+				}
+
+				&::before {
+					inset: 0;
+					background:
+						radial-gradient(farthest-side, var(--c) 98%, #0000) top/var(--b)
+						var(--b) no-repeat,
+						conic-gradient(var(--c) calc(var(--p) * 1%), #0000 0);
+					-webkit-mask: radial-gradient(farthest-side, #0000 calc(99% - var(--b)), #000 calc(100% - var(--b)));
+					mask: radial-gradient(farthest-side, #0000 calc(99% - var(--b)), #000 calc(100% - var(--b)));
+				}
+
+				&::after {
+					inset: calc(50% - var(--b) / 2);
+					background: var(--c);
+					transform:
+						rotate(calc(var(--p) * 3.6deg))
+						translateY(calc(50% - var(--w) / 2));
+				}
+			}
+
+			.plans__chart-label {
+				color: #646970;
+			}
+		}
+	}
 }
