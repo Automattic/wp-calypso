@@ -30,27 +30,29 @@ export const HelpCenterSitePicker: React.FC< SitePicker > = ( {
 
 	return (
 		<section>
-			{ sitePickerChoice === 'OTHER_SITE' ? (
+			<SitePickerDropDown
+				enabled={ enabled }
+				onPickSite={ ( id: string | number ) => {
+					if ( id !== 0 ) {
+						setSite( currentSite );
+					}
+					setSitePickerChoice( id === 0 ? 'OTHER_SITE' : 'CURRENT_SITE' );
+				} }
+				options={ options }
+				siteId={ siteId }
+			/>
+
+			{ sitePickerChoice === 'OTHER_SITE' && (
 				<>
-					<TextControl
-						label={ __( 'Site address', __i18n_text_domain__ ) }
-						value={ userDeclaredSiteUrl ?? '' }
-						onChange={ setUserDeclaredSiteUrl }
-					/>
+					<section>
+						<TextControl
+							label={ __( 'Site address', __i18n_text_domain__ ) }
+							value={ userDeclaredSiteUrl ?? '' }
+							onChange={ setUserDeclaredSiteUrl }
+						/>
+					</section>
 					<HelpCenterOwnershipNotice ownershipResult={ ownershipResult } />
 				</>
-			) : (
-				<SitePickerDropDown
-					enabled={ enabled }
-					onPickSite={ ( id: string | number ) => {
-						if ( id !== 0 ) {
-							setSite( currentSite );
-						}
-						setSitePickerChoice( id === 0 ? 'OTHER_SITE' : 'CURRENT_SITE' );
-					} }
-					options={ options }
-					siteId={ siteId }
-				/>
 			) }
 		</section>
 	);

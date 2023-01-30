@@ -155,8 +155,10 @@ export const HelpCenterContactForm = () => {
 		Boolean( supportSite?.jetpack ),
 		Boolean( supportSite?.is_wpcom_atomic )
 	);
-
-	const showingSibylResults = params.get( 'show-results' ) === 'true';
+	const showingSibylResults = params.has( 'show-results' );
+	const showSibylArticlesPrelaunch = Boolean(
+		! showingSibylResults && sibylArticles && sibylArticles.length > 0
+	);
 
 	const InfoTip = () => {
 		const ref = useRef< HTMLButtonElement >( null );
@@ -198,11 +200,12 @@ export const HelpCenterContactForm = () => {
 		sectionName,
 		ownershipResult,
 		hideSiteInfo,
-		params
+		params,
+		showSibylArticlesPrelaunch
 	);
 
 	const getCTALabel = () => {
-		if ( ! showingSibylResults && sibylArticles && sibylArticles.length > 0 ) {
+		if ( showSibylArticlesPrelaunch ) {
 			return __( 'Continue', __i18n_text_domain__ );
 		}
 
@@ -258,16 +261,14 @@ export const HelpCenterContactForm = () => {
 				</p>
 			) }
 
-			{ ! userWithNoSites && (
-				<HelpCenterSitePicker
-					ownershipResult={ ownershipResult }
-					sitePickerChoice={ sitePickerChoice }
-					setSitePickerChoice={ setSitePickerChoice }
-					currentSite={ currentSite }
-					siteId={ sitePickerChoice === 'CURRENT_SITE' ? currentSite?.ID : 0 }
-					enabled={ mode === 'FORUM' }
-				/>
-			) }
+			<HelpCenterSitePicker
+				ownershipResult={ ownershipResult }
+				sitePickerChoice={ sitePickerChoice }
+				setSitePickerChoice={ setSitePickerChoice }
+				currentSite={ currentSite }
+				siteId={ sitePickerChoice === 'CURRENT_SITE' ? currentSite?.ID : 0 }
+				enabled={ mode === 'FORUM' }
+			/>
 
 			{ [ 'FORUM', 'EMAIL' ].includes( mode ) && (
 				<section>
@@ -340,7 +341,7 @@ export const HelpCenterContactForm = () => {
 					</div>
 				</section>
 			) }
-			<SibylArticles articleCanNavigateBack />
+			<SibylArticles message={ message } supportSite={ supportSite } articleCanNavigateBack />
 		</main>
 	);
 };

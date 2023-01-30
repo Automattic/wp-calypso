@@ -24,7 +24,8 @@ export function useContactFormCTA(
 	sectionName: string,
 	ownershipResult: any,
 	hideSiteInfo: boolean,
-	params: URLSearchParams
+	params: URLSearchParams,
+	showSibylArticlesPrelaunch: boolean
 ) {
 	const queryClient = useQueryClient();
 	const email = useSelector( getCurrentUserEmail );
@@ -61,6 +62,16 @@ export function useContactFormCTA(
 	};
 
 	function handleCTA() {
+		// Forward to Sibyl if we have articles to show before submitting
+		if ( showSibylArticlesPrelaunch ) {
+			params.set( 'show-results', 'true' );
+			history.push( {
+				pathname: '/contact-form',
+				search: params.toString(),
+			} );
+			return;
+		}
+
 		const productSlug = supportSite?.plan.product_slug;
 		const plan = getPlan( productSlug );
 		const productId = plan?.getProductId();

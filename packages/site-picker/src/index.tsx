@@ -146,6 +146,7 @@ export const SitePickerDropDown: FC< Props > = ( {
 					<div ref={ ( r ) => r !== ref && setRef( r ) } className="site-picker__site-drawer">
 						{ options.map( ( option, index ) => (
 							<SitePickerItem
+								key={ index }
 								host={ option?.URL?.replace( 'https://', '' ) ?? '' }
 								name={ option?.name ?? '' }
 								open={ open }
