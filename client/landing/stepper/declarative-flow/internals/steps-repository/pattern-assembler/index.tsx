@@ -308,7 +308,7 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 		} else if ( name === 'footer' ) {
 			trackEventPatternAdd( 'footer' );
 		} else if ( name === 'homepage' ) {
-			trackEventPatternAdd( 'footer' );
+			trackEventPatternAdd( 'section' );
 		}
 	};
 
