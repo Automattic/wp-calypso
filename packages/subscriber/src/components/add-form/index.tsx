@@ -297,10 +297,10 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	function renderEmptyFormValidationMsg() {
 		const validationMsg = showCsvUpload
 			? __(
-					'The required fields are manually entering at least one email ' +
-						'or providing your mailing list by selecting a CSV file.'
+					"You'll need to add at least one email address " +
+						'or upload a CSV file of current subscribers to continue.'
 			  )
-			: __( 'The required field is to enter at least one email.' );
+			: __( "You'll need to add at least one subscriber to continue." );
 
 		return (
 			!! submitAttemptCount &&
