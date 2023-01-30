@@ -59,6 +59,10 @@
 	& .is-section-stats .has-fixed-nav {
 		padding-top: 64px;
 	}
+	& .stats-site .stats > .highlight-cards,
+	& .stats-insights .stats > .highlight-cards {
+		background-color: var(--jetpack-white-off);
+	}
 	#wpcontent {
 		padding-left: 1px;
 	}

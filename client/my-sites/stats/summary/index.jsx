@@ -246,7 +246,7 @@ class StatsSummary extends Component {
 		} );
 
 		return (
-			<Main className="has-fixed-nav" wideLayout>
+			<Main className="has-fixed-nav stats-summary" wideLayout>
 				<PageViewTracker
 					path={ `/stats/${ period }/${ module }/:site` }
 					title={ `Stats > ${ titlecase( period ) } > ${ titlecase( module ) }` }

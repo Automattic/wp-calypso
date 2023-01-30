@@ -41,7 +41,7 @@ const StatsInsights = ( props ) => {
 	// TODO: should be refactored into separate components
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<Main fullWidthLayout>
+		<Main fullWidthLayout className="stats-insights">
 			<DocumentHead title={ translate( 'Jetpack Stats' ) } />
 			<PageViewTracker path="/stats/insights/:site" title="Stats > Insights" />
 			<div className="stats">

@@ -83,7 +83,7 @@ class StatsOverview extends Component {
 		} );
 
 		return (
-			<Main wideLayout>
+			<Main wideLayout className="stats-overview">
 				<DocumentHead title={ translate( 'Stats' ) } />
 				<PageViewTracker
 					path={ `/stats/${ period }` }

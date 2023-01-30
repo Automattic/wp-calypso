@@ -161,7 +161,7 @@ class WordAds extends Component {
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<Main fullWidthLayout>
+			<Main fullWidthLayout className="stats-wordads">
 				<DocumentHead title={ translate( 'WordAds Stats' ) } />
 				<PageViewTracker
 					path={ `/stats/ads/${ period }/:site` }
