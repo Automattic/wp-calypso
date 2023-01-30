@@ -44,7 +44,7 @@ export const useSiteCopy = (
 		const siteFeatures = getSiteFeatures( state, site?.ID );
 		return siteFeatures ? siteFeatures : { isRequesting: true };
 	} );
-	const isAtomic = useSelect( ( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID ) );
+	const isAtomic = useSelect( ( select ) => site && select( SITE_STORE ).isSiteAtomic( site?.ID ) );
 	const plan = site?.plan;
 	const isSiteOwner = site?.site_owner === userId;
 
@@ -53,7 +53,7 @@ export const useSiteCopy = (
 		( state ) => isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state )
 	);
 
-	const purchases = useSelector( ( state ) => getSitePurchases( state, site.ID ) );
+	const purchases = useSelector( ( state ) => getSitePurchases( state, site?.ID ) );
 
 	const { setPlanCartItem, setProductCartItems } = useDispatch( ONBOARD_STORE );
 
