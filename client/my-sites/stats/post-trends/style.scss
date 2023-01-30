@@ -41,7 +41,7 @@ $lowestLevelColor: var(--color-neutral-5);
 }
 
 .post-trends__title {
-	@include stats-section-header();
+	@include stats-section-header;
 }
 
 .post-trends__value {

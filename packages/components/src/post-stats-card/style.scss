@@ -36,7 +36,7 @@ $break-wpcom-smallest: 320px;
 }
 
 .post-stats-card__post-title {
-	@include stats-section-header();
+	@include stats-section-header;
 	margin-bottom: 4px;
 }
 
@@ -71,7 +71,7 @@ $break-wpcom-smallest: 320px;
 }
 
 .post-stats-card__count-value {
-	@include stats-section-header();
+	@include stats-section-header;
 	color: var(--studio-gray-100);
 }
 
