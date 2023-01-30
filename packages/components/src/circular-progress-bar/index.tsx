@@ -5,12 +5,12 @@ const CircularProgressBar = ( {
 	currentStep,
 	numberOfSteps,
 	size,
-	enableMobileScaling = false,
+	enableDesktopScaling = false,
 }: {
 	currentStep: number;
 	numberOfSteps: number;
 	size: number;
-	enableMobileScaling?: boolean;
+	enableDesktopScaling?: boolean;
 } ) => {
 	const SIZE = size;
 	const STROKE_WIDTH = 4;
@@ -21,7 +21,7 @@ const CircularProgressBar = ( {
 		<div
 			role="progressbar"
 			className={ classnames( 'circular__progress-bar', {
-				'mobile-scaling': enableMobileScaling,
+				'desktop-scaling': enableDesktopScaling,
 			} ) }
 			style={ { width: SIZE, height: SIZE } }
 		>

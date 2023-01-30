@@ -5,7 +5,7 @@
 .circular__progress-bar {
 	position: relative;
 
-	&.mobile-scaling {
+	&.desktop-scaling {
 		@include break-mobile {
 			// mobile: 40px, desktop: 48px (1.2x scale)
 			transform: scale(1.2);
