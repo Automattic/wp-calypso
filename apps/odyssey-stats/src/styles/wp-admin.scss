@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+
 // Override spinner styles
 .stats-module__placeholder {
 	.spinner {
@@ -101,13 +103,26 @@
 	}
 	.stats .jetpack-header {
 		padding-bottom: 12px;
+		// Align with navigation.
+		@include breakpoint-deprecated( "<660px" ) {
+			padding-left: 16px;
+		}
+	}
+	.stats-navigation.stats-navigation--modernized .section-nav__panel {
+		// align with header
+		@include breakpoint-deprecated( ">660px" ) {
+			padding: 0;
+		}
 	}
 	.stats-navigation.stats-navigation--modernized .section-nav-tab .section-nav-tab__link {
 		padding-left: 0;
 		padding-right: 0;
 	}
 	.stats-navigation.stats-navigation--modernized .section-nav-tab:not(:first-child) {
-		margin-left: 32px;
+		// No need for dropdown nav to have margins.
+		@include breakpoint-deprecated( ">480px" ) {
+			margin-left: 32px;
+		}
 	}
 	// Black segmented control.
 	.segmented-control.is-primary .segmented-control__item.is-selected .segmented-control__link,
