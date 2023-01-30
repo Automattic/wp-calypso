@@ -27,6 +27,7 @@ const THEME_CARD_WIDTH = 320; // used to calculate the number of column in theme
 const THEM_CARD_MARGIN = 16; // used to calculate the max-width of column in theme-list
 
 export const ThemesList = ( props ) => {
+	const isLoggedIn = useSelector( isUserLoggedIn );
 	const [ ctaPosition, setCtaPosition ] = useState( 0 );
 
 	const fetchNextPage = useCallback(
@@ -76,7 +77,7 @@ export const ThemesList = ( props ) => {
 		<div ref={ resizeRef } className="themes-list">
 			{ props.themes.map( ( theme, index ) => [
 				<ThemeBlock key={ 'theme-block' + index } theme={ theme } index={ index } { ...props } />,
-				...( index === ctaPosition && isEnabled( 'pattern-assembler/logged-out-showcase' )
+				...( index === ctaPosition && isEnabled( 'pattern-assembler/logged-out-showcase' ) && ! isLoggedIn
 					? [
 							<PatternAssemblerCta
 								key="pattern-assembler-cta"
