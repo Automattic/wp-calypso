@@ -7,7 +7,7 @@ Admittedly, our components are quite disorganized and it’s not clear what shou
 When figuring out which `<Button>` component to use, here are some guidelines you could consider:
 
 - [`@wordpress/components`](https://wordpress.github.io/gutenberg) can be used for interfaces in the WordPress.org context (e.g. Block Editor).
-- [`@automattic/components`](https://wpcalypso.wordpress.com/devdocs/design) or `client/components` can be used for interfaces in the WordPress.com context.
+- [`@automattic/components` and `client/components`](https://wpcalypso.wordpress.com/devdocs/design) can be used for interfaces in the WordPress.com context.
 - [`client/blocks`](https://wpcalypso.wordpress.com/devdocs/blocks) represents more complex WordPress.com components that are usually composed from multiple UI components and are usually connected to the Redux state.
 
 There may also be a more specific component library for the project you're working on (e.g. `@automattic/jetpack-components` and `@woocommerce/components`).
