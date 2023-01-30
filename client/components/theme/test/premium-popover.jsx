@@ -67,7 +67,7 @@ describe( 'Theme', () => {
 			expect( screen.queryByTestId( 'upsell-header' ) ).toBeDefined();
 			expect( screen.queryByTestId( 'upsell-header' ).innerHTML ).toBe( 'Premium theme' );
 			expect( screen.queryByTestId( 'upsell-message' ).innerHTML ).toContain(
-				'The premium theme is included in your plan.'
+				'This premium theme is included in your plan.'
 			);
 		} );
 

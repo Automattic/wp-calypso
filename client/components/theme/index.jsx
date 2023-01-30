@@ -372,9 +372,9 @@ export class Theme extends Component {
 				}
 			);
 		} else if ( isUsablePremiumTheme ) {
-			return translate( 'The premium theme is included in your plan.' );
+			return translate( 'This premium theme is included in your plan.' );
 		} else if ( isUsableBundledTheme ) {
-			return translate( 'The WooCommerce theme is included in your plan.' );
+			return translate( 'This WooCommerce theme is included in your plan.' );
 		} else if ( doesThemeBundleSoftwareSet ) {
 			return createInterpolateElement(
 				translate( 'This WooCommerce theme is included in the <Link>Business plan</Link>.' ),
