@@ -12,8 +12,8 @@ yarn run generate
 
 Now we have 2 generators as below, and the calypso-package-generator will ask you to choose.
 
-* component: Add a new library of React components designed for use in Automattic products.
-* library: Add a new library of js designed for use in Automattic products.
+- component: Add a new library of React components designed for use in Automattic products.
+- library: Add a new library of js designed for use in Automattic products.
 
 ### Example
 
