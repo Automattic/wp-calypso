@@ -76,9 +76,10 @@
 	}
 
 	.setup-form__submit {
-		color: var(--color-surface);
+		border: none;
 		background-color: var(--studio-blue-50);
 		border-radius: 4px;
+		color: var(--color-surface);
 		font-weight: 500;
 		width: 100%;
 		// adds +2 px of padding to the button to match the input field height

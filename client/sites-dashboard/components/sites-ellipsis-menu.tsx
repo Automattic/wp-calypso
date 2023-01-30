@@ -18,6 +18,7 @@ import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
@@ -186,12 +187,13 @@ const PreviewSiteModalItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
 	const hasCopySiteFeature = useSafeSiteHasFeature( site.ID, WPCOM_FEATURES_COPY_SITE );
+	const isAtomic = useSelector( ( state ) => isSiteAtomic( state, site.ID ) );
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 	const plan = site.plan;
 	const isSiteOwner = site.site_owner === userId;
 	const { setPlanCartItem } = useDispatch( ONBOARD_STORE );
 
-	if ( ! hasCopySiteFeature || ! isSiteOwner || ! plan ) {
+	if ( ! hasCopySiteFeature || ! isSiteOwner || ! plan || ! isAtomic ) {
 		return null;
 	}
 
