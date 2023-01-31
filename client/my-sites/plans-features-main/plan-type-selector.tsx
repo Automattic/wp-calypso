@@ -141,6 +141,10 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 
 	const redirectTo = props.redirectTo ? { redirect_to: props.redirectTo } : {};
 
+	const domainFromHomeUpsellFlow = new URLSearchParams( window.location.search ).get(
+		'get_domain'
+	);
+
 	return (
 		<IntervalTypeToggleWrapper
 			showingMonthly={ intervalType === 'monthly' }
@@ -149,7 +153,11 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 			<SegmentedControl compact className={ segmentClasses } primary={ true }>
 				<SegmentedControl.Item
 					selected={ intervalType === 'monthly' }
-					path={ generatePath( props, { intervalType: 'monthly', ...redirectTo } ) }
+					path={ generatePath( props, {
+						intervalType: 'monthly',
+						get_domain: domainFromHomeUpsellFlow,
+						...redirectTo,
+					} ) }
 					isPlansInsideStepper={ props.isPlansInsideStepper }
 				>
 					<span>{ translate( 'Pay monthly' ) }</span>
@@ -157,7 +165,11 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 
 				<SegmentedControl.Item
 					selected={ intervalType === 'yearly' }
-					path={ generatePath( props, { intervalType: 'yearly', ...redirectTo } ) }
+					path={ generatePath( props, {
+						intervalType: 'yearly',
+						get_domain: domainFromHomeUpsellFlow,
+						...redirectTo,
+					} ) }
 					isPlansInsideStepper={ props.isPlansInsideStepper }
 				>
 					<span ref={ ( ref ) => ref && setSpanRef( ref ) }>{ translate( 'Pay annually' ) }</span>
@@ -276,6 +288,7 @@ export default PlanTypeSelector;
 const IntervalTypeToggleWrapper = styled.div< { showingMonthly: boolean; isInSignup: boolean } >`
 	display: ${ ( { isInSignup } ) => ( isInSignup ? 'flex' : 'block' ) };
 	align-content: space-between;
+	justify-content: center;
 
 	> .segmented-control.is-compact:not( .is-signup ) {
 		margin: 8px auto 16px;

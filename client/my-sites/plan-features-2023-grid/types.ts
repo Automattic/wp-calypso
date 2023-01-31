@@ -2,7 +2,10 @@ import { applyTestFiltersToPlansList } from '@automattic/calypso-products';
 import { FeatureObject } from 'calypso/lib/plans/features-list';
 import type { PricedAPIPlan } from '@automattic/data-stores';
 
-export type TransformedFeatureObject = FeatureObject & { availableForCurrentPlan: boolean };
+export type TransformedFeatureObject = FeatureObject & {
+	availableForCurrentPlan: boolean;
+	availableOnlyForAnnualPlans: boolean;
+};
 
 export type PlanProperties = {
 	cartItemForPlan: {
@@ -10,8 +13,8 @@ export type PlanProperties = {
 	} | null;
 	currencyCode: string | null;
 	discountPrice: number | null;
-	features: PlanFeature[];
-	jpFeatures: PlanFeature[];
+	features: TransformedFeatureObject[];
+	jpFeatures: TransformedFeatureObject[];
 	isLandingPage?: boolean;
 	isPlaceholder?: boolean;
 	planConstantObj: ReturnType< typeof applyTestFiltersToPlansList >;
@@ -27,12 +30,6 @@ export type PlanProperties = {
 	isMonthlyPlan: boolean;
 	tagline: string;
 	storageOptions: string[];
+	availableForPurchase: boolean;
+	current?: boolean;
 };
-
-export interface PlanFeature {
-	availableForCurrentPlan?: boolean;
-	availableOnlyForAnnualPlans?: boolean;
-	getSlug: () => string;
-	getTitle: ( name?: string ) => React.ReactNode;
-	getDescription?: () => React.ReactNode;
-}
