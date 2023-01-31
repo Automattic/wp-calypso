@@ -40,7 +40,7 @@ export type PlanTypeSelectorProps = {
 	eligibleForWpcomMonthlyPlans?: boolean;
 	isPlansInsideStepper: boolean;
 	hideDiscountLabel: boolean;
-	redirectTo: string | null;
+	redirectTo?: string | null;
 };
 
 interface PathArgs {
