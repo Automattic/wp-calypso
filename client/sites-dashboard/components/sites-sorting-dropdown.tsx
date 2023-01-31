@@ -93,7 +93,7 @@ export const SitesSortingDropdown = ( {
 				</SortingButton>
 			) }
 			renderContent={ ( { onClose } ) => (
-				<NavigableMenu>
+				<NavigableMenu cycle={ false }>
 					<MenuItemsChoice
 						value={ currentSortingValue }
 						onSelect={ ( value: typeof choices[ 0 ][ 'value' ] ) => {
