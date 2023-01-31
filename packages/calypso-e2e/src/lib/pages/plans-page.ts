@@ -33,8 +33,7 @@ const selectors = {
 		const viewportSuffix = envVariables.VIEWPORT_NAME === 'mobile' ? 'mobile' : 'table';
 		return `.plan-features__${ viewportSuffix } >> .plan-features__actions-button.is-${ plan.toLowerCase() }-plan:has-text("${ buttonText }")`;
 	},
-	activePlan: ( plan: Plans ) =>
-		`th.plan-features__table-item:has-text("${ plan }"):has-text("Your Plan")`,
+	activePlan: ( plan: Plans ) => `th .is-${ plan.toLowerCase() }-plan:has(.plan-pill)`,
 
 	// My Plans tab
 	myPlanTitle: ( planName: Plans ) => `.my-plan-card__title:has-text("${ planName }")`,
@@ -97,7 +96,7 @@ export class PlansPage {
 	 *
 	 * This method accepts a parameter of `Plan` type which defines the expected
 	 * plan to be active on the site. This method then compares this against the
-	 * actual text on both the My Plans and Plans tabs.
+	 * actual text on both the My Plans and Plans tabs, hence the race.
 	 *
 	 * @param {Plans} expectedPlan Name of the expected plan.
 	 * @throws If the expected plan title is not found in the timeout period.
