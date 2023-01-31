@@ -128,7 +128,7 @@ export function addExternalManagedThemeToCart( themeId: string, siteId: number )
 			typeof window !== 'undefined' ? window.location : {};
 
 		const redirectUrl = addQueryArgs( `/checkout/${ siteSlug }`, {
-			redirect_to: `${ origin }/theme/${ themeId }/${ siteSlug }`,
+			redirect_to: `${ origin }/theme/${ themeId }/${ siteSlug }?check-atomic-transfer=true`,
 		} );
 
 		dispatch( isLoadingCart( true ) );
