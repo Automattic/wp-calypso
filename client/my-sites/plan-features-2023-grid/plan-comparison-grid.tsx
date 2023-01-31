@@ -105,7 +105,7 @@ const TitleRow = styled( Row )`
 	}
 `;
 
-const Cell = styled.div< { textAlign?: string } >`
+const Cell = styled.div< { textAlign?: string; isInSignup?: boolean } >`
 	text-align: ${ ( props ) => props.textAlign ?? 'left' };
 	display: flex;
 	flex: 1;
@@ -132,7 +132,7 @@ const Cell = styled.div< { textAlign?: string } >`
 
 	@media ( min-width: 880px ) {
 		padding: 0 14px;
-		max-width: 180px;
+		max-width: ${ ( { isInSignup } ) => ( isInSignup ? '180px' : '160px' ) };
 
 		&:first-of-type {
 			padding-left: 0;
@@ -140,6 +140,9 @@ const Cell = styled.div< { textAlign?: string } >`
 		&:last-of-type {
 			padding-right: 0;
 		}
+	}
+	@media ( min-width: 880px ) {
+		min-width: 180px;
 	}
 
 	@media ( min-width: 1500px ) {
@@ -261,7 +264,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 					const rawPrice = planPropertiesObj.rawPrice;
 					const isLargeCurrency = rawPrice ? rawPrice > 99000 : false;
 
-					const showPlanSelect = ! allVisible;
+					const showPlanSelect = ! allVisible && ! current;
 
 					return (
 						<Cell key={ planName } className={ headerClasses } textAlign="left">
@@ -357,12 +360,17 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 } ) => {
 	const translate = useTranslate();
 	const featureGroupMap = getPlanFeaturesGrouped();
-	const displayedPlansProperties = ( planProperties ?? [] ).filter(
-		( { planName } ) => ! ( planName === PLAN_ENTERPRISE_GRID_WPCOM )
+	const displayedPlansProperties = useMemo(
+		() =>
+			( planProperties ?? [] ).filter(
+				( { planName } ) => ! ( planName === PLAN_ENTERPRISE_GRID_WPCOM )
+			),
+		[ planProperties ]
 	);
 	const isMonthly = intervalType === 'monthly';
-	const isMediumBreakpoint = usePricingBreakpoint( 1340 );
-	const isSmallBreakpoint = usePricingBreakpoint( 880 );
+	const isLargestBreakpoint = usePricingBreakpoint( 1772 ); // 1500px + 272px (sidebar)
+	const isLargeBreakpoint = usePricingBreakpoint( 1612 ); // 1340px + 272px (sidebar)
+	const isMediumBreakpoint = usePricingBreakpoint( 1340 ); // keeping original breakpoint to match Plan Grid
 
 	const [ visiblePlans, setVisiblePlans ] = useState< string[] >( [] );
 	const [ firstSetOfFeatures ] = Object.keys( featureGroupMap );
@@ -373,16 +381,30 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 	useEffect( () => {
 		let newVisiblePlans = displayedPlansProperties.map( ( { planName } ) => planName );
 
-		if ( isMediumBreakpoint ) {
-			newVisiblePlans = newVisiblePlans.slice( 0, 4 );
+		let visibleLength = newVisiblePlans.length;
+		if ( ! isInSignup ) {
+			visibleLength = isLargestBreakpoint ? 4 : visibleLength;
+			visibleLength = isLargeBreakpoint ? 3 : visibleLength;
 		}
 
-		if ( isSmallBreakpoint || ( isInSignup && isMediumBreakpoint ) ) {
-			newVisiblePlans = newVisiblePlans.slice( 0, 2 );
+		visibleLength = isMediumBreakpoint ? 2 : visibleLength;
+
+		if ( newVisiblePlans.length !== visibleLength ) {
+			// ensures current plan is first in the list
+			newVisiblePlans.sort( ( visiblePlan ) => ( visiblePlan === currentSitePlanSlug ? -1 : 1 ) );
+			newVisiblePlans = newVisiblePlans.slice( 0, visibleLength );
 		}
 
 		setVisiblePlans( newVisiblePlans );
-	}, [ isMediumBreakpoint, intervalType ] );
+	}, [
+		isLargestBreakpoint,
+		isLargeBreakpoint,
+		isMediumBreakpoint,
+		intervalType,
+		displayedPlansProperties,
+		isInSignup,
+		currentSitePlanSlug,
+	] );
 
 	const restructuredFeatures = useMemo( () => {
 		let previousPlan = null;
@@ -500,9 +522,8 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 					const featureGroupClass = `feature-group-title-${ featureGroup.slug }`;
 					const isHiddenInMobile = ! visibleFeatureGroups.includes( featureGroup.slug );
 					return (
-						<div className={ featureGroupClass }>
+						<div key={ featureGroupClass } className={ featureGroup.slug }>
 							<TitleRow
-								key={ featureGroupClass }
 								className="plan-comparison-grid__group-title-row"
 								onClick={ () => toggleFeatureGroup( featureGroup.slug ) }
 							>
