@@ -1,7 +1,5 @@
-import {
-	getUsageLevel,
-	StorageUsageLevels,
-} from 'calypso/components/backup-storage-space/storage-usage-levels';
+import { getUsageLevel } from 'calypso/components/backup-storage-space/storage-usage-levels';
+import { StorageUsageLevels } from 'calypso/state/rewind/storage/types';
 
 describe( 'getUsageLevel', () => {
 	const MINIMUM_DAYS_OF_BACKUPS = 7;
