@@ -360,8 +360,12 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 } ) => {
 	const translate = useTranslate();
 	const featureGroupMap = getPlanFeaturesGrouped();
-	const displayedPlansProperties = ( planProperties ?? [] ).filter(
-		( { planName } ) => ! ( planName === PLAN_ENTERPRISE_GRID_WPCOM )
+	const displayedPlansProperties = useMemo(
+		() =>
+			( planProperties ?? [] ).filter(
+				( { planName } ) => ! ( planName === PLAN_ENTERPRISE_GRID_WPCOM )
+			),
+		[ planProperties ]
 	);
 	const isMonthly = intervalType === 'monthly';
 	const isLargestBreakpoint = usePricingBreakpoint( 1600 );
@@ -399,7 +403,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		isLargeBreakpoint,
 		isMediumBreakpoint,
 		intervalType,
-		planProperties,
+		displayedPlansProperties,
 		isInSignup,
 	] );
 
