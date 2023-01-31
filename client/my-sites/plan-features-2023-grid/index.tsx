@@ -21,6 +21,7 @@ import {
 	getPlanPath,
 } from '@automattic/calypso-products';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import page from 'page';
@@ -119,11 +120,28 @@ type PlanFeatures2023GridConnectedProps = {
 type PlanFeatures2023GridType = PlanFeatures2023GridProps &
 	PlanFeatures2023GridConnectedProps & { children?: React.ReactNode };
 
-export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > {
+type PlanFeatures2023GridState = {
+	showPlansComparisonGrid: boolean;
+};
+
+export class PlanFeatures2023Grid extends Component<
+	PlanFeatures2023GridType,
+	PlanFeatures2023GridState
+> {
+	state = {
+		showPlansComparisonGrid: false,
+	};
+
 	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_wp_plans_test_view' );
 		retargetViewPlans();
 	}
+
+	toggleShowPlansComparisonGrid = () => {
+		this.setState( ( { showPlansComparisonGrid } ) => ( {
+			showPlansComparisonGrid: ! showPlansComparisonGrid,
+		} ) );
+	};
 
 	render() {
 		const {
@@ -136,6 +154,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			currentSitePlanSlug,
 			manageHref,
 			canUserPurchasePlan,
+			translate,
 		} = this.props;
 		return (
 			<div className="plans-wrapper">
@@ -154,17 +173,26 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 						</div>
 					</div>
 				</div>
-				<PlanComparisonGrid
-					planTypeSelectorProps={ planTypeSelectorProps }
-					planProperties={ planProperties }
-					intervalType={ intervalType }
-					isInSignup={ isInSignup }
-					isLaunchPage={ isLaunchPage }
-					flowName={ flowName }
-					currentSitePlanSlug={ currentSitePlanSlug }
-					manageHref={ manageHref }
-					canUserPurchasePlan={ canUserPurchasePlan }
-				/>
+				<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
+					<Button onClick={ this.toggleShowPlansComparisonGrid }>
+						{ this.state.showPlansComparisonGrid
+							? translate( 'Hide comparison' )
+							: translate( 'Compare plans' ) }
+					</Button>
+				</div>
+				{ this.state.showPlansComparisonGrid ? (
+					<PlanComparisonGrid
+						planTypeSelectorProps={ planTypeSelectorProps }
+						planProperties={ planProperties }
+						intervalType={ intervalType }
+						isInSignup={ isInSignup }
+						isLaunchPage={ isLaunchPage }
+						flowName={ flowName }
+						currentSitePlanSlug={ currentSitePlanSlug }
+						manageHref={ manageHref }
+						canUserPurchasePlan={ canUserPurchasePlan }
+					/>
+				) : null }
 			</div>
 		);
 	}
