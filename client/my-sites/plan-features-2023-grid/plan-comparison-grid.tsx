@@ -368,9 +368,9 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		[ planProperties ]
 	);
 	const isMonthly = intervalType === 'monthly';
-	const isLargestBreakpoint = usePricingBreakpoint( 1600 );
-	const isLargeBreakpoint = usePricingBreakpoint( 1500 );
-	const isMediumBreakpoint = usePricingBreakpoint( 1340 );
+	const isLargestBreakpoint = usePricingBreakpoint( 1772 ); // 1500px + 272px (sidebar)
+	const isLargeBreakpoint = usePricingBreakpoint( 1612 ); // 1340px + 272px (sidebar)
+	const isMediumBreakpoint = usePricingBreakpoint( 1340 ); // keeping original breakpoint to match Plan Grid
 
 	const [ visiblePlans, setVisiblePlans ] = useState< string[] >( [] );
 	const [ firstSetOfFeatures ] = Object.keys( featureGroupMap );
@@ -390,10 +390,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		visibleLength = isMediumBreakpoint ? 2 : visibleLength;
 
 		if ( newVisiblePlans.length !== visibleLength ) {
-			const currentPlan = displayedPlansProperties.find( ( { current } ) => current );
-			if ( currentPlan ) {
-				newVisiblePlans.sort( ( a ) => ( a === currentPlan.planName ? -1 : 1 ) );
-			}
+			newVisiblePlans.sort( ( visiblePlan ) => ( visiblePlan === currentSitePlanSlug ? -1 : 1 ) );
 			newVisiblePlans = newVisiblePlans.slice( 0, visibleLength );
 		}
 
@@ -405,6 +402,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		intervalType,
 		displayedPlansProperties,
 		isInSignup,
+		currentSitePlanSlug,
 	] );
 
 	const restructuredFeatures = useMemo( () => {
