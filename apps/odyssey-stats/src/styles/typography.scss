@@ -1,16 +1,4 @@
-@import "@automattic/components/src/styles/typography.scss";
-
-$display-type-font: -apple-system,BlinkMacSystemFont,"Segoe UI","Roboto","Oxygen-Sans","Ubuntu","Cantarell","Helvetica Neue",sans-serif;
-$display-type-weight: 700;
-$display-type-line-height: 40px;
-
-// Override display type styling for Jetpack.
-@mixin stats-section-header-for-jetpack {
-	font-family: $display-type-font;
-	font-size: $font-size-header;
-	font-weight: $display-type-weight;
-	line-height: $display-type-line-height;
-}
+@import "./variables.scss";
 
 // Find all instances of stats-section-header mixin usage and override with stats-section-header-for-jetpack.
 .post-trends__title,
