@@ -1,7 +1,6 @@
 @import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 
-$header-font: Recoleta, $sans;
 $mobile-layout-breakpoint: $break-small;
 
 .stats__all-time-highlights-section {
@@ -100,7 +99,7 @@ $mobile-layout-breakpoint: $break-small;
 	}
 
 	.highlight-card-detail-item-content {
-		font-family: $header-font;
+		font-family: $brand-serif;
 		font-weight: 400;
 		font-size: $font-title-large;
 		line-height: 40px;
