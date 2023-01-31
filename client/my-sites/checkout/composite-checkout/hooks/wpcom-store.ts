@@ -5,6 +5,7 @@ import {
 	getInitialWpcomStoreState,
 	managedContactDetailsUpdaters as updaters,
 } from '../types/wpcom-store-state';
+import type { DispatchFromMap, SelectFromMap } from '@automattic/data-stores';
 import type { DomainContactDetails } from '@automattic/shopping-cart';
 import type {
 	PossiblyCompleteDomainContactDetails,
@@ -42,25 +43,8 @@ export interface WpcomCheckoutStore extends ReturnType< typeof registerStore > {
 	getState: () => WpcomStoreState;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type OmitFirstArg< F > = F extends ( x: any, ...args: infer P ) => infer R
-	? ( ...args: P ) => R
-	: never;
-type OmitFirstArgs< O > = {
-	[ K in keyof O ]: OmitFirstArg< O[ K ] >;
-};
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type ChangeReturnTypeToPromise< F > = F extends ( ...args: infer P ) => any
-	? ( ...args: P ) => Promise< void >
-	: never;
-type RemoveReturnTypes< O > = {
-	[ K in keyof O ]: ChangeReturnTypeToPromise< O[ K ] >;
-};
-
-type Selectors = OmitFirstArgs< typeof selectors >;
-type Actions = RemoveReturnTypes< typeof actions >;
-export type WpcomCheckoutStoreSelectors = Selectors;
-export type WpcomCheckoutStoreActions = Actions;
+export type WpcomCheckoutStoreSelectors = SelectFromMap< typeof selectors >;
+export type WpcomCheckoutStoreActions = DispatchFromMap< typeof actions >;
 
 declare module '@wordpress/data' {
 	function select( key: typeof STORE_KEY ): WpcomCheckoutStoreSelectors | undefined;
