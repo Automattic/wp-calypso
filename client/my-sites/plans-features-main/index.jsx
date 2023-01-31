@@ -158,12 +158,14 @@ export class PlansFeaturesMain extends Component {
 				intervalType,
 			};
 			const planTypeSelectorProps = {
+				basePlansPath: this.props.basePlansPath,
 				isInSignup: this.props.isInSignup,
 				eligibleForWpcomMonthlyPlans: this.props.eligibleForWpcomMonthlyPlans,
 				isPlansInsideStepper: this.props.isPlansInsideStepper,
 				intervalType: this.props.intervalType,
 				customerType: this.props.customerType,
 				hidePersonalPlan: this.props.hidePersonalPlan,
+				siteSlug: this.props.siteSlug,
 			};
 			const asyncPlanFeatures2023Grid = (
 				<AsyncLoad
@@ -172,6 +174,7 @@ export class PlansFeaturesMain extends Component {
 					planTypeSelectorProps={ planTypeSelectorProps }
 				/>
 			);
+
 			return (
 				<div
 					className={ classNames(
