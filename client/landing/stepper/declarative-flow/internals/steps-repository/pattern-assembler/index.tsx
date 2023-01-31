@@ -257,7 +257,12 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 						createCustomHomeTemplateContent( stylesheet, !! header, !! footer, !! sections.length )
 					)
 				)
-				.then( () => runThemeSetupOnSite( siteSlugOrId, design, { trimContent: false } ) )
+				.then( () =>
+					runThemeSetupOnSite( siteSlugOrId, design, {
+						trimContent: false,
+						is_assembler_flow: true,
+					} )
+				)
 				.then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) )
 		);
 

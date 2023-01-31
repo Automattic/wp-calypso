@@ -399,6 +399,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 
 		const themeSetupOptions: ThemeSetupOptions = {
 			trim_content: options?.trimContent ?? true,
+			is_assembler_flow: options?.is_assembler_flow ?? false,
 		};
 
 		if ( verticalizable ) {

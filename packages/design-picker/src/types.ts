@@ -118,6 +118,7 @@ export interface DesignOptions {
 	verticalId?: string;
 	pageTemplate?: string;
 	trimContent?: boolean;
+	is_assembler_flow?: boolean;
 }
 
 export interface DesignPreviewOptions {
