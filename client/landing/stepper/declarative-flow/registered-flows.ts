@@ -47,6 +47,9 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	free: () => import( /* webpackChunkName: "free-flow" */ '../declarative-flow/free' ),
 
+	'site-assembler': () =>
+		import( /* webpackChunkName: "site-assembler-flow" */ './site-assembler-flow' ),
+
 	'free-post-setup': () =>
 		import( /* webpackChunkName: "free-post-setup-flow" */ '../declarative-flow/free-post-setup' ),
 

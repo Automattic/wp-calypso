@@ -53,6 +53,16 @@ $plan-features-sidebar-width: 272px;
 					color: var(--studio-gray-0);
 				}
 			}
+
+			&.is-current-plan {
+				background-color: var(--studio-white);
+				color: var(--studio-gray-100);
+				box-shadow: inset 0 0 0 1px var(--studio-gray-10);
+
+				&:hover {
+					box-shadow: inset 0 0 0 1px var(--studio-gray-80);
+				}
+			}
 		}
 	}
 }
@@ -875,6 +885,9 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 }
 
 .plan-comparison-grid {
+	.plan-features-2023-gridrison__actions-buttons {
+		min-height: 40px;
+	}
 	.plan-comparison-grid__plan-row {
 		padding-top: 0;
 		padding-bottom: 0;

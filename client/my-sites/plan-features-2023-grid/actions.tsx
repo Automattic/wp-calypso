@@ -199,7 +199,9 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 } ) => {
 	const translate = useTranslate();
 
-	const classes = classNames( 'plan-features-2023-grid__actions-button', className );
+	const classes = classNames( 'plan-features-2023-grid__actions-button', className, {
+		'is-current-plan': current,
+	} );
 
 	const handleUpgradeButtonClick = () => {
 		if ( isPlaceholder ) {
