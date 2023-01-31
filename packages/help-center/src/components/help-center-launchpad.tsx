@@ -10,13 +10,24 @@ import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SITE_STORE } from '../stores';
 
 export const HelpCenterLaunchpad = () => {
-	const { __ } = useI18n();
+	const getEnvironmentHostname = () => {
+		const currentEnvironment = window?.configData?.env_id;
+		const hostname = window?.configData?.hostname;
+		const port = window?.configData?.port;
+		switch ( currentEnvironment ) {
+			case 'development':
+				return `http://${ hostname }:${ port }`;
+			default:
+				return `https://${ hostname }`;
+		}
+	};
 
+	const { __ } = useI18n();
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const site = useSelect( ( select ) => siteId && select( SITE_STORE ).getSite( siteId ) );
 	const siteIntent = site && site?.options?.site_intent;
 	const siteSlug = site && new URL( site.URL ).host;
-	const launchpadURL = `https://wordpress.com/setup/${ siteIntent }/launchpad?siteSlug=${ siteSlug }`;
+	const launchpadURL = `${ getEnvironmentHostname() }/setup/${ siteIntent }/launchpad?siteSlug=${ siteSlug }`;
 	const sectionName = useSelector( ( state ) => getSectionName( state ) );
 
 	const handleLaunchpadHelpLinkClick = () => {
@@ -28,7 +39,7 @@ export const HelpCenterLaunchpad = () => {
 		} );
 	};
 
-	if ( ! site || ! siteIntent || ! siteSlug ) {
+	if ( ! site || ! siteIntent || ! siteSlug || ! window.configData ) {
 		return null;
 	}
 	return (
