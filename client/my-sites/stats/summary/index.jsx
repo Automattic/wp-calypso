@@ -124,7 +124,7 @@ class StatsSummary extends Component {
 						path="authors"
 						moduleStrings={ StatsStrings.authors }
 						period={ this.props.period }
-						query={ query }
+						query={ merge( {}, statsQueryOptions, query ) }
 						statType="statsTopAuthors"
 						className="stats__author-views"
 						summary={ true }
