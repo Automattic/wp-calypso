@@ -63,6 +63,7 @@
 			flex-direction: column;
 			justify-content: space-between;
 			flex-wrap: wrap;
+			height: 134px;
 			min-width: 280px;
 
 			@media ( max-width: 740px ) {
@@ -75,10 +76,11 @@
 			}
 
 			h3 {
-				line-height: 24px;
+				line-height: 16px;
 				font-weight: 500;
 				font-size: $font-body;
 				color: var(--studio-gray-100);
+				margin-bottom: 5px;
 			}
 
 			p {
@@ -93,7 +95,7 @@
 		}
 
 		.thank-you__step-icon {
-			width: calc(18px + 25px); // icon size + padding
+			width: calc(18px + 23px); // icon size + padding
 			flex-basis: 100%;
 		}
 

@@ -52,6 +52,7 @@ project {
 	subProject(_self.projects.WPComTests)
 	subProject(_self.projects.WebApp)
 	subProject(_self.projects.MarTech)
+	buildType(YarnInstall)
 	buildType(BuildBaseImages)
 	buildType(CheckCodeStyle)
 	buildType(ValidateRenovateConfig)
@@ -59,7 +60,7 @@ project {
 
 	params {
 		param("env.NODE_OPTIONS", "--max-old-space-size=32000")
-		text("E2E_WORKERS", "16", label = "Magellan parallel workers", description = "Number of parallel workers in Magellan (e2e tests)", allowEmpty = true)
+		text("JEST_E2E_WORKERS", "100%", label = "Magellan parallel workers", description = "Number of parallel workers in Magellan (e2e tests)", allowEmpty = true)
 		text("env.JEST_MAX_WORKERS", "16", label = "Jest max workers", description = "How many tests run in parallel", allowEmpty = true)
 		password("matticbot_oauth_token", "credentialsJSON:34cb38a5-9124-41c4-8497-74ed6289d751", display = ParameterDisplay.HIDDEN)
 		text("env.CHILD_CONCURRENCY", "15", label = "Yarn child concurrency", description = "How many packages yarn builds in parallel", allowEmpty = true)
@@ -103,6 +104,29 @@ project {
 		}
 	}
 }
+
+// This build should mostly be triggered by other builds.
+object YarnInstall : BuildType({
+	name = "Install Dependencies"
+	description = "Installs dependencies, e.g. yarn install"
+	vcs {
+		root(WpCalypso)
+		cleanCheckout = true
+	}
+	steps {
+		bashNodeScript {
+			name = "Yarn Install"
+			scriptContent = """
+				# Install modules
+				${_self.yarn_install_cmd}
+			""".trimIndent()
+		}
+	}
+	features {
+		perfmon {
+		}
+	}
+})
 
 object BuildBaseImages : BuildType({
 	name = "Build base images"
@@ -180,9 +204,8 @@ object BuildBaseImages : BuildType({
 
 	triggers {
 		schedule {
-			schedulingPolicy = daily {
-				// Time in UTC. Roughly EU mid day, before US starts
-				hour = 11
+			schedulingPolicy = cron {
+				hours = "*/4"
 			}
 			branchFilter = """
 				+:trunk

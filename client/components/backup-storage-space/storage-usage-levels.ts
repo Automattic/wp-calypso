@@ -1,11 +1,4 @@
-export type StorageUsageLevelName = 'Full' | 'Critical' | 'Warning' | 'Normal' | 'BackupsDiscarded';
-export const StorageUsageLevels: Record< StorageUsageLevelName, StorageUsageLevelName > = {
-	Full: 'Full',
-	Critical: 'Critical',
-	Warning: 'Warning',
-	Normal: 'Normal',
-	BackupsDiscarded: 'BackupsDiscarded',
-} as const;
+import { StorageUsageLevelName, StorageUsageLevels } from 'calypso/state/rewind/storage/types';
 
 const THRESHOLDS: Record< number, StorageUsageLevelName > = {
 	100: StorageUsageLevels.Full,
@@ -37,7 +30,7 @@ export const getUsageLevel = (
 		!! planRetentionDays &&
 		!! daysOfBackupsSaved
 	) {
-		// if current allowed days of backups is equal to the minimum, return storage full.
+		// if current days of backups saved is less than or equal to the minimum and storage is overlimit.
 		if (
 			minDaysOfBackupsAllowed >= daysOfBackupsSaved &&
 			used > 0 &&

@@ -1,21 +1,49 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { isFreePlanProduct } from '@automattic/calypso-products';
 import { Button, Card, Spinner } from '@automattic/components';
 import { useDomainSuggestions } from '@automattic/domain-picker/src';
 import { useLocale } from '@automattic/i18n-utils';
+import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
 export default function DomainUpsell() {
+	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const isEmailVerified = useSelector( ( state ) => isCurrentUserEmailVerified( state ) );
+	const siteDomains = useSelector( ( state ) => getDomainsBySiteId( state, site.ID ) );
+
+	if ( siteDomains.length > 1 || ! isEmailVerified || ! isFreePlanProduct( site.plan ) ) {
+		return null;
+	}
+
+	return (
+		<CalypsoShoppingCartProvider>
+			<RenderDomainUpsell />
+		</CalypsoShoppingCartProvider>
+	);
+}
+
+export function RenderDomainUpsell() {
 	const translate = useTranslate();
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
 	const siteSubDomain = siteSlug.split( '.' )[ 0 ];
 	const locale = useLocale();
 	const { allDomainSuggestions } =
 		useDomainSuggestions( siteSubDomain, 3, undefined, locale ) || {};
+
+	const cartKey = useCartKey();
+	const shoppingCartManager = useShoppingCart( cartKey );
 
 	// Get first non-free suggested domain.
 	const domainSuggestion = allDomainSuggestions?.filter(
@@ -35,13 +63,28 @@ export default function DomainUpsell() {
 		} );
 	};
 
-	const purchaseLink = '/plans/' + siteSlug;
-	const getCtaClickHandler = () => {
+	const purchaseLink = '/plans/' + siteSlug + '?get_domain=' + domainSuggestionName;
+	const [ ctaIsBusy, setCtaIsBusy ] = useState( false );
+	const getCtaClickHandler = async () => {
+		setCtaIsBusy( true );
 		recordTracksEvent( 'calypso_my_home_domain_upsell_cta_click', {
 			button_url: purchaseLink,
 			domain_suggestion: domainSuggestionName,
 			product_slug: domainSuggestionProductSlug,
 		} );
+
+		try {
+			await shoppingCartManager.addProductsToCart( [
+				domainRegistration( {
+					productSlug: domainSuggestionProductSlug,
+					domain: domainSuggestionName,
+				} ),
+			] );
+		} catch {
+			// Nothing needs to be done here. CartMessages will display the error to the user.
+			return null;
+		}
+		page( purchaseLink );
 	};
 
 	return (
@@ -76,9 +119,9 @@ export default function DomainUpsell() {
 
 				<div className="domain-upsell-actions">
 					<Button href={ searchLink } onClick={ getSearchClickHandler }>
-						{ translate( 'Search a domain' ) }
+						{ translate( 'Search for a domain' ) }
 					</Button>
-					<Button primary href={ purchaseLink } onClick={ getCtaClickHandler }>
+					<Button primary onClick={ getCtaClickHandler } busy={ ctaIsBusy }>
 						{ translate( 'Get your custom domain' ) }
 					</Button>
 				</div>

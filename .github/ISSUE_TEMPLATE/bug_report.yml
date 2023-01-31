@@ -1,17 +1,23 @@
 name: Bug Report
 description: Helps us improve our product!
-labels: "Needs triage, [Type] Bug"
-title: "[Bug]: "
+labels: "Needs triage, [Type] Bug, User Report"
 body:
   - type: markdown
     attributes:
       value: |
         ### Thanks for contributing!
 
-        Please write a clear title, then fill in as much details as possible.
+        Please write a clear title, then fill in the fields below and submit.
 
-        __Avoid using image hosting services such as Cloudup, Droplr, Imgur, etc., to link to media.__
-        Instead, attach screenshot(s) or recording(s) directly in any of the text areas below: click, then drag and drop.
+        Please **do not** link to image hosting services such as Cloudup, Droplr, Imgur, etc…
+        Instead, directly embed screenshot(s) or recording(s) in any of the text areas below: click, then drag and drop.
+
+        If you have any questions, please ask in: `#dotcom-pa-triage`.
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        ## Core Information
   - type: textarea
     id: summary
     attributes:
@@ -25,8 +31,6 @@ body:
         2. Click on any blog post.
         3. Click on the 'Like' button.
         4. ...
-
-        Attach any media by drag and dropping or selecting upload.
     validations:
       required: true
   - type: textarea
@@ -46,74 +50,17 @@ body:
     validations:
       required: true
   - type: dropdown
-    id: browser
-    attributes:
-      label: Browser
-      description: (You may select more than one)
-      options:
-        - Google Chrome/Chromium
-        - Mozilla Firefox
-        - Microsoft Edge
-        - Apple Safari
-        - iOS Safari
-        - Android Chrome
-      multiple: true
-  - type: input
-    id: issue_context
-    attributes:
-      label: Context
-      placeholder: |
-        e.g. Customer report, details of your exploratory testing, etc.
-  - type: markdown
-    attributes:
-      value: |
-        ---
-        ## Additional context
-
-        The following section is optional. If you're an Automattician, you should be able to fill it in. If not, please scroll to the bottom and submit the issue.
-  - type: dropdown
-    id: site-type
-    attributes:
-      label: Platform (Simple, Atomic, or both?)
-      description: (You may select more than one)
-      options:
-        - Simple
-        - Atomic
-        - Self-hosted
-      multiple: true
-  - type: textarea
-    id: other_notes
-    attributes:
-      label: Other notes
-      placeholder: |
-        e.g. Logs, CLI or console errors, notes, observations, etc.
-  - type: markdown
-    attributes:
-      value: |
-        ---
-        ## Issue severity
-
-        Please provide details around how often the issue is reproducible & how many users are affected.
-  - type: dropdown
-    id: reproducibility
-    attributes:
-      label: Reproducibility
-      options:
-        - Consistent
-        - Intermittent
-        - Once
-    validations:
-      required: true
-  - type: dropdown
     id: users-affected
     attributes:
-      label: Severity
-      description: How many users are impacted? A guess is fine.
+      label: Impact
+      description: Approximately how many users are impacted?
       options:
         - One
         - Some (< 50%)
         - Most (> 50%)
         - All
+    validations:
+      required: true
   - type: dropdown
     id: workarounds
     attributes:
@@ -124,10 +71,33 @@ body:
         - Yes, difficult to implement
         - Yes, easy to implement
         - There is no user impact
-  - type: textarea
-    id: workarounds-detail
+    validations:
+      required: true
+
+  - type: markdown
     attributes:
-      label: Workaround details
-      description: If you are aware of a workaround, please describe it below.
+      value: |
+        <br>
+        
+        ## Optional Information
+
+        The following section is optional. 
+  - type: dropdown
+    id: site-type
+    attributes:
+      label: Platform (Simple and/or Atomic)
+      description: (You may select more than one)
+      options:
+        - Simple
+        - Atomic
+        - Self-hosted
+      multiple: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or notes
       placeholder: |
-        e.g. There is an alternative way to access this setting in the sidebar, but it's not readily apparent.
+        Add any information that may be relevant, such as:
+          - Browser/Platform
+          - Theme
+          - Logs/Errors

@@ -30,6 +30,7 @@ class PopoverInner extends Component {
 		onClose: noop,
 		onMouseEnter: noop,
 		onMouseLeave: noop,
+		hideArrow: false,
 	};
 
 	/**
@@ -349,7 +350,7 @@ class PopoverInner extends Component {
 				onMouseEnter={ this.handleOnMouseEnter }
 				onMouseLeave={ this.handleOnMouseLeave }
 			>
-				<div className="popover__arrow" />
+				{ ! this.props.hideArrow ? <div className="popover__arrow" /> : null }
 				<div ref={ this.popoverInnerNodeRef } className="popover__inner">
 					{ this.props.children }
 				</div>
@@ -367,7 +368,7 @@ class PopoverInner extends Component {
 // the outer `isVisible` prop by the `showDelay` timeout. One consequence is that the `RootChild`
 // is created on show and destroyed on hide, making sure that the last shown popover will be
 // also the last DOM element inside `document.body`, ensuring that it has a higher z-index.
-function Popover( { isVisible = false, showDelay = 0, ...props } ) {
+function Popover( { isVisible = false, showDelay = 0, hideArrow = false, ...props } ) {
 	const isRtl = useRtl();
 	const [ show, setShow ] = useState( isVisible );
 
@@ -398,7 +399,7 @@ function Popover( { isVisible = false, showDelay = 0, ...props } ) {
 
 	return (
 		<RootChild>
-			<PopoverInner { ...props } isRtl={ isRtl } />
+			<PopoverInner { ...props } isRtl={ isRtl } hideArrow={ hideArrow } />
 		</RootChild>
 	);
 }
@@ -411,6 +412,7 @@ const PropTypeElement = PropTypes.oneOfType( [
 ] );
 
 Popover.propTypes = {
+	hideArrow: PropTypes.bool,
 	autoPosition: PropTypes.bool,
 	autoRtl: PropTypes.bool,
 	className: PropTypes.string,

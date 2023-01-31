@@ -953,9 +953,7 @@ export const normalizers = {
 		const emailsData = get( data, [ 'posts' ], [] );
 
 		return emailsData.map( ( { id, href, date, title, type, opens } ) => {
-			const detailPage = site
-				? `/stats/email/opens/${ site.slug }/${ query.period }/${ id }`
-				: null;
+			const detailPage = site ? `/stats/email/opens/day/${ id }/${ site.slug }` : null;
 			return {
 				id,
 				href,
@@ -963,6 +961,42 @@ export const normalizers = {
 				label: title,
 				type,
 				value: opens || '0',
+				page: detailPage,
+				actions: [
+					{
+						type: 'link',
+						data: href,
+					},
+				],
+			};
+		} );
+	},
+
+	/**
+	 * Returns a normalized statsEmailsClick array, ready for use in stats-module
+	 *
+	 * @param   {Object} data   Stats data
+	 * @param   {Object} query  Stats query
+	 * @param   {number} siteId  Site ID
+	 * @param   {Object} site    Site object
+	 * @returns {Array}       Normalized stats data
+	 */
+	statsEmailsClick( data, query = {}, siteId, site ) {
+		if ( ! data || ! query.period || ! query.date ) {
+			return [];
+		}
+
+		const emailsData = get( data, [ 'posts' ], [] );
+
+		return emailsData.map( ( { id, href, date, title, type, clicks } ) => {
+			const detailPage = site ? `/stats/email/clicks/day/${ id }/${ site.slug }` : null;
+			return {
+				id,
+				href,
+				date,
+				label: title,
+				type,
+				value: clicks || '0',
 				page: detailPage,
 				actions: [
 					{

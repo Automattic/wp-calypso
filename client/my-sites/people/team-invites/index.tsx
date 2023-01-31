@@ -1,7 +1,7 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import QuerySiteInvites from 'calypso/components/data/query-site-invites';
+import useGetInvitesQuery from 'calypso/data/invites/use-get-invites-query';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import { getPendingInvitesForSite } from 'calypso/state/invites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -15,6 +15,8 @@ function TeamInvites() {
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 	const siteId = site?.ID as number;
 	const pendingInvites = useSelector( ( state ) => getPendingInvitesForSite( state, siteId ) );
+
+	useGetInvitesQuery( siteId );
 
 	function renderInvite( invite: Invite ) {
 		const user = invite.user;
@@ -33,7 +35,6 @@ function TeamInvites() {
 
 	return (
 		<>
-			<QuerySiteInvites siteId={ siteId } />
 			{ !! pendingInvites?.length && (
 				<>
 					<PeopleListSectionHeader

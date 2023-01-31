@@ -1,4 +1,5 @@
 // import { subscribeIsDesktop } from '@automattic/viewport';
+import { isEnabled } from '@automattic/calypso-config';
 import { getPlan, PLAN_FREE } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
@@ -159,6 +160,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					{ components: { link: freePlanButton } }
 			  );
 	};
+	const is2023OnboardingPricingGrid = isEnabled( 'onboarding/2023-pricing-grid' );
 
 	const plansFeaturesSelection = () => {
 		const { flowName } = props;
@@ -176,7 +178,8 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					shouldHideNavButtons={ true }
 					fallbackHeaderText={ fallbackHeaderText }
 					fallbackSubHeaderText={ fallbackSubHeaderText }
-					isWideLayout={ true }
+					isWideLayout={ ! is2023OnboardingPricingGrid }
+					isExtraWideLayout={ is2023OnboardingPricingGrid }
 					stepContent={ plansFeaturesList() }
 					allowBackFirstStep={ false }
 				/>
@@ -187,7 +190,8 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const classes = classNames( 'plans-step', {
 		'in-vertically-scrolled-plans-experiment': isInVerticalScrollingPlansExperiment,
 		'has-no-sidebar': true,
-		'is-wide-layout': true,
+		'is-wide-layout': ! is2023OnboardingPricingGrid,
+		'is-extra-wide-layout': is2023OnboardingPricingGrid,
 	} );
 
 	return (
