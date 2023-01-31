@@ -62,6 +62,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 		referenceRef: navigationHeaderRef,
 	} = useScrollAboveElement();
 	const searchRef = useRef( null );
+	const categoriesRef = useRef();
 	//  another temporary solution until phase 4 is merged
 	const [ isFetchingPluginsBySearchTerm, setIsFetchingPluginsBySearchTerm ] = useState( false );
 
@@ -150,6 +151,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 			<JetpackDisconnectedNotice />
 			<SearchBoxHeader
 				searchRef={ searchRef }
+				categoriesRef={ categoriesRef }
 				stickySearchBoxRef={ searchHeaderRef }
 				isSticky={ isAboveElement }
 				searchTerm={ search }
@@ -171,7 +173,9 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 				renderTitleInH1={ ! category }
 			/>
 
-			<Categories selected={ category } noSelection={ search ? true : false } />
+			<div ref={ categoriesRef }>
+				<Categories selected={ category } noSelection={ search ? true : false } />
+			</div>
 			<div className="plugins-browser__main-container">{ renderList() }</div>
 			{ ! category && ! search && <EducationFooter /> }
 		</MainComponent>

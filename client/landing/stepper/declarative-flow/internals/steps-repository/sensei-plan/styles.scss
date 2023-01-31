@@ -1,0 +1,122 @@
+@import "@automattic/onboarding/styles/mixins";
+@import "../../sensei";
+
+.step-container.senseiPlan {
+	.plan-item {
+		margin-top: 0;
+
+		&__viewport {
+			border: none;
+		}
+
+		&__heading,
+		&__price {
+			display: flex;
+			justify-content: center;
+		}
+		&__price-amount,
+		&__price-note,
+		&__price-discount,
+		&__actions {
+			text-align: center;
+		}
+
+		&__price-amount {
+			margin-top: 20px;
+			color: $black;
+		}
+
+		&__select-button {
+			width: 100%;
+			background-color: $sensei-color;
+			border: 1px solid darken($sensei-color, 10%);
+			&:hover:not(:disabled) {
+				background-color: darken($sensei-color, 10%);
+				border: 1px solid darken($sensei-color, 10%);
+			}
+		}
+
+		&__summary,
+		&__price-note,
+		&__price-discount {
+			display: none;
+		}
+
+		&--sensei {
+			display: flex;
+			flex-direction: column;
+			justify-content: flex-end;
+			align-items: center;
+			margin-top: 48px;
+			flex: 0;
+
+			.plan-item {
+				&__summary,
+				&__price-note,
+				&__price-discount {
+					display: block;
+					text-transform: unset;
+				}
+			}
+		}
+
+		&--is-loading {
+			.plan-item {
+				&__price-amount {
+					@include onboarding-placeholder();
+					width: 30%;
+				}
+				&__price-note {
+					@include onboarding-placeholder();
+					width: 80%;
+				}
+				&__price-discount {
+					@include onboarding-placeholder();
+					width: 90%;
+				}
+			}
+		}
+	}
+
+
+	.plans-feature-list {
+		&__item {
+			margin: 12px 0;
+		}
+		&__item-group {
+			list-style: none;
+		}
+		&__item-annual-nudge {
+			display: none;
+		}
+		&__item-bullet-icon path {
+			fill: #008a20;
+			stroke: #008a20;
+		}
+		&__item--requires-annual-enabled,
+		&__item--requires-annual-disabled {
+			.plans-feature-list__item-description {
+				font-weight: 700;
+			}
+		}
+		&__item--requires-annual-disabled {
+			.plans-feature-list {
+				&__item-annual-nudge {
+					display: block;
+				}
+				&__item-bullet-icon path {
+					fill: var(--studio-orange-40);
+					stroke: var(--studio-orange-40);
+				}
+			}
+		}
+	}
+
+
+	.plans-interval-toggle__popover:not(.plans-interval-toggle__popover--mobile) {
+		display: none;
+		@media ( min-width: 780px ) {
+			display: block;
+		}
+	}
+}

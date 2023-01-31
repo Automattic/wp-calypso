@@ -286,7 +286,7 @@ export class CartCheckoutPage {
 	 */
 	async purchase( { timeout }: { timeout?: number } = {} ): Promise< void > {
 		await Promise.all( [
-			this.page.waitForNavigation( { timeout: timeout } ),
+			this.page.waitForResponse( /.*me\/transactions.*/, { timeout: timeout } ),
 			this.page.click( selectors.purchaseButton ),
 		] );
 	}

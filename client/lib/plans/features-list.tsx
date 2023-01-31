@@ -222,19 +222,24 @@ import {
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n, { TranslateResult } from 'i18n-calypso';
 import { MemoExoticComponent } from 'react';
+import SupportIcon from 'calypso/assets/images/onboarding/support.svg';
+import ThemeImage from 'calypso/assets/images/onboarding/theme.jpg';
 import ExternalLink from 'calypso/components/external-link';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import MaterialIcon from 'calypso/components/material-icon';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'calypso/lib/url/support';
 
+const is2023OnboardingPricingGrid = isEnabled( 'onboarding/2023-pricing-grid' );
+
 export type FeatureObject = {
 	getSlug: () => string;
 	getTitle: ( domainName?: string ) => TranslateResult;
+	getAlternativeTitle?: () => TranslateResult;
 	getHeader?: () => TranslateResult;
 	getDescription?: ( domainName?: string ) => TranslateResult;
 	getStoreSlug?: () => string;
 	getCompareTitle?: () => TranslateResult;
-	getIcon?: () => string | { icon: string; component: MemoExoticComponent< any > };
+	getIcon?: () => string | { icon: string; component: MemoExoticComponent< any > } | JSX.Element;
 	isPlan?: boolean;
 };
 export type FeatureList = {
@@ -561,13 +566,18 @@ export const FEATURES_LIST: FeatureList = {
 				context: 'title',
 			} );
 		},
+		getAlternativeTitle: () => i18n.translate( 'Free custom domain' ),
 		getDescription: ( domainName?: string ) => {
 			if ( domainName ) {
 				return i18n.translate( 'Your domain (%s) is included with this plan.', {
 					args: domainName,
 				} );
 			}
-
+			if ( is2023OnboardingPricingGrid ) {
+				return i18n.translate(
+					'Get a custom domain – like yoursite.com – free for the first year.'
+				);
+			}
 			return i18n.translate(
 				'All paid WordPress.com plans purchased for an annual term include one year of free domain registration. ' +
 					'Domains registered through this promotion will renew at our {{a}}standard rate{{/a}}, plus applicable taxes, after the first year.{{br /}}{{br /}}' +
@@ -1646,10 +1656,15 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_PAGES ]: {
 		getSlug: () => FEATURE_PAGES,
 		getTitle: () => i18n.translate( 'Unlimited pages' ),
+		getCompareTitle: () => i18n.translate( 'Add as many pages as you like.' ),
+		getDescription: () => i18n.translate( 'Add as many pages as you like to your site.' ),
 	},
 	[ FEATURE_USERS ]: {
 		getSlug: () => FEATURE_USERS,
 		getTitle: () => i18n.translate( 'Unlimited users' ),
+		getCompareTitle: () => i18n.translate( 'Invite others to contribute to your site.' ),
+		getDescription: () =>
+			i18n.translate( 'Invite others to contribute to your site and assign access permissions.' ),
 	},
 	[ FEATURE_NEWSLETTERS_RSS ]: {
 		getSlug: () => FEATURE_NEWSLETTERS_RSS,
@@ -1658,6 +1673,8 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_POST_EDITS_HISTORY ]: {
 		getSlug: () => FEATURE_POST_EDITS_HISTORY,
 		getTitle: () => i18n.translate( 'Time machine for post edits' ),
+		getDescription: () =>
+			i18n.translate( 'Roll back your posts to an earlier edit with a built-in revision history.' ),
 	},
 	[ FEATURE_SECURITY_BRUTE_FORCE ]: {
 		getSlug: () => FEATURE_SECURITY_BRUTE_FORCE,
@@ -1670,6 +1687,7 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_ALWAYS_ONLINE ]: {
 		getSlug: () => FEATURE_ALWAYS_ONLINE,
 		getTitle: () => i18n.translate( 'Online forever' ),
+		getDescription: () => i18n.translate( 'Build and count on a site designed to last forever.' ),
 	},
 	[ FEATURE_FAST_DNS ]: {
 		getSlug: () => FEATURE_FAST_DNS,
@@ -1678,10 +1696,15 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_STYLE_CUSTOMIZATION ]: {
 		getSlug: () => FEATURE_STYLE_CUSTOMIZATION,
 		getTitle: () => i18n.translate( 'Style customization' ),
+		getCompareTitle: () =>
+			i18n.translate( 'Take control of every font, color and detail of your site' ),
 	},
 	[ FEATURE_SUPPORT_EMAIL ]: {
 		getSlug: () => FEATURE_SUPPORT_EMAIL,
 		getTitle: () => i18n.translate( 'Support via email' ),
+		getIcon: () => <img src={ SupportIcon } alt={ i18n.translate( 'Customer support' ) } />,
+		getAlternativeTitle: () => i18n.translate( 'Customer support' ),
+		getCompareTitle: () => i18n.translate( 'Unlimited support via emails.' ),
 	},
 	[ FEATURE_DESIGN_TOOLS ]: {
 		getSlug: () => FEATURE_DESIGN_TOOLS,
@@ -1690,6 +1713,8 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_PREMIUM_THEMES_V2 ]: {
 		getSlug: () => FEATURE_PREMIUM_THEMES_V2,
 		getTitle: () => i18n.translate( 'Premium themes' ),
+		getIcon: () => <img src={ ThemeImage } alt={ i18n.translate( 'Premium themes' ) } />,
+		getCompareTitle: () => i18n.translate( 'A collection of premium design templates' ),
 	},
 	[ FEATURE_WORDADS ]: {
 		getSlug: () => FEATURE_WORDADS,
@@ -1702,10 +1727,14 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_BANDWIDTH ]: {
 		getSlug: () => FEATURE_BANDWIDTH,
 		getTitle: () => i18n.translate( 'Unrestricted bandwidth' ),
+		getDescription: () =>
+			i18n.translate( 'Never fret about getting too much traffic or paying overage charges.' ),
 	},
 	[ FEATURE_BURST ]: {
 		getSlug: () => FEATURE_BURST,
 		getTitle: () => i18n.translate( 'High-burst capacity' ),
+		getCompareTitle: () =>
+			i18n.translate( 'Lean on integrated resource management and instant scaling.' ),
 	},
 	[ FEATURE_WAF_V2 ]: {
 		getSlug: () => FEATURE_WAF_V2,
@@ -1714,6 +1743,9 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_CDN ]: {
 		getSlug: () => FEATURE_CDN,
 		getTitle: () => i18n.translate( 'Global CDN with 28+ locations' ),
+		getAlternativeTitle: () => i18n.translate( 'Global CDN' ),
+		getCompareTitle: () =>
+			i18n.translate( 'Rely on ultra-fast site speeds, from any location on earth.' ),
 	},
 	[ FEATURE_CPUS ]: {
 		getSlug: () => FEATURE_CPUS,
@@ -1786,7 +1818,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_LTD_SOCIAL_MEDIA_JP ]: {
 		getSlug: () => FEATURE_LTD_SOCIAL_MEDIA_JP,
-		getTitle: () => i18n.translate( 'Limited social media sharing' ),
+		getTitle: () => i18n.translate( 'Limited shares in social media' ),
 	},
 	[ FEATURE_CONTACT_FORM_JP ]: {
 		getSlug: () => FEATURE_CONTACT_FORM_JP,

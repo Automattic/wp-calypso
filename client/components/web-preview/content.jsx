@@ -445,6 +445,7 @@ export default class WebPreviewContent extends Component {
 											? `rgba(16, 21, 23, 0.5)`
 											: 'rgba(16, 21, 23, 0)',
 										transition: 'background 0.2s ease',
+										pointerEvents: 'none',
 									} }
 								>
 									<button
@@ -452,6 +453,7 @@ export default class WebPreviewContent extends Component {
 											position: 'relative',
 											top: this.state.showIFrameOverlay ? '0' : '15px',
 											transition: 'all 0.2s ease',
+											pointerEvents: 'all',
 										} }
 										aria-label="Edit your new site"
 										className="web-preview__frame-edit-button"

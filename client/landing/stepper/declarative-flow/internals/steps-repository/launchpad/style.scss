@@ -138,7 +138,8 @@
 .link-in-bio:not(.domains),
 .link-in-bio-tld:not(.domains),
 .free,
-.build {
+.build,
+.write {
 	.step-container {
 		.step-container__content h1,
 		.step-container__content h1.launchpad__sidebar-h1 {
@@ -485,6 +486,7 @@
 	}
 
 	.web-preview__frame-wrapper.is-resizable {
+		transition: max-width 0.2s linear;
 		margin: 0;
 		padding: 0;
 		background-color: transparent;
