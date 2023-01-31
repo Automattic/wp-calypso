@@ -384,7 +384,8 @@ export default withCurrentRoute(
 		// TODO: Connect this to the actual experiment.
 		const userBelongsToExperiment = true;
 		const isStartDomainExperiment =
-			currentRoute.startsWith( '/domains/add' ) && userBelongsToExperiment;
+			( currentRoute.startsWith( '/domains/add' ) || currentRoute.startsWith( '/plans/yearly' ) ) &&
+			userBelongsToExperiment;
 		const isJetpack =
 			( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) ||
 			currentRoute.startsWith( '/checkout/jetpack' );
