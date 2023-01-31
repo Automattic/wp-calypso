@@ -361,13 +361,7 @@ function TrailingItems( { spacersCount } ) {
 	const DEFAULT_NUM_SPACERS = 11; // gives enough spacers for a theoretical 12 column layout
 	const numSpacers = spacersCount ?? DEFAULT_NUM_SPACERS;
 	return times( numSpacers, function ( i ) {
-		return (
-			<div
-				className="themes-list__spacer"
-				key={ 'themes-list__spacer-' + i }
-				data-key={ 'themes-list__spacer-' + i }
-			/>
-		);
+		return <div className="themes-list__spacer" key={ 'themes-list__spacer-' + i } />;
 	} );
 }
 
