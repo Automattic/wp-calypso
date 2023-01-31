@@ -1,4 +1,4 @@
-import { Field, VatDetails } from '@automattic/wpcom-checkout';
+import { Field } from '@automattic/wpcom-checkout';
 import { CheckboxControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -62,11 +62,11 @@ export function VatForm( {
 	countryCode: string | undefined;
 } ) {
 	const translate = useTranslate();
-	const vatDetailsInForm: VatDetails = useSelect( ( select ) =>
-		select( 'wpcom-checkout' ).getVatDetails()
+	const vatDetailsInForm = useSelect(
+		( select ) => select( 'wpcom-checkout' )?.getVatDetails() ?? {}
 	);
 	const wpcomStoreActions = useDispatch( 'wpcom-checkout' );
-	const setVatDetailsInForm = wpcomStoreActions.setVatDetails as ( vat: VatDetails ) => void;
+	const setVatDetailsInForm = wpcomStoreActions?.setVatDetails;
 	const { vatDetails: vatDetailsFromServer, isLoading: isLoadingVatDetails } = useVatDetails();
 	const [ isFormActive, setIsFormActive ] = useState< boolean >( false );
 
@@ -74,7 +74,13 @@ export function VatForm( {
 	// actions.
 	const previousCountryCode = useRef< string >( '' );
 	useEffect( () => {
-		if ( ! countryCode || isLoadingVatDetails || countryCode === previousCountryCode.current ) {
+		if (
+			! vatDetailsInForm ||
+			! setVatDetailsInForm ||
+			! countryCode ||
+			isLoadingVatDetails ||
+			countryCode === previousCountryCode.current
+		) {
 			return;
 		}
 
@@ -130,6 +136,15 @@ export function VatForm( {
 
 	const reduxDispatch = useReduxDispatch();
 
+	if (
+		! setVatDetailsInForm ||
+		! countryCode ||
+		isLoadingVatDetails ||
+		! isVatSupportedFor( countryCode )
+	) {
+		return null;
+	}
+
 	const toggleVatForm = ( isChecked: boolean ) => {
 		if ( ! isChecked ) {
 			// Clear the VAT form when the checkbox is unchecked so that the VAT
@@ -166,10 +181,6 @@ export function VatForm( {
 	const clickSupport = () => {
 		reduxDispatch( recordTracksEvent( 'calypso_vat_details_support_click' ) );
 	};
-
-	if ( ! countryCode || isLoadingVatDetails || ! isVatSupportedFor( countryCode ) ) {
-		return null;
-	}
 
 	if ( ! isFormActive ) {
 		return (
