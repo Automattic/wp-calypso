@@ -64,6 +64,7 @@ class DomainSearch extends Component {
 	};
 
 	isMounted = false;
+	isStartDomainExperiment = true;
 
 	state = {
 		domainRegistrationAvailable: true,
@@ -101,6 +102,10 @@ class DomainSearch extends Component {
 	};
 
 	componentDidMount() {
+		if ( this.isStartDomainExperiment ) {
+			document.body.classList.add( 'is-experiment-user' );
+		}
+
 		this.checkSiteIsUpgradeable();
 
 		this.isMounted = true;
@@ -113,6 +118,10 @@ class DomainSearch extends Component {
 	}
 
 	componentWillUnmount() {
+		if ( this.isStartDomainExperiment ) {
+			document.body.classList.remove( 'is-experiment-user' );
+		}
+
 		this.isMounted = false;
 	}
 
@@ -204,6 +213,7 @@ class DomainSearch extends Component {
 
 		const classes = classnames( 'main-column', {
 			'domain-search-page-wrapper': this.state.domainRegistrationAvailable,
+			'is-experiment-user': this.isStartDomainExperiment,
 		} );
 		const { domainRegistrationMaintenanceEndTime } = this.state;
 

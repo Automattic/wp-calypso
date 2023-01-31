@@ -10,3 +10,10 @@
 		align-items: center;
 	}
 }
+
+
+body.is-section-domains {
+	&.is-experiment-user {
+		background: #fdfdfd;
+	}
+}
