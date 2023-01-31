@@ -8,15 +8,14 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 	const site = useSite();
 	const siteId = site?.ID || null;
 	const theme = site?.options?.theme_slug || '';
-	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
-	const siteCount = currentUser?.site_count ?? 0;
+	const siteCount = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() )?.site_count;
 
 	return useCallback( () => {
 		recordSignupComplete(
 			{
 				flow,
 				siteId: siteId,
-				isNewUser: siteCount <= 1,
+				isNewUser: siteCount ?? true,
 				hasCartItems: false,
 				isNew7DUserSite: '',
 				theme,
