@@ -229,13 +229,14 @@ import ExternalLinkWithTracking from 'calypso/components/external-link/with-trac
 import MaterialIcon from 'calypso/components/material-icon';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'calypso/lib/url/support';
 
+const is2023OnboardingPricingGrid = isEnabled( 'onboarding/2023-pricing-grid' );
+
 export type FeatureObject = {
 	getSlug: () => string;
 	getTitle: ( domainName?: string ) => TranslateResult;
 	getAlternativeTitle?: () => TranslateResult;
 	getHeader?: () => TranslateResult;
 	getDescription?: ( domainName?: string ) => TranslateResult;
-	getExplanation?: () => TranslateResult;
 	getStoreSlug?: () => string;
 	getCompareTitle?: () => TranslateResult;
 	getIcon?: () => string | { icon: string; component: MemoExoticComponent< any > } | JSX.Element;
@@ -572,7 +573,11 @@ export const FEATURES_LIST: FeatureList = {
 					args: domainName,
 				} );
 			}
-
+			if ( is2023OnboardingPricingGrid ) {
+				return i18n.translate(
+					'Get a custom domain – like yoursite.com – free for the first year.'
+				);
+			}
 			return i18n.translate(
 				'All paid WordPress.com plans purchased for an annual term include one year of free domain registration. ' +
 					'Domains registered through this promotion will renew at our {{a}}standard rate{{/a}}, plus applicable taxes, after the first year.{{br /}}{{br /}}' +
@@ -591,8 +596,6 @@ export const FEATURES_LIST: FeatureList = {
 				}
 			);
 		},
-		getExplanation: () =>
-			i18n.translate( 'Get a custom domain – like yoursite.com – free for the first year.' ),
 	},
 
 	[ FEATURE_JETPACK_ESSENTIAL ]: {
@@ -1654,13 +1657,13 @@ export const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_PAGES,
 		getTitle: () => i18n.translate( 'Unlimited pages' ),
 		getCompareTitle: () => i18n.translate( 'Add as many pages as you like.' ),
-		getExplanation: () => i18n.translate( 'Add as many pages as you like to your site.' ),
+		getDescription: () => i18n.translate( 'Add as many pages as you like to your site.' ),
 	},
 	[ FEATURE_USERS ]: {
 		getSlug: () => FEATURE_USERS,
 		getTitle: () => i18n.translate( 'Unlimited users' ),
 		getCompareTitle: () => i18n.translate( 'Invite others to contribute to your site.' ),
-		getExplanation: () =>
+		getDescription: () =>
 			i18n.translate( 'Invite others to contribute to your site and assign access permissions.' ),
 	},
 	[ FEATURE_NEWSLETTERS_RSS ]: {
@@ -1670,7 +1673,7 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_POST_EDITS_HISTORY ]: {
 		getSlug: () => FEATURE_POST_EDITS_HISTORY,
 		getTitle: () => i18n.translate( 'Time machine for post edits' ),
-		getExplanation: () =>
+		getDescription: () =>
 			i18n.translate( 'Roll back your posts to an earlier edit with a built-in revision history.' ),
 	},
 	[ FEATURE_SECURITY_BRUTE_FORCE ]: {
@@ -1684,7 +1687,7 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_ALWAYS_ONLINE ]: {
 		getSlug: () => FEATURE_ALWAYS_ONLINE,
 		getTitle: () => i18n.translate( 'Online forever' ),
-		getExplanation: () => i18n.translate( 'Build and count on a site designed to last forever.' ),
+		getDescription: () => i18n.translate( 'Build and count on a site designed to last forever.' ),
 	},
 	[ FEATURE_FAST_DNS ]: {
 		getSlug: () => FEATURE_FAST_DNS,
@@ -1724,7 +1727,7 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_BANDWIDTH ]: {
 		getSlug: () => FEATURE_BANDWIDTH,
 		getTitle: () => i18n.translate( 'Unrestricted bandwidth' ),
-		getExplanation: () =>
+		getDescription: () =>
 			i18n.translate( 'Never fret about getting too much traffic or paying overage charges.' ),
 	},
 	[ FEATURE_BURST ]: {

@@ -50,6 +50,7 @@ Tooltip.defaultProps = {
 	showDelay: 100,
 	position: 'top',
 	showOnMobile: false,
+	hideArrow: false,
 };
 
 export default Tooltip;

@@ -368,7 +368,7 @@ class PopoverInner extends Component {
 // the outer `isVisible` prop by the `showDelay` timeout. One consequence is that the `RootChild`
 // is created on show and destroyed on hide, making sure that the last shown popover will be
 // also the last DOM element inside `document.body`, ensuring that it has a higher z-index.
-function Popover( { isVisible = false, showDelay = 0, hideArrow, ...props } ) {
+function Popover( { isVisible = false, showDelay = 0, hideArrow = false, ...props } ) {
 	const isRtl = useRtl();
 	const [ show, setShow ] = useState( isVisible );
 
@@ -399,7 +399,7 @@ function Popover( { isVisible = false, showDelay = 0, hideArrow, ...props } ) {
 
 	return (
 		<RootChild>
-			<PopoverInner { ...props } isRtl={ isRtl } hideArrow />
+			<PopoverInner { ...props } isRtl={ isRtl } hideArrow={ hideArrow } />
 		</RootChild>
 	);
 }

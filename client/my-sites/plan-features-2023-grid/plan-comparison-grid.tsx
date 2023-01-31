@@ -527,7 +527,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 											key="feature-name"
 											className={ `plan-comparison-grid__feature-feature-name ${ feature.getTitle() }` }
 										>
-											<Plans2023Tooltip text={ feature.getExplanation?.() }>
+											<Plans2023Tooltip text={ feature.getDescription?.() }>
 												{ feature.getTitle() }
 											</Plans2023Tooltip>
 											{ allJetpackFeatures.has( feature.getSlug() ) ? (
