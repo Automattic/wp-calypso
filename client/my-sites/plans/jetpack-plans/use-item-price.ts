@@ -168,7 +168,7 @@ const useItemPrice = (
 				? getMonthlyPrice( introductoryOfferPrices.introOfferCost )
 				: undefined;
 
-			// Override Jetpack Social and Jetpack Backup Tier 1 price by hard-coding it for now
+			// Override Jetpack Social Basic, Jetpack Social Advanced and Jetpack Backup Tier 1 price by hard-coding it for now
 			if (
 				[
 					...JETPACK_SOCIAL_PRODUCTS,
