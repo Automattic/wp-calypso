@@ -43,9 +43,7 @@ export const ThemesList = ( props ) => {
 			return <WPOrgMatchingThemes matchingThemes={ matchingWpOrgThemes } { ...props } />;
 		}
 
-		return (
-			<Empty translate={ props.translate } upsellCardDisplayed={ props.upsellCardDisplayed } />
-		);
+		return <Empty translate={ props.translate } />;
 	}
 
 	return (
@@ -59,7 +57,7 @@ export const ThemesList = ( props ) => {
 				<TrailingItems />
 				<InfiniteScroll nextPageMethod={ fetchNextPage } />
 			</div>
-			<Footer translate={ props.translate } upsellCardDisplayed={ props.upsellCardDisplayed } />
+			<Footer translate={ props.translate } />
 		</>
 	);
 };
@@ -88,7 +86,6 @@ ThemesList.propTypes = {
 	] ),
 	siteId: PropTypes.number,
 	searchTerm: PropTypes.string,
-	upsellCardDisplayed: PropTypes.func,
 };
 
 ThemesList.defaultProps = {
