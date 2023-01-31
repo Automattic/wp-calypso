@@ -3,33 +3,33 @@
  */
 import { render } from '@testing-library/react';
 
-describe( 'AppPromo', () => {
-	const appPromoDetails = {
+describe( 'AppPromoSidebar', () => {
+	const appPromoSidebarDetails = {
 		promoCode: 'a0001',
 		message: 'WordPress.com your way  — desktop app now available for Mac, Windows, and Linux.',
 	};
-	const appPromoLink = 'http://www.wordpress.com';
+	const appPromoSidebarLink = 'http://www.wordpress.com';
 
-	let AppPromo;
-	let AppPromoComponent;
+	let AppPromoSidebar;
+	let AppPromoSidebarComponent;
 	let getPromoLink;
 	const defaultPropsToRender = {
 		location: 'reader',
-		promoItem: appPromoDetails,
-		getPromoLink: () => appPromoLink,
+		promoItem: appPromoSidebarDetails,
+		getPromoLink: () => appPromoSidebarLink,
 		translate: ( string ) => string,
 	};
 	// The reason we don't import this higher up is this component can't be
 	// imported until the fake DOM is setup.
 	beforeAll( () => {
-		AppPromo = require( '..' ).AppPromo;
+		AppPromoSidebar = require( '..' ).AppPromoSidebar;
 		getPromoLink = require( '..' ).getPromoLink;
-		AppPromoComponent = <AppPromo { ...defaultPropsToRender } />;
+		AppPromoSidebarComponent = <AppPromoSidebar { ...defaultPropsToRender } />;
 	} );
 
 	describe( 'readering', () => {
 		test( 'should render the primary components', () => {
-			const { container } = render( AppPromoComponent );
+			const { container } = render( AppPromoSidebarComponent );
 
 			expect( container.getElementsByClassName( 'app-promo' ) ).toHaveLength( 1 );
 			expect( container.getElementsByClassName( 'app-promo__dismiss' ) ).toHaveLength( 1 );
@@ -37,17 +37,19 @@ describe( 'AppPromo', () => {
 		} );
 
 		test( 'should render the promo text', () => {
-			const { container } = render( AppPromoComponent );
+			const { container } = render( AppPromoSidebarComponent );
 
-			expect( container.textContent ).toEqual( expect.stringContaining( appPromoDetails.message ) );
+			expect( container.textContent ).toEqual(
+				expect.stringContaining( appPromoSidebarDetails.message )
+			);
 		} );
 
 		test( 'should render the promo link', () => {
-			const { container } = render( AppPromoComponent );
+			const { container } = render( AppPromoSidebarComponent );
 
 			const promoLink = container.getElementsByClassName( 'app-promo__link' );
 			expect( promoLink ).toHaveLength( 1 );
-			expect( promoLink[ 0 ].getAttribute( 'href' ) ).toBe( appPromoLink );
+			expect( promoLink[ 0 ].getAttribute( 'href' ) ).toBe( appPromoSidebarLink );
 		} );
 	} );
 

@@ -88,8 +88,8 @@ export const getPromoLink = ( location, promoDetails ) => {
 	return `https://apps.wordpress.com/${ type }/?ref=promo_${ location }_${ promoCode }`;
 };
 
-export class AppPromo extends Component {
-	static displayName = 'AppPromo';
+export class AppPromoSidebar extends Component {
+	static displayName = 'AppPromoSidebar';
 
 	static propTypes = {
 		location: PropTypes.string.isRequired,
@@ -211,7 +211,7 @@ export class AppPromo extends Component {
 	}
 }
 
-AppPromo.defaultProps = {
+AppPromoSidebar.defaultProps = {
 	recordTracksEvent: noop,
 	saveDismissal: () => store.set( 'desktop_promo_disabled', true ),
 	getPromoLink,
@@ -222,4 +222,4 @@ export default connect(
 		userSettings: getUserSettings( state ),
 	} ),
 	{ fetchUserSettings, recordTracksEvent }
-)( localize( AppPromo ) );
+)( localize( AppPromoSidebar ) );
