@@ -2,6 +2,7 @@ import {
 	JETPACK_BACKUP_T1_PRODUCTS,
 	JETPACK_CRM_PRODUCTS,
 	JETPACK_SOCIAL_PRODUCTS,
+	JETPACK_SOCIAL_ADVANCED_PRODUCTS,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
 import { useMemo } from 'react';
@@ -169,9 +170,14 @@ const useItemPrice = (
 
 			// Override Jetpack Social and Jetpack Backup Tier 1 price by hard-coding it for now
 			if (
-				[ ...JETPACK_SOCIAL_PRODUCTS, ...JETPACK_BACKUP_T1_PRODUCTS ].includes(
+				[
+					...JETPACK_SOCIAL_PRODUCTS,
+					...JETPACK_SOCIAL_ADVANCED_PRODUCTS,
+					...JETPACK_BACKUP_T1_PRODUCTS,
+				].includes(
 					item?.productSlug as
 						| typeof JETPACK_SOCIAL_PRODUCTS[ number ]
+						| typeof JETPACK_SOCIAL_ADVANCED_PRODUCTS[ number ]
 						| typeof JETPACK_BACKUP_T1_PRODUCTS[ number ]
 				)
 			) {
