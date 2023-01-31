@@ -6,13 +6,12 @@ import { localize } from 'i18n-calypso';
 import { isEmpty, times } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { connect, useSelector } from 'react-redux';
 import proThemesBanner from 'calypso/assets/images/themes/pro-themes-banner.svg';
 import EmptyContent from 'calypso/components/empty-content';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import Theme from 'calypso/components/theme';
-import { useWindowResizeCallback } from 'calypso/lib/track-element-size';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { upsellCardDisplayed as upsellCardDisplayedAction } from 'calypso/state/themes/actions';
@@ -23,15 +22,9 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';
 
 const noop = () => {};
-const THEME_CARD_WIDTH = 320; // used to calculate the number of column in theme-list
-const THEM_CARD_MARGIN = 16; // used to calculate the max-width of column in theme-list
 
 export const ThemesList = ( props ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const [ patternAssemblerCtaPlacement, setPatternAssemblerCtaPlacement ] = useState( {
-		position: -1,
-		trailing: 0,
-	} );
 
 	const fetchNextPage = useCallback(
 		( options ) => {
@@ -39,34 +32,6 @@ export const ThemesList = ( props ) => {
 		},
 		[ props.fetchNextPage ]
 	);
-
-	const handleContentRectChange = useCallback(
-		( contentRect ) => {
-			if ( contentRect ) {
-				const themesCount = props.themes.length;
-				const columnCount = Math.floor(
-					contentRect.width / ( THEME_CARD_WIDTH + THEM_CARD_MARGIN * 2 )
-				);
-				const relativeCtaPosition = columnCount * 3 - 1;
-				const actualCtaPosition =
-					relativeCtaPosition < themesCount - 1 ? relativeCtaPosition : themesCount - 1;
-
-				let trailingSpacersCount = 0;
-				if ( actualCtaPosition >= themesCount - 1 ) {
-					trailingSpacersCount = Math.ceil( themesCount / columnCount ) * columnCount - themesCount;
-				}
-
-				setPatternAssemblerCtaPlacement( {
-					position: actualCtaPosition,
-					trailing: trailingSpacersCount,
-				} );
-			}
-		},
-		[ patternAssemblerCtaPlacement, props.themes.length ]
-	);
-
-	// Subscribe to changes to element size and position.
-	const resizeRef = useWindowResizeCallback( handleContentRectChange );
 
 	if ( ! props.loading && props.themes.length === 0 ) {
 		return (
@@ -83,31 +48,21 @@ export const ThemesList = ( props ) => {
 	}
 
 	return (
-		<div ref={ resizeRef } className="themes-list">
-			{ props.themes.map( ( theme, index ) => [
-				<ThemeBlock key={ 'theme-block' + index } theme={ theme } index={ index } { ...props } />,
-				...( index === patternAssemblerCtaPlacement.position &&
-				isEnabled( 'pattern-assembler/logged-out-showcase' ) &&
-				! isLoggedIn
-					? [
-							<TrailingItems
-								key="theme-trailing-items"
-								spacersCount={ patternAssemblerCtaPlacement.trailing }
-							/>,
-							<PatternAssemblerCta
-								key="pattern-assembler-cta"
-								onButtonClick={ () =>
-									window.location.assign(
-										'/start/with-theme?ref=calypshowcase&theme=blank-canvas-3'
-									)
-								}
-							></PatternAssemblerCta>,
-					  ]
-					: [] ),
-			] ) }
+		<div className="themes-list">
+			{ props.themes.map( ( theme, index ) => (
+				<ThemeBlock key={ 'theme-block' + index } theme={ theme } index={ index } { ...props } />
+			) ) }
+			{ /* The Pattern Assembler CTA will display on the fourth row and the behavior is controlled by CSS */ }
+			{ isEnabled( 'pattern-assembler/logged-out-showcase' ) &&
+				props.themes.length > 0 &&
+				! isLoggedIn && (
+					<PatternAssemblerCta
+						onButtonClick={ () =>
+							window.location.assign( '/start/with-theme?ref=calypshowcase&theme=blank-canvas-3' )
+						}
+					/>
+				) }
 			{ props.loading && <LoadingPlaceholders placeholderCount={ props.placeholderCount } /> }
-			{ /* Invisible trailing items keep all elements same width in flexbox grid. */ }
-			<TrailingItems />
 			<InfiniteScroll nextPageMethod={ fetchNextPage } />
 		</div>
 	);
@@ -281,7 +236,6 @@ function WPOrgMatchingThemes( props ) {
 					<ThemeBlock theme={ theme } index={ index } { ...props } />
 				</div>
 			) ) }
-			<TrailingItems />
 		</div>
 	);
 }
@@ -354,14 +308,6 @@ function LoadingPlaceholders( { placeholderCount } ) {
 				isPlaceholder={ true }
 			/>
 		);
-	} );
-}
-
-function TrailingItems( { spacersCount } ) {
-	const DEFAULT_NUM_SPACERS = 11; // gives enough spacers for a theoretical 12 column layout
-	const numSpacers = spacersCount ?? DEFAULT_NUM_SPACERS;
-	return times( numSpacers, function ( i ) {
-		return <div className="themes-list__spacer" key={ 'themes-list__spacer-' + i } />;
 	} );
 }
 

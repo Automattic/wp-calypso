@@ -1,6 +1,6 @@
 .themes-list {
-	display: flex;
-	flex-flow: row wrap;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
 	list-style: none;
 	padding: 0;
 	margin: 0 -10px; // items flush against list edge
@@ -11,19 +11,12 @@
 	}
 
 	.pattern-assembler-cta-wrapper {
-		width: 100%;
+		grid-column: 1/-1;
+		grid-row-start: 4;
 		background: #fff;
 		box-shadow: 0 0 0 1px var(--color-border-subtle);
 		margin: 0 16px 48px;
-		order: 0;
 	}
-}
-
-.themes-list__spacer {
-	width: 230px;
-	height: 0;
-	margin: 0 10px;
-	flex-grow: 1;
 }
 
 .themes-list__empty-container {
