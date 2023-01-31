@@ -371,8 +371,22 @@ export class Theme extends Component {
 		);
 	};
 
+	getUpsellHeader = () => {
+		const { doesThemeBundleSoftwareSet, isExternallyManagedTheme, translate } = this.props;
+
+		if ( isExternallyManagedTheme ) {
+			return translate( 'Paid theme' );
+		}
+
+		if ( doesThemeBundleSoftwareSet ) {
+			return translate( 'WooCommerce theme' );
+		}
+
+		return translate( 'Premium theme' );
+	};
+
 	getUpsellPopoverContent = () => {
-		const { doesThemeBundleSoftwareSet, isExternallyManagedTheme, theme, translate } = this.props;
+		const { theme } = this.props;
 
 		return (
 			<>
@@ -382,11 +396,7 @@ export class Theme extends Component {
 				/>
 				<div>
 					<div data-testid="upsell-header" className="theme__upsell-header">
-						{ ( ! doesThemeBundleSoftwareSet || isExternallyManagedTheme ) &&
-							translate( 'Premium theme' ) }
-						{ doesThemeBundleSoftwareSet &&
-							! isExternallyManagedTheme &&
-							translate( 'WooCommerce theme' ) }
+						{ this.getUpsellHeader() }
 					</div>
 					<div data-testid="upsell-message">{ this.getUpsellMessage() }</div>
 				</div>
@@ -394,15 +404,35 @@ export class Theme extends Component {
 		);
 	};
 
+	getPremiumThemeBadge = () => {
+		const { doesThemeBundleSoftwareSet, isExternallyManagedTheme, translate } = this.props;
+
+		const commonProps = {
+			className: 'theme__upsell-popover',
+			tooltipClassName: 'theme__upsell-popover info-popover__tooltip',
+			tooltipContent: this.getUpsellPopoverContent(),
+			tooltipPosition: 'top',
+		};
+
+		if ( isExternallyManagedTheme ) {
+			return (
+				<PremiumBadge
+					{ ...commonProps }
+					className={ classNames( commonProps.className, 'theme__marketplace-theme' ) }
+					labelText={ translate( 'Paid', { textOnly: true } ) }
+				/>
+			);
+		}
+
+		if ( doesThemeBundleSoftwareSet ) {
+			return <WooCommerceBundledBadge { ...commonProps } />;
+		}
+
+		return <PremiumBadge { ...commonProps } />;
+	};
+
 	renderUpsell = () => {
-		const {
-			active,
-			doesThemeBundleSoftwareSet,
-			isExternallyManagedTheme,
-			isPremiumTheme,
-			isPremiumThemeAvailable,
-			theme,
-		} = this.props;
+		const { active, isPremiumTheme, isPremiumThemeAvailable, theme } = this.props;
 
 		/*
 		 * Only show the Premium badge if we're not already showing the price
@@ -411,7 +441,6 @@ export class Theme extends Component {
 		const showPremiumBadge = isPremiumTheme && isPremiumThemeAvailable && ! active;
 		const isNewCardsOnly = isEnabled( 'themes/showcase-i4/cards-only' );
 		const isNewDetailsAndPreview = isEnabled( 'themes/showcase-i4/details-and-preview' );
-		const popoverContent = this.getUpsellPopoverContent();
 
 		return (
 			<span className="theme__upsell">
@@ -420,24 +449,7 @@ export class Theme extends Component {
 					eventProperties={ { cta_name: 'theme-upsell', theme: theme.id } }
 				/>
 				{ isNewCardsOnly || isNewDetailsAndPreview ? (
-					<>
-						{ ( ! doesThemeBundleSoftwareSet || isExternallyManagedTheme ) && (
-							<PremiumBadge
-								className="theme__upsell-popover"
-								tooltipClassName="theme__upsell-popover info-popover__tooltip"
-								tooltipContent={ popoverContent }
-								tooltipPosition="top"
-							/>
-						) }
-						{ doesThemeBundleSoftwareSet && ! isExternallyManagedTheme && (
-							<WooCommerceBundledBadge
-								className="theme__upsell-popover"
-								tooltipClassName="theme__upsell-popover info-popover__tooltip"
-								tooltipContent={ popoverContent }
-								tooltipPosition="top"
-							/>
-						) }
-					</>
+					this.getPremiumThemeBadge()
 				) : (
 					<InfoPopover
 						icon="star"
@@ -448,7 +460,7 @@ export class Theme extends Component {
 						) }
 						position="top"
 					>
-						{ popoverContent }
+						{ this.getUpsellPopoverContent() }
 					</InfoPopover>
 				) }
 			</span>
