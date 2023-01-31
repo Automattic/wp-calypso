@@ -1,4 +1,3 @@
-import { useDispatch } from '@wordpress/data';
 import { useCallback, useEffect, useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { useSelector, useDispatch as useRootDispatch } from 'react-redux';
@@ -7,7 +6,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 import { getPlugins } from 'calypso/state/plugins/installed/selectors';
 import { SenseiStepContainer } from '../components/sensei-step-container';
-import { Progress, SenseiStepProgress } from '../sensei-setup/sensei-step-progress';
+import { Progress, SenseiStepProgress } from '../components/sensei-step-progress';
 import type { Step } from '../../types';
 
 import './style.scss';

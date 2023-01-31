@@ -1,12 +1,12 @@
-import { SenseiStepContainer } from '@automattic/onboarding';
 import { TextControl } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import React, { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { SenseiStepProgress } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/sensei-setup/sensei-step-progress';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { SenseiStepContainer } from '../components/sensei-step-container';
+import { SenseiStepProgress } from '../components/sensei-step-progress';
 import PurposeItem from './purpose-item';
 import type { Step } from '../../types';
 import './style.scss';
