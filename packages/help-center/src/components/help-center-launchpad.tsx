@@ -37,6 +37,7 @@ export const HelpCenterLaunchpad = () => {
 				className="inline-help__launchpad-link"
 				href={ localizeUrl( launchpadURL ) }
 				rel="noreferrer"
+				target="_top"
 				aria-label="Link to Launchpad screen"
 				onClick={ () => {
 					handleLaunchpadHelpLinkClick();
