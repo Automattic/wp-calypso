@@ -10,7 +10,15 @@ import {
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 
-const QueryAtomicTransferStatus = ( { siteId, onTransferComplete } ) => {
+interface QueryAtomicTransferStatusProps {
+	siteId: number;
+	onTransferComplete: CallableFunction;
+}
+
+const QueryAtomicTransferStatus = ( {
+	siteId,
+	onTransferComplete,
+}: QueryAtomicTransferStatusProps ) => {
 	const dispatch = useDispatch();
 	const transferStatus = useSelector( ( state ) => getAutomatedTransferStatus( state, siteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
@@ -31,3 +39,5 @@ const QueryAtomicTransferStatus = ( { siteId, onTransferComplete } ) => {
 
 	return null;
 };
+
+export default QueryAtomicTransferStatus;
