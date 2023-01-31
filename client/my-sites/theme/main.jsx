@@ -908,7 +908,7 @@ class ThemeSheet extends Component {
 							? `/checkout/${ siteSlug }/business?redirect_to=${ encodeURIComponent(
 									thisPageUrl
 							  ) }`
-							: plansUrl
+							: localizeUrl( 'https://wordpress.com/pricing' )
 					}
 					showIcon
 					event="theme_upsell_plan_click"
