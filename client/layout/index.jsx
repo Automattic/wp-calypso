@@ -381,7 +381,10 @@ export default withCurrentRoute(
 		const siteId = getSelectedSiteId( state );
 		const sectionJitmPath = getMessagePathForJITM( currentRoute );
 		const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
-		const isStartDomainExperiment = currentRoute.endsWith( '/v2' );
+		// TODO: Connect this to the actual experiment.
+		const userBelongsToExperiment = true;
+		const isStartDomainExperiment =
+			currentRoute.startsWith( '/domains/add' ) && userBelongsToExperiment;
 		const isJetpack =
 			( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) ||
 			currentRoute.startsWith( '/checkout/jetpack' );
