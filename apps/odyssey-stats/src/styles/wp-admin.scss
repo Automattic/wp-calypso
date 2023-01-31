@@ -62,7 +62,8 @@
 		padding-top: 64px;
 	}
 	& .stats-site .stats > .highlight-cards,
-	& .stats-insights .stats > .highlight-cards {
+	& .stats-insights .stats > .highlight-cards,
+	& .stats-wordads .stats > .highlight-cards {
 		background-color: var(--jetpack-white-off);
 	}
 	#wpcontent {
@@ -124,7 +125,7 @@
 			margin-left: 32px;
 		}
 	}
-	// Black segmented control.
+	// Black period segmented control.
 	.segmented-control.is-primary .segmented-control__item.is-selected .segmented-control__link,
 	.segmented-control.is-primary .segmented-control__item.is-selected .segmented-control__link:hover {
 		background-color: var(--studio-black);
