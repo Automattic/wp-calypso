@@ -7,7 +7,7 @@ import {
 	FEATURE_ALWAYS_ONLINE,
 	FEATURE_STATS_JP,
 	FEATURE_CONTACT_FORM_JP,
-	FEATURE_GROUP_GENERAL_FEATURES,
+	FEATURE_GROUP_ESSENTIAL_FEATURES,
 	FEATURE_CUSTOM_DOMAIN,
 	FEATURE_SUPPORT_EMAIL,
 	FEATURE_BANDWIDTH,
@@ -67,8 +67,8 @@ import {
 import { FeatureGroupMap } from './types';
 
 export const featureGroups: Partial< FeatureGroupMap > = {
-	[ FEATURE_GROUP_GENERAL_FEATURES ]: {
-		slug: FEATURE_GROUP_GENERAL_FEATURES,
+	[ FEATURE_GROUP_ESSENTIAL_FEATURES ]: {
+		slug: FEATURE_GROUP_ESSENTIAL_FEATURES,
 		getTitle: () => i18n.translate( 'Essential features' ),
 		get2023PricingGridSignupWpcomFeatures: () => [
 			FEATURE_PAGES,

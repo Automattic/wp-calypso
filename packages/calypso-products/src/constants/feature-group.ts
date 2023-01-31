@@ -1,4 +1,4 @@
-export const FEATURE_GROUP_GENERAL_FEATURES = 'feature-group-general-features';
+export const FEATURE_GROUP_ESSENTIAL_FEATURES = 'feature-group-essential-features';
 export const FEATURE_GROUP_PERFORMANCE_BOOSTERS = 'feature-group-performance-boosters';
 export const FEATURE_GROUP_HIGH_AVAILABILITY = 'feature-group-high-availability';
 export const FEATURE_GROUP_DEVELOPER_TOOLS = 'feature-group-developer-tools';
