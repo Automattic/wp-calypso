@@ -5,7 +5,6 @@ import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import decodeEntities from 'calypso/lib/formatting/decode/browser';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -80,7 +79,6 @@ export const ThankYouPluginSection = ( { plugin }: { plugin: any } ) => {
 		plugin?.setup_url && siteAdminUrl ? siteAdminUrl + plugin.setup_url : null;
 	const setupURL = plugin?.action_links?.Settings || fallbackSetupUrl || managePluginsUrl;
 	const documentationURL = plugin?.documentation_url;
-	const pluginName = decodeEntities( plugin?.name );
 
 	const sendTrackEvent = useCallback(
 		( name: string, link: string ) => {
@@ -102,13 +100,13 @@ export const ThankYouPluginSection = ( { plugin }: { plugin: any } ) => {
 				alt={
 					translate( "%(plugin)s's icon", {
 						args: {
-							plugin: pluginName,
+							plugin: plugin.name,
 						},
 					} ) as string
 				}
 			/>
 			<PluginSectionContent>
-				<PluginSectionName>{ pluginName }</PluginSectionName>
+				<PluginSectionName>{ plugin.name }</PluginSectionName>
 				{ /* TODO: Implement expiration date logic, the prop expiration date doesn't exists */ }
 				{ plugin.expirationDate && (
 					<PluginSectionExpirationDate>{ plugin.expirationDate }</PluginSectionExpirationDate>

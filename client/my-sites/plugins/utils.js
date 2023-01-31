@@ -3,7 +3,6 @@ import { isMagnificentLocale } from '@automattic/i18n-utils';
 import { useTranslate, translate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { decodeEntities } from 'calypso/lib/formatting';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 export function siteObjectsToSiteIds( sites ) {
@@ -40,7 +39,7 @@ const getConfirmationText = ( sites, selectedPlugins, actionText ) => {
 
 	selectedPlugins.forEach( ( plugin ) => {
 		pluginsList[ plugin.slug ] = true;
-		pluginName = decodeEntities( plugin.name ) || plugin.slug;
+		pluginName = plugin.name || plugin.slug;
 
 		Object.keys( plugin.sites ).forEach( ( siteId ) => {
 			const site = sites.find( ( s ) => s.ID === parseInt( siteId ) );

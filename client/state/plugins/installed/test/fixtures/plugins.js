@@ -75,3 +75,7 @@ export const jetpackUpdated = {
 	autoupdate: true,
 	log: [ 'Array' ],
 };
+
+export const healthCheck = {
+	name: 'Health Check &amp; Troubleshooting',
+};

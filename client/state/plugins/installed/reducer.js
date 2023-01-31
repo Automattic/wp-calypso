@@ -1,6 +1,7 @@
 /* eslint-disable no-case-declarations */
 
 import { findIndex } from 'lodash';
+import { decodeEntities } from 'calypso/lib/formatting';
 import {
 	PLUGINS_RECEIVE,
 	PLUGINS_REQUEST,
@@ -93,16 +94,31 @@ const updatePlugin = function ( state, action ) {
 	return state;
 };
 
+function decodeAllPluginsName( pluginsData ) {
+	return Object.fromEntries(
+		Object.entries( pluginsData ).map( ( [ siteId, pluginItems ] ) => {
+			return [ siteId, decodePluginName( pluginItems ) ];
+		} )
+	);
+}
+
+function decodePluginName( pluginData ) {
+	return pluginData.map( ( pluginItem ) => {
+		return { ...pluginItem, name: decodeEntities( pluginItem.name ) };
+	} );
+}
+
 /*
  * Tracks all known installed plugin objects indexed by site ID.
  */
 export const plugins = withSchemaValidation( pluginsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
 		case PLUGINS_RECEIVE: {
-			return { ...state, [ action.siteId ]: action.data };
+			return { ...state, [ action.siteId ]: decodePluginName( action.data ) };
 		}
-		case PLUGINS_ALL_RECEIVE:
-			return { ...action.allSitesPlugins };
+		case PLUGINS_ALL_RECEIVE: {
+			return decodeAllPluginsName( action.allSitesPlugins );
+		}
 		case PLUGIN_ACTIVATE_REQUEST_SUCCESS:
 		case PLUGIN_DEACTIVATE_REQUEST_SUCCESS:
 		case PLUGIN_UPDATE_REQUEST_SUCCESS:
