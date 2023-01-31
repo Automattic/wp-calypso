@@ -159,6 +159,10 @@ module.exports = {
 			/^calypso\/components\/jetpack-colophon$/,
 			'calypso/components/jetpack/jetpack-footer'
 		),
+		new webpack.NormalModuleReplacementPlugin(
+			/^calypso\/components\/formatted-header$/,
+			'calypso/components/jetpack/jetpack-header'
+		),
 		shouldEmitStats &&
 			new BundleAnalyzerPlugin( {
 				analyzerMode: 'server',

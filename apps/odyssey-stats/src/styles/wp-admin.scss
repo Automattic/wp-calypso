@@ -39,6 +39,10 @@
 
 // Overrides layout for WP Admin.
 .wp-admin {
+	// CSS variable overrides.
+	--sidebar-width-max: 160px;
+	--sidebar-width-min: 36px;
+
 	& .layout__content,
 	&.theme-default .focus-content .layout__content {
 		padding-top: 32px;
@@ -46,12 +50,14 @@
 	}
 	// Fixed header doesn't work well for WP-Admin, as the masterbar isn't fixed.
 	& .is-section-stats .has-fixed-nav .fixed-navigation-header__header {
-		position: relative;
-		top: initial;
-		left: initial;
+		@media (max-width: 600px) {
+			position: absolute;
+			width: 100%;
+			left: 0;
+		}
 	}
 	& .is-section-stats .has-fixed-nav {
-		padding-top: 0;
+		padding-top: 64px;
 	}
 	#wpcontent {
 		padding-left: 1px;
@@ -83,8 +89,25 @@
 		// Override WP-Admin styles.
 		float: none;
 	}
+
+	// Jetpack custom styles.
 	.stats > .jp-dashboard-footer {
 		padding-top: 32px;
 		padding-bottom: 32px;
 	}
+	.stats .jetpack-header {
+		padding-bottom: 12px;
+	}
+	.stats-navigation.stats-navigation--modernized .section-nav-tab .section-nav-tab__link {
+		padding-left: 0;
+		padding-right: 0;
+	}
+	.stats-navigation.stats-navigation--modernized .section-nav-tab:not(:first-child) {
+		margin-left: 32px;
+	}
+}
+
+// Hide Odyssey Stats preview JITM inside odyssey.
+.jitm-card.jitm-banner.odyssey-stats-preview {
+	display: none;
 }

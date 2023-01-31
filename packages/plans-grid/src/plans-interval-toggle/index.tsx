@@ -43,7 +43,7 @@ export const PopupMessages: React.FunctionComponent< PopupMessagesProps > = ( {
 	);
 };
 
-interface PlansIntervalToggleProps {
+export interface PlansIntervalToggleProps {
 	intervalType: Plans.PlanBillingPeriod;
 	onChange: ( selectedValue: Plans.PlanBillingPeriod ) => void;
 	maxMonthlyDiscountPercentage?: number;

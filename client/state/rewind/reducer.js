@@ -5,6 +5,7 @@ import capabilities from './capabilities/reducer';
 import policies from './policies/reducer';
 import size from './size/reducer';
 import state from './state/reducer';
+import storage from './storage/reducer';
 
 const rewind = combineReducers( {
 	backups,
@@ -12,6 +13,7 @@ const rewind = combineReducers( {
 	policies,
 	size,
 	state,
+	storage,
 } );
 
 const reducer = keyedReducer( 'siteId', rewind );

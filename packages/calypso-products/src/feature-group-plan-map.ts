@@ -7,7 +7,7 @@ import {
 	FEATURE_ALWAYS_ONLINE,
 	FEATURE_STATS_JP,
 	FEATURE_CONTACT_FORM_JP,
-	FEATURE_GROUP_GENERAL_FEATURES,
+	FEATURE_GROUP_ESSENTIAL_FEATURES,
 	FEATURE_CUSTOM_DOMAIN,
 	FEATURE_SUPPORT_EMAIL,
 	FEATURE_BANDWIDTH,
@@ -58,7 +58,6 @@ import {
 	FEATURE_LTD_SOCIAL_MEDIA_JP,
 	FEATURE_PLUGINS_THEMES,
 	FEATURE_PLUGIN_AUTOUPDATE_JP,
-	FEATURE_GROUP_INNOVATIVE_TECHNOLOGIES,
 	FEATURE_GLOBAL_EDGE_CACHING,
 	FEATURE_ES_SEARCH_JP,
 	FEATURE_SMART_REDIRECTS,
@@ -68,22 +67,24 @@ import {
 import { FeatureGroupMap } from './types';
 
 export const featureGroups: Partial< FeatureGroupMap > = {
-	[ FEATURE_GROUP_GENERAL_FEATURES ]: {
-		slug: FEATURE_GROUP_GENERAL_FEATURES,
-		getTitle: () => i18n.translate( 'General Features' ),
+	[ FEATURE_GROUP_ESSENTIAL_FEATURES ]: {
+		slug: FEATURE_GROUP_ESSENTIAL_FEATURES,
+		getTitle: () => i18n.translate( 'Essential features' ),
 		get2023PricingGridSignupWpcomFeatures: () => [
 			FEATURE_PAGES,
 			FEATURE_USERS,
 			FEATURE_POST_EDITS_HISTORY,
 			FEATURE_ALWAYS_ONLINE,
-			FEATURE_CONTACT_FORM_JP,
-			FEATURE_STATS_JP,
 			FEATURE_CUSTOM_DOMAIN,
-			FEATURE_LIVE_CHAT_SUPPORT,
+			FEATURE_BANDWIDTH,
+			FEATURE_STATS_JP,
 			FEATURE_SUPPORT_EMAIL,
+			FEATURE_LIVE_CHAT_SUPPORT,
 			FEATURE_PLUGINS_THEMES,
 			FEATURE_PLUGIN_AUTOUPDATE_JP,
-			FEATURE_BANDWIDTH,
+			FEATURE_CONTACT_FORM_JP,
+			FEATURE_ES_SEARCH_JP,
+			FEATURE_SMART_REDIRECTS,
 		],
 	},
 	[ FEATURE_GROUP_PERFORMANCE_BOOSTERS ]: {
@@ -93,6 +94,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 			FEATURE_FAST_DNS,
 			FEATURE_BURST,
 			FEATURE_CPUS,
+			FEATURE_GLOBAL_EDGE_CACHING,
 			FEATURE_CDN,
 		],
 	},
@@ -103,11 +105,12 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 			FEATURE_DATACENTRE_FAILOVER,
 			FEATURE_ONE_CLICK_RESTORE_V2,
 			FEATURE_REALTIME_BACKUPS_JP,
+			FEATURE_UPTIME_MONITOR_JP,
 		],
 	},
 	[ FEATURE_GROUP_DEVELOPER_TOOLS ]: {
 		slug: FEATURE_GROUP_DEVELOPER_TOOLS,
-		getTitle: () => i18n.translate( 'Developer Tools' ),
+		getTitle: () => i18n.translate( 'Developer tools' ),
 		get2023PricingGridSignupWpcomFeatures: () => [
 			FEATURE_DEV_TOOLS,
 			FEATURE_MULTI_SITE,
@@ -116,7 +119,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 	},
 	[ FEATURE_GROUP_SECURITY_AND_SAFETY ]: {
 		slug: FEATURE_GROUP_SECURITY_AND_SAFETY,
-		getTitle: () => i18n.translate( 'Security and Safety' ),
+		getTitle: () => i18n.translate( 'Security and safety' ),
 		get2023PricingGridSignupWpcomFeatures: () => [
 			FEATURE_SECURITY_BRUTE_FORCE,
 			FEATURE_ISOLATED_INFRA,
@@ -125,23 +128,12 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 			FEATURE_SECURITY_DDOS,
 			FEATURE_SECURITY_MALWARE,
 			FEATURE_WAF_V2,
-		],
-	},
-	[ FEATURE_GROUP_INNOVATIVE_TECHNOLOGIES ]: {
-		slug: FEATURE_GROUP_INNOVATIVE_TECHNOLOGIES,
-		getTitle: () => i18n.translate( 'Innovative technologies' ),
-		get2023PricingGridSignupWpcomFeatures: () => [
-			FEATURE_GLOBAL_EDGE_CACHING,
-			FEATURE_ES_SEARCH_JP,
-			FEATURE_SMART_REDIRECTS,
 			FEATURE_SITE_ACTIVITY_LOG_JP,
-			FEATURE_UPTIME_MONITOR_JP,
 		],
 	},
-
 	[ FEATURE_GROUP_THEMES_AND_CUSTOMIZATION ]: {
 		slug: FEATURE_GROUP_THEMES_AND_CUSTOMIZATION,
-		getTitle: () => i18n.translate( 'Themes and customization' ),
+		getTitle: () => i18n.translate( 'Design customization' ),
 		get2023PricingGridSignupWpcomFeatures: () => [
 			FEATURE_BEAUTIFUL_THEMES,
 			FEATURE_STYLE_CUSTOMIZATION,
@@ -152,7 +144,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 
 	[ FEATURE_GROUP_SUPERIOR_COMMERCE_SOLUTIONS ]: {
 		slug: FEATURE_GROUP_SUPERIOR_COMMERCE_SOLUTIONS,
-		getTitle: () => i18n.translate( 'Superior commerce solutions' ),
+		getTitle: () => i18n.translate( 'Advanced commerce solutions' ),
 		get2023PricingGridSignupWpcomFeatures: () => [
 			FEATURE_SELL_SHIP,
 			FEATURE_CUSTOM_STORE,
@@ -166,7 +158,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 	},
 	[ FEATURE_GROUP_MARKETING_GROWTH_AND_MONETIZATION_TOOLS ]: {
 		slug: FEATURE_GROUP_MARKETING_GROWTH_AND_MONETIZATION_TOOLS,
-		getTitle: () => i18n.translate( 'Marketing, growth and monetization tools' ),
+		getTitle: () => i18n.translate( 'Growth and monetization tools' ),
 		get2023PricingGridSignupWpcomFeatures: () => [
 			FEATURE_NEWSLETTERS_RSS,
 			FEATURE_AD_FREE_EXPERIENCE,

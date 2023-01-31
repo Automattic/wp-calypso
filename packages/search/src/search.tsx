@@ -102,7 +102,7 @@ const getScrollLeft = (
 	return scrollLeft;
 };
 
-type ImperativeHandle = {
+export type ImperativeHandle = {
 	focus: () => void;
 	blur: () => void;
 	clear: () => void;

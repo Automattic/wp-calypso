@@ -142,13 +142,15 @@ function Subscribers( props: Props ) {
 
 		case 'no-result':
 			return (
-				<NoResults
-					image="/calypso/images/people/mystery-person.svg"
-					text={ _( 'No results found for {{em}}%(searchTerm)s{{/em}}', {
-						args: { searchTerm: search },
-						components: { em: <em /> },
-					} ) }
-				/>
+				<Card>
+					<NoResults
+						image="/calypso/images/people/mystery-person.svg"
+						text={ _( 'No results found for {{em}}%(searchTerm)s{{/em}}', {
+							args: { searchTerm: search },
+							components: { em: <em /> },
+						} ) }
+					/>
+				</Card>
 			);
 	}
 

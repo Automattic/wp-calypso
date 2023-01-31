@@ -86,7 +86,9 @@ export async function clickNavTab(
 
 	// Click on the intended item and wait for navigation to finish.
 	const navTabItem = page.locator( selectors.navTabItem( { name: name, selected: false } ) );
-	await Promise.all( [ page.waitForNavigation(), navTabItem.click() ] );
+
+	const regex = new RegExp( `.*/${ name.toLowerCase() }/.*` );
+	await Promise.all( [ page.waitForURL( regex ), navTabItem.click() ] );
 
 	// Final verification, check that we are now on the expected navtab.
 	const newSelectedTabLocator = page.locator(

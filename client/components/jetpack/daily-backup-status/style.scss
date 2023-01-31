@@ -215,3 +215,7 @@
 		box-shadow: 0 0 0 1px #dcdcde;
 	}
 }
+
+.daily-backup-status:empty {
+	display: none;
+}
