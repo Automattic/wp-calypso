@@ -47,6 +47,9 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	free: () => import( /* webpackChunkName: "free-flow" */ '../declarative-flow/free' ),
 
+	'site-assembler': () =>
+		import( /* webpackChunkName: "site-assembler-flow" */ './site-assembler-flow' ),
+
 	'free-post-setup': () =>
 		import( /* webpackChunkName: "free-post-setup-flow" */ '../declarative-flow/free-post-setup' ),
 
@@ -56,6 +59,11 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 availableFlows[ 'plugin-bundle' ] = () =>
 	import( /* webpackChunkName: "plugin-bundle-flow" */ '../declarative-flow/plugin-bundle-flow' );
+
+if ( config.isEnabled( 'sensei/onboarding' ) ) {
+	availableFlows[ 'sensei' ] = () =>
+		import( /* webpackChunkName: "sensei-flow" */ '../declarative-flow/sensei' );
+}
 
 if ( config.isEnabled( 'sites/copy-site' ) ) {
 	availableFlows[ 'copy-site' ] = () =>

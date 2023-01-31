@@ -1,6 +1,6 @@
 import { Card } from '@automattic/components';
 import * as React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useQueryRewindPolicies } from 'calypso/components/data/query-rewind-policies';
 import { useQueryRewindSize } from 'calypso/components/data/query-rewind-size';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
@@ -13,15 +13,18 @@ import {
 	getRewindDaysOfBackupsAllowed,
 	getRewindDaysOfBackupsSaved,
 } from 'calypso/state/rewind/selectors';
+import { setUsageLevel } from 'calypso/state/rewind/storage/action';
+import { StorageUsageLevels } from 'calypso/state/rewind/storage/types';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
-import { getUsageLevel, StorageUsageLevels } from './storage-usage-levels';
+import { getUsageLevel } from './storage-usage-levels';
 import UsageDisplay from './usage-display';
 import Upsell from './usage-warning/upsell';
 
 import './style.scss';
 
 const BackupStorageSpace: React.FC = () => {
+	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	useQueryRewindSize( siteId );
 	useQueryRewindPolicies( siteId );
@@ -50,6 +53,11 @@ const BackupStorageSpace: React.FC = () => {
 	const showUpsell = usageLevel !== StorageUsageLevels.Normal;
 	const requestingSize = useSelector( ( state ) => isRequestingRewindSize( state, siteId ) );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) as string;
+
+	// update the usage level
+	React.useEffect( () => {
+		dispatch( setUsageLevel( siteId, usageLevel ) );
+	}, [ dispatch, siteId, usageLevel ] );
 
 	// Sites without a storage policy don't have a notion of "bytes available,"
 	// so this value will be undefined; if so, don't render

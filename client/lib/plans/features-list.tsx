@@ -1804,7 +1804,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_LTD_SOCIAL_MEDIA_JP ]: {
 		getSlug: () => FEATURE_LTD_SOCIAL_MEDIA_JP,
-		getTitle: () => i18n.translate( 'Limited social media sharing' ),
+		getTitle: () => i18n.translate( 'Limited shares in social media' ),
 	},
 	[ FEATURE_CONTACT_FORM_JP ]: {
 		getSlug: () => FEATURE_CONTACT_FORM_JP,

@@ -1,6 +1,6 @@
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { useMemo } from 'react';
-import { StorageUsageLevelName, StorageUsageLevels } from '../storage-usage-levels';
+import { StorageUsageLevelName, StorageUsageLevels } from 'calypso/state/rewind/storage/types';
 
 const useStorageStatusText = (
 	usageLevel: StorageUsageLevelName,
@@ -9,8 +9,6 @@ const useStorageStatusText = (
 ): TranslateResult | null => {
 	const translate = useTranslate();
 
-	// TODO: For StorageUsageLevels.Warning, estimate how many days until
-	// all storage is used, and show that in the status text.
 	return useMemo( () => {
 		switch ( usageLevel ) {
 			case StorageUsageLevels.Warning:
@@ -23,7 +21,7 @@ const useStorageStatusText = (
 				);
 			case StorageUsageLevels.Full:
 				return translate(
-					'You have reached your storage limit with %(daysOfBackupsSaved)d days of backups saved. Backups have been stopped. Please upgrade your storage to resume backups.',
+					'You have reached your storage limit with %(daysOfBackupsSaved)d day(s) of backups saved. Backups have been stopped. Please upgrade your storage to resume backups.',
 					{
 						args: { daysOfBackupsSaved },
 					}
@@ -38,7 +36,7 @@ const useStorageStatusText = (
 		}
 
 		return null;
-	}, [ translate, usageLevel ] );
+	}, [ translate, usageLevel, daysOfBackupsSaved, minDaysOfBackupsAllowed ] );
 };
 
 export default useStorageStatusText;

@@ -5,7 +5,7 @@ import {
 	isWpcomEnterpriseGridPlan,
 	isFreePlan,
 	isBusinessPlan,
-	FEATURE_GROUP_GENERAL_FEATURES,
+	FEATURE_GROUP_ESSENTIAL_FEATURES,
 	getPlanFeaturesGrouped,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 } from '@automattic/calypso-products';
@@ -572,7 +572,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 									</Row>
 								);
 							} ) }
-							{ featureGroup.slug === FEATURE_GROUP_GENERAL_FEATURES ? (
+							{ featureGroup.slug === FEATURE_GROUP_ESSENTIAL_FEATURES ? (
 								<Row
 									key="feature-storage"
 									isHiddenInMobile={ isHiddenInMobile }
