@@ -34,8 +34,6 @@ const selectors = {
 	editorRoot: 'body.block-editor-page',
 	editorCanvasIframe: 'iframe[name="editor-canvas"]',
 	editorCanvasRoot: '.wp-site-blocks',
-	viewEditorButtonMobile: 'button:has-text("View Editor")',
-	editButton: '.edit-site-site-hub__edit-button',
 	templateLoadingSpinner: '[aria-label="Block: Template Part"] .components-spinner',
 	closeStylesWelcomeGuideButton:
 		'[aria-label="Welcome to styles"] button[aria-label="Close dialog"]',
@@ -95,7 +93,7 @@ export class FullSiteEditorPage {
 			.frameLocator( selectors.editorCanvasIframe )
 			.locator( selectors.editorCanvasRoot );
 
-		this.editorToolbarComponent = new EditorToolbarComponent( page, this.editor, 'site-editor' );
+		this.editorToolbarComponent = new EditorToolbarComponent( page, this.editor );
 		this.editorWelcomeTourComponent = new EditorWelcomeTourComponent( page, this.editor );
 		this.editorPopoverMenuComponent = new EditorPopoverMenuComponent( page, this.editor );
 		this.editorSiteStylesComponent = new EditorSiteStylesComponent( page, this.editor );
@@ -160,15 +158,7 @@ export class FullSiteEditorPage {
 			leaveWithoutSaving?: boolean;
 		} = { leaveWithoutSaving: true }
 	): Promise< void > {
-		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			const viewEditorButton = this.editor.locator( selectors.viewEditorButtonMobile );
-			await viewEditorButton.click();
-		}
-
 		await this.waitUntilLoaded();
-
-		const editButton = this.editor.locator( selectors.editButton );
-		await editButton.click();
 
 		await this.editorWelcomeTourComponent.forceDismissWelcomeTour();
 		await this.cookieBannerComponent.acceptCookie();
@@ -377,7 +367,7 @@ export class FullSiteEditorPage {
 	/**
 	 * Save the changes in the full site editor (equivalent of publish).
 	 *
-	 * @param {object} param0 Keyed options parameter.
+	 * @param {Object} param0 Keyed options parameter.
 	 * @param {boolean} param0.checkPreSaveNotices Whether the presence of the pre-save notices should be checked.
 	 */
 	async save(

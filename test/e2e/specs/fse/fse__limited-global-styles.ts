@@ -45,8 +45,8 @@ describe( DataHelper.createSuiteTitle( 'Site Editor: Limited Global Styles' ), f
 	} );
 
 	it( 'Save the styles and check that the pre-save notice shows up', async function () {
-		// On mobile, site styles is a popover panel that blocks the Save button.
-		// So let's always close site styles first to be safe. :)
+		// On mobile, the styles is a popover panel that hides the success notification
+		// checked by the "save" method, so let's always close it first to be safe. :)
 		await fullSiteEditorPage.closeSiteStyles();
 		await fullSiteEditorPage.save( { checkPreSaveNotices: true } );
 	} );
@@ -57,8 +57,8 @@ describe( DataHelper.createSuiteTitle( 'Site Editor: Limited Global Styles' ), f
 	} );
 
 	it( 'Save the styles and check that the pre-save notice does not show up', async function () {
-		// On mobile, site styles is a popover panel that blocks the Save button.
-		// So let's always close site styles first to be safe. :)
+		// On mobile, the styles is a popover panel that hides the success notification
+		// checked by the "save" method, so let's always close it first to be safe. :)
 		await fullSiteEditorPage.closeSiteStyles();
 		await fullSiteEditorPage.save( { checkPreSaveNotices: true } );
 	} );
