@@ -178,7 +178,8 @@ const LoggedInPlansFeatureActionButton = ( {
 		( availableForPurchase || isPlaceholder ) &&
 		currentSitePlanSlug &&
 		isMonthly( currentSitePlanSlug ) &&
-		getPlanClass( planType ) === getPlanClass( currentSitePlanSlug )
+		getPlanClass( planType ) === getPlanClass( currentSitePlanSlug ) &&
+		currentSitePlanSlug !== 'ecommerce-trial-bundle-monthly'
 	) {
 		return (
 			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
