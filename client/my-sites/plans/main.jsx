@@ -144,8 +144,9 @@ class Plans extends Component {
 			);
 		}
 
-		const hideFreePlan =
-			! isEnabled( 'onboarding/2023-pricing-grid' ) || ! isFreePlan( currentPlan.productSlug );
+		const hideFreePlan = isEnabled( 'onboarding/2023-pricing-grid' )
+			? ! isFreePlan( currentPlan.productSlug )
+			: true;
 
 		return (
 			<PlansFeaturesMain

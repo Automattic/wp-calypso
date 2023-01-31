@@ -390,6 +390,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		visibleLength = isMediumBreakpoint ? 2 : visibleLength;
 
 		if ( newVisiblePlans.length !== visibleLength ) {
+			// ensures current plan is first in the list
 			newVisiblePlans.sort( ( visiblePlan ) => ( visiblePlan === currentSitePlanSlug ? -1 : 1 ) );
 			newVisiblePlans = newVisiblePlans.slice( 0, visibleLength );
 		}
@@ -521,7 +522,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 					const featureGroupClass = `feature-group-title-${ featureGroup.slug }`;
 					const isHiddenInMobile = ! visibleFeatureGroups.includes( featureGroup.slug );
 					return (
-						<div key={ featureGroupClass } className={ featureGroupClass }>
+						<div key={ featureGroupClass } className={ featureGroup.slug }>
 							<TitleRow
 								className="plan-comparison-grid__group-title-row"
 								onClick={ () => toggleFeatureGroup( featureGroup.slug ) }
