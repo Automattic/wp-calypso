@@ -124,6 +124,7 @@ export class PlansFeaturesMain extends Component {
 			isPlansInsideStepper,
 			is2023OnboardingPricingGrid,
 			intervalType,
+			planTypeSelectorProps,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -156,16 +157,6 @@ export class PlansFeaturesMain extends Component {
 				isReskinned,
 				isPlansInsideStepper,
 				intervalType,
-			};
-			const planTypeSelectorProps = {
-				basePlansPath: this.props.basePlansPath,
-				isInSignup: this.props.isInSignup,
-				eligibleForWpcomMonthlyPlans: this.props.eligibleForWpcomMonthlyPlans,
-				isPlansInsideStepper: this.props.isPlansInsideStepper,
-				intervalType: this.props.intervalType,
-				customerType: this.props.customerType,
-				hidePersonalPlan: this.props.hidePersonalPlan,
-				siteSlug: this.props.siteSlug,
 			};
 			const asyncPlanFeatures2023Grid = (
 				<AsyncLoad
@@ -583,8 +574,13 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	render() {
-		const { siteId, redirectToAddDomainFlow, domainAndPlanPackage, is2023OnboardingPricingGrid } =
-			this.props;
+		const {
+			siteId,
+			redirectToAddDomainFlow,
+			domainAndPlanPackage,
+			is2023OnboardingPricingGrid,
+			planTypeSelectorProps,
+		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
@@ -613,7 +609,7 @@ export class PlansFeaturesMain extends Component {
 				<div className="plans-features-main__notice" />
 				{ ! hidePlanSelector && (
 					<PlanTypeSelector
-						{ ...this.props }
+						{ ...planTypeSelectorProps }
 						kind={ kindOfPlanTypeSelector }
 						plans={ visiblePlans }
 					/>
@@ -691,6 +687,7 @@ export default connect(
 		const sitePlanSlug = sitePlan?.product_slug;
 		const eligibleForWpcomMonthlyPlans = isEligibleForWpComMonthlyPlan( state, siteId );
 		const titanMonthlyRenewalCost = getProductDisplayCost( state, TITAN_MAIL_MONTHLY_SLUG );
+		const siteSlug = getSiteSlug( state, get( props.site, [ 'ID' ] ) );
 
 		let customerType = chooseDefaultCustomerType( {
 			currentCustomerType: props.customerType,
@@ -707,6 +704,17 @@ export default connect(
 			customerType = 'business';
 		}
 		const is2023OnboardingPricingGrid = isEnabled( 'onboarding/2023-pricing-grid' );
+		const planTypeSelectorProps = {
+			basePlansPath: props.basePlansPath,
+			isInSignup: props.isInSignup,
+			eligibleForWpcomMonthlyPlans: eligibleForWpcomMonthlyPlans,
+			isPlansInsideStepper: props.isPlansInsideStepper,
+			intervalType: props.intervalType,
+			customerType: customerType,
+			hidePersonalPlan: props.hidePersonalPlan,
+			siteSlug,
+		};
+
 		return {
 			isCurrentPlanRetired: isProPlan( sitePlanSlug ) || isStarterPlan( sitePlanSlug ),
 			currentPurchaseIsInAppPurchase: currentPurchase?.isInAppPurchase,
@@ -717,12 +725,13 @@ export default connect(
 			isMultisite: isJetpackSiteMultiSite( state, siteId ),
 			previousRoute: getPreviousRoute( state ),
 			siteId,
-			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),
+			siteSlug,
 			sitePlanSlug,
 			eligibleForWpcomMonthlyPlans,
 			titanMonthlyRenewalCost,
 			is2023OnboardingPricingGrid,
 			showFAQ: !! props.showFAQ && ! is2023OnboardingPricingGrid,
+			planTypeSelectorProps,
 		};
 	},
 	{
