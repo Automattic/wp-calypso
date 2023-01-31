@@ -100,3 +100,8 @@
 		margin-left: 32px;
 	}
 }
+
+// Hide Odyssey Stats preview JITM inside odyssey.
+.jitm-card.jitm-banner.odyssey-stats-preview {
+	display: none;
+}

@@ -104,7 +104,15 @@ function PurchaseMetaPrice( { purchase }: { purchase: Purchase } ) {
 	};
 
 	const getPriceLabel = ( period: string | null ) => {
-		if ( ! period ) {
+		if (
+			// If this is not a product that will renew, we should display the price
+			// without "x/year".
+			! period ||
+			// For introductory offers with prorated renewals, it's confusing to see
+			// the renewal price as "x/year", so we will just show the renewal
+			// price by itself.
+			purchase.introductoryOffer?.isNextRenewalProrated
+		) {
 			return (
 				<span>
 					{ formatCurrency( priceInteger, currencyCode, {
