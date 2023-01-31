@@ -16,10 +16,7 @@ import { isEditorReadyWithBlocks } from '../../utils';
  * @see https://github.com/godaddy-wordpress/coblocks/issues/2475
  */
 async function removeCoBlocksFontStyles() {
-	const editorHasBlocks = await isEditorReadyWithBlocks();
-	if ( ! editorHasBlocks ) {
-		return;
-	}
+	await isEditorReadyWithBlocks();
 
 	removeFilter( 'blocks.getSaveContent.extraProps', 'coblocks/applyFontSettings' );
 }
