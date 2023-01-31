@@ -9,7 +9,7 @@ import type { ReinstallPluginsResponse } from './types';
  */
 const reinstallPlugins = ( siteId: number ): Promise< ReinstallPluginsResponse > => {
 	return wpcom.req.get( {
-		path: `/marketplace/products/${ siteId }/reinstall`,
+		path: `/sites/${ siteId }/marketplace/products/reinstall`,
 		apiNamespace: 'wpcom/v2',
 	} );
 };
