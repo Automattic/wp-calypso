@@ -901,10 +901,8 @@ class ThemeSheet extends Component {
 					forceDisplay
 					href={
 						siteId
-							? `/checkout/${ siteSlug }/business?redirect_to=${ encodeURIComponent(
-									thisPageUrl
-							  ) }`
-							: localizeUrl( 'https://wordpress.com/pricing' )
+							? `/checkout/${ siteSlug }/business?redirect_to=${ thisPageUrl }`
+							: localizeUrl( 'https://wordpress.com/start/business' )
 					}
 					showIcon
 					event="theme_upsell_plan_click"
