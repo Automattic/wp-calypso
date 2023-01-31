@@ -885,6 +885,7 @@ class ThemeSheet extends Component {
 		}
 
 		if ( hasWpOrgThemeUpsellBanner || hasThemeUpsellBannerAtomic ) {
+			const thisPageUrl = `/theme/${ themeId }/${ siteSlug }`;
 			pageUpsellBanner = (
 				<UpsellNudge
 					plan={ PLAN_BUSINESS }
@@ -896,13 +897,19 @@ class ThemeSheet extends Component {
 					}
 					description={ preventWidows(
 						translate(
-							'Instantly unlock thousands of different themes and install your own when you upgrade.'
+							'Instantly unlock thousands of different themes and install your own when you upgrade to the Business plan.'
 						)
 					) }
 					forceHref
 					feature={ FEATURE_UPLOAD_THEMES }
 					forceDisplay
-					href={ ! siteId ? '/plans' : null }
+					href={
+						siteId
+							? `/checkout/${ siteSlug }/business?redirect_to=${ encodeURIComponent(
+									thisPageUrl
+							  ) }`
+							: plansUrl
+					}
 					showIcon
 					event="theme_upsell_plan_click"
 					tracksClickName="calypso_theme_upsell_plan_click"
