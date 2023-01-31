@@ -14,27 +14,58 @@ const StatsCard = ( {
 	footerAction,
 	isEmpty,
 	emptyMessage,
-	metricLabel,
 	heroElement,
+	splitHeader,
+	metricLabel,
+	mainItemLabel,
+	additionalHeaderColumns,
 }: StatsCardProps ) => {
 	const translate = useTranslate();
+
+	const titleNode = titleURL ? (
+		<a href={ `${ titleURL }` } className={ `${ BASE_CLASS_NAME }--header--title` }>
+			{ title }
+		</a>
+	) : (
+		<div className={ `${ BASE_CLASS_NAME }--header--title` }>{ title }</div>
+	);
+
+	// On one line shows card title and value column header
+	const SimpleHeader = (
+		<div className={ `${ BASE_CLASS_NAME }--header` }>
+			{ titleNode }
+			{ ! isEmpty && <div>{ metricLabel ?? translate( 'Views' ) }</div> }
+		</div>
+	);
+
+	// Show Card title on one line and all other column header(s) below:
+	// (main item, optional additional columns and value)
+	const SplitHeader = (
+		<div className={ `${ BASE_CLASS_NAME }--header ${ BASE_CLASS_NAME }--header--split` }>
+			{ titleNode }
+			<div className={ `${ BASE_CLASS_NAME }--column-header` }>
+				<div className={ `${ BASE_CLASS_NAME }--column-header-left` }>
+					{ splitHeader && mainItemLabel }
+					{ additionalHeaderColumns && (
+						<div className={ `${ BASE_CLASS_NAME }--header--additional` }>
+							{ additionalHeaderColumns }
+						</div>
+					) }
+				</div>
+				{ ! isEmpty && (
+					<div className={ `${ BASE_CLASS_NAME }--column-header-right` }>
+						{ metricLabel ?? translate( 'Views' ) }
+					</div>
+				) }
+			</div>
+		</div>
+	);
 
 	return (
 		<div className={ classNames( className, BASE_CLASS_NAME ) }>
 			{ !! heroElement && <div className={ `${ BASE_CLASS_NAME }--hero` }>{ heroElement }</div> }
 			<div className={ `${ BASE_CLASS_NAME }--header-and-body` }>
-				{ title && (
-					<div className={ `${ BASE_CLASS_NAME }--header` }>
-						{ titleURL ? (
-							<a href={ `${ titleURL }` } className={ `${ BASE_CLASS_NAME }--header--title` }>
-								{ title }
-							</a>
-						) : (
-							<div className={ `${ BASE_CLASS_NAME }--header--title` }>{ title }</div>
-						) }
-						{ ! isEmpty && <div>{ metricLabel ?? translate( 'Views' ) }</div> }
-					</div>
-				) }
+				{ splitHeader ? SplitHeader : SimpleHeader }
 				<div
 					className={ classNames( `${ BASE_CLASS_NAME }--body`, {
 						[ `${ BASE_CLASS_NAME }--body-empty` ]: isEmpty,

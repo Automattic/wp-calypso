@@ -24,6 +24,9 @@ const StatsListCard = ( {
 	error,
 	heroElement,
 	metricLabel,
+	splitHeader,
+	mainItemLabel,
+	additionalColumns,
 } ) => {
 	const moduleNameTitle = titlecase( moduleType );
 	const debug = debugFactory( `calypso:stats:list:${ moduleType }` );
@@ -100,6 +103,9 @@ const StatsListCard = ( {
 			className={ `list-${ moduleType }` }
 			metricLabel={ metricLabel }
 			heroElement={ heroElement }
+			splitHeader={ splitHeader }
+			mainItemLabel={ mainItemLabel }
+			additionalHeaderColumns={ additionalColumns?.header }
 		>
 			{ !! loader && loader }
 			{ !! error && error }
@@ -128,6 +134,7 @@ const StatsListCard = ( {
 							useShortLabel={ useShortLabel }
 							isStatic={ ! isInteractive }
 							barMaxValue={ barMaxValue }
+							additionalColumns={ additionalColumns?.body( item ) }
 						/>
 					);
 				} ) }

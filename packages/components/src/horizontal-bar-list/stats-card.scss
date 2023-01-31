@@ -42,6 +42,28 @@
 			line-height: $header-line-height;
 			color: var(--color-text);
 		}
+
+		&.stats-card--header--split {
+			display: block;
+		}
+		.stats-card--column-header {
+			display: flex;
+			justify-content: space-between;
+			padding-top: $header-spacer;
+		}
+		.stats-card--column-header-left {
+			display: flex;
+			width: calc(100% - $value-column-width);
+			justify-content: space-between;
+		}
+		.stats-card--column-header-right {
+			width: $value-column-width;
+			text-align: right;
+		}
+	}
+
+	.stats-card--header--additional {
+		@include additional-columns-wrapper;
 	}
 
 	.stats-card--body-empty {
