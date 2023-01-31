@@ -128,6 +128,16 @@ describe( DataHelper.createSuiteTitle( 'FTME: Write' ), function () {
 			await page.keyboard.press( 'Escape' );
 		} );
 
+		it( 'Dismiss Launchpad modal if shown', async function () {
+			const selector = '.launchpad__save-modal-buttons button';
+			const locator = editorPage.getLocator( selector );
+			try {
+				await locator.click( { timeout: 2000 } );
+			} catch {
+				// 	// noop;
+			}
+		} );
+
 		it( 'Exit editor', async function () {
 			await editorPage.exitEditor();
 		} );

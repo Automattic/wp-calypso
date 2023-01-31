@@ -206,6 +206,7 @@ export type RequestCartTaxData = null | {
 		subdivision_code: string | undefined;
 		vat_id?: string;
 		organization?: string;
+		address?: string;
 	};
 };
 
@@ -315,6 +316,7 @@ export interface ResponseCartTaxData {
 		subdivision_code?: string;
 		vat_id?: string;
 		organization?: string;
+		address?: string;
 	};
 	display_taxes: boolean;
 }
@@ -528,6 +530,7 @@ export interface CartLocation {
 	subdivisionCode?: string;
 	vatId?: string;
 	organization?: string;
+	address?: string;
 }
 
 export interface ResponseCartProductExtra {

@@ -42,5 +42,6 @@ export async function updateCartContactDetailsForCheckout(
 		subdivisionCode,
 		vatId: vatDetails.id ?? '',
 		organization: vatDetails.name ?? '',
+		address: vatDetails.address ?? '',
 	} );
 }
