@@ -757,6 +757,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildTy
 				}
 			}
 		},
+		enableCommitStatusPublisher = true,
 		buildTriggers = {
 			vcs {
 				branchFilter = """
