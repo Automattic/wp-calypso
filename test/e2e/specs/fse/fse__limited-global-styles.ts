@@ -41,7 +41,10 @@ describe( DataHelper.createSuiteTitle( 'Site Editor: Limited Global Styles' ), f
 	} );
 
 	it( 'Pick a non-default style variation', async function () {
-		await fullSiteEditorPage.setStyleVariation( 'Non-default' );
+		// The primary site of the `simpleSiteFreePlanUser` account has the Twenty Twenty-Two
+		// theme which includes a "Blue" style variation. If the active theme on the site
+		// ever changes, we'll need to update the name of this style variation.
+		await fullSiteEditorPage.setStyleVariation( 'Blue' );
 	} );
 
 	it( 'Save the styles and check that the pre-save notice shows up', async function () {

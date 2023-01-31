@@ -20,7 +20,6 @@ import {
 	OpenInlineInserter,
 	EditorInlineBlockInserterComponent,
 	DimensionsSettings,
-	StyleVariation,
 	CookieBannerComponent,
 } from '..';
 import { getCalypsoURL } from '../../data-helper';
@@ -556,11 +555,11 @@ export class FullSiteEditorPage {
 	 * Sets a style variation for the site.
 	 * This auto-handles returning to top menu and navigating down.
 	 *
-	 * @param {StyleVariation} styleVariation The style variation to set.
+	 * @param {string} styleVariationName The name of the style variation to set.
 	 */
-	async setStyleVariation( styleVariation: StyleVariation ): Promise< void > {
-		await this.editorSiteStylesComponent.setStyleVariation( styleVariation );
-		this.hasCustomStyles = styleVariation !== 'Default';
+	async setStyleVariation( styleVariationName: string ): Promise< void > {
+		await this.editorSiteStylesComponent.setStyleVariation( styleVariationName );
+		this.hasCustomStyles = styleVariationName !== 'Default';
 	}
 
 	//#endregion
