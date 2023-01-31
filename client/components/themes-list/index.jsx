@@ -43,18 +43,21 @@ export const ThemesList = ( props ) => {
 	const handleContentRectChange = useCallback(
 		( contentRect ) => {
 			if ( contentRect ) {
+				const themesCount = props.themes.length;
 				const columnCount = Math.floor(
 					contentRect.width / ( THEME_CARD_WIDTH + THEM_CARD_MARGIN * 2 )
 				);
-				const relativeCtaPosition =
-					columnCount * 3 - 1 < props.themes.length - 1
-						? columnCount * 3 - 1
-						: props.themes.length - 1;
-				const trailingSpacersCount =
-					Math.ceil( props.themes.length / columnCount ) * columnCount - props.themes.length;
+				const relativeCtaPosition = columnCount * 3 - 1;
+				const actualCtaPosition =
+					relativeCtaPosition < themesCount - 1 ? relativeCtaPosition : themesCount - 1;
+
+				let trailingSpacersCount = 0;
+				if ( actualCtaPosition >= themesCount - 1 ) {
+					trailingSpacersCount = Math.ceil( themesCount / columnCount ) * columnCount - themesCount;
+				}
 
 				setPatternAssemblerCtaPlacement( {
-					position: relativeCtaPosition,
+					position: actualCtaPosition,
 					trailing: trailingSpacersCount,
 				} );
 			}
@@ -87,7 +90,10 @@ export const ThemesList = ( props ) => {
 				isEnabled( 'pattern-assembler/logged-out-showcase' ) &&
 				! isLoggedIn
 					? [
-							<TrailingItems spacersCount={ patternAssemblerCtaPlacement.trailing } />,
+							<TrailingItems
+								key="theme-trailing-items"
+								spacersCount={ patternAssemblerCtaPlacement.trailing }
+							/>,
 							<PatternAssemblerCta
 								key="pattern-assembler-cta"
 								onButtonClick={ () =>
@@ -353,9 +359,15 @@ function LoadingPlaceholders( { placeholderCount } ) {
 
 function TrailingItems( { spacersCount } ) {
 	const DEFAULT_NUM_SPACERS = 11; // gives enough spacers for a theoretical 12 column layout
-	const numSpacers = spacersCount || DEFAULT_NUM_SPACERS;
+	const numSpacers = spacersCount ?? DEFAULT_NUM_SPACERS;
 	return times( numSpacers, function ( i ) {
-		return <div className="themes-list__spacer" key={ 'themes-list__spacer-' + i } />;
+		return (
+			<div
+				className="themes-list__spacer"
+				key={ 'themes-list__spacer-' + i }
+				data-key={ 'themes-list__spacer-' + i }
+			/>
+		);
 	} );
 }
 
