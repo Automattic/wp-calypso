@@ -12,11 +12,11 @@ import { SITE_STORE } from '../stores';
 export const HelpCenterLaunchpad = () => {
 	const getEnvironmentHostname = () => {
 		const currentEnvironment = window?.configData?.env_id;
-		const hostname = window?.configData?.hostname;
+		const hostname = window?.configData?.hostname ?? 'wordpress.com';
 		const port = window?.configData?.port;
 		switch ( currentEnvironment ) {
 			case 'development':
-				return `http://${ hostname }:${ port }`;
+				return `http://${ hostname }${ port ? ':' + port : '' }`;
 			default:
 				return `https://${ hostname }`;
 		}
