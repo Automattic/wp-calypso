@@ -10,3 +10,4 @@ export { default as getRewindMinimumDaysOfBackupsAllowed } from './get-rewind-mi
 export { default as getRewindDaysOfBackupsAllowed } from './get-rewind-days-of-backups-allowed';
 export { default as getRewindDaysOfBackupsSaved } from './get-rewind-days-of-backups-saved';
 export { default as getActivityLogVisibleDays } from './get-activity-log-visible-days';
+export { default as getRewindStorageUsageLevel } from './get-rewind-storage-usage-level';

@@ -99,7 +99,7 @@ export const useDaysOfBackupsSavedText = (
 		const daysOfBackupsSavedLinkTarget = `/activity-log/${ siteSlug }?group=rewind`;
 
 		return translate(
-			'{{a}}%(daysOfBackupsSaved)d day of backup saved{{/a}}',
+			'{{a}}%(daysOfBackupsSaved)d day of backups saved{{/a}}',
 			'{{a}}%(daysOfBackupsSaved)d days of backups saved{{/a}}',
 			{
 				count: daysOfBackupsSaved,

@@ -1,5 +1,7 @@
 import config from '@automattic/calypso-config';
+import { isDesktop } from '@automattic/viewport';
 import { get, includes, reject } from 'lodash';
+import { BLANK_CANVAS_DESIGN } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/constants';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -108,11 +110,23 @@ function getThankYouNoSiteDestination() {
 }
 
 function getChecklistThemeDestination( { siteSlug, themeParameter } ) {
+	const canGoToAssemblerFlow = isDesktop();
+
 	if (
-		themeParameter === 'blank-canvas-3' &&
+		themeParameter === BLANK_CANVAS_DESIGN.slug &&
 		config.isEnabled( 'pattern-assembler/logged-out-showcase' )
 	) {
-		return `/setup/site-setup/patternAssembler?siteSlug=${ siteSlug }`;
+		if ( canGoToAssemblerFlow ) {
+			return addQueryArgs(
+				{
+					theme: themeParameter,
+					siteSlug: siteSlug,
+				},
+				`/setup/site-assembler`
+			);
+		}
+
+		return `/site-editor/${ siteSlug }`;
 	}
 	return `/home/${ siteSlug }`;
 }

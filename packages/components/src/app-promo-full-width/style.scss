@@ -31,6 +31,11 @@
 	}
 	a:hover {
 		text-decoration: underline;
+		text-underline-offset: 2px;
+
+		&.jetpack {
+			color: var(--studio-jetpack-green-60);
+		}
 	}
 }
 
@@ -81,14 +86,12 @@
 
 	margin: 0;
 
-	font-family: "SF Pro Text", serif;
 	font-style: normal;
 	font-weight: 400;
 	font-size: 17px; // stylelint-disable-line declaration-property-unit-allowed-list
 	line-height: 25px;
-	letter-spacing: -0.24px;
 
-	color: var(--studio-gray-100);
+	color: var(--studio-gray-50);
 
 	@media ( max-width: 625px ) {
 		margin-bottom: 20px;
