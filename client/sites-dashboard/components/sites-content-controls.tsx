@@ -78,6 +78,26 @@ const ControlsSelectDropdown = styled( SelectDropdown )( {
 	},
 } );
 
+const ShortcutKey = styled.div( {
+	position: 'absolute',
+	right: '10px',
+	color: '#979A9C',
+	fontFamily: 'monospace',
+	zIndex: 23, // Places the shortcut key above the placeholder fadeout gradient
+	borderRadius: 4,
+	border: '1px solid #979A9C',
+	width: 17,
+	height: 17,
+	textAlign: 'center',
+	lineHeight: '17px',
+	fontSize: 12,
+	boxShadow: '0 1px 2px rgba(151, 154, 156, 0.25)',
+
+	'.search-component.has-focus &': {
+		display: 'none',
+	},
+} );
+
 type Statuses = ReturnType< typeof useSitesListGrouping >[ 'statuses' ];
 
 type SitesContentControlsProps = {
@@ -131,11 +151,20 @@ export const SitesContentControls = ( {
 				searchIcon={ <SitesSearchIcon /> }
 				onSearch={ ( term ) => handleQueryParamChange( { search: term?.trim(), page: undefined } ) }
 				isReskinned
+				inputLabel={ __( 'Search sites, press "/" to focus search field' ) }
 				placeholder={ __( 'Search by name or domain…' ) }
 				disableAutocorrect={ true }
 				defaultValue={ initialSearch }
 				ref={ searchRef }
-			/>
+			>
+				<ShortcutKey
+					aria-hidden
+					onClick={ () => searchRef.current?.focus() }
+					style={ { display: initialSearch ? 'none' : undefined } }
+				>
+					/
+				</ShortcutKey>
+			</SitesSearch>
 			<DisplayControls>
 				<ControlsSelectDropdown
 					// Translators: `siteStatus` is one of the site statuses specified in the Sites page.
