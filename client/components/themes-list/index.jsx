@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { PatternAssemblerCta } from '@automattic/design-picker';
+import { PatternAssemblerCta, BLANK_CANVAS_DESIGN } from '@automattic/design-picker';
 import { localize } from 'i18n-calypso';
 import { isEmpty, times } from 'lodash';
 import page from 'page';
@@ -58,7 +58,9 @@ export const ThemesList = ( props ) => {
 				! isLoggedIn && (
 					<PatternAssemblerCta
 						onButtonClick={ () =>
-							window.location.assign( '/start/with-theme?ref=calypshowcase&theme=blank-canvas-3' )
+							window.location.assign(
+								`/start/with-theme?ref=calypshowcase&theme=${ BLANK_CANVAS_DESIGN.slug }`
+							)
 						}
 					/>
 				) }
