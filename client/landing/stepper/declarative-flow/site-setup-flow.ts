@@ -446,13 +446,6 @@ const siteSetupFlow: Flow = {
 					return navigate( 'vertical' );
 
 				case 'patternAssembler':
-					// eslint-disable-next-line no-case-declarations
-					const backTo = urlQueryParams.get( 'backTo' );
-
-					if ( backTo ) {
-						return redirect( backTo );
-					}
-
 					return navigate( 'designSetup' );
 
 				case 'editEmail':

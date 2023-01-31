@@ -1,20 +1,18 @@
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { useViewportMatch } from '@wordpress/compose';
 import { Icon, addTemplate, brush, cloudUpload } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { isEmpty, times } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { connect, useSelector } from 'react-redux';
-import proThemesBanner from 'calypso/assets/images/themes/pro-themes-banner.svg';
-import EmptyContent from 'calypso/components/empty-content';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import Theme from 'calypso/components/theme';
+import { BLANK_CANVAS_DESIGN } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/constants';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { upsellCardDisplayed as upsellCardDisplayedAction } from 'calypso/state/themes/actions';
 import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
+import { getThemeSignupUrl } from 'calypso/state/themes/selectors';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
@@ -140,27 +138,39 @@ function ThemeBlock( props ) {
 }
 
 function Footer( props ) {
-	const { upsellCardDisplayed, translate } = props;
+	const { translate } = props;
 	const selectedSite = useSelector( getSelectedSite );
 	const canInstallTheme = useSelector( ( state ) =>
 		siteHasFeature( state, selectedSite?.ID, FEATURE_INSTALL_THEMES )
 	);
-	const canGoToPatternAssembler = useViewportMatch( 'large' );
+	const blankCanvasSignupUrl = useSelector( ( state ) =>
+		getThemeSignupUrl( state, BLANK_CANVAS_DESIGN.slug )
+	);
+	const isAtomic = useSelector( ( state ) => isAtomicSite( state, selectedSite?.ID ) );
 
-	// Prevents the Upwork upsell from being visible, so it doesn't conflict with the actions below.
-	useEffect( () => {
-		if ( selectedSite ) {
-			upsellCardDisplayed( true );
-		} else {
-			upsellCardDisplayed( false );
-		}
-		return () => {
-			upsellCardDisplayed( false );
-		};
-	}, [ selectedSite, upsellCardDisplayed ] );
-
+	let uploadThemeDescription;
+	let uploadThemeUrl;
+	let uploadThemeButton;
 	if ( ! selectedSite ) {
-		return null;
+		uploadThemeDescription = translate(
+			'With a Business plan, you can upload and install third-party themes to your site, including themes from WordPress.org, and even themes you have custom-made for your website.'
+		);
+		uploadThemeUrl = '/start/business';
+		uploadThemeButton = translate( 'Get started' );
+	} else if ( canInstallTheme ) {
+		uploadThemeDescription = translate(
+			'You can upload third-party themes to your site, including themes from WordPress.org, and even themes you have custom-made for your website.'
+		);
+		uploadThemeUrl = isAtomic
+			? `https://${ selectedSite.slug }/wp-admin/theme-install.php`
+			: `/themes/upload/${ selectedSite.slug }`;
+		uploadThemeButton = translate( 'Upload theme' );
+	} else {
+		uploadThemeDescription = translate(
+			'Upgrade to a Business plan to upload and install third-party themes to your site, including themes from WordPress.org, and even themes you have custom-made for your website.'
+		);
+		uploadThemeUrl = `/checkout/${ selectedSite.slug }/business?redirect_to=/themes/upload/${ selectedSite.slug }`;
+		uploadThemeButton = translate( 'Upgrade your plan' );
 	}
 
 	return (
@@ -179,25 +189,19 @@ function Footer( props ) {
 							{ translate( 'Create your own theme from scratch' ) }
 						</div>
 						<div className="themes-list__footer-action-description">
-							{ canGoToPatternAssembler
-								? translate(
+							{ selectedSite
+								? translate( 'Jump right into the editor to design your homepage from scratch.' )
+								: translate(
 										'Start with a blank canvas and design your own homepage using our library of patterns.'
-								  )
-								: translate( 'Jump right into the editor to design your homepage from scratch.' ) }
+								  ) }
 						</div>
 					</div>
 					<Button
 						primary
 						className="themes-list__footer-action-button"
-						href={
-							canGoToPatternAssembler
-								? `/setup/site-setup/patternAssembler?siteSlug=${ selectedSite.slug }&backTo=/themes/${ selectedSite.slug }`
-								: `/site-editor/${ selectedSite.slug }`
-						}
+						href={ selectedSite ? `/site-editor/${ selectedSite.slug }` : blankCanvasSignupUrl }
 					>
-						{ canGoToPatternAssembler
-							? translate( 'Start designing' )
-							: translate( 'Open the editor' ) }
+						{ selectedSite ? translate( 'Open the editor' ) : translate( 'Start designing' ) }
 					</Button>
 				</div>
 			</div>
@@ -230,27 +234,12 @@ function Footer( props ) {
 				<div className="themes-list__footer-action-content">
 					<div className="themes-list__footer-action-text">
 						<div className="themes-list__footer-action-title">
-							{ translate( 'Upload your theme' ) }
+							{ translate( 'Upload a theme' ) }
 						</div>
-						<div className="themes-list__footer-action-description">
-							{ canInstallTheme
-								? translate(
-										'You can upload third-party themes to your site, including themes from WordPress.org, and even themes you have custom-made for your website.'
-								  )
-								: translate(
-										'Upgrade your plan to unlock the ability to upload and install your own theme.'
-								  ) }
-						</div>
+						<div className="themes-list__footer-action-description">{ uploadThemeDescription }</div>
 					</div>
-					<Button
-						className="themes-list__footer-action-button"
-						href={
-							canInstallTheme
-								? `https://${ selectedSite.slug }/wp-admin/theme-install.php`
-								: `/themes/upload/${ selectedSite.slug }`
-						}
-					>
-						{ translate( 'Upload theme' ) }
+					<Button className="themes-list__footer-action-button" href={ uploadThemeUrl }>
+						{ uploadThemeButton }
 					</Button>
 				</div>
 			</div>
@@ -259,31 +248,14 @@ function Footer( props ) {
 }
 
 function Empty( props ) {
-	const { translate, upsellCardDisplayed, searchTerm } = props;
-	const selectedSite = useSelector( getSelectedSite );
-
-	if ( ! selectedSite ) {
-		return (
-			<>
-				<EmptyContent
-					title={ translate( 'Sorry, no themes found.' ) }
-					line={ translate( 'Try a different search or more filters?' ) }
-				/>
-				<PlanGetStartedCTA
-					searchTerm={ searchTerm }
-					translate={ translate }
-					recordTracksEvent={ props.recordTracksEvent }
-				/>
-			</>
-		);
-	}
+	const { translate } = props;
 
 	return (
 		<>
 			<div className="themes-list__empty-search-text">
 				{ translate( 'No themes match your search' ) }
 			</div>
-			<Footer translate={ translate } upsellCardDisplayed={ upsellCardDisplayed } />
+			<Footer translate={ translate } />
 		</>
 	);
 }
@@ -317,43 +289,7 @@ function WPOrgMatchingThemes( props ) {
 				) ) }
 				<TrailingItems />
 			</div>
-			<Footer translate={ props.translate } upsellCardDisplayed={ props.upsellCardDisplayed } />
-		</div>
-	);
-}
-
-function PlanGetStartedCTA( { searchTerm, translate, recordTracksEvent } ) {
-	const onGetStartedClick = useCallback( () => {
-		recordTracksEvent( 'calypso_themeshowcase_search_empty_results_get_started', {
-			search_term: searchTerm,
-		} );
-
-		return page( `/start/business` );
-	}, [ searchTerm, recordTracksEvent ] );
-
-	return (
-		<div className="themes-list__upgrade-section-wrapper">
-			<div className="themes-list__upgrade-section-title">
-				{ translate( 'Use any theme on WordPress.com' ) }
-			</div>
-			<div className="themes-list__upgrade-section-subtitle">
-				{ translate(
-					'Have a theme in mind that we don’t show here? Unlock the ability to use any theme, including Astra, with a Business plan.'
-				) }
-			</div>
-
-			<Button primary className="themes-list__upgrade-section-cta" onClick={ onGetStartedClick }>
-				{ translate( 'Get started' ) }
-			</Button>
-
-			<div className="themes-list__themes-images">
-				<img
-					src={ proThemesBanner }
-					alt={ translate(
-						'Themes banner featuring Astra, Neve, GeneratePress, and Hestia theme'
-					) }
-				/>
-			</div>
+			<Footer translate={ props.translate } />
 		</div>
 	);
 }
@@ -381,8 +317,4 @@ const mapStateToProps = ( state ) => ( {
 	themesBookmark: getThemesBookmark( state ),
 } );
 
-const mapDispatchToProps = {
-	upsellCardDisplayed: upsellCardDisplayedAction,
-};
-
-export default connect( mapStateToProps, mapDispatchToProps )( localize( ThemesList ) );
+export default connect( mapStateToProps )( localize( ThemesList ) );

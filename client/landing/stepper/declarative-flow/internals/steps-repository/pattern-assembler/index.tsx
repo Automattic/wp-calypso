@@ -32,12 +32,11 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 	const [ sectionPosition, setSectionPosition ] = useState< number | null >( null );
 	const incrementIndexRef = useRef( 0 );
 	const [ activePosition, setActivePosition ] = useState( -1 );
-	const { goBack, goNext, submit } = navigation;
+	const { goBack, goNext, submit, goToStep } = navigation;
 	const { setThemeOnSite, runThemeSetupOnSite, createCustomTemplate } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
-	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
