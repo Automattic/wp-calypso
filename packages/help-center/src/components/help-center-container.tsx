@@ -10,6 +10,8 @@ import classnames from 'classnames';
 import { useState, useRef, FC } from 'react';
 import Draggable, { DraggableProps } from 'react-draggable';
 import { MemoryRouter, Redirect } from 'react-router-dom';
+// eslint-disable-next-line no-restricted-imports
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud'; // TODO: get this from somewhere
 /**
  * Internal Dependencies
  */
@@ -96,7 +98,7 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) =
 							onDismiss={ onDismiss }
 						/>
 						<HelpCenterContent />
-						{ ! isMinimized && <HelpCenterFooter /> }
+						{ ! isMinimized && ! isJetpackCloud() && <HelpCenterFooter /> }
 					</Card>
 				</OptionalDraggable>
 			</FeatureFlagProvider>

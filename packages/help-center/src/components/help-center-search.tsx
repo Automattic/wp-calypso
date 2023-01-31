@@ -5,6 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { useHistory, useLocation } from 'react-router-dom';
 import InlineHelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud'; // TODO: get this from somewhere
 import { HelpCenterMoreResources } from './help-center-more-resources';
 import HelpCenterSearchResults from './help-center-search-results';
 import './help-center-search.scss';
@@ -52,13 +53,15 @@ export const HelpCenterSearch = () => {
 
 	return (
 		<div className="inline-help__search">
-			<InlineHelpSearchCard
-				searchQuery={ searchQuery }
-				onSearch={ setSearchQuery }
-				location="help-center"
-				isVisible
-				placeholder={ __( 'Search for help', __i18n_text_domain__ ) }
-			/>
+			{ ! isJetpackCloud() && (
+				<InlineHelpSearchCard
+					searchQuery={ searchQuery }
+					onSearch={ setSearchQuery }
+					location="help-center"
+					isVisible
+					placeholder={ __( 'Search for help', __i18n_text_domain__ ) }
+				/>
+			) }
 			{ searchQuery && (
 				<HelpCenterSearchResults
 					onSelect={ redirectToArticle }
@@ -69,7 +72,7 @@ export const HelpCenterSearch = () => {
 				/>
 			) }
 			{ ! searchQuery && <SibylArticles message="" supportSite={ undefined } /> }
-			{ ! searchQuery && <HelpCenterMoreResources /> }
+			{ ! searchQuery && ! isJetpackCloud() && <HelpCenterMoreResources /> }
 		</div>
 	);
 };

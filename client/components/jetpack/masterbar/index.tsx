@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import ProfileDropdown from 'calypso/components/jetpack/profile-dropdown';
+import JetpackCloudHelpCenter from 'calypso/jetpack-cloud/sections/help-center';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import { getDocumentHeadTitle } from 'calypso/state/document-head/selectors/get-document-head-title';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -50,6 +51,7 @@ const JetpackCloudMasterBar: React.FC = () => {
 			</a>
 			<AsyncLoad require="calypso/components/jetpack/portal-nav" placeholder={ null } />
 			{ headerTitle && <h1 className="masterbar__item-title">{ headerTitle }</h1> }
+			<JetpackCloudHelpCenter />
 			<ProfileDropdown />
 		</Masterbar>
 	);
