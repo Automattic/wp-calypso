@@ -116,7 +116,7 @@ export class FullSiteEditorPage {
 		);
 		this.templatePartModalComponent = new TemplatePartModalComponent( page, this.editor );
 		this.templatePartListComponent = new TemplatePartListComponent( page, this.editor );
-		this.cookieBannerComponent = new CookieBannerComponent( this.editor );
+		this.cookieBannerComponent = new CookieBannerComponent( page, this.editor );
 	}
 
 	//#region Visit and Setup
