@@ -36,7 +36,7 @@ type WpcomStoreAction =
 	  }
 	| { type: 'SET_VAT_DETAILS'; payload: VatDetails };
 
-type StoreKey = 'wpcom-checkout';
+export const STORE_KEY = 'wpcom-checkout';
 
 export interface WpcomCheckoutStore extends ReturnType< typeof registerStore > {
 	getState: () => WpcomStoreState;
@@ -63,10 +63,8 @@ export type WpcomCheckoutStoreSelectors = Selectors;
 export type WpcomCheckoutStoreActions = Actions;
 
 declare module '@wordpress/data' {
-	// We also add undefined to these to cover the case where this store has not
-	// been defined yet.
-	function select( key: StoreKey ): WpcomCheckoutStoreSelectors | undefined;
-	function dispatch( key: StoreKey ): WpcomCheckoutStoreActions | undefined;
+	function select( key: typeof STORE_KEY ): WpcomCheckoutStoreSelectors | undefined;
+	function dispatch( key: typeof STORE_KEY ): WpcomCheckoutStoreActions | undefined;
 }
 
 const actions = {
@@ -204,7 +202,7 @@ export function useWpcomStore(): WpcomCheckoutStore | undefined {
 		}
 	}
 
-	return registerStore( 'wpcom-checkout', {
+	return registerStore( STORE_KEY, {
 		reducer( state: WpcomStoreState | undefined, action: WpcomStoreAction ): WpcomStoreState {
 			const checkedState =
 				state === undefined ? getInitialWpcomStoreState( emptyManagedContactDetails ) : state;
