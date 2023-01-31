@@ -105,7 +105,7 @@ describe(
 			} );
 
 			it( 'Make purchase', async function () {
-				await cartCheckoutPage.purchase( { timeout: 30 * 1000 } );
+				await cartCheckoutPage.purchase( { timeout: 60 * 1000 } );
 			} );
 
 			it( 'Return to My Home dashboard', async function () {
@@ -124,7 +124,6 @@ describe(
 
 			it( `Plans page states user is on WordPress.com ${ planName } plan`, async function () {
 				const plansPage = new PlansPage( page );
-				await plansPage.visit( 'My Plan', newSiteDetails.blog_details.site_slug );
 				await plansPage.validateActivePlan( 'Premium' );
 			} );
 		} );

@@ -11,7 +11,7 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import { getTopLevelOfTld } from 'calypso/lib/domains';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { VatForm, isVatSupportedFor } from './vat-form';
+import { VatForm } from './vat-form';
 import type { DomainContactDetails as DomainContactDetailsData } from '@automattic/shopping-cart';
 import type { DomainContactDetailsErrors } from '@automattic/wpcom-checkout';
 
@@ -45,9 +45,7 @@ export default function DomainContactDetails( {
 	const needsAlternateEmailForGSuite = needsOnlyGoogleAppsDetails;
 	const tlds = getAllTopLevelTlds( domainNames );
 
-	const isVatSupported =
-		config.isEnabled( 'checkout/vat-form' ) &&
-		Boolean( contactDetails.countryCode && isVatSupportedFor( contactDetails.countryCode ) );
+	const isVatSupported = config.isEnabled( 'checkout/vat-form' );
 
 	return (
 		<Fragment>

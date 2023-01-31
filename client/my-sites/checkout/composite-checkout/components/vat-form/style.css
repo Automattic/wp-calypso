@@ -9,3 +9,6 @@
 	margin-top: 16px;
 }
 
+.vat-form__row--full-width {
+	display: block;
+}

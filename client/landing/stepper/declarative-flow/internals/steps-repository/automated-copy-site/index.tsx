@@ -46,12 +46,10 @@ const AutomatedCopySite: Step = function AutomatedCopySite( { navigation } ) {
 		if ( ! site?.ID || ! sourceSiteId ) {
 			return;
 		}
-		setPendingAction( async () => {
-			const siteId = site.ID;
-			setProgress( 0 );
+		async function initCopySite() {
 			try {
 				await wpcom.req.post( {
-					path: `/sites/${ siteId }/copy-from-site`,
+					path: `/sites/${ site?.ID }/copy-from-site`,
 					apiNamespace: 'wpcom/v2',
 					body: {
 						source_blog_id: sourceSiteId,
@@ -60,14 +58,17 @@ const AutomatedCopySite: Step = function AutomatedCopySite( { navigation } ) {
 			} catch ( _error ) {
 				throw new Error( 'Error copying site' );
 			}
-
+		}
+		initCopySite();
+		setPendingAction( async () => {
+			setProgress( 0 );
 			let stopPollingTransfer = false;
 
 			while ( ! stopPollingTransfer ) {
 				await wait( TIME_CHECK_TRANSFER_STATUS );
-				await requestLatestAtomicTransfer( siteId );
-				const transfer = getSiteLatestAtomicTransfer( siteId );
-				const transferError = getSiteLatestAtomicTransferError( siteId );
+				await requestLatestAtomicTransfer( site.ID );
+				const transfer = getSiteLatestAtomicTransfer( site.ID );
+				const transferError = getSiteLatestAtomicTransferError( site.ID );
 				const transferStatus = transfer?.status;
 				const isTransferringStatusFailed = transferError && transferError?.status >= 500;
 
@@ -100,14 +101,14 @@ const AutomatedCopySite: Step = function AutomatedCopySite( { navigation } ) {
 
 		submit?.();
 	}, [
-		sourceSiteId,
-		siteSlug,
 		getSiteLatestAtomicTransfer,
 		getSiteLatestAtomicTransferError,
 		requestLatestAtomicTransfer,
 		setPendingAction,
 		setProgress,
-		site,
+		site?.ID,
+		siteSlug,
+		sourceSiteId,
 		submit,
 	] );
 
