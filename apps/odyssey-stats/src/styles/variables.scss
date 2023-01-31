@@ -1,6 +1,7 @@
+@import "@automattic/typography/styles/variables.scss";
 @import "@automattic/components/src/styles/typography.scss";
 
-$display-type-font: -apple-system,BlinkMacSystemFont,"Segoe UI","Roboto","Oxygen-Sans","Ubuntu","Cantarell","Helvetica Neue",sans-serif;
+$display-type-font: $sans;
 $display-type-weight: 400;
 $display-type-line-height: 40px;
 
