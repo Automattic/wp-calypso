@@ -256,8 +256,8 @@ class StatsSummary extends Component {
 				<div id="my-stats-content" className={ cardParentClassName }>
 					{ /* TODO: move the header <AllTimeNav /> here when modernising summary detail page */ }
 					{ summaryViews }
+					<JetpackColophon />
 				</div>
-				<JetpackColophon />
 			</Main>
 		);
 	}

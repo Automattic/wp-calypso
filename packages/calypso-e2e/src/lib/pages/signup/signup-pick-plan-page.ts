@@ -28,17 +28,38 @@ export class SignupPickPlanPage {
 	 * @returns {Promise<SiteDetails>} Details of the newly created site.
 	 */
 	async selectPlan( name: Plans ): Promise< NewSiteResponse > {
-		const [ response ] = await Promise.all( [
-			this.page.waitForResponse( /.*sites\/new\?.*/ ),
-			this.plansPage.selectPlan( name ),
+		await Promise.all( [
+			this.page.waitForURL( /.*start\/plans.*/ ),
+			this.page.waitForLoadState(),
 		] );
 
+		let url: RegExp;
+		if ( name !== 'Free' ) {
+			// Non-free plans should redirect to the Checkout cart.
+			url = new RegExp( '.*checkout.*' );
+		} else {
+			url = new RegExp( '.*setup/site-setup.*' );
+		}
+
+		const actions = [
+			this.page.waitForResponse( /.*sites\/new\?.*/ ),
+			this.page.waitForURL( url, { timeout: 30 * 1000 } ),
+			this.plansPage.selectPlan( name ),
+		];
+
+		const [ response ] = await Promise.all( actions );
+
 		if ( ! response ) {
-			throw new Error( 'Failed to create new site when selecting a plan at signup.' );
+			throw new Error( 'Failed to intercept response for new site creation.' );
 		}
 
 		const responseJSON = await response.json();
 		const body: NewSiteResponse = responseJSON.body;
+
+		if ( ! body.blog_details.blogid ) {
+			console.error( body );
+			throw new Error( `Failed to locate blog ID for the created site.` );
+		}
 
 		// Cast the blogID value to a number, in case it comes in as a string.
 		body.blog_details.blogid = Number( body.blog_details.blogid );

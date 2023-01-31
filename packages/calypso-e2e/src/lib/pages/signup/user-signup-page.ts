@@ -102,7 +102,7 @@ export class UserSignupPage {
 		await this.page.fill( selectors.passwordInput, password );
 
 		const [ , response ] = await Promise.all( [
-			this.page.waitForNavigation(),
+			this.page.waitForURL( /.*crowdsignal\.com\/start\?plan=free.*/ ),
 			this.page.waitForResponse( /.*new\?.*/ ),
 			this.page.click( selectors.submitButton ),
 		] );
