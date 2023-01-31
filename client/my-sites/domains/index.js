@@ -214,6 +214,18 @@ export default function () {
 	);
 
 	page(
+		'/domains/add/:domain/v2',
+		siteSelection,
+		navigation,
+		domainsController.redirectIfNoSite( '/domains/add' ),
+		domainsController.redirectToUseYourDomainIfVipSite(),
+		domainsController.jetpackNoDomainsWarning,
+		domainsController.domainSearch,
+		makeLayout,
+		clientRender
+	);
+
+	page(
 		'/domains/add/:domain/email/:siteSlug',
 		siteSelection,
 		navigation,
