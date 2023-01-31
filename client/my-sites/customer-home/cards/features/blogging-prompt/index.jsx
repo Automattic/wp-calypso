@@ -63,7 +63,7 @@ const BloggingPromptCard = () => {
 						</Button>
 					</EllipsisMenu>
 				</CardHeading>
-				<PromptsNavigation prompts={ prompts } showViewAllResponses={ false } />
+				<PromptsNavigation prompts={ prompts } showViewAllResponses={ true } />
 			</Card>
 		</div>
 	);
