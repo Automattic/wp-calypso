@@ -132,6 +132,7 @@ export default function ContactDetailsContainer( {
 						onChange={ onChangeContactInfo }
 						countriesList={ countriesList }
 						isDisabled={ isDisabled }
+						allowVat
 					/>
 				</Fragment>
 			);

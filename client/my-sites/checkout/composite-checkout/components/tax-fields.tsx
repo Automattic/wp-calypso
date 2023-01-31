@@ -40,12 +40,14 @@ export default function TaxFields( {
 	taxInfo,
 	countriesList,
 	onChange,
+	allowVat,
 	isDisabled,
 }: {
 	section: string;
 	taxInfo: ManagedContactDetails;
 	countriesList: CountryListItem[];
 	onChange: ( taxInfo: ManagedContactDetails ) => void;
+	allowVat?: boolean;
 	isDisabled?: boolean;
 } ) {
 	const translate = useTranslate();
@@ -54,7 +56,7 @@ export default function TaxFields( {
 		countriesList.length && countryCode?.value
 			? getCountryPostalCodeSupport( countriesList, countryCode.value )
 			: false;
-	const isVatSupported = config.isEnabled( 'checkout/vat-form' );
+	const isVatSupported = config.isEnabled( 'checkout/vat-form' ) && allowVat;
 
 	return (
 		<>
