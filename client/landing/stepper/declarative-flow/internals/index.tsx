@@ -79,12 +79,12 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		// We record the event only when the step is not empty. Additionally, we should not fire this event whenever the intent is changed
 		if ( currentStepRoute ) {
 			recordStepStart( flow.name, kebabCase( currentStepRoute ), { intent } );
-		}
 
-		// Also record page view for data and analytics
-		const pathname = window.location.pathname;
-		const pageTitle = `Setup > ${ flow.name } > ${ currentStepRoute }`;
-		recordPageView( pathname, pageTitle );
+			// Also record page view for data and analytics
+			const pathname = window.location.pathname || '';
+			const pageTitle = `Setup > ${ flow.name } > ${ currentStepRoute }`;
+			recordPageView( pathname, pageTitle );
+		}
 
 		// We leave out intent from the dependency list, due to the ONBOARD_STORE being reset in the exit flow.
 		// This causes the intent to become empty, and thus this event being fired again.
