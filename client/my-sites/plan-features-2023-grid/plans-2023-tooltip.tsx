@@ -1,42 +1,52 @@
 import styled from '@emotion/styled';
 import { TranslateResult } from 'i18n-calypso';
-import { PropsWithChildren } from 'react';
+import { PropsWithChildren, useRef, useState } from 'react';
+import Tooltip from 'calypso/components/tooltip';
 
-const TooltipContainer = styled.div`
-	position: relative;
-	cursor: default;
-`;
-const Tooltip = styled.div`
-	background: #101517;
-	border-radius: 4px;
-	font-size: 12px;
-	color: #fff;
-	display: block;
-	width: 245px;
-	position: absolute;
-	padding: 8px 10px;
-	box-shadow: 0 1px 2px rgb( 0 0 0 / 5% );
-	font-weight: 400;
-	text-align: center;
-	pointer-events: none;
-	z-index: 55;
-	transition: opacity 0.2s ease;
-	left: -18px;
-	top: -55px;
-	opacity: 0;
-	${ TooltipContainer }:hover & {
-		opacity: 1;
+const HoverAreaContainer = styled.span``;
+
+const StyledTooltip = styled( Tooltip )`
+	&.tooltip.popover .popover__inner {
+		background: var( --color-masterbar-background );
+		text-align: center;
+		border-radius: 4px;
+		min-height: 48px;
+		width: 190px;
+		display: flex;
+		align-items: center;
+		font-style: normal;
+		font-weight: 400;
+		font-size: 1em;
+		padding: 8px 25px;
 	}
 `;
 
 export const Plans2023Tooltip = ( props: PropsWithChildren< { text?: TranslateResult } > ) => {
+	const [ isVisible, setIsVisible ] = useState( false );
+	const tooltipRef = useRef< HTMLDivElement >( null );
+
 	if ( ! props.text ) {
 		return <>{ props.children }</>;
 	}
+
 	return (
-		<TooltipContainer className="plans-tooltip">
-			{ props.children }
-			<Tooltip>{ props.text }</Tooltip>
-		</TooltipContainer>
+		<>
+			<HoverAreaContainer
+				className="plans-2023-tooltip__hover-area-container"
+				ref={ tooltipRef }
+				onMouseEnter={ () => setIsVisible( true ) }
+				onMouseLeave={ () => setIsVisible( false ) }
+			>
+				{ props.children }
+			</HoverAreaContainer>
+			<StyledTooltip
+				isVisible={ isVisible }
+				position="top"
+				context={ tooltipRef.current }
+				hideArrow
+			>
+				{ props.text }
+			</StyledTooltip>
+		</>
 	);
 };
