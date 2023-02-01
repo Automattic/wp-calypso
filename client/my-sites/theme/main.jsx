@@ -790,10 +790,11 @@ class ThemeSheet extends Component {
 		if ( ! isLoggedIn ) {
 			plansUrl = localizeUrl( 'https://wordpress.com/pricing' );
 		} else if ( siteSlug ) {
+			const redirectTo = `/theme/${ themeId }${ section ? '/' + section : '' }/${ siteId }`;
 			const plan = isExternallyManagedTheme || isBundledSoftwareSet ? PLAN_BUSINESS : PLAN_PREMIUM;
 			plansUrl =
 				plansUrl +
-				`/${ siteSlug }/?plan=${ plan }&redirect_to=${ encodeURIComponent( analyticsPath ) }`;
+				`/${ siteSlug }/?plan=${ plan }&redirect_to=${ encodeURIComponent( redirectTo ) }`;
 		}
 
 		const launchPricing = () => window.open( plansUrl, '_blank' );
