@@ -24,7 +24,6 @@ import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
-import Badge from 'calypso/components/badge';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
@@ -203,57 +202,60 @@ class CurrentPlan extends Component {
 
 				<Card className="current-plan__trial-card">
 					<div className="current-plan__trial-card-content">
-						<Badge type="info">{ translate( '5 days left' ) }</Badge>
-						<p className="current-plan__card-title">
-							{ translate( 'You’re in a free trial store' ) }
-						</p>
+						<p className="current-plan__card-title">{ translate( 'You’re in a free trial' ) }</p>
 						<p className="current-plan__card-subtitle">
 							{ translate(
-								'Your free trial we’ll expire in 5 days. Pick a plan by December, 13th to keep your store running.'
+								'Your free trial will end in 5 days. Sign up to a plan by December 13 unlock new features and keep your store running.'
 							) }
 						</p>
-						<Button primary>{ translate( 'Pick a plan' ) }</Button>
+						<Button primary>{ translate( 'Get Commerce' ) }</Button>
 					</div>
-					<div className="current-plan__trial-ilustration">
-						<img
-							width={ 180 }
-							alt="Pick a plan"
-							src="/calypso/images/plans/wpcom/plan-ecommerce-trial.png"
-						/>
+					<div className="plans__chart-wrapper">
+						<div className="plans__chart" style={ { '--p': '50' } }>
+							5
+						</div>
+						<br />
+						<span className="plans__chart-label">{ translate( 'days left in trial' ) }</span>
 					</div>
 				</Card>
 
-				<h2 className="current-plan__section-title">What’s included in your free trial</h2>
+				<h2 className="current-plan__section-title">
+					{ translate( 'What’s included in your free trial' ) }
+				</h2>
 				<div className="current-plan__included-wrapper">
 					<Card>
 						<img
-							className="current-plan__included-ilustration"
+							className="current-plan__included-illustration"
 							alt="Priority support"
 							src="/calypso/images/plans/wpcom/trial-features/priority-support.svg"
 						/>
 						<p className="current-plan__included-title">Priority support</p>
 						<p className="current-plan__included-text">
-							Need help? Reach out to us anytime, anywhere.
+							{ translate( 'Need help? Reach out to us anytime, anywhere.' ) }
 						</p>
-						<Button className="current-plan__included-link">Ask a question</Button>
+						<Button className="current-plan__included-link">
+							{ translate( 'Ask a question' ) }
+						</Button>
 					</Card>
 
 					<Card>
 						<img
-							className="current-plan__included-ilustration"
+							className="current-plan__included-illustration"
 							alt="Premium themes"
 							src="/calypso/images/plans/wpcom/trial-features/premium-themes.svg"
 						/>
-						<p className="current-plan__included-title">Premium themes</p>
+						<p className="current-plan__included-title">{ translate( 'Premium themes' ) }</p>
 						<p className="current-plan__included-text">
-							Explore a diverse selection of beautifully designed premium themes.
+							{ translate( 'Explore a diverse selection of beautifully designed premium themes.' ) }
 						</p>
-						<Button className="current-plan__included-link">Browse premium themes</Button>
+						<Button className="current-plan__included-link">
+							{ translate( 'Browse premium themes' ) }
+						</Button>
 					</Card>
 
 					<Card>
 						<img
-							className="current-plan__included-ilustration"
+							className="current-plan__included-illustration"
 							alt="Advanced customization"
 							src="/calypso/images/plans/wpcom/trial-features/advanced-customization.svg"
 						/>
@@ -266,7 +268,7 @@ class CurrentPlan extends Component {
 
 					<Card>
 						<img
-							className="current-plan__included-ilustration"
+							className="current-plan__included-illustration"
 							alt="Unlimited products"
 							src="/calypso/images/plans/wpcom/trial-features/unlimited-products.svg"
 						/>
@@ -279,7 +281,7 @@ class CurrentPlan extends Component {
 
 					<Card>
 						<img
-							className="current-plan__included-ilustration"
+							className="current-plan__included-illustration"
 							alt="Jetpack features"
 							src="/calypso/images/plans/wpcom/trial-features/jetpack-features.svg"
 						/>
@@ -292,7 +294,7 @@ class CurrentPlan extends Component {
 
 					<Card>
 						<img
-							className="current-plan__included-ilustration"
+							className="current-plan__included-illustration"
 							alt="SEO tools"
 							src="/calypso/images/plans/wpcom/trial-features/seo-tools.svg"
 						/>
@@ -305,7 +307,7 @@ class CurrentPlan extends Component {
 
 					<Card>
 						<img
-							className="current-plan__included-ilustration"
+							className="current-plan__included-illustration"
 							alt="Google Analytics"
 							src="/calypso/images/plans/wpcom/trial-features/google-analytics.svg"
 						/>
@@ -318,7 +320,7 @@ class CurrentPlan extends Component {
 
 					<Card>
 						<img
-							className="current-plan__included-ilustration"
+							className="current-plan__included-illustration"
 							alt="Best-in-class hosting"
 							src="/calypso/images/plans/wpcom/trial-features/best-in-class-hosting.svg"
 						/>
@@ -339,7 +341,7 @@ class CurrentPlan extends Component {
 				<div className="current-plan__more-wrapper">
 					<Card>
 						<img
-							className="current-plan__more-ilustration"
+							className="current-plan__more-illustration"
 							alt="Launch your store to the world"
 							src="/calypso/images/plans/wpcom/trial-features/launch.png"
 						/>
@@ -354,7 +356,7 @@ class CurrentPlan extends Component {
 
 					<Card>
 						<img
-							className="current-plan__more-ilustration"
+							className="current-plan__more-illustration"
 							alt="Get access to more premium themes"
 							src="/calypso/images/plans/wpcom/trial-features/themes.png"
 						/>
@@ -369,7 +371,7 @@ class CurrentPlan extends Component {
 
 					<Card>
 						<img
-							className="current-plan__more-ilustration"
+							className="current-plan__more-illustration"
 							alt="Make money with your store"
 							src="/calypso/images/plans/wpcom/trial-features/money.png"
 						/>
@@ -384,7 +386,7 @@ class CurrentPlan extends Component {
 
 					<Card>
 						<img
-							className="current-plan__more-ilustration"
+							className="current-plan__more-illustration"
 							alt="Boost your email marketing"
 							src="/calypso/images/plans/wpcom/trial-features/email.png"
 						/>
@@ -399,7 +401,7 @@ class CurrentPlan extends Component {
 
 					<Card>
 						<img
-							className="current-plan__more-ilustration"
+							className="current-plan__more-illustration"
 							alt="Promote your products"
 							src="/calypso/images/plans/wpcom/trial-features/promote.png"
 						/>
@@ -414,7 +416,7 @@ class CurrentPlan extends Component {
 
 					<Card>
 						<img
-							className="current-plan__more-ilustration"
+							className="current-plan__more-illustration"
 							alt="Integrate top shipping carriers"
 							src="/calypso/images/plans/wpcom/trial-features/shipping.png"
 						/>
@@ -429,7 +431,9 @@ class CurrentPlan extends Component {
 				</div>
 
 				<div className="current-plan__cta-wrapper">
-					<Button className="current-plan__cta">Enhance your store and pick a plan</Button>
+					<Button className="current-plan__cta">
+						{ translate( 'Enhance your store and get Commerce' ) }
+					</Button>
 				</div>
 			</>
 		);
