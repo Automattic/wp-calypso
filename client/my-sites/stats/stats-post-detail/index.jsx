@@ -142,7 +142,7 @@ class StatsPostDetail extends Component {
 		const isFeatured = config.isEnabled( 'stats/enhance-post-detail' );
 
 		return isFeatured ? (
-			<Main fullWidthLayout className="stats-post-detail">
+			<Main fullWidthLayout>
 				<PageViewTracker
 					path={ `/stats/${ postType }/:post_id/:site` }
 					title={ `Stats > Single ${ titlecase( postType ) }` }
@@ -198,7 +198,7 @@ class StatsPostDetail extends Component {
 				</WebPreview>
 			</Main>
 		) : (
-			<Main className="has-fixed-nav stats-post-detail" wideLayout>
+			<Main className="has-fixed-nav" wideLayout>
 				<PageViewTracker
 					path={ `/stats/${ postType }/:post_id/:site` }
 					title={ `Stats > Single ${ titlecase( postType ) }` }
