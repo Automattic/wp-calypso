@@ -84,6 +84,12 @@
 		display: flex;
 		border-bottom: 1px solid var(--studio-gray-5);
 		padding-bottom: 20px;
+		flex-direction: column;
+		gap: 16px;
+
+		@include break-mobile {
+			flex-direction: row;
+		}
 
 		@include break-small {
 			padding-bottom: 40px;
@@ -100,7 +106,6 @@
 		overflow: visible;
 		align-self: center;
 		display: inline-block;
-		margin-left: 16px;
 	}
 
 	.themes-list__more-options-action-title {
