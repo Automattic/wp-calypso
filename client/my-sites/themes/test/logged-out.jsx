@@ -12,6 +12,9 @@ import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
 import LoggedOutShowcase from '../logged-out';
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
+jest.mock( 'calypso/lib/analytics/track-component-view', () =>
+	require( 'calypso/components/empty-component' )
+);
 jest.mock( 'calypso/lib/analytics/page-view-tracker', () =>
 	require( 'calypso/components/empty-component' )
 );
