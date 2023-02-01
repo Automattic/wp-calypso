@@ -135,11 +135,11 @@ class WordAds extends Component {
 
 	render() {
 		const {
-			isJetpack,
-			isOdysseyStats,
 			canAccessAds,
 			canUpgradeToUseWordAds,
 			date,
+			isJetpack,
+			isOdysseyStats,
 			site,
 			siteId,
 			slug,
