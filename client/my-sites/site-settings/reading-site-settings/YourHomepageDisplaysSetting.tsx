@@ -119,7 +119,7 @@ const YourHomepageDisplaysSetting = ( {
 				<FormSelect
 					id="posts-page-select"
 					name="page_for_posts"
-					disabled={ disabled || isLoading || ! pages?.length }
+					disabled={ disabled || isLoading || ! pages?.length || page_on_front === '' }
 					value={ page_for_posts }
 					onChange={ handlePageForPostsChange }
 				>
