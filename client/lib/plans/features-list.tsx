@@ -871,7 +871,7 @@ export const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_LIVE_CHAT_SUPPORT,
 		getTitle: () => i18n.translate( 'Live chat support' ),
 		getDescription: () =>
-			i18n.translate( 'Live chat is available 24 hours a day from Monday through Friday.' ),
+			i18n.translate( 'Realtime help and guidance from professional WordPress experts.' ),
 	},
 
 	[ FEATURE_PREMIUM_SUPPORT ]: {
@@ -1309,7 +1309,7 @@ export const FEATURES_LIST: FeatureList = {
 
 	[ FEATURE_ONE_CLICK_RESTORE_V2 ]: {
 		getSlug: () => FEATURE_ONE_CLICK_RESTORE_V2,
-		getTitle: () => i18n.translate( 'One-click restores' ),
+		getTitle: () => i18n.translate( 'One-click restore' ),
 		getDescription: () =>
 			i18n.translate(
 				'Revert back to a point-in-time in your site’s history, with a single click.'
@@ -1905,7 +1905,7 @@ export const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_CONTACT_FORM_JP,
 		getTitle: () => i18n.translate( 'Contact form' ),
 		getDescription: () =>
-			i18n.translate( 'At-a-glance and deep-dive data to measure your site’s success.' ),
+			i18n.translate( 'Make it easy for your visitors to get in touch, right from your site.' ),
 	},
 	[ FEATURE_PAID_SUBSCRIBERS_JP ]: {
 		getSlug: () => FEATURE_PAID_SUBSCRIBERS_JP,
@@ -1920,7 +1920,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_VIDEOPRESS_JP ]: {
 		getSlug: () => FEATURE_VIDEOPRESS_JP,
-		getTitle: () => i18n.translate( '4K Video with VideoPress' ),
+		getTitle: () => i18n.translate( '4K Videos with VideoPress' ),
 		getDescription: () =>
 			i18n.translate( 'Showcase your videos beautifully with the 4K VideoPress player.' ),
 	},
@@ -1969,7 +1969,8 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_ES_SEARCH_JP ]: {
 		getSlug: () => FEATURE_ES_SEARCH_JP,
 		getTitle: () => i18n.translate( 'Built-in Elasticsearch' ),
-		getDescription: () => i18n.translate( 'Built-in Elasticsearch' ),
+		getDescription: () =>
+			i18n.translate( 'Make surfacing your content simple with built-in premium site search.' ),
 	},
 	[ FEATURE_PLUGIN_AUTOUPDATE_JP ]: {
 		getSlug: () => FEATURE_PLUGIN_AUTOUPDATE_JP,
