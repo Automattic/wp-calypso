@@ -203,42 +203,6 @@ body.is-section-plans.is-trial-plan {
 			list-style: none;
 			padding: 0;
 			margin-top: 30px;
-
-			.card {
-				width: 240px;
-				display: flex;
-				flex-direction: column;
-				border: 1px solid var(--color-neutral-5);
-				border-radius: 2px;
-				// Assimetric padding same as the designs
-				padding: 48px 24px 35px 24px;
-				box-shadow: none;
-
-				.current-plan__included-illustration {
-					width: 60px;
-				}
-
-				.current-plan__included-title {
-					margin-top: 20px;
-					font-weight: 600;
-					font-size: $font-body;
-				}
-
-				.current-plan__included-text {
-					flex: 1;
-					font-weight: 400;
-					font-size: $font-body-small;
-					color: var(--color-neutral-40);
-				}
-
-				.current-plan__included-link {
-					color: var(--color-accent);
-					font-size: $font-body-small;
-					border: 0;
-					padding: 0;
-					text-align: left;
-				}
-			}
 		}
 
 		.current-plan__more-wrapper {

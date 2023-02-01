@@ -63,6 +63,7 @@ import VideoPressProductThankYou from './current-plan-thank-you/jetpack-videopre
 import PaidPlanThankYou from './current-plan-thank-you/paid-plan-thank-you';
 import ScanProductThankYou from './current-plan-thank-you/scan-thank-you';
 import SearchProductThankYou from './current-plan-thank-you/search-thank-you';
+import FeatureIncludedCard from './feature-included-card';
 import PurchasesListing from './purchases-listing';
 
 import './style.scss';
@@ -196,6 +197,72 @@ class CurrentPlan extends Component {
 	renderEcommerceTrialPage() {
 		const { translate } = this.props;
 
+		const whatsIncluded = [
+			{
+				illustration: '/calypso/images/plans/wpcom/trial-features/priority-support.svg',
+				title: translate( 'Priority support' ),
+				text: translate( 'Need help? Reach out to us anytime, anywhere.' ),
+				showButton: true,
+				buttonText: translate( 'Ask a question' ),
+			},
+			{
+				illustration: '/calypso/images/plans/wpcom/trial-features/premium-themes.svg',
+				title: translate( 'Premium themes' ),
+				text: translate( 'Explore a diverse selection of beautifully designed premium themes.' ),
+				showButton: true,
+				buttonText: translate( 'Browse premium themes' ),
+			},
+			{
+				illustration: '/calypso/images/plans/wpcom/trial-features/advanced-customization.svg',
+				title: translate( 'Advanced customization' ),
+				text: translate( "Change your store's appearance in a few clicks!" ),
+				showButton: true,
+				buttonText: translate( 'Design your store' ),
+			},
+			{
+				illustration: '/calypso/images/plans/wpcom/trial-features/unlimited-products.svg',
+				title: translate( 'Unlimited products' ),
+				text: translate(
+					'List as many products or services as you’d like and offer subscriptions.'
+				),
+				showButton: true,
+				buttonText: translate( 'Add a product' ),
+			},
+			{
+				illustration: '/calypso/images/plans/wpcom/trial-features/jetpack-features.svg',
+				title: translate( 'Jetpack features' ),
+				text: translate( 'Get auto real-time backups, malware scans, and spam protection.' ),
+				showButton: true,
+				buttonText: translate( 'Keep your store safe' ),
+			},
+			{
+				illustration: '/calypso/images/plans/wpcom/trial-features/seo-tools.svg',
+				title: translate( 'SEO tools' ),
+				text: translate(
+					'Boost traffic with tools that make your content more findable on search engines.'
+				),
+				showButton: true,
+				buttonText: translate( 'Increase visibility' ),
+			},
+			{
+				illustration: '/calypso/images/plans/wpcom/trial-features/google-analytics.svg',
+				title: translate( 'Google Analytics' ),
+				text: translate(
+					'Understand visitors and traffic patterns more in depht with Google stats.'
+				),
+				showButton: true,
+				buttonText: translate( 'Connect Google Analytics' ),
+			},
+			{
+				illustration: '/calypso/images/plans/wpcom/trial-features/best-in-class-hosting.svg',
+				title: translate( 'Best-in-class hosting' ),
+				text: translate(
+					'Hosting is included with your plan, eliminating additional cost and technical hassle.'
+				),
+				showButton: false,
+			},
+		];
+
 		return (
 			<>
 				<BodySectionCssClass bodyClass={ [ 'is-trial-plan' ] } />
@@ -223,112 +290,16 @@ class CurrentPlan extends Component {
 					{ translate( 'What’s included in your free trial' ) }
 				</h2>
 				<div className="current-plan__included-wrapper">
-					<Card>
-						<img
-							className="current-plan__included-illustration"
-							alt="Priority support"
-							src="/calypso/images/plans/wpcom/trial-features/priority-support.svg"
-						/>
-						<p className="current-plan__included-title">Priority support</p>
-						<p className="current-plan__included-text">
-							{ translate( 'Need help? Reach out to us anytime, anywhere.' ) }
-						</p>
-						<Button className="current-plan__included-link">
-							{ translate( 'Ask a question' ) }
-						</Button>
-					</Card>
-
-					<Card>
-						<img
-							className="current-plan__included-illustration"
-							alt="Premium themes"
-							src="/calypso/images/plans/wpcom/trial-features/premium-themes.svg"
-						/>
-						<p className="current-plan__included-title">{ translate( 'Premium themes' ) }</p>
-						<p className="current-plan__included-text">
-							{ translate( 'Explore a diverse selection of beautifully designed premium themes.' ) }
-						</p>
-						<Button className="current-plan__included-link">
-							{ translate( 'Browse premium themes' ) }
-						</Button>
-					</Card>
-
-					<Card>
-						<img
-							className="current-plan__included-illustration"
-							alt="Advanced customization"
-							src="/calypso/images/plans/wpcom/trial-features/advanced-customization.svg"
-						/>
-						<p className="current-plan__included-title">Advanced customization</p>
-						<p className="current-plan__included-text">
-							Change your store's appearance in a few clicks!
-						</p>
-						<Button className="current-plan__included-link">Design your store</Button>
-					</Card>
-
-					<Card>
-						<img
-							className="current-plan__included-illustration"
-							alt="Unlimited products"
-							src="/calypso/images/plans/wpcom/trial-features/unlimited-products.svg"
-						/>
-						<p className="current-plan__included-title">Unlimited products</p>
-						<p className="current-plan__included-text">
-							List as many products or services as you’d like and offer subscriptions.
-						</p>
-						<Button className="current-plan__included-link">Add a product</Button>
-					</Card>
-
-					<Card>
-						<img
-							className="current-plan__included-illustration"
-							alt="Jetpack features"
-							src="/calypso/images/plans/wpcom/trial-features/jetpack-features.svg"
-						/>
-						<p className="current-plan__included-title">Jetpack features</p>
-						<p className="current-plan__included-text">
-							Get auto real-time backups, malware scans, and spam protection.
-						</p>
-						<Button className="current-plan__included-link">Keep your store safe</Button>
-					</Card>
-
-					<Card>
-						<img
-							className="current-plan__included-illustration"
-							alt="SEO tools"
-							src="/calypso/images/plans/wpcom/trial-features/seo-tools.svg"
-						/>
-						<p className="current-plan__included-title">SEO tools</p>
-						<p className="current-plan__included-text">
-							Boost traffic with tools that make your content more findable on search engines.
-						</p>
-						<Button className="current-plan__included-link">Increase visibility</Button>
-					</Card>
-
-					<Card>
-						<img
-							className="current-plan__included-illustration"
-							alt="Google Analytics"
-							src="/calypso/images/plans/wpcom/trial-features/google-analytics.svg"
-						/>
-						<p className="current-plan__included-title">Google Analytics</p>
-						<p className="current-plan__included-text">
-							Understand visitors and traffic patterns more in depht with Google stats.
-						</p>
-						<Button className="current-plan__included-link">Connect Google Analytics</Button>
-					</Card>
-
-					<Card>
-						<img
-							className="current-plan__included-illustration"
-							alt="Best-in-class hosting"
-							src="/calypso/images/plans/wpcom/trial-features/best-in-class-hosting.svg"
-						/>
-						<p className="current-plan__included-title">Best-in-class hosting</p>
-						<p className="current-plan__included-text">
-							Hosting is included with your plan, eliminating additional cost and technical hassle.
-						</p>
-					</Card>
+					{ whatsIncluded.map( ( feature ) => (
+						<FeatureIncludedCard
+							key={ feature.title }
+							illustration={ feature.illustration }
+							title={ feature.title }
+							text={ feature.text }
+							showButton={ feature.showButton }
+							buttonText={ feature.buttonText }
+						></FeatureIncludedCard>
+					) ) }
 				</div>
 
 				<h2 className="current-plan__section-title">Do you want more?</h2>
