@@ -16,7 +16,6 @@ import photon from 'photon';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
-import InfoPopover from 'calypso/components/info-popover';
 import PulsingDot from 'calypso/components/pulsing-dot';
 import Tooltip from 'calypso/components/tooltip';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
@@ -56,13 +55,10 @@ export class Theme extends Component {
 			stylesheet: PropTypes.string,
 			taxonomies: PropTypes.object,
 			update: PropTypes.object,
-			price: PropTypes.any,
 			soft_launched: PropTypes.bool,
 		} ),
 		// If true, highlight this theme as active
 		active: PropTypes.bool,
-		// Theme price (pre-formatted string) -- empty string indicates free theme
-		price: PropTypes.string,
 		// If true, the theme is being installed
 		installing: PropTypes.bool,
 		// If true, render a placeholder
@@ -131,7 +127,6 @@ export class Theme extends Component {
 		return (
 			nextProps.theme.id !== this.props.theme.id ||
 			nextProps.active !== this.props.active ||
-			nextProps.price !== this.props.price ||
 			nextProps.installing !== this.props.installing ||
 			! isEqual(
 				Object.keys( nextProps.buttonContents ),
@@ -435,15 +430,7 @@ export class Theme extends Component {
 	};
 
 	renderUpsell = () => {
-		const { active, isPremiumTheme, isPremiumThemeAvailable, theme } = this.props;
-
-		/*
-		 * Only show the Premium badge if we're not already showing the price
-		 * and the theme isn't the active theme.
-		 */
-		const showPremiumBadge = isPremiumTheme && isPremiumThemeAvailable && ! active;
-		const isNewCardsOnly = isEnabled( 'themes/showcase-i4/cards-only' );
-		const isNewDetailsAndPreview = isEnabled( 'themes/showcase-i4/details-and-preview' );
+		const { theme } = this.props;
 
 		return (
 			<span className="theme__upsell">
@@ -451,21 +438,7 @@ export class Theme extends Component {
 					eventName="calypso_upgrade_nudge_impression"
 					eventProperties={ { cta_name: 'theme-upsell', theme: theme.id } }
 				/>
-				{ isNewCardsOnly || isNewDetailsAndPreview ? (
-					this.getPremiumThemeBadge()
-				) : (
-					<InfoPopover
-						icon="star"
-						showOnHover={ true }
-						className={ classNames(
-							'theme__upsell-popover',
-							isPremiumThemeAvailable || showPremiumBadge ? 'active' : null
-						) }
-						position="top"
-					>
-						{ this.getUpsellPopoverContent() }
-					</InfoPopover>
-				) }
+				{ this.getPremiumThemeBadge() }
 			</span>
 		);
 	};
@@ -522,18 +495,8 @@ export class Theme extends Component {
 	};
 
 	render() {
-		const {
-			active,
-			price,
-			theme,
-			translate,
-			hasPremiumThemesFeature,
-			isPremiumTheme,
-			didPurchaseTheme,
-			isExternallyManagedTheme,
-		} = this.props;
+		const { active, theme, translate, isPremiumTheme, isExternallyManagedTheme } = this.props;
 		const { name, description, screenshot, style_variations = [] } = theme;
-		const isNewCardsOnly = isEnabled( 'themes/showcase-i4/cards-only' );
 		const isNewDetailsAndPreview = isEnabled( 'themes/showcase-i4/details-and-preview' );
 		const isActionable = this.props.screenshotClickUrl || this.props.onScreenshotClick;
 		const themeClass = classNames( 'theme', {
@@ -541,12 +504,7 @@ export class Theme extends Component {
 			'is-actionable': isActionable,
 		} );
 
-		const themeNeedsPurchase = isPremiumTheme && ! hasPremiumThemesFeature && ! didPurchaseTheme;
 		const showUpsell = ( isPremiumTheme || isExternallyManagedTheme ) && ! active;
-		const priceClass = classNames( 'theme__badge-price', {
-			'theme__badge-price-upgrade': ! themeNeedsPurchase,
-		} );
-
 		const themeDescription = decodeEntities( description );
 
 		// for performance testing
@@ -621,16 +579,13 @@ export class Theme extends Component {
 								} ) }
 							</span>
 						) }
-						{ ! isNewCardsOnly && ! isNewDetailsAndPreview && active && (
-							<span className={ priceClass }>{ price }</span>
-						) }
 						{ isNewDetailsAndPreview && ! active && this.renderStyleVariations() }
-						{ showUpsell
-							? this.renderUpsell()
-							: ( isNewCardsOnly || isNewDetailsAndPreview ) &&
-							  ! active && (
-									<span className="theme__info-upsell-description">{ translate( 'Free' ) }</span>
-							  ) }
+						{ ! active &&
+							( showUpsell ? (
+								this.renderUpsell()
+							) : (
+								<span className="theme__info-upsell-description">{ translate( 'Free' ) }</span>
+							) ) }
 						{ this.renderMoreButton() }
 					</div>
 				</div>
