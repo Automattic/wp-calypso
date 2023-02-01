@@ -31,7 +31,7 @@ const StatsCard = ( {
 	);
 
 	// On one line shows card title and value column header
-	const SimpleHeader = (
+	const simpleHeaderNode = (
 		<div className={ `${ BASE_CLASS_NAME }--header` }>
 			{ titleNode }
 			{ ! isEmpty && <div>{ metricLabel ?? translate( 'Views' ) }</div> }
@@ -40,7 +40,7 @@ const StatsCard = ( {
 
 	// Show Card title on one line and all other column header(s) below:
 	// (main item, optional additional columns and value)
-	const SplitHeader = (
+	const splitHeaderNode = (
 		<div className={ `${ BASE_CLASS_NAME }--header ${ BASE_CLASS_NAME }--header--split` }>
 			{ titleNode }
 			<div className={ `${ BASE_CLASS_NAME }--column-header` }>
@@ -65,7 +65,7 @@ const StatsCard = ( {
 		<div className={ classNames( className, BASE_CLASS_NAME ) }>
 			{ !! heroElement && <div className={ `${ BASE_CLASS_NAME }--hero` }>{ heroElement }</div> }
 			<div className={ `${ BASE_CLASS_NAME }--header-and-body` }>
-				{ splitHeader ? SplitHeader : SimpleHeader }
+				{ splitHeader ? splitHeaderNode : simpleHeaderNode }
 				<div
 					className={ classNames( `${ BASE_CLASS_NAME }--body`, {
 						[ `${ BASE_CLASS_NAME }--body-empty` ]: isEmpty,
