@@ -790,7 +790,7 @@ class ThemeSheet extends Component {
 		if ( ! isLoggedIn ) {
 			plansUrl = localizeUrl( 'https://wordpress.com/pricing' );
 		} else if ( siteSlug ) {
-			const redirectTo = `/theme/${ themeId }${ section ? '/' + section : '' }/${ siteId }`;
+			const redirectTo = `/theme/${ themeId }${ section ? '/' + section : '' }/${ siteSlug }`;
 			const plan = isExternallyManagedTheme || isBundledSoftwareSet ? PLAN_BUSINESS : PLAN_PREMIUM;
 			plansUrl =
 				plansUrl +
@@ -927,6 +927,13 @@ class ThemeSheet extends Component {
 
 		return (
 			<Main className={ className }>
+				{ siteSlug && (
+					<AsyncLoad
+						require="calypso/components/global-notices"
+						placeholder={ null }
+						id="notices"
+					/>
+				) }
 				<QueryCanonicalTheme themeId={ this.props.themeId } siteId={ siteId } />
 				<QueryProductsList />
 				<QueryUserPurchases />
