@@ -378,7 +378,7 @@ class CurrentPlan extends Component {
 				</div>
 
 				<div className="current-plan__cta-wrapper">
-					<Button className="current-plan__cta">
+					<Button className="current-plan__cta is-primary">
 						{ translate( 'Enhance your store and get Commerce' ) }
 					</Button>
 				</div>
