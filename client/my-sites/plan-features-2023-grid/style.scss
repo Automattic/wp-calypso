@@ -63,6 +63,13 @@ $plan-features-sidebar-width: 272px;
 					box-shadow: inset 0 0 0 1px var(--studio-gray-80);
 				}
 			}
+
+			&.disabled,
+			&[disabled] {
+				background-color: var(--studio-white);
+				color: var(--color-neutral-light);
+				box-shadow: inset 0 0 0 1px #e0e0e0;
+			}
 		}
 	}
 }

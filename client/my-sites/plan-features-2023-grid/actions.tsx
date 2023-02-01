@@ -143,6 +143,12 @@ const LoggedInPlansFeatureActionButton = ( {
 				</Button>
 			);
 		}
+
+		return (
+			<Button className={ classes } disabled={ true }>
+				{ translate( 'Constact support', { context: 'verb' } ) }
+			</Button>
+		);
 	}
 
 	if ( current && planType !== PLAN_P2_FREE ) {
@@ -166,17 +172,7 @@ const LoggedInPlansFeatureActionButton = ( {
 		);
 	}
 
-	let buttonTextFallback = freePlan
-		? translate( 'Select Free', { context: 'button' } )
-		: translate( 'Upgrade', { context: 'verb' } );
-
-	if ( buttonText ) {
-		buttonTextFallback = buttonText;
-	} else {
-		buttonTextFallback = freePlan
-			? translate( 'Select Free', { context: 'button' } )
-			: translate( 'Upgrade', { context: 'verb' } );
-	}
+	const buttonTextFallback = buttonText ?? translate( 'Upgrade', { context: 'verb' } );
 
 	if ( availableForPurchase || isPlaceholder ) {
 		return (
