@@ -1,9 +1,12 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { getPlanClass, isMonthly, PLAN_P2_FREE, isFreePlan } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import styled from '@emotion/styled';
 import classNames from 'classnames';
 import { localize, TranslateResult, useTranslate } from 'i18n-calypso';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { Plans2023Tooltip } from './plans-2023-tooltip';
 
 type PlanFeaturesActionsButtonProps = {
 	availableForPurchase: boolean;
@@ -26,6 +29,18 @@ type PlanFeaturesActionsButtonProps = {
 	isWpcomEnterpriseGridPlan: boolean;
 	selectedSiteSlug: string | null;
 };
+
+const DummyDisabledButton = styled.div`
+	background-color: var( --studio-white );
+	color: var( --studio-gray-5 );
+	box-shadow: inset 0 0 0 1px var( --studio-gray-10 );
+	font-weight: 500;
+	line-height: 20px;
+	border-radius: 4px;
+	padding: 10px 14px;
+	border: unset;
+	text-align: center;
+`;
 
 const SignupFlowPlanFeatureActionButton = ( {
 	freePlan,
@@ -182,12 +197,23 @@ const LoggedInPlansFeatureActionButton = ( {
 		);
 	}
 
-	if ( ! availableForPurchase && forceDisplayButton ) {
-		return (
-			<Button className={ classes } disabled={ true }>
-				{ buttonText }
-			</Button>
-		);
+	const is2023OnboardingPricingGrid = isEnabled( 'onboarding/2023-pricing-grid' );
+	if ( ! availableForPurchase ) {
+		if ( is2023OnboardingPricingGrid ) {
+			return (
+				<Plans2023Tooltip text={ translate( 'Please contact support to downgrade your plan.' ) }>
+					<DummyDisabledButton>
+						{ translate( 'Downgrade', { context: 'verb' } ) }
+					</DummyDisabledButton>
+				</Plans2023Tooltip>
+			);
+		} else if ( forceDisplayButton ) {
+			return (
+				<Button className={ classes } disabled={ true }>
+					{ buttonText }
+				</Button>
+			);
+		}
 	}
 
 	return null;
