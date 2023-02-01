@@ -77,7 +77,7 @@ export const ThemesList = ( props ) => {
 				{ props.loading && <LoadingPlaceholders placeholderCount={ props.placeholderCount } /> }
 				<InfiniteScroll nextPageMethod={ fetchNextPage } />
 			</div>
-			<Footer
+			<MoreOptions
 				recordTracksEvent={ props.recordTracksEvent }
 				searchTerm={ props.searchTerm }
 				translate={ props.translate }
@@ -160,7 +160,7 @@ function ThemeBlock( props ) {
 	);
 }
 
-function Footer( { recordTracksEvent, searchTerm, translate } ) {
+function MoreOptions( { recordTracksEvent, searchTerm, translate } ) {
 	const selectedSite = useSelector( getSelectedSite );
 	const canInstallTheme = useSelector( ( state ) =>
 		siteHasFeature( state, selectedSite?.ID, FEATURE_INSTALL_THEMES )
@@ -200,21 +200,21 @@ function Footer( { recordTracksEvent, searchTerm, translate } ) {
 	}
 
 	return (
-		<div className="themes-list__footer">
-			<div className="themes-list__footer-heading">
+		<div className="themes-list__more-options">
+			<div className="themes-list__more-options-heading">
 				{ translate( "Can't find what you're looking for?" ) }
 			</div>
-			<div className="themes-list__footer-subheading">
+			<div className="themes-list__more-options-subheading">
 				{ translate( 'Here are a few more options:' ) }
 			</div>
-			<div className="themes-list__footer-action">
-				<Icon className="themes-list__footer-action-icon" icon={ addTemplate } size={ 28 } />
-				<div className="themes-list__footer-action-content">
-					<div className="themes-list__footer-action-text">
-						<div className="themes-list__footer-action-title">
+			<div className="themes-list__more-options-action">
+				<Icon className="themes-list__more-options-action-icon" icon={ addTemplate } size={ 28 } />
+				<div className="themes-list__more-options-action-content">
+					<div className="themes-list__more-options-action-text">
+						<div className="themes-list__more-options-action-title">
 							{ translate( 'Design your own' ) }
 						</div>
-						<div className="themes-list__footer-action-description">
+						<div className="themes-list__more-options-action-description">
 							{ selectedSite
 								? translate( 'Jump right into the editor to design your homepage from scratch.' )
 								: translate(
@@ -224,7 +224,7 @@ function Footer( { recordTracksEvent, searchTerm, translate } ) {
 					</div>
 					<Button
 						primary
-						className="themes-list__footer-action-button"
+						className="themes-list__more-options-action-button"
 						href={ selectedSite ? `/site-editor/${ selectedSite.slug }` : blankCanvasSignupUrl }
 						onClick={ () => {
 							recordTracksEvent( 'calypso_themeshowcase_more_options_design_homepage_click', {
@@ -238,24 +238,24 @@ function Footer( { recordTracksEvent, searchTerm, translate } ) {
 					</Button>
 				</div>
 			</div>
-			<div className="themes-list__footer-action">
-				<Icon className="themes-list__footer-action-icon" icon={ brush } size={ 28 } />
-				<div className="themes-list__footer-action-content">
-					<div className="themes-list__footer-action-text">
-						<div className="themes-list__footer-action-title">
+			<div className="themes-list__more-options-action">
+				<Icon className="themes-list__more-options-action-icon" icon={ brush } size={ 28 } />
+				<div className="themes-list__more-options-action-content">
+					<div className="themes-list__more-options-action-text">
+						<div className="themes-list__more-options-action-title">
 							{ translate( 'Hire our team of experts to design one for you', {
 								comment:
 									'"One" means a theme in this context (i.e. "Hire our team of experts to design a theme for you")',
 							} ) }
 						</div>
-						<div className="themes-list__footer-action-description">
+						<div className="themes-list__more-options-action-description">
 							{ translate(
 								'A WordPress.com professional will create layouts for up to 5 pages of your site.'
 							) }
 						</div>
 					</div>
 					<Button
-						className="themes-list__footer-action-button"
+						className="themes-list__more-options-action-button"
 						href="https://wordpress.com/do-it-for-me/"
 						onClick={ () => {
 							recordTracksEvent( 'calypso_themeshowcase_more_options_difm_click', {
@@ -268,17 +268,19 @@ function Footer( { recordTracksEvent, searchTerm, translate } ) {
 					</Button>
 				</div>
 			</div>
-			<div className="themes-list__footer-action">
-				<Icon className="themes-list__footer-action-icon" icon={ cloudUpload } size={ 28 } />
-				<div className="themes-list__footer-action-content">
-					<div className="themes-list__footer-action-text">
-						<div className="themes-list__footer-action-title">
+			<div className="themes-list__more-options-action">
+				<Icon className="themes-list__more-options-action-icon" icon={ cloudUpload } size={ 28 } />
+				<div className="themes-list__more-options-action-content">
+					<div className="themes-list__more-options-action-text">
+						<div className="themes-list__more-options-action-title">
 							{ translate( 'Upload a theme' ) }
 						</div>
-						<div className="themes-list__footer-action-description">{ uploadThemeDescription }</div>
+						<div className="themes-list__more-options-action-description">
+							{ uploadThemeDescription }
+						</div>
 					</div>
 					<Button
-						className="themes-list__footer-action-button"
+						className="themes-list__more-options-action-button"
 						href={ uploadThemeUrl }
 						onClick={ () => {
 							recordTracksEvent( 'calypso_themeshowcase_more_options_upload_theme_click', {
@@ -304,7 +306,7 @@ function Empty( props ) {
 			<div className="themes-list__empty-search-text">
 				{ translate( 'No themes match your search' ) }
 			</div>
-			<Footer
+			<MoreOptions
 				recordTracksEvent={ props.recordTracksEvent }
 				searchTerm={ props.searchTerm }
 				translate={ translate }
@@ -341,7 +343,7 @@ function WPOrgMatchingThemes( props ) {
 					</div>
 				) ) }
 			</div>
-			<Footer
+			<MoreOptions
 				recordTracksEvent={ props.recordTracksEvent }
 				searchTerm={ props.searchTerm }
 				translate={ props.translate }
