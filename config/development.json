@@ -171,6 +171,7 @@
 		"stats/enhance-post-detail": true,
 		"stats/horizontal-bars-everywhere": true,
 		"stats/insights-page-grid": true,
+		"stats/new-video-summary": true,
 		"stepper-woocommerce-poc": true,
 		"subscriber-csv-upload": true,
 		"subscriber-importer": true,
