@@ -1,5 +1,3 @@
-/* eslint-disable no-case-declarations */
-
 import { withStorageKey } from '@automattic/state-utils';
 import {
 	STORED_CARDS_ADD_COMPLETED,
@@ -113,10 +111,11 @@ export const isDeleting = ( state = {}, action ) => {
 			};
 
 		case STORED_CARDS_DELETE_FAILED:
-		case STORED_CARDS_DELETE_COMPLETED:
+		case STORED_CARDS_DELETE_COMPLETED: {
 			const nextState = { ...state };
 			delete nextState[ action.card.stored_details_id ];
 			return nextState;
+		}
 	}
 
 	return state;
