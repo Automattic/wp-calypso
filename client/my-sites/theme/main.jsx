@@ -794,7 +794,7 @@ class ThemeSheet extends Component {
 			const plan = isExternallyManagedTheme || isBundledSoftwareSet ? PLAN_BUSINESS : PLAN_PREMIUM;
 			plansUrl =
 				plansUrl +
-				`/${ siteSlug }/?plan=${ plan }&redirect_to=${ encodeURIComponent( redirectTo ) }`;
+				`/${ siteSlug }/?plan=${ plan }&redirect_to=${ redirectTo }`;
 		}
 
 		const launchPricing = () => window.open( plansUrl, '_blank' );
