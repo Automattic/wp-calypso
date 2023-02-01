@@ -1,4 +1,4 @@
-import { getPlanClass, isMonthly, PLAN_P2_FREE } from '@automattic/calypso-products';
+import { getPlanClass, isMonthly, PLAN_P2_FREE, isFreePlan } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { localize, TranslateResult, useTranslate } from 'i18n-calypso';
@@ -24,6 +24,7 @@ type PlanFeaturesActionsButtonProps = {
 	flowName: string;
 	buttonText?: string;
 	isWpcomEnterpriseGridPlan: boolean;
+	selectedSiteSlug: string | null;
 };
 
 const SignupFlowPlanFeatureActionButton = ( {
@@ -112,6 +113,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	currentSitePlanSlug,
 	buttonText,
 	forceDisplayButton,
+	selectedSiteSlug,
 }: {
 	freePlan: boolean;
 	isPlaceholder: boolean;
@@ -125,8 +127,30 @@ const LoggedInPlansFeatureActionButton = ( {
 	currentSitePlanSlug?: string;
 	buttonText?: string;
 	forceDisplayButton: boolean;
+	selectedSiteSlug: string | null;
 } ) => {
 	const translate = useTranslate();
+
+	if ( freePlan ) {
+		if ( currentSitePlanSlug && isFreePlan( currentSitePlanSlug ) ) {
+			return (
+				<Button
+					className={ classes }
+					href={ `/add-ons/${ selectedSiteSlug }` }
+					disabled={ ! manageHref }
+				>
+					{ translate( 'Manage add-ons', { context: 'verb' } ) }
+				</Button>
+			);
+		}
+
+		return (
+			<Button className={ classes } disabled={ true }>
+				{ translate( 'Constact support', { context: 'verb' } ) }
+			</Button>
+		);
+	}
+
 	if ( current && planType !== PLAN_P2_FREE ) {
 		return (
 			<Button className={ classes } href={ manageHref } disabled={ ! manageHref }>
@@ -148,17 +172,7 @@ const LoggedInPlansFeatureActionButton = ( {
 		);
 	}
 
-	let buttonTextFallback = freePlan
-		? translate( 'Select Free', { context: 'button' } )
-		: translate( 'Upgrade', { context: 'verb' } );
-
-	if ( buttonText ) {
-		buttonTextFallback = buttonText;
-	} else {
-		buttonTextFallback = freePlan
-			? translate( 'Select Free', { context: 'button' } )
-			: translate( 'Upgrade', { context: 'verb' } );
-	}
+	const buttonTextFallback = buttonText ?? translate( 'Upgrade', { context: 'verb' } );
 
 	if ( availableForPurchase || isPlaceholder ) {
 		return (
@@ -175,6 +189,7 @@ const LoggedInPlansFeatureActionButton = ( {
 			</Button>
 		);
 	}
+
 	return null;
 };
 
@@ -196,6 +211,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	flowName,
 	buttonText,
 	isWpcomEnterpriseGridPlan = false,
+	selectedSiteSlug,
 } ) => {
 	const translate = useTranslate();
 
@@ -274,6 +290,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 			currentSitePlanSlug={ currentSitePlanSlug }
 			buttonText={ buttonText }
 			forceDisplayButton={ forceDisplayButton }
+			selectedSiteSlug={ selectedSiteSlug }
 		/>
 	);
 };

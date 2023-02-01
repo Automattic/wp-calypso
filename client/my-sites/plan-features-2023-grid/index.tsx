@@ -174,6 +174,7 @@ export class PlanFeatures2023Grid extends Component<
 			manageHref,
 			canUserPurchasePlan,
 			translate,
+			selectedSiteSlug,
 		} = this.props;
 		return (
 			<div className="plans-wrapper">
@@ -214,6 +215,7 @@ export class PlanFeatures2023Grid extends Component<
 							currentSitePlanSlug={ currentSitePlanSlug }
 							manageHref={ manageHref }
 							canUserPurchasePlan={ canUserPurchasePlan }
+							selectedSiteSlug={ selectedSiteSlug }
 						/>
 						<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
 							<Button onClick={ this.toggleShowPlansComparisonGrid }>
@@ -526,6 +528,7 @@ export class PlanFeatures2023Grid extends Component<
 			canUserPurchasePlan,
 			manageHref,
 			currentSitePlanSlug,
+			selectedSiteSlug,
 		} = this.props;
 
 		return planPropertiesObj.map( ( properties: PlanProperties ) => {
@@ -550,6 +553,7 @@ export class PlanFeatures2023Grid extends Component<
 						flowName={ flowName }
 						current={ current ?? false }
 						currentSitePlanSlug={ currentSitePlanSlug }
+						selectedSiteSlug={ selectedSiteSlug }
 					/>
 				</Container>
 			);
@@ -820,14 +824,16 @@ const ConnectedPlanFeatures2023Grid = connect(
 			);
 		}
 
+		const manageHref =
+			purchaseId && selectedSiteSlug
+				? getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
+				: `/plans/my-plan/${ siteId }`;
+
 		return {
 			currentSitePlanSlug: currentSitePlan?.productSlug,
 			planProperties,
 			canUserPurchasePlan,
-			manageHref:
-				purchaseId && selectedSiteSlug
-					? getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
-					: `/plans/my-plan/${ siteId }`,
+			manageHref,
 			selectedSiteSlug,
 		};
 	},
