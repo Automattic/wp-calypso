@@ -26,15 +26,15 @@ object WPComPlugins : Project({
 		)
 	}
 
-	buildType(EditingToolkit)
-	buildType(WpcomBlockEditor)
-	buildType(Notifications)
-	buildType(OdysseyStats)
-	buildType(O2Blocks)
-	buildType(HappyBlocks)
-	buildType(Happychat)
-	buildType(InlineHelp)
-	buildType(GutenbergUploadSourceMapsToSentry);
+	sequence {
+		buildType(EditingToolkit)
+		buildType(WpcomBlockEditor)
+		buildType(Notifications)
+		buildType(OdysseyStats)
+		buildType(O2Blocks)
+		buildType(HappyBlocks)
+		buildType(GutenbergUploadSourceMapsToSentry);
+	}
 
 	cleanup {
 		keepRule {
@@ -216,24 +216,6 @@ private object HappyBlocks : WPComPluginBuild(
 			"""
 		}
 	}
-)
-
-private object Happychat : WPComPluginBuild(
-	buildId = "WPComPlugins_Happychat",
-	buildName = "Happychat",
-	pluginSlug = "happychat",
-	archiveDir = "./dist/",
-	docsLink = "TODO",
-	withPRNotify = "false",
-)
-
-private object InlineHelp : WPComPluginBuild(
-	buildId = "WPComPlugins_InlineHelp",
-	buildName = "Inline Help",
-	pluginSlug = "inline-help",
-	archiveDir = "./dist/",
-	docsLink = "TODO",
-	withPRNotify = "false",
 )
 
 private object GutenbergUploadSourceMapsToSentry: BuildType() {
