@@ -5,15 +5,14 @@ import {
 	INSTALL_PLUGIN,
 } from 'calypso/lib/plugins/constants';
 import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
-import { getAllPluginsIndexedByPluginSlug } from '../selectors-ts';
+import { getAllPluginsIndexedByPluginSlug, getAllPluginsIndexedBySiteId } from '../selectors-ts';
 import { akismet, helloDolly, jetpack } from './fixtures/plugins';
 
 const siteOneId = 12345;
 const siteTwoId = 54321;
 const siteThreeId = 21435;
 
-// const nonExistingSiteId1 = 0;
-// const nonExistingSiteId2 = 1;
+const nonExistingSiteId = 0;
 
 const createError = function ( error, message, name = false ) {
 	const errorObj = new Error( message );
@@ -172,5 +171,23 @@ describe( 'getAllPluginsIndexedByPluginSlug', () => {
 		const plugins = getAllPluginsIndexedByPluginSlug( state );
 
 		expect( plugins[ 'none' ] ).toEqual( undefined );
+	} );
+} );
+
+describe( 'getAllPluginsIndexedBySiteId', () => {
+	test( 'Returns the plugins for site one', () => {
+		const plugins = getAllPluginsIndexedBySiteId( state );
+
+		expect( plugins[ siteOneId ] ).toEqual( {
+			akismet: akismetWithSites,
+			'hello-dolly': helloDollyWithSites,
+		} );
+
+		expect( plugins[ siteTwoId ] ).toEqual( {
+			jetpack: jetpackWithSites,
+			'hello-dolly': helloDollyWithSites,
+		} );
+
+		expect( plugins[ nonExistingSiteId ] ).toEqual( undefined );
 	} );
 } );
