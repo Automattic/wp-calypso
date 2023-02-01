@@ -33,6 +33,7 @@ import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QuerySites from 'calypso/components/data/query-sites';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
@@ -53,6 +54,7 @@ import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import {
 	getCurrentPlan,
 	getECommerceTrialDaysLeft,
+	getECommerceTrialExpiration,
 	isECommerceTrialExpired,
 	isRequestingSitePlans,
 } from 'calypso/state/sites/plans/selectors';
@@ -201,7 +203,15 @@ class CurrentPlan extends Component {
 	}
 
 	renderEcommerceTrialPage() {
-		const { translate, eCommerceTrialDaysLeft, isTrialExpired } = this.props;
+		const {
+			translate,
+			eCommerceTrialDaysLeft,
+			isTrialExpired,
+			eCommerceTrialExpiration,
+			locale,
+			moment,
+			currentPlan,
+		} = this.props;
 
 		const whatsIncluded = [
 			{
@@ -302,10 +312,19 @@ class CurrentPlan extends Component {
 			},
 		];
 
-		// Can be fetched dynamically from `plan.interval`. Does it need a new selector?
-		const trialDuration = 31;
+		const trialStart = moment( currentPlan?.subscribedDate );
+		const trialEnd = moment( currentPlan?.expiryDate );
+		const trialDuration = trialEnd.diff( trialStart, 'days' );
+
 		// Trial progress from 0 to 100
 		const trialProgress = ( 1 - eCommerceTrialDaysLeft / trialDuration ) * 100;
+
+		// moment.js doesn't have a format option to display the long form in a localized way without the year
+		// https://github.com/moment/moment/issues/3341
+		const readableExpirationDate = eCommerceTrialExpiration?.toDate().toLocaleDateString( locale, {
+			month: 'long',
+			day: 'numeric',
+		} );
 
 		return (
 			<>
@@ -318,9 +337,15 @@ class CurrentPlan extends Component {
 							{
 								// Still need to populate the date correctly
 								translate(
-									'Your free trial will end in %d day. Sign up to a plan by December 13 unlock new features and keep your store running.',
-									'Your free trial will end in %d days. Sign up to a plan by December 13 unlock new features and keep your store running.',
-									{ count: eCommerceTrialDaysLeft, args: [ eCommerceTrialDaysLeft ] }
+									'Your free trial will end in %(daysLeft)d day. Sign up to a plan by %(expirationdate)s to unlock new features and keep your store running.',
+									'Your free trial will end in %(daysLeft)d days. Sign up to a plan by %(expirationdate)s to unlock new features and keep your store running.',
+									{
+										count: eCommerceTrialDaysLeft,
+										args: {
+											daysLeft: eCommerceTrialDaysLeft,
+											expirationdate: readableExpirationDate,
+										},
+									}
 								)
 							}
 						</p>
@@ -503,6 +528,7 @@ export default connect( ( state, { requestThankYou } ) => {
 	const eligibleForProPlan = isEligibleForProPlan( state, selectedSiteId );
 	const eCommerceTrialDaysLeft = Math.round( getECommerceTrialDaysLeft( state, selectedSiteId ) );
 	const isTrialExpired = isECommerceTrialExpired( state, selectedSiteId );
+	const eCommerceTrialExpiration = getECommerceTrialExpiration( state, selectedSiteId );
 
 	return {
 		currentPlan,
@@ -520,5 +546,6 @@ export default connect( ( state, { requestThankYou } ) => {
 		eligibleForProPlan,
 		eCommerceTrialDaysLeft,
 		isTrialExpired,
+		eCommerceTrialExpiration,
 	};
-} )( localize( CurrentPlan ) );
+} )( localize( withLocalizedMoment( CurrentPlan ) ) );
