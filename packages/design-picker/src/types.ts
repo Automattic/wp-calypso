@@ -118,7 +118,7 @@ export interface DesignOptions {
 	verticalId?: string;
 	pageTemplate?: string;
 	trimContent?: boolean;
-	is_assembler_flow?: boolean;
+	posts_source_site_id?: number;
 }
 
 export interface DesignPreviewOptions {

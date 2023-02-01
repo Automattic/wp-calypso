@@ -473,7 +473,7 @@ describe( 'Site Actions', () => {
 			expect( generator.next().value ).toEqual(
 				createMockedThemeSetupApiRequest( {
 					trim_content: true,
-					is_assembler_flow: false,
+					posts_source_site_id: undefined,
 				} )
 			);
 		} );
@@ -503,7 +503,7 @@ describe( 'Site Actions', () => {
 				createMockedThemeSetupApiRequest( {
 					trim_content: true,
 					vertical_id: mockedSiteVerticalId,
-					is_assembler_flow: false,
+					posts_source_site_id: undefined,
 				} )
 			);
 		} );
@@ -532,7 +532,7 @@ describe( 'Site Actions', () => {
 				createMockedThemeSetupApiRequest( {
 					trim_content: true,
 					pattern_ids: patternIds,
-					is_assembler_flow: false,
+					posts_source_site_id: undefined,
 				} )
 			);
 		} );
@@ -561,7 +561,7 @@ describe( 'Site Actions', () => {
 				createMockedThemeSetupApiRequest( {
 					trim_content: true,
 					header_pattern_ids: headerPatternIds,
-					is_assembler_flow: false,
+					posts_source_site_id: undefined,
 				} )
 			);
 		} );
@@ -590,7 +590,7 @@ describe( 'Site Actions', () => {
 				createMockedThemeSetupApiRequest( {
 					trim_content: true,
 					footer_pattern_ids: footerPatternIds,
-					is_assembler_flow: false,
+					posts_source_site_id: undefined,
 				} )
 			);
 		} );

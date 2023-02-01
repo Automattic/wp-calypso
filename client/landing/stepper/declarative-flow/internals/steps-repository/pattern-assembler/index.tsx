@@ -13,7 +13,7 @@ import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign } from '../../analytics/record-design';
-import { SITE_TAGLINE } from './constants';
+import { SITE_TAGLINE, PLACEHOLDER_SITE_ID } from './constants';
 import PatternLayout from './pattern-layout';
 import PatternSelectorLoader from './pattern-selector-loader';
 import { useAllPatterns } from './patterns-data';
@@ -260,7 +260,7 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 				.then( () =>
 					runThemeSetupOnSite( siteSlugOrId, design, {
 						trimContent: false,
-						is_assembler_flow: true,
+						posts_source_site_id: PLACEHOLDER_SITE_ID,
 					} )
 				)
 				.then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) )

@@ -399,7 +399,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 
 		const themeSetupOptions: ThemeSetupOptions = {
 			trim_content: options?.trimContent ?? true,
-			is_assembler_flow: options?.is_assembler_flow ?? false,
+			posts_source_site_id: options?.posts_source_site_id,
 		};
 
 		if ( verticalizable ) {
