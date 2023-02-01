@@ -1,0 +1,109 @@
+// Variables
+$plan-features-sidebar-width: 272px;
+$plan-features-header-banner-height: 20px;
+
+// Breakpoints
+$plans-2023-small-breakpoint: 880px;
+$plans-2023-medium-breakpoint: 1340px;
+$plans-2023-large-breakpoint: 1500px;
+
+/**
+ * Media queries for the plans grid in onboarding/signup
+ */
+@mixin onboarding-2023-pricing-grid-plans-breakpoints {
+	max-width: 414px;
+
+	@media ( min-width: $plans-2023-small-breakpoint ) {
+		max-width: 860px;
+	}
+
+	@media ( min-width: $plans-2023-medium-breakpoint ) {
+		max-width: 1320px;
+	}
+
+	@media ( min-width: $plans-2023-large-breakpoint ) {
+		max-width: 1480px;
+	}
+}
+
+/**
+ * Media queries for the plans grid on the /plans page.
+ * Since there is a sidebar on internal pages,
+ * this should stretch to fill it's container on non-mobile resolutions.
+ */
+@mixin pricing-grid-2023-plans-section-breakpoints {
+	max-width: 414px;
+
+	@media ( min-width: ( $plans-2023-small-breakpoint ) ) {
+		max-width: 100%;
+	}
+}
+
+/**
+ * Show/hide desktop/tablet/mobile layouts based on the screen width.
+ * Desktop layout: width > $plans-2023-medium-breakpoint
+ * Tablet layout:  $plans-2023-small-breakpoint < width < $plans-2023-medium-breakpoint
+ * Mobile layout:  width < $plans-2023-small-breakpoint
+ */
+@mixin plan-features-layout-switcher-onboarding {
+	.plan-features-2023-grid__desktop-view {
+		display: none;
+
+		@media ( min-width: $plans-2023-medium-breakpoint ) {
+			display: block;
+		}
+	}
+
+	.plan-features-2023-grid__tablet-view {
+		display: none;
+
+		@media ( min-width: $plans-2023-small-breakpoint ) {
+			display: block;
+		}
+
+		@media ( min-width: $plans-2023-medium-breakpoint ) {
+			display: none;
+		}
+	}
+
+	.plan-features-2023-grid__mobile-view {
+		display: block;
+
+		@media ( min-width: $plans-2023-small-breakpoint ) {
+			display: none;
+		}
+	}
+}
+
+/**
+ * Same as `plan-features-layout-switcher-onboarding`, except that we add the sidebar width to the breakpoints.
+ */
+@mixin plan-features-layout-switcher-onboarding-plans-section {
+	.plan-features-2023-grid__desktop-view {
+		display: none;
+
+		@media ( min-width: ( $plans-2023-medium-breakpoint + $plan-features-sidebar-width ) ) {
+			display: block;
+		}
+	}
+
+	.plan-features-2023-grid__tablet-view {
+		display: none;
+
+		@media ( min-width: ( $plans-2023-small-breakpoint + $plan-features-sidebar-width ) ) {
+			display: block;
+		}
+
+		@media ( min-width: ( $plans-2023-medium-breakpoint + $plan-features-sidebar-width ) ) {
+			display: none;
+		}
+	}
+
+	.plan-features-2023-grid__mobile-view {
+		display: block;
+
+		@media ( min-width: ( $plans-2023-small-breakpoint + $plan-features-sidebar-width ) ) {
+			display: none;
+		}
+	}
+}

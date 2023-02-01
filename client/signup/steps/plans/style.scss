@@ -1,45 +1,11 @@
-$plans-2023-small-breakpoint: 880px;
-$plans-2023-medium-breakpoint: 1340px;
-$plans-2023-large-breakpoint: 1500px;
-
-@mixin onboarding-2023-pricing-grid-plans-breakpoints {
-	max-width: 414px;
-
-	@media ( min-width: $plans-2023-small-breakpoint ) {
-		max-width: 860px;
-	}
-
-	@media ( min-width: $plans-2023-medium-breakpoint ) {
-		max-width: 1320px;
-	}
-
-	@media ( min-width: $plans-2023-large-breakpoint ) {
-		max-width: 1480px;
-	}
-}
-
-@mixin internal-plans-page {
-	max-width: 414px;
-
-	@media ( min-width: $plans-2023-small-breakpoint ) {
-		max-width: 860px;
-	}
-
-	@media ( min-width: $plans-2023-medium-breakpoint ) {
-		max-width: 1320px;
-	}
-
-	@media ( min-width: $plans-2023-large-breakpoint ) {
-		max-width: 1566px;
-	}
-}
+@import "calypso/my-sites/plan-features-2023-grid/media-queries";
 
 .plans-features-main__group.is-2023-pricing-grid {
 	@include onboarding-2023-pricing-grid-plans-breakpoints;
 }
 
-.is-full-width-layout .plans-features-main__group.is-2023-pricing-grid {
-	@include internal-plans-page;
+.is-section-plans .plans-features-main__group.is-2023-pricing-grid {
+	@include pricing-grid-2023-plans-section-breakpoints;
 
 }
 
