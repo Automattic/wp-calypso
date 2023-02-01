@@ -15,27 +15,26 @@ import 'calypso/state/themes/init';
  * @returns {Function}         Action thunk
  */
 export function requestThemeOnAtomic( themeId, siteId ) {
-	return ( dispatch ) => {
+	return async ( dispatch ) => {
 		dispatch( {
 			type: THEME_REQUEST,
 			siteId,
 			themeId,
 		} );
-		return wpcom.req
-			.get( {
+
+		try {
+			const { themes } = await wpcom.req.get( {
 				path: `/sites/${ siteId }/themes/${ themeId }`,
 				apiNamespace: 'wp/v2',
-			} )
-			.then( ( { themes } ) => {
-				dispatch( receiveThemes( map( themes, normalizeJetpackTheme ), siteId ) );
-				dispatch( {
-					type: THEME_REQUEST_SUCCESS,
-					siteId,
-					themeId,
-				} );
-			} )
-			.catch( ( error ) => {
-				dispatch( themeRequestFailure( siteId, themeId, error ) );
 			} );
+			dispatch( receiveThemes( map( themes, normalizeJetpackTheme ), siteId ) );
+			dispatch( {
+				type: THEME_REQUEST_SUCCESS,
+				siteId,
+				themeId,
+			} );
+		} catch ( error ) {
+			dispatch( themeRequestFailure( siteId, themeId, error ) );
+		}
 	};
 }
