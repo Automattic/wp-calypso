@@ -371,8 +371,6 @@ class CurrentPlan extends Component {
 							illustration={ feature.illustration }
 							title={ feature.title }
 							text={ feature.text }
-							showButton={ feature.showButton }
-							buttonText={ feature.buttonText }
 						></FeatureNotIncludedCard>
 					) ) }
 				</div>
