@@ -1,5 +1,7 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import { PatternAssemblerCta, BLANK_CANVAS_DESIGN } from '@automattic/design-picker';
 import { Icon, addTemplate, brush, cloudUpload } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { isEmpty, times } from 'lodash';
@@ -8,7 +10,7 @@ import { useCallback, useMemo } from 'react';
 import { connect, useSelector } from 'react-redux';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import Theme from 'calypso/components/theme';
-import { BLANK_CANVAS_DESIGN } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/constants';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
@@ -21,6 +23,8 @@ import './style.scss';
 const noop = () => {};
 
 export const ThemesList = ( props ) => {
+	const isLoggedIn = useSelector( isUserLoggedIn );
+
 	const fetchNextPage = useCallback(
 		( options ) => {
 			props.fetchNextPage( options );
@@ -52,9 +56,19 @@ export const ThemesList = ( props ) => {
 				{ props.themes.map( ( theme, index ) => (
 					<ThemeBlock key={ 'theme-block' + index } theme={ theme } index={ index } { ...props } />
 				) ) }
+				{ /* The Pattern Assembler CTA will display on the fourth row and the behavior is controlled by CSS */ }
+				{ isEnabled( 'pattern-assembler/logged-out-showcase' ) &&
+					props.themes.length > 0 &&
+					! isLoggedIn && (
+						<PatternAssemblerCta
+							onButtonClick={ () =>
+								window.location.assign(
+									`/start/with-theme?ref=calypshowcase&theme=${ BLANK_CANVAS_DESIGN.slug }`
+								)
+							}
+						/>
+					) }
 				{ props.loading && <LoadingPlaceholders placeholderCount={ props.placeholderCount } /> }
-				{ /* Invisible trailing items keep all elements same width in flexbox grid. */ }
-				<TrailingItems />
 				<InfiniteScroll nextPageMethod={ fetchNextPage } />
 			</div>
 			<Footer translate={ props.translate } />
@@ -73,6 +87,7 @@ ThemesList.propTypes = {
 	onScreenshotClick: PropTypes.func.isRequired,
 	onStyleVariationClick: PropTypes.func,
 	onMoreButtonClick: PropTypes.func,
+	onMoreButtonItemClick: PropTypes.func,
 	getActionLabel: PropTypes.func,
 	isActive: PropTypes.func,
 	getPrice: PropTypes.func,
@@ -120,6 +135,7 @@ function ThemeBlock( props ) {
 			onScreenshotClick={ props.onScreenshotClick }
 			onStyleVariationClick={ props.onStyleVariationClick }
 			onMoreButtonClick={ props.onMoreButtonClick }
+			onMoreButtonItemClick={ props.onMoreButtonItemClick }
 			actionLabel={ props.getActionLabel( theme.id ) }
 			index={ index }
 			theme={ theme }
@@ -284,7 +300,6 @@ function WPOrgMatchingThemes( props ) {
 						<ThemeBlock theme={ theme } index={ index } { ...props } />
 					</div>
 				) ) }
-				<TrailingItems />
 			</div>
 			<Footer translate={ props.translate } />
 		</div>
@@ -300,13 +315,6 @@ function LoadingPlaceholders( { placeholderCount } ) {
 				isPlaceholder={ true }
 			/>
 		);
-	} );
-}
-
-function TrailingItems() {
-	const NUM_SPACERS = 11; // gives enough spacers for a theoretical 12 column layout
-	return times( NUM_SPACERS, function ( i ) {
-		return <div className="themes-list__spacer" key={ 'themes-list__spacer-' + i } />;
 	} );
 }
 

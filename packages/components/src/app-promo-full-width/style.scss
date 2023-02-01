@@ -1,3 +1,4 @@
+@import "@automattic/typography/styles/variables";
 @import "../styles/typography";
 
 .promo-card {
@@ -71,7 +72,7 @@
 	margin-bottom: 10px;
 
 	/* Xl/Serif */
-	font-family: Recoleta, serif;
+	font-family: $brand-serif;
 	font-style: normal;
 	font-weight: 400;
 	font-size: 32px; // stylelint-disable-line declaration-property-unit-allowed-list

@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import { localizeUrl, getLanguageSlugs } from '@automattic/i18n-utils';
-import { getLocaleSlug } from 'i18n-calypso';
 import performanceMark from 'calypso/server/lib/performance-mark';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { setDocumentHeadLink } from 'calypso/state/document-head/actions';
@@ -28,7 +27,8 @@ export const setLocalizedCanonicalUrl = ( context, next ) => {
 		return;
 	}
 
-	const href = getLocalizedCanonicalUrl( context.originalUrl, getLocaleSlug() );
+	const langParamSlug = context.i18n.getLocaleSlug();
+	const href = getLocalizedCanonicalUrl( context.originalUrl, langParamSlug );
 	const link = {
 		rel: 'canonical',
 		href,
