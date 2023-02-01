@@ -43,21 +43,23 @@ const StatsCard = ( {
 	const splitHeaderNode = (
 		<div className={ `${ BASE_CLASS_NAME }-header ${ BASE_CLASS_NAME }-header--split` }>
 			{ titleNode }
-			<div className={ `${ BASE_CLASS_NAME }--column-header` }>
-				<div className={ `${ BASE_CLASS_NAME }--column-header__left` }>
-					{ splitHeader && mainItemLabel }
-					{ additionalHeaderColumns && (
-						<div className={ `${ BASE_CLASS_NAME }-header__additional` }>
-							{ additionalHeaderColumns }
+			{ ! isEmpty && (
+				<div className={ `${ BASE_CLASS_NAME }--column-header` }>
+					<div className={ `${ BASE_CLASS_NAME }--column-header__left` }>
+						{ splitHeader && mainItemLabel }
+						{ additionalHeaderColumns && (
+							<div className={ `${ BASE_CLASS_NAME }-header__additional` }>
+								{ additionalHeaderColumns }
+							</div>
+						) }
+					</div>
+					{ ! isEmpty && (
+						<div className={ `${ BASE_CLASS_NAME }--column-header__right` }>
+							{ metricLabel ?? translate( 'Views' ) }
 						</div>
 					) }
 				</div>
-				{ ! isEmpty && (
-					<div className={ `${ BASE_CLASS_NAME }--column-header__right` }>
-						{ metricLabel ?? translate( 'Views' ) }
-					</div>
-				) }
-			</div>
+			) }
 		</div>
 	);
 
