@@ -1,8 +1,8 @@
 @import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
+@import "@automattic/components/src/styles/mixins";
 @import "@automattic/components/src/highlight-cards/variables.scss";
 
-$font-recoleta: Recoleta, $sans;
 $font-label: "SF Pro Text", $sans;
 $mobile-layout-breakpoint: $break-small;
 $common-border-radius: 4px;
@@ -41,10 +41,7 @@ $lowestLevelColor: var(--color-neutral-5);
 }
 
 .post-trends__title {
-	font-size: 32px; // stylelint-disable-line declaration-property-unit-allowed-list
-	font-weight: 400;
-	line-height: 40px;
-	font-family: $font-recoleta;
+	@include stats-section-header;
 }
 
 .post-trends__value {

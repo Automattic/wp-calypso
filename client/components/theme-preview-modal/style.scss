@@ -35,7 +35,7 @@ $break-design-preview: 1024px;
 	inset-inline-end: 0;
 	inset-inline-start: 0;
 	height: 60px;
-	gap: 24px;
+	gap: 16px;
 	margin: 0;
 	padding: 0 20px;
 	pointer-events: none;
@@ -45,6 +45,7 @@ $break-design-preview: 1024px;
 	z-index: z-index(".theme-preview-modal", ".theme-preview-modal__navigation");
 
 	@include break-design-preview {
+		gap: 24px;
 		position: absolute;
 		top: 8px;
 		inset-inline-end: 24px;
@@ -74,6 +75,7 @@ $break-design-preview: 1024px;
 		font-weight: 600;
 		margin-top: -2px;
 		padding: 0;
+		white-space: nowrap;
 
 		svg {
 			fill: var(--color-neutral-100);
@@ -96,6 +98,18 @@ $break-design-preview: 1024px;
 		gap: 10px;
 		justify-content: center;
 		line-height: 20px;
+	}
+
+	&-action {
+		display: flex;
+		flex-direction: row-reverse;
+		gap: 8px;
+		max-width: 50%;
+		white-space: nowrap;
+
+		button {
+			padding: 8px;
+		}
 	}
 
 	&-title,

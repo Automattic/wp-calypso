@@ -240,7 +240,10 @@ class ThemeSheet extends Component {
 		}
 		event.preventDefault();
 
-		this.props.recordTracksEvent( 'calypso_theme_live_demo_preview_click', { type } );
+		this.props.recordTracksEvent( 'calypso_theme_live_demo_preview_click', {
+			theme: this.props.themeId,
+			type,
+		} );
 
 		const { preview } = this.props.options;
 		this.props.setThemePreviewOptions(
@@ -675,7 +678,7 @@ class ThemeSheet extends Component {
 		const label = this.getDefaultOptionLabel();
 		const price = this.renderPrice();
 		const placeholder = <span className="theme__sheet-button-placeholder">loading......</span>;
-		const { isActive, isExternallyManagedTheme } = this.props;
+		const { isActive, isExternallyManagedTheme, isLoggedIn } = this.props;
 		const { isLoading } = this.props;
 
 		return (
@@ -683,7 +686,9 @@ class ThemeSheet extends Component {
 				className="theme__sheet-primary-button"
 				href={
 					getUrl &&
-					( ! isExternallyManagedTheme || ! config.isEnabled( 'themes/third-party-premium' ) )
+					( ! isExternallyManagedTheme ||
+						! isLoggedIn ||
+						! config.isEnabled( 'themes/third-party-premium' ) )
 						? getUrl( this.props.themeId )
 						: null
 				}
@@ -847,7 +852,7 @@ class ThemeSheet extends Component {
 
 		let onClick = null;
 
-		if ( isExternallyManagedTheme ) {
+		if ( isExternallyManagedTheme && isLoggedIn ) {
 			onClick = this.onButtonClick;
 		} else if ( ! isLoggedIn ) {
 			onClick = launchPricing;
