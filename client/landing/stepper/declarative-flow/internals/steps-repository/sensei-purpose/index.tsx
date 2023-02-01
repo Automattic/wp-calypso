@@ -18,7 +18,6 @@ export const purposes = [
 		id: 'sell_courses',
 		label: __( 'Sell courses and generate income' ),
 		plugin: { slug: 'woocommerce', id: 'woocommerce/woocommerce' },
-		//description: __( 'WooCommerce will be installed for free.' ),
 	},
 	{
 		id: 'provide_certification',
@@ -27,7 +26,6 @@ export const purposes = [
 			slug: 'sensei-certificates',
 			id: 'sensei-certificates/woothemes-sensei-certificates',
 		},
-		//description: __( 'Sensei LMS Certificates will be installed for free.' ),
 	},
 	{
 		id: 'educate_students',
@@ -79,8 +77,6 @@ const SenseiPurpose: Step = ( { navigation: { submit } } ) => {
 	};
 
 	const submitPage = async () => {
-		// TODO Save user selection.
-
 		submit?.();
 	};
 
