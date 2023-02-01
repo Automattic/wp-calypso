@@ -1,5 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { getPlanClass, isMonthly, PLAN_P2_FREE, isFreePlan } from '@automattic/calypso-products';
+import {
+	getPlanClass,
+	isMonthly,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	PLAN_P2_FREE,
+	isFreePlan,
+} from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
@@ -178,7 +184,8 @@ const LoggedInPlansFeatureActionButton = ( {
 		( availableForPurchase || isPlaceholder ) &&
 		currentSitePlanSlug &&
 		isMonthly( currentSitePlanSlug ) &&
-		getPlanClass( planType ) === getPlanClass( currentSitePlanSlug )
+		getPlanClass( planType ) === getPlanClass( currentSitePlanSlug ) &&
+		currentSitePlanSlug !== PLAN_ECOMMERCE_TRIAL_MONTHLY
 	) {
 		return (
 			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
