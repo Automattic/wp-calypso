@@ -74,11 +74,11 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 	}, [ launchpadScreenOption, siteSlug, flow ] );
 
 	useEffect( () => {
-		if ( siteSlug && localStorage.getItem( 'launchpad_siteSlug' ) !== siteSlug ) {
+		if ( siteSlug && site && localStorage.getItem( 'launchpad_siteSlug' ) !== siteSlug ) {
 			recordSignupComplete();
 			localStorage.setItem( 'launchpad_siteSlug', siteSlug );
 		}
-	}, [ recordSignupComplete, siteSlug ] );
+	}, [ recordSignupComplete, siteSlug, site ] );
 
 	return (
 		<>
