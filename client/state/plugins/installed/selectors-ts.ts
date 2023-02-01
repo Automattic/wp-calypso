@@ -44,7 +44,13 @@ export const getAllPluginsIndexedByPluginSlug = createSelector(
 				const pluginsForSite = installedPlugins[ siteId ] || [];
 				pluginsForSite.forEach( ( plugin: InstalledPluginData ) => {
 					const { active, autoupdate, update, version, ...otherPluginInfo } = plugin;
-					const sitePluginInfo = { active, autoupdate, update, version };
+
+					const sitePluginInfo: { [ key: string ]: any } = {};
+					[ 'active', 'autoupdate', 'update', 'version' ].forEach( ( prop ) => {
+						if ( undefined !== plugin[ prop ] ) {
+							sitePluginInfo[ prop ] = plugin[ prop ];
+						}
+					} );
 
 					plugins[ plugin.slug ] = {
 						...plugins[ plugin.slug ],
