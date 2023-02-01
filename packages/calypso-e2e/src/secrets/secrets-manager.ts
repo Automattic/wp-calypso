@@ -14,6 +14,7 @@ export const TEST_ACCOUNT_NAMES = [
 	'gutenbergAtomicSiteUser',
 	'gutenbergAtomicSiteEdgeUser',
 	'coBlocksSimpleSiteEdgeUser',
+	'coBlocksAtomicSiteEdgeUser',
 	'siteEditorSimpleSiteUser',
 	'siteEditorSimpleSiteEdgeUser',
 	'martechTosUser',
