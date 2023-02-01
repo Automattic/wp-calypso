@@ -27,6 +27,7 @@ import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import BloombergLogo from 'calypso/assets/images/onboarding/bloomberg-logo.svg';
+import cloudLogo from 'calypso/assets/images/onboarding/cloud-logo.svg';
 import CNNLogo from 'calypso/assets/images/onboarding/cnn-logo.svg';
 import CondenastLogo from 'calypso/assets/images/onboarding/condenast-logo.svg';
 import DisneyLogo from 'calypso/assets/images/onboarding/disney-logo.svg';
@@ -386,6 +387,11 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 						</div>
 					) }
 					<header className={ headerClasses }>
+						{ isBusinessPlan( planName ) && (
+							<div className="plan-features-2023-grid__plan-logo">
+								<img src={ cloudLogo } alt="Cloud logo" />{ ' ' }
+							</div>
+						) }
 						{ isEcommercePlan( planName ) && (
 							<div className="plan-features-2023-grid__plan-logo">
 								<img src={ wooLogo } alt="WooCommerce logo" />{ ' ' }
@@ -403,6 +409,8 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 	}
 
 	renderPlanHeaders( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
+		const { translate } = this.props;
+
 		return planPropertiesObj.map( ( properties: PlanProperties ) => {
 			const { planName, planConstantObj } = properties;
 			const headerClasses = classNames(
@@ -418,7 +426,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 				>
 					<header className={ headerClasses }>
 						<h4 className="plan-features-2023-grid__header-title">
-							{ planConstantObj.getTitle() }
+							{ isEcommercePlan( planName ) ? translate( 'Commerce' ) : planConstantObj.getTitle() }
 						</h4>
 					</header>
 				</Container>
