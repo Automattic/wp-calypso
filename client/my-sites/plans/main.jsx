@@ -6,6 +6,7 @@ import {
 	PLAN_FREE,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
+import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import { addQueryArgs } from '@wordpress/url';
 import { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -35,6 +36,7 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PlansHeader from './header';
+import './style.scss';
 
 function DomainAndPlanUpsellNotice() {
 	const translate = useTranslate();
@@ -67,8 +69,15 @@ class Plans extends Component {
 		intervalType: 'yearly',
 	};
 
+	state = {
+		isDesktop: isDesktop(),
+	};
+
 	componentDidMount() {
 		this.redirectIfInvalidPlanInterval();
+		this.unsubscribe = subscribeIsDesktop( ( matchesDesktop ) =>
+			this.setState( { isDesktop: matchesDesktop } )
+		);
 
 		// Scroll to the top
 		if ( typeof window !== 'undefined' ) {
@@ -161,8 +170,12 @@ class Plans extends Component {
 				withDiscount={ this.props.withDiscount }
 				discountEndDate={ this.props.discountEndDate }
 				site={ selectedSite }
-				plansWithScroll={ false }
+				plansWithScroll={ this.state.isDesktop }
 				showTreatmentPlansReorderTest={ this.props.showTreatmentPlansReorderTest }
+				shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
+				isReskinned={ true } // for styles
+				isPlansInsideStepper={ true }
+				isInSignup={ true } // for the correct styles
 			/>
 		);
 	}
@@ -213,6 +226,7 @@ class Plans extends Component {
 							{ domainAndPlanPackage && <DomainAndPlanUpsellNotice /> }
 							<div id="plans" className="plans plans__has-sidebar">
 								<PlansNavigation path={ this.props.context.path } />
+
 								{ isEcommerceTrial ? this.renderEcommerceTrialPage() : this.renderPlansMain() }
 								<PerformanceTrackerStop />
 							</div>

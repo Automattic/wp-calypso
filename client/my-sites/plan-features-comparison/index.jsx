@@ -54,7 +54,7 @@ export class PlanFeaturesComparison extends Component {
 	}
 
 	render() {
-		const { isInSignup, planProperties, translate } = this.props;
+		const { isInSignup, planProperties, translate, isReskinned } = this.props;
 		const tableClasses = classNames(
 			'plan-features-comparison__table',
 			`has-${ planProperties.length }-cols`
@@ -64,6 +64,7 @@ export class PlanFeaturesComparison extends Component {
 		} );
 		const planWrapperClasses = classNames( {
 			'plans-wrapper': isInSignup,
+			'is-reskinned': isReskinned,
 		} );
 
 		return (
