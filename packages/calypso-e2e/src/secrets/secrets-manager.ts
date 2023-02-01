@@ -173,6 +173,7 @@ export class SecretsManager {
 				gutenbergAtomicSiteUser: { ...fakeAccount },
 				gutenbergAtomicSiteEdgeUser: { ...fakeAccount },
 				coBlocksSimpleSiteEdgeUser: { ...fakeAccount },
+				coBlocksAtomicSiteEdgeUser: { ...fakeAccount },
 				siteEditorSimpleSiteUser: { ...fakeAccount },
 				siteEditorSimpleSiteEdgeUser: { ...fakeAccount },
 				martechTosUser: { ...fakeAccount },
