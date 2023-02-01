@@ -184,7 +184,7 @@ const siteSetupFlow: Flow = {
 					if ( siteId ) {
 						pendingActions.push(
 							saveSiteSettings( siteId, {
-								launchpad_screen: isLaunchpadIntent( intent ) ? 'full' : 'off',
+								launchpad_screen: isLaunchpadIntent( intent ) ? 'full' : null,
 							} )
 						);
 					}
