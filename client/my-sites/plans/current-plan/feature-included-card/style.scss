@@ -8,24 +8,24 @@
 	padding: 48px 24px 35px 24px;
 	box-shadow: none;
 
-	.feature-included-card__included-illustration {
+	.feature-included-card__illustration {
 		width: 60px;
 	}
 
-	.feature-included-card__included-title {
+	.feature-included-card__title {
 		margin-top: 20px;
 		font-weight: 600;
 		font-size: $font-body;
 	}
 
-	.feature-included-card__included-text {
+	.feature-included-card__text {
 		flex: 1;
 		font-weight: 400;
 		font-size: $font-body-small;
 		color: var(--color-neutral-40);
 	}
 
-	.feature-included-card__included-link {
+	.feature-included-card__link {
 		color: var(--color-accent);
 		font-size: $font-body-small;
 		border: 0;
