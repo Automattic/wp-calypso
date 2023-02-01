@@ -510,7 +510,6 @@ export class Theme extends Component {
 			price,
 			theme,
 			translate,
-			upsellUrl,
 			hasPremiumThemesFeature,
 			isPremiumTheme,
 			didPurchaseTheme,
@@ -526,10 +525,9 @@ export class Theme extends Component {
 		} );
 
 		const themeNeedsPurchase = isPremiumTheme && ! hasPremiumThemesFeature && ! didPurchaseTheme;
-		const showUpsell = upsellUrl && ( isPremiumTheme || isExternallyManagedTheme ) && ! active;
+		const showUpsell = ( isPremiumTheme || isExternallyManagedTheme ) && ! active;
 		const priceClass = classNames( 'theme__badge-price', {
 			'theme__badge-price-upgrade': ! themeNeedsPurchase,
-			'theme__badge-price-upsell': showUpsell,
 		} );
 
 		const themeDescription = decodeEntities( description );
@@ -610,13 +608,12 @@ export class Theme extends Component {
 							<span className={ priceClass }>{ price }</span>
 						) }
 						{ isNewDetailsAndPreview && ! active && this.renderStyleVariations() }
-						{ upsellUrl && // Do not show any pricing related infomation if there's no upsell action link.
-							( showUpsell
-								? this.renderUpsell()
-								: ( isNewCardsOnly || isNewDetailsAndPreview ) &&
-								  ! active && (
-										<span className="theme__info-upsell-description">{ translate( 'Free' ) }</span>
-								  ) ) }
+						{ showUpsell
+							? this.renderUpsell()
+							: ( isNewCardsOnly || isNewDetailsAndPreview ) &&
+							  ! active && (
+									<span className="theme__info-upsell-description">{ translate( 'Free' ) }</span>
+							  ) }
 						{ this.renderMoreButton() }
 					</div>
 				</div>
