@@ -36,7 +36,7 @@ const selectors = {
 	templateLoadingSpinner: '[aria-label="Block: Template Part"] .components-spinner',
 	closeStylesWelcomeGuideButton:
 		'[aria-label="Welcome to styles"] button[aria-label="Close dialog"]',
-	limitedGlobalStylesModalTryButton: '.wpcom-global-styles-modal button:has-text("Try it out")',
+	limitedGlobalStylesModalTryButton: '.wpcom-global-styles-modal__actions button:first-child',
 	// The toast can have double quotes, so we use single quotes here.
 	confirmationToast: ( text: string ) => `.components-snackbar:has-text('${ text }')`,
 	focusedBlock: ( blockSelector: string ) => `${ blockSelector }.is-selected`,
