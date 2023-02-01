@@ -532,7 +532,7 @@ export default function buildFallbackResponse( {
 					title: translate( 'Reading' ),
 					type: 'submenu-item',
 					url: config.isEnabled( 'settings/modernize-reading-settings' )
-						? `/settings/general/${ siteDomain }`
+						? `/settings/reading/${ siteDomain }`
 						: `https://${ siteDomain }/wp-admin/options-reading.php`,
 				},
 				{
