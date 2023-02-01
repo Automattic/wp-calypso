@@ -16,7 +16,7 @@ const selectors = {
 		if ( name === 'Free' ) {
 			// Free plan is a pseudo-button presented as a
 			// link.
-			return `button:text-matches("${ name }", "i")`;
+			return `button:text-matches("${ name }", "i"):visible`;
 		}
 		return `button.is-${ name.toLowerCase() }-plan:visible`;
 	},
