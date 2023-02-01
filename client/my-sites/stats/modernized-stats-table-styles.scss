@@ -51,14 +51,12 @@ $common-border-radius: 4px;
 		align-items: center;
 		justify-content: space-between;
 
-		@media ( max-width: $custom-mobile-breakpoint ) {
-			display: block;
+		.segmented-control__text {
+			white-space: normal;
 		}
 
-		@media ( max-width: $break-mobile ) {
-			.segmented-control__text {
-				white-space: normal;
-			}
+		@media ( max-width: $custom-mobile-breakpoint ) {
+			display: block;
 		}
 	}
 
