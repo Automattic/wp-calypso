@@ -19,6 +19,13 @@ $brand-display: "SF Pro Display", $sans;
 	}
 }
 
+// Workaround for forums global and broad styles overriding this block styles
+.spf-reply__content {
+	& .hb-pricing-plans-embed:last-child {
+		margin: 24px 0;
+	}
+}
+
 .hb-pricing-plans-embed {
 	flex-wrap: wrap;
 	padding: 28px;
