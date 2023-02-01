@@ -138,6 +138,7 @@
 		"site-indicator": true,
 		"sites/copy-site": true,
 		"ssr/prefetch-timebox": true,
+		"stats/enhance-post-detail": true,
 		"stats/horizontal-bars-everywhere": true,
 		"stats/insights-page-grid": false,
 		"stepper-woocommerce-poc": true,

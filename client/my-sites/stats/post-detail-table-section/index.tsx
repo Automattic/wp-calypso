@@ -36,7 +36,7 @@ export default function PostDetailTableSection( {
 	return (
 		<div className="stats__post-detail-table-section stats__modernized-stats-table">
 			<div className="highlight-cards">
-				<h1 className="highlight-cards-heading">{ translate( 'All-time Insights' ) }</h1>
+				<h1 className="highlight-cards-heading">{ translate( 'All-time insights' ) }</h1>
 
 				<div className="highlight-cards-list">
 					<Card className="highlight-card">
