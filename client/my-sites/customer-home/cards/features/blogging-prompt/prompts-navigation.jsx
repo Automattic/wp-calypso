@@ -115,7 +115,7 @@ const PromptsNavigation = ( { prompts } ) => {
 
 		const viewAllResponses = (
 			<a
-				href={ 'http://wordpress.com/tag/dailyprompt-' + encodeURIComponent( prompt.id ) }
+				href={ '/tag/dailyprompt-' + encodeURIComponent( prompt.id ) }
 				className="blogging-prompt__prompt-responses-link"
 				onClick={ trackClickViewAllResponses }
 			>
