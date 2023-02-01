@@ -712,6 +712,9 @@ body.is-section-signup.is-white-signup,
 			border-radius: 4px;
 			background-color: var(--studio-gray-80);
 			transform: translate(20px, 0);
+			@media ( max-width: 880px ) {
+				transform: translate(20px, -50px);
+			}
 		}
 
 		&.popular-plan-parent-class {

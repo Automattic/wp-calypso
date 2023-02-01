@@ -280,6 +280,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 							<PlanSelector>
 								<h4 className="plan-comparison-grid__title">
 									{ planConstantObj.getTitle() }
+
 									{ showPlanSelect && <Gridicon icon="chevron-down" size={ 12 } color="#0675C4" /> }
 								</h4>
 								{ showPlanSelect && (
@@ -289,7 +290,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 										value={ planName }
 									>
 										{ displayedPlansProperties.map(
-											( { planName: otherPlan, product_name_short } ) => {
+											( { planName: otherPlan, planConstantObj } ) => {
 												const isVisiblePlan = visiblePlansProperties.find(
 													( { planName } ) => planName === otherPlan
 												);
@@ -300,7 +301,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 
 												return (
 													<option key={ otherPlan } value={ otherPlan }>
-														{ product_name_short }
+														{ planConstantObj.getTitle() }
 													</option>
 												);
 											}
