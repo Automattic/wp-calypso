@@ -181,17 +181,24 @@ export class PlanFeatures2023Grid extends Component<
 					</Button>
 				</div>
 				{ this.state.showPlansComparisonGrid ? (
-					<PlanComparisonGrid
-						planTypeSelectorProps={ planTypeSelectorProps }
-						planProperties={ planProperties }
-						intervalType={ intervalType }
-						isInSignup={ isInSignup }
-						isLaunchPage={ isLaunchPage }
-						flowName={ flowName }
-						currentSitePlanSlug={ currentSitePlanSlug }
-						manageHref={ manageHref }
-						canUserPurchasePlan={ canUserPurchasePlan }
-					/>
+					<>
+						<PlanComparisonGrid
+							planTypeSelectorProps={ planTypeSelectorProps }
+							planProperties={ planProperties }
+							intervalType={ intervalType }
+							isInSignup={ isInSignup }
+							isLaunchPage={ isLaunchPage }
+							flowName={ flowName }
+							currentSitePlanSlug={ currentSitePlanSlug }
+							manageHref={ manageHref }
+							canUserPurchasePlan={ canUserPurchasePlan }
+						/>
+						<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
+							<Button onClick={ this.toggleShowPlansComparisonGrid }>
+								{ translate( 'Hide comparison' ) }
+							</Button>
+						</div>
+					</>
 				) : null }
 			</div>
 		);
