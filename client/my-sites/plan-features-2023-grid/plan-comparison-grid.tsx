@@ -487,6 +487,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		}
 		return acc;
 	}, [] );
+
 	return (
 		<div className="plan-comparison-grid">
 			<PlanComparisonHeader className="wp-brand-font">
@@ -501,6 +502,8 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 				intervalType={ planTypeSelectorProps.intervalType }
 				customerType={ planTypeSelectorProps.customerType }
 				hidePersonalPlan={ planTypeSelectorProps.hidePersonalPlan }
+				basePlansPath={ planTypeSelectorProps.basePlansPath }
+				siteSlug={ planTypeSelectorProps.siteSlug }
 				hideDiscountLabel={ true }
 			/>
 			<Grid>
@@ -515,7 +518,6 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 					manageHref={ manageHref }
 					canUserPurchasePlan={ canUserPurchasePlan }
 				/>
-
 				{ Object.values( featureGroupMap ).map( ( featureGroup: FeatureGroup ) => {
 					const features = featureGroup.get2023PricingGridSignupWpcomFeatures();
 					const featureObjects = getPlanFeaturesObject( features );
