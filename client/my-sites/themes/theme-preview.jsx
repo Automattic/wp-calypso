@@ -12,6 +12,7 @@ import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-s
 import PulsingDot from 'calypso/components/pulsing-dot';
 import ThemePreviewModal from 'calypso/components/theme-preview-modal';
 import WebPreview from 'calypso/components/web-preview';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
@@ -93,24 +94,33 @@ class ThemePreview extends Component {
 	};
 
 	onPrimaryButtonClick = () => {
+		const { themeId } = this.props;
 		const option = this.getPrimaryOption();
-		option.action && option.action( this.props.themeId );
+
+		this.props.recordTracksEvent( 'calypso_theme_preview_primary_button_click', {
+			theme: themeId,
+			...( option.key && { action: option.key } ),
+		} );
+
+		option.action && option.action( themeId );
 		! this.props.isJetpack && this.props.hideThemePreview();
 	};
 
 	onSecondaryButtonClick = () => {
+		const { themeId } = this.props;
 		const secondary = this.getSecondaryOption();
-		secondary.action && secondary.action( this.props.themeId );
+
+		this.props.recordTracksEvent( 'calypso_theme_preview_secondary_button_click', {
+			theme: themeId,
+			...( secondary.key && { action: secondary.key } ),
+		} );
+
+		secondary.action && secondary.action( themeId );
 		! this.props.isJetpack && this.props.hideThemePreview();
 	};
 
 	onUnlockStyleButtonClick = () => {
 		this.setState( { showUnlockStyleUpgradeModal: true } );
-	};
-
-	onSelectVariation = ( variation ) => {
-		const { themeId, primary, secondary } = this.props.themeOptions;
-		this.props.setThemePreviewOptions( themeId, primary, secondary, variation );
 	};
 
 	onPremiumGlobalStylesUpgradeModalCheckout = () => {
@@ -188,15 +198,44 @@ class ThemePreview extends Component {
 		return demoUrl + '?demo=true&iframe=true&theme_preview=true';
 	};
 
+	onSelectVariation = ( variation ) => {
+		const { themeId, primary, secondary } = this.props.themeOptions;
+		this.props.recordTracksEvent( 'calypso_theme_preview_style_variation_click', {
+			theme: themeId,
+			style_variation: variation.slug,
+		} );
+
+		this.props.setThemePreviewOptions( themeId, primary, secondary, variation );
+	};
+
 	onClickCategory = ( category ) => {
-		const { filterToTermTable, isLoggedIn, locale, siteSlug } = this.props;
+		const { filterToTermTable, isLoggedIn, locale, siteSlug, themeId } = this.props;
 		const subjectTermTable = getSubjectsFromTermTable( filterToTermTable );
 		const subject = subjectTermTable[ `subject:${ category.slug }` ];
 
 		if ( subject ) {
+			this.props.recordTracksEvent( 'calypso_theme_preview_category_click', {
+				theme: themeId,
+				category: category.slug,
+			} );
+
 			const path = `/themes/filter/${ subject }/${ siteSlug ?? '' }`;
 			window.location.href = localizeThemesPath( path, locale, ! isLoggedIn );
 		}
+	};
+
+	onClickDevice = ( device ) => {
+		this.props.recordTracksEvent( 'calypso_theme_preview_device_switcher_click', {
+			theme: this.props.themeId,
+			device,
+		} );
+	};
+
+	onClose = () => {
+		this.props.recordTracksEvent( 'calypso_theme_preview_close_click', {
+			theme: this.props.themeId,
+		} );
+		this.props.hideThemePreview();
 	};
 
 	render() {
@@ -222,12 +261,18 @@ class ThemePreview extends Component {
 							previewUrl={ this.getPreviewUrl() }
 							selectedVariation={ selectedVariation }
 							actionButtons={
-								showUnlockStyleButton ? this.renderUnlockStyleButton() : this.renderPrimaryButton()
+								<>
+									{ showUnlockStyleButton
+										? this.renderUnlockStyleButton()
+										: this.renderPrimaryButton() }
+									{ this.renderSecondaryButton() }
+								</>
 							}
 							shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 							onSelectVariation={ this.onSelectVariation }
 							onClickCategory={ this.onClickCategory }
-							onClose={ this.props.hideThemePreview }
+							onClose={ this.onClose }
+							recordDeviceClick={ this.onClickDevice }
 						/>
 					) : (
 						<WebPreview
@@ -306,5 +351,5 @@ export default connect(
 			],
 		};
 	},
-	{ hideThemePreview, setThemePreviewOptions }
+	{ hideThemePreview, recordTracksEvent, setThemePreviewOptions }
 )( withSiteGlobalStylesStatus( localize( ConnectedThemePreview ) ) );

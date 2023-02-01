@@ -75,7 +75,8 @@ export class Theme extends Component {
 		onStyleVariationClick: PropTypes.func,
 		// Called when the more button is clicked
 		onMoreButtonClick: PropTypes.func,
-		// Options to populate the 'More' button popover menu with
+		// Called when a more button item is clicked
+		onMoreButtonItemClick: PropTypes.func,
 		buttonContents: PropTypes.objectOf(
 			PropTypes.shape( {
 				label: PropTypes.string,
@@ -107,6 +108,7 @@ export class Theme extends Component {
 		isPlaceholder: false,
 		buttonContents: {},
 		onMoreButtonClick: noop,
+		onMoreButtonItemClick: noop,
 		actionLabel: '',
 		active: false,
 	};
@@ -139,6 +141,7 @@ export class Theme extends Component {
 			nextProps.onScreenshotClick !== this.props.onScreenshotClick ||
 			nextProps.onStyleVariationClick !== this.props.onStyleVariationClick ||
 			nextProps.onMoreButtonClick !== this.props.onMoreButtonClick ||
+			nextProps.onMoreButtonItemClick !== this.props.onMoreButtonItemClick ||
 			themeThumbnailRefUpdated
 		);
 	}
@@ -473,7 +476,8 @@ export class Theme extends Component {
 	};
 
 	renderMoreButton = () => {
-		const { active, buttonContents, index, theme, onMoreButtonClick } = this.props;
+		const { active, buttonContents, index, theme, onMoreButtonClick, onMoreButtonItemClick } =
+			this.props;
 		if ( isEmpty( buttonContents ) ) {
 			return null;
 		}
@@ -485,6 +489,7 @@ export class Theme extends Component {
 				themeName={ theme.name }
 				active={ active }
 				onMoreButtonClick={ onMoreButtonClick }
+				onMoreButtonItemClick={ onMoreButtonItemClick }
 				options={ buttonContents }
 			/>
 		);
