@@ -357,7 +357,7 @@ class CurrentPlan extends Component {
 					) ) }
 				</div>
 
-				<h2 className="current-plan__section-title">Do you want more?</h2>
+				<h2 className="current-plan__section-title">{ translate( 'Do you want more?' ) }</h2>
 				<p className="current-plan__section-subtitle">
 					{ translate( 'The free trial doesn’t support the following features.' ) }
 					<br />
