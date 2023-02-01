@@ -105,6 +105,7 @@ export default function AnnualHighlightsSection( { siteId }: { siteId: number } 
 				titleHref={ viewMoreHref }
 				year={ year }
 				navigation={ navigation }
+				className="has-jetpack-color"
 			/>
 		</>
 	);

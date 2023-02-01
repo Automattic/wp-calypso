@@ -148,7 +148,7 @@ export default function HighlightsSection( props ) {
 	const highlights = getHighlights( earningsData );
 	const notices = payoutNotices( earningsData );
 	return (
-		<div className="highlight-cards wordads">
+		<div className="highlight-cards wordads has-jetpack-color">
 			<HighlightsSectionHeader notices={ notices } />
 			<HighlightsListing highlights={ highlights } />
 		</div>
