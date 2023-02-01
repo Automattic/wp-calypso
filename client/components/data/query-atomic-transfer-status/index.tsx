@@ -33,7 +33,7 @@ const QueryAtomicTransferStatus = ( {
 			return onTransferComplete();
 		}
 		if ( ! isFetchingTransferStatus ) {
-			waitFor( 2 ).then( () => dispatch( fetchAutomatedTransferStatus( siteId ) ) );
+			waitFor( 3 ).then( () => dispatch( fetchAutomatedTransferStatus( siteId ) ) );
 		}
 	}, [ siteId, dispatch, transferStatus, isFetchingTransferStatus, isJetpackSelfHosted ] );
 

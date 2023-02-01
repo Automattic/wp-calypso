@@ -132,6 +132,8 @@ class ThemeSheet extends Component {
 		section: '',
 	};
 
+	state = {};
+
 	scrollToTop = () => {
 		window.scroll( 0, 0 );
 	};
@@ -576,7 +578,9 @@ class ThemeSheet extends Component {
 			isExternallyManagedTheme,
 			isSiteEligibleForManagedExternalThemes,
 			isMarketplaceThemeSubscribed,
+			checkAtomicTransferStatus,
 		} = this.props;
+		const { isAtomicTransferCompleted } = this.state;
 		if ( isActive ) {
 			// Customize site
 			return (
@@ -617,6 +621,13 @@ class ThemeSheet extends Component {
 				isSiteEligibleForManagedExternalThemes
 			) {
 				return translate( 'Subscribe to activate' );
+			} else if ( checkAtomicTransferStatus && ! isAtomicTransferCompleted ) {
+				return (
+					<span className="theme__sheet-customize-button spin">
+						<Gridicon icon="sync" />
+						{ translate( 'Activate this design' ) }
+					</span>
+				);
 			}
 			// else: activate
 			return translate( 'Activate this design' );
@@ -683,7 +694,8 @@ class ThemeSheet extends Component {
 		const price = this.renderPrice();
 		const placeholder = <span className="theme__sheet-button-placeholder">loading......</span>;
 		const { isActive, isExternallyManagedTheme, isLoggedIn } = this.props;
-		const { isLoading } = this.props;
+		const { isLoading, checkAtomicTransferStatus } = this.props;
+		const { isAtomicTransferCompleted } = this.state;
 
 		return (
 			<Button
@@ -699,7 +711,7 @@ class ThemeSheet extends Component {
 				}
 				onClick={ this.onButtonClick }
 				primary
-				disabled={ isLoading }
+				disabled={ isLoading || ( checkAtomicTransferStatus && ! isAtomicTransferCompleted ) }
 				target={ isActive ? '_blank' : null }
 			>
 				{ this.isLoaded() ? label : placeholder }
@@ -763,8 +775,18 @@ class ThemeSheet extends Component {
 		);
 	};
 
-	onTransferComplete = () => {
-		// TBD
+	onAtomicTransferComplete = () => {
+		if ( ! this.state.isAtomicTransferCompleted ) {
+			this.setState( {
+				isAtomicTransferCompleted: true,
+			} );
+
+			const { isAtomic, siteSlug } = this.props;
+			if ( ! isAtomic ) {
+				const newSiteSlug = siteSlug.replace( /\b.wordpress.com/, '.wpcomstaging.com' );
+				return page( `/theme/makoney/${ newSiteSlug }?transfer-successful=true` );
+			}
+		}
 	};
 
 	renderSheet = () => {
@@ -790,6 +812,7 @@ class ThemeSheet extends Component {
 			isSiteEligibleForManagedExternalThemes,
 			isMarketplaceThemeSubscribed,
 			isLoading,
+			checkAtomicTransferStatus,
 		} = this.props;
 
 		const analyticsPath = `/theme/${ themeId }${ section ? '/' + section : '' }${
@@ -940,7 +963,6 @@ class ThemeSheet extends Component {
 			'is-removed': isRemoved,
 		} );
 
-		const checkAtomicTransferStatus = getQueryArgs()?.[ 'check-atomic-transfer' ] === 'true';
 		return (
 			<Main className={ className }>
 				<QueryCanonicalTheme themeId={ this.props.themeId } siteId={ siteId } />
@@ -985,7 +1007,7 @@ class ThemeSheet extends Component {
 				{ checkAtomicTransferStatus && (
 					<QueryAtomicTransferStatus
 						siteId={ siteId }
-						onTransferComplete={ this.onTransferComplete }
+						onTransferComplete={ this.onAtomicTransferComplete }
 					/>
 				) }
 			</Main>
@@ -1123,6 +1145,7 @@ export default connect(
 			),
 			isLoading,
 			isMarketplaceThemeSubscribed,
+			checkAtomicTransferStatus: getQueryArgs()?.[ 'check-atomic-transfer' ] === 'true',
 		};
 	},
 	{
