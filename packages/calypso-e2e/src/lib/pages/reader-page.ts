@@ -66,7 +66,8 @@ export class ReaderPage {
 	 */
 	async visitPost( { index, text }: { index?: number; text?: string } = {} ): Promise< void > {
 		// Wait for main reader stream to populate.
-		await this.page.locator( selectors.streamPlaceholder ).waitFor( { state: 'hidden' } );
+		// Use the `last` method to narrow down the locators in case more than 1 placeholders exist.
+		await this.page.locator( selectors.streamPlaceholder ).last().waitFor( { state: 'hidden' } );
 
 		let selector = '';
 
