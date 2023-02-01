@@ -25,7 +25,7 @@ import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import page from 'page';
-import { Component } from 'react';
+import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import BloombergLogo from 'calypso/assets/images/onboarding/bloomberg-logo.svg';
 import CNNLogo from 'calypso/assets/images/onboarding/cnn-logo.svg';
@@ -43,6 +43,7 @@ import PlanPill from 'calypso/components/plans/plan-pill';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
+import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/plan-type-selector';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
@@ -132,6 +133,8 @@ export class PlanFeatures2023Grid extends Component<
 		showPlansComparisonGrid: false,
 	};
 
+	plansComparisonGridContainerRef = createRef< HTMLDivElement >();
+
 	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_wp_plans_test_view' );
 		retargetViewPlans();
@@ -142,6 +145,22 @@ export class PlanFeatures2023Grid extends Component<
 			showPlansComparisonGrid: ! showPlansComparisonGrid,
 		} ) );
 	};
+
+	componentDidUpdate(
+		prevProps: Readonly< PlanFeatures2023GridType >,
+		prevState: Readonly< PlanFeatures2023GridState >
+	) {
+		// If the "Compare plans" button is clicked, scroll to the plans comparison grid.
+		if (
+			prevState.showPlansComparisonGrid === false &&
+			this.plansComparisonGridContainerRef.current
+		) {
+			scrollIntoViewport( this.plansComparisonGridContainerRef.current, {
+				behavior: 'smooth',
+				scrollMode: 'if-needed',
+			} );
+		}
+	}
 
 	render() {
 		const {
@@ -181,7 +200,7 @@ export class PlanFeatures2023Grid extends Component<
 					</Button>
 				</div>
 				{ this.state.showPlansComparisonGrid ? (
-					<>
+					<div ref={ this.plansComparisonGridContainerRef }>
 						<PlanComparisonGrid
 							planTypeSelectorProps={ planTypeSelectorProps }
 							planProperties={ planProperties }
@@ -198,7 +217,7 @@ export class PlanFeatures2023Grid extends Component<
 								{ translate( 'Hide comparison' ) }
 							</Button>
 						</div>
-					</>
+					</div>
 				) : null }
 			</div>
 		);
