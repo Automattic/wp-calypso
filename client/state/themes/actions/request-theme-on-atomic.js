@@ -8,7 +8,7 @@ import { normalizeJetpackTheme } from 'calypso/state/themes/utils';
 import 'calypso/state/themes/init';
 
 /**
- * Triggers a network request to fetch a specific theme from an atomic site.
+ * Triggers a network request to fetch a specific theme on an atomic site.
  *
  * @param  {string}   themeId Theme ID
  * @param  {number}   siteId  Site ID
@@ -22,7 +22,10 @@ export function requestThemeOnAtomic( themeId, siteId ) {
 			themeId,
 		} );
 		return wpcom.req
-			.get( `/sites/${ siteId }/themes/${ themeId }` )
+			.get( {
+				path: `/sites/${ siteId }/themes/${ themeId }`,
+				apiNamespace: 'wp/v2',
+			} )
 			.then( ( { themes } ) => {
 				dispatch( receiveThemes( map( themes, normalizeJetpackTheme ), siteId ) );
 				dispatch( {
