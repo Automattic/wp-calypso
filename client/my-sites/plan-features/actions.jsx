@@ -3,6 +3,7 @@ import {
 	PLAN_P2_FREE,
 	getPlanClass,
 	planLevelsMatch,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
@@ -75,7 +76,7 @@ const PlanFeaturesActionsButton = ( {
 		( availableForPurchase || isPlaceholder ) &&
 		isMonthly( currentSitePlanSlug ) &&
 		getPlanClass( planType ) === getPlanClass( currentSitePlanSlug ) &&
-		currentSitePlanSlug !== 'ecommerce-trial-bundle-monthly'
+		currentSitePlanSlug !== PLAN_ECOMMERCE_TRIAL_MONTHLY
 	) {
 		return (
 			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
