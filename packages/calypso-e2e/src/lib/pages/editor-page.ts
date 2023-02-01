@@ -637,7 +637,7 @@ export class EditorPage {
 				this.page.waitForResponse( /v2\/(posts|pages)\/[\d]+/ ),
 				this.page.waitForResponse( /.*v2\/sites\/[\d]+\/(posts|pages)\/[\d]+.*/ ),
 			] ),
-			actionsArray,
+			...actionsArray,
 		] );
 
 		const json = await response.json();
