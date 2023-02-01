@@ -11,39 +11,6 @@ exports[`ThemesList should render a div with a className of "themes-list" 1`] = 
     <div
       data-testid="theme-2"
     />
-    <div
-      class="themes-list__spacer"
-    />
-    <div
-      class="themes-list__spacer"
-    />
-    <div
-      class="themes-list__spacer"
-    />
-    <div
-      class="themes-list__spacer"
-    />
-    <div
-      class="themes-list__spacer"
-    />
-    <div
-      class="themes-list__spacer"
-    />
-    <div
-      class="themes-list__spacer"
-    />
-    <div
-      class="themes-list__spacer"
-    />
-    <div
-      class="themes-list__spacer"
-    />
-    <div
-      class="themes-list__spacer"
-    />
-    <div
-      class="themes-list__spacer"
-    />
     <div />
   </div>
 </div>
