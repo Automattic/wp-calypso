@@ -2,6 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import {
 	getPlan,
 	getIntervalTypeForTerm,
+	isFreePlan,
 	PLAN_FREE,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
@@ -143,11 +144,15 @@ class Plans extends Component {
 			);
 		}
 
+		const hideFreePlan = isEnabled( 'onboarding/2023-pricing-grid' )
+			? ! isFreePlan( currentPlan.productSlug )
+			: true;
+
 		return (
 			<PlansFeaturesMain
 				redirectToAddDomainFlow={ this.props.redirectToAddDomainFlow }
 				domainAndPlanPackage={ this.props.domainAndPlanPackage }
-				hideFreePlan={ true }
+				hideFreePlan={ hideFreePlan }
 				customerType={ this.props.customerType }
 				intervalType={ this.props.intervalType }
 				selectedFeature={ this.props.selectedFeature }

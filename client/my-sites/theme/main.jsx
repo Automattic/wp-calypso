@@ -240,7 +240,10 @@ class ThemeSheet extends Component {
 		}
 		event.preventDefault();
 
-		this.props.recordTracksEvent( 'calypso_theme_live_demo_preview_click', { type } );
+		this.props.recordTracksEvent( 'calypso_theme_live_demo_preview_click', {
+			theme: this.props.themeId,
+			type,
+		} );
 
 		const { preview } = this.props.options;
 		this.props.setThemePreviewOptions(
@@ -675,7 +678,7 @@ class ThemeSheet extends Component {
 		const label = this.getDefaultOptionLabel();
 		const price = this.renderPrice();
 		const placeholder = <span className="theme__sheet-button-placeholder">loading......</span>;
-		const { isActive, isExternallyManagedTheme } = this.props;
+		const { isActive, isExternallyManagedTheme, isLoggedIn } = this.props;
 		const { isLoading } = this.props;
 
 		return (
@@ -683,7 +686,9 @@ class ThemeSheet extends Component {
 				className="theme__sheet-primary-button"
 				href={
 					getUrl &&
-					( ! isExternallyManagedTheme || ! config.isEnabled( 'themes/third-party-premium' ) )
+					( ! isExternallyManagedTheme ||
+						! isLoggedIn ||
+						! config.isEnabled( 'themes/third-party-premium' ) )
 						? getUrl( this.props.themeId )
 						: null
 				}
@@ -847,7 +852,7 @@ class ThemeSheet extends Component {
 
 		let onClick = null;
 
-		if ( isExternallyManagedTheme ) {
+		if ( isExternallyManagedTheme && isLoggedIn ) {
 			onClick = this.onButtonClick;
 		} else if ( ! isLoggedIn ) {
 			onClick = launchPricing;
@@ -885,20 +890,25 @@ class ThemeSheet extends Component {
 		}
 
 		if ( hasWpOrgThemeUpsellBanner || hasThemeUpsellBannerAtomic ) {
+			const thisPageUrl = `/theme/${ themeId }/${ siteSlug }`;
 			pageUpsellBanner = (
 				<UpsellNudge
 					plan={ PLAN_BUSINESS }
 					className="theme__page-upsell-banner"
-					title={ translate( 'Access this theme for FREE with a Business plan!' ) }
+					title={ translate( 'Access this third-party theme with the Business plan!' ) }
 					description={ preventWidows(
 						translate(
-							'Instantly unlock thousands of different themes and install your own when you upgrade.'
+							'Instantly unlock thousands of different themes and install your own when you upgrade to the Business plan.'
 						)
 					) }
 					forceHref
 					feature={ FEATURE_UPLOAD_THEMES }
 					forceDisplay
-					href={ ! siteId ? '/plans' : null }
+					href={
+						siteId
+							? `/checkout/${ siteSlug }/business?redirect_to=${ thisPageUrl }`
+							: localizeUrl( 'https://wordpress.com/start/business' )
+					}
 					showIcon
 					event="theme_upsell_plan_click"
 					tracksClickName="calypso_theme_upsell_plan_click"

@@ -1,11 +1,11 @@
-import MobilePromoCard from '../';
+import AppPromoFullWidth from '..';
 
 export default {
-	component: MobilePromoCard,
+	component: AppPromoFullWidth,
 	title: 'Mobile Promo Card',
 };
 
-const Template = ( args ) => <MobilePromoCard { ...args } />;
+const Template = ( args ) => <AppPromoFullWidth { ...args } />;
 
 export const Default = Template.bind( {} );
 Default.args = {

@@ -1,11 +1,15 @@
-import { localizeUrl } from '@automattic/i18n-utils';
+import { useLocale, localizeUrl } from '@automattic/i18n-utils';
+import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import useDropdownPagesQuery, { PageNode } from 'calypso/data/dropdown-pages/use-dropdown-pages';
+import useDropdownPagesQuery, {
+	DropdownPagesResponse,
+	PageNode,
+} from 'calypso/data/dropdown-pages/use-dropdown-pages';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const PAGE_TITLE_DEPTH_PADDING = '—'; // em dash
@@ -36,7 +40,9 @@ const insertPageNodeToDropdownPages = (
 	} );
 };
 
-const toFlatDropdownPages = ( pageNodes: PageNode[] ): DropdownPage[] => {
+const toFlatDropdownPages = ( {
+	dropdown_pages: pageNodes,
+}: DropdownPagesResponse ): DropdownPage[] => {
 	const dropdownPages: DropdownPage[] = [];
 	pageNodes.forEach( ( pageNode ) => {
 		insertPageNodeToDropdownPages( pageNode, dropdownPages );
@@ -64,9 +70,13 @@ const YourHomepageDisplaysSetting = ( {
 	disabled,
 	siteId,
 }: YourHomepageDisplaysSettingProps ) => {
+	const { hasTranslation } = useI18n();
+	const locale = useLocale();
 	const translate = useTranslate();
 
-	const { data: pages, isLoading } = useDropdownPagesQuery( siteId, {
+	const { data: pages, isLoading } = useDropdownPagesQuery<
+		ReturnType< typeof toFlatDropdownPages >
+	>( siteId, {
 		select: toFlatDropdownPages,
 	} );
 
@@ -123,7 +133,11 @@ const YourHomepageDisplaysSetting = ( {
 					value={ page_for_posts }
 					onChange={ handlePageForPostsChange }
 				>
-					<option value="">{ translate( '—— Select ——' ) }</option>
+					<option value="">
+						{ locale.startsWith( 'en' ) || hasTranslation( '—— None ——' )
+							? translate( '—— None ——' )
+							: translate( '—— Select ——' ) }
+					</option>
 					{ pages?.map( ( page ) => {
 						return (
 							<option

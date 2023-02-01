@@ -64,3 +64,15 @@ export const MOBILE_VIEWPORT_WIDTH = 599;
  * Generated design picker
  */
 export const STICKY_OFFSET_TOP = 109;
+
+/**
+ * Hard-coded design
+ */
+export const BLANK_CANVAS_DESIGN = {
+	slug: 'blank-canvas-3',
+	title: 'Blank Canvas',
+	recipe: {
+		stylesheet: 'pub/blank-canvas-3',
+	},
+	design_type: 'assembler',
+};
