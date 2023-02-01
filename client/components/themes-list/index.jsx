@@ -150,8 +150,7 @@ function ThemeBlock( props ) {
 	);
 }
 
-function Footer( props ) {
-	const { translate } = props;
+function Footer( { translate } ) {
 	const selectedSite = useSelector( getSelectedSite );
 	const canInstallTheme = useSelector( ( state ) =>
 		siteHasFeature( state, selectedSite?.ID, FEATURE_INSTALL_THEMES )
@@ -180,7 +179,7 @@ function Footer( props ) {
 		uploadThemeButton = translate( 'Upload theme' );
 	} else {
 		uploadThemeDescription = translate(
-			'Upgrade to a Business plan to upload and install third-party themes to your site, including themes from WordPress.org, and even themes you have custom-made for your website.'
+			'With a Business plan, you can upload and install third-party themes to your site, including themes from WordPress.org, and even themes you have custom-made for your website.'
 		);
 		uploadThemeUrl = `/checkout/${ selectedSite.slug }/business?redirect_to=/themes/upload/${ selectedSite.slug }`;
 		uploadThemeButton = translate( 'Upgrade your plan' );
@@ -199,7 +198,7 @@ function Footer( props ) {
 				<div className="themes-list__footer-action-content">
 					<div className="themes-list__footer-action-text">
 						<div className="themes-list__footer-action-title">
-							{ translate( 'Create your own theme from scratch' ) }
+							{ translate( 'Design your own' ) }
 						</div>
 						<div className="themes-list__footer-action-description">
 							{ selectedSite
