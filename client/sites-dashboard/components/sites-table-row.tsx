@@ -176,7 +176,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 				) }
 			</Column>
 			<Column style={ { width: '24px' } }>
-				<SitesEllipsisMenu site={ site } />
+				{ inViewOnce && <SitesEllipsisMenu site={ site } /> }
 			</Column>
 		</Row>
 	);

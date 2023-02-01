@@ -13,7 +13,7 @@ import 'calypso/state/purchases/init';
 export const getUserPurchases = createSelector(
 	( state ) => {
 		if ( ! hasLoadedUserPurchasesFromServer( state ) ) {
-			return null;
+			return [];
 		}
 
 		const userId = getCurrentUserId( state );

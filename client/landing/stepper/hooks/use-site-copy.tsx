@@ -3,14 +3,14 @@ import { createHigherOrderComponent } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useMemo, useCallback } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
-import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
+import { useQueryUserPurchases } from 'calypso/components/data/query-user-purchases';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
-	hasLoadedSitePurchasesFromServer,
-	isFetchingSitePurchases,
+	hasLoadedUserPurchasesFromServer,
+	isFetchingUserPurchases,
 } from 'calypso/state/purchases/selectors';
 import getSiteFeatures from 'calypso/state/selectors/get-site-features';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -43,20 +43,20 @@ export const useSiteCopy = (
 		const siteFeatures = getSiteFeatures( state, site?.ID );
 		return siteFeatures ? siteFeatures : { isRequesting: true };
 	} );
-	const isAtomic = useSelect( ( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID ) );
+	const isAtomic = useSelect( ( select ) => site && select( SITE_STORE ).isSiteAtomic( site?.ID ) );
 	const plan = site?.plan;
 	const isSiteOwner = site?.site_owner === userId;
 
-	useQuerySitePurchases( site?.ID );
-	const isLoadingPurchase = useSelector(
-		( state ) => isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state )
+	useQueryUserPurchases();
+	const isLoadingPurchases = useSelector(
+		( state ) => isFetchingUserPurchases( state ) || ! hasLoadedUserPurchasesFromServer( state )
 	);
 
 	const { setPlanCartItem } = useDispatch( ONBOARD_STORE );
 
 	const shouldShowSiteCopyItem = useMemo( () => {
-		return hasCopySiteFeature && isSiteOwner && plan && isAtomic && ! isLoadingPurchase;
-	}, [ hasCopySiteFeature, isSiteOwner, plan, isLoadingPurchase, isAtomic ] );
+		return hasCopySiteFeature && isSiteOwner && plan && isAtomic && ! isLoadingPurchases;
+	}, [ hasCopySiteFeature, isSiteOwner, plan, isLoadingPurchases, isAtomic ] );
 
 	const startSiteCopy = useCallback(
 		//eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -75,9 +75,9 @@ export const useSiteCopy = (
 		() => ( {
 			shouldShowSiteCopyItem,
 			startSiteCopy,
-			isFetching: isLoadingPurchase || isRequestingSiteFeatures,
+			isFetching: isLoadingPurchases || isRequestingSiteFeatures,
 		} ),
-		[ isLoadingPurchase, isRequestingSiteFeatures, shouldShowSiteCopyItem, startSiteCopy ]
+		[ isLoadingPurchases, isRequestingSiteFeatures, shouldShowSiteCopyItem, startSiteCopy ]
 	);
 };
 
