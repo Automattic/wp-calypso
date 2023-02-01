@@ -3,25 +3,9 @@ import {
 	FEATURE_6GB_STORAGE,
 	FEATURE_13GB_STORAGE,
 	FEATURE_200GB_STORAGE,
-	isEcommercePlan,
 } from '@automattic/calypso-products';
-import { translate, TranslateResult } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
-
-/**
- * This is a temporary fix since an actual plan name change is going to be time consuming.
- * The change from eCommerce to Commerce however is quite minor. So we do a Frontend only cosmetic change for now.
- *
- * @param planName The name of the plan
- * @param planTitle Display name of the plan
- * @returns Overridden display name if this is the eCommerce plan
- */
-export function resolvePlanName( planName: string, planTitle: TranslateResult ): TranslateResult {
-	if ( isEcommercePlan( planName ) ) {
-		return translate( 'Commerce' );
-	}
-	return planTitle;
-}
 
 export const getStorageStringFromFeature = ( storageFeature: string ) => {
 	switch ( storageFeature ) {
