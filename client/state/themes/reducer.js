@@ -307,6 +307,27 @@ export const queryRequestErrors = ( state = {}, action ) => {
 	return state;
 };
 
+export const themeRequestSuccessful = ( state = {}, action ) => {
+	const { siteId, themeId } = action;
+	switch ( action.type ) {
+		case THEME_REQUEST:
+		case THEME_REQUEST_FAILURE:
+			return {
+				...state,
+				[ siteId ]: omit( state[ siteId ], themeId ),
+			};
+		case THEME_REQUEST_SUCCESS:
+			return {
+				...state,
+				[ siteId ]: {
+					...state[ siteId ],
+					[ themeId ]: true,
+				},
+			};
+	}
+	return state;
+};
+
 function fromApi( theme ) {
 	if ( ! theme || ! theme.description ) {
 		return theme;
@@ -642,6 +663,7 @@ const combinedReducer = combineReducers( {
 	themesUpdate,
 	upsellCardDisplayed,
 	isLoadingCart,
+	themeRequestSuccessful,
 } );
 const themesReducer = withStorageKey( 'themes', combinedReducer );
 

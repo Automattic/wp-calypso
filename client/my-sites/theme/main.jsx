@@ -20,11 +20,11 @@ import AsyncLoad from 'calypso/components/async-load';
 import Badge from 'calypso/components/badge';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
-import QueryAtomicTransferStatus from 'calypso/components/data/query-atomic-transfer-status';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import QueryThemeAvailabilityForSite from 'calypso/components/data/query-theme-availability-for-site';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -779,7 +779,7 @@ class ThemeSheet extends Component {
 		);
 	};
 
-	onAtomicTransferComplete = () => {
+	onThemeAvialable = () => {
 		if ( ! this.state.isAtomicTransferCompleted ) {
 			this.setState( {
 				isAtomicTransferCompleted: true,
@@ -1008,9 +1008,10 @@ class ThemeSheet extends Component {
 				<ThemePreview belowToolbar={ previewUpsellBanner } />
 				<PerformanceTrackerStop />
 				{ checkAtomicTransferStatus && (
-					<QueryAtomicTransferStatus
+					<QueryThemeAvailabilityForSite
 						siteId={ siteId }
-						onTransferComplete={ this.onAtomicTransferComplete }
+						themeId={ themeId }
+						onThemeAvialable={ this.onThemeAvialable }
 					/>
 				) }
 			</Main>
