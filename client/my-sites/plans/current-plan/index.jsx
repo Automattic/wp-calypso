@@ -50,7 +50,12 @@ import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import { getCurrentPlan, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
+import {
+	getCurrentPlan,
+	getECommerceTrialDaysLeft,
+	isECommerceTrialExpired,
+	isRequestingSitePlans,
+} from 'calypso/state/sites/plans/selectors';
 import { getJetpackSearchCustomizeUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import AntiSpamProductThankYou from './current-plan-thank-you/anti-spam-thank-you';
@@ -196,7 +201,7 @@ class CurrentPlan extends Component {
 	}
 
 	renderEcommerceTrialPage() {
-		const { translate } = this.props;
+		const { translate, eCommerceTrialDaysLeft, isTrialExpired } = this.props;
 
 		const whatsIncluded = [
 			{
@@ -297,6 +302,11 @@ class CurrentPlan extends Component {
 			},
 		];
 
+		// Can be fetched dynamically from `plan.interval`. Does it need a new selector?
+		const trialDuration = 31;
+		// Trial progress from 0 to 100
+		const trialProgress = ( 1 - eCommerceTrialDaysLeft / trialDuration ) * 100;
+
 		return (
 			<>
 				<BodySectionCssClass bodyClass={ [ 'is-trial-plan' ] } />
@@ -305,18 +315,29 @@ class CurrentPlan extends Component {
 					<div className="current-plan__trial-card-content">
 						<p className="current-plan__card-title">{ translate( 'You’re in a free trial' ) }</p>
 						<p className="current-plan__card-subtitle">
-							{ translate(
-								'Your free trial will end in 5 days. Sign up to a plan by December 13 unlock new features and keep your store running.'
-							) }
+							{
+								// Still need to populate the date correctly
+								translate(
+									'Your free trial will end in %d day. Sign up to a plan by December 13 unlock new features and keep your store running.',
+									'Your free trial will end in %d days. Sign up to a plan by December 13 unlock new features and keep your store running.',
+									{ count: eCommerceTrialDaysLeft, args: [ eCommerceTrialDaysLeft ] }
+								)
+							}
 						</p>
 						<Button primary>{ translate( 'Get Commerce' ) }</Button>
 					</div>
 					<div className="plans__chart-wrapper">
-						<div className="plans__chart" style={ { '--p': '50' } }>
-							5
+						<div className="plans__chart" style={ { '--p': trialProgress } }>
+							{ eCommerceTrialDaysLeft }
 						</div>
 						<br />
-						<span className="plans__chart-label">{ translate( 'days left in trial' ) }</span>
+						<span className="plans__chart-label">
+							{ isTrialExpired
+								? translate( 'Your free trial has expired' )
+								: translate( 'day left in trial', 'days left in trial', {
+										count: eCommerceTrialDaysLeft,
+								  } ) }
+						</span>
 					</div>
 				</Card>
 
@@ -482,6 +503,8 @@ export default connect( ( state, { requestThankYou } ) => {
 
 	const currentPlan = getCurrentPlan( state, selectedSiteId );
 	const eligibleForProPlan = isEligibleForProPlan( state, selectedSiteId );
+	const eCommerceTrialDaysLeft = Math.round( getECommerceTrialDaysLeft( state, selectedSiteId ) );
+	const isTrialExpired = isECommerceTrialExpired( state, selectedSiteId );
 
 	return {
 		currentPlan,
@@ -497,5 +520,7 @@ export default connect( ( state, { requestThankYou } ) => {
 		showThankYou: requestThankYou && isJetpackNotAtomic,
 		scheduleId: getConciergeScheduleId( state ),
 		eligibleForProPlan,
+		eCommerceTrialDaysLeft,
+		isTrialExpired,
 	};
 } )( localize( CurrentPlan ) );
