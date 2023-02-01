@@ -47,7 +47,13 @@ export const ThemesList = ( props ) => {
 			return <WPOrgMatchingThemes matchingThemes={ matchingWpOrgThemes } { ...props } />;
 		}
 
-		return <Empty translate={ props.translate } />;
+		return (
+			<Empty
+				recordTracksEvent={ props.recordTracksEvent }
+				searchTerm={ props.searchTerm }
+				translate={ props.translate }
+			/>
+		);
 	}
 
 	return (
@@ -71,7 +77,11 @@ export const ThemesList = ( props ) => {
 				{ props.loading && <LoadingPlaceholders placeholderCount={ props.placeholderCount } /> }
 				<InfiniteScroll nextPageMethod={ fetchNextPage } />
 			</div>
-			<Footer translate={ props.translate } />
+			<Footer
+				recordTracksEvent={ props.recordTracksEvent }
+				searchTerm={ props.searchTerm }
+				translate={ props.translate }
+			/>
 		</>
 	);
 };
@@ -150,7 +160,7 @@ function ThemeBlock( props ) {
 	);
 }
 
-function Footer( { translate } ) {
+function Footer( { recordTracksEvent, searchTerm, translate } ) {
 	const selectedSite = useSelector( getSelectedSite );
 	const canInstallTheme = useSelector( ( state ) =>
 		siteHasFeature( state, selectedSite?.ID, FEATURE_INSTALL_THEMES )
@@ -163,12 +173,14 @@ function Footer( { translate } ) {
 	let uploadThemeDescription;
 	let uploadThemeUrl;
 	let uploadThemeButton;
+	let uploadThemeTrackEventDestinationProp;
 	if ( ! selectedSite ) {
 		uploadThemeDescription = translate(
 			'With a Business plan, you can upload and install third-party themes to your site, including themes from WordPress.org, and even themes you have custom-made for your website.'
 		);
 		uploadThemeUrl = '/start/business';
 		uploadThemeButton = translate( 'Get started' );
+		uploadThemeTrackEventDestinationProp = 'signup';
 	} else if ( canInstallTheme ) {
 		uploadThemeDescription = translate(
 			'You can upload third-party themes to your site, including themes from WordPress.org, and even themes you have custom-made for your website.'
@@ -177,12 +189,14 @@ function Footer( { translate } ) {
 			? `https://${ selectedSite.slug }/wp-admin/theme-install.php`
 			: `/themes/upload/${ selectedSite.slug }`;
 		uploadThemeButton = translate( 'Upload theme' );
+		uploadThemeTrackEventDestinationProp = 'upload-theme';
 	} else {
 		uploadThemeDescription = translate(
 			'With a Business plan, you can upload and install third-party themes to your site, including themes from WordPress.org, and even themes you have custom-made for your website.'
 		);
 		uploadThemeUrl = `/checkout/${ selectedSite.slug }/business?redirect_to=/themes/upload/${ selectedSite.slug }`;
 		uploadThemeButton = translate( 'Upgrade your plan' );
+		uploadThemeTrackEventDestinationProp = 'checkout';
 	}
 
 	return (
@@ -212,6 +226,13 @@ function Footer( { translate } ) {
 						primary
 						className="themes-list__footer-action-button"
 						href={ selectedSite ? `/site-editor/${ selectedSite.slug }` : blankCanvasSignupUrl }
+						onClick={ () => {
+							recordTracksEvent( 'calypso_themeshowcase_more_options_design_homepage_click', {
+								site_plan: selectedSite?.plan?.product_slug,
+								search_term: searchTerm,
+								destination: selectedSite ? 'site-editor' : 'signup',
+							} );
+						} }
 					>
 						{ selectedSite ? translate( 'Open the editor' ) : translate( 'Start designing' ) }
 					</Button>
@@ -236,6 +257,12 @@ function Footer( { translate } ) {
 					<Button
 						className="themes-list__footer-action-button"
 						href="https://wordpress.com/do-it-for-me/"
+						onClick={ () => {
+							recordTracksEvent( 'calypso_themeshowcase_more_options_difm_click', {
+								site_plan: selectedSite?.plan?.product_slug,
+								search_term: searchTerm,
+							} );
+						} }
 					>
 						{ translate( 'Hire an expert' ) }
 					</Button>
@@ -250,7 +277,17 @@ function Footer( { translate } ) {
 						</div>
 						<div className="themes-list__footer-action-description">{ uploadThemeDescription }</div>
 					</div>
-					<Button className="themes-list__footer-action-button" href={ uploadThemeUrl }>
+					<Button
+						className="themes-list__footer-action-button"
+						href={ uploadThemeUrl }
+						onClick={ () => {
+							recordTracksEvent( 'calypso_themeshowcase_more_options_upload_theme_click', {
+								site_plan: selectedSite?.plan?.product_slug,
+								search_term: searchTerm,
+								destination: uploadThemeTrackEventDestinationProp,
+							} );
+						} }
+					>
 						{ uploadThemeButton }
 					</Button>
 				</div>
@@ -267,7 +304,11 @@ function Empty( props ) {
 			<div className="themes-list__empty-search-text">
 				{ translate( 'No themes match your search' ) }
 			</div>
-			<Footer translate={ translate } />
+			<Footer
+				recordTracksEvent={ props.recordTracksEvent }
+				searchTerm={ props.searchTerm }
+				translate={ translate }
+			/>
 		</>
 	);
 }
@@ -300,7 +341,11 @@ function WPOrgMatchingThemes( props ) {
 					</div>
 				) ) }
 			</div>
-			<Footer translate={ props.translate } />
+			<Footer
+				recordTracksEvent={ props.recordTracksEvent }
+				searchTerm={ props.searchTerm }
+				translate={ props.translate }
+			/>
 		</div>
 	);
 }
