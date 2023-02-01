@@ -1,4 +1,5 @@
 import { Page, Locator } from 'playwright';
+import { EXTENDED_EDITOR_WAIT_TIMEOUT } from '../pages/editor-page';
 
 /**
  * Represents the welcome tour that shows in a popover when the editor loads.
@@ -25,7 +26,9 @@ export class EditorWelcomeTourComponent {
 	 */
 	async forceDismissWelcomeTour(): Promise< void > {
 		// Locator API doesn't have waitForFunction yet. We need a Frame for now.
-		const editorElement = await this.editor.elementHandle();
+		const editorElement = await this.editor.elementHandle( {
+			timeout: EXTENDED_EDITOR_WAIT_TIMEOUT,
+		} );
 		const editorFrame = await editorElement?.ownerFrame();
 		if ( ! editorFrame ) {
 			return;
