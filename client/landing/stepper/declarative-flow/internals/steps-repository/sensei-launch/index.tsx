@@ -19,6 +19,8 @@ interface InstalledPlugin {
 	active: boolean;
 }
 
+const SENSEI_PRO_PLUGIN_SLUG = 'sensei-pro';
+
 const SenseiLaunch = () => {
 	const { __ } = useI18n();
 	const site = useSite();
@@ -42,7 +44,7 @@ const SenseiLaunch = () => {
 
 	useEffect( () => {
 		const intervalId = setInterval( () => {
-			const woothemesSensei = plugins.find( ( plugin ) => plugin.slug === 'woothemes-sensei' );
+			const woothemesSensei = plugins.find( ( plugin ) => plugin.slug === SENSEI_PRO_PLUGIN_SLUG );
 			if ( ! woothemesSensei?.active && retries < maxRetries ) {
 				setRetries( retries + 1 );
 				dispatch( fetchSitePlugins( siteId ) );
