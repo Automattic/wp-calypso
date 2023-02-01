@@ -495,5 +495,8 @@ export type RawDomainContactValidationResponse =
 export interface CountryListItem {
 	code: string;
 	name: string;
-	has_postal_codes: boolean;
+	has_postal_codes?: boolean;
+	vat_city?: boolean;
+	vat_region?: boolean;
+	vat_organization?: boolean;
 }
