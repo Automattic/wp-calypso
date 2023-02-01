@@ -19,11 +19,33 @@ $brand-display: "SF Pro Display", $sans;
 	}
 }
 
-// Workaround for forums global and broad styles overriding this block styles
+// Workaround for forums global and broad styles overriding this block's styles
 .spf-reply__content {
-	& .hb-pricing-plans-embed:last-child {
-		margin: 24px 0;
+	.hb-pricing-plans-embed {
+		&:last-child {
+			margin: 24px 0;
+		}
+
+		a.components-button:link,
+		& a.components-button:visited {
+			color: var(--wp-components-color-accent-inverted, #fff);
+			text-decoration: none;
+		}
 	}
+}
+
+
+// Workaround for forums global and broad styles overriding this block's styles
+.spf-topic-form  label.hb-pricing-plans-embed__billing-option-label {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-family: $brand-text;
+	font-weight: 400;
+	font-size: 0.875rem;
+	line-height: 1.42;
+	letter-spacing: -0.15px;
+	color: $studio-gray-60;
 }
 
 .hb-pricing-plans-embed {
