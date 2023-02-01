@@ -200,7 +200,10 @@ export class PlanFeatures2023Grid extends Component<
 					</Button>
 				</div>
 				{ this.state.showPlansComparisonGrid ? (
-					<div ref={ this.plansComparisonGridContainerRef }>
+					<div
+						ref={ this.plansComparisonGridContainerRef }
+						className="plan-features-2023-grid__plan-comparison-grid-container"
+					>
 						<PlanComparisonGrid
 							planTypeSelectorProps={ planTypeSelectorProps }
 							planProperties={ planProperties }
