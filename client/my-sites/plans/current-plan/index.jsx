@@ -64,6 +64,7 @@ import PaidPlanThankYou from './current-plan-thank-you/paid-plan-thank-you';
 import ScanProductThankYou from './current-plan-thank-you/scan-thank-you';
 import SearchProductThankYou from './current-plan-thank-you/search-thank-you';
 import FeatureIncludedCard from './feature-included-card';
+import FeatureNotIncludedCard from './feature-not-included-card';
 import PurchasesListing from './purchases-listing';
 
 import './style.scss';
@@ -263,6 +264,39 @@ class CurrentPlan extends Component {
 			},
 		];
 
+		const whatsNotIncluded = [
+			{
+				illustration: '/calypso/images/plans/wpcom/trial-features/launch.png',
+				title: translate( 'Launch your store to the world' ),
+				text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio ullamcorper efficitur.',
+			},
+			{
+				illustration: '/calypso/images/plans/wpcom/trial-features/themes.png',
+				title: translate( 'Get access to more premium themes' ),
+				text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio ullamcorper efficitur.',
+			},
+			{
+				illustration: '/calypso/images/plans/wpcom/trial-features/money.png',
+				title: translate( 'Make money with your store' ),
+				text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio ullamcorper efficitur.',
+			},
+			{
+				illustration: '/calypso/images/plans/wpcom/trial-features/email.png',
+				title: translate( 'Boost your email marketing' ),
+				text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio ullamcorper efficitur.',
+			},
+			{
+				illustration: '/calypso/images/plans/wpcom/trial-features/promote.png',
+				title: translate( 'Promote your products' ),
+				text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio ullamcorper efficitur.',
+			},
+			{
+				illustration: '/calypso/images/plans/wpcom/trial-features/shipping.png',
+				title: translate( 'Integrate top shipping carriers' ),
+				text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio ullamcorper efficitur.',
+			},
+		];
+
 		return (
 			<>
 				<BodySectionCssClass bodyClass={ [ 'is-trial-plan' ] } />
@@ -304,101 +338,22 @@ class CurrentPlan extends Component {
 
 				<h2 className="current-plan__section-title">Do you want more?</h2>
 				<p className="current-plan__section-subtitle">
-					The free trial doesn’t support the following features.
+					{ translate( 'The free trial doesn’t support the following features.' ) }
 					<br />
-					Get the most value out of WooCommerce and pick one of our plans.
+					{ translate( 'Get the most value out of WooCommerce and pick one of our plans.' ) }
 				</p>
 
 				<div className="current-plan__more-wrapper">
-					<Card>
-						<img
-							className="current-plan__more-illustration"
-							alt="Launch your store to the world"
-							src="/calypso/images/plans/wpcom/trial-features/launch.png"
-						/>
-						<div className="current-plan__more-content">
-							<p className="current-plan__more-title">Launch your store to the world</p>
-							<p className="current-plan__more-text">
-								Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio
-								ullamcorper efficitur.
-							</p>
-						</div>
-					</Card>
-
-					<Card>
-						<img
-							className="current-plan__more-illustration"
-							alt="Get access to more premium themes"
-							src="/calypso/images/plans/wpcom/trial-features/themes.png"
-						/>
-						<div className="current-plan__more-content">
-							<p className="current-plan__more-title">Get access to more premium themes</p>
-							<p className="current-plan__more-text">
-								Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio
-								ullamcorper efficitur.
-							</p>
-						</div>
-					</Card>
-
-					<Card>
-						<img
-							className="current-plan__more-illustration"
-							alt="Make money with your store"
-							src="/calypso/images/plans/wpcom/trial-features/money.png"
-						/>
-						<div className="current-plan__more-content">
-							<p className="current-plan__more-title">Make money with your store</p>
-							<p className="current-plan__more-text">
-								Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio
-								ullamcorper efficitur.
-							</p>
-						</div>
-					</Card>
-
-					<Card>
-						<img
-							className="current-plan__more-illustration"
-							alt="Boost your email marketing"
-							src="/calypso/images/plans/wpcom/trial-features/email.png"
-						/>
-						<div className="current-plan__more-content">
-							<p className="current-plan__more-title">Boost your email marketing</p>
-							<p className="current-plan__more-text">
-								Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio
-								ullamcorper efficitur.
-							</p>
-						</div>
-					</Card>
-
-					<Card>
-						<img
-							className="current-plan__more-illustration"
-							alt="Promote your products"
-							src="/calypso/images/plans/wpcom/trial-features/promote.png"
-						/>
-						<div className="current-plan__more-content">
-							<p className="current-plan__more-title">Promote your products</p>
-							<p className="current-plan__more-text">
-								Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio
-								ullamcorper efficitur.
-							</p>
-						</div>
-					</Card>
-
-					<Card>
-						<img
-							className="current-plan__more-illustration"
-							alt="Integrate top shipping carriers"
-							src="/calypso/images/plans/wpcom/trial-features/shipping.png"
-						/>
-						<div className="current-plan__more-content">
-							<p className="current-plan__more-title">Integrate top shipping carriers</p>
-							<p className="current-plan__more-text">
-								Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio
-								ullamcorper efficitur.
-							</p>
-						</div>
-					</Card>
+					{ whatsNotIncluded.map( ( feature ) => (
+						<FeatureNotIncludedCard
+							key={ feature.title }
+							illustration={ feature.illustration }
+							title={ feature.title }
+							text={ feature.text }
+							showButton={ feature.showButton }
+							buttonText={ feature.buttonText }
+						></FeatureNotIncludedCard>
+					) ) }
 				</div>
 
 				<div className="current-plan__cta-wrapper">

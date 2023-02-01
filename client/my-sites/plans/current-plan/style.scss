@@ -211,33 +211,6 @@ body.is-section-plans.is-trial-plan {
 			list-style: none;
 			padding: 20px;
 			margin-top: 30px;
-
-			.card {
-				width: 490px;
-				display: flex;
-				box-shadow: none;
-
-				.current-plan__more-illustration {
-					width: 130px;
-					height: fit-content;
-				}
-
-				.current-plan__more-content {
-					padding-left: 25px;
-
-					.current-plan__more-title {
-						font-weight: 600;
-						font-size: $font-body;
-						margin-bottom: 1rem;
-					}
-
-					.current-plan__more-text {
-						font-weight: 400;
-						font-size: $font-body-small;
-						color: var(--color-neutral-40);
-					}
-				}
-			}
 		}
 
 		.current-plan__cta-wrapper {
@@ -251,6 +224,7 @@ body.is-section-plans.is-trial-plan {
 		padding: 0 20px;
 
 		.plans__chart {
+
 			// percentage
 			@property --p {
 				syntax: "<number>";
