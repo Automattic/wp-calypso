@@ -1696,7 +1696,8 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_SMART_REDIRECTS ]: {
 		getSlug: () => FEATURE_SMART_REDIRECTS,
-		getTitle: () =>
+		getTitle: () => i18n.translate( 'Smart redirects' ),
+		getDescription: () =>
 			i18n.translate( 'Count on automatic redirects when you update your post or page’s URL.' ),
 	},
 	[ FEATURE_ALWAYS_ONLINE ]: {
@@ -1714,6 +1715,8 @@ export const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_STYLE_CUSTOMIZATION,
 		getTitle: () => i18n.translate( 'Style customization' ),
 		getCompareTitle: () =>
+			i18n.translate( 'Take control of every font, color, and detail of your site’s design.' ),
+		getDescription: () =>
 			i18n.translate( 'Take control of every font, color, and detail of your site’s design.' ),
 	},
 	[ FEATURE_SUPPORT_EMAIL ]: {
@@ -1762,6 +1765,8 @@ export const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_BURST,
 		getTitle: () => i18n.translate( 'High-burst capacity' ),
 		getCompareTitle: () =>
+			i18n.translate( 'Lean on integrated resource management and instant scaling.' ),
+		getDescription: () =>
 			i18n.translate( 'Lean on integrated resource management and instant scaling.' ),
 	},
 	[ FEATURE_WAF_V2 ]: {
