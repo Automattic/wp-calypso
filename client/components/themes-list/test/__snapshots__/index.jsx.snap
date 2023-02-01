@@ -14,24 +14,24 @@ exports[`ThemesList should render a div with a className of "themes-list" 1`] = 
     <div />
   </div>
   <div
-    class="themes-list__footer"
+    class="themes-list__more-options"
   >
     <div
-      class="themes-list__footer-heading"
+      class="themes-list__more-options-heading"
     >
       Can't find what you're looking for?
     </div>
     <div
-      class="themes-list__footer-subheading"
+      class="themes-list__more-options-subheading"
     >
       Here are a few more options:
     </div>
     <div
-      class="themes-list__footer-action"
+      class="themes-list__more-options-action"
     >
       <svg
         aria-hidden="true"
-        class="themes-list__footer-action-icon"
+        class="themes-list__more-options-action-icon"
         focusable="false"
         height="28"
         viewBox="0 0 24 24"
@@ -45,24 +45,24 @@ exports[`ThemesList should render a div with a className of "themes-list" 1`] = 
         />
       </svg>
       <div
-        class="themes-list__footer-action-content"
+        class="themes-list__more-options-action-content"
       >
         <div
-          class="themes-list__footer-action-text"
+          class="themes-list__more-options-action-text"
         >
           <div
-            class="themes-list__footer-action-title"
+            class="themes-list__more-options-action-title"
           >
-            Create your own theme from scratch
+            Design your own
           </div>
           <div
-            class="themes-list__footer-action-description"
+            class="themes-list__more-options-action-description"
           >
             Start with a blank canvas and design your own homepage using our library of patterns.
           </div>
         </div>
         <button
-          class="button themes-list__footer-action-button is-primary"
+          class="button themes-list__more-options-action-button is-primary"
           type="button"
         >
           Start designing
@@ -70,11 +70,11 @@ exports[`ThemesList should render a div with a className of "themes-list" 1`] = 
       </div>
     </div>
     <div
-      class="themes-list__footer-action"
+      class="themes-list__more-options-action"
     >
       <svg
         aria-hidden="true"
-        class="themes-list__footer-action-icon"
+        class="themes-list__more-options-action-icon"
         focusable="false"
         height="28"
         viewBox="0 0 24 24"
@@ -86,24 +86,24 @@ exports[`ThemesList should render a div with a className of "themes-list" 1`] = 
         />
       </svg>
       <div
-        class="themes-list__footer-action-content"
+        class="themes-list__more-options-action-content"
       >
         <div
-          class="themes-list__footer-action-text"
+          class="themes-list__more-options-action-text"
         >
           <div
-            class="themes-list__footer-action-title"
+            class="themes-list__more-options-action-title"
           >
             Hire our team of experts to design one for you
           </div>
           <div
-            class="themes-list__footer-action-description"
+            class="themes-list__more-options-action-description"
           >
             A WordPress.com professional will create layouts for up to 5 pages of your site.
           </div>
         </div>
         <a
-          class="button themes-list__footer-action-button"
+          class="button themes-list__more-options-action-button"
           href="https://wordpress.com/do-it-for-me/"
         >
           Hire an expert
@@ -111,11 +111,11 @@ exports[`ThemesList should render a div with a className of "themes-list" 1`] = 
       </div>
     </div>
     <div
-      class="themes-list__footer-action"
+      class="themes-list__more-options-action"
     >
       <svg
         aria-hidden="true"
-        class="themes-list__footer-action-icon"
+        class="themes-list__more-options-action-icon"
         focusable="false"
         height="28"
         viewBox="0 0 24 24"
@@ -127,24 +127,24 @@ exports[`ThemesList should render a div with a className of "themes-list" 1`] = 
         />
       </svg>
       <div
-        class="themes-list__footer-action-content"
+        class="themes-list__more-options-action-content"
       >
         <div
-          class="themes-list__footer-action-text"
+          class="themes-list__more-options-action-text"
         >
           <div
-            class="themes-list__footer-action-title"
+            class="themes-list__more-options-action-title"
           >
             Upload a theme
           </div>
           <div
-            class="themes-list__footer-action-description"
+            class="themes-list__more-options-action-description"
           >
             With a Business plan, you can upload and install third-party themes to your site, including themes from WordPress.org, and even themes you have custom-made for your website.
           </div>
         </div>
         <a
-          class="button themes-list__footer-action-button"
+          class="button themes-list__more-options-action-button"
           href="/start/business"
         >
           Get started
