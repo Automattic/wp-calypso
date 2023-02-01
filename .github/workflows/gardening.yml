@@ -29,11 +29,6 @@ jobs:
        with:
          node-version: ^18.13.0
 
-     - name: Wait for prior instances of the workflow to finish
-       uses: softprops/turnstyle@v1
-       env:
-         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
      - name: 'Run gardening action'
        uses: automattic/action-repo-gardening@trunk
        with:
