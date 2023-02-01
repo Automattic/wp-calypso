@@ -94,18 +94,41 @@ const updatePlugin = function ( state, action ) {
 	return state;
 };
 
-function decodeAllPluginsName( pluginsData ) {
+/**
+ * Helper function that iterates over the allSites object to update the name of the plugins
+ *
+ * @param {Object} allSites Object containing all the sites and their respective plugins
+ * @returns {Object} Object containing all the sites and their respective plugins with decoded names
+ */
+function decodeAllSitePluginsName( allSites ) {
 	return Object.fromEntries(
-		Object.entries( pluginsData ).map( ( [ siteId, pluginItems ] ) => {
-			return [ siteId, decodePluginName( pluginItems ) ];
+		Object.entries( allSites ).map( ( [ siteId, pluginItems ] ) => {
+			return [ siteId, decodeAllPluginsName( pluginItems ) ];
 		} )
 	);
 }
 
-function decodePluginName( pluginData ) {
-	return pluginData.map( ( pluginItem ) => {
-		return { ...pluginItem, name: decodeEntities( pluginItem.name ) };
-	} );
+/**
+ * Helper function that iterates over a list of plugins to update its name if required
+ *
+ * @param {Array} pluginData List of plugin objects
+ * @returns {Array} List of plugin objects with decoded names
+ */
+function decodeAllPluginsName( pluginData ) {
+	return pluginData.map( ( pluginItem ) => decodePluginName( pluginItem ) );
+}
+
+/*
+ * Helper function to decode a plugin's name after a successful plugin action
+ * (multiple action-types are possible)
+ * @param {Object} pluginItem - plugin object
+ * @returns {Object} - plugin object with decoded name
+ */
+function decodePluginName( pluginItem ) {
+	if ( ! pluginItem.name ) {
+		return pluginItem;
+	}
+	return { ...pluginItem, name: decodeEntities( pluginItem.name ) };
 }
 
 /*
@@ -114,10 +137,10 @@ function decodePluginName( pluginData ) {
 export const plugins = withSchemaValidation( pluginsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
 		case PLUGINS_RECEIVE: {
-			return { ...state, [ action.siteId ]: decodePluginName( action.data ) };
+			return { ...state, [ action.siteId ]: decodeAllPluginsName( action.data ) };
 		}
 		case PLUGINS_ALL_RECEIVE: {
-			return decodeAllPluginsName( action.allSitesPlugins );
+			return decodeAllSitePluginsName( action.allSitesPlugins );
 		}
 		case PLUGIN_ACTIVATE_REQUEST_SUCCESS:
 		case PLUGIN_DEACTIVATE_REQUEST_SUCCESS:
@@ -145,8 +168,9 @@ function pluginsForSite( state = [], action ) {
 		case PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS:
 		case PLUGIN_ACTION_STATUS_UPDATE:
 			return state.map( ( p ) => plugin( p, action ) );
-		case PLUGIN_INSTALL_REQUEST_SUCCESS:
-			return [ ...state, action.data ];
+		case PLUGIN_INSTALL_REQUEST_SUCCESS: {
+			return [ ...state, decodePluginName( action.data ) ];
+		}
 		case PLUGIN_REMOVE_REQUEST_SUCCESS:
 			const index = findIndex( state, { id: action.pluginId } );
 			return [ ...state.slice( 0, index ), ...state.slice( index + 1 ) ];
@@ -168,12 +192,17 @@ function plugin( state, action ) {
 			if ( state.id !== action.data.id ) {
 				return state;
 			}
-			return Object.assign( {}, state, action.data );
+			return Object.assign( {}, state, decodePluginName( action.data ) );
 		case PLUGIN_UPDATE_REQUEST_SUCCESS:
 			if ( state.id !== action.data.id ) {
 				return state;
 			}
-			return Object.assign( {}, state, { update: { recentlyUpdated: true } }, action.data );
+			return Object.assign(
+				{},
+				state,
+				{ update: { recentlyUpdated: true } },
+				decodePluginName( action.data )
+			);
 		default:
 			return state;
 	}

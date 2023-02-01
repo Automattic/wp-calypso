@@ -161,6 +161,18 @@ describe( 'reducer:', () => {
 			expect( state ).toEqual( { 'one.site': [ akismet, jetpack ] } );
 		} );
 
+		test( 'should load a new plugin when installed with name html decoded', () => {
+			const originalState = deepFreeze( { 'one.site': [] } );
+			const state = plugins( originalState, {
+				type: PLUGIN_INSTALL_REQUEST_SUCCESS,
+				siteId: 'one.site',
+				pluginId: healthCheck.id,
+				data: healthCheck,
+			} );
+			const statePluginName = state[ 'one.site' ][ 0 ].name;
+			expect( statePluginName ).toEqual( 'Health Check & Troubleshooting' );
+		} );
+
 		test( 'should remove an existing plugin when deleted', () => {
 			const originalState = deepFreeze( { 'one.site': [ akismet, jetpack ] } );
 			const state = plugins( originalState, {

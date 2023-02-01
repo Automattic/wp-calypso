@@ -77,5 +77,6 @@ export const jetpackUpdated = {
 };
 
 export const healthCheck = {
+	id: 'health-check/health-check',
 	name: 'Health Check &amp; Troubleshooting',
 };
