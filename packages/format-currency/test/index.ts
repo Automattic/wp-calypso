@@ -163,8 +163,10 @@ describe( 'formatCurrency', () => {
 				integer: '0',
 				fraction: '.00',
 				sign: '',
+				hasNonZeroFraction: false,
 			} );
 		} );
+
 		test( 'handles negative values', () => {
 			const money = getCurrencyObject( -1234.56789, 'USD' );
 			expect( money ).toEqual( {
@@ -173,8 +175,10 @@ describe( 'formatCurrency', () => {
 				integer: '1,234',
 				fraction: '.57',
 				sign: '-',
+				hasNonZeroFraction: true,
 			} );
 		} );
+
 		test( 'handles values that round up', () => {
 			const money = getCurrencyObject( 9.99876, 'USD' );
 			expect( money ).toEqual( {
@@ -183,8 +187,10 @@ describe( 'formatCurrency', () => {
 				integer: '10',
 				fraction: '.00',
 				sign: '',
+				hasNonZeroFraction: false,
 			} );
 		} );
+
 		test( 'handles values that round down', () => {
 			const money = getCurrencyObject( 9.99432, 'USD' );
 			expect( money ).toEqual( {
@@ -193,6 +199,7 @@ describe( 'formatCurrency', () => {
 				integer: '9',
 				fraction: '.99',
 				sign: '',
+				hasNonZeroFraction: true,
 			} );
 		} );
 
@@ -204,6 +211,7 @@ describe( 'formatCurrency', () => {
 				integer: '99',
 				fraction: '.32',
 				sign: '',
+				hasNonZeroFraction: true,
 			} );
 		} );
 
@@ -215,6 +223,7 @@ describe( 'formatCurrency', () => {
 				integer: '9,932',
 				fraction: '',
 				sign: '',
+				hasNonZeroFraction: false,
 			} );
 		} );
 
@@ -226,6 +235,7 @@ describe( 'formatCurrency', () => {
 				integer: '99',
 				fraction: '.32',
 				sign: '',
+				hasNonZeroFraction: true,
 			} );
 		} );
 
@@ -238,8 +248,10 @@ describe( 'formatCurrency', () => {
 					integer: '9,800,900',
 					fraction: '.32',
 					sign: '',
+					hasNonZeroFraction: true,
 				} );
 			} );
+
 			test( 'AUD', () => {
 				const money = getCurrencyObject( 9800900.32, 'AUD' );
 				expect( money ).toEqual( {
@@ -248,8 +260,10 @@ describe( 'formatCurrency', () => {
 					integer: '9,800,900',
 					fraction: '.32',
 					sign: '',
+					hasNonZeroFraction: true,
 				} );
 			} );
+
 			test( 'CAD', () => {
 				const money = getCurrencyObject( 9800900.32, 'CAD', { locale: 'en-US' } );
 				expect( money ).toEqual( {
@@ -258,8 +272,10 @@ describe( 'formatCurrency', () => {
 					integer: '9,800,900',
 					fraction: '.32',
 					sign: '',
+					hasNonZeroFraction: true,
 				} );
 			} );
+
 			test( 'EUR', () => {
 				const money = getCurrencyObject( 9800900.32, 'EUR', { locale: 'de-DE' } );
 				expect( money ).toEqual( {
@@ -268,8 +284,10 @@ describe( 'formatCurrency', () => {
 					integer: '9.800.900',
 					fraction: ',32',
 					sign: '',
+					hasNonZeroFraction: true,
 				} );
 			} );
+
 			test( 'GBP', () => {
 				const money = getCurrencyObject( 9800900.32, 'GBP' );
 				expect( money ).toEqual( {
@@ -278,8 +296,10 @@ describe( 'formatCurrency', () => {
 					integer: '9,800,900',
 					fraction: '.32',
 					sign: '',
+					hasNonZeroFraction: true,
 				} );
 			} );
+
 			test( 'JPY', () => {
 				const money = getCurrencyObject( 9800900.32, 'JPY' );
 				expect( money ).toEqual( {
@@ -288,8 +308,10 @@ describe( 'formatCurrency', () => {
 					integer: '9,800,900',
 					fraction: '',
 					sign: '',
+					hasNonZeroFraction: false,
 				} );
 			} );
+
 			test( 'BRL', () => {
 				const money = getCurrencyObject( 9800900.32, 'BRL', { locale: 'pt-BR' } );
 				expect( money ).toEqual( {
@@ -298,6 +320,7 @@ describe( 'formatCurrency', () => {
 					integer: '9.800.900',
 					fraction: ',32',
 					sign: '',
+					hasNonZeroFraction: true,
 				} );
 			} );
 		} );

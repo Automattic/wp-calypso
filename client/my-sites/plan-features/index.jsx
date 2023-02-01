@@ -57,7 +57,6 @@ import {
 	getPlanSlug,
 	getDiscountedRawPrice,
 } from 'calypso/state/plans/selectors';
-import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -69,6 +68,7 @@ import {
 	getPlansBySiteId,
 	isCurrentUserCurrentPlanOwner,
 } from 'calypso/state/sites/plans/selectors';
+import isPlanAvailableForPurchase from 'calypso/state/sites/plans/selectors/is-plan-available-for-purchase';
 import {
 	getSitePlan,
 	getSiteSlug,
@@ -81,6 +81,7 @@ import PlanFeaturesHeader from './header';
 import PlanFeaturesItem from './item';
 import PlanFeaturesActionsWrapper from './plan-features-action-wrapper';
 import PlanFeaturesScroller from './scroller';
+
 import './style.scss';
 
 const noop = () => {};
@@ -949,9 +950,8 @@ const ConnectedPlanFeatures = connect(
 				const isLoadingSitePlans = selectedSiteId && ! sitePlans.hasLoadedFromServer;
 				const isMonthlyPlan = isMonthly( plan );
 				const showMonthly = ! isMonthlyPlan;
-				const availableForPurchase = isInSignup
-					? true
-					: canUpgradeToPlan( state, selectedSiteId, plan ) && canPurchase;
+				const availableForPurchase =
+					isInSignup || isPlanAvailableForPurchase( state, selectedSiteId, plan );
 				const relatedMonthlyPlan = showMonthly
 					? getPlanBySlug( state, getMonthlyPlanByYearly( plan ) )
 					: null;

@@ -47,13 +47,27 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	free: () => import( /* webpackChunkName: "free-flow" */ '../declarative-flow/free' ),
 
+	'site-assembler': () =>
+		import( /* webpackChunkName: "site-assembler-flow" */ './site-assembler-flow' ),
+
 	'free-post-setup': () =>
 		import( /* webpackChunkName: "free-post-setup-flow" */ '../declarative-flow/free-post-setup' ),
+
+	build: () => import( /* webpackChunkName: "build-flow" */ '../declarative-flow/build' ),
+	write: () => import( /* webpackChunkName: "write-flow" */ '../declarative-flow/write' ),
 };
 
-if ( config.isEnabled( 'themes/plugin-bundling' ) ) {
-	availableFlows[ 'plugin-bundle' ] = () =>
-		import( /* webpackChunkName: "plugin-bundle-flow" */ '../declarative-flow/plugin-bundle-flow' );
+availableFlows[ 'plugin-bundle' ] = () =>
+	import( /* webpackChunkName: "plugin-bundle-flow" */ '../declarative-flow/plugin-bundle-flow' );
+
+if ( config.isEnabled( 'sensei/onboarding' ) ) {
+	availableFlows[ 'sensei' ] = () =>
+		import( /* webpackChunkName: "sensei-flow" */ '../declarative-flow/sensei' );
+}
+
+if ( config.isEnabled( 'sites/copy-site' ) ) {
+	availableFlows[ 'copy-site' ] = () =>
+		import( /* webpackChunkName: "copy-site" */ '../declarative-flow/copy-site' );
 }
 
 export default availableFlows;

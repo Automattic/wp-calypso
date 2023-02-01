@@ -1,6 +1,12 @@
 import { FEATURE_VIDEO_UPLOADS, planHasFeature } from '@automattic/calypso-products';
 import { DEVICE_TYPES } from '@automattic/components';
-import { FREE_FLOW, NEWSLETTER_FLOW } from '@automattic/onboarding';
+import {
+	FREE_FLOW,
+	NEWSLETTER_FLOW,
+	BUILD_FLOW,
+	WRITE_FLOW,
+	SENSEI_FLOW,
+} from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import WebPreview from 'calypso/components/web-preview/component';
@@ -22,6 +28,7 @@ const LaunchpadSitePreview = ( {
 	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles();
 	const site = useSite();
 	const isInVideoPressFlow = isVideoPressFlow( flow );
+	const isSenseiFlow = SENSEI_FLOW === flow;
 
 	let previewUrl = siteSlug ? 'https://' + siteSlug : null;
 	const devicesToShow: Device[] = [ DEVICE_TYPES.COMPUTER, DEVICE_TYPES.PHONE ];
@@ -30,7 +37,7 @@ const LaunchpadSitePreview = ( {
 		components: { strong: <strong /> },
 	} );
 
-	if ( isInVideoPressFlow ) {
+	if ( isInVideoPressFlow || isSenseiFlow ) {
 		const windowWidth = window.innerWidth;
 		defaultDevice = windowWidth >= 1000 ? DEVICE_TYPES.COMPUTER : DEVICE_TYPES.PHONE;
 		const productSlug = site?.plan?.product_slug;
@@ -77,6 +84,10 @@ const LaunchpadSitePreview = ( {
 				return DEVICE_TYPES.COMPUTER;
 			case FREE_FLOW:
 				return DEVICE_TYPES.COMPUTER;
+			case BUILD_FLOW:
+				return DEVICE_TYPES.COMPUTER;
+			case WRITE_FLOW:
+				return DEVICE_TYPES.COMPUTER;
 			default:
 				return DEVICE_TYPES.PHONE;
 		}
@@ -102,6 +113,7 @@ const LaunchpadSitePreview = ( {
 				defaultViewportDevice={ defaultDevice }
 				devicesToShow={ devicesToShow }
 				showSiteAddressBar={ false }
+				enableEditOverlay
 			/>
 		</div>
 	);

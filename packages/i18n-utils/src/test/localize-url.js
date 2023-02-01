@@ -179,6 +179,30 @@ describe( '#localizeUrl', () => {
 		);
 	} );
 
+	test( 'go blog url', () => {
+		expect( localizeUrl( 'https://wordpress.com/go/', 'en' ) ).toEqual(
+			'https://wordpress.com/go/'
+		);
+		// Locales without a Go blog.
+		expect( localizeUrl( 'https://wordpress.com/go/', 'sv' ) ).toEqual(
+			'https://wordpress.com/go/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/go/', 'pl' ) ).toEqual(
+			'https://wordpress.com/go/'
+		);
+		// Locales with a Go blog.
+		expect( localizeUrl( 'https://wordpress.com/go/', 'pt-br' ) ).toEqual(
+			'https://wordpress.com/pt-br/go/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/go/', 'es' ) ).toEqual(
+			'https://wordpress.com/es/go/'
+		);
+		// Don't rewrite specific posts.
+		expect( localizeUrl( 'https://wordpress.com/go/category/test/', 'pt-br' ) ).toEqual(
+			'https://wordpress.com/go/category/test/'
+		);
+	} );
+
 	test( 'support url', () => {
 		expect( localizeUrl( 'https://en.support.wordpress.com/', 'en' ) ).toEqual(
 			'https://wordpress.com/support/'

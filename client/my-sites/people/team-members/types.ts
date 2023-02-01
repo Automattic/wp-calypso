@@ -1,15 +1,10 @@
-import { UserData as User } from 'calypso/lib/user/user';
+import type { Member, UseQuery } from '../types';
 
 export type UsersQueryData = {
-	users: User[];
+	users: Member[];
 	total: number;
 };
 
 export type UsersQuery = {
 	data?: UsersQueryData;
-	hasNextPage: boolean;
-	refetch: () => void;
-	fetchNextPage: () => void;
-	isLoading: boolean;
-	isFetchingNextPage: boolean;
-};
+} & UseQuery;

@@ -3,7 +3,7 @@ import isJetpackConnectionPluginActive from './is-jetpack-connection-plugin-acti
 /**
  * Returns true if site has the Jetpack Search Plugin active, false if it is not active
  *
- * @param  {object}   state  Global state tree
+ * @param  {Object}   state  Global state tree
  * @param  {?number}   siteId Site ID
  * @returns {?boolean}        Whether site has the Jetpack Search plugin active
  */

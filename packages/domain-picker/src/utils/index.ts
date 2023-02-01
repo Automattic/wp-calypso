@@ -25,7 +25,7 @@ export function mockDomainSuggestion(
 /**
  * Get the suggestions vendor
  *
- * @param {object} [options={}] Options to determine the suggestion vendor
+ * @param {Object} [options={}] Options to determine the suggestion vendor
  * @param {boolean} [options.isSignup=false] Flag to indicate that we're in a signup context
  * @param {boolean} [options.isDomainOnly=false] Flag to indicate that we're in a domain-only context
  * @param {boolean} [options.isPremium=false] Flag to show premium domains.

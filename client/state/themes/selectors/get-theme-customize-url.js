@@ -7,7 +7,7 @@ import 'calypso/state/themes/init';
 /**
  * Returns the URL for opening the customizer with the given theme on the given site.
  *
- * @param  {object}   state   Global state tree
+ * @param  {Object}   state   Global state tree
  * @param  {string}   themeId Theme ID
  * @param  {?number}  siteId  Site ID to open the customizer for
  * @returns {?string}          Customizer URL

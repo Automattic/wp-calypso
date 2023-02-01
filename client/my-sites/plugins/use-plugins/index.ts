@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
 import { Plugin } from 'calypso/data/marketplace/types';
 import { useESPluginsInfinite } from 'calypso/data/marketplace/use-es-query';
 import {
@@ -27,23 +26,6 @@ interface WPCOMResponse {
 	data?: Plugin[];
 	isLoading: boolean;
 	fetchNextPage?: () => void;
-}
-
-/**
- * Multiply the wpcom rating to match the wporg value.
- * wpcom rating is from 1 to 5 while wporg is from 1 to 100.
- *
- * @param plugin
- * @returns
- */
-function updateWpComRating( plugin: Plugin ) {
-	if ( ! plugin || ! plugin.rating ) {
-		return plugin;
-	}
-
-	plugin.rating *= 20;
-
-	return plugin;
 }
 
 const WPCOM_CATEGORIES_BLOCKLIST = [ 'popular' ];
@@ -93,7 +75,7 @@ const usePlugins = ( {
 			!! ( search || ! WPORG_CATEGORIES_BLOCKLIST.includes( category || '' ) ) && wporgEnabled,
 	} ) as WPORGResponse;
 
-	const { data: wpcomPluginsRaw = [], isLoading: isFetchingDotCom } = useWPCOMPluginsList(
+	const { data: dotComPlugins = [], isLoading: isFetchingDotCom } = useWPCOMPluginsList(
 		'all',
 		search,
 		tag,
@@ -102,20 +84,10 @@ const usePlugins = ( {
 		}
 	) as WPCOMResponse;
 
-	const { data: featuredPluginsRaw = [], isLoading: isFetchingDotComFeatured } =
+	const { data: featuredPlugins = [], isLoading: isFetchingDotComFeatured } =
 		useWPCOMFeaturedPlugins( {
 			enabled: category === 'featured' && wpcomEnabled,
 		} ) as WPCOMResponse;
-
-	const featuredPlugins = useMemo(
-		() => ( featuredPluginsRaw as Plugin[] ).map( updateWpComRating ),
-		[ featuredPluginsRaw ]
-	);
-
-	const dotComPlugins = useMemo(
-		() => ( wpcomPluginsRaw as Plugin[] ).map( updateWpComRating ),
-		[ wpcomPluginsRaw ]
-	);
 
 	switch ( category ) {
 		case 'paid':

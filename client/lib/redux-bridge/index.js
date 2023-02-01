@@ -7,7 +7,7 @@ export function setReduxStore( store ) {
 /**
  * Dispatch an action against the current redux store
  *
- * @returns {any} Result of the dispatch
+ * @returns {undefined} Result of the dispatch
  */
 export function reduxDispatch( ...args ) {
 	if ( ! reduxStore ) {

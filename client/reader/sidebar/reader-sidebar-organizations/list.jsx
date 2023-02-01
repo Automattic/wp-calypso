@@ -3,12 +3,11 @@ import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import AutomatticLogo from 'calypso/assets/images/icons/a8c-logo.svg';
-import P2Logo from 'calypso/assets/images/icons/p2-logo.svg';
 import Count from 'calypso/components/count';
-import SVGIcon from 'calypso/components/svg-icon';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import SidebarItem from 'calypso/layout/sidebar/item';
+import ReaderA8cIcon from 'calypso/reader/components/icons/a8c-icon';
+import ReaderP2Icon from 'calypso/reader/components/icons/p2-icon';
 import ReaderSidebarHelper from 'calypso/reader/sidebar/helper';
 import { toggleReaderSidebarOrganization } from 'calypso/state/reader-ui/sidebar/actions';
 import { isOrganizationOpen } from 'calypso/state/reader-ui/sidebar/selectors';
@@ -32,9 +31,9 @@ export class ReaderSidebarOrganizationsList extends Component {
 	renderIcon() {
 		const { organization } = this.props;
 		if ( organization.id === AUTOMATTIC_ORG_ID ) {
-			return <SVGIcon name="a8c-logo" icon={ AutomatticLogo } classes="sidebar__menu-icon" />;
+			return <ReaderA8cIcon />;
 		}
-		return <SVGIcon name="p2-logo" icon={ P2Logo } classes="sidebar__menu-icon" />;
+		return <ReaderP2Icon />;
 	}
 
 	renderAll() {

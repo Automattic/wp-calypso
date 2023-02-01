@@ -17,7 +17,7 @@ export default class MeTwoStepSMS {
 	/**
 	 * Sends a two-step code via SMS to the current user.
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */

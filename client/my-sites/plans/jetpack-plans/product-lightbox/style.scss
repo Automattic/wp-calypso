@@ -545,3 +545,20 @@ p.product-lightbox__included-product-list-item-description span {
 	color: var(--color-neutral-100);
 	border: 1px solid var(--color-neutral-100);
 }
+
+.inactive {
+	border: none;
+}
+
+// Visually hidden, but acccessible
+.jetpack-products-with-variants {
+	position: absolute !important;
+	width: 1px !important;
+	height: 1px !important;
+	padding: 0 !important;
+	margin: -1px !important;
+	overflow: hidden !important;
+	clip: rect(0, 0, 0, 0) !important;
+	white-space: nowrap !important;
+	border: 0 !important;
+}

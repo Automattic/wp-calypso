@@ -497,6 +497,7 @@ const sections = [
 		module: 'calypso/jetpack-cloud/sections/pricing',
 		group: 'jetpack-cloud',
 		enableLoggedOut: true,
+		isomorphic: true,
 		links: [
 			{
 				rel: 'stylesheet',
@@ -510,6 +511,7 @@ const sections = [
 		module: 'calypso/jetpack-cloud/sections/comparison',
 		group: 'jetpack-cloud',
 		enableLoggedOut: true,
+		isomorphic: true,
 	},
 	{
 		name: 'jetpack-search',

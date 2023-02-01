@@ -19,7 +19,9 @@ export const start = async (
 	}: { fullPageLoad?: boolean; collectors?: Collector[] } = {}
 ): Promise< void > => {
 	// There is a report in progress for this key, ignore this second call.
-	if ( inFlightReporters.has( id ) ) return;
+	if ( inFlightReporters.has( id ) ) {
+		return;
+	}
 
 	const report = fullPageLoad
 		? ReportImpl.fromPageStart( id, collectors )
@@ -42,7 +44,9 @@ export const stop = async (
 	const existingReport = inFlightReporters.get( id );
 
 	// There is no in progress report with the key, fail silently to avoid messing with the rendering
-	if ( ! existingReport ) return false;
+	if ( ! existingReport ) {
+		return false;
+	}
 
 	inFlightReporters.delete( id );
 

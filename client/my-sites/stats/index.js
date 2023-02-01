@@ -14,7 +14,7 @@ import {
 	redirectToDefaultModulePage,
 	redirectToDefaultSitePage,
 	redirectToDefaultWordAdsPeriod,
-	emailOpen,
+	emailStats,
 } from './controller';
 
 import './style.scss';
@@ -26,7 +26,7 @@ const statsPage = ( url, controller ) => {
 
 export default function () {
 	const validPeriods = [ 'day', 'week', 'month', 'year' ].join( '|' );
-	const validEmailPeriods = [ 'hour', 'day', 'week', 'month', 'year' ].join( '|' );
+	const validEmailPeriods = [ 'hour', 'day' ].join( '|' );
 
 	const validModules = [
 		'posts',
@@ -81,7 +81,10 @@ export default function () {
 
 	// Email stats Pages
 	if ( config.isEnabled( 'newsletter/stats' ) ) {
-		statsPage( `/stats/email/open/:site/:period(${ validEmailPeriods })/:email_id`, emailOpen );
+		statsPage(
+			`/stats/email/:statType/:period(${ validEmailPeriods })/:email_id/:site`,
+			emailStats
+		);
 	}
 
 	// Anything else should redirect to default stats page

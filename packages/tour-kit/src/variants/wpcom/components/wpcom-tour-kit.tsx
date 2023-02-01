@@ -14,7 +14,7 @@ const WpcomTourKit: React.FunctionComponent< Props > = ( { config } ) => {
 
 	return (
 		<TourKit
-			__temp__className={ 'wpcom-tour-kit' }
+			__temp__className="wpcom-tour-kit"
 			config={ {
 				...config,
 				renderers: {

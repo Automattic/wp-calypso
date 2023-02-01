@@ -110,6 +110,11 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 								tagline: translate( 'Connect with your people' ),
 								href: 'https://jetpackcrm.com/?utm_medium=automattic_referred&utm_source=jpcom_header',
 							},
+							{
+								label: translate( 'Blaze' ),
+								tagline: translate( 'Advertise your best content' ),
+								href: `${ JETPACK_COM_BASE_URL }/blaze/`,
+							},
 						],
 					},
 				],
@@ -133,6 +138,31 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 		],
 		[ translate ]
 	);
+	const bundles = useMemo(
+		() => ( {
+			label: translate( 'Bundles' ),
+			items: [
+				{
+					label: translate( 'Complete' ),
+					tagline: translate( 'The ultimate toolkit' ),
+					href: `${ JETPACK_COM_BASE_URL }/complete/`,
+				},
+				{
+					label: translate( 'Security' ),
+					tagline: translate( 'Comprehensive site security' ),
+					href: `${ JETPACK_COM_BASE_URL }/features/security/`,
+				},
+			],
+		} ),
+		[ translate ]
+	);
+
+	const appsLink = {
+		categoryLabel: translate( 'Android and iOS' ),
+		label: translate( 'Mobile app' ),
+		tagline: translate( 'Put your site in your pocket' ),
+		href: `${ JETPACK_COM_BASE_URL }/mobile/`,
+	};
 
 	const shouldShowCart = useSelector( isJetpackCloudCartEnabled );
 
@@ -269,6 +299,59 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 																		</li>
 																	) ) }
 																</ul>
+
+																<hr className="header__submenu-section-separator" />
+
+																<div className="header__submenu-bottom-section">
+																	<div className="header__submenu-bundles">
+																		<p className="header__submenu-category-heading">
+																			{ bundles.label }
+																		</p>
+
+																		<ul className="header__submenu-links-list">
+																			{ bundles.items.map( ( { label, tagline, href } ) => {
+																				return (
+																					<li key={ `bundles-${ href }` }>
+																						<ExternalLink
+																							className="header__submenu-link"
+																							href={ localizeUrl( href, locale ) }
+																							onClick={ onLinkClick }
+																						>
+																							<span className="header__submenu-label">
+																								{ label }
+																							</span>
+																							<span className="header__submenu-tagline">
+																								{ tagline }
+																							</span>
+																						</ExternalLink>
+																					</li>
+																				);
+																			} ) }
+																		</ul>
+																	</div>
+																	<div className="header__submenu-apps-wrapper">
+																		<p className="header__submenu-category-heading">
+																			{ appsLink.categoryLabel }
+																		</p>
+
+																		<ul className="header__submenu-links-list">
+																			<li>
+																				<ExternalLink
+																					className="header__submenu-link"
+																					href={ localizeUrl( appsLink.href, locale ) }
+																					onClick={ onLinkClick }
+																				>
+																					<span className="header__submenu-label">
+																						{ appsLink.label }
+																					</span>
+																					<span className="header__submenu-tagline">
+																						{ appsLink.tagline }
+																					</span>
+																				</ExternalLink>
+																			</li>
+																		</ul>
+																	</div>
+																</div>
 															</div>
 														</div>
 													) }

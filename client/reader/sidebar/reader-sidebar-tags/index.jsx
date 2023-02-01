@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import QueryReaderFollowedTags from 'calypso/components/data/query-reader-followed-tags';
 import FormTextInputWithAction from 'calypso/components/forms/form-text-input-with-action';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
+import ReaderTagIcon from 'calypso/reader/components/icons/tag-icon';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { requestFollowTag } from 'calypso/state/reader/tags/items/actions';
@@ -52,7 +53,7 @@ export class ReaderSidebarTags extends Component {
 					expanded={ isOpen }
 					title={ translate( 'Tags' ) }
 					onClick={ onClick }
-					materialIcon="local_offer"
+					customIcon={ <ReaderTagIcon /> }
 					disableFlyout={ true }
 					className={ path.startsWith( '/tag' ) && 'sidebar__menu--selected' }
 				>

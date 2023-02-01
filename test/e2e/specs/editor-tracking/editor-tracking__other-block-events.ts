@@ -70,6 +70,10 @@ describe(
 				);
 				expect( eventDidFire ).toBe( true );
 			} );
+
+			it( 'Close the page', async function () {
+				await page.close();
+			} );
 		} );
 
 		describe( '"wpcom_block_deleted"', function () {
@@ -95,6 +99,10 @@ describe(
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 			} );
 
+			it( 'Close the navigation sidebar', async function () {
+				await fullSiteEditorPage.closeNavSidebar();
+			} );
+
 			it( 'Add a Pullquote block', async function () {
 				await fullSiteEditorPage.addBlockFromSidebar(
 					'Pullquote',
@@ -110,6 +118,10 @@ describe(
 			it( '"wpcom_block_deleted" event fires', async function () {
 				const eventDidFire = await editorTracksEventManager.didEventFire( 'wpcom_block_deleted' );
 				expect( eventDidFire ).toBe( true );
+			} );
+
+			it( 'Close the page', async function () {
+				await page.close();
 			} );
 		} );
 	}

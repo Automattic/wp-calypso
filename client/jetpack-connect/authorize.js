@@ -291,6 +291,8 @@ export class JetpackAuthorize extends Component {
 		} else if ( this.isFromJetpackBackupPlugin() && ! siteHasBackups ) {
 			debug( `Redirecting directly to cart with ${ PRODUCT_JETPACK_BACKUP_T1_YEARLY } in cart.` );
 			navigate( `/checkout/${ urlToSlug( homeUrl ) }/${ PRODUCT_JETPACK_BACKUP_T1_YEARLY }` );
+		} else if ( this.isFromJetpackMigration() ) {
+			navigate( `/setup/import-focused/siteCreationStep?from=${ urlToSlug( homeUrl ) }` );
 		} else {
 			const redirectionTarget = this.getRedirectionTarget();
 			debug( `Redirecting to: ${ redirectionTarget }` );
@@ -337,7 +339,7 @@ export class JetpackAuthorize extends Component {
 	/**
 	 * Check whether this a valid authorized SSO request
 	 *
-	 * @param  {object}  props          Props to test
+	 * @param  {Object}  props          Props to test
 	 * @param  {?string} props.authQuery.from     Where is the request from
 	 * @param  {?number} props.authQuery.clientId Remote site ID
 	 * @returns {boolean}                True if it's a valid SSO request otherwise false
@@ -350,7 +352,7 @@ export class JetpackAuthorize extends Component {
 	/**
 	 * Check if the user is coming from the Jetpack upgrade flow.
 	 *
-	 * @param  {object}  props           Props to test
+	 * @param  {Object}  props           Props to test
 	 * @param  {?string} props.authQuery.redirectAfterAuth Where were we redirected after auth.
 	 * @returns {boolean}                True if the user is coming from the Jetpack upgrade flow, false otherwise.
 	 */
@@ -414,6 +416,11 @@ export class JetpackAuthorize extends Component {
 	isJetpackPartnerCoupon( props = this.props ) {
 		const { from } = props.authQuery;
 		return startsWith( from, 'jetpack-partner-coupon' );
+	}
+
+	isFromJetpackMigration( props = this.props ) {
+		const { from } = props.authQuery;
+		return startsWith( from, 'jetpack-migration' );
 	}
 
 	shouldRedirectJetpackStart( props = this.props ) {

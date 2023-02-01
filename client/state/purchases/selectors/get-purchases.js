@@ -6,7 +6,7 @@ import 'calypso/state/purchases/init';
 /**
  * Return the list of purchases from state object
  *
- * @param   {object} state - current state object
+ * @param   {Object} state - current state object
  * @returns {Array} Purchases
  */
 export const getPurchases = createSelector(

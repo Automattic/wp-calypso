@@ -3,6 +3,7 @@ import {
 	LINK_IN_BIO_TLD_FLOW,
 	NEWSLETTER_FLOW,
 	VIDEOPRESS_FLOW,
+	SENSEI_FLOW,
 	FREE_FLOW,
 } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
@@ -34,14 +35,21 @@ export function getLaunchpadTranslations( flow: string | null ): TranslatedLaunc
 			break;
 		case FREE_FLOW:
 			translatedStrings.flowName = translate( 'Free Website' );
-			translatedStrings.title = translate( 'Your website is almost ready!' );
-			translatedStrings.launchTitle = translate( 'Your website is almost ready!' );
-			translatedStrings.subtitle = translate( 'Keep the momentum going with these final steps.' );
+			translatedStrings.title = translate( "Your new site's ready!" );
+			translatedStrings.launchTitle = translate( "Your new site's ready!" );
+			translatedStrings.subtitle = translate(
+				'Launch it to the world. Or add some finishing touches. (You can come back to make changes any time.)'
+			);
 			break;
 		case VIDEOPRESS_FLOW:
 			translatedStrings.flowName = translate( 'Video' );
 			translatedStrings.title = translate( 'Your site is almost ready!' );
 			translatedStrings.launchTitle = translate( 'Your site is almost ready!' );
+			break;
+		case SENSEI_FLOW:
+			translatedStrings.flowName = translate( 'Sensei' );
+			translatedStrings.title = translate( 'Your Course Site is ready to launch!' );
+			translatedStrings.launchTitle = translate( 'Your Course Site is ready to launch!' );
 			break;
 	}
 

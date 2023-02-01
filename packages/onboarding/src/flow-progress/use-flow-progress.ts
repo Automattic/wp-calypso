@@ -1,4 +1,10 @@
-import { ECOMMERCE_FLOW, LINK_IN_BIO_FLOW, LINK_IN_BIO_TLD_FLOW, FREE_FLOW } from '../utils/flows';
+import {
+	ECOMMERCE_FLOW,
+	LINK_IN_BIO_FLOW,
+	LINK_IN_BIO_TLD_FLOW,
+	FREE_FLOW,
+	COPY_SITE_FLOW,
+} from '../utils/flows';
 
 /* eslint-disable no-restricted-imports */
 interface FlowProgress {
@@ -50,6 +56,12 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		processing: 6,
 		launchpad: 7,
 	},
+	sensei: {
+		senseiSetup: 1,
+		senseiDomain: 2,
+		senseiPlan: 3,
+		senseiLaunch: 4,
+	},
 	[ ECOMMERCE_FLOW ]: {
 		intro: 0,
 		storeProfiler: 1,
@@ -60,6 +72,13 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		waitForAtomic: 4,
 		checkPlan: 4,
 		storeAddress: 5,
+	},
+	[ COPY_SITE_FLOW ]: {
+		domains: 0,
+		'site-creation-step': 1,
+		processing: 2,
+		'automated-copy': 3,
+		'processing-copy': 3,
 	},
 };
 

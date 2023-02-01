@@ -1,0 +1,37 @@
+@import "@automattic/typography/styles/variables";
+.mini-carousel-block {
+	display: flex;
+	align-items: center;
+	margin-top: 16px;
+
+	@include breakpoint-deprecated( "<660px" ) {
+		flex-direction: column;
+		align-items: start;
+	}
+
+	&__content {
+		flex: 1;
+		margin: 0 1rem;
+
+		@include breakpoint-deprecated( "<660px" ) {
+			margin: 16px 0;
+		}
+	}
+
+	&__content-text {
+		margin: 0;
+		@include breakpoint-deprecated( "<660px" ) {
+			margin-top: 16px;
+		}
+	}
+
+	&__close-button {
+		border: 0 !important;
+		font-size: $font-body-extra-small !important;
+	}
+
+	&__close-button-icon {
+		vertical-align: middle;
+		margin-top: -4px;
+	}
+}

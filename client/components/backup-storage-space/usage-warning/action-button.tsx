@@ -2,8 +2,8 @@ import { Button } from '@wordpress/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
+import { StorageUsageLevelName } from 'calypso/state/rewind/storage/types';
 import useStorageStatusText from './use-storage-status-text';
-import type { StorageUsageLevelName } from '../storage-usage-levels';
 
 type OwnProps = {
 	className?: string;
@@ -13,6 +13,8 @@ type OwnProps = {
 	storage: React.ReactChild;
 	onClick?: React.MouseEventHandler;
 	price: JSX.Element;
+	daysOfBackupsSaved: number;
+	minDaysOfBackupsAllowed: number;
 };
 
 const ActionButton: React.FC< OwnProps > = ( {
@@ -22,8 +24,14 @@ const ActionButton: React.FC< OwnProps > = ( {
 	storage,
 	onClick,
 	price,
+	daysOfBackupsSaved,
+	minDaysOfBackupsAllowed,
 } ) => {
-	const storageStatusText = useStorageStatusText( usageLevel );
+	const storageStatusText = useStorageStatusText(
+		usageLevel,
+		daysOfBackupsSaved,
+		minDaysOfBackupsAllowed
+	);
 
 	const hasClickableAction = Boolean( href || onClick );
 	const translate = useTranslate();

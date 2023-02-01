@@ -57,6 +57,8 @@ const useSiteMenuItems = () => {
 
 	const hasSiteWithPlugins = useSelector( canAnySiteHavePlugins );
 
+	const hasUnifiedImporter = isEnabled( 'importer/unified' );
+
 	/**
 	 * When no site domain is provided, lets show only menu items that support all sites screens.
 	 */
@@ -68,7 +70,7 @@ const useSiteMenuItems = () => {
 	 * When we have a jetpack connected site & we cannot retrieve the dynamic menu from that site.
 	 */
 	if ( isJetpack && ! isAtomic && ! menuItems ) {
-		return jetpackMenu( { siteDomain } );
+		return jetpackMenu( { siteDomain, hasUnifiedImporter } );
 	}
 
 	/**

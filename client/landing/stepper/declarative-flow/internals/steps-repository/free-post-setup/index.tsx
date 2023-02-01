@@ -8,8 +8,8 @@ import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
 import SetupForm from '../components/setup-form';
+import useSetupFormInitialValues from '../components/setup-form/hooks/use-setup-form-initial-values';
 import type { Step } from '../../types';
-
 import '../free-setup/styles.scss';
 
 const FreePostSetup: Step = ( { navigation } ) => {
@@ -25,19 +25,13 @@ const FreePostSetup: Step = ( { navigation } ) => {
 	};
 
 	const [ invalidSiteTitle, setInvalidSiteTitle ] = useState( false );
-	const [ siteTitle, setComponentSiteTitle ] = useState( '' );
-	const [ tagline, setTagline ] = useState( '' );
 	const [ base64Image, setBase64Image ] = useState< string | null >();
 	const [ selectedFile, setSelectedFile ] = useState< File | undefined >();
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isSubmitError, setIsSubmitError ] = useState( false );
-
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
 
-	useEffect( () => {
-		setComponentSiteTitle( site?.name || '' );
-		setTagline( site?.description || '' );
-	}, [ site ] );
+	const { siteTitle, setComponentSiteTitle, tagline, setTagline } = useSetupFormInitialValues();
 
 	useEffect( () => {
 		setIsSubmitError( false );

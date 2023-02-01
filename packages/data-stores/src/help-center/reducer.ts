@@ -67,6 +67,15 @@ const message: Reducer< string | undefined, HelpCenterAction > = ( state, action
 	return state;
 };
 
+const chatTag: Reducer< string | undefined, HelpCenterAction > = ( state, action ) => {
+	if ( action.type === 'HELP_CENTER_RESET_STORE' ) {
+		return undefined;
+	} else if ( action.type === 'HELP_CENTER_SET_CHAT_TAG' ) {
+		return action.chatTag;
+	}
+	return state;
+};
+
 const userDeclaredSiteUrl: Reducer< string | undefined, HelpCenterAction > = ( state, action ) => {
 	if ( action.type === 'HELP_CENTER_RESET_STORE' ) {
 		return undefined;
@@ -116,6 +125,7 @@ const reducer = combineReducers( {
 	site,
 	subject,
 	message,
+	chatTag,
 	userDeclaredSite,
 	userDeclaredSiteUrl,
 	hasSeenWhatsNewModal,

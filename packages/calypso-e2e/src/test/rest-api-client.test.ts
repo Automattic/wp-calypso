@@ -81,39 +81,33 @@ describe( 'RestAPIClient: getMyAccountInformation', function () {
 	} );
 } );
 
-describe( 'RestAPIClient: getAllSites', function () {
+describe( 'RestAPIClient: getAllDomains', function () {
 	const restAPIClient = new RestAPIClient( {
 		username: 'fake_user',
 		password: 'fake_password',
 	} );
-	const requestURL = restAPIClient.getRequestURL( '1.1', '/me/sites' );
+	const requestURL = restAPIClient.getRequestURL( '1.1', '/all-domains/' );
 
 	test( 'Sites are returned on successful request', async function () {
 		const testData = {
-			sites: [
+			domains: [
 				{
-					ID: 5420,
-					name: 'Site One',
-					description: 'My amazing site',
-					URL: 'https://myamazinsite.test.com',
-					site_owner: 420,
+					blog_id: 5420,
+					domain: 'myamazinsite.test.com',
 				},
 				{
-					ID: 8799,
-					name: 'Site Two',
-					description: 'My amazing site, redux',
-					URL: 'https://myamazinsiteredux.test.com',
-					site_owner: 420,
+					blog_id: 8799,
+					domain: 'myamazinsiteredux.test.com',
 				},
 			],
 		};
 
 		nock( requestURL.origin ).get( requestURL.pathname ).reply( 200, testData );
 
-		const response = await restAPIClient.getAllSites();
-		expect( response.sites.length ).toBe( 2 );
-		expect( response.sites[ 0 ].ID ).toBe( 5420 );
-		expect( response.sites[ 1 ].ID ).toBe( 8799 );
+		const response = await restAPIClient.getAllDomains();
+		expect( response.domains.length ).toBe( 2 );
+		expect( response.domains[ 0 ].blog_id ).toBe( 5420 );
+		expect( response.domains[ 1 ].blog_id ).toBe( 8799 );
 	} );
 
 	test.each( [
@@ -126,7 +120,7 @@ describe( 'RestAPIClient: getAllSites', function () {
 			.get( requestURL.pathname )
 			.reply( 400, { error: code, message: message } );
 
-		await expect( restAPIClient.getAllSites() ).rejects.toThrowError( `${ code }: ${ message }` );
+		await expect( restAPIClient.getAllDomains() ).rejects.toThrowError( `${ code }: ${ message }` );
 	} );
 } );
 

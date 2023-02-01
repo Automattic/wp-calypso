@@ -1,46 +1,119 @@
 .blogging-prompt {
+	/* Blogging Prompt Card ------------------------ */
 	.card.blogging-prompt__card {
-		padding-bottom: 24px;
+		padding: 24px;
 	}
-	.blogging-prompt__lightbulb-icon {
-		display: inline-block;
-		vertical-align: middle;
-		margin-left: -6px;
-		path {
-			fill: var(--studio-gray-50);
-		}
-	}
+	/* Blogging Prompt Header ------------------------ */
 	h1.card-heading {
+		color: var(--color-text-subtle);
+		display: flex;
 		font-size: $font-body-small;
 		font-weight: normal;
-		color: var(--color-text-subtle);
-	}
-	.blogging-prompt__heading-text {
-		color: var(--studio-gray-80);
-	}
-	.blogging-prompt__menu {
-		margin-top: -8px;
-	}
-	.blogging-prompt__prompt-text {
-		font-size: $font-title-small;
-		font-weight: 500;
-		padding-bottom: 20px;
-	}
-}
+		gap: 8px;
+		margin-bottom: 24px;
 
-.blogging-prompt__menu {
-	float: right;
-	.button {
-		text-align: left;
+		.blogging-prompt__heading-text {
+			color: var(--studio-gray-80);
+			flex: 1;
+		}
+		.blogging-prompt__lightbulb-icon {
+			path {
+				fill: var(--studio-gray-50);
+			}
+			position: relative;
+			top: 1px;
+		}
+		.blogging-prompt__menu {
+			margin-top: -13px;
+		}
 	}
-	.blogging-prompt__bell-icon {
-		display: inline-block;
-		height: 18px;
-		width: 18px;
-		margin-right: 10px;
-		.gridicon {
-			width: 24px;
-			height: 24px;
+	/* Blogging Prompt Body ------------------------ */
+	.blogging-prompt__prompt-container {
+		width: 100%;
+
+		.blogging-prompt__prompt-navigation {
+			align-items: center;
+			display: flex;
+			gap: 20px;
+		}
+		.blogging-prompt__prompt-text {
+			flex: 1;
+			font-size: $font-title-small;
+			font-weight: 500;
+			line-height: 26px;
+		}
+		button.navigation-link {
+			border-radius: 50%;
+			height: 44px;
+			margin: 0;
+			padding: 0;
+			width: 44px;
+		}
+	}
+	/* Blogging Prompt Replies & Answer Button ------------------------ */
+	.blogging-prompt__prompt-answers {
+		align-items: center;
+		display: flex;
+		gap: 10px;
+		margin-top: 24px;
+		width: 100%;
+
+		.blogging-prompt__prompt-responses {
+			align-items: center;
+			display: flex;
+			flex: 1;
+			gap: 10px;
+
+			&-users {
+				position: relative;
+				top: 4px;
+			}
+		}
+		.blogging-prompt__prompt-responses img {
+			border-radius: 100%;
+			height: 22px;
+			border: 2px solid #fff;
+			position: relative;
+			margin-left: -10px;
+			width: 22px;
+
+			&:first-child {
+				margin-left: 0;
+			}
+		}
+		.blogging-prompt__prompt-responses-link {
+			color: var(--studio-gray-80);
+			flex: 1;
+			font-size: $font-body-small;
+			text-decoration-line: underline;
+
+			&:hover {
+				text-decoration-line: none;
+			}
+		}
+		.blogging-prompt__prompt-no-response {
+			align-items: center;
+			display: flex;
+			color: var(--color-text-subtle);
+			flex: 1;
+			font-size: $font-body-small;
+			gap: 6px;
+		}
+	}
+	/* Blogging Prompt Menu ------------------------ */
+	.blogging-prompt__menu {
+		.button {
+			text-align: left;
+		}
+		.blogging-prompt__bell-icon {
+			display: inline-block;
+			height: 18px;
+			width: 18px;
+			margin-right: 10px;
+			.gridicon {
+				width: 24px;
+				height: 24px;
+			}
 		}
 	}
 }

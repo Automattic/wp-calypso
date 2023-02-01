@@ -757,6 +757,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildTy
 				}
 			}
 		},
+		enableCommitStatusPublisher = true,
 		buildTriggers = {
 			vcs {
 				branchFilter = """
@@ -831,7 +832,7 @@ object PreReleaseE2ETests : BuildType({
 				mkdir temp
 
 				# Run suite.
-				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=calypso-release
+				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=calypso-release
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}
@@ -1071,7 +1072,7 @@ object KPIDashboardTests : BuildType({
 				mkdir temp
 
 				# Run suite.
-				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=kpi
+				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=kpi
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}

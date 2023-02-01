@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
+import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import { getSiteUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { NewsletterSettingsSection } from '../reading-newsletter-settings';
@@ -13,48 +14,65 @@ import wrapSettingsForm from '../wrap-settings-form';
 
 const isEnabled = config.isEnabled( 'settings/modernize-reading-settings' );
 
-type Settings = {
-	jetpack_relatedposts_enabled?: boolean;
-	jetpack_relatedposts_show_headline?: boolean;
-	jetpack_relatedposts_show_thumbnails?: boolean;
-	posts_per_page?: boolean;
-	posts_per_rss?: boolean;
-	rss_use_excerpt?: boolean;
-	wpcom_featured_image_in_email?: boolean;
-	wpcom_subscription_emails_use_excerpt?: boolean;
-	subscription_options?: {
-		invitation: string;
-		comment_follow: string;
-	};
+export type SubscriptionOptions = {
+	invitation: string;
+	comment_follow: string;
 };
 
-const getFormSettings = ( settings: Settings ) => {
+type Fields = {
+	jetpack_relatedposts_enabled?: boolean;
+	jetpack_relatedposts_show_context?: boolean;
+	jetpack_relatedposts_show_date?: boolean;
+	jetpack_relatedposts_show_headline?: boolean;
+	jetpack_relatedposts_show_thumbnails?: boolean;
+	page_for_posts?: string;
+	page_on_front?: string;
+	posts_per_page?: number;
+	posts_per_rss?: number;
+	rss_use_excerpt?: boolean;
+	show_on_front?: 'posts' | 'page';
+	subscription_options?: SubscriptionOptions;
+	wpcom_featured_image_in_email?: boolean;
+	wpcom_subscription_emails_use_excerpt?: boolean;
+};
+
+const getFormSettings = ( settings: unknown & Fields ) => {
 	if ( ! settings ) {
 		return {};
 	}
 
 	const {
 		jetpack_relatedposts_enabled,
+		jetpack_relatedposts_show_context,
+		jetpack_relatedposts_show_date,
 		jetpack_relatedposts_show_headline,
 		jetpack_relatedposts_show_thumbnails,
+		page_for_posts,
+		page_on_front,
 		posts_per_page,
 		posts_per_rss,
 		rss_use_excerpt,
+		show_on_front,
+		subscription_options,
 		wpcom_featured_image_in_email,
 		wpcom_subscription_emails_use_excerpt,
-		subscription_options,
 	} = settings;
 
 	return {
 		...( jetpack_relatedposts_enabled && { jetpack_relatedposts_enabled } ),
+		...( jetpack_relatedposts_show_context && { jetpack_relatedposts_show_context } ),
+		...( jetpack_relatedposts_show_date && { jetpack_relatedposts_show_date } ),
 		...( jetpack_relatedposts_show_headline && { jetpack_relatedposts_show_headline } ),
 		...( jetpack_relatedposts_show_thumbnails && { jetpack_relatedposts_show_thumbnails } ),
+		...( page_for_posts && { page_for_posts } ),
+		...( page_on_front && { page_on_front } ),
 		...( posts_per_page && { posts_per_page } ),
 		...( posts_per_rss && { posts_per_rss } ),
 		...( rss_use_excerpt && { rss_use_excerpt } ),
+		...( show_on_front && { show_on_front } ),
+		...( subscription_options && { subscription_options } ),
 		...( wpcom_featured_image_in_email && { wpcom_featured_image_in_email } ),
 		...( wpcom_subscription_emails_use_excerpt && { wpcom_subscription_emails_use_excerpt } ),
-		...( subscription_options && { subscription_options } ),
 	};
 };
 
@@ -66,18 +84,6 @@ const connectComponent = connect( ( state ) => {
 	};
 } );
 
-type Fields = {
-	posts_per_page?: number;
-	posts_per_rss?: number;
-	rss_use_excerpt?: boolean;
-	wpcom_featured_image_in_email?: boolean;
-	wpcom_subscription_emails_use_excerpt?: boolean;
-	subscription_options?: {
-		invitation: string;
-		comment_follow: string;
-	};
-};
-
 type ReadingSettingsFormProps = {
 	fields: Fields;
 	onChangeField: ( field: string ) => ( event: React.ChangeEvent< HTMLInputElement > ) => void;
@@ -85,6 +91,7 @@ type ReadingSettingsFormProps = {
 	handleSubmitForm: ( event: React.FormEvent< HTMLFormElement > ) => void;
 	isRequestingSettings: boolean;
 	isSavingSettings: boolean;
+	settings: { subscription_options?: SubscriptionOptions };
 	siteUrl?: string;
 	updateFields: ( fields: Fields ) => void;
 };
@@ -98,10 +105,12 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 			handleToggle,
 			isRequestingSettings,
 			isSavingSettings,
+			settings,
 			siteUrl,
 			updateFields,
 		}: ReadingSettingsFormProps ) => {
 			const disabled = isRequestingSettings || isSavingSettings;
+			const savedSubscriptionOptions = settings?.subscription_options;
 			return (
 				<form onSubmit={ handleSubmitForm }>
 					<SiteSettingsSection
@@ -112,6 +121,7 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 						disabled={ disabled }
 						isRequestingSettings={ isRequestingSettings }
 						isSavingSettings={ isSavingSettings }
+						updateFields={ updateFields }
 					/>
 					<RssFeedSettingsSection
 						fields={ fields }
@@ -128,6 +138,7 @@ const ReadingSettingsForm = wrapSettingsForm( getFormSettings )(
 						handleSubmitForm={ handleSubmitForm }
 						disabled={ disabled }
 						isSavingSettings={ isSavingSettings }
+						savedSubscriptionOptions={ savedSubscriptionOptions }
 						updateFields={ updateFields }
 					/>
 				</form>
@@ -144,7 +155,8 @@ const ReadingSettings = () => {
 	}
 
 	return (
-		<Main className="site-settings">
+		<Main className="site-settings site-settings__reading-settings">
+			<ScreenOptionsTab wpAdminPath="options-reading.php" />
 			<DocumentHead title={ translate( 'Reading Settings' ) } />
 			<FormattedHeader brandFont headerText={ translate( 'Reading Settings' ) } align="left" />
 			<ReadingSettingsForm />

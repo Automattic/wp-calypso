@@ -33,7 +33,7 @@ const PatternAssemblerPreview = ( { header, sections = [], footer, activePositio
 		null
 	);
 	const totalPatterns = [ header, ...sections, footer ].filter( Boolean );
-	const hasSelectedPatterns = totalPatterns.length > 1;
+	const hasSelectedPatterns = totalPatterns.length > 0;
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 
 	const mergedDesign = {

@@ -77,7 +77,7 @@ class ActivityLogTasklist extends Component {
 	 * If it receives a string, it assumes it's a valid plugin or theme slug and adds it to the dismissed list.
 	 * When it doesn't receive a string, it adds all the plugin and theme slugs to the dismissed list.
 	 *
-	 * @param {object} item Plugin or theme to dismiss.
+	 * @param {Object} item Plugin or theme to dismiss.
 	 */
 	dismiss = ( item ) => {
 		// ToDo: this should update some record in the tasklist API
@@ -100,7 +100,7 @@ class ActivityLogTasklist extends Component {
 	/**
 	 * Goes to general plugin management screen.
 	 *
-	 * @returns {object} Action to redirect to plugins management.
+	 * @returns {Object} Action to redirect to plugins management.
 	 */
 	goManagePlugins = () =>
 		this.props.goManagePlugins(
@@ -114,7 +114,7 @@ class ActivityLogTasklist extends Component {
 	 *
 	 * @param {string} slug Plugin or theme slug, like "hello-dolly" or "dara".
 	 * @param {string} type Indicates if it's "plugin" or "theme".
-	 * @returns {object} Action to redirect to plugin management.
+	 * @returns {Object} Action to redirect to plugin management.
 	 */
 	goToPage = ( slug, type ) => this.props.goToPage( slug, type, this.props.siteSlug );
 
@@ -131,7 +131,7 @@ class ActivityLogTasklist extends Component {
 	/**
 	 * Add a plugin, theme, or core update to the update queue. Insert a prop to track enqueue origin later.
 	 *
-	 * @param {object} item Plugin, theme, or core update to enqueue.
+	 * @param {Object} item Plugin, theme, or core update to enqueue.
 	 * @param {string} from Pass '_from_error' when calling from error notice. Otherwise it's empty.
 	 */
 	enqueue = ( item, from = '' ) => {
@@ -173,7 +173,7 @@ class ActivityLogTasklist extends Component {
 	/**
 	 * Expand the list of updates to show all of them
 	 *
-	 * @param {object} event Synthetic event
+	 * @param {Object} event Synthetic event
 	 */
 	showAllUpdates = ( event ) => {
 		recordTracksEvent( 'calypso_activitylog_tasklist_expand_view' );
@@ -184,7 +184,7 @@ class ActivityLogTasklist extends Component {
 	/**
 	 * Starts the update process for a specified plugin/theme. Displays an informational notice.
 	 *
-	 * @param {object} item Plugin/theme information that includes
+	 * @param {Object} item Plugin/theme information that includes
 	 * {
 	 * 		{string} slug Plugin or theme slug, like "hello-dolly". Slug for core updates is "wordpress".
 	 * 		{string} name Plugin or theme name, like "Hello Dolly". Name for core updates is "WordPress".

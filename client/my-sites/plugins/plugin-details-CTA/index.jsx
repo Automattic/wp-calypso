@@ -146,7 +146,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 			<div className="plugin-details-cta__container">
 				<div className="plugin-details-cta__price">{ translate( 'Free' ) }</div>
 				<span className="plugin-details-cta__preinstalled">
-					{ selectedSite
+					{ selectedSite && shouldUpgrade
 						? translate(
 								'%s is automatically managed for you. Upgrade your plan and get access to another 50,000 WordPress plugins to extend functionality for your site.',
 								{ args: plugin.name }
@@ -154,7 +154,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 						: translate( '%s is automatically managed for you.', { args: plugin.name } ) }
 				</span>
 
-				{ selectedSite && (
+				{ selectedSite && shouldUpgrade && (
 					<Button
 						href={ upgradeToBusinessHref }
 						className="plugin-details-cta__install-button"

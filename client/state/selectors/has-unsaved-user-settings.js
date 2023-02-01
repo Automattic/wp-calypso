@@ -5,7 +5,7 @@ import 'calypso/state/user-settings/init';
 /**
  * Check if there are any unsaved settings
  *
- * @param  {object} state Global state tree
+ * @param  {Object} state Global state tree
  * @returns {boolean} are there any unsaved settings?
  */
 export default function hasUnsavedUserSettings( state ) {

@@ -82,8 +82,8 @@ export const sharePostStatus = ( state = {}, action ) => {
  * `false` for done or failed fetching, or `undefined` if no fetch attempt
  * has been made for the site.
  *
- * @param {object} state Redux state
- * @param {object} action Redux action
+ * @param {Object} state Redux state
+ * @param {Object} action Redux action
  */
 export const fetchingConnections = ( state = {}, action ) => {
 	switch ( action.type ) {

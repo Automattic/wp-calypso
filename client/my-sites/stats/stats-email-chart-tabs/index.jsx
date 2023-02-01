@@ -48,6 +48,7 @@ class StatModuleChartTabs extends Component {
 		switchTab: PropTypes.func,
 		queryDate: PropTypes.string,
 		recordGoogleEvent: PropTypes.func,
+		sliceFromBeginning: PropTypes.bool,
 	};
 
 	onLegendClick = ( chartItem ) => {
@@ -69,7 +70,7 @@ class StatModuleChartTabs extends Component {
 	};
 
 	render() {
-		const { isActiveTabLoading } = this.props;
+		const { isActiveTabLoading, onChangeMaxBars } = this.props;
 
 		const classes = [
 			'is-chart-tabs',
@@ -92,7 +93,13 @@ class StatModuleChartTabs extends Component {
 				/>
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
-				<Chart barClick={ this.props.barClick } data={ chartData } minBarWidth={ 35 } />
+				<Chart
+					barClick={ this.props.barClick }
+					data={ chartData }
+					minBarWidth={ 35 }
+					sliceFromBeginning={ false }
+					onChangeMaxBars={ onChangeMaxBars }
+				/>
 				<StatTabs
 					data={ this.props.counts }
 					tabs={ this.props.charts }
@@ -113,26 +120,40 @@ const NO_SITE_STATE = {
 };
 
 const connectComponent = connect(
-	( state, { activeLegend, period: { period, endOf }, chartTab, queryDate, postId, statType } ) => {
+	(
+		state,
+		{
+			activeLegend,
+			period: { period, endOf },
+			chartTab,
+			queryDate,
+			postId,
+			statType,
+			onChangeMaxBars,
+			maxBars,
+		}
+	) => {
 		const siteId = getSelectedSiteId( state );
 		if ( ! siteId ) {
 			return NO_SITE_STATE;
 		}
 
-		let quantity = 'year' === period ? 10 : 30;
-		quantity = 'hour' === period ? 24 : quantity;
+		const quantity = 'hour' === period ? 24 : 30;
 		const counts = getCountRecords( state, siteId, postId, period, statType );
+		const timezoneOffset = getSiteOption( state, siteId, 'gmt_offset' ) || 0;
+		const date = getQueryDate( queryDate, timezoneOffset, period, quantity );
 		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate );
+		const maxBarsForRequest = 'hour' === period ? quantity : maxBars;
 		const isActiveTabLoading = isLoadingTabs(
 			state,
 			siteId,
 			postId,
 			period,
 			statType,
-			endOf.format( 'YYYY-MM-DD' )
+			endOf.format( 'YYYY-MM-DD' ),
+			chartData.length,
+			maxBarsForRequest
 		);
-		const timezoneOffset = getSiteOption( state, siteId, 'gmt_offset' ) || 0;
-		const date = getQueryDate( queryDate, timezoneOffset, period, quantity );
 		const queryKey = `${ date }-${ period }-${ quantity }-${ siteId }`;
 
 		return {
@@ -141,6 +162,7 @@ const connectComponent = connect(
 			isActiveTabLoading,
 			queryKey,
 			siteId,
+			onChangeMaxBars,
 		};
 	},
 	{ recordGoogleEvent }

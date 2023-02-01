@@ -62,7 +62,7 @@ export const isActivityBackup = ( activity ) => {
  * Retrieve the backup error code from activity object.
  *
  * @typedef {import('calypso/state/data-layer/wpcom/sites/activity/from-api.js').processItem} ProcessItem
- * @param {object} activity Activity to get the error code from.
+ * @param {Object} activity Activity to get the error code from.
  * @returns {'BAD_CREDENTIALS'|'NOT_ACCESSIBLE'} The error code as set in @see {ProcessItem}
  */
 export const getBackupErrorCode = ( activity ) => {

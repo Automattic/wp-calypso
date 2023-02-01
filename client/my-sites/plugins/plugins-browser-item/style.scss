@@ -10,7 +10,7 @@
 	cursor: pointer;
 	display: block;
 	float: left;
-	margin: 16px 0 0 0;
+	margin: 18px 0 0 0;
 	position: relative;
 	overflow: hidden;
 
@@ -19,8 +19,8 @@
 	}
 
 	.plugin-icon {
-		width: 60px;
-		height: 60px;
+		width: 47px;
+		height: 47px;
 		margin-right: 0;
 
 		&.is-placeholder {
@@ -33,14 +33,48 @@
 	.plugins-browser-item__last-updated {
 		text-overflow: ellipsis;
 		white-space: nowrap;
-		margin-left: calc(60px + 16px); // icon width + margin
+		margin-left: calc(47px + 16px); // icon width + margin
+	}
+
+	.plugins-browser-item__ratings {
+		display: flex;
+		justify-content: flex-end;
+
+		.plugins-browser-item__rating-star {
+			margin-right: 4px;
+			margin-left: 16px;
+		}
+
+		.plugins-browser-item__rating-value {
+			font-size: $font-body-extra-small;
+			line-height: 20px;
+			font-weight: 500;
+			color: var(--studio-gray-80);
+			margin-right: 5px;
+		}
+
+		.plugins-browser-item__number-of-ratings {
+			font-size: $font-body-extra-small;
+			line-height: 20px;
+			font-weight: 400;
+			color: var(--studio-gray-60);
+		}
 	}
 
 	.plugins-browser-item__description {
 		margin: 16px 0;
+		font-family: "SF Pro Text", $sans;
 		font-size: $font-body-small;
 		font-weight: 400;
-		color: $studio-gray-60;
+		line-height: 20px;
+		color: $studio-gray-80;
+
+		// limit to 2 lines
+		height: calc(20px * 2); // line height * number of lines
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
 	}
 
 	&.compact {
@@ -55,15 +89,17 @@
 		}
 
 		.plugins-browser-item__title {
+			margin-top: -3px;
 			font-size: $font-body-small;
 			margin-left: 0;
 		}
 
 		.plugins-browser-item__description {
 			font-size: $font-body-extra-small;
-			margin: 5px 0 0 0;
+			margin: 0;
 			text-overflow: ellipsis;
 			white-space: nowrap;
+			height: auto;
 		}
 
 		@include break-medium {
@@ -72,7 +108,7 @@
 			&:nth-of-type(2) {
 				margin-top: 24px;
 			}
-			width: calc(50% - 10px); // 2 column grid with 20px gutter
+			width: calc(50% - 9px); // 2 column grid with 18px gutter
 		}
 
 		@include break-wide {
@@ -88,7 +124,7 @@
 
 	&.extended {
 		@include break-large {
-			width: calc(50% - 10px); // 2 column grid with 20px gutter
+			width: calc(50% - 9px); // 2 column grid with 18px gutter
 		}
 	}
 
@@ -115,7 +151,7 @@
 	display: flex;
 	flex-direction: column;
 	height: 100%;
-	padding: 30px;
+	padding: 29px 30px 24px;
 	box-sizing: border-box;
 	border: 1px solid var(--studio-gray-5);
 	border-radius: 5px; /* stylelint-disable-line scales/radii */
@@ -139,19 +175,22 @@
 }
 
 .plugins-browser-item__title {
-	color: var(--color-neutral-70);
-	font-weight: 600;
+	color: var(--color-neutral-100);
+	font-weight: 500;
 	font-size: $font-body;
-	margin-top: -3px;
+	line-height: 24px;
 }
 
 .plugins-browser-item__author {
-	color: var(--color-text-subtle);
-	font-size: $font-body-small;
+	color: var(--studio-gray-60);
+	font-family: "SF Pro Text", $sans;
+	font-size: $font-body-extra-small;
+	line-height: 20px;
+	padding-bottom: 6px;
 }
 
 .plugins-browser-item__author-name {
-	color: $studio-blue-40;
+	color: var(--studio-blue-50);
 }
 
 .plugins-browser-item__last-updated,
@@ -185,7 +224,9 @@
 
 .plugins-browser-item__pricing,
 .plugins-browser-item__installed {
-	font-size: $font-body;
+	font-size: $font-body-extra-small;
+	font-weight: 500;
+	line-height: 20px;
 	color: $studio-black;
 }
 
@@ -216,6 +257,13 @@
 	@extend %placeholder;
 }
 
+.plugins-browser-item__installed-and-active-container {
+	display: flex;
+	width: 100%;
+	justify-content: space-between;
+	align-items: center;
+}
+
 .plugins-browser-item__installed {
 	display: flex;
 	animation: appear 0.15s ease-in;
@@ -226,14 +274,9 @@
 		border-radius: 50%;
 	}
 
-	.gridicon.checkmark--active {
-		color: var(--studio-green-30);
-		border: 2px solid var(--studio-green-30);
-	}
-
-	.gridicon.checkmark--inactive {
-		color: var(--studio-gray-60);
-		border: 2px solid var(--studio-gray-60);
+	.gridicon.checkmark {
+		color: var(--studio-gray-30);
+		border: 1px solid var(--studio-gray-60);
 	}
 }
 
@@ -247,6 +290,8 @@
 .plugins-browser-item__period,
 .plugins-browser-item__requires-plan-upgrade {
 	color: var(--studio-gray-60);
+	font-family: "SF Pro Text", $sans;
+	font-weight: 400;
 	font-size: $font-body-extra-small;
 }
 

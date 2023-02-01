@@ -7,7 +7,7 @@ import getUserSetting from 'calypso/state/selectors/get-user-setting';
  * 1) the user has chosen to enable it,
  * 2) it can be displayed based on the user's language and device settings
  *
- * @param {object} state Global state tree
+ * @param {Object} state Global state tree
  * @returns {boolean} whether the CT should be enabled
  */
 export default function isCommunityTranslatorEnabled( state ) {

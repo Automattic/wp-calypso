@@ -9,8 +9,8 @@ import { combineReducers, keyedReducer } from 'calypso/state/utils';
 /**
  * Returns the updated app filter state after an action has been dispatched
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
  * @returns {string}        Updated state
  */
 export const app = ( state = null, action ) => {
@@ -23,12 +23,12 @@ export const app = ( state = null, action ) => {
 /**
  * Returns the updated date filter state after an action has been dispatched
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
  * @param  {string} action.type
  * @param  action.month
  * @param  action.operator
- * @returns {object}        Updated state
+ * @returns {Object}        Updated state
  */
 export const date = ( state = { month: null, operator: null }, { type, month, operator } ) => {
 	if ( type === BILLING_TRANSACTIONS_FILTER_SET_MONTH ) {
@@ -43,8 +43,8 @@ export const date = ( state = { month: null, operator: null }, { type, month, op
 /**
  * Returns the updated page state after an action has been dispatched
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
  * @returns {number}        Updated state
  */
 export const page = ( state = 1, action ) => {
@@ -63,8 +63,8 @@ export const page = ( state = 1, action ) => {
 /**
  * Returns the updated string search filter state after an action has been dispatched
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
  * @returns {string}        Updated state
  */
 export const query = ( state = '', action ) => {

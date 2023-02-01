@@ -86,6 +86,12 @@ const PeopleProfile = ( { siteId, type, user, invite, showDate, showRole = true 
 			case 'viewer':
 				text = translate( 'Viewer' );
 				break;
+			case 'shop_manager':
+				text = translate( 'Shop manager' );
+				break;
+			case 'customer':
+				text = translate( 'Customer' );
+				break;
 			default:
 				text = role;
 		}
@@ -289,6 +295,17 @@ const PeopleProfile = ( { siteId, type, user, invite, showDate, showRole = true 
 		);
 	};
 
+	const renderViewerRole = () => {
+		const role = 'viewer';
+		return (
+			<div className="people-profile__badges">
+				<div className={ classNames( 'people-profile__role-badge', getRoleBadgeClass( role ) ) }>
+					{ getRoleBadgeText( role ) }
+				</div>
+			</div>
+		);
+	};
+
 	const isFollowerType = () => {
 		return user && ! user.roles && user.date_subscribed;
 	};
@@ -307,6 +324,7 @@ const PeopleProfile = ( { siteId, type, user, invite, showDate, showRole = true 
 				{ renderLogin() }
 				{ showDate && renderSubscribedDate() }
 				{ showRole && isFollowerType() ? renderSubscribedRole() : renderRole() }
+				{ type === 'viewer' && renderViewerRole() }
 			</div>
 		</div>
 	);

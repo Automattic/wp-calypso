@@ -10,12 +10,10 @@ import { parse as parseQs, stringify as stringifyQs } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
-import rocketImage from 'calypso/assets/images/customer-home/illustration--rocket.svg';
 import illustration404 from 'calypso/assets/images/illustrations/illustration-404.svg';
 import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
-import Banner from 'calypso/components/banner';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
@@ -27,7 +25,6 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import memoizeLast from 'calypso/lib/memoize-last';
-import { StatsNoContentBanner } from 'calypso/my-sites/stats/stats-no-content-banner';
 import {
 	recordGoogleEvent,
 	recordTracksEvent,
@@ -40,6 +37,7 @@ import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HighlightsSection from './highlights-section';
+import MiniCarousel from './mini-carousel';
 import PromoCards from './promo-cards';
 import ChartTabs from './stats-chart-tabs';
 import Countries from './stats-countries';
@@ -158,29 +156,8 @@ class StatsSite extends Component {
 		}
 	};
 
-	renderPrivateSiteBanner( siteId, siteSlug ) {
-		return (
-			<Banner
-				callToAction={ translate( 'Launch your site' ) }
-				className="stats__private-site-banner"
-				description={ translate(
-					'Changing your site from private to public helps people find you and get more visitors. Don’t worry, you can keep working on your site.'
-				) }
-				disableCircle={ true }
-				event="calypso_stats_private_site_banner"
-				dismissPreferenceName={ `stats-launch-private-site-${ siteId }` }
-				href={ `/settings/general/${ siteSlug }` }
-				iconPath={ rocketImage }
-				title={ translate( 'Launch your site to drive more visitors' ) }
-				tracksClickName="calypso_stats_private_site_banner_click"
-				tracksDismissName="calypso_stats_private_site_banner_dismiss"
-				tracksImpressionName="calypso_stats_private_site_banner_view"
-			/>
-		);
-	}
-
 	renderStats() {
-		const { date, siteId, slug, isJetpack, isSitePrivate, isOdysseyStats } = this.props;
+		const { date, siteId, slug, isJetpack, isSitePrivate, isOdysseyStats, context } = this.props;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
@@ -194,7 +171,9 @@ class StatsSite extends Component {
 			path: '/stats',
 		};
 		const slugPath = slug ? `/${ slug }` : '';
-		const pathTemplate = `${ traffic.path }/{{ interval }}${ slugPath }`;
+		const pathTemplate = `${ traffic.path }/{{ interval }}${ slugPath }?tab=${
+			this.state.activeTab ? this.state.activeTab.attr : 'views'
+		}`;
 
 		const wrapperClass = classNames( 'stats-content', {
 			'is-period-year': period === 'year',
@@ -245,6 +224,7 @@ class StatsSite extends Component {
 								date={ date }
 								period={ period }
 								url={ `/stats/${ period }/${ slug }` }
+								queryParams={ context.query }
 							>
 								<DatePicker
 									period={ period }
@@ -270,22 +250,15 @@ class StatsSite extends Component {
 							period={ this.props.period }
 							chartTab={ this.props.chartTab }
 						/>
-
-						{ isSitePrivate ? this.renderPrivateSiteBanner( siteId, slug ) : null }
-						{ ! isSitePrivate && <StatsNoContentBanner siteId={ siteId } siteSlug={ slug } /> }
 					</>
 
+					<MiniCarousel
+						isOdysseyStats={ isOdysseyStats }
+						slug={ slug }
+						isSitePrivate={ isSitePrivate }
+					/>
+
 					<div className="stats__module-list stats__module-list--traffic is-events stats__module--unified">
-						{ config.isEnabled( 'newsletter/stats' ) && (
-							<StatsModule
-								path="emails-open"
-								moduleStrings={ moduleStrings.emailsOpenStats }
-								period={ this.props.period }
-								query={ query }
-								statType="statsEmailsOpen"
-								hideSummaryLink
-							/>
-						) }
 						<StatsModule
 							path="posts"
 							moduleStrings={ moduleStrings.posts }
@@ -344,12 +317,35 @@ class StatsSite extends Component {
 							statType="statsVideoPlays"
 							showSummaryLink
 						/>
+						{ config.isEnabled( 'newsletter/stats' ) && (
+							<>
+								<StatsModule
+									path="emails-open"
+									moduleStrings={ moduleStrings.emailsOpenStats }
+									period={ this.props.period }
+									query={ query }
+									statType="statsEmailsOpen"
+									hideSummaryLink
+									metricLabel={ translate( 'Opens' ) }
+								/>
+								<StatsModule
+									path="emails-click"
+									moduleStrings={ moduleStrings.emailsClickStats }
+									period={ this.props.period }
+									query={ query }
+									statType="statsEmailsClick"
+									hideSummaryLink
+									metricLabel={ translate( 'Clicks' ) }
+								/>
+							</>
+						) }
 						{
 							// File downloads are not yet supported in Jetpack Stats
 							// TODO: Confirm the above statement.
 							! isJetpack && (
 								<StatsModule
 									path="filedownloads"
+									metricLabel={ translate( 'Downloads' ) }
 									moduleStrings={ moduleStrings.filedownloads }
 									period={ this.props.period }
 									query={ query }

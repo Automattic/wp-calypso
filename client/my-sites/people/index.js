@@ -22,6 +22,16 @@ export default function () {
 		clientRender
 	);
 
+	page(
+		'/people/:filter(viewers)/:site_id/:user_id',
+		peopleController.enforceSiteEnding,
+		siteSelection,
+		navigation,
+		peopleController.viewerTeamMember,
+		makeLayout,
+		clientRender
+	);
+
 	page( '/people/invites', siteSelection, sites, makeLayout, clientRender );
 
 	page(
@@ -45,16 +55,6 @@ export default function () {
 	);
 
 	page(
-		'/people/:filter(team-members)/:site_id',
-		peopleController.enforceSiteEnding,
-		siteSelection,
-		navigation,
-		peopleController.teamMembers,
-		makeLayout,
-		clientRender
-	);
-
-	page(
 		'/people/:filter(subscribers)/:site_id',
 		peopleController.enforceSiteEnding,
 		siteSelection,
@@ -65,7 +65,7 @@ export default function () {
 	);
 
 	page(
-		'/people/:filter(subscribers)/:site_id/:id',
+		'/people/:filter(subscribers)/:site_id/:typeId',
 		peopleController.enforceSiteEnding,
 		siteSelection,
 		navigation,

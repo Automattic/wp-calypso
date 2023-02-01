@@ -6,7 +6,7 @@ import type { AppState } from 'calypso/types';
 /**
  * Determine the default section to show for the specified site.
  *
- * @param  {object}  state  Global state tree.
+ * @param  {Object}  state  Global state tree.
  * @param  {?number} siteId Site ID.
  * @returns {string}         Url of the site home.
  */

@@ -369,8 +369,15 @@ export class PlansStep extends Component {
 	}
 
 	plansFeaturesSelection() {
-		const { flowName, stepName, positionInFlow, translate, hasInitializedSitesBackUrl, steps } =
-			this.props;
+		const {
+			flowName,
+			stepName,
+			positionInFlow,
+			translate,
+			hasInitializedSitesBackUrl,
+			steps,
+			isOnboarding2023PricingGrid,
+		} = this.props;
 
 		const headerText = this.getHeaderText();
 		const fallbackHeaderText = this.props.fallbackHeaderText || headerText;
@@ -412,7 +419,8 @@ export class PlansStep extends Component {
 					fallbackHeaderText={ fallbackHeaderText }
 					subHeaderText={ subHeaderText }
 					fallbackSubHeaderText={ fallbackSubHeaderText }
-					isWideLayout={ true }
+					isWideLayout={ ! isOnboarding2023PricingGrid }
+					isExtraWideLayout={ isOnboarding2023PricingGrid }
 					stepContent={ this.plansFeaturesList() }
 					allowBackFirstStep={ !! hasInitializedSitesBackUrl }
 					backUrl={ backUrl }
@@ -424,11 +432,14 @@ export class PlansStep extends Component {
 	}
 
 	render() {
+		const is2023OnboardingPricingGrid = isEnabled( 'onboarding/2023-pricing-grid' );
+
 		const classes = classNames( 'plans plans-step', {
 			'in-vertically-scrolled-plans-experiment':
 				! this.props.isOnboarding2023PricingGrid && this.props.isInVerticalScrollingPlansExperiment,
 			'has-no-sidebar': true,
-			'is-wide-layout': true,
+			'is-wide-layout': ! is2023OnboardingPricingGrid,
+			'is-extra-wide-layout': is2023OnboardingPricingGrid,
 		} );
 
 		return (
@@ -460,7 +471,7 @@ PlansStep.propTypes = {
  * Checks if the domainItem picked in the domain step is a top level .blog domain -
  * we only want to make Blogger plan available if it is.
  *
- * @param {object} domainItem domainItem object stored in the "choose domain" step
+ * @param {Object} domainItem domainItem object stored in the "choose domain" step
  * @returns {boolean} is .blog domain registration
  */
 export const isDotBlogDomainRegistration = ( domainItem ) => {
@@ -475,7 +486,7 @@ export const isDotBlogDomainRegistration = ( domainItem ) => {
 export default connect(
 	(
 		state,
-		{ path, flowName, signupDependencies: { siteSlug, domainItem, plans_reorder_abtest_variation } }
+		{ path, signupDependencies: { siteSlug, domainItem, plans_reorder_abtest_variation } }
 	) => ( {
 		// Blogger plan is only available if user chose either a free domain or a .blog domain registration
 		disableBloggerPlanWithNonBlogDomain:
@@ -496,8 +507,7 @@ export default connect(
 		isInVerticalScrollingPlansExperiment: true,
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
 		eligibleForProPlan: isEligibleForProPlan( state, getSiteBySlug( state, siteSlug )?.ID ),
-		isOnboarding2023PricingGrid:
-			isEnabled( 'onboarding/2023-pricing-grid' ) && flowName === 'onboarding-2023-pricing-grid',
+		isOnboarding2023PricingGrid: isEnabled( 'onboarding/2023-pricing-grid' ),
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep, errorNotice }
 )( localize( PlansStep ) );

@@ -107,7 +107,7 @@ export class HelpContactForm extends PureComponent {
 	/**
 	 * Set up our initial state
 	 *
-	 * @returns {object} An object representing our initial state
+	 * @returns {Object} An object representing our initial state
 	 */
 	state = this.props.valueLink.value || {
 		message: '',
@@ -378,7 +378,7 @@ export class HelpContactForm extends PureComponent {
 	/**
 	 * Render the contact form
 	 *
-	 * @returns {object} ReactJS JSX object
+	 * @returns {Object} ReactJS JSX object
 	 */
 	render() {
 		const {

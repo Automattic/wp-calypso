@@ -55,7 +55,7 @@ const WhatsNewPage: React.FC< Props > = ( {
 							src={ imageSrc }
 							alt={ description }
 							aria-hidden="true"
-							className={ 'whats-new-page__image' }
+							className="whats-new-page__image"
 						/>
 					</div>
 				) }

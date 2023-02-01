@@ -46,7 +46,7 @@ import {
  * Test helper to build a product object
  *
  * @param   {string} product_slug Product slug
- * @returns {object}              Object containing product_slug
+ * @returns {Object}              Object containing product_slug
  */
 const makeProductFromSlug = ( product_slug ) => ( { product_slug } );
 

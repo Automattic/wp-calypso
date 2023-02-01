@@ -4,10 +4,10 @@ import PopupMonitor from '@automattic/popup-monitor';
  * The callback function of the requestExternalAccess utility.
  *
  * @callback requestCallback
- * @param {object} result Received authentication data.
+ * @param {Object} result Received authentication data.
  * @param {number} result.keyring_id
  * @param {string} result.id_token
- * @param {object} result.user
+ * @param {Object} result.user
  */
 
 /**

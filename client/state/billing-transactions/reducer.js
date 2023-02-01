@@ -17,9 +17,9 @@ import ui from './ui/reducer';
  * Returns the updated items state after an action has been dispatched.
  * The state contains all past and upcoming billing transactions.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const items = withSchemaValidation( billingTransactionsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -36,9 +36,9 @@ export const items = withSchemaValidation( billingTransactionsSchema, ( state = 
  * Returns the updated requests state after an action has been dispatched.
  * The state contains whether a request for billing transactions is in progress.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const requesting = ( state = false, action ) => {
 	switch ( action.type ) {
@@ -57,9 +57,9 @@ export const requesting = ( state = false, action ) => {
  * Returns the updated sending email requests state after an action has been dispatched.
  * The state contains whether a request for sending a receipt email is in progress.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const sendingReceiptEmail = ( state = {}, action ) => {
 	switch ( action.type ) {

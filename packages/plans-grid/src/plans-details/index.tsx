@@ -65,7 +65,7 @@ const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale, bil
 						{ isLoading
 							? placeholderPlans.map( ( placeholder ) => (
 									<th key={ placeholder }>
-										<span className="plans-details__placeholder">{ '' }</span>
+										<span className="plans-details__placeholder"></span>
 									</th>
 							  ) )
 							: supportedPlans.map( ( plan ) => (
@@ -79,9 +79,7 @@ const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale, bil
 						{ placeholderPlans.map( ( placeholder, i ) => (
 							<tr className="plans-details__feature-row" key={ i }>
 								<th key={ placeholder }>
-									<span className="plans-details__placeholder plans-details__placeholder--wide">
-										{ '' }
-									</span>
+									<span className="plans-details__placeholder plans-details__placeholder--wide"></span>
 								</th>
 								{ placeholderPlans.map( ( j ) => (
 									<td key={ j }></td>
@@ -176,7 +174,7 @@ const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale, bil
 						{ isLoading
 							? placeholderPlans.map( ( placeholder ) => (
 									<td key={ placeholder }>
-										<span className="plans-details__placeholder">{ '' }</span>
+										<span className="plans-details__placeholder"></span>
 									</td>
 							  ) )
 							: supportedPlans.map( ( plan, i ) => (
@@ -190,9 +188,7 @@ const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale, bil
 							? placeholderPlans.map( ( placeholder ) => (
 									<td key={ placeholder }>
 										<Button className="plans-details__select-button" isPrimary disabled>
-											<span className="plans-details__placeholder plans-details__placeholder--narrow">
-												{ '' }
-											</span>
+											<span className="plans-details__placeholder plans-details__placeholder--narrow"></span>
 										</Button>{ ' ' }
 									</td>
 							  ) )

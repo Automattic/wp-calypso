@@ -3,6 +3,7 @@ import { AddSubscriberForm } from '@automattic/subscriber';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
 import InfiniteList from 'calypso/components/infinite-list';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -11,7 +12,8 @@ import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PeopleListSectionHeader from '../people-list-section-header';
-import type { Follower, FollowersQuery } from './types';
+import type { Member } from '../types';
+import type { FollowersQuery } from './types';
 
 import './style.scss';
 
@@ -48,11 +50,11 @@ function Subscribers( props: Props ) {
 		);
 	}
 
-	function getFollowerRef( follower: Follower ) {
+	function getFollowerRef( follower: Member ) {
 		return 'follower-' + follower.ID;
 	}
 
-	function renderFollower( follower: Follower ) {
+	function renderFollower( follower: Member ) {
 		return (
 			<PeopleListItem
 				key={ follower?.ID }
@@ -119,19 +121,36 @@ function Subscribers( props: Props ) {
 		case 'empty':
 			return (
 				<Card>
-					{ site && <AddSubscriberForm siteId={ site?.ID } onImportFinished={ refetch } /> }
+					{ site && (
+						<>
+							{ /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */ }
+							{ /* @ts-ignore */ }
+							<EmailVerificationGate
+								noticeText={ _( 'You must verify your email to add subscribers.' ) }
+								noticeStatus="is-info"
+							>
+								<AddSubscriberForm
+									siteId={ site?.ID }
+									submitBtnAlwaysEnable={ true }
+									onImportFinished={ refetch }
+								/>
+							</EmailVerificationGate>
+						</>
+					) }
 				</Card>
 			);
 
 		case 'no-result':
 			return (
-				<NoResults
-					image="/calypso/images/people/mystery-person.svg"
-					text={ _( 'No results found for {{em}}%(searchTerm)s{{/em}}', {
-						args: { searchTerm: search },
-						components: { em: <em /> },
-					} ) }
-				/>
+				<Card>
+					<NoResults
+						image="/calypso/images/people/mystery-person.svg"
+						text={ _( 'No results found for {{em}}%(searchTerm)s{{/em}}', {
+							args: { searchTerm: search },
+							components: { em: <em /> },
+						} ) }
+					/>
+				</Card>
 			);
 	}
 
