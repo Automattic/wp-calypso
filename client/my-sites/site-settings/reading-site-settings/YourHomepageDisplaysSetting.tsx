@@ -1,4 +1,5 @@
-import { localizeUrl } from '@automattic/i18n-utils';
+import { useLocale, localizeUrl } from '@automattic/i18n-utils';
+import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -69,6 +70,8 @@ const YourHomepageDisplaysSetting = ( {
 	disabled,
 	siteId,
 }: YourHomepageDisplaysSettingProps ) => {
+	const { hasTranslation } = useI18n();
+	const locale = useLocale();
 	const translate = useTranslate();
 
 	const { data: pages, isLoading } = useDropdownPagesQuery<
@@ -130,7 +133,11 @@ const YourHomepageDisplaysSetting = ( {
 					value={ page_for_posts }
 					onChange={ handlePageForPostsChange }
 				>
-					<option value="">{ translate( '—— Select ——' ) }</option>
+					<option value="">
+						{ locale.startsWith( 'en' ) || hasTranslation( '—— None ——' )
+							? translate( '—— None ——' )
+							: translate( '—— Select ——' ) }
+					</option>
 					{ pages?.map( ( page ) => {
 						return (
 							<option
