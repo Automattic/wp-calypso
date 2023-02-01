@@ -119,7 +119,7 @@
 		"seller-experience": true,
 		"sensei/onboarding": false,
 		"server-side-rendering": true,
-		"settings/modernize-reading-settings": false,
+		"settings/modernize-reading-settings": true,
 		"settings/security/monitor": true,
 		"sign-in-with-apple": true,
 		"sign-in-with-apple/redirect": true,
