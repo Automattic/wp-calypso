@@ -27,7 +27,7 @@ import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
 import PlanFeatures2023GridHeaderPrice from './header-price';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import { PlanProperties } from './types';
-import { usePricingBreakpoint } from './util';
+import { resolvePlanName, usePricingBreakpoint } from './util';
 
 const JetpackIconContainer = styled.div`
 	padding-left: 6px;
@@ -276,7 +276,8 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 							) }
 							<PlanSelector>
 								<h4 className="plan-comparison-grid__title">
-									{ planConstantObj.getTitle() }
+									{ resolvePlanName( planName, planConstantObj.getTitle() ) }
+
 									{ showPlanSelect && <Gridicon icon="chevron-down" size={ 12 } color="#0675C4" /> }
 								</h4>
 								{ showPlanSelect && (
@@ -297,7 +298,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 
 												return (
 													<option key={ otherPlan } value={ otherPlan }>
-														{ product_name_short }
+														{ resolvePlanName( otherPlan, product_name_short ) }
 													</option>
 												);
 											}

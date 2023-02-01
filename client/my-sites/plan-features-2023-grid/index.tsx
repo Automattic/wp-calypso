@@ -66,7 +66,7 @@ import PlanFeatures2023GridHeaderPrice from './header-price';
 import { PlanFeaturesItem } from './item';
 import { PlanComparisonGrid } from './plan-comparison-grid';
 import { PlanProperties, TransformedFeatureObject } from './types';
-import { getStorageStringFromFeature } from './util';
+import { getStorageStringFromFeature, resolvePlanName } from './util';
 
 import './style.scss';
 type PlanRowOptions = {
@@ -409,8 +409,6 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 	}
 
 	renderPlanHeaders( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { translate } = this.props;
-
 		return planPropertiesObj.map( ( properties: PlanProperties ) => {
 			const { planName, planConstantObj } = properties;
 			const headerClasses = classNames(
@@ -426,7 +424,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 				>
 					<header className={ headerClasses }>
 						<h4 className="plan-features-2023-grid__header-title">
-							{ isEcommercePlan( planName ) ? translate( 'Commerce' ) : planConstantObj.getTitle() }
+							{ resolvePlanName( planName, planConstantObj.getTitle() ) }
 						</h4>
 					</header>
 				</Container>

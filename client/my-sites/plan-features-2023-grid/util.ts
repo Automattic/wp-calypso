@@ -3,9 +3,17 @@ import {
 	FEATURE_6GB_STORAGE,
 	FEATURE_13GB_STORAGE,
 	FEATURE_200GB_STORAGE,
+	isEcommercePlan,
 } from '@automattic/calypso-products';
-import { translate } from 'i18n-calypso';
+import { translate, TranslateResult } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
+
+export function resolvePlanName( planName: string, planTitle: TranslateResult ): TranslateResult {
+	if ( isEcommercePlan( planName ) ) {
+		return translate( 'Commerce' );
+	}
+	return planTitle;
+}
 
 export const getStorageStringFromFeature = ( storageFeature: string ) => {
 	switch ( storageFeature ) {
