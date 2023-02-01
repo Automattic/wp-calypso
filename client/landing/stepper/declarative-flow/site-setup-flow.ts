@@ -164,12 +164,17 @@ const siteSetupFlow: Flow = {
 					if ( ! siteSlug ) {
 						return;
 					}
+
+					// If user clicks "Skip to Dashboard" on goals step,
+					// Default site_intent to "build"
+					const updatedSiteIntent = intent ? intent : SiteIntent.Build;
+
 					const siteId = site?.ID;
 					const pendingActions = [
-						setIntentOnSite( siteSlug, intent ),
+						setIntentOnSite( siteSlug, updatedSiteIntent ),
 						setGoalsOnSite( siteSlug, goals ),
 					];
-					if ( intent === SiteIntent.Write && ! selectedDesign && ! isAtomic ) {
+					if ( updatedSiteIntent === SiteIntent.Write && ! selectedDesign && ! isAtomic ) {
 						pendingActions.push(
 							setThemeOnSite(
 								siteSlug,
@@ -180,7 +185,7 @@ const siteSetupFlow: Flow = {
 					}
 
 					// Add Launchpad to selected intents in General Onboarding
-					if ( isLaunchpadIntent( intent ) && typeof siteId === 'number' ) {
+					if ( isLaunchpadIntent( updatedSiteIntent ) && typeof siteId === 'number' ) {
 						pendingActions.push( saveSiteSettings( siteId, { launchpad_screen: 'full' } ) );
 					}
 
