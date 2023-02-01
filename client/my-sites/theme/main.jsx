@@ -927,13 +927,7 @@ class ThemeSheet extends Component {
 
 		return (
 			<Main className={ className }>
-				{ siteSlug && (
-					<AsyncLoad
-						require="calypso/components/global-notices"
-						placeholder={ null }
-						id="notices"
-					/>
-				) }
+				<AsyncLoad require="calypso/components/global-notices" placeholder={ null } id="notices" />
 				<QueryCanonicalTheme themeId={ this.props.themeId } siteId={ siteId } />
 				<QueryProductsList />
 				<QueryUserPurchases />
