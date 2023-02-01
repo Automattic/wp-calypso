@@ -201,7 +201,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	if ( ! availableForPurchase ) {
 		if ( is2023OnboardingPricingGrid ) {
 			return (
-				<Plans2023Tooltip text={ translate( 'Please, contact support to downgrade your plan' ) }>
+				<Plans2023Tooltip text={ translate( 'Please contact support to downgrade your plan.' ) }>
 					<DummyDisabledButton>
 						{ translate( 'Downgrade', { context: 'verb' } ) }
 					</DummyDisabledButton>
