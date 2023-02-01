@@ -214,12 +214,12 @@ class ThemeSheet extends Component {
 
 		return (
 			<div className="theme__sheet-bar">
-				<span className="theme__sheet-bar-title">
+				<h1 className="theme__sheet-bar-title">
 					{ title }
 					{ softLaunched && (
 						<span className="theme__sheet-bar-soft-launched">{ translate( 'A8C Only' ) }</span>
 					) }
-				</span>
+				</h1>
 				<span className="theme__sheet-bar-tag">{ tag }</span>
 			</div>
 		);
