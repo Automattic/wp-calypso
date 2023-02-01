@@ -15,7 +15,7 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 			{
 				flow,
 				siteId: siteId,
-				isNewUser: siteCount ?? true,
+				isNewUser: ! siteCount,
 				hasCartItems: false,
 				isNew7DUserSite: '',
 				theme,
