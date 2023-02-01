@@ -11,60 +11,59 @@ import {
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { storedCardsSchema } from './schema';
+import type { StoredCardsActions, StoredCardsState } from './types';
 
 /**
  * `Reducer` function which handles request/response actions
  * concerning stored cards data updates
- *
- * @param  {Array}  state  Current state
- * @param  {Object} action storeCard action
- * @returns {Array}         Updated state
  */
-export const items = withSchemaValidation( storedCardsSchema, ( state = [], action ) => {
-	switch ( action.type ) {
-		case STORED_CARDS_ADD_COMPLETED: {
-			const { item } = action;
-			return [ ...state, item ];
+export const items = withSchemaValidation(
+	storedCardsSchema,
+	( state: StoredCardsState[ 'items' ] | undefined = [], action: StoredCardsActions ) => {
+		switch ( action.type ) {
+			case STORED_CARDS_ADD_COMPLETED: {
+				const { item } = action;
+				return [ ...state, item ];
+			}
+
+			case STORED_CARDS_FETCH_COMPLETED: {
+				const { list } = action;
+				return list;
+			}
+			case STORED_CARDS_DELETE_COMPLETED: {
+				const { card } = action;
+				return state.filter(
+					( item ) => ! card.allStoredDetailsIds.includes( item.stored_details_id )
+				);
+			}
+			case STORED_CARDS_UPDATE_IS_BACKUP_COMPLETED: {
+				const { stored_details_id, is_backup } = action;
+				return state.map( ( item ) => {
+					if ( item.stored_details_id === stored_details_id && item.meta ) {
+						return {
+							...item,
+							meta: [
+								...( item.meta?.filter( ( meta ) => meta.meta_key !== 'is_backup' ) ?? {} ),
+								{ meta_key: 'is_backup', meta_value: is_backup ? 'backup' : null },
+							],
+						};
+					}
+					return item;
+				} );
+			}
 		}
 
-		case STORED_CARDS_FETCH_COMPLETED: {
-			const { list } = action;
-			return list;
-		}
-		case STORED_CARDS_DELETE_COMPLETED: {
-			const { card } = action;
-			return state.filter(
-				( item ) => ! card.allStoredDetailsIds.includes( item.stored_details_id )
-			);
-		}
-		case STORED_CARDS_UPDATE_IS_BACKUP_COMPLETED: {
-			const { stored_details_id, is_backup } = action;
-			return state.map( ( item ) => {
-				if ( item.stored_details_id === stored_details_id && item.meta ) {
-					return {
-						...item,
-						meta: [
-							...( item.meta?.filter( ( meta ) => meta.meta_key !== 'is_backup' ) ?? {} ),
-							{ meta_key: 'is_backup', meta_value: is_backup ? 'backup' : null },
-						],
-					};
-				}
-				return item;
-			} );
-		}
+		return state;
 	}
-
-	return state;
-} );
+);
 
 /**
  * Returns whether the list of stored cards has been loaded from the server in reaction to the specified action.
- *
- * @param {Array} state - current state
- * @param {Object} action - action payload
- * @returns {boolean} - updated state
  */
-export const hasLoadedFromServer = ( state = false, action ) => {
+export const hasLoadedFromServer = (
+	state: StoredCardsState[ 'hasLoadedFromServer' ] | undefined = false,
+	action: StoredCardsActions
+) => {
 	switch ( action.type ) {
 		case STORED_CARDS_FETCH_COMPLETED:
 			return true;
@@ -76,12 +75,11 @@ export const hasLoadedFromServer = ( state = false, action ) => {
 /**
  * `Reducer` function which handles request/response actions
  * concerning stored cards fetching
- *
- * @param {Object} state - current state
- * @param {Object} action - storedCard action
- * @returns {Object} updated state
  */
-export const isFetching = ( state = false, action ) => {
+export const isFetching = (
+	state: StoredCardsState[ 'isFetching' ] | undefined = false,
+	action: StoredCardsActions
+) => {
 	switch ( action.type ) {
 		case STORED_CARDS_FETCH:
 			return true;
@@ -97,12 +95,11 @@ export const isFetching = ( state = false, action ) => {
 /**
  * `Reducer` function which handles request/response actions
  * concerning stored card deletion
- *
- * @param {Object} state - current state
- * @param {Object} action - storedCard action
- * @returns {Object} updated state
  */
-export const isDeleting = ( state = {}, action ) => {
+export const isDeleting = (
+	state: StoredCardsState[ 'isDeleting' ] | undefined = {},
+	action: StoredCardsActions
+) => {
 	switch ( action.type ) {
 		case STORED_CARDS_DELETE:
 			return {
