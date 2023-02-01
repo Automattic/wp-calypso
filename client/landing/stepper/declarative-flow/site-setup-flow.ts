@@ -180,9 +180,13 @@ const siteSetupFlow: Flow = {
 						);
 					}
 
-					// Add Launchpad to selected intents in General Onboarding
-					if ( isLaunchpadIntent( intent ) && typeof siteId === 'number' ) {
-						pendingActions.push( saveSiteSettings( siteId, { launchpad_screen: 'full' } ) );
+					// Update Launchpad option based on site intent
+					if ( siteId ) {
+						pendingActions.push(
+							saveSiteSettings( siteId, {
+								launchpad_screen: isLaunchpadIntent( intent ) ? 'full' : 'off',
+							} )
+						);
 					}
 
 					let redirectionUrl = to;
