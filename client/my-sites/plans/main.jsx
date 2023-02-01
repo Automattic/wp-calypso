@@ -258,7 +258,29 @@ class Plans extends Component {
 	}
 
 	renderEcommerceTrialPage() {
-		const { translate } = this.props;
+		const {
+			translate,
+			moment,
+			currentPlan,
+			eCommerceTrialDaysLeft,
+			eCommerceTrialExpiration,
+			isTrialExpired,
+			locale,
+		} = this.props;
+
+		const trialStart = moment( currentPlan?.subscribedDate );
+		const trialEnd = moment( currentPlan?.expiryDate );
+		const trialDuration = trialEnd.diff( trialStart, 'days' );
+
+		// Trial progress from 0 to 100
+		const trialProgress = ( 1 - eCommerceTrialDaysLeft / trialDuration ) * 100;
+
+		// moment.js doesn't have a format option to display the long form in a localized way without the year
+		// https://github.com/moment/moment/issues/3341
+		const readableExpirationDate = eCommerceTrialExpiration?.toDate().toLocaleDateString( locale, {
+			month: 'long',
+			day: 'numeric',
+		} );
 
 		return (
 			<>
@@ -268,17 +290,34 @@ class Plans extends Component {
 					<div className="plans__trial-card-content">
 						<p className="plans__card-title">{ translate( 'You’re in a free trial store' ) }</p>
 						<p className="plans__card-subtitle">
-							{ translate(
-								'Your free trial will end in 5 days. Sign up to a plan by December 13 unlock new features and keep your store running.'
-							) }
+							{
+								// Still need to populate the date correctly
+								translate(
+									'Your free trial will end in %(daysLeft)d day. Sign up to a plan by %(expirationdate)s to unlock new features and keep your store running.',
+									'Your free trial will end in %(daysLeft)d days. Sign up to a plan by %(expirationdate)s to unlock new features and keep your store running.',
+									{
+										count: eCommerceTrialDaysLeft,
+										args: {
+											daysLeft: eCommerceTrialDaysLeft,
+											expirationdate: readableExpirationDate,
+										},
+									}
+								)
+							}
 						</p>
 					</div>
 					<div className="plans__chart-wrapper">
-						<div className="plans__chart" style={ { '--p': '25' } }>
-							5
+						<div className="plans__chart" style={ { '--p': trialProgress } }>
+							{ eCommerceTrialDaysLeft }
 						</div>
 						<br />
-						<span className="plans__chart-label">days left in trial</span>
+						<span className="plans__chart-label">
+							{ isTrialExpired
+								? translate( 'Your free trial has expired' )
+								: translate( 'day left in trial', 'days left in trial', {
+										count: eCommerceTrialDaysLeft,
+								  } ) }
+						</span>
 					</div>
 				</Card>
 			</>
