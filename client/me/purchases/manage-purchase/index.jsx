@@ -630,7 +630,7 @@ class ManagePurchase extends Component {
 		);
 
 		return (
-			<Card className="manage-purchase_disconnected" highlight="error">
+			<Card className="manage-purchase__disconnected-notice" highlight="error">
 				{ text }
 			</Card>
 		);
