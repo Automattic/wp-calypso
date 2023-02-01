@@ -216,6 +216,7 @@ type PlanComparisonGridProps = {
 	currentSitePlanSlug: string;
 	manageHref: string;
 	canUserPurchasePlan: boolean;
+	selectedSiteSlug: string | null;
 };
 type PlanComparisonGridHeaderProps = {
 	displayedPlansProperties: Array< PlanProperties >;
@@ -228,6 +229,7 @@ type PlanComparisonGridHeaderProps = {
 	currentSitePlanSlug: string;
 	manageHref: string;
 	canUserPurchasePlan: boolean;
+	selectedSiteSlug: string | null;
 };
 
 const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
@@ -241,6 +243,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 	currentSitePlanSlug,
 	manageHref,
 	canUserPurchasePlan,
+	selectedSiteSlug,
 } ) => {
 	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
@@ -339,6 +342,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 								planName={ planConstantObj.getTitle() }
 								planType={ planName }
 								flowName={ flowName }
+								selectedSiteSlug={ selectedSiteSlug }
 							/>
 						</Cell>
 					);
@@ -358,6 +362,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 	currentSitePlanSlug,
 	manageHref,
 	canUserPurchasePlan,
+	selectedSiteSlug,
 } ) => {
 	const translate = useTranslate();
 	const featureGroupMap = getPlanFeaturesGrouped();
@@ -517,6 +522,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 					currentSitePlanSlug={ currentSitePlanSlug }
 					manageHref={ manageHref }
 					canUserPurchasePlan={ canUserPurchasePlan }
+					selectedSiteSlug={ selectedSiteSlug }
 				/>
 				{ Object.values( featureGroupMap ).map( ( featureGroup: FeatureGroup ) => {
 					const features = featureGroup.get2023PricingGridSignupWpcomFeatures();
@@ -656,6 +662,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 					currentSitePlanSlug={ currentSitePlanSlug }
 					manageHref={ manageHref }
 					canUserPurchasePlan={ canUserPurchasePlan }
+					selectedSiteSlug={ selectedSiteSlug }
 				/>
 			</Grid>
 		</div>
