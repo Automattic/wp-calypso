@@ -62,6 +62,9 @@
 	& .highlight-cards.has-background-color {
 		background-color: var(--jetpack-white-off);
 	}
+	& .inner-notice-container.has-background-color {
+		background-color: var(--jetpack-white-off);
+	}
 	#wpcontent {
 		padding-left: 1px;
 	}
@@ -129,6 +132,9 @@
 	}
 	.segmented-control.is-primary .segmented-control__item.is-selected + .segmented-control__item .segmented-control__link {
 		border-left-color: var(--studio-black);
+	}
+	.is-odyssey-only {
+		display: block;
 	}
 }
 

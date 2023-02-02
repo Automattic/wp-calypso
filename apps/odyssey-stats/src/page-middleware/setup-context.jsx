@@ -41,18 +41,10 @@ export const setupContextMiddleware = ( reduxStore, reactQueryClient ) => {
 			return page.replace( newUrl, context.state, false, false );
 		};
 
-		// Break routing and do full load for logout link in /me
-		if ( context.pathname === '/wp-login.php' ) {
+		if ( ! context.pathname.startsWith( '/stats' ) ) {
 			window.location.href = context.path;
 			return;
 		}
-
-		// Some paths live outside of Calypso and should be opened separately
-		// Examples: /support, /forums
-		// if ( isOutsideCalypso( context.pathname ) ) {
-		// 	window.location.href = context.path;
-		// 	return;
-		// }
 
 		next();
 	} );
