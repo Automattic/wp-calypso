@@ -402,12 +402,24 @@
 .theme__sheet-style-variations {
 	.card {
 		display: flex;
-		gap: 4px;
+		gap: 8px;
+		overflow: scroll;
 		padding: 12px 20px;
+	}
+
+	&-badges {
+		.card {
+			gap: 4px;
+		}
 	}
 
 	.style-variation__badge-wrapper {
 		flex-basis: 20px;
+	}
+
+	.design-preview__style-variation-wrapper {
+		flex-basis: 120px;
+		flex-shrink: 0;
 	}
 }
 

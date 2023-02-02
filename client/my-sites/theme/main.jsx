@@ -12,6 +12,7 @@ import {
 	ThemePreview as ThemeWebPreview,
 } from '@automattic/design-picker';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { createHigherOrderComponent } from '@wordpress/compose';
 import classNames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import page from 'page';
@@ -53,6 +54,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { setThemePreviewOptions } from 'calypso/state/themes/actions';
 import {
@@ -403,7 +405,7 @@ class ThemeSheet extends Component {
 	};
 
 	renderSectionContent = ( section ) => {
-		const { styleVariations, translate } = this.props;
+		const { shouldLimitGlobalStyles, styleVariations, themeOptions, translate } = this.props;
 		const activeSection = {
 			'': this.renderOverviewTab(),
 			setup: this.renderSetupTab(),
@@ -413,13 +415,28 @@ class ThemeSheet extends Component {
 		return (
 			<div className="theme__sheet-content">
 				{ styleVariations.length > 0 && (
-					<div className="theme__sheet-style-variations">
+					<div className="theme__sheet-style-variations theme__sheet-style-variations-badges">
 						<SectionHeader label={ translate( 'Choose your style' ) } />
 						<div className="card">
 							<StyleVariationBadges
 								maxVariationsToShow={ styleVariations.length }
 								variations={ styleVariations }
 								onClick={ this.onStyleVariationClick }
+							/>
+						</div>
+					</div>
+				) }
+				{ styleVariations.length > 0 && (
+					<div className="theme__sheet-style-variations">
+						<SectionHeader label={ translate( 'Choose your style' ) } />
+						<div className="card">
+							<AsyncLoad
+								require="@automattic/design-preview/src/components/style-variation"
+								placeholder={ null }
+								selectedVariation={ themeOptions?.styleVariation }
+								variations={ styleVariations }
+								onClick={ this.onStyleVariationClick }
+								showGlobalStylesPremiumBadge={ shouldLimitGlobalStyles }
 							/>
 						</div>
 					</div>
@@ -1028,6 +1045,15 @@ class ThemeSheet extends Component {
 	}
 }
 
+const withSiteGlobalStylesStatus = createHigherOrderComponent(
+	( Wrapped ) => ( props ) => {
+		const { siteId } = props;
+		const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( siteId || -1 );
+		return <Wrapped { ...props } shouldLimitGlobalStyles={ shouldLimitGlobalStyles } />;
+	},
+	'withSiteGlobalStylesStatus'
+);
+
 const ConnectedThemeSheet = connectOptions( ThemeSheet );
 
 const ThemeSheetWithOptions = ( props ) => {
@@ -1159,4 +1185,4 @@ export default connect(
 		setThemePreviewOptions,
 		recordTracksEvent,
 	}
-)( localize( ThemeSheetWithOptions ) );
+)( withSiteGlobalStylesStatus( localize( ThemeSheetWithOptions ) ) );
