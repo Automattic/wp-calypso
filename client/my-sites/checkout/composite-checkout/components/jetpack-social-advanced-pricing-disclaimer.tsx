@@ -1,10 +1,10 @@
-import { JETPACK_FIRST_YEAR_50_PERCENT_OFF_PRODUCTS } from '@automattic/calypso-products';
+import { JETPACK_SOCIAL_ADVANCED_PRODUCTS } from '@automattic/calypso-products';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import CheckoutTermsItem from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms-item';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 
-export default function JetpackProductPricingDisclaimer() {
+export default function JetpackSocialAdvancedPricingDisclaimer() {
 	const cartKey = useCartKey();
 	const translate = useTranslate();
 	const { responseCart } = useShoppingCart( cartKey );
@@ -14,17 +14,14 @@ export default function JetpackProductPricingDisclaimer() {
 	if ( product_slugs.length === 0 ) {
 		return null;
 	}
-	const product_names = products.map( ( product ) => product.product_name );
-
-	const showJetpackProductPricingDisclaimer = JETPACK_FIRST_YEAR_50_PERCENT_OFF_PRODUCTS.filter(
-		( slug ) => product_slugs.includes( slug )
+	const showJetpackProductPricingDisclaimer = JETPACK_SOCIAL_ADVANCED_PRODUCTS.filter( ( slug ) =>
+		product_slugs.includes( slug )
 	);
 	if ( showJetpackProductPricingDisclaimer.length > 0 ) {
 		return (
 			<CheckoutTermsItem key="jetpack-product-pricing-disclaimer">
 				{ translate(
-					'The following products are currently in development: %(productNames)s Enjoy using them at half price over the next year while we continue to develop the features.',
-					{ args: { productNames: product_names.join( ',' ) } }
+					'The Jetpack Social Advanced plan is currently in a Beta state and not yet fully developed so the current price is half of the regular price. Enjoy using the plan at this discounted rate for the next year while we continue to develop the features.'
 				) }
 			</CheckoutTermsItem>
 		);
