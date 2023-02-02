@@ -6,13 +6,14 @@ import { Icon, addTemplate, brush, cloudUpload } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { isEmpty, times } from 'lodash';
 import PropTypes from 'prop-types';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { connect, useSelector } from 'react-redux';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import Theme from 'calypso/components/theme';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { upsellCardDisplayed as upsellCardDisplayedAction } from 'calypso/state/themes/actions';
 import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -51,6 +52,7 @@ export const ThemesList = ( props ) => {
 				recordTracksEvent={ props.recordTracksEvent }
 				searchTerm={ props.searchTerm }
 				translate={ props.translate }
+				upsellCardDisplayed={ props.upsellCardDisplayed }
 			/>
 		);
 	}
@@ -103,6 +105,7 @@ ThemesList.propTypes = {
 	] ),
 	siteId: PropTypes.number,
 	searchTerm: PropTypes.string,
+	upsellCardDisplayed: PropTypes.func,
 };
 
 ThemesList.defaultProps = {
@@ -152,7 +155,7 @@ function ThemeBlock( props ) {
 	);
 }
 
-function Options( { recordTracksEvent, searchTerm, translate } ) {
+function Options( { recordTracksEvent, searchTerm, translate, upsellCardDisplayed } ) {
 	const isLoggedInShowcase = useSelector( isUserLoggedIn );
 	const selectedSite = useSelector( getSelectedSite );
 	const canInstallTheme = useSelector( ( state ) =>
@@ -162,6 +165,13 @@ function Options( { recordTracksEvent, searchTerm, translate } ) {
 	const sitePlan = selectedSite?.plan?.product_slug;
 
 	const options = [];
+
+	useEffect( () => {
+		upsellCardDisplayed( true );
+		return () => {
+			upsellCardDisplayed( false );
+		};
+	}, [ upsellCardDisplayed ] );
 
 	// Design your own theme / homepage.
 	if ( isLoggedInShowcase ) {
@@ -267,7 +277,7 @@ function Options( { recordTracksEvent, searchTerm, translate } ) {
 				{ translate( 'Here are a few more options:' ) }
 			</div>
 			{ options.map( ( option, index ) => (
-				<div className="themes-list__option">
+				<div className="themes-list__option" key={ index }>
 					<Icon className="themes-list__option-icon" icon={ option.icon } size={ 28 } />
 					<div className="themes-list__option-content">
 						<div className="themes-list__option-text">
@@ -290,17 +300,16 @@ function Options( { recordTracksEvent, searchTerm, translate } ) {
 }
 
 function Empty( props ) {
-	const { translate } = props;
-
 	return (
 		<>
 			<div className="themes-list__empty-search-text">
-				{ translate( 'No themes match your search' ) }
+				{ props.translate( 'No themes match your search' ) }
 			</div>
 			<Options
 				recordTracksEvent={ props.recordTracksEvent }
 				searchTerm={ props.searchTerm }
-				translate={ translate }
+				translate={ props.translate }
+				upsellCardDisplayed={ props.upsellCardDisplayed }
 			/>
 		</>
 	);
@@ -352,4 +361,8 @@ const mapStateToProps = ( state ) => ( {
 	themesBookmark: getThemesBookmark( state ),
 } );
 
-export default connect( mapStateToProps )( localize( ThemesList ) );
+const mapDispatchToProps = {
+	upsellCardDisplayed: upsellCardDisplayedAction,
+};
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ThemesList ) );
