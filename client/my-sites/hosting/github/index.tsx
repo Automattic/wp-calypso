@@ -6,6 +6,7 @@ import {
 	getKeyringConnections,
 	isKeyringConnectionsFetching,
 } from 'calypso/state/sharing/keyring/selectors';
+import { GitHubPlaceholderCard } from './github-placeholder-card';
 
 export const GitHubCard = () => {
 	const isFetching = useSelector( isKeyringConnectionsFetching );
@@ -16,11 +17,10 @@ export const GitHubCard = () => {
 	}
 
 	if ( isFetching ) {
-		// todo render placeholder
-		return null;
+		return <GitHubPlaceholderCard />;
 	}
 
-	const gitHub = connections.find( ( connection ) => connection.service === 'github' );
+	const gitHub = connections.find( ( connection ) => connection.service === 'github-deploy' );
 
 	if ( gitHub ) {
 		return <GithubConnectCard />;

@@ -8,8 +8,8 @@ import iconGitHub from '../github.svg';
 export const GithubConnectCard = () => {
 	const { __ } = useI18n();
 	return (
-		<Card className="github-authorize-card">
-			<img className="github-authorize-icon" src={ iconGitHub } alt="" />
+		<Card className="github-hosting-card">
+			<img className="github-hosting-icon" src={ iconGitHub } alt="" />
 			<CardHeading>{ __( 'Connect Branch' ) }</CardHeading>
 		</Card>
 	);

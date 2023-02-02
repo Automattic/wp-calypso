@@ -7,7 +7,7 @@ import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions
 import { getKeyringServiceByName } from 'calypso/state/sharing/services/selectors';
 import iconGitHub from '../github.svg';
 
-import './style.scss';
+import '../style.scss';
 
 type Service = {
 	connect_URL: string;
@@ -15,7 +15,9 @@ type Service = {
 
 export const GithubAuthorizeCard = () => {
 	const dispatch = useDispatch();
-	const github = useSelector( ( state ) => getKeyringServiceByName( state, 'github' ) ) as Service;
+	const github = useSelector( ( state ) =>
+		getKeyringServiceByName( state, 'github-deploy' )
+	) as Service;
 	const handleClick = () => {
 		requestExternalAccess( github.connect_URL, () => {
 			dispatch( requestKeyringConnections() );
@@ -23,8 +25,8 @@ export const GithubAuthorizeCard = () => {
 	};
 
 	return (
-		<Card className="github-authorize-card">
-			<img className="github-authorize-icon" src={ iconGitHub } alt="" />
+		<Card className="github-hosting-card">
+			<img className="github-hosting-icon" src={ iconGitHub } alt="" />
 			<CardHeading>{ translate( 'Connect GitHub' ) }</CardHeading>
 			<p>
 				{ translate(
