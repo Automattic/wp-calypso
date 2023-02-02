@@ -40,7 +40,7 @@ export type DispatchFromMap< A extends Record< string, ( ...args: any[] ) => any
 		...args: Parameters< A[ actionCreator ] >
 	) => A[ actionCreator ] extends ( ...args: any[] ) => Generator
 		? Promise< GeneratorReturnType< A[ actionCreator ] > >
-		: void;
+		: Promise< void >;
 };
 
 /**

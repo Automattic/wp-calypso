@@ -10,7 +10,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import NoResponsesIcon from './no-responses-icon';
 import './style.scss';
 
-const PromptsNavigation = ( { prompts, showViewAllResponses = false } ) => {
+const PromptsNavigation = ( { prompts } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const [ promptIndex, setPromptIndex ] = useState( 0 );
@@ -115,9 +115,7 @@ const PromptsNavigation = ( { prompts, showViewAllResponses = false } ) => {
 
 		const viewAllResponses = (
 			<a
-				href={ 'http://wordpress.com/tag/dailyprompt-' + prompt.id }
-				target="_blank"
-				rel="noreferrer"
+				href={ '/tag/dailyprompt-' + encodeURIComponent( prompt.id ) }
 				className="blogging-prompt__prompt-responses-link"
 				onClick={ trackClickViewAllResponses }
 			>
@@ -133,7 +131,7 @@ const PromptsNavigation = ( { prompts, showViewAllResponses = false } ) => {
 							return <img alt="answered-users" src={ sample.avatar } />;
 						} ) }
 					</div>
-					{ showViewAllResponses ? viewAllResponses : '' }
+					{ prompt.answered_users_count > 0 ? viewAllResponses : '' }
 				</div>
 			);
 		}
