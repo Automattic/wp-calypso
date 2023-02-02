@@ -78,6 +78,8 @@ import ThemeNotFoundError from './theme-not-found-error';
 
 import './style.scss';
 
+const noop = () => {};
+
 class ThemeSheet extends Component {
 	static displayName = 'ThemeSheet';
 
@@ -795,8 +797,9 @@ class ThemeSheet extends Component {
 		if ( ! isLoggedIn ) {
 			plansUrl = localizeUrl( 'https://wordpress.com/pricing' );
 		} else if ( siteSlug ) {
+			const redirectTo = `/theme/${ themeId }${ section ? '/' + section : '' }/${ siteSlug }`;
 			const plan = isExternallyManagedTheme || isBundledSoftwareSet ? PLAN_BUSINESS : PLAN_PREMIUM;
-			plansUrl = plansUrl + `/${ siteSlug }/?plan=${ plan }`;
+			plansUrl = plansUrl + `/${ siteSlug }/?plan=${ plan }&redirect_to=${ redirectTo }`;
 		}
 
 		const launchPricing = () => window.open( plansUrl, '_blank' );
@@ -880,7 +883,7 @@ class ThemeSheet extends Component {
 					feature={ WPCOM_FEATURES_PREMIUM_THEMES }
 					forceHref={ onClick === null }
 					disableHref={ onClick !== null }
-					onClick={ onClick }
+					onClick={ null === onClick ? noop : onClick }
 					href={ plansUrl }
 					showIcon={ true }
 					forceDisplay={ forceDisplay }
@@ -947,6 +950,7 @@ class ThemeSheet extends Component {
 					title={ analyticsPageTitle }
 					properties={ { is_logged_in: isLoggedIn } }
 				/>
+				<AsyncLoad require="calypso/components/global-notices" placeholder={ null } id="notices" />
 				{ this.renderBar() }
 				<QueryActiveTheme siteId={ siteId } />
 				<ThanksModal source="details" themeId={ this.props.themeId } />
