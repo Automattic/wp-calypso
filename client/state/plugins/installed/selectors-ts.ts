@@ -47,8 +47,8 @@ export const getAllPluginsIndexedByPluginSlug = createSelector(
 
 					const sitePluginInfo: { [ key: string ]: any } = {};
 					[ 'active', 'autoupdate', 'update', 'version' ].forEach( ( prop ) => {
-						if ( undefined !== plugin[ prop ] ) {
-							sitePluginInfo[ prop ] = plugin[ prop ];
+						if ( undefined !== ( plugin as any )[ prop ] ) {
+							sitePluginInfo[ prop ] = ( plugin as any )[ prop ];
 						}
 					} );
 
