@@ -2,12 +2,7 @@ import { translate } from 'i18n-calypso';
 
 translate( 'Claim your domain' );
 translate(
-	'Stake your claim on your corner of the web with a custom %(domainName) that’s easy to find, share, and follow. Not sure yet?',
-	{
-		args: {
-			domainName: 'example.blog',
-		},
-	}
+	'Stake your claim on your corner of the web with a custom domain name that’s easy to find, share, and follow. Not sure yet?'
 );
 translate( 'Decide later.' );
 
