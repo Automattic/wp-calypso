@@ -261,7 +261,11 @@ object BuildDockerImage : BuildType({
 					path = "Dockerfile"
 				}
 				namesAndTags = "registry.a8c.com/calypso/base:%base_image_publish_tag%"
-				commandArgs = "--target update-base-cache $commonArgs"
+				commandArgs = """
+					--target update-base-cache
+					--cache-from=registry.a8c.com/calypso/app:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber},%base_image%
+					$commonArgs
+				""".trimIndent().replace("\n"," ")
 			}
 			param("dockerImage.platform", "linux")
 		}
