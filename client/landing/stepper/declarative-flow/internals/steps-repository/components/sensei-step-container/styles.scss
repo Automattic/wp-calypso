@@ -28,7 +28,7 @@
 	.sensei-step-green {
 		background-color: $sensei-onboarding-color;
 
-		.step-container__header .formatted-header .formatted-header__subtitle {
+		.formatted-header .formatted-header__subtitle {
 			color: inherit;
 			text-align: center;
 		}
@@ -52,7 +52,7 @@
 		}
 	}
 
-	@media (min-width: $breakpoint-mobile) {
+	@media (max-width: $breakpoint-mobile) {
 		.step-container__header .formatted-header .formatted-header__title,
 		.step-container__header .formatted-header .formatted-header__subtitle {
 			text-align: left;
