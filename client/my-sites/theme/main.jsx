@@ -676,7 +676,7 @@ class ThemeSheet extends Component {
 	};
 
 	renderButton = () => {
-		const { getUrl } = this.props.defaultOption;
+		const { getUrl, key } = this.props.defaultOption;
 		const label = this.getDefaultOptionLabel();
 		const price = this.renderPrice();
 		const placeholder = <span className="theme__sheet-button-placeholder">loading......</span>;
@@ -688,7 +688,8 @@ class ThemeSheet extends Component {
 				className="theme__sheet-primary-button"
 				href={
 					getUrl &&
-					( ! isExternallyManagedTheme ||
+					( key === 'customize' ||
+						! isExternallyManagedTheme ||
 						! isLoggedIn ||
 						! config.isEnabled( 'themes/third-party-premium' ) )
 						? getUrl( this.props.themeId )
