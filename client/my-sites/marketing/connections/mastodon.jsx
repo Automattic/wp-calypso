@@ -18,10 +18,10 @@ const Mastodon = ( { service, action, connectAnother, connections } ) => {
 	 * @returns boolean
 	 */
 	const isValidUsername = ( username ) =>
-		/@?\b([A-Z0-9._%+-]+)@([A-Z0-9.-]+\.[A-Z]{2,})\b/gim.test( username );
+		/@?\b([A-Z0-9_]+)@([A-Z0-9.-]+\.[A-Z]{2,})\b/gi.test( username );
 
 	const validateInstance = () => {
-		if ( isValidUsername( instance ) ) {
+		if ( ! instance || isValidUsername( instance ) ) {
 			setError( null );
 		} else {
 			setError( translate( 'This username is not valid.' ) );
