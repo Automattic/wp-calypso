@@ -179,7 +179,7 @@ const PreviewSiteModalItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 	);
 };
 
-const CopySiteItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
+const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
 
 	const copySiteHref = addQueryArgs( `/setup/copy-site`, {
