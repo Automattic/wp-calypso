@@ -48,7 +48,7 @@ export async function maybeRedirect( context, next ) {
 	// See https://cylonp2.wordpress.com/2022/09/19/question-about-infinite-redirect/#comment-1731
 	if (
 		( maybeStalelaunchpadScreenOption && maybeStalelaunchpadScreenOption === 'full' ) ||
-		currentUrl?.includes( 'postOnboarding=true' )
+		currentUrl?.includes( 'showLaunchpad=true' )
 	) {
 		await context.store.dispatch( requestSite( siteId ) );
 	}

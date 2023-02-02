@@ -189,7 +189,7 @@ const siteSetupFlow: Flow = {
 
 					// Forcing cache invalidation to retrieve latest launchpad_screen option value
 					if ( isLaunchpadIntent( intent ) ) {
-						redirectionUrl = addQueryArgs( { postOnboarding: true }, to );
+						redirectionUrl = addQueryArgs( { showLaunchpad: true }, to );
 					}
 
 					Promise.all( pendingActions ).then( () => window.location.assign( redirectionUrl ) );
