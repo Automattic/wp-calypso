@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Icon, chartBar, trendingUp } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize, translate, numberFormat } from 'i18n-calypso';
@@ -25,6 +26,7 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
+import PromoCards from '../promo-cards';
 import DatePicker from '../stats-date-picker';
 import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
@@ -132,7 +134,8 @@ class WordAds extends Component {
 	};
 
 	render() {
-		const { canAccessAds, canUpgradeToUseWordAds, date, site, siteId, slug } = this.props;
+		const { canAccessAds, canUpgradeToUseWordAds, date, isOdysseyStats, site, siteId, slug } =
+			this.props;
 
 		const { period, endOf } = this.props.period;
 
@@ -246,6 +249,8 @@ class WordAds extends Component {
 								</div>
 							</div>
 
+							<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="ads" slug={ slug } />
+
 							<JetpackColophon />
 						</Fragment>
 					) }
@@ -260,7 +265,9 @@ export default connect(
 	( state ) => {
 		const site = getSelectedSite( state );
 		const siteId = getSelectedSiteId( state );
+		const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 		return {
+			isOdysseyStats,
 			site,
 			siteId,
 			slug: getSelectedSiteSlug( state ),

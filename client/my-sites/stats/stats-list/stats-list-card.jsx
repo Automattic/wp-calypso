@@ -24,6 +24,9 @@ const StatsListCard = ( {
 	error,
 	heroElement,
 	metricLabel,
+	splitHeader,
+	mainItemLabel,
+	additionalColumns,
 } ) => {
 	const moduleNameTitle = titlecase( moduleType );
 	const debug = debugFactory( `calypso:stats:list:${ moduleType }` );
@@ -100,38 +103,44 @@ const StatsListCard = ( {
 			className={ `list-${ moduleType }` }
 			metricLabel={ metricLabel }
 			heroElement={ heroElement }
+			splitHeader={ splitHeader }
+			mainItemLabel={ mainItemLabel }
+			additionalHeaderColumns={ additionalColumns?.header }
 		>
 			{ !! loader && loader }
 			{ !! error && error }
-			<HorizontalBarList>
-				{ sortedData?.map( ( item, index ) => {
-					let leftSideItem;
-					const isInteractive = item?.link || item?.page || item?.children;
-					const key = item?.id || index; // not every item has an id
+			{ ! loader && (
+				<HorizontalBarList>
+					{ sortedData?.map( ( item, index ) => {
+						let leftSideItem;
+						const isInteractive = item?.link || item?.page || item?.children;
+						const key = item?.id || index; // not every item has an id
 
-					// left icon visible only for Author avatars and Contry flags.
-					if ( item?.countryCode ) {
-						leftSideItem = <StatsListCountryFlag countryCode={ item.countryCode } />;
-					} else if ( moduleType === 'authors' && item?.icon ) {
-						leftSideItem = <StatsCardAvatar url={ item?.icon } altName={ item?.label } />;
-					}
+						// left icon visible only for Author avatars and Contry flags.
+						if ( item?.countryCode ) {
+							leftSideItem = <StatsListCountryFlag countryCode={ item.countryCode } />;
+						} else if ( moduleType === 'authors' && item?.icon ) {
+							leftSideItem = <StatsCardAvatar url={ item?.icon } altName={ item?.label } />;
+						}
 
-					return (
-						<HorizontalBarListItem
-							key={ key }
-							data={ item }
-							maxValue={ barMaxValue }
-							hasIndicator={ item?.className?.includes( 'published' ) }
-							onClick={ localClickHandler }
-							leftSideItem={ leftSideItem }
-							renderRightSideItem={ ( incomingItem ) => outputRightItem( incomingItem, key ) }
-							useShortLabel={ useShortLabel }
-							isStatic={ ! isInteractive }
-							barMaxValue={ barMaxValue }
-						/>
-					);
-				} ) }
-			</HorizontalBarList>
+						return (
+							<HorizontalBarListItem
+								key={ key }
+								data={ item }
+								maxValue={ barMaxValue }
+								hasIndicator={ item?.className?.includes( 'published' ) }
+								onClick={ localClickHandler }
+								leftSideItem={ leftSideItem }
+								renderRightSideItem={ ( incomingItem ) => outputRightItem( incomingItem, key ) }
+								useShortLabel={ useShortLabel }
+								isStatic={ ! isInteractive }
+								barMaxValue={ barMaxValue }
+								additionalColumns={ additionalColumns?.body( item ) }
+							/>
+						);
+					} ) }
+				</HorizontalBarList>
+			) }
 		</StatsCard>
 	);
 };

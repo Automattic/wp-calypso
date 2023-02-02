@@ -216,6 +216,7 @@ type PlanComparisonGridProps = {
 	currentSitePlanSlug: string;
 	manageHref: string;
 	canUserPurchasePlan: boolean;
+	selectedSiteSlug: string | null;
 };
 type PlanComparisonGridHeaderProps = {
 	displayedPlansProperties: Array< PlanProperties >;
@@ -228,6 +229,7 @@ type PlanComparisonGridHeaderProps = {
 	currentSitePlanSlug: string;
 	manageHref: string;
 	canUserPurchasePlan: boolean;
+	selectedSiteSlug: string | null;
 };
 
 const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
@@ -241,6 +243,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 	currentSitePlanSlug,
 	manageHref,
 	canUserPurchasePlan,
+	selectedSiteSlug,
 } ) => {
 	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
@@ -277,6 +280,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 							<PlanSelector>
 								<h4 className="plan-comparison-grid__title">
 									{ planConstantObj.getTitle() }
+
 									{ showPlanSelect && <Gridicon icon="chevron-down" size={ 12 } color="#0675C4" /> }
 								</h4>
 								{ showPlanSelect && (
@@ -286,7 +290,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 										value={ planName }
 									>
 										{ displayedPlansProperties.map(
-											( { planName: otherPlan, product_name_short } ) => {
+											( { planName: otherPlan, planConstantObj } ) => {
 												const isVisiblePlan = visiblePlansProperties.find(
 													( { planName } ) => planName === otherPlan
 												);
@@ -297,7 +301,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 
 												return (
 													<option key={ otherPlan } value={ otherPlan }>
-														{ product_name_short }
+														{ planConstantObj.getTitle() }
 													</option>
 												);
 											}
@@ -339,6 +343,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 								planName={ planConstantObj.getTitle() }
 								planType={ planName }
 								flowName={ flowName }
+								selectedSiteSlug={ selectedSiteSlug }
 							/>
 						</Cell>
 					);
@@ -358,6 +363,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 	currentSitePlanSlug,
 	manageHref,
 	canUserPurchasePlan,
+	selectedSiteSlug,
 } ) => {
 	const translate = useTranslate();
 	const featureGroupMap = getPlanFeaturesGrouped();
@@ -487,6 +493,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		}
 		return acc;
 	}, [] );
+
 	return (
 		<div className="plan-comparison-grid">
 			<PlanComparisonHeader className="wp-brand-font">
@@ -501,6 +508,8 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 				intervalType={ planTypeSelectorProps.intervalType }
 				customerType={ planTypeSelectorProps.customerType }
 				hidePersonalPlan={ planTypeSelectorProps.hidePersonalPlan }
+				basePlansPath={ planTypeSelectorProps.basePlansPath }
+				siteSlug={ planTypeSelectorProps.siteSlug }
 				hideDiscountLabel={ true }
 			/>
 			<Grid>
@@ -514,8 +523,8 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 					currentSitePlanSlug={ currentSitePlanSlug }
 					manageHref={ manageHref }
 					canUserPurchasePlan={ canUserPurchasePlan }
+					selectedSiteSlug={ selectedSiteSlug }
 				/>
-
 				{ Object.values( featureGroupMap ).map( ( featureGroup: FeatureGroup ) => {
 					const features = featureGroup.get2023PricingGridSignupWpcomFeatures();
 					const featureObjects = getPlanFeaturesObject( features );
@@ -654,6 +663,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 					currentSitePlanSlug={ currentSitePlanSlug }
 					manageHref={ manageHref }
 					canUserPurchasePlan={ canUserPurchasePlan }
+					selectedSiteSlug={ selectedSiteSlug }
 				/>
 			</Grid>
 		</div>

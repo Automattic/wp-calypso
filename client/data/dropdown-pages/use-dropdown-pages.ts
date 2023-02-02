@@ -1,7 +1,10 @@
 import { useQuery } from 'react-query';
 import wpcom from 'calypso/lib/wp';
 
-type Response = PageNode[];
+export type DropdownPagesResponse = {
+	found: number;
+	dropdown_pages: PageNode[];
+};
 
 export type PageNode = {
 	ID: number;
@@ -9,10 +12,13 @@ export type PageNode = {
 	children?: PageNode[];
 };
 
-const useDropdownPagesQuery = ( siteId?: number, queryOptions = {} ) => {
-	return useQuery(
+const useDropdownPagesQuery = < TData = DropdownPagesResponse >(
+	siteId?: number,
+	queryOptions = {}
+) => {
+	return useQuery< DropdownPagesResponse, unknown, TData >(
 		[ 'sites', siteId, 'dropdown-pages' ],
-		(): Promise< Response > => wpcom.req.get( `/sites/${ siteId }/dropdown-pages` ),
+		(): Promise< DropdownPagesResponse > => wpcom.req.get( `/sites/${ siteId }/dropdown-pages` ),
 		{
 			enabled: !! siteId,
 			...queryOptions,

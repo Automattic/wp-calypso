@@ -1,25 +1,30 @@
 import styled from '@emotion/styled';
 
 export const Title = styled.h1`
-	margin-top: 16px;
 	font-size: 36px;
 	line-height: 40px;
 	font-family: Recoleta, sans-serif;
+	margin-bottom: 16px;
 `;
 
 export const Label = styled.label`
-	margin-top: 40px;
+	margin-top: 24px;
+	margin-bottom: 8px;
 	font-size: 14px;
 	line-height: 20px;
+	font-weight: 600;
+`;
+
+export const Hint = styled.div`
+	font-size: 13px;
 `;
 
 export const Input = styled.input`
-	margin-top: 10px;
-	padding: 10px 16px;
+	padding: 12px 16px;
 	font-size: 14px;
 	line-height: 20px;
 
-	&:placehoder {
+	&:placeholder {
 		color: #909398;
 	}
 `;

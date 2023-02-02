@@ -21,12 +21,14 @@ import {
 	getPlanPath,
 } from '@automattic/calypso-products';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import page from 'page';
-import { Component } from 'react';
+import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import BloombergLogo from 'calypso/assets/images/onboarding/bloomberg-logo.svg';
+import cloudLogo from 'calypso/assets/images/onboarding/cloud-logo.svg';
 import CNNLogo from 'calypso/assets/images/onboarding/cnn-logo.svg';
 import CondenastLogo from 'calypso/assets/images/onboarding/condenast-logo.svg';
 import DisneyLogo from 'calypso/assets/images/onboarding/disney-logo.svg';
@@ -42,6 +44,7 @@ import PlanPill from 'calypso/components/plans/plan-pill';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
+import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/plan-type-selector';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
@@ -119,10 +122,45 @@ type PlanFeatures2023GridConnectedProps = {
 type PlanFeatures2023GridType = PlanFeatures2023GridProps &
 	PlanFeatures2023GridConnectedProps & { children?: React.ReactNode };
 
-export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > {
+type PlanFeatures2023GridState = {
+	showPlansComparisonGrid: boolean;
+};
+
+export class PlanFeatures2023Grid extends Component<
+	PlanFeatures2023GridType,
+	PlanFeatures2023GridState
+> {
+	state = {
+		showPlansComparisonGrid: false,
+	};
+
+	plansComparisonGridContainerRef = createRef< HTMLDivElement >();
+
 	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_wp_plans_test_view' );
 		retargetViewPlans();
+	}
+
+	toggleShowPlansComparisonGrid = () => {
+		this.setState( ( { showPlansComparisonGrid } ) => ( {
+			showPlansComparisonGrid: ! showPlansComparisonGrid,
+		} ) );
+	};
+
+	componentDidUpdate(
+		prevProps: Readonly< PlanFeatures2023GridType >,
+		prevState: Readonly< PlanFeatures2023GridState >
+	) {
+		// If the "Compare plans" button is clicked, scroll to the plans comparison grid.
+		if (
+			prevState.showPlansComparisonGrid === false &&
+			this.plansComparisonGridContainerRef.current
+		) {
+			scrollIntoViewport( this.plansComparisonGridContainerRef.current, {
+				behavior: 'smooth',
+				scrollMode: 'if-needed',
+			} );
+		}
 	}
 
 	render() {
@@ -136,6 +174,8 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			currentSitePlanSlug,
 			manageHref,
 			canUserPurchasePlan,
+			translate,
+			selectedSiteSlug,
 		} = this.props;
 		return (
 			<div className="plans-wrapper">
@@ -154,17 +194,37 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 						</div>
 					</div>
 				</div>
-				<PlanComparisonGrid
-					planTypeSelectorProps={ planTypeSelectorProps }
-					planProperties={ planProperties }
-					intervalType={ intervalType }
-					isInSignup={ isInSignup }
-					isLaunchPage={ isLaunchPage }
-					flowName={ flowName }
-					currentSitePlanSlug={ currentSitePlanSlug }
-					manageHref={ manageHref }
-					canUserPurchasePlan={ canUserPurchasePlan }
-				/>
+				<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
+					<Button onClick={ this.toggleShowPlansComparisonGrid }>
+						{ this.state.showPlansComparisonGrid
+							? translate( 'Hide comparison' )
+							: translate( 'Compare plans' ) }
+					</Button>
+				</div>
+				{ this.state.showPlansComparisonGrid ? (
+					<div
+						ref={ this.plansComparisonGridContainerRef }
+						className="plan-features-2023-grid__plan-comparison-grid-container"
+					>
+						<PlanComparisonGrid
+							planTypeSelectorProps={ planTypeSelectorProps }
+							planProperties={ planProperties }
+							intervalType={ intervalType }
+							isInSignup={ isInSignup }
+							isLaunchPage={ isLaunchPage }
+							flowName={ flowName }
+							currentSitePlanSlug={ currentSitePlanSlug }
+							manageHref={ manageHref }
+							canUserPurchasePlan={ canUserPurchasePlan }
+							selectedSiteSlug={ selectedSiteSlug }
+						/>
+						<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
+							<Button onClick={ this.toggleShowPlansComparisonGrid }>
+								{ translate( 'Hide comparison' ) }
+							</Button>
+						</div>
+					</div>
+				) : null }
 			</div>
 		);
 	}
@@ -386,6 +446,11 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 						</div>
 					) }
 					<header className={ headerClasses }>
+						{ isBusinessPlan( planName ) && (
+							<div className="plan-features-2023-grid__plan-logo">
+								<img src={ cloudLogo } alt="Cloud logo" />{ ' ' }
+							</div>
+						) }
 						{ isEcommercePlan( planName ) && (
 							<div className="plan-features-2023-grid__plan-logo">
 								<img src={ wooLogo } alt="WooCommerce logo" />{ ' ' }
@@ -469,6 +534,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			canUserPurchasePlan,
 			manageHref,
 			currentSitePlanSlug,
+			selectedSiteSlug,
 		} = this.props;
 
 		return planPropertiesObj.map( ( properties: PlanProperties ) => {
@@ -493,6 +559,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 						flowName={ flowName }
 						current={ current ?? false }
 						currentSitePlanSlug={ currentSitePlanSlug }
+						selectedSiteSlug={ selectedSiteSlug }
 					/>
 				</Container>
 			);
@@ -763,14 +830,16 @@ const ConnectedPlanFeatures2023Grid = connect(
 			);
 		}
 
+		const manageHref =
+			purchaseId && selectedSiteSlug
+				? getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
+				: `/plans/my-plan/${ siteId }`;
+
 		return {
 			currentSitePlanSlug: currentSitePlan?.productSlug,
 			planProperties,
 			canUserPurchasePlan,
-			manageHref:
-				purchaseId && selectedSiteSlug
-					? getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
-					: `/plans/my-plan/${ siteId }`,
+			manageHref,
 			selectedSiteSlug,
 		};
 	},
