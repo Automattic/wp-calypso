@@ -7,6 +7,11 @@ import {
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
+import {
+	getStateLabelText,
+	STATE_SELECT_TEXT,
+} from 'calypso/components/domains/contact-details-form-fields/custom-form-fieldsets/utils';
+import { StateSelect } from 'calypso/my-sites/domains/components/form';
 import { isValid } from '../types/wpcom-store-state';
 import CountrySelectMenu from './country-select-menu';
 import { LeftColumn, RightColumn } from './ie-fallback';
@@ -17,11 +22,6 @@ import type {
 	ManagedValue,
 } from '@automattic/wpcom-checkout';
 import type { ChangeEvent } from 'react';
-import { Input, StateSelect } from 'calypso/my-sites/domains/components/form';
-import {
-	getStateLabelText,
-	STATE_SELECT_TEXT,
-} from 'calypso/components/domains/contact-details-form-fields/custom-form-fieldsets/utils';
 
 const GridRow = styled.div`
 	display: -ms-grid;
