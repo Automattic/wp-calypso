@@ -399,8 +399,11 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 
 		const themeSetupOptions: ThemeSetupOptions = {
 			trim_content: options?.trimContent ?? true,
-			posts_source_site_id: options?.posts_source_site_id,
 		};
+
+		if ( options?.posts_source_site_id ) {
+			themeSetupOptions.posts_source_site_id = options.posts_source_site_id;
+		}
 
 		if ( verticalizable ) {
 			themeSetupOptions.vertical_id = options?.verticalId;

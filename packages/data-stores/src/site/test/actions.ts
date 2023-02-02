@@ -473,7 +473,6 @@ describe( 'Site Actions', () => {
 			expect( generator.next().value ).toEqual(
 				createMockedThemeSetupApiRequest( {
 					trim_content: true,
-					posts_source_site_id: undefined,
 				} )
 			);
 		} );
@@ -503,7 +502,6 @@ describe( 'Site Actions', () => {
 				createMockedThemeSetupApiRequest( {
 					trim_content: true,
 					vertical_id: mockedSiteVerticalId,
-					posts_source_site_id: undefined,
 				} )
 			);
 		} );
@@ -532,7 +530,6 @@ describe( 'Site Actions', () => {
 				createMockedThemeSetupApiRequest( {
 					trim_content: true,
 					pattern_ids: patternIds,
-					posts_source_site_id: undefined,
 				} )
 			);
 		} );
@@ -561,7 +558,6 @@ describe( 'Site Actions', () => {
 				createMockedThemeSetupApiRequest( {
 					trim_content: true,
 					header_pattern_ids: headerPatternIds,
-					posts_source_site_id: undefined,
 				} )
 			);
 		} );
@@ -590,7 +586,6 @@ describe( 'Site Actions', () => {
 				createMockedThemeSetupApiRequest( {
 					trim_content: true,
 					footer_pattern_ids: footerPatternIds,
-					posts_source_site_id: undefined,
 				} )
 			);
 		} );
