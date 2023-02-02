@@ -5,7 +5,10 @@ import { render, screen } from '@testing-library/react';
 import nock from 'nock';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
-import { stripeConfiguration } from 'calypso/my-sites/checkout/composite-checkout/test/util';
+import {
+	stripeConfiguration,
+	mockStripeElements,
+} from 'calypso/my-sites/checkout/composite-checkout/test/util';
 import { createReduxStore } from 'calypso/state';
 import { PURCHASES_SITE_FETCH_COMPLETED } from 'calypso/state/action-types';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
@@ -15,57 +18,18 @@ import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import ChangePaymentMethod from '../change-payment-method';
 import type { StoredCard } from 'calypso/my-sites/checkout/composite-checkout/types/stored-cards';
 
-const mockElement = () => ( {
-	mount: jest.fn(),
-	destroy: jest.fn(),
-	on: jest.fn(),
-	update: jest.fn(),
-} );
-
-const mockElements = () => {
-	const elements = {};
-	return {
-		create: jest.fn( ( type ) => {
-			elements[ type ] = mockElement();
-			return elements[ type ];
-		} ),
-		getElement: jest.fn( ( type ) => {
-			return elements[ type ] || null;
-		} ),
-	};
-};
-
-const mockStripe = () => ( {
-	elements: jest.fn( () => mockElements() ),
-	createToken: jest.fn(),
-	createSource: jest.fn(),
-	createPaymentMethod: jest.fn(),
-	confirmCardPayment: jest.fn(),
-	confirmCardSetup: jest.fn(),
-	paymentRequest: jest.fn(),
-	_registerWrapper: jest.fn(),
-} );
-
 jest.mock( '@stripe/react-stripe-js', () => {
 	const stripe = jest.requireActual( '@stripe/react-stripe-js' );
 
 	return {
 		...stripe,
-		Element: () => {
-			return mockElement();
-		},
-		useStripe: () => {
-			return mockStripe();
-		},
-		useElements: () => {
-			return mockElements();
-		},
+		...mockStripeElements(),
 	};
 } );
 
 jest.mock( '@stripe/stripe-js', () => {
 	return {
-		loadStripe: async () => mockStripe(),
+		loadStripe: async () => mockStripeElements().useStripe(),
 	};
 } );
 
