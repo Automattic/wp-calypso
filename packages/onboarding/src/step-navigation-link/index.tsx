@@ -59,11 +59,6 @@ const StepNavigationLink: React.FC< Props > = ( {
 			primary={ primary }
 			borderless={ borderless }
 			className={ buttonClasses }
-			// Use onMouseDown here to prevent onClick blocked by onBlur
-			// if any exists in adjacent elements
-			onMouseDown={ ( event: React.MouseEvent< HTMLButtonElement > ) => {
-				event.preventDefault();
-			} }
 			onClick={ onClick }
 			rel={ rel }
 		>
