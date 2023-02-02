@@ -39,7 +39,7 @@ const updateGlobalStyles = (
 
 export const useCreateSenseiSite = () => {
 	const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) );
-	const { setIntentOnSite } = useDispatch( SITE_STORE );
+	const { setIntentOnSite, saveSiteSettings } = useDispatch( SITE_STORE );
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const { createSenseiSite, setSelectedSite } = useDispatch( ONBOARD_STORE );
 	const { getSelectedStyleVariation } = useSelect( ( select ) => select( ONBOARD_STORE ) );
@@ -76,7 +76,10 @@ export const useCreateSenseiSite = () => {
 		const newSite = getNewSite();
 		const siteId = newSite?.blogid;
 		setSelectedSite( newSite?.blogid );
-		await Promise.all( [ setIntentOnSite( newSite?.site_slug as string, SENSEI_FLOW ) ] );
+		await Promise.all( [
+			setIntentOnSite( newSite?.site_slug as string, SENSEI_FLOW ),
+			saveSiteSettings( newSite?.blogid as number, { launchpad_screen: 'off' } ),
+		] );
 
 		setProgress( {
 			percentage: 75,
