@@ -2,7 +2,6 @@
 
 /* eslint-disable no-restricted-imports */
 import config from '@automattic/calypso-config';
-import { Gridicon } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { map, pickBy, flowRight } from 'lodash';
