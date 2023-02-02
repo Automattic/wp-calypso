@@ -25,32 +25,56 @@ $plan-features-sidebar-width: 272px;
 			&.is-free-plan {
 				background-color: var(--studio-blue-50);
 				color: var(--studio-blue-0);
+
+				&:focus {
+					box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-blue-50);
+				}
 			}
 
 			&.is-personal-plan {
 				background-color: var(--studio-blue-60);
 				color: var(--studio-blue-0);
+
+				&:focus {
+					box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-blue-50);
+				}
 			}
 
 			&.is-premium-plan {
 				background-color: #004687;
 				color: var(--studio-blue-0);
+
+				&:focus {
+					box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px #004687;
+				}
 			}
 
 			&.is-business-plan {
 				background-color: #7f54b3;
 				color: var(--studio-purple-0);
+
+				&:focus {
+					box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px #7f54b3;
+				}
 			}
 
 			&.is-ecommerce-plan {
 				background-color: #55347d;
 				color: var(--studio-purple-0);
+
+				&:focus {
+					box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px #55347d;
+				}
 			}
 
 			&.is-wpcom-enterprise-grid-plan {
 				background-color: var(--studio-gray-80);
 				a {
 					color: var(--studio-gray-0);
+				}
+
+				&:focus {
+					box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-gray-80);
 				}
 			}
 
@@ -848,20 +872,25 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 	.segmented-control__item {
 		border: 6px;
 		padding: 2px;
+		font-weight: 500;
 
 		& .segmented-control__link {
 			border: 1px solid #f2f2f2;
+			border-radius: 5px; /* stylelint-disable-line scales/radii */
+
 			&:hover {
-				border: 1px solid var(--studio-gray-10);
-				background-color: unset;
-				border-radius: 5px; /* stylelint-disable-line scales/radii */
+				border-color: rgba(0, 0, 0, 0.04);
+				background: rgba(255, 255, 255, 0.3);
+			}
+			&:focus {
+				box-shadow: 0 0 0 1px var(--studio-gray-90);
 			}
 		}
 
 		&.is-selected .segmented-control__link {
 			border: 0.5px solid rgba(0, 0, 0, 0.04);
 			box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12), 0 3px 1px rgba(0, 0, 0, 0.04);
-			border-radius: 5px; /* stylelint-disable-line scales/radii */
+
 			background-color: #fff;
 			// border-color: rgba(0, 0, 0, 0.04);
 
@@ -1130,10 +1159,17 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 		line-height: 20px;
 		padding: 0 24px;
 		width: 100%;
+		transition: border-color 0.15s ease-out;
 
 		@media ( min-width: $plans-2023-small-breakpoint ) {
 			width: initial;
 			height: 40px;
+		}
+
+		&:not([disabled]):hover,
+		&:not([disabled]):focus {
+			border-color: var(--studio-gray-100);
+			box-shadow: none;
 		}
 	}
 }
