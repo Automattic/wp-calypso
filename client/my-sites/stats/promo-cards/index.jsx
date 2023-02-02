@@ -75,6 +75,30 @@ export default function PromoCards( { isOdysseyStats, slug, pageSlug } ) {
 		// Events need to incorporate the page and the click type.
 		// This will allow us to account for integration across different pages.
 		// FORMAT: calypso_stats_PAGE_mobile_cta_EVENT
+		// Current known events across Stats pages are listed below.
+		// This comment will fall out of date if the PromoCards component
+		// is added to any new pages.
+		// Ads:
+		// - calypso_stats_ads_mobile_cta_jetpack_click_a8c
+		// - calypso_stats_ads_mobile_cta_jetpack_click_apple
+		// - calypso_stats_ads_mobile_cta_jetpack_click_google
+		// - calypso_stats_ads_mobile_cta_woo_click_a8c
+		// - calypso_stats_ads_mobile_cta_woo_click_apple
+		// - calypso_stats_ads_mobile_cta_woo_click_google
+		// Annual Insights:
+		// - calypso_stats_annual_insights_mobile_cta_jetpack_click_a8c
+		// - calypso_stats_annual_insights_mobile_cta_jetpack_click_apple
+		// - calypso_stats_annual_insights_mobile_cta_jetpack_click_google
+		// - calypso_stats_annual_insights_mobile_cta_woo_click_a8c
+		// - calypso_stats_annual_insights_mobile_cta_woo_click_apple
+		// - calypso_stats_annual_insights_mobile_cta_woo_click_google
+		// Traffic
+		// - calypso_stats_traffic_mobile_cta_jetpack_click_a8c
+		// - calypso_stats_traffic_mobile_cta_jetpack_click_apple
+		// - calypso_stats_traffic_mobile_cta_jetpack_click_google
+		// - calypso_stats_traffic_mobile_cta_woo_click_a8c
+		// - calypso_stats_traffic_mobile_cta_woo_click_apple
+		// - calypso_stats_traffic_mobile_cta_woo_click_google
 		const tracksEventName = `calypso_stats_${ pageSlug }_mobile_cta_${ event }`.replaceAll(
 			'-',
 			'_'
