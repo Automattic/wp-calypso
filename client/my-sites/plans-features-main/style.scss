@@ -55,7 +55,14 @@
 	margin: auto;
 	max-width: 335px;
 
-	@include onboarding-2023-pricing-grid-plans-breakpoints;
+	.is-section-signup & {
+		@include onboarding-2023-pricing-grid-plans-breakpoints;
+	}
+
+	.is-section-plans & {
+		@include pricing-grid-2023-plans-section-breakpoints;
+
+	}
 
 }
 

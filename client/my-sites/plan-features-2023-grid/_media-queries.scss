@@ -32,11 +32,7 @@ $plans-2023-large-breakpoint: 1500px;
  * this should stretch to fill it's container on non-mobile resolutions.
  */
 @mixin pricing-grid-2023-plans-section-breakpoints {
-	max-width: 414px;
-
-	@media ( min-width: ( $plans-2023-small-breakpoint ) ) {
-		max-width: 100%;
-	}
+	max-width: 100%;
 }
 
 /**
