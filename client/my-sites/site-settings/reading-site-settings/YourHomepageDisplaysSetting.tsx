@@ -83,8 +83,8 @@ const YourHomepageDisplaysSetting = ( {
 	const handlePageOnFrontChange: React.FormEventHandler = ( { target } ) => {
 		const selectedPageId: string = ( target as HTMLSelectElement ).value;
 		if ( selectedPageId === '' ) {
-			// Default was selected, so we need to set show_on_front to 'posts'
-			onChange?.( { show_on_front: 'posts', page_on_front: '' } );
+			// Default was selected, so we need to set show_on_front to 'posts' and unset page_for_posts.
+			onChange?.( { show_on_front: 'posts', page_on_front: '', page_for_posts: '' } );
 		} else {
 			onChange?.( { show_on_front: 'page', page_on_front: selectedPageId } );
 		}
@@ -129,7 +129,7 @@ const YourHomepageDisplaysSetting = ( {
 				<FormSelect
 					id="posts-page-select"
 					name="page_for_posts"
-					disabled={ disabled || isLoading || ! pages?.length }
+					disabled={ disabled || isLoading || ! pages?.length || page_on_front === '' }
 					value={ page_for_posts }
 					onChange={ handlePageForPostsChange }
 				>

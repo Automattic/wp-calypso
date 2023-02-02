@@ -6,7 +6,7 @@ import { initGoogleRecaptcha } from 'calypso/lib/analytics/recaptcha';
 import './style.scss';
 
 function Recaptcha( { badgePosition } ) {
-	const { setRecaptchaClientId } = useDispatch( 'wpcom-checkout' );
+	const { setRecaptchaClientId } = useDispatch( 'wpcom-checkout' ) ?? {};
 	useEffect( () => {
 		initGoogleRecaptcha( 'g-recaptcha', config( 'google_recaptcha_site_key' ) ).then(
 			( clientId ) => {
@@ -14,7 +14,7 @@ function Recaptcha( { badgePosition } ) {
 					return;
 				}
 
-				setRecaptchaClientId( parseInt( clientId ) );
+				setRecaptchaClientId?.( parseInt( clientId ) );
 			}
 		);
 	}, [ setRecaptchaClientId ] );

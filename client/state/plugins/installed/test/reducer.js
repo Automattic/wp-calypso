@@ -5,6 +5,7 @@ import {
 	PLUGINS_REQUEST,
 	PLUGINS_REQUEST_SUCCESS,
 	PLUGINS_REQUEST_FAILURE,
+	PLUGINS_ALL_RECEIVE,
 	PLUGIN_ACTIVATE_REQUEST,
 	PLUGIN_ACTIVATE_REQUEST_SUCCESS,
 	PLUGIN_ACTIVATE_REQUEST_FAILURE,
@@ -18,7 +19,7 @@ import {
 } from 'calypso/state/action-types';
 import { isRequesting, plugins } from '../reducer';
 import status from '../status/reducer';
-import { akismet, jetpack } from './fixtures/plugins';
+import { akismet, jetpack, healthCheck } from './fixtures/plugins';
 
 describe( 'reducer:', () => {
 	describe( 'isRequesting', () => {
@@ -56,6 +57,27 @@ describe( 'reducer:', () => {
 				data: [ akismet ],
 			} );
 			expect( state ).toEqual( { 'one.site': [ akismet ] } );
+		} );
+
+		test( 'should load the plugins with its name html decoded', () => {
+			const originalState = deepFreeze( { 'one.site': [] } );
+			const state = plugins( originalState, {
+				type: PLUGINS_RECEIVE,
+				siteId: 'one.site',
+				data: [ healthCheck ],
+			} );
+			const statePluginName = state[ 'one.site' ][ 0 ].name;
+			expect( statePluginName ).toEqual( 'Health Check & Troubleshooting' );
+		} );
+
+		test( 'should load all sites plugins with its name html decoded', () => {
+			const originalState = deepFreeze( { 'one.site': [] } );
+			const state = plugins( originalState, {
+				type: PLUGINS_ALL_RECEIVE,
+				allSitesPlugins: { 'one.site': [ healthCheck ] },
+			} );
+			const statePluginName = state[ 'one.site' ][ 0 ].name;
+			expect( statePluginName ).toEqual( 'Health Check & Troubleshooting' );
 		} );
 
 		test( 'should show an activated plugin as active', () => {
@@ -137,6 +159,18 @@ describe( 'reducer:', () => {
 				data: jetpack,
 			} );
 			expect( state ).toEqual( { 'one.site': [ akismet, jetpack ] } );
+		} );
+
+		test( 'should load a new plugin when installed with name html decoded', () => {
+			const originalState = deepFreeze( { 'one.site': [] } );
+			const state = plugins( originalState, {
+				type: PLUGIN_INSTALL_REQUEST_SUCCESS,
+				siteId: 'one.site',
+				pluginId: healthCheck.id,
+				data: healthCheck,
+			} );
+			const statePluginName = state[ 'one.site' ][ 0 ].name;
+			expect( statePluginName ).toEqual( 'Health Check & Troubleshooting' );
 		} );
 
 		test( 'should remove an existing plugin when deleted', () => {

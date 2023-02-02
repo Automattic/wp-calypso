@@ -66,11 +66,7 @@ import WPContactFormSummary from './wp-contact-form-summary';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
 import type { RemoveProductFromCart, MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import type {
-	CountryListItem,
-	ManagedContactDetails,
-	VatDetails,
-} from '@automattic/wpcom-checkout';
+import type { CountryListItem } from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
@@ -188,18 +184,12 @@ export default function WPCheckout( {
 
 	const contactDetailsType = getContactDetailsType( responseCart );
 
-	const contactInfo: ManagedContactDetails = useSelect( ( sel ) =>
-		sel( 'wpcom-checkout' ).getContactInfo()
-	);
+	const contactInfo = useSelect( ( sel ) => sel( 'wpcom-checkout' )?.getContactInfo() ?? {} );
 
-	const vatDetails: VatDetails = useSelect( ( sel ) => sel( 'wpcom-checkout' ).getVatDetails() );
+	const vatDetails = useSelect( ( sel ) => sel( 'wpcom-checkout' )?.getVatDetails() ?? {} );
 	const { setVatDetails } = useVatDetails();
 
-	const {
-		touchContactFields,
-		applyDomainContactValidationResults,
-		clearDomainContactErrorMessages,
-	} = useDispatch( 'wpcom-checkout' );
+	const checkoutActions = useDispatch( 'wpcom-checkout' );
 
 	const [ shouldShowContactDetailsValidationErrors, setShouldShowContactDetailsValidationErrors ] =
 		useState( true );
@@ -257,6 +247,16 @@ export default function WPCheckout( {
 		}
 		return true;
 	};
+
+	if ( ! checkoutActions ) {
+		return null;
+	}
+
+	const {
+		touchContactFields,
+		applyDomainContactValidationResults,
+		clearDomainContactErrorMessages,
+	} = checkoutActions;
 
 	const isWcMobile = isWcMobileApp();
 

@@ -890,20 +890,25 @@ class ThemeSheet extends Component {
 		}
 
 		if ( hasWpOrgThemeUpsellBanner || hasThemeUpsellBannerAtomic ) {
+			const thisPageUrl = `/theme/${ themeId }/${ siteSlug }`;
 			pageUpsellBanner = (
 				<UpsellNudge
 					plan={ PLAN_BUSINESS }
 					className="theme__page-upsell-banner"
-					title={ translate( 'Access this theme for FREE with a Business plan!' ) }
+					title={ translate( 'Access this third-party theme with the Business plan!' ) }
 					description={ preventWidows(
 						translate(
-							'Instantly unlock thousands of different themes and install your own when you upgrade.'
+							'Instantly unlock thousands of different themes and install your own when you upgrade to the Business plan.'
 						)
 					) }
 					forceHref
 					feature={ FEATURE_UPLOAD_THEMES }
 					forceDisplay
-					href={ ! siteId ? '/plans' : null }
+					href={
+						siteId
+							? `/checkout/${ siteSlug }/business?redirect_to=${ thisPageUrl }`
+							: localizeUrl( 'https://wordpress.com/start/business' )
+					}
 					showIcon
 					event="theme_upsell_plan_click"
 					tracksClickName="calypso_theme_upsell_plan_click"
