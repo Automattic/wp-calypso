@@ -14,7 +14,6 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
-import { getThemeSignupUrl } from 'calypso/state/themes/selectors';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
@@ -56,33 +55,35 @@ export const ThemesList = ( props ) => {
 		);
 	}
 
+	const showPatternAssemblerCta =
+		isEnabled( 'pattern-assembler/logged-out-showcase' ) && props.themes.length > 0 && ! isLoggedIn;
+
 	return (
-		<>
-			<div className="themes-list">
-				{ props.themes.map( ( theme, index ) => (
-					<ThemeBlock key={ 'theme-block' + index } theme={ theme } index={ index } { ...props } />
-				) ) }
-				{ /* The Pattern Assembler CTA will display on the fourth row and the behavior is controlled by CSS */ }
-				{ isEnabled( 'pattern-assembler/logged-out-showcase' ) &&
-					props.themes.length > 0 &&
-					! isLoggedIn && (
-						<PatternAssemblerCta
-							onButtonClick={ () =>
-								window.location.assign(
-									`/start/with-theme?ref=calypshowcase&theme=${ BLANK_CANVAS_DESIGN.slug }`
-								)
-							}
-						/>
-					) }
-				{ props.loading && <LoadingPlaceholders placeholderCount={ props.placeholderCount } /> }
-				<InfiniteScroll nextPageMethod={ fetchNextPage } />
-			</div>
-			<MoreOptions
-				recordTracksEvent={ props.recordTracksEvent }
-				searchTerm={ props.searchTerm }
-				translate={ props.translate }
-			/>
-		</>
+		<div className="themes-list">
+			{ props.themes.map( ( theme, index ) => (
+				<ThemeBlock key={ 'theme-block' + index } theme={ theme } index={ index } { ...props } />
+			) ) }
+			{ /* The Pattern Assembler CTA will display on the fourth row and the behavior is controlled by CSS */ }
+			{ showPatternAssemblerCta && (
+				<PatternAssemblerCta
+					onButtonClick={ () =>
+						window.location.assign(
+							`/start/with-theme?ref=calypshowcase&theme=${ BLANK_CANVAS_DESIGN.slug }`
+						)
+					}
+				/>
+			) }
+			{ props.loading && <LoadingPlaceholders placeholderCount={ props.placeholderCount } /> }
+			<InfiniteScroll nextPageMethod={ fetchNextPage } />
+			{ /* Do not show the "more options" card when the Pattern Assembler CTA is visible, to avoid a conflict between the two */ }
+			{ ! showPatternAssemblerCta && (
+				<Options
+					recordTracksEvent={ props.recordTracksEvent }
+					searchTerm={ props.searchTerm }
+					translate={ props.translate }
+				/>
+			) }
+		</div>
 	);
 };
 
@@ -160,140 +161,139 @@ function ThemeBlock( props ) {
 	);
 }
 
-function MoreOptions( { recordTracksEvent, searchTerm, translate } ) {
+function Options( { recordTracksEvent, searchTerm, translate } ) {
+	const isLoggedInShowcase = useSelector( isUserLoggedIn );
 	const selectedSite = useSelector( getSelectedSite );
 	const canInstallTheme = useSelector( ( state ) =>
 		siteHasFeature( state, selectedSite?.ID, FEATURE_INSTALL_THEMES )
 	);
-	const blankCanvasSignupUrl = useSelector( ( state ) =>
-		getThemeSignupUrl( state, BLANK_CANVAS_DESIGN.slug )
-	);
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, selectedSite?.ID ) );
+	const sitePlan = selectedSite?.plan?.product_slug;
 
-	let uploadThemeDescription;
-	let uploadThemeUrl;
-	let uploadThemeButton;
-	let uploadThemeTrackEventDestinationProp;
-	if ( ! selectedSite ) {
-		uploadThemeDescription = translate(
-			'With a Business plan, you can upload and install third-party themes to your site, including themes from WordPress.org, and even themes you have custom-made for your website.'
-		);
-		uploadThemeUrl = '/start/business';
-		uploadThemeButton = translate( 'Get started' );
-		uploadThemeTrackEventDestinationProp = 'signup';
-	} else if ( canInstallTheme ) {
-		uploadThemeDescription = translate(
-			'You can upload third-party themes to your site, including themes from WordPress.org, and even themes you have custom-made for your website.'
-		);
-		uploadThemeUrl = isAtomic
-			? `https://${ selectedSite.slug }/wp-admin/theme-install.php`
-			: `/themes/upload/${ selectedSite.slug }`;
-		uploadThemeButton = translate( 'Upload theme' );
-		uploadThemeTrackEventDestinationProp = 'upload-theme';
+	const options = [];
+
+	// Design your own theme / homepage.
+	if ( isLoggedInShowcase ) {
+		// This should start the Pattern Assembler ideally, but it's not ready yet for the
+		// logged-in showcase, so we use the site editor as a fallback.
+		options.push( {
+			title: translate( 'Design your own' ),
+			icon: addTemplate,
+			description: translate( 'Jump right into the editor to design your homepage.' ),
+			onClick: () =>
+				recordTracksEvent( 'calypso_themeshowcase_more_options_design_homepage_click', {
+					site_plan: sitePlan,
+					search_term: searchTerm,
+					destination: 'site-editor',
+				} ),
+			url: `/site-editor/${ selectedSite.slug }`,
+			buttonText: translate( 'Open the editor' ),
+		} );
 	} else {
-		uploadThemeDescription = translate(
-			'With a Business plan, you can upload and install third-party themes to your site, including themes from WordPress.org, and even themes you have custom-made for your website.'
-		);
-		uploadThemeUrl = `/checkout/${ selectedSite.slug }/business?redirect_to=/themes/upload/${ selectedSite.slug }`;
-		uploadThemeButton = translate( 'Upgrade your plan' );
-		uploadThemeTrackEventDestinationProp = 'checkout';
+		// This should also start the Pattern Assembler, which is currently in development for
+		// the logged-out showcase. Since there isn't any proper fallback for the meantime, we
+		// just don't include this option.
+	}
+
+	// Do it for me.
+	options.push( {
+		title: translate( 'Hire our team of experts to design one for you', {
+			comment:
+				'"One" means a theme in this context (i.e. "Hire our team of experts to design a theme for you")',
+		} ),
+		icon: brush,
+		description: translate(
+			'A WordPress.com professional will create layouts for up to 5 pages of your site.'
+		),
+		onClick: () =>
+			recordTracksEvent( 'calypso_themeshowcase_more_options_difm_click', {
+				site_plan: sitePlan,
+				search_term: searchTerm,
+			} ),
+		url: 'https://wordpress.com/do-it-for-me/',
+		buttonText: translate( 'Hire an expert' ),
+	} );
+
+	// Upload a theme.
+	if ( ! isLoggedInShowcase ) {
+		options.push( {
+			title: translate( 'Upload a theme' ),
+			icon: cloudUpload,
+			description: translate(
+				'With a Business plan, you can upload and install third-party themes, including your own themes.'
+			),
+			onClick: () =>
+				recordTracksEvent( 'calypso_themeshowcase_more_options_upload_theme_click', {
+					site_plan: sitePlan,
+					search_term: searchTerm,
+					destination: 'signup',
+				} ),
+			url: '/start/business',
+			buttonText: translate( 'Get started' ),
+		} );
+	} else if ( canInstallTheme ) {
+		options.push( {
+			title: translate( 'Upload a theme' ),
+			icon: cloudUpload,
+			description: translate(
+				'You can upload and install third-party themes, including your own themes.'
+			),
+			onClick: () =>
+				recordTracksEvent( 'calypso_themeshowcase_more_options_upload_theme_click', {
+					site_plan: sitePlan,
+					search_term: searchTerm,
+					destination: 'upload-theme',
+				} ),
+			url: isAtomic
+				? `https://${ selectedSite.slug }/wp-admin/theme-install.php`
+				: `/themes/upload/${ selectedSite.slug }`,
+			buttonText: translate( 'Upload theme' ),
+		} );
+	} else {
+		options.push( {
+			title: translate( 'Upload a theme' ),
+			icon: cloudUpload,
+			description: translate(
+				'With a Business plan, you can upload and install third-party themes, including your own themes.'
+			),
+			onClick: () =>
+				recordTracksEvent( 'calypso_themeshowcase_more_options_upload_theme_click', {
+					site_plan: sitePlan,
+					search_term: searchTerm,
+					destination: 'checkout',
+				} ),
+			url: `/checkout/${ selectedSite.slug }/business?redirect_to=/themes/upload/${ selectedSite.slug }`,
+			buttonText: translate( 'Upgrade your plan' ),
+		} );
 	}
 
 	return (
-		<div className="themes-list__more-options">
-			<div className="themes-list__more-options-heading">
+		<div className="themes-list__options">
+			<div className="themes-list__options-heading">
 				{ translate( "Can't find what you're looking for?" ) }
 			</div>
-			<div className="themes-list__more-options-subheading">
+			<div className="themes-list__options-subheading">
 				{ translate( 'Here are a few more options:' ) }
 			</div>
-			<div className="themes-list__more-options-action">
-				<Icon className="themes-list__more-options-action-icon" icon={ addTemplate } size={ 28 } />
-				<div className="themes-list__more-options-action-content">
-					<div className="themes-list__more-options-action-text">
-						<div className="themes-list__more-options-action-title">
-							{ translate( 'Design your own' ) }
+			{ options.map( ( option, index ) => (
+				<div className="themes-list__option">
+					<Icon className="themes-list__option-icon" icon={ option.icon } size={ 28 } />
+					<div className="themes-list__option-content">
+						<div className="themes-list__option-text">
+							<div className="themes-list__option-title">{ option.title }</div>
+							<div className="themes-list__option-description">{ option.description }</div>
 						</div>
-						<div className="themes-list__more-options-action-description">
-							{ selectedSite
-								? translate( 'Jump right into the editor to design your homepage from scratch.' )
-								: translate(
-										'Start with a blank canvas and design your own homepage using our library of patterns.'
-								  ) }
-						</div>
+						<Button
+							primary={ index === 0 }
+							className="themes-list__option-button"
+							href={ option.url }
+							onClick={ option.onClick }
+						>
+							{ option.buttonText }
+						</Button>
 					</div>
-					<Button
-						primary
-						className="themes-list__more-options-action-button"
-						href={ selectedSite ? `/site-editor/${ selectedSite.slug }` : blankCanvasSignupUrl }
-						onClick={ () => {
-							recordTracksEvent( 'calypso_themeshowcase_more_options_design_homepage_click', {
-								site_plan: selectedSite?.plan?.product_slug,
-								search_term: searchTerm,
-								destination: selectedSite ? 'site-editor' : 'signup',
-							} );
-						} }
-					>
-						{ selectedSite ? translate( 'Open the editor' ) : translate( 'Start designing' ) }
-					</Button>
 				</div>
-			</div>
-			<div className="themes-list__more-options-action">
-				<Icon className="themes-list__more-options-action-icon" icon={ brush } size={ 28 } />
-				<div className="themes-list__more-options-action-content">
-					<div className="themes-list__more-options-action-text">
-						<div className="themes-list__more-options-action-title">
-							{ translate( 'Hire our team of experts to design one for you', {
-								comment:
-									'"One" means a theme in this context (i.e. "Hire our team of experts to design a theme for you")',
-							} ) }
-						</div>
-						<div className="themes-list__more-options-action-description">
-							{ translate(
-								'A WordPress.com professional will create layouts for up to 5 pages of your site.'
-							) }
-						</div>
-					</div>
-					<Button
-						className="themes-list__more-options-action-button"
-						href="https://wordpress.com/do-it-for-me/"
-						onClick={ () => {
-							recordTracksEvent( 'calypso_themeshowcase_more_options_difm_click', {
-								site_plan: selectedSite?.plan?.product_slug,
-								search_term: searchTerm,
-							} );
-						} }
-					>
-						{ translate( 'Hire an expert' ) }
-					</Button>
-				</div>
-			</div>
-			<div className="themes-list__more-options-action">
-				<Icon className="themes-list__more-options-action-icon" icon={ cloudUpload } size={ 28 } />
-				<div className="themes-list__more-options-action-content">
-					<div className="themes-list__more-options-action-text">
-						<div className="themes-list__more-options-action-title">
-							{ translate( 'Upload a theme' ) }
-						</div>
-						<div className="themes-list__more-options-action-description">
-							{ uploadThemeDescription }
-						</div>
-					</div>
-					<Button
-						className="themes-list__more-options-action-button"
-						href={ uploadThemeUrl }
-						onClick={ () => {
-							recordTracksEvent( 'calypso_themeshowcase_more_options_upload_theme_click', {
-								site_plan: selectedSite?.plan?.product_slug,
-								search_term: searchTerm,
-								destination: uploadThemeTrackEventDestinationProp,
-							} );
-						} }
-					>
-						{ uploadThemeButton }
-					</Button>
-				</div>
-			</div>
+			) ) }
 		</div>
 	);
 }
@@ -306,7 +306,7 @@ function Empty( props ) {
 			<div className="themes-list__empty-search-text">
 				{ translate( 'No themes match your search' ) }
 			</div>
-			<MoreOptions
+			<Options
 				recordTracksEvent={ props.recordTracksEvent }
 				searchTerm={ props.searchTerm }
 				translate={ translate }
@@ -329,21 +329,19 @@ function WPOrgMatchingThemes( props ) {
 	);
 
 	return (
-		<div>
-			<div className="themes-list">
-				{ matchingThemes.map( ( theme, index ) => (
-					<div
-						onClick={ () => onWPOrgCardClick( theme ) }
-						key={ 'theme-block' + index }
-						role="button"
-						tabIndex={ 0 }
-						onKeyUp={ () => onWPOrgCardClick( theme ) }
-					>
-						<ThemeBlock theme={ theme } index={ index } { ...props } />
-					</div>
-				) ) }
-			</div>
-			<MoreOptions
+		<div className="themes-list">
+			{ matchingThemes.map( ( theme, index ) => (
+				<div
+					onClick={ () => onWPOrgCardClick( theme ) }
+					key={ 'theme-block' + index }
+					role="button"
+					tabIndex={ 0 }
+					onKeyUp={ () => onWPOrgCardClick( theme ) }
+				>
+					<ThemeBlock theme={ theme } index={ index } { ...props } />
+				</div>
+			) ) }
+			<Options
 				recordTracksEvent={ props.recordTracksEvent }
 				searchTerm={ props.searchTerm }
 				translate={ props.translate }
