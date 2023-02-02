@@ -50,6 +50,7 @@ class SharingServiceExamples extends Component {
 		action: PropTypes.func.isRequired,
 		connections: PropTypes.array.isRequired,
 		connectAnother: PropTypes.func.isRequired,
+		isConnecting: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -458,6 +459,7 @@ class SharingServiceExamples extends Component {
 					action={ this.props.action }
 					connectAnother={ this.props.connectAnother }
 					connections={ this.props.connections }
+					isConnecting={ this.props.isConnecting }
 				/>
 			);
 		}

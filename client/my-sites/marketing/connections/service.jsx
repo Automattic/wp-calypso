@@ -591,6 +591,7 @@ export class SharingService extends Component {
 						<ServiceExamples
 							service={ this.props.service }
 							action={ this.performAction }
+							isConnecting={ this.state.isConnecting }
 							connectAnother={ this.connectAnother }
 							connections={ connections }
 						/>
