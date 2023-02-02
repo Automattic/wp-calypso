@@ -104,7 +104,9 @@ object BuildPlugins: BuildType({
 				# Run extra script necessary for Happy Blocks.
 				# This should be parallelized when other builds that need
 				# extra processing is added.
-				bash /.teamcity/scripts/WPComPlugins/happy-blocks.sh
+				chmod +x .teamcity/scripts/WPComPlugins/
+
+				./.teamcity/scripts/WPComPlugins/happy-blocks.sh
 			"""
 		}
 
@@ -131,27 +133,7 @@ object BuildPlugins: BuildType({
 		bashNodeScript {
 			name = "Process Artifacts"
 			scriptContent = """
-				set -x
-
-				# Plugins that need to have artifacts processed.
-				pluginDirs=( "inline-help" "happy-blocks")
-
-				# Function to process artifact.
-				# Bare-bones for now as this is PoC.
-				process_artifacts () {
-					workingDir=$1
-					archiveDir=$2
-
-					cd $workingDir
-					cp README.md $workingDir/$archiveDir
-
-					# echo
-					# zip -rq ../../../$pluginSlug.zip .
-				}
-
-				for dir in ${pluginDirs[@]}; do
-					process_artifacts "apps/$dir" "./dist/"
-				done
+				./.teamcity/scripts/WPComPlugins/processArtifacts.sh
 			"""
 		}
 	}
