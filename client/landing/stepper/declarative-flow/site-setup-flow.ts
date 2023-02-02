@@ -110,6 +110,7 @@ const siteSetupFlow: Flow = {
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
 		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
+		const { getIntent } = useSelect( ( select ) => select( ONBOARD_STORE ) );
 		const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
 		const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 		const startingPoint = useSelect( ( select ) => select( ONBOARD_STORE ).getStartingPoint() );
@@ -138,7 +139,7 @@ const siteSetupFlow: Flow = {
 			( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID )
 		);
 		const storeType = useSelect( ( select ) => select( ONBOARD_STORE ).getStoreType() );
-		const { setPendingAction, setStepProgress, resetOnboardStoreWithSkipFlags } =
+		const { setPendingAction, setStepProgress, resetOnboardStoreWithSkipFlags, setIntent } =
 			useDispatch( ONBOARD_STORE );
 		const { setIntentOnSite, setGoalsOnSite, setThemeOnSite, saveSiteSettings } =
 			useDispatch( SITE_STORE );
@@ -165,12 +166,13 @@ const siteSetupFlow: Flow = {
 						return;
 					}
 
+					const siteIntent = getIntent();
 					const siteId = site?.ID;
 					const pendingActions = [
-						setIntentOnSite( siteSlug, intent ),
+						setIntentOnSite( siteSlug, siteIntent ),
 						setGoalsOnSite( siteSlug, goals ),
 					];
-					if ( intent === SiteIntent.Write && ! selectedDesign && ! isAtomic ) {
+					if ( siteIntent === SiteIntent.Write && ! selectedDesign && ! isAtomic ) {
 						pendingActions.push(
 							setThemeOnSite(
 								siteSlug,
@@ -181,7 +183,7 @@ const siteSetupFlow: Flow = {
 					}
 
 					// Add Launchpad to selected intents in General Onboarding
-					if ( isLaunchpadIntent( intent ) && typeof siteId === 'number' ) {
+					if ( isLaunchpadIntent( siteIntent ) && typeof siteId === 'number' ) {
 						pendingActions.push( saveSiteSettings( siteId, { launchpad_screen: 'full' } ) );
 					}
 
@@ -192,7 +194,7 @@ const siteSetupFlow: Flow = {
 			navigate( 'processing' );
 
 			// Clean-up the store so that if onboard for new site will be launched it will be launched with no preselected values
-			resetOnboardStoreWithSkipFlags( [ 'skipPendingAction' ] );
+			resetOnboardStoreWithSkipFlags( [ 'skipPendingAction', 'skipIntent' ] );
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
@@ -521,6 +523,7 @@ const siteSetupFlow: Flow = {
 
 				case 'goals':
 					// Skip to dashboard must have been pressed
+					setIntent( SiteIntent.Build );
 					return exitFlow( `/home/${ siteSlug }` );
 
 				case 'vertical':
