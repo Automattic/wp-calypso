@@ -77,9 +77,7 @@ RUN find /calypso/build /calypso/public -name "*.*.map" -exec rm {} \;
 FROM ${base_image} as update-base-cache
 
 # Update webpack cache in the base image so that it can be re-used in future builds.
-# We only copy this part of the cache to make --push faster, and because webpack
-# is the main thing which will impact build performance when the cache invalidates.
-COPY --from=builder /calypso/.cache/evergreen/webpack /calypso/.cache/evergreen/webpack
+COPY --from=builder /calypso/.cache/ /calypso/.cache/
 
 ###################
 FROM node:${node_version}-alpine as app
