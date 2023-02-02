@@ -384,8 +384,15 @@ export default withCurrentRoute(
 		const isJetpack =
 			( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) ||
 			currentRoute.startsWith( '/checkout/jetpack' );
-		const noMasterbarForRoute = isJetpackLogin || currentRoute === '/me/account/closed';
-		const noMasterbarForSection = [ 'signup', 'jetpack-connect' ].includes( sectionName );
+		const userBelongsToExperiment =
+			'treatment' === sessionStorage.getItem( 'calypso_sidebar_upsell_experiment' );
+		const isStartDomainExperiment =
+			( currentRoute.startsWith( '/domains/add' ) || currentRoute.startsWith( '/plans/yearly' ) ) &&
+			userBelongsToExperiment;
+		const noMasterbarForRoute =
+			isStartDomainExperiment || isJetpackLogin || currentRoute === '/me/account/closed';
+		const noMasterbarForSection =
+			isStartDomainExperiment || [ 'signup', 'jetpack-connect' ].includes( sectionName );
 		const masterbarIsHidden =
 			! masterbarIsVisible( state ) ||
 			noMasterbarForSection ||
@@ -409,7 +416,7 @@ export default withCurrentRoute(
 			'plugins',
 			'comments',
 		].includes( sectionName );
-		const sidebarIsHidden = ! secondary || isWcMobileApp();
+		const sidebarIsHidden = isStartDomainExperiment || ! secondary || isWcMobileApp();
 		const chatIsDocked = ! [ 'reader', 'theme' ].includes( sectionName ) && ! sidebarIsHidden;
 
 		const userAllowedToHelpCenter =
