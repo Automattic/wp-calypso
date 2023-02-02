@@ -792,7 +792,7 @@ class ThemeSheet extends Component {
 			const { isAtomic, siteSlug } = this.props;
 			if ( ! isAtomic ) {
 				const newSiteSlug = siteSlug.replace( /\b.wordpress.com/, '.wpcomstaging.com' );
-				return page( `/theme/makoney/${ newSiteSlug }?sync-completed=true` );
+				return page( `/theme/makoney/${ newSiteSlug }` );
 			}
 		}
 	};
