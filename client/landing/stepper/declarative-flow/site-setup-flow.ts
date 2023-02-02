@@ -198,6 +198,7 @@ const siteSetupFlow: Flow = {
 						return;
 					}
 
+<<<<<<< HEAD
 					const siteIntent = getIntent();
 					const siteId = site?.ID;
 					const pendingActions = [
@@ -205,6 +206,14 @@ const siteSetupFlow: Flow = {
 						setGoalsOnSite( siteSlug, goals ),
 					];
 					if ( siteIntent === SiteIntent.Write && ! selectedDesign && ! isAtomic ) {
+=======
+					const siteId = site?.ID;
+					const pendingActions = [
+						setIntentOnSite( siteSlug, intent ),
+						setGoalsOnSite( siteSlug, goals ),
+					];
+					if ( intent === SiteIntent.Write && ! selectedDesign && ! isAtomic ) {
+>>>>>>> 31bb1c42aa (Undo site intent default to build changes in exitFlow)
 						pendingActions.push(
 							setThemeOnSite(
 								siteSlug,
@@ -214,6 +223,7 @@ const siteSetupFlow: Flow = {
 						);
 					}
 
+<<<<<<< HEAD
 					let redirectionUrl = to;
 
 					// The e2e test sites can include one (or both) of the blog stickers below:
@@ -239,6 +249,11 @@ const siteSetupFlow: Flow = {
 						if ( isLaunchpadIntent( siteIntent ) ) {
 							redirectionUrl = addQueryArgs( { showLaunchpad: true }, to );
 						}
+=======
+					// Add Launchpad to selected intents in General Onboarding
+					if ( isLaunchpadIntent( intent ) && typeof siteId === 'number' ) {
+						pendingActions.push( saveSiteSettings( siteId, { launchpad_screen: 'full' } ) );
+>>>>>>> 31bb1c42aa (Undo site intent default to build changes in exitFlow)
 					}
 
 					Promise.all( pendingActions ).then( () => window.location.assign( redirectionUrl ) );
