@@ -19,7 +19,7 @@ const SharingServiceAction = ( {
 	translate,
 	recordTracksEvent,
 	path,
-	expanded,
+	isExpanded,
 } ) => {
 	let warning = false;
 	let label;
@@ -118,7 +118,7 @@ const SharingServiceAction = ( {
 						: null
 				}
 			>
-				{ expanded && removableConnections.length === 0 ? (
+				{ isExpanded && removableConnections.length === 0 ? (
 					<>
 						<Gridicon icon="cross-small" size={ 16 } />
 						<span>{ translate( 'Cancel' ) }</span>
@@ -150,6 +150,7 @@ SharingServiceAction.propTypes = {
 	status: PropTypes.string,
 	translate: PropTypes.func,
 	recordTracksEvent: PropTypes.func,
+	isExpanded: PropTypes.bool,
 };
 
 SharingServiceAction.defaultProps = {

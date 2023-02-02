@@ -580,7 +580,7 @@ export class SharingService extends Component {
 					compact
 					summary={ action }
 					expandedSummary={
-						this.isMastodonService() ? cloneElement( action, { expanded: true } ) : action
+						this.isMastodonService() ? cloneElement( action, { isExpanded: true } ) : action
 					}
 				>
 					<div
