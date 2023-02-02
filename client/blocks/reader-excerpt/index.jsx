@@ -58,7 +58,7 @@ const normalizeWhitespace = ( str ) => {
  */
 const getDailyPromptText = ( post ) => {
 	const dom = domForHtml( post.content );
-	const promptQuote = dom.querySelector( '.is-reader > .wp-block-pullquote:first-child' );
+	const promptQuote = dom.querySelector( '.wp-block-pullquote:first-child' );
 
 	if ( promptQuote && promptQuote.innerText ) {
 		// Remove double spaces which are not normalized by `HTMLElement.innerText`
