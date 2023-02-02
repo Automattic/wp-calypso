@@ -353,10 +353,12 @@ export class PlansStep extends Component {
 		}
 
 		if ( this.state.isDesktop ) {
-			return translate(
-				"Pick one that's right for you and unlock features that help you grow. Or {{link}}start with a free site{{/link}}.",
-				{ components: { link: freePlanButton } }
-			);
+			return hideFreePlan
+				? translate( 'Try risk-free with a 14-day money-back guarantee.' )
+				: translate(
+						"Pick one that's right for you and unlock features that help you grow. Or {{link}}start with a free site{{/link}}.",
+						{ components: { link: freePlanButton } }
+				  );
 		}
 
 		return translate( 'Choose a plan or {{link}}start with a free site{{/link}}.', {
