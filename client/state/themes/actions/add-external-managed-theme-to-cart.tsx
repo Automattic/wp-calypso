@@ -128,7 +128,7 @@ export function addExternalManagedThemeToCart( themeId: string, siteId: number )
 			typeof window !== 'undefined' ? window.location : {};
 
 		const redirectTo = addQueryArgs( `${ origin }/theme/${ themeId }/${ siteSlug }`, {
-			...( ! isSiteEligibleForManagedExternalThemes ? { 'check-atomic-transfer': true } : {} ),
+			...( ! isSiteEligibleForManagedExternalThemes ? { 'sync-active-theme': true } : {} ),
 		} );
 
 		const redirectUrl = addQueryArgs( `/checkout/${ siteSlug }`, {
