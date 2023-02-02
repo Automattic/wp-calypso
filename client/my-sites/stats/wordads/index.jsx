@@ -20,7 +20,7 @@ import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { canAccessWordAds, isJetpackSite } from 'calypso/state/sites/selectors';
+import { canAccessWordAds } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -134,16 +134,8 @@ class WordAds extends Component {
 	};
 
 	render() {
-		const {
-			canAccessAds,
-			canUpgradeToUseWordAds,
-			date,
-			isJetpack,
-			isOdysseyStats,
-			site,
-			siteId,
-			slug,
-		} = this.props;
+		const { canAccessAds, canUpgradeToUseWordAds, date, isOdysseyStats, site, siteId, slug } =
+			this.props;
 
 		const { period, endOf } = this.props.period;
 
@@ -257,12 +249,7 @@ class WordAds extends Component {
 								</div>
 							</div>
 
-							<PromoCards
-								isJetpack={ isJetpack }
-								isOdysseyStats={ isOdysseyStats }
-								pageSlug="ads"
-								slug={ slug }
-							/>
+							<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="ads" slug={ slug } />
 
 							<JetpackColophon />
 						</Fragment>
@@ -278,10 +265,8 @@ export default connect(
 	( state ) => {
 		const site = getSelectedSite( state );
 		const siteId = getSelectedSiteId( state );
-		const isJetpack = isJetpackSite( state, siteId );
 		const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 		return {
-			isJetpack,
 			isOdysseyStats,
 			site,
 			siteId,
