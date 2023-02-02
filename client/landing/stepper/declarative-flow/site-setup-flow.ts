@@ -181,7 +181,7 @@ const siteSetupFlow: Flow = {
 					}
 
 					// Update Launchpad option based on site intent
-					if ( siteId ) {
+					if ( typeof siteId === 'number' ) {
 						pendingActions.push(
 							saveSiteSettings( siteId, {
 								launchpad_screen: isLaunchpadIntent( intent ) ? 'full' : null,
