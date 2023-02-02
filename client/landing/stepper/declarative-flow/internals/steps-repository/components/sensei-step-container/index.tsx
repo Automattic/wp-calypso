@@ -11,10 +11,15 @@ interface SenseiStepContainerProps {
 	stepName: string;
 	recordTracksEvent: ( eventName: string, eventProperties: object ) => void;
 	children: React.ReactNode;
+	className?: string;
+	formattedHeader?: React.ReactNode;
+	showFooter?: boolean;
 }
 
 export const SenseiStepContainer: React.FC< SenseiStepContainerProps > = ( {
+	formattedHeader,
 	children,
+	showFooter,
 	...props
 } ) => {
 	const { __ } = useI18n();
@@ -31,15 +36,20 @@ export const SenseiStepContainer: React.FC< SenseiStepContainerProps > = ( {
 						<Icon icon={ wordpress } />
 						<Title>{ __( 'Course Creator' ) }</Title>
 					</TitleContainer>
+					{ formattedHeader && <div className="step-container__header">{ formattedHeader }</div> }
 					{ children }
-					<Footer>
-						<FooterText>
-							{ createInterpolateElement( __( 'Hosted by <a>WordPress.com</a>' ), {
-								a: <ExternalLink href="https://wordpress.com" />,
-							} ) }
-						</FooterText>
-						<FooterText>{ __( 'Course creation and LMS tools powered by SenseiLMS' ) }</FooterText>
-					</Footer>
+					{ showFooter && (
+						<Footer>
+							<FooterText>
+								{ createInterpolateElement( __( 'Hosted by <a>WordPress.com</a>' ), {
+									a: <ExternalLink href="https://wordpress.com" />,
+								} ) }
+							</FooterText>
+							<FooterText>
+								{ __( 'Course creation and LMS tools powered by SenseiLMS' ) }
+							</FooterText>
+						</Footer>
+					) }
 				</Container>
 			}
 		/>

@@ -9,11 +9,15 @@ const debug = debugFactory( 'calypso:composite-checkout:use-detected-country-cod
 export default function useDetectedCountryCode(): void {
 	const detectedCountryCode = useSelector( getCurrentUserCountryCode );
 	const refHaveUsedDetectedCountryCode = useRef( false );
-	const { loadCountryCodeFromGeoIP } = useDispatch( 'wpcom-checkout' );
+	const { loadCountryCodeFromGeoIP } = useDispatch( 'wpcom-checkout' ) ?? {};
 
 	useEffect( () => {
 		// Dispatch exactly once
-		if ( detectedCountryCode && ! refHaveUsedDetectedCountryCode.current ) {
+		if (
+			detectedCountryCode &&
+			! refHaveUsedDetectedCountryCode.current &&
+			loadCountryCodeFromGeoIP
+		) {
 			debug( 'using detected country code "' + detectedCountryCode + '"' );
 			loadCountryCodeFromGeoIP( detectedCountryCode );
 			refHaveUsedDetectedCountryCode.current = true;

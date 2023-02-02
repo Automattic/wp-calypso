@@ -15,6 +15,7 @@ export type HorizontalBarListItemProps = {
 	renderRightSideItem?: ( data: StatDataObject ) => React.ReactNode;
 	useShortLabel?: boolean;
 	isStatic?: boolean;
+	additionalColumns?: React.ReactNode;
 };
 
 type StatDataObject = {
@@ -54,6 +55,9 @@ export type StatsCardProps = {
 	emptyMessage?: string;
 	metricLabel?: string;
 	heroElement?: React.ReactNode;
+	splitHeader?: boolean;
+	mainItemLabel?: React.ReactNode;
+	additionalHeaderColumns?: React.ReactNode;
 };
 
 export type StatsCardAvatarProps = {

@@ -19,6 +19,7 @@ const HorizontalBarListItem = ( {
 	renderRightSideItem,
 	useShortLabel,
 	isStatic,
+	additionalColumns,
 }: HorizontalBarListItemProps ) => {
 	const { label, value, shortLabel, children: itemChildren } = data;
 	const fillPercentage = maxValue > 0 ? ( value / maxValue ) * 100 : 0;
@@ -110,6 +111,9 @@ const HorizontalBarListItem = ( {
 						<span className={ `${ BASE_CLASS_NAME }--hover-action` }>
 							{ renderRightSideItem( data ) }
 						</span>
+					) }
+					{ additionalColumns && (
+						<div className={ `${ BASE_CLASS_NAME }-item--additional` }>{ additionalColumns }</div>
 					) }
 				</div>
 				<div className="value">{ numberFormat( value, 0 ) }</div>

@@ -98,7 +98,27 @@ class PurchaseItem extends Component {
 			if ( isJetpack ) {
 				return (
 					<span className="purchase-item__is-error">
-						{ translate( 'Disconnected from WordPress.com' ) }
+						{ translate(
+							'You no longer have access to this site. {{button}}Contact support{{/button}}',
+							{
+								args: {
+									site: name,
+								},
+								components: {
+									button: (
+										<button
+											className="purchase-item__link purchase-item__link--error"
+											onClick={ ( event ) => {
+												event.stopPropagation();
+												event.preventDefault();
+												page( CALYPSO_CONTACT );
+											} }
+											title={ translate( 'Contact Support' ) }
+										/>
+									),
+								},
+							}
+						) }
 					</span>
 				);
 			}

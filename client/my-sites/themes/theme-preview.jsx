@@ -78,6 +78,15 @@ class ThemePreview extends Component {
 		return this.props.themeOptions?.styleVariation;
 	};
 
+	getPremiumGlobalStylesEventProps = () => {
+		const { themeId } = this.props;
+		const styleVariationOption = this.getStyleVariationOption();
+		return {
+			theme: themeId,
+			style_variation: styleVariationOption?.slug,
+		};
+	};
+
 	shouldShowUnlockStyleButton = () => {
 		const { options, shouldLimitGlobalStyles, themeOptions } = this.props;
 		if ( ! themeOptions ) {
@@ -120,20 +129,40 @@ class ThemePreview extends Component {
 	};
 
 	onUnlockStyleButtonClick = () => {
+		this.props.recordTracksEvent(
+			'calypso_theme_preview_global_styles_gating_modal_show',
+			this.getPremiumGlobalStylesEventProps()
+		);
+
 		this.setState( { showUnlockStyleUpgradeModal: true } );
 	};
 
 	onPremiumGlobalStylesUpgradeModalCheckout = () => {
+		this.props.recordTracksEvent(
+			'calypso_theme_preview_global_styles_gating_modal_checkout_button_click',
+			this.getPremiumGlobalStylesEventProps()
+		);
+
 		this.setState( { showUnlockStyleUpgradeModal: false } );
 		page( `/checkout/${ this.props.siteSlug || '' }/premium` );
 	};
 
 	onPremiumGlobalStylesUpgradeModalTryStyle = () => {
+		this.props.recordTracksEvent(
+			'calypso_theme_preview_global_styles_gating_modal_try_button_click',
+			this.getPremiumGlobalStylesEventProps()
+		);
+
 		this.setState( { showUnlockStyleUpgradeModal: false } );
 		this.onPrimaryButtonClick();
 	};
 
 	onPremiumGlobalStylesUpgradeModalClose = () => {
+		this.props.recordTracksEvent(
+			'calypso_theme_preview_global_styles_gating_modal_close_button_click',
+			this.getPremiumGlobalStylesEventProps()
+		);
+
 		this.setState( { showUnlockStyleUpgradeModal: false } );
 	};
 
