@@ -51,7 +51,7 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
-import { setThemePreviewOptions } from 'calypso/state/themes/actions';
+import { setThemePreviewOptions, themeStartActivationSync } from 'calypso/state/themes/actions';
 import {
 	doesThemeBundleSoftwareSet,
 	isThemeActive,
@@ -70,6 +70,7 @@ import {
 	isExternallyManagedTheme as getIsExternallyManagedTheme,
 	isSiteEligibleForManagedExternalThemes as getIsSiteEligibleForManagedExternalThemes,
 	isMarketplaceThemeSubscribed as getIsMarketplaceThemeSubscribed,
+	isThemeActivationSyncStarted as getIsThemeActivationSyncStarted,
 } from 'calypso/state/themes/selectors';
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
@@ -140,6 +141,9 @@ class ThemeSheet extends Component {
 
 	componentDidMount() {
 		this.scrollToTop();
+		if ( getQueryArgs()?.[ 'sync-active-theme' ] === 'true' ) {
+			this.props.themeStartActivationSync( this.props.siteId, this.props.themeId );
+		}
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -160,9 +164,9 @@ class ThemeSheet extends Component {
 	};
 
 	isLoading = () => {
-		const { isLoading, checkAtomicTransferStatus } = this.props;
+		const { isLoading, isThemeActivationSyncStarted } = this.props;
 		const { isAtomicTransferCompleted } = this.state;
-		return isLoading || ( checkAtomicTransferStatus && ! isAtomicTransferCompleted );
+		return isLoading || ( isThemeActivationSyncStarted && ! isAtomicTransferCompleted );
 	};
 
 	// If a theme has been removed by a theme shop, then the theme will still exist and a8c will take over any support responsibilities.
@@ -584,7 +588,7 @@ class ThemeSheet extends Component {
 			isExternallyManagedTheme,
 			isSiteEligibleForManagedExternalThemes,
 			isMarketplaceThemeSubscribed,
-			checkAtomicTransferStatus,
+			isThemeActivationSyncStarted,
 		} = this.props;
 		const { isAtomicTransferCompleted } = this.state;
 		if ( isActive ) {
@@ -627,7 +631,7 @@ class ThemeSheet extends Component {
 				isSiteEligibleForManagedExternalThemes
 			) {
 				return translate( 'Subscribe to activate' );
-			} else if ( checkAtomicTransferStatus && ! isAtomicTransferCompleted ) {
+			} else if ( isThemeActivationSyncStarted && ! isAtomicTransferCompleted ) {
 				return (
 					<span className="theme__sheet-customize-button spin">
 						<Gridicon icon="sync" />
@@ -815,7 +819,7 @@ class ThemeSheet extends Component {
 			isExternallyManagedTheme,
 			isSiteEligibleForManagedExternalThemes,
 			isMarketplaceThemeSubscribed,
-			checkAtomicTransferStatus,
+			isThemeActivationSyncStarted,
 		} = this.props;
 
 		const analyticsPath = `/theme/${ themeId }${ section ? '/' + section : '' }${
@@ -1007,7 +1011,7 @@ class ThemeSheet extends Component {
 				</div>
 				<ThemePreview belowToolbar={ previewUpsellBanner } />
 				<PerformanceTrackerStop />
-				{ checkAtomicTransferStatus && (
+				{ isThemeActivationSyncStarted && (
 					<SyncActiveTheme
 						siteId={ siteId }
 						themeId={ themeId }
@@ -1149,11 +1153,12 @@ export default connect(
 			),
 			isLoading,
 			isMarketplaceThemeSubscribed,
-			checkAtomicTransferStatus: getQueryArgs()?.[ 'sync-active-theme' ] === 'true',
+			isThemeActivationSyncStarted: getIsThemeActivationSyncStarted( state, siteId, themeId ),
 		};
 	},
 	{
 		setThemePreviewOptions,
 		recordTracksEvent,
+		themeStartActivationSync,
 	}
 )( localize( ThemeSheetWithOptions ) );
