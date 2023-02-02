@@ -1,5 +1,9 @@
 import treeSelect from '@automattic/tree-select';
-import { injectRecommendations, getDistanceBetweenRecs } from 'calypso/reader/stream/utils';
+import {
+	injectRecommendations,
+	getDistanceBetweenRecs,
+	injectPrompts,
+} from 'calypso/reader/stream/utils';
 import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import getReaderStream from 'calypso/state/reader/streams/selectors/get-reader-stream';
 
@@ -25,6 +29,8 @@ export const getTransformedStreamItems = treeSelect(
 		if ( recs.length > 0 ) {
 			items = injectRecommendations( items, recs, getDistanceBetweenRecs( follows.length ) );
 		}
+
+		items = injectPrompts( items, 10 );
 
 		return items;
 	},

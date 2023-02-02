@@ -89,3 +89,19 @@ export function getDistanceBetweenRecs( totalSubs ) {
 		MAX_DISTANCE_BETWEEN_RECS
 	);
 }
+
+export function injectPrompts( posts, itemsBetweenPrompts ) {
+	if ( posts.length < itemsBetweenPrompts ) {
+		return posts;
+	}
+
+	return flatMap( posts, ( post, index ) => {
+		if ( index && index % itemsBetweenPrompts === 0 ) {
+			const promptBlock = {
+				isPromptBlock: true,
+			};
+			return [ promptBlock, post ];
+		}
+		return post;
+	} );
+}
