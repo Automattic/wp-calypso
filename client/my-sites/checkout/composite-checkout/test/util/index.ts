@@ -1222,3 +1222,66 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 
 	throw new Error( `No variants found for product_slug ${ data.product_slug }` );
 }
+
+/**
+ * Helper to prepare to mock Stripe Elements.
+ *
+ * To use this, you'll need to call it inside `jest.mock()` as follows:
+ *
+ * ```
+ * jest.mock( '@stripe/react-stripe-js', () => {
+ *   const stripe = jest.requireActual( '@stripe/react-stripe-js' );
+ *   return { ...stripe, ...mockStripeElements() };
+ * } );
+ *
+ * jest.mock( '@stripe/stripe-js', () => {
+ *   return {
+ *     loadStripe: async () => mockStripeElements().useStripe(),
+ *   };
+ * } );
+ * ```
+ */
+export function mockStripeElements() {
+	const mockElement = () => ( {
+		mount: jest.fn(),
+		destroy: jest.fn(),
+		on: jest.fn(),
+		update: jest.fn(),
+	} );
+
+	const mockElements = () => {
+		const elements = {};
+		return {
+			create: jest.fn( ( type ) => {
+				elements[ type ] = mockElement();
+				return elements[ type ];
+			} ),
+			getElement: jest.fn( ( type ) => {
+				return elements[ type ] || null;
+			} ),
+		};
+	};
+
+	const mockStripe = () => ( {
+		elements: jest.fn( () => mockElements() ),
+		createToken: jest.fn(),
+		createSource: jest.fn(),
+		createPaymentMethod: jest.fn(),
+		confirmCardPayment: jest.fn(),
+		confirmCardSetup: jest.fn(),
+		paymentRequest: jest.fn(),
+		_registerWrapper: jest.fn(),
+	} );
+
+	return {
+		Element: () => {
+			return mockElement();
+		},
+		useStripe: () => {
+			return mockStripe();
+		},
+		useElements: () => {
+			return mockElements();
+		},
+	};
+}
