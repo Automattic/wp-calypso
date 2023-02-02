@@ -27,7 +27,7 @@ fun BuildSteps.mergeTrunk(skipIfConflict: Boolean = false): ScriptBuildStep {
 			# parameter in the project settings.
 			if ! git merge trunk ; then
 				if [ "$skipIfConflict" = false ] ; then
-					echo "##teamcity[buildProblem description='There is a merge conflict with trunk. Skipping this step to allow the build to continue.']"
+					echo "##teamcity[buildProblem description='There is a merge conflict with trunk. Rebase on trunk to resolve this problem.' identity='merge_conflict']]"
 					exit
 				fi
 				# If do want to skip if there's a conflict, reset the merge.
