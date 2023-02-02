@@ -59,6 +59,10 @@ const WRITE_INTENT_DEFAULT_THEME_STYLE_VARIATION = 'white';
 const SiteIntent = Onboard.SiteIntent;
 const SiteGoal = Onboard.SiteGoal;
 
+function isLaunchpadIntent( intent: string ) {
+	return intent === SiteIntent.Write || intent === SiteIntent.Build;
+}
+
 const siteSetupFlow: Flow = {
 	name: 'site-setup',
 
@@ -136,7 +140,8 @@ const siteSetupFlow: Flow = {
 		const storeType = useSelect( ( select ) => select( ONBOARD_STORE ).getStoreType() );
 		const { setPendingAction, setStepProgress, resetOnboardStoreWithSkipFlags } =
 			useDispatch( ONBOARD_STORE );
-		const { setIntentOnSite, setGoalsOnSite, setThemeOnSite } = useDispatch( SITE_STORE );
+		const { setIntentOnSite, setGoalsOnSite, setThemeOnSite, saveSiteSettings } =
+			useDispatch( SITE_STORE );
 		const dispatch = reduxDispatch();
 
 		const flowProgress = useSiteSetupFlowProgress( currentStep, intent );
@@ -159,7 +164,7 @@ const siteSetupFlow: Flow = {
 					if ( ! siteSlug ) {
 						return;
 					}
-
+					const siteId = site?.ID;
 					const pendingActions = [
 						setIntentOnSite( siteSlug, intent ),
 						setGoalsOnSite( siteSlug, goals ),
@@ -172,6 +177,11 @@ const siteSetupFlow: Flow = {
 								WRITE_INTENT_DEFAULT_THEME_STYLE_VARIATION
 							)
 						);
+					}
+
+					// Add Launchpad to selected intents in General Onboarding
+					if ( isLaunchpadIntent( intent ) && typeof siteId === 'number' ) {
+						pendingActions.push( saveSiteSettings( siteId, { launchpad_screen: 'full' } ) );
 					}
 
 					Promise.all( pendingActions ).then( () => window.location.assign( to ) );
@@ -259,6 +269,9 @@ const siteSetupFlow: Flow = {
 						return exitFlow( `/setup/plugin-bundle/?siteSlug=${ siteSlug }` );
 					}
 
+					if ( isLaunchpadIntent( intent ) ) {
+						return exitFlow( `/setup/${ intent }/launchpad?siteSlug=${ siteSlug }` );
+					}
 					return exitFlow( `/home/${ siteSlug }` );
 				}
 

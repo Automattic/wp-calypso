@@ -53,11 +53,29 @@ $plan-features-sidebar-width: 272px;
 					color: var(--studio-gray-0);
 				}
 			}
+
+			&.is-current-plan {
+				background-color: var(--studio-white);
+				color: var(--studio-gray-100);
+				box-shadow: inset 0 0 0 1px var(--studio-gray-10);
+
+				&:hover {
+					box-shadow: inset 0 0 0 1px var(--studio-gray-80);
+				}
+			}
+
+			&.disabled,
+			&[disabled] {
+				background-color: var(--studio-white);
+				color: var(--color-neutral-light);
+				box-shadow: inset 0 0 0 1px #e0e0e0;
+			}
 		}
 	}
 }
 .plan-features-2023-grid__table-item.is-top-buttons {
 	padding: 0 20px;
+	vertical-align: bottom;
 }
 
 .plan-features-2023-grid__header {
@@ -422,7 +440,6 @@ $plan-features-sidebar-width: 272px;
 
 			.plan-features-2023-grid__item-title {
 				text-decoration: line-through;
-				color: var(--color-neutral-30);
 			}
 		}
 	}
@@ -455,25 +472,8 @@ $plan-features-sidebar-width: 272px;
 			flex-direction: column;
 			position: relative;
 
-			& .plan-features-2023-grid__item-annual-plan-container {
-				display: flex;
-				position: absolute;
-				top: -3px;
-
-				& .plan-features-2023-grid__item-annual-plan {
-					font-weight: 600;
-					color: var(--color-error);
-					font-size: 0.6rem; /* stylelint-disable-line scales/font-sizes */
-					text-transform: uppercase;
-				}
-			}
-
 			& .plan-features-2023-grid__item-info-container {
 				display: flex;
-
-				&.plan-features-2023-grid__item-info-annual-only {
-					margin-top: 10px;
-				}
 			}
 		}
 
@@ -712,6 +712,9 @@ body.is-section-signup.is-white-signup,
 			border-radius: 4px;
 			background-color: var(--studio-gray-80);
 			transform: translate(20px, 0);
+			@media ( max-width: 880px ) {
+				transform: translate(20px, -50px);
+			}
 		}
 
 		&.popular-plan-parent-class {
@@ -875,6 +878,9 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 }
 
 .plan-comparison-grid {
+	.plan-features-2023-gridrison__actions-buttons {
+		min-height: 40px;
+	}
 	.plan-comparison-grid__plan-row {
 		padding-top: 0;
 		padding-bottom: 0;
@@ -1104,4 +1110,39 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 			}
 		}
 	}
+}
+
+.plan-features-2023-grid__toggle-plan-comparison-button-container {
+	display: flex;
+	justify-content: center;
+	margin: 32px 20px 0 20px;
+
+	button {
+		background: var(--studio-white);
+		border: 1px solid var(--studio-gray-10);
+		border-radius: 4px;
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+		color: var(--studio-gray-100);
+		font-size: $font-body-small;
+		font-weight: 500;
+		height: 48px;
+		justify-content: center;
+		line-height: 20px;
+		padding: 0 24px;
+		width: 100%;
+
+		@media ( min-width: $plans-2023-small-breakpoint ) {
+			width: initial;
+			height: 40px;
+		}
+	}
+}
+
+/**
+ * We auto-scroll to the plan comparison grid when it is shown.
+ * However, on the /plans page, due to the presence of the masterbar on top,
+ * we need to add a scroll offset.
+ */
+.is-section-plans .plan-features-2023-grid__plan-comparison-grid-container {
+	scroll-margin-top: $plan-features-header-banner-height + 24px;
 }

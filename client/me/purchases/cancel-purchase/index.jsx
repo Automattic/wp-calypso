@@ -90,9 +90,13 @@ class CancelPurchase extends Component {
 			return true;
 		}
 
-		const { purchase } = props;
+		const { purchase, site } = props;
 
 		if ( ! purchase ) {
+			return false;
+		}
+
+		if ( ! site ) {
 			return false;
 		}
 

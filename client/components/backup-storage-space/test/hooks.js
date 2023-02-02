@@ -115,7 +115,7 @@ describe( 'useDaysOfBackupsSavedText', () => {
 
 	test( 'renders `1 day of backup saved` when passed daysOfBackupsSaved as 1', () => {
 		const text = renderDaysOfBackupsSavedText( 1, 'site-slug' );
-		expect( text ).toHaveTextContent( '1 day of backup saved' );
+		expect( text ).toHaveTextContent( '1 day of backups saved' );
 	} );
 
 	test( 'renders `7 days of backups` saved when passed daysOfBackupsSaved as 7', () => {

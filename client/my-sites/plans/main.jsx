@@ -143,11 +143,13 @@ class Plans extends Component {
 			);
 		}
 
+		const hideFreePlan = ! isEnabled( 'onboarding/2023-pricing-grid' );
+
 		return (
 			<PlansFeaturesMain
 				redirectToAddDomainFlow={ this.props.redirectToAddDomainFlow }
 				domainAndPlanPackage={ this.props.domainAndPlanPackage }
-				hideFreePlan={ true }
+				hideFreePlan={ hideFreePlan }
 				customerType={ this.props.customerType }
 				intervalType={ this.props.intervalType }
 				selectedFeature={ this.props.selectedFeature }

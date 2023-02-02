@@ -30,6 +30,7 @@ interface ThemePreviewModalProps {
 	onSelectVariation: ( variation: StyleVariation ) => void;
 	onClickCategory: ( category: Category ) => void;
 	onClose: () => void;
+	recordDeviceClick: ( device: string ) => void;
 }
 
 const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( {
@@ -41,6 +42,7 @@ const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( {
 	onSelectVariation,
 	onClickCategory,
 	onClose,
+	recordDeviceClick,
 } ) => {
 	const siteId = useSelector( getSelectedSiteId ) || -1;
 	const isThemePremium = useSelector( ( state ) => getIsThemePremium( state, theme.id ) );
@@ -136,6 +138,7 @@ const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( {
 						selectedVariation={ selectedStyleVariation }
 						onSelectVariation={ previewDesignVariation }
 						onClickCategory={ onClickCategory }
+						recordDeviceClick={ recordDeviceClick }
 						actionButtons={ actionButtons }
 						showGlobalStylesPremiumBadge={ shouldLimitGlobalStyles }
 					/>

@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { StepContainer } from '@automattic/onboarding';
+import { StepContainer, SITE_SETUP_FLOW, SITE_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useEffect } from 'react';
@@ -59,7 +59,7 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 
 	useEffect( () => {
 		// Require to start the flow from the first step
-		if ( ! selectedDesign ) {
+		if ( ! selectedDesign && flow === SITE_SETUP_FLOW ) {
 			goToStep?.( 'goals' );
 		}
 	}, [] );
@@ -371,7 +371,7 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 			<DocumentHead title={ translate( 'Design your home' ) } />
 			<StepContainer
 				stepName="pattern-assembler"
-				hideBack={ showPatternSelectorType !== null }
+				hideBack={ showPatternSelectorType !== null || flow === SITE_ASSEMBLER_FLOW }
 				goBack={ onBack }
 				goNext={ goNext }
 				isHorizontalLayout={ false }

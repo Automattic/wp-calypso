@@ -81,12 +81,14 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	];
 	const inProgress = useInProgressState();
 	const prevInProgress = useRef( inProgress );
+	const prevSubmitAttemptCount = useRef< number >();
 	const [ selectedFile, setSelectedFile ] = useState< File >();
 	const [ isSelectedFileValid, setIsSelectedFileValid ] = useState( true );
 	const [ emails, setEmails ] = useState< string[] >( [] );
 	const [ isValidEmails, setIsValidEmails ] = useState< boolean[] >( [] );
 	const [ isDirtyEmails, setIsDirtyEmails ] = useState< boolean[] >( [] );
 	const [ emailFormControls, setEmailFormControls ] = useState( emailControlPlaceholder );
+	const [ submitAttemptCount, setSubmitAttemptCount ] = useState( 0 );
 	const [ submitBtnReady, setIsSubmitBtnReady ] = useState( isSubmitButtonReady() );
 	const importSelector = useSelect( ( s ) => s( SUBSCRIBER_STORE ).getImportSubscribersSelector() );
 	const [ formFileUploadElement ] = useState(
@@ -113,6 +115,9 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		prevInProgress.current = inProgress;
 	}, [ inProgress ] );
 	useEffect( () => {
+		prevSubmitAttemptCount.current = submitAttemptCount;
+	}, [ submitAttemptCount ] );
+	useEffect( () => {
 		setIsSubmitBtnReady( isSubmitButtonReady() );
 	}, [ isValidEmails, selectedFile, allowEmptyFormSubmit, submitBtnAlwaysEnable ] );
 
@@ -123,6 +128,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	 */
 	function onFormSubmit( e: FormEvent ) {
 		e.preventDefault();
+		setSubmitAttemptCount( submitAttemptCount + 1 );
 
 		const validEmails = getValidEmails();
 
@@ -288,6 +294,22 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		);
 	}
 
+	function renderEmptyFormValidationMsg() {
+		const validationMsg = showCsvUpload
+			? __(
+					"You'll need to add at least one email address " +
+						'or upload a CSV file of current subscribers to continue.'
+			  )
+			: __( "You'll need to add at least one subscriber to continue." );
+
+		return (
+			!! submitAttemptCount &&
+			submitAttemptCount !== prevSubmitAttemptCount.current &&
+			! emails.filter( ( x ) => !! x ).length &&
+			! selectedFile && <FormInputValidation isError={ true } text={ validationMsg } />
+		);
+	}
+
 	function renderEmailListInfoMsg() {
 		return (
 			emailControlMaxNum === isValidEmails.filter( ( x ) => x ).length && (
@@ -447,6 +469,9 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 					{ showCsvUpload && ! includesHandledError() && renderImportCsvLabel() }
 					{ showCsvUpload && ! includesHandledError() && renderImportCsvDisclaimerMsg() }
 					{ ! includesHandledError() && renderFollowerNoticeLabel() }
+
+					{ renderEmptyFormValidationMsg() }
+
 					<NextButton
 						type="submit"
 						className="add-subscriber__form-submit-btn"
