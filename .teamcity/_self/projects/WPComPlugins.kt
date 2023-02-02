@@ -89,6 +89,9 @@ object BuildPlugins: BuildType({
 
 				# Install dependencies
 				yarn
+
+				# Set execution permission for additional scripts.
+				chmod +x .teamcity/scripts/WPComPlugins/
 			"""
 		}
 
@@ -102,11 +105,9 @@ object BuildPlugins: BuildType({
 				yarn workspaces foreach --verbose --parallel --include '{happy-blocks,@automattic/notifications}' run build
 
 				# Run extra script necessary for Happy Blocks.
-				# This should be parallelized when other builds that need
-				# extra processing is added.
-				chmod +x .teamcity/scripts/WPComPlugins/
-
-				./.teamcity/scripts/WPComPlugins/happy-blocks.sh
+				# When other plugins that need additional configuration are added,
+				# this should be parallelized.
+				./.teamcity/scripts/WPComPlugins/happy-blocks.sh &
 			"""
 		}
 
@@ -133,7 +134,12 @@ object BuildPlugins: BuildType({
 		bashNodeScript {
 			name = "Process Artifacts"
 			scriptContent = """
-				./.teamcity/scripts/WPComPlugins/processArtifacts.sh
+				# Plugins that need to have artifacts processed.
+				# Pass in the directory as it appears on disk without the `app/` directory.
+				declare pluginDirs=("happy-blocks" "notifications")
+
+				./.teamcity/scripts/WPComPlugins/processArtifacts.sh \
+					"happy-blocks" "notifications"
 			"""
 		}
 	}
