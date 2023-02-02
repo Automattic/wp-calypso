@@ -349,7 +349,9 @@ class CurrentPlan extends Component {
 								)
 							}
 						</p>
-						<Button primary>{ translate( 'Get Commerce' ) }</Button>
+						<Button className="current-plan__trial-card-cta" primary>
+							{ translate( 'Get Commerce' ) }
+						</Button>
 					</div>
 					<div className="plans__chart-wrapper">
 						<div className="plans__chart" style={ { '--p': trialProgress } }>
@@ -386,7 +388,7 @@ class CurrentPlan extends Component {
 				<p className="current-plan__section-subtitle">
 					{ translate( 'The free trial doesn’t support the following features.' ) }
 					<br />
-					{ translate( 'Get the most value out of WooCommerce and pick one of our plans.' ) }
+					{ translate( 'Get the most value out of WooCommerce and get Pro.' ) }
 				</p>
 
 				<div className="current-plan__more-wrapper">

@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .feature-included-card__card {
 	width: 240px;
 	display: flex;
@@ -8,28 +10,53 @@
 	padding: 48px 24px 35px 24px;
 	box-shadow: none;
 
+	@media (max-width: $break-mobile) {
+		flex-direction: row;
+		width: 100%;
+		padding: 24px 16px;
+		align-items: flex-start;
+	}
+
 	.feature-included-card__illustration {
 		width: 60px;
 	}
 
-	.feature-included-card__title {
-		margin-top: 20px;
-		font-weight: 600;
-		font-size: $font-body;
-	}
-
-	.feature-included-card__text {
+	.feature-included-card__content {
 		flex: 1;
-		font-weight: 400;
-		font-size: $font-body-small;
-		color: var(--color-neutral-40);
-	}
+		display: flex;
+		flex-direction: column;
 
-	.feature-included-card__link {
-		color: var(--color-accent);
-		font-size: $font-body-small;
-		border: 0;
-		padding: 0;
-		text-align: left;
+		@media (max-width: $break-mobile) {
+			margin-left: 24px;
+		}
+
+		.feature-included-card__title {
+			margin-top: 20px;
+			font-weight: 600;
+			font-size: $font-body-small;
+
+			@media (max-width: $break-mobile) {
+				margin: 0;
+			}
+		}
+
+		.feature-included-card__text {
+			flex: 1;
+			font-weight: 400;
+			font-size: $font-body-extra-small;
+			color: var(--color-neutral-40);
+
+			@media (max-width: $break-mobile) {
+				margin: 10px 0;
+			}
+		}
+
+		.feature-included-card__link {
+			color: var(--color-accent);
+			font-size: $font-body-extra-small;
+			border: 0;
+			padding: 0;
+			text-align: left;
+		}
 	}
 }
