@@ -16,6 +16,7 @@ import {
 } from 'calypso/state/stored-cards/selectors';
 import type { PaymentMethod as PaymentMethodType } from 'calypso/lib/checkout/payment-methods';
 import type { StoredCard } from 'calypso/my-sites/checkout/composite-checkout/types/stored-cards';
+import type { IAppState } from 'calypso/state/types';
 
 import 'calypso/me/purchases/payment-methods/style.scss';
 
@@ -93,7 +94,7 @@ class PaymentMethodList extends Component< PaymentMethodListProps > {
 	}
 }
 
-export default connect( ( state ) => ( {
+export default connect( ( state: IAppState ) => ( {
 	cards: getAllStoredCards( state ),
 	paymentAgreements: getUniquePaymentAgreements( state ),
 	hasLoadedFromServer: hasLoadedStoredCardsFromServer( state ),
