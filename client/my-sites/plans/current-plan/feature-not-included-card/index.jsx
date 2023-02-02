@@ -1,4 +1,4 @@
-import { Card } from '@automattic/components';
+import { Card, Gridicon } from '@automattic/components';
 import { Component } from 'react';
 
 import './style.scss';
@@ -14,6 +14,9 @@ class FeatureNotIncludedCard extends Component {
 					alt={ title }
 					src={ illustration }
 				/>
+				<div>
+					<Gridicon className="feature-not-included-card__cross" icon="cross" size={ 24 } />
+				</div>
 				<div className="feature-not-included-card__content">
 					<p className="feature-not-included-card__title">{ title }</p>
 					<p className="feature-not-included-card__text">{ text }</p>

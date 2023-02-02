@@ -33,21 +33,23 @@
 		.feature-included-card__title {
 			margin-top: 20px;
 			font-weight: 600;
-			font-size: $font-body-small;
+			font-size: $font-body;
 
 			@media (max-width: $break-mobile) {
 				margin: 0;
+				font-size: $font-body-small;
 			}
 		}
 
 		.feature-included-card__text {
 			flex: 1;
 			font-weight: 400;
-			font-size: $font-body-extra-small;
+			font-size: $font-body-small;
 			color: var(--color-neutral-40);
 
 			@media (max-width: $break-mobile) {
 				margin: 10px 0;
+				font-size: $font-body-extra-small;
 			}
 		}
 

@@ -193,6 +193,7 @@ body.is-section-plans.is-trial-plan {
 
 					@media (max-width: $break-mobile) {
 						font-size: $font-body-extra-small;
+						color: var(--color-neutral-80);
 					}
 				}
 			}
@@ -200,6 +201,7 @@ body.is-section-plans.is-trial-plan {
 			.current-plan__trial-card-cta {
 				@media (max-width: $break-mobile) {
 					width: 100%;
+					line-height: 30px;
 				}
 			}
 
@@ -322,11 +324,13 @@ body.is-section-plans.is-trial-plan {
 
 			@media (max-width: $break-mobile) {
 				padding: 0 20px;
+				margin-top: 0;
 			}
 
 			button {
 				@media (max-width: $break-mobile) {
 					width: 100%;
+					line-height: 30px;
 				}
 			}
 		}
