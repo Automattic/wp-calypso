@@ -1,7 +1,6 @@
 @import "@automattic/typography/styles/variables";
 @import "../../sensei-variables";
 
-$breakpoint-mobile: 600px;
 $checked-color: #000;
 
 .sensei.sensei-purpose {
@@ -39,7 +38,7 @@ $checked-color: #000;
 		transition: 0.3s border-color;
 
 		&--checked {
-			box-shadow: 0 0 0 1.5px $checked-color;
+			box-shadow: 0 0 0 2px $checked-color;
 		}
 
 		.components-base-control__field {
@@ -49,11 +48,6 @@ $checked-color: #000;
 		.components-checkbox-control__input-container {
 			width: 24px;
 			height: 24px;
-		}
-
-		.components-checkbox-control__input[type="checkbox"]:focus {
-			box-shadow: 0 0 0 2px #b7c9be, 0 0 0 4px $checked-color;
-			outline: 2px solid transparent;
 		}
 
 		.components-checkbox-control__label {
@@ -73,15 +67,25 @@ $checked-color: #000;
 				background: $checked-color;
 				border-color: $checked-color;
 			}
+			&:focus {
+				outline: none;
+				box-shadow: none;
+			}
+			&:focus-visible {
+				outline: none;
+				box-shadow: 0 0 0 2px $sensei-onboarding-color, 0 0 0 4px $sensei-focus-color;
+			}
 		}
+
 		.sensei-setup-wizard__text-control input {
 			background: #fff;
-			border: 1px solid #26212e;
+			border: 1px solid #2f2f34;
 			border-radius: 4px;
 			padding: 12px;
 			font-size: $font-body;
-			&:focus {
-				box-shadow: 0 0 0 2px #b7c9be, 0 0 0 4px $checked-color;
+
+			&:focus-visible {
+				box-shadow: 0 0 0 2px $sensei-onboarding-color, 0 0 0 4px $sensei-focus-color;
 				outline: none;
 				border: 1px solid #26212e;
 			}

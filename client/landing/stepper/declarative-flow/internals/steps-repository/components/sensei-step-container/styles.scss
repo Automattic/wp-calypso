@@ -28,7 +28,7 @@
 	.sensei-step-green {
 		background-color: $sensei-onboarding-color;
 
-		.formatted-header__subtitle {
+		.step-container__header .formatted-header .formatted-header__subtitle {
 			color: inherit;
 			text-align: center;
 		}
@@ -44,6 +44,18 @@
 			&:disabled {
 				opacity: 0.5;
 			}
+
+			&:focus-visible {
+				outline: none;
+				box-shadow: 0 0 0 2px $sensei-onboarding-color, 0 0 0 4px $sensei-focus-color;
+			}
+		}
+	}
+
+	@media (min-width: $breakpoint-mobile) {
+		.step-container__header .formatted-header .formatted-header__title,
+		.step-container__header .formatted-header .formatted-header__subtitle {
+			text-align: left;
 		}
 	}
 }

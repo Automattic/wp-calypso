@@ -51,8 +51,8 @@ const SenseiPurpose: Step = ( { navigation: { submit } } ) => {
 	useEffect( () => {
 		const tick = async () => {
 			if ( progress < 110 ) {
-				await wait( 500 );
-				setProgress( ( progress ) => progress + 10 );
+				await wait( 1500 );
+				setProgress( ( progress ) => progress + 33 );
 			}
 		};
 		tick();
