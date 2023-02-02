@@ -2,7 +2,6 @@
 
 /* eslint-disable no-restricted-imports */
 import config from '@automattic/calypso-config';
-import { Gridicon } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { map, pickBy, flowRight } from 'lodash';
@@ -11,6 +10,7 @@ import { Component, Fragment } from 'react';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
+import DomainUpsell from 'calypso/components/domains/domain-upsell';
 import { BlockEditorSettings } from 'calypso/data/block-editor/use-block-editor-settings-query';
 import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
@@ -713,42 +713,27 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<div className="main main-column calypsoify is-iframe" role="main">
 					{ ! isIframeLoaded && <Placeholder /> }
+					{ isIframeLoaded && <DomainUpsell /> }
 					{ ( shouldLoadIframe || isIframeLoaded ) && (
-						<>
-							<div className="wpcom-domain-upsell" id="wpcom-domain-upsell">
-								<div className="wpcom-domain-upsell-content">
-									<div className="wpcom-domain-upsell-content-text">
-										<Gridicon icon="globe" size={ 16 } />
-										<span className="wpcom-domain-upsell-domain-name">
-											gdemichelisnoplan.wordpress.com
-										</span>
-										<button className="wpcom-domain-upsell-button">
-											<span className="is-desktop">Customize your domain </span>
-											<span className="is-mobile">Customize </span>
-										</button>
-									</div>
-								</div>
-							</div>
-							<Iframe
-								className={ isIframeLoaded ? 'is-loaded' : '' }
-								ref={ this.iframeRef }
-								src={ isIframeLoaded ? currentIFrameUrl : iframeUrl }
-								// NOTE: Do not include any "editor load" events in
-								// this handler. It really only tracks if the document
-								// has loaded. That document could just be a 404 or
-								// a browser error page. Use the WindowActions.Loaded
-								// onMessage handler to handle when the editor iframe
-								// has loaded and started responding. This is the
-								// redirect timer stage 2.
-								onLoad={ () => this.setEditorRedirectTimer( 2000 ) }
-								// When 3rd party cookies are disabled, the iframe
-								// shows an error page that flashes for a moment
-								// before the user is the redirected to wp-admin.
-								// This styling hides the iframe until it loads or
-								// the redirect is executed.
-								style={ isIframeLoaded ? undefined : { opacity: 0 } }
-							/>
-						</>
+						<Iframe
+							className={ isIframeLoaded ? 'is-loaded' : '' }
+							ref={ this.iframeRef }
+							src={ isIframeLoaded ? currentIFrameUrl : iframeUrl }
+							// NOTE: Do not include any "editor load" events in
+							// this handler. It really only tracks if the document
+							// has loaded. That document could just be a 404 or
+							// a browser error page. Use the WindowActions.Loaded
+							// onMessage handler to handle when the editor iframe
+							// has loaded and started responding. This is the
+							// redirect timer stage 2.
+							onLoad={ () => this.setEditorRedirectTimer( 2000 ) }
+							// When 3rd party cookies are disabled, the iframe
+							// shows an error page that flashes for a moment
+							// before the user is the redirected to wp-admin.
+							// This styling hides the iframe until it loads or
+							// the redirect is executed.
+							style={ isIframeLoaded ? undefined : { opacity: 0 } }
+						/>
 					) }
 				</div>
 				<AsyncLoad
