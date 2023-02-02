@@ -133,7 +133,8 @@
 	font-size: 90%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 }
 
-.theme__sheet-screenshot {
+.theme__sheet-screenshot,
+.theme__sheet-web-preview {
 	display: block;
 	margin-top: -156px;
 	width: 98%;
@@ -175,6 +176,14 @@
 				0 0 0 1px var(--color-neutral-light),
 				0 2px 10px 0 rgba(var(--color-neutral-dark-rgb), 0.5);
 		}
+	}
+}
+
+.theme__sheet-web-preview {
+	position: relative;
+
+	@include breakpoint-deprecated( ">960px" ) {
+		height: 85vh;
 	}
 }
 
@@ -388,6 +397,18 @@
 	color: transparent;
 	background-color: rgba(255, 255, 255, 0.4);
 	animation: loading-fade 1.6s ease-in-out infinite;
+}
+
+.theme__sheet-style-variations {
+	.card {
+		display: flex;
+		gap: 4px;
+		padding: 12px 20px;
+	}
+
+	.style-variation__badge-wrapper {
+		flex-basis: 20px;
+	}
 }
 
 .theme__sheet-features-list {

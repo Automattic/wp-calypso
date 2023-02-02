@@ -6,6 +6,11 @@ import {
 	WPCOM_FEATURES_PREMIUM_THEMES,
 } from '@automattic/calypso-products';
 import { Button, Card, Gridicon } from '@automattic/components';
+import {
+	getDesignPreviewUrl,
+	StyleVariationBadges,
+	ThemePreview as ThemeWebPreview,
+} from '@automattic/design-picker';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
@@ -64,6 +69,7 @@ import {
 	getThemeRequestErrors,
 	getThemeForumUrl,
 	getThemeDemoUrl,
+	getThemePreviewThemeOptions,
 	shouldShowTryAndCustomize,
 	isExternallyManagedTheme as getIsExternallyManagedTheme,
 	isSiteEligibleForManagedExternalThemes as getIsSiteEligibleForManagedExternalThemes,
@@ -165,6 +171,11 @@ class ThemeSheet extends Component {
 	onSecondaryButtonClick = () => {
 		const { secondaryOption } = this.props;
 		secondaryOption && secondaryOption.action && secondaryOption.action( this.props.themeId );
+	};
+
+	onStyleVariationClick = ( variation ) => {
+		const { themeId, primary, secondary } = this.props.themeOptions;
+		this.props.setThemePreviewOptions( themeId, primary, secondary, variation );
 	};
 
 	getValidSections = () => {
@@ -322,6 +333,25 @@ class ThemeSheet extends Component {
 		return <div className="theme__sheet-screenshot">{ img }</div>;
 	}
 
+	renderWebPreview = () => {
+		const { locale, stylesheet, themeId, themeOptions } = this.props;
+		const url = getDesignPreviewUrl(
+			{ slug: themeId, recipe: { stylesheet } },
+			{ language: locale }
+		);
+
+		return (
+			<div className="theme__sheet-web-preview">
+				<ThemeWebPreview
+					url={ url }
+					inlineCss={ themeOptions?.styleVariation?.inline_css }
+					isShowFrameBorder={ false }
+					isShowDeviceSwitcher={ false }
+				/>
+			</div>
+		);
+	};
+
 	renderSectionNav = ( currentSection ) => {
 		const { siteSlug, themeId, demoUrl, translate, locale, isLoggedIn } = this.props;
 		const filterStrings = {
@@ -373,6 +403,7 @@ class ThemeSheet extends Component {
 	};
 
 	renderSectionContent = ( section ) => {
+		const { styleVariations, translate } = this.props;
 		const activeSection = {
 			'': this.renderOverviewTab(),
 			setup: this.renderSetupTab(),
@@ -381,6 +412,18 @@ class ThemeSheet extends Component {
 
 		return (
 			<div className="theme__sheet-content">
+				{ styleVariations.length > 0 && (
+					<div className="theme__sheet-style-variations">
+						<SectionHeader label={ translate( 'Choose your style' ) } />
+						<div className="card">
+							<StyleVariationBadges
+								maxVariationsToShow={ styleVariations.length }
+								variations={ styleVariations }
+								onClick={ this.onStyleVariationClick }
+							/>
+						</div>
+					</div>
+				) }
 				{ config.isEnabled( 'jitms' ) && this.props.siteSlug && (
 					<AsyncLoad
 						require="calypso/blocks/jitm"
@@ -766,6 +809,7 @@ class ThemeSheet extends Component {
 			siteSlug,
 			retired,
 			hasUnlimitedPremiumThemes,
+			styleVariations,
 			isAtomic,
 			isPremium,
 			isBundledSoftwareSet,
@@ -965,7 +1009,9 @@ class ThemeSheet extends Component {
 						{ retired && this.renderRetired() }
 					</div>
 					{ ! isRemoved && (
-						<div className="theme__sheet-column-right">{ this.renderScreenshot() }</div>
+						<div className="theme__sheet-column-right">
+							{ styleVariations.length ? this.renderWebPreview() : this.renderScreenshot() }
+						</div>
 					) }
 				</div>
 				<ThemePreview belowToolbar={ previewUpsellBanner } />
@@ -1071,6 +1117,7 @@ export default connect(
 		return {
 			...theme,
 			themeId,
+			themeOptions: getThemePreviewThemeOptions( state ),
 			price: getPremiumThemePrice( state, themeId, siteId ),
 			error,
 			siteId,
@@ -1096,8 +1143,9 @@ export default connect(
 			// Remove the trailing slash because the page URL doesn't have one either.
 			canonicalUrl: localizeUrl( englishUrl, getLocaleSlug(), false ).replace( /\/$/, '' ),
 			demoUrl: getThemeDemoUrl( state, themeId, siteId ),
-			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 			softLaunched: theme?.soft_launched,
+			styleVariations: theme?.style_variations || [],
+			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 			isExternallyManagedTheme,
 			isSiteEligibleForManagedExternalThemes: getIsSiteEligibleForManagedExternalThemes(
 				state,
