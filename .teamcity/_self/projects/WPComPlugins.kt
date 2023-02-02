@@ -2,6 +2,7 @@ package _self.projects
 
 import _self.bashNodeScript
 import _self.lib.wpcom.WPComPluginBuild
+import _self.lib.utils.mergeTrunk
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildSteps
@@ -26,15 +27,13 @@ object WPComPlugins : Project({
 		)
 	}
 
-	sequence {
-		buildType(EditingToolkit)
-		buildType(WpcomBlockEditor)
-		buildType(Notifications)
-		buildType(OdysseyStats)
-		buildType(O2Blocks)
-		buildType(HappyBlocks)
-		buildType(GutenbergUploadSourceMapsToSentry);
-	}
+	buildType(EditingToolkit)
+	buildType(WpcomBlockEditor)
+	buildType(Notifications)
+	buildType(OdysseyStats)
+	buildType(O2Blocks)
+	buildType(HappyBlocks)
+	buildType(GutenbergUploadSourceMapsToSentry);
 
 	cleanup {
 		keepRule {
@@ -57,6 +56,138 @@ object WPComPlugins : Project({
 			dataToKeep = everything()
 			applyPerEachBranch = true
 			preserveArtifactsDependencies = true
+		}
+	}
+})
+
+object BuildPlugins: BuildType({
+	id("calypso_WPComPlugins_Build_Plugins")
+	uuid = "8453b8fe-226f-4e91-b5cc-8bdad15e0814"
+	name = "Build WPCom Plugins"
+	description = "Test"
+
+	vcs {
+		root(Settings.WpCalypso)
+		cleanCheckout = true
+	}
+
+	artifactRules = """
+		apps/happy-blocks/release-files => happy-blocks.zip
+		apps/notifications/dist => notifications.zip
+	""".trimIndent()
+
+	buildNumberPattern = "%build.prefix%.%build.counter%"
+
+	triggers {
+		vcs {
+			branchFilter = """
+			+:*
+			-:pull*
+		""".trimIndent()
+		}
+	}
+
+	features {
+		perfmon {}
+
+		pullRequests {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			provider = github {
+				authType = token {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
+			}
+		}
+
+		commitStatusPublisher {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			publisher = github {
+				githubUrl = "https://api.github.com"
+				authType = personalToken {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+			}
+		}
+	}
+
+	steps {
+		mergeTrunk()
+
+		bashNodeScript {
+			name = "Prepare environment"
+			scriptContent = """
+				set -x
+
+				# Update composer
+				composer install
+
+				# Install dependencies
+				yarn
+			"""
+		}
+
+		bashNodeScript {
+			name = "Build artifacts"
+			scriptContent = """
+				# @automattic/wpcom-block-editor needs this variable.
+				export NODE_ENV="development"
+
+				# Run `yarn build` for the plugins specified in the glob.
+				yarn workspaces foreach --verbose --parallel --include '{happy-blocks,@automattic/notifications}' run build
+
+				# Run extra script necessary for Happy Blocks.
+				# This should be parallelized when other builds that need
+				# extra processing is added.
+				bash /.teamcity/scripts/WPComPlugins/happy-blocks.sh
+			"""
+		}
+
+		/**
+		 * We download the archive directly in this step rather than relying on
+		 * an artifact dependency. We do this because if two commits on trunk
+		 * build at the same time, then they will both point to the same artifact
+		 * dependency. In this scenario, we actually want the current build to
+		 * diff against the artifact from that other commit build.
+		 *
+		 * Using the artifact dependency feature, we can only rely on already-finished
+		 * builds at the time the current build *starts*. This means every build
+		 * would have to run in serial, which is not possible in TeamCity without
+		 * a plugin. As a result, commits have to happen several minutes apart
+		 * in order for the diff tagging feature to work correctly in this scenario.
+		 *
+		 * Downloading from the API directly means that the previous build only
+		 * has to finish by the time this *step* begins. As a result, as long as
+		 * the two builds start further apart than the time this step takes,
+		 * then we can diff against the correct artifact. This means two builds
+		 * can be started within a few seconds of each other on trunk, and the
+		 * most recent build of the two can still rely on the other's artifact.
+		 */
+		bashNodeScript {
+			name = "Process Artifacts"
+			scriptContent = """
+				set -x
+
+				# Plugins that need to have artifacts processed.
+				pluginDirs=( "inline-help" "happy-blocks")
+
+				# Function to process artifact.
+				# Bare-bones for now as this is PoC.
+				process_artifacts () {
+					workingDir=$1
+					archiveDir=$2
+
+					cd $workingDir
+					cp README.md $workingDir/$archiveDir
+
+					# echo
+					# zip -rq ../../../$pluginSlug.zip .
+				}
+
+				for dir in ${pluginDirs[@]}; do
+					process_artifacts "apps/$dir" "./dist/"
+				done
+			"""
 		}
 	}
 })
