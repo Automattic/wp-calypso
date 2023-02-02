@@ -28,6 +28,7 @@ import { isWpMobileApp, isWcMobileApp } from 'calypso/lib/mobile-app';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
+import { isDomainSidebarExperimentUser } from 'calypso/my-sites/controller';
 import { isOffline } from 'calypso/state/application/selectors';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
@@ -384,11 +385,9 @@ export default withCurrentRoute(
 		const isJetpack =
 			( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) ||
 			currentRoute.startsWith( '/checkout/jetpack' );
-		const userBelongsToExperiment =
-			'treatment' === sessionStorage.getItem( 'calypso_sidebar_upsell_experiment' );
 		const isStartDomainExperiment =
 			( currentRoute.startsWith( '/domains/add' ) || currentRoute.startsWith( '/plans/yearly' ) ) &&
-			userBelongsToExperiment;
+			isDomainSidebarExperimentUser();
 		const noMasterbarForRoute =
 			isStartDomainExperiment || isJetpackLogin || currentRoute === '/me/account/closed';
 		const noMasterbarForSection =
