@@ -78,6 +78,8 @@ import ThemeNotFoundError from './theme-not-found-error';
 
 import './style.scss';
 
+const noop = () => {};
+
 class ThemeSheet extends Component {
 	static displayName = 'ThemeSheet';
 
@@ -864,8 +866,6 @@ class ThemeSheet extends Component {
 				( isExternallyManagedTheme &&
 					( ! isMarketplaceThemeSubscribed || ! isSiteEligibleForManagedExternalThemes ) );
 
-			const noop = () => {};
-
 			const upsellNudgePlan =
 				isExternallyManagedTheme || isBundledSoftwareSet ? PLAN_BUSINESS : PLAN_PREMIUM;
 			pageUpsellBanner = (
@@ -925,7 +925,6 @@ class ThemeSheet extends Component {
 
 		return (
 			<Main className={ className }>
-				<AsyncLoad require="calypso/components/global-notices" placeholder={ null } id="notices" />
 				<QueryCanonicalTheme themeId={ this.props.themeId } siteId={ siteId } />
 				<QueryProductsList />
 				<QueryUserPurchases />
@@ -941,6 +940,7 @@ class ThemeSheet extends Component {
 					title={ analyticsPageTitle }
 					properties={ { is_logged_in: isLoggedIn } }
 				/>
+				<AsyncLoad require="calypso/components/global-notices" placeholder={ null } id="notices" />
 				{ this.renderBar() }
 				<QueryActiveTheme siteId={ siteId } />
 				<ThanksModal source="details" themeId={ this.props.themeId } />
