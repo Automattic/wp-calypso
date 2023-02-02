@@ -1,0 +1,25 @@
+.user-licenses {
+	&__header {
+		display: flex;
+		align-items: center;
+
+		> * + * {
+			margin-left: 24px;
+		}
+	}
+}
+
+@include breakpoint-deprecated( "<960px" ) {
+	.user-licenses__header {
+		flex-wrap: wrap;
+
+		> * {
+			width: 100%;
+			margin-bottom: 16px;
+		}
+
+		> * + * {
+			margin-left: 0;
+		}
+	}
+}

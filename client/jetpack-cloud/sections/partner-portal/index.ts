@@ -41,6 +41,17 @@ export default function () {
 	// Redirect invalid license list filters back to the main portal page.
 	page( `/partner-portal/licenses/*`, '/partner-portal/licenses' );
 
+	// View a list of user licenses.
+	page(
+		`/partner-portal/user-licenses`,
+		controller.requireAccessContext,
+		controller.requireTermsOfServiceConsentContext,
+		controller.requireSelectedPartnerKeyContext,
+		controller.userLicensesContext,
+		makeLayout,
+		clientRender
+	);
+
 	// Issue a license.
 	page(
 		`/partner-portal/issue-license`,

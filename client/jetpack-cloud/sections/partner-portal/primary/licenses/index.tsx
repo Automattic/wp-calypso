@@ -75,6 +75,8 @@ export default function Licenses( {
 
 				<SelectPartnerKeyDropdown />
 
+				<a href="/partner-portal/user-licenses">{ translate( 'View User Licenses instead' ) }</a>
+
 				<Button
 					href="/partner-portal/issue-license"
 					onClick={ onIssueNewLicenseClick }

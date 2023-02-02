@@ -12,6 +12,7 @@ import PaymentMethodAdd from 'calypso/jetpack-cloud/sections/partner-portal/prim
 import PaymentMethodList from 'calypso/jetpack-cloud/sections/partner-portal/primary/payment-method-list';
 import Prices from 'calypso/jetpack-cloud/sections/partner-portal/primary/prices';
 import TermsOfServiceConsent from 'calypso/jetpack-cloud/sections/partner-portal/primary/terms-of-service-consent';
+import UserLicenses from 'calypso/jetpack-cloud/sections/partner-portal/primary/user-licenses';
 import PartnerPortalSidebar from 'calypso/jetpack-cloud/sections/partner-portal/sidebar';
 import {
 	LicenseFilter,
@@ -82,6 +83,13 @@ export function licensesContext( context: PageJS.Context, next: () => void ): vo
 			sortField={ sortField }
 		/>
 	);
+	next();
+}
+
+export function userLicensesContext( context: PageJS.Context, next: () => void ): void {
+	context.header = <Header />;
+	context.secondary = <PartnerPortalSidebar path={ context.path } />;
+	context.primary = <UserLicenses />;
 	next();
 }
 
