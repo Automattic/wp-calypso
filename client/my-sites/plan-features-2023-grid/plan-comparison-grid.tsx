@@ -122,7 +122,7 @@ const Cell = styled.div< { textAlign?: string; isInSignup: boolean } >`
 	align-items: center;
 	padding: 33px 20px 0;
 
-	@media ( max-width: 879px ) {
+	@media ( max-width: ${ getMobileBreakpoint } ) {
 		&.title-is-subtitle {
 			padding-top: 0;
 		}

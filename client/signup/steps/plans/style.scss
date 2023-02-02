@@ -1,6 +1,6 @@
 @import "calypso/my-sites/plan-features-2023-grid/media-queries";
 
-.plans-features-main__group.is-2023-pricing-grid {
+.is-section-signup .plans-features-main__group.is-2023-pricing-grid {
 	@include onboarding-2023-pricing-grid-plans-breakpoints;
 }
 

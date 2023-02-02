@@ -107,3 +107,31 @@ $plans-2023-large-breakpoint: 1500px;
 		}
 	}
 }
+
+@mixin plans-2023-break-small() {
+	.is-section-signup & {
+		@media ( min-width: $plans-2023-small-breakpoint ) {
+			@content;
+		}
+	}
+
+	.is-section-plans & {
+		@media ( min-width: $plans-2023-small-breakpoint + $plan-features-sidebar-width ) {
+			@content;
+		}
+	}
+}
+
+@mixin plans-2023-break-medium() {
+	.is-section-signup & {
+		@media ( min-width: $plans-2023-medium-breakpoint ) {
+			@content;
+		}
+	}
+
+	.is-section-plans & {
+		@media ( min-width: $plans-2023-medium-breakpoint + $plan-features-sidebar-width ) {
+			@content;
+		}
+	}
+}
