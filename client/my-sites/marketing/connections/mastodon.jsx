@@ -1,6 +1,7 @@
 import { FormInputValidation } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import PropTypes from 'prop-types';
+import { useState, FormEvent } from 'react';
 import FormsButton from 'calypso/components/forms/form-button';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -10,11 +11,17 @@ const Mastodon = ( { service, action, connectAnother, connections } ) => {
 	const [ instance, setInstance ] = useState( '' );
 	const [ error, setError ] = useState( null );
 
-	const matchUsername = ( username ) =>
+	/**
+	 * Checks if username matches a valid Mastodon username.
+	 *
+	 * @param {string} username
+	 * @returns boolean
+	 */
+	const isValidUsername = ( username ) =>
 		/@?\b([A-Z0-9._%+-]+)@([A-Z0-9.-]+\.[A-Z]{2,})\b/gim.test( username );
 
 	const validateInstance = () => {
-		if ( matchUsername( instance ) ) {
+		if ( isValidUsername( instance ) ) {
 			setError( null );
 		} else {
 			setError( translate( 'This username is not valid.' ) );
@@ -25,18 +32,18 @@ const Mastodon = ( { service, action, connectAnother, connections } ) => {
 	 * Set the instance to the connect URL so that it can be used to connect to Mastodon.
 	 */
 	const setInstanceToConnectURL = () => {
-		const connect_URL = new URL( service.connect_URL );
-		connect_URL.searchParams.set( 'instance', instance );
-		service.connect_URL = connect_URL.toString();
+		const url = new URL( service.connect_URL );
+		url.searchParams.set( 'instance', instance );
+		service.connect_URL = url.toString();
 	};
 
 	/**
 	 * Handle the Connect account submission.
 	 *
-	 * @param event
+	 * @param {FormEvent< HTMLFormElement >} e - The form submission event.
 	 */
-	const onSubmit = ( event ) => {
-		event.preventDefault();
+	const handleSubmit = ( e ) => {
+		e.preventDefault();
 		setInstanceToConnectURL();
 		connections.length >= 1 ? connectAnother() : action();
 	};
@@ -44,7 +51,7 @@ const Mastodon = ( { service, action, connectAnother, connections } ) => {
 	const showError = !! error;
 	return (
 		<div className="sharing-service-distributed-example">
-			<form onSubmit={ onSubmit }>
+			<form onSubmit={ handleSubmit }>
 				<div className="sharing-service-example">
 					<FormLabel htmlFor="instance">{ translate( 'Enter your Mastodon username' ) }</FormLabel>
 					<FormTextInput
@@ -61,7 +68,11 @@ const Mastodon = ( { service, action, connectAnother, connections } ) => {
 					{ showError && <FormInputValidation isError text={ error } /> }
 				</div>
 				<div className="sharing-service-example">
-					<FormsButton primary type="submit" disabled={ ! matchUsername( instance ) || showError }>
+					<FormsButton
+						primary
+						type="submit"
+						disabled={ ! isValidUsername( instance ) || showError }
+					>
 						{ connections.length >= 1
 							? translate( 'Connect one more account' )
 							: translate( 'Connect account' ) }
