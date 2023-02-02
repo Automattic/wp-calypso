@@ -11,7 +11,7 @@ import SectionHeader from 'calypso/components/section-header';
 import PromoCards from 'calypso/my-sites/stats/promo-cards';
 import ErrorPanel from 'calypso/my-sites/stats/stats-error';
 import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './style.scss';
@@ -142,8 +142,7 @@ class AnnualSiteStats extends Component {
 	}
 
 	render() {
-		const { isJetpack, isOdysseyStats, isWidget, moment, siteId, siteSlug, translate, years } =
-			this.props;
+		const { isOdysseyStats, isWidget, moment, siteId, siteSlug, translate, years } = this.props;
 		const strings = this.getStrings();
 		const now = moment();
 		const currentYear = now.format( 'YYYY' );
@@ -192,7 +191,6 @@ class AnnualSiteStats extends Component {
 					) }
 				</Card>
 				<PromoCards
-					isJetpack={ isJetpack }
 					isOdysseyStats={ isOdysseyStats }
 					pageSlug="annual-insights"
 					slug={ siteSlug }
@@ -209,7 +207,6 @@ export default connect( ( state ) => {
 	const insights = getSiteStatsNormalizedData( state, siteId, statType, {} );
 
 	return {
-		isJetpack: isJetpackSite( state, siteId ),
 		isOdysseyStats: config.isEnabled( 'is_running_in_jetpack_site' ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
