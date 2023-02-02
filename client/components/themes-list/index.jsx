@@ -55,34 +55,25 @@ export const ThemesList = ( props ) => {
 		);
 	}
 
-	const showPatternAssemblerCta =
-		isEnabled( 'pattern-assembler/logged-out-showcase' ) && props.themes.length > 0 && ! isLoggedIn;
-
 	return (
 		<div className="themes-list">
 			{ props.themes.map( ( theme, index ) => (
 				<ThemeBlock key={ 'theme-block' + index } theme={ theme } index={ index } { ...props } />
 			) ) }
 			{ /* The Pattern Assembler CTA will display on the fourth row and the behavior is controlled by CSS */ }
-			{ showPatternAssemblerCta && (
-				<PatternAssemblerCta
-					onButtonClick={ () =>
-						window.location.assign(
-							`/start/with-theme?ref=calypshowcase&theme=${ BLANK_CANVAS_DESIGN.slug }`
-						)
-					}
-				/>
-			) }
+			{ isEnabled( 'pattern-assembler/logged-out-showcase' ) &&
+				props.themes.length > 0 &&
+				! isLoggedIn && (
+					<PatternAssemblerCta
+						onButtonClick={ () =>
+							window.location.assign(
+								`/start/with-theme?ref=calypshowcase&theme=${ BLANK_CANVAS_DESIGN.slug }`
+							)
+						}
+					/>
+				) }
 			{ props.loading && <LoadingPlaceholders placeholderCount={ props.placeholderCount } /> }
 			<InfiniteScroll nextPageMethod={ fetchNextPage } />
-			{ /* Do not show the "more options" card when the Pattern Assembler CTA is visible, to avoid a conflict between the two */ }
-			{ ! showPatternAssemblerCta && (
-				<Options
-					recordTracksEvent={ props.recordTracksEvent }
-					searchTerm={ props.searchTerm }
-					translate={ props.translate }
-				/>
-			) }
 		</div>
 	);
 };
@@ -341,11 +332,6 @@ function WPOrgMatchingThemes( props ) {
 					<ThemeBlock theme={ theme } index={ index } { ...props } />
 				</div>
 			) ) }
-			<Options
-				recordTracksEvent={ props.recordTracksEvent }
-				searchTerm={ props.searchTerm }
-				translate={ props.translate }
-			/>
 		</div>
 	);
 }
