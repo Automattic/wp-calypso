@@ -128,6 +128,7 @@ object BuildDockerImage : BuildType({
 				""".trimIndent()
 				commandArgs = """
 					--pull
+					--cache-from=registry.a8c.com/calypso/app:latest
 					--label com.a8c.image-builder=teamcity
 					--label com.a8c.target=calypso-live
 					--label com.a8c.build-id=%teamcity.build.id%
