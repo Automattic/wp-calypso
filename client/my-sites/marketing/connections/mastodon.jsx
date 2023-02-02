@@ -72,4 +72,11 @@ const Mastodon = ( { service, action, connectAnother, connections } ) => {
 	);
 };
 
+Mastodon.propTypes = {
+	service: PropTypes.object.isRequired,
+	action: PropTypes.func.isRequired,
+	connectAnother: PropTypes.func.isRequired,
+	connections: PropTypes.array.isRequired,
+};
+
 export default Mastodon;

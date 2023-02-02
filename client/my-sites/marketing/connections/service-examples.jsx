@@ -47,8 +47,9 @@ class SharingServiceExamples extends Component {
 		site: PropTypes.object,
 		hasJetpack: PropTypes.bool,
 		translate: PropTypes.func,
-		action: PropTypes.func,
-		connections: PropTypes.array,
+		action: PropTypes.func.isRequired,
+		connections: PropTypes.array.isRequired,
+		connectAnother: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
