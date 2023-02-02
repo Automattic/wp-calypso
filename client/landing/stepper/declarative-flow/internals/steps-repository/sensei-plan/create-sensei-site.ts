@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { useNewSiteVisibility } from 'calypso/landing/gutenboarding/hooks/use-selected-plan';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from 'calypso/landing/stepper/stores';
 import wpcom from 'calypso/lib/wp';
-import { Progress } from '../sensei-setup/sensei-step-progress';
+import { Progress } from '../components/sensei-step-progress';
 import type { StyleVariation } from 'calypso/../packages/design-picker';
 
 const getStyleVariations = ( siteId: number, stylesheet: string ): Promise< StyleVariation[] > =>
@@ -36,6 +36,8 @@ const updateGlobalStyles = (
 		apiNamespace: 'wp/v2',
 		body: styleVariation,
 	} );
+
+const COURSE_THEME = 'pub/course';
 
 export const useCreateSenseiSite = () => {
 	const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) );
@@ -89,8 +91,8 @@ export const useCreateSenseiSite = () => {
 		if ( siteId ) {
 			const selectedStyleVariationTitle = getSelectedStyleVariation()?.title;
 			const [ styleVariations, theme ]: [ StyleVariation[], Theme ] = await Promise.all( [
-				getStyleVariations( siteId, 'pub/course' ),
-				getSiteTheme( siteId, 'pub/course' ),
+				getStyleVariations( siteId, COURSE_THEME ),
+				getSiteTheme( siteId, COURSE_THEME ),
 			] );
 			const userGlobalStylesLink: string =
 				theme?._links?.[ 'wp:user-global-styles' ]?.[ 0 ]?.href || '';
