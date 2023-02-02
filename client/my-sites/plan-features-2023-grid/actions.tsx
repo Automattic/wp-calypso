@@ -1,9 +1,18 @@
-import { getPlanClass, isMonthly, PLAN_P2_FREE } from '@automattic/calypso-products';
+import { isEnabled } from '@automattic/calypso-config';
+import {
+	getPlanClass,
+	isMonthly,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	PLAN_P2_FREE,
+	isFreePlan,
+} from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import styled from '@emotion/styled';
 import classNames from 'classnames';
 import { localize, TranslateResult, useTranslate } from 'i18n-calypso';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { Plans2023Tooltip } from './plans-2023-tooltip';
 
 type PlanFeaturesActionsButtonProps = {
 	availableForPurchase: boolean;
@@ -24,7 +33,20 @@ type PlanFeaturesActionsButtonProps = {
 	flowName: string;
 	buttonText?: string;
 	isWpcomEnterpriseGridPlan: boolean;
+	selectedSiteSlug: string | null;
 };
+
+const DummyDisabledButton = styled.div`
+	background-color: var( --studio-white );
+	color: var( --studio-gray-5 );
+	box-shadow: inset 0 0 0 1px var( --studio-gray-10 );
+	font-weight: 500;
+	line-height: 20px;
+	border-radius: 4px;
+	padding: 10px 14px;
+	border: unset;
+	text-align: center;
+`;
 
 const SignupFlowPlanFeatureActionButton = ( {
 	freePlan,
@@ -112,6 +134,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	currentSitePlanSlug,
 	buttonText,
 	forceDisplayButton,
+	selectedSiteSlug,
 }: {
 	freePlan: boolean;
 	isPlaceholder: boolean;
@@ -125,8 +148,30 @@ const LoggedInPlansFeatureActionButton = ( {
 	currentSitePlanSlug?: string;
 	buttonText?: string;
 	forceDisplayButton: boolean;
+	selectedSiteSlug: string | null;
 } ) => {
 	const translate = useTranslate();
+
+	if ( freePlan ) {
+		if ( currentSitePlanSlug && isFreePlan( currentSitePlanSlug ) ) {
+			return (
+				<Button
+					className={ classes }
+					href={ `/add-ons/${ selectedSiteSlug }` }
+					disabled={ ! manageHref }
+				>
+					{ translate( 'Manage add-ons', { context: 'verb' } ) }
+				</Button>
+			);
+		}
+
+		return (
+			<Button className={ classes } disabled={ true }>
+				{ translate( 'Constact support', { context: 'verb' } ) }
+			</Button>
+		);
+	}
+
 	if ( current && planType !== PLAN_P2_FREE ) {
 		return (
 			<Button className={ classes } href={ manageHref } disabled={ ! manageHref }>
@@ -139,7 +184,8 @@ const LoggedInPlansFeatureActionButton = ( {
 		( availableForPurchase || isPlaceholder ) &&
 		currentSitePlanSlug &&
 		isMonthly( currentSitePlanSlug ) &&
-		getPlanClass( planType ) === getPlanClass( currentSitePlanSlug )
+		getPlanClass( planType ) === getPlanClass( currentSitePlanSlug ) &&
+		currentSitePlanSlug !== PLAN_ECOMMERCE_TRIAL_MONTHLY
 	) {
 		return (
 			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
@@ -148,17 +194,7 @@ const LoggedInPlansFeatureActionButton = ( {
 		);
 	}
 
-	let buttonTextFallback = freePlan
-		? translate( 'Select Free', { context: 'button' } )
-		: translate( 'Upgrade', { context: 'verb' } );
-
-	if ( buttonText ) {
-		buttonTextFallback = buttonText;
-	} else {
-		buttonTextFallback = freePlan
-			? translate( 'Select Free', { context: 'button' } )
-			: translate( 'Upgrade', { context: 'verb' } );
-	}
+	const buttonTextFallback = buttonText ?? translate( 'Upgrade', { context: 'verb' } );
 
 	if ( availableForPurchase || isPlaceholder ) {
 		return (
@@ -168,13 +204,25 @@ const LoggedInPlansFeatureActionButton = ( {
 		);
 	}
 
-	if ( ! availableForPurchase && forceDisplayButton ) {
-		return (
-			<Button className={ classes } disabled={ true }>
-				{ buttonText }
-			</Button>
-		);
+	const is2023OnboardingPricingGrid = isEnabled( 'onboarding/2023-pricing-grid' );
+	if ( ! availableForPurchase ) {
+		if ( is2023OnboardingPricingGrid ) {
+			return (
+				<Plans2023Tooltip text={ translate( 'Please contact support to downgrade your plan.' ) }>
+					<DummyDisabledButton>
+						{ translate( 'Downgrade', { context: 'verb' } ) }
+					</DummyDisabledButton>
+				</Plans2023Tooltip>
+			);
+		} else if ( forceDisplayButton ) {
+			return (
+				<Button className={ classes } disabled={ true }>
+					{ buttonText }
+				</Button>
+			);
+		}
 	}
+
 	return null;
 };
 
@@ -196,6 +244,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	flowName,
 	buttonText,
 	isWpcomEnterpriseGridPlan = false,
+	selectedSiteSlug,
 } ) => {
 	const translate = useTranslate();
 
@@ -274,6 +323,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 			currentSitePlanSlug={ currentSitePlanSlug }
 			buttonText={ buttonText }
 			forceDisplayButton={ forceDisplayButton }
+			selectedSiteSlug={ selectedSiteSlug }
 		/>
 	);
 };
