@@ -32,6 +32,7 @@ import {
 	withAnalytics,
 } from 'calypso/state/analytics/actions';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
+import { dismissJITMDirectCall } from 'calypso/state/jitm/actions';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
@@ -119,6 +120,7 @@ class StatsSite extends Component {
 	state = {
 		activeTab: null,
 		activeLegend: null,
+		isOptOutNoticeDismissed: false,
 	};
 
 	static getDerivedStateFromProps( props, state ) {
@@ -190,6 +192,11 @@ class StatsSite extends Component {
 			'is-period-year': period === 'year',
 		} );
 
+		const dismissOptOutNotice = () => {
+			this.setState( { isOptOutNoticeDismissed: true } );
+			context.store.dispatch( dismissJITMDirectCall( 'no-idea', 'opt-out-new-stats' ) );
+		};
+
 		return (
 			<div className="stats">
 				{ ! isOdysseyStats && (
@@ -226,11 +233,12 @@ class StatsSite extends Component {
 					slug={ slug }
 				/>
 
-				{ showOptOutNotice && (
+				{ showOptOutNotice && ! this.state.isOptOutNoticeDismissed && (
 					<div className="inner-notice-container has-background-color is-odyssey-only">
 						<NoticeBanner
 							level="success"
 							title={ translate( 'Welcome to the new Jetpack Stats!' ) }
+							onClose={ dismissOptOutNotice }
 						>
 							{ translate(
 								'{{p}}Enjoy a more modern and mobile friendly experience with new stats and insights to help you grow your site.{{/p}}{{p}}If you prefer to continue using the traditional stats, {{manageYourSettingsLink}}manage your settings{{/manageYourSettingsLink}}.{{/p}}',

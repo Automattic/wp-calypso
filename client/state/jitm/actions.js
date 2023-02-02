@@ -6,6 +6,7 @@ import {
 	JITM_FETCH,
 	JITM_SET,
 	JITM_OPEN_HELP_CENTER,
+	JITM_DISMISS_DIRECT,
 } from 'calypso/state/action-types';
 import 'calypso/state/data-layer/wpcom/sites/jitm';
 import 'calypso/state/jitm/init';
@@ -21,6 +22,19 @@ import 'calypso/state/jitm/init';
 export const dismissJITM = ( siteId, id, featureClass ) => ( {
 	type: JITM_DISMISS,
 	siteId,
+	id,
+	featureClass,
+} );
+
+/**
+ * Dismisses a jitm directly
+ *
+ * @param {string} id The id of the jitm to dismiss
+ * @param {string} featureClass The feature class of the jitm to dismiss
+ * @returns {Object} The dismiss action
+ */
+export const dismissJITMDirectCall = ( id, featureClass ) => ( {
+	type: JITM_DISMISS_DIRECT,
 	id,
 	featureClass,
 } );
