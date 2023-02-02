@@ -2,6 +2,7 @@ import { Card, PostStatsCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { getPostStat } from 'calypso/state/stats/posts/selectors';
 import PostLikes from '../stats-post-likes';
 
@@ -58,7 +59,7 @@ export default function PostDetailHighlightsSection( {
 	const postData = {
 		date: post?.date,
 		post_thumbnail: post?.post_thumbnail?.URL || null,
-		title: textTruncator( post?.title, POST_STATS_CARD_TITLE_LIMIT ),
+		title: decodeEntities( stripHTML( textTruncator( post?.title, POST_STATS_CARD_TITLE_LIMIT ) ) ),
 	};
 
 	return (

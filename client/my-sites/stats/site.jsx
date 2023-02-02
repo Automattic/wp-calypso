@@ -357,12 +357,7 @@ class StatsSite extends Component {
 						}
 					</div>
 				</div>
-				<PromoCards
-					isJetpack={ isJetpack }
-					isOdysseyStats={ isOdysseyStats }
-					pageSlug="traffic"
-					slug={ slug }
-				/>
+				<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
 				<JetpackColophon />
 			</div>
 		);

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 /* eslint-disable jsdoc/require-param */
 /**
@@ -530,7 +531,9 @@ export default function buildFallbackResponse( {
 					slug: 'options-reading-php',
 					title: translate( 'Reading' ),
 					type: 'submenu-item',
-					url: `https://${ siteDomain }/wp-admin/options-reading.php`,
+					url: config.isEnabled( 'settings/modernize-reading-settings' )
+						? `/settings/reading/${ siteDomain }`
+						: `https://${ siteDomain }/wp-admin/options-reading.php`,
 				},
 				{
 					parent: 'options-general.php',

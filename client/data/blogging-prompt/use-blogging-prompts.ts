@@ -5,27 +5,21 @@ import wp from 'calypso/lib/wp';
 export interface BloggingPrompt {
 	id: string;
 	text: string;
+	title: string;
+	content: string;
+	attribution: string;
+	date: string;
+	answered: boolean;
+	answered_users_count: number;
 	answered_users_sample: Array< string >;
 }
 
-const selectPrompts = ( response: {
-	prompts: Array< { id: string; text: string; answered_users_sample: Array< string > } >;
-} ): BloggingPrompt[] | null => {
+const selectPrompts = ( response: { prompts: BloggingPrompt[] } ): BloggingPrompt[] | null => {
 	const prompts = response && response.prompts;
 	if ( ! prompts ) {
 		return null;
 	}
-	return prompts.map(
-		( prompt: {
-			id: string;
-			text: string;
-			answered_users_sample: Array< string >;
-		} ): BloggingPrompt => ( {
-			id: prompt.id,
-			text: prompt.text,
-			answered_users_sample: prompt.answered_users_sample,
-		} )
-	);
+	return prompts;
 };
 
 export const useBloggingPrompts = (

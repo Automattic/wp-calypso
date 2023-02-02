@@ -1,3 +1,4 @@
+import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { mayWeInitTracker, mayWeTrackByTracker } from '../tracker-buckets';
 import {
@@ -49,7 +50,9 @@ if ( typeof window !== 'undefined' ) {
 
 	// Linkedin
 	if ( mayWeInitTracker( 'linkedin' ) ) {
-		setupLinkedinInsight( isJetpackCloud() ? TRACKING_IDS.jetpackLinkedinId : null );
+		setupLinkedinInsight(
+			isJetpackCloud() || isJetpackCheckout() ? TRACKING_IDS.jetpackLinkedinId : null
+		);
 	}
 
 	// Quora
