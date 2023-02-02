@@ -1,4 +1,4 @@
-import { ConfettiAnimation } from '@automattic/components';
+import { ConfettiAnimation, Gridicon } from '@automattic/components';
 import { Button, Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -65,25 +65,36 @@ const CelebrateSiteLaunch = ( { isSiteSetupComplete, pendingSiteSetupTasks, site
 					onRequestClose={ () => setModalIsOpen( false ) }
 					// contentLabel={ label }
 					// overlayClassName={ backdropClassName } // We use flex here which react-modal doesn't
-					// className={ dialogClassName }
+					className="launched__modal"
 					// htmlOpenClassName="ReactModal__Html--open"
 					// role="dialog"
 					// shouldCloseOnEsc
 				>
 					<ConfettiAnimation />
-					<h1>{ translate( 'Congrats, your site is live!' ) }</h1>
-					<p>
-						{ translate(
-							'Your site is live. Now you can head over to your site and share it with the world or keep working on it.'
-						) }
-					</p>
-					<div>
-						<Button isSecondary onClick={ () => setModalIsOpen( false ) }>
-							{ translate( 'Back to home' ) }
-						</Button>
-						<Button href={ siteSlug } isPrimary>
-							{ translate( 'View Site' ) }
-						</Button>
+					<div className="launched__modal-content">
+						<div className="launched__modal-text">
+							<h1 className="launched__modal-heading">
+								{ translate( 'Congrats, your site is live!' ) }
+							</h1>
+							<p className="launched__modal-body">
+								{ translate(
+									'Your site is live. Now you can head over to your site and share it with the world or keep working on it.'
+								) }
+							</p>
+						</div>
+						<div className="launched__modal-actions">
+							<div className="launched__modal-site">
+								<p className="launched__modal-domain">totoroadventures.wordpress.com</p>
+
+								<Button href={ siteSlug } isPrimary>
+									{ translate( 'View Site' ) }
+								</Button>
+							</div>
+							<Button className="launched__modal-customize">
+								<Gridicon icon="domains" size={ 16 } />
+								<span>Customize your domain</span>
+							</Button>
+						</div>
 					</div>
 				</Modal>
 			) }

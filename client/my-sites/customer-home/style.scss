@@ -298,3 +298,72 @@ body.is-section-home.theme-default.color-scheme {
 	background: var(--color-neutral-80);
 	color: var(--color-neutral-0);
 }
+
+.launched__modal {
+	max-width: 640px;
+
+	.components-modal__content {
+		margin: 0;
+		padding: 48px;
+	}
+
+	&-content {
+		display: flex;
+		flex-direction: column;
+		gap: 32px;
+	}
+
+	&-heading {
+		color: var(--studio-gray-100);
+		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+		font-size: 2rem;
+		line-height: 40px;
+		font-weight: 400;
+		letter-spacing: 0.2px;
+		margin: 0;
+		padding-bottom: 8px;
+	}
+
+	&-body,
+	&-domain {
+		margin: 0;
+		color: var(--studio-gray-80);
+		font-size: 1rem;
+		line-height: 24px;
+	}
+
+	&-domain {
+		padding-left: 8px;
+	}
+
+	&-buttons {
+		display: flex;
+		flex-direction: row;
+		justify-content: end;
+		gap: 16px;
+	}
+
+	&-actions {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
+
+	&-site {
+		padding: 8px;
+		background: var(--studio-gray-80);
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	&-customize {
+		display: inline-flex;
+		flex-direction: row;
+		justify-content: start;
+		gap: 6px;
+		padding: 0;
+		margin: 0;
+	}
+}
