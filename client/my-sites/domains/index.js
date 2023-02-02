@@ -4,6 +4,7 @@ import { recordSiftScienceUser } from 'calypso/lib/siftscience';
 import {
 	navigation,
 	siteSelection,
+	setExperimentVariation,
 	sites,
 	wpForTeamsGeneralNotSupportedRedirect,
 } from 'calypso/my-sites/controller';
@@ -204,6 +205,7 @@ export default function () {
 	page(
 		'/domains/add/:domain',
 		siteSelection,
+		setExperimentVariation,
 		navigation,
 		domainsController.redirectIfNoSite( '/domains/add' ),
 		domainsController.redirectToUseYourDomainIfVipSite(),

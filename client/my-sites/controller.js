@@ -13,6 +13,7 @@ import { cloudSiteSelection } from 'calypso/jetpack-cloud/controller';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { navigate } from 'calypso/lib/navigate';
 import { onboardingUrl } from 'calypso/lib/paths';
@@ -425,6 +426,17 @@ export function noSite( context, next ) {
 
 	context.store.dispatch( setSelectedSiteId( null ) );
 	return next();
+}
+
+export async function setExperimentVariation( context, next ) {
+	const experimentAssignment = await loadExperimentAssignment(
+		'calypso_sidebar_upsell_dedicated_upgrade_flow_202301'
+	);
+
+	const variationName = experimentAssignment?.variationName;
+	sessionStorage.setItem( 'calypso_sidebar_upsell_experiment', variationName );
+
+	next();
 }
 
 /*

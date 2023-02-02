@@ -29,7 +29,7 @@ import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { isOffline } from 'calypso/state/application/selectors';
-import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
 import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -376,8 +376,8 @@ class Layout extends Component {
 
 export default withCurrentRoute(
 	connect( ( state, { currentSection, currentRoute, currentQuery, secondary } ) => {
-		const currentUser = getCurrentUser( state );
-		const userBelongsToExperiment = 'treatment' === currentUser?.calypso_sidebar_upsell_experiment;
+		const userBelongsToExperiment =
+			'treatment' === sessionStorage.getItem( 'calypso_sidebar_upsell_experiment' );
 		const sectionGroup = currentSection?.group ?? null;
 		const sectionName = currentSection?.name ?? null;
 		const siteId = getSelectedSiteId( state );
