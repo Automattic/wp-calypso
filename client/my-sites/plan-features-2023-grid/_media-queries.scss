@@ -109,7 +109,7 @@ $plans-2023-large-breakpoint: 1500px;
 }
 
 @mixin plans-2023-break-small() {
-	.is-section-signup & {
+	body.is-section-signup.is-white-signup & {
 		@media ( min-width: $plans-2023-small-breakpoint ) {
 			@content;
 		}
@@ -123,7 +123,7 @@ $plans-2023-large-breakpoint: 1500px;
 }
 
 @mixin plans-2023-break-medium() {
-	.is-section-signup & {
+	body.is-section-signup.is-white-signup & {
 		@media ( min-width: $plans-2023-medium-breakpoint ) {
 			@content;
 		}
