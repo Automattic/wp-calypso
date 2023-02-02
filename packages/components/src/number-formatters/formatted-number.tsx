@@ -4,7 +4,7 @@ export default function formattedNumber( number: number | null ) {
 		try {
 			return Intl.NumberFormat().format( number as number );
 		} catch {
-			return '-';
+			return number;
 		}
 	}
 
