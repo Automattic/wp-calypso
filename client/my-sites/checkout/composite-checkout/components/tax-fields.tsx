@@ -3,6 +3,7 @@ import {
 	Field,
 	tryToGuessPostalCodeFormat,
 	getCountryPostalCodeSupport,
+	getCountryTaxRequirements,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -16,6 +17,11 @@ import type {
 	ManagedValue,
 } from '@automattic/wpcom-checkout';
 import type { ChangeEvent } from 'react';
+import { Input, StateSelect } from 'calypso/my-sites/domains/components/form';
+import {
+	getStateLabelText,
+	STATE_SELECT_TEXT,
+} from 'calypso/components/domains/contact-details-form-fields/custom-form-fieldsets/utils';
 
 const GridRow = styled.div`
 	display: -ms-grid;
@@ -51,11 +57,15 @@ export default function TaxFields( {
 	isDisabled?: boolean;
 } ) {
 	const translate = useTranslate();
-	const { postalCode, countryCode } = taxInfo;
+	const { postalCode, countryCode, city, state } = taxInfo;
 	const arePostalCodesSupported =
 		countriesList.length && countryCode?.value
 			? getCountryPostalCodeSupport( countriesList, countryCode.value )
 			: false;
+	const taxRequirements =
+		countriesList.length && countryCode?.value
+			? getCountryTaxRequirements( countriesList, countryCode.value )
+			: {};
 	const isVatSupported = config.isEnabled( 'checkout/vat-form' ) && allowVat;
 
 	return (
@@ -68,6 +78,8 @@ export default function TaxFields( {
 							onChange( {
 								countryCode: { value: event.target.value, errors: [], isTouched: true },
 								postalCode: updatePostalCodeForCountry( postalCode, countryCode, countriesList ),
+								city,
+								state,
 							} );
 						} }
 						isError={ countryCode?.isTouched && ! isValid( countryCode ) }
@@ -94,6 +106,8 @@ export default function TaxFields( {
 										countryCode,
 										countriesList
 									),
+									city,
+									state,
 								} );
 							} }
 							autoComplete={ section + ' postal-code' }
@@ -105,6 +119,52 @@ export default function TaxFields( {
 					</RightColumn>
 				) }
 			</FieldRow>
+			{ ( taxRequirements.city || taxRequirements.state ) && (
+				<FieldRow>
+					{ taxRequirements.city && (
+						<LeftColumn>
+							<Field
+								id={ section + '-city' }
+								type="text"
+								label={ String( translate( 'City' ) ) }
+								value={ city?.value ?? '' }
+								disabled={ isDisabled }
+								onChange={ ( newValue: string ) => {
+									onChange( {
+										countryCode,
+										postalCode,
+										city: { value: newValue, errors: [], isTouched: true },
+										state,
+									} );
+								} }
+								autoComplete={ section + ' city' }
+								isError={ city?.isTouched && ! isValid( city ) }
+								errorMessage={
+									city?.errors[ 0 ] ?? String( translate( 'This field is required.' ) )
+								}
+							/>
+						</LeftColumn>
+					) }
+					{ taxRequirements.state && countryCode?.value && (
+						<RightColumn>
+							<StateSelect
+								label={ getStateLabelText( countryCode.value ) }
+								countryCode={ countryCode.value }
+								selectText={ STATE_SELECT_TEXT[ countryCode.value ] }
+								value={ state?.value }
+								onChange={ ( event: ChangeEvent< HTMLSelectElement > ) => {
+									onChange( {
+										countryCode,
+										postalCode,
+										city,
+										state: { value: event.target.value, errors: [], isTouched: true },
+									} );
+								} }
+							/>
+						</RightColumn>
+					) }
+				</FieldRow>
+			) }
 			{ isVatSupported && (
 				<VatForm section={ section } isDisabled={ isDisabled } countryCode={ countryCode?.value } />
 			) }

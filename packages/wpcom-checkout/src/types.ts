@@ -340,6 +340,8 @@ export type ManagedContactDetailsUpdaters = {
 	updatePhone: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
 	updatePhoneNumberCountry: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
 	updatePostalCode: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
+	updateCity: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
+	updateState: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
 	updateEmail: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
 	updateCountryCode: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
 	updateDomainContactFields: (
@@ -496,7 +498,7 @@ export interface CountryListItem {
 	code: string;
 	name: string;
 	has_postal_codes?: boolean;
-	vat_city?: boolean;
-	vat_region?: boolean;
-	vat_organization?: boolean;
+	tax_needs_city?: boolean;
+	tax_needs_state?: boolean;
+	tax_needs_organization?: boolean;
 }

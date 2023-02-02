@@ -2,18 +2,18 @@ import type { CountryListItem } from './types';
 
 export interface CountryVatRequirements {
 	city?: true;
-	region?: true;
+	state?: true;
 	organization?: true;
 }
 
 /**
- * Returns VAT requirements for the specified country code.
+ * Returns tax requirements for the specified country code.
  *
  * NOTE: Will return an empty object if the countries list is empty or if the country
  * code is not in the list! Always check that the countries list has loaded
  * before calling this.
  */
-export function getCountryVatRequirements(
+export function getCountryTaxRequirements(
 	countries: CountryListItem[],
 	countryCode: string
 ): CountryVatRequirements {
@@ -38,13 +38,13 @@ export function getCountryVatRequirements(
 		return {};
 	}
 	const requirements: CountryVatRequirements = {};
-	if ( countryListItem.vat_city ) {
+	if ( countryListItem.tax_needs_city ) {
 		requirements.city = true;
 	}
-	if ( countryListItem.vat_region ) {
-		requirements.region = true;
+	if ( countryListItem.tax_needs_state ) {
+		requirements.state = true;
 	}
-	if ( countryListItem.vat_organization ) {
+	if ( countryListItem.tax_needs_organization ) {
 		requirements.organization = true;
 	}
 	return requirements;

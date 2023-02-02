@@ -41,7 +41,9 @@ export function convertResponseCartToRequestCart( {
 		tax.location.subdivision_code ||
 		tax.location.vat_id ||
 		tax.location.organization ||
-		tax.location.address
+		tax.location.address ||
+		tax.location.city ||
+		tax.location.state
 	) {
 		requestCartTax = {
 			location: {
@@ -51,6 +53,8 @@ export function convertResponseCartToRequestCart( {
 				vat_id: tax.location.vat_id,
 				organization: tax.location.organization,
 				address: tax.location.address,
+				city: tax.location.city,
+				state: tax.location.state,
 			},
 		};
 	}
@@ -121,6 +125,8 @@ export function addLocationToResponseCart(
 				vat_id: location.vatId || undefined,
 				organization: location.organization || undefined,
 				address: location.address || undefined,
+				city: location.city || undefined,
+				state: location.state || undefined,
 			},
 		},
 	};
@@ -137,6 +143,8 @@ export function doesCartLocationDifferFromResponseCartLocation(
 		vatId: newVatId = '',
 		organization: newOrganization = '',
 		address: newAddress = '',
+		city: newCity = '',
+		state: newState = '',
 	} = location;
 	const {
 		country_code: oldCountryCode = '',
@@ -145,6 +153,8 @@ export function doesCartLocationDifferFromResponseCartLocation(
 		vat_id: oldVatId = '',
 		organization: oldOrganization = '',
 		address: oldAddress = '',
+		city: oldCity = '',
+		state: oldState = '',
 	} = cart.tax?.location ?? {};
 
 	if ( location.countryCode !== undefined && newCountryCode !== oldCountryCode ) {
@@ -163,6 +173,12 @@ export function doesCartLocationDifferFromResponseCartLocation(
 		return true;
 	}
 	if ( location.address !== undefined && newAddress !== oldAddress ) {
+		return true;
+	}
+	if ( location.city !== undefined && newCity !== oldCity ) {
+		return true;
+	}
+	if ( location.state !== undefined && newState !== oldState ) {
 		return true;
 	}
 	return false;

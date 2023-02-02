@@ -205,7 +205,7 @@ class PluginSections extends Component {
 				<div
 					ref={ this.descriptionContent }
 					className={ contentClasses }
-					// Sanitized in client/lib/plugins/utils.js with sanitizeHtml
+					// Sanitized in client/lib/plugins/utils.ts with sanitizeHtml
 					dangerouslySetInnerHTML={ {
 						__html: this.props.plugin.sections[ this.getSelected() ],
 					} }
@@ -224,7 +224,7 @@ class PluginSections extends Component {
 						/>
 					</div>
 					<div
-						// Sanitized in client/lib/plugins/utils.js with sanitizeHtml
+						// Sanitized in client/lib/plugins/utils.ts with sanitizeHtml
 						dangerouslySetInnerHTML={ {
 							__html: this.props.plugin.sections[ this.getSelected() ],
 						} }
@@ -244,7 +244,7 @@ class PluginSections extends Component {
 				</div>
 
 				<div
-					// Sanitized in client/lib/plugins/utils.js with sanitizeHtml
+					// Sanitized in client/lib/plugins/utils.ts with sanitizeHtml
 					dangerouslySetInnerHTML={ {
 						__html: this.props.plugin.sections[ this.getSelected() ],
 					} }
