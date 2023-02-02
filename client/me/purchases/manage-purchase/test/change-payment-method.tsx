@@ -80,11 +80,11 @@ const storedCard1: StoredCard = {
 	added: '2022-05-23',
 	card: '4242',
 	card_type: 'visa',
-	email: 'foo@example.com',
-	expiry: '05/33',
+	email: '',
+	expiry: '2033-11-30',
 	is_expired: false,
-	last_service: '',
-	last_used: '',
+	last_service: 'wordpress-com',
+	last_used: '2022-01-26 17:19:54',
 	meta: [],
 	mp_ref: '12345abcd',
 	name: 'Human Person',
@@ -243,6 +243,35 @@ describe( 'ChangePaymentMethod', () => {
 			</ReduxProvider>
 		);
 
-		expect( await screen.findByText( storedCard1.name ) ).toBeInTheDocument();
+		expect( await screen.findByLabelText( new RegExp( storedCard1.name ) ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders a new credit card payment method', async () => {
+		const queryClient = new QueryClient();
+
+		const paymentMethods: StoredCard[] = [ storedCard1 ];
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me/payment-methods?expired=include' )
+			.reply( 200, paymentMethods );
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me/stripe-configuration' )
+			.reply( 200, stripeConfiguration );
+
+		render(
+			<ReduxProvider store={ createTestReduxStore() }>
+				<QueryClientProvider client={ queryClient }>
+					<ChangePaymentMethod
+						getManagePurchaseUrlFor={ ( siteSlug: string, purchaseId: number ) =>
+							`/manage-purchase-url/${ siteSlug }/${ purchaseId }`
+						}
+						purchaseId={ 1 }
+						purchaseListUrl="purchase-list-url"
+						siteSlug="example.com"
+					/>
+				</QueryClientProvider>
+			</ReduxProvider>
+		);
+
+		expect( await screen.findByLabelText( 'Credit or debit card' ) ).toBeInTheDocument();
 	} );
 } );
