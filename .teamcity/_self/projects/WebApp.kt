@@ -123,6 +123,11 @@ object BuildDockerImage : BuildType({
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 		}
 		
+		// Read only cache should be disabled on trunk -- e.g., when we're on the
+		// default branch, we should write to the cache. In branches, we should
+		// not write to the cache. (Except when we enable it via the testing arg.)
+		val readonlyCache = ! ( "%teamcity.build.branch.is_default%".toBoolean() || "%UPDATE_BASE_IMAGE_CACHE%".toBoolean() )
+
 		val commonArgs = """
 			--label com.a8c.image-builder=teamcity
 			--label com.a8c.build-id=%teamcity.build.id%
@@ -134,6 +139,7 @@ object BuildDockerImage : BuildType({
 			--build-arg manual_sentry_release=%MANUAL_SENTRY_RELEASE%
 			--build-arg is_default_branch=%teamcity.build.branch.is_default%
 			--build-arg sentry_auth_token=%SENTRY_AUTH_TOKEN%
+			--build-arg readonly_cache=$readonlyCache
 		""".trimIndent().replace("\n"," ")
 
 		dockerCommand {

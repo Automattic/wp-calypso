@@ -13,7 +13,10 @@ FROM ${base_image} as builder-cache-true
 
 ENV NPM_CONFIG_CACHE=/calypso/.cache
 ENV PERSISTENT_CACHE=true
-ENV READONLY_CACHE=true
+
+# This is an experiment to see if we can improve build and queue times by updating the cache frequently.
+ARG readonly_cache=true
+ENV READONLY_CACHE $readonly_cache
 
 ###################
 FROM builder-cache-${use_cache} as builder
