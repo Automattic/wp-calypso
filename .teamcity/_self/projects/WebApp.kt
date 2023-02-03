@@ -1,35 +1,16 @@
 package _self.projects
 
+import Settings
+import _self.bashNodeScript
+import _self.lib.customBuildType.E2EBuildType
+import _self.lib.utils.mergeTrunk
+
 import jetbrains.buildServer.configs.kotlin.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.*
-
-import Settings
-import _self.bashNodeScript
-import _self.lib.customBuildType.E2EBuildType
-import _self.lib.utils.mergeTrunk
-// import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
-// import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStepConditions
-// import jetbrains.buildServer.configs.kotlin.v2019_2.BuildSteps
-// import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
-// import jetbrains.buildServer.configs.kotlin.v2019_2.FailureAction
-// import jetbrains.buildServer.configs.kotlin.v2019_2.Project
-// import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.PullRequests
-// import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
-// import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.notifications
-// import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
-// import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
-// import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
-// import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.dockerCommand
-// import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
-// import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.BuildFailureOnMetric
-// import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.failOnMetricChange
-// import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
-// import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
-// import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.finishBuildTrigger
 
 object WebApp : Project({
 	id("WebApp")
@@ -135,13 +116,14 @@ object BuildDockerImage : BuildType({
 		// default branch, we should write to the cache. In branches, we should
 		// not write to the cache. (Except when we enable it via the testing arg.)
 		val isTrunk = Settings.WpCalypso.paramRefs.buildVcsBranch.toString() == "trunk"
+		val currentBranch = Settings.WpCalypso.paramRefs.buildVcsBranch
 		val readonlyCache = ! ( isTrunk ||base_img )
 
 		script {
 			name = "Test kotlin params"
 			scriptContent = """
 				#!/bin/bash
-
+				echo "branch: $currentBranch"
 				echo "base_img: $base_img"
 				echo "isTrunk: $isTrunk"
 				echo "readonlyCache: $readonlyCache"
