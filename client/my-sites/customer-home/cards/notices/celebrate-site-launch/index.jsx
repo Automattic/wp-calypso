@@ -61,15 +61,7 @@ const CelebrateSiteLaunch = ( { isSiteSetupComplete, pendingSiteSetupTasks, site
 			/>
 
 			{ modalIsOpen && (
-				<Modal
-					onRequestClose={ () => setModalIsOpen( false ) }
-					// contentLabel={ label }
-					// overlayClassName={ backdropClassName } // We use flex here which react-modal doesn't
-					className="launched__modal"
-					// htmlOpenClassName="ReactModal__Html--open"
-					// role="dialog"
-					// shouldCloseOnEsc
-				>
+				<Modal onRequestClose={ () => setModalIsOpen( false ) } className="launched__modal">
 					<ConfettiAnimation />
 					<div className="launched__modal-content">
 						<div className="launched__modal-text">
@@ -84,15 +76,15 @@ const CelebrateSiteLaunch = ( { isSiteSetupComplete, pendingSiteSetupTasks, site
 						</div>
 						<div className="launched__modal-actions">
 							<div className="launched__modal-site">
-								<p className="launched__modal-domain">totoroadventures.wordpress.com</p>
+								<p className="launched__modal-domain">{ siteSlug }</p>
 
-								<Button href={ siteSlug } isPrimary>
-									{ translate( 'View Site' ) }
+								<Button isPrimary href={ `https://${ siteSlug }` } target="_blank">
+									{ translate( 'Visit site' ) }
 								</Button>
 							</div>
-							<Button className="launched__modal-customize">
+							<Button className="launched__modal-customize" href={ `/domains/add/${ siteSlug }` }>
 								<Gridicon icon="domains" size={ 16 } />
-								<span>Customize your domain</span>
+								<span>{ translate( 'Customize your domain' ) }</span>
 							</Button>
 						</div>
 					</div>
