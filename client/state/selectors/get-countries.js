@@ -3,7 +3,7 @@ import { get } from 'lodash';
 import 'calypso/state/countries/init';
 
 /**
- * @typedef {import('@automatic/wpcom-checkout').CountryListItem} CountryListItem
+ * @typedef {import('@automattic/wpcom-checkout').CountryListItem} CountryListItem
  */
 
 /**
