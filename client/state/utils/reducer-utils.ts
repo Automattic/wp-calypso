@@ -4,7 +4,7 @@ import { APPLY_STORED_STATE } from 'calypso/state/action-types';
 import { SerializationResult } from 'calypso/state/serialization-result';
 import { serialize, deserialize } from './serialize';
 import type { SerializableReducer } from './serialize';
-import type { Reducer, AnyAction, Action } from 'redux';
+import type { ReducersMapObject, Reducer, AnyAction, Action } from 'redux';
 
 export interface CombinedReducer extends SerializableReducer {
 	storageKey?: string;
@@ -241,8 +241,8 @@ function serializeState< TState = any >(
 	);
 }
 
-function deserializeState(
-	reducers: Record< string, SerializableReducer >,
+function deserializeState< TState, TAction extends AnyAction >(
+	reducers: ReducersMapObject< TState, TAction >,
 	persisted: Record< string, any >
 ) {
 	return mapValues( reducers, ( reducer, reducerKey ) =>
