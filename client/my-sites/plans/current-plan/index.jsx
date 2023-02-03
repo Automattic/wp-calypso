@@ -215,28 +215,28 @@ class CurrentPlan extends Component {
 
 		const whatsIncluded = [
 			{
-				illustration: '/calypso/images/plans/wpcom/trial-features/priority-support.svg',
+				illustration: '/calypso/images/plans/wpcom/ecommerce-trial/priority-support.svg',
 				title: translate( 'Priority support' ),
 				text: translate( 'Need help? Reach out to us anytime, anywhere.' ),
 				showButton: true,
 				buttonText: translate( 'Ask a question' ),
 			},
 			{
-				illustration: '/calypso/images/plans/wpcom/trial-features/premium-themes.svg',
+				illustration: '/calypso/images/plans/wpcom/ecommerce-trial/premium-themes.svg',
 				title: translate( 'Premium themes' ),
 				text: translate( 'Explore a diverse selection of beautifully designed premium themes.' ),
 				showButton: true,
 				buttonText: translate( 'Browse premium themes' ),
 			},
 			{
-				illustration: '/calypso/images/plans/wpcom/trial-features/advanced-customization.svg',
+				illustration: '/calypso/images/plans/wpcom/ecommerce-trial/advanced-customization.svg',
 				title: translate( 'Advanced customization' ),
 				text: translate( "Change your store's appearance in a few clicks!" ),
 				showButton: true,
 				buttonText: translate( 'Design your store' ),
 			},
 			{
-				illustration: '/calypso/images/plans/wpcom/trial-features/unlimited-products.svg',
+				illustration: '/calypso/images/plans/wpcom/ecommerce-trial/unlimited-products.svg',
 				title: translate( 'Unlimited products' ),
 				text: translate(
 					'List as many products or services as you’d like and offer subscriptions.'
@@ -245,14 +245,14 @@ class CurrentPlan extends Component {
 				buttonText: translate( 'Add a product' ),
 			},
 			{
-				illustration: '/calypso/images/plans/wpcom/trial-features/jetpack-features.svg',
+				illustration: '/calypso/images/plans/wpcom/ecommerce-trial/jetpack-features.svg',
 				title: translate( 'Jetpack features' ),
 				text: translate( 'Get auto real-time backups, malware scans, and spam protection.' ),
 				showButton: true,
 				buttonText: translate( 'Keep your store safe' ),
 			},
 			{
-				illustration: '/calypso/images/plans/wpcom/trial-features/seo-tools.svg',
+				illustration: '/calypso/images/plans/wpcom/ecommerce-trial/seo-tools.svg',
 				title: translate( 'SEO tools' ),
 				text: translate(
 					'Boost traffic with tools that make your content more findable on search engines.'
@@ -261,7 +261,7 @@ class CurrentPlan extends Component {
 				buttonText: translate( 'Increase visibility' ),
 			},
 			{
-				illustration: '/calypso/images/plans/wpcom/trial-features/google-analytics.svg',
+				illustration: '/calypso/images/plans/wpcom/ecommerce-trial/google-analytics.svg',
 				title: translate( 'Google Analytics' ),
 				text: translate(
 					'Understand visitors and traffic patterns more in depht with Google stats.'
@@ -270,7 +270,7 @@ class CurrentPlan extends Component {
 				buttonText: translate( 'Connect Google Analytics' ),
 			},
 			{
-				illustration: '/calypso/images/plans/wpcom/trial-features/best-in-class-hosting.svg',
+				illustration: '/calypso/images/plans/wpcom/ecommerce-trial/best-in-class-hosting.svg',
 				title: translate( 'Best-in-class hosting' ),
 				text: translate(
 					'Hosting is included with your plan, eliminating additional cost and technical hassle.'
@@ -281,32 +281,32 @@ class CurrentPlan extends Component {
 
 		const whatsNotIncluded = [
 			{
-				illustration: '/calypso/images/plans/wpcom/trial-features/launch.png',
+				illustration: '/calypso/images/plans/wpcom/ecommerce-trial/launch.png',
 				title: translate( 'Launch your store to the world' ),
 				text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio ullamcorper efficitur.',
 			},
 			{
-				illustration: '/calypso/images/plans/wpcom/trial-features/themes.png',
+				illustration: '/calypso/images/plans/wpcom/ecommerce-trial/themes.png',
 				title: translate( 'Get access to more premium themes' ),
 				text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio ullamcorper efficitur.',
 			},
 			{
-				illustration: '/calypso/images/plans/wpcom/trial-features/money.png',
+				illustration: '/calypso/images/plans/wpcom/ecommerce-trial/money.png',
 				title: translate( 'Make money with your store' ),
 				text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio ullamcorper efficitur.',
 			},
 			{
-				illustration: '/calypso/images/plans/wpcom/trial-features/email.png',
+				illustration: '/calypso/images/plans/wpcom/ecommerce-trial/email.png',
 				title: translate( 'Boost your email marketing' ),
 				text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio ullamcorper efficitur.',
 			},
 			{
-				illustration: '/calypso/images/plans/wpcom/trial-features/promote.png',
+				illustration: '/calypso/images/plans/wpcom/ecommerce-trial/promote.png',
 				title: translate( 'Promote your products' ),
 				text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio ullamcorper efficitur.',
 			},
 			{
-				illustration: '/calypso/images/plans/wpcom/trial-features/shipping.png',
+				illustration: '/calypso/images/plans/wpcom/ecommerce-trial/shipping.png',
 				title: translate( 'Integrate top shipping carriers' ),
 				text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio ullamcorper efficitur.',
 			},
