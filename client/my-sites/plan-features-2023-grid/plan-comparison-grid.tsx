@@ -77,9 +77,9 @@ const Title = styled.div< { isHiddenInMobile?: boolean; isInSignup: boolean } >`
 	}
 `;
 
-const Grid = styled.div`
+const Grid = styled.div< { isInSignup: boolean } >`
 	display: grid;
-	margin-top: 90px;
+	margin-top: ${ ( props ) => ( props.isInSignup ? '90px' : '64px' ) };
 	background: #fff;
 	border: solid 1px #e0e0e0;
 
@@ -529,7 +529,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 				siteSlug={ planTypeSelectorProps.siteSlug }
 				hideDiscountLabel={ true }
 			/>
-			<Grid>
+			<Grid isInSignup={ isInSignup }>
 				<PlanComparisonGridHeader
 					displayedPlansProperties={ displayedPlansProperties }
 					visiblePlansProperties={ visiblePlansProperties }
