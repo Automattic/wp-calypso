@@ -1,29 +1,30 @@
 package _self.projects
 
-import DslContext
+import jetbrains.buildServer.configs.kotlin.*
+
 import Settings
 import _self.bashNodeScript
 import _self.lib.customBuildType.E2EBuildType
 import _self.lib.utils.mergeTrunk
-import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
-import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStepConditions
-import jetbrains.buildServer.configs.kotlin.v2019_2.BuildSteps
-import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
-import jetbrains.buildServer.configs.kotlin.v2019_2.FailureAction
-import jetbrains.buildServer.configs.kotlin.v2019_2.Project
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.PullRequests
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.notifications
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.dockerCommand
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
-import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.BuildFailureOnMetric
-import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.failOnMetricChange
-import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
-import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
-import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.finishBuildTrigger
+// import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
+// import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStepConditions
+// import jetbrains.buildServer.configs.kotlin.v2019_2.BuildSteps
+// import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
+// import jetbrains.buildServer.configs.kotlin.v2019_2.FailureAction
+// import jetbrains.buildServer.configs.kotlin.v2019_2.Project
+// import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.PullRequests
+// import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
+// import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.notifications
+// import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
+// import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
+// import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
+// import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.dockerCommand
+// import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
+// import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.BuildFailureOnMetric
+// import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.failOnMetricChange
+// import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
+// import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
+// import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.finishBuildTrigger
 
 object WebApp : Project({
 	id("WebApp")
