@@ -42,9 +42,8 @@
 
 	ul {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+		grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 		gap: 22px 24px;
-		margin-right: 16px;
 	}
 
 	.hosting-upsell-nudge__feature-icon {

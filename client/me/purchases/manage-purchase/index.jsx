@@ -31,7 +31,7 @@ import {
 	hasMarketplaceProduct,
 	isDIFMProduct,
 } from '@automattic/calypso-products';
-import { Button, Card, CompactCard, ProductIcon, Gridicon } from '@automattic/components';
+import { Spinner, Button, Card, CompactCard, ProductIcon, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -52,6 +52,7 @@ import MaterialIcon from 'calypso/components/material-icon';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
+import reinstallPlugins from 'calypso/data/marketplace/reinstall-plugins-api';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
@@ -94,6 +95,7 @@ import {
 	getCurrentUser,
 	getCurrentUserId,
 } from 'calypso/state/current-user/selectors';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import {
 	getSitePurchases,
@@ -169,6 +171,7 @@ class ManagePurchase extends Component {
 		cancelLink: null,
 		isRemoving: false,
 		isCancelSurveyVisible: false,
+		isReinstalling: false,
 	};
 
 	componentDidMount() {
@@ -595,6 +598,44 @@ class ManagePurchase extends Component {
 				onClickFinalConfirm={ this.cancelSubscription }
 				flowType={ getPurchaseCancellationFlowType( purchase ) }
 			/>
+		);
+	}
+
+	handleReinstall = async () => {
+		this.setState( { isReinstalling: true } );
+		const siteId = this.props.purchase.siteId;
+		try {
+			const response = await reinstallPlugins( siteId );
+
+			this.props.successNotice( response.message, { duration: 5000 } );
+		} catch ( error ) {
+			this.props.errorNotice( error.message );
+		} finally {
+			this.setState( { isReinstalling: false } );
+		}
+	};
+
+	renderReinstall() {
+		const { purchase, productsList, translate } = this.props;
+		const { isReinstalling } = this.state;
+		if ( ! ( purchase.active && hasMarketplaceProduct( productsList, purchase.productSlug ) ) ) {
+			return null;
+		}
+
+		return (
+			<CompactCard tagName="a" onClick={ isReinstalling ? null : this.handleReinstall }>
+				{ isReinstalling ? (
+					<>
+						<Spinner className="card__icon" />
+						{ translate( 'Reinstalling…' ) }
+					</>
+				) : (
+					<>
+						<MaterialIcon icon="build" className="card__icon" />
+						{ translate( 'Reinstall' ) }
+					</>
+				) }
+			</CompactCard>
 		);
 	}
 
@@ -1040,6 +1081,7 @@ class ManagePurchase extends Component {
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewMonthlyNavItem() }
 						{ ! isJetpackTemporarySite && this.renderUpgradeNavItem() }
 						{ this.renderEditPaymentMethodNavItem() }
+						{ this.renderReinstall() }
 						{ this.renderCancelPurchaseNavItem() }
 						{ this.renderCancelSurvey() }
 						{ ! isJetpackTemporarySite && this.renderRemovePurchaseNavItem() }
@@ -1244,5 +1286,7 @@ export default connect(
 	{
 		handleRenewNowClick,
 		handleRenewMultiplePurchasesClick,
+		errorNotice,
+		successNotice,
 	}
 )( localize( ManagePurchase ) );
