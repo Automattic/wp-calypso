@@ -5,7 +5,6 @@ import {
 	PLAN_FREE,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
-import { Card } from '@automattic/components';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { addQueryArgs } from '@wordpress/url';
@@ -22,7 +21,6 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
-import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
@@ -43,9 +41,8 @@ import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provider';
 import withCartKey from '../checkout/with-cart-key';
 import DomainAndPlanPackageNavigation from '../domains/components/domain-and-plan-package/navigation';
+import ECommerceTrialPlans from './ecommerce-trial';
 import PlansHeader from './header';
-
-import './style.scss';
 
 function DomainAndPlanUpsellNotice() {
 	const translate = useTranslate();
@@ -258,70 +255,7 @@ class Plans extends Component {
 	}
 
 	renderEcommerceTrialPage() {
-		const {
-			translate,
-			moment,
-			currentPlan,
-			eCommerceTrialDaysLeft,
-			eCommerceTrialExpiration,
-			isTrialExpired,
-			locale,
-		} = this.props;
-
-		const trialStart = moment( currentPlan?.subscribedDate );
-		const trialEnd = moment( currentPlan?.expiryDate );
-		const trialDuration = trialEnd.diff( trialStart, 'days' );
-
-		// Trial progress from 0 to 100
-		const trialProgress = ( 1 - eCommerceTrialDaysLeft / trialDuration ) * 100;
-
-		// moment.js doesn't have a format option to display the long form in a localized way without the year
-		// https://github.com/moment/moment/issues/3341
-		const readableExpirationDate = eCommerceTrialExpiration?.toDate().toLocaleDateString( locale, {
-			month: 'long',
-			day: 'numeric',
-		} );
-
-		return (
-			<>
-				<BodySectionCssClass bodyClass={ [ 'is-trial-plan' ] } />
-
-				<Card className="plans__trial-card">
-					<div className="plans__trial-card-content">
-						<p className="plans__card-title">{ translate( 'You’re in a free trial store' ) }</p>
-						<p className="plans__card-subtitle">
-							{
-								// Still need to populate the date correctly
-								translate(
-									'Your free trial will end in %(daysLeft)d day. Sign up to a plan by %(expirationdate)s to unlock new features and keep your store running.',
-									'Your free trial will end in %(daysLeft)d days. Sign up to a plan by %(expirationdate)s to unlock new features and keep your store running.',
-									{
-										count: eCommerceTrialDaysLeft,
-										args: {
-											daysLeft: eCommerceTrialDaysLeft,
-											expirationdate: readableExpirationDate,
-										},
-									}
-								)
-							}
-						</p>
-					</div>
-					<div className="plans__chart-wrapper">
-						<div className="plans__chart" style={ { '--p': trialProgress } }>
-							{ eCommerceTrialDaysLeft }
-						</div>
-						<br />
-						<span className="plans__chart-label">
-							{ isTrialExpired
-								? translate( 'Your free trial has expired' )
-								: translate( 'day left in trial', 'days left in trial', {
-										count: eCommerceTrialDaysLeft,
-								  } ) }
-						</span>
-					</div>
-				</Card>
-			</>
-		);
+		return <ECommerceTrialPlans { ...this.props } />;
 	}
 
 	render() {
