@@ -185,6 +185,10 @@ const PlanSelector = styled.header`
 		left: 0;
 		cursor: pointer;
 		height: 30px;
+
+		&:focus ~ .plan-comparison-grid__title {
+			outline: thin dotted;
+		}
 	}
 `;
 
@@ -278,11 +282,6 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 								</div>
 							) }
 							<PlanSelector>
-								<h4 className="plan-comparison-grid__title">
-									{ planConstantObj.getTitle() }
-
-									{ showPlanSelect && <Gridicon icon="chevron-down" size={ 12 } color="#0675C4" /> }
-								</h4>
 								{ showPlanSelect && (
 									<select
 										onChange={ ( event: ChangeEvent ) => onPlanChange( planName, event ) }
@@ -308,6 +307,11 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 										) }
 									</select>
 								) }
+								<h4 className="plan-comparison-grid__title">
+									{ planConstantObj.getTitle() }
+
+									{ showPlanSelect && <Gridicon icon="chevron-down" size={ 12 } color="#0675C4" /> }
+								</h4>
 							</PlanSelector>
 							<PlanFeatures2023GridHeaderPrice
 								currencyCode={ currencyCode }
