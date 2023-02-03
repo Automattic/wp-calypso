@@ -43,12 +43,15 @@ export default function HighlightCard( {
 		: null;
 	const textRef = useRef( null );
 	const [ isTooltipVisible, setTooltipVisible ] = useState( false );
+
 	return (
 		<Card className="highlight-card">
 			<div className="highlight-card-icon">{ icon }</div>
 			<div className="highlight-card-heading">{ heading }</div>
 			<div
-				className="highlight-card-count"
+				className={ classNames( 'highlight-card-count', {
+					'is-pointer': showValueTooltip,
+				} ) }
 				onMouseEnter={ () => setTooltipVisible( true ) }
 				onMouseLeave={ () => setTooltipVisible( false ) }
 			>
