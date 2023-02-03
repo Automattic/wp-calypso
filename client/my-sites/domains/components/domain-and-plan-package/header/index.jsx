@@ -6,8 +6,13 @@ export default function DomainAndPlanPackageHeader() {
 	const translate = useTranslate();
 
 	return (
-		<div>
-			<span>{ translate( 'Back to Sites' ) }</span>
+		<div class="domain-and-plan-package-header">
+			<div class="domain-and-plan-package-header__back">
+				<span>{ translate( 'Back to Sites' ) }</span>
+			</div>
+			<div class="domain-and-plan-package-header__steps">
+				<span>1. Domain 2. Plan 3. Purchase</span>
+			</div>
 		</div>
 	);
 }

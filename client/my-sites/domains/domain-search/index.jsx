@@ -25,6 +25,7 @@ import {
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { isDomainSidebarExperimentUser } from 'calypso/my-sites/controller';
+import DomainAndPlanPackageHeader from 'calypso/my-sites/domains/components/domain-and-plan-package/header';
 import NewDomainsRedirectionNoticeUpsell from 'calypso/my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
 import {
 	domainAddEmailUpsell,
@@ -315,11 +316,14 @@ class DomainSearch extends Component {
 		}
 
 		return (
-			<Main className={ classes } wideLayout>
-				<QueryProductsList />
-				<QuerySiteDomains siteId={ this.props.selectedSiteId } />
-				{ content }
-			</Main>
+			<>
+				<DomainAndPlanPackageHeader />
+				<Main className={ classes } wideLayout>
+					<QueryProductsList />
+					<QuerySiteDomains siteId={ this.props.selectedSiteId } />
+					{ content }
+				</Main>
+			</>
 		);
 	}
 }
