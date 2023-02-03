@@ -29,10 +29,22 @@ $plans-2023-large-breakpoint: 1500px;
 /**
  * Media queries for the plans grid on the /plans page.
  * Since there is a sidebar on internal pages,
- * this should stretch to fill it's container on non-mobile resolutions.
+ * we add the sidebar width to the default breakpoints.
  */
 @mixin pricing-grid-2023-plans-section-breakpoints {
-	max-width: 100%;
+	max-width: 414px;
+
+	@media ( min-width: $plans-2023-small-breakpoint  + $plan-features-sidebar-width  ) {
+		max-width: 860px;
+	}
+
+	@media ( min-width: $plans-2023-medium-breakpoint  + $plan-features-sidebar-width  ) {
+		max-width: 1320px;
+	}
+
+	@media ( min-width: $plans-2023-large-breakpoint  + $plan-features-sidebar-width  ) {
+		max-width: 1480px;
+	}
 }
 
 /**
