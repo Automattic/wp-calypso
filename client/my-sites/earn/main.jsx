@@ -74,7 +74,7 @@ class EarningsMain extends Component {
 			case 'ads-earnings':
 				return (
 					<AdsWrapper section={ this.props.section }>
-						<WordAdsEarnings site={ this.props.site } />
+						<WordAdsEarnings site={ this.props.site } showSummary />
 					</AdsWrapper>
 				);
 			case 'ads-payments':

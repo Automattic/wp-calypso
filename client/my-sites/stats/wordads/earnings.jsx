@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import QueryWordadsEarnings from 'calypso/components/data/query-wordads-earnings';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getWordAdsEarnings } from 'calypso/state/wordads/earnings/selectors';
+import EarningsSummary from './earnings-summary';
 
 class WordAdsEarnings extends Component {
 	static propTypes = {
@@ -210,12 +211,12 @@ class WordAdsEarnings extends Component {
 	}
 
 	render() {
-		const { siteId, earnings, translate } = this.props;
+		const { siteId, earnings, translate, showSummary = false } = this.props;
 
 		return (
 			<div>
 				<QueryWordadsEarnings siteId={ siteId } />
-
+				{ showSummary && <EarningsSummary earnings={ earnings } /> }
 				{ earnings && this.checkSize( earnings.wordads )
 					? this.earningsTable( earnings.wordads, translate( 'Earnings history' ), 'wordads' )
 					: null }
