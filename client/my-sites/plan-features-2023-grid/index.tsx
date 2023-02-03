@@ -394,10 +394,7 @@ export class PlanFeatures2023Grid extends Component<
 			const classes = classNames( 'plan-features-2023-grid__table-item', 'is-bottom-aligned', {
 				'has-border-top': ! isReskinned,
 			} );
-
-			if ( rawPrice === undefined || rawPrice === null ) {
-				return;
-			}
+			const hasNoPrice = rawPrice === undefined || rawPrice === null;
 
 			return (
 				<Container
@@ -406,14 +403,16 @@ export class PlanFeatures2023Grid extends Component<
 					className={ classes }
 					isMobile={ options?.isMobile }
 				>
-					<PlanFeatures2023GridHeaderPrice
-						currencyCode={ currencyCode }
-						discountPrice={ discountPrice }
-						rawPrice={ rawPrice }
-						planName={ planName }
-						is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
-						isLargeCurrency={ isLargeCurrency }
-					/>
+					{ ! hasNoPrice && (
+						<PlanFeatures2023GridHeaderPrice
+							currencyCode={ currencyCode }
+							discountPrice={ discountPrice }
+							rawPrice={ rawPrice }
+							planName={ planName }
+							is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+							isLargeCurrency={ isLargeCurrency }
+						/>
+					) }
 				</Container>
 			);
 		} );
