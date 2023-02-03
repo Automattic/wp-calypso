@@ -37,7 +37,7 @@ const DEFAULT_LINK_IN_BIO_THEME = 'pub/lynx';
 const DEFAULT_WOOEXPRESS_FLOW = 'pub/twentytwentytwo';
 const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
 
-const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } ) {
+const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, data } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
 	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
@@ -114,7 +114,8 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 			siteAccentColor,
 			true,
 			username,
-			domainCartItem
+			domainCartItem,
+			data.sourceSlug
 		);
 
 		if ( planCartItem ) {

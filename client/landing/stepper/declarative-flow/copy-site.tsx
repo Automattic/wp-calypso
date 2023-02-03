@@ -121,7 +121,9 @@ const copySite: Flow = {
 
 			switch ( _currentStepSlug ) {
 				case 'domains': {
-					return navigate( 'site-creation-step' );
+					return navigate( 'site-creation-step', {
+						sourceSlug: urlQueryParams.get( 'sourceSlug' ),
+					} );
 				}
 
 				case 'site-creation-step': {
