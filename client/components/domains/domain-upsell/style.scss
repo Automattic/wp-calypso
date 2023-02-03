@@ -1,16 +1,18 @@
+@import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
 .domain-upsell {
-	font-style: normal;
-	padding: 15px;
-	line-height: normal;
+	font-size: $font-body-extra-small;
 	position: absolute;
 	z-index: 99998;
-	left: 35%;
-	right: 35%;
+	display: flex;
+	align-items: center;
+	height: 60px;
+	left: 50%;
+	transform: translateX(-50%);
 
-	@include breakpoint-deprecated( "<480px" ) {
+	@include breakpoint-deprecated( "<1040px" ) {
 		display: none;
 	}
 
@@ -29,12 +31,31 @@
 		padding: 6px 20px;
 		column-gap: 10px;
 		background: #f6f7f7;
+		@include breakpoint-deprecated( "<1280px" ) {
+			padding: 6px 10px;
+		}
 	}
 
+	&__button-text-desktop {
+		display: block;
+		@include breakpoint-deprecated( "<1280px" ) {
+			display: none;
+		}
+	}
+	&__button-text-mobile {
+		display: none;
+		@include breakpoint-deprecated( "<1280px" ) {
+			display: block;
+		}
+	}
 	&__icon {
 		fill: var(--studio-gray-60);
+		@include breakpoint-deprecated( "<1280px" ) {
+			display: none;
+		}
 	}
 	&__button {
+		font-size: $font-body-extra-small;
 		white-space: nowrap;
 		text-decoration: underline;
 		color: #3858e9;
