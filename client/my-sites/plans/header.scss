@@ -62,7 +62,10 @@
 		margin-left: auto;
 		margin-right: auto;
 	}
-	.notice.notice {
-		margin-bottom: 0;
+
+	@media (max-width: 660px) {
+		.formatted-header.formatted-header {
+			margin: 16px;
+		}
 	}
 }
