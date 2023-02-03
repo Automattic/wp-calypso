@@ -1,5 +1,6 @@
 package _self.projects
 
+import DslContext
 import Settings
 import _self.bashNodeScript
 import _self.lib.customBuildType.E2EBuildType
@@ -127,7 +128,7 @@ object BuildDockerImage : BuildType({
 		// Read only cache should be disabled on trunk -- e.g., when we're on the
 		// default branch, we should write to the cache. In branches, we should
 		// not write to the cache. (Except when we enable it via the testing arg.)
-		val isTrunk = Settings.WpCalypso.paramRefs.buildVcsBranch == "trunk"
+		val isTrunk = Settings.WpCalypso.paramRefs.buildVcsBranch.toString() == "trunk"
 		val readonlyCache = ! ( isTrunk ||base_img )
 
 		script {
