@@ -23,8 +23,9 @@ import {
 	updatePrivacyForDomain,
 } from 'calypso/lib/cart-values/cart-items';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
-import { isDomainSidebarExperimentUser } from 'calypso/my-sites/controller';
+// import { isDomainSidebarExperimentUser } from 'calypso/my-sites/controller';
 import NewDomainsRedirectionNoticeUpsell from 'calypso/my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
 import {
 	domainAddEmailUpsell,
@@ -69,6 +70,7 @@ class DomainSearch extends Component {
 	state = {
 		domainRegistrationAvailable: true,
 		domainRegistrationMaintenanceEndTime: null,
+		isDomainSidebarExperimentUser: null,
 	};
 
 	handleDomainsAvailabilityChange = ( isAvailable, maintenanceEndTime = null ) => {
@@ -101,8 +103,18 @@ class DomainSearch extends Component {
 		this.isMounted && page( '/checkout/' + this.props.selectedSiteSlug );
 	};
 
-	componentDidMount() {
-		if ( isDomainSidebarExperimentUser() ) {
+	getExperimentData = async () => {
+		const experimentAssignment = await loadExperimentAssignment(
+			'calypso_sidebar_upsell_dedicated_upgrade_flow_202301'
+		);
+		this.setState( {
+			isDomainSidebarExperimentUser: experimentAssignment?.variationName === 'treatment',
+		} );
+	};
+
+	async componentDidMount() {
+		await this.getExperimentData();
+		if ( this.state.isDomainSidebarExperimentUser ) {
 			document.body.classList.add( 'is-experiment-user' );
 		}
 		this.checkSiteIsUpgradeable();
@@ -117,7 +129,7 @@ class DomainSearch extends Component {
 	}
 
 	componentWillUnmount() {
-		if ( isDomainSidebarExperimentUser() ) {
+		if ( this.state.isDomainSidebarExperimentUser ) {
 			document.body.classList.remove( 'is-experiment-user' );
 		}
 
@@ -244,7 +256,7 @@ class DomainSearch extends Component {
 			content = (
 				<span>
 					<div className="domain-search__content">
-						{ false === isDomainSidebarExperimentUser() && (
+						{ false === this.state.isDomainSidebarExperimentUser && (
 							<BackButton
 								className="domain-search__go-back"
 								href={ domainManagementList( selectedSiteSlug ) }
@@ -256,7 +268,7 @@ class DomainSearch extends Component {
 
 						{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 						<div className="domains__header">
-							{ isDomainSidebarExperimentUser() && (
+							{ this.state.isDomainSidebarExperimentUser && (
 								<>
 									<FormattedHeader
 										brandFont
@@ -273,7 +285,7 @@ class DomainSearch extends Component {
 								</>
 							) }
 
-							{ false === isDomainSidebarExperimentUser() && (
+							{ false === this.state.isDomainSidebarExperimentUser && (
 								<FormattedHeader
 									brandFont
 									headerText={
