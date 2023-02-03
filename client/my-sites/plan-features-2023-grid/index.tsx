@@ -19,13 +19,17 @@ import {
 	TYPE_ECOMMERCE,
 	TYPE_ENTERPRISE_GRID_WPCOM,
 	getPlanPath,
+	PLAN_ENTERPRISE_GRID_WPCOM,
 } from '@automattic/calypso-products';
+import formatCurrency from '@automattic/format-currency';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { localize, LocalizeProps } from 'i18n-calypso';
+import { last } from 'lodash';
 import page from 'page';
 import { Component, createRef } from 'react';
+import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import BloombergLogo from 'calypso/assets/images/onboarding/bloomberg-logo.svg';
 import cloudLogo from 'calypso/assets/images/onboarding/cloud-logo.svg';
@@ -38,13 +42,17 @@ import SlackLogo from 'calypso/assets/images/onboarding/slack-logo.svg';
 import TimeLogo from 'calypso/assets/images/onboarding/time-logo.svg';
 import vipLogo from 'calypso/assets/images/onboarding/vip-logo.svg';
 import wooLogo from 'calypso/assets/images/onboarding/woo-logo.svg';
+import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import FoldableCard from 'calypso/components/foldable-card';
 import JetpackLogo from 'calypso/components/jetpack-logo';
+import Notice from 'calypso/components/notice';
 import PlanPill from 'calypso/components/plans/plan-pill';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
+import { getDiscountByName } from 'calypso/lib/discounts';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
+import { calculatePlanCredits } from 'calypso/my-sites/plan-features';
 import { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/plan-type-selector';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
@@ -71,6 +79,7 @@ import { PlanProperties, TransformedFeatureObject } from './types';
 import { getStorageStringFromFeature } from './util';
 
 import './style.scss';
+
 type PlanRowOptions = {
 	isMobile?: boolean;
 	previousProductNameShort?: string;
@@ -106,6 +115,8 @@ type PlanFeatures2023GridProps = {
 	isLandingPage?: boolean;
 	intervalType: string;
 	currentSitePlanSlug: string;
+	withDiscount: boolean;
+	discountEndDate: Date;
 };
 
 type PlanFeatures2023GridConnectedProps = {
@@ -117,6 +128,8 @@ type PlanFeatures2023GridConnectedProps = {
 	planTypeSelectorProps: PlanTypeSelectorProps;
 	manageHref: string;
 	selectedSiteSlug: string | null;
+	planCredits: number;
+	hasPlaceholders: boolean;
 };
 
 type PlanFeatures2023GridType = PlanFeatures2023GridProps &
@@ -179,6 +192,8 @@ export class PlanFeatures2023Grid extends Component<
 		} = this.props;
 		return (
 			<div className="plans-wrapper">
+				<QueryActivePromotions />
+				{ this.renderNotice() }
 				<div className="plan-features">
 					<div className="plan-features-2023-grid__content">
 						<div>
@@ -687,6 +702,89 @@ export class PlanFeatures2023Grid extends Component<
 			);
 		} );
 	}
+
+	getBannerContainer() {
+		return document.querySelector( '.plans-features-main__notice' );
+	}
+
+	higherPlanAvailable() {
+		const currentPlan = this.props.currentSitePlanSlug;
+		const availablePlanProperties = this.props.planProperties.filter(
+			( { planName } ) => planName !== PLAN_ENTERPRISE_GRID_WPCOM
+		);
+		const highestPlan = last( availablePlanProperties );
+
+		return currentPlan !== highestPlan?.planName && highestPlan?.availableForPurchase;
+	}
+
+	hasDiscountNotice() {
+		const { canUserPurchasePlan, hasPlaceholders, withDiscount } = this.props;
+		const bannerContainer = this.getBannerContainer();
+		if ( ! bannerContainer ) {
+			return false;
+		}
+
+		const activeDiscount = getDiscountByName( withDiscount );
+		if ( ! activeDiscount || hasPlaceholders || ! canUserPurchasePlan ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	renderNotice() {
+		return (
+			// this.renderUpgradeDisabledNotice() ||
+			// this.renderDiscountNotice() ||
+			this.renderCreditNotice()
+			// || this.renderMarketingMessage()
+		);
+	}
+
+	renderCreditNotice() {
+		const { canUserPurchasePlan, hasPlaceholders, translate, planCredits, planProperties } =
+			this.props;
+		const bannerContainer = this.getBannerContainer();
+
+		const showPlanCreditsApplied = ! this.hasDiscountNotice();
+
+		if (
+			hasPlaceholders ||
+			! canUserPurchasePlan ||
+			! bannerContainer ||
+			! showPlanCreditsApplied ||
+			! planCredits ||
+			! this.higherPlanAvailable()
+		) {
+			return null;
+		}
+
+		return ReactDOM.createPortal(
+			<Notice
+				className="plan-features__notice-credits"
+				showDismiss={ false }
+				icon="info-outline"
+				status="is-success"
+			>
+				{ translate(
+					'You have {{b}}%(amountInCurrency)s{{/b}} of pro-rated credits available from your current plan. ' +
+						'Apply those credits towards an upgrade before they expire!',
+					{
+						args: {
+							amountInCurrency: formatCurrency(
+								planCredits,
+								planProperties[ 0 ].currencyCode || ''
+							),
+						},
+						components: {
+							b: <strong />,
+						},
+					}
+				) }
+			</Notice>,
+			bannerContainer
+		);
+	}
 }
 
 /* eslint-disable wpcalypso/redux-no-bound-selectors */
@@ -712,7 +810,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 
 			// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
 			const showMonthlyPrice = true;
-			if ( placeholder || ! planObject ) {
+			if ( placeholder || ( ! planObject && plan !== PLAN_ENTERPRISE_GRID_WPCOM ) ) {
 				isPlaceholder = true;
 			}
 
@@ -835,12 +933,18 @@ const ConnectedPlanFeatures2023Grid = connect(
 				? getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
 				: `/plans/my-plan/${ siteId }`;
 
+		const planCredits = calculatePlanCredits( state, siteId, planProperties );
+		const hasPlaceholders = ( planProperties: Array< PlanProperties > ) =>
+			planProperties.filter( ( planProps ) => planProps.isPlaceholder ).length > 0;
+
 		return {
 			currentSitePlanSlug: currentSitePlan?.productSlug,
 			planProperties,
 			canUserPurchasePlan,
 			manageHref,
 			selectedSiteSlug,
+			planCredits,
+			hasPlaceholders: hasPlaceholders( planProperties ),
 		};
 	},
 	{
