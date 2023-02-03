@@ -67,7 +67,11 @@ import {
 } from 'calypso/state/plans/selectors';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import { getCurrentPlan, isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
+import {
+	getCurrentPlan,
+	isCurrentUserCurrentPlanOwner,
+	getPlanDiscountedRawPrice,
+} from 'calypso/state/sites/plans/selectors';
 import isPlanAvailableForPurchase from 'calypso/state/sites/plans/selectors/is-plan-available-for-purchase';
 import {
 	getSiteSlug,
@@ -906,7 +910,11 @@ const ConnectedPlanFeatures2023Grid = connect(
 			);
 
 			const rawPrice = getPlanRawPrice( state, planProductId, showMonthlyPrice );
-			const discountPrice = getDiscountedRawPrice( state, planProductId, showMonthlyPrice );
+			const isMonthlyObj = { isMonthly: showMonthlyPrice };
+
+			const discountPrice = siteId
+				? getPlanDiscountedRawPrice( state, siteId, plan, isMonthlyObj )
+				: getDiscountedRawPrice( state, planProductId, showMonthlyPrice );
 
 			let annualPricePerMonth = discountPrice || rawPrice;
 			if ( isMonthlyPlan ) {
