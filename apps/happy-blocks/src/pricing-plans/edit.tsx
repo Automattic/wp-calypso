@@ -40,38 +40,6 @@ export const Edit: FunctionComponent< BlockEditProps< BlockAttributes > > = ( {
 		} );
 	}, [ attributes.planTypeOptions.length, attributes.productSlug, plans, setAttributes ] );
 
-	useEffect( () => {
-		if ( attributes.domain ) {
-			return;
-		}
-
-		const blogIdSelect: HTMLSelectElement | null =
-			document.querySelector( 'select[name="blog_id"]' );
-
-		if ( ! blogIdSelect ) {
-			return;
-		}
-
-		const updateBlogId = () => {
-			const url = blogIdSelect.options[ blogIdSelect.selectedIndex ].text;
-			const domain = url.replace( /^https?:\/\//, '' );
-
-			if ( domain !== '--' ) {
-				setAttributes( { domain } );
-			} else {
-				// This needs to be 'false' when unset, see https://github.com/Automattic/wp-calypso/pull/70402#discussion_r1033299970
-				setAttributes( { domain: false } );
-			}
-		};
-
-		updateBlogId();
-		blogIdSelect.addEventListener( 'change', updateBlogId );
-
-		return () => {
-			blogIdSelect.removeEventListener( 'change', updateBlogId );
-		};
-	}, [ attributes.domain, setAttributes ] );
-
 	const blockProps = useBlockProps();
 
 	if ( isLoading || ! plans?.length ) {
