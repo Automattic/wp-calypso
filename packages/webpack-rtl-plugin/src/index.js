@@ -8,6 +8,7 @@ class WebpackRTLPlugin {
 		this.options = {
 			options: {},
 			plugins: [],
+			filenameSuffix: null,
 			...options,
 		};
 		this.cache = new WeakMap();
@@ -35,7 +36,7 @@ class WebpackRTLPlugin {
 								}
 
 								// Compute the filename
-								const filename = asset.replace( cssRe, '.rtl$&' );
+								const filename = asset.replace( cssRe, this.options.filenameSuffix || `.rtl$&` );
 								const assetInstance = assets[ asset ];
 								chunk.files.add( filename );
 

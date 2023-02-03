@@ -81,6 +81,51 @@ describe( 'Webpack RTL Plugin', () => {
 		} );
 	} );
 
+	describe( 'Filename suffix option', () => {
+		const bundlePath = path.join( __dirname, 'dist/bundle.js' );
+		const cssBundlePath = path.join( __dirname, 'dist/style.css' );
+		const rtlCssWithCustomFilenameSuffixBundlePath = path.join( __dirname, 'dist/style-rtl.css' );
+
+		beforeAll(
+			() =>
+				new Promise( ( done ) => {
+					webpack(
+						{
+							...baseConfig,
+							plugins: [
+								...baseConfig.plugins,
+								new WebpackRTLPlugin( { filenameSuffix: '-rtl.css' } ),
+							],
+						},
+						( err, stats ) => {
+							if ( err ) {
+								return done( err );
+							}
+
+							if ( stats.hasErrors() ) {
+								return done( new Error( stats.toString() ) );
+							}
+							done();
+						}
+					);
+				} )
+		);
+
+		it( 'should create a second bundle', () => {
+			expect( fs.existsSync( bundlePath ) ).toBe( true );
+			expect( fs.existsSync( cssBundlePath ) ).toBe( true );
+			expect( fs.existsSync( rtlCssWithCustomFilenameSuffixBundlePath ) ).toBe( true );
+		} );
+
+		it( 'should contain the correct content', () => {
+			const contentCss = fs.readFileSync( cssBundlePath, 'utf-8' );
+			const contentRrlCss = fs.readFileSync( rtlCssWithCustomFilenameSuffixBundlePath, 'utf-8' );
+
+			expect( contentCss ).toContain( 'padding-left: 10px;' );
+			expect( contentRrlCss ).toContain( 'padding-right: 10px;' );
+		} );
+	} );
+
 	describe( 'Test option', () => {
 		let bundlePath;
 		let cssBundlePath;
