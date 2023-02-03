@@ -7,7 +7,10 @@ export interface SerializableReducer< TState = any, TAction extends AnyAction = 
 	deserialize?: ( persisted: any ) => TState;
 }
 
-export function serialize< TState >( reducer: SerializableReducer< TState >, state: TState ): any {
+export function serialize< TState, TAction extends AnyAction >(
+	reducer: SerializableReducer< TState, TAction >,
+	state: TState
+): any {
 	if ( ! reducer.serialize ) {
 		return undefined;
 	}
