@@ -6,11 +6,23 @@ import { serialize, deserialize } from './serialize';
 import type { SerializableReducer } from './serialize';
 import type { ReducersMapObject, Reducer, AnyAction, Action } from 'redux';
 
-export interface CombinedReducer extends SerializableReducer {
+type TReducerKey = string;
+
+type TAddReducer< TState, TAction extends Action > = (
+	keyPath: TReducerKey[],
+	reducer: CombinedReducer< TState, TAction >
+) => CombinedReducer;
+
+export interface CombinedReducer< TState = any, TAction extends Action = AnyAction >
+	extends SerializableReducer< TState, TAction > {
 	storageKey?: string;
-	addReducer?: ( keyPath: string[], reducer: Reducer ) => CombinedReducer;
+	addReducer?: TAddReducer;
 	getStorageKeys?: () => Generator< string | { storageKey: string; reducer: Reducer } >;
 }
+
+export type CombinedReducersMapObject< TState = any, TAction extends Action = Action > = {
+	[ K in keyof TState ]: CombinedReducer< TState[ K ], TAction >;
+};
 
 /**
  * Create a new reducer from original `reducers` by adding a new `reducer` at `keyPath`
@@ -21,15 +33,18 @@ export interface CombinedReducer extends SerializableReducer {
  * @returns The function to be attached as `addReducer` method to the
  *   result of `combineReducers`.
  */
-export function addReducer(
-	origReducer: CombinedReducer,
-	reducers: Record< string, CombinedReducer >
-) {
-	return ( keyPath: string[], reducer: CombinedReducer ): CombinedReducer => {
+export function addReducer< TState, TAction extends Action >(
+	origReducer: CombinedReducer< TState, TAction >,
+	reducers: CombinedReducersMapObject< TState, TAction >
+): TAddReducer {
+	return (
+		keyPath: TReducerKey[],
+		reducer: CombinedReducer< TState, TAction >
+	): CombinedReducer => {
 		// extract the first key from keyPath and dive recursively into the reducer tree
 		const [ key, ...restKeys ] = keyPath;
 
-		const existingReducer = reducers[ key ];
+		const existingReducer = reducers[ key as keyof TState ];
 		let newReducer;
 
 		// if there is an existing reducer at this path, we'll recursively call `addReducer`
@@ -141,29 +156,35 @@ export function addReducer(
  * @param reducers - object containing the reducers to merge
  * @returns - Returns the combined reducer function
  */
-export function combineReducers( reducers: Record< string, Reducer > ): CombinedReducer {
+export function combineReducers< TState, TAction extends Action = AnyAction >(
+	reducers: ReducersMapObject< TState, TAction >
+): CombinedReducer< TState, TAction > {
 	const combined = combine( reducers );
 
-	const combinedReducer: CombinedReducer = ( state, action ) => {
+	const reducerWrapper = ( state: TState, action: TAction ): TState => {
 		switch ( action.type ) {
-			case APPLY_STORED_STATE:
-				return applyStoredState( reducers, state, action );
+			// case APPLY_STORED_STATE:
+			// 	return applyStoredState( reducers, state, action );
 
 			default:
 				return combined( state, action );
 		}
 	};
 
-	combinedReducer.serialize = ( state ) => serializeState( reducers, state );
-	combinedReducer.deserialize = ( persisted ) => deserializeState( reducers, persisted );
-	combinedReducer.addReducer = addReducer( combinedReducer, reducers );
-	combinedReducer.getStorageKeys = getStorageKeys( reducers );
+	const combinedReducer = reducerWrapper as CombinedReducer< TState, TAction >;
+
+	combinedReducer.serialize = ( state: TState ) =>
+		serializeState< TState, TAction >( reducers, state );
+	// combinedReducer.deserialize = ( persisted: any ) =>
+	// 	deserializeState< TState, TAction >( reducers, persisted );
+	// combinedReducer.addReducer = addReducer< TState, TAction >( combinedReducer, reducers );
+	// combinedReducer.getStorageKeys = getStorageKeys( reducers );
 
 	return combinedReducer;
 }
 
-function applyStoredState< TState, TAction extends AnyAction = Action >(
-	reducers: Record< string, CombinedReducer >,
+function applyStoredState< TState, TAction extends Action = AnyAction >(
+	reducers: ReducersMapObject< Reducer & { storageKey?: CombinedReducer[ 'storageKey' ] } >,
 	state: TState,
 	action: TAction
 ) {
@@ -212,9 +233,9 @@ function getStorageKeys(
 //   `undefined` rather than an empty object.
 // - if the state to serialize is `undefined` (happens when some key in state is missing)
 //   the serialized value is `undefined` and there's no need to reduce anything.
-function serializeState< TState = any >(
-	reducers: Record< string, CombinedReducer >,
-	state: Record< keyof typeof reducers, TState >
+function serializeState< TState, TAction extends Action >(
+	reducers: CombinedReducersMapObject< TState, TAction >,
+	state: TState
 ): SerializationResult | undefined {
 	if ( state === undefined ) {
 		return undefined;
@@ -223,7 +244,7 @@ function serializeState< TState = any >(
 	return reduce(
 		reducers,
 		( result, reducer, reducerKey ) => {
-			const serialized = serialize( reducer, state[ reducerKey ] );
+			const serialized = serialize( reducer, state[ reducerKey as keyof TState ] );
 			if ( serialized !== undefined ) {
 				if ( ! result ) {
 					// instantiate the result object only when it's going to have at least one property
