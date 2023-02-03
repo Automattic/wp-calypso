@@ -60,6 +60,7 @@ import {
 } from 'calypso/state/sites/plans/selectors';
 import { getJetpackSearchCustomizeUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import DoughnutChart from '../doughnut-chart';
 import AntiSpamProductThankYou from './current-plan-thank-you/anti-spam-thank-you';
 import BackupProductThankYou from './current-plan-thank-you/backup-thank-you';
 import FreePlanThankYou from './current-plan-thank-you/free-plan-thank-you';
@@ -316,8 +317,8 @@ class CurrentPlan extends Component {
 		const trialEnd = moment( currentPlan?.expiryDate );
 		const trialDuration = trialEnd.diff( trialStart, 'days' );
 
-		// Trial progress from 0 to 100
-		const trialProgress = ( 1 - eCommerceTrialDaysLeft / trialDuration ) * 100;
+		// Trial progress from 0 to 1
+		const trialProgress = 1 - eCommerceTrialDaysLeft / trialDuration;
 
 		// moment.js doesn't have a format option to display the long form in a localized way without the year
 		// https://github.com/moment/moment/issues/3341
@@ -354,9 +355,7 @@ class CurrentPlan extends Component {
 						</Button>
 					</div>
 					<div className="plans__chart-wrapper">
-						<div className="plans__chart" style={ { '--p': trialProgress } }>
-							{ eCommerceTrialDaysLeft }
-						</div>
+						<DoughnutChart progress={ trialProgress } text={ eCommerceTrialDaysLeft } />
 						<br />
 						<span className="plans__chart-label">
 							{ isTrialExpired
