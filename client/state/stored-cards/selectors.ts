@@ -1,15 +1,14 @@
 import { groupBy } from 'lodash';
 import { isPaymentAgreement, isCreditCard } from 'calypso/lib/checkout/payment-methods';
+import type { StoredCard } from 'calypso/my-sites/checkout/composite-checkout/types/stored-cards';
+import type { IAppState } from 'calypso/state/types';
 
 import 'calypso/state/stored-cards/init';
 
 /**
  * Return user's stored cards from state object
- *
- * @param {Object} state - current state object
- * @returns {import('calypso/my-sites/checkout/composite-checkout/types/stored-cards.ts').StoredCard[]} Stored Cards
  */
-export const getStoredCards = ( state ) =>
+export const getStoredCards = ( state: IAppState ): StoredCard[] =>
 	( state.storedCards?.items ?? [] )
 		.filter( ( method ) => isCreditCard( method ) )
 		.filter( ( method ) => ! method.is_expired )
@@ -20,11 +19,8 @@ export const getStoredCards = ( state ) =>
 
 /**
  * Return user's stored cards including expired cards
- *
- * @param {Object} state - current state object
- * @returns {import('calypso/my-sites/checkout/composite-checkout/types/stored-cards.ts').StoredCard[]} Stored Cards
  */
-export const getAllStoredCards = ( state ) =>
+export const getAllStoredCards = ( state: IAppState ): StoredCard[] =>
 	( state.storedCards?.items ?? [] )
 		.filter( ( method ) => isCreditCard( method ) )
 		.map( ( card ) => ( {
@@ -39,7 +35,7 @@ export const getAllStoredCards = ( state ) =>
  * @param {Object} state - current state object
  * @returns {Array} Stored Payment Agreements
  */
-export const getStoredPaymentAgreements = ( state ) =>
+export const getStoredPaymentAgreements = ( state: IAppState ): StoredCard[] =>
 	( state.storedCards?.items ?? [] )
 		.filter( ( stored ) => isPaymentAgreement( stored ) )
 		.map( ( method ) => ( {
@@ -54,7 +50,7 @@ export const getStoredPaymentAgreements = ( state ) =>
  * @param {Object} state - current state object
  * @returns {Array} Stored Payment Methods excluding cards
  */
-export const getUniquePaymentAgreements = ( state ) => {
+export const getUniquePaymentAgreements = ( state: IAppState ): StoredCard[] => {
 	const paymentMethods = getStoredPaymentAgreements( state );
 	const groups = groupBy( paymentMethods, 'email' );
 	const paymentMethodsGroups = Object.values( groups );
@@ -69,20 +65,22 @@ export const getUniquePaymentAgreements = ( state ) => {
 
 /**
  * Returns a Stored Card
- *
- * @param  {Object} state      global state
- * @param  {number} cardId  the card id
- * @returns {undefined|import('calypso/my-sites/checkout/composite-checkout/types/stored-cards.ts').StoredCard} the matching card if there is one
  */
-export const getStoredCardById = ( state, cardId ) =>
+export const getStoredCardById = (
+	state: IAppState,
+	cardId: StoredCard[ 'stored_details_id' ]
+): undefined | StoredCard =>
 	getStoredCards( state )
 		.filter( ( card ) => card.stored_details_id === cardId )
 		.shift();
 
-export const hasLoadedStoredCardsFromServer = ( state ) =>
+export const hasLoadedStoredCardsFromServer = ( state: IAppState ) =>
 	Boolean( state.storedCards?.hasLoadedFromServer );
 
-export const isDeletingStoredCard = ( state, cardId ) =>
-	Boolean( state.storedCards?.isDeleting[ cardId ] );
+export const isDeletingStoredCard = (
+	state: IAppState,
+	cardId: StoredCard[ 'stored_details_id' ]
+) => Boolean( state.storedCards?.isDeleting[ cardId ] );
 
-export const isFetchingStoredCards = ( state ) => Boolean( state.storedCards?.isFetching );
+export const isFetchingStoredCards = ( state: IAppState ) =>
+	Boolean( state.storedCards?.isFetching );

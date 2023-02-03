@@ -1807,7 +1807,7 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_SECURITY_MALWARE ]: {
 		getSlug: () => FEATURE_SECURITY_MALWARE,
 		getTitle: () => i18n.translate( 'Managed malware protection' ),
-		getDescription: () => i18n.translate( 'Stay safe with automated malware scanning.n' ),
+		getDescription: () => i18n.translate( 'Stay safe with automated malware scanning.' ),
 	},
 	[ FEATURE_SECURITY_DDOS ]: {
 		getSlug: () => FEATURE_SECURITY_DDOS,
