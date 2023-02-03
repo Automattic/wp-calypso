@@ -205,7 +205,6 @@ class Plans extends Component {
 								wideLayout={ ! is2023OnboardingPricingGrid }
 							>
 								{ domainAndPlanPackage && <DomainAndPlanUpsellNotice /> }
-								<DomainAndPlanUpsellNotice />
 								{ ! canAccessPlans && (
 									<EmptyContent
 										illustration="/calypso/images/illustrations/illustration-404.svg"
