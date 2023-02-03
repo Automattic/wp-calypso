@@ -288,17 +288,17 @@ class CurrentPlan extends Component {
 			},
 			{
 				illustration: '/calypso/images/plans/wpcom/ecommerce-trial/themes.png',
-				title: translate( 'Get access to more premium themes' ),
+				title: translate( 'Access all premium themes' ),
 				text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio ullamcorper efficitur.',
 			},
 			{
 				illustration: '/calypso/images/plans/wpcom/ecommerce-trial/money.png',
-				title: translate( 'Make money with your store' ),
+				title: translate( 'Sell your products' ),
 				text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio ullamcorper efficitur.',
 			},
 			{
 				illustration: '/calypso/images/plans/wpcom/ecommerce-trial/email.png',
-				title: translate( 'Boost your email marketing' ),
+				title: translate( 'Connect with your customers' ),
 				text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio ullamcorper efficitur.',
 			},
 			{
