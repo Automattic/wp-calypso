@@ -255,6 +255,16 @@ body.is-section-plans.is-trial-plan {
 
 			@media (max-width: $break-mobile) {
 				padding: 0 20px;
+
+				.current-plan__included-view-all {
+					color: var(--color-accent);
+					font-size: $font-body-extra-small;
+					border: 0;
+					padding: 0;
+					text-align: center;
+					width: 100%;
+					margin-top: 20px;
+				}
 			}
 		}
 

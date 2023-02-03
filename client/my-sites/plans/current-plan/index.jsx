@@ -80,6 +80,8 @@ import './style.scss';
 class CurrentPlan extends Component {
 	state = {
 		hideThankYouModal: false,
+		showAllTrialFeaturesInMobileView: false,
+		isMobile: window.matchMedia( '(max-width: 480px)' ).matches,
 	};
 
 	static propTypes = {
@@ -105,6 +107,11 @@ class CurrentPlan extends Component {
 	componentDidMount() {
 		if ( typeof window !== 'undefined' ) {
 			window.scrollTo( 0, 0 );
+
+			// Handle media query changes here, since we can't use the useMediaQuery Hook
+			window
+				.matchMedia( '(max-width: 480px)' )
+				.addEventListener( 'change', ( e ) => this.setState( { isMobile: e.matches } ) );
 		}
 	}
 
@@ -214,7 +221,11 @@ class CurrentPlan extends Component {
 			currentPlan,
 		} = this.props;
 
-		const whatsIncluded = [
+		const viewAllIncludedFeatures = () => {
+			this.setState( { showAllTrialFeaturesInMobileView: true } );
+		};
+
+		const allIncludedFeatures = [
 			{
 				illustration: '/calypso/images/plans/wpcom/ecommerce-trial/priority-support.svg',
 				title: translate( 'Priority support' ),
@@ -279,6 +290,13 @@ class CurrentPlan extends Component {
 				showButton: false,
 			},
 		];
+
+		const displayAllIncluded = ! this.state.isMobile || this.state.showAllTrialFeaturesInMobileView;
+
+		const whatsIncluded = displayAllIncluded
+			? allIncludedFeatures
+			: // Show only first 4 items
+			  allIncludedFeatures.slice( 0, 4 );
 
 		const whatsNotIncluded = [
 			{
@@ -381,6 +399,12 @@ class CurrentPlan extends Component {
 							buttonText={ feature.buttonText }
 						></FeatureIncludedCard>
 					) ) }
+
+					{ ! displayAllIncluded ? (
+						<Button className="current-plan__included-view-all" onClick={ viewAllIncludedFeatures }>
+							{ translate( 'View all' ) }
+						</Button>
+					) : null }
 				</div>
 
 				<h2 className="current-plan__section-title">{ translate( 'Do you want more?' ) }</h2>
