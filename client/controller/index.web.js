@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
 import page from 'page';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
@@ -53,18 +53,20 @@ export const ProviderWrappedLayout = ( {
 		setIsExperimentLoaded( true );
 	}
 
-	function shouldLoadDomainExperiment() {
-		return (
+	const shouldLoadDomainExperiment = useCallback( () => {
+		const domainAndPackage = currentQuery && 'true' === currentQuery.domainAndPlanPackage;
+		const experimentPages =
 			window.location.pathname.startsWith( '/domains/add' ) ||
-			window.location.pathname.startsWith( '/plans/yearly' )
-		);
-	}
+			window.location.pathname.startsWith( '/plans/yearly' );
+
+		return domainAndPackage && experimentPages;
+	}, [ currentQuery ] );
 
 	useEffect( () => {
 		if ( shouldLoadDomainExperiment() ) {
 			loadDomainExperiment();
 		}
-	}, [ currentRoute ] );
+	}, [ currentRoute, currentQuery, shouldLoadDomainExperiment ] );
 
 	if ( shouldLoadDomainExperiment() && ! isExperimentLoaded ) {
 		return null;
