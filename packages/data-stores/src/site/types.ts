@@ -472,6 +472,7 @@ export interface ThemeSetupOptions {
 	pattern_ids?: number[] | string[];
 	header_pattern_ids?: number[] | string[];
 	footer_pattern_ids?: number[] | string[];
+	posts_source_site_id?: number;
 }
 
 export interface ActiveTheme {
