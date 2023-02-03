@@ -47,7 +47,6 @@ object BuildDockerImage : BuildType({
 
 	params {
 		text("base_image", "registry.a8c.com/calypso/base:latest", label = "Base docker image", description = "Base docker image", allowEmpty = false)
-		text("base_image_publish_tag", "latest", label = "Tag to use for the published base image", description = "Base docker image tag", allowEmpty = false)
 		checkbox(
 			name = "MANUAL_SENTRY_RELEASE",
 			value = "false",
@@ -56,15 +55,6 @@ object BuildDockerImage : BuildType({
 			checked = "true",
 			unchecked = "false"
 		)
-		checkbox(
-			name = "UPDATE_BASE_IMAGE_CACHE",
-			value = "false",
-			label = "Update the base image from the cache.",
-			description = "Updates the base image by copying .cache files from the current build. Runs on trunk by default if the cache invalidates during the build.",
-			checked = "true",
-			unchecked = "false"
-		)
-		param("env.WEBPACK_CACHE_INVALIDATED", "false")
 	}
 
 	vcs {
@@ -73,13 +63,15 @@ object BuildDockerImage : BuildType({
 	}
 
 	steps {
+
 		script {
 			name = "Webhook Start"
-			conditions {
-				equals("teamcity.build.branch.is_default", "true")
-			}
 			scriptContent = """
 				#!/usr/bin/env bash
+
+				if [[ "%teamcity.build.branch.is_default%" != "true" ]]; then
+					exit 0
+				fi
 
 				payload=${'$'}(jq -n \
 					--arg action "start" \
@@ -95,11 +87,11 @@ object BuildDockerImage : BuildType({
 
 		script {
 			name = "Post PR comment"
-			conditions {
-				doesNotEqual("teamcity.build.branch.is_default", "true")
-			}
 			scriptContent = """
 				#!/usr/bin/env bash
+				if [[ "%teamcity.build.branch.is_default%" == "true" ]]; then
+					exit 0
+				fi
 
 				export GH_TOKEN="%matticbot_oauth_token%"
 				chmod +x ./bin/add-pr-comment.sh
@@ -122,19 +114,6 @@ object BuildDockerImage : BuildType({
 			dockerPull = true
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 		}
-		
-		val commonArgs = """
-			--label com.a8c.image-builder=teamcity
-			--label com.a8c.build-id=%teamcity.build.id%
-			--build-arg workers=32
-			--build-arg node_memory=32768
-			--build-arg use_cache=true
-			--build-arg base_image=%base_image%
-			--build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}
-			--build-arg manual_sentry_release=%MANUAL_SENTRY_RELEASE%
-			--build-arg is_default_branch=%teamcity.build.branch.is_default%
-			--build-arg sentry_auth_token=%SENTRY_AUTH_TOKEN%
-		""".trimIndent().replace("\n"," ")
 
 		dockerCommand {
 			name = "Build docker image"
@@ -147,7 +126,20 @@ object BuildDockerImage : BuildType({
 					registry.a8c.com/calypso/app:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber}
 					registry.a8c.com/calypso/app:latest
 				""".trimIndent()
-				commandArgs = "--pull --label com.a8c.target=calypso-live $commonArgs"
+				commandArgs = """
+					--pull
+					--label com.a8c.image-builder=teamcity
+					--label com.a8c.target=calypso-live
+					--label com.a8c.build-id=%teamcity.build.id%
+					--build-arg workers=32
+					--build-arg node_memory=32768
+					--build-arg use_cache=true
+					--build-arg base_image=%base_image%
+					--build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}
+					--build-arg manual_sentry_release=%MANUAL_SENTRY_RELEASE%
+					--build-arg is_default_branch=%teamcity.build.branch.is_default%
+					--build-arg sentry_auth_token=%SENTRY_AUTH_TOKEN%
+				""".trimIndent().replace("\n"," ")
 			}
 			param("dockerImage.platform", "linux")
 		}
@@ -164,11 +156,12 @@ object BuildDockerImage : BuildType({
 		script {
 			name = "Webhook fail OR webhook done and push trunk tag for deploy"
 			executionMode = BuildStep.ExecutionMode.ALWAYS
-			conditions {
-				equals("teamcity.build.branch.is_default", "true")
-			}
 			scriptContent = """
 				#!/usr/bin/env bash
+
+				if [[ "%teamcity.build.branch.is_default%" != "true" ]]; then
+					exit 0
+				fi
 
 				ACTION="fail"
 				SUCCESS=$(curl --silent -X GET -H "Content-Type: text/plain" https://teamcity.a8c.com/guestAuth/app/rest/builds/?locator=id:%teamcity.build.id% | grep -c 'status="SUCCESS"')
@@ -191,11 +184,11 @@ object BuildDockerImage : BuildType({
 
 		script {
 			name = "Post PR comment with link"
-			conditions {
-				doesNotEqual("teamcity.build.branch.is_default", "true")
-			}
 			scriptContent = """
 				#!/usr/bin/env bash
+				if [[ "%teamcity.build.branch.is_default%" == "true" ]]; then
+					exit 0
+				fi
 
 				export GH_TOKEN="%matticbot_oauth_token%"
 				chmod +x ./bin/add-pr-comment.sh
@@ -228,56 +221,6 @@ object BuildDockerImage : BuildType({
 				</details>
 				EOF
 			"""
-		}
-
-		// Conditions don't seem to support and/or, so we do this in a separate step.
-		// Essentially, UPDATE_BASE_IMAGE_CACHE will remain false by default, but
-		// if we're on trunk and get WEBPACK_CACHE_INVALIDATED set by the docker build,
-		// then we can flip it to true to trigger the cache rebuild.
-		script {
-			name = "Set cache update"
-			conditions {
-				equals("env.WEBPACK_CACHE_INVALIDATED", "true")
-				equals("teamcity.build.branch.is_default", "true")
-			}
-			scriptContent = """
-				echo "##teamcity[setParameter name='UPDATE_BASE_IMAGE_CACHE' value='true']"
-			"""
-		}
-
-		// This updates the base docker image when the webpack cache invalidates.
-		// It does so by re-using the layers already generated above, and simply
-		// copying the .cache directory as a new layer into the base image. On
-		// trunk, this will update the latest base image for future builds.
-		//
-		// Runs after everything else to avoid blocking the deploy system or calypso.live.
-		dockerCommand {
-			name = "Rebuild cache image"
-			conditions {
-				equals("UPDATE_BASE_IMAGE_CACHE", "true")
-			}
-			commandType = build {
-				source = file {
-					path = "Dockerfile"
-				}
-				namesAndTags = "registry.a8c.com/calypso/base:%base_image_publish_tag%"
-				commandArgs = """
-					--target update-base-cache
-					--cache-from=registry.a8c.com/calypso/app:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber},%base_image%
-					$commonArgs
-				""".trimIndent().replace("\n"," ")
-			}
-			param("dockerImage.platform", "linux")
-		}
-
-		dockerCommand {
-			name = "Push cache image"
-			conditions {
-				equals("UPDATE_BASE_IMAGE_CACHE", "true")
-			}
-			commandType = push {
-				namesAndTags = "registry.a8c.com/calypso/base:%base_image_publish_tag%"
-			}
 		}
 	}
 
