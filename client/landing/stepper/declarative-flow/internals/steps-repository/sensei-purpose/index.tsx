@@ -13,7 +13,7 @@ import './style.scss';
 
 const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
 
-export const purposes = [
+export const purposeOptions = [
 	{
 		id: 'sell_courses',
 		label: __( 'Sell courses and generate income' ),
@@ -39,7 +39,7 @@ export const purposes = [
 	},
 ];
 
-type FormState = {
+type PurposeFormState = {
 	selected: string[];
 	other: string;
 };
@@ -60,7 +60,7 @@ const SenseiPurpose: Step = ( { navigation: { submit } } ) => {
 
 	const waiting = progress < 110;
 
-	const [ { selected, other }, setFormState ] = useState< FormState >( {
+	const [ { selected, other }, setPurpose ] = useState< PurposeFormState >( {
 		selected: [],
 		other: '',
 	} );
@@ -68,11 +68,13 @@ const SenseiPurpose: Step = ( { navigation: { submit } } ) => {
 	const isEmpty = ! selected.length;
 
 	const toggleItem = ( id: string ) => {
-		setFormState( ( formState ) => ( {
-			...formState,
-			selected: selected.includes( id )
-				? selected.filter( ( item ) => item !== id )
-				: [ id, ...selected ],
+		const wasSelected = selected.includes( id );
+		const newSelection = wasSelected
+			? selected.filter( ( item ) => item !== id )
+			: [ id, ...selected ];
+		setPurpose( ( purposeFormState ) => ( {
+			...purposeFormState,
+			selected: newSelection,
 		} ) );
 	};
 
@@ -110,7 +112,7 @@ const SenseiPurpose: Step = ( { navigation: { submit } } ) => {
 					<DocumentHead title={ title } />
 					<div className="sensei-setup-wizard__purpose-container">
 						<ul className="sensei-setup-wizard__purpose-list">
-							{ purposes.map( ( { id, label, description } ) => (
+							{ purposeOptions.map( ( { id, label, description } ) => (
 								<PurposeItem
 									key={ id }
 									label={ label }
@@ -135,7 +137,7 @@ const SenseiPurpose: Step = ( { navigation: { submit } } ) => {
 									value={ other }
 									placeholder={ __( 'Description' ) }
 									onChange={ ( value ) =>
-										setFormState( ( formState ) => ( {
+										setPurpose( ( formState ) => ( {
 											...formState,
 											other: value,
 										} ) )
