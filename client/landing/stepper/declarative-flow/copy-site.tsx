@@ -17,7 +17,7 @@ import { useSiteCopy } from '../hooks/use-site-copy';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import AutomatedCopySite from './internals/steps-repository/automated-copy-site';
 import DomainsStep from './internals/steps-repository/domains';
-import ProcessingStep, { ProcessingResult } from './internals/steps-repository/processing-step';
+import ProcessingStep from './internals/steps-repository/processing-step';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import {
 	AssertConditionResult,
@@ -116,10 +116,7 @@ const copySite: Flow = {
 
 		setStepProgress( flowProgress );
 
-		const submit = async (
-			providedDependencies: ProvidedDependencies = {},
-			...params: string[]
-		) => {
+		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug );
 
 			switch ( _currentStepSlug ) {
@@ -153,12 +150,6 @@ const copySite: Flow = {
 				}
 
 				case 'processing-copy': {
-					const processingResult = params[ 0 ] as ProcessingResult;
-
-					if ( processingResult === ProcessingResult.FAILURE ) {
-						// @TODO:Create a retry step
-						return navigate( 'retry' );
-					}
 					clearSignupDestinationCookie();
 					return window.location.assign( `/home/${ providedDependencies?.siteSlug }` );
 				}
