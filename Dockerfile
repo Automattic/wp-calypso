@@ -13,7 +13,10 @@ FROM ${base_image} as builder-cache-true
 
 ENV NPM_CONFIG_CACHE=/calypso/.cache
 ENV PERSISTENT_CACHE=true
-ENV READONLY_CACHE=true
+
+# This is an experiment to see if we can improve build and queue times by updating the cache frequently.
+ARG readonly_cache=true
+ENV READONLY_CACHE $readonly_cache
 
 ###################
 FROM builder-cache-${use_cache} as builder
@@ -58,11 +61,6 @@ RUN bash /tmp/env-config.sh
 #
 # This layer is populated with up-to-date files from
 # Calypso development.
-#
-# We remove apps, tests and desktop because they are not needed to
-# build or run calypso, but yarn will still install their
-# dependencies which end up bloating the image.
-# /apps/notifications is not removed because it is required by Calypso
 COPY . /calypso/
 RUN yarn install --immutable --check-cache
 
@@ -71,10 +69,20 @@ RUN yarn install --immutable --check-cache
 # This contains built environments of Calypso. It will
 # change any time any of the Calypso source-code changes.
 ENV NODE_ENV production
-RUN yarn run build
+RUN yarn run build 2>&1 | tee build_log.txt && \
+	./bin/check-log-for-cache-invalidation.sh build_log.txt
 
 # Delete any sourcemaps which may have been generated to avoid creating a large artifact.
 RUN find /calypso/build /calypso/public -name "*.*.map" -exec rm {} \;
+
+###################
+# A cache-only update can be generated with "docker build --target update-base-cache"
+FROM ${base_image} as update-base-cache
+
+# Update webpack cache in the base image so that it can be re-used in future builds.
+# We only copy this part of the cache to make --push faster, and because webpack
+# is the main thing which will impact build performance when the cache invalidates.
+COPY --from=builder /calypso/.cache/evergreen/webpack /calypso/.cache/evergreen/webpack
 
 ###################
 FROM node:${node_version}-alpine as app
