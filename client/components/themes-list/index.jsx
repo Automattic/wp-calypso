@@ -34,7 +34,11 @@ export const ThemesList = ( props ) => {
 		[ props.fetchNextPage ]
 	);
 
-	const goToSiteAssemblerFlow = () => {
+	const goToSiteAssemblerFlow = ( shouldGoToAssemblerStep ) => {
+		props.recordTracksEvent( 'calypso_themeshowcase_pattern_assembler_cta_click', {
+			goes_to_assembler_step: shouldGoToAssemblerStep,
+		} );
+
 		const params = new URLSearchParams( {
 			ref: 'calypshowcase',
 			theme: BLANK_CANVAS_DESIGN.slug,
