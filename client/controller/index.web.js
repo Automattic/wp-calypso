@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
 import page from 'page';
+import { useEffect } from 'react';
 import { QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
@@ -10,6 +11,7 @@ import MomentProvider from 'calypso/components/localized-moment/provider';
 import { RouteProvider } from 'calypso/components/route';
 import Layout from 'calypso/layout';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { login } from 'calypso/lib/paths';
 import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
 import { getSiteFragment } from 'calypso/lib/route';
@@ -39,6 +41,18 @@ export const ProviderWrappedLayout = ( {
 } ) => {
 	const state = store.getState();
 	const userLoggedIn = isUserLoggedIn( state );
+
+	useEffect( () => {
+		async function loadExperiment() {
+			const experimentAssignment = await loadExperimentAssignment(
+				'calypso_sidebar_upsell_dedicated_upgrade_flow_202301'
+			);
+			const variationName2 = experimentAssignment?.variationName;
+			sessionStorage.setItem( 'calypso_sidebar_upsell_experiment', variationName2 );
+		}
+
+		loadExperiment();
+	}, [] );
 
 	const layout = userLoggedIn ? (
 		<Layout primary={ primary } secondary={ secondary } />
