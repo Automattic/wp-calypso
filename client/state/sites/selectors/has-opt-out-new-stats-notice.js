@@ -14,5 +14,5 @@ export default function hasOptOutNewStatsNotice( state, siteId ) {
 	}
 	const site = getRawSite( state, siteId );
 
-	return site?.has_opt_out_notice;
+	return site?.has_opt_out_new_stats_notice;
 }
