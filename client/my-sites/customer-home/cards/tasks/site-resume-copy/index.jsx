@@ -5,8 +5,8 @@ import { useSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
 import { preventWidows } from 'calypso/lib/formatting';
 import { TASK_SITE_RESUME_COPY } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
-import { getSite } from 'calypso/state/sites/selectors';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSite, getSiteOption } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const SiteResumeCopy = ( { siteSlug, sourceSite, sourceSiteSlug } ) => {
 	const translate = useTranslate();
@@ -33,8 +33,7 @@ const SiteResumeCopy = ( { siteSlug, sourceSite, sourceSiteSlug } ) => {
 };
 
 const mapStateToProps = ( state ) => {
-	const sourceSiteSlug = 'source1public2cloning3test.wpcomstaging.com';
-
+	const sourceSiteSlug = getSiteOption( state, getSelectedSiteId( state ), 'site_source_slug' );
 	return {
 		siteSlug: getSelectedSiteSlug( state ),
 		sourceSite: getSite( state, sourceSiteSlug ),
