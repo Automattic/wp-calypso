@@ -15,12 +15,12 @@ export function serialize< TState >( reducer: SerializableReducer< TState >, sta
 	return reducer.serialize( state );
 }
 
-export function deserialize< TState >(
-	reducer: SerializableReducer< TState >,
+export function deserialize< TState, TAction extends AnyAction = Action >(
+	reducer: SerializableReducer< TState, TAction >,
 	persisted: any
 ): TState {
 	if ( ! reducer.deserialize ) {
-		return getInitialState( reducer );
+		return getInitialState< TState, TAction >( reducer );
 	}
 
 	return reducer.deserialize( persisted );
