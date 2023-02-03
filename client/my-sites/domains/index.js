@@ -6,7 +6,6 @@ import {
 	siteSelection,
 	sites,
 	wpForTeamsGeneralNotSupportedRedirect,
-	setExperimentVariation,
 } from 'calypso/my-sites/controller';
 import domainsController from './controller';
 import domainManagementController from './domain-management/controller';
@@ -205,7 +204,6 @@ export default function () {
 	page(
 		'/domains/add/:domain',
 		siteSelection,
-		setExperimentVariation,
 		navigation,
 		domainsController.redirectIfNoSite( '/domains/add' ),
 		domainsController.redirectToUseYourDomainIfVipSite(),

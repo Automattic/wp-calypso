@@ -10,6 +10,7 @@ import MomentProvider from 'calypso/components/localized-moment/provider';
 import { RouteProvider } from 'calypso/components/route';
 import Layout from 'calypso/layout';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
+import { useExperiment } from 'calypso/lib/explat';
 import { login } from 'calypso/lib/paths';
 import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
 import { getSiteFragment } from 'calypso/lib/route';
@@ -39,9 +40,16 @@ export const ProviderWrappedLayout = ( {
 } ) => {
 	const state = store.getState();
 	const userLoggedIn = isUserLoggedIn( state );
+	const [ , experimentAssignment ] = useExperiment(
+		'calypso_sidebar_upsell_dedicated_upgrade_flow_202301'
+	);
 
 	const layout = userLoggedIn ? (
-		<Layout primary={ primary } secondary={ secondary } />
+		<Layout
+			primary={ primary }
+			secondary={ secondary }
+			experimentAssignment={ experimentAssignment }
+		/>
 	) : (
 		<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
 	);
