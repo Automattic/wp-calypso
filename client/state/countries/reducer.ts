@@ -6,10 +6,16 @@ import {
 	COUNTRIES_WOOCOMMERCE_UPDATED,
 } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
+import type { CountryListItem } from '@automattic/wpcom-checkout';
+import type { Reducer } from 'react';
+import type { AnyAction } from 'redux';
 
-const createListReducer =
-	( updatedActionType ) =>
-	( state = [], action ) => {
+type ListReducerState = CountryListItem[];
+
+function createListReducer< TActionType extends string >(
+	updatedActionType: TActionType
+): Reducer< ListReducerState | undefined, AnyAction > {
+	return ( state: undefined | ListReducerState = [], action: AnyAction ) => {
 		switch ( action.type ) {
 			case updatedActionType:
 				return action.countries;
@@ -17,6 +23,7 @@ const createListReducer =
 				return state;
 		}
 	};
+}
 
 const combinedReducer = combineReducers( {
 	domains: createListReducer( COUNTRIES_DOMAINS_UPDATED ),
