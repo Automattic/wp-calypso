@@ -2,6 +2,7 @@
 
 ## trunk
 
+- Added a new color for Mastodon.
 - Switched from `node-sass` to `sass` (Dart Sass) for processing Sass files.
   - Removed dependency `node-sass`
   - Added dependency `sass ^1.32.13`

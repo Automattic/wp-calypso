@@ -1,7 +1,5 @@
 @import "@automattic/onboarding/styles/mixins";
-@import "calypso/signup/steps/plans/style.scss";
-$plan-features-header-banner-height: 20px;
-$plan-features-sidebar-width: 272px;
+@import "calypso/my-sites/plan-features-2023-grid/media-queries";
 
 .plan-features--loading-container {
 	margin-top: 300px;
@@ -25,32 +23,56 @@ $plan-features-sidebar-width: 272px;
 			&.is-free-plan {
 				background-color: var(--studio-blue-50);
 				color: var(--studio-blue-0);
+
+				&:focus {
+					box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-blue-50);
+				}
 			}
 
 			&.is-personal-plan {
 				background-color: var(--studio-blue-60);
 				color: var(--studio-blue-0);
+
+				&:focus {
+					box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-blue-50);
+				}
 			}
 
 			&.is-premium-plan {
 				background-color: #004687;
 				color: var(--studio-blue-0);
+
+				&:focus {
+					box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px #004687;
+				}
 			}
 
 			&.is-business-plan {
 				background-color: #7f54b3;
 				color: var(--studio-purple-0);
+
+				&:focus {
+					box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px #7f54b3;
+				}
 			}
 
 			&.is-ecommerce-plan {
 				background-color: #55347d;
 				color: var(--studio-purple-0);
+
+				&:focus {
+					box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px #55347d;
+				}
 			}
 
 			&.is-wpcom-enterprise-grid-plan {
 				background-color: var(--studio-gray-80);
 				a {
 					color: var(--studio-gray-0);
+				}
+
+				&:focus {
+					box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-gray-80);
 				}
 			}
 
@@ -91,7 +113,7 @@ $plan-features-sidebar-width: 272px;
 .plan-features-2023-grid__header-logo {
 	padding-left: 20px;
 
-	@media ( min-width: 880px ) {
+	@include plans-2023-break-small {
 		margin-top: 36px;
 
 		.plan-features-2023-grid__table-top & {
@@ -99,7 +121,7 @@ $plan-features-sidebar-width: 272px;
 		}
 	}
 
-	@media ( min-width: 1340px ) {
+	@include plans-2023-break-medium {
 		margin-top: 36px;
 	}
 }
@@ -123,12 +145,12 @@ $plan-features-sidebar-width: 272px;
 	transform: translateY(-20px);
 	overflow-x: hidden;
 
-	@media ( min-width: 880px ) {
+	@include plans-2023-break-small {
 		padding-top: 64px;
 		overflow-x: auto;
 	}
 
-	@media ( min-width: 1340px ) {
+	@include plans-2023-break-medium {
 		padding-top: 103px;
 		overflow-x: auto;
 	}
@@ -141,32 +163,15 @@ $plan-features-sidebar-width: 272px;
 		width: auto;
 	}
 
-	.plan-features-2023-grid__desktop-view {
-		display: none;
-
-		@media ( min-width: 1340px ) {
-			display: block;
-		}
+	.is-section-signup & {
+		@include plan-features-layout-switcher-onboarding;
 	}
 
-	.plan-features-2023-grid__tablet-view {
-		display: none;
-
-		@media ( min-width: 880px ) {
-			display: block;
-		}
-
-		@media ( min-width: 1340px ) {
-			display: none;
-		}
+	.is-section-plans & {
+		@include plan-features-layout-switcher-onboarding-plans-section;
 	}
 
 	.plan-features-2023-grid__mobile-view {
-		display: block;
-
-		@media ( min-width: 880px ) {
-			display: none;
-		}
 
 		.plan-features-2023-grid__mobile-plan-card {
 			background-color: var(--studio-white);
@@ -285,12 +290,12 @@ $plan-features-sidebar-width: 272px;
 		font-weight: 400;
 		padding: 0 20px 24px 20px;
 
-		@media ( min-width: 880px ) {
+		@include plans-2023-break-small {
 			font-size: $font-body-small;
 			line-height: 20px;
 		}
 
-		@media ( min-width: 1340px ) {
+		@include plans-2023-break-medium {
 			font-size: 0.813rem; /* stylelint-disable-line */
 			line-height: 16px;
 			padding-bottom: 8px;
@@ -308,7 +313,7 @@ $plan-features-sidebar-width: 272px;
 			font-weight: 600;
 		}
 
-		@media ( min-width: 880px ) {
+		@include plans-2023-break-small {
 			border-right: solid 1px #e0e0e0;
 			border-left: solid 1px #e0e0e0;
 
@@ -358,7 +363,7 @@ $plan-features-sidebar-width: 272px;
 				transform: rotate(16deg);
 				border-color: #000;
 
-				@media ( min-width: 880px ) {
+				@include plans-2023-break-small {
 					right: 68%;
 				}
 			}
@@ -429,7 +434,7 @@ $plan-features-sidebar-width: 272px;
 				font-weight: 600;
 			}
 
-			@media ( min-width: 880px ) {
+			@include plans-2023-break-small {
 				font-size: $font-body-extra-small;
 				line-height: 16px;
 			}
@@ -516,7 +521,7 @@ $plan-features-sidebar-width: 272px;
 				padding-top: 12px;
 			}
 
-			@media ( min-width: $plans-2023-small-breakpoint ) {
+			@include plans-2023-break-small {
 				position: relative;
 				top: 10px;
 				padding-top: 0;
@@ -559,7 +564,7 @@ $plan-features-sidebar-width: 272px;
 				}
 			}
 
-			@media ( min-width: $plans-2023-medium-breakpoint ) {
+			@include plans-2023-break-medium {
 				img:nth-child(1) {
 					padding-right: 24px;
 				}
@@ -674,7 +679,7 @@ body.is-section-signup.is-white-signup,
 			font-size: $font-body-extra-small;
 			padding: 0 19px 24px 20px;
 
-			@media ( min-width: 880px ) {
+			@include plans-2023-break-small {
 				padding-bottom: 16px;
 			}
 
@@ -684,12 +689,12 @@ body.is-section-signup.is-white-signup,
 				font-weight: 400;
 				color: var(--studio-gray-80);
 
-				@media ( min-width: 880px ) {
+				@include plans-2023-break-small {
 					font-size: $font-body-small;
 					line-height: 20px;
 				}
 
-				@media ( min-width: 1340px ) {
+				@include plans-2023-break-medium {
 					font-size: $font-body-extra-small;
 					line-height: 16px;
 				}
@@ -711,9 +716,9 @@ body.is-section-signup.is-white-signup,
 			bottom: 0;
 			border-radius: 4px;
 			background-color: var(--studio-gray-80);
-			transform: translate(20px, 0);
-			@media ( max-width: 880px ) {
-				transform: translate(20px, -50px);
+			transform: translate(20px, -50px);
+			@include plans-2023-break-small {
+				transform: translate(20px, 0);
 			}
 		}
 
@@ -728,7 +733,7 @@ body.is-section-signup.is-white-signup,
 				color: #fff;
 				padding: 0 0 17px;
 
-				@media ( min-width: 880px ) {
+				@include plans-2023-break-small {
 					position: absolute;
 					top: -38px;
 					right: -1px;
@@ -781,7 +786,7 @@ body.is-section-signup.is-white-signup,
 			padding: 0 20px;
 			margin-bottom: 12px;
 
-			@media ( min-width: 880px ) {
+			@include plans-2023-break-small {
 				margin-top: 36px;
 				font-size: $font-body-extra-small;
 			}
@@ -822,20 +827,20 @@ body.is-section-signup.is-white-signup,
 	.step-wrapper__header {
 		margin: 24px 20px 38px;
 
-		@media ( min-width: 880px ) {
+		@include plans-2023-break-small {
 			margin: 24px 20px;
 		}
 	}
 }
 
 body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup__step .segmented-control.price-toggle,
-.is-pricing-grid-2023-plans-features-main .segmented-control.price-toggle {
+#primary .is-pricing-grid-2023-plans-features-main .segmented-control.price-toggle {
 	background-color: #f2f2f2;
 	max-width: 375px;
 	width: 100%;
 	margin: 0 22px;
 
-	@media ( min-width: 880px ) {
+	@include plans-2023-break-small {
 		max-width: unset;
 		width: auto;
 		margin: 0 auto;
@@ -848,22 +853,27 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 	.segmented-control__item {
 		border: 6px;
 		padding: 2px;
+		font-weight: 500;
 
 		& .segmented-control__link {
 			border: 1px solid #f2f2f2;
+			border-radius: 5px; /* stylelint-disable-line scales/radii */
+
 			&:hover {
-				border: 1px solid var(--studio-gray-10);
-				background-color: unset;
-				border-radius: 5px; /* stylelint-disable-line scales/radii */
+				border-color: rgba(0, 0, 0, 0.04);
+				background: rgba(255, 255, 255, 0.3);
+			}
+			&:focus {
+				box-shadow: 0 0 0 1px var(--studio-gray-90);
+				outline: none;
 			}
 		}
 
 		&.is-selected .segmented-control__link {
 			border: 0.5px solid rgba(0, 0, 0, 0.04);
 			box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12), 0 3px 1px rgba(0, 0, 0, 0.04);
-			border-radius: 5px; /* stylelint-disable-line scales/radii */
+
 			background-color: #fff;
-			// border-color: rgba(0, 0, 0, 0.04);
 
 			&:hover {
 				background-color: #fff;
@@ -890,7 +900,7 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 			display: none;
 		}
 
-		@media ( min-width: $plans-2023-small-breakpoint ) {
+		@include plans-2023-break-small {
 			&:last-of-type {
 				display: flex;
 			}
@@ -904,7 +914,7 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 		padding-top: 46px;
 		padding-bottom: 20px;
 
-		@media ( min-width: $plans-2023-small-breakpoint ) {
+		@include plans-2023-break-small {
 			padding-top: 34px;
 
 			&.popular-plan-parent-class {
@@ -920,7 +930,7 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 			}
 		}
 
-		@media ( min-width: $plans-2023-medium-breakpoint ) {
+		@include plans-2023-break-medium {
 			&.plan-is-footer {
 				padding-top: 110px;
 			}
@@ -937,7 +947,7 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 				}
 			}
 
-			@media ( min-width: $plans-2023-small-breakpoint ) {
+			@include plans-2023-break-small {
 				.plan-features-2023-grid__popular-badge {
 					padding: 20px 0 25px;
 					position: absolute;
@@ -972,10 +982,10 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 			border-radius: 4px;
 			background-color: var(--studio-gray-80);
 
-			@media ( min-width: $plans-2023-small-breakpoint ) {
+			@include plans-2023-break-small {
 				left: 15px;
 			}
-			@media ( min-width: $plans-2023-medium-breakpoint ) {
+			@include plans-2023-break-medium {
 				top: 55px;
 			}
 		}
@@ -1012,7 +1022,7 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 			}
 		}
 
-		@media ( min-width: $plans-2023-small-breakpoint ) {
+		@include plans-2023-break-small {
 			.plan-comparison-grid__plan-image,
 			.plan-comparison-grid__plan-title,
 			.plan-comparison-grid__plan-subtitle {
@@ -1042,7 +1052,7 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 			right: -1px;
 		}
 
-		@media ( min-width: $plans-2023-small-breakpoint ) {
+		@include plans-2023-break-small {
 			&::before,
 			&:not(:last-of-type)::after {
 				display: block;
@@ -1089,7 +1099,7 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 		min-height: 30px;
 		line-height: 1.3;
 
-		@media ( min-width: $plans-2023-small-breakpoint ) {
+		@include plans-2023-break-small {
 			margin: 7px 0 10px;
 		}
 
@@ -1099,12 +1109,12 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 			font-weight: 400;
 			color: var(--studio-gray-80);
 
-			@media ( min-width: $plans-2023-small-breakpoint ) {
+			@include plans-2023-break-small {
 				font-size: $font-body-small;
 				line-height: 20px;
 			}
 
-			@media ( min-width: $plans-2023-medium-breakpoint ) {
+			@include plans-2023-break-medium {
 				font-size: $font-body-extra-small;
 				line-height: 16px;
 			}
@@ -1115,7 +1125,7 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 .plan-features-2023-grid__toggle-plan-comparison-button-container {
 	display: flex;
 	justify-content: center;
-	margin: 32px 20px 0 20px;
+	margin-top: 32px;
 
 	button {
 		background: var(--studio-white);
@@ -1130,10 +1140,17 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 		line-height: 20px;
 		padding: 0 24px;
 		width: 100%;
+		transition: border-color 0.15s ease-out;
 
-		@media ( min-width: $plans-2023-small-breakpoint ) {
+		@include plans-2023-break-small {
 			width: initial;
 			height: 40px;
+		}
+
+		&:not([disabled]):hover,
+		&:not([disabled]):focus {
+			border-color: var(--studio-gray-100);
+			box-shadow: none;
 		}
 	}
 }

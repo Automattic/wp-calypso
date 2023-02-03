@@ -2,6 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { PatternAssemblerCta, BLANK_CANVAS_DESIGN } from '@automattic/design-picker';
+import { SITE_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import { Icon, addTemplate, brush, cloudUpload } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { isEmpty, times } from 'lodash';
@@ -31,6 +32,15 @@ export const ThemesList = ( props ) => {
 		},
 		[ props.fetchNextPage ]
 	);
+
+	const goToSiteAssemblerFlow = () => {
+		const params = new URLSearchParams( {
+			ref: 'calypshowcase',
+			theme: BLANK_CANVAS_DESIGN.slug,
+			destination_flow: SITE_ASSEMBLER_FLOW,
+		} );
+		window.location.assign( `/start/with-theme?${ params }` );
+	};
 
 	const matchingWpOrgThemes = useMemo(
 		() =>
@@ -65,15 +75,7 @@ export const ThemesList = ( props ) => {
 			{ /* The Pattern Assembler CTA will display on the fourth row and the behavior is controlled by CSS */ }
 			{ isEnabled( 'pattern-assembler/logged-out-showcase' ) &&
 				props.themes.length > 0 &&
-				! isLoggedIn && (
-					<PatternAssemblerCta
-						onButtonClick={ () =>
-							window.location.assign(
-								`/start/with-theme?ref=calypshowcase&theme=${ BLANK_CANVAS_DESIGN.slug }`
-							)
-						}
-					/>
-				) }
+				! isLoggedIn && <PatternAssemblerCta onButtonClick={ goToSiteAssemblerFlow } /> }
 			{ props.loading && <LoadingPlaceholders placeholderCount={ props.placeholderCount } /> }
 			<InfiniteScroll nextPageMethod={ fetchNextPage } />
 		</div>

@@ -167,7 +167,7 @@ const LoggedInPlansFeatureActionButton = ( {
 
 		return (
 			<Button className={ classes } disabled={ true }>
-				{ translate( 'Constact support', { context: 'verb' } ) }
+				{ translate( 'Contact support', { context: 'verb' } ) }
 			</Button>
 		);
 	}
