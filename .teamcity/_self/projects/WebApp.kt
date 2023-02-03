@@ -110,26 +110,7 @@ object BuildDockerImage : BuildType({
 			dockerPull = true
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 		}
-		
-		val base_img = DslContext.getParameter("UPDATE_BASE_IMAGE_CACHE").toBoolean()
-		// Read only cache should be disabled on trunk -- e.g., when we're on the
-		// default branch, we should write to the cache. In branches, we should
-		// not write to the cache. (Except when we enable it via the testing arg.)
-		val isTrunk = Settings.WpCalypso.paramRefs.buildVcsBranch.toString() == "trunk"
-		val currentBranch = Settings.WpCalypso.paramRefs.buildVcsBranch
-		val readonlyCache = ! ( isTrunk ||base_img )
 
-		script {
-			name = "Test kotlin params"
-			scriptContent = """
-				#!/bin/bash
-				echo "branch: $currentBranch"
-				echo "base_img: $base_img"
-				echo "isTrunk: $isTrunk"
-				echo "readonlyCache: $readonlyCache"
-				echo 
-			"""
-		}
 		val commonArgs = """
 			--label com.a8c.image-builder=teamcity
 			--label com.a8c.build-id=%teamcity.build.id%
@@ -141,7 +122,7 @@ object BuildDockerImage : BuildType({
 			--build-arg manual_sentry_release=%MANUAL_SENTRY_RELEASE%
 			--build-arg is_default_branch=%teamcity.build.branch.is_default%
 			--build-arg sentry_auth_token=%SENTRY_AUTH_TOKEN%
-			--build-arg readonly_cache=$readonlyCache
+			--build-arg generate_cache_image=%UPDATE_BASE_IMAGE_CACHE%
 		""".trimIndent().replace("\n"," ")
 
 		dockerCommand {
