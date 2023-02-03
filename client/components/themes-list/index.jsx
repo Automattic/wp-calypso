@@ -11,6 +11,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { connect, useSelector } from 'react-redux';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import Theme from 'calypso/components/theme';
+import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -59,6 +60,7 @@ export const ThemesList = ( props ) => {
 
 		return (
 			<Empty
+				isFSEActive={ props.isFSEActive }
 				recordTracksEvent={ props.recordTracksEvent }
 				searchTerm={ props.searchTerm }
 				translate={ props.translate }
@@ -157,7 +159,7 @@ function ThemeBlock( props ) {
 	);
 }
 
-function Options( { recordTracksEvent, searchTerm, translate, upsellCardDisplayed } ) {
+function Options( { isFSEActive, recordTracksEvent, searchTerm, translate, upsellCardDisplayed } ) {
 	const isLoggedInShowcase = useSelector( isUserLoggedIn );
 	const selectedSite = useSelector( getSelectedSite );
 	const canInstallTheme = useSelector( ( state ) =>
@@ -179,19 +181,21 @@ function Options( { recordTracksEvent, searchTerm, translate, upsellCardDisplaye
 	if ( isLoggedInShowcase ) {
 		// This should start the Pattern Assembler ideally, but it's not ready yet for the
 		// logged-in showcase, so we use the site editor as a fallback.
-		options.push( {
-			title: translate( 'Design your own' ),
-			icon: addTemplate,
-			description: translate( 'Jump right into the editor to design your homepage.' ),
-			onClick: () =>
-				recordTracksEvent( 'calypso_themeshowcase_more_options_design_homepage_click', {
-					site_plan: sitePlan,
-					search_term: searchTerm,
-					destination: 'site-editor',
-				} ),
-			url: `/site-editor/${ selectedSite.slug }`,
-			buttonText: translate( 'Open the editor' ),
-		} );
+		if ( isFSEActive ) {
+			options.push( {
+				title: translate( 'Design your own' ),
+				icon: addTemplate,
+				description: translate( 'Jump right into the editor to design your homepage.' ),
+				onClick: () =>
+					recordTracksEvent( 'calypso_themeshowcase_more_options_design_homepage_click', {
+						site_plan: sitePlan,
+						search_term: searchTerm,
+						destination: 'site-editor',
+					} ),
+				url: `/site-editor/${ selectedSite.slug }`,
+				buttonText: translate( 'Open the editor' ),
+			} );
+		}
 	} else {
 		// This should also start the Pattern Assembler, which is currently in development for
 		// the logged-out showcase. Since there isn't any proper fallback for the meantime, we
@@ -308,6 +312,7 @@ function Empty( props ) {
 				{ props.translate( 'No themes match your search' ) }
 			</div>
 			<Options
+				isFSEActive={ props.isFSEActive }
 				recordTracksEvent={ props.recordTracksEvent }
 				searchTerm={ props.searchTerm }
 				translate={ props.translate }
@@ -367,4 +372,7 @@ const mapDispatchToProps = {
 	upsellCardDisplayed: upsellCardDisplayedAction,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( ThemesList ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( withIsFSEActive( ThemesList ) ) );
