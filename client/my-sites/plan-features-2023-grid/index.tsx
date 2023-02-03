@@ -19,6 +19,7 @@ import {
 	TYPE_ECOMMERCE,
 	TYPE_ENTERPRISE_GRID_WPCOM,
 	getPlanPath,
+	PLAN_FREE,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
@@ -64,9 +65,16 @@ import {
 	getDiscountedRawPrice,
 } from 'calypso/state/plans/selectors';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getCurrentPlan, isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import isPlanAvailableForPurchase from 'calypso/state/sites/plans/selectors/is-plan-available-for-purchase';
-import { getSiteSlug, isCurrentPlanPaid, isCurrentSitePlan } from 'calypso/state/sites/selectors';
+import {
+	getSiteSlug,
+	isCurrentPlanPaid,
+	getSitePlan,
+	isCurrentSitePlan,
+	isJetpackSite,
+} from 'calypso/state/sites/selectors';
 import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provider';
 import { getManagePurchaseUrlFor } from '../purchases/paths';
 import PlanFeatures2023GridActions from './actions';
@@ -130,6 +138,7 @@ type PlanFeatures2023GridConnectedProps = {
 	selectedSiteSlug: string | null;
 	planCredits: number;
 	hasPlaceholders: boolean;
+	showPlanCreditsApplied: boolean;
 };
 
 type PlanFeatures2023GridType = PlanFeatures2023GridProps &
@@ -734,25 +743,51 @@ export class PlanFeatures2023Grid extends Component<
 
 	renderNotice() {
 		return (
-			// this.renderUpgradeDisabledNotice() ||
+			this.renderUpgradeDisabledNotice() ||
 			// this.renderDiscountNotice() ||
 			this.renderCreditNotice()
 			// || this.renderMarketingMessage()
 		);
 	}
 
-	renderCreditNotice() {
-		const { canUserPurchasePlan, hasPlaceholders, translate, planCredits, planProperties } =
-			this.props;
-		const bannerContainer = this.getBannerContainer();
+	renderUpgradeDisabledNotice() {
+		const { canUserPurchasePlan, hasPlaceholders, translate } = this.props;
 
-		const showPlanCreditsApplied = ! this.hasDiscountNotice();
+		if ( hasPlaceholders || canUserPurchasePlan ) {
+			return null;
+		}
+
+		const bannerContainer = this.getBannerContainer();
+		if ( ! bannerContainer ) {
+			return false;
+		}
+		return ReactDOM.createPortal(
+			<Notice className="plan-features__notice" showDismiss={ false } status="is-info">
+				{ translate(
+					'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.'
+				) }
+			</Notice>,
+			bannerContainer
+		);
+	}
+
+	renderCreditNotice() {
+		const {
+			canUserPurchasePlan,
+			showPlanCreditsApplied,
+			hasPlaceholders,
+			translate,
+			planCredits,
+			planProperties,
+		} = this.props;
+		const bannerContainer = this.getBannerContainer();
+		const isShowPlanCreditsApplied = true === showPlanCreditsApplied && ! this.hasDiscountNotice();
 
 		if (
 			hasPlaceholders ||
 			! canUserPurchasePlan ||
 			! bannerContainer ||
-			! showPlanCreditsApplied ||
+			! isShowPlanCreditsApplied ||
 			! planCredits ||
 			! this.higherPlanAvailable()
 		) {
@@ -795,7 +830,11 @@ const ConnectedPlanFeatures2023Grid = connect(
 			! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId );
 		const purchaseId = getCurrentPlanPurchaseId( state, siteId );
 		const selectedSiteSlug = getSiteSlug( state, siteId );
+		const sitePlan = getSitePlan( state, siteId );
 		const currentSitePlan = getCurrentPlan( state, siteId );
+
+		const isJetpack = siteId ? isJetpackSite( state, siteId ) : false;
+		const isSiteAT = siteId ? isSiteAutomatedTransfer( state, siteId ) : false;
 
 		let planProperties: PlanProperties[] = plans.map( ( plan: string ) => {
 			let isPlaceholder = false;
@@ -937,6 +976,8 @@ const ConnectedPlanFeatures2023Grid = connect(
 		const hasPlaceholders = ( planProperties: Array< PlanProperties > ) =>
 			planProperties.filter( ( planProps ) => planProps.isPlaceholder ).length > 0;
 
+		const isJetpackNotAtomic = isJetpack && ! isSiteAT;
+
 		return {
 			currentSitePlanSlug: currentSitePlan?.productSlug,
 			planProperties,
@@ -945,6 +986,12 @@ const ConnectedPlanFeatures2023Grid = connect(
 			selectedSiteSlug,
 			planCredits,
 			hasPlaceholders: hasPlaceholders( planProperties ),
+			showPlanCreditsApplied:
+				sitePlan &&
+				sitePlan.product_slug !== PLAN_FREE &&
+				planCredits &&
+				! isJetpackNotAtomic &&
+				! isInSignup,
 		};
 	},
 	{
