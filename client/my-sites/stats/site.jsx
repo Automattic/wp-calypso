@@ -245,7 +245,9 @@ class StatsSite extends Component {
 								{
 									components: {
 										p: <p />,
-										manageYourSettingsLink: <a href="/wp-admin/admin.php?page=jetpack#/traffic" />,
+										manageYourSettingsLink: (
+											<a href="/wp-admin/admin.php?page=jetpack#/settings?term=stats" />
+										),
 									},
 								}
 							) }
