@@ -194,7 +194,7 @@ class StatsSite extends Component {
 
 		const dismissOptOutNotice = () => {
 			this.setState( { isOptOutNoticeDismissed: true } );
-			context.store.dispatch( dismissJITMDirectCall( 'no-idea', 'opt-out-new-stats' ) );
+			context.store.dispatch( dismissJITMDirectCall( 'opt-out-new-stats', 'opt-out-new-stats' ) );
 		};
 
 		return (
