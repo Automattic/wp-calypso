@@ -32,7 +32,7 @@ import {
 	withAnalytics,
 } from 'calypso/state/analytics/actions';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
-import { dismissJITMDirectCall } from 'calypso/state/jitm/actions';
+import { dismissJITMDirect } from 'calypso/state/jitm/actions';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
@@ -194,7 +194,7 @@ class StatsSite extends Component {
 
 		const dismissOptOutNotice = () => {
 			this.setState( { isOptOutNoticeDismissed: true } );
-			context.store.dispatch( dismissJITMDirectCall( 'opt-out-new-stats', 'opt-out-new-stats' ) );
+			context.store.dispatch( dismissJITMDirect( 'opt-out-new-stats', 'opt-out-new-stats' ) );
 		};
 
 		return (

@@ -33,7 +33,7 @@ export const dismissJITM = ( siteId, id, featureClass ) => ( {
  * @param {string} featureClass The feature class of the jitm to dismiss
  * @returns {Object} The dismiss action
  */
-export const dismissJITMDirectCall = ( id, featureClass ) => ( {
+export const dismissJITMDirect = ( id, featureClass ) => ( {
 	type: JITM_DISMISS_DIRECT,
 	id,
 	featureClass,

@@ -104,7 +104,7 @@ export const doDismissJITM = ( action ) =>
  * @param {Object} action The dismissal action
  * @returns {Object} The HTTP fetch action
  */
-export const doDismissJITMDirectCall = ( action ) =>
+export const doDismissJITMDirect = ( action ) =>
 	http(
 		{
 			method: 'POST',
@@ -164,7 +164,7 @@ registerHandlers( 'state/data-layer/wpcom/sites/jitm/index.js', {
 	],
 	[ JITM_DISMISS_DIRECT ]: [
 		dispatchRequest( {
-			fetch: doDismissJITMDirectCall,
+			fetch: doDismissJITMDirect,
 			onSuccess: noop,
 			onError: noop,
 		} ),
