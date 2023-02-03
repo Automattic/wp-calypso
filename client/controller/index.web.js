@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
 import page from 'page';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
@@ -42,17 +42,33 @@ export const ProviderWrappedLayout = ( {
 	const state = store.getState();
 	const userLoggedIn = isUserLoggedIn( state );
 
-	useEffect( () => {
-		async function loadExperiment() {
-			const experimentAssignment = await loadExperimentAssignment(
-				'calypso_sidebar_upsell_dedicated_upgrade_flow_202301'
-			);
-			const variationName = experimentAssignment?.variationName;
-			sessionStorage.setItem( 'calypso_sidebar_upsell_experiment', variationName );
-		}
+	const [ isExperimentLoaded, setIsExperimentLoaded ] = useState( null );
 
-		loadExperiment();
-	}, [] );
+	async function loadDomainExperiment() {
+		const experimentAssignment = await loadExperimentAssignment(
+			'calypso_sidebar_upsell_dedicated_upgrade_flow_202301'
+		);
+		const variationName = experimentAssignment?.variationName;
+		sessionStorage.setItem( 'calypso_sidebar_upsell_experiment', variationName );
+		setIsExperimentLoaded( true );
+	}
+
+	function shouldLoadDomainExperiment() {
+		return (
+			window.location.pathname.startsWith( '/domains/add' ) ||
+			window.location.pathname.startsWith( '/plans/yearly' )
+		);
+	}
+
+	useEffect( () => {
+		if ( shouldLoadDomainExperiment() ) {
+			loadDomainExperiment();
+		}
+	}, [ currentRoute ] );
+
+	if ( shouldLoadDomainExperiment() && ! isExperimentLoaded ) {
+		return null;
+	}
 
 	const layout = userLoggedIn ? (
 		<Layout primary={ primary } secondary={ secondary } />
