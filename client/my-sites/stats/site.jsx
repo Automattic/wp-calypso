@@ -233,8 +233,8 @@ class StatsSite extends Component {
 					slug={ slug }
 				/>
 
-				{ showOptOutNotice && ! this.state.isOptOutNoticeDismissed && (
-					<div className="inner-notice-container has-background-color is-odyssey-only">
+				{ isOdysseyStats && showOptOutNotice && ! this.state.isOptOutNoticeDismissed && (
+					<div className="inner-notice-container has-background-color">
 						<NoticeBanner
 							level="success"
 							title={ translate( 'Welcome to the new Jetpack Stats!' ) }
