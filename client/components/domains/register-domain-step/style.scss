@@ -347,3 +347,18 @@ body.is-section-signup.is-white-signup {
 	overflow: hidden;
 }
 
+.domains-quickfilter-group {
+
+	@include break-large {
+		display: flex;
+	}
+
+	.components-button {
+		&.is-pressed {
+			&::before {
+				border-radius: 4px;
+			}
+		}
+	}
+
+}

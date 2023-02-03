@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { isBlogger } from '@automattic/calypso-products';
-import { Button, CompactCard } from '@automattic/components';
+import { Button, CompactCard, ResponsiveToolbarGroup } from '@automattic/components';
 import Search from '@automattic/search';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { Icon } from '@wordpress/icons';
@@ -72,6 +72,7 @@ import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availabi
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import wpcom from 'calypso/lib/wp';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
+import { isDomainSidebarExperimentUser } from 'calypso/my-sites/controller';
 import { domainUseMyDomain } from 'calypso/my-sites/domains/paths';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import AlreadyOwnADomain from './already-own-a-domain';
@@ -432,6 +433,8 @@ class RegisterDomainStep extends Component {
 							{ this.renderSearchBar() }
 						</CompactCard>
 					</div>
+					{ isDomainSidebarExperimentUser() && this.renderQuickFilters() }
+
 					{ ! isSignupStep && isQueryInvalid && (
 						<Notice
 							className="register-domain-step__notice"
@@ -495,6 +498,43 @@ class RegisterDomainStep extends Component {
 					showTldFilter={ showTldFilter }
 				/>
 			)
+		);
+	}
+
+	renderQuickFilters() {
+		// TODO: Confirm where should we load these tlds from
+		const items = [
+			{ key: 'all', text: 'All' },
+			{ key: 'blog', text: '.blog' },
+			{ key: 'com', text: '.com' },
+			{ key: 'news', text: '.news' },
+			{ key: 'email', text: '.email' },
+			{ key: 'info', text: '.info' },
+			{ key: 'help', text: '.help' },
+			{ key: 'press', text: '.press' },
+			{ key: 'report', text: '.report' },
+		];
+
+		const handleClick = ( index ) => {
+			const option = items[ index ].key;
+			if ( 'all' === option ) {
+				this.onFiltersReset();
+			} else {
+				this.onFiltersChange( { tlds: [ option ] }, { shouldSubmit: true } );
+			}
+		};
+
+		return (
+			<ResponsiveToolbarGroup
+				className="domains-quickfilter-group"
+				initialActiveIndex={ 0 }
+				forceSwipe={ 'undefined' === typeof window }
+				onClick={ handleClick }
+			>
+				{ items.map( ( item ) => (
+					<span key={ `domains-quickfilter-group-item-${ item.key }` }>{ item.text }</span>
+				) ) }
+			</ResponsiveToolbarGroup>
 		);
 	}
 
