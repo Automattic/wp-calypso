@@ -16,7 +16,7 @@ const TourKitMinimized: React.FunctionComponent< Props > = ( {
 	onDismiss,
 } ) => {
 	return (
-		<div className={ 'tour-kit-minimized' }>
+		<div className="tour-kit-minimized">
 			<config.renderers.tourMinimized
 				steps={ steps }
 				currentStepIndex={ currentStepIndex }

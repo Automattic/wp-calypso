@@ -72,9 +72,9 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 
 	return (
 		<Main fullWidthLayout className="themes">
-			{ isNewDetailsAndPreview && (
-				<BodySectionCssClass bodyClass={ [ 'is-section-themes-i4-2' ] } />
-			) }
+			<BodySectionCssClass
+				bodyClass={ [ ...( isNewDetailsAndPreview ? [ 'is-section-themes-i4-2' ] : [] ) ] }
+			/>
 			<QueryActiveTheme siteId={ siteId } />
 			{ currentThemeId && <QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } /> }
 

@@ -14,7 +14,7 @@ const debug = debugFactory( 'notifications:messaging' );
  *
  * @typedef {Function} MessageEventReceiver
  * @throws {TypeError} When no data or invalid data comes in on the event
- * @param {object} event incoming event
+ * @param {Object} event incoming event
  * @returns {undefined}
  */
 
@@ -69,7 +69,7 @@ export const receiveMessage = ( receiver ) => ( event ) => {
 /**
  * Sends outgoing messages to parent frame
  *
- * @param {object} message data to send
+ * @param {Object} message data to send
  * @returns {undefined}
  */
 export const sendMessage = ( message ) => {

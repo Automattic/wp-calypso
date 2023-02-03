@@ -166,8 +166,8 @@ const streamApis = {
 /**
  * Request a page for the given stream
  *
- * @param  {object}   action   Action being handled
- * @returns {object} http action for data-layer to dispatch
+ * @param  {Object}   action   Action being handled
+ * @returns {Object | undefined} http action for data-layer to dispatch
  */
 export function requestPage( action ) {
 	const {

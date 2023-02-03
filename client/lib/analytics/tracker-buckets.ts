@@ -4,9 +4,11 @@ import {
 	isPiiUrl,
 	isUrlExcludedForPerformance,
 	getTrackingPrefs,
+	mayWeTrackUserGpcInCcpaRegion,
 } from 'calypso/lib/analytics/utils';
 import { isE2ETest } from 'calypso/lib/e2e';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import isJetpackCheckout from '../jetpack/is-jetpack-checkout';
 
 const allAdTrackers = [
 	'bing',
@@ -55,8 +57,8 @@ export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 	twitter: Bucket.ADVERTISING,
 	facebook: Bucket.ADVERTISING,
 
-	// Advertising trackers (only Jetpack Cloud):
-	linkedin: isJetpackCloud() ? Bucket.ADVERTISING : null,
+	// Advertising trackers (only Jetpack Cloud or on Jetpack Checkout):
+	linkedin: isJetpackCloud() || isJetpackCheckout() ? Bucket.ADVERTISING : null,
 
 	// Disabled trackers:
 	quantcast: null,
@@ -103,9 +105,15 @@ export const mayWeTrackByBucket = ( bucket: Bucket ) => {
 		return false;
 	}
 
-	// Disable advertising trackers on specific urls
-	if ( Bucket.ADVERTISING === bucket && isUrlExcludedForPerformance() ) {
-		return false;
+	if ( Bucket.ADVERTISING === bucket ) {
+		// Disable advertising trackers on specific urls
+		if ( isUrlExcludedForPerformance() ) {
+			return false;
+		}
+		// Disable advertising trackers if GPC browser flag is set, and the user location pertains to CCPA.
+		if ( ! mayWeTrackUserGpcInCcpaRegion() ) {
+			return false;
+		}
 	}
 
 	const prefs = getTrackingPrefs();

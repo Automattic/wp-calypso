@@ -23,6 +23,8 @@ export interface MonitorSettings {
 	last_down_time: string;
 	monitor_deferment_time: number;
 	monitor_user_emails: Array< string >;
+	monitor_user_email_notifications: boolean;
+	monitor_user_wp_note_notifications: boolean;
 }
 
 export interface Site {

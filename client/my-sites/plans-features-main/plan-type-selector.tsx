@@ -25,7 +25,7 @@ import {
 	getDiscountedRawPrice,
 } from 'calypso/state/plans/selectors';
 
-type Props = {
+export type PlanTypeSelectorProps = {
 	kind: 'interval' | 'customer';
 	basePlansPath?: string | null;
 	intervalType: string;
@@ -39,13 +39,15 @@ type Props = {
 	plans: string[];
 	eligibleForWpcomMonthlyPlans?: boolean;
 	isPlansInsideStepper: boolean;
+	hideDiscountLabel: boolean;
+	redirectTo?: string | null;
 };
 
 interface PathArgs {
 	[ key: string ]: Primitive;
 }
 
-type GeneratePathFunction = ( props: Partial< Props >, args: PathArgs ) => string;
+type GeneratePathFunction = ( props: Partial< PlanTypeSelectorProps >, args: PathArgs ) => string;
 
 export const generatePath: GeneratePathFunction = ( props, additionalArgs = {} ) => {
 	const { intervalType = '' } = additionalArgs;
@@ -112,14 +114,20 @@ export const PopupMessages: React.FunctionComponent< PopupMessageProps > = ( {
 	);
 };
 
-type IntervalTypeProps = Pick<
-	Props,
-	'intervalType' | 'plans' | 'isInSignup' | 'eligibleForWpcomMonthlyPlans' | 'isPlansInsideStepper'
+export type IntervalTypeProps = Pick<
+	PlanTypeSelectorProps,
+	| 'intervalType'
+	| 'plans'
+	| 'isInSignup'
+	| 'eligibleForWpcomMonthlyPlans'
+	| 'isPlansInsideStepper'
+	| 'hideDiscountLabel'
+	| 'redirectTo'
 >;
 
 export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
 	const translate = useTranslate();
-	const { intervalType, isInSignup, eligibleForWpcomMonthlyPlans } = props;
+	const { intervalType, isInSignup, eligibleForWpcomMonthlyPlans, hideDiscountLabel } = props;
 	const [ spanRef, setSpanRef ] = useState< HTMLSpanElement >();
 	const segmentClasses = classNames( 'plan-features__interval-type', 'price-toggle', {
 		'is-signup': isInSignup,
@@ -131,6 +139,12 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		return null;
 	}
 
+	const additionalPathProps = props.redirectTo ? { redirect_to: props.redirectTo } : {};
+
+	const domainFromHomeUpsellFlow = new URLSearchParams( window.location.search ).get(
+		'get_domain'
+	);
+
 	return (
 		<IntervalTypeToggleWrapper
 			showingMonthly={ intervalType === 'monthly' }
@@ -139,7 +153,11 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 			<SegmentedControl compact className={ segmentClasses } primary={ true }>
 				<SegmentedControl.Item
 					selected={ intervalType === 'monthly' }
-					path={ generatePath( props, { intervalType: 'monthly' } ) }
+					path={ generatePath( props, {
+						intervalType: 'monthly',
+						get_domain: domainFromHomeUpsellFlow,
+						...additionalPathProps,
+					} ) }
 					isPlansInsideStepper={ props.isPlansInsideStepper }
 				>
 					<span>{ translate( 'Pay monthly' ) }</span>
@@ -147,19 +165,25 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 
 				<SegmentedControl.Item
 					selected={ intervalType === 'yearly' }
-					path={ generatePath( props, { intervalType: 'yearly' } ) }
+					path={ generatePath( props, {
+						intervalType: 'yearly',
+						get_domain: domainFromHomeUpsellFlow,
+						...additionalPathProps,
+					} ) }
 					isPlansInsideStepper={ props.isPlansInsideStepper }
 				>
 					<span ref={ ( ref ) => ref && setSpanRef( ref ) }>{ translate( 'Pay annually' ) }</span>
-					<PopupMessages context={ spanRef } isVisible={ popupIsVisible }>
-						{ translate(
-							'Save up to %(maxDiscount)d%% by paying annually and get a free domain for one year',
-							{
-								args: { maxDiscount },
-								comment: 'Will be like "Save up to 30% by paying annually..."',
-							}
-						) }
-					</PopupMessages>
+					{ hideDiscountLabel ? null : (
+						<PopupMessages context={ spanRef } isVisible={ popupIsVisible }>
+							{ translate(
+								'Save up to %(maxDiscount)d%% by paying annually and get a free domain for one year',
+								{
+									args: { maxDiscount },
+									comment: 'Will be like "Save up to 30% by paying annually..."',
+								}
+							) }
+						</PopupMessages>
+					) }
 				</SegmentedControl.Item>
 			</SegmentedControl>
 		</IntervalTypeToggleWrapper>
@@ -186,7 +210,7 @@ export const ExperimentalIntervalTypeToggle: React.FunctionComponent< IntervalTy
 	);
 };
 
-type CustomerTypeProps = Pick< Props, 'customerType' | 'isInSignup' >;
+type CustomerTypeProps = Pick< PlanTypeSelectorProps, 'customerType' | 'isInSignup' >;
 
 export const CustomerTypeToggle: React.FunctionComponent< CustomerTypeProps > = ( props ) => {
 	const translate = useTranslate();
@@ -212,7 +236,10 @@ export const CustomerTypeToggle: React.FunctionComponent< CustomerTypeProps > = 
 	);
 };
 
-const PlanTypeSelector: React.FunctionComponent< Props > = ( { kind, ...props } ) => {
+const PlanTypeSelector: React.FunctionComponent< PlanTypeSelectorProps > = ( {
+	kind,
+	...props
+} ) => {
 	if ( kind === 'interval' ) {
 		return <IntervalTypeToggle { ...props } />;
 	}
@@ -261,6 +288,7 @@ export default PlanTypeSelector;
 const IntervalTypeToggleWrapper = styled.div< { showingMonthly: boolean; isInSignup: boolean } >`
 	display: ${ ( { isInSignup } ) => ( isInSignup ? 'flex' : 'block' ) };
 	align-content: space-between;
+	justify-content: center;
 
 	> .segmented-control.is-compact:not( .is-signup ) {
 		margin: 8px auto 16px;

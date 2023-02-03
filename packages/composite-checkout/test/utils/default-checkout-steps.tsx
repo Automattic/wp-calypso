@@ -31,7 +31,7 @@ export function DefaultCheckoutSteps() {
 				isStepActive={ false }
 				isStepComplete={ true }
 				stepNumber={ 1 }
-				stepId={ 'order-summary-step' }
+				stepId="order-summary-step"
 				className={ orderSummaryStep.className }
 			/>
 			<CheckoutStep

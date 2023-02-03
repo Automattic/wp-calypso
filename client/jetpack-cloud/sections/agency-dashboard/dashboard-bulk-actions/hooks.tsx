@@ -1,7 +1,12 @@
 import { useTranslate } from 'i18n-calypso';
-import { ReactChild, useCallback } from 'react';
+import { ReactChild, useCallback, useEffect, useState, useContext, RefObject } from 'react';
 import acceptDialog from 'calypso/lib/accept';
-import { useToggleActivateMonitor, useUpdateMonitorSettings } from '../hooks';
+import {
+	useJetpackAgencyDashboardRecordTrackEvent,
+	useToggleActivateMonitor,
+	useUpdateMonitorSettings,
+} from '../hooks';
+import SitesOverviewContext from '../sites-overview/context';
 import {
 	availableNotificationDurations as durations,
 	getSiteCountText,
@@ -25,18 +30,20 @@ const dialogContent = (
 	return acceptDialog( content, action, heading, null, options );
 };
 
-export function useHandleToggleMonitor( selectedSites: Array< Site > ) {
+export function useHandleToggleMonitor( selectedSites: Array< Site >, isLargeScreen?: boolean ) {
 	const translate = useTranslate();
 
 	const toggleActivateMonitor = useToggleActivateMonitor( selectedSites );
+	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( selectedSites, isLargeScreen );
 
 	const toggleMonitor = useCallback(
 		( accepted: boolean, activate: boolean ) => {
 			if ( accepted ) {
 				toggleActivateMonitor( activate );
+				recordEvent( activate ? 'resume_monitor_save' : 'pause_monitor_save' );
 			}
 		},
-		[ toggleActivateMonitor ]
+		[ recordEvent, toggleActivateMonitor ]
 	);
 
 	const handleToggleActivateMonitor = useCallback(
@@ -73,9 +80,13 @@ export function useHandleToggleMonitor( selectedSites: Array< Site > ) {
 	return handleToggleActivateMonitor;
 }
 
-export function useHandleResetNotification( selectedSites: Array< Site > ) {
+export function useHandleResetNotification(
+	selectedSites: Array< Site >,
+	isLargeScreen?: boolean
+) {
 	const translate = useTranslate();
 	const { updateMonitorSettings } = useUpdateMonitorSettings( selectedSites );
+	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( selectedSites, isLargeScreen );
 
 	const resetMonitorDuration = useCallback(
 		( accepted: boolean ) => {
@@ -85,9 +96,10 @@ export function useHandleResetNotification( selectedSites: Array< Site > ) {
 					jetmon_defer_status_down_minutes: defaultDuration?.time,
 				};
 				updateMonitorSettings( params );
+				recordEvent( 'reset_notification_save' );
 			}
 		},
-		[ updateMonitorSettings ]
+		[ recordEvent, updateMonitorSettings ]
 	);
 
 	const handleResetNotification = useCallback( () => {
@@ -121,4 +133,44 @@ export function useHandleResetNotification( selectedSites: Array< Site > ) {
 	}, [ resetMonitorDuration, selectedSites, translate ] );
 
 	return handleResetNotification;
+}
+
+const MAX_ACTIONBAR_HEIGHT = 30;
+const MIN_ACTIONBAR_WIDTH = 400;
+
+export function useHandleShowHideActionBar( node: RefObject< HTMLDivElement > ) {
+	const [ actionBarVisible, setActionBarVisible ] = useState( true );
+	const { isBulkManagementActive } = useContext( SitesOverviewContext );
+
+	const maybeMakeActionBarVisible = useCallback( () => {
+		const actionBarDomElement = node ? node.current : null;
+
+		if ( actionBarDomElement ) {
+			if ( actionBarDomElement.offsetWidth < MIN_ACTIONBAR_WIDTH ) {
+				return;
+			}
+
+			setTimeout( () => {
+				const actionBarVisible = actionBarDomElement.offsetHeight <= MAX_ACTIONBAR_HEIGHT;
+				setActionBarVisible( actionBarVisible );
+			}, 1 );
+		}
+	}, [ node ] );
+
+	useEffect( () => {
+		window.addEventListener( 'resize', maybeMakeActionBarVisible );
+		return () => {
+			window.removeEventListener( 'resize', maybeMakeActionBarVisible );
+		};
+	}, [ maybeMakeActionBarVisible ] );
+
+	useEffect( () => {
+		if ( isBulkManagementActive ) {
+			maybeMakeActionBarVisible();
+		}
+		// Do not add maybeMakeActionBarVisible to the dependency array as it will cause an infinite loop
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ isBulkManagementActive ] );
+
+	return { actionBarVisible };
 }

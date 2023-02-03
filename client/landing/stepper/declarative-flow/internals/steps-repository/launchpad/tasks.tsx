@@ -69,9 +69,27 @@ export const tasks: Task[] = [
 		disabled: true,
 	},
 	{
+		id: 'sensei_setup',
+		completed: true,
+		taskType: 'blog',
+		disabled: true,
+	},
+	{
+		id: 'sensei_publish_first_course',
+		completed: false,
+		taskType: 'blog',
+		disabled: false,
+	},
+	{
 		id: 'setup_free',
 		completed: true,
 		disabled: false,
+		taskType: 'blog',
+	},
+	{
+		id: 'setup_general',
+		completed: true,
+		disabled: true,
 		taskType: 'blog',
 	},
 	{
@@ -84,6 +102,12 @@ export const tasks: Task[] = [
 		id: 'site_launched',
 		completed: false,
 		disabled: false,
+		taskType: 'blog',
+	},
+	{
+		id: 'setup_write',
+		completed: true,
+		disabled: true,
 		taskType: 'blog',
 	},
 ];
@@ -107,5 +131,20 @@ export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 		'design_edited',
 		'site_launched',
 	],
+	build: [
+		'setup_general',
+		'design_selected',
+		'first_post_published',
+		'design_edited',
+		'site_launched',
+	],
+	write: [
+		'setup_write',
+		'design_selected',
+		'first_post_published',
+		'design_edited',
+		'site_launched',
+	],
 	videopress: [ 'videopress_setup', 'plan_selected', 'videopress_upload', 'videopress_launched' ],
+	sensei: [ 'sensei_setup', 'plan_selected', 'sensei_publish_first_course' ],
 };

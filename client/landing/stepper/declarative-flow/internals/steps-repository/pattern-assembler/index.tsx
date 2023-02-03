@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { StepContainer } from '@automattic/onboarding';
+import { StepContainer, SITE_SETUP_FLOW, SITE_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useEffect } from 'react';
@@ -11,10 +11,9 @@ import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
-import { useThemeDetails } from '../../../../hooks/use-theme-details';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign } from '../../analytics/record-design';
-import { SITE_TAGLINE } from './constants';
+import { SITE_TAGLINE, PLACEHOLDER_SITE_ID } from './constants';
 import PatternLayout from './pattern-layout';
 import PatternSelectorLoader from './pattern-selector-loader';
 import { useAllPatterns } from './patterns-data';
@@ -44,9 +43,6 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const allPatterns = useAllPatterns();
-	const { data: theme } = useThemeDetails( selectedDesign?.slug );
-	const themeDemoSiteSlug =
-		theme && theme.demo_uri.replace( /^https?:\/\//, '' ).replace( '/', '' );
 
 	const largePreviewProps = {
 		placeholder: null,
@@ -63,7 +59,7 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 
 	useEffect( () => {
 		// Require to start the flow from the first step
-		if ( ! selectedDesign ) {
+		if ( ! selectedDesign && flow === SITE_SETUP_FLOW ) {
 			goToStep?.( 'goals' );
 		}
 	}, [] );
@@ -261,7 +257,12 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 						createCustomHomeTemplateContent( stylesheet, !! header, !! footer, !! sections.length )
 					)
 				)
-				.then( () => runThemeSetupOnSite( siteSlugOrId, design ) )
+				.then( () =>
+					runThemeSetupOnSite( siteSlugOrId, design, {
+						trimContent: false,
+						posts_source_site_id: PLACEHOLDER_SITE_ID,
+					} )
+				)
 				.then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) )
 		);
 
@@ -366,7 +367,7 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 		</div>
 	);
 
-	if ( ! selectedDesign || ! themeDemoSiteSlug ) {
+	if ( ! site?.ID || ! selectedDesign ) {
 		return null;
 	}
 
@@ -375,7 +376,7 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 			<DocumentHead title={ translate( 'Design your home' ) } />
 			<StepContainer
 				stepName="pattern-assembler"
-				hideBack={ showPatternSelectorType !== null }
+				hideBack={ showPatternSelectorType !== null || flow === SITE_ASSEMBLER_FLOW }
 				goBack={ onBack }
 				goNext={ goNext }
 				isHorizontalLayout={ false }
@@ -386,7 +387,7 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 						<AsyncLoad
 							require="./pattern-assembler-container"
 							placeholder={ null }
-							siteId={ themeDemoSiteSlug }
+							siteId={ site?.ID }
 							stylesheet={ selectedDesign?.recipe?.stylesheet }
 							patternIds={ allPatterns.map( ( pattern ) => encodePatternId( pattern.id ) ) }
 							siteInfo={ siteInfo }

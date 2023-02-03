@@ -8,7 +8,7 @@ import getSiteOption from './get-site-option';
  * previewed, or null if preview ability cannot be determined. This indicates
  * whether it is safe to embed iframe previews for the site.
  *
- * @param  {object}   state  Global state tree
+ * @param  {Object}   state  Global state tree
  * @param  {number}   siteId Site ID
  * @returns {?boolean}        Whether site is previewable
  */

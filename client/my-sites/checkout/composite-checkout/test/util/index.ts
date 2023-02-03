@@ -74,107 +74,95 @@ export const countryList: CountryListItem[] = [
 		name: 'Australia',
 		has_postal_codes: true,
 	},
+	{
+		code: 'ES',
+		name: 'Spain',
+		has_postal_codes: true,
+	},
+	{
+		code: 'CA',
+		name: 'Canada',
+		has_postal_codes: true,
+	},
+	{
+		code: 'GB',
+		name: 'United Kingdom',
+		has_postal_codes: true,
+	},
 ];
 
 export const siteId = 13579;
 
-export const domainProduct = {
+export const domainProduct: ResponseCartProduct = {
 	...getEmptyResponseCartProduct(),
 	product_name: '.cash Domain',
 	product_slug: 'domain_reg',
 	currency: 'BRL',
 	extra: {
 		context: 'signup',
-		domain_registration_agreement_url:
-			'https://wordpress.com/automattic-domain-name-registration-agreement/',
-		privacy: true,
-		privacy_available: true,
-		registrar: 'KS_RAM',
 	},
-	free_trial: false,
 	meta: 'foo.cash',
 	product_id: 6,
 	volume: 1,
 	is_domain_registration: true,
 	item_original_cost_integer: 500,
-	item_original_cost_display: 'R$5',
 	item_subtotal_integer: 500,
-	item_subtotal_display: 'R$5',
 	bill_period: '365',
 	months_per_bill_period: 12,
 };
 
-export const caDomainProduct = {
+export const caDomainProduct: ResponseCartProduct = {
 	...getEmptyResponseCartProduct(),
 	product_name: '.ca Domain',
 	product_slug: 'domain_reg',
 	currency: 'BRL',
 	extra: {
 		context: 'signup',
-		domain_registration_agreement_url:
-			'https://wordpress.com/automattic-domain-name-registration-agreement/',
-		privacy: true,
-		privacy_available: true,
-		registrar: 'KS_RAM',
 	},
-	free_trial: false,
 	meta: 'foo.ca',
 	product_id: 6,
 	volume: 1,
 	is_domain_registration: true,
 	item_original_cost_integer: 500,
-	item_original_cost_display: 'R$5',
 	item_subtotal_integer: 500,
-	item_subtotal_display: 'R$5',
 	bill_period: '365',
 	months_per_bill_period: 12,
 };
 
-export const gSuiteProduct = {
+export const gSuiteProduct: ResponseCartProduct = {
 	...getEmptyResponseCartProduct(),
 	product_name: 'G Suite',
 	product_slug: 'gapps',
 	currency: 'BRL',
 	extra: {},
-	free_trial: false,
 	meta: 'foo.cash',
 	product_id: 9,
 	volume: 1,
 	is_domain_registration: false,
 	item_original_cost_integer: 500,
-	item_original_cost_display: 'R$5',
 	item_subtotal_integer: 500,
-	item_subtotal_display: 'R$5',
 	bill_period: '365',
 	months_per_bill_period: 12,
 };
 
-export const domainTransferProduct = {
+export const domainTransferProduct: ResponseCartProduct = {
 	...getEmptyResponseCartProduct(),
 	product_name: '.cash Domain',
 	product_slug: 'domain_transfer',
 	currency: 'BRL',
 	extra: {
 		context: 'signup',
-		domain_registration_agreement_url:
-			'https://wordpress.com/automattic-domain-name-registration-agreement/',
-		privacy: true,
-		privacy_available: true,
-		registrar: 'KS_RAM',
 	},
-	free_trial: false,
 	meta: 'foo.cash',
 	product_id: 6,
 	volume: 1,
 	item_original_cost_integer: 500,
-	item_original_cost_display: 'R$5',
 	item_subtotal_integer: 500,
-	item_subtotal_display: 'R$5',
 	bill_period: '365',
 	months_per_bill_period: 12,
 };
 
-export const planWithBundledDomain = {
+export const planWithBundledDomain: ResponseCartProduct = {
 	...getEmptyResponseCartProduct(),
 	product_name: 'WordPress.com Personal',
 	product_slug: 'personal-bundle',
@@ -183,19 +171,16 @@ export const planWithBundledDomain = {
 		context: 'signup',
 		domain_to_bundle: 'foo.cash',
 	},
-	free_trial: false,
 	meta: '',
 	product_id: 1009,
 	volume: 1,
 	item_original_cost_integer: 14400,
-	item_original_cost_display: 'R$144',
 	item_subtotal_integer: 14400,
-	item_subtotal_display: 'R$144',
 	bill_period: '365',
 	months_per_bill_period: 12,
 };
 
-export const planWithoutDomain = {
+export const planWithoutDomain: ResponseCartProduct = {
 	...getEmptyResponseCartProduct(),
 	product_name: 'WordPress.com Personal',
 	product_slug: 'personal-bundle',
@@ -203,19 +188,16 @@ export const planWithoutDomain = {
 	extra: {
 		context: 'signup',
 	},
-	free_trial: false,
 	meta: '',
 	product_id: 1009,
 	volume: 1,
 	item_original_cost_integer: 14400,
-	item_original_cost_display: 'R$144',
 	item_subtotal_integer: 14400,
-	item_subtotal_display: 'R$144',
 	bill_period: '365',
 	months_per_bill_period: 12,
 };
 
-export const planWithoutDomainMonthly = {
+export const planWithoutDomainMonthly: ResponseCartProduct = {
 	...getEmptyResponseCartProduct(),
 	product_name: 'WordPress.com Personal Monthly',
 	product_slug: 'personal-bundle-monthly',
@@ -223,19 +205,16 @@ export const planWithoutDomainMonthly = {
 	extra: {
 		context: 'signup',
 	},
-	free_trial: false,
 	meta: '',
 	product_id: 1019,
 	volume: 1,
 	item_original_cost_integer: 14400,
-	item_original_cost_display: 'R$144',
 	item_subtotal_integer: 14400,
-	item_subtotal_display: 'R$144',
 	bill_period: '31',
 	months_per_bill_period: 1,
 };
 
-export const planWithoutDomainBiannual = {
+export const planWithoutDomainBiannual: ResponseCartProduct = {
 	...getEmptyResponseCartProduct(),
 	product_name: 'WordPress.com Personal 2 Year',
 	product_slug: 'personal-bundle-2y',
@@ -243,19 +222,16 @@ export const planWithoutDomainBiannual = {
 	extra: {
 		context: 'signup',
 	},
-	free_trial: false,
 	meta: '',
 	product_id: 1029,
 	volume: 1,
 	item_original_cost_integer: 14400,
-	item_original_cost_display: 'R$144',
 	item_subtotal_integer: 14400,
-	item_subtotal_display: 'R$144',
 	bill_period: '730',
 	months_per_bill_period: 24,
 };
 
-export const planLevel2 = {
+export const planLevel2: ResponseCartProduct = {
 	...getEmptyResponseCartProduct(),
 	product_name: 'WordPress.com Business',
 	product_slug: 'business-bundle',
@@ -263,14 +239,11 @@ export const planLevel2 = {
 	extra: {
 		context: 'signup',
 	},
-	free_trial: false,
 	meta: '',
 	product_id: 1008,
 	volume: 1,
 	item_original_cost_integer: 14400,
-	item_original_cost_display: 'R$144',
 	item_subtotal_integer: 14400,
-	item_subtotal_display: 'R$144',
 	bill_period: '365',
 	months_per_bill_period: 12,
 };
@@ -287,9 +260,7 @@ export const planLevel2Monthly: ResponseCartProduct = {
 	product_id: 1018,
 	volume: 1,
 	item_original_cost_integer: 14400,
-	item_original_cost_display: 'R$144',
 	item_subtotal_integer: 14400,
-	item_subtotal_display: 'R$144',
 	bill_period: '31',
 	months_per_bill_period: 1,
 };
@@ -306,9 +277,7 @@ export const planLevel2Biannual: ResponseCartProduct = {
 	product_id: 1028,
 	volume: 1,
 	item_original_cost_integer: 14400,
-	item_original_cost_display: 'R$144',
 	item_subtotal_integer: 14400,
-	item_subtotal_display: 'R$144',
 	bill_period: '730',
 	months_per_bill_period: 24,
 };
@@ -316,7 +285,7 @@ export const planLevel2Biannual: ResponseCartProduct = {
 export const fetchStripeConfiguration = async () => stripeConfiguration;
 
 export function mockSetCartEndpointWith( { currency, locale } ): SetCart {
-	return async ( _: number, requestCart: RequestCart ) => {
+	return async ( _: number, requestCart: RequestCart ): Promise< ResponseCart > => {
 		const { products: requestProducts, coupon: requestCoupon } = requestCart;
 		const products = requestProducts.map( convertRequestProductToResponseProduct( currency ) );
 
@@ -335,10 +304,8 @@ export function mockSetCartEndpointWith( { currency, locale } ): SetCart {
 			cart_key: 1234,
 			coupon: requestCoupon,
 			coupon_discounts_integer: [],
-			coupon_savings_total_display: requestCoupon ? 'R$10' : 'R$0',
 			coupon_savings_total_integer: requestCoupon ? 1000 : 0,
 			create_new_blog: false,
-			credits_display: '0',
 			credits_integer: 0,
 			currency,
 			is_coupon_applied: true,
@@ -346,24 +313,51 @@ export function mockSetCartEndpointWith( { currency, locale } ): SetCart {
 			locale,
 			next_domain_is_free: false,
 			products,
-			sub_total_display: 'R$149',
 			sub_total_integer: totalInteger - taxInteger,
-			sub_total_with_taxes_display: 'R$156',
 			sub_total_with_taxes_integer: totalInteger,
 			tax: {
 				location: requestCart.tax?.location ?? {},
 				display_taxes: !! requestCart.tax?.location?.postal_code,
 			},
 			total_cost: 0,
-			total_cost_display: 'R$156',
 			total_cost_integer: totalInteger,
 			total_tax: '',
 			total_tax_breakdown: [],
-			total_tax_display: 'R$7',
 			total_tax_integer: taxInteger,
 			next_domain_condition: '',
 		};
 	};
+}
+
+export function convertProductSlugToResponseProduct( productSlug: string ) {
+	switch ( productSlug ) {
+		case 'jetpack_backup_t1_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2100,
+				product_name: 'Jetpack VaultPress Backup (10GB)',
+				product_slug: 'jetpack_backup_t1_monthly',
+				currency: 'USD',
+			};
+		case 'jetpack_backup_t1_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2100,
+				product_name: 'Jetpack VaultPress Backup (10GB)',
+				product_slug: 'jetpack_backup_t1_yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_scan':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2106,
+				product_name: 'Jetpack Scan Daily',
+				product_slug: 'jetpack_scan',
+				currency: 'USD',
+			};
+		default:
+			return getEmptyResponseCartProduct();
+	}
 }
 
 function convertRequestProductToResponseProduct(
@@ -441,7 +435,6 @@ function convertRequestProductToResponseProduct(
 					item_original_cost_integer: 7000,
 					item_original_cost_display: 'R$70',
 					item_subtotal_integer: 7000,
-					item_subtotal_display: 'R$70',
 					bill_period: '365',
 					months_per_bill_period: 12,
 					item_tax: 0,
@@ -458,9 +451,7 @@ function convertRequestProductToResponseProduct(
 					currency: currency,
 					is_domain_registration: false,
 					item_original_cost_integer: 6900,
-					item_original_cost_display: 'R$69',
 					item_subtotal_integer: 6900,
-					item_subtotal_display: 'R$69',
 					item_tax: 0,
 					meta: product.meta,
 					volume: 1,
@@ -475,9 +466,7 @@ function convertRequestProductToResponseProduct(
 					currency: currency,
 					is_domain_registration: false,
 					item_original_cost_integer: 4900,
-					item_original_cost_display: 'R$49',
 					item_subtotal_integer: 4900,
-					item_subtotal_display: 'R$49',
 					item_tax: 0,
 					meta: product.meta,
 					volume: 1,
@@ -492,9 +481,7 @@ function convertRequestProductToResponseProduct(
 					currency: currency,
 					is_domain_registration: false,
 					item_original_cost_integer: 4100,
-					item_original_cost_display: 'R$41',
 					item_subtotal_integer: 4100,
-					item_subtotal_display: 'R$41',
 					bill_period: '365',
 					months_per_bill_period: 12,
 					item_tax: 0,
@@ -511,9 +498,7 @@ function convertRequestProductToResponseProduct(
 					currency: currency,
 					is_domain_registration: false,
 					item_original_cost_integer: 4200,
-					item_original_cost_display: 'R$42',
 					item_subtotal_integer: 4200,
-					item_subtotal_display: 'R$42',
 					bill_period: '365',
 					months_per_bill_period: 12,
 					item_tax: 0,
@@ -530,9 +515,7 @@ function convertRequestProductToResponseProduct(
 					currency: currency,
 					is_domain_registration: false,
 					item_original_cost_integer: planLevel2.item_original_cost_integer,
-					item_original_cost_display: planLevel2.item_original_cost_display,
 					item_subtotal_integer: planLevel2.item_subtotal_integer,
-					item_subtotal_display: planLevel2.item_subtotal_display,
 					bill_period: planLevel2.bill_period,
 					months_per_bill_period: 12,
 					item_tax: 0,
@@ -549,9 +532,7 @@ function convertRequestProductToResponseProduct(
 					currency: currency,
 					is_domain_registration: false,
 					item_original_cost_integer: planLevel2Biannual.item_original_cost_integer,
-					item_original_cost_display: planLevel2Biannual.item_original_cost_display,
 					item_subtotal_integer: planLevel2Biannual.item_subtotal_integer,
-					item_subtotal_display: planLevel2Biannual.item_subtotal_display,
 					bill_period: planLevel2Biannual.bill_period,
 					months_per_bill_period: 24,
 					item_tax: 0,
@@ -568,7 +549,6 @@ function convertRequestProductToResponseProduct(
 			product_slug: 'unknown',
 			currency: currency,
 			is_domain_registration: false,
-			item_subtotal_display: '$0',
 			item_subtotal_integer: 0,
 			item_tax: 0,
 		};
@@ -583,7 +563,6 @@ export function getBasicCart(): ResponseCart {
 		...cart,
 		coupon: '',
 		coupon_savings_total_integer: 0,
-		coupon_savings_total_display: '0',
 		currency: 'BRL',
 		locale: 'br-pt',
 		is_coupon_applied: false,
@@ -594,11 +573,8 @@ export function getBasicCart(): ResponseCart {
 		},
 		allowed_payment_methods: [ 'WPCOM_Billing_PayPal_Express' ],
 		total_tax_integer: 700,
-		total_tax_display: 'R$7',
 		total_cost_integer: 15600,
-		total_cost_display: 'R$156',
 		sub_total_integer: 15600,
-		sub_total_display: 'R$156',
 		coupon_discounts_integer: [],
 	};
 }
@@ -799,7 +775,6 @@ export function createTestReduxStore() {
 						product_type: 'bundle',
 						available: true,
 						is_domain_registration: false,
-						cost_display: planWithoutDomain.item_subtotal_display,
 						currency_code: planWithoutDomain.currency,
 					},
 					[ planWithoutDomainMonthly.product_slug ]: {
@@ -808,7 +783,6 @@ export function createTestReduxStore() {
 						product_type: 'bundle',
 						available: true,
 						is_domain_registration: false,
-						cost_display: planWithoutDomainMonthly.item_subtotal_display,
 						currency_code: planWithoutDomainMonthly.currency,
 					},
 					[ planWithoutDomainBiannual.product_slug ]: {
@@ -817,7 +791,6 @@ export function createTestReduxStore() {
 						product_type: 'bundle',
 						available: true,
 						is_domain_registration: false,
-						cost_display: planWithoutDomainBiannual.item_subtotal_display,
 						currency_code: planWithoutDomainBiannual.currency,
 					},
 					[ planLevel2.product_slug ]: {
@@ -826,7 +799,6 @@ export function createTestReduxStore() {
 						product_type: 'bundle',
 						available: true,
 						is_domain_registration: false,
-						cost_display: planLevel2.item_subtotal_display,
 						currency_code: planLevel2.currency,
 					},
 					[ planLevel2Monthly.product_slug ]: {
@@ -835,7 +807,6 @@ export function createTestReduxStore() {
 						product_type: 'bundle',
 						available: true,
 						is_domain_registration: false,
-						cost_display: planLevel2Monthly.item_subtotal_display,
 						currency_code: planLevel2Monthly.currency,
 					},
 					[ planLevel2Biannual.product_slug ]: {
@@ -844,7 +815,6 @@ export function createTestReduxStore() {
 						product_type: 'bundle',
 						available: true,
 						is_domain_registration: false,
-						cost_display: planLevel2Biannual.item_subtotal_display,
 						currency_code: planLevel2Biannual.currency,
 					},
 					domain_map: {
@@ -885,6 +855,26 @@ export function createTestReduxStore() {
 		};
 	};
 	return createStore( rootReducer, applyMiddleware( thunk ) );
+}
+
+export function mockGetVatInfoEndpoint( response ) {
+	nock( 'https://public-api.wordpress.com' )
+		.persist()
+		.get( '/rest/v1.1/me/vat-info' )
+		.optionally()
+		.reply( 200, response );
+}
+
+export function mockSetVatInfoEndpoint() {
+	const endpoint = jest.fn();
+	endpoint.mockReturnValue( true );
+
+	nock( 'https://public-api.wordpress.com' )
+		.post( '/rest/v1.1/me/vat-info', ( body ) => {
+			return endpoint( body );
+		} )
+		.reply( 200 );
+	return endpoint;
 }
 
 export function mockPayPalEndpoint( endpointResponse ) {
@@ -1175,6 +1165,8 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 				product_slug: data.product_slug,
 				currency: planLevel2Monthly.currency,
 				price_integer: getVariantPrice( planLevel2Monthly ),
+				price_before_discounts_integer: getVariantPrice( planLevel2Monthly ),
+				introductory_offer_terms: {},
 			};
 		case planLevel2.product_slug:
 			return {
@@ -1183,6 +1175,8 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 				product_slug: data.product_slug,
 				currency: planLevel2.currency,
 				price_integer: getVariantPrice( planLevel2 ),
+				price_before_discounts_integer: getVariantPrice( planLevel2 ),
+				introductory_offer_terms: {},
 			};
 		case planLevel2Biannual.product_slug:
 			return {
@@ -1191,6 +1185,8 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 				product_slug: data.product_slug,
 				currency: planLevel2Biannual.currency,
 				price_integer: getVariantPrice( planLevel2Biannual ),
+				price_before_discounts_integer: getVariantPrice( planLevel2Biannual ),
+				introductory_offer_terms: {},
 			};
 		case planWithoutDomainMonthly.product_slug:
 			return {
@@ -1199,6 +1195,8 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 				product_slug: data.product_slug,
 				currency: planWithoutDomainMonthly.currency,
 				price_integer: getVariantPrice( planWithoutDomainMonthly ),
+				price_before_discounts_integer: getVariantPrice( planWithoutDomainMonthly ),
+				introductory_offer_terms: {},
 			};
 		case planWithoutDomain.product_slug:
 			return {
@@ -1207,6 +1205,8 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 				product_slug: data.product_slug,
 				currency: planWithoutDomain.currency,
 				price_integer: getVariantPrice( planWithoutDomain ),
+				price_before_discounts_integer: getVariantPrice( planWithoutDomain ),
+				introductory_offer_terms: {},
 			};
 		case planWithoutDomainBiannual.product_slug:
 			return {
@@ -1215,8 +1215,73 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 				product_slug: data.product_slug,
 				currency: planWithoutDomainBiannual.currency,
 				price_integer: getVariantPrice( planWithoutDomainBiannual ),
+				price_before_discounts_integer: getVariantPrice( planWithoutDomainBiannual ),
+				introductory_offer_terms: {},
 			};
 	}
 
 	throw new Error( `No variants found for product_slug ${ data.product_slug }` );
+}
+
+/**
+ * Helper to prepare to mock Stripe Elements.
+ *
+ * To use this, you'll need to call it inside `jest.mock()` as follows:
+ *
+ * ```
+ * jest.mock( '@stripe/react-stripe-js', () => {
+ *   const stripe = jest.requireActual( '@stripe/react-stripe-js' );
+ *   return { ...stripe, ...mockStripeElements() };
+ * } );
+ *
+ * jest.mock( '@stripe/stripe-js', () => {
+ *   return {
+ *     loadStripe: async () => mockStripeElements().useStripe(),
+ *   };
+ * } );
+ * ```
+ */
+export function mockStripeElements() {
+	const mockElement = () => ( {
+		mount: jest.fn(),
+		destroy: jest.fn(),
+		on: jest.fn(),
+		update: jest.fn(),
+	} );
+
+	const mockElements = () => {
+		const elements = {};
+		return {
+			create: jest.fn( ( type ) => {
+				elements[ type ] = mockElement();
+				return elements[ type ];
+			} ),
+			getElement: jest.fn( ( type ) => {
+				return elements[ type ] || null;
+			} ),
+		};
+	};
+
+	const mockStripe = () => ( {
+		elements: jest.fn( () => mockElements() ),
+		createToken: jest.fn(),
+		createSource: jest.fn(),
+		createPaymentMethod: jest.fn(),
+		confirmCardPayment: jest.fn(),
+		confirmCardSetup: jest.fn(),
+		paymentRequest: jest.fn(),
+		_registerWrapper: jest.fn(),
+	} );
+
+	return {
+		Element: () => {
+			return mockElement();
+		},
+		useStripe: () => {
+			return mockStripe();
+		},
+		useElements: () => {
+			return mockElements();
+		},
+	};
 }

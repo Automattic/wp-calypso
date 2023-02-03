@@ -8,7 +8,7 @@ import 'calypso/state/plans/init';
 /**
  * Return WordPress plans getting from state object
  */
-export const getPlans = ( state: AppState ): PricedAPIPlan[] => {
+export const getPlans = ( state: AppState ): PricedAPIPlan[] | undefined => {
 	return state.plans.items;
 };
 
@@ -24,16 +24,16 @@ export const isRequestingPlans = ( state: AppState ): boolean => {
  */
 export const getPlan = createSelector(
 	( state: AppState, productId: string | number ): PricedAPIPlan | undefined =>
-		getPlans( state ).find( ( plan ) => plan.product_id === productId ),
+		getPlans( state )?.find( ( plan ) => plan.product_id === productId ),
 	( state: AppState ) => getPlans( state )
 );
 
 /**
  * Returns a plan searched by its slug
  *
- * @param  {object} state      global state
+ * @param  {Object} state      global state
  * @param  {string} planSlug the plan slug
- * @returns {object} the matching plan
+ * @returns {Object} the matching plan
  */
 export const getPlanBySlug = createSelector(
 	( state, planSlug ) => find( getPlans( state ), { product_slug: planSlug } ),
@@ -43,7 +43,7 @@ export const getPlanBySlug = createSelector(
 /**
  * Returns a plan product_slug. Useful for getting a cartItem for a plan.
  *
- * @param  {object}  state     global state
+ * @param  {Object}  state     global state
  * @param  {number}  productId the plan productId
  * @returns {string}  plan product_slug
  */

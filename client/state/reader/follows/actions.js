@@ -30,7 +30,7 @@ import 'calypso/state/reader/init';
 /**
  * Extended information about a reader follow
  *
- * @typedef {object} follow
+ * @typedef {Object} follow
  * @property {number} ID
  * @property {string} URL The URL being followed. Usually a feed.
  * @property {string} feed_URL Same as URL
@@ -38,15 +38,15 @@ import 'calypso/state/reader/init';
  * @property {number} feed_ID The feed ID
  * @property {number} date_subscribed The date subscribed. Seconds since epoch.
  * @property {boolean} is_owner Is the current user the owner of this site
- * @property {object} delivery_methods
+ * @property {Object} delivery_methods
  */
 
 /**
  * Follow a feed URL
  *
  * @param  {string} feedUrl      The feed URL
- * @param {object} followInfo		A subscription, optional
- * @returns {object}              The action
+ * @param {Object} followInfo		A subscription, optional
+ * @returns {Object}              The action
  */
 export function follow( feedUrl, followInfo ) {
 	const action = {
@@ -71,8 +71,8 @@ export function unfollow( feedUrl ) {
  * when following a URL.
  *
  * @param  {string} feedUrl Feed URL
- * @param  {object} error Error response (contains keys 'info' and 'subscribed')
- * @returns {object} Action
+ * @param  {Object} error Error response (contains keys 'info' and 'subscribed')
+ * @returns {Object} Action
  */
 export function recordFollowError( feedUrl, error ) {
 	const action = {
@@ -93,7 +93,7 @@ export function receiveFollows( { follows, totalCount } ) {
 /**
  * Returns an action object to signal that follows have been requested.
  *
- * @returns {object} 		Action object
+ * @returns {Object} 		Action object
  */
 export function requestFollows() {
 	return {
@@ -105,7 +105,7 @@ export function requestFollows() {
  * Represents a completed sync.
  *
  * @param  {Array} followedUrls An array of all the feed URLS seen during the sync
- * @returns {object}              The action
+ * @returns {Object}              The action
  */
 export function syncComplete( followedUrls ) {
 	return {

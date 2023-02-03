@@ -54,40 +54,42 @@ function useFeatureList(): FeatureListItem[] {
 		{
 			title: translate( 'SFTP' ),
 			description: translate(
-				`Access and edit your website's files directly using an SFTP client`
+				'Streamline your workflow and edit your files with precision using an SFTP client.'
 			),
 			icon: iconCloud,
 		},
 		{
 			title: translate( 'CLI Access' ),
 			description: translate(
-				'Use WP-CLI to manage plugins and users, or perform search-and-replace across your site'
+				'Use WP-CLI to manage plugins and users, or automate repetitive tasks from your terminal.'
 			),
 			icon: iconTerminal,
 		},
 		{
 			title: translate( 'SSH' ),
 			description: translate(
-				`Work the way you're used to working with SSH access to your website`
+				'Take control of your website’s performance and security using SSH.'
 			),
 			icon: iconSSH,
 		},
 		{
 			title: translate( 'Pick Your Data Center' ),
 			description: translate(
-				'Choose a primary data center for your site while still enjoying multi-region redundancy'
+				'Choose a primary data center for your site while still enjoying geo-redundant architecture.'
 			),
 			icon: iconServerRacks,
 		},
 		{
 			title: translate( 'Database Access' ),
-			description: translate( `Inspect your website's tables and run SQL queries via phpMyAdmin` ),
+			description: translate(
+				'Manage your website’s data easily, using phpMyAdmin to inspect tables and run queries.'
+			),
 			icon: iconDatabase,
 		},
 		{
 			title: translate( 'Live Support' ),
 			description: translate(
-				'Either have questions or need help, get instant support from our Happiness Engineers'
+				'Whenever you’re stuck, our Happiness Engineers have the answers on hand.'
 			),
 			icon: iconComments,
 		},

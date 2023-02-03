@@ -7,8 +7,8 @@ import { getMimeType } from 'calypso/lib/media/utils/get-mime-type';
  * size for the site is unknown or a video is being uploaded for a Jetpack
  * site with VideoPress enabled. Otherwise, returns true.
  *
- * @param  {object}   item  Media object
- * @param  {object}   site  Site object
+ * @param  {Object}   item  Media object
+ * @param  {Object}   site  Site object
  * @returns {?boolean}       Whether the size exceeds the site maximum
  */
 export function isExceedingSiteMaxUploadSize( item, site ) {

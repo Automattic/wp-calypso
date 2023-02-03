@@ -30,6 +30,8 @@ import {
 	PRODUCT_JETPACK_BOOST_MONTHLY,
 	PRODUCT_JETPACK_SOCIAL_BASIC,
 	PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
+	PRODUCT_JETPACK_SOCIAL_ADVANCED,
+	PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
 	JETPACK_TAG_FOR_VIDEOGRAPHERS,
 	JETPACK_TAG_FOR_ALL_SITES,
 	JETPACK_TAG_FOR_BLOGGERS,
@@ -114,6 +116,10 @@ export const getJetpackProductsShortNames = (): Record< string, TranslateResult 
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: translate( 'Social', {
 			context: 'Jetpack product name',
 		} ),
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: translate( 'Social', { context: 'Jetpack product name' } ),
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: translate( 'Social', {
+			context: 'Jetpack product name',
+		} ),
 	};
 };
 
@@ -152,7 +158,8 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 		},
 	} );
 	const boost = translate( 'Boost' );
-	const social = translate( 'Social', { context: 'Jetpack product name' } );
+	const socialBasic = translate( 'Social Basic', { context: 'Jetpack product name' } );
+	const socialAdvanced = translate( 'Social Advanced (Beta)', { context: 'Jetpack product name' } );
 
 	const text10gb = translate( '%(numberOfGigabytes)dGB', '%(numberOfGigabytes)dGB', {
 		comment:
@@ -209,8 +216,10 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: videoPress,
 		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpam,
 		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpam,
-		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: social,
-		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: social,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialBasic,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialBasic,
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvanced,
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvanced,
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY ]: backupAddon10gb,
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_MONTHLY ]: backupAddon100gb,
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_MONTHLY ]: backupAddon1tb,
@@ -269,6 +278,8 @@ export const getJetpackProductsCallToAction = (): Record< string, TranslateResul
 		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpam,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: social,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: social,
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: social,
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: social,
 	};
 };
 
@@ -287,6 +298,10 @@ export const getJetpackProductsTaglines = (): Record<
 	const antiSpamTagline = translate( 'Block spam automatically' );
 	const videoPressTagLine = translate( 'High-quality, ad-free video for WordPress' );
 	const socialTagLine = translate(
+		'Easily share your website content on your social media channels'
+	);
+	//TODO: fill in the actua value.
+	const socialAdvancedTagLine = translate(
 		'Easily share your website content on your social media channels'
 	);
 	const backupAddonTagLine = translate(
@@ -355,6 +370,8 @@ export const getJetpackProductsTaglines = (): Record<
 		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: { default: videoPressTagLine },
 		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: { default: socialTagLine },
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: { default: socialTagLine },
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: { default: socialAdvancedTagLine },
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: { default: socialAdvancedTagLine },
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY ]: {
 			default: backupAddonTagLine,
 			owned: backupAddonOwnedTagLine,
@@ -475,6 +492,11 @@ export const getJetpackProductsDescriptions = (): Record< string, TranslateResul
 		'Easily share your website content on your social media channels from one place.'
 	);
 
+	//TODO: fill in the right value.
+	const socialAdvancedDescription = translate(
+		'Easily share your website content on your social media channels from one place.'
+	);
+
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDailyDescription,
@@ -498,6 +520,8 @@ export const getJetpackProductsDescriptions = (): Record< string, TranslateResul
 		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpamDescription,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialDescription,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialDescription,
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedDescription,
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedDescription,
 	};
 };
 
@@ -522,6 +546,8 @@ export const getJetpackProductsShortDescriptions = (): Record< string, Translate
 		'Automatically clear spam from your comments and forms.'
 	);
 	const socialShortDescription = translate( 'Write once, post everywhere.' );
+	//TODO: Fill in the right value.
+	const socialAdvancedShortDescription = translate( 'Write once, post everywhere.' );
 
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyShortDescription,
@@ -546,6 +572,8 @@ export const getJetpackProductsShortDescriptions = (): Record< string, Translate
 		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpamShortDescription,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialShortDescription,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialShortDescription,
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedShortDescription,
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedShortDescription,
 	};
 };
 
@@ -574,6 +602,10 @@ export const getJetpackProductsFeaturedDescription = (): Record< string, Transla
 	const socialFeaturedText = translate(
 		'Write once, post everywhere. Easily share your content on social media from WordPress.'
 	);
+	//TODO: fill in the right value.
+	const socialAdvancedFeaturedText = translate(
+		'Write once, post everywhere. Easily share your content on social media from WordPress.'
+	);
 
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyFeaturedText,
@@ -598,6 +630,8 @@ export const getJetpackProductsFeaturedDescription = (): Record< string, Transla
 		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boostFeaturedText,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialFeaturedText,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialFeaturedText,
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedFeaturedText,
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedFeaturedText,
 	};
 };
 export const getJetpackProductsLightboxDescription = (): Record< string, TranslateResult > => {
@@ -625,6 +659,9 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 	const socialLightboxDescription = translate(
 		'Easily share your website content on your social media channels from one place.'
 	);
+	const socialAdvancedLightboxDescription = translate(
+		'Easily share your website content on your social media channels from one place. Enjoy using the advanced plan for half price over the next year while we continue to develop the features.'
+	);
 
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyLightboxDescription,
@@ -649,6 +686,8 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boostLightboxDescription,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialLightboxDescription,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialLightboxDescription,
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedLightboxDescription,
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedLightboxDescription,
 	};
 };
 
@@ -742,12 +781,24 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Optimize CSS loading' ),
 		translate( 'Lazy image loading' ),
 	];
-	const socialIncludesInfo = [
+	const socialBasicIncludesInfo = [
 		translate( 'Automatically share your posts and products on social media' ),
 		translate( 'Post to multiple channels at once' ),
 		translate( 'Manage all of your channels from a single hub' ),
 		translate( 'Scheduled posts' ),
 		translate( 'Share to Twitter, Facebook, LinkedIn, and Tumblr' ),
+	];
+	const socialAdvancedIncludesInfo = [
+		translate( 'Automatically share your posts and products on social media' ),
+		translate( 'Post to multiple channels at once' ),
+		translate( 'Manage all of your channels from a single hub' ),
+		translate( 'Scheduled posts' ),
+		translate( 'Share to Twitter, Facebook, LinkedIn, and Tumblr' ),
+		translate( 'Engagement Optimizer' ),
+		translate( 'Recycle content' ),
+		translate( 'Coming soon: Image generator' ),
+		translate( 'Coming soon: Multi-image sharing' ),
+		translate( 'Coming soon: Video sharing' ),
 	];
 
 	return {
@@ -771,8 +822,10 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: searchIncludesInfo,
 		[ PRODUCT_JETPACK_BOOST ]: boostIncludesInfo,
 		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boostIncludesInfo,
-		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialIncludesInfo,
-		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialIncludesInfo,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialBasicIncludesInfo,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialBasicIncludesInfo,
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedIncludesInfo,
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedIncludesInfo,
 	};
 };
 
@@ -830,6 +883,21 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		translate( 'No developer required' ),
 	];
 
+	//TODO: fill in the actual values.
+	const socialAdvancedBenefits = [
+		translate( 'Save time by sharing your posts automatically' ),
+		translate( 'Unlock your growth potential by building a following on social media' ),
+		translate( 'Easy-to-use interface' ),
+		translate( 'No developer required' ),
+		translate( 'Enhance social media engagement with personalized posts' ),
+		translate( 'Repurpose, reuse or republish already published content' ),
+		translate(
+			'Coming soon: Automatically create custom images, saving you hours of tedious work'
+		),
+		translate( 'Coming soon: Share multiple images at once on social media platforms' ),
+		translate( 'Coming soon: Upload and share videos to your social platforms' ),
+	];
+
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupBenefits,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupBenefits,
@@ -853,6 +921,8 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boostBenefits,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialBenefits,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialBenefits,
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedBenefits,
+		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedBenefits,
 	};
 };
 

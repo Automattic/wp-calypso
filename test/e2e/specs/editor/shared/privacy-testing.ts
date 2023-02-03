@@ -48,11 +48,16 @@ export function createPrivacyTests( { visibility }: { visibility: ArticlePrivacy
 			} );
 
 			it( 'Start new page', async function () {
+				// @TODO Consider moving this to EditorPage.
 				editorPage = new EditorPage( page, { target: features.siteType } );
 				await editorPage.visit( 'page' );
 				await editorPage.waitUntilLoaded();
-				const editorIframe = await editorPage.getEditorHandle();
-				const pageTemplateModalComponent = new PageTemplateModalComponent( editorIframe, page );
+
+				const editorWindowLocator = editorPage.getEditorWindowLocator();
+				const pageTemplateModalComponent = new PageTemplateModalComponent(
+					page,
+					editorWindowLocator
+				);
 				await pageTemplateModalComponent.selectBlankPage();
 			} );
 

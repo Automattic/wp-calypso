@@ -40,6 +40,7 @@ export default function HighlightsSection( { siteId }: { siteId: number } ) {
 			onClickLikes={ () => null }
 			onClickViews={ () => null }
 			onClickVisitors={ () => null }
+			className="has-background-color"
 		/>
 	);
 }

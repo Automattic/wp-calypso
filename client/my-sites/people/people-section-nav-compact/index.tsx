@@ -19,14 +19,14 @@ function PeopleSectionNavCompact( props: Props ) {
 
 	const filters = [
 		{
-			id: 'subscribers',
-			title: _( 'Subscribers' ),
-			path: '/people/subscribers/' + site?.slug,
-		},
-		{
 			id: 'team',
 			title: _( 'Team' ),
 			path: '/people/team/' + site?.slug,
+		},
+		{
+			id: 'subscribers',
+			title: _( 'Subscribers' ),
+			path: '/people/subscribers/' + site?.slug,
 		},
 	];
 

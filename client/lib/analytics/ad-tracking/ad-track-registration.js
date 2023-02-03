@@ -61,5 +61,13 @@ export async function adTrackRegistration() {
 		window.pintrk( ...params );
 	}
 
+	// Twitter
+
+	if ( mayWeTrackByTracker( 'twitter' ) ) {
+		const params = [ 'event', 'tw-nvzbs-odfz8' ];
+		debug( 'adTrackRegistration: [Twitter]', params );
+		window.twq( ...params );
+	}
+
 	debug( 'adTrackRegistration: dataLayer:', JSON.stringify( window.dataLayer, null, 2 ) );
 }

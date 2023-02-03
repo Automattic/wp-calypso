@@ -31,7 +31,7 @@ import {
 	hasMarketplaceProduct,
 	isDIFMProduct,
 } from '@automattic/calypso-products';
-import { Button, Card, CompactCard, ProductIcon, Gridicon } from '@automattic/components';
+import { Spinner, Button, Card, CompactCard, ProductIcon, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -52,6 +52,7 @@ import MaterialIcon from 'calypso/components/material-icon';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
+import reinstallPlugins from 'calypso/data/marketplace/reinstall-plugins-api';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
@@ -80,6 +81,7 @@ import {
 import { getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
 import { addQueryArgs } from 'calypso/lib/url';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
 import { PreCancellationDialog } from 'calypso/me/purchases/pre-cancellation-dialog';
 import ProductLink from 'calypso/me/purchases/product-link';
@@ -93,6 +95,7 @@ import {
 	getCurrentUser,
 	getCurrentUserId,
 } from 'calypso/state/current-user/selectors';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import {
 	getSitePurchases,
@@ -168,6 +171,7 @@ class ManagePurchase extends Component {
 		cancelLink: null,
 		isRemoving: false,
 		isCancelSurveyVisible: false,
+		isReinstalling: false,
 	};
 
 	componentDidMount() {
@@ -457,6 +461,11 @@ class ManagePurchase extends Component {
 			translate,
 		} = this.props;
 
+		// If site is in a disconnected state, or the purchase owner has been removed from the site
+		if ( ! site ) {
+			return null;
+		}
+
 		if ( canAutoRenewBeTurnedOff( purchase ) ) {
 			return null;
 		}
@@ -592,15 +601,90 @@ class ManagePurchase extends Component {
 		);
 	}
 
+	handleReinstall = async () => {
+		this.setState( { isReinstalling: true } );
+		const siteId = this.props.purchase.siteId;
+		try {
+			const response = await reinstallPlugins( siteId );
+
+			this.props.successNotice( response.message, { duration: 5000 } );
+		} catch ( error ) {
+			this.props.errorNotice( error.message );
+		} finally {
+			this.setState( { isReinstalling: false } );
+		}
+	};
+
+	renderReinstall() {
+		const { purchase, productsList, translate } = this.props;
+		const { isReinstalling } = this.state;
+		if ( ! ( purchase.active && hasMarketplaceProduct( productsList, purchase.productSlug ) ) ) {
+			return null;
+		}
+
+		return (
+			<CompactCard tagName="a" onClick={ isReinstalling ? null : this.handleReinstall }>
+				{ isReinstalling ? (
+					<>
+						<Spinner className="card__icon" />
+						{ translate( 'Reinstalling…' ) }
+					</>
+				) : (
+					<>
+						<MaterialIcon icon="build" className="card__icon" />
+						{ translate( 'Reinstall' ) }
+					</>
+				) }
+			</CompactCard>
+		);
+	}
+
 	cancelSubscription = () => {
 		this.closeDialog();
 		page.redirect( this.props.purchaseListUrl );
 		return;
 	};
 
+	renderDisconnectedStateWarning() {
+		const { purchase, translate } = this.props;
+
+		const text = translate(
+			'This purchase is no longer connected with %(siteName)s and cannot be removed, please {{button}}contact support{{/button}}',
+			{
+				args: {
+					siteName: purchase.domain,
+				},
+				components: {
+					button: (
+						<button
+							className="purchase-item__link"
+							onClick={ ( event ) => {
+								event.stopPropagation();
+								event.preventDefault();
+								page( CALYPSO_CONTACT );
+							} }
+							title={ translate( 'Contact Support' ) }
+						/>
+					),
+				},
+			}
+		);
+
+		return (
+			<Card className="manage-purchase__disconnected-notice" highlight="error">
+				{ text }
+			</Card>
+		);
+	}
+
 	renderCancelPurchaseNavItem() {
-		const { isAtomicSite, purchase, translate } = this.props;
+		const { isAtomicSite, purchase, site, translate } = this.props;
 		const { id } = purchase;
+
+		// If site is in a disconnected state, or the purchase owner has been removed from the site
+		if ( ! site ) {
+			return this.renderDisconnectedStateWarning();
+		}
 
 		if ( ! canAutoRenewBeTurnedOff( purchase ) ) {
 			return null;
@@ -956,8 +1040,8 @@ class ManagePurchase extends Component {
 								</div>
 							) : (
 								<PlanPrice
-									rawPrice={ getRenewalPrice( purchase ) }
-									productDisplayPrice={ purchase.productDisplayPrice }
+									rawPrice={ purchase.regularPriceInteger }
+									isSmallestUnit
 									currencyCode={ purchase.currencyCode }
 									taxText={ purchase.taxText }
 									isOnSale={ !! purchase.saleAmount }
@@ -997,6 +1081,7 @@ class ManagePurchase extends Component {
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewMonthlyNavItem() }
 						{ ! isJetpackTemporarySite && this.renderUpgradeNavItem() }
 						{ this.renderEditPaymentMethodNavItem() }
+						{ this.renderReinstall() }
 						{ this.renderCancelPurchaseNavItem() }
 						{ this.renderCancelSurvey() }
 						{ ! isJetpackTemporarySite && this.renderRemovePurchaseNavItem() }
@@ -1201,5 +1286,7 @@ export default connect(
 	{
 		handleRenewNowClick,
 		handleRenewMultiplePurchasesClick,
+		errorNotice,
+		successNotice,
 	}
 )( localize( ManagePurchase ) );

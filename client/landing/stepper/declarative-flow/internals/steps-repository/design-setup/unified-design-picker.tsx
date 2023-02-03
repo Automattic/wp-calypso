@@ -18,6 +18,7 @@ import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
+import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import WebPreview from 'calypso/components/web-preview/content';
 import { useSiteVerticalQueryById } from 'calypso/data/site-verticals';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -41,7 +42,6 @@ import {
 import { getCategorizationOptions } from './categories';
 import { DEFAULT_VARIATION_SLUG, RETIRING_DESIGN_SLUGS, STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
-import PremiumGlobalStylesUpgradeModal from './premium-global-styles-upgrade-modal';
 import PreviewToolbar from './preview-toolbar';
 import UpgradeModal from './upgrade-modal';
 import getThemeIdFromDesign from './utils/get-theme-id-from-design';
@@ -51,6 +51,11 @@ import type { StarterDesigns } from '@automattic/data-stores';
 import type { Design, StyleVariation } from '@automattic/design-picker';
 
 const SiteIntent = Onboard.SiteIntent;
+const SITE_ASSEMBLER_AVAILABLE_INTENTS: string[] = [ SiteIntent.Build ];
+
+if ( isEnabled( 'pattern-assembler/write-flow' ) ) {
+	SITE_ASSEMBLER_AVAILABLE_INTENTS.push( SiteIntent.Write );
+}
 
 const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const { goBack, submit, exitFlow } = navigation;
@@ -100,9 +105,12 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 		const blankCanvasDesignOffset = allDesigns.static.designs.findIndex( isBlankCanvasDesign );
 		if ( blankCanvasDesignOffset !== -1 ) {
-			// Extract the blank canvas design first and then insert it into the last one for the build intent
+			// Extract the blank canvas design first and then insert it into the last one for the build and write intents
 			const blankCanvasDesign = allDesigns.static.designs.splice( blankCanvasDesignOffset, 1 );
-			if ( isEnabled( 'signup/design-picker-pattern-assembler' ) && intent === SiteIntent.Build ) {
+			if (
+				isEnabled( 'signup/design-picker-pattern-assembler' ) &&
+				SITE_ASSEMBLER_AVAILABLE_INTENTS.includes( intent )
+			) {
 				allDesigns.static.designs.push( ...blankCanvasDesign );
 			}
 		}
@@ -279,9 +287,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	const shouldUpgrade =
 		( selectedDesign?.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme ) ||
-		( isEnabled( 'themes/plugin-bundling' ) &&
-			! isPluginBundleEligible &&
-			isBundledWithWooCommerce );
+		( ! isPluginBundleEligible && isBundledWithWooCommerce );
 
 	const [ showUpgradeModal, setShowUpgradeModal ] = useState( false );
 
@@ -320,7 +326,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		);
 
 		let plan;
-		if ( isEnabled( 'themes/plugin-bundling' ) && themeHasWooCommerce ) {
+		if ( themeHasWooCommerce ) {
 			plan = 'business-bundle';
 		} else {
 			plan = isEligibleForProPlan && isEnabled( 'plans/pro-plan' ) ? 'pro' : 'premium';

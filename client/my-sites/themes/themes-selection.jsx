@@ -24,6 +24,7 @@ import {
 	prependThemeFilterKeys,
 } from 'calypso/state/themes/selectors';
 import { trackClick } from './helpers';
+import SearchThemesTracks from './search-themes-tracks';
 import './themes-selection.scss';
 
 class ThemesSelection extends Component {
@@ -106,8 +107,32 @@ class ThemesSelection extends Component {
 	};
 
 	onStyleVariationClick = ( themeId, resultsRank, variation ) => {
+		const { query, filterString } = this.props;
+		const search_taxonomies = filterString;
+		const search_term = search_taxonomies + ( query.search || '' );
 		if ( ! this.props.isThemeActive( themeId ) ) {
 			this.recordSearchResultsClick( themeId, resultsRank, 'style_variation', variation?.slug );
+		}
+
+		const tracksProps = {
+			search_term: search_term || null,
+			search_taxonomies,
+			theme: themeId,
+			results_rank: resultsRank + 1,
+			page_number: query.page,
+			theme_on_page: parseInt( ( resultsRank + 1 ) / query.number ),
+		};
+
+		if ( variation ) {
+			this.props.recordTracksEvent( 'calypso_themeshowcase_theme_style_variation_click', {
+				...tracksProps,
+				style_variation: variation.slug,
+			} );
+		} else {
+			this.props.recordTracksEvent(
+				'calypso_themeshowcase_theme_style_variation_more_click',
+				tracksProps
+			);
 		}
 
 		const options = this.getOptions(
@@ -119,6 +144,22 @@ class ThemesSelection extends Component {
 		if ( options && options.preview ) {
 			options.preview.action( themeId );
 		}
+	};
+
+	onMoreButtonItemClick = ( themeId, resultsRank, key ) => {
+		const { query, filterString } = this.props;
+		const search_taxonomies = filterString;
+		const search_term = search_taxonomies + ( query.search || '' );
+
+		this.props.recordTracksEvent( 'calypso_themeshowcase_theme_more_button_item_click', {
+			search_term: search_term || null,
+			search_taxonomies,
+			theme: themeId,
+			action: key,
+			results_rank: resultsRank + 1,
+			page_number: query.page,
+			theme_on_page: parseInt( ( resultsRank + 1 ) / query.number ),
+		} );
 	};
 
 	fetchNextPage = ( options ) => {
@@ -186,6 +227,8 @@ class ThemesSelection extends Component {
 	render() {
 		const { source, query, upsellUrl, siteId } = this.props;
 
+		const themes = this.props.customizedThemesList || this.props.themes;
+
 		return (
 			<div className="themes__selection">
 				<QueryThemes query={ query } siteId={ source } />
@@ -194,11 +237,12 @@ class ThemesSelection extends Component {
 				) }
 				<ThemesList
 					upsellUrl={ upsellUrl }
-					themes={ this.props.customizedThemesList || this.props.themes }
+					themes={ themes }
 					wpOrgThemes={ this.props.wpOrgThemes }
 					fetchNextPage={ this.fetchNextPage }
 					recordTracksEvent={ this.props.recordTracksEvent }
 					onMoreButtonClick={ this.recordSearchResultsClick }
+					onMoreButtonItemClick={ this.onMoreButtonItemClick }
 					getButtonOptions={ this.getOptions }
 					onScreenshotClick={ this.onScreenshotClick }
 					onStyleVariationClick={ this.onStyleVariationClick }
@@ -213,6 +257,11 @@ class ThemesSelection extends Component {
 					bookmarkRef={ this.props.bookmarkRef }
 					siteId={ siteId }
 					searchTerm={ query.search }
+				/>
+				<SearchThemesTracks
+					query={ query }
+					themes={ themes }
+					wporgThemes={ this.props.wpOrgThemes }
 				/>
 			</div>
 		);

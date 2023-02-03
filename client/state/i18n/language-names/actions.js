@@ -6,8 +6,8 @@ import 'calypso/state/data-layer/wpcom/i18n/language-names';
 /**
  * Action creator function: I18N_LANGUAGE_NAMES_ADD
  *
- * @param {object} items - list of localized language names
- * @returns {object} action object
+ * @param {Object} items - list of localized language names
+ * @returns {Object} action object
  */
 export const receiveLanguageNames = ( items ) => ( {
 	type: I18N_LANGUAGE_NAMES_ADD,
@@ -17,7 +17,7 @@ export const receiveLanguageNames = ( items ) => ( {
 /**
  * Action creator to request localized language names: I18N_LANGUAGE_NAMES_REQUEST
  *
- * @returns {object} action object
+ * @returns {Object} action object
  */
 export const requestLanguageNames = () => {
 	return {

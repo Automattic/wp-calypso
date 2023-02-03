@@ -84,7 +84,11 @@
 				padding: 8px 12px;
 				font-size: $font-body-small;
 				line-height: 20px;
-				color: var(--color-neutral-60);
+
+				&:hover {
+					color: var(--color-neutral-60);
+					background-color: var(--color-surface);
+				}
 
 				@media ( max-width: $break-medium ) {
 					padding: 8px 0;
@@ -93,18 +97,18 @@
 				@media ( max-width: $break-mobile ) {
 					padding: 8px;
 				}
-
-				&:hover {
-					color: var(--color-neutral-60);
-					background-color: var(--color-surface);
-				}
 			}
 
-			&.is-selected {
-				border-bottom-color: var(--color-neutral-100);
-
+			@include breakpoint-deprecated( ">480px" ) {
 				.section-nav-tab__link {
-					color: var(--color-neutral-100);
+					color: var(--color-neutral-60);
+				}
+				&.is-selected {
+					border-bottom-color: var(--color-neutral-100);
+
+					.section-nav-tab__link {
+						color: var(--color-neutral-100);
+					}
 				}
 			}
 		}

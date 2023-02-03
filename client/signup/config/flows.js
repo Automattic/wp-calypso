@@ -1,4 +1,7 @@
 import config from '@automattic/calypso-config';
+import { BLANK_CANVAS_DESIGN } from '@automattic/design-picker';
+import { SITE_ASSEMBLER_FLOW } from '@automattic/onboarding';
+import { isDesktop } from '@automattic/viewport';
 import { get, includes, reject } from 'lodash';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import { getQueryArgs } from 'calypso/lib/query-args';
@@ -107,12 +110,25 @@ function getThankYouNoSiteDestination() {
 	return `/checkout/thank-you/no-site`;
 }
 
-function getChecklistThemeDestination( { siteSlug, themeParameter } ) {
+function getChecklistThemeDestination( { siteSlug, themeParameter, destinationFlowParameter } ) {
+	const canGoToAssemblerFlow = isDesktop();
+
 	if (
-		themeParameter === 'blank-canvas-3' &&
+		destinationFlowParameter === SITE_ASSEMBLER_FLOW &&
+		themeParameter === BLANK_CANVAS_DESIGN.slug &&
 		config.isEnabled( 'pattern-assembler/logged-out-showcase' )
 	) {
-		return `/setup/site-setup/patternAssembler?siteSlug=${ siteSlug }`;
+		if ( canGoToAssemblerFlow ) {
+			return addQueryArgs(
+				{
+					theme: themeParameter,
+					siteSlug: siteSlug,
+				},
+				`/setup/site-assembler`
+			);
+		}
+
+		return `/site-editor/${ siteSlug }`;
 	}
 	return `/home/${ siteSlug }`;
 }

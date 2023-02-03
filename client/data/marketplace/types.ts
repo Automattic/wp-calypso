@@ -86,3 +86,7 @@ export type SearchParams = {
 	pageSize: number;
 	locale: string;
 };
+
+export type ReinstallPluginsResponse = {
+	message: string;
+};

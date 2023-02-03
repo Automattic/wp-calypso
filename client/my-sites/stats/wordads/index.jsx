@@ -1,10 +1,11 @@
+import config from '@automattic/calypso-config';
 import { Icon, chartBar, trendingUp } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize, translate, numberFormat } from 'i18n-calypso';
 import { find } from 'lodash';
 import moment from 'moment';
 import page from 'page';
-import { parse as parseQs, stringify as stringifyQs } from 'qs';
+import { stringify as stringifyQs } from 'qs';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
@@ -25,21 +26,16 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
+import PromoCards from '../promo-cards';
 import DatePicker from '../stats-date-picker';
 import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
 import WordAdsChartTabs from '../wordads-chart-tabs';
 import WordAdsEarnings from './earnings';
+import HighlightsSection from './highlights-section';
 
 import './style.scss';
 import 'calypso/my-sites/earn/ads/style.scss';
-
-function updateQueryString( query = {} ) {
-	return {
-		...parseQs( window.location.search.substring( 1 ) ),
-		...query,
-	};
-}
 
 const formatCurrency = ( value ) => {
 	return '$' + numberFormat( value, 2 );
@@ -115,8 +111,9 @@ class WordAds extends Component {
 
 	barClick = ( bar ) => {
 		this.props.recordGoogleEvent( 'WordAds Stats', 'Clicked Chart Bar' );
-		const updatedQs = stringifyQs( updateQueryString( { startDate: bar.data.period } ) );
-		page.redirect( `${ window.location.pathname }?${ updatedQs }` );
+		const updatedQs = stringifyQs( { ...this.props.context.query, startDate: bar.data.period } );
+
+		page.redirect( `${ this.props.context.pathname }?${ updatedQs }` );
 	};
 
 	onChangeLegend = ( activeLegend ) => this.setState( { activeLegend } );
@@ -125,8 +122,8 @@ class WordAds extends Component {
 		if ( ! tab.loading && tab.attr !== this.state.chartTab ) {
 			this.props.recordGoogleEvent( 'WordAds Stats', 'Clicked ' + titlecase( tab.attr ) + ' Tab' );
 			// switch the tab by navigating to route with updated query string
-			const updatedQs = stringifyQs( updateQueryString( { tab: tab.attr } ) );
-			page.show( `${ window.location.pathname }?${ updatedQs }` );
+			const updatedQs = stringifyQs( { ...this.props.context.query, tab: tab.attr } );
+			page.show( `${ this.props.context.pathname }?${ updatedQs }` );
 		}
 	};
 
@@ -137,7 +134,8 @@ class WordAds extends Component {
 	};
 
 	render() {
-		const { canAccessAds, canUpgradeToUseWordAds, date, site, siteId, slug } = this.props;
+		const { canAccessAds, canUpgradeToUseWordAds, date, isOdysseyStats, site, siteId, slug } =
+			this.props;
 
 		const { period, endOf } = this.props.period;
 
@@ -204,6 +202,8 @@ class WordAds extends Component {
 								slug={ slug }
 							/>
 
+							<HighlightsSection siteId={ siteId } />
+
 							<div id="my-stats-content" className={ statsWrapperClass }>
 								<>
 									<StatsPeriodHeader>
@@ -249,6 +249,8 @@ class WordAds extends Component {
 								</div>
 							</div>
 
+							<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="ads" slug={ slug } />
+
 							<JetpackColophon />
 						</Fragment>
 					) }
@@ -263,7 +265,9 @@ export default connect(
 	( state ) => {
 		const site = getSelectedSite( state );
 		const siteId = getSelectedSiteId( state );
+		const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 		return {
+			isOdysseyStats,
 			site,
 			siteId,
 			slug: getSelectedSiteSlug( state ),

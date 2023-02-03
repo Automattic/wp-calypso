@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from '@wordpress/element';
 import classnames from 'classnames';
 import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
-import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import {
 	doesThemeBundleSoftwareSet as getDoesThemeBundleSoftwareSet,
 	isExternallyManagedTheme as getIsExternallyManagedTheme,
@@ -26,20 +25,24 @@ interface ThemePreviewModalProps {
 	theme: ThemeWithStyleVariations;
 	previewUrl: string;
 	actionButtons: React.ReactNode;
+	shouldLimitGlobalStyles: boolean;
 	selectedVariation?: StyleVariation;
 	onSelectVariation: ( variation: StyleVariation ) => void;
 	onClickCategory: ( category: Category ) => void;
 	onClose: () => void;
+	recordDeviceClick: ( device: string ) => void;
 }
 
 const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( {
 	theme,
 	previewUrl,
 	actionButtons,
+	shouldLimitGlobalStyles,
 	selectedVariation,
 	onSelectVariation,
 	onClickCategory,
 	onClose,
+	recordDeviceClick,
 } ) => {
 	const siteId = useSelector( getSelectedSiteId ) || -1;
 	const isThemePremium = useSelector( ( state ) => getIsThemePremium( state, theme.id ) );
@@ -52,7 +55,6 @@ const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( {
 	const doesThemeBundleSoftwareSet = useSelector( ( state ) =>
 		getDoesThemeBundleSoftwareSet( state, theme.id )
 	);
-	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( siteId );
 	const [ selectedStyleVariation, setSelectedStyleVariation ] = useState< StyleVariation | null >(
 		selectedVariation || null
 	);
@@ -136,6 +138,7 @@ const ThemePreviewModal: React.FC< ThemePreviewModalProps > = ( {
 						selectedVariation={ selectedStyleVariation }
 						onSelectVariation={ previewDesignVariation }
 						onClickCategory={ onClickCategory }
+						recordDeviceClick={ recordDeviceClick }
 						actionButtons={ actionButtons }
 						showGlobalStylesPremiumBadge={ shouldLimitGlobalStyles }
 					/>

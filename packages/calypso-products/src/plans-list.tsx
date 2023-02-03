@@ -154,6 +154,7 @@ import {
 	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_ECOMMERCE_3_YEARS,
 	PLAN_ECOMMERCE_MONTHLY,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	PLAN_FREE,
 	PLAN_JETPACK_BUSINESS,
@@ -316,6 +317,8 @@ import {
 	FEATURE_PREMIUM_CONTENT_JP,
 	FEATURE_ONE_CLICK_RESTORE_V2,
 	FEATURE_SITE_ACTIVITY_LOG_JP,
+	FEATURE_CLOUD_CRITICAL_CSS,
+	FEATURE_GLOBAL_EDGE_CACHING,
 } from './constants';
 import type {
 	BillingTerm,
@@ -689,12 +692,14 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		},
 	} ),
 } );
+const is2023OnboardingPricingGrid = isEnabled( 'onboarding/2023-pricing-grid' );
 
 const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
 	group: GROUP_WPCOM,
 	type: TYPE_ECOMMERCE,
-	getTitle: () => i18n.translate( 'eCommerce' ),
+	getTitle: () =>
+		is2023OnboardingPricingGrid ? i18n.translate( 'Commerce' ) : i18n.translate( 'eCommerce' ),
 	getAudience: () => i18n.translate( 'Best for online stores' ),
 	getBlogAudience: () => i18n.translate( 'Best for online stores' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for online stores' ),
@@ -1136,6 +1141,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_PLUGINS_THEMES,
 		FEATURE_BANDWIDTH,
+		FEATURE_GLOBAL_EDGE_CACHING,
 		FEATURE_BURST,
 		FEATURE_WAF_V2,
 		FEATURE_CDN,
@@ -1708,6 +1714,7 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 			FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 			FEATURE_JETPACK_VIDEOPRESS,
 			FEATURE_JETPACK_VIDEOPRESS_MONTHLY,
+			FEATURE_CLOUD_CRITICAL_CSS,
 			FEATURE_REPUBLICIZE,
 			FEATURE_ADVANCED_SEO,
 			FEATURE_SEO_PREVIEW_TOOLS,
@@ -2022,6 +2029,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_BUSINESS,
 				PLAN_BUSINESS_2_YEARS,
 				PLAN_WPCOM_PRO_MONTHLY,
+				PLAN_ECOMMERCE_TRIAL_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1021,
 		getStoreSlug: () => PLAN_ECOMMERCE_MONTHLY,
@@ -2050,6 +2058,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_BUSINESS_2_YEARS,
 				PLAN_ECOMMERCE_MONTHLY,
 				PLAN_WPCOM_PRO_MONTHLY,
+				PLAN_ECOMMERCE_TRIAL_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1011,
 		getStoreSlug: () => PLAN_ECOMMERCE,
@@ -2079,6 +2088,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_ECOMMERCE_MONTHLY,
 				PLAN_ECOMMERCE,
 				PLAN_WPCOM_PRO_MONTHLY,
+				PLAN_ECOMMERCE_TRIAL_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1031,
 		getStoreSlug: () => PLAN_ECOMMERCE_2_YEARS,
@@ -2123,6 +2133,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_ECOMMERCE,
 				PLAN_ECOMMERCE_2_YEARS,
 				PLAN_WPCOM_PRO_MONTHLY,
+				PLAN_ECOMMERCE_TRIAL_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1051,
 		getStoreSlug: () => PLAN_ECOMMERCE_3_YEARS,
@@ -2596,4 +2607,18 @@ PLANS_LIST[ PLAN_WPCOM_PRO_MONTHLY ] = {
 	getProductId: () => 1034,
 	getStoreSlug: () => PLAN_WPCOM_PRO_MONTHLY,
 	getPathSlug: () => 'pro-monthly',
+};
+
+PLANS_LIST[ PLAN_ECOMMERCE_TRIAL_MONTHLY ] = {
+	...getDotcomPlanDetails(),
+	type: TYPE_ECOMMERCE,
+	group: GROUP_WPCOM,
+	getProductId: () => 1052,
+	getPathSlug: () => PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	term: TERM_MONTHLY,
+	getBillingTimeFrame: () => i18n.translate( 'free trial' ),
+	getStoreSlug: () => PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	getTitle: () => i18n.translate( 'eCommerce free trial' ),
+	getDescription: () => i18n.translate( 'eCommerce free trial' ),
+	getTagline: () => i18n.translate( 'Get a taste of the world’s most popular eCommerce software.' ),
 };

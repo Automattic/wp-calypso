@@ -22,7 +22,7 @@ const dynamicPluginsApiBase = '/marketplace/products-dynamic';
 const featuredPluginsApiBase = '/plugins/featured';
 const pluginsApiNamespace = 'wpcom/v2';
 
-const WPCOM_PLUGINS_CACHE_VERSION = 1;
+const WPCOM_PLUGINS_CACHE_VERSION = 2;
 const getCacheKey = ( key: string ): QueryKey => [
 	WPCOM_PLUGINS_CACHE_VERSION.toString(),
 	'wpcom-plugins',

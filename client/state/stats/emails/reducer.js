@@ -12,9 +12,9 @@ import { items as itemSchemas } from './schema';
  * Returns the updated requests state after an action has been dispatched. The
  * state maps site ID, post ID and stat keys to the request stats.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const requests = ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -68,19 +68,17 @@ export const requests = ( state = {}, action ) => {
  * Returns the updated items state after an action has been dispatched. The
  * state maps site ID, email ID and stat keys to the value of the stat.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const items = withSchemaValidation( itemSchemas, ( state = {}, action ) => {
-	const checkState = ( actualState, period ) => ( 'hour' === period ? {} : actualState );
-
 	switch ( action.type ) {
 		case EMAIL_STATS_RECEIVE:
 			// eslint-disable-next-line no-case-declarations
 			const { siteId, postId, period, statType } = action;
 
-			return merge( {}, checkState( state, period ), {
+			return merge( {}, state, {
 				[ siteId ]: {
 					[ postId ]: {
 						[ period ]: {

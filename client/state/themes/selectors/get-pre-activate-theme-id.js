@@ -7,7 +7,7 @@ import 'calypso/state/themes/init';
  * will change the homepage of the site, usually,
  * this feature is included in First-Template Themes.
  *
- * @param {object} state   Global state tree
+ * @param {Object} state   Global state tree
  * @returns {string} Theme ID,
  */
 export function getPreActivateThemeId( state ) {

@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { MobilePromoCard } from '@automattic/components';
+import { AppPromoFullWidth } from '@automattic/components';
 import { translate } from 'i18n-calypso';
+import page from 'page';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import blazeDropDownIllustration from 'calypso/assets/images/illustrations/blaze-drop-down.svg';
@@ -13,6 +14,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './style.scss';
 
+const EVENT_ADS_MOBILE_PROMO_VIEW = 'calypso_stats_ads_mobile_cta_jetpack_view';
 const EVENT_TRAFFIC_BLAZE_PROMO_VIEW = 'calypso_stats_traffic_blaze_banner_view';
 const EVENT_TRAFFIC_MOBILE_PROMO_VIEW = 'calypso_stats_traffic_mobile_cta_jetpack_view';
 const EVENT_YOAST_PROMO_VIEW = 'calypso_stats_wordpress_seo_premium_banner_view';
@@ -32,10 +34,14 @@ export default function PromoCards( { isOdysseyStats, slug, pageSlug } ) {
 	);
 	const shouldShowAdvertisingOption = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
 
+	// This is used to show some banner only on annual stats page.
+	const isAnnualStatsPage = page.current.includes( 'annualstats' );
+
 	// Blaze promo is disabled for Odyssey.
-	const showBlazePromo = ! isOdysseyStats && shouldShowAdvertisingOption;
+	const showBlazePromo = isAnnualStatsPage && ! isOdysseyStats && shouldShowAdvertisingOption;
 	// Yoast promo is disabled for Odyssey & self-hosted & non-traffic pages.
-	const showYoastPromo = ! isOdysseyStats && ! jetpackNonAtomic && pageSlug === 'traffic';
+	const showYoastPromo =
+		isAnnualStatsPage && ! isOdysseyStats && ! jetpackNonAtomic && pageSlug === 'traffic';
 
 	const viewEvents = useMemo( () => {
 		const events = [];
@@ -46,6 +52,8 @@ export default function PromoCards( { isOdysseyStats, slug, pageSlug } ) {
 		} else if ( pageSlug === 'annual-insights' ) {
 			showBlazePromo && events.push( EVENT_ANNUAL_BLAZE_PROMO_VIEW );
 			events.push( EVENT_ANNUAL_MOBILE_PROMO_VIEW );
+		} else if ( pageSlug === 'ads' ) {
+			events.push( EVENT_ADS_MOBILE_PROMO_VIEW );
 		}
 		return events;
 	}, [ pageSlug, showBlazePromo, showYoastPromo ] );
@@ -67,7 +75,34 @@ export default function PromoCards( { isOdysseyStats, slug, pageSlug } ) {
 		// Events need to incorporate the page and the click type.
 		// This will allow us to account for integration across different pages.
 		// FORMAT: calypso_stats_PAGE_mobile_cta_EVENT
-		const tracksEventName = `calypso_stats_traffic_mobile_cta_${ event.replaceAll( '-', '_' ) }`;
+		// Current known events across Stats pages are listed below.
+		// This comment will fall out of date if the PromoCards component
+		// is added to any new pages.
+		// Ads:
+		// - calypso_stats_ads_mobile_cta_jetpack_click_a8c
+		// - calypso_stats_ads_mobile_cta_jetpack_click_apple
+		// - calypso_stats_ads_mobile_cta_jetpack_click_google
+		// - calypso_stats_ads_mobile_cta_woo_click_a8c
+		// - calypso_stats_ads_mobile_cta_woo_click_apple
+		// - calypso_stats_ads_mobile_cta_woo_click_google
+		// Annual Insights:
+		// - calypso_stats_annual_insights_mobile_cta_jetpack_click_a8c
+		// - calypso_stats_annual_insights_mobile_cta_jetpack_click_apple
+		// - calypso_stats_annual_insights_mobile_cta_jetpack_click_google
+		// - calypso_stats_annual_insights_mobile_cta_woo_click_a8c
+		// - calypso_stats_annual_insights_mobile_cta_woo_click_apple
+		// - calypso_stats_annual_insights_mobile_cta_woo_click_google
+		// Traffic
+		// - calypso_stats_traffic_mobile_cta_jetpack_click_a8c
+		// - calypso_stats_traffic_mobile_cta_jetpack_click_apple
+		// - calypso_stats_traffic_mobile_cta_jetpack_click_google
+		// - calypso_stats_traffic_mobile_cta_woo_click_a8c
+		// - calypso_stats_traffic_mobile_cta_woo_click_apple
+		// - calypso_stats_traffic_mobile_cta_woo_click_google
+		const tracksEventName = `calypso_stats_${ pageSlug }_mobile_cta_${ event }`.replaceAll(
+			'-',
+			'_'
+		);
 		recordTracksEvent( tracksEventName );
 	};
 
@@ -103,7 +138,7 @@ export default function PromoCards( { isOdysseyStats, slug, pageSlug } ) {
 							href={ `/plugins/wordpress-seo-premium/${ slug }` }
 						/>
 					) }
-					<MobilePromoCard
+					<AppPromoFullWidth
 						className="stats__promo-card-apps"
 						clickHandler={ promoCardDidReceiveClick }
 					/>

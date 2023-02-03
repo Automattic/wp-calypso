@@ -90,7 +90,6 @@ export const getPlansProducts = ( state: State ): PlanProduct[] => {
 
 /**
  * @deprecated  getPrices is deprecated, please use plan.price directly
- *
  * @param _state the state
  * @param _locale the locale
  */

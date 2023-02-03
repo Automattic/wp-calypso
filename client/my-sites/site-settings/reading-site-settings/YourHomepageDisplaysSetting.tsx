@@ -1,11 +1,15 @@
-import { localizeUrl } from '@automattic/i18n-utils';
+import { useLocale, localizeUrl } from '@automattic/i18n-utils';
+import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import useDropdownPagesQuery, { PageNode } from 'calypso/data/dropdown-pages/use-dropdown-pages';
+import useDropdownPagesQuery, {
+	DropdownPagesResponse,
+	PageNode,
+} from 'calypso/data/dropdown-pages/use-dropdown-pages';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const PAGE_TITLE_DEPTH_PADDING = '—'; // em dash
@@ -36,7 +40,9 @@ const insertPageNodeToDropdownPages = (
 	} );
 };
 
-const toFlatDropdownPages = ( pageNodes: PageNode[] ): DropdownPage[] => {
+const toFlatDropdownPages = ( {
+	dropdown_pages: pageNodes,
+}: DropdownPagesResponse ): DropdownPage[] => {
 	const dropdownPages: DropdownPage[] = [];
 	pageNodes.forEach( ( pageNode ) => {
 		insertPageNodeToDropdownPages( pageNode, dropdownPages );
@@ -64,17 +70,21 @@ const YourHomepageDisplaysSetting = ( {
 	disabled,
 	siteId,
 }: YourHomepageDisplaysSettingProps ) => {
+	const { hasTranslation } = useI18n();
+	const locale = useLocale();
 	const translate = useTranslate();
 
-	const { data: pages, isLoading } = useDropdownPagesQuery( siteId, {
+	const { data: pages, isLoading } = useDropdownPagesQuery<
+		ReturnType< typeof toFlatDropdownPages >
+	>( siteId, {
 		select: toFlatDropdownPages,
 	} );
 
 	const handlePageOnFrontChange: React.FormEventHandler = ( { target } ) => {
 		const selectedPageId: string = ( target as HTMLSelectElement ).value;
 		if ( selectedPageId === '' ) {
-			// Default was selected, so we need to set show_on_front to 'posts'
-			onChange?.( { show_on_front: 'posts', page_on_front: '' } );
+			// Default was selected, so we need to set show_on_front to 'posts' and unset page_for_posts.
+			onChange?.( { show_on_front: 'posts', page_on_front: '', page_for_posts: '' } );
 		} else {
 			onChange?.( { show_on_front: 'page', page_on_front: selectedPageId } );
 		}
@@ -119,11 +129,15 @@ const YourHomepageDisplaysSetting = ( {
 				<FormSelect
 					id="posts-page-select"
 					name="page_for_posts"
-					disabled={ disabled || isLoading || ! pages?.length }
+					disabled={ disabled || isLoading || ! pages?.length || page_on_front === '' }
 					value={ page_for_posts }
 					onChange={ handlePageForPostsChange }
 				>
-					<option value="">{ translate( '—— Select ——' ) }</option>
+					<option value="">
+						{ locale.startsWith( 'en' ) || hasTranslation( '—— None ——' )
+							? translate( '—— None ——' )
+							: translate( '—— Select ——' ) }
+					</option>
 					{ pages?.map( ( page ) => {
 						return (
 							<option

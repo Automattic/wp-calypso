@@ -6,24 +6,24 @@ export default { title: 'tour-kit' };
 
 const References = () => {
 	return (
-		<div className={ 'storybook__tourkit-references' }>
-			<div className={ 'storybook__tourkit-references-container' }>
+		<div className="storybook__tourkit-references">
+			<div className="storybook__tourkit-references-container">
 				<div
 					style={ { resize: 'both', overflow: 'auto' } }
-					className={ 'storybook__tourkit-references-a' }
+					className="storybook__tourkit-references-a"
 				>
 					<p>Reference A</p>
 				</div>
-				<div className={ 'storybook__tourkit-references-b' }>
+				<div className="storybook__tourkit-references-b">
 					<p>Reference B</p>
 					<div style={ { display: 'grid', placeItems: 'center' } }>
 						<input style={ { margin: 'auto', display: 'block' } }></input>
 					</div>
 				</div>
-				<div className={ 'storybook__tourkit-references-c' }>
+				<div className="storybook__tourkit-references-c">
 					<p>Reference C</p>
 				</div>
-				<div className={ 'storybook__tourkit-references-d' }>
+				<div className="storybook__tourkit-references-d">
 					<p>Reference D</p>
 				</div>
 			</div>
@@ -184,4 +184,4 @@ export const AutoScroll = () => (
 	</>
 );
 
-export const Placement = () => <StoryTour placement={ 'left' } />;
+export const Placement = () => <StoryTour placement="left" />;

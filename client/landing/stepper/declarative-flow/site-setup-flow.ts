@@ -5,6 +5,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { addQueryArgs } from 'calypso/lib/route';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
@@ -43,7 +44,6 @@ import ProcessingStep, { ProcessingResult } from './internals/steps-repository/p
 import SiteOptions from './internals/steps-repository/site-options';
 import SiteVertical from './internals/steps-repository/site-vertical';
 import StoreAddress from './internals/steps-repository/store-address';
-import StoreFeatures from './internals/steps-repository/store-features';
 import WooConfirm from './internals/steps-repository/woo-confirm';
 import WooInstallPlugins from './internals/steps-repository/woo-install-plugins';
 import WooTransfer from './internals/steps-repository/woo-transfer';
@@ -60,6 +60,10 @@ const WRITE_INTENT_DEFAULT_THEME_STYLE_VARIATION = 'white';
 const SiteIntent = Onboard.SiteIntent;
 const SiteGoal = Onboard.SiteGoal;
 
+function isLaunchpadIntent( intent: string ) {
+	return intent === SiteIntent.Write || intent === SiteIntent.Build;
+}
+
 const siteSetupFlow: Flow = {
 	name: 'site-setup',
 
@@ -73,7 +77,6 @@ const siteSetupFlow: Flow = {
 			{ slug: 'patternAssembler', component: PatternAssembler },
 			{ slug: 'bloggerStartingPoint', component: StartingPointStep },
 			{ slug: 'courses', component: CoursesStep },
-			{ slug: 'storeFeatures', component: StoreFeatures },
 			{ slug: 'import', component: ImportStep },
 			...( isEnabled( 'onboarding/import-light' )
 				? [ { slug: 'importLight', component: ImportLight } ]
@@ -138,10 +141,11 @@ const siteSetupFlow: Flow = {
 		const storeType = useSelect( ( select ) => select( ONBOARD_STORE ).getStoreType() );
 		const { setPendingAction, setStepProgress, resetOnboardStoreWithSkipFlags } =
 			useDispatch( ONBOARD_STORE );
-		const { setIntentOnSite, setGoalsOnSite, setThemeOnSite } = useDispatch( SITE_STORE );
+		const { setIntentOnSite, setGoalsOnSite, setThemeOnSite, saveSiteSettings } =
+			useDispatch( SITE_STORE );
 		const dispatch = reduxDispatch();
 
-		const flowProgress = useSiteSetupFlowProgress( currentStep, intent, storeType );
+		const flowProgress = useSiteSetupFlowProgress( currentStep, intent );
 
 		if ( flowProgress ) {
 			setStepProgress( flowProgress );
@@ -161,7 +165,7 @@ const siteSetupFlow: Flow = {
 					if ( ! siteSlug ) {
 						return;
 					}
-
+					const siteId = site?.ID;
 					const pendingActions = [
 						setIntentOnSite( siteSlug, intent ),
 						setGoalsOnSite( siteSlug, goals ),
@@ -176,7 +180,19 @@ const siteSetupFlow: Flow = {
 						);
 					}
 
-					Promise.all( pendingActions ).then( () => window.location.assign( to ) );
+					// Add Launchpad to selected intents in General Onboarding
+					if ( isLaunchpadIntent( intent ) && typeof siteId === 'number' ) {
+						pendingActions.push( saveSiteSettings( siteId, { launchpad_screen: 'full' } ) );
+					}
+
+					let redirectionUrl = to;
+
+					// Forcing cache invalidation to retrieve latest launchpad_screen option value
+					if ( isLaunchpadIntent( intent ) ) {
+						redirectionUrl = addQueryArgs( { showLaunchpad: true }, to );
+					}
+
+					Promise.all( pendingActions ).then( () => window.location.assign( redirectionUrl ) );
 				} );
 			} );
 
@@ -197,11 +213,7 @@ const siteSetupFlow: Flow = {
 						 *
 						 * Instead of having the user manually choose between "Start simple" and "More power", we let them select a theme and use the theme choice to determine which path to take.
 						 */
-						if ( isEnabled( 'themes/plugin-bundling' ) ) {
-							return navigate( 'designSetup' );
-						}
-
-						return navigate( 'storeFeatures' );
+						return navigate( 'designSetup' );
 					}
 					return navigate( 'bloggerStartingPoint' );
 				}
@@ -257,7 +269,6 @@ const siteSetupFlow: Flow = {
 					// If so, send them to the plugin-bundle flow.
 					const theme_software_set = currentTheme?.taxonomies?.theme_software_set;
 					if (
-						isEnabled( 'themes/plugin-bundling' ) &&
 						theme_software_set &&
 						theme_software_set.length > 0 &&
 						isPluginBundleEligible &&
@@ -266,6 +277,9 @@ const siteSetupFlow: Flow = {
 						return exitFlow( `/setup/plugin-bundle/?siteSlug=${ siteSlug }` );
 					}
 
+					if ( isLaunchpadIntent( intent ) ) {
+						return exitFlow( `/setup/${ intent }/launchpad?siteSlug=${ siteSlug }` );
+					}
 					return exitFlow( `/home/${ siteSlug }` );
 				}
 
@@ -326,23 +340,6 @@ const siteSetupFlow: Flow = {
 							return navigate( submittedIntent );
 						}
 					}
-				}
-
-				case 'storeFeatures': {
-					const storeType = params[ 0 ];
-					if ( storeType === 'power' ) {
-						if ( isEnabled( 'stepper-woocommerce-poc' ) ) {
-							return navigate( 'storeAddress' );
-						}
-
-						const args = new URLSearchParams();
-						args.append( 'back_to', `/start/setup-site/store-features?siteSlug=${ siteSlug }` );
-						args.append( 'siteSlug', siteSlug as string );
-						return exitFlow( `/start/woocommerce-install?${ args.toString() }` );
-					} else if ( storeType === 'simple' ) {
-						return navigate( 'designSetup' );
-					}
-					return navigate( 'bloggerStartingPoint' );
 				}
 
 				case 'storeAddress':
@@ -444,11 +441,8 @@ const siteSetupFlow: Flow = {
 				case 'intent':
 					return navigate( 'vertical' );
 
-				case 'storeFeatures':
-					return navigate( 'options' );
-
 				case 'storeAddress':
-					return navigate( 'storeFeatures' );
+					return navigate( 'options' );
 
 				case 'businessInfo':
 					return navigate( 'storeAddress' );
@@ -461,13 +455,7 @@ const siteSetupFlow: Flow = {
 
 				case 'designSetup':
 					if ( intent === 'sell' ) {
-						// For theme/plugin bundling, we skip the store features step because we use the theme to decide if they're going through "Start simple" or "More power"
-						if ( isEnabled( 'themes/plugin-bundling' ) ) {
-							return navigate( 'options' );
-						}
-
-						// this means we came from sell => store-features => start simple, we go back to store features
-						return navigate( 'storeFeatures' );
+						return navigate( 'options' );
 					} else if ( intent === 'write' ) {
 						// this means we came from write => blogger staring point => choose a design
 						return navigate( 'bloggerStartingPoint' );
@@ -531,7 +519,7 @@ const siteSetupFlow: Flow = {
 			switch ( currentStep ) {
 				case 'options':
 					if ( intent === 'sell' ) {
-						return navigate( 'storeFeatures' );
+						return navigate( 'designSetup' );
 					}
 					return navigate( 'bloggerStartingPoint' );
 

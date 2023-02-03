@@ -47,4 +47,3 @@ The post ID for which the email stat should be requested.
 </table>
 
 The stats fields being requested.
-

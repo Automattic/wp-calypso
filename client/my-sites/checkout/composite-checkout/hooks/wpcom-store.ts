@@ -5,12 +5,14 @@ import {
 	getInitialWpcomStoreState,
 	managedContactDetailsUpdaters as updaters,
 } from '../types/wpcom-store-state';
+import type { DispatchFromMap, SelectFromMap } from '@automattic/data-stores';
 import type { DomainContactDetails } from '@automattic/shopping-cart';
 import type {
 	PossiblyCompleteDomainContactDetails,
 	WpcomStoreState,
 	ManagedContactDetails,
 	ManagedContactDetailsErrors,
+	VatDetails,
 } from '@automattic/wpcom-checkout';
 
 type WpcomStoreAction =
@@ -32,13 +34,102 @@ type WpcomStoreAction =
 	| {
 			type: 'LOAD_DOMAIN_CONTACT_DETAILS_FROM_CACHE';
 			payload: PossiblyCompleteDomainContactDetails;
-	  };
+	  }
+	| { type: 'SET_VAT_DETAILS'; payload: VatDetails };
 
-export function useWpcomStore(): void {
+export const STORE_KEY = 'wpcom-checkout';
+
+export interface WpcomCheckoutStore extends ReturnType< typeof registerStore > {
+	getState: () => WpcomStoreState;
+}
+
+export type WpcomCheckoutStoreSelectors = SelectFromMap< typeof selectors >;
+export type WpcomCheckoutStoreActions = DispatchFromMap< typeof actions >;
+
+declare module '@wordpress/data' {
+	function select( key: typeof STORE_KEY ): WpcomCheckoutStoreSelectors | undefined;
+	function dispatch( key: typeof STORE_KEY ): WpcomCheckoutStoreActions | undefined;
+}
+
+const actions = {
+	applyDomainContactValidationResults( payload: ManagedContactDetailsErrors ): WpcomStoreAction {
+		return { type: 'APPLY_DOMAIN_CONTACT_VALIDATION_RESULTS', payload };
+	},
+
+	clearDomainContactErrorMessages(): WpcomStoreAction {
+		return { type: 'CLEAR_DOMAIN_CONTACT_ERROR_MESSAGES' };
+	},
+
+	setRecaptchaClientId( payload: number ): WpcomStoreAction {
+		return { type: 'SET_RECAPTCHA_CLIENT_ID', payload };
+	},
+
+	updateDomainContactFields( payload: DomainContactDetails ): WpcomStoreAction {
+		return { type: 'UPDATE_DOMAIN_CONTACT_FIELDS', payload };
+	},
+
+	updatePhone( payload: string ): WpcomStoreAction {
+		return { type: 'UPDATE_PHONE', payload };
+	},
+
+	updatePhoneNumberCountry( payload: string ): WpcomStoreAction {
+		return { type: 'UPDATE_PHONE_NUMBER_COUNTRY', payload };
+	},
+
+	updatePostalCode( payload: string ): WpcomStoreAction {
+		return { type: 'UPDATE_POSTAL_CODE', payload };
+	},
+
+	updateEmail( payload: string ): WpcomStoreAction {
+		return { type: 'UPDATE_EMAIL', payload };
+	},
+
+	updateCountryCode( payload: string ): WpcomStoreAction {
+		return { type: 'UPDATE_COUNTRY_CODE', payload };
+	},
+
+	touchContactFields(): WpcomStoreAction {
+		return { type: 'TOUCH_CONTACT_DETAILS' };
+	},
+
+	updateVatId( payload: string ): WpcomStoreAction {
+		return { type: 'UPDATE_VAT_ID', payload: payload };
+	},
+
+	loadCountryCodeFromGeoIP( payload: string ): WpcomStoreAction {
+		return { type: 'LOAD_COUNTRY_CODE_FROM_GEOIP', payload };
+	},
+
+	loadDomainContactDetailsFromCache(
+		payload: PossiblyCompleteDomainContactDetails
+	): WpcomStoreAction {
+		return { type: 'LOAD_DOMAIN_CONTACT_DETAILS_FROM_CACHE', payload };
+	},
+
+	setVatDetails( payload: VatDetails ): WpcomStoreAction {
+		return { type: 'SET_VAT_DETAILS', payload };
+	},
+};
+
+const selectors = {
+	getContactInfo( state: WpcomStoreState ): ManagedContactDetails {
+		return state.contactDetails;
+	},
+
+	getRecaptchaClientId( state: WpcomStoreState ): number {
+		return state.recaptchaClientId;
+	},
+
+	getVatDetails( state: WpcomStoreState ): VatDetails | undefined {
+		return state.vatDetails;
+	},
+};
+
+export function useWpcomStore(): WpcomCheckoutStore | undefined {
 	// Only register once
 	const registerIsComplete = useRef< boolean >( false );
 	if ( registerIsComplete.current ) {
-		return;
+		return undefined;
 	}
 	registerIsComplete.current = true;
 
@@ -86,82 +177,26 @@ export function useWpcomStore(): void {
 		}
 	}
 
-	registerStore( 'wpcom-checkout', {
+	function vatDetailsReducer( state: VatDetails, action: WpcomStoreAction ): VatDetails {
+		switch ( action.type ) {
+			case 'SET_VAT_DETAILS':
+				return action.payload;
+			default:
+				return state;
+		}
+	}
+
+	return registerStore( STORE_KEY, {
 		reducer( state: WpcomStoreState | undefined, action: WpcomStoreAction ): WpcomStoreState {
 			const checkedState =
 				state === undefined ? getInitialWpcomStoreState( emptyManagedContactDetails ) : state;
 			return {
 				contactDetails: contactReducer( checkedState.contactDetails, action ),
 				recaptchaClientId: recaptchaClientIdReducer( checkedState.recaptchaClientId, action ),
+				vatDetails: vatDetailsReducer( checkedState.vatDetails, action ),
 			};
 		},
-
-		actions: {
-			applyDomainContactValidationResults(
-				payload: ManagedContactDetailsErrors
-			): WpcomStoreAction {
-				return { type: 'APPLY_DOMAIN_CONTACT_VALIDATION_RESULTS', payload };
-			},
-
-			clearDomainContactErrorMessages(): WpcomStoreAction {
-				return { type: 'CLEAR_DOMAIN_CONTACT_ERROR_MESSAGES' };
-			},
-
-			setRecaptchaClientId( payload: number ): WpcomStoreAction {
-				return { type: 'SET_RECAPTCHA_CLIENT_ID', payload };
-			},
-
-			updateDomainContactFields( payload: DomainContactDetails ): WpcomStoreAction {
-				return { type: 'UPDATE_DOMAIN_CONTACT_FIELDS', payload };
-			},
-
-			updatePhone( payload: string ): WpcomStoreAction {
-				return { type: 'UPDATE_PHONE', payload };
-			},
-
-			updatePhoneNumberCountry( payload: string ): WpcomStoreAction {
-				return { type: 'UPDATE_PHONE_NUMBER_COUNTRY', payload };
-			},
-
-			updatePostalCode( payload: string ): WpcomStoreAction {
-				return { type: 'UPDATE_POSTAL_CODE', payload };
-			},
-
-			updateEmail( payload: string ): WpcomStoreAction {
-				return { type: 'UPDATE_EMAIL', payload };
-			},
-
-			updateCountryCode( payload: string ): WpcomStoreAction {
-				return { type: 'UPDATE_COUNTRY_CODE', payload };
-			},
-
-			touchContactFields(): WpcomStoreAction {
-				return { type: 'TOUCH_CONTACT_DETAILS' };
-			},
-
-			updateVatId( payload: string ): WpcomStoreAction {
-				return { type: 'UPDATE_VAT_ID', payload: payload };
-			},
-
-			loadCountryCodeFromGeoIP( payload: string ): WpcomStoreAction {
-				return { type: 'LOAD_COUNTRY_CODE_FROM_GEOIP', payload };
-			},
-
-			loadDomainContactDetailsFromCache(
-				payload: PossiblyCompleteDomainContactDetails
-			): WpcomStoreAction {
-				return { type: 'LOAD_DOMAIN_CONTACT_DETAILS_FROM_CACHE', payload };
-			},
-		},
-
-		selectors: {
-			getContactInfo( state: WpcomStoreState ): ManagedContactDetails {
-				return state.contactDetails;
-			},
-
-			getRecaptchaClientId( state: WpcomStoreState ): number {
-				return state.recaptchaClientId;
-			},
-		},
+		actions,
+		selectors,
 	} );
 }

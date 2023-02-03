@@ -1,5 +1,4 @@
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
@@ -29,7 +28,6 @@ const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
 
 const AutomatedCopySite: Step = function AutomatedCopySite( { navigation } ) {
 	const { submit } = navigation;
-	const { __ } = useI18n();
 	const site = useSite();
 	const urlQueryParams = useQuery();
 	const siteSlug = urlQueryParams.get( 'siteSlug' );
@@ -38,25 +36,20 @@ const AutomatedCopySite: Step = function AutomatedCopySite( { navigation } ) {
 		sourceSlug ? select( SITE_STORE ).getSite( sourceSlug ) : undefined
 	);
 	const sourceSiteId = sourceSite?.ID;
-	const { setPendingAction, setProgress, setProgressTitle } = useDispatch( ONBOARD_STORE );
+	const { setPendingAction, setProgress } = useDispatch( ONBOARD_STORE );
 	const { requestLatestAtomicTransfer } = useDispatch( SITE_STORE );
 	const { getSiteLatestAtomicTransfer, getSiteLatestAtomicTransferError } = useSelect( ( select ) =>
 		select( SITE_STORE )
 	);
 
-	const progressTitle = __( 'Copying site' );
-
 	useEffect( () => {
 		if ( ! site?.ID || ! sourceSiteId ) {
 			return;
 		}
-		setProgressTitle( progressTitle );
-		setPendingAction( async () => {
-			const siteId = site.ID;
-			setProgress( 0 );
+		async function initCopySite() {
 			try {
 				await wpcom.req.post( {
-					path: `/sites/${ siteId }/copy-from-site`,
+					path: `/sites/${ site?.ID }/copy-from-site`,
 					apiNamespace: 'wpcom/v2',
 					body: {
 						source_blog_id: sourceSiteId,
@@ -65,14 +58,17 @@ const AutomatedCopySite: Step = function AutomatedCopySite( { navigation } ) {
 			} catch ( _error ) {
 				throw new Error( 'Error copying site' );
 			}
-
+		}
+		initCopySite();
+		setPendingAction( async () => {
+			setProgress( 0 );
 			let stopPollingTransfer = false;
 
 			while ( ! stopPollingTransfer ) {
 				await wait( TIME_CHECK_TRANSFER_STATUS );
-				await requestLatestAtomicTransfer( siteId );
-				const transfer = getSiteLatestAtomicTransfer( siteId );
-				const transferError = getSiteLatestAtomicTransferError( siteId );
+				await requestLatestAtomicTransfer( site.ID );
+				const transfer = getSiteLatestAtomicTransfer( site.ID );
+				const transferError = getSiteLatestAtomicTransferError( site.ID );
 				const transferStatus = transfer?.status;
 				const isTransferringStatusFailed = transferError && transferError?.status >= 500;
 
@@ -105,16 +101,14 @@ const AutomatedCopySite: Step = function AutomatedCopySite( { navigation } ) {
 
 		submit?.();
 	}, [
-		progressTitle,
-		sourceSiteId,
-		siteSlug,
-		setProgressTitle,
 		getSiteLatestAtomicTransfer,
 		getSiteLatestAtomicTransferError,
 		requestLatestAtomicTransfer,
 		setPendingAction,
 		setProgress,
-		site,
+		site?.ID,
+		siteSlug,
+		sourceSiteId,
 		submit,
 	] );
 

@@ -7,6 +7,7 @@ import {
 	PLAN_TRIENNIAL_PERIOD,
 } from '@automattic/calypso-products';
 import { CompactCard, Gridicon } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
 import { ExternalLink } from '@wordpress/components';
 import { Icon, warning as warningIcon } from '@wordpress/icons';
 import classNames from 'classnames';
@@ -97,7 +98,27 @@ class PurchaseItem extends Component {
 			if ( isJetpack ) {
 				return (
 					<span className="purchase-item__is-error">
-						{ translate( 'Disconnected from WordPress.com' ) }
+						{ translate(
+							'You no longer have access to this site. {{button}}Contact support{{/button}}',
+							{
+								args: {
+									site: name,
+								},
+								components: {
+									button: (
+										<button
+											className="purchase-item__link purchase-item__link--error"
+											onClick={ ( event ) => {
+												event.stopPropagation();
+												event.preventDefault();
+												page( CALYPSO_CONTACT );
+											} }
+											title={ translate( 'Contact Support' ) }
+										/>
+									),
+								},
+							}
+						) }
 					</span>
 				);
 			}
@@ -153,7 +174,10 @@ class PurchaseItem extends Component {
 					{
 						args: {
 							date: expiry.format( 'LL' ),
-							amount: purchase.priceText,
+							amount: formatCurrency( purchase.priceInteger, purchase.currencyCode, {
+								isSmallestUnit: true,
+								stripZeros: true,
+							} ),
 						},
 						components: {
 							span: <span className="purchase-item__date" />,
@@ -221,7 +245,10 @@ class PurchaseItem extends Component {
 			if ( purchase.billPeriodDays ) {
 				const translateOptions = {
 					args: {
-						amount: purchase.priceText,
+						amount: formatCurrency( purchase.priceInteger, purchase.currencyCode, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ),
 						date: renewDate.format( 'LL' ),
 					},
 					components: {
@@ -278,7 +305,10 @@ class PurchaseItem extends Component {
 
 			return translate( 'Renews at %(amount)s on {{span}}%(date)s{{/span}}', {
 				args: {
-					amount: purchase.priceText,
+					amount: formatCurrency( purchase.priceInteger, purchase.currencyCode, {
+						isSmallestUnit: true,
+						stripZeros: true,
+					} ),
 					date: renewDate.format( 'LL' ),
 				},
 				components: {

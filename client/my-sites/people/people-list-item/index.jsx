@@ -23,10 +23,12 @@ class PeopleListItem extends PureComponent {
 		site: PropTypes.object,
 		invite: PropTypes.object,
 		showStatus: PropTypes.bool,
+		clickableItem: PropTypes.bool,
 		RevokeClearBtn: PropTypes.elementType,
 	};
 
 	static defaultProps = {
+		clickableItem: true,
 		RevokeClearBtn: null,
 	};
 
@@ -60,7 +62,11 @@ class PeopleListItem extends PureComponent {
 	};
 
 	maybeGetCardLink = () => {
-		const { invite, site, type, user } = this.props;
+		const { invite, site, type, user, clickableItem } = this.props;
+
+		if ( ! clickableItem ) {
+			return false;
+		}
 
 		switch ( type ) {
 			case 'invite-details':
@@ -77,6 +83,9 @@ class PeopleListItem extends PureComponent {
 					`/people/subscribers/${ site.slug }/${ subscriberType }-${ user.ID }`
 				);
 			}
+
+			case 'viewer':
+				return `/people/viewers/${ site.slug }/${ user.ID }`;
 
 			default:
 				return this.canLinkToProfile() && `/people/edit/${ site.slug }/${ user.login }`;

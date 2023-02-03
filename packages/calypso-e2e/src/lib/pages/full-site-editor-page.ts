@@ -1,3 +1,4 @@
+import assert from 'assert';
 import { Locator, Page } from 'playwright';
 import {
 	BlockInserter,
@@ -19,6 +20,7 @@ import {
 	OpenInlineInserter,
 	EditorInlineBlockInserterComponent,
 	DimensionsSettings,
+	CookieBannerComponent,
 } from '..';
 import { getCalypsoURL } from '../../data-helper';
 import { getIdFromBlock } from '../../element-helper';
@@ -34,10 +36,12 @@ const selectors = {
 	templateLoadingSpinner: '[aria-label="Block: Template Part"] .components-spinner',
 	closeStylesWelcomeGuideButton:
 		'[aria-label="Welcome to styles"] button[aria-label="Close dialog"]',
+	limitedGlobalStylesModalTryButton: '.wpcom-global-styles-modal__actions button:first-child',
 	// The toast can have double quotes, so we use single quotes here.
 	confirmationToast: ( text: string ) => `.components-snackbar:has-text('${ text }')`,
 	focusedBlock: ( blockSelector: string ) => `${ blockSelector }.is-selected`,
 	parentOfFocusedBlock: ( blockSelector: string ) => `${ blockSelector }.has-child-selected`,
+	limitedGlobalStylesPreSaveNotice: '.wpcom-global-styles-notice',
 };
 
 /**
@@ -60,6 +64,9 @@ export class FullSiteEditorPage {
 	private fullSiteEditorNavSidebarComponent: FullSiteEditorNavSidebarComponent;
 	private templatePartModalComponent: TemplatePartModalComponent;
 	private templatePartListComponent: TemplatePartListComponent;
+	private cookieBannerComponent: CookieBannerComponent;
+
+	private hasCustomStyles = false;
 
 	/**
 	 * Constructs an instance of the page POM class.
@@ -108,6 +115,7 @@ export class FullSiteEditorPage {
 		);
 		this.templatePartModalComponent = new TemplatePartModalComponent( page, this.editor );
 		this.templatePartListComponent = new TemplatePartListComponent( page, this.editor );
+		this.cookieBannerComponent = new CookieBannerComponent( page, this.editor );
 	}
 
 	//#region Visit and Setup
@@ -118,7 +126,9 @@ export class FullSiteEditorPage {
 	 * @param {string} siteHostName Host name of the site, without scheme. (e.g. testsite.wordpress.com)
 	 */
 	async visit( siteHostName: string ): Promise< void > {
-		await this.page.goto( getCalypsoURL( `site-editor/${ siteHostName }` ) );
+		await this.page.goto( getCalypsoURL( `site-editor/${ siteHostName }` ), {
+			timeout: 60 * 1000,
+		} );
 	}
 
 	/**
@@ -137,7 +147,7 @@ export class FullSiteEditorPage {
 	/**
 	 * Does all waiting and initial actions to prepare the site editor for interaction.
 	 *
-	 * @param {object} param0 Keyed object of options.
+	 * @param {Object} param0 Keyed object of options.
 	 * @param {boolean} param0.leaveWithoutSaving Set if we should auto-except dialog about unsaved changes when leaving.
 	 */
 	async prepareForInteraction(
@@ -148,7 +158,9 @@ export class FullSiteEditorPage {
 		} = { leaveWithoutSaving: true }
 	): Promise< void > {
 		await this.waitUntilLoaded();
+
 		await this.editorWelcomeTourComponent.forceDismissWelcomeTour();
+		await this.cookieBannerComponent.acceptCookie();
 
 		if ( leaveWithoutSaving ) {
 			this.page.on( 'dialog', async ( dialog ) => {
@@ -353,12 +365,48 @@ export class FullSiteEditorPage {
 
 	/**
 	 * Save the changes in the full site editor (equivalent of publish).
+	 *
+	 * @param {Object} param0 Keyed options parameter.
+	 * @param {boolean} param0.checkPreSaveNotices Whether the presence of the pre-save notices should be checked.
 	 */
-	async save(): Promise< void > {
+	async save(
+		{ checkPreSaveNotices }: { checkPreSaveNotices: boolean } = { checkPreSaveNotices: false }
+	): Promise< void > {
 		await this.clearExistingSaveConfirmationToast();
 		await this.editorToolbarComponent.saveSiteEditor();
+		if ( checkPreSaveNotices ) {
+			const limitedGlobalStylesPreSaveNotice = this.editor.locator(
+				selectors.limitedGlobalStylesPreSaveNotice
+			);
+			if ( this.hasCustomStyles ) {
+				await limitedGlobalStylesPreSaveNotice.waitFor();
+			} else {
+				const count = await limitedGlobalStylesPreSaveNotice.count();
+				assert.equal( count, 0 );
+			}
+		}
 		await this.fullSiteEditorSavePanelComponent.confirmSave();
 		await this.waitForConfirmationToast( 'Site updated.' );
+	}
+
+	/**
+	 * Open the navigation sidebar.
+	 */
+	async openNavSidebar(): Promise< void > {
+		const openButton = this.editor.locator( 'button[aria-label="Open Navigation Sidebar"]' );
+		const closeButton = this.editor.locator( 'button[aria-label="Open the editor"]' );
+
+		await Promise.race( [ closeButton.waitFor(), openButton.click() ] );
+	}
+
+	/**
+	 * Close the navigation sidebar.
+	 */
+	async closeNavSidebar(): Promise< void > {
+		const openButton = this.editor.locator( 'button[aria-label="Open Navigation Sidebar"]' );
+		const closeButton = this.editor.locator( 'button[aria-label="Open the editor"]' );
+
+		await Promise.race( [ openButton.waitFor(), closeButton.click() ] );
 	}
 
 	/**
@@ -386,7 +434,7 @@ export class FullSiteEditorPage {
 	/**
 	 * Opens the site styles sidebar in the site editor.
 	 *
-	 * @param {object} param0 Keyed options parameter.
+	 * @param {Object} param0 Keyed options parameter.
 	 * @param {boolean} param0.closeWelcomeGuide Set if should close welcome guide on opening.
 	 */
 	async openSiteStyles(
@@ -448,7 +496,7 @@ export class FullSiteEditorPage {
 	 * @param {ColorLocation} colorLocation What part of the site we are updating the color for.
 	 * @param {ColorSettings} colorSettings Settings for the color to set.
 	 */
-	async setGlobalColorStlye(
+	async setGlobalColorStyle(
 		colorLocation: ColorLocation,
 		colorSettings: ColorSettings
 	): Promise< void > {
@@ -495,6 +543,25 @@ export class FullSiteEditorPage {
 		await this.editorPopoverMenuComponent.clickMenuButton( 'Reset to defaults' );
 	}
 
+	/**
+	 * Selects the "Try it out" option on the Limited Global Styles upgrade modal.
+	 */
+	async tryGlobalStyles(): Promise< void > {
+		const locator = this.editor.locator( selectors.limitedGlobalStylesModalTryButton );
+		await locator.click();
+	}
+
+	/**
+	 * Sets a style variation for the site.
+	 * This auto-handles returning to top menu and navigating down.
+	 *
+	 * @param {string} styleVariationName The name of the style variation to set.
+	 */
+	async setStyleVariation( styleVariationName: string ): Promise< void > {
+		await this.editorSiteStylesComponent.setStyleVariation( styleVariationName );
+		this.hasCustomStyles = styleVariationName !== 'Default';
+	}
+
 	//#endregion
 
 	//#region Template Parts
@@ -527,15 +594,15 @@ export class FullSiteEditorPage {
 	/**
 	 * Delete a template part in the site editor.
 	 *
-	 * @param {string} name Name of the template part.
+	 * @param {string[]} names Name of the template part.
 	 */
-	async deleteTemplatePart( name: string ): Promise< void > {
-		if ( ! ( await this.templatePartListComponent.isOpen() ) ) {
-			await this.editorToolbarComponent.openNavSidebar();
-			await this.fullSiteEditorNavSidebarComponent.navigateToTemplateParts();
+	async deleteTemplateParts( names: string[] ): Promise< void > {
+		await this.openNavSidebar();
+		await this.fullSiteEditorNavSidebarComponent.navigateToTemplatePartsManager();
+		for ( const name of names ) {
+			await this.templatePartListComponent.deleteTemplatePart( name );
+			await this.waitForConfirmationToast( `"${ name }" deleted.` );
 		}
-		await this.templatePartListComponent.deleteTemplatePart( name );
-		await this.waitForConfirmationToast( `"${ name }" deleted.` );
 	}
 
 	//#endregion

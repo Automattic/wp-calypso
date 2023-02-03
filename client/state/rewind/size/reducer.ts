@@ -32,7 +32,43 @@ const bytesUsed = (
 	return size.bytesUsed ?? null;
 };
 
+const minDaysOfBackupsAllowed = (
+	state: AppState = null,
+	{ type, size }: AnyAction
+): AppState | number | null => {
+	if ( type !== REWIND_SIZE_SET ) {
+		return state;
+	}
+
+	return size.minDaysOfBackupsAllowed ?? null;
+};
+
+const daysOfBackupsAllowed = (
+	state: AppState = null,
+	{ type, size }: AnyAction
+): AppState | number | null => {
+	if ( type !== REWIND_SIZE_SET ) {
+		return state;
+	}
+
+	return size.daysOfBackupsAllowed ?? null;
+};
+
+const daysOfBackupsSaved = (
+	state: AppState = null,
+	{ type, size }: AnyAction
+): AppState | number | null => {
+	if ( type !== REWIND_SIZE_SET ) {
+		return state;
+	}
+
+	return size.daysOfBackupsSaved ?? null;
+};
+
 export default combineReducers( {
 	requestStatus,
 	bytesUsed,
+	minDaysOfBackupsAllowed,
+	daysOfBackupsAllowed,
+	daysOfBackupsSaved,
 } );

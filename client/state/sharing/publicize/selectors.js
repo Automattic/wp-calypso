@@ -9,7 +9,7 @@ import 'calypso/state/sharing/init';
 /**
  * Returns an array of known connections for the given site ID.
  *
- * @param  {object} state  Global state tree
+ * @param  {Object} state  Global state tree
  * @param  {number} siteId Site ID
  * @returns {Array}         Site connections
  */
@@ -21,7 +21,7 @@ export function getConnectionsBySiteId( state, siteId ) {
  * Returns an array of known connections for the given site ID
  * that are available to the specified user ID.
  *
- * @param  {object} state  Global state tree
+ * @param  {Object} state  Global state tree
  * @param  {number} siteId Site ID
  * @param  {number} userId User ID to filter
  * @returns {Array}         User connections
@@ -41,7 +41,7 @@ export const getSiteUserConnections = createSelector(
  * Returns an array of known connections for the given site ID
  * that are available to the specified user ID.
  *
- * @param  {object} state   Global state tree
+ * @param  {Object} state   Global state tree
  * @param  {number} siteId  Site ID
  * @param  {number} userId  User ID to filter
  * @param  {string} service The name of the service to check
@@ -54,7 +54,7 @@ export function getSiteUserConnectionsForService( state, siteId, userId, service
 /**
  * Returns true when there are broken connections for the specified service.
  *
- * @param  {object} state   Global state tree
+ * @param  {Object} state   Global state tree
  * @param  {number} siteId  Site ID
  * @param  {number} userId  User ID to filter
  * @param  {string} service The name of the service to check
@@ -74,7 +74,7 @@ export function getBrokenSiteUserConnectionsForService( state, siteId, userId, s
  * `edit_others_posts` capability or it's a connection to one of
  * their accounts.
  *
- * @param  {object} state   Global state tree
+ * @param  {Object} state   Global state tree
  * @param  {string} service The name of the service
  * @returns {Array}          Connections for which the current user is
  *                          permitted to remove.
@@ -99,7 +99,7 @@ export function getRemovableConnections( state, service ) {
 /**
  * Returns true if connections have been fetched for the given site ID.
  *
- * @param  {object} state  Global state tree
+ * @param  {Object} state  Global state tree
  * @param  {number} siteId Site ID
  * @returns {Array}         Site connections
  */
@@ -110,7 +110,7 @@ export function hasFetchedConnections( state, siteId ) {
 /**
  * Returns true if connections are currently fetching for the given site ID.
  *
- * @param  {object} state  Global state tree
+ * @param  {Object} state  Global state tree
  * @param  {number} siteId Site ID
  * @returns {Array}         Site connections
  */

@@ -9,6 +9,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import useCampaignsQuery from 'calypso/data/promote-post/use-promote-post-campaigns-query';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
 import CampaignsList from 'calypso/my-sites/promote-post/components/campaigns-list';
 import { Post } from 'calypso/my-sites/promote-post/components/post-item';
@@ -176,13 +177,18 @@ export default function PromotedPosts( { tab }: Props ) {
 			{ ! campaignsIsLoading && ! campaignsData?.length && <PostsListBanner /> }
 
 			<PromotePostTabBar tabs={ tabs } selectedTab={ selectedTab } />
-			{ selectedTab === 'campaigns' && (
-				<CampaignsList
-					hasLocalUser={ hasLocalUser }
-					isError={ isError }
-					isLoading={ campaignsIsLoading }
-					campaigns={ campaignsData || [] }
-				/>
+			{ selectedTab === 'campaigns' ? (
+				<>
+					<PageViewTracker path="/advertising/:site/campaigns" title="Advertising > Campaigns" />
+					<CampaignsList
+						hasLocalUser={ hasLocalUser }
+						isError={ isError }
+						isLoading={ campaignsIsLoading }
+						campaigns={ campaignsData || [] }
+					/>
+				</>
+			) : (
+				<PageViewTracker path="/advertising/:site/posts" title="Advertising > Ready to Blaze" />
 			) }
 
 			<QueryPosts siteId={ selectedSiteId } query={ queryPost } postId={ null } />

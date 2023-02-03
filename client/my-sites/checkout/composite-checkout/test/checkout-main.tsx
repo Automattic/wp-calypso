@@ -5,6 +5,7 @@ import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
 import { render, fireEvent, screen, within, waitFor, act } from '@testing-library/react';
 import nock from 'nock';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import { navigate } from 'calypso/lib/navigate';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -65,6 +66,7 @@ describe( 'CheckoutMain', () => {
 		} );
 
 		const store = createTestReduxStore();
+		const queryClient = new QueryClient();
 
 		MyCheckout = ( {
 			cartChanges,
@@ -84,25 +86,28 @@ describe( 'CheckoutMain', () => {
 			const mainCartKey = 123456;
 			useCartKey.mockImplementation( () => ( useUndefinedCartKey ? undefined : mainCartKey ) );
 			nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
+			nock( 'https://public-api.wordpress.com' ).get( '/rest/v1.1/me/vat-info' ).reply( 200, {} );
 			mockMatchMediaOnWindow();
 			return (
 				<ReduxProvider store={ store }>
-					<ShoppingCartProvider
-						managerClient={ managerClient }
-						options={ {
-							defaultCartKey: useUndefinedCartKey ? undefined : mainCartKey,
-						} }
-						{ ...additionalCartProps }
-					>
-						<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
-							<CheckoutMain
-								siteId={ siteId }
-								siteSlug="foo.com"
-								overrideCountryList={ countryList }
-								{ ...additionalProps }
-							/>
-						</StripeHookProvider>
-					</ShoppingCartProvider>
+					<QueryClientProvider client={ queryClient }>
+						<ShoppingCartProvider
+							managerClient={ managerClient }
+							options={ {
+								defaultCartKey: useUndefinedCartKey ? undefined : mainCartKey,
+							} }
+							{ ...additionalCartProps }
+						>
+							<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
+								<CheckoutMain
+									siteId={ siteId }
+									siteSlug="foo.com"
+									overrideCountryList={ countryList }
+									{ ...additionalProps }
+								/>
+							</StripeHookProvider>
+						</ShoppingCartProvider>
+					</QueryClientProvider>
 				</ReduxProvider>
 			);
 		};

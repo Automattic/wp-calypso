@@ -1,5 +1,5 @@
 import { ProgressBar } from '@automattic/components';
-import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
+import { isNewsletterOrLinkInBioFlow, isWooExpressFlow } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
 import { useEffect, useState } from 'react';
@@ -8,6 +8,7 @@ import { Switch, Route, Redirect, generatePath, useHistory, useLocation } from '
 import DocumentHead from 'calypso/components/data/document-head';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
+import { recordPageView } from 'calypso/lib/analytics/page-view';
 import SignupHeader from 'calypso/signup/signup-header';
 import { ONBOARD_STORE } from '../../stores';
 import recordStepStart from './analytics/record-step-start';
@@ -78,6 +79,11 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		// We record the event only when the step is not empty. Additionally, we should not fire this event whenever the intent is changed
 		if ( currentStepRoute ) {
 			recordStepStart( flow.name, kebabCase( currentStepRoute ), { intent } );
+
+			// Also record page view for data and analytics
+			const pathname = window.location.pathname || '';
+			const pageTitle = `Setup > ${ flow.name } > ${ currentStepRoute }`;
+			recordPageView( pathname, pageTitle );
 		}
 
 		// We leave out intent from the dependency list, due to the ONBOARD_STORE being reset in the exit flow.
@@ -106,6 +112,14 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		}
 	};
 
+	const getShowWooLogo = () => {
+		if ( isWooExpressFlow( flow.name ) ) {
+			return true;
+		}
+
+		return false;
+	};
+
 	let progressBarExtraStyle: React.CSSProperties = {};
 	if ( 'videopress' === flow.name ) {
 		progressBarExtraStyle = {
@@ -132,7 +146,8 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 									total={ 100 }
 									style={ progressBarExtraStyle }
 								/>
-								<SignupHeader pageTitle={ flow.title } />
+
+								<SignupHeader pageTitle={ flow.title } showWooLogo={ getShowWooLogo() } />
 								{ renderStep( step ) }
 							</div>
 						</Route>

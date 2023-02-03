@@ -15,6 +15,7 @@ import PeopleInvites from './people-invites';
 import SubscriberDetails from './subscriber-details';
 import SubscribersTeam from './subscribers-team';
 import TeamInvite from './team-invite';
+import ViewerDetails from './viewer-details';
 
 export default {
 	redirectToTeam,
@@ -51,6 +52,10 @@ export default {
 
 	teamMembers( context, next ) {
 		renderTeamMembers( context, next );
+	},
+
+	viewerTeamMember( context, next ) {
+		renderViewerTeamMember( context, next );
 	},
 
 	subscribers( context, next ) {
@@ -228,5 +233,22 @@ function renderSingleTeamMember( context, next ) {
 			<EditTeamMember userLogin={ context.params.user_login } />
 		</>
 	);
+	next();
+}
+
+function renderViewerTeamMember( context, next ) {
+	const SingleTeamMemberTitle = () => {
+		const translate = useTranslate();
+
+		return <DocumentHead title={ translate( 'View Team Member', { textOnly: true } ) } />;
+	};
+
+	context.primary = (
+		<>
+			<SingleTeamMemberTitle />
+			<ViewerDetails userId={ context.params.user_id } />
+		</>
+	);
+
 	next();
 }

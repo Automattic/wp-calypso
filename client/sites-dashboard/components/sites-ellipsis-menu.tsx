@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import {
-	WPCOM_FEATURES_ATOMIC,
+	WPCOM_FEATURES_COPY_SITE,
 	WPCOM_FEATURES_MANAGE_PLUGINS,
 	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
 } from '@automattic/calypso-products';
@@ -15,8 +15,10 @@ import { ComponentType, useEffect, useState } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import SitePreviewLink from 'calypso/components/site-preview-link';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
@@ -184,16 +186,16 @@ const PreviewSiteModalItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 
 const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
-	const hasAtomicFeature = useSafeSiteHasFeature( site.ID, WPCOM_FEATURES_ATOMIC );
+	const hasCopySiteFeature = useSafeSiteHasFeature( site.ID, WPCOM_FEATURES_COPY_SITE );
+	const isAtomic = useSelector( ( state ) => isSiteAtomic( state, site.ID ) );
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 	const plan = site.plan;
 	const isSiteOwner = site.site_owner === userId;
 	const { setPlanCartItem } = useDispatch( ONBOARD_STORE );
 
-	if ( ! hasAtomicFeature || ! isSiteOwner || ! plan ) {
+	if ( ! hasCopySiteFeature || ! isSiteOwner || ! plan || ! isAtomic ) {
 		return null;
 	}
-	setPlanCartItem( { product_slug: plan.product_slug } );
 
 	const copySiteHref = addQueryArgs( `/setup/copy-site`, {
 		sourceSlug: site.slug,
@@ -201,7 +203,11 @@ const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 	return (
 		<MenuItemLink
 			href={ copySiteHref }
-			onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_copy_site' ) }
+			onClick={ () => {
+				clearSignupDestinationCookie();
+				setPlanCartItem( { product_slug: plan.product_slug } );
+				recordTracks( 'calypso_sites_dashboard_site_action_copy_site_click' );
+			} }
 		>
 			{ __( 'Copy site' ) }
 		</MenuItemLink>

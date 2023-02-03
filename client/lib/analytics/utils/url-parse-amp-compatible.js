@@ -21,7 +21,7 @@ function urlSafeBase64DecodeString( str ) {
  * See also https://github.com/ampproject/amphtml/blob/HEAD/extensions/amp-analytics/linker-id-receiving.md
  *
  * @param {string} value Value to be decoded
- * @returns {null|object} null or and object containing key/value pairs
+ * @returns {null | Object} null or and object containing key/value pairs
  */
 function parseAmpEncodedParams( value ) {
 	value = value
@@ -46,7 +46,7 @@ function parseAmpEncodedParams( value ) {
  * This function is used to support AMP-compatible tracking.
  *
  * @param {string} url URL to be parsed like `document.location.href`.
- * @returns {object} A URL instance with the original data plus the data extracted from `tk_amp`. Null if not a valid absolute URL.
+ * @returns {Object} A URL instance with the original data plus the data extracted from `tk_amp`. Null if not a valid absolute URL.
  */
 export default function urlParseAmpCompatible( url ) {
 	try {
