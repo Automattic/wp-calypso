@@ -241,7 +241,7 @@ function serializeState< TState = any >(
 	);
 }
 
-function deserializeState< TState, TAction extends AnyAction >(
+function deserializeState< TState, TAction extends Action >(
 	reducers: ReducersMapObject< TState, TAction >,
 	persisted: Record< string, any >
 ) {
