@@ -47,8 +47,8 @@ export const ProviderWrappedLayout = ( {
 			const experimentAssignment = await loadExperimentAssignment(
 				'calypso_sidebar_upsell_dedicated_upgrade_flow_202301'
 			);
-			const variationName2 = experimentAssignment?.variationName;
-			sessionStorage.setItem( 'calypso_sidebar_upsell_experiment', variationName2 );
+			const variationName = experimentAssignment?.variationName;
+			sessionStorage.setItem( 'calypso_sidebar_upsell_experiment', variationName );
 		}
 
 		loadExperiment();
