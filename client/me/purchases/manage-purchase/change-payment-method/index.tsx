@@ -29,7 +29,6 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PaymentMethodSelector from '../payment-method-selector';
 import getPaymentMethodIdFromPayment from '../payment-method-selector/get-payment-method-id-from-payment';
 import useCreateAssignablePaymentMethods from './use-create-assignable-payment-methods';
-import type { PurchasePayment, Purchase } from 'calypso/lib/purchases/types';
 
 interface ChangePaymentMethodProps {
 	getManagePurchaseUrlFor: ( siteSlug: string, purchaseId: number ) => string;
@@ -47,12 +46,8 @@ function ChangePaymentMethod( {
 	const hasLoadedSites = useSelector( ( state ) => ! isRequestingSites( state ) );
 	const hasLoadedStoredCards = useSelector( hasLoadedStoredCardsFromServer );
 	const hasLoadedUserPurchases = useSelector( hasLoadedUserPurchasesFromServer );
-	const purchase: Purchase | undefined = useSelector( ( state ) =>
-		getByPurchaseId( state, purchaseId )
-	);
-	const payment: PurchasePayment | undefined = useSelector(
-		( state ) => getByPurchaseId( state, purchaseId )?.payment
-	);
+	const purchase = useSelector( ( state ) => getByPurchaseId( state, purchaseId ) );
+	const payment = useSelector( ( state ) => getByPurchaseId( state, purchaseId )?.payment );
 	const selectedSite = useSelector( getSelectedSite );
 
 	const { isStripeLoading } = useStripe();
