@@ -718,7 +718,11 @@ export function shouldRedirectToJetpackAuthorize( context, site ) {
  * @returns {boolean} Whether the user is in the Domain sidebar upsell experiment.
  */
 export const isDomainSidebarExperimentUser = () => {
-	return 'treatment' === sessionStorage.getItem( 'calypso_sidebar_upsell_experiment' );
+	const domainAndPackage = new URL( document.location ).searchParams.has( 'domainAndPlanPackage' );
+	return (
+		domainAndPackage &&
+		'treatment' === sessionStorage.getItem( 'calypso_sidebar_upsell_experiment' )
+	);
 };
 
 /**
