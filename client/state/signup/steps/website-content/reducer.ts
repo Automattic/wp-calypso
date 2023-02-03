@@ -12,6 +12,7 @@ import {
 	SIGNUP_STEPS_WEBSITE_CONTENT_MEDIA_REMOVED,
 	SIGNUP_STEPS_WEBSITE_CONTENT_REMOVE_LOGO_URL,
 	SIGNUP_STEPS_WEBSITE_CONTENT_FEEDBACK_CHANGE,
+	SIGNUP_STEPS_WEBSITE_CONTENT_CHANGES_SAVED,
 } from 'calypso/state/action-types';
 import { getSingleMediaPlaceholder, MediaUploadedData } from './actions';
 import { initialState, LOGO_SECTION_ID, MEDIA_UPLOAD_STATES } from './constants';
@@ -71,6 +72,7 @@ export default ( state = initialState, action: AnyAction ): WebsiteContentCollec
 						[ 0 ]: MEDIA_UPLOAD_STATES.UPLOAD_COMPLETED,
 					},
 				},
+				hasUnsavedChanges: true,
 			};
 		}
 
@@ -84,6 +86,7 @@ export default ( state = initialState, action: AnyAction ): WebsiteContentCollec
 					...state.websiteContent,
 					feedbackSection: { genericFeedback: feedback },
 				},
+				hasUnsavedChanges: true,
 			};
 		}
 
@@ -101,6 +104,7 @@ export default ( state = initialState, action: AnyAction ): WebsiteContentCollec
 						[ 0 ]: MEDIA_UPLOAD_STATES.UPLOAD_REMOVED,
 					},
 				},
+				hasUnsavedChanges: true,
 			};
 		}
 
@@ -153,6 +157,7 @@ export default ( state = initialState, action: AnyAction ): WebsiteContentCollec
 				},
 
 				mediaUploadStates: mediaUploadStates,
+				hasUnsavedChanges: true,
 			};
 		}
 
@@ -206,6 +211,7 @@ export default ( state = initialState, action: AnyAction ): WebsiteContentCollec
 						[ payload.mediaIndex ]: MEDIA_UPLOAD_STATES.UPLOAD_REMOVED,
 					},
 				},
+				hasUnsavedChanges: true,
 			};
 		}
 
@@ -226,8 +232,17 @@ export default ( state = initialState, action: AnyAction ): WebsiteContentCollec
 						return page;
 					} ),
 				},
+				hasUnsavedChanges: true,
 			};
 		}
+
+		case SIGNUP_STEPS_WEBSITE_CONTENT_CHANGES_SAVED: {
+			return {
+				...state,
+				hasUnsavedChanges: false,
+			};
+		}
+
 		case SIGNUP_COMPLETE_RESET: {
 			return initialState;
 		}

@@ -17,6 +17,7 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { saveSignupStep } from 'calypso/state/signup/progress/actions';
 import {
+	changesSaved,
 	initializeWebsiteContentForm,
 	updateWebsiteContentCurrentIndex,
 } from 'calypso/state/signup/steps/website-content/actions';
@@ -27,6 +28,7 @@ import {
 	getWebsiteContentDataCollectionIndex,
 	isMediaUploadInProgress,
 	WebsiteContentStateModel,
+	hasUnsavedChanges as hasUnsavedWebsiteContentChanges,
 } from 'calypso/state/signup/steps/website-content/selectors';
 import { getSiteId } from 'calypso/state/sites/selectors';
 import { sectionGenerator } from './section-generator';
@@ -103,6 +105,7 @@ function WebsiteContentStep( {
 	const isImageUploading = useSelector( ( state ) =>
 		isMediaUploadInProgress( state as WebsiteContentStateModel )
 	);
+	const hasUnsavedChanges = useSelector( hasUnsavedWebsiteContentChanges );
 
 	const [ isConfirmDialogOpen, setIsConfirmDialogOpen ] = useState( false );
 	const translatedPageTitles = useTranslatedPageTitles();
@@ -118,6 +121,7 @@ function WebsiteContentStep( {
 	const saveFormValues = async () => {
 		try {
 			await mutateAsync();
+			dispatch( changesSaved() );
 			dispatch(
 				successNotice( translate( 'Changes saved successfully!' ), {
 					id: 'website-content-save-notice',
@@ -211,6 +215,7 @@ function WebsiteContentStep( {
 				saveFormValues={ saveFormValues }
 				blockNavigation={ isImageUploading }
 				isSaving={ isSaving }
+				hasUnsavedChanges={ hasUnsavedChanges }
 			/>
 		</>
 	);

@@ -21,6 +21,7 @@ interface AccordionFormProps< T > {
 	onErrorUpdates?: ( errors: ValidationErrors ) => void;
 	blockNavigation?: boolean;
 	isSaving: boolean;
+	hasUnsavedChanges: boolean;
 }
 
 export default function AccordionForm< T >( {
@@ -34,6 +35,7 @@ export default function AccordionForm< T >( {
 	onErrorUpdates,
 	blockNavigation,
 	isSaving,
+	hasUnsavedChanges,
 }: AccordionFormProps< T > ) {
 	const [ formErrors, setFormErrors ] = useState< ValidationErrors >( {} );
 
@@ -82,6 +84,10 @@ export default function AccordionForm< T >( {
 		updateCurrentIndex( currentIndex );
 		updateFormValues && updateFormValues( formValues );
 		setIsSectionAtIndexTouched( { ...isSectionAtIndexTouched, [ `${ currentIndex }` ]: true } );
+		// save values, but do not block UI.
+		if ( hasUnsavedChanges ) {
+			saveFormValues();
+		}
 	};
 
 	const onNext = async ( validator?: ValidatorFunction< T > ) => {
@@ -94,7 +100,9 @@ export default function AccordionForm< T >( {
 			}
 		}
 
-		await saveFormValues();
+		if ( hasUnsavedChanges ) {
+			await saveFormValues();
+		}
 
 		if ( currentIndex < sections.length - 1 ) {
 			updateCurrentIndex( currentIndex + 1 );
@@ -124,6 +132,7 @@ export default function AccordionForm< T >( {
 					blockNavigation={ blockNavigation }
 					showSubmit={ index === sections.length - 1 }
 					isSaving={ isSaving }
+					hasUnsavedChanges={ hasUnsavedChanges }
 				/>
 			) ) }
 		</>

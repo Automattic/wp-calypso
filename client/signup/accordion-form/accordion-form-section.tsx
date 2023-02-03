@@ -12,6 +12,7 @@ interface AccordionFormSectionProps< T > extends AccordionSectionProps< T > {
 	onSave: () => void;
 	blockNavigation?: boolean;
 	isSaving: boolean;
+	hasUnsavedChanges: boolean;
 }
 
 interface SectionHeaderProps {
@@ -124,7 +125,7 @@ export default function AccordionFormSection< T >( props: AccordionFormSectionPr
 					<ButtonsContainer>
 						<ActionButton
 							onClick={ props.onSave }
-							disabled={ props.blockNavigation || props.isSaving }
+							disabled={ props.blockNavigation || props.isSaving || ! props.hasUnsavedChanges }
 						>
 							{ props.isSaving ? translate( 'Saving' ) : translate( 'Save Changes' ) }
 						</ActionButton>

@@ -34,3 +34,7 @@ export function isMediaUploadInProgress( state: WebsiteContentStateModel ) {
 	);
 	return allStates.some( ( s ) => MEDIA_UPLOAD_STATES.UPLOAD_STARTED === s );
 }
+
+export function hasUnsavedChanges( state: WebsiteContentStateModel ): boolean {
+	return state.signup?.steps?.websiteContentCollection?.hasUnsavedChanges;
+}

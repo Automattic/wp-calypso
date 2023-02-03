@@ -27,6 +27,7 @@ import {
 	mediaRemoved,
 	logoRemoved,
 	getSingleMediaPlaceholder,
+	changesSaved,
 } from '../actions';
 import { initialState, LOGO_SECTION_ID, MEDIA_UPLOAD_STATES } from '../constants';
 import websiteContentCollectionReducer from '../reducer';
@@ -74,6 +75,7 @@ const initialTestState: WebsiteContentCollectionState = {
 			},
 		],
 	},
+	hasUnsavedChanges: false,
 };
 
 const translatedPageTitles = {
@@ -310,6 +312,7 @@ describe( 'reducer', () => {
 					},
 				],
 			},
+			hasUnsavedChanges: true,
 		} );
 	} );
 
@@ -400,6 +403,7 @@ describe( 'reducer', () => {
 					1: MEDIA_UPLOAD_STATES.UPLOAD_COMPLETED,
 				},
 			},
+			hasUnsavedChanges: true,
 		} );
 
 		// Now remove the image and check state
@@ -437,6 +441,7 @@ describe( 'reducer', () => {
 					1: MEDIA_UPLOAD_STATES.UPLOAD_REMOVED,
 				},
 			},
+			hasUnsavedChanges: true,
 		} );
 	} );
 
@@ -454,6 +459,7 @@ describe( 'reducer', () => {
 				...initialTestState.websiteContent,
 				siteLogoSection: { siteLogoUrl: 'wp.me/some-random-image.png' },
 			},
+			hasUnsavedChanges: true,
 		} );
 	} );
 
@@ -498,6 +504,7 @@ describe( 'reducer', () => {
 				...initialTestState.websiteContent,
 				siteLogoSection: { siteLogoUrl: '' },
 			},
+			hasUnsavedChanges: true,
 		} );
 	} );
 
@@ -547,7 +554,15 @@ describe( 'reducer', () => {
 					},
 				],
 			},
+			hasUnsavedChanges: true,
 		} );
+	} );
+
+	test( 'should set the hasUnsavedChangeFlag to false whenever changes are saved', () => {
+		const action = changesSaved();
+		expect(
+			websiteContentCollectionReducer( { ...initialTestState }, action ).hasUnsavedChanges
+		).toEqual( false );
 	} );
 
 	test( 'should reset the state on signup complete', () => {

@@ -27,6 +27,7 @@ import {
 	SIGNUP_STEPS_WEBSITE_CONTENT_REMOVE_LOGO_URL,
 	SIGNUP_STEPS_WEBSITE_FIELD_CHANGED,
 	SIGNUP_STEPS_WEBSITE_CONTENT_FEEDBACK_CHANGE,
+	SIGNUP_STEPS_WEBSITE_CONTENT_CHANGES_SAVED,
 } from 'calypso/state/action-types';
 import { Media, MediaUploadType, WebsiteContentServerState } from './types';
 import 'calypso/state/signup/init';
@@ -182,6 +183,9 @@ export function initializeWebsiteContentForm(
 			id: pageId,
 			title: translatedPageTitles[ pageId ],
 			content: savedContent?.content ?? '',
+			displayEmail: savedContent?.displayEmail || undefined,
+			displayPhone: savedContent?.displayPhone || undefined,
+			displayAddress: savedContent?.displayAddress || undefined,
 			media: getInitialMediaState( pageId, savedContent?.media ),
 		};
 	} );
@@ -193,5 +197,11 @@ export function initializeWebsiteContentForm(
 			siteLogoSection: { siteLogoUrl },
 			feedbackSection: { genericFeedback },
 		},
+	};
+}
+
+export function changesSaved() {
+	return {
+		type: SIGNUP_STEPS_WEBSITE_CONTENT_CHANGES_SAVED,
 	};
 }

@@ -56,6 +56,7 @@ export interface WebsiteContentCollectionState {
 	currentIndex: number;
 	websiteContent: WebsiteContent;
 	mediaUploadStates: Record< string, Record< string, string > >;
+	hasUnsavedChanges: boolean;
 }
 
 export type WebsiteContentRequestDTO = {
@@ -78,7 +79,7 @@ export type WebsiteContentServerState = {
 	selectedPageTitles: PageId[];
 	isWebsiteContentSubmitted: boolean;
 	isStoreFlow: boolean;
-	pages: PageData[];
+	pages: Array< PageData & ContactPageData >;
 	siteLogoUrl: string;
 	genericFeedback: string;
 };

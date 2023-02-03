@@ -17,4 +17,5 @@ export const initialState: WebsiteContentCollectionState = {
 		feedbackSection: { genericFeedback: '' },
 	},
 	mediaUploadStates: {},
+	hasUnsavedChanges: false,
 };
