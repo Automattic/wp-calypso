@@ -125,8 +125,8 @@ object BuildDockerImage : BuildType({
 		
 		// Read only cache should be disabled on trunk -- e.g., when we're on the
 		// default branch, we should write to the cache. In branches, we should
-		// not write to the cache.
-		val readonlyCache = ! "%teamcity.build.branch.is_default%".toBoolean()
+		// not write to the cache. (Except when we enable it via the testing arg.)
+		val readonlyCache = ! ( "%teamcity.build.branch.is_default%".toBoolean() || "%UPDATE_BASE_IMAGE_CACHE%".toBoolean() )
 
 		val commonArgs = """
 			--label com.a8c.image-builder=teamcity

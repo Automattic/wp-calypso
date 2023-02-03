@@ -78,7 +78,6 @@ RUN find /calypso/build /calypso/public -name "*.*.map" -exec rm {} \;
 ###################
 # A cache-only update can be generated with "docker build --target update-base-cache"
 FROM ${base_image} as update-base-cache
-ARG UID=1003
 
 # Update webpack cache in the base image so that it can be re-used in future builds.
 # We only copy this part of the cache to make --push faster, and because webpack
