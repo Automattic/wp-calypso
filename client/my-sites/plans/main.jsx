@@ -34,6 +34,7 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PlansHeader from './header';
+import ModernizedLayout from './modernized-layout';
 
 function DomainAndPlanUpsellNotice() {
 	const translate = useTranslate();
@@ -186,36 +187,37 @@ class Plans extends Component {
 		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 
 		return (
-			<div className={ is2023OnboardingPricingGrid ? 'is-2023-pricing-grid' : '' }>
+			<div>
+				<ModernizedLayout section="plans" main="plans" />
 				{ selectedSite.ID && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
 				<PageViewTracker path="/plans/:site" title="Plans" />
 				<QueryContactDetailsCache />
 				<QueryPlans />
 				<TrackComponentView eventName="calypso_plans_view" />
-				<Main
-					fullWidthLayout={ is2023OnboardingPricingGrid }
-					wideLayout={ ! is2023OnboardingPricingGrid }
-				>
-					{ ! canAccessPlans && (
-						<EmptyContent
-							illustration="/calypso/images/illustrations/illustration-404.svg"
-							title={ translate( 'You are not authorized to view this page' ) }
-						/>
-					) }
-					{ canAccessPlans && (
-						<>
-							<PlansHeader />
-
-							{ domainAndPlanPackage && <DomainAndPlanUpsellNotice /> }
-							<div id="plans" className="plans plans__has-sidebar">
-								<PlansNavigation path={ this.props.context.path } />
+				{ canAccessPlans && (
+					<div>
+						<PlansHeader />
+						<div id="plans" className="plans plans__has-sidebar">
+							<PlansNavigation path={ this.props.context.path } modernized={ true } />
+							<Main
+								fullWidthLayout={ is2023OnboardingPricingGrid }
+								wideLayout={ ! is2023OnboardingPricingGrid }
+							>
+								{ domainAndPlanPackage && <DomainAndPlanUpsellNotice /> }
+								<DomainAndPlanUpsellNotice />
+								{ ! canAccessPlans && (
+									<EmptyContent
+										illustration="/calypso/images/illustrations/illustration-404.svg"
+										title={ translate( 'You are not authorized to view this page' ) }
+									/>
+								) }
 								{ isEcommerceTrial ? this.renderEcommerceTrialPage() : this.renderPlansMain() }
 								<PerformanceTrackerStop />
-							</div>
-						</>
-					) }
-				</Main>
+							</Main>
+						</div>
+					</div>
+				) }
 			</div>
 		);
 	}

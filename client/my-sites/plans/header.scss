@@ -1,5 +1,9 @@
 @import "@wordpress/base-styles/breakpoints";
 
+.plans main {
+	padding-top: 15px;
+}
+
 .is-section-plans .formatted-header.navigation {
 	display: flex;
 	justify-content: space-between;

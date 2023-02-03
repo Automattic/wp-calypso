@@ -44,6 +44,7 @@ import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import JetpackChecklist from 'calypso/my-sites/plans/current-plan/jetpack-checklist';
 import PlanRenewalMessage from 'calypso/my-sites/plans/jetpack-plans/plan-renewal-message';
 import legacyPlanNotice from 'calypso/my-sites/plans/legacy-plan-notice';
+import ModernizedLayout from 'calypso/my-sites/plans/modernized-layout';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
@@ -232,71 +233,75 @@ class CurrentPlan extends Component {
 		}
 
 		return (
-			<Main className="current-plan" wideLayout>
+			<div>
+				<ModernizedLayout section="plans" main="current-plan" />
 				<DocumentHead title={ translate( 'My Plan' ) } />
-				<FormattedHeader
-					brandFont
-					className="current-plan__page-heading"
-					headerText={ translate( 'Plans' ) }
-					subHeaderText={ translate(
-						'Learn about the features included in your WordPress.com plan.'
-					) }
-					align="left"
-				/>
-				<div className="current-plan__content">
-					{ selectedSiteId && (
-						// key={ selectedSiteId } ensures data is refetched for changing selectedSiteId
-						<QueryConciergeInitial key={ selectedSiteId } siteId={ selectedSiteId } />
-					) }
-					<QuerySites siteId={ selectedSiteId } />
-					<QuerySitePlans siteId={ selectedSiteId } />
-					<QuerySitePurchases siteId={ selectedSiteId } />
-					<QuerySiteProducts siteId={ selectedSiteId } />
-					{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
+				{ selectedSiteId && (
+					// key={ selectedSiteId } ensures data is refetched for changing selectedSiteId
+					<QueryConciergeInitial key={ selectedSiteId } siteId={ selectedSiteId } />
+				) }
+				<QuerySites siteId={ selectedSiteId } />
+				<QuerySitePlans siteId={ selectedSiteId } />
+				<QuerySitePurchases siteId={ selectedSiteId } />
+				<QuerySiteProducts siteId={ selectedSiteId } />
+				{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
+				<div>
+					<FormattedHeader
+						brandFont
+						className="current-plan__section-header modernized-header"
+						headerText={ translate( 'Plans' ) }
+						subHeaderText={ translate(
+							'Learn about the features included in your WordPress.com plan.'
+						) }
+						align="left"
+					/>
+					<div className="current-plan current-plan__content">
+						{ showThankYou && ! this.state.hideThankYouModal && (
+							<Dialog
+								baseClassName="current-plan__dialog dialog__content dialog__backdrop"
+								isVisible={ showThankYou }
+								onClose={ this.hideThankYouModalOnClose }
+							>
+								{ this.renderThankYou() }
+							</Dialog>
+						) }
 
-					{ showThankYou && ! this.state.hideThankYouModal && (
-						<Dialog
-							baseClassName="current-plan__dialog dialog__content dialog__backdrop"
-							isVisible={ showThankYou }
-							onClose={ this.hideThankYouModalOnClose }
-						>
-							{ this.renderThankYou() }
-						</Dialog>
-					) }
+						<PlansNavigation path={ path } modernized={ true } />
 
-					<PlansNavigation path={ path } />
+						<Main wideLayout>
+							{ showDomainWarnings && (
+								<DomainWarnings
+									domains={ domains }
+									position="current-plan"
+									selectedSite={ selectedSite }
+									allowedRules={ [
+										'newDomainsWithPrimary',
+										'newDomains',
+										'unverifiedDomainsCanManage',
+										'unverifiedDomainsCannotManage',
+										'wrongNSMappedDomains',
+										'newTransfersWrongNS',
+									] }
+								/>
+							) }
 
-					{ showDomainWarnings && (
-						<DomainWarnings
-							domains={ domains }
-							position="current-plan"
-							selectedSite={ selectedSite }
-							allowedRules={ [
-								'newDomainsWithPrimary',
-								'newDomains',
-								'unverifiedDomainsCanManage',
-								'unverifiedDomainsCannotManage',
-								'wrongNSMappedDomains',
-								'newTransfersWrongNS',
-							] }
-						/>
-					) }
+							{ showExpiryNotice && (
+								<Notice status="is-info" text={ <PlanRenewalMessage /> } showDismiss={ false }>
+									<NoticeAction href={ `/plans/${ selectedSite.slug || '' }` }>
+										{ translate( 'View plans' ) }
+									</NoticeAction>
+								</Notice>
+							) }
 
-					{ showExpiryNotice && (
-						<Notice status="is-info" text={ <PlanRenewalMessage /> } showDismiss={ false }>
-							<NoticeAction href={ `/plans/${ selectedSite.slug || '' }` }>
-								{ translate( 'View plans' ) }
-							</NoticeAction>
-						</Notice>
-					) }
+							{ legacyPlanNotice( eligibleForProPlan, selectedSite ) }
 
-					{ legacyPlanNotice( eligibleForProPlan, selectedSite ) }
+							{ isEcommerceTrial ? this.renderEcommerceTrialPage() : this.renderMain() }
 
-					{ isEcommerceTrial ? this.renderEcommerceTrialPage() : this.renderMain() }
-
-					<TrackComponentView eventName="calypso_plans_my_plan_view" />
+							<TrackComponentView eventName="calypso_plans_my_plan_view" />
+						</Main>
+					</div>
 				</div>
-			</Main>
+			</div>
 		);
 	}
 }

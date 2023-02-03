@@ -1,0 +1,62 @@
+/**
+ * Styles borrowed in part from /stats to modernize the section header and navbar.
+ * These are not loaded or used currently. `modernized-section.tsx` contains an equivalent
+ * styled component. Styles here may be used to build a Layout component in a follow up.
+ */
+
+// Must be included in root style.scss of /plans
+
+@use "sass:math";
+@import "@automattic/components/src/highlight-cards/variables.scss";
+
+$plans-background-color: #fdfdfd;
+$plans-sections-max-width: 1224px;
+$plans-layout-contnet-padding-top: 79px;
+$sidebar-appearance-break-point: 783px;
+
+// Elements above main layout content per pages
+.plans__section-header {
+	background-color: var(--studio-white);
+
+	@media ( min-width: $custom-mobile-breakpoint ) {
+		padding: 0 max(calc(50% - #{math.div($plans-sections-max-width, 2)}), 32px);
+	}
+}
+
+// Main layout content
+.plans {
+	// Ensures horizontal padding for all sections.
+	@media ( min-width: $custom-mobile-breakpoint ) {
+		> * {
+			padding: 0 max(calc(50% - #{math.div($plans-sections-max-width, 2)}), 32px);
+		}
+	}
+
+	&.has-fixed-nav {
+		padding-top: 44px;
+	}
+}
+
+.is-section-plans {
+	background-color: var(--studio-white);
+
+	.plans {
+		background-color: $plans-background-color;
+	}
+
+	// this overrides the default .layout__content that adds unwanted padding
+	& .layout__content,
+	&.theme-default .focus-content .layout__content {
+		padding: $plans-layout-contnet-padding-top 0 0 0;
+
+		@media ( min-width: $sidebar-appearance-break-point ) {
+			padding: $plans-layout-contnet-padding-top 0 0 calc(var(--sidebar-width-max) + 1px);
+		}
+
+		.jetpack-colophon {
+			padding-top: $vertical-margin;
+			padding-bottom: $vertical-margin;
+			margin-top: 0;
+		}
+	}
+}
