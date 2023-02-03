@@ -34,15 +34,15 @@ $plans-2023-large-breakpoint: 1500px;
 @mixin pricing-grid-2023-plans-section-breakpoints {
 	max-width: 414px;
 
-	@media ( min-width: $plans-2023-small-breakpoint  + $plan-features-sidebar-width  ) {
+	@media ( min-width: $plans-2023-small-breakpoint + $plan-features-sidebar-width ) {
 		max-width: 860px;
 	}
 
-	@media ( min-width: $plans-2023-medium-breakpoint  + $plan-features-sidebar-width  ) {
+	@media ( min-width: $plans-2023-medium-breakpoint + $plan-features-sidebar-width ) {
 		max-width: 1320px;
 	}
 
-	@media ( min-width: $plans-2023-large-breakpoint  + $plan-features-sidebar-width  ) {
+	@media ( min-width: $plans-2023-large-breakpoint + $plan-features-sidebar-width ) {
 		max-width: 1480px;
 	}
 }

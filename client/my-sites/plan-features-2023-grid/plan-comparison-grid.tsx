@@ -90,7 +90,7 @@ const Grid = styled.div`
 const Row = styled.div< { isHiddenInMobile?: boolean; isInSignup: boolean } >`
 	justify-content: space-between;
 	margin-bottom: -1px;
-	align-items: center;
+	align-items: stretch;
 	display: ${ ( props ) => ( props.isHiddenInMobile ? 'none' : 'flex' ) };
 
 	@media ( min-width: ${ getMobileBreakpoint } ) {
