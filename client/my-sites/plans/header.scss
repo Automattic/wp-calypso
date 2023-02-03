@@ -52,3 +52,17 @@
 		margin: 0 24px;
 	}
 }
+
+
+.is-2023-pricing-grid {
+	.formatted-header.formatted-header,
+	.notice.notice,
+	.section-nav.section-nav {
+		max-width: 1040px;
+		margin-left: auto;
+		margin-right: auto;
+	}
+	.notice.notice {
+		margin-bottom: 0;
+	}
+}
