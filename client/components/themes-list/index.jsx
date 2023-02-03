@@ -206,7 +206,7 @@ function Options( { isFSEActive, recordTracksEvent, searchTerm, translate, upsel
 	options.push( {
 		title: translate( 'Hire our team of experts to design one for you', {
 			comment:
-				'"One" means a theme in this context (i.e. "Hire our team of experts to design a theme for you")',
+				'"One" could mean "theme" or "site" in this context (i.e. "Hire our team of experts to design a theme for you")',
 		} ),
 		icon: brush,
 		description: translate(
