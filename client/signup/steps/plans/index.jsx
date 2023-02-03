@@ -12,6 +12,7 @@ import {
 	isLinkInBioFlow,
 	NEWSLETTER_FLOW,
 	isNewsletterOrLinkInBioFlow,
+	SITE_ASSEMBLER_FLOW,
 } from '@automattic/onboarding';
 import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
@@ -242,6 +243,7 @@ export class PlansStep extends Component {
 					site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
 					showFAQ={ this.state.isDesktop && ! this.isTailoredFlow() }
 					hideFreePlan={ hideFreePlan }
+					hideEcommercePlan={ this.shouldHideEcommercePlan() }
 					isInSignup={ true }
 					isLaunchPage={ isLaunchPage }
 					intervalType={ this.getIntervalType() }
@@ -366,6 +368,11 @@ export class PlansStep extends Component {
 
 	isTailoredFlow() {
 		return isNewsletterOrLinkInBioFlow( this.props.flowName );
+	}
+
+	shouldHideEcommercePlan() {
+		// Site Assembler doesn't support atomic site, so we have to hide the plan
+		return this.props.signupDependencies.destinationFlowParameter === SITE_ASSEMBLER_FLOW;
 	}
 
 	plansFeaturesSelection() {
