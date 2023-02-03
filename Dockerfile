@@ -13,7 +13,10 @@ FROM ${base_image} as builder-cache-true
 
 ENV NPM_CONFIG_CACHE=/calypso/.cache
 ENV PERSISTENT_CACHE=true
-ENV READONLY_CACHE=true
+
+# This is an experiment to see if we can improve build and queue times by updating the cache frequently.
+ARG readonly_cache=true
+ENV READONLY_CACHE $readonly_cache
 
 ###################
 FROM builder-cache-${use_cache} as builder
@@ -75,11 +78,12 @@ RUN find /calypso/build /calypso/public -name "*.*.map" -exec rm {} \;
 ###################
 # A cache-only update can be generated with "docker build --target update-base-cache"
 FROM ${base_image} as update-base-cache
+ARG UID=1003
 
 # Update webpack cache in the base image so that it can be re-used in future builds.
 # We only copy this part of the cache to make --push faster, and because webpack
 # is the main thing which will impact build performance when the cache invalidates.
-COPY --from=builder /calypso/.cache/evergreen/webpack /calypso/.cache/evergreen/webpack
+COPY --from=builder --chown=$UID /calypso/.cache/evergreen/webpack /calypso/.cache/evergreen/webpack
 
 ###################
 FROM node:${node_version}-alpine as app
