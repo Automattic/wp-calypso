@@ -123,11 +123,24 @@ object BuildDockerImage : BuildType({
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 		}
 		
+		val base_img = DslContext.getParameter("UPDATE_BASE_IMAGE_CACHE").toBoolean()
 		// Read only cache should be disabled on trunk -- e.g., when we're on the
 		// default branch, we should write to the cache. In branches, we should
 		// not write to the cache. (Except when we enable it via the testing arg.)
-		val readonlyCache = ! ( "%teamcity.build.branch.is_default%".toBoolean() || "%UPDATE_BASE_IMAGE_CACHE%".toBoolean() )
+		val isTrunk = Settings.WpCalypso.paramRefs.buildVcsBranch == "trunk"
+		val readonlyCache = ! ( isTrunk ||base_img )
 
+		script {
+			name = "Test kotlin params"
+			scriptContent = """
+				#!/bin/bash
+
+				echo "base_img: $base_img"
+				echo "isTrunk: $isTrunk"
+				echo "readonlyCache: $readonlyCache"
+				echo 
+			"""
+		}
 		val commonArgs = """
 			--label com.a8c.image-builder=teamcity
 			--label com.a8c.build-id=%teamcity.build.id%
