@@ -109,6 +109,10 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	font-size: 36px; // stylelint-disable-line declaration-property-unit-allowed-list
 	font-weight: 400;
 	line-height: 40px;
+
+	&.is-pointer {
+		cursor: pointer;
+	}
 }
 
 .highlight-card-count-value {
