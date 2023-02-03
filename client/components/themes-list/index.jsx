@@ -212,12 +212,14 @@ function Options( { isFSEActive, recordTracksEvent, searchTerm, translate, upsel
 		description: translate(
 			'A WordPress.com professional will create layouts for up to 5 pages of your site.'
 		),
-		onClick: () =>
+		onClick: () => {
 			recordTracksEvent( 'calypso_themeshowcase_more_options_difm_click', {
 				site_plan: sitePlan,
 				search_term: searchTerm,
-			} ),
-		url: 'https://wordpress.com/marketing/do-it-for-me/',
+			} );
+			window.location.replace( 'https://wordpress.com/do-it-for-me/' );
+		},
+		url: 'https://wordpress.com/do-it-for-me/',
 		buttonText: translate( 'Hire an expert' ),
 	} );
 
