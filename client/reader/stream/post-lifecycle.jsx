@@ -39,7 +39,10 @@ class PostLifecycle extends Component {
 			);
 		} else if ( postKey.isPromptBlock ) {
 			return (
-				<div className="reader-stream__blogging-prompt">
+				<div
+					className="reader-stream__blogging-prompt"
+					key={ 'blogging-prompt-card-' + postKey.index }
+				>
 					<BloggingPromptCard />
 				</div>
 			);

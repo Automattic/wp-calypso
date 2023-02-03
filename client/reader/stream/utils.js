@@ -99,6 +99,7 @@ export function injectPrompts( posts, itemsBetweenPrompts ) {
 		if ( index && index % itemsBetweenPrompts === 0 ) {
 			const promptBlock = {
 				isPromptBlock: true,
+				index: index,
 			};
 			return [ promptBlock, post ];
 		}
