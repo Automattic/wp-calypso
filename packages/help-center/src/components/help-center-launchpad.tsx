@@ -1,5 +1,6 @@
 /* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import { CircularProgressBar } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useSelect } from '@wordpress/data';
@@ -11,14 +12,18 @@ import { SITE_STORE } from '../stores';
 
 export const HelpCenterLaunchpad = () => {
 	const getEnvironmentHostname = () => {
-		const currentEnvironment = window?.configData?.env_id;
-		const hostname = window?.configData?.hostname ?? 'wordpress.com';
-		const port = window?.configData?.port;
-		switch ( currentEnvironment ) {
-			case 'development':
-				return `http://${ hostname }${ port ? ':' + port : '' }`;
-			default:
-				return `https://${ hostname }`;
+		try {
+			const currentEnvironment = config( 'env_id' );
+			const hostname = config( 'hostname' ) ?? 'wordpress.com';
+			const port = config( 'port' );
+			switch ( currentEnvironment ) {
+				case 'development':
+					return `http://${ hostname }${ port ? ':' + port : '' }`;
+				default:
+					return `https://${ hostname }`;
+			}
+		} catch ( error ) {
+			return 'https://wordpress.com';
 		}
 	};
 
@@ -39,7 +44,7 @@ export const HelpCenterLaunchpad = () => {
 		} );
 	};
 
-	if ( ! site || ! siteIntent || ! siteSlug || ! window.configData ) {
+	if ( ! site || ! siteIntent || ! siteSlug ) {
 		return null;
 	}
 	return (
