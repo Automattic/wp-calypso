@@ -26,11 +26,6 @@ jest.mock( 'react-redux', () => ( {
 	useSelector: () => false,
 } ) );
 
-jest.mock( '@wordpress/compose', () => ( {
-	...jest.requireActual( '@wordpress/compose' ),
-	useViewportMatch: jest.fn( () => true ),
-} ) );
-
 window.IntersectionObserver = jest.fn( () => ( { observe: jest.fn(), disconnect: jest.fn() } ) );
 
 const themes = [
