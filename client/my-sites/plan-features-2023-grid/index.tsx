@@ -46,6 +46,7 @@ import wooLogo from 'calypso/assets/images/onboarding/woo-logo.svg';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import FoldableCard from 'calypso/components/foldable-card';
 import JetpackLogo from 'calypso/components/jetpack-logo';
+import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
 import PlanPill from 'calypso/components/plans/plan-pill';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
@@ -744,9 +745,53 @@ export class PlanFeatures2023Grid extends Component<
 	renderNotice() {
 		return (
 			this.renderUpgradeDisabledNotice() ||
-			// this.renderDiscountNotice() ||
-			this.renderCreditNotice()
-			// || this.renderMarketingMessage()
+			this.renderDiscountNotice() ||
+			this.renderCreditNotice() ||
+			this.renderMarketingMessage()
+		);
+	}
+
+	renderMarketingMessage() {
+		const { siteId, hasPlaceholders, isInSignup } = this.props;
+
+		if ( hasPlaceholders || isInSignup ) {
+			return null;
+		}
+
+		const bannerContainer = this.getBannerContainer();
+		if ( ! bannerContainer ) {
+			return null;
+		}
+
+		return ReactDOM.createPortal( <MarketingMessage siteId={ siteId } />, bannerContainer );
+	}
+
+	renderDiscountNotice() {
+		if ( ! this.hasDiscountNotice() ) {
+			return false;
+		}
+
+		const bannerContainer = this.getBannerContainer();
+		const activeDiscount = getDiscountByName( this.props.withDiscount );
+		if ( ! bannerContainer || ! activeDiscount ) {
+			return false;
+		}
+		return ReactDOM.createPortal(
+			<Notice
+				className="plan-features__notice-credits"
+				showDismiss={ false }
+				icon="info-outline"
+				status="is-success"
+			>
+				{ activeDiscount?.plansPageNoticeTextTitle && (
+					<strong>
+						{ activeDiscount?.plansPageNoticeTextTitle }
+						<br />
+					</strong>
+				) }
+				{ activeDiscount.plansPageNoticeText }
+			</Notice>,
+			bannerContainer
 		);
 	}
 
