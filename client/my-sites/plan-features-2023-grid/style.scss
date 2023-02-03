@@ -485,10 +485,15 @@
 		&.plan-features-2023-grid__enterprise-logo {
 			display: flex;
 			flex-wrap: wrap;
-			column-gap: 32px;
+			column-gap: 20px;
 			row-gap: 14px;
 			position: relative;
-			top: 14px;
+			margin: 32px 0 0;
+
+			@include plans-2023-break-small {
+				margin: 0;
+				top: 14px;
+			}
 		}
 	}
 }
