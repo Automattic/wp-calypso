@@ -192,6 +192,51 @@ const useSectionPatterns = () => {
 		() =>
 			[
 				{
+					id: 5645,
+					name: 'Four Recent Blog Posts',
+					category: posts,
+				},
+				{
+					id: 1784,
+					name: 'Recent Posts',
+					category: posts,
+				},
+				{
+					id: 8421,
+					name: 'Grid of posts 2x3',
+					category: posts,
+				},
+				{
+					id: 8435,
+					name: 'Grid of Posts 3x2',
+					category: posts,
+				},
+				{
+					id: 7996,
+					name: 'Grid of Posts 4x2',
+					category: posts,
+				},
+				{
+					id: 8437,
+					name: 'List of posts',
+					category: posts,
+				},
+				{
+					id: 3213,
+					name: 'Latest podcast episodes',
+					category: posts,
+				},
+				{
+					id: 6305,
+					name: 'Heading with Image Grid',
+					category: images,
+				},
+				{
+					id: 7149,
+					name: 'Two column image grid',
+					category: images,
+				},
+				{
 					id: 7156,
 					name: 'Media and text with image on the right',
 					category: callToAction,
@@ -255,56 +300,6 @@ const useSectionPatterns = () => {
 					id: 6312,
 					name: 'Two Column CTA',
 					category: callToAction,
-				},
-				{
-					id: 5645,
-					name: 'Four Recent Blog Posts',
-					category: posts,
-				},
-				{
-					id: 1784,
-					name: 'Recent Posts',
-					category: posts,
-				},
-				{
-					id: 8421,
-					name: 'Grid of posts 2x3',
-					category: posts,
-				},
-				{
-					id: 8435,
-					name: 'Grid of Posts 3x2',
-					category: posts,
-				},
-				{
-					id: 7996,
-					name: 'Grid of Posts 4x2',
-					category: posts,
-				},
-				{
-					id: 8437,
-					name: 'List of posts',
-					category: posts,
-				},
-				{
-					id: 3213,
-					name: 'Latest podcast episodes',
-					category: posts,
-				},
-				{
-					id: 6305,
-					name: 'Heading with Image Grid',
-					category: images,
-				},
-				{
-					id: 7149,
-					name: 'Two column image grid',
-					category: images,
-				},
-				{
-					id: 7149,
-					name: 'Two column image grid',
-					category: images,
 				},
 				{
 					id: 5691,
