@@ -10,12 +10,10 @@ import type { CountryListItem } from '@automattic/wpcom-checkout';
 import type { Reducer } from 'react';
 import type { AnyAction } from 'redux';
 
-type ListReducerState = CountryListItem[];
-
 function createListReducer< TActionType extends string >(
 	updatedActionType: TActionType
-): Reducer< ListReducerState | undefined, AnyAction > {
-	return ( state: undefined | ListReducerState = [], action: AnyAction ) => {
+): Reducer< CountryListItem[] | undefined, AnyAction > {
+	return ( state: undefined | CountryListItem[] = [], action: AnyAction ) => {
 		switch ( action.type ) {
 			case updatedActionType:
 				return action.countries;
