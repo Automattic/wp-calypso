@@ -8,9 +8,16 @@ export type WooCountryValue = string;
 
 export type WooCountryList = Record< WooCountryKey, WooCountryValue >;
 
+export interface SmsCountry {
+	code: string;
+	name: string;
+	numeric_code: string;
+	country_name: string;
+}
+
 export interface CountriesState {
 	domains: CountryListItem[] | undefined;
 	payments: CountryListItem[] | undefined;
-	sms: CountryListItem[] | undefined;
+	sms: SmsCountry[] | undefined;
 	woocommerce: WooCountryList | undefined;
 }
