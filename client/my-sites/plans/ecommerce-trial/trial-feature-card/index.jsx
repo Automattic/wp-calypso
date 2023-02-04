@@ -1,9 +1,16 @@
-import { Card } from '@automattic/components';
+import { Card, Gridicon } from '@automattic/components';
+import { useState } from 'react';
 
 import './style.scss';
 
 export default function TrialFeatureCard( props ) {
 	const { illustration, title, subtitle, items } = props;
+
+	const [ expanded, setExpanded ] = useState( props.expanded );
+
+	const toggle = () => {
+		setExpanded( ! expanded );
+	};
 
 	return (
 		<Card className="trial-feature-card__card">
@@ -11,19 +18,29 @@ export default function TrialFeatureCard( props ) {
 			<div className="trial-feature-card__text">
 				<div className="trial-feature-card__title">{ title }</div>
 				<div className="trial-feature-card__subtitle">{ subtitle }</div>
-				<div className="trial-feature-card__items-wrapper">
-					{ items.map( ( item ) => (
-						<div key={ item.title } className="trial-feature-card__item">
-							<div className="trial-feature-card__item-icon">X</div>
-							<div className="trial-feature-card__item-icontent">
-								<div className="trial-feature-card__item-icontent-title">{ item.title }</div>
-								<div className="trial-feature-card__item-icontent-subtitle">{ item.subtitle }</div>
+				{ expanded ? (
+					<div className="trial-feature-card__items-wrapper">
+						{ items.map( ( item ) => (
+							<div key={ item.title } className="trial-feature-card__item">
+								<div className="trial-feature-card__item-icon">
+									<Gridicon icon="checkmark" size={ 18 } />
+								</div>
+								<div className="trial-feature-card__item-content">
+									<div className="trial-feature-card__item-content-title">{ item.title }</div>
+									<div className="trial-feature-card__item-content-subtitle">{ item.subtitle }</div>
+								</div>
 							</div>
-						</div>
-					) ) }
-				</div>
+						) ) }
+					</div>
+				) : null }
 			</div>
-			<div className="trial-feature-card__accordion-toggle">V</div>
+			<div className="trial-feature-card__accordion-toggle">
+				{ expanded ? (
+					<Gridicon icon="chevron-down" size={ 16 } onClick={ toggle } />
+				) : (
+					<Gridicon icon="chevron-up" size={ 16 } onClick={ toggle } />
+				) }
+			</div>
 		</Card>
 	);
 }

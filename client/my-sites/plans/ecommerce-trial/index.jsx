@@ -39,6 +39,7 @@ export default function ECommerceTrialPlans( props ) {
 
 	const features = [
 		{
+			expanded: true,
 			illustration: '/calypso/images/me/pattern-dark.png',
 			title: translate( 'General features' ),
 			subtitle: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
