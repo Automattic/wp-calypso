@@ -331,6 +331,11 @@ export default function ECommerceTrialPlans( props ) {
 					<TrialFeatureCard key={ feature.title } { ...feature } />
 				) ) }
 			</div>
+			<div className="e-commerce-trial-plans__cta-wrapper">
+				<Button className="e-commerce-trial-plans__cta is-primary">
+					{ translate( 'Get Commerce' ) }
+				</Button>
+			</div>
 		</>
 	);
 }

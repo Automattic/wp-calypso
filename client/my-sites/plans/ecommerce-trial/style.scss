@@ -23,6 +23,7 @@ body.is-section-plans.is-trial-plan {
 		.e-commerce-trial-plans__trial-card-content {
 			flex: 1;
 			margin-top: 10px;
+			padding-right: 25%;
 
 			.e-commerce-trial-plans__card-title {
 				font-size: $font-title-medium;
@@ -118,6 +119,23 @@ body.is-section-plans.is-trial-plan {
 			.e-commerce-trial-plans__price-card-savings {
 				color: #306e27;
 				font-size: $font-body-extra-small;
+			}
+		}
+	}
+
+	.e-commerce-trial-plans__cta-wrapper {
+		text-align: center;
+		margin-top: 45px;
+
+		@media (max-width: $break-mobile) {
+			padding: 0 20px;
+			margin-top: 0;
+		}
+
+		button {
+			@media (max-width: $break-mobile) {
+				width: 100%;
+				line-height: 30px;
 			}
 		}
 	}
