@@ -1,6 +1,11 @@
 .trial-feature-card__card {
-	padding: 24px;
 	display: flex;
+	padding: 24px;
+	margin: 0;
+
+	&:last-child {
+		border-radius: 0 0 2px 2px;
+	}
 
 	.trial-feature-card__illustration {
 		width: 115px;
@@ -28,16 +33,21 @@
 
 			.trial-feature-card__item {
 				display: flex;
-
+				padding: 7px 0;
 
 				.trial-feature-card__item-icon {
-					padding: 0 20px;
+					padding: 3px 0;
+
+					.gridicons-checkmark {
+						fill: var(--color-success-40);
+					}
 				}
 
 				.trial-feature-card__item-content {
 					flex: 1;
 					display: flex;
 					flex-direction: column;
+					margin-left: 20px;
 
 					.trial-feature-card__item-content-title {
 						font-size: $font-body;
@@ -54,6 +64,12 @@
 	}
 
 	.trial-feature-card__accordion-toggle {
-		padding: 15px;
+
+		.gridicons-chevron-down,
+		.gridicons-chevron-up {
+			cursor: pointer;
+			padding: 15px;
+			fill: var(--color-neutral-90);
+		}
 	}
 }
