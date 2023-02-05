@@ -10,10 +10,25 @@ import type { CountriesState } from './types';
 import type { Reducer } from 'react';
 import type { AnyAction } from 'redux';
 
-function createListReducer< TType extends keyof CountriesState, TActionType extends string >(
-	updatedActionType: TActionType
-): Reducer< CountriesState[ TType ] | undefined, AnyAction > {
-	return ( state: undefined | CountriesState[ TType ], action: AnyAction ) => {
+function createListReducer<
+	TType extends Exclude< keyof CountriesState, 'woocommerce' >,
+	TActionType extends string
+>( updatedActionType: TActionType ): Reducer< CountriesState[ TType ] | undefined, AnyAction > {
+	return ( state: undefined | CountriesState[ TType ] = [], action: AnyAction ) => {
+		switch ( action.type ) {
+			case updatedActionType:
+				return action.countries;
+			default:
+				return state;
+		}
+	};
+}
+
+function createObjectReducer<
+	TType extends Extract< keyof CountriesState, 'woocommerce' >,
+	TActionType extends string
+>( updatedActionType: TActionType ): Reducer< CountriesState[ TType ] | undefined, AnyAction > {
+	return ( state: undefined | CountriesState[ TType ] = {}, action: AnyAction ) => {
 		switch ( action.type ) {
 			case updatedActionType:
 				return action.countries;
@@ -35,7 +50,7 @@ const combinedReducer = combineReducers( {
 		COUNTRIES_PAYMENTS_UPDATED
 	),
 	sms: createListReducer< 'sms', typeof COUNTRIES_SMS_UPDATED >( COUNTRIES_SMS_UPDATED ),
-	woocommerce: createListReducer< 'woocommerce', typeof COUNTRIES_WOOCOMMERCE_UPDATED >(
+	woocommerce: createObjectReducer< 'woocommerce', typeof COUNTRIES_WOOCOMMERCE_UPDATED >(
 		COUNTRIES_WOOCOMMERCE_UPDATED
 	),
 } );
