@@ -138,7 +138,7 @@ class ReaderStream extends Component {
 
 	focusSelectedPost = ( selectedPostKey ) => {
 		const postRefKey = this.getPostRef( selectedPostKey );
-		const ref = this.listRef.current.refs[ postRefKey ];
+		const ref = this.listRef.current && this.listRef.current.refs[ postRefKey ];
 		const node = ReactDom.findDOMNode( ref );
 
 		// if the post is found, focus the first anchor tag within it.
@@ -146,9 +146,7 @@ class ReaderStream extends Component {
 			const firstLink = node.querySelector( 'a' );
 
 			if ( firstLink ) {
-				setTimeout( () => {
-					firstLink.focus();
-				} );
+				firstLink.focus();
 			}
 		}
 	};
