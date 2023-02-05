@@ -6,14 +6,14 @@ import {
 	COUNTRIES_WOOCOMMERCE_UPDATED,
 } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
-import type { CountryListItem } from '@automattic/wpcom-checkout';
+import type { CountriesState } from './types';
 import type { Reducer } from 'react';
 import type { AnyAction } from 'redux';
 
-function createListReducer< TActionType extends string >(
+function createListReducer< TType extends keyof CountriesState, TActionType extends string >(
 	updatedActionType: TActionType
-): Reducer< CountryListItem[] | undefined, AnyAction > {
-	return ( state: undefined | CountryListItem[] = [], action: AnyAction ) => {
+): Reducer< CountriesState[ TType ] | undefined, AnyAction > {
+	return ( state: undefined | CountriesState[ TType ], action: AnyAction ) => {
 		switch ( action.type ) {
 			case updatedActionType:
 				return action.countries;
@@ -24,10 +24,20 @@ function createListReducer< TActionType extends string >(
 }
 
 const combinedReducer = combineReducers( {
-	domains: createListReducer( COUNTRIES_DOMAINS_UPDATED ),
-	payments: createListReducer( COUNTRIES_PAYMENTS_UPDATED ),
-	sms: createListReducer( COUNTRIES_SMS_UPDATED ),
-	woocommerce: createListReducer( COUNTRIES_WOOCOMMERCE_UPDATED ),
+	// Note: it would be nice to not need to specify the second generic type
+	// here, since it can be inferred from the argument, but if you pass any
+	// generics, you must pass all generics. May possibly be solved by
+	// https://github.com/microsoft/TypeScript/pull/26349
+	domains: createListReducer< 'domains', typeof COUNTRIES_DOMAINS_UPDATED >(
+		COUNTRIES_DOMAINS_UPDATED
+	),
+	payments: createListReducer< 'payments', typeof COUNTRIES_PAYMENTS_UPDATED >(
+		COUNTRIES_PAYMENTS_UPDATED
+	),
+	sms: createListReducer< 'sms', typeof COUNTRIES_SMS_UPDATED >( COUNTRIES_SMS_UPDATED ),
+	woocommerce: createListReducer< 'woocommerce', typeof COUNTRIES_WOOCOMMERCE_UPDATED >(
+		COUNTRIES_WOOCOMMERCE_UPDATED
+	),
 } );
 
 const countriesReducer = withStorageKey( 'countries', combinedReducer );
