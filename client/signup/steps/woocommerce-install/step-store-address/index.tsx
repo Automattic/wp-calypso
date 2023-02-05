@@ -50,7 +50,7 @@ export default function StepStoreAddress( props: WooCommerceStoreAddressProps ) 
 	const siteId = useSelector( getSelectedSiteId ) as number;
 
 	const countriesList =
-		useSelector( ( state: IAppState ) => getCountries( state, 'woocommerce' ) ) || [];
+		useSelector( ( state: IAppState ) => getCountries( state, 'woocommerce' ) ) || {};
 	const countriesAsOptions = Object.entries( countriesList ).map( ( [ key, value ] ) => {
 		return { value: key, label: value };
 	} );
