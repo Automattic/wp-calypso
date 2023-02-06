@@ -12,7 +12,7 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { deleteStoredCard } from 'calypso/state/stored-cards/actions';
 import { isDeletingStoredCard } from 'calypso/state/stored-cards/selectors';
 import PaymentMethodDeleteDialog from './payment-method-delete-dialog';
-import type { CalypsoDispatch } from 'calypso/state/types';
+import type { CalypsoDispatch, IAppState } from 'calypso/state/types';
 
 interface Props {
 	card: PaymentMethod;
@@ -20,7 +20,7 @@ interface Props {
 
 const PaymentMethodDelete: FunctionComponent< Props > = ( { card } ) => {
 	const translate = useTranslate();
-	const isDeleting = useSelector( ( state ) =>
+	const isDeleting = useSelector( ( state: IAppState ) =>
 		isDeletingStoredCard( state, card.stored_details_id )
 	);
 	const reduxDispatch = useDispatch< CalypsoDispatch >();
