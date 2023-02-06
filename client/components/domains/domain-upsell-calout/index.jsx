@@ -15,23 +15,26 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
-const DomainUpsell = () => {
+const DomainUpsellCalout = ( { trackEvent } ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const trackEventView = `calypso_${ trackEvent }_view`;
+	const trackEventClick = `calypso_${ trackEvent }_click`;
+	const trackEventDismiss = `calypso_${ trackEvent }_dismiss`;
+	const dismissPreference = `${ trackEvent }-${ site.ID }`;
 	const isEmailVerified = useSelector( ( state ) => isCurrentUserEmailVerified( state ) );
 	const siteDomains = useSelector( ( state ) => getDomainsBySiteId( state, site.ID ) );
 	const hasPreferences = useSelector( hasReceivedRemotePreferences );
-	const dismissPreference = `site_editor_domain_upsell-${ site.ID }`;
 	const isDismissed = useSelector( ( state ) => getPreference( state, dismissPreference ) );
 
 	const getCtaClickHandler = useCallback( () => {
-		recordTracksEvent( 'calypso_site_editor_domain_upsell_search_click' );
+		recordTracksEvent( trackEventClick );
 		page( sprintf( '/domains/add/%s?domainAndPlanPackage=true', site.domain ) );
-	}, [ site.domain ] );
+	}, [ trackEventClick, site.domain ] );
 
 	const getDismissClickHandler = () => {
-		recordTracksEvent( 'calypso_site_editor_domain_upsell_search_dismiss' );
+		recordTracksEvent( trackEventDismiss );
 		dispatch( savePreference( dismissPreference, 1 ) );
 	};
 
@@ -47,22 +50,24 @@ const DomainUpsell = () => {
 
 	return (
 		<>
-			<TrackComponentView eventName="calypso_site_preview_domain_upsell_search_view" />
-			<div className="domain-upsell" id="domain-upsell">
-				<div className="domain-upsell__content">
-					<div className="domain-upsell__content-text">
-						<Gridicon icon="globe" size={ 16 } className="domain-upsell__icon" />
-						<span className="domain-upsell__domain-name">{ site.domain }</span>
-						<button className="domain-upsell__button" onClick={ getCtaClickHandler }>
-							<span className="domain-upsell__button-text-desktop">
+			<TrackComponentView eventName={ trackEventView } />
+			<div className="domain-upsell-calout" id="domain-upsell-calout">
+				<div className="domain-upsell-calout__content">
+					<div className="domain-upsell-calout__content-text">
+						<Gridicon icon="globe" size={ 16 } className="domain-upsell-calout__icon" />
+						<span className="domain-upsell-calout__domain-name">{ site.domain }</span>
+						<button className="domain-upsell-calout__button" onClick={ getCtaClickHandler }>
+							<span className="domain-upsell-calout__button-text-desktop">
 								{ __( 'Customize your domain' ) }
 							</span>
-							<span className="domain-upsell__button-text-mobile">{ __( 'Customize' ) }</span>
+							<span className="domain-upsell-calout__button-text-mobile">
+								{ __( 'Customize' ) }
+							</span>
 						</button>
 						<Gridicon
 							icon="cross"
 							size={ 16 }
-							className="domain-upsell__dismiss-icon"
+							className="domain-upsell-calout__dismiss-icon"
 							onClick={ getDismissClickHandler }
 						/>
 					</div>
@@ -72,4 +77,4 @@ const DomainUpsell = () => {
 	);
 };
 
-export default DomainUpsell;
+export default DomainUpsellCalout;
