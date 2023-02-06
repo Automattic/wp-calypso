@@ -20,7 +20,7 @@ export default function usePreinstalledPremiumPlugin( pluginSlug ) {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const billingPeriod = useSelector( getBillingInterval );
 
-	useQuerySitePurchases( selectedSiteId ?? -1 );
+	useQuerySitePurchases( selectedSiteId );
 
 	const isPreinstalledPremiumPluginUpgraded = useSelector(
 		( state ) =>
@@ -56,10 +56,7 @@ export default function usePreinstalledPremiumPlugin( pluginSlug ) {
 
 	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, selectedSiteId ) );
 	const hasPurchasedFree = sitePurchases.some( isJetpackSearchFree );
-
 	const hasPurchasedPaid = sitePurchases.some( isJetpackSearch );
-
-	const preinstalledPremiumPluginFeature = preinstalledPremiumPlugin?.feature;
 
 	// Does the preinstalled premium plugin have a free tier?
 	const hasPreinstalledPremiumPluginFreeTier = !! preinstalledPremiumPlugin?.products?.free;
@@ -98,7 +95,6 @@ export default function usePreinstalledPremiumPlugin( pluginSlug ) {
 		isPreinstalledPremiumPlugin: !! preinstalledPremiumPlugin,
 		isPreinstalledPremiumPluginActive,
 		isPreinstalledPremiumPluginUpgraded,
-		preinstalledPremiumPluginFeature,
 		preinstalledPremiumPluginProduct,
 		sitesWithPreinstalledPremiumPlugin,
 		isPreinstalledPremiumPluginFreeInstalled,
