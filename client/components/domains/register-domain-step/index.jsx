@@ -526,7 +526,7 @@ class RegisterDomainStep extends Component {
 
 		return (
 			<ResponsiveToolbarGroup
-				className="domains-quickfilter-group"
+				className="register-domain-step__domains-quickfilter-group"
 				initialActiveIndex={ 0 }
 				forceSwipe={ 'undefined' === typeof window }
 				onClick={ handleClick }

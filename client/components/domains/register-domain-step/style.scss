@@ -347,18 +347,25 @@ body.is-section-signup.is-white-signup {
 	overflow: hidden;
 }
 
-.domains-quickfilter-group {
+.is-experiment-user {
 
-	@include break-large {
-		display: flex;
+	.register-domain-step {
+		box-shadow: none;
+		background: #fdfdfd;
 	}
 
-	.components-button {
-		&.is-pressed {
-			&::before {
-				border-radius: 4px;
+	.register-domain-step__domains-quickfilter-group {
+
+		@include break-large {
+			display: flex;
+		}
+
+		.components-button {
+			&.is-pressed {
+				&::before {
+					border-radius: 4px;
+				}
 			}
 		}
 	}
-
 }
