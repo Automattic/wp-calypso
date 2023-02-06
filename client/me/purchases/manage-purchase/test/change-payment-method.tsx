@@ -15,6 +15,7 @@ import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
+import { receiveSites } from 'calypso/state/sites/actions';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import ChangePaymentMethod from '../change-payment-method';
 import type { StoredCard } from 'calypso/my-sites/checkout/composite-checkout/types/stored-cards';
@@ -140,39 +141,34 @@ const initialPurchases = [
 	},
 ];
 
+const initialSites = [
+	{
+		ID: 1,
+		URL: 'example.com',
+		capabilities: {},
+		description: 'something',
+		domain: '',
+		jetpack: false,
+		launch_status: 'sure',
+		locale: 'en',
+		name: undefined,
+		options: {},
+		slug: 'example.com',
+	},
+];
+
 function createTestReduxStore() {
 	const initialState = getInitialState( initialReducer, userId );
-	const reduxStore = createReduxStore(
-		{
-			...initialState,
-			sites: {
-				items: {
-					[ siteId ]: {
-						ID: 1,
-						URL: 'example.com',
-						capabilities: {},
-						description: 'something',
-						domain: '',
-						jetpack: false,
-						launch_status: 'sure',
-						locale: 'en',
-						name: undefined,
-						options: {},
-						slug: 'example.com',
-					},
-				},
-			},
-		},
-		initialReducer
-	);
+	const reduxStore = createReduxStore( initialState, initialReducer );
 	setStore( reduxStore, getStateFromCache( userId ) );
 
 	// Dispatch actions on the store to set its initial state. They cannot be
-	// included in the initial state provided to createReduxStore because the
-	// reducer does not support setting keys for reducers that don't exist and
-	// the reducers won't be registererd until we call `setStore()` to initialize
+	// included in the initial state provided to `createReduxStore` because the
+	// function does not support setting keys for reducers that don't exist and
+	// the reducers won't be registered until we call `setStore()` to initialize
 	// support for dynamic reducers.
 	reduxStore.dispatch( setCurrentUser( { ID: userId } ) );
+	reduxStore.dispatch( receiveSites( initialSites ) );
 	reduxStore.dispatch( setSelectedSiteId( siteId ) );
 	reduxStore.dispatch( {
 		type: PURCHASES_SITE_FETCH_COMPLETED,
