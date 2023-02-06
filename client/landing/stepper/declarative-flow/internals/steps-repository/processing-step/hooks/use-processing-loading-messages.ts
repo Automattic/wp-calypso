@@ -13,8 +13,8 @@ export function useProcessingLoadingMessages( flow?: string ) {
 
 	if ( flow === 'copy-site' ) {
 		return [
-			{ title: __( 'Laying the foundations' ), duration: 5000 },
-			{ title: __( 'Securing your data' ), duration: 4000 },
+			{ title: __( 'Laying the foundations' ), duration: 3500 },
+			{ title: __( 'Securing your data' ), duration: 4500 },
 			{ title: __( 'Enabling encryption' ), duration: 5000 },
 			{ title: __( 'Applying a shiny top coat' ), duration: 4000 },
 		];
