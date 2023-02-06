@@ -11912,7 +11912,7 @@ __metadata:
     redux-mock-store: ^1.5.4
     redux-thunk: ^2.3.0
     regenerator-runtime: ^0.13.9
-    social-logos: ^2.4.0
+    social-logos: ^2.5.2
     socket.io-client: ^2.3.0
     source-map-support: ^0.5.19
     store: ^2.0.12
@@ -30257,14 +30257,14 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"social-logos@npm:^2.4.0":
-  version: 2.4.0
-  resolution: "social-logos@npm:2.4.0"
+"social-logos@npm:^2.5.2":
+  version: 2.5.2
+  resolution: "social-logos@npm:2.5.2"
   dependencies:
     prop-types: ^15.5.7
   peerDependencies:
-    react: 15 - 17
-  checksum: 7ea4a21c5e2f38221ab4bcec4ebdcdcfe4d2420bf748fe132a88bfc8d5fa359948e73df59d12dd4f2379abf2eb4e5a17e671195f0aec1a0da599e1e2ca204e94
+    react: 15 - 18
+  checksum: 60a5d5440b9b8b57a29bd60340ad62a063da7da29a2b437ebdbaaaf29596ebfa264cdd0aa1d09a3e4bc6e3cb2c220d6dbf8e8a17c2b27bc307a9059d3adddcbd
   languageName: node
   linkType: hard
 

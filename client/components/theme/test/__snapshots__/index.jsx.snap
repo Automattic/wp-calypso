@@ -31,6 +31,11 @@ exports[`Theme rendering with default display buttonContents should match snapsh
         Twenty Seventeen
       </h2>
       <span
+        class="theme__info-upsell-description"
+      >
+        Free
+      </span>
+      <span
         class="theme__more-button"
       >
         <button

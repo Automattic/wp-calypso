@@ -1,5 +1,5 @@
 import './style.scss';
-import { useLocalizeUrl } from '@automattic/i18n-utils';
+import { useLocalizeUrl, removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
 import { useTranslate, getLocaleSlug } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -9,6 +9,7 @@ import { useDoNotSell } from 'calypso/lib/analytics/utils';
 import { preventWidows } from 'calypso/lib/formatting';
 import { navigate } from 'calypso/lib/navigate';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 const UniversalNavbarFooter = () => {
 	const translate = useTranslate();
@@ -17,6 +18,9 @@ const UniversalNavbarFooter = () => {
 	const { shouldSeeDoNotSell, isDoNotSell, onSetDoNotSell } = useDoNotSell();
 	const [ isDialogOpen, setIsDialogOpen ] = useState( false );
 	const isLoggedIn = useSelector( isUserLoggedIn );
+
+	const currentRoute = useSelector( getCurrentRoute );
+	const pathNameWithoutLocale = removeLocaleFromPathLocaleInFront( currentRoute ).slice( 1 );
 
 	const openDialog = useCallback( () => {
 		setIsDialogOpen( true );
@@ -235,69 +239,68 @@ const UniversalNavbarFooter = () => {
 								<select
 									className="lp-language-picker__content"
 									title={ translate( 'Change Language' ) }
-									onChange={ ( e ) => navigate( e.target.value ) }
-									defaultValue={
-										translate.localeSlug === 'en'
-											? `/plugins`
-											: `/${ translate.localeSlug }/plugins`
-									}
+									onChange={ ( e ) => {
+										navigate( e.target.value );
+										window.location.reload();
+									} }
+									defaultValue={ currentRoute }
 								>
 									<option>{ translate( 'Change Language' ) }</option>
-									<option lang="es" value="/es/plugins">
+									<option lang="es" value={ `/es/${ pathNameWithoutLocale }` }>
 										Español
 									</option>
-									<option lang="pt-br" value="/pt-br/plugins">
+									<option lang="pt-br" value={ `/pt-br/${ pathNameWithoutLocale }` }>
 										Português do Brasil
 									</option>
-									<option lang="de" value="/de/plugins">
+									<option lang="de" value={ `/de/${ pathNameWithoutLocale }` }>
 										Deutsch
 									</option>
-									<option lang="fr" value="/fr/plugins">
+									<option lang="fr" value={ `/fr/${ pathNameWithoutLocale }` }>
 										Français
 									</option>
-									<option lang="he" value="/he/plugins">
+									<option lang="he" value={ `/he/${ pathNameWithoutLocale }` }>
 										עִבְרִית
 									</option>
-									<option lang="ja" value="/ja/plugins">
+									<option lang="ja" value={ `/ja/${ pathNameWithoutLocale }` }>
 										日本語
 									</option>
-									<option lang="it" value="/it/plugins">
+									<option lang="it" value={ `/it/${ pathNameWithoutLocale }` }>
 										Italiano
 									</option>
-									<option lang="nl" value="/nl/plugins">
+									<option lang="nl" value={ `/nl/${ pathNameWithoutLocale }` }>
 										Nederlands
 									</option>
-									<option lang="ru" value="/ru/plugins">
+									<option lang="ru" value={ `/ru/${ pathNameWithoutLocale }` }>
 										Русский
 									</option>
-									<option lang="tr" value="/tr/plugins">
+									<option lang="tr" value={ `/tr/${ pathNameWithoutLocale }` }>
 										Türkçe
 									</option>
-									<option lang="id" value="/id/plugins">
+									<option lang="id" value={ `/id/${ pathNameWithoutLocale }` }>
 										Bahasa Indonesia
 									</option>
-									<option lang="zh-cn" value="/zh-cn/plugins">
+									<option lang="zh-cn" value={ `/zh-cn/${ pathNameWithoutLocale }` }>
 										简体中文
 									</option>
-									<option lang="zh-tw" value="/zh-tw/plugins">
+									<option lang="zh-tw" value={ `/zh-tw/${ pathNameWithoutLocale }` }>
 										繁體中文
 									</option>
-									<option lang="ko" value="/ko/plugins">
+									<option lang="ko" value={ `/ko/${ pathNameWithoutLocale }` }>
 										한국어
 									</option>
-									<option lang="ar" value="/ar/plugins">
+									<option lang="ar" value={ `/ar/${ pathNameWithoutLocale }` }>
 										العربية
 									</option>
-									<option lang="sv" value="/sv/plugins">
+									<option lang="sv" value={ `/sv/${ pathNameWithoutLocale }` }>
 										Svenska
 									</option>
-									<option lang="el" value="/el/plugins">
+									<option lang="el" value={ `/el/${ pathNameWithoutLocale }` }>
 										Ελληνικά
 									</option>
-									<option lang="en" value="/plugins">
+									<option lang="en" value={ `/${ pathNameWithoutLocale }` }>
 										English
 									</option>
-									<option lang="ro" value="/ro/plugins">
+									<option lang="ro" value={ `/ro/${ pathNameWithoutLocale }` }>
 										Română
 									</option>
 								</select>
