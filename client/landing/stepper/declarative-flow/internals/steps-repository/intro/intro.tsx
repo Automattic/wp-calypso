@@ -13,31 +13,31 @@ export interface IntroContent {
 	title: WPElement | string;
 	text?: WPElement | string;
 	buttonText: string;
-	moreModal?: IntroMoreModal;
+	modal?: IntroModal;
 }
 
-export interface IntroMoreModal {
+export interface IntroModal {
 	buttonText: string;
 	content: WPElement;
 }
 
 const Intro: React.FC< Props > = ( { onSubmit, introContent } ) => {
-	const [ showMoreModal, setShowMoreModal ] = useState( false );
-	const { title, text, buttonText, moreModal } = introContent;
+	const [ showModal, setShowModal ] = useState( false );
+	const { title, text, buttonText, modal } = introContent;
 
 	const modalClasses = classNames( 'intro__more-modal', {
-		show: showMoreModal,
+		show: showModal,
 	} );
 
 	const handleMoreClick = () => {
 		// hack to cover the logo header because z-index not respecting element that is heavily nested
 		document.getElementsByClassName( 'signup-header' )[ 0 ].style.display = 'none';
-		setShowMoreModal( true );
+		setShowModal( true );
 	};
 
 	const handleModalClose = () => {
 		document.getElementsByClassName( 'signup-header' )[ 0 ].style.display = null; // null = reset back to default
-		setShowMoreModal( false );
+		setShowModal( false );
 	};
 
 	return (
@@ -51,21 +51,21 @@ const Intro: React.FC< Props > = ( { onSubmit, introContent } ) => {
 					<Button className="intro__button" primary onClick={ onSubmit }>
 						{ buttonText }
 					</Button>
-					{ moreModal && (
+					{ modal && (
 						<Button className="intro__button-more" transparent onClick={ handleMoreClick }>
-							{ moreModal.buttonText }
+							{ modal.buttonText }
 						</Button>
 					) }
 				</div>
 			</div>
-			{ moreModal && (
+			{ modal && (
 				<div className={ modalClasses }>
 					<div className="intro__more-modal-header">
 						<Button plain onClick={ handleModalClose }>
 							<CloseIcon />
 						</Button>
 					</div>
-					{ moreModal.content }
+					{ modal.content }
 				</div>
 			) }
 		</>
