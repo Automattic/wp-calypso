@@ -15,13 +15,13 @@ const SiteResumeCopy = ( { siteSlug, sourceSite, sourceSiteSlug } ) => {
 	return (
 		<Task
 			isUrgent
-			title={ translate( 'Resume copying your site' ) }
+			title={ translate( 'Ready to finish copying your site?' ) }
 			description={ preventWidows(
 				translate(
-					'You didn’t finish copying your site, but don’t worry, we’ll guide you through the process when you are ready.'
+					'Your copied site is almost there. You can finish setting it up any time you’re ready.'
 				)
 			) }
-			actionText={ translate( 'Resume copying' ) }
+			actionText={ translate( 'Finish setting it up' ) }
 			actionUrl={ `/setup/copy-site?sourceSlug=${ sourceSiteSlug }&siteSlug=${ siteSlug }` }
 			actionOnClick={ () => {
 				startSiteCopy( 'calypso_resume_copy_site_click' );
