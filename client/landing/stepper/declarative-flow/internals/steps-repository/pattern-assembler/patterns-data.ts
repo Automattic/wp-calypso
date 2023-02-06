@@ -1,7 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { Onboard } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { useIntent } from '../../../../hooks/use-intent';
 import type { Pattern } from './types';
+
+const SiteIntent = Onboard.SiteIntent;
 
 const useHeaderPatterns = () => {
 	const translate = useTranslate();
@@ -176,7 +180,9 @@ const useFooterPatterns = () => {
 };
 
 const useSectionPatterns = () => {
+	const intent = useIntent();
 	const translate = useTranslate();
+
 	const callToAction = translate( 'Call to action' );
 	const images = translate( 'Images' );
 	const list = translate( 'List' );
@@ -188,44 +194,52 @@ const useSectionPatterns = () => {
 	const portfolio = translate( 'Portfolio' );
 	const posts = translate( 'Posts' );
 
+	const postsPatterns = [
+		{
+			id: 5645,
+			name: 'Four Recent Blog Posts',
+			category: posts,
+		},
+		{
+			id: 1784,
+			name: 'Recent Posts',
+			category: posts,
+		},
+		{
+			id: 8421,
+			name: 'Grid of posts 2x3',
+			category: posts,
+		},
+		{
+			id: 8435,
+			name: 'Grid of Posts 3x2',
+			category: posts,
+		},
+		{
+			id: 7996,
+			name: 'Grid of Posts 4x2',
+			category: posts,
+		},
+		{
+			id: 8437,
+			name: 'List of posts',
+			category: posts,
+		},
+		{
+			id: 3213,
+			name: 'Latest podcast episodes',
+			category: posts,
+		},
+	];
+
+	const addPostsPatternsInWriteFlow = () => ( intent === SiteIntent.Write ? postsPatterns : [] );
+	const addPostsPatternsInNonWriteFlows = () =>
+		intent !== SiteIntent.Write ? postsPatterns : [];
+
 	const sectionPatterns: Pattern[] = useMemo(
 		() =>
 			[
-				{
-					id: 5645,
-					name: 'Four Recent Blog Posts',
-					category: posts,
-				},
-				{
-					id: 1784,
-					name: 'Recent Posts',
-					category: posts,
-				},
-				{
-					id: 8421,
-					name: 'Grid of posts 2x3',
-					category: posts,
-				},
-				{
-					id: 8435,
-					name: 'Grid of Posts 3x2',
-					category: posts,
-				},
-				{
-					id: 7996,
-					name: 'Grid of Posts 4x2',
-					category: posts,
-				},
-				{
-					id: 8437,
-					name: 'List of posts',
-					category: posts,
-				},
-				{
-					id: 3213,
-					name: 'Latest podcast episodes',
-					category: posts,
-				},
+				...addPostsPatternsInWriteFlow(),
 				{
 					id: 7156,
 					name: 'Media and text with image on the right',
@@ -291,6 +305,7 @@ const useSectionPatterns = () => {
 					name: 'Two Column CTA',
 					category: callToAction,
 				},
+				...addPostsPatternsInNonWriteFlows(),
 				{
 					id: 6305,
 					name: 'Heading with Image Grid',
