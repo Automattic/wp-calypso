@@ -317,13 +317,11 @@ class DomainSearch extends Component {
 		}
 
 		return (
-			<>
-				<Main className={ classes } wideLayout>
-					<QueryProductsList />
-					<QuerySiteDomains siteId={ this.props.selectedSiteId } />
-					{ content }
-				</Main>
-			</>
+			<Main className={ classes } wideLayout>
+				<QueryProductsList />
+				<QuerySiteDomains siteId={ this.props.selectedSiteId } />
+				{ content }
+			</Main>
 		);
 	}
 }
