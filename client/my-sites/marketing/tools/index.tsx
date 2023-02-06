@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
 import rocket from 'calypso/assets/images/customer-home/illustration--rocket.svg';
 import earnIllustration from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
+import promotionIcon from 'calypso/assets/images/customer-home/promoted-marketing-integrations-alt.svg';
 import canvaLogo from 'calypso/assets/images/illustrations/canva-logo.svg';
 import facebookLogo from 'calypso/assets/images/illustrations/facebook-logo.png';
 import sendinblueLogo from 'calypso/assets/images/illustrations/sendinblue-logo.svg';
@@ -52,6 +53,10 @@ export const MarketingTools: FunctionComponent = () => {
 		recordTracksEvent( 'calypso_marketing_tools_create_a_logo_button_click' );
 	};
 
+	const handlePromotedPostsClick = () => {
+		recordTracksEvent( 'calypso_marketing_tools_promoted_posts_button_click' );
+	};
+
 	const handleFacebookClick = () => {
 		recordTracksEvent( 'calypso_marketing_tools_facebook_button_click' );
 	};
@@ -92,6 +97,22 @@ export const MarketingTools: FunctionComponent = () => {
 			<MarketingToolsHeader handleButtonClick={ handleBusinessToolsClick } />
 
 			<div className="tools__feature-list">
+				<MarketingToolsFeature
+					title={ translate( 'Get more traffic by promoting your content' ) }
+					description={ translate(
+						'Promote your content on millions of sites across WordPress.com and Tumblr with our new promoted post tool. Get new users to your best content, spending less than you would on a cup of coffee.'
+					) }
+					imagePath={ promotionIcon }
+				>
+					<Button
+						onClick={ handlePromotedPostsClick }
+						href={ `/advertising/${ selectedSiteSlug }` }
+						target="_blank"
+					>
+						{ translate( 'Let’s Go!' ) }
+					</Button>
+				</MarketingToolsFeature>
+
 				<MarketingToolsFeature
 					title={ translate( 'Want to build a great brand? Start with a great logo' ) }
 					description={ translate(
