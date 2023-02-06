@@ -255,7 +255,7 @@ class Plans extends Component {
 	}
 
 	renderEcommerceTrialPage() {
-		return <ECommerceTrialPlans { ...this.props } />;
+		return <ECommerceTrialPlans />;
 	}
 
 	render() {
