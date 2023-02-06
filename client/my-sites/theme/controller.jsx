@@ -62,7 +62,12 @@ export function details( context, next ) {
 	}
 
 	context.primary = (
-		<ThemeSheetComponent id={ slug } section={ section } pathName={ context.pathname } />
+		<ThemeSheetComponent
+			id={ slug }
+			section={ section }
+			pathName={ context.pathname }
+			syncActiveTheme={ context.query?.[ 'sync-active-theme' ] === 'true' }
+		/>
 	);
 
 	next();

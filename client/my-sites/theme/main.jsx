@@ -36,7 +36,6 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
-import { getQueryArgs } from 'calypso/lib/query-args';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
 import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
@@ -141,7 +140,9 @@ class ThemeSheet extends Component {
 
 	componentDidMount() {
 		this.scrollToTop();
-		if ( getQueryArgs()?.[ 'sync-active-theme' ] === 'true' ) {
+
+		const { syncActiveTheme } = this.props;
+		if ( syncActiveTheme ) {
 			this.props.themeStartActivationSync( this.props.siteId, this.props.themeId );
 		}
 	}
