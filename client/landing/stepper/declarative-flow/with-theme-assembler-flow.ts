@@ -13,7 +13,7 @@ import type { Design } from '@automattic/design-picker/src/types';
 
 const withThemeAssemblerFlow: Flow = {
 	name: WITH_THEME_ASSEMBLER_FLOW,
-	useSteps() {
+	useSideEffect() {
 		const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 		const selectedTheme = useQuery().get( 'theme' );
 
@@ -23,7 +23,9 @@ const withThemeAssemblerFlow: Flow = {
 				setSelectedDesign( BLANK_CANVAS_DESIGN as Design );
 			}
 		}, [] );
+	},
 
+	useSteps() {
 		return [
 			{ slug: 'patternAssembler', component: PatternAssembler },
 			{ slug: 'processing', component: Processing },
