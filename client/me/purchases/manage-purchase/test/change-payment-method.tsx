@@ -35,9 +35,9 @@ jest.mock( '@stripe/stripe-js', () => {
 	};
 } );
 
-// `recordPageView()` calls `fetch` for analytics with no guards and it is not
-// available outside of a browser so we must mock it here to avoid fatals.
-global.fetch = jest.fn( () => Promise.resolve() );
+// `recordPageView()` calls `fetch` for analytics with no guards and `fetch` is
+// not available outside of a browser so we must mock it here to avoid fatals.
+global.fetch = jest.fn( () => Promise.resolve( { ok: false } ) ) as jest.Mock;
 
 const userId = 1;
 const siteId = 1;
