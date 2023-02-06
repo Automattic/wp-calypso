@@ -556,12 +556,13 @@ class RegisterDomainStep extends Component {
 			onSearchChange: this.onSearchChange,
 			ref: this.bindSearchCardReference,
 			isReskinned: this.props.isReskinned,
+			childrenBeforeCloseButton: isDomainSidebarExperimentUser() && this.renderSearchFilters(),
 		};
 
 		return (
 			<>
 				<Search { ...componentProps }></Search>
-				{ this.renderSearchFilters() }
+				{ false === isDomainSidebarExperimentUser() && this.renderSearchFilters() }
 			</>
 		);
 	}
