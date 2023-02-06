@@ -5,6 +5,8 @@ import {
 	PLAN_FREE,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
+import { withShoppingCart } from '@automattic/shopping-cart';
+import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import { addQueryArgs } from '@wordpress/url';
 import { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -33,6 +35,8 @@ import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-f
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provider';
+import withCartKey from '../checkout/with-cart-key';
 import PlansHeader from './header';
 
 function DomainAndPlanUpsellNotice() {
@@ -66,9 +70,15 @@ class Plans extends Component {
 		intervalType: 'yearly',
 	};
 
+	state = {
+		isDesktop: isDesktop(),
+	};
+
 	componentDidMount() {
 		this.redirectIfInvalidPlanInterval();
-
+		this.unsubscribe = subscribeIsDesktop( ( matchesDesktop ) =>
+			this.setState( { isDesktop: matchesDesktop } )
+		);
 		// Scroll to the top
 		if ( typeof window !== 'undefined' ) {
 			window.scrollTo( 0, 0 );
@@ -123,6 +133,37 @@ class Plans extends Component {
 		);
 	};
 
+	handleUpgradeClick = async ( cartItemForPlan ) => {
+		const selectedSiteSlug = this.props.selectedSite.slug;
+		const redirectTo = this.props.redirectTo;
+		try {
+			// In this flow we redirect to checkout with both the plan and domain
+			// product in the cart.
+			await this.props.shoppingCartManager.addProductsToCart( [
+				{
+					product_slug: cartItemForPlan.product_slug,
+					extra: {
+						afterPurchaseUrl: redirectTo ?? undefined,
+					},
+				},
+			] );
+		} catch {
+			// Nothing needs to be done here. CartMessages will display the error to the user.
+			return;
+		}
+
+		if ( this.props.withDiscount && this.isMounted ) {
+			try {
+				await this.props.shoppingCartManager.applyCoupon( this.props.withDiscount );
+			} catch {
+				// If the coupon does not apply, let's continue to checkout anyway.
+			}
+		}
+
+		this.isMounted && page( `/checkout/${ selectedSiteSlug }` );
+		return;
+	};
+
 	renderPlansMain() {
 		const { currentPlan, selectedSite, isWPForTeamsSite } = this.props;
 
@@ -158,8 +199,13 @@ class Plans extends Component {
 				withDiscount={ this.props.withDiscount }
 				discountEndDate={ this.props.discountEndDate }
 				site={ selectedSite }
-				plansWithScroll={ false }
 				showTreatmentPlansReorderTest={ this.props.showTreatmentPlansReorderTest }
+				// plansWithScroll={ this.state.isDesktop }
+				shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
+				// isReskinned={ true } // for styles
+				// isPlansInsideStepper={ true }
+				// isInSignup={ true } // for the correct styles
+				onUpgradeClick={ this.handleUpgradeClick }
 			/>
 		);
 	}
@@ -221,7 +267,7 @@ class Plans extends Component {
 	}
 }
 
-export default connect( ( state ) => {
+const ConnectedPlans = connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 
 	const currentPlan = getCurrentPlan( state, selectedSiteId );
@@ -242,4 +288,12 @@ export default connect( ( state ) => {
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
 		is2023OnboardingPricingGrid,
 	};
-} )( localize( withTrackingTool( 'HotJar' )( Plans ) ) );
+} )( withCartKey( withShoppingCart( localize( withTrackingTool( 'HotJar' )( Plans ) ) ) ) );
+
+export default function PlansWrapper( props ) {
+	return (
+		<CalypsoShoppingCartProvider>
+			<ConnectedPlans { ...props } />
+		</CalypsoShoppingCartProvider>
+	);
+}
