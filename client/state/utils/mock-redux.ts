@@ -1,11 +1,14 @@
+import { getEmptyResponseCartProduct } from '@automattic/shopping-cart';
 import { createReduxStore } from 'calypso/state';
 import { PURCHASES_SITE_FETCH_COMPLETED } from 'calypso/state/action-types';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
+import { receiveProductsList } from 'calypso/state/products-list/actions';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import { receiveSites } from 'calypso/state/sites/actions';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import type { ResponseCartProduct } from '@automattic/shopping-cart';
 import type { StoredCard } from 'calypso/my-sites/checkout/composite-checkout/types/stored-cards';
 
 export const userId = 1;
@@ -127,6 +130,276 @@ export const initialSites = [
 	},
 ];
 
+export const domainProduct: ResponseCartProduct = {
+	...getEmptyResponseCartProduct(),
+	product_name: '.cash Domain',
+	product_slug: 'domain_reg',
+	currency: 'BRL',
+	extra: {
+		context: 'signup',
+	},
+	meta: 'foo.cash',
+	product_id: 6,
+	volume: 1,
+	is_domain_registration: true,
+	item_original_cost_integer: 500,
+	item_subtotal_integer: 500,
+	bill_period: '365',
+	months_per_bill_period: 12,
+};
+
+export const caDomainProduct: ResponseCartProduct = {
+	...getEmptyResponseCartProduct(),
+	product_name: '.ca Domain',
+	product_slug: 'domain_reg',
+	currency: 'BRL',
+	extra: {
+		context: 'signup',
+	},
+	meta: 'foo.ca',
+	product_id: 6,
+	volume: 1,
+	is_domain_registration: true,
+	item_original_cost_integer: 500,
+	item_subtotal_integer: 500,
+	bill_period: '365',
+	months_per_bill_period: 12,
+};
+
+export const gSuiteProduct: ResponseCartProduct = {
+	...getEmptyResponseCartProduct(),
+	product_name: 'G Suite',
+	product_slug: 'gapps',
+	currency: 'BRL',
+	extra: {},
+	meta: 'foo.cash',
+	product_id: 9,
+	volume: 1,
+	is_domain_registration: false,
+	item_original_cost_integer: 500,
+	item_subtotal_integer: 500,
+	bill_period: '365',
+	months_per_bill_period: 12,
+};
+
+export const domainTransferProduct: ResponseCartProduct = {
+	...getEmptyResponseCartProduct(),
+	product_name: '.cash Domain',
+	product_slug: 'domain_transfer',
+	currency: 'BRL',
+	extra: {
+		context: 'signup',
+	},
+	meta: 'foo.cash',
+	product_id: 6,
+	volume: 1,
+	item_original_cost_integer: 500,
+	item_subtotal_integer: 500,
+	bill_period: '365',
+	months_per_bill_period: 12,
+};
+
+export const planWithBundledDomain: ResponseCartProduct = {
+	...getEmptyResponseCartProduct(),
+	product_name: 'WordPress.com Personal',
+	product_slug: 'personal-bundle',
+	currency: 'BRL',
+	extra: {
+		context: 'signup',
+		domain_to_bundle: 'foo.cash',
+	},
+	meta: '',
+	product_id: 1009,
+	volume: 1,
+	item_original_cost_integer: 14400,
+	item_subtotal_integer: 14400,
+	bill_period: '365',
+	months_per_bill_period: 12,
+};
+
+export const planWithoutDomain: ResponseCartProduct = {
+	...getEmptyResponseCartProduct(),
+	product_name: 'WordPress.com Personal',
+	product_slug: 'personal-bundle',
+	currency: 'BRL',
+	extra: {
+		context: 'signup',
+	},
+	meta: '',
+	product_id: 1009,
+	volume: 1,
+	item_original_cost_integer: 14400,
+	item_subtotal_integer: 14400,
+	bill_period: '365',
+	months_per_bill_period: 12,
+};
+
+export const planWithoutDomainMonthly: ResponseCartProduct = {
+	...getEmptyResponseCartProduct(),
+	product_name: 'WordPress.com Personal Monthly',
+	product_slug: 'personal-bundle-monthly',
+	currency: 'BRL',
+	extra: {
+		context: 'signup',
+	},
+	meta: '',
+	product_id: 1019,
+	volume: 1,
+	item_original_cost_integer: 14400,
+	item_subtotal_integer: 14400,
+	bill_period: '31',
+	months_per_bill_period: 1,
+};
+
+export const planWithoutDomainBiannual: ResponseCartProduct = {
+	...getEmptyResponseCartProduct(),
+	product_name: 'WordPress.com Personal 2 Year',
+	product_slug: 'personal-bundle-2y',
+	currency: 'BRL',
+	extra: {
+		context: 'signup',
+	},
+	meta: '',
+	product_id: 1029,
+	volume: 1,
+	item_original_cost_integer: 14400,
+	item_subtotal_integer: 14400,
+	bill_period: '730',
+	months_per_bill_period: 24,
+};
+
+export const planLevel2: ResponseCartProduct = {
+	...getEmptyResponseCartProduct(),
+	product_name: 'WordPress.com Business',
+	product_slug: 'business-bundle',
+	currency: 'BRL',
+	extra: {
+		context: 'signup',
+	},
+	meta: '',
+	product_id: 1008,
+	volume: 1,
+	item_original_cost_integer: 14400,
+	item_subtotal_integer: 14400,
+	bill_period: '365',
+	months_per_bill_period: 12,
+};
+
+export const planLevel2Monthly: ResponseCartProduct = {
+	...getEmptyResponseCartProduct(),
+	product_name: 'WordPress.com Business Monthly',
+	product_slug: 'business-bundle-monthly',
+	currency: 'BRL',
+	extra: {
+		context: 'signup',
+	},
+	meta: '',
+	product_id: 1018,
+	volume: 1,
+	item_original_cost_integer: 14400,
+	item_subtotal_integer: 14400,
+	bill_period: '31',
+	months_per_bill_period: 1,
+};
+
+export const planLevel2Biannual: ResponseCartProduct = {
+	...getEmptyResponseCartProduct(),
+	product_name: 'WordPress.com Business 2 Year',
+	product_slug: 'business-bundle-2y',
+	currency: 'BRL',
+	extra: {
+		context: 'signup',
+	},
+	meta: '',
+	product_id: 1028,
+	volume: 1,
+	item_original_cost_integer: 14400,
+	item_subtotal_integer: 14400,
+	bill_period: '730',
+	months_per_bill_period: 24,
+};
+
+const productsList = {
+	[ planWithoutDomain.product_slug ]: {
+		product_id: planWithoutDomain.product_id,
+		product_slug: planWithoutDomain.product_slug,
+		product_type: 'bundle',
+		available: true,
+		is_domain_registration: false,
+		currency_code: planWithoutDomain.currency,
+	},
+	[ planWithoutDomainMonthly.product_slug ]: {
+		product_id: planWithoutDomainMonthly.product_id,
+		product_slug: planWithoutDomainMonthly.product_slug,
+		product_type: 'bundle',
+		available: true,
+		is_domain_registration: false,
+		currency_code: planWithoutDomainMonthly.currency,
+	},
+	[ planWithoutDomainBiannual.product_slug ]: {
+		product_id: planWithoutDomainBiannual.product_id,
+		product_slug: planWithoutDomainBiannual.product_slug,
+		product_type: 'bundle',
+		available: true,
+		is_domain_registration: false,
+		currency_code: planWithoutDomainBiannual.currency,
+	},
+	[ planLevel2.product_slug ]: {
+		product_id: planLevel2.product_id,
+		product_slug: planLevel2.product_slug,
+		product_type: 'bundle',
+		available: true,
+		is_domain_registration: false,
+		currency_code: planLevel2.currency,
+	},
+	[ planLevel2Monthly.product_slug ]: {
+		product_id: planLevel2Monthly.product_id,
+		product_slug: planLevel2Monthly.product_slug,
+		product_type: 'bundle',
+		available: true,
+		is_domain_registration: false,
+		currency_code: planLevel2Monthly.currency,
+	},
+	[ planLevel2Biannual.product_slug ]: {
+		product_id: planLevel2Biannual.product_id,
+		product_slug: planLevel2Biannual.product_slug,
+		product_type: 'bundle',
+		available: true,
+		is_domain_registration: false,
+		currency_code: planLevel2Biannual.currency,
+	},
+	domain_map: {
+		product_id: 5,
+		product_name: 'Product',
+		product_slug: 'domain_map',
+	},
+	domain_reg: {
+		product_id: 6,
+		product_name: 'Product',
+		product_slug: 'domain_reg',
+	},
+	premium_theme: {
+		product_id: 39,
+		product_name: 'Product',
+		product_slug: 'premium_theme',
+	},
+	'concierge-session': {
+		product_id: 371,
+		product_name: 'Product',
+		product_slug: 'concierge-session',
+	},
+	jetpack_backup_daily: {
+		product_id: 2100,
+		product_name: 'Jetpack Backup (Daily)',
+		product_slug: 'jetpack_backup_daily',
+	},
+	jetpack_scan: {
+		product_id: 2106,
+		product_name: 'Jetpack Scan Daily',
+		product_slug: 'jetpack_scan',
+	},
+};
+
 export function createTestReduxStore() {
 	const initialState = getInitialState( initialReducer, userId );
 	const reduxStore = createReduxStore( initialState, initialReducer );
@@ -145,6 +418,7 @@ export function createTestReduxStore() {
 		siteId,
 		purchases: initialPurchases,
 	} );
+	reduxStore.dispatch( receiveProductsList( productsList ) );
 
 	return reduxStore;
 }
