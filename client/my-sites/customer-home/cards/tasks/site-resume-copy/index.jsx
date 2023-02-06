@@ -2,6 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import siteCopyIllustration from 'calypso/assets/images/customer-home/illustration--import-complete.svg';
 import { useSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
 import { TASK_SITE_RESUME_COPY } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
@@ -24,7 +25,8 @@ const SiteResumeCopy = ( { siteSlug, sourceSite, sourceSiteSlug } ) => {
 			actionText={ translate( 'Finish setting it up' ) }
 			actionUrl={ `/setup/copy-site?sourceSlug=${ sourceSiteSlug }&siteSlug=${ siteSlug }` }
 			actionOnClick={ () => {
-				startSiteCopy( 'calypso_resume_copy_site_click' );
+				recordTracksEvent( 'calypso_resume_copy_site_click' );
+				startSiteCopy();
 			} }
 			illustration={ siteCopyIllustration }
 			taskId={ TASK_SITE_RESUME_COPY }
