@@ -24,6 +24,7 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
+import { isDomainSidebarExperimentUser } from 'calypso/my-sites/controller';
 import NewDomainsRedirectionNoticeUpsell from 'calypso/my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
 import {
 	domainAddEmailUpsell,
@@ -61,6 +62,7 @@ class DomainSearch extends Component {
 		selectedSiteId: PropTypes.number,
 		selectedSiteSlug: PropTypes.string,
 		domainAndPlanUpsellFlow: PropTypes.bool,
+		stateObject: PropTypes.object,
 	};
 
 	isMounted = false;
@@ -113,6 +115,10 @@ class DomainSearch extends Component {
 	}
 
 	componentWillUnmount() {
+		if ( isDomainSidebarExperimentUser( this.props.stateObject ) ) {
+			document.body.classList.remove( 'is-experiment-user' );
+		}
+
 		this.isMounted = false;
 	}
 
@@ -196,10 +202,15 @@ class DomainSearch extends Component {
 	}
 
 	render() {
-		const { selectedSite, selectedSiteSlug, translate, isManagingAllDomains, cart } = this.props;
+		const { selectedSite, selectedSiteSlug, translate, isManagingAllDomains, cart, stateObject } =
+			this.props;
 
 		if ( ! selectedSite ) {
 			return null;
+		}
+
+		if ( isDomainSidebarExperimentUser( stateObject ) ) {
+			document.body.classList.add( 'is-experiment-user' );
 		}
 
 		const classes = classnames( 'main-column', {
@@ -236,24 +247,46 @@ class DomainSearch extends Component {
 			content = (
 				<span>
 					<div className="domain-search__content">
-						<BackButton
-							className="domain-search__go-back"
-							href={ domainManagementList( selectedSiteSlug ) }
-						>
-							<Gridicon icon="arrow-left" size={ 18 } />
-							{ translate( 'Back' ) }
-						</BackButton>
+						{ false === isDomainSidebarExperimentUser( stateObject ) && (
+							<BackButton
+								className="domain-search__go-back"
+								href={ domainManagementList( selectedSiteSlug ) }
+							>
+								<Gridicon icon="arrow-left" size={ 18 } />
+								{ translate( 'Back' ) }
+							</BackButton>
+						) }
+
 						{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 						<div className="domains__header">
-							<FormattedHeader
-								brandFont
-								headerText={
-									isManagingAllDomains
-										? translate( 'All Domains' )
-										: translate( 'Search for a domain' )
-								}
-								align="left"
-							/>
+							{ isDomainSidebarExperimentUser( stateObject ) && (
+								<>
+									<FormattedHeader
+										brandFont
+										headerText={ translate( 'Claim your domain' ) }
+										align="center"
+									/>
+
+									<p>
+										{ translate(
+											'Stake your claim on your corner of the web with a custom domain name that’s easy to find, share, and follow. Not sure yet?'
+										) }
+										<a href="/support/domains/">{ translate( 'Decide later.' ) }</a>
+									</p>
+								</>
+							) }
+
+							{ false === isDomainSidebarExperimentUser( stateObject ) && (
+								<FormattedHeader
+									brandFont
+									headerText={
+										isManagingAllDomains
+											? translate( 'All Domains' )
+											: translate( 'Search for a domain' )
+									}
+									align="left"
+								/>
+							) }
 						</div>
 
 						<EmailVerificationGate
@@ -308,6 +341,7 @@ export default connect(
 			isSiteOnMonthlyPlan: isSiteOnMonthlyPlan( state, siteId ),
 			productsList: getProductsList( state ),
 			userCanPurchaseGSuite: canUserPurchaseGSuite( state ),
+			stateObject: state,
 		};
 	},
 	{

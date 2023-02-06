@@ -53,6 +53,7 @@ import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selec
 import { successNotice, warningNotice, errorNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getP2HubBlogId from 'calypso/state/selectors/get-p2-hub-blog-id';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
@@ -742,3 +743,15 @@ export function selectSiteIfLoggedIn( context, next ) {
 	// only have one site.
 	composeHandlers( siteSelection, sites, makeLayout, render )( context );
 }
+
+/**
+ * Whether the user is in the Domain sidebar upsell experiment.
+ *
+ * @returns {boolean} Whether the user is in the Domain sidebar upsell experiment.
+ */
+export const isDomainSidebarExperimentUser = ( state ) => {
+	const currentUser = getCurrentUser( state );
+	const domainAndPlanPackage = getCurrentQueryArguments( state ).domainAndPlanPackage;
+
+	return domainAndPlanPackage && 'treatment' === currentUser?.calypso_sidebar_upsell_experiment;
+};
