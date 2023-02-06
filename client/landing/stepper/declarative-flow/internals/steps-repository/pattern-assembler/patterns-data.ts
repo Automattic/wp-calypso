@@ -227,16 +227,6 @@ const useSectionPatterns = () => {
 					category: posts,
 				},
 				{
-					id: 6305,
-					name: 'Heading with Image Grid',
-					category: images,
-				},
-				{
-					id: 7149,
-					name: 'Two column image grid',
-					category: images,
-				},
-				{
 					id: 7156,
 					name: 'Media and text with image on the right',
 					category: callToAction,
@@ -300,6 +290,16 @@ const useSectionPatterns = () => {
 					id: 6312,
 					name: 'Two Column CTA',
 					category: callToAction,
+				},
+				{
+					id: 6305,
+					name: 'Heading with Image Grid',
+					category: images,
+				},
+				{
+					id: 7149,
+					name: 'Two column image grid',
+					category: images,
 				},
 				{
 					id: 5691,
