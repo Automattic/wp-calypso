@@ -136,9 +136,9 @@ export default function ECommerceTrialCurrentPlan( props ) {
 
 	/**
 	 * Trial progress from 0 to 1
-	 * Only used while trial is not expired
 	 */
 	const trialProgress = 1 - eCommerceTrialDaysLeft / trialDuration;
+	const eCommerceTrialDaysLeftToDisplay = isTrialExpired ? 0 : eCommerceTrialDaysLeft;
 
 	// moment.js doesn't have a format option to display the long form in a localized way without the year
 	// https://github.com/moment/moment/issues/3341
@@ -157,27 +157,28 @@ export default function ECommerceTrialCurrentPlan( props ) {
 						{ translate( 'You’re in a free trial' ) }
 					</p>
 					<p className="e-commerce-trial-current-plan__card-subtitle">
-						{
-							// Still need to populate the date correctly
-							translate(
-								'Your free trial will end in %(daysLeft)d day. Sign up to a plan by %(expirationdate)s to unlock new features and keep your store running.',
-								'Your free trial will end in %(daysLeft)d days. Sign up to a plan by %(expirationdate)s to unlock new features and keep your store running.',
-								{
-									count: eCommerceTrialDaysLeft,
-									args: {
-										daysLeft: eCommerceTrialDaysLeft,
-										expirationdate: readableExpirationDate,
-									},
-								}
-							)
-						}
+						{ isTrialExpired
+							? translate(
+									'Your free trial has expired. Sign up to a plan to unlock new features and keep your store running.'
+							  )
+							: translate(
+									'Your free trial will end in %(daysLeft)d day. Sign up to a plan by %(expirationdate)s to unlock new features and keep your store running.',
+									'Your free trial will end in %(daysLeft)d days. Sign up to a plan by %(expirationdate)s to unlock new features and keep your store running.',
+									{
+										count: eCommerceTrialDaysLeft,
+										args: {
+											daysLeft: eCommerceTrialDaysLeft,
+											expirationdate: readableExpirationDate,
+										},
+									}
+							  ) }
 					</p>
 					<Button className="e-commerce-trial-current-plan__trial-card-cta" primary>
 						{ translate( 'Get Commerce' ) }
 					</Button>
 				</div>
 				<div className="plans__chart-wrapper">
-					<DoughnutChart progress={ trialProgress } text={ eCommerceTrialDaysLeft } />
+					<DoughnutChart progress={ trialProgress } text={ eCommerceTrialDaysLeftToDisplay } />
 					<br />
 					<span className="plans__chart-label">
 						{ isTrialExpired
