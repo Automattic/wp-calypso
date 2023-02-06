@@ -25,7 +25,7 @@ import {
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { isDomainSidebarExperimentUser } from 'calypso/my-sites/controller';
-import DomainAndPlanPackageHeader from 'calypso/my-sites/domains/components/domain-and-plan-package/header';
+import DomainAndPlanPackageNavigation from 'calypso/my-sites/domains/components/domain-and-plan-package/navigation';
 import NewDomainsRedirectionNoticeUpsell from 'calypso/my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
 import {
 	domainAddEmailUpsell,
@@ -259,6 +259,7 @@ class DomainSearch extends Component {
 						<div className="domains__header">
 							{ isDomainSidebarExperimentUser() && (
 								<>
+									<DomainAndPlanPackageNavigation step={ 1 } />
 									<FormattedHeader
 										brandFont
 										headerText={ translate( 'Claim your domain' ) }
@@ -317,7 +318,6 @@ class DomainSearch extends Component {
 
 		return (
 			<>
-				<DomainAndPlanPackageHeader />
 				<Main className={ classes } wideLayout>
 					<QueryProductsList />
 					<QuerySiteDomains siteId={ this.props.selectedSiteId } />
