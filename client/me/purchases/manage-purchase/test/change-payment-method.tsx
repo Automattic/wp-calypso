@@ -9,7 +9,7 @@ import {
 	stripeConfiguration,
 	mockStripeElements,
 } from 'calypso/my-sites/checkout/composite-checkout/test/util';
-import { createTestReduxStore, storedCard1 } from 'calypso/state/utils';
+import { createTestReduxStore, setCommonTestReduxState, storedCard1 } from 'calypso/state/utils';
 import ChangePaymentMethod from '../change-payment-method';
 import type { StoredCard } from 'calypso/my-sites/checkout/composite-checkout/types/stored-cards';
 
@@ -45,7 +45,7 @@ describe( 'ChangePaymentMethod', () => {
 			.reply( 200, stripeConfiguration );
 
 		render(
-			<ReduxProvider store={ createTestReduxStore() }>
+			<ReduxProvider store={ setCommonTestReduxState( createTestReduxStore() ) }>
 				<QueryClientProvider client={ queryClient }>
 					<ChangePaymentMethod
 						getManagePurchaseUrlFor={ ( siteSlug: string, purchaseId: number ) =>
@@ -74,7 +74,7 @@ describe( 'ChangePaymentMethod', () => {
 			.reply( 200, stripeConfiguration );
 
 		render(
-			<ReduxProvider store={ createTestReduxStore() }>
+			<ReduxProvider store={ setCommonTestReduxState( createTestReduxStore() ) }>
 				<QueryClientProvider client={ queryClient }>
 					<ChangePaymentMethod
 						getManagePurchaseUrlFor={ ( siteSlug: string, purchaseId: number ) =>
@@ -103,7 +103,7 @@ describe( 'ChangePaymentMethod', () => {
 			.reply( 200, stripeConfiguration );
 
 		render(
-			<ReduxProvider store={ createTestReduxStore() }>
+			<ReduxProvider store={ setCommonTestReduxState( createTestReduxStore() ) }>
 				<QueryClientProvider client={ queryClient }>
 					<ChangePaymentMethod
 						getManagePurchaseUrlFor={ ( siteSlug: string, purchaseId: number ) =>
