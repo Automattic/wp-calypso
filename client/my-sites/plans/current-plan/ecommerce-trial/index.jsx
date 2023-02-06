@@ -3,16 +3,32 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useMediaQuery } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
+import {
+	getCurrentPlan,
+	getECommerceTrialDaysLeft,
+	getECommerceTrialExpiration,
+	isECommerceTrialExpired,
+} from 'calypso/state/sites/plans/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import DoughnutChart from '../../doughnut-chart';
 import FeatureIncludedCard from '../feature-included-card';
 import FeatureNotIncludedCard from '../feature-not-included-card';
 
 import './style.scss';
 
-export default function ECommerceTrialCurrentPlan( props ) {
-	const { currentPlan, eCommerceTrialDaysLeft, eCommerceTrialExpiration, isTrialExpired } = props;
+export default function ECommerceTrialCurrentPlan() {
+	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+
+	const { currentPlan, eCommerceTrialDaysLeft, isTrialExpired, eCommerceTrialExpiration } =
+		useSelector( ( state ) => ( {
+			currentPlan: getCurrentPlan( state, selectedSiteId ),
+			eCommerceTrialDaysLeft: Math.round( getECommerceTrialDaysLeft( state, selectedSiteId ) ),
+			isTrialExpired: isECommerceTrialExpired( state, selectedSiteId ),
+			eCommerceTrialExpiration: getECommerceTrialExpiration( state, selectedSiteId ),
+		} ) );
 
 	const locale = useLocale();
 	const moment = useLocalizedMoment();

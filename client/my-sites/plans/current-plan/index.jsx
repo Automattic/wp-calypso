@@ -50,13 +50,7 @@ import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import {
-	getCurrentPlan,
-	getECommerceTrialDaysLeft,
-	getECommerceTrialExpiration,
-	isECommerceTrialExpired,
-	isRequestingSitePlans,
-} from 'calypso/state/sites/plans/selectors';
+import { getCurrentPlan, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import { getJetpackSearchCustomizeUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import AntiSpamProductThankYou from './current-plan-thank-you/anti-spam-thank-you';
@@ -201,7 +195,7 @@ class CurrentPlan extends Component {
 	}
 
 	renderEcommerceTrialPage() {
-		return <ECommerceTrialCurrentPlan { ...this.props } />;
+		return <ECommerceTrialCurrentPlan />;
 	}
 
 	render() {
@@ -321,9 +315,6 @@ export default connect( ( state, { requestThankYou } ) => {
 
 	const currentPlan = getCurrentPlan( state, selectedSiteId );
 	const eligibleForProPlan = isEligibleForProPlan( state, selectedSiteId );
-	const eCommerceTrialDaysLeft = Math.round( getECommerceTrialDaysLeft( state, selectedSiteId ) );
-	const isTrialExpired = isECommerceTrialExpired( state, selectedSiteId );
-	const eCommerceTrialExpiration = getECommerceTrialExpiration( state, selectedSiteId );
 
 	return {
 		currentPlan,
@@ -339,8 +330,5 @@ export default connect( ( state, { requestThankYou } ) => {
 		showThankYou: requestThankYou && isJetpackNotAtomic,
 		scheduleId: getConciergeScheduleId( state ),
 		eligibleForProPlan,
-		eCommerceTrialDaysLeft,
-		isTrialExpired,
-		eCommerceTrialExpiration,
 	};
 } )( localize( withLocalizedMoment( CurrentPlan ) ) );
