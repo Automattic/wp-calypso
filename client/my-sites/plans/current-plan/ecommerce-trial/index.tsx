@@ -44,6 +44,7 @@ const ECommerceTrialCurrentPlan = () => {
 	const isMobile = useMediaQuery( '(max-width: 480px)' );
 	const displayAllIncluded = ! isMobile || showAllTrialFeaturesInMobileView;
 
+	// TODO: translate when final copy is available
 	const allIncludedFeatures = [
 		{
 			title: translate( 'Priority support' ),
@@ -53,11 +54,11 @@ const ECommerceTrialCurrentPlan = () => {
 			buttonText: translate( 'Ask a question' ),
 		},
 		{
-			title: translate( 'Premium themes' ),
-			text: translate( 'Explore a diverse selection of beautifully designed premium themes.' ),
+			title: 'Premium themes',
+			text: 'Explore a diverse selection of beautifully designed premium themes.',
 			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/premium-themes.svg',
 			showButton: true,
-			buttonText: translate( 'Browse premium themes' ),
+			buttonText: 'Browse premium themes',
 		},
 		{
 			title: translate( 'Advanced customization' ),
@@ -92,7 +93,7 @@ const ECommerceTrialCurrentPlan = () => {
 		{
 			title: translate( 'Google Analytics' ),
 			text: translate(
-				'Understand visitors and traffic patterns more in depht with Google stats.'
+				'Understand visitors and traffic patterns in more depth with Google stats.'
 			),
 			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/google-analytics.svg',
 			showButton: true,
@@ -190,7 +191,10 @@ const ECommerceTrialCurrentPlan = () => {
 							  ) }
 					</p>
 					<Button className="e-commerce-trial-current-plan__trial-card-cta" primary>
-						{ translate( 'Get Commerce' ) }
+						{
+							// TODO: translate when final copy is available
+							'Get Commerce'
+						}
 					</Button>
 				</div>
 				<div className="plans__chart-wrapper">
@@ -240,7 +244,10 @@ const ECommerceTrialCurrentPlan = () => {
 			<p className="e-commerce-trial-current-plan__section-subtitle">
 				{ translate( 'The free trial doesn’t support the following features.' ) }
 				<br />
-				{ translate( 'Get the most value out of WooCommerce and get Pro.' ) }
+				{
+					// TODO: translate when final copy is available
+					'Get the most value out of WooCommerce and get Pro.'
+				}
 			</p>
 
 			<div className="e-commerce-trial-current-plan__more-wrapper">
@@ -256,7 +263,10 @@ const ECommerceTrialCurrentPlan = () => {
 
 			<div className="e-commerce-trial-current-plan__cta-wrapper">
 				<Button className="e-commerce-trial-current-plan__cta is-primary">
-					{ translate( 'Enhance your store and get Commerce' ) }
+					{
+						// TODO: translate when final copy is available
+						'Enhance your store and get Commerce'
+					}
 				</Button>
 			</div>
 		</>

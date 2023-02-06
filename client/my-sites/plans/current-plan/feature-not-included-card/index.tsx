@@ -8,7 +8,7 @@ interface Props {
 	title: string;
 }
 
-const FeatureNotIncludedCard: React.FunctionComponent< Props > = ( props ) => {
+const FeatureNotIncludedCard = ( props: Props ) => {
 	const { illustration, title, text } = props;
 
 	return (

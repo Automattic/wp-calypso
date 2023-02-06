@@ -11,7 +11,7 @@ interface Props {
 	buttonClick?: () => void;
 }
 
-const FeatureIncludedCard: React.FunctionComponent< Props > = ( props ) => {
+const FeatureIncludedCard = ( props: Props ) => {
 	const { illustration, title, text, showButton, buttonText, buttonClick } = props;
 
 	return (
