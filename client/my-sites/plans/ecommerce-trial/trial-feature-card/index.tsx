@@ -3,7 +3,20 @@ import { useState } from 'react';
 
 import './style.scss';
 
-export default function TrialFeatureCard( props ) {
+interface Props {
+	illustration: string;
+	title: string;
+	subtitle: string;
+	items: [
+		{
+			title: string;
+			subtitle: string;
+		}
+	];
+	expanded?: boolean;
+}
+
+export default function TrialFeatureCard( props: Props ) {
 	const { illustration, title, subtitle, items } = props;
 
 	const [ expanded, setExpanded ] = useState( props.expanded );
@@ -18,7 +31,7 @@ export default function TrialFeatureCard( props ) {
 			<div className="trial-feature-card__text">
 				<div className="trial-feature-card__title">{ title }</div>
 				<div className="trial-feature-card__subtitle">{ subtitle }</div>
-				{ expanded ? (
+				{ expanded && (
 					<div className="trial-feature-card__items-wrapper">
 						{ items.map( ( item ) => (
 							<div key={ item.title } className="trial-feature-card__item">
@@ -32,7 +45,7 @@ export default function TrialFeatureCard( props ) {
 							</div>
 						) ) }
 					</div>
-				) : null }
+				) }
 			</div>
 			<div className="trial-feature-card__accordion-toggle">
 				{ expanded ? (
