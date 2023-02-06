@@ -43,6 +43,7 @@ import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import ThemePreview from 'calypso/my-sites/themes/theme-preview';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { isUserPaid } from 'calypso/state/purchases/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -798,6 +799,10 @@ class ThemeSheet extends Component {
 		}
 	};
 
+	onAtomicThemeActiveFailure = ( message ) => {
+		return this.props.errorNotice( message );
+	};
+
 	renderSheet = () => {
 		const section = this.validateSection( this.props.section );
 		const {
@@ -1017,6 +1022,7 @@ class ThemeSheet extends Component {
 						siteId={ siteId }
 						themeId={ themeId }
 						onAtomicThemeActive={ this.onAtomicThemeActive }
+						onFailure={ this.onAtomicThemeActiveFailure }
 					/>
 				) }
 			</Main>
@@ -1161,5 +1167,6 @@ export default connect(
 		setThemePreviewOptions,
 		recordTracksEvent,
 		themeStartActivationSync,
+		errorNotice,
 	}
 )( localize( ThemeSheetWithOptions ) );
