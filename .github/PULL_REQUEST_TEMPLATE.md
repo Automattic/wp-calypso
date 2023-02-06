@@ -1,8 +1,8 @@
-#### Proposed Changes
+## Proposed Changes
 
 *
 
-#### Testing Instructions
+## Testing Instructions
 
 <!--
 Add as many details as possible to help others reproduce the issue and test the fix.
@@ -11,7 +11,7 @@ Add as many details as possible to help others reproduce the issue and test the 
 
 *
 
-#### Pre-merge Checklist
+## Pre-merge Checklist
 
 <!--
 Complete applicable items on this checklist **before** merging into trunk. Inapplicable items can be left unchecked.
