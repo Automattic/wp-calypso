@@ -68,8 +68,10 @@ RUN yarn install --immutable --check-cache
 # This contains built environments of Calypso. It will
 # change any time any of the Calypso source-code changes.
 ENV NODE_ENV production
-RUN yarn run build 2>&1 | tee build_log.txt && \
-	./bin/check-log-for-cache-invalidation.sh build_log.txt
+RUN yarn run build 2>&1 | tee /tmp/build_log.txt
+
+# This will output a service message to TeamCity if the build cache was invalidated as seen in the build_log file.
+RUN ./bin/check-log-for-cache-invalidation.sh /tmp/build_log.txt
 
 # Delete any sourcemaps which may have been generated to avoid creating a large artifact.
 RUN find /calypso/build /calypso/public -name "*.*.map" -exec rm {} \;
