@@ -9,13 +9,15 @@ interface SyncActiveThemeProps {
 	themeId: string;
 	onThemeActive: CallableFunction;
 	maxAttempts?: number;
+	delay?: number;
 }
 
 const SyncActiveTheme = ( {
 	siteId,
 	themeId,
 	onThemeActive,
-	maxAttempts = 20,
+	maxAttempts = 50,
+	delay = 2,
 }: SyncActiveThemeProps ) => {
 	const dispatch = useDispatch();
 	const requestStarted = useSelector( ( state ) => isRequestingActiveTheme( state, siteId ) );
@@ -30,7 +32,7 @@ const SyncActiveTheme = ( {
 		}
 		if ( ! requestStarted && attempts < maxAttempts ) {
 			setAttempts( attempts + 1 );
-			waitFor( 5 ).then( () => dispatch( requestActiveTheme( siteId ) ) );
+			waitFor( delay ).then( () => dispatch( requestActiveTheme( siteId ) ) );
 		}
 	}, [ siteId, dispatch, requestStarted, activeTheme ] );
 
