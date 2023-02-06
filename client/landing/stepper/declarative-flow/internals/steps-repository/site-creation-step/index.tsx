@@ -115,7 +115,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 			true,
 			username,
 			domainCartItem,
-			data.sourceSlug
+			data?.sourceSlug as string
 		);
 
 		if ( planCartItem ) {
