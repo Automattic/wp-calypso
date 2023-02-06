@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { PatternAssemblerCta, BLANK_CANVAS_DESIGN } from '@automattic/design-picker';
-import { SITE_ASSEMBLER_FLOW } from '@automattic/onboarding';
+import { SITE_ASSEMBLER_FLOW, WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import { Icon, addTemplate, brush, cloudUpload } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { isEmpty, times } from 'lodash';
@@ -40,7 +40,7 @@ export const ThemesList = ( props ) => {
 			theme: BLANK_CANVAS_DESIGN.slug,
 			destination_flow: SITE_ASSEMBLER_FLOW,
 		} );
-		window.location.assign( `/start/with-theme?${ params }` );
+		window.location.assign( `/start/${ WITH_THEME_ASSEMBLER_FLOW }?${ params }` );
 	};
 
 	const matchingWpOrgThemes = useMemo(

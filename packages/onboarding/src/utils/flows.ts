@@ -16,6 +16,8 @@ export const BUILD_FLOW = 'build';
 export const WRITE_FLOW = 'write';
 export const SITE_ASSEMBLER_FLOW = 'site-assembler';
 export const SITE_SETUP_FLOW = 'site-setup';
+export const WITH_THEME_FLOW = 'with-theme';
+export const WITH_THEME_ASSEMBLER_FLOW = 'with-theme-assembler';
 
 export const isLinkInBioFlow = ( flowName: string | null ) => {
 	return Boolean(
@@ -65,6 +67,18 @@ export const isWooExpressFlow = ( flowName: string | null ) => {
 
 export const isBuildFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ BUILD_FLOW ].includes( flowName ) );
+};
+
+export const isSiteAssemblerFlow = ( flowName: string | null ) => {
+	const SITE_ASSEMBLER_FLOWS = [ SITE_ASSEMBLER_FLOW, WITH_THEME_ASSEMBLER_FLOW ];
+
+	return !! flowName && SITE_ASSEMBLER_FLOWS.includes( flowName );
+};
+
+export const isWithThemeFlow = ( flowName: string | null ) => {
+	const WITH_THEME_FLOWS = [ WITH_THEME_FLOW, WITH_THEME_ASSEMBLER_FLOW ];
+
+	return !! flowName && WITH_THEME_FLOWS.includes( flowName );
 };
 
 export const ecommerceFlowRecurTypes = {
