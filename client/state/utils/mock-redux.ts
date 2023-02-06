@@ -10,6 +10,7 @@ import { receiveSites } from 'calypso/state/sites/actions';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 import type { StoredCard } from 'calypso/my-sites/checkout/composite-checkout/types/stored-cards';
+import type { ReduxStore } from 'calypso/state';
 
 export const userId = 1;
 
@@ -400,16 +401,36 @@ const productsList = {
 	},
 };
 
-export function createTestReduxStore() {
+/**
+ * Create a Redux store for automated tests.
+ *
+ * This store will have the same middleware and reducers that the actual
+ * calypso Redux store will have.
+ *
+ * By default most of the store's data will be empty, so if you want to set
+ * initial data you'll need to call the appropriate dispatch actions on the
+ * store returned by this function.
+ *
+ * The initial state cannot be hard-coded because the `createReduxStore` does
+ * not support setting keys for reducers that don't exist and the reducers
+ * won't be registered until we call `setStore()` to initialize support for
+ * dynamic reducers.
+ *
+ * If you want the most common test data to be prefilled, call
+ * `setCommonTestReduxState()` like this:
+ *
+ * ```
+ * setCommonTestReduxState( createTestReduxStore );
+ * ```
+ */
+export function createTestReduxStore(): ReduxStore {
 	const initialState = getInitialState( initialReducer, userId );
 	const reduxStore = createReduxStore( initialState, initialReducer );
 	setStore( reduxStore, getStateFromCache( userId ) );
+	return reduxStore;
+}
 
-	// Dispatch actions on the store to set its initial state. They cannot be
-	// included in the initial state provided to `createReduxStore` because the
-	// function does not support setting keys for reducers that don't exist and
-	// the reducers won't be registered until we call `setStore()` to initialize
-	// support for dynamic reducers.
+export function setCommonTestReduxState( reduxStore: ReduxStore ): ReduxStore {
 	reduxStore.dispatch( setCurrentUser( { ID: userId } ) );
 	reduxStore.dispatch( receiveSites( initialSites ) );
 	reduxStore.dispatch( setSelectedSiteId( siteId ) );
@@ -419,6 +440,5 @@ export function createTestReduxStore() {
 		purchases: initialPurchases,
 	} );
 	reduxStore.dispatch( receiveProductsList( productsList ) );
-
 	return reduxStore;
 }
