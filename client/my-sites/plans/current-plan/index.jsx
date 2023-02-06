@@ -234,7 +234,7 @@ class CurrentPlan extends Component {
 
 		return (
 			<div>
-				<ModernizedLayout section="plans" main="current-plan" />
+				<ModernizedLayout section="plans" subSection="current-plan" />
 				<DocumentHead title={ translate( 'My Plan' ) } />
 				{ selectedSiteId && (
 					// key={ selectedSiteId } ensures data is refetched for changing selectedSiteId

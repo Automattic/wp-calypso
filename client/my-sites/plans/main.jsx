@@ -188,7 +188,7 @@ class Plans extends Component {
 
 		return (
 			<div>
-				<ModernizedLayout section="plans" main="plans" />
+				<ModernizedLayout section="plans" />
 				{ selectedSite.ID && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
 				<PageViewTracker path="/plans/:site" title="Plans" />

@@ -4,21 +4,21 @@
  */
 
 import { css, Global } from '@emotion/react';
+import { memo } from '@wordpress/element';
 
-const backgroundColor = '#fdfdfd';
-const sectionMaxWidth = '1224px';
-const layoutContentPaddingTop = '79px';
-const sidebarAppearanceBreakPoint = '783px';
-// from @automattic/components/src/highlight-cards/variables.scss:
-const customMobileBreakpoint = '660px';
-const verticalMargin = '32px';
-
-const ModernizedLayout: React.FunctionComponent< { section: string; main: string } > = ( {
+const ModernizedLayout: React.FunctionComponent< { section: string; subSection?: string } > = ( {
 	section,
-	main,
+	subSection,
 } ) => {
+	const backgroundColor = '#fdfdfd';
+	const sectionMaxWidth = '1224px';
+	const layoutContentPaddingTop = '79px';
+	const sidebarAppearanceBreakPoint = '783px';
+	// from @automattic/components/src/highlight-cards/variables.scss:
+	const customMobileBreakpoint = '660px';
+	const verticalMargin = '32px';
 	const globalOverrides = css`
-		.${ main }__section-header {
+		.${ subSection ?? section }__section-header {
 			background-color: var( --studio-white );
 
 			@media ( min-width: ${ customMobileBreakpoint } ) {
@@ -27,7 +27,7 @@ const ModernizedLayout: React.FunctionComponent< { section: string; main: string
 		}
 
 		// Main layout content
-		.${ main } {
+		.${ subSection ?? section } {
 			// Ensures horizontal padding for all sections.
 			@media ( min-width: ${ customMobileBreakpoint } ) {
 				> * {
@@ -43,7 +43,7 @@ const ModernizedLayout: React.FunctionComponent< { section: string; main: string
 		.is-section-${ section } {
 			background-color: var( --studio-white );
 
-			.${ main } {
+			.${ subSection ?? section } {
 				background-color: ${ backgroundColor };
 			}
 
@@ -68,4 +68,4 @@ const ModernizedLayout: React.FunctionComponent< { section: string; main: string
 	return <Global styles={ globalOverrides } />;
 };
 
-export default ModernizedLayout;
+export default memo( ModernizedLayout );
