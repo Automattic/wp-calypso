@@ -13,8 +13,10 @@ fi
 
 if grep "resolving of build dependencies is invalid" $build_file ; then
 	echo "##teamcity[message text='Webpack cache invalidated!' errorDetails='This commit invalidated the webpack cache. Base image will be updated with new cache contents if on trunk.' status='warning']"
-	echo "Relevant details:"
-	grep "cache.PackFileCacheStrategy" $build_file
-
 	echo "##teamcity[setParameter name='env.WEBPACK_CACHE_INVALIDATED' value='true']"
+
+	echo "Relevant details:"
+	# Exclude the vast number of files that get serialized.
+	grep "cache.PackFileCacheStrategy" $build_file | grep -v "Serialization of"
+
 fi
