@@ -36,7 +36,7 @@ export const EmailsTextSetting = ( { value, disabled, updateFields }: EmailsText
 		};
 
 	return (
-		<div className="site-settings__emails-test-settings-container">
+		<div className="site-settings__emails-text-settings-container">
 			<FormFieldset>
 				{ /* @ts-expect-error FormLegend is not typed and is causing errors */ }
 				<FormLegend>
