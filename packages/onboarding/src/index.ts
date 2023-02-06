@@ -7,7 +7,7 @@ export {
 	SkipButton,
 	ArrowButton,
 } from './action-buttons';
-export { createSiteWithCart, addPlanToCart } from './cart';
+export { createSiteWithCart, addPlanToCart, addProductsToCart } from './cart';
 export { setupSiteAfterCreation, base64ImageToBlob } from './setup-tailored-site-after-creation';
 export { uploadAndSetSiteLogo } from './upload-and-set-site-logo';
 export { default as FeatureIcon } from './feature-icon';
