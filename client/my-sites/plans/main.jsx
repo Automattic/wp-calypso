@@ -4,6 +4,7 @@ import {
 	getIntervalTypeForTerm,
 	PLAN_FREE,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	isFreePlan,
 } from '@automattic/calypso-products';
 import { addQueryArgs } from '@wordpress/url';
 import { localize, useTranslate } from 'i18n-calypso';
@@ -35,6 +36,7 @@ import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PlansHeader from './header';
 import ModernizedLayout from './modernized-layout';
+import './style.scss';
 
 function DomainAndPlanUpsellNotice() {
 	const translate = useTranslate();
@@ -185,10 +187,11 @@ class Plans extends Component {
 
 		const currentPlanSlug = selectedSite?.plan?.product_slug;
 		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+		const isPlanFree = isFreePlan( currentPlanSlug );
 
 		return (
 			<div>
-				<ModernizedLayout section="plans" />
+				<ModernizedLayout section="plans" dropShadowOnHeader={ isPlanFree } />
 				{ selectedSite.ID && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
 				<PageViewTracker path="/plans/:site" title="Plans" />

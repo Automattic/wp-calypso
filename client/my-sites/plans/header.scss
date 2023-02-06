@@ -1,9 +1,5 @@
 @import "@wordpress/base-styles/breakpoints";
 
-.plans main {
-	padding-top: 17px;
-}
-
 .is-section-plans .formatted-header.navigation {
 	display: flex;
 	justify-content: space-between;
@@ -54,22 +50,5 @@
 		color: var(--color-text-subtle);
 		font-size: 1rem;
 		margin: 0 24px;
-	}
-}
-
-
-.is-2023-pricing-grid {
-	.formatted-header.formatted-header,
-	.notice.notice,
-	.section-nav.section-nav {
-		max-width: 1040px;
-		margin-left: auto;
-		margin-right: auto;
-	}
-
-	@media (max-width: 660px) {
-		.formatted-header.formatted-header {
-			margin: 16px;
-		}
 	}
 }

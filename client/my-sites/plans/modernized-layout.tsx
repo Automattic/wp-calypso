@@ -6,10 +6,11 @@
 import { css, Global } from '@emotion/react';
 import { memo } from '@wordpress/element';
 
-const ModernizedLayout: React.FunctionComponent< { section: string; subSection?: string } > = ( {
-	section,
-	subSection,
-} ) => {
+const ModernizedLayout: React.FunctionComponent< {
+	section: string;
+	subSection?: string;
+	dropShadowOnHeader?: boolean;
+} > = ( { section, subSection, dropShadowOnHeader = true } ) => {
 	const backgroundColor = '#fdfdfd';
 	const sectionMaxWidth = '1224px';
 	const layoutContentPaddingTop = '79px';
@@ -17,9 +18,14 @@ const ModernizedLayout: React.FunctionComponent< { section: string; subSection?:
 	// from @automattic/components/src/highlight-cards/variables.scss:
 	const customMobileBreakpoint = '660px';
 	const verticalMargin = '32px';
+
 	const globalOverrides = css`
 		.${ subSection ?? section }__section-header {
 			background-color: var( --studio-white );
+			${ dropShadowOnHeader &&
+			css`
+				box-shadow: inset 0 -1px 0 #0000000d;
+			` }
 
 			@media ( min-width: ${ customMobileBreakpoint } ) {
 				padding: 0 max( calc( 50% - ( ${ sectionMaxWidth } / 2 ) ), 32px );

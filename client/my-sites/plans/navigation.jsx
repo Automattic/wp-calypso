@@ -12,7 +12,7 @@ import isSiteOnFreePlan from 'calypso/state/selectors/is-site-on-free-plan';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import './modernized-navigation.scss';
+import './navigation.scss';
 
 class PlansNavigation extends Component {
 	static propTypes = {
