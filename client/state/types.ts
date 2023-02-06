@@ -7,13 +7,21 @@ import type { AnyAction } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
 
 /**
- * This global app state is currently incomplete and should be completed as each state slice becomes typed
+ * This global Redux app state.
+ *
+ * This is currently incomplete and should be completed as each state slice
+ * becomes typed.
+ *
+ * Each slice is registered dynamically by calling the `registerReducer()`
+ * function so please mark each slice as optional as it may not be defined when
+ * its selector is called (eg: in tests which do not implement dynamic
+ * reducers).
  */
 export interface IAppState extends DefaultRootState {
-	plugins: IPluginsState;
+	plugins?: IPluginsState;
 	marketplace: IMarketplaceState;
-	storedCards: StoredCardsState;
-	countries: CountriesState;
+	storedCards?: StoredCardsState;
+	countries?: CountriesState;
 }
 
 /**
