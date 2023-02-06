@@ -500,7 +500,12 @@ export function siteSelection( context, next ) {
 	}
 
 	const siteId = getSiteId( getState(), siteFragment );
-	if ( siteId ) {
+	const isUnlinkedCheckout =
+		'1' === context.query?.unlinked &&
+		null !== context.pathname.match( /^\/checkout\/[^/]+\/jetpack_/i ) &&
+		false === context.pathname.includes( 'jetpack_boost' );
+
+	if ( siteId && ! isUnlinkedCheckout ) {
 		// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
 		// to wp-admin. In that case, don't continue handling the route.
 		dispatch( setSelectedSiteId( siteId ) );
@@ -533,7 +538,7 @@ export function siteSelection( context, next ) {
 					freshSiteId = getSiteId( getState(), wpcomStagingFragment );
 				}
 
-				if ( freshSiteId ) {
+				if ( freshSiteId && ! isUnlinkedCheckout ) {
 					// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
 					// to wp-admin. In that case, don't continue handling the route.
 					dispatch( setSelectedSiteId( freshSiteId ) );
