@@ -10,7 +10,7 @@
 	--line-width: 9px;
 	--main-color: var(--color-accent-rgb);
 
-	background-color: #fff;
+	background-color: var(--color-surface);
 	width: var(--width);
 	aspect-ratio: 1;
 	position: relative;
@@ -21,7 +21,7 @@
 	border-radius: 50%;
 	box-shadow:
 		inset 0 0 0 var(--line-width) rgba(var(--main-color), 0.1),
-		inset 0 0 0 10px #fff;
+		inset 0 0 0 10px var(--color-surface);
 
 	&::before,
 	&::after {
@@ -33,10 +33,10 @@
 	&::before {
 		inset: 0;
 		background:
-			radial-gradient(farthest-side, rgb(var(--main-color)) 98%, #0000) top/var(--line-width) var(--line-width) no-repeat,
-			conic-gradient(rgb(var(--main-color)) calc(var(--percentage) * 1%), #0000 0);
-		-webkit-mask: radial-gradient(farthest-side, #0000 calc(99% - var(--line-width)), #000 calc(100% - var(--line-width)));
-		mask: radial-gradient(farthest-side, #0000 calc(99% - var(--line-width)), #000 calc(100% - var(--line-width)));
+			radial-gradient(farthest-side, rgb(var(--main-color)) 98%, transparent) top/var(--line-width) var(--line-width) no-repeat,
+			conic-gradient(rgb(var(--main-color)) calc(var(--percentage) * 1%), transparent 0);
+		-webkit-mask: radial-gradient(farthest-side, transparent calc(99% - var(--line-width)), var(--studio-black) calc(100% - var(--line-width)));
+		mask: radial-gradient(farthest-side, transparent calc(99% - var(--line-width)), var(--studio-black) calc(100% - var(--line-width)));
 	}
 
 	&::after {
