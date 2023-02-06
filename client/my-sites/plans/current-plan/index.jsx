@@ -33,7 +33,6 @@ import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QuerySites from 'calypso/components/data/query-sites';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
@@ -214,6 +213,7 @@ class CurrentPlan extends Component {
 
 		const currentPlanSlug = selectedSite.plan.product_slug;
 		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+
 		const shouldQuerySiteDomains = selectedSiteId && shouldShowDomainWarnings;
 		const showDomainWarnings = hasDomainsLoaded && shouldShowDomainWarnings;
 
@@ -331,4 +331,4 @@ export default connect( ( state, { requestThankYou } ) => {
 		scheduleId: getConciergeScheduleId( state ),
 		eligibleForProPlan,
 	};
-} )( localize( withLocalizedMoment( CurrentPlan ) ) );
+} )( localize( CurrentPlan ) );
