@@ -60,9 +60,15 @@ export const EmailsTextSetting = ( { value, disabled, updateFields }: EmailsText
 					autoCapitalize="none"
 				/>
 				<FormSettingExplanation>
-					{ translate(
-						'The welcome message sent out to new readers when they subscribe to your blog.'
-					) }
+					{ hasTranslation(
+						'The confirmation message sent out to new readers when they subscribe to your blog.'
+					) || locale.startsWith( 'en' )
+						? translate(
+								'The confirmation message sent out to new readers when they subscribe to your blog.'
+						  )
+						: translate(
+								'The welcome message sent out to new readers when they subscribe to your blog.'
+						  ) }
 				</FormSettingExplanation>
 				<FormLabel htmlFor="comment_follow_email_text">
 					{ translate( 'Comment follow email text' ) }
