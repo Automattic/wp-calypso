@@ -22,7 +22,7 @@ export interface IntroModalContentProps {
 
 export interface IntroModal {
 	buttonText: string;
-	content: React.FC< IntroModalContentProps >;
+	content?: React.FC< IntroModalContentProps >;
 }
 
 const Intro: React.FC< Props > = ( { onSubmit, introContent } ) => {
@@ -69,7 +69,7 @@ const Intro: React.FC< Props > = ( { onSubmit, introContent } ) => {
 							<CloseIcon />
 						</Button>
 					</div>
-					<modal.content onSubmit={ onSubmit } />
+					{ modal.content && <modal.content onSubmit={ onSubmit } /> }
 				</div>
 			) }
 		</>
