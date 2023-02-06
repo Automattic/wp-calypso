@@ -790,10 +790,10 @@ class ThemeSheet extends Component {
 				isAtomicTransferCompleted: true,
 			} );
 
-			const { isAtomic, siteSlug } = this.props;
+			const { isAtomic, siteSlug, themeId } = this.props;
 			if ( ! isAtomic ) {
 				const newSiteSlug = siteSlug.replace( /\b.wordpress.com/, '.wpcomstaging.com' );
-				return page( `/theme/makoney/${ newSiteSlug }` );
+				return page( `/theme/${ themeId }/${ newSiteSlug }` );
 			}
 		}
 	};
