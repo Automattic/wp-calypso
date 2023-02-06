@@ -252,4 +252,31 @@
 			border-color: revert;
 		}
 	}
+
+	.intro__more-modal {
+		position: absolute;
+		left: 24px;
+		right: 24px;
+		top: 24px;
+		bottom: 24px;
+		height: 100%;
+		background-color: #000;
+		z-index: 100;
+		display: none;
+
+		&.show {
+			display: block;
+		}
+
+		.intro__more-modal-header {
+			display: flex;
+			justify-content: right;
+			margin-right: 24px;
+			margin-top: 29px;
+
+			button {
+				cursor: pointer;
+			}
+		}
+	}
 }

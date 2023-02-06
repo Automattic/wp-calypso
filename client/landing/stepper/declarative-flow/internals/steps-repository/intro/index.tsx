@@ -10,6 +10,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import IntroStep, { IntroContent } from './intro';
+import VideoPressIntroMoreModalContent from './videopress-intro-modal-content';
 import type { Step } from '../../types';
 
 import './styles.scss';
@@ -54,11 +55,9 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 					{ br: <br /> }
 				),
 				buttonText: __( 'Get started' ),
-				moreButton: {
-					text: __( 'Learn More' ),
-					onClick: () => {
-						return;
-					},
+				moreModal: {
+					buttonText: __( 'Learn More' ),
+					content: <VideoPressIntroMoreModalContent />,
 				},
 			};
 		}
