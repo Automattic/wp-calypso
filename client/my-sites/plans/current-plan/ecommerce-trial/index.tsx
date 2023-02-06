@@ -46,64 +46,64 @@ const ECommerceTrialCurrentPlan = () => {
 
 	const allIncludedFeatures = [
 		{
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/priority-support.svg',
 			title: translate( 'Priority support' ),
 			text: translate( 'Need help? Reach out to us anytime, anywhere.' ),
+			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/priority-support.svg',
 			showButton: true,
 			buttonText: translate( 'Ask a question' ),
 		},
 		{
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/premium-themes.svg',
 			title: translate( 'Premium themes' ),
 			text: translate( 'Explore a diverse selection of beautifully designed premium themes.' ),
+			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/premium-themes.svg',
 			showButton: true,
 			buttonText: translate( 'Browse premium themes' ),
 		},
 		{
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/advanced-customization.svg',
 			title: translate( 'Advanced customization' ),
 			text: translate( "Change your store's appearance in a few clicks!" ),
+			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/advanced-customization.svg',
 			showButton: true,
 			buttonText: translate( 'Design your store' ),
 		},
 		{
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/unlimited-products.svg',
 			title: translate( 'Unlimited products' ),
 			text: translate( 'List as many products or services as you’d like and offer subscriptions.' ),
+			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/unlimited-products.svg',
 			showButton: true,
 			buttonText: translate( 'Add a product' ),
 		},
 		{
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/jetpack-features.svg',
 			title: translate( 'Jetpack features' ),
 			text: translate( 'Get auto real-time backups, malware scans, and spam protection.' ),
+			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/jetpack-features.svg',
 			showButton: true,
 			buttonText: translate( 'Keep your store safe' ),
 		},
 		{
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/seo-tools.svg',
 			title: translate( 'SEO tools' ),
 			text: translate(
 				'Boost traffic with tools that make your content more findable on search engines.'
 			),
+			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/seo-tools.svg',
 			showButton: true,
 			buttonText: translate( 'Increase visibility' ),
 		},
 		{
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/google-analytics.svg',
 			title: translate( 'Google Analytics' ),
 			text: translate(
 				'Understand visitors and traffic patterns more in depht with Google stats.'
 			),
+			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/google-analytics.svg',
 			showButton: true,
 			buttonText: translate( 'Connect Google Analytics' ),
 		},
 		{
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/best-in-class-hosting.svg',
 			title: translate( 'Best-in-class hosting' ),
 			text: translate(
 				'Hosting is included with your plan, eliminating additional cost and technical hassle.'
 			),
+			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/best-in-class-hosting.svg',
 			showButton: false,
 		},
 	];
@@ -115,34 +115,34 @@ const ECommerceTrialCurrentPlan = () => {
 
 	const whatsNotIncluded = [
 		{
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/launch.png',
 			title: translate( 'Launch your store to the world' ),
 			text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio ullamcorper efficitur.',
+			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/launch.png',
 		},
 		{
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/themes.png',
 			title: translate( 'Access all premium themes' ),
 			text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio ullamcorper efficitur.',
+			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/themes.png',
 		},
 		{
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/money.png',
 			title: translate( 'Sell your products' ),
 			text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio ullamcorper efficitur.',
+			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/money.png',
 		},
 		{
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/email.png',
 			title: translate( 'Connect with your customers' ),
 			text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio ullamcorper efficitur.',
+			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/email.png',
 		},
 		{
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/promote.png',
 			title: translate( 'Promote your products' ),
 			text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio ullamcorper efficitur.',
+			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/promote.png',
 		},
 		{
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/shipping.png',
 			title: translate( 'Integrate top shipping carriers' ),
 			text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio ullamcorper efficitur.',
+			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/shipping.png',
 		},
 	];
 
@@ -194,7 +194,10 @@ const ECommerceTrialCurrentPlan = () => {
 					</Button>
 				</div>
 				<div className="plans__chart-wrapper">
-					<DoughnutChart progress={ trialProgress } text={ eCommerceTrialDaysLeftToDisplay } />
+					<DoughnutChart
+						progress={ trialProgress }
+						text={ eCommerceTrialDaysLeftToDisplay?.toString() }
+					/>
 					<br />
 					<span className="plans__chart-label">
 						{ isTrialExpired
