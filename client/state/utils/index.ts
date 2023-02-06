@@ -5,3 +5,4 @@ export { serialize, deserialize } from './serialize';
 export { withPersistence } from './with-persistence';
 export { addReducer, combineReducers } from './reducer-utils';
 export { addReducerEnhancer } from './add-reducer-enhancer';
+export * from './mock-redux';
