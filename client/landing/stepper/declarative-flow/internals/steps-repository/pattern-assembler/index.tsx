@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { StepContainer, SITE_SETUP_FLOW, SITE_ASSEMBLER_FLOW } from '@automattic/onboarding';
+import { StepContainer, SITE_SETUP_FLOW, WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useEffect } from 'react';
@@ -376,7 +376,7 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 			<DocumentHead title={ translate( 'Design your home' ) } />
 			<StepContainer
 				stepName="pattern-assembler"
-				hideBack={ showPatternSelectorType !== null || flow === SITE_ASSEMBLER_FLOW }
+				hideBack={ showPatternSelectorType !== null || flow === WITH_THEME_ASSEMBLER_FLOW }
 				goBack={ onBack }
 				goNext={ goNext }
 				isHorizontalLayout={ false }

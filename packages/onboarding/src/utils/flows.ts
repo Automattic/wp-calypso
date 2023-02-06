@@ -14,7 +14,6 @@ export const MIGRATION_FLOW = 'import-focused';
 export const COPY_SITE_FLOW = 'copy-site';
 export const BUILD_FLOW = 'build';
 export const WRITE_FLOW = 'write';
-export const SITE_ASSEMBLER_FLOW = 'site-assembler';
 export const SITE_SETUP_FLOW = 'site-setup';
 export const WITH_THEME_FLOW = 'with-theme';
 export const WITH_THEME_ASSEMBLER_FLOW = 'with-theme-assembler';
@@ -70,7 +69,7 @@ export const isBuildFlow = ( flowName: string | null ) => {
 };
 
 export const isSiteAssemblerFlow = ( flowName: string | null ) => {
-	const SITE_ASSEMBLER_FLOWS = [ SITE_ASSEMBLER_FLOW, WITH_THEME_ASSEMBLER_FLOW ];
+	const SITE_ASSEMBLER_FLOWS = [ WITH_THEME_ASSEMBLER_FLOW ];
 
 	return !! flowName && SITE_ASSEMBLER_FLOWS.includes( flowName );
 };

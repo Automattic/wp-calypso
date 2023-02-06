@@ -1,5 +1,5 @@
 import { BLANK_CANVAS_DESIGN } from '@automattic/design-picker';
-import { useFlowProgress, SITE_ASSEMBLER_FLOW } from '@automattic/onboarding';
+import { useFlowProgress, WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useQuery } from '../hooks/use-query';
@@ -11,14 +11,14 @@ import Processing from './internals/steps-repository/processing-step';
 import { Flow, ProvidedDependencies } from './internals/types';
 import type { Design } from '@automattic/design-picker/src/types';
 
-const siteAssemblerFlow: Flow = {
-	name: SITE_ASSEMBLER_FLOW,
+const withThemeAssemblerFlow: Flow = {
+	name: WITH_THEME_ASSEMBLER_FLOW,
 	useSteps() {
 		const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 		const selectedTheme = useQuery().get( 'theme' );
 
 		useEffect( () => {
-			if ( selectedTheme === BLANK_CANVAS_DESIGN.slug && this.name === SITE_ASSEMBLER_FLOW ) {
+			if ( selectedTheme === BLANK_CANVAS_DESIGN.slug ) {
 				// User has selected blank-canvas-3 theme from theme showcase and enter assembler flow
 				setSelectedDesign( BLANK_CANVAS_DESIGN as Design );
 			}
@@ -65,4 +65,4 @@ const siteAssemblerFlow: Flow = {
 	},
 };
 
-export default siteAssemblerFlow;
+export default withThemeAssemblerFlow;
