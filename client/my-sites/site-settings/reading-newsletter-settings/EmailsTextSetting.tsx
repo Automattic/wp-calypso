@@ -70,12 +70,14 @@ export const EmailsTextSetting = ( { value, disabled, updateFields }: EmailsText
 								'The welcome message sent out to new readers when they subscribe to your blog.'
 						  ) }
 				</FormSettingExplanation>
-				<FormLabel htmlFor="comment_follow_email_text">
-					{ translate( 'Comment follow email text' ) }
+				<FormLabel htmlFor="comment_follow_email_message">
+					{ hasTranslation( 'Comment follow email message' ) || locale.startsWith( 'en' )
+						? translate( 'Comment follow email message' )
+						: translate( 'Comment follow email text' ) }
 				</FormLabel>
 				<FormTextarea
-					name="comment_follow_email_text"
-					id="comment_follow_email_text"
+					name="comment_follow_email_message"
+					id="comment_follow_email_message"
 					value={ value?.comment_follow }
 					onChange={ updateSubscriptionOptions( 'comment_follow' ) }
 					disabled={ disabled }
