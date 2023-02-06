@@ -3,7 +3,7 @@
 body.is-section-plans.is-trial-plan {
 
 	&.color-scheme {
-		--color-surface-backdrop: #fff;
+		--color-surface-backdrop: var(--color-surface);
 	}
 
 	.current-plan__content {
@@ -28,7 +28,7 @@ body.is-section-plans.is-trial-plan {
 				.e-commerce-trial-current-plan__card-title {
 					font-size: $font-title-medium;
 					font-weight: 400;
-					color: #000;
+					color: var(--studio-black);
 					margin: 0;
 
 					@media (max-width: $break-mobile) {
