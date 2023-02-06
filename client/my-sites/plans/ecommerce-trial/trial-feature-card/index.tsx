@@ -7,19 +7,17 @@ interface Props {
 	illustration: string;
 	title: string;
 	subtitle: string;
-	items: [
-		{
-			title: string;
-			subtitle: string;
-		}
-	];
+	items: {
+		title: string;
+		subtitle: string;
+	}[];
 	expanded?: boolean;
 }
 
 export default function TrialFeatureCard( props: Props ) {
 	const { illustration, title, subtitle, items } = props;
 
-	const [ expanded, setExpanded ] = useState( props.expanded );
+	const [ expanded, setExpanded ] = useState( !! props.expanded );
 
 	const toggle = () => {
 		setExpanded( ! expanded );

@@ -1,30 +1,48 @@
 import { Button, Card } from '@automattic/components';
+import { useLocale } from '@automattic/i18n-utils';
 import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import SegmentedControl from 'calypso/components/segmented-control';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
+import {
+	getCurrentPlan,
+	getECommerceTrialDaysLeft,
+	getECommerceTrialExpiration,
+	isECommerceTrialExpired,
+} from 'calypso/state/sites/plans/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import DoughnutChart from '../doughnut-chart';
 import TrialFeatureCard from './trial-feature-card';
 
 import './style.scss';
 
-export default function ECommerceTrialPlans( props ) {
-	const {
-		translate,
-		moment,
-		currentPlan,
-		eCommerceTrialDaysLeft,
-		eCommerceTrialExpiration,
-		isTrialExpired,
-		locale,
-	} = props;
+const ECommerceTrialPlans = () => {
+	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || -1;
+
+	const { currentPlan, eCommerceTrialDaysLeft, isTrialExpired, eCommerceTrialExpiration } =
+		useSelector( ( state ) => ( {
+			currentPlan: getCurrentPlan( state, selectedSiteId ),
+			isTrialExpired: isECommerceTrialExpired( state, selectedSiteId ),
+			eCommerceTrialDaysLeft: Math.round( getECommerceTrialDaysLeft( state, selectedSiteId ) || 0 ),
+			eCommerceTrialExpiration: getECommerceTrialExpiration( state, selectedSiteId ),
+		} ) );
+
+	const locale = useLocale();
+	const moment = useLocalizedMoment();
+	const translate = useTranslate();
 
 	const trialStart = moment( currentPlan?.subscribedDate );
 	const trialEnd = moment( currentPlan?.expiryDate );
 	const trialDuration = trialEnd.diff( trialStart, 'days' );
 
-	// Trial progress from 0 to 1
+	/**
+	 * Trial progress from 0 to 1
+	 */
 	const trialProgress = 1 - eCommerceTrialDaysLeft / trialDuration;
+	const eCommerceTrialDaysLeftToDisplay = isTrialExpired ? 0 : eCommerceTrialDaysLeft;
 
 	// moment.js doesn't have a format option to display the long form in a localized way without the year
 	// https://github.com/moment/moment/issues/3341
@@ -257,30 +275,34 @@ export default function ECommerceTrialPlans( props ) {
 						{ translate( 'You’re in a free trial store' ) }
 					</p>
 					<p className="e-commerce-trial-plans__card-subtitle">
-						{
-							// Still need to populate the date correctly
-							translate(
-								'Your free trial will end in %(daysLeft)d day. Sign up to a plan by %(expirationdate)s to unlock new features and keep your store running.',
-								'Your free trial will end in %(daysLeft)d days. Sign up to a plan by %(expirationdate)s to unlock new features and keep your store running.',
-								{
-									count: eCommerceTrialDaysLeft,
-									args: {
-										daysLeft: eCommerceTrialDaysLeft,
-										expirationdate: readableExpirationDate,
-									},
-								}
-							)
-						}
+						{ isTrialExpired
+							? translate(
+									'Your free trial has expired. Sign up to a plan to unlock new features and keep your store running.'
+							  )
+							: translate(
+									'Your free trial will end in %(daysLeft)d day. Sign up to a plan by %(expirationdate)s to unlock new features and keep your store running.',
+									'Your free trial will end in %(daysLeft)d days. Sign up to a plan by %(expirationdate)s to unlock new features and keep your store running.',
+									{
+										count: eCommerceTrialDaysLeftToDisplay,
+										args: {
+											daysLeft: eCommerceTrialDaysLeftToDisplay,
+											expirationdate: readableExpirationDate,
+										},
+									}
+							  ) }
 					</p>
 				</div>
 				<div className="e-commerce-trial-plans__chart-wrapper">
-					<DoughnutChart progress={ trialProgress } text={ eCommerceTrialDaysLeft } />
+					<DoughnutChart
+						progress={ trialProgress }
+						text={ eCommerceTrialDaysLeftToDisplay?.toString() }
+					/>
 					<br />
 					<span className="e-commerce-trial-plans__chart-label">
 						{ isTrialExpired
 							? translate( 'Your free trial has expired' )
 							: translate( 'day left in trial', 'days left in trial', {
-									count: eCommerceTrialDaysLeft,
+									count: eCommerceTrialDaysLeftToDisplay,
 							  } ) }
 					</span>
 				</div>
@@ -338,4 +360,6 @@ export default function ECommerceTrialPlans( props ) {
 			</div>
 		</>
 	);
-}
+};
+
+export default ECommerceTrialPlans;
