@@ -7,7 +7,7 @@ import { isRequestingActiveTheme, getActiveTheme } from 'calypso/state/themes/se
 interface SyncActiveThemeProps {
 	siteId: number;
 	themeId: string;
-	onThemeActive: CallableFunction;
+	onAtomicThemeActive: CallableFunction;
 	maxAttempts?: number;
 	delay?: number;
 }
@@ -15,7 +15,7 @@ interface SyncActiveThemeProps {
 const SyncActiveTheme = ( {
 	siteId,
 	themeId,
-	onThemeActive,
+	onAtomicThemeActive,
 	maxAttempts = 50,
 	delay = 2,
 }: SyncActiveThemeProps ) => {
@@ -28,7 +28,7 @@ const SyncActiveTheme = ( {
 
 	useEffect( () => {
 		if ( activeTheme === themeId ) {
-			return onThemeActive();
+			return onAtomicThemeActive();
 		}
 		if ( ! requestStarted && attempts < maxAttempts ) {
 			setAttempts( attempts + 1 );

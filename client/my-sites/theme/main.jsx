@@ -784,7 +784,7 @@ class ThemeSheet extends Component {
 		);
 	};
 
-	onThemeActive = () => {
+	onAtomicThemeActive = () => {
 		if ( ! this.state.isAtomicTransferCompleted ) {
 			this.setState( {
 				isAtomicTransferCompleted: true,
@@ -1016,7 +1016,7 @@ class ThemeSheet extends Component {
 					<SyncActiveTheme
 						siteId={ siteId }
 						themeId={ themeId }
-						onThemeActive={ this.onThemeActive }
+						onAtomicThemeActive={ this.onAtomicThemeActive }
 					/>
 				) }
 			</Main>
