@@ -1,11 +1,10 @@
-import { URL_TYPE, determineUrlType } from '@automattic/calypso-url';
 import { Button, Gridicon } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { navigate } from 'calypso/lib/navigate';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -65,27 +64,18 @@ const PromptsNavigation = ( { prompts } ) => {
 
 		// Track if a user skipped todays prompt and choose to answer another prompt
 		const todayPromptId = prompts[ 0 ].id;
-		const skippedPromptId = getPrompt()?.id;
-		if ( todayPromptId !== skippedPromptId ) {
+		const selectedPromptId = getPrompt()?.id;
+		if ( todayPromptId !== selectedPromptId ) {
 			dispatch(
 				recordTracksEvent( `calypso_customer_home_skip_prompt`, {
 					site_id: siteId,
-					prompt_id: skippedPromptId,
+					prompt_id: todayPromptId,
 				} )
 			);
 		}
 
 		// Navigate to the editor.
-		const newPostLink = getNewPostLink();
-		const newPostLinkType = determineUrlType( getNewPostLink() );
-
-		if ( newPostLinkType === URL_TYPE.PATH_ABSOLUTE ) {
-			// Internal link, use router navigation to avoid reloading Calypso.
-			page( newPostLink );
-		} else {
-			// External link, use a full page reload to the new url.
-			window.location.href = newPostLink;
-		}
+		navigate( getNewPostLink() );
 	};
 
 	const trackClickViewAllResponses = () => {
