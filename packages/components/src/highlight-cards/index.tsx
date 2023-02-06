@@ -133,8 +133,14 @@ export default function HighlightCards( {
 						context={ textRef.current }
 					>
 						<div className="highlight-card-tooltip-content comparing-info">
-							<p>Highlights displayed are for the last 7 days, excluding today.</p>
-							<p>Trends shown are in comparison to the previous 7 days before that.</p>
+							<p>
+								{ translate( 'Highlights displayed are for the last 7 days, excluding today.' ) }
+							</p>
+							<p>
+								{ translate(
+									'Trends shown are in comparison to the previous 7 days before that.'
+								) }
+							</p>
 							<div className="comparing-info-chart">
 								<small>
 									{ translate( '%(fourteen)d days {{vs/}} %(seven)d days', {
