@@ -16,8 +16,8 @@ export interface SmsCountry {
 }
 
 export interface CountriesState {
-	domains: CountryListItem[] | undefined;
-	payments: CountryListItem[] | undefined;
-	sms: SmsCountry[] | undefined;
-	woocommerce: WooCountryList | undefined;
+	domains?: CountryListItem[];
+	payments?: CountryListItem[];
+	sms?: SmsCountry[];
+	woocommerce?: WooCountryList;
 }
