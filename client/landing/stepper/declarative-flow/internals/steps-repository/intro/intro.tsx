@@ -34,13 +34,10 @@ const Intro: React.FC< Props > = ( { onSubmit, introContent } ) => {
 	} );
 
 	const handleMoreClick = () => {
-		// hack to cover the logo header because z-index not respecting element that is heavily nested
-		document.getElementsByClassName( 'signup-header' )[ 0 ].style.display = 'none';
 		setShowModal( true );
 	};
 
 	const handleModalClose = () => {
-		document.getElementsByClassName( 'signup-header' )[ 0 ].style.display = null; // null = reset back to default
 		setShowModal( false );
 	};
 
