@@ -11,3 +11,4 @@ export { default as getRewindDaysOfBackupsAllowed } from './get-rewind-days-of-b
 export { default as getRewindDaysOfBackupsSaved } from './get-rewind-days-of-backups-saved';
 export { default as getActivityLogVisibleDays } from './get-activity-log-visible-days';
 export { default as getRewindStorageUsageLevel } from './get-rewind-storage-usage-level';
+export { default as getBackupRetentionDays } from './get-backup-retention-days';
