@@ -43,8 +43,8 @@ class PlansNavigation extends Component {
 		const path = sectionify( this.props.path );
 		const sectionTitle = this.getSectionTitle( path );
 		const hasPinnedItems = Boolean( site ) && isMobile();
-		const wrapperClasses = classNames( {
-			'plans-navigation--modernized': modernized,
+		const wrapperClasses = classNames( 'plans-navigation', {
+			'is-modernized': modernized,
 		} );
 
 		return (
