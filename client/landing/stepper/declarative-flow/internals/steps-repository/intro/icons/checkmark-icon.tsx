@@ -9,8 +9,8 @@ const CheckmarkIcon = () => {
 			className="checkmark-icon"
 		>
 			<path
-				fill-rule="evenodd"
-				clip-rule="evenodd"
+				fillRule="evenodd"
+				clipRule="evenodd"
 				d="M5.99973 10.699L1.79973 6.499L0.399734 7.899L5.99973 13.499L17.9997 1.499L16.5997 0.098999L5.99973 10.699Z"
 				fill="white"
 			/>
