@@ -98,6 +98,12 @@ object BuildDockerImage : BuildType({
 			"""
 		}
 
+		// We want calypso.live and Calypso e2e tests to run even if there's a merge conflict,
+		// just to keep things going. However, if we can merge, the webpack cache
+		// can be better utilized, since it's kept up-to-date for trunk commits. 
+		// Note that this only happens on non-trunk
+		mergeTrunk( skipIfConflict = true )
+
 		script {
 			name = "Restore git mtime"
 			scriptContent = """
