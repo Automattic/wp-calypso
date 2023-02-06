@@ -134,7 +134,10 @@ export default function ECommerceTrialCurrentPlan( props ) {
 	const trialEnd = moment( currentPlan?.expiryDate );
 	const trialDuration = trialEnd.diff( trialStart, 'days' );
 
-	// Trial progress from 0 to 1
+	/**
+	 * Trial progress from 0 to 1
+	 * Only used while trial is not expired
+	 */
 	const trialProgress = 1 - eCommerceTrialDaysLeft / trialDuration;
 
 	// moment.js doesn't have a format option to display the long form in a localized way without the year
@@ -201,14 +204,14 @@ export default function ECommerceTrialCurrentPlan( props ) {
 					></FeatureIncludedCard>
 				) ) }
 
-				{ ! displayAllIncluded ? (
+				{ displayAllIncluded && (
 					<Button
 						className="e-commerce-trial-current-plan__included-view-all"
 						onClick={ viewAllIncludedFeatures }
 					>
 						{ translate( 'View all' ) }
 					</Button>
-				) : null }
+				) }
 			</div>
 
 			<h2 className="e-commerce-trial-current-plan__section-title">
