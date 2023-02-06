@@ -34,13 +34,14 @@ export default function HighlightsSection( { siteId }: { siteId: number } ) {
 
 	return (
 		<HighlightCards
+			className="has-background-color"
 			counts={ counts }
 			previousCounts={ previousCounts }
+			showValueTooltip={ true }
 			onClickComments={ () => null }
 			onClickLikes={ () => null }
 			onClickViews={ () => null }
 			onClickVisitors={ () => null }
-			className="has-background-color"
 		/>
 	);
 }

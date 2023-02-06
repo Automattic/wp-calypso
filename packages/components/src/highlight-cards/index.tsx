@@ -19,6 +19,7 @@ export type HighlightCardsProps = {
 		views: number | null;
 		visitors: number | null;
 	};
+	showValueTooltip?: boolean | null;
 	onClickComments: ( event: MouseEvent ) => void;
 	onClickLikes: ( event: MouseEvent ) => void;
 	onClickViews: ( event: MouseEvent ) => void;
@@ -33,6 +34,7 @@ export default function HighlightCards( {
 	onClickViews,
 	onClickVisitors,
 	previousCounts,
+	showValueTooltip,
 }: HighlightCardsProps ) {
 	const translate = useTranslate();
 
@@ -49,6 +51,7 @@ export default function HighlightCards( {
 					icon={ <Icon icon={ people } /> }
 					count={ counts?.visitors ?? null }
 					previousCount={ previousCounts?.visitors ?? null }
+					showValueTooltip={ showValueTooltip }
 					onClick={ onClickVisitors }
 				/>
 				<HighlightCard
@@ -56,6 +59,7 @@ export default function HighlightCards( {
 					icon={ <Icon icon={ eye } /> }
 					count={ counts?.views ?? null }
 					previousCount={ previousCounts?.views ?? null }
+					showValueTooltip={ showValueTooltip }
 					onClick={ onClickViews }
 				/>
 				<HighlightCard
@@ -63,6 +67,7 @@ export default function HighlightCards( {
 					icon={ <Icon icon={ starEmpty } /> }
 					count={ counts?.likes ?? null }
 					previousCount={ previousCounts?.likes ?? null }
+					showValueTooltip={ showValueTooltip }
 					onClick={ onClickLikes }
 				/>
 				<HighlightCard
@@ -70,6 +75,7 @@ export default function HighlightCards( {
 					icon={ <Icon icon={ commentContent } /> }
 					count={ counts?.comments ?? null }
 					previousCount={ previousCounts?.comments ?? null }
+					showValueTooltip={ showValueTooltip }
 					onClick={ onClickComments }
 				/>
 			</div>
