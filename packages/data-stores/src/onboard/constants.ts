@@ -13,6 +13,7 @@ export enum SiteIntent {
 	Write = 'write',
 	Sell = 'sell',
 	Build = 'build',
+	Copy = 'copy',
 	DIFM = 'difm', // "Do It For Me"
 	WpAdmin = 'wpadmin',
 	Import = 'import', // deprecated

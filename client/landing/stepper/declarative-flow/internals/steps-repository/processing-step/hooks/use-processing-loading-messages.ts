@@ -11,6 +11,14 @@ export function useProcessingLoadingMessages() {
 
 	const stepData = useSelect( ( select ) => select( STEPPER_INTERNAL_STORE ).getStepData() );
 	switch ( stepData.intent ) {
+		case SiteIntent.Copy:
+			loadingMessages = [
+				{ title: __( 'Laying the foundations' ), duration: 5000 },
+				{ title: __( 'Securing your data' ), duration: 4000 },
+				{ title: __( 'Enabling encryption' ), duration: 5000 },
+				{ title: __( 'Applying a shiny top coat' ), duration: 4000 },
+			];
+			break;
 		case SiteIntent.DIFM:
 			loadingMessages = [
 				{ title: __( 'Securing your data' ), duration: 5000 },
