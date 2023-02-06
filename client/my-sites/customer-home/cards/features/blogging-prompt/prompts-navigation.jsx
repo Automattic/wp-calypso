@@ -75,7 +75,7 @@ const PromptsNavigation = ( { prompts } ) => {
 			);
 		}
 
-		// Navigate the the editor.
+		// Navigate to the editor.
 		const newPostLink = getNewPostLink();
 		const newPostLinkType = determineUrlType( getNewPostLink() );
 
@@ -83,7 +83,7 @@ const PromptsNavigation = ( { prompts } ) => {
 			// Internal link, use router navigation to avoid reloading Calypso.
 			page( newPostLink );
 		} else {
-			// External link, use regular navigation.
+			// External link, use a full page reload to the new url.
 			window.location.href = newPostLink;
 		}
 	};
