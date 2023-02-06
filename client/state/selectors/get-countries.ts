@@ -12,5 +12,5 @@ export default function getCountries< TType extends keyof CountriesState >(
 	state: IAppState,
 	type: TType
 ) {
-	return state.countries?.[ type ] ?? null;
+	return state.countries[ type ] ?? null;
 }
