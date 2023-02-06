@@ -98,8 +98,9 @@ export const doDismissJITM = ( action ) =>
 	);
 
 /**
- * Dismisses a jitm on the jetpack site, it returns nothing useful and will return no useful error, so we'll
- * fail and succeed silently.
+ * Dismisses a jitm on the jetpack site.
+ * The difference between this and doDismissJITM is that this action sends requests directly to the Jetpack site,
+ * instead of going through the WordPress.com rest-api endpoint.
  *
  * @param {Object} action The dismissal action
  * @returns {Object} The HTTP fetch action
