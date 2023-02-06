@@ -180,7 +180,7 @@ const PreviewSiteModalItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 	);
 };
 
-const CopySiteItem = ( { site }: SitesMenuItemProps ) => {
+const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
 	const { shouldShowSiteCopyItem, startSiteCopy } = useSiteCopy( site );
 
@@ -195,7 +195,8 @@ const CopySiteItem = ( { site }: SitesMenuItemProps ) => {
 		<MenuItemLink
 			href={ copySiteHref }
 			onClick={ () => {
-				startSiteCopy( 'calypso_sites_dashboard_site_action_copy_site_click' );
+				recordTracks( 'calypso_sites_dashboard_site_action_copy_site_click' );
+				startSiteCopy();
 			} }
 		>
 			{ __( 'Copy site' ) }
@@ -273,7 +274,7 @@ export const SitesEllipsisMenu = ( {
 					<ManagePluginsItem { ...props } />
 					{ showHosting && <HostingConfigItem { ...props } /> }
 					{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
-					{ isEnabled( 'sites/copy-site' ) && <CopySiteItem site={ site } /> }
+					{ isEnabled( 'sites/copy-site' ) && <CopySiteItem { ...props } /> }
 					<WpAdminItem { ...props } />
 				</SiteMenuGroup>
 			) }

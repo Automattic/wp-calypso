@@ -102,7 +102,8 @@ class SiteTools extends Component {
 					<SiteToolsLink
 						href={ copySiteUrl }
 						onClick={ () => {
-							startSiteCopy( 'calypso_settings_copy_site_option_click' );
+							recordTracksEvent( 'calypso_settings_copy_site_option_click' );
+							startSiteCopy();
 						} }
 						title={ copyTitle }
 						description={ copyText }
