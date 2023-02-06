@@ -63,7 +63,18 @@ const VideoPressIntroModalContent = () => {
 					{ translate( 'Get Started' ) }
 				</Button>
 				<Button plain className="learn-more">
-					{ translate( 'Or learn more about VideoPress' ) }
+					{ translate( ' VideoPress' ) }
+					{ translate( 'Or learn more about {{a}}VideoPress{{/a}}.', {
+						components: {
+							a: (
+								<a
+									href="https://videopress.com"
+									target="_blank"
+									rel="external noreferrer noopener"
+								/>
+							),
+						},
+					} ) }
 				</Button>
 			</div>
 			<div className="videopress-intro-modal__screenshots">

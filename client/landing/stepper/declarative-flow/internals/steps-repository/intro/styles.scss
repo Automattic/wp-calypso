@@ -251,6 +251,17 @@
 			color: revert;
 			border-color: revert;
 		}
+
+		@media screen and ( max-width: 512px ) and ( orientation: portrait ) {
+			flex-direction: column;
+			align-items: center;
+
+			.intro__button,
+			.intro__button-more {
+				width: 270px;
+				margin-top: 10px;
+			}
+		}
 	}
 
 	.intro__more-modal {
