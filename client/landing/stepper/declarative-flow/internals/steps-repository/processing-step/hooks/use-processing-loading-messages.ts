@@ -5,7 +5,7 @@ import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 
 const SiteIntent = Onboard.SiteIntent;
 
-export function useProcessingLoadingMessages( flow?: string ) {
+export function useProcessingLoadingMessages( flow?: string | null ) {
 	const { __ } = useI18n();
 	let loadingMessages = [];
 
