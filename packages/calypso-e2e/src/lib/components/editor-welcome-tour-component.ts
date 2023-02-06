@@ -34,20 +34,28 @@ export class EditorWelcomeTourComponent {
 			return;
 		}
 
-		await editorFrame.waitForFunction(
-			async () =>
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				await ( window as any ).wp.data
-					.select( 'automattic/wpcom-welcome-guide' )
-					.isWelcomeGuideStatusLoaded()
-		);
+		await editorFrame.waitForFunction( async () => {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const welcomeGuide = ( window as any )?.wp?.data?.select( 'automattic/wpcom-welcome-guide' );
+
+			if ( typeof welcomeGuide?.isWelcomeGuideStatusLoaded !== 'function' ) {
+				return false;
+			}
+
+			return await welcomeGuide.isWelcomeGuideStatusLoaded();
+		} );
 
 		await editorFrame.waitForFunction( async () => {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			const actionPayload = await ( window as any ).wp.data
-				.dispatch( 'automattic/wpcom-welcome-guide' )
-				.setShowWelcomeGuide( false );
+			const welcomeGuide = ( window as any )?.wp?.data?.dispatch(
+				'automattic/wpcom-welcome-guide'
+			);
 
+			if ( typeof welcomeGuide?.setShowWelcomeGuide !== 'function' ) {
+				return false;
+			}
+
+			const actionPayload = await welcomeGuide.setShowWelcomeGuide( false );
 			return actionPayload.show === false;
 		} );
 	}
