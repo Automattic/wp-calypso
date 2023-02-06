@@ -501,6 +501,14 @@ class RegisterDomainStep extends Component {
 		);
 	}
 
+	getActiveIndexByKey( items, tlds ) {
+		if ( undefined === tlds[ 0 ] ) {
+			return 0;
+		}
+
+		return items.findIndex( ( item ) => item.key === tlds[ 0 ] );
+	}
+
 	renderQuickFilters() {
 		// TODO: Confirm where should we load these tlds from
 		const items = [
@@ -527,7 +535,7 @@ class RegisterDomainStep extends Component {
 		return (
 			<ResponsiveToolbarGroup
 				className="register-domain-step__domains-quickfilter-group"
-				initialActiveIndex={ 0 }
+				initialActiveIndex={ this.getActiveIndexByKey( items, this.state.filters.tlds ) }
 				forceSwipe={ 'undefined' === typeof window }
 				onClick={ handleClick }
 			>
