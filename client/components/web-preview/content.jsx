@@ -9,7 +9,7 @@ import SeoPreviewPane from 'calypso/components/seo-preview-pane';
 import SpinnerLine from 'calypso/components/spinner-line';
 import { addQueryArgs } from 'calypso/lib/route';
 import { hasTouch } from 'calypso/lib/touch-detect';
-import DomainUpsell from '../domains/domain-upsell';
+import DomainUpsellCalout from '../domains/domain-upsell-calout';
 import Toolbar from './toolbar';
 
 import './style.scss';
@@ -392,7 +392,7 @@ export default class WebPreviewContent extends Component {
 					isSticky={ this.props.isStickyToolbar }
 				/>
 				{ this.props.belowToolbar }
-				<DomainUpsell />
+				{ isLoaded && <DomainUpsellCalout trackEvent="site_preview_domain_upsell_calout" /> }
 				{ ( ! isLoaded || this.state.isLoadingSubpage ) && <SpinnerLine /> }
 				<div
 					className="web-preview__placeholder"
