@@ -39,7 +39,7 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 
 	const { __ } = useI18n();
 	const videoPressLoadingMessages = useVideoPressLoadingMessages();
-	const defaultLoadingMessages = useProcessingLoadingMessages();
+	const defaultLoadingMessages = useProcessingLoadingMessages( flow );
 	const loadingMessages =
 		'videopress' === flow ? videoPressLoadingMessages : defaultLoadingMessages;
 

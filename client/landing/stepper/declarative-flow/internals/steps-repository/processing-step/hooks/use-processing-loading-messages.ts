@@ -5,20 +5,22 @@ import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 
 const SiteIntent = Onboard.SiteIntent;
 
-export function useProcessingLoadingMessages() {
+export function useProcessingLoadingMessages( flow?: string ) {
 	const { __ } = useI18n();
 	let loadingMessages = [];
 
 	const stepData = useSelect( ( select ) => select( STEPPER_INTERNAL_STORE ).getStepData() );
+
+	if ( flow === 'copy-site' ) {
+		return [
+			{ title: __( 'Laying the foundations' ), duration: 5000 },
+			{ title: __( 'Securing your data' ), duration: 4000 },
+			{ title: __( 'Enabling encryption' ), duration: 5000 },
+			{ title: __( 'Applying a shiny top coat' ), duration: 4000 },
+		];
+	}
+
 	switch ( stepData.intent ) {
-		case SiteIntent.Copy:
-			loadingMessages = [
-				{ title: __( 'Laying the foundations' ), duration: 5000 },
-				{ title: __( 'Securing your data' ), duration: 4000 },
-				{ title: __( 'Enabling encryption' ), duration: 5000 },
-				{ title: __( 'Applying a shiny top coat' ), duration: 4000 },
-			];
-			break;
 		case SiteIntent.DIFM:
 			loadingMessages = [
 				{ title: __( 'Securing your data' ), duration: 5000 },
