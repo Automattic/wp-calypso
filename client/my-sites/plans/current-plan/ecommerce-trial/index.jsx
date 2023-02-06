@@ -205,7 +205,7 @@ export default function ECommerceTrialCurrentPlan( props ) {
 					></FeatureIncludedCard>
 				) ) }
 
-				{ displayAllIncluded && (
+				{ ! displayAllIncluded && (
 					<Button
 						className="e-commerce-trial-current-plan__included-view-all"
 						onClick={ viewAllIncludedFeatures }
