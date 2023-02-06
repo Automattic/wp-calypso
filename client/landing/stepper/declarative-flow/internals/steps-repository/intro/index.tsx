@@ -57,7 +57,7 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 				buttonText: __( 'Get started' ),
 				modal: {
 					buttonText: __( 'Learn More' ),
-					content: <VideoPressIntroModalContent />,
+					content: VideoPressIntroModalContent,
 				},
 			};
 		}

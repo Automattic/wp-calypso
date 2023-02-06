@@ -2,8 +2,9 @@ import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import './videopress-intro-modal-styles.scss';
 import CheckmarkIcon from './icons/checkmark-icon';
+import { IntroModalContentProps } from './intro';
 
-const VideoPressIntroModalContent = () => {
+const VideoPressIntroModalContent: React.FC< IntroModalContentProps > = ( { onSubmit } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -59,22 +60,11 @@ const VideoPressIntroModalContent = () => {
 				</li>
 			</ul>
 			<div className="videopress-intro-modal__button-column">
-				<Button className="intro__button" primary>
+				<Button className="intro__button" primary onClick={ onSubmit }>
 					{ translate( 'Get Started' ) }
 				</Button>
 				<Button plain className="learn-more">
-					{ translate( ' VideoPress' ) }
-					{ translate( 'Or learn more about {{a}}VideoPress{{/a}}.', {
-						components: {
-							a: (
-								<a
-									href="https://videopress.com"
-									target="_blank"
-									rel="external noreferrer noopener"
-								/>
-							),
-						},
-					} ) }
+					{ translate( 'Or learn more about VideoPress.' ) }
 				</Button>
 			</div>
 			<div className="videopress-intro-modal__screenshots">
