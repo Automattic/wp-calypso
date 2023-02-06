@@ -54,6 +54,12 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 					{ br: <br /> }
 				),
 				buttonText: __( 'Get started' ),
+				moreButton: {
+					text: __( 'Learn More' ),
+					onClick: () => {
+						return;
+					},
+				},
 			};
 		}
 

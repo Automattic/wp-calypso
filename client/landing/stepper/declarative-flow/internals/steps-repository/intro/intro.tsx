@@ -10,6 +10,12 @@ export interface IntroContent {
 	title: WPElement | string;
 	text?: WPElement | string;
 	buttonText: string;
+	moreButton?: IntroMoreButton;
+}
+
+export interface IntroMoreButton {
+	text: string;
+	onClick: () => void;
 }
 
 const Intro: React.FC< Props > = ( { onSubmit, introContent } ) => {
@@ -20,9 +26,20 @@ const Intro: React.FC< Props > = ( { onSubmit, introContent } ) => {
 					<span>{ introContent.title }</span>
 				</h1>
 				{ introContent.text && <div className="intro__description"> { introContent.text } </div> }
-				<Button className="intro__button" primary onClick={ onSubmit }>
-					{ introContent.buttonText }
-				</Button>
+				<div className="intro__button-row">
+					<Button className="intro__button" primary onClick={ onSubmit }>
+						{ introContent.buttonText }
+					</Button>
+					{ introContent.moreButton && (
+						<Button
+							className="intro__button-more"
+							transparent
+							onClick={ introContent.moreButton.onClick }
+						>
+							{ introContent.moreButton.text }
+						</Button>
+					) }
+				</div>
 			</div>
 		</>
 	);
