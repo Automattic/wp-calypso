@@ -19,14 +19,14 @@ import FeatureNotIncludedCard from '../feature-not-included-card';
 
 import './style.scss';
 
-export default function ECommerceTrialCurrentPlan() {
-	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+const ECommerceTrialCurrentPlan = () => {
+	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || -1;
 
 	const { currentPlan, eCommerceTrialDaysLeft, isTrialExpired, eCommerceTrialExpiration } =
 		useSelector( ( state ) => ( {
 			currentPlan: getCurrentPlan( state, selectedSiteId ),
-			eCommerceTrialDaysLeft: Math.round( getECommerceTrialDaysLeft( state, selectedSiteId ) ),
 			isTrialExpired: isECommerceTrialExpired( state, selectedSiteId ),
+			eCommerceTrialDaysLeft: Math.round( getECommerceTrialDaysLeft( state, selectedSiteId ) || 0 ),
 			eCommerceTrialExpiration: getECommerceTrialExpiration( state, selectedSiteId ),
 		} ) );
 
@@ -258,4 +258,6 @@ export default function ECommerceTrialCurrentPlan() {
 			</div>
 		</>
 	);
-}
+};
+
+export default ECommerceTrialCurrentPlan;
