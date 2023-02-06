@@ -44,7 +44,6 @@ class PlansNavigation extends Component {
 		const sectionTitle = this.getSectionTitle( path );
 		const hasPinnedItems = Boolean( site ) && isMobile();
 		const wrapperClasses = classNames( {
-			'plans-navigation': modernized,
 			'plans-navigation--modernized': modernized,
 		} );
 
