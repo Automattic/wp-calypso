@@ -2,7 +2,7 @@ import { Button, Card } from '@automattic/components';
 import requestExternalAccess from '@automattic/request-external-access';
 import { translate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
-import CardHeading from 'calypso/components/card-heading/index';
+import CardHeading from 'calypso/components/card-heading';
 import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
 import { getKeyringServiceByName } from 'calypso/state/sharing/services/selectors';
 import iconGitHub from '../github.svg';

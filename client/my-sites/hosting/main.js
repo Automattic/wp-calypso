@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_SFTP, FEATURE_SFTP_DATABASE } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
@@ -163,17 +164,22 @@ class Hosting extends Component {
 
 		const getContent = () => {
 			const WrapperComponent = isDisabled || isTransferring ? FeatureExample : Fragment;
+			const isGitHubEnabled = isEnabled( 'hosting/github-integration' );
 
 			return (
 				<>
-					<QueryKeyringServices />
-					<QueryKeyringConnections />
+					{ isGitHubEnabled && (
+						<>
+							<QueryKeyringServices />
+							<QueryKeyringConnections />
+						</>
+					) }
 					<WrapperComponent>
 						<Layout className="hosting__layout">
 							<Column type="main" className="hosting__main-layout-col">
 								<SFTPCard disabled={ isDisabled } />
 								<PhpMyAdminCard disabled={ isDisabled } />
-								<GitHubCard />
+								{ isGitHubEnabled && <GitHubCard /> }
 								<WebServerSettingsCard disabled={ isDisabled } />
 								<RestorePlanSoftwareCard disabled={ isDisabled } />
 								<MiscellaneousCard disabled={ isDisabled } />

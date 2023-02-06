@@ -1,7 +1,6 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useSelector } from 'react-redux';
-import { GithubAuthorizeCard } from 'calypso/my-sites/hosting/github/github-authorize-card/index';
-import { GithubConnectCard } from 'calypso/my-sites/hosting/github/github-connect-card/index';
+import { GithubAuthorizeCard } from 'calypso/my-sites/hosting/github/github-authorize-card';
+import { GithubConnectCard } from 'calypso/my-sites/hosting/github/github-connect-card';
 import {
 	getKeyringConnections,
 	isKeyringConnectionsFetching,
@@ -12,10 +11,6 @@ export const GitHubCard = () => {
 	const isFetching = useSelector( isKeyringConnectionsFetching );
 	const connections = useSelector( getKeyringConnections );
 
-	if ( ! isEnabled( 'hosting/github-integration' ) ) {
-		return null;
-	}
-
 	if ( isFetching ) {
 		return <GitHubPlaceholderCard />;
 	}
@@ -25,5 +20,6 @@ export const GitHubCard = () => {
 	if ( gitHub ) {
 		return <GithubConnectCard />;
 	}
+
 	return <GithubAuthorizeCard />;
 };

@@ -1,6 +1,6 @@
 import { Card, Spinner } from '@automattic/components';
 import { translate } from 'i18n-calypso';
-import CardHeading from 'calypso/components/card-heading/index';
+import CardHeading from 'calypso/components/card-heading';
 import iconGitHub from '../github.svg';
 
 import '../style.scss';

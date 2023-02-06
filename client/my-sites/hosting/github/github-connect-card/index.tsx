@@ -1,6 +1,6 @@
 import { Card } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
-import CardHeading from 'calypso/components/card-heading/index';
+import CardHeading from 'calypso/components/card-heading';
 import iconGitHub from '../github.svg';
 
 // todo - just a placeholder for now as the implementation of this
