@@ -13,6 +13,6 @@
 	display: block;
 }
 
-.vat-form__row input:disabled {
+.vat-form__row input[type=checkbox]:disabled {
 	opacity: 0.5;
 }
