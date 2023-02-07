@@ -329,7 +329,10 @@ const ECommerceTrialPlans = () => {
 			<Card className="e-commerce-trial-plans__price-card">
 				<div className="e-commerce-trial-plans__price-card-text">
 					<span className="e-commerce-trial-plans__price-card-title">
-						{ translate( 'Commerce' ) }
+						{
+							// TODO: translate when final copy is available
+							'Commerce'
+						}
 					</span>
 					<span className="e-commerce-trial-plans__price-card-subtitle">
 						{ translate( 'Accelerate your growth with advanced features.' ) }
@@ -337,18 +340,31 @@ const ECommerceTrialPlans = () => {
 				</div>
 				<div className="e-commerce-trial-plans__price-card-conditions">
 					<span className="e-commerce-trial-plans__price-card-value">
-						<span className="e-commerce-trial-plans__price-card-value-symbol">$</span>45
+						<span className="e-commerce-trial-plans__price-card-value-symbol">$</span>
+						{
+							// TODO: make it dynamic
+							'45'
+						}
 					</span>
 					<span className="e-commerce-trial-plans__price-card-interval">
-						per month, $540 billed annually
+						{
+							// TODO: translate when final copy is available
+							'per month, $540 billed annually'
+						}
 					</span>
 					<span className="e-commerce-trial-plans__price-card-savings">
-						{ translate( 'SAVE 31% BY PAYING ANNUALLY' ) }
+						{
+							// TODO: translate when final copy is available
+							'SAVE 31% BY PAYING ANNUALLY'
+						}
 					</span>
 				</div>
 				<div className="e-commerce-trial-plans__price-card-cta-wrapper">
 					<Button className="e-commerce-trial-plans__price-card-cta" primary>
-						{ translate( 'Get Commerce' ) }
+						{
+							// TODO: translate when final copy is available
+							'Get Commerce'
+						}
 					</Button>
 				</div>
 			</Card>
@@ -360,7 +376,10 @@ const ECommerceTrialPlans = () => {
 			</div>
 			<div className="e-commerce-trial-plans__cta-wrapper">
 				<Button className="e-commerce-trial-plans__cta is-primary">
-					{ translate( 'Get Commerce' ) }
+					{
+						// TODO: translate when final copy is available
+						'Get Commerce'
+					}
 				</Button>
 			</div>
 		</>
