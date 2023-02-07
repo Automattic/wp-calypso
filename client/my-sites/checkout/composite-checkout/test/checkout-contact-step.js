@@ -573,6 +573,37 @@ describe( 'Checkout contact step', () => {
 		expect( await screen.findByLabelText( 'Address for VAT' ) ).toHaveValue( '123 Main Street' );
 	} );
 
+	it( 'does not allow unchecking the VAT details checkbox if the VAT fields are pre-filled', async () => {
+		nock.cleanAll();
+		mockCachedContactDetailsEndpoint( {
+			country_code: 'GB',
+			postal_code: '',
+		} );
+		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
+		mockGetVatInfoEndpoint( {
+			id: '12345',
+			name: 'Test company',
+			address: '123 Main Street',
+			country: 'GB',
+		} );
+		const cartChanges = { products: [ planWithoutDomain ] };
+		const user = userEvent.setup();
+		render( <MyCheckout cartChanges={ cartChanges } /> );
+
+		// Wait for checkout to load.
+		await screen.findByLabelText( 'Continue with the entered contact details' );
+		const countryField = await screen.findByLabelText( 'Country' );
+
+		expect( countryField.selectedOptions[ 0 ].value ).toBe( 'GB' );
+		expect( await screen.findByLabelText( 'Add VAT details' ) ).toBeChecked();
+		expect( await screen.findByLabelText( 'Add VAT details' ) ).toBeDisabled();
+
+		// Try to click it anyway and make sure it does not change.
+		await user.click( await screen.findByLabelText( 'Add VAT details' ) );
+		expect( await screen.findByLabelText( 'Add VAT details' ) ).toBeChecked();
+		expect( await screen.findByLabelText( 'VAT Number' ) ).toBeInTheDocument();
+	} );
+
 	it( 'sends data to the VAT endpoint when completing the step if the box is checked', async () => {
 		const vatId = '12345';
 		const vatName = 'Test company';
