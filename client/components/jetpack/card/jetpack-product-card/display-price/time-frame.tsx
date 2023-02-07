@@ -9,6 +9,7 @@ interface TimeFrameProps {
 	expiryDate?: Moment;
 	billingTerm: Duration;
 	discountedPriceDuration?: number;
+	formattedOriginalPrice?: string;
 }
 
 interface RegularTimeFrameProps {
@@ -22,6 +23,7 @@ interface ExpiringDateTimeFrameProps {
 interface PartialDiscountTimeFrameProps {
 	billingTerm: Duration;
 	discountedPriceDuration: number;
+	formattedOriginalPrice: string;
 }
 
 interface A11yProps {
@@ -90,6 +92,7 @@ const ExpiringDateTimeFrame: React.FC< ExpiringDateTimeFrameProps > = ( { produc
 const PartialDiscountTimeFrame: React.FC< PartialDiscountTimeFrameProps & A11yProps > = ( {
 	billingTerm,
 	discountedPriceDuration,
+	formattedOriginalPrice,
 	forScreenReader,
 } ) => {
 	const translate = useTranslate();
@@ -98,20 +101,21 @@ const PartialDiscountTimeFrame: React.FC< PartialDiscountTimeFrameProps & A11yPr
 		count: discountedPriceDuration,
 		args: {
 			months: discountedPriceDuration,
+			original_price: formattedOriginalPrice,
 		},
 	};
 
 	/* eslint-disable wpcalypso/i18n-mismatched-placeholders */
 	let text = translate(
-		'for the first month, billed yearly',
-		'for the first %(months)d months, billed yearly',
+		'for the first month, then %(original_price)s /month billed yearly',
+		'for the first %(months)d months, then %(original_price) /month billed yearly',
 		opts
 	);
 
 	if ( billingTerm === TERM_MONTHLY ) {
 		text = translate(
-			'for the first month, billed monthly',
-			'for the first %(months)d months, billed monthly',
+			'for the first month, then %(original_price)s /month billed monthly',
+			'for the first %(months)d months, then %(original_price) /month billed monthly',
 			opts
 		);
 	}
@@ -128,6 +132,7 @@ const TimeFrame: React.FC< TimeFrameProps & A11yProps > = ( {
 	expiryDate,
 	billingTerm,
 	discountedPriceDuration,
+	formattedOriginalPrice,
 	forScreenReader,
 } ) => {
 	const moment = useLocalizedMoment();
@@ -138,12 +143,13 @@ const TimeFrame: React.FC< TimeFrameProps & A11yProps > = ( {
 		return <ExpiringDateTimeFrame productExpiryDate={ productExpiryDate } />;
 	}
 
-	if ( discountedPriceDuration ) {
+	if ( discountedPriceDuration && formattedOriginalPrice ) {
 		return (
 			<PartialDiscountTimeFrame
 				billingTerm={ billingTerm }
 				discountedPriceDuration={ discountedPriceDuration }
 				forScreenReader={ forScreenReader }
+				formattedOriginalPrice={ formattedOriginalPrice }
 			/>
 		);
 	}
