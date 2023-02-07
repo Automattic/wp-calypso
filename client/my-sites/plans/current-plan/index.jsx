@@ -235,13 +235,7 @@ class CurrentPlan extends Component {
 
 		return (
 			<div>
-				{ ! isJetpack && (
-					<ModernizedLayout
-						section="plans"
-						subSection="current-plan"
-						dropShadowOnHeader={ isFreePlan( currentPlanSlug ) }
-					/>
-				) }
+				{ ! isJetpack && <ModernizedLayout dropShadowOnHeader={ isFreePlan( currentPlanSlug ) } /> }
 				<DocumentHead title={ translate( 'My Plan' ) } />
 				{ selectedSiteId && (
 					<QueryConciergeInitial key={ selectedSiteId } siteId={ selectedSiteId } />

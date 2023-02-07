@@ -7,11 +7,9 @@
 import { css, Global } from '@emotion/react';
 import { memo } from '@wordpress/element';
 
-const ModernizedLayout: React.FunctionComponent< {
-	section: string;
-	subSection?: string;
-	dropShadowOnHeader?: boolean;
-} > = ( { section, subSection, dropShadowOnHeader = true } ) => {
+const ModernizedLayout: React.FunctionComponent< { dropShadowOnHeader?: boolean } > = ( {
+	dropShadowOnHeader = true,
+} ) => {
 	const backgroundColor = '#fdfdfd';
 	const sectionMaxWidth = '1224px';
 	const layoutContentPaddingTop = '79px';
@@ -21,7 +19,8 @@ const ModernizedLayout: React.FunctionComponent< {
 	const verticalMargin = '32px';
 
 	const globalOverrides = css`
-		.${ subSection ?? section }__section-header {
+		.plans__section-header,
+		.current-plan__section-header {
 			background-color: var( --studio-white );
 			${ dropShadowOnHeader &&
 			css`
@@ -34,7 +33,8 @@ const ModernizedLayout: React.FunctionComponent< {
 		}
 
 		// Main layout content
-		.${ subSection ?? section } {
+		.plans,
+		.current-plan {
 			// Ensures horizontal padding for all sections.
 			@media ( min-width: ${ customMobileBreakpoint } ) {
 				> * {
@@ -119,10 +119,11 @@ const ModernizedLayout: React.FunctionComponent< {
 			}
 		}
 
-		.is-section-${ section } {
+		.is-section-plans {
 			background-color: var( --studio-white );
 
-			.${ subSection ?? section } {
+			.plans,
+			.current-plan {
 				background-color: ${ backgroundColor };
 			}
 

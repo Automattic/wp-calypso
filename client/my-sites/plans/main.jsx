@@ -190,7 +190,7 @@ class Plans extends Component {
 
 		return (
 			<div>
-				<ModernizedLayout section="plans" dropShadowOnHeader={ isFreePlan( currentPlanSlug ) } />
+				<ModernizedLayout dropShadowOnHeader={ isFreePlan( currentPlanSlug ) } />
 				{ selectedSite.ID && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
 				<PageViewTracker path="/plans/:site" title="Plans" />
