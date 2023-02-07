@@ -23,6 +23,18 @@ const defaultCriteria: FeatureCriteria[] = [
 		accountName: 'coBlocksSimpleSiteEdgeUser',
 	},
 	{
+		coblocks: 'edge',
+		gutenberg: 'edge',
+		siteType: 'atomic',
+		accountName: 'coBlocksAtomicSiteEdgeUser',
+	},
+	{
+		coblocks: 'edge',
+		gutenberg: 'stable',
+		siteType: 'atomic',
+		accountName: 'coBlocksAtomicSiteEdgeUser',
+	},
+	{
 		gutenberg: 'stable',
 		siteType: 'simple',
 		variant: 'siteEditor',
