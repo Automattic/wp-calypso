@@ -2,11 +2,11 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-body.is-section-gutenberg-editor .domain-upsell-calout {
+body.is-section-gutenberg-editor .domain-upsell-callout {
 	height: 60px;
 }
 
-.domain-upsell-calout {
+.domain-upsell-callout {
 	font-size: $font-body-extra-small;
 	position: absolute;
 	z-index: 99998;

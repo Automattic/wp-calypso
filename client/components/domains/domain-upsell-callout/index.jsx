@@ -1,7 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isFreePlanProduct } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
-import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
 import { useCallback } from 'react';
@@ -15,7 +14,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
-const DomainUpsellCalout = ( { trackEvent } ) => {
+const DomainUpsellCallout = ( { trackEvent } ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
@@ -30,7 +29,7 @@ const DomainUpsellCalout = ( { trackEvent } ) => {
 
 	const getCtaClickHandler = useCallback( () => {
 		recordTracksEvent( trackEventClick );
-		page( `/domains/add/${site.domain}?domainAndPlanPackage=true`);
+		page( `/domains/add/${ site.domain }?domainAndPlanPackage=true` );
 	}, [ trackEventClick, site.domain ] );
 
 	const getDismissClickHandler = () => {
@@ -51,23 +50,23 @@ const DomainUpsellCalout = ( { trackEvent } ) => {
 	return (
 		<>
 			<TrackComponentView eventName={ trackEventView } />
-			<div className="domain-upsell-calout" id="domain-upsell-calout">
-				<div className="domain-upsell-calout__content">
-					<div className="domain-upsell-calout__content-text">
-						<Gridicon icon="globe" size={ 16 } className="domain-upsell-calout__icon" />
-						<span className="domain-upsell-calout__domain-name">{ site.domain }</span>
-						<button className="domain-upsell-calout__button" onClick={ getCtaClickHandler }>
-							<span className="domain-upsell-calout__button-text-desktop">
+			<div className="domain-upsell-callout" id="domain-upsell-callout">
+				<div className="domain-upsell-callout__content">
+					<div className="domain-upsell-callout__content-text">
+						<Gridicon icon="globe" size={ 16 } className="domain-upsell-callout__icon" />
+						<span className="domain-upsell-callout__domain-name">{ site.domain }</span>
+						<button className="domain-upsell-callout__button" onClick={ getCtaClickHandler }>
+							<span className="domain-upsell-callout__button-text-desktop">
 								{ __( 'Customize your domain' ) }
 							</span>
-							<span className="domain-upsell-calout__button-text-mobile">
+							<span className="domain-upsell-callout__button-text-mobile">
 								{ __( 'Customize' ) }
 							</span>
 						</button>
 						<Gridicon
 							icon="cross"
 							size={ 16 }
-							className="domain-upsell-calout__dismiss-icon"
+							className="domain-upsell-callout__dismiss-icon"
 							onClick={ getDismissClickHandler }
 						/>
 					</div>
@@ -77,4 +76,4 @@ const DomainUpsellCalout = ( { trackEvent } ) => {
 	);
 };
 
-export default DomainUpsellCalout;
+export default DomainUpsellCallout;
