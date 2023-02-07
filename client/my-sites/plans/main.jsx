@@ -33,6 +33,7 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PlansHeader from './header';
 import ModernizedLayout from './modernized-layout';
@@ -179,6 +180,7 @@ class Plans extends Component {
 			currentPlan,
 			domainAndPlanPackage,
 			is2023OnboardingPricingGrid,
+			isJetpack,
 		} = this.props;
 
 		if ( ! selectedSite || this.isInvalidPlanInterval() || ! currentPlan ) {
@@ -190,7 +192,7 @@ class Plans extends Component {
 
 		return (
 			<div>
-				<ModernizedLayout dropShadowOnHeader={ isFreePlan( currentPlanSlug ) } />
+				{ ! isJetpack && <ModernizedLayout dropShadowOnHeader={ isFreePlan( currentPlanSlug ) } /> }
 				{ selectedSite.ID && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
 				<PageViewTracker path="/plans/:site" title="Plans" />
@@ -244,5 +246,6 @@ export default connect( ( state ) => {
 		showTreatmentPlansReorderTest: isTreatmentPlansReorderTest( state ),
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
 		is2023OnboardingPricingGrid,
+		isJetpack: isJetpackSite( state, selectedSiteId ),
 	};
 } )( localize( withTrackingTool( 'HotJar' )( Plans ) ) );
