@@ -259,7 +259,7 @@ class DomainSearch extends Component {
 						<div className="domains__header">
 							{ isDomainSidebarExperimentUser() && (
 								<>
-									<DomainAndPlanPackageNavigation step={ 1 } />
+									<DomainAndPlanPackageNavigation step={ 2 } />
 									<FormattedHeader
 										brandFont
 										headerText={ translate( 'Claim your domain' ) }

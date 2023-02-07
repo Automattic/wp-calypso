@@ -7,7 +7,7 @@
 	justify-content: center;
 	margin: 24px 0;
 
-	.domain-and-plan-package-navigation__back {
+	&__back {
 		height: 24px;
 		display: flex;
 		align-items: center;
@@ -32,12 +32,12 @@
 		}
 	}
 
-	ol.domain-and-plan-package-navigation__steps {
+	&__steps {
 		display: none;
 	}
 
 	@include break-xlarge {
-		ol.domain-and-plan-package-navigation__steps {
+		&__steps {
 			display: block;
 			counter-reset: step-counter;
 			margin: 0;
@@ -50,7 +50,7 @@
 			}
 		}
 
-		ol.domain-and-plan-package-navigation__steps > li {
+		&__steps > li {
 			color: var(--studio-gray-40);
 			display: inline-block;
 			counter-increment: step-counter;
@@ -63,24 +63,25 @@
 			}
 		}
 
-		ol.domain-and-plan-package-navigation__steps li:is(:first-child)::before,
-		ol.domain-and-plan-package-navigation__steps li::before {
+		&__steps li:is(:first-child)::before,
+		&__steps li::before {
 			display: inline-block;
 			text-align: center;
 			position: absolute;
 			left: 10px;
 		}
 
-		ol.domain-and-plan-package-navigation__steps li.domain-and-plan-package-navigation__active:is(:first-child)::before,
-		ol.domain-and-plan-package-navigation__steps li::before {
+		&__steps &__active:is(:first-child)::before,
+		&__steps li::before {
 			content: counter(step-counter) ".";
 		}
 
-		ol.domain-and-plan-package-navigation__steps li:is(:first-child)::before {
+		&__steps li:is(:first-child)::before {
 			content: "";
+			padding: 0;
 		}
 
-		ol li.domain-and-plan-package-navigation__active {
+		ol &__active {
 			color: var(--studio-pink-50);
 		}
 	}

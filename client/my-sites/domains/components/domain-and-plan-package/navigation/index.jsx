@@ -3,7 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 
 import './style.scss';
 
-export default function DomainAndPlanPackageHeader( props ) {
+export default function DomainAndPlanPackageNavigation( props ) {
 	const translate = useTranslate();
 
 	const goBack = () => {
