@@ -242,7 +242,7 @@ const ECommerceTrialPlansPage = () => {
 
 	return (
 		<>
-			<BodySectionCssClass bodyClass={ [ 'is-trial-plan' ] } />
+			<BodySectionCssClass bodyClass={ [ 'is-ecommerce-trial-plan' ] } />
 
 			<Card className="e-commerce-trial-plans__trial-card">
 				<div className="e-commerce-trial-plans__trial-card-content">
