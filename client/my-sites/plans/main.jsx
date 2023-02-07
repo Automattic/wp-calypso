@@ -272,8 +272,13 @@ class Plans extends Component {
 			return this.renderPlaceholder();
 		}
 
-		const allDomains = getDomainRegistrations( this.props.cart );
+		const allDomains = isDomainSidebarExperimentUser()
+			? getDomainRegistrations( this.props.cart )
+			: [];
 		const currentDomain = allDomains.length ? allDomains[ 0 ]?.meta : null;
+		if ( isDomainSidebarExperimentUser() && ! currentDomain ) {
+			page.redirect( `/domains/add/${ selectedSite.slug }?domainAndPlanPackage=true` );
+		}
 
 		return (
 			<div>
@@ -337,7 +342,7 @@ class Plans extends Component {
 	}
 }
 
-export default connect( ( state ) => {
+const ConnectedPlans = connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 
 	const currentPlan = getCurrentPlan( state, selectedSiteId );
@@ -358,4 +363,12 @@ export default connect( ( state ) => {
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
 		is2023OnboardingPricingGrid,
 	};
-} )( localize( withTrackingTool( 'HotJar' )( Plans ) ) );
+} )( withCartKey( withShoppingCart( localize( withTrackingTool( 'HotJar' )( Plans ) ) ) ) );
+
+export default function PlansWrapper( props ) {
+	return (
+		<CalypsoShoppingCartProvider>
+			<ConnectedPlans { ...props } />
+		</CalypsoShoppingCartProvider>
+	);
+}
