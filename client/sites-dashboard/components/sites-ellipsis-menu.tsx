@@ -13,6 +13,7 @@ import { ComponentType, useEffect, useState } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import SitePreviewLink from 'calypso/components/site-preview-link';
 import { useSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
+import { useInView } from 'calypso/lib/use-in-view';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
@@ -191,7 +192,6 @@ const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 			href={ copySiteHref }
 			onClick={ () => {
 				recordTracks( 'calypso_sites_dashboard_site_action_copy_site_click' );
-				startSiteCopy();
 			} }
 		>
 			{ __( 'Copy site' ) }

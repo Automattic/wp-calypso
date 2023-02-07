@@ -35,10 +35,12 @@ export const useQueryUserPurchases = () => {
 	const hasLoaded = useSelector( ( state ) => state.purchases.hasLoadedUserPurchasesFromServer );
 	const reduxDispatch = useDispatch();
 
-	if ( ! userId || isRequesting || hasLoaded ) {
-		return;
-	}
-	reduxDispatch( fetchUserPurchases( userId ) );
+	useEffect( () => {
+		if ( ! userId || isRequesting || hasLoaded ) {
+			return;
+		}
+		reduxDispatch( fetchUserPurchases( userId ) );
+	}, [ userId, isRequesting, hasLoaded, reduxDispatch ] );
 };
 
 export default QueryUserPurchases;

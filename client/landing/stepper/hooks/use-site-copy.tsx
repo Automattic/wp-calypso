@@ -68,11 +68,14 @@ export const useSiteCopy = (
 		setPlanCartItem( { product_slug: plan?.product_slug as string } );
 
 		const marketplacePluginProducts = ( purchases || [] )
-			.filter( ( purchase ) => purchase.productType === 'marketplace_plugin' )
+			.filter(
+				( purchase ) =>
+					purchase.productType === 'marketplace_plugin' && purchase.siteId === site?.ID
+			)
 			.map( ( purchase ) => ( { product_slug: purchase.productSlug } ) );
 
 		setProductCartItems( marketplacePluginProducts );
-	}, [ plan, setPlanCartItem, purchases, shouldShowSiteCopyItem, setProductCartItems ] );
+	}, [ plan, setPlanCartItem, purchases, shouldShowSiteCopyItem, setProductCartItems, site?.ID ] );
 
 	return useMemo(
 		() => ( {
