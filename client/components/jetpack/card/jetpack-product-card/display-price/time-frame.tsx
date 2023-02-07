@@ -1,5 +1,5 @@
 import { TERM_MONTHLY } from '@automattic/calypso-products';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import type { Duration } from 'calypso/my-sites/plans/jetpack-plans/types';
@@ -96,6 +96,7 @@ const PartialDiscountTimeFrame: React.FC< PartialDiscountTimeFrameProps & A11yPr
 	forScreenReader,
 } ) => {
 	const translate = useTranslate();
+	let text;
 
 	const opts = {
 		count: discountedPriceDuration,
@@ -106,20 +107,44 @@ const PartialDiscountTimeFrame: React.FC< PartialDiscountTimeFrameProps & A11yPr
 	};
 
 	/* eslint-disable wpcalypso/i18n-mismatched-placeholders */
-	let text = translate(
-		'for the first month, then %(original_price)s /month billed yearly',
-		'for the first %(months)d months, then %(original_price) /month billed yearly',
-		opts
-	);
-
 	if ( billingTerm === TERM_MONTHLY ) {
-		text = translate(
-			'for the first month, then %(original_price)s /month billed monthly',
-			'for the first %(months)d months, then %(original_price) /month billed monthly',
-			opts
-		);
+		if (
+			getLocaleSlug() === 'en' ||
+			getLocaleSlug() === 'en-gb' ||
+			i18n.hasTranslation( 'for the first month, then %(original_price)s /month billed monthly' )
+		) {
+			text = translate(
+				'for the first month, then %(original_price)s /month billed monthly',
+				'for the first %(months)d months, then %(original_price) /month billed monthly',
+				opts
+			);
+		} else {
+			text = translate(
+				'for the first month, billed monthly',
+				'for the first %(months)d months, billed monthly',
+				opts
+			);
+		}
+	} else {
+		// eslint-disable-next-line no-lonely-if
+		if (
+			getLocaleSlug() === 'en' ||
+			getLocaleSlug() === 'en-gb' ||
+			i18n.hasTranslation( 'for the first month, then %(original_price)s /month billed yearly' )
+		) {
+			text = translate(
+				'for the first month, then %(original_price)s /month billed yearly',
+				'for the first %(months)d months, then %(original_price) /month billed yearly',
+				opts
+			);
+		} else {
+			text = translate(
+				'for the first month, billed yearly',
+				'for the first %(months)d months, billed yearly',
+				opts
+			);
+		}
 	}
-	/* eslint-enable wpcalypso/i18n-mismatched-placeholders */
 
 	if ( forScreenReader ) {
 		return <>{ text }</>;
