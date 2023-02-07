@@ -218,7 +218,7 @@ function PriceWithoutHtml( {
 	return <>{ priceObj.integer }</>;
 }
 
-export function PriceAsString( price: number, currencyCode: string, isSmallestUnit = false ) {
+export function priceAsString( price: number, currencyCode: string, isSmallestUnit = false ) {
 	const priceObj = getCurrencyObject( price, currencyCode, { isSmallestUnit } );
 	return (
 		priceObj.symbol +

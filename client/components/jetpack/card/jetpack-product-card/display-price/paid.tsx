@@ -1,6 +1,6 @@
 import { TranslateResult } from 'i18n-calypso';
 import InfoPopover from 'calypso/components/info-popover';
-import PlanPrice, { PriceAsString } from 'calypso/my-sites/plan-price';
+import PlanPrice, { priceAsString } from 'calypso/my-sites/plan-price';
 import PriceAriaLabel from './price-aria-label';
 import TimeFrame from './time-frame';
 import type { Duration } from 'calypso/my-sites/plans/jetpack-plans/types';
@@ -104,7 +104,7 @@ const Paid: React.FC< OwnProps > = ( props ) => {
 		return <Placeholder { ...props } />;
 	}
 
-	const formattedOriginalPrice = PriceAsString( originalPrice, currencyCode );
+	const formattedOriginalPrice = priceAsString( originalPrice, currencyCode );
 
 	let priceComponent = isDiscounted ? (
 		<DiscountedPrice { ...props } finalPrice={ finalPrice } />
