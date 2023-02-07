@@ -1,19 +1,9 @@
 import { createSelector } from '@automattic/state-utils';
+import { isRequesting, isRequestingForAllSites } from './selectors';
 import type { InstalledPlugins, InstalledPluginData, Plugin } from './types';
 import type { AppState } from 'calypso/types';
 
 import 'calypso/state/plugins/init';
-
-export function isRequesting( state: AppState, siteId: number ) {
-	if ( typeof state.plugins.installed.isRequesting[ siteId ] === 'undefined' ) {
-		return false;
-	}
-	return state.plugins.installed.isRequesting[ siteId ];
-}
-
-export function isRequestingForAllSites( state: AppState ) {
-	return state.plugins.installed.isRequestingAll;
-}
 
 const getSiteIdsThatHavePlugins = createSelector(
 	( state: AppState ) => {
