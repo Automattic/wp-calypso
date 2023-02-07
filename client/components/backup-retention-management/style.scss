@@ -1,0 +1,170 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.backup-retention-management {
+	--color-accent: var(--studio-green-50);
+	box-sizing: border-box;
+	margin: auto;
+	max-width: 720px;
+	padding-left: 16px;
+	padding-right: 16px;
+
+	h3 {
+		font-size: $font-body;
+	}
+
+	.storage-details {
+		display: flex;
+		flex-direction: row;
+		grid-column-gap: 48px;
+		margin-bottom: 26px;
+
+		.label {
+			font-size: 0.875rem;
+		}
+
+		.value {
+			font-size: 1.75rem;
+			font-weight: 600;
+			color: var(--studio-gray-60);
+		}
+	}
+
+	.retention-form {
+		.retention-form__instructions {
+			margin-bottom: 24px;
+			font-size: 1rem;
+			font-weight: 400;
+			line-height: 24px;
+			color: var(--studio-gray-50);
+		}
+
+		.retention-form__options {
+			display: flex;
+			flex-direction: row;
+			align-items: flex-start;
+			justify-content: space-between;
+			column-gap: 8px;
+			margin-bottom: 8px;
+
+			.retention-option {
+				box-shadow: 0 0 0 1px var(--color-border-subtle);
+				padding: 16px 12px;
+				border-radius: 4px;
+				width: 100%;
+				cursor: pointer;
+				align-self: stretch;
+
+				.retention-option__headline {
+					display: flex;
+					flex-direction: row;
+					align-items: center;
+					justify-content: space-between;
+					margin-bottom: 16px;
+
+					.headline__label {
+						font-size: 1.5rem;
+						line-height: 24px;
+						font-weight: 600;
+						color: var(--studio-gray-80);
+					}
+
+					.headline__input {
+						-webkit-appearance: none;
+						appearance: none;
+						margin: 0;
+						padding: 0;
+						width: 24px;
+						height: 24px;
+						border-width: 2px;
+						border-color: var(--studio-gray-40);
+
+						&:focus {
+							box-shadow: none;
+						}
+
+						&::after {
+							content: "";
+							display: block;
+							border-radius: 50%;
+							width: 10px;
+							height: 10px;
+							margin: 1px;
+						}
+
+						&:checked {
+							&::after {
+								border: 4px solid #fff;
+							}
+
+							border-color: var(--color-accent);
+						}
+					}
+				}
+
+				.retention-option__space-needed {
+					margin-bottom: 16px;
+
+					.space-needed__label {
+						font-size: 0.875rem;
+						font-weight: 400;
+						line-height: 28px;
+						color: var(--studio-gray-80);
+					}
+
+					.space-needed__value {
+						font-size: 1rem;
+						font-weight: 600;
+						color: var(--studio-gray-80);
+					}
+				}
+
+				&__upgrade-required {
+					font-size: 0.875rem;
+					font-weight: 400;
+					color: var(--studio-red-50);
+					margin-bottom: 8px;
+					visibility: hidden;
+					&.is-visible {
+						visibility: visible;
+					}
+				}
+
+				&__current-plan {
+					background: var(--studio-green-5);
+					border-radius: 2px;
+					color: var(--studio-green-60);
+					display: inline-block;
+					font-size: 0.75rem;
+					font-weight: 400;
+					line-height: 24px;
+					padding: 0 8px;
+					visibility: hidden;
+					&.is-visible {
+						visibility: visible;
+					}
+				}
+			}
+		}
+
+		.retention-form__disclaimer {
+			font-size: 0.75rem;
+			font-weight: 400;
+			line-height: 18px;
+			color: var(--studio-gray-50);
+			margin-bottom: 18px;
+		}
+
+		.retention-form__additional-storage {
+			margin-bottom: 8px;
+
+			.additional-storage__cta {
+				font-weight: 600;
+			}
+		}
+
+		.retention-form__submit {
+			text-align: right;
+		}
+	}
+}
