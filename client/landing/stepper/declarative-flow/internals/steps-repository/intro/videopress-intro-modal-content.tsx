@@ -23,7 +23,7 @@ const VideoPressIntroModalContent: React.FC< IntroModalContentProps > = ( { onSu
 							components: {
 								a: (
 									<a
-										href="https://jetpack.com/features/design/themes/showcase/videomaker/"
+										href="https://videomakerdemo.wordpress.com/"
 										target="_blank"
 										rel="external noreferrer noopener"
 									/>
@@ -63,14 +63,24 @@ const VideoPressIntroModalContent: React.FC< IntroModalContentProps > = ( { onSu
 				<Button className="intro__button" primary onClick={ onSubmit }>
 					{ translate( 'Get Started' ) }
 				</Button>
-				<Button plain className="learn-more">
-					{ translate( 'Or learn more about VideoPress.' ) }
-				</Button>
+				<div className="learn-more">
+					{ translate( '{{a}}Or learn more about VideoPress.{{/a}}', {
+						components: {
+							a: (
+								<a
+									href="https://videopress.com/"
+									target="_blank"
+									rel="external noreferrer noopener"
+								/>
+							),
+						},
+					} ) }
+				</div>
 			</div>
 			<div className="videopress-intro-modal__screenshots">
 				<img
 					src="https://videopress2.files.wordpress.com/2023/02/videopress-modal-screenshots.png"
-					alt="Mobile device screenshot samples of the Videomaker theme."
+					alt={ translate( 'Mobile device screenshot samples of the Videomaker theme.' ) }
 				/>
 			</div>
 		</div>
