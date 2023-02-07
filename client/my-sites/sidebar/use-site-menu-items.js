@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
+import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import domainOnlyFallbackMenu from 'calypso/my-sites/sidebar/static-data/domain-only-fallback-menu';
@@ -16,6 +17,30 @@ import { requestAdminMenu } from '../../state/admin-menu/actions';
 import allSitesMenu from './static-data/all-sites-menu';
 import buildFallbackResponse from './static-data/fallback-menu';
 import jetpackMenu from './static-data/jetpack-fallback-menu';
+
+const withTranslatedReadingSettingsTitle = ( menuItems ) => {
+	return menuItems.map( ( item ) => {
+		if ( item.slug?.endsWith( 'options-general-php' ) ) {
+			// Settings menu item has children, one of which is Reading.
+			const childrenWithTranslation = item.children?.map( ( child ) => {
+				if ( child.slug?.endsWith( 'options-reading-php' ) ) {
+					return {
+						...child,
+						title: translate( 'Reading' ),
+					};
+				}
+				return child;
+			} );
+
+			return {
+				...item,
+				children: childrenWithTranslation,
+			};
+		}
+
+		return item;
+	} );
+};
 
 const useSiteMenuItems = () => {
 	const dispatch = useDispatch();
@@ -92,6 +117,10 @@ const useSiteMenuItems = () => {
 		shouldShowInbox,
 		shouldShowAddOns: shouldShowAddOnsInFallbackMenu,
 	};
+
+	if ( isEnabled( 'settings/modernize-reading-settings' ) && menuItems ) {
+		return withTranslatedReadingSettingsTitle( menuItems );
+	}
 
 	return menuItems ?? buildFallbackResponse( fallbackDataOverrides );
 };
