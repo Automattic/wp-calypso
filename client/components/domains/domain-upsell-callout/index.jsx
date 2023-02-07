@@ -50,7 +50,7 @@ const DomainUpsellCallout = ( { trackEvent } ) => {
 	return (
 		<>
 			<TrackComponentView eventName={ trackEventView } />
-			<div className="domain-upsell-callout" id="domain-upsell-callout">
+			<div className="domain-upsell-callout">
 				<div className="domain-upsell-callout__content">
 					<div className="domain-upsell-callout__content-text">
 						<Gridicon icon="globe" size={ 16 } className="domain-upsell-callout__icon" />
