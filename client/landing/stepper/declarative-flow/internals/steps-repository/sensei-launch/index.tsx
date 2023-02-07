@@ -1,15 +1,13 @@
-import { useDispatch } from '@wordpress/data';
 import { useCallback, useEffect, useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { useSelector, useDispatch as useRootDispatch } from 'react-redux';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
-import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 import { getPlugins } from 'calypso/state/plugins/installed/selectors';
 import { SenseiStepContainer } from '../components/sensei-step-container';
-import { Progress, SenseiStepProgress } from '../sensei-setup/sensei-step-progress';
+import { Progress, SenseiStepProgress } from '../components/sensei-step-progress';
+import type { Step } from '../../types';
 
 import './style.scss';
 
@@ -19,12 +17,10 @@ interface InstalledPlugin {
 	active: boolean;
 }
 
-const SenseiLaunch = () => {
+const SenseiLaunch: Step = ( { navigation: { submit } } ) => {
 	const { __ } = useI18n();
 	const site = useSite();
 	const siteId = site?.ID;
-	const launchpadScreen = site?.options.launchpad_screen;
-	const siteSlug = useSiteSlugParam();
 	const [ retries, setRetries ] = useState< number >( 0 );
 
 	const selectSitePlugins = useCallback(
@@ -34,9 +30,7 @@ const SenseiLaunch = () => {
 		[ siteId ]
 	);
 	const dispatch = useRootDispatch();
-	const { saveSiteSettings } = useDispatch( SITE_STORE );
 	const plugins: InstalledPlugin[] = useSelector( selectSitePlugins );
-	const launchpadUrl = `/setup/sensei/launchpad?siteSlug=${ siteSlug }&siteId=${ siteId }`;
 	const expectedRetries = 15;
 	const maxRetries = 40;
 
@@ -52,19 +46,11 @@ const SenseiLaunch = () => {
 			setRetries( -1 );
 			clearInterval( intervalId );
 
-			setTimeout( () => {
-				if ( launchpadScreen !== 'full' ) {
-					saveSiteSettings( siteId as number, { launchpad_screen: 'full' } ).finally( () => {
-						window.location.replace( launchpadUrl );
-					} );
-				} else {
-					window.location.replace( launchpadUrl );
-				}
-			}, 800 );
+			setTimeout( () => submit?.(), 800 );
 		}, 3000 );
 
 		return () => clearInterval( intervalId );
-	}, [ plugins, launchpadUrl, dispatch, siteId, saveSiteSettings, launchpadScreen, retries ] );
+	}, [ plugins, dispatch, siteId, retries, submit ] );
 
 	const progress: Progress = {
 		percentage: ( retries * 100 ) / expectedRetries,

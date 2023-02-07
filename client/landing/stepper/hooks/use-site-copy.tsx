@@ -67,11 +67,13 @@ export const useSiteCopy = (
 		clearSignupDestinationCookie();
 		setPlanCartItem( { product_slug: plan?.product_slug as string } );
 
-		const marketplacePluginProducts = purchases
-			.filter( ( purchase ) => purchase.productType === 'marketplace_plugin' )
+		const marketplaceProducts = purchases
+			.filter( ( purchase ) =>
+				[ 'marketplace_plugin', 'marketplace_theme' ].includes( purchase.productType )
+			)
 			.map( ( purchase ) => ( { product_slug: purchase.productSlug } ) );
 
-		setProductCartItems( marketplacePluginProducts );
+		setProductCartItems( marketplaceProducts );
 	}, [ plan, setPlanCartItem, purchases, shouldShowSiteCopyItem, setProductCartItems ] );
 
 	return useMemo(

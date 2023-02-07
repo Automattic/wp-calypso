@@ -1,5 +1,5 @@
 import './nav-style.scss';
-import { useLocalizeUrl } from '@automattic/i18n-utils';
+import { useLocalizeUrl, useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useTranslate, getLocaleSlug } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -17,6 +17,7 @@ const UniversalNavbarHeader = () => {
 	const [ isMobileMenuOpen, setMobileMenuOpen ] = useState( false );
 	const sectionName = useSelector( getSectionName );
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	const isEnglishLocale = useIsEnglishLocale();
 
 	const startUrl = addQueryArgs(
 		{
@@ -206,13 +207,15 @@ const UniversalNavbarHeader = () => {
 													type="dropdown"
 													target="_self"
 												/>
-												<UniversalNavbarLiMenuItem
-													titleValue={ translate( 'WordPress Courses' ) }
-													elementContent={ translate( 'WordPress Courses' ) }
-													urlValue={ localizeUrl( '//wordpress.com/courses/' ) }
-													type="dropdown"
-													target="_self"
-												/>
+												{ isEnglishLocale && (
+													<UniversalNavbarLiMenuItem
+														titleValue={ translate( 'Learn WordPress' ) }
+														elementContent={ translate( 'Learn WordPress' ) }
+														urlValue={ localizeUrl( '//wordpress.com/learn/' ) }
+														type="dropdown"
+														target="_self"
+													/>
+												) }
 											</ul>
 										</div>
 									</li>
@@ -422,12 +425,14 @@ const UniversalNavbarHeader = () => {
 										urlValue={ localizeUrl( '//wordpress.com/webinars/' ) }
 										type="menu"
 									/>
-									<UniversalNavbarLiMenuItem
-										titleValue={ translate( 'WordPress Courses' ) }
-										elementContent={ translate( 'WordPress Courses' ) }
-										urlValue={ localizeUrl( '//wordpress.com/courses/' ) }
-										type="menu"
-									/>
+									{ isEnglishLocale && (
+										<UniversalNavbarLiMenuItem
+											titleValue={ translate( 'Learn WordPress' ) }
+											elementContent={ translate( 'Learn WordPress' ) }
+											urlValue={ localizeUrl( '//wordpress.com/learn/' ) }
+											type="menu"
+										/>
+									) }
 								</ul>
 							</div>
 						</div>

@@ -5,7 +5,8 @@ import topRightImgSrc from 'calypso/assets/images/onboarding/sensei/progress-bg-
 import {
 	Container,
 	Content,
-	Text,
+	Title,
+	Subtitle,
 	Progress,
 	ProgressValue,
 	TopRightImg,
@@ -15,6 +16,7 @@ import {
 export type Progress = {
 	percentage: number;
 	title: string;
+	subtitle?: string;
 };
 
 type SenseiStepProgressProps = {
@@ -26,7 +28,8 @@ export const SenseiStepProgress: React.FC< SenseiStepProgressProps > = ( { progr
 		<Container>
 			<TopRightImg src={ topRightImgSrc } />
 			<Content>
-				<Text>{ progress.title }</Text>
+				<Title>{ progress.title }</Title>
+				{ progress.subtitle && <Subtitle>{ progress.subtitle }</Subtitle> }
 				<Progress>
 					<ProgressValue progress={ progress.percentage } />
 				</Progress>
