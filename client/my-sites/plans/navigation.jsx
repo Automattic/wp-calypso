@@ -1,5 +1,4 @@
 import { isMobile } from '@automattic/viewport';
-import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -12,7 +11,6 @@ import isSiteOnFreePlan from 'calypso/state/selectors/is-site-on-free-plan';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import './navigation.scss';
 
 class PlansNavigation extends Component {
 	static propTypes = {
@@ -20,7 +18,6 @@ class PlansNavigation extends Component {
 		path: PropTypes.string.isRequired,
 		shouldShowNavigation: PropTypes.bool,
 		site: PropTypes.object,
-		modernized: PropTypes.bool,
 	};
 
 	getSectionTitle( path ) {
@@ -39,18 +36,15 @@ class PlansNavigation extends Component {
 	}
 
 	render() {
-		const { site, shouldShowNavigation, translate, modernized = false } = this.props;
+		const { site, shouldShowNavigation, translate } = this.props;
 		const path = sectionify( this.props.path );
 		const sectionTitle = this.getSectionTitle( path );
 		const hasPinnedItems = Boolean( site ) && isMobile();
-		const wrapperClasses = classNames( 'plans-navigation', {
-			'is-modernized': modernized,
-		} );
 
 		return (
 			site &&
 			shouldShowNavigation && (
-				<div className={ wrapperClasses }>
+				<div className="navigation">
 					<SectionNav hasPinnedItems={ hasPinnedItems } selectedText={ sectionTitle }>
 						<NavTabs label="Section" selectedText={ sectionTitle }>
 							<NavItem

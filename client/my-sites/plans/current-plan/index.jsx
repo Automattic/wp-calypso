@@ -244,7 +244,6 @@ class CurrentPlan extends Component {
 				) }
 				<DocumentHead title={ translate( 'My Plan' ) } />
 				{ selectedSiteId && (
-					// key={ selectedSiteId } ensures data is refetched for changing selectedSiteId
 					<QueryConciergeInitial key={ selectedSiteId } siteId={ selectedSiteId } />
 				) }
 				<QuerySites siteId={ selectedSiteId } />
@@ -273,7 +272,7 @@ class CurrentPlan extends Component {
 							</Dialog>
 						) }
 
-						<PlansNavigation path={ path } modernized={ ! isJetpack } />
+						<PlansNavigation path={ path } />
 
 						<Main wideLayout>
 							{ showDomainWarnings && (

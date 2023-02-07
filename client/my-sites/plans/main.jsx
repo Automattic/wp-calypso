@@ -201,23 +201,23 @@ class Plans extends Component {
 					<div>
 						<PlansHeader />
 						<div id="plans" className="plans plans__has-sidebar">
-							<PlansNavigation path={ this.props.context.path } modernized={ true } />
+							<PlansNavigation path={ this.props.context.path } />
 							<Main
 								fullWidthLayout={ is2023OnboardingPricingGrid }
 								wideLayout={ ! is2023OnboardingPricingGrid }
 							>
 								{ domainAndPlanPackage && <DomainAndPlanUpsellNotice /> }
-								{ ! canAccessPlans && (
-									<EmptyContent
-										illustration="/calypso/images/illustrations/illustration-404.svg"
-										title={ translate( 'You are not authorized to view this page' ) }
-									/>
-								) }
 								{ isEcommerceTrial ? this.renderEcommerceTrialPage() : this.renderPlansMain() }
 								<PerformanceTrackerStop />
 							</Main>
 						</div>
 					</div>
+				) }
+				{ ! canAccessPlans && (
+					<EmptyContent
+						illustration="/calypso/images/illustrations/illustration-404.svg"
+						title={ translate( 'You are not authorized to view this page' ) }
+					/>
 				) }
 			</div>
 		);
