@@ -3,9 +3,9 @@ import requestExternalAccess from '@automattic/request-external-access';
 import { translate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
+import SocialLogo from 'calypso/components/social-logo';
 import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
 import { getKeyringServiceByName } from 'calypso/state/sharing/services/selectors';
-import iconGitHub from '../github.svg';
 
 import '../style.scss';
 
@@ -26,7 +26,7 @@ export const GithubAuthorizeCard = () => {
 
 	return (
 		<Card className="github-hosting-card">
-			<img className="github-hosting-icon" src={ iconGitHub } alt="" />
+			<SocialLogo className="material-icon" icon="github" size={ 32 } />
 			<CardHeading>{ translate( 'Connect GitHub' ) }</CardHeading>
 			<p>
 				{ translate(
