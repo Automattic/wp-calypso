@@ -5,6 +5,7 @@ import {
 	PLAN_FREE,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
+import { withShoppingCart } from '@automattic/shopping-cart';
 import { addQueryArgs } from '@wordpress/url';
 import { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -17,11 +18,14 @@ import QueryContactDetailsCache from 'calypso/components/data/query-contact-deta
 import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
+import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
+import { getDomainRegistrations } from 'calypso/lib/cart-values/cart-items';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import { isDomainSidebarExperimentUser } from 'calypso/my-sites/controller';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
@@ -33,7 +37,11 @@ import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-f
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provider';
+import withCartKey from '../checkout/with-cart-key';
 import PlansHeader from './header';
+
+import './style.scss';
 
 function DomainAndPlanUpsellNotice() {
 	const translate = useTranslate();
@@ -69,9 +77,19 @@ class Plans extends Component {
 	componentDidMount() {
 		this.redirectIfInvalidPlanInterval();
 
+		if ( isDomainSidebarExperimentUser() ) {
+			document.body.classList.add( 'is-experiment-user' );
+		}
+
 		// Scroll to the top
 		if ( typeof window !== 'undefined' ) {
 			window.scrollTo( 0, 0 );
+		}
+	}
+
+	componentWillUnmount() {
+		if ( isDomainSidebarExperimentUser() ) {
+			document.body.classList.remove( 'is-experiment-user' );
 		}
 	}
 
@@ -185,6 +203,9 @@ class Plans extends Component {
 			return this.renderPlaceholder();
 		}
 
+		const allDomains = getDomainRegistrations( this.props.cart );
+		const currentDomain = allDomains.length ? allDomains[ 0 ]?.meta : null;
+
 		return (
 			<div>
 				{ selectedSite.ID && <QuerySitePurchases siteId={ selectedSite.ID } /> }
@@ -205,9 +226,35 @@ class Plans extends Component {
 					) }
 					{ canAccessPlans && (
 						<>
-							<PlansHeader />
+							{ ! isDomainSidebarExperimentUser() && <PlansHeader /> }
+							{ ! isDomainSidebarExperimentUser() && domainAndPlanPackage && (
+								<DomainAndPlanUpsellNotice />
+							) }
+							{ isDomainSidebarExperimentUser() && (
+								<>
+									<div className="plans__header">
+										<FormattedHeader
+											brandFont
+											headerText={ translate( 'Choose the perfect plan' ) }
+											align="center"
+										/>
 
-							{ domainAndPlanPackage && <DomainAndPlanUpsellNotice /> }
+										<p>
+											{ translate(
+												'With your annual plan, you’ll get %(domainName)s {{strong}}free for the first year{{/strong}}. You’ll also unlock advanced features that make it easy to build and grow your site.',
+												{
+													args: {
+														domainName: currentDomain,
+													},
+													components: {
+														strong: <strong />,
+													},
+												}
+											) }
+										</p>
+									</div>
+								</>
+							) }
 							<div id="plans" className="plans plans__has-sidebar">
 								<PlansNavigation path={ this.props.context.path } />
 								{ isEcommerceTrial ? this.renderEcommerceTrialPage() : this.renderPlansMain() }
@@ -221,7 +268,7 @@ class Plans extends Component {
 	}
 }
 
-export default connect( ( state ) => {
+const ConnectedPlans = connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 
 	const currentPlan = getCurrentPlan( state, selectedSiteId );
@@ -242,4 +289,12 @@ export default connect( ( state ) => {
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
 		is2023OnboardingPricingGrid,
 	};
-} )( localize( withTrackingTool( 'HotJar' )( Plans ) ) );
+} )( withCartKey( withShoppingCart( localize( withTrackingTool( 'HotJar' )( Plans ) ) ) ) );
+
+export default function PlansWrapper( props ) {
+	return (
+		<CalypsoShoppingCartProvider>
+			<ConnectedPlans { ...props } />
+		</CalypsoShoppingCartProvider>
+	);
+}
