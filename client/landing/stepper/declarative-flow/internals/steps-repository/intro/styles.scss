@@ -273,10 +273,13 @@
 		height: 100%;
 		background-color: #000;
 		z-index: 100;
-		display: none;
+		opacity: 0;
+		transition: opacity 0.3s linear;
+		pointer-events: none;
 
 		&.show {
-			display: block;
+			opacity: 1;
+			pointer-events: all;
 		}
 
 		.intro__more-modal-header {
