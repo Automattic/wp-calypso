@@ -70,21 +70,17 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 
 	// Default visibility is public
 	let siteVisibility = Site.Visibility.PublicIndexed;
+	const wooFlows = [ ECOMMERCE_FLOW, WOOEXPRESS_FLOW ];
 
-	// Link-in-bio flow defaults to "Coming Soon"
+	// These flows default to "Coming Soon"
 	if (
 		isLinkInBioFlow( flow ) ||
 		isFreeFlow( flow ) ||
 		isMigrationFlow( flow ) ||
-		isCopySiteFlow( flow )
+		isCopySiteFlow( flow ) ||
+		wooFlows.includes( flow || '' )
 	) {
 		siteVisibility = Site.Visibility.PublicNotIndexed;
-	}
-
-	// Certain flows should default to private.
-	const privateFlows = [ ECOMMERCE_FLOW, WOOEXPRESS_FLOW ];
-	if ( privateFlows.includes( flow || '' ) ) {
-		siteVisibility = Site.Visibility.Private;
 	}
 
 	const signupDestinationCookieExists = retrieveSignupDestination();

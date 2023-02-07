@@ -367,6 +367,7 @@ export class SiteSettingsFormGeneral extends Component {
 			siteId,
 			site,
 			isComingSoon,
+			isSiteOnECommerceTrial,
 		} = this.props;
 
 		const blogPublic = parseInt( fields.blog_public, 10 );
@@ -384,7 +385,7 @@ export class SiteSettingsFormGeneral extends Component {
 				'is-coming-soon-disabled': isComingSoonDisabled,
 			}
 		);
-		const showPreviewLink = isComingSoon && hasSitePreviewLink;
+		const showPreviewLink = isComingSoon && hasSitePreviewLink && ! isSiteOnECommerceTrial;
 		return (
 			<FormFieldset>
 				{ ! isNonAtomicJetpackSite &&
@@ -615,7 +616,7 @@ export class SiteSettingsFormGeneral extends Component {
 		// isPrivateAndUnlaunched means it is an unlaunched coming soon v1 site
 		const isPrivateAndUnlaunched = -1 === blogPublic && this.props.isUnlaunchedSite;
 
-		const showPreviewLink = isComingSoon && hasSitePreviewLink;
+		const showPreviewLink = isComingSoon && hasSitePreviewLink && ! isSiteOnECommerceTrial;
 
 		const LaunchCard = showPreviewLink ? CompactCard : Card;
 
