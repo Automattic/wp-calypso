@@ -4,11 +4,12 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 /**
  * Whether the user is in the Domain sidebar upsell experiment.
  *
+ * @param state {object} Global state tree.
  * @returns {boolean} Whether the user is in the Domain sidebar upsell experiment.
  */
 export const isDomainSidebarExperimentUser = ( state ) => {
 	const currentUser = getCurrentUser( state );
-	const domainAndPlanPackage = getCurrentQueryArguments( state ).domainAndPlanPackage;
+	const domainAndPlanPackage = !! getCurrentQueryArguments( state )?.domainAndPlanPackage;
 
 	return domainAndPlanPackage && 'treatment' === currentUser?.calypso_sidebar_upsell_experiment;
 };
