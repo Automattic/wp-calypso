@@ -24,7 +24,6 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
-import { isDomainSidebarExperimentUser } from 'calypso/my-sites/controller';
 import NewDomainsRedirectionNoticeUpsell from 'calypso/my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
 import {
 	domainAddEmailUpsell,
@@ -39,6 +38,7 @@ import {
 } from 'calypso/state/domains/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
+import { isDomainSidebarExperimentUser } from 'calypso/state/selectors/is-domain-sidebar-experiment-user';
 import isSiteOnMonthlyPlan from 'calypso/state/selectors/is-site-on-monthly-plan';
 import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
@@ -62,7 +62,7 @@ class DomainSearch extends Component {
 		selectedSiteId: PropTypes.number,
 		selectedSiteSlug: PropTypes.string,
 		domainAndPlanUpsellFlow: PropTypes.bool,
-		stateObject: PropTypes.object,
+		domainSidebarExperimentUser: PropTypes.bool,
 	};
 
 	isMounted = false;
@@ -115,7 +115,7 @@ class DomainSearch extends Component {
 	}
 
 	componentWillUnmount() {
-		if ( isDomainSidebarExperimentUser( this.props.stateObject ) ) {
+		if ( this.props.domainSidebarExperimentUser ) {
 			document.body.classList.remove( 'is-experiment-user' );
 		}
 
@@ -202,14 +202,20 @@ class DomainSearch extends Component {
 	}
 
 	render() {
-		const { selectedSite, selectedSiteSlug, translate, isManagingAllDomains, cart, stateObject } =
-			this.props;
+		const {
+			selectedSite,
+			selectedSiteSlug,
+			translate,
+			isManagingAllDomains,
+			cart,
+			domainSidebarExperimentUser,
+		} = this.props;
 
 		if ( ! selectedSite ) {
 			return null;
 		}
 
-		if ( isDomainSidebarExperimentUser( stateObject ) ) {
+		if ( domainSidebarExperimentUser ) {
 			document.body.classList.add( 'is-experiment-user' );
 		}
 
@@ -247,7 +253,7 @@ class DomainSearch extends Component {
 			content = (
 				<span>
 					<div className="domain-search__content">
-						{ false === isDomainSidebarExperimentUser( stateObject ) && (
+						{ false === domainSidebarExperimentUser && (
 							<BackButton
 								className="domain-search__go-back"
 								href={ domainManagementList( selectedSiteSlug ) }
@@ -259,7 +265,7 @@ class DomainSearch extends Component {
 
 						{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 						<div className="domains__header">
-							{ isDomainSidebarExperimentUser( stateObject ) && (
+							{ domainSidebarExperimentUser && (
 								<>
 									<FormattedHeader
 										brandFont
@@ -276,7 +282,7 @@ class DomainSearch extends Component {
 								</>
 							) }
 
-							{ false === isDomainSidebarExperimentUser( stateObject ) && (
+							{ false === domainSidebarExperimentUser && (
 								<FormattedHeader
 									brandFont
 									headerText={
@@ -341,7 +347,7 @@ export default connect(
 			isSiteOnMonthlyPlan: isSiteOnMonthlyPlan( state, siteId ),
 			productsList: getProductsList( state ),
 			userCanPurchaseGSuite: canUserPurchaseGSuite( state ),
-			stateObject: state,
+			domainSidebarExperimentUser: isDomainSidebarExperimentUser( state ),
 		};
 	},
 	{
