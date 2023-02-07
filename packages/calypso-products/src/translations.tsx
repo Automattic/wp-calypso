@@ -787,6 +787,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Manage all of your channels from a single hub' ),
 		translate( 'Scheduled posts' ),
 		translate( 'Share to Twitter, Facebook, LinkedIn, and Tumblr' ),
+		translate( 'Recycle content' ),
 	];
 	const socialAdvancedIncludesInfo = [
 		translate( 'Automatically share your posts and products on social media' ),
@@ -881,6 +882,7 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		translate( 'Unlock your growth potential by building a following on social media' ),
 		translate( 'Easy-to-use interface' ),
 		translate( 'No developer required' ),
+		translate( 'Repurpose, reuse or republish already published content' ),
 	];
 
 	//TODO: fill in the actual values.
