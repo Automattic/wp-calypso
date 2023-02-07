@@ -12,7 +12,7 @@
 }
 
 body.is-section-domains.is-domain-sidebar-experiment-user {
-	background: #fdfdfd;
+	background: var(--color-body-background);
 
 	.domains__header {
 		display: block;

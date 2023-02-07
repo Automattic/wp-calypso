@@ -382,13 +382,12 @@ export default withCurrentRoute(
 		const siteId = getSelectedSiteId( state );
 		const sectionJitmPath = getMessagePathForJITM( currentRoute );
 		const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
+		const domainSidebarExperimentUser = isDomainSidebarExperimentUser( state );
 		const isJetpack =
 			( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) ||
 			currentRoute.startsWith( '/checkout/jetpack' );
 		const noMasterbarForRoute =
-			isJetpackLogin ||
-			currentRoute === '/me/account/closed' ||
-			isDomainSidebarExperimentUser( state );
+			isJetpackLogin || currentRoute === '/me/account/closed' || domainSidebarExperimentUser;
 		const noMasterbarForSection = [ 'signup', 'jetpack-connect' ].includes( sectionName );
 		const masterbarIsHidden =
 			! masterbarIsVisible( state ) ||
@@ -413,8 +412,7 @@ export default withCurrentRoute(
 			'plugins',
 			'comments',
 		].includes( sectionName );
-		const sidebarIsHidden =
-			! secondary || isWcMobileApp() || isDomainSidebarExperimentUser( state );
+		const sidebarIsHidden = ! secondary || isWcMobileApp() || domainSidebarExperimentUser;
 		const chatIsDocked = ! [ 'reader', 'theme' ].includes( sectionName ) && ! sidebarIsHidden;
 
 		const userAllowedToHelpCenter =

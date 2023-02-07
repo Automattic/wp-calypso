@@ -23,6 +23,7 @@ import {
 	updatePrivacyForDomain,
 } from 'calypso/lib/cart-values/cart-items';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import { addQueryArgs } from 'calypso/lib/url';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import NewDomainsRedirectionNoticeUpsell from 'calypso/my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
 import {
@@ -109,6 +110,10 @@ class DomainSearch extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
+		if ( this.props.domainSidebarExperimentUser ) {
+			document.body.classList.add( 'is-domain-sidebar-experiment-user' );
+		}
+
 		if ( prevProps.selectedSiteId !== this.props.selectedSiteId ) {
 			this.checkSiteIsUpgradeable();
 		}
@@ -215,17 +220,18 @@ class DomainSearch extends Component {
 			return null;
 		}
 
-		if ( domainSidebarExperimentUser ) {
-			document.body.classList.add( 'is-domain-sidebar-experiment-user' );
-		}
-
 		const classes = classnames( 'main-column', {
 			'domain-search-page-wrapper': this.state.domainRegistrationAvailable,
 		} );
 		const { domainRegistrationMaintenanceEndTime } = this.state;
 
 		const hasPlanInCart = hasPlan( cart );
-		const hrefForDecideLater = `/plans/yearly/${ selectedSite.domain }?domainAndPlanPackage=true`;
+		const hrefForDecideLater = addQueryArgs(
+			{
+				domainAndPlanPackage: true,
+			},
+			`/plans/yearly/${ selectedSite.domain }`
+		);
 
 		let content;
 
@@ -254,7 +260,7 @@ class DomainSearch extends Component {
 			content = (
 				<span>
 					<div className="domain-search__content">
-						{ false === domainSidebarExperimentUser && (
+						{ ! domainSidebarExperimentUser && (
 							<BackButton
 								className="domain-search__go-back"
 								href={ domainManagementList( selectedSiteSlug ) }
@@ -285,7 +291,7 @@ class DomainSearch extends Component {
 								</>
 							) }
 
-							{ false === domainSidebarExperimentUser && (
+							{ ! domainSidebarExperimentUser && (
 								<FormattedHeader
 									brandFont
 									headerText={
