@@ -16,7 +16,7 @@ import TrialFeatureCard from './trial-feature-card';
 
 import './style.scss';
 
-const ECommerceTrialPlans = () => {
+const ECommerceTrialPlansPage = () => {
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || -1;
 
 	const { currentPlan, eCommerceTrialDaysLeft, isTrialExpired, eCommerceTrialExpiration } =
@@ -361,4 +361,4 @@ const ECommerceTrialPlans = () => {
 	);
 };
 
-export default ECommerceTrialPlans;
+export default ECommerceTrialPlansPage;

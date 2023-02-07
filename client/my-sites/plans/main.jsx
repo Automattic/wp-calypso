@@ -41,7 +41,7 @@ import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provider';
 import withCartKey from '../checkout/with-cart-key';
 import DomainAndPlanPackageNavigation from '../domains/components/domain-and-plan-package/navigation';
-import ECommerceTrialPlans from './ecommerce-trial';
+import ECommerceTrialPlansPage from './ecommerce-trial';
 import PlansHeader from './header';
 
 function DomainAndPlanUpsellNotice() {
@@ -255,7 +255,7 @@ class Plans extends Component {
 	}
 
 	renderEcommerceTrialPage() {
-		return <ECommerceTrialPlans />;
+		return <ECommerceTrialPlansPage />;
 	}
 
 	render() {
