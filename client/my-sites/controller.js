@@ -500,6 +500,9 @@ export function siteSelection( context, next ) {
 	}
 
 	const siteId = getSiteId( getState(), siteFragment );
+
+	// Making sure non-connected users get redirected to user connection flow.
+	// Details: p9dueE-6Hf-p2
 	const isUnlinkedCheckout =
 		'1' === context.query?.unlinked &&
 		context.pathname.match( /^\/checkout\/[^/]+\/jetpack_/i ) &&
