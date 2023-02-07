@@ -45,7 +45,7 @@ describe( 'getBackupCurrentSiteSize()', () => {
 				},
 			},
 			siteId: 123,
-			expected: null,
+			expected: undefined,
 		},
 		{
 			state: {
@@ -61,7 +61,7 @@ describe( 'getBackupCurrentSiteSize()', () => {
 			expected: 1024,
 		},
 	] )(
-		'should return the lastBackupSize if passed, null otherwise',
+		'should return the lastBackupSize if passed, undefined otherwise',
 		( { state, siteId, expected } ) => {
 			const output = getBackupCurrentSiteSize( state, siteId );
 			expect( output ).toBe( expected );
