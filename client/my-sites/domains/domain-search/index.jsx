@@ -225,6 +225,7 @@ class DomainSearch extends Component {
 		const { domainRegistrationMaintenanceEndTime } = this.state;
 
 		const hasPlanInCart = hasPlan( cart );
+		const hrefForDecideLater = `/plans/yearly/${ selectedSite.domain }?domainAndPlanPackage=true`;
 
 		let content;
 
@@ -277,7 +278,9 @@ class DomainSearch extends Component {
 										{ translate(
 											'Stake your claim on your corner of the web with a custom domain name that’s easy to find, share, and follow. Not sure yet?'
 										) }
-										<a href="/support/domains/">{ translate( 'Decide later.' ) }</a>
+										<a className="domains__header-decide-later" href={ hrefForDecideLater }>
+											{ translate( 'Decide later.' ) }
+										</a>
 									</p>
 								</>
 							) }
