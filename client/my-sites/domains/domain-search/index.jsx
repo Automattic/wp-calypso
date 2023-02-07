@@ -116,7 +116,7 @@ class DomainSearch extends Component {
 
 	componentWillUnmount() {
 		if ( this.props.domainSidebarExperimentUser ) {
-			document.body.classList.remove( 'is-experiment-user' );
+			document.body.classList.remove( 'is-domain-sidebar-experiment-user' );
 		}
 
 		this.isMounted = false;
@@ -216,7 +216,7 @@ class DomainSearch extends Component {
 		}
 
 		if ( domainSidebarExperimentUser ) {
-			document.body.classList.add( 'is-experiment-user' );
+			document.body.classList.add( 'is-domain-sidebar-experiment-user' );
 		}
 
 		const classes = classnames( 'main-column', {
