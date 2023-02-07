@@ -6,6 +6,7 @@ import {
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
 import { withShoppingCart } from '@automattic/shopping-cart';
+import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { addQueryArgs } from '@wordpress/url';
 import { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -58,6 +59,65 @@ function DomainAndPlanUpsellNotice() {
 	);
 }
 
+function PlansFeaturesMainWithComparison( props ) {
+	const isDesktop = useDesktopBreakpoint();
+	const handleUpgradeClick = async ( cartItemForPlan ) => {
+		const selectedSiteSlug = props.selectedSite.slug;
+		const redirectTo = props.redirectTo;
+		try {
+			// In this flow we redirect to checkout with both the plan and domain
+			// product in the cart.
+			await props.shoppingCartManager.addProductsToCart( [
+				{
+					product_slug: cartItemForPlan.product_slug,
+					extra: {
+						afterPurchaseUrl: redirectTo ?? undefined,
+					},
+				},
+			] );
+		} catch {
+			// Nothing needs to be done here. CartMessages will display the error to the user.
+			return;
+		}
+
+		if ( props.withDiscount ) {
+			try {
+				await props.shoppingCartManager.applyCoupon( props.withDiscount );
+			} catch {
+				// If the coupon does not apply, let's continue to checkout anyway.
+			}
+		}
+
+		page( `/checkout/${ selectedSiteSlug }` );
+		return;
+	};
+	return (
+		<PlansFeaturesMain
+			redirectToAddDomainFlow={ props.redirectToAddDomainFlow }
+			domainAndPlanPackage={ props.domainAndPlanPackage }
+			hideFreePlan={ props.hideFreePlan }
+			customerType={ props.customerType }
+			intervalType={ props.intervalType }
+			selectedFeature={ props.selectedFeature }
+			selectedPlan={ props.selectedPlan }
+			redirectTo={ props.redirectTo }
+			withDiscount={ props.withDiscount }
+			discountEndDate={ props.discountEndDate }
+			site={ props.selectedSite }
+			showTreatmentPlansReorderTest={ props.showTreatmentPlansReorderTest }
+			plansWithScroll={ isDesktop }
+			shouldShowPlansFeatureComparison={ isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
+			isReskinned={ true } // for styles
+			isInSignup={ true } // for the correct styles
+			onUpgradeClick={ handleUpgradeClick }
+		/>
+	);
+}
+
+const DomainSidebarUpsellExperimentPlansFeaturesMain = withCartKey(
+	withShoppingCart( PlansFeaturesMainWithComparison )
+);
+
 class Plans extends Component {
 	static propTypes = {
 		context: PropTypes.object.isRequired,
@@ -76,7 +136,6 @@ class Plans extends Component {
 
 	componentDidMount() {
 		this.redirectIfInvalidPlanInterval();
-
 		if ( isDomainSidebarExperimentUser() ) {
 			document.body.classList.add( 'is-experiment-user' );
 		}
@@ -162,6 +221,16 @@ class Plans extends Component {
 		}
 
 		const hideFreePlan = ! isEnabled( 'onboarding/2023-pricing-grid' );
+		if ( isDomainSidebarExperimentUser() && this.props.domainAndPlanPackage ) {
+			return (
+				<CalypsoShoppingCartProvider>
+					<DomainSidebarUpsellExperimentPlansFeaturesMain
+						hideFreePlan={ hideFreePlan }
+						{ ...this.props }
+					/>
+				</CalypsoShoppingCartProvider>
+			);
+		}
 
 		return (
 			<PlansFeaturesMain
@@ -268,7 +337,7 @@ class Plans extends Component {
 	}
 }
 
-const ConnectedPlans = connect( ( state ) => {
+export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 
 	const currentPlan = getCurrentPlan( state, selectedSiteId );
@@ -289,12 +358,4 @@ const ConnectedPlans = connect( ( state ) => {
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
 		is2023OnboardingPricingGrid,
 	};
-} )( withCartKey( withShoppingCart( localize( withTrackingTool( 'HotJar' )( Plans ) ) ) ) );
-
-export default function PlansWrapper( props ) {
-	return (
-		<CalypsoShoppingCartProvider>
-			<ConnectedPlans { ...props } />
-		</CalypsoShoppingCartProvider>
-	);
-}
+} )( localize( withTrackingTool( 'HotJar' )( Plans ) ) );
