@@ -31,6 +31,7 @@ interface SitesMenuItemProps {
 	site: SiteExcerptData;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	recordTracks: ( eventName: string, extraProps?: Record< string, any > ) => void;
+	onClick?: () => void;
 }
 
 interface MenuItemLinkProps extends Omit< CoreMenuItem.Props, 'href' > {
@@ -181,7 +182,7 @@ const PreviewSiteModalItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 	);
 };
 
-const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
+const CopySiteItem = ( { recordTracks, site, onClick }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
 
 	const copySiteHref = addQueryArgs( `/setup/copy-site`, {
@@ -192,6 +193,9 @@ const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 			href={ copySiteHref }
 			onClick={ () => {
 				recordTracks( 'calypso_sites_dashboard_site_action_copy_site_click' );
+				if ( onClick ) {
+					onClick();
+				}
 			} }
 		>
 			{ __( 'Copy site' ) }
@@ -275,7 +279,7 @@ export const SitesEllipsisMenu = ( {
 						{ showHosting && <HostingConfigItem { ...props } /> }
 						{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
 						{ isEnabled( 'sites/copy-site' ) && shouldShowSiteCopyItem && (
-							<CopySiteItem recordTracks={ startSiteCopy } site={ site } />
+							<CopySiteItem { ...props } onClick={ startSiteCopy } />
 						) }
 						<WpAdminItem { ...props } />
 					</SiteMenuGroup>
