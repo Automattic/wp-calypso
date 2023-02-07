@@ -92,7 +92,6 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	const sitesWithPlugin = useSelector( ( state ) =>
 		getSiteObjectsWithPlugin( state, siteIds, softwareSlug )
 	);
-
 	const installedOnSitesQuantity = sitesWithPlugin.length;
 
 	const [ displayManageSitePluginsModal, setDisplayManageSitePluginsModal ] = useState( false );
