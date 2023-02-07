@@ -520,6 +520,26 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/cookie-consent@workspace:packages/cookie-consent":
+  version: 0.0.0-use.local
+  resolution: "@automattic/cookie-consent@workspace:packages/cookie-consent"
+  dependencies:
+    "@storybook/addon-backgrounds": ^6.4.19
+    "@storybook/react": ^6.4.19
+    classnames: ^2.3.1
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    typescript: ^4.7.4
+  peerDependencies:
+    "@wordpress/data": ^6.1.5
+    "@wordpress/element": ^4.5.0
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    reakit-utils: ^0.15.1
+    redux: ^4.1.2
+  languageName: unknown
+  linkType: soft
+
 "@automattic/create-calypso-config@workspace:^, @automattic/create-calypso-config@workspace:packages/create-calypso-config":
   version: 0.0.0-use.local
   resolution: "@automattic/create-calypso-config@workspace:packages/create-calypso-config"

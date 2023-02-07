@@ -1,0 +1,50 @@
+{
+	"name": "@automattic/cookie-consent",
+	"version": "1.0.0",
+	"description": "Help Center.",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.ts",
+	"sideEffects": [
+		"*.css",
+		"*.scss"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/help-center"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"types": "dist/types",
+	"scripts": {
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
+		"prepack": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch",
+		"storybook": "start-storybook"
+	},
+	"dependencies": {
+		"classnames": "^2.3.1",
+		"react": "^17.0.2",
+		"react-dom": "^17.0.2"
+	},
+	"devDependencies": {
+		"@storybook/addon-backgrounds": "^6.4.19",
+		"@storybook/react": "^6.4.19",
+		"typescript": "^4.7.4"
+	},
+	"peerDependencies": {
+		"@wordpress/data": "^6.1.5",
+		"@wordpress/element": "^4.5.0",
+		"react": "^17.0.2",
+		"react-dom": "^17.0.2",
+		"reakit-utils": "^0.15.1",
+		"redux": "^4.1.2"
+	}
+}
