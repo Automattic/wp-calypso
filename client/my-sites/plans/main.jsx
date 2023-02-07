@@ -187,11 +187,10 @@ class Plans extends Component {
 
 		const currentPlanSlug = selectedSite?.plan?.product_slug;
 		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
-		const isPlanFree = isFreePlan( currentPlanSlug );
 
 		return (
 			<div>
-				<ModernizedLayout section="plans" dropShadowOnHeader={ isPlanFree } />
+				<ModernizedLayout section="plans" dropShadowOnHeader={ isFreePlan( currentPlanSlug ) } />
 				{ selectedSite.ID && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
 				<PageViewTracker path="/plans/:site" title="Plans" />

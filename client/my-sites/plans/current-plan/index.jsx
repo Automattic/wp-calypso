@@ -15,6 +15,7 @@ import {
 	isFreeJetpackPlan,
 	isFreePlanProduct,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	isFreePlan,
 } from '@automattic/calypso-products';
 import { Dialog } from '@automattic/components';
 import classNames from 'classnames';
@@ -209,11 +210,11 @@ class CurrentPlan extends Component {
 			showThankYou,
 			translate,
 			eligibleForProPlan,
+			isJetpack,
 		} = this.props;
 
 		const currentPlanSlug = selectedSite.plan.product_slug;
 		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
-
 		const shouldQuerySiteDomains = selectedSiteId && shouldShowDomainWarnings;
 		const showDomainWarnings = hasDomainsLoaded && shouldShowDomainWarnings;
 
@@ -234,7 +235,13 @@ class CurrentPlan extends Component {
 
 		return (
 			<div>
-				<ModernizedLayout section="plans" subSection="current-plan" />
+				{ ! isJetpack && (
+					<ModernizedLayout
+						section="plans"
+						subSection="current-plan"
+						dropShadowOnHeader={ isFreePlan( currentPlanSlug ) }
+					/>
+				) }
 				<DocumentHead title={ translate( 'My Plan' ) } />
 				{ selectedSiteId && (
 					// key={ selectedSiteId } ensures data is refetched for changing selectedSiteId
@@ -266,7 +273,7 @@ class CurrentPlan extends Component {
 							</Dialog>
 						) }
 
-						<PlansNavigation path={ path } modernized={ true } />
+						<PlansNavigation path={ path } modernized={ ! isJetpack } />
 
 						<Main wideLayout>
 							{ showDomainWarnings && (
@@ -334,5 +341,6 @@ export default connect( ( state, { requestThankYou } ) => {
 		showThankYou: requestThankYou && isJetpackNotAtomic,
 		scheduleId: getConciergeScheduleId( state ),
 		eligibleForProPlan,
+		isJetpack,
 	};
 } )( localize( CurrentPlan ) );
