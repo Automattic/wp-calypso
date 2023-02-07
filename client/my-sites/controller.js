@@ -713,19 +713,6 @@ export function shouldRedirectToJetpackAuthorize( context, site ) {
 }
 
 /**
- * Whether the user is in the Domain sidebar upsell experiment.
- *
- * @returns {boolean} Whether the user is in the Domain sidebar upsell experiment.
- */
-export const isDomainSidebarExperimentUser = () => {
-	const domainAndPackage = new URL( document.location ).searchParams.has( 'domainAndPlanPackage' );
-	return (
-		domainAndPackage &&
-		'treatment' === sessionStorage.getItem( 'calypso_sidebar_upsell_experiment' )
-	);
-};
-
-/**
  * Get redirect URL to the Jetpack site for authorization.
  *
  * @param {Object} context -- The context object.

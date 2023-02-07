@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
 import page from 'page';
-import { useCallback, useEffect, useState } from 'react';
 import { QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
@@ -11,7 +10,6 @@ import MomentProvider from 'calypso/components/localized-moment/provider';
 import { RouteProvider } from 'calypso/components/route';
 import Layout from 'calypso/layout';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { login } from 'calypso/lib/paths';
 import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
 import { getSiteFragment } from 'calypso/lib/route';
@@ -41,36 +39,6 @@ export const ProviderWrappedLayout = ( {
 } ) => {
 	const state = store.getState();
 	const userLoggedIn = isUserLoggedIn( state );
-
-	const [ isExperimentLoaded, setIsExperimentLoaded ] = useState( null );
-
-	async function loadDomainExperiment() {
-		const experimentAssignment = await loadExperimentAssignment(
-			'calypso_sidebar_upsell_dedicated_upgrade_flow_202301'
-		);
-		const variationName = experimentAssignment?.variationName;
-		sessionStorage.setItem( 'calypso_sidebar_upsell_experiment', variationName );
-		setIsExperimentLoaded( true );
-	}
-
-	const shouldLoadDomainExperiment = useCallback( () => {
-		const domainAndPackage = currentQuery && 'true' === currentQuery.domainAndPlanPackage;
-		const experimentPages =
-			window.location.pathname.startsWith( '/domains/add' ) ||
-			window.location.pathname.startsWith( '/plans/yearly' );
-
-		return domainAndPackage && experimentPages;
-	}, [ currentQuery ] );
-
-	useEffect( () => {
-		if ( shouldLoadDomainExperiment() ) {
-			loadDomainExperiment();
-		}
-	}, [ currentRoute, currentQuery, shouldLoadDomainExperiment ] );
-
-	if ( shouldLoadDomainExperiment() && ! isExperimentLoaded ) {
-		return null;
-	}
 
 	const layout = userLoggedIn ? (
 		<Layout primary={ primary } secondary={ secondary } />

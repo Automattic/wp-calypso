@@ -24,7 +24,6 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
-import { isDomainSidebarExperimentUser } from 'calypso/my-sites/controller';
 import NewDomainsRedirectionNoticeUpsell from 'calypso/my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
 import {
 	domainAddEmailUpsell,
@@ -102,9 +101,6 @@ class DomainSearch extends Component {
 	};
 
 	componentDidMount() {
-		if ( isDomainSidebarExperimentUser() ) {
-			document.body.classList.add( 'is-experiment-user' );
-		}
 		this.checkSiteIsUpgradeable();
 
 		this.isMounted = true;
@@ -117,10 +113,6 @@ class DomainSearch extends Component {
 	}
 
 	componentWillUnmount() {
-		if ( isDomainSidebarExperimentUser() ) {
-			document.body.classList.remove( 'is-experiment-user' );
-		}
-
 		this.isMounted = false;
 	}
 
@@ -244,46 +236,24 @@ class DomainSearch extends Component {
 			content = (
 				<span>
 					<div className="domain-search__content">
-						{ false === isDomainSidebarExperimentUser() && (
-							<BackButton
-								className="domain-search__go-back"
-								href={ domainManagementList( selectedSiteSlug ) }
-							>
-								<Gridicon icon="arrow-left" size={ 18 } />
-								{ translate( 'Back' ) }
-							</BackButton>
-						) }
-
+						<BackButton
+							className="domain-search__go-back"
+							href={ domainManagementList( selectedSiteSlug ) }
+						>
+							<Gridicon icon="arrow-left" size={ 18 } />
+							{ translate( 'Back' ) }
+						</BackButton>
 						{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 						<div className="domains__header">
-							{ isDomainSidebarExperimentUser() && (
-								<>
-									<FormattedHeader
-										brandFont
-										headerText={ translate( 'Claim your domain' ) }
-										align="center"
-									/>
-
-									<p>
-										{ translate(
-											'Stake your claim on your corner of the web with a custom domain name that’s easy to find, share, and follow. Not sure yet?'
-										) }
-										<a href="/support/domains/">{ translate( 'Decide later.' ) }</a>
-									</p>
-								</>
-							) }
-
-							{ false === isDomainSidebarExperimentUser() && (
-								<FormattedHeader
-									brandFont
-									headerText={
-										isManagingAllDomains
-											? translate( 'All Domains' )
-											: translate( 'Search for a domain' )
-									}
-									align="left"
-								/>
-							) }
+							<FormattedHeader
+								brandFont
+								headerText={
+									isManagingAllDomains
+										? translate( 'All Domains' )
+										: translate( 'Search for a domain' )
+								}
+								align="left"
+							/>
 						</div>
 
 						<EmailVerificationGate
