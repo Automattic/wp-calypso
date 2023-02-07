@@ -8,7 +8,7 @@ import 'calypso/state/plans/init';
 /**
  * Return WordPress plans getting from state object
  */
-export const getPlans = ( state: AppState ): PricedAPIPlan[] => {
+export const getPlans = ( state: AppState ): PricedAPIPlan[] | undefined => {
 	return state.plans.items;
 };
 
@@ -24,7 +24,7 @@ export const isRequestingPlans = ( state: AppState ): boolean => {
  */
 export const getPlan = createSelector(
 	( state: AppState, productId: string | number ): PricedAPIPlan | undefined =>
-		getPlans( state ).find( ( plan ) => plan.product_id === productId ),
+		getPlans( state )?.find( ( plan ) => plan.product_id === productId ),
 	( state: AppState ) => getPlans( state )
 );
 

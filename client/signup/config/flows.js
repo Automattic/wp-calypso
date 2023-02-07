@@ -1,7 +1,8 @@
 import config from '@automattic/calypso-config';
+import { BLANK_CANVAS_DESIGN } from '@automattic/design-picker';
+import { SITE_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import { isDesktop } from '@automattic/viewport';
 import { get, includes, reject } from 'lodash';
-import { BLANK_CANVAS_DESIGN } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/constants';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -109,10 +110,11 @@ function getThankYouNoSiteDestination() {
 	return `/checkout/thank-you/no-site`;
 }
 
-function getChecklistThemeDestination( { siteSlug, themeParameter } ) {
+function getChecklistThemeDestination( { siteSlug, themeParameter, destinationFlowParameter } ) {
 	const canGoToAssemblerFlow = isDesktop();
 
 	if (
+		destinationFlowParameter === SITE_ASSEMBLER_FLOW &&
 		themeParameter === BLANK_CANVAS_DESIGN.slug &&
 		config.isEnabled( 'pattern-assembler/logged-out-showcase' )
 	) {

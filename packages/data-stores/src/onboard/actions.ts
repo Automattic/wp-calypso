@@ -266,6 +266,11 @@ export const setPlanCartItem = ( planCartItem: MinimalRequestCartProduct | null 
 	planCartItem,
 } );
 
+export const setProductCartItems = ( productCartItems: MinimalRequestCartProduct[] | null ) => ( {
+	type: 'SET_PRODUCT_CART_ITEMS' as const,
+	productCartItems,
+} );
+
 export const setRandomizedDesigns = ( randomizedDesigns: { featured: Design[] } ) => ( {
 	type: 'SET_RANDOMIZED_DESIGNS' as const,
 	randomizedDesigns,
@@ -503,6 +508,7 @@ export type OnboardAction = ReturnType<
 	| typeof setStoreLocationCountryCode
 	| typeof setEcommerceFlowRecurType
 	| typeof setHideFreePlan
+	| typeof setProductCartItems
 	| typeof setPlanCartItem
 	| typeof setIsMigrateFromWp
 >;

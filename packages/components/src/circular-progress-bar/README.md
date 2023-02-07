@@ -20,3 +20,5 @@ function render() {
 
 - `currentStep`: a number representing the current completed step (required).
 - `numberOfSteps`: a number representing the total number of steps (required).
+- `size`: a number representing the base size of component in pixels (required).
+- `enableDesktopScaling`: a boolean that applys the 'desktop-scaling' class which scales the component size by 1.2x (optional)

@@ -23,7 +23,7 @@ const PricingPlans: FunctionComponent<
 	const onSetPlan = ( productSlug: string ) => setAttributes( { productSlug } );
 
 	return (
-		<div className="hb-pricing-plans-embed">
+		<div className="hb-pricing-plans-embed wp-block-embed">
 			{ attributes.planTypeOptions.length > 1 && (
 				<PricingPlansTabs
 					attributes={ attributes }

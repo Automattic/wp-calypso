@@ -5,7 +5,7 @@ import {
 	isWpcomEnterpriseGridPlan,
 	isFreePlan,
 	isBusinessPlan,
-	FEATURE_GROUP_GENERAL_FEATURES,
+	FEATURE_GROUP_ESSENTIAL_FEATURES,
 	getPlanFeaturesGrouped,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 } from '@automattic/calypso-products';
@@ -25,8 +25,16 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import PlanFeatures2023GridActions from './actions';
 import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
 import PlanFeatures2023GridHeaderPrice from './header-price';
+import { Plans2023Tooltip } from './plans-2023-tooltip';
 import { PlanProperties } from './types';
 import { usePricingBreakpoint } from './util';
+
+function getMobileBreakpoint( { isInSignup }: { isInSignup: boolean } ) {
+	if ( isInSignup ) {
+		return '880px';
+	}
+	return '1152px'; // 880px + 272px (sidebar)
+}
 
 const JetpackIconContainer = styled.div`
 	padding-left: 6px;
@@ -41,7 +49,7 @@ const PlanComparisonHeader = styled.h1`
 	margin: 48px 0;
 `;
 
-const Title = styled.div< { isHiddenInMobile?: boolean } >`
+const Title = styled.div< { isHiddenInMobile?: boolean; isInSignup: boolean } >`
 	font-weight: 500;
 	font-size: 20px;
 	padding: 14px;
@@ -58,7 +66,7 @@ const Title = styled.div< { isHiddenInMobile?: boolean } >`
 			props.isHiddenInMobile ? 'rotateZ( 180deg )' : 'rotateZ( 0deg )' };
 	}
 
-	@media ( min-width: 880px ) {
+	@media ( min-width: ${ getMobileBreakpoint } ) {
 		padding-left: 0;
 		border: none;
 		padding: 0;
@@ -69,9 +77,9 @@ const Title = styled.div< { isHiddenInMobile?: boolean } >`
 	}
 `;
 
-const Grid = styled.div`
+const Grid = styled.div< { isInSignup: boolean } >`
 	display: grid;
-	margin-top: 90px;
+	margin-top: ${ ( props ) => ( props.isInSignup ? '90px' : '64px' ) };
 	background: #fff;
 	border: solid 1px #e0e0e0;
 
@@ -79,13 +87,13 @@ const Grid = styled.div`
 		border-radius: 5px;
 	}
 `;
-const Row = styled.div< { isHiddenInMobile?: boolean } >`
+const Row = styled.div< { isHiddenInMobile?: boolean; isInSignup: boolean } >`
 	justify-content: space-between;
 	margin-bottom: -1px;
-	align-items: center;
+	align-items: stretch;
 	display: ${ ( props ) => ( props.isHiddenInMobile ? 'none' : 'flex' ) };
 
-	@media ( min-width: 880px ) {
+	@media ( min-width: ${ getMobileBreakpoint } ) {
 		display: flex;
 		margin: 0 20px;
 		padding: 12px 0;
@@ -93,11 +101,11 @@ const Row = styled.div< { isHiddenInMobile?: boolean } >`
 	}
 `;
 
-const TitleRow = styled( Row )`
+const TitleRow = styled( Row )< { isInSignup: boolean } >`
 	cursor: pointer;
 	display: flex;
 
-	@media ( min-width: 880px ) {
+	@media ( min-width: ${ getMobileBreakpoint } ) {
 		cursor: default;
 		border-bottom: none;
 		padding: 20px 0 10px;
@@ -105,7 +113,7 @@ const TitleRow = styled( Row )`
 	}
 `;
 
-const Cell = styled.div< { textAlign?: string } >`
+const Cell = styled.div< { textAlign?: string; isInSignup: boolean } >`
 	text-align: ${ ( props ) => props.textAlign ?? 'left' };
 	display: flex;
 	flex: 1;
@@ -114,7 +122,7 @@ const Cell = styled.div< { textAlign?: string } >`
 	align-items: center;
 	padding: 33px 20px 0;
 
-	@media ( max-width: 879px ) {
+	@media ( max-width: ${ getMobileBreakpoint } ) {
 		&.title-is-subtitle {
 			padding-top: 0;
 		}
@@ -130,9 +138,9 @@ const Cell = styled.div< { textAlign?: string } >`
 		}
 	}
 
-	@media ( min-width: 880px ) {
+	@media ( min-width: ${ getMobileBreakpoint } ) {
 		padding: 0 14px;
-		max-width: 180px;
+		max-width: ${ ( { isInSignup } ) => ( isInSignup ? '180px' : '160px' ) };
 
 		&:first-of-type {
 			padding-left: 0;
@@ -141,16 +149,19 @@ const Cell = styled.div< { textAlign?: string } >`
 			padding-right: 0;
 		}
 	}
+	@media ( min-width: ${ getMobileBreakpoint } ) {
+		min-width: 180px;
+	}
 
 	@media ( min-width: 1500px ) {
 		max-width: 200px;
 	}
 `;
 
-const RowHead = styled.div`
+const RowHead = styled.div< { isInSignup: boolean } >`
 	display: none;
 	font-size: 14px;
-	@media ( min-width: 880px ) {
+	@media ( min-width: ${ getMobileBreakpoint } ) {
 		display: block;
 		flex: 1;
 	}
@@ -181,10 +192,14 @@ const PlanSelector = styled.header`
 		left: 0;
 		cursor: pointer;
 		height: 30px;
+
+		&:focus ~ .plan-comparison-grid__title {
+			outline: thin dotted;
+		}
 	}
 `;
 
-const StorageButton = styled.div`
+const StorageButton = styled.div< { isInSignup: boolean } >`
 	background: #f2f2f2;
 	border-radius: 5px;
 	padding: 4px 0;
@@ -198,7 +213,7 @@ const StorageButton = styled.div`
 	min-width: 64px;
 	margin-top: 10px;
 
-	@media ( min-width: 880px ) {
+	@media ( min-width: ${ getMobileBreakpoint } ) {
 		margin-top: 0;
 	}
 `;
@@ -212,6 +227,8 @@ type PlanComparisonGridProps = {
 	currentSitePlanSlug: string;
 	manageHref: string;
 	canUserPurchasePlan: boolean;
+	selectedSiteSlug: string | null;
+	onUpgradeClick: ( properties: PlanProperties ) => void;
 };
 type PlanComparisonGridHeaderProps = {
 	displayedPlansProperties: Array< PlanProperties >;
@@ -224,6 +241,8 @@ type PlanComparisonGridHeaderProps = {
 	currentSitePlanSlug: string;
 	manageHref: string;
 	canUserPurchasePlan: boolean;
+	selectedSiteSlug: string | null;
+	onUpgradeClick: ( properties: PlanProperties ) => void;
 };
 
 const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
@@ -237,109 +256,118 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 	currentSitePlanSlug,
 	manageHref,
 	canUserPurchasePlan,
+	selectedSiteSlug,
+	onUpgradeClick,
 } ) => {
 	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const allVisible = visiblePlansProperties.length === displayedPlansProperties.length;
 	return (
-		<Row className="plan-comparison-grid__plan-row">
+		<Row className="plan-comparison-grid__plan-row" isInSignup={ isInSignup }>
 			<RowHead
 				key="feature-name"
 				className="plan-comparison-grid__header plan-comparison-grid__interval-toggle"
+				isInSignup={ isInSignup }
 			/>
-			{ visiblePlansProperties.map(
-				( { planName, planConstantObj, availableForPurchase, current, ...planPropertiesObj } ) => {
-					const headerClasses = classNames(
-						'plan-comparison-grid__header',
-						getPlanClass( planName ),
-						{
-							'popular-plan-parent-class': isBusinessPlan( planName ),
-							'plan-is-footer': isFooter,
-						}
-					);
+			{ visiblePlansProperties.map( ( planProperties ) => {
+				const { planName, planConstantObj, availableForPurchase, current, ...planPropertiesObj } =
+					planProperties;
+				const headerClasses = classNames(
+					'plan-comparison-grid__header',
+					getPlanClass( planName ),
+					{
+						'popular-plan-parent-class': isBusinessPlan( planName ),
+						'plan-is-footer': isFooter,
+					}
+				);
 
-					const rawPrice = planPropertiesObj.rawPrice;
-					const isLargeCurrency = rawPrice ? rawPrice > 99000 : false;
+				const rawPrice = planPropertiesObj.rawPrice;
+				const isLargeCurrency = rawPrice ? rawPrice > 99000 : false;
 
-					const showPlanSelect = ! allVisible;
+				const showPlanSelect = ! allVisible && ! current;
 
-					return (
-						<Cell key={ planName } className={ headerClasses } textAlign="left">
-							{ isBusinessPlan( planName ) && (
-								<div className="plan-features-2023-grid__popular-badge">
-									<PlanPill isInSignup={ isInSignup }>{ translate( 'Popular' ) }</PlanPill>
-								</div>
-							) }
-							<PlanSelector>
-								<h4 className="plan-comparison-grid__title">
-									{ planConstantObj.getTitle() }
-									{ showPlanSelect && <Gridicon icon="chevron-down" size={ 12 } color="#0675C4" /> }
-								</h4>
-								{ showPlanSelect && (
-									<select
-										onChange={ ( event: ChangeEvent ) => onPlanChange( planName, event ) }
-										className="plan-comparison-grid__title-select"
-										value={ planName }
-									>
-										{ displayedPlansProperties.map(
-											( { planName: otherPlan, product_name_short } ) => {
-												const isVisiblePlan = visiblePlansProperties.find(
-													( { planName } ) => planName === otherPlan
-												);
-
-												if ( isVisiblePlan && otherPlan !== planName ) {
-													return null;
-												}
-
-												return (
-													<option key={ otherPlan } value={ otherPlan }>
-														{ product_name_short }
-													</option>
-												);
-											}
-										) }
-									</select>
-								) }
-							</PlanSelector>
-							<PlanFeatures2023GridHeaderPrice
-								currencyCode={ currencyCode }
-								discountPrice={ planPropertiesObj.discountPrice }
-								rawPrice={ rawPrice || 0 }
-								planName={ planName }
-								is2023OnboardingPricingGrid={ true }
-								isLargeCurrency={ isLargeCurrency }
-							/>
-							<div className="plan-comparison-grid__billing-info">
-								<PlanFeatures2023GridBillingTimeframe
-									rawPrice={ rawPrice }
-									rawPriceAnnual={ planPropertiesObj.rawPriceAnnual }
-									currencyCode={ planPropertiesObj.currencyCode }
-									annualPricePerMonth={ planPropertiesObj.annualPricePerMonth }
-									isMonthlyPlan={ planPropertiesObj.isMonthlyPlan }
-									translate={ translate }
-									billingTimeframe={ planConstantObj.getBillingTimeFrame() }
-								/>
+				return (
+					<Cell
+						key={ planName }
+						isInSignup={ isInSignup }
+						className={ headerClasses }
+						textAlign="left"
+					>
+						{ isBusinessPlan( planName ) && (
+							<div className="plan-features-2023-grid__popular-badge">
+								<PlanPill isInSignup={ isInSignup }>{ translate( 'Popular' ) }</PlanPill>
 							</div>
-							<PlanFeatures2023GridActions
-								currentSitePlanSlug={ currentSitePlanSlug }
-								manageHref={ manageHref }
-								canUserPurchasePlan={ canUserPurchasePlan }
-								current={ current ?? false }
-								availableForPurchase={ availableForPurchase }
-								className={ getPlanClass( planName ) }
-								freePlan={ isFreePlan( planName ) }
-								isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planName ) }
-								isPlaceholder={ planPropertiesObj.isPlaceholder }
-								isInSignup={ isInSignup }
-								isLaunchPage={ isLaunchPage }
-								planName={ planConstantObj.getTitle() }
-								planType={ planName }
-								flowName={ flowName }
+						) }
+						<PlanSelector>
+							{ showPlanSelect && (
+								<select
+									onChange={ ( event: ChangeEvent ) => onPlanChange( planName, event ) }
+									className="plan-comparison-grid__title-select"
+									value={ planName }
+								>
+									{ displayedPlansProperties.map( ( { planName: otherPlan, planConstantObj } ) => {
+										const isVisiblePlan = visiblePlansProperties.find(
+											( { planName } ) => planName === otherPlan
+										);
+
+										if ( isVisiblePlan && otherPlan !== planName ) {
+											return null;
+										}
+
+										return (
+											<option key={ otherPlan } value={ otherPlan }>
+												{ planConstantObj.getTitle() }
+											</option>
+										);
+									} ) }
+								</select>
+							) }
+							<h4 className="plan-comparison-grid__title">
+								{ planConstantObj.getTitle() }
+
+								{ showPlanSelect && <Gridicon icon="chevron-down" size={ 12 } color="#0675C4" /> }
+							</h4>
+						</PlanSelector>
+						<PlanFeatures2023GridHeaderPrice
+							currencyCode={ currencyCode }
+							discountPrice={ planPropertiesObj.discountPrice }
+							rawPrice={ rawPrice || 0 }
+							planName={ planName }
+							is2023OnboardingPricingGrid={ true }
+							isLargeCurrency={ isLargeCurrency }
+						/>
+						<div className="plan-comparison-grid__billing-info">
+							<PlanFeatures2023GridBillingTimeframe
+								rawPrice={ rawPrice }
+								rawPriceAnnual={ planPropertiesObj.rawPriceAnnual }
+								currencyCode={ planPropertiesObj.currencyCode }
+								annualPricePerMonth={ planPropertiesObj.annualPricePerMonth }
+								isMonthlyPlan={ planPropertiesObj.isMonthlyPlan }
+								translate={ translate }
+								billingTimeframe={ planConstantObj.getBillingTimeFrame() }
 							/>
-						</Cell>
-					);
-				}
-			) }
+						</div>
+						<PlanFeatures2023GridActions
+							currentSitePlanSlug={ currentSitePlanSlug }
+							manageHref={ manageHref }
+							canUserPurchasePlan={ canUserPurchasePlan }
+							current={ current ?? false }
+							availableForPurchase={ availableForPurchase }
+							className={ getPlanClass( planName ) }
+							freePlan={ isFreePlan( planName ) }
+							isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planName ) }
+							isPlaceholder={ planPropertiesObj.isPlaceholder }
+							isInSignup={ isInSignup }
+							isLaunchPage={ isLaunchPage }
+							planName={ planConstantObj.getTitle() }
+							planType={ planName }
+							flowName={ flowName }
+							selectedSiteSlug={ selectedSiteSlug }
+							onUpgradeClick={ () => onUpgradeClick( planProperties ) }
+						/>
+					</Cell>
+				);
+			} ) }
 		</Row>
 	);
 };
@@ -354,15 +382,22 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 	currentSitePlanSlug,
 	manageHref,
 	canUserPurchasePlan,
+	selectedSiteSlug,
+	onUpgradeClick,
 } ) => {
 	const translate = useTranslate();
 	const featureGroupMap = getPlanFeaturesGrouped();
-	const displayedPlansProperties = ( planProperties ?? [] ).filter(
-		( { planName } ) => ! ( planName === PLAN_ENTERPRISE_GRID_WPCOM )
+	const displayedPlansProperties = useMemo(
+		() =>
+			( planProperties ?? [] ).filter(
+				( { planName } ) => ! ( planName === PLAN_ENTERPRISE_GRID_WPCOM )
+			),
+		[ planProperties ]
 	);
 	const isMonthly = intervalType === 'monthly';
-	const isMediumBreakpoint = usePricingBreakpoint( 1340 );
-	const isSmallBreakpoint = usePricingBreakpoint( 880 );
+	const isLargestBreakpoint = usePricingBreakpoint( 1772 ); // 1500px + 272px (sidebar)
+	const isLargeBreakpoint = usePricingBreakpoint( 1612 ); // 1340px + 272px (sidebar)
+	const isMediumBreakpoint = usePricingBreakpoint( 1340 ); // keeping original breakpoint to match Plan Grid
 
 	const [ visiblePlans, setVisiblePlans ] = useState< string[] >( [] );
 	const [ firstSetOfFeatures ] = Object.keys( featureGroupMap );
@@ -373,16 +408,30 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 	useEffect( () => {
 		let newVisiblePlans = displayedPlansProperties.map( ( { planName } ) => planName );
 
-		if ( isMediumBreakpoint ) {
-			newVisiblePlans = newVisiblePlans.slice( 0, 4 );
+		let visibleLength = newVisiblePlans.length;
+		if ( ! isInSignup ) {
+			visibleLength = isLargestBreakpoint ? 4 : visibleLength;
+			visibleLength = isLargeBreakpoint ? 3 : visibleLength;
 		}
 
-		if ( isSmallBreakpoint || ( isInSignup && isMediumBreakpoint ) ) {
-			newVisiblePlans = newVisiblePlans.slice( 0, 2 );
+		visibleLength = isMediumBreakpoint ? 2 : visibleLength;
+
+		if ( newVisiblePlans.length !== visibleLength ) {
+			// ensures current plan is first in the list
+			newVisiblePlans.sort( ( visiblePlan ) => ( visiblePlan === currentSitePlanSlug ? -1 : 1 ) );
+			newVisiblePlans = newVisiblePlans.slice( 0, visibleLength );
 		}
 
 		setVisiblePlans( newVisiblePlans );
-	}, [ isMediumBreakpoint, intervalType ] );
+	}, [
+		isLargestBreakpoint,
+		isLargeBreakpoint,
+		isMediumBreakpoint,
+		intervalType,
+		displayedPlansProperties,
+		isInSignup,
+		currentSitePlanSlug,
+	] );
 
 	const restructuredFeatures = useMemo( () => {
 		let previousPlan = null;
@@ -464,6 +513,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		}
 		return acc;
 	}, [] );
+
 	return (
 		<div className="plan-comparison-grid">
 			<PlanComparisonHeader className="wp-brand-font">
@@ -478,9 +528,11 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 				intervalType={ planTypeSelectorProps.intervalType }
 				customerType={ planTypeSelectorProps.customerType }
 				hidePersonalPlan={ planTypeSelectorProps.hidePersonalPlan }
+				basePlansPath={ planTypeSelectorProps.basePlansPath }
+				siteSlug={ planTypeSelectorProps.siteSlug }
 				hideDiscountLabel={ true }
 			/>
-			<Grid>
+			<Grid isInSignup={ isInSignup }>
 				<PlanComparisonGridHeader
 					displayedPlansProperties={ displayedPlansProperties }
 					visiblePlansProperties={ visiblePlansProperties }
@@ -491,8 +543,9 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 					currentSitePlanSlug={ currentSitePlanSlug }
 					manageHref={ manageHref }
 					canUserPurchasePlan={ canUserPurchasePlan }
+					selectedSiteSlug={ selectedSiteSlug }
+					onUpgradeClick={ onUpgradeClick }
 				/>
-
 				{ Object.values( featureGroupMap ).map( ( featureGroup: FeatureGroup ) => {
 					const features = featureGroup.get2023PricingGridSignupWpcomFeatures();
 					const featureObjects = getPlanFeaturesObject( features );
@@ -500,14 +553,15 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 					const featureGroupClass = `feature-group-title-${ featureGroup.slug }`;
 					const isHiddenInMobile = ! visibleFeatureGroups.includes( featureGroup.slug );
 					return (
-						<div className={ featureGroupClass }>
+						<div key={ featureGroupClass } className={ featureGroup.slug }>
 							<TitleRow
-								key={ featureGroupClass }
 								className="plan-comparison-grid__group-title-row"
+								isInSignup={ isInSignup }
 								onClick={ () => toggleFeatureGroup( featureGroup.slug ) }
 							>
 								<Title
 									isHiddenInMobile={ isHiddenInMobile }
+									isInSignup={ isInSignup }
 									className={ `plan-comparison-grid__group-${ featureGroup.slug }` }
 								>
 									<Gridicon icon="chevron-up" size={ 12 } color="#1E1E1E" />
@@ -520,13 +574,17 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 									<Row
 										key={ featureSlug }
 										isHiddenInMobile={ isHiddenInMobile }
+										isInSignup={ isInSignup }
 										className="plan-comparison-grid__feature-row"
 									>
 										<RowHead
 											key="feature-name"
 											className={ `plan-comparison-grid__feature-feature-name ${ feature.getTitle() }` }
+											isInSignup={ isInSignup }
 										>
-											{ feature.getTitle() }
+											<Plans2023Tooltip text={ feature.getDescription?.() }>
+												{ feature.getTitle() }
+											</Plans2023Tooltip>
 											{ allJetpackFeatures.has( feature.getSlug() ) ? (
 												<JetpackIconContainer>
 													<JetpackLogo size={ 16 } />
@@ -547,7 +605,12 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 											);
 
 											return (
-												<Cell key={ planName } className={ cellClasses } textAlign="center">
+												<Cell
+													key={ planName }
+													isInSignup={ isInSignup }
+													className={ cellClasses }
+													textAlign="center"
+												>
 													{ feature.getIcon && (
 														<span className="plan-comparison-grid__plan-image">
 															{ feature.getIcon() }
@@ -572,17 +635,23 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 									</Row>
 								);
 							} ) }
-							{ featureGroup.slug === FEATURE_GROUP_GENERAL_FEATURES ? (
+							{ featureGroup.slug === FEATURE_GROUP_ESSENTIAL_FEATURES ? (
 								<Row
 									key="feature-storage"
 									isHiddenInMobile={ isHiddenInMobile }
+									isInSignup={ isInSignup }
 									className="plan-comparison-grid__feature-storage"
 								>
 									<RowHead
 										key="feature-name"
 										className="plan-comparison-grid__feature-feature-name storage"
+										isInSignup={ isInSignup }
 									>
-										{ translate( 'Storage' ) }
+										<Plans2023Tooltip
+											text={ translate( 'Space to store your photos, media, and more.' ) }
+										>
+											{ translate( 'Storage' ) }
+										</Plans2023Tooltip>
 									</RowHead>
 									{ ( visiblePlansProperties ?? [] ).map( ( { planName } ) => {
 										const storageFeature = restructuredFeatures.planStorageOptionsMap[ planName ];
@@ -597,12 +666,18 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 										);
 
 										return (
-											<Cell key={ planName } className={ cellClasses } textAlign="center">
+											<Cell
+												key={ planName }
+												isInSignup={ isInSignup }
+												className={ cellClasses }
+												textAlign="center"
+											>
 												<span className="plan-comparison-grid__plan-title">
 													{ translate( 'Storage' ) }
 												</span>
 												<StorageButton
 													className="plan-features-2023-grid__storage-button"
+													isInSignup={ isInSignup }
 													key={ planName }
 												>
 													{ featureObject.getCompareTitle?.() }
@@ -626,6 +701,8 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 					currentSitePlanSlug={ currentSitePlanSlug }
 					manageHref={ manageHref }
 					canUserPurchasePlan={ canUserPurchasePlan }
+					selectedSiteSlug={ selectedSiteSlug }
+					onUpgradeClick={ onUpgradeClick }
 				/>
 			</Grid>
 		</div>

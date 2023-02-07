@@ -124,6 +124,7 @@ export class PlansFeaturesMain extends Component {
 			isPlansInsideStepper,
 			is2023OnboardingPricingGrid,
 			intervalType,
+			planTypeSelectorProps,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -157,14 +158,6 @@ export class PlansFeaturesMain extends Component {
 				isPlansInsideStepper,
 				intervalType,
 			};
-			const planTypeSelectorProps = {
-				isInSignup: this.props.isInSignup,
-				eligibleForWpcomMonthlyPlans: this.props.eligibleForWpcomMonthlyPlans,
-				isPlansInsideStepper: this.props.isPlansInsideStepper,
-				intervalType: this.props.intervalType,
-				customerType: this.props.customerType,
-				hidePersonalPlan: this.props.hidePersonalPlan,
-			};
 			const asyncPlanFeatures2023Grid = (
 				<AsyncLoad
 					require="calypso/my-sites/plan-features-2023-grid"
@@ -172,6 +165,7 @@ export class PlansFeaturesMain extends Component {
 					planTypeSelectorProps={ planTypeSelectorProps }
 				/>
 			);
+
 			return (
 				<div
 					className={ classNames(
@@ -357,6 +351,7 @@ export class PlansFeaturesMain extends Component {
 			hideFreePlan,
 			hidePersonalPlan,
 			hidePremiumPlan,
+			hideEcommercePlan,
 			sitePlanSlug,
 			showTreatmentPlansReorderTest,
 			flowName,
@@ -396,6 +391,10 @@ export class PlansFeaturesMain extends Component {
 
 		if ( hidePremiumPlan ) {
 			plans = plans.filter( ( planSlug ) => ! isPremiumPlan( planSlug ) );
+		}
+
+		if ( hideEcommercePlan ) {
+			plans = plans.filter( ( planSlug ) => ! isEcommercePlan( planSlug ) );
 		}
 
 		if ( isNewsletterOrLinkInBioFlow( flowName ) ) {
@@ -580,8 +579,13 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	render() {
-		const { siteId, redirectToAddDomainFlow, domainAndPlanPackage, is2023OnboardingPricingGrid } =
-			this.props;
+		const {
+			siteId,
+			redirectToAddDomainFlow,
+			domainAndPlanPackage,
+			is2023OnboardingPricingGrid,
+			planTypeSelectorProps,
+		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
@@ -610,7 +614,7 @@ export class PlansFeaturesMain extends Component {
 				<div className="plans-features-main__notice" />
 				{ ! hidePlanSelector && (
 					<PlanTypeSelector
-						{ ...this.props }
+						{ ...planTypeSelectorProps }
 						kind={ kindOfPlanTypeSelector }
 						plans={ visiblePlans }
 					/>
@@ -641,6 +645,7 @@ PlansFeaturesMain.propTypes = {
 	hideFreePlan: PropTypes.bool,
 	hidePersonalPlan: PropTypes.bool,
 	hidePremiumPlan: PropTypes.bool,
+	hideEcommercePlan: PropTypes.bool,
 	customerType: PropTypes.string,
 	flowName: PropTypes.string,
 	intervalType: PropTypes.oneOf( [ 'monthly', 'yearly' ] ),
@@ -688,6 +693,7 @@ export default connect(
 		const sitePlanSlug = sitePlan?.product_slug;
 		const eligibleForWpcomMonthlyPlans = isEligibleForWpComMonthlyPlan( state, siteId );
 		const titanMonthlyRenewalCost = getProductDisplayCost( state, TITAN_MAIL_MONTHLY_SLUG );
+		const siteSlug = getSiteSlug( state, get( props.site, [ 'ID' ] ) );
 
 		let customerType = chooseDefaultCustomerType( {
 			currentCustomerType: props.customerType,
@@ -704,6 +710,17 @@ export default connect(
 			customerType = 'business';
 		}
 		const is2023OnboardingPricingGrid = isEnabled( 'onboarding/2023-pricing-grid' );
+		const planTypeSelectorProps = {
+			basePlansPath: props.basePlansPath,
+			isInSignup: props.isInSignup,
+			eligibleForWpcomMonthlyPlans: eligibleForWpcomMonthlyPlans,
+			isPlansInsideStepper: props.isPlansInsideStepper,
+			intervalType: props.intervalType,
+			customerType: customerType,
+			hidePersonalPlan: props.hidePersonalPlan,
+			siteSlug,
+		};
+
 		return {
 			isCurrentPlanRetired: isProPlan( sitePlanSlug ) || isStarterPlan( sitePlanSlug ),
 			currentPurchaseIsInAppPurchase: currentPurchase?.isInAppPurchase,
@@ -714,12 +731,13 @@ export default connect(
 			isMultisite: isJetpackSiteMultiSite( state, siteId ),
 			previousRoute: getPreviousRoute( state ),
 			siteId,
-			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),
+			siteSlug,
 			sitePlanSlug,
 			eligibleForWpcomMonthlyPlans,
 			titanMonthlyRenewalCost,
 			is2023OnboardingPricingGrid,
 			showFAQ: !! props.showFAQ && ! is2023OnboardingPricingGrid,
+			planTypeSelectorProps,
 		};
 	},
 	{

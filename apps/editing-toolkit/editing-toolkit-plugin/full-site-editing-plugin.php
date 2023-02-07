@@ -345,7 +345,7 @@ function load_coming_soon() {
 	}
 }
 // Todo: once coming-soon is migrated to the new jetpack-mu-wpcom plugin, coming-soon can be removed from ETK.
-if ( has_action( 'plugins_loaded', 'Jetpack\Mu_Wpcom\load_coming_soon' ) === false ) {
+if ( has_action( 'plugins_loaded', 'Automattic\Jetpack\Jetpack_Mu_Wpcom::load_coming_soon' ) === false ) {
 	add_action( 'plugins_loaded', __NAMESPACE__ . '\load_coming_soon' );
 }
 

@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import type { Pattern } from './types';
@@ -185,240 +186,284 @@ const useSectionPatterns = () => {
 	const links = translate( 'Links' );
 	const services = translate( 'Services' );
 	const portfolio = translate( 'Portfolio' );
+	const posts = translate( 'Posts' );
 
 	const sectionPatterns: Pattern[] = useMemo(
-		() => [
-			{
-				id: 7156,
-				name: 'Media and text with image on the right',
-				category: callToAction,
-			},
-			{
-				id: 7153,
-				name: 'Media and text with image on the left',
-				category: callToAction,
-			},
-			{
-				id: 7146,
-				name: 'Four column list',
-				category: callToAction,
-			},
-			{
-				id: 7132,
-				name: 'Cover image with left-aligned call to action',
-				category: callToAction,
-			},
-			{
-				id: 7159,
-				name: 'Cover image with centered text and a button',
-				category: callToAction,
-			},
-			{
-				id: 3741,
-				name: 'Large CTA',
-				category: callToAction,
-			},
-			{
-				id: 6303,
-				name: 'Two Buttons Centered CTA',
-				category: callToAction,
-			},
-			{
-				id: 6304,
-				name: 'Centered Heading with CTA',
-				category: callToAction,
-			},
-			{
-				id: 6311,
-				name: 'Portfolio Project',
-				category: callToAction,
-			},
-			{
-				id: 3747,
-				name: 'Hero with CTA',
-				category: callToAction,
-			},
-			{
-				id: 6308,
-				name: 'Cover Image with CTA',
-				category: callToAction,
-			},
-			{
-				id: 6310,
-				name: 'Gallery with description on the left',
-				category: callToAction,
-			},
-			{
-				id: 6312,
-				name: 'Two Column CTA',
-				category: callToAction,
-			},
-			{
-				id: 6305,
-				name: 'Heading with Image Grid',
-				category: images,
-			},
-			{
-				id: 7149,
-				name: 'Two column image grid',
-				category: images,
-			},
-			{
-				id: 5691,
-				name: 'Three logos, heading, and paragraphs',
-				category: images,
-			},
-			{
-				id: 7143,
-				name: 'Full-width image',
-				category: images,
-			},
-			{
-				id: 737,
-				name: 'Logos',
-				category: images,
-			},
-			{
-				id: 1585,
-				name: 'Quote and logos',
-				category: images,
-			},
-			{
-				id: 7135,
-				name: 'Three columns with images and text',
-				category: list,
-			},
-			{
-				id: 789,
-				name: 'Numbered list',
-				category: list,
-			},
-			{
-				id: 6712,
-				name: 'List of events',
-				category: list,
-			},
-			{
-				id: 5666,
-				name: 'Large numbers, heading, and paragraphs',
-				category: numbers,
-			},
-			{
-				id: 462,
-				name: 'Numbers',
-				category: numbers,
-			},
-			{
-				id: 6309,
-				name: '6309',
-				category: about,
-			},
-			{
-				id: 6306,
-				name: 'Names List',
-				category: about,
-			},
-			{
-				id: 5663,
-				name: 'Large headline',
-				category: about,
-			},
-			{
-				id: 7140,
-				name: 'Left-aligned headline',
-				category: about,
-			},
-			{
-				id: 7138,
-				name: 'Centered headline and text',
-				category: about,
-			},
-			{
-				id: 7161,
-				name: 'Two testimonials side by side',
-				category: testimonials,
-			},
-			{
-				id: 6307,
-				name: '3 Column Testimonials',
-				category: testimonials,
-			},
-			{
-				id: 6324,
-				name: 'Two Column Testimonials',
-				category: testimonials,
-			},
-			{
-				id: 1600,
-				name: 'Three column text and links',
-				category: links,
-			},
-			{
-				id: 6323,
-				name: "FAQ's",
-				category: services,
-			},
-			{
-				id: 3743,
-				name: 'Simple Two Column Layout',
-				category: services,
-			},
-			{
-				id: 39,
-				name: 'Topics with Image',
-				category: services,
-			},
-			{
-				id: 6313,
-				name: 'Portfolio Intro',
-				category: portfolio,
-			},
-			{
-				id: 6314,
-				name: 'Centered Intro',
-				category: portfolio,
-			},
-			{
-				id: 6315,
-				name: 'Large Intro Text',
-				category: portfolio,
-			},
-			{
-				id: 6316,
-				name: 'Squared Media & Text',
-				category: portfolio,
-			},
-			{
-				id: 6317,
-				name: 'Horizontal Media & Text',
-				category: portfolio,
-			},
-			{
-				id: 6318,
-				name: 'Offset Projects',
-				category: portfolio,
-			},
-			{
-				id: 6319,
-				name: 'Case Study',
-				category: portfolio,
-			},
-			{
-				id: 6320,
-				name: 'Heading with two images and descriptions',
-				category: portfolio,
-			},
-			{
-				id: 6321,
-				name: 'CV Text Grid',
-				category: portfolio,
-			},
-			{
-				id: 6322,
-				name: 'Tall Item One Column',
-				category: portfolio,
-			},
-		],
+		() =>
+			[
+				{
+					id: 7156,
+					name: 'Media and text with image on the right',
+					category: callToAction,
+				},
+				{
+					id: 7153,
+					name: 'Media and text with image on the left',
+					category: callToAction,
+				},
+				{
+					id: 7146,
+					name: 'Four column list',
+					category: callToAction,
+				},
+				{
+					id: 7132,
+					name: 'Cover image with left-aligned call to action',
+					category: callToAction,
+				},
+				{
+					id: 7159,
+					name: 'Cover image with centered text and a button',
+					category: callToAction,
+				},
+				{
+					id: 3741,
+					name: 'Large CTA',
+					category: callToAction,
+				},
+				{
+					id: 6303,
+					name: 'Two Buttons Centered CTA',
+					category: callToAction,
+				},
+				{
+					id: 6304,
+					name: 'Centered Heading with CTA',
+					category: callToAction,
+				},
+				{
+					id: 6311,
+					name: 'Portfolio Project',
+					category: callToAction,
+				},
+				{
+					id: 3747,
+					name: 'Hero with CTA',
+					category: callToAction,
+				},
+				{
+					id: 6308,
+					name: 'Cover Image with CTA',
+					category: callToAction,
+				},
+				{
+					id: 6310,
+					name: 'Gallery with description on the left',
+					category: callToAction,
+				},
+				{
+					id: 6312,
+					name: 'Two Column CTA',
+					category: callToAction,
+				},
+				{
+					id: 5645,
+					name: 'Four Recent Blog Posts',
+					category: posts,
+				},
+				{
+					id: 1784,
+					name: 'Recent Posts',
+					category: posts,
+				},
+				{
+					id: 8421,
+					name: 'Grid of posts 2x3',
+					category: posts,
+				},
+				{
+					id: 8435,
+					name: 'Grid of Posts 3x2',
+					category: posts,
+				},
+				{
+					id: 7996,
+					name: 'Grid of Posts 4x2',
+					category: posts,
+				},
+				{
+					id: 8437,
+					name: 'List of posts',
+					category: posts,
+				},
+				{
+					id: 3213,
+					name: 'Latest podcast episodes',
+					category: posts,
+				},
+				{
+					id: 6305,
+					name: 'Heading with Image Grid',
+					category: images,
+				},
+				{
+					id: 7149,
+					name: 'Two column image grid',
+					category: images,
+				},
+				{
+					id: 7149,
+					name: 'Two column image grid',
+					category: images,
+				},
+				{
+					id: 5691,
+					name: 'Three logos, heading, and paragraphs',
+					category: images,
+				},
+				{
+					id: 7143,
+					name: 'Full-width image',
+					category: images,
+				},
+				{
+					id: 737,
+					name: 'Logos',
+					category: images,
+				},
+				{
+					id: 1585,
+					name: 'Quote and logos',
+					category: images,
+				},
+				{
+					id: 7135,
+					name: 'Three columns with images and text',
+					category: list,
+				},
+				{
+					id: 789,
+					name: 'Numbered list',
+					category: list,
+				},
+				{
+					id: 6712,
+					name: 'List of events',
+					category: list,
+				},
+				{
+					id: 5666,
+					name: 'Large numbers, heading, and paragraphs',
+					category: numbers,
+				},
+				{
+					id: 462,
+					name: 'Numbers',
+					category: numbers,
+				},
+				{
+					id: 6309,
+					name: '6309',
+					category: about,
+				},
+				{
+					id: 6306,
+					name: 'Names List',
+					category: about,
+				},
+				{
+					id: 5663,
+					name: 'Large headline',
+					category: about,
+				},
+				{
+					id: 7140,
+					name: 'Left-aligned headline',
+					category: about,
+				},
+				{
+					id: 7138,
+					name: 'Centered headline and text',
+					category: about,
+				},
+				{
+					id: 7161,
+					name: 'Two testimonials side by side',
+					category: testimonials,
+				},
+				{
+					id: 6307,
+					name: '3 Column Testimonials',
+					category: testimonials,
+				},
+				{
+					id: 6324,
+					name: 'Two Column Testimonials',
+					category: testimonials,
+				},
+				{
+					id: 1600,
+					name: 'Three column text and links',
+					category: links,
+				},
+				{
+					id: 6323,
+					name: "FAQ's",
+					category: services,
+				},
+				{
+					id: 3743,
+					name: 'Simple Two Column Layout',
+					category: services,
+				},
+				{
+					id: 39,
+					name: 'Topics with Image',
+					category: services,
+				},
+				{
+					id: 6313,
+					name: 'Portfolio Intro',
+					category: portfolio,
+				},
+				{
+					id: 6314,
+					name: 'Centered Intro',
+					category: portfolio,
+				},
+				{
+					id: 6315,
+					name: 'Large Intro Text',
+					category: portfolio,
+				},
+				{
+					id: 6316,
+					name: 'Squared Media & Text',
+					category: portfolio,
+				},
+				{
+					id: 6317,
+					name: 'Horizontal Media & Text',
+					category: portfolio,
+				},
+				{
+					id: 6318,
+					name: 'Offset Projects',
+					category: portfolio,
+				},
+				{
+					id: 6319,
+					name: 'Case Study',
+					category: portfolio,
+				},
+				{
+					id: 6320,
+					name: 'Heading with two images and descriptions',
+					category: portfolio,
+				},
+				{
+					id: 6321,
+					name: 'CV Text Grid',
+					category: portfolio,
+				},
+				{
+					id: 6322,
+					name: 'Tall Item One Column',
+					category: portfolio,
+				},
+			].filter(
+				( { category } ) => isEnabled( 'pattern-assembler/write-flow' ) || category !== posts
+			),
 		[]
 	);
 

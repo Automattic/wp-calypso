@@ -159,7 +159,7 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 	} );
 	const boost = translate( 'Boost' );
 	const socialBasic = translate( 'Social Basic', { context: 'Jetpack product name' } );
-	const socialAdvanced = translate( 'Social Advanced Beta', { context: 'Jetpack product name' } );
+	const socialAdvanced = translate( 'Social Advanced (Beta)', { context: 'Jetpack product name' } );
 
 	const text10gb = translate( '%(numberOfGigabytes)dGB', '%(numberOfGigabytes)dGB', {
 		comment:
@@ -659,9 +659,8 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 	const socialLightboxDescription = translate(
 		'Easily share your website content on your social media channels from one place.'
 	);
-	//TODO: Fill the right value.
 	const socialAdvancedLightboxDescription = translate(
-		'Easily share your website content on your social media channels from one place.'
+		'Easily share your website content on your social media channels from one place. Enjoy using the advanced plan for half price over the next year while we continue to develop the features.'
 	);
 
 	return {

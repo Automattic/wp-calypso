@@ -50,9 +50,10 @@ export function requestThemes( siteId, query = {}, locale ) {
 						{
 							...query,
 							apiVersion: '1.2',
-							include_blankcanvas_theme: config.isEnabled( 'pattern-assembler/logged-out-showcase' )
-								? 'true'
-								: null,
+							// We should keep the blank-canvas-3 stay hidden according to below discussion
+							// https://github.com/Automattic/wp-calypso/issues/71911#issuecomment-1381284172
+							// User can be redirected to PatternAssembler flow using the PatternAssemblerCTA on theme-list
+							include_blankcanvas_theme: null,
 							include_marketplace_themes: config.isEnabled( 'themes/third-party-premium' )
 								? 'true'
 								: null,

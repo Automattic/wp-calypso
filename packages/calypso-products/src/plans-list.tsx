@@ -692,12 +692,14 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		},
 	} ),
 } );
+const is2023OnboardingPricingGrid = isEnabled( 'onboarding/2023-pricing-grid' );
 
 const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
 	group: GROUP_WPCOM,
 	type: TYPE_ECOMMERCE,
-	getTitle: () => i18n.translate( 'eCommerce' ),
+	getTitle: () =>
+		is2023OnboardingPricingGrid ? i18n.translate( 'Commerce' ) : i18n.translate( 'eCommerce' ),
 	getAudience: () => i18n.translate( 'Best for online stores' ),
 	getBlogAudience: () => i18n.translate( 'Best for online stores' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for online stores' ),
@@ -2027,6 +2029,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_BUSINESS,
 				PLAN_BUSINESS_2_YEARS,
 				PLAN_WPCOM_PRO_MONTHLY,
+				PLAN_ECOMMERCE_TRIAL_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1021,
 		getStoreSlug: () => PLAN_ECOMMERCE_MONTHLY,
@@ -2055,6 +2058,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_BUSINESS_2_YEARS,
 				PLAN_ECOMMERCE_MONTHLY,
 				PLAN_WPCOM_PRO_MONTHLY,
+				PLAN_ECOMMERCE_TRIAL_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1011,
 		getStoreSlug: () => PLAN_ECOMMERCE,
@@ -2084,6 +2088,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_ECOMMERCE_MONTHLY,
 				PLAN_ECOMMERCE,
 				PLAN_WPCOM_PRO_MONTHLY,
+				PLAN_ECOMMERCE_TRIAL_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1031,
 		getStoreSlug: () => PLAN_ECOMMERCE_2_YEARS,
@@ -2128,6 +2133,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_ECOMMERCE,
 				PLAN_ECOMMERCE_2_YEARS,
 				PLAN_WPCOM_PRO_MONTHLY,
+				PLAN_ECOMMERCE_TRIAL_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1051,
 		getStoreSlug: () => PLAN_ECOMMERCE_3_YEARS,
