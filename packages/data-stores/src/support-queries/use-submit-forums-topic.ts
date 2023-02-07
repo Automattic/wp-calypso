@@ -1,5 +1,6 @@
+import apiFetch, { APIFetchOptions } from '@wordpress/api-fetch';
 import { useMutation } from 'react-query';
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { AnalysisReport } from '../queries/use-site-analysis';
 import { SiteDetails } from '../site';
 
@@ -11,10 +12,6 @@ type ForumTopic = {
 	hideInfo: boolean;
 	userDeclaredSiteUrl?: string;
 	ownershipResult: AnalysisReport;
-};
-
-type Response = {
-	topic_URL: string;
 };
 
 export function useSubmitForumsMutation() {
@@ -54,18 +51,25 @@ export function useSubmitForumsMutation() {
 				subject,
 				message: forumMessage,
 				locale,
-				client: 'help-center',
 				hide_blog_info: hideInfo,
 				blog_id: site?.ID,
 				blog_url: site?.URL,
 			};
 
-			return wpcomRequest< Response >( {
-				path: '/help/forums/support/topics/new',
-				apiVersion: '1.1',
-				method: 'POST',
-				body: requestData,
-			} );
+			return canAccessWpcomApis()
+				? wpcomRequest( {
+						path: 'help/forum/new',
+						apiNamespace: 'wpcom/v2/',
+						apiVersion: '2',
+						method: 'POST',
+						body: requestData,
+				  } )
+				: apiFetch( {
+						global: true,
+						path: '/help-center/forum/new',
+						method: 'POST',
+						data: requestData,
+				  } as APIFetchOptions );
 		}
 	);
 }

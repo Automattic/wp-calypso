@@ -178,6 +178,10 @@ class Help_Center {
 		require_once __DIR__ . '/class-wp-rest-help-center-ticket.php';
 		$controller = new WP_REST_Help_Center_Ticket();
 		$controller->register_rest_route();
+
+		require_once __DIR__ . '/class-wp-rest-help-center-forum.php';
+		$controller = new WP_REST_Help_Center_Forum();
+		$controller->register_rest_route();
 	}
 
 	/**
