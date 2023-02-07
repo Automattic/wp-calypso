@@ -19,26 +19,30 @@ export default function TrialFeatureCard( props: Props ) {
 
 	const [ expanded, setExpanded ] = useState( !! props.expanded );
 
-	const toggle = () => {
+	const toggleExpanded = () => {
 		setExpanded( ! expanded );
 	};
 
 	return (
-		<Card className="trial-feature-card__card">
+		<Card className="trial-feature-card">
 			<img className="trial-feature-card__illustration" alt={ title } src={ illustration } />
-			<div className="trial-feature-card__text">
-				<div className="trial-feature-card__title">{ title }</div>
-				<div className="trial-feature-card__subtitle">{ subtitle }</div>
+			<div className="trial-feature-card__content">
+				<div className="trial-feature-card__content-title">{ title }</div>
+				<div className="trial-feature-card__content-subtitle">{ subtitle }</div>
 				{ expanded && (
-					<div className="trial-feature-card__items-wrapper">
+					<div className="trial-feature-card__content-items">
 						{ items.map( ( item ) => (
-							<div key={ item.title } className="trial-feature-card__item">
-								<div className="trial-feature-card__item-icon">
+							<div key={ item.title } className="trial-feature-card__content-items-item">
+								<div className="trial-feature-card__content-items-item-icon">
 									<Gridicon icon="checkmark" size={ 18 } />
 								</div>
-								<div className="trial-feature-card__item-content">
-									<div className="trial-feature-card__item-content-title">{ item.title }</div>
-									<div className="trial-feature-card__item-content-subtitle">{ item.subtitle }</div>
+								<div className="trial-feature-card__content-items-item-content">
+									<div className="trial-feature-card__content-items-item-content-title">
+										{ item.title }
+									</div>
+									<div className="trial-feature-card__content-items-item-content-subtitle">
+										{ item.subtitle }
+									</div>
 								</div>
 							</div>
 						) ) }
@@ -47,9 +51,9 @@ export default function TrialFeatureCard( props: Props ) {
 			</div>
 			<div className="trial-feature-card__accordion-toggle">
 				{ expanded ? (
-					<Gridicon icon="chevron-down" size={ 16 } onClick={ toggle } />
+					<Gridicon icon="chevron-down" size={ 16 } onClick={ toggleExpanded } />
 				) : (
-					<Gridicon icon="chevron-up" size={ 16 } onClick={ toggle } />
+					<Gridicon icon="chevron-up" size={ 16 } onClick={ toggleExpanded } />
 				) }
 			</div>
 		</Card>
