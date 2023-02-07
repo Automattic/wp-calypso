@@ -22,6 +22,7 @@ export interface IntroModalContentProps {
 
 export interface IntroModal {
 	buttonText: string;
+	onClick?: () => void;
 	content?: React.FC< IntroModalContentProps >;
 }
 
@@ -35,6 +36,9 @@ const Intro: React.FC< Props > = ( { onSubmit, introContent } ) => {
 
 	const handleMoreClick = () => {
 		setShowModal( true );
+		if ( modal && modal.onClick ) {
+			modal.onClick();
+		}
 	};
 
 	const handleModalClose = () => {
