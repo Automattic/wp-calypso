@@ -105,10 +105,10 @@ export default function () {
 	statsStrings.publicize = {
 		title: translate( 'Publicize', { context: 'Stats: title of module' } ),
 		item: translate( 'Service', { context: 'Stats: module row header for publicize service.' } ),
-		value: translate( 'Followers', {
-			context: 'Stats: module row header for number of followers on the service.',
+		value: translate( 'Subscribers', {
+			context: 'Stats: module row header for number of subscribers on the service.',
 		} ),
-		empty: translate( 'No publicize followers recorded', {
+		empty: translate( 'No publicize subscribers recorded', {
 			context: 'Stats: Info box label when the publicize module is empty',
 		} ),
 	};
