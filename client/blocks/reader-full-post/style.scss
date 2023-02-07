@@ -158,8 +158,12 @@
 	color: var(--color-neutral-70);
 	font-size: rem(17px);
 	line-height: 28px;
+
 	figure.wp-block-table {
 		overflow: auto;
+	}
+	.has-text-align-center {
+		text-align: center;
 	}
 }
 
