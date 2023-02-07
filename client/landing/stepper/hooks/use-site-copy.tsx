@@ -53,7 +53,8 @@ export const useSiteCopy = (
 		return siteFeatures ? siteFeatures : { isRequesting: true };
 	} );
 	const isAtomic = useSelect(
-		( select ) => site && ! options.disabled && select( SITE_STORE ).isSiteAtomic( site?.ID )
+		( select ) => site && ! options.disabled && select( SITE_STORE ).isSiteAtomic( site?.ID ),
+		[ site?.ID, options.disabled ]
 	);
 	const plan = site?.plan;
 	const isSiteOwner = site?.site_owner === userId;
