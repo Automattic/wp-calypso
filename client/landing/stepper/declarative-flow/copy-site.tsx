@@ -80,9 +80,16 @@ const copySite: Flow = {
 			recordFullStoryEvent( 'calypso_signup_start_copy_site', { flow: this.name } );
 		}, [] );
 
+		const urlQueryParams = useQuery();
+		const siteSlug = urlQueryParams.get( 'siteSlug' );
+
 		return [
-			{ slug: 'domains', component: DomainsStep },
-			{ slug: 'site-creation-step', component: SiteCreationStep },
+			...( ! siteSlug
+				? [
+						{ slug: 'domains', component: DomainsStep },
+						{ slug: 'site-creation-step', component: SiteCreationStep },
+				  ]
+				: [] ),
 			{ slug: 'processing', component: ProcessingStep },
 			{ slug: 'automated-copy', component: AutomatedCopySite },
 			{
@@ -114,7 +121,9 @@ const copySite: Flow = {
 
 			switch ( _currentStepSlug ) {
 				case 'domains': {
-					return navigate( 'site-creation-step' );
+					return navigate( 'site-creation-step', {
+						sourceSlug: urlQueryParams.get( 'sourceSlug' ),
+					} );
 				}
 
 				case 'site-creation-step': {
@@ -122,17 +131,18 @@ const copySite: Flow = {
 				}
 
 				case 'processing': {
+					const siteSlug = providedDependencies?.siteSlug || urlQueryParams.get( 'siteSlug' );
 					const destination = addQueryArgs( `/setup/${ this.name }/automated-copy`, {
 						sourceSlug: urlQueryParams.get( 'sourceSlug' ),
-						siteSlug: providedDependencies?.siteSlug,
+						siteSlug: siteSlug,
 					} );
 					persistSignupDestination( destination );
-					setSignupCompleteSlug( providedDependencies?.siteSlug );
+					setSignupCompleteSlug( siteSlug );
 					setSignupCompleteFlowName( flowName );
 					const returnUrl = encodeURIComponent( destination );
 					return window.location.assign(
 						`/checkout/${ encodeURIComponent(
-							( providedDependencies?.siteSlug as string ) ?? ''
+							( siteSlug as string ) ?? ''
 						) }?redirect_to=${ returnUrl }&signup=1`
 					);
 				}
@@ -161,7 +171,11 @@ const copySite: Flow = {
 			navigate( step );
 		};
 
-		return { goNext, goBack, goToStep, submit };
+		const exitFlow = ( location = '/sites' ) => {
+			window.location.assign( location );
+		};
+
+		return { goNext, goBack, goToStep, submit, exitFlow };
 	},
 
 	useAssertConditions() {
