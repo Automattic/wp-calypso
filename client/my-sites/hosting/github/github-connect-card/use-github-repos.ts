@@ -1,15 +1,15 @@
-import { useQuery } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import wp from 'calypso/lib/wp';
 
-export const USE_GITHUB_REPOS_QUERY_KEY = 'github-repos-query-key';
+const USE_GITHUB_REPOS_QUERY_KEY = 'github-repos-query-key';
 
 export interface Repo {
 	name: string;
 	full_name: string;
 }
 
-export const useGithubRepos = ( siteId: number | null ) => {
-	return useQuery(
+export const useGithubRepos = ( siteId: number | null, options?: UseQueryOptions< Repo[] > ) => {
+	return useQuery< Repo[] >(
 		[ USE_GITHUB_REPOS_QUERY_KEY, siteId ],
 		(): Repo[] =>
 			wp.req.get( {
@@ -26,6 +26,7 @@ export const useGithubRepos = ( siteId: number | null ) => {
 			meta: {
 				persist: false,
 			},
+			...options,
 		}
 	);
 };

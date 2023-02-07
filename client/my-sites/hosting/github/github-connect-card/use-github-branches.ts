@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import wp from 'calypso/lib/wp';
 
 const USE_GITHUB_BRANCHES_QUERY_KEY = 'github-branches-query-key';
@@ -7,8 +7,12 @@ export type RepoBranch = {
 	name: string;
 };
 
-export const useGithubBranches = ( siteId: number | null, repoName: string | undefined ) => {
-	return useQuery(
+export const useGithubBranches = (
+	siteId: number | null,
+	repoName: string | undefined,
+	options?: UseQueryOptions< RepoBranch[] >
+) => {
+	return useQuery< RepoBranch[] >(
 		[ USE_GITHUB_BRANCHES_QUERY_KEY, repoName, siteId ],
 		(): RepoBranch[] =>
 			wp.req.get( {
@@ -24,6 +28,7 @@ export const useGithubBranches = ( siteId: number | null, repoName: string | und
 			meta: {
 				persist: false,
 			},
+			...options,
 			cacheTime: CACHE_TIME,
 		}
 	);
