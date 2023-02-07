@@ -1,7 +1,13 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .trial-feature-card {
 	display: flex;
 	padding: 24px;
 	margin: 0;
+
+	@media (max-width: $break-mobile) {
+		padding: 24px 16px;
+	}
 
 	&:last-child {
 		border-radius: 0 0 2px 2px;
@@ -10,6 +16,10 @@
 	&__illustration {
 		width: 115px;
 		height: 65px;
+
+		@media (max-width: $break-mobile) {
+			display: none;
+		}
 	}
 
 	&__content {
@@ -18,18 +28,31 @@
 		flex-direction: column;
 		padding: 5px 25px;
 
+		@media (max-width: $break-mobile) {
+			padding: 0;
+		}
+
 
 		&-title {
 			font-size: $font-title-small;
+			font-weight: 500;
 		}
 
 		&-subtitle {
 			font-size: $font-body;
 			color: var(--color-neutral-40);
+
+			@media (max-width: $break-mobile) {
+				display: none;
+			}
 		}
 
 		&-items {
 			margin-top: 45px;
+
+			@media (max-width: $break-mobile) {
+				margin-top: 30px;
+			}
 
 			&-item {
 				display: flex;
@@ -68,7 +91,7 @@
 		.gridicons-chevron-down,
 		.gridicons-chevron-up {
 			cursor: pointer;
-			padding: 15px;
+			padding: 4px;
 			fill: var(--color-neutral-90);
 		}
 	}

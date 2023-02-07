@@ -89,6 +89,7 @@ body.is-section-plans.is-trial-plan {
 		@media (max-width: $break-mobile) {
 			flex-direction: column;
 			margin: 0 20px;
+			padding: 32px 20px;
 		}
 
 		.e-commerce-trial-plans__price-card-text {
@@ -157,9 +158,10 @@ body.is-section-plans.is-trial-plan {
 			}
 
 			.e-commerce-trial-plans__price-card-savings {
-				color: #306e27;
+				color: var(--color-success-60);
 				font-size: $font-body-extra-small;
 				font-weight: 600;
+				padding: 5px 0;
 			}
 		}
 	}
