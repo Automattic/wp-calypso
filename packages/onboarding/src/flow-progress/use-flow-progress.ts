@@ -60,7 +60,8 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		senseiSetup: 1,
 		senseiDomain: 2,
 		senseiPlan: 3,
-		senseiLaunch: 4,
+		senseiPurpose: 4,
+		senseiLaunch: 5,
 	},
 	[ ECOMMERCE_FLOW ]: {
 		intro: 0,

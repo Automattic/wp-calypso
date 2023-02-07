@@ -23,8 +23,8 @@ import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import wpcom from 'calypso/lib/wp';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import { SenseiStepContainer } from '../components/sensei-step-container';
-import { SenseiStepError } from '../sensei-setup/sensei-step-error';
-import { SenseiStepProgress, Progress } from '../sensei-setup/sensei-step-progress';
+import { SenseiStepError } from '../components/sensei-step-error';
+import { SenseiStepProgress, Progress } from '../components/sensei-step-progress';
 import { Tagline, Title, PlansIntervalToggle } from './components';
 import { Status, features } from './constants';
 import type { Step } from '../../types';
@@ -185,7 +185,7 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 			setSelectedSite( newSite?.blogid );
 			await Promise.all( [
 				setIntentOnSite( newSite?.site_slug as string, SENSEI_FLOW ),
-				saveSiteSettings( newSite?.blogid as number, { launchpad_screen: 'full' } ),
+				saveSiteSettings( newSite?.blogid as number, { launchpad_screen: 'off' } ),
 			] );
 
 			setProgress( {
@@ -246,7 +246,7 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 
 			await cartManagerClient.forCartKey( cartKey ).actions.addProductsToCart( productsToAdd );
 			const redirectTo = encodeURIComponent(
-				`/setup/sensei/senseiLaunch?siteSlug=${ newSite?.site_slug }&siteId=${ newSite?.blogid }`
+				`/setup/sensei/senseiPurpose?siteSlug=${ newSite?.site_slug }&siteId=${ newSite?.blogid }`
 			);
 
 			return window.location.replace(
@@ -273,7 +273,7 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 	// translators: %s is the cost per year (e.g "billed as 96$ annually")
 	const newPlanItemPriceLabelAnnually = __( 'per month, billed as %s annually' );
 
-	const fallbackPlanItemPriceLabelAnnually = __( 'billed annually' );
+	const fallbackPlanItemPriceLabelAnnually = __( 'per month, billed annually' );
 
 	const planItemPriceLabelAnnually =
 		locale === 'en' || hasTranslation?.( 'per month, billed as %s annually' )
