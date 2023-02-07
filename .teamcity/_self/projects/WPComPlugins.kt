@@ -105,7 +105,7 @@ object BuildPlugins: BuildType({
 				export NODE_ENV="development"
 
 				# Run `yarn build` for the plugins specified in the glob.
-				yarn workspaces foreach --verbose --parallel --include '{happy-blocks,@automattic/notifications}' run build
+				yarn workspaces foreach --verbose --parallel --include '{happy-blocks,@automattic/notifications}' run build-ci
 
 				# Run extra script necessary for Happy Blocks.
 				# When other plugins that need additional configuration are added,

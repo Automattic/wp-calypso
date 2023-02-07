@@ -21,7 +21,8 @@
 		"dev-server": "NODE_ENV=development webpack serve",
 		"start": "yarn run clean && yarn run build:notifications && yarn run dev-server",
 		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/notifications",
-		"build": "NODE_ENV=production yarn dev"
+		"build": "NODE_ENV=production yarn dev",
+		"build-ci": "yarn build && ./bin/prepArtifactForCI.sh"
 	},
 	"dependencies": {
 		"@automattic/calypso-color-schemes": "workspace:^",
