@@ -246,6 +246,9 @@ export const SitesEllipsisMenu = ( {
 	site: SiteExcerptData;
 } ) => {
 	const dispatch = useReduxDispatch();
+	const [ inViewOnce, setInViewOnce ] = useState( false );
+	const ref = useInView< HTMLTableCellElement >( () => setInViewOnce( true ) );
+
 	const { __ } = useI18n();
 	const props: SitesMenuItemProps = {
 		site,
@@ -255,27 +258,29 @@ export const SitesEllipsisMenu = ( {
 	};
 
 	const showHosting = ! isNotAtomicJetpack( site ) && ! site.options?.is_wpforteams_site;
-	const { shouldShowSiteCopyItem, startSiteCopy } = useSiteCopy( site );
+	const { shouldShowSiteCopyItem, startSiteCopy } = useSiteCopy( site, { disabled: ! inViewOnce } );
 
 	return (
-		<SiteDropdownMenu
-			icon={ <Gridicon icon="ellipsis" /> }
-			className={ className }
-			label={ __( 'Site Actions' ) }
-		>
-			{ () => (
-				<SiteMenuGroup>
-					{ site.launch_status === 'unlaunched' && <LaunchItem { ...props } /> }
-					<SettingsItem { ...props } />
-					<ManagePluginsItem { ...props } />
-					{ showHosting && <HostingConfigItem { ...props } /> }
-					{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
-					{ isEnabled( 'sites/copy-site' ) && shouldShowSiteCopyItem && (
-						<CopySiteItem recordTracks={ startSiteCopy } site={ site } />
-					) }
-					<WpAdminItem { ...props } />
-				</SiteMenuGroup>
-			) }
-		</SiteDropdownMenu>
+		<div ref={ ref }>
+			<SiteDropdownMenu
+				icon={ <Gridicon icon="ellipsis" /> }
+				className={ className }
+				label={ __( 'Site Actions' ) }
+			>
+				{ () => (
+					<SiteMenuGroup>
+						{ site.launch_status === 'unlaunched' && <LaunchItem { ...props } /> }
+						<SettingsItem { ...props } />
+						<ManagePluginsItem { ...props } />
+						{ showHosting && <HostingConfigItem { ...props } /> }
+						{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
+						{ isEnabled( 'sites/copy-site' ) && shouldShowSiteCopyItem && (
+							<CopySiteItem recordTracks={ startSiteCopy } site={ site } />
+						) }
+						<WpAdminItem { ...props } />
+					</SiteMenuGroup>
+				) }
+			</SiteDropdownMenu>
+		</div>
 	);
 };

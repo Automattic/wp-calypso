@@ -2,9 +2,8 @@ import { useSiteLaunchStatusLabel, getSiteLaunchStatus } from '@automattic/sites
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import { AnchorHTMLAttributes, memo, useState } from 'react';
+import { AnchorHTMLAttributes, memo } from 'react';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
-import { useInView } from 'calypso/lib/use-in-view';
 import { displaySiteUrl, getDashboardUrl } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import { SitesGridActionRenew } from './sites-grid-action-renew';
@@ -73,8 +72,6 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 
 	const isP2Site = site.options?.is_wpforteams_site;
 	const translatedStatus = useSiteLaunchStatusLabel( site );
-	const [ inViewOnce, setInViewOnce ] = useState( false );
-	const ref = useInView< HTMLTableCellElement >( () => setInViewOnce( true ) );
 
 	const siteDashboardUrlProps: AnchorHTMLAttributes< HTMLAnchorElement > = {
 		href: getDashboardUrl( site.slug ),
@@ -109,12 +106,12 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 						{ site.title }
 					</SiteName>
 
-					<div className={ badges } ref={ ref }>
+					<div className={ badges }>
 						{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
 						{ getSiteLaunchStatus( site ) !== 'public' && (
 							<SitesLaunchStatusBadge>{ translatedStatus }</SitesLaunchStatusBadge>
 						) }
-						{ inViewOnce && <SitesEllipsisMenu className={ ellipsis } site={ site } /> }
+						<SitesEllipsisMenu className={ ellipsis } site={ site } />
 					</div>
 				</>
 			}

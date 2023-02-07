@@ -17,14 +17,18 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
-function useSafeSiteHasFeature( siteId: number | undefined, feature: string ) {
+interface SiteCopyOptions {
+	disabled: boolean;
+}
+
+function useSafeSiteHasFeature( siteId: number | undefined, feature: string, disabled = false ) {
 	const dispatch = useReduxDispatch();
 	useEffect( () => {
-		if ( ! siteId ) {
+		if ( ! siteId || disabled ) {
 			return;
 		}
 		dispatch( fetchSiteFeatures( siteId ) );
-	}, [ dispatch, siteId ] );
+	}, [ dispatch, siteId, disabled ] );
 
 	return useSelector( ( state ) => {
 		if ( ! siteId ) {
@@ -35,19 +39,26 @@ function useSafeSiteHasFeature( siteId: number | undefined, feature: string ) {
 }
 
 export const useSiteCopy = (
-	site: Pick< SiteExcerptData, 'ID' | 'site_owner' | 'plan' > | undefined
+	site: Pick< SiteExcerptData, 'ID' | 'site_owner' | 'plan' > | undefined,
+	options: SiteCopyOptions = { disabled: false }
 ) => {
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
-	const hasCopySiteFeature = useSafeSiteHasFeature( site?.ID, WPCOM_FEATURES_COPY_SITE );
+	const hasCopySiteFeature = useSafeSiteHasFeature(
+		site?.ID,
+		WPCOM_FEATURES_COPY_SITE,
+		options.disabled
+	);
 	const { isRequesting: isRequestingSiteFeatures } = useSelector( ( state ) => {
 		const siteFeatures = getSiteFeatures( state, site?.ID );
 		return siteFeatures ? siteFeatures : { isRequesting: true };
 	} );
-	const isAtomic = useSelect( ( select ) => site && select( SITE_STORE ).isSiteAtomic( site?.ID ) );
+	const isAtomic = useSelect(
+		( select ) => site && ! options.disabled && select( SITE_STORE ).isSiteAtomic( site?.ID )
+	);
 	const plan = site?.plan;
 	const isSiteOwner = site?.site_owner === userId;
 
-	useQueryUserPurchases();
+	useQueryUserPurchases( options.disabled );
 	const isLoadingPurchases = useSelector(
 		( state ) => isFetchingUserPurchases( state ) || ! hasLoadedUserPurchasesFromServer( state )
 	);
