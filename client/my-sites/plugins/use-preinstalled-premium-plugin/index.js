@@ -4,7 +4,7 @@ import { useQuerySitePurchases } from 'calypso/components/data/query-site-purcha
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import { getSitesWithPlugin } from 'calypso/state/plugins/installed/selectors';
-import { getSitePurchases, isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
+import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
 import isPluginActive from 'calypso/state/selectors/is-plugin-active';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -21,8 +21,6 @@ export default function usePreinstalledPremiumPlugin( pluginSlug ) {
 	const billingPeriod = useSelector( getBillingInterval );
 
 	useQuerySitePurchases( selectedSiteId );
-
-	const isFetchingPreinstalledPremiumPluginData = useSelector( isFetchingSitePurchases );
 
 	const isPreinstalledPremiumPluginUpgraded = useSelector(
 		( state ) =>
@@ -101,6 +99,5 @@ export default function usePreinstalledPremiumPlugin( pluginSlug ) {
 		sitesWithPreinstalledPremiumPlugin,
 		isPreinstalledPremiumPluginFreeInstalled,
 		isPreinstalledPremiumPluginPaidInstalled,
-		isFetchingPreinstalledPremiumPluginData,
 	};
 }

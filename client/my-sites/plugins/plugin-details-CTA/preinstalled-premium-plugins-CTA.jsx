@@ -37,7 +37,6 @@ export default function PluginDetailsCTAPreinstalledPremiumPlugins( {
 		preinstalledPremiumPluginProduct,
 		isPreinstalledPremiumPluginFreeInstalled,
 		isPreinstalledPremiumPluginPaidInstalled,
-		isFetchingPreinstalledPremiumPluginData,
 	} = usePreinstalledPremiumPlugin( plugin.slug );
 
 	const managedPluginMessage = (
@@ -100,10 +99,6 @@ export default function PluginDetailsCTAPreinstalledPremiumPlugins( {
 			/>
 		</div>
 	);
-
-	if ( isFetchingPreinstalledPremiumPluginData ) {
-		return null;
-	}
 
 	if ( isPreinstalledPremiumPluginPaidInstalled ) {
 		return managedPluginMessage;
