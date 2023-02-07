@@ -12,9 +12,11 @@ import { checkoutTheme } from '@automattic/composite-checkout';
 import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
 import { ThemeProvider } from '@emotion/react';
 import { render, screen, waitFor } from '@testing-library/react';
+import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import WPCheckoutOrderSummary from '../components/wp-checkout-order-summary';
+import getJetpackProductFeatures from '../lib/get-jetpack-product-features';
 import {
 	mockSetCartEndpointWith,
 	mockGetCartEndpointWith,
@@ -32,13 +34,9 @@ jest.mock( '@automattic/calypso-config', () => {
 	return mock;
 } );
 
-const jetpackBackupFeatureList = [
-	'Real-time cloud backups',
-	'10GB of backup storage',
-	'30-day archive & activity log',
-	'One-click restores',
-	'Priority support',
-];
+const translate: ( original: string ) => string = ( original ) => {
+	return original;
+};
 
 describe( 'WPCheckoutOrderSummary', () => {
 	let container: HTMLDivElement | null;
@@ -91,6 +89,10 @@ describe( 'WPCheckoutOrderSummary', () => {
 			const backupT1Monthly = convertProductSlugToResponseProduct(
 				PRODUCT_JETPACK_BACKUP_T1_MONTHLY
 			);
+			const productFeatures = getJetpackProductFeatures(
+				backupT1Monthly,
+				translate as ReturnType< typeof useTranslate >
+			);
 			const cartChanges = {
 				products: [ backupT1Monthly ],
 			};
@@ -98,7 +100,7 @@ describe( 'WPCheckoutOrderSummary', () => {
 			render( <MyCheckoutSummary cartChanges={ cartChanges } /> );
 
 			await waitFor( async () => {
-				jetpackBackupFeatureList.map( ( feature ) => {
+				productFeatures.map( ( feature ) => {
 					expect( screen.queryByText( feature ) ).toBeInTheDocument();
 				} );
 			} );
@@ -108,6 +110,10 @@ describe( 'WPCheckoutOrderSummary', () => {
 			const backupT1Yearly = convertProductSlugToResponseProduct(
 				PRODUCT_JETPACK_BACKUP_T1_YEARLY
 			);
+			const productFeatures = getJetpackProductFeatures(
+				backupT1Yearly,
+				translate as ReturnType< typeof useTranslate >
+			);
 			const cartChanges = {
 				products: [ backupT1Yearly ],
 			};
@@ -115,7 +121,7 @@ describe( 'WPCheckoutOrderSummary', () => {
 			render( <MyCheckoutSummary cartChanges={ cartChanges } /> );
 
 			await waitFor( async () => {
-				jetpackBackupFeatureList.map( ( feature ) => {
+				productFeatures.map( ( feature ) => {
 					expect( screen.queryByText( feature ) ).toBeInTheDocument();
 				} );
 			} );
@@ -124,6 +130,10 @@ describe( 'WPCheckoutOrderSummary', () => {
 		test( 'VaultPress Backup T1 related feature list does not show up if there are multiple items in the cart', async () => {
 			const backupT1Yearly = convertProductSlugToResponseProduct(
 				PRODUCT_JETPACK_BACKUP_T1_YEARLY
+			);
+			const productFeatures = getJetpackProductFeatures(
+				backupT1Yearly,
+				translate as ReturnType< typeof useTranslate >
 			);
 			const scan = convertProductSlugToResponseProduct( PRODUCT_JETPACK_SCAN );
 
@@ -134,19 +144,26 @@ describe( 'WPCheckoutOrderSummary', () => {
 			render( <MyCheckoutSummary cartChanges={ cartChanges } /> );
 
 			await waitFor( async () => {
-				jetpackBackupFeatureList.map( ( feature ) => {
+				productFeatures.map( ( feature ) => {
 					expect( screen.queryByText( feature ) ).toBeNull();
 				} );
 			} );
 		} );
 
 		test( 'VaultPress Backup T1 related feature list does not show up if the cart is empty', async () => {
+			const backupT1Yearly = convertProductSlugToResponseProduct(
+				PRODUCT_JETPACK_BACKUP_T1_YEARLY
+			);
+			const productFeatures = getJetpackProductFeatures(
+				backupT1Yearly,
+				translate as ReturnType< typeof useTranslate >
+			);
 			const cartChanges = { products: [] };
 
 			render( <MyCheckoutSummary cartChanges={ cartChanges } /> );
 
 			await waitFor( async () => {
-				jetpackBackupFeatureList.map( ( feature ) => {
+				productFeatures.map( ( feature ) => {
 					expect( screen.queryByText( feature ) ).toBeNull();
 				} );
 			} );
@@ -154,12 +171,19 @@ describe( 'WPCheckoutOrderSummary', () => {
 
 		test( 'VaultPress Backup T1 related feature list does not show up if a different Jetpack product is in cart', async () => {
 			const scan = convertProductSlugToResponseProduct( PRODUCT_JETPACK_SCAN );
+			const backupT1Yearly = convertProductSlugToResponseProduct(
+				PRODUCT_JETPACK_BACKUP_T1_YEARLY
+			);
+			const productFeatures = getJetpackProductFeatures(
+				backupT1Yearly,
+				translate as ReturnType< typeof useTranslate >
+			);
 			const cartChanges = { products: [ scan ] };
 
 			render( <MyCheckoutSummary cartChanges={ cartChanges } /> );
 
 			await waitFor( async () => {
-				jetpackBackupFeatureList.map( ( feature ) => {
+				productFeatures.map( ( feature ) => {
 					expect( screen.queryByText( feature ) ).toBeNull();
 				} );
 			} );
