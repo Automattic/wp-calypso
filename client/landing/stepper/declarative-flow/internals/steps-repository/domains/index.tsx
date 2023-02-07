@@ -223,6 +223,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			isWideLayout={ true }
 			shouldStickyNavButtons={ isCopySiteFlow( flow ) }
 			hideBack={ ! isCopySiteFlow( flow ) }
+			backLabelText={ __( 'Back to Sites' ) }
 			hideSkip={ true }
 			flowName={ isCopySiteFlow( flow ) ? ( flow as string ) : 'linkInBio' }
 			stepContent={ <div className="domains__content">{ renderContent() }</div> }
