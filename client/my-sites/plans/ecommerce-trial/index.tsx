@@ -58,7 +58,7 @@ const ECommerceTrialPlans = () => {
 	const features = [
 		{
 			expanded: true,
-			illustration: '/calypso/images/me/pattern-dark.png',
+			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/general-features.png',
 			title: translate( 'General features' ),
 			subtitle: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
 			items: [
@@ -83,7 +83,7 @@ const ECommerceTrialPlans = () => {
 			],
 		},
 		{
-			illustration: '/calypso/images/me/pattern-dark.png',
+			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/payments.png',
 			title: translate( 'Payments' ),
 			subtitle: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
 			items: [
@@ -118,7 +118,7 @@ const ECommerceTrialPlans = () => {
 			],
 		},
 		{
-			illustration: '/calypso/images/me/pattern-dark.png',
+			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/product-management.png',
 			title: translate( 'Product management' ),
 			subtitle: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
 			items: [
@@ -169,7 +169,7 @@ const ECommerceTrialPlans = () => {
 			],
 		},
 		{
-			illustration: '/calypso/images/me/pattern-dark.png',
+			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/customization.png',
 			title: translate( 'Themes and customization' ),
 			subtitle: translate( 'Bring your brand to life with a fully customizable storefront.' ),
 			items: [
@@ -194,7 +194,7 @@ const ECommerceTrialPlans = () => {
 			],
 		},
 		{
-			illustration: '/calypso/images/me/pattern-dark.png',
+			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/growth.png',
 			title: translate( 'Marketing and growth' ),
 			subtitle: 'Optimize your store for sales by adding in email and social integrations.',
 			items: [
@@ -231,7 +231,7 @@ const ECommerceTrialPlans = () => {
 			],
 		},
 		{
-			illustration: '/calypso/images/me/pattern-dark.png',
+			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/shipping2.png',
 			title: translate( 'Shipping' ),
 			subtitle: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
 			items: [
