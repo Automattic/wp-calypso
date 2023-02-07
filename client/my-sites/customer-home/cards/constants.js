@@ -36,6 +36,7 @@ export const TASK_RENEW_EXPIRING_PLAN = 'home-task-renew-expiring-plan';
 export const TASK_REACTIVATE_EXPIRED_PLAN = 'home-task-reactivate-expired-plan';
 export const TASK_REACTIVATE_ATOMIC_TRANSFER = 'home-task-reactivate-atomic-transfer';
 export const TASK_REACTIVATE_RESTORE_BACKUP = 'home-task-reactivate-restore-backup';
+export const TASK_SITE_RESUME_COPY = 'home-site-resume-copy';
 export const TASK_SITE_SETUP_CHECKLIST = 'home-task-site-setup-checklist';
 export const TASK_WEBINARS = 'home-task-webinars';
 export const TASK_WP_COURSES = 'home-task-wp-courses';
