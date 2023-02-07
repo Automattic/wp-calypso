@@ -30,7 +30,7 @@ const DomainUpsellCalout = ( { trackEvent } ) => {
 
 	const getCtaClickHandler = useCallback( () => {
 		recordTracksEvent( trackEventClick );
-		page( sprintf( '/domains/add/%s?domainAndPlanPackage=true', site.domain ) );
+		page( `/domains/add/${site.domain}?domainAndPlanPackage=true`);
 	}, [ trackEventClick, site.domain ] );
 
 	const getDismissClickHandler = () => {
