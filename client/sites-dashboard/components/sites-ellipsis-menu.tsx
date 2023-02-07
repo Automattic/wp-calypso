@@ -28,6 +28,7 @@ import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 interface SitesMenuItemProps {
 	site: SiteExcerptData;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	recordTracks: ( eventName: string, extraProps?: Record< string, any > ) => void;
 }
 
@@ -190,6 +191,7 @@ const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 			href={ copySiteHref }
 			onClick={ () => {
 				recordTracks( 'calypso_sites_dashboard_site_action_copy_site_click' );
+				startSiteCopy();
 			} }
 		>
 			{ __( 'Copy site' ) }

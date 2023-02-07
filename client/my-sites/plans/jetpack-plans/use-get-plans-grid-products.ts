@@ -4,12 +4,15 @@ import {
 	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
+	PRODUCT_JETPACK_SOCIAL_BASIC,
+	PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
+	PRODUCT_JETPACK_SOCIAL_ADVANCED,
+	PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
 	PRODUCT_JETPACK_SCAN,
 	PRODUCT_JETPACK_SCAN_MONTHLY,
 	JETPACK_BOOST_PRODUCTS,
 	JETPACK_SCAN_PRODUCTS,
 	JETPACK_SEARCH_PRODUCTS,
-	JETPACK_SOCIAL_PRODUCTS,
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_VIDEOPRESS_PRODUCTS,
 	getPlan,
@@ -111,14 +114,22 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 		availableProducts = [ ...availableProducts, ...JETPACK_BOOST_PRODUCTS ];
 	}
 
-	// If Jetpack Social is directly or indirectly owned, continue, otherwise make it available.
-	if (
-		! ownedProducts.some( ( ownedProduct ) =>
-			( JETPACK_SOCIAL_PRODUCTS as ReadonlyArray< string > ).includes( ownedProduct )
-		)
-	) {
-		availableProducts = [ ...availableProducts, ...JETPACK_SOCIAL_PRODUCTS ];
+	const socialProductsToShow: string[] = [];
+
+	const ownsSocialBasic =
+		ownedProducts.includes( PRODUCT_JETPACK_SOCIAL_BASIC ) ||
+		ownedProducts.includes( PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY );
+	const ownsSocialAdvanced =
+		ownedProducts.includes( PRODUCT_JETPACK_SOCIAL_ADVANCED ) ||
+		ownedProducts.includes( PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY );
+
+	// If neither Social Basic or Social Advanced backups are owned, then show Social Basic Plan.
+	// Otherwise the one owned will be displayed via purchasedProducts.
+	if ( ! ownsSocialBasic && ! ownsSocialAdvanced ) {
+		socialProductsToShow.push( PRODUCT_JETPACK_SOCIAL_BASIC, PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY );
 	}
+
+	availableProducts = [ ...availableProducts, ...socialProductsToShow ];
 
 	return {
 		availableProducts: availableProducts.map( slugToSelectorProduct ) as SelectorProduct[],

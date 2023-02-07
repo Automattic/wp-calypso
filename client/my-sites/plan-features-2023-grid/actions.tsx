@@ -27,7 +27,7 @@ type PlanFeaturesActionsButtonProps = {
 	isPopular?: boolean;
 	isInSignup: boolean;
 	isLaunchPage?: boolean;
-	onUpgradeClick?: () => void;
+	onUpgradeClick: () => void;
 	planName: TranslateResult;
 	planType: string;
 	flowName: string;

@@ -921,6 +921,14 @@ class RegisterDomainStep extends Component {
 						AVAILABLE_PREMIUM === status &&
 						result?.is_supported_premium_domain;
 
+					/**
+					 * In rare cases we don't get the FQDN as suggestion from the suggestion engine but only
+					 * from the availability endpoint. Let's make sure the `is_premium` flag is set.
+					 */
+					if ( result?.is_supported_premium_domain ) {
+						result.is_premium = true;
+					}
+
 					// Mapped status always overrides other statuses.
 					const availabilityStatus = isDomainMapped ? mappable : status;
 

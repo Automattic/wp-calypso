@@ -5,12 +5,12 @@ import { useEffect, useMemo, useCallback } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import { useQueryUserPurchases } from 'calypso/components/data/query-user-purchases';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
 	hasLoadedUserPurchasesFromServer,
 	isFetchingUserPurchases,
+	getUserPurchases,
 } from 'calypso/state/purchases/selectors';
 import getSiteFeatures from 'calypso/state/selectors/get-site-features';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -52,24 +52,27 @@ export const useSiteCopy = (
 		( state ) => isFetchingUserPurchases( state ) || ! hasLoadedUserPurchasesFromServer( state )
 	);
 
-	const { setPlanCartItem } = useDispatch( ONBOARD_STORE );
+	const purchases = useSelector( ( state ) => getUserPurchases( state ) );
+
+	const { setPlanCartItem, setProductCartItems } = useDispatch( ONBOARD_STORE );
 
 	const shouldShowSiteCopyItem = useMemo( () => {
 		return hasCopySiteFeature && isSiteOwner && plan && isAtomic && ! isLoadingPurchases;
 	}, [ hasCopySiteFeature, isSiteOwner, plan, isLoadingPurchases, isAtomic ] );
 
-	const startSiteCopy = useCallback(
-		//eslint-disable-next-line @typescript-eslint/no-explicit-any
-		( eventName: string, extraProps?: Record< string, any > ) => {
-			if ( ! plan ) {
-				return;
-			}
-			clearSignupDestinationCookie();
-			setPlanCartItem( { product_slug: plan.product_slug } );
-			recordTracksEvent( eventName, extraProps );
-		},
-		[ plan, setPlanCartItem ]
-	);
+	const startSiteCopy = useCallback( () => {
+		if ( ! shouldShowSiteCopyItem ) {
+			return;
+		}
+		clearSignupDestinationCookie();
+		setPlanCartItem( { product_slug: plan?.product_slug as string } );
+
+		const marketplacePluginProducts = ( purchases || [] )
+			.filter( ( purchase ) => purchase.productType === 'marketplace_plugin' )
+			.map( ( purchase ) => ( { product_slug: purchase.productSlug } ) );
+
+		setProductCartItems( marketplacePluginProducts );
+	}, [ plan, setPlanCartItem, purchases, shouldShowSiteCopyItem, setProductCartItems ] );
 
 	return useMemo(
 		() => ( {
