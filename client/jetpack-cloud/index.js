@@ -8,7 +8,10 @@ import { sites, siteSelection } from 'calypso/my-sites/controller';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import getPrimarySiteIsJetpack from 'calypso/state/selectors/get-primary-site-is-jetpack';
-import Landing from './sections/landing';
+import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import Landing from './sections/landing/main';
+import { isSiteEligibleForJetpackCloud, getLandingPath } from './sections/landing/selectors';
 
 const debug = new Debug( 'calypso:jetpack-cloud:controller' );
 
@@ -52,8 +55,32 @@ const redirectToPrimarySiteLanding = ( context, next ) => {
 
 const landingController = ( context, next ) => {
 	debug( 'controller: landingController', context );
-	context.primary = <Landing />;
-	next();
+
+	const state = context.store.getState();
+	const selectedSiteId = getSelectedSiteId( state );
+
+	// This path requires a selected site ID;
+	// if we don't have one, go to the main landing page
+	if ( ! Number.isFinite( selectedSiteId ) ) {
+		page.redirect( '/landing' );
+		return;
+	}
+
+	// To land people on the right page, we need to have
+	// information on the selected site's eligibility
+	// and the Cloud services available to it;
+	// if this info isn't present, dip into an empty React page
+	// that will fetch it and then redirect using the same logic
+	const isEligible = isSiteEligibleForJetpackCloud( state, selectedSiteId );
+	const siteFeatures = getFeaturesBySiteId( state, selectedSiteId );
+	if ( isEligible === null || ! siteFeatures ) {
+		context.primary = <Landing />;
+		next();
+		return;
+	}
+
+	const landingPath = getLandingPath( state, selectedSiteId );
+	page.redirect( landingPath );
 };
 
 export default function () {
