@@ -334,12 +334,11 @@ const ECommerceTrialPlans = () => {
 					<span className="e-commerce-trial-plans__price-card-subtitle">
 						{ translate( 'Accelerate your growth with advanced features.' ) }
 					</span>
-					<Button className="e-commerce-trial-plans__price-card-cta" primary>
-						{ translate( 'Get Commerce' ) }
-					</Button>
 				</div>
 				<div className="e-commerce-trial-plans__price-card-conditions">
-					<span className="e-commerce-trial-plans__price-card-value">$45</span>
+					<span className="e-commerce-trial-plans__price-card-value">
+						<span className="e-commerce-trial-plans__price-card-value-symbol">$</span>45
+					</span>
 					<span className="e-commerce-trial-plans__price-card-interval">
 						per month, $540 billed annually
 					</span>
@@ -347,7 +346,13 @@ const ECommerceTrialPlans = () => {
 						{ translate( 'SAVE 31% BY PAYING ANNUALLY' ) }
 					</span>
 				</div>
+				<div className="e-commerce-trial-plans__price-card-cta-wrapper">
+					<Button className="e-commerce-trial-plans__price-card-cta" primary>
+						{ translate( 'Get Commerce' ) }
+					</Button>
+				</div>
 			</Card>
+
 			<div className="e-commerce-trial-plans__features-wrapper">
 				{ features.map( ( feature ) => (
 					<TrialFeatureCard key={ feature.title } { ...feature } />
