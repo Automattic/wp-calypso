@@ -52,207 +52,189 @@ const ECommerceTrialPlansPage = () => {
 		{
 			expanded: true,
 			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/general-features.png',
-			title: translate( 'General features' ),
+			title: 'General features',
 			subtitle: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
 			items: [
 				{
-					title: translate( 'Online store' ),
-					subtitle: translate( 'All-in-one solution for starting your ecommerce store.' ),
+					title: 'Online store',
+					subtitle: 'All-in-one solution for starting your ecommerce store.',
 				},
 				{
-					title: translate( 'Mobile app' ),
-					subtitle: translate( 'Manage your store anywhere with the free WooCommerce Mobile App.' ),
+					title: 'Mobile app',
+					subtitle: 'Manage your store anywhere with the free WooCommerce Mobile App.',
 				},
 				{
-					title: translate( '24/7 support' ),
-					subtitle: translate(
-						'Need help? Reach out to us anytime, anywhere. Get 24/7 phone, email, and live chat support.'
-					),
+					title: '24/7 support',
+					subtitle:
+						'Need help? Reach out to us anytime, anywhere. Get 24/7 phone, email, and live chat support.',
 				},
 				{
-					title: translate( 'Unlimited admin accounts' ),
+					title: 'Unlimited admin accounts',
 					subtitle: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ',
 				},
 			],
 		},
 		{
 			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/payments.png',
-			title: translate( 'Payments' ),
+			title: 'Payments',
 			subtitle: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
 			items: [
 				{
-					title: translate( 'Credit card rate: 2.9% + 30c' ),
-					subtitle: translate( 'Accept Visa, Mastercard and' ),
+					title: 'Credit card rate: 2.9% + 30c',
+					subtitle: 'Accept Visa, Mastercard and',
 				},
 				{
-					title: translate( 'Sell in over 60 countries' ),
+					title: 'Sell in over 60 countries',
 					subtitle: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ',
 				},
 				{
-					title: translate( 'Advanced subscriptions' ),
-					subtitle: translate(
-						'Add subscription plans to any product – plus discounts for subscribing and a way for customers to purchase subscriptions for others.'
-					),
+					title: 'Advanced subscriptions',
+					subtitle:
+						'Add subscription plans to any product – plus discounts for subscribing and a way for customers to purchase subscriptions for others.',
 				},
 				{
-					title: translate( 'Automated tax compliance' ),
+					title: 'Automated tax compliance',
 					subtitle: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ',
 				},
 				{
-					title: translate( 'Pre-orders' ),
-					subtitle: translate( "Take orders before launches, and fill orders when you're ready." ),
+					title: 'Pre-orders',
+					subtitle: "Take orders before launches, and fill orders when you're ready.",
 				},
 				{
-					title: translate( 'Stripe M2 Reader' ),
-					subtitle: translate(
-						'Easy-to-use mobile card reader designed for fast, reliable payments.'
-					),
+					title: 'Stripe M2 Reader',
+					subtitle: 'Easy-to-use mobile card reader designed for fast, reliable payments.',
 				},
 			],
 		},
 		{
 			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/product-management.png',
-			title: translate( 'Product management' ),
+			title: 'Product management',
 			subtitle: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
 			items: [
 				{
-					title: translate( 'Unlimited products' ),
-					subtitle: translate( 'Add unlimited products to your store.' ),
+					title: 'Unlimited products',
+					subtitle: 'Add unlimited products to your store.',
 				},
 				{
-					title: translate( 'Offer gift cards' ),
-					subtitle: translate( 'Sell and accept pre-paid, multi-purpose e-gift vouchers.' ),
+					title: 'Offer gift cards',
+					subtitle: 'Sell and accept pre-paid, multi-purpose e-gift vouchers.',
 				},
 				{
-					title: translate( 'Send back in stock notifications' ),
-					subtitle: translate( 'Notify customers when your products are restocked.' ),
+					title: 'Send back in stock notifications',
+					subtitle: 'Notify customers when your products are restocked.',
 				},
 				{
-					title: translate( 'Set order limits' ),
-					subtitle: translate( 'Specify min and max allowed product quantities for orders.' ),
+					title: 'Set order limits',
+					subtitle: 'Specify min and max allowed product quantities for orders.',
 				},
 				{
-					title: translate( 'Sell product bundles' ),
-					subtitle: translate( 'Offer personalized product packages and bulk discounts.' ),
+					title: 'Sell product bundles',
+					subtitle: 'Offer personalized product packages and bulk discounts.',
 				},
 				{
-					title: translate( 'Offer customizable product kits' ),
-					subtitle: translate(
-						'Use Composite Products to add product kit building functionality with inventory management.'
-					),
+					title: 'Offer customizable product kits',
+					subtitle:
+						'Use Composite Products to add product kit building functionality with inventory management.',
 				},
 				{
-					title: translate( 'Import your products via CSV' ),
-					subtitle: translate( 'Import, merge, and export products using a CSV file.' ),
+					title: 'Import your products via CSV',
+					subtitle: 'Import, merge, and export products using a CSV file.',
 				},
 				{
-					title: translate( 'Sell product add-ons' ),
-					subtitle: translate( 'Enable gift wrapping/messages or custom pricing.' ),
+					title: 'Sell product add-ons',
+					subtitle: 'Enable gift wrapping/messages or custom pricing.',
 				},
 				{
-					title: translate( 'Unlimited images' ),
-					subtitle: translate( 'Add any number of images to your product variations.' ),
+					title: 'Unlimited images',
+					subtitle: 'Add any number of images to your product variations.',
 				},
 				{
-					title: translate( 'Product recommendations' ),
-					subtitle: translate(
-						'Earn more revenue with automated upsell and cross-sell product recommendations.'
-					),
+					title: 'Product recommendations',
+					subtitle:
+						'Earn more revenue with automated upsell and cross-sell product recommendations.',
 				},
 			],
 		},
 		{
 			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/customization.png',
-			title: translate( 'Themes and customization' ),
-			subtitle: translate( 'Bring your brand to life with a fully customizable storefront.' ),
+			title: 'Themes and customization',
+			subtitle: 'Bring your brand to life with a fully customizable storefront.',
 			items: [
 				{
-					title: translate( 'Premium themes' ),
-					subtitle: translate(
-						'Tap into a diverse selection of beautifully designed premium themes.'
-					),
+					title: 'Premium themes',
+					subtitle: 'Tap into a diverse selection of beautifully designed premium themes.',
 				},
 				{
-					title: translate( 'Block-based templates' ),
-					subtitle: translate(
-						"Take control over your store's layout without touching a line of code."
-					),
+					title: 'Block-based templates',
+					subtitle: "Take control over your store's layout without touching a line of code.",
 				},
 				{
-					title: translate( 'Cart and checkout optimization' ),
-					subtitle: translate(
-						'Streamline your checkout and boost conversions with the Cart and Checkout blocks.'
-					),
+					title: 'Cart and checkout optimization',
+					subtitle:
+						'Streamline your checkout and boost conversions with the Cart and Checkout blocks.',
 				},
 			],
 		},
 		{
 			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/growth.png',
-			title: translate( 'Marketing and growth' ),
+			title: 'Marketing and growth',
 			subtitle: 'Optimize your store for sales by adding in email and social integrations.',
 			items: [
 				{
-					title: translate( 'Sales channels' ),
-					subtitle: translate(
-						'Promote and sell your products on multiple sales channels, including social media and online marketplaces.'
-					),
+					title: 'Sales channels',
+					subtitle:
+						'Promote and sell your products on multiple sales channels, including social media and online marketplaces.',
 				},
 				{
-					title: translate( 'Marketing automation' ),
-					subtitle: translate(
-						'Build custom automations so you can engage customers at every stage of their journey.'
-					),
+					title: 'Marketing automation',
+					subtitle:
+						'Build custom automations so you can engage customers at every stage of their journey.',
 				},
 				{
-					title: translate( 'Abandoned cart recovery' ),
-					subtitle: translate(
-						'Automatically send emails to customers who leave your store without completing the checkout process.'
-					),
+					title: 'Abandoned cart recovery',
+					subtitle:
+						'Automatically send emails to customers who leave your store without completing the checkout process.',
 				},
 				{
-					title: translate( 'Refer a friend' ),
-					subtitle: translate( 'Give a free gift or coupon as a referral reward.' ),
+					title: 'Refer a friend',
+					subtitle: 'Give a free gift or coupon as a referral reward.',
 				},
 				{
-					title: translate( 'Birthday coupon' ),
-					subtitle: translate( 'Send customers a personalized coupon on their birthdays.' ),
+					title: 'Birthday coupon',
+					subtitle: 'Send customers a personalized coupon on their birthdays.',
 				},
 				{
-					title: translate( 'Points and rewards' ),
-					subtitle: translate( 'Reward customers for purchases and loyalty.' ),
+					title: 'Points and rewards',
+					subtitle: 'Reward customers for purchases and loyalty.',
 				},
 			],
 		},
 		{
 			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/shipping2.png',
-			title: translate( 'Shipping' ),
+			title: 'Shipping',
 			subtitle: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
 			items: [
 				{
-					title: translate( 'Shipping labels' ),
-					subtitle: translate( 'Save on shipping by printing labels right from your store.' ),
+					title: 'Shipping labels',
+					subtitle: 'Save on shipping by printing labels right from your store.',
 				},
 				{
-					title: translate( 'Shipping tracking' ),
-					subtitle: translate( 'Provide customers with an easy way to track their shipment.' ),
+					title: 'Shipping tracking',
+					subtitle: 'Provide customers with an easy way to track their shipment.',
 				},
 				{
-					title: translate( 'Shipping rates' ),
-					subtitle: translate(
-						'Define multiple shipping rates based on location, price, weight, or other criteria.'
-					),
+					title: 'Shipping rates',
+					subtitle:
+						'Define multiple shipping rates based on location, price, weight, or other criteria.',
 				},
 				{
-					title: translate( 'Conditional shipping and payments' ),
-					subtitle: translate(
-						'Use conditional logic to restrict the shipping and payment options.'
-					),
+					title: 'Conditional shipping and payments',
+					subtitle: 'Use conditional logic to restrict the shipping and payment options.',
 				},
 				{
-					title: translate( 'Returns and warranty' ),
-					subtitle: translate(
-						'Manage the RMA process, add warranties to products and let customers request/manage returns from their account.'
-					),
+					title: 'Returns and warranty',
+					subtitle:
+						'Manage the RMA process, add warranties to products and let customers request/manage returns from their account.',
 				},
 			],
 		},
@@ -265,7 +247,7 @@ const ECommerceTrialPlansPage = () => {
 			<Card className="e-commerce-trial-plans__trial-card">
 				<div className="e-commerce-trial-plans__trial-card-content">
 					<p className="e-commerce-trial-plans__card-title">
-						{ translate( 'You’re in a free trial store' ) }
+						{ translate( 'You’re in a free trial' ) }
 					</p>
 					<p className="e-commerce-trial-plans__card-subtitle">
 						{ isTrialExpired
@@ -273,8 +255,8 @@ const ECommerceTrialPlansPage = () => {
 									'Your free trial has expired. Sign up to a plan to unlock new features and keep your store running.'
 							  )
 							: translate(
-									'Your free trial will end in %(daysLeft)d day. Sign up to a plan by %(expirationdate)s to unlock new features and keep your store running.',
-									'Your free trial will end in %(daysLeft)d days. Sign up to a plan by %(expirationdate)s to unlock new features and keep your store running.',
+									'Your free trial will end in %(daysLeft)d day. Upgrade to a plan by %(expirationdate)s to unlock new features and start selling.',
+									'Your free trial will end in %(daysLeft)d days. Upgrade to a plan by %(expirationdate)s to unlock new features and start selling.',
 									{
 										count: eCommerceTrialDaysLeftToDisplay,
 										args: {
@@ -336,10 +318,7 @@ const ECommerceTrialPlansPage = () => {
 				</div>
 				<div className="e-commerce-trial-plans__price-card-cta-wrapper">
 					<Button className="e-commerce-trial-plans__price-card-cta" primary>
-						{
-							// TODO: translate when final copy is available
-							'Get Commerce'
-						}
+						{ translate( 'Upgrade now' ) }
 					</Button>
 				</div>
 			</Card>
@@ -351,10 +330,7 @@ const ECommerceTrialPlansPage = () => {
 			</div>
 			<div className="e-commerce-trial-plans__cta-wrapper">
 				<Button className="e-commerce-trial-plans__cta is-primary">
-					{
-						// TODO: translate when final copy is available
-						'Get Commerce'
-					}
+					{ translate( 'Upgrade now' ) }
 				</Button>
 			</div>
 		</>
