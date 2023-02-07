@@ -166,7 +166,7 @@ const ECommerceTrialCurrentPlan = () => {
 
 	return (
 		<>
-			<BodySectionCssClass bodyClass={ [ 'is-ecommerce-trial-plan' ] } />
+			<BodySectionCssClass bodyClass={ [ 'is-trial-plan' ] } />
 
 			<Card className="e-commerce-trial-current-plan__trial-card">
 				<div className="e-commerce-trial-current-plan__trial-card-content">
