@@ -1,0 +1,21 @@
+.connect-branch__fields {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+	gap: 16px;
+
+	.select-dropdown__header {
+		height: 40px;
+	}
+}
+
+.connect-branch__field {
+	max-width: 100%;
+	width: 100%;
+}
+
+@media ( max-width: 860px ) {
+	.connect-branch__fields {
+		flex-direction: column;
+	}
+}
