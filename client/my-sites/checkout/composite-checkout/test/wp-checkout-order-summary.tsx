@@ -34,9 +34,7 @@ jest.mock( '@automattic/calypso-config', () => {
 	return mock;
 } );
 
-const translate: ( original: string ) => string = ( original ) => {
-	return original;
-};
+const identity = ( x: string ) => x;
 
 describe( 'WPCheckoutOrderSummary', () => {
 	let container: HTMLDivElement | null;
@@ -91,7 +89,7 @@ describe( 'WPCheckoutOrderSummary', () => {
 			);
 			const productFeatures = getJetpackProductFeatures(
 				backupT1Monthly,
-				translate as ReturnType< typeof useTranslate >
+				identity as ReturnType< typeof useTranslate >
 			);
 			const cartChanges = {
 				products: [ backupT1Monthly ],
@@ -112,7 +110,7 @@ describe( 'WPCheckoutOrderSummary', () => {
 			);
 			const productFeatures = getJetpackProductFeatures(
 				backupT1Yearly,
-				translate as ReturnType< typeof useTranslate >
+				identity as ReturnType< typeof useTranslate >
 			);
 			const cartChanges = {
 				products: [ backupT1Yearly ],
@@ -133,7 +131,7 @@ describe( 'WPCheckoutOrderSummary', () => {
 			);
 			const productFeatures = getJetpackProductFeatures(
 				backupT1Yearly,
-				translate as ReturnType< typeof useTranslate >
+				identity as ReturnType< typeof useTranslate >
 			);
 			const scan = convertProductSlugToResponseProduct( PRODUCT_JETPACK_SCAN );
 
@@ -156,7 +154,7 @@ describe( 'WPCheckoutOrderSummary', () => {
 			);
 			const productFeatures = getJetpackProductFeatures(
 				backupT1Yearly,
-				translate as ReturnType< typeof useTranslate >
+				identity as ReturnType< typeof useTranslate >
 			);
 			const cartChanges = { products: [] };
 
@@ -176,7 +174,7 @@ describe( 'WPCheckoutOrderSummary', () => {
 			);
 			const productFeatures = getJetpackProductFeatures(
 				backupT1Yearly,
-				translate as ReturnType< typeof useTranslate >
+				identity as ReturnType< typeof useTranslate >
 			);
 			const cartChanges = { products: [ scan ] };
 
