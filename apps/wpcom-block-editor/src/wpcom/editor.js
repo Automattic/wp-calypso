@@ -6,7 +6,7 @@ import './features/reorder-block-categories';
 import './features/override-edit-site-back-button';
 import './features/tracking';
 import './features/use-classic-block-guide';
-import './features/domain-upsell-banner';
+import './features/domain-upsell-callout';
 import InserterMenuTrackingEvent from './features/tracking/wpcom-inserter-menu-search-term';
 import './features/site-editor-env-consistency';
 import './editor.scss';
