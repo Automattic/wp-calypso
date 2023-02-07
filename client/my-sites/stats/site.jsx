@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { eye } from '@automattic/components/src/icons';
+import NoticeBanner from '@automattic/components/src/notice-banner';
 import { Icon, people, starEmpty, commentContent } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
@@ -31,10 +32,12 @@ import {
 	withAnalytics,
 } from 'calypso/state/analytics/actions';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
+import { dismissJITMDirect } from 'calypso/state/jitm/actions';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import hasOptOutNewStatsNotice from 'calypso/state/sites/selectors/has-opt-out-new-stats-notice';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HighlightsSection from './highlights-section';
 import MiniCarousel from './mini-carousel';
@@ -117,6 +120,7 @@ class StatsSite extends Component {
 	state = {
 		activeTab: null,
 		activeLegend: null,
+		isOptOutNoticeDismissed: false,
 	};
 
 	static getDerivedStateFromProps( props, state ) {
@@ -157,7 +161,16 @@ class StatsSite extends Component {
 	};
 
 	renderStats() {
-		const { date, siteId, slug, isJetpack, isSitePrivate, isOdysseyStats, context } = this.props;
+		const {
+			date,
+			siteId,
+			slug,
+			isJetpack,
+			isSitePrivate,
+			isOdysseyStats,
+			context,
+			showOptOutNotice,
+		} = this.props;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
@@ -178,6 +191,11 @@ class StatsSite extends Component {
 		const wrapperClass = classNames( 'stats-content', {
 			'is-period-year': period === 'year',
 		} );
+
+		const dismissOptOutNotice = () => {
+			this.setState( { isOptOutNoticeDismissed: true } );
+			context.store.dispatch( dismissJITMDirect( 'opt-out-new-stats', 'opt-out-new-stats' ) );
+		};
 
 		return (
 			<div className="stats">
@@ -214,6 +232,28 @@ class StatsSite extends Component {
 					siteId={ siteId }
 					slug={ slug }
 				/>
+
+				{ isOdysseyStats && showOptOutNotice && ! this.state.isOptOutNoticeDismissed && (
+					<div className="inner-notice-container has-background-color">
+						<NoticeBanner
+							level="success"
+							title={ translate( 'Welcome to the new Jetpack Stats!' ) }
+							onClose={ dismissOptOutNotice }
+						>
+							{ translate(
+								'{{p}}Enjoy a more modern and mobile friendly experience with new stats and insights to help you grow your site.{{/p}}{{p}}If you prefer to continue using the traditional stats, {{manageYourSettingsLink}}manage your settings{{/manageYourSettingsLink}}.{{/p}}',
+								{
+									components: {
+										p: <p />,
+										manageYourSettingsLink: (
+											<a href="/wp-admin/admin.php?page=jetpack#/settings?term=stats" />
+										),
+									},
+								}
+							) }
+						</NoticeBanner>
+					</div>
+				) }
 
 				<HighlightsSection siteId={ siteId } />
 
@@ -440,6 +480,7 @@ export default connect(
 			showEnableStatsModule,
 			path: getCurrentRouteParameterized( state, siteId ),
 			isOdysseyStats,
+			showOptOutNotice: hasOptOutNewStatsNotice( state, siteId ),
 		};
 	},
 	{ recordGoogleEvent, enableJetpackStatsModule, recordTracksEvent }
