@@ -32,7 +32,8 @@
 	"dependencies": {
 		"classnames": "^2.3.1",
 		"react": "^17.0.2",
-		"react-dom": "^17.0.2"
+		"react-dom": "^17.0.2",
+		"@automattic/calypso-storybook": "workspace:^"
 	},
 	"devDependencies": {
 		"@storybook/addon-backgrounds": "^6.4.19",
