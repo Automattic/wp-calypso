@@ -2,7 +2,7 @@
 
 body.is-section-plans.is-trial-plan {
 	&.color-scheme {
-		--color-surface-backdrop: #fff;
+		--color-surface-backdrop: var(--color-surface);
 	}
 
 	.section-nav {
@@ -27,7 +27,7 @@ body.is-section-plans.is-trial-plan {
 			.e-commerce-trial-plans__card-title {
 				font-size: $font-title-medium;
 				font-weight: 400;
-				color: #000;
+				color: var(--studio-black);
 				margin: 0;
 
 				@media (max-width: $break-mobile) {
@@ -143,7 +143,7 @@ body.is-section-plans.is-trial-plan {
 
 				.e-commerce-trial-plans__price-card-value-symbol {
 					@media (max-width: $break-mobile) {
-						// Make a <sup> like style
+						// Make a <sup>-like style
 						/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 						font-size: 70%;
 						position: relative;
