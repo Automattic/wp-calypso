@@ -10,6 +10,7 @@ import {
 	isCopySiteFlow,
 	isWooExpressFlow,
 	StepContainer,
+	addProductsToCart,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -41,14 +42,14 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 	const { __ } = useI18n();
 	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
 
-	const { domainCartItem, planCartItem, siteAccentColor, getSelectedSiteTitle } = useSelect(
-		( select ) => ( {
+	const { domainCartItem, planCartItem, siteAccentColor, getSelectedSiteTitle, productCartItems } =
+		useSelect( ( select ) => ( {
 			domainCartItem: select( ONBOARD_STORE ).getDomainCartItem(),
 			siteAccentColor: select( ONBOARD_STORE ).getSelectedSiteAccentColor(),
 			planCartItem: select( ONBOARD_STORE ).getPlanCartItem(),
+			productCartItems: select( ONBOARD_STORE ).getProductCartItems(),
 			getSelectedSiteTitle: select( ONBOARD_STORE ).getSelectedSiteTitle(),
-		} )
-	);
+		} ) );
 
 	const username = useSelector( ( state ) => getCurrentUserName( state ) );
 
@@ -118,6 +119,10 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 
 		if ( planCartItem ) {
 			await addPlanToCart( site?.siteSlug as string, flow as string, true, theme, planCartItem );
+		}
+
+		if ( productCartItems?.length ) {
+			await addProductsToCart( site?.siteSlug as string, flow as string, productCartItems );
 		}
 
 		return {

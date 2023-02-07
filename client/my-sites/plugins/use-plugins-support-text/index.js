@@ -36,7 +36,7 @@ export default function usePluginsSupportText() {
 	const isLiveSupport = useSelector( hasOrIntendsToBuyLiveSupport );
 	const supportTextNonPro = isLiveSupport
 		? translate( 'Live chat support' )
-		: translate( 'Unlimited Email Support' );
+		: translate( 'Unlimited email support' );
 	const supportText = eligibleForProPlan ? translate( 'Premium support' ) : supportTextNonPro;
 	return supportText;
 }
