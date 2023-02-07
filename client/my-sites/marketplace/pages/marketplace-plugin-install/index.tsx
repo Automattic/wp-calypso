@@ -7,6 +7,7 @@ import { useEffect, useState, useMemo, useRef } from 'react';
 import { useSelector, useDispatch, DefaultRootState } from 'react-redux';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
+import QueryTheme from 'calypso/components/data/query-theme';
 import EmptyContent from 'calypso/components/empty-content';
 import WordPressWordmark from 'calypso/components/wordpress-wordmark';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
@@ -38,7 +39,11 @@ import isPluginUploadComplete from 'calypso/state/selectors/is-plugin-upload-com
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { initiateThemeTransfer as initiateTransfer } from 'calypso/state/themes/actions';
+import {
+	activateTheme,
+	initiateThemeTransfer as initiateTransfer,
+} from 'calypso/state/themes/actions';
+import { getTheme, isThemeActive as getThemeActive } from 'calypso/state/themes/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -72,6 +77,8 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 	const pluginMalicious = pluginUploadError?.error === 'plugin_malicious';
 	const pluginTooBig = pluginUploadError?.statusCode === 413;
 	const wporgPlugin = useSelector( ( state ) => getPlugin( state, productSlug ) );
+	const wpOrgTheme = useSelector( ( state ) => getTheme( state, 'wporg', productSlug ) );
+	const isThemeActive = useSelector( ( state ) => getThemeActive( state, productSlug, siteId ) );
 	const isWporgPluginFetched = useSelector( ( state ) => isFetched( state, productSlug ) );
 	const uploadedPluginSlug = useSelector( ( state ) =>
 		getUploadedPluginId( state, siteId )
@@ -176,7 +183,7 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 			( marketplacePluginInstallationInProgress || directInstallationAllowed ) &&
 			! isUploadFlow &&
 			! initializeInstallFlow &&
-			wporgPlugin &&
+			( wporgPlugin.wporg || wpOrgTheme ) &&
 			selectedSite
 		) {
 			const triggerInstallFlow = () => {
@@ -185,8 +192,13 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 			};
 
 			if ( selectedSite.jetpack ) {
-				// initialize plugin installing
-				dispatch( installPlugin( siteId, wporgPlugin, false ) );
+				if ( wpOrgTheme ) {
+					// initilize theme activating
+					dispatch( activateTheme( wpOrgTheme.id, siteId ) );
+				} else {
+					// initialize plugin installing
+					dispatch( installPlugin( siteId, wporgPlugin, false ) );
+				}
 
 				triggerInstallFlow();
 			} else if ( hasAtomicFeature ) {
@@ -205,6 +217,7 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 		selectedSite,
 		siteId,
 		wporgPlugin,
+		wpOrgTheme,
 		productSlug,
 		dispatch,
 		hasAtomicFeature,
@@ -235,6 +248,17 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ pluginUploadComplete, installedPlugin, setCurrentStep ] );
 
+	// Validate theme is already active
+	useEffect( () => {
+		if ( wpOrgTheme && isThemeActive && currentStep === 1 ) {
+			waitFor( 1 ).then( () =>
+				page.redirect(
+					`/marketplace/thank-you/${ productSlug }/${ selectedSiteSlug }?hide-progress-bar`
+				)
+			);
+		}
+	}, [ wpOrgTheme, isThemeActive, currentStep, productSlug, selectedSiteSlug ] );
+
 	// Check completition of all flows and redirect to thank you page
 	useEffect( () => {
 		if (
@@ -259,16 +283,23 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ pluginActive, automatedTransferStatus, atomicFlow, isUploadFlow, isAtomic ] ); // We need to trigger this hook also when `automatedTransferStatus` changes cause the plugin install is done on the background in that case.
 
-	const steps = useMemo(
-		() => [
+	const steps = useMemo( () => {
+		if ( ! ( wporgPlugin?.wporg || wpComPluginData?.id || !! wpOrgTheme ) ) {
+			return [ 'Setting up installation' ];
+		}
+
+		if ( wpOrgTheme ) {
+			return [ translate( 'Setting up theme installation' ), translate( 'Activating theme' ) ];
+		}
+
+		return [
 			isUploadFlow
 				? translate( 'Uploading plugin' )
 				: translate( 'Setting up plugin installation' ),
 			translate( 'Installing plugin' ),
 			translate( 'Activating plugin' ),
-		],
-		[ isUploadFlow, translate ]
-	);
+		];
+	}, [ wporgPlugin, wpComPluginData, wpOrgTheme, isUploadFlow, translate ] );
 	const additionalSteps = useMarketplaceAdditionalSteps();
 
 	const renderError = () => {
@@ -299,10 +330,29 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 				/>
 			);
 		}
-		if ( noDirectAccessError && ! directInstallationAllowed ) {
+		if (
+			noDirectAccessError &&
+			! directInstallationAllowed &&
+			( wporgPlugin?.wporg || wpComPluginData?.id || !! wpOrgTheme )
+		) {
 			const variationPeriod = 'monthly';
 			const variation = wpComPluginData?.variations?.[ variationPeriod ];
 			const marketplaceProductSlug = getProductSlugByPeriodVariation( variation, productsList );
+			const installPluginQuestionText = translate(
+				'Do you want to install the plugin %(plugin)s?',
+				{
+					args: { plugin: wporgPlugin?.name || wpComPluginData?.name },
+				}
+			);
+			const activateThemeQuestionText = translate( 'Do you want to activate the theme %(theme)s?', {
+				args: { theme: wpOrgTheme?.name },
+			} );
+
+			const goToPluginPageText = translate( 'Go to the plugin page' );
+			const goToThemePageText = translate( 'Go to the theme page' );
+
+			const installPluginText = translate( 'Install and activate plugin' );
+			const activateThemeText = translate( 'Activate theme' );
 
 			return (
 				<>
@@ -312,23 +362,30 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 						illustration={
 							wporgPlugin?.icon ||
 							wpComPluginData?.icon ||
+							wpOrgTheme?.screenshot ||
 							'/calypso/images/illustrations/error.svg'
 						}
-						illustrationWidth={ ( wporgPlugin?.icon || wpComPluginData?.icon ) && 128 }
+						illustrationWidth={
+							( wporgPlugin?.icon || wpComPluginData?.icon || wpOrgTheme?.screenshot ) && 128
+						}
 						title={ wporgPlugin?.name || wpComPluginData?.name || productSlug }
-						line={ translate( 'Do you want to install the plugin %(plugin)s?', {
-							args: { plugin: wporgPlugin?.name || wpComPluginData?.name || productSlug },
-						} ) }
+						line={ wpOrgTheme ? activateThemeQuestionText : installPluginQuestionText }
 					>
 						{ isProductListFetched && (
 							<div className="marketplace-plugin-install__direct-install-actions">
-								<Button href={ `/plugins/${ productSlug }/${ selectedSite?.slug }` }>
-									{ translate( 'Go to the plugin page' ) }
+								<Button
+									href={
+										wpOrgTheme
+											? `/themes/${ productSlug }/${ selectedSite?.slug }`
+											: `/plugins/${ productSlug }/${ selectedSite?.slug }`
+									}
+								>
+									{ wpOrgTheme ? goToThemePageText : goToPluginPageText }
 								</Button>
 
 								{ ! isMarketplaceProduct ? (
 									<Button primary onClick={ () => setDirectInstallationAllowed( true ) }>
-										{ translate( 'Install and activate plugin' ) }
+										{ wpOrgTheme ? activateThemeText : installPluginText }
 									</Button>
 								) : (
 									<Button
@@ -417,6 +474,7 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 				title="Plugins > Installing"
 			/>
 			{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
+			<QueryTheme siteId="wporg" themeId={ productSlug } />
 			<Masterbar className="marketplace-plugin-install__masterbar">
 				<WordPressWordmark className="marketplace-plugin-install__wpcom-wordmark" />
 				<Item>{ translate( 'Plugin installation' ) }</Item>
