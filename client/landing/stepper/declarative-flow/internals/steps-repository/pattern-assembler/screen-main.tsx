@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import {
 	__experimentalItemGroup as ItemGroup,
@@ -58,6 +59,21 @@ const ScreenMain = ( { onSelect, onContinueClick }: Props ) => {
 							{ translate( 'Create your homepage' ) }
 						</span>
 					</NavigationButtonAsItem>
+					{ isEnabled( 'pattern-assembler/color-and-fonts' ) && (
+						<>
+							<Divider />
+							<NavigationButtonAsItem
+								path="/color-palettes"
+								icon={ layout }
+								aria-label={ translate( 'Change colours' ) }
+								onClick={ () => onSelect( 'homepage' ) }
+							>
+								<span className="pattern-layout__list-item-text">
+									{ translate( 'Change colours' ) }
+								</span>
+							</NavigationButtonAsItem>
+						</>
+					) }
 				</ItemGroup>
 			</div>
 			<div className="screen-container__footer">
