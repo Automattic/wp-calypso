@@ -502,8 +502,8 @@ export function siteSelection( context, next ) {
 	const siteId = getSiteId( getState(), siteFragment );
 	const isUnlinkedCheckout =
 		'1' === context.query?.unlinked &&
-		null !== context.pathname.match( /^\/checkout\/[^/]+\/jetpack_/i ) &&
-		false === context.pathname.includes( 'jetpack_boost' );
+		context.pathname.match( /^\/checkout\/[^/]+\/jetpack_/i ) &&
+		context.pathname.includes( 'jetpack_boost' );
 
 	if ( siteId && ! isUnlinkedCheckout ) {
 		// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
