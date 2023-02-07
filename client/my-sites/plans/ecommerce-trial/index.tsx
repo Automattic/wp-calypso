@@ -1,11 +1,8 @@
 import { Button, Card } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
-import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import SegmentedControl from 'calypso/components/segmented-control';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import {
 	getCurrentPlan,
@@ -50,10 +47,6 @@ const ECommerceTrialPlans = () => {
 		month: 'long',
 		day: 'numeric',
 	} );
-
-	const [ interval, setInterval ] = useState( 'yearly' );
-
-	const segmentClasses = classNames( 'price-toggle' );
 
 	const features = [
 		{
@@ -307,24 +300,6 @@ const ECommerceTrialPlans = () => {
 					</span>
 				</div>
 			</Card>
-
-			<div className="e-commerce-trial-plans__interval-toggle-wrapper">
-				<SegmentedControl compact primary={ true } className={ segmentClasses }>
-					<SegmentedControl.Item
-						selected={ interval === 'monthly' }
-						onClick={ () => setInterval( 'monthly' ) }
-					>
-						<span>{ translate( 'Pay Monthly' ) }</span>
-					</SegmentedControl.Item>
-
-					<SegmentedControl.Item
-						selected={ interval === 'yearly' }
-						onClick={ () => setInterval( 'yearly' ) }
-					>
-						<span>{ translate( 'Pay Annually' ) }</span>
-					</SegmentedControl.Item>
-				</SegmentedControl>
-			</div>
 
 			<Card className="e-commerce-trial-plans__price-card">
 				<div className="e-commerce-trial-plans__price-card-text">

@@ -63,32 +63,17 @@ body.is-section-plans.is-trial-plan {
 		}
 	}
 
-	.e-commerce-trial-plans__interval-toggle-wrapper {
-		display: flex;
-		justify-content: center;
-		// Margins from designs
-		margin: 48px 0 32px 0;
-		padding: 0 20px;
-
-		.price-toggle {
-			width: 240px;
-
-			@media (max-width: $break-mobile) {
-				width: 100%;
-			}
-		}
-	}
-
 	.e-commerce-trial-plans__price-card {
 		display: flex;
 		flex-wrap: wrap;
 		border-radius: 2px 2px 0 0;
 		padding: 32px;
-		margin: 0;
+		margin-top: 30px;
 
 		@media (max-width: $break-mobile) {
 			flex-direction: column;
-			margin: 0 20px;
+			// No margin-bottom to integrate with accordion
+			margin: 20px 20px 0 20px;
 			padding: 32px 20px;
 		}
 
