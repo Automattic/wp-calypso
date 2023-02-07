@@ -432,12 +432,12 @@ function getProductPartsFromAlias( productAlias: string ): {
 } {
 	const [ slug, ...productParts ] = productAlias.split( ':' );
 
-	let meta = null;
-	let quantity = null;
+	let meta: string | null = null;
+	let quantity: number | null = null;
 
 	productParts.forEach( ( part ) => {
 		if ( /^-q-\d+$/.test( part ) ) {
-			quantity = part.replace( /^-q-/, '' );
+			quantity = parseInt( part.replace( /^-q-/, '' ), 10 );
 			return;
 		}
 		meta = part;
