@@ -144,8 +144,7 @@ body.is-section-plans.is-trial-plan {
 				.e-commerce-trial-plans__price-card-value-symbol {
 					@media (max-width: $break-mobile) {
 						// Make a <sup>-like style
-						/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-						font-size: 70%;
+						font-size: $font-title-medium;
 						position: relative;
 						top: -0.3em;
 					}
