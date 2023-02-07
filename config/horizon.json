@@ -71,6 +71,7 @@
 		"mailchimp": false,
 		"marketplace-domain-bundle": false,
 		"marketplace-fetch-dynamic-plugin-details": false,
+		"marketplace-fetch-all-dynamic-products": true,
 		"marketplace-jetpack-plugin-search": true,
 		"marketplace-personal-premium": false,
 		"marketplace-test": false,
