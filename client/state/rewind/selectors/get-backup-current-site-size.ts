@@ -8,6 +8,6 @@ import type { AppState } from 'calypso/types';
  * @returns The current site size number in bytes.
  */
 const getBackupCurrentSiteSize = ( state: AppState, siteId: number ): number | undefined =>
-	state.rewind[ siteId ]?.size?.lastBackupSize ?? null;
+	state.rewind[ siteId ]?.size?.lastBackupSize ?? undefined;
 
 export default getBackupCurrentSiteSize;
