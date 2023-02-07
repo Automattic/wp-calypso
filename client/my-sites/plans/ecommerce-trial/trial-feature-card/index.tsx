@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 import './style.scss';
 
-interface Props {
+interface TrialFeatureCardProps {
 	illustration: string;
 	title: string;
 	subtitle: string;
@@ -14,7 +14,7 @@ interface Props {
 	expanded?: boolean;
 }
 
-export default function TrialFeatureCard( props: Props ) {
+export default function TrialFeatureCard( props: TrialFeatureCardProps ) {
 	const { illustration, title, subtitle, items } = props;
 
 	const [ expanded, setExpanded ] = useState( !! props.expanded );
