@@ -23,37 +23,43 @@ const PatternSelectorLoader = ( {
 	const footerPatterns = useFooterPatterns();
 	const sectionPatterns = useSectionPatterns();
 
-	return (
-		<>
-			<PatternSelector
-				show={ showPatternSelectorType === 'header' }
-				patterns={ headerPatterns }
-				onSelect={ onSelect }
-				onBack={ onBack }
-				onDoneClick={ onDoneClick }
-				title={ translate( 'Add a header' ) }
-				selectedPattern={ selectedPattern }
-			/>
-			<PatternSelector
-				show={ showPatternSelectorType === 'footer' }
-				patterns={ footerPatterns }
-				onSelect={ onSelect }
-				onBack={ onBack }
-				onDoneClick={ onDoneClick }
-				title={ translate( 'Add a footer' ) }
-				selectedPattern={ selectedPattern }
-			/>
-			<PatternSelector
-				show={ showPatternSelectorType === 'section' }
-				patterns={ sectionPatterns }
-				onSelect={ onSelect }
-				onBack={ onBack }
-				onDoneClick={ onDoneClick }
-				title={ selectedPattern ? translate( 'Replace section' ) : translate( 'Add sections' ) }
-				selectedPattern={ selectedPattern }
-			/>
-		</>
-	);
+	switch ( showPatternSelectorType ) {
+		case 'header':
+			return (
+				<PatternSelector
+					patterns={ headerPatterns }
+					onSelect={ onSelect }
+					onBack={ onBack }
+					onDoneClick={ onDoneClick }
+					title={ translate( 'Add a header' ) }
+					selectedPattern={ selectedPattern }
+				/>
+			);
+		case 'footer':
+			return (
+				<PatternSelector
+					patterns={ footerPatterns }
+					onSelect={ onSelect }
+					onBack={ onBack }
+					onDoneClick={ onDoneClick }
+					title={ translate( 'Add a footer' ) }
+					selectedPattern={ selectedPattern }
+				/>
+			);
+		case 'section':
+			return (
+				<PatternSelector
+					patterns={ sectionPatterns }
+					onSelect={ onSelect }
+					onBack={ onBack }
+					onDoneClick={ onDoneClick }
+					title={ selectedPattern ? translate( 'Replace section' ) : translate( 'Add sections' ) }
+					selectedPattern={ selectedPattern }
+				/>
+			);
+		default:
+			return null;
+	}
 };
 
 export default PatternSelectorLoader;
