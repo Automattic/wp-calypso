@@ -1,6 +1,10 @@
+import { getPlans, PLAN_ECOMMERCE, PLAN_ECOMMERCE_MONTHLY } from '@automattic/calypso-products';
 import { Button, Card } from '@automattic/components';
+import { getCurrencyObject } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
+import { getPlanRawPrice, getPlan } from 'calypso/state/plans/selectors';
 import ECommerceTrialBanner from './ecommerce-trial-banner';
 import TrialFeatureCard from './trial-feature-card';
 
@@ -8,6 +12,25 @@ import './style.scss';
 
 const ECommerceTrialPlansPage = () => {
 	const translate = useTranslate();
+
+	const eCommercePlanAnnual = getPlans()[ PLAN_ECOMMERCE ];
+	const eCommercePlanMonthly = getPlans()[ PLAN_ECOMMERCE_MONTHLY ];
+
+	const eCommercePlanPrices = useSelector( ( state ) => ( {
+		annualPlanPrice: getPlanRawPrice( state, eCommercePlanAnnual.getProductId(), false ) || 0,
+		annualPlanMonthlyPrice: getPlanRawPrice( state, eCommercePlanAnnual.getProductId(), true ) || 0,
+		monthlyPlanPrice: getPlanRawPrice( state, eCommercePlanMonthly.getProductId() ) || 0,
+		currencyCode: getPlan( state, eCommercePlanAnnual.getProductId() )?.currency_code || '',
+	} ) );
+
+	const { symbol: currencySymbol } = getCurrencyObject( 0, eCommercePlanPrices.currencyCode );
+
+	// Defaulting to annual while we don't add the toggle
+	const isAnnualSubscription = true;
+
+	const percentageSavings = Math.floor(
+		( 1 - eCommercePlanPrices.annualPlanMonthlyPrice / eCommercePlanPrices.monthlyPlanPrice ) * 100
+	);
 
 	const features = [
 		{
@@ -204,6 +227,45 @@ const ECommerceTrialPlansPage = () => {
 		},
 	];
 
+	const priceContent = isAnnualSubscription
+		? translate(
+				'{{monthlyPriceWrapper}}{{currencySymbol}}%(currency)s{{/currencySymbol}}%(monthlyPrice)s{{/monthlyPriceWrapper}} {{priceDescription}}per month, %(annualPrice)s billed annually{{/priceDescription}}',
+				{
+					args: {
+						currency: currencySymbol,
+						monthlyPrice: eCommercePlanPrices.annualPlanMonthlyPrice,
+						annualPrice: eCommercePlanPrices.annualPlanPrice,
+					},
+					components: {
+						monthlyPriceWrapper: <span className="e-commerce-trial-plans__price-card-value" />,
+						priceDescription: <span className="e-commerce-trial-plans__price-card-interval" />,
+						currencySymbol: <span className="e-commerce-trial-plans__price-card-value-symbol" />,
+					},
+				}
+		  )
+		: translate(
+				'{{monthlyPriceWrapper}}{{currencySymbol}}%(currency)s{{/currencySymbol}}%(monthlyPrice)s{{/monthlyPriceWrapper}} {{priceDescription}}per month{{/priceDescription}}',
+				{
+					args: {
+						currency: currencySymbol,
+						monthlyPrice: eCommercePlanPrices.monthlyPlanPrice,
+					},
+					components: {
+						monthlyPriceWrapper: <span className="e-commerce-trial-plans__price-card-value" />,
+						priceDescription: <span className="e-commerce-trial-plans__price-card-interval" />,
+						currencySymbol: <span className="e-commerce-trial-plans__price-card-value-symbol" />,
+					},
+				}
+		  );
+
+	const annualUpsellContent = isAnnualSubscription && (
+		<span className="e-commerce-trial-plans__price-card-savings">
+			{ translate( 'Save %(percentageSavings)s%% by paying annually', {
+				args: { percentageSavings },
+			} ) }
+		</span>
+	);
+
 	return (
 		<>
 			<BodySectionCssClass bodyClass={ [ 'is-ecommerce-trial-plan' ] } />
@@ -225,25 +287,8 @@ const ECommerceTrialPlansPage = () => {
 					</span>
 				</div>
 				<div className="e-commerce-trial-plans__price-card-conditions">
-					<span className="e-commerce-trial-plans__price-card-value">
-						<span className="e-commerce-trial-plans__price-card-value-symbol">$</span>
-						{
-							// TODO: make it dynamic
-							'45'
-						}
-					</span>
-					<span className="e-commerce-trial-plans__price-card-interval">
-						{
-							// TODO: translate when final copy is available
-							'per month, $540 billed annually'
-						}
-					</span>
-					<span className="e-commerce-trial-plans__price-card-savings">
-						{
-							// TODO: translate when final copy is available
-							'SAVE 31% BY PAYING ANNUALLY'
-						}
-					</span>
+					{ priceContent }
+					{ annualUpsellContent }
 				</div>
 				<div className="e-commerce-trial-plans__price-card-cta-wrapper">
 					<Button className="e-commerce-trial-plans__price-card-cta" primary>
