@@ -10,7 +10,7 @@ import type { Step } from '../../types';
 
 import './style.scss';
 
-const SENSEI_PRO_PLUGIN_SLUG = 'woothemes-sensei';
+const SENSEI_PRO_PLUGIN_SLUG = 'sensei-pro';
 
 const useRetriesProgress = (
 	retries: number,

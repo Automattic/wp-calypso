@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
 
-export type FormState = {
+export type SitePurpose = {
 	selected: string[];
 	other: string;
 };
@@ -61,7 +61,7 @@ export const purposes: Purpose[] = [
 ];
 const STORAGE_KEY = 'sensei-site-purpose';
 
-export function saveSelectedPurposes( value: FormState ) {
+export function saveSelectedPurposes( value: SitePurpose ) {
 	window.sessionStorage.setItem( STORAGE_KEY, ( value && JSON.stringify( value ) ) || '' );
 }
 
@@ -69,7 +69,7 @@ export function clearSelectedPurposes() {
 	window.sessionStorage.removeItem( STORAGE_KEY );
 }
 
-export function getSelectedPurposes(): FormState {
+export function getSelectedPurposes(): SitePurpose {
 	const storedValue = window.sessionStorage.getItem( STORAGE_KEY );
 	let parsedValue;
 	try {
@@ -78,7 +78,7 @@ export function getSelectedPurposes(): FormState {
 	return parsedValue || { selected: [], other: '' };
 }
 
-export function getSelectedPlugins( selectedPurposes: FormState ): Plugin[] {
+export function getSelectedPlugins( selectedPurposes: SitePurpose ): Plugin[] {
 	const { selected } = selectedPurposes;
 	return purposes
 		.filter( ( purpose ) => selected.includes( purpose.id ) )

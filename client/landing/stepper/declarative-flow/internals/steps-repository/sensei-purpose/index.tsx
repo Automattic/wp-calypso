@@ -8,7 +8,12 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { SenseiStepContainer } from '../components/sensei-step-container';
 import { SenseiStepProgress } from '../components/sensei-step-progress';
 import PurposeItem from './purpose-item';
-import { clearSelectedPurposes, FormState, purposes, saveSelectedPurposes } from './purposes';
+import {
+	clearSelectedPurposes,
+	SitePurpose,
+	purposes as purposeOptions,
+	saveSelectedPurposes,
+} from './purposes';
 import type { Step } from '../../types';
 import './style.scss';
 
@@ -34,11 +39,11 @@ const SenseiPurpose: Step = ( { navigation: { submit } } ) => {
 
 	const waiting = progress < 110;
 
-	const [ formState, setPurpose ] = useState< PurposeFormState >( {
+	const [ sitePurpose, setSitePurpose ] = useState< SitePurpose >( {
 		selected: [],
 		other: '',
 	} );
-	const { selected, other } = formState;
+	const { selected, other } = sitePurpose;
 
 	const isEmpty = ! selected.length;
 
@@ -47,14 +52,14 @@ const SenseiPurpose: Step = ( { navigation: { submit } } ) => {
 		const newSelection = wasSelected
 			? selected.filter( ( item ) => item !== id )
 			: [ id, ...selected ];
-		setPurpose( ( purposeFormState ) => ( {
+		setSitePurpose( ( purposeFormState ) => ( {
 			...purposeFormState,
 			selected: newSelection,
 		} ) );
 	};
 
 	const submitPage = async () => {
-		saveSelectedPurposes( formState );
+		saveSelectedPurposes( sitePurpose );
 		submit?.();
 	};
 
@@ -88,7 +93,7 @@ const SenseiPurpose: Step = ( { navigation: { submit } } ) => {
 					<DocumentHead title={ title } />
 					<div className="sensei-setup-wizard__purpose-container">
 						<ul className="sensei-setup-wizard__purpose-list">
-							{ purposes.map( ( { id, label, description } ) => (
+							{ purposeOptions.map( ( { id, label, description } ) => (
 								<PurposeItem
 									key={ id }
 									label={ label }
@@ -113,7 +118,7 @@ const SenseiPurpose: Step = ( { navigation: { submit } } ) => {
 									value={ other }
 									placeholder={ __( 'Description' ) }
 									onChange={ ( value ) =>
-										setPurpose( ( formState ) => ( {
+										setSitePurpose( ( formState ) => ( {
 											...formState,
 											other: value,
 										} ) )
