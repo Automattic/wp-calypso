@@ -233,17 +233,6 @@ $font-family: "SF Pro Text", $sans;
 		position: absolute;
 		top: 0;
 
-		&--active {
-			height: 100%;
-			overflow: initial;
-			animation: 1s slideIn cubic-bezier(0.445, 0.05, 0.55, 0.95), fadeIn 0.3s ease-in;
-		}
-
-		&--hide {
-			animation: 0.25s fadeOut forwards;
-			pointer-events: none;
-		}
-
 		.pattern-selector__header {
 			display: flex;
 

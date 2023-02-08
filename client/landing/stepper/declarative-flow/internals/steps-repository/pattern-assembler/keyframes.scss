@@ -8,19 +8,6 @@
 	}
 }
 
-@keyframes fadeOut {
-	0% {
-		opacity: 1;
-	}
-	99% {
-		opacity: 0;
-	}
-	100% {
-		height: 0;
-		overflow: hidden;
-	}
-}
-
 @keyframes fadeInShort {
 	0% {
 		opacity: 0.5;
@@ -28,27 +15,6 @@
 
 	100% {
 		opacity: 1;
-	}
-}
-
-@keyframes slideIn {
-	0.00% {
-		transform: translateX(250px);
-	}
-	16.53% {
-		transform: translateX(-8.66px);
-	}
-	37.40% {
-		transform: translateX(2.29px);
-	}
-	58.26% {
-		transform: translateX(-0.7px);
-	}
-	79.13% {
-		transform: translateX(0.02px);
-	}
-	100.00% {
-		transform: translateX(0);
 	}
 }
 
