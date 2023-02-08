@@ -183,7 +183,7 @@ export default function TaxFields( {
 			{ fields
 				.filter( ( field, index ) => index % 2 === 0 )
 				.map( ( field, index ) => (
-					<FieldRow>
+					<FieldRow key={ index }>
 						<LeftColumn>{ field }</LeftColumn>
 						{ fields[ index * 2 + 1 ] && <RightColumn>{ fields[ index * 2 + 1 ] }</RightColumn> }
 					</FieldRow>
