@@ -79,7 +79,7 @@
 		"@wordpress/api-fetch": "^6.6.0",
 		"@wordpress/base-styles": "^4.7.0",
 		"@wordpress/block-editor": "^9.1.0",
-		"@wordpress/blocks": "^11.8.0",
+		"@wordpress/blocks": "^11.11.0",
 		"@wordpress/components": "^19.15.0",
 		"@wordpress/compose": "^5.7.0",
 		"@wordpress/data": "^6.9.0",
