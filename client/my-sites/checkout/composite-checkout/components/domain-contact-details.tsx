@@ -108,6 +108,7 @@ export default function DomainContactDetails( {
 					section="domain-contact-form"
 					isDisabled={ isDisabled }
 					countryCode={ contactDetails.countryCode }
+					excludeOrganizationField={ true }
 				/>
 			) }
 		</Fragment>
