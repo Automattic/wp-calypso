@@ -29,8 +29,8 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@wordpress/block-editor": "^9.1.0",
-		"@wordpress/compose": "^5.7.0",
+		"@wordpress/block-editor": "^10.5.0",
+		"@wordpress/compose": "^5.20.0",
 		"classnames": "^2.3.1",
 		"react-query": "^3.32.1",
 		"tslib": "^2.3.0",
