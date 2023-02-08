@@ -110,6 +110,7 @@ export default function PlansHeader() {
 	if ( null === domainFromHomeUpsellFlow ) {
 		return (
 			<FormattedHeader
+				className="plans__section-header modernized-header"
 				brandFont
 				headerText={ translate( 'Plans' ) }
 				subHeaderText={ plansDescription }
