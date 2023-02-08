@@ -21,8 +21,8 @@ import {
 	initializeWebsiteContentForm,
 	updateWebsiteContentCurrentIndex,
 } from 'calypso/state/signup/steps/website-content/actions';
+import { useGetWebsiteContentQuery } from 'calypso/state/signup/steps/website-content/hooks/use-get-website-content-query';
 import { useSaveWebsiteContentMutation } from 'calypso/state/signup/steps/website-content/hooks/use-save-website-content-mutation';
-import { useWebsiteContentQuery } from 'calypso/state/signup/steps/website-content/hooks/use-website-content-query';
 import {
 	getWebsiteContent,
 	getWebsiteContentDataCollectionIndex,
@@ -246,7 +246,7 @@ export default function WrapperWebsiteContent(
 	const translate = useTranslate();
 	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
 
-	const { isLoading, isError, data } = useWebsiteContentQuery( queryObject.siteSlug );
+	const { isLoading, isError, data } = useGetWebsiteContentQuery( queryObject.siteSlug );
 
 	const headerText = translate( 'Website Content' );
 	const subHeaderText = data?.isStoreFlow
