@@ -148,6 +148,12 @@ button {
 	}
 }
 
+.intro {
+	.signup-header {
+		z-index: 0 !important; /* set to 0 to prevent it from covering top of intro modal */
+	}
+}
+
 /**
  * Tailored flow stylings
  */
