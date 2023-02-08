@@ -24,7 +24,9 @@ const PromptsNavigation = ( { prompts } ) => {
 		return prompts !== undefined ? prompts[ promptIndex ] : null;
 	};
 
-	const getNewPostLink = () => addQueryArgs( editorUrl, { answer_prompt: getPrompt()?.id } );
+	// If no site ID set, go through site selector before rendering post editor
+	const getNewPostLink = () =>
+		addQueryArgs( siteId ? editorUrl : '/post', { answer_prompt: getPrompt()?.id } );
 
 	const goToPreviousStep = () => {
 		let nextIndex = promptIndex - 1;

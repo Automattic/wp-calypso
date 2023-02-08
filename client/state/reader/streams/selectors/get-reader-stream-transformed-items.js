@@ -3,6 +3,7 @@ import {
 	injectRecommendations,
 	getDistanceBetweenRecs,
 	injectPrompts,
+	getDistanceBetweenPrompts,
 } from 'calypso/reader/stream/utils';
 import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import getReaderStream from 'calypso/state/reader/streams/selectors/get-reader-stream';
@@ -30,7 +31,7 @@ export const getTransformedStreamItems = treeSelect(
 			items = injectRecommendations( items, recs, getDistanceBetweenRecs( follows.length ) );
 		}
 
-		items = injectPrompts( items, 10 );
+		items = injectPrompts( items, getDistanceBetweenPrompts( follows.length ) );
 
 		return items;
 	},
