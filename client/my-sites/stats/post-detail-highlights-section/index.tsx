@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { getPostStat } from 'calypso/state/stats/posts/selectors';
+import StatsDetailsNavigation from '../stats-details-navigation';
 import PostLikes from '../stats-post-likes';
 
 import './style.scss';
@@ -73,6 +74,8 @@ export default function PostDetailHighlightsSection( {
 
 			<div className="highlight-cards">
 				<h1 className="highlight-cards-heading">{ translate( 'Highlights' ) }</h1>
+
+				<StatsDetailsNavigation postId={ postId } givenSiteId={ siteId } />
 
 				<div className="highlight-cards-list">
 					<PostStatsCard
