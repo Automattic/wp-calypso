@@ -5,21 +5,16 @@ export type SitePurpose = {
 	other: string;
 };
 
-export type ManagedPlugin = {
-	softwareSet: string;
-};
-
 export type Plugin = {
 	id?: string;
 	slug: string;
 	softwareSet?: string;
 };
 
-export type Purpose = {
+type Purpose = {
 	id: string;
 	label: string;
 	plugins?: Array< Plugin >;
-	softwareSet?: string;
 	description?: string;
 };
 
@@ -78,8 +73,8 @@ export function getSelectedPurposes(): SitePurpose {
 	return parsedValue || { selected: [], other: '' };
 }
 
-export function getSelectedPlugins( selectedPurposes: SitePurpose ): Plugin[] {
-	const { selected } = selectedPurposes;
+export function getSelectedPlugins(): Plugin[] {
+	const { selected } = getSelectedPurposes();
 	return purposes
 		.filter( ( purpose ) => selected.includes( purpose.id ) )
 		.reduce( ( plugins, purpose ) => plugins.concat( purpose.plugins as [] ), [] );

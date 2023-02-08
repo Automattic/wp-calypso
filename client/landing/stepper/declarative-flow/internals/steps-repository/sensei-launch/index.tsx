@@ -5,7 +5,7 @@ import { useAtomicSitePlugins } from 'calypso/landing/stepper/declarative-flow/i
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { SenseiStepContainer } from '../components/sensei-step-container';
 import { Progress, SenseiStepProgress } from '../components/sensei-step-progress';
-import { getSelectedPlugins, getSelectedPurposes } from '../sensei-purpose/purposes';
+import { getSelectedPlugins } from '../sensei-purpose/purposes';
 import type { Step } from '../../types';
 
 import './style.scss';
@@ -42,7 +42,7 @@ const SenseiLaunch: Step = ( { navigation: { submit } } ) => {
 	const progress = useRetriesProgress( retries, maxRetries, 15 );
 
 	const { pollPlugins, isPluginInstalled, queuePlugin } = useAtomicSitePlugins();
-	const additionalPlugins = useMemo( () => getSelectedPlugins( getSelectedPurposes() ), [] );
+	const additionalPlugins = useMemo( () => getSelectedPlugins(), [] );
 
 	useEffect( () => {
 		additionalPlugins.forEach( queuePlugin );
