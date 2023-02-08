@@ -74,7 +74,8 @@ export default function HighlightCard( {
 							{ difference > 0 && <Icon size={ 18 } icon={ arrowUp } /> }
 						</span>
 						<span className="highlight-card-difference-absolute-value">
-							{ formattedNumber( Math.abs( difference ) ) }
+							{ difference <= 9999 && formattedNumber( Math.abs( difference ) ) }
+							{ difference > 9999 && <ShortenedNumber value={ Math.abs( difference ) } /> }
 						</span>
 						{ percentage !== null && (
 							<span className="highlight-card-difference-absolute-percentage">
