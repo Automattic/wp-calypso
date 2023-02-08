@@ -24,13 +24,13 @@ const defaultCriteria: FeatureCriteria[] = [
 	},
 	{
 		coblocks: 'edge',
-		gutenberg: 'edge',
+		gutenberg: 'stable',
 		siteType: 'atomic',
 		accountName: 'coBlocksAtomicSiteEdgeUser',
 	},
 	{
 		coblocks: 'edge',
-		gutenberg: 'stable',
+		gutenberg: 'edge',
 		siteType: 'atomic',
 		accountName: 'coBlocksAtomicSiteEdgeUser',
 	},

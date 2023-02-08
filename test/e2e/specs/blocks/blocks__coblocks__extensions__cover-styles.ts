@@ -17,7 +17,10 @@ import { TEST_IMAGE_PATH } from '../constants';
 
 declare const browser: Browser;
 
-const features = envToFeatureKey( envVariables );
+const features = envToFeatureKey( {
+	...envVariables,
+	COBLOCKS_EDGE: envVariables.TEST_ON_ATOMIC || envVariables.COBLOCKS_EDGE,
+} );
 
 describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Cover Styles' ), () => {
 	const accountName = getTestAccountByFeature( features );

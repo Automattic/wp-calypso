@@ -15,9 +15,12 @@ import { skipItIf } from '../../jest-helpers';
 
 declare const browser: Browser;
 
-const features = envToFeatureKey( envVariables );
 const isAtomic = envVariables.TEST_ON_ATOMIC;
 const isSimple = ! envVariables.TEST_ON_ATOMIC;
+const features = envToFeatureKey( {
+	...envVariables,
+	COBLOCKS_EDGE: isAtomic || envVariables.COBLOCKS_EDGE,
+} );
 
 describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Gutter Control' ), () => {
 	const accountName = getTestAccountByFeature( features );
