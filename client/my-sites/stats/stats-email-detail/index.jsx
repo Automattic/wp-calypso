@@ -2,6 +2,7 @@ import { getUrlParts } from '@automattic/calypso-url';
 import { Spinner } from '@automattic/components';
 import { localize, translate } from 'i18n-calypso';
 import { find, flowRight } from 'lodash';
+import moment from 'moment';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { parse as parseQs, stringify as stringifyQs } from 'qs';
@@ -178,6 +179,7 @@ class StatsEmailDetail extends Component {
 			post,
 			statType,
 			hasValidDate,
+			showNoDataInfo,
 		} = this.props;
 		const { maxBars } = this.state;
 
@@ -278,6 +280,11 @@ class StatsEmailDetail extends Component {
 									/>
 								</StatsPeriodHeader>
 
+								{ showNoDataInfo && (
+									<div className="no-data">
+										{ translate( '⚠️ There is no data before 2022-11-24 for the email stats' ) }
+									</div>
+								) }
 								<ChartTabs
 									activeTab={ getActiveTab( this.props.chartTab, statType ) }
 									activeLegend={ this.state.activeLegend }
@@ -358,6 +365,8 @@ const connectComponent = connect(
 			hasValidDate,
 		} = getPeriodWithFallback( ownProps.period, ownProps.date, isValidStartDate, post?.date );
 
+		const showNoDataInfo = moment( date ).isBefore( moment( '2022-11-24' ) );
+
 		return {
 			countViews: getEmailStat( state, siteId, postId, period, statType ),
 			isRequestingStats: isRequestingEmailStats(
@@ -376,6 +385,7 @@ const connectComponent = connect(
 			period: { period, endOf },
 			date,
 			hasValidDate,
+			showNoDataInfo,
 		};
 	},
 	{ recordGoogleEvent }

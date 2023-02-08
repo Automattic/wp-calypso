@@ -4,6 +4,10 @@ $break-large-stats-countries: 1280px;
 
 // Countries
 .stats__email-detail {
+	.no-data {
+		text-align: center;
+	}
+
 	.section-nav {
 		box-shadow: inset 0 -1px 0 #0000000d;
 		margin-bottom: 16px;
