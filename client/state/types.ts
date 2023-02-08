@@ -1,4 +1,5 @@
 import type { CountriesState } from './countries/types';
+import type { BillingTransactionsState } from 'calypso/state/billing-transactions/types';
 import type { IMarketplaceState } from 'calypso/state/marketplace/types';
 import type { IPluginsState } from 'calypso/state/plugins/reducer';
 import type { StoredCardsState } from 'calypso/state/stored-cards/types';
@@ -22,6 +23,7 @@ export interface IAppState extends DefaultRootState {
 	marketplace: IMarketplaceState;
 	storedCards?: StoredCardsState;
 	countries?: CountriesState;
+	billingTransactions?: BillingTransactionsState;
 }
 
 /**
