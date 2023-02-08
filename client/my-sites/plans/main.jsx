@@ -180,7 +180,7 @@ class Plans extends Component {
 			currentPlan,
 			domainAndPlanPackage,
 			is2023OnboardingPricingGrid,
-			isJetpack,
+			isJetpackNotAtomic,
 		} = this.props;
 
 		if ( ! selectedSite || this.isInvalidPlanInterval() || ! currentPlan ) {
@@ -192,7 +192,9 @@ class Plans extends Component {
 
 		return (
 			<div>
-				{ ! isJetpack && <ModernizedLayout dropShadowOnHeader={ isFreePlan( currentPlanSlug ) } /> }
+				{ ! isJetpackNotAtomic && (
+					<ModernizedLayout dropShadowOnHeader={ isFreePlan( currentPlanSlug ) } />
+				) }
 				{ selectedSite.ID && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
 				<PageViewTracker path="/plans/:site" title="Plans" />
@@ -246,6 +248,6 @@ export default connect( ( state ) => {
 		showTreatmentPlansReorderTest: isTreatmentPlansReorderTest( state ),
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
 		is2023OnboardingPricingGrid,
-		isJetpack: isJetpackSite( state, selectedSiteId ),
+		isJetpackNotAtomic: isJetpackSite( state, selectedSiteId, { treatAtomicAsJetpackSite: false } ),
 	};
 } )( localize( withTrackingTool( 'HotJar' )( Plans ) ) );

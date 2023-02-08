@@ -210,7 +210,7 @@ class CurrentPlan extends Component {
 			showThankYou,
 			translate,
 			eligibleForProPlan,
-			isJetpack,
+			isJetpackNotAtomic,
 		} = this.props;
 
 		const currentPlanSlug = selectedSite.plan.product_slug;
@@ -235,7 +235,9 @@ class CurrentPlan extends Component {
 
 		return (
 			<div>
-				{ ! isJetpack && <ModernizedLayout dropShadowOnHeader={ isFreePlan( currentPlanSlug ) } /> }
+				{ ! isJetpackNotAtomic && (
+					<ModernizedLayout dropShadowOnHeader={ isFreePlan( currentPlanSlug ) } />
+				) }
 				<DocumentHead title={ translate( 'My Plan' ) } />
 				{ selectedSiteId && (
 					<QueryConciergeInitial key={ selectedSiteId } siteId={ selectedSiteId } />
@@ -334,6 +336,6 @@ export default connect( ( state, { requestThankYou } ) => {
 		showThankYou: requestThankYou && isJetpackNotAtomic,
 		scheduleId: getConciergeScheduleId( state ),
 		eligibleForProPlan,
-		isJetpack,
+		isJetpackNotAtomic,
 	};
 } )( localize( CurrentPlan ) );
