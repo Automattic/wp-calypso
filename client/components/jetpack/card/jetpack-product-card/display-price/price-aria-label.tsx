@@ -9,6 +9,7 @@ interface Props {
 	isDiscounted: boolean;
 	finalPrice: number;
 	originalPrice?: number;
+	formattedOriginalPrice?: string;
 	discountedPriceDuration?: number;
 }
 
