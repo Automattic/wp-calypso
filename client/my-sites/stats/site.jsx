@@ -264,7 +264,7 @@ class StatsSite extends Component {
 					</div>
 				) }
 				{ showFeedbackNotice &&
-					! this.state.isFeedbackNoticeDismissed && ( //todo replace with conditional rendering as above
+					! this.state.isFeedbackNoticeDismissed && ( //todo add back in isOdysseyStats to this conditional
 						<div className="inner-notice-container has-background-color">
 							<NoticeBanner
 								level="info"
