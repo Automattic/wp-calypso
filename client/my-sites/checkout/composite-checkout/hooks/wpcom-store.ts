@@ -87,13 +87,13 @@ const actions = {
 		return { type: 'UPDATE_POSTAL_CODE', payload };
 	},
 
-    updateCity( payload: string ): WpcomStoreAction {
-        return { type: 'UPDATE_CITY', payload };
-    },
+	updateCity( payload: string ): WpcomStoreAction {
+		return { type: 'UPDATE_CITY', payload };
+	},
 
-    updateState( payload: string ): WpcomStoreAction {
-        return { type: 'UPDATE_STATE', payload };
-    },
+	updateState( payload: string ): WpcomStoreAction {
+		return { type: 'UPDATE_STATE', payload };
+	},
 
 	updateEmail( payload: string ): WpcomStoreAction {
 		return { type: 'UPDATE_EMAIL', payload };
