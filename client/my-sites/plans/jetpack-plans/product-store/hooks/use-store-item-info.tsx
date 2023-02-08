@@ -256,6 +256,11 @@ export const useStoreItemInfo = ( {
 		( item: SelectorProduct ) => {
 			const shouldShowCart = getShouldShowCart( item );
 			const isProductInCart = getIsProductInCart( item );
+			const isOwned = getIsOwned( item );
+
+			if ( isOwned ) {
+				return <>{ translate( 'Manage Subscription' ) }</>;
+			}
 
 			if ( ! shouldShowCart ) {
 				return <>{ translate( 'Proceed to checkout' ) }</>;

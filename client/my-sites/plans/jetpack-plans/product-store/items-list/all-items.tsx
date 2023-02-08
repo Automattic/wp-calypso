@@ -111,7 +111,7 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 					// Go to the checkout page for all products when they click on the 'GET' CTA, except for Jetpack Social where we open a modal.
 					const ctaHref =
 						isSocialProduct && config.isEnabled( 'jetpack-social/advanced-plan' )
-							? '#${item.productSlug}'
+							? `#${ item.productSlug }`
 							: getCheckoutURL( item );
 					const onClickCta =
 						isSocialProduct && config.isEnabled( 'jetpack-social/advanced-plan' )
