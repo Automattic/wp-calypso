@@ -25,7 +25,7 @@ export const GithubConnectCard = () => {
 
 	const [ selectedRepo, setSelectedRepo ] = useState< Repo >();
 	const [ selectedBranch, setSelectedBranch ] = useState< RepoBranch >();
-	const [ basePath, setBasePath ] = useState< string >();
+	const [ basePath, setBasePath ] = useState< string >( '' );
 	const { data: repos, isLoading: isLoadingRepos } = useGithubRepos( siteId, {
 		onSuccess( repos ) {
 			setSelectedRepo( repos[ 0 ] );
@@ -113,7 +113,7 @@ export const GithubConnectCard = () => {
 								connectBranch( {
 									repoName: selectedRepo?.name,
 									branchName: selectedBranch?.name,
-									basePath: basePath,
+									basePath: basePath?.trim(),
 								} );
 							} }
 							className="connect-branch__field"
@@ -135,7 +135,8 @@ export const GithubConnectCard = () => {
 					<FormTextInput
 						id="root_path"
 						placeholder="/wp-content"
-						dir="rtl"
+						value={ basePath }
+						dir="ltr"
 						onChange={ handleBasePathChange }
 					/>
 				</div>
