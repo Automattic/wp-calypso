@@ -25,6 +25,7 @@ import {
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { addQueryArgs } from 'calypso/lib/url';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
+import DomainAndPlanPackageNavigation from 'calypso/my-sites/domains/components/domain-and-plan-package/navigation';
 import NewDomainsRedirectionNoticeUpsell from 'calypso/my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
 import {
 	domainAddEmailUpsell,
@@ -48,7 +49,6 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import DomainAndPlanPackageNavigation from '../components/domain-and-plan-package/navigation';
 
 import './style.scss';
 import 'calypso/my-sites/domains/style.scss';
