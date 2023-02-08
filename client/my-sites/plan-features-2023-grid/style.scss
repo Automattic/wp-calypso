@@ -95,6 +95,9 @@
 		}
 	}
 }
+.plan-features-2023-grid__table-item {
+	padding: 0;
+}
 .plan-features-2023-grid__table-item.is-top-buttons {
 	padding: 0 20px;
 	vertical-align: bottom;
@@ -302,6 +305,7 @@
 			font-size: 0.813rem; /* stylelint-disable-line */
 			line-height: 16px;
 			padding-bottom: 8px;
+			min-height: 50px;
 		}
 	}
 
@@ -718,6 +722,7 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 			&:hover {
 				border-color: rgba(0, 0, 0, 0.04);
 				background: rgba(255, 255, 255, 0.3) !important;
+				background: rgba(255, 255, 255, 0.3);
 			}
 			&:focus {
 				box-shadow: 0 0 0 1px var(--studio-gray-90);
