@@ -29,31 +29,28 @@ const PatternList = ( {
 
 	return (
 		<>
-			{ patterns?.map( ( pattern: Pattern, index: number ) => {
-				const isShown = shownPatterns.includes( pattern );
-
-				return isShown ? (
-					<PatternPreviewAutoHeight
-						key={ `${ index }-${ pattern.id }` }
-						url={ getPatternPreviewUrl( {
-							id: pattern.id,
-							language: locale,
-							siteTitle: site?.name,
-							stylesheet,
+			{ patterns?.map( ( pattern: Pattern, index: number ) => (
+				<PatternPreviewAutoHeight
+					key={ `${ index }-${ pattern.id }` }
+					url={ getPatternPreviewUrl( {
+						id: pattern.id,
+						language: locale,
+						siteTitle: site?.name,
+						stylesheet,
+					} ) }
+					patternId={ pattern.id }
+					patternName={ pattern.category }
+					isShown={ shownPatterns.includes( pattern ) }
+				>
+					<Button
+						title={ pattern.category }
+						className={ classnames( 'pattern-list__pattern', {
+							[ activeClassName ]: pattern.id === selectedPattern?.id,
 						} ) }
-						patternId={ pattern.id }
-						patternName={ pattern.category }
-					>
-						<Button
-							title={ pattern.category }
-							className={ classnames( 'pattern-list__pattern', {
-								[ activeClassName ]: pattern.id === selectedPattern?.id,
-							} ) }
-							onClick={ () => onSelect( pattern ) }
-						/>
-					</PatternPreviewAutoHeight>
-				) : null;
-			} ) }
+						onClick={ () => onSelect( pattern ) }
+					/>
+				</PatternPreviewAutoHeight>
+			) ) }
 		</>
 	);
 };

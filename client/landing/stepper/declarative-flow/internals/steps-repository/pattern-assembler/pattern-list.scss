@@ -1,3 +1,5 @@
+@import "@automattic/onboarding/styles/mixins";
+
 .pattern-list__pattern {
 	min-height: 140px;
 
@@ -11,5 +13,14 @@
 		border-radius: 4px;
 		pointer-events: none;
 		overflow: hidden;
+	}
+
+	.pattern-list__pattern-placeholder {
+		@include onboarding-placeholder;
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
 	}
 }
