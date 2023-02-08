@@ -181,6 +181,11 @@ const useItemPrice = (
 					discountedPriceDuration = 1;
 				}
 			}
+		} else {
+			discountedPrice = introductoryOfferPrices.introOfferCost;
+			if ( discountedPrice ) {
+				discountedPriceDuration = 1;
+			}
 		}
 	}
 
