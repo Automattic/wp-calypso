@@ -343,7 +343,7 @@ class Plans extends Component {
 	}
 }
 
-export default connect( ( state ) => {
+const ConnectedPlans = connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 
 	const currentPlan = getCurrentPlan( state, selectedSiteId );
@@ -365,4 +365,12 @@ export default connect( ( state ) => {
 		is2023OnboardingPricingGrid,
 		domainSidebarExperimentUser: isDomainSidebarExperimentUser( state ),
 	};
-} )( localize( withTrackingTool( 'HotJar' )( Plans ) ) );
+} )( withCartKey( withShoppingCart( localize( withTrackingTool( 'HotJar' )( Plans ) ) ) ) );
+
+export default function PlansWrapper( props ) {
+	return (
+		<CalypsoShoppingCartProvider>
+			<ConnectedPlans { ...props } />
+		</CalypsoShoppingCartProvider>
+	);
+}
