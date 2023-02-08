@@ -6,6 +6,7 @@
 
 import { css, Global } from '@emotion/react';
 import { memo } from '@wordpress/element';
+import './modernized-layout.scss';
 
 const ModernizedLayout: React.FunctionComponent< { dropShadowOnHeader?: boolean } > = ( {
 	dropShadowOnHeader = true,
@@ -14,20 +15,22 @@ const ModernizedLayout: React.FunctionComponent< { dropShadowOnHeader?: boolean 
 	const sectionMaxWidth = '1224px';
 	const layoutContentPaddingTop = '79px';
 	const sidebarAppearanceBreakPoint = '783px';
+	const breakMedium = '782px';
+	const breakMobile = '480px';
+	// ----------------------------------------------
 	// from @automattic/components/src/highlight-cards/variables.scss:
-	const customMobileBreakpoint = '660px';
+	// ----------------------------------------------
+	const customBreakpointSmall = '660px';
 	const verticalMargin = '32px';
+	// ----------------------------------------------
 
 	const globalOverrides = css`
 		.plans__section-header,
 		.current-plan__section-header {
 			background-color: var( --studio-white );
-			${ dropShadowOnHeader &&
-			css`
-				box-shadow: inset 0 -1px 0 #0000000d;
-			` }
+			${ dropShadowOnHeader && 'box-shadow: inset 0 -1px 0 #0000000d;' }
 
-			@media ( min-width: ${ customMobileBreakpoint } ) {
+			@media ( min-width: ${ customBreakpointSmall } ) {
 				padding: 0 max( calc( 50% - ( ${ sectionMaxWidth } / 2 ) ), 32px );
 			}
 		}
@@ -36,7 +39,7 @@ const ModernizedLayout: React.FunctionComponent< { dropShadowOnHeader?: boolean 
 		.plans,
 		.current-plan {
 			// Ensures horizontal padding for all sections.
-			@media ( min-width: ${ customMobileBreakpoint } ) {
+			@media ( min-width: ${ customBreakpointSmall } ) {
 				> * {
 					padding: 0 max( calc( 50% - ( ${ sectionMaxWidth } / 2 ) ), 32px );
 				}
@@ -53,7 +56,7 @@ const ModernizedLayout: React.FunctionComponent< { dropShadowOnHeader?: boolean 
 				.segmented-control {
 					margin-left: 0;
 
-					@include breakpoint-deprecated( '>480px' ) {
+					@media ( min-width: ${ breakMedium } ) {
 						margin-left: 16px;
 					}
 				}
@@ -70,7 +73,7 @@ const ModernizedLayout: React.FunctionComponent< { dropShadowOnHeader?: boolean 
 				.section-nav__panel {
 					padding: 0;
 
-					@media ( max-width: $break-medium ) {
+					@media ( max-width: ${ breakMedium } ) {
 						padding: 0 16px;
 					}
 				}
@@ -79,14 +82,14 @@ const ModernizedLayout: React.FunctionComponent< { dropShadowOnHeader?: boolean 
 					&:not( :first-child ) {
 						margin-left: 16px;
 
-						@media ( max-width: $break-mobile ) {
+						@media ( max-width: ${ breakMobile } ) {
 							margin-left: 0;
 						}
 					}
 
 					.section-nav-tab__link {
 						padding: 8px 12px;
-						font-size: $font-body-small;
+						font-size: var( --scss-font-body-small );
 						line-height: 20px;
 
 						&:hover {
@@ -94,16 +97,16 @@ const ModernizedLayout: React.FunctionComponent< { dropShadowOnHeader?: boolean 
 							background-color: var( --color-surface );
 						}
 
-						@media ( max-width: $break-medium ) {
+						@media ( max-width: ${ breakMedium } ) {
 							padding: 8px 0;
 						}
 
-						@media ( max-width: $break-mobile ) {
+						@media ( max-width: ${ breakMobile } ) {
 							padding: 8px;
 						}
 					}
 
-					@include breakpoint-deprecated( '>480px' ) {
+					@media ( min-width: ${ breakMobile } ) {
 						.section-nav-tab__link {
 							color: var( --color-neutral-60 );
 						}
