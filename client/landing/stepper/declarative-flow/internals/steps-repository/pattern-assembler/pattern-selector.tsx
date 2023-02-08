@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
+import { useAsyncList } from '@wordpress/compose';
 import { useSelect } from '@wordpress/data';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -27,9 +28,11 @@ const PatternSelector = ( {
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 	const translate = useTranslate();
 	const stylesheet = selectedDesign?.recipe?.stylesheet || '';
+	const shownPatterns = useAsyncList( patterns );
 	const patternListProps = {
 		placeholder: null,
 		patterns,
+		shownPatterns,
 		selectedPattern,
 		activeClassName: 'pattern-selector__block-list--selected-pattern',
 		onSelect,
