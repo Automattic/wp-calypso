@@ -18,7 +18,7 @@ export const GitHubCard = () => {
 	const gitHub = connections.find( ( connection ) => connection.service === 'github-deploy' );
 
 	if ( gitHub ) {
-		return <GithubConnectCard />;
+		return <GithubConnectCard connection={ gitHub } />;
 	}
 
 	return <GithubAuthorizeCard />;

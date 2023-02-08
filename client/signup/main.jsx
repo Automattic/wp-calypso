@@ -502,7 +502,7 @@ class Signup extends Component {
 			siteId,
 			isNewUser,
 			hasCartItems,
-			planProductSlug: hasCartItems ? cartItem.product_slug : undefined,
+			planProductSlug: hasCartItems && cartItem !== null ? cartItem.product_slug : undefined,
 			domainProductSlug:
 				undefined !== domainItem && domainItem.is_domain_registration
 					? domainItem.product_slug
