@@ -40,6 +40,7 @@ import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provider';
 import withCartKey from '../checkout/with-cart-key';
+import DomainAndPlanPackageNavigation from '../domains/components/domain-and-plan-package/navigation';
 import PlansHeader from './header';
 
 import './style.scss';
@@ -308,6 +309,8 @@ class Plans extends Component {
 							{ domainSidebarExperimentUser && (
 								<>
 									<div className="plans__header">
+										<DomainAndPlanPackageNavigation step={ 2 } />
+
 										<FormattedHeader
 											brandFont
 											headerText={ translate( 'Choose the perfect plan' ) }
