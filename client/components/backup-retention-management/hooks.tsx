@@ -2,6 +2,7 @@ import { useMemo } from '@wordpress/element';
 import { useSelector } from 'react-redux';
 import { useStorageText } from 'calypso/components/backup-storage-space/hooks';
 import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
+import getBackupCurrentSiteSize from 'calypso/state/rewind/selectors/get-backup-current-site-size';
 import getRewindBytesAvailable from 'calypso/state/rewind/selectors/get-rewind-bytes-available';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { RetentionRadioOptionType } from './consts';
@@ -10,7 +11,10 @@ import { RetentionRadioOptionType } from './consts';
  * Estimate the current site size based on the last backup size, adding a 25% buffer
  */
 export function useEstimatedCurrentSiteSize(): number {
-	const lastBackupSize = 2 ** 30; // @TODO: Fetch this from #73031 when it's ready. We will need to call getBackupCurrentSiteSize() from the state.
+	const siteId = useSelector( getSelectedSiteId ) as number;
+	const lastBackupSize = useSelector(
+		( state ) => getBackupCurrentSiteSize( state, siteId ) as number
+	);
 	return useMemo( () => lastBackupSize + lastBackupSize * 0.25, [ lastBackupSize ] );
 }
 
