@@ -79,7 +79,7 @@ const ModernizedLayout: React.FunctionComponent< { dropShadowOnHeader?: boolean 
 				}
 
 				.section-nav-tab {
-					&:not( :first-child ) {
+					&:not( :first-of-type ) {
 						margin-left: 16px;
 
 						@media ( max-width: ${ breakMobile } ) {
