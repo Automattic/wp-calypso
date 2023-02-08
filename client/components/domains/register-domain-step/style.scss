@@ -347,11 +347,11 @@ body.is-section-signup.is-white-signup {
 	overflow: hidden;
 }
 
-.is-experiment-user {
+.is-domain-sidebar-experiment-user {
 
 	.register-domain-step {
 		box-shadow: none;
-		background: #fdfdfd;
+		background: var(--color-body-background);
 	}
 
 	.register-domain-step__domains-quickfilter-group {
