@@ -25,5 +25,6 @@ export * from './introductory-offer';
 export * from './join-classes';
 export * from './checkout-line-items';
 export * from './get-country-postal-code-support';
+export * from './get-country-tax-requirements';
 export * from './can-item-be-removed-from-cart';
 export * from './partner-coupon';
