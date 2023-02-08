@@ -28,7 +28,9 @@ import statsStrings from '../stats-strings';
 const StatsInsights = ( props ) => {
 	const { siteId, siteSlug, translate, isOdysseyStats } = props;
 	const moduleStrings = statsStrings();
+
 	const isInsightsPageGridEnabled = config.isEnabled( 'stats/insights-page-grid' );
+	const isLatestPostReplaced = config.isEnabled( 'stats/latest-post-stats' );
 
 	const statsModuleListClass = classNames( 'stats__module-list stats__module--unified', {
 		'is-insights-page-enabled': isInsightsPageGridEnabled,
@@ -87,7 +89,7 @@ const StatsInsights = ( props ) => {
 							hideNewModule // remove when cleaning 'stats/horizontal-bars-everywhere' FF
 						/>
 
-						<LatestPostSummary />
+						{ ! isLatestPostReplaced && <LatestPostSummary /> }
 						<Reach />
 					</div>
 				) : (

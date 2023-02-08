@@ -38,9 +38,24 @@ $mobile-layout-breakpoint: $break-small;
 		}
 	}
 
-	.highlight-cards-list .highlight-card {
-		padding: 24px;
-		min-width: 320px;
+	.highlight-cards-list {
+		&:not(:first-child) {
+			margin-top: 24px;
+		}
+
+		.highlight-card {
+			padding: 24px;
+			min-width: 320px;
+		}
+
+		.post-stats-card {
+			flex: 1;
+			max-height: unset;
+
+			&:not(:first-child) {
+				margin-left: 24px;
+			}
+		}
 	}
 
 	.highlight-card-heading {
