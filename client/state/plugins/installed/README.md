@@ -46,7 +46,7 @@ Get an object of all installed plugins in all sites, indexed by the plugin slug.
 
 ### `getAllPluginsIndexedBySiteId( state: Object )`
 
-Get an object for retrieving the plugins for a site by a site ID
+Get an object of all installed plugins of each site, indexed by site ID.
 
 ## Reducer
 
