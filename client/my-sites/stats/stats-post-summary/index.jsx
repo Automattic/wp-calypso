@@ -152,7 +152,7 @@ class StatsPostSummary extends Component {
 				{ isFeatured ? (
 					<StatsPeriodHeader>
 						<StatsPeriodNavigation showArrows={ false }>
-							<DatePicker period={ this.state.period } date={ selectedRecord.startDate } isShort />
+							<DatePicker period={ this.state.period } date={ selectedRecord?.startDate } isShort />
 						</StatsPeriodNavigation>
 						<SegmentedControl primary>
 							{ periods.map( ( { id, label } ) => (
