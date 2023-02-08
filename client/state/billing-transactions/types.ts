@@ -58,10 +58,19 @@ export interface UpcomingCharge {
 export type ReceiptId = string;
 export type SendingReceiptEmailRecord = Record< ReceiptId, boolean >;
 
+export interface BillingTransactionUiState {
+	app?: string | null;
+	date?: { month: string | null; operator: string | null };
+	page?: number;
+	query?: string;
+}
+
+export type BillingTransactionsType = 'past' | 'upcoming';
+
 export interface BillingTransactionsState {
 	items?: { past?: BillingTransaction[]; upcoming?: UpcomingCharge[] };
 	requesting?: boolean;
 	sendingReceiptEmail?: SendingReceiptEmailRecord;
 	individualTransactions?: unknown; // TODO: fill this in.
-	ui?: unknown; // TODO: fill this in.
+	ui?: Record< BillingTransactionsType, BillingTransactionUiState >;
 }
