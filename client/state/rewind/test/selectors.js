@@ -2,6 +2,7 @@ import {
 	getRewindStorageUsageLevel,
 	getBackupCurrentSiteSize,
 	getBackupRetentionDays,
+	getBackupRetentionUpdateRequestStatus,
 } from '../selectors';
 import { StorageUsageLevels } from '../storage/types';
 
@@ -103,6 +104,41 @@ describe( 'getBackupRetentionDays()', () => {
 		'should return the retentionDays if passed, undefined otherwise',
 		( { state, siteId, expected } ) => {
 			const output = getBackupRetentionDays( state, siteId );
+			expect( output ).toBe( expected );
+		}
+	);
+} );
+
+describe( 'getBackupRetentionUpdateRequestStatus()', () => {
+	it.each( [
+		{
+			state: {
+				rewind: {
+					123: {
+						retention: {},
+					},
+				},
+			},
+			siteId: 123,
+			expected: 'unsubmitted',
+		},
+		{
+			state: {
+				rewind: {
+					123: {
+						retention: {
+							updateBackupRetentionRequestStatus: 'pending',
+						},
+					},
+				},
+			},
+			siteId: 123,
+			expected: 'pending',
+		},
+	] )(
+		'should return the updateBackupRetentionRequestStatus if passed, unsubmitted otherwise',
+		( { state, siteId, expected } ) => {
+			const output = getBackupRetentionUpdateRequestStatus( state, siteId );
 			expect( output ).toBe( expected );
 		}
 	);
