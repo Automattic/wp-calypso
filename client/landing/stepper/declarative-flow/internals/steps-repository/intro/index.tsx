@@ -56,7 +56,7 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 				),
 				buttonText: __( 'Get started' ),
 				modal: {
-					buttonText: __( 'Learn More' ),
+					buttonText: __( 'Learn more' ),
 					onClick: () => recordTracksEvent( 'calypso_videopress_signup_learn_more_button_clicked' ),
 					content: VideoPressIntroModalContent,
 				},

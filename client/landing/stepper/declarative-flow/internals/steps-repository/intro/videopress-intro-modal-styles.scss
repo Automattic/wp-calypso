@@ -2,35 +2,40 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	padding: 24px;
+	height: 100%;
+	padding: 24px 32px;
 
 	.intro__title {
-		margin-top: 30px;
+		margin-top: 16px;
 		text-align: center;
 	}
 
 	.intro__description {
 		color: #a7aaad;
-		max-width: 432px;
+		max-width: 420px;
 		text-align: center;
 	}
 
 	.videopress-intro-modal__list {
-		margin-top: 45px;
-		margin-bottom: 54px;
+		margin-top: 40px;
+		margin-bottom: 48px;
 		list-style: none;
 
 		li {
 			display: flex;
 			flex-direction: row;
 			align-items: baseline;
+			margin-bottom: 4px;
 
 			a {
 				color: #ffe61c;
+				border-bottom: 1px solid currentColor;
+				font-weight: 500;
+				padding: 1px;
 			}
 
 			.checkmark-icon {
-				margin-right: 19px;
+				margin-right: 16px;
 			}
 		}
 	}
@@ -38,20 +43,34 @@
 	.videopress-intro-modal__button-column {
 		display: flex;
 		flex-direction: column;
+		width: 100%;
+		align-items: center;
+		flex: 1;
+
+		button.is-primary {
+			width: 100%;
+			max-width: 220px;
+			font-weight: 500;
+		}
 
 		.learn-more {
-			margin-top: 18px;
+			margin-top: 16px;
 
 			a {
 				color: #a7aaad;
+				transition: color 0.1s ease-in-out;
+				&:hover {
+					color: #fff;
+				}
 			}
 
 		}
 	}
 
 	.videopress-intro-modal__screenshots {
-		margin-top: 38px;
+		margin-top: 48px;
 		text-align: center;
+		width: 100%;
 
 		img {
 			max-width: 80%;

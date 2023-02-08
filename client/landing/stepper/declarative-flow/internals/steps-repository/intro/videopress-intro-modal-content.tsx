@@ -9,7 +9,7 @@ const VideoPressIntroModalContent: React.FC< IntroModalContentProps > = ( { onSu
 
 	return (
 		<div className="videopress-intro-modal">
-			<h1 className="intro__title">{ translate( 'Your video site, with no hassle' ) }</h1>
+			<h1 className="intro__title">{ translate( 'Your video site, with no hassle.' ) }</h1>
 			<div className="intro__description">
 				{ translate(
 					'Create a WordPress.com site with everything you need to share your videos with the world.'
@@ -61,7 +61,7 @@ const VideoPressIntroModalContent: React.FC< IntroModalContentProps > = ( { onSu
 			</ul>
 			<div className="videopress-intro-modal__button-column">
 				<Button className="intro__button" primary onClick={ onSubmit }>
-					{ translate( 'Get Started' ) }
+					{ translate( 'Get started' ) }
 				</Button>
 				<div className="learn-more">
 					{ translate( '{{a}}Or learn more about VideoPress.{{/a}}', {
@@ -79,7 +79,7 @@ const VideoPressIntroModalContent: React.FC< IntroModalContentProps > = ( { onSu
 			</div>
 			<div className="videopress-intro-modal__screenshots">
 				<img
-					src="https://videopress2.files.wordpress.com/2023/02/videopress-modal-screenshots.png"
+					src="https://videopress2.files.wordpress.com/2023/02/videopress-modal-screenshots-2x.png"
 					alt={ translate( 'Mobile device screenshot samples of the Videomaker theme.' ) }
 				/>
 			</div>

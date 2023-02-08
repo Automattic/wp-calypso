@@ -266,30 +266,73 @@
 
 	.intro__more-modal {
 		position: absolute;
-		left: 24px;
-		right: 24px;
-		top: 24px;
-		bottom: 24px;
-		height: 100%;
-		background-color: #000;
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: -10px;
+		padding: 24px;
 		z-index: 100;
-		opacity: 0;
-		transition: opacity 0.3s linear;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
 		pointer-events: none;
 
+		.intro__more-modal-container {
+			border-radius: 4px;
+			background-color: #000;
+			display: flex;
+			flex-direction: column;
+			height: 100%;
+			max-height: 940px;
+			width: 100%;
+			max-width: 1400px;
+			overflow: hidden;
+			will-change: opacity, transform;
+			opacity: 0;
+			transform: scale(0.9);
+			transition: 0.2s ease-in-out;
+			box-shadow: 0 100px 80px rgba(0, 0, 0, 0.08), 0 20px 10px rgba(0, 0, 0, 0.1), 0 6px 6px rgba(0, 0, 0, 0.1);
+		}
+
 		&.show {
-			opacity: 1;
 			pointer-events: all;
+
+			.intro__more-modal-container {
+				opacity: 1;
+				animation-name: intro__more-modal-pop;
+				animation-duration: 0.3s;
+				animation-timing-function: cubic-bezier(0.455, 0.03, 0.515, 0.955);
+				animation-fill-mode: forwards;
+				transform-origin: center center;
+			}
 		}
 
 		.intro__more-modal-header {
 			display: flex;
 			justify-content: right;
 			margin-right: 24px;
-			margin-top: 29px;
+			margin-top: 24px;
 
 			button {
 				cursor: pointer;
+			}
+		}
+
+		@keyframes intro__more-modal-pop {
+			0% {
+				opacity: 0;
+				transform: scale(0.9);
+			}
+
+			50% {
+				opacity: 1;
+				transform: scale(1.01);
+			}
+
+			100% {
+				opacity: 1;
+				transform: scale(1);
 			}
 		}
 	}

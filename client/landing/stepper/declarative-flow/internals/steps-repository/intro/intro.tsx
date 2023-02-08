@@ -65,12 +65,14 @@ const Intro: React.FC< Props > = ( { onSubmit, introContent } ) => {
 			</div>
 			{ modal && (
 				<div className={ modalClasses }>
-					<div className="intro__more-modal-header">
-						<Button plain onClick={ handleModalClose }>
-							<CloseIcon />
-						</Button>
+					<div className="intro__more-modal-container">
+						<div className="intro__more-modal-header">
+							<Button plain onClick={ handleModalClose }>
+								<CloseIcon />
+							</Button>
+						</div>
+						{ modal.content && <modal.content onSubmit={ onSubmit } /> }
 					</div>
-					{ modal.content && <modal.content onSubmit={ onSubmit } /> }
 				</div>
 			) }
 		</>
