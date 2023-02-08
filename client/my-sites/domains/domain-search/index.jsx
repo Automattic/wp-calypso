@@ -48,6 +48,7 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
+import DomainAndPlanPackageNavigation from '../components/domain-and-plan-package/navigation';
 
 import './style.scss';
 import 'calypso/my-sites/domains/style.scss';
@@ -276,6 +277,7 @@ class DomainSearch extends Component {
 						<div className="domains__header">
 							{ domainSidebarExperimentUser && (
 								<>
+									<DomainAndPlanPackageNavigation step={ 1 } />
 									<FormattedHeader
 										brandFont
 										headerText={ translate( 'Claim your domain' ) }
