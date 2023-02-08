@@ -264,18 +264,25 @@ class StatsSite extends Component {
 					</div>
 				) }
 				{ showFeedbackNotice &&
+					! this.state.isFeedbackNoticeDismissed && ( //todo replace with conditional rendering as above
 					<div className="inner-notice-container has-background-color">
 						<NoticeBanner
-							level="success"
-							title={ translate( 'Welcome to the new Jetpack Stats!' ) }
+								level="info"
+								title={ translate( "We'd love to hear your thoughts on the new Stats" ) }
 								onClose={ dismissFeedbackNotice }
 						>
 							{ translate(
-								'{{p}}Enjoy a more modern and mobile friendly experience with new stats and insights to help you grow your site.{{/p}}{{p}}If you prefer to continue using the traditional stats, {{manageYourSettingsLink}}manage your settings{{/manageYourSettingsLink}}.{{/p}}',
+									"{{p}}Now that you've gotten familiar with the new Jetpack Stats, we'd love to hear about your experience so we can continue to shape Jetpack to meet your needs.{{/p}}{{p}}{{takeSurveyButton}}remind me later{{/takeSurveyButton}}{{remindMeLaterLink}}remind me later{{/remindMeLaterLink}}{{/p}}",
 								{
 									components: {
 										p: <p />,
-										manageYourSettingsLink: (
+											// todo update link to a Jetpack redirect in the banner with an appropriate slug, like jetpack-stats-2023-usage-survey
+											takeSurveyButton: (
+												<button>
+													<a href="/wp-admin/admin.php?page=jetpack#/settings?term=stats" />
+												</button>
+											),
+											remindMeLaterLink: (
 											<a href="/wp-admin/admin.php?page=jetpack#/settings?term=stats" />
 										),
 									},
