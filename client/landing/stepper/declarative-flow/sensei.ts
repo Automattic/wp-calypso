@@ -58,7 +58,11 @@ const sensei: Flow = {
 			}
 		};
 
-		return { submit };
+		const goToStep = ( step: string ) => {
+			navigate( step );
+		};
+
+		return { submit, goToStep };
 	},
 
 	useAssertConditions() {
