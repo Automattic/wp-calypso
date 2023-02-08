@@ -59,11 +59,11 @@ class StatModuleFollowers extends Component {
 		const options = [
 			{
 				value: 'wpcom-followers',
-				label: this.props.translate( 'WordPress.com followers' ),
+				label: this.props.translate( 'WordPress.com subscribers' ),
 			},
 			{
 				value: 'email-followers',
-				label: this.props.translate( 'Email followers' ),
+				label: this.props.translate( 'Email subscribers' ),
 			},
 		];
 
