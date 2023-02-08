@@ -12,7 +12,7 @@ translate( 'Complete your purchase' );
 
 translate( 'Choose the perfect plan' );
 translate(
-	'With your annual plan, you’ll get %(domainName) {{strong}}free for the first year{{/strong}}. You’ll also unlock advanced features that make it easy to build and grow your site.',
+	'With your annual plan, you’ll get %(domainName)s {{strong}}free for the first year{{/strong}}. You’ll also unlock advanced features that make it easy to build and grow your site.',
 	{
 		args: {
 			domainName: 'example.blog',
