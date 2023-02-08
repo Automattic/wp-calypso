@@ -2,6 +2,7 @@ import { store as blockEditorStore } from '@wordpress/block-editor';
 import { useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import useBlockRendererSettings from '../hooks/use-block-renderer-settings';
+import { PreloadStyleAssets } from './preload-assets';
 
 export interface Props {
 	siteId: number | string;
@@ -25,7 +26,12 @@ const BlockRendererProvider = ( { siteId, stylesheet = '', children }: Props ) =
 		return null;
 	}
 
-	return children;
+	return (
+		<>
+			<PreloadStyleAssets html={ settings?.__unstableResolvedAssets?.styles } />
+			{ children }
+		</>
+	);
 };
 
 export default BlockRendererProvider;
