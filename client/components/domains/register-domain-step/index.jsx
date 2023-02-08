@@ -510,7 +510,6 @@ class RegisterDomainStep extends Component {
 	}
 
 	renderQuickFilters() {
-		// TODO: Confirm where should we load these tlds from
 		const items = [
 			{ key: 'all', text: 'All' },
 			{ key: 'blog', text: '.blog' },
