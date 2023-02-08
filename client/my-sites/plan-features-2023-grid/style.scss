@@ -167,11 +167,15 @@
 
 	.is-section-stepper &,
 	.is-section-signup & {
-		@include plan-features-layout-switcher-onboarding;
+		@include plan-features-layout-switcher;
 	}
 
-	.is-section-plans & {
-		@include plan-features-layout-switcher-onboarding-plans-section;
+	.is-section-plans:not(.is-sidebar-collapsed) & {
+		@include plan-features-layout-switcher-with-sidebar;
+	}
+
+	.is-section-plans.is-sidebar-collapsed & {
+		@include plan-features-layout-switcher;
 	}
 
 	.plan-features-2023-grid__mobile-view {
