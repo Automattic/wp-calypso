@@ -111,6 +111,12 @@
 		fill: var(--jp-black);
 	}
 
+	.notice-banner__action-button,
+	.notice-banner__action-link {
+		margin-top: 15px;
+		margin-right: 5px;
+	}
+
 	.notice-banner__action-button {
 		background-color: var(--jp-black);
 		border-radius: 4px;
