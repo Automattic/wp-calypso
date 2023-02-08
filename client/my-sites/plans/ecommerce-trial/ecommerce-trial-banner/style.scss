@@ -16,6 +16,11 @@
 		margin-top: 10px;
 		padding-right: 25%;
 
+		@media (max-width: $break-mobile) {
+			padding: 0;
+			margin: 0;
+		}
+
 		.e-commerce-trial-banner__title {
 			font-size: $font-title-medium;
 			font-weight: 400;
@@ -24,6 +29,7 @@
 
 			@media (max-width: $break-mobile) {
 				font-size: $font-body-small;
+				font-weight: 600;
 			}
 		}
 

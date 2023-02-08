@@ -14,63 +14,62 @@ const ECommerceTrialPlansPage = () => {
 			expanded: true,
 			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/general-features.png',
 			title: 'General features',
-			subtitle: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+			subtitle: 'Everything you need to grow your business.',
 			items: [
 				{
-					title: 'Online store',
-					subtitle: 'All-in-one solution for starting your ecommerce store.',
-				},
-				{
-					title: 'Mobile app',
-					subtitle: 'Manage your store anywhere with the free WooCommerce Mobile App.',
-				},
-				{
-					title: '24/7 support',
+					title: 'Sell the simple way',
 					subtitle:
-						'Need help? Reach out to us anytime, anywhere. Get 24/7 phone, email, and live chat support.',
+						'Your store includes everything you need to launch quickly and grow over time – all in one turnkey package.',
 				},
 				{
-					title: 'Unlimited admin accounts',
-					subtitle: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ',
+					title: 'Manage on the go',
+					subtitle:
+						'Process orders and manage your store anywhere with the WooCommerce Mobile App.',
+				},
+				{
+					title: 'Get support 24/7',
+					subtitle: 'Need help? Reach out anytime via email or chat.',
+				},
+				{
+					title: 'Have unlimited admin accounts',
+					subtitle: 'Add as many staff accounts as you need to help run your business.',
 				},
 			],
 		},
 		{
 			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/payments.png',
 			title: 'Payments',
-			subtitle: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+			subtitle: 'Quickly and easily accept payments.',
 			items: [
 				{
-					title: 'Credit card rate: 2.9% + 30c',
-					subtitle: 'Accept Visa, Mastercard and',
+					title: 'Give your customers more ways to pay.',
+					subtitle:
+						'Accept all major credit and debit cards, plus popular options like Apple Pay and Google Pay.',
 				},
 				{
 					title: 'Sell in over 60 countries',
-					subtitle: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ',
+					subtitle: 'Get paid in more than 100 currencies from all over the world.',
 				},
 				{
-					title: 'Advanced subscriptions',
+					title: 'Offer subscriptions',
 					subtitle:
-						'Add subscription plans to any product – plus discounts for subscribing and a way for customers to purchase subscriptions for others.',
+						'Add a subscription for any product or service, including the ability to set subscription discounts, signup fees, free trials, or expiration periods.',
 				},
 				{
-					title: 'Automated tax compliance',
-					subtitle: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ',
+					title: 'Automate tax collection',
+					subtitle: 'Automatically calculate how much sales tax should be collected at checkout.',
 				},
 				{
-					title: 'Pre-orders',
-					subtitle: "Take orders before launches, and fill orders when you're ready.",
-				},
-				{
-					title: 'Stripe M2 Reader',
-					subtitle: 'Easy-to-use mobile card reader designed for fast, reliable payments.',
+					title: 'Sell in person',
+					subtitle:
+						'Use a mobile card reader to take payments in a store, at a popup, or wherever your business takes you.',
 				},
 			],
 		},
 		{
 			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/product-management.png',
 			title: 'Product management',
-			subtitle: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+			subtitle: 'Simplify the way you manage, sell and promote your products.',
 			items: [
 				{
 					title: 'Unlimited products',
@@ -114,6 +113,10 @@ const ECommerceTrialPlansPage = () => {
 					subtitle:
 						'Earn more revenue with automated upsell and cross-sell product recommendations.',
 				},
+				{
+					title: 'Take pre-orders',
+					subtitle: 'Let customers order products before they’re available.',
+				},
 			],
 		},
 		{
@@ -142,58 +145,58 @@ const ECommerceTrialPlansPage = () => {
 			subtitle: 'Optimize your store for sales by adding in email and social integrations.',
 			items: [
 				{
-					title: 'Sales channels',
+					title: 'Sell everywhere',
 					subtitle:
-						'Promote and sell your products on multiple sales channels, including social media and online marketplaces.',
+						'Promote and sell your products on popular social media platforms and marketplaces.',
 				},
 				{
-					title: 'Marketing automation',
+					title: 'Automate your marketing',
+					subtitle: 'Build custom email automations to keep customers and prospects engaged.',
+				},
+				{
+					title: 'Recover abandoned carts',
 					subtitle:
-						'Build custom automations so you can engage customers at every stage of their journey.',
+						'Drive more sales by automatically emailing customers who leave your store without checking out.',
 				},
 				{
-					title: 'Abandoned cart recovery',
+					title: 'Encourage referrals',
+					subtitle: 'Offer free gifts or coupons when your customers refer new shoppers.',
+				},
+				{
+					title: 'Send birthday coupons',
 					subtitle:
-						'Automatically send emails to customers who leave your store without completing the checkout process.',
+						'Automatically email your customers a birthday discount to keep them coming back.',
 				},
 				{
-					title: 'Refer a friend',
-					subtitle: 'Give a free gift or coupon as a referral reward.',
-				},
-				{
-					title: 'Birthday coupon',
-					subtitle: 'Send customers a personalized coupon on their birthdays.',
-				},
-				{
-					title: 'Points and rewards',
-					subtitle: 'Reward customers for purchases and loyalty.',
+					title: 'Drive loyalty',
+					subtitle: 'Keep your loyal customers loyal with a rewards program.',
 				},
 			],
 		},
 		{
 			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/shipping2.png',
 			title: 'Shipping',
-			subtitle: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+			subtitle: 'Streamline your fulfillment with integrated shipping.',
 			items: [
 				{
-					title: 'Shipping labels',
-					subtitle: 'Save on shipping by printing labels right from your store.',
+					title: 'Print shipping labels',
+					subtitle: 'Print shipping labels from your store to save time and money.',
 				},
 				{
-					title: 'Shipping tracking',
+					title: 'Offer shipment tracking',
 					subtitle: 'Provide customers with an easy way to track their shipment.',
 				},
 				{
-					title: 'Shipping rates',
+					title: 'Customize shipping rates',
 					subtitle:
 						'Define multiple shipping rates based on location, price, weight, or other criteria.',
 				},
 				{
-					title: 'Conditional shipping and payments',
-					subtitle: 'Use conditional logic to restrict the shipping and payment options.',
+					title: 'Set conditional shipping',
+					subtitle: 'Restrict shipping and payment options using conditional logic.',
 				},
 				{
-					title: 'Returns and warranty',
+					title: 'Simplify returns and exchanges',
 					subtitle:
 						'Manage the RMA process, add warranties to products and let customers request/manage returns from their account.',
 				},
