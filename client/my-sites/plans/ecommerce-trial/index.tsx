@@ -205,7 +205,9 @@ const ECommerceTrialPlansPage = () => {
 		<>
 			<BodySectionCssClass bodyClass={ [ 'is-ecommerce-trial-plan' ] } />
 
-			<ECommerceTrialBanner />
+			<div className="e-commerce-trial-plans__banner-wrapper">
+				<ECommerceTrialBanner />
+			</div>
 
 			<Card className="e-commerce-trial-plans__price-card">
 				<div className="e-commerce-trial-plans__price-card-text">
