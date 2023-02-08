@@ -11,10 +11,8 @@ import { getSite, getSiteOption } from 'calypso/state/sites/selectors';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import StatsOverview from './overview';
 import StatsSite from './site';
 import StatsEmailDetail from './stats-email-detail';
-import StatsSummary from './summary';
 
 const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
@@ -252,7 +250,14 @@ export function overview( context, next ) {
 
 	bumpStat( 'calypso_stats_overview_period', activeFilter.period );
 
-	context.primary = <StatsOverview period={ activeFilter.period } path={ context.pathname } />;
+	context.primary = (
+		<AsyncLoad
+			require="calypso/my-sites/stats/overview"
+			placeholder={ PageLoading }
+			path={ context.pathname }
+			period={ activeFilter.period }
+		/>
+	);
 	next();
 }
 
@@ -378,7 +383,9 @@ export function summary( context, next ) {
 	}
 
 	context.primary = (
-		<StatsSummary
+		<AsyncLoad
+			placeholder={ PageLoading }
+			require="calypso/my-sites/stats/summary"
 			path={ context.pathname }
 			statsQueryOptions={ statsQueryOptions }
 			date={ date }
