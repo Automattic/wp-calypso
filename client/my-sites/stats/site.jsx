@@ -173,6 +173,7 @@ class StatsSite extends Component {
 			isOdysseyStats,
 			context,
 			showOptOutNotice,
+			showFeedbackNotice,
 		} = this.props;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
@@ -257,7 +258,7 @@ class StatsSite extends Component {
 						</NoticeBanner>
 					</div>
 				) }
-				{ isOdysseyStats && ( //todo replace with conditional rendering
+				{ showFeedbackNotice &&
 					<div className="inner-notice-container has-background-color">
 						<NoticeBanner
 							level="success"
@@ -510,6 +511,7 @@ export default connect(
 			path: getCurrentRouteParameterized( state, siteId ),
 			isOdysseyStats,
 			showOptOutNotice: hasOptOutNewStatsNotice( state, siteId ),
+			: hasFeedbackNewStatsNotice( stashowFeedbackNoticete, siteId ),
 		};
 	},
 	{ recordGoogleEvent, enableJetpackStatsModule, recordTracksEvent }
