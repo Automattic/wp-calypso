@@ -65,6 +65,17 @@ const daysOfBackupsSaved = (
 	return size.daysOfBackupsSaved ?? null;
 };
 
+const retentionDays = (
+	state: AppState = null,
+	{ type, size }: AnyAction
+): AppState | number | null => {
+	if ( type !== REWIND_SIZE_SET ) {
+		return state;
+	}
+
+	return size.retentionDays ?? null;
+};
+
 const lastBackupSize = (
 	state: AppState = null,
 	{ type, size }: AnyAction
@@ -82,5 +93,6 @@ export default combineReducers( {
 	minDaysOfBackupsAllowed,
 	daysOfBackupsAllowed,
 	daysOfBackupsSaved,
+	retentionDays,
 	lastBackupSize,
 } );
