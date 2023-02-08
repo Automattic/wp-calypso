@@ -265,17 +265,17 @@ class StatsSite extends Component {
 				) }
 				{ showFeedbackNotice &&
 					! this.state.isFeedbackNoticeDismissed && ( //todo replace with conditional rendering as above
-					<div className="inner-notice-container has-background-color">
-						<NoticeBanner
+						<div className="inner-notice-container has-background-color">
+							<NoticeBanner
 								level="info"
 								title={ translate( "We'd love to hear your thoughts on the new Stats" ) }
 								onClose={ dismissFeedbackNotice }
-						>
-							{ translate(
+							>
+								{ translate(
 									"{{p}}Now that you've gotten familiar with the new Jetpack Stats, we'd love to hear about your experience so we can continue to shape Jetpack to meet your needs.{{/p}}{{p}}{{takeSurveyButton}}remind me later{{/takeSurveyButton}}{{remindMeLaterLink}}remind me later{{/remindMeLaterLink}}{{/p}}",
-								{
-									components: {
-										p: <p />,
+									{
+										components: {
+											p: <p />,
 											// todo update link to a Jetpack redirect in the banner with an appropriate slug, like jetpack-stats-2023-usage-survey
 											takeSurveyButton: (
 												<button>
@@ -283,14 +283,14 @@ class StatsSite extends Component {
 												</button>
 											),
 											remindMeLaterLink: (
-											<a href="/wp-admin/admin.php?page=jetpack#/settings?term=stats" />
-										),
-									},
-								}
-							) }
-						</NoticeBanner>
-					</div>
-				) }
+												<a href="/wp-admin/admin.php?page=jetpack#/settings?term=stats" />
+											),
+										},
+									}
+								) }
+							</NoticeBanner>
+						</div>
+					) }
 
 				<HighlightsSection siteId={ siteId } />
 
@@ -523,7 +523,7 @@ export default connect(
 			path: getCurrentRouteParameterized( state, siteId ),
 			isOdysseyStats,
 			showOptOutNotice: hasOptOutNewStatsNotice( state, siteId ),
-			: hasFeedbackNewStatsNotice( stashowFeedbackNoticete, siteId ),
+			showFeedbackNotice: hasFeedbackNewStatsNotice( state, siteId ),
 		};
 	},
 	{ recordGoogleEvent, enableJetpackStatsModule, recordTracksEvent }
