@@ -51,7 +51,7 @@ export function useToggleActivateMonitor(
 		onMutate: async ( { siteId } ) => {
 			dispatch( setSiteMonitorStatus( siteId, 'loading' ) );
 		},
-		onSuccess: async ( data, { siteId } ) => {
+		onSuccess: async ( _data, { siteId, params } ) => {
 			// Cancel any current refetches, so they don't overwrite our update
 			await queryClient.cancelQueries( queryKey );
 
@@ -65,7 +65,7 @@ export function useToggleActivateMonitor(
 								...site,
 								monitor_settings: {
 									...site.monitor_settings,
-									monitor_active: data.settings.monitor_active,
+									monitor_active: params.monitor_active,
 								},
 							};
 						}
