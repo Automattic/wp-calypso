@@ -231,7 +231,7 @@ class StatsEmailDetail extends Component {
 					) }
 					{ post ? (
 						<>
-							<div>
+							<div className="main-container">
 								<h1>{ this.getTitle() }</h1>
 
 								<StatsDetailsNavigation

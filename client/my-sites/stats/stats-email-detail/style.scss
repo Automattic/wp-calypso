@@ -4,6 +4,10 @@ $break-large-stats-countries: 1280px;
 
 // Countries
 .stats__email-detail {
+	.main-container {
+		padding: 32px 12px;
+	}
+
 	.no-data {
 		text-align: center;
 	}
