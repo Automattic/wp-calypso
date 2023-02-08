@@ -4,7 +4,7 @@ import { RetentionRadioOptionType } from '../consts';
 import RetentionOptionCard from './retention-option-card';
 
 interface RetentionOptionsControlProps {
-	retentionOptions: Array< RetentionRadioOptionType >;
+	retentionOptions: Record< number, RetentionRadioOptionType >;
 	retentionSelected?: number;
 	onChange: ( value: number ) => void;
 }
