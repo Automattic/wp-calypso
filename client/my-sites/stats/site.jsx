@@ -364,12 +364,12 @@ class StatsSite extends Component {
 									additionalColumns={ {
 										header: (
 											<>
-												<span>{ translate( 'Clicks' ) }</span>
+												<span>{ translate( 'Opens' ) }</span>
 											</>
 										),
 										body: ( item ) => (
 											<>
-												<span>{ item.clicks }</span>
+												<span>{ item.opens }</span>
 											</>
 										),
 									} }
@@ -378,9 +378,9 @@ class StatsSite extends Component {
 									period={ this.props.period }
 									query={ query }
 									statType="statsEmailsSummary"
-									mainItemLabel={ <span>{ translate( 'Post' ) }</span> }
+									mainItemLabel={ translate( 'Post' ) }
 									hideSummaryLink
-									metricLabel={ translate( 'Opens' ) }
+									metricLabel={ translate( 'Clicks' ) }
 								/>
 							</>
 						) }

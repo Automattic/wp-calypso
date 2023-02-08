@@ -960,7 +960,8 @@ export const normalizers = {
 				date,
 				label: title,
 				type,
-				value: opens || '0',
+				value: clicks || '0',
+				opens: opens || '0',
 				clicks: clicks || '0',
 				page: detailPage,
 				actions: [
