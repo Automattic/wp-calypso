@@ -28,6 +28,7 @@ import {
 	getSignupCompleteSlug,
 } from 'calypso/signup/storageUtils';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
+import { addTempSiteToSourceOption } from '../import/helper';
 import type { Step } from '../../types';
 
 import './styles.scss';
@@ -120,6 +121,13 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 
 		if ( productCartItems?.length ) {
 			await addProductsToCart( site?.siteSlug as string, flow as string, productCartItems );
+		}
+
+		if ( isMigrationFlow( flow ) ) {
+			const search = window.location.search;
+			const sourceSiteSlug = new URLSearchParams( search ).get( 'from' );
+			// Store temporary target blog id to source site option
+			await addTempSiteToSourceOption( site?.siteId as number, sourceSiteSlug as string );
 		}
 
 		return {
