@@ -278,13 +278,15 @@ class StatsSite extends Component {
 											p: <p />,
 											// todo update link to a Jetpack redirect in the banner with an appropriate slug, like jetpack-stats-2023-usage-survey
 											takeSurveyButton: (
-												<button className="notice-banner__action-button">
-													<a href="link TBC" />
-												</button>
+												<button
+													type="button"
+													className="notice-banner__action-button"
+													onClick={ () => ( window.location.href = 'https://jetpack.com' ) }
+												/>
 											),
 											// todo update link to a Jetpack redirect in the banner with an appropriate slug, like jetpack-stats-2023-usage-survey
 											remindMeLaterLink: (
-												<a className="notice-banner__action-link" href="linktoremindmelater" />
+												<a className="notice-banner__action-link" href="https://" />
 											),
 										},
 									}
