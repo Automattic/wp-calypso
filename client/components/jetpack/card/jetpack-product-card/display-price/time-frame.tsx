@@ -115,7 +115,7 @@ const PartialDiscountTimeFrame: React.FC< PartialDiscountTimeFrameProps & A11yPr
 		) {
 			text = translate(
 				'for the first month, then %(original_price)s /month billed monthly',
-				'for the first %(months)d months, then %(original_price) /month billed monthly',
+				'for the first %(months)d months, then %(original_price)s /month billed monthly',
 				opts
 			);
 		} else {
@@ -134,7 +134,7 @@ const PartialDiscountTimeFrame: React.FC< PartialDiscountTimeFrameProps & A11yPr
 		) {
 			text = translate(
 				'for the first month, then %(original_price)s /month billed yearly',
-				'for the first %(months)d months, then %(original_price) /month billed yearly',
+				'for the first %(months)d months, then %(original_price)s /month billed yearly',
 				opts
 			);
 		} else {
