@@ -278,7 +278,7 @@ class Plans extends Component {
 
 		const allDomains = domainSidebarExperimentUser ? getDomainRegistrations( this.props.cart ) : [];
 		const yourDomainName = allDomains.length
-			? allDomains[ 0 ]?.meta
+			? allDomains.slice( -1 )[ 0 ]?.meta
 			: translate( 'your domain name' );
 
 		return (
