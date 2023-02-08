@@ -55,10 +55,13 @@ export interface UpcomingCharge {
 	wpcom_product_slug: string;
 }
 
+export type ReceiptId = string;
+export type SendingReceiptEmailRecord = Record< ReceiptId, boolean >;
+
 export interface BillingTransactionsState {
-	items: { past: BillingTransaction[]; upcoming: UpcomingCharge[] };
-	requesting: boolean;
-	sendingReceiptEmail: boolean;
-	individualTransactions: unknown; // TODO: fill this in.
-	ui: unknown; // TODO: fill this in.
+	items?: { past?: BillingTransaction[]; upcoming?: UpcomingCharge[] };
+	requesting?: boolean;
+	sendingReceiptEmail?: SendingReceiptEmailRecord;
+	individualTransactions?: unknown; // TODO: fill this in.
+	ui?: unknown; // TODO: fill this in.
 }
