@@ -53,12 +53,17 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	@include stats-section-header;
 
 	margin-bottom: $header-margin-bottom;
+
 	small {
 		font-family: $highlight-card-heading-font;
 		font-size: $font-body-small;
 		line-height: 1.5;
 		color: var(--studio-gray-50);
 		font-weight: 400;
+
+		@media ( max-width: $break-mobile ) {
+			display: block;
+		}
 	}
 
 	svg {
@@ -248,11 +253,6 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 
 	.card.highlight-card {
 		padding: 16px 24px;
-	}
-
-	.highlight-cards-heading {
-		display: flex;
-		flex-flow: column;
 	}
 
 	.highlight-card-icon {
