@@ -427,13 +427,13 @@ const useSectionPatterns = () => {
 				category: portfolio,
 			},
 			{
-				id: 5645,
-				name: 'Four Recent Blog Posts',
+				id: 1784,
+				name: 'Recent Posts',
 				category: posts,
 			},
 			{
-				id: 1784,
-				name: 'Recent Posts',
+				id: 8437,
+				name: 'List of posts',
 				category: posts,
 			},
 			{
@@ -447,13 +447,13 @@ const useSectionPatterns = () => {
 				category: posts,
 			},
 			{
-				id: 7996,
-				name: 'Grid of Posts 4x2',
+				id: 5645,
+				name: 'Four Recent Blog Posts',
 				category: posts,
 			},
 			{
-				id: 8437,
-				name: 'List of posts',
+				id: 7996,
+				name: 'Grid of Posts 4x2',
 				category: posts,
 			},
 			{
@@ -461,17 +461,7 @@ const useSectionPatterns = () => {
 				name: 'Latest podcast episodes',
 				category: posts,
 			},
-		].sort( ( a, b ) => {
-			// Sort alphabetically
-			if ( a.category < b.category ) {
-				return -1;
-			}
-			if ( a.category > b.category ) {
-				return 1;
-			}
-			return 0;
-		} );
-
+		];
 		if ( isEnabled( 'pattern-assembler/write-flow' ) ) {
 			if ( intent === SiteIntent.Write ) {
 				// In the Write flow, move posts patterns to the first position
