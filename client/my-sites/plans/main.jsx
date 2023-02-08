@@ -291,7 +291,7 @@ class Plans extends Component {
 				<TrackComponentView eventName="calypso_plans_view" />
 				<Main
 					fullWidthLayout={ is2023OnboardingPricingGrid && ! isEcommerceTrial }
-					wideLayout={ ! ( is2023OnboardingPricingGrid && ! isEcommerceTrial ) }
+					wideLayout={ ! is2023OnboardingPricingGrid || isEcommerceTrial }
 				>
 					{ ! canAccessPlans && (
 						<EmptyContent
