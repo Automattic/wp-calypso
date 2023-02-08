@@ -2,20 +2,31 @@ import i18n from 'i18n-calypso';
 import { find, pick } from 'lodash';
 import moment from 'moment';
 import page from 'page';
+import AsyncLoad from 'calypso/components/async-load';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { getSiteFragment, getStatsDefaultSitePage } from 'calypso/lib/route';
 import { getSite, getSiteOption } from 'calypso/state/sites/selectors';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import StatsCommentFollows from './comment-follows';
 import StatsOverview from './overview';
 import StatsSite from './site';
 import StatsEmailDetail from './stats-email-detail';
-import StatsInsights from './stats-insights';
-import StatsPostDetail from './stats-post-detail';
 import StatsSummary from './summary';
-import WordAds from './wordads';
+
+const PageLoading = (
+	<div
+		style={ {
+			minHeight: 'calc( 100vh - 100px )',
+			width: '100%',
+			display: 'flex',
+			justifyContent: 'center',
+			alignItems: 'center',
+		} }
+	>
+		<img width="32" height="32" alt="Loading" src="//en.wordpress.com/i/loading/loading-64.gif" />
+	</div>
+);
 
 function rangeOfPeriod( period, date ) {
 	const periodRange = {
@@ -194,7 +205,9 @@ export function redirectToDefaultModulePage( context ) {
 }
 
 export function insights( context, next ) {
-	context.primary = <StatsInsights />;
+	context.primary = (
+		<AsyncLoad require="calypso/my-sites/stats/stats-insights" placeholder={ PageLoading } />
+	);
 	next();
 }
 
@@ -381,7 +394,15 @@ export function post( context, next ) {
 		return next();
 	}
 
-	context.primary = <StatsPostDetail path={ context.path } postId={ postId } context={ context } />;
+	context.primary = (
+		<AsyncLoad
+			require="calypso/my-sites/stats/stats-post-detail"
+			placeholder={ PageLoading }
+			path={ context.path }
+			postId={ postId }
+			context={ context }
+		/>
+	);
 
 	next();
 }
@@ -410,7 +431,9 @@ export function follows( context, next ) {
 	}
 
 	context.primary = (
-		<StatsCommentFollows
+		<AsyncLoad
+			require="calypso/my-sites/stats/comment-follows"
+			placeholder={ PageLoading }
 			path={ context.path }
 			page={ pageNum }
 			perPage="20"
@@ -453,7 +476,9 @@ export function wordAds( context, next ) {
 	bumpStat( 'calypso_wordads_stats_site_period', activeFilter.period + numPeriodAgo );
 
 	context.primary = (
-		<WordAds
+		<AsyncLoad
+			require="calypso/my-sites/stats/wordads"
+			placeholder={ PageLoading }
 			path={ context.pathname }
 			date={ date }
 			chartTab={ queryOptions.tab || 'impressions' }
