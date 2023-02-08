@@ -207,6 +207,8 @@ export type RequestCartTaxData = null | {
 		vat_id?: string;
 		organization?: string;
 		address?: string;
+		city?: string;
+		state?: string;
 	};
 };
 
@@ -317,6 +319,8 @@ export interface ResponseCartTaxData {
 		vat_id?: string;
 		organization?: string;
 		address?: string;
+		city?: string;
+		state?: string;
 	};
 	display_taxes: boolean;
 }
@@ -532,6 +536,8 @@ export interface CartLocation {
 	vatId?: string;
 	organization?: string;
 	address?: string;
+	city?: string;
+	state?: string;
 }
 
 export interface ResponseCartProductExtra {

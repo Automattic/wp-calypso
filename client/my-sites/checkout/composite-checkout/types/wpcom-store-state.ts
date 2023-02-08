@@ -703,6 +703,20 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 		};
 	},
 
+	updateCity: ( oldDetails: ManagedContactDetails, newCity: string ): ManagedContactDetails => {
+		return {
+			...oldDetails,
+			city: touchIfDifferent( newCity, oldDetails.city ),
+		};
+	},
+
+	updateState: ( oldDetails: ManagedContactDetails, newState: string ): ManagedContactDetails => {
+		return {
+			...oldDetails,
+			state: touchIfDifferent( newState, oldDetails.state ),
+		};
+	},
+
 	updateEmail: ( oldDetails: ManagedContactDetails, newEmail: string ): ManagedContactDetails => {
 		return {
 			...oldDetails,
