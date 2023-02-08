@@ -171,7 +171,11 @@ const copySite: Flow = {
 			navigate( step );
 		};
 
-		return { goNext, goBack, goToStep, submit };
+		const exitFlow = ( location = '/sites' ) => {
+			window.location.assign( location );
+		};
+
+		return { goNext, goBack, goToStep, submit, exitFlow };
 	},
 
 	useAssertConditions() {

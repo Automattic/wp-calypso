@@ -23,13 +23,18 @@ export const Content = styled.div`
 	position: relative;
 `;
 
-export const Text = styled.div`
+export const Title = styled.div`
 	font-family: Recoleta, sans-serif;
 	font-size: 32px;
 	line-height: 40px;
 	position: relative;
 	width: 100%;
 	text-align: center;
+`;
+
+export const Subtitle = styled.div`
+	text-align: center;
+	margin: 12px auto;
 `;
 
 export const Progress = styled.div`
