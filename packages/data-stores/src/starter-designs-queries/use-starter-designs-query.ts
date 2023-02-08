@@ -15,6 +15,7 @@ interface StarterDesignsQueryParams {
 	intent: string;
 	seed?: string;
 	_locale: string;
+	include_virtual_designs?: boolean;
 }
 
 interface Options extends QueryOptions< StarterDesignsResponse, unknown > {
@@ -37,6 +38,8 @@ interface StaticDesign {
 	price?: string;
 	style_variations?: StyleVariation[];
 	software_sets?: SoftwareSet[];
+	is_virtual: boolean;
+	style_variation: StyleVariation | null;
 }
 
 interface GeneratedDesign {
@@ -90,6 +93,8 @@ function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
 		price,
 		style_variations,
 		software_sets,
+		is_virtual,
+		style_variation,
 	} = design;
 	const is_premium =
 		( design.recipe.stylesheet && design.recipe.stylesheet.startsWith( 'premium/' ) ) || false;
@@ -111,6 +116,8 @@ function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
 		software_sets,
 		design_type: is_premium ? 'premium' : 'standard',
 		style_variations,
+		is_virtual,
+		style_variation,
 		// Deprecated; used for /start flow
 		features: [],
 		template: '',
