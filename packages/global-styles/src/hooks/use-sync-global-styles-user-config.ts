@@ -3,8 +3,8 @@ import { mergeBaseAndUserConfigs } from '@wordpress/edit-site/build-module/compo
 import { useContext, useEffect } from 'react';
 import type { GlobalStylesObject } from '../types';
 
-const useSyncGlobalStyles = ( globalStyles: GlobalStylesObject[], enabled: boolean ) => {
-	const { setUserConfig } = useContext( GlobalStylesContext );
+const useSyncGlobalStylesUserConfig = ( globalStyles: GlobalStylesObject[], enabled: boolean ) => {
+	const { user, setUserConfig } = useContext( GlobalStylesContext );
 
 	useEffect( () => {
 		if ( ! enabled ) {
@@ -17,6 +17,8 @@ const useSyncGlobalStyles = ( globalStyles: GlobalStylesObject[], enabled: boole
 				.reduce( ( prev, current ) => mergeBaseAndUserConfigs( prev, current ), {} )
 		);
 	}, [ globalStyles, enabled ] );
+
+	return user;
 };
 
-export default useSyncGlobalStyles;
+export default useSyncGlobalStylesUserConfig;

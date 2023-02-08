@@ -1,3 +1,3 @@
 export * from './components';
-export { useSyncGlobalStyles } from './hooks';
+export { useSyncGlobalStylesUserConfig } from './hooks';
 export * from './types';
