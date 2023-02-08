@@ -2,6 +2,7 @@ import { Button, Gridicon } from '@automattic/components';
 import { useInstanceId } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
+import { useMutation } from 'react-query';
 import { useDispatch } from 'react-redux';
 import { deleteStoredKeyringConnection } from 'calypso/state/sharing/keyring/actions';
 import './style.scss';
@@ -17,13 +18,12 @@ export function DisconnectGitHubExpander( { connection }: DisconnectGitHubExpand
 	const panelId = useInstanceId( DisconnectGitHubExpander, 'disconnect-github' ) + '-panel';
 	const dispatch = useDispatch();
 	const [ isExpanded, setIsExpanded ] = useState( false );
-	const [ isDisconnecting, setIsDisconnecting ] = useState( false );
 
-	const handleClick = async () => {
-		setIsDisconnecting( true );
-		await dispatch( deleteStoredKeyringConnection( connection ) );
-		setIsDisconnecting( false );
-	};
+	// Using ReactQuery to manage `isDisconnecting` state because it's not exposed from the Redux store.
+	const mutation = useMutation< unknown, unknown, Connection >(
+		async ( c ) => await dispatch( deleteStoredKeyringConnection( c ) )
+	);
+	const { mutate: disconnect, isLoading: isDisconnecting } = mutation;
 
 	return (
 		<>
@@ -42,7 +42,7 @@ export function DisconnectGitHubExpander( { connection }: DisconnectGitHubExpand
 			>
 				<Button
 					scary
-					onClick={ handleClick }
+					onClick={ () => disconnect( connection ) }
 					busy={ isDisconnecting }
 					disabled={ isDisconnecting } // `busy` doesn't actually disable the button
 				>
