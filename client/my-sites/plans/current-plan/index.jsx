@@ -15,7 +15,6 @@ import {
 	isFreeJetpackPlan,
 	isFreePlanProduct,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
-	isFreePlan,
 } from '@automattic/calypso-products';
 import { Dialog } from '@automattic/components';
 import classNames from 'classnames';
@@ -45,7 +44,6 @@ import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import JetpackChecklist from 'calypso/my-sites/plans/current-plan/jetpack-checklist';
 import PlanRenewalMessage from 'calypso/my-sites/plans/jetpack-plans/plan-renewal-message';
 import legacyPlanNotice from 'calypso/my-sites/plans/legacy-plan-notice';
-import ModernizedLayout from 'calypso/my-sites/plans/modernized-layout';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
@@ -211,11 +209,11 @@ class CurrentPlan extends Component {
 			showThankYou,
 			translate,
 			eligibleForProPlan,
-			isJetpackNotAtomic,
 		} = this.props;
 
 		const currentPlanSlug = selectedSite.plan.product_slug;
 		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+
 		const shouldQuerySiteDomains = selectedSiteId && shouldShowDomainWarnings;
 		const showDomainWarnings = hasDomainsLoaded && shouldShowDomainWarnings;
 
@@ -235,76 +233,71 @@ class CurrentPlan extends Component {
 		}
 
 		return (
-			<div>
-				{ ! isJetpackNotAtomic && (
-					<ModernizedLayout dropShadowOnHeader={ isFreePlan( currentPlanSlug ) } />
-				) }
+			<Main className="current-plan" wideLayout>
 				<DocumentHead title={ translate( 'My Plan' ) } />
-				{ selectedSiteId && (
-					<QueryConciergeInitial key={ selectedSiteId } siteId={ selectedSiteId } />
-				) }
-				<QuerySites siteId={ selectedSiteId } />
-				<QuerySitePlans siteId={ selectedSiteId } />
-				<QuerySitePurchases siteId={ selectedSiteId } />
-				<QuerySiteProducts siteId={ selectedSiteId } />
-				{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
-				<div>
-					<FormattedHeader
-						brandFont
-						className="current-plan__section-header modernized-header"
-						headerText={ translate( 'Plans' ) }
-						subHeaderText={ translate(
-							'Learn about the features included in your WordPress.com plan.'
-						) }
-						align="left"
-					/>
-					<div className="current-plan current-plan__content">
-						{ showThankYou && ! this.state.hideThankYouModal && (
-							<Dialog
-								baseClassName="current-plan__dialog dialog__content dialog__backdrop"
-								isVisible={ showThankYou }
-								onClose={ this.hideThankYouModalOnClose }
-							>
-								{ this.renderThankYou() }
-							</Dialog>
-						) }
+				<FormattedHeader
+					brandFont
+					className="current-plan__page-heading"
+					headerText={ translate( 'Plans' ) }
+					subHeaderText={ translate(
+						'Learn about the features included in your WordPress.com plan.'
+					) }
+					align="left"
+				/>
+				<div className="current-plan__content">
+					{ selectedSiteId && (
+						// key={ selectedSiteId } ensures data is refetched for changing selectedSiteId
+						<QueryConciergeInitial key={ selectedSiteId } siteId={ selectedSiteId } />
+					) }
+					<QuerySites siteId={ selectedSiteId } />
+					<QuerySitePlans siteId={ selectedSiteId } />
+					<QuerySitePurchases siteId={ selectedSiteId } />
+					<QuerySiteProducts siteId={ selectedSiteId } />
+					{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
 
-						<PlansNavigation path={ path } />
+					{ showThankYou && ! this.state.hideThankYouModal && (
+						<Dialog
+							baseClassName="current-plan__dialog dialog__content dialog__backdrop"
+							isVisible={ showThankYou }
+							onClose={ this.hideThankYouModalOnClose }
+						>
+							{ this.renderThankYou() }
+						</Dialog>
+					) }
 
-						<Main wideLayout>
-							{ showDomainWarnings && (
-								<DomainWarnings
-									domains={ domains }
-									position="current-plan"
-									selectedSite={ selectedSite }
-									allowedRules={ [
-										'newDomainsWithPrimary',
-										'newDomains',
-										'unverifiedDomainsCanManage',
-										'unverifiedDomainsCannotManage',
-										'wrongNSMappedDomains',
-										'newTransfersWrongNS',
-									] }
-								/>
-							) }
+					<PlansNavigation path={ path } />
 
-							{ showExpiryNotice && (
-								<Notice status="is-info" text={ <PlanRenewalMessage /> } showDismiss={ false }>
-									<NoticeAction href={ `/plans/${ selectedSite.slug || '' }` }>
-										{ translate( 'View plans' ) }
-									</NoticeAction>
-								</Notice>
-							) }
+					{ showDomainWarnings && (
+						<DomainWarnings
+							domains={ domains }
+							position="current-plan"
+							selectedSite={ selectedSite }
+							allowedRules={ [
+								'newDomainsWithPrimary',
+								'newDomains',
+								'unverifiedDomainsCanManage',
+								'unverifiedDomainsCannotManage',
+								'wrongNSMappedDomains',
+								'newTransfersWrongNS',
+							] }
+						/>
+					) }
 
-							{ legacyPlanNotice( eligibleForProPlan, selectedSite ) }
+					{ showExpiryNotice && (
+						<Notice status="is-info" text={ <PlanRenewalMessage /> } showDismiss={ false }>
+							<NoticeAction href={ `/plans/${ selectedSite.slug || '' }` }>
+								{ translate( 'View plans' ) }
+							</NoticeAction>
+						</Notice>
+					) }
 
-							{ isEcommerceTrial ? this.renderEcommerceTrialPage() : this.renderMain() }
+					{ legacyPlanNotice( eligibleForProPlan, selectedSite ) }
 
-							<TrackComponentView eventName="calypso_plans_my_plan_view" />
-						</Main>
-					</div>
+					{ isEcommerceTrial ? this.renderEcommerceTrialPage() : this.renderMain() }
+
+					<TrackComponentView eventName="calypso_plans_my_plan_view" />
 				</div>
-			</div>
+			</Main>
 		);
 	}
 }
@@ -337,6 +330,5 @@ export default connect( ( state, { requestThankYou } ) => {
 		showThankYou: requestThankYou && isJetpackNotAtomic,
 		scheduleId: getConciergeScheduleId( state ),
 		eligibleForProPlan,
-		isJetpackNotAtomic,
 	};
 } )( localize( CurrentPlan ) );

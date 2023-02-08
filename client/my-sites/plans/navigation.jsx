@@ -44,26 +44,24 @@ class PlansNavigation extends Component {
 		return (
 			site &&
 			shouldShowNavigation && (
-				<div className="navigation">
-					<SectionNav hasPinnedItems={ hasPinnedItems } selectedText={ sectionTitle }>
-						<NavTabs label="Section" selectedText={ sectionTitle }>
-							<NavItem
-								path={ `/plans/my-plan/${ site.slug }` }
-								selected={ path === '/plans/my-plan' }
-							>
-								{ translate( 'My Plan' ) }
-							</NavItem>
-							<NavItem
-								path={ `/plans/${ site.slug }` }
-								selected={
-									path === '/plans' || path === '/plans/monthly' || path === '/plans/yearly'
-								}
-							>
-								{ translate( 'Plans' ) }
-							</NavItem>
-						</NavTabs>
-					</SectionNav>
-				</div>
+				<SectionNav hasPinnedItems={ hasPinnedItems } selectedText={ sectionTitle }>
+					<NavTabs label="Section" selectedText={ sectionTitle }>
+						<NavItem
+							path={ `/plans/my-plan/${ site.slug }` }
+							selected={ path === '/plans/my-plan' }
+						>
+							{ translate( 'My Plan' ) }
+						</NavItem>
+						<NavItem
+							path={ `/plans/${ site.slug }` }
+							selected={
+								path === '/plans' || path === '/plans/monthly' || path === '/plans/yearly'
+							}
+						>
+							{ translate( 'Plans' ) }
+						</NavItem>
+					</NavTabs>
+				</SectionNav>
 			)
 		);
 	}
