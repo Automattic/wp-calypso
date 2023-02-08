@@ -65,10 +65,17 @@ export interface BillingTransactionUiState {
 	query?: string;
 }
 
-export type BillingTransactionsType = 'past' | 'upcoming';
+export type BillingTransactionsTypePast = 'past';
+export type BillingTransactionsTypeUpcoming = 'upcoming';
+export type BillingTransactionsType = BillingTransactionsTypePast | BillingTransactionsTypeUpcoming;
+
+export type BillingTransactionsStateItems = {
+	past?: BillingTransaction[];
+	upcoming?: UpcomingCharge[];
+};
 
 export interface BillingTransactionsState {
-	items?: { past?: BillingTransaction[]; upcoming?: UpcomingCharge[] };
+	items?: BillingTransactionsStateItems;
 	requesting?: boolean;
 	sendingReceiptEmail?: SendingReceiptEmailRecord;
 	individualTransactions?: unknown; // TODO: fill this in.
