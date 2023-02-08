@@ -122,6 +122,7 @@ class StatsSite extends Component {
 		activeTab: null,
 		activeLegend: null,
 		isOptOutNoticeDismissed: false,
+		isFeedbackNoticeDismissed: false,
 	};
 
 	static getDerivedStateFromProps( props, state ) {
