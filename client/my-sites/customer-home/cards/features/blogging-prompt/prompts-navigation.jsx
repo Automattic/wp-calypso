@@ -4,6 +4,7 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { navigate } from 'calypso/lib/navigate';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -22,6 +23,8 @@ const PromptsNavigation = ( { prompts } ) => {
 	const getPrompt = () => {
 		return prompts !== undefined ? prompts[ promptIndex ] : null;
 	};
+
+	const getNewPostLink = () => addQueryArgs( editorUrl, { answer_prompt: getPrompt()?.id } );
 
 	const goToPreviousStep = () => {
 		let nextIndex = promptIndex - 1;
@@ -48,32 +51,38 @@ const PromptsNavigation = ( { prompts } ) => {
 		}
 	};
 
-	const trackBloggingPromptClick = () => {
+	const handleBloggingPromptClick = ( e ) => {
+		// Prevent navigating away so we have time to record the click.
+		e.preventDefault();
+
 		dispatch(
 			recordTracksEvent( `calypso_customer_home_answer_prompt`, {
 				site_id: siteId,
-				prompt_id: getPrompt().id,
+				prompt_id: getPrompt()?.id,
 			} )
 		);
 
 		// Track if a user skipped todays prompt and choose to answer another prompt
 		const todayPromptId = prompts[ 0 ].id;
-		const skippedPromptId = getPrompt().id;
-		if ( todayPromptId !== skippedPromptId ) {
+		const selectedPromptId = getPrompt()?.id;
+		if ( todayPromptId !== selectedPromptId ) {
 			dispatch(
 				recordTracksEvent( `calypso_customer_home_skip_prompt`, {
 					site_id: siteId,
-					prompt_id: skippedPromptId,
+					prompt_id: todayPromptId,
 				} )
 			);
 		}
+
+		// Navigate to the editor.
+		navigate( getNewPostLink() );
 	};
 
 	const trackClickViewAllResponses = () => {
 		dispatch(
 			recordTracksEvent( `calypso_customer_home_view_all_responses`, {
 				site_id: siteId,
-				prompt_id: getPrompt().id,
+				prompt_id: getPrompt()?.id,
 			} )
 		);
 	};
@@ -91,7 +100,7 @@ const PromptsNavigation = ( { prompts } ) => {
 				>
 					<Gridicon icon={ backIcon } size={ 18 } />
 				</Button>
-				<div className="blogging-prompt__prompt-text">{ getPrompt().text }</div>
+				<div className="blogging-prompt__prompt-text">{ getPrompt()?.text }</div>
 				<Button
 					borderless={ false }
 					className={ buttonClasses }
@@ -115,7 +124,9 @@ const PromptsNavigation = ( { prompts } ) => {
 
 		const viewAllResponses = (
 			<a
-				href={ '/tag/dailyprompt-' + encodeURIComponent( prompt.id ) }
+				href={
+					'/tag/dailyprompt' + ( prompt && prompt.id ? '-' + encodeURIComponent( prompt.id ) : '' )
+				}
 				className="blogging-prompt__prompt-responses-link"
 				onClick={ trackClickViewAllResponses }
 			>
@@ -123,15 +134,15 @@ const PromptsNavigation = ( { prompts } ) => {
 			</a>
 		);
 
-		if ( prompt.answered_users_sample.length > 0 ) {
+		if ( prompt?.answered_users_sample.length > 0 ) {
 			responses = (
 				<div className="blogging-prompt__prompt-responses">
 					<div className="blogging-prompt__prompt-responses-users">
-						{ prompt.answered_users_sample.map( ( sample ) => {
-							return <img alt="answered-users" src={ sample.avatar } />;
+						{ prompt?.answered_users_sample.map( ( sample ) => {
+							return <img alt="answered-users" src={ sample.avatar } key={ sample.avatar } />;
 						} ) }
 					</div>
-					{ prompt.answered_users_count > 0 ? viewAllResponses : '' }
+					{ prompt?.answered_users_count > 0 ? viewAllResponses : '' }
 				</div>
 			);
 		}
@@ -140,13 +151,10 @@ const PromptsNavigation = ( { prompts } ) => {
 	};
 
 	const renderPromptAnswer = () => {
-		const newPostLink = addQueryArgs( editorUrl, {
-			answer_prompt: getPrompt().id,
-		} );
 		return (
 			<div className="blogging-prompt__prompt-answers">
 				{ renderResponses() }
-				<Button href={ newPostLink } onClick={ trackBloggingPromptClick() } target="_blank">
+				<Button href={ getNewPostLink() } onClick={ handleBloggingPromptClick }>
 					{ translate( 'Post Answer', {
 						comment:
 							'"Post" here is a verb meaning "to publish", as in "post an answer to this writing prompt"',

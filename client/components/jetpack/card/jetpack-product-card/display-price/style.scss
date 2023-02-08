@@ -207,6 +207,12 @@
 		color: var(--studio-pink-50);
 	}
 
+	&__standalone-card-price {
+		.plan-price {
+			margin: 0 0.2rem 0 0;
+		}
+	}
+
 	&.is-placeholder {
 		.plan-price {
 			@include placeholder( --color-neutral-10 );
@@ -258,6 +264,17 @@
 	&.is-disabled {
 		.display-price {
 			opacity: 0.4;
+		}
+	}
+}
+
+// TODO: This was originally a hotfix and needs cleanup
+.item-price .display-price {
+	&.is-jetpack-cloud:not(.is-placeholder) {
+		max-height: none;
+
+		.display-price__billing-time-frame {
+			line-height: 1.2;
 		}
 	}
 }

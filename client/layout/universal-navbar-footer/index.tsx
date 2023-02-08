@@ -1,5 +1,9 @@
 import './style.scss';
-import { useLocalizeUrl, removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
+import {
+	useLocalizeUrl,
+	removeLocaleFromPathLocaleInFront,
+	useIsEnglishLocale,
+} from '@automattic/i18n-utils';
 import { useTranslate, getLocaleSlug } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -18,7 +22,7 @@ const UniversalNavbarFooter = () => {
 	const { shouldSeeDoNotSell, isDoNotSell, onSetDoNotSell } = useDoNotSell();
 	const [ isDialogOpen, setIsDialogOpen ] = useState( false );
 	const isLoggedIn = useSelector( isUserLoggedIn );
-
+	const isEnglishLocale = useIsEnglishLocale();
 	const currentRoute = useSelector( getCurrentRoute );
 	const pathNameWithoutLocale = removeLocaleFromPathLocaleInFront( currentRoute ).slice( 1 );
 
@@ -176,9 +180,11 @@ const UniversalNavbarFooter = () => {
 									</a>
 								</li>
 								<li>
-									<a href={ localizeUrl( 'https://wordpress.com/courses/' ) } target="_self">
-										{ translate( 'WordPress Courses' ) }
-									</a>
+									{ isEnglishLocale && (
+										<a href={ localizeUrl( 'https://wordpress.com/learn/' ) } target="_self">
+											{ translate( 'Learn WordPress' ) }
+										</a>
+									) }
 								</li>
 								<li>
 									<a

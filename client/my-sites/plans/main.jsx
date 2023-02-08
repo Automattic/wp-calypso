@@ -4,6 +4,7 @@ import {
 	getIntervalTypeForTerm,
 	PLAN_FREE,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	isFreePlan,
 } from '@automattic/calypso-products';
 import { addQueryArgs } from '@wordpress/url';
 import { localize, useTranslate } from 'i18n-calypso';
@@ -32,8 +33,11 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PlansHeader from './header';
+import ModernizedLayout from './modernized-layout';
+import './style.scss';
 
 function DomainAndPlanUpsellNotice() {
 	const translate = useTranslate();
@@ -176,6 +180,7 @@ class Plans extends Component {
 			currentPlan,
 			domainAndPlanPackage,
 			is2023OnboardingPricingGrid,
+			isJetpackNotAtomic,
 		} = this.props;
 
 		if ( ! selectedSite || this.isInvalidPlanInterval() || ! currentPlan ) {
@@ -186,36 +191,38 @@ class Plans extends Component {
 		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 
 		return (
-			<div className={ is2023OnboardingPricingGrid ? 'is-2023-pricing-grid' : '' }>
+			<div>
+				{ ! isJetpackNotAtomic && (
+					<ModernizedLayout dropShadowOnHeader={ isFreePlan( currentPlanSlug ) } />
+				) }
 				{ selectedSite.ID && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
 				<PageViewTracker path="/plans/:site" title="Plans" />
 				<QueryContactDetailsCache />
 				<QueryPlans />
 				<TrackComponentView eventName="calypso_plans_view" />
-				<Main
-					fullWidthLayout={ is2023OnboardingPricingGrid }
-					wideLayout={ ! is2023OnboardingPricingGrid }
-				>
-					{ ! canAccessPlans && (
-						<EmptyContent
-							illustration="/calypso/images/illustrations/illustration-404.svg"
-							title={ translate( 'You are not authorized to view this page' ) }
-						/>
-					) }
-					{ canAccessPlans && (
-						<>
-							<PlansHeader />
-
-							{ domainAndPlanPackage && <DomainAndPlanUpsellNotice /> }
-							<div id="plans" className="plans plans__has-sidebar">
-								<PlansNavigation path={ this.props.context.path } />
+				{ canAccessPlans && (
+					<div>
+						<PlansHeader />
+						<div id="plans" className="plans plans__has-sidebar">
+							<PlansNavigation path={ this.props.context.path } />
+							<Main
+								fullWidthLayout={ is2023OnboardingPricingGrid }
+								wideLayout={ ! is2023OnboardingPricingGrid }
+							>
+								{ domainAndPlanPackage && <DomainAndPlanUpsellNotice /> }
 								{ isEcommerceTrial ? this.renderEcommerceTrialPage() : this.renderPlansMain() }
 								<PerformanceTrackerStop />
-							</div>
-						</>
-					) }
-				</Main>
+							</Main>
+						</div>
+					</div>
+				) }
+				{ ! canAccessPlans && (
+					<EmptyContent
+						illustration="/calypso/images/illustrations/illustration-404.svg"
+						title={ translate( 'You are not authorized to view this page' ) }
+					/>
+				) }
 			</div>
 		);
 	}
@@ -241,5 +248,6 @@ export default connect( ( state ) => {
 		showTreatmentPlansReorderTest: isTreatmentPlansReorderTest( state ),
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
 		is2023OnboardingPricingGrid,
+		isJetpackNotAtomic: isJetpackSite( state, selectedSiteId, { treatAtomicAsJetpackSite: false } ),
 	};
 } )( localize( withTrackingTool( 'HotJar' )( Plans ) ) );
