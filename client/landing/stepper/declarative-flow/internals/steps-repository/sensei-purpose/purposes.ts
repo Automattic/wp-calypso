@@ -9,12 +9,11 @@ export type ManagedPlugin = {
 	softwareSet: string;
 };
 
-export type Plugin =
-	| {
-			id: string;
-			slug: string;
-	  }
-	| ManagedPlugin;
+export type Plugin = {
+	id?: string;
+	slug: string;
+	softwareSet?: string;
+};
 
 export type Purpose = {
 	id: string;
@@ -31,6 +30,7 @@ export const purposes: Purpose[] = [
 		plugins: [
 			{
 				softwareSet: 'woo-on-plans',
+				slug: 'woocommerce',
 			},
 			{
 				slug: 'woocommerce-google-analytics-integration',

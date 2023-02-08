@@ -5,7 +5,7 @@ import { useAtomicSitePlugins } from 'calypso/landing/stepper/declarative-flow/i
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { SenseiStepContainer } from '../components/sensei-step-container';
 import { Progress, SenseiStepProgress } from '../components/sensei-step-progress';
-import { getSelectedPlugins, getSelectedPurposes, Plugin } from '../sensei-purpose/purposes';
+import { getSelectedPlugins, getSelectedPurposes } from '../sensei-purpose/purposes';
 import type { Step } from '../../types';
 
 import './style.scss';
@@ -36,23 +36,21 @@ const useRetriesProgress = (
 	return progress;
 };
 
-function useInstallPurposeStepPlugins( queuePlugin: ( plugin: Plugin ) => void ) {
-	const additionalPlugins = useMemo( () => getSelectedPlugins( getSelectedPurposes() ), [] );
-
-	useEffect( () => {
-		additionalPlugins.forEach( queuePlugin );
-	}, [ additionalPlugins, queuePlugin ] );
-}
-
 const SenseiLaunch: Step = ( { navigation: { submit } } ) => {
 	const [ retries, setRetries ] = useState< number >( 0 );
 	const maxRetries = 40;
 	const progress = useRetriesProgress( retries, maxRetries, 15 );
 
 	const { pollPlugins, isPluginInstalled, queuePlugin } = useAtomicSitePlugins();
-	useInstallPurposeStepPlugins( queuePlugin );
+	const additionalPlugins = useMemo( () => getSelectedPlugins( getSelectedPurposes() ), [] );
 
-	const isComplete = retries >= maxRetries || isPluginInstalled( SENSEI_PRO_PLUGIN_SLUG );
+	useEffect( () => {
+		additionalPlugins.forEach( queuePlugin );
+	}, [ additionalPlugins, queuePlugin ] );
+
+	const allPlugins = [ SENSEI_PRO_PLUGIN_SLUG, ...additionalPlugins.map( ( p ) => p.slug ) ];
+	const arePluginsInstalled = allPlugins.every( isPluginInstalled );
+	const isComplete = retries >= maxRetries || arePluginsInstalled;
 
 	useEffect(
 		function pollSitePlugins() {

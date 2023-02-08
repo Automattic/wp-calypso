@@ -8,7 +8,7 @@ import {
 	installPlugin as installPluginAction,
 } from 'calypso/state/plugins/installed/actions';
 import { getPlugins } from 'calypso/state/plugins/installed/selectors';
-import { ManagedPlugin, Plugin } from '../sensei-purpose/purposes';
+import { Plugin } from '../sensei-purpose/purposes';
 
 interface InstalledPlugin {
 	id: string;
@@ -38,11 +38,11 @@ export function useAtomicSitePlugins() {
 
 	const installPluginOrSoftwareSet = useCallback(
 		( plugin: Plugin ) => {
-			const { softwareSet } = plugin as ManagedPlugin;
+			const { softwareSet } = plugin;
 			if ( softwareSet ) {
 				initiateSoftwareInstall( siteId, softwareSet );
 			} else {
-				const { slug } = plugin as Exclude< Plugin, ManagedPlugin >;
+				const { slug } = plugin;
 				if ( slug && ! isPluginInstalled( slug ) ) {
 					dispatch( installPluginAction( siteId, plugin ) );
 				}
