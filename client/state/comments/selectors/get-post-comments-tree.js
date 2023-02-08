@@ -28,17 +28,6 @@ export const getPostCommentsTree = treeSelect(
 			) {
 				return false;
 			}
-
-			// Filter out pending comments that are duplicates of approved comments
-			if ( item.status === 'pending' ) {
-				const duplicate = allItems.find(
-					( comment ) => comment.content === item.content && comment.ID !== item.ID
-				);
-				if ( duplicate ) {
-					return false;
-				}
-			}
-
 			if ( status !== 'all' ) {
 				return item.isPlaceholder || item.status === status;
 			}
