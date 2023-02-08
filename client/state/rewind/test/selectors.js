@@ -1,4 +1,8 @@
-import { getRewindStorageUsageLevel, getBackupCurrentSiteSize, getBackupRetentionDays } from '../selectors';
+import {
+	getRewindStorageUsageLevel,
+	getBackupCurrentSiteSize,
+	getBackupRetentionDays,
+} from '../selectors';
 import { StorageUsageLevels } from '../storage/types';
 
 describe( 'getRewindStorageUsageLevel()', () => {
@@ -96,11 +100,10 @@ describe( 'getBackupRetentionDays()', () => {
 			expected: 30,
 		},
 	] )(
-		'should return the retentionDays if passed, null otherwise',
+		'should return the retentionDays if passed, undefined otherwise',
 		( { state, siteId, expected } ) => {
 			const output = getBackupRetentionDays( state, siteId );
 			expect( output ).toBe( expected );
 		}
 	);
 } );
-

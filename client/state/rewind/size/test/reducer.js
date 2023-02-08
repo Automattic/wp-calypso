@@ -32,8 +32,8 @@ describe( 'rewind.size reducers', () => {
 			}
 		);
 	} );
-  
-  describe( 'retentionDays', () => {
+
+	describe( 'retentionDays', () => {
 		it.each( [
 			{
 				state: undefined,
