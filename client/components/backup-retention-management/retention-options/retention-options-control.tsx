@@ -28,7 +28,7 @@ const RetentionOptionsControl: React.FC< RetentionOptionsControlProps > = ( {
 
 	return (
 		<div className="retention-form__options">
-			{ retentionOptions.map( ( option ) => (
+			{ Object.values( retentionOptions ).map( ( option ) => (
 				<RetentionOptionCard
 					{ ...option }
 					key={ option.value }
