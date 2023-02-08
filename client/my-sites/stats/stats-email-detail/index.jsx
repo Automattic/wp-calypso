@@ -16,9 +16,6 @@ import QueryEmailStats from 'calypso/components/data/query-email-stats';
 import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import Main from 'calypso/components/main';
-import SectionNav from 'calypso/components/section-nav';
-import NavItem from 'calypso/components/section-nav/item';
-import NavTabs from 'calypso/components/section-nav/tabs';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import memoizeLast from 'calypso/lib/memoize-last';
@@ -32,6 +29,7 @@ import { getEmailStat, isRequestingEmailStats } from 'calypso/state/stats/emails
 import { getPeriodWithFallback, getCharts } from 'calypso/state/stats/emails/utils';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import DatePicker from '../stats-date-picker';
+import StatsDetailsNavigation from '../stats-details-navigation';
 import ChartTabs from '../stats-email-chart-tabs';
 import StatsEmailTopRow from '../stats-email-top-row';
 import { StatsNoContentBanner } from '../stats-no-content-banner';
@@ -192,21 +190,6 @@ class StatsEmailDetail extends Component {
 			path: `/stats/email/${ statType }`,
 		};
 
-		const navItems = [ 'highlights', 'opens', 'clicks' ].map( ( item ) => {
-			const pathParam = [ 'opens', 'clicks' ].includes( item )
-				? `email/${ item }/${ period }`
-				: `post`;
-			const attr = {
-				key: item,
-				path: `/stats/${ pathParam }/${ postId }/${ givenSiteId }`,
-				selected: statType === item,
-			};
-
-			// uppercase first character of item
-
-			return <NavItem { ...attr }>{ item.charAt( 0 ).toUpperCase() + item.slice( 1 ) }</NavItem>;
-		} );
-
 		const query = memoizedQuery( period, endOf );
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ traffic.path }/{{ interval }}/${ postId }${ slugPath }`;
@@ -251,11 +234,12 @@ class StatsEmailDetail extends Component {
 							<div>
 								<h1>{ this.getTitle() }</h1>
 
-								<SectionNav>
-									<NavTabs label="Stats" selectedText="Opens">
-										{ navItems }
-									</NavTabs>
-								</SectionNav>
+								<StatsDetailsNavigation
+									postId={ postId }
+									period={ period }
+									statType={ statType }
+									givenSiteId={ givenSiteId }
+								/>
 
 								<StatsEmailTopRow siteId={ siteId } postId={ postId } statType={ statType } />
 
