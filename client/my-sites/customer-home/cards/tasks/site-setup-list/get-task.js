@@ -178,6 +178,21 @@ export const getTask = (
 				isSkippable: true,
 			};
 			break;
+		case CHECKLIST_KNOWN_TASKS.SENSEI_SETUP:
+			taskData = {
+				timing: 15,
+				title: translate( 'Finish Sensei setup' ),
+				description: translate(
+					'Customize your course templates, create your first course, and more!'
+				),
+				actionText: task.isCompleted
+					? translate( 'Go to Sensei Home' )
+					: translate( 'Finish Sensei setup' ),
+				actionUrl: taskUrls?.sensei_setup,
+				actionDisableOnComplete: false,
+				isSkippable: true,
+			};
+			break;
 		case CHECKLIST_KNOWN_TASKS.SITE_LAUNCHED: {
 			const description = isBlogger
 				? translate(

@@ -12,6 +12,7 @@ export const CHECKLIST_KNOWN_TASKS = {
 	BLOGNAME_SET: 'blogname_set',
 	MOBILE_APP_INSTALLED: 'mobile_app_installed',
 	WOOCOMMERCE_SETUP: 'woocommerce_setup',
+	SENSEI_SETUP: 'sensei_setup',
 	SITE_LAUNCHED: 'site_launched',
 	FRONT_PAGE_UPDATED: 'front_page_updated',
 	SITE_MENU_UPDATED: 'site_menu_updated',
