@@ -25,14 +25,12 @@ export const useGithubConnectMutation = (
 ) => {
 	const queryClient = useQueryClient();
 	const mutation = useMutation(
+		//todo sent basePath
 		async ( { repoName, branchName }: MutationVariables ) =>
-			wp.req.post(
-				{
-					path: `/sites/${ siteId }/hosting/github/connect`,
-					apiNamespace: 'wpcom/v2',
-				},
-				{ repoName, branchName }
-			),
+			wp.req.get( {
+				path: `/sites/${ siteId }/hosting/github/connect?repo=${ repoName }&branch=${ branchName }`,
+				apiNamespace: 'wpcom/v2',
+			} ),
 		{
 			...options,
 			onSuccess: async ( ...args ) => {
