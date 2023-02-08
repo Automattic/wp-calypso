@@ -8,6 +8,7 @@ import './pattern-list-renderer.scss';
 interface PatternListItemProps {
 	pattern: Pattern;
 	className: string;
+	isShown: boolean;
 	onSelect: ( selectedPattern: Pattern | null ) => void;
 }
 
@@ -22,19 +23,26 @@ interface PatternListRendererProps {
 const PLACEHOLDER_HEIGHT = 100;
 const MAX_HEIGHT_FOR_100VH = 500;
 
-const PatternListItem = ( { pattern, className, onSelect }: PatternListItemProps ) => {
+const PatternListItem = ( { pattern, className, isShown, onSelect }: PatternListItemProps ) => {
 	return (
 		<Button
 			className={ className }
 			title={ pattern.category }
 			onClick={ () => onSelect( pattern ) }
 		>
-			<PatternRenderer
-				patternId={ encodePatternId( pattern.id ) }
-				viewportWidth={ 1060 }
-				minHeight={ PLACEHOLDER_HEIGHT }
-				maxHeightFor100vh={ MAX_HEIGHT_FOR_100VH }
-			/>
+			{ isShown ? (
+				<PatternRenderer
+					patternId={ encodePatternId( pattern.id ) }
+					viewportWidth={ 1060 }
+					minHeight={ PLACEHOLDER_HEIGHT }
+					maxHeightFor100vh={ MAX_HEIGHT_FOR_100VH }
+				/>
+			) : (
+				<div
+					className="pattern-list-renderer__pattern-list-item-placeholder"
+					style={ { height: PLACEHOLDER_HEIGHT } }
+				/>
+			) }
 		</Button>
 	);
 };
@@ -48,20 +56,17 @@ const PatternListRenderer = ( {
 }: PatternListRendererProps ) => {
 	return (
 		<>
-			{ patterns.map( ( pattern, index ) => {
-				const isShown = shownPatterns.includes( pattern );
-
-				return isShown ? (
-					<PatternListItem
-						key={ `${ index }-${ pattern.id }` }
-						pattern={ pattern }
-						className={ classnames( 'pattern-list-renderer__pattern-list-item', {
-							[ activeClassName ]: pattern.id === selectedPattern?.id,
-						} ) }
-						onSelect={ onSelect }
-					/>
-				) : null;
-			} ) }
+			{ patterns.map( ( pattern, index ) => (
+				<PatternListItem
+					key={ `${ index }-${ pattern.id }` }
+					pattern={ pattern }
+					className={ classnames( 'pattern-list-renderer__pattern-list-item', {
+						[ activeClassName ]: pattern.id === selectedPattern?.id,
+					} ) }
+					isShown={ shownPatterns.includes( pattern ) }
+					onSelect={ onSelect }
+				/>
+			) ) }
 		</>
 	);
 };

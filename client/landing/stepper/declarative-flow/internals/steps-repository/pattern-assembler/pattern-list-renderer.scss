@@ -1,3 +1,9 @@
+@import "@automattic/onboarding/styles/mixins";
+
 .pattern-list-renderer__pattern-list-item {
 	padding: 0;
+}
+
+.pattern-list-renderer__pattern-list-item-placeholder {
+	@include onboarding-placeholder;
 }

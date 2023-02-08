@@ -11,13 +11,16 @@ const PatternPreviewAutoHeight = ( {
 	url,
 	patternName,
 	patternId,
+	isShown,
 }: {
 	children: ReactElement;
 	url: string;
 	patternName: string;
 	patternId: number;
+	isShown: boolean;
 } ) => {
 	const [ height, setHeight ] = useState( initialHeight );
+	const [ isLoaded, setIsLoaded ] = useState( false );
 	const calypso_token = patternId;
 	const verticalPadding = height < initialHeight ? verticalPaddingValue : 0;
 
@@ -36,6 +39,7 @@ const PatternPreviewAutoHeight = ( {
 
 			if ( 'page-dimensions-on-load' === data.type ) {
 				setHeight( data.payload.height );
+				setIsLoaded( true );
 			}
 		};
 
@@ -51,6 +55,7 @@ const PatternPreviewAutoHeight = ( {
 				minHeight: Math.round( height * iframeScaleRatio ) + verticalPadding,
 			},
 		},
+		isShown && isLoaded ? null : <div className="pattern-list__pattern-placeholder" />,
 		<iframe
 			title={ patternName }
 			frameBorder="0"
