@@ -140,7 +140,7 @@ class Plans extends Component {
 	componentDidMount() {
 		this.redirectIfInvalidPlanInterval();
 		if ( this.props.domainSidebarExperimentUser ) {
-			document.body.classList.add( 'is-experiment-user' );
+			document.body.classList.add( 'is-domain-sidebar-experiment-user' );
 		}
 
 		// Scroll to the top
@@ -151,7 +151,7 @@ class Plans extends Component {
 
 	componentWillUnmount() {
 		if ( this.props.domainSidebarExperimentUser ) {
-			document.body.classList.remove( 'is-experiment-user' );
+			document.body.classList.remove( 'is-domain-sidebar-experiment-user' );
 		}
 	}
 

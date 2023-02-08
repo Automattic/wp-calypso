@@ -1,27 +1,17 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-@import "@automattic/typography/styles/variables";
 
 .plans main {
 	padding-top: 17px;
 }
 
-.domains__header {
-	display: flex;
-	justify-content: space-between;
-	align-items: flex-start;
-
-	@include breakpoint-deprecated( "<660px" ) {
-		align-items: center;
-	}
-}
-
-body.is-section-plans.is-experiment-user {
-	background: #fdfdfd;
+body.is-section-plans.is-domain-sidebar-experiment-user {
+	background: var(--color-body-background);
 
 	.layout__content {
 		padding-left: 0 !important;
 	}
+
 	.plans__header {
 		display: block;
 
@@ -35,13 +25,6 @@ body.is-section-plans.is-experiment-user {
 			color: var(--color-text-subtle);
 			text-align: center;
 			padding: 0 10px;
-		}
-
-		a {
-			color: var(--studio-gray-90);
-			font-weight: 500;
-			padding-left: 5px;
-			text-decoration: underline;
 		}
 	}
 
