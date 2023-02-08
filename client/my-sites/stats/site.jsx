@@ -272,18 +272,19 @@ class StatsSite extends Component {
 								onClose={ dismissFeedbackNotice }
 							>
 								{ translate(
-									"{{p}}Now that you've gotten familiar with the new Jetpack Stats, we'd love to hear about your experience so we can continue to shape Jetpack to meet your needs.{{/p}}{{p}}{{takeSurveyButton}}remind me later{{/takeSurveyButton}}{{remindMeLaterLink}}remind me later{{/remindMeLaterLink}}{{/p}}",
+									"{{p}}Now that you've gotten familiar with the new Jetpack Stats, we'd love to hear about your experience so we can continue to shape Jetpack to meet your needs.{{/p}}{{p}}{{takeSurveyButton}}Take quick survey{{/takeSurveyButton}} {{remindMeLaterLink}}Remind me later{{/remindMeLaterLink}}{{/p}}",
 									{
 										components: {
 											p: <p />,
 											// todo update link to a Jetpack redirect in the banner with an appropriate slug, like jetpack-stats-2023-usage-survey
 											takeSurveyButton: (
-												<button>
-													<a href="/wp-admin/admin.php?page=jetpack#/settings?term=stats" />
+												<button className="notice-banner__action-button">
+													<a href="link TBC" />
 												</button>
 											),
+											// todo update link to a Jetpack redirect in the banner with an appropriate slug, like jetpack-stats-2023-usage-survey
 											remindMeLaterLink: (
-												<a href="/wp-admin/admin.php?page=jetpack#/settings?term=stats" />
+												<a className="notice-banner__action-link" href="linktoremindmelater" />
 											),
 										},
 									}
