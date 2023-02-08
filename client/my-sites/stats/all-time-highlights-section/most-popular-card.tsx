@@ -15,7 +15,7 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { getPostStat } from 'calypso/state/stats/posts/selectors';
 
-const POST_STATS_CARD_TITLE_LIMIT = 48;
+const POST_STATS_CARD_TITLE_LIMIT = 40;
 
 // Use ellipsis when characters count over the limit.
 // TODO: Extract to shared utilities
