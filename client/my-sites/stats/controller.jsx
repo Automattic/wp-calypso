@@ -1,3 +1,5 @@
+import config from '@automattic/calypso-config';
+import { Spinner } from '@automattic/components';
 import i18n from 'i18n-calypso';
 import { find, pick } from 'lodash';
 import moment from 'moment';
@@ -14,6 +16,8 @@ import StatsSite from './site';
 import StatsEmailDetail from './stats-email-detail';
 import StatsSummary from './summary';
 
+const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+
 const PageLoading = (
 	<div
 		style={ {
@@ -24,7 +28,11 @@ const PageLoading = (
 			alignItems: 'center',
 		} }
 	>
-		<img width="32" height="32" alt="Loading" src="//en.wordpress.com/i/loading/loading-64.gif" />
+		{ isOdysseyStats ? (
+			<img width="32" height="32" alt="Loading" src="//en.wordpress.com/i/loading/loading-64.gif" />
+		) : (
+			<Spinner />
+		) }
 	</div>
 );
 
