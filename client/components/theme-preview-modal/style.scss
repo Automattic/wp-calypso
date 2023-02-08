@@ -2,10 +2,10 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
 
-$break-design-preview: 1024px;
+$break-xlarge: 1080px;
 
 @mixin break-design-preview() {
-	@media (min-width: #{ ($break-design-preview) }) {
+	@media (min-width: #{ ($break-xlarge) }) {
 		@content;
 	}
 }
