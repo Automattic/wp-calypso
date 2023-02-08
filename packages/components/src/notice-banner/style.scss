@@ -110,7 +110,21 @@
 	.notice-banner__icon {
 		fill: var(--black);
 	}
+
+	.notice-banner__action-button {
+		background-color: var(--jp-black);
+		border-radius: 4px;
+		color: var(--studio-white);
+		padding: 8px;
+	}
+
+	.notice-banner__action-link {
+		color: var(--jp-black);
+		text-decoration: underline;
+		font-weight: bold;
+	}
 }
+
 
 .notice-banner.is-success {
 	border-left-color: var(--jp-green);
