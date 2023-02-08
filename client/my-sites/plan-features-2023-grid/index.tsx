@@ -88,6 +88,7 @@ import PlanFeatures2023GridFeatures from './features';
 import PlanFeatures2023GridHeaderPrice from './header-price';
 import { PlanFeaturesItem } from './item';
 import { PlanComparisonGrid } from './plan-comparison-grid';
+import { Plans2023Tooltip } from './plans-2023-tooltip';
 import { PlanProperties, TransformedFeatureObject } from './types';
 import { getStorageStringFromFeature } from './util';
 
@@ -476,19 +477,35 @@ export class PlanFeatures2023Grid extends Component<
 					) }
 					<header className={ headerClasses }>
 						{ isBusinessPlan( planName ) && (
-							<div className="plan-features-2023-grid__plan-logo">
-								<img src={ cloudLogo } alt="Cloud logo" />{ ' ' }
-							</div>
+							<Plans2023Tooltip
+								text={ translate(
+									'WP Cloud gives you the tools you need to add scalable, highly available, extremely fast WordPress hosting.'
+								) }
+							>
+								<div className="plan-features-2023-grid__plan-logo">
+									<img src={ cloudLogo } alt="Cloud logo" />{ ' ' }
+								</div>
+							</Plans2023Tooltip>
 						) }
 						{ isEcommercePlan( planName ) && (
-							<div className="plan-features-2023-grid__plan-logo">
-								<img src={ wooLogo } alt="WooCommerce logo" />{ ' ' }
-							</div>
+							<Plans2023Tooltip
+								text={ translate(
+									'Make your online store a reality with the power of WooCommerce.'
+								) }
+							>
+								<div className="plan-features-2023-grid__plan-logo">
+									<img src={ wooLogo } alt="WooCommerce logo" />{ ' ' }
+								</div>
+							</Plans2023Tooltip>
 						) }
 						{ isWpcomEnterpriseGridPlan( planName ) && (
-							<div className="plan-features-2023-grid__plan-logo">
-								<img src={ vipLogo } alt="WPVIP logo" />{ ' ' }
-							</div>
+							<Plans2023Tooltip
+								text={ translate( 'The trusted choice for enterprise WordPress hosting.' ) }
+							>
+								<div className="plan-features-2023-grid__plan-logo">
+									<img src={ vipLogo } alt="WPVIP logo" />{ ' ' }
+								</div>
+							</Plans2023Tooltip>
 						) }
 					</header>
 				</Container>
@@ -650,7 +667,7 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanFeaturesList( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { domainName } = this.props;
+		const { domainName, translate } = this.props;
 		const planProperties = planPropertiesObj.filter(
 			( properties ) => ! isWpcomEnterpriseGridPlan( properties.planName )
 		);
@@ -670,7 +687,13 @@ export class PlanFeatures2023Grid extends Component<
 					/>
 					{ jpFeatures.length !== 0 && (
 						<div className="plan-features-2023-grid__jp-logo" key="jp-logo">
-							<JetpackLogo size={ 16 } />
+							<Plans2023Tooltip
+								text={ translate(
+									'Security, performance and growth tools made by the WordPress experts.'
+								) }
+							>
+								<JetpackLogo size={ 16 } />
+							</Plans2023Tooltip>
 						</div>
 					) }
 					<PlanFeatures2023GridFeatures
