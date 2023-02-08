@@ -5,15 +5,13 @@ import {
 	BILLING_TRANSACTIONS_FILTER_SET_QUERY,
 } from 'calypso/state/action-types';
 import { combineReducers, keyedReducer } from 'calypso/state/utils';
+import type { BillingTransactionUiState } from '../types';
+import type { AnyAction } from 'redux';
 
 /**
  * Returns the updated app filter state after an action has been dispatched
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @returns {string}        Updated state
  */
-export const app = ( state = null, action ) => {
+export const app = ( state: BillingTransactionUiState[ 'app' ] = null, action: AnyAction ) => {
 	if ( action.type === BILLING_TRANSACTIONS_FILTER_SET_APP ) {
 		return action.app;
 	}
@@ -22,15 +20,11 @@ export const app = ( state = null, action ) => {
 
 /**
  * Returns the updated date filter state after an action has been dispatched
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @param  {string} action.type
- * @param  action.month
- * @param  action.operator
- * @returns {Object}        Updated state
  */
-export const date = ( state = { month: null, operator: null }, { type, month, operator } ) => {
+export const date = (
+	state: BillingTransactionUiState[ 'date' ] = { month: null, operator: null },
+	{ type, month, operator }: AnyAction
+) => {
 	if ( type === BILLING_TRANSACTIONS_FILTER_SET_MONTH ) {
 		return {
 			month,
@@ -42,12 +36,8 @@ export const date = ( state = { month: null, operator: null }, { type, month, op
 
 /**
  * Returns the updated page state after an action has been dispatched
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @returns {number}        Updated state
  */
-export const page = ( state = 1, action ) => {
+export const page = ( state: BillingTransactionUiState[ 'page' ] = 1, action: AnyAction ) => {
 	switch ( action.type ) {
 		case BILLING_TRANSACTIONS_FILTER_SET_PAGE:
 			return action.page;
@@ -62,12 +52,8 @@ export const page = ( state = 1, action ) => {
 
 /**
  * Returns the updated string search filter state after an action has been dispatched
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @returns {string}        Updated state
  */
-export const query = ( state = '', action ) => {
+export const query = ( state: BillingTransactionUiState[ 'query' ] = '', action: AnyAction ) => {
 	if ( action.type === BILLING_TRANSACTIONS_FILTER_SET_QUERY ) {
 		return action.query;
 	}
