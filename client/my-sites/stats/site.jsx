@@ -255,6 +255,27 @@ class StatsSite extends Component {
 						</NoticeBanner>
 					</div>
 				) }
+				{ isOdysseyStats && ( //todo replace with conditional rendering
+					<div className="inner-notice-container has-background-color">
+						<NoticeBanner
+							level="success"
+							title={ translate( 'Welcome to the new Jetpack Stats!' ) }
+							onClose={ dismissOptOutNotice }
+						>
+							{ translate(
+								'{{p}}Enjoy a more modern and mobile friendly experience with new stats and insights to help you grow your site.{{/p}}{{p}}If you prefer to continue using the traditional stats, {{manageYourSettingsLink}}manage your settings{{/manageYourSettingsLink}}.{{/p}}',
+								{
+									components: {
+										p: <p />,
+										manageYourSettingsLink: (
+											<a href="/wp-admin/admin.php?page=jetpack#/settings?term=stats" />
+										),
+									},
+								}
+							) }
+						</NoticeBanner>
+					</div>
+				) }
 
 				<HighlightsSection siteId={ siteId } />
 
