@@ -162,6 +162,7 @@
 		width: auto;
 	}
 
+	.is-section-stepper &,
 	.is-section-signup & {
 		@include plan-features-layout-switcher-onboarding;
 	}
@@ -266,6 +267,8 @@
 		border-radius: 5px; /* stylelint-disable-line */
 		background-color: #fff;
 		margin: 0;
+		border-spacing: 0;
+		width: 100%;
 	}
 
 	.plan-features-2023-grid__table-bottom .plan-features-2023-grid__table {
@@ -273,6 +276,7 @@
 	}
 
 	.plan-features-2023-grid__header-title {
+		margin-top: 0;
 		margin-bottom: 5px;
 		font-size: $font-title-large;
 		line-height: 0.7;
@@ -307,6 +311,7 @@
 		border: none;
 		background-color: var(--color-surface);
 		position: relative;
+		vertical-align: baseline;
 
 		.is-bold {
 			font-weight: 600;
@@ -512,6 +517,7 @@
 	border-radius: 4px;
 }
 
+body.is-section-stepper,
 body.is-section-signup.is-white-signup,
 .is-2023-pricing-grid {
 
@@ -684,6 +690,7 @@ body.is-section-signup.is-white-signup,
 	}
 }
 
+.plans-features-main.is-pricing-grid-2023-plans-features-main  ul.segmented-control.price-toggle,
 body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup__step .segmented-control.price-toggle,
 #primary .is-pricing-grid-2023-plans-features-main .segmented-control.price-toggle {
 	background-color: #f2f2f2;
@@ -699,18 +706,18 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 		padding: 6px 11px;
 	}
 
-	.segmented-control__item {
+	li.segmented-control__item:not(.is-selected) {
 		border: 6px;
 		padding: 2px;
 		font-weight: 500;
 
-		& .segmented-control__link {
+		& a.segmented-control__link {
 			border: 1px solid #f2f2f2;
 			border-radius: 5px; /* stylelint-disable-line scales/radii */
 
 			&:hover {
 				border-color: rgba(0, 0, 0, 0.04);
-				background: rgba(255, 255, 255, 0.3);
+				background: rgba(255, 255, 255, 0.3) !important;
 			}
 			&:focus {
 				box-shadow: 0 0 0 1px var(--studio-gray-90);
@@ -912,6 +919,7 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 
 
 	.plan-comparison-grid__title {
+		margin-top: 0;
 		margin-bottom: 12px;
 		font-size: $font-title-small;
 		line-height: 1.2;
@@ -1001,6 +1009,7 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 		&:not([disabled]):focus {
 			border-color: var(--studio-gray-100);
 			box-shadow: none;
+			color: inherit;
 		}
 	}
 }
@@ -1012,4 +1021,8 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
  */
 .is-section-plans .plan-features-2023-grid__plan-comparison-grid-container {
 	scroll-margin-top: $plan-features-header-banner-height + 24px;
+}
+
+.formatted-header {
+	margin-bottom: 0;
 }
