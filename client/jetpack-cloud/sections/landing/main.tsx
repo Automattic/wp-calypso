@@ -1,79 +1,80 @@
-import {
-	WPCOM_FEATURES_BACKUPS,
-	WPCOM_FEATURES_INSTANT_SEARCH,
-	WPCOM_FEATURES_SCAN,
-} from '@automattic/calypso-products';
 import page from 'page';
-import { useEffect } from 'react';
-import * as React from 'react';
+import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
+import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import isRequestingSiteFeatures from 'calypso/state/selectors/is-requesting-site-features';
-import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import isBackupPluginActive from 'calypso/state/sites/selectors/is-backup-plugin-active';
-import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
-import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
-import isSearchPluginActive from 'calypso/state/sites/selectors/is-search-plugin-active';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
-import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
-import { AppState } from 'calypso/types';
+import { getLandingPath, isSiteEligibleForJetpackCloud } from './selectors';
+import type React from 'react';
 
-const siteIsEligible = ( state: AppState, siteId: number | null ) =>
-	siteId
-		? ( isJetpackSite( state, siteId ) ||
-				isBackupPluginActive( state, siteId ) ||
-				isSearchPluginActive( state, siteId ) ) &&
-		  ! isSiteAtomic( state, siteId ) &&
-		  ! isJetpackSiteMultiSite( state, siteId )
-		: null;
+/**
+ * Check whether or not we've asked for and received an API response
+ * describing the features of the site with the given ID.
+ *
+ * @param siteId The site for which features data should be requested.
+ * @returns true if a request and response have taken place (success or failure);
+ * false otherwise.
+ */
+const useResolvedSiteFeatures = ( siteId: number ) => {
+	const hasSiteFeatures = useSelector(
+		( state ) => !! getFeaturesBySiteId( state, siteId )?.active
+	);
+	const requestedSiteFeatures = useRef( false );
+	const isFetchingSiteFeatures = useSelector( ( state ) =>
+		isRequestingSiteFeatures( state, siteId )
+	);
+	useEffect( () => {
+		if ( isFetchingSiteFeatures ) {
+			requestedSiteFeatures.current = true;
+		}
+	}, [ isFetchingSiteFeatures ] );
+
+	// If the site's features array is populated,
+	// we know a request happened at some point previously and was successful
+	if ( hasSiteFeatures ) {
+		return true;
+	}
+
+	// If the site's features array is unpopulated, but we know we sent a request for it,
+	// something must have failed; but we know an attempt was made and allowed to
+	// fully resolve.
+	if ( requestedSiteFeatures.current && ! isFetchingSiteFeatures ) {
+		return true;
+	}
+
+	return false;
+};
 
 const Landing: React.FC = () => {
-	const siteId = useSelector( getSelectedSiteId );
-	const siteSlug = useSelector( getSelectedSiteSlug );
+	// This page should only ever load in a context where a site is already selected
+	const siteId = useSelector( getSelectedSiteId ) as number;
 
-	const isEligible = useSelector( ( state ) => siteIsEligible( state, siteId ) );
-	const hasBackup = useSelector( ( state ) =>
-		siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS )
-	);
-	const hasScan = useSelector( ( state ) => siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN ) );
-	const hasSearch = useSelector( ( state ) =>
-		siteHasFeature( state, siteId, WPCOM_FEATURES_INSTANT_SEARCH )
-	);
-	const isFetchingSiteFeatures = useSelector( isRequestingSiteFeatures );
+	const isEligible = useSelector( ( state ) => isSiteEligibleForJetpackCloud( state, siteId ) );
+	const resolvedSiteFeatures = useResolvedSiteFeatures( siteId );
+	const landingPath = useSelector( ( state ) => getLandingPath( state, siteId ) );
 
 	useEffect( () => {
-		// early return while we wait to retrieve information
-		if ( isEligible === null || isFetchingSiteFeatures === true ) {
+		// Send sites that aren't Cloud-eligible back to the home page
+		if ( ! isEligible ) {
+			page.redirect( '/' );
 			return;
 		}
 
-		// Send sites that aren't Cloud-eligible back to the home page
-		if ( ! isEligible ) {
-			return page.redirect( '/' );
+		// Before continuing, wait until we've fetched the selected site's features
+		if ( ! resolvedSiteFeatures ) {
+			return;
 		}
 
+		// By this point, we can assume that landingPath is defined;
+		// let's redirect people to the most appropriate page,
+		// based on the features available to the selected site
 		const redirectUrl = new URL( window.location.href );
+		redirectUrl.pathname = landingPath as string;
+		page.redirect( redirectUrl.toString() );
+	}, [ resolvedSiteFeatures, isEligible, landingPath ] );
 
-		if ( hasBackup ) {
-			redirectUrl.pathname = `/backup/${ siteSlug ?? '' }`;
-		} else if ( hasScan ) {
-			redirectUrl.pathname = `/scan/${ siteSlug ?? '' }`;
-		} else if ( hasSearch ) {
-			redirectUrl.pathname = `/jetpack-search/${ siteSlug ?? '' }`;
-		} else {
-			// For sites with no eligible capabilities, show the Backup upsell page.
-			redirectUrl.pathname = `/backup/${ siteSlug ?? '' }`;
-		}
-
-		return page.redirect( redirectUrl.toString() );
-	}, [ hasBackup, hasScan, hasSearch, isEligible, isFetchingSiteFeatures, siteSlug ] );
-
-	return (
-		<>
-			<QuerySiteFeatures siteIds={ [ siteId ] } />
-		</>
-	);
+	return <QuerySiteFeatures siteIds={ [ siteId ] } />;
 };
 
 export default Landing;
