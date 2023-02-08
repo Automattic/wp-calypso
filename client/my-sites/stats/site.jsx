@@ -111,6 +111,7 @@ Object.defineProperty( CHART_COMMENTS, 'label', {
 } );
 
 const getActiveTab = ( chartTab ) => find( CHARTS, { attr: chartTab } ) || CHARTS[ 0 ];
+
 class StatsSite extends Component {
 	static defaultProps = {
 		chartTab: 'views',
@@ -360,22 +361,26 @@ class StatsSite extends Component {
 						{ config.isEnabled( 'newsletter/stats' ) && (
 							<>
 								<StatsModule
-									path="emails-open"
-									moduleStrings={ moduleStrings.emailsOpenStats }
+									additionalColumns={ {
+										header: (
+											<>
+												<span>{ translate( 'Clicks' ) }</span>
+											</>
+										),
+										body: ( item ) => (
+											<>
+												<span>{ item.clicks }</span>
+											</>
+										),
+									} }
+									path="emails"
+									moduleStrings={ moduleStrings.emails }
 									period={ this.props.period }
 									query={ query }
-									statType="statsEmailsOpen"
+									statType="statsEmailsSummary"
+									mainItemLabel={ <span>{ translate( 'Post' ) }</span> }
 									hideSummaryLink
 									metricLabel={ translate( 'Opens' ) }
-								/>
-								<StatsModule
-									path="emails-click"
-									moduleStrings={ moduleStrings.emailsClickStats }
-									period={ this.props.period }
-									query={ query }
-									statType="statsEmailsClick"
-									hideSummaryLink
-									metricLabel={ translate( 'Clicks' ) }
 								/>
 							</>
 						) }
@@ -451,6 +456,7 @@ class StatsSite extends Component {
 		);
 	}
 }
+
 const enableJetpackStatsModule = ( siteId, path ) =>
 	withAnalytics(
 		recordTracksEvent( 'calypso_jetpack_module_toggle', {

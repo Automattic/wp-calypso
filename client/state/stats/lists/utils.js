@@ -937,7 +937,7 @@ export const normalizers = {
 	},
 
 	/**
-	 * Returns a normalized statsEmailsOpen array, ready for use in stats-module
+	 * Returns a normalized statsEmailsSummary array, ready for use in stats-module
 	 *
 	 * @param   {Object} data   Stats data
 	 * @param   {Object} query  Stats query
@@ -945,14 +945,14 @@ export const normalizers = {
 	 * @param   {Object} site    Site object
 	 * @returns {Array}       Normalized stats data
 	 */
-	statsEmailsOpen( data, query = {}, siteId, site ) {
-		if ( ! data || ! query.period || ! query.date ) {
+	statsEmailsSummary( data, query, siteId, site ) {
+		if ( ! data ) {
 			return [];
 		}
 
 		const emailsData = get( data, [ 'posts' ], [] );
 
-		return emailsData.map( ( { id, href, date, title, type, opens } ) => {
+		return emailsData.map( ( { id, href, date, title, type, opens, clicks } ) => {
 			const detailPage = site ? `/stats/email/opens/day/${ id }/${ site.slug }` : null;
 			return {
 				id,
@@ -961,42 +961,7 @@ export const normalizers = {
 				label: title,
 				type,
 				value: opens || '0',
-				page: detailPage,
-				actions: [
-					{
-						type: 'link',
-						data: href,
-					},
-				],
-			};
-		} );
-	},
-
-	/**
-	 * Returns a normalized statsEmailsClick array, ready for use in stats-module
-	 *
-	 * @param   {Object} data   Stats data
-	 * @param   {Object} query  Stats query
-	 * @param   {number} siteId  Site ID
-	 * @param   {Object} site    Site object
-	 * @returns {Array}       Normalized stats data
-	 */
-	statsEmailsClick( data, query = {}, siteId, site ) {
-		if ( ! data || ! query.period || ! query.date ) {
-			return [];
-		}
-
-		const emailsData = get( data, [ 'posts' ], [] );
-
-		return emailsData.map( ( { id, href, date, title, type, clicks } ) => {
-			const detailPage = site ? `/stats/email/clicks/day/${ id }/${ site.slug }` : null;
-			return {
-				id,
-				href,
-				date,
-				label: title,
-				type,
-				value: clicks || '0',
+				clicks: clicks || '0',
 				page: detailPage,
 				actions: [
 					{
