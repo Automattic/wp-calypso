@@ -72,9 +72,9 @@ import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availabi
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import wpcom from 'calypso/lib/wp';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
-import { isDomainSidebarExperimentUser } from 'calypso/my-sites/controller';
 import { domainUseMyDomain } from 'calypso/my-sites/domains/paths';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { isDomainSidebarExperimentUser } from 'calypso/state/selectors/is-domain-sidebar-experiment-user';
 import AlreadyOwnADomain from './already-own-a-domain';
 import tip from './tip';
 
@@ -391,7 +391,7 @@ class RegisterDomainStep extends Component {
 	}
 
 	render() {
-		const { isSignupStep, showAlreadyOwnADomain } = this.props;
+		const { isSignupStep, showAlreadyOwnADomain, domainSidebarExperimentUser } = this.props;
 
 		const {
 			availabilityError,
@@ -433,7 +433,7 @@ class RegisterDomainStep extends Component {
 							{ this.renderSearchBar() }
 						</CompactCard>
 					</div>
-					{ isDomainSidebarExperimentUser() && this.renderQuickFilters() }
+					{ domainSidebarExperimentUser && this.renderQuickFilters() }
 
 					{ ! isSignupStep && isQueryInvalid && (
 						<Notice
@@ -564,13 +564,14 @@ class RegisterDomainStep extends Component {
 			onSearchChange: this.onSearchChange,
 			ref: this.bindSearchCardReference,
 			isReskinned: this.props.isReskinned,
-			childrenBeforeCloseButton: isDomainSidebarExperimentUser() && this.renderSearchFilters(),
+			childrenBeforeCloseButton:
+				this.props.domainSidebarExperimentUser && this.renderSearchFilters(),
 		};
 
 		return (
 			<>
 				<Search { ...componentProps }></Search>
-				{ false === isDomainSidebarExperimentUser() && this.renderSearchFilters() }
+				{ false === this.props.domainSidebarExperimentUser && this.renderSearchFilters() }
 			</>
 		);
 	}
@@ -1602,6 +1603,7 @@ export default connect(
 	( state ) => {
 		return {
 			currentUser: getCurrentUser( state ),
+			domainSidebarExperimentUser: isDomainSidebarExperimentUser( state ),
 		};
 	},
 	{
