@@ -38,6 +38,7 @@ export default function HighlightCard( {
 	showValueTooltip,
 }: HighlightCardProps ) {
 	const difference = subtract( count, previousCount );
+	const differenceMagnitude = Math.abs( difference as number );
 	const percentage = Number.isFinite( difference )
 		? percentCalculator( Math.abs( difference as number ), previousCount )
 		: null;
@@ -74,8 +75,8 @@ export default function HighlightCard( {
 							{ difference > 0 && <Icon size={ 18 } icon={ arrowUp } /> }
 						</span>
 						<span className="highlight-card-difference-absolute-value">
-							{ difference <= 9999 && formattedNumber( Math.abs( difference ) ) }
-							{ difference > 9999 && <ShortenedNumber value={ Math.abs( difference ) } /> }
+							{ differenceMagnitude <= 9999 && formattedNumber( differenceMagnitude ) }
+							{ differenceMagnitude > 9999 && <ShortenedNumber value={ differenceMagnitude } /> }
 						</span>
 						{ percentage !== null && (
 							<span className="highlight-card-difference-absolute-percentage">
