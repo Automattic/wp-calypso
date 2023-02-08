@@ -195,7 +195,7 @@ class StatsEmailDetail extends Component {
 		const pathTemplate = `${ traffic.path }/{{ interval }}/${ postId }${ slugPath }`;
 		return (
 			<>
-				<Main className="has-fixed-nav stats__email-detail" wideLayout>
+				<Main className="has-fixed-nav stats__email-detail">
 					<QueryEmailStats
 						siteId={ siteId }
 						postId={ postId }
