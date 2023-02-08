@@ -289,55 +289,55 @@ class Plans extends Component {
 				<QueryContactDetailsCache />
 				<QueryPlans />
 				<TrackComponentView eventName="calypso_plans_view" />
-				<Main
-					fullWidthLayout={ is2023OnboardingPricingGrid }
-					wideLayout={ ! is2023OnboardingPricingGrid }
-				>
-					{ ! canAccessPlans && (
-						<EmptyContent
-							illustration="/calypso/images/illustrations/illustration-404.svg"
-							title={ translate( 'You are not authorized to view this page' ) }
-						/>
-					) }
-					{ canAccessPlans && (
-						<div>
-							{ ! domainSidebarExperimentUser && <PlansHeader /> }
-							{ ! domainSidebarExperimentUser && domainAndPlanPackage && (
-								<DomainAndPlanUpsellNotice />
-							) }
-							{ domainSidebarExperimentUser && (
-								<>
-									<div className="plans__header">
-										<FormattedHeader
-											brandFont
-											headerText={ translate( 'Choose the perfect plan' ) }
-											align="center"
-										/>
+				{ ! canAccessPlans && (
+					<EmptyContent
+						illustration="/calypso/images/illustrations/illustration-404.svg"
+						title={ translate( 'You are not authorized to view this page' ) }
+					/>
+				) }
+				{ canAccessPlans && (
+					<div>
+						{ ! domainSidebarExperimentUser && <PlansHeader /> }
+						{ domainSidebarExperimentUser && (
+							<>
+								<div className="plans__header">
+									<FormattedHeader
+										brandFont
+										headerText={ translate( 'Choose the perfect plan' ) }
+										align="center"
+									/>
 
-										<p>
-											{ translate(
-												'With your annual plan, you’ll get %(domainName)s {{strong}}free for the first year{{/strong}}. You’ll also unlock advanced features that make it easy to build and grow your site.',
-												{
-													args: {
-														domainName: yourDomainName,
-													},
-													components: {
-														strong: <strong />,
-													},
-												}
-											) }
-										</p>
-									</div>
-								</>
-							) }
-							<div id="plans" className="plans plans__has-sidebar">
-								<PlansNavigation path={ this.props.context.path } />
+									<p>
+										{ translate(
+											'With your annual plan, you’ll get %(domainName)s {{strong}}free for the first year{{/strong}}. You’ll also unlock advanced features that make it easy to build and grow your site.',
+											{
+												args: {
+													domainName: yourDomainName,
+												},
+												components: {
+													strong: <strong />,
+												},
+											}
+										) }
+									</p>
+								</div>
+							</>
+						) }
+						<div id="plans" className="plans plans__has-sidebar">
+							<PlansNavigation path={ this.props.context.path } />
+							<Main
+								fullWidthLayout={ is2023OnboardingPricingGrid }
+								wideLayout={ ! is2023OnboardingPricingGrid }
+							>
+								{ ! domainSidebarExperimentUser && domainAndPlanPackage && (
+									<DomainAndPlanUpsellNotice />
+								) }
 								{ isEcommerceTrial ? this.renderEcommerceTrialPage() : this.renderPlansMain() }
 								<PerformanceTrackerStop />
-							</div>
+							</Main>
 						</div>
-					) }
-				</Main>
+					</div>
+				) }
 			</div>
 		);
 	}
