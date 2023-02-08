@@ -214,7 +214,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 
 	const getTitle = () => {
 		if ( design.is_virtual && design.style_variation ) {
-			return `${ design.title } – ${ design.style_variation?.title }`;
+			return `${ design.title } – ${ design.style_variation.title }`;
 		}
 
 		return design.title;
