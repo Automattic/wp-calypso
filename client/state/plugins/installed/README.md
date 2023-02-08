@@ -42,7 +42,7 @@ Get the most recent status for a plugin action (including "inProgress" for curre
 
 ### `getAllPluginsIndexedByPluginSlug( state: Object )`
 
-Get an object for retrieving a plugin by its slug
+Get an object of all installed plugins in all sites, indexed by the plugin slug.
 
 ### `getAllPluginsIndexedBySiteId( state: Object )`
 
