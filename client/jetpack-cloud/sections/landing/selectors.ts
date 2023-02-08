@@ -52,6 +52,8 @@ export const getLandingPath = ( state: AppState, siteId: number ) => {
 		return `/jetpack-search/${ siteSlug }`;
 	}
 
-	// For sites with no eligible capabilities, show the Backup upsell page.
+	// For sites with no eligible capabilities, or in situations where
+	// we haven't been able to fetch the selected site's features,
+	// show the Backup upsell page.
 	return `/backup/${ siteSlug }`;
 };

@@ -66,9 +66,8 @@ const landingController = ( context, next ) => {
 		return;
 	}
 
-	// To land people on the right page, we need to have
-	// information on the selected site's eligibility
-	// and the Cloud services available to it;
+	// To land people on the right page, we need to have information
+	// on the selected site's eligibility and the Cloud services available to it;
 	// if this info isn't present, dip into an empty React page
 	// that will fetch it and then redirect using the same logic
 	const isEligible = isSiteEligibleForJetpackCloud( state, selectedSiteId );
