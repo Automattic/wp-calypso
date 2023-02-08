@@ -12,6 +12,10 @@ export default function DomainAndPlanPackageNavigation( props ) {
 
 	const step = props.step ? props.step : 1;
 
+	const stepIndication = translate( 'Step %(currentStep)s of %(stepCount)s', {
+		args: { currentStep: step, stepCount: 3 },
+	} );
+
 	return (
 		<div className="domain-and-plan-package-navigation">
 			<div className="domain-and-plan-package-navigation__back">
@@ -32,6 +36,7 @@ export default function DomainAndPlanPackageNavigation( props ) {
 				</li>
 				<li>{ translate( 'Complete your purchase' ) }</li>
 			</ol>
+			<div className="domain-and-plan-package-navigation__step-indication">{ stepIndication }</div>
 		</div>
 	);
 }
