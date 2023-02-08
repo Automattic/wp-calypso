@@ -21,7 +21,21 @@ export interface IBillingIntervalState {
 	interval: IntervalLength.MONTHLY | IntervalLength.ANNUALLY;
 }
 
+export enum IReinstallProductsStatus {
+	COMPLETED = 'completed',
+	FAILED = 'failed',
+	IN_PROGRESS = 'in-progress',
+	NOT_STARTED = 'not-started',
+}
+
+export interface IReinstallProductsState {
+	[ siteId: number ]: {
+		status: IReinstallProductsStatus;
+	};
+}
+
 export interface IMarketplaceState {
 	purchaseFlow: IPurchaseFlowState;
 	billingInterval: IBillingIntervalState;
+	reinstallProducts: IReinstallProductsState;
 }
