@@ -56,7 +56,7 @@ const StatsInsights = ( props ) => {
 				/>
 				<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />
 				<AnnualHighlightsSection siteId={ siteId } />
-				<AllTimelHighlightsSection siteId={ siteId } />
+				<AllTimelHighlightsSection siteId={ siteId } siteSlug={ siteSlug } />
 				<PostingActivity siteId={ siteId } />
 				<AllTimeViewsSection siteId={ siteId } slug={ siteSlug } />
 				{ siteId && (

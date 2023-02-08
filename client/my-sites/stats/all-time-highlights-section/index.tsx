@@ -37,7 +37,13 @@ type MostPopularData = {
 	hourPercent: number;
 };
 
-export default function AllTimeHighlightsSection( { siteId }: { siteId: number } ) {
+export default function AllTimeHighlightsSection( {
+	siteId,
+	siteSlug,
+}: {
+	siteId: number;
+	siteSlug: string;
+} ) {
 	const translate = useTranslate();
 
 	const insightsQuery = {};
@@ -270,8 +276,8 @@ export default function AllTimeHighlightsSection( { siteId }: { siteId: number }
 
 				{ isLatestPostReplaced && (
 					<div className="highlight-cards-list">
-						<LatestPostCard siteId={ siteId } />
-						<MostPopularPostCard siteId={ siteId } />
+						<LatestPostCard siteId={ siteId } siteSlug={ siteSlug } />
+						<MostPopularPostCard siteId={ siteId } siteSlug={ siteSlug } />
 					</div>
 				) }
 			</div>

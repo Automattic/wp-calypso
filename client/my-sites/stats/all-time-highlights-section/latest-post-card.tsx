@@ -20,7 +20,13 @@ const textTruncator = ( text: string, limit = 48 ) => {
 	return `${ truncatedText }${ text.length > limit ? '...' : '' } `;
 };
 
-export default function LatestPostCard( { siteId }: { siteId: number } ) {
+export default function LatestPostCard( {
+	siteId,
+	siteSlug,
+}: {
+	siteId: number;
+	siteSlug: string;
+} ) {
 	const translate = useTranslate();
 
 	const posts = useSelector( ( state ) =>
@@ -57,6 +63,7 @@ export default function LatestPostCard( { siteId }: { siteId: number } ) {
 					post={ latestPostData }
 					viewCount={ latestPostData?.viewCount }
 					commentCount={ latestPostData?.commentCount }
+					titleLink={ `/stats/post/${ latestPost.ID }/${ siteSlug }` }
 				/>
 			) }
 		</>

@@ -15,6 +15,7 @@ type PostStatsCardProps = {
 		post_thumbnail: string | null;
 		title: string;
 	};
+	titleLink?: string | undefined;
 };
 
 export default function PostStatsCard( {
@@ -23,14 +24,18 @@ export default function PostStatsCard( {
 	likeCount,
 	post,
 	viewCount,
+	titleLink,
 }: PostStatsCardProps ) {
 	const translate = useTranslate();
 	const parsedDate = useMemo( () => new Date( post?.date ).toLocaleDateString(), [ post?.date ] );
+	const TitleTag = titleLink ? 'a' : 'div';
 	return (
 		<Card className="post-stats-card">
 			<div className="post-stats-card__heading">{ heading }</div>
 			<div className="post-stats-card__post-info">
-				<div className="post-stats-card__post-title">{ post?.title }</div>
+				<TitleTag className="post-stats-card__post-title" href={ titleLink }>
+					{ post?.title }
+				</TitleTag>
 				{ post?.date && (
 					<div className="post-stats-card__post-date">
 						{ translate( 'Published %(date)s', {

@@ -64,7 +64,13 @@ const getStatsData = createSelector(
 	( state, siteId, topPostsQuery ) => [ topPostsQuery ]
 );
 
-export default function MostPopularPostCard( { siteId }: { siteId: number } ) {
+export default function MostPopularPostCard( {
+	siteId,
+	siteSlug,
+}: {
+	siteId: number;
+	siteSlug: string;
+} ) {
 	const translate = useTranslate();
 
 	const { topPostsQuery } = useSelector( ( state ) => getStatsQueries( state, siteId ) );
@@ -120,6 +126,7 @@ export default function MostPopularPostCard( { siteId }: { siteId: number } ) {
 					post={ mostPopularPostData }
 					viewCount={ mostPopularPostData?.viewCount }
 					commentCount={ mostPopularPostData?.commentCount }
+					titleLink={ `/stats/post/${ mostPopularPost.ID }/${ siteSlug }` }
 				/>
 			) }
 		</>

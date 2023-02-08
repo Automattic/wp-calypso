@@ -43,6 +43,10 @@ $break-wpcom-smallest: 320px;
 .post-stats-card__post-title {
 	@include stats-section-header;
 	margin-bottom: 4px;
+
+	&:visited {
+		color: var(--studio-gray-100);
+	}
 }
 
 .post-stats-card__post-info {
