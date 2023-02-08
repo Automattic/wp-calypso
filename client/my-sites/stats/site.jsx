@@ -201,6 +201,11 @@ class StatsSite extends Component {
 			context.store.dispatch( dismissJITMDirect( 'opt-out-new-stats', 'opt-out-new-stats' ) );
 		};
 
+		const dismissFeedbackNotice = () => {
+			this.setState( { isFeedbackNoticeDismissed: true } );
+			context.store.dispatch( dismissJITMDirect( 'opt-out-feedback', 'opt-out-feedback' ) );
+		};
+
 		return (
 			<div className="stats">
 				{ ! isOdysseyStats && (
@@ -263,7 +268,7 @@ class StatsSite extends Component {
 						<NoticeBanner
 							level="success"
 							title={ translate( 'Welcome to the new Jetpack Stats!' ) }
-							onClose={ dismissOptOutNotice }
+								onClose={ dismissFeedbackNotice }
 						>
 							{ translate(
 								'{{p}}Enjoy a more modern and mobile friendly experience with new stats and insights to help you grow your site.{{/p}}{{p}}If you prefer to continue using the traditional stats, {{manageYourSettingsLink}}manage your settings{{/manageYourSettingsLink}}.{{/p}}',
