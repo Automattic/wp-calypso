@@ -5,10 +5,10 @@ import { useEffect, useMemo, useCallback } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
+	getSitePurchases,
 	hasLoadedSitePurchasesFromServer,
 	isFetchingSitePurchases,
 } from 'calypso/state/purchases/selectors';
@@ -43,7 +43,7 @@ export const useSiteCopy = (
 		const siteFeatures = getSiteFeatures( state, site?.ID );
 		return siteFeatures ? siteFeatures : { isRequesting: true };
 	} );
-	const isAtomic = useSelect( ( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID ) );
+	const isAtomic = useSelect( ( select ) => site && select( SITE_STORE ).isSiteAtomic( site?.ID ) );
 	const plan = site?.plan;
 	const isSiteOwner = site?.site_owner === userId;
 
@@ -52,24 +52,29 @@ export const useSiteCopy = (
 		( state ) => isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state )
 	);
 
-	const { setPlanCartItem } = useDispatch( ONBOARD_STORE );
+	const purchases = useSelector( ( state ) => getSitePurchases( state, site?.ID ) );
+
+	const { setPlanCartItem, setProductCartItems } = useDispatch( ONBOARD_STORE );
 
 	const shouldShowSiteCopyItem = useMemo( () => {
 		return hasCopySiteFeature && isSiteOwner && plan && isAtomic && ! isLoadingPurchase;
 	}, [ hasCopySiteFeature, isSiteOwner, plan, isLoadingPurchase, isAtomic ] );
 
-	const startSiteCopy = useCallback(
-		//eslint-disable-next-line @typescript-eslint/no-explicit-any
-		( eventName: string, extraProps?: Record< string, any > ) => {
-			if ( ! plan ) {
-				return;
-			}
-			clearSignupDestinationCookie();
-			setPlanCartItem( { product_slug: plan.product_slug } );
-			recordTracksEvent( eventName, extraProps );
-		},
-		[ plan, setPlanCartItem ]
-	);
+	const startSiteCopy = useCallback( () => {
+		if ( ! shouldShowSiteCopyItem ) {
+			return;
+		}
+		clearSignupDestinationCookie();
+		setPlanCartItem( { product_slug: plan?.product_slug as string } );
+
+		const marketplaceProducts = purchases
+			.filter( ( purchase ) =>
+				[ 'marketplace_plugin', 'marketplace_theme' ].includes( purchase.productType )
+			)
+			.map( ( purchase ) => ( { product_slug: purchase.productSlug } ) );
+
+		setProductCartItems( marketplaceProducts );
+	}, [ plan, setPlanCartItem, purchases, shouldShowSiteCopyItem, setProductCartItems ] );
 
 	return useMemo(
 		() => ( {

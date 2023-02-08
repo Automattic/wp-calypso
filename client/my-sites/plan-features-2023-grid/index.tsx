@@ -246,6 +246,7 @@ export class PlanFeatures2023Grid extends Component<
 							manageHref={ manageHref }
 							canUserPurchasePlan={ canUserPurchasePlan }
 							selectedSiteSlug={ selectedSiteSlug }
+							onUpgradeClick={ this.handleUpgradeClick }
 						/>
 						<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
 							<Button onClick={ this.toggleShowPlansComparisonGrid }>
@@ -535,7 +536,7 @@ export class PlanFeatures2023Grid extends Component<
 		} );
 	}
 
-	handleUpgradeClick( singlePlanProperties: PlanProperties ) {
+	handleUpgradeClick = ( singlePlanProperties: PlanProperties ) => {
 		const { onUpgradeClick: ownPropsOnUpgradeClick, selectedSiteSlug } = this.props;
 		const { cartItemForPlan, planName } = singlePlanProperties;
 
@@ -552,7 +553,7 @@ export class PlanFeatures2023Grid extends Component<
 		const planPath = getPlanPath( planName ) || '';
 		const checkoutUrlWithArgs = `/checkout/${ selectedSiteSlug }/${ planPath }`;
 		page( checkoutUrlWithArgs );
-	}
+	};
 
 	renderTopButtons( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
 		const {
