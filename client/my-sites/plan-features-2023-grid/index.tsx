@@ -483,7 +483,7 @@ export class PlanFeatures2023Grid extends Component<
 								) }
 							>
 								<div className="plan-features-2023-grid__plan-logo">
-									<img src={ cloudLogo } alt="Cloud logo" />{ ' ' }
+									<img src={ cloudLogo } alt="WP Cloud logo" />{ ' ' }
 								</div>
 							</Plans2023Tooltip>
 						) }
