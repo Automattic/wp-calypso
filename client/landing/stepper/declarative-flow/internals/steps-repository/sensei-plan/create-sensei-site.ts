@@ -116,6 +116,7 @@ export const useCreateSenseiSite = () => {
 		getNewSite,
 		getSelectedStyleVariation,
 		locale,
+		saveSiteSettings,
 		setIntentOnSite,
 		setSelectedSite,
 		visibility,

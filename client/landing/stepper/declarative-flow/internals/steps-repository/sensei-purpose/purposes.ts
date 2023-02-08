@@ -77,5 +77,9 @@ export function getSelectedPlugins(): Plugin[] {
 	const { selected } = getSelectedPurposes();
 	return purposes
 		.filter( ( purpose ) => selected.includes( purpose.id ) )
-		.reduce( ( plugins, purpose ) => plugins.concat( purpose.plugins as [] ), [] );
+		.reduce(
+			( plugins, purpose ) =>
+				purpose.plugins ? plugins.concat( purpose.plugins as [] ) : plugins,
+			[]
+		);
 }
