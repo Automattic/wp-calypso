@@ -44,7 +44,10 @@ const sensei: Flow = {
 		const siteSlug = useSiteSlug();
 		setStepProgress( flowProgress );
 
-		const submit = () => {
+		const submit = ( deps: any, stepResult?: string ) => {
+			if ( stepResult ) {
+				return navigate( stepResult );
+			}
 			switch ( _currentStep ) {
 				case 'senseiSetup':
 					return navigate( 'senseiDomain' );

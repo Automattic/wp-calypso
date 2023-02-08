@@ -24,7 +24,7 @@ import type { PlanBillingPeriod } from 'calypso/../packages/data-stores';
 import 'calypso/../packages/plans-grid/src/plans-table/style.scss';
 import './styles.scss';
 
-const SenseiPlan: Step = ( { flow, navigation: { goToStep } } ) => {
+const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 	const [ billingPeriod, setBillingPeriod ] = useState< PlanBillingPeriod >( 'ANNUALLY' );
 	const [ status, setStatus ] = useState< Status >( Status.Initial );
 	const locale = useLocale();
@@ -36,8 +36,8 @@ const SenseiPlan: Step = ( { flow, navigation: { goToStep } } ) => {
 	const { businessPlanPricing, businessPlanProduct } = useBusinessPlanPricing( billingPeriod );
 
 	const goToDomainStep = useCallback( () => {
-		goToStep?.( 'senseiDomain' );
-	}, [ goToStep ] );
+		submit?.( undefined, 'senseiDomain' );
+	}, [ submit ] );
 
 	const { createAndConfigureSite, progress } = useCreateSenseiSite();
 
