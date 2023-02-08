@@ -32,8 +32,8 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 
 	const domain = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDomain() );
 
-	const senseiProPricing = useSenseiProPricing( billingPeriod );
-	const { businessPlanPricing, businessPlanProduct } = useBusinessPlanPricing( billingPeriod );
+	const senseiProPlan = useSenseiProPricing( billingPeriod );
+	const businessPlan = useBusinessPlanPricing( billingPeriod );
 
 	const goToDomainStep = useCallback( () => {
 		submit?.( undefined, 'senseiDomain' );
@@ -48,13 +48,13 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const productsToAdd: any[] = [
 				{
-					product_slug: businessPlanProduct?.storeSlug,
+					product_slug: businessPlan.productSlug,
 					extra: {
 						signup_flow: flow,
 					},
 				},
 				{
-					product_slug: senseiProPricing.productSlug,
+					product_slug: senseiProPlan.productSlug,
 					extra: {
 						signup_flow: flow,
 					},
@@ -78,7 +78,7 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 
 			return `/checkout/${ site?.site_slug }?signup=1&redirect_to=${ redirectTo }`;
 		},
-		[ businessPlanProduct?.storeSlug, domain, flow, senseiProPricing.productSlug ]
+		[ businessPlan.productSlug, domain, flow, senseiProPlan.productSlug ]
 	);
 
 	const onPlanSelect = async () => {
@@ -97,12 +97,12 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 		}
 	};
 
-	const currencyCode = senseiProPricing.currencyCode;
-	const isLoading = ! businessPlanPricing.monthlyPrice || ! senseiProPricing.monthlyPrice;
-	const price = businessPlanPricing.price + senseiProPricing.price;
+	const currencyCode = senseiProPlan.currencyCode;
+	const isLoading = ! businessPlan.monthlyPrice || ! senseiProPlan.monthlyPrice;
+	const price = businessPlan.price + senseiProPlan.price;
 	const priceStr = formatCurrency( price, currencyCode, { stripZeros: true } );
-	const monthlyPrice = businessPlanPricing.monthlyPrice + senseiProPricing.monthlyPrice;
-	const annualPrice = businessPlanPricing.yearlyPrice + senseiProPricing.yearlyPrice;
+	const monthlyPrice = businessPlan.monthlyPrice + senseiProPlan.monthlyPrice;
+	const annualPrice = businessPlan.yearlyPrice + senseiProPlan.yearlyPrice;
 	const annualPriceStr = formatCurrency( annualPrice, currencyCode, { stripZeros: true } );
 	const annualSavings = monthlyPrice * 12 - annualPrice;
 	const annualSavingsStr = formatCurrency( annualSavings, currencyCode, { stripZeros: true } );

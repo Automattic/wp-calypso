@@ -9,12 +9,12 @@ const SENSEI_PRO_PRODUCT_YEARLY = 'sensei_pro_yearly';
 const SENSEI_PRO_PRODUCT_MONTHLY = 'sensei_pro_monthly';
 
 export function useSenseiProPricing( billingPeriod: PlanBillingPeriod ) {
-	const isYearly = billingPeriod === 'ANNUALLY';
-
 	return useSelect(
 		( select ) => {
-			const yearly = select( PRODUCTS_LIST_STORE ).getProductBySlug( SENSEI_PRO_PRODUCT_YEARLY );
-			const monthly = select( PRODUCTS_LIST_STORE ).getProductBySlug( SENSEI_PRO_PRODUCT_MONTHLY );
+			const isYearly = billingPeriod === 'ANNUALLY';
+			const { getProductBySlug } = select( PRODUCTS_LIST_STORE );
+			const yearly = getProductBySlug( SENSEI_PRO_PRODUCT_YEARLY );
+			const monthly = getProductBySlug( SENSEI_PRO_PRODUCT_MONTHLY );
 
 			if ( ! yearly || ! monthly ) {
 				return {
@@ -34,12 +34,11 @@ export function useSenseiProPricing( billingPeriod: PlanBillingPeriod ) {
 				currencyCode: yearly.currency_code,
 			};
 		},
-		[ isYearly ]
+		[ billingPeriod ]
 	);
 }
 
-export function useBusinessPlanPricing( billingPeriod: 'MONTHLY' | 'ANNUALLY' ) {
-	const isYearly = billingPeriod === 'ANNUALLY';
+export function useBusinessPlanPricing( billingPeriod: PlanBillingPeriod ) {
 	const locale = useLocale();
 	const { supportedPlans } = useSupportedPlans( locale, billingPeriod );
 
@@ -49,15 +48,14 @@ export function useBusinessPlanPricing( billingPeriod: 'MONTHLY' | 'ANNUALLY' ) 
 
 	const slug = businessPlan?.periodAgnosticSlug;
 
-	const businessPlanProduct = useSelect(
-		( select ) => select( PLANS_STORE ).getPlanProduct( slug, billingPeriod ),
-		[ slug, billingPeriod ]
-	);
-
-	const businessPlanPricing = useSelect(
+	return useSelect(
 		( select ) => {
-			const monthly = select( PLANS_STORE ).getPlanProduct( slug, 'MONTHLY' );
-			const yearly = select( PLANS_STORE ).getPlanProduct( slug, 'ANNUALLY' );
+			const { getPlanProduct } = select( PLANS_STORE );
+			const monthly = getPlanProduct( slug, 'MONTHLY' );
+			const yearly = getPlanProduct( slug, 'ANNUALLY' );
+
+			const isYearly = billingPeriod === 'ANNUALLY';
+
 			if ( ! yearly || ! monthly ) {
 				return {
 					monthlyPrice: 0,
@@ -71,11 +69,9 @@ export function useBusinessPlanPricing( billingPeriod: 'MONTHLY' | 'ANNUALLY' ) 
 				monthlyPrice: monthly.rawPrice,
 				yearlyPrice: yearly.rawPrice,
 				price: isYearly ? Math.ceil( yearly.rawPrice / 12 ) : monthly.rawPrice,
-				productSlug: '',
+				productSlug: isYearly ? yearly.storeSlug : monthly.storeSlug,
 			};
 		},
-		[ isYearly, slug ]
+		[ billingPeriod, slug ]
 	);
-
-	return { businessPlanPricing, businessPlanProduct };
 }
