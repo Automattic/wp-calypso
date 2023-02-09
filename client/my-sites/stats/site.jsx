@@ -378,7 +378,7 @@ class StatsSite extends Component {
 									period={ this.props.period }
 									query={ query }
 									statType="statsEmailsSummary"
-									mainItemLabel={ translate( 'Post' ) }
+									mainItemLabel={ translate( 'Latest Emails' ) }
 									hideSummaryLink
 									metricLabel={ translate( 'Clicks' ) }
 								/>
