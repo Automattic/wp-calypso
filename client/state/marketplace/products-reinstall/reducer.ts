@@ -13,7 +13,7 @@ export const defaultState: IReinstallProductsState = {};
 const productsReinstall = withSchemaValidation(
 	productsReinstallSchema,
 	( state = defaultState, action: AnyAction ): IReinstallProductsState => {
-		const { type, siteId } = action;
+		const { type, siteId, error } = action;
 		switch ( type ) {
 			case MARKETPLACE_PRODUCTS_REINSTALL_STARTED:
 				return {
@@ -34,6 +34,7 @@ const productsReinstall = withSchemaValidation(
 					...state,
 					[ siteId ]: {
 						status: IReinstallProductsStatus.FAILED,
+						error,
 					},
 				};
 		}

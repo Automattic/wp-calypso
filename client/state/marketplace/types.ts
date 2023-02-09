@@ -31,6 +31,7 @@ export enum IReinstallProductsStatus {
 export interface IReinstallProductsState {
 	[ siteId: number ]: {
 		status: IReinstallProductsStatus;
+		error?: string;
 	};
 }
 

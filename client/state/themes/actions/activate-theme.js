@@ -10,7 +10,10 @@ import {
 import { errorNotice } from 'calypso/state/notices/actions';
 import { THEME_ACTIVATE, THEME_ACTIVATE_FAILURE } from 'calypso/state/themes/action-types';
 import { themeActivated } from 'calypso/state/themes/actions/theme-activated';
-import { getThemePreviewThemeOptions } from 'calypso/state/themes/selectors';
+import {
+	getThemePreviewThemeOptions,
+	isMarketplaceThemeSubscribed,
+} from 'calypso/state/themes/selectors';
 
 import 'calypso/state/themes/init';
 
@@ -86,6 +89,9 @@ export function activateTheme(
 				} );
 
 				if ( error.error === 'theme_not_found' ) {
+					if ( isMarketplaceThemeSubscribed( getState(), themeId ) ) {
+						return;
+					}
 					dispatch( errorNotice( translate( 'Theme not yet available for this site' ) ) );
 				} else {
 					dispatch(

@@ -1,3 +1,4 @@
+import wpcom from 'calypso/lib/wp';
 import {
 	MARKETPLACE_PRODUCTS_REINSTALL_COMPLETED,
 	MARKETPLACE_PRODUCTS_REINSTALL_FAILED,
@@ -6,6 +7,29 @@ import {
 import type { AnyAction } from 'redux';
 import 'calypso/state/marketplace/init';
 
+/**
+ * Reinstall products on a site.
+ *
+ * @param siteId the site id
+ * @returns Promise
+ */
+export function productsReinstall( siteId: number ) {
+	return async ( dispatch: CallableFunction ) => {
+		dispatch( productsReinstallStarted( siteId ) );
+
+		try {
+			await wpcom.req.get( {
+				path: `/sites/${ siteId }/marketplace/products/reinstall`,
+				apiNamespace: 'wpcom/v2',
+			} );
+
+			dispatch( productsReinstallCompleted( siteId ) );
+		} catch ( error ) {
+			dispatch( productsReinstallFailed( siteId, ( error as Error ).message ) );
+		}
+	};
+}
+
 export function productsReinstallStarted( siteId: number ): AnyAction {
 	return {
 		type: MARKETPLACE_PRODUCTS_REINSTALL_STARTED,
@@ -13,10 +37,11 @@ export function productsReinstallStarted( siteId: number ): AnyAction {
 	};
 }
 
-export function productsReinstallFailed( siteId: number ): AnyAction {
+export function productsReinstallFailed( siteId: number, error: string ): AnyAction {
 	return {
 		type: MARKETPLACE_PRODUCTS_REINSTALL_FAILED,
 		siteId,
+		error,
 	};
 }
 
