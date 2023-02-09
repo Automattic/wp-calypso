@@ -2,6 +2,7 @@ import { Button, Card } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import { useMediaQuery } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -12,7 +13,7 @@ import {
 	getECommerceTrialExpiration,
 	isECommerceTrialExpired,
 } from 'calypso/state/sites/plans/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import DoughnutChart from '../../doughnut-chart';
 import FeatureIncludedCard from '../feature-included-card';
 import FeatureNotIncludedCard from '../feature-not-included-card';
@@ -20,7 +21,8 @@ import FeatureNotIncludedCard from '../feature-not-included-card';
 import './style.scss';
 
 const ECommerceTrialCurrentPlan = () => {
-	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || -1;
+	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
+	const selectedSiteId = selectedSite?.ID || -1;
 
 	const { currentPlan, eCommerceTrialDaysLeft, isTrialExpired, eCommerceTrialExpiration } =
 		useSelector( ( state ) => ( {
@@ -43,6 +45,10 @@ const ECommerceTrialCurrentPlan = () => {
 
 	const isMobile = useMediaQuery( '(max-width: 480px)' );
 	const displayAllIncluded = ! isMobile || showAllTrialFeaturesInMobileView;
+
+	const gotoPlansPage = () => {
+		page.redirect( '/plans/' + selectedSite?.slug );
+	};
 
 	// TODO: translate when final copy is available
 	const allIncludedFeatures = [
@@ -186,7 +192,11 @@ const ECommerceTrialCurrentPlan = () => {
 									}
 							  ) }
 					</p>
-					<Button className="e-commerce-trial-current-plan__trial-card-cta" primary>
+					<Button
+						className="e-commerce-trial-current-plan__trial-card-cta"
+						primary
+						onClick={ gotoPlansPage }
+					>
 						{ translate( 'Upgrade now' ) }
 					</Button>
 				</div>
@@ -252,7 +262,7 @@ const ECommerceTrialCurrentPlan = () => {
 			</div>
 
 			<div className="e-commerce-trial-current-plan__cta-wrapper">
-				<Button className="e-commerce-trial-current-plan__cta is-primary">
+				<Button className="e-commerce-trial-current-plan__cta is-primary" onClick={ gotoPlansPage }>
 					{ translate( 'Upgrade now' ) }
 				</Button>
 			</div>
