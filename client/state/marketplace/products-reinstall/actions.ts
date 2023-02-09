@@ -3,7 +3,9 @@ import {
 	MARKETPLACE_PRODUCTS_REINSTALL_COMPLETED,
 	MARKETPLACE_PRODUCTS_REINSTALL_FAILED,
 	MARKETPLACE_PRODUCTS_REINSTALL_STARTED,
+	MARKETPLACE_PRODUCTS_REINSTALL_NOT_STARTED,
 } from 'calypso/state/action-types';
+import { activateTheme } from 'calypso/state/themes/actions';
 import type { AnyAction } from 'redux';
 import 'calypso/state/marketplace/init';
 
@@ -13,7 +15,7 @@ import 'calypso/state/marketplace/init';
  * @param siteId the site id
  * @returns Promise
  */
-export function productsReinstall( siteId: number ) {
+export function productsReinstall( siteId: number, themeId: string ) {
 	return async ( dispatch: CallableFunction ) => {
 		dispatch( productsReinstallStarted( siteId ) );
 
@@ -27,6 +29,7 @@ export function productsReinstall( siteId: number ) {
 		} catch ( error ) {
 			dispatch( productsReinstallFailed( siteId, ( error as Error ).message ) );
 		}
+		dispatch( activateTheme( themeId, siteId ) );
 	};
 }
 
@@ -48,6 +51,13 @@ export function productsReinstallFailed( siteId: number, error: string ): AnyAct
 export function productsReinstallCompleted( siteId: number ): AnyAction {
 	return {
 		type: MARKETPLACE_PRODUCTS_REINSTALL_COMPLETED,
+		siteId,
+	};
+}
+
+export function productsReinstallNotStarted( siteId: number ): AnyAction {
+	return {
+		type: MARKETPLACE_PRODUCTS_REINSTALL_NOT_STARTED,
 		siteId,
 	};
 }
