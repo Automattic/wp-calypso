@@ -1,16 +1,16 @@
 import { FEATURE_SFTP, FEATURE_SSH } from '@automattic/calypso-products';
-import { Card, Button, Gridicon, Spinner } from '@automattic/components';
+import { Card, Button, Spinner } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import styled from '@emotion/styled';
 import { PanelBody, ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
+import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import ExternalLink from 'calypso/components/external-link';
-import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
-import FormTextInput from 'calypso/components/forms/form-text-input';
 import MaterialIcon from 'calypso/components/material-icon';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
@@ -43,6 +43,11 @@ const FILEZILLA_URL = 'https://filezilla-project.org/';
 const SFTP_URL = 'sftp.wp.com';
 const SFTP_PORT = 22;
 
+const SftpClipboardButtonInput = styled( ClipboardButtonInput )( {
+	display: 'block',
+	marginBottom: '16px',
+} );
+
 export const SftpCard = ( {
 	translate,
 	username,
@@ -66,13 +71,6 @@ export const SftpCard = ( {
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isPasswordLoading, setPasswordLoading ] = useState( false );
 	const [ isSshAccessLoading, setSshAccessLoading ] = useState( false );
-	const [ isCopied, setIsCopied ] = useState( {
-		password: false,
-		url: false,
-		port: false,
-		username: false,
-		sshConnectString: false,
-	} );
 
 	const sshConnectString = `ssh ${ username }@sftp.wp.com`;
 
@@ -80,17 +78,6 @@ export const SftpCard = ( {
 		if ( password ) {
 			removePasswordFromState( siteId, currentUserId, username );
 		}
-	};
-
-	const onCopy = ( field ) => {
-		setIsCopied( {
-			password: false,
-			url: false,
-			port: false,
-			username: false,
-			sshConnectString: false,
-		} );
-		setIsCopied( { [ field ]: true } );
 	};
 
 	const resetPassword = () => {
@@ -142,25 +129,7 @@ export const SftpCard = ( {
 		if ( password ) {
 			return (
 				<>
-					<div className="sftp-card__copy-field sftp-card__password-field">
-						<FormTextInput
-							id="password"
-							className="sftp-card__copy-input"
-							value={ password }
-							readOnly
-						/>
-						<ClipboardButton
-							className="sftp-card__copy-button"
-							text={ password }
-							onCopy={ () => onCopy( 'password' ) }
-							compact
-						>
-							{ isCopied.password && <Gridicon icon="checkmark" /> }
-							{ isCopied.password
-								? translate( 'Copied!' )
-								: translate( 'Copy', { context: 'verb' } ) }
-						</ClipboardButton>
-					</div>
+					<SftpClipboardButtonInput value={ password } />
 					<p className="sftp-card__password-warning">
 						{ translate(
 							'Save your password somewhere safe. You will need to reset it to view it again.'
@@ -211,22 +180,7 @@ export const SftpCard = ( {
 						}
 					) }
 				/>
-				{ isSshAccessEnabled && (
-					<div className="sftp-card__copy-field">
-						<FormTextInput className="sftp-card__copy-input" value={ sshConnectString } readOnly />
-						<ClipboardButton
-							className="sftp-card__copy-button"
-							text={ sshConnectString }
-							onCopy={ () => onCopy( 'sshConnectString' ) }
-							compact
-						>
-							{ isCopied.sshConnectString && <Gridicon icon="checkmark" /> }
-							{ isCopied.sshConnectString
-								? translate( 'Copied!' )
-								: translate( 'Copy', { context: 'verb' } ) }
-						</ClipboardButton>
-					</div>
-				) }
+				{ isSshAccessEnabled && <SftpClipboardButtonInput value={ sshConnectString } /> }
 			</div>
 		);
 	};
@@ -333,56 +287,11 @@ export const SftpCard = ( {
 			{ username && (
 				<FormFieldset className="sftp-card__info-field">
 					<FormLabel htmlFor="url">{ translate( 'URL' ) }</FormLabel>
-					<div className="sftp-card__copy-field">
-						<FormTextInput id="url" className="sftp-card__copy-input" value={ SFTP_URL } readOnly />
-						<ClipboardButton
-							className="sftp-card__copy-button"
-							text={ SFTP_URL }
-							onCopy={ () => onCopy( 'url' ) }
-							compact
-						>
-							{ isCopied.url && <Gridicon icon="checkmark" /> }
-							{ isCopied.url ? translate( 'Copied!' ) : translate( 'Copy', { context: 'verb' } ) }
-						</ClipboardButton>
-					</div>
+					<SftpClipboardButtonInput value={ SFTP_URL } />
 					<FormLabel htmlFor="port">{ translate( 'Port' ) }</FormLabel>
-					<div className="sftp-card__copy-field">
-						<FormTextInput
-							id="port"
-							className="sftp-card__copy-input"
-							value={ SFTP_PORT }
-							readOnly
-						/>
-						<ClipboardButton
-							className="sftp-card__copy-button"
-							text={ SFTP_PORT.toString() }
-							onCopy={ () => onCopy( 'port' ) }
-							compact
-						>
-							{ isCopied.port && <Gridicon icon="checkmark" /> }
-							{ isCopied.port ? translate( 'Copied!' ) : translate( 'Copy', { context: 'verb' } ) }
-						</ClipboardButton>
-					</div>
+					<SftpClipboardButtonInput value={ SFTP_PORT.toString() } />
 					<FormLabel htmlFor="username">{ translate( 'Username' ) }</FormLabel>
-					<div className="sftp-card__copy-field">
-						<FormTextInput
-							id="username"
-							className="sftp-card__copy-input"
-							value={ username }
-							readOnly
-						/>
-						<ClipboardButton
-							className="sftp-card__copy-button"
-							text={ username }
-							onCopy={ () => onCopy( 'username' ) }
-							compact
-						>
-							{ isCopied.username && <Gridicon icon="checkmark" /> }
-							{ isCopied.username
-								? translate( 'Copied!' )
-								: translate( 'Copy', { context: 'verb' } ) }
-						</ClipboardButton>
-					</div>
+					<SftpClipboardButtonInput value={ username } />
 					<FormLabel htmlFor="password">{ translate( 'Password' ) }</FormLabel>
 					{ renderPasswordField() }
 					{ siteHasSshFeature && (
