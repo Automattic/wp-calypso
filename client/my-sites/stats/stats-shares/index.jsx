@@ -77,7 +77,7 @@ const StatShares = ( { siteId } ) => {
 					loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
 				/>
 			) }
-			{ ( false || ! isInsightsPageGridEnabled ) && (
+			{ ! isInsightsPageGridEnabled && (
 				<div className="list-shares">
 					<SectionHeader label={ translate( 'Shares' ) } />
 					<Card className={ classNames( ...classes ) }>
