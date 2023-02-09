@@ -9,17 +9,22 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import SocialLogo from 'calypso/components/social-logo';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { DisconnectGitHubExpander } from '../disconnect-github-expander';
 import { RepoBranch, useGithubBranches } from './use-github-branches';
 import { useGithubConnectMutation } from './use-github-connect';
 import { Repo, useGithubRepos } from './use-github-repos';
+import type { ComponentProps } from 'react';
 
+interface GithubConnectCardProps {
+	connection: ComponentProps< typeof DisconnectGitHubExpander >[ 'connection' ];
+}
 import './style.scss';
 
 const noticeOptions = {
 	duration: 3000,
 };
 
-export const GithubConnectCard = () => {
+export const GithubConnectCard = ( { connection }: GithubConnectCardProps ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const dispatch = useDispatch();
 
@@ -140,6 +145,9 @@ export const GithubConnectCard = () => {
 						onChange={ handleBasePathChange }
 					/>
 				</div>
+			</div>
+			<div style={ { marginTop: '16px' } }>
+				<DisconnectGitHubExpander connection={ connection } />
 			</div>
 		</Card>
 	);
