@@ -40,20 +40,22 @@
 		}
 
 		.retention-form__options {
-			display: flex;
-			flex-direction: row;
-			align-items: flex-start;
-			justify-content: space-between;
-			column-gap: 8px;
-			margin-bottom: 8px;
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			grid-template-rows: repeat(2, 1fr);
+			grid-column-gap: 8px;
+			grid-row-gap: 8px;
+
+			@include break-large {
+				grid-template-columns: repeat(4, 1fr);
+				grid-template-rows: repeat(1, 1fr);
+			}
 
 			.retention-option {
 				box-shadow: 0 0 0 1px var(--color-border-subtle);
 				padding: 16px 12px;
 				border-radius: 4px;
-				width: 100%;
 				cursor: pointer;
-				align-self: stretch;
 
 				.retention-option__headline {
 					display: flex;
@@ -63,7 +65,7 @@
 					margin-bottom: 16px;
 
 					.headline__label {
-						font-size: 1.5rem;
+						font-size: 1.25rem;
 						line-height: 24px;
 						font-weight: 600;
 						color: var(--studio-gray-80);
@@ -74,9 +76,9 @@
 						appearance: none;
 						margin: 0;
 						padding: 0;
-						width: 24px;
-						height: 24px;
-						border-width: 2px;
+						width: 20px;
+						height: 20px;
+						border-width: 1px;
 						border-color: var(--studio-gray-40);
 
 						&:focus {
@@ -94,7 +96,7 @@
 
 						&:checked {
 							&::after {
-								border: 4px solid #fff;
+								border: 3px solid #fff;
 							}
 
 							border-color: var(--color-accent);
