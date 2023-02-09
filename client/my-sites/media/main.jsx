@@ -9,6 +9,8 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryMedia from 'calypso/components/data/query-media';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import { withEditMedia } from 'calypso/data/media/use-edit-media-mutation';
 import { withDeleteMedia } from 'calypso/data/media/with-delete-media';
@@ -358,6 +360,19 @@ class Media extends Component {
 				{ mediaId && site && site.ID && <QueryMedia siteId={ site.ID } mediaId={ mediaId } /> }
 				<PageViewTracker path={ this.getAnalyticsPath() } title="Media" />
 				<DocumentHead title={ translate( 'Media' ) } />
+				{ this.props.selectedSite.is_private && this.props.selectedSite.is_wpcom_atomic && (
+					<Notice
+						showDismiss={ false }
+						status="is-info"
+						text={ translate(
+							'Your site is Private and the image CDN is disabled. If image thumbnails do not display, switch to Coming Soon mode.'
+						) }
+					>
+						<NoticeAction href="/support/settings/privacy-settings/#private" external>
+							{ translate( 'Learn more' ) }
+						</NoticeAction>
+					</Notice>
+				) }
 				<FormattedHeader
 					brandFont
 					className="media__page-heading"
