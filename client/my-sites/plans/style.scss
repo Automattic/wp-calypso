@@ -19,7 +19,8 @@ body.is-section-plans.is-domain-sidebar-experiment-user {
 	}
 
 	.plans__header {
-		// display: block;
+		display: block;
+		overflow: auto;
 
 		.formatted-header__title,
 		.formatted-header__subtitle {
@@ -49,10 +50,6 @@ body.is-section-plans.is-domain-sidebar-experiment-user {
 			}
 		}
 	}
-
-	// .main.is-wide-layout {
-	// 	max-width: $break-medium;
-	// }
 
 	// plans comparison grid
 	.plan-features-comparison__table-item {
