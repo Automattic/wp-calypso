@@ -29,7 +29,24 @@ import PlanFeatures2023GridHeaderPrice from './header-price';
 import { plansBreakSmall, plansBreakLarge } from './media-queries';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import { usePricingBreakpoint } from './util';
-import type { PlanProperties } from './types';
+
+function DropdownIcon() {
+	return (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			width="15"
+			height="15"
+			fill="#0675C4"
+			viewBox="0 -1 8 8"
+		>
+			<path
+				fillRule="evenodd"
+				d="M7.99 1.889L4.002 5.307.014 1.89.99.75l3.012 2.582L7.014.75l.976 1.139z"
+				clipRule="evenodd"
+			></path>
+		</svg>
+	);
+}
 
 const JetpackIconContainer = styled.div`
 	padding-left: 6px;
@@ -361,9 +378,8 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 								</select>
 							) }
 							<h4 className="plan-comparison-grid__title">
-								{ planConstantObj.getTitle() }
-
-								{ showPlanSelect && <Gridicon icon="chevron-down" size={ 12 } color="#0675C4" /> }
+								<span>{ planConstantObj.getTitle() }</span>
+								{ showPlanSelect && <DropdownIcon /> }
 							</h4>
 						</PlanSelector>
 						<PlanFeatures2023GridHeaderPrice
