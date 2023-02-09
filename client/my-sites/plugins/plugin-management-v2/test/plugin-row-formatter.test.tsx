@@ -57,6 +57,18 @@ const props = {
 };
 
 describe( '<PluginRowFormatter>', () => {
+	beforeAll( () => {
+		window.matchMedia = jest.fn().mockImplementation( ( query ) => {
+			return {
+				matches: true,
+				media: query,
+				onchange: null,
+				addListener: jest.fn(),
+				removeListener: jest.fn(),
+			};
+		} );
+	} );
+
 	test( 'should render correctly and show site domain', () => {
 		const { container } = render( <PluginRowFormatter { ...props } /> );
 
