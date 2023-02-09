@@ -35,7 +35,7 @@ export default () => {
 			// isActive = true means user has opted out of "advertising" tracking
 			const prefs = setTrackingPrefs( { ok: true, buckets: { advertising: ! isActive } } );
 
-			if ( ! isActive ) {
+			if ( isActive ) {
 				recordTracksEvent( 'a8c_ccpa_optout', {
 					source: 'calypso',
 					hostname: window.location.hostname,
