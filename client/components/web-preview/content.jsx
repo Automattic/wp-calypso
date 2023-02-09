@@ -391,7 +391,9 @@ export default class WebPreviewContent extends Component {
 					isLoading={ this.state.isLoadingSubpage }
 					isSticky={ this.props.isStickyToolbar }
 				/>
-				<DomainUpsellCallout trackEvent="site_preview_domain_upsell_callout" />
+				{ this.props.showExternal && this.props.isModalWindow && ! this.props.isPrivateAtomic && (
+					<DomainUpsellCallout trackEvent="site_preview_domain_upsell_callout" />
+				) }
 				{ this.props.belowToolbar }
 				{ ( ! isLoaded || this.state.isLoadingSubpage ) && <SpinnerLine /> }
 				<div
