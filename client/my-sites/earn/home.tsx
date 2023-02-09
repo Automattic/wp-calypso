@@ -6,7 +6,6 @@ import {
 	FEATURE_PREMIUM_CONTENT_CONTAINER,
 	FEATURE_DONATIONS,
 	FEATURE_RECURRING_PAYMENTS,
-	WPCOM_FEATURES_WORDADS,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { addQueryArgs } from '@wordpress/url';
@@ -26,8 +25,10 @@ import wp from 'calypso/lib/wp';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import getSiteWordadsStatus from 'calypso/state/selectors/get-site-wordads-status';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import siteHasWordAds from 'calypso/state/selectors/site-has-wordads';
 import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors';
 import getSiteBySlug from 'calypso/state/sites/selectors/get-site-by-slug';
@@ -55,6 +56,7 @@ interface ConnectedProps {
 	hasDonations: boolean;
 	hasPremiumContent: boolean;
 	hasRecurringPayments: boolean;
+	hasIneligiblePlanforWordAds: boolean;
 }
 
 const Home: FunctionComponent< ConnectedProps > = ( {
@@ -71,6 +73,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	hasDonations,
 	hasPremiumContent,
 	hasRecurringPayments,
+	hasIneligiblePlanforWordAds,
 	trackUpgrade,
 	trackLearnLink,
 	trackCtaButton,
@@ -482,19 +485,24 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 							);
 						},
 				  };
-		const title = hasSetupAds ? translate( 'View ad dashboard' ) : translate( 'Earn ad revenue' );
-		const body = hasSetupAds ? (
-			translate(
-				"Check out your ad earnings history, including total earnings, total paid to date, and the amount that you've still yet to be paid."
-			)
-		) : (
-			<>
-				{ translate(
-					'Make money each time someone visits your site by displaying advertisements on all your posts and pages.'
-				) }
-				{ ! hasWordAds && <em>{ getPremiumPlanNames() }</em> }
-			</>
-		);
+		const title =
+			hasSetupAds && ! hasIneligiblePlanforWordAds
+				? translate( 'View ad dashboard' )
+				: translate( 'Earn ad revenue' );
+
+		const body =
+			hasSetupAds && ! hasIneligiblePlanforWordAds ? (
+				translate(
+					"Check out your ad earnings history, including total earnings, total paid to date, and the amount that you've still yet to be paid."
+				)
+			) : (
+				<>
+					{ translate(
+						'Make money each time someone visits your site by displaying advertisements on all your posts and pages.'
+					) }
+					{ ! hasWordAds && <em>{ getPremiumPlanNames() }</em> }
+				</>
+			);
 
 		const learnMoreLink = ! ( hasWordAds || hasSetupAds )
 			? { url: 'https://wordads.co/', onClick: () => trackLearnLink( 'ads' ) }
@@ -586,6 +594,7 @@ export default connect(
 			state?.memberships?.settings?.[ siteId ]?.connectedAccountId ?? null;
 		const sitePlanSlug = getSitePlanSlug( state, siteId );
 		const hasPaidPlan = isCurrentPlanPaid( state, siteId );
+		const hasWordAds = siteHasWordAds( state, siteId );
 		const isLoading = ( hasConnectedAccount === null && hasPaidPlan ) || sitePlanSlug === null;
 
 		return {
@@ -595,7 +604,9 @@ export default connect(
 				isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId )
 			),
 			isUserAdmin: canCurrentUser( state, siteId, 'manage_options' ),
-			hasWordAds: siteHasFeature( state, siteId, WPCOM_FEATURES_WORDADS ),
+			hasWordAds,
+			hasIneligiblePlanforWordAds:
+				! hasWordAds && getSiteWordadsStatus( state, siteId ) === 'ineligible',
 			hasSimplePayments: siteHasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),
 			hasConnectedAccount,
 			eligibleForProPlan: isEligibleForProPlan( state, siteId ),
