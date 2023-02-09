@@ -19,6 +19,7 @@ const isAtomic = envVariables.TEST_ON_ATOMIC;
 const isSimple = ! envVariables.TEST_ON_ATOMIC;
 const features = envToFeatureKey( {
 	...envVariables,
+	// CoBlocks on Atomic: https://github.com/Automattic/wp-calypso/pull/73052
 	COBLOCKS_EDGE: isAtomic || envVariables.COBLOCKS_EDGE,
 } );
 

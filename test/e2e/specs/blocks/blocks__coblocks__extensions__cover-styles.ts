@@ -19,6 +19,7 @@ declare const browser: Browser;
 
 const features = envToFeatureKey( {
 	...envVariables,
+	// CoBlocks on Atomic: https://github.com/Automattic/wp-calypso/pull/73052
 	COBLOCKS_EDGE: envVariables.TEST_ON_ATOMIC || envVariables.COBLOCKS_EDGE,
 } );
 

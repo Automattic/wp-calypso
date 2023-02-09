@@ -23,6 +23,7 @@ const defaultCriteria: FeatureCriteria[] = [
 		accountName: 'coBlocksSimpleSiteEdgeUser',
 	},
 	{
+		// CoBlocks on Atomic: https://github.com/Automattic/wp-calypso/pull/73052
 		coblocks: 'edge',
 		gutenberg: 'stable',
 		siteType: 'atomic',
