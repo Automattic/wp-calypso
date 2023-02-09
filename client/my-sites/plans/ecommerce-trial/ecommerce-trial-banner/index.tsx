@@ -53,7 +53,7 @@ const ECommerceTrialBanner = () => {
 				<p className="e-commerce-trial-banner__subtitle">
 					{ isTrialExpired
 						? translate(
-								'Your free trial has expired. Sign up to a plan to unlock new features and keep your store running.'
+								'Your free trial has expired. Upgrade to a plan to unlock new features and start selling.'
 						  )
 						: translate(
 								'Your free trial will end in %(daysLeft)d day. Upgrade to a plan by %(expirationdate)s to unlock new features and start selling.',
