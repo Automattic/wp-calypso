@@ -168,7 +168,11 @@ export default function AllTimeHighlightsSection( {
 		<div className="stats__all-time-highlights-section">
 			{ siteId && (
 				<>
-					<QueryPosts siteId={ siteId } query={ { status: 'publish', number: 1 } } />
+					<QueryPosts
+						siteId={ siteId }
+						postId={ null }
+						query={ { status: 'publish', number: 1 } }
+					/>
 					<QuerySiteStats siteId={ siteId } statType="stats" query={ {} } />
 					<QuerySiteStats siteId={ siteId } statType="statsInsights" query={ insightsQuery } />
 				</>
