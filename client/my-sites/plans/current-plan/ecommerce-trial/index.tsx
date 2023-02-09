@@ -1,20 +1,12 @@
-import { Button, Card } from '@automattic/components';
-import { useLocale } from '@automattic/i18n-utils';
+import { Button } from '@automattic/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
-import {
-	getCurrentPlan,
-	getECommerceTrialDaysLeft,
-	getECommerceTrialExpiration,
-	isECommerceTrialExpired,
-} from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import DoughnutChart from '../../doughnut-chart';
+import ECommerceTrialBanner from '../../ecommerce-trial/ecommerce-trial-banner';
 import FeatureIncludedCard from '../feature-included-card';
 import FeatureNotIncludedCard from '../feature-not-included-card';
 
@@ -22,18 +14,7 @@ import './style.scss';
 
 const ECommerceTrialCurrentPlan = () => {
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
-	const selectedSiteId = selectedSite?.ID || -1;
 
-	const { currentPlan, eCommerceTrialDaysLeft, isTrialExpired, eCommerceTrialExpiration } =
-		useSelector( ( state ) => ( {
-			currentPlan: getCurrentPlan( state, selectedSiteId ),
-			isTrialExpired: isECommerceTrialExpired( state, selectedSiteId ),
-			eCommerceTrialDaysLeft: Math.round( getECommerceTrialDaysLeft( state, selectedSiteId ) || 0 ),
-			eCommerceTrialExpiration: getECommerceTrialExpiration( state, selectedSiteId ),
-		} ) );
-
-	const locale = useLocale();
-	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 
 	const [ showAllTrialFeaturesInMobileView, setShowAllTrialFeaturesInMobileView ] =
@@ -149,72 +130,13 @@ const ECommerceTrialCurrentPlan = () => {
 		},
 	];
 
-	const trialStart = moment( currentPlan?.subscribedDate );
-	const trialEnd = moment( currentPlan?.expiryDate );
-	const trialDuration = trialEnd.diff( trialStart, 'days' );
-
-	/**
-	 * Trial progress from 0 to 1
-	 */
-	const trialProgress = 1 - eCommerceTrialDaysLeft / trialDuration;
-	const eCommerceTrialDaysLeftToDisplay = isTrialExpired ? 0 : eCommerceTrialDaysLeft;
-
-	// moment.js doesn't have a format option to display the long form in a localized way without the year
-	// https://github.com/moment/moment/issues/3341
-	const readableExpirationDate = eCommerceTrialExpiration?.toDate().toLocaleDateString( locale, {
-		month: 'long',
-		day: 'numeric',
-	} );
-
 	return (
 		<>
 			<BodySectionCssClass bodyClass={ [ 'is-ecommerce-trial-plan' ] } />
 
-			<Card className="e-commerce-trial-current-plan__trial-card">
-				<div className="e-commerce-trial-current-plan__trial-card-content">
-					<p className="e-commerce-trial-current-plan__card-title">
-						{ translate( 'You’re in a free trial' ) }
-					</p>
-					<p className="e-commerce-trial-current-plan__card-subtitle">
-						{ isTrialExpired
-							? translate(
-									'Your free trial has expired. Upgrade to a plan to unlock new features and start selling.'
-							  )
-							: translate(
-									'Your free trial will end in %(daysLeft)d day. Upgrade to a plan by %(expirationdate)s to unlock new features and start selling.',
-									'Your free trial will end in %(daysLeft)d days. Upgrade to a plan by %(expirationdate)s to unlock new features and start selling.',
-									{
-										count: eCommerceTrialDaysLeft,
-										args: {
-											daysLeft: eCommerceTrialDaysLeft,
-											expirationdate: readableExpirationDate,
-										},
-									}
-							  ) }
-					</p>
-					<Button
-						className="e-commerce-trial-current-plan__trial-card-cta"
-						primary
-						onClick={ gotoPlansPage }
-					>
-						{ translate( 'Upgrade now' ) }
-					</Button>
-				</div>
-				<div className="plans__chart-wrapper">
-					<DoughnutChart
-						progress={ trialProgress }
-						text={ eCommerceTrialDaysLeftToDisplay?.toString() }
-					/>
-					<br />
-					<span className="plans__chart-label">
-						{ isTrialExpired
-							? translate( 'Your free trial has expired' )
-							: translate( 'day left in trial', 'days left in trial', {
-									count: eCommerceTrialDaysLeft,
-							  } ) }
-					</span>
-				</div>
-			</Card>
+			<div className="e-commerce-trial-current-plan__banner-wrapper">
+				<ECommerceTrialBanner showButton={ true } onClick={ gotoPlansPage } />
+			</div>
 
 			<h2 className="e-commerce-trial-current-plan__section-title">
 				{ translate( 'What’s included in your free trial' ) }
