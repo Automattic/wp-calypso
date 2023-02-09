@@ -285,7 +285,10 @@ function useRecordVatEvents( {
 	useEffect( () => {
 		if ( fetchError && lastFetchError.current !== fetchError ) {
 			reduxDispatch(
-				recordTracksEvent( 'calypso_vat_details_fetch_failure', { error: fetchError.error } )
+				recordTracksEvent( 'calypso_vat_details_fetch_failure', {
+					error: fetchError.error,
+					message: fetchError.message,
+				} )
 			);
 			lastFetchError.current = fetchError;
 			return;
