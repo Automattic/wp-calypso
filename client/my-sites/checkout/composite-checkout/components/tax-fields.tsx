@@ -4,6 +4,7 @@ import {
 	tryToGuessPostalCodeFormat,
 	getCountryPostalCodeSupport,
 	getCountryTaxRequirements,
+	CountryTaxRequirements,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -72,13 +73,19 @@ export default function TaxFields( {
 		<CountrySelectMenu
 			translate={ translate }
 			onChange={ ( event: ChangeEvent< HTMLSelectElement > ) => {
-				onChange( {
-					countryCode: { value: event.target.value, errors: [], isTouched: true },
-					postalCode: updatePostalCodeForCountry( postalCode, countryCode, countriesList ),
-					city,
-					state,
-					organization,
-				} );
+				onChange(
+					updateOnChangePayload(
+						{
+							countryCode: { value: event.target.value, errors: [], isTouched: true },
+							postalCode: updatePostalCodeForCountry( postalCode, countryCode, countriesList ),
+							city,
+							state,
+							organization,
+						},
+						arePostalCodesSupported,
+						taxRequirements
+					)
+				);
 			} }
 			isError={ countryCode?.isTouched && ! isValid( countryCode ) }
 			isDisabled={ isDisabled }
@@ -96,17 +103,23 @@ export default function TaxFields( {
 				value={ postalCode?.value ?? '' }
 				disabled={ isDisabled }
 				onChange={ ( newValue: string ) => {
-					onChange( {
-						countryCode,
-						postalCode: updatePostalCodeForCountry(
-							{ value: newValue.toUpperCase(), errors: [], isTouched: true },
-							countryCode,
-							countriesList
-						),
-						city,
-						state,
-						organization,
-					} );
+					onChange(
+						updateOnChangePayload(
+							{
+								countryCode,
+								postalCode: updatePostalCodeForCountry(
+									{ value: newValue.toUpperCase(), errors: [], isTouched: true },
+									countryCode,
+									countriesList
+								),
+								city,
+								state,
+								organization,
+							},
+							arePostalCodesSupported,
+							taxRequirements
+						)
+					);
 				} }
 				autoComplete={ section + ' postal-code' }
 				isError={ postalCode?.isTouched && ! isValid( postalCode ) }
@@ -123,13 +136,19 @@ export default function TaxFields( {
 				value={ city?.value ?? '' }
 				disabled={ isDisabled }
 				onChange={ ( newValue: string ) => {
-					onChange( {
-						countryCode,
-						postalCode,
-						city: { value: newValue, errors: [], isTouched: true },
-						state,
-						organization,
-					} );
+					onChange(
+						updateOnChangePayload(
+							{
+								countryCode,
+								postalCode,
+								city: { value: newValue, errors: [], isTouched: true },
+								state,
+								organization,
+							},
+							arePostalCodesSupported,
+							taxRequirements
+						)
+					);
 				} }
 				autoComplete={ section + ' city' }
 				isError={ city?.isTouched && ! isValid( city ) }
@@ -145,13 +164,19 @@ export default function TaxFields( {
 				selectText={ STATE_SELECT_TEXT[ countryCode?.value ?? '' ] }
 				value={ state?.value }
 				onChange={ ( event: ChangeEvent< HTMLSelectElement > ) => {
-					onChange( {
-						countryCode,
-						postalCode,
-						city,
-						state: { value: event.target.value, errors: [], isTouched: true },
-						organization,
-					} );
+					onChange(
+						updateOnChangePayload(
+							{
+								countryCode,
+								postalCode,
+								city,
+								state: { value: event.target.value, errors: [], isTouched: true },
+								organization,
+							},
+							arePostalCodesSupported,
+							taxRequirements
+						)
+					);
 				} }
 			/>
 		);
@@ -165,13 +190,19 @@ export default function TaxFields( {
 				value={ organization?.value ?? '' }
 				disabled={ isDisabled }
 				onChange={ ( newValue: string ) => {
-					onChange( {
-						countryCode,
-						postalCode,
-						city,
-						state,
-						organization: { value: newValue, errors: [], isTouched: true },
-					} );
+					onChange(
+						updateOnChangePayload(
+							{
+								countryCode,
+								postalCode,
+								city,
+								state,
+								organization: { value: newValue, errors: [], isTouched: true },
+							},
+							arePostalCodesSupported,
+							taxRequirements
+						)
+					);
 				} }
 				autoComplete="organization"
 			/>
@@ -198,6 +229,26 @@ export default function TaxFields( {
 			) }
 		</>
 	);
+}
+
+function updateOnChangePayload(
+	taxInfo: {
+		countryCode: ManagedContactDetails[ 'countryCode' ] | undefined;
+		postalCode: ManagedContactDetails[ 'postalCode' ] | undefined;
+		city: ManagedContactDetails[ 'city' ] | undefined;
+		state: ManagedContactDetails[ 'state' ] | undefined;
+		organization: ManagedContactDetails[ 'organization' ] | undefined;
+	},
+	arePostalCodesSupported: boolean,
+	taxRequirements: CountryTaxRequirements
+) {
+	return {
+		countryCode: taxInfo.countryCode,
+		postalCode: arePostalCodesSupported ? taxInfo.postalCode : undefined,
+		city: taxRequirements.city ? taxInfo.city : undefined,
+		state: taxRequirements.state ? taxInfo.state : undefined,
+		organization: taxRequirements.organization ? taxInfo.organization : undefined,
+	};
 }
 
 function updatePostalCodeForCountry(
