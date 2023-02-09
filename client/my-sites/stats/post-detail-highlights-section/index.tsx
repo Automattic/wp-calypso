@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Card, PostStatsCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -75,7 +76,9 @@ export default function PostDetailHighlightsSection( {
 			<div className="highlight-cards">
 				<h1 className="highlight-cards-heading">{ translate( 'Highlights' ) }</h1>
 
-				<StatsDetailsNavigation postId={ postId } givenSiteId={ siteId } />
+				{ config.isEnabled( 'newsletter/stats' ) && (
+					<StatsDetailsNavigation postId={ postId } givenSiteId={ siteId } />
+				) }
 
 				<div className="highlight-cards-list">
 					<PostStatsCard
