@@ -60,7 +60,11 @@
 
 		.trial-feature-card__accordion-toggle {
 			cursor: pointer;
-			padding: 10px;
+			margin-top: 25px;
+
+			@media (max-width: $break-mobile) {
+				margin-top: 10px;
+			}
 
 			.gridicons-chevron-down,
 			.gridicons-chevron-up {
