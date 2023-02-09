@@ -500,7 +500,15 @@ export function siteSelection( context, next ) {
 	}
 
 	const siteId = getSiteId( getState(), siteFragment );
-	if ( siteId ) {
+
+	// Making sure non-connected users get redirected to user connection flow.
+	// Details: p9dueE-6Hf-p2
+	const isUnlinkedCheckout =
+		'1' === context.query?.unlinked &&
+		context.pathname.match( /^\/checkout\/[^/]+\/jetpack_/i ) &&
+		! context.pathname.includes( 'jetpack_boost' );
+
+	if ( siteId && ! isUnlinkedCheckout ) {
 		// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
 		// to wp-admin. In that case, don't continue handling the route.
 		dispatch( setSelectedSiteId( siteId ) );
@@ -533,7 +541,9 @@ export function siteSelection( context, next ) {
 					freshSiteId = getSiteId( getState(), wpcomStagingFragment );
 				}
 
-				if ( freshSiteId ) {
+				// If the user is presumably not connected to WPCOM, we ignore the site ID we found.
+				// Details: p9dueE-6Hf-p2
+				if ( freshSiteId && ! isUnlinkedCheckout ) {
 					// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
 					// to wp-admin. In that case, don't continue handling the route.
 					dispatch( setSelectedSiteId( freshSiteId ) );

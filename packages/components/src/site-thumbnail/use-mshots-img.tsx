@@ -1,6 +1,6 @@
 import { addQueryArgs } from '@wordpress/url';
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
-import { fetchIsRedirect } from './fetch-is-redirect';
+import { fetchAwaitRedirect } from './fetch-await-redirect';
 
 export function mshotsUrl( targetUrl: string, options: MShotsOptions, countToRefresh = 0 ): string {
 	if ( ! targetUrl ) {
@@ -78,7 +78,11 @@ export const useMshotsImg = (
 		}
 
 		async function checkRedirectImage() {
-			const isRedirect = await fetchIsRedirect( mshotUrl );
+			const { isError, isRedirect } = await fetchAwaitRedirect( mshotUrl );
+			if ( isError ) {
+				setIsLoading( false );
+				setIsError( true );
+			}
 			// 307 is the status code for a temporary redirect used by mshots.
 			// If we `follow` the redirect, the `response.url` will be 'https://s0.wp.com/mshots/v1/default'
 			// and the `response.headers.get('content-type)` will be 'image/gif'

@@ -65,10 +65,6 @@
 		@media ( max-width: $break-small ) {
 			gap: 24px 12px;
 		}
-
-		&::after {
-			display: none;
-		}
 	}
 
 	.post-stats-card__thumbnail {

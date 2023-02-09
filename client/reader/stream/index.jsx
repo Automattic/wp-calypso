@@ -125,6 +125,7 @@ class ReaderStream extends Component {
 
 		if ( ! keysAreEqual( selectedPostKey, this.props.selectedPostKey ) ) {
 			this.scrollToSelectedPost( true );
+			this.focusSelectedPost( this.props.selectedPostKey );
 		}
 
 		if ( this.props.shouldRequestRecs ) {
@@ -134,6 +135,21 @@ class ReaderStream extends Component {
 			} );
 		}
 	}
+
+	focusSelectedPost = ( selectedPostKey ) => {
+		const postRefKey = this.getPostRef( selectedPostKey );
+		const ref = this.listRef.current && this.listRef.current.refs[ postRefKey ];
+		const node = ReactDom.findDOMNode( ref );
+
+		// if the post is found, focus the first anchor tag within it.
+		if ( node ) {
+			const firstLink = node.querySelector( 'a' );
+
+			if ( firstLink ) {
+				firstLink.focus();
+			}
+		}
+	};
 
 	_popstate = () => {
 		if ( this.props.selectedPostKey && window.history.scrollRestoration !== 'manual' ) {
@@ -172,6 +188,12 @@ class ReaderStream extends Component {
 		window.addEventListener( 'popstate', this._popstate );
 		if ( 'scrollRestoration' in window.history ) {
 			window.history.scrollRestoration = 'manual';
+		}
+
+		if ( this.props.selectedPostKey ) {
+			setTimeout( () => {
+				this.focusSelectedPost( this.props.selectedPostKey );
+			}, 100 );
 		}
 
 		document.addEventListener( 'keydown', this.handleKeydown, true );
