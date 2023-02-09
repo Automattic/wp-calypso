@@ -39,7 +39,7 @@ interface StaticDesign {
 	style_variations?: StyleVariation[];
 	software_sets?: SoftwareSet[];
 	is_virtual: boolean;
-	style_variation: StyleVariation | null;
+	style_variation_slug: string | null;
 }
 
 interface GeneratedDesign {
@@ -94,7 +94,7 @@ function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
 		style_variations,
 		software_sets,
 		is_virtual,
-		style_variation,
+		style_variation_slug,
 	} = design;
 	const is_premium =
 		( design.recipe.stylesheet && design.recipe.stylesheet.startsWith( 'premium/' ) ) || false;
@@ -102,6 +102,9 @@ function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
 	const is_bundled_with_woo_commerce = ( design.software_sets || [] ).some(
 		( { slug } ) => slug === 'woo-on-plans'
 	);
+
+	const style_variation =
+		style_variations?.find( ( { slug } ) => slug === style_variation_slug ) ?? null;
 
 	return {
 		slug,
