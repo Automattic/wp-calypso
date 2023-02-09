@@ -9,6 +9,25 @@ body.is-section-plans.is-ecommerce-trial-plan {
 		box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.05);
 	}
 
+	.e-commerce-trial-plans__interval-toggle-wrapper {
+		display: flex;
+		justify-content: center;
+		margin: 48px 0 32px 0;
+		padding: 0 20px;
+
+		.e-commerce-trial-plans__interval-toggle {
+			font-weight: 500;
+			max-width: -moz-fit-content;
+			max-width: fit-content;
+			width: auto;
+
+			@media (max-width: $break-mobile) {
+				max-width: 100%;
+				width: 100%;
+			}
+		}
+	}
+
 	.e-commerce-trial-plans__banner-wrapper {
 		margin: 20px 0;
 	}

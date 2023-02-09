@@ -1,4 +1,9 @@
-import { getPlans, PLAN_ECOMMERCE, PLAN_ECOMMERCE_MONTHLY } from '@automattic/calypso-products';
+import {
+	getPlans,
+	plansLink,
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_MONTHLY,
+} from '@automattic/calypso-products';
 import { Button, Card } from '@automattic/components';
 import { getCurrencyObject } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
@@ -9,6 +14,7 @@ import growth from 'calypso/assets/images/plans/wpcom/ecommerce-trial/growth.png
 import payments from 'calypso/assets/images/plans/wpcom/ecommerce-trial/payments.png';
 import productManagement from 'calypso/assets/images/plans/wpcom/ecommerce-trial/product-management.png';
 import shipping from 'calypso/assets/images/plans/wpcom/ecommerce-trial/shipping.png';
+import SegmentedControl from 'calypso/components/segmented-control';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getPlanRawPrice, getPlan } from 'calypso/state/plans/selectors';
 import ECommerceTrialBanner from './ecommerce-trial-banner';
@@ -16,7 +22,15 @@ import TrialFeatureCard from './trial-feature-card';
 
 import './style.scss';
 
-const ECommerceTrialPlansPage = () => {
+interface ECommerceTrialPlansPageProps {
+	interval?: 'monthly' | 'yearly';
+	siteSlug: string;
+}
+
+const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
+	const interval = props.interval ?? 'monthly';
+	const siteSlug = props.siteSlug;
+
 	const translate = useTranslate();
 
 	const eCommercePlanAnnual = getPlans()[ PLAN_ECOMMERCE ];
@@ -31,8 +45,7 @@ const ECommerceTrialPlansPage = () => {
 
 	const { symbol: currencySymbol } = getCurrencyObject( 0, eCommercePlanPrices.currencyCode );
 
-	// Defaulting to annual while we don't add the toggle
-	const isAnnualSubscription = true;
+	const isAnnualSubscription = interval === 'yearly';
 
 	const percentageSavings = Math.floor(
 		( 1 - eCommercePlanPrices.annualPlanMonthlyPrice / eCommercePlanPrices.monthlyPlanPrice ) * 100
@@ -268,20 +281,34 @@ const ECommerceTrialPlansPage = () => {
 				}
 		  );
 
-	const annualUpsellContent = isAnnualSubscription && (
-		<span className="e-commerce-trial-plans__price-card-savings">
-			{ translate( 'Save %(percentageSavings)s%% by paying annually', {
-				args: { percentageSavings },
-			} ) }
-		</span>
-	);
-
 	return (
 		<>
 			<BodySectionCssClass bodyClass={ [ 'is-ecommerce-trial-plan' ] } />
 
 			<div className="e-commerce-trial-plans__banner-wrapper">
 				<ECommerceTrialBanner />
+			</div>
+
+			<div className="e-commerce-trial-plans__interval-toggle-wrapper">
+				<SegmentedControl
+					compact
+					primary={ true }
+					className="e-commerce-trial-plans__interval-toggle price-toggle"
+				>
+					<SegmentedControl.Item
+						selected={ interval === 'monthly' }
+						path={ plansLink( '/plans', siteSlug, 'monthly', true ) }
+					>
+						<span>{ translate( 'Pay Monthly' ) }</span>
+					</SegmentedControl.Item>
+
+					<SegmentedControl.Item
+						selected={ interval === 'yearly' }
+						path={ plansLink( '/plans', siteSlug, 'yearly', true ) }
+					>
+						<span>{ translate( 'Pay Annually' ) }</span>
+					</SegmentedControl.Item>
+				</SegmentedControl>
 			</div>
 
 			<Card className="e-commerce-trial-plans__price-card">
@@ -298,7 +325,11 @@ const ECommerceTrialPlansPage = () => {
 				</div>
 				<div className="e-commerce-trial-plans__price-card-conditions">
 					{ priceContent }
-					{ annualUpsellContent }
+					<span className="e-commerce-trial-plans__price-card-savings">
+						{ translate( 'Save %(percentageSavings)s%% by paying annually', {
+							args: { percentageSavings },
+						} ) }
+					</span>
 				</div>
 				<div className="e-commerce-trial-plans__price-card-cta-wrapper">
 					<Button className="e-commerce-trial-plans__price-card-cta" primary>

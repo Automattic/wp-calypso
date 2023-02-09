@@ -255,7 +255,16 @@ class Plans extends Component {
 	}
 
 	renderEcommerceTrialPage() {
-		return <ECommerceTrialPlansPage />;
+		const { intervalType, selectedSite } = this.props;
+
+		if ( ! selectedSite ) {
+			return this.renderPlaceholder();
+		}
+
+		// Only accept monthly or yearly for the interval; otherwise let the component provide a default.
+		const interval =
+			intervalType === 'monthly' || intervalType === 'yearly' ? intervalType : undefined;
+		return <ECommerceTrialPlansPage interval={ interval } siteSlug={ selectedSite.slug } />;
 	}
 
 	render() {
