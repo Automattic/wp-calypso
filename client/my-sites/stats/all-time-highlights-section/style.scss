@@ -13,6 +13,7 @@ $mobile-layout-breakpoint: $break-small;
 		}
 	}
 
+	// Mobile layout
 	.stats__all-time-highlights-mobile {
 		display: none;
 		margin: 16px 0;
@@ -25,16 +26,21 @@ $mobile-layout-breakpoint: $break-small;
 			margin: 16px 16px 24px;
 		}
 
-		.dot-pager {
+		.dot-pager,
+		.highlight-cards-list {
 			padding: 24px;
 			border: 1px var(--color-border-subtle);
 			border-style: solid none;
 		}
 
-		.card.highlight-card {
-			padding: 0;
-			margin: 0;
-			box-shadow: none;
+		.card {
+			&.highlight-card,
+			&.post-stats-card {
+				padding: 0;
+				margin: 0;
+				box-shadow: none;
+				border: 0;
+			}
 		}
 	}
 

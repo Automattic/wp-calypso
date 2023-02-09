@@ -227,6 +227,10 @@ export default function AllTimeHighlightsSection( {
 						);
 					} ) }
 				</DotPager>
+
+				<div className="highlight-cards-list">
+					<LatestPostCard siteId={ siteId } siteSlug={ siteSlug } />
+				</div>
 			</div>
 
 			<div className="highlight-cards">
