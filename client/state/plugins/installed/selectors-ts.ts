@@ -80,14 +80,13 @@ export const getAllPluginsIndexedBySiteId = createSelector(
 				pluginsIndexedBySiteId: { [ siteId: number ]: { [ pluginSlug: string ]: Plugin } },
 				plugin
 			) => {
-				Object.keys( plugin.sites )
-					.map( ( siteId ) => Number( siteId ) )
-					.forEach( ( siteId ) => {
-						pluginsIndexedBySiteId[ siteId ] = {
-							...pluginsIndexedBySiteId[ siteId ],
-							[ plugin.slug ]: plugin,
-						};
-					} );
+				Object.keys( plugin.sites ).forEach( ( siteIdString ) => {
+					const siteId = Number( siteIdString );
+					pluginsIndexedBySiteId[ siteId ] = {
+						...pluginsIndexedBySiteId[ siteId ],
+						[ plugin.slug ]: plugin,
+					};
+				} );
 
 				return pluginsIndexedBySiteId;
 			},
