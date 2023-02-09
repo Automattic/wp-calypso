@@ -7,15 +7,18 @@ interface propTypes {
 	postId: number;
 	period?: string;
 	statType?: string;
-	givenSiteId: number;
+	givenSiteId: string;
 }
+
+const tabs = { highlights: 'Highlights', opens: 'Email opens', clicks: 'Email clicks' };
+
 const navItems = (
 	postId: number,
 	period: string | undefined = 'day',
 	statType: string | undefined,
-	givenSiteId: number
-) =>
-	[ 'highlights', 'opens', 'clicks' ].map( ( item ) => {
+	givenSiteId: string
+) => {
+	return Object.keys( tabs ).map( ( item ) => {
 		const selected = statType ? statType === item : 'highlights' === item;
 		const pathParam = [ 'opens', 'clicks' ].includes( item )
 			? `email/${ item }/${ period }`
@@ -25,10 +28,12 @@ const navItems = (
 			path: `/stats/${ pathParam }/${ postId }/${ givenSiteId }`,
 			selected,
 		};
+		const label = tabs[ item as keyof typeof tabs ];
 
 		// uppercase first character of item
-		return <NavItem { ...attr }>{ item.charAt( 0 ).toUpperCase() + item.slice( 1 ) }</NavItem>;
+		return <NavItem { ...attr }>{ label }</NavItem>;
 	} );
+};
 
 function StatsDetailsNavigation( { postId, period, statType, givenSiteId }: propTypes ) {
 	return (
@@ -42,7 +47,7 @@ StatsDetailsNavigation.propTypes = {
 	postId: PropTypes.number.isRequired,
 	period: PropTypes.string,
 	statType: PropTypes.string,
-	givenSiteId: PropTypes.number.isRequired,
+	givenSiteId: PropTypes.string.isRequired,
 };
 
 export default StatsDetailsNavigation;
