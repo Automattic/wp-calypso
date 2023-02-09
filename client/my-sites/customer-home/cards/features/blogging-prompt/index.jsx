@@ -23,7 +23,8 @@ const BloggingPromptCard = () => {
 	const primarySiteId = useSelector( ( state ) => getPrimarySiteId( state ) );
 	let siteId = selectedSiteId;
 
-	// If no selected site ID, fallback to using Primary blog id so we can request prompts
+	// We need a site ID to request prompts
+	// If no selected site ID, fallback to using Primary site ID
 	if ( siteId === null ) {
 		siteId = primarySiteId;
 	}
