@@ -63,14 +63,14 @@ export function useSubmitForumsMutation() {
 			};
 
 			return canAccessWpcomApis()
-				? wpcomRequest( {
+				? wpcomRequest< ForumResponse >( {
 						path: 'help/forum/new',
 						apiNamespace: 'wpcom/v2/',
 						apiVersion: '2',
 						method: 'POST',
 						body: requestData,
 				  } )
-				: apiFetch( {
+				: apiFetch< ForumResponse >( {
 						global: true,
 						path: '/help-center/forum/new',
 						method: 'POST',
