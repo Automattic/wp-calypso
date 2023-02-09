@@ -145,7 +145,7 @@ export const SftpCard = ( {
 		if ( password ) {
 			return (
 				<>
-					<SftpClipboardButtonInput value={ password } />
+					<SftpClipboardButtonInput id="password" name="password" value={ password } />
 					<p className="sftp-card__password-warning">
 						{ translate(
 							'Save your password somewhere safe. You will need to reset it to view it again.'
@@ -196,7 +196,9 @@ export const SftpCard = ( {
 						}
 					) }
 				/>
-				{ isSshAccessEnabled && <SftpClipboardButtonInput value={ sshConnectString } /> }
+				{ isSshAccessEnabled && (
+					<SftpClipboardButtonInput id="ssh" name="ssh" value={ sshConnectString } />
+				) }
 			</div>
 		);
 	};
@@ -303,14 +305,16 @@ export const SftpCard = ( {
 			{ username && (
 				<FormFieldset className="sftp-card__info-field">
 					<FormLabel htmlFor="url">{ translate( 'URL' ) }</FormLabel>
-					<SftpClipboardButtonInput value={ SFTP_URL } />
+					<SftpClipboardButtonInput id="url" name="url" value={ SFTP_URL } />
 					<FormLabel htmlFor="port">{ translate( 'Port' ) }</FormLabel>
-					<SftpClipboardButtonInput value={ SFTP_PORT.toString() } />
+					<SftpClipboardButtonInput id="port" name="port" value={ SFTP_PORT.toString() } />
 					<FormLabel htmlFor="username">{ translate( 'Username' ) }</FormLabel>
-					<SftpClipboardButtonInput value={ username } />
+					<SftpClipboardButtonInput id="username" name="username" value={ username } />
 					<FormLabel htmlFor="password">{ translate( 'Password' ) }</FormLabel>
 					{ renderPasswordField() }
-					{ siteHasSshFeature && <SftpSshLabel>{ translate( 'SSH Access' ) }</SftpSshLabel> }
+					{ siteHasSshFeature && (
+						<SftpSshLabel htmlFor="ssh">{ translate( 'SSH Access' ) }</SftpSshLabel>
+					) }
 					{ siteHasSshFeature && renderSshField() }
 					<ReauthRequired twoStepAuthorization={ twoStepAuthorization }>
 						{ () => (
