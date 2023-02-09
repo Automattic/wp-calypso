@@ -41,9 +41,8 @@ import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provider';
 import withCartKey from '../checkout/with-cart-key';
 import DomainAndPlanPackageNavigation from '../domains/components/domain-and-plan-package/navigation';
+import ECommerceTrialPlansPage from './ecommerce-trial';
 import PlansHeader from './header';
-
-import './style.scss';
 
 function DomainAndPlanUpsellNotice() {
 	const translate = useTranslate();
@@ -256,7 +255,7 @@ class Plans extends Component {
 	}
 
 	renderEcommerceTrialPage() {
-		return <div className="plans__ecommerce-trial-wrapper">{ this.renderPlansMain() }</div>;
+		return <ECommerceTrialPlansPage />;
 	}
 
 	render() {
@@ -294,8 +293,8 @@ class Plans extends Component {
 				<QueryPlans />
 				<TrackComponentView eventName="calypso_plans_view" />
 				<Main
-					fullWidthLayout={ is2023OnboardingPricingGrid }
-					wideLayout={ ! is2023OnboardingPricingGrid }
+					fullWidthLayout={ is2023OnboardingPricingGrid && ! isEcommerceTrial }
+					wideLayout={ ! is2023OnboardingPricingGrid || isEcommerceTrial }
 				>
 					{ ! canAccessPlans && (
 						<EmptyContent
