@@ -1,7 +1,6 @@
 import { Card, Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { sortBy } from 'lodash';
 import { useSelector, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
@@ -10,7 +9,6 @@ import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-
 import { SECTION_BLOGGING_PROMPT } from 'calypso/my-sites/customer-home/cards/constants';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
-import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import BellOffIcon from './bell-off-icon';
 import LightbulbIcon from './lightbulb-icon';
@@ -23,21 +21,11 @@ const BloggingPromptCard = () => {
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const primarySiteId = useSelector( ( state ) => getPrimarySiteId( state ) );
-	let sites = useSelector( ( state ) => getSitesItems( state ) );
 	let siteId = selectedSiteId;
 
-	// If no selected site ID, set site ID to first site with write site_intent
+	// If no selected site ID, fallback to using Primary blog id so we can request prompts
 	if ( siteId === null ) {
-		sites = sortBy( sites, [ 'ID' ] );
-		const blogs = Object.values( sites ).filter( ( site ) => {
-			return site.options?.site_intent === 'write';
-		} );
-		if ( blogs.length > 0 ) {
-			siteId = blogs[ 0 ].ID;
-		} else {
-			// Fallback to using Primary blog id so we can request prompts
-			siteId = primarySiteId;
-		}
+		siteId = primarySiteId;
 	}
 
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
