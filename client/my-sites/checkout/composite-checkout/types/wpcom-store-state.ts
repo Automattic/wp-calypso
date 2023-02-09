@@ -720,7 +720,7 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 		};
 	},
 
-	updateSomeFields: (
+	updateTaxFields: (
 		oldDetails: ManagedContactDetails,
 		newDetails: ManagedContactDetails
 	): ManagedContactDetails => {

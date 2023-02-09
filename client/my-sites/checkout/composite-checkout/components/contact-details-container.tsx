@@ -59,11 +59,11 @@ export default function ContactDetailsContainer( {
 		return null;
 	}
 
-	const { updateDomainContactFields, updateSomeFields, updateEmail } = checkoutActions;
+	const { updateDomainContactFields, updateTaxFields, updateEmail } = checkoutActions;
 	const contactDetails = prepareDomainContactDetails( contactInfo );
 	const contactDetailsErrors = prepareDomainContactDetailsErrors( contactInfo );
 	const onChangeContactInfo = ( newInfo: ManagedContactDetails ) => {
-		updateSomeFields( newInfo );
+		updateTaxFields( newInfo );
 	};
 
 	const updateDomainContactRelatedData = ( details: DomainContactDetailsData ) => {
