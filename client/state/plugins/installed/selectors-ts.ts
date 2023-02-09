@@ -12,6 +12,8 @@ const getSiteIdsThatHavePlugins = createSelector(
 	( state ) => [ state.plugins.installed.plugins ]
 );
 
+const emptyObject = {};
+
 /**
  * The server returns plugins store at state.plugins.installed.plugins are indexed by site, which means
  * that the information for a plugin may be spread across multiple site objects. This selector transforms
@@ -20,7 +22,7 @@ const getSiteIdsThatHavePlugins = createSelector(
 export const getAllPluginsIndexedByPluginSlug = createSelector(
 	( state: AppState ) => {
 		if ( isRequestingForAllSites( state ) ) {
-			return {};
+			return emptyObject;
 		}
 
 		return getSiteIdsThatHavePlugins( state ).reduce(
