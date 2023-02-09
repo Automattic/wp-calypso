@@ -54,11 +54,11 @@ const ECommerceTrialCurrentPlan = () => {
 			buttonText: translate( 'Ask a question' ),
 		},
 		{
-			title: 'Premium themes',
-			text: 'Choose from a wide selection of beautifully designed themes.',
+			title: translate( 'Premium themes' ),
+			text: translate( 'Choose from a wide selection of beautifully designed themes.' ),
 			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/premium-themes.svg',
 			showButton: true,
-			buttonText: 'Browse premium themes',
+			buttonText: translate( 'Browse premium themes' ),
 		},
 		{
 			title: translate( 'Simple customization' ),
