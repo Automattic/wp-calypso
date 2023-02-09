@@ -18,6 +18,7 @@ import FormButton from 'calypso/components/forms/form-button';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import getSiteWordadsStatus from 'calypso/state/selectors/get-site-wordads-status';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { canAccessWordAds, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
@@ -187,11 +188,13 @@ class AdsWrapper extends Component {
 		);
 	}
 
-	renderUpsell() {
+	renderUpsell( options = {} ) {
+		const { forceDisplay = false } = options;
 		const { siteSlug, translate } = this.props;
 		const bannerURL = `/checkout/${ siteSlug }/premium`;
 		return (
 			<UpsellNudge
+				forceDisplay={ forceDisplay }
 				callToAction={ translate( 'Upgrade' ) }
 				plan={ PLAN_PREMIUM }
 				title={ translate( 'Upgrade to the Premium plan and start earning' ) }
@@ -252,12 +255,26 @@ class AdsWrapper extends Component {
 		);
 	}
 
+	renderContenWithUpsell( component ) {
+		const { section } = this.props;
+		const allowedSections = [ 'ads-earnings', 'ads-payments' ];
+		const isAllowedSection = allowedSections.includes( section );
+		return (
+			<>
+				{ this.renderUpsell( { forceDisplay: true } ) }
+				{ isAllowedSection ? component : <FeatureExample>{ component }</FeatureExample> }
+			</>
+		);
+	}
+
 	render() {
 		const {
 			canAccessAds,
 			canActivateWordadsInstant,
 			canUpgradeToUseWordAds,
+			hasIneligiblePlanforWordAds,
 			isWordadsInstantEligibleButNotOwner,
+			siteId,
 			site,
 			translate,
 		} = this.props;
@@ -285,10 +302,13 @@ class AdsWrapper extends Component {
 			component = null;
 		} else if ( site.options.wordads && site.is_private ) {
 			notice = this.renderNoticeSiteIsPrivate();
+		} else if ( hasIneligiblePlanforWordAds ) {
+			component = this.renderContenWithUpsell( component );
 		}
 
 		return (
 			<div>
+				<QueryWordadsStatus siteId={ siteId } />
 				{ notice }
 				{ component }
 			</div>
@@ -310,6 +330,9 @@ const mapStateToProps = ( state ) => {
 		canActivateWordadsInstant: ! site.options.wordads && canActivateWordAds && hasWordAdsFeature,
 		canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
 		canUpgradeToUseWordAds: ! site.options.wordads && ! hasWordAdsFeature,
+		hasWordAdsFeature,
+		hasIneligiblePlanforWordAds:
+			! hasWordAdsFeature && getSiteWordadsStatus( state, siteId ) === 'ineligible',
 		requestingWordAdsApproval: isRequestingWordAdsApprovalForSite( state, site ),
 		wordAdsError: getWordAdsErrorForSite( state, site ),
 		wordAdsSuccess: getWordAdsSuccessForSite( state, site ),
