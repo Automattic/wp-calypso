@@ -29,8 +29,8 @@ const ECommerceTrialBanner = () => {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 
-	const trialStart = moment( currentPlan?.subscribedDate );
-	const trialEnd = moment( currentPlan?.expiryDate );
+	const trialStart = moment.utc( currentPlan?.subscribedDate );
+	const trialEnd = moment.utc( currentPlan?.expiryDate );
 	const trialDuration = trialEnd.diff( trialStart, 'days' );
 
 	/**
