@@ -259,7 +259,7 @@ export const SitesEllipsisMenu = ( {
 	};
 
 	const showHosting = ! isNotAtomicJetpack( site ) && ! site.options?.is_wpforteams_site;
-	const { shouldShowSiteCopyItem, startSiteCopy } = useSiteCopy( site, { disabled: ! inViewOnce } );
+	const { shouldShowSiteCopyItem, startSiteCopy } = useSiteCopy( site, { enabled: inViewOnce } );
 
 	return (
 		<div ref={ ref }>

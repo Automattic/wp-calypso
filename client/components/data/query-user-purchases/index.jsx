@@ -29,18 +29,18 @@ function QueryUserPurchases() {
 	return null;
 }
 
-export const useQueryUserPurchases = ( disabled = false ) => {
+export const useQueryUserPurchases = ( enabled = true ) => {
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 	const isRequesting = useSelector( ( state ) => state.purchases.isFetchingUserPurchases );
 	const hasLoaded = useSelector( ( state ) => state.purchases.hasLoadedUserPurchasesFromServer );
 	const reduxDispatch = useDispatch();
 
 	useEffect( () => {
-		if ( ! userId || isRequesting || hasLoaded || disabled ) {
+		if ( ! userId || isRequesting || hasLoaded || ! enabled ) {
 			return;
 		}
 		reduxDispatch( fetchUserPurchases( userId ) );
-	}, [ userId, isRequesting, hasLoaded, reduxDispatch, disabled ] );
+	}, [ userId, isRequesting, hasLoaded, reduxDispatch, enabled ] );
 };
 
 export default QueryUserPurchases;

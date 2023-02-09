@@ -18,17 +18,17 @@ import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 interface SiteCopyOptions {
-	disabled: boolean;
+	enabled: boolean;
 }
 
-function useSafeSiteHasFeature( siteId: number | undefined, feature: string, disabled = false ) {
+function useSafeSiteHasFeature( siteId: number | undefined, feature: string, enabled = true ) {
 	const dispatch = useReduxDispatch();
 	useEffect( () => {
-		if ( ! siteId || disabled ) {
+		if ( ! siteId || ! enabled ) {
 			return;
 		}
 		dispatch( fetchSiteFeatures( siteId ) );
-	}, [ dispatch, siteId, disabled ] );
+	}, [ dispatch, siteId, enabled ] );
 
 	return useSelector( ( state ) => {
 		if ( ! siteId ) {
@@ -40,26 +40,26 @@ function useSafeSiteHasFeature( siteId: number | undefined, feature: string, dis
 
 export const useSiteCopy = (
 	site: Pick< SiteExcerptData, 'ID' | 'site_owner' | 'plan' > | undefined,
-	options: SiteCopyOptions = { disabled: false }
+	options: SiteCopyOptions = { enabled: true }
 ) => {
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 	const hasCopySiteFeature = useSafeSiteHasFeature(
 		site?.ID,
 		WPCOM_FEATURES_COPY_SITE,
-		options.disabled
+		options.enabled
 	);
 	const { isRequesting: isRequestingSiteFeatures } = useSelector( ( state ) => {
 		const siteFeatures = getSiteFeatures( state, site?.ID );
 		return siteFeatures ? siteFeatures : { isRequesting: true };
 	} );
 	const isAtomic = useSelect(
-		( select ) => site && ! options.disabled && select( SITE_STORE ).isSiteAtomic( site?.ID ),
-		[ site?.ID, options.disabled ]
+		( select ) => site && options.enabled && select( SITE_STORE ).isSiteAtomic( site?.ID ),
+		[ site?.ID, options.enabled ]
 	);
 	const plan = site?.plan;
 	const isSiteOwner = site?.site_owner === userId;
 
-	useQueryUserPurchases( options.disabled );
+	useQueryUserPurchases( options.enabled );
 	const isLoadingPurchases = useSelector(
 		( state ) => isFetchingUserPurchases( state ) || ! hasLoadedUserPurchasesFromServer( state )
 	);
