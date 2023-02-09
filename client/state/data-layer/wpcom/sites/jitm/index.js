@@ -1,6 +1,10 @@
 import moment from 'moment/moment';
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
-import { JITM_DISMISS, JITM_FETCH, JITM_DISMISS_DIRECT } from 'calypso/state/action-types';
+import {
+	JITM_DISMISS,
+	JITM_FETCH,
+	UPDATE_STATS_NOTICE_STATUS_DIRECT,
+} from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
@@ -109,11 +113,11 @@ export const doDismissJITMDirect = ( action ) =>
 	http(
 		{
 			method: 'POST',
-			path: '/jitm',
-			apiNamespace: 'jetpack/v4',
+			path: '/stats/notices',
 			body: {
 				feature_class: action.featureClass,
 				id: action.id,
+				status: action.status,
 			},
 		},
 		action
@@ -163,7 +167,7 @@ registerHandlers( 'state/data-layer/wpcom/sites/jitm/index.js', {
 			onError: noop,
 		} ),
 	],
-	[ JITM_DISMISS_DIRECT ]: [
+	[ UPDATE_STATS_NOTICE_STATUS_DIRECT ]: [
 		dispatchRequest( {
 			fetch: doDismissJITMDirect,
 			onSuccess: noop,

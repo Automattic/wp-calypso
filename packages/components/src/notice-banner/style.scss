@@ -113,8 +113,8 @@
 
 	.notice-banner__action-button,
 	.notice-banner__action-link {
-		margin-top: 15px;
-		margin-right: 5px;
+		margin-top: 16px;
+		margin-right: 8px;
 	}
 
 	.notice-banner__action-button {
@@ -127,7 +127,8 @@
 	.notice-banner__action-link {
 		color: var(--jp-black);
 		text-decoration: underline;
-		font-weight: bold;
+		font-weight: 600;
+		margin-left: 16px;
 	}
 }
 

@@ -6,7 +6,7 @@ import {
 	JITM_FETCH,
 	JITM_SET,
 	JITM_OPEN_HELP_CENTER,
-	JITM_DISMISS_DIRECT,
+	UPDATE_STATS_NOTICE_STATUS_DIRECT,
 } from 'calypso/state/action-types';
 import 'calypso/state/data-layer/wpcom/sites/jitm';
 import 'calypso/state/jitm/init';
@@ -33,10 +33,11 @@ export const dismissJITM = ( siteId, id, featureClass ) => ( {
  * @param {string} featureClass The feature class of the jitm to dismiss
  * @returns {Object} The dismiss action
  */
-export const dismissJITMDirect = ( id, featureClass ) => ( {
-	type: JITM_DISMISS_DIRECT,
+export const updateStatsNoticeStatusDirect = ( id, featureClass, status = 'dismissed' ) => ( {
+	type: UPDATE_STATS_NOTICE_STATUS_DIRECT,
 	id,
 	featureClass,
+	status,
 } );
 
 /**
