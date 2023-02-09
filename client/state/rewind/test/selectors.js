@@ -115,9 +115,7 @@ describe( 'getBackupRetentionUpdateRequestStatus()', () => {
 	test( 'should default to UNSUBMITTED when no backup retention update request is being made yet.', () => {
 		const state = {
 			rewind: {
-				[ TEST_SITE_ID ]: {
-					retention: {},
-				},
+				[ TEST_SITE_ID ]: {},
 			},
 		};
 		expect( getBackupRetentionUpdateRequestStatus( state, TEST_SITE_ID ) ).toEqual(
@@ -129,9 +127,7 @@ describe( 'getBackupRetentionUpdateRequestStatus()', () => {
 		const state = {
 			rewind: {
 				[ TEST_SITE_ID ]: {
-					retention: {
-						updateRequestStatus: BACKUP_RETENTION_UPDATE_REQUEST.PENDING,
-					},
+					updateBackupRetentionRequestStatus: BACKUP_RETENTION_UPDATE_REQUEST.PENDING,
 				},
 			},
 		};

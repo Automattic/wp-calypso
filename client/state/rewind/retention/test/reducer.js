@@ -5,7 +5,7 @@ import {
 import { requestSize } from '../../size/actions';
 import { updateBackupRetention } from '../actions';
 import { BACKUP_RETENTION_UPDATE_REQUEST } from '../constants';
-import retention from '../reducer';
+import { updateBackupRetentionRequestStatus } from '../reducer';
 
 describe( 'updateBackupRetentionRequestStatus', () => {
 	const mockUpdateRequestInitiated = {
@@ -17,27 +17,27 @@ describe( 'updateBackupRetentionRequestStatus', () => {
 
 	test( 'should default to UNSUBMITTED when receiving other non-retention update related actions', () => {
 		// lets ensure that state is not modified when passed an unrelated action.
-		expect( retention( undefined, requestSize ).updateRequestStatus ).toEqual(
+		expect( updateBackupRetentionRequestStatus( undefined, requestSize ) ).toEqual(
 			BACKUP_RETENTION_UPDATE_REQUEST.UNSUBMITTED
 		);
 	} );
 
 	test( 'should return PENDING status when retention update request action is initiated', () => {
 		// lets update backup retention for siteId:123 to 7 days.
-		expect( retention( undefined, updateBackupRetention( 123, 7 ) ).updateRequestStatus ).toEqual(
-			BACKUP_RETENTION_UPDATE_REQUEST.PENDING
-		);
+		expect(
+			updateBackupRetentionRequestStatus( undefined, updateBackupRetention( 123, 7 ) )
+		).toEqual( BACKUP_RETENTION_UPDATE_REQUEST.PENDING );
 	} );
 
 	test( 'should return SUCCESS status when retention update request action gets completed successfully', () => {
 		expect(
-			retention( mockUpdateRequestInitiated, updateSuccessAction ).updateRequestStatus
+			updateBackupRetentionRequestStatus( mockUpdateRequestInitiated, updateSuccessAction )
 		).toEqual( BACKUP_RETENTION_UPDATE_REQUEST.SUCCESS );
 	} );
 
 	test( 'should return FAILED status when retention update request action gets failed', () => {
 		expect(
-			retention( mockUpdateRequestInitiated, updateFailedAction ).updateRequestStatus
+			updateBackupRetentionRequestStatus( mockUpdateRequestInitiated, updateFailedAction )
 		).toEqual( BACKUP_RETENTION_UPDATE_REQUEST.FAILED );
 	} );
 } );
