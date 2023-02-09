@@ -105,18 +105,15 @@ class DomainSearch extends Component {
 	};
 
 	componentDidMount() {
+		if ( this.props.domainSidebarExperimentUser ) {
+			document.body.classList.add( 'is-domain-sidebar-experiment-user' );
+		}
 		this.checkSiteIsUpgradeable();
 
 		this.isMounted = true;
 	}
 
 	componentDidUpdate( prevProps ) {
-		if ( this.props.domainSidebarExperimentUser ) {
-			document.body.classList.add( 'is-domain-sidebar-experiment-user' );
-		} else {
-			document.body.classList.remove( 'is-domain-sidebar-experiment-user' );
-		}
-
 		if ( prevProps.selectedSiteId !== this.props.selectedSiteId ) {
 			this.checkSiteIsUpgradeable();
 		}
@@ -277,7 +274,10 @@ class DomainSearch extends Component {
 						<div className="domains__header">
 							{ domainSidebarExperimentUser && (
 								<>
-									<DomainAndPlanPackageNavigation step={ 1 } />
+									<DomainAndPlanPackageNavigation
+										goBackLink={ domainManagementList( selectedSiteSlug ) }
+										step={ 1 }
+									/>
 									<FormattedHeader
 										brandFont
 										headerText={ translate( 'Claim your domain' ) }

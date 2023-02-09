@@ -23,6 +23,11 @@ $break-wpcom-smallest: 320px;
 	max-height: 255px;
 	padding: $card-padding;
 	gap: $card-padding;
+
+	// Eliminate the `::after` pseudo-element from frequently accompanied .card
+	&.card::after {
+		display: none;
+	}
 }
 
 .post-stats-card__heading {
@@ -38,6 +43,10 @@ $break-wpcom-smallest: 320px;
 .post-stats-card__post-title {
 	@include stats-section-header;
 	margin-bottom: 4px;
+
+	&:visited {
+		color: var(--studio-gray-100);
+	}
 }
 
 .post-stats-card__post-info {

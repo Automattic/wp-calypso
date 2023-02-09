@@ -891,6 +891,7 @@ class RegisterDomainStep extends Component {
 				pending: false,
 				is_premium: data.is_premium,
 				cost: data.cost,
+				sale_cost: data.sale_cost,
 				is_price_limit_exceeded: data.is_price_limit_exceeded,
 			} ) )
 			.catch( ( error ) => ( {

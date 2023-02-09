@@ -33,8 +33,7 @@ const wpcomV1Endpoints = {
 	statsInsights: 'stats/insights',
 	statsFileDownloads: 'stats/file-downloads',
 	statsAds: 'wordads/stats',
-	statsEmailsOpen: 'stats/opens/emails/summary',
-	statsEmailsClick: 'stats/clicks/emails/summary',
+	statsEmailsSummary: 'stats/emails/summary',
 };
 
 const wpcomV2Endpoints = {
@@ -76,8 +75,7 @@ export function requestSiteStats( siteId, statType, query ) {
 			switch ( statType ) {
 				case 'statsVideo':
 					return query.postId;
-				case 'statsEmailsOpen':
-				case 'statsEmailsClick':
+				case 'statsEmailsSummary':
 					return { period: PERIOD_ALL_TIME, quantity: 10 };
 				default:
 					return query;

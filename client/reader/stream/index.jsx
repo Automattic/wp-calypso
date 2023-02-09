@@ -190,6 +190,12 @@ class ReaderStream extends Component {
 			window.history.scrollRestoration = 'manual';
 		}
 
+		if ( this.props.selectedPostKey ) {
+			setTimeout( () => {
+				this.focusSelectedPost( this.props.selectedPostKey );
+			}, 100 );
+		}
+
 		document.addEventListener( 'keydown', this.handleKeydown, true );
 	}
 

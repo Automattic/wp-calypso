@@ -113,8 +113,8 @@ export default function () {
 		} ),
 	};
 
-	statsStrings.emailsOpenStats = {
-		title: translate( 'Email opens', { context: 'Stats: title of module' } ),
+	statsStrings.emails = {
+		title: translate( 'Emails', { context: 'Stats: title of module' } ),
 		item: translate( 'Title', { context: 'Stats: module row header for post title.' } ),
 		value: translate( 'Opens', { context: 'Stats: module row header for number of email opens.' } ),
 		empty: translate( 'No email opens', {

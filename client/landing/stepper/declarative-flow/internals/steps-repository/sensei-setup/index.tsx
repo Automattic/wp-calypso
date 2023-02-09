@@ -4,7 +4,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { CSSProperties } from 'react';
+import { CSSProperties, useEffect } from 'react';
 import FormRadioWithThumbnail from 'calypso/components/forms/form-radio-with-thumbnail';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ONBOARD_STORE } from '../../../../stores';
@@ -69,6 +69,11 @@ const SenseiSetup: Step = ( { navigation } ) => {
 
 	const { submit } = navigation;
 	const dispatch = useDispatch( ONBOARD_STORE );
+
+	useEffect( () => {
+		dispatch.resetOnboardStore();
+	}, [ dispatch ] );
+
 	const handleSubmit = useCallback( () => {
 		dispatch.setSiteTitle( siteTitle );
 		const variation = styles.find( ( style ) => style.name === checked ) || styles[ 0 ];

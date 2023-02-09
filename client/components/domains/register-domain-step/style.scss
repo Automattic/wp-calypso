@@ -354,6 +354,10 @@ body.is-section-signup.is-white-signup {
 		background: var(--color-body-background);
 	}
 
+	.search-filters-dropdown-filters {
+		border-color: transparent;
+	}
+
 	.register-domain-step__domains-quickfilter-group {
 
 		@include break-large {

@@ -103,7 +103,7 @@ $grid-vertical-gutters: 32px;
 		"country country country country country country country country country country country country"
 		"authors authors authors authors search search search search clicks clicks clicks clicks"
 		"videos videos videos videos videos videos downloads downloads downloads downloads downloads downloads"
-		"emails-open emails-open emails-open emails-open emails-open emails-open emails-click emails-click emails-click emails-click emails-click emails-click",
+		"emails emails emails emails emails emails emails emails emails emails emails emails",
 		6
 	);
 
@@ -113,7 +113,7 @@ $grid-vertical-gutters: 32px;
 		"authors authors authors authors search search search search"
 		"clicks clicks clicks clicks videos videos videos videos"
 		"downloads downloads downloads downloads downloads downloads downloads downloads"
-		"emails-open emails-open emails-open emails-open emails-click emails-click emails-click emails-click",
+		"emails emails emails emails emails emails emails emails",
 		7
 	);
 
@@ -126,8 +126,7 @@ $grid-vertical-gutters: 32px;
 		"clicks clicks clicks clicks"
 		"videos videos videos videos"
 		"downloads downloads downloads downloads"
-		"emails-open emails-open emails-open emails-open"
-		"emails-click emails-click emails-click emails-click",
+		"emails emails emails emails",
 		10
 	);
 
@@ -204,12 +203,7 @@ $grid-vertical-gutters: 32px;
 	}
 
 	.stats__module-wrapper--emails,
-	.list-emails-open {
-		grid-area: emails-open;
-	}
-
-	.stats__module-wrapper--emails,
-	.list-emails-click {
-		grid-area: emails-click;
+	.list-emails {
+		grid-area: emails;
 	}
 }
