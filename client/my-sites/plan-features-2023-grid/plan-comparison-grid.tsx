@@ -26,7 +26,7 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import PlanFeatures2023GridActions from './actions';
 import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
 import PlanFeatures2023GridHeaderPrice from './header-price';
-import { plansBreakSmall, plansBreakLarge, plans2023SmallBreakpoint } from './media-queries';
+import { plansBreakSmall, plansBreakLarge } from './media-queries';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import { usePricingBreakpoint } from './util';
 import type { PlanProperties } from './types';
@@ -119,6 +119,7 @@ const Cell = styled.div< { textAlign?: string; isInSignup: boolean } >`
 	flex-direction: column;
 	align-items: center;
 	padding: 33px 20px 0;
+	border-right: solid 1px #e0e0e0;
 
 	.gridicon {
 		fill: currentColor;
@@ -128,31 +129,37 @@ const Cell = styled.div< { textAlign?: string; isInSignup: boolean } >`
 		max-width: 100%;
 	}
 
-	@media ( max-width: ${ plans2023SmallBreakpoint } ) {
-		&.title-is-subtitle {
-			padding-top: 0;
-		}
+	&.title-is-subtitle {
+		padding-top: 0;
+	}
 
-		border-right: solid 1px #e0e0e0;
+	&:last-of-type {
+		border-right: none;
+	}
 
-		&:last-of-type {
-			border-right: none;
-		}
-
-		${ Row }:last-of-type & {
-			padding-bottom: 24px;
-		}
+	${ Row }:last-of-type & {
+		padding-bottom: 24px;
 	}
 
 	${ plansBreakSmall( css`
 		padding: 0 14px;
 		min-width: 180px;
+		border-right: none;
 
 		&:first-of-type {
 			padding-left: 0;
 		}
 		&:last-of-type {
 			padding-right: 0;
+			border-right: none;
+		}
+
+		&.title-is-subtitle {
+			padding-top: 33px;
+		}
+
+		${ Row }:last-of-type & {
+			padding-bottom: 0px;
 		}
 	` ) }
 

@@ -2,12 +2,12 @@ import { css } from '@emotion/react';
 import type { SerializedStyles } from '@emotion/react';
 
 const sidebarWidth = 272; //in px
-export const plans2023SmallBreakpoint = '880px';
-export const plans2023MediumBreakpoint = '1340px';
-export const plans2023LargeBreakpoint = '1500px';
-export const plans2023SmallWithSidebarBreakpoint = `${ 880 + sidebarWidth }px`;
-export const plans2023MediumWithSidebarBreakpoint = `${ 1340 + sidebarWidth }px`;
-export const plans2023LargeWithSidebarBreakpoint = `${ 1500 + sidebarWidth }px`;
+const plans2023SmallBreakpoint = '880px';
+const plans2023MediumBreakpoint = '1340px';
+const plans2023LargeBreakpoint = '1500px';
+const plans2023SmallWithSidebarBreakpoint = `${ 880 + sidebarWidth }px`;
+const plans2023MediumWithSidebarBreakpoint = `${ 1340 + sidebarWidth }px`;
+const plans2023LargeWithSidebarBreakpoint = `${ 1500 + sidebarWidth }px`;
 
 export const plansBreakSmall = ( styles: SerializedStyles ) => css`
 	body.is-section-signup.is-white-signup & {
