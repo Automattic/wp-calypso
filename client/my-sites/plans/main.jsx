@@ -281,6 +281,9 @@ class Plans extends Component {
 		const yourDomainName = allDomains.length
 			? allDomains.slice( -1 )[ 0 ]?.meta
 			: translate( 'your domain name' );
+		const goBackLink = addQueryArgs( `/domains/add/${ selectedSite.slug }`, {
+			domainAndPlanPackage: true,
+		} );
 
 		return (
 			<div className={ is2023OnboardingPricingGrid ? 'is-2023-pricing-grid' : '' }>
@@ -309,7 +312,7 @@ class Plans extends Component {
 							{ domainSidebarExperimentUser && (
 								<>
 									<div className="plans__header">
-										<DomainAndPlanPackageNavigation step={ 2 } />
+										<DomainAndPlanPackageNavigation goBackLink={ goBackLink } step={ 2 } />
 
 										<FormattedHeader
 											brandFont
