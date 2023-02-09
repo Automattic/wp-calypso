@@ -66,7 +66,7 @@ export const useSiteCopy = (
 
 	const purchases = useSelector( ( state ) => getUserPurchases( state ) );
 
-	const { setPlanCartItem, setProductCartItems, resetOnboardStore } = useDispatch( ONBOARD_STORE );
+	const { setPlanCartItem, setProductCartItems } = useDispatch( ONBOARD_STORE );
 
 	const shouldShowSiteCopyItem = useMemo( () => {
 		return hasCopySiteFeature && isSiteOwner && plan && isAtomic && ! isLoadingPurchases;
@@ -76,7 +76,6 @@ export const useSiteCopy = (
 		if ( ! shouldShowSiteCopyItem ) {
 			return;
 		}
-		resetOnboardStore();
 		clearSignupDestinationCookie();
 		setPlanCartItem( { product_slug: plan?.product_slug as string } );
 
@@ -89,15 +88,7 @@ export const useSiteCopy = (
 			.map( ( purchase ) => ( { product_slug: purchase.productSlug } ) );
 
 		setProductCartItems( marketplacePluginProducts );
-	}, [
-		plan,
-		setPlanCartItem,
-		purchases,
-		shouldShowSiteCopyItem,
-		setProductCartItems,
-		resetOnboardStore,
-		site?.ID,
-	] );
+	}, [ plan, setPlanCartItem, purchases, shouldShowSiteCopyItem, setProductCartItems, site?.ID ] );
 
 	return useMemo(
 		() => ( {

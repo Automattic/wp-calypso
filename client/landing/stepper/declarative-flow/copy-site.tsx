@@ -75,10 +75,12 @@ const copySite: Flow = {
 	},
 
 	useSteps() {
+		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
 		useEffect( () => {
+			resetOnboardStore();
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
 			recordFullStoryEvent( 'calypso_signup_start_copy_site', { flow: this.name } );
-		}, [] );
+		}, [ resetOnboardStore ] );
 
 		const urlQueryParams = useQuery();
 		const siteSlug = urlQueryParams.get( 'siteSlug' );
