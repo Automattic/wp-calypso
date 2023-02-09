@@ -121,11 +121,10 @@ class Help_Center {
 	 * Get current site details.
 	 */
 	public function get_current_site() {
-		$site       = \Jetpack_Options::get_option( 'id' );
-		$logo_id    = get_option( 'site_logo' );
-		$products   = wpcom_get_site_purchases();
-		$at_options = get_option( 'at_options' );
-		$plan       = array_pop(
+		$site_id     = \Jetpack_Options::get_option( 'id' );
+		$request_url = esc_url( 'https://public-api.wordpress.com/rest/v1/sites/' . $site_id . '?http_envelope=1&check_wpcom=1' );
+		$products    = wpcom_get_site_purchases();
+		$plan        = array_pop(
 			array_filter(
 				$products,
 				function ( $product ) {
@@ -134,21 +133,16 @@ class Help_Center {
 			)
 		);
 
-		return array(
-			'ID'              => $site,
-			'name'            => get_bloginfo( 'name' ),
-			'URL'             => get_bloginfo( 'url' ),
-			'plan'            => array(
-				'product_slug' => $plan->product_slug,
-			),
-			'is_wpcom_atomic' => boolval( $at_options ),
-			'jetpack'         => true === apply_filters( 'is_jetpack_site', false, $site ),
-			'logo'            => array(
-				'id'    => $logo_id,
-				'sizes' => array(),
-				'url'   => wp_get_attachment_image_src( $logo_id, 'thumbnail' )[0],
-			),
-		);
+		if ( function_exists( 'wpcom_json_api_get' ) ) {
+			$response = wpcom_json_api_get( $request_url );
+		} else {
+			$response = wp_remote_get( $request_url );
+		}
+
+		$site_data         = json_decode( wp_remote_retrieve_body( $response ), true )['body'];
+		$site_data['plan'] = $plan;
+
+		return $site_data;
 	}
 
 	/**

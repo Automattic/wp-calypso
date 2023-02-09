@@ -471,7 +471,7 @@ export const HelpCenterContactForm = () => {
 			{ ! userWithNoSites && (
 				<section>
 					<HelpCenterSitePicker
-						enabled={ mode === 'FORUM' }
+						enabled={ mode === 'FORUM' && ! supportSite.is_wpcom_atomic }
 						currentSite={ currentSite }
 						onSelect={ ( id: string | number ) => {
 							if ( id !== 0 ) {

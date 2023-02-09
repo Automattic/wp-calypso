@@ -13,7 +13,7 @@ import { hasTranslation, sprintf } from '@wordpress/i18n';
 import { comment, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { useState, FC } from 'react';
+import { FC } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, LinkProps } from 'react-router-dom';
 import { useActiveSupportTicketsQuery } from 'calypso/data/help/use-active-support-tickets-query';
@@ -49,7 +49,6 @@ export const HelpCenterContactPage: FC = () => {
 	} );
 	const { data: supportAvailability } = useSupportAvailability( 'CHAT' );
 	const isLoading = renderChat.isLoading || renderEmail.isLoading || isLoadingTickets;
-	const [ toggleMoreOptions, setToggleMoreOptions ] = useState( false );
 
 	useEffect( () => {
 		if ( isLoading ) {
@@ -131,11 +130,7 @@ export const HelpCenterContactPage: FC = () => {
 					reopensAt="2022-12-26 07:00Z"
 					enabled={ hasAccessToLivechat }
 				/>
-				<div
-					className={ classnames( 'help-center-contact-page__boxes', {
-						expanded: toggleMoreOptions,
-					} ) }
-				>
+				<div className={ classnames( 'help-center-contact-page__boxes' ) }>
 					<Link to="/contact-form?mode=FORUM">
 						<div
 							className={ classnames( 'help-center-contact-page__box', 'forum' ) }
@@ -216,12 +211,6 @@ export const HelpCenterContactPage: FC = () => {
 						</Link>
 					) }
 				</div>
-				<button
-					className="help-center-contact-page__more-options"
-					onClick={ () => setToggleMoreOptions( ! toggleMoreOptions ) }
-				>
-					{ toggleMoreOptions ? 'Less' : 'More' } support options
-				</button>
 			</div>
 			<SibylArticles articleCanNavigateBack />
 		</div>
