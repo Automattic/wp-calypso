@@ -1,7 +1,6 @@
 import { CompactCard, Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
-import * as React from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -280,19 +279,23 @@ function useRecordVatEvents( {
 	isUpdateSuccessful?: boolean;
 } ) {
 	const reduxDispatch = useDispatch();
+	const lastFetchError = useRef< FetchError >();
+	const lastUpdateError = useRef< UpdateError >();
 
 	useEffect( () => {
-		if ( fetchError ) {
+		if ( fetchError && lastFetchError.current !== fetchError ) {
 			reduxDispatch(
 				recordTracksEvent( 'calypso_vat_details_fetch_failure', { error: fetchError.error } )
 			);
+			lastFetchError.current = fetchError;
 			return;
 		}
 
-		if ( updateError ) {
+		if ( updateError && lastUpdateError.current !== updateError ) {
 			reduxDispatch(
 				recordTracksEvent( 'calypso_vat_details_validation_failure', { error: updateError.error } )
 			);
+			lastUpdateError.current = updateError;
 			return;
 		}
 
