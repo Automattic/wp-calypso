@@ -15,7 +15,7 @@ import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
 import useVatDetails from './use-vat-details';
-import type { UpdateError } from './use-vat-details';
+import type { UpdateError, FetchError } from './use-vat-details';
 import type { VatDetails } from '@automattic/wpcom-checkout';
 
 import './style.scss';
@@ -23,6 +23,8 @@ import './style.scss';
 export default function VatInfoPage() {
 	const translate = useTranslate();
 	const { isLoading, fetchError } = useVatDetails();
+
+	useRecordVatEvents( { fetchError } );
 
 	if ( fetchError ) {
 		return (
@@ -69,7 +71,7 @@ function VatForm() {
 	};
 
 	useDisplayVatNotices( { error: updateError, success: isUpdateSuccessful } );
-	useRecordVatEvents( { error: updateError, success: isUpdateSuccessful } );
+	useRecordVatEvents( { updateError, isUpdateSuccessful } );
 
 	const clickSupport = () => {
 		reduxDispatch( recordTracksEvent( 'calypso_vat_details_support_click' ) );
@@ -268,22 +270,37 @@ function useDisplayVatNotices( {
 	}, [ error, success, reduxDispatch, translate ] );
 }
 
-function useRecordVatEvents( { error, success }: { error: UpdateError | null; success: boolean } ) {
+function useRecordVatEvents( {
+	updateError,
+	fetchError,
+	isUpdateSuccessful,
+}: {
+	updateError?: UpdateError | null;
+	fetchError?: FetchError | null;
+	isUpdateSuccessful?: boolean;
+} ) {
 	const reduxDispatch = useDispatch();
 
 	useEffect( () => {
-		if ( error ) {
+		if ( fetchError ) {
 			reduxDispatch(
-				recordTracksEvent( 'calypso_vat_details_validation_failure', { error: error.error } )
+				recordTracksEvent( 'calypso_vat_details_fetch_failure', { error: fetchError.error } )
 			);
 			return;
 		}
 
-		if ( success ) {
+		if ( updateError ) {
+			reduxDispatch(
+				recordTracksEvent( 'calypso_vat_details_validation_failure', { error: updateError.error } )
+			);
+			return;
+		}
+
+		if ( isUpdateSuccessful ) {
 			reduxDispatch( recordTracksEvent( 'calypso_vat_details_validation_success' ) );
 			return;
 		}
-	}, [ error, success, reduxDispatch ] );
+	}, [ fetchError, updateError, isUpdateSuccessful, reduxDispatch ] );
 }
 
 function LoadingPlaceholder() {
