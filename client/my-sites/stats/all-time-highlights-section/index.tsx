@@ -163,6 +163,7 @@ export default function AllTimeHighlightsSection( {
 	}, [ isStatsLoading, translate, views, viewsBestDay, viewsBestDayTotal ] );
 
 	const isLatestPostReplaced = config.isEnabled( 'stats/latest-post-stats' );
+	const isMostPopularPostShow = config.isEnabled( 'stats/most-popular-post' );
 
 	return (
 		<div className="stats__all-time-highlights-section">
@@ -281,7 +282,9 @@ export default function AllTimeHighlightsSection( {
 				{ isLatestPostReplaced && (
 					<div className="highlight-cards-list">
 						<LatestPostCard siteId={ siteId } siteSlug={ siteSlug } />
-						<MostPopularPostCard siteId={ siteId } siteSlug={ siteSlug } />
+						{ isMostPopularPostShow && (
+							<MostPopularPostCard siteId={ siteId } siteSlug={ siteSlug } />
+						) }
 					</div>
 				) }
 			</div>
