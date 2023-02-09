@@ -52,6 +52,7 @@ interface ExternalProps {
 	currentContext?: string;
 	isMarketplace?: boolean;
 	showDataCenterPicker?: boolean;
+	isContinueButtonDisabled?: boolean;
 }
 
 type Props = ExternalProps & ReturnType< typeof mergeProps > & LocalizeProps;
@@ -79,6 +80,7 @@ export const EligibilityWarnings = ( {
 	launchSite: launch,
 	makeSitePublic,
 	translate,
+	isContinueButtonDisabled,
 }: Props ) => {
 	const warnings = eligibilityData.eligibilityWarnings || [];
 	const listHolds = eligibilityData.eligibilityHolds || [];
@@ -239,7 +241,8 @@ export const EligibilityWarnings = ( {
 						disabled={
 							isProceedButtonDisabled( isEligible, listHolds ) ||
 							siteIsSavingSettings ||
-							siteIsLaunching
+							siteIsLaunching ||
+							isContinueButtonDisabled
 						}
 						busy={ siteIsLaunching || siteIsSavingSettings }
 						onClick={ logEventAndProceed }

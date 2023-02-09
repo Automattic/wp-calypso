@@ -3,12 +3,15 @@ import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { activateTheme } from 'calypso/state/themes/actions/activate-theme';
 import { installAndActivateTheme } from 'calypso/state/themes/actions/install-and-activate-theme';
+import { showAtomicTransferDialog } from 'calypso/state/themes/actions/show-atomic-transfer-dialog';
 import { showAutoLoadingHomepageWarning } from 'calypso/state/themes/actions/show-auto-loading-homepage-warning';
 import { suffixThemeIdForInstall } from 'calypso/state/themes/actions/suffix-theme-id-for-install';
 import {
 	getTheme,
 	hasAutoLoadingHomepageModalAccepted,
 	themeHasAutoLoadingHomepage,
+	hasAtomicTransferDialogAccepted,
+	doesThemeRequireAtomicSite,
 } from 'calypso/state/themes/selectors';
 
 import 'calypso/state/themes/init';
@@ -41,6 +44,19 @@ export function activate(
 		} else {
 			// Keep default behaviour on Atomic. See https://github.com/Automattic/wp-calypso/pull/65846#issuecomment-1192650587
 			keepCurrentHomepage = isSiteAtomic( getState(), siteId ) ? true : keepCurrentHomepage;
+		}
+
+		/**
+		 * Make sure to show the Atomic transfer dialog if the theme requires
+		 * an Atomic site. If the dialog has been accepted, we can continue.
+		 */
+		if (
+			doesThemeRequireAtomicSite( getState(), themeId ) &&
+			! isJetpackSite( getState(), siteId ) &&
+			! isSiteAtomic( getState(), siteId ) &&
+			! hasAtomicTransferDialogAccepted( getState(), themeId )
+		) {
+			return dispatch( showAtomicTransferDialog( themeId ) );
 		}
 
 		/**
