@@ -14,5 +14,5 @@ export default function hasFeedbackNewStatsNotice( state, siteId ) {
 	}
 	const site = getRawSite( state, siteId );
 
-	return site?.stats_notices?.feedback_new_stats;
+	return site?.stats_notices?.new_stats_feedback;
 }

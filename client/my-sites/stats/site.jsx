@@ -37,7 +37,7 @@ import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-ro
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import hasFeedbackNewStatsNotice from 'calypso/state/sites/selectors/has-feedback-new-stats-notice';
+import hasNewStatsFeedbackNotice from 'calypso/state/sites/selectors/has-new-stats-feedback-notice';
 import hasOptOutNewStatsNotice from 'calypso/state/sites/selectors/has-opt-out-new-stats-notice';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HighlightsSection from './highlights-section';
@@ -203,7 +203,7 @@ class StatsSite extends Component {
 
 		const dismissFeedbackNotice = () => {
 			this.setState( { isFeedbackNoticeDismissed: true } );
-			context.store.dispatch( dismissJITMDirect( 'opt-out-feedback', 'opt-out-feedback' ) );
+			context.store.dispatch( dismissJITMDirect( 'new-stats-feedback', 'new-stats-feedback' ) );
 		};
 
 		return (
@@ -263,37 +263,34 @@ class StatsSite extends Component {
 						</NoticeBanner>
 					</div>
 				) }
-				{ showFeedbackNotice &&
-					! this.state.isFeedbackNoticeDismissed && ( //todo add back in isOdysseyStats to this conditional
-						<div className="inner-notice-container has-background-color">
-							<NoticeBanner
-								level="info"
-								title={ translate( "We'd love to hear your thoughts on the new Stats" ) }
-								onClose={ dismissFeedbackNotice }
-							>
-								{ translate(
-									"{{p}}Now that you've gotten familiar with the new Jetpack Stats, we'd love to hear about your experience so we can continue to shape Jetpack to meet your needs.{{/p}}{{p}}{{takeSurveyButton}}Take quick survey{{/takeSurveyButton}} {{remindMeLaterLink}}Remind me later{{/remindMeLaterLink}}{{/p}}",
-									{
-										components: {
-											p: <p />,
-											// todo update link to a Jetpack redirect in the banner with an appropriate slug, like jetpack-stats-2023-usage-survey
-											takeSurveyButton: (
-												<button
-													type="button"
-													className="notice-banner__action-button"
-													onClick={ () => ( window.location.href = 'https://jetpack.com' ) }
-												/>
-											),
-											// todo update link to a Jetpack redirect in the banner with an appropriate slug, like jetpack-stats-2023-usage-survey
-											remindMeLaterLink: (
-												<a className="notice-banner__action-link" href="https://" />
-											),
-										},
-									}
-								) }
-							</NoticeBanner>
-						</div>
-					) }
+				{ isOdysseyStats && showFeedbackNotice && ! this.state.isFeedbackNoticeDismissed && (
+					<div className="inner-notice-container has-background-color">
+						<NoticeBanner
+							level="info"
+							title={ translate( "We'd love to hear your thoughts on the new Stats" ) }
+							onClose={ dismissFeedbackNotice }
+						>
+							{ translate(
+								"{{p}}Now that you've gotten familiar with the new Jetpack Stats, we'd love to hear about your experience so we can continue to shape Jetpack to meet your needs.{{/p}}{{p}}{{takeSurveyButton}}Take quick survey{{/takeSurveyButton}} {{remindMeLaterLink}}Remind me later{{/remindMeLaterLink}}{{/p}}",
+								{
+									components: {
+										p: <p />,
+										// todo update link to a Jetpack redirect in the banner with an appropriate slug, like jetpack-stats-2023-usage-survey
+										takeSurveyButton: (
+											<button
+												type="button"
+												className="notice-banner__action-button"
+												onClick={ () => ( window.location.href = 'https://jetpack.com' ) }
+											/>
+										),
+										// todo update link to a Jetpack redirect in the banner with an appropriate slug, like jetpack-stats-2023-usage-survey
+										remindMeLaterLink: <a className="notice-banner__action-link" href="https://" />,
+									},
+								}
+							) }
+						</NoticeBanner>
+					</div>
+				) }
 
 				<HighlightsSection siteId={ siteId } />
 
@@ -526,7 +523,7 @@ export default connect(
 			path: getCurrentRouteParameterized( state, siteId ),
 			isOdysseyStats,
 			showOptOutNotice: hasOptOutNewStatsNotice( state, siteId ),
-			showFeedbackNotice: hasFeedbackNewStatsNotice( state, siteId ),
+			showFeedbackNotice: hasNewStatsFeedbackNotice( state, siteId ),
 		};
 	},
 	{ recordGoogleEvent, enableJetpackStatsModule, recordTracksEvent }
