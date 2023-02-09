@@ -110,7 +110,7 @@ const PlanRow = styled( Row )`
 		&:last-of-type {
 			display: flex;
 			padding-top: 0;
-			padding-bottom: 24px;
+			padding-bottom: 0;
 		}
 	` ) }
 `;
