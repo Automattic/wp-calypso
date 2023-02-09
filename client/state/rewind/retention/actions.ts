@@ -1,17 +1,12 @@
-import { Action } from 'redux';
 import { JETPACK_BACKUP_RETENTION_UPDATE } from 'calypso/state/action-types';
-import type { RetentionPeriod } from './types';
+import type { UpdateRequestActionType, RetentionPeriod } from './types';
 import 'calypso/state/data-layer/wpcom/sites/rewind/retention';
-
-type RequestActionType = Action< typeof JETPACK_BACKUP_RETENTION_UPDATE > & {
-	siteId: number | null;
-	retentionDays: RetentionPeriod;
-};
+import 'calypso/state/rewind/init';
 
 export const updateBackupRetention = (
-	siteId: number | null,
+	siteId: number,
 	retentionDays: RetentionPeriod
-): RequestActionType => ( {
+): UpdateRequestActionType => ( {
 	type: JETPACK_BACKUP_RETENTION_UPDATE,
 	siteId,
 	retentionDays,

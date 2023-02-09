@@ -1,4 +1,3 @@
-import { Action } from 'redux';
 import {
 	JETPACK_BACKUP_RETENTION_UPDATE,
 	JETPACK_BACKUP_RETENTION_UPDATE_ERROR,
@@ -7,14 +6,9 @@ import {
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { RetentionPeriod } from 'calypso/state/rewind/retention/types';
+import type { UpdateRequestActionType } from 'calypso/state/rewind/retention/types';
 
-type RequestActionType = Action< typeof JETPACK_BACKUP_RETENTION_UPDATE > & {
-	siteId: number | null;
-	retentionDays: RetentionPeriod;
-};
-
-export const updateRetention = ( action: RequestActionType ) =>
+export const updateRetention = ( action: UpdateRequestActionType ) =>
 	http(
 		{
 			apiNamespace: 'wpcom/v2',
@@ -25,12 +19,12 @@ export const updateRetention = ( action: RequestActionType ) =>
 		action
 	);
 
-const onSuccess = ( { siteId }: RequestActionType ) => ( {
+const onSuccess = ( { siteId }: UpdateRequestActionType ) => ( {
 	type: JETPACK_BACKUP_RETENTION_UPDATE_SUCCESS,
 	siteId,
 } );
 
-const onError = ( { siteId }: RequestActionType, error: string ) => ( {
+const onError = ( { siteId }: UpdateRequestActionType, error: string ) => ( {
 	type: JETPACK_BACKUP_RETENTION_UPDATE_ERROR,
 	siteId,
 	error,

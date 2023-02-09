@@ -1,3 +1,4 @@
+import { BACKUP_RETENTION_UPDATE_REQUEST } from '../retention/constants';
 import {
 	getRewindStorageUsageLevel,
 	getBackupCurrentSiteSize,
@@ -109,36 +110,33 @@ describe( 'getBackupRetentionDays()', () => {
 	);
 } );
 describe( 'getBackupRetentionUpdateRequestStatus()', () => {
-	it.each( [
-		{
-			state: {
-				rewind: {
-					123: {
-						retention: {},
+	const TEST_SITE_ID = 123;
+
+	test( 'should default to UNSUBMITTED when no backup retention update request is being made yet.', () => {
+		const state = {
+			rewind: {
+				[ TEST_SITE_ID ]: {
+					retention: {},
+				},
+			},
+		};
+		expect( getBackupRetentionUpdateRequestStatus( state, TEST_SITE_ID ) ).toEqual(
+			BACKUP_RETENTION_UPDATE_REQUEST.UNSUBMITTED
+		);
+	} );
+
+	test( 'should return PENDING status when the state indicates a backup update request was initiated.', () => {
+		const state = {
+			rewind: {
+				[ TEST_SITE_ID ]: {
+					retention: {
+						updateRequestStatus: BACKUP_RETENTION_UPDATE_REQUEST.PENDING,
 					},
 				},
 			},
-			siteId: 123,
-			expected: 'unsubmitted',
-		},
-		{
-			state: {
-				rewind: {
-					123: {
-						retention: {
-							updateBackupRetentionRequestStatus: 'pending',
-						},
-					},
-				},
-			},
-			siteId: 123,
-			expected: 'pending',
-		},
-	] )(
-		'should return the updateBackupRetentionRequestStatus if passed, unsubmitted otherwise',
-		( { state, siteId, expected } ) => {
-			const output = getBackupRetentionUpdateRequestStatus( state, siteId );
-			expect( output ).toBe( expected );
-		}
-	);
+		};
+		expect( getBackupRetentionUpdateRequestStatus( state, TEST_SITE_ID ) ).toEqual(
+			BACKUP_RETENTION_UPDATE_REQUEST.PENDING
+		);
+	} );
 } );

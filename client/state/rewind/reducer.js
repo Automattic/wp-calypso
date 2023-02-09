@@ -12,10 +12,10 @@ const rewind = combineReducers( {
 	backups,
 	capabilities,
 	policies,
+	retention,
 	size,
 	state,
 	storage,
-	retention,
 } );
 
 const reducer = keyedReducer( 'siteId', rewind );
