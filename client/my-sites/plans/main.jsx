@@ -269,12 +269,12 @@ class Plans extends Component {
 			domainSidebarExperimentUser,
 		} = this.props;
 
-		const currentPlanSlug = selectedSite.plan.product_slug;
-		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
-
 		if ( ! selectedSite || this.isInvalidPlanInterval() || ! currentPlan ) {
 			return this.renderPlaceholder();
 		}
+
+		const currentPlanSlug = selectedSite?.plan?.product_slug;
+		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 
 		const allDomains = domainSidebarExperimentUser ? getDomainRegistrations( this.props.cart ) : [];
 		const yourDomainName = allDomains.length
