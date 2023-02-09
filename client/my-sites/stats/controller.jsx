@@ -142,6 +142,12 @@ function getSiteFilters( siteId ) {
 			id: 'stats-email-clicks-day',
 			period: 'day',
 		},
+		{
+			title: i18n.translate( 'Days' ),
+			path: `/stats/day/emails`,
+			id: 'stats-email-summary',
+			period: 'day',
+		},
 	];
 }
 
@@ -566,7 +572,17 @@ export function emailSummary( context, next ) {
 		return next();
 	}
 
-	context.primary = <StatsEmailSummary />;
+	const filters = getSiteFilters( givenSiteId );
+	const activeFilter = find( filters, ( filter ) => {
+		return (
+			context.path.indexOf( filter.path ) >= 0 ||
+			( filter.altPaths && context.path.indexOf( filter.altPaths ) >= 0 )
+		);
+	} );
+
+	const date = moment().locale( 'en' );
+
+	context.primary = <StatsEmailSummary period={ rangeOfPeriod( activeFilter.period, date ) } />;
 
 	next();
 }

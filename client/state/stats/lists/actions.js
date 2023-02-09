@@ -76,7 +76,7 @@ export function requestSiteStats( siteId, statType, query ) {
 				case 'statsVideo':
 					return query.postId;
 				case 'statsEmailsSummary':
-					return { period: PERIOD_ALL_TIME, quantity: 10 };
+					return { period: PERIOD_ALL_TIME, quantity: query.quantity ?? 10 };
 				default:
 					return query;
 			}

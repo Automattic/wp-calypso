@@ -1,1 +1,5 @@
-@import "@wordpress/base-styles/breakpoints";
+.stats-section-title {
+	color: var(--color-neutral-50);
+	font-size: 1.25rem;
+	margin: 1em 0;
+}
