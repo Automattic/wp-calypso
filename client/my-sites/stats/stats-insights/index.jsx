@@ -90,7 +90,7 @@ const StatsInsights = ( props ) => {
 						/>
 
 						{ /* Replaced by new modules on top of the page */ }
-						{ /* { ! isLatestPostReplaced && <LatestPostSummary /> } */ }
+						{ ! isLatestPostReplaced && <LatestPostSummary /> }
 						{ /* <Reach /> */ }
 					</div>
 				) : (
