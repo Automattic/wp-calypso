@@ -106,8 +106,13 @@
 			color: #000;
 		}
 
-		.intro__button-more:hover {
-			color: var(--color-surface) !important;
+		.intro__button-more {
+			border-color: transparent;
+
+			&:hover {
+				color: #fff !important;
+				border-color: #fff !important;
+			}
 		}
 	}
 
@@ -233,7 +238,7 @@
 		justify-content: center;
 
 		.intro__button,
-		.intro_button-more {
+		.intro__button-more {
 			font-family: "SF Pro Text", $sans;
 			color: var(--color-surface);
 			font-weight: 500;
