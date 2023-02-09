@@ -43,6 +43,7 @@ import withCartKey from '../checkout/with-cart-key';
 import DomainAndPlanPackageNavigation from '../domains/components/domain-and-plan-package/navigation';
 import ECommerceTrialPlansPage from './ecommerce-trial';
 import PlansHeader from './header';
+import './style.scss';
 
 function DomainAndPlanUpsellNotice() {
 	const translate = useTranslate();

@@ -12,6 +12,12 @@ body.is-section-plans.is-domain-sidebar-experiment-user {
 		padding-left: 0 !important;
 	}
 
+	.plans__has-sidebar {
+		.section-nav {
+			display: none;
+		}
+	}
+
 	.plans__header {
 		display: block;
 
