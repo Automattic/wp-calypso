@@ -68,24 +68,13 @@ const StatShares = ( { siteId } ) => {
 					useShortNumber
 					// Shares don't have a summary page yet.
 					// TODO: limit to 5 items after summary page is added.
-					// showMore={ {
-					// 	url: this.getHref(),
-					// 	label:
-					// 		data.length >= 10
-					// 			? translate( 'View all', {
-					// 					context: 'Stats: Button link to show more detailed stats information',
-					// 			  } )
-					// 			: translate( 'View details', {
-					// 					context: 'Stats: Button label to see the detailed content of a panel',
-					// 			  } ),
-					// } }
+					// showMore={ ... }
 					error={
 						( hasError || ( ! isLoading && ! siteStats?.stats?.shares ) ) && (
 							<ErrorPanel message={ translate( 'No shares recorded' ) } />
 						)
 					}
 					loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
-					// heroElement={ path === 'countryviews' && <Geochart query={ query } /> }
 				/>
 			) }
 			{ ( false || ! isInsightsPageGridEnabled ) && (
