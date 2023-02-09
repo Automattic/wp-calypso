@@ -1,10 +1,6 @@
 import moment from 'moment/moment';
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
-import {
-	JITM_DISMISS,
-	JITM_FETCH,
-	UPDATE_STATS_NOTICE_STATUS_DIRECT,
-} from 'calypso/state/action-types';
+import { JITM_DISMISS, JITM_FETCH } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
@@ -102,28 +98,6 @@ export const doDismissJITM = ( action ) =>
 	);
 
 /**
- * Dismisses a jitm on the jetpack site.
- * The difference between this and doDismissJITM is that this action sends requests directly to the Jetpack site,
- * instead of going through the WordPress.com rest-api endpoint.
- *
- * @param {Object} action The dismissal action
- * @returns {Object} The HTTP fetch action
- */
-export const doDismissJITMDirect = ( action ) =>
-	http(
-		{
-			method: 'POST',
-			path: '/stats/notices',
-			body: {
-				feature_class: action.featureClass,
-				id: action.id,
-				status: action.status,
-			},
-		},
-		action
-	);
-
-/**
  * Called when the http layer receives a valid jitm
  *
  * @param {Object} action action object
@@ -163,13 +137,6 @@ registerHandlers( 'state/data-layer/wpcom/sites/jitm/index.js', {
 	[ JITM_DISMISS ]: [
 		dispatchRequest( {
 			fetch: doDismissJITM,
-			onSuccess: noop,
-			onError: noop,
-		} ),
-	],
-	[ UPDATE_STATS_NOTICE_STATUS_DIRECT ]: [
-		dispatchRequest( {
-			fetch: doDismissJITMDirect,
 			onSuccess: noop,
 			onError: noop,
 		} ),
