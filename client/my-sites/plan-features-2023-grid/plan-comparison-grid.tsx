@@ -99,6 +99,22 @@ const Row = styled.div< { isHiddenInMobile?: boolean } >`
 	` ) }
 `;
 
+const PlanRow = styled( Row )`
+	&:last-of-type {
+		display: none;
+	}
+
+	${ plansBreakSmall( css`
+		border-bottom: none;
+
+		&:last-of-type {
+			display: flex;
+			padding-top: 0;
+			padding-bottom: 24px;
+		}
+	` ) }
+`;
+
 const TitleRow = styled( Row )`
 	cursor: pointer;
 	display: flex;
@@ -286,7 +302,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const allVisible = visiblePlansProperties.length === displayedPlansProperties.length;
 	return (
-		<Row className="plan-comparison-grid__plan-row">
+		<PlanRow>
 			<RowHead
 				key="feature-name"
 				className="plan-comparison-grid__header plan-comparison-grid__interval-toggle"
@@ -390,7 +406,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 					</Cell>
 				);
 			} ) }
-		</Row>
+		</PlanRow>
 	);
 };
 
