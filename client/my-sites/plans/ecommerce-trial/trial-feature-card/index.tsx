@@ -25,33 +25,31 @@ export default function TrialFeatureCard( props: TrialFeatureCardProps ) {
 
 	return (
 		<Card className="trial-feature-card">
-			<img className="trial-feature-card__illustration" alt={ title } src={ illustration } />
-			<div className="trial-feature-card__content">
-				<div className="trial-feature-card__content-title">{ title }</div>
-				<div className="trial-feature-card__content-subtitle">{ subtitle }</div>
-				{ expanded && (
-					<div className="trial-feature-card__content-items">
-						{ items.map( ( item ) => (
-							<div key={ item.title } className="trial-feature-card__content-items-item">
-								<div className="trial-feature-card__content-items-item-icon">
-									<Gridicon icon="checkmark" size={ 18 } />
-								</div>
-								<div className="trial-feature-card__content-items-item-content">
-									<div className="trial-feature-card__content-items-item-content-title">
-										{ item.title }
-									</div>
-									<div className="trial-feature-card__content-items-item-content-subtitle">
-										{ item.subtitle }
-									</div>
-								</div>
-							</div>
-						) ) }
-					</div>
-				) }
-			</div>
-			<button className="trial-feature-card__accordion-toggle" onClick={ toggleExpanded }>
-				<Gridicon icon={ expanded ? 'chevron-down' : 'chevron-up' } size={ 16 } />
+			<button className="trial-feature-card__header" onClick={ toggleExpanded }>
+				<img className="trial-feature-card__illustration" alt={ title } src={ illustration } />
+				<div className="trial-feature-card__header-text">
+					<div className="trial-feature-card__title">{ title }</div>
+					<div className="trial-feature-card__subtitle">{ subtitle }</div>
+				</div>
+				<div className="trial-feature-card__accordion-toggle">
+					<Gridicon icon={ expanded ? 'chevron-down' : 'chevron-up' } size={ 16 } />
+				</div>
 			</button>
+			{ expanded && (
+				<div className="trial-feature-card__items">
+					{ items.map( ( item ) => (
+						<div key={ item.title } className="trial-feature-card__item">
+							<div className="trial-feature-card__item-icon">
+								<Gridicon icon="checkmark" size={ 18 } />
+							</div>
+							<div className="trial-feature-card__item-content">
+								<div className="trial-feature-card__item-title">{ item.title }</div>
+								<div className="trial-feature-card__item-subtitle">{ item.subtitle }</div>
+							</div>
+						</div>
+					) ) }
+				</div>
+			) }
 		</Card>
 	);
 }
