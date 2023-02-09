@@ -37,8 +37,6 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import SshKeys from './ssh-keys';
 
-import './style.scss';
-
 const FILEZILLA_URL = 'https://filezilla-project.org/';
 const SFTP_URL = 'sftp.wp.com';
 const SFTP_PORT = 22;
@@ -46,6 +44,24 @@ const SFTP_PORT = 22;
 const SftpClipboardButtonInput = styled( ClipboardButtonInput )( {
 	display: 'block',
 	marginBottom: '16px',
+} );
+
+const SftpQuestionsContainer = styled.div( {
+	marginBottom: '1.5em',
+} );
+
+const SftpPasswordExplainer = styled.p( {
+	marginBottom: '8px',
+} );
+
+const SftpEnableWarning = styled.p( {
+	color: 'var(--color-text-subtle)',
+} );
+
+const SftpSshLabel = styled( FormLabel )( {
+	marginTop: '16px',
+	paddingTop: '16px',
+	borderTop: '1px solid #e0e0e0',
 } );
 
 export const SftpCard = ( {
@@ -141,9 +157,9 @@ export const SftpCard = ( {
 
 		return (
 			<>
-				<p className="sftp-card__password-explainer">
+				<SftpPasswordExplainer>
 					{ translate( 'For security reasons, you must reset your password to view it.' ) }
-				</p>
+				</SftpPasswordExplainer>
 				<Button
 					onClick={ resetPassword }
 					disabled={ isPasswordLoading }
@@ -225,7 +241,7 @@ export const SftpCard = ( {
 				</p>
 			</div>
 			{ displayQuestionsAndButton && (
-				<div className="sftp-card__questions">
+				<SftpQuestionsContainer>
 					<PanelBody title={ translate( 'What is SFTP?' ) } initialOpen={ false }>
 						{ translate(
 							'SFTP stands for Secure File Transfer Protocol (or SSH File Transfer Protocol). It’s a secure way for you to access your website files on your local computer via a client program such as {{a}}Filezilla{{/a}}. ' +
@@ -265,11 +281,11 @@ export const SftpCard = ( {
 							) }
 						</PanelBody>
 					) }
-				</div>
+				</SftpQuestionsContainer>
 			) }
 			{ displayQuestionsAndButton && (
 				<>
-					<p className="sftp-card__enable-warning">
+					<SftpEnableWarning>
 						{ translate(
 							'{{strong}}Ready to access your website files?{{/strong}} Keep in mind, if mistakes happen you can restore your last backup, but will lose changes made after the backup date.',
 							{
@@ -278,7 +294,7 @@ export const SftpCard = ( {
 								},
 							}
 						) }
-					</p>
+					</SftpEnableWarning>
 					<Button onClick={ createUser } primary className="sftp-card__create-credentials-button">
 						{ translate( 'Create credentials' ) }
 					</Button>
@@ -294,9 +310,7 @@ export const SftpCard = ( {
 					<SftpClipboardButtonInput value={ username } />
 					<FormLabel htmlFor="password">{ translate( 'Password' ) }</FormLabel>
 					{ renderPasswordField() }
-					{ siteHasSshFeature && (
-						<FormLabel className="sftp-card__ssh-label">{ translate( 'SSH Access' ) }</FormLabel>
-					) }
+					{ siteHasSshFeature && <SftpSshLabel>{ translate( 'SSH Access' ) }</SftpSshLabel> }
 					{ siteHasSshFeature && renderSshField() }
 					<ReauthRequired twoStepAuthorization={ twoStepAuthorization }>
 						{ () => (
