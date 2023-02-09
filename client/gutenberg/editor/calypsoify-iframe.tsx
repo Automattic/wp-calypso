@@ -713,7 +713,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<div className="main main-column calypsoify is-iframe" role="main">
 					{ ! isIframeLoaded && <Placeholder /> }
-					{ isIframeLoaded && (
+					{ isIframeLoaded && this.props.editorType !== 'site' && (
 						<DomainUpsellCallout trackEvent="site_editor_domain_upsell_callout" />
 					) }
 					{ ( shouldLoadIframe || isIframeLoaded ) && (
