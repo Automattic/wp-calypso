@@ -10,6 +10,7 @@ import {
 	PLAN_ENTERPRISE_GRID_WPCOM,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -25,16 +26,10 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import PlanFeatures2023GridActions from './actions';
 import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
 import PlanFeatures2023GridHeaderPrice from './header-price';
+import { plansBreakSmall, plansBreakLarge } from './media-queries';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
-import { PlanProperties } from './types';
 import { usePricingBreakpoint } from './util';
-
-function getMobileBreakpoint( { isInSignup }: { isInSignup: boolean } ) {
-	if ( isInSignup ) {
-		return '880px';
-	}
-	return '1152px'; // 880px + 272px (sidebar)
-}
+import type { PlanProperties } from './types';
 
 const JetpackIconContainer = styled.div`
 	padding-left: 6px;
@@ -52,7 +47,7 @@ const PlanComparisonHeader = styled.h1`
 	}
 `;
 
-const Title = styled.div< { isHiddenInMobile?: boolean; isInSignup: boolean } >`
+const Title = styled.div< { isHiddenInMobile?: boolean } >`
 	font-weight: 500;
 	font-size: 20px;
 	padding: 14px;
@@ -69,7 +64,7 @@ const Title = styled.div< { isHiddenInMobile?: boolean; isInSignup: boolean } >`
 			props.isHiddenInMobile ? 'rotateZ( 180deg )' : 'rotateZ( 0deg )' };
 	}
 
-	@media ( min-width: ${ getMobileBreakpoint } ) {
+	${ plansBreakSmall( css`
 		padding-left: 0;
 		border: none;
 		padding: 0;
@@ -77,7 +72,7 @@ const Title = styled.div< { isHiddenInMobile?: boolean; isInSignup: boolean } >`
 		.gridicon {
 			display: none;
 		}
-	}
+	` ) }
 `;
 
 const Grid = styled.div< { isInSignup: boolean } >`
@@ -90,30 +85,46 @@ const Grid = styled.div< { isInSignup: boolean } >`
 		border-radius: 5px;
 	}
 `;
-const Row = styled.div< { isHiddenInMobile?: boolean; isInSignup: boolean } >`
+const Row = styled.div< { isHiddenInMobile?: boolean } >`
 	justify-content: space-between;
 	margin-bottom: -1px;
 	align-items: stretch;
 	display: ${ ( props ) => ( props.isHiddenInMobile ? 'none' : 'flex' ) };
 
-	@media ( min-width: ${ getMobileBreakpoint } ) {
+	${ plansBreakSmall( css`
 		display: flex;
 		margin: 0 20px;
 		padding: 12px 0;
 		border-bottom: 1px solid #eee;
-	}
+	` ) }
 `;
 
-const TitleRow = styled( Row )< { isInSignup: boolean } >`
+const PlanRow = styled( Row )`
+	&:last-of-type {
+		display: none;
+	}
+
+	${ plansBreakSmall( css`
+		border-bottom: none;
+
+		&:last-of-type {
+			display: flex;
+			padding-top: 0;
+			padding-bottom: 0;
+		}
+	` ) }
+`;
+
+const TitleRow = styled( Row )`
 	cursor: pointer;
 	display: flex;
 
-	@media ( min-width: ${ getMobileBreakpoint } ) {
+	${ plansBreakSmall( css`
 		cursor: default;
 		border-bottom: none;
 		padding: 20px 0 10px;
 		pointer-events: none;
-	}
+	` ) }
 `;
 
 const Cell = styled.div< { textAlign?: string; isInSignup: boolean } >`
@@ -124,6 +135,7 @@ const Cell = styled.div< { textAlign?: string; isInSignup: boolean } >`
 	flex-direction: column;
 	align-items: center;
 	padding: 33px 20px 0;
+	border-right: solid 1px #e0e0e0;
 
 	.gridicon {
 		fill: currentColor;
@@ -133,49 +145,65 @@ const Cell = styled.div< { textAlign?: string; isInSignup: boolean } >`
 		max-width: 100%;
 	}
 
-	@media ( max-width: ${ getMobileBreakpoint } ) {
-		&.title-is-subtitle {
-			padding-top: 0;
-		}
-
-		border-right: solid 1px #e0e0e0;
-
-		&:last-of-type {
-			border-right: none;
-		}
-
-		${ Row }:last-of-type & {
-			padding-bottom: 24px;
-		}
+	&.title-is-subtitle {
+		padding-top: 0;
 	}
 
-	@media ( min-width: ${ getMobileBreakpoint } ) {
+	&:last-of-type {
+		border-right: none;
+	}
+
+	${ Row }:last-of-type & {
+		padding-bottom: 24px;
+	}
+
+	${ plansBreakSmall( css`
 		padding: 0 14px;
-		max-width: ${ ( { isInSignup } ) => ( isInSignup ? '180px' : '160px' ) };
+		min-width: 180px;
+		border-right: none;
 
 		&:first-of-type {
 			padding-left: 0;
 		}
 		&:last-of-type {
 			padding-right: 0;
+			border-right: none;
 		}
-	}
-	@media ( min-width: ${ getMobileBreakpoint } ) {
-		min-width: 180px;
-	}
 
-	@media ( min-width: 1500px ) {
+		&.title-is-subtitle {
+			padding-top: 33px;
+		}
+
+		${ Row }:last-of-type & {
+			padding-bottom: 0px;
+		}
+	` ) }
+
+	${ ( props ) =>
+		props.isInSignup
+			? plansBreakSmall(
+					css`
+						max-width: 180px;
+					`
+			  )
+			: plansBreakSmall(
+					css`
+						max-width: 160px;
+					`
+			  ) }
+
+	${ plansBreakLarge( css`
 		max-width: 200px;
-	}
+	` ) }
 `;
 
-const RowHead = styled.div< { isInSignup: boolean } >`
+const RowHead = styled.div`
 	display: none;
 	font-size: 14px;
-	@media ( min-width: ${ getMobileBreakpoint } ) {
+	${ plansBreakSmall( css`
 		display: block;
 		flex: 1;
-	}
+	` ) }
 `;
 
 const PlanSelector = styled.header`
@@ -210,7 +238,7 @@ const PlanSelector = styled.header`
 	}
 `;
 
-const StorageButton = styled.div< { isInSignup: boolean } >`
+const StorageButton = styled.div`
 	background: #f2f2f2;
 	border-radius: 5px;
 	padding: 4px 0;
@@ -224,9 +252,9 @@ const StorageButton = styled.div< { isInSignup: boolean } >`
 	min-width: 64px;
 	margin-top: 10px;
 
-	@media ( min-width: ${ getMobileBreakpoint } ) {
+	${ plansBreakSmall( css`
 		margin-top: 0;
-	}
+	` ) }
 `;
 type PlanComparisonGridProps = {
 	planProperties?: Array< PlanProperties >;
@@ -274,11 +302,10 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const allVisible = visiblePlansProperties.length === displayedPlansProperties.length;
 	return (
-		<Row className="plan-comparison-grid__plan-row" isInSignup={ isInSignup }>
+		<PlanRow>
 			<RowHead
 				key="feature-name"
 				className="plan-comparison-grid__header plan-comparison-grid__interval-toggle"
-				isInSignup={ isInSignup }
 			/>
 			{ visiblePlansProperties.map( ( planProperties ) => {
 				const { planName, planConstantObj, availableForPurchase, current, ...planPropertiesObj } =
@@ -379,7 +406,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 					</Cell>
 				);
 			} ) }
-		</Row>
+		</PlanRow>
 	);
 };
 
@@ -567,12 +594,10 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 						<div key={ featureGroupClass } className={ featureGroup.slug }>
 							<TitleRow
 								className="plan-comparison-grid__group-title-row"
-								isInSignup={ isInSignup }
 								onClick={ () => toggleFeatureGroup( featureGroup.slug ) }
 							>
 								<Title
 									isHiddenInMobile={ isHiddenInMobile }
-									isInSignup={ isInSignup }
 									className={ `plan-comparison-grid__group-${ featureGroup.slug }` }
 								>
 									<Gridicon icon="chevron-up" size={ 12 } color="#1E1E1E" />
@@ -585,13 +610,11 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 									<Row
 										key={ featureSlug }
 										isHiddenInMobile={ isHiddenInMobile }
-										isInSignup={ isInSignup }
 										className="plan-comparison-grid__feature-row"
 									>
 										<RowHead
 											key="feature-name"
 											className="plan-comparison-grid__feature-feature-name"
-											isInSignup={ isInSignup }
 										>
 											<Plans2023Tooltip text={ feature.getDescription?.() }>
 												{ feature.getTitle() }
@@ -650,13 +673,11 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 								<Row
 									key="feature-storage"
 									isHiddenInMobile={ isHiddenInMobile }
-									isInSignup={ isInSignup }
 									className="plan-comparison-grid__feature-storage"
 								>
 									<RowHead
 										key="feature-name"
 										className="plan-comparison-grid__feature-feature-name storage"
-										isInSignup={ isInSignup }
 									>
 										<Plans2023Tooltip
 											text={ translate( 'Space to store your photos, media, and more.' ) }
@@ -688,7 +709,6 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 												</span>
 												<StorageButton
 													className="plan-features-2023-grid__storage-button"
-													isInSignup={ isInSignup }
 													key={ planName }
 												>
 													{ featureObject.getCompareTitle?.() }

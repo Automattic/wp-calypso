@@ -2,12 +2,15 @@
 
 .is-section-stepper .plans-features-main__group.is-2023-pricing-grid,
 .is-section-signup .plans-features-main__group.is-2023-pricing-grid {
-	@include onboarding-2023-pricing-grid-plans-breakpoints;
+	@include pricing-grid-breakpoints;
 }
 
-.is-section-plans .plans-features-main__group.is-2023-pricing-grid {
-	@include pricing-grid-2023-plans-section-breakpoints;
+.is-section-plans:not(.is-sidebar-collapsed) .plans-features-main__group.is-2023-pricing-grid {
+	@include pricing-grid-breakpoints-with-sidebar;
+}
 
+.is-section-plans.is-sidebar-collapsed .plans-features-main__group.is-2023-pricing-grid {
+	@include pricing-grid-breakpoints;
 }
 
 .plans-step {
@@ -29,7 +32,7 @@
 	}
 
 	.is-onboarding-2023-pricing-grid &.is-wide-layout {
-		@include onboarding-2023-pricing-grid-plans-breakpoints;
+		@include pricing-grid-breakpoints;
 	}
 
 	.formatted-header.is-without-subhead {
@@ -42,7 +45,7 @@
 		}
 
 		.is-onboarding-2023-pricing-grid .signup__step &.is-wide-layout {
-			@include onboarding-2023-pricing-grid-plans-breakpoints;
+			@include pricing-grid-breakpoints;
 		}
 	}
 }
