@@ -89,8 +89,9 @@ const StatsInsights = ( props ) => {
 							hideNewModule // remove when cleaning 'stats/horizontal-bars-everywhere' FF
 						/>
 
+						{ /* Replaced by new modules on top of the page */ }
 						{ ! isLatestPostReplaced && <LatestPostSummary /> }
-						<Reach />
+						{ /* <Reach /> */ }
 					</div>
 				) : (
 					// remove all this section when cleaning 'stats/insights-page-grid'
