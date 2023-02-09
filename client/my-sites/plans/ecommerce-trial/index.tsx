@@ -235,7 +235,7 @@ const ECommerceTrialPlansPage = () => {
 
 	const monthlyPriceWrapper = <span className="e-commerce-trial-plans__price-card-value" />;
 	const priceDescription = <span className="e-commerce-trial-plans__price-card-interval" />;
-	const currencyWrapper = <sup className="e-commerce-trial-plans__price-card-value-symbol" />;
+	const currencyWrapper = <span className="e-commerce-trial-plans__price-card-value-symbol" />;
 
 	const priceContent = isAnnualSubscription
 		? translate(

@@ -75,14 +75,6 @@ body.is-section-plans.is-ecommerce-trial-plan {
 					margin-top: 30px;
 					font-weight: 400;
 				}
-
-				.e-commerce-trial-plans__price-card-value-symbol {
-					@media (max-width: $break-mobile) {
-						// Setting the default 'user agent' style to the sup element, since it's overwritten globally
-						vertical-align: super;
-						font-size: smaller;
-					}
-				}
 			}
 
 			.e-commerce-trial-plans__price-card-interval {
