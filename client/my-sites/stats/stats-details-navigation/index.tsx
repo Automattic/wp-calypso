@@ -7,7 +7,7 @@ interface propTypes {
 	postId: number;
 	period?: string;
 	statType?: string;
-	givenSiteId: string;
+	givenSiteId: string | number;
 }
 
 const tabs = { highlights: 'Highlights', opens: 'Email opens', clicks: 'Email clicks' };
@@ -16,7 +16,7 @@ const navItems = (
 	postId: number,
 	period: string | undefined = 'day',
 	statType: string | undefined,
-	givenSiteId: string
+	givenSiteId: string | number
 ) => {
 	return Object.keys( tabs ).map( ( item ) => {
 		const selected = statType ? statType === item : 'highlights' === item;
@@ -47,7 +47,7 @@ StatsDetailsNavigation.propTypes = {
 	postId: PropTypes.number.isRequired,
 	period: PropTypes.string,
 	statType: PropTypes.string,
-	givenSiteId: PropTypes.string.isRequired,
+	givenSiteId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
 };
 
 export default StatsDetailsNavigation;
