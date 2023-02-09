@@ -1,6 +1,6 @@
 import type { CountryListItem } from './types';
 
-export interface CountryVatRequirements {
+export interface CountryTaxRequirements {
 	city?: true;
 	state?: true;
 	organization?: true;
@@ -16,7 +16,7 @@ export interface CountryVatRequirements {
 export function getCountryTaxRequirements(
 	countries: CountryListItem[],
 	countryCode: string
-): CountryVatRequirements {
+): CountryTaxRequirements {
 	if ( ! countryCode ) {
 		return {};
 	}
@@ -37,7 +37,7 @@ export function getCountryTaxRequirements(
 		);
 		return {};
 	}
-	const requirements: CountryVatRequirements = {};
+	const requirements: CountryTaxRequirements = {};
 	if ( countryListItem.tax_needs_city ) {
 		requirements.city = true;
 	}
