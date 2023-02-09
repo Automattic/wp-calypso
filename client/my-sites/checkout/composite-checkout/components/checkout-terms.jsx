@@ -7,6 +7,7 @@ import DomainRegistrationAgreement from './domain-registration-agreement';
 import DomainRegistrationHsts from './domain-registration-hsts';
 import { EbanxTermsOfService } from './ebanx-terms-of-service';
 import { InternationalFeeNotice } from './international-fee-notice';
+import JetpackSocialAdvancedPricingDisclaimer from './jetpack-social-advanced-pricing-disclaimer';
 import RefundPolicies from './refund-policies';
 import { TermsOfService } from './terms-of-service';
 import ThirdPartyPluginsTermsOfService from './third-party-plugins-terms-of-service';
@@ -29,6 +30,7 @@ class CheckoutTerms extends Component {
 						} ) }
 					</strong>
 				</div>
+
 				<TermsOfService
 					hasRenewableSubscription={ hasRenewableSubscription( cart ) }
 					isGiftPurchase={ isGiftPurchase }
@@ -42,6 +44,7 @@ class CheckoutTerms extends Component {
 				<EbanxTermsOfService />
 				<InternationalFeeNotice />
 				{ ! isGiftPurchase && <AdditionalTermsOfServiceInCart /> }
+				<JetpackSocialAdvancedPricingDisclaimer />
 			</Fragment>
 		);
 	}

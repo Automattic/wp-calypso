@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	Card,
 	PercentCalculator as percentCalculator,
@@ -8,12 +9,15 @@ import { Icon, people, postContent, starEmpty, commentContent } from '@wordpress
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import QueryPosts from 'calypso/components/data/query-posts';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import DotPager from 'calypso/components/dot-pager';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 } from 'calypso/state/stats/lists/selectors';
+import LatestPostCard from './latest-post-card';
+import MostPopularPostCard from './most-popular-card';
 
 import './style.scss';
 
@@ -33,15 +37,23 @@ type MostPopularData = {
 	hourPercent: number;
 };
 
-export default function AllTimeHighlightsSection( { siteId }: { siteId: number } ) {
+export default function AllTimeHighlightsSection( {
+	siteId,
+	siteSlug,
+}: {
+	siteId: number;
+	siteSlug: string;
+} ) {
 	const translate = useTranslate();
+
+	const insightsQuery = {};
 
 	const isStatsRequesting = useSelector( ( state ) =>
 		isRequestingSiteStatsForQuery( state, siteId, 'stats', {} )
 	);
 
 	const isInsightsRequesting = useSelector( ( state ) =>
-		isRequestingSiteStatsForQuery( state, siteId, 'statsInsights', {} )
+		isRequestingSiteStatsForQuery( state, siteId, 'statsInsights', insightsQuery )
 	);
 
 	const { comments, posts, views, visitors, viewsBestDay, viewsBestDayTotal } = useSelector(
@@ -49,7 +61,7 @@ export default function AllTimeHighlightsSection( { siteId }: { siteId: number }
 	) as AllTimeData;
 
 	const { day, percent, hour, hourPercent } = useSelector(
-		( state ) => getSiteStatsNormalizedData( state, siteId, 'statsInsights', {} ) || {}
+		( state ) => getSiteStatsNormalizedData( state, siteId, 'statsInsights', insightsQuery ) || {}
 	) as MostPopularData;
 
 	const isStatsLoading = isStatsRequesting && ! views;
@@ -150,12 +162,19 @@ export default function AllTimeHighlightsSection( { siteId }: { siteId: number }
 		};
 	}, [ isStatsLoading, translate, views, viewsBestDay, viewsBestDayTotal ] );
 
+	const isLatestPostReplaced = config.isEnabled( 'stats/latest-post-stats' );
+
 	return (
 		<div className="stats__all-time-highlights-section">
 			{ siteId && (
 				<>
+					<QueryPosts
+						siteId={ siteId }
+						postId={ null }
+						query={ { status: 'publish', number: 1 } }
+					/>
 					<QuerySiteStats siteId={ siteId } statType="stats" query={ {} } />
-					<QuerySiteStats siteId={ siteId } statType="statsInsights" />
+					<QuerySiteStats siteId={ siteId } statType="statsInsights" query={ insightsQuery } />
 				</>
 			) }
 
@@ -258,6 +277,13 @@ export default function AllTimeHighlightsSection( { siteId }: { siteId: number }
 						);
 					} ) }
 				</div>
+
+				{ isLatestPostReplaced && (
+					<div className="highlight-cards-list">
+						<LatestPostCard siteId={ siteId } siteSlug={ siteSlug } />
+						<MostPopularPostCard siteId={ siteId } siteSlug={ siteSlug } />
+					</div>
+				) }
 			</div>
 		</div>
 	);

@@ -37,7 +37,7 @@ const DEFAULT_LINK_IN_BIO_THEME = 'pub/lynx';
 const DEFAULT_WOOEXPRESS_FLOW = 'pub/twentytwentytwo';
 const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
 
-const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } ) {
+const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, data } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
 	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
@@ -70,21 +70,17 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 
 	// Default visibility is public
 	let siteVisibility = Site.Visibility.PublicIndexed;
+	const wooFlows = [ ECOMMERCE_FLOW, WOOEXPRESS_FLOW ];
 
-	// Link-in-bio flow defaults to "Coming Soon"
+	// These flows default to "Coming Soon"
 	if (
 		isLinkInBioFlow( flow ) ||
 		isFreeFlow( flow ) ||
 		isMigrationFlow( flow ) ||
-		isCopySiteFlow( flow )
+		isCopySiteFlow( flow ) ||
+		wooFlows.includes( flow || '' )
 	) {
 		siteVisibility = Site.Visibility.PublicNotIndexed;
-	}
-
-	// Certain flows should default to private.
-	const privateFlows = [ ECOMMERCE_FLOW, WOOEXPRESS_FLOW ];
-	if ( privateFlows.includes( flow || '' ) ) {
-		siteVisibility = Site.Visibility.Private;
 	}
 
 	const signupDestinationCookieExists = retrieveSignupDestination();
@@ -114,7 +110,8 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 			siteAccentColor,
 			true,
 			username,
-			domainCartItem
+			domainCartItem,
+			data?.sourceSlug as string
 		);
 
 		if ( planCartItem ) {
