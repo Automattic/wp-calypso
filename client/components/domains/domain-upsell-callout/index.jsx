@@ -21,16 +21,16 @@ const DomainUpsellCallout = ( { trackEvent } ) => {
 	const trackEventView = `calypso_${ trackEvent }_view`;
 	const trackEventClick = `calypso_${ trackEvent }_click`;
 	const trackEventDismiss = `calypso_${ trackEvent }_dismiss`;
-	const dismissPreference = `${ trackEvent }-${ site.ID }`;
+	const dismissPreference = `${ trackEvent }-${ site?.ID }`;
 	const isEmailVerified = useSelector( ( state ) => isCurrentUserEmailVerified( state ) );
-	const siteDomains = useSelector( ( state ) => getDomainsBySiteId( state, site.ID ) );
+	const siteDomains = useSelector( ( state ) => getDomainsBySiteId( state, site?.ID ) );
 	const hasPreferences = useSelector( hasReceivedRemotePreferences );
 	const isDismissed = useSelector( ( state ) => getPreference( state, dismissPreference ) );
 
 	const getCtaClickHandler = useCallback( () => {
 		recordTracksEvent( trackEventClick );
-		page( `/domains/add/${ site.domain }?domainAndPlanPackage=true` );
-	}, [ trackEventClick, site.domain ] );
+		page( `/domains/add/${ site?.domain }?domainAndPlanPackage=true` );
+	}, [ trackEventClick, site?.domain ] );
 
 	const getDismissClickHandler = () => {
 		recordTracksEvent( trackEventDismiss );
@@ -38,6 +38,7 @@ const DomainUpsellCallout = ( { trackEvent } ) => {
 	};
 
 	if (
+		! site ||
 		! hasPreferences ||
 		isDismissed ||
 		siteDomains.length > 1 ||
