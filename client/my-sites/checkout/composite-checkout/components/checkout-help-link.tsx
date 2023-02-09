@@ -148,8 +148,9 @@ export default function CheckoutHelpLink() {
 	const { responseCart } = useShoppingCart( cartKey );
 
 	const cartErrors = responseCart.messages?.errors || [];
-	const purchasesAreBlocked =
-		cartErrors.filter( ( error: ResponseCartMessage ) => error.code === 'blocked' ).length > 0;
+	const purchasesAreBlocked = cartErrors.some(
+		( error: ResponseCartMessage ) => error.code === 'blocked'
+	);
 
 	const {
 		presalesZendeskChatAvailable,
