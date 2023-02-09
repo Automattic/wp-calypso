@@ -675,7 +675,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 														</span>
 													) }
 													{ hasFeature ? (
-														<Gridicon icon="checkmark" color="#0675C4" />
+														<Gridicon icon="checkmark" color="#0675C4" size={ 18 } />
 													) : (
 														<Gridicon icon="minus-small" color="#C3C4C7" />
 													) }
