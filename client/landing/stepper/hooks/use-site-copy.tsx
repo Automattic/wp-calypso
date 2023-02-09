@@ -85,10 +85,6 @@ export const useSiteCopy = (
 					[ 'marketplace_plugin', 'marketplace_theme' ].includes( purchase.productType ) &&
 					purchase.siteId === site?.ID
 			)
-			.filter(
-				( purchase ) =>
-					purchase.productType === 'marketplace_plugin' && purchase.siteId === site?.ID
-			)
 			.map( ( purchase ) => ( { product_slug: purchase.productSlug } ) );
 
 		setProductCartItems( marketplacePluginProducts );
