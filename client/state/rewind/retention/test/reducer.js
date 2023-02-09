@@ -35,7 +35,7 @@ describe( 'updateBackupRetentionRequestStatus', () => {
 		).toEqual( BACKUP_RETENTION_UPDATE_REQUEST.SUCCESS );
 	} );
 
-	test( 'should return PENDING status when retention update request action gets failed', () => {
+	test( 'should return FAILED status when retention update request action gets failed', () => {
 		expect(
 			retention( mockUpdateRequestInitiated, updateFailedAction ).updateRequestStatus
 		).toEqual( BACKUP_RETENTION_UPDATE_REQUEST.FAILED );
