@@ -87,11 +87,12 @@
 	}
 
 	.trial-feature-card__accordion-toggle {
+		display: inline-flex;
+		cursor: pointer;
+		padding: 10px;
 
 		.gridicons-chevron-down,
 		.gridicons-chevron-up {
-			cursor: pointer;
-			padding: 4px;
 			fill: var(--color-neutral-90);
 		}
 	}

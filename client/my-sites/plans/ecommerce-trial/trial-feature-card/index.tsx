@@ -49,13 +49,9 @@ export default function TrialFeatureCard( props: TrialFeatureCardProps ) {
 					</div>
 				) }
 			</div>
-			<div className="trial-feature-card__accordion-toggle">
-				<Gridicon
-					icon={ expanded ? 'chevron-down' : 'chevron-up' }
-					size={ 16 }
-					onClick={ toggleExpanded }
-				/>
-			</div>
+			<button className="trial-feature-card__accordion-toggle" onClick={ toggleExpanded }>
+				<Gridicon icon={ expanded ? 'chevron-down' : 'chevron-up' } size={ 16 } />
+			</button>
 		</Card>
 	);
 }

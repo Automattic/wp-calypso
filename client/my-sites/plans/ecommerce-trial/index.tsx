@@ -235,7 +235,7 @@ const ECommerceTrialPlansPage = () => {
 
 	const priceContent = isAnnualSubscription
 		? translate(
-				'{{monthlyPriceWrapper}}{{currencySymbol}}%(currency)s{{/currencySymbol}}%(monthlyPrice)s{{/monthlyPriceWrapper}} {{priceDescription}}per month, %(annualPrice)s billed annually{{/priceDescription}}',
+				'{{monthlyPriceWrapper}}{{currencySymbol}}%(currency)s{{/currencySymbol}}%(monthlyPrice)s{{/monthlyPriceWrapper}} {{priceDescription}}per month, %(currency)s%(annualPrice)s billed annually{{/priceDescription}}',
 				{
 					args: {
 						currency: currencySymbol,
