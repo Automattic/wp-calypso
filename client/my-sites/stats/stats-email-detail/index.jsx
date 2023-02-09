@@ -17,7 +17,6 @@ import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import memoizeLast from 'calypso/lib/memoize-last';
 import StatsEmailModule from 'calypso/my-sites/stats/stats-email-module';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
@@ -36,6 +35,11 @@ import { StatsNoContentBanner } from '../stats-no-content-banner';
 import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
 import './style.scss';
+
+const pageTitles = {
+	opens: translate( 'Email opens' ),
+	clicks: translate( 'Email clicks' ),
+};
 
 function getPageUrl() {
 	return getUrlParts( page.current );
@@ -137,15 +141,7 @@ class StatsEmailDetail extends Component {
 		window.scrollTo( 0, 0 );
 	}
 
-	getTitle() {
-		const { post } = this.props;
-
-		if ( typeof post?.title === 'string' && post.title.length ) {
-			return decodeEntities( stripHTML( post.title ) );
-		}
-
-		return null;
-	}
+	getTitle = ( statType ) => pageTitles[ statType ];
 
 	onChangeLegend = ( activeLegend ) => this.setState( { activeLegend } );
 
@@ -215,7 +211,7 @@ class StatsEmailDetail extends Component {
 					/>
 
 					<FixedNavigationHeader
-						navigationItems={ this.getNavigationItemsWithTitle( this.getTitle() ) }
+						navigationItems={ this.getNavigationItemsWithTitle( this.getTitle( statType ) ) }
 					></FixedNavigationHeader>
 
 					{ ! isRequestingStats && ! countViews && post && (
@@ -232,7 +228,7 @@ class StatsEmailDetail extends Component {
 					{ post ? (
 						<>
 							<div className="main-container">
-								<h1>{ this.getTitle() }</h1>
+								<h1>{ this.getTitle( statType ) }</h1>
 
 								<StatsDetailsNavigation
 									postId={ postId }
