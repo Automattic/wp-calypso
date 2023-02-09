@@ -14,6 +14,12 @@ type ForumTopic = {
 	ownershipResult: AnalysisReport;
 };
 
+export type ForumResponse = {
+	topic_URL: string;
+	topic_ID: number;
+	success: boolean;
+};
+
 export function useSubmitForumsMutation() {
 	return useMutation(
 		( {

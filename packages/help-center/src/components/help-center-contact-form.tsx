@@ -9,6 +9,7 @@ import { Button, FormInputValidation, Popover } from '@automattic/components';
 import {
 	useSubmitTicketMutation,
 	useSubmitForumsMutation,
+	ForumResponse,
 	useSiteAnalysis,
 	useUserSites,
 	AnalysisReport,
@@ -347,7 +348,11 @@ export const HelpCenterContactForm = () => {
 							location: 'help-center',
 							section: sectionName,
 						} );
-						history.push( `/success?forumTopic=${ encodeURIComponent( response.topic_URL ) }` );
+						history.push(
+							`/success?forumTopic=${ encodeURIComponent(
+								( response as ForumResponse ).topic_URL
+							) }`
+						);
 						resetStore();
 					} )
 					.catch( () => {
