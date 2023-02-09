@@ -13,6 +13,7 @@ import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import StatsSite from './site';
 import StatsEmailDetail from './stats-email-detail';
+import StatsEmailSummary from './stats-email-summary';
 
 const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
@@ -550,6 +551,22 @@ export function emailStats( context, next ) {
 			isValidStartDate={ isValidStartDate }
 		/>
 	);
+
+	next();
+}
+
+export function emailSummary( context, next ) {
+	const givenSiteId = context.params.site;
+
+	const selectedSite = getSite( context.store.getState(), givenSiteId );
+	const siteId = selectedSite ? selectedSite.ID || 0 : 0;
+
+	if ( 0 === siteId ) {
+		window.location = '/stats';
+		return next();
+	}
+
+	context.primary = <StatsEmailSummary />;
 
 	next();
 }
