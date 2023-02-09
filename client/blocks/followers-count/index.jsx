@@ -20,9 +20,9 @@ class FollowersCount extends Component {
 					<Button
 						borderless
 						href={ '/people/followers/' + slug }
-						title={ translate( 'Total of WordPress and Email Followers' ) }
+						title={ translate( 'Total of WordPress and Email Subscribers' ) }
 					>
-						{ translate( 'Followers' ) } <Count count={ followers } />
+						{ translate( 'Subscribers' ) } <Count count={ followers } />
 					</Button>
 				) }
 			</div>

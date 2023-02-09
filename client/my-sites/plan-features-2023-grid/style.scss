@@ -177,9 +177,12 @@
 			border: 1px solid #e0e0e0;
 			/* stylelint-disable-next-line */
 			border-radius: 5px;
-			margin-bottom: 12px;
+			margin: 20px;
 			padding: 38px 0 20px 0;
 
+			&:first-of-type {
+				margin-top: 0;
+			}
 
 			.foldable-card__main .foldable-card__expand .gridicon {
 				width: 14px;
