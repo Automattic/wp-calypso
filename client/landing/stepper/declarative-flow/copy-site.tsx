@@ -71,7 +71,7 @@ const copySite: Flow = {
 	name: COPY_SITE_FLOW,
 
 	get title() {
-		return translate( 'Copy Site' );
+		return '';
 	},
 
 	useSteps() {
