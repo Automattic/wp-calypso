@@ -1,6 +1,7 @@
+import { Onboard } from '@automattic/data-stores';
 import { BLANK_CANVAS_DESIGN } from '@automattic/design-picker';
 import { useFlowProgress, WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useQuery } from '../hooks/use-query';
 import { useSiteSlug } from '../hooks/use-site-slug';
@@ -11,10 +12,12 @@ import Processing from './internals/steps-repository/processing-step';
 import { Flow, ProvidedDependencies } from './internals/types';
 import type { Design } from '@automattic/design-picker/src/types';
 
+const SiteIntent = Onboard.SiteIntent;
+
 const withThemeAssemblerFlow: Flow = {
 	name: WITH_THEME_ASSEMBLER_FLOW,
 	useSideEffect() {
-		const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
+		const { setSelectedDesign, setIntent } = useDispatch( ONBOARD_STORE );
 		const selectedTheme = useQuery().get( 'theme' );
 
 		useEffect( () => {
@@ -22,6 +25,8 @@ const withThemeAssemblerFlow: Flow = {
 				// User has selected blank-canvas-3 theme from theme showcase and enter assembler flow
 				setSelectedDesign( BLANK_CANVAS_DESIGN as Design );
 			}
+
+			setIntent( SiteIntent.WithThemeAssembler );
 		}, [] );
 	},
 
@@ -34,6 +39,7 @@ const withThemeAssemblerFlow: Flow = {
 
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
+		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 		const { setStepProgress, setPendingAction } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
 		setStepProgress( flowProgress );
@@ -50,7 +56,7 @@ const withThemeAssemblerFlow: Flow = {
 		};
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
-			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
+			recordSubmitStep( providedDependencies, intent, flowName, _currentStep );
 
 			switch ( _currentStep ) {
 				case 'processing':
