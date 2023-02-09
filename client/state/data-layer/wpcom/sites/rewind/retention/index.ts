@@ -11,7 +11,7 @@ import { RetentionPeriod } from 'calypso/state/rewind/retention/types';
 
 type RequestActionType = Action< typeof JETPACK_BACKUP_RETENTION_UPDATE > & {
 	siteId: number | null;
-	rententionDays: RetentionPeriod;
+	retentionDays: RetentionPeriod;
 };
 
 export const updateRetention = ( action: RequestActionType ) =>
@@ -20,7 +20,7 @@ export const updateRetention = ( action: RequestActionType ) =>
 			apiNamespace: 'wpcom/v2',
 			method: 'POST',
 			path: `/sites/${ action.siteId }/backup/retention/update`,
-			body: { retention_days: action.rententionDays },
+			body: { retention_days: action.retentionDays },
 		},
 		action
 	);

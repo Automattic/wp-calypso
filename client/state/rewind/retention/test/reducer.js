@@ -6,7 +6,7 @@ import {
 import retentionReducer from '../reducer';
 
 describe( 'rewind.retention reducers', () => {
-	describe( 'lastBackupSize', () => {
+	describe( 'updateBackupRetentionRequestStatus', () => {
 		it.each( [
 			{
 				state: undefined,
