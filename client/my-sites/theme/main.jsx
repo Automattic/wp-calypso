@@ -78,6 +78,8 @@ import ThemeNotFoundError from './theme-not-found-error';
 
 import './style.scss';
 
+const noop = () => {};
+
 class ThemeSheet extends Component {
 	static displayName = 'ThemeSheet';
 
@@ -214,12 +216,12 @@ class ThemeSheet extends Component {
 
 		return (
 			<div className="theme__sheet-bar">
-				<span className="theme__sheet-bar-title">
+				<h1 className="theme__sheet-bar-title">
 					{ title }
 					{ softLaunched && (
 						<span className="theme__sheet-bar-soft-launched">{ translate( 'A8C Only' ) }</span>
 					) }
-				</span>
+				</h1>
 				<span className="theme__sheet-bar-tag">{ tag }</span>
 			</div>
 		);
@@ -674,7 +676,7 @@ class ThemeSheet extends Component {
 	};
 
 	renderButton = () => {
-		const { getUrl } = this.props.defaultOption;
+		const { getUrl, key } = this.props.defaultOption;
 		const label = this.getDefaultOptionLabel();
 		const price = this.renderPrice();
 		const placeholder = <span className="theme__sheet-button-placeholder">loading......</span>;
@@ -686,7 +688,8 @@ class ThemeSheet extends Component {
 				className="theme__sheet-primary-button"
 				href={
 					getUrl &&
-					( ! isExternallyManagedTheme ||
+					( key === 'customize' ||
+						! isExternallyManagedTheme ||
 						! isLoggedIn ||
 						! config.isEnabled( 'themes/third-party-premium' ) )
 						? getUrl( this.props.themeId )
@@ -795,8 +798,9 @@ class ThemeSheet extends Component {
 		if ( ! isLoggedIn ) {
 			plansUrl = localizeUrl( 'https://wordpress.com/pricing' );
 		} else if ( siteSlug ) {
+			const redirectTo = `/theme/${ themeId }${ section ? '/' + section : '' }/${ siteSlug }`;
 			const plan = isExternallyManagedTheme || isBundledSoftwareSet ? PLAN_BUSINESS : PLAN_PREMIUM;
-			plansUrl = plansUrl + `/${ siteSlug }/?plan=${ plan }`;
+			plansUrl = plansUrl + `/${ siteSlug }/?plan=${ plan }&redirect_to=${ redirectTo }`;
 		}
 
 		const launchPricing = () => window.open( plansUrl, '_blank' );
@@ -880,7 +884,7 @@ class ThemeSheet extends Component {
 					feature={ WPCOM_FEATURES_PREMIUM_THEMES }
 					forceHref={ onClick === null }
 					disableHref={ onClick !== null }
-					onClick={ onClick }
+					onClick={ null === onClick ? noop : onClick }
 					href={ plansUrl }
 					showIcon={ true }
 					forceDisplay={ forceDisplay }
@@ -947,6 +951,7 @@ class ThemeSheet extends Component {
 					title={ analyticsPageTitle }
 					properties={ { is_logged_in: isLoggedIn } }
 				/>
+				<AsyncLoad require="calypso/components/global-notices" placeholder={ null } id="notices" />
 				{ this.renderBar() }
 				<QueryActiveTheme siteId={ siteId } />
 				<ThanksModal source="details" themeId={ this.props.themeId } />

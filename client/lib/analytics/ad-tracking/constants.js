@@ -63,6 +63,7 @@ export const TRACKING_IDS = {
 	jetpackGoogleGA4Gtag: 'G-YELRMVV4YG',
 	jetpackGoogleAdsGtagPurchase: 'AW-946162814/kIF1CL3ApfsBEP6YlcMD',
 	jetpackLinkedinId: '4537722',
+	jetpackTwitterPixelId: 'odlje',
 };
 // This name is something we created to store a session id for DCM Floodlight session tracking
 export const DCM_FLOODLIGHT_SESSION_COOKIE_NAME = 'dcmsid';

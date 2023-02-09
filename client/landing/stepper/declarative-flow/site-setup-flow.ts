@@ -5,6 +5,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { addQueryArgs } from 'calypso/lib/route';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
@@ -184,7 +185,14 @@ const siteSetupFlow: Flow = {
 						pendingActions.push( saveSiteSettings( siteId, { launchpad_screen: 'full' } ) );
 					}
 
-					Promise.all( pendingActions ).then( () => window.location.assign( to ) );
+					let redirectionUrl = to;
+
+					// Forcing cache invalidation to retrieve latest launchpad_screen option value
+					if ( isLaunchpadIntent( intent ) ) {
+						redirectionUrl = addQueryArgs( { showLaunchpad: true }, to );
+					}
+
+					Promise.all( pendingActions ).then( () => window.location.assign( redirectionUrl ) );
 				} );
 			} );
 

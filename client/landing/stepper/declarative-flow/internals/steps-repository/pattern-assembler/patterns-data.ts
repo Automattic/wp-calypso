@@ -1,6 +1,11 @@
+import { isEnabled } from '@automattic/calypso-config';
+import { Onboard } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { useIntent } from '../../../../hooks/use-intent';
 import type { Pattern } from './types';
+
+const SiteIntent = Onboard.SiteIntent;
 
 const useHeaderPatterns = () => {
 	const translate = useTranslate();
@@ -175,19 +180,22 @@ const useFooterPatterns = () => {
 };
 
 const useSectionPatterns = () => {
+	const intent = useIntent();
 	const translate = useTranslate();
+
+	const about = translate( 'About' );
 	const callToAction = translate( 'Call to action' );
 	const images = translate( 'Images' );
+	const links = translate( 'Links' );
 	const list = translate( 'List' );
 	const numbers = translate( 'Numbers' );
-	const about = translate( 'About' );
-	const testimonials = translate( 'Testimonials' );
-	const links = translate( 'Links' );
-	const services = translate( 'Services' );
 	const portfolio = translate( 'Portfolio' );
+	const posts = translate( 'Posts' );
+	const services = translate( 'Services' );
+	const testimonials = translate( 'Testimonials' );
 
-	const sectionPatterns: Pattern[] = useMemo(
-		() => [
+	const sectionPatterns: Pattern[] = useMemo( () => {
+		let patterns = [
 			{
 				id: 7156,
 				name: 'Media and text with image on the right',
@@ -418,9 +426,64 @@ const useSectionPatterns = () => {
 				name: 'Tall Item One Column',
 				category: portfolio,
 			},
-		],
-		[]
-	);
+			{
+				id: 1784,
+				name: 'Recent Posts',
+				category: posts,
+			},
+			{
+				id: 8437,
+				name: 'List of posts',
+				category: posts,
+			},
+			{
+				id: 8421,
+				name: 'Grid of posts 2x3',
+				category: posts,
+			},
+			{
+				id: 8435,
+				name: 'Grid of Posts 3x2',
+				category: posts,
+			},
+			{
+				id: 5645,
+				name: 'Four Recent Blog Posts',
+				category: posts,
+			},
+			{
+				id: 7996,
+				name: 'Grid of Posts 4x2',
+				category: posts,
+			},
+			{
+				id: 3213,
+				name: 'Latest podcast episodes',
+				category: posts,
+			},
+		];
+		if ( isEnabled( 'pattern-assembler/write-flow' ) ) {
+			if ( intent === SiteIntent.Write ) {
+				// In the Write flow, move posts patterns to the first position
+				patterns = patterns.sort( ( a, b ) => {
+					if ( a.category === b.category ) {
+						return 0;
+					} else if ( a.category === posts ) {
+						return -1;
+					} else if ( b.category === posts ) {
+						return 1;
+					}
+
+					return 0;
+				} );
+			}
+		} else {
+			// Remove posts patterns
+			patterns = patterns.filter( ( { category } ) => category !== posts );
+		}
+
+		return patterns;
+	}, [] );
 
 	return sectionPatterns;
 };

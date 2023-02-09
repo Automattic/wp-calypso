@@ -20,6 +20,7 @@ type WpcomStoreAction =
 			type: 'APPLY_DOMAIN_CONTACT_VALIDATION_RESULTS';
 			payload: ManagedContactDetailsErrors;
 	  }
+	| { type: 'UPDATE_TAX_FIELDS'; payload: ManagedContactDetails }
 	| { type: 'UPDATE_DOMAIN_CONTACT_FIELDS'; payload: DomainContactDetails }
 	| { type: 'SET_RECAPTCHA_CLIENT_ID'; payload: number }
 	| { type: 'UPDATE_VAT_ID'; payload: string }
@@ -62,6 +63,10 @@ const actions = {
 
 	setRecaptchaClientId( payload: number ): WpcomStoreAction {
 		return { type: 'SET_RECAPTCHA_CLIENT_ID', payload };
+	},
+
+	updateTaxFields( payload: ManagedContactDetails ): WpcomStoreAction {
+		return { type: 'UPDATE_TAX_FIELDS', payload };
 	},
 
 	updateDomainContactFields( payload: DomainContactDetails ): WpcomStoreAction {
@@ -141,6 +146,8 @@ export function useWpcomStore(): WpcomCheckoutStore | undefined {
 			case 'UPDATE_DOMAIN_CONTACT_FIELDS': {
 				return updaters.updateDomainContactFields( state, action.payload );
 			}
+			case 'UPDATE_TAX_FIELDS':
+				return updaters.updateTaxFields( state, action.payload );
 			case 'UPDATE_VAT_ID':
 				return updaters.updateVatId( state, action.payload );
 			case 'UPDATE_PHONE':

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { fetchUserPurchases } from 'calypso/state/purchases/actions';
 import {
@@ -28,5 +28,19 @@ function QueryUserPurchases() {
 
 	return null;
 }
+
+export const useQueryUserPurchases = ( enabled = true ) => {
+	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
+	const isRequesting = useSelector( ( state ) => state.purchases.isFetchingUserPurchases );
+	const hasLoaded = useSelector( ( state ) => state.purchases.hasLoadedUserPurchasesFromServer );
+	const reduxDispatch = useDispatch();
+
+	useEffect( () => {
+		if ( ! userId || isRequesting || hasLoaded || ! enabled ) {
+			return;
+		}
+		reduxDispatch( fetchUserPurchases( userId ) );
+	}, [ userId, isRequesting, hasLoaded, reduxDispatch, enabled ] );
+};
 
 export default QueryUserPurchases;

@@ -80,6 +80,6 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 	} );
 
 	it( 'Unlike the comment', async function () {
-		await commentsComponent.unlike( comment );
+		await ElementHelper.reloadAndRetry( page, () => commentsComponent.unlike( comment ) );
 	} );
 } );

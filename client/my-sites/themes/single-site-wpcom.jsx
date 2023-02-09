@@ -28,7 +28,6 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 	const { currentPlan, currentThemeId, isVip, requestingSitePlans, siteId, siteSlug, translate } =
 		props;
 
-	const isNewCardsOnly = isEnabled( 'themes/showcase-i4/cards-only' );
 	const isNewDetailsAndPreview = isEnabled( 'themes/showcase-i4/details-and-preview' );
 	const displayUpsellBanner = ! requestingSitePlans && currentPlan && ! isVip;
 	const upsellUrl = `/plans/${ siteSlug }`;
@@ -88,10 +87,7 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 	return (
 		<Main fullWidthLayout className="themes">
 			<BodySectionCssClass
-				bodyClass={ [
-					...( isNewCardsOnly ? [ 'is-section-themes-i4-cards-only' ] : [] ),
-					...( isNewDetailsAndPreview ? [ 'is-section-themes-i4-2' ] : [] ),
-				] }
+				bodyClass={ [ ...( isNewDetailsAndPreview ? [ 'is-section-themes-i4-2' ] : [] ) ] }
 			/>
 			<QueryActiveTheme siteId={ siteId } />
 			{ currentThemeId && <QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } /> }

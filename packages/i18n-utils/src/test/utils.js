@@ -1,4 +1,4 @@
-import { getMappedLanguageSlug } from '../';
+import { getMappedLanguageSlug, removeLocaleFromPathLocaleInFront } from '../';
 
 jest.mock( '@automattic/calypso-config', () => ( {} ) );
 
@@ -11,5 +11,13 @@ describe( '#getMappedLanguageSlug', () => {
 		expect( getMappedLanguageSlug( 'en' ) ).toBe( 'en' );
 		expect( getMappedLanguageSlug( 'de' ) ).toBe( 'de' );
 		expect( getMappedLanguageSlug( 'he' ) ).toBe( 'he' );
+	} );
+} );
+
+describe( '#removeLocaleFromPathLocaleInFront', () => {
+	test( 'should correctly return the real path when locale is at the beginning of the path', () => {
+		expect( removeLocaleFromPathLocaleInFront( '/en/themes' ) ).toBe( '/themes' );
+		expect( removeLocaleFromPathLocaleInFront( '/themes' ) ).toBe( '/themes' );
+		expect( removeLocaleFromPathLocaleInFront( '/de/themes' ) ).toBe( '/themes' );
 	} );
 } );

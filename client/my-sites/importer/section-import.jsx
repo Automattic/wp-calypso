@@ -144,12 +144,10 @@ class SectionImport extends Component {
 	 */
 	renderIdleImporters( importerState ) {
 		const { site, siteTitle } = this.props;
-		let importers = getImporters();
-
-		// Filter out all importers except the WordPress ones for Atomic sites.
-		if ( ! isEnabled( 'importer/unified' ) && site.options.is_wpcom_atomic ) {
-			importers = importers.filter( ( importer ) => importer.engine === 'wordpress' );
-		}
+		const importers = getImporters( {
+			isAtomic: site.options.is_wpcom_atomic,
+			isJetpack: site.jetpack,
+		} );
 
 		const importerElements = importers.map( ( { engine } ) => {
 			const ImporterComponent = importerComponents[ engine ];
@@ -169,6 +167,8 @@ class SectionImport extends Component {
 					site={ site }
 					siteTitle={ siteTitle }
 					importerStatus={ importerStatus }
+					isAtomic={ site.options.is_wpcom_atomic }
+					isJetpack={ site.jetpack }
 				/>
 			);
 		} );
