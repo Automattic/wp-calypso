@@ -45,7 +45,7 @@ interface ConnectedProps {
 	isNonAtomicJetpack: boolean;
 	isLoading: boolean;
 	hasSimplePayments: boolean;
-	hasWordAds: boolean;
+	hasWordAdsFeature: boolean;
 	hasConnectedAccount: boolean | null;
 	hasSetupAds: boolean;
 	trackUpgrade: ( plan: string, feature: string ) => void;
@@ -66,7 +66,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	isUserAdmin,
 	isLoading,
 	hasSimplePayments,
-	hasWordAds,
+	hasWordAdsFeature,
 	hasConnectedAccount,
 	hasSetupAds,
 	eligibleForProPlan,
@@ -466,7 +466,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 */
 	const getAdsCard = () => {
 		const cta =
-			hasWordAds || hasSetupAds
+			hasWordAdsFeature || hasSetupAds
 				? {
 						text: hasSetupAds ? translate( 'View ad dashboard' ) : translate( 'Earn ad revenue' ),
 						action: () => {
@@ -500,11 +500,11 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					{ translate(
 						'Make money each time someone visits your site by displaying advertisements on all your posts and pages.'
 					) }
-					{ ! hasWordAds && <em>{ getPremiumPlanNames() }</em> }
+					{ ! hasWordAdsFeature && <em>{ getPremiumPlanNames() }</em> }
 				</>
 			);
 
-		const learnMoreLink = ! ( hasWordAds || hasSetupAds )
+		const learnMoreLink = ! ( hasWordAdsFeature || hasSetupAds )
 			? { url: 'https://wordads.co/', onClick: () => trackLearnLink( 'ads' ) }
 			: null;
 		return {
@@ -568,7 +568,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 
 	return (
 		<Fragment>
-			{ ! hasWordAds && <QueryWordadsStatus siteId={ siteId } /> }
+			{ ! hasWordAdsFeature && <QueryWordadsStatus siteId={ siteId } /> }
 			<QueryMembershipsSettings siteId={ siteId } />
 			{ isLoading && (
 				<div className="earn__placeholder-promo-card">
@@ -594,7 +594,7 @@ export default connect(
 			state?.memberships?.settings?.[ siteId ]?.connectedAccountId ?? null;
 		const sitePlanSlug = getSitePlanSlug( state, siteId );
 		const hasPaidPlan = isCurrentPlanPaid( state, siteId );
-		const hasWordAds = siteHasWordAds( state, siteId );
+		const hasWordAdsFeature = siteHasWordAds( state, siteId );
 		const isLoading = ( hasConnectedAccount === null && hasPaidPlan ) || sitePlanSlug === null;
 
 		return {
@@ -604,9 +604,9 @@ export default connect(
 				isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId )
 			),
 			isUserAdmin: canCurrentUser( state, siteId, 'manage_options' ),
-			hasWordAds,
+			hasWordAdsFeature,
 			hasIneligiblePlanforWordAds:
-				! hasWordAds && getSiteWordadsStatus( state, siteId ) === 'ineligible',
+				! hasWordAdsFeature && getSiteWordadsStatus( state, siteId ) === 'ineligible',
 			hasSimplePayments: siteHasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),
 			hasConnectedAccount,
 			eligibleForProPlan: isEligibleForProPlan( state, siteId ),

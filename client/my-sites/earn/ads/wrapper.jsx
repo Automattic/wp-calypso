@@ -19,7 +19,7 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getSiteWordadsStatus from 'calypso/state/selectors/get-site-wordads-status';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import siteHasWordAds from 'calypso/state/selectors/site-has-wordads';
 import { canAccessWordAds, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
@@ -319,7 +319,7 @@ class AdsWrapper extends Component {
 const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
-	const hasWordAdsFeature = siteHasFeature( state, siteId, WPCOM_FEATURES_WORDADS );
+	const hasWordAdsFeature = siteHasWordAds( state, siteId );
 	const canActivateWordAds = canCurrentUser( state, siteId, 'activate_wordads' );
 
 	return {
