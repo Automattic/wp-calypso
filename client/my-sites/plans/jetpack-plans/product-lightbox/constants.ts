@@ -30,10 +30,10 @@ export const PRODUCT_OPTIONS: Record< string, TranslateResult > = {
 		comment: 'Get up to 1000 shares',
 	} ),
 	[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: translate( 'Social Advanced', {
-		comment: 'Get unlimited shares and share as a post.',
+		comment: 'Get unlimited shares and share as a post by attaching images or videos.',
 	} ),
 	[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: translate( 'Social Advanced', {
-		comment: 'Get unlimited shares and share as a post.',
+		comment: 'Get unlimited shares and share as a post by attaching images or videos.',
 	} ),
 };
 

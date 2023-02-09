@@ -259,11 +259,11 @@ export const useStoreItemInfo = ( {
 			const isOwned = getIsOwned( item );
 
 			if ( isOwned ) {
-				return <>{ translate( 'Manage Subscription' ) }</>;
+				return translate( 'Manage Subscription' );
 			}
 
 			if ( ! shouldShowCart ) {
-				return <>{ translate( 'Proceed to checkout' ) }</>;
+				return translate( 'Proceed to checkout' );
 			}
 
 			if ( isProductInCart ) {
@@ -275,7 +275,7 @@ export const useStoreItemInfo = ( {
 				);
 			}
 
-			return <>{ translate( 'Add to cart' ) }</>;
+			return translate( 'Add to cart' );
 		},
 		[ getIsProductInCart, getShouldShowCart, translate ]
 	);
