@@ -1,6 +1,6 @@
 import { select } from '@wordpress/data';
 import { STORE_KEY } from './constants';
-import { SiteLaunchStatus, SiteOption } from './types';
+import { Domain, SiteLaunchStatus, SiteOption } from './types';
 import type { State } from './reducer';
 
 export const getState = ( state: State ) => state;
@@ -88,12 +88,12 @@ export const getSiteOption = ( state: State, siteId: number, optionName: SiteOpt
 export const getPrimarySiteDomain = ( _: State, siteId: number ) =>
 	select( STORE_KEY )
 		.getSiteDomains( siteId )
-		?.find( ( domain ) => domain.primary_domain );
+		?.find( ( domain: Domain ) => domain.primary_domain );
 
 export const getSiteSubdomain = ( _: State, siteId: number ) =>
 	select( STORE_KEY )
 		.getSiteDomains( siteId )
-		?.find( ( domain ) => domain.is_subdomain );
+		?.find( ( domain: Domain ) => domain.is_subdomain );
 
 export const getSiteLatestAtomicTransfer = ( state: State, siteId: number ) => {
 	return state.latestAtomicTransferStatus[ siteId ]?.transfer;
