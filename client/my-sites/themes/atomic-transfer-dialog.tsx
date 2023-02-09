@@ -51,11 +51,17 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 		dispatchInitiateThemeTransfer( siteId, null, '' );
 	}
 
+	getCurrentPath = () => {
+		const { origin, href } = window.location;
+
+		return href.replace( origin, '' );
+	};
+
 	componentDidUpdate( prevProps: Readonly< AtomicTransferDialogProps > ): void {
 		const { siteId, siteSlug, isTransferred } = this.props;
 		if ( siteId && siteSlug && prevProps.isTransferred !== isTransferred && isTransferred ) {
 			window.location.replace(
-				`/themes/${ siteSlug.replace( /\b.wordpress.com/, '.wpcomstaging.com' ) }`
+				this.getCurrentPath().replace( /\b.wordpress.com/, '.wpcomstaging.com' )
 			);
 		}
 	}
