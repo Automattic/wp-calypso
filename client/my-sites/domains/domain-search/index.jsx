@@ -277,7 +277,10 @@ class DomainSearch extends Component {
 						<div className="domains__header">
 							{ domainSidebarExperimentUser && (
 								<>
-									<DomainAndPlanPackageNavigation step={ 1 } />
+									<DomainAndPlanPackageNavigation
+										goBackLink={ domainManagementList( selectedSiteSlug ) }
+										step={ 1 }
+									/>
 									<FormattedHeader
 										brandFont
 										headerText={ translate( 'Claim your domain' ) }
