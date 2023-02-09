@@ -12,6 +12,7 @@ import { ComponentType, useEffect, useState } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import SitePreviewLink from 'calypso/components/site-preview-link';
 import { useSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
+import { useInView } from 'calypso/lib/use-in-view';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
@@ -29,6 +30,7 @@ interface SitesMenuItemProps {
 	site: SiteExcerptData;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	recordTracks: ( eventName: string, extraProps?: Record< string, any > ) => void;
+	onClick?: () => void;
 }
 
 interface MenuItemLinkProps extends Omit< CoreMenuItem.Props, 'href' > {
@@ -179,13 +181,8 @@ const PreviewSiteModalItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 	);
 };
 
-const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
+const CopySiteItem = ( { recordTracks, site, onClick }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
-	const { shouldShowSiteCopyItem, startSiteCopy } = useSiteCopy( site );
-
-	if ( ! shouldShowSiteCopyItem ) {
-		return null;
-	}
 
 	const copySiteHref = addQueryArgs( `/setup/copy-site`, {
 		sourceSlug: site.slug,
@@ -195,7 +192,7 @@ const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 			href={ copySiteHref }
 			onClick={ () => {
 				recordTracks( 'calypso_sites_dashboard_site_action_copy_site_click' );
-				startSiteCopy();
+				onClick?.();
 			} }
 		>
 			{ __( 'Copy site' ) }
@@ -250,6 +247,9 @@ export const SitesEllipsisMenu = ( {
 	site: SiteExcerptData;
 } ) => {
 	const dispatch = useReduxDispatch();
+	const [ inViewOnce, setInViewOnce ] = useState( false );
+	const ref = useInView< HTMLTableCellElement >( () => setInViewOnce( true ) );
+
 	const { __ } = useI18n();
 	const props: SitesMenuItemProps = {
 		site,
@@ -259,24 +259,27 @@ export const SitesEllipsisMenu = ( {
 	};
 
 	const showHosting = ! isNotAtomicJetpack( site ) && ! site.options?.is_wpforteams_site;
+	const { shouldShowSiteCopyItem, startSiteCopy } = useSiteCopy( site, { enabled: inViewOnce } );
 
 	return (
-		<SiteDropdownMenu
-			icon={ <Gridicon icon="ellipsis" /> }
-			className={ className }
-			label={ __( 'Site Actions' ) }
-		>
-			{ () => (
-				<SiteMenuGroup>
-					{ site.launch_status === 'unlaunched' && <LaunchItem { ...props } /> }
-					<SettingsItem { ...props } />
-					<ManagePluginsItem { ...props } />
-					{ showHosting && <HostingConfigItem { ...props } /> }
-					{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
-					<CopySiteItem { ...props } />
-					<WpAdminItem { ...props } />
-				</SiteMenuGroup>
-			) }
-		</SiteDropdownMenu>
+		<div ref={ ref }>
+			<SiteDropdownMenu
+				icon={ <Gridicon icon="ellipsis" /> }
+				className={ className }
+				label={ __( 'Site Actions' ) }
+			>
+				{ () => (
+					<SiteMenuGroup>
+						{ site.launch_status === 'unlaunched' && <LaunchItem { ...props } /> }
+						<SettingsItem { ...props } />
+						<ManagePluginsItem { ...props } />
+						{ showHosting && <HostingConfigItem { ...props } /> }
+						{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
+						{ shouldShowSiteCopyItem && <CopySiteItem { ...props } onClick={ startSiteCopy } /> }
+						<WpAdminItem { ...props } />
+					</SiteMenuGroup>
+				) }
+			</SiteDropdownMenu>
+		</div>
 	);
 };
