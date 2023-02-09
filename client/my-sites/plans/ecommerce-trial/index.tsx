@@ -3,6 +3,12 @@ import { Button, Card } from '@automattic/components';
 import { getCurrencyObject } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import customization from 'calypso/assets/images/plans/wpcom/ecommerce-trial/customization.png';
+import generalFeatures from 'calypso/assets/images/plans/wpcom/ecommerce-trial/general-features.png';
+import growth from 'calypso/assets/images/plans/wpcom/ecommerce-trial/growth.png';
+import payments from 'calypso/assets/images/plans/wpcom/ecommerce-trial/payments.png';
+import productManagement from 'calypso/assets/images/plans/wpcom/ecommerce-trial/product-management.png';
+import shipping from 'calypso/assets/images/plans/wpcom/ecommerce-trial/shipping.png';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getPlanRawPrice, getPlan } from 'calypso/state/plans/selectors';
 import ECommerceTrialBanner from './ecommerce-trial-banner';
@@ -35,7 +41,7 @@ const ECommerceTrialPlansPage = () => {
 	const features = [
 		{
 			expanded: true,
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/general-features.png',
+			illustration: generalFeatures,
 			title: 'General features',
 			subtitle: 'Everything you need to grow your business.',
 			items: [
@@ -60,7 +66,7 @@ const ECommerceTrialPlansPage = () => {
 			],
 		},
 		{
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/payments.png',
+			illustration: payments,
 			title: 'Payments',
 			subtitle: 'Quickly and easily accept payments.',
 			items: [
@@ -90,7 +96,7 @@ const ECommerceTrialPlansPage = () => {
 			],
 		},
 		{
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/product-management.png',
+			illustration: productManagement,
 			title: 'Product management',
 			subtitle: 'Simplify the way you manage, sell and promote your products.',
 			items: [
@@ -143,7 +149,7 @@ const ECommerceTrialPlansPage = () => {
 			],
 		},
 		{
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/customization.png',
+			illustration: customization,
 			title: 'Themes and customization',
 			subtitle: 'Bring your brand to life with a fully customizable storefront.',
 			items: [
@@ -163,7 +169,7 @@ const ECommerceTrialPlansPage = () => {
 			],
 		},
 		{
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/growth.png',
+			illustration: growth,
 			title: 'Marketing and growth',
 			subtitle: 'Optimize your store for sales by adding in email and social integrations.',
 			items: [
@@ -197,7 +203,7 @@ const ECommerceTrialPlansPage = () => {
 			],
 		},
 		{
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/shipping2.png',
+			illustration: shipping,
 			title: 'Shipping',
 			subtitle: 'Streamline your fulfillment with integrated shipping.',
 			items: [
