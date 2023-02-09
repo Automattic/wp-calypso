@@ -41,15 +41,7 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 	}
 
 	header() {
-		const { translate } = this.props;
-
-		return (
-			<header className="business-plan-upgrade-upsell-new-design__small-header">
-				<h1 className="business-plan-upgrade-upsell-new-design__small-header-title">
-					{ translate( 'Limited time offer' ) }
-				</h1>
-			</header>
-		);
+		return null;
 	}
 
 	image() {
