@@ -12,6 +12,7 @@ import StatsCommentFollows from './comment-follows';
 import StatsOverview from './overview';
 import StatsSite from './site';
 import StatsEmailDetail from './stats-email-detail';
+import StatsEmailSummary from './stats-email-summary';
 import StatsInsights from './stats-insights';
 import StatsPostDetail from './stats-post-detail';
 import StatsSummary from './summary';
@@ -510,6 +511,22 @@ export function emailStats( context, next ) {
 			isValidStartDate={ isValidStartDate }
 		/>
 	);
+
+	next();
+}
+
+export function emailSummary( context, next ) {
+	const givenSiteId = context.params.site;
+
+	const selectedSite = getSite( context.store.getState(), givenSiteId );
+	const siteId = selectedSite ? selectedSite.ID || 0 : 0;
+
+	if ( 0 === siteId ) {
+		window.location = '/stats';
+		return next();
+	}
+
+	context.primary = <StatsEmailSummary />;
 
 	next();
 }
