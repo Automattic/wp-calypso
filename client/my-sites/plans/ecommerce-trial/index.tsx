@@ -233,9 +233,13 @@ const ECommerceTrialPlansPage = () => {
 		},
 	];
 
+	const monthlyPriceWrapper = <span className="e-commerce-trial-plans__price-card-value" />;
+	const priceDescription = <span className="e-commerce-trial-plans__price-card-interval" />;
+	const currencyWrapper = <sup className="e-commerce-trial-plans__price-card-value-symbol" />;
+
 	const priceContent = isAnnualSubscription
 		? translate(
-				'{{monthlyPriceWrapper}}{{currencySymbol}}%(currency)s{{/currencySymbol}}%(monthlyPrice)s{{/monthlyPriceWrapper}} {{priceDescription}}per month, %(currency)s%(annualPrice)s billed annually{{/priceDescription}}',
+				'{{monthlyPriceWrapper}}{{currencyWrapper}}%(currency)s{{/currencyWrapper}}%(monthlyPrice)s{{/monthlyPriceWrapper}} {{priceDescription}}per month, %(currency)s%(annualPrice)s billed annually{{/priceDescription}}',
 				{
 					args: {
 						currency: currencySymbol,
@@ -243,23 +247,23 @@ const ECommerceTrialPlansPage = () => {
 						annualPrice: eCommercePlanPrices.annualPlanPrice,
 					},
 					components: {
-						monthlyPriceWrapper: <span className="e-commerce-trial-plans__price-card-value" />,
-						priceDescription: <span className="e-commerce-trial-plans__price-card-interval" />,
-						currencySymbol: <span className="e-commerce-trial-plans__price-card-value-symbol" />,
+						monthlyPriceWrapper,
+						priceDescription,
+						currencyWrapper,
 					},
 				}
 		  )
 		: translate(
-				'{{monthlyPriceWrapper}}{{currencySymbol}}%(currency)s{{/currencySymbol}}%(monthlyPrice)s{{/monthlyPriceWrapper}} {{priceDescription}}per month{{/priceDescription}}',
+				'{{monthlyPriceWrapper}}{{currencyWrapper}}%(currency)s{{/currencyWrapper}}%(monthlyPrice)s{{/monthlyPriceWrapper}} {{priceDescription}}per month{{/priceDescription}}',
 				{
 					args: {
 						currency: currencySymbol,
 						monthlyPrice: eCommercePlanPrices.monthlyPlanPrice,
 					},
 					components: {
-						monthlyPriceWrapper: <span className="e-commerce-trial-plans__price-card-value" />,
-						priceDescription: <span className="e-commerce-trial-plans__price-card-interval" />,
-						currencySymbol: <span className="e-commerce-trial-plans__price-card-value-symbol" />,
+						monthlyPriceWrapper,
+						priceDescription,
+						currencyWrapper,
 					},
 				}
 		  );

@@ -78,10 +78,9 @@ body.is-section-plans.is-ecommerce-trial-plan {
 
 				.e-commerce-trial-plans__price-card-value-symbol {
 					@media (max-width: $break-mobile) {
-						// Make a <sup>-like style
-						font-size: $font-title-medium;
-						position: relative;
-						top: -0.3em;
+						// Setting the default 'user agent' style to the sup element, since it's overwritten globally
+						vertical-align: super;
+						font-size: smaller;
 					}
 				}
 			}
