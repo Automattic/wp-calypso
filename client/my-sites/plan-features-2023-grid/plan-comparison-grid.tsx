@@ -44,9 +44,12 @@ const JetpackIconContainer = styled.div`
 `;
 
 const PlanComparisonHeader = styled.h1`
-	font-size: 2rem;
-	text-align: center;
-	margin: 48px 0;
+	.plans .step-container .step-container__content &&,
+	&& {
+		font-size: 2rem;
+		text-align: center;
+		margin: 48px 0;
+	}
 `;
 
 const Title = styled.div< { isHiddenInMobile?: boolean; isInSignup: boolean } >`
@@ -121,6 +124,14 @@ const Cell = styled.div< { textAlign?: string; isInSignup: boolean } >`
 	flex-direction: column;
 	align-items: center;
 	padding: 33px 20px 0;
+
+	.gridicon {
+		fill: currentColor;
+	}
+
+	img {
+		max-width: 100%;
+	}
 
 	@media ( max-width: ${ getMobileBreakpoint } ) {
 		&.title-is-subtitle {
@@ -579,7 +590,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 									>
 										<RowHead
 											key="feature-name"
-											className={ `plan-comparison-grid__feature-feature-name ${ feature.getTitle() }` }
+											className="plan-comparison-grid__feature-feature-name"
 											isInSignup={ isInSignup }
 										>
 											<Plans2023Tooltip text={ feature.getDescription?.() }>
