@@ -28,8 +28,6 @@ type WpcomStoreAction =
 	| { type: 'UPDATE_PHONE'; payload: string }
 	| { type: 'UPDATE_PHONE_NUMBER_COUNTRY'; payload: string }
 	| { type: 'UPDATE_POSTAL_CODE'; payload: string }
-	| { type: 'UPDATE_CITY'; payload: string }
-	| { type: 'UPDATE_STATE'; payload: string }
 	| { type: 'TOUCH_CONTACT_DETAILS' }
 	| { type: 'CLEAR_DOMAIN_CONTACT_ERROR_MESSAGES' }
 	| { type: 'UPDATE_COUNTRY_CODE'; payload: string }
@@ -85,14 +83,6 @@ const actions = {
 
 	updatePostalCode( payload: string ): WpcomStoreAction {
 		return { type: 'UPDATE_POSTAL_CODE', payload };
-	},
-
-	updateCity( payload: string ): WpcomStoreAction {
-		return { type: 'UPDATE_CITY', payload };
-	},
-
-	updateState( payload: string ): WpcomStoreAction {
-		return { type: 'UPDATE_STATE', payload };
 	},
 
 	updateEmail( payload: string ): WpcomStoreAction {
@@ -166,10 +156,6 @@ export function useWpcomStore(): WpcomCheckoutStore | undefined {
 				return updaters.updatePhoneNumberCountry( state, action.payload );
 			case 'UPDATE_POSTAL_CODE':
 				return updaters.updatePostalCode( state, action.payload );
-			case 'UPDATE_CITY':
-				return updaters.updateCity( state, action.payload );
-			case 'UPDATE_STATE':
-				return updaters.updateState( state, action.payload );
 			case 'UPDATE_EMAIL':
 				return updaters.updateEmail( state, action.payload );
 			case 'UPDATE_COUNTRY_CODE':

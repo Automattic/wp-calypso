@@ -340,8 +340,6 @@ export type ManagedContactDetailsUpdaters = {
 	updatePhone: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
 	updatePhoneNumberCountry: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
 	updatePostalCode: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
-	updateCity: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
-	updateState: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
 	updateEmail: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
 	updateCountryCode: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
 	updateTaxFields: (
