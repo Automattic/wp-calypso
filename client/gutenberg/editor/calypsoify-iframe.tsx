@@ -677,10 +677,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		}
 	};
 
-	isEditorTypePost = () => {
-		return undefined === this.props.editorType || 'site' !== this.props.editorType;
-	};
-
 	render() {
 		const { iframeUrl, shouldLoadIframe, isNew7DUser, currentUserCountryCode } = this.props;
 		const {
@@ -717,7 +713,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<div className="main main-column calypsoify is-iframe" role="main">
 					{ ! isIframeLoaded && <Placeholder /> }
-					{ isIframeLoaded && this.isEditorTypePost() && (
+					{ isIframeLoaded && this.props.editorType !== 'site' && (
 						<DomainUpsellCallout trackEvent="site_editor_domain_upsell_callout" />
 					) }
 					{ ( shouldLoadIframe || isIframeLoaded ) && (
