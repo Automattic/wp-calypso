@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { setupSiteAfterCreation } from '@automattic/onboarding';
+import { HOSTING_LP_FLOW, setupSiteAfterCreation } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 
 const noop = () => {};
@@ -18,6 +18,14 @@ export function generateFlows( {
 	getDIFMSiteContentCollectionDestination = noop,
 } = {} ) {
 	const flows = [
+		{
+			name: HOSTING_LP_FLOW,
+			steps: [ 'plans', 'user', 'domains' ],
+			destination: getSignupDestination,
+			description: 'Create an account and a blog and then add the starter plan to the users cart.',
+			lastModified: '2023-02-09',
+			showRecaptcha: true,
+		},
 		{
 			name: 'account',
 			steps: [ 'user' ],
