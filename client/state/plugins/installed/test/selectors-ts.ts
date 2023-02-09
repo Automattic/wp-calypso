@@ -72,7 +72,7 @@ const state = deepFreeze( {
 	...userState,
 } );
 
-const jetpackWithSites = {
+const jetpackWithSites = deepFreeze( {
 	id: 'jetpack/jetpack',
 	slug: 'jetpack',
 	name: 'Jetpack by WordPress.com',
@@ -103,9 +103,9 @@ const jetpackWithSites = {
 			},
 		},
 	},
-};
+} );
 
-const akismetWithSites = {
+const akismetWithSites = deepFreeze( {
 	id: 'akismet/akismet',
 	slug: 'akismet',
 	name: 'Akismet',
@@ -122,9 +122,9 @@ const akismetWithSites = {
 			version: '3.1.11',
 		},
 	},
-};
+} );
 
-const helloDollyWithSites = {
+const helloDollyWithSites = deepFreeze( {
 	id: 'hello-dolly/hello',
 	slug: 'hello-dolly',
 	name: 'Hello Dolly',
@@ -146,7 +146,7 @@ const helloDollyWithSites = {
 			autoupdate: true,
 		},
 	},
-};
+} );
 
 describe( 'getAllPluginsIndexedByPluginSlug', () => {
 	test( 'Returns the jetpack plugin', () => {
