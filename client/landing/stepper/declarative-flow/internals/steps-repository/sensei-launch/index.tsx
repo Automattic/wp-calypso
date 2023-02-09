@@ -20,6 +20,7 @@ const useRetriesProgress = (
 	const progress: Progress = {
 		percentage: ( retries * 100 ) / expectedRetries,
 		title: __( 'Installing Sensei' ),
+		subtitle: __( 'Our flexible LMS to power your online courses' ),
 	};
 
 	if ( retries > expectedRetries / 2 || maxRetries === retries ) {
