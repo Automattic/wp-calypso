@@ -9,6 +9,7 @@ import { useBloggingPrompts } from 'calypso/data/blogging-prompt/use-blogging-pr
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 import { SECTION_BLOGGING_PROMPT } from 'calypso/my-sites/customer-home/cards/constants';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import BellOffIcon from './bell-off-icon';
@@ -21,6 +22,7 @@ const BloggingPromptCard = () => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const primarySiteId = useSelector( ( state ) => getPrimarySiteId( state ) );
 	let sites = useSelector( ( state ) => getSitesItems( state ) );
 	let siteId = selectedSiteId;
 
@@ -32,6 +34,9 @@ const BloggingPromptCard = () => {
 		} );
 		if ( blogs.length > 0 ) {
 			siteId = blogs[ 0 ].ID;
+		} else {
+			// Fallback to using Primary blog id so we can request prompts
+			siteId = primarySiteId;
 		}
 	}
 
