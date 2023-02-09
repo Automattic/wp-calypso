@@ -108,7 +108,7 @@ export function getDistanceBetweenPrompts( totalSubs ) {
 
 	return Math.min(
 		Math.max(
-			Math.floor( Math.log( totalSubs ) * Math.LOG2E * 5 - 3 ),
+			Math.floor( Math.log( totalSubs ) * Math.LOG2E * 7 - 3 ),
 			MIN_DISTANCE_BETWEEN_PROMPTS
 		),
 		MAX_DISTANCE_BETWEEN_PROMPTS
