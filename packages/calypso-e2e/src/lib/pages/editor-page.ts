@@ -108,7 +108,8 @@ export class EditorPage {
 		this.editorGutenbergComponent = new EditorGutenbergComponent(
 			page,
 			this.editorWindow,
-			this.editorCanvas
+			this.editorCanvas,
+			blockTheme
 		);
 		this.editorToolbarComponent = new EditorToolbarComponent( page, this.editorWindow );
 		this.editorSettingsSidebarComponent = new EditorSettingsSidebarComponent(

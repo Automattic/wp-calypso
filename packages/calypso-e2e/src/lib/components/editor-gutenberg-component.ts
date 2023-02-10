@@ -21,6 +21,7 @@ export class EditorGutenbergComponent {
 	private page: Page;
 	private editor: Locator;
 	private editorCanvas: Locator;
+	private isBlockTheme = false;
 
 	/**
 	 * Constructs an instance of the component.
@@ -28,10 +29,11 @@ export class EditorGutenbergComponent {
 	 * @param {Page} page The underlying page.
 	 * @param {Locator} editor Locator or FrameLocator to the editor.
 	 */
-	constructor( page: Page, editor: Locator, editorCanvas: Locator ) {
+	constructor( page: Page, editor: Locator, editorCanvas: Locator, blockTheme: boolean ) {
 		this.page = page;
 		this.editor = editor;
 		this.editorCanvas = editorCanvas;
+		this.isBlockTheme = blockTheme;
 	}
 
 	/**
@@ -145,9 +147,11 @@ export class EditorGutenbergComponent {
 	 * @returns {Promise<ElementHandle>} ElementHandle of the selected block.
 	 */
 	async getSelectedBlockElementHandle( blockEditorSelector: string ): Promise< ElementHandle > {
+		// In block themes, "div.edit-post-visual-editor__content-area" is outside of the content iframe.
+		const parent = this.isBlockTheme ? editorPane : '.block-editor-iframe__body';
 		// Note the :is() selector. This is to support both the block API v1 and V2.
 		const locator = this.editorCanvas.locator(
-			`:is(${ editorPane } ${ blockEditorSelector }.is-selected, ${ editorPane } ${ blockEditorSelector }.has-child-selected)`
+			`:is(${ parent } ${ blockEditorSelector }.is-selected, ${ parent } ${ blockEditorSelector }.has-child-selected)`
 		);
 		await locator.waitFor();
 		return ( await locator.elementHandle() ) as ElementHandle;
