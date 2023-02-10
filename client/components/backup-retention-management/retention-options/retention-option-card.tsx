@@ -1,10 +1,11 @@
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
+import type { TranslateResult } from 'i18n-calypso';
 
 interface RetentionOptionCardProps {
 	label: string;
-	spaceNeeded: string;
+	spaceNeeded: TranslateResult | string;
 	upgradeRequired: boolean;
 	isCurrentPlan: boolean;
 	value: number;
