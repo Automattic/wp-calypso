@@ -46,7 +46,12 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 
 	image() {
 		return (
-			<img className="business-plan-upgrade-upsell-new-design__image" src={ upsellImage } alt="" />
+			<img
+				className="business-plan-upgrade-upsell-new-design__image"
+				src={ upsellImage }
+				alt=""
+				width="255"
+			/>
 		);
 	}
 
@@ -140,7 +145,7 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 	footer() {
 		const { translate, handleClickAccept, handleClickDecline } = this.props;
 		return (
-			<footer className="business-plan-upgrade-upsell-new-design__footer">
+			<footer>
 				<Button
 					data-e2e-button="decline"
 					className="business-plan-upgrade-upsell-new-design__decline-offer-button"
