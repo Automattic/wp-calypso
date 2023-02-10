@@ -96,7 +96,7 @@
 		"onboarding/import-redirect-to-themes": true,
 		"p2/p2-plus": true,
 		"pattern-assembler/client-side-render": true,
-		"pattern-assembler/logged-out-showcase": false,
+		"pattern-assembler/logged-out-showcase": true,
 		"pattern-assembler/write-flow": false,
 		"plans/personal-plan": true,
 		"plans/pro-plan": false,
