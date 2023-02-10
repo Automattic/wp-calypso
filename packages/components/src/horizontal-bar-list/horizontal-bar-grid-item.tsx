@@ -132,6 +132,7 @@ const HorizontalBarListItem = ( {
 									data={ child }
 									maxValue={ maxValue }
 									useShortLabel={ useShortLabel }
+									useShortNumber={ useShortNumber }
 									renderRightSideItem={ renderRightSideItem }
 									onClick={ ( e ) => onClick?.( e, child ) }
 									hasIndicator={ hasIndicator }

@@ -11,6 +11,8 @@ import {
 	getSiteStatsNormalizedData,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import StatsListCard from '../stats-list/stats-list-card';
+import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
 
@@ -36,39 +38,108 @@ export const StatsReach = ( props ) => {
 		0
 	);
 
+	const isInsightsPageGridEnabled = config.isEnabled( 'stats/insights-page-grid' );
+
+	let data = [];
+
+	if ( isInsightsPageGridEnabled ) {
+		const wpData = {
+			value: wpcomFollowCount,
+			label: translate( 'WordPress.com' ),
+		};
+
+		const emailData = {
+			value: emailFollowCount,
+			label: translate( 'Email' ),
+		};
+
+		const socialData = {
+			value: publicizeFollowCount,
+			label: translate( 'Social' ),
+		};
+
+		if ( ! isOdysseyStats ) {
+			wpData.actions = [
+				{
+					type: 'link',
+					data: `/people/followers/${ siteSlug }`,
+				},
+			];
+
+			emailData.actions = [
+				{
+					type: 'link',
+					data: `/people/email-followers/${ siteSlug }`,
+				},
+			];
+		}
+
+		if ( publicizeFollowCount > 0 ) {
+			socialData.children = publicizeData;
+		}
+
+		data = [ wpData, emailData, socialData ];
+
+		// sort descending
+		data.sort( ( a, b ) => b.value - a.value );
+	}
+
 	return (
-		<div className="list-total-followers">
+		<>
 			{ siteId && <QuerySiteStats siteId={ siteId } statType="statsFollowers" /> }
 			{ siteId && <QuerySiteStats siteId={ siteId } statType="statsPublicize" /> }
-			<SectionHeader label={ translate( 'Subscriber totals' ) } />
-			<Card className="stats-module stats-reach__card">
-				<StatsTabs borderless>
-					<StatsTab
-						gridicon="my-sites"
-						label={ translate( 'WordPress.com' ) }
-						loading={ isLoadingFollowData }
-						href={ ! isOdysseyStats ? `/people/followers/${ siteSlug }` : null }
-						value={ wpcomFollowCount }
-						compact
-					/>
-					<StatsTab
-						gridicon="mail"
-						label={ translate( 'Email' ) }
-						loading={ isLoadingFollowData }
-						href={ ! isOdysseyStats ? `/people/email-followers/${ siteSlug }` : null }
-						value={ emailFollowCount }
-						compact
-					/>
-					<StatsTab
-						gridicon="share"
-						label={ translate( 'Social' ) }
-						loading={ isLoadingPublicize }
-						value={ publicizeFollowCount }
-						compact
-					/>
-				</StatsTabs>
-			</Card>
-		</div>
+			{ isInsightsPageGridEnabled && (
+				<StatsListCard
+					moduleType="publicize"
+					data={ data }
+					title={ translate( 'Social subscribers' ) }
+					emptyMessage={ translate( 'No subscribers recorded' ) }
+					mainItemLabel={ translate( 'Service' ) }
+					metricLabel={ translate( 'Total subscribers' ) }
+					splitHeader
+					useShortNumber
+					// Shares don't have a summary page yet.
+					// TODO: limit to 5 items after summary page is added.
+					// showMore={ ... }
+					// TODO: add error state once it's implemented
+					loader={
+						isLoadingFollowData && <StatsModulePlaceholder isLoading={ isLoadingFollowData } />
+					}
+				/>
+			) }
+			{ ! isInsightsPageGridEnabled && (
+				<div className="list-total-followers">
+					<SectionHeader label={ translate( 'Subscriber totals' ) } />
+					<Card className="stats-module stats-reach__card">
+						<StatsTabs borderless>
+							<StatsTab
+								gridicon="my-sites"
+								label={ translate( 'WordPress.com' ) }
+								loading={ isLoadingFollowData }
+								href={ ! isOdysseyStats ? `/people/followers/${ siteSlug }` : null }
+								value={ wpcomFollowCount }
+								compact
+							/>
+							<StatsTab
+								gridicon="mail"
+								label={ translate( 'Email' ) }
+								loading={ isLoadingFollowData }
+								href={ ! isOdysseyStats ? `/people/email-followers/${ siteSlug }` : null }
+								value={ emailFollowCount }
+								compact
+							/>
+							<StatsTab
+								gridicon="share"
+								label={ translate( 'Social' ) }
+								loading={ isLoadingPublicize }
+								value={ publicizeFollowCount }
+								compact
+							/>
+						</StatsTabs>
+					</Card>
+				</div>
+			) }
+		</>
 	);
 };
 
