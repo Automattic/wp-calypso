@@ -157,6 +157,7 @@ export const getFilteredAndSortedPlugins = createSelector(
 				}, {} as PluginSites );
 		}
 
+		// Filter the plugins using the pluginFilter if it is set
 		const pluginList =
 			pluginFilter && _filters[ pluginFilter ]
 				? Object.entries( allPluginsForSites )
@@ -167,6 +168,7 @@ export const getFilteredAndSortedPlugins = createSelector(
 						}, {} as { [ pluginSlug: string ]: Plugin } )
 				: allPluginsForSites;
 
+		// Sort the plugins alphabetically by slug
 		const sortedPluginListEntries = Object.entries( pluginList ).sort(
 			( [ pluginSlugA ], [ pluginSlugB ] ) => {
 				const pluginSlugALower = pluginSlugA.toLowerCase();
