@@ -54,7 +54,7 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 
 		page.redirect( checkoutUrl );
 	}, [ siteSlug, targetECommercePlan ] );
-	
+
 	const eCommercePlanFeatureSets = useMemo( () => {
 		return getECommerceFeatureSets( { translate } );
 	}, [ translate ] );
