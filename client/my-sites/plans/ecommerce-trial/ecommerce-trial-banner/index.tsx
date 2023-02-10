@@ -1,4 +1,4 @@
-import { Button, Card } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -15,11 +15,11 @@ import DoughnutChart from '../../doughnut-chart';
 import './style.scss';
 
 interface ECommerceTrialBannerProps {
-	showButton?: boolean;
-	onClick?: () => void;
+	callToAction?: JSX.Element | null;
 }
 
 const ECommerceTrialBanner = ( props: ECommerceTrialBannerProps ) => {
+	const { callToAction } = props;
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || -1;
 
 	const { currentPlan, eCommerceTrialDaysLeft, isTrialExpired, eCommerceTrialExpiration } =
@@ -72,15 +72,7 @@ const ECommerceTrialBanner = ( props: ECommerceTrialBannerProps ) => {
 								}
 						  ) }
 				</p>
-				{ props.showButton && (
-					<Button
-						className="e-commerce-trial-current-plan__trial-card-cta"
-						primary
-						onClick={ props.onClick }
-					>
-						{ translate( 'Upgrade now' ) }
-					</Button>
-				) }
+				{ callToAction }
 			</div>
 			<div className="e-commerce-trial-banner__chart-wrapper">
 				<DoughnutChart

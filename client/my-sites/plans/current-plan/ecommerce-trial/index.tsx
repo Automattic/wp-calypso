@@ -130,12 +130,22 @@ const ECommerceTrialCurrentPlan = () => {
 		},
 	];
 
+	const bannerCallToAction = (
+		<Button
+			className="e-commerce-trial-current-plan__trial-card-cta"
+			primary
+			onClick={ gotoPlansPage }
+		>
+			{ translate( 'Upgrade now' ) }
+		</Button>
+	);
+
 	return (
 		<>
 			<BodySectionCssClass bodyClass={ [ 'is-ecommerce-trial-plan' ] } />
 
 			<div className="e-commerce-trial-current-plan__banner-wrapper">
-				<ECommerceTrialBanner showButton={ true } onClick={ gotoPlansPage } />
+				<ECommerceTrialBanner callToAction={ bannerCallToAction } />
 			</div>
 
 			<h2 className="e-commerce-trial-current-plan__section-title">
