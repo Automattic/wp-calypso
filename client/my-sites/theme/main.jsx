@@ -800,7 +800,7 @@ class ThemeSheet extends Component {
 	};
 
 	onAtomicThemeActiveFailure = ( message ) => {
-		return this.props.errorNotice( message );
+		this.props.errorNotice( message );
 	};
 
 	renderSheet = () => {
