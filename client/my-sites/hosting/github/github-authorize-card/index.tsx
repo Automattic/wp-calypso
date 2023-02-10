@@ -30,7 +30,7 @@ export const GithubAuthorizeCard = () => {
 	return (
 		<Card className="github-hosting-card">
 			<img className="github-hosting-icon" src={ iconGitHub } alt="" />
-			<CardHeading>{ translate( 'Connect GitHub' ) }</CardHeading>
+			<CardHeading id="connect-github">{ translate( 'Connect GitHub' ) }</CardHeading>
 			<p>
 				{ translate(
 					'Connect this site to a GitHub repository, choose a branch, and deploy with each push.'
