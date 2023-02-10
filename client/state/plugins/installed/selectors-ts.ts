@@ -1,6 +1,13 @@
 import { createSelector } from '@automattic/state-utils';
+import { cloneDeep } from 'lodash';
 import { isRequesting, isRequestingForAllSites } from './selectors';
-import type { InstalledPlugins, InstalledPluginData, Plugin } from './types';
+import type {
+	InstalledPlugins,
+	InstalledPluginData,
+	Plugin,
+	PluginFilter,
+	PluginSites,
+} from './types';
 import type { AppState } from 'calypso/types';
 
 import 'calypso/state/plugins/init';
@@ -65,6 +72,34 @@ export const getAllPluginsIndexedByPluginSlug = createSelector(
 	]
 ) as { ( state: AppState ): { [ pluginSlug: string ]: Plugin } };
 
+const _filters: { [ key in PluginFilter ]: ( plugin: Plugin ) => boolean } = {
+	none: function () {
+		return false;
+	},
+	all: function () {
+		return true;
+	},
+	active: function ( plugin: Plugin ) {
+		return (
+			Object.values( plugin.sites ).some( ( site ) => site.active ) ||
+			!! plugin.statusRecentlyChanged
+		);
+	},
+	inactive: function ( plugin: Plugin ) {
+		return (
+			Object.values( plugin.sites ).some( ( site ) => ! site.active ) ||
+			!! plugin.statusRecentlyChanged
+		);
+	},
+	updates: function ( plugin: Plugin ) {
+		return (
+			Object.values( plugin.sites ).some(
+				( site ) => !! site.update && ! site.update.recentlyUpdated
+			) || !! plugin.statusRecentlyChanged
+		);
+	},
+};
+
 /**
  * The plugins here differ from the plugin objects found on state.plugins.installed.plugins in that each plugin
  * object has data from all the different sites on it, whereas on state.plugins.installed.plugins they only have
@@ -95,3 +130,59 @@ export const getAllPluginsIndexedBySiteId = createSelector(
 	},
 	( state ) => [ getAllPluginsIndexedByPluginSlug( state ), getSiteIdsThatHavePlugins( state ) ]
 ) as { ( state: AppState ): { [ siteId: number ]: { [ pluginSlug: string ]: Plugin } } };
+
+export const getFilteredAndSortedPlugins = createSelector(
+	( state: AppState, siteIds: number[], pluginFilter?: PluginFilter ) => {
+		const allPluginsIndexedBySiteId = getAllPluginsIndexedBySiteId( state );
+
+		// Properties on the objects in allPluginsIndexedBySiteId will be modified and the
+		// selector memoization always returns the same object, so use cloneDeep to avoid
+		// altering it for everyone.
+		const allPluginsForSites: { [ pluginSlug: string ]: Plugin } = cloneDeep(
+			siteIds
+				.map( ( siteId: number ) => allPluginsIndexedBySiteId[ siteId ] )
+				.filter( Boolean )
+				.reduce( ( accumulator, current ) => ( { ...accumulator, ...current } ), {} )
+		);
+
+		// Filter the sites object on the plugins so that only data for the requested siteIds is present
+		for ( const pluginSlug of Object.keys( allPluginsForSites ) ) {
+			allPluginsForSites[ pluginSlug ].sites = Object.entries(
+				allPluginsForSites[ pluginSlug ].sites
+			)
+				.filter( ( [ siteId ] ) => siteIds.includes( Number( siteId ) ) )
+				.reduce( ( obj, [ siteId, site ] ) => {
+					obj[ siteId ] = site;
+					return obj;
+				}, {} as PluginSites );
+		}
+
+		const pluginList =
+			pluginFilter && _filters[ pluginFilter ]
+				? Object.entries( allPluginsForSites )
+						.filter( ( [ , plugin ] ) => _filters[ pluginFilter ]( plugin ) )
+						.reduce( ( obj, [ pluginSlug, plugin ] ) => {
+							obj[ pluginSlug ] = plugin;
+							return obj;
+						}, {} as { [ pluginSlug: string ]: Plugin } )
+				: allPluginsForSites;
+
+		const sortedPluginListEntries = Object.entries( pluginList ).sort(
+			( [ pluginSlugA ], [ pluginSlugB ] ) => {
+				const pluginSlugALower = pluginSlugA.toLowerCase();
+				const pluginSlugBLower = pluginSlugB.toLowerCase();
+				if ( pluginSlugALower < pluginSlugBLower ) {
+					return -1;
+				} else if ( pluginSlugALower > pluginSlugBLower ) {
+					return 1;
+				}
+				return 0;
+			}
+		);
+		return sortedPluginListEntries.map( ( [ , plugin ] ) => plugin );
+	},
+	( state: AppState ) => [ getAllPluginsIndexedBySiteId( state ) ],
+	( state: AppState, siteIds: number[], pluginFilter?: PluginFilter ) => {
+		return [ siteIds, pluginFilter ].flat().join( '-' );
+	}
+);
