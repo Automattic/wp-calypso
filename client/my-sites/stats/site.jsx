@@ -206,7 +206,7 @@ class StatsSite extends Component {
 		const dismissFeedbackNotice = () => {
 			this.setState( { isFeedbackNoticeDismissed: true } );
 			context.store.dispatch(
-				updateStatsNoticeStatusDirect( 'new_stats_feedback', 'new_stats_feedback' )
+				updateStatsNoticeStatusDirect( 'new_stats_feedback', 'new_stats_feedback', 'dismissed' )
 			);
 		};
 

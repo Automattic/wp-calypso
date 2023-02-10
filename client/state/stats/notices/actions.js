@@ -8,9 +8,15 @@ import 'calypso/state/data-layer/wpcom/sites/stats/notices';
  * @param {string} featureClass The feature class of the jitm to dismiss
  * @returns {Object} The dismiss action
  */
-export const updateStatsNoticeStatusDirect = ( id, featureClass, status = 'dismissed' ) => ( {
+export const updateStatsNoticeStatusDirect = (
+	id,
+	featureClass,
+	status = 'dismissed',
+	postponed_for = 0
+) => ( {
 	type: UPDATE_STATS_NOTICE_STATUS_DIRECT,
 	id,
 	featureClass,
 	status,
+	postponed_for,
 } );

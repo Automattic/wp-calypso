@@ -22,6 +22,7 @@ export const doUpdateStatsNoticeStatusDirect = ( action ) =>
 				feature_class: action.featureClass,
 				id: action.id,
 				status: action.status,
+				postponed_for: action.postponed_for,
 			},
 		},
 		action
