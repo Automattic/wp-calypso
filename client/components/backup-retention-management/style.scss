@@ -173,7 +173,9 @@
 }
 
 .backup-retention-management.retention-form__confirmation-dialog {
-	max-width: 465px;
+	&.dialog.card {
+		max-width: 465px;
+	}
 
 	h3 {
 		margin-bottom: 16px;
