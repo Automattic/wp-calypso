@@ -1,5 +1,5 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
+	is2023PricingGridEnabled,
 	getPlanClass,
 	isMonthly,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
@@ -204,7 +204,7 @@ const LoggedInPlansFeatureActionButton = ( {
 		);
 	}
 
-	const is2023OnboardingPricingGrid = isEnabled( 'onboarding/2023-pricing-grid' );
+	const is2023OnboardingPricingGrid = is2023PricingGridEnabled();
 	if ( ! availableForPurchase ) {
 		if ( is2023OnboardingPricingGrid ) {
 			return (

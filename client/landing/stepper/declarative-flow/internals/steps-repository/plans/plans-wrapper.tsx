@@ -1,6 +1,5 @@
 // import { subscribeIsDesktop } from '@automattic/viewport';
-import { isEnabled } from '@automattic/calypso-config';
-import { getPlan, PLAN_FREE } from '@automattic/calypso-products';
+import { getPlan, PLAN_FREE, is2023PricingGridEnabled } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
 import { NEWSLETTER_FLOW } from '@automattic/onboarding';
@@ -160,7 +159,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					{ components: { link: freePlanButton } }
 			  );
 	};
-	const is2023OnboardingPricingGrid = isEnabled( 'onboarding/2023-pricing-grid' );
+	const is2023OnboardingPricingGrid = is2023PricingGridEnabled();
 
 	const plansFeaturesSelection = () => {
 		const { flowName } = props;

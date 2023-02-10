@@ -218,6 +218,7 @@ import {
 	FEATURE_PREMIUM_CONTENT_JP,
 	FEATURE_SITE_ACTIVITY_LOG_JP,
 	FEATURE_GLOBAL_EDGE_CACHING,
+	is2023PricingGridEnabled,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n, { TranslateResult } from 'i18n-calypso';
@@ -229,7 +230,7 @@ import ExternalLinkWithTracking from 'calypso/components/external-link/with-trac
 import MaterialIcon from 'calypso/components/material-icon';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'calypso/lib/url/support';
 
-const is2023OnboardingPricingGrid = isEnabled( 'onboarding/2023-pricing-grid' );
+const is2023OnboardingPricingGrid = is2023PricingGridEnabled();
 
 export type FeatureObject = {
 	getSlug: () => string;
