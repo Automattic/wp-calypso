@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { eye } from '@automattic/components/src/icons';
-import NoticeBanner from '@automattic/components/src/notice-banner';
 import { Icon, people, starEmpty, commentContent } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
@@ -36,9 +35,6 @@ import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-ro
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import hasNewStatsFeedbackNotice from 'calypso/state/sites/selectors/has-new-stats-feedback-notice';
-import hasOptOutNewStatsNotice from 'calypso/state/sites/selectors/has-opt-out-new-stats-notice';
-import { updateStatsNoticeStatusDirect } from 'calypso/state/stats/notices/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HighlightsSection from './highlights-section';
 import MiniCarousel from './mini-carousel';
@@ -47,6 +43,7 @@ import ChartTabs from './stats-chart-tabs';
 import Countries from './stats-countries';
 import DatePicker from './stats-date-picker';
 import StatsModule from './stats-module';
+import StatsNotices from './stats-notices';
 import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
 import statsStrings from './stats-strings';
@@ -122,8 +119,6 @@ class StatsSite extends Component {
 	state = {
 		activeTab: null,
 		activeLegend: null,
-		isOptOutNoticeDismissed: false,
-		isFeedbackNoticeDismissed: false,
 	};
 
 	static getDerivedStateFromProps( props, state ) {
@@ -164,17 +159,7 @@ class StatsSite extends Component {
 	};
 
 	renderStats() {
-		const {
-			date,
-			siteId,
-			slug,
-			isJetpack,
-			isSitePrivate,
-			isOdysseyStats,
-			context,
-			showOptOutNotice,
-			showFeedbackNotice,
-		} = this.props;
+		const { date, siteId, slug, isJetpack, isSitePrivate, isOdysseyStats, context } = this.props;
 
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
@@ -195,31 +180,6 @@ class StatsSite extends Component {
 		const wrapperClass = classNames( 'stats-content', {
 			'is-period-year': period === 'year',
 		} );
-
-		const dismissOptOutNotice = () => {
-			this.setState( { isOptOutNoticeDismissed: true } );
-			context.store.dispatch(
-				updateStatsNoticeStatusDirect( 'opt_out_new_stats', 'opt_out_new_stats' )
-			);
-		};
-
-		const updateNewStatsFeedBackStats =
-			( status, url = null, postponed_for = 0 ) =>
-			() => {
-				this.setState( { isFeedbackNoticeDismissed: true } );
-				context.store.dispatch(
-					updateStatsNoticeStatusDirect(
-						'new_stats_feedback',
-						'new_stats_feedback',
-						status,
-						postponed_for
-					)
-				);
-				if ( url ) {
-					// Leave some time for the notice to be dismissed.
-					setTimeout( () => ( window.location.href = url ), 500 );
-				}
-			};
 
 		return (
 			<div className="stats">
@@ -257,66 +217,7 @@ class StatsSite extends Component {
 					slug={ slug }
 				/>
 
-				{ isOdysseyStats && showOptOutNotice && ! this.state.isOptOutNoticeDismissed && (
-					<div className="inner-notice-container has-background-color">
-						<NoticeBanner
-							level="success"
-							title={ translate( 'Welcome to the new Jetpack Stats!' ) }
-							onClose={ dismissOptOutNotice }
-						>
-							{ translate(
-								'{{p}}Enjoy a more modern and mobile friendly experience with new stats and insights to help you grow your site.{{/p}}{{p}}If you prefer to continue using the traditional stats, {{manageYourSettingsLink}}manage your settings{{/manageYourSettingsLink}}.{{/p}}',
-								{
-									components: {
-										p: <p />,
-										manageYourSettingsLink: (
-											<a href="/wp-admin/admin.php?page=jetpack#/settings?term=stats" />
-										),
-									},
-								}
-							) }
-						</NoticeBanner>
-					</div>
-				) }
-				{ isOdysseyStats && showFeedbackNotice && ! this.state.isFeedbackNoticeDismissed && (
-					<div className="inner-notice-container has-background-color">
-						<NoticeBanner
-							level="info"
-							title={ translate( "We'd love to hear your thoughts on the new Stats" ) }
-							onClose={ updateNewStatsFeedBackStats( 'dismissed' ) }
-						>
-							{ translate(
-								"{{p}}Now that you've gotten familiar with the new Jetpack Stats, we'd love to hear about your experience so we can continue to shape Jetpack to meet your needs.{{/p}}{{p}}{{takeSurveyButton}}Take quick survey{{/takeSurveyButton}} {{remindMeLaterLink}}Remind me later{{/remindMeLaterLink}}{{/p}}",
-								{
-									components: {
-										p: <p />,
-										// todo update link to a Jetpack redirect in the banner with an appropriate slug, like jetpack-stats-2023-usage-survey
-										takeSurveyButton: (
-											<button
-												type="button"
-												className="notice-banner__action-button"
-												onClick={ updateNewStatsFeedBackStats(
-													'dismissed',
-													'https://jetpack.com/redirect?source=new-jetpack-stats-usage-survey'
-												) }
-											/>
-										),
-										remindMeLaterLink: (
-											<button
-												className="notice-banner__action-link"
-												onClick={ updateNewStatsFeedBackStats(
-													'postponed',
-													null,
-													30 * 24 * 86400
-												) }
-											/>
-										),
-									},
-								}
-							) }
-						</NoticeBanner>
-					</div>
-				) }
+				{ isOdysseyStats && <StatsNotices siteId={ siteId } /> }
 
 				<HighlightsSection siteId={ siteId } />
 
@@ -548,8 +449,6 @@ export default connect(
 			showEnableStatsModule,
 			path: getCurrentRouteParameterized( state, siteId ),
 			isOdysseyStats,
-			showOptOutNotice: hasOptOutNewStatsNotice( state, siteId ),
-			showFeedbackNotice: hasNewStatsFeedbackNotice( state, siteId ),
 		};
 	},
 	{ recordGoogleEvent, enableJetpackStatsModule, recordTracksEvent }

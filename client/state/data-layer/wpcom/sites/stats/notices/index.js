@@ -19,7 +19,6 @@ export const doUpdateStatsNoticeStatusDirect = ( action ) =>
 			method: 'POST',
 			path: '/stats/notices',
 			body: {
-				feature_class: action.featureClass,
 				id: action.id,
 				status: action.status,
 				postponed_for: action.postponed_for,

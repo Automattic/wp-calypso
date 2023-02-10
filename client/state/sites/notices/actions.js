@@ -9,14 +9,16 @@ import 'calypso/state/data-layer/wpcom/sites/stats/notices';
  * @returns {Object} The dismiss action
  */
 export const updateStatsNoticeStatusDirect = (
+	siteId,
 	id,
-	featureClass,
 	status = 'dismissed',
 	postponed_for = 0
-) => ( {
-	type: UPDATE_STATS_NOTICE_STATUS_DIRECT,
-	id,
-	featureClass,
-	status,
-	postponed_for,
-} );
+) => {
+	return {
+		type: UPDATE_STATS_NOTICE_STATUS_DIRECT,
+		siteId,
+		id,
+		status,
+		postponed_for,
+	};
+};
