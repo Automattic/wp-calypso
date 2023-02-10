@@ -228,15 +228,15 @@ class StatsEmailDetail extends Component {
 					) }
 					{ post ? (
 						<>
+							<StatsDetailsNavigation
+								postId={ postId }
+								period={ period }
+								statType={ statType }
+								givenSiteId={ givenSiteId }
+							/>
+
 							<div className="main-container">
 								<h1>{ this.getTitle( statType ) }</h1>
-
-								<StatsDetailsNavigation
-									postId={ postId }
-									period={ period }
-									statType={ statType }
-									givenSiteId={ givenSiteId }
-								/>
 
 								<StatsEmailTopRow siteId={ siteId } postId={ postId } statType={ statType } />
 

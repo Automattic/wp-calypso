@@ -10,7 +10,17 @@ $break-large-stats-countries: 1280px;
 	}
 
 	.main-container {
-		padding: 32px 0;
+		padding: 0;
+
+		@media ( max-width: $break-medium ) {
+			padding: 0 0.875rem;
+
+			.stats-email-open-top-row {
+				.highlight-cards-list {
+					padding: 4px;
+				}
+			}
+		}
 	}
 
 	.no-data {

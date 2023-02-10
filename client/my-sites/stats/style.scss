@@ -39,18 +39,26 @@
 
 // Compensate for the fixed header.
 .is-section-stats .has-fixed-nav {
-	padding-top: 44px;
+	padding-top: 0;
 
 	&.stats__email-detail {
-		padding: 44px 20px;
+		padding: 32px;
 	}
 
 	@media ( max-width: 782px ) {
-		padding-top: 65px;
+		padding: 0;
+
+		&.stats__email-detail {
+			padding: 32px 0;
+		}
 	}
 
 	@media ( max-width: 660px ) {
-		padding-top: 60px;
+		padding: 0;
+
+		&.stats__email-detail {
+			padding-left: 32px 0;
+		}
 	}
 }
 

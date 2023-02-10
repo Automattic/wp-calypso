@@ -74,11 +74,11 @@ export default function PostDetailHighlightsSection( {
 			) }
 
 			<div className="highlight-cards">
-				<h1 className="highlight-cards-heading">{ translate( 'Highlights' ) }</h1>
-
 				{ config.isEnabled( 'newsletter/stats' ) && (
 					<StatsDetailsNavigation postId={ postId } givenSiteId={ siteId } />
 				) }
+
+				<h1 className="highlight-cards-heading">{ translate( 'Highlights' ) }</h1>
 
 				<div className="highlight-cards-list">
 					<PostStatsCard
