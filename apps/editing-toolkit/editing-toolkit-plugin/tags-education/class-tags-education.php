@@ -31,7 +31,7 @@ class Tags_Education {
 	 * @return \A8C\FSE\Tags_Education
 	 */
 	public static function init() {
-		if ( is_null( self::$instance ) ) {
+		if ( self::$instance === null ) {
 			self::$instance = new self();
 		}
 		return self::$instance;

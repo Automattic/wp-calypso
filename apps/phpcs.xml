@@ -11,6 +11,15 @@
 	<ini name="error_reporting" value="E_ALL &#38; ~E_DEPRECATED" />
 
 	<rule ref="Jetpack"/>
+
+	<rule ref="Jetpack.Functions.I18n">
+		<!-- Newspack and ETK is synced from another repo and uses "newspack-blocks" text_domain -->
+		<exclude-pattern>editing-toolkit/editing-toolkit-plugin/newspack-blocks/synced-newspack-blocks</exclude-pattern>
+		<properties>
+			<property name="text_domain" value="full-site-editing" />
+		</properties>
+	</rule>
+
 	<rule ref="WordPress.Utils.I18nTextDomainFixer">
 		<properties>
 			<property name="old_text_domain" type="array">
@@ -37,7 +46,13 @@
 		ignore style rules not tracked upstream. (We should not ignore rules
 		which catch actual errors.)
 	-->
+	<rule ref="Squiz.Commenting.FunctionComment.MissingParamTag" >
+		<exclude-pattern>editing-toolkit/editing-toolkit-plugin/newspack-blocks/synced-newspack-blocks</exclude-pattern>
+	</rule>
 	<rule ref="VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable" >
+		<exclude-pattern>editing-toolkit/editing-toolkit-plugin/newspack-blocks/synced-newspack-blocks</exclude-pattern>
+	</rule>
+	<rule ref="VariableAnalysis.CodeAnalysis.VariableAnalysis.UndefinedVariable" >
 		<exclude-pattern>editing-toolkit/editing-toolkit-plugin/newspack-blocks/synced-newspack-blocks</exclude-pattern>
 	</rule>
 
