@@ -102,16 +102,22 @@
 		}
 
 		.button.is-primary {
-			background-color: #ffe61c;
+			background: #ffe61c;
 			color: #000;
-		}
-
-		.intro__button-more {
-			border-color: transparent;
+			transition: box-shadow 0.4s ease-in-out;
 
 			&:hover {
-				color: #fff !important;
-				border-color: #fff !important;
+				box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) inset, 0 2px 24px rgba(255, 230, 28, 0.3), 0 0 8px rgba(255, 230, 28, 0.18), 0 0 4px rgba(255, 230, 28, 0.15), 0 0 2.5px rgba(255, 230, 28, 0.12), 0 0 4px rgba(255, 230, 28, 0.1), 0 0 2px rgba(0, 0, 0, 0.8);
+			}
+		}
+
+		.button.intro__button-more {
+			border-color: rgba(255, 255, 255, 0.5);
+			transition: border 0.2s ease-in-out;
+
+			&:hover {
+				color: #fff;
+				border-color: #fff;
 			}
 		}
 	}
