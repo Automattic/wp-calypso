@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -7,6 +8,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import SectionHeader from 'calypso/components/section-header';
+import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
@@ -16,6 +18,7 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import StatsErrorPanel from '../stats-error';
+import StatsListCard from '../stats-list/stats-list-card';
 import StatsModuleContent from '../stats-module/content-text';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsModuleSelectDropdown from '../stats-module/select-dropdown';
@@ -106,13 +109,24 @@ class StatsComments extends Component {
 			requestingCommentsStats,
 			siteId,
 			translate,
+			isInsightsPageGridEnabled,
 		} = this.props;
 		const commentsAuthors = get( commentsStatsData, 'authors' );
 		const commentsPosts = get( commentsStatsData, 'posts' );
 		const noData = ! commentsAuthors;
 		const selectOptions = [
-			{ value: 'top-authors', label: translate( 'Comments by authors' ) },
-			{ value: 'top-content', label: translate( 'Comments by posts & pages' ) },
+			{
+				value: 'top-authors',
+				label: ! isInsightsPageGridEnabled
+					? translate( 'Comments by authors' )
+					: translate( 'By authors' ),
+			},
+			{
+				value: 'top-content',
+				label: ! isInsightsPageGridEnabled
+					? translate( 'Comments by posts & pages' )
+					: translate( 'By posts & pages' ),
+			},
 		];
 
 		const classes = classNames( 'stats-module', {
@@ -121,49 +135,96 @@ class StatsComments extends Component {
 			'is-showing-error': hasError || noData,
 		} );
 
+		const isLoading = requestingCommentsStats && ! commentsAuthors;
+		let data = this.state.activeFilter === 'top-authors' ? commentsAuthors : commentsPosts;
+
+		data = data?.map( ( item ) => ( { ...item, value: parseInt( item.value, 10 ) } ) );
+
 		return (
-			<div className="list-comments">
+			<>
 				{ siteId && <QuerySiteStats statType="statsComments" siteId={ siteId } /> }
 				{ siteId && (
 					<QuerySiteStats statType="statsCommentFollowers" siteId={ siteId } query={ { max: 7 } } />
 				) }
-				<SectionHeader label={ translate( 'Comments' ) } />
-				<Card className={ classes }>
-					<div className="module-content">
-						{ noData && ! hasError && ! requestingCommentsStats && (
-							<StatsErrorPanel
-								className="is-empty-message"
-								message={ translate( 'No comments posted' ) }
+				{ isInsightsPageGridEnabled && (
+					<StatsListCard
+						moduleType="comments"
+						data={ data }
+						title={ translate( 'Comments' ) }
+						emptyMessage={ translate( 'No comments posted' ) }
+						mainItemLabel={ translate( 'Author' ) }
+						metricLabel={ translate( 'Comments' ) }
+						splitHeader
+						useShortNumber
+						// Shares don't have a summary page yet.
+						// TODO: limit to 5 items after summary page is added.
+						// showMore={ ... }
+						error={
+							noData &&
+							! hasError &&
+							! requestingCommentsStats && (
+								<StatsErrorPanel
+									className="is-empty-message"
+									message={ translate( 'No comments posted' ) }
+								/>
+							)
+						}
+						loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
+						toggleControl={
+							<SimplifiedSegmentedControl
+								options={ selectOptions }
+								onSelect={ this.changeFilter }
 							/>
-						) }
+						}
+						className="stats__modernised-comments"
+					/>
+				) }
+				{ ! isInsightsPageGridEnabled && (
+					<div className="list-comments">
+						<SectionHeader label={ translate( 'Comments' ) } />
+						<Card className={ classes }>
+							<div className="module-content">
+								{ noData && ! hasError && ! requestingCommentsStats && (
+									<StatsErrorPanel
+										className="is-empty-message"
+										message={ translate( 'No comments posted' ) }
+									/>
+								) }
 
-						<StatsModuleSelectDropdown options={ selectOptions } onSelect={ this.changeFilter } />
+								<StatsModuleSelectDropdown
+									options={ selectOptions }
+									onSelect={ this.changeFilter }
+								/>
 
-						{ this.renderCommentFollowers() }
+								{ this.renderCommentFollowers() }
 
-						{ hasError ? <StatsErrorPanel className="network-error" /> : null }
+								{ hasError ? <StatsErrorPanel className="network-error" /> : null }
 
-						<CommentTab
-							name="Top Commenters"
-							value={ translate( 'Comments' ) }
-							label={ translate( 'Author' ) }
-							data={ commentsAuthors }
-							isActive={ 'top-authors' === activeFilter }
-						/>
+								<CommentTab
+									name="Top Commenters"
+									value={ translate( 'Comments' ) }
+									label={ translate( 'Author' ) }
+									data={ commentsAuthors }
+									isActive={ 'top-authors' === activeFilter }
+								/>
 
-						<CommentTab
-							name="Most Commented"
-							value={ translate( 'Comments' ) }
-							label={ translate( 'Title' ) }
-							data={ commentsPosts }
-							isActive={ 'top-content' === activeFilter }
-						/>
+								<CommentTab
+									name="Most Commented"
+									value={ translate( 'Comments' ) }
+									label={ translate( 'Title' ) }
+									data={ commentsPosts }
+									isActive={ 'top-content' === activeFilter }
+								/>
 
-						{ this.renderSummary() }
-						<StatsModulePlaceholder isLoading={ requestingCommentsStats && ! commentsAuthors } />
+								{ this.renderSummary() }
+								<StatsModulePlaceholder
+									isLoading={ requestingCommentsStats && ! commentsAuthors }
+								/>
+							</div>
+						</Card>
 					</div>
-				</Card>
-			</div>
+				) }
+			</>
 		);
 	}
 }
@@ -183,6 +244,7 @@ const connectComponent = connect(
 			requestingCommentsStats: isRequestingSiteStatsForQuery( state, siteId, 'statsComments', {} ),
 			siteId,
 			siteSlug,
+			isInsightsPageGridEnabled: config.isEnabled( 'stats/insights-page-grid' ),
 		};
 	},
 	{ recordGoogleEvent }
