@@ -731,12 +731,10 @@
 	clear: both;
 	display: flex;
 	flex-direction: column;
-	margin-left: 16px;
 	margin-top: 6px;
 
 	@include breakpoint-deprecated(">660px") {
 		padding: 12px 0 4px 0;
-		margin-left: 52px;
 	}
 
 	.blogging-prompt__menu {
