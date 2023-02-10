@@ -64,6 +64,7 @@ FormattedHeader.propTypes = {
 	isSecondary: PropTypes.bool,
 	align: PropTypes.oneOf( [ 'center', 'left', 'right' ] ),
 	hasScreenOptions: PropTypes.bool,
+	children: PropTypes.node,
 };
 
 FormattedHeader.defaultProps = {
