@@ -4,6 +4,18 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
+import bestInClassHosting from 'calypso/assets/images/plans/wpcom/ecommerce-trial/best-in-class-hosting.svg';
+import connect from 'calypso/assets/images/plans/wpcom/ecommerce-trial/connect.png';
+import googleAnalytics from 'calypso/assets/images/plans/wpcom/ecommerce-trial/google-analytics.svg';
+import launch from 'calypso/assets/images/plans/wpcom/ecommerce-trial/launch.png';
+import premiumThemes from 'calypso/assets/images/plans/wpcom/ecommerce-trial/premium-themes.svg';
+import prioritySupport from 'calypso/assets/images/plans/wpcom/ecommerce-trial/priority-support.svg';
+import promote from 'calypso/assets/images/plans/wpcom/ecommerce-trial/promote.png';
+import securityPerformance from 'calypso/assets/images/plans/wpcom/ecommerce-trial/security-performance.svg';
+import seoTools from 'calypso/assets/images/plans/wpcom/ecommerce-trial/seo-tools.svg';
+import shipping from 'calypso/assets/images/plans/wpcom/ecommerce-trial/shipping2.png';
+import simpleCustomization from 'calypso/assets/images/plans/wpcom/ecommerce-trial/simple-customization.svg';
+import unlimitedProducts from 'calypso/assets/images/plans/wpcom/ecommerce-trial/unlimited-products.svg';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ECommerceTrialBanner from '../../ecommerce-trial/ecommerce-trial-banner';
@@ -36,14 +48,14 @@ const ECommerceTrialCurrentPlan = () => {
 		{
 			title: translate( 'Priority support' ),
 			text: translate( 'Need help? Reach out to us anytime, anywhere.' ),
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/priority-support.svg',
+			illustration: prioritySupport,
 			showButton: true,
 			buttonText: translate( 'Ask a question' ),
 		},
 		{
 			title: translate( 'Premium themes' ),
 			text: translate( 'Choose from a wide selection of beautifully designed themes.' ),
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/premium-themes.svg',
+			illustration: premiumThemes,
 			showButton: true,
 			buttonText: translate( 'Browse premium themes' ),
 		},
@@ -52,7 +64,7 @@ const ECommerceTrialCurrentPlan = () => {
 			text: translate(
 				"Change your store's look and feel, update your cart and checkout pages, and more."
 			),
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/advanced-customization.svg',
+			illustration: simpleCustomization,
 			showButton: true,
 			buttonText: translate( 'Design your store' ),
 		},
@@ -61,14 +73,14 @@ const ECommerceTrialCurrentPlan = () => {
 			text: translate(
 				"Create as many products or services as you'd like, including subscriptions."
 			),
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/unlimited-products.svg',
+			illustration: unlimitedProducts,
 			showButton: true,
 			buttonText: translate( 'Add a product' ),
 		},
 		{
 			title: translate( 'Security & performance' ),
 			text: translate( 'Get auto real-time backups, malware scans, and spam protection.' ),
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/jetpack-features.svg',
+			illustration: securityPerformance,
 			showButton: true,
 			buttonText: translate( 'Keep your store safe' ),
 		},
@@ -77,21 +89,21 @@ const ECommerceTrialCurrentPlan = () => {
 			text: translate(
 				'Boost traffic with tools that make your content more findable on search engines.'
 			),
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/seo-tools.svg',
+			illustration: seoTools,
 			showButton: true,
 			buttonText: translate( 'Increase visibility' ),
 		},
 		{
 			title: translate( 'Google Analytics' ),
 			text: translate( "See where your visitors come from and what they're doing on your store." ),
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/google-analytics.svg',
+			illustration: googleAnalytics,
 			showButton: true,
 			buttonText: translate( 'Connect Google Analytics' ),
 		},
 		{
 			title: translate( 'Best-in-class hosting' ),
 			text: translate( 'We take care of hosting your store so you can focus on selling.' ),
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/best-in-class-hosting.svg',
+			illustration: bestInClassHosting,
 			showButton: false,
 		},
 	];
@@ -105,28 +117,28 @@ const ECommerceTrialCurrentPlan = () => {
 		{
 			title: translate( 'Launch your store to the world' ),
 			text: translate( 'Once you upgrade, you can publish your store and start taking orders.' ),
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/launch.png',
+			illustration: launch,
 		},
 		{
 			title: translate( 'Promote your products' ),
 			text: translate(
 				'Advertise and sell on popular marketplaces and social media platforms using your product catalog.'
 			),
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/promote.png',
+			illustration: promote,
 		},
 		{
 			title: translate( 'Connect with your customers' ),
 			text: translate(
 				'Get access to email features that let you communicate with your customers and prospects.'
 			),
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/email.png',
+			illustration: connect,
 		},
 		{
 			title: translate( 'Integrate top shipping carriers' ),
 			text: translate(
 				'Customize your shipping rates, print labels right from your store, and more.'
 			),
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/shipping.png',
+			illustration: shipping,
 		},
 	];
 
