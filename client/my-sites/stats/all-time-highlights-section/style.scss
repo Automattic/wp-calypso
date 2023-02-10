@@ -49,19 +49,24 @@ $mobile-layout-breakpoint: $break-small;
 		&:not(:first-child) {
 			margin-top: 24px;
 		}
+	}
 
-		.highlight-card {
-			padding: 24px;
-			min-width: 320px;
+	.highlight-card {
+		padding: 24px;
+		min-width: 320px;
+	}
+
+	.post-stats-card {
+		flex: 1;
+		max-height: unset;
+		grid-template-columns: minmax(10px, 550px) minmax(0, auto);
+
+		&:not(:first-child) {
+			margin-left: 24px;
 		}
 
-		.post-stats-card {
-			flex: 1;
-			max-height: unset;
-
-			&:not(:first-child) {
-				margin-left: 24px;
-			}
+		.post-stats-card__thumbnail {
+			margin-left: auto;
 		}
 	}
 
