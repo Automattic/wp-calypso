@@ -1,4 +1,4 @@
-import type { HelpCenterSite } from '@automattic/data-stores';
+import type { HelpCenterSite, AnalysisReport } from '@automattic/data-stores';
 import type { ReactElement } from 'react';
 
 export interface Container {
@@ -16,8 +16,10 @@ export interface Header {
 }
 
 export interface SitePicker {
+	ownershipResult: AnalysisReport;
+	setSitePickerChoice: any;
+	sitePickerChoice: string;
 	currentSite: HelpCenterSite | undefined;
-	onSelect: ( siteId: number | string ) => void;
 	siteId: string | number | null | undefined;
 	enabled: boolean;
 }
@@ -59,3 +61,5 @@ export interface SupportTicket {
 	url: string;
 	when: string;
 }
+
+export type Mode = 'CHAT' | 'EMAIL' | 'FORUM';
