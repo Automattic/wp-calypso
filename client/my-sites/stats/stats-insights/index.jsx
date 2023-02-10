@@ -97,7 +97,7 @@ const StatsInsights = ( props ) => {
 					<div className="stats-insights__nonperiodic has-recent">
 						<div className={ statsModuleListClass }>
 							<div className="stats__module-column">
-								<LatestPostSummary />
+								{ ! isLatestPostReplaced && <LatestPostSummary /> }
 
 								<StatsModule
 									path="tags-categories"
