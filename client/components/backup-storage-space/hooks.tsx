@@ -149,7 +149,8 @@ export const useStorageText = ( storageInBytes: number ): TranslateResult | stri
 
 					return translate( '%(storageInBytes).1fTB', {
 						args: { storageInBytes: unitAmount },
-						comment: 'Must use unit abbreviation; describes an storage amounts (e.g., 1.5TB)',
+						comment:
+							'Must use unit abbreviation; describes an storage amounts with 1 decimal point (e.g., 1.5TB)',
 					} );
 			}
 		}
