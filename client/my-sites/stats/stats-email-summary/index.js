@@ -79,7 +79,7 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 					moduleStrings={ { ...StatsStrings.emails, title: '' } }
 					period={ period }
 					query={ query }
-					statType="statsEmailsSummary"
+					statType="statsEmailsSummaryByOpens"
 					mainItemLabel={ translate( 'Latest Emails' ) }
 					hideSummaryLink
 					metricLabel={ translate( 'Clicks' ) }

@@ -379,8 +379,8 @@ class StatsSite extends Component {
 									query={ query }
 									statType="statsEmailsSummary"
 									mainItemLabel={ translate( 'Latest Emails' ) }
-									hideSummaryLink
 									metricLabel={ translate( 'Clicks' ) }
+									showSummaryLink
 								/>
 							</>
 						) }
