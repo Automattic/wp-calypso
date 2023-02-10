@@ -326,11 +326,6 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 			<Modal
 				title="" // We're providing the title with the `aria.labelledby` prop
 				className="page-pattern-modal"
-				// @ts-expect-error `onRequestClose`'s type is () => void but ideally but
-				// in reality, it might receive an event object that might be one of multiple
-				// types (see the `CloseModalEvent` type above for more info). We ignore the
-				// error for now until the type is updated in DefinitelyTyped.
-				// DT PR: https://github.com/DefinitelyTyped/DefinitelyTyped/pull/60127.
 				onRequestClose={ this.closeModal }
 				aria={ {
 					labelledby: `page-pattern-modal__heading-${ instanceId }`,
