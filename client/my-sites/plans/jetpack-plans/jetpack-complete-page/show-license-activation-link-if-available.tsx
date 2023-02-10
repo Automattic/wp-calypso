@@ -16,7 +16,7 @@ interface Props {
 	siteId: number | null;
 }
 
-function MaybeShowLicenseActivationLink( { siteId }: Props ) {
+function ShowLicenseActivationLinkIfAvailable( { siteId }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
@@ -48,9 +48,9 @@ function MaybeShowLicenseActivationLink( { siteId }: Props ) {
 
 	if ( StillLoadinglicensesCounts && ! userLicensesCounts ) {
 		return (
-			<div className="maybe-show-license-activation-link__container">
+			<div className="show-license-activation-link-if-available__container">
 				<div
-					className={ classNames( 'maybe-show-license-activation-link', {
+					className={ classNames( 'show-license-activation-link-if-available', {
 						'is-placeholder': StillLoadinglicensesCounts,
 					} ) }
 				>
@@ -66,8 +66,8 @@ function MaybeShowLicenseActivationLink( { siteId }: Props ) {
 
 	if ( siteId && hasDetachedLicenses ) {
 		return (
-			<div className="maybe-show-license-activation-link__container">
-				<div className="maybe-show-license-activation-link">
+			<div className="show-license-activation-link-if-available__container">
+				<div className="show-license-activation-link-if-available">
 					{ isMobile ? (
 						<a href={ jetpackDashboardUrl } onClick={ onLinkClick }>
 							{ translate( 'Activate license' ) }
@@ -90,4 +90,4 @@ function MaybeShowLicenseActivationLink( { siteId }: Props ) {
 	return null;
 }
 
-export default MaybeShowLicenseActivationLink;
+export default ShowLicenseActivationLinkIfAvailable;

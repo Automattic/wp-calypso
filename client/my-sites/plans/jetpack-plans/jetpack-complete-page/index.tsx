@@ -12,7 +12,7 @@ import { JPC_PATH_PLANS } from 'calypso/jetpack-connect/constants';
 import { successNotice } from 'calypso/state/notices/actions';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import { QueryArgs, Duration } from '../types';
-import MaybeShowLicenseActivationLink from './maybe-show-license-activation-link';
+import ShowLicenseActivationLinkIfAvailable from './show-license-activation-link-if-available';
 
 import './style.scss';
 
@@ -45,7 +45,7 @@ const JetpackCompletePage: React.FC< Props > = ( {
 		<>
 			<QueryJetpackUserLicensesCounts />
 			<Main className="jetpack-complete-page__main" wideLayout>
-				<MaybeShowLicenseActivationLink siteId={ siteId } />
+				<ShowLicenseActivationLinkIfAvailable siteId={ siteId } />
 				<JetpackRnaDialogCard
 					cardImage={ rnaImageComplete }
 					cardImage2xRetina={ rnaImageComplete2xRetina }
