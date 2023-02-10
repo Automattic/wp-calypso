@@ -33,7 +33,13 @@ const SyncActiveTheme = ( {
 
 	useEffect( () => {
 		if ( exceededMaxAttempts ) {
-			dispatch( recordTracksEvent( 'calypso_sync_active_theme_exceeded_max_attempts' ) );
+			dispatch(
+				recordTracksEvent( 'calypso_sync_active_theme_exceeded_max_attempts', {
+					delay,
+					max_attempts: maxAttempts,
+					theme: themeId,
+				} )
+			);
 			return onFailure?.(
 				translate( 'Failed to check the theme activation status, please try again.' )
 			);
