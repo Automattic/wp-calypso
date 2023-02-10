@@ -418,9 +418,9 @@ export class JetpackAuthorize extends Component {
 		return startsWith( from, 'jetpack-partner-coupon' );
 	}
 
-	isFromJetpackMigration( props = this.props ) {
+	isFromMigrationPlugin( props = this.props ) {
 		const { from } = props.authQuery;
-		return startsWith( from, 'jetpack-migration' );
+		return startsWith( from, 'wpcom-migration' );
 	}
 
 	shouldRedirectJetpackStart( props = this.props ) {
