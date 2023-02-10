@@ -211,6 +211,7 @@ class StatsEmailDetail extends Component {
 					/>
 
 					<FixedNavigationHeader
+						className="stats__email-detail-header"
 						navigationItems={ this.getNavigationItemsWithTitle( this.getTitle( statType ) ) }
 					></FixedNavigationHeader>
 

@@ -152,6 +152,7 @@ class StatsPostDetail extends Component {
 
 				<div className="stats has-fixed-nav">
 					<FixedNavigationHeader
+						className="stats__post-detail-header"
 						navigationItems={ this.getNavigationItemsWithTitle( this.getTitle() ) }
 					>
 						{ showViewLink && (

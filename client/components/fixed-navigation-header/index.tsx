@@ -32,6 +32,11 @@ const Header = styled.header`
 			padding: 0 16px;
 		}
 	}
+
+	&.stats__post-detail-header,
+	&.stats__email-detail-header {
+		border-bottom: 0;
+	}
 `;
 
 const Container = styled.div`
