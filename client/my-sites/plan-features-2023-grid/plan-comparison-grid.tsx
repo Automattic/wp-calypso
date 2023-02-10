@@ -32,16 +32,11 @@ import { usePricingBreakpoint } from './util';
 
 function DropdownIcon() {
 	return (
-		<svg
-			xmlns="http://www.w3.org/2000/svg"
-			width="15"
-			height="15"
-			fill="#0675C4"
-			viewBox="0 -1 8 8"
-		>
+		<svg xmlns="http://www.w3.org/2000/svg" width="26" height="24" fill="none" viewBox="0 0 26 24">
 			<path
+				fill="#0675C4"
 				fillRule="evenodd"
-				d="M7.99 1.889L4.002 5.307.014 1.89.99.75l3.012 2.582L7.014.75l.976 1.139z"
+				d="M18 10.5L13 15l-5-4.5L9.224 9 13 12.399 16.776 9 18 10.5z"
 				clipRule="evenodd"
 			></path>
 		</svg>
