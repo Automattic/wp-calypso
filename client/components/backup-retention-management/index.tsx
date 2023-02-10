@@ -1,5 +1,4 @@
-import { Button, Card, Dialog } from '@automattic/components';
-import { Spinner } from '@wordpress/components';
+import { Button, Card, Dialog, Spinner } from '@automattic/components';
 import { useEffect, useState, useCallback } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
@@ -115,24 +114,30 @@ const BackupRetentionManagement: FunctionComponent = () => {
 	const disableFormSubmission =
 		! retentionSelected ||
 		retentionSelected === currentRetentionPlan ||
-		retentionOptionsCards[ retentionSelected ].upgradeRequired;
+		retentionOptionsCards[ retentionSelected ].upgradeRequired ||
+		updateRetentionRequestStatus === BACKUP_RETENTION_UPDATE_REQUEST.PENDING;
 
 	const [ confirmationDialogVisible, setConfirmationDialogVisible ] = useState( false );
 	const onConfirmationClose = useCallback( () => {
 		setConfirmationDialogVisible( false );
 	}, [] );
 
+	const updateRetentionPeriod = useCallback( () => {
+		dispatch( updateBackupRetention( siteId, retentionSelected as RetentionPeriod ) );
+	}, [ dispatch, retentionSelected, siteId ] );
+
 	const handleUpdateRetention = useCallback( () => {
 		if ( ! retentionSelected ) {
 			return;
 		}
 
-		setConfirmationDialogVisible( true );
-	}, [ retentionSelected ] );
-
-	const onUpdateConfirmation = useCallback( () => {
-		dispatch( updateBackupRetention( siteId, retentionSelected as RetentionPeriod ) );
-	}, [ dispatch, retentionSelected, siteId ] );
+		// Show confirmation dialog if updating retention period to a lower value, otherwise update immediately
+		if ( retentionSelected < currentRetentionPlan ) {
+			setConfirmationDialogVisible( true );
+		} else {
+			updateRetentionPeriod();
+		}
+	}, [ currentRetentionPlan, retentionSelected, updateRetentionPeriod ] );
 
 	// Set the retention period selected when we fetch the current plan retention period
 	useEffect( () => {
@@ -185,7 +190,11 @@ const BackupRetentionManagement: FunctionComponent = () => {
 						</div>
 						<div className="retention-form__submit">
 							<Button primary onClick={ handleUpdateRetention } disabled={ disableFormSubmission }>
-								{ translate( 'Update settings' ) }
+								{ updateRetentionRequestStatus !== BACKUP_RETENTION_UPDATE_REQUEST.PENDING ? (
+									translate( 'Update settings' )
+								) : (
+									<Spinner />
+								) }
 							</Button>
 						</div>
 						<Dialog
@@ -194,11 +203,15 @@ const BackupRetentionManagement: FunctionComponent = () => {
 							onClose={ onConfirmationClose }
 							buttons={ [
 								<Button onClick={ onConfirmationClose }>{ translate( 'Cancel' ) }</Button>,
-								<Button onClick={ onUpdateConfirmation } primary>
+								<Button
+									onClick={ updateRetentionPeriod }
+									primary
+									disabled={ disableFormSubmission }
+								>
 									{ updateRetentionRequestStatus !== BACKUP_RETENTION_UPDATE_REQUEST.PENDING ? (
 										translate( 'Confirm change' )
 									) : (
-										<Spinner />
+										<Spinner size={ 22 } />
 									) }
 								</Button>,
 							] }
