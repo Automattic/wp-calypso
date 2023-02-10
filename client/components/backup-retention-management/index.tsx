@@ -53,7 +53,7 @@ const BackupRetentionManagement: FunctionComponent = () => {
 
 	// The retention days that currently applies for this customer.
 	const [ currentRetentionPlan, setCurrentRetentionPlan ] = useState( 0 );
-	useMemo( () => {
+	useEffect( () => {
 		if ( isFetching ) {
 			return;
 		}
@@ -63,7 +63,8 @@ const BackupRetentionManagement: FunctionComponent = () => {
 		} else if ( planRetentionPeriod ) {
 			setCurrentRetentionPlan( planRetentionPeriod );
 		}
-	}, [ customerRetentionPeriod, isFetching, planRetentionPeriod ] );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ customerRetentionPeriod, planRetentionPeriod ] );
 
 	const storageLimitBytes = useSelector( ( state ) =>
 		getRewindBytesAvailable( state, siteId )
