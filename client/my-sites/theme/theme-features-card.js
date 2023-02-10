@@ -34,7 +34,7 @@ const ThemeFeaturesCard = ( { isWpcomTheme, siteSlug, features, translate } ) =>
 
 export default connect( ( state, { taxonomies } ) => {
 	const features = get( taxonomies, 'theme_feature', [] ).map( ( { name, slug } ) => {
-		const term = isValidThemeFilterTerm( state, slug ) ? slug : `feature:${ slug }`;
+		const term = isValidThemeFilterTerm( state, slug ) ? slug : `${ slug }`;
 		return { name, slug, term };
 	} );
 	return { features };
