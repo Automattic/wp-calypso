@@ -86,6 +86,14 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
+			name: 'with-theme-assembler',
+			steps: [ 'user', 'domains-theme-preselected', 'plans' ],
+			destination: getChecklistThemeDestination,
+			description: 'Preselect a theme to activate/buy from an external source with the assembler.',
+			lastModified: '2023-02-06',
+			showRecaptcha: true,
+		},
+		{
 			name: 'design-first',
 			steps: [
 				'template-first-themes',

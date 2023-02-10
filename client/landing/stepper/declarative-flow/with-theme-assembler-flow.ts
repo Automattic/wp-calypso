@@ -1,6 +1,7 @@
+import { Onboard } from '@automattic/data-stores';
 import { BLANK_CANVAS_DESIGN } from '@automattic/design-picker';
-import { useFlowProgress, SITE_ASSEMBLER_FLOW } from '@automattic/onboarding';
-import { useDispatch } from '@wordpress/data';
+import { useFlowProgress, WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useQuery } from '../hooks/use-query';
 import { useSiteSlug } from '../hooks/use-site-slug';
@@ -11,19 +12,25 @@ import Processing from './internals/steps-repository/processing-step';
 import { Flow, ProvidedDependencies } from './internals/types';
 import type { Design } from '@automattic/design-picker/src/types';
 
-const siteAssemblerFlow: Flow = {
-	name: SITE_ASSEMBLER_FLOW,
-	useSteps() {
-		const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
+const SiteIntent = Onboard.SiteIntent;
+
+const withThemeAssemblerFlow: Flow = {
+	name: WITH_THEME_ASSEMBLER_FLOW,
+	useSideEffect() {
+		const { setSelectedDesign, setIntent } = useDispatch( ONBOARD_STORE );
 		const selectedTheme = useQuery().get( 'theme' );
 
 		useEffect( () => {
-			if ( selectedTheme === BLANK_CANVAS_DESIGN.slug && this.name === SITE_ASSEMBLER_FLOW ) {
+			if ( selectedTheme === BLANK_CANVAS_DESIGN.slug ) {
 				// User has selected blank-canvas-3 theme from theme showcase and enter assembler flow
 				setSelectedDesign( BLANK_CANVAS_DESIGN as Design );
 			}
-		}, [] );
 
+			setIntent( SiteIntent.WithThemeAssembler );
+		}, [] );
+	},
+
+	useSteps() {
 		return [
 			{ slug: 'patternAssembler', component: PatternAssembler },
 			{ slug: 'processing', component: Processing },
@@ -32,6 +39,7 @@ const siteAssemblerFlow: Flow = {
 
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
+		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 		const { setStepProgress, setPendingAction } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
 		setStepProgress( flowProgress );
@@ -48,7 +56,7 @@ const siteAssemblerFlow: Flow = {
 		};
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
-			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
+			recordSubmitStep( providedDependencies, intent, flowName, _currentStep );
 
 			switch ( _currentStep ) {
 				case 'processing':
@@ -65,4 +73,4 @@ const siteAssemblerFlow: Flow = {
 	},
 };
 
-export default siteAssemblerFlow;
+export default withThemeAssemblerFlow;
