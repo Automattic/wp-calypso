@@ -9,7 +9,7 @@ import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
 
 class MyComponent extends Component {
 	componentDidMount() {
-		setTimeout(() => scrollToAnchor({offset: 15}));
+		setTimeout( () => scrollToAnchor( { offset: 15 } ) );
 	}
 }
 ```
