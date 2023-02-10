@@ -224,6 +224,10 @@
 			flex-wrap: wrap-reverse;
 		}
 
+		.domain-registration-suggestion__title {
+			align-self: unset;
+		}
+
 		.domain-registration-suggestion__badges {
 			margin-bottom: 5px;
 			margin-left: 0;
