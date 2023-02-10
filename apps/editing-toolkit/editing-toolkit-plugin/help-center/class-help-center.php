@@ -7,8 +7,6 @@
 
 namespace A8C\FSE;
 
-use Automattic\Jetpack\Connection\Client as Client;
-
 /**
  * Class Help_Center
  */
@@ -123,11 +121,10 @@ class Help_Center {
 	 * Get current site details.
 	 */
 	public function get_current_site() {
-		$site_id        = \Jetpack_Options::get_option( 'id' );
-		$wpcom_endpoint = sprintf( '/sites/%d?force=wpcom', $site_id );
-		$wpcom_version  = '1.1';
-		$products       = wpcom_get_site_purchases();
-		$plan           = array_pop(
+		$site     = \Jetpack_Options::get_option( 'id' );
+		$logo_id  = get_option( 'site_logo' );
+		$products = wpcom_get_site_purchases();
+		$plan     = array_pop(
 			array_filter(
 				$products,
 				function ( $product ) {
@@ -136,16 +133,21 @@ class Help_Center {
 			)
 		);
 
-		if ( function_exists( 'wpcom_json_api_get' ) ) {
-			$response = wpcom_json_api_get( $wpcom_endpoint, $wpcom_version );
-		} else {
-			$response = Client::wpcom_json_api_request_as_blog( $wpcom_endpoint, $wpcom_version );
-		}
-
-		$site_data         = json_decode( wp_remote_retrieve_body( $response ), true );
-		$site_data['plan'] = $plan;
-
-		return $site_data;
+		return array(
+			'ID'              => $site,
+			'name'            => get_bloginfo( 'name' ),
+			'URL'             => get_bloginfo( 'url' ),
+			'plan'            => array(
+				'product_slug' => $plan->product_slug,
+			),
+			'is_wpcom_atomic' => boolval( defined( 'IS_ATOMIC' ) && IS_ATOMIC ),
+			'jetpack'         => true === apply_filters( 'is_jetpack_site', false, $site ),
+			'logo'            => array(
+				'id'    => $logo_id,
+				'sizes' => array(),
+				'url'   => wp_get_attachment_image_src( $logo_id, 'thumbnail' )[0],
+			),
+		);
 	}
 
 	/**
