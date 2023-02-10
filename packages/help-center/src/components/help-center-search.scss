@@ -350,16 +350,16 @@
 				.help-center-contact-page__box-icon {
 					border-radius: 2px 0 0 2px;
 					display: flex;
-					background-color: var(--color-sidebar-background);
+					background-color: var(--color-primary);
 					width: 56px;
 
 					svg {
-						fill: var(--color-sidebar-text);
+						fill: var(--color-primary-0);
 						display: block;
 						margin: auto;
 
 						path {
-							stroke: var(--color-sidebar-text);
+							stroke: var(--color-primary-0);
 						}
 					}
 				}
