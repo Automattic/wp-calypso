@@ -8,9 +8,9 @@
 body.is-section-plans.is-domain-sidebar-experiment-user {
 	background: var(--color-body-background);
 
-	.layout__content {
-		padding-left: 0 !important;
-	}
+	// .layout__content {
+	// 	padding-left: 0 !important;
+	// }
 
 	.plans__has-sidebar {
 		.section-nav {
@@ -20,6 +20,12 @@ body.is-section-plans.is-domain-sidebar-experiment-user {
 
 	.plans__header {
 		display: block;
+		overflow: auto;
+
+		.formatted-header__title,
+		.formatted-header__subtitle {
+			max-width: unset;
+		}
 
 		h1 {
 			font-family: $brand-serif;
@@ -43,10 +49,6 @@ body.is-section-plans.is-domain-sidebar-experiment-user {
 				padding: 0 80px;
 			}
 		}
-	}
-
-	.main.is-wide-layout {
-		max-width: $break-medium;
 	}
 
 	// plans comparison grid
