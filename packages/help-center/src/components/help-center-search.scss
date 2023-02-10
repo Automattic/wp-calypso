@@ -350,11 +350,11 @@
 				.help-center-contact-page__box-icon {
 					border-radius: 2px 0 0 2px;
 					display: flex;
-					background-color: var(--studio-blue-70);
+					background-color: var(--color-sidebar-background);
 					width: 56px;
 
 					svg {
-						fill: #fff;
+						fill: var(--color-sidebar-text);
 						display: block;
 						margin: auto;
 					}
@@ -370,10 +370,6 @@
 				}
 
 				&.chat {
-					.help-center-contact-page__box-icon {
-						background-color: var(--color-accent);
-					}
-
 					&.is-disabled {
 						cursor: auto;
 

@@ -46,7 +46,7 @@ class WP_REST_Help_Center_Forum extends \WP_REST_Controller {
 						'required' => true,
 					),
 					'blog_id'                => array(
-						'type'    => 'string',
+						'type'    => 'integer',
 						'default' => null,
 					),
 					'tags'                   => array(
@@ -61,8 +61,7 @@ class WP_REST_Help_Center_Forum extends \WP_REST_Controller {
 						'default' => false,
 					),
 					'should_use_test_forums' => array(
-						'type'    => 'boolean',
-						'default' => null,
+						'type' => 'boolean',
 					),
 				),
 			)
@@ -85,7 +84,7 @@ class WP_REST_Help_Center_Forum extends \WP_REST_Controller {
 			'tags'                   => $request['tags'],
 			'locale'                 => $request['locale'],
 			'hide_blog_info'         => $request['hide_blog_info'],
-			'should_use_test_forums' => $request['should_use_test_forums'],
+			'should_use_test_forums' => isset( $request['should_use_test_forums'] ) && $request['should_use_test_forums'],
 		);
 
 		$body = Client::wpcom_json_api_request_as_user(
