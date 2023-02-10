@@ -205,12 +205,24 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 		);
 	}
 
+	const previewDesign = () => {
+		if ( design.is_virtual && design.style_variation ) {
+			return onPreview( design, design.style_variation );
+		}
+		return onPreview( design );
+	};
+
+	const getTitle = () => {
+		if ( design.is_virtual && design.style_variation ) {
+			return `${ design.title } – ${ design.style_variation.title }`;
+		}
+
+		return design.title;
+	};
+
 	return (
 		<div className="design-picker__design-option">
-			<button
-				data-e2e-button={ isPremium ? 'paidOption' : 'freeOption' }
-				onClick={ () => onPreview( design ) }
-			>
+			<button data-e2e-button={ isPremium ? 'paidOption' : 'freeOption' } onClick={ previewDesign }>
 				<span
 					className={ classnames(
 						'design-picker__image-frame',
@@ -225,7 +237,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 				</span>
 				<span className="design-picker__option-overlay">
 					<span id={ makeOptionId( design ) } className="design-picker__option-meta">
-						<span className="design-picker__option-name">{ design.title }</span>
+						<span className="design-picker__option-name">{ getTitle() }</span>
 						{ style_variations.length > 0 && (
 							<div className="design-picker__options-style-variations">
 								<StyleVariationBadges
@@ -407,10 +419,10 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 				/>
 			) }
 			<div className="design-picker__grid">
-				{ filteredStaticDesigns.map( ( design ) => (
+				{ filteredStaticDesigns.map( ( design, index ) => (
 					<DesignButtonContainer
 						category={ categorization?.selection }
-						key={ design.slug }
+						key={ index }
 						design={ design }
 						locale={ locale }
 						onSelect={ onSelect }

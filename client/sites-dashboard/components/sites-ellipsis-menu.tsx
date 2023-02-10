@@ -1,6 +1,4 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
-	WPCOM_FEATURES_COPY_SITE,
 	WPCOM_FEATURES_MANAGE_PLUGINS,
 	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
 } from '@automattic/calypso-products';
@@ -8,17 +6,14 @@ import { Gridicon } from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { DropdownMenu, MenuGroup, MenuItem as CoreMenuItem, Modal } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { ComponentType, useEffect, useState } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import SitePreviewLink from 'calypso/components/site-preview-link';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
+import { useSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
+import { useInView } from 'calypso/lib/use-in-view';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
@@ -33,7 +28,9 @@ import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 interface SitesMenuItemProps {
 	site: SiteExcerptData;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	recordTracks: ( eventName: string, extraProps?: Record< string, any > ) => void;
+	onClick?: () => void;
 }
 
 interface MenuItemLinkProps extends Omit< CoreMenuItem.Props, 'href' > {
@@ -184,18 +181,8 @@ const PreviewSiteModalItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 	);
 };
 
-const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
+const CopySiteItem = ( { recordTracks, site, onClick }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
-	const hasCopySiteFeature = useSafeSiteHasFeature( site.ID, WPCOM_FEATURES_COPY_SITE );
-	const isAtomic = useSelector( ( state ) => isSiteAtomic( state, site.ID ) );
-	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
-	const plan = site.plan;
-	const isSiteOwner = site.site_owner === userId;
-	const { setPlanCartItem } = useDispatch( ONBOARD_STORE );
-
-	if ( ! hasCopySiteFeature || ! isSiteOwner || ! plan || ! isAtomic ) {
-		return null;
-	}
 
 	const copySiteHref = addQueryArgs( `/setup/copy-site`, {
 		sourceSlug: site.slug,
@@ -204,9 +191,8 @@ const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 		<MenuItemLink
 			href={ copySiteHref }
 			onClick={ () => {
-				clearSignupDestinationCookie();
-				setPlanCartItem( { product_slug: plan.product_slug } );
 				recordTracks( 'calypso_sites_dashboard_site_action_copy_site_click' );
+				onClick?.();
 			} }
 		>
 			{ __( 'Copy site' ) }
@@ -261,6 +247,9 @@ export const SitesEllipsisMenu = ( {
 	site: SiteExcerptData;
 } ) => {
 	const dispatch = useReduxDispatch();
+	const [ inViewOnce, setInViewOnce ] = useState( false );
+	const ref = useInView< HTMLTableCellElement >( () => setInViewOnce( true ) );
+
 	const { __ } = useI18n();
 	const props: SitesMenuItemProps = {
 		site,
@@ -270,24 +259,27 @@ export const SitesEllipsisMenu = ( {
 	};
 
 	const showHosting = ! isNotAtomicJetpack( site ) && ! site.options?.is_wpforteams_site;
+	const { shouldShowSiteCopyItem, startSiteCopy } = useSiteCopy( site, { enabled: inViewOnce } );
 
 	return (
-		<SiteDropdownMenu
-			icon={ <Gridicon icon="ellipsis" /> }
-			className={ className }
-			label={ __( 'Site Actions' ) }
-		>
-			{ () => (
-				<SiteMenuGroup>
-					{ site.launch_status === 'unlaunched' && <LaunchItem { ...props } /> }
-					<SettingsItem { ...props } />
-					<ManagePluginsItem { ...props } />
-					{ showHosting && <HostingConfigItem { ...props } /> }
-					{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
-					{ isEnabled( 'sites/copy-site' ) && <CopySiteItem { ...props } /> }
-					<WpAdminItem { ...props } />
-				</SiteMenuGroup>
-			) }
-		</SiteDropdownMenu>
+		<div ref={ ref }>
+			<SiteDropdownMenu
+				icon={ <Gridicon icon="ellipsis" /> }
+				className={ className }
+				label={ __( 'Site Actions' ) }
+			>
+				{ () => (
+					<SiteMenuGroup>
+						{ site.launch_status === 'unlaunched' && <LaunchItem { ...props } /> }
+						<SettingsItem { ...props } />
+						<ManagePluginsItem { ...props } />
+						{ showHosting && <HostingConfigItem { ...props } /> }
+						{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
+						{ shouldShowSiteCopyItem && <CopySiteItem { ...props } onClick={ startSiteCopy } /> }
+						<WpAdminItem { ...props } />
+					</SiteMenuGroup>
+				) }
+			</SiteDropdownMenu>
+		</div>
 	);
 };

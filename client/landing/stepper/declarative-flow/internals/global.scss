@@ -74,7 +74,7 @@ button {
 .free-setup,
 .free-post-setup,
 .free,
-.site-assembler {
+.with-theme-assembler {
 	padding: 60px 0 0;
 	box-sizing: border-box;
 
@@ -145,6 +145,12 @@ button {
 	.step-container {
 		--color-accent: #117ac9;
 		--color-accent-60: #0e64a5;
+	}
+}
+
+.intro {
+	.signup-header {
+		z-index: 0 !important; /* set to 0 to prevent it from covering top of intro modal */
 	}
 }
 

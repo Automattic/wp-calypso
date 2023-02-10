@@ -1,4 +1,8 @@
-import { VIDEOPRESS_FLOW, isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
+import {
+	VIDEOPRESS_FLOW,
+	isNewsletterOrLinkInBioFlow,
+	isWithThemeFlow,
+} from '@automattic/onboarding';
 import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
@@ -722,7 +726,7 @@ class DomainsStep extends Component {
 	}
 
 	shouldHideNavButtons() {
-		return 'with-theme' === this.props.flowName || this.isTailoredFlow();
+		return isWithThemeFlow( this.props.flowName ) || this.isTailoredFlow();
 	}
 
 	renderContent() {

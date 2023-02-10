@@ -58,6 +58,7 @@ export function register(): typeof STORE_KEY {
 			'ecommerceFlowRecurType',
 			'domainCartItem',
 			'planCartItem',
+			'productCartItems',
 		],
 	} );
 	isRegistered = true;

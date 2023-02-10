@@ -21,6 +21,7 @@ const StatsListCard = ( {
 	emptyMessage,
 	loader,
 	useShortLabel,
+	useShortNumber,
 	error,
 	heroElement,
 	metricLabel,
@@ -133,6 +134,7 @@ const StatsListCard = ( {
 								leftSideItem={ leftSideItem }
 								renderRightSideItem={ ( incomingItem ) => outputRightItem( incomingItem, key ) }
 								useShortLabel={ useShortLabel }
+								useShortNumber={ useShortNumber }
 								isStatic={ ! isInteractive }
 								barMaxValue={ barMaxValue }
 								additionalColumns={ additionalColumns?.body( item ) }

@@ -10,11 +10,11 @@ import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
 import {
 	isLinkInBioFlow,
-	NEWSLETTER_FLOW,
 	isNewsletterOrLinkInBioFlow,
-	SITE_ASSEMBLER_FLOW,
+	isSiteAssemblerFlow,
+	isTailoredSignupFlow,
+	NEWSLETTER_FLOW,
 } from '@automattic/onboarding';
-import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
 import i18n, { localize } from 'i18n-calypso';
@@ -371,8 +371,8 @@ export class PlansStep extends Component {
 	}
 
 	shouldHideEcommercePlan() {
-		// Site Assembler doesn't support atomic site, so we have to hide the plan
-		return this.props.signupDependencies.destinationFlowParameter === SITE_ASSEMBLER_FLOW;
+		// The flow with the Site Assembler step doesn't support atomic site, so we have to hide the plan
+		return isSiteAssemblerFlow( this.props.flowName );
 	}
 
 	plansFeaturesSelection() {

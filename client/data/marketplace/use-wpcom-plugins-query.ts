@@ -15,7 +15,7 @@ import {
 import wpcom from 'calypso/lib/wp';
 import { BASE_STALE_TIME } from 'calypso/state/initial-state';
 
-type Type = 'all' | 'featured';
+type Type = 'all' | 'featured' | 'launched';
 
 const pluginsApiBase = '/marketplace/products';
 const dynamicPluginsApiBase = '/marketplace/products-dynamic';

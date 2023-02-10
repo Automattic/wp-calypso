@@ -54,7 +54,6 @@ main.business-plan-upgrade-upsell-new-design.main {
 	}
 
 	&__image-container {
-		min-width: 200px;
 		grid-area: images;
 		text-align: center;
 		@include breakpoint-deprecated( "<660px" ) {
@@ -62,7 +61,9 @@ main.business-plan-upgrade-upsell-new-design.main {
 		}
 
 		img {
-			max-width: 60%;
+			@include breakpoint-deprecated( ">660px" ) {
+				margin: 0 0 0 30px;
+			}
 		}
 	}
 
@@ -77,21 +78,19 @@ main.business-plan-upgrade-upsell-new-design.main {
 	}
 
 	&__container {
-		max-width: 746px;
+		max-width: 830px;
 		margin: 0 auto;
 		display: grid;
-		grid-auto-rows: auto 1fr;
-		grid-template-columns: minmax(0, 1fr) 50%;
+		grid-auto-rows: auto;
+		grid-template-columns: 1fr 2fr auto;
 		grid-template-areas:
 			"body body images"
-			"countdown countdown images"
 			"buttons buttons images";
 		@include breakpoint-deprecated( "<660px" ) {
 			grid-auto-rows: auto;
 			grid-template-columns: 1fr;
 			grid-template-areas:
 				"body body body"
-				"countdown countdown countdown"
 				"buttons buttons buttons"
 				"images images images";
 		}

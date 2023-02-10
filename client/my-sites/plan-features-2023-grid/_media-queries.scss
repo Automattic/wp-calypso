@@ -10,7 +10,7 @@ $plans-2023-large-breakpoint: 1500px;
 /**
  * Media queries for the plans grid in onboarding/signup
  */
-@mixin onboarding-2023-pricing-grid-plans-breakpoints {
+@mixin pricing-grid-breakpoints {
 	max-width: 414px;
 
 	@media ( min-width: $plans-2023-small-breakpoint ) {
@@ -31,7 +31,7 @@ $plans-2023-large-breakpoint: 1500px;
  * Since there is a sidebar on internal pages,
  * we add the sidebar width to the default breakpoints.
  */
-@mixin pricing-grid-2023-plans-section-breakpoints {
+@mixin pricing-grid-breakpoints-with-sidebar {
 	max-width: 414px;
 
 	@media ( min-width: $plans-2023-small-breakpoint + $plan-features-sidebar-width ) {
@@ -53,7 +53,7 @@ $plans-2023-large-breakpoint: 1500px;
  * Tablet layout:  $plans-2023-small-breakpoint < width < $plans-2023-medium-breakpoint
  * Mobile layout:  width < $plans-2023-small-breakpoint
  */
-@mixin plan-features-layout-switcher-onboarding {
+@mixin plan-features-layout-switcher {
 	.plan-features-2023-grid__desktop-view {
 		display: none;
 
@@ -84,9 +84,9 @@ $plans-2023-large-breakpoint: 1500px;
 }
 
 /**
- * Same as `plan-features-layout-switcher-onboarding`, except that we add the sidebar width to the breakpoints.
+ * Same as `plan-features-layout-switcher`, except that we add the sidebar width to the breakpoints.
  */
-@mixin plan-features-layout-switcher-onboarding-plans-section {
+@mixin plan-features-layout-switcher-with-sidebar {
 	.plan-features-2023-grid__desktop-view {
 		display: none;
 
@@ -117,28 +117,42 @@ $plans-2023-large-breakpoint: 1500px;
 }
 
 @mixin plans-2023-break-small() {
+	body.is-section-stepper &,
 	body.is-section-signup.is-white-signup & {
 		@media ( min-width: $plans-2023-small-breakpoint ) {
 			@content;
 		}
 	}
 
-	.is-section-plans & {
+	.is-section-plans:not(.is-sidebar-collapsed) & {
 		@media ( min-width: $plans-2023-small-breakpoint + $plan-features-sidebar-width ) {
+			@content;
+		}
+	}
+
+	.is-section-plans.is-sidebar-collapsed & {
+		@media ( min-width: $plans-2023-small-breakpoint ) {
 			@content;
 		}
 	}
 }
 
 @mixin plans-2023-break-medium() {
+	body.is-section-stepper &,
 	body.is-section-signup.is-white-signup & {
 		@media ( min-width: $plans-2023-medium-breakpoint ) {
 			@content;
 		}
 	}
 
-	.is-section-plans & {
+	.is-section-plans:not(.is-sidebar-collapsed) & {
 		@media ( min-width: $plans-2023-medium-breakpoint + $plan-features-sidebar-width ) {
+			@content;
+		}
+	}
+
+	.is-section-plans.is-sidebar-collapsed & {
+		@media ( min-width: $plans-2023-medium-breakpoint ) {
 			@content;
 		}
 	}

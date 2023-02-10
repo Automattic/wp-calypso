@@ -21,7 +21,7 @@ import {
 } from 'calypso/state/signup/steps/website-content/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { PageDetailsParams } from './default-page-details';
-import type { ContactPageData } from 'calypso/state/signup/steps/website-content/schema';
+import type { ContactPageData } from 'calypso/state/signup/steps/website-content/types';
 
 export const CONTENT_SUFFIX = 'Content';
 export const IMAGE_PREFIX = 'Image';

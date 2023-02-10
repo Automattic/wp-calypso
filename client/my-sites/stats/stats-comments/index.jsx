@@ -75,7 +75,7 @@ class StatsComments extends Component {
 		return (
 			<StatsModuleContent className="module-content-text-stat">
 				<p>
-					{ translate( 'Total posts with comment followers:' ) }{ ' ' }
+					{ translate( 'Total posts with comment subscribers:' ) }{ ' ' }
 					<a href={ commentFollowURL }>{ numberFormat( commentFollowersTotal ) }</a>
 				</p>
 			</StatsModuleContent>

@@ -25,7 +25,7 @@ function addProvidedDependencies( step, providedDependencies ) {
 	return { ...step, providedDependencies };
 }
 
-function recordSubmitStep( stepName, providedDependencies, optionalProps ) {
+function recordSubmitStep( flow, stepName, providedDependencies, optionalProps ) {
 	// Transform the keys since tracks events only accept snaked prop names.
 	// And anonymize personally identifiable information.
 	const inputs = reduce(
@@ -88,6 +88,7 @@ function recordSubmitStep( stepName, providedDependencies, optionalProps ) {
 	const device = resolveDeviceTypeByViewPort();
 	return recordTracksEvent( 'calypso_signup_actions_submit_step', {
 		device,
+		flow,
 		step: stepName,
 		...optionalProps,
 		...inputs,
@@ -113,7 +114,7 @@ export function submitSignupStep( step, providedDependencies ) {
 		const lastUpdated = Date.now();
 		const { intent } = getSignupDependencyStore( getState() );
 
-		dispatch( recordSubmitStep( step.stepName, providedDependencies, { intent } ) );
+		dispatch( recordSubmitStep( lastKnownFlow, step.stepName, providedDependencies, { intent } ) );
 
 		dispatch( {
 			type: SIGNUP_PROGRESS_SUBMIT_STEP,

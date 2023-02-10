@@ -230,11 +230,30 @@
 	}
 }
 
+.inner-notice-container {
+	padding-top: 32px;
+	p {
+		margin-bottom: 0;
+	}
+}
+
 // Stats section scoped styles
 .is-section-stats {
 	&.color-scheme.is-classic-dark {
 		@include apply-improved-classic-dark-colors();
 	}
 }
+
+.list-emails {
+	.horizontal-bar-list .horizontal-bar-list-item-bar::before {
+		display: none;
+	}
+
+	.horizontal-bar-list-item--additional,
+	.stats-card-header__additional {
+		font-weight: 500;
+	}
+}
+
 
 @import "calypso/my-sites/stats/grid-layout.scss";

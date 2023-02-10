@@ -55,13 +55,18 @@
 	margin: auto;
 	max-width: 335px;
 
+	.is-section-stepper &,
 	.is-section-signup & {
-		@include onboarding-2023-pricing-grid-plans-breakpoints;
+		@include pricing-grid-breakpoints;
 	}
 
-	.is-section-plans & {
-		@include pricing-grid-2023-plans-section-breakpoints;
+	.is-section-plans:not(.is-sidebar-collapsed) & {
+		@include pricing-grid-breakpoints-with-sidebar;
 
+	}
+
+	.is-section-plans.is-sidebar-collapsed & {
+		@include pricing-grid-breakpoints;
 	}
 
 }

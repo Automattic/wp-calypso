@@ -10,6 +10,7 @@ import {
 	isCopySiteFlow,
 	isWooExpressFlow,
 	StepContainer,
+	addProductsToCart,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -36,19 +37,19 @@ const DEFAULT_LINK_IN_BIO_THEME = 'pub/lynx';
 const DEFAULT_WOOEXPRESS_FLOW = 'pub/twentytwentytwo';
 const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
 
-const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } ) {
+const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, data } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
 	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
 
-	const { domainCartItem, planCartItem, siteAccentColor, getSelectedSiteTitle } = useSelect(
-		( select ) => ( {
+	const { domainCartItem, planCartItem, siteAccentColor, getSelectedSiteTitle, productCartItems } =
+		useSelect( ( select ) => ( {
 			domainCartItem: select( ONBOARD_STORE ).getDomainCartItem(),
 			siteAccentColor: select( ONBOARD_STORE ).getSelectedSiteAccentColor(),
 			planCartItem: select( ONBOARD_STORE ).getPlanCartItem(),
+			productCartItems: select( ONBOARD_STORE ).getProductCartItems(),
 			getSelectedSiteTitle: select( ONBOARD_STORE ).getSelectedSiteTitle(),
-		} )
-	);
+		} ) );
 
 	const username = useSelector( ( state ) => getCurrentUserName( state ) );
 
@@ -69,21 +70,17 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 
 	// Default visibility is public
 	let siteVisibility = Site.Visibility.PublicIndexed;
+	const wooFlows = [ ECOMMERCE_FLOW, WOOEXPRESS_FLOW ];
 
-	// Link-in-bio flow defaults to "Coming Soon"
+	// These flows default to "Coming Soon"
 	if (
 		isLinkInBioFlow( flow ) ||
 		isFreeFlow( flow ) ||
 		isMigrationFlow( flow ) ||
-		isCopySiteFlow( flow )
+		isCopySiteFlow( flow ) ||
+		wooFlows.includes( flow || '' )
 	) {
 		siteVisibility = Site.Visibility.PublicNotIndexed;
-	}
-
-	// Certain flows should default to private.
-	const privateFlows = [ ECOMMERCE_FLOW, WOOEXPRESS_FLOW ];
-	if ( privateFlows.includes( flow || '' ) ) {
-		siteVisibility = Site.Visibility.Private;
 	}
 
 	const signupDestinationCookieExists = retrieveSignupDestination();
@@ -113,11 +110,16 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 			siteAccentColor,
 			true,
 			username,
-			domainCartItem
+			domainCartItem,
+			data?.sourceSlug as string
 		);
 
 		if ( planCartItem ) {
 			await addPlanToCart( site?.siteSlug as string, flow as string, true, theme, planCartItem );
+		}
+
+		if ( productCartItems?.length ) {
+			await addProductsToCart( site?.siteSlug as string, flow as string, productCartItems );
 		}
 
 		return {

@@ -477,6 +477,8 @@ class Signup extends Component {
 			( isNewishUser && dependencies && dependencies.siteSlug && existingSiteCount <= 1 )
 		);
 		const hasCartItems = dependenciesContainCartItem( dependencies );
+		const cartItem = get( dependencies, 'cartItem' );
+		const domainItem = get( dependencies, 'domainItem' );
 		const selectedDesign = get( dependencies, 'selectedDesign' );
 		const intent = get( dependencies, 'intent' );
 		const startingPoint = get( dependencies, 'startingPoint' );
@@ -500,6 +502,11 @@ class Signup extends Component {
 			siteId,
 			isNewUser,
 			hasCartItems,
+			planProductSlug: hasCartItems && cartItem !== null ? cartItem.product_slug : undefined,
+			domainProductSlug:
+				undefined !== domainItem && domainItem.is_domain_registration
+					? domainItem.product_slug
+					: undefined,
 			isNew7DUserSite,
 			// Record the following values so that we can know the user completed which branch under the hero flow
 			theme: selectedDesign?.theme,

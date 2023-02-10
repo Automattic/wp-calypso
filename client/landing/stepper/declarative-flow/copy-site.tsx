@@ -17,7 +17,7 @@ import { useSiteCopy } from '../hooks/use-site-copy';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import AutomatedCopySite from './internals/steps-repository/automated-copy-site';
 import DomainsStep from './internals/steps-repository/domains';
-import ProcessingStep, { ProcessingResult } from './internals/steps-repository/processing-step';
+import ProcessingStep from './internals/steps-repository/processing-step';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import {
 	AssertConditionResult,
@@ -71,7 +71,7 @@ const copySite: Flow = {
 	name: COPY_SITE_FLOW,
 
 	get title() {
-		return translate( 'Copy Site' );
+		return '';
 	},
 
 	useSteps() {
@@ -80,9 +80,16 @@ const copySite: Flow = {
 			recordFullStoryEvent( 'calypso_signup_start_copy_site', { flow: this.name } );
 		}, [] );
 
+		const urlQueryParams = useQuery();
+		const siteSlug = urlQueryParams.get( 'siteSlug' );
+
 		return [
-			{ slug: 'domains', component: DomainsStep },
-			{ slug: 'site-creation-step', component: SiteCreationStep },
+			...( ! siteSlug
+				? [
+						{ slug: 'domains', component: DomainsStep },
+						{ slug: 'site-creation-step', component: SiteCreationStep },
+				  ]
+				: [] ),
 			{ slug: 'processing', component: ProcessingStep },
 			{ slug: 'automated-copy', component: AutomatedCopySite },
 			{
@@ -92,7 +99,7 @@ const copySite: Flow = {
 						{ ...props }
 						title={ translate( 'We’re copying your site' ) }
 						subtitle={ translate(
-							'This may take a few minutes. Feel free to close this window, we’ll email you when it’s done.'
+							'Feel free to close this window. We’ll email you when your new site is ready.'
 						) }
 					/>
 				),
@@ -109,15 +116,14 @@ const copySite: Flow = {
 
 		setStepProgress( flowProgress );
 
-		const submit = async (
-			providedDependencies: ProvidedDependencies = {},
-			...params: string[]
-		) => {
+		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug );
 
 			switch ( _currentStepSlug ) {
 				case 'domains': {
-					return navigate( 'site-creation-step' );
+					return navigate( 'site-creation-step', {
+						sourceSlug: urlQueryParams.get( 'sourceSlug' ),
+					} );
 				}
 
 				case 'site-creation-step': {
@@ -125,17 +131,18 @@ const copySite: Flow = {
 				}
 
 				case 'processing': {
+					const siteSlug = providedDependencies?.siteSlug || urlQueryParams.get( 'siteSlug' );
 					const destination = addQueryArgs( `/setup/${ this.name }/automated-copy`, {
 						sourceSlug: urlQueryParams.get( 'sourceSlug' ),
-						siteSlug: providedDependencies?.siteSlug,
+						siteSlug: siteSlug,
 					} );
 					persistSignupDestination( destination );
-					setSignupCompleteSlug( providedDependencies?.siteSlug );
+					setSignupCompleteSlug( siteSlug );
 					setSignupCompleteFlowName( flowName );
 					const returnUrl = encodeURIComponent( destination );
 					return window.location.assign(
 						`/checkout/${ encodeURIComponent(
-							( providedDependencies?.siteSlug as string ) ?? ''
+							( siteSlug as string ) ?? ''
 						) }?redirect_to=${ returnUrl }&signup=1`
 					);
 				}
@@ -145,12 +152,6 @@ const copySite: Flow = {
 				}
 
 				case 'processing-copy': {
-					const processingResult = params[ 0 ] as ProcessingResult;
-
-					if ( processingResult === ProcessingResult.FAILURE ) {
-						// @TODO:Create a retry step
-						return navigate( 'retry' );
-					}
 					clearSignupDestinationCookie();
 					return window.location.assign( `/home/${ providedDependencies?.siteSlug }` );
 				}
@@ -170,7 +171,11 @@ const copySite: Flow = {
 			navigate( step );
 		};
 
-		return { goNext, goBack, goToStep, submit };
+		const exitFlow = ( location = '/sites' ) => {
+			window.location.assign( location );
+		};
+
+		return { goNext, goBack, goToStep, submit, exitFlow };
 	},
 
 	useAssertConditions() {

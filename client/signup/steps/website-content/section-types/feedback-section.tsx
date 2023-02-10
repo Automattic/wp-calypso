@@ -3,7 +3,7 @@ import { ChangeEvent } from 'react';
 import { useDispatch } from 'react-redux';
 import { TextAreaField, LabelBlock } from 'calypso/signup/accordion-form/form-components';
 import { updateFeedback } from 'calypso/state/signup/steps/website-content/actions';
-import type { WebsiteContent } from 'calypso/state/signup/steps/website-content/schema';
+import type { WebsiteContent } from 'calypso/state/signup/steps/website-content/types';
 export function FeedbackSection( {
 	data,
 	onChangeField,
