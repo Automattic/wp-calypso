@@ -22,7 +22,8 @@ export function generateFlows( {
 			name: HOSTING_LP_FLOW,
 			steps: [ 'plans', 'user', 'domains' ],
 			destination: getSignupDestination,
-			description: 'Create an account and a blog and then add the starter plan to the users cart.',
+			description:
+				'Create an account and a blog and give the user the option of adding a domain and plan to the cart.',
 			lastModified: '2023-02-09',
 			showRecaptcha: true,
 		},
