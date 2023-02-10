@@ -7,7 +7,9 @@ A utility module to smoothly scroll to a URL anchor position.
 ```js
 import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
 
-componentDidMount() {
-	setTimeout( () => scrollToAnchor( { offset: 15 } ) );
+class MyComponent extends Component {
+	componentDidMount() {
+		setTimeout(() => scrollToAnchor({offset: 15}));
+	}
 }
 ```
