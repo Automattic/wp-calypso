@@ -297,7 +297,7 @@ class StatsSite extends Component {
 												className="notice-banner__action-button"
 												onClick={ updateNewStatsFeedBackStats(
 													'dismissed',
-													'https://jetpack.com'
+													'https://jetpack.com/redirect?source=new-jetpack-stats-usage-survey'
 												) }
 											/>
 										),
