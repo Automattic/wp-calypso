@@ -15,6 +15,11 @@
 
 	label {
 		display: block;
+		margin-bottom: 12px;
+	}
+
+	legend {
+		margin-bottom: 5px;
 	}
 
 	input {
@@ -42,7 +47,6 @@
 
 	legend,
 	label {
-		margin-bottom: 5px;
 		font-size: $font-body-small;
 		font-weight: 700;
 	}
