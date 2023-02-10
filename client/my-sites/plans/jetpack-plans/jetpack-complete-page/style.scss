@@ -39,10 +39,10 @@
 	}
 }
 
-.maybe-show-license-activation-link__container {
+.show-license-activation-link-if-available__container {
 	display: flex;
 
-	.maybe-show-license-activation-link {
+	.show-license-activation-link-if-available {
 		display: inline-block;
 		margin-left: auto;
 		color: var(--studio-black);
