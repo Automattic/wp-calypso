@@ -92,6 +92,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 				site && select( SITE_STORE ).siteHasFeature( site.ID, WPCOM_FEATURES_PREMIUM_THEMES )
 		)
 	);
+	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles();
 
 	// ********** Logic for vertical
 	const { data: siteVertical, isLoading: isLoadingSiteVertical } =
@@ -129,6 +130,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		{
 			enabled: true,
 			select: selectStarterDesigns,
+			shouldLimitGlobalStyles,
 		}
 	);
 
@@ -358,8 +360,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	}
 
 	// ********** Logic for Premium Global Styles
-
-	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles();
 	const [ showPremiumGlobalStylesModal, setShowPremiumGlobalStylesModal ] = useState( false );
 
 	function unlockPremiumGlobalStyles() {

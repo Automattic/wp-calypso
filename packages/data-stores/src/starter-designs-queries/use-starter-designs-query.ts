@@ -21,6 +21,7 @@ interface StarterDesignsQueryParams {
 interface Options extends QueryOptions< StarterDesignsResponse, unknown > {
 	enabled?: boolean;
 	select?: ( response: StarterDesigns ) => StarterDesigns;
+	shouldLimitGlobalStyles?: boolean;
 }
 
 interface StarterDesignsResponse {
@@ -51,7 +52,7 @@ interface GeneratedDesign {
 
 export function useStarterDesignsQuery(
 	queryParams: StarterDesignsQueryParams,
-	{ select, ...queryOptions }: Options = {}
+	{ select, shouldLimitGlobalStyles, ...queryOptions }: Options = {}
 ): UseQueryResult< StarterDesigns > {
 	return useQuery( [ 'starter-designs', queryParams ], () => fetchStarterDesigns( queryParams ), {
 		select: ( response: StarterDesignsResponse ) => {
@@ -60,7 +61,9 @@ export function useStarterDesignsQuery(
 					designs: response.generated?.designs?.map( apiStarterDesignsGeneratedToDesign ),
 				},
 				static: {
-					designs: response.static?.designs?.map( apiStarterDesignsStaticToDesign ),
+					designs: response.static?.designs?.map( ( design ) =>
+						apiStarterDesignsStaticToDesign( design, shouldLimitGlobalStyles )
+					),
 				},
 			};
 
@@ -82,7 +85,10 @@ function fetchStarterDesigns(
 	} );
 }
 
-function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
+function apiStarterDesignsStaticToDesign(
+	design: StaticDesign,
+	shouldLimitGlobalStyles?: boolean
+): Design {
 	const {
 		slug,
 		title,
@@ -97,7 +103,9 @@ function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
 		style_variation_slug,
 	} = design;
 	const is_premium =
-		( design.recipe.stylesheet && design.recipe.stylesheet.startsWith( 'premium/' ) ) || false;
+		( design.recipe.stylesheet && design.recipe.stylesheet.startsWith( 'premium/' ) ) ||
+		( is_virtual && style_variation_slug && shouldLimitGlobalStyles ) ||
+		false;
 
 	const is_bundled_with_woo_commerce = ( design.software_sets || [] ).some(
 		( { slug } ) => slug === 'woo-on-plans'
