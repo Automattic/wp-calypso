@@ -28,6 +28,8 @@
 	"stats/enhance-post-detail",
 	"stats/horizontal-bars-everywhere",
 	"stats/insights-page-grid",
+	"stats/latest-post-stats",
+	"stats/most-popular-post",
 	"stats/new-video-summary",
 	"wpcom_concierge_schedule_id",
 	"wpcom_signup_id",
