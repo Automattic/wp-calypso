@@ -45,6 +45,6 @@ export const is2023PricingGridEnabled = () => {
 	const supportedLocales = [ 'en', 'en-gb', 'es' ];
 	return (
 		isEnabled( 'onboarding/2023-pricing-grid' ) &&
-		supportedLocales.includes( getLocaleSlug() || '' )
+		supportedLocales.includes( getLocaleSlug() ?? '' )
 	);
 };
