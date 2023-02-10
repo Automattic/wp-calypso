@@ -7,6 +7,8 @@ import {
 import { Button, Card } from '@automattic/components';
 import { getCurrencyObject } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
+import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import customization from 'calypso/assets/images/plans/wpcom/ecommerce-trial/customization.png';
 import generalFeatures from 'calypso/assets/images/plans/wpcom/ecommerce-trial/general-features.png';
@@ -46,10 +48,17 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 	const { symbol: currencySymbol } = getCurrencyObject( 0, eCommercePlanPrices.currencyCode );
 
 	const isAnnualSubscription = interval === 'yearly';
+	const targetECommercePlan = isAnnualSubscription ? eCommercePlanAnnual : eCommercePlanMonthly;
 
 	const percentageSavings = Math.floor(
 		( 1 - eCommercePlanPrices.annualPlanMonthlyPrice / eCommercePlanPrices.monthlyPlanPrice ) * 100
 	);
+
+	const redirectToCheckoutForPlan = useCallback( () => {
+		const checkoutUrl = `/checkout/${ siteSlug }/${ targetECommercePlan.getStoreSlug() }`;
+
+		page.redirect( checkoutUrl );
+	}, [ siteSlug, targetECommercePlan ] );
 
 	const features = [
 		{
@@ -314,10 +323,7 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 			<Card className="e-commerce-trial-plans__price-card">
 				<div className="e-commerce-trial-plans__price-card-text">
 					<span className="e-commerce-trial-plans__price-card-title">
-						{
-							// TODO: translate when final copy is available
-							'Commerce'
-						}
+						{ targetECommercePlan.getTitle() }
 					</span>
 					<span className="e-commerce-trial-plans__price-card-subtitle">
 						{ translate( 'Accelerate your growth with advanced features.' ) }
@@ -332,7 +338,11 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 					</span>
 				</div>
 				<div className="e-commerce-trial-plans__price-card-cta-wrapper">
-					<Button className="e-commerce-trial-plans__price-card-cta" primary>
+					<Button
+						className="e-commerce-trial-plans__price-card-cta"
+						primary
+						onClick={ redirectToCheckoutForPlan }
+					>
 						{ translate( 'Upgrade now' ) }
 					</Button>
 				</div>
@@ -344,7 +354,10 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 				) ) }
 			</div>
 			<div className="e-commerce-trial-plans__cta-wrapper">
-				<Button className="e-commerce-trial-plans__cta is-primary">
+				<Button
+					className="e-commerce-trial-plans__cta is-primary"
+					onClick={ redirectToCheckoutForPlan }
+				>
 					{ translate( 'Upgrade now' ) }
 				</Button>
 			</div>
