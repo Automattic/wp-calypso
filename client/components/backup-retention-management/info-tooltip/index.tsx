@@ -2,6 +2,7 @@ import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import Tooltip from 'calypso/components/tooltip';
+import { STORAGE_RETENTION_LEARN_MORE_LINK } from '../constants';
 import './style.scss';
 
 const InfoToolTip: React.FC = () => {
@@ -53,7 +54,7 @@ const InfoToolTip: React.FC = () => {
 					components: {
 						a: (
 							<a
-								href="https://jetpack.com/support/backup/#how-is-storage-usage-calculated"
+								href={ STORAGE_RETENTION_LEARN_MORE_LINK }
 								target="_blank"
 								rel="external noreferrer noopener"
 							/>

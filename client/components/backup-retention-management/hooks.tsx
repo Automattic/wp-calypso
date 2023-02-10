@@ -4,6 +4,7 @@ import { useStorageText } from 'calypso/components/backup-storage-space/hooks';
 import getBackupCurrentSiteSize from 'calypso/state/rewind/selectors/get-backup-current-site-size';
 import getRewindBytesAvailable from 'calypso/state/rewind/selectors/get-rewind-bytes-available';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { STORAGE_ESTIMATION_ADDITIONAL_BUFFER } from './constants';
 import type { RetentionRadioOptionType } from './types';
 
 /**
@@ -14,7 +15,10 @@ export function useEstimatedCurrentSiteSize(): number {
 	const lastBackupSize = useSelector(
 		( state ) => getBackupCurrentSiteSize( state, siteId ) as number
 	);
-	return useMemo( () => lastBackupSize + lastBackupSize * 0.25, [ lastBackupSize ] );
+	return useMemo(
+		() => lastBackupSize + lastBackupSize * STORAGE_ESTIMATION_ADDITIONAL_BUFFER,
+		[ lastBackupSize ]
+	);
 }
 
 /**

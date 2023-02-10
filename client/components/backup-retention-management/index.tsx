@@ -15,7 +15,7 @@ import getRewindBytesAvailable from 'calypso/state/rewind/selectors/get-rewind-b
 import isRequestingRewindPolicies from 'calypso/state/rewind/selectors/is-requesting-rewind-policies';
 import isRequestingRewindSize from 'calypso/state/rewind/selectors/is-requesting-rewind-size';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { RetentionOptions } from './consts';
+import { RETENTION_OPTIONS } from './constants';
 import { useEstimatedCurrentSiteSize, usePrepareRetentionOptions } from './hooks';
 import InfoTooltip from './info-tooltip';
 import LoadingPlaceholder from './loading';
@@ -76,29 +76,29 @@ const BackupRetentionManagement: FunctionComponent = () => {
 	const storageLimitText = useStorageText( storageLimitBytes );
 
 	const retentionOptionsCards: Record< number, RetentionRadioOptionType > = {
-		[ RetentionOptions.RETENTION_DAYS_7 ]: usePrepareRetentionOptions(
+		[ RETENTION_OPTIONS.RETENTION_DAYS_7 ]: usePrepareRetentionOptions(
 			translate( '7 days' ),
-			RetentionOptions.RETENTION_DAYS_7,
+			RETENTION_OPTIONS.RETENTION_DAYS_7,
 			currentRetentionPlan,
-			retentionSelected === RetentionOptions.RETENTION_DAYS_7
+			retentionSelected === RETENTION_OPTIONS.RETENTION_DAYS_7
 		),
-		[ RetentionOptions.RETENTION_DAYS_30 ]: usePrepareRetentionOptions(
+		[ RETENTION_OPTIONS.RETENTION_DAYS_30 ]: usePrepareRetentionOptions(
 			translate( '30 days' ),
-			RetentionOptions.RETENTION_DAYS_30,
+			RETENTION_OPTIONS.RETENTION_DAYS_30,
 			currentRetentionPlan,
-			retentionSelected === RetentionOptions.RETENTION_DAYS_30
+			retentionSelected === RETENTION_OPTIONS.RETENTION_DAYS_30
 		),
-		[ RetentionOptions.RETENTION_DAYS_120 ]: usePrepareRetentionOptions(
+		[ RETENTION_OPTIONS.RETENTION_DAYS_120 ]: usePrepareRetentionOptions(
 			translate( '120 days' ),
-			RetentionOptions.RETENTION_DAYS_120,
+			RETENTION_OPTIONS.RETENTION_DAYS_120,
 			currentRetentionPlan,
-			retentionSelected === RetentionOptions.RETENTION_DAYS_120
+			retentionSelected === RETENTION_OPTIONS.RETENTION_DAYS_120
 		),
-		[ RetentionOptions.RETENTION_DAYS_365 ]: usePrepareRetentionOptions(
+		[ RETENTION_OPTIONS.RETENTION_DAYS_365 ]: usePrepareRetentionOptions(
 			translate( '1 year' ),
-			RetentionOptions.RETENTION_DAYS_365,
+			RETENTION_OPTIONS.RETENTION_DAYS_365,
 			currentRetentionPlan,
-			retentionSelected === RetentionOptions.RETENTION_DAYS_365
+			retentionSelected === RETENTION_OPTIONS.RETENTION_DAYS_365
 		),
 	};
 
