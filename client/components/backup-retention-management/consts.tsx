@@ -1,3 +1,5 @@
+import type { TranslateResult } from 'i18n-calypso';
+
 export const RetentionOptions = {
 	RETENTION_DAYS_7: 7,
 	RETENTION_DAYS_30: 30,
@@ -7,7 +9,7 @@ export const RetentionOptions = {
 
 export interface RetentionRadioOptionType {
 	label: string; // 7 days
-	spaceNeeded: any; // 700MB
+	spaceNeeded: TranslateResult | string; // 700MB
 	upgradeRequired: boolean;
 	isCurrentPlan: boolean;
 	value: number; // 7
