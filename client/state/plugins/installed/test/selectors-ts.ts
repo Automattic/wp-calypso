@@ -172,6 +172,13 @@ describe( 'getAllPluginsIndexedByPluginSlug', () => {
 
 		expect( plugins[ 'none' ] ).toEqual( undefined );
 	} );
+
+	test( 'Memozies the returned plugins object', () => {
+		const pluginsOne = getAllPluginsIndexedByPluginSlug( state );
+		const pluginsTwo = getAllPluginsIndexedByPluginSlug( state );
+
+		expect( pluginsOne ).toBe( pluginsTwo );
+	} );
 } );
 
 describe( 'getAllPluginsIndexedBySiteId', () => {
@@ -182,12 +189,27 @@ describe( 'getAllPluginsIndexedBySiteId', () => {
 			akismet: akismetWithSites,
 			'hello-dolly': helloDollyWithSites,
 		} );
+	} );
+
+	test( 'Returns the plugins for site two.', () => {
+		const plugins = getAllPluginsIndexedBySiteId( state );
 
 		expect( plugins[ siteTwoId ] ).toEqual( {
 			jetpack: jetpackWithSites,
 			'hello-dolly': helloDollyWithSites,
 		} );
+	} );
+
+	test( 'Returns undefined for a non-existing site.', () => {
+		const plugins = getAllPluginsIndexedBySiteId( state );
 
 		expect( plugins[ nonExistingSiteId ] ).toEqual( undefined );
+	} );
+
+	test( 'Memozies the returned plugins object', () => {
+		const pluginsOne = getAllPluginsIndexedBySiteId( state );
+		const pluginsTwo = getAllPluginsIndexedBySiteId( state );
+
+		expect( pluginsOne ).toBe( pluginsTwo );
 	} );
 } );
