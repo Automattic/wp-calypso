@@ -82,9 +82,16 @@ const copySite: Flow = {
 			recordFullStoryEvent( 'calypso_signup_start_copy_site', { flow: this.name } );
 		}, [ resetOnboardStore ] );
 
+		const urlQueryParams = useQuery();
+		const siteSlug = urlQueryParams.get( 'siteSlug' );
+
 		return [
-			{ slug: 'domains', component: DomainsStep },
-			{ slug: 'site-creation-step', component: SiteCreationStep },
+			...( ! siteSlug
+				? [
+						{ slug: 'domains', component: DomainsStep },
+						{ slug: 'site-creation-step', component: SiteCreationStep },
+				  ]
+				: [] ),
 			{ slug: 'processing', component: ProcessingStep },
 			{ slug: 'automated-copy', component: AutomatedCopySite },
 			{
@@ -99,7 +106,6 @@ const copySite: Flow = {
 					/>
 				),
 			},
-			{ slug: 'resuming', component: ProcessingStep }, // Needs siteSlug param
 		];
 	},
 
@@ -126,7 +132,6 @@ const copySite: Flow = {
 					return navigate( 'processing' );
 				}
 
-				case 'resuming':
 				case 'processing': {
 					const siteSlug = providedDependencies?.siteSlug || urlQueryParams.get( 'siteSlug' );
 					const destination = addQueryArgs( `/setup/${ this.name }/automated-copy`, {
