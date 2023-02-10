@@ -3,13 +3,13 @@ import { Gridicon, Spinner } from '@automattic/components';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { ChangeEvent, MouseEvent, useState } from 'react';
+import { ChangeEvent, MouseEvent, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useAddMedia } from 'calypso/data/media/use-add-media';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { LabelLink, SubLabel } from 'calypso/signup/accordion-form/form-components';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { Media, MediaUploadType } from 'calypso/state/signup/steps/website-content/schema';
+import { Media, MediaUploadType } from 'calypso/state/signup/steps/website-content/types';
 import type { SiteDetails } from '@automattic/data-stores';
 
 const debug = debugFactory( 'difm:website-content' );
@@ -155,6 +155,13 @@ export function WordpressMediaUpload( {
 
 	const allowedFileTypes = mediaType === 'VIDEO' ? allowedVideoExtensions : allowedImageExtensions;
 	const allowedFileTypesString = allowedFileTypes.map( ( type ) => `.${ type }` ).join();
+
+	// Initialize uploadState if media has already been uploaded.
+	useEffect( () => {
+		if ( url?.length ) {
+			setUploadState( UPLOAD_STATES.COMPLETED );
+		}
+	}, [ url ] );
 
 	const isFileValid = ( fileList: FileList | null ): boolean => {
 		if ( ! fileList ) {
