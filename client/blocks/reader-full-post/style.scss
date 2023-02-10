@@ -623,6 +623,14 @@
 	display: none;
 }
 
+.wp-block-file {
+	margin-bottom: 24px;
+
+	.wp-block-file__button {
+		display: none;
+	}
+}
+
 .reader-post-actions__item {
 	&:hover,
 	button.is-active,
