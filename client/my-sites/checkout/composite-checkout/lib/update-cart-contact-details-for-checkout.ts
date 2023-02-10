@@ -41,7 +41,7 @@ export async function updateCartContactDetailsForCheckout(
 		postalCode: arePostalCodesSupported ? contactInfo.postalCode?.value : '',
 		subdivisionCode,
 		vatId: vatDetails.id ?? '',
-		organization: vatDetails.name ?? '',
+		organization: contactInfo.organization?.value ?? vatDetails.name ?? '',
 		address: vatDetails.address ?? '',
 		city: contactInfo.city?.value ?? '',
 		state: contactInfo.state?.value ?? '',
