@@ -10,23 +10,23 @@ import { useSelector } from 'react-redux';
 import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SITE_STORE } from '../stores';
 
-export const HelpCenterLaunchpad = () => {
-	const getEnvironmentHostname = () => {
-		try {
-			const currentEnvironment = config( 'env_id' );
-			const hostname = config( 'hostname' ) ?? 'wordpress.com';
-			const port = config( 'port' );
-			switch ( currentEnvironment ) {
-				case 'development':
-					return `http://${ hostname }${ port ? ':' + port : '' }`;
-				default:
-					return `https://${ hostname }`;
-			}
-		} catch ( error ) {
-			return 'https://wordpress.com';
+const getEnvironmentHostname = () => {
+	try {
+		const currentEnvironment = config( 'env_id' );
+		const hostname = config( 'hostname' ) ?? 'wordpress.com';
+		const port = config( 'port' );
+		switch ( currentEnvironment ) {
+			case 'development':
+				return `http://${ hostname }${ port ? ':' + port : '' }`;
+			default:
+				return `https://${ hostname }`;
 		}
-	};
+	} catch ( error ) {
+		return 'https://wordpress.com';
+	}
+};
 
+export const HelpCenterLaunchpad = () => {
 	const { __ } = useI18n();
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const site = useSelect( ( select ) => siteId && select( SITE_STORE ).getSite( siteId ) );
