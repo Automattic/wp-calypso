@@ -203,12 +203,23 @@ class StatsSite extends Component {
 			);
 		};
 
-		const dismissFeedbackNotice = () => {
-			this.setState( { isFeedbackNoticeDismissed: true } );
-			context.store.dispatch(
-				updateStatsNoticeStatusDirect( 'new_stats_feedback', 'new_stats_feedback', 'dismissed' )
-			);
-		};
+		const updateNewStatsFeedBackStats =
+			( status, url = null, postponed_for = 0 ) =>
+			() => {
+				this.setState( { isFeedbackNoticeDismissed: true } );
+				context.store.dispatch(
+					updateStatsNoticeStatusDirect(
+						'new_stats_feedback',
+						'new_stats_feedback',
+						status,
+						postponed_for
+					)
+				);
+				if ( url ) {
+					// Leave some time for the notice to be dismissed.
+					setTimeout( () => ( window.location.href = url ), 500 );
+				}
+			};
 
 		return (
 			<div className="stats">
@@ -272,7 +283,7 @@ class StatsSite extends Component {
 						<NoticeBanner
 							level="info"
 							title={ translate( "We'd love to hear your thoughts on the new Stats" ) }
-							onClose={ dismissFeedbackNotice }
+							onClose={ updateNewStatsFeedBackStats( 'dismissed' ) }
 						>
 							{ translate(
 								"{{p}}Now that you've gotten familiar with the new Jetpack Stats, we'd love to hear about your experience so we can continue to shape Jetpack to meet your needs.{{/p}}{{p}}{{takeSurveyButton}}Take quick survey{{/takeSurveyButton}} {{remindMeLaterLink}}Remind me later{{/remindMeLaterLink}}{{/p}}",
@@ -284,11 +295,22 @@ class StatsSite extends Component {
 											<button
 												type="button"
 												className="notice-banner__action-button"
-												onClick={ () => ( window.location.href = 'https://jetpack.com' ) }
+												onClick={ updateNewStatsFeedBackStats(
+													'dismissed',
+													'https://jetpack.com'
+												) }
 											/>
 										),
-										// todo update link to a Jetpack redirect in the banner with an appropriate slug, like jetpack-stats-2023-usage-survey
-										remindMeLaterLink: <a className="notice-banner__action-link" href="https://" />,
+										remindMeLaterLink: (
+											<button
+												className="notice-banner__action-link"
+												onClick={ updateNewStatsFeedBackStats(
+													'postponed',
+													null,
+													30 * 24 * 86400
+												) }
+											/>
+										),
 									},
 								}
 							) }
