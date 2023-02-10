@@ -2,6 +2,7 @@ import {
 	PLAN_PREMIUM,
 	PLAN_JETPACK_SECURITY_DAILY,
 	WPCOM_FEATURES_WORDADS,
+	FEATURE_WORDADS_INSTANT,
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
@@ -189,9 +190,9 @@ class AdsWrapper extends Component {
 	}
 
 	renderUpsell( options = {} ) {
-		const { forceDisplay = false } = options;
+		const { forceDisplay = false, url } = options;
 		const { siteSlug, translate } = this.props;
-		const bannerURL = `/checkout/${ siteSlug }/premium`;
+		const bannerURL = url || `/checkout/${ siteSlug }/premium`;
 		return (
 			<UpsellNudge
 				forceDisplay={ forceDisplay }
@@ -255,13 +256,14 @@ class AdsWrapper extends Component {
 		);
 	}
 
-	renderContenWithUpsell( component ) {
-		const { section } = this.props;
+	renderContentWithUpsell( component ) {
+		const { section, siteSlug } = this.props;
 		const allowedSections = [ 'ads-earnings', 'ads-payments' ];
 		const isAllowedSection = allowedSections.includes( section );
+		const url = `/plans/${ siteSlug }?feature=${ FEATURE_WORDADS_INSTANT }&plan=${ PLAN_PREMIUM }`;
 		return (
 			<>
-				{ this.renderUpsell( { forceDisplay: true } ) }
+				{ this.renderUpsell( { forceDisplay: true, url } ) }
 				{ isAllowedSection ? component : <FeatureExample>{ component }</FeatureExample> }
 			</>
 		);
@@ -303,7 +305,7 @@ class AdsWrapper extends Component {
 		} else if ( site.options.wordads && site.is_private ) {
 			notice = this.renderNoticeSiteIsPrivate();
 		} else if ( hasIneligiblePlanforWordAds ) {
-			component = this.renderContenWithUpsell( component );
+			component = this.renderContentWithUpsell( component );
 		}
 
 		return (

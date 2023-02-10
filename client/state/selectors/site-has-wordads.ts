@@ -10,6 +10,5 @@ import type { AppState } from 'calypso/types';
  * @returns {boolean} True if the site has WPCOM_FEATURES_WORDADS feature. Otherwise, False.
  */
 export default function siteHasWordAds( state: AppState, siteId: number | null ): boolean {
-	//siteHasWordAdsFeature
 	return siteHasFeature( state, siteId, WPCOM_FEATURES_WORDADS );
 }
