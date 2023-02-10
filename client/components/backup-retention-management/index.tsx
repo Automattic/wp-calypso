@@ -1,6 +1,6 @@
 import { Button, Card, Dialog } from '@automattic/components';
 import { Spinner } from '@wordpress/components';
-import { useEffect, useState, useCallback, useMemo } from '@wordpress/element';
+import { useEffect, useState, useCallback } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
