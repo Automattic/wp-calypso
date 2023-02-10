@@ -21,14 +21,21 @@ export const updateRetention = ( action: UpdateRequestActionType ) =>
 		action
 	);
 
-const onSuccess = ( { siteId }: UpdateRequestActionType ) => [
+const onSuccess = ( { siteId, retentionDays }: UpdateRequestActionType ) => [
 	{
 		type: JETPACK_BACKUP_RETENTION_UPDATE_SUCCESS,
 		siteId,
 	},
-	successNotice( translate( 'Your new days of saved backups has been saved successfully!' ), {
-		duration: 5000,
-	} ),
+	successNotice(
+		translate( 'You have successfully changed the time period of saved backups to %(days)d days', {
+			args: {
+				days: retentionDays,
+			},
+		} ),
+		{
+			duration: 5000,
+		}
+	),
 ];
 
 const onError = ( { siteId }: UpdateRequestActionType, error: string ) => [
