@@ -19,7 +19,6 @@ import './style.scss';
 
 const Task = ( {
 	actionButton,
-	actionBusy = false,
 	actionOnClick,
 	actionTarget,
 	actionText,
@@ -41,7 +40,6 @@ const Task = ( {
 	title,
 }: {
 	actionOnClick?: () => void;
-	actionBusy?: boolean;
 	badgeText?: ReactNode;
 	completeOnStart?: boolean;
 	description: ReactNode;
@@ -144,7 +142,6 @@ const Task = ( {
 				onClick={ startTask }
 				href={ actionUrl }
 				target={ actionTarget }
-				busy={ actionBusy }
 			>
 				{ actionText }
 			</Button>
