@@ -61,7 +61,9 @@ main.business-plan-upgrade-upsell-new-design.main {
 		}
 
 		img {
-			margin: 0 0 0 30px;
+			@include breakpoint-deprecated( ">660px" ) {
+				margin: 0 0 0 30px;
+			}
 		}
 	}
 
