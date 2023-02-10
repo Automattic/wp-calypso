@@ -111,6 +111,7 @@ import { getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
 import { cancelPurchase, managePurchase, purchasesRoot } from '../paths';
 import PurchaseSiteHeader from '../purchases-site/header';
 import RemovePurchase from '../remove-purchase';
@@ -546,6 +547,7 @@ class ManagePurchase extends Component {
 					planName={ getName( purchase ) }
 					oldDomainName={ site.domain }
 					newDomainName={ site.wpcom_url }
+					hasSetupAds={ this.props.hasSetupAds }
 				/>
 			);
 		}
@@ -1210,6 +1212,7 @@ export default connect(
 		const relatedMonthlyPlanSlug = getMonthlyPlanByYearly( purchase?.productSlug );
 		const relatedMonthlyPlanPrice = getSitePlanRawPrice( state, siteId, relatedMonthlyPlanSlug );
 		const primaryDomain = getPrimaryDomainBySiteId( state, siteId );
+
 		return {
 			hasLoadedDomains,
 			hasLoadedSites,
@@ -1220,6 +1223,9 @@ export default connect(
 				? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 				: false,
 			hasCustomPrimaryDomain: hasCustomDomain( site ),
+			hasSetupAds: Boolean(
+				site?.options?.wordads || isRequestingWordAdsApprovalForSite( state, site )
+			),
 			productsList,
 			purchase,
 			purchases,
