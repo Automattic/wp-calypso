@@ -357,6 +357,10 @@
 						fill: var(--color-sidebar-text);
 						display: block;
 						margin: auto;
+
+						path {
+							stroke: var(--color-sidebar-text);
+						}
 					}
 				}
 
@@ -370,6 +374,10 @@
 				}
 
 				&.chat {
+					svg path {
+						stroke: none;
+					}
+
 					&.is-disabled {
 						cursor: auto;
 

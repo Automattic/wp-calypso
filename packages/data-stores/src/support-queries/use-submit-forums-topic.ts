@@ -34,14 +34,8 @@ export function useSubmitForumsMutation() {
 			const blogHelpMessages = [];
 
 			if ( site ) {
-				if ( site.jetpack ) {
-					blogHelpMessages.push( 'WP.com: Unknown' );
-					blogHelpMessages.push( 'Jetpack: Yes' );
-				} else {
-					blogHelpMessages.push( `WP.com: ${ ownershipResult.isWpcom ? 'Yes' : 'No' }` );
-					blogHelpMessages.push( 'Jetpack: No' );
-				}
-
+				blogHelpMessages.push( `WP.com: ${ ownershipResult.isWpcom ? 'Yes' : 'No' }` );
+				blogHelpMessages.push( `Jetpack: ${ site.jetpack ? 'Yes' : 'No' }` );
 				blogHelpMessages.push(
 					`Correct account: ${ ownershipResult.result === 'OWNED_BY_USER' ? 'Yes' : 'No' }`
 				);

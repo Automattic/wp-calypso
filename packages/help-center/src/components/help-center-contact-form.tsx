@@ -273,7 +273,7 @@ export const HelpCenterContactForm = () => {
 
 					recordTracksEvent( 'calypso_help_live_chat_begin', {
 						site_plan_product_id: productId,
-						is_automated_transfer: supportSite.is_wpcom_atomic,
+						is_automated_transfer: supportSite?.is_wpcom_atomic,
 						force_site_id: true,
 						location: 'help-center',
 						section: sectionName,
@@ -471,7 +471,7 @@ export const HelpCenterContactForm = () => {
 			{ ! userWithNoSites && (
 				<section>
 					<HelpCenterSitePicker
-						enabled={ mode === 'FORUM' && ! supportSite.is_wpcom_atomic }
+						enabled={ mode === 'FORUM' && ! supportSite?.is_wpcom_atomic }
 						currentSite={ currentSite }
 						onSelect={ ( id: string | number ) => {
 							if ( id !== 0 ) {

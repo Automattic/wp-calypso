@@ -7,6 +7,8 @@
 
 namespace A8C\FSE;
 
+use Automattic\Jetpack\Connection\Client as Client;
+
 /**
  * Class Help_Center
  */
@@ -121,10 +123,11 @@ class Help_Center {
 	 * Get current site details.
 	 */
 	public function get_current_site() {
-		$site_id     = \Jetpack_Options::get_option( 'id' );
-		$request_url = esc_url( 'https://public-api.wordpress.com/rest/v1/sites/' . $site_id . '?http_envelope=1&check_wpcom=1' );
-		$products    = wpcom_get_site_purchases();
-		$plan        = array_pop(
+		$site_id        = \Jetpack_Options::get_option( 'id' );
+		$wpcom_endpoint = sprintf( '/sites/%d?force=wpcom', $site_id );
+		$wpcom_version  = '1.1';
+		$products       = wpcom_get_site_purchases();
+		$plan           = array_pop(
 			array_filter(
 				$products,
 				function ( $product ) {
@@ -134,12 +137,12 @@ class Help_Center {
 		);
 
 		if ( function_exists( 'wpcom_json_api_get' ) ) {
-			$response = wpcom_json_api_get( $request_url );
+			$response = wpcom_json_api_get( $wpcom_endpoint, $wpcom_version );
 		} else {
-			$response = wp_remote_get( $request_url );
+			$response = Client::wpcom_json_api_request_as_blog( $wpcom_endpoint, $wpcom_version );
 		}
 
-		$site_data         = json_decode( wp_remote_retrieve_body( $response ), true )['body'];
+		$site_data         = json_decode( wp_remote_retrieve_body( $response ), true );
 		$site_data['plan'] = $plan;
 
 		return $site_data;
