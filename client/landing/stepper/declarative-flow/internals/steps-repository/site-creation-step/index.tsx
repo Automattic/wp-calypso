@@ -54,7 +54,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 
 	const username = useSelector( ( state ) => getCurrentUserName( state ) );
 
-	const { setPendingAction, setIsMigrateFromWp } = useDispatch( ONBOARD_STORE );
+	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 
 	let theme: string;
 	if ( isMigrationFlow( flow ) || isCopySiteFlow( flow ) ) {
@@ -138,11 +138,6 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 
 	useEffect( () => {
 		setProgress( 0.1 );
-
-		if ( isMigrationFlow( flow ) ) {
-			setIsMigrateFromWp( true );
-		}
-
 		if ( submit ) {
 			setPendingAction( createSite );
 			submit();
