@@ -31,6 +31,7 @@ $mobile-layout-breakpoint: $break-small;
 			padding: 24px;
 			border: 1px var(--color-border-subtle);
 			border-style: solid none;
+			background-color: var(--color-surface);
 		}
 
 		.card {
