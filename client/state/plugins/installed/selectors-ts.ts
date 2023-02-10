@@ -63,7 +63,7 @@ export const getAllPluginsIndexedByPluginSlug = createSelector(
 		getSiteIdsThatHavePlugins( state ),
 		...getSiteIdsThatHavePlugins( state ).map( ( siteId ) => isRequesting( state, siteId ) ),
 	]
-);
+) as { ( state: AppState ): { [ pluginSlug: string ]: Plugin } };
 
 /**
  * The plugins here differ from the plugin objects found on state.plugins.installed.plugins in that each plugin
@@ -72,7 +72,7 @@ export const getAllPluginsIndexedByPluginSlug = createSelector(
  * getAllPluginsIndexedByPluginSlug, except they are indexed by siteId.
  */
 export const getAllPluginsIndexedBySiteId = createSelector(
-	( state ) => {
+	( state: AppState ) => {
 		const allPluginsIndexedByPluginSlug = getAllPluginsIndexedByPluginSlug( state );
 
 		return Object.values( allPluginsIndexedByPluginSlug ).reduce(
@@ -94,4 +94,4 @@ export const getAllPluginsIndexedBySiteId = createSelector(
 		);
 	},
 	( state ) => [ getAllPluginsIndexedByPluginSlug( state ), getSiteIdsThatHavePlugins( state ) ]
-);
+) as { ( state: AppState ): { [ siteId: number ]: { [ pluginSlug: string ]: Plugin } } };
