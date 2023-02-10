@@ -17,6 +17,7 @@ import isRequestingRewindSize from 'calypso/state/rewind/selectors/is-requesting
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { RetentionOptions, RetentionRadioOptionType } from './consts';
 import { useEstimatedCurrentSiteSize, usePrepareRetentionOptions } from './hooks';
+import InfoTooltip from './info-tooltip';
 import LoadingPlaceholder from './loading';
 import RetentionOptionsControl from './retention-options/retention-options-control';
 import type { RetentionPeriod } from 'calypso/state/rewind/retention/types';
@@ -160,8 +161,9 @@ const BackupRetentionManagement: FunctionComponent = () => {
 	return (
 		( isFetching && <LoadingPlaceholder /> ) || (
 			<div className="backup-retention-management">
-				<Card compact={ true }>
-					<h3>{ translate( 'Days of backups saved' ) }</h3>
+				<Card compact={ true } className="setting-title">
+					<h3>{ translate( 'Days of backups saved' ) } </h3>
+					<InfoTooltip />
 				</Card>
 				<Card>
 					<div className="storage-details">

@@ -31,6 +31,15 @@
 	}
 }
 
+.backup-retention-management .setting-title {
+	align-items: center;
+	column-gap: 8px;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	margin-bottom: 16px;
+}
+
 .backup-retention-management .retention-form {
 	&__instructions {
 		margin-bottom: 24px;
