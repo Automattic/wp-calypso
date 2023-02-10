@@ -1,12 +1,17 @@
-import { Button, Card } from '@automattic/components';
-import { useEffect, useState, useCallback } from '@wordpress/element';
+import { Button, Card, Dialog } from '@automattic/components';
+import { Spinner } from '@wordpress/components';
+import { useEffect, useState, useCallback, useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useStorageText } from 'calypso/components/backup-storage-space/hooks';
 import { useQueryRewindPolicies } from 'calypso/components/data/query-rewind-policies';
 import { useQueryRewindSize } from 'calypso/components/data/query-rewind-size';
+import { updateBackupRetention } from 'calypso/state/rewind/retention/actions';
+import { BACKUP_RETENTION_UPDATE_REQUEST } from 'calypso/state/rewind/retention/constants';
 import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
+import getBackupRetentionDays from 'calypso/state/rewind/selectors/get-backup-retention-days';
+import getBackupRetentionUpdateRequestStatus from 'calypso/state/rewind/selectors/get-backup-retention-update-status';
 import getRewindBytesAvailable from 'calypso/state/rewind/selectors/get-rewind-bytes-available';
 import isRequestingRewindPolicies from 'calypso/state/rewind/selectors/is-requesting-rewind-policies';
 import isRequestingRewindSize from 'calypso/state/rewind/selectors/is-requesting-rewind-size';
@@ -15,24 +20,51 @@ import { RetentionOptions, RetentionRadioOptionType } from './consts';
 import { useEstimatedCurrentSiteSize, usePrepareRetentionOptions } from './hooks';
 import LoadingPlaceholder from './loading';
 import RetentionOptionsControl from './retention-options/retention-options-control';
+import type { RetentionPeriod } from 'calypso/state/rewind/retention/types';
 import './style.scss';
 
 const BackupRetentionManagement: FunctionComponent = () => {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+
 	const siteId = useSelector( getSelectedSiteId ) as number;
 
 	// Query dependencies
 	useQueryRewindSize( siteId );
 	useQueryRewindPolicies( siteId );
+	const requestingSize = useSelector( ( state ) => isRequestingRewindSize( state, siteId ) );
+	const requestingPolicies = useSelector( ( state ) =>
+		isRequestingRewindPolicies( state, siteId )
+	);
+	const isFetching = requestingSize || requestingPolicies;
 
-	const translate = useTranslate();
-
-	const disableForm = false;
-	const formHasErrors = false;
-
-	const [ retentionSelected, setRetentionSelected ] = useState( 0 );
+	// Retention period included in customer plan
 	const planRetentionPeriod = useSelector( ( state ) =>
 		getActivityLogVisibleDays( state, siteId )
 	);
+
+	// Retention period set by customer (if any)
+	const customerRetentionPeriod = useSelector( ( state ) =>
+		getBackupRetentionDays( state, siteId )
+	);
+
+	// The retention days option selected by the customer ( or by default )
+	const [ retentionSelected, setRetentionSelected ] = useState( 0 );
+
+	// The retention days that currently applies for this customer.
+	const [ currentRetentionPlan, setCurrentRetentionPlan ] = useState( 0 );
+	useMemo( () => {
+		if ( isFetching ) {
+			return;
+		}
+
+		if ( customerRetentionPeriod ) {
+			setCurrentRetentionPlan( customerRetentionPeriod );
+		} else if ( planRetentionPeriod ) {
+			setCurrentRetentionPlan( planRetentionPeriod );
+		}
+	}, [ customerRetentionPeriod, isFetching, planRetentionPeriod ] );
+
 	const storageLimitBytes = useSelector( ( state ) =>
 		getRewindBytesAvailable( state, siteId )
 	) as number;
@@ -41,46 +73,36 @@ const BackupRetentionManagement: FunctionComponent = () => {
 	const currentSiteSizeText = useStorageText( estimatedCurrentSiteSize );
 	const storageLimitText = useStorageText( storageLimitBytes );
 
-	const requestingSize = useSelector( ( state ) => isRequestingRewindSize( state, siteId ) );
-	const requestingPolicies = useSelector( ( state ) =>
-		isRequestingRewindPolicies( state, siteId )
-	);
-
-	const isFetching = requestingSize || requestingPolicies;
-
 	const retentionOptionsCards: Record< number, RetentionRadioOptionType > = {
 		[ RetentionOptions.RETENTION_DAYS_7 ]: usePrepareRetentionOptions(
 			translate( '7 days' ),
 			RetentionOptions.RETENTION_DAYS_7,
+			currentRetentionPlan,
 			retentionSelected === RetentionOptions.RETENTION_DAYS_7
 		),
 		[ RetentionOptions.RETENTION_DAYS_30 ]: usePrepareRetentionOptions(
 			translate( '30 days' ),
 			RetentionOptions.RETENTION_DAYS_30,
+			currentRetentionPlan,
 			retentionSelected === RetentionOptions.RETENTION_DAYS_30
 		),
 		[ RetentionOptions.RETENTION_DAYS_120 ]: usePrepareRetentionOptions(
 			translate( '120 days' ),
 			RetentionOptions.RETENTION_DAYS_120,
+			currentRetentionPlan,
 			retentionSelected === RetentionOptions.RETENTION_DAYS_120
 		),
 		[ RetentionOptions.RETENTION_DAYS_365 ]: usePrepareRetentionOptions(
 			translate( '1 year' ),
 			RetentionOptions.RETENTION_DAYS_365,
+			currentRetentionPlan,
 			retentionSelected === RetentionOptions.RETENTION_DAYS_365
 		),
 	};
 
-	// Set the retention period selected when we fetch the current plan retention period
-	useEffect( () => {
-		if ( planRetentionPeriod && ! retentionSelected ) {
-			setRetentionSelected( planRetentionPeriod );
-		}
-	}, [ planRetentionPeriod, retentionSelected ] );
-
-	const handleUpdateRetention = () => {
-		return;
-	};
+	const updateRetentionRequestStatus = useSelector( ( state ) =>
+		getBackupRetentionUpdateRequestStatus( state, siteId )
+	);
 
 	// Set the retention period selected when the user selects a new option
 	const onRetentionSelectionChange = useCallback( ( value: number ) => {
@@ -88,6 +110,46 @@ const BackupRetentionManagement: FunctionComponent = () => {
 			setRetentionSelected( value );
 		}
 	}, [] );
+
+	const disableFormSubmission =
+		! retentionSelected ||
+		retentionSelected === currentRetentionPlan ||
+		retentionOptionsCards[ retentionSelected ].upgradeRequired;
+
+	const [ confirmationDialogVisible, setConfirmationDialogVisible ] = useState( false );
+	const onConfirmationClose = useCallback( () => {
+		setConfirmationDialogVisible( false );
+	}, [] );
+
+	const handleUpdateRetention = useCallback( () => {
+		if ( ! retentionSelected ) {
+			return;
+		}
+
+		setConfirmationDialogVisible( true );
+	}, [ retentionSelected ] );
+
+	const onUpdateConfirmation = useCallback( () => {
+		dispatch( updateBackupRetention( siteId, retentionSelected as RetentionPeriod ) );
+	}, [ dispatch, retentionSelected, siteId ] );
+
+	// Set the retention period selected when we fetch the current plan retention period
+	useEffect( () => {
+		if ( currentRetentionPlan && ! retentionSelected ) {
+			setRetentionSelected( currentRetentionPlan );
+		}
+	}, [ currentRetentionPlan, retentionSelected ] );
+
+	useEffect( () => {
+		if ( updateRetentionRequestStatus === BACKUP_RETENTION_UPDATE_REQUEST.SUCCESS ) {
+			// Update the current retention plan to the one updated by the user.
+			setCurrentRetentionPlan( retentionSelected );
+			setConfirmationDialogVisible( false );
+		} else if ( updateRetentionRequestStatus === BACKUP_RETENTION_UPDATE_REQUEST.FAILED ) {
+			setConfirmationDialogVisible( false );
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ updateRetentionRequestStatus ] );
 
 	return (
 		( isFetching && <LoadingPlaceholder /> ) || (
@@ -120,23 +182,36 @@ const BackupRetentionManagement: FunctionComponent = () => {
 								'*We estimate the space you need based on your current site size and the selected number of days.'
 							) }
 						</div>
-						<div className="retention-form__additional-storage">
-							<div className="additional-storage__label">
-								{ translate( 'You need additional storage to choose this setting.' ) }
-							</div>
-							<div className="additional-storage__cta">
-								{ translate( 'Add XXGB additional storage for $X/month' ) }
-							</div>
-						</div>
 						<div className="retention-form__submit">
-							<Button
-								primary
-								onClick={ handleUpdateRetention }
-								disabled={ disableForm || formHasErrors }
-							>
+							<Button primary onClick={ handleUpdateRetention } disabled={ disableFormSubmission }>
 								{ translate( 'Update settings' ) }
 							</Button>
 						</div>
+						<Dialog
+							additionalClassNames="backup-retention-management retention-form__confirmation-dialog"
+							isVisible={ confirmationDialogVisible }
+							onClose={ onConfirmationClose }
+							buttons={ [
+								<Button onClick={ onConfirmationClose }>{ translate( 'Cancel' ) }</Button>,
+								<Button onClick={ onUpdateConfirmation } primary>
+									{ updateRetentionRequestStatus !== BACKUP_RETENTION_UPDATE_REQUEST.PENDING ? (
+										translate( 'Confirm change' )
+									) : (
+										<Spinner />
+									) }
+								</Button>,
+							] }
+						>
+							<h3>{ translate( 'Update settings' ) }</h3>
+							<p>
+								{ translate(
+									'You are about to reduce the number of days your backups are being saved. Backups older than %(retentionDays)s days will be lost.',
+									{
+										args: { retentionDays: retentionSelected },
+									}
+								) }
+							</p>
+						</Dialog>
 					</div>
 				</Card>
 			</div>

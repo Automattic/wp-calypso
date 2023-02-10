@@ -1,7 +1,6 @@
 import { useMemo } from '@wordpress/element';
 import { useSelector } from 'react-redux';
 import { useStorageText } from 'calypso/components/backup-storage-space/hooks';
-import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
 import getBackupCurrentSiteSize from 'calypso/state/rewind/selectors/get-backup-current-site-size';
 import getRewindBytesAvailable from 'calypso/state/rewind/selectors/get-rewind-bytes-available';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -40,6 +39,7 @@ export function useEstimateSpaceNeeded(
 export function usePrepareRetentionOptions(
 	label: string,
 	desiredRetentionDays: number,
+	currentRetentionPlan: number,
 	checked: boolean
 ): RetentionRadioOptionType {
 	const siteId = useSelector( getSelectedSiteId ) as number;
@@ -49,10 +49,6 @@ export function usePrepareRetentionOptions(
 		getRewindBytesAvailable( state, siteId )
 	) as number;
 
-	const planRetentionPeriod = useSelector( ( state ) =>
-		getActivityLogVisibleDays( state, siteId )
-	);
-
 	const spaceNeeded = useEstimateSpaceNeeded( currentSiteSizeInBytes, desiredRetentionDays );
 	const spaceNeededText = useStorageText( spaceNeeded );
 
@@ -61,7 +57,7 @@ export function usePrepareRetentionOptions(
 			label,
 			spaceNeeded: spaceNeededText,
 			upgradeRequired: spaceNeeded > storageLimitBytes,
-			isCurrentPlan: desiredRetentionDays === planRetentionPeriod,
+			isCurrentPlan: desiredRetentionDays === currentRetentionPlan,
 			value: desiredRetentionDays,
 			checked,
 		};
@@ -71,7 +67,7 @@ export function usePrepareRetentionOptions(
 		spaceNeeded,
 		storageLimitBytes,
 		desiredRetentionDays,
-		planRetentionPeriod,
+		currentRetentionPlan,
 		checked,
 	] );
 }
