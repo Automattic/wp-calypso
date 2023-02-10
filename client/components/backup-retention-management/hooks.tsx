@@ -4,7 +4,7 @@ import { useStorageText } from 'calypso/components/backup-storage-space/hooks';
 import getBackupCurrentSiteSize from 'calypso/state/rewind/selectors/get-backup-current-site-size';
 import getRewindBytesAvailable from 'calypso/state/rewind/selectors/get-rewind-bytes-available';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { RetentionRadioOptionType } from './consts';
+import type { RetentionRadioOptionType } from './types';
 
 /**
  * Estimate the current site size based on the last backup size, adding a 25% buffer

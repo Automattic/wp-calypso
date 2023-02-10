@@ -15,11 +15,12 @@ import getRewindBytesAvailable from 'calypso/state/rewind/selectors/get-rewind-b
 import isRequestingRewindPolicies from 'calypso/state/rewind/selectors/is-requesting-rewind-policies';
 import isRequestingRewindSize from 'calypso/state/rewind/selectors/is-requesting-rewind-size';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { RetentionOptions, RetentionRadioOptionType } from './consts';
+import { RetentionOptions } from './consts';
 import { useEstimatedCurrentSiteSize, usePrepareRetentionOptions } from './hooks';
 import InfoTooltip from './info-tooltip';
 import LoadingPlaceholder from './loading';
 import RetentionOptionsControl from './retention-options/retention-options-control';
+import type { RetentionRadioOptionType } from './types';
 import type { RetentionPeriod } from 'calypso/state/rewind/retention/types';
 import './style.scss';
 

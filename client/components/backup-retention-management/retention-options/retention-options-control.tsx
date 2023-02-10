@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from '@wordpress/element';
 import React from 'react';
-import { RetentionRadioOptionType } from '../consts';
 import RetentionOptionCard from './retention-option-card';
+import type { RetentionRadioOptionType } from '../types';
 
 interface RetentionOptionsControlProps {
 	retentionOptions: Record< number, RetentionRadioOptionType >;
