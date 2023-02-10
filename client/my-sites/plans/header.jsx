@@ -1,4 +1,6 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button, Dialog, Gridicon } from '@automattic/components';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useState } from 'react';
@@ -14,7 +16,7 @@ export default function PlansHeader() {
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, selectedSiteId ) );
 	const translate = useTranslate();
 	const [ showDomainUpsellDialog, setShowDomainUpsellDialog ] = useState( false );
-
+	const is2023OnboardingPricingGrid = isEnabled( 'onboarding/2023-pricing-grid' );
 	const domainFromHomeUpsellFlow = new URLSearchParams( window.location.search ).get(
 		'get_domain'
 	);
@@ -22,24 +24,6 @@ export default function PlansHeader() {
 	const plansDescription = translate(
 		'See and compare the features available on each WordPress.com plan.'
 	);
-
-	const domainUpsellDescription = translate(
-		'With an annual plan, you can get {{strong}}%(domainName)s for free{{/strong}} for the first year, Jetpack essential features, live chat support, and all the features that will take your site to the next level.',
-		{
-			args: {
-				domainName: domainFromHomeUpsellFlow,
-			},
-			components: {
-				strong: <strong />,
-			},
-		}
-	);
-
-	const onBackClick = () => {
-		recordTracksEvent( 'calypso_plans_page_domain_upsell_back_click' );
-		// We currently have only one flow that leads to the plans page domain upsell.
-		page( '/home/' + siteSlug );
-	};
 
 	const onCloseDialog = () => {
 		setShowDomainUpsellDialog( false );
@@ -118,30 +102,29 @@ export default function PlansHeader() {
 			/>
 		);
 	}
+	const withSkipButton = ! is2023OnboardingPricingGrid;
+	const classes = classNames( 'plans__section-header', 'modernized-header', 'header-text', {
+		'with-skip-button': withSkipButton,
+	} );
 
 	return (
 		<>
 			{ renderDeleteDialog() }
 			<FormattedHeader
-				className="header-text plans__section-header modernized-header"
+				className={ classes }
 				brandFont
-				headerText={ translate( 'Free for the first year!' ) }
-				subHeaderText={ domainUpsellDescription }
+				headerText={ translate( 'Plans' ) }
+				subHeaderText={ plansDescription }
 				align="left"
 			>
-				<div>
+				{ withSkipButton && (
 					<div className="plans__section-header-navigation">
-						<Button onClick={ onBackClick } className="inline-help__cancel-button" borderless>
-							<Gridicon icon="arrow-left" size={ 18 } />
-							{ translate( 'Back' ) }
-						</Button>
-
 						<Button onClick={ onSkipClick } borderless href="/">
 							{ translate( 'Skip' ) }
 							<Gridicon icon="arrow-right" size={ 18 } />
 						</Button>
 					</div>
-				</div>
+				) }
 			</FormattedHeader>
 		</>
 	);

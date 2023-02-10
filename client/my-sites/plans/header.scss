@@ -12,10 +12,16 @@
 }
 
 .is-section-plans .plans__section-header {
-	.formatted-header__title,
-	.formatted-header__subtitle {
-		max-width: $break-medium;
+	&.with-skip-button {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
 	}
+
+	// .formatted-header__title,
+	// .formatted-header__subtitle {
+	// 	max-width: $break-medium;
+	// }
 }
 
 .dialog.planspage__domain-upsell {

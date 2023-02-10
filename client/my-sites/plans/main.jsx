@@ -27,9 +27,9 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import { getDomainRegistrations } from 'calypso/lib/cart-values/cart-items';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
-import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
@@ -230,6 +230,20 @@ class Plans extends Component {
 		const goBackLink = addQueryArgs( `/domains/add/${ selectedSite.slug }`, {
 			domainAndPlanPackage: true,
 		} );
+		const domainFromHomeUpsellFlow = new URLSearchParams( window.location.search ).get(
+			'get_domain'
+		);
+		const domainUpsellDescription = translate(
+			'With an annual plan, you can get {{strong}}%(domainName)s for free{{/strong}} for the first year, Jetpack essential features, live chat support, and all the features that will take your site to the next level.',
+			{
+				args: {
+					domainName: domainFromHomeUpsellFlow,
+				},
+				components: {
+					strong: <strong />,
+				},
+			}
+		);
 
 		return (
 			<div>
@@ -278,6 +292,15 @@ class Plans extends Component {
 								fullWidthLayout={ is2023PricingGridVisible && ! isEcommerceTrial }
 								wideLayout={ ! is2023PricingGridVisible || isEcommerceTrial }
 							>
+								{ ! ( null === domainFromHomeUpsellFlow ) && (
+									<FormattedHeader
+										className="header-text"
+										brandFont
+										headerText={ translate( 'Free for the first year!' ) }
+										subHeaderText={ domainUpsellDescription }
+										align="center"
+									/>
+								) }
 								{ ! isDomainAndPlanPackageFlow && domainAndPlanPackage && (
 									<DomainAndPlanUpsellNotice />
 								) }
