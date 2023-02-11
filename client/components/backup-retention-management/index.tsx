@@ -166,7 +166,7 @@ const BackupRetentionManagement: FunctionComponent = () => {
 					<h3>{ translate( 'Days of backups saved' ) } </h3>
 					<InfoTooltip />
 				</Card>
-				<Card>
+				<Card className="setting-content">
 					<div className="storage-details">
 						<div className="storage-details__size">
 							<div className="size__label label">{ translate( 'Current site size*' ) }</div>

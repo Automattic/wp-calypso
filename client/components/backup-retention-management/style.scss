@@ -17,7 +17,7 @@
 		display: flex;
 		flex-direction: row;
 		grid-column-gap: 48px;
-		margin-bottom: 26px;
+		margin-bottom: 32px;
 
 		.label {
 			font-size: 0.875rem;
@@ -39,6 +39,10 @@
 	justify-content: flex-start;
 }
 
+.backup-retention-management .setting-content {
+	padding-top: 28px;
+}
+
 .backup-retention-management .retention-form {
 	&__instructions {
 		margin-bottom: 24px;
@@ -53,7 +57,7 @@
 		font-weight: 400;
 		line-height: 18px;
 		color: var(--studio-gray-50);
-		margin-bottom: 18px;
+		margin-bottom: 24px;
 	}
 
 	&__additional-storage {
