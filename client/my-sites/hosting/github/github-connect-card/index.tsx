@@ -10,9 +10,9 @@ import SocialLogo from 'calypso/components/social-logo';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { DisconnectGitHubExpander } from '../disconnect-github-expander';
-import { RepoBranch, useGithubBranches } from './use-github-branches';
+import { useGithubBranches } from './use-github-branches';
 import { useGithubConnectMutation } from './use-github-connect';
-import { Repo, useGithubRepos } from './use-github-repos';
+import { useGithubRepos } from './use-github-repos';
 import type { ComponentProps } from 'react';
 
 interface GithubConnectCardProps {
@@ -28,8 +28,8 @@ export const GithubConnectCard = ( { connection }: GithubConnectCardProps ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const dispatch = useDispatch();
 
-	const [ selectedRepo, setSelectedRepo ] = useState< Repo >();
-	const [ selectedBranch, setSelectedBranch ] = useState< RepoBranch >();
+	const [ selectedRepo, setSelectedRepo ] = useState< string >();
+	const [ selectedBranch, setSelectedBranch ] = useState< string >();
 	const [ basePath, setBasePath ] = useState< string >( '' );
 	const { data: repos, isLoading: isLoadingRepos } = useGithubRepos( siteId, {
 		onSuccess( repos ) {
@@ -38,7 +38,7 @@ export const GithubConnectCard = ( { connection }: GithubConnectCardProps ) => {
 	} );
 	const { data: branches, isLoading: isLoadingBranches } = useGithubBranches(
 		siteId,
-		selectedRepo?.name,
+		selectedRepo,
 		{
 			onSuccess( branches ) {
 				setSelectedBranch( branches[ 0 ] );
@@ -66,12 +66,12 @@ export const GithubConnectCard = ( { connection }: GithubConnectCardProps ) => {
 	const showSpinner = ! repos && ! branches && ( isLoadingRepos || isLoadingBranches );
 	const disabled = isLoadingBranches || isConnecting;
 	const handleRepoSelect = ( repoName: string ) => {
-		const selectedRepo = repos?.find( ( repo ) => repo.full_name === repoName );
+		const selectedRepo = repos?.find( ( repo ) => repo === repoName );
 		setSelectedRepo( selectedRepo );
 	};
 
 	const handleBranchSelect = ( branchName: string ) => {
-		const selectedBranch = branches?.find( ( branch ) => branch.name === branchName );
+		const selectedBranch = branches?.find( ( branch ) => branch === branchName );
 		setSelectedBranch( selectedBranch );
 	};
 
@@ -92,22 +92,22 @@ export const GithubConnectCard = ( { connection }: GithubConnectCardProps ) => {
 						<FormSelect
 							className="connect-branch__field"
 							onChange={ ( event ) => handleRepoSelect( event.currentTarget.value ) }
-							value={ selectedRepo?.full_name }
+							value={ selectedRepo }
 						>
 							{ repos?.map( ( repo ) => (
-								<option value={ repo.full_name } key={ repo.name }>
-									{ repo.full_name }
+								<option value={ repo } key={ repo }>
+									{ repo }
 								</option>
 							) ) }
 						</FormSelect>
 						<FormSelect
 							className="connect-branch__field"
 							onChange={ ( event ) => handleBranchSelect( event.currentTarget.value ) }
-							value={ selectedBranch?.name }
+							value={ selectedBranch }
 						>
 							{ branches?.map( ( branch ) => (
-								<option value={ branch.name } key={ branch.name }>
-									{ branch.name }
+								<option value={ branch } key={ branch }>
+									{ branch }
 								</option>
 							) ) }
 						</FormSelect>
@@ -116,8 +116,8 @@ export const GithubConnectCard = ( { connection }: GithubConnectCardProps ) => {
 							busy={ disabled }
 							onClick={ () => {
 								connectBranch( {
-									repoName: selectedRepo?.name,
-									branchName: selectedBranch?.name,
+									repoName: selectedRepo,
+									branchName: selectedBranch,
 									basePath: basePath?.trim(),
 								} );
 							} }
