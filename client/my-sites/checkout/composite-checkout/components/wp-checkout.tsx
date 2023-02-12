@@ -34,6 +34,7 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
+import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-valid-checkout-back-url';
 import { leaveCheckout } from 'calypso/my-sites/checkout/composite-checkout/lib/leave-checkout';
@@ -266,6 +267,7 @@ export default function WPCheckout( {
 			<MainContentWrapper>
 				<NonCheckoutContentWrapper>
 					<NonCheckoutContentInnerWrapper>
+						<PerformanceTrackerStop />
 						<CheckoutCompleteRedirecting />
 						<SubmitButtonWrapper>
 							<Button buttonType="primary" fullWidth isBusy disabled>
@@ -292,6 +294,7 @@ export default function WPCheckout( {
 			<MainContentWrapper>
 				<NonCheckoutContentWrapper>
 					<NonCheckoutContentInnerWrapper>
+						<PerformanceTrackerStop />
 						<EmptyCart />
 						<SubmitButtonWrapper>
 							<Button buttonType="primary" fullWidth onClick={ goToPreviousPage }>
@@ -343,6 +346,7 @@ export default function WPCheckout( {
 				</CheckoutSummaryArea>
 			}
 		>
+			<PerformanceTrackerStop />
 			{ infoMessage }
 			<CheckoutStepBody
 				onError={ onReviewError }
