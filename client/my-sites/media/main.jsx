@@ -10,7 +10,6 @@ import QueryMedia from 'calypso/components/data/query-media';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Notice from 'calypso/components/notice';
-import NoticeAction from 'calypso/components/notice/notice-action';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import { withEditMedia } from 'calypso/data/media/use-edit-media-mutation';
 import { withDeleteMedia } from 'calypso/data/media/with-delete-media';
@@ -365,13 +364,14 @@ class Media extends Component {
 						showDismiss={ false }
 						status="is-info"
 						text={ translate(
-							'Your site is Private and the image CDN is disabled. If image thumbnails do not display, switch to Coming Soon mode.'
+							'Your site is Private and the image CDN is disabled. If image thumbnails do not display, switch to Coming Soon mode. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+							{
+								components: {
+									learnMoreLink: <InlineSupportLink supportContext="privacy" showIcon={ false } />,
+								},
+							}
 						) }
-					>
-						<NoticeAction href="/support/settings/privacy-settings/#private" external>
-							{ translate( 'Learn more' ) }
-						</NoticeAction>
-					</Notice>
+					/>
 				) }
 				<FormattedHeader
 					brandFont
