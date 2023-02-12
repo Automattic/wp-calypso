@@ -9,10 +9,10 @@ import './style.scss';
 
 export default function StatsNotices( { siteId } ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+
 	const showOptOutNotice = useSelector( ( state ) => hasOptOutNewStatsNotice( state, siteId ) );
 	const showFeedbackNotice = useSelector( ( state ) => hasNewStatsFeedbackNotice( state, siteId ) );
-	const showContainer = showOptOutNotice || showFeedbackNotice;
-	const dispatch = useDispatch();
 
 	const updateNewStatsFeedBackStats =
 		( id, status, url = null, postponed_for = 0 ) =>
@@ -38,9 +38,9 @@ export default function StatsNotices( { siteId } ) {
 	const dismissFeedbackNotice = updateNewStatsFeedBackStats( 'new_stats_feedback', 'dismissed' );
 
 	return (
-		showContainer && (
-			<div className="inner-notice-container has-background-color">
-				{ showOptOutNotice && (
+		<>
+			{ showOptOutNotice && (
+				<div className="inner-notice-container has-background-color">
 					<NoticeBanner
 						level="success"
 						title={ translate( 'Welcome to the new Jetpack Stats!' ) }
@@ -58,9 +58,10 @@ export default function StatsNotices( { siteId } ) {
 							}
 						) }
 					</NoticeBanner>
-				) }
-
-				{ showFeedbackNotice && (
+				</div>
+			) }
+			{ showFeedbackNotice && (
+				<div className="inner-notice-container has-background-color">
 					<NoticeBanner
 						level="info"
 						title={ translate( "We'd love to hear your thoughts on the new Stats" ) }
@@ -88,8 +89,8 @@ export default function StatsNotices( { siteId } ) {
 							}
 						) }
 					</NoticeBanner>
-				) }
-			</div>
-		)
+				</div>
+			) }
+		</>
 	);
 }
