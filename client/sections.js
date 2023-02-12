@@ -262,6 +262,7 @@ const sections = [
 		module: 'calypso/my-sites/checkout',
 		group: 'sites',
 		enableLoggedOut: true,
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'plans',

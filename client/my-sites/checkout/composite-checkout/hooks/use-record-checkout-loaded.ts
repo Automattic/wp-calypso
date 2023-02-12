@@ -2,6 +2,7 @@ import debugFactory from 'debug';
 import { useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { hasRenewalItem } from 'calypso/lib/cart-values/cart-items';
+import { usePerformanceTrackerStop } from 'calypso/lib/performance-tracking/use-performance-tracker-stop';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import type { StoredCard } from '../types/stored-cards';
 import type { ResponseCart } from '@automattic/shopping-cart';
@@ -25,6 +26,7 @@ export default function useRecordCheckoutLoaded( {
 } ): void {
 	const reduxDispatch = useDispatch();
 	const hasRecordedCheckoutLoad = useRef( false );
+	usePerformanceTrackerStop();
 	if ( ! isLoading && ! hasRecordedCheckoutLoad.current ) {
 		debug( 'composite checkout has loaded' );
 		reduxDispatch(
