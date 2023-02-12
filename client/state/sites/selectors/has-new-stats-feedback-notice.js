@@ -8,7 +8,7 @@ import getRawSite from 'calypso/state/selectors/get-raw-site';
  * @param siteId The site ID.
  * @returns {?boolean}        hasFeedbackNotice
  */
-export default function hasFeedbackNewStatsNotice( state, siteId ) {
+export default function hasNewStatsFeedbackNotice( state, siteId ) {
 	if ( ! siteId ) {
 		return null;
 	}
