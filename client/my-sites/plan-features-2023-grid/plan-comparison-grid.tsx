@@ -28,6 +28,7 @@ import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
 import PlanFeatures2023GridHeaderPrice from './header-price';
 import { plansBreakSmall, plansBreakLarge } from './media-queries';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
+import { PlanProperties } from './types';
 import { usePricingBreakpoint } from './util';
 
 function DropdownIcon() {
