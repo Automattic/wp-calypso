@@ -65,7 +65,8 @@ $mobile-layout-breakpoint: $break-small;
 			margin-left: 24px;
 		}
 
-		.post-stats-card__thumbnail {
+		.post-stats-card__thumbnail,
+		.post-stats-card__upload {
 			margin-left: auto;
 		}
 	}
