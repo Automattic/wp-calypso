@@ -22,6 +22,10 @@ const circle = (
 	</SVG>
 );
 
+type CoreDataPlaceholder = {
+	hasFinishedResolution: ( ...args: unknown[] ) => boolean;
+};
+
 export const HelpCenterMoreResources = () => {
 	const { __ } = useI18n();
 	const sectionName = useSelector( getSectionName );
@@ -42,7 +46,7 @@ export const HelpCenterMoreResources = () => {
 			hasSeenWhatsNewModal: (
 				select( HELP_CENTER_STORE ) as HelpCenterSelect
 			 ).getHasSeenWhatsNewModal(),
-			doneLoading: select( 'core/data' ).hasFinishedResolution(
+			doneLoading: ( select( 'core/data' ) as CoreDataPlaceholder ).hasFinishedResolution(
 				HELP_CENTER_STORE,
 				'getHasSeenWhatsNewModal',
 				[]
