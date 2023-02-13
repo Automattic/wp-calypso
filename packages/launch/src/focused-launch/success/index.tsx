@@ -9,6 +9,7 @@ import * as React from 'react';
 import LaunchContext from '../../context';
 import { useSiteDomains, useHasEcommercePlan } from '../../hooks';
 import { LAUNCH_STORE, SITE_STORE } from '../../stores';
+import type { LaunchSelect, SiteSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -19,12 +20,12 @@ const Success: React.FunctionComponent = () => {
 		React.useContext( LaunchContext );
 
 	const isSiteLaunching = useSelect(
-		( select ) => select( SITE_STORE ).isSiteLaunching( siteId ),
+		( select ) => ( select( SITE_STORE ) as SiteSelect ).isSiteLaunching( siteId ),
 		[]
 	);
 
 	const [ isSelectedPlanPaid, selectedDomain ] = useSelect( ( select ) => {
-		const launchStore = select( LAUNCH_STORE );
+		const launchStore: LaunchSelect = select( LAUNCH_STORE );
 
 		return [ launchStore.isSelectedPlanPaid(), launchStore.getSelectedDomain() ];
 	}, [] );

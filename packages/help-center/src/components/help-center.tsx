@@ -17,7 +17,7 @@ import { useStillNeedHelpURL } from '../hooks/use-still-need-help-url';
 import { HELP_CENTER_STORE, USER_STORE, SITE_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContainer from './help-center-container';
-import type { HelpCenterSelect } from '@automattic/data-stores';
+import type { HelpCenterSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 import '../styles.scss';
 
 const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
@@ -51,10 +51,13 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const primarySiteId = useSelector( ( state ) => getPrimarySiteId( state ) );
 
-	useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
+	useSelect( ( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(), [] );
 
 	const currentSite = window?.helpCenterData?.currentSite;
-	const site = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId || primarySiteId ) );
+	const site = useSelect(
+		( select ) => ( select( SITE_STORE ) as SiteSelect ).getSite( siteId || primarySiteId ),
+		[]
+	);
 
 	setSite( currentSite ? currentSite : site );
 	useSupportAvailability( 'CHAT' );

@@ -34,6 +34,7 @@ export * from './domain-suggestions/types';
 export * from './plans/types';
 export * from './subscriber/types';
 export * from './launch/types';
+export * from './user/types';
 
 export {
 	Analyzer,
