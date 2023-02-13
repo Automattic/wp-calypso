@@ -289,6 +289,8 @@ const IntervalTypeToggleWrapper = styled.div< { showingMonthly: boolean; isInSig
 	display: ${ ( { isInSignup } ) => ( isInSignup ? 'flex' : 'block' ) };
 	align-content: space-between;
 	justify-content: center;
+	margin-left: 20px;
+	margin-right: 20px;
 
 	> .segmented-control.is-compact:not( .is-signup ) {
 		margin: 8px auto 16px;

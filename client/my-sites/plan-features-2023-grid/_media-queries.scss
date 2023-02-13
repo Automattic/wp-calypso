@@ -17,7 +17,7 @@ $minWidthToGridWidthMap: (
 
 
 @mixin pricing-grid-breakpoints {
-	width: 414px;
+	width: 100%;
 
 	@each $screenMinWidth, $gridWidth in $minWidthToGridWidthMap {
 		@media ( min-width: #{$screenMinWidth} ) {
