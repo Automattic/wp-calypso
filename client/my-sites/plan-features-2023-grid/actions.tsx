@@ -160,7 +160,7 @@ const LoggedInPlansFeatureActionButton = ( {
 					href={ `/add-ons/${ selectedSiteSlug }` }
 					disabled={ ! manageHref }
 				>
-					{ translate( 'Manage add-ons', { context: 'verb' } ) }
+					{ translate( 'Keep my plan', { context: 'verb' } ) }
 				</Button>
 			);
 		}
