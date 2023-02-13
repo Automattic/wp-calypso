@@ -2,7 +2,7 @@ import { eye } from '@automattic/components/src/icons';
 import { Icon, commentContent, starEmpty } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import { Card, ShortenedNumber } from '../';
+import { Card, ShortenedNumber, Button } from '../';
 import './style.scss';
 
 type PostStatsCardProps = {
@@ -16,6 +16,7 @@ type PostStatsCardProps = {
 		title: string;
 	};
 	titleLink?: string | undefined;
+	uploadHref?: string | undefined;
 };
 
 export default function PostStatsCard( {
@@ -25,6 +26,7 @@ export default function PostStatsCard( {
 	post,
 	viewCount,
 	titleLink,
+	uploadHref,
 }: PostStatsCardProps ) {
 	const translate = useTranslate();
 	const parsedDate = useMemo( () => new Date( post?.date ).toLocaleDateString(), [ post?.date ] );
@@ -79,6 +81,13 @@ export default function PostStatsCard( {
 						textOnly: true,
 					} ) }
 				/>
+			) }
+			{ uploadHref && ! post?.post_thumbnail && (
+				<div className="post-stats-card__upload">
+					<Button className="post-stats-card__upload-btn" href={ uploadHref }>
+						{ translate( 'Add featured image' ) }
+					</Button>
+				</div>
 			) }
 		</Card>
 	);
