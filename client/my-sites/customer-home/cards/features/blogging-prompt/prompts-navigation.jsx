@@ -11,14 +11,17 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import NoResponsesIcon from './no-responses-icon';
 import './style.scss';
 
-const PromptsNavigation = ( { prompts } ) => {
+const PromptsNavigation = ( { prompts, index } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const [ promptIndex, setPromptIndex ] = useState( 0 );
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const editorUrl = useSelector( ( state ) => getEditorUrl( state, siteId ) );
 	const backIcon = 'arrow-left';
 	const forwardIcon = 'arrow-right';
+
+	const initialIndex = index ? index % prompts.length : 0;
+
+	const [ promptIndex, setPromptIndex ] = useState( initialIndex );
 
 	const getPrompt = () => {
 		return prompts !== undefined ? prompts[ promptIndex ] : null;

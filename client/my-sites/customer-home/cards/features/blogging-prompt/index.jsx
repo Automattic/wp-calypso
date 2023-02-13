@@ -16,7 +16,7 @@ import PromptsNavigation from './prompts-navigation';
 
 import './style.scss';
 
-const BloggingPromptCard = () => {
+const BloggingPromptCard = ( { index } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
@@ -73,7 +73,7 @@ const BloggingPromptCard = () => {
 						</Button>
 					</EllipsisMenu>
 				</CardHeading>
-				<PromptsNavigation prompts={ prompts } />
+				<PromptsNavigation prompts={ prompts } index={ index } />
 			</Card>
 		</div>
 	);
