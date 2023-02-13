@@ -97,6 +97,8 @@
 		"stats/enhance-post-detail": true,
 		"stats/horizontal-bars-everywhere": true,
 		"stats/insights-page-grid": false,
+		"stats/latest-post-stats": false,
+		"stats/most-popular-post": false,
 		"stats/new-video-summary": false,
 		"stepper-woocommerce-poc": true,
 		"themes/premium": true,

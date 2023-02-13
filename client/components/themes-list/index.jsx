@@ -27,6 +27,9 @@ const noop = () => {};
 export const ThemesList = ( props ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
+	const isPatternAssemblerCTAEnabled =
+		isEnabled( 'pattern-assembler/logged-out-showcase' ) && ! isLoggedIn;
+
 	const fetchNextPage = useCallback(
 		( options ) => {
 			props.fetchNextPage( options );
@@ -58,7 +61,14 @@ export const ThemesList = ( props ) => {
 
 	if ( ! props.loading && props.themes.length === 0 ) {
 		if ( matchingWpOrgThemes.length ) {
-			return <WPOrgMatchingThemes matchingThemes={ matchingWpOrgThemes } { ...props } />;
+			return (
+				<>
+					<WPOrgMatchingThemes matchingThemes={ matchingWpOrgThemes } { ...props } />
+					{ isPatternAssemblerCTAEnabled && (
+						<PatternAssemblerCta onButtonClick={ goToSiteAssemblerFlow } />
+					) }
+				</>
+			);
 		}
 
 		return (
@@ -77,10 +87,10 @@ export const ThemesList = ( props ) => {
 			{ props.themes.map( ( theme, index ) => (
 				<ThemeBlock key={ 'theme-block' + index } theme={ theme } index={ index } { ...props } />
 			) ) }
-			{ /* The Pattern Assembler CTA will display on the fourth row and the behavior is controlled by CSS */ }
-			{ isEnabled( 'pattern-assembler/logged-out-showcase' ) &&
-				props.themes.length > 0 &&
-				! isLoggedIn && <PatternAssemblerCta onButtonClick={ goToSiteAssemblerFlow } /> }
+			{ /* The Pattern Assembler CTA will display on the 9th row and the behavior is controlled by CSS */ }
+			{ isPatternAssemblerCTAEnabled && props.themes.length > 0 && (
+				<PatternAssemblerCta onButtonClick={ goToSiteAssemblerFlow } />
+			) }
 			{ props.loading && <LoadingPlaceholders placeholderCount={ props.placeholderCount } /> }
 			<InfiniteScroll nextPageMethod={ fetchNextPage } />
 		</div>

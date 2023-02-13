@@ -19,6 +19,7 @@ const StatsCard = ( {
 	metricLabel,
 	mainItemLabel,
 	additionalHeaderColumns,
+	toggleControl,
 }: StatsCardProps ) => {
 	const translate = useTranslate();
 
@@ -42,7 +43,10 @@ const StatsCard = ( {
 	// (main item, optional additional columns and value)
 	const splitHeaderNode = (
 		<div className={ `${ BASE_CLASS_NAME }-header ${ BASE_CLASS_NAME }-header--split` }>
-			{ titleNode }
+			<div className={ `${ BASE_CLASS_NAME }-header--main` }>
+				{ titleNode }
+				{ toggleControl }
+			</div>
 			{ ! isEmpty && (
 				<div className={ `${ BASE_CLASS_NAME }--column-header` }>
 					<div className={ `${ BASE_CLASS_NAME }--column-header__left` }>

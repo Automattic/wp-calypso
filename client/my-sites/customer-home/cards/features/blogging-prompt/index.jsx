@@ -8,6 +8,7 @@ import { useBloggingPrompts } from 'calypso/data/blogging-prompt/use-blogging-pr
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 import { SECTION_BLOGGING_PROMPT } from 'calypso/my-sites/customer-home/cards/constants';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import BellOffIcon from './bell-off-icon';
 import LightbulbIcon from './lightbulb-icon';
@@ -18,8 +19,19 @@ import './style.scss';
 const BloggingPromptCard = () => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const primarySiteId = useSelector( ( state ) => getPrimarySiteId( state ) );
+	let siteId = selectedSiteId;
+
+	// We need a site ID to request prompts
+	// If no selected site ID, fallback to using Primary site ID
+	if ( siteId === null ) {
+		siteId = primarySiteId;
+	}
+
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
+	const notificationSettingsLink = '/me/notifications' + ( siteSlug ? '#' + siteSlug : '' );
+
 	const maxNumberOfPrompts = 10;
 	const { data: prompts } = useBloggingPrompts( siteId, maxNumberOfPrompts );
 
@@ -36,8 +48,6 @@ const BloggingPromptCard = () => {
 			} )
 		);
 	};
-
-	const notificationSettingsLink = `/me/notifications#${ siteSlug }`;
 
 	return (
 		<div className="blogging-prompt">

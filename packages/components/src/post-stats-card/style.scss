@@ -63,7 +63,7 @@ $break-wpcom-smallest: 320px;
 	display: flex;
 	flex-flow: row;
 	grid-area: counts;
-	justify-content: space-between;
+	gap: 64px;
 }
 
 .post-stats-card__count {

@@ -309,7 +309,6 @@ import {
 	FEATURE_VIDEOPRESS_JP,
 	FEATURE_UNLTD_SOCIAL_MEDIA_JP,
 	FEATURE_SEO_JP,
-	FEATURE_BRUTE_PROTECT_JP,
 	FEATURE_REALTIME_BACKUPS_JP,
 	FEATURE_UPTIME_MONITOR_JP,
 	FEATURE_ES_SEARCH_JP,
@@ -320,6 +319,7 @@ import {
 	FEATURE_CLOUD_CRITICAL_CSS,
 	FEATURE_GLOBAL_EDGE_CACHING,
 } from './constants';
+import { is2023PricingGridEnabled } from './plans-utilities';
 import type {
 	BillingTerm,
 	Plan,
@@ -692,7 +692,8 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		},
 	} ),
 } );
-const is2023OnboardingPricingGrid = isEnabled( 'onboarding/2023-pricing-grid' );
+
+const is2023OnboardingPricingGrid = is2023PricingGridEnabled();
 
 const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
@@ -999,7 +1000,6 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_UNLTD_SOCIAL_MEDIA_JP,
 		FEATURE_SEO_JP,
 		FEATURE_SITE_ACTIVITY_LOG_JP,
-		FEATURE_BRUTE_PROTECT_JP,
 	],
 	get2023PricingGridSignupStorageOptions: () => [ FEATURE_13GB_STORAGE ],
 	// Features not displayed but used for checking plan abilities

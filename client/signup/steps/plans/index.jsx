@@ -1,5 +1,5 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
+	is2023PricingGridEnabled,
 	planHasFeature,
 	FEATURE_UPLOAD_THEMES_PLUGINS,
 	getPlan,
@@ -439,7 +439,7 @@ export class PlansStep extends Component {
 	}
 
 	render() {
-		const is2023OnboardingPricingGrid = isEnabled( 'onboarding/2023-pricing-grid' );
+		const is2023OnboardingPricingGrid = is2023PricingGridEnabled();
 
 		const classes = classNames( 'plans plans-step', {
 			'in-vertically-scrolled-plans-experiment':
@@ -514,7 +514,7 @@ export default connect(
 		isInVerticalScrollingPlansExperiment: true,
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
 		eligibleForProPlan: isEligibleForProPlan( state, getSiteBySlug( state, siteSlug )?.ID ),
-		isOnboarding2023PricingGrid: isEnabled( 'onboarding/2023-pricing-grid' ),
+		isOnboarding2023PricingGrid: is2023PricingGridEnabled(),
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep, errorNotice }
 )( localize( PlansStep ) );

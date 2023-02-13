@@ -8,6 +8,7 @@ import {
 	getWpOrgImporterUrl,
 } from 'calypso/blocks/import/util';
 import { WPImportOption } from 'calypso/blocks/importer/wordpress/types';
+import wpcom from 'calypso/lib/wp';
 import { BASE_ROUTE } from './config';
 
 export function getFinalImporterUrl(
@@ -61,4 +62,19 @@ export function generateStepPath( stepName: string, stepSectionName?: string ) {
 	const path = routes.join( '_' );
 
 	return camelCase( path ) as string;
+}
+
+export async function addTempSiteToSourceOption( targetBlogId: number, sourceSiteSlug: string ) {
+	return wpcom.req
+		.post( {
+			path: `/migrations/from-source/${ sourceSiteSlug }`,
+			apiNamespace: 'wpcom/v2',
+			body: {
+				target_blog_id: targetBlogId,
+			},
+		} )
+		.catch( ( error: Error ) => {
+			// eslint-disable-next-line no-console
+			console.error( 'Unable to store option in source site', error );
+		} );
 }
