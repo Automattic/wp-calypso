@@ -56,7 +56,7 @@ const SyncActiveTheme = ( {
 		} else if ( attempts >= maxAttempts ) {
 			setExceededMaxAttempts( true );
 		}
-	}, [ siteId, dispatch, requestStarted, activeTheme ] );
+	}, [ requestStarted, activeTheme ] );
 
 	return null;
 };
