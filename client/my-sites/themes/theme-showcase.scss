@@ -5,7 +5,7 @@ $theme-img-filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.05));
 
 body.is-section-themes {
 	&.theme-default.color-scheme {
-		--color-surface-backdrop: #fdfdfd;
+		--color-surface-backdrop: var(--studio-white);
 	}
 
 	.layout:not(.has-no-sidebar) .layout__content {

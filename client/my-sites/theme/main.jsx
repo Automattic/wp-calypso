@@ -6,7 +6,13 @@ import {
 	WPCOM_FEATURES_PREMIUM_THEMES,
 } from '@automattic/calypso-products';
 import { Button, Card, Gridicon } from '@automattic/components';
+import {
+	getDesignPreviewUrl,
+	PremiumBadge,
+	ThemePreview as ThemeWebPreview,
+} from '@automattic/design-picker';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { createHigherOrderComponent } from '@wordpress/compose';
 import classNames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import page from 'page';
@@ -32,6 +38,7 @@ import SectionHeader from 'calypso/components/section-header';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
@@ -48,6 +55,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { setThemePreviewOptions } from 'calypso/state/themes/actions';
 import {
@@ -64,6 +72,7 @@ import {
 	getThemeRequestErrors,
 	getThemeForumUrl,
 	getThemeDemoUrl,
+	getThemePreviewThemeOptions,
 	shouldShowTryAndCustomize,
 	isExternallyManagedTheme as getIsExternallyManagedTheme,
 	isSiteEligibleForManagedExternalThemes as getIsSiteEligibleForManagedExternalThemes,
@@ -167,6 +176,11 @@ class ThemeSheet extends Component {
 	onSecondaryButtonClick = () => {
 		const { secondaryOption } = this.props;
 		secondaryOption && secondaryOption.action && secondaryOption.action( this.props.themeId );
+	};
+
+	onStyleVariationClick = ( variation ) => {
+		const { themeId, primary, secondary } = this.props.themeOptions;
+		this.props.setThemePreviewOptions( themeId, primary, secondary, variation );
 	};
 
 	getValidSections = () => {
@@ -324,6 +338,25 @@ class ThemeSheet extends Component {
 		return <div className="theme__sheet-screenshot">{ img }</div>;
 	}
 
+	renderWebPreview = () => {
+		const { locale, stylesheet, themeId, themeOptions } = this.props;
+		const url = getDesignPreviewUrl(
+			{ slug: themeId, recipe: { stylesheet } },
+			{ language: locale }
+		);
+
+		return (
+			<div className="theme__sheet-web-preview">
+				<ThemeWebPreview
+					url={ url }
+					inlineCss={ themeOptions?.styleVariation?.inline_css }
+					isShowFrameBorder={ false }
+					isShowDeviceSwitcher={ false }
+				/>
+			</div>
+		);
+	};
+
 	renderSectionNav = ( currentSection ) => {
 		const { siteSlug, themeId, demoUrl, translate, locale, isLoggedIn } = this.props;
 		const filterStrings = {
@@ -375,6 +408,8 @@ class ThemeSheet extends Component {
 	};
 
 	renderSectionContent = ( section ) => {
+		const isNewDetailsAndPreview = config.isEnabled( 'themes/showcase-i4/details-and-preview' );
+		const { isPremium, supportDocumentation } = this.props;
 		const activeSection = {
 			'': this.renderOverviewTab(),
 			setup: this.renderSetupTab(),
@@ -390,12 +425,77 @@ class ThemeSheet extends Component {
 						messagePath="calypso:theme:admin_notices"
 					/>
 				) }
-				{ this.renderSectionNav( section ) }
-				{ activeSection }
+				{ ! isNewDetailsAndPreview ? (
+					<>
+						{ this.renderSectionNav( section ) }
+						{ activeSection }
+					</>
+				) : (
+					<>
+						{ this.renderOverviewTab() }
+						{ ! isPremium && supportDocumentation && this.renderSetupTab() }
+						{ this.renderSupportTab() }
+					</>
+				) }
 				<div className="theme__sheet-footer-line">
 					<Gridicon icon="my-sites" />
 				</div>
 			</div>
+		);
+	};
+
+	renderHeader = () => {
+		const { author, name, translate, softLaunched } = this.props;
+		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
+		const title = name || placeholder;
+		const tag = author ? translate( 'by %(author)s', { args: { author: author } } ) : placeholder;
+
+		return (
+			<div className="theme__sheet-header">
+				<Button className="theme__sheet-header-back-button" borderless onClick={ this.goBack }>
+					<Gridicon icon="chevron-left" size={ 18 } />
+					{ translate( 'Back to themes' ) }
+				</Button>
+				<div className="theme__sheet-header-columns">
+					<h1 className="theme__sheet-header-title">
+						{ title }
+						{ ! softLaunched && (
+							<span className="theme__sheet-bar-soft-launched">{ translate( 'A8C Only' ) }</span>
+						) }
+					</h1>
+					<span className="theme__sheet-header-tag">{ tag }</span>
+					{ this.renderStyleVariations() }
+				</div>
+			</div>
+		);
+	};
+
+	renderStyleVariations = () => {
+		const { shouldLimitGlobalStyles, styleVariations, themeOptions, translate } = this.props;
+
+		return (
+			styleVariations.length > 0 && (
+				<div className="theme__sheet-style-variations">
+					<h2>
+						{ translate( 'Style' ) }
+						<PremiumBadge
+							tooltipContent={ translate(
+								'Unlock this style, and tons of other features, by upgrading to a Premium plan.'
+							) }
+						/>
+					</h2>
+					<div className="theme__sheet-style-variations-previews">
+						<AsyncLoad
+							require="@automattic/design-preview/src/components/style-variation"
+							placeholder={ null }
+							selectedVariation={ themeOptions?.styleVariation }
+							variations={ styleVariations }
+							onClick={ this.onStyleVariationClick }
+							showGlobalStylesPremiumBadge={ shouldLimitGlobalStyles }
+						/>
+					</div>
+				</div>
+			)
 		);
 	};
 
@@ -421,10 +521,12 @@ class ThemeSheet extends Component {
 	};
 
 	renderOverviewTab = () => {
+		const isNewDetailsAndPreview = config.isEnabled( 'themes/showcase-i4/details-and-preview' );
 		const { download, isWpcomTheme, siteSlug, taxonomies, isPremium } = this.props;
 
 		return (
 			<div>
+				{ isNewDetailsAndPreview && this.renderHeader() }
 				<Card className="theme__sheet-content">{ this.renderDescription() }</Card>
 				<ThemeFeaturesCard
 					taxonomies={ taxonomies }
@@ -769,6 +871,7 @@ class ThemeSheet extends Component {
 			siteSlug,
 			retired,
 			hasUnlimitedPremiumThemes,
+			styleVariations,
 			isAtomic,
 			isPremium,
 			isBundledSoftwareSet,
@@ -927,6 +1030,7 @@ class ThemeSheet extends Component {
 			} );
 		}
 
+		const isNewDetailsAndPreview = config.isEnabled( 'themes/showcase-i4/details-and-preview' );
 		const isRemoved = this.isRemoved();
 
 		const className = classNames( 'theme__sheet', { 'is-with-upsell-banner': hasUpsellBanner } );
@@ -936,6 +1040,9 @@ class ThemeSheet extends Component {
 
 		return (
 			<Main className={ className }>
+				<BodySectionCssClass
+					bodyClass={ [ ...( isNewDetailsAndPreview ? [ 'is-section-theme-i4' ] : [] ) ] }
+				/>
 				<QueryCanonicalTheme themeId={ this.props.themeId } siteId={ siteId } />
 				<QueryProductsList />
 				<QueryUserPurchases />
@@ -952,25 +1059,32 @@ class ThemeSheet extends Component {
 					properties={ { is_logged_in: isLoggedIn } }
 				/>
 				<AsyncLoad require="calypso/components/global-notices" placeholder={ null } id="notices" />
-				{ this.renderBar() }
+				{ ! isNewDetailsAndPreview && this.renderBar() }
 				<QueryActiveTheme siteId={ siteId } />
 				<ThanksModal source="details" themeId={ this.props.themeId } />
 				<AutoLoadingHomepageModal source="details" />
-				{ pageUpsellBanner }
-				<HeaderCake
-					className="theme__sheet-action-bar"
-					backText={ translate( 'All Themes' ) }
-					onClick={ this.goBack }
-				>
-					{ ! retired && ! hasWpOrgThemeUpsellBanner && ! isWPForTeamsSite && this.renderButton() }
-				</HeaderCake>
+				{ ! isNewDetailsAndPreview && pageUpsellBanner }
+				{ ! isNewDetailsAndPreview && (
+					<HeaderCake
+						className="theme__sheet-action-bar"
+						backText={ translate( 'All Themes' ) }
+						onClick={ this.goBack }
+					>
+						{ ! retired &&
+							! hasWpOrgThemeUpsellBanner &&
+							! isWPForTeamsSite &&
+							this.renderButton() }
+					</HeaderCake>
+				) }
 				<div className={ columnsClassName }>
 					<div className="theme__sheet-column-left">
 						{ ! retired && this.renderSectionContent( section ) }
 						{ retired && this.renderRetired() }
 					</div>
 					{ ! isRemoved && (
-						<div className="theme__sheet-column-right">{ this.renderScreenshot() }</div>
+						<div className="theme__sheet-column-right">
+							{ styleVariations.length ? this.renderWebPreview() : this.renderScreenshot() }
+						</div>
 					) }
 				</div>
 				<ThemePreview belowToolbar={ previewUpsellBanner } />
@@ -986,6 +1100,15 @@ class ThemeSheet extends Component {
 		return this.renderSheet();
 	}
 }
+
+const withSiteGlobalStylesStatus = createHigherOrderComponent(
+	( Wrapped ) => ( props ) => {
+		const { siteId } = props;
+		const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( siteId || -1 );
+		return <Wrapped { ...props } shouldLimitGlobalStyles={ shouldLimitGlobalStyles } />;
+	},
+	'withSiteGlobalStylesStatus'
+);
 
 const ConnectedThemeSheet = connectOptions( ThemeSheet );
 
@@ -1076,6 +1199,7 @@ export default connect(
 		return {
 			...theme,
 			themeId,
+			themeOptions: getThemePreviewThemeOptions( state ),
 			price: getPremiumThemePrice( state, themeId, siteId ),
 			error,
 			siteId,
@@ -1103,6 +1227,7 @@ export default connect(
 			demoUrl: getThemeDemoUrl( state, themeId, siteId ),
 			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 			softLaunched: theme?.soft_launched,
+			styleVariations: theme?.style_variations || [],
 			isExternallyManagedTheme,
 			isSiteEligibleForManagedExternalThemes: getIsSiteEligibleForManagedExternalThemes(
 				state,
@@ -1116,4 +1241,4 @@ export default connect(
 		setThemePreviewOptions,
 		recordTracksEvent,
 	}
-)( localize( ThemeSheetWithOptions ) );
+)( withSiteGlobalStylesStatus( localize( ThemeSheetWithOptions ) ) );
