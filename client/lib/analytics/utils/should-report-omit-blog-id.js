@@ -1,3 +1,5 @@
+import { getSiteFragment } from 'calypso/lib/route';
+
 const SITE_FRAGMENT_REGEX = /\/(:site|:site_id|:siteid|:blogid|:blog_id|:siteslug)(\/|$|\?)/i;
 
 /**
@@ -11,7 +13,12 @@ const SITE_FRAGMENT_REGEX = /\/(:site|:site_id|:siteid|:blogid|:blog_id|:siteslu
  */
 export default ( path ) => {
 	if ( ! path ) {
+		return false;
+	}
+
+	if ( SITE_FRAGMENT_REGEX.test( path ) ) {
 		return true;
 	}
-	return ! SITE_FRAGMENT_REGEX.test( path );
+
+	return !! getSiteFragment( path );
 };
