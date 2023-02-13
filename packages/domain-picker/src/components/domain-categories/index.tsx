@@ -23,8 +23,9 @@ const DomainPickerCategories: React.FunctionComponent< Props > = ( { onSelect, s
 		onSelect( slug );
 	};
 
-	const domainCategories = useSelect( ( select ) =>
-		select( DOMAIN_SUGGESTIONS_STORE ).getCategories()
+	const domainCategories = useSelect(
+		( select ) => select( DOMAIN_SUGGESTIONS_STORE ).getCategories(),
+		[]
 	);
 
 	const allCategoriesLabel = __( 'All Categories', __i18n_text_domain__ );

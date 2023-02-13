@@ -1,3 +1,5 @@
+import * as selectors from './selectors';
+import type { SelectFromMap } from '../mapped-types';
 import type { plansProductSlugs, plansSlugs } from './constants';
 
 export type StorePlanSlug = typeof plansProductSlugs[ number ];
@@ -121,3 +123,5 @@ export interface DetailsAPIResponse {
 	features_by_type: FeaturesByType[];
 	features: DetailsAPIFeature[];
 }
+
+export type PlansSelect = SelectFromMap< typeof selectors >;
