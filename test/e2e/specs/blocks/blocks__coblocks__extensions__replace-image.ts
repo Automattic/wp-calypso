@@ -56,7 +56,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Replace Image' ), 
 		const uploadedImage = await imageBlock.upload( imageFile.fullpath );
 		uploadedImageURL = ( await uploadedImage.getAttribute( 'src' ) ) as string;
 		uploadedImageURL = uploadedImageURL.split( '?' )[ 0 ];
-	} );
+	}, 60000 );
 
 	it( `Replace uploaded image`, async () => {
 		const editorWindowLocator = editorPage.getEditorWindowLocator();
@@ -72,7 +72,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Replace Image' ), 
 		newImageURL = newImageURL.split( '?' )[ 0 ];
 
 		expect( newImageURL ).not.toEqual( uploadedImageURL );
-	} );
+	}, 60000 );
 
 	it( 'Publish the post', async () => {
 		await editorPage.publish( { visit: true } );

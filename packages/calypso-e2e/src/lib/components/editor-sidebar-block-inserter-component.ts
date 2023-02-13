@@ -74,10 +74,14 @@ export class EditorSidebarBlockInserterComponent {
 		if ( type === 'pattern' ) {
 			locator = this.editor.locator( selectors.patternResultItem( name ) ).first();
 		} else {
-			locator = this.editor.locator( selectors.blockResultItem( name ) ).first();
+			locator = this.editor
+				.locator( sidebarParentSelector )
+				.getByRole( 'option', { name, exact: true } );
 		}
 
-		await Promise.all( [ locator.hover(), locator.focus() ] );
+		await locator.waitFor();
+		await locator.hover();
+		await locator.focus();
 		await locator.click();
 	}
 }
