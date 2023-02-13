@@ -1,6 +1,6 @@
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import { FunctionComponent } from 'react';
 import type { TranslateResult } from 'i18n-calypso';
 
 interface RetentionOptionCardProps {
@@ -13,7 +13,7 @@ interface RetentionOptionCardProps {
 	onChange: ( value: number ) => void;
 }
 
-const RetentionOptionCard: React.FC< RetentionOptionCardProps > = ( {
+const RetentionOptionCard: FunctionComponent< RetentionOptionCardProps > = ( {
 	label,
 	spaceNeeded,
 	upgradeRequired,
