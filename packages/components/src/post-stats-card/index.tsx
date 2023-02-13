@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { eye } from '@automattic/components/src/icons';
 import { Icon, commentContent, starEmpty } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -31,6 +32,15 @@ export default function PostStatsCard( {
 	const translate = useTranslate();
 	const parsedDate = useMemo( () => new Date( post?.date ).toLocaleDateString(), [ post?.date ] );
 	const TitleTag = titleLink ? 'a' : 'div';
+
+	const recordClickOnUploadImageButton = () => {
+		recordTracksEvent( 'calypso_stats_insights_upload_image_button_click', { href: uploadHref } );
+
+		if ( uploadHref ) {
+			window.location.href = uploadHref;
+		}
+	};
+
 	return (
 		<Card className="post-stats-card">
 			<div className="post-stats-card__heading">{ heading }</div>
@@ -84,7 +94,10 @@ export default function PostStatsCard( {
 			) }
 			{ uploadHref && ! post?.post_thumbnail && (
 				<div className="post-stats-card__upload">
-					<Button className="post-stats-card__upload-btn" href={ uploadHref }>
+					<Button
+						className="post-stats-card__upload-btn"
+						onClick={ recordClickOnUploadImageButton }
+					>
 						{ translate( 'Add featured image' ) }
 					</Button>
 				</div>
