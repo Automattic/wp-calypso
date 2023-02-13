@@ -30,7 +30,7 @@ const BloggingPromptCard = () => {
 	}
 
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
-	const notificationSettingsLink = '/me/notifications' + siteSlug ? '#' + siteSlug : '';
+	const notificationSettingsLink = '/me/notifications' + ( siteSlug ? '#' + siteSlug : '' );
 
 	const maxNumberOfPrompts = 10;
 	const { data: prompts } = useBloggingPrompts( siteId, maxNumberOfPrompts );
