@@ -15,7 +15,7 @@ interface Props {
 	siteId: number;
 }
 export function InviteLinkForm( props: Props ) {
-	const _ = useTranslate();
+	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const { siteId } = props;
 
@@ -56,7 +56,7 @@ export function InviteLinkForm( props: Props ) {
 		accept(
 			<div>
 				<p>
-					{ _(
+					{ translate(
 						'Once this invite link is disabled, nobody will be able to use it to join your team. Are you sure?'
 					) }
 				</p>
@@ -66,7 +66,7 @@ export function InviteLinkForm( props: Props ) {
 					dispatch( disableInviteLinks( siteId ) );
 				}
 			},
-			_( 'Disable' )
+			translate( 'Disable' )
 		);
 	}
 
@@ -82,7 +82,7 @@ export function InviteLinkForm( props: Props ) {
 	return (
 		<>
 			<div className="invite-people__link-instructions">
-				{ _(
+				{ translate(
 					'Use this link to onboard your team members without having to invite them one by one. ' +
 						'{{strong}}Anybody visiting this URL will be able to sign up to your organization,{{/strong}} ' +
 						'even if they received the link from somebody else, so make sure that you share it with trusted people.',
@@ -96,7 +96,7 @@ export function InviteLinkForm( props: Props ) {
 					className="invite-people__link-generate"
 					busy={ isGeneratingInviteLinks }
 				>
-					{ _( 'Generate new link' ) }
+					{ translate( 'Generate new link' ) }
 				</Button>
 			) }
 
@@ -130,8 +130,8 @@ export function InviteLinkForm( props: Props ) {
 							text={ activeInviteLink.link }
 							onCopy={ onInviteLinkCopy }
 						>
-							{ showCopyConfirmation && _( 'Copied!' ) }
-							{ ! showCopyConfirmation && _( 'Copy link' ) }
+							{ showCopyConfirmation && translate( 'Copied!' ) }
+							{ ! showCopyConfirmation && translate( 'Copy link' ) }
 						</ClipboardButton>
 					</div>
 
@@ -142,7 +142,7 @@ export function InviteLinkForm( props: Props ) {
 						<span>
 							(
 							<button className="invite-people__link-disable" onClick={ disableLinks }>
-								{ _( 'Disable invite link' ) }
+								{ translate( 'Disable invite link' ) }
 							</button>
 							)
 						</span>
