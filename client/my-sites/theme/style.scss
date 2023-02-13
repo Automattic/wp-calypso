@@ -8,18 +8,27 @@ body.is-section-theme-i4 {
 	}
 
 	.theme__sheet-columns {
+		display: flex;
+		gap: 32px;
 		padding-top: 48px;
 	}
 
 	.theme__sheet-content {
+		box-shadow: none;
+		padding: 0;
+
 		h2 {
 			border: 0;
 			color: var(--color-neutral-100);
 			font-size: $font-body;
 			font-weight: 500;
 			line-height: 24px;
-			margin: 0 0 12px 0;
+			margin: 40px 0 12px 0;
 			padding: 0;
+
+			&::before {
+				content: none;
+			}
 		}
 	}
 
@@ -106,6 +115,8 @@ body.is-section-theme-i4 {
 
 	.theme__sheet-header-title {
 		@include onboarding-font-recoleta;
+		align-items: center;
+		display: flex;
 		font-size: $font-title-large;
 		line-height: 1;
 	}
@@ -120,8 +131,6 @@ body.is-section-theme-i4 {
 }
 
 .theme__sheet-style-variations {
-	margin-top: 40px;
-
 	&-previews {
 		display: flex;
 		gap: 8px;

@@ -409,7 +409,7 @@ class ThemeSheet extends Component {
 
 	renderSectionContent = ( section ) => {
 		const isNewDetailsAndPreview = config.isEnabled( 'themes/showcase-i4/details-and-preview' );
-		const { isPremium, supportDocumentation } = this.props;
+		const { isPremium, isWpcomTheme, supportDocumentation } = this.props;
 		const activeSection = {
 			'': this.renderOverviewTab(),
 			setup: this.renderSetupTab(),
@@ -435,6 +435,7 @@ class ThemeSheet extends Component {
 						{ this.renderOverviewTab() }
 						{ ! isPremium && supportDocumentation && this.renderSetupTab() }
 						{ this.renderSupportTab() }
+						{ isNewDetailsAndPreview && isWpcomTheme && this.renderNextTheme() }
 					</>
 				) }
 				<div className="theme__sheet-footer-line">
@@ -459,7 +460,7 @@ class ThemeSheet extends Component {
 				<div className="theme__sheet-header-columns">
 					<h1 className="theme__sheet-header-title">
 						{ title }
-						{ ! softLaunched && (
+						{ softLaunched && (
 							<span className="theme__sheet-bar-soft-launched">{ translate( 'A8C Only' ) }</span>
 						) }
 					</h1>
@@ -534,7 +535,7 @@ class ThemeSheet extends Component {
 					isWpcomTheme={ isWpcomTheme }
 				/>
 				{ download && ! isPremium && <ThemeDownloadCard href={ download } /> }
-				{ isWpcomTheme && this.renderNextTheme() }
+				{ ! isNewDetailsAndPreview && isWpcomTheme && this.renderNextTheme() }
 			</div>
 		);
 	};
