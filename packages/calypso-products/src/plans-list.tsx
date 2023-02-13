@@ -320,6 +320,7 @@ import {
 	FEATURE_CLOUD_CRITICAL_CSS,
 	FEATURE_GLOBAL_EDGE_CACHING,
 } from './constants';
+import { is2023PricingGridEnabled } from './plans-utilities';
 import type {
 	BillingTerm,
 	Plan,
@@ -692,7 +693,8 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		},
 	} ),
 } );
-const is2023OnboardingPricingGrid = isEnabled( 'onboarding/2023-pricing-grid' );
+
+const is2023OnboardingPricingGrid = is2023PricingGridEnabled();
 
 const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
