@@ -43,7 +43,11 @@ class PostLifecycle extends Component {
 					className="reader-stream__blogging-prompt"
 					key={ 'blogging-prompt-card-' + postKey.index }
 				>
+<<<<<<< HEAD
 					<BloggingPromptCard siteId={ siteId } viewContext="reader" showMenu={ false } />
+=======
+					<BloggingPromptCard index={ postKey.index } />
+>>>>>>> 93c3eca481 (Pass index of prompts to card)
 				</div>
 			);
 		} else if ( streamKey.indexOf( 'rec' ) > -1 ) {

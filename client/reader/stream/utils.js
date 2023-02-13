@@ -90,8 +90,8 @@ export function getDistanceBetweenRecs( totalSubs ) {
 	);
 }
 
-const MIN_DISTANCE_BETWEEN_PROMPTS = 10;
-const MAX_DISTANCE_BETWEEN_PROMPTS = 50;
+const MIN_DISTANCE_BETWEEN_PROMPTS = 1;
+const MAX_DISTANCE_BETWEEN_PROMPTS = 5;
 
 export function getDistanceBetweenPrompts( totalSubs ) {
 	// the distance between recs changes based on how many subscriptions the user has.
@@ -120,12 +120,15 @@ export function injectPrompts( posts, itemsBetweenPrompts ) {
 		return posts;
 	}
 
+	let promptIndex = 0;
+
 	return flatMap( posts, ( post, index ) => {
 		if ( index && index % itemsBetweenPrompts === 0 ) {
 			const promptBlock = {
 				isPromptBlock: true,
-				index: index,
+				index: promptIndex,
 			};
+			promptIndex++;
 			return [ promptBlock, post ];
 		}
 		return post;
