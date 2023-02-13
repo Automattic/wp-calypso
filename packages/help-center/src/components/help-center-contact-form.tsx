@@ -4,7 +4,7 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { getPlan, getPlanTermLabel } from '@automattic/calypso-products';
+import { getPlan, getPlanTermLabel, isFreePlanProduct } from '@automattic/calypso-products';
 import { Button, FormInputValidation, Popover } from '@automattic/components';
 import {
 	useSubmitTicketMutation,
@@ -471,7 +471,12 @@ export const HelpCenterContactForm = () => {
 			{ ! userWithNoSites && (
 				<section>
 					<HelpCenterSitePicker
-						enabled={ mode === 'FORUM' && ! supportSite?.is_wpcom_atomic }
+						enabled={
+							mode === 'FORUM' &&
+							( ( supportSite.plan?.product_slug &&
+								isFreePlanProduct( { product_slug: supportSite.plan?.product_slug } ) ) ||
+								userWithNoSites )
+						}
 						currentSite={ currentSite }
 						onSelect={ ( id: string | number ) => {
 							if ( id !== 0 ) {
