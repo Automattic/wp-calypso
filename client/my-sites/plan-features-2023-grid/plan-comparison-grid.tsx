@@ -28,8 +28,21 @@ import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
 import PlanFeatures2023GridHeaderPrice from './header-price';
 import { plansBreakSmall, plansBreakLarge } from './media-queries';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
+import { PlanProperties } from './types';
 import { usePricingBreakpoint } from './util';
-import type { PlanProperties } from './types';
+
+function DropdownIcon() {
+	return (
+		<svg xmlns="http://www.w3.org/2000/svg" width="26" height="24" fill="none" viewBox="0 -5 26 24">
+			<path
+				fill="#0675C4"
+				fillRule="evenodd"
+				d="M18 10.5L13 15l-5-4.5L9.224 9 13 12.399 16.776 9 18 10.5z"
+				clipRule="evenodd"
+			></path>
+		</svg>
+	);
+}
 
 const JetpackIconContainer = styled.div`
 	padding-left: 6px;
@@ -361,9 +374,8 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 								</select>
 							) }
 							<h4 className="plan-comparison-grid__title">
-								{ planConstantObj.getTitle() }
-
-								{ showPlanSelect && <Gridicon icon="chevron-down" size={ 12 } color="#0675C4" /> }
+								<span>{ planConstantObj.getTitle() }</span>
+								{ showPlanSelect && <DropdownIcon /> }
 							</h4>
 						</PlanSelector>
 						<PlanFeatures2023GridHeaderPrice
@@ -659,7 +671,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 														</span>
 													) }
 													{ hasFeature ? (
-														<Gridicon icon="checkmark" color="#0675C4" />
+														<Gridicon icon="checkmark" color="#0675C4" size={ 18 } />
 													) : (
 														<Gridicon icon="minus-small" color="#C3C4C7" />
 													) }

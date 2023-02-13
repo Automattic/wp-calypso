@@ -224,7 +224,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import i18n, { TranslateResult } from 'i18n-calypso';
 import { MemoExoticComponent } from 'react';
 import SupportIcon from 'calypso/assets/images/onboarding/support.svg';
-import ThemeImage from 'calypso/assets/images/onboarding/theme.jpg';
+import Theme2Image from 'calypso/assets/images/onboarding/theme-2.jpg';
 import ExternalLink from 'calypso/components/external-link';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import MaterialIcon from 'calypso/components/material-icon';
@@ -1740,7 +1740,7 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_PREMIUM_THEMES_V2 ]: {
 		getSlug: () => FEATURE_PREMIUM_THEMES_V2,
 		getTitle: () => i18n.translate( 'Premium themes' ),
-		getIcon: () => <img src={ ThemeImage } alt={ i18n.translate( 'Premium themes' ) } />,
+		getIcon: () => <img src={ Theme2Image } alt={ i18n.translate( 'Premium themes' ) } />,
 		getCompareTitle: () => i18n.translate( 'A collection of premium design templates' ),
 		getDescription: () => i18n.translate( 'Switch between a collection of premium design themes.' ),
 	},
