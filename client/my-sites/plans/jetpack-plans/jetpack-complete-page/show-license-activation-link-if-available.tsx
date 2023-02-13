@@ -44,14 +44,12 @@ function ShowLicenseActivationLinkIfAvailable( { siteId }: Props ) {
 		);
 	}, [ dispatch, siteId ] );
 
-	const StillLoadinglicensesCounts = ! hasFetchedLicensesCounts;
-
-	if ( StillLoadinglicensesCounts && ! userLicensesCounts ) {
+	if ( ! hasFetchedLicensesCounts && ! userLicensesCounts ) {
 		return (
 			<div className="show-license-activation-link-if-available__container">
 				<div
 					className={ classNames( 'show-license-activation-link-if-available', {
-						'is-placeholder': StillLoadinglicensesCounts,
+						'is-placeholder': ! hasFetchedLicensesCounts,
 					} ) }
 				>
 					{ isMobile ? (
