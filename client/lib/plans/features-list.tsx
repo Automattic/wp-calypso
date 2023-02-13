@@ -575,7 +575,12 @@ export const FEATURES_LIST: FeatureList = {
 			}
 			if ( is2023OnboardingPricingGrid ) {
 				return i18n.translate(
-					'Get a custom domain – like yourgroovydomain.com – free for the first year.'
+					'Get a custom domain – like {{i}}yourgroovydomain.com{{/i}} – free for the first year.',
+					{
+						components: {
+							i: <i />,
+						},
+					}
 				);
 			}
 			return i18n.translate(
