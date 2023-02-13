@@ -5,6 +5,7 @@ import {
 	TransferEligibilityWarning,
 	TransferEligibilityError,
 	TransferEligibility,
+	TransferSelectFn,
 } from './types';
 
 export const getAutomatedTransferEligibility = (
@@ -18,7 +19,7 @@ export const getAutomatedTransferEligibility = (
 };
 
 export const getEligibilityHolds = createRegistrySelector(
-	( select ) =>
+	( select: TransferSelectFn ) =>
 		( state: State, siteId: number | null ): TransferEligibilityError[] | null => {
 			const transferEligibility = select( STORE_KEY ).getAutomatedTransferEligibility( siteId );
 
@@ -39,7 +40,7 @@ export const getEligibilityHolds = createRegistrySelector(
 );
 
 export const getEligibilityWarnings = createRegistrySelector(
-	( select ) =>
+	( select: TransferSelectFn ) =>
 		( state: State, siteId: number | null ): TransferEligibilityWarning[] | null => {
 			const transferEligibility = select( STORE_KEY ).getAutomatedTransferEligibility( siteId );
 
@@ -66,7 +67,7 @@ export const getEligibilityWarnings = createRegistrySelector(
 );
 
 export const getNonSubdomainWarnings = createRegistrySelector(
-	( select ) =>
+	( select: TransferSelectFn ) =>
 		( state: State, siteId: number | null ): TransferEligibilityWarning[] | null => {
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore Until createRegistrySelector is typed correctly
@@ -83,7 +84,7 @@ export const getNonSubdomainWarnings = createRegistrySelector(
 );
 
 export const getWpcomSubdomainWarning = createRegistrySelector(
-	( select ) =>
+	( select: TransferSelectFn ) =>
 		( state: State, siteId: number | null ): TransferEligibilityWarning | null => {
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore Until createRegistrySelector is typed correctly
