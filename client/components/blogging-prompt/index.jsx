@@ -16,7 +16,11 @@ import PromptsNavigation from './prompts-navigation';
 
 import './style.scss';
 
+<<<<<<< HEAD:client/my-sites/customer-home/cards/features/blogging-prompt/index.jsx
 const BloggingPromptCard = ( { index } ) => {
+=======
+const BloggingPromptCard = ( { context } ) => {
+>>>>>>> bb5af98738 (Move blogging prompt card into components directory):client/components/blogging-prompt/index.jsx
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
@@ -40,11 +44,16 @@ const BloggingPromptCard = ( { index } ) => {
 	if ( prompts === undefined ) {
 		return null;
 	}
+
+	if ( context !== 'reader' ) {
+		context = 'home';
+	}
 	const hidePrompts = () => {
 		skipCard( SECTION_BLOGGING_PROMPT );
 		dispatch(
 			recordTracksEvent( 'calypso_customer_home_task_skip', {
 				task: SECTION_BLOGGING_PROMPT,
+				context: context,
 			} )
 		);
 	};
@@ -73,7 +82,11 @@ const BloggingPromptCard = ( { index } ) => {
 						</Button>
 					</EllipsisMenu>
 				</CardHeading>
+<<<<<<< HEAD:client/my-sites/customer-home/cards/features/blogging-prompt/index.jsx
 				<PromptsNavigation prompts={ prompts } index={ index } />
+=======
+				<PromptsNavigation prompts={ prompts } context={ context } />
+>>>>>>> bb5af98738 (Move blogging prompt card into components directory):client/components/blogging-prompt/index.jsx
 			</Card>
 		</div>
 	);

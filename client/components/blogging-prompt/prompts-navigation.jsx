@@ -11,7 +11,11 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import NoResponsesIcon from './no-responses-icon';
 import './style.scss';
 
+<<<<<<< HEAD:client/my-sites/customer-home/cards/features/blogging-prompt/prompts-navigation.jsx
 const PromptsNavigation = ( { prompts, index } ) => {
+=======
+const PromptsNavigation = ( { prompts, context } ) => {
+>>>>>>> bb5af98738 (Move blogging prompt card into components directory):client/components/blogging-prompt/prompts-navigation.jsx
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
@@ -64,6 +68,7 @@ const PromptsNavigation = ( { prompts, index } ) => {
 			recordTracksEvent( `calypso_customer_home_answer_prompt`, {
 				site_id: siteId,
 				prompt_id: getPrompt()?.id,
+				context: context,
 			} )
 		);
 
@@ -75,6 +80,7 @@ const PromptsNavigation = ( { prompts, index } ) => {
 				recordTracksEvent( `calypso_customer_home_skip_prompt`, {
 					site_id: siteId,
 					prompt_id: todayPromptId,
+					context: context,
 				} )
 			);
 		}
@@ -88,6 +94,7 @@ const PromptsNavigation = ( { prompts, index } ) => {
 			recordTracksEvent( `calypso_customer_home_view_all_responses`, {
 				site_id: siteId,
 				prompt_id: getPrompt()?.id,
+				context: context,
 			} )
 		);
 	};
