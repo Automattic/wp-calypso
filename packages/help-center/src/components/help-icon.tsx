@@ -3,11 +3,15 @@ import { forwardRef } from 'react';
 import { HELP_CENTER_STORE } from '../stores';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 
+type CoreDataPlaceholder = {
+	hasFinishedResolution: ( ...args: unknown[] ) => boolean;
+};
+
 const HelpIcon = forwardRef< SVGSVGElement >( ( _, ref ) => {
 	const { unreadCount, doneLoading, hasSeenWhatsNewModal } = useSelect(
 		( select ) => ( {
 			unreadCount: ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getUnreadCount(),
-			doneLoading: select( 'core/data' ).hasFinishedResolution(
+			doneLoading: ( select( 'core/data' ) as CoreDataPlaceholder ).hasFinishedResolution(
 				HELP_CENTER_STORE,
 				'getHasSeenWhatsNewModal',
 				[]
