@@ -75,7 +75,7 @@ class Plans extends Component {
 		redirectTo: PropTypes.string,
 		selectedSite: PropTypes.object,
 		isDomainAndPlanPackageFlow: PropTypes.bool,
-		domainFromHomeUpsellFlow: PropTypes.string | undefined,
+		domainFromHomeUpsellFlow: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -292,7 +292,7 @@ class Plans extends Component {
 								fullWidthLayout={ is2023PricingGridVisible && ! isEcommerceTrial }
 								wideLayout={ ! is2023PricingGridVisible || isEcommerceTrial }
 							>
-								{ ! domainSidebarExperimentUser && domainFromHomeUpsellFlow && (
+								{ ! isDomainAndPlanPackageFlow && domainFromHomeUpsellFlow && (
 									<FormattedHeader
 										className="header-text plans__formatted-header is-domain-upsell"
 										brandFont
