@@ -4,9 +4,10 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import { useSourceMigrationStatusQuery } from 'calypso/data/site-migration/use-source-migration-status-query';
+import { useSiteQuery } from 'calypso/data/sites/use-site-query';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { getSite, getSourceSiteMigrationData } from '../import/helper';
 import type { Step } from '../../types';
 import './styles.scss';
 
@@ -14,38 +15,40 @@ const MigrationHandler: Step = function MigrationHandler( { navigation } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
 	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
-	const { setPendingAction, setIsMigrateFromWp } = useDispatch( ONBOARD_STORE );
+	const { setIsMigrateFromWp } = useDispatch( ONBOARD_STORE );
+	const search = window.location.search;
+	const sourceSiteSlug = new URLSearchParams( search ).get( 'from' ) || '';
+	const { data: sourceSite, isError: isErrorSourcSite } = useSiteQuery( sourceSiteSlug );
+	const { data: sourceSiteMigrationStatus, isError: isErrorSourceSiteMigrationStatus } =
+		useSourceMigrationStatusQuery( sourceSite?.ID );
+	const errorDependency = {
+		isFromMigrationPlugin: true,
+		hasError: true,
+	};
 
-	async function fetchSourceMigrationStatus() {
-		const search = window.location.search;
-		const sourceSiteSlug = new URLSearchParams( search ).get( 'from' ) || '';
-		try {
-			const sourceSiteInfo = await getSite( sourceSiteSlug );
-			const sourceSiteMigrationStatus = await getSourceSiteMigrationData( sourceSiteInfo?.ID );
-
-			return {
-				isFromMigrationPlugin: true,
-				status: sourceSiteMigrationStatus?.status,
-				targetBlogId: sourceSiteMigrationStatus?.target_blog_id,
-				isAdminOnTarget: sourceSiteMigrationStatus?.is_target_blog_admin,
-				isTargetBlogUpgraded: sourceSiteMigrationStatus?.is_target_blog_upgraded,
-				targetBlogSlug: sourceSiteMigrationStatus?.target_blog_slug,
-			};
-		} catch ( error ) {
-			return {
-				isFromMigrationPlugin: true,
-				hasError: true,
-			};
-		}
-	}
 	useEffect( () => {
 		setIsMigrateFromWp( true );
-		if ( submit ) {
-			setPendingAction( fetchSourceMigrationStatus );
-			submit();
-		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
+
+	useEffect( () => {
+		if ( submit ) {
+			if ( isErrorSourcSite || isErrorSourceSiteMigrationStatus ) {
+				return submit( errorDependency );
+			}
+			if ( sourceSiteMigrationStatus ) {
+				submit( {
+					isFromMigrationPlugin: true,
+					status: sourceSiteMigrationStatus?.status,
+					targetBlogId: sourceSiteMigrationStatus?.target_blog_id,
+					isAdminOnTarget: sourceSiteMigrationStatus?.is_target_blog_admin,
+					isTargetBlogUpgraded: sourceSiteMigrationStatus?.is_target_blog_upgraded,
+					targetBlogSlug: sourceSiteMigrationStatus?.target_blog_slug,
+				} );
+			}
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ isErrorSourcSite, isErrorSourceSiteMigrationStatus, sourceSiteMigrationStatus ] );
 
 	const getCurrentMessage = () => {
 		return __( 'Scanning your site' );

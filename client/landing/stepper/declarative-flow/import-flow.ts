@@ -144,9 +144,6 @@ const importFlow: Flow = {
 					return navigate( 'processing' );
 
 				case 'processing': {
-					if ( providedDependencies?.isFromMigrationPlugin ) {
-						return handleMigrationRedirects( providedDependencies );
-					}
 					if ( providedDependencies?.siteSlug ) {
 						const from = urlQueryParams.get( 'from' );
 						return navigate( `import?siteSlug=${ providedDependencies?.siteSlug }&from=${ from }` );
@@ -159,7 +156,7 @@ const importFlow: Flow = {
 					return exitFlow( `/home/${ siteSlugParam }` );
 				}
 				case 'migrationHandler': {
-					return navigate( 'processing' );
+					return handleMigrationRedirects( providedDependencies );
 				}
 			}
 		};
