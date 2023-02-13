@@ -161,23 +161,25 @@ const useItemPrice = (
 
 	if ( item && itemCost ) {
 		originalPrice = itemCost;
-		originalPrice = item.term !== TERM_MONTHLY ? getMonthlyPrice( itemCost ) : originalPrice;
-		discountedPrice = introductoryOfferPrices.introOfferCost
-			? getMonthlyPrice( introductoryOfferPrices.introOfferCost )
-			: undefined;
+		if ( item.term !== TERM_MONTHLY ) {
+			originalPrice = getMonthlyPrice( itemCost );
+			discountedPrice = introductoryOfferPrices.introOfferCost
+				? getMonthlyPrice( introductoryOfferPrices.introOfferCost )
+				: undefined;
 
-		// Override Jetpack Social Basic, Jetpack Social Advanced and Jetpack Backup Tier 1 price by hard-coding it for now
-		if (
-			[ ...JETPACK_SOCIAL_PRODUCTS, ...JETPACK_BACKUP_T1_PRODUCTS ].includes(
-				item?.productSlug as
-					| typeof JETPACK_SOCIAL_PRODUCTS[ number ]
-					| typeof JETPACK_BACKUP_T1_PRODUCTS[ number ]
-			)
-		) {
-			discountedPrice = introductoryOfferPrices.introOfferCost || undefined;
+			// Override Jetpack Social Basic, Jetpack Social Advanced and Jetpack Backup Tier 1 price by hard-coding it for now
+			if (
+				[ ...JETPACK_SOCIAL_PRODUCTS, ...JETPACK_BACKUP_T1_PRODUCTS ].includes(
+					item?.productSlug as
+						| typeof JETPACK_SOCIAL_PRODUCTS[ number ]
+						| typeof JETPACK_BACKUP_T1_PRODUCTS[ number ]
+				)
+			) {
+				discountedPrice = introductoryOfferPrices.introOfferCost || undefined;
 
-			if ( discountedPrice ) {
-				discountedPriceDuration = 1;
+				if ( discountedPrice ) {
+					discountedPriceDuration = 1;
+				}
 			}
 		}
 	}
