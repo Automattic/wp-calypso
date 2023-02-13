@@ -16,7 +16,7 @@ import PromptsNavigation from './prompts-navigation';
 
 import './style.scss';
 
-const BloggingPromptCard = () => {
+const BloggingPromptCard = ( { context } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
@@ -40,11 +40,17 @@ const BloggingPromptCard = () => {
 	if ( prompts === undefined ) {
 		return null;
 	}
+
+	if ( context !== 'reader' ) {
+		context = 'home';
+	}
+
 	const hidePrompts = () => {
 		skipCard( SECTION_BLOGGING_PROMPT );
 		dispatch(
 			recordTracksEvent( 'calypso_customer_home_task_skip', {
 				task: SECTION_BLOGGING_PROMPT,
+				context: context,
 			} )
 		);
 	};
@@ -73,7 +79,7 @@ const BloggingPromptCard = () => {
 						</Button>
 					</EllipsisMenu>
 				</CardHeading>
-				<PromptsNavigation prompts={ prompts } />
+				<PromptsNavigation prompts={ prompts } context={ context } />
 			</Card>
 		</div>
 	);

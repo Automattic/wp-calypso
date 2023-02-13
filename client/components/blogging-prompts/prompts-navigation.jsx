@@ -11,7 +11,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import NoResponsesIcon from './no-responses-icon';
 import './style.scss';
 
-const PromptsNavigation = ( { prompts } ) => {
+const PromptsNavigation = ( { prompts, context } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const [ promptIndex, setPromptIndex ] = useState( 0 );
@@ -61,6 +61,7 @@ const PromptsNavigation = ( { prompts } ) => {
 			recordTracksEvent( `calypso_customer_home_answer_prompt`, {
 				site_id: siteId,
 				prompt_id: getPrompt()?.id,
+				context: context,
 			} )
 		);
 
@@ -72,6 +73,7 @@ const PromptsNavigation = ( { prompts } ) => {
 				recordTracksEvent( `calypso_customer_home_skip_prompt`, {
 					site_id: siteId,
 					prompt_id: todayPromptId,
+					context: context,
 				} )
 			);
 		}
@@ -85,6 +87,7 @@ const PromptsNavigation = ( { prompts } ) => {
 			recordTracksEvent( `calypso_customer_home_view_all_responses`, {
 				site_id: siteId,
 				prompt_id: getPrompt()?.id,
+				context: context,
 			} )
 		);
 	};

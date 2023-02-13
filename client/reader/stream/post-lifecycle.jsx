@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import PostBlocked from 'calypso/blocks/reader-post-card/blocked';
+import BloggingPromptCard from 'calypso/components/blogging-prompts';
 import QueryReaderPost from 'calypso/components/data/query-reader-post';
 import compareProps from 'calypso/lib/compare-props';
-import BloggingPromptCard from 'calypso/my-sites/customer-home/cards/features/blogging-prompt';
 import { IN_STREAM_RECOMMENDATION } from 'calypso/reader/follow-sources';
 import ListGap from 'calypso/reader/list-gap';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
@@ -43,7 +43,7 @@ class PostLifecycle extends Component {
 					className="reader-stream__blogging-prompt"
 					key={ 'blogging-prompt-card-' + postKey.index }
 				>
-					<BloggingPromptCard />
+					<BloggingPromptCard context="reader" />
 				</div>
 			);
 		} else if ( streamKey.indexOf( 'rec' ) > -1 ) {
