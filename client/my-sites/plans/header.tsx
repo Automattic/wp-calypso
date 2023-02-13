@@ -86,9 +86,15 @@ const DomainUpsellHeader: React.FunctionComponent< { domain: string } > = ( { do
 		'See and compare the features available on each WordPress.com plan.'
 	);
 	const withSkipButton = ! is2023OnboardingPricingGrid;
-	const classes = classNames( 'plans__section-header', 'modernized-header', 'header-text', {
-		'with-skip-button': withSkipButton,
-	} );
+	const classes = classNames(
+		'plans__formatted-header',
+		'plans__section-header',
+		'modernized-header',
+		'header-text',
+		{
+			'with-skip-button': withSkipButton,
+		}
+	);
 
 	const handleCloseDialog = useCallback( () => {
 		setShowDomainUpsellDialog( false );
@@ -122,12 +128,10 @@ const DomainUpsellHeader: React.FunctionComponent< { domain: string } > = ( { do
 				align="left"
 			>
 				{ withSkipButton && (
-					<div className="plans__section-header-navigation">
-						<Button onClick={ onSkipClick } borderless href="/">
-							{ translate( 'Skip' ) }
-							<Gridicon icon="arrow-right" size={ 18 } />
-						</Button>
-					</div>
+					<Button className="plans__section-header-skip-button" onClick={ onSkipClick } href="/">
+						{ translate( 'Skip' ) }
+						<Gridicon icon="arrow-right" size={ 18 } />
+					</Button>
 				) }
 			</FormattedHeader>
 		</>
@@ -145,7 +149,7 @@ const PlansHeader: React.FunctionComponent< { domainFromHomeUpsellFlow?: string 
 	if ( ! domainFromHomeUpsellFlow ) {
 		return (
 			<FormattedHeader
-				className="plans__section-header modernized-header"
+				className="plans__formatted-header plans__section-header modernized-header"
 				brandFont
 				headerText={ translate( 'Plans' ) }
 				subHeaderText={ plansDescription }

@@ -294,7 +294,7 @@ class Plans extends Component {
 							>
 								{ ! domainSidebarExperimentUser && domainFromHomeUpsellFlow && (
 									<FormattedHeader
-										className="header-text"
+										className="header-text plans__formatted-header is-domain-upsell"
 										brandFont
 										headerText={ translate( 'Free for the first year!' ) }
 										subHeaderText={ domainUpsellDescription }
