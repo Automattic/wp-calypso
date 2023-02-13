@@ -16,12 +16,13 @@ export function generateFlows( {
 	getDestinationFromIntent = noop,
 	getDIFMSignupDestination = noop,
 	getDIFMSiteContentCollectionDestination = noop,
+	getHomeDestination = noop,
 } = {} ) {
 	const flows = [
 		{
 			name: HOSTING_LP_FLOW,
 			steps: [ 'plans', 'user', 'domains' ],
-			destination: getSignupDestination,
+			destination: getHomeDestination,
 			description:
 				'Create an account and a blog and give the user the option of adding a domain and plan to the cart.',
 			lastModified: '2023-02-09',
