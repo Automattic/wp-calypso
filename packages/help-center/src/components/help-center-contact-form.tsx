@@ -40,6 +40,7 @@ import { SitePicker } from '../types';
 import { BackButton } from './back-button';
 import { HelpCenterOwnershipNotice } from './help-center-notice';
 import { SibylArticles } from './help-center-sibyl-articles';
+import type { HelpCenterSelect } from '@automattic/data-stores';
 import './help-center-contact-form.scss';
 
 export const SITE_STORE = 'automattic/site';
@@ -166,13 +167,14 @@ export const HelpCenterContactForm = () => {
 		'CURRENT_SITE'
 	);
 	const { currentSite, subject, message, userDeclaredSiteUrl } = useSelect( ( select ) => {
+		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return {
-			currentSite: select( HELP_CENTER_STORE ).getSite(),
-			subject: select( HELP_CENTER_STORE ).getSubject(),
-			message: select( HELP_CENTER_STORE ).getMessage(),
-			userDeclaredSiteUrl: select( HELP_CENTER_STORE ).getUserDeclaredSiteUrl(),
+			currentSite: helpCenterSelect.getSite(),
+			subject: helpCenterSelect.getSubject(),
+			message: helpCenterSelect.getMessage(),
+			userDeclaredSiteUrl: helpCenterSelect.getUserDeclaredSiteUrl(),
 		};
-	} );
+	}, [] );
 
 	const {
 		setSite,

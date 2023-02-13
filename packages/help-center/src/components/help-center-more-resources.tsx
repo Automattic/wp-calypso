@@ -14,6 +14,7 @@ import { getUserPurchases } from 'calypso/state/purchases/selectors';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import { NewReleases } from '../icons';
 import { HELP_CENTER_STORE } from '../stores';
+import type { HelpCenterSelect } from '@automattic/data-stores';
 
 const circle = (
 	<SVG viewBox="0 0 24 24">
@@ -36,14 +37,19 @@ export const HelpCenterMoreResources = () => {
 		};
 	} );
 
-	const { hasSeenWhatsNewModal, doneLoading } = useSelect( ( select ) => ( {
-		hasSeenWhatsNewModal: select( HELP_CENTER_STORE ).getHasSeenWhatsNewModal(),
-		doneLoading: select( 'core/data' ).hasFinishedResolution(
-			HELP_CENTER_STORE,
-			'getHasSeenWhatsNewModal',
-			[]
-		),
-	} ) );
+	const { hasSeenWhatsNewModal, doneLoading } = useSelect(
+		( select ) => ( {
+			hasSeenWhatsNewModal: (
+				select( HELP_CENTER_STORE ) as HelpCenterSelect
+			 ).getHasSeenWhatsNewModal(),
+			doneLoading: select( 'core/data' ).hasFinishedResolution(
+				HELP_CENTER_STORE,
+				'getHasSeenWhatsNewModal',
+				[]
+			),
+		} ),
+		[]
+	);
 
 	const { setHasSeenWhatsNewModal } = useDispatch( HELP_CENTER_STORE );
 

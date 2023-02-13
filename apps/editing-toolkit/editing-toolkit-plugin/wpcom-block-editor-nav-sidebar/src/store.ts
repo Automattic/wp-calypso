@@ -1,7 +1,6 @@
 import { combineReducers, registerStore } from '@wordpress/data';
 import { actions, Action } from './actions';
 import { STORE_KEY } from './constants';
-import type { DispatchFromMap, SelectFromMap } from '@automattic/data-stores';
 import type { Reducer } from 'redux';
 
 const opened: Reducer< boolean, Action > = ( state = false, action ) => {
@@ -38,8 +37,3 @@ registerStore( STORE_KEY, {
 	reducer,
 	selectors,
 } );
-
-declare module '@wordpress/data' {
-	function dispatch( key: typeof STORE_KEY ): DispatchFromMap< typeof actions >;
-	function select( key: typeof STORE_KEY ): SelectFromMap< typeof selectors >;
-}

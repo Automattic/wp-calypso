@@ -8,15 +8,9 @@ import type {
 	CardStoreAction,
 	CardElementType,
 } from './types';
-import type { DispatchFromMap, SelectFromMap } from '@automattic/data-stores';
 import type { StoreStateValue } from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:credit-card' );
-
-declare module '@wordpress/data' {
-	function dispatch( key: 'wpcom-credit-card' ): DispatchFromMap< typeof actions >;
-	function select( key: 'wpcom-credit-card' ): SelectFromMap< typeof selectors >;
-}
 
 export const actions = {
 	changeBrand( payload: string ): CardStoreAction {

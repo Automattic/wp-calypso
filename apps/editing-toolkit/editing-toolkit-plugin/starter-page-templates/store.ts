@@ -30,11 +30,3 @@ registerStore( STORE_KEY, {
 	actions,
 	selectors,
 } );
-
-declare module '@wordpress/data' {
-	function dispatch( key: 'automattic/starter-page-layouts' ): typeof actions;
-	function select( key: 'automattic/starter-page-layouts' ): {
-		isOpen: () => ReturnType< typeof selectors.isOpen >;
-		isPatternPicker: () => ReturnType< typeof selectors.isPatternPicker >;
-	};
-}

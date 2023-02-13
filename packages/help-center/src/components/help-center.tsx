@@ -17,7 +17,7 @@ import { useStillNeedHelpURL } from '../hooks/use-still-need-help-url';
 import { HELP_CENTER_STORE, USER_STORE, SITE_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContainer from './help-center-container';
-
+import type { HelpCenterSelect } from '@automattic/data-stores';
 import '../styles.scss';
 
 const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
@@ -28,10 +28,13 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	const { setUnreadCount } = useDispatch( HELP_CENTER_STORE );
 	const { setSite } = useDispatch( HELP_CENTER_STORE );
 
-	const { show, isMinimized } = useSelect( ( select ) => ( {
-		isMinimized: select( HELP_CENTER_STORE ).getIsMinimized(),
-		show: select( HELP_CENTER_STORE ).isHelpCenterShown(),
-	} ) );
+	const { show, isMinimized } = useSelect(
+		( select ) => ( {
+			isMinimized: ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getIsMinimized(),
+			show: ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
+		} ),
+		[]
+	);
 
 	const { unreadCount, closeChat } = useHCWindowCommunicator( isMinimized || ! show );
 

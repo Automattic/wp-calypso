@@ -5,7 +5,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import * as React from 'react';
 import { PLANS_STORE } from '../stores';
-import type { Plans } from '@automattic/data-stores';
+import type { Plans, PlansSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -22,7 +22,7 @@ const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale, bil
 	const { __, hasTranslation } = useI18n();
 
 	const { supportedPlans, planProducts, features, featuresByType } = useSelect( ( select ) => {
-		const { getPlanProduct, getFeatures, getFeaturesByType, getSupportedPlans } =
+		const { getPlanProduct, getFeatures, getFeaturesByType, getSupportedPlans }: PlansSelect =
 			select( PLANS_STORE );
 		const supportedPlans = getSupportedPlans( locale );
 		const planProducts = supportedPlans.map( ( plan ) =>
@@ -35,7 +35,7 @@ const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale, bil
 			features: getFeatures( locale ),
 			featuresByType: getFeaturesByType( locale ),
 		};
-	} );
+	}, [] );
 
 	const isLoading = ! supportedPlans?.length;
 	const placeholderPlans = [ 1, 2, 3, 4, 5 ];

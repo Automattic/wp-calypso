@@ -1,17 +1,20 @@
 import { useSelect } from '@wordpress/data';
 import { forwardRef } from 'react';
 import { HELP_CENTER_STORE } from '../stores';
+import type { HelpCenterSelect } from '@automattic/data-stores';
 
 const HelpIcon = forwardRef< SVGSVGElement >( ( _, ref ) => {
 	const { unreadCount, doneLoading, hasSeenWhatsNewModal } = useSelect(
 		( select ) => ( {
-			unreadCount: select( HELP_CENTER_STORE ).getUnreadCount(),
+			unreadCount: ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getUnreadCount(),
 			doneLoading: select( 'core/data' ).hasFinishedResolution(
 				HELP_CENTER_STORE,
 				'getHasSeenWhatsNewModal',
 				[]
 			),
-			hasSeenWhatsNewModal: select( HELP_CENTER_STORE ).getHasSeenWhatsNewModal(),
+			hasSeenWhatsNewModal: (
+				select( HELP_CENTER_STORE ) as HelpCenterSelect
+			 ).getHasSeenWhatsNewModal(),
 		} ),
 		[]
 	);

@@ -6,8 +6,8 @@ export function useInProgressState() {
 	const { addSelector, importSelector } = useSelect( ( select ) => {
 		const subscriber: SubscriberSelect = select( SUBSCRIBER_STORE );
 		return {
-			addSelector: subscriber.addSelector,
-			importSelector: subscriber.importSelector,
+			addSelector: subscriber.getAddSubscribersSelector(),
+			importSelector: subscriber.getImportSubscribersSelector(),
 		};
 	}, [] );
 

@@ -23,6 +23,7 @@ import type {
 	StoreState,
 	ManagedContactDetails,
 } from '@automattic/wpcom-checkout';
+import type { AnyAction } from 'redux';
 
 const debug = debugFactory( 'calypso:paypal-payment-method' );
 
@@ -30,14 +31,9 @@ const debug = debugFactory( 'calypso:paypal-payment-method' );
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
 const storeKey = 'paypal';
-type StoreKey = typeof storeKey;
 type NounsInStore = 'postalCode' | 'countryCode';
+type PaypalSelectors = StoreSelectors< NounsInStore >;
 type PayPalStore = PaymentMethodStore< NounsInStore >;
-
-declare module '@wordpress/data' {
-	function select( key: StoreKey ): StoreSelectors< NounsInStore >;
-	function dispatch( key: StoreKey ): StoreActions< NounsInStore >;
-}
 
 const actions: StoreActions< NounsInStore > = {
 	changePostalCode( payload ) {
@@ -65,7 +61,7 @@ export function createPayPalStore(): PayPalStore {
 				postalCode: { value: '', isTouched: false },
 				countryCode: { value: '', isTouched: false },
 			},
-			action
+			action: AnyAction
 		): StoreState< NounsInStore > {
 			switch ( action.type ) {
 				case 'POSTAL_CODE_SET':
@@ -141,8 +137,14 @@ function PayPalTaxFields() {
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 	const countriesList = useCountryList();
-	const postalCode = useSelect( ( select ) => select( storeKey ).getPostalCode() );
-	const countryCode = useSelect( ( select ) => select( storeKey ).getCountryCode() );
+	const postalCode = useSelect(
+		( select ) => ( select( storeKey ) as PaypalSelectors ).getPostalCode(),
+		[]
+	);
+	const countryCode = useSelect(
+		( select ) => ( select( storeKey ) as PaypalSelectors ).getCountryCode(),
+		[]
+	);
 	const fields = useMemo(
 		() => ( {
 			postalCode: { ...postalCode, errors: [] },
@@ -189,8 +191,14 @@ function PayPalLabel( {
 }
 
 function TaxLabel() {
-	const postalCode = useSelect( ( select ) => select( storeKey ).getPostalCode() );
-	const countryCode = useSelect( ( select ) => select( storeKey ).getCountryCode() );
+	const postalCode = useSelect(
+		( select ) => ( select( storeKey ) as PaypalSelectors ).getPostalCode(),
+		[]
+	);
+	const countryCode = useSelect(
+		( select ) => ( select( storeKey ) as PaypalSelectors ).getCountryCode(),
+		[]
+	);
 	const taxString = [ countryCode.value, postalCode.value ].filter( isValueTruthy ).join( ', ' );
 	return (
 		<div>
@@ -209,8 +217,14 @@ function PayPalSubmitButton( {
 	const { __ } = useI18n();
 	const { formStatus } = useFormStatus();
 	const { transactionStatus } = useTransactionStatus();
-	const postalCode = useSelect( ( select ) => select( storeKey )?.getPostalCode() );
-	const countryCode = useSelect( ( select ) => select( storeKey )?.getCountryCode() );
+	const postalCode = useSelect(
+		( select ) => ( select( storeKey ) as PaypalSelectors )?.getPostalCode(),
+		[]
+	);
+	const countryCode = useSelect(
+		( select ) => ( select( storeKey ) as PaypalSelectors )?.getCountryCode(),
+		[]
+	);
 
 	const handleButtonPress = () => {
 		if ( ! onClick ) {

@@ -1,4 +1,4 @@
-import { registerStore } from '@wordpress/data';
+import { register } from '@wordpress/data';
 import { useRef } from 'react';
 import {
 	emptyManagedContactDetails,
@@ -40,17 +40,12 @@ type WpcomStoreAction =
 
 export const STORE_KEY = 'wpcom-checkout';
 
-export interface WpcomCheckoutStore extends ReturnType< typeof registerStore > {
+export interface WpcomCheckoutStore extends ReturnType< typeof register > {
 	getState: () => WpcomStoreState;
 }
 
 export type WpcomCheckoutStoreSelectors = SelectFromMap< typeof selectors >;
 export type WpcomCheckoutStoreActions = DispatchFromMap< typeof actions >;
-
-declare module '@wordpress/data' {
-	function select( key: typeof STORE_KEY ): WpcomCheckoutStoreSelectors | undefined;
-	function dispatch( key: typeof STORE_KEY ): WpcomCheckoutStoreActions | undefined;
-}
 
 const actions = {
 	applyDomainContactValidationResults( payload: ManagedContactDetailsErrors ): WpcomStoreAction {
