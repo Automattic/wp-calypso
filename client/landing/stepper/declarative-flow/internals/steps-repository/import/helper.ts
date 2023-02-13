@@ -1,6 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { SiteDetails, SourceSiteMigrationDetails } from '@automattic/data-stores/src/site';
 import { addQueryArgs } from '@wordpress/url';
 import { camelCase } from 'lodash';
+import wpcomRequest from 'wpcom-proxy-request';
 import { ImporterPlatform } from 'calypso/blocks/import/types';
 import {
 	getImporterUrl,
@@ -77,4 +79,20 @@ export async function addTempSiteToSourceOption( targetBlogId: number, sourceSit
 			// eslint-disable-next-line no-console
 			console.error( 'Unable to store option in source site', error );
 		} );
+}
+
+export function getSite( sourceSiteSlug: string ) {
+	return wpcomRequest< SiteDetails >( {
+		path: '/sites/' + encodeURIComponent( sourceSiteSlug as string ),
+		apiVersion: '1.1',
+	} );
+}
+
+export function getSourceSiteMigrationData(
+	sourceId: number
+): Promise< SourceSiteMigrationDetails > {
+	return wpcom.req.get( {
+		path: '/migrations/from-source/' + encodeURIComponent( sourceId as number ),
+		apiNamespace: 'wpcom/v2',
+	} );
 }
