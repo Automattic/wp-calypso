@@ -280,13 +280,12 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 
 	const { setPlanProductId } = useDispatch( LAUNCH_STORE );
 
-	const [ selectedPlanProductId, billingPeriod ] = useSelect(
-		( select ) => [
-			( select( LAUNCH_STORE ) as LaunchSelect ).getSelectedPlanProductId(),
-			( select( LAUNCH_STORE ) as LaunchSelect ).getLastPlanBillingPeriod(),
-		],
-		[]
-	);
+	const { selectedPlanProductId, billingPeriod } = useSelect( ( select ) => {
+		return {
+			selectedPlanProductId: ( select( LAUNCH_STORE ) as LaunchSelect ).getSelectedPlanProductId(),
+			billingPeriod: ( select( LAUNCH_STORE ) as LaunchSelect ).getLastPlanBillingPeriod(),
+		};
+	}, [] );
 
 	const { selectedPlan, selectedPlanProduct } = useSelect( ( select ) => {
 		const plansStore: PlansSelect = select( PLANS_STORE );
@@ -514,17 +513,18 @@ type StepIndexRenderFunction = ( renderOptions: {
 const Summary: React.FunctionComponent = () => {
 	const { siteId } = React.useContext( LaunchContext );
 
-	const [ hasSelectedDomain, isSiteTitleStepVisible, selectedDomain, selectedPlanProductId ] =
+	const { hasSelectedDomain, isSiteTitleStepVisible, selectedDomain, selectedPlanProductId } =
 		useSelect( ( select ) => {
 			const launchStore: LaunchSelect = select( LAUNCH_STORE );
-			const { isSiteTitleStepVisible, domain, planProductId } = launchStore.getState();
+			const launchStoreState = launchStore.getState();
+			const { domain, planProductId } = launchStoreState;
 
-			return [
-				launchStore.hasSelectedDomainOrSubdomain(),
-				isSiteTitleStepVisible,
-				domain,
-				planProductId,
-			];
+			return {
+				hasSelectedDomain: launchStore.hasSelectedDomainOrSubdomain(),
+				isSiteTitleStepVisible: launchStoreState.isSiteTitleStepVisible,
+				selectedDomain: domain,
+				selectedPlanProductId: planProductId,
+			};
 		}, [] );
 
 	const isSelectedPlanPaid = useSelect(

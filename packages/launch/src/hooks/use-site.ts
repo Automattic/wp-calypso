@@ -7,16 +7,16 @@ import type { SiteSelect } from '@automattic/data-stores';
 export function useSite() {
 	const { siteId } = useContext( LaunchContext );
 
-	const [ site, isSiteLaunched, isSiteLaunching, isLoading ] = useSelect(
+	const { site, isSiteLaunched, isSiteLaunching, isLoading } = useSelect(
 		( select ) => {
 			const siteStore: SiteSelect = select( SITE_STORE );
 
-			return [
-				siteStore.getSite( siteId ),
-				siteStore.isSiteLaunched( siteId ),
-				siteStore.isSiteLaunching( siteId ),
-				siteStore.isFetchingSiteDetails(),
-			];
+			return {
+				site: siteStore.getSite( siteId ),
+				isSiteLaunched: siteStore.isSiteLaunched( siteId ),
+				isSiteLaunching: siteStore.isSiteLaunching( siteId ),
+				isLoading: siteStore.isFetchingSiteDetails(),
+			};
 		},
 		[ siteId ]
 	);
