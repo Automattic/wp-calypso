@@ -218,16 +218,6 @@ function PriceWithoutHtml( {
 	return <>{ priceObj.integer }</>;
 }
 
-export function priceAsString( price: number, currencyCode: string, isSmallestUnit = false ) {
-	const priceObj = getCurrencyObject( price, currencyCode, { isSmallestUnit } );
-	return (
-		priceObj.symbol +
-		( priceObj.hasNonZeroFraction
-			? `${ priceObj.integer }${ priceObj.fraction }`
-			: priceObj.integer )
-	);
-}
-
 function FlatPriceDisplay( {
 	smallerPrice,
 	higherPrice,
