@@ -181,6 +181,8 @@ export class JetpackAuthorize extends Component {
 			return this.redirect();
 		} else if ( nextProps.isAlreadyOnSitesList && alreadyAuthorized ) {
 			return this.redirect();
+		} else if ( this.isFromJetpackMigration() && nextProps.isAlreadyOnSitesList ) {
+			return this.redirect();
 		}
 		if (
 			authorizeError &&
@@ -292,7 +294,7 @@ export class JetpackAuthorize extends Component {
 			debug( `Redirecting directly to cart with ${ PRODUCT_JETPACK_BACKUP_T1_YEARLY } in cart.` );
 			navigate( `/checkout/${ urlToSlug( homeUrl ) }/${ PRODUCT_JETPACK_BACKUP_T1_YEARLY }` );
 		} else if ( this.isFromJetpackMigration() ) {
-			navigate( `/setup/import-focused/siteCreationStep?from=${ urlToSlug( homeUrl ) }` );
+			navigate( `/setup/import-focused/migrationHandler?from=${ urlToSlug( homeUrl ) }` );
 		} else {
 			const redirectionTarget = this.getRedirectionTarget();
 			debug( `Redirecting to: ${ redirectionTarget }` );

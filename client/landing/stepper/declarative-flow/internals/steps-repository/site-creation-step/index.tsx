@@ -19,6 +19,8 @@ import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import useAddTempSiteToSourceOptionMutation from 'calypso/data/site-migration/use-add-temp-site-mutation';
+import { useSiteQuery } from 'calypso/data/sites/use-site-query';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
@@ -28,7 +30,6 @@ import {
 	getSignupCompleteSlug,
 } from 'calypso/signup/storageUtils';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
-import { addTempSiteToSourceOption } from '../import/helper';
 import type { Step } from '../../types';
 
 import './styles.scss';
@@ -54,7 +55,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 
 	const username = useSelector( ( state ) => getCurrentUserName( state ) );
 
-	const { setPendingAction, setIsMigrateFromWp } = useDispatch( ONBOARD_STORE );
+	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 
 	let theme: string;
 	if ( isMigrationFlow( flow ) || isCopySiteFlow( flow ) ) {
@@ -92,6 +93,10 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 		wasSignupCheckoutPageUnloaded() && signupDestinationCookieExists && isReEnteringFlow
 	);
 	const blogTitle = isFreeFlow( 'free' ) ? getSelectedSiteTitle : '';
+	const { addTempSiteToSourceOption } = useAddTempSiteToSourceOptionMutation();
+	const search = window.location.search;
+	const sourceSiteSlug = new URLSearchParams( search ).get( 'from' ) || '';
+	const { data: siteData } = useSiteQuery( sourceSiteSlug, isCopySiteFlow( flow ) );
 
 	async function createSite() {
 		if ( isManageSiteFlow ) {
@@ -124,10 +129,8 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 		}
 
 		if ( isMigrationFlow( flow ) ) {
-			const search = window.location.search;
-			const sourceSiteSlug = new URLSearchParams( search ).get( 'from' );
 			// Store temporary target blog id to source site option
-			await addTempSiteToSourceOption( site?.siteId as number, sourceSiteSlug as string );
+			addTempSiteToSourceOption( site?.siteId as number, siteData?.ID as number );
 		}
 
 		return {
@@ -138,11 +141,6 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 
 	useEffect( () => {
 		setProgress( 0.1 );
-
-		if ( isMigrationFlow( flow ) ) {
-			setIsMigrateFromWp( true );
-		}
-
 		if ( submit ) {
 			setPendingAction( createSite );
 			submit();
