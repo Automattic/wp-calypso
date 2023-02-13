@@ -77,7 +77,7 @@ export const ThemesList = ( props ) => {
 			{ props.themes.map( ( theme, index ) => (
 				<ThemeBlock key={ 'theme-block' + index } theme={ theme } index={ index } { ...props } />
 			) ) }
-			{ /* The Pattern Assembler CTA will display on the fourth row and the behavior is controlled by CSS */ }
+			{ /* The Pattern Assembler CTA will display on the 9th row and the behavior is controlled by CSS */ }
 			{ isEnabled( 'pattern-assembler/logged-out-showcase' ) &&
 				props.themes.length > 0 &&
 				! isLoggedIn && <PatternAssemblerCta onButtonClick={ goToSiteAssemblerFlow } /> }
