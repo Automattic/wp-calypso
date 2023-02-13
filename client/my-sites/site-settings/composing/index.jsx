@@ -2,7 +2,6 @@ import { CompactCard } from '@automattic/components';
 import PropTypes from 'prop-types';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import DateTimeFormat from '../date-time-format';
-import BloggingPrompts from './blogging-prompts';
 import DefaultPostFormat from './default-post-format';
 import Latex from './latex';
 import Markdown from './markdown';
@@ -50,20 +49,6 @@ const Composing = ( {
 			siteIsJetpack={ siteIsJetpack }
 			handleToggle={ handleToggle }
 		/>
-
-		{
-			// Blogging prompts is a Jetpack editor extension that's enabled for Simple and Atomic sites only
-			( ! siteIsJetpack || isAtomic ) && (
-				<BloggingPrompts
-					fields={ fields }
-					isRequestingSettings={ isRequestingSettings }
-					isSavingSettings={ isSavingSettings }
-					isAtomic={ isAtomic }
-					siteIsJetpack={ siteIsJetpack }
-					handleToggle={ handleToggle }
-				/>
-			)
-		}
 
 		{ siteIsJetpack && (
 			<>

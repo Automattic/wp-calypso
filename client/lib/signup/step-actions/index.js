@@ -4,7 +4,6 @@ import { getUrlParts } from '@automattic/calypso-url';
 import { Site } from '@automattic/data-stores';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
-import { mapRecordKeysRecursively, camelToSnakeCase } from '@automattic/js-utils';
 import debugFactory from 'debug';
 import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
@@ -27,7 +26,10 @@ import {
 	isUserLoggedIn,
 	getCurrentUser,
 } from 'calypso/state/current-user/selectors';
-import { buildDIFMCartExtrasObject } from 'calypso/state/difm/assemblers';
+import {
+	buildDIFMCartExtrasObject,
+	buildDIFMWebsiteContentRequestDTO,
+} from 'calypso/state/difm/assemblers';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
@@ -385,18 +387,14 @@ export function submitWebsiteContent( callback, { siteSlug }, step, reduxStore )
 		defer( callback );
 		return;
 	}
-	const {
-		pages,
-		siteLogoSection: { siteLogoUrl: site_logo_url },
-		feedbackSection: { genericFeedback: generic_feedback },
-	} = websiteContent;
-	const pagesDTO = pages.map( ( page ) => mapRecordKeysRecursively( page, camelToSnakeCase ) );
+
+	const websiteContentRequestDTO = buildDIFMWebsiteContentRequestDTO( websiteContent );
 
 	wpcom.req
 		.post( {
 			path: `/sites/${ siteSlug }/do-it-for-me/website-content`,
 			apiNamespace: 'wpcom/v2',
-			body: { pages: pagesDTO, site_logo_url, generic_feedback },
+			body: websiteContentRequestDTO,
 		} )
 		.then( () => reduxStore.dispatch( requestSite( siteSlug ) ) )
 		.then( () => callback() )

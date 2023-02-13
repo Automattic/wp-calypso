@@ -220,6 +220,19 @@
 	}
 
 	.featured-domain-suggestions {
+		.domain-registration-suggestion__title-wrapper {
+			flex-wrap: wrap-reverse;
+		}
+
+		.domain-registration-suggestion__title {
+			align-self: unset;
+		}
+
+		.domain-registration-suggestion__badges {
+			margin-bottom: 5px;
+			margin-left: 0;
+		}
+
 		.domain-suggestion__action {
 			border: none;
 			border-radius: 4px;

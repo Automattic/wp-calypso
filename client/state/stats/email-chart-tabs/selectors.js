@@ -50,10 +50,11 @@ export function isLoadingTabs(
 	barNumber
 ) {
 	const stats = get( state.stats.emails.items, [ siteId, postId, period, statType, date ], null );
-	// if we have redux stats ready return false
-	if ( dataLength < barNumber ) {
+	// If we have data for 30 columns, that's the maximum the endpoint can return
+	if ( dataLength < barNumber && dataLength < 30 ) {
 		return true;
 	}
+	// if we have redux stats ready return false
 	if ( stats ) {
 		return false;
 	}

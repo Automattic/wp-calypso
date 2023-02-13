@@ -221,7 +221,6 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		<StepContainer
 			stepName="domains"
 			isWideLayout={ true }
-			shouldStickyNavButtons={ isCopySiteFlow( flow ) }
 			hideBack={ ! isCopySiteFlow( flow ) }
 			backLabelText={ __( 'Back to Sites' ) }
 			hideSkip={ true }

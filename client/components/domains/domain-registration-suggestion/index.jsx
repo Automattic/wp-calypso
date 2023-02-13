@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -411,6 +412,11 @@ const mapStateToProps = ( state, props ) => {
 
 	if ( isPremium ) {
 		productCost = props.premiumDomain?.cost;
+		if ( props.premiumDomain?.sale_cost ) {
+			productSaleCost = formatCurrency( props.premiumDomain?.sale_cost, currentUserCurrencyCode, {
+				stripZeros,
+			} );
+		}
 	} else {
 		productCost = getDomainPrice( productSlug, productsList, currentUserCurrencyCode, stripZeros );
 		productSaleCost = getDomainSalePrice(

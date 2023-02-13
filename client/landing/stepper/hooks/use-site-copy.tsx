@@ -3,28 +3,32 @@ import { createHigherOrderComponent } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useMemo, useCallback } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
-import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
+import { useQueryUserPurchases } from 'calypso/components/data/query-user-purchases';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
-	getSitePurchases,
-	hasLoadedSitePurchasesFromServer,
-	isFetchingSitePurchases,
+	hasLoadedUserPurchasesFromServer,
+	isFetchingUserPurchases,
+	getUserPurchases,
 } from 'calypso/state/purchases/selectors';
 import getSiteFeatures from 'calypso/state/selectors/get-site-features';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
-function useSafeSiteHasFeature( siteId: number | undefined, feature: string ) {
+interface SiteCopyOptions {
+	enabled: boolean;
+}
+
+function useSafeSiteHasFeature( siteId: number | undefined, feature: string, enabled = true ) {
 	const dispatch = useReduxDispatch();
 	useEffect( () => {
-		if ( ! siteId ) {
+		if ( ! siteId || ! enabled ) {
 			return;
 		}
 		dispatch( fetchSiteFeatures( siteId ) );
-	}, [ dispatch, siteId ] );
+	}, [ dispatch, siteId, enabled ] );
 
 	return useSelector( ( state ) => {
 		if ( ! siteId ) {
@@ -35,54 +39,73 @@ function useSafeSiteHasFeature( siteId: number | undefined, feature: string ) {
 }
 
 export const useSiteCopy = (
-	site: Pick< SiteExcerptData, 'ID' | 'site_owner' | 'plan' > | undefined
+	site: Pick< SiteExcerptData, 'ID' | 'site_owner' | 'plan' > | undefined,
+	options: SiteCopyOptions = { enabled: true }
 ) => {
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
-	const hasCopySiteFeature = useSafeSiteHasFeature( site?.ID, WPCOM_FEATURES_COPY_SITE );
+	const hasCopySiteFeature = useSafeSiteHasFeature(
+		site?.ID,
+		WPCOM_FEATURES_COPY_SITE,
+		options.enabled
+	);
 	const { isRequesting: isRequestingSiteFeatures } = useSelector( ( state ) => {
 		const siteFeatures = getSiteFeatures( state, site?.ID );
 		return siteFeatures ? siteFeatures : { isRequesting: true };
 	} );
-	const isAtomic = useSelect( ( select ) => site && select( SITE_STORE ).isSiteAtomic( site?.ID ) );
+	const isAtomic = useSelect(
+		( select ) => site && options.enabled && select( SITE_STORE ).isSiteAtomic( site?.ID ),
+		[ site?.ID, options.enabled ]
+	);
 	const plan = site?.plan;
 	const isSiteOwner = site?.site_owner === userId;
 
-	useQuerySitePurchases( site?.ID );
-	const isLoadingPurchase = useSelector(
-		( state ) => isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state )
+	useQueryUserPurchases( options.enabled );
+	const isLoadingPurchases = useSelector(
+		( state ) => isFetchingUserPurchases( state ) || ! hasLoadedUserPurchasesFromServer( state )
 	);
 
-	const purchases = useSelector( ( state ) => getSitePurchases( state, site?.ID ) );
+	const purchases = useSelector( ( state ) => getUserPurchases( state ) );
 
-	const { setPlanCartItem, setProductCartItems } = useDispatch( ONBOARD_STORE );
+	const { setPlanCartItem, setProductCartItems, resetOnboardStore } = useDispatch( ONBOARD_STORE );
 
 	const shouldShowSiteCopyItem = useMemo( () => {
-		return hasCopySiteFeature && isSiteOwner && plan && isAtomic && ! isLoadingPurchase;
-	}, [ hasCopySiteFeature, isSiteOwner, plan, isLoadingPurchase, isAtomic ] );
+		return hasCopySiteFeature && isSiteOwner && plan && isAtomic && ! isLoadingPurchases;
+	}, [ hasCopySiteFeature, isSiteOwner, plan, isLoadingPurchases, isAtomic ] );
 
 	const startSiteCopy = useCallback( () => {
 		if ( ! shouldShowSiteCopyItem ) {
 			return;
 		}
 		clearSignupDestinationCookie();
+		resetOnboardStore();
 		setPlanCartItem( { product_slug: plan?.product_slug as string } );
 
-		const marketplaceProducts = purchases
-			.filter( ( purchase ) =>
-				[ 'marketplace_plugin', 'marketplace_theme' ].includes( purchase.productType )
+		const marketplacePluginProducts = ( purchases || [] )
+			.filter(
+				( purchase ) =>
+					[ 'marketplace_plugin', 'marketplace_theme' ].includes( purchase.productType ) &&
+					purchase.siteId === site?.ID
 			)
 			.map( ( purchase ) => ( { product_slug: purchase.productSlug } ) );
 
-		setProductCartItems( marketplaceProducts );
-	}, [ plan, setPlanCartItem, purchases, shouldShowSiteCopyItem, setProductCartItems ] );
+		setProductCartItems( marketplacePluginProducts );
+	}, [
+		plan,
+		setPlanCartItem,
+		purchases,
+		resetOnboardStore,
+		shouldShowSiteCopyItem,
+		setProductCartItems,
+		site?.ID,
+	] );
 
 	return useMemo(
 		() => ( {
 			shouldShowSiteCopyItem,
 			startSiteCopy,
-			isFetching: isLoadingPurchase || isRequestingSiteFeatures,
+			isFetching: isLoadingPurchases || isRequestingSiteFeatures,
 		} ),
-		[ isLoadingPurchase, isRequestingSiteFeatures, shouldShowSiteCopyItem, startSiteCopy ]
+		[ isLoadingPurchases, isRequestingSiteFeatures, shouldShowSiteCopyItem, startSiteCopy ]
 	);
 };
 

@@ -15,6 +15,7 @@ import {
 	redirectToDefaultSitePage,
 	redirectToDefaultWordAdsPeriod,
 	emailStats,
+	emailSummary,
 } from './controller';
 
 import './style.scss';
@@ -85,6 +86,7 @@ export default function () {
 			`/stats/email/:statType/:period(${ validEmailPeriods })/:email_id/:site`,
 			emailStats
 		);
+		statsPage( `/stats/day/emails/:site`, emailSummary );
 	}
 
 	// Anything else should redirect to default stats page
