@@ -1,8 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { SiteDetails, SourceSiteMigrationDetails } from '@automattic/data-stores/src/site';
 import { addQueryArgs } from '@wordpress/url';
 import { camelCase } from 'lodash';
-import wpcomRequest from 'wpcom-proxy-request';
 import { ImporterPlatform } from 'calypso/blocks/import/types';
 import {
 	getImporterUrl,
@@ -10,7 +8,6 @@ import {
 	getWpOrgImporterUrl,
 } from 'calypso/blocks/import/util';
 import { WPImportOption } from 'calypso/blocks/importer/wordpress/types';
-import wpcom from 'calypso/lib/wp';
 import { BASE_ROUTE } from './config';
 
 export function getFinalImporterUrl(
@@ -64,37 +61,4 @@ export function generateStepPath( stepName: string, stepSectionName?: string ) {
 	const path = routes.join( '_' );
 
 	return camelCase( path ) as string;
-}
-
-export async function addTempSiteToSourceOption( targetBlogId: number, sourceSiteSlug: string ) {
-	try {
-		const sourceSite = await getSite( sourceSiteSlug );
-		const result = await wpcom.req.post( {
-			path: `/migrations/from-source/${ sourceSite.ID }`,
-			apiNamespace: 'wpcom/v2',
-			body: {
-				target_blog_id: targetBlogId,
-			},
-		} );
-		return result;
-	} catch ( error ) {
-		// eslint-disable-next-line no-console
-		console.error( 'Unable to store option in source site', error );
-	}
-}
-
-export function getSite( sourceSiteSlug: string ) {
-	return wpcomRequest< SiteDetails >( {
-		path: '/sites/' + encodeURIComponent( sourceSiteSlug as string ),
-		apiVersion: '1.1',
-	} );
-}
-
-export function getSourceSiteMigrationData(
-	sourceId: number
-): Promise< SourceSiteMigrationDetails > {
-	return wpcom.req.get( {
-		path: '/migrations/from-source/' + encodeURIComponent( sourceId as number ),
-		apiNamespace: 'wpcom/v2',
-	} );
 }
