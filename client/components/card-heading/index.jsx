@@ -26,6 +26,7 @@ CardHeading.propTypes = {
 	size: PropTypes.number,
 	isBold: PropTypes.bool,
 	className: PropTypes.string,
+	id: PropTypes.string,
 };
 
 export default CardHeading;
