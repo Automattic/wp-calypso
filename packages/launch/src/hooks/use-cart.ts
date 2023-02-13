@@ -5,6 +5,7 @@ import LaunchContext from '../context';
 import { useSiteDomains, useHasEcommercePlan } from '../hooks';
 import { LAUNCH_STORE, SITE_STORE, PLANS_STORE } from '../stores';
 import { getDomainProduct, getPlanProductForFlow } from '../utils';
+import type { LaunchSelect, PlansSelect } from '@automattic/data-stores';
 
 type LaunchCart = {
 	goToCheckout: () => Promise< void >; // used in gutenboarding-launch
@@ -17,15 +18,18 @@ export function useCart(): LaunchCart {
 
 	const locale = useLocale();
 
-	const [ planProductId, domain ] = useSelect( ( select ) => [
-		select( LAUNCH_STORE ).getSelectedPlanProductId(),
-		select( LAUNCH_STORE ).getSelectedDomain(),
-	] );
+	const [ planProductId, domain ] = useSelect(
+		( select ) => [
+			( select( LAUNCH_STORE ) as LaunchSelect ).getSelectedPlanProductId(),
+			( select( LAUNCH_STORE ) as LaunchSelect ).getSelectedDomain(),
+		],
+		[]
+	);
 
 	const { planProduct, isEcommercePlan } = useSelect(
 		( select ) => {
-			const plansStore = select( PLANS_STORE );
-			const plan = plansStore.getPlanByProductId( planProductId, locale );
+			const plansStore: PlansSelect = select( PLANS_STORE );
+			const plan = plansStore.getPlanByProductId( planProductId as number, locale );
 			return {
 				planProduct: plansStore.getPlanProductById( planProductId as number ),
 				isEcommercePlan: plansStore.isPlanEcommerce( plan?.periodAgnosticSlug ),
