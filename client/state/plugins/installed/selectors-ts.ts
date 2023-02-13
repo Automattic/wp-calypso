@@ -186,3 +186,55 @@ export const getFilteredAndSortedPlugins = createSelector(
 		return [ siteIds, pluginFilter ].flat().join( '-' );
 	}
 );
+
+export function getPluginsOnSites( state: AppState, plugins: Plugin[] ) {
+	return Object.values( plugins ).reduce(
+		( acc: { [ pluginSlug: string ]: Plugin }, plugin: Plugin ) => {
+			const siteIds = Object.keys( plugin.sites ).map( Number );
+			const pluginOnSites = getPluginOnSites( state, siteIds, plugin.slug );
+			if ( pluginOnSites ) {
+				acc[ plugin.slug ] = pluginOnSites;
+			}
+			return acc;
+		},
+		{}
+	);
+}
+
+export function getPluginOnSites( state: AppState, siteIds: number[], pluginSlug: string ) {
+	const plugin = getAllPluginsIndexedByPluginSlug( state )[ pluginSlug ];
+
+	if ( ! plugin ) {
+		return undefined;
+	}
+
+	for ( const siteId of siteIds ) {
+		if ( plugin.sites[ siteId ] ) {
+			return plugin;
+		}
+	}
+
+	return undefined;
+}
+
+export function getPluginOnSite( state: AppState, siteId: number, pluginSlug: string ) {
+	const plugin = getAllPluginsIndexedByPluginSlug( state )[ pluginSlug ];
+
+	const { sites, ...pluginWithoutSites } = plugin;
+
+	return plugin && plugin.sites[ siteId ]
+		? // Because this is a plugin for a single site context only the data for the selected
+		  // site is included. When I changed this file to TypeScript I found that some code
+		  // assumes it will be on the plugin object, while other code assumes it will be on the
+		  // sites object, so I included both.
+		  {
+				...pluginWithoutSites,
+				...plugin.sites[ siteId ],
+				...{ sites: { [ siteId ]: plugin.sites[ siteId ] } },
+		  }
+		: undefined;
+}
+
+export function getPluginsOnSite( state: AppState, siteId: number, pluginSlugs: string[] ) {
+	return pluginSlugs.map( ( pluginSlug ) => getPluginOnSite( state, siteId, pluginSlug ) );
+}
