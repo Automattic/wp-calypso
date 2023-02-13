@@ -162,7 +162,7 @@ const useItemPrice = (
 	if ( item && itemCost ) {
 		originalPrice = itemCost;
 		if ( item.term !== TERM_MONTHLY ) {
-			originalPrice = getMonthlyPrice( itemCost );
+			originalPrice = getMonthlyPrice( itemCost ); // monthlyItemCost - See comment above.
 			discountedPrice = introductoryOfferPrices.introOfferCost
 				? getMonthlyPrice( introductoryOfferPrices.introOfferCost )
 				: undefined;
