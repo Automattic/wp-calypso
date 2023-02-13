@@ -26,7 +26,7 @@ class PostLifecycle extends Component {
 	};
 
 	render() {
-		const { post, postKey, isSelected, recsStreamKey, streamKey } = this.props;
+		const { post, postKey, isSelected, recsStreamKey, streamKey, siteId } = this.props;
 
 		if ( postKey.isRecommendationBlock ) {
 			return (
@@ -45,6 +45,7 @@ class PostLifecycle extends Component {
 				>
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 					<BloggingPromptCard index={ postKey.index } />
 =======
 					<BloggingPromptCard context="reader" />
@@ -52,6 +53,9 @@ class PostLifecycle extends Component {
 =======
 					<BloggingPromptCard tracksContext="reader" />
 >>>>>>> 84b1447c2c (change prop name to tracksContext)
+=======
+					<BloggingPromptCard siteId={ siteId } viewContext="reader" />
+>>>>>>> a59fd46bb8 (Pass site ID from postlifecyle and use viewContext)
 				</div>
 			);
 		} else if ( streamKey.indexOf( 'rec' ) > -1 ) {

@@ -12,6 +12,7 @@ import './style.scss';
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<< HEAD:client/my-sites/customer-home/cards/features/blogging-prompt/prompts-navigation.jsx
 const PromptsNavigation = ( { prompts, index } ) => {
 =======
@@ -25,6 +26,9 @@ const PromptsNavigation = ( { prompts, tracksContext } ) => {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 =======
 const PromptsNavigation = ( { siteId, prompts, tracksContext } ) => {
+=======
+const PromptsNavigation = ( { siteId, prompts, viewContext } ) => {
+>>>>>>> a59fd46bb8 (Pass site ID from postlifecyle and use viewContext)
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const [ promptIndex, setPromptIndex ] = useState( 0 );
@@ -78,7 +82,7 @@ const PromptsNavigation = ( { siteId, prompts, tracksContext } ) => {
 			recordTracksEvent( `calypso_customer_home_answer_prompt`, {
 				site_id: siteId,
 				prompt_id: getPrompt()?.id,
-				context: tracksContext,
+				context: viewContext,
 			} )
 		);
 
@@ -90,7 +94,7 @@ const PromptsNavigation = ( { siteId, prompts, tracksContext } ) => {
 				recordTracksEvent( `calypso_customer_home_skip_prompt`, {
 					site_id: siteId,
 					prompt_id: todayPromptId,
-					context: tracksContext,
+					context: viewContext,
 				} )
 			);
 		}
@@ -104,7 +108,7 @@ const PromptsNavigation = ( { siteId, prompts, tracksContext } ) => {
 			recordTracksEvent( `calypso_customer_home_view_all_responses`, {
 				site_id: siteId,
 				prompt_id: getPrompt()?.id,
-				context: tracksContext,
+				context: viewContext,
 			} )
 		);
 	};
