@@ -44,10 +44,14 @@ class PostLifecycle extends Component {
 					key={ 'blogging-prompt-card-' + postKey.index }
 				>
 <<<<<<< HEAD
+<<<<<<< HEAD
 					<BloggingPromptCard index={ postKey.index } />
 =======
 					<BloggingPromptCard context="reader" />
 >>>>>>> bb5af98738 (Move blogging prompt card into components directory)
+=======
+					<BloggingPromptCard tracksContext="reader" />
+>>>>>>> 84b1447c2c (change prop name to tracksContext)
 				</div>
 			);
 		} else if ( streamKey.indexOf( 'rec' ) > -1 ) {

@@ -16,11 +16,15 @@ import PromptsNavigation from './prompts-navigation';
 
 import './style.scss';
 
+<<<<<<< HEAD
 <<<<<<< HEAD:client/my-sites/customer-home/cards/features/blogging-prompt/index.jsx
 const BloggingPromptCard = ( { index } ) => {
 =======
 const BloggingPromptCard = ( { context } ) => {
 >>>>>>> bb5af98738 (Move blogging prompt card into components directory):client/components/blogging-prompt/index.jsx
+=======
+const BloggingPromptCard = ( { tracksContext } ) => {
+>>>>>>> 84b1447c2c (change prop name to tracksContext)
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
@@ -45,15 +49,15 @@ const BloggingPromptCard = ( { context } ) => {
 		return null;
 	}
 
-	if ( context !== 'reader' ) {
-		context = 'home';
+	if ( tracksContext !== 'reader' ) {
+		tracksContext = 'home';
 	}
 	const hidePrompts = () => {
 		skipCard( SECTION_BLOGGING_PROMPT );
 		dispatch(
 			recordTracksEvent( 'calypso_customer_home_task_skip', {
 				task: SECTION_BLOGGING_PROMPT,
-				context: context,
+				context: tracksContext,
 			} )
 		);
 	};
@@ -82,11 +86,15 @@ const BloggingPromptCard = ( { context } ) => {
 						</Button>
 					</EllipsisMenu>
 				</CardHeading>
+<<<<<<< HEAD
 <<<<<<< HEAD:client/my-sites/customer-home/cards/features/blogging-prompt/index.jsx
 				<PromptsNavigation prompts={ prompts } index={ index } />
 =======
 				<PromptsNavigation prompts={ prompts } context={ context } />
 >>>>>>> bb5af98738 (Move blogging prompt card into components directory):client/components/blogging-prompt/index.jsx
+=======
+				<PromptsNavigation prompts={ prompts } tracksContext={ tracksContext } />
+>>>>>>> 84b1447c2c (change prop name to tracksContext)
 			</Card>
 		</div>
 	);
