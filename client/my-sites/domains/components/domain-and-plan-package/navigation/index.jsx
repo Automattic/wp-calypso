@@ -29,7 +29,7 @@ export default function DomainAndPlanPackageNavigation( props ) {
 					{ props.step !== 1 ? (
 						<span>{ translate( 'Back' ) }</span>
 					) : (
-						<span>{ translate( 'Back to My Home' ) }</span>
+						<span>{ translate( 'Home' ) }</span>
 					) }
 				</Button>
 			</div>
