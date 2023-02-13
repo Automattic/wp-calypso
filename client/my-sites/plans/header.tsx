@@ -78,9 +78,13 @@ const DomainUpsellDialog: React.FunctionComponent< {
 	);
 };
 
-const DomainUpsellHeader: React.FunctionComponent< { domain: string } > = ( { domain } ) => {
+const DomainUpsellHeader: React.FunctionComponent< {
+	domain: string;
+	visibleDialog: boolean;
+	onCloseDialog: () => void;
+	onOpenDialog: () => void;
+} > = ( { domain, visibleDialog, onCloseDialog, onOpenDialog } ) => {
 	const translate = useTranslate();
-	const [ showDomainUpsellDialog, setShowDomainUpsellDialog ] = useState( false );
 	const is2023OnboardingPricingGrid = isEnabled( 'onboarding/2023-pricing-grid' );
 	const plansDescription = translate(
 		'See and compare the features available on each WordPress.com plan.'
@@ -96,30 +100,18 @@ const DomainUpsellHeader: React.FunctionComponent< { domain: string } > = ( { do
 		}
 	);
 
-	const handleCloseDialog = useCallback( () => {
-		setShowDomainUpsellDialog( false );
-	}, [] );
-
-	const handleOpenDialog = useCallback( () => {
-		setShowDomainUpsellDialog( true );
-	}, [] );
-
 	const onSkipClick = useCallback(
 		( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {
 			event.preventDefault();
 			recordTracksEvent( 'calypso_plans_page_domain_upsell_skip_click' );
-			handleOpenDialog();
+			onOpenDialog();
 		},
-		[ handleOpenDialog ]
+		[ onOpenDialog ]
 	);
 
 	return (
 		<>
-			<DomainUpsellDialog
-				visible={ showDomainUpsellDialog }
-				onClose={ handleCloseDialog }
-				domain={ domain }
-			/>
+			<DomainUpsellDialog visible={ visibleDialog } onClose={ onCloseDialog } domain={ domain } />
 			<FormattedHeader
 				className={ classes }
 				brandFont
@@ -146,6 +138,16 @@ const PlansHeader: React.FunctionComponent< { domainFromHomeUpsellFlow?: string 
 		'See and compare the features available on each WordPress.com plan.'
 	);
 
+	const [ visibleDialog, setVisibleDialog ] = useState( false );
+
+	const handleCloseDialog = useCallback( () => {
+		setVisibleDialog( false );
+	}, [ setVisibleDialog ] );
+
+	const handleOpenDialog = useCallback( () => {
+		setVisibleDialog( true );
+	}, [ setVisibleDialog ] );
+
 	if ( ! domainFromHomeUpsellFlow ) {
 		return (
 			<FormattedHeader
@@ -158,7 +160,14 @@ const PlansHeader: React.FunctionComponent< { domainFromHomeUpsellFlow?: string 
 		);
 	}
 
-	return <DomainUpsellHeader domain={ domainFromHomeUpsellFlow } />;
+	return (
+		<DomainUpsellHeader
+			domain={ domainFromHomeUpsellFlow }
+			visibleDialog={ visibleDialog }
+			onCloseDialog={ handleCloseDialog }
+			onOpenDialog={ handleOpenDialog }
+		/>
+	);
 };
 
 export default PlansHeader;
