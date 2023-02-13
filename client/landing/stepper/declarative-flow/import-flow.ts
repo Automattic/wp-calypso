@@ -1,4 +1,4 @@
-import { Design } from '@automattic/design-picker';
+import { Design, isBlankCanvasDesign } from '@automattic/design-picker';
 import { IMPORT_FOCUSED_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
@@ -126,6 +126,8 @@ const importFlow: Flow = {
 					}
 					// End of Pattern Assembler flow
 					if ( selectedDesign?.design_type === 'assembler' ) {
+						return exitFlow( `/site-editor/${ siteSlugParam }` );
+					} else if ( isBlankCanvasDesign( selectedDesign ) ) {
 						return exitFlow( `/site-editor/${ siteSlugParam }` );
 					}
 
