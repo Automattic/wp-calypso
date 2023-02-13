@@ -18,11 +18,11 @@ export function useCart(): LaunchCart {
 
 	const locale = useLocale();
 
-	const [ planProductId, domain ] = useSelect(
-		( select ) => [
-			( select( LAUNCH_STORE ) as LaunchSelect ).getSelectedPlanProductId(),
-			( select( LAUNCH_STORE ) as LaunchSelect ).getSelectedDomain(),
-		],
+	const { planProductId, domain } = useSelect(
+		( select ) => ( {
+			planProductId: ( select( LAUNCH_STORE ) as LaunchSelect ).getSelectedPlanProductId(),
+			domain: ( select( LAUNCH_STORE ) as LaunchSelect ).getSelectedDomain(),
+		} ),
 		[]
 	);
 
