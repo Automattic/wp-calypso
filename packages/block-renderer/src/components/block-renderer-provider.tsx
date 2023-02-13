@@ -11,8 +11,6 @@ export interface Props {
 
 const BlockRendererProvider = ( { siteId, stylesheet = '', children }: Props ) => {
 	const { data: settings } = useBlockRendererSettings( siteId, stylesheet );
-
-	// @ts-expect-error Type definition is outdated
 	const { updateSettings } = useDispatch( blockEditorStore );
 
 	useEffect( () => {

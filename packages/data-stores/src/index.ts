@@ -31,6 +31,7 @@ export * from './templates';
 export * from './onboard/types';
 export * from './domain-suggestions/types';
 export * from './plans/types';
+export * from './subscriber/types';
 
 export {
 	Analyzer,
