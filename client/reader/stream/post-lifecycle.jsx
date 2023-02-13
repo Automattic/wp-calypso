@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import PostBlocked from 'calypso/blocks/reader-post-card/blocked';
 import QueryReaderPost from 'calypso/components/data/query-reader-post';
 import compareProps from 'calypso/lib/compare-props';
+import BloggingPromptCard from 'calypso/my-sites/customer-home/cards/features/blogging-prompt';
 import { IN_STREAM_RECOMMENDATION } from 'calypso/reader/follow-sources';
 import ListGap from 'calypso/reader/list-gap';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
@@ -35,6 +36,15 @@ class PostLifecycle extends Component {
 					streamKey={ recsStreamKey }
 					followSource={ IN_STREAM_RECOMMENDATION }
 				/>
+			);
+		} else if ( postKey.isPromptBlock ) {
+			return (
+				<div
+					className="reader-stream__blogging-prompt"
+					key={ 'blogging-prompt-card-' + postKey.index }
+				>
+					<BloggingPromptCard />
+				</div>
 			);
 		} else if ( streamKey.indexOf( 'rec' ) > -1 ) {
 			return <EmptySearchRecommendedPost post={ post } site={ postKey } />;
