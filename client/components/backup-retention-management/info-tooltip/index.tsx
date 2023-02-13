@@ -1,14 +1,15 @@
 import { Button, Gridicon } from '@automattic/components';
+import { useRef, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import * as React from 'react';
+import { FunctionComponent } from 'react';
 import Tooltip from 'calypso/components/tooltip';
 import { STORAGE_RETENTION_LEARN_MORE_LINK } from '../constants';
 import './style.scss';
 
-const InfoToolTip: React.FC = () => {
+const InfoToolTip: FunctionComponent = () => {
 	const translate = useTranslate();
-	const [ isTooltipVisible, setTooltipVisible ] = React.useState< boolean >( false );
-	const tooltip = React.useRef< SVGSVGElement >( null );
+	const [ isTooltipVisible, setTooltipVisible ] = useState< boolean >( false );
+	const tooltip = useRef< SVGSVGElement >( null );
 
 	const toggleTooltip = ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ): void => {
 		setTooltipVisible( ! isTooltipVisible );
