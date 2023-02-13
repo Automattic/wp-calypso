@@ -32,6 +32,7 @@ import FocusedLaunchSummaryItem, {
 	TrailingContentSide,
 } from './focused-launch-summary-item';
 import type { Plan, PlanProduct } from '../../stores';
+import type { LaunchSelect, PlansSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -279,19 +280,22 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 
 	const { setPlanProductId } = useDispatch( LAUNCH_STORE );
 
-	const [ selectedPlanProductId, billingPeriod ] = useSelect( ( select ) => [
-		select( LAUNCH_STORE ).getSelectedPlanProductId(),
-		select( LAUNCH_STORE ).getLastPlanBillingPeriod(),
-	] );
+	const [ selectedPlanProductId, billingPeriod ] = useSelect(
+		( select ) => [
+			( select( LAUNCH_STORE ) as LaunchSelect ).getSelectedPlanProductId(),
+			( select( LAUNCH_STORE ) as LaunchSelect ).getLastPlanBillingPeriod(),
+		],
+		[]
+	);
 
 	const { selectedPlan, selectedPlanProduct } = useSelect( ( select ) => {
-		const plansStore = select( PLANS_STORE );
+		const plansStore: PlansSelect = select( PLANS_STORE );
 
 		return {
 			selectedPlan: plansStore.getPlanByProductId( selectedPlanProductId, locale ),
 			selectedPlanProduct: plansStore.getPlanProductById( selectedPlanProductId ),
 		};
-	} );
+	}, [] );
 
 	// persist non-default selected paid plan if it's paid in order to keep displaying it in the plan picker
 	const [ nonDefaultPaidPlan, setNonDefaultPaidPlan ] = React.useState< Plan | undefined >();
@@ -512,7 +516,7 @@ const Summary: React.FunctionComponent = () => {
 
 	const [ hasSelectedDomain, isSiteTitleStepVisible, selectedDomain, selectedPlanProductId ] =
 		useSelect( ( select ) => {
-			const launchStore = select( LAUNCH_STORE );
+			const launchStore: LaunchSelect = select( LAUNCH_STORE );
 			const { isSiteTitleStepVisible, domain, planProductId } = launchStore.getState();
 
 			return [
@@ -524,7 +528,7 @@ const Summary: React.FunctionComponent = () => {
 		}, [] );
 
 	const isSelectedPlanPaid = useSelect(
-		( select ) => select( LAUNCH_STORE ).isSelectedPlanPaid(),
+		( select ) => ( select( LAUNCH_STORE ) as LaunchSelect ).isSelectedPlanPaid(),
 		[]
 	);
 

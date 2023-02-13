@@ -1,3 +1,5 @@
+import * as selectors from './selectors';
+import type { SelectFromMap } from '../mapped-types';
 import type { DataStatus } from './constants';
 
 export interface DomainSuggestionQuery {
@@ -247,3 +249,5 @@ export interface DomainSuggestionState {
 export type DomainAvailabilities = Record< string, DomainAvailability | undefined >;
 
 export type DomainSuggestionSelectorOptions = Partial< Exclude< DomainSuggestionQuery, 'query' > >;
+
+export type DomainSuggestionsSelect = SelectFromMap< typeof selectors >;

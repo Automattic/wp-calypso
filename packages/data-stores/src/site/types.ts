@@ -1,6 +1,7 @@
-import type { ActionCreators } from './actions';
-import type { DispatchFromMap } from '../mapped-types';
+import * as selectors from './selectors';
+import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
 import type { FeatureId } from '../wpcom-features';
+import type { ActionCreators } from './actions';
 
 export interface Dispatch {
 	dispatch: DispatchFromMap< ActionCreators >;
@@ -481,6 +482,8 @@ export interface ActiveTheme {
 		'wp:user-global-styles': { href: string }[];
 	};
 }
+
+export type SiteSelect = SelectFromMap< typeof selectors >;
 
 export interface SourceSiteMigrationDetails {
 	status: string;

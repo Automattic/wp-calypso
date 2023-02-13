@@ -7,6 +7,7 @@ import { LAUNCH_STORE, SITE_STORE, PLANS_STORE, DOMAIN_SUGGESTIONS_STORE } from 
 import { isDomainProduct } from '../utils';
 import { useSiteDomains } from './use-site-domains';
 import type { DomainProduct } from '../utils';
+import type { DomainSuggestionsSelect, LaunchSelect, PlansSelect } from '@automattic/data-stores';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 export function useDomainProductFromCart(): DomainProduct | undefined {
@@ -40,7 +41,9 @@ export function useDomainSuggestionFromCart(): DomainSuggestions.DomainSuggestio
 			if ( ! domainName ) {
 				return;
 			}
-			return select( DOMAIN_SUGGESTIONS_STORE ).isAvailable( domainName );
+			return ( select( DOMAIN_SUGGESTIONS_STORE ) as DomainSuggestionsSelect ).isAvailable(
+				domainName
+			);
 		},
 		[ domainName ]
 	);
@@ -90,9 +93,10 @@ export function useDomainSelection(): DomainSelection {
 		domain: selectedDomain,
 		planProductId,
 		confirmedDomainSelection,
-	} = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
-	const isPlanFree = useSelect( ( select ) =>
-		select( PLANS_STORE ).isPlanProductFree( planProductId )
+	} = useSelect( ( select ) => ( select( LAUNCH_STORE ) as LaunchSelect ).getState(), [] );
+	const isPlanFree = useSelect(
+		( select ) => ( select( PLANS_STORE ) as PlansSelect ).isPlanProductFree( planProductId ),
+		[]
 	);
 	const { siteSubdomain, hasPaidDomain, sitePrimaryDomain } = useSiteDomains();
 

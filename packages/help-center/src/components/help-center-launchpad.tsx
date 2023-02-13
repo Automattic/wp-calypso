@@ -9,6 +9,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
 import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SITE_STORE } from '../stores';
+import type { SiteSelect } from '@automattic/data-stores';
 
 const getEnvironmentHostname = () => {
 	try {
@@ -29,7 +30,10 @@ const getEnvironmentHostname = () => {
 export const HelpCenterLaunchpad = () => {
 	const { __ } = useI18n();
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
-	const site = useSelect( ( select ) => siteId && select( SITE_STORE ).getSite( siteId ) );
+	const site = useSelect(
+		( select ) => siteId && ( select( SITE_STORE ) as SiteSelect ).getSite( siteId ),
+		[]
+	);
 	const siteIntent = site && site?.options?.site_intent;
 	const siteSlug = site && new URL( site.URL ).host;
 	const launchpadURL = `${ getEnvironmentHostname() }/setup/${ siteIntent }/launchpad?siteSlug=${ siteSlug }`;
