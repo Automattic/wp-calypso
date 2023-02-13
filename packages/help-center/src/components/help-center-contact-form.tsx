@@ -473,7 +473,7 @@ export const HelpCenterContactForm = () => {
 					<HelpCenterSitePicker
 						enabled={
 							mode === 'FORUM' &&
-							( ( supportSite.plan?.product_slug &&
+							( ( supportSite?.plan?.product_slug &&
 								isFreePlanProduct( { product_slug: supportSite.plan?.product_slug } ) ) ||
 								userWithNoSites )
 						}
