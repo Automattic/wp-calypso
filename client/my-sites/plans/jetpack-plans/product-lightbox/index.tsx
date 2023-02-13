@@ -83,6 +83,7 @@ const ProductLightbox: React.FC< Props > = ( {
 		getOnClickPurchase,
 		getLightBoxCtaLabel,
 		getIsProductInCart,
+		getIsOwned,
 	} = useStoreItemInfoContext();
 
 	const onCheckoutClick = useCallback( () => {
@@ -134,6 +135,8 @@ const ProductLightbox: React.FC< Props > = ( {
 
 	const isProductInCart =
 		! isJetpackPlanSlug( product.productSlug ) && getIsProductInCart( product );
+
+	const isOwned = getIsOwned( product );
 
 	return (
 		<Modal
@@ -203,11 +206,13 @@ const ProductLightbox: React.FC< Props > = ( {
 									</div>
 								</div>
 							) }
-							<PaymentPlan
-								isMultiSiteIncompatible={ isMultiSiteIncompatible }
-								siteId={ siteId }
-								product={ product }
-							/>
+							{ ! isOwned && (
+								<PaymentPlan
+									isMultiSiteIncompatible={ isMultiSiteIncompatible }
+									siteId={ siteId }
+									product={ product }
+								/>
+							) }
 							<Button
 								primary={ ! isProductInCart }
 								onClick={ onCheckoutClick }
