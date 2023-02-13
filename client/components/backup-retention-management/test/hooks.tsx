@@ -2,7 +2,6 @@ import { renderHook } from '@testing-library/react-hooks';
 import getBackupCurrentSiteSize from 'calypso/state/rewind/selectors/get-backup-current-site-size';
 import getRewindBytesAvailable from 'calypso/state/rewind/selectors/get-rewind-bytes-available';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
-import { useStorageText } from '../../backup-storage-space/hooks';
 import {
 	useEstimatedCurrentSiteSize,
 	useEstimateSpaceNeeded,
@@ -20,17 +19,10 @@ jest.mock( 'react-redux', () => ( {
 	useSelector: jest.fn( ( func ) => func() ),
 } ) );
 
-jest.mock( 'i18n-calypso', () => ( {
-	useTranslate: jest.fn( () => ( text ) => text ),
-} ) );
-
 // Mock selectors
 jest.mock( 'calypso/state/ui/selectors/get-selected-site-id', () => jest.fn( () => MOCK_SITE_ID ) );
 jest.mock( 'calypso/state/rewind/selectors/get-backup-current-site-size', () => jest.fn() );
 jest.mock( 'calypso/state/rewind/selectors/get-rewind-bytes-available', () => jest.fn() );
-jest.mock( 'calypso/components/backup-storage-space/hooks', () => ( {
-	useStorageText: jest.fn(),
-} ) );
 
 // Fixtures
 const RETENTION_OPTIONS_FIXTURES = {
@@ -101,10 +93,6 @@ describe( 'hooks', () => {
 	} );
 
 	describe( 'usePrepareRetentionOptions', () => {
-		beforeAll( () => {
-			( useStorageText as jest.Mock ).mockImplementation( () => '10GB' );
-		} );
-
 		it( 'should return a retention option that is the current plan and requires upgrade when spaceNeeded is higher than storage limit', () => {
 			( getBackupCurrentSiteSize as jest.Mock ).mockImplementation( () => GB_IN_BYTES * 20 );
 			( getRewindBytesAvailable as jest.Mock ).mockImplementation( () => GB_IN_BYTES * 10 );
@@ -120,7 +108,7 @@ describe( 'hooks', () => {
 
 			const expectedOutput = {
 				label: input.label,
-				spaceNeeded: '10GB',
+				spaceNeeded: '750GB',
 				upgradeRequired: true,
 				isCurrentPlan: true,
 				value: input.desiredRetentionDays,
@@ -145,7 +133,7 @@ describe( 'hooks', () => {
 
 			const expectedOutput = {
 				label: input.label,
-				spaceNeeded: '10GB',
+				spaceNeeded: '0.0GB',
 				upgradeRequired: false,
 				isCurrentPlan: true,
 				value: input.desiredRetentionDays,
@@ -170,7 +158,7 @@ describe( 'hooks', () => {
 
 			const expectedOutput = {
 				label: input.label,
-				spaceNeeded: '10GB',
+				spaceNeeded: '2.9TB',
 				upgradeRequired: true,
 				isCurrentPlan: false,
 				value: input.desiredRetentionDays,
@@ -195,7 +183,7 @@ describe( 'hooks', () => {
 
 			const expectedOutput = {
 				label: input.label,
-				spaceNeeded: '10GB',
+				spaceNeeded: '0.1GB',
 				upgradeRequired: false,
 				isCurrentPlan: false,
 				value: input.desiredRetentionDays,
