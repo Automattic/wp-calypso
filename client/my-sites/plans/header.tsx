@@ -11,28 +11,30 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './header.scss';
 
-const DomainUpsellDialog: React.FunctionComponent< { visible: boolean; onClose: () => void } > = ( {
-	visible,
-	onClose,
-} ) => {
+const DomainUpsellDialog: React.FunctionComponent< {
+	visible: boolean;
+	onClose: () => void;
+	domain: string;
+} > = ( { visible, onClose, domain } ) => {
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, selectedSiteId ) );
-	const domainFromHomeUpsellFlow = new URLSearchParams( window.location.search ).get(
-		'get_domain'
-	);
+
 	const onCloseDialog = useCallback( () => {
 		onClose();
 	}, [ onClose ] );
+
 	const onCancelPlanClick = useCallback( () => {
 		onClose();
 		recordTracksEvent( 'calypso_plans_page_domain_upsell_cancel_plan_click' );
 		page( '/checkout/' + siteSlug );
 	}, [ onClose, siteSlug ] );
+
 	const onContinuePlanClick = useCallback( () => {
 		onClose();
 		recordTracksEvent( 'calypso_plans_page_domain_upsell_continue_plan_click' );
 	}, [ onClose ] );
+
 	const buttons = [
 		{ action: 'cancel', label: translate( 'That works for me' ), onClick: onCancelPlanClick },
 		{
@@ -62,7 +64,7 @@ const DomainUpsellDialog: React.FunctionComponent< { visible: boolean; onClose: 
 					'Any domain you purchase without a plan will get redirected to %(domainName)s.',
 					{
 						args: {
-							domainName: domainFromHomeUpsellFlow,
+							domainName: domain,
 						},
 					}
 				) }
@@ -76,19 +78,26 @@ const DomainUpsellDialog: React.FunctionComponent< { visible: boolean; onClose: 
 	);
 };
 
-const DomainUpsellHeader: React.FunctionComponent = () => {
+const DomainUpsellHeader: React.FunctionComponent< { domain: string } > = ( { domain } ) => {
 	const translate = useTranslate();
 	const [ showDomainUpsellDialog, setShowDomainUpsellDialog ] = useState( false );
 	const is2023OnboardingPricingGrid = isEnabled( 'onboarding/2023-pricing-grid' );
 	const plansDescription = translate(
 		'See and compare the features available on each WordPress.com plan.'
 	);
+	const withSkipButton = ! is2023OnboardingPricingGrid;
+	const classes = classNames( 'plans__section-header', 'modernized-header', 'header-text', {
+		'with-skip-button': withSkipButton,
+	} );
+
 	const handleCloseDialog = useCallback( () => {
 		setShowDomainUpsellDialog( false );
 	}, [] );
+
 	const handleOpenDialog = useCallback( () => {
 		setShowDomainUpsellDialog( true );
 	}, [] );
+
 	const onSkipClick = useCallback(
 		( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {
 			event.preventDefault();
@@ -97,14 +106,14 @@ const DomainUpsellHeader: React.FunctionComponent = () => {
 		},
 		[ handleOpenDialog ]
 	);
-	const withSkipButton = ! is2023OnboardingPricingGrid;
-	const classes = classNames( 'plans__section-header', 'modernized-header', 'header-text', {
-		'with-skip-button': withSkipButton,
-	} );
 
 	return (
 		<>
-			<DomainUpsellDialog visible={ showDomainUpsellDialog } onClose={ handleCloseDialog } />
+			<DomainUpsellDialog
+				visible={ showDomainUpsellDialog }
+				onClose={ handleCloseDialog }
+				domain={ domain }
+			/>
 			<FormattedHeader
 				className={ classes }
 				brandFont
@@ -125,17 +134,15 @@ const DomainUpsellHeader: React.FunctionComponent = () => {
 	);
 };
 
-const PlansHeader: React.FunctionComponent = () => {
+const PlansHeader: React.FunctionComponent< { domainFromHomeUpsellFlow?: string } > = ( {
+	domainFromHomeUpsellFlow,
+} ) => {
 	const translate = useTranslate();
-	const domainFromHomeUpsellFlow = new URLSearchParams( window.location.search ).get(
-		'get_domain'
-	);
-
 	const plansDescription = translate(
 		'See and compare the features available on each WordPress.com plan.'
 	);
 
-	if ( null === domainFromHomeUpsellFlow ) {
+	if ( ! domainFromHomeUpsellFlow ) {
 		return (
 			<FormattedHeader
 				className="plans__section-header modernized-header"
@@ -147,7 +154,7 @@ const PlansHeader: React.FunctionComponent = () => {
 		);
 	}
 
-	return <DomainUpsellHeader />;
+	return <DomainUpsellHeader domain={ domainFromHomeUpsellFlow } />;
 };
 
 export default PlansHeader;

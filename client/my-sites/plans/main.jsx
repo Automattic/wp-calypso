@@ -75,6 +75,7 @@ class Plans extends Component {
 		redirectTo: PropTypes.string,
 		selectedSite: PropTypes.object,
 		isDomainAndPlanPackageFlow: PropTypes.bool,
+		domainFromHomeUpsellFlow: PropTypes.string | undefined,
 	};
 
 	static defaultProps = {
@@ -214,6 +215,7 @@ class Plans extends Component {
 			is2023PricingGridVisible,
 			isDomainAndPlanPackageFlow,
 			isJetpackNotAtomic,
+			domainFromHomeUpsellFlow,
 		} = this.props;
 
 		if ( ! selectedSite || this.isInvalidPlanInterval() || ! currentPlan ) {
@@ -222,7 +224,6 @@ class Plans extends Component {
 
 		const currentPlanSlug = selectedSite?.plan?.product_slug;
 		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
-
 		const allDomains = isDomainAndPlanPackageFlow ? getDomainRegistrations( this.props.cart ) : [];
 		const yourDomainName = allDomains.length
 			? allDomains.slice( -1 )[ 0 ]?.meta
@@ -230,9 +231,6 @@ class Plans extends Component {
 		const goBackLink = addQueryArgs( `/domains/add/${ selectedSite.slug }`, {
 			domainAndPlanPackage: true,
 		} );
-		const domainFromHomeUpsellFlow = new URLSearchParams( window.location.search ).get(
-			'get_domain'
-		);
 		const domainUpsellDescription = translate(
 			'With an annual plan, you can get {{strong}}%(domainName)s for free{{/strong}} for the first year, Jetpack essential features, live chat support, and all the features that will take your site to the next level.',
 			{
@@ -258,7 +256,9 @@ class Plans extends Component {
 				<TrackComponentView eventName="calypso_plans_view" />
 				{ canAccessPlans && (
 					<div>
-						{ ! isDomainAndPlanPackageFlow && <PlansHeader /> }
+						{ ! isDomainAndPlanPackageFlow && (
+							<PlansHeader domainFromHomeUpsellFlow={ domainFromHomeUpsellFlow } />
+						) }
 						{ isDomainAndPlanPackageFlow && (
 							<>
 								<div className="plans__header">
@@ -292,7 +292,7 @@ class Plans extends Component {
 								fullWidthLayout={ is2023PricingGridVisible && ! isEcommerceTrial }
 								wideLayout={ ! is2023PricingGridVisible || isEcommerceTrial }
 							>
-								{ ! ( null === domainFromHomeUpsellFlow ) && (
+								{ ! domainSidebarExperimentUser && domainFromHomeUpsellFlow && (
 									<FormattedHeader
 										className="header-text"
 										brandFont
@@ -343,6 +343,7 @@ const ConnectedPlans = connect( ( state ) => {
 		is2023PricingGridVisible,
 		isDomainAndPlanPackageFlow: !! getCurrentQueryArguments( state )?.domainAndPlanPackage,
 		isJetpackNotAtomic: isJetpackSite( state, selectedSiteId, { treatAtomicAsJetpackSite: false } ),
+		domainFromHomeUpsellFlow: getCurrentQueryArguments( state )?.get_domain?.toString(),
 	};
 } )( withCartKey( withShoppingCart( localize( withTrackingTool( 'HotJar' )( Plans ) ) ) ) );
 
