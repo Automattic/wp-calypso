@@ -7,10 +7,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { navigate } from 'calypso/lib/navigate';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import NoResponsesIcon from './no-responses-icon';
 import './style.scss';
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD:client/my-sites/customer-home/cards/features/blogging-prompt/prompts-navigation.jsx
 const PromptsNavigation = ( { prompts, index } ) => {
@@ -23,6 +23,12 @@ const PromptsNavigation = ( { prompts, tracksContext } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+=======
+const PromptsNavigation = ( { siteId, prompts, tracksContext } ) => {
+	const dispatch = useDispatch();
+	const translate = useTranslate();
+	const [ promptIndex, setPromptIndex ] = useState( 0 );
+>>>>>>> 762bf35932 (refactor how we handle siteId)
 	const editorUrl = useSelector( ( state ) => getEditorUrl( state, siteId ) );
 	const backIcon = 'arrow-left';
 	const forwardIcon = 'arrow-right';

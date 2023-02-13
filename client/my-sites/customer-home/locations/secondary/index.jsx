@@ -20,7 +20,7 @@ const cardComponents = {
 	[ FEATURE_SUPPORT ]: HelpSearch,
 };
 
-const Secondary = ( { cards } ) => {
+const Secondary = ( { cards, siteId } ) => {
 	if ( ! cards || ! cards.length ) {
 		return null;
 	}
@@ -32,6 +32,7 @@ const Secondary = ( { cards } ) => {
 					cardComponents[ card ] &&
 					createElement( cardComponents[ card ], {
 						key: card,
+						siteId: siteId,
 					} )
 			) }
 		</>

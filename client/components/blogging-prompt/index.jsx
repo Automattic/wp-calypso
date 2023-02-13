@@ -9,13 +9,14 @@ import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-
 import { SECTION_BLOGGING_PROMPT } from 'calypso/my-sites/customer-home/cards/constants';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import BellOffIcon from './bell-off-icon';
 import LightbulbIcon from './lightbulb-icon';
 import PromptsNavigation from './prompts-navigation';
 
 import './style.scss';
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD:client/my-sites/customer-home/cards/features/blogging-prompt/index.jsx
 const BloggingPromptCard = ( { index } ) => {
@@ -25,24 +26,16 @@ const BloggingPromptCard = ( { context } ) => {
 =======
 const BloggingPromptCard = ( { tracksContext } ) => {
 >>>>>>> 84b1447c2c (change prop name to tracksContext)
+=======
+const BloggingPromptCard = ( { siteId, tracksContext } ) => {
+>>>>>>> 762bf35932 (refactor how we handle siteId)
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const primarySiteId = useSelector( ( state ) => getPrimarySiteId( state ) );
-	let siteId = selectedSiteId;
-
-	// We need a site ID to request prompts
-	// If no selected site ID, fallback to using Primary site ID
-	if ( siteId === null ) {
-		siteId = primarySiteId;
-	}
-
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
 	const notificationSettingsLink = '/me/notifications' + ( siteSlug ? '#' + siteSlug : '' );
-
 	const maxNumberOfPrompts = 10;
-	const { data: prompts } = useBloggingPrompts( siteId, maxNumberOfPrompts );
-
+	const { data: prompts } = useBloggingPrompts( siteId || primarySiteId, maxNumberOfPrompts );
 	const { skipCard } = useSkipCurrentViewMutation( siteId );
 
 	if ( prompts === undefined ) {
@@ -87,6 +80,7 @@ const BloggingPromptCard = ( { tracksContext } ) => {
 					</EllipsisMenu>
 				</CardHeading>
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<< HEAD:client/my-sites/customer-home/cards/features/blogging-prompt/index.jsx
 				<PromptsNavigation prompts={ prompts } index={ index } />
 =======
@@ -95,6 +89,9 @@ const BloggingPromptCard = ( { tracksContext } ) => {
 =======
 				<PromptsNavigation prompts={ prompts } tracksContext={ tracksContext } />
 >>>>>>> 84b1447c2c (change prop name to tracksContext)
+=======
+				<PromptsNavigation siteId={ siteId } prompts={ prompts } tracksContext={ tracksContext } />
+>>>>>>> 762bf35932 (refactor how we handle siteId)
 			</Card>
 		</div>
 	);
