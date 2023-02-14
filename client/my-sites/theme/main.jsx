@@ -592,11 +592,13 @@ class ThemeSheet extends Component {
 			<div>
 				{ isNewDetailsAndPreview && this.renderHeader() }
 				<Card className="theme__sheet-content">{ this.renderDescription() }</Card>
-				<ThemeFeaturesCard
-					taxonomies={ taxonomies }
-					siteSlug={ siteSlug }
-					isWpcomTheme={ isWpcomTheme }
-				/>
+				<div className="theme__sheet-features">
+					<ThemeFeaturesCard
+						taxonomies={ taxonomies }
+						siteSlug={ siteSlug }
+						isWpcomTheme={ isWpcomTheme }
+					/>
+				</div>
 				{ download && ! isPremium && <ThemeDownloadCard href={ download } /> }
 				{ ! isNewDetailsAndPreview && isWpcomTheme && this.renderNextTheme() }
 			</div>

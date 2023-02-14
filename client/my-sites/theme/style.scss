@@ -16,6 +16,7 @@ body.is-section-theme-i4 {
 
 	.theme__sheet-content {
 		box-shadow: none;
+		min-height: auto;
 		padding: 0;
 
 		h2 {
@@ -30,6 +31,13 @@ body.is-section-theme-i4 {
 			&::before {
 				content: none;
 			}
+		}
+
+		.notes {
+			background: transparent;
+			border: 0;
+			margin: 0;
+			padding: 0;
 		}
 	}
 
@@ -56,6 +64,10 @@ body.is-section-theme-i4 {
 			0 3px 5px rgba(0, 0, 0, 0.2);
 		margin-top: 0;
 		overflow: hidden;
+	}
+
+	.theme__sheet-features {
+		margin-top: 32px;
 	}
 }
 
