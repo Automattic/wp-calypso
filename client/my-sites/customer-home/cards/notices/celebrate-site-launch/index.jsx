@@ -15,7 +15,6 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 const CelebrateSiteLaunch = ( { isSiteSetupComplete, pendingSiteSetupTasks, siteId } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-
 	const skipSiteSetup = () => {
 		// Mark all pending tasks as completed.
 		pendingSiteSetupTasks.forEach( ( task ) =>

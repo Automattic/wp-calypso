@@ -35,7 +35,7 @@ import {
 	getSiteOption,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import CelebrateLaunchModal from './celebrate-launch-modal';
+import CelebrateLaunchModal from './components/celebrate-launch-modal';
 
 import './style.scss';
 
