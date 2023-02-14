@@ -1,3 +1,5 @@
+declare module '@wordpress/components';
+
 declare module '@automattic/whats-new' {
 	type FunctionProps = {
 		onClose: () => void;

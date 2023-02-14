@@ -131,7 +131,6 @@
 		"@testing-library/jest-dom": "^5.16.2",
 		"@testing-library/react": "^12.1.3",
 		"@types/node": "^18.11.18",
-		"@types/wordpress__plugins": "^3.0.0",
 		"@wordpress/eslint-plugin": "^13.6.0",
 		"@wordpress/jest-preset-default": "^10.3.0",
 		"@wordpress/readable-js-assets-webpack-plugin": "^2.5.0",
