@@ -196,6 +196,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 				<PremiumBadge
 					tooltipPosition="bottom right"
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }
+					labelText={ __( 'Upgrade' ) }
 				/>
 			);
 		}
