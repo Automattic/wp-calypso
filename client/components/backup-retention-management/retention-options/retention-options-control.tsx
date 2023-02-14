@@ -4,7 +4,7 @@ import RetentionOptionCard from './retention-option-card';
 import type { RetentionRadioOptionType } from '../types';
 
 interface RetentionOptionsControlProps {
-	retentionOptions: Record< number, RetentionRadioOptionType >;
+	retentionOptions: RetentionRadioOptionType[];
 	retentionSelected?: number;
 	onChange: ( value: number ) => void;
 }
@@ -28,9 +28,10 @@ const RetentionOptionsControl: React.FC< RetentionOptionsControlProps > = ( {
 
 	return (
 		<div className="retention-form__options">
-			{ Object.values( retentionOptions ).map( ( option ) => (
+			{ retentionOptions.map( ( option ) => (
 				<RetentionOptionCard
 					{ ...option }
+					checked={ option.checked }
 					key={ option.value }
 					onChange={ handleRetentionOptionChange }
 				/>

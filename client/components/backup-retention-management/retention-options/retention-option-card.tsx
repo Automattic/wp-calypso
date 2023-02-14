@@ -1,11 +1,11 @@
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
-import type { TranslateResult } from 'i18n-calypso';
+import { useStorageText } from 'calypso/components/backup-storage-space/hooks';
 
 interface RetentionOptionCardProps {
 	label: string;
-	spaceNeeded: TranslateResult | string;
+	spaceNeededInBytes: number;
 	upgradeRequired: boolean;
 	isCurrentPlan: boolean;
 	value: number;
@@ -15,7 +15,7 @@ interface RetentionOptionCardProps {
 
 const RetentionOptionCard: FunctionComponent< RetentionOptionCardProps > = ( {
 	label,
-	spaceNeeded,
+	spaceNeededInBytes,
 	upgradeRequired,
 	isCurrentPlan,
 	value,
@@ -52,7 +52,7 @@ const RetentionOptionCard: FunctionComponent< RetentionOptionCardProps > = ( {
 			</div>
 			<div className="retention-option__space-needed">
 				<div className="space-needed__label">{ translate( 'Space needed:' ) }</div>
-				<div className="space-needed__value">{ spaceNeeded }</div>
+				<div className="space-needed__value">{ useStorageText( spaceNeededInBytes ) }</div>
 			</div>
 			<div
 				className={ classnames( 'retention-option__upgrade-required', {

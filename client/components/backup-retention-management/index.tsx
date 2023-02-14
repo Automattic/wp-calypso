@@ -9,14 +9,14 @@ import { useQueryRewindSize } from 'calypso/components/data/query-rewind-size';
 import { updateBackupRetention } from 'calypso/state/rewind/retention/actions';
 import { BACKUP_RETENTION_UPDATE_REQUEST } from 'calypso/state/rewind/retention/constants';
 import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
+import getBackupCurrentSiteSize from 'calypso/state/rewind/selectors/get-backup-current-site-size';
 import getBackupRetentionDays from 'calypso/state/rewind/selectors/get-backup-retention-days';
 import getBackupRetentionUpdateRequestStatus from 'calypso/state/rewind/selectors/get-backup-retention-update-status';
 import getRewindBytesAvailable from 'calypso/state/rewind/selectors/get-rewind-bytes-available';
 import isRequestingRewindPolicies from 'calypso/state/rewind/selectors/is-requesting-rewind-policies';
 import isRequestingRewindSize from 'calypso/state/rewind/selectors/is-requesting-rewind-size';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { RETENTION_OPTIONS } from './constants';
-import { useEstimatedCurrentSiteSize, usePrepareRetentionOptions } from './hooks';
+import { getEstimatedCurrentSiteSize, getSpaceNeededInBytes } from './hooks';
 import InfoTooltip from './info-tooltip';
 import LoadingPlaceholder from './loading';
 import RetentionOptionsControl from './retention-options/retention-options-control';
@@ -52,6 +52,9 @@ const BackupRetentionManagement: FunctionComponent = () => {
 	// The retention days option selected by the customer ( or by default )
 	const [ retentionSelected, setRetentionSelected ] = useState( 0 );
 
+	// If the current selection requires an storage upgrade
+	const [ storageUpgradeRequired, setStorageUpgradeRequired ] = useState( false );
+
 	// The retention days that currently applies for this customer.
 	const [ currentRetentionPlan, setCurrentRetentionPlan ] = useState( 0 );
 	useEffect( () => {
@@ -70,53 +73,104 @@ const BackupRetentionManagement: FunctionComponent = () => {
 	const storageLimitBytes = useSelector( ( state ) =>
 		getRewindBytesAvailable( state, siteId )
 	) as number;
-	const estimatedCurrentSiteSize = useEstimatedCurrentSiteSize();
 
+	const lastBackupSize = useSelector( ( state ) =>
+		getBackupCurrentSiteSize( state, siteId )
+	) as number;
+
+	const estimatedCurrentSiteSize = getEstimatedCurrentSiteSize( lastBackupSize );
 	const currentSiteSizeText = useStorageText( estimatedCurrentSiteSize );
 	const storageLimitText = useStorageText( storageLimitBytes );
 
-	const retentionOptionsCards: Record< number, RetentionRadioOptionType > = {
-		[ RETENTION_OPTIONS.RETENTION_DAYS_7 ]: usePrepareRetentionOptions(
-			translate( '7 days' ),
-			RETENTION_OPTIONS.RETENTION_DAYS_7,
-			currentRetentionPlan,
-			retentionSelected === RETENTION_OPTIONS.RETENTION_DAYS_7
-		),
-		[ RETENTION_OPTIONS.RETENTION_DAYS_30 ]: usePrepareRetentionOptions(
-			translate( '30 days' ),
-			RETENTION_OPTIONS.RETENTION_DAYS_30,
-			currentRetentionPlan,
-			retentionSelected === RETENTION_OPTIONS.RETENTION_DAYS_30
-		),
-		[ RETENTION_OPTIONS.RETENTION_DAYS_120 ]: usePrepareRetentionOptions(
-			translate( '120 days' ),
-			RETENTION_OPTIONS.RETENTION_DAYS_120,
-			currentRetentionPlan,
-			retentionSelected === RETENTION_OPTIONS.RETENTION_DAYS_120
-		),
-		[ RETENTION_OPTIONS.RETENTION_DAYS_365 ]: usePrepareRetentionOptions(
-			translate( '1 year' ),
-			RETENTION_OPTIONS.RETENTION_DAYS_365,
-			currentRetentionPlan,
-			retentionSelected === RETENTION_OPTIONS.RETENTION_DAYS_365
-		),
-	};
+	const [ retentionOptionsCards, setRetentionOptionsCards ] = useState<
+		RetentionRadioOptionType[]
+	>( [
+		{
+			label: translate( '7 days' ),
+			spaceNeededInBytes: 0,
+			upgradeRequired: false,
+			isCurrentPlan: false,
+			value: 7,
+			checked: false,
+		},
+		{
+			label: translate( '30 days' ),
+			spaceNeededInBytes: 0,
+			upgradeRequired: false,
+			isCurrentPlan: false,
+			value: 30,
+			checked: false,
+		},
+		{
+			label: translate( '120 days' ),
+			spaceNeededInBytes: 0,
+			upgradeRequired: false,
+			isCurrentPlan: false,
+			value: 120,
+			checked: false,
+		},
+		{
+			label: translate( '1 year' ),
+			spaceNeededInBytes: 0,
+			upgradeRequired: false,
+			isCurrentPlan: false,
+			value: 365,
+			checked: false,
+		},
+	] );
+
+	// Update the retention options cards with the correct values dynamically
+	useEffect( () => {
+		if ( isFetching ) {
+			return;
+		}
+
+		setRetentionOptionsCards( ( previousOptions ): RetentionRadioOptionType[] => {
+			const newOptions = previousOptions.map( ( card ): RetentionRadioOptionType => {
+				const isCurrentPlan = card.value === currentRetentionPlan;
+				const checked = card.value === retentionSelected;
+				const spaceNeededInBytes = getSpaceNeededInBytes( estimatedCurrentSiteSize, card.value );
+				const upgradeRequired = spaceNeededInBytes > storageLimitBytes;
+
+				return {
+					...card,
+					isCurrentPlan,
+					checked,
+					spaceNeededInBytes,
+					upgradeRequired,
+				};
+			} ) as RetentionRadioOptionType[];
+
+			return newOptions;
+		} );
+	}, [
+		currentRetentionPlan,
+		estimatedCurrentSiteSize,
+		isFetching,
+		retentionSelected,
+		storageLimitBytes,
+	] );
 
 	const updateRetentionRequestStatus = useSelector( ( state ) =>
 		getBackupRetentionUpdateRequestStatus( state, siteId )
 	);
 
 	// Set the retention period selected when the user selects a new option
-	const onRetentionSelectionChange = useCallback( ( value: number ) => {
-		if ( value ) {
-			setRetentionSelected( value );
-		}
-	}, [] );
+	const onRetentionSelectionChange = useCallback(
+		( value: number ) => {
+			if ( value ) {
+				setRetentionSelected( value );
+				const selectedOption = retentionOptionsCards.find( ( option ) => option.value === value );
+				setStorageUpgradeRequired( selectedOption?.upgradeRequired ?? false );
+			}
+		},
+		[ retentionOptionsCards ]
+	);
 
 	const disableFormSubmission =
 		! retentionSelected ||
 		retentionSelected === currentRetentionPlan ||
-		retentionOptionsCards[ retentionSelected ].upgradeRequired ||
+		storageUpgradeRequired ||
 		updateRetentionRequestStatus === BACKUP_RETENTION_UPDATE_REQUEST.PENDING;
 
 	const [ confirmationDialogVisible, setConfirmationDialogVisible ] = useState( false );
