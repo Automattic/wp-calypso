@@ -339,6 +339,7 @@ export type TempResponseCart = ResponseCart< RequestCartProduct >;
 export interface ResponseCartMessages {
 	errors?: ResponseCartMessage[];
 	success?: ResponseCartMessage[];
+	persistent_errors?: ResponseCartMessage[];
 }
 
 export interface ResponseCartMessage {
