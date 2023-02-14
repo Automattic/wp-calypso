@@ -204,6 +204,7 @@ export function VatForm( {
 					checked={ isFormActive }
 					onChange={ toggleVatForm }
 					label={ translate( 'Add VAT details' ) }
+					disabled={ isDisabled || Boolean( vatDetailsFromServer.id ) }
 				/>
 				{ countryCode === 'GB' && (
 					<CheckboxControl

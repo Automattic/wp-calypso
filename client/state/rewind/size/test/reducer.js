@@ -1,4 +1,8 @@
-import { REWIND_SIZE_GET, REWIND_SIZE_SET } from 'calypso/state/action-types';
+import {
+	JETPACK_BACKUP_RETENTION_SET,
+	REWIND_SIZE_GET,
+	REWIND_SIZE_SET,
+} from 'calypso/state/action-types';
 import sizeReducer from '../reducer';
 
 // @TODO: Add tests for the other reducers
@@ -61,5 +65,21 @@ describe( 'rewind.size reducers', () => {
 				expect( sizeReducer( state, action ).retentionDays ).toEqual( expected );
 			}
 		);
+
+		it( 'should return the new retentionDays value if we set it using the action JETPACK_BACKUP_RETENTION_SET and state is undefined', () => {
+			expect(
+				sizeReducer( undefined, { type: JETPACK_BACKUP_RETENTION_SET, retentionDays: 30 } )
+					.retentionDays
+			).toEqual( 30 );
+		} );
+
+		it( 'should return the new retentionDays value if we set it using the action JETPACK_BACKUP_RETENTION_SET and state has a value', () => {
+			expect(
+				sizeReducer(
+					{ retentionDays: 30 },
+					{ type: JETPACK_BACKUP_RETENTION_SET, retentionDays: 7 }
+				).retentionDays
+			).toEqual( 7 );
+		} );
 	} );
 } );

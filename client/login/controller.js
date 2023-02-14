@@ -203,7 +203,7 @@ export function redirectJetpack( context, next ) {
 	const isUserComingFromPricingPage =
 		redirect_to?.includes( 'source=jetpack-plans' ) ||
 		redirect_to?.includes( 'source=jetpack-connect-plans' );
-	const isUserComingFromMigrationPlugin = redirect_to?.includes( 'jetpack-migration' );
+	const isUserComingFromMigrationPlugin = redirect_to?.includes( 'wpcom-migration' );
 
 	/**
 	 * Send arrivals from the jetpack connect process or jetpack's pricing page
