@@ -149,7 +149,10 @@ const BackupRetentionManagement: FunctionComponent = () => {
 	}, [ currentRetentionPlan, retentionSelected ] );
 
 	useEffect( () => {
-		if ( updateRetentionRequestStatus !== BACKUP_RETENTION_UPDATE_REQUEST.PENDING ) {
+		if (
+			updateRetentionRequestStatus === BACKUP_RETENTION_UPDATE_REQUEST.SUCCESS ||
+			updateRetentionRequestStatus === BACKUP_RETENTION_UPDATE_REQUEST.FAILED
+		) {
 			setConfirmationDialogVisible( false );
 		}
 	}, [ updateRetentionRequestStatus ] );
