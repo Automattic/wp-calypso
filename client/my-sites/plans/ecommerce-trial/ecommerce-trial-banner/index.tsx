@@ -14,7 +14,12 @@ import DoughnutChart from '../../doughnut-chart';
 
 import './style.scss';
 
-const ECommerceTrialBanner = () => {
+interface ECommerceTrialBannerProps {
+	callToAction?: JSX.Element | null;
+}
+
+const ECommerceTrialBanner = ( props: ECommerceTrialBannerProps ) => {
+	const { callToAction } = props;
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || -1;
 
 	const { currentPlan, eCommerceTrialDaysLeft, isTrialExpired, eCommerceTrialExpiration } =
@@ -67,6 +72,7 @@ const ECommerceTrialBanner = () => {
 								}
 						  ) }
 				</p>
+				{ callToAction }
 			</div>
 			<div className="e-commerce-trial-banner__chart-wrapper">
 				<DoughnutChart

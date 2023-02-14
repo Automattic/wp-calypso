@@ -43,6 +43,14 @@ function wpcom_should_limit_global_styles( $blog_id = 0 ) {
 		return false;
 	}
 
+	if ( function_exists( 'has_blog_sticker' ) && has_blog_sticker( 'theme-demo-site', $blog_id ) ) {
+		return false;
+	}
+
+	if ( function_exists( 'wpcomsh_is_site_sticker_active' ) && wpcomsh_is_site_sticker_active( 'theme-demo-site' ) ) {
+		return false;
+	}
+
 	return true;
 }
 

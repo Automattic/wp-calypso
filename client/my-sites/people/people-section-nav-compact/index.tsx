@@ -11,21 +11,21 @@ interface Props {
 	filterCount?: { [ key: string ]: undefined | number };
 }
 function PeopleSectionNavCompact( props: Props ) {
-	const _ = useTranslate();
+	const translate = useTranslate();
 	const { selectedFilter, searchTerm, filterCount } = props;
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 	const searchPlaceholder =
-		selectedFilter === 'subscribers' ? _( 'Search by email...' ) : undefined;
+		selectedFilter === 'subscribers' ? translate( 'Search by email…' ) : undefined;
 
 	const filters = [
 		{
 			id: 'team',
-			title: _( 'Team' ),
+			title: translate( 'Team' ),
 			path: '/people/team/' + site?.slug,
 		},
 		{
 			id: 'subscribers',
-			title: _( 'Subscribers' ),
+			title: translate( 'Subscribers' ),
 			path: '/people/subscribers/' + site?.slug,
 		},
 	];

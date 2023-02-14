@@ -168,6 +168,9 @@
 	.has-text-align-right {
 		text-align: right;
 	}
+	.wp-block-group p:last-child {
+		margin-bottom: 24px;
+	}
 }
 
 .reader-full-post__story-content img {
@@ -621,6 +624,14 @@
 
 .post-edit-button__label {
 	display: none;
+}
+
+.wp-block-file {
+	margin-bottom: 24px;
+
+	.wp-block-file__button {
+		display: none;
+	}
 }
 
 .reader-post-actions__item {

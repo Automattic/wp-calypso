@@ -1,0 +1,199 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.backup-retention-management {
+	--color-accent: var(--studio-green-50);
+	box-sizing: border-box;
+	margin: auto;
+	max-width: 720px;
+	padding-left: 16px;
+	padding-right: 16px;
+
+	h3 {
+		font-size: $font-body;
+	}
+
+	.storage-details {
+		display: flex;
+		flex-direction: row;
+		grid-column-gap: 48px;
+		margin-bottom: 32px;
+
+		.label {
+			font-size: 0.875rem;
+		}
+
+		.value {
+			font-size: 1.75rem;
+			font-weight: 600;
+			color: var(--studio-gray-60);
+		}
+	}
+}
+
+.backup-retention-management .setting-title {
+	align-items: center;
+	column-gap: 8px;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+}
+
+.backup-retention-management .setting-content {
+	padding-top: 28px;
+}
+
+.backup-retention-management .retention-form {
+	&__instructions {
+		margin-bottom: 24px;
+		font-size: 1rem;
+		font-weight: 400;
+		line-height: 24px;
+		color: var(--studio-gray-50);
+	}
+
+	&__disclaimer {
+		font-size: 0.75rem;
+		font-weight: 400;
+		line-height: 18px;
+		color: var(--studio-gray-50);
+		margin-bottom: 24px;
+	}
+
+	&__additional-storage {
+		margin-bottom: 8px;
+
+		.additional-storage__cta {
+			font-weight: 600;
+		}
+	}
+
+	&__submit {
+		text-align: right;
+	}
+}
+
+.backup-retention-management .retention-form .retention-form__options {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	grid-template-rows: repeat(2, 1fr);
+	grid-column-gap: 8px;
+	grid-row-gap: 8px;
+	margin-bottom: 8px;
+
+	@include break-large {
+		grid-template-columns: repeat(4, 1fr);
+		grid-template-rows: repeat(1, 1fr);
+	}
+
+	.retention-option {
+		box-shadow: 0 0 0 1px var(--color-border-subtle);
+		padding: 16px 12px;
+		border-radius: 4px;
+		cursor: pointer;
+
+		&__headline {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 16px;
+		}
+
+		&__headline .headline__label {
+			font-size: 1.25rem;
+			line-height: 24px;
+			font-weight: 600;
+			color: var(--studio-gray-80);
+		}
+
+		&__headline	.headline__input {
+			-webkit-appearance: none;
+			appearance: none;
+			margin: 0;
+			padding: 0;
+			width: 20px;
+			height: 20px;
+			border-width: 1px;
+			border-color: var(--studio-gray-40);
+
+			&:focus {
+				box-shadow: none;
+			}
+
+			&::after {
+				content: "";
+				display: block;
+				border-radius: 50%;
+				width: 10px;
+				height: 10px;
+				margin: 1px;
+			}
+
+			&:checked {
+				&::after {
+					border: 3px solid #fff;
+				}
+
+				border-color: var(--color-accent);
+			}
+		}
+
+		&__space-needed {
+			margin-bottom: 16px;
+
+			.space-needed__label {
+				font-size: 0.875rem;
+				font-weight: 400;
+				line-height: 28px;
+				color: var(--studio-gray-80);
+			}
+
+			.space-needed__value {
+				font-size: 1rem;
+				font-weight: 600;
+				color: var(--studio-gray-80);
+			}
+		}
+
+		&__upgrade-required {
+			font-size: 0.875rem;
+			font-weight: 400;
+			color: var(--studio-red-50);
+			margin-bottom: 8px;
+			visibility: hidden;
+			&.is-visible {
+				visibility: visible;
+			}
+		}
+
+		&__current-plan {
+			background: var(--studio-green-5);
+			border-radius: 2px;
+			color: var(--studio-green-60);
+			display: inline-block;
+			font-size: 0.75rem;
+			font-weight: 400;
+			line-height: 24px;
+			padding: 0 8px;
+			visibility: hidden;
+			&.is-visible {
+				visibility: visible;
+			}
+		}
+	}
+}
+
+.backup-retention-management.retention-form__confirmation-dialog {
+	&.dialog.card {
+		max-width: 465px;
+	}
+
+	h3 {
+		margin-bottom: 16px;
+	}
+
+	p {
+		font-size: 1rem;
+	}
+}

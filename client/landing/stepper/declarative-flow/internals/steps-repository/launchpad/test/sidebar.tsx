@@ -69,7 +69,7 @@ describe( 'Sidebar', () => {
 	it( 'displays an escape hatch from Launchpad that will take the user to Calypso my Home', () => {
 		renderSidebar( props );
 
-		const escapeHatchButton = screen.getByRole( 'button', { name: /go to admin/i } );
+		const escapeHatchButton = screen.getByRole( 'button', { name: /Skip to dashboard/i } );
 		expect( escapeHatchButton ).toBeVisible();
 	} );
 

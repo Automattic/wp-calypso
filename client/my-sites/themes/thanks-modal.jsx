@@ -237,7 +237,7 @@ class ThanksModal extends Component {
 		if ( isFSEActive ) {
 			return (
 				<span className="thanks-modal__button-customize">
-					{ this.props.translate( 'Edit site' ) }
+					{ this.props.translate( 'Customize site' ) }
 				</span>
 			);
 		}

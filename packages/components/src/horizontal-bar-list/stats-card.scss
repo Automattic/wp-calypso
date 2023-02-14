@@ -62,6 +62,12 @@
 		}
 	}
 
+	.stats-card-header--main {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
 	.stats-card-header__additional {
 		@include additional-columns-wrapper;
 	}

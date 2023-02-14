@@ -61,6 +61,27 @@ $grid-vertical-gutters: 32px;
 		padding: 0 16px;
 	}
 
+	// Temporary change until all cards are replaced with new components. Remove when cleaning 'stats/insights-page-grid' FF.
+	@media (min-width: 661px) {
+		& > div {
+			display: flex;
+			flex-direction: column;
+			align-items: stretch;
+
+			& > * {
+				margin: 0;
+
+				& + div {
+					flex: 1 0 auto;
+				}
+			}
+
+			.card.stats-module {
+				margin-bottom: 0;
+			}
+		}
+	}
+
 	.stats__module-wrapper--tags-categories,
 	.list-tags-categories {
 		grid-area: tags-categories;

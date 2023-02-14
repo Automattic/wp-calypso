@@ -72,3 +72,16 @@ $headerHeight: 72px;
 .blazepress-widget.dialog__backdrop {
 	background-color: rgba(var(--color-neutral-100-rgb), 0.6);
 }
+
+.is-mobile-app-view {
+	.blazepress-widget__header-bar {
+		display: none;
+	}
+	.blazepress-widget__content {
+		height: 100%;
+		margin-top: 0;
+	}
+	.blazepress-widget .wpcom__loading-ellipsis {
+		margin-top: 50%;
+	}
+}

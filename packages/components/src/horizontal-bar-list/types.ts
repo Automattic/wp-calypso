@@ -59,6 +59,7 @@ export type StatsCardProps = {
 	splitHeader?: boolean;
 	mainItemLabel?: React.ReactNode;
 	additionalHeaderColumns?: React.ReactNode;
+	toggleControl?: React.ReactNode;
 };
 
 export type StatsCardAvatarProps = {

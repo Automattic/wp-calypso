@@ -3,6 +3,7 @@ import {
 	isDomainRegistration,
 	isDomainTransfer,
 	isDomainMapping,
+	is2023PricingGridEnabled,
 } from '@automattic/calypso-products';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { isNewsletterOrLinkInBioFlow, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
@@ -774,7 +775,7 @@ class Signup extends Component {
 		// If there is any condition upon which the free plan should be hidden these issues need to be resolved.
 		// For now we always show the free plan for the 2023-pricing-grid
 		// More Context : Automattic/martech#1464
-		const hideFreePlan = config.isEnabled( 'onboarding/2023-pricing-grid' )
+		const hideFreePlan = is2023PricingGridEnabled()
 			? false
 			: planWithDomain || this.props.isDomainOnlySite || selectedHideFreePlan;
 		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;

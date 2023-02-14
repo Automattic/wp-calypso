@@ -105,12 +105,35 @@
 }
 
 .notice-banner.is-info {
-	border-left-color: var(--black);
+	border-left-color: var(--jp-black);
 
 	.notice-banner__icon {
-		fill: var(--black);
+		fill: var(--jp-black);
+	}
+
+	.notice-banner__action-button,
+	.notice-banner__action-link {
+		cursor: pointer;
+
+		margin-top: 16px;
+		margin-right: 8px;
+	}
+
+	.notice-banner__action-button {
+		background-color: var(--jp-black);
+		border-radius: 4px;
+		color: var(--studio-white);
+		padding: 8px;
+	}
+
+	.notice-banner__action-link {
+		color: var(--jp-black);
+		text-decoration: underline;
+		font-weight: 600;
+		margin-left: 16px;
 	}
 }
+
 
 .notice-banner.is-success {
 	border-left-color: var(--jp-green);

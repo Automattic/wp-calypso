@@ -10,7 +10,6 @@ import { useTranslate } from 'i18n-calypso';
 import { Fragment, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
-import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
 import QueryJetpackSaleCoupon from 'calypso/components/data/query-jetpack-sale-coupon';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QueryPostCounts from 'calypso/components/data/query-post-counts';
@@ -28,7 +27,6 @@ import {
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
-import getIsIntroOfferRequesting from 'calypso/state/selectors/get-is-requesting-into-offers';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -131,9 +129,6 @@ export default function CheckoutMain( {
 			return siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
 		} ) || isJetpackCheckout;
 	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
-	const isLoadingIntroOffers = useSelector( ( state ) =>
-		getIsIntroOfferRequesting( state, siteId )
-	);
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
 	const createUserAndSiteBeforeTransaction =
 		Boolean( isLoggedOutCart || isNoSiteCart ) && ! isJetpackCheckout;
@@ -482,28 +477,32 @@ export default function CheckoutMain( {
 		: {};
 	const theme = { ...checkoutTheme, colors: { ...checkoutTheme.colors, ...jetpackColors } };
 
-	const isLoading: boolean =
+	// This variable determines if we see the loading page or if checkout can
+	// render its steps. Note that this does not prevent everything inside
+	// `CheckoutProvider` from rendering, only everything inside
+	// `CheckoutStepGroup`. This is because this variable is used to set the
+	// `FormStatus` to `FormStatus::LOADING`. Be careful what you add to this
+	// variable because it will slow down checkout's load time.
+	const isCheckoutPageLoading: boolean =
 		isInitialCartLoading ||
 		arePaymentMethodsLoading ||
 		paymentMethods.length < 1 ||
 		responseCart.products.length < 1 ||
-		countriesList.length < 1 ||
-		isLoadingIntroOffers;
-	if ( isLoading ) {
+		countriesList.length < 1;
+	if ( isCheckoutPageLoading ) {
 		debug( 'still loading because one of these is true', {
 			isInitialCartLoading,
 			paymentMethods: paymentMethods.length < 1,
 			arePaymentMethodsLoading: arePaymentMethodsLoading,
 			items: responseCart.products.length < 1,
 			countriesList: countriesList.length < 1,
-			isLoadingIntroOffers,
 		} );
 	} else {
 		debug( 'no longer loading' );
 	}
 
 	useRecordCheckoutLoaded( {
-		isLoading,
+		isLoading: isCheckoutPageLoading,
 		responseCart,
 		storedCards,
 		productAliasFromUrl,
@@ -665,7 +664,6 @@ export default function CheckoutMain( {
 
 	return (
 		<Fragment>
-			<QueryIntroOffers siteId={ updatedSiteId } />
 			<QueryJetpackSaleCoupon />
 			<QuerySitePlans siteId={ updatedSiteId } />
 			<QuerySitePurchases siteId={ updatedSiteId } />
@@ -689,7 +687,7 @@ export default function CheckoutMain( {
 				onPaymentMethodChanged={ handlePaymentMethodChanged }
 				paymentMethods={ paymentMethods }
 				paymentProcessors={ paymentProcessors }
-				isLoading={ isLoading }
+				isLoading={ isCheckoutPageLoading }
 				isValidating={ isCartPendingUpdate }
 				theme={ theme }
 				selectFirstAvailablePaymentMethod
