@@ -647,6 +647,6 @@
 	}
 }
 
-.wp-block-latest-posts {
-	display: none;
+.wp-block-latest-posts__post-date::before {
+	content: " - ";
 }
