@@ -15,23 +15,7 @@ import PromptsNavigation from './prompts-navigation';
 
 import './style.scss';
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD:client/my-sites/customer-home/cards/features/blogging-prompt/index.jsx
-const BloggingPromptCard = ( { index } ) => {
-=======
-const BloggingPromptCard = ( { context } ) => {
->>>>>>> bb5af98738 (Move blogging prompt card into components directory):client/components/blogging-prompt/index.jsx
-=======
-const BloggingPromptCard = ( { tracksContext } ) => {
->>>>>>> 84b1447c2c (change prop name to tracksContext)
-=======
-const BloggingPromptCard = ( { siteId, tracksContext } ) => {
->>>>>>> 762bf35932 (refactor how we handle siteId)
-=======
-const BloggingPromptCard = ( { siteId, viewContext } ) => {
->>>>>>> a59fd46bb8 (Pass site ID from postlifecyle and use viewContext)
+const BloggingPromptCard = ( { siteId, viewContext, showMenu = true } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
@@ -44,15 +28,19 @@ const BloggingPromptCard = ( { siteId, viewContext } ) => {
 		return null;
 	}
 
-	if ( viewContext !== 'reader' ) {
-		viewContext = 'home';
-	}
+	const getTracksPrefix = () => {
+		if ( viewContext === 'home' ) {
+			return 'calypso_customer_home_';
+		}
+		return 'calypso_reader_';
+	};
+
 	const hidePrompts = () => {
 		skipCard( SECTION_BLOGGING_PROMPT );
 		dispatch(
-			recordTracksEvent( 'calypso_customer_home_task_skip', {
+			recordTracksEvent( getTracksPrefix() + 'task_skip', {
 				task: SECTION_BLOGGING_PROMPT,
-				context: viewContext,
+				location: viewContext,
 			} )
 		);
 	};
@@ -60,7 +48,7 @@ const BloggingPromptCard = ( { siteId, viewContext } ) => {
 	const renderMenu = () => {
 		// Only render the menu in home view context
 		return (
-			viewContext === 'home' && (
+			showMenu && (
 				<EllipsisMenu
 					className="blogging-prompt__menu"
 					position="bottom"
@@ -89,23 +77,12 @@ const BloggingPromptCard = ( { siteId, viewContext } ) => {
 					</span>
 					{ renderMenu() }
 				</CardHeading>
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD:client/my-sites/customer-home/cards/features/blogging-prompt/index.jsx
-				<PromptsNavigation prompts={ prompts } index={ index } />
-=======
-				<PromptsNavigation prompts={ prompts } context={ context } />
->>>>>>> bb5af98738 (Move blogging prompt card into components directory):client/components/blogging-prompt/index.jsx
-=======
-				<PromptsNavigation prompts={ prompts } tracksContext={ tracksContext } />
->>>>>>> 84b1447c2c (change prop name to tracksContext)
-=======
-				<PromptsNavigation siteId={ siteId } prompts={ prompts } tracksContext={ tracksContext } />
->>>>>>> 762bf35932 (refactor how we handle siteId)
-=======
-				<PromptsNavigation siteId={ siteId } prompts={ prompts } viewContext={ viewContext } />
->>>>>>> a59fd46bb8 (Pass site ID from postlifecyle and use viewContext)
+				<PromptsNavigation
+					siteId={ siteId }
+					prompts={ prompts }
+					viewContext={ viewContext }
+					tracksPrefix={ getTracksPrefix() }
+				/>
 			</Card>
 		</div>
 	);

@@ -10,36 +10,13 @@ import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import NoResponsesIcon from './no-responses-icon';
 import './style.scss';
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD:client/my-sites/customer-home/cards/features/blogging-prompt/prompts-navigation.jsx
-const PromptsNavigation = ( { prompts, index } ) => {
-=======
-const PromptsNavigation = ( { prompts, context } ) => {
->>>>>>> bb5af98738 (Move blogging prompt card into components directory):client/components/blogging-prompt/prompts-navigation.jsx
-=======
-const PromptsNavigation = ( { prompts, tracksContext } ) => {
->>>>>>> 84b1447c2c (change prop name to tracksContext)
+const PromptsNavigation = ( { siteId, prompts, viewContext, tracksPrefix } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
-=======
-const PromptsNavigation = ( { siteId, prompts, tracksContext } ) => {
-=======
-const PromptsNavigation = ( { siteId, prompts, viewContext } ) => {
->>>>>>> a59fd46bb8 (Pass site ID from postlifecyle and use viewContext)
-	const dispatch = useDispatch();
-	const translate = useTranslate();
-	const [ promptIndex, setPromptIndex ] = useState( 0 );
->>>>>>> 762bf35932 (refactor how we handle siteId)
 	const editorUrl = useSelector( ( state ) => getEditorUrl( state, siteId ) );
+	const [ promptIndex, setPromptIndex ] = useState( 0 );
 	const backIcon = 'arrow-left';
 	const forwardIcon = 'arrow-right';
-
-	const initialIndex = index ? index % prompts.length : 0;
-
-	const [ promptIndex, setPromptIndex ] = useState( initialIndex );
 
 	const getPrompt = () => {
 		return prompts !== undefined ? prompts[ promptIndex ] : null;
@@ -79,10 +56,10 @@ const PromptsNavigation = ( { siteId, prompts, viewContext } ) => {
 		e.preventDefault();
 
 		dispatch(
-			recordTracksEvent( `calypso_customer_home_answer_prompt`, {
+			recordTracksEvent( tracksPrefix + `answer_prompt`, {
 				site_id: siteId,
 				prompt_id: getPrompt()?.id,
-				context: viewContext,
+				location: viewContext,
 			} )
 		);
 
@@ -91,10 +68,10 @@ const PromptsNavigation = ( { siteId, prompts, viewContext } ) => {
 		const selectedPromptId = getPrompt()?.id;
 		if ( todayPromptId !== selectedPromptId ) {
 			dispatch(
-				recordTracksEvent( `calypso_customer_home_skip_prompt`, {
+				recordTracksEvent( tracksPrefix + `skip_prompt`, {
 					site_id: siteId,
 					prompt_id: todayPromptId,
-					context: viewContext,
+					location: viewContext,
 				} )
 			);
 		}
@@ -105,10 +82,10 @@ const PromptsNavigation = ( { siteId, prompts, viewContext } ) => {
 
 	const trackClickViewAllResponses = () => {
 		dispatch(
-			recordTracksEvent( `calypso_customer_home_view_all_responses`, {
+			recordTracksEvent( tracksPrefix + 'view_all_responses', {
 				site_id: siteId,
 				prompt_id: getPrompt()?.id,
-				context: viewContext,
+				location: viewContext,
 			} )
 		);
 	};

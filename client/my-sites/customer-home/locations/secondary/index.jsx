@@ -33,6 +33,7 @@ const Secondary = ( { cards, siteId } ) => {
 					createElement( cardComponents[ card ], {
 						key: card,
 						siteId: siteId,
+						viewContext: 'home',
 					} )
 			) }
 		</>
