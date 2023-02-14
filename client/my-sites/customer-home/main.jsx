@@ -3,7 +3,7 @@ import { Button } from '@automattic/components';
 import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -35,6 +35,7 @@ import {
 	getSiteOption,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import CelebrateLaunchModal from './components/celebrate-launch-modal';
 
 import './style.scss';
 
@@ -48,6 +49,10 @@ const Home = ( {
 	sitePlan,
 	isNew7DUser,
 } ) => {
+	const [ celebrateLaunchModalIsOpen, setCelebrateLaunchModalIsOpen ] = useState(
+		window.location.href.includes( 'celebrateLaunch=true' )
+	);
+
 	const translate = useTranslate();
 
 	const { data: layout, isLoading } = useHomeLayoutQuery( siteId );
@@ -142,6 +147,9 @@ const Home = ( {
 						</div>
 					</div>
 				</>
+			) }
+			{ celebrateLaunchModalIsOpen && (
+				<CelebrateLaunchModal setModalIsOpen={ setCelebrateLaunchModalIsOpen } site={ site } />
 			) }
 		</Main>
 	);
