@@ -48,7 +48,7 @@ const Guide: React.FC< Props > = ( { children, className, onFinish } ) => {
 			className={ classnames( 'components-guide', className ) }
 			overlayClassName={ classnames( 'components-guide-overlay', className ) }
 			onRequestClose={ onFinish }
-			onKeyDown={ ( event: KeyboardEvent ) => {
+			onKeyDown={ ( event ) => {
 				if ( event.keyCode === LEFT ) {
 					goBack();
 				} else if ( event.keyCode === RIGHT ) {
