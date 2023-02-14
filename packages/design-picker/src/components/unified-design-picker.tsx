@@ -54,6 +54,8 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 				language: locale,
 				vertical_id: design.verticalizable ? verticalId : undefined,
 				use_screenshot_overrides: true,
+				...( design.is_virtual &&
+					design.style_variation && { style_variation: design.style_variation } ),
 			} ) }
 			aria-labelledby={ makeOptionId( design ) }
 			alt=""

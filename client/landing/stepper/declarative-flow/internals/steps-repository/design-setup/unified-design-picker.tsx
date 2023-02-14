@@ -579,6 +579,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			site_title: shouldCustomizeText ? siteTitle : undefined,
 			site_tagline: shouldCustomizeText ? siteDescription : undefined,
 			vertical_id: selectedDesign.verticalizable ? siteVerticalId : undefined,
+			style_variation: selectedStyleVariation,
 		} );
 
 		const pickDesignText =
