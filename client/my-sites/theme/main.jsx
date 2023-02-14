@@ -438,18 +438,37 @@ class ThemeSheet extends Component {
 						{ isNewDetailsAndPreview && isWpcomTheme && this.renderNextTheme() }
 					</>
 				) }
-				<div className="theme__sheet-footer-line">
-					<Gridicon icon="my-sites" />
-				</div>
+				{ ! isNewDetailsAndPreview && (
+					<div className="theme__sheet-footer-line">
+						<Gridicon icon="my-sites" />
+					</div>
+				) }
 			</div>
 		);
 	};
 
 	renderHeader = () => {
-		const { author, name, translate, softLaunched } = this.props;
+		const {
+			author,
+			canUserUploadThemes,
+			hasUnlimitedPremiumThemes,
+			isAtomic,
+			isPremium,
+			isWPForTeamsSite,
+			name,
+			retired,
+			softLaunched,
+			translate,
+		} = this.props;
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
 		const tag = author ? translate( 'by %(author)s', { args: { author: author } } ) : placeholder;
+
+		// Show theme upsell banner on Jetpack sites.
+		const hasWpOrgThemeUpsellBanner =
+			isAtomic && isPremium && ! canUserUploadThemes && ! hasUnlimitedPremiumThemes;
+
+		const shouldRenderButton = ! retired && ! hasWpOrgThemeUpsellBanner && ! isWPForTeamsSite;
 
 		return (
 			<div className="theme__sheet-header">
@@ -458,15 +477,31 @@ class ThemeSheet extends Component {
 					{ translate( 'Back to themes' ) }
 				</Button>
 				<div className="theme__sheet-header-columns">
-					<h1 className="theme__sheet-header-title">
-						{ title }
-						{ softLaunched && (
-							<span className="theme__sheet-bar-soft-launched">{ translate( 'A8C Only' ) }</span>
+					<div className="theme__sheet-header-column-info">
+						<h1 className="theme__sheet-header-title">
+							{ title }
+							{ softLaunched && (
+								<span className="theme__sheet-bar-soft-launched">{ translate( 'A8C Only' ) }</span>
+							) }
+						</h1>
+						<span className="theme__sheet-header-tag">{ tag }</span>
+					</div>
+					<div className="theme__sheet-header-column-actions">
+						{ shouldRenderButton && this.renderButton() }
+						{ this.shouldRenderPreviewButton() && (
+							<Button
+								onClick={ ( e ) => {
+									this.previewAction( e, 'link' );
+								} }
+							>
+								{ translate( 'Open live demo', {
+									context: 'Individual theme live preview button',
+								} ) }
+							</Button>
 						) }
-					</h1>
-					<span className="theme__sheet-header-tag">{ tag }</span>
-					{ this.renderStyleVariations() }
+					</div>
 				</div>
+				{ this.renderStyleVariations() }
 			</div>
 		);
 	};

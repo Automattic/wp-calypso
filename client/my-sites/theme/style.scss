@@ -10,7 +10,8 @@ body.is-section-theme-i4 {
 	.theme__sheet-columns {
 		display: flex;
 		gap: 32px;
-		padding-top: 48px;
+		max-width: 1462px;
+		padding: 48px 0;
 	}
 
 	.theme__sheet-content {
@@ -110,6 +111,28 @@ body.is-section-theme-i4 {
 			height: 20px;
 			margin-right: 4px;
 			width: 20px;
+		}
+	}
+
+	.theme__sheet-header-columns {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.theme__sheet-header-column-actions {
+		display: flex;
+		gap: 10px;
+
+		button {
+			border-radius: 4px;
+		}
+
+		.theme__sheet-primary-button {
+			position: relative;
+			right: auto;
+			top: auto;
+			margin-right: 0 !important;
 		}
 	}
 
