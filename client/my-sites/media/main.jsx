@@ -379,7 +379,7 @@ class Media extends Component {
 						showDismiss={ false }
 						status="is-info"
 						text={ translate(
-							'Your site is Private and the image CDN is disabled. If image thumbnails do not display, switch to Coming Soon mode. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+							'The image CDN is disabled because your site is marked Private. If image thumbnails do not display in your Media Library, you can switch to Coming Soon mode. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 							{
 								components: {
 									learnMoreLink: <InlineSupportLink supportContext="privacy" showIcon={ false } />,
