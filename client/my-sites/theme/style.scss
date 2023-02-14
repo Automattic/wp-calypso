@@ -34,8 +34,17 @@ body.is-section-theme-i4 {
 	}
 
 	.theme__page-upsell-banner {
+		background-color: #f0f7fc;
+		border: 0;
+		border-radius: 4px;
+		box-shadow: none;
 		margin-bottom: 24px;
+		padding: 24px 30px;
 		width: 100%;
+
+		.banner__icon-circle {
+			background-color: var(--studio-blue-50);
+		}
 	}
 
 	.theme__sheet-web-preview,
