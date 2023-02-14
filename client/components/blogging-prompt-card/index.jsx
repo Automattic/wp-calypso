@@ -31,8 +31,12 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu } ) => {
 	const getTracksPrefix = () => {
 		if ( viewContext === 'home' ) {
 			return 'calypso_customer_home_';
+		} else if ( viewContext === 'reader' ) {
+			return 'calypso_reader_';
 		}
-		return 'calypso_reader_';
+
+		// eslint-disable-next-line no-console
+		console.error( 'A valid viewContext is required for the BloggingPromptCard component.' );
 	};
 
 	const hidePrompts = () => {
