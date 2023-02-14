@@ -7,8 +7,8 @@
 
 	&.desktop-scaling {
 		@include break-mobile {
-			// desktop - 30% upscale
-			transform: scale(1.3);
+			// mobile first, upscale for desktop
+			transform: scale(1.2);
 		}
 	}
 
