@@ -99,7 +99,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const { __ } = useI18n();
 	const translatedStatus = useSiteLaunchStatusLabel( site );
 	const [ inViewOnce, setInViewOnce ] = useState( false );
-	const ref = useInView< HTMLTableCellElement >( () => setInViewOnce( true ) );
+	const ref = useInView< HTMLTableRowElement >( () => setInViewOnce( true ) );
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 
 	const isP2Site = site.options?.is_wpforteams_site;
