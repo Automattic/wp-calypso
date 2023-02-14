@@ -82,7 +82,7 @@ const BackupRetentionManagement: FunctionComponent = () => {
 	const currentSiteSizeText = useStorageText( estimatedCurrentSiteSize );
 	const storageLimitText = useStorageText( storageLimitBytes );
 
-	const [ retentionOptionsCards, setRetentionOptionsCards ] = useState< RetentionOptionInput[] >( [
+	const getOptionsInitialState = (): RetentionOptionInput[] => [
 		{
 			id: 7,
 			spaceNeededInBytes: 0,
@@ -103,7 +103,9 @@ const BackupRetentionManagement: FunctionComponent = () => {
 			spaceNeededInBytes: 0,
 			upgradeRequired: false,
 		},
-	] );
+	];
+
+	const [ retentionOptionsCards, setRetentionOptionsCards ] = useState( getOptionsInitialState );
 
 	// Update the retention options cards with the correct values dynamically
 	useEffect( () => {
