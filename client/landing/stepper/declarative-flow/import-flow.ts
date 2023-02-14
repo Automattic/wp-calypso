@@ -125,9 +125,7 @@ const importFlow: Flow = {
 						return navigate( `import?siteSlug=${ providedDependencies?.siteSlug }&from=${ from }` );
 					}
 					// End of Pattern Assembler flow
-					if ( selectedDesign?.design_type === 'assembler' ) {
-						return exitFlow( `/site-editor/${ siteSlugParam }` );
-					} else if ( isBlankCanvasDesign( selectedDesign ) ) {
+					if ( isBlankCanvasDesign( selectedDesign ) ) {
 						return exitFlow( `/site-editor/${ siteSlugParam }` );
 					}
 

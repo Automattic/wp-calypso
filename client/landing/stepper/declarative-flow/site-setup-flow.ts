@@ -237,10 +237,8 @@ const siteSetupFlow: Flow = {
 					}
 
 					// End of Pattern Assembler flow
-					if ( selectedDesign?.design_type === 'assembler' ) {
+					if ( isBlankCanvasDesign( selectedDesign ) ) {
 						window.sessionStorage.setItem( 'wpcom_signup_completed_flow', 'pattern_assembler' );
-						return exitFlow( `/site-editor/${ siteSlug }` );
-					} else if ( isBlankCanvasDesign( selectedDesign ) ) {
 						return exitFlow( `/site-editor/${ siteSlug }` );
 					}
 
