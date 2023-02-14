@@ -2314,7 +2314,9 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 			translate( 'VideoPress: 1TB of ad-free video hosting' ),
 			translate( 'Boost: Automatic CSS generation' ),
 			translate( 'Site Search: Up to 100k records and 100k requests/mo.' ),
-			translate( 'Social: Unlimited shares and share as a post.' ),
+			translate(
+				'Social: Get unlimited shares and share as a post by attaching images or videos.'
+			),
 			translate( 'CRM: Entrepreneur with 30 extensions' ),
 		],
 	},
@@ -2346,7 +2348,9 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 			translate( 'VideoPress: 1TB of ad-free video hosting' ),
 			translate( 'Boost: Automatic CSS generation' ),
 			translate( 'Site Search: Up to 100k records and 100k requests/mo.' ),
-			translate( 'Social: Basic with unlimited shares' ),
+			translate(
+				'Social: Get unlimited shares and share as a post by attaching images or videos.'
+			),
 			translate( 'CRM: Entrepreneur with 30 extensions' ),
 		],
 	},
