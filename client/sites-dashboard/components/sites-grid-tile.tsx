@@ -1,5 +1,5 @@
 import { css } from '@emotion/css';
-import { ReactNode } from 'react';
+import { ReactNode, forwardRef } from 'react';
 
 const container = css( {
 	display: 'flex',
@@ -21,16 +21,19 @@ interface SitesGridTileProps {
 	leading: ReactNode;
 	primary: ReactNode;
 	secondary: ReactNode;
+	ref?: React.Ref< HTMLDivElement >;
 }
 
-export const SitesGridTile = ( { leading, primary, secondary }: SitesGridTileProps ) => {
-	return (
-		<div className={ container }>
-			{ leading }
-			<div>
-				<div className={ primaryContainer }>{ primary }</div>
-				{ secondary }
+export const SitesGridTile = forwardRef(
+	( { leading, primary, secondary }: SitesGridTileProps, ref ) => {
+		return (
+			<div ref={ ref } className={ container }>
+				{ leading }
+				<div>
+					<div className={ primaryContainer }>{ primary }</div>
+					{ secondary }
+				</div>
 			</div>
-		</div>
-	);
-};
+		);
+	}
+);
