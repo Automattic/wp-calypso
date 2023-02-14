@@ -130,6 +130,7 @@ export const SitesContentControls = ( {
 			<SitesSearch
 				searchIcon={ <SitesSearchIcon /> }
 				onSearch={ ( term ) => handleQueryParamChange( { search: term?.trim(), page: undefined } ) }
+				delaySearch={ true }
 				isReskinned
 				placeholder={ __( 'Search by name or domain…' ) }
 				disableAutocorrect={ true }
