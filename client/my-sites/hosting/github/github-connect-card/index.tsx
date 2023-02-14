@@ -66,13 +66,12 @@ export const GithubConnectCard = ( { connection }: GithubConnectCardProps ) => {
 	const showSpinner = ! repos && ! branches && ( isLoadingRepos || isLoadingBranches );
 	const disabled = isLoadingBranches || isConnecting;
 	const handleRepoSelect = ( repoName: string ) => {
-		const selectedRepo = repos?.find( ( repo ) => repo === repoName );
-		setSelectedRepo( selectedRepo );
+		setSelectedRepo( repoName );
+		setSelectedBranch( '' );
 	};
 
 	const handleBranchSelect = ( branchName: string ) => {
-		const selectedBranch = branches?.find( ( branch ) => branch === branchName );
-		setSelectedBranch( selectedBranch );
+		setSelectedBranch( branchName );
 	};
 
 	const handleBasePathChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
