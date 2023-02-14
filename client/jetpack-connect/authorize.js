@@ -181,8 +181,6 @@ export class JetpackAuthorize extends Component {
 			return this.redirect();
 		} else if ( nextProps.isAlreadyOnSitesList && alreadyAuthorized ) {
 			return this.redirect();
-		} else if ( this.isFromJetpackMigration() && nextProps.isAlreadyOnSitesList ) {
-			return this.redirect();
 		}
 		if (
 			authorizeError &&
