@@ -15,7 +15,7 @@ import PromptsNavigation from './prompts-navigation';
 
 import './style.scss';
 
-const BloggingPromptCard = ( { siteId, viewContext, showMenu = true } ) => {
+const BloggingPromptCard = ( { siteId, viewContext, showMenu } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
@@ -46,24 +46,21 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu = true } ) => {
 	};
 
 	const renderMenu = () => {
-		// Only render the menu in home view context
 		return (
-			showMenu && (
-				<EllipsisMenu
-					className="blogging-prompt__menu"
-					position="bottom"
-					key="blogging-prompt__menu" //`key` is necessary due to behavior of preventWidows function in CardHeading component.
-				>
-					<Button className="popover__menu-item" onClick={ hidePrompts }>
-						<Gridicon icon="not-visible" className="gridicons-not-visible" />
-						{ translate( 'Hide Daily Prompts' ) }
-					</Button>
-					<Button className="popover__menu-item" href={ notificationSettingsLink }>
-						<BellOffIcon />
-						{ translate( 'Manage Notifications' ) }
-					</Button>
-				</EllipsisMenu>
-			)
+			<EllipsisMenu
+				className="blogging-prompt__menu"
+				position="bottom"
+				key="blogging-prompt__menu" //`key` is necessary due to behavior of preventWidows function in CardHeading component.
+			>
+				<Button className="popover__menu-item" onClick={ hidePrompts }>
+					<Gridicon icon="not-visible" className="gridicons-not-visible" />
+					{ translate( 'Hide Daily Prompts' ) }
+				</Button>
+				<Button className="popover__menu-item" href={ notificationSettingsLink }>
+					<BellOffIcon />
+					{ translate( 'Manage Notifications' ) }
+				</Button>
+			</EllipsisMenu>
 		);
 	};
 
@@ -75,7 +72,7 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu = true } ) => {
 					<span className="blogging-prompt__heading-text">
 						{ translate( 'Daily writing prompt' ) }
 					</span>
-					{ renderMenu() }
+					{ showMenu && renderMenu() }
 				</CardHeading>
 				<PromptsNavigation
 					siteId={ siteId }

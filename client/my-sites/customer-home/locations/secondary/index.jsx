@@ -32,8 +32,9 @@ const Secondary = ( { cards, siteId } ) => {
 					cardComponents[ card ] &&
 					createElement( cardComponents[ card ], {
 						key: card,
-						siteId: siteId,
-						viewContext: 'home',
+						...( card === SECTION_BLOGGING_PROMPT
+							? { siteId: siteId, showMenu: true, viewContext: 'home' }
+							: {} ),
 					} )
 			) }
 		</>

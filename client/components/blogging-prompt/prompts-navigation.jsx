@@ -56,7 +56,7 @@ const PromptsNavigation = ( { siteId, prompts, viewContext, tracksPrefix } ) => 
 		e.preventDefault();
 
 		dispatch(
-			recordTracksEvent( tracksPrefix + `answer_prompt`, {
+			recordTracksEvent( tracksPrefix + 'answer_prompt', {
 				site_id: siteId,
 				prompt_id: getPrompt()?.id,
 				location: viewContext,
@@ -68,7 +68,7 @@ const PromptsNavigation = ( { siteId, prompts, viewContext, tracksPrefix } ) => 
 		const selectedPromptId = getPrompt()?.id;
 		if ( todayPromptId !== selectedPromptId ) {
 			dispatch(
-				recordTracksEvent( tracksPrefix + `skip_prompt`, {
+				recordTracksEvent( tracksPrefix + 'skip_prompt', {
 					site_id: siteId,
 					prompt_id: todayPromptId,
 					location: viewContext,
