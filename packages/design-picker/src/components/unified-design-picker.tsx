@@ -196,11 +196,10 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 				<PremiumBadge
 					tooltipPosition="bottom right"
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }
-					labelText={ __( 'Upgrade' ) }
+					labelText={ shouldUpgrade ? __( 'Upgrade' ) : __( 'Premium' ) }
 				/>
 			);
 		}
-
 		return (
 			<div className="design-picker__pricing-description design-picker__override-premium-badge">
 				{ badge }
