@@ -1,13 +1,13 @@
 import config from '@automattic/calypso-config';
 import Debug from 'debug';
 import page from 'page';
-import AsyncLoad from 'calypso/components/async-load';
 import { dashboardPath } from 'calypso/lib/jetpack/paths';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getPrimarySiteIsJetpack from 'calypso/state/selectors/get-primary-site-is-jetpack';
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import Landing from './landing';
 import { isSiteEligibleForJetpackCloud, getLandingPath } from './selectors';
 
 const debug = new Debug( 'calypso:jetpack-cloud:landing:controller' );
@@ -32,9 +32,7 @@ const landForSiteId = ( siteId, context, next ) => {
 	const siteFeatures = getFeaturesBySiteId( state, siteId );
 	if ( isEligible === null || ! siteFeatures ) {
 		debug( '[landForSiteId]: rendering interstitial Landing page' );
-		context.primary = (
-			<AsyncLoad require="calypso/jetpack-cloud/sections/landing/main" siteId={ siteId } />
-		);
+		context.primary = <Landing siteId={ siteId } />;
 		next();
 		return;
 	}
