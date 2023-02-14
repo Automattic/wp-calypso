@@ -1,15 +1,16 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
+import { useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { PLANS_UI_STORE } from '../../store';
 import './style.scss';
 
-const DomainUpsellHeader: React.FunctionComponent< {
-	onOpenDialog: () => void;
-} > = ( { onOpenDialog } ) => {
+const DomainUpsellHeader: React.FunctionComponent = () => {
+	const { setShowDomainUpsellDialog } = useDispatch( PLANS_UI_STORE );
 	const translate = useTranslate();
 	const is2023OnboardingPricingGrid = isEnabled( 'onboarding/2023-pricing-grid' );
 	const plansDescription = translate(
@@ -30,9 +31,9 @@ const DomainUpsellHeader: React.FunctionComponent< {
 		( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {
 			event.preventDefault();
 			recordTracksEvent( 'calypso_plans_page_domain_upsell_skip_click' );
-			onOpenDialog();
+			setShowDomainUpsellDialog( true );
 		},
-		[ onOpenDialog ]
+		[ setShowDomainUpsellDialog ]
 	);
 
 	return (
@@ -57,22 +58,11 @@ const DomainUpsellHeader: React.FunctionComponent< {
 
 const PlansHeader: React.FunctionComponent< {
 	domainFromHomeUpsellFlow?: string;
-	onOpenDomainUpsellDialog: () => void;
-} > = ( { domainFromHomeUpsellFlow, onOpenDomainUpsellDialog } ) => {
+} > = ( { domainFromHomeUpsellFlow } ) => {
 	const translate = useTranslate();
 	const plansDescription = translate(
 		'See and compare the features available on each WordPress.com plan.'
 	);
-
-	// const [ visibleDialog, setVisibleDialog ] = useState( false );
-
-	// const handleCloseDialog = useCallback( () => {
-	// 	setVisibleDialog( false );
-	// }, [ setVisibleDialog ] );
-
-	// const handleOpenDialog = useCallback( () => {
-	// 	setVisibleDialog( true );
-	// }, [ setVisibleDialog ] );
 
 	if ( ! domainFromHomeUpsellFlow ) {
 		return (
@@ -86,7 +76,7 @@ const PlansHeader: React.FunctionComponent< {
 		);
 	}
 
-	return <DomainUpsellHeader onOpenDialog={ onOpenDomainUpsellDialog } />;
+	return <DomainUpsellHeader />;
 };
 
 export default PlansHeader;

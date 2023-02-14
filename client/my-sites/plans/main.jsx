@@ -206,18 +206,6 @@ class Plans extends Component {
 		return <ECommerceTrialPlansPage interval={ interval } siteSlug={ selectedSite.slug } />;
 	}
 
-	state = {
-		visibleDomainUpsellDialog: false,
-	};
-
-	handleCloseDomainUpsellDialog = () => {
-		this.setState( { visibleDomainUpsellDialog: false } );
-	};
-
-	handleOpenDomainUpsellDialog = () => {
-		this.setState( { visibleDomainUpsellDialog: true } );
-	};
-
 	render() {
 		const {
 			selectedSite,
@@ -230,8 +218,6 @@ class Plans extends Component {
 			isJetpackNotAtomic,
 			domainFromHomeUpsellFlow,
 		} = this.props;
-
-		const { visibleDomainUpsellDialog } = this.state;
 
 		if ( ! selectedSite || this.isInvalidPlanInterval() || ! currentPlan ) {
 			return this.renderPlaceholder();
@@ -269,18 +255,11 @@ class Plans extends Component {
 				<QueryContactDetailsCache />
 				<QueryPlans />
 				<TrackComponentView eventName="calypso_plans_view" />
-				<DomainUpsellDialog
-					visible={ visibleDomainUpsellDialog }
-					onClose={ this.handleCloseDomainUpsellDialog }
-					domain={ domainFromHomeUpsellFlow }
-				/>
+				<DomainUpsellDialog domain={ domainFromHomeUpsellFlow } />
 				{ canAccessPlans && (
 					<div>
 						{ ! isDomainAndPlanPackageFlow && (
-							<PlansHeader
-								domainFromHomeUpsellFlow={ domainFromHomeUpsellFlow }
-								onOpenDomainUpsellDialog={ this.handleOpenDomainUpsellDialog }
-							/>
+							<PlansHeader domainFromHomeUpsellFlow={ domainFromHomeUpsellFlow } />
 						) }
 						{ isDomainAndPlanPackageFlow && (
 							<>

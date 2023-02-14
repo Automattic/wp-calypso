@@ -1,35 +1,41 @@
 import { Dialog, Gridicon } from '@automattic/components';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { useCallback } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import page from 'page';
 import { useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { PLANS_UI_STORE } from '../../store';
 import './style.scss';
 
 const DomainUpsellDialog: React.FunctionComponent< {
-	visible: boolean;
-	onClose: () => void;
 	domain: string;
-} > = ( { visible, onClose, domain } ) => {
+} > = ( { domain } ) => {
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, selectedSiteId ) );
+	const { setShowDomainUpsellDialog } = useDispatch( PLANS_UI_STORE );
+	const visible = useSelect( ( select ) => {
+		return select( PLANS_UI_STORE ).isDomainUpsellDialogShown();
+	} );
 
 	const onCloseDialog = useCallback( () => {
-		onClose();
-	}, [ onClose ] );
+		// onClose();
+		setShowDomainUpsellDialog( false );
+	}, [ setShowDomainUpsellDialog ] );
 
 	const onCancelPlanClick = useCallback( () => {
-		onClose();
+		onCloseDialog();
 		recordTracksEvent( 'calypso_plans_page_domain_upsell_cancel_plan_click' );
 		page( '/checkout/' + siteSlug );
-	}, [ onClose, siteSlug ] );
+	}, [ onCloseDialog, siteSlug ] );
 
 	const onContinuePlanClick = useCallback( () => {
-		onClose();
+		onCloseDialog();
 		recordTracksEvent( 'calypso_plans_page_domain_upsell_continue_plan_click' );
-	}, [ onClose ] );
+	}, [ onCloseDialog ] );
 
 	const buttons = [
 		{ action: 'cancel', label: translate( 'That works for me' ), onClick: onCancelPlanClick },
