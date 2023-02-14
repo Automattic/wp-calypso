@@ -1,4 +1,4 @@
-import { register } from '@wordpress/data';
+import { register, registerStore } from '@wordpress/data';
 import { useRef } from 'react';
 import {
 	emptyManagedContactDetails,
