@@ -2,19 +2,19 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useStorageText } from 'calypso/components/backup-storage-space/hooks';
+import { RETENTION_OPTIONS_LABELS } from '../constants';
+import type { RetentionPeriod } from 'calypso/state/rewind/retention/types';
 
 interface RetentionOptionCardProps {
-	label: string;
 	spaceNeededInBytes: number;
 	upgradeRequired: boolean;
 	isCurrentPlan: boolean;
-	value: number;
+	value: RetentionPeriod;
 	checked?: boolean;
 	onChange: ( value: number ) => void;
 }
 
 const RetentionOptionCard: FunctionComponent< RetentionOptionCardProps > = ( {
-	label,
 	spaceNeededInBytes,
 	upgradeRequired,
 	isCurrentPlan,
@@ -38,7 +38,7 @@ const RetentionOptionCard: FunctionComponent< RetentionOptionCardProps > = ( {
 			tabIndex={ 0 }
 		>
 			<div className="retention-option__headline">
-				<div className="headline__label">{ label }</div>
+				<div className="headline__label">{ RETENTION_OPTIONS_LABELS[ value ] }</div>
 				<input
 					className="headline__input components-radio-control__input"
 					type="radio"

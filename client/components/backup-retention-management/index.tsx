@@ -20,7 +20,7 @@ import { STORAGE_ESTIMATION_ADDITIONAL_BUFFER } from './constants';
 import InfoTooltip from './info-tooltip';
 import LoadingPlaceholder from './loading';
 import RetentionOptionsControl from './retention-options/retention-options-control';
-import type { RetentionRadioOptionType } from './types';
+import type { RetentionOptionInput } from './types';
 import type { RetentionPeriod } from 'calypso/state/rewind/retention/types';
 import './style.scss';
 
@@ -82,40 +82,26 @@ const BackupRetentionManagement: FunctionComponent = () => {
 	const currentSiteSizeText = useStorageText( estimatedCurrentSiteSize );
 	const storageLimitText = useStorageText( storageLimitBytes );
 
-	const [ retentionOptionsCards, setRetentionOptionsCards ] = useState<
-		RetentionRadioOptionType[]
-	>( [
+	const [ retentionOptionsCards, setRetentionOptionsCards ] = useState< RetentionOptionInput[] >( [
 		{
-			label: translate( '7 days' ),
+			id: 7,
 			spaceNeededInBytes: 0,
 			upgradeRequired: false,
-			isCurrentPlan: false,
-			value: 7,
-			checked: false,
 		},
 		{
-			label: translate( '30 days' ),
+			id: 30,
 			spaceNeededInBytes: 0,
 			upgradeRequired: false,
-			isCurrentPlan: false,
-			value: 30,
-			checked: false,
 		},
 		{
-			label: translate( '120 days' ),
+			id: 120,
 			spaceNeededInBytes: 0,
 			upgradeRequired: false,
-			isCurrentPlan: false,
-			value: 120,
-			checked: false,
 		},
 		{
-			label: translate( '1 year' ),
+			id: 365,
 			spaceNeededInBytes: 0,
 			upgradeRequired: false,
-			isCurrentPlan: false,
-			value: 365,
-			checked: false,
 		},
 	] );
 
@@ -125,31 +111,21 @@ const BackupRetentionManagement: FunctionComponent = () => {
 			return;
 		}
 
-		setRetentionOptionsCards( ( previousOptions ): RetentionRadioOptionType[] => {
-			const newOptions = previousOptions.map( ( card ): RetentionRadioOptionType => {
-				const isCurrentPlan = card.value === currentRetentionPlan;
-				const checked = card.value === retentionSelected;
-				const spaceNeededInBytes = estimatedCurrentSiteSize * card.value;
+		setRetentionOptionsCards( ( previousOptions ) => {
+			const newOptions = previousOptions.map( ( option ) => {
+				const spaceNeededInBytes = estimatedCurrentSiteSize * option.id;
 				const upgradeRequired = spaceNeededInBytes > storageLimitBytes;
 
 				return {
-					...card,
-					isCurrentPlan,
-					checked,
+					...option,
 					spaceNeededInBytes,
 					upgradeRequired,
 				};
-			} ) as RetentionRadioOptionType[];
+			} );
 
 			return newOptions;
 		} );
-	}, [
-		currentRetentionPlan,
-		estimatedCurrentSiteSize,
-		isFetching,
-		retentionSelected,
-		storageLimitBytes,
-	] );
+	}, [ estimatedCurrentSiteSize, isFetching, storageLimitBytes ] );
 
 	const updateRetentionRequestStatus = useSelector( ( state ) =>
 		getBackupRetentionUpdateRequestStatus( state, siteId )
@@ -160,7 +136,7 @@ const BackupRetentionManagement: FunctionComponent = () => {
 		( value: number ) => {
 			if ( value ) {
 				setRetentionSelected( value );
-				const selectedOption = retentionOptionsCards.find( ( option ) => option.value === value );
+				const selectedOption = retentionOptionsCards.find( ( option ) => option.id === value );
 				setStorageUpgradeRequired( selectedOption?.upgradeRequired ?? false );
 			}
 		},
@@ -236,6 +212,7 @@ const BackupRetentionManagement: FunctionComponent = () => {
 							{ translate( 'Select the number of days you would like your backups to be saved.' ) }
 						</div>
 						<RetentionOptionsControl
+							currentRetentionPlan={ currentRetentionPlan }
 							onChange={ onRetentionSelectionChange }
 							retentionSelected={ retentionSelected }
 							retentionOptions={ retentionOptionsCards }
