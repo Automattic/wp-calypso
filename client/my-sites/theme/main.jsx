@@ -104,7 +104,10 @@ class ThemeSheet extends Component {
 			PropTypes.string,
 			PropTypes.bool, // happens if no content: false
 		] ),
-		supportDocumentation: PropTypes.string,
+		supportDocumentation: PropTypes.oneOfType( [
+			PropTypes.string,
+			PropTypes.bool, // happens if no content: false
+		] ),
 		download: PropTypes.string,
 		taxonomies: PropTypes.object,
 		stylesheet: PropTypes.string,
@@ -221,6 +224,17 @@ class ThemeSheet extends Component {
 		this.trackButtonClick( 'css_forum' );
 	};
 
+	renderBackButton = () => {
+		const { translate } = this.props;
+
+		return (
+			<Button className="theme__sheet-back-button" borderless onClick={ this.goBack }>
+				<Gridicon icon="chevron-left" size={ 18 } />
+				{ translate( 'Back to themes' ) }
+			</Button>
+		);
+	};
+
 	renderBar = () => {
 		const { author, name, translate, softLaunched } = this.props;
 
@@ -282,6 +296,39 @@ class ThemeSheet extends Component {
 	isThemeAvailable() {
 		const { demoUrl, retired } = this.props;
 		return demoUrl && ! retired;
+	}
+
+	hasWpComThemeUpsellBanner() {
+		const {
+			hasUnlimitedPremiumThemes,
+			isBundledSoftwareSet,
+			isExternallyManagedTheme,
+			isJetpack,
+			isPremium,
+			isVip,
+			retired,
+		} = this.props;
+
+		// Show theme upsell banner on Simple sites.
+		return (
+			( ! isJetpack && isPremium && ! hasUnlimitedPremiumThemes && ! isVip && ! retired ) ||
+			isBundledSoftwareSet ||
+			isExternallyManagedTheme
+		);
+	}
+
+	hasWpOrgThemeUpsellBanner() {
+		const { canUserUploadThemes, isAtomic, isJetpack, isWpcomTheme, siteId } = this.props;
+
+		// Show theme upsell banner on Jetpack sites.
+		return ! isAtomic && ! isWpcomTheme && ( ! siteId || ( ! isJetpack && ! canUserUploadThemes ) );
+	}
+
+	hasThemeUpsellBannerAtomic() {
+		const { canUserUploadThemes, isAtomic, isPremium, hasUnlimitedPremiumThemes } = this.props;
+
+		// Show theme upsell banner on Atomic sites.
+		return isAtomic && isPremium && ! canUserUploadThemes && ! hasUnlimitedPremiumThemes;
 	}
 
 	// Render "Open Live Demo" pseudo-button for mobiles.
@@ -448,34 +495,15 @@ class ThemeSheet extends Component {
 	};
 
 	renderHeader = () => {
-		const {
-			author,
-			canUserUploadThemes,
-			hasUnlimitedPremiumThemes,
-			isAtomic,
-			isPremium,
-			isWPForTeamsSite,
-			name,
-			retired,
-			softLaunched,
-			translate,
-		} = this.props;
+		const { author, isWPForTeamsSite, name, retired, softLaunched, translate } = this.props;
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
 		const tag = author ? translate( 'by %(author)s', { args: { author: author } } ) : placeholder;
-
-		// Show theme upsell banner on Jetpack sites.
-		const hasWpOrgThemeUpsellBanner =
-			isAtomic && isPremium && ! canUserUploadThemes && ! hasUnlimitedPremiumThemes;
-
-		const shouldRenderButton = ! retired && ! hasWpOrgThemeUpsellBanner && ! isWPForTeamsSite;
+		const shouldRenderButton =
+			! retired && ! this.hasWpOrgThemeUpsellBanner() && ! isWPForTeamsSite;
 
 		return (
 			<div className="theme__sheet-header">
-				<Button className="theme__sheet-header-back-button" borderless onClick={ this.goBack }>
-					<Gridicon icon="chevron-left" size={ 18 } />
-					{ translate( 'Back to themes' ) }
-				</Button>
 				<div className="theme__sheet-header-columns">
 					<div className="theme__sheet-header-column-info">
 						<h1 className="theme__sheet-header-title">
@@ -906,17 +934,10 @@ class ThemeSheet extends Component {
 			siteId,
 			siteSlug,
 			retired,
-			hasUnlimitedPremiumThemes,
 			styleVariations,
-			isAtomic,
-			isPremium,
 			isBundledSoftwareSet,
 			isSiteBundleEligible,
-			isJetpack,
-			isWpcomTheme,
-			isVip,
 			translate,
-			canUserUploadThemes,
 			isWPForTeamsSite,
 			isLoggedIn,
 			isExternallyManagedTheme,
@@ -979,16 +1000,11 @@ class ThemeSheet extends Component {
 		let previewUpsellBanner;
 
 		// Show theme upsell banner on Simple sites.
-		const hasWpComThemeUpsellBanner =
-			( ! isJetpack && isPremium && ! hasUnlimitedPremiumThemes && ! isVip && ! retired ) ||
-			isBundledSoftwareSet ||
-			isExternallyManagedTheme;
+		const hasWpComThemeUpsellBanner = this.hasWpComThemeUpsellBanner();
 		// Show theme upsell banner on Jetpack sites.
-		const hasWpOrgThemeUpsellBanner =
-			! isAtomic && ! isWpcomTheme && ( ! siteId || ( ! isJetpack && ! canUserUploadThemes ) );
+		const hasWpOrgThemeUpsellBanner = this.hasWpOrgThemeUpsellBanner();
 		// Show theme upsell banner on Atomic sites.
-		const hasThemeUpsellBannerAtomic =
-			isAtomic && isPremium && ! canUserUploadThemes && ! hasUnlimitedPremiumThemes;
+		const hasThemeUpsellBannerAtomic = this.hasThemeUpsellBannerAtomic();
 
 		const hasUpsellBanner =
 			hasWpComThemeUpsellBanner || hasWpOrgThemeUpsellBanner || hasThemeUpsellBannerAtomic;
@@ -1114,6 +1130,12 @@ class ThemeSheet extends Component {
 				) }
 				<div className={ columnsClassName }>
 					<div className="theme__sheet-column-left">
+						{ isNewDetailsAndPreview && (
+							<>
+								{ this.renderBackButton() }
+								{ pageUpsellBanner }
+							</>
+						) }
 						{ ! retired && this.renderSectionContent( section ) }
 						{ retired && this.renderRetired() }
 					</div>
