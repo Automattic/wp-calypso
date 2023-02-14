@@ -86,6 +86,8 @@ export interface BillingTransactionsStateItems {
 	upcoming?: UpcomingCharge[];
 }
 
+export type IndividualTransactionsRecord = Record< ReceiptId, IndividualTransactionsState >;
+
 export interface IndividualTransactionsState {
 	requesting: boolean;
 	error: boolean;
@@ -96,6 +98,6 @@ export interface BillingTransactionsState {
 	items?: BillingTransactionsStateItems;
 	requesting?: boolean;
 	sendingReceiptEmail?: SendingReceiptEmailRecord;
-	individualTransactions?: IndividualTransactionsState;
+	individualTransactions?: IndividualTransactionsRecord;
 	ui?: Record< BillingTransactionsType, BillingTransactionUiState >;
 }
