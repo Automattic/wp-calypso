@@ -359,20 +359,6 @@ class Media extends Component {
 				{ mediaId && site && site.ID && <QueryMedia siteId={ site.ID } mediaId={ mediaId } /> }
 				<PageViewTracker path={ this.getAnalyticsPath() } title="Media" />
 				<DocumentHead title={ translate( 'Media' ) } />
-				{ this.props.selectedSite.is_private && this.props.selectedSite.is_wpcom_atomic && (
-					<Notice
-						showDismiss={ false }
-						status="is-info"
-						text={ translate(
-							'Your site is Private and the image CDN is disabled. If image thumbnails do not display, switch to Coming Soon mode. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-							{
-								components: {
-									learnMoreLink: <InlineSupportLink supportContext="privacy" showIcon={ false } />,
-								},
-							}
-						) }
-					/>
-				) }
 				<FormattedHeader
 					brandFont
 					className="media__page-heading"
@@ -388,6 +374,20 @@ class Media extends Component {
 					align="left"
 					hasScreenOptions
 				/>
+				{ this.props.selectedSite.is_private && this.props.selectedSite.is_wpcom_atomic && (
+					<Notice
+						showDismiss={ false }
+						status="is-info"
+						text={ translate(
+							'Your site is Private and the image CDN is disabled. If image thumbnails do not display, switch to Coming Soon mode. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+							{
+								components: {
+									learnMoreLink: <InlineSupportLink supportContext="privacy" showIcon={ false } />,
+								},
+							}
+						) }
+					/>
+				) }
 				{ this.showDialog() && (
 					<EditorMediaModalDialog
 						isVisible
