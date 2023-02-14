@@ -1,3 +1,15 @@
+import type { RawReceiptPurchase } from 'calypso/state/receipts/types';
+
+export interface IndividualReceipt {
+	receipt_id: number;
+	purchases: RawReceiptPurchase[];
+	display_price: string;
+	price_integer: number;
+	price_float: number;
+	currency: string;
+	is_gift_purchase: boolean;
+}
+
 export interface BillingTransaction {
 	id: string;
 	service: string;
@@ -69,15 +81,21 @@ export type BillingTransactionsTypePast = 'past';
 export type BillingTransactionsTypeUpcoming = 'upcoming';
 export type BillingTransactionsType = BillingTransactionsTypePast | BillingTransactionsTypeUpcoming;
 
-export type BillingTransactionsStateItems = {
+export interface BillingTransactionsStateItems {
 	past?: BillingTransaction[];
 	upcoming?: UpcomingCharge[];
-};
+}
+
+export interface IndividualTransactionsState {
+	requesting: boolean;
+	error: boolean;
+	data: IndividualReceipt | null;
+}
 
 export interface BillingTransactionsState {
 	items?: BillingTransactionsStateItems;
 	requesting?: boolean;
 	sendingReceiptEmail?: SendingReceiptEmailRecord;
-	individualTransactions?: unknown; // TODO: fill this in.
+	individualTransactions?: IndividualTransactionsState;
 	ui?: Record< BillingTransactionsType, BillingTransactionUiState >;
 }
