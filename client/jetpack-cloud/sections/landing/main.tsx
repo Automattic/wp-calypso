@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import isRequestingSiteFeatures from 'calypso/state/selectors/is-requesting-site-features';
-import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import { getLandingPath, isSiteEligibleForJetpackCloud } from './selectors';
 import type React from 'react';
 
@@ -46,10 +45,8 @@ const useResolvedSiteFeatures = ( siteId: number ) => {
 	return false;
 };
 
-const Landing: React.FC = () => {
-	// This page should only ever load in a context where a site is already selected
-	const siteId = useSelector( getSelectedSiteId ) as number;
-
+// This page should only ever load in a context where a site is already selected
+const Landing: React.FC< { siteId: number } > = ( { siteId } ) => {
 	const isEligible = useSelector( ( state ) => isSiteEligibleForJetpackCloud( state, siteId ) );
 	const resolvedSiteFeatures = useResolvedSiteFeatures( siteId );
 	const landingPath = useSelector( ( state ) => getLandingPath( state, siteId ) );
