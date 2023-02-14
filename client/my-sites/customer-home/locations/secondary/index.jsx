@@ -1,5 +1,5 @@
 import { createElement } from 'react';
-import BloggingPrompt from 'calypso/components/blogging-prompt';
+import BloggingPrompt from 'calypso/components/blogging-prompt-card';
 import {
 	FEATURE_DOMAIN_UPSELL,
 	FEATURE_STATS,

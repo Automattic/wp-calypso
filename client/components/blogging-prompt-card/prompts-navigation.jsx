@@ -10,7 +10,7 @@ import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import NoResponsesIcon from './no-responses-icon';
 import './style.scss';
 
-const PromptsNavigation = ( { siteId, prompts, viewContext, tracksPrefix } ) => {
+const PromptsNavigation = ( { siteId, prompts, tracksPrefix } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const editorUrl = useSelector( ( state ) => getEditorUrl( state, siteId ) );
@@ -59,7 +59,6 @@ const PromptsNavigation = ( { siteId, prompts, viewContext, tracksPrefix } ) => 
 			recordTracksEvent( tracksPrefix + 'answer_prompt', {
 				site_id: siteId,
 				prompt_id: getPrompt()?.id,
-				location: viewContext,
 			} )
 		);
 
@@ -71,7 +70,6 @@ const PromptsNavigation = ( { siteId, prompts, viewContext, tracksPrefix } ) => 
 				recordTracksEvent( tracksPrefix + 'skip_prompt', {
 					site_id: siteId,
 					prompt_id: todayPromptId,
-					location: viewContext,
 				} )
 			);
 		}
@@ -85,7 +83,6 @@ const PromptsNavigation = ( { siteId, prompts, viewContext, tracksPrefix } ) => 
 			recordTracksEvent( tracksPrefix + 'view_all_responses', {
 				site_id: siteId,
 				prompt_id: getPrompt()?.id,
-				location: viewContext,
 			} )
 		);
 	};

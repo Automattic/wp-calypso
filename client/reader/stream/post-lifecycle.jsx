@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import PostBlocked from 'calypso/blocks/reader-post-card/blocked';
-import BloggingPromptCard from 'calypso/components/blogging-prompt';
+import BloggingPromptCard from 'calypso/components/blogging-prompt-card';
 import QueryReaderPost from 'calypso/components/data/query-reader-post';
 import compareProps from 'calypso/lib/compare-props';
 import { IN_STREAM_RECOMMENDATION } from 'calypso/reader/follow-sources';

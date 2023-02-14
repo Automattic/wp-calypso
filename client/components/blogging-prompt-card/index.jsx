@@ -40,7 +40,6 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu } ) => {
 		dispatch(
 			recordTracksEvent( getTracksPrefix() + 'task_skip', {
 				task: SECTION_BLOGGING_PROMPT,
-				location: viewContext,
 			} )
 		);
 	};
@@ -69,7 +68,8 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu } ) => {
 			<Card className={ classnames( 'customer-home__card', 'blogging-prompt__card' ) }>
 				<CardHeading>
 					<LightbulbIcon />
-					<span className="blogging-prompt__heading-text">
+					{ /*`key` is necessary due to behavior of preventWidows function in CardHeading component.*/ }
+					<span className="blogging-prompt__heading-text" key="blogging-prompt__heading-text">
 						{ translate( 'Daily writing prompt' ) }
 					</span>
 					{ showMenu && renderMenu() }
@@ -77,7 +77,6 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu } ) => {
 				<PromptsNavigation
 					siteId={ siteId }
 					prompts={ prompts }
-					viewContext={ viewContext }
 					tracksPrefix={ getTracksPrefix() }
 				/>
 			</Card>
