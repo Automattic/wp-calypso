@@ -89,3 +89,45 @@ export function getDistanceBetweenRecs( totalSubs ) {
 		MAX_DISTANCE_BETWEEN_RECS
 	);
 }
+
+const MIN_DISTANCE_BETWEEN_PROMPTS = 10;
+const MAX_DISTANCE_BETWEEN_PROMPTS = 50;
+
+export function getDistanceBetweenPrompts( totalSubs ) {
+	// the distance between recs changes based on how many subscriptions the user has.
+	// We cap it at MAX_DISTANCE_BETWEEN_PROMPTS.
+	// It grows at the natural log of the number of subs, times a multiplier, offset by a constant.
+	// This lets the distance between prompts grow quickly as you add subs early on, and slow down as you
+	// become a common user of the reader.
+	if ( totalSubs <= 0 ) {
+		// 0 means either we don't know yet, or the user actually has zero subs.
+		// if a user has zero subs, we don't show posts at all, so just treat 0 as 'unknown' and
+		// push recs to the max.
+		return MAX_DISTANCE_BETWEEN_PROMPTS;
+	}
+
+	return Math.min(
+		Math.max(
+			Math.floor( Math.log( totalSubs ) * Math.LOG2E * 7 - 3 ),
+			MIN_DISTANCE_BETWEEN_PROMPTS
+		),
+		MAX_DISTANCE_BETWEEN_PROMPTS
+	);
+}
+
+export function injectPrompts( posts, itemsBetweenPrompts ) {
+	if ( posts.length < itemsBetweenPrompts ) {
+		return posts;
+	}
+
+	return flatMap( posts, ( post, index ) => {
+		if ( index && index % itemsBetweenPrompts === 0 ) {
+			const promptBlock = {
+				isPromptBlock: true,
+				index: index,
+			};
+			return [ promptBlock, post ];
+		}
+		return post;
+	} );
+}

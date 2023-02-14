@@ -21,6 +21,7 @@ import {
 	SITE_PLUGIN_UPDATED,
 	SITE_FRONT_PAGE_UPDATE,
 	SITE_MIGRATION_STATUS_UPDATE,
+	UPDATE_STATS_NOTICE_STATUS_DIRECT,
 } from 'calypso/state/action-types';
 import { THEME_ACTIVATE_SUCCESS } from 'calypso/state/themes/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
@@ -263,6 +264,21 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 				[ siteId ]: {
 					...state[ siteId ],
 					site_migration: merge( {}, siteMigrationMeta, newMeta ),
+				},
+			};
+		}
+
+		case UPDATE_STATS_NOTICE_STATUS_DIRECT: {
+			const { id, status, siteId } = action;
+
+			return {
+				...state,
+				[ siteId ]: {
+					...state[ siteId ],
+					stats_notices: {
+						...state[ siteId ].stats_notices,
+						[ id ]: ! [ 'dismissed', 'postponed' ].includes( status ),
+					},
 				},
 			};
 		}

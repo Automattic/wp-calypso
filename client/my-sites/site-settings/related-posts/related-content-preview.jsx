@@ -15,7 +15,6 @@ const RelatedContentPreview = ( {
 				textOnly: true,
 				context: 'Demo content for related posts',
 			} ),
-			date: 'August 8, 2005',
 			topic: translate( 'In "Mobile"', {
 				context: 'topic post is located in',
 			} ),
@@ -26,7 +25,6 @@ const RelatedContentPreview = ( {
 				textOnly: true,
 				context: 'Demo content for related posts',
 			} ),
-			date: 'August 8, 2005',
 			topic: translate( 'In "Mobile"', {
 				context: 'topic post is located in',
 			} ),
@@ -37,12 +35,12 @@ const RelatedContentPreview = ( {
 				textOnly: true,
 				context: 'Demo content for related posts',
 			} ),
-			date: 'August 8, 2005',
 			topic: translate( 'In "Upgrade"', {
 				context: 'topic post is located in',
 			} ),
 		},
 	];
+	const postDate = `August 8, ${ new Date().getFullYear() - 1 }`;
 
 	return (
 		<div className="related-posts__preview">
@@ -66,7 +64,7 @@ const RelatedContentPreview = ( {
 								<h4 className="related-posts__preview-post-title">
 									<a className="related-posts__preview-post-a">{ post.title }</a>
 								</h4>
-								{ showDate && <span>{ post.date }</span> }
+								{ showDate && <span>{ postDate }</span> }
 								{ showContext && (
 									<p className="related-posts__preview-post-context">{ post.topic }</p>
 								) }

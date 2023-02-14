@@ -3,6 +3,7 @@ import {
 	isDomainRegistration,
 	isDomainTransfer,
 	isDomainMapping,
+	is2023PricingGridEnabled,
 } from '@automattic/calypso-products';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { isNewsletterOrLinkInBioFlow, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
@@ -477,6 +478,8 @@ class Signup extends Component {
 			( isNewishUser && dependencies && dependencies.siteSlug && existingSiteCount <= 1 )
 		);
 		const hasCartItems = dependenciesContainCartItem( dependencies );
+		const cartItem = get( dependencies, 'cartItem' );
+		const domainItem = get( dependencies, 'domainItem' );
 		const selectedDesign = get( dependencies, 'selectedDesign' );
 		const intent = get( dependencies, 'intent' );
 		const startingPoint = get( dependencies, 'startingPoint' );
@@ -500,6 +503,11 @@ class Signup extends Component {
 			siteId,
 			isNewUser,
 			hasCartItems,
+			planProductSlug: hasCartItems && cartItem !== null ? cartItem.product_slug : undefined,
+			domainProductSlug:
+				undefined !== domainItem && domainItem.is_domain_registration
+					? domainItem.product_slug
+					: undefined,
 			isNew7DUserSite,
 			// Record the following values so that we can know the user completed which branch under the hero flow
 			theme: selectedDesign?.theme,
@@ -767,7 +775,7 @@ class Signup extends Component {
 		// If there is any condition upon which the free plan should be hidden these issues need to be resolved.
 		// For now we always show the free plan for the 2023-pricing-grid
 		// More Context : Automattic/martech#1464
-		const hideFreePlan = config.isEnabled( 'onboarding/2023-pricing-grid' )
+		const hideFreePlan = is2023PricingGridEnabled()
 			? false
 			: planWithDomain || this.props.isDomainOnlySite || selectedHideFreePlan;
 		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;

@@ -41,20 +41,17 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 	}
 
 	header() {
-		const { translate } = this.props;
-
-		return (
-			<header className="business-plan-upgrade-upsell-new-design__small-header">
-				<h1 className="business-plan-upgrade-upsell-new-design__small-header-title">
-					{ translate( 'Limited time offer' ) }
-				</h1>
-			</header>
-		);
+		return null;
 	}
 
 	image() {
 		return (
-			<img className="business-plan-upgrade-upsell-new-design__image" src={ upsellImage } alt="" />
+			<img
+				className="business-plan-upgrade-upsell-new-design__image"
+				src={ upsellImage }
+				alt=""
+				width="255"
+			/>
 		);
 	}
 
@@ -148,7 +145,7 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 	footer() {
 		const { translate, handleClickAccept, handleClickDecline } = this.props;
 		return (
-			<footer className="business-plan-upgrade-upsell-new-design__footer">
+			<footer>
 				<Button
 					data-e2e-button="decline"
 					className="business-plan-upgrade-upsell-new-design__decline-offer-button"

@@ -29,16 +29,16 @@ interface Props {
 }
 
 function InviteForm( props: Props ) {
-	const _ = useTranslate();
+	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const { onInviteSuccess } = props;
 
 	const emailControlPlaceholder = [
-		_( 'sibling@example.com' ),
-		_( 'parents@example.com' ),
-		_( 'friend@example.com' ),
+		translate( 'sibling@example.com' ),
+		translate( 'parents@example.com' ),
+		translate( 'friend@example.com' ),
 	];
-	const defaultEmailControlPlaceholder = _( 'Add another email or username' );
+	const defaultEmailControlPlaceholder = translate( 'Add another email or username' );
 
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 	const siteId = site?.ID as number;
@@ -148,7 +148,7 @@ function InviteForm( props: Props ) {
 				target="_blank"
 				href={ localizeUrl( 'https://wordpress.com/support/user-roles/' ) }
 			>
-				{ _( 'Learn more' ) }
+				{ translate( 'Learn more' ) }
 			</Button>
 		);
 	}
@@ -174,7 +174,9 @@ function InviteForm( props: Props ) {
 
 			{ [ ...Array( tokenControlNum ) ].map( ( v, i ) => (
 				<FormFieldset key={ i }>
-					{ ! i && <FormLabel htmlFor={ `token-${ i }` }>{ _( 'Email or Username' ) }</FormLabel> }
+					{ ! i && (
+						<FormLabel htmlFor={ `token-${ i }` }>{ translate( 'Email or Username' ) }</FormLabel>
+					) }
 					<div className="form-field-wrapper">
 						<FormTextInput
 							id={ `token-${ i }` }
@@ -216,18 +218,18 @@ function InviteForm( props: Props ) {
 						borderless={ true }
 						onClick={ () => setShowMsg( true ) }
 					>
-						{ _( '+ Add a message' ) }
+						{ translate( '+ Add a message' ) }
 					</Button>
 				) }
 				{ showMsg && (
 					<>
-						<FormLabel htmlFor="message">{ _( 'Message' ) }</FormLabel>
+						<FormLabel htmlFor="message">{ translate( 'Message' ) }</FormLabel>
 						<FormTextarea
 							// eslint-disable-next-line jsx-a11y/no-autofocus
 							autoFocus
 							id="message"
 							value={ message }
-							placeholder={ _( 'This message will be sent along with invitation emails.' ) }
+							placeholder={ translate( 'This message will be sent along with invitation emails.' ) }
 							onChange={ ( e: ChangeEvent< HTMLInputElement > ) => setMessage( e.target.value ) }
 						/>
 					</>
@@ -240,7 +242,7 @@ function InviteForm( props: Props ) {
 				busy={ invitingProgress }
 				className="team-invite-form__submit-btn"
 			>
-				{ _( 'Send invitation' ) }
+				{ translate( 'Send invitation' ) }
 			</Button>
 		</form>
 	);

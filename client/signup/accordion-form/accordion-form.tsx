@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import AccordionFormSection from './accordion-form-section';
-import {
+import type {
 	AccordionSectionProps,
 	SectionGeneratorReturnType,
 	ValidationErrors,
@@ -17,8 +17,11 @@ interface AccordionFormProps< T > {
 	onSubmit: ( formValues: T ) => void;
 	formValues: T;
 	updateFormValues?: ( formValues: T ) => void;
+	saveFormValues: () => Promise< void >;
 	onErrorUpdates?: ( errors: ValidationErrors ) => void;
 	blockNavigation?: boolean;
+	isSaving: boolean;
+	hasUnsavedChanges: boolean;
 }
 
 export default function AccordionForm< T >( {
@@ -26,10 +29,13 @@ export default function AccordionForm< T >( {
 	updateCurrentIndex,
 	updateFormValues,
 	formValues,
+	saveFormValues,
 	onSubmit,
 	generatedSections,
 	onErrorUpdates,
 	blockNavigation,
+	isSaving,
+	hasUnsavedChanges,
 }: AccordionFormProps< T > ) {
 	const [ formErrors, setFormErrors ] = useState< ValidationErrors >( {} );
 
@@ -78,9 +84,13 @@ export default function AccordionForm< T >( {
 		updateCurrentIndex( currentIndex );
 		updateFormValues && updateFormValues( formValues );
 		setIsSectionAtIndexTouched( { ...isSectionAtIndexTouched, [ `${ currentIndex }` ]: true } );
+		// save values, but do not block UI.
+		if ( hasUnsavedChanges ) {
+			saveFormValues();
+		}
 	};
 
-	const onNext = ( validator?: ValidatorFunction< T > ) => {
+	const onNext = async ( validator?: ValidatorFunction< T > ) => {
 		updateFormValues && updateFormValues( formValues );
 
 		if ( validator ) {
@@ -88,6 +98,10 @@ export default function AccordionForm< T >( {
 			if ( ! validationResult.result ) {
 				return;
 			}
+		}
+
+		if ( hasUnsavedChanges ) {
+			await saveFormValues();
 		}
 
 		if ( currentIndex < sections.length - 1 ) {
@@ -114,8 +128,11 @@ export default function AccordionForm< T >( {
 					isTouched={ isSectionAtIndexTouched[ `${ index }` ] }
 					onNext={ () => onNext( section.validate ) }
 					onOpen={ () => onOpen( index ) }
+					onSave={ saveFormValues }
 					blockNavigation={ blockNavigation }
 					showSubmit={ index === sections.length - 1 }
+					isSaving={ isSaving }
+					hasUnsavedChanges={ hasUnsavedChanges }
 				/>
 			) ) }
 		</>

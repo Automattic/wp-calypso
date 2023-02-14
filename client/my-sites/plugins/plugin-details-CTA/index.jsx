@@ -169,9 +169,10 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 
 	// Some plugins can be preinstalled on WPCOM and available as standalone on WPORG,
 	// but require a paid upgrade to function.
-	if ( isPreinstalledPremiumPlugin ) {
+	if ( selectedSite && isPreinstalledPremiumPlugin ) {
 		return (
 			<div className="plugin-details-cta__container">
+				<QuerySitePurchases siteId={ selectedSite?.ID } />
 				<PluginDetailsCTAPreinstalledPremiumPlugins
 					isPluginInstalledOnsite={ isPluginInstalledOnsiteWithSubscription }
 					plugin={ plugin }

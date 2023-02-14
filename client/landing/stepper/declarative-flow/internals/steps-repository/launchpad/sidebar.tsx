@@ -168,7 +168,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 						recordTracksEvent( 'calypso_launchpad_go_to_admin_clicked', { flow: flow } );
 						goNext?.();
 					} }
-					label={ translate( 'Go to Admin' ) }
+					label={ translate( 'Skip to dashboard' ) }
 					borderless={ true }
 				/>
 			</div>

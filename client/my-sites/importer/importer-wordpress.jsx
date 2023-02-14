@@ -9,6 +9,8 @@ class ImporterWordPress extends PureComponent {
 
 	static propTypes = {
 		siteTitle: PropTypes.string.isRequired,
+		isAtomic: PropTypes.bool,
+		isJetpack: PropTypes.bool,
 		importerStatus: PropTypes.shape( {
 			importerState: PropTypes.string.isRequired,
 			errorData: PropTypes.shape( {
@@ -22,6 +24,8 @@ class ImporterWordPress extends PureComponent {
 	render() {
 		const importerData = importerConfig( {
 			siteTitle: this.props.siteTitle,
+			isAtomic: this.props.isAtomic,
+			isJetpack: this.props.isJetpack,
 		} ).wordpress;
 
 		return <FileImporter importerData={ importerData } { ...this.props } />;

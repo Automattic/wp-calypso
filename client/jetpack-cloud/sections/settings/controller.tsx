@@ -1,4 +1,6 @@
+import config from '@automattic/calypso-config';
 import AdvancedCredentials from 'calypso/components/advanced-credentials';
+import BackupRetentionManagement from 'calypso/components/backup-retention-management';
 import HasSitePurchasesSwitch from 'calypso/components/has-site-purchases-switch';
 import IsCurrentUserAdminSwitch from 'calypso/components/jetpack/is-current-user-admin-switch';
 import NotAuthorizedPage from 'calypso/components/jetpack/not-authorized-page';
@@ -22,19 +24,24 @@ export const advancedCredentials: PageJS.Callback = ( context, next ) => {
 	const sectionElt = <AdvancedCredentials action={ action } host={ host } role="main" />;
 
 	context.primary = (
-		<HasSiteCredentialsSwitch
-			siteId={ siteId }
-			trueComponent={ sectionElt }
-			falseComponent={
-				<HasSitePurchasesSwitch
-					siteId={ siteId }
-					trueComponent={ sectionElt }
-					falseComponent={ <NoSitesPurchasesMessage /> }
-					loadingComponent={ <AdvancedCredentialsLoadingPlaceholder /> }
-				/>
-			}
-			loadingComponent={ <AdvancedCredentialsLoadingPlaceholder /> }
-		/>
+		<>
+			{ config.isEnabled( 'jetpack/backup-retention-settings' ) ? (
+				<BackupRetentionManagement />
+			) : null }
+			<HasSiteCredentialsSwitch
+				siteId={ siteId }
+				trueComponent={ sectionElt }
+				falseComponent={
+					<HasSitePurchasesSwitch
+						siteId={ siteId }
+						trueComponent={ sectionElt }
+						falseComponent={ <NoSitesPurchasesMessage /> }
+						loadingComponent={ <AdvancedCredentialsLoadingPlaceholder /> }
+					/>
+				}
+				loadingComponent={ <AdvancedCredentialsLoadingPlaceholder /> }
+			/>
+		</>
 	);
 
 	next();

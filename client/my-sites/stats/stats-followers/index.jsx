@@ -59,11 +59,11 @@ class StatModuleFollowers extends Component {
 		const options = [
 			{
 				value: 'wpcom-followers',
-				label: this.props.translate( 'WordPress.com followers' ),
+				label: this.props.translate( 'WordPress.com subscribers' ),
 			},
 			{
 				value: 'email-followers',
-				label: this.props.translate( 'Email followers' ),
+				label: this.props.translate( 'Email subscribers' ),
 			},
 		];
 
@@ -121,12 +121,15 @@ class StatModuleFollowers extends Component {
 				{ siteId && (
 					<QuerySiteStats statType="statsFollowers" siteId={ siteId } query={ emailQuery } />
 				) }
-				<SectionHeader label={ translate( 'Followers' ) } href={ summaryPageLink } />
+				<SectionHeader label={ translate( 'Subscribers' ) } href={ summaryPageLink } />
 				<Card className={ classNames( ...classes ) }>
 					<div className="followers">
 						<div className="module-content">
 							{ noData && ! hasError && ! isLoading && (
-								<ErrorPanel className="is-empty-message" message={ translate( 'No followers' ) } />
+								<ErrorPanel
+									className="is-empty-message"
+									message={ translate( 'No subscribers' ) }
+								/>
 							) }
 
 							{ this.filterSelect() }
@@ -135,12 +138,15 @@ class StatModuleFollowers extends Component {
 								<div className="module-content-text module-content-text-stat">
 									{ wpcomData && !! wpcomData.total_wpcom && (
 										<p>
-											{ translate( 'Total WordPress.com followers' ) }:{ ' ' }
+											{ translate( 'Total WordPress.com subscribers' ) }:{ ' ' }
 											{ numberFormat( wpcomData.total_wpcom ) }
 										</p>
 									) }
 								</div>
-								<StatsListLegend value={ translate( 'Since' ) } label={ translate( 'Follower' ) } />
+								<StatsListLegend
+									value={ translate( 'Since' ) }
+									label={ translate( 'Subscriber' ) }
+								/>
 								{ hasWpcomFollowers && (
 									<StatsList moduleName="wpcomFollowers" data={ wpcomData.subscribers } />
 								) }
@@ -151,13 +157,16 @@ class StatModuleFollowers extends Component {
 								<div className="module-content-text module-content-text-stat">
 									{ emailData && !! emailData.total_email && (
 										<p>
-											{ translate( 'Total Email Followers' ) }:{ ' ' }
+											{ translate( 'Total Email Subscribers' ) }:{ ' ' }
 											{ numberFormat( emailData.total_email ) }
 										</p>
 									) }
 								</div>
 
-								<StatsListLegend value={ translate( 'Since' ) } label={ translate( 'Follower' ) } />
+								<StatsListLegend
+									value={ translate( 'Since' ) }
+									label={ translate( 'Subscriber' ) }
+								/>
 								{ hasEmailFollowers && (
 									<StatsList moduleName="EmailFollowers" data={ emailData.subscribers } />
 								) }

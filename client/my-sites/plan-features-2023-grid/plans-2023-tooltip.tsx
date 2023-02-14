@@ -12,7 +12,6 @@ const StyledTooltip = styled( Tooltip )`
 		border-radius: 4px;
 		min-height: 32px;
 		width: 210px;
-		display: flex;
 		align-items: center;
 		font-style: normal;
 		font-weight: 400;

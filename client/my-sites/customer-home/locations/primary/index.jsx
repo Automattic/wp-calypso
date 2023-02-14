@@ -20,6 +20,7 @@ import {
 	TASK_MARKETPLACE,
 	TASK_RENEW_EXPIRED_PLAN,
 	TASK_RENEW_EXPIRING_PLAN,
+	TASK_SITE_RESUME_COPY,
 	TASK_SITE_SETUP_CHECKLIST,
 	TASK_UPSELL_TITAN,
 	TASK_VERIFY_EMAIL,
@@ -47,6 +48,7 @@ import Podcasting from 'calypso/my-sites/customer-home/cards/tasks/podcasting';
 import PromotePost from 'calypso/my-sites/customer-home/cards/tasks/promote-post';
 import Renew from 'calypso/my-sites/customer-home/cards/tasks/renew';
 import { ReviveAutoRevertedAtomic } from 'calypso/my-sites/customer-home/cards/tasks/revive-auto-reverted-atomic';
+import SiteResumeCopy from 'calypso/my-sites/customer-home/cards/tasks/site-resume-copy';
 import SiteSetupList from 'calypso/my-sites/customer-home/cards/tasks/site-setup-list';
 import TitanBanner from 'calypso/my-sites/customer-home/cards/tasks/titan-banner';
 import UseBuiltBy from 'calypso/my-sites/customer-home/cards/tasks/use-built-by';
@@ -76,6 +78,7 @@ const cardComponents = {
 	[ TASK_REACTIVATE_EXPIRED_PLAN ]: ReviveAutoRevertedAtomic,
 	[ TASK_REACTIVATE_ATOMIC_TRANSFER ]: ReviveAutoRevertedAtomic,
 	[ TASK_REACTIVATE_RESTORE_BACKUP ]: ReviveAutoRevertedAtomic,
+	[ TASK_SITE_RESUME_COPY ]: SiteResumeCopy,
 	[ TASK_SITE_SETUP_CHECKLIST ]: SiteSetupList,
 	[ TASK_UPSELL_TITAN ]: TitanBanner,
 	[ TASK_WEBINARS ]: Webinars,
@@ -89,6 +92,7 @@ const urgentTasks = [
 	TASK_REACTIVATE_EXPIRED_PLAN,
 	TASK_REACTIVATE_ATOMIC_TRANSFER,
 	TASK_REACTIVATE_RESTORE_BACKUP,
+	TASK_SITE_RESUME_COPY,
 ];
 
 const Primary = ( { cards, trackCard } ) => {
