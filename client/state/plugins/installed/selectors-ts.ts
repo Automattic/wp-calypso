@@ -1,4 +1,10 @@
 import { createSelector } from '@automattic/state-utils';
+import {
+	getSite,
+	getSiteTitle,
+	isJetpackSite,
+	isJetpackSiteSecondaryNetworkSite,
+} from 'calypso/state/sites/selectors';
 import { isRequesting, isRequestingForAllSites } from './selectors';
 import type {
 	InstalledPlugins,
@@ -248,3 +254,58 @@ export const getPluginsOnSite = createSelector(
 	],
 	( state: AppState, siteId: number, pluginSlugs: string[] ) => [ siteId, ...pluginSlugs ].join()
 );
+
+export function getSitesWithPlugin( state: AppState, siteIds: number[], pluginSlug: string ) {
+	const plugin = getAllPluginsIndexedByPluginSlug( state )[ pluginSlug ];
+	if ( ! plugin ) {
+		return [];
+	}
+
+	// Filter the requested sites list by the list of sites for this plugin
+	const pluginSites = siteIds.filter( ( siteId ) => plugin.sites.hasOwnProperty( siteId ) );
+
+	// return sortBy( pluginSites, ( siteId ) => getSiteTitle( state, siteId )?.toLowerCase() );
+	return pluginSites.sort( ( a, b ) => {
+		const siteTitleA = getSiteTitle( state, a )?.toLowerCase() || '';
+		const siteTitleB = getSiteTitle( state, b )?.toLowerCase() || '';
+		if ( siteTitleA < siteTitleB ) {
+			return -1;
+		}
+		if ( siteTitleA > siteTitleB ) {
+			return 1;
+		}
+		return 0;
+	} );
+}
+
+export function getSiteObjectsWithPlugin( state: AppState, siteIds: number[], pluginSlug: string ) {
+	const siteIdsWithPlugin = getSitesWithPlugin( state, siteIds, pluginSlug );
+	return siteIdsWithPlugin.map( ( siteId ) => getSite( state, siteId ) );
+}
+
+export function getSitesWithoutPlugin( state: AppState, siteIds: number[], pluginSlug: string ) {
+	const installedOnSiteIds = getSitesWithPlugin( state, siteIds, pluginSlug ) || [];
+
+	return siteIds.filter( ( siteId ) => {
+		if ( ! getSite( state, siteId )?.visible || ! isJetpackSite( state, siteId ) ) {
+			return false;
+		}
+
+		if ( isJetpackSiteSecondaryNetworkSite( state, siteId ) ) {
+			return false;
+		}
+
+		return installedOnSiteIds.every( function ( installedOnSiteId ) {
+			return installedOnSiteId !== siteId;
+		} );
+	} );
+}
+
+export function getSiteObjectsWithoutPlugin(
+	state: AppState,
+	siteIds: number[],
+	pluginSlug: string
+) {
+	const siteIdsWithoutPlugin = getSitesWithoutPlugin( state, siteIds, pluginSlug );
+	return siteIdsWithoutPlugin.map( ( siteId ) => getSite( state, siteId ) );
+}
