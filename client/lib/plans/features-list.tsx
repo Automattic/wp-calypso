@@ -576,7 +576,12 @@ export const FEATURES_LIST: FeatureList = {
 			}
 			if ( is2023OnboardingPricingGrid ) {
 				return i18n.translate(
-					'Get a custom domain – like yoursite.com – free for the first year.'
+					'Get a custom domain – like {{i}}yourgroovydomain.com{{/i}} – free for the first year.',
+					{
+						components: {
+							i: <i />,
+						},
+					}
 				);
 			}
 			return i18n.translate(
@@ -1754,7 +1759,7 @@ export const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_PLUGINS_THEMES,
 		getTitle: () => i18n.translate( 'Install plugins & themes' ),
 		getDescription: () =>
-			i18n.translate( 'Unlock access to 50,000+ add-ons, design templates, and integrations.' ),
+			i18n.translate( 'Unlock access to 50,000+ plugins, design templates, and integrations.' ),
 	},
 	[ FEATURE_BANDWIDTH ]: {
 		getSlug: () => FEATURE_BANDWIDTH,
