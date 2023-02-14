@@ -16,7 +16,7 @@ import getRewindBytesAvailable from 'calypso/state/rewind/selectors/get-rewind-b
 import isRequestingRewindPolicies from 'calypso/state/rewind/selectors/is-requesting-rewind-policies';
 import isRequestingRewindSize from 'calypso/state/rewind/selectors/is-requesting-rewind-size';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getEstimatedCurrentSiteSize, getSpaceNeededInBytes } from './hooks';
+import { STORAGE_ESTIMATION_ADDITIONAL_BUFFER } from './constants';
 import InfoTooltip from './info-tooltip';
 import LoadingPlaceholder from './loading';
 import RetentionOptionsControl from './retention-options/retention-options-control';
@@ -78,7 +78,7 @@ const BackupRetentionManagement: FunctionComponent = () => {
 		getBackupCurrentSiteSize( state, siteId )
 	) as number;
 
-	const estimatedCurrentSiteSize = getEstimatedCurrentSiteSize( lastBackupSize );
+	const estimatedCurrentSiteSize = lastBackupSize * ( STORAGE_ESTIMATION_ADDITIONAL_BUFFER + 1 );
 	const currentSiteSizeText = useStorageText( estimatedCurrentSiteSize );
 	const storageLimitText = useStorageText( storageLimitBytes );
 
@@ -129,7 +129,7 @@ const BackupRetentionManagement: FunctionComponent = () => {
 			const newOptions = previousOptions.map( ( card ): RetentionRadioOptionType => {
 				const isCurrentPlan = card.value === currentRetentionPlan;
 				const checked = card.value === retentionSelected;
-				const spaceNeededInBytes = getSpaceNeededInBytes( estimatedCurrentSiteSize, card.value );
+				const spaceNeededInBytes = estimatedCurrentSiteSize * card.value;
 				const upgradeRequired = spaceNeededInBytes > storageLimitBytes;
 
 				return {
