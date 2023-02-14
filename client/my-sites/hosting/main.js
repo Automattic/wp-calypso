@@ -17,6 +17,7 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
 import { GitHubCard } from 'calypso/my-sites/hosting/github';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
@@ -65,6 +66,7 @@ class Hosting extends Component {
 			// Try to refresh the transfer state
 			this.props.fetchAutomatedTransferStatus( this.props.siteId );
 		}
+		setTimeout( () => scrollToAnchor( { offset: 30 } ), 2000 );
 	}
 
 	render() {
