@@ -15,11 +15,7 @@ import PromptsNavigation from './prompts-navigation';
 
 import './style.scss';
 
-<<<<<<< HEAD:client/components/blogging-prompt-card/index.jsx
-const BloggingPromptCard = ( { siteId, viewContext, showMenu } ) => {
-=======
-const BloggingPromptCard = ( { index } ) => {
->>>>>>> 93c3eca481 (Pass index of prompts to card):client/my-sites/customer-home/cards/features/blogging-prompt/index.jsx
+const BloggingPromptCard = ( { siteId, viewContext, showMenu, index } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
@@ -82,15 +78,12 @@ const BloggingPromptCard = ( { index } ) => {
 					</span>
 					{ showMenu && renderMenu() }
 				</CardHeading>
-<<<<<<< HEAD:client/components/blogging-prompt-card/index.jsx
 				<PromptsNavigation
 					siteId={ siteId }
 					prompts={ prompts }
 					tracksPrefix={ getTracksPrefix() }
+					index={ index }
 				/>
-=======
-				<PromptsNavigation prompts={ prompts } index={ index } />
->>>>>>> 93c3eca481 (Pass index of prompts to card):client/my-sites/customer-home/cards/features/blogging-prompt/index.jsx
 			</Card>
 		</div>
 	);

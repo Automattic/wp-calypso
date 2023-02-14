@@ -10,23 +10,14 @@ import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import NoResponsesIcon from './no-responses-icon';
 import './style.scss';
 
-<<<<<<< HEAD:client/components/blogging-prompt-card/prompts-navigation.jsx
-const PromptsNavigation = ( { siteId, prompts, tracksPrefix } ) => {
+const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-=======
-const PromptsNavigation = ( { prompts, index } ) => {
-	const dispatch = useDispatch();
-	const translate = useTranslate();
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
->>>>>>> 93c3eca481 (Pass index of prompts to card):client/my-sites/customer-home/cards/features/blogging-prompt/prompts-navigation.jsx
 	const editorUrl = useSelector( ( state ) => getEditorUrl( state, siteId ) );
-	const [ promptIndex, setPromptIndex ] = useState( 0 );
 	const backIcon = 'arrow-left';
 	const forwardIcon = 'arrow-right';
 
 	const initialIndex = index ? index % prompts.length : 0;
-
 	const [ promptIndex, setPromptIndex ] = useState( initialIndex );
 
 	const getPrompt = () => {
