@@ -67,19 +67,19 @@ describe( 'rewind.size reducers', () => {
 		);
 
 		it( 'should return the new retentionDays value if we set it using the action JETPACK_BACKUP_RETENTION_SET and state is undefined', () => {
-			const state = undefined;
-			const action = { type: JETPACK_BACKUP_RETENTION_SET, retentionDays: 30 };
-			const expected = 30;
-
-			expect( sizeReducer( state, action ).retentionDays ).toEqual( expected );
+			expect(
+				sizeReducer( undefined, { type: JETPACK_BACKUP_RETENTION_SET, retentionDays: 30 } )
+					.retentionDays
+			).toEqual( 30 );
 		} );
 
 		it( 'should return the new retentionDays value if we set it using the action JETPACK_BACKUP_RETENTION_SET and state has a value', () => {
-			const state = { retentionDays: 30 };
-			const action = { type: JETPACK_BACKUP_RETENTION_SET, retentionDays: 7 };
-			const expected = 7;
-
-			expect( sizeReducer( state, action ).retentionDays ).toEqual( expected );
+			expect(
+				sizeReducer(
+					{ retentionDays: 30 },
+					{ type: JETPACK_BACKUP_RETENTION_SET, retentionDays: 7 }
+				).retentionDays
+			).toEqual( 7 );
 		} );
 	} );
 } );
