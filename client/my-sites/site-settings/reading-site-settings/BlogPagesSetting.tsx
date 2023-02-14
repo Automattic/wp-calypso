@@ -16,7 +16,11 @@ export const BlogPagesSetting = ( { value = 10, onChange, disabled }: BlogPagesS
 	const translate = useTranslate();
 	return (
 		<FormFieldset>
-			<FormLabel id={ `${ BLOG_PAGES_OPTION }-label` } htmlFor={ BLOG_PAGES_OPTION }>
+			<FormLabel
+				id={ `${ BLOG_PAGES_OPTION }-label` }
+				htmlFor={ BLOG_PAGES_OPTION }
+				className="reduce-margin-bottom-fix"
+			>
 				{ translate( 'Blog pages' ) }
 			</FormLabel>
 			<div>

@@ -15,11 +15,6 @@
 
 	label {
 		display: block;
-		margin-bottom: 12px;
-	}
-
-	legend {
-		margin-bottom: 5px;
 	}
 
 	input {
@@ -47,8 +42,17 @@
 
 	legend,
 	label {
+		margin-bottom: 5px;
 		font-size: $font-body-small;
 		font-weight: 700;
+	}
+
+	label.reduce-margin-bottom-fix {
+		margin-bottom: 2px;
+	}
+
+	label.increase-margin-bottom-fix {
+		margin-bottom: 7px;
 	}
 
 	.components-toggle-control__label {
