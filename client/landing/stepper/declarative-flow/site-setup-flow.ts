@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
-import { Design } from '@automattic/design-picker';
+import { Design, isBlankCanvasDesign } from '@automattic/design-picker';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
@@ -241,7 +241,7 @@ const siteSetupFlow: Flow = {
 					}
 
 					// End of Pattern Assembler flow
-					if ( selectedDesign?.design_type === 'assembler' ) {
+					if ( isBlankCanvasDesign( selectedDesign ) ) {
 						window.sessionStorage.setItem( 'wpcom_signup_completed_flow', 'pattern_assembler' );
 						return exitFlow( `/site-editor/${ siteSlug }` );
 					}
