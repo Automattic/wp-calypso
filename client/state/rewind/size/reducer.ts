@@ -66,15 +66,12 @@ const daysOfBackupsSaved = (
 	return size.daysOfBackupsSaved ?? null;
 };
 
-const retentionDays = (
-	state: AppState = null,
-	{ type, size, retentionDays }: AnyAction
-): AppState | number | null => {
-	switch ( type ) {
+const retentionDays = ( state: AppState = null, payload: AnyAction ): AppState | number | null => {
+	switch ( payload.type ) {
 		case REWIND_SIZE_SET:
-			return size.retentionDays ?? null;
+			return payload.size.retentionDays ?? null;
 		case JETPACK_BACKUP_RETENTION_SET:
-			return retentionDays ?? null;
+			return payload.retentionDays ?? null;
 	}
 
 	return state;
