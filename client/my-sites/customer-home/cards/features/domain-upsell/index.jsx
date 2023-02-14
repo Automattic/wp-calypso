@@ -54,7 +54,7 @@ export function RenderDomainUpsell() {
 	const domainSuggestionName = domainSuggestion?.domain_name ?? siteSubDomain + '.blog';
 	const domainSuggestionProductSlug = domainSuggestion?.product_slug;
 
-	const searchLink = '/domains/add/' + siteSlug;
+	const searchLink = '/domains/add/' + siteSlug + '?domainAndPlanPackage=true';
 	const getSearchClickHandler = () => {
 		recordTracksEvent( 'calypso_my_home_domain_upsell_search_click', {
 			button_url: searchLink,
