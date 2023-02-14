@@ -321,7 +321,8 @@ class StatsSite extends Component {
 							statType="statsVideoPlays"
 							showSummaryLink
 						/>
-						{ config.isEnabled( 'newsletter/stats' ) && (
+						{ /** Enable Email module when Odyssey is ready. */ }
+						{ config.isEnabled( 'newsletter/stats' ) && ! isOdysseyStats && (
 							<>
 								<StatsModule
 									additionalColumns={ {
