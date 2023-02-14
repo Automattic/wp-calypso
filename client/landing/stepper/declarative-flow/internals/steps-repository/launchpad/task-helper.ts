@@ -29,7 +29,6 @@ export function getEnhancedTasks(
 	const enhancedTaskList: Task[] = [];
 	const productSlug = site?.plan?.product_slug;
 	const translatedPlanName = productSlug ? PLANS_LIST[ productSlug ].getTitle() : '';
-	const isSiteOnFreePlan = site?.plan?.is_free;
 
 	const linkInBioLinksEditCompleted =
 		site?.options?.launchpad_checklist_tasks_statuses?.links_edited || false;
@@ -301,13 +300,11 @@ export function getEnhancedTasks(
 				case 'domain_upsell':
 					taskData = {
 						title: translate( 'Choose a domain' ),
-						completed: ! isSiteOnFreePlan,
-						disabled: ! isSiteOnFreePlan,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign( `/domains/add/${ siteSlug }` );
 						},
-						...( isSiteOnFreePlan && { badgeText: translate( 'Upgrade Plan' ) } ),
+						badgeText: translate( 'Upgrade Plan' ),
 					};
 					break;
 			}
