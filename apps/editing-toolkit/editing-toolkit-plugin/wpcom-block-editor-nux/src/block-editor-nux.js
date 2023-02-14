@@ -9,6 +9,8 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
 import { getQueryArg } from '@wordpress/url';
+import { QueryClientProvider } from 'react-query';
+import { blockEditorNuxQueryClient } from '../../common/block-editor-nux-query-client';
 import DraftPostModal from './draft-post-modal';
 import PostPublishedModal from './post-published-modal';
 import PurchaseNotice from './purchase-notice';
@@ -80,11 +82,13 @@ function WelcomeTour() {
 registerPlugin( 'wpcom-block-editor-nux', {
 	render: () => (
 		<>
-			<WelcomeTour />
-			<PostPublishedModal />
-			<SellerCelebrationModal />
-			<PurchaseNotice />
-			<VideoPressCelebrationModal />
+			<QueryClientProvider client={ blockEditorNuxQueryClient }>
+				<WelcomeTour />
+				<PostPublishedModal />
+				<SellerCelebrationModal />
+				<PurchaseNotice />
+				<VideoPressCelebrationModal />
+			</QueryClientProvider>
 		</>
 	),
 } );
