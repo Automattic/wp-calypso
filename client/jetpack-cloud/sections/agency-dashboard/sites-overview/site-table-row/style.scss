@@ -5,10 +5,6 @@
 	&:hover {
 		background: var(--studio-gray-0);
 
-		+.site-table__connection-error {
-			background: var(--studio-gray-0);
-		}
-
 		.sites-overview__overlay {
 			background: linear-gradient(to right, rgba(246, 247, 247, 0.8) 30%, rgba(246, 247, 247, 1) 100%);
 		}
@@ -34,12 +30,6 @@
 	}
 }
 
-.site-table__connection-error {
-	td {
-		padding: 0;
-	}
-}
-
 td.site-table__actions {
 	padding: 0;
 	width: 50px;
@@ -55,3 +45,16 @@ td.site-table__td-without-border-bottom {
 	right: 0;
 	top: 2px;
 }
+td.site-table__error {
+	padding: 0 16px;
+}
+
+tr.site-table__table-row-site-error {
+	background: var(--studio-red-0);
+	&:hover,
+	&:hover .sites-overview__overlay,
+	.sites-overview__overlay {
+		background: var(--studio-red-0);
+	}
+}
+

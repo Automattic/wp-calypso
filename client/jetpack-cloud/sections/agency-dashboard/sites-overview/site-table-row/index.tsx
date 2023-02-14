@@ -51,6 +51,7 @@ export default function SiteTableRow( { columns, item, setExpanded, isExpanded }
 		selectedLicenses?.length && ! currentSiteHasSelectedLicenses;
 
 	const hideBorderBottom = isExpanded || site.error;
+	const showSiteError = site.error || ! isSiteConnected;
 
 	return (
 		<Fragment>
@@ -58,6 +59,7 @@ export default function SiteTableRow( { columns, item, setExpanded, isExpanded }
 				className={ classNames( 'site-table__table-row', {
 					'site-table__table-row-disabled': shouldDisableLicenseSelection,
 					'site-table__table-row-active': currentSiteHasSelectedLicenses,
+					'site-table__table-row-site-error': showSiteError,
 				} ) }
 				onClick={ ( event ) => {
 					if ( ! shouldDisableLicenseSelection ) {
@@ -71,6 +73,9 @@ export default function SiteTableRow( { columns, item, setExpanded, isExpanded }
 			>
 				{ columns.map( ( column ) => {
 					const row = item[ column.key ];
+					if ( showSiteError && column.key !== 'site' ) {
+						return null;
+					}
 					if ( row.type ) {
 						return (
 							<td
@@ -89,6 +94,11 @@ export default function SiteTableRow( { columns, item, setExpanded, isExpanded }
 						);
 					}
 				} ) }
+				{ showSiteError && (
+					<td className="site-table__error" colSpan={ columns.length - 1 }>
+						<SiteErrorContent siteUrl={ site.value.url } />
+					</td>
+				) }
 				<td
 					className={ classNames( 'site-table__actions', {
 						'site-table__td-without-border-bottom': hideBorderBottom,
