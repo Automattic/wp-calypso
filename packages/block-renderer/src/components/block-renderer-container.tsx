@@ -7,7 +7,7 @@ import {
 } from '@wordpress/block-editor';
 import { useResizeObserver, useRefEffect } from '@wordpress/compose';
 import { useSelect } from '@wordpress/data';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { BLOCK_MAX_HEIGHT } from '../constants';
 import type { RenderedStyle } from '../types';
 import './block-renderer-container.scss';
@@ -40,6 +40,7 @@ const ScaledBlockRendererContainer = ( {
 	isMinHeight100vh,
 	maxHeightFor100vh,
 }: ScaledBlockRendererContainerProps ) => {
+	const [ isLoaded, setIsLoaded ] = useState( false );
 	const [ contentResizeListener, { height: contentHeight } ] = useResizeObserver();
 	const { styles, assets, duotone } = useSelect( ( select ) => {
 		// @ts-expect-error Type definition is outdated
@@ -115,8 +116,8 @@ const ScaledBlockRendererContainer = ( {
 						: undefined,
 				minHeight: '1px',
 				// Try to avoid showing the content when the styles are not ready
-				opacity: contentHeight ? 1 : 0,
-				transition: 'opacity 0.3s ease-in-out',
+				opacity: isLoaded ? 1 : 0,
+				transition: 'opacity 0.3s ease-in',
 			} }
 		>
 			<Iframe
@@ -124,6 +125,12 @@ const ScaledBlockRendererContainer = ( {
 				assets={ assets }
 				contentRef={ contentRef }
 				aria-hidden
+				onLoad={ ( { target }: { target: HTMLLinkElement } ) => {
+					// Wait for the style links
+					if ( ! isLoaded && target.href ) {
+						setIsLoaded( true );
+					}
+				} }
 				tabIndex={ -1 }
 				style={ {
 					position: 'absolute',
@@ -142,7 +149,7 @@ const ScaledBlockRendererContainer = ( {
 						<PresetDuotoneFilter preset={ preset } key={ preset.slug } />
 					) )
 				}
-				{ children }
+				{ isLoaded ? children : null }
 			</Iframe>
 		</div>
 	);

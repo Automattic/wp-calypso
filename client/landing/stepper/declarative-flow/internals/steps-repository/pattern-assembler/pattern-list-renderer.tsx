@@ -38,10 +38,7 @@ const PatternListItem = ( { pattern, className, isShown, onSelect }: PatternList
 					maxHeightFor100vh={ MAX_HEIGHT_FOR_100VH }
 				/>
 			) : (
-				<div
-					className="pattern-list-renderer__pattern-list-item-placeholder"
-					style={ { height: PLACEHOLDER_HEIGHT } }
-				/>
+				<div style={ { height: PLACEHOLDER_HEIGHT } } />
 			) }
 		</Button>
 	);
