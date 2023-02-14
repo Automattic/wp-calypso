@@ -17,7 +17,7 @@ import ExternalLinkWithTracking from 'calypso/components/external-link/with-trac
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
-import { PLANS_UI_STORE } from './store';
+import { WPCOM_PLANS_UI_STORE } from './store';
 
 type PlanFeaturesActionsButtonProps = {
 	availableForPurchase: boolean;
@@ -155,7 +155,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	forceDisplayButton: boolean;
 	selectedSiteSlug: string | null;
 } ) => {
-	const { setShowDomainUpsellDialog } = useDispatch( PLANS_UI_STORE );
+	const { setShowDomainUpsellDialog } = useDispatch( WPCOM_PLANS_UI_STORE );
 	const translate = useTranslate();
 	const domainFromHomeUpsellFlow = useSelector(
 		( state ) => getCurrentQueryArguments( state )?.get_domain

@@ -6,11 +6,11 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { PLANS_UI_STORE } from '../../store';
+import { WPCOM_PLANS_UI_STORE } from '../../store';
 import './style.scss';
 
 const DomainUpsellHeader: React.FunctionComponent = () => {
-	const { setShowDomainUpsellDialog } = useDispatch( PLANS_UI_STORE );
+	const { setShowDomainUpsellDialog } = useDispatch( WPCOM_PLANS_UI_STORE );
 	const translate = useTranslate();
 	const is2023OnboardingPricingGrid = isEnabled( 'onboarding/2023-pricing-grid' );
 	const plansDescription = translate(

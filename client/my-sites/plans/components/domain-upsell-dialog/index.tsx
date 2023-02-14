@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { PLANS_UI_STORE } from '../../store';
+import { WPCOM_PLANS_UI_STORE } from '../../store';
 import './style.scss';
 
 const DomainUpsellDialog: React.FunctionComponent< {
@@ -16,9 +16,9 @@ const DomainUpsellDialog: React.FunctionComponent< {
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, selectedSiteId ) );
-	const { setShowDomainUpsellDialog } = useDispatch( PLANS_UI_STORE );
+	const { setShowDomainUpsellDialog } = useDispatch( WPCOM_PLANS_UI_STORE );
 	const visible = useSelect( ( select ) => {
-		return select( PLANS_UI_STORE ).isDomainUpsellDialogShown();
+		return select( WPCOM_PLANS_UI_STORE ).isDomainUpsellDialogShown();
 	} );
 
 	const onCloseDialog = useCallback( () => {

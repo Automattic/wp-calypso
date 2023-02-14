@@ -1,3 +1,3 @@
-import { PlansUI } from '@automattic/data-stores';
+import { WpcomPlansUI } from '@automattic/data-stores';
 
-export const PLANS_UI_STORE = PlansUI.register();
+export const WPCOM_PLANS_UI_STORE = WpcomPlansUI.register();
