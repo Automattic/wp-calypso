@@ -304,7 +304,7 @@ export function getEnhancedTasks(
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign( `/domains/add/${ siteSlug }` );
 						},
-						badgeText: translate( 'Upgrade Plan' ),
+						badgeText: translate( 'Upgrade plan' ),
 					};
 					break;
 			}
