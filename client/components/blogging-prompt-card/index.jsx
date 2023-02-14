@@ -8,44 +8,62 @@ import { useBloggingPrompts } from 'calypso/data/blogging-prompt/use-blogging-pr
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 import { SECTION_BLOGGING_PROMPT } from 'calypso/my-sites/customer-home/cards/constants';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
 import BellOffIcon from './bell-off-icon';
 import LightbulbIcon from './lightbulb-icon';
 import PromptsNavigation from './prompts-navigation';
 
 import './style.scss';
 
-const BloggingPromptCard = () => {
+const BloggingPromptCard = ( { siteId, viewContext, showMenu } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
-	const primarySiteId = useSelector( ( state ) => getPrimarySiteId( state ) );
-	let siteId = selectedSiteId;
-
-	// We need a site ID to request prompts
-	// If no selected site ID, fallback to using Primary site ID
-	if ( siteId === null ) {
-		siteId = primarySiteId;
-	}
-
-	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const notificationSettingsLink = '/me/notifications' + ( siteSlug ? '#' + siteSlug : '' );
-
 	const maxNumberOfPrompts = 10;
 	const { data: prompts } = useBloggingPrompts( siteId, maxNumberOfPrompts );
-
 	const { skipCard } = useSkipCurrentViewMutation( siteId );
 
 	if ( prompts === undefined ) {
 		return null;
 	}
+
+	const getTracksPrefix = () => {
+		if ( viewContext === 'home' ) {
+			return 'calypso_customer_home_';
+		} else if ( viewContext === 'reader' ) {
+			return 'calypso_reader_';
+		}
+
+		// eslint-disable-next-line no-console
+		console.error( 'A valid viewContext is required for the BloggingPromptCard component.' );
+	};
+
 	const hidePrompts = () => {
 		skipCard( SECTION_BLOGGING_PROMPT );
 		dispatch(
-			recordTracksEvent( 'calypso_customer_home_task_skip', {
+			recordTracksEvent( getTracksPrefix() + 'task_skip', {
 				task: SECTION_BLOGGING_PROMPT,
 			} )
+		);
+	};
+
+	const renderMenu = () => {
+		return (
+			<EllipsisMenu
+				className="blogging-prompt__menu"
+				position="bottom"
+				key="blogging-prompt__menu" //`key` is necessary due to behavior of preventWidows function in CardHeading component.
+			>
+				<Button className="popover__menu-item" onClick={ hidePrompts }>
+					<Gridicon icon="not-visible" className="gridicons-not-visible" />
+					{ translate( 'Hide Daily Prompts' ) }
+				</Button>
+				<Button className="popover__menu-item" href={ notificationSettingsLink }>
+					<BellOffIcon />
+					{ translate( 'Manage Notifications' ) }
+				</Button>
+			</EllipsisMenu>
 		);
 	};
 
@@ -54,26 +72,17 @@ const BloggingPromptCard = () => {
 			<Card className={ classnames( 'customer-home__card', 'blogging-prompt__card' ) }>
 				<CardHeading>
 					<LightbulbIcon />
-					<span className="blogging-prompt__heading-text">
+					{ /*`key` is necessary due to behavior of preventWidows function in CardHeading component.*/ }
+					<span className="blogging-prompt__heading-text" key="blogging-prompt__heading-text">
 						{ translate( 'Daily writing prompt' ) }
 					</span>
-					{ /* `key` is necessary due to behavior of preventWidows function in CardHeading component. */ }
-					<EllipsisMenu
-						className="blogging-prompt__menu"
-						position="bottom"
-						key="blogging-prompt__menu"
-					>
-						<Button className="popover__menu-item" onClick={ hidePrompts }>
-							<Gridicon icon="not-visible" className="gridicons-not-visible" />
-							{ translate( 'Hide Daily Prompts' ) }
-						</Button>
-						<Button className="popover__menu-item" href={ notificationSettingsLink }>
-							<BellOffIcon />
-							{ translate( 'Manage Notifications' ) }
-						</Button>
-					</EllipsisMenu>
+					{ showMenu && renderMenu() }
 				</CardHeading>
-				<PromptsNavigation prompts={ prompts } />
+				<PromptsNavigation
+					siteId={ siteId }
+					prompts={ prompts }
+					tracksPrefix={ getTracksPrefix() }
+				/>
 			</Card>
 		</div>
 	);

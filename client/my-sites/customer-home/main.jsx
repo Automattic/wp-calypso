@@ -135,7 +135,7 @@ const Home = ( {
 					<PluginsAnnouncementModal />
 					<div className="customer-home__layout">
 						<div className="customer-home__layout-col customer-home__layout-col-left">
-							<Secondary cards={ layout.secondary } />
+							<Secondary cards={ layout.secondary } siteId={ siteId } />
 						</div>
 						<div className="customer-home__layout-col customer-home__layout-col-right">
 							<Tertiary cards={ layout.tertiary } />
