@@ -98,7 +98,8 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 				{ currentTask && enhancedTasks?.length && (
 					<div className="launchpad__progress-bar-container">
 						<CircularProgressBar
-							size={ 52 }
+							size={ 40 }
+							enableDesktopScaling
 							currentStep={ currentTask }
 							numberOfSteps={ enhancedTasks?.length }
 						/>

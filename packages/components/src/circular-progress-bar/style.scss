@@ -8,7 +8,7 @@
 	&.desktop-scaling {
 		@include break-mobile {
 			// mobile first, upscale for desktop
-			transform: scale(1.2);
+			transform: scale(1.3);
 		}
 	}
 
@@ -25,7 +25,8 @@
 
 	&-text {
 		font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-		font-size: 15px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		font-size: 11.5px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		font-weight: 500;
 		letter-spacing: 0.05em;
 
 		// center the text inside the circle
