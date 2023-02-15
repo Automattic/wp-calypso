@@ -327,12 +327,12 @@ export const SitesEllipsisMenu = ( {
 					<SiteMenuGroup>
 						{ site.launch_status === 'unlaunched' && <LaunchItem { ...props } /> }
 						<SettingsItem { ...props } />
+						<DeveloperSettings siteSlug={ site.slug } />
 						<ManagePluginsItem { ...props } />
 						{ showHosting && <HostingConfigItem { ...props } /> }
 						{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
 						{ shouldShowSiteCopyItem && <CopySiteItem { ...props } onClick={ startSiteCopy } /> }
 						<WpAdminItem { ...props } />
-						<DeveloperSettings siteSlug={ site.slug } />
 					</SiteMenuGroup>
 				) }
 			</SiteDropdownMenu>
