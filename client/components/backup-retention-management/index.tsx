@@ -7,18 +7,18 @@ import { useStorageText } from 'calypso/components/backup-storage-space/hooks';
 import { updateBackupRetention } from 'calypso/state/rewind/retention/actions';
 import { BACKUP_RETENTION_UPDATE_REQUEST } from 'calypso/state/rewind/retention/constants';
 import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
+import getBackupCurrentSiteSize from 'calypso/state/rewind/selectors/get-backup-current-site-size';
 import getBackupRetentionDays from 'calypso/state/rewind/selectors/get-backup-retention-days';
 import getBackupRetentionUpdateRequestStatus from 'calypso/state/rewind/selectors/get-backup-retention-update-status';
 import getRewindBytesAvailable from 'calypso/state/rewind/selectors/get-rewind-bytes-available';
 import isRequestingRewindPolicies from 'calypso/state/rewind/selectors/is-requesting-rewind-policies';
 import isRequestingRewindSize from 'calypso/state/rewind/selectors/is-requesting-rewind-size';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { RETENTION_OPTIONS } from './constants';
-import { useEstimatedCurrentSiteSize, usePrepareRetentionOptions } from './hooks';
+import { RETENTION_OPTIONS, STORAGE_ESTIMATION_ADDITIONAL_BUFFER } from './constants';
 import InfoTooltip from './info-tooltip';
 import LoadingPlaceholder from './loading';
 import RetentionOptionsControl from './retention-options/retention-options-control';
-import type { RetentionRadioOptionType } from './types';
+import type { RetentionOptionInput } from './types';
 import type { RetentionPeriod } from 'calypso/state/rewind/retention/types';
 import './style.scss';
 
@@ -47,6 +47,9 @@ const BackupRetentionManagement: FunctionComponent = () => {
 	// The retention days option selected by the customer ( or by default )
 	const [ retentionSelected, setRetentionSelected ] = useState( 0 );
 
+	// If the current selection requires an storage upgrade
+	const [ storageUpgradeRequired, setStorageUpgradeRequired ] = useState( false );
+
 	// The retention days that currently applies for this customer.
 	const [ currentRetentionPlan, setCurrentRetentionPlan ] = useState( 0 );
 	useEffect( () => {
@@ -65,53 +68,48 @@ const BackupRetentionManagement: FunctionComponent = () => {
 	const storageLimitBytes = useSelector( ( state ) =>
 		getRewindBytesAvailable( state, siteId )
 	) as number;
-	const estimatedCurrentSiteSize = useEstimatedCurrentSiteSize();
 
+	const lastBackupSize = useSelector( ( state ) =>
+		getBackupCurrentSiteSize( state, siteId )
+	) as number;
+
+	const estimatedCurrentSiteSize = lastBackupSize * ( STORAGE_ESTIMATION_ADDITIONAL_BUFFER + 1 );
 	const currentSiteSizeText = useStorageText( estimatedCurrentSiteSize );
 	const storageLimitText = useStorageText( storageLimitBytes );
 
-	const retentionOptionsCards: Record< number, RetentionRadioOptionType > = {
-		[ RETENTION_OPTIONS.RETENTION_DAYS_7 ]: usePrepareRetentionOptions(
-			translate( '7 days' ),
-			RETENTION_OPTIONS.RETENTION_DAYS_7,
-			currentRetentionPlan,
-			retentionSelected === RETENTION_OPTIONS.RETENTION_DAYS_7
-		),
-		[ RETENTION_OPTIONS.RETENTION_DAYS_30 ]: usePrepareRetentionOptions(
-			translate( '30 days' ),
-			RETENTION_OPTIONS.RETENTION_DAYS_30,
-			currentRetentionPlan,
-			retentionSelected === RETENTION_OPTIONS.RETENTION_DAYS_30
-		),
-		[ RETENTION_OPTIONS.RETENTION_DAYS_120 ]: usePrepareRetentionOptions(
-			translate( '120 days' ),
-			RETENTION_OPTIONS.RETENTION_DAYS_120,
-			currentRetentionPlan,
-			retentionSelected === RETENTION_OPTIONS.RETENTION_DAYS_120
-		),
-		[ RETENTION_OPTIONS.RETENTION_DAYS_365 ]: usePrepareRetentionOptions(
-			translate( '1 year' ),
-			RETENTION_OPTIONS.RETENTION_DAYS_365,
-			currentRetentionPlan,
-			retentionSelected === RETENTION_OPTIONS.RETENTION_DAYS_365
-		),
-	};
+	const retentionOptionsCards = RETENTION_OPTIONS.map( ( retentionDays ) => {
+		return {
+			id: retentionDays,
+			spaceNeededInBytes: estimatedCurrentSiteSize * retentionDays,
+			upgradeRequired: estimatedCurrentSiteSize * retentionDays > storageLimitBytes,
+		};
+	} );
 
 	const updateRetentionRequestStatus = useSelector( ( state ) =>
 		getBackupRetentionUpdateRequestStatus( state, siteId )
 	);
 
 	// Set the retention period selected when the user selects a new option
-	const onRetentionSelectionChange = useCallback( ( value: number ) => {
-		if ( value ) {
-			setRetentionSelected( value );
-		}
-	}, [] );
+	const onRetentionSelectionChange = useCallback(
+		( value: number ) => {
+			if ( value ) {
+				setRetentionSelected( value );
+				const selectedOption = retentionOptionsCards.find(
+					( option ) => option.id === value
+				) as RetentionOptionInput;
+
+				if ( selectedOption.upgradeRequired !== storageUpgradeRequired ) {
+					setStorageUpgradeRequired( selectedOption.upgradeRequired );
+				}
+			}
+		},
+		[ retentionOptionsCards, storageUpgradeRequired ]
+	);
 
 	const disableFormSubmission =
 		! retentionSelected ||
 		retentionSelected === currentRetentionPlan ||
-		retentionOptionsCards[ retentionSelected ].upgradeRequired ||
+		storageUpgradeRequired ||
 		updateRetentionRequestStatus === BACKUP_RETENTION_UPDATE_REQUEST.PENDING;
 
 	const [ confirmationDialogVisible, setConfirmationDialogVisible ] = useState( false );
@@ -175,6 +173,7 @@ const BackupRetentionManagement: FunctionComponent = () => {
 							{ translate( 'Select the number of days you would like your backups to be saved.' ) }
 						</div>
 						<RetentionOptionsControl
+							currentRetentionPlan={ currentRetentionPlan }
 							onChange={ onRetentionSelectionChange }
 							retentionSelected={ retentionSelected }
 							retentionOptions={ retentionOptionsCards }
