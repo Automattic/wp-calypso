@@ -66,6 +66,10 @@ class SuggestionSearch extends Component {
 	};
 
 	handleSuggestionKeyDown = ( event ) => {
+		if ( event.key === 'Backspace' ) {
+			this.props.onReset?.();
+		}
+
 		if ( this.suggestionsRef.props.suggestions.length > 0 && event.key === 'Enter' ) {
 			event.preventDefault();
 		}

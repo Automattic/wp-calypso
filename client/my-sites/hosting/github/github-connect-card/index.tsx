@@ -1,4 +1,4 @@
-import { Button, Card, Spinner } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import { ExternalLink } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
 import { ComponentProps, useState } from 'react';
@@ -11,10 +11,9 @@ import SocialLogo from 'calypso/components/social-logo';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { DisconnectGitHubExpander } from '../disconnect-github-expander';
-import { Search } from './search';
+import { SearchRepos } from './search-repos';
 import { useGithubBranches } from './use-github-branches';
 import { useGithubConnectMutation } from './use-github-connect';
-import { useGithubRepos } from './use-github-repos';
 
 import './style.scss';
 interface GithubConnectCardProps {
@@ -30,7 +29,7 @@ export const GithubConnectCard = ( { connection }: GithubConnectCardProps ) => {
 
 	const [ selectedRepo, setSelectedRepo ] = useState< string >();
 	const [ selectedBranch, setSelectedBranch ] = useState< string >();
-	const { data: repos, isLoading: isLoadingRepos } = useGithubRepos( siteId );
+
 	const { data: branches, isLoading: isLoadingBranches } = useGithubBranches(
 		siteId,
 		selectedRepo,
@@ -58,7 +57,6 @@ export const GithubConnectCard = ( { connection }: GithubConnectCardProps ) => {
 		},
 	} );
 
-	const showSpinner = ! repos && ! branches && ( isLoadingRepos || isLoadingBranches );
 	const busy = isLoadingBranches || isConnecting;
 	const disabled = ! selectedBranch || ! selectedRepo;
 	const handleRepoSelect = ( repoName: string ) => {
@@ -70,11 +68,9 @@ export const GithubConnectCard = ( { connection }: GithubConnectCardProps ) => {
 		setSelectedBranch( branchName );
 	};
 
-	const resetRepoSelection = ( query: string ) => {
-		if ( selectedRepo && query.length === 0 ) {
-			setSelectedRepo( '' );
-			setSelectedBranch( '' );
-		}
+	const resetRepoSelection = () => {
+		setSelectedRepo( '' );
+		setSelectedBranch( '' );
 	};
 
 	return (
@@ -88,37 +84,31 @@ export const GithubConnectCard = ( { connection }: GithubConnectCardProps ) => {
 						{ __( 'Learn more' ) }
 					</ExternalLink>
 				</p>
-				{ showSpinner ? (
-					<Spinner />
-				) : (
-					<FormFieldset className="connect-branch__fields">
-						<FormFieldset className="connect-branch__field">
-							<FormLabel htmlFor="repository">{ __( 'Repository' ) }</FormLabel>
-							<Search
-								id="repository"
-								className="connect-branch__repository-field"
-								placeholder={ __( 'Start typing a repo..' ) }
-								options={ repos ?? [] }
-								onSelect={ handleRepoSelect }
-								onChange={ resetRepoSelection }
-							/>
-						</FormFieldset>
-						<FormFieldset className="connect-branch__field">
-							<FormLabel htmlFor="branch">{ __( 'Branch to deploy' ) }</FormLabel>
-							<FormSelect
-								className="connect-branch__field"
-								onChange={ ( event ) => handleBranchSelect( event.currentTarget.value ) }
-								value={ selectedBranch }
-							>
-								{ branches?.map( ( branch ) => (
-									<option value={ branch } key={ branch }>
-										{ branch }
-									</option>
-								) ) }
-							</FormSelect>
-						</FormFieldset>
+
+				<FormFieldset className="connect-branch__fields">
+					<FormFieldset className="connect-branch__field">
+						<FormLabel htmlFor="repository">{ __( 'Repository' ) }</FormLabel>
+						<SearchRepos
+							siteId={ siteId }
+							onSelect={ handleRepoSelect }
+							onReset={ resetRepoSelection }
+						/>
 					</FormFieldset>
-				) }
+					<FormFieldset className="connect-branch__field">
+						<FormLabel htmlFor="branch">{ __( 'Branch to deploy' ) }</FormLabel>
+						<FormSelect
+							className="connect-branch__field"
+							onChange={ ( event ) => handleBranchSelect( event.currentTarget.value ) }
+							value={ selectedBranch }
+						>
+							{ branches?.map( ( branch ) => (
+								<option value={ branch } key={ branch }>
+									{ branch }
+								</option>
+							) ) }
+						</FormSelect>
+					</FormFieldset>
+				</FormFieldset>
 			</div>
 			<div className="connect-branch__buttons">
 				<Button
