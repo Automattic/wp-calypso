@@ -60,50 +60,48 @@ let pageLink = '';
 jest.mock( 'page', () => ( link ) => ( pageLink = link ) );
 
 describe( 'index', () => {
-	describe( 'verification nudge', () => {
-		test( 'Should show H3 content for the Home domain upsell and test search domain button link', async () => {
-			const initialState = {};
-			const mockStore = configureStore();
-			const store = mockStore( initialState );
+	test( 'Should show H3 content for the Home domain upsell and test search domain button link', async () => {
+		const initialState = {};
+		const mockStore = configureStore();
+		const store = mockStore( initialState );
 
-			const { container } = render(
-				<Provider store={ store }>
-					<DomainUpsell />
-				</Provider>
-			);
+		const { container } = render(
+			<Provider store={ store }>
+				<DomainUpsell />
+			</Provider>
+		);
 
-			const notice = container.querySelector( 'h3' );
-			expect( notice ).toBeVisible();
-			expect( notice ).toHaveTextContent( 'Own your online identity with a custom domain' );
+		const notice = container.querySelector( 'h3' );
+		expect( notice ).toBeVisible();
+		expect( notice ).toHaveTextContent( 'Own your online identity with a custom domain' );
 
-			const links = [].slice.call( container.querySelectorAll( 'a' ) );
-			expect(
-				links.some( ( link ) =>
-					link.href.endsWith( '/domains/add/example.wordpress.com?domainAndPlanPackage=true' )
-				)
-			).toBeTruthy();
-		} );
+		const links = [].slice.call( container.querySelectorAll( 'a' ) );
+		expect(
+			links.some( ( link ) =>
+				link.href.endsWith( '/domains/add/example.wordpress.com?domainAndPlanPackage=true' )
+			)
+		).toBeTruthy();
+	} );
 
-		test( 'Should test the purchase button link', async () => {
-			nock.cleanAll();
-			nock( 'https://public-api.wordpress.com' )
-				.persist()
-				.post( '/rest/v1.1/me/shopping-cart/no-site' )
-				.reply( 200 );
+	test( 'Should test the purchase button link', async () => {
+		nock.cleanAll();
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.post( '/rest/v1.1/me/shopping-cart/no-site' )
+			.reply( 200 );
 
-			const initialState = {};
-			const mockStore = configureStore();
-			const store = mockStore( initialState );
+		const initialState = {};
+		const mockStore = configureStore();
+		const store = mockStore( initialState );
 
-			const { getByText } = render(
-				<Provider store={ store }>
-					<DomainUpsell />
-				</Provider>
-			);
+		const { getByText } = render(
+			<Provider store={ store }>
+				<DomainUpsell />
+			</Provider>
+		);
 
-			const user = userEvent.setup();
-			await user.click( getByText( 'Buy this domain' ) );
-			expect( pageLink ).toBe( '/plans/yearly/example.wordpress.com?get_domain=example.blog' );
-		} );
+		const user = userEvent.setup();
+		await user.click( getByText( 'Buy this domain' ) );
+		expect( pageLink ).toBe( '/plans/yearly/example.wordpress.com?get_domain=example.blog' );
 	} );
 } );
