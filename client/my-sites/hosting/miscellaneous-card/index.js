@@ -8,8 +8,8 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import MaterialIcon from 'calypso/components/material-icon';
 import { clearWordPressCache } from 'calypso/state/hosting/actions';
 import getRequest from 'calypso/state/selectors/get-request';
-import { isAtomicClearCacheEnabled } from 'calypso/state/selectors/is-atomic-clear-cache-enabled';
 import { shouldProvideReasonToClearAtomicCache } from 'calypso/state/selectors/should-provide-reason-to-clear-atomic-cache';
+import { shouldRateLimitAtomicCacheClear } from 'calypso/state/selectors/should-rate-limit-atomic-cache-clear';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -17,8 +17,8 @@ import './style.scss';
 const MiscellaneousCard = ( {
 	disabled,
 	shouldProvideReasonToClearCache,
+	shouldRateLimitCacheClear,
 	clearAtomicWordPressCache,
-	isClearCacheEnabled,
 	isClearingCache,
 	siteId,
 	translate,
@@ -75,10 +75,17 @@ const MiscellaneousCard = ( {
 				<Button
 					onClick={ shouldProvideReasonToClearCache ? showConfirmationDialog : clearCache }
 					busy={ isClearingCache }
-					disabled={ disabled || isClearingCache }
+					disabled={ disabled || isClearingCache || shouldRateLimitCacheClear }
 				>
 					<span>{ clearCacheText }</span>
 				</Button>
+				{ shouldRateLimitCacheClear && (
+					<p class="form-setting-explanation">
+						{ translate(
+							'You cleared the cache recently. Please wait a few minutes and try again.'
+						) }
+					</p>
+				) }
 
 				<Dialog
 					isVisible={ showDialog }
@@ -111,10 +118,6 @@ const MiscellaneousCard = ( {
 		);
 	};
 
-	if ( ! isClearCacheEnabled ) {
-		return null;
-	}
-
 	return (
 		<Card className="miscellaneous-card">
 			<MaterialIcon icon="settings" size={ 32 } />
@@ -130,7 +133,7 @@ export default connect(
 
 		return {
 			shouldProvideReasonToClearCache: shouldProvideReasonToClearAtomicCache( state, siteId ),
-			isClearCacheEnabled: isAtomicClearCacheEnabled( state, siteId ),
+			shouldRateLimitCacheClear: shouldRateLimitAtomicCacheClear( state, siteId ),
 			isClearingCache: getRequest( state, clearWordPressCache( siteId ) )?.isLoading ?? false,
 			siteId,
 		};
