@@ -9,6 +9,7 @@ import DisconnectSite from 'calypso/my-sites/site-settings/disconnect-site';
 import ConfirmDisconnection from 'calypso/my-sites/site-settings/disconnect-site/confirm';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import NoSitesPurchasesMessage from './empty-content';
+import HasRetentionCapabilitiesSwitch from './has-retention-capabilities-switch';
 import HasSiteCredentialsSwitch from './has-site-credentials-switch';
 import AdvancedCredentialsLoadingPlaceholder from './loading';
 import SettingsPage from './main';
@@ -26,7 +27,12 @@ export const advancedCredentials: PageJS.Callback = ( context, next ) => {
 	context.primary = (
 		<>
 			{ config.isEnabled( 'jetpack/backup-retention-settings' ) ? (
-				<BackupRetentionManagement />
+				<HasRetentionCapabilitiesSwitch
+					siteId={ siteId }
+					trueComponent={ <BackupRetentionManagement /> }
+					falseComponent={ null }
+					loadingComponent={ null }
+				/>
 			) : null }
 			<HasSiteCredentialsSwitch
 				siteId={ siteId }
