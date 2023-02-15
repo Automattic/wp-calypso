@@ -11,7 +11,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
-const MiscellaneousCard = ( {
+const CacheCard = ( {
 	disabled,
 	shouldRateLimitCacheClear,
 	clearAtomicWordPressCache,
@@ -79,4 +79,4 @@ export default connect(
 	{
 		clearAtomicWordPressCache: clearWordPressCache,
 	}
-)( localize( MiscellaneousCard ) );
+)( localize( CacheCard ) );
