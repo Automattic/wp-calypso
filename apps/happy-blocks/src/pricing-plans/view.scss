@@ -163,7 +163,6 @@ $brand-display: "SF Pro Display", $sans;
 			font-family: $brand-text;
 			font-weight: 400;
 			font-size: 0.875rem;
-			line-height: 1.33;
 			align-items: center;
 			letter-spacing: -0.24px;
 			color: $studio-gray-80;
@@ -180,11 +179,13 @@ $brand-display: "SF Pro Display", $sans;
 
 			p {
 				margin: 0;
-				line-height: 1.57;
+				line-height: 1.33;
 			}
 
 			@include break-medium {
-				line-height: 1.57;
+				p {
+					line-height: 1.57;
+				}
 			}
 		}
 	}
