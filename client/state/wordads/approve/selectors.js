@@ -8,7 +8,7 @@ import 'calypso/state/wordads/init';
  * @returns {boolean}       requesting state
  */
 export function isRequestingWordAdsApproval( state, siteId ) {
-	return !! state.wordads.approve.requesting[ siteId ];
+	return !! state?.wordads?.approve?.requesting[ siteId ];
 }
 
 /**
