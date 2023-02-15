@@ -1,3 +1,4 @@
+import debugModule from 'debug';
 import page from 'page';
 import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
@@ -6,6 +7,8 @@ import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import isRequestingSiteFeatures from 'calypso/state/selectors/is-requesting-site-features';
 import { getLandingPath, isSiteEligibleForJetpackCloud } from './selectors';
 import type React from 'react';
+
+const debug = debugModule( 'calypso:jetpack-cloud:landing:main' );
 
 /**
  * Check whether or not we've asked for and received an API response
@@ -39,6 +42,7 @@ const useResolvedSiteFeatures = ( siteId: number ) => {
 	// something must have failed; but we know an attempt was made and allowed to
 	// fully resolve.
 	if ( requestedSiteFeatures.current && ! isFetchingSiteFeatures ) {
+		debug( 'site features request seems to have failed' );
 		return true;
 	}
 
@@ -54,14 +58,19 @@ const Landing: React.FC< { siteId: number } > = ( { siteId } ) => {
 	useEffect( () => {
 		// Send sites that aren't Cloud-eligible back to the home page
 		if ( ! isEligible ) {
-			page.redirect( '/' );
+			debug( 'site not eligible; redirecting to site selection' );
+
+			page.redirect( '/landing' );
 			return;
 		}
 
 		// Before continuing, wait until we've fetched the selected site's features
 		if ( ! resolvedSiteFeatures ) {
+			debug( 'site features not yet resolved' );
 			return;
 		}
+
+		debug( 'site features resolved; redirecting to appropriate landing page', { landingPath } );
 
 		// By this point, we can assume that landingPath is defined;
 		// let's redirect people to the most appropriate page,
