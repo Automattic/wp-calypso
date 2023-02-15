@@ -111,10 +111,4 @@ body.is-section-plans.is-domain-sidebar-experiment-user {
 			color: var(--studio-orange-40);
 		}
 	}
-
-	.plans-features-main__group.is-scrollable:not(.is-2023-pricing-grid) {
-		@media ( min-width: 1800px ) {
-			margin-left: -360px;
-		}
-	}
 }
