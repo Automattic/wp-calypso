@@ -23,8 +23,8 @@ interface SitesGridTileProps {
 	secondary: ReactNode;
 }
 
-export const SitesGridTile = forwardRef(
-	( { leading, primary, secondary }: SitesGridTileProps, ref: React.Ref< HTMLDivElement > ) => {
+export const SitesGridTile = forwardRef< HTMLDivElement, SitesGridTileProps >(
+	( { leading, primary, secondary }, ref ) => {
 		return (
 			<div ref={ ref } className={ container }>
 				{ leading }
