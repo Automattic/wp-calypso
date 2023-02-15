@@ -1,3 +1,4 @@
+import { Button, Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import SecurityIcon from '../../assets/jetpack-icon-lock.svg';
@@ -7,8 +8,6 @@ import CrmIcon from '../../assets/jetpack-product-icon-crm.svg';
 import SearchIcon from '../../assets/jetpack-product-icon-search.svg';
 import SocialIcon from '../../assets/jetpack-product-icon-social.svg';
 import VideoPressIcon from '../../assets/jetpack-product-icon-videopress.svg';
-import Button from '../button';
-import Card from '../card';
 import './style.scss';
 
 type JetpackUpsellSectionProps = {
@@ -20,7 +19,7 @@ export default function JetpackUpsellSection( {
 	purchasedProducts,
 	siteUrl,
 }: JetpackUpsellSectionProps ) {
-	// TODO: Add collapsible card
+	// TODO: Make card collapsible
 
 	const translate = useTranslate();
 	const PRODUCTS = useMemo(
@@ -112,15 +111,17 @@ export default function JetpackUpsellSection( {
 					( { title, description, href, isFree, iconUrl } ) => (
 						<div className="jetpack-upsell-section__product">
 							<div className="jetpack-upsell-section__product-icon">
-								{ /* TODO: Add styling for icon div */ }
 								<img src={ iconUrl } alt={ translate( 'included' ) } width="24px" height="24px" />
 							</div>
 							<h3 className="jetpack-upsell-section__product-title">{ title }</h3>
 							<p className="jetpack-upsell-section__product-description">{ description }</p>
 							<a href={ href } className="jetpack-upsell-section__product-link">
-								{ translate( 'More about %(productName)s', {
-									args: { productName: title },
-								} ) }
+								<span className="jetpack-upsell-section__product-link-text">
+									{ translate( 'More about %(productName)s', {
+										args: { productName: title },
+									} ) }
+								</span>
+								<Gridicon icon="external" size={ 16 } />
 							</a>
 							<Button className="jetpack-upsell-section__product-button" primary={ ! isFree }>
 								{ isFree ? translate( 'Install Free' ) : translate( 'Upgrade' ) }
