@@ -11,6 +11,7 @@ import ErrorStep from './internals/steps-repository/error-step';
 import ProcessingStep, { ProcessingResult } from './internals/steps-repository/processing-step';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import WaitForAtomic from './internals/steps-repository/wait-for-atomic';
+import WaitForPluginInstall from './internals/steps-repository/wait-for-plugin-install';
 import { AssertConditionState } from './internals/types';
 import type { AssertConditionResult, Flow, ProvidedDependencies } from './internals/types';
 
@@ -23,6 +24,7 @@ const wooexpress: Flow = {
 			{ slug: 'processing', component: ProcessingStep },
 			{ slug: 'assignTrialPlan', component: AssignTrialPlanStep },
 			{ slug: 'waitForAtomic', component: WaitForAtomic },
+			{ slug: 'waitForPluginInstall', component: WaitForPluginInstall },
 			{ slug: 'error', component: ErrorStep },
 		];
 	},
@@ -103,6 +105,10 @@ const wooexpress: Flow = {
 					}
 
 					if ( providedDependencies?.finishedWaitingForAtomic ) {
+						return navigate( 'waitForPluginInstall', { siteId, siteSlug } );
+					}
+
+					if ( providedDependencies?.pluginsInstalled ) {
 						return exitFlow( `/home/${ siteSlug }` );
 					}
 
@@ -120,6 +126,10 @@ const wooexpress: Flow = {
 				}
 
 				case 'waitForAtomic': {
+					return navigate( 'processing' );
+				}
+
+				case 'waitForPluginInstall': {
 					return navigate( 'processing' );
 				}
 			}
