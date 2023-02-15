@@ -7,7 +7,7 @@ import {
 } from '@wordpress/block-editor';
 import { useResizeObserver, useRefEffect } from '@wordpress/compose';
 import { useSelect } from '@wordpress/data';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { BLOCK_MAX_HEIGHT } from '../constants';
 import type { RenderedStyle } from '../types';
 import './block-renderer-container.scss';
@@ -28,6 +28,35 @@ interface ScaledBlockRendererContainerProps extends BlockRendererContainerProps 
 	containerWidth: number;
 }
 
+function useParsedAssets( html: string ) {
+	return useMemo( () => {
+		const doc = document.implementation.createHTMLDocument( '' );
+		doc.body.innerHTML = html;
+		return Array.from( doc.body.children );
+	}, [ html ] );
+}
+
+async function loadStyle(
+	element: HTMLElement,
+	{ tagName, id, href, rel, media, textContent }: HTMLLinkElement
+) {
+	return new Promise( ( resolve, reject ) => {
+		const style = element.ownerDocument.createElement( tagName ) as HTMLLinkElement;
+		style.id = id;
+		if ( href ) {
+			style.href = href;
+			style.rel = rel;
+			style.media = media;
+			style.onload = () => resolve( style );
+			style.onerror = () => reject();
+		} else {
+			style.textContent = textContent;
+			resolve( style );
+		}
+		element.ownerDocument.head.appendChild( style );
+	} );
+}
+
 const ScaledBlockRendererContainer = ( {
 	children,
 	styles: customStyles,
@@ -40,6 +69,7 @@ const ScaledBlockRendererContainer = ( {
 	isMinHeight100vh,
 	maxHeightFor100vh,
 }: ScaledBlockRendererContainerProps ) => {
+	const [ isLoaded, setIsLoaded ] = useState( false );
 	const [ contentResizeListener, { height: contentHeight } ] = useResizeObserver();
 	const { styles, assets, duotone } = useSelect( ( select ) => {
 		// @ts-expect-error Type definition is outdated
@@ -50,6 +80,8 @@ const ScaledBlockRendererContainer = ( {
 			duotone: settings.__experimentalFeatures?.color?.duotone,
 		};
 	}, [] );
+
+	const styleAssets = useParsedAssets( assets?.styles );
 
 	const editorStyles = useMemo( () => {
 		const mergedStyles = [
@@ -85,6 +117,16 @@ const ScaledBlockRendererContainer = ( {
 		bodyElement.style.boxSizing = 'border-box';
 		bodyElement.style.position = 'absolute';
 		bodyElement.style.width = '100%';
+
+		// Load styles manually to avoid a flash of unstyled content.
+		// Gutenberg fixed this issue via https://github.com/WordPress/gutenberg/pull/46706 but it requires `@wordpress/block-editor: ^11.2.0`
+		styleAssets
+			.reduce(
+				( promise, style ): Promise< any > =>
+					promise.then( () => loadStyle( bodyElement, style as HTMLLinkElement ) ),
+				Promise.resolve()
+			)
+			.finally( () => setIsLoaded( true ) );
 	}, [] );
 
 	const scale = containerWidth / viewportWidth;
@@ -94,7 +136,7 @@ const ScaledBlockRendererContainer = ( {
 		scaledHeight = maxHeightFor100vh * scale;
 	}
 
-	let iframeHeight = ( contentHeight as number ) || minHeight;
+	let iframeHeight = contentHeight as number;
 	if ( isMinHeight100vh ) {
 		if ( viewportHeight ) {
 			iframeHeight = viewportHeight;
@@ -113,18 +155,15 @@ const ScaledBlockRendererContainer = ( {
 					maxHeight !== 'none' && ( contentHeight as number ) > maxHeight
 						? ( maxHeight as number ) * scale
 						: undefined,
-				minHeight: '1px',
-				// Try to avoid showing the content when the styles are not ready
-				opacity: contentHeight ? 1 : 0,
-				transition: 'opacity 0.3s ease-in-out',
 			} }
 		>
 			<Iframe
 				head={ <EditorStyles styles={ editorStyles } /> }
-				assets={ assets }
+				assets={ { scripts: assets?.scripts } }
 				contentRef={ contentRef }
 				aria-hidden
 				tabIndex={ -1 }
+				loading="lazy"
 				style={ {
 					position: 'absolute',
 					width: viewportWidth,
@@ -133,9 +172,11 @@ const ScaledBlockRendererContainer = ( {
 					// This is a catch-all max-height for patterns.
 					// See: https://github.com/WordPress/gutenberg/pull/38175.
 					maxHeight,
+					// Avoid showing the unstyled content
+					opacity: isLoaded ? 1 : 0,
 				} }
 			>
-				{ contentResizeListener }
+				{ isLoaded ? contentResizeListener : null }
 				{
 					/* Filters need to be rendered before children to avoid Safari rendering issues. */
 					svgFilters.map( ( preset ) => (
