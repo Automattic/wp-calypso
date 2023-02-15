@@ -280,7 +280,7 @@ describe( 'getPluginsOnSites', () => {
 		} );
 	} );
 
-	it( 'returns an empty object if the plugins have no sites', () => {
+	it( 'returns an empty object if the sites have no plugins', () => {
 		const plugins = [
 			{ ...jetpackWithSites, ...{ sites: {} } },
 			{ ...akismetWithSites, ...{ sites: {} } },
