@@ -42,7 +42,7 @@ export function splitCartProducts( cart: ResponseCart ): WpcomJetpackCartInfo {
 		akismetProducts: akismetProducts,
 		jetpackProducts: jetpackProducts,
 		wpcomProducts: wpcomProducts,
-		containsAkismetProducts: 0 === akismetProducts.length,
+		containsAkismetProducts: 0 !== akismetProducts.length,
 		containsJetpackProducts: 0 !== jetpackProducts.length,
 		containsWpcomProducts: 0 !== wpcomProducts.length,
 		akismetCost: akismetCost,

@@ -444,7 +444,7 @@ function recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo ) {
 				transaction_id: orderId,
 			},
 		];
-		debug( 'recordOrderInGoogleAds: Record Jetpack Purchase', params );
+		debug( 'recordOrderInGoogleAds: Record Akismet Purchase', params );
 		window.gtag( ...params );
 	}
 }
