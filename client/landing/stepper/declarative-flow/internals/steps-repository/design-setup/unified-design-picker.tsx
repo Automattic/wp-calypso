@@ -124,6 +124,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			intent,
 			seed: siteSlugOrId || undefined,
 			_locale: locale,
+			include_virtual_designs: isEnabled( 'virtual-themes/onboarding' ),
 		},
 		{
 			enabled: true,
@@ -706,6 +707,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }
 			purchasedThemes={ purchasedThemes }
 			currentPlanFeatures={ currentPlanFeatures }
+			shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 		/>
 	);
 

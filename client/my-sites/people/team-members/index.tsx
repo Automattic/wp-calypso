@@ -16,7 +16,7 @@ interface Props {
 	usersQuery: UsersQuery;
 }
 function TeamMembers( props: Props ) {
-	const _ = useTranslate();
+	const translate = useTranslate();
 	const { search, usersQuery } = props;
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 
@@ -33,20 +33,22 @@ function TeamMembers( props: Props ) {
 	}
 
 	function getHeaderLabel() {
-		const options = {
-			args: { number: membersTotal, searchTerm: search },
-			count: membersTotal as number,
-		};
-
 		if ( search && membersTotal ) {
-			return _(
+			return translate(
 				'%(number)d Person Matching {{em}}"%(searchTerm)s"{{/em}}',
 				'%(number)d People Matching {{em}}"%(searchTerm)s"{{/em}}',
-				{ ...options, components: { em: <em /> } }
+				{
+					args: { number: membersTotal, searchTerm: search },
+					count: membersTotal as number,
+					components: { em: <em /> },
+				}
 			);
 		}
 
-		return _( 'You have %(number)d team member', 'You have %(number)d team members', options );
+		return translate( 'You have %(number)d team member', 'You have %(number)d team members', {
+			args: { number: membersTotal, searchTerm: search },
+			count: membersTotal as number,
+		} );
 	}
 
 	function renderPerson( user: Member ) {
@@ -77,7 +79,7 @@ function TeamMembers( props: Props ) {
 				<>
 					<PeopleListSectionHeader isPlaceholder={ isLoading } label={ getHeaderLabel() }>
 						<Button compact primary href={ addTeamMemberLink }>
-							{ _( 'Add a team member' ) }
+							{ translate( 'Add a team member' ) }
 						</Button>
 					</PeopleListSectionHeader>
 					<Card className="people-team-members-list">
@@ -102,7 +104,7 @@ function TeamMembers( props: Props ) {
 				<Card>
 					<NoResults
 						image="/calypso/images/people/mystery-person.svg"
-						text={ _( 'No results found for {{em}}%(searchTerm)s{{/em}}', {
+						text={ translate( 'No results found for {{em}}%(searchTerm)s{{/em}}', {
 							args: { searchTerm: search },
 							components: { em: <em /> },
 						} ) }

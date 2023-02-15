@@ -28,7 +28,7 @@ interface Props {
 	site: SiteDetails;
 }
 function TeamInvite( props: Props ) {
-	const _ = useTranslate();
+	const translate = useTranslate();
 
 	const { site } = props;
 	const siteId = site.ID;
@@ -55,13 +55,13 @@ function TeamInvite( props: Props ) {
 			<Main>
 				<PageViewTracker path="/people/new/:site" title="People > Invite People" />
 				<HeaderCake onClick={ goBack }>
-					{ _( 'Add team members to %(sitename)s', {
+					{ translate( 'Add team members to %(sitename)s', {
 						args: { sitename: site.name },
 					} ) }
 				</HeaderCake>
 				<PeopleSectionAddNav selectedFilter="team" />
 				<EmptyContent
-					title={ _( 'Oops, only administrators can invite other people' ) }
+					title={ translate( 'Oops, only administrators can invite other people' ) }
 					illustration="/calypso/images/illustrations/illustration-empty-results.svg"
 				/>
 			</Main>
@@ -75,7 +75,7 @@ function TeamInvite( props: Props ) {
 			{ siteId && isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 
 			<HeaderCake onClick={ goBack }>
-				{ _( 'Add team members to %(sitename)s', {
+				{ translate( 'Add team members to %(sitename)s', {
 					args: { sitename: site.name },
 				} ) }
 			</HeaderCake>
@@ -108,7 +108,7 @@ function TeamInvite( props: Props ) {
 
 			{ isSiteForTeams && (
 				<>
-					<SectionHeader label={ _( 'Invite Link' ) } />
+					<SectionHeader label={ translate( 'Invite Link' ) } />
 					<Card className="invite-people__link">
 						{ /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */ }
 						{ /* @ts-ignore */ }

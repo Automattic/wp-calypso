@@ -150,6 +150,7 @@ interface DesignButtonProps {
 	onCheckout?: any;
 	verticalId?: string;
 	currentPlanFeatures?: string[];
+	shouldLimitGlobalStyles?: boolean;
 }
 
 const DesignButton: React.FC< DesignButtonProps > = ( {
@@ -160,9 +161,11 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	hasPurchasedTheme = false,
 	verticalId,
 	currentPlanFeatures,
+	shouldLimitGlobalStyles,
 } ) => {
 	const { __ } = useI18n();
-	const { style_variations = [], is_premium: isPremium = false } = design;
+	const { is_premium = false, is_virtual, style_variation, style_variations = [] } = design;
+	const isPremium = is_premium || ( shouldLimitGlobalStyles && is_virtual && style_variation );
 	const shouldUpgrade = isPremium && ! isPremiumThemeAvailable && ! hasPurchasedTheme;
 	const currentSiteCanInstallWoo = currentPlanFeatures?.includes( FEATURE_WOOP ) ?? false;
 
@@ -205,11 +208,27 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 		);
 	}
 
+	const previewDesign = ( styleVariation?: StyleVariation ) => {
+		if ( design.is_virtual && design.style_variation ) {
+			const parentDesign = { ...design, is_virtual: false, style_variation: null };
+			return onPreview( parentDesign, styleVariation ?? design.style_variation );
+		}
+		return onPreview( design, styleVariation );
+	};
+
+	const getTitle = () => {
+		if ( design.is_virtual && design.style_variation ) {
+			return `${ design.title } – ${ design.style_variation.title }`;
+		}
+
+		return design.title;
+	};
+
 	return (
 		<div className="design-picker__design-option">
 			<button
 				data-e2e-button={ isPremium ? 'paidOption' : 'freeOption' }
-				onClick={ () => onPreview( design ) }
+				onClick={ () => previewDesign() }
 			>
 				<span
 					className={ classnames(
@@ -225,12 +244,12 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 				</span>
 				<span className="design-picker__option-overlay">
 					<span id={ makeOptionId( design ) } className="design-picker__option-meta">
-						<span className="design-picker__option-name">{ design.title }</span>
+						<span className="design-picker__option-name">{ getTitle() }</span>
 						{ style_variations.length > 0 && (
 							<div className="design-picker__options-style-variations">
 								<StyleVariationBadges
 									variations={ style_variations }
-									onClick={ ( variation ) => onPreview( design, variation ) }
+									onClick={ ( variation ) => previewDesign( variation ) }
 								/>
 							</div>
 						) }
@@ -372,6 +391,7 @@ interface DesignPickerProps {
 	onCheckout?: any;
 	purchasedThemes?: string[];
 	currentPlanFeatures?: string[];
+	shouldLimitGlobalStyles?: boolean;
 }
 
 const DesignPicker: React.FC< DesignPickerProps > = ( {
@@ -387,6 +407,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	verticalId,
 	purchasedThemes,
 	currentPlanFeatures,
+	shouldLimitGlobalStyles,
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
 	const filteredStaticDesigns = useMemo( () => {
@@ -407,10 +428,10 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 				/>
 			) }
 			<div className="design-picker__grid">
-				{ filteredStaticDesigns.map( ( design ) => (
+				{ filteredStaticDesigns.map( ( design, index ) => (
 					<DesignButtonContainer
 						category={ categorization?.selection }
-						key={ design.slug }
+						key={ index }
 						design={ design }
 						locale={ locale }
 						onSelect={ onSelect }
@@ -421,6 +442,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						verticalId={ verticalId }
 						hasPurchasedTheme={ wasThemePurchased( purchasedThemes, design ) }
 						currentPlanFeatures={ currentPlanFeatures }
+						shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 					/>
 				) ) }
 				{ categorization?.selection === SHOW_GENERATED_DESIGNS_SLUG &&
@@ -454,6 +476,7 @@ export interface UnifiedDesignPickerProps {
 	onCheckout?: any;
 	purchasedThemes?: string[];
 	currentPlanFeatures?: string[];
+	shouldLimitGlobalStyles?: boolean;
 }
 
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
@@ -471,6 +494,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	onCheckout,
 	purchasedThemes,
 	currentPlanFeatures,
+	shouldLimitGlobalStyles,
 } ) => {
 	const translate = useTranslate();
 	const hasCategories = !! categorization?.categories.length;
@@ -507,6 +531,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					onCheckout={ onCheckout }
 					purchasedThemes={ purchasedThemes }
 					currentPlanFeatures={ currentPlanFeatures }
+					shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 				/>
 				{ ( ! isShowAll || ! hasGeneratedDesigns ) && bottomAnchorContent }
 			</div>

@@ -1,6 +1,7 @@
 import { Button, Card } from '@automattic/components';
 import requestExternalAccess from '@automattic/request-external-access';
 import { translate } from 'i18n-calypso';
+import { useMutation } from 'react-query';
 import { useSelector, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import SocialLogo from 'calypso/components/social-logo';
@@ -18,11 +19,13 @@ export const GithubAuthorizeCard = () => {
 	const github = useSelector( ( state ) =>
 		getKeyringServiceByName( state, 'github-deploy' )
 	) as Service;
-	const handleClick = () => {
-		requestExternalAccess( github.connect_URL, () => {
-			dispatch( requestKeyringConnections() );
-		} );
-	};
+
+	const { mutate: authorize, isLoading: isAuthorizing } = useMutation< void, unknown, string >(
+		async ( connectURL ) => {
+			await new Promise( ( resolve ) => requestExternalAccess( connectURL, resolve ) );
+			await dispatch( requestKeyringConnections() );
+		}
+	);
 
 	return (
 		<Card className="github-hosting-card">
@@ -33,7 +36,12 @@ export const GithubAuthorizeCard = () => {
 					'Connect this site to a GitHub repository and automatically deploy branches on push.'
 				) }
 			</p>
-			<Button className="is-primary" disabled={ ! github } onClick={ handleClick }>
+			<Button
+				className="is-primary"
+				busy={ isAuthorizing }
+				disabled={ ! github || isAuthorizing }
+				onClick={ () => authorize( github.connect_URL ) }
+			>
 				{ translate( 'Authorize access to Github' ) }
 			</Button>
 		</Card>

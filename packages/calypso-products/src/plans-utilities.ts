@@ -1,3 +1,5 @@
+import { isEnabled } from '@automattic/calypso-config';
+import { getLocaleSlug } from 'i18n-calypso';
 import {
 	JETPACK_REDIRECT_CHECKOUT_TO_WPADMIN,
 	BEST_VALUE_PLANS,
@@ -38,3 +40,11 @@ export function getTermDuration( term: string ): number | undefined {
 }
 
 export const redirectCheckoutToWpAdmin = (): boolean => !! JETPACK_REDIRECT_CHECKOUT_TO_WPADMIN;
+
+export const is2023PricingGridEnabled = () => {
+	const supportedLocales = [ 'en', 'en-gb', 'es' ];
+	return (
+		isEnabled( 'onboarding/2023-pricing-grid' ) &&
+		supportedLocales.includes( getLocaleSlug() ?? '' )
+	);
+};

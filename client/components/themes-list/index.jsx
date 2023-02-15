@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { PatternAssemblerCta, BLANK_CANVAS_DESIGN } from '@automattic/design-picker';
-import { SITE_ASSEMBLER_FLOW } from '@automattic/onboarding';
+import { WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import { Icon, addTemplate, brush, cloudUpload } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { isEmpty, times } from 'lodash';
@@ -27,6 +27,9 @@ const noop = () => {};
 export const ThemesList = ( props ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
+	const isPatternAssemblerCTAEnabled =
+		isEnabled( 'pattern-assembler/logged-out-showcase' ) && ! isLoggedIn;
+
 	const fetchNextPage = useCallback(
 		( options ) => {
 			props.fetchNextPage( options );
@@ -42,9 +45,8 @@ export const ThemesList = ( props ) => {
 		const params = new URLSearchParams( {
 			ref: 'calypshowcase',
 			theme: BLANK_CANVAS_DESIGN.slug,
-			destination_flow: SITE_ASSEMBLER_FLOW,
 		} );
-		window.location.assign( `/start/with-theme?${ params }` );
+		window.location.assign( `/start/${ WITH_THEME_ASSEMBLER_FLOW }?${ params }` );
 	};
 
 	const matchingWpOrgThemes = useMemo(
@@ -59,7 +61,14 @@ export const ThemesList = ( props ) => {
 
 	if ( ! props.loading && props.themes.length === 0 ) {
 		if ( matchingWpOrgThemes.length ) {
-			return <WPOrgMatchingThemes matchingThemes={ matchingWpOrgThemes } { ...props } />;
+			return (
+				<>
+					<WPOrgMatchingThemes matchingThemes={ matchingWpOrgThemes } { ...props } />
+					{ isPatternAssemblerCTAEnabled && (
+						<PatternAssemblerCta onButtonClick={ goToSiteAssemblerFlow } />
+					) }
+				</>
+			);
 		}
 
 		return (
@@ -78,10 +87,10 @@ export const ThemesList = ( props ) => {
 			{ props.themes.map( ( theme, index ) => (
 				<ThemeBlock key={ 'theme-block' + index } theme={ theme } index={ index } { ...props } />
 			) ) }
-			{ /* The Pattern Assembler CTA will display on the fourth row and the behavior is controlled by CSS */ }
-			{ isEnabled( 'pattern-assembler/logged-out-showcase' ) &&
-				props.themes.length > 0 &&
-				! isLoggedIn && <PatternAssemblerCta onButtonClick={ goToSiteAssemblerFlow } /> }
+			{ /* The Pattern Assembler CTA will display on the 9th row and the behavior is controlled by CSS */ }
+			{ isPatternAssemblerCTAEnabled && props.themes.length > 0 && (
+				<PatternAssemblerCta onButtonClick={ goToSiteAssemblerFlow } />
+			) }
 			{ props.loading && <LoadingPlaceholders placeholderCount={ props.placeholderCount } /> }
 			<InfiniteScroll nextPageMethod={ fetchNextPage } />
 		</div>

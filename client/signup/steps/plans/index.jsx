@@ -1,5 +1,5 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
+	is2023PricingGridEnabled,
 	planHasFeature,
 	FEATURE_UPLOAD_THEMES_PLUGINS,
 	getPlan,
@@ -10,11 +10,12 @@ import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
 import {
 	isLinkInBioFlow,
-	NEWSLETTER_FLOW,
+	isHostingLPFlow,
 	isNewsletterOrLinkInBioFlow,
-	SITE_ASSEMBLER_FLOW,
+	isSiteAssemblerFlow,
+	isTailoredSignupFlow,
+	NEWSLETTER_FLOW,
 } from '@automattic/onboarding';
-import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
 import i18n, { localize } from 'i18n-calypso';
@@ -371,8 +372,8 @@ export class PlansStep extends Component {
 	}
 
 	shouldHideEcommercePlan() {
-		// Site Assembler doesn't support atomic site, so we have to hide the plan
-		return this.props.signupDependencies.destinationFlowParameter === SITE_ASSEMBLER_FLOW;
+		// The flow with the Site Assembler step doesn't support atomic site, so we have to hide the plan
+		return isSiteAssemblerFlow( this.props.flowName );
 	}
 
 	plansFeaturesSelection() {
@@ -422,7 +423,7 @@ export class PlansStep extends Component {
 					stepName={ stepName }
 					positionInFlow={ positionInFlow }
 					headerText={ headerText }
-					shouldHideNavButtons={ this.isTailoredFlow() }
+					shouldHideNavButtons={ this.isTailoredFlow() || isHostingLPFlow( this.props.flowName ) }
 					fallbackHeaderText={ fallbackHeaderText }
 					subHeaderText={ subHeaderText }
 					fallbackSubHeaderText={ fallbackSubHeaderText }
@@ -439,7 +440,7 @@ export class PlansStep extends Component {
 	}
 
 	render() {
-		const is2023OnboardingPricingGrid = isEnabled( 'onboarding/2023-pricing-grid' );
+		const is2023OnboardingPricingGrid = is2023PricingGridEnabled();
 
 		const classes = classNames( 'plans plans-step', {
 			'in-vertically-scrolled-plans-experiment':
@@ -514,7 +515,7 @@ export default connect(
 		isInVerticalScrollingPlansExperiment: true,
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
 		eligibleForProPlan: isEligibleForProPlan( state, getSiteBySlug( state, siteSlug )?.ID ),
-		isOnboarding2023PricingGrid: isEnabled( 'onboarding/2023-pricing-grid' ),
+		isOnboarding2023PricingGrid: is2023PricingGridEnabled(),
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep, errorNotice }
 )( localize( PlansStep ) );

@@ -33,7 +33,7 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import SitePreviewLink from 'calypso/components/site-preview-link';
 import Timezone from 'calypso/components/timezone';
 import { preventWidows } from 'calypso/lib/formatting';
-import scrollTo from 'calypso/lib/scroll-to';
+import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -63,21 +63,7 @@ import wrapSettingsForm from './wrap-settings-form';
 
 export class SiteSettingsFormGeneral extends Component {
 	componentDidMount() {
-		// Wait for page.js to update the URL, then see if we are linking
-		// directly to a section of this page.
-		setTimeout( () => {
-			if ( ! window || ! window.location ) {
-				// This code breaks everything in the tests (they hang with no
-				// error message).
-				return;
-			}
-			const hash = window.location.hash;
-			const el = hash && document.getElementById( hash.substring( 1 ) );
-			if ( hash && el ) {
-				const y = el.offsetTop - document.getElementById( 'header' ).offsetHeight - 15;
-				scrollTo( { y } );
-			}
-		} );
+		setTimeout( () => scrollToAnchor( { offset: 15 } ) );
 	}
 
 	getIncompleteLocaleNoticeMessage = ( language ) => {
@@ -367,7 +353,6 @@ export class SiteSettingsFormGeneral extends Component {
 			siteId,
 			site,
 			isComingSoon,
-			isSiteOnECommerceTrial,
 		} = this.props;
 
 		const blogPublic = parseInt( fields.blog_public, 10 );
@@ -385,7 +370,7 @@ export class SiteSettingsFormGeneral extends Component {
 				'is-coming-soon-disabled': isComingSoonDisabled,
 			}
 		);
-		const showPreviewLink = isComingSoon && hasSitePreviewLink && ! isSiteOnECommerceTrial;
+		const showPreviewLink = isComingSoon && hasSitePreviewLink;
 		return (
 			<FormFieldset>
 				{ ! isNonAtomicJetpackSite &&
@@ -616,7 +601,7 @@ export class SiteSettingsFormGeneral extends Component {
 		// isPrivateAndUnlaunched means it is an unlaunched coming soon v1 site
 		const isPrivateAndUnlaunched = -1 === blogPublic && this.props.isUnlaunchedSite;
 
-		const showPreviewLink = isComingSoon && hasSitePreviewLink && ! isSiteOnECommerceTrial;
+		const showPreviewLink = isComingSoon && hasSitePreviewLink;
 
 		const LaunchCard = showPreviewLink ? CompactCard : Card;
 

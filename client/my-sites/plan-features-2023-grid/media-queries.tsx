@@ -10,7 +10,8 @@ const plans2023MediumWithSidebarBreakpoint = `${ 1340 + sidebarWidth }px`;
 const plans2023LargeWithSidebarBreakpoint = `${ 1500 + sidebarWidth }px`;
 
 export const plansBreakSmall = ( styles: SerializedStyles ) => css`
-	body.is-section-signup.is-white-signup & {
+	body.is-section-signup.is-white-signup &,
+	body.is-section-stepper & {
 		@media ( min-width: ${ plans2023SmallBreakpoint } ) {
 			${ styles }
 		}
@@ -30,7 +31,8 @@ export const plansBreakSmall = ( styles: SerializedStyles ) => css`
 `;
 
 export const plansBreakMedium = ( styles: SerializedStyles ) => css`
-	body.is-section-signup.is-white-signup & {
+	body.is-section-signup.is-white-signup &,
+	body.is-section-stepper & {
 		@media ( min-width: ${ plans2023MediumBreakpoint } ) {
 			${ styles }
 		}
@@ -50,7 +52,8 @@ export const plansBreakMedium = ( styles: SerializedStyles ) => css`
 `;
 
 export const plansBreakLarge = ( styles: SerializedStyles ) => css`
-	body.is-section-signup.is-white-signup & {
+	body.is-section-signup.is-white-signup &,
+	body.is-section-stepper & {
 		@media ( min-width: ${ plans2023LargeBreakpoint } ) {
 			${ styles }
 		}

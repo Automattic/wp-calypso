@@ -130,7 +130,7 @@ const WebServerSettingsCard = ( {
 
 		return (
 			<FormFieldset>
-				<FormLabel>{ translate( 'PHP Version' ) }</FormLabel>
+				<FormLabel>{ translate( 'PHP version' ) }</FormLabel>
 				<FormSelect
 					disabled={ disabled || isUpdatingPhpVersion }
 					className="web-server-settings-card__php-version-select"
@@ -161,7 +161,7 @@ const WebServerSettingsCard = ( {
 						busy={ isUpdatingPhpVersion }
 						disabled={ isUpdatingPhpVersion }
 					>
-						<span>{ translate( 'Update PHP Version' ) }</span>
+						<span>{ translate( 'Update PHP version' ) }</span>
 					</Button>
 				) }
 			</FormFieldset>
@@ -210,7 +210,7 @@ const WebServerSettingsCard = ( {
 		return (
 			<FormFieldset>
 				<FormLabel htmlFor="staticFile404Select">
-					{ translate( 'Handling Requests for Nonexistent Assets', {
+					{ translate( 'Handling requests for nonexistent assets', {
 						comment:
 							'How the web server handles requests for nonexistent asset files. ' +
 							'For example, file types like JavaScript, CSS, and images are considered assets.',
@@ -267,7 +267,7 @@ const WebServerSettingsCard = ( {
 			<QuerySitePhpVersion siteId={ siteId } />
 			<QuerySiteStaticFile404 siteId={ siteId } />
 			<MaterialIcon icon="build" size={ 32 } />
-			<CardHeading>{ translate( 'Web Server Settings' ) }</CardHeading>
+			<CardHeading id="web-server-settings">{ translate( 'Web server settings' ) }</CardHeading>
 			<p>
 				{ translate(
 					'For sites with specialized needs, fine-tune how the web server runs your website.'
