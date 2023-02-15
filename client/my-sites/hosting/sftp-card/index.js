@@ -313,7 +313,7 @@ export const SftpCard = ( {
 					<FormLabel htmlFor="password">{ translate( 'Password' ) }</FormLabel>
 					{ renderPasswordField() }
 					{ siteHasSshFeature && (
-						<SftpSshLabel htmlFor="ssh">{ translate( 'SSH Access' ) }</SftpSshLabel>
+						<SftpSshLabel htmlFor="ssh">{ translate( 'SSH access' ) }</SftpSshLabel>
 					) }
 					{ siteHasSshFeature && renderSshField() }
 					<ReauthRequired twoStepAuthorization={ twoStepAuthorization }>

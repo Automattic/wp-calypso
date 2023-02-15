@@ -208,11 +208,12 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 		);
 	}
 
-	const previewDesign = () => {
+	const previewDesign = ( styleVariation?: StyleVariation ) => {
 		if ( design.is_virtual && design.style_variation ) {
-			return onPreview( design, design.style_variation );
+			const parentDesign = { ...design, is_virtual: false, style_variation: null };
+			return onPreview( parentDesign, styleVariation ?? design.style_variation );
 		}
-		return onPreview( design );
+		return onPreview( design, styleVariation );
 	};
 
 	const getTitle = () => {
@@ -225,7 +226,10 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 
 	return (
 		<div className="design-picker__design-option">
-			<button data-e2e-button={ isPremium ? 'paidOption' : 'freeOption' } onClick={ previewDesign }>
+			<button
+				data-e2e-button={ isPremium ? 'paidOption' : 'freeOption' }
+				onClick={ () => previewDesign() }
+			>
 				<span
 					className={ classnames(
 						'design-picker__image-frame',
@@ -245,7 +249,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 							<div className="design-picker__options-style-variations">
 								<StyleVariationBadges
 									variations={ style_variations }
-									onClick={ ( variation ) => onPreview( design, variation ) }
+									onClick={ ( variation ) => previewDesign( variation ) }
 								/>
 							</div>
 						) }

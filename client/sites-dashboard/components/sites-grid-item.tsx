@@ -2,8 +2,9 @@ import { useSiteLaunchStatusLabel, getSiteLaunchStatus } from '@automattic/sites
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import { AnchorHTMLAttributes, memo } from 'react';
+import { AnchorHTMLAttributes, memo, useState } from 'react';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import { useInView } from 'calypso/lib/use-in-view';
 import { displaySiteUrl, getDashboardUrl } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import { SitesGridActionRenew } from './sites-grid-action-renew';
@@ -51,6 +52,10 @@ const SitesGridItemSecondary = styled.div( {
 	justifyContent: 'space-between',
 } );
 
+const EllipsisMenuContainer = styled.div( {
+	width: '24px',
+} );
+
 const ellipsis = css( {
 	'.button.ellipsis-menu__toggle': {
 		padding: 0,
@@ -73,6 +78,9 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 	const isP2Site = site.options?.is_wpforteams_site;
 	const translatedStatus = useSiteLaunchStatusLabel( site );
 
+	const [ inViewOnce, setInViewOnce ] = useState( false );
+	const ref = useInView< HTMLDivElement >( () => setInViewOnce( true ) );
+
 	const siteDashboardUrlProps: AnchorHTMLAttributes< HTMLAnchorElement > = {
 		href: getDashboardUrl( site.slug ),
 		title: __( 'Visit Dashboard' ),
@@ -85,12 +93,14 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 
 	return (
 		<SitesGridTile
+			ref={ ref }
 			leading={
 				<>
 					<ThumbnailLink { ...siteDashboardUrlProps }>
 						<SiteItemThumbnail
 							displayMode="tile"
 							className={ siteThumbnail }
+							showPlaceholder={ ! inViewOnce }
 							site={ site }
 							width={ THUMBNAIL_DIMENSION.width }
 							height={ THUMBNAIL_DIMENSION.height }
@@ -111,7 +121,9 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 						{ getSiteLaunchStatus( site ) !== 'public' && (
 							<SitesLaunchStatusBadge>{ translatedStatus }</SitesLaunchStatusBadge>
 						) }
-						<SitesEllipsisMenu className={ ellipsis } site={ site } />
+						<EllipsisMenuContainer>
+							{ inViewOnce && <SitesEllipsisMenu className={ ellipsis } site={ site } /> }
+						</EllipsisMenuContainer>
 					</div>
 				</>
 			}

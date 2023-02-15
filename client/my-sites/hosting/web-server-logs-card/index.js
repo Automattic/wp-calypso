@@ -246,7 +246,7 @@ const WebServerLogsCard = ( props ) => {
 				<div className="web-server-logs-card__dates">
 					<div className="web-server-logs-card__start">
 						<FormFieldset>
-							<FormLabel>{ translate( 'Log Start:' ) }</FormLabel>
+							<FormLabel>{ translate( 'Log start:' ) }</FormLabel>
 							<FormTextInput
 								value={ startDateTime }
 								onChange={ updateStartDateTime }
@@ -261,7 +261,7 @@ const WebServerLogsCard = ( props ) => {
 					</div>
 					<div className="web-server-logs-card__end">
 						<FormFieldset>
-							<FormLabel>{ translate( 'Log End:' ) }</FormLabel>
+							<FormLabel>{ translate( 'Log end:' ) }</FormLabel>
 							<FormTextInput
 								value={ endDateTime }
 								onChange={ updateEndDateTime }
@@ -299,7 +299,7 @@ const WebServerLogsCard = ( props ) => {
 	return (
 		<Card className="web-server-logs-card">
 			<MaterialIcon icon="settings" size={ 32 } />
-			<CardHeading>{ translate( 'Download Web Server Logs' ) }</CardHeading>
+			<CardHeading>{ translate( 'Download web server logs' ) }</CardHeading>
 			{ getContent() }
 		</Card>
 	);
