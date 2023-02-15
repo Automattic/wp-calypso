@@ -59,7 +59,7 @@ export function RenderDomainUpsell() {
 		{
 			domainAndPlanPackage: true,
 		},
-		`/plans/yearly/${ siteSlug }`
+		`/domains/add/${ siteSlug }`
 	);
 	const getSearchClickHandler = () => {
 		recordTracksEvent( 'calypso_my_home_domain_upsell_search_click', {
