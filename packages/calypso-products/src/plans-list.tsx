@@ -1588,7 +1588,16 @@ const getPlanJetpackSecurityT1Details = (): IncompleteJetpackPlan => ( {
 		),
 	getFeaturedDescription: () =>
 		translate(
-			'Easy-to-use, comprehensive WordPress site security including backups, malware scanning, and spam protection.'
+			'This bundle includes:{{br/}}{{ul}}{{li}}VaultPress Backup{{/li}}{{li}}Scan{{/li}}{{li}}Akismet Anti-spam{{/li}}{{/ul}}',
+			{
+				components: {
+					ul: <ul />,
+					li: <li />,
+					br: <br />,
+				},
+				comment:
+					'{{ul}}{{ul/}} represents an unorder list, {{li}}{/li} represent an item and {{br/}} represents a line break',
+			}
 		),
 	getLightboxDescription: () =>
 		translate(
