@@ -1,6 +1,6 @@
-import { Button, Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { Button, Card, Gridicon } from '../';
 import SecurityIcon from '../../assets/jetpack-icon-lock.svg';
 import BackupIcon from '../../assets/jetpack-product-icon-backup.svg';
 import BoostIcon from '../../assets/jetpack-product-icon-boost.svg';
