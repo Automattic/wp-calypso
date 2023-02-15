@@ -28,7 +28,7 @@ describe( 'shouldRateLimitAtomicCacheClear', () => {
 		);
 	} );
 
-	test( 'should return false if the cache was cleared more than 5 minutes ago', () => {
+	test( 'should return false if the cache was cleared more than a minute ago', () => {
 		expect(
 			shouldRateLimitAtomicCacheClear(
 				generateState( { timestamp: TIMESTAMP - ONE_MINUTE_IN_MILLISECONDS - ONE_SECOND } ),
@@ -37,7 +37,7 @@ describe( 'shouldRateLimitAtomicCacheClear', () => {
 		).toBe( false );
 	} );
 
-	test( 'should return true if the cache was cleared less than 5 minutes ago', () => {
+	test( 'should return true if the cache was cleared less than a minute ago', () => {
 		expect(
 			shouldRateLimitAtomicCacheClear(
 				generateState( { timestamp: TIMESTAMP - ONE_MINUTE_IN_MILLISECONDS + ONE_SECOND } ),
