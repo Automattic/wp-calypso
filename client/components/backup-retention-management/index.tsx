@@ -94,23 +94,26 @@ const BackupRetentionManagement: FunctionComponent = () => {
 	const onRetentionSelectionChange = useCallback(
 		( value: number ) => {
 			if ( value ) {
-				setRetentionSelected( value );
-				const selectedOption = retentionOptionsCards.find(
-					( option ) => option.id === value
-				) as RetentionOptionInput;
+				if ( value !== retentionSelected ) {
+					setRetentionSelected( value );
 
-				if ( selectedOption.upgradeRequired !== storageUpgradeRequired ) {
-					setStorageUpgradeRequired( selectedOption.upgradeRequired );
+					dispatch(
+						recordTracksEvent( 'calypso_jetpack_backup_storage_retention_option_click', {
+							retention_option: value,
+						} )
+					);
+
+					const selectedOption = retentionOptionsCards.find(
+						( option ) => option.id === value
+					) as RetentionOptionInput;
+
+					if ( selectedOption.upgradeRequired !== storageUpgradeRequired ) {
+						setStorageUpgradeRequired( selectedOption.upgradeRequired );
+					}
 				}
-
-				dispatch(
-					recordTracksEvent( 'calypso_jetpack_backup_storage_retention_option_click', {
-						retention_option: value,
-					} )
-				);
 			}
 		},
-		[ dispatch, retentionOptionsCards, storageUpgradeRequired ]
+		[ dispatch, retentionOptionsCards, retentionSelected, storageUpgradeRequired ]
 	);
 
 	const disableFormSubmission =
