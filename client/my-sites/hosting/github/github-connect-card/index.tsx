@@ -1,25 +1,25 @@
 import { Button, Card, Spinner } from '@automattic/components';
+import { ExternalLink } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
-import { useState } from 'react';
+import { ComponentProps, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
-import FormTextInput from 'calypso/components/forms/form-text-input';
 import SocialLogo from 'calypso/components/social-logo';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { DisconnectGitHubExpander } from '../disconnect-github-expander';
+import { Search } from './search';
 import { useGithubBranches } from './use-github-branches';
 import { useGithubConnectMutation } from './use-github-connect';
 import { useGithubRepos } from './use-github-repos';
-import type { ComponentProps } from 'react';
 
+import './style.scss';
 interface GithubConnectCardProps {
 	connection: ComponentProps< typeof DisconnectGitHubExpander >[ 'connection' ];
 }
-import './style.scss';
-
 const noticeOptions = {
 	duration: 3000,
 };
@@ -30,12 +30,7 @@ export const GithubConnectCard = ( { connection }: GithubConnectCardProps ) => {
 
 	const [ selectedRepo, setSelectedRepo ] = useState< string >();
 	const [ selectedBranch, setSelectedBranch ] = useState< string >();
-	const [ basePath, setBasePath ] = useState< string >( '' );
-	const { data: repos, isLoading: isLoadingRepos } = useGithubRepos( siteId, {
-		onSuccess( repos ) {
-			setSelectedRepo( repos[ 0 ] );
-		},
-	} );
+	const { data: repos, isLoading: isLoadingRepos } = useGithubRepos( siteId );
 	const { data: branches, isLoading: isLoadingBranches } = useGithubBranches(
 		siteId,
 		selectedRepo,
@@ -64,7 +59,8 @@ export const GithubConnectCard = ( { connection }: GithubConnectCardProps ) => {
 	} );
 
 	const showSpinner = ! repos && ! branches && ( isLoadingRepos || isLoadingBranches );
-	const disabled = isLoadingBranches || isConnecting;
+	const busy = isLoadingBranches || isConnecting;
+	const disabled = ! selectedBranch || ! selectedRepo;
 	const handleRepoSelect = ( repoName: string ) => {
 		setSelectedRepo( repoName );
 		setSelectedBranch( '' );
@@ -74,78 +70,61 @@ export const GithubConnectCard = ( { connection }: GithubConnectCardProps ) => {
 		setSelectedBranch( branchName );
 	};
 
-	const handleBasePathChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
-		setBasePath( event.currentTarget.value );
-	};
-
 	return (
 		<Card className="connect-branch-card">
 			<SocialLogo className="material-icon" icon="github" size={ 32 } />
-			<CardHeading>{ __( 'Connect Branch' ) }</CardHeading>
+			<CardHeading>{ __( 'Deploy from GitHub' ) }</CardHeading>
 			<div>
-				<p>{ __( 'Changes pushed to connected branch will be deployed automatically' ) }</p>
+				<p>
+					{ __( 'Changes pushed to the selected branch will be automatically deployed. ' ) }
+					<ExternalLink href="#" target="_blank" rel="noopener noreferrer">
+						{ __( 'Learn more' ) }
+					</ExternalLink>
+				</p>
 				{ showSpinner ? (
 					<Spinner />
 				) : (
 					<FormFieldset className="connect-branch__fields">
-						<FormSelect
-							className="connect-branch__field"
-							onChange={ ( event ) => handleRepoSelect( event.currentTarget.value ) }
-							value={ selectedRepo }
-						>
-							{ repos?.map( ( repo ) => (
-								<option value={ repo } key={ repo }>
-									{ repo }
-								</option>
-							) ) }
-						</FormSelect>
-						<FormSelect
-							className="connect-branch__field"
-							onChange={ ( event ) => handleBranchSelect( event.currentTarget.value ) }
-							value={ selectedBranch }
-						>
-							{ branches?.map( ( branch ) => (
-								<option value={ branch } key={ branch }>
-									{ branch }
-								</option>
-							) ) }
-						</FormSelect>
-						<Button
-							primary
-							busy={ disabled }
-							onClick={ () => {
-								connectBranch( {
-									repoName: selectedRepo,
-									branchName: selectedBranch,
-									basePath: basePath?.trim(),
-								} );
-							} }
-							className="connect-branch__field"
-							disabled={ disabled }
-						>
-							<span>{ __( 'Connect' ) }</span>
-						</Button>
+						<FormFieldset className="connect-branch__field">
+							<FormLabel htmlFor="repository">{ __( 'Repository' ) }</FormLabel>
+							<Search
+								id="repository"
+								placeholder={ __( 'Start typing a repo..' ) }
+								options={ repos ?? [] }
+								onSelect={ handleRepoSelect }
+							/>
+						</FormFieldset>
+						<FormFieldset className="connect-branch__field">
+							<FormLabel htmlFor="branch">{ __( 'Branch to deploy' ) }</FormLabel>
+							<FormSelect
+								className="connect-branch__field"
+								onChange={ ( event ) => handleBranchSelect( event.currentTarget.value ) }
+								value={ selectedBranch }
+							>
+								{ branches?.map( ( branch ) => (
+									<option value={ branch } key={ branch }>
+										{ branch }
+									</option>
+								) ) }
+							</FormSelect>
+						</FormFieldset>
 					</FormFieldset>
 				) }
-				<div>
-					<span>
-						<strong>{ __( 'Root Directory' ) }</strong>
-						<small>
-							{ __(
-								'(you can specify a root directory and only changes in that directory will be deployed)'
-							) }
-						</small>
-					</span>
-					<FormTextInput
-						id="root_path"
-						placeholder="/wp-content"
-						value={ basePath }
-						dir="ltr"
-						onChange={ handleBasePathChange }
-					/>
-				</div>
 			</div>
-			<div style={ { marginTop: '16px' } }>
+			<div style={ { marginTop: '10px', display: 'inline-flex', gap: '16px' } }>
+				<Button
+					primary
+					busy={ busy }
+					onClick={ () => {
+						connectBranch( {
+							repoName: selectedRepo,
+							branchName: selectedBranch,
+						} );
+					} }
+					disabled={ disabled }
+				>
+					<span>{ __( 'Connect to repository' ) }</span>
+				</Button>
 				<DisconnectGitHubExpander connection={ connection } />
 			</div>
 		</Card>

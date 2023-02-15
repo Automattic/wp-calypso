@@ -16,6 +16,7 @@ export const useGithubRepos = ( siteId: number | null, options?: UseQueryOptions
 			meta: {
 				persist: false,
 			},
+			refetchOnWindowFocus: false,
 			...options,
 		}
 	);

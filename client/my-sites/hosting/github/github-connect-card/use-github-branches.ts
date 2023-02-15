@@ -4,6 +4,15 @@ import wp from 'calypso/lib/wp';
 const USE_GITHUB_BRANCHES_QUERY_KEY = 'github-branches-query-key';
 const CACHE_TIME = 1000 * 60 * 5; // 5 mins
 
+const sortBranches = ( a: string, b: string ): number => {
+	if ( a.includes( 'master' ) || a.includes( 'main' ) || a.includes( 'trunk' ) ) {
+		return -1;
+	} else if ( b.includes( 'master' ) || b.includes( 'main' ) || b.includes( 'trunk' ) ) {
+		return 1;
+	}
+	return a.localeCompare( b );
+};
+
 export const useGithubBranches = (
 	siteId: number | null,
 	repoName: string | undefined,
@@ -18,6 +27,7 @@ export const useGithubBranches = (
 			} ),
 		{
 			enabled: !! siteId && !! repoName,
+			select: ( data ) => data.sort( sortBranches ),
 			meta: {
 				persist: false,
 			},
