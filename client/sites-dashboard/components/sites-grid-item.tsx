@@ -52,6 +52,10 @@ const SitesGridItemSecondary = styled.div( {
 	justifyContent: 'space-between',
 } );
 
+const EllipsisMenuContainer = styled.div( {
+	width: '24px',
+} );
+
 const ellipsis = css( {
 	'.button.ellipsis-menu__toggle': {
 		padding: 0,
@@ -117,7 +121,9 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 						{ getSiteLaunchStatus( site ) !== 'public' && (
 							<SitesLaunchStatusBadge>{ translatedStatus }</SitesLaunchStatusBadge>
 						) }
-						{ inViewOnce && <SitesEllipsisMenu className={ ellipsis } site={ site } /> }
+						<EllipsisMenuContainer>
+							{ inViewOnce && <SitesEllipsisMenu className={ ellipsis } site={ site } /> }
+						</EllipsisMenuContainer>
 					</div>
 				</>
 			}
