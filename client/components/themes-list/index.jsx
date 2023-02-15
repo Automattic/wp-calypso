@@ -87,6 +87,10 @@ export const ThemesList = ( props ) => {
 			{ props.themes.map( ( theme, index ) => (
 				<ThemeBlock key={ 'theme-block' + index } theme={ theme } index={ index } { ...props } />
 			) ) }
+			{ /* Add a second plan upsell at 7th row and the behavior is controlled by CSS */ }
+			{ props.themes.length > 0 && (
+				<div className="second-upsell-wrapper">{ props.upsellBanner }</div>
+			) }
 			{ /* The Pattern Assembler CTA will display on the 9th row and the behavior is controlled by CSS */ }
 			{ isPatternAssemblerCTAEnabled && props.themes.length > 0 && (
 				<PatternAssemblerCta onButtonClick={ goToSiteAssemblerFlow } />
