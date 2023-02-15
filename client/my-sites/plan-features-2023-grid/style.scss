@@ -581,11 +581,11 @@ body.is-section-signup.is-white-signup,
 
 				@include plans-2023-break-small {
 					position: absolute;
-					top: -38px;
+					top: -35px; // at -35px this covers the top border of the table, including its top-right radius, as intended
 					right: -1px;
 					border-color: #e0e0e0;
 					border-width: 1px 1px 0 1px;
-					/* stylelint-disable-next-line */
+					/* stylelint-disable-next-line scales/radii */
 					border-radius: 5px 5px 0 0;
 					border-style: solid;
 					padding-top: 20px;
@@ -703,6 +703,41 @@ body.is-section-signup.is-white-signup,
 
 		@include plans-2023-break-small {
 			margin: 24px 20px;
+		}
+	}
+
+	// adjust border radius for having multiple popular badges
+	.plan-features-2023-grid__tablet-view {
+		.plan-features-2023-grid__table-item.plan-features-2023-grid__table-item {
+			&.popular-plan-parent-class {
+				.plan-features-2023-grid__popular-badge {
+					&.is-business-plan {
+						border-top-right-radius: 0;
+					}
+
+					&.is-ecommerce-plan {
+						border-top-left-radius: 0;
+					}
+				}
+			}
+		}
+	}
+	// adjust border radius for having multiple popular badges
+	.plan-features-2023-grid__desktop-view {
+		.plan-features-2023-grid__table-item.plan-features-2023-grid__table-item {
+			&.popular-plan-parent-class {
+				.plan-features-2023-grid__popular-badge {
+					&.is-premium-plan {
+						border-top-right-radius: 0;
+					}
+					&.is-business-plan {
+						border-radius: 0;
+					}
+					&.is-ecommerce-plan {
+						border-top-left-radius: 0;
+					}
+				}
+			}
 		}
 	}
 }
