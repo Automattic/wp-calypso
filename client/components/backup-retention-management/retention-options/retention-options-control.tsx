@@ -37,7 +37,9 @@ const RetentionOptionsControl: React.FC< RetentionOptionsControlProps > = ( {
 					upgradeRequired={ option.upgradeRequired }
 					checked={ retentionSelected === option.id }
 					isCurrentPlan={ currentRetentionPlan === option.id }
-					key={ option.id }
+					// Given that we are working with a small set of options,
+					// we could use the option id as a key
+					key={ `retention-option-${ option.id }` }
 					onChange={ handleRetentionOptionChange }
 				/>
 			) ) }
