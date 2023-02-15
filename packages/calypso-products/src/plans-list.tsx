@@ -1696,12 +1696,9 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 			'Get the full Jetpack suite with real-time security tools, improved site performance, and tools to grow your business.{{br/}}{{br/}}',
 			{
 				components: {
-					ul: <ul />,
-					li: <li />,
 					br: <br />,
 				},
-				comment:
-					'{{ul}}{{ul/}} represents an unorder list, {{li}}{/li} represent an item and {{br/}} represents a line break',
+				comment: '{{br/}} represents a line break',
 			}
 		),
 	getLightboxDescription: () =>
