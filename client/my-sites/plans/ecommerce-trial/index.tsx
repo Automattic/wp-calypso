@@ -119,7 +119,11 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 						selected={ interval === 'yearly' }
 						path={ plansLink( '/plans', siteSlug, 'yearly', true ) }
 					>
-						<span>{ translate( 'Pay Annually' ) }</span>
+						<span>
+							{ translate( 'Pay Annually (Save %(percentageSavings)s%%)', {
+								args: { percentageSavings },
+							} ) }
+						</span>
 					</SegmentedControl.Item>
 				</SegmentedControl>
 			</div>
@@ -135,11 +139,13 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 				</div>
 				<div className="e-commerce-trial-plans__price-card-conditions">
 					{ priceContent }
-					<span className="e-commerce-trial-plans__price-card-savings">
-						{ translate( 'Save %(percentageSavings)s%% by paying annually', {
-							args: { percentageSavings },
-						} ) }
-					</span>
+					{ isAnnualSubscription && (
+						<span className="e-commerce-trial-plans__price-card-savings">
+							{ translate( 'Save %(percentageSavings)s%% by paying annually', {
+								args: { percentageSavings },
+							} ) }
+						</span>
+					) }
 				</div>
 				<div className="e-commerce-trial-plans__price-card-cta-wrapper">
 					<Button
