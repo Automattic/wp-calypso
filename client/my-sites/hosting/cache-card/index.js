@@ -3,7 +3,7 @@ import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import MaterialIcon from 'calypso/components/material-icon';
-import { CLEAR_CACHE } from "calypso/lib/url/support";
+import { CLEAR_CACHE } from 'calypso/lib/url/support';
 import { clearWordPressCache } from 'calypso/state/hosting/actions';
 import getRequest from 'calypso/state/selectors/get-request';
 import { shouldRateLimitAtomicCacheClear } from 'calypso/state/selectors/should-rate-limit-atomic-cache-clear';
@@ -56,7 +56,7 @@ const MiscellaneousCard = ( {
 			</div>
 		);
 	};
-//autorenew
+	//autorenew
 	return (
 		<Card className="cache-card">
 			<MaterialIcon icon="autorenew" size={ 24 } />
