@@ -28,6 +28,8 @@ const RetentionOptionCard: FunctionComponent< RetentionOptionCardProps > = ( {
 		onChange( value );
 	};
 
+	const spaceNeededText = useStorageText( spaceNeededInBytes );
+
 	return (
 		<div
 			className="retention-option"
@@ -52,7 +54,7 @@ const RetentionOptionCard: FunctionComponent< RetentionOptionCardProps > = ( {
 			</div>
 			<div className="retention-option__space-needed">
 				<div className="space-needed__label">{ translate( 'Space needed:' ) }</div>
-				<div className="space-needed__value">{ useStorageText( spaceNeededInBytes ) }</div>
+				<div className="space-needed__value">{ spaceNeededText }</div>
 			</div>
 			<div
 				className={ classnames( 'retention-option__upgrade-required', {
