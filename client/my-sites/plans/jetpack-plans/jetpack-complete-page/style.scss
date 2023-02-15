@@ -77,8 +77,8 @@
 	}
 	@include breakpoint-deprecated( "<960px" ) {
 		flex-direction: column;
-		
 	}
+
 	.jetpack-complete-page__get-complete-button {
 		@include breakpoint-deprecated( ">960px" ) {
 			margin-right: 2em;
