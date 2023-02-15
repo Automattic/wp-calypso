@@ -3,6 +3,7 @@ import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import MaterialIcon from 'calypso/components/material-icon';
+import { CLEAR_CACHE } from "calypso/lib/url/support";
 import { clearWordPressCache } from 'calypso/state/hosting/actions';
 import getRequest from 'calypso/state/selectors/get-request';
 import { shouldRateLimitAtomicCacheClear } from 'calypso/state/selectors/should-rate-limit-atomic-cache-clear';
@@ -26,19 +27,19 @@ const MiscellaneousCard = ( {
 		return (
 			<div>
 				<p>
-					{ translate( '{{strong}}Warning!{{/strong}}', {
+					{ translate(
+						'Be careful, clearing the cache may make your site unresponsive while it is being rebuilt.'
+					) }
+				</p>
+				<p>
+					{ translate( '{{a}}Learn more about clearing your site’s cache{{/a}}', {
 						components: {
-							strong: <strong />,
+							a: <a href={ CLEAR_CACHE } target="_blank" rel="noopener noreferrer" />,
 						},
 					} ) }
 				</p>
-				<p>
-					{ translate(
-						'Clearing the cache on your site may make it unresponsive while the cache is rebuilding. ' +
-							'Please use this feature responsibly.'
-					) }
-				</p>
 				<Button
+					primary
 					onClick={ clearCache }
 					busy={ isClearingCache }
 					disabled={ disabled || isClearingCache || shouldRateLimitCacheClear }
@@ -55,11 +56,11 @@ const MiscellaneousCard = ( {
 			</div>
 		);
 	};
-
+//autorenew
 	return (
-		<Card className="miscellaneous-card">
-			<MaterialIcon icon="settings" size={ 32 } />
-			<CardHeading>{ translate( 'Miscellaneous' ) }</CardHeading>
+		<Card className="cache-card">
+			<MaterialIcon icon="autorenew" size={ 24 } />
+			<CardHeading>{ translate( 'Cache' ) }</CardHeading>
 			{ getClearCacheContent() }
 		</Card>
 	);
