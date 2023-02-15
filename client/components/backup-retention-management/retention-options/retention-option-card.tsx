@@ -1,8 +1,7 @@
 import classnames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useStorageText } from 'calypso/components/backup-storage-space/hooks';
-import { RETENTION_OPTIONS_LABELS } from '../constants';
 import type { RetentionPeriod } from 'calypso/state/rewind/retention/types';
 
 interface RetentionOptionCardProps {
@@ -29,6 +28,13 @@ const RetentionOptionCard: FunctionComponent< RetentionOptionCardProps > = ( {
 	};
 
 	const spaceNeededText = useStorageText( spaceNeededInBytes );
+
+	const RETENTION_OPTIONS_LABELS: Record< RetentionPeriod, TranslateResult > = {
+		[ 7 ]: translate( '7 days' ),
+		[ 30 ]: translate( '30 days' ),
+		[ 120 ]: translate( '120 days' ),
+		[ 365 ]: translate( '1 year' ),
+	};
 
 	return (
 		<div
