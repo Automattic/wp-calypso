@@ -1,3 +1,4 @@
+import formatCurrency from '@automattic/format-currency';
 import { TranslateResult } from 'i18n-calypso';
 import InfoPopover from 'calypso/components/info-popover';
 import PlanPrice from 'calypso/my-sites/plan-price';
@@ -104,6 +105,26 @@ const Paid: React.FC< OwnProps > = ( props ) => {
 		return <Placeholder { ...props } />;
 	}
 
+	const formattedOriginalPrice = formatCurrency( originalPrice, currencyCode, {
+		stripZeros: true,
+	} );
+
+	let priceComponent = isDiscounted ? (
+		<DiscountedPrice { ...props } finalPrice={ finalPrice } />
+	) : (
+		<OriginalPrice { ...props } finalPrice={ finalPrice } />
+	);
+
+	// If the pricing has a limited discount duration, the original price is handled in the duration string
+	// In this case, we'll just show the final price and not the crossed-out price.
+	if ( discountedPriceDuration ) {
+		priceComponent = (
+			<span className="display-price__standalone-card-price">
+				<PlanPrice rawPrice={ finalPrice } currencyCode={ currencyCode } />
+			</span>
+		);
+	}
+
 	return (
 		<>
 			<PriceAriaLabel
@@ -111,14 +132,11 @@ const Paid: React.FC< OwnProps > = ( props ) => {
 				currencyCode={ currencyCode }
 				finalPrice={ finalPrice }
 				isDiscounted={ isDiscounted }
+				formattedOriginalPrice={ formattedOriginalPrice }
 			/>
 			<span className="display-price__prices" aria-hidden="true">
 				{ displayFrom && <span className="display-price__from">from</span> }
-				{ isDiscounted ? (
-					<DiscountedPrice { ...props } finalPrice={ finalPrice } />
-				) : (
-					<OriginalPrice { ...props } finalPrice={ finalPrice } />
-				) }
+				{ priceComponent }
 			</span>
 			{ tooltipText && (
 				<InfoPopover position="top" className="display-price__price-tooltip">
@@ -129,6 +147,7 @@ const Paid: React.FC< OwnProps > = ( props ) => {
 				<TimeFrame
 					billingTerm={ billingTerm }
 					discountedPriceDuration={ discountedPriceDuration }
+					formattedOriginalPrice={ formattedOriginalPrice }
 				/>
 			</span>
 		</>

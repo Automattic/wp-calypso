@@ -472,6 +472,7 @@ export interface ThemeSetupOptions {
 	pattern_ids?: number[] | string[];
 	header_pattern_ids?: number[] | string[];
 	footer_pattern_ids?: number[] | string[];
+	posts_source_site_id?: number;
 }
 
 export interface ActiveTheme {
@@ -479,4 +480,12 @@ export interface ActiveTheme {
 	_links: {
 		'wp:user-global-styles': { href: string }[];
 	};
+}
+
+export interface SourceSiteMigrationDetails {
+	status: string;
+	target_blog_id?: number;
+	is_target_blog_admin?: boolean;
+	is_target_blog_upgraded?: boolean;
+	target_blog_slug?: string;
 }

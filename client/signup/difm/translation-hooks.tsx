@@ -1,4 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import {
 	HOME_PAGE,
 	BLOG_PAGE,
@@ -24,22 +25,24 @@ import type { TranslateResult } from 'i18n-calypso';
  */
 export function useTranslatedPageTitles() {
 	const translate = useTranslate();
-	const pages: Record< PageId, TranslateResult > = {
-		[ HOME_PAGE ]: translate( 'Home' ),
-		[ BLOG_PAGE ]: translate( 'Blog' ),
-		[ CONTACT_PAGE ]: translate( 'Contact' ),
-		[ ABOUT_PAGE ]: translate( 'About' ),
-		[ PHOTO_GALLERY_PAGE ]: translate( 'Photo Gallery' ),
-		[ VIDEO_GALLERY_PAGE ]: translate( 'Video Gallery' ),
-		[ PORTFOLIO_PAGE ]: translate( 'Portfolio' ),
-		[ FAQ_PAGE ]: translate( 'FAQ' ),
-		[ SERVICES_PAGE ]: translate( 'Services' ),
-		[ TESTIMONIALS_PAGE ]: translate( 'Testimonials' ),
-		[ PRICING_PAGE ]: translate( 'Pricing' ),
-		[ TEAM_PAGE ]: translate( 'Team' ),
-		[ SHOP_PAGE ]: translate( 'Shop' ),
-	};
-	return pages;
+	return useMemo( () => {
+		const pages: Record< PageId, TranslateResult > = {
+			[ HOME_PAGE ]: translate( 'Home' ),
+			[ BLOG_PAGE ]: translate( 'Blog' ),
+			[ CONTACT_PAGE ]: translate( 'Contact' ),
+			[ ABOUT_PAGE ]: translate( 'About' ),
+			[ PHOTO_GALLERY_PAGE ]: translate( 'Photo Gallery' ),
+			[ VIDEO_GALLERY_PAGE ]: translate( 'Video Gallery' ),
+			[ PORTFOLIO_PAGE ]: translate( 'Portfolio' ),
+			[ FAQ_PAGE ]: translate( 'FAQ' ),
+			[ SERVICES_PAGE ]: translate( 'Services' ),
+			[ TESTIMONIALS_PAGE ]: translate( 'Testimonials' ),
+			[ PRICING_PAGE ]: translate( 'Pricing' ),
+			[ TEAM_PAGE ]: translate( 'Team' ),
+			[ SHOP_PAGE ]: translate( 'Shop' ),
+		};
+		return pages;
+	}, [ translate ] );
 }
 
 // Requesting Contexts

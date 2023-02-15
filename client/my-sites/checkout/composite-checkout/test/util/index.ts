@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY } from '@automattic/calypso-products';
 import {
 	getEmptyResponseCart,
 	getEmptyResponseCartProduct,
@@ -441,6 +442,38 @@ function convertRequestProductToResponseProduct(
 					meta: product.meta,
 					volume: 1,
 					extra: {},
+				};
+			case GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY:
+				return {
+					...getEmptyResponseCartProduct(),
+					product_id: 690,
+					// Adding the quantity to the name is a hacky way to validate that it
+					// is passed to the endpoint correctly.
+					product_name: `Google Workspace for '${ product.meta ?? '' }' and quantity '${
+						product.quantity ?? ''
+					}'`,
+					product_slug: GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
+					currency: currency,
+					is_domain_registration: false,
+					item_original_cost_integer: 7000,
+					item_original_cost_display: 'R$70',
+					item_subtotal_integer: 7000,
+					bill_period: '365',
+					months_per_bill_period: 12,
+					item_tax: 0,
+					meta: product.meta,
+					quantity: product.quantity,
+					extra: {
+						google_apps_users: [
+							{
+								email: 'foo@bar.com',
+								firstname: 'Human',
+								lastname: 'Person',
+								recoveryEmail: 'foo@example.com',
+								hash: '1234567',
+							},
+						],
+					},
 				};
 			case 'premium_theme':
 				return {
@@ -1221,4 +1254,67 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 	}
 
 	throw new Error( `No variants found for product_slug ${ data.product_slug }` );
+}
+
+/**
+ * Helper to prepare to mock Stripe Elements.
+ *
+ * To use this, you'll need to call it inside `jest.mock()` as follows:
+ *
+ * ```
+ * jest.mock( '@stripe/react-stripe-js', () => {
+ *   const stripe = jest.requireActual( '@stripe/react-stripe-js' );
+ *   return { ...stripe, ...mockStripeElements() };
+ * } );
+ *
+ * jest.mock( '@stripe/stripe-js', () => {
+ *   return {
+ *     loadStripe: async () => mockStripeElements().useStripe(),
+ *   };
+ * } );
+ * ```
+ */
+export function mockStripeElements() {
+	const mockElement = () => ( {
+		mount: jest.fn(),
+		destroy: jest.fn(),
+		on: jest.fn(),
+		update: jest.fn(),
+	} );
+
+	const mockElements = () => {
+		const elements = {};
+		return {
+			create: jest.fn( ( type ) => {
+				elements[ type ] = mockElement();
+				return elements[ type ];
+			} ),
+			getElement: jest.fn( ( type ) => {
+				return elements[ type ] || null;
+			} ),
+		};
+	};
+
+	const mockStripe = () => ( {
+		elements: jest.fn( () => mockElements() ),
+		createToken: jest.fn(),
+		createSource: jest.fn(),
+		createPaymentMethod: jest.fn(),
+		confirmCardPayment: jest.fn(),
+		confirmCardSetup: jest.fn(),
+		paymentRequest: jest.fn(),
+		_registerWrapper: jest.fn(),
+	} );
+
+	return {
+		Element: () => {
+			return mockElement();
+		},
+		useStripe: () => {
+			return mockStripe();
+		},
+		useElements: () => {
+			return mockElements();
+		},
+	};
 }

@@ -28,6 +28,7 @@ import {
 	PLAN_PERSONAL,
 	TITAN_MAIL_MONTHLY_SLUG,
 	PLAN_FREE,
+	is2023PricingGridEnabled,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
@@ -125,6 +126,7 @@ export class PlansFeaturesMain extends Component {
 			is2023OnboardingPricingGrid,
 			intervalType,
 			planTypeSelectorProps,
+			busyOnUpgradeClick,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -222,6 +224,7 @@ export class PlansFeaturesMain extends Component {
 					isReskinned={ isReskinned }
 					isFAQCondensedExperiment={ isFAQCondensedExperiment }
 					isPlansInsideStepper={ isPlansInsideStepper }
+					busyOnUpgradeClick={ busyOnUpgradeClick }
 				/>
 			</div>
 		);
@@ -351,6 +354,7 @@ export class PlansFeaturesMain extends Component {
 			hideFreePlan,
 			hidePersonalPlan,
 			hidePremiumPlan,
+			hideEcommercePlan,
 			sitePlanSlug,
 			showTreatmentPlansReorderTest,
 			flowName,
@@ -390,6 +394,10 @@ export class PlansFeaturesMain extends Component {
 
 		if ( hidePremiumPlan ) {
 			plans = plans.filter( ( planSlug ) => ! isPremiumPlan( planSlug ) );
+		}
+
+		if ( hideEcommercePlan ) {
+			plans = plans.filter( ( planSlug ) => ! isEcommercePlan( planSlug ) );
 		}
 
 		if ( isNewsletterOrLinkInBioFlow( flowName ) ) {
@@ -640,6 +648,7 @@ PlansFeaturesMain.propTypes = {
 	hideFreePlan: PropTypes.bool,
 	hidePersonalPlan: PropTypes.bool,
 	hidePremiumPlan: PropTypes.bool,
+	hideEcommercePlan: PropTypes.bool,
 	customerType: PropTypes.string,
 	flowName: PropTypes.string,
 	intervalType: PropTypes.oneOf( [ 'monthly', 'yearly' ] ),
@@ -660,6 +669,7 @@ PlansFeaturesMain.propTypes = {
 	isReskinned: PropTypes.bool,
 	isPlansInsideStepper: PropTypes.bool,
 	planTypeSelector: PropTypes.string,
+	busyOnUpgradeClick: PropTypes.bool,
 };
 
 PlansFeaturesMain.defaultProps = {
@@ -676,6 +686,7 @@ PlansFeaturesMain.defaultProps = {
 	isReskinned: false,
 	planTypeSelector: 'interval',
 	isPlansInsideStepper: false,
+	busyOnUpgradeClick: false,
 };
 
 export default connect(
@@ -703,7 +714,7 @@ export default connect(
 		) {
 			customerType = 'business';
 		}
-		const is2023OnboardingPricingGrid = isEnabled( 'onboarding/2023-pricing-grid' );
+		const is2023OnboardingPricingGrid = is2023PricingGridEnabled();
 		const planTypeSelectorProps = {
 			basePlansPath: props.basePlansPath,
 			isInSignup: props.isInSignup,

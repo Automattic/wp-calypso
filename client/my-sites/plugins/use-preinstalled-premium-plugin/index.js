@@ -1,7 +1,9 @@
+import { isJetpackSearchFree, isJetpackSearch } from '@automattic/calypso-products';
 import { useSelector } from 'react-redux';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import { getSitesWithPlugin } from 'calypso/state/plugins/installed/selectors';
+import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
 import isPluginActive from 'calypso/state/selectors/is-plugin-active';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -49,10 +51,24 @@ export default function usePreinstalledPremiumPlugin( pluginSlug ) {
 		return isPluginActive( state, selectedSiteId, pluginSlug );
 	} );
 
-	const preinstalledPremiumPluginFeature = preinstalledPremiumPlugin?.feature;
+	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, selectedSiteId ) );
+	const hasPurchasedFree = sitePurchases.some( isJetpackSearchFree );
+	const hasPurchasedPaid = sitePurchases.some( isJetpackSearch );
 
-	const preinstalledPremiumPluginProduct =
-		preinstalledPremiumPlugin?.products?.[ getPeriodVariationValue( billingPeriod ) ];
+	// Does the preinstalled premium plugin have a free tier?
+	const hasPreinstalledPremiumPluginFreeTier = !! preinstalledPremiumPlugin?.products?.free;
+
+	// Is the site using the free tier of a preinstalled premium plugin?
+	const isPreinstalledPremiumPluginFreeInstalled =
+		hasPreinstalledPremiumPluginFreeTier && isPreinstalledPremiumPluginUpgraded && hasPurchasedFree;
+
+	const isPreinstalledPremiumPluginPaidInstalled =
+		isPreinstalledPremiumPluginUpgraded && hasPurchasedPaid;
+
+	// If the site is using the free tier, offer the paid product
+	const preinstalledPremiumPluginProduct = isPreinstalledPremiumPluginFreeInstalled
+		? preinstalledPremiumPlugin?.products?.[ getPeriodVariationValue( billingPeriod ) ]
+		: preinstalledPremiumPlugin?.products?.free;
 
 	const sitesWithPreinstalledPremiumPlugin = useSelector( ( state ) => {
 		if ( ! preinstalledPremiumPlugin ) {
@@ -76,8 +92,9 @@ export default function usePreinstalledPremiumPlugin( pluginSlug ) {
 		isPreinstalledPremiumPlugin: !! preinstalledPremiumPlugin,
 		isPreinstalledPremiumPluginActive,
 		isPreinstalledPremiumPluginUpgraded,
-		preinstalledPremiumPluginFeature,
 		preinstalledPremiumPluginProduct,
 		sitesWithPreinstalledPremiumPlugin,
+		isPreinstalledPremiumPluginFreeInstalled,
+		isPreinstalledPremiumPluginPaidInstalled,
 	};
 }

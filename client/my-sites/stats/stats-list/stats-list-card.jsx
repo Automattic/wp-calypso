@@ -4,6 +4,7 @@ import {
 	StatsCard,
 	StatsCardAvatar,
 } from '@automattic/components';
+import classNames from 'classnames';
 import debugFactory from 'debug';
 import page from 'page';
 import React, { useState, useCallback } from 'react';
@@ -21,12 +22,15 @@ const StatsListCard = ( {
 	emptyMessage,
 	loader,
 	useShortLabel,
+	useShortNumber,
 	error,
 	heroElement,
 	metricLabel,
 	splitHeader,
 	mainItemLabel,
 	additionalColumns,
+	toggleControl,
+	className,
 } ) => {
 	const moduleNameTitle = titlecase( moduleType );
 	const debug = debugFactory( `calypso:stats:list:${ moduleType }` );
@@ -100,12 +104,13 @@ const StatsListCard = ( {
 			}
 			emptyMessage={ emptyMessage }
 			isEmpty={ ! loader && ( ! data || ! data?.length ) }
-			className={ `list-${ moduleType }` }
+			className={ classNames( `list-${ moduleType }`, className ) }
 			metricLabel={ metricLabel }
 			heroElement={ heroElement }
 			splitHeader={ splitHeader }
 			mainItemLabel={ mainItemLabel }
 			additionalHeaderColumns={ additionalColumns?.header }
+			toggleControl={ toggleControl }
 		>
 			{ !! loader && loader }
 			{ !! error && error }
@@ -119,7 +124,7 @@ const StatsListCard = ( {
 						// left icon visible only for Author avatars and Contry flags.
 						if ( item?.countryCode ) {
 							leftSideItem = <StatsListCountryFlag countryCode={ item.countryCode } />;
-						} else if ( moduleType === 'authors' && item?.icon ) {
+						} else if ( ( moduleType === 'authors' || moduleType === 'comments' ) && item?.icon ) {
 							leftSideItem = <StatsCardAvatar url={ item?.icon } altName={ item?.label } />;
 						}
 
@@ -133,6 +138,7 @@ const StatsListCard = ( {
 								leftSideItem={ leftSideItem }
 								renderRightSideItem={ ( incomingItem ) => outputRightItem( incomingItem, key ) }
 								useShortLabel={ useShortLabel }
+								useShortNumber={ useShortNumber }
 								isStatic={ ! isInteractive }
 								barMaxValue={ barMaxValue }
 								additionalColumns={ additionalColumns?.body( item ) }

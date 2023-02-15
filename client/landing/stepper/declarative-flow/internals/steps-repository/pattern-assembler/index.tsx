@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { StepContainer, SITE_SETUP_FLOW, SITE_ASSEMBLER_FLOW } from '@automattic/onboarding';
+import { StepContainer, SITE_SETUP_FLOW, WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useEffect } from 'react';
@@ -13,7 +13,7 @@ import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign } from '../../analytics/record-design';
-import { SITE_TAGLINE } from './constants';
+import { SITE_TAGLINE, PLACEHOLDER_SITE_ID } from './constants';
 import PatternLayout from './pattern-layout';
 import PatternSelectorLoader from './pattern-selector-loader';
 import { useAllPatterns } from './patterns-data';
@@ -23,7 +23,7 @@ import type { Pattern } from './types';
 import type { DesignRecipe, Design } from '@automattic/design-picker/src/types';
 import './style.scss';
 
-const PatternAssembler: Step = ( { navigation, flow } ) => {
+const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 	const translate = useTranslate();
 	const [ showPatternSelectorType, setShowPatternSelectorType ] = useState< string | null >( null );
 	const [ header, setHeader ] = useState< Pattern | null >( null );
@@ -43,6 +43,11 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const allPatterns = useAllPatterns();
+	const commonEventProps = {
+		flow,
+		step: stepName,
+		intent,
+	};
 
 	const largePreviewProps = {
 		placeholder: null,
@@ -82,6 +87,7 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 
 	const trackEventPatternAdd = ( patternType: string ) => {
 		recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_add_click', {
+			...commonEventProps,
 			pattern_type: patternType,
 		} );
 	};
@@ -96,6 +102,7 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 		patternName: string;
 	} ) => {
 		recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_select_click', {
+			...commonEventProps,
 			pattern_type: patternType,
 			pattern_id: patternId,
 			pattern_name: patternName,
@@ -105,6 +112,7 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 	const trackEventContinue = () => {
 		const patterns = getPatterns();
 		recordTracksEvent( 'calypso_signup_pattern_assembler_continue_click', {
+			...commonEventProps,
 			pattern_types: [ header && 'header', sections.length && 'section', footer && 'footer' ]
 				.filter( Boolean )
 				.join( ',' ),
@@ -114,6 +122,7 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 		} );
 		patterns.forEach( ( { id, name, category } ) => {
 			recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_final_select', {
+				...commonEventProps,
 				pattern_id: id,
 				pattern_name: name,
 				pattern_category: category,
@@ -227,6 +236,7 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 	const onBack = () => {
 		const patterns = getPatterns();
 		recordTracksEvent( 'calypso_signup_pattern_assembler_back_click', {
+			...commonEventProps,
 			has_selected_patterns: patterns.length > 0,
 			pattern_count: patterns.length,
 		} );
@@ -257,7 +267,12 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 						createCustomHomeTemplateContent( stylesheet, !! header, !! footer, !! sections.length )
 					)
 				)
-				.then( () => runThemeSetupOnSite( siteSlugOrId, design ) )
+				.then( () =>
+					runThemeSetupOnSite( siteSlugOrId, design, {
+						trimContent: false,
+						posts_source_site_id: PLACEHOLDER_SITE_ID,
+					} )
+				)
 				.then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) )
 		);
 
@@ -288,6 +303,7 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 					onDoneClick={ () => {
 						const patterns = getPatterns( showPatternSelectorType );
 						recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_select_done_click', {
+							...commonEventProps,
 							pattern_type: showPatternSelectorType,
 							pattern_ids: patterns.map( ( { id } ) => id ).join( ',' ),
 							pattern_names: patterns.map( ( { name } ) => name ).join( ',' ),
@@ -297,6 +313,7 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 					} }
 					onBack={ () => {
 						recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_select_back_click', {
+							...commonEventProps,
 							pattern_type: showPatternSelectorType,
 						} );
 
@@ -371,7 +388,7 @@ const PatternAssembler: Step = ( { navigation, flow } ) => {
 			<DocumentHead title={ translate( 'Design your home' ) } />
 			<StepContainer
 				stepName="pattern-assembler"
-				hideBack={ showPatternSelectorType !== null || flow === SITE_ASSEMBLER_FLOW }
+				hideBack={ showPatternSelectorType !== null || flow === WITH_THEME_ASSEMBLER_FLOW }
 				goBack={ onBack }
 				goNext={ goNext }
 				isHorizontalLayout={ false }

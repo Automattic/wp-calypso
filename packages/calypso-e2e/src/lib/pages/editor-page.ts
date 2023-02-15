@@ -41,7 +41,7 @@ const selectors = {
 	// Welcome tour
 	welcomeTourCloseButton: 'button[aria-label="Close Tour"]',
 };
-const EXTENDED_TIMEOUT = 30 * 1000;
+export const EXTENDED_EDITOR_WAIT_TIMEOUT = 30 * 1000;
 
 /**
  * Represents an instance of the WPCOM's Gutenberg editor page.
@@ -154,7 +154,7 @@ export class EditorPage {
 		// In a typical loading scenario, this request is one of the last to fire.
 		// Lacking a perfect cross-site type (Simple/Atomic) way to check the loading state,
 		// it is a fairly good stand-in.
-		await this.page.waitForResponse( /.*posts.*/, { timeout: EXTENDED_TIMEOUT } );
+		await this.page.waitForResponse( /.*posts.*/, { timeout: EXTENDED_EDITOR_WAIT_TIMEOUT } );
 
 		// Dismiss the Welcome Tour.
 		await this.editorWelcomeTourComponent.forceDismissWelcomeTour();

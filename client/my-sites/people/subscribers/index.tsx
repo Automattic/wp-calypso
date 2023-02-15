@@ -23,7 +23,7 @@ interface Props {
 	followersQuery: FollowersQuery;
 }
 function Subscribers( props: Props ) {
-	const _ = useTranslate();
+	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const { search, followersQuery } = props;
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
@@ -87,17 +87,21 @@ function Subscribers( props: Props ) {
 				<>
 					<PeopleListSectionHeader
 						isPlaceholder={ isLoading }
-						label={ _( 'You have %(number)d subscriber', 'You have %(number)d subscribers', {
-							args: { number: subscribersTotal },
-							count: subscribersTotal as number,
-						} ) }
+						label={ translate(
+							'You have %(number)d subscriber',
+							'You have %(number)d subscribers',
+							{
+								args: { number: subscribersTotal },
+								count: subscribersTotal as number,
+							}
+						) }
 					>
 						<Button compact primary href={ addSubscribersLink }>
-							{ _( 'Add subscribers' ) }
+							{ translate( 'Add subscribers' ) }
 						</Button>
 						<EllipsisMenu compact position="bottom">
 							<PopoverMenuItem href={ downloadCsvLink } onClick={ onDownloadCsvClick }>
-								{ _( 'Download email subscribers as CSV' ) }
+								{ translate( 'Download email subscribers as CSV' ) }
 							</PopoverMenuItem>
 						</EllipsisMenu>
 					</PeopleListSectionHeader>
@@ -126,7 +130,7 @@ function Subscribers( props: Props ) {
 							{ /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */ }
 							{ /* @ts-ignore */ }
 							<EmailVerificationGate
-								noticeText={ _( 'You must verify your email to add subscribers.' ) }
+								noticeText={ translate( 'You must verify your email to add subscribers.' ) }
 								noticeStatus="is-info"
 							>
 								<AddSubscriberForm
@@ -145,7 +149,7 @@ function Subscribers( props: Props ) {
 				<Card>
 					<NoResults
 						image="/calypso/images/people/mystery-person.svg"
-						text={ _( 'No results found for {{em}}%(searchTerm)s{{/em}}', {
+						text={ translate( 'No results found for {{em}}%(searchTerm)s{{/em}}', {
 							args: { searchTerm: search },
 							components: { em: <em /> },
 						} ) }

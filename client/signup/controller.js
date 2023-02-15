@@ -288,6 +288,7 @@ export default {
 		const refParameter = query && query.ref;
 		// Set theme parameter in signup depencency store so we can retrieve it in getChecklistThemeDestination().
 		const themeParameter = query && query.theme;
+
 		const additionalDependencies = {
 			...( refParameter && { refParameter } ),
 			...( themeParameter && { themeParameter } ),

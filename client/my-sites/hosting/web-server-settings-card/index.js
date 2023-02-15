@@ -267,7 +267,7 @@ const WebServerSettingsCard = ( {
 			<QuerySitePhpVersion siteId={ siteId } />
 			<QuerySiteStaticFile404 siteId={ siteId } />
 			<MaterialIcon icon="build" size={ 32 } />
-			<CardHeading>{ translate( 'Web Server Settings' ) }</CardHeading>
+			<CardHeading id="web-server-settings">{ translate( 'Web Server Settings' ) }</CardHeading>
 			<p>
 				{ translate(
 					'For sites with specialized needs, fine-tune how the web server runs your website.'

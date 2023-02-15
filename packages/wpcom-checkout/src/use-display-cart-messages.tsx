@@ -12,11 +12,21 @@ export default function useDisplayCartMessages( {
 	isLoadingCart,
 	showErrorMessages,
 	showSuccessMessages,
+	shouldShowPersistentErrors,
 }: {
 	cart: ResponseCart;
 	isLoadingCart: boolean;
 	showSuccessMessages: ShowMessages;
 	showErrorMessages: ShowMessages;
+
+	/**
+	 * Persistent errors like "Purchases are disabled for this site" are returned
+	 * during cart fetch (regular cart errors are transient and only are returned
+	 * when changing the cart). We want to display these errors only in certain
+	 * contexts where they will make sense (like checkout), not in every place
+	 * that happens to render this component (like the plans page).
+	 */
+	shouldShowPersistentErrors: boolean;
 } ): void {
 	const previousCart = useRef< ResponseCart | null >( null );
 
@@ -30,9 +40,10 @@ export default function useDisplayCartMessages( {
 			previousCart: previousCart.current,
 			showErrorMessages,
 			showSuccessMessages,
+			shouldShowPersistentErrors,
 		} );
 		previousCart.current = cart;
-	}, [ cart, isLoadingCart, showErrorMessages, showSuccessMessages ] );
+	}, [ cart, isLoadingCart, showErrorMessages, showSuccessMessages, shouldShowPersistentErrors ] );
 }
 
 function displayCartMessages( {
@@ -41,33 +52,31 @@ function displayCartMessages( {
 	previousCart,
 	showErrorMessages,
 	showSuccessMessages,
+	shouldShowPersistentErrors,
 }: {
 	cart: ResponseCart;
 	isLoadingCart: boolean;
 	previousCart: ResponseCart | null;
 	showErrorMessages: ShowMessages;
 	showSuccessMessages: ShowMessages;
+	shouldShowPersistentErrors: boolean;
 } ) {
 	const newCart = cart;
 	if ( isLoadingCart ) {
 		return;
 	}
 	const messages = getNewMessages( previousCart, newCart );
-	const areThereMessages = Boolean( messages.errors?.length || messages.success?.length );
-	if ( ! areThereMessages ) {
-		return;
+
+	if ( messages.errors?.length ) {
+		showErrorMessages( messages.errors );
 	}
 
-	const errorMessageCount = messages.errors?.length ?? 0;
-	const errorMessages = messages.errors;
-	if ( errorMessages && errorMessageCount > 0 ) {
-		showErrorMessages( errorMessages );
+	if ( messages.success?.length ) {
+		showSuccessMessages( messages.success );
 	}
 
-	const successMessageCount = messages.success?.length ?? 0;
-	const successMessages = messages.success;
-	if ( successMessages && successMessageCount > 0 ) {
-		showSuccessMessages( successMessages );
+	if ( messages.persistent_errors?.length && shouldShowPersistentErrors ) {
+		showErrorMessages( messages.persistent_errors );
 	}
 }
 

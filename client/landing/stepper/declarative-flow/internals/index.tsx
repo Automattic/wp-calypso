@@ -103,7 +103,14 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				throw new Error( assertCondition.message ?? 'An error has occurred.' );
 		}
 
-		return <step.component navigation={ stepNavigation } flow={ flow.name } data={ stepData } />;
+		return (
+			<step.component
+				navigation={ stepNavigation }
+				flow={ flow.name }
+				stepName={ step.slug }
+				data={ stepData }
+			/>
+		);
 	};
 
 	const getDocumentHeadTitle = () => {

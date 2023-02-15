@@ -1,3 +1,4 @@
+import formatCurrency from '@automattic/format-currency';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -85,6 +86,9 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 								<TimeFrame
 									billingTerm={ billingTerm }
 									discountedPriceDuration={ discountedPriceDuration }
+									formattedOriginalPrice={ formatCurrency( originalPrice, currencyCode, {
+										stripZeros: true,
+									} ) }
 								/>
 							</div>
 						</div>

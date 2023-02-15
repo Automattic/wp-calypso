@@ -1,10 +1,5 @@
 import { Frame, Page, ElementHandle } from 'playwright';
 
-// Workaround to get a type from predefined array.
-// See https://stackoverflow.com/a/59857409.
-const gutterValuesArray = [ 'None', 'Small', 'Medium', 'Large', 'Huge' ] as const;
-export type gutterValues = typeof gutterValuesArray[ number ];
-
 const selectors = {
 	block: '.wp-block-coblocks-pricing-table',
 	pricing: '.wp-block-coblocks-pricing-table-item__amount',
@@ -18,7 +13,7 @@ export class PricingTableBlock {
 	// Static properties.
 	static blockName = 'Pricing Table';
 	static blockEditorSelector = '[aria-label="Block: Pricing Table"]';
-	static gutterValues = gutterValuesArray;
+
 	block: ElementHandle;
 
 	/**
@@ -47,21 +42,21 @@ export class PricingTableBlock {
 	/**
 	 * Given an appropriate value, select the gutter value on the settings sidebar for Pricing Table block.
 	 *
-	 * @param {string} value Value to set the gutter to.
+	 * @param {string} name Name of the gutter preset.
+	 * @param {number} value Value of the gutter for the "Custom" preset (Atomic).
 	 * @returns {Promise<void>} No return value.
 	 */
-	async setGutter( value: gutterValues ): Promise< void > {
+	async setGutter( name: string, value?: number ): Promise< void > {
 		const frame = ( await this.block.ownerFrame() ) as Frame;
+		const buttonSelector = `${ selectors.gutterControl } button[aria-label="${ name }"]`;
 
-		const selector = `${ selectors.gutterControl } button[aria-label="${ value }"]`;
-		await frame.click( selector );
-		const elementHandle = await frame.waitForSelector( selector );
-		// waitForFunction will do its own validation, so no need to return the value
-		// to caller for a check.
-		await frame.waitForFunction(
-			( element: SVGElement | HTMLElement ) => element.ariaPressed === 'true',
-			elementHandle
-		);
+		await frame.locator( buttonSelector ).click();
+		await frame.locator( `${ buttonSelector }[aria-pressed="true"]` ).waitFor();
+
+		if ( name === 'Custom' && value !== undefined ) {
+			const valueInput = frame.locator( 'input[type="number"]:below(button[aria-label="Custom"])' );
+			await valueInput.fill( String( value ) );
+		}
 	}
 
 	/**

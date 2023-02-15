@@ -40,6 +40,7 @@ import {
 	getTransformedStreamItems,
 	shouldRequestRecs,
 } from 'calypso/state/reader/streams/selectors';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import EmptyContent from './empty';
 import PostLifecycle from './post-lifecycle';
@@ -125,6 +126,7 @@ class ReaderStream extends Component {
 
 		if ( ! keysAreEqual( selectedPostKey, this.props.selectedPostKey ) ) {
 			this.scrollToSelectedPost( true );
+			this.focusSelectedPost( this.props.selectedPostKey );
 		}
 
 		if ( this.props.shouldRequestRecs ) {
@@ -134,6 +136,21 @@ class ReaderStream extends Component {
 			} );
 		}
 	}
+
+	focusSelectedPost = ( selectedPostKey ) => {
+		const postRefKey = this.getPostRef( selectedPostKey );
+		const ref = this.listRef.current && this.listRef.current.refs[ postRefKey ];
+		const node = ReactDom.findDOMNode( ref );
+
+		// if the post is found, focus the first anchor tag within it.
+		if ( node ) {
+			const firstLink = node.querySelector( 'a' );
+
+			if ( firstLink ) {
+				firstLink.focus();
+			}
+		}
+	};
 
 	_popstate = () => {
 		if ( this.props.selectedPostKey && window.history.scrollRestoration !== 'manual' ) {
@@ -172,6 +189,12 @@ class ReaderStream extends Component {
 		window.addEventListener( 'popstate', this._popstate );
 		if ( 'scrollRestoration' in window.history ) {
 			window.history.scrollRestoration = 'manual';
+		}
+
+		if ( this.props.selectedPostKey ) {
+			setTimeout( () => {
+				this.focusSelectedPost( this.props.selectedPostKey );
+			}, 100 );
 		}
 
 		document.addEventListener( 'keydown', this.handleKeydown, true );
@@ -394,7 +417,7 @@ class ReaderStream extends Component {
 	};
 
 	renderPost = ( postKey, index ) => {
-		const { selectedPostKey, streamKey } = this.props;
+		const { selectedPostKey, streamKey, primarySiteId } = this.props;
 		const isSelected = !! ( selectedPostKey && keysAreEqual( selectedPostKey, postKey ) );
 
 		const itemKey = this.getPostRef( postKey );
@@ -425,6 +448,7 @@ class ReaderStream extends Component {
 					recsStreamKey={ this.props.recsStreamKey }
 					index={ index }
 					compact={ this.props.useCompactCards }
+					siteId={ primarySiteId }
 				/>
 				{ index === 0 && <PerformanceTrackerStop /> }
 			</Fragment>
@@ -558,6 +582,7 @@ export default connect(
 			shouldRequestRecs: shouldRequestRecs( state, streamKey, recsStreamKey ),
 			likedPost: selectedPost && isLikedPost( state, selectedPost.site_ID, selectedPost.ID ),
 			organizations: getReaderOrganizations( state ),
+			primarySiteId: getPrimarySiteId( state ),
 		};
 	},
 	{

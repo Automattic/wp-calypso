@@ -11,7 +11,7 @@ import type { Invite } from './types';
 import './style.scss';
 
 function TeamInvites() {
-	const _ = useTranslate();
+	const translate = useTranslate();
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 	const siteId = site?.ID as number;
 	const pendingInvites = useSelector( ( state ) => getPendingInvitesForSite( state, siteId ) );
@@ -38,7 +38,7 @@ function TeamInvites() {
 			{ !! pendingInvites?.length && (
 				<>
 					<PeopleListSectionHeader
-						label={ _(
+						label={ translate(
 							'You have a pending invite for %(number)d user',
 							'You have a pending invite for %(number)d users',
 							{
