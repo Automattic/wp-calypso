@@ -479,10 +479,14 @@ class ThemeSheet extends Component {
 					</>
 				) : (
 					<>
-						{ this.renderOverviewTab() }
-						{ ! isPremium && supportDocumentation && this.renderSetupTab() }
-						{ this.renderSupportTab() }
-						{ isNewDetailsAndPreview && isWpcomTheme && this.renderNextTheme() }
+						{ this.isLoaded() && (
+							<>
+								{ this.renderOverviewTab() }
+								{ ! isPremium && supportDocumentation && this.renderSetupTab() }
+								{ this.renderSupportTab() }
+								{ isNewDetailsAndPreview && isWpcomTheme && this.renderNextTheme() }
+							</>
+						) }
 					</>
 				) }
 				{ ! isNewDetailsAndPreview && (
