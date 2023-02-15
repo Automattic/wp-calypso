@@ -234,20 +234,9 @@ describe( 'getFilteredAndSortedPlugins', () => {
 		expect( plugins ).toHaveLength( 3 );
 	} );
 
-	test( 'Should get a plugin list containing jetpack if both sites are requested', () => {
+	test( 'Should get a plugin list containing all plugins in sorted order if both sites are requested', () => {
 		const plugins = getFilteredAndSortedPlugins( state, [ siteOneId, siteTwoId ], undefined );
-		const siteWithPlugin = {
-			[ siteTwoId ]: {
-				active: jetpack.active,
-				autoupdate: jetpack.autoupdate,
-				update: jetpack.update,
-				version: jetpack.version,
-			},
-		};
-		const { active, autoupdate, update, version, ...pluginProperties } = jetpack;
-		expect( plugins ).toEqual(
-			expect.arrayContaining( [ { ...pluginProperties, sites: siteWithPlugin } ] )
-		);
+		expect( plugins ).toEqual( [ akismetWithSites, helloDollyWithSites, jetpackWithSites ] );
 	} );
 
 	test( 'Should get a plugin list of length 2 if only site 1 is requested', () => {
