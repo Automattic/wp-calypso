@@ -27,14 +27,14 @@ export const GithubAuthorizeCard = () => {
 	return (
 		<Card className="github-hosting-card">
 			<SocialLogo className="material-icon" icon="github" size={ 32 } />
-			<CardHeading>{ translate( 'Connect GitHub' ) }</CardHeading>
+			<CardHeading>{ translate( 'Deploy from GitHub' ) }</CardHeading>
 			<p>
 				{ translate(
-					'Connect this site to a GitHub repository, choose a branch, and deploy with each push.'
+					'Connect this site to a GitHub repository and automatically deploy branches on push.'
 				) }
 			</p>
 			<Button className="is-primary" disabled={ ! github } onClick={ handleClick }>
-				{ translate( 'Authorize' ) }
+				{ translate( 'Authorize access to Github' ) }
 			</Button>
 		</Card>
 	);

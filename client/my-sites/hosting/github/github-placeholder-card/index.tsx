@@ -9,7 +9,7 @@ export const GitHubPlaceholderCard = () => {
 	return (
 		<Card className="github-hosting-card">
 			<SocialLogo className="material-icon" icon="github" size={ 32 } />
-			<CardHeading>{ translate( 'GitHub' ) }</CardHeading>
+			<CardHeading>{ translate( 'Deploy from GitHub' ) }</CardHeading>
 			<Spinner />
 		</Card>
 	);
