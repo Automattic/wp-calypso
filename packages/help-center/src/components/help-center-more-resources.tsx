@@ -12,7 +12,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
 import { getSectionName } from 'calypso/state/ui/selectors';
-import NewReleases from '../icons/new-releases';
+import { NewReleases } from '../icons';
 import { HELP_CENTER_STORE } from '../stores';
 
 const circle = (

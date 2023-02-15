@@ -4,8 +4,6 @@ import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useStorageText } from 'calypso/components/backup-storage-space/hooks';
-import { useQueryRewindPolicies } from 'calypso/components/data/query-rewind-policies';
-import { useQueryRewindSize } from 'calypso/components/data/query-rewind-size';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { updateBackupRetention } from 'calypso/state/rewind/retention/actions';
 import { BACKUP_RETENTION_UPDATE_REQUEST } from 'calypso/state/rewind/retention/constants';
@@ -31,9 +29,6 @@ const BackupRetentionManagement: FunctionComponent = () => {
 
 	const siteId = useSelector( getSelectedSiteId ) as number;
 
-	// Query dependencies
-	useQueryRewindSize( siteId );
-	useQueryRewindPolicies( siteId );
 	const requestingSize = useSelector( ( state ) => isRequestingRewindSize( state, siteId ) );
 	const requestingPolicies = useSelector( ( state ) =>
 		isRequestingRewindPolicies( state, siteId )

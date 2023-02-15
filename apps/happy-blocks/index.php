@@ -35,11 +35,12 @@
  *      ```
  */
 
- /**
-	* Load the shared assets for the custom block (view and editor).
-	* @return void
-	*/
- function a8c_happyblocks_shared_assets() {
+/**
+ * Load the shared assets for the custom block (view and editor).
+ *
+ * @return void
+ */
+function a8c_happyblocks_shared_assets() {
 	$assets = require plugin_dir_path( __FILE__ ) . 'dist/editor.min.asset.php';
 
 	wp_register_script( 'a8c-happyblocks-pricing-plans', '', array(), '20221212', true );
