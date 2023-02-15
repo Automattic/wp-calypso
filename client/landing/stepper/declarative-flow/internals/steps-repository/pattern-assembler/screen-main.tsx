@@ -4,7 +4,7 @@ import {
 	__experimentalItemGroup as ItemGroup,
 	__experimentalDivider as Divider,
 } from '@wordpress/components';
-import { header, footer, layout } from '@wordpress/icons';
+import { header, footer, layout, styles } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { NavigationButtonAsItem } from './navigator-buttons';
 import NavigatorHeader from './navigator-header';
@@ -64,7 +64,7 @@ const ScreenMain = ( { onSelect, onContinueClick }: Props ) => {
 							<Divider />
 							<NavigationButtonAsItem
 								path="/color-palettes"
-								icon={ layout }
+								icon={ styles }
 								aria-label={ translate( 'Change colours' ) }
 								onClick={ () => onSelect( 'homepage' ) }
 							>
