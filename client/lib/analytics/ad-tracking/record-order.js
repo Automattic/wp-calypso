@@ -2,7 +2,7 @@ import { getCurrentUser } from '@automattic/calypso-analytics';
 import { costToUSD, refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
 import { mayWeTrackByTracker } from '../tracker-buckets';
 import { cartToGaPurchase } from '../utils/cart-to-ga-purchase';
-import { splitWpcomJetpackCartInfo } from '../utils/split-wpcom-jetpack-cart-info';
+import { splitCartProducts } from '../utils/split-wpcom-jetpack-cart-info';
 import {
 	debug,
 	TRACKING_IDS,
@@ -46,7 +46,7 @@ export async function recordOrder( cart, orderId ) {
 
 	// Fire one tracking event that includes details about the entire order
 
-	const wpcomJetpackCartInfo = splitWpcomJetpackCartInfo( cart );
+	const wpcomJetpackCartInfo = splitCartProducts( cart );
 	debug( 'recordOrder: wpcomJetpackCartInfo:', wpcomJetpackCartInfo );
 
 	recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo );
