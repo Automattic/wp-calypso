@@ -140,7 +140,7 @@ class Help_Center {
 			'plan'            => array(
 				'product_slug' => $plan->product_slug,
 			),
-			'is_wpcom_atomic' => boolval( defined( 'IS_ATOMIC' ) && IS_ATOMIC ),
+			'is_wpcom_atomic' => defined( 'IS_ATOMIC' ) && IS_ATOMIC,
 			'jetpack'         => true === apply_filters( 'is_jetpack_site', false, $site ),
 			'logo'            => array(
 				'id'    => $logo_id,
