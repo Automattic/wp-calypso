@@ -19,7 +19,7 @@ const MiscellaneousCard = ( {
 	translate,
 } ) => {
 	const clearCache = () => {
-		clearAtomicWordPressCache( siteId, 'Clearing again in less than 5 minutes.' );
+		clearAtomicWordPressCache( siteId, 'Manually clearing again.' );
 	};
 
 	const getClearCacheContent = () => {
