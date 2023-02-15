@@ -221,6 +221,9 @@ export function getPluginOnSite( state: AppState, siteId: number, pluginSlug: st
 		return undefined;
 	}
 
+	// To keep compatibility with some behavior that existed before the refactor
+	// in #73296 the returned object has the site specific data lifted onto it, and
+	// the sites property has only the site data for the requested site.
 	return {
 		...pluginWithoutSites,
 		...plugin.sites[ siteId ],
