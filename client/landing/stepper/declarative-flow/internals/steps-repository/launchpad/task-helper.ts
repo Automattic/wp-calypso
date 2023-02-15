@@ -302,7 +302,7 @@ export function getEnhancedTasks(
 						title: translate( 'Choose a domain' ),
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							window.location.assign( `/domains/add/${ siteSlug }` );
+							window.location.assign( `/domains/add/${ siteSlug }?domainAndPlanPackage=true` );
 						},
 						badgeText: translate( 'Upgrade plan' ),
 					};
