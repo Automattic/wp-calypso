@@ -141,8 +141,11 @@ export default function ToggleActivateMonitoring( {
 		<>
 			<span
 				ref={ statusContentRef }
+				role="button"
+				tabIndex={ 0 }
 				onMouseEnter={ handleShowTooltip }
 				onMouseLeave={ handleHideTooltip }
+				onMouseDown={ handleHideTooltip }
 				className={ classNames( 'toggle-activate-monitoring__toggle-button', {
 					[ 'sites-overview__disabled' ]: siteError,
 				} ) }
