@@ -1,6 +1,7 @@
 import { useI18n } from '@wordpress/react-i18n';
+import { LoadingMessage } from './types';
 
-export function useVideoPressLoadingMessages() {
+export function useVideoPressLoadingMessages(): LoadingMessage[] {
 	const { __ } = useI18n();
 	return [
 		{ title: __( 'Setting up your video site' ), duration: 5000 },

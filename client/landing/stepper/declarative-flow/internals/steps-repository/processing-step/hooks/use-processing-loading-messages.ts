@@ -3,10 +3,11 @@ import { isWooExpressFlow } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
+import { LoadingMessage } from './types';
 
 const SiteIntent = Onboard.SiteIntent;
 
-export function useProcessingLoadingMessages( flow?: string | null ) {
+export function useProcessingLoadingMessages( flow?: string | null ): LoadingMessage[] {
 	const { __ } = useI18n();
 	let loadingMessages = [];
 
@@ -21,7 +22,7 @@ export function useProcessingLoadingMessages( flow?: string | null ) {
 		];
 	}
 
-	if ( isWooExpressFlow( flow ) ) {
+	if ( isWooExpressFlow( flow || null ) ) {
 		return stepData.currentStep === 'siteCreationStep'
 			? [
 					{
