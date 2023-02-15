@@ -5,7 +5,7 @@ import {
 	PLAN_ECOMMERCE_MONTHLY,
 } from '@automattic/calypso-products';
 import { Button, Card } from '@automattic/components';
-import { getCurrencyObject } from '@automattic/format-currency';
+import { formatCurrency } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useCallback, useMemo } from 'react';
@@ -40,8 +40,6 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 		currencyCode: getPlan( state, eCommercePlanAnnual.getProductId() )?.currency_code || '',
 	} ) );
 
-	const { symbol: currencySymbol } = getCurrencyObject( 0, eCommercePlanPrices.currencyCode );
-
 	const isAnnualSubscription = interval === 'yearly';
 	const targetECommercePlan = isAnnualSubscription ? eCommercePlanAnnual : eCommercePlanMonthly;
 
@@ -61,35 +59,42 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 
 	const monthlyPriceWrapper = <span className="e-commerce-trial-plans__price-card-value" />;
 	const priceDescription = <span className="e-commerce-trial-plans__price-card-interval" />;
-	const currencyWrapper = <span className="e-commerce-trial-plans__price-card-value-symbol" />;
 
 	const priceContent = isAnnualSubscription
 		? translate(
-				'{{monthlyPriceWrapper}}{{currencyWrapper}}%(currency)s{{/currencyWrapper}}%(monthlyPrice)s{{/monthlyPriceWrapper}} {{priceDescription}}per month, %(currency)s%(annualPrice)s billed annually{{/priceDescription}}',
+				'{{monthlyPriceWrapper}}%(monthlyPrice)s{{/monthlyPriceWrapper}} {{priceDescription}}per month, %(annualPrice)s billed annually{{/priceDescription}}',
 				{
 					args: {
-						currency: currencySymbol,
-						monthlyPrice: eCommercePlanPrices.annualPlanMonthlyPrice,
-						annualPrice: eCommercePlanPrices.annualPlanPrice,
+						monthlyPrice: formatCurrency(
+							eCommercePlanPrices.annualPlanMonthlyPrice,
+							eCommercePlanPrices.currencyCode,
+							{ stripZeros: true }
+						),
+						annualPrice: formatCurrency(
+							eCommercePlanPrices.annualPlanPrice,
+							eCommercePlanPrices.currencyCode,
+							{ stripZeros: true }
+						),
 					},
 					components: {
 						monthlyPriceWrapper,
 						priceDescription,
-						currencyWrapper,
 					},
 				}
 		  )
 		: translate(
-				'{{monthlyPriceWrapper}}{{currencyWrapper}}%(currency)s{{/currencyWrapper}}%(monthlyPrice)s{{/monthlyPriceWrapper}} {{priceDescription}}per month{{/priceDescription}}',
+				'{{monthlyPriceWrapper}}%(monthlyPrice)s{{/monthlyPriceWrapper}} {{priceDescription}}per month{{/priceDescription}}',
 				{
 					args: {
-						currency: currencySymbol,
-						monthlyPrice: eCommercePlanPrices.monthlyPlanPrice,
+						monthlyPrice: formatCurrency(
+							eCommercePlanPrices.monthlyPlanPrice,
+							eCommercePlanPrices.currencyCode,
+							{ stripZeros: true }
+						),
 					},
 					components: {
 						monthlyPriceWrapper,
 						priceDescription,
-						currencyWrapper,
 					},
 				}
 		  );
