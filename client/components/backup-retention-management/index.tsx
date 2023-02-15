@@ -16,7 +16,7 @@ import getRewindBytesAvailable from 'calypso/state/rewind/selectors/get-rewind-b
 import isRequestingRewindPolicies from 'calypso/state/rewind/selectors/is-requesting-rewind-policies';
 import isRequestingRewindSize from 'calypso/state/rewind/selectors/is-requesting-rewind-size';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { STORAGE_ESTIMATION_ADDITIONAL_BUFFER } from './constants';
+import { RETENTION_OPTIONS, STORAGE_ESTIMATION_ADDITIONAL_BUFFER } from './constants';
 import InfoTooltip from './info-tooltip';
 import LoadingPlaceholder from './loading';
 import RetentionOptionsControl from './retention-options/retention-options-control';
@@ -82,52 +82,13 @@ const BackupRetentionManagement: FunctionComponent = () => {
 	const currentSiteSizeText = useStorageText( estimatedCurrentSiteSize );
 	const storageLimitText = useStorageText( storageLimitBytes );
 
-	const getOptionsInitialState = (): RetentionOptionInput[] => [
-		{
-			id: 7,
-			spaceNeededInBytes: 0,
-			upgradeRequired: false,
-		},
-		{
-			id: 30,
-			spaceNeededInBytes: 0,
-			upgradeRequired: false,
-		},
-		{
-			id: 120,
-			spaceNeededInBytes: 0,
-			upgradeRequired: false,
-		},
-		{
-			id: 365,
-			spaceNeededInBytes: 0,
-			upgradeRequired: false,
-		},
-	];
-
-	const [ retentionOptionsCards, setRetentionOptionsCards ] = useState( getOptionsInitialState );
-
-	// Update the retention options cards with the correct values dynamically
-	useEffect( () => {
-		if ( isFetching ) {
-			return;
-		}
-
-		setRetentionOptionsCards( ( previousOptions ) => {
-			const newOptions = previousOptions.map( ( option ) => {
-				const spaceNeededInBytes = estimatedCurrentSiteSize * option.id;
-				const upgradeRequired = spaceNeededInBytes > storageLimitBytes;
-
-				return {
-					...option,
-					spaceNeededInBytes,
-					upgradeRequired,
-				};
-			} );
-
-			return newOptions;
-		} );
-	}, [ estimatedCurrentSiteSize, isFetching, storageLimitBytes ] );
+	const retentionOptionsCards = RETENTION_OPTIONS.map( ( retentionDays ) => {
+		return {
+			id: retentionDays,
+			spaceNeededInBytes: estimatedCurrentSiteSize * retentionDays,
+			upgradeRequired: estimatedCurrentSiteSize * retentionDays > storageLimitBytes,
+		};
+	} );
 
 	const updateRetentionRequestStatus = useSelector( ( state ) =>
 		getBackupRetentionUpdateRequestStatus( state, siteId )
@@ -138,8 +99,11 @@ const BackupRetentionManagement: FunctionComponent = () => {
 		( value: number ) => {
 			if ( value ) {
 				setRetentionSelected( value );
-				const selectedOption = retentionOptionsCards.find( ( option ) => option.id === value );
-				setStorageUpgradeRequired( selectedOption?.upgradeRequired ?? false );
+				const selectedOption = retentionOptionsCards.find(
+					( option ) => option.id === value
+				) as RetentionOptionInput;
+
+				setStorageUpgradeRequired( selectedOption.upgradeRequired );
 			}
 		},
 		[ retentionOptionsCards ]
