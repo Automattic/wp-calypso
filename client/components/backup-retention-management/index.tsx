@@ -103,10 +103,12 @@ const BackupRetentionManagement: FunctionComponent = () => {
 					( option ) => option.id === value
 				) as RetentionOptionInput;
 
-				setStorageUpgradeRequired( selectedOption.upgradeRequired );
+				if ( selectedOption.upgradeRequired !== storageUpgradeRequired ) {
+					setStorageUpgradeRequired( selectedOption.upgradeRequired );
+				}
 			}
 		},
-		[ retentionOptionsCards ]
+		[ retentionOptionsCards, storageUpgradeRequired ]
 	);
 
 	const disableFormSubmission =
