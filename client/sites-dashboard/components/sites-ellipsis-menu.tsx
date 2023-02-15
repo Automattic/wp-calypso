@@ -200,7 +200,7 @@ const CopySiteItem = ( { recordTracks, site, onClick }: SitesMenuItemProps ) => 
 	);
 };
 
-const ExternalGridIcon = styled( Gridicon )( {
+const MenuItemGridIcon = styled( Gridicon )( {
 	insetBlockStart: '-1px',
 	marginInlineStart: '4px',
 	position: 'relative',
@@ -214,7 +214,7 @@ const WpAdminItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 			href={ site.options?.admin_url }
 			onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_wpadmin_click' ) }
 		>
-			{ __( 'Visit WP Admin' ) } <ExternalGridIcon icon="external" size={ 18 } />
+			{ __( 'Visit WP Admin' ) } <MenuItemGridIcon icon="external" size={ 18 } />
 		</MenuItemLink>
 	);
 };
@@ -280,7 +280,9 @@ function DeveloperSettings( { siteSlug }: { siteSlug: string } ) {
 
 	return (
 		<div { ...developerSubmenuProps.parent }>
-			<MenuItemLink>{ __( 'Developer settings' ) }</MenuItemLink>
+			<MenuItemLink>
+				{ __( 'Developer settings' ) } <MenuItemGridIcon icon="chevron-right" size={ 18 } />
+			</MenuItemLink>
 			<SubmenuPopover { ...developerSubmenuProps.submenu }>
 				{ submenuItems.map( ( item ) => (
 					<MenuItemLink key={ item.label } href={ item.href }>
