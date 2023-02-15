@@ -149,14 +149,12 @@ const BackupRetentionManagement: FunctionComponent = () => {
 	}, [ currentRetentionPlan, retentionSelected ] );
 
 	useEffect( () => {
-		if ( updateRetentionRequestStatus === BACKUP_RETENTION_UPDATE_REQUEST.SUCCESS ) {
-			// Update the current retention plan to the one updated by the user.
-			setCurrentRetentionPlan( retentionSelected );
-			setConfirmationDialogVisible( false );
-		} else if ( updateRetentionRequestStatus === BACKUP_RETENTION_UPDATE_REQUEST.FAILED ) {
+		if (
+			updateRetentionRequestStatus === BACKUP_RETENTION_UPDATE_REQUEST.SUCCESS ||
+			updateRetentionRequestStatus === BACKUP_RETENTION_UPDATE_REQUEST.FAILED
+		) {
 			setConfirmationDialogVisible( false );
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ updateRetentionRequestStatus ] );
 
 	return (
