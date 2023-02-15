@@ -7,7 +7,6 @@ $plans-2023-small-breakpoint: 780px;
 $plans-2023-medium-breakpoint: 1200px;
 
 $minWidthToGridWidthMap: (
-	650px: "570px",
 	780px: "668px",
 	1024px: "860px",
 	1200px: "1134px",
@@ -32,7 +31,6 @@ $minWidthToGridWidthMap: (
  * This should stretch to fill it's container.
  */
 @mixin pricing-grid-breakpoints-with-sidebar {
-
 	width: 100%;
 }
 
