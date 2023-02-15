@@ -4,8 +4,6 @@ import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useStorageText } from 'calypso/components/backup-storage-space/hooks';
-import { useQueryRewindPolicies } from 'calypso/components/data/query-rewind-policies';
-import { useQueryRewindSize } from 'calypso/components/data/query-rewind-size';
 import { updateBackupRetention } from 'calypso/state/rewind/retention/actions';
 import { BACKUP_RETENTION_UPDATE_REQUEST } from 'calypso/state/rewind/retention/constants';
 import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
@@ -30,9 +28,6 @@ const BackupRetentionManagement: FunctionComponent = () => {
 
 	const siteId = useSelector( getSelectedSiteId ) as number;
 
-	// Query dependencies
-	useQueryRewindSize( siteId );
-	useQueryRewindPolicies( siteId );
 	const requestingSize = useSelector( ( state ) => isRequestingRewindSize( state, siteId ) );
 	const requestingPolicies = useSelector( ( state ) =>
 		isRequestingRewindPolicies( state, siteId )
@@ -147,14 +142,12 @@ const BackupRetentionManagement: FunctionComponent = () => {
 	}, [ currentRetentionPlan, retentionSelected ] );
 
 	useEffect( () => {
-		if ( updateRetentionRequestStatus === BACKUP_RETENTION_UPDATE_REQUEST.SUCCESS ) {
-			// Update the current retention plan to the one updated by the user.
-			setCurrentRetentionPlan( retentionSelected );
-			setConfirmationDialogVisible( false );
-		} else if ( updateRetentionRequestStatus === BACKUP_RETENTION_UPDATE_REQUEST.FAILED ) {
+		if (
+			updateRetentionRequestStatus === BACKUP_RETENTION_UPDATE_REQUEST.SUCCESS ||
+			updateRetentionRequestStatus === BACKUP_RETENTION_UPDATE_REQUEST.FAILED
+		) {
 			setConfirmationDialogVisible( false );
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ updateRetentionRequestStatus ] );
 
 	return (

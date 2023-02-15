@@ -46,7 +46,9 @@ const build: Flow = {
 			switch ( _currentStep ) {
 				case 'processing':
 					if ( providedDependencies?.goToHome && providedDependencies?.siteSlug ) {
-						return window.location.replace( `/home/${ providedDependencies?.siteSlug }` );
+						return window.location.replace(
+							`/home/${ providedDependencies?.siteSlug }?celebrateLaunch=true&launchpadComplete=true`
+						);
 					}
 
 					return navigate( `launchpad` );

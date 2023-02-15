@@ -602,6 +602,20 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( redirectTo );
 	} );
 
+	it( 'redirects to external redirectTo url if the hostame is jetpack.com', () => {
+		const adminUrl = 'https://my.site/wp-admin/';
+		const redirectTo = 'http://jetpack.com/';
+		const url = getThankYouPageUrl( { ...defaultArgs, adminUrl, redirectTo } );
+		expect( url ).toBe( redirectTo );
+	} );
+
+	it( 'redirects to external redirectTo url if the hostame is akismet.com', () => {
+		const adminUrl = 'https://my.site/wp-admin/';
+		const redirectTo = 'http://akismet.com/';
+		const url = getThankYouPageUrl( { ...defaultArgs, adminUrl, redirectTo } );
+		expect( url ).toBe( redirectTo );
+	} );
+
 	it( 'redirects to manage purchase page if there is a renewal', () => {
 		const cart = {
 			...getEmptyResponseCart(),

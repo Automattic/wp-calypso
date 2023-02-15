@@ -12,7 +12,6 @@ import { ComponentType, useEffect, useState } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import SitePreviewLink from 'calypso/components/site-preview-link';
 import { useSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
-import { useInView } from 'calypso/lib/use-in-view';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
@@ -247,8 +246,6 @@ export const SitesEllipsisMenu = ( {
 	site: SiteExcerptData;
 } ) => {
 	const dispatch = useReduxDispatch();
-	const [ inViewOnce, setInViewOnce ] = useState( false );
-	const ref = useInView< HTMLTableCellElement >( () => setInViewOnce( true ) );
 
 	const { __ } = useI18n();
 	const props: SitesMenuItemProps = {
@@ -259,27 +256,25 @@ export const SitesEllipsisMenu = ( {
 	};
 
 	const showHosting = ! isNotAtomicJetpack( site ) && ! site.options?.is_wpforteams_site;
-	const { shouldShowSiteCopyItem, startSiteCopy } = useSiteCopy( site, { enabled: inViewOnce } );
+	const { shouldShowSiteCopyItem, startSiteCopy } = useSiteCopy( site );
 
 	return (
-		<div ref={ ref }>
-			<SiteDropdownMenu
-				icon={ <Gridicon icon="ellipsis" /> }
-				className={ className }
-				label={ __( 'Site Actions' ) }
-			>
-				{ () => (
-					<SiteMenuGroup>
-						{ site.launch_status === 'unlaunched' && <LaunchItem { ...props } /> }
-						<SettingsItem { ...props } />
-						<ManagePluginsItem { ...props } />
-						{ showHosting && <HostingConfigItem { ...props } /> }
-						{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
-						{ shouldShowSiteCopyItem && <CopySiteItem { ...props } onClick={ startSiteCopy } /> }
-						<WpAdminItem { ...props } />
-					</SiteMenuGroup>
-				) }
-			</SiteDropdownMenu>
-		</div>
+		<SiteDropdownMenu
+			icon={ <Gridicon icon="ellipsis" /> }
+			className={ className }
+			label={ __( 'Site Actions' ) }
+		>
+			{ () => (
+				<SiteMenuGroup>
+					{ site.launch_status === 'unlaunched' && <LaunchItem { ...props } /> }
+					<SettingsItem { ...props } />
+					<ManagePluginsItem { ...props } />
+					{ showHosting && <HostingConfigItem { ...props } /> }
+					{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
+					{ shouldShowSiteCopyItem && <CopySiteItem { ...props } onClick={ startSiteCopy } /> }
+					<WpAdminItem { ...props } />
+				</SiteMenuGroup>
+			) }
+		</SiteDropdownMenu>
 	);
 };

@@ -168,6 +168,10 @@ const Cell = styled.div< { textAlign?: string; isInSignup: boolean } >`
 
 	${ Row }:last-of-type & {
 		padding-bottom: 24px;
+
+		${ plansBreakSmall( css`
+			padding-bottom: 0px;
+		` ) }
 	}
 
 	${ plansBreakSmall( css`
@@ -181,14 +185,6 @@ const Cell = styled.div< { textAlign?: string; isInSignup: boolean } >`
 		&:last-of-type {
 			padding-right: 0;
 			border-right: none;
-		}
-
-		&.title-is-subtitle {
-			padding-top: 33px;
-		}
-
-		${ Row }:last-of-type & {
-			padding-bottom: 0px;
 		}
 	` ) }
 

@@ -683,6 +683,13 @@ export const getPopularPlanSpec = ( {
 
 	const group = GROUP_WPCOM;
 
+	if ( flowName === 'hosting' ) {
+		return {
+			type: TYPE_BUSINESS,
+			group,
+		};
+	}
+
 	if ( flowName === 'link-in-bio' || flowName === 'link-in-bio-tld' ) {
 		return {
 			type: TYPE_PERSONAL,

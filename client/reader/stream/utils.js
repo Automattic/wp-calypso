@@ -120,12 +120,15 @@ export function injectPrompts( posts, itemsBetweenPrompts ) {
 		return posts;
 	}
 
+	let promptIndex = 0;
+
 	return flatMap( posts, ( post, index ) => {
 		if ( index && index % itemsBetweenPrompts === 0 ) {
 			const promptBlock = {
 				isPromptBlock: true,
-				index: index,
+				index: promptIndex,
 			};
+			promptIndex++;
 			return [ promptBlock, post ];
 		}
 		return post;

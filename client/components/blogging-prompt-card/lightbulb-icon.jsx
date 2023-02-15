@@ -1,6 +1,6 @@
 export default function LightbulbIcon() {
 	return (
-		<span className="blogging-prompt__lightbulb-icon">
+		<span className="blogging-prompt__lightbulb-icon" key="blogging-prompt__lightbulb-icon">
 			<svg
 				fill="none"
 				height="20"
