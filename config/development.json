@@ -108,7 +108,6 @@
 		"mailchimp": true,
 		"manage/import/site-importer-endpoints": true,
 		"marketplace-domain-bundle": true,
-		"marketplace-fetch-dynamic-plugin-details": true,
 		"marketplace-fetch-all-dynamic-products": true,
 		"marketplace-jetpack-plugin-search": true,
 		"marketplace-personal-premium": false,

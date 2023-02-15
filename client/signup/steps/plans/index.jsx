@@ -10,6 +10,7 @@ import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
 import {
 	isLinkInBioFlow,
+	isHostingLPFlow,
 	isNewsletterOrLinkInBioFlow,
 	isSiteAssemblerFlow,
 	isTailoredSignupFlow,
@@ -422,7 +423,7 @@ export class PlansStep extends Component {
 					stepName={ stepName }
 					positionInFlow={ positionInFlow }
 					headerText={ headerText }
-					shouldHideNavButtons={ this.isTailoredFlow() }
+					shouldHideNavButtons={ this.isTailoredFlow() || isHostingLPFlow( this.props.flowName ) }
 					fallbackHeaderText={ fallbackHeaderText }
 					subHeaderText={ subHeaderText }
 					fallbackSubHeaderText={ fallbackSubHeaderText }

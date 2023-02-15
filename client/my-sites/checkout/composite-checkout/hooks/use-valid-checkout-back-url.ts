@@ -6,6 +6,7 @@ import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-
 
 const getAllowedHosts = ( siteSlug?: string ) => {
 	const basicHosts = [
+		'akismet.com',
 		'jetpack.com',
 		'jetpack.cloud.localhost',
 		'cloud.jetpack.com',

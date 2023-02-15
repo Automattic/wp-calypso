@@ -15,7 +15,7 @@ import PromptsNavigation from './prompts-navigation';
 
 import './style.scss';
 
-const BloggingPromptCard = ( { siteId, viewContext, showMenu } ) => {
+const BloggingPromptCard = ( { siteId, viewContext, showMenu, index } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
@@ -82,6 +82,7 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu } ) => {
 					siteId={ siteId }
 					prompts={ prompts }
 					tracksPrefix={ getTracksPrefix() }
+					index={ index }
 				/>
 			</Card>
 		</div>

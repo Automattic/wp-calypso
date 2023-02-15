@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Card, Button } from '@automattic/components';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 import classnames from 'classnames';
 import { useTranslate, useRtl } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -17,6 +18,7 @@ import './style.scss';
 export const GoMobile = ( { email, sendMobileLoginEmail } ) => {
 	const isRtl = useRtl();
 	const translate = useTranslate();
+	const localizeUrl = useLocalizeUrl();
 	const { isDesktop, isiPad, isiPod, isiPhone, isAndroid } = userAgent;
 	const isIos = isiPad || isiPod || isiPhone;
 	const isDesktopApp = config.isEnabled( 'desktop' );
@@ -57,7 +59,9 @@ export const GoMobile = ( { email, sendMobileLoginEmail } ) => {
 					) : (
 						<Button
 							className="go-mobile__email-link-button is-link"
-							href="https://apps.wordpress.com/get?campaign=calypso-customer-home"
+							href={ localizeUrl(
+								'https://apps.wordpress.com/get/?campaign=calypso-customer-home'
+							) }
 						>
 							{ translate( 'Get the Jetpack app' ) }
 						</Button>

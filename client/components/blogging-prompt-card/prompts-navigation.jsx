@@ -10,13 +10,15 @@ import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import NoResponsesIcon from './no-responses-icon';
 import './style.scss';
 
-const PromptsNavigation = ( { siteId, prompts, tracksPrefix } ) => {
+const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const editorUrl = useSelector( ( state ) => getEditorUrl( state, siteId ) );
-	const [ promptIndex, setPromptIndex ] = useState( 0 );
 	const backIcon = 'arrow-left';
 	const forwardIcon = 'arrow-right';
+
+	const initialIndex = index ? index % prompts.length : 0;
+	const [ promptIndex, setPromptIndex ] = useState( initialIndex );
 
 	const getPrompt = () => {
 		return prompts !== undefined ? prompts[ promptIndex ] : null;
