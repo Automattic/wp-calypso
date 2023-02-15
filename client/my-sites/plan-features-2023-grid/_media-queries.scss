@@ -1,4 +1,5 @@
-// Variables
+@import "@automattic/components/src/highlight-cards/variables.scss";
+
 $plan-features-sidebar-width: 272px;
 $plan-features-header-banner-height: 20px;
 
@@ -140,6 +141,21 @@ $minWidthToGridWidthMap: (
 
 	.is-section-plans.is-sidebar-collapsed & {
 		@media ( min-width: $plans-2023-medium-breakpoint ) {
+			@content;
+		}
+	}
+}
+
+/**
+ * @see client/my-sites/plans/modernized-layout.tsx
+ * This file introduces padding for the header on the plans page
+ * at a custom mobile breakpoint.
+ *
+ * This mixin can be use to target that particular breakpoint.
+ */
+@mixin plans-section-custom-mobile-breakpoint() {
+	.is-section-plans & {
+		@media ( min-width: $custom-mobile-breakpoint ) {
 			@content;
 		}
 	}
