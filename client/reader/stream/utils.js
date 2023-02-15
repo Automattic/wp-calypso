@@ -90,8 +90,8 @@ export function getDistanceBetweenRecs( totalSubs ) {
 	);
 }
 
-const MIN_DISTANCE_BETWEEN_PROMPTS = 1;
-const MAX_DISTANCE_BETWEEN_PROMPTS = 5;
+const MIN_DISTANCE_BETWEEN_PROMPTS = 10;
+const MAX_DISTANCE_BETWEEN_PROMPTS = 50;
 
 export function getDistanceBetweenPrompts( totalSubs ) {
 	// the distance between recs changes based on how many subscriptions the user has.
