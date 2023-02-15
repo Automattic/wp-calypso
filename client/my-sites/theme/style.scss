@@ -1,21 +1,17 @@
 @import "@automattic/onboarding/styles/mixins";
 
 body.is-section-theme-i4 {
-	padding-top: var(--masterbar-height);
+	&.theme-default.color-scheme {
+		--color-surface-backdrop: var(--studio-white);
+	}
 
-	&.theme-default {
-		&.color-scheme {
-			--color-surface-backdrop: var(--studio-white);
-		}
+	.layout:not(.has-no-sidebar) .layout__content {
+		padding-top: var(--masterbar-height);
+	}
 
-		.layout__content {
-			padding: 0;
-		}
-
-		.layout__primary .main {
-			@include breakpoint-deprecated( "<960px" ) {
-				padding-bottom: 40px;
-			}
+	.layout__primary .main {
+		@include breakpoint-deprecated( "<960px" ) {
+			padding-bottom: 40px;
 		}
 	}
 
