@@ -96,6 +96,10 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ hasActionSuccessfullyRun ] );
 
+	const getSubtitle = () => {
+		return props.subtitle || loadingMessages[ currentMessageIndex ]?.subtitle;
+	};
+
 	const flowName = props.flow || '';
 	const isJetpackPowered = isNewsletterOrLinkInBioFlow( flowName );
 	const isWooCommercePowered = flowName === ECOMMERCE_FLOW;
@@ -104,6 +108,8 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 	if ( isLinkInBioFlow( flowName ) || isFreeFlow( flowName ) ) {
 		return <TailoredFlowPreCheckoutScreen flowName={ flowName } />;
 	}
+
+	const subtitle = getSubtitle();
 
 	return (
 		<>
@@ -124,7 +130,7 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 							) : (
 								<LoadingEllipsis />
 							) }
-							{ props.subtitle && <p className="processing-step__subtitle">{ props.subtitle }</p> }
+							{ subtitle && <p className="processing-step__subtitle">{ subtitle }</p> }
 						</div>
 					</>
 				}

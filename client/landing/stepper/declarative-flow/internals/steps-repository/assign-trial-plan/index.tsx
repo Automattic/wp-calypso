@@ -53,6 +53,12 @@ const AssignTrialPlanStep: Step = function AssignTrialPlanStep( { navigation, da
 		return __( "Woo! We're creating your store" );
 	};
 
+	const getSubTitle = () => {
+		return __(
+			'#FunWooFact: Did you know that Woo powers almost 4 million stores worldwide? You’re in good company.'
+		);
+	};
+
 	return (
 		<>
 			<DocumentHead title={ getCurrentMessage() } />
@@ -71,6 +77,7 @@ const AssignTrialPlanStep: Step = function AssignTrialPlanStep( { navigation, da
 							) : (
 								<LoadingEllipsis />
 							) }
+							<p className="processing-step__subtitle">{ getSubTitle() }</p>
 						</div>
 					</>
 				}
