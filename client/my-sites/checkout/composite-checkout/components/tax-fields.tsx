@@ -220,12 +220,7 @@ export default function TaxFields( {
 					</FieldRow>
 				) ) }
 			{ isVatSupported && (
-				<VatForm
-					section={ section }
-					isDisabled={ isDisabled }
-					countryCode={ countryCode?.value }
-					excludeOrganizationField={ taxRequirements.organization }
-				/>
+				<VatForm section={ section } isDisabled={ isDisabled } countryCode={ countryCode?.value } />
 			) }
 		</>
 	);

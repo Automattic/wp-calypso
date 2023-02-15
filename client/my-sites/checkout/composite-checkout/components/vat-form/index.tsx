@@ -51,7 +51,6 @@ export function VatForm( {
 	section,
 	isDisabled,
 	countryCode,
-	excludeOrganizationField,
 }: {
 	section: string;
 	isDisabled?: boolean;
@@ -61,7 +60,6 @@ export function VatForm( {
 	 * VAT details. They may differ. See below for more details.
 	 */
 	countryCode: string | undefined;
-	excludeOrganizationField?: boolean;
 } ) {
 	const translate = useTranslate();
 	const vatDetailsInForm = useSelect(
@@ -219,22 +217,20 @@ export function VatForm( {
 				) }
 			</div>
 			<div className="vat-form__row">
-				{ ! excludeOrganizationField && (
-					<Field
-						id={ section + '-organization' }
-						type="text"
-						label={ String( translate( 'Organization for VAT' ) ) }
-						value={ vatDetailsInForm.name ?? '' }
-						autoComplete="organization"
-						disabled={ isDisabled }
-						onChange={ ( newValue: string ) => {
-							setVatDetailsInForm( {
-								...vatDetailsInForm,
-								name: newValue,
-							} );
-						} }
-					/>
-				) }
+				<Field
+					id={ section + '-organization' }
+					type="text"
+					label={ String( translate( 'Organization for VAT' ) ) }
+					value={ vatDetailsInForm.name ?? '' }
+					autoComplete="organization"
+					disabled={ isDisabled }
+					onChange={ ( newValue: string ) => {
+						setVatDetailsInForm( {
+							...vatDetailsInForm,
+							name: newValue,
+						} );
+					} }
+				/>
 				<Field
 					id={ section + '-vat-id' }
 					type="text"
