@@ -7,7 +7,7 @@ import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getPrimarySiteIsJetpack from 'calypso/state/selectors/get-primary-site-is-jetpack';
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
-import Landing from './landing';
+import Landing from './main';
 import { isSiteEligibleForJetpackCloud, getLandingPath } from './selectors';
 
 const debug = new Debug( 'calypso:jetpack-cloud:landing:controller' );
