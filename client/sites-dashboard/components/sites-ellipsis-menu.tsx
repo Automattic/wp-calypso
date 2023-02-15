@@ -2,13 +2,13 @@ import {
 	WPCOM_FEATURES_MANAGE_PLUGINS,
 	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
 } from '@automattic/calypso-products';
-import { Gridicon } from '@automattic/components';
+import { Gridicon, SubmenuPopover, useSubenuPopoverProps } from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { DropdownMenu, MenuGroup, MenuItem as CoreMenuItem, Modal } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { ComponentType, useEffect, useState } from 'react';
+import { ComponentType, useEffect, useMemo, useState } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import SitePreviewLink from 'calypso/components/site-preview-link';
 import { useSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
@@ -237,7 +237,60 @@ const SiteDropdownMenu = styled( DropdownMenu )( {
 	'.components-popover': {
 		zIndex: 177,
 	},
+
+	'.submenu-popover > .components-popover__content': {
+		display: 'flex',
+		flexDirection: 'column',
+	},
 } );
+
+function useSubmenuItems( siteSlug: string ) {
+	const { __ } = useI18n();
+	return useMemo(
+		() => [
+			{
+				label: __( 'privacy-settings' ),
+				href: `/settings/general/${ siteSlug }#site-privacy-settings`,
+			},
+			{
+				label: __( 'database-access' ),
+				href: `/hosting-config/${ siteSlug }#database-access`,
+			},
+			{
+				label: __( 'sftp-credentials' ),
+				href: `/hosting-config/${ siteSlug }#sftp-credentials`,
+			},
+			{
+				label: __( '/hostingserver-settings' ),
+				href: `/hosting-config/${ siteSlug }#web-server-settings`,
+			},
+			{
+				label: __( 'connect-github' ),
+				href: `/hosting-config/${ siteSlug }#connect-github`,
+			},
+		],
+		[ __, siteSlug ]
+	);
+}
+
+function DeveloperSettings( { siteSlug }: { siteSlug: string } ) {
+	const { __ } = useI18n();
+	const submenuItems = useSubmenuItems( siteSlug );
+	const developerSubmenuProps = useSubenuPopoverProps< HTMLDivElement >();
+
+	return (
+		<div { ...developerSubmenuProps.parent }>
+			<MenuItemLink>{ __( 'Developer settings' ) }</MenuItemLink>
+			<SubmenuPopover { ...developerSubmenuProps.submenu }>
+				{ submenuItems.map( ( item ) => (
+					<MenuItemLink key={ item.label } href={ item.href }>
+						{ item.label }
+					</MenuItemLink>
+				) ) }
+			</SubmenuPopover>
+		</div>
+	);
+}
 
 export const SitesEllipsisMenu = ( {
 	className,
@@ -277,6 +330,7 @@ export const SitesEllipsisMenu = ( {
 						{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
 						{ shouldShowSiteCopyItem && <CopySiteItem { ...props } onClick={ startSiteCopy } /> }
 						<WpAdminItem { ...props } />
+						<DeveloperSettings siteSlug={ site.slug } />
 					</SiteMenuGroup>
 				) }
 			</SiteDropdownMenu>
