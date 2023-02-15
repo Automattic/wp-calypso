@@ -473,6 +473,7 @@ __metadata:
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": 7.0.2
     "@types/canvas-confetti": ^1.6.0
+    "@types/qrcode.react": ^1.0.2
     "@wordpress/base-styles": ^4.5.0
     "@wordpress/components": ^19.15.0
     "@wordpress/icons": ^9.11.0
@@ -483,6 +484,7 @@ __metadata:
     i18n-calypso: "workspace:^"
     lodash: ^4.17.21
     prop-types: ^15.7.2
+    qrcode.react: ^1.0.1
     react-modal: ^3.14.3
     typescript: ^4.7.4
     utility-types: ^3.10.0
@@ -6983,6 +6985,15 @@ __metadata:
   version: 15.7.3
   resolution: "@types/prop-types@npm:15.7.3"
   checksum: 511aac811bfdba9dd1c463d6e502d852bb2196048cf861fbf48a97d883dd32c1c44ad2127a18dbb49733d9ad0aafd445d673eb50d5547ca843106835f67b5877
+  languageName: node
+  linkType: hard
+
+"@types/qrcode.react@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "@types/qrcode.react@npm:1.0.2"
+  dependencies:
+    "@types/react": "*"
+  checksum: 31f9653b3d479b5674b4ac655ea0f13f6b6d6c5fad4822adf129832ab63c5417ea8873d0ce894537a69c5ba48927fd972b0ef43fc270b4021fa9f01fb8f1902f
   languageName: node
   linkType: hard
 

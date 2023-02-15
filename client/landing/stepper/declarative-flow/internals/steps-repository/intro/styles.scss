@@ -102,12 +102,23 @@
 		}
 
 		.button.is-primary {
-			background-color: #ffe61c;
+			background: #ffe61c;
 			color: #000;
+			transition: box-shadow 0.4s ease-in-out;
+
+			&:hover {
+				box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1) inset, 0 2px 24px rgba(255, 230, 28, 0.3), 0 0 8px rgba(255, 230, 28, 0.18), 0 0 4px rgba(255, 230, 28, 0.15), 0 0 2.5px rgba(255, 230, 28, 0.12), 0 0 4px rgba(255, 230, 28, 0.1), 0 0 2px rgba(0, 0, 0, 0.8);
+			}
 		}
 
-		.intro__button-more:hover {
-			color: var(--color-surface) !important;
+		.button.intro__button-more {
+			border-color: rgba(255, 255, 255, 0.5);
+			transition: border 0.2s ease-in-out;
+
+			&:hover {
+				color: #fff;
+				border-color: #fff;
+			}
 		}
 	}
 
@@ -233,7 +244,7 @@
 		justify-content: center;
 
 		.intro__button,
-		.intro_button-more {
+		.intro__button-more {
 			font-family: "SF Pro Text", $sans;
 			color: var(--color-surface);
 			font-weight: 500;

@@ -95,13 +95,7 @@
 		}
 	}
 }
-.plan-features-2023-grid__table-item {
-	padding: 0;
-}
-.plan-features-2023-grid__table-item.is-top-buttons {
-	padding: 0 20px;
-	vertical-align: bottom;
-}
+
 
 .plan-features-2023-grid__header {
 	position: relative;
@@ -328,12 +322,14 @@
 			font-weight: 600;
 		}
 
+
+		&.is-top-buttons {
+			padding: 0 20px;
+			vertical-align: bottom;
+		}
+
 		@include plans-2023-break-small {
 			border-left: solid 1px #e0e0e0;
-
-			&.is-bottom-aligned {
-				vertical-align: bottom;
-			}
 		}
 	}
 

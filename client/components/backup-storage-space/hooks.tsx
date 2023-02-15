@@ -111,3 +111,50 @@ export const useDaysOfBackupsSavedText = (
 		);
 	}, [ translate, daysOfBackupsSaved, siteSlug ] );
 };
+
+/**
+ * The idea is to convert any storage amount in bytes to a human readable format.
+ *
+ * @param storageInBytes The storage amount in bytes
+ * @returns				 The storage amount in a human readable format
+ */
+export const useStorageText = ( storageInBytes: number ): TranslateResult | string => {
+	const translate = useTranslate();
+
+	return useMemo( () => {
+		if ( storageInBytes && storageInBytes >= 0 ) {
+			const { unitAmount, unit } = convertBytesToUnitAmount( storageInBytes );
+
+			switch ( unit ) {
+				case StorageUnits.Gigabyte:
+					if ( unitAmount % 1 === 0 ) {
+						return translate( '%(storageInBytes)dGB', {
+							args: { storageInBytes: unitAmount },
+							comment: 'Must use unit abbreviation; describes an storage amounts (e.g., 20GB)',
+						} );
+					}
+
+					return translate( '%(storageInBytes).1fGB', {
+						args: { storageInBytes: unitAmount },
+						comment:
+							'Must use unit abbreviation; describes an storage amounts with 1 decimal point (e.g., 20.0GB)',
+					} );
+				case StorageUnits.Terabyte:
+					if ( unitAmount % 1 === 0 ) {
+						return translate( '%(storageInBytes)dTB', {
+							args: { storageInBytes: unitAmount },
+							comment: 'Must use unit abbreviation; describes an storage amounts (e.g., 1TB)',
+						} );
+					}
+
+					return translate( '%(storageInBytes).1fTB', {
+						args: { storageInBytes: unitAmount },
+						comment:
+							'Must use unit abbreviation; describes an storage amounts with 1 decimal point (e.g., 1.5TB)',
+					} );
+			}
+		}
+
+		return '';
+	}, [ translate, storageInBytes ] );
+};

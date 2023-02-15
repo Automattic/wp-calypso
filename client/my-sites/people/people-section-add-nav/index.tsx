@@ -10,19 +10,19 @@ interface Props {
 	selectedFilter: string;
 }
 function PeopleSectionAddNav( props: Props ) {
-	const _ = useTranslate();
+	const translate = useTranslate();
 	const { selectedFilter } = props;
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 
 	const filters = [
 		{
 			id: 'team',
-			title: _( 'Add to team' ),
+			title: translate( 'Add to team' ),
 			path: '/people/new/' + site?.slug,
 		},
 		{
 			id: 'subscribers',
-			title: _( 'Add subscribers' ),
+			title: translate( 'Add subscribers' ),
 			path: '/people/add-subscribers/' + site?.slug,
 		},
 	];

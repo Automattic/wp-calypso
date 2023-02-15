@@ -26,7 +26,11 @@ export default function DomainAndPlanPackageNavigation( props ) {
 			<div className="domain-and-plan-package-navigation__back">
 				<Button borderless="true" onClick={ goBack }>
 					<Gridicon icon="chevron-left" />
-					<span>{ translate( 'Back' ) }</span>
+					{ props.step !== 1 ? (
+						<span>{ translate( 'Back' ) }</span>
+					) : (
+						<span>{ translate( 'Home' ) }</span>
+					) }
 				</Button>
 			</div>
 			<ol className="domain-and-plan-package-navigation__steps">

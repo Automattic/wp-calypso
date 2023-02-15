@@ -217,7 +217,7 @@ export const SftpCard = ( {
 	return (
 		<Card className="sftp-card">
 			<MaterialIcon icon="key" size={ 32 } />
-			<CardHeading>
+			<CardHeading id="sftp-credentials">
 				{ siteHasSshFeature
 					? translate( 'SFTP/SSH credentials' )
 					: translate( 'SFTP credentials' ) }
@@ -313,7 +313,7 @@ export const SftpCard = ( {
 					<FormLabel htmlFor="password">{ translate( 'Password' ) }</FormLabel>
 					{ renderPasswordField() }
 					{ siteHasSshFeature && (
-						<SftpSshLabel htmlFor="ssh">{ translate( 'SSH Access' ) }</SftpSshLabel>
+						<SftpSshLabel htmlFor="ssh">{ translate( 'SSH access' ) }</SftpSshLabel>
 					) }
 					{ siteHasSshFeature && renderSshField() }
 					<ReauthRequired twoStepAuthorization={ twoStepAuthorization }>

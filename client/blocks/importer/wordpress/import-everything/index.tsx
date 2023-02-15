@@ -156,7 +156,7 @@ export class ImportEverything extends SectionMigrate {
 	}
 
 	renderMigrationProgress() {
-		const { translate, sourceSite, targetSiteSlug } = this.props;
+		const { translate, sourceSite, targetSite } = this.props;
 
 		return (
 			<>
@@ -168,7 +168,7 @@ export class ImportEverything extends SectionMigrate {
 							sprintf( translate( 'Backing up %(website)s' ), { website: sourceSite.slug } ) +
 								'...' }
 						{ MigrationStatus.RESTORING === this.state.migrationStatus &&
-							sprintf( translate( 'Restoring to %(website)s' ), { website: targetSiteSlug } ) +
+							sprintf( translate( 'Restoring to %(website)s' ), { website: targetSite.slug } ) +
 								'...' }
 					</Title>
 					<ProgressBar compact={ true } value={ this.state.percent ? this.state.percent : 0 } />
@@ -237,7 +237,7 @@ export class ImportEverything extends SectionMigrate {
 	}
 
 	renderHoorayScreenWithDomainInfo() {
-		const { translate, stepNavigator, targetSiteSlug } = this.props;
+		const { translate, stepNavigator, targetSite } = this.props;
 		return (
 			<>
 				<Title>{ translate( "Migration done! You're all set!" ) }</Title>
@@ -249,7 +249,7 @@ export class ImportEverything extends SectionMigrate {
 						{ br: createElement( 'br' ) }
 					) }
 				</SubTitle>
-				<DomainInfo domain={ targetSiteSlug } />
+				<DomainInfo domain={ targetSite.slug } />
 				<DoneButton
 					className="is-normal-width"
 					label={ translate( 'Update domain name' ) }

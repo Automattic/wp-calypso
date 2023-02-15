@@ -120,7 +120,7 @@ class DomainSearch extends Component {
 	}
 
 	componentWillUnmount() {
-		if ( this.props.domainSidebarExperimentUser ) {
+		if ( document.body.classList.contains( 'is-domain-sidebar-experiment-user' ) ) {
 			document.body.classList.remove( 'is-domain-sidebar-experiment-user' );
 		}
 
@@ -275,7 +275,7 @@ class DomainSearch extends Component {
 							{ domainSidebarExperimentUser && (
 								<>
 									<DomainAndPlanPackageNavigation
-										goBackLink={ domainManagementList( selectedSiteSlug ) }
+										goBackLink={ `/home/${ selectedSiteSlug }` }
 										step={ 1 }
 									/>
 									<FormattedHeader

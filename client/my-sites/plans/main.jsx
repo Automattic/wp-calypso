@@ -6,6 +6,7 @@ import {
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	isFreePlan,
 } from '@automattic/calypso-products';
+import { is2023PricingGridEnabled } from '@automattic/calypso-products/src/plans-utilities';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { addQueryArgs } from '@wordpress/url';
@@ -143,6 +144,7 @@ class Plans extends Component {
 
 	componentDidMount() {
 		this.redirectIfInvalidPlanInterval();
+
 		if ( this.props.domainSidebarExperimentUser ) {
 			document.body.classList.add( 'is-domain-sidebar-experiment-user' );
 		}
@@ -154,7 +156,7 @@ class Plans extends Component {
 	}
 
 	componentWillUnmount() {
-		if ( this.props.domainSidebarExperimentUser ) {
+		if ( document.body.classList.contains( 'is-domain-sidebar-experiment-user' ) ) {
 			document.body.classList.remove( 'is-domain-sidebar-experiment-user' );
 		}
 	}
@@ -227,7 +229,7 @@ class Plans extends Component {
 			);
 		}
 
-		const hideFreePlan = ! isEnabled( 'onboarding/2023-pricing-grid' );
+		const hideFreePlan = ! is2023PricingGridEnabled();
 		if ( this.props.domainSidebarExperimentUser && this.props.domainAndPlanPackage ) {
 			return (
 				<CalypsoShoppingCartProvider>
@@ -372,7 +374,7 @@ const ConnectedPlans = connect( ( state ) => {
 	const currentPlanIntervalType = getIntervalTypeForTerm(
 		getPlan( currentPlan?.productSlug )?.term
 	);
-	const is2023OnboardingPricingGrid = isEnabled( 'onboarding/2023-pricing-grid' );
+	const is2023OnboardingPricingGrid = is2023PricingGridEnabled();
 
 	return {
 		currentPlan,

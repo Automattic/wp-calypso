@@ -7,24 +7,26 @@ import { useDispatch, useSelector } from 'react-redux';
 import { navigate } from 'calypso/lib/navigate';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import NoResponsesIcon from './no-responses-icon';
 import './style.scss';
 
-const PromptsNavigation = ( { prompts } ) => {
+const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const [ promptIndex, setPromptIndex ] = useState( 0 );
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const editorUrl = useSelector( ( state ) => getEditorUrl( state, siteId ) );
 	const backIcon = 'arrow-left';
 	const forwardIcon = 'arrow-right';
+
+	const initialIndex = index ? index % prompts.length : 0;
+	const [ promptIndex, setPromptIndex ] = useState( initialIndex );
 
 	const getPrompt = () => {
 		return prompts !== undefined ? prompts[ promptIndex ] : null;
 	};
 
-	const getNewPostLink = () => addQueryArgs( editorUrl, { answer_prompt: getPrompt()?.id } );
+	// If no site ID set, go through site selector before rendering post editor
+	const getNewPostLink = () =>
+		addQueryArgs( siteId ? editorUrl : '/post', { answer_prompt: getPrompt()?.id } );
 
 	const goToPreviousStep = () => {
 		let nextIndex = promptIndex - 1;
@@ -56,7 +58,7 @@ const PromptsNavigation = ( { prompts } ) => {
 		e.preventDefault();
 
 		dispatch(
-			recordTracksEvent( `calypso_customer_home_answer_prompt`, {
+			recordTracksEvent( tracksPrefix + 'answer_prompt', {
 				site_id: siteId,
 				prompt_id: getPrompt()?.id,
 			} )
@@ -67,7 +69,7 @@ const PromptsNavigation = ( { prompts } ) => {
 		const selectedPromptId = getPrompt()?.id;
 		if ( todayPromptId !== selectedPromptId ) {
 			dispatch(
-				recordTracksEvent( `calypso_customer_home_skip_prompt`, {
+				recordTracksEvent( tracksPrefix + 'skip_prompt', {
 					site_id: siteId,
 					prompt_id: todayPromptId,
 				} )
@@ -80,7 +82,7 @@ const PromptsNavigation = ( { prompts } ) => {
 
 	const trackClickViewAllResponses = () => {
 		dispatch(
-			recordTracksEvent( `calypso_customer_home_view_all_responses`, {
+			recordTracksEvent( tracksPrefix + 'view_all_responses', {
 				site_id: siteId,
 				prompt_id: getPrompt()?.id,
 			} )
