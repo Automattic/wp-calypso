@@ -1,14 +1,13 @@
 //imports
 import { useTranslate } from 'i18n-calypso';
 //import Button component
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Button from 'calypso/components/forms/form-button';
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 
 //create a new function to render cta buttons
 const CtaButtons = () => {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	return (
 		<div className="jetpack-complete-page__cta-buttons">
