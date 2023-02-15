@@ -602,7 +602,7 @@ export class SiteSettingsFormGeneral extends Component {
 		// isPrivateAndUnlaunched means it is an unlaunched coming soon v1 site
 		const isPrivateAndUnlaunched = -1 === blogPublic && this.props.isUnlaunchedSite;
 
-		const showPreviewLink = isComingSoon && hasSitePreviewLink && ! isSiteOnECommerceTrial;
+		const showPreviewLink = isComingSoon && hasSitePreviewLink;
 
 		const LaunchCard = showPreviewLink ? CompactCard : Card;
 
