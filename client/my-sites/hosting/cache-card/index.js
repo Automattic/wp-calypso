@@ -28,15 +28,13 @@ const CacheCard = ( {
 			<div>
 				<p>
 					{ translate(
-						'Be careful, clearing the cache may make your site unresponsive while it is being rebuilt.'
+						'Be careful, clearing the cache may make your site unresponsive while it is being rebuilt. {{a}}Learn more about clearing your site’s cache{{/a}}',
+						{
+							components: {
+								a: <a href={ CLEAR_CACHE } target="_blank" rel="noopener noreferrer" />,
+							},
+						}
 					) }
-				</p>
-				<p>
-					{ translate( '{{a}}Learn more about clearing your site’s cache{{/a}}', {
-						components: {
-							a: <a href={ CLEAR_CACHE } target="_blank" rel="noopener noreferrer" />,
-						},
-					} ) }
 				</p>
 				<Button
 					primary
