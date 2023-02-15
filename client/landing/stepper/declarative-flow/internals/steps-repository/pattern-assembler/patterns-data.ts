@@ -360,7 +360,6 @@ const useSectionPatterns = () => {
 				name: 'Large numbers, heading, and paragraphs',
 				category: numbers,
 				category_slug: 'numbers',
-				category_slug: 'numbers',
 			},
 			{
 				id: 462,
