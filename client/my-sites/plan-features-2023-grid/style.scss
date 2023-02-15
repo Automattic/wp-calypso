@@ -706,7 +706,7 @@ body.is-section-signup.is-white-signup,
 		}
 	}
 
-	// adjust border radius for having multiple popular badges
+	// adjust border radius for having multiple popular badges in tablet view
 	.plan-features-2023-grid__tablet-view {
 		.plan-features-2023-grid__table-item.plan-features-2023-grid__table-item {
 			&.popular-plan-parent-class {
@@ -722,7 +722,7 @@ body.is-section-signup.is-white-signup,
 			}
 		}
 	}
-	// adjust border radius for having multiple popular badges
+	// adjust border radius for having multiple popular badges in desktop view
 	.plan-features-2023-grid__desktop-view {
 		.plan-features-2023-grid__table-item.plan-features-2023-grid__table-item {
 			&.popular-plan-parent-class {
