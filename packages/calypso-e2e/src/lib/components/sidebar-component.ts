@@ -7,6 +7,7 @@ type FocusType = 'Sites' | 'Sidebar';
 
 const selectors = {
 	sidebar: '.sidebar',
+	sidebarNotice: '.sidebar .current-site__notices .banner__action button:visible',
 	collapsedSidebar: '.is-sidebar-collapsed',
 	focusedLayout: ( focus: FocusType ) => `.layout.focus-${ focus.toLowerCase() }`,
 
@@ -104,6 +105,37 @@ export class SidebarComponent {
 		// Verify the expected item or subitem is selected.
 		const locator = this.page.locator( selectedMenuItem );
 		await locator.waitFor( { state: 'attached' } );
+	}
+
+	/**
+	 * Open a notice of the sidebar menu.
+	 *
+	 * @param {string} item Plaintext representation of the top level heading.
+	 * @param {string} expectedUrl expected URL after clicking on the notice.
+	 * @returns {Promise<void>} No return value.
+	 */
+	async openNotice( item: string, expectedUrl: string ): Promise< void > {
+		await this.waitForSidebarInitialization();
+
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			await this.openMobileSidebar();
+		}
+
+		// Top level menu item selector.
+		const itemSelector = `${ selectors.sidebarNotice }`;
+		await this.page.dispatchEvent( itemSelector, 'click' );
+
+		const currentURL = this.page.url();
+		// Do not verify selected menu items or retry if navigation takes user out of Calypso (eg. WP-Admin, Widgets editor)...
+		if ( ! currentURL.startsWith( getCalypsoURL() ) ) {
+			return;
+		}
+		// ... or to a page in Calypso that closes the sidebar.
+		if ( currentURL.match( /\/(post|page|site-editor)\// ) ) {
+			return;
+		}
+
+		await this.page.waitForURL( expectedUrl );
 	}
 
 	/* Miscellaneous actions on sidebar */
