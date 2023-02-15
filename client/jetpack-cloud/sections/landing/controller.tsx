@@ -1,38 +1,37 @@
 import config from '@automattic/calypso-config';
-import Debug from 'debug';
+import debugModule from 'debug';
 import page from 'page';
 import { dashboardPath } from 'calypso/lib/jetpack/paths';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
-import getPrimarySiteIsJetpack from 'calypso/state/selectors/get-primary-site-is-jetpack';
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import Landing from './main';
 import { isSiteEligibleForJetpackCloud, getLandingPath } from './selectors';
 
-const debug = new Debug( 'calypso:jetpack-cloud:landing:controller' );
+const debug = debugModule( 'calypso:jetpack-cloud:landing:controller' );
 
-const landForSiteId = ( siteId, context, next ) => {
+const landForSiteId = ( siteId: number | null, context: PageJS.Context, next: () => void ) => {
 	debug( '[landForSiteId]: function entry', { siteId, context } );
 
-	const state = context.store.getState();
-
-	// This path requires a selected site ID;
-	// if we don't have one, go to the main landing page
-	if ( ! Number.isFinite( siteId ) ) {
-		page.redirect( '/landing' );
-		return;
+	// Landing requires a site ID;
+	// if we don't have one, redirect to the site selection page
+	if ( ! Number.isInteger( siteId ) ) {
+		debug( '[landForSiteId]: site ID not specified; redirecting to site selection' );
+		return '/landing';
 	}
+
+	const state = context.store.getState();
 
 	// To land people on the right page, we need to have information
 	// on the selected site's eligibility and the Cloud services available to it;
 	// if this info isn't present, dip into an empty React page
 	// that will fetch it and then redirect using the same logic
-	const isEligible = isSiteEligibleForJetpackCloud( state, siteId );
+	const isEligible = isSiteEligibleForJetpackCloud( state, siteId as number );
 	const siteFeatures = getFeaturesBySiteId( state, siteId );
 	if ( isEligible === null || ! siteFeatures ) {
 		debug( '[landForSiteId]: rendering interstitial Landing page' );
-		context.primary = <Landing siteId={ siteId } />;
+		context.primary = <Landing siteId={ siteId as number } />;
 		next();
 		return;
 	}
@@ -42,34 +41,26 @@ const landForSiteId = ( siteId, context, next ) => {
 	page.redirect( landingPath );
 };
 
-export const landForPrimarySite = ( context, next ) => {
+export const landForPrimarySite = ( context: PageJS.Context, next: () => void ) => {
 	debug( '[landForPrimarySite]: function entry', context );
 
 	const state = context.store.getState();
 
-	const isAgency = isAgencyUser( state );
 	const isAgencyEnabled = config.isEnabled( 'jetpack/agency-dashboard' );
+	const isAgency = isAgencyUser( state );
 	const dashboardRedirectLink = dashboardPath();
-	if ( isAgency && isAgencyEnabled ) {
+	if ( isAgencyEnabled && isAgency ) {
 		debug( '[landForPrimarySite]: redirecting to agency dashboard' );
 
 		page.redirect( dashboardRedirectLink );
 		return;
 	}
 
-	const isPrimarySiteJetpackSite = getPrimarySiteIsJetpack( state );
-	if ( isPrimarySiteJetpackSite ) {
-		const primarySiteId = getPrimarySiteId( state );
-		landForSiteId( primarySiteId, context, next );
-		return;
-	}
-
-	debug( '[landForPrimarySite]: redirecting to site selection' );
-	page( `/landing` );
-	next();
+	const primarySiteId = getPrimarySiteId( state );
+	landForSiteId( primarySiteId, context, next );
 };
 
-export const landForSelectedSite = ( context, next ) => {
+export const landForSelectedSite = ( context: PageJS.Context, next: () => void ) => {
 	debug( '[landForSelectedSite]: function entry', context );
 
 	const state = context.store.getState();
