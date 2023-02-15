@@ -48,9 +48,7 @@ const CacheCard = ( {
 				</Button>
 				{ shouldRateLimitCacheClear && (
 					<p class="form-setting-explanation">
-						{ translate(
-							'You cleared the cache recently. Please wait a few minutes and try again.'
-						) }
+						{ translate( 'You cleared the cache recently. Please wait a minute and try again.' ) }
 					</p>
 				) }
 			</div>
