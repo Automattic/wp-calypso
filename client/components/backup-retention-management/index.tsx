@@ -95,7 +95,6 @@ const BackupRetentionManagement: FunctionComponent = () => {
 		( value: number ) => {
 			if ( value ) {
 				setRetentionSelected( value );
-
 				const selectedOption = retentionOptionsCards.find(
 					( option ) => option.id === value
 				) as RetentionOptionInput;
