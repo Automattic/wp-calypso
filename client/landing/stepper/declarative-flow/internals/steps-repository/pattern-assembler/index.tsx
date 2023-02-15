@@ -120,12 +120,12 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 			pattern_names: patterns.map( ( { name } ) => name ).join( ',' ),
 			pattern_count: patterns.length,
 		} );
-		patterns.forEach( ( { id, name, category } ) => {
+		patterns.forEach( ( { id, name, category_slug } ) => {
 			recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_final_select', {
 				...commonEventProps,
 				pattern_id: id,
 				pattern_name: name,
-				pattern_category: category,
+				pattern_category: category_slug,
 			} );
 		} );
 	};
