@@ -1,10 +1,10 @@
 .jetpack-upsell-section__product {
 	display: grid;
-	grid-template-columns: fit-content 3fr 1fr 1fr;
+	grid-template-columns: max-content 3fr max-content max-content;
 	grid-template-areas:
 		"icon title link button"
 		"icon description link button";
-	gap: 1em;
+	column-gap: 1em;
 }
 
 .jetpack-upsell-section__product-icon {
