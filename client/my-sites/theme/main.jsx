@@ -504,17 +504,17 @@ class ThemeSheet extends Component {
 
 		return (
 			<div className="theme__sheet-header">
-				<div className="theme__sheet-header-columns">
-					<div className="theme__sheet-header-column-info">
-						<h1 className="theme__sheet-header-title">
+				<div className="theme__sheet-main">
+					<div className="theme__sheet-main-info">
+						<h1 className="theme__sheet-main-info-title">
 							{ title }
 							{ softLaunched && (
 								<span className="theme__sheet-bar-soft-launched">{ translate( 'A8C Only' ) }</span>
 							) }
 						</h1>
-						<span className="theme__sheet-header-tag">{ tag }</span>
+						<span className="theme__sheet-main-info-tag">{ tag }</span>
 					</div>
-					<div className="theme__sheet-header-column-actions">
+					<div className="theme__sheet-main-actions">
 						{ shouldRenderButton && this.renderButton() }
 						{ this.shouldRenderPreviewButton() && (
 							<Button
@@ -590,7 +590,6 @@ class ThemeSheet extends Component {
 
 		return (
 			<div>
-				{ isNewDetailsAndPreview && this.renderHeader() }
 				<Card className="theme__sheet-content">{ this.renderDescription() }</Card>
 				<div className="theme__sheet-features">
 					<ThemeFeaturesCard
@@ -1131,13 +1130,14 @@ class ThemeSheet extends Component {
 					</HeaderCake>
 				) }
 				<div className={ columnsClassName }>
+					{ isNewDetailsAndPreview && (
+						<div className="theme__sheet-column-header">
+							{ this.renderBackButton() }
+							{ pageUpsellBanner }
+							{ this.renderHeader() }
+						</div>
+					) }
 					<div className="theme__sheet-column-left">
-						{ isNewDetailsAndPreview && (
-							<>
-								{ this.renderBackButton() }
-								{ pageUpsellBanner }
-							</>
-						) }
 						{ ! retired && this.renderSectionContent( section ) }
 						{ retired && this.renderRetired() }
 					</div>

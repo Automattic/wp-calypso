@@ -3,21 +3,25 @@
 body.is-section-theme-i4 {
 	padding-top: var(--masterbar-height);
 
-	&.theme-default.color-scheme {
-		--color-surface-backdrop: var(--studio-white);
+	&.theme-default {
+		&.color-scheme {
+			--color-surface-backdrop: var(--studio-white);
+		}
+
+		.layout__content {
+			padding: 0;
+		}
 	}
 
 	.theme__sheet-columns {
-		display: flex;
-		gap: 32px;
+		display: grid;
+		gap: 0 32px;
+		grid-template-columns: 1fr 1fr;
+		grid-template-areas:
+			"header preview"
+			"content preview";
 		max-width: 1462px;
-		padding: 48px 0;
-	}
-
-	.theme__sheet-content {
-		box-shadow: none;
-		min-height: auto;
-		padding: 0;
+		padding: 48px 20px;
 
 		h2 {
 			border: 0;
@@ -32,6 +36,50 @@ body.is-section-theme-i4 {
 				content: none;
 			}
 		}
+
+		.theme__sheet-column-header {
+			grid-area: header;
+
+			h2 {
+				margin: 0 0 12px 0;
+			}
+		}
+
+		.theme__sheet-column-left {
+			grid-area: content;
+		}
+
+		.theme__sheet-column-right {
+			grid-area: preview;
+		}
+
+		.theme__sheet-column-left,
+		.theme__sheet-column-right {
+			box-sizing: border-box;
+			width: 100%;
+		}
+
+		@include breakpoint-deprecated( "<960px" ) {
+			display: flex;
+			gap: 16px;
+			flex-direction: column;
+			padding: 0;
+
+			.theme__sheet-column-left {
+				padding: 0 24px;
+				order: 2;
+			}
+
+			.theme__sheet-column-right {
+				order: 1;
+			}
+		}
+	}
+
+	.theme__sheet-content {
+		box-shadow: none;
+		min-height: auto;
+		padding: 0;
 
 		.notes {
 			background: transparent;
@@ -64,6 +112,11 @@ body.is-section-theme-i4 {
 			0 3px 5px rgba(0, 0, 0, 0.2);
 		margin-top: 0;
 		overflow: hidden;
+
+		@include breakpoint-deprecated( "<960px" ) {
+			border-radius: 0;
+			box-shadow: none;
+		}
 	}
 
 	.theme__sheet-features {
@@ -135,51 +188,33 @@ body.is-section-theme-i4 {
 		margin-right: 4px;
 		width: 20px;
 	}
-}
 
-.theme__sheet-header {
-	margin-bottom: 24px;
-
-	.theme__sheet-header-columns {
-		display: flex;
+	@include breakpoint-deprecated( "<960px" ) {
 		align-items: center;
-		justify-content: space-between;
-	}
-
-	.theme__sheet-header-column-actions {
+		box-shadow: 0 0 0 1px var(--color-neutral-5);
+		box-sizing: border-box;
 		display: flex;
-		gap: 10px;
+		height: 52px;
+		margin-bottom: 16px;
+		padding: 0 24px;
+		width: 100%;
 
-		button {
-			border-radius: 4px;
+		svg {
+			top: 2px;
 		}
-
-		.theme__sheet-primary-button {
-			position: relative;
-			right: auto;
-			top: auto;
-			margin-right: 0 !important;
-		}
-	}
-
-	.theme__sheet-header-title {
-		@include onboarding-font-recoleta;
-		align-items: center;
-		display: flex;
-		font-size: $font-title-large;
-		line-height: 1;
-	}
-
-	.theme__sheet-header-tag {
-		color: var(--color-neutral-60);
-		font-size: $font-body;
-		font-weight: 400;
-		line-height: 24px;
-		-webkit-font-smoothing: antialiased;
 	}
 }
 
 .theme__sheet-style-variations {
+	@include breakpoint-deprecated( "<960px" ) {
+		margin-bottom: -16px;
+		padding: 0 0 0 24px;
+
+		.theme__sheet-style-variations-previews {
+			padding: 2px 24px 16px 2px;
+		}
+	}
+
 	&-previews {
 		display: flex;
 		gap: 8px;
@@ -210,6 +245,79 @@ body.is-section-theme-i4 {
 
 .theme__sheet-columns.is-removed {
 	justify-content: center;
+}
+
+.theme__sheet-column-header {
+	margin-bottom: 24px;
+
+	@include breakpoint-deprecated( "<960px" ) {
+		margin-bottom: 0;
+	}
+
+	.theme__sheet-header {
+		display: flex;
+		flex-direction: column;
+		gap: 40px;
+
+		@include breakpoint-deprecated( "<960px" ) {
+			gap: 16px;
+		}
+	}
+
+	.theme__sheet-main {
+		align-items: center;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 16px;
+		justify-content: space-between;
+
+		@include breakpoint-deprecated( "<960px" ) {
+			align-items: flex-start;
+			flex-direction: column;
+			padding: 0 24px;
+		}
+	}
+
+	.theme__sheet-main-actions {
+		display: flex;
+		gap: 10px;
+
+		@include breakpoint-deprecated( "<960px" ) {
+			flex-direction: column;
+			width: 100%;
+		}
+
+		button {
+			border-radius: 4px;
+
+			@include breakpoint-deprecated( "<960px" ) {
+				width: 100%;
+			}
+		}
+
+		.theme__sheet-primary-button {
+			position: relative;
+			right: auto;
+			top: auto;
+			margin-right: 0 !important;
+		}
+	}
+
+	.theme__sheet-main-info-title {
+		@include onboarding-font-recoleta;
+		align-items: center;
+		display: flex;
+		font-size: $font-title-large;
+		line-height: 1;
+	}
+
+	.theme__sheet-main-info-tag {
+		color: var(--color-neutral-60);
+		font-size: $font-body;
+		font-weight: 400;
+		line-height: 24px;
+		-webkit-font-smoothing: antialiased;
+	}
 }
 
 .theme__sheet-column-left,
