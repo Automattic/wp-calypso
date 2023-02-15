@@ -5,6 +5,7 @@ import {
 import { useGlobalStylesOutput } from '@wordpress/edit-site/build-module/components/global-styles/use-global-styles-output';
 import { useMemo } from 'react';
 import { STYLE_PREVIEW_HEIGHT } from '../../constants';
+import './style.scss';
 
 interface Props {
 	width: number | null;
@@ -13,7 +14,7 @@ interface Props {
 	children: JSX.Element;
 }
 
-const VariationPreviewContainer = ( {
+const GlobalStylesVariationContainer = ( {
 	width,
 	ratio,
 	containerResizeListener,
@@ -39,7 +40,7 @@ const VariationPreviewContainer = ( {
 
 	return (
 		<Iframe
-			className="global-styles-variation-preview__iframe"
+			className="global-styles-variation-container__iframe"
 			head={ <EditorStyles styles={ editorStyles } /> }
 			style={ {
 				height: Math.ceil( STYLE_PREVIEW_HEIGHT * ratio ),
@@ -54,4 +55,4 @@ const VariationPreviewContainer = ( {
 	);
 };
 
-export default VariationPreviewContainer;
+export default GlobalStylesVariationContainer;

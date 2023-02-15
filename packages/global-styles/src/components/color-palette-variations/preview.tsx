@@ -12,7 +12,7 @@ import {
 	STYLE_PREVIEW_HEIGHT,
 	STYLE_PREVIEW_COLOR_SWATCH_SIZE,
 } from '../../constants';
-import VariationPreviewContainer from '../variation-preview-container';
+import GlobalStylesVariationContainer from '../global-styles-variation-container';
 import type { Color } from '../../types';
 
 const ColorPaletteVariationPreview = () => {
@@ -30,7 +30,7 @@ const ColorPaletteVariationPreview = () => {
 		.slice( 0, 2 );
 
 	return (
-		<VariationPreviewContainer
+		<GlobalStylesVariationContainer
 			width={ width }
 			ratio={ ratio }
 			containerResizeListener={ containerResizeListener }
@@ -73,7 +73,7 @@ const ColorPaletteVariationPreview = () => {
 					</HStack>
 				</div>
 			</div>
-		</VariationPreviewContainer>
+		</GlobalStylesVariationContainer>
 	);
 };
 

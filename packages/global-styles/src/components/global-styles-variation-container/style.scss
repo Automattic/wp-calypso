@@ -1,0 +1,16 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.global-styles-variation-container__iframe {
+	border-radius: 3px; /* stylelint-disable-line scales/radii */
+	box-shadow: 0 0 0 1px rgb(0 0 0 / 10%);
+	border: 0;
+	display: block;
+	max-height: 61.2903px;
+	max-width: 100%;
+	overflow: hidden;
+
+	@include break-large {
+		max-height: 77.2258px;
+	}
+}

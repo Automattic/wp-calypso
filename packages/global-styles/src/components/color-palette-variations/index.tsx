@@ -2,6 +2,7 @@ import { GlobalStylesContext } from '@wordpress/edit-site/build-module/component
 import { mergeBaseAndUserConfigs } from '@wordpress/edit-site/build-module/components/global-styles/global-styles-provider';
 import { ENTER } from '@wordpress/keycodes';
 import classnames from 'classnames';
+import { translate } from 'i18n-calypso';
 import { useState, useMemo, useContext } from 'react';
 import { useColorPaletteVariations } from '../../hooks';
 import ColorPaletteVariationPreview from './preview';
@@ -43,22 +44,28 @@ const ColorPaletteVariation = ( {
 	};
 
 	return (
-		<GlobalStylesContext.Provider value={ context }>
-			<div
-				className={ classnames( 'global-styles-variation__item', {
-					'is-active': isActive,
-				} ) }
-				role="button"
-				onClick={ selectColorPaletteVariation }
-				onKeyDown={ selectOnEnter }
-				tabIndex={ 0 }
-				aria-current={ isActive }
-			>
-				<div className="global-styles-variation__item-preview">
+		<div
+			className={ classnames( 'global-styles-variation__item', {
+				'is-active': isActive,
+			} ) }
+			role="button"
+			onClick={ selectColorPaletteVariation }
+			onKeyDown={ selectOnEnter }
+			tabIndex={ 0 }
+			aria-current={ isActive }
+			aria-label={
+				translate( 'Color: %s', {
+					comment: 'Aria label for color preview buttons',
+					args: colorPaletteVariation.title,
+				} ) as string
+			}
+		>
+			<div className="global-styles-variation__item-preview">
+				<GlobalStylesContext.Provider value={ context }>
 					<ColorPaletteVariationPreview />
-				</div>
+				</GlobalStylesContext.Provider>
 			</div>
-		</GlobalStylesContext.Provider>
+		</div>
 	);
 };
 
