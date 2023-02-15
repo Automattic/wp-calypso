@@ -1,0 +1,32 @@
+.jetpack-upsell-section__product {
+	display: grid;
+	grid-template-columns: fit-content 3fr 1fr 1fr;
+	grid-template-areas:
+		"icon title link button"
+		"icon description link button";
+	gap: 1em;
+}
+
+.jetpack-upsell-section__product-icon {
+	grid-area: icon;
+	align-self: center;
+	justify-self: center;
+}
+.jetpack-upsell-section__product-title {
+	grid-area: title;
+	margin: 0;
+}
+.jetpack-upsell-section__product-description {
+	grid-area: description;
+	margin: 0;
+}
+.jetpack-upsell-section__product-link {
+	grid-area: link;
+	align-self: center;
+	justify-self: end;
+}
+.jetpack-upsell-section__product-button {
+	grid-area: button;
+	align-self: center;
+	justify-self: end;
+}
