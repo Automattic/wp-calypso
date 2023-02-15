@@ -5,8 +5,8 @@ import {
 	PLAN_FREE,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	isFreePlan,
-	is2023PricingGridEnabled,
 } from '@automattic/calypso-products';
+import { is2023PricingGridEnabled } from '@automattic/calypso-products/src/plans-utilities';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { addQueryArgs } from '@wordpress/url';
@@ -144,8 +144,11 @@ class Plans extends Component {
 
 	componentDidMount() {
 		this.redirectIfInvalidPlanInterval();
+
 		if ( this.props.domainSidebarExperimentUser ) {
 			document.body.classList.add( 'is-domain-sidebar-experiment-user' );
+		} else {
+			document.body.classList.remove( 'is-domain-sidebar-experiment-user' );
 		}
 
 		// Scroll to the top
@@ -156,7 +159,7 @@ class Plans extends Component {
 
 	componentWillUnmount() {
 		if ( this.props.domainSidebarExperimentUser ) {
-			document.body.classList.remove( 'is-domain-sidebar-experiment-user' );
+			document.body.classList.remove( 'is-domain-sidebar-experiment-user2' );
 		}
 	}
 
