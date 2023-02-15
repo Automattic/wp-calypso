@@ -353,7 +353,6 @@ export class SiteSettingsFormGeneral extends Component {
 			siteId,
 			site,
 			isComingSoon,
-			isSiteOnECommerceTrial,
 		} = this.props;
 
 		const blogPublic = parseInt( fields.blog_public, 10 );
@@ -371,7 +370,7 @@ export class SiteSettingsFormGeneral extends Component {
 				'is-coming-soon-disabled': isComingSoonDisabled,
 			}
 		);
-		const showPreviewLink = isComingSoon && hasSitePreviewLink && ! isSiteOnECommerceTrial;
+		const showPreviewLink = isComingSoon && hasSitePreviewLink;
 		return (
 			<FormFieldset>
 				{ ! isNonAtomicJetpackSite &&
