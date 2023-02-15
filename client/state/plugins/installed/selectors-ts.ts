@@ -160,28 +160,27 @@ export const getFilteredAndSortedPlugins = createSelector(
 		// Filter the plugins using the pluginFilter if it is set
 		const pluginList =
 			pluginFilter && _filters[ pluginFilter ]
-				? Object.entries( allPluginsForSites )
-						.filter( ( [ , plugin ] ) => _filters[ pluginFilter ]( plugin ) )
-						.reduce( ( obj, [ pluginSlug, plugin ] ) => {
-							obj[ pluginSlug ] = plugin;
+				? Object.values( allPluginsForSites )
+						.filter( ( plugin ) => _filters[ pluginFilter ]( plugin ) )
+						.reduce( ( obj, plugin ) => {
+							obj[ plugin.slug ] = plugin;
 							return obj;
 						}, {} as { [ pluginSlug: string ]: Plugin } )
 				: allPluginsForSites;
 
 		// Sort the plugins alphabetically by slug
-		const sortedPluginListEntries = Object.entries( pluginList ).sort(
-			( [ pluginSlugA ], [ pluginSlugB ] ) => {
-				const pluginSlugALower = pluginSlugA.toLowerCase();
-				const pluginSlugBLower = pluginSlugB.toLowerCase();
-				if ( pluginSlugALower < pluginSlugBLower ) {
-					return -1;
-				} else if ( pluginSlugALower > pluginSlugBLower ) {
-					return 1;
-				}
-				return 0;
+		const sortedPluginListEntries = Object.values( pluginList ).sort( ( pluginA, pluginB ) => {
+			const pluginSlugALower = pluginA.slug.toLowerCase();
+			const pluginSlugBLower = pluginB.slug.toLowerCase();
+			if ( pluginSlugALower < pluginSlugBLower ) {
+				return -1;
+			} else if ( pluginSlugALower > pluginSlugBLower ) {
+				return 1;
 			}
-		);
-		return sortedPluginListEntries.map( ( [ , plugin ] ) => plugin );
+			return 0;
+		} );
+
+		return sortedPluginListEntries;
 	},
 	( state: AppState ) => [ getAllPluginsIndexedBySiteId( state ) ],
 	( state: AppState, siteIds: number[], pluginFilter?: PluginFilter ) => {
