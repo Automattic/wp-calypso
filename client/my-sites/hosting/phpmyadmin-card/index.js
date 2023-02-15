@@ -59,7 +59,7 @@ export default function PhpMyAdminCard( { disabled } ) {
 	return (
 		<Card className="phpmyadmin-card">
 			<MaterialIcon icon="dns" size={ 32 } />
-			<CardHeading id="database-access">{ translate( 'Database Access' ) }</CardHeading>
+			<CardHeading id="database-access">{ translate( 'Database access' ) }</CardHeading>
 			<p>
 				{ translate(
 					'For the tech-savvy, manage your database with phpMyAdmin and run a wide range of operations with MySQL.'
