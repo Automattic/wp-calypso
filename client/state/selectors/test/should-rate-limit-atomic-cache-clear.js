@@ -1,6 +1,6 @@
 import { shouldRateLimitAtomicCacheClear } from 'calypso/state/selectors/should-rate-limit-atomic-cache-clear';
 
-const FIVE_MINUTES_IN_MILLISECONDS = 300 * 1000;
+const ONE_MINUTE_IN_MILLISECONDS = 60 * 1000;
 const ONE_SECOND = 1000;
 const SITE_ID = 123;
 const TIMESTAMP = 1234567890;
@@ -31,7 +31,7 @@ describe( 'shouldRateLimitAtomicCacheClear', () => {
 	test( 'should return false if the cache was cleared more than 5 minutes ago', () => {
 		expect(
 			shouldRateLimitAtomicCacheClear(
-				generateState( { timestamp: TIMESTAMP - FIVE_MINUTES_IN_MILLISECONDS - ONE_SECOND } ),
+				generateState( { timestamp: TIMESTAMP - ONE_MINUTE_IN_MILLISECONDS - ONE_SECOND } ),
 				SITE_ID
 			)
 		).toBe( false );
@@ -40,7 +40,7 @@ describe( 'shouldRateLimitAtomicCacheClear', () => {
 	test( 'should return true if the cache was cleared less than 5 minutes ago', () => {
 		expect(
 			shouldRateLimitAtomicCacheClear(
-				generateState( { timestamp: TIMESTAMP - FIVE_MINUTES_IN_MILLISECONDS + ONE_SECOND } ),
+				generateState( { timestamp: TIMESTAMP - ONE_MINUTE_IN_MILLISECONDS + ONE_SECOND } ),
 				SITE_ID
 			)
 		).toBe( true );

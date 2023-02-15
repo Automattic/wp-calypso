@@ -1,6 +1,6 @@
 import 'calypso/state/hosting/init';
 
-const FIVE_MINUTES_IN_MILLISECONDS = 300 * 1000;
+const ONE_MINUTE_IN_MILLISECONDS = 60 * 1000;
 
 export function shouldRateLimitAtomicCacheClear( state, siteId ) {
 	const lastCacheCleared = state.atomicHosting?.[ siteId ]?.lastCacheClearTimestamp;
@@ -9,6 +9,6 @@ export function shouldRateLimitAtomicCacheClear( state, siteId ) {
 		return false;
 	}
 
-	const rateLimitTime = new Date().valueOf() - FIVE_MINUTES_IN_MILLISECONDS;
+	const rateLimitTime = new Date().valueOf() - ONE_MINUTE_IN_MILLISECONDS;
 	return lastCacheCleared > rateLimitTime;
 }
