@@ -96,7 +96,7 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 						<SiteItemThumbnail
 							displayMode="tile"
 							className={ siteThumbnail }
-							inViewOnce={ inViewOnce }
+							showPlaceholder={ ! inViewOnce }
 							site={ site }
 							width={ THUMBNAIL_DIMENSION.width }
 							height={ THUMBNAIL_DIMENSION.height }

@@ -25,12 +25,12 @@ interface SiteItemThumbnailProps extends Omit< ComponentProps< typeof SiteThumbn
 	displayMode: SitesDisplayMode;
 	site: SiteExcerptData;
 	alt?: string;
-	inViewOnce?: boolean;
+	showPlaceholder?: boolean;
 }
 
 export const SiteItemThumbnail = ( {
 	displayMode,
-	inViewOnce,
+	showPlaceholder,
 	site,
 	...props
 }: SiteItemThumbnailProps ) => {
@@ -38,7 +38,7 @@ export const SiteItemThumbnail = ( {
 	const classes = classNames( props.className, disallowSelection );
 
 	// Allow parent component to lazy load the entire component.
-	if ( inViewOnce === false ) {
+	if ( showPlaceholder === true ) {
 		return (
 			<SiteThumbnail
 				{ ...props }
