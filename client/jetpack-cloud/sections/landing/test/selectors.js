@@ -37,11 +37,22 @@ describe( 'getLandingPath', () => {
 		jest.resetAllMocks();
 	} );
 
-	it( 'should return / for ineligible sites', () => {
+	it.each( [ [ undefined ], [ null ], [ Infinity ], [ 4.2 ], [ true ], [ 'abc' ] ] )(
+		'should return /landing if an integer site ID is not specified',
+		( siteId ) => {
+			isJetpackSite.mockReturnValue( true );
+			getSiteSlug.mockReturnValue( FAKE_SITE_SLUG );
+
+			const landingPath = getLandingPath( {}, siteId );
+			expect( landingPath ).toEqual( '/landing' );
+		}
+	);
+
+	it( 'should return /landing for ineligible sites', () => {
 		isJetpackSite.mockReturnValue( false );
 
 		const landingPath = getLandingPath( {}, 0 );
-		expect( landingPath ).toEqual( '/' );
+		expect( landingPath ).toEqual( '/landing' );
 	} );
 
 	it( 'should return /backup/<site> for eligible sites with Backup', () => {

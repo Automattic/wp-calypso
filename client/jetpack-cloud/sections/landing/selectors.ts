@@ -19,11 +19,17 @@ export const isSiteEligibleForJetpackCloud = ( state: AppState, siteId: number )
 	! isSiteAtomic( state, siteId ) &&
 	! isJetpackSiteMultiSite( state, siteId );
 
-export const getLandingPath = ( state: AppState, siteId: number ) => {
-	// Send sites that aren't Cloud-eligible back to the home page
-	const isEligible = isSiteEligibleForJetpackCloud( state, siteId );
+export const getLandingPath = ( state: AppState, siteId: number | null ) => {
+	// Landing requires a site ID;
+	// if we don't have one, redirect to the site selection page
+	if ( ! Number.isInteger( siteId ) ) {
+		return '/landing';
+	}
+
+	// Send sites that aren't Cloud-eligible back to the site selection page
+	const isEligible = isSiteEligibleForJetpackCloud( state, siteId as number );
 	if ( ! isEligible ) {
-		return '/';
+		return '/landing';
 	}
 
 	const siteSlug = getSiteSlug( state, siteId );
