@@ -23,6 +23,7 @@ declare const window: undefined | ( Window & { BUILD_TIMESTAMP?: number } );
 const TRACKS_SPECIAL_PROPS_NAMES = [ 'geo', 'message', 'request', 'geocity', 'ip' ];
 const EVENT_NAME_EXCEPTIONS = [
 	'a8c_cookie_banner_ok',
+	'a8c_ccpa_optout',
 	// WooCommerce Onboarding / Connection Flow.
 	'wcadmin_storeprofiler_create_jetpack_account',
 	'wcadmin_storeprofiler_connect_store',
