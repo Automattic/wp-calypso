@@ -315,6 +315,28 @@ function recordOrderInFacebook( cart, orderId, wpcomJetpackCartInfo ) {
 			window.fbq( ...params );
 		}
 	}
+
+	// Akismet
+	if ( wpcomJetpackCartInfo.containsAkismetProducts ) {
+		if ( null !== wpcomJetpackCartInfo.akismetCostUSD && wpcomJetpackCartInfo.akismetCostUSD > 0 ) {
+			const params = [
+				'trackSingle',
+				TRACKING_IDS.facebookAkismetInit,
+				'Purchase',
+				{
+					product_slug: wpcomJetpackCartInfo.akismetProducts
+						.map( ( product ) => product.product_slug )
+						.join( ', ' ),
+					value: wpcomJetpackCartInfo.akismetCostUSD,
+					currency: 'USD',
+					user_id: currentUser ? currentUser.hashedPii.ID : 0,
+					order_id: orderId,
+				},
+			];
+			debug( 'recordOrderInFacebook: Akismet', params );
+			window.fbq( ...params );
+		}
+	}
 }
 
 /**
@@ -378,7 +400,7 @@ function recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo ) {
 	}
 
 	// MCC-level event.
-	// @TODO Separate WPCOM from Jetpack events.
+	// WPCOM
 	if ( mayWeTrackByTracker( 'googleAds' ) ) {
 		const params = [
 			'event',
@@ -394,6 +416,7 @@ function recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo ) {
 		window.gtag( ...params );
 	}
 
+	// Jetpack
 	if ( mayWeTrackByTracker( 'googleAds' ) && wpcomJetpackCartInfo.containsJetpackProducts ) {
 		const params = [
 			'event',
@@ -401,6 +424,22 @@ function recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo ) {
 			{
 				send_to: TRACKING_IDS.jetpackGoogleAdsGtagPurchase,
 				value: wpcomJetpackCartInfo.jetpackCost,
+				currency: cart.currency,
+				transaction_id: orderId,
+			},
+		];
+		debug( 'recordOrderInGoogleAds: Record Jetpack Purchase', params );
+		window.gtag( ...params );
+	}
+
+	// Akismet
+	if ( mayWeTrackByTracker( 'googleAds' ) && wpcomJetpackCartInfo.containsAkismetProducts ) {
+		const params = [
+			'event',
+			'conversion',
+			{
+				send_to: TRACKING_IDS.akismetGoogleAdsGtagPurchase,
+				value: wpcomJetpackCartInfo.akismetCost,
 				currency: cart.currency,
 				transaction_id: orderId,
 			},
