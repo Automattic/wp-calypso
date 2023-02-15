@@ -1,23 +1,26 @@
 import { Popover } from '@wordpress/components';
-import { useRef, useState, RefObject } from 'react';
+import { useState } from 'react';
 
 interface SubmenuPopoverProps extends Popover.Props {
 	isVisible?: boolean;
 	offset?: number;
+	placement?: 'right-start' | 'left-start';
 }
 
-export function useSubenuPopoverProps< T extends { offsetWidth: number } >() {
+export function useSubenuPopoverProps(
+	options: {
+		placement?: SubmenuPopoverProps[ 'placement' ];
+	} = {}
+) {
+	const { placement = 'right-start' } = options;
 	const [ isVisible, setIsVisible ] = useState( false );
-	const anchor = useRef< T >();
 
 	const submenu: Partial< SubmenuPopoverProps > = {
 		isVisible,
-		offset: anchor.current?.offsetWidth,
-		position: 'middle right',
+		placement,
 	};
 
 	const parent = {
-		ref: anchor as RefObject< T >,
 		onMouseOver: () => setIsVisible( true ),
 		onMouseLeave: () => setIsVisible( false ),
 	};
