@@ -64,19 +64,19 @@ const PlansHeader: React.FunctionComponent< {
 		'See and compare the features available on each WordPress.com plan.'
 	);
 
-	if ( ! domainFromHomeUpsellFlow ) {
-		return (
-			<FormattedHeader
-				className="plans__formatted-header plans__section-header modernized-header"
-				brandFont
-				headerText={ translate( 'Plans' ) }
-				subHeaderText={ plansDescription }
-				align="left"
-			/>
-		);
+	if ( domainFromHomeUpsellFlow ) {
+		return <DomainUpsellHeader />;
 	}
 
-	return <DomainUpsellHeader />;
+	return (
+		<FormattedHeader
+			className="plans__formatted-header plans__section-header modernized-header"
+			brandFont
+			headerText={ translate( 'Plans' ) }
+			subHeaderText={ plansDescription }
+			align="left"
+		/>
+	);
 };
 
 export default PlansHeader;
