@@ -217,17 +217,15 @@ export function getPluginOnSite( state: AppState, siteId: number, pluginSlug: st
 
 	const { sites, ...pluginWithoutSites } = plugin;
 
-	return plugin && plugin.sites[ siteId ]
-		? // Because this is a plugin for a single site context only the data for the selected
-		  // site is included. When I changed this file to TypeScript I found that some code
-		  // assumes it will be on the plugin object, while other code assumes it will be on the
-		  // sites object, so I included both.
-		  {
-				...pluginWithoutSites,
-				...plugin.sites[ siteId ],
-				...{ sites: { [ siteId ]: plugin.sites[ siteId ] } },
-		  }
-		: undefined;
+	if ( ! plugin || ! plugin.sites[ siteId ] ) {
+		return undefined;
+	}
+
+	return {
+		...pluginWithoutSites,
+		...plugin.sites[ siteId ],
+		...{ sites: { [ siteId ]: plugin.sites[ siteId ] } },
+	};
 }
 
 export function getPluginsOnSite( state: AppState, siteId: number, pluginSlugs: string[] ) {
