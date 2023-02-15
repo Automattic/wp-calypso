@@ -205,10 +205,8 @@ export function getPluginOnSites( state: AppState, siteIds: number[], pluginSlug
 		return undefined;
 	}
 
-	for ( const siteId of siteIds ) {
-		if ( plugin.sites[ siteId ] ) {
-			return plugin;
-		}
+	if ( siteIds.some( ( siteId ) => !! plugin.sites[ siteId ] ) ) {
+		return plugin;
 	}
 
 	return undefined;
