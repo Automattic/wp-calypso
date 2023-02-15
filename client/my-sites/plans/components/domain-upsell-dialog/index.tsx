@@ -17,12 +17,11 @@ const DomainUpsellDialog: React.FunctionComponent< {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, selectedSiteId ) );
 	const { setShowDomainUpsellDialog } = useDispatch( WPCOM_PLANS_UI_STORE );
-	const visible = useSelect( ( select ) => {
+	const isVisible = useSelect( ( select ) => {
 		return select( WPCOM_PLANS_UI_STORE ).isDomainUpsellDialogShown();
 	} );
 
 	const onCloseDialog = useCallback( () => {
-		// onClose();
 		setShowDomainUpsellDialog( false );
 	}, [ setShowDomainUpsellDialog ] );
 
@@ -50,7 +49,7 @@ const DomainUpsellDialog: React.FunctionComponent< {
 	return (
 		<Dialog
 			additionalClassNames="domain-upsell-dialog"
-			isVisible={ visible }
+			isVisible={ isVisible }
 			buttons={ buttons }
 			onClose={ onCloseDialog }
 			shouldCloseOnEsc={ true }
