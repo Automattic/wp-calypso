@@ -70,6 +70,13 @@ export const GithubConnectCard = ( { connection }: GithubConnectCardProps ) => {
 		setSelectedBranch( branchName );
 	};
 
+	const resetRepoSelection = ( query: string ) => {
+		if ( selectedRepo && query.length === 0 ) {
+			setSelectedRepo( '' );
+			setSelectedBranch( '' );
+		}
+	};
+
 	return (
 		<Card className="connect-branch-card">
 			<SocialLogo className="material-icon" icon="github" size={ 32 } />
@@ -89,9 +96,11 @@ export const GithubConnectCard = ( { connection }: GithubConnectCardProps ) => {
 							<FormLabel htmlFor="repository">{ __( 'Repository' ) }</FormLabel>
 							<Search
 								id="repository"
+								className="connect-branch__repository-field"
 								placeholder={ __( 'Start typing a repo..' ) }
 								options={ repos ?? [] }
 								onSelect={ handleRepoSelect }
+								onChange={ resetRepoSelection }
 							/>
 						</FormFieldset>
 						<FormFieldset className="connect-branch__field">
@@ -111,7 +120,7 @@ export const GithubConnectCard = ( { connection }: GithubConnectCardProps ) => {
 					</FormFieldset>
 				) }
 			</div>
-			<div style={ { marginTop: '10px', display: 'inline-flex', gap: '16px' } }>
+			<div style={ { display: 'inline-flex', gap: '16px' } }>
 				<Button
 					primary
 					busy={ busy }
