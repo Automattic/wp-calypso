@@ -94,9 +94,9 @@ const Grid = styled.div< { isInSignup: boolean } >`
 	background: #fff;
 	border: solid 1px #e0e0e0;
 
-	@media ( min-width: 385px ) {
+	${ plansBreakSmall( css`
 		border-radius: 5px;
-	}
+	` ) }
 `;
 const Row = styled.div< { isHiddenInMobile?: boolean } >`
 	justify-content: space-between;
