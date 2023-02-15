@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useStorageText } from 'calypso/components/backup-storage-space/hooks';
 import { useQueryRewindPolicies } from 'calypso/components/data/query-rewind-policies';
 import { useQueryRewindSize } from 'calypso/components/data/query-rewind-size';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { updateBackupRetention } from 'calypso/state/rewind/retention/actions';
 import { BACKUP_RETENTION_UPDATE_REQUEST } from 'calypso/state/rewind/retention/constants';
 import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
@@ -107,11 +108,20 @@ const BackupRetentionManagement: FunctionComponent = () => {
 	);
 
 	// Set the retention period selected when the user selects a new option
-	const onRetentionSelectionChange = useCallback( ( value: number ) => {
-		if ( value ) {
-			setRetentionSelected( value );
-		}
-	}, [] );
+	const onRetentionSelectionChange = useCallback(
+		( value: number ) => {
+			if ( value ) {
+				setRetentionSelected( value );
+
+				dispatch(
+					recordTracksEvent( 'calypso_jetpack_backup_storage_retention_option_click', {
+						retention_option: value,
+					} )
+				);
+			}
+		},
+		[ dispatch ]
+	);
 
 	const disableFormSubmission =
 		! retentionSelected ||
@@ -126,6 +136,12 @@ const BackupRetentionManagement: FunctionComponent = () => {
 
 	const updateRetentionPeriod = useCallback( () => {
 		dispatch( updateBackupRetention( siteId, retentionSelected as RetentionPeriod ) );
+
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_storage_retention_submit_click', {
+				retention_option: retentionSelected,
+			} )
+		);
 	}, [ dispatch, retentionSelected, siteId ] );
 
 	const handleUpdateRetention = useCallback( () => {
