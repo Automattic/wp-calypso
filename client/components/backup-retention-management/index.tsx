@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useStorageText } from 'calypso/components/backup-storage-space/hooks';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { updateBackupRetention } from 'calypso/state/rewind/retention/actions';
 import { BACKUP_RETENTION_UPDATE_REQUEST } from 'calypso/state/rewind/retention/constants';
 import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
@@ -93,17 +94,26 @@ const BackupRetentionManagement: FunctionComponent = () => {
 	const onRetentionSelectionChange = useCallback(
 		( value: number ) => {
 			if ( value ) {
-				setRetentionSelected( value );
-				const selectedOption = retentionOptionsCards.find(
-					( option ) => option.id === value
-				) as RetentionOptionInput;
+				if ( value !== retentionSelected ) {
+					setRetentionSelected( value );
 
-				if ( selectedOption.upgradeRequired !== storageUpgradeRequired ) {
-					setStorageUpgradeRequired( selectedOption.upgradeRequired );
+					dispatch(
+						recordTracksEvent( 'calypso_jetpack_backup_storage_retention_option_click', {
+							retention_option: value,
+						} )
+					);
+
+					const selectedOption = retentionOptionsCards.find(
+						( option ) => option.id === value
+					) as RetentionOptionInput;
+
+					if ( selectedOption.upgradeRequired !== storageUpgradeRequired ) {
+						setStorageUpgradeRequired( selectedOption.upgradeRequired );
+					}
 				}
 			}
 		},
-		[ retentionOptionsCards, storageUpgradeRequired ]
+		[ dispatch, retentionOptionsCards, retentionSelected, storageUpgradeRequired ]
 	);
 
 	const disableFormSubmission =
@@ -119,6 +129,12 @@ const BackupRetentionManagement: FunctionComponent = () => {
 
 	const updateRetentionPeriod = useCallback( () => {
 		dispatch( updateBackupRetention( siteId, retentionSelected as RetentionPeriod ) );
+
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_storage_retention_submit_click', {
+				retention_option: retentionSelected,
+			} )
+		);
 	}, [ dispatch, retentionSelected, siteId ] );
 
 	const handleUpdateRetention = useCallback( () => {
