@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	WPCOM_FEATURES_MANAGE_PLUGINS,
 	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
@@ -327,7 +328,7 @@ export const SitesEllipsisMenu = ( {
 					<SiteMenuGroup>
 						{ site.launch_status === 'unlaunched' && <LaunchItem { ...props } /> }
 						<SettingsItem { ...props } />
-						<DeveloperSettings siteSlug={ site.slug } />
+						{ isEnabled( 'dev/developer-ux' ) && <DeveloperSettings siteSlug={ site.slug } /> }
 						<ManagePluginsItem { ...props } />
 						{ showHosting && <HostingConfigItem { ...props } /> }
 						{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
