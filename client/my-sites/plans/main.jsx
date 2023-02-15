@@ -159,7 +159,7 @@ class Plans extends Component {
 
 	componentWillUnmount() {
 		if ( this.props.domainSidebarExperimentUser ) {
-			document.body.classList.remove( 'is-domain-sidebar-experiment-user2' );
+			document.body.classList.remove( 'is-domain-sidebar-experiment-user' );
 		}
 	}
 
