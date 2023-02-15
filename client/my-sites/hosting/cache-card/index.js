@@ -44,7 +44,7 @@ const CacheCard = ( {
 					busy={ isClearingCache }
 					disabled={ disabled || isClearingCache || shouldRateLimitCacheClear }
 				>
-					<span>{ translate( 'Clear Cache' ) }</span>
+					<span>{ translate( 'Clear cache' ) }</span>
 				</Button>
 				{ shouldRateLimitCacheClear && (
 					<p class="form-setting-explanation">
