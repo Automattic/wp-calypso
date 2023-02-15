@@ -21,6 +21,7 @@ import {
 	getPlanPath,
 	PLAN_FREE,
 	PLAN_ENTERPRISE_GRID_WPCOM,
+	isPremiumPlan,
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -479,13 +480,20 @@ export class PlanFeatures2023Grid extends Component<
 				getPlanClass( planName )
 			);
 			const tableItemClasses = classNames( 'plan-features-2023-grid__table-item', {
-				'popular-plan-parent-class': isBusinessPlan( planName ),
+				'popular-plan-parent-class':
+					isBusinessPlan( planName ) || isFreePlan( planName ) || isPremiumPlan( planName ),
+			} );
+
+			const popularBadgeClasses = classNames( 'plan-features-2023-grid__popular-badge', {
+				'with-plan-logo': ! ( isFreePlan( planName ) || isPremiumPlan( planName ) ),
 			} );
 
 			return (
 				<Container key={ planName } className={ tableItemClasses } isMobile={ options?.isMobile }>
-					{ isBusinessPlan( planName ) && (
-						<div className="plan-features-2023-grid__popular-badge">
+					{ ( isBusinessPlan( planName ) ||
+						isFreePlan( planName ) ||
+						isPremiumPlan( planName ) ) && (
+						<div className={ popularBadgeClasses }>
 							<PlanPill isInSignup={ isInSignup }>{ translate( 'Popular' ) }</PlanPill>
 						</div>
 					) }

@@ -310,7 +310,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 					'plan-comparison-grid__header',
 					getPlanClass( planName ),
 					{
-						'popular-plan-parent-class': isBusinessPlan( planName ),
+						'popular-plan-parent-class': isBusinessPlan( planName ) || isFreePlan( planName ),
 						'plan-is-footer': isFooter,
 					}
 				);
@@ -322,7 +322,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 
 				return (
 					<Cell key={ planName } className={ headerClasses } textAlign="left">
-						{ isBusinessPlan( planName ) && (
+						{ ( isBusinessPlan( planName ) || isFreePlan( planName ) ) && (
 							<div className="plan-features-2023-grid__popular-badge">
 								<PlanPill isInSignup={ isInSignup }>{ translate( 'Popular' ) }</PlanPill>
 							</div>
@@ -633,7 +633,8 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 												'plan-comparison-grid__plan',
 												getPlanClass( planName ),
 												{
-													'popular-plan-parent-class': isBusinessPlan( planName ),
+													'popular-plan-parent-class':
+														isBusinessPlan( planName ) || isFreePlan( planName ),
 													'has-feature': hasFeature,
 													'title-is-subtitle': 'live-chat-support' === featureSlug,
 												}
@@ -689,7 +690,8 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 											'has-feature',
 											getPlanClass( planName ),
 											{
-												'popular-plan-parent-class': isBusinessPlan( planName ),
+												'popular-plan-parent-class':
+													isBusinessPlan( planName ) || isFreePlan( planName ),
 											}
 										);
 

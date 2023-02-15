@@ -568,28 +568,6 @@ body.is-section-signup.is-white-signup,
 			}
 		}
 
-		.plan-pill {
-			font-family: Inter, $sans;
-			font-size: 0.75rem;
-			font-weight: 500;
-			color: var(--studio-white);
-			letter-spacing: 0.2px;
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-			line-height: 1.25rem;
-			padding: 0 9px;
-			right: unset;
-			left: unset;
-			top: unset;
-			bottom: 0;
-			border-radius: 4px;
-			background-color: var(--studio-gray-80);
-			transform: translate(20px, -50px);
-			text-transform: unset;
-			@include plans-2023-break-small {
-				transform: translate(20px, 0);
-			}
-		}
-
 		&.popular-plan-parent-class {
 			position: relative;
 
@@ -612,6 +590,34 @@ body.is-section-signup.is-white-signup,
 					border-style: solid;
 					padding-top: 20px;
 					margin-bottom: 0;
+				}
+
+				.plan-pill {
+					font-family: Inter, $sans;
+					font-size: 0.75rem;
+					font-weight: 500;
+					color: var(--studio-white);
+					letter-spacing: 0.2px;
+					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+					line-height: 1.25rem;
+					padding: 0 9px;
+					right: unset;
+					left: unset;
+					top: unset;
+					bottom: 0;
+					border-radius: 4px;
+					background-color: var(--studio-gray-80);
+					transform: translate(20px, -50px);
+					text-transform: unset;
+					@include plans-2023-break-small {
+						transform: translate(20px, 0);
+					}
+				}
+
+				&:not(.with-plan-logo) {
+					.plan-pill {
+						transform: translate(20px, 0);
+					}
 				}
 			}
 		}
