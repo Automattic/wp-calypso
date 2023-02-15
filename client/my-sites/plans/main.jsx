@@ -147,8 +147,6 @@ class Plans extends Component {
 
 		if ( this.props.domainSidebarExperimentUser ) {
 			document.body.classList.add( 'is-domain-sidebar-experiment-user' );
-		} else {
-			document.body.classList.remove( 'is-domain-sidebar-experiment-user' );
 		}
 
 		// Scroll to the top
@@ -158,7 +156,7 @@ class Plans extends Component {
 	}
 
 	componentWillUnmount() {
-		if ( this.props.domainSidebarExperimentUser ) {
+		if ( document.body.classList.contains( 'is-domain-sidebar-experiment-user' ) ) {
 			document.body.classList.remove( 'is-domain-sidebar-experiment-user' );
 		}
 	}
