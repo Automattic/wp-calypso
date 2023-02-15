@@ -120,7 +120,7 @@ export const GithubConnectCard = ( { connection }: GithubConnectCardProps ) => {
 					</FormFieldset>
 				) }
 			</div>
-			<div style={ { display: 'inline-flex', gap: '16px' } }>
+			<div className="connect-branch__buttons">
 				<Button
 					primary
 					busy={ busy }

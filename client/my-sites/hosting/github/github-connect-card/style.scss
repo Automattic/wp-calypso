@@ -18,8 +18,16 @@
 	.connect-branch__fields {
 		flex-direction: column;
 	}
+	.connect-branch__buttons {
+		flex-direction: column;
+	}
 }
 
 .connect-branch__repository-field .suggestions {
 	position: absolute;
+}
+
+.connect-branch__buttons {
+	display: inline-flex;
+	gap: 16px;
 }
