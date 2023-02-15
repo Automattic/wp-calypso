@@ -66,7 +66,6 @@ const SVG_IGNORE_PATHS = [
 	/images\/email-providers\/google-workspace/,
 
 	// Illustrations that contain logos
-	/images\/customer-home\/illustration--task-podcasting.svg/,
 	/images\/customer-home\/illustration--task-connect-social-accounts.svg/,
 
 	// Credit card and payment gateway logos (the disabled versions are allowed)
