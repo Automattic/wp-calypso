@@ -1,14 +1,10 @@
-import { Button, Card, Dialog } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { useState } from 'react';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormTextInput from 'calypso/components/forms/form-text-input';
 import MaterialIcon from 'calypso/components/material-icon';
 import { clearWordPressCache } from 'calypso/state/hosting/actions';
 import getRequest from 'calypso/state/selectors/get-request';
-import { shouldProvideReasonToClearAtomicCache } from 'calypso/state/selectors/should-provide-reason-to-clear-atomic-cache';
 import { shouldRateLimitAtomicCacheClear } from 'calypso/state/selectors/should-rate-limit-atomic-cache-clear';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -16,47 +12,17 @@ import './style.scss';
 
 const MiscellaneousCard = ( {
 	disabled,
-	shouldProvideReasonToClearCache,
 	shouldRateLimitCacheClear,
 	clearAtomicWordPressCache,
 	isClearingCache,
 	siteId,
 	translate,
 } ) => {
-	const [ showDialog, setShowDialog ] = useState( false );
-	const [ reason, setReason ] = useState( '' );
-
 	const clearCache = () => {
-		clearAtomicWordPressCache(
-			siteId,
-			shouldProvideReasonToClearCache ? reason : 'Clearing again in less than 24 hours.'
-		);
-		setShowDialog( false );
-		setReason( '' );
-	};
-
-	const showConfirmationDialog = () => {
-		setShowDialog( true );
-	};
-
-	const closeConfirmationDialog = () => {
-		setShowDialog( false );
-	};
-
-	const onReasonChange = ( event ) => {
-		setReason( event.target.value );
+		clearAtomicWordPressCache( siteId, 'Clearing again in less than 5 minutes.' );
 	};
 
 	const getClearCacheContent = () => {
-		const clearCacheText = translate( 'Clear Cache' );
-		const clearCacheDisabled = ! reason || reason.length < 3;
-		const deleteButtons = [
-			<Button onClick={ closeConfirmationDialog }>{ translate( 'Cancel' ) }</Button>,
-			<Button primary scary disabled={ clearCacheDisabled } onClick={ clearCache }>
-				{ clearCacheText }
-			</Button>,
-		];
-
 		return (
 			<div>
 				<p>
@@ -73,11 +39,11 @@ const MiscellaneousCard = ( {
 					) }
 				</p>
 				<Button
-					onClick={ shouldProvideReasonToClearCache ? showConfirmationDialog : clearCache }
+					onClick={ clearCache }
 					busy={ isClearingCache }
 					disabled={ disabled || isClearingCache || shouldRateLimitCacheClear }
 				>
-					<span>{ clearCacheText }</span>
+					<span>{ translate( 'Clear Cache' ) }</span>
 				</Button>
 				{ shouldRateLimitCacheClear && (
 					<p class="form-setting-explanation">
@@ -86,34 +52,6 @@ const MiscellaneousCard = ( {
 						) }
 					</p>
 				) }
-
-				<Dialog
-					isVisible={ showDialog }
-					buttons={ deleteButtons }
-					className="miscellaneous-card__confirm-dialog"
-				>
-					<h1 className="miscellaneous-card__confirm-header">{ clearCacheText }</h1>
-					<FormLabel
-						htmlFor="confirmDomainChangeInput"
-						className="miscellaneous-card__confirm-label"
-					>
-						<p>{ translate( "Please let us know why you are clearing your site's cache." ) }</p>
-						<p>
-							{ translate(
-								'We use this information to audit plugins and give valuable feedback to plugin developers. ' +
-									'It is our way of giving back to the community and helping people learn more about WordPress.'
-							) }
-						</p>
-					</FormLabel>
-
-					<FormTextInput
-						autoCapitalize="off"
-						onChange={ onReasonChange }
-						value={ reason }
-						aria-required="true"
-						id="confirmDomainChangeInput"
-					/>
-				</Dialog>
 			</div>
 		);
 	};
@@ -132,7 +70,6 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 
 		return {
-			shouldProvideReasonToClearCache: shouldProvideReasonToClearAtomicCache( state, siteId ),
 			shouldRateLimitCacheClear: shouldRateLimitAtomicCacheClear( state, siteId ),
 			isClearingCache: getRequest( state, clearWordPressCache( siteId ) )?.isLoading ?? false,
 			siteId,
