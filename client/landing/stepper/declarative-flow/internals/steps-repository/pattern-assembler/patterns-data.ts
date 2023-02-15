@@ -342,7 +342,6 @@ const useSectionPatterns = () => {
 				name: 'Three columns with images and text',
 				category: list,
 				category_slug: 'list',
-				category_slug: 'list',
 			},
 			{
 				id: 789,
