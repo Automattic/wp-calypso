@@ -96,6 +96,8 @@ export interface Design {
 	price?: string;
 	software_sets?: SoftwareSet[];
 	is_bundled_with_woo_commerce?: boolean;
+	is_virtual?: boolean;
+	style_variation?: StyleVariation | null; // Style variation used by virtual themes.
 
 	/** @deprecated used for Gutenboarding (/new flow) */
 	stylesheet?: string;

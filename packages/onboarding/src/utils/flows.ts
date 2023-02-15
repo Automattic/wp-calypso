@@ -1,5 +1,6 @@
 export const NEWSLETTER_FLOW = 'newsletter';
 export const NEWSLETTER_POST_SETUP_FLOW = 'newsletter-post-setup';
+export const HOSTING_LP_FLOW = 'hosting';
 export const LINK_IN_BIO_FLOW = 'link-in-bio';
 export const LINK_IN_BIO_TLD_FLOW = 'link-in-bio-tld';
 export const LINK_IN_BIO_POST_SETUP_FLOW = 'link-in-bio-post-setup';
@@ -27,6 +28,10 @@ export const isLinkInBioFlow = ( flowName: string | null ) => {
 
 export const isFreeFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ FREE_FLOW, FREE_POST_SETUP_FLOW ].includes( flowName ) );
+};
+
+export const isHostingLPFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && HOSTING_LP_FLOW === flowName );
 };
 
 export const isNewsletterOrLinkInBioFlow = ( flowName: string | null ) => {

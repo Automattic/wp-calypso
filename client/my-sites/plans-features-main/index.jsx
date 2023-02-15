@@ -28,6 +28,7 @@ import {
 	PLAN_PERSONAL,
 	TITAN_MAIL_MONTHLY_SLUG,
 	PLAN_FREE,
+	is2023PricingGridEnabled,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
@@ -713,7 +714,7 @@ export default connect(
 		) {
 			customerType = 'business';
 		}
-		const is2023OnboardingPricingGrid = isEnabled( 'onboarding/2023-pricing-grid' );
+		const is2023OnboardingPricingGrid = is2023PricingGridEnabled();
 		const planTypeSelectorProps = {
 			basePlansPath: props.basePlansPath,
 			isInSignup: props.isInSignup,

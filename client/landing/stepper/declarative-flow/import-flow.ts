@@ -1,4 +1,4 @@
-import { Design } from '@automattic/design-picker';
+import { Design, isBlankCanvasDesign } from '@automattic/design-picker';
 import { IMPORT_FOCUSED_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
@@ -18,6 +18,7 @@ import ImporterMedium from './internals/steps-repository/importer-medium';
 import ImporterSquarespace from './internals/steps-repository/importer-squarespace';
 import ImporterWix from './internals/steps-repository/importer-wix';
 import ImporterWordpress from './internals/steps-repository/importer-wordpress';
+import MigrationHandler from './internals/steps-repository/migration-handler';
 import PatternAssembler from './internals/steps-repository/pattern-assembler';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
@@ -43,6 +44,7 @@ const importFlow: Flow = {
 			{ slug: 'patternAssembler', component: PatternAssembler },
 			{ slug: 'processing', component: ProcessingStep },
 			{ slug: 'siteCreationStep', component: SiteCreationStep },
+			{ slug: 'migrationHandler', component: MigrationHandler },
 		];
 	},
 
@@ -70,6 +72,28 @@ const importFlow: Flow = {
 			} );
 
 			return navigate( 'processing' );
+		};
+
+		const handleMigrationRedirects = ( providedDependencies: ProvidedDependencies = {} ) => {
+			const from = urlQueryParams.get( 'from' );
+			// If there's any errors, we redirct them to the siteCreationStep for a clean start
+			if ( providedDependencies?.hasError ) {
+				return navigate( 'siteCreationStep' );
+			}
+			if ( providedDependencies?.status === 'inactive' ) {
+				// This means they haven't kick off the migration before, so we send them to create a new site
+				if ( ! providedDependencies?.targetBlogId ) {
+					return navigate( 'siteCreationStep' );
+				}
+				// For some reason, the admin role is mismatch, we want to create a new site for them as well
+				if ( providedDependencies?.isAdminOnTarget === false ) {
+					return navigate( 'siteCreationStep' );
+				}
+			}
+			// For those who hasn't paid or in the middle of the migration process, we sent them to the importerWordPress step
+			return navigate(
+				`importerWordpress?siteSlug=${ providedDependencies?.targetBlogSlug }&from=${ from }&option=everything`
+			);
 		};
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
@@ -125,11 +149,14 @@ const importFlow: Flow = {
 						return navigate( `import?siteSlug=${ providedDependencies?.siteSlug }&from=${ from }` );
 					}
 					// End of Pattern Assembler flow
-					if ( selectedDesign?.design_type === 'assembler' ) {
+					if ( isBlankCanvasDesign( selectedDesign ) ) {
 						return exitFlow( `/site-editor/${ siteSlugParam }` );
 					}
 
 					return exitFlow( `/home/${ siteSlugParam }` );
+				}
+				case 'migrationHandler': {
+					return handleMigrationRedirects( providedDependencies );
 				}
 			}
 		};

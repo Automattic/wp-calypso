@@ -5,7 +5,7 @@ import { getTokenValidation } from 'calypso/state/invites/selectors';
 import { warningNotice } from 'calypso/state/notices/actions';
 
 export function useValidationNotifications() {
-	const _ = useTranslate();
+	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const { failure } = useSelector( getTokenValidation );
@@ -14,7 +14,7 @@ export function useValidationNotifications() {
 
 	function showValidationFailureNotice() {
 		dispatch(
-			warningNotice( _( 'Oops, something went wrong with the form validation.' ), {
+			warningNotice( translate( 'Oops, something went wrong with the form validation.' ), {
 				duration: 3000,
 			} )
 		);

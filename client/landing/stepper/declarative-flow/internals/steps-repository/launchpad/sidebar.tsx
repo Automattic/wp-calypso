@@ -99,7 +99,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 					<div className="launchpad__progress-bar-container">
 						<CircularProgressBar
 							size={ 40 }
-							enableDesktopScaling={ true }
+							enableDesktopScaling
 							currentStep={ currentTask }
 							numberOfSteps={ enhancedTasks?.length }
 						/>
@@ -168,7 +168,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 						recordTracksEvent( 'calypso_launchpad_go_to_admin_clicked', { flow: flow } );
 						goNext?.();
 					} }
-					label={ translate( 'Go to Admin' ) }
+					label={ translate( 'Skip to dashboard' ) }
 					borderless={ true }
 				/>
 			</div>

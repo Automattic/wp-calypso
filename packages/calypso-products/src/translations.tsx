@@ -158,8 +158,8 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 		},
 	} );
 	const boost = translate( 'Boost' );
-	const socialBasic = translate( 'Social Basic', { context: 'Jetpack product name' } );
-	const socialAdvanced = translate( 'Social Advanced (Beta)', { context: 'Jetpack product name' } );
+	const socialBasic = translate( 'Social', { context: 'Jetpack product name' } );
+	const socialAdvanced = translate( 'Social', { context: 'Jetpack product name' } );
 
 	const text10gb = translate( '%(numberOfGigabytes)dGB', '%(numberOfGigabytes)dGB', {
 		comment:

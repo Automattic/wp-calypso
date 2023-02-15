@@ -44,7 +44,7 @@ export const EmailsTextSetting = ( { value, disabled, updateFields }: EmailsText
 			<FormFieldset>
 				{ /* @ts-expect-error FormLegend is not typed and is causing errors */ }
 				<FormLegend>
-					These settings change the emails sent from your site to your readers
+					{ translate( 'These settings change the emails sent from your site to your readers' ) }
 				</FormLegend>
 				<FormLabel htmlFor="confirmation_email_message">
 					{ hasTranslation( 'Confirmation email message' ) || locale.startsWith( 'en' )

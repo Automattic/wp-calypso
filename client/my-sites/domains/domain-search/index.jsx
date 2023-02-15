@@ -275,7 +275,7 @@ class DomainSearch extends Component {
 							{ domainSidebarExperimentUser && (
 								<>
 									<DomainAndPlanPackageNavigation
-										goBackLink={ domainManagementList( selectedSiteSlug ) }
+										goBackLink={ `/home/${ selectedSiteSlug }` }
 										step={ 1 }
 									/>
 									<FormattedHeader

@@ -1,6 +1,8 @@
 @import "~@automattic/typography/styles/variables";
 @import "~@automattic/color-studio/dist/color-variables";
 @import "~@wordpress/base-styles/colors";
+@import "~@wordpress/base-styles/breakpoints";
+@import "~@wordpress/base-styles/mixins";
 
 $brand-text: "SF Pro Text", $sans;
 $brand-display: "SF Pro Display", $sans;
@@ -120,7 +122,12 @@ $brand-display: "SF Pro Display", $sans;
 
 	&__tab {
 		display: flex;
+		flex-direction: column;
 		gap: 24px;
+
+		@include break-medium {
+			flex-direction: row;
+		}
 	}
 
 	&__header {
@@ -142,7 +149,6 @@ $brand-display: "SF Pro Display", $sans;
 			font-size: 0.75rem;
 			line-height: 1.66;
 			color: $studio-gray-60;
-			margin-bottom: 8px;
 		}
 
 		&-learn-more {
@@ -157,10 +163,10 @@ $brand-display: "SF Pro Display", $sans;
 			font-family: $brand-text;
 			font-weight: 400;
 			font-size: 0.875rem;
-			line-height: 1.57;
 			align-items: center;
 			letter-spacing: -0.24px;
 			color: $studio-gray-80;
+			margin-top: 8px;
 
 			p:first-of-type {
 				overflow: hidden;
@@ -173,7 +179,13 @@ $brand-display: "SF Pro Display", $sans;
 
 			p {
 				margin: 0;
-				line-height: 1.57;
+				line-height: 1.33;
+			}
+
+			@include break-medium {
+				p {
+					line-height: 1.57;
+				}
 			}
 		}
 	}

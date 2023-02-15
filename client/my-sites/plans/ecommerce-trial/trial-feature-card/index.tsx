@@ -1,20 +1,21 @@
 import { Card, Gridicon } from '@automattic/components';
 import { useState } from 'react';
+import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
 
-interface TrialFeatureCardProps {
+export interface ECommercePlanFeatureSet {
 	illustration: string;
 	title: string;
-	subtitle: string;
+	subtitle: TranslateResult;
 	items: {
 		title: string;
-		subtitle: string;
+		subtitle: TranslateResult;
 	}[];
 	expanded?: boolean;
 }
 
-export default function TrialFeatureCard( props: TrialFeatureCardProps ) {
+export default function TrialFeatureCard( props: ECommercePlanFeatureSet ) {
 	const { illustration, title, subtitle, items } = props;
 
 	const [ expanded, setExpanded ] = useState( !! props.expanded );

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import PostBlocked from 'calypso/blocks/reader-post-card/blocked';
+import BloggingPromptCard from 'calypso/components/blogging-prompt-card';
 import QueryReaderPost from 'calypso/components/data/query-reader-post';
 import compareProps from 'calypso/lib/compare-props';
 import { IN_STREAM_RECOMMENDATION } from 'calypso/reader/follow-sources';
@@ -25,7 +26,7 @@ class PostLifecycle extends Component {
 	};
 
 	render() {
-		const { post, postKey, isSelected, recsStreamKey, streamKey } = this.props;
+		const { post, postKey, isSelected, recsStreamKey, streamKey, siteId } = this.props;
 
 		if ( postKey.isRecommendationBlock ) {
 			return (
@@ -35,6 +36,20 @@ class PostLifecycle extends Component {
 					streamKey={ recsStreamKey }
 					followSource={ IN_STREAM_RECOMMENDATION }
 				/>
+			);
+		} else if ( postKey.isPromptBlock ) {
+			return (
+				<div
+					className="reader-stream__blogging-prompt"
+					key={ 'blogging-prompt-card-' + postKey.index }
+				>
+					<BloggingPromptCard
+						siteId={ siteId }
+						viewContext="reader"
+						showMenu={ false }
+						index={ postKey.index }
+					/>
+				</div>
 			);
 		} else if ( streamKey.indexOf( 'rec' ) > -1 ) {
 			return <EmptySearchRecommendedPost post={ post } site={ postKey } />;

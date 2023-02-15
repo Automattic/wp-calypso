@@ -81,24 +81,17 @@ const StatsInsights = ( props ) => {
 						{ ! isOdysseyStats && <StatShares siteId={ siteId } /> }
 
 						<Followers path="followers" />
-						<StatsModule
-							path="publicize"
-							moduleStrings={ moduleStrings.publicize }
-							statType="statsPublicize"
-							hideSummaryLink
-							hideNewModule // remove when cleaning 'stats/horizontal-bars-everywhere' FF
-						/>
+						<Reach />
 
 						{ /* Replaced by new modules on top of the page */ }
 						{ ! isLatestPostReplaced && <LatestPostSummary /> }
-						{ /* <Reach /> */ }
 					</div>
 				) : (
 					// remove all this section when cleaning 'stats/insights-page-grid'
 					<div className="stats-insights__nonperiodic has-recent">
 						<div className={ statsModuleListClass }>
 							<div className="stats__module-column">
-								<LatestPostSummary />
+								{ ! isLatestPostReplaced && <LatestPostSummary /> }
 
 								<StatsModule
 									path="tags-categories"
