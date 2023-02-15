@@ -31,7 +31,7 @@ export const advancedCredentials: PageJS.Callback = ( context, next ) => {
 					siteId={ siteId }
 					trueComponent={ <BackupRetentionManagement /> }
 					falseComponent={ null }
-					loadingComponent={ null }
+					loadingComponent={ <AdvancedCredentialsLoadingPlaceholder /> } // Let's use the same placeholder for now
 				/>
 			) : null }
 			<HasSiteCredentialsSwitch
