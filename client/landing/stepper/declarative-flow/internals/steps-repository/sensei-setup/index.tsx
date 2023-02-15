@@ -4,12 +4,12 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { CSSProperties } from 'react';
+import { CSSProperties, useEffect } from 'react';
 import FormRadioWithThumbnail from 'calypso/components/forms/form-radio-with-thumbnail';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ONBOARD_STORE } from '../../../../stores';
 import { SenseiStepContainer } from '../components/sensei-step-container';
-import { Title, Label, Input, Button } from './components';
+import { Title, Label, Input, Button, Hint } from './components';
 import type { StyleVariation } from 'calypso/../packages/design-picker/src/types';
 import type { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import './style.scss';
@@ -69,6 +69,11 @@ const SenseiSetup: Step = ( { navigation } ) => {
 
 	const { submit } = navigation;
 	const dispatch = useDispatch( ONBOARD_STORE );
+
+	useEffect( () => {
+		dispatch.resetOnboardStore();
+	}, [ dispatch ] );
+
 	const handleSubmit = useCallback( () => {
 		dispatch.setSiteTitle( siteTitle );
 		const variation = styles.find( ( style ) => style.name === checked ) || styles[ 0 ];
@@ -96,12 +101,10 @@ const SenseiSetup: Step = ( { navigation } ) => {
 						placeholder={ __( 'My Site Name' ) }
 						value={ siteTitle }
 					/>
-					<div className="sensei-theme-prompt">
-						<h4>{ __( 'Pick a style' ) }</h4>
-						<p>
-							{ __( 'Choose a different theme style now, or customize colors and fonts later.' ) }
-						</p>
-					</div>
+					<Label>{ __( 'Pick a style' ) }</Label>
+					<Hint>
+						{ __( 'Choose a different theme style now, or customize colors and fonts later.' ) }
+					</Hint>
 					<div className="sensei-theme-style-selector">
 						{ styles.map( ( item, i ) => (
 							<FormRadioWithThumbnail
@@ -117,7 +120,7 @@ const SenseiSetup: Step = ( { navigation } ) => {
 							/>
 						) ) }
 					</div>
-					{ ! isDesktop && <div>{ preview }</div> }
+					{ ! isDesktop && preview }
 					<Button disabled={ ! siteTitle } onClick={ handleSubmit }>
 						{ __( 'Continue' ) }
 					</Button>

@@ -127,6 +127,13 @@ export async function recordOrder( cart, orderId ) {
 		window.adRoll.trackPurchase();
 	}
 
+	if ( mayWeTrackByTracker( 'linkedin' ) && wpcomJetpackCartInfo.containsJetpackProducts ) {
+		const params = { conversion_id: 10947410 };
+
+		debug( 'recordOrder: [LinkedIn]', params );
+		window.lintrk( 'track', params );
+	}
+
 	// Uses JSON.stringify() to print the expanded object because during localhost or .live testing after firing this
 	// event we redirect the user to wordpress.com which causes a domain change preventing the expanding and inspection
 	// of any object in the JS console since they are no longer available.

@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
 import rocket from 'calypso/assets/images/customer-home/illustration--rocket.svg';
 import earnIllustration from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
+import builtByWp from 'calypso/assets/images/illustrations/built-by-wp-vert-blue.svg';
 import canvaLogo from 'calypso/assets/images/illustrations/canva-logo.svg';
 import facebookLogo from 'calypso/assets/images/illustrations/facebook-logo.png';
 import sendinblueLogo from 'calypso/assets/images/illustrations/sendinblue-logo.svg';
@@ -46,6 +47,10 @@ export const MarketingTools: FunctionComponent = () => {
 		recordTracksEvent( 'calypso_marketing_tools_earn_button_click' );
 
 		page( `/earn/${ selectedSiteSlug }` );
+	};
+
+	const handleBuiltByWpClick = () => {
+		recordTracksEvent( 'calypso_marketing_tools_built_by_wp_button_click' );
 	};
 
 	const handleCreateALogoClick = () => {
@@ -92,6 +97,21 @@ export const MarketingTools: FunctionComponent = () => {
 			<MarketingToolsHeader handleButtonClick={ handleBusinessToolsClick } />
 
 			<div className="tools__feature-list">
+				<MarketingToolsFeature
+					title={ translate( 'Let our WordPress.com experts build your site!' ) }
+					description={ translate(
+						"Hire our dedicated experts to build a handcrafted, personalized website. Share some details about what you're looking for, and we'll make it happen."
+					) }
+					imagePath={ builtByWp }
+				>
+					<Button
+						onClick={ handleBuiltByWpClick }
+						href="https://builtbywp.com/?utm_medium=automattic_referred&utm_source=WordPresscom&utm_campaign=tools"
+						target="_blank"
+					>
+						{ translate( 'Get started' ) }
+					</Button>
+				</MarketingToolsFeature>
 				<MarketingToolsFeature
 					title={ translate( 'Want to build a great brand? Start with a great logo' ) }
 					description={ translate(

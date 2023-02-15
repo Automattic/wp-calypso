@@ -1,7 +1,8 @@
 import config from '@automattic/calypso-config';
+import { BLANK_CANVAS_DESIGN } from '@automattic/design-picker';
+import { isSiteAssemblerFlow } from '@automattic/onboarding';
 import { isDesktop } from '@automattic/viewport';
 import { get, includes, reject } from 'lodash';
-import { BLANK_CANVAS_DESIGN } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/constants';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -109,20 +110,21 @@ function getThankYouNoSiteDestination() {
 	return `/checkout/thank-you/no-site`;
 }
 
-function getChecklistThemeDestination( { siteSlug, themeParameter } ) {
-	const canGoToAssemblerFlow = isDesktop();
-
+function getChecklistThemeDestination( { flowName, siteSlug, themeParameter } ) {
 	if (
+		isSiteAssemblerFlow( flowName ) &&
 		themeParameter === BLANK_CANVAS_DESIGN.slug &&
 		config.isEnabled( 'pattern-assembler/logged-out-showcase' )
 	) {
-		if ( canGoToAssemblerFlow ) {
+		// Go to the site assembler flow if viewport width >= 960px as the layout doesn't support small
+		// screen for now
+		if ( isDesktop() ) {
 			return addQueryArgs(
 				{
 					theme: themeParameter,
 					siteSlug: siteSlug,
 				},
-				`/setup/site-assembler`
+				`/setup/with-theme-assembler`
 			);
 		}
 
@@ -167,6 +169,10 @@ function getDIFMSiteContentCollectionDestination( { siteSlug } ) {
 	return `/home/${ siteSlug }`;
 }
 
+function getHomeDestination( { siteSlug } ) {
+	return `/home/${ siteSlug }`;
+}
+
 const flows = generateFlows( {
 	getSiteDestination,
 	getRedirectDestination,
@@ -180,6 +186,7 @@ const flows = generateFlows( {
 	getDestinationFromIntent,
 	getDIFMSignupDestination,
 	getDIFMSiteContentCollectionDestination,
+	getHomeDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {

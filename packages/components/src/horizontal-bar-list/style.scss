@@ -130,6 +130,10 @@
 	cursor: auto;
 }
 
+.horizontal-bar-list-item--additional {
+	@include additional-columns-wrapper;
+}
+
 .horizontal-bar-list-group {
 	list-style: none;
 	margin: $space-between-rows 0 $row-height 0;

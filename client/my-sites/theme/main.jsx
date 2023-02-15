@@ -78,6 +78,8 @@ import ThemeNotFoundError from './theme-not-found-error';
 
 import './style.scss';
 
+const noop = () => {};
+
 class ThemeSheet extends Component {
 	static displayName = 'ThemeSheet';
 
@@ -214,12 +216,12 @@ class ThemeSheet extends Component {
 
 		return (
 			<div className="theme__sheet-bar">
-				<span className="theme__sheet-bar-title">
+				<h1 className="theme__sheet-bar-title">
 					{ title }
 					{ softLaunched && (
 						<span className="theme__sheet-bar-soft-launched">{ translate( 'A8C Only' ) }</span>
 					) }
-				</span>
+				</h1>
 				<span className="theme__sheet-bar-tag">{ tag }</span>
 			</div>
 		);
@@ -240,7 +242,10 @@ class ThemeSheet extends Component {
 		}
 		event.preventDefault();
 
-		this.props.recordTracksEvent( 'calypso_theme_live_demo_preview_click', { type } );
+		this.props.recordTracksEvent( 'calypso_theme_live_demo_preview_click', {
+			theme: this.props.themeId,
+			type,
+		} );
 
 		const { preview } = this.props.options;
 		this.props.setThemePreviewOptions(
@@ -671,11 +676,11 @@ class ThemeSheet extends Component {
 	};
 
 	renderButton = () => {
-		const { getUrl } = this.props.defaultOption;
+		const { getUrl, key } = this.props.defaultOption;
 		const label = this.getDefaultOptionLabel();
 		const price = this.renderPrice();
 		const placeholder = <span className="theme__sheet-button-placeholder">loading......</span>;
-		const { isActive, isExternallyManagedTheme } = this.props;
+		const { isActive, isExternallyManagedTheme, isLoggedIn } = this.props;
 		const { isLoading } = this.props;
 
 		return (
@@ -683,7 +688,10 @@ class ThemeSheet extends Component {
 				className="theme__sheet-primary-button"
 				href={
 					getUrl &&
-					( ! isExternallyManagedTheme || ! config.isEnabled( 'themes/third-party-premium' ) )
+					( key === 'customize' ||
+						! isExternallyManagedTheme ||
+						! isLoggedIn ||
+						! config.isEnabled( 'themes/third-party-premium' ) )
 						? getUrl( this.props.themeId )
 						: null
 				}
@@ -790,8 +798,9 @@ class ThemeSheet extends Component {
 		if ( ! isLoggedIn ) {
 			plansUrl = localizeUrl( 'https://wordpress.com/pricing' );
 		} else if ( siteSlug ) {
+			const redirectTo = `/theme/${ themeId }${ section ? '/' + section : '' }/${ siteSlug }`;
 			const plan = isExternallyManagedTheme || isBundledSoftwareSet ? PLAN_BUSINESS : PLAN_PREMIUM;
-			plansUrl = plansUrl + `/${ siteSlug }/?plan=${ plan }`;
+			plansUrl = plansUrl + `/${ siteSlug }/?plan=${ plan }&redirect_to=${ redirectTo }`;
 		}
 
 		const launchPricing = () => window.open( plansUrl, '_blank' );
@@ -847,7 +856,7 @@ class ThemeSheet extends Component {
 
 		let onClick = null;
 
-		if ( isExternallyManagedTheme ) {
+		if ( isExternallyManagedTheme && isLoggedIn ) {
 			onClick = this.onButtonClick;
 		} else if ( ! isLoggedIn ) {
 			onClick = launchPricing;
@@ -875,7 +884,7 @@ class ThemeSheet extends Component {
 					feature={ WPCOM_FEATURES_PREMIUM_THEMES }
 					forceHref={ onClick === null }
 					disableHref={ onClick !== null }
-					onClick={ onClick }
+					onClick={ null === onClick ? noop : onClick }
 					href={ plansUrl }
 					showIcon={ true }
 					forceDisplay={ forceDisplay }
@@ -885,20 +894,25 @@ class ThemeSheet extends Component {
 		}
 
 		if ( hasWpOrgThemeUpsellBanner || hasThemeUpsellBannerAtomic ) {
+			const thisPageUrl = `/theme/${ themeId }/${ siteSlug }`;
 			pageUpsellBanner = (
 				<UpsellNudge
 					plan={ PLAN_BUSINESS }
 					className="theme__page-upsell-banner"
-					title={ translate( 'Access this theme for FREE with a Business plan!' ) }
+					title={ translate( 'Access this third-party theme with the Business plan!' ) }
 					description={ preventWidows(
 						translate(
-							'Instantly unlock thousands of different themes and install your own when you upgrade.'
+							'Instantly unlock thousands of different themes and install your own when you upgrade to the Business plan.'
 						)
 					) }
 					forceHref
 					feature={ FEATURE_UPLOAD_THEMES }
 					forceDisplay
-					href={ ! siteId ? '/plans' : null }
+					href={
+						siteId
+							? `/checkout/${ siteSlug }/business?redirect_to=${ thisPageUrl }`
+							: localizeUrl( 'https://wordpress.com/start/business' )
+					}
 					showIcon
 					event="theme_upsell_plan_click"
 					tracksClickName="calypso_theme_upsell_plan_click"
@@ -937,6 +951,7 @@ class ThemeSheet extends Component {
 					title={ analyticsPageTitle }
 					properties={ { is_logged_in: isLoggedIn } }
 				/>
+				<AsyncLoad require="calypso/components/global-notices" placeholder={ null } id="notices" />
 				{ this.renderBar() }
 				<QueryActiveTheme siteId={ siteId } />
 				<ThanksModal source="details" themeId={ this.props.themeId } />

@@ -59,6 +59,7 @@ import { extractStoredCardMetaValue } from './purchase-modal/util';
 import { QuickstartSessionsRetirement } from './quickstart-sessions-retirement';
 import type { WithShoppingCartProps, MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { PaymentMethod } from 'calypso/lib/checkout/payment-methods';
+import type { IAppState } from 'calypso/state/types';
 
 import './style.scss';
 
@@ -521,7 +522,7 @@ const getProductSlug = ( upsellType: string, productAlias: string, planTerm: str
 };
 
 export default connect(
-	( state: UpsellNudgeState, props: UpsellNudgeManualProps ) => {
+	( state: IAppState, props: UpsellNudgeManualProps ) => {
 		const { siteSlugParam, upgradeItem, upsellType } = props;
 		const selectedSiteId = getSelectedSiteId( state );
 		const productsList = getProductsList( state );

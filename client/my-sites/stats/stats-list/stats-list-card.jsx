@@ -4,6 +4,7 @@ import {
 	StatsCard,
 	StatsCardAvatar,
 } from '@automattic/components';
+import classNames from 'classnames';
 import debugFactory from 'debug';
 import page from 'page';
 import React, { useState, useCallback } from 'react';
@@ -21,9 +22,15 @@ const StatsListCard = ( {
 	emptyMessage,
 	loader,
 	useShortLabel,
+	useShortNumber,
 	error,
 	heroElement,
 	metricLabel,
+	splitHeader,
+	mainItemLabel,
+	additionalColumns,
+	toggleControl,
+	className,
 } ) => {
 	const moduleNameTitle = titlecase( moduleType );
 	const debug = debugFactory( `calypso:stats:list:${ moduleType }` );
@@ -97,41 +104,49 @@ const StatsListCard = ( {
 			}
 			emptyMessage={ emptyMessage }
 			isEmpty={ ! loader && ( ! data || ! data?.length ) }
-			className={ `list-${ moduleType }` }
+			className={ classNames( `list-${ moduleType }`, className ) }
 			metricLabel={ metricLabel }
 			heroElement={ heroElement }
+			splitHeader={ splitHeader }
+			mainItemLabel={ mainItemLabel }
+			additionalHeaderColumns={ additionalColumns?.header }
+			toggleControl={ toggleControl }
 		>
 			{ !! loader && loader }
 			{ !! error && error }
-			<HorizontalBarList>
-				{ sortedData?.map( ( item, index ) => {
-					let leftSideItem;
-					const isInteractive = item?.link || item?.page || item?.children;
-					const key = item?.id || index; // not every item has an id
+			{ ! loader && (
+				<HorizontalBarList>
+					{ sortedData?.map( ( item, index ) => {
+						let leftSideItem;
+						const isInteractive = item?.link || item?.page || item?.children;
+						const key = item?.id || index; // not every item has an id
 
-					// left icon visible only for Author avatars and Contry flags.
-					if ( item?.countryCode ) {
-						leftSideItem = <StatsListCountryFlag countryCode={ item.countryCode } />;
-					} else if ( moduleType === 'authors' && item?.icon ) {
-						leftSideItem = <StatsCardAvatar url={ item?.icon } altName={ item?.label } />;
-					}
+						// left icon visible only for Author avatars and Contry flags.
+						if ( item?.countryCode ) {
+							leftSideItem = <StatsListCountryFlag countryCode={ item.countryCode } />;
+						} else if ( ( moduleType === 'authors' || moduleType === 'comments' ) && item?.icon ) {
+							leftSideItem = <StatsCardAvatar url={ item?.icon } altName={ item?.label } />;
+						}
 
-					return (
-						<HorizontalBarListItem
-							key={ key }
-							data={ item }
-							maxValue={ barMaxValue }
-							hasIndicator={ item?.className?.includes( 'published' ) }
-							onClick={ localClickHandler }
-							leftSideItem={ leftSideItem }
-							renderRightSideItem={ ( incomingItem ) => outputRightItem( incomingItem, key ) }
-							useShortLabel={ useShortLabel }
-							isStatic={ ! isInteractive }
-							barMaxValue={ barMaxValue }
-						/>
-					);
-				} ) }
-			</HorizontalBarList>
+						return (
+							<HorizontalBarListItem
+								key={ key }
+								data={ item }
+								maxValue={ barMaxValue }
+								hasIndicator={ item?.className?.includes( 'published' ) }
+								onClick={ localClickHandler }
+								leftSideItem={ leftSideItem }
+								renderRightSideItem={ ( incomingItem ) => outputRightItem( incomingItem, key ) }
+								useShortLabel={ useShortLabel }
+								useShortNumber={ useShortNumber }
+								isStatic={ ! isInteractive }
+								barMaxValue={ barMaxValue }
+								additionalColumns={ additionalColumns?.body( item ) }
+							/>
+						);
+					} ) }
+				</HorizontalBarList>
+			) }
 		</StatsCard>
 	);
 };

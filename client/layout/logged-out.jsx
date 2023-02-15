@@ -149,6 +149,13 @@ const LayoutLoggedOut = ( {
 					) }
 				</>
 			) }
+
+			{ [ 'themes', 'theme' ].includes( sectionName ) && (
+				<>
+					<UniversalNavbarFooter />
+					<UniversalNavbarFooterAutomattic />
+				</>
+			) }
 		</div>
 	);
 };

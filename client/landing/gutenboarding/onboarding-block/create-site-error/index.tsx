@@ -20,7 +20,7 @@ const CreateSiteError: FunctionComponent< Props > = ( { linkTo } ) => {
 
 	const { resetNewSiteFailed } = useDispatch( SITE_STORE );
 
-	useEffect( () => resetNewSiteFailed );
+	useEffect( () => void resetNewSiteFailed() );
 
 	return (
 		<div className="create-site-error">

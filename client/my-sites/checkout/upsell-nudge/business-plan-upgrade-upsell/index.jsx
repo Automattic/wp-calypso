@@ -1,7 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
 import { PureComponent } from 'react';
 import formatCurrency from 'calypso/../packages/format-currency/src';
-import upsellImage from 'calypso/assets/images/checkout-upsell/upsell-rocket.png';
+import upsellImage from 'calypso/assets/images/checkout-upsell/upsell-rocket-2.png';
 import DocumentHead from 'calypso/components/data/document-head';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 
@@ -23,13 +23,13 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 					properties={ { upgrade_item: 'business' } }
 				/>
 				<DocumentHead title={ title } />
-				<div className="business-plan-upgrade-upsell-new-design__header">
-					{ receiptId ? this.header() : '' }
-					<div className="business-plan-upgrade-upsell-new-design__header-title">
-						{ this.title() }
-					</div>
-				</div>
 				<div className="business-plan-upgrade-upsell-new-design__container">
+					<div className="business-plan-upgrade-upsell-new-design__header">
+						{ receiptId ? this.header() : '' }
+						<div className="business-plan-upgrade-upsell-new-design__header-title">
+							{ this.title() }
+						</div>
+					</div>
 					<div className="business-plan-upgrade-upsell-new-design__body">{ this.body() }</div>
 					<div className="business-plan-upgrade-upsell-new-design__image-container">
 						{ this.image() }
@@ -41,20 +41,17 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 	}
 
 	header() {
-		const { translate } = this.props;
-
-		return (
-			<header className="business-plan-upgrade-upsell-new-design__small-header">
-				<h1 className="business-plan-upgrade-upsell-new-design__small-header-title">
-					{ translate( 'Limited time offer' ) }
-				</h1>
-			</header>
-		);
+		return null;
 	}
 
 	image() {
 		return (
-			<img className="business-plan-upgrade-upsell-new-design__image" src={ upsellImage } alt="" />
+			<img
+				className="business-plan-upgrade-upsell-new-design__image"
+				src={ upsellImage }
+				alt=""
+				width="454"
+			/>
 		);
 	}
 
@@ -80,7 +77,9 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 		return (
 			<>
 				<div className="business-plan-upgrade-upsell-new-design__column-pane">
-					<p>{ translate( 'Unlock the power of the Business Plan and gain access to:' ) }</p>
+					<p>
+						<b>{ translate( 'Unlock the power of the Business Plan and gain access to:' ) }</b>
+					</p>
 					<ul className="business-plan-upgrade-upsell-new-design__checklist">
 						<li className="business-plan-upgrade-upsell-new-design__checklist-item">
 							<Gridicon
@@ -123,14 +122,26 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 					</ul>
 					<p>
 						{ translate(
-							'The great news is that you can upgrade today and try the Business Plan risk-free thanks to our 14-day money-back guarantee. Simply click below to upgrade. You’ll only have to pay the difference to the Premium Plan ({{del}}%(fullPrice)s{{/del}} %(discountPrice)s).',
+							'The great news is that you can upgrade today and try the Business Plan risk-free thanks to our {{b}}%(days)d-day money-back guarantee{{/b}}.',
 							{
 								components: {
-									del: <del />,
 									b: <b />,
 								},
 								args: {
 									days: hasSevenDayRefundPeriod ? 7 : 14,
+									comment: 'A number, e.g. 7-day money-back guarantee',
+								},
+							}
+						) }
+					</p>
+					<p>
+						{ translate(
+							'Simply click below to upgrade. You’ll only have to pay the difference to the Premium Plan ({{del}}%(fullPrice)s{{/del}} %(discountPrice)s).',
+							{
+								components: {
+									del: <del />,
+								},
+								args: {
 									fullPrice: formatCurrency( planRawPrice, currencyCode, { stripZeros: true } ),
 									discountPrice: formatCurrency( planDiscountedRawPrice, currencyCode, {
 										stripZeros: true,
@@ -148,20 +159,20 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 	footer() {
 		const { translate, handleClickAccept, handleClickDecline } = this.props;
 		return (
-			<footer className="business-plan-upgrade-upsell-new-design__footer">
-				<Button
-					data-e2e-button="decline"
-					className="business-plan-upgrade-upsell-new-design__decline-offer-button"
-					onClick={ handleClickDecline }
-				>
-					{ translate( 'No Thanks' ) }
-				</Button>
+			<footer>
 				<Button
 					primary
 					className="business-plan-upgrade-upsell-new-design__accept-offer-button"
 					onClick={ () => handleClickAccept( 'accept' ) }
 				>
 					{ translate( 'Upgrade Now' ) }
+				</Button>
+				<Button
+					data-e2e-button="decline"
+					className="business-plan-upgrade-upsell-new-design__decline-offer-button"
+					onClick={ handleClickDecline }
+				>
+					{ translate( 'No Thanks' ) }
 				</Button>
 			</footer>
 		);

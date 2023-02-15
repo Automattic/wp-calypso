@@ -213,4 +213,28 @@
 	img:first-child {
 		margin-top: 0;
 	}
+
+	.a8c-table-of-contents {
+		& > p,
+		& > button {
+			display: none;
+		}
+	}
+
+	.wp-block-wpsupport3-update-plan-cta {
+		.container .card {
+			margin-top: 16px;
+			.small {
+				font-size: $font-body-extra-small;
+			}
+
+			.title {
+				font-size: $font-title-small;
+			}
+		}
+
+		.plan-options {
+			display: none;
+		}
+	}
 }

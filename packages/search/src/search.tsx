@@ -46,6 +46,7 @@ type Props = {
 	className?: string;
 	compact?: boolean;
 	children?: ReactNode;
+	childrenBeforeCloseButton?: ReactNode;
 	defaultIsOpen?: boolean;
 	defaultValue?: string;
 	delaySearch?: boolean;
@@ -102,7 +103,7 @@ const getScrollLeft = (
 	return scrollLeft;
 };
 
-type ImperativeHandle = {
+export type ImperativeHandle = {
 	focus: () => void;
 	blur: () => void;
 	clear: () => void;
@@ -112,6 +113,7 @@ type ImperativeHandle = {
 const InnerSearch = (
 	{
 		children,
+		childrenBeforeCloseButton,
 		delaySearch = false,
 		disabled = false,
 		pinned = false,
@@ -485,6 +487,7 @@ const InnerSearch = (
 				/>
 				{ renderStylingDiv() }
 			</form>
+			{ childrenBeforeCloseButton }
 			{ shouldRenderRightOpenIcon ? renderOpenIcon() : renderCloseButton() }
 			{ children }
 		</div>

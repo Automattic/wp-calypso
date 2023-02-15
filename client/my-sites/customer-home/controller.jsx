@@ -38,6 +38,7 @@ export async function maybeRedirect( context, next ) {
 
 	const siteId = getSelectedSiteId( state );
 	const maybeStalelaunchpadScreenOption = getSiteOptions( state, siteId )?.launchpad_screen;
+	const currentUrl = window.location.href;
 
 	// We need the latest site info to determine if a user should be redirected to Launchpad.
 	// As a result, we can't use locally cached data, which might think that Launchpad is
@@ -45,12 +46,19 @@ export async function maybeRedirect( context, next ) {
 	// disabled. Because of this, we refetch site information and limit traffic by scoping down
 	// requests to launchpad enabled sites.
 	// See https://cylonp2.wordpress.com/2022/09/19/question-about-infinite-redirect/#comment-1731
-	if ( maybeStalelaunchpadScreenOption && maybeStalelaunchpadScreenOption === 'full' ) {
+	if (
+		( maybeStalelaunchpadScreenOption && maybeStalelaunchpadScreenOption === 'full' ) ||
+		currentUrl?.includes( 'showLaunchpad=true' )
+	) {
 		await context.store.dispatch( requestSite( siteId ) );
 	}
 
 	const refetchedOptions = getSiteOptions( context.store.getState(), siteId );
-	const shouldRedirectToLaunchpad = refetchedOptions?.launchpad_screen === 'full';
+	const shouldRedirectToLaunchpad =
+		refetchedOptions?.launchpad_screen === 'full' &&
+		// Temporary hack/band-aid to resolve a stale issue with atomic that the requestSite
+		// dispatch above doesnt always seem to resolve.
+		! currentUrl?.includes( 'launchpadComplete=true' );
 
 	if ( shouldRedirectToLaunchpad ) {
 		// The new stepper launchpad onboarding flow isn't registered within the "page"

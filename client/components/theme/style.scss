@@ -4,8 +4,6 @@ $soft-launch-badge-font-size: 0.725rem;
 .theme {
 	padding: 0;
 	margin: 0 10px 20px;
-	width: 230px; // Fixed width gives desired wrapping...
-	flex-grow: 1; // ...grow allows expansion to fill space after wrap.
 	transition: all 100ms ease-in-out;
 
 	&.is-active {
@@ -135,6 +133,9 @@ $soft-launch-badge-font-size: 0.725rem;
 		background: #008a20;
 		fill: #fff;
 	}
+	&.premium-badge.theme__marketplace-theme {
+		background: var(--color-primary);
+	}
 	&.popover.info-popover__tooltip {
 		.popover__inner {
 			max-width: 245px;
@@ -146,6 +147,9 @@ $soft-launch-badge-font-size: 0.725rem;
 		}
 		.popover__arrow {
 			display: none;
+		}
+		.components-button {
+			font-size: inherit;
 		}
 	}
 	.theme__upsell-header {

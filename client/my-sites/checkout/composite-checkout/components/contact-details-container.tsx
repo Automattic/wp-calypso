@@ -52,15 +52,19 @@ export default function ContactDetailsContainer( {
 		.filter( ( product ) => isDomainProduct( product ) || isDomainTransfer( product ) )
 		.filter( ( product ) => ! isDomainMapping( product ) )
 		.map( getDomain );
-	const { updateDomainContactFields, updateCountryCode, updatePostalCode, updateEmail } =
-		useDispatch( 'wpcom-checkout' );
+	const checkoutActions = useDispatch( 'wpcom-checkout' );
+	const { email } = useSelect( ( select ) => select( 'wpcom-checkout' )?.getContactInfo() ?? {} );
+
+	if ( ! checkoutActions ) {
+		return null;
+	}
+
+	const { updateDomainContactFields, updateTaxFields, updateEmail } = checkoutActions;
 	const contactDetails = prepareDomainContactDetails( contactInfo );
 	const contactDetailsErrors = prepareDomainContactDetailsErrors( contactInfo );
 	const onChangeContactInfo = ( newInfo: ManagedContactDetails ) => {
-		updateCountryCode( newInfo.countryCode?.value ?? '' );
-		updatePostalCode( newInfo.postalCode?.value ?? '' );
+		updateTaxFields( newInfo );
 	};
-	const { email } = useSelect( ( select ) => select( 'wpcom-checkout' ).getContactInfo() );
 
 	const updateDomainContactRelatedData = ( details: DomainContactDetailsData ) => {
 		updateDomainContactFields( details );
@@ -118,8 +122,8 @@ export default function ContactDetailsContainer( {
 								updateEmail( value );
 							} }
 							autoComplete="email"
-							isError={ email.isTouched && ! isValid( email ) }
-							errorMessage={ email.errors[ 0 ] || '' }
+							isError={ email?.isTouched && ! isValid( email ) }
+							errorMessage={ email?.errors[ 0 ] || '' }
 							description={ String(
 								translate( "You'll use this email address to access your account later" )
 							) }

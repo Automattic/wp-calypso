@@ -61,6 +61,27 @@ $grid-vertical-gutters: 32px;
 		padding: 0 16px;
 	}
 
+	// Temporary change until all cards are replaced with new components. Remove when cleaning 'stats/insights-page-grid' FF.
+	@media (min-width: 661px) {
+		& > div {
+			display: flex;
+			flex-direction: column;
+			align-items: stretch;
+
+			& > * {
+				margin: 0;
+
+				& + div {
+					flex: 1 0 auto;
+				}
+			}
+
+			.card.stats-module {
+				margin-bottom: 0;
+			}
+		}
+	}
+
 	.stats__module-wrapper--tags-categories,
 	.list-tags-categories {
 		grid-area: tags-categories;
@@ -103,7 +124,7 @@ $grid-vertical-gutters: 32px;
 		"country country country country country country country country country country country country"
 		"authors authors authors authors search search search search clicks clicks clicks clicks"
 		"videos videos videos videos videos videos downloads downloads downloads downloads downloads downloads"
-		"emails-open emails-open emails-open emails-open emails-open emails-open emails-click emails-click emails-click emails-click emails-click emails-click",
+		"emails emails emails emails emails emails emails emails emails emails emails emails",
 		6
 	);
 
@@ -113,7 +134,7 @@ $grid-vertical-gutters: 32px;
 		"authors authors authors authors search search search search"
 		"clicks clicks clicks clicks videos videos videos videos"
 		"downloads downloads downloads downloads downloads downloads downloads downloads"
-		"emails-open emails-open emails-open emails-open emails-click emails-click emails-click emails-click",
+		"emails emails emails emails emails emails emails emails",
 		7
 	);
 
@@ -126,8 +147,7 @@ $grid-vertical-gutters: 32px;
 		"clicks clicks clicks clicks"
 		"videos videos videos videos"
 		"downloads downloads downloads downloads"
-		"emails-open emails-open"
-		"emails-click emails-click",
+		"emails emails emails emails",
 		10
 	);
 
@@ -204,12 +224,7 @@ $grid-vertical-gutters: 32px;
 	}
 
 	.stats__module-wrapper--emails,
-	.list-emails-open {
-		grid-area: emails-open;
-	}
-
-	.stats__module-wrapper--emails,
-	.list-emails-click {
-		grid-area: emails-click;
+	.list-emails {
+		grid-area: emails;
 	}
 }

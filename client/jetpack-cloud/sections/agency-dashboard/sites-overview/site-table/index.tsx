@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Icon, starFilled } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useContext } from 'react';
@@ -40,15 +39,11 @@ export default function SiteTable( { isLoading, columns, items }: Props ) {
 									</span>
 								</th>
 							) ) }
-							{ isEnabled( 'jetpack/partner-portal-downtime-monitoring-updates' ) ? (
-								<th>
-									<div className="plugin-common-table__bulk-actions">
-										<EditButton isLargeScreen sites={ items } />
-									</div>
-								</th>
-							) : (
-								<th></th>
-							) }
+							<th>
+								<div className="plugin-common-table__bulk-actions">
+									<EditButton isLargeScreen sites={ items } />
+								</div>
+							</th>
 						</>
 					) }
 				</tr>

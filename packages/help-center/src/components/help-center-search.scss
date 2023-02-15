@@ -339,10 +339,6 @@
 				color: #1d2327;
 			}
 
-			&.is-reversed {
-				flex-direction: column-reverse;
-			}
-
 			.help-center-contact-page__box {
 				display: flex;
 				flex-direction: row;
@@ -354,13 +350,17 @@
 				.help-center-contact-page__box-icon {
 					border-radius: 2px 0 0 2px;
 					display: flex;
-					background-color: var(--studio-blue-70);
+					background-color: var(--color-primary);
 					width: 56px;
 
 					svg {
-						fill: #fff;
+						fill: var(--color-primary-0);
 						display: block;
 						margin: auto;
+
+						path {
+							stroke: var(--color-primary-0);
+						}
 					}
 				}
 
@@ -374,8 +374,8 @@
 				}
 
 				&.chat {
-					.help-center-contact-page__box-icon {
-						background-color: var(--color-accent);
+					svg path {
+						stroke: none;
 					}
 
 					&.is-disabled {
@@ -415,6 +415,10 @@
 						font-size: $font-body;
 					}
 				}
+			}
+
+			.disabled {
+				order: 3;
 			}
 		}
 

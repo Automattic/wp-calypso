@@ -13,7 +13,7 @@ import type { Invite } from '../team-invites/types';
 import './style.scss';
 
 function TeamInvitesAccepted() {
-	const _ = useTranslate();
+	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
@@ -28,8 +28,8 @@ function TeamInvitesAccepted() {
 	function showPrompt() {
 		accept(
 			<div>
-				<h1>{ _( 'Clear All Accepted' ) }</h1>
-				<p>{ _( 'Are you sure you wish to clear all accepted invites?' ) }</p>
+				<h1>{ translate( 'Clear All Accepted' ) }</h1>
+				<p>{ translate( 'Are you sure you wish to clear all accepted invites?' ) }</p>
 			</div>,
 			( accepted: boolean ) => {
 				if ( ! accepted ) {
@@ -39,7 +39,7 @@ function TeamInvitesAccepted() {
 				const ids = acceptedInvites ? acceptedInvites?.map( ( x ) => x.key ) : [];
 				dispatch( deleteInvites( siteId, ids ) );
 			},
-			_( 'Clear all' )
+			translate( 'Clear all' )
 		);
 	}
 
@@ -64,7 +64,7 @@ function TeamInvitesAccepted() {
 			{ !! acceptedInvites?.length && (
 				<>
 					<PeopleListSectionHeader
-						label={ _(
+						label={ translate(
 							'%(numberPeople)d user has accepted your invite',
 							'%(numberPeople)d users have accepted your invites',
 							{
@@ -76,7 +76,7 @@ function TeamInvitesAccepted() {
 						) }
 					>
 						<Button compact busy={ isDeleting } onClick={ onClearAll }>
-							{ _( 'Clear all invites' ) }
+							{ translate( 'Clear all invites' ) }
 						</Button>
 					</PeopleListSectionHeader>
 					<Card className="people-team-invites-accepted-list">

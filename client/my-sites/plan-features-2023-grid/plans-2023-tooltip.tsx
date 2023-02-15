@@ -10,14 +10,13 @@ const StyledTooltip = styled( Tooltip )`
 		background: var( --color-masterbar-background );
 		text-align: center;
 		border-radius: 4px;
-		min-height: 48px;
-		width: 190px;
-		display: flex;
+		min-height: 32px;
+		width: 210px;
 		align-items: center;
 		font-style: normal;
 		font-weight: 400;
 		font-size: 1em;
-		padding: 8px 25px;
+		padding: 8px 10px;
 	}
 `;
 

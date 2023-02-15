@@ -3,6 +3,7 @@ import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 import classnames from 'classnames';
 import { numberFormat } from 'i18n-calypso';
 import React, { useState } from 'react';
+import ShortenedNumber from '../number-formatters';
 import type { HorizontalBarListItemProps } from './types';
 
 import './style.scss';
@@ -18,7 +19,9 @@ const HorizontalBarListItem = ( {
 	leftSideItem,
 	renderRightSideItem,
 	useShortLabel,
+	useShortNumber,
 	isStatic,
+	additionalColumns,
 }: HorizontalBarListItemProps ) => {
 	const { label, value, shortLabel, children: itemChildren } = data;
 	const fillPercentage = maxValue > 0 ? ( value / maxValue ) * 100 : 0;
@@ -111,8 +114,13 @@ const HorizontalBarListItem = ( {
 							{ renderRightSideItem( data ) }
 						</span>
 					) }
+					{ additionalColumns && (
+						<div className={ `${ BASE_CLASS_NAME }-item--additional` }>{ additionalColumns }</div>
+					) }
 				</div>
-				<div className="value">{ numberFormat( value, 0 ) }</div>
+				<div className="value">
+					{ ! useShortNumber ? numberFormat( value, 0 ) : <ShortenedNumber value={ value } /> }
+				</div>
 			</li>
 			{ itemChildren && open && (
 				<li>
@@ -124,6 +132,7 @@ const HorizontalBarListItem = ( {
 									data={ child }
 									maxValue={ maxValue }
 									useShortLabel={ useShortLabel }
+									useShortNumber={ useShortNumber }
 									renderRightSideItem={ renderRightSideItem }
 									onClick={ ( e ) => onClick?.( e, child ) }
 									hasIndicator={ hasIndicator }

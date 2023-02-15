@@ -20,7 +20,7 @@ import {
 	mockCartEndpoint,
 	mockCachedContactDetailsEndpoint,
 } from './util';
-import type { CountryListItem, ManagedContactDetails } from '@automattic/wpcom-checkout';
+import type { CountryListItem } from '@automattic/wpcom-checkout';
 
 const initialCart = getEmptyResponseCart();
 const { getCart, setCart } = mockCartEndpoint( initialCart, 'USD', 'US' );
@@ -64,9 +64,7 @@ function MyTestContent( { countries }: { countries: CountryListItem[] } ) {
 		initialCart.cart_key
 	);
 	useCachedDomainContactDetails( () => null, countries );
-	const contactInfo: ManagedContactDetails = useSelect( ( select ) =>
-		select( 'wpcom-checkout' ).getContactInfo()
-	);
+	const contactInfo = useSelect( ( select ) => select( 'wpcom-checkout' ).getContactInfo() );
 	const [ localLocation, setLocation ] = useState( { countryCode: '', postalCode: '' } );
 	const onChangeCountry = ( evt ) => {
 		const newVal = evt.target.value;

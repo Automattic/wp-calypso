@@ -51,6 +51,11 @@ import type { StarterDesigns } from '@automattic/data-stores';
 import type { Design, StyleVariation } from '@automattic/design-picker';
 
 const SiteIntent = Onboard.SiteIntent;
+const SITE_ASSEMBLER_AVAILABLE_INTENTS: string[] = [ SiteIntent.Build ];
+
+if ( isEnabled( 'pattern-assembler/write-flow' ) ) {
+	SITE_ASSEMBLER_AVAILABLE_INTENTS.push( SiteIntent.Write );
+}
 
 const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const { goBack, submit, exitFlow } = navigation;
@@ -100,9 +105,12 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 		const blankCanvasDesignOffset = allDesigns.static.designs.findIndex( isBlankCanvasDesign );
 		if ( blankCanvasDesignOffset !== -1 ) {
-			// Extract the blank canvas design first and then insert it into the last one for the build intent
+			// Extract the blank canvas design first and then insert it into the last one for the build and write intents
 			const blankCanvasDesign = allDesigns.static.designs.splice( blankCanvasDesignOffset, 1 );
-			if ( isEnabled( 'signup/design-picker-pattern-assembler' ) && intent === SiteIntent.Build ) {
+			if (
+				isEnabled( 'signup/design-picker-pattern-assembler' ) &&
+				SITE_ASSEMBLER_AVAILABLE_INTENTS.includes( intent )
+			) {
 				allDesigns.static.designs.push( ...blankCanvasDesign );
 			}
 		}
@@ -116,6 +124,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			intent,
 			seed: siteSlugOrId || undefined,
 			_locale: locale,
+			include_virtual_designs: isEnabled( 'virtual-themes/onboarding' ),
 		},
 		{
 			enabled: true,
@@ -698,6 +707,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }
 			purchasedThemes={ purchasedThemes }
 			currentPlanFeatures={ currentPlanFeatures }
+			shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 		/>
 	);
 

@@ -8,6 +8,9 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	'anchor-fm-flow': () =>
 		import( /* webpackChunkName: "anchor-fm-flow" */ '../declarative-flow/anchor-fm-flow' ),
 
+	'copy-site': () =>
+		import( /* webpackChunkName: "copy-site-flow" */ '../declarative-flow/copy-site' ),
+
 	newsletter: () =>
 		import( /* webpackChunkName: "newsletter-flow" */ '../declarative-flow/newsletter' ),
 
@@ -47,8 +50,8 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	free: () => import( /* webpackChunkName: "free-flow" */ '../declarative-flow/free' ),
 
-	'site-assembler': () =>
-		import( /* webpackChunkName: "site-assembler-flow" */ './site-assembler-flow' ),
+	'with-theme-assembler': () =>
+		import( /* webpackChunkName: "with-theme-assembler-flow" */ './with-theme-assembler-flow' ),
 
 	'free-post-setup': () =>
 		import( /* webpackChunkName: "free-post-setup-flow" */ '../declarative-flow/free-post-setup' ),
@@ -63,11 +66,6 @@ availableFlows[ 'plugin-bundle' ] = () =>
 if ( config.isEnabled( 'sensei/onboarding' ) ) {
 	availableFlows[ 'sensei' ] = () =>
 		import( /* webpackChunkName: "sensei-flow" */ '../declarative-flow/sensei' );
-}
-
-if ( config.isEnabled( 'sites/copy-site' ) ) {
-	availableFlows[ 'copy-site' ] = () =>
-		import( /* webpackChunkName: "copy-site" */ '../declarative-flow/copy-site' );
 }
 
 export default availableFlows;

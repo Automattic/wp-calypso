@@ -49,7 +49,6 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 		requestingSitePlans,
 	} = props;
 
-	const isNewCardsOnly = isEnabled( 'themes/showcase-i4/cards-only' );
 	const isNewDetailsAndPreview = isEnabled( 'themes/showcase-i4/details-and-preview' );
 	const displayUpsellBanner = isAtomic && ! requestingSitePlans && currentPlan;
 	const upsellUrl =
@@ -74,10 +73,7 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 	return (
 		<Main fullWidthLayout className="themes">
 			<BodySectionCssClass
-				bodyClass={ [
-					...( isNewCardsOnly ? [ 'is-section-themes-i4-cards-only' ] : [] ),
-					...( isNewDetailsAndPreview ? [ 'is-section-themes-i4-2' ] : [] ),
-				] }
+				bodyClass={ [ ...( isNewDetailsAndPreview ? [ 'is-section-themes-i4-2' ] : [] ) ] }
 			/>
 			<QueryActiveTheme siteId={ siteId } />
 			{ currentThemeId && <QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } /> }

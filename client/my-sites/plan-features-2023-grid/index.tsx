@@ -19,14 +19,21 @@ import {
 	TYPE_ECOMMERCE,
 	TYPE_ENTERPRISE_GRID_WPCOM,
 	getPlanPath,
+	PLAN_FREE,
+	PLAN_ENTERPRISE_GRID_WPCOM,
 } from '@automattic/calypso-products';
+import formatCurrency from '@automattic/format-currency';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { localize, LocalizeProps } from 'i18n-calypso';
+import { last } from 'lodash';
 import page from 'page';
-import { Component } from 'react';
+import { Component, createRef } from 'react';
+import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import BloombergLogo from 'calypso/assets/images/onboarding/bloomberg-logo.svg';
+import cloudLogo from 'calypso/assets/images/onboarding/cloud-logo.svg';
 import CNNLogo from 'calypso/assets/images/onboarding/cnn-logo.svg';
 import CondenastLogo from 'calypso/assets/images/onboarding/condenast-logo.svg';
 import DisneyLogo from 'calypso/assets/images/onboarding/disney-logo.svg';
@@ -36,12 +43,18 @@ import SlackLogo from 'calypso/assets/images/onboarding/slack-logo.svg';
 import TimeLogo from 'calypso/assets/images/onboarding/time-logo.svg';
 import vipLogo from 'calypso/assets/images/onboarding/vip-logo.svg';
 import wooLogo from 'calypso/assets/images/onboarding/woo-logo.svg';
+import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import FoldableCard from 'calypso/components/foldable-card';
 import JetpackLogo from 'calypso/components/jetpack-logo';
+import MarketingMessage from 'calypso/components/marketing-message';
+import Notice from 'calypso/components/notice';
 import PlanPill from 'calypso/components/plans/plan-pill';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
+import { getDiscountByName } from 'calypso/lib/discounts';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
+import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
+import { calculatePlanCredits } from 'calypso/my-sites/plan-features';
 import { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/plan-type-selector';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
@@ -53,9 +66,20 @@ import {
 	getDiscountedRawPrice,
 } from 'calypso/state/plans/selectors';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
-import { getCurrentPlan, isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import {
+	getCurrentPlan,
+	isCurrentUserCurrentPlanOwner,
+	getPlanDiscountedRawPrice,
+} from 'calypso/state/sites/plans/selectors';
 import isPlanAvailableForPurchase from 'calypso/state/sites/plans/selectors/is-plan-available-for-purchase';
-import { getSiteSlug, isCurrentPlanPaid, isCurrentSitePlan } from 'calypso/state/sites/selectors';
+import {
+	getSiteSlug,
+	isCurrentPlanPaid,
+	getSitePlan,
+	isCurrentSitePlan,
+	isJetpackSite,
+} from 'calypso/state/sites/selectors';
 import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provider';
 import { getManagePurchaseUrlFor } from '../purchases/paths';
 import PlanFeatures2023GridActions from './actions';
@@ -64,10 +88,12 @@ import PlanFeatures2023GridFeatures from './features';
 import PlanFeatures2023GridHeaderPrice from './header-price';
 import { PlanFeaturesItem } from './item';
 import { PlanComparisonGrid } from './plan-comparison-grid';
+import { Plans2023Tooltip } from './plans-2023-tooltip';
 import { PlanProperties, TransformedFeatureObject } from './types';
 import { getStorageStringFromFeature } from './util';
 
 import './style.scss';
+
 type PlanRowOptions = {
 	isMobile?: boolean;
 	previousProductNameShort?: string;
@@ -103,6 +129,8 @@ type PlanFeatures2023GridProps = {
 	isLandingPage?: boolean;
 	intervalType: string;
 	currentSitePlanSlug: string;
+	withDiscount: boolean;
+	discountEndDate: Date;
 };
 
 type PlanFeatures2023GridConnectedProps = {
@@ -114,15 +142,53 @@ type PlanFeatures2023GridConnectedProps = {
 	planTypeSelectorProps: PlanTypeSelectorProps;
 	manageHref: string;
 	selectedSiteSlug: string | null;
+	planCredits: number;
+	hasPlaceholders: boolean;
+	showPlanCreditsApplied: boolean;
 };
 
 type PlanFeatures2023GridType = PlanFeatures2023GridProps &
 	PlanFeatures2023GridConnectedProps & { children?: React.ReactNode };
 
-export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > {
+type PlanFeatures2023GridState = {
+	showPlansComparisonGrid: boolean;
+};
+
+export class PlanFeatures2023Grid extends Component<
+	PlanFeatures2023GridType,
+	PlanFeatures2023GridState
+> {
+	state = {
+		showPlansComparisonGrid: false,
+	};
+
+	plansComparisonGridContainerRef = createRef< HTMLDivElement >();
+
 	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_wp_plans_test_view' );
 		retargetViewPlans();
+	}
+
+	toggleShowPlansComparisonGrid = () => {
+		this.setState( ( { showPlansComparisonGrid } ) => ( {
+			showPlansComparisonGrid: ! showPlansComparisonGrid,
+		} ) );
+	};
+
+	componentDidUpdate(
+		prevProps: Readonly< PlanFeatures2023GridType >,
+		prevState: Readonly< PlanFeatures2023GridState >
+	) {
+		// If the "Compare plans" button is clicked, scroll to the plans comparison grid.
+		if (
+			prevState.showPlansComparisonGrid === false &&
+			this.plansComparisonGridContainerRef.current
+		) {
+			scrollIntoViewport( this.plansComparisonGridContainerRef.current, {
+				behavior: 'smooth',
+				scrollMode: 'if-needed',
+			} );
+		}
 	}
 
 	render() {
@@ -136,9 +202,13 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			currentSitePlanSlug,
 			manageHref,
 			canUserPurchasePlan,
+			translate,
+			selectedSiteSlug,
 		} = this.props;
 		return (
 			<div className="plans-wrapper">
+				<QueryActivePromotions />
+				{ this.renderNotice() }
 				<div className="plan-features">
 					<div className="plan-features-2023-grid__content">
 						<div>
@@ -154,17 +224,38 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 						</div>
 					</div>
 				</div>
-				<PlanComparisonGrid
-					planTypeSelectorProps={ planTypeSelectorProps }
-					planProperties={ planProperties }
-					intervalType={ intervalType }
-					isInSignup={ isInSignup }
-					isLaunchPage={ isLaunchPage }
-					flowName={ flowName }
-					currentSitePlanSlug={ currentSitePlanSlug }
-					manageHref={ manageHref }
-					canUserPurchasePlan={ canUserPurchasePlan }
-				/>
+				<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
+					<Button onClick={ this.toggleShowPlansComparisonGrid }>
+						{ this.state.showPlansComparisonGrid
+							? translate( 'Hide comparison' )
+							: translate( 'Compare plans' ) }
+					</Button>
+				</div>
+				{ this.state.showPlansComparisonGrid ? (
+					<div
+						ref={ this.plansComparisonGridContainerRef }
+						className="plan-features-2023-grid__plan-comparison-grid-container"
+					>
+						<PlanComparisonGrid
+							planTypeSelectorProps={ planTypeSelectorProps }
+							planProperties={ planProperties }
+							intervalType={ intervalType }
+							isInSignup={ isInSignup }
+							isLaunchPage={ isLaunchPage }
+							flowName={ flowName }
+							currentSitePlanSlug={ currentSitePlanSlug }
+							manageHref={ manageHref }
+							canUserPurchasePlan={ canUserPurchasePlan }
+							selectedSiteSlug={ selectedSiteSlug }
+							onUpgradeClick={ this.handleUpgradeClick }
+						/>
+						<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
+							<Button onClick={ this.toggleShowPlansComparisonGrid }>
+								{ translate( 'Hide comparison' ) }
+							</Button>
+						</div>
+					</div>
+				) : null }
 			</div>
 		);
 	}
@@ -305,10 +396,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			const classes = classNames( 'plan-features-2023-grid__table-item', 'is-bottom-aligned', {
 				'has-border-top': ! isReskinned,
 			} );
-
-			if ( rawPrice === undefined || rawPrice === null ) {
-				return;
-			}
+			const hasNoPrice = rawPrice === undefined || rawPrice === null;
 
 			return (
 				<Container
@@ -317,14 +405,16 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 					className={ classes }
 					isMobile={ options?.isMobile }
 				>
-					<PlanFeatures2023GridHeaderPrice
-						currencyCode={ currencyCode }
-						discountPrice={ discountPrice }
-						rawPrice={ rawPrice }
-						planName={ planName }
-						is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
-						isLargeCurrency={ isLargeCurrency }
-					/>
+					{ ! hasNoPrice && (
+						<PlanFeatures2023GridHeaderPrice
+							currencyCode={ currencyCode }
+							discountPrice={ discountPrice }
+							rawPrice={ rawPrice }
+							planName={ planName }
+							is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+							isLargeCurrency={ isLargeCurrency }
+						/>
+					) }
 				</Container>
 			);
 		} );
@@ -386,15 +476,36 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 						</div>
 					) }
 					<header className={ headerClasses }>
+						{ isBusinessPlan( planName ) && (
+							<Plans2023Tooltip
+								text={ translate(
+									'WP Cloud gives you the tools you need to add scalable, highly available, extremely fast WordPress hosting.'
+								) }
+							>
+								<div className="plan-features-2023-grid__plan-logo">
+									<img src={ cloudLogo } alt="WP Cloud logo" />{ ' ' }
+								</div>
+							</Plans2023Tooltip>
+						) }
 						{ isEcommercePlan( planName ) && (
-							<div className="plan-features-2023-grid__plan-logo">
-								<img src={ wooLogo } alt="WooCommerce logo" />{ ' ' }
-							</div>
+							<Plans2023Tooltip
+								text={ translate(
+									'Make your online store a reality with the power of WooCommerce.'
+								) }
+							>
+								<div className="plan-features-2023-grid__plan-logo">
+									<img src={ wooLogo } alt="WooCommerce logo" />{ ' ' }
+								</div>
+							</Plans2023Tooltip>
 						) }
 						{ isWpcomEnterpriseGridPlan( planName ) && (
-							<div className="plan-features-2023-grid__plan-logo">
-								<img src={ vipLogo } alt="WPVIP logo" />{ ' ' }
-							</div>
+							<Plans2023Tooltip
+								text={ translate( 'The trusted choice for enterprise WordPress hosting.' ) }
+							>
+								<div className="plan-features-2023-grid__plan-logo">
+									<img src={ vipLogo } alt="WPVIP logo" />{ ' ' }
+								</div>
+							</Plans2023Tooltip>
 						) }
 					</header>
 				</Container>
@@ -442,7 +553,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 		} );
 	}
 
-	handleUpgradeClick( singlePlanProperties: PlanProperties ) {
+	handleUpgradeClick = ( singlePlanProperties: PlanProperties ) => {
 		const { onUpgradeClick: ownPropsOnUpgradeClick, selectedSiteSlug } = this.props;
 		const { cartItemForPlan, planName } = singlePlanProperties;
 
@@ -459,7 +570,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 		const planPath = getPlanPath( planName ) || '';
 		const checkoutUrlWithArgs = `/checkout/${ selectedSiteSlug }/${ planPath }`;
 		page( checkoutUrlWithArgs );
-	}
+	};
 
 	renderTopButtons( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
 		const {
@@ -469,6 +580,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			canUserPurchasePlan,
 			manageHref,
 			currentSitePlanSlug,
+			selectedSiteSlug,
 		} = this.props;
 
 		return planPropertiesObj.map( ( properties: PlanProperties ) => {
@@ -493,6 +605,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 						flowName={ flowName }
 						current={ current ?? false }
 						currentSitePlanSlug={ currentSitePlanSlug }
+						selectedSiteSlug={ selectedSiteSlug }
 					/>
 				</Container>
 			);
@@ -554,7 +667,7 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 	}
 
 	renderPlanFeaturesList( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { domainName } = this.props;
+		const { domainName, translate } = this.props;
 		const planProperties = planPropertiesObj.filter(
 			( properties ) => ! isWpcomEnterpriseGridPlan( properties.planName )
 		);
@@ -574,7 +687,13 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 					/>
 					{ jpFeatures.length !== 0 && (
 						<div className="plan-features-2023-grid__jp-logo" key="jp-logo">
-							<JetpackLogo size={ 16 } />
+							<Plans2023Tooltip
+								text={ translate(
+									'Security, performance and growth tools made by the WordPress experts.'
+								) }
+							>
+								<JetpackLogo size={ 16 } />
+							</Plans2023Tooltip>
 						</div>
 					) }
 					<PlanFeatures2023GridFeatures
@@ -620,6 +739,159 @@ export class PlanFeatures2023Grid extends Component< PlanFeatures2023GridType > 
 			);
 		} );
 	}
+
+	getBannerContainer() {
+		return document.querySelector( '.plans-features-main__notice' );
+	}
+
+	higherPlanAvailable() {
+		const currentPlan = this.props.currentSitePlanSlug;
+		const availablePlanProperties = this.props.planProperties.filter(
+			( { planName } ) => planName !== PLAN_ENTERPRISE_GRID_WPCOM
+		);
+		const highestPlan = last( availablePlanProperties );
+
+		return currentPlan !== highestPlan?.planName && highestPlan?.availableForPurchase;
+	}
+
+	hasDiscountNotice() {
+		const { canUserPurchasePlan, hasPlaceholders, withDiscount } = this.props;
+		const bannerContainer = this.getBannerContainer();
+		if ( ! bannerContainer ) {
+			return false;
+		}
+
+		const activeDiscount = getDiscountByName( withDiscount );
+		if ( ! activeDiscount || hasPlaceholders || ! canUserPurchasePlan ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	renderNotice() {
+		return (
+			this.renderUpgradeDisabledNotice() ||
+			this.renderDiscountNotice() ||
+			this.renderCreditNotice() ||
+			this.renderMarketingMessage()
+		);
+	}
+
+	renderMarketingMessage() {
+		const { siteId, hasPlaceholders, isInSignup } = this.props;
+
+		if ( hasPlaceholders || isInSignup ) {
+			return null;
+		}
+
+		const bannerContainer = this.getBannerContainer();
+		if ( ! bannerContainer ) {
+			return null;
+		}
+
+		return ReactDOM.createPortal( <MarketingMessage siteId={ siteId } />, bannerContainer );
+	}
+
+	renderDiscountNotice() {
+		if ( ! this.hasDiscountNotice() ) {
+			return false;
+		}
+
+		const bannerContainer = this.getBannerContainer();
+		const activeDiscount = getDiscountByName( this.props.withDiscount );
+		if ( ! bannerContainer || ! activeDiscount ) {
+			return false;
+		}
+		return ReactDOM.createPortal(
+			<Notice
+				className="plan-features__notice-credits"
+				showDismiss={ false }
+				icon="info-outline"
+				status="is-success"
+			>
+				{ activeDiscount?.plansPageNoticeTextTitle && (
+					<strong>
+						{ activeDiscount?.plansPageNoticeTextTitle }
+						<br />
+					</strong>
+				) }
+				{ activeDiscount.plansPageNoticeText }
+			</Notice>,
+			bannerContainer
+		);
+	}
+
+	renderUpgradeDisabledNotice() {
+		const { canUserPurchasePlan, hasPlaceholders, translate } = this.props;
+
+		if ( hasPlaceholders || canUserPurchasePlan ) {
+			return null;
+		}
+
+		const bannerContainer = this.getBannerContainer();
+		if ( ! bannerContainer ) {
+			return false;
+		}
+		return ReactDOM.createPortal(
+			<Notice className="plan-features__notice" showDismiss={ false } status="is-info">
+				{ translate(
+					'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.'
+				) }
+			</Notice>,
+			bannerContainer
+		);
+	}
+
+	renderCreditNotice() {
+		const {
+			canUserPurchasePlan,
+			showPlanCreditsApplied,
+			hasPlaceholders,
+			translate,
+			planCredits,
+			planProperties,
+		} = this.props;
+		const bannerContainer = this.getBannerContainer();
+		const isShowPlanCreditsApplied = true === showPlanCreditsApplied && ! this.hasDiscountNotice();
+
+		if (
+			hasPlaceholders ||
+			! canUserPurchasePlan ||
+			! bannerContainer ||
+			! isShowPlanCreditsApplied ||
+			! planCredits ||
+			! this.higherPlanAvailable()
+		) {
+			return null;
+		}
+
+		return ReactDOM.createPortal(
+			<Notice
+				className="plan-features__notice-credits"
+				showDismiss={ false }
+				icon="info-outline"
+				status="is-success"
+			>
+				{ translate(
+					'You have {{b}}%(amountInCurrency)s{{/b}} of pro-rated credits available from your current plan. ' +
+						'Apply those credits towards an upgrade before they expire!',
+					{
+						args: {
+							amountInCurrency: formatCurrency(
+								planCredits,
+								planProperties[ 0 ].currencyCode || ''
+							),
+						},
+						components: {
+							b: <strong />,
+						},
+					}
+				) }
+			</Notice>,
+			bannerContainer
+		);
+	}
 }
 
 /* eslint-disable wpcalypso/redux-no-bound-selectors */
@@ -630,7 +902,11 @@ const ConnectedPlanFeatures2023Grid = connect(
 			! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId );
 		const purchaseId = getCurrentPlanPurchaseId( state, siteId );
 		const selectedSiteSlug = getSiteSlug( state, siteId );
+		const sitePlan = getSitePlan( state, siteId );
 		const currentSitePlan = getCurrentPlan( state, siteId );
+
+		const isJetpack = siteId ? isJetpackSite( state, siteId ) : false;
+		const isSiteAT = siteId ? isSiteAutomatedTransfer( state, siteId ) : false;
 
 		let planProperties: PlanProperties[] = plans.map( ( plan: string ) => {
 			let isPlaceholder = false;
@@ -645,7 +921,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 
 			// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
 			const showMonthlyPrice = true;
-			if ( placeholder || ! planObject ) {
+			if ( placeholder || ( ! planObject && plan !== PLAN_ENTERPRISE_GRID_WPCOM ) ) {
 				isPlaceholder = true;
 			}
 
@@ -657,7 +933,11 @@ const ConnectedPlanFeatures2023Grid = connect(
 			);
 
 			const rawPrice = getPlanRawPrice( state, planProductId, showMonthlyPrice );
-			const discountPrice = getDiscountedRawPrice( state, planProductId, showMonthlyPrice );
+			const isMonthlyObj = { isMonthly: showMonthlyPrice };
+
+			const discountPrice = siteId
+				? getPlanDiscountedRawPrice( state, siteId, plan, isMonthlyObj )
+				: getDiscountedRawPrice( state, planProductId, showMonthlyPrice );
 
 			let annualPricePerMonth = discountPrice || rawPrice;
 			if ( isMonthlyPlan ) {
@@ -763,15 +1043,31 @@ const ConnectedPlanFeatures2023Grid = connect(
 			);
 		}
 
+		const manageHref =
+			purchaseId && selectedSiteSlug
+				? getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
+				: `/plans/my-plan/${ siteId }`;
+
+		const planCredits = calculatePlanCredits( state, siteId, planProperties );
+		const hasPlaceholders = ( planProperties: Array< PlanProperties > ) =>
+			planProperties.filter( ( planProps ) => planProps.isPlaceholder ).length > 0;
+
+		const isJetpackNotAtomic = isJetpack && ! isSiteAT;
+
 		return {
 			currentSitePlanSlug: currentSitePlan?.productSlug,
 			planProperties,
 			canUserPurchasePlan,
-			manageHref:
-				purchaseId && selectedSiteSlug
-					? getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
-					: `/plans/my-plan/${ siteId }`,
+			manageHref,
 			selectedSiteSlug,
+			planCredits,
+			hasPlaceholders: hasPlaceholders( planProperties ),
+			showPlanCreditsApplied:
+				sitePlan &&
+				sitePlan.product_slug !== PLAN_FREE &&
+				planCredits &&
+				! isJetpackNotAtomic &&
+				! isInSignup,
 		};
 	},
 	{

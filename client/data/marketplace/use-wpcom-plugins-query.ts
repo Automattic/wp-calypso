@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	useQuery,
 	UseQueryResult,
@@ -15,10 +14,9 @@ import {
 import wpcom from 'calypso/lib/wp';
 import { BASE_STALE_TIME } from 'calypso/state/initial-state';
 
-type Type = 'all' | 'featured';
+type Type = 'all' | 'featured' | 'launched';
 
 const pluginsApiBase = '/marketplace/products';
-const dynamicPluginsApiBase = '/marketplace/products-dynamic';
 const featuredPluginsApiBase = '/plugins/featured';
 const pluginsApiNamespace = 'wpcom/v2';
 
@@ -81,17 +79,11 @@ export const useWPCOMPluginsList = (
 	} );
 };
 
-const fetchWPCOMPlugin = ( slug: string ) => {
-	// eslint-disable-next-line no-constant-condition
-	const pluginBase = config.isEnabled( 'marketplace-fetch-dynamic-plugin-details' )
-		? dynamicPluginsApiBase
-		: pluginsApiBase;
-
-	return wpcom.req.get( {
-		path: `${ pluginBase }/${ slug }`,
+const fetchWPCOMPlugin = ( slug: string ) =>
+	wpcom.req.get( {
+		path: `${ pluginsApiBase }/${ slug }`,
 		apiNamespace: pluginsApiNamespace,
 	} );
-};
 
 export const getWPCOMPluginQueryParams = ( slug: string ): [ QueryKey, QueryFunction ] => {
 	const cacheKey = getCacheKey( slug + '-normalized' );

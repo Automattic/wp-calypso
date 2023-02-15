@@ -1,6 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 
-.is-section-plans .formatted-header.navigation {
+.is-section-plans .plans__section-header-navigation {
 	display: flex;
 	justify-content: space-between;
 	margin: 0;
@@ -11,8 +11,11 @@
 	}
 }
 
-.is-section-plans .formatted-header.header-text {
-	max-width: $break-medium;
+.is-section-plans .plans__section-header {
+	.formatted-header__title,
+	.formatted-header__subtitle {
+		max-width: $break-medium;
+	}
 }
 
 .dialog.planspage__domain-upsell {

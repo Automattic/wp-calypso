@@ -1,8 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/typography/styles/variables";
 
-$font-recoleta: Recoleta, $sans;
-
 /**
  * CSS used to transform existing Segment component to the styles used in the modernized Stats.
  */
@@ -71,17 +69,4 @@ $font-recoleta: Recoleta, $sans;
 		margin: 16px 0;
 		min-width: unset;
 	}
-}
-
-// TODO: would it be better to have a mixin file in Calypso components?
-
-/*
- * Styles shared across headers on the Stats page.
- */
-@mixin section-header {
-	font-weight: 400;
-	font-family: $font-recoleta;
-	font-size: $font-title-large;
-	line-height: 40px;
-	color: var(--studio-gray-100);
 }

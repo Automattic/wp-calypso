@@ -1,10 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
-import { Design } from '@automattic/design-picker';
+import { Design, isBlankCanvasDesign } from '@automattic/design-picker';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { addQueryArgs } from 'calypso/lib/route';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
@@ -179,12 +180,23 @@ const siteSetupFlow: Flow = {
 						);
 					}
 
-					// Add Launchpad to selected intents in General Onboarding
-					if ( isLaunchpadIntent( intent ) && typeof siteId === 'number' ) {
-						pendingActions.push( saveSiteSettings( siteId, { launchpad_screen: 'full' } ) );
+					// Update Launchpad option based on site intent
+					if ( typeof siteId === 'number' ) {
+						pendingActions.push(
+							saveSiteSettings( siteId, {
+								launchpad_screen: isLaunchpadIntent( intent ) ? 'full' : 'off',
+							} )
+						);
 					}
 
-					Promise.all( pendingActions ).then( () => window.location.assign( to ) );
+					let redirectionUrl = to;
+
+					// Forcing cache invalidation to retrieve latest launchpad_screen option value
+					if ( isLaunchpadIntent( intent ) ) {
+						redirectionUrl = addQueryArgs( { showLaunchpad: true }, to );
+					}
+
+					Promise.all( pendingActions ).then( () => window.location.assign( redirectionUrl ) );
 				} );
 			} );
 
@@ -229,7 +241,7 @@ const siteSetupFlow: Flow = {
 					}
 
 					// End of Pattern Assembler flow
-					if ( selectedDesign?.design_type === 'assembler' ) {
+					if ( isBlankCanvasDesign( selectedDesign ) ) {
 						window.sessionStorage.setItem( 'wpcom_signup_completed_flow', 'pattern_assembler' );
 						return exitFlow( `/site-editor/${ siteSlug }` );
 					}
