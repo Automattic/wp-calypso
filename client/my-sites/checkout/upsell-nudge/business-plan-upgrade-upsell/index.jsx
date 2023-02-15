@@ -1,4 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
+import moment from 'moment';
 import { PureComponent } from 'react';
 import formatCurrency from 'calypso/../packages/format-currency/src';
 import upsellImage from 'calypso/assets/images/checkout-upsell/upsell-rocket-2.png';
@@ -73,7 +74,28 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 			planDiscountedRawPrice,
 			currencyCode,
 			hasSevenDayRefundPeriod,
+			currentPlan,
 		} = this.props;
+
+		const getTimeLeftFromSecondsLeft = ( timeDiff ) => {
+			return {
+				hours: Math.floor( ( timeDiff / ( 60 * 60 ) ) % 24 ),
+				minutes: Math.floor( ( timeDiff / 60 ) % 60 ),
+				seconds: Math.floor( timeDiff % 60 )
+					.toString()
+					.padStart( 2, '0' ),
+			};
+		};
+
+		const expiryDate = moment.utc( currentPlan?.subscribedDate ).unix() + 24 * 60 * 60;
+		const now = moment.utc().unix();
+		const isBeforeExpiry = currentPlan && now <= expiryDate;
+		const { hours, minutes, seconds } = getTimeLeftFromSecondsLeft( expiryDate - now );
+		console.log( 'expiryDate', expiryDate );
+		console.log( 'expiryDateb', moment.utc( currentPlan?.subscribedDate ).unix() );
+		console.log( 'expiryDate-now', now );
+		console.log( 'expiryDate', isBeforeExpiry );
+
 		return (
 			<>
 				<div className="business-plan-upgrade-upsell-new-design__column-pane">
@@ -151,6 +173,14 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 							}
 						) }
 					</p>
+					<div className="business-plan-upgrade-upsell-new-design__countdown-counter">
+						<span>
+							{ translate( 'Discount ends in %(hours)dh %(minutes)dm %(seconds)ss', {
+								args: { hours, minutes, seconds },
+								comment: 'The end string will look like "Discount ends in 6h 2m 20s"',
+							} ) }
+						</span>
+					</div>
 				</div>
 			</>
 		);
