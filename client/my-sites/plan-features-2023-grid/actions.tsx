@@ -15,7 +15,7 @@ import { localize, TranslateResult, useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import { WPCOM_PLANS_UI_STORE } from './store';
 
@@ -157,9 +157,7 @@ const LoggedInPlansFeatureActionButton = ( {
 } ) => {
 	const { setShowDomainUpsellDialog } = useDispatch( WPCOM_PLANS_UI_STORE );
 	const translate = useTranslate();
-	const domainFromHomeUpsellFlow = useSelector(
-		( state ) => getCurrentQueryArguments( state )?.get_domain
-	);
+	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 
 	const showDomainUpsellDialog = useCallback( () => {
 		setShowDomainUpsellDialog( true );
