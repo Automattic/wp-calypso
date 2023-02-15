@@ -188,17 +188,14 @@ export const getFilteredAndSortedPlugins = createSelector(
 );
 
 export function getPluginsOnSites( state: AppState, plugins: Plugin[] ) {
-	return Object.values( plugins ).reduce(
-		( acc: { [ pluginSlug: string ]: Plugin }, plugin: Plugin ) => {
-			const siteIds = Object.keys( plugin.sites ).map( Number );
-			const pluginOnSites = getPluginOnSites( state, siteIds, plugin.slug );
-			if ( pluginOnSites ) {
-				acc[ plugin.slug ] = pluginOnSites;
-			}
-			return acc;
-		},
-		{}
-	);
+	return plugins.reduce( ( acc: { [ pluginSlug: string ]: Plugin }, plugin: Plugin ) => {
+		const siteIds = Object.keys( plugin.sites ).map( Number );
+		const pluginOnSites = getPluginOnSites( state, siteIds, plugin.slug );
+		if ( pluginOnSites ) {
+			acc[ plugin.slug ] = pluginOnSites;
+		}
+		return acc;
+	}, {} );
 }
 
 export function getPluginOnSites( state: AppState, siteIds: number[], pluginSlug: string ) {
