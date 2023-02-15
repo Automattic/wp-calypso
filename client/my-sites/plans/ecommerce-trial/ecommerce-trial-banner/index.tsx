@@ -39,10 +39,10 @@ const ECommerceTrialBanner = ( props: ECommerceTrialBannerProps ) => {
 	const trialDuration = trialEnd.diff( trialStart, 'days' );
 
 	/**
-	 * Trial progress from 0 to 1
+	 * Trial progress from 0 to 1.
+	 * Protect against values < 0 by wrapping the code in Math.max()
 	 */
-	const trialProgress =
-		eCommerceTrialDaysLeft <= trialDuration ? 1 - eCommerceTrialDaysLeft / trialDuration : 0;
+	const trialProgress = Math.max( 1 - eCommerceTrialDaysLeft / trialDuration, 0 );
 	const eCommerceTrialDaysLeftToDisplay = isTrialExpired ? 0 : eCommerceTrialDaysLeft;
 
 	// moment.js doesn't have a format option to display the long form in a localized way without the year
