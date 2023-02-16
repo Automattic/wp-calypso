@@ -252,35 +252,41 @@ function useSubmenuItems( siteSlug: string ) {
 			{
 				label: __( 'Privacy settings' ),
 				href: `/settings/general/${ siteSlug }#site-privacy-settings`,
+				eventName: 'calypso_sites_dashboard_site_action_submenu_privacy_settings_click',
 			},
 			{
 				label: __( 'Database access' ),
 				href: `/hosting-config/${ siteSlug }#database-access`,
+				eventName: 'calypso_sites_dashboard_site_action_submenu_database_access_click',
 			},
 			{
 				label: __( 'SFTP/SSH credentials' ),
 				href: `/hosting-config/${ siteSlug }#sftp-credentials`,
+				eventName: 'calypso_sites_dashboard_site_action_submenu_sftp_credentials_click',
 			},
 			{
 				label: __( 'Web server settings' ),
 				href: `/hosting-config/${ siteSlug }#web-server-settings`,
+				eventName: 'calypso_sites_dashboard_site_action_submenu_web_server_settings_click',
 			},
 			{
 				label: __( 'Connect github' ),
 				href: `/hosting-config/${ siteSlug }#connect-github`,
+				eventName: 'calypso_sites_dashboard_site_action_submenu_connect_github_click',
 			},
 			{
 				label: __( 'Clear cache' ),
 				href: `/hosting-config/${ siteSlug }#cache`,
+				eventName: 'calypso_sites_dashboard_site_action_submenu_cache_click',
 			},
 		],
 		[ __, siteSlug ]
 	);
 }
 
-function DeveloperSettings( { siteSlug }: { siteSlug: string } ) {
+function DeveloperSettings( { site, recordTracks }: SitesMenuItemProps ) {
 	const { __ } = useI18n();
-	const submenuItems = useSubmenuItems( siteSlug );
+	const submenuItems = useSubmenuItems( site.slug );
 	const developerSubmenuProps = useSubenuPopoverProps< HTMLDivElement >( { offsetTop: -8 } );
 
 	return (
@@ -290,7 +296,11 @@ function DeveloperSettings( { siteSlug }: { siteSlug: string } ) {
 			</MenuItemLink>
 			<SubmenuPopover { ...developerSubmenuProps.submenu }>
 				{ submenuItems.map( ( item ) => (
-					<MenuItemLink key={ item.label } href={ item.href }>
+					<MenuItemLink
+						key={ item.label }
+						href={ item.href }
+						onClick={ () => recordTracks( item.eventName ) }
+					>
 						{ item.label }
 					</MenuItemLink>
 				) ) }
@@ -332,7 +342,7 @@ export const SitesEllipsisMenu = ( {
 					<SiteMenuGroup>
 						{ site.launch_status === 'unlaunched' && <LaunchItem { ...props } /> }
 						<SettingsItem { ...props } />
-						{ isEnabled( 'dev/developer-ux' ) && <DeveloperSettings siteSlug={ site.slug } /> }
+						{ isEnabled( 'dev/developer-ux' ) && <DeveloperSettings { ...props } /> }
 						<ManagePluginsItem { ...props } />
 						{ showHosting && <HostingConfigItem { ...props } /> }
 						{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
