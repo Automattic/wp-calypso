@@ -295,17 +295,24 @@ function wpcom_premium_global_styles_is_site_exempt( $blog_id = 0 ) {
 		return false;
 	}
 
-	// Non-Simple sites are edge cases; other conditions will determine whether they can use GS.
-	if ( ! defined( 'IS_WPCOM' ) || ! IS_WPCOM ) {
-		return false;
-	}
-
 	// If the exemption check has already been performed, just return if the site is exempt.
 	if ( wpcom_global_styles_has_blog_sticker( 'wpcom-premium-global-styles-exemption-checked', $blog_id ) ) {
 		return wpcom_global_styles_has_blog_sticker( 'wpcom-premium-global-styles-exempt', $blog_id );
 	}
 
+	// Non-Simple sites are edge cases; other conditions will determine whether they can use GS.
+	if ( ! defined( 'IS_WPCOM' ) || ! IS_WPCOM ) {
+		return false;
+	}
+
 	switch_to_blog( $blog_id );
+
+	// If the current user cannot modify the `wp_global_styles` CPT, the exemption check is not needed;
+	// other conditions will determine whether they can use GS.
+	$wp_global_styles_cpt = get_post_type_object( 'wp_global_styles' );
+	if ( ! current_user_can( $wp_global_styles_cpt->cap->publish_posts ) ) {
+		return false;
+	}
 
 	add_blog_sticker( 'wpcom-premium-global-styles-exemption-checked', null, null, $blog_id );
 
