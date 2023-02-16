@@ -6,10 +6,9 @@
 $gray-100: #101517;
 $gray-60: #50575e;
 $design-button-primary-color: rgb(17, 122, 201);
-$break-design-preview: 1024px;
 
 @mixin break-design-preview() {
-	@media (min-width: #{ ($break-design-preview) }) {
+	@media (min-width: #{ ($break-xlarge) }) {
 		@content;
 	}
 }
