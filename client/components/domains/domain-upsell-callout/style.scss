@@ -72,3 +72,29 @@ body.is-section-posts .domain-upsell-callout {
 		cursor: pointer;
 	}
 }
+
+// Launchpad specific styles
+.domain-upsell-callout.is-launchpad {
+	position: relative;
+	transform: none;
+	left: 0;
+	width: 100%;
+
+	&.is-phone {
+		@include break-large {
+			// INFO
+			// This is matching the web preview width on mobile screens but it clips off the domain banner a bit so maybe we should consider bumping up that width here
+			max-width: 340px;
+		}
+	}
+
+	.domain-upsell-callout__content {
+		background: #f6f7f7;
+		border-radius: 40px 40px 0 0;  /* stylelint-disable-line scales/radii */
+		padding-top: 10px;
+	}
+
+	.domain-upsell-callout__content-text {
+		background: none;
+	}
+}

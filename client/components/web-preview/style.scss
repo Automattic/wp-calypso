@@ -285,6 +285,10 @@ a.web-preview__external.button {
 	display: flex;
 	flex-direction: column;
 	position: relative;
+	// INFO
+	// I am using this to fix the alignment issue when using the phone preview because it aligns the banner to the left otherwise
+	// This is potentially dangerous because it could affect other places so if we keep this we should test all other web previews
+	align-items: center;
 }
 
 .web-preview__loading-message-wrapper {

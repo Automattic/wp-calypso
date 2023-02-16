@@ -63,8 +63,8 @@ export class WebPreviewModal extends Component {
 		fixedViewportWidth: PropTypes.number,
 		// Prevents tabbing into the iframe.
 		disableTabbing: PropTypes.bool,
-		// Edit overlay that redirects to the Site Editor
-		enableEditOverlay: PropTypes.bool,
+		// Allow Launchpad specific customizations
+		isLaunchpad: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -83,7 +83,7 @@ export class WebPreviewModal extends Component {
 		hasSidebar: false,
 		overridePost: null,
 		autoHeight: false,
-		enableEditOverlay: false,
+		isLaunchpad: false,
 	};
 
 	constructor( props ) {

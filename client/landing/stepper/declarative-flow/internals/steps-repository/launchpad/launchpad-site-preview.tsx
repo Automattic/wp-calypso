@@ -113,7 +113,9 @@ const LaunchpadSitePreview = ( {
 				defaultViewportDevice={ defaultDevice }
 				devicesToShow={ devicesToShow }
 				showSiteAddressBar={ false }
-				enableEditOverlay
+				// INFO
+				// I've renamed the "enableEditOverlay" prop to a more generic name "isLaunchpad" since I'm using it to customize the domain upsell component inside the web preview
+				isLaunchpad
 			/>
 		</div>
 	);

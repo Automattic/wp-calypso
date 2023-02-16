@@ -377,6 +377,9 @@ export default class WebPreviewContent extends Component {
 			( this.props.showPreview || ! this.props.isModalWindow ) &&
 			this.state.device !== 'seo';
 
+		const shouldShowDomainUpsellForNonLaunchpad =
+			this.props.showExternal && this.props.isModalWindow && ! this.props.isPrivateAtomic;
+
 		return (
 			<div className={ className } ref={ this.setWrapperElement }>
 				<ToolbarComponent
@@ -391,8 +394,14 @@ export default class WebPreviewContent extends Component {
 					isLoading={ this.state.isLoadingSubpage }
 					isSticky={ this.props.isStickyToolbar }
 				/>
-				{ this.props.showExternal && this.props.isModalWindow && ! this.props.isPrivateAtomic && (
-					<DomainUpsellCallout trackEvent="site_preview_domain_upsell_callout" />
+				{ /* INFO */ }
+				{ /* Currently I'm bypassing all of the conditions inside shouldShowDomainUpsellForNonLaunchpad in favor if the isLaunchpad prop is true for easier testing but we should come back to this and figure out which of these conditions we should keep for launchpad*/ }
+				{ ( shouldShowDomainUpsellForNonLaunchpad || this.props.isLaunchpad ) && (
+					<DomainUpsellCallout
+						isPhone={ this.state.device === 'phone' }
+						isLaunchpad={ this.props.isLaunchpad }
+						trackEvent="site_preview_domain_upsell_callout"
+					/>
 				) }
 				{ this.props.belowToolbar }
 				{ ( ! isLoaded || this.state.isLoadingSubpage ) && <SpinnerLine /> }
@@ -412,17 +421,18 @@ export default class WebPreviewContent extends Component {
 					{ 'seo' !== this.state.device && (
 						<div
 							onMouseEnter={ () => {
-								if ( this.props.enableEditOverlay ) {
+								if ( this.props.isLaunchpad ) {
 									this.setState( { showIFrameOverlay: true } );
 								}
 							} }
 							onMouseLeave={ () => {
-								if ( this.props.enableEditOverlay ) {
+								if ( this.props.isLaunchpad ) {
 									this.setState( { showIFrameOverlay: false } );
 								}
 							} }
 							className={ classNames( 'web-preview__frame-wrapper', {
 								'is-resizable': ! this.props.isModalWindow,
+								'is-launchpad': this.props.isLaunchpad,
 							} ) }
 						>
 							<iframe
@@ -431,7 +441,7 @@ export default class WebPreviewContent extends Component {
 								style={ {
 									...this.state.iframeStyle,
 									height: this.state.viewport?.height,
-									pointerEvents: this.props.enableEditOverlay ? 'auto' : 'all',
+									pointerEvents: this.props.isLaunchpad ? 'auto' : 'all',
 								} }
 								src="about:blank"
 								onLoad={ () => this.setLoaded( 'iframe-onload' ) }
@@ -440,7 +450,7 @@ export default class WebPreviewContent extends Component {
 								scrolling={ autoHeight ? 'no' : undefined }
 								tabIndex={ disableTabbing ? -1 : 0 }
 							/>
-							{ this.props.enableEditOverlay && (
+							{ this.props.isLaunchpad && (
 								<div
 									className="web-preview__frame-edit-overlay"
 									style={ {
@@ -558,7 +568,7 @@ WebPreviewContent.propTypes = {
 	// Uses the CSS selector to scroll to it
 	scrollToSelector: PropTypes.string,
 	// Edit overlay that redirects to the Site Editor
-	enableEditOverlay: PropTypes.bool,
+	isLaunchpad: PropTypes.bool,
 };
 
 WebPreviewContent.defaultProps = {
@@ -584,5 +594,5 @@ WebPreviewContent.defaultProps = {
 	autoHeight: false,
 	inlineCss: null,
 	scrollToSelector: null,
-	enableEditOverlay: false,
+	isLaunchpad: false,
 };

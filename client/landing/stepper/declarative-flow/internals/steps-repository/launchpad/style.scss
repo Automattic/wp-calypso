@@ -485,13 +485,23 @@
 
 	}
 
+	.is-phone .web-preview__frame-wrapper.is-resizable.is-launchpad {
+		.web-preview__frame-edit-overlay {
+			@include break-large {
+				border-radius: 0 0 40px 40px; /* stylelint-disable-line scales/radii */
+			}
+		}
+	}
+
 	.web-preview__frame-wrapper.is-resizable {
 		transition: max-width 0.2s linear;
 		margin: 0;
 		padding: 0;
 		background-color: transparent;
 		position: relative;
-		max-width: 95%;
+		// This makes the iframe smaller than the upsell domain banner so we have to remove this
+		// If we want to match the current styling on prod we could probably move this to a higher parent component so it affects both the iframe and the banner
+		// max-width: 95%;
 
 		@include break-large {
 			height: 880px;
@@ -523,6 +533,29 @@
 				border-color: #c3c4c7;
 				border-width: 2px;
 				cursor: pointer;
+			}
+		}
+	}
+
+	// INFO
+	// When have to remove the top border radius from the iframe and apply it to the domain upsell banner instead
+	// We have to make sure all of these cases look good:
+	// Desktop screen - desktop preview and phone preview
+	// Mobile screen - desktop preview and phone preview
+	.web-preview__frame-wrapper.is-resizable.is-launchpad {
+		.web-preview__frame-edit-overlay {
+			border-radius: 0 0 40px 40px;  /* stylelint-disable-line scales/radii */
+		}
+
+		@include break-large {
+			border-radius: 0 0 20px 20px; /* stylelint-disable-line scales/radii */
+		}
+
+		.web-preview__frame {
+			border-radius: 0 0 40px 40px; /* stylelint-disable-line scales/radii */
+
+			@include break-large {
+				border-radius: 0 0 20px 20px; /* stylelint-disable-line scales/radii */
 			}
 		}
 	}
