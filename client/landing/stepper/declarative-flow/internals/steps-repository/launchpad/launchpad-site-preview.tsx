@@ -9,6 +9,7 @@ import {
 	SENSEI_FLOW,
 } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { DomainUpsellCalloutContent } from 'calypso/components/domains/domain-upsell-callout';
@@ -104,7 +105,11 @@ const LaunchpadSitePreview = ( {
 	}
 
 	return (
-		<div className="launchpad__site-preview-wrapper">
+		<div
+			className={ classnames( 'launchpad__site-preview-wrapper', {
+				'has-banner': shouldShowUpsell,
+			} ) }
+		>
 			<WebPreview
 				className="launchpad__-web-preview"
 				disableTabbing

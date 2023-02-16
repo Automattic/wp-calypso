@@ -563,6 +563,43 @@
 	.spinner-line {
 		display: none;
 	}
+
+	.domain-upsell-callout {
+		position: relative;
+		transform: none;
+		left: 2.5%;
+		width: 95%;
+		overflow-wrap: anywhere;
+
+		@media ( max-width: 1080px ) {
+			display: block;
+		}
+
+		.domain-upsell-callout__icon {
+			display: block;
+		}
+
+		.domain-upsell-callout__content {
+			background: #f6f7f7;
+			border-radius: 40px 40px 0 0;  /* stylelint-disable-line scales/radii */
+			padding-top: 10px;
+		}
+
+	}
+
+	.is-phone .domain-upsell-callout {
+		max-width: 340px;
+		// margin auto doesnt align it but its close
+		margin: auto;
+	}
+}
+
+// Not working currently - meaning to set border radius of top of preview frame to 0 to align with the banner,
+.launchpad__site-preview-wrapper.has-banner .web-preview__frame {
+	.is-phone .web-preview__frame-wrapper.is-resizable .web-preview__frame {
+		border-top-left-radius: 0;
+		border-top-right-radius: 0;
+	}
 }
 
 // Launchpad - Processing Screens
