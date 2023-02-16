@@ -15,10 +15,10 @@ Environment Variables control much of the runtime configuration for E2E tests.
 | COOKIES_PATH          | Path on disk to the saved authenticated cookies.                    | ./cookies/                                        |
 | GUTENBERG_EDGE        | Use the bleeding edge Gutenberg build.                              | false                                             |
 | HEADLESS              | Configure browser headless/headful mode.                            | false                                             |
+| JETPACK_TARGET        | Which Jetpack install we are targeting through Calypso              | wpcom-production                                  |
 | SLOW_MO               | Slow down the execution by given milliseconds.                      | 0                                                 |
 | TEST_LOCALES          | The locales to target for I18N testing                              | A long list of currently supported locales.       |
 | TEST_ON_ATOMIC        | Use a user with an Atomic site.                                     | false                                             |
-| TEST_ON_JETPACK       | Use a user with a jetpack connected site.                           | false                                             |
 | VIEWPORT_NAME         | Specify the viewport to be used.                                    | desktop                                           |
 
 <!-- When adding new rows, run the following command to sort the resulting sub-table in alphabetical order:
