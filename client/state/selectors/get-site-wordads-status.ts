@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import type { AppState } from 'calypso/types';
 
 /**
@@ -11,5 +10,5 @@ export default function getSiteWordadsStatus(
 	if ( ! siteId ) {
 		return null;
 	}
-	return get( state, [ 'wordads', 'status', siteId, 'status' ], null );
+	return state.wordads?.status?.[ siteId ]?.status ?? null;
 }

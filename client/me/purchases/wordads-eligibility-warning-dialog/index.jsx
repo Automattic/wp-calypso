@@ -40,7 +40,7 @@ const WordAdsEligibilityWarningDialog = ( {
 				</FormSectionHeading>
 				<p>
 					{ translate(
-						'When you downgrade your plan, you will become ineligible for the WordAds program. Visit {{a}}our FAQ{{/a}} to learn more.{{br/}}{{br/}}',
+						'When you downgrade your plan, you will become ineligible for the WordAds program. Visit {{a}}our FAQ{{/a}} to learn more.',
 						{
 							components: {
 								a: (
@@ -54,7 +54,9 @@ const WordAdsEligibilityWarningDialog = ( {
 							},
 						}
 					) }
-					{ translate( ' Would you still like to downgrade your plan?' ) }
+					<br />
+					<br />
+					{ translate( 'Would you still like to downgrade your plan?' ) }
 				</p>
 			</>
 		</Dialog>

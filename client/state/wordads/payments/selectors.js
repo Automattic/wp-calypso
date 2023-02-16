@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/wordads/init';
 
 /**
@@ -10,5 +8,5 @@ import 'calypso/state/wordads/init';
  * @returns {Object}        WordAds Error
  */
 export function getWordAdsPayments( state, siteId ) {
-	return get( state, [ 'wordads', 'payments', siteId ], [] );
+	return state.wordads?.payments?.[ siteId ] ?? [];
 }

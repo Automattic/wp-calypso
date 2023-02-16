@@ -76,24 +76,30 @@ class NonPrimaryDomainDialog extends Component {
 									strong: <strong />,
 								},
 							}
+						) }{ ' ' }
+						{ hasSetupAds && (
+							<>
+								<br />
+								<br />
+								{ translate(
+									'You will also be ineligible for the WordAds program. Visit {{a}}our FAQ{{/a}} to learn more.',
+									{
+										components: {
+											a: (
+												<a
+													href="https://wordads.co/faq/#eligibility-for-wordads"
+													target="_blank"
+													rel="noopener noreferrer"
+												/>
+											),
+										},
+									}
+								) }
+								<br />
+								<br />
+							</>
 						) }
-						{ hasSetupAds &&
-							translate(
-								'{{br/}}{{br/}}You will also be ineligible for the WordAds program. Visit {{a}}our FAQ{{/a}} to learn more.{{br/}}{{br/}}',
-								{
-									components: {
-										a: (
-											<a
-												href="https://wordads.co/faq/#eligibility-for-wordads"
-												target="_blank"
-												rel="noopener noreferrer"
-											/>
-										),
-										br: <br />,
-									},
-								}
-							) }
-						{ translate( ' Would you still like to downgrade your plan?' ) }
+						{ translate( 'Would you still like to downgrade your plan?' ) }
 					</p>
 				</Fragment>
 			</Dialog>
