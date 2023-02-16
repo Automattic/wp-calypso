@@ -72,8 +72,12 @@ export function getDesignEventProps( {
 	design: Design;
 	styleVariation?: StyleVariation;
 } ) {
-	const variationSlugSuffix =
-		styleVariation && styleVariation.slug !== 'default' ? `-${ styleVariation.slug }` : '';
+	let variationSlugSuffix = '';
+	if ( styleVariation && styleVariation.slug !== 'default' ) {
+		variationSlugSuffix = `-${ styleVariation.slug }`;
+	} else if ( design.is_virtual && design.style_variation?.slug ) {
+		variationSlugSuffix = `-${ design.style_variation.slug }`;
+	}
 
 	return {
 		flow,
@@ -85,5 +89,6 @@ export function getDesignEventProps( {
 		design_type: design.design_type,
 		is_premium: design.is_premium,
 		has_style_variations: ( design.style_variations || [] ).length > 0,
+		is_virtual: design.is_virtual,
 	};
 }

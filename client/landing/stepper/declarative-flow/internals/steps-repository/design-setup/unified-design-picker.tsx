@@ -78,6 +78,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const siteVerticalId = useSelect(
 		( select ) => ( site && select( SITE_STORE ).getSiteVerticalId( site.ID ) ) || ''
 	);
+	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles();
 
 	const isAtomic = useSelect( ( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID ) );
 	useEffect( () => {
@@ -129,6 +130,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		{
 			enabled: true,
 			select: selectStarterDesigns,
+			shouldLimitGlobalStyles,
 		}
 	);
 
@@ -240,7 +242,18 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	function previewDesign( design: Design, styleVariation?: StyleVariation ) {
 		recordPreviewedDesign( { flow, intent, design, styleVariation } );
-		setSelectedDesign( design );
+
+		if ( design.is_virtual ) {
+			const parentDesign = staticDesigns.find(
+				( staticDesign ) => staticDesign.slug === design.slug && ! staticDesign.is_virtual
+			);
+			setSelectedDesign( parentDesign );
+			if ( ! styleVariation && design.style_variation ) {
+				setSelectedStyleVariation( design.style_variation );
+			}
+		} else {
+			setSelectedDesign( design );
+		}
 
 		if ( styleVariation ) {
 			recordTracksEvent(
@@ -358,8 +371,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	}
 
 	// ********** Logic for Premium Global Styles
-
-	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles();
 	const [ showPremiumGlobalStylesModal, setShowPremiumGlobalStylesModal ] = useState( false );
 
 	function unlockPremiumGlobalStyles() {
@@ -707,7 +718,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }
 			purchasedThemes={ purchasedThemes }
 			currentPlanFeatures={ currentPlanFeatures }
-			shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 		/>
 	);
 
