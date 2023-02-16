@@ -200,13 +200,13 @@ fun jetpackPlaywrightBuildType( targetDevice: String, buildUuid: String, jetpack
 			select(
 				name = "env.JETPACK_TARGET",
 				value = jetpackTarget,
-				label = 'Jetpack Target',
-				description = 'Which Jetpack install are we targeting through Calypso?',
-				options = [
+				label = "Jetpack Target",
+				description = "Which Jetpack install are we targeting through Calypso?",
+				options = listOf(
 					"wpcom-production",
 					"wpcom-staging",
 					"not-wpcom"
-				]
+				)
 			)
 
 		},
