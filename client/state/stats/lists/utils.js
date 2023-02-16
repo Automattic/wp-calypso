@@ -811,8 +811,20 @@ export const normalizers = {
 			return record;
 		};
 
+		// If there's only one item in a group, then we expand the children to the top level.
+		statsData = statsData.map( ( item ) => {
+			if ( item.results.length === 1 ) {
+				return {
+					...item.results[ 0 ],
+					group: item.results[ 0 ].name,
+					total: item.results[ 0 ].views,
+				};
+			}
+			return item;
+		} );
+
 		// If there's only one group, then we expand the children to the top level.
-		if ( 1 === statsData.length ) {
+		if ( 1 === statsData.length && statsData[ 0 ].results ) {
 			statsData = statsData[ 0 ].results.map( ( child ) => {
 				return {
 					...child,
