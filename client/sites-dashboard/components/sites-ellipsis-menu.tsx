@@ -277,7 +277,7 @@ function useSubmenuItems( siteSlug: string ) {
 function DeveloperSettings( { siteSlug }: { siteSlug: string } ) {
 	const { __ } = useI18n();
 	const submenuItems = useSubmenuItems( siteSlug );
-	const developerSubmenuProps = useSubenuPopoverProps< HTMLDivElement >();
+	const developerSubmenuProps = useSubenuPopoverProps< HTMLDivElement >( { offsetTop: -8 } );
 
 	return (
 		<div { ...developerSubmenuProps.parent }>

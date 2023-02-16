@@ -31,12 +31,27 @@ function useHasRightSpace( element: HTMLElement | undefined ) {
 	}, [ element ] );
 }
 
-export function useSubenuPopoverProps< T extends HTMLElement >() {
+export function useSubenuPopoverProps< T extends HTMLElement >(
+	options: { offsetTop?: number } = {}
+) {
+	const { offsetTop = 0 } = options;
 	const [ isVisible, setIsVisible ] = useState( false );
 	const anchor = useRef< T >();
 	const hasRightSpace = useHasRightSpace( anchor?.current );
 
-	const anchorRect = anchor?.current?.getBoundingClientRect();
+	function getAnchorWithOffset( anchorRect: DOMRect | undefined ) {
+		if ( ! anchorRect || offsetTop === 0 ) {
+			return anchorRect;
+		}
+		return new DOMRect(
+			anchorRect.x,
+			anchorRect.y + offsetTop,
+			anchorRect.width,
+			anchorRect.height
+		);
+	}
+
+	const anchorRect = getAnchorWithOffset( anchor?.current?.getBoundingClientRect() );
 	const submenu: Partial< SubmenuPopoverProps > = {
 		isVisible,
 		placement: hasRightSpace ? 'right-start' : 'left-start',
