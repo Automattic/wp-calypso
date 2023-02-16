@@ -1,13 +1,50 @@
 import { Button, Gridicon } from '@automattic/components';
+import moment from 'moment';
 import { PureComponent } from 'react';
-import formatCurrency from 'calypso/../packages/format-currency/src';
 import upsellImage from 'calypso/assets/images/checkout-upsell/upsell-rocket-2.png';
 import DocumentHead from 'calypso/components/data/document-head';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 
 import './style.scss';
 
-export class BusinessPlanUpgradeUpsell extends PureComponent {
+export class BusinessPlanUpgradeUpsellTreatment extends PureComponent {
+	constructor( props ) {
+		super( props );
+		this.state = { hours: 0, minutes: 0, seconds: 0 };
+	}
+
+	componentDidMount() {
+		const discountEndDate =
+			moment.utc( this.props.currentPlan?.subscribedDate ).unix() + 24 * 60 * 60;
+		this.getDiscountTimeRemaining( discountEndDate );
+		this.timerID = setInterval( () => this.getDiscountTimeRemaining( discountEndDate ), 1000 );
+	}
+
+	componentWillUnmount() {
+		clearInterval( this.timerID );
+	}
+
+	getDiscountTimeRemaining( discountEndDate ) {
+		const timeDiff = discountEndDate - moment.utc().unix();
+		if ( timeDiff <= 0 ) {
+			clearInterval( this.timerID );
+			this.setState( {
+				hours: 0,
+				minutes: 0,
+				seconds: 0,
+			} );
+			return;
+		}
+
+		this.setState( {
+			hours: Math.floor( ( timeDiff / ( 60 * 60 ) ) % 24 ),
+			minutes: Math.floor( ( timeDiff / 60 ) % 60 ),
+			seconds: Math.floor( timeDiff % 60 )
+				.toString()
+				.padStart( 2, '0' ),
+		} );
+	}
+
 	render() {
 		const { receiptId, translate } = this.props;
 
@@ -67,13 +104,14 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 	}
 
 	body() {
-		const {
-			translate,
-			planRawPrice,
-			planDiscountedRawPrice,
-			currencyCode,
-			hasSevenDayRefundPeriod,
-		} = this.props;
+		const { translate, hasSevenDayRefundPeriod } = this.props;
+
+		const { hours, minutes, seconds } = {
+			hours: this.state.hours,
+			minutes: this.state.minutes,
+			seconds: this.state.seconds,
+		};
+
 		return (
 			<>
 				<div className="business-plan-upgrade-upsell-new-design__column-pane">
@@ -135,22 +173,23 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 						) }
 					</p>
 					<p>
-						{ translate(
-							'Simply click below to upgrade. You’ll only have to pay the difference to the Premium Plan ({{del}}%(fullPrice)s{{/del}} %(discountPrice)s).',
-							{
-								components: {
-									del: <del />,
-								},
-								args: {
-									fullPrice: formatCurrency( planRawPrice, currencyCode, { stripZeros: true } ),
-									discountPrice: formatCurrency( planDiscountedRawPrice, currencyCode, {
-										stripZeros: true,
-									} ),
-									comment: 'A monetary value at the end, e.g. $25',
-								},
-							}
-						) }
+						{ translate( "Upgrade now and we'll give you {{b}}15% off your first %(term)s{{/b}}.", {
+							components: {
+								b: <b />,
+							},
+							args: {
+								term: hasSevenDayRefundPeriod ? 'month' : 'year',
+							},
+						} ) }
 					</p>
+					<div className="business-plan-upgrade-upsell-new-design__countdown-counter">
+						<span>
+							{ translate( 'Discount ends in %(hours)dh %(minutes)dm %(seconds)ss', {
+								args: { hours, minutes, seconds },
+								comment: 'The end string will look like "Discount ends in 6h 2m 20s"',
+							} ) }
+						</span>
+					</div>
 				</div>
 			</>
 		);
