@@ -23,7 +23,7 @@ export default function PostsListBanner() {
 				</div>
 				<div className="posts-list-banner__description">
 					{ translate(
-						'Reach more people by promoting your work to the larger WordPress.com community of blogs and sites.'
+						'Reach more people promoting your work to the larger WordPress.com community of blogs and sites.'
 					) }
 				</div>
 				<Button compact className="posts-list-banner__learn-more">
