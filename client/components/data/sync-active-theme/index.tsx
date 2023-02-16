@@ -1,4 +1,4 @@
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
@@ -23,6 +23,7 @@ const SyncActiveTheme = ( {
 	maxAttempts = 50,
 	delay = 2,
 }: SyncActiveThemeProps ) => {
+	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const requestStarted = useSelector( ( state ) => isRequestingActiveTheme( state, siteId ) );
 
