@@ -96,7 +96,7 @@ class DomainRegistrationSuggestion extends Component {
 	}
 
 	onButtonClick = () => {
-		const { suggestion, railcarId } = this.props;
+		const { suggestion, railcarId, uiPosition } = this.props;
 
 		if ( this.isUnavailableDomain( suggestion.domain_name ) ) {
 			return;
@@ -109,7 +109,7 @@ class DomainRegistrationSuggestion extends Component {
 			} );
 		}
 
-		this.props.onButtonClick( suggestion );
+		this.props.onButtonClick( suggestion, uiPosition );
 	};
 
 	isUnavailableDomain = ( domain ) => {
