@@ -50,6 +50,7 @@ import FoldableCard from 'calypso/components/foldable-card';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
+import PlanPill from 'calypso/components/plans/plan-pill';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import { getDiscountByName } from 'calypso/lib/discounts';
@@ -85,15 +86,14 @@ import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provi
 import { getManagePurchaseUrlFor } from '../purchases/paths';
 import PlanFeatures2023GridActions from './actions';
 import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
-import PopularBadge from './components/popular-badge';
 import PlanFeatures2023GridFeatures from './features';
 import PlanFeatures2023GridHeaderPrice from './header-price';
+import useFeaturedLabel from './hooks/use-featured-label';
 import { PlanFeaturesItem } from './item';
 import { PlanComparisonGrid } from './plan-comparison-grid';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import { PlanProperties, TransformedFeatureObject } from './types';
 import { getStorageStringFromFeature } from './util';
-
 import './style.scss';
 
 type PlanRowOptions = {
@@ -499,21 +499,27 @@ export class PlanFeatures2023Grid extends Component<
 				'popular-plan-parent-class': isBusinessPlan( planName ) || isPremiumPlan( planName ),
 			} );
 
-			const popularBadgeClasses = classNames( {
-				'with-plan-logo': ! (
-					isFreePlan( planName ) ||
-					isPersonalPlan( planName ) ||
-					isPremiumPlan( planName )
-				),
-			} );
+			const popularBadgeClasses = classNames(
+				'plan-features-2023-grid__popular-badge',
+				getPlanClass( planName ),
+				{
+					'with-plan-logo': ! (
+						isFreePlan( planName ) ||
+						isPersonalPlan( planName ) ||
+						isPremiumPlan( planName )
+					),
+				}
+			);
+
+			const featuredLabel = useFeaturedLabel( planName );
 
 			return (
 				<Container key={ planName } className={ tableItemClasses } isMobile={ options?.isMobile }>
-					<PopularBadge
-						isInSignup={ isInSignup }
-						planName={ planName }
-						additionalClassName={ popularBadgeClasses }
-					/>
+					{ featuredLabel && (
+						<div className={ popularBadgeClasses }>
+							<PlanPill isInSignup={ isInSignup }>{ featuredLabel }</PlanPill>
+						</div>
+					) }
 					<header className={ headerClasses }>
 						{ isBusinessPlan( planName ) && (
 							<ServiceLogo
