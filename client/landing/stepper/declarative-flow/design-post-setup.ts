@@ -1,4 +1,3 @@
-// import { useSelect } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import {
 	setSignupCompleteSlug,
@@ -7,7 +6,6 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useQuery } from '../hooks/use-query';
 import { useSiteSlug } from '../hooks/use-site-slug';
-// import { ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import DesignSetup from './internals/steps-repository/design-setup';
 import Processing from './internals/steps-repository/processing-step';
@@ -26,11 +24,10 @@ const designSetup: Flow = {
 		];
 	},
 
-	useStepNavigation( currentStep ) {
+	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
 		const siteSlug = useSiteSlug();
 		const flowToReturnTo = useQuery().get( 'flowToReturnTo' ) || 'free';
-		// const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, 'design-post-setup', flowName, currentStep );
@@ -56,10 +53,7 @@ const designSetup: Flow = {
 							) }?redirect_to=${ returnUrl }&signup=1`
 						);
 					}
-					return window.location.assign(
-						`/setup/design-post-setup/processing?siteSlug=${ siteSlug }`
-					);
-				//return navigate( `processing?siteSlug=${ siteSlug }` );
+					return navigate( `processing?siteSlug=${ siteSlug }` );
 			}
 		}
 
