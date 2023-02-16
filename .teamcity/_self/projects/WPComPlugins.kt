@@ -106,43 +106,6 @@ object BuildPlugins: BuildType({
 
 				# Run `yarn build` for the plugins specified in the glob.
 				yarn workspaces foreach --verbose --parallel --include '{happy-blocks,@automattic/notifications}' run build-ci
-
-				# Run extra script necessary for Happy Blocks.
-				# When other plugins that need additional configuration are added,
-				# this should be parallelized.
-				./.teamcity/scripts/WPComPlugins/happy-blocks.sh &
-			"""
-		}
-
-		/**
-		 * We download the archive directly in this step rather than relying on
-		 * an artifact dependency. We do this because if two commits on trunk
-		 * build at the same time, then they will both point to the same artifact
-		 * dependency. In this scenario, we actually want the current build to
-		 * diff against the artifact from that other commit build.
-		 *
-		 * Using the artifact dependency feature, we can only rely on already-finished
-		 * builds at the time the current build *starts*. This means every build
-		 * would have to run in serial, which is not possible in TeamCity without
-		 * a plugin. As a result, commits have to happen several minutes apart
-		 * in order for the diff tagging feature to work correctly in this scenario.
-		 *
-		 * Downloading from the API directly means that the previous build only
-		 * has to finish by the time this *step* begins. As a result, as long as
-		 * the two builds start further apart than the time this step takes,
-		 * then we can diff against the correct artifact. This means two builds
-		 * can be started within a few seconds of each other on trunk, and the
-		 * most recent build of the two can still rely on the other's artifact.
-		 */
-		bashNodeScript {
-			name = "Process Artifacts"
-			scriptContent = """
-				# Plugins that need to have artifacts processed.
-				# Pass in the directory as it appears on disk without the `app/` directory.
-				declare pluginDirs=("happy-blocks" "notifications")
-
-				./.teamcity/scripts/WPComPlugins/processArtifacts.sh \
-					"happy-blocks" "notifications"
 			"""
 		}
 	}
