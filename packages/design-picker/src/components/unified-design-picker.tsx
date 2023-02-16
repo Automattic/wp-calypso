@@ -196,7 +196,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 			const toolTip =
 				shouldUpgrade && isLimitedVirtual
 					? __( 'Unlock this style, and tons of other features, by upgrading to a Premium plan.' )
-					: null;
+					: undefined;
 			badge = (
 				<PremiumBadge
 					tooltipPosition="bottom right"
