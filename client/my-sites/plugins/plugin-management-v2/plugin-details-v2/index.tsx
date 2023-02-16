@@ -92,7 +92,7 @@ export default function PluginDetailsV2( {
 			/>
 			<div className="plugin-details-v2__top-container">
 				<div className="plugin-details__page legacy">
-					<div className="plugin-details__layout plugin-details__top-section">
+					<div>
 						<div className="plugin-details__layout-col-left">
 							<PluginDetailsHeader
 								isJetpackCloud
