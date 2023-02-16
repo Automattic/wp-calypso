@@ -44,7 +44,7 @@ const LaunchpadSitePreview = ( {
 
 	const getUpsellClickHandler = useCallback( () => {
 		recordTracksEvent( 'calypso_launchpad_preview_domain_upsell_click' );
-		page( `/domains/add/${ siteSlug }?domainAndPlanPackage=true` );
+		window.location.assign( `/domains/add/${ siteSlug }?domainAndPlanPackage=true` );
 	}, [ siteSlug ] );
 
 	if ( isInVideoPressFlow || isSenseiFlow ) {
