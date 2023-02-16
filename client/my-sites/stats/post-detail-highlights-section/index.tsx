@@ -95,9 +95,7 @@ export default function PostDetailHighlightsSection( {
 							<span>{ translate( 'Post likes' ) }</span>
 							<Count count={ post?.like_count || 0 } />
 						</div>
-						{ !! postId && (
-							<PostLikes siteId={ siteId } postId={ postId } postType={ post?.type } />
-						) }
+						<PostLikes siteId={ siteId } postId={ postId } postType={ post?.type } />
 					</Card>
 				</div>
 			</div>
