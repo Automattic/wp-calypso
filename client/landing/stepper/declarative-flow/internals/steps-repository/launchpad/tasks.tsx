@@ -141,6 +141,7 @@ export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 	build: [
 		'setup_general',
 		'design_selected',
+		'domain_upsell',
 		'first_post_published',
 		'design_edited',
 		'site_launched',
@@ -148,6 +149,7 @@ export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 	write: [
 		'setup_write',
 		'design_selected',
+		'domain_upsell',
 		'first_post_published',
 		'design_edited',
 		'site_launched',

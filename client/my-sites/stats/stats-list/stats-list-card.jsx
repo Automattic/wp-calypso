@@ -32,6 +32,9 @@ const StatsListCard = ( {
 	additionalColumns,
 	toggleControl,
 	className,
+	usePlainCard,
+	showLeftIcon,
+	isLinkUnderlined,
 } ) => {
 	const moduleNameTitle = titlecase( moduleType );
 	const debug = debugFactory( `calypso:stats:list:${ moduleType }` );
@@ -125,7 +128,7 @@ const StatsListCard = ( {
 						// left icon visible only for Author avatars and Contry flags.
 						if ( item?.countryCode ) {
 							leftSideItem = <StatsListCountryFlag countryCode={ item.countryCode } />;
-						} else if ( ( moduleType === 'authors' || moduleType === 'comments' ) && item?.icon ) {
+						} else if ( showLeftIcon && item?.icon ) {
 							leftSideItem = <StatsCardAvatar url={ item?.icon } altName={ item?.label } />;
 						}
 
@@ -153,6 +156,8 @@ const StatsListCard = ( {
 								isStatic={ ! isInteractive }
 								barMaxValue={ barMaxValue }
 								additionalColumns={ additionalColumns?.body( item ) }
+								usePlainCard={ usePlainCard }
+								isLinkUnderlined={ isLinkUnderlined }
 							/>
 						);
 					} ) }
