@@ -788,7 +788,7 @@ export const normalizers = {
 
 		const { startOf } = rangeOfPeriod( query.period, query.date );
 		const dataPath = query.summarize ? [ 'summary', 'groups' ] : [ 'days', startOf, 'groups' ];
-		const statsData = get( data, dataPath, [] );
+		let statsData = get( data, dataPath, [] );
 
 		const parseItem = ( item ) => {
 			let children;
@@ -810,6 +810,17 @@ export const normalizers = {
 
 			return record;
 		};
+
+		// If there's only one group, then we expand the children to the top level.
+		if ( 1 === statsData.length ) {
+			statsData = statsData[ 0 ].results.map( ( child ) => {
+				return {
+					...child,
+					group: child.name,
+					total: child.views,
+				};
+			} );
+		}
 
 		return statsData.map( ( item ) => {
 			let actions = [];
