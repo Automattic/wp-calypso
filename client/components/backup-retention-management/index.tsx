@@ -4,6 +4,9 @@ import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useStorageText } from 'calypso/components/backup-storage-space/hooks';
+import { UpsellPrice } from 'calypso/components/backup-storage-space/usage-warning/upsell';
+import QuerySiteProducts from 'calypso/components/data/query-site-products';
+import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { updateBackupRetention } from 'calypso/state/rewind/retention/actions';
 import { BACKUP_RETENTION_UPDATE_REQUEST } from 'calypso/state/rewind/retention/constants';
@@ -14,11 +17,13 @@ import getBackupRetentionUpdateRequestStatus from 'calypso/state/rewind/selector
 import getRewindBytesAvailable from 'calypso/state/rewind/selectors/get-rewind-bytes-available';
 import isRequestingRewindPolicies from 'calypso/state/rewind/selectors/is-requesting-rewind-policies';
 import isRequestingRewindSize from 'calypso/state/rewind/selectors/is-requesting-rewind-size';
+import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { RETENTION_OPTIONS, STORAGE_ESTIMATION_ADDITIONAL_BUFFER } from './constants';
 import InfoTooltip from './info-tooltip';
 import LoadingPlaceholder from './loading';
 import RetentionOptionsControl from './retention-options/retention-options-control';
+import useUpsellInfo from './use-upsell-info';
 import type { RetentionOptionInput } from './types';
 import type { RetentionPeriod } from 'calypso/state/rewind/retention/types';
 import './style.scss';
@@ -78,6 +83,28 @@ const BackupRetentionManagement: FunctionComponent = () => {
 		getBackupRetentionUpdateRequestStatus( state, siteId )
 	);
 
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) as string;
+	const { upsellSlug, originalPrice, isPriceFetching, currencyCode } = useUpsellInfo(
+		siteId,
+		estimatedCurrentSiteSize,
+		retentionSelected,
+		storageLimitBytes
+	);
+
+	const upgradePrice = (
+		<UpsellPrice
+			originalPrice={ originalPrice }
+			isPriceFetching={ isPriceFetching }
+			currencyCode={ currencyCode }
+			upsellSlug={ upsellSlug }
+		/>
+	);
+
+	const storageUpgradeUrl = buildCheckoutURL( siteSlug, upsellSlug.productSlug, {
+		source: 'backup-storage-purchase-not-renewal',
+		redirect_to: window.location.href,
+	} );
+
 	// Set the retention period selected when the user selects a new option
 	const onRetentionSelectionChange = useCallback(
 		( value: number ) => {
@@ -107,7 +134,6 @@ const BackupRetentionManagement: FunctionComponent = () => {
 	const disableFormSubmission =
 		! retentionSelected ||
 		retentionSelected === currentRetentionPlan ||
-		storageUpgradeRequired ||
 		updateRetentionRequestStatus === BACKUP_RETENTION_UPDATE_REQUEST.PENDING;
 
 	const [ confirmationDialogVisible, setConfirmationDialogVisible ] = useState( false );
@@ -154,9 +180,30 @@ const BackupRetentionManagement: FunctionComponent = () => {
 		}
 	}, [ updateRetentionRequestStatus ] );
 
+	const updateSettingsButton = (
+		<Button primary onClick={ handleUpdateRetention } disabled={ disableFormSubmission }>
+			{ updateRetentionRequestStatus !== BACKUP_RETENTION_UPDATE_REQUEST.PENDING ? (
+				translate( 'Update settings' )
+			) : (
+				<Spinner />
+			) }
+		</Button>
+	);
+
+	const purchaseStorageButton = (
+		<Button
+			primary
+			href={ storageUpgradeUrl }
+			disabled={ disableFormSubmission || isPriceFetching }
+		>
+			{ translate( 'Purchase storage' ) }
+		</Button>
+	);
+
 	return (
 		( isFetching && <LoadingPlaceholder /> ) || (
 			<div className="backup-retention-management">
+				{ siteId && <QuerySiteProducts siteId={ siteId } /> }
 				<Card compact={ true } className="setting-title">
 					<h3>{ translate( 'Days of backups saved' ) } </h3>
 					<InfoTooltip />
@@ -187,14 +234,21 @@ const BackupRetentionManagement: FunctionComponent = () => {
 								'*We estimate the space you need based on your current site size and the selected number of days.'
 							) }
 						</div>
+						{ storageUpgradeRequired && (
+							<div className="retention-form__additional-storage">
+								<div className="additional-storage__label">
+									{ translate( 'You need additional storage to choose this setting.' ) }
+								</div>
+								<div className="additional-storage__cta">
+									{ translate( 'Add %(storage)s additional storage for {{price/}}', {
+										components: { price: upgradePrice },
+										args: { storage: upsellSlug.storage },
+									} ) }
+								</div>
+							</div>
+						) }
 						<div className="retention-form__submit">
-							<Button primary onClick={ handleUpdateRetention } disabled={ disableFormSubmission }>
-								{ updateRetentionRequestStatus !== BACKUP_RETENTION_UPDATE_REQUEST.PENDING ? (
-									translate( 'Update settings' )
-								) : (
-									<Spinner />
-								) }
-							</Button>
+							{ storageUpgradeRequired ? purchaseStorageButton : updateSettingsButton }
 						</div>
 						<Dialog
 							additionalClassNames="backup-retention-management retention-form__confirmation-dialog"
