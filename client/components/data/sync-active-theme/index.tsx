@@ -45,7 +45,7 @@ const SyncActiveTheme = ( {
 				translate( 'Failed to check the theme activation status, please try again.' )
 			);
 		}
-	}, [ exceededMaxAttempts ] );
+	}, [ exceededMaxAttempts, delay, maxAttempts, themeId, translate ] );
 
 	useEffect( () => {
 		if ( activeTheme === themeId ) {
