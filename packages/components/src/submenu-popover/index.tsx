@@ -1,5 +1,5 @@
 import { Popover } from '@wordpress/components';
-import { LegacyRef, useMemo, useRef, useState } from 'react';
+import { LegacyRef, useCallback, useMemo, useRef, useState } from 'react';
 
 interface SubmenuPopoverProps extends Popover.Props {
 	isVisible?: boolean;
@@ -20,7 +20,37 @@ interface SubmenuPopoverProps extends Popover.Props {
 	__unstableForcePosition?: boolean;
 }
 
-function useHasRightSpace( element: HTMLElement | undefined ) {
+/**
+ * Adds a11y support to the submenu popover.
+ * - Closes the popover when pressing Escape.
+ * - Closes the popover when pressing Tab and the focus is on the last element.
+ */
+function useCloseSubmenuA11y() {
+	return useCallback(
+		( {
+			event,
+			lastChild,
+			setIsVisible,
+		}: {
+			event: React.KeyboardEvent< HTMLElement >;
+			lastChild: Element | null | undefined;
+			setIsVisible: ( isVisible: boolean ) => void;
+		} ) => {
+			const isEscape = event.key === 'Escape';
+			const tabOnLastChild = event.key === 'Tab' && ! event.shiftKey && lastChild === event.target;
+			if ( isEscape || tabOnLastChild ) {
+				setIsVisible( false );
+			}
+		},
+		[]
+	);
+}
+
+/**
+ * Checks if the submenu popover has enough space to be displayed on the right.
+ * If not, it will return false to be displayed on the left.
+ */
+function useHasRightSpace( element: HTMLElement | undefined ): boolean {
 	return useMemo( () => {
 		if ( ! element ) {
 			return true;
@@ -50,8 +80,8 @@ export function useSubenuPopoverProps< T extends HTMLElement >(
 			anchorRect.height
 		);
 	}
-
-	const anchorRect = getAnchorWithOffset( anchor?.current?.getBoundingClientRect() );
+	const closeSubmenuA11y = useCloseSubmenuA11y();
+	const anchorRect = getAnchorWithOffset( anchor.current?.getBoundingClientRect() );
 	const submenu: Partial< SubmenuPopoverProps > = {
 		isVisible,
 		placement: hasRightSpace ? 'right-start' : 'left-start',
@@ -63,6 +93,13 @@ export function useSubenuPopoverProps< T extends HTMLElement >(
 		ref: anchor as LegacyRef< T >,
 		onMouseOver: () => setIsVisible( true ),
 		onMouseLeave: () => setIsVisible( false ),
+		onClick: () => setIsVisible( true ),
+		onKeyDown: ( event: React.KeyboardEvent< T > ) => {
+			const lastChild = anchor.current?.querySelector(
+				'.submenu-popover > :last-child > :last-child'
+			);
+			closeSubmenuA11y( { event, lastChild, setIsVisible } );
+		},
 	};
 
 	return {
