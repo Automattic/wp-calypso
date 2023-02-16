@@ -22,6 +22,8 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 				intent: flow,
 				startingPoint: flow,
 				isBlankCanvas: theme?.includes( 'blank-canvas' ),
+				domainProductSlug: '',
+				planProductSlug: '',
 			},
 			true
 		);
