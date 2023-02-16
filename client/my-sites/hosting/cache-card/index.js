@@ -1,11 +1,9 @@
 import { Button, Card } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
-import ExternalLink from 'calypso/components/external-link';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import MaterialIcon from 'calypso/components/material-icon';
-import { CLEAR_CACHE } from 'calypso/lib/url/support';
 import { clearWordPressCache } from 'calypso/state/hosting/actions';
 import getRequest from 'calypso/state/selectors/get-request';
 import { shouldRateLimitAtomicCacheClear } from 'calypso/state/selectors/should-rate-limit-atomic-cache-clear';
@@ -33,7 +31,7 @@ const CacheCard = ( {
 						'Be careful, clearing the cache may make your site unresponsive while it is being rebuilt. {{a}}Learn more about clearing your site’s cache{{/a}}',
 						{
 							components: {
-								a: <ExternalLink icon target="_blank" href={ localizeUrl( CLEAR_CACHE ) } />,
+								a: <InlineSupportLink supportContext="hosting-clear-cache" showIcon={ false } />,
 							},
 						}
 					) }
