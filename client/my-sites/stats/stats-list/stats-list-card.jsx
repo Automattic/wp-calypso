@@ -4,10 +4,11 @@ import {
 	StatsCard,
 	StatsCardAvatar,
 } from '@automattic/components';
+import { Icon, tag, file, chevronDown } from '@wordpress/icons';
 import classNames from 'classnames';
 import debugFactory from 'debug';
 import page from 'page';
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import titlecase from 'to-title-case';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import OpenLink from './action-link';
@@ -127,6 +128,16 @@ const StatsListCard = ( {
 						} else if ( ( moduleType === 'authors' || moduleType === 'comments' ) && item?.icon ) {
 							leftSideItem = <StatsCardAvatar url={ item?.icon } altName={ item?.label } />;
 						}
+
+						if ( item?.children && moduleType === 'tags-categories' ) {
+							leftSideItem = <Icon className="stats-icon" icon={ chevronDown } size={ 22 } />;
+						} else if ( item?.label?.length === 1 && item?.label[ 0 ]?.labelIcon === 'folder' ) {
+							leftSideItem = <Icon className="stats-icon" icon={ file } size={ 22 } />;
+						} else if ( item?.label?.length === 1 && item?.label[ 0 ]?.labelIcon === 'tag' ) {
+							leftSideItem = <Icon className="stats-icon" icon={ tag } size={ 22 } />;
+						}
+
+						// ADD OPTION FOR ARRAYS WITH MULTIPLE ITEMS
 
 						return (
 							<HorizontalBarListItem
