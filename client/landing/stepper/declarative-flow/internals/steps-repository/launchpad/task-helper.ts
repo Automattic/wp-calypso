@@ -74,7 +74,7 @@ export function getEnhancedTasks(
 			switch ( task.id ) {
 				case 'setup_write':
 					taskData = {
-						title: translate( 'Personalize your site' ),
+						title: translate( 'Set up your site' ),
 					};
 					break;
 				case 'setup_free':
