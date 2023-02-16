@@ -43,7 +43,12 @@ class PostLifecycle extends Component {
 					className="reader-stream__blogging-prompt"
 					key={ 'blogging-prompt-card-' + postKey.index }
 				>
-					<BloggingPromptCard siteId={ siteId } viewContext="reader" showMenu={ false } />
+					<BloggingPromptCard
+						siteId={ siteId }
+						viewContext="reader"
+						showMenu={ false }
+						index={ postKey.index }
+					/>
 				</div>
 			);
 		} else if ( streamKey.indexOf( 'rec' ) > -1 ) {

@@ -16,7 +16,7 @@ export const GithubConnectCard = ( { connection }: GithubConnectCardProps ) => {
 	return (
 		<Card className="github-hosting-card">
 			<img className="github-hosting-icon" src={ iconGitHub } alt="" />
-			<CardHeading>{ __( 'Connect Branch' ) }</CardHeading>
+			<CardHeading>{ __( 'Connect branch' ) }</CardHeading>
 			<DisconnectGitHubExpander connection={ connection } />
 		</Card>
 	);

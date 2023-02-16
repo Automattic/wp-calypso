@@ -101,7 +101,7 @@ const linkInBio: Flow = {
 				case 'processing':
 					if ( providedDependencies?.goToHome && providedDependencies?.siteSlug ) {
 						return window.location.replace(
-							`/home/${ providedDependencies?.siteSlug }?celebrateLaunch=true`
+							`/home/${ providedDependencies?.siteSlug }?celebrateLaunch=true&launchpadComplete=true`
 						);
 					}
 					if ( providedDependencies?.goToCheckout ) {

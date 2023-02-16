@@ -1,9 +1,16 @@
 /**
  * @jest-environment jsdom
  */
-import { getArrayOfFilteredTasks, getEnhancedTasks } from '../task-helper';
+import { filterDomainUpsellTask, getArrayOfFilteredTasks, getEnhancedTasks } from '../task-helper';
 import { tasks, launchpadFlowTasks } from '../tasks';
-import { buildTask } from './lib/fixtures';
+import {
+	LINK_IN_BIO_FLOW,
+	FREE_FLOW,
+	WRITE_FLOW,
+	BUILD_FLOW,
+	NEWSLETTER_FLOW,
+} from './../../../../../../../../packages/onboarding/src/utils/flows';
+import { buildTask, buildSiteDetails, defaultSiteDetails } from './lib/fixtures';
 
 describe( 'Task Helpers', () => {
 	describe( 'getEnhancedTasks', () => {
@@ -81,6 +88,82 @@ describe( 'Task Helpers', () => {
 				expect( getArrayOfFilteredTasks( tasks, 'newsletter' ) ).toEqual(
 					tasks.filter( ( task ) => launchpadFlowTasks[ 'newsletter' ].includes( task.id ) )
 				);
+			} );
+		} );
+	} );
+
+	describe( 'filterDomainUpsellTask', () => {
+		describe( 'when site plan is free and affected flow (free, build, write)', () => {
+			it( 'return original enhanceTasks', () => {
+				const task = buildTask( {
+					id: 'domain_upsell',
+					completed: false,
+					disabled: true,
+					taskType: 'blog',
+					title: 'domain upsell task',
+				} );
+				const tasks = [ task ];
+				const site = defaultSiteDetails;
+				const freeFlow = FREE_FLOW;
+				const writeFlow = WRITE_FLOW;
+				const buildFlow = BUILD_FLOW;
+				expect( filterDomainUpsellTask( freeFlow, tasks, site ) ).toBe( tasks );
+				expect( filterDomainUpsellTask( writeFlow, tasks, site ) ).toBe( tasks );
+				expect( filterDomainUpsellTask( buildFlow, tasks, site ) ).toBe( tasks );
+			} );
+		} );
+
+		describe( 'when unaffected flow', () => {
+			it( 'return original enhanceTasks', () => {
+				const task = buildTask( {
+					id: 'domain_upsell',
+					completed: false,
+					disabled: true,
+					taskType: 'blog',
+					title: 'domain upsell task',
+				} );
+				const tasks = [ task ];
+				const site = defaultSiteDetails;
+				const newsletterFlow = NEWSLETTER_FLOW;
+				expect( filterDomainUpsellTask( newsletterFlow, tasks, site ) ).toBe( tasks );
+			} );
+		} );
+
+		describe( 'when site plan is not free and affected flow (free, build, write)', () => {
+			it( 'return enhanceTask array with domain_upsell task removed', () => {
+				const task = buildTask( {
+					id: 'domain_upsell',
+					completed: false,
+					disabled: true,
+					taskType: 'blog',
+					title: 'domain upsell task',
+				} );
+				const tasks = [ task ];
+				const site = buildSiteDetails( { plan: { is_free: false } } );
+
+				const freeFlow = FREE_FLOW;
+				const writeFlow = WRITE_FLOW;
+				const buildFlow = BUILD_FLOW;
+				expect( filterDomainUpsellTask( freeFlow, tasks, site ) ).toHaveLength( 0 );
+				expect( filterDomainUpsellTask( writeFlow, tasks, site ) ).toHaveLength( 0 );
+				expect( filterDomainUpsellTask( buildFlow, tasks, site ) ).toHaveLength( 0 );
+			} );
+		} );
+
+		describe( 'when site plan is not free and not affected flow', () => {
+			it( 'return enhanceTask array with domain_upsell task removed', () => {
+				const tasks = buildTask( {
+					id: 'domain_upsell',
+					completed: false,
+					disabled: true,
+					taskType: 'blog',
+					title: 'domain upsell task',
+				} );
+				const site = buildSiteDetails( {} );
+				const newsletterFlow = NEWSLETTER_FLOW;
+				const linkInBioFlow = LINK_IN_BIO_FLOW;
+				expect( filterDomainUpsellTask( newsletterFlow, tasks, site ) ).toBe( tasks );
+				expect( filterDomainUpsellTask( linkInBioFlow, tasks, site ) ).toBe( tasks );
 			} );
 		} );
 	} );
