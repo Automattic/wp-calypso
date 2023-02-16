@@ -258,6 +258,10 @@ body.is-section-theme-i4 {
 	.design-preview__style-variation-wrapper {
 		flex-basis: 120px;
 		flex-shrink: 0;
+
+		@include breakpoint-deprecated( "<960px" ) {
+			flex-basis: 100px;
+		}
 	}
 }
 
