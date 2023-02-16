@@ -6,6 +6,7 @@ export const PRODUCT_WPCOM_SEARCH = 'wpcom_search';
 export const PRODUCT_WPCOM_SEARCH_MONTHLY = 'wpcom_search_monthly';
 export const PRODUCT_WPCOM_UNLIMITED_THEMES = 'unlimited_themes';
 export const PRODUCT_WPCOM_CUSTOM_DESIGN = 'custom-design';
+export const PRODUCT_WPCOM_10_GB_STORAGE = '1gb_space_upgrade';
 
 export const WPCOM_SEARCH_PRODUCTS = <const>[ PRODUCT_WPCOM_SEARCH, PRODUCT_WPCOM_SEARCH_MONTHLY ];
 
