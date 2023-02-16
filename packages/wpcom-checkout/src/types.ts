@@ -501,6 +501,6 @@ export interface CountryListItem {
 	name: string;
 	has_postal_codes?: boolean;
 	tax_needs_city?: boolean;
-	tax_needs_state?: boolean;
+	tax_needs_subdivision?: boolean;
 	tax_needs_organization?: boolean;
 }

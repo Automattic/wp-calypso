@@ -85,7 +85,7 @@ export const countryList: CountryListItem[] = [
 		name: 'Canada',
 		has_postal_codes: true,
 		tax_needs_city: true,
-		tax_needs_state: true,
+		tax_needs_subdivision: true,
 	},
 	{
 		code: 'GB',
@@ -97,7 +97,7 @@ export const countryList: CountryListItem[] = [
 		code: 'IN',
 		name: 'India',
 		has_postal_codes: true,
-		tax_needs_state: true,
+		tax_needs_subdivision: true,
 	},
 	{
 		code: 'JP',

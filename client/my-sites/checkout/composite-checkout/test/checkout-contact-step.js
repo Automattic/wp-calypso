@@ -879,24 +879,29 @@ describe( 'Checkout contact step', () => {
 
 	it.each( [
 		{
-			tax: { country_code: 'CA', city: 'Montreal', state: 'QC', postal_code: 'A1A 1A1' },
-			labels: { state: 'Province' },
+			tax: {
+				country_code: 'CA',
+				city: 'Montreal',
+				subdivision_code: 'QC',
+				postal_code: 'A1A 1A1',
+			},
+			labels: { subdivision_code: 'Province' },
 			product: 'plan',
 			expect: 'city and province',
 		},
 		{
-			tax: { country_code: 'CA', city: 'Montreal', state: 'QC', postal_code: 'A1A 1A1' },
-			labels: { state: 'Province' },
+			tax: { country_code: 'CA', city: 'Montreal', subdivision_code: 'QC', postal_code: 'A1A 1A1' },
+			labels: { subdivision_code: 'Province' },
 			product: 'plan with domain',
 			expect: 'city and province',
 		},
 		{
-			tax: { country_code: 'IN', state: 'KA', postal_code: '123 456' },
+			tax: { country_code: 'IN', subdivision_code: 'KA', postal_code: '123 456' },
 			product: 'plan',
 			expect: 'state',
 		},
 		{
-			tax: { country_code: 'IN', state: 'KA', postal_code: '123 456' },
+			tax: { country_code: 'IN', subdivision_code: 'KA', postal_code: '123 456' },
 			product: 'plan with domain',
 			expect: 'state',
 		},
@@ -933,10 +938,10 @@ describe( 'Checkout contact step', () => {
 	] )(
 		'sends additional tax data with $expect to the shopping-cart endpoint when a country with those requirements has been chosen and a $product is in the cart',
 		async ( { tax, labels, product } ) => {
-			const selects = { country_code: true, state: true };
+			const selects = { country_code: true, subdivision_code: true };
 			labels = {
 				city: 'City',
-				state: 'State',
+				subdivision_code: 'State',
 				organization: 'Organization',
 				postal_code: product === 'plan' ? 'Postal code' : 'Postal Code',
 				country_code: 'Country',
@@ -970,10 +975,7 @@ describe( 'Checkout contact step', () => {
 					...initialCart,
 					...cartChanges,
 					tax: {
-						location: {
-							...tax,
-							subdivision_code: product === 'plan with domain' ? tax.state : undefined,
-						},
+						location: tax,
 					},
 				} )
 			);

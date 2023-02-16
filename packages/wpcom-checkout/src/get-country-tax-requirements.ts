@@ -2,7 +2,7 @@ import type { CountryListItem } from './types';
 
 export interface CountryTaxRequirements {
 	city?: true;
-	state?: true;
+	subdivision?: true;
 	organization?: true;
 }
 
@@ -41,8 +41,8 @@ export function getCountryTaxRequirements(
 	if ( countryListItem.tax_needs_city ) {
 		requirements.city = true;
 	}
-	if ( countryListItem.tax_needs_state ) {
-		requirements.state = true;
+	if ( countryListItem.tax_needs_subdivision ) {
+		requirements.subdivision = true;
 	}
 	if ( countryListItem.tax_needs_organization ) {
 		requirements.organization = true;

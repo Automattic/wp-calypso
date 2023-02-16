@@ -156,7 +156,7 @@ export default function TaxFields( {
 			/>
 		);
 	}
-	if ( taxRequirements.state ) {
+	if ( taxRequirements.subdivision ) {
 		fields.push(
 			<StateSelect
 				label={ getStateLabelText( countryCode?.value ?? '' ) }
@@ -241,7 +241,7 @@ function updateOnChangePayload(
 		countryCode: taxInfo.countryCode,
 		postalCode: arePostalCodesSupported ? taxInfo.postalCode : undefined,
 		city: taxRequirements.city ? taxInfo.city : undefined,
-		state: taxRequirements.state ? taxInfo.state : undefined,
+		state: taxRequirements.subdivision ? taxInfo.state : undefined,
 		organization: taxRequirements.organization ? taxInfo.organization : undefined,
 	};
 }
