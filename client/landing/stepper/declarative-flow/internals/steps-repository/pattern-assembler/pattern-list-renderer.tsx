@@ -1,6 +1,8 @@
 import { PatternRenderer } from '@automattic/block-renderer';
 import { Button } from '@automattic/components';
 import classnames from 'classnames';
+import { useState } from 'react';
+import { useInView } from 'calypso/lib/use-in-view';
 import { encodePatternId } from './utils';
 import type { Pattern } from './types';
 import './pattern-list-renderer.scss';
@@ -24,13 +26,17 @@ const PLACEHOLDER_HEIGHT = 100;
 const MAX_HEIGHT_FOR_100VH = 500;
 
 const PatternListItem = ( { pattern, className, isShown, onSelect }: PatternListItemProps ) => {
+	const [ inViewOnce, setInViewOnce ] = useState( false );
+	const ref = useInView< HTMLButtonElement >( () => setInViewOnce( true ) );
+
 	return (
 		<Button
 			className={ className }
 			title={ pattern.category }
+			ref={ ref }
 			onClick={ () => onSelect( pattern ) }
 		>
-			{ isShown ? (
+			{ isShown && inViewOnce ? (
 				<PatternRenderer
 					key={ pattern.id }
 					patternId={ encodePatternId( pattern.id ) }
