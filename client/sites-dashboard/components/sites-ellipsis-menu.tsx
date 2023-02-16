@@ -270,7 +270,12 @@ function useSubmenuItems( siteSlug: string ) {
 				eventName: 'calypso_sites_dashboard_site_action_submenu_web_server_settings_click',
 			},
 			{
-				label: __( 'Connect github' ),
+				label: __( 'Performance settings' ),
+				href: `/settings/performance/${ siteSlug }`,
+				eventName: 'calypso_sites_dashboard_site_action_submenu_web_server_settings_click',
+			},
+			{
+				label: __( 'Github connection' ),
 				href: `/hosting-config/${ siteSlug }#connect-github`,
 				eventName: 'calypso_sites_dashboard_site_action_submenu_connect_github_click',
 			},
