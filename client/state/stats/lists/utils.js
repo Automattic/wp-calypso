@@ -811,9 +811,9 @@ export const normalizers = {
 			return record;
 		};
 
-		// Expand the children to the parent level, if there's only one group or only one item in a group.
+		// If there's only one item in a group, then we expand the children to the parent level.
 		statsData = statsData.map( ( item ) => {
-			if ( item.results.length === 1 || ( statsData.length === 1 && item.results?.length > 0 ) ) {
+			if ( item.results.length === 1 ) {
 				return {
 					...item.results[ 0 ],
 					group: item.results[ 0 ].name,
