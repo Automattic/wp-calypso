@@ -497,6 +497,7 @@ class ManagePurchase extends Component {
 		this.setState( {
 			showNonPrimaryDomainWarningDialog: true,
 			showRemoveSubscriptionWarningDialog: false,
+			showWordAdsEligibilityWarningDialog: false,
 			isRemoving: false,
 			isCancelSurveyVisible: false,
 			cancelLink,
@@ -705,14 +706,14 @@ class ManagePurchase extends Component {
 				link_text: text,
 			} );
 
-			if ( this.shouldShowNonPrimaryDomainWarning() ) {
-				event.preventDefault();
-				this.showNonPrimaryDomainWarningDialog( link );
-			}
-
 			if ( this.props.hasSetupAds ) {
 				event.preventDefault();
 				this.showWordAdsEligibilityWarningDialog( link );
+			}
+
+			if ( this.shouldShowNonPrimaryDomainWarning() ) {
+				event.preventDefault();
+				this.showNonPrimaryDomainWarningDialog( link );
 			}
 
 			if ( isSubscription( purchase ) ) {
