@@ -22,6 +22,7 @@ import EmptyContent from 'calypso/components/empty-content';
 import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
 import { CtaButton } from 'calypso/components/promo-section/promo-card/cta';
 import wp from 'calypso/lib/wp';
+import { WordAdsStatus } from 'calypso/my-sites/earn/ads/types';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -606,7 +607,7 @@ export default connect(
 			isUserAdmin: canCurrentUser( state, siteId, 'manage_options' ),
 			hasWordAdsFeature,
 			hasIneligiblePlanforWordAds:
-				! hasWordAdsFeature && getSiteWordadsStatus( state, siteId ) === 'ineligible',
+				! hasWordAdsFeature && getSiteWordadsStatus( state, siteId ) === WordAdsStatus.ineligible,
 			hasSimplePayments: siteHasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),
 			hasConnectedAccount,
 			eligibleForProPlan: isEligibleForProPlan( state, siteId ),

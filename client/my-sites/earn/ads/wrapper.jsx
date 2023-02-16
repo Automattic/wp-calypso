@@ -18,6 +18,7 @@ import FeatureExample from 'calypso/components/feature-example';
 import FormButton from 'calypso/components/forms/form-button';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import { WordAdsStatus } from 'calypso/my-sites/earn/ads/types';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getSiteWordadsStatus from 'calypso/state/selectors/get-site-wordads-status';
 import siteHasWordAds from 'calypso/state/selectors/site-has-wordads';
@@ -334,7 +335,7 @@ const mapStateToProps = ( state ) => {
 		canUpgradeToUseWordAds: ! site.options.wordads && ! hasWordAdsFeature,
 		hasWordAdsFeature,
 		hasIneligiblePlanforWordAds:
-			! hasWordAdsFeature && getSiteWordadsStatus( state, siteId ) === 'ineligible',
+			! hasWordAdsFeature && getSiteWordadsStatus( state, siteId ) === WordAdsStatus.ineligible,
 		requestingWordAdsApproval: isRequestingWordAdsApprovalForSite( state, site ),
 		wordAdsError: getWordAdsErrorForSite( state, site ),
 		wordAdsSuccess: getWordAdsSuccessForSite( state, site ),
