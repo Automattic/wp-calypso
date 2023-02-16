@@ -34,11 +34,6 @@ function wpcom_should_limit_global_styles( $blog_id = 0 ) {
 		}
 	}
 
-	// Limit Global Styles on sites with the 'wpcom-limit-global-styles' sticker.
-	if ( wpcom_global_styles_has_blog_sticker( 'wpcom-limit-global-styles', $blog_id ) ) {
-		return true;
-	}
-
 	// Do not limit Global Styles on demo sites.
 	if ( wpcom_global_styles_has_blog_sticker( 'theme-demo-site', $blog_id ) ) {
 		return false;
@@ -46,10 +41,7 @@ function wpcom_should_limit_global_styles( $blog_id = 0 ) {
 
 	// Do not limit Global Styles on sites created before we made it a paid feature (2022-12-15),
 	// that had already used Global Styles.
-	if (
-		$blog_id < 213403000 &&
-		defined( 'IS_WPCOM' ) && IS_WPCOM && wpcom_global_styles_has_been_used( $blog_id )
-	) {
+	if ( wpcom_premium_global_styles_is_site_exempt( $blog_id ) ) {
 		return false;
 	}
 
@@ -290,13 +282,32 @@ function wpcom_global_styles_in_use() {
 }
 
 /**
- * Checks if Global Styles has been customized by the given site in the past.
+ * Checks whether the site is exempt from Premium Global Styles because
+ * it was created before the Premium Global Styles launch date (2022-12-15)
+ * and had already customized its Global Styles.
  *
  * @param  int $blog_id Blog ID.
- * @return bool Whether Global Styles have been customized.
+ * @return bool Whether the site is exempt from Premium Global Styles.
  */
-function wpcom_global_styles_has_been_used( $blog_id = 0 ) {
+function wpcom_premium_global_styles_is_site_exempt( $blog_id = 0 ) {
+	// Sites created after we made GS a paid feature (2022-12-15) are never exempt.
+	if ( $blog_id >= 213403000 ) {
+		return false;
+	}
+
+	// Non-Simple sites are edge cases; other conditions will determine whether they can use GS.
+	if ( ! defined( 'IS_WPCOM' ) || ! IS_WPCOM ) {
+		return false;
+	}
+
+	// If the exemption check has already been performed, just return if the site is exempt.
+	if ( wpcom_global_styles_has_blog_sticker( 'wpcom-premium-global-styles-exemption-checked', $blog_id ) ) {
+		return wpcom_global_styles_has_blog_sticker( 'wpcom-premium-global-styles-exempt', $blog_id );
+	}
+
 	switch_to_blog( $blog_id );
+
+	add_blog_sticker( 'wpcom-premium-global-styles-exemption-checked', null, null, $blog_id );
 
 	$global_styles_used = false;
 
@@ -313,8 +324,8 @@ function wpcom_global_styles_has_been_used( $blog_id = 0 ) {
 		}
 	}
 
-	if ( ! $global_styles_used ) {
-		add_blog_sticker( 'wpcom-limit-global-styles', null, null, $blog_id );
+	if ( $global_styles_used ) {
+		add_blog_sticker( 'wpcom-premium-global-styles-exempt', null, null, $blog_id );
 	}
 
 	restore_current_blog();
