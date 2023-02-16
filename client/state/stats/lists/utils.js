@@ -813,7 +813,7 @@ export const normalizers = {
 
 		// If there's only one item in a group, then we expand the children to the top level.
 		statsData = statsData.map( ( item ) => {
-			if ( item.results.length === 1 ) {
+			if ( item.results.length === 1 || ( statsData.length === 1 && item.results?.length > 0 ) ) {
 				return {
 					...item.results[ 0 ],
 					group: item.results[ 0 ].name,
@@ -822,17 +822,6 @@ export const normalizers = {
 			}
 			return item;
 		} );
-
-		// If there's only one group, then we expand the children to the top level.
-		if ( 1 === statsData.length && statsData[ 0 ].results ) {
-			statsData = statsData[ 0 ].results.map( ( child ) => {
-				return {
-					...child,
-					group: child.name,
-					total: child.views,
-				};
-			} );
-		}
 
 		return statsData.map( ( item ) => {
 			let actions = [];
