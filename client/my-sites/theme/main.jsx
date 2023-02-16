@@ -51,7 +51,10 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
-import { setThemePreviewOptions, themeStartActivationSync } from 'calypso/state/themes/actions';
+import {
+	setThemePreviewOptions,
+	themeStartActivationSync as themeStartActivationSyncAction,
+} from 'calypso/state/themes/actions';
 import {
 	doesThemeBundleSoftwareSet,
 	isThemeActive,
@@ -142,9 +145,9 @@ class ThemeSheet extends Component {
 	componentDidMount() {
 		this.scrollToTop();
 
-		const { syncActiveTheme } = this.props;
+		const { syncActiveTheme, themeStartActivationSync, siteId, themeId } = this.props;
 		if ( syncActiveTheme ) {
-			this.props.themeStartActivationSync( this.props.siteId, this.props.themeId );
+			themeStartActivationSync( siteId, themeId );
 		}
 	}
 
@@ -1166,7 +1169,7 @@ export default connect(
 	{
 		setThemePreviewOptions,
 		recordTracksEvent,
-		themeStartActivationSync,
+		themeStartActivationSync: themeStartActivationSyncAction,
 		errorNotice,
 	}
 )( localize( ThemeSheetWithOptions ) );
