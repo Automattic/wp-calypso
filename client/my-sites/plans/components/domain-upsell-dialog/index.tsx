@@ -59,7 +59,7 @@ const DomainUpsellDialog: React.FunctionComponent< {
 					<Gridicon icon="cross" />
 				</button>
 			</header>
-			<h1>{ translate( 'You need a plan to have a primary custom domain' ) }</h1>
+			<h1>{ translate( 'You need a paid plan to have a primary custom domain' ) }</h1>
 			<p>
 				{ translate(
 					'Any domain you purchase without a plan will get redirected to %(domainName)s.',
