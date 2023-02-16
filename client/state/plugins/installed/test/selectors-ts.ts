@@ -290,6 +290,20 @@ describe( 'getPluginsOnSites', () => {
 
 		expect( result ).toEqual( {} );
 	} );
+
+	it( 'returns an empty object for an empty plugins array', () => {
+		const result = getPluginsOnSites( state, [] );
+
+		expect( result ).toEqual( {} );
+	} );
+
+	it( 'returns undefined for a plugin object with an invalid slug', () => {
+		const invalidPlugin = { ...jetpackWithSites, ...{ slug: 'invalid-slug' } };
+
+		const result = getPluginsOnSites( state, [ invalidPlugin ] );
+
+		expect( result ).toEqual( { 'invalid-plugin': undefined } );
+	} );
 } );
 
 describe( 'getPluginOnSites', () => {
