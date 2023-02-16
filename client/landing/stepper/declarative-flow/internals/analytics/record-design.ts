@@ -16,6 +16,7 @@ export function recordPreviewedDesign( {
 	recordTracksEvent( 'calypso_signup_design_preview_select', {
 		...getDesignEventProps( { flow, intent, design, styleVariation } ),
 		...getDesignTypeProps( design ),
+		...getVirtualDesignProps( design, styleVariation ),
 	} );
 }
 
@@ -72,12 +73,8 @@ export function getDesignEventProps( {
 	design: Design;
 	styleVariation?: StyleVariation;
 } ) {
-	let variationSlugSuffix = '';
-	if ( styleVariation && styleVariation.slug !== 'default' ) {
-		variationSlugSuffix = `-${ styleVariation.slug }`;
-	} else if ( design.is_virtual && design.style_variation?.slug ) {
-		variationSlugSuffix = `-${ design.style_variation.slug }`;
-	}
+	const variationSlugSuffix =
+		styleVariation && styleVariation.slug !== 'default' ? `-${ styleVariation.slug }` : '';
 
 	return {
 		flow,
@@ -89,6 +86,17 @@ export function getDesignEventProps( {
 		design_type: design.design_type,
 		is_premium: design.is_premium,
 		has_style_variations: ( design.style_variations || [] ).length > 0,
+	};
+}
+
+export function getVirtualDesignProps( design: Design, styleVariation?: StyleVariation ) {
+	const variationSlugSuffix =
+		! styleVariation && design.is_virtual && design.style_variation?.slug
+			? `-${ design.style_variation.slug }`
+			: '';
+
+	return {
+		slug: design.slug + variationSlugSuffix,
 		is_virtual: design.is_virtual,
 	};
 }

@@ -38,6 +38,7 @@ import {
 	getDesignTypeProps,
 	recordPreviewedDesign,
 	recordSelectedDesign,
+	getVirtualDesignProps,
 } from '../../analytics/record-design';
 import { getCategorizationOptions } from './categories';
 import { DEFAULT_VARIATION_SLUG, RETIRING_DESIGN_SLUGS, STEP_NAME } from './constants';
@@ -256,10 +257,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		}
 
 		if ( styleVariation ) {
-			recordTracksEvent(
-				'calypso_signup_design_picker_style_variation_button_click',
-				getEventPropsByDesign( design, styleVariation )
-			);
+			recordTracksEvent( 'calypso_signup_design_picker_style_variation_button_click', {
+				...getEventPropsByDesign( design, styleVariation ),
+				...getVirtualDesignProps( design, styleVariation ),
+			} );
 			setSelectedStyleVariation( styleVariation );
 		}
 
