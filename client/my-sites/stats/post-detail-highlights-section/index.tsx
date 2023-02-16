@@ -84,10 +84,10 @@ export default function PostDetailHighlightsSection( {
 				<div className="highlight-cards-list">
 					<PostStatsCard
 						heading={ translate( 'All-time stats' ) }
-						likeCount={ post?.like_count }
+						likeCount={ post?.like_count || 0 }
 						post={ postData }
 						viewCount={ viewCount }
-						commentCount={ post?.discussion?.comment_count }
+						commentCount={ post?.discussion?.comment_count || 0 }
 					/>
 
 					<Card className="highlight-card">
