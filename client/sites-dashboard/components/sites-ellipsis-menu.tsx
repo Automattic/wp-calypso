@@ -23,6 +23,7 @@ import {
 	getManagePluginsUrl,
 	getPluginsUrl,
 	getSettingsUrl,
+	isCustomDomain,
 	isNotAtomicJetpack,
 } from '../utils';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
@@ -245,54 +246,82 @@ const SiteDropdownMenu = styled( DropdownMenu )( {
 	},
 } );
 
-function useSubmenuItems( siteSlug: string ) {
+function useSubmenuItems( {
+	siteSlug,
+	isCustomDomain,
+	isAtomic,
+}: {
+	siteSlug: string;
+	isCustomDomain: boolean;
+	isAtomic: boolean;
+} ) {
 	const { __ } = useI18n();
 	return useMemo(
-		() => [
-			{
-				label: __( 'Privacy settings' ),
-				href: `/settings/general/${ siteSlug }#site-privacy-settings`,
-				eventName: 'calypso_sites_dashboard_site_action_submenu_privacy_settings_click',
-			},
-			{
-				label: __( 'Database access' ),
-				href: `/hosting-config/${ siteSlug }#database-access`,
-				eventName: 'calypso_sites_dashboard_site_action_submenu_database_access_click',
-			},
-			{
-				label: __( 'SFTP/SSH credentials' ),
-				href: `/hosting-config/${ siteSlug }#sftp-credentials`,
-				eventName: 'calypso_sites_dashboard_site_action_submenu_sftp_credentials_click',
-			},
-			{
-				label: __( 'Web server settings' ),
-				href: `/hosting-config/${ siteSlug }#web-server-settings`,
-				eventName: 'calypso_sites_dashboard_site_action_submenu_web_server_settings_click',
-			},
-			{
-				label: __( 'Performance settings' ),
-				href: `/settings/performance/${ siteSlug }`,
-				eventName: 'calypso_sites_dashboard_site_action_submenu_web_server_settings_click',
-			},
-			{
-				label: __( 'Github connection' ),
-				href: `/hosting-config/${ siteSlug }#connect-github`,
-				eventName: 'calypso_sites_dashboard_site_action_submenu_connect_github_click',
-			},
-			{
-				label: __( 'Clear cache' ),
-				href: `/hosting-config/${ siteSlug }#cache`,
-				eventName: 'calypso_sites_dashboard_site_action_submenu_cache_click',
-			},
-		],
-		[ __, siteSlug ]
+		() =>
+			[
+				{
+					label: __( 'Privacy settings' ),
+					href: `/settings/general/${ siteSlug }#site-privacy-settings`,
+					eventName: 'calypso_sites_dashboard_site_action_submenu_privacy_settings_click',
+				},
+				{
+					condition: isAtomic,
+					label: __( 'Database access' ),
+					href: `/hosting-config/${ siteSlug }#database-access`,
+					eventName: 'calypso_sites_dashboard_site_action_submenu_database_access_click',
+				},
+				{
+					condition: isAtomic,
+					label: __( 'SFTP/SSH credentials' ),
+					href: `/hosting-config/${ siteSlug }#sftp-credentials`,
+					eventName: 'calypso_sites_dashboard_site_action_submenu_sftp_credentials_click',
+				},
+				{
+					condition: isAtomic,
+					label: __( 'Web server settings' ),
+					href: `/hosting-config/${ siteSlug }#web-server-settings`,
+					eventName: 'calypso_sites_dashboard_site_action_submenu_web_server_settings_click',
+				},
+				{
+					label: __( 'Performance settings' ),
+					href: `/settings/performance/${ siteSlug }`,
+					eventName: 'calypso_sites_dashboard_site_action_submenu_performance_settings_click',
+				},
+				{
+					condition: isCustomDomain,
+					label: __( 'DNS records' ),
+					href: `/domains/manage/${ siteSlug }/dns/${ siteSlug }`,
+					eventName: 'calypso_sites_dashboard_site_action_submenu_dns_records_click',
+				},
+				{
+					condition: isAtomic,
+					label: __( 'Github connection' ),
+					href: `/hosting-config/${ siteSlug }#connect-github`,
+					eventName: 'calypso_sites_dashboard_site_action_submenu_connect_github_click',
+				},
+				{
+					condition: isAtomic,
+					label: __( 'Clear cache' ),
+					href: `/hosting-config/${ siteSlug }#cache`,
+					eventName: 'calypso_sites_dashboard_site_action_submenu_cache_click',
+				},
+			].filter( ( { condition } ) => condition ?? true ),
+		[ __, isAtomic, isCustomDomain, siteSlug ]
 	);
 }
 
 function DeveloperSettings( { site, recordTracks }: SitesMenuItemProps ) {
 	const { __ } = useI18n();
-	const submenuItems = useSubmenuItems( site.slug );
+	const submenuItems = useSubmenuItems( {
+		siteSlug: site.slug,
+		isCustomDomain: isCustomDomain( site.slug ),
+		isAtomic: Boolean( site.is_wpcom_atomic ),
+	} );
 	const developerSubmenuProps = useSubenuPopoverProps< HTMLDivElement >( { offsetTop: -8 } );
+
+	if ( submenuItems.length === 0 ) {
+		return null;
+	}
 
 	return (
 		<div { ...developerSubmenuProps.parent }>
