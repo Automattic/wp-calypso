@@ -1,4 +1,3 @@
-//imports
 import { PLAN_JETPACK_COMPLETE } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
