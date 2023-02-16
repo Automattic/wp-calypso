@@ -8,7 +8,7 @@ interface SearchProps {
 	onSelect( option: string ): void;
 	onChange?( query: string, selected: boolean ): void;
 	disabled?: boolean;
-	onReset(): void;
+	isSearching: boolean;
 	query: string;
 }
 
@@ -18,9 +18,9 @@ export const Search = ( {
 	placeholder,
 	options,
 	onSelect,
-	onReset,
 	onChange,
 	disabled,
+	isSearching,
 	query,
 }: SearchProps ) => {
 	return (
@@ -29,8 +29,8 @@ export const Search = ( {
 			className={ className }
 			placeholder={ placeholder }
 			disabled={ disabled }
-			showIcon={ false }
-			showSuggestionsWithEmptyQuery
+			showIcon={ isSearching }
+			isSearching={ isSearching }
 			onChange={ ( query: string, selected: boolean ) => {
 				if ( selected ) {
 					return onSelect( query );
@@ -38,7 +38,6 @@ export const Search = ( {
 
 				onChange?.( query, selected );
 			} }
-			onReset={ onReset }
 			value={ query }
 			suggestions={ options
 				.filter( ( repo ) =>

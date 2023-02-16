@@ -7,15 +7,15 @@ import { useGithubRepos } from './use-github-repos';
 interface SearchReposProps {
 	siteId: number | null;
 	onSelect( repo: string ): void;
-	onReset(): void;
+	onChange?( query: string ): void;
 }
 
-export const SearchRepos = ( { siteId, onSelect, onReset }: SearchReposProps ) => {
+export const SearchRepos = ( { siteId, onSelect, onChange }: SearchReposProps ) => {
 	const { __ } = useI18n();
 	const [ query, setQuery ] = useState( '' );
 	const [ debouncedQuery ] = useDebounce( query, 500 );
 
-	const { data: repos } = useGithubRepos( siteId, debouncedQuery );
+	const { data: repos, isLoading } = useGithubRepos( siteId, debouncedQuery );
 
 	return (
 		<Search
@@ -24,11 +24,11 @@ export const SearchRepos = ( { siteId, onSelect, onReset }: SearchReposProps ) =
 			className="connect-branch__repository-field"
 			placeholder={ __( 'Start typing a repo..' ) }
 			options={ query ? repos ?? [] : [] }
+			isSearching={ isLoading }
 			onSelect={ onSelect }
-			onChange={ ( query ) => setQuery( query.trim() ) }
-			onReset={ () => {
-				setQuery( '' );
-				onReset();
+			onChange={ ( query ) => {
+				setQuery( query.trim() );
+				onChange?.( query.trim() );
 			} }
 		/>
 	);

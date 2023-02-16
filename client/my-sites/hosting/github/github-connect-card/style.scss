@@ -2,6 +2,7 @@
 	display: flex;
 	flex-direction: row;
 	align-items: flex-start;
+	margin-bottom: 0;
 	gap: 16px;
 
 	.select-dropdown__header {
@@ -9,9 +10,17 @@
 	}
 }
 
+.connect-branch-card .form-fieldset {
+	margin-bottom: 0;
+}
+
 .connect-branch__field {
 	max-width: 100%;
 	width: 100%;
+
+	.select-dropdown__container {
+		width: 100%;
+	}
 }
 
 @media ( max-width: 860px ) {
@@ -27,7 +36,23 @@
 	position: absolute;
 }
 
+.connect-branch__repository-field {
+	.spinner {
+		right: 10px;
+		width: unset !important;
+		left: unset;
+	}
+	input {
+		padding-right: 42px;
+	}
+}
+
 .connect-branch__buttons {
 	display: inline-flex;
 	gap: 16px;
+}
+
+.connect-branch-card .form-setting-explanation {
+	margin-bottom: 20px;
+	margin-top: 5px;
 }
