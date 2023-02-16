@@ -181,7 +181,7 @@ fun editorTrackingBuildType( targetDevice: String, buildUuid: String, atomic: Bo
 	)
 }
 
-fun jetpackPlaywrightBuildType( targetDevice: String, buildUuid: String, jetpackTarget: string = "wpcom-production" ): E2EBuildType {
+fun jetpackPlaywrightBuildType( targetDevice: String, buildUuid: String, jetpackTarget: String = "wpcom-production" ): E2EBuildType {
 	return E2EBuildType (
 		buildId = "WPComTests_jetpack_Playwright_$targetDevice",
 		buildUuid = buildUuid,
