@@ -27,7 +27,7 @@ object WPComPlugins : Project({
 		)
 	}
 
-	buildType(BuildPlugins)
+	buildType(CalypsoApps)
 	buildType(EditingToolkit)
 	buildType(WpcomBlockEditor)
 	buildType(Notifications)
@@ -63,11 +63,11 @@ object WPComPlugins : Project({
 	}
 })
 
-object BuildPlugins: BuildType({
+object CalypsoApps: BuildType({
 	id("calypso_WPComPlugins_Build_Plugins")
 	uuid = "8453b8fe-226f-4e91-b5cc-8bdad15e0814"
-	name = "Build WPCom Plugins"
-	description = "Test"
+	name = "CalypsoApps"
+	description = "Test description"
 
 	vcs {
 		root(Settings.WpCalypso)
@@ -101,10 +101,8 @@ object BuildPlugins: BuildType({
 		bashNodeScript {
 			name = "Build artifacts"
 			scriptContent = """
-				# @automattic/wpcom-block-editor needs this variable.
-				export NODE_ENV="development"
-
-				# Run `yarn build` for the plugins specified in the glob.
+				# Run `yarn build-ci` script for the plugins specified in the glob.
+				# `build-ci` is a specialized build for CI environment.
 				yarn workspaces foreach --verbose --parallel --include '{happy-blocks,@automattic/notifications}' run build-ci
 			"""
 		}
