@@ -227,6 +227,7 @@ class StatsModule extends Component {
 							additionalColumns={ additionalColumns }
 							splitHeader={ !! additionalColumns }
 							mainItemLabel={ mainItemLabel }
+							showLeftIcon={ path === 'authors' }
 						/>
 						{ isAllTime && (
 							<div className={ footerClass }>
