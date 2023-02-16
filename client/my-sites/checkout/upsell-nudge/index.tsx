@@ -323,7 +323,6 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 						handleClickAccept={ this.handleClickAccept }
 						handleClickDecline={ this.handleClickDecline }
 						hasSevenDayRefundPeriod={ hasSevenDayRefundPeriod }
-						currentPlan={ currentPlan }
 					/>
 				);
 
