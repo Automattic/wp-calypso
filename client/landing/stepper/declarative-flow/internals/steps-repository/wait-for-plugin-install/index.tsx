@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
-import { isWooExpressFlow } from '@automattic/onboarding';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -30,9 +29,10 @@ export const installedStates = {
 
 const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
 
-const WaitForPluginInstall: Step = function WaitForAtomic( { navigation, data, flow } ) {
+const WaitForPluginInstall: Step = function WaitForAtomic( { navigation, data } ) {
 	const { submit } = navigation;
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
+	const pluginsToVerify = useSelect( ( select ) => select( ONBOARD_STORE ).getPluginsToVerify() );
 
 	const siteId = data?.siteId;
 	const siteSlug = data?.siteSlug;
@@ -70,8 +70,8 @@ const WaitForPluginInstall: Step = function WaitForAtomic( { navigation, data, f
 			const totalTimeout = 1000 * 300;
 			const maxFinishTime = startTime + totalTimeout;
 
-			// Poll for transfer status
-			let stopPollingPlugins = false;
+			// Poll for transfer status. If there are no plugins to verify, we can skip this step.
+			let stopPollingPlugins = pluginsToVerify && pluginsToVerify.length > 0;
 
 			while ( ! stopPollingPlugins ) {
 				await wait( 500 );
@@ -82,15 +82,12 @@ const WaitForPluginInstall: Step = function WaitForAtomic( { navigation, data, f
 						apiVersion: '1.1',
 					} );
 
-					// For WooExpress, we need to check for the WooCommerce plugin.
-					if ( response?.plugins && isWooExpressFlow( flow ) ) {
-						const woocommercePlugin = response?.plugins.find(
-							( plugin: { slug: string } ) => plugin.slug === 'woocommerce'
-						);
-
-						if ( woocommercePlugin ) {
-							stopPollingPlugins = true;
-						}
+					// Check that all plugins to verify have been installed.
+					// If they _have_ been installed, we can stop polling.
+					if ( response?.plugins && pluginsToVerify ) {
+						stopPollingPlugins = pluginsToVerify.every( ( slug ) => {
+							return response?.plugins.find( ( plugin: { slug: string } ) => plugin.slug === slug );
+						} );
 					}
 				} catch ( err ) {
 					// Ignore errors. It's normal to get errors the first couple of times we poll. The timeout will eventually catch it if the failures continue.
