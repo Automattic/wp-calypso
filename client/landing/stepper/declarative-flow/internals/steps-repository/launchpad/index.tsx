@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import { useRecordSignupComplete } from 'calypso/landing/stepper/hooks/use-record-signup-complete';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
@@ -30,6 +31,7 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 	const verifiedParam = useQuery().get( 'verified' );
 	const site = useSite();
 	const launchpadScreenOption = site?.options?.launchpad_screen;
+	const recordSignupComplete = useRecordSignupComplete( flow );
 	const dispatch = useDispatch();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
@@ -70,6 +72,13 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 			}
 		}
 	}, [ launchpadScreenOption, siteSlug, flow ] );
+
+	useEffect( () => {
+		if ( siteSlug && site && localStorage.getItem( 'launchpad_siteSlug' ) !== siteSlug ) {
+			recordSignupComplete();
+			localStorage.setItem( 'launchpad_siteSlug', siteSlug );
+		}
+	}, [ recordSignupComplete, siteSlug, site ] );
 
 	return (
 		<>
