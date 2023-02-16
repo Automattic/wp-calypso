@@ -74,7 +74,7 @@ const WaitForPluginInstall: Step = function WaitForAtomic( { navigation, data, f
 			let stopPollingPlugins = false;
 
 			while ( ! stopPollingPlugins ) {
-				await wait( 3000 );
+				await wait( 500 );
 
 				try {
 					const response: PluginsResponse = await wpcomRequest( {
