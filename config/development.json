@@ -169,7 +169,6 @@
 		"signup/woo-verify-email": false,
 		"site-indicator": true,
 		"ssr/prefetch-timebox": false,
-		"stats/enhance-post-detail": true,
 		"stats/horizontal-bars-everywhere": true,
 		"stats/insights-page-grid": true,
 		"stats/latest-post-stats": true,
