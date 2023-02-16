@@ -397,7 +397,7 @@ export class PlansStep extends Component {
 
 		if ( 0 === positionInFlow && hasInitializedSitesBackUrl ) {
 			backUrl = hasInitializedSitesBackUrl;
-			backLabelText = translate( 'Back to Sites' );
+			backLabelText = translate( 'Back to sites' );
 		}
 
 		let queryParams;

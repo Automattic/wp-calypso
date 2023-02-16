@@ -165,7 +165,8 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 } ) => {
 	const { __ } = useI18n();
 	const { is_premium = false, is_virtual, style_variation, style_variations = [] } = design;
-	const isPremium = is_premium || ( shouldLimitGlobalStyles && is_virtual && style_variation );
+	const isLimitedVirtual = shouldLimitGlobalStyles && is_virtual && style_variation;
+	const isPremium = is_premium || isLimitedVirtual;
 	const shouldUpgrade = isPremium && ! isPremiumThemeAvailable && ! hasPurchasedTheme;
 	const currentSiteCanInstallWoo = currentPlanFeatures?.includes( FEATURE_WOOP ) ?? false;
 
@@ -192,10 +193,15 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 		if ( designIsBundledWithWoo ) {
 			badge = <WooCommerceBundledBadge />;
 		} else if ( isPremium ) {
+			const toolTip =
+				shouldUpgrade && isLimitedVirtual
+					? __( 'Unlock this style, and tons of other features, by upgrading to a Premium plan.' )
+					: undefined;
 			badge = (
 				<PremiumBadge
 					tooltipPosition="bottom right"
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }
+					tooltipContent={ toolTip }
 				/>
 			);
 		}
@@ -208,11 +214,12 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 		);
 	}
 
-	const previewDesign = () => {
+	const previewDesign = ( styleVariation?: StyleVariation ) => {
 		if ( design.is_virtual && design.style_variation ) {
-			return onPreview( design, design.style_variation );
+			const parentDesign = { ...design, is_virtual: false, style_variation: null };
+			return onPreview( parentDesign, styleVariation ?? design.style_variation );
 		}
-		return onPreview( design );
+		return onPreview( design, styleVariation );
 	};
 
 	const getTitle = () => {
@@ -225,7 +232,10 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 
 	return (
 		<div className="design-picker__design-option">
-			<button data-e2e-button={ isPremium ? 'paidOption' : 'freeOption' } onClick={ previewDesign }>
+			<button
+				data-e2e-button={ isPremium ? 'paidOption' : 'freeOption' }
+				onClick={ () => previewDesign() }
+			>
 				<span
 					className={ classnames(
 						'design-picker__image-frame',
@@ -245,7 +255,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 							<div className="design-picker__options-style-variations">
 								<StyleVariationBadges
 									variations={ style_variations }
-									onClick={ ( variation ) => onPreview( design, variation ) }
+									onClick={ ( variation ) => previewDesign( variation ) }
 								/>
 							</div>
 						) }

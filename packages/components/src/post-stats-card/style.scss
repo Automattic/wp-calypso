@@ -84,7 +84,8 @@ $break-wpcom-smallest: 320px;
 	color: var(--studio-gray-100);
 }
 
-.post-stats-card__thumbnail {
+.post-stats-card__thumbnail,
+.post-stats-card__upload {
 	border-radius: 0 $border-radius $border-radius 0;
 	grid-area: thumbnail;
 	height: calc(100% + #{$card-padding * 2});
@@ -92,6 +93,35 @@ $break-wpcom-smallest: 320px;
 	max-width: 300px;
 	object-fit: cover;
 	width: calc(100% + #{$card-padding});
+}
+
+.post-stats-card__upload {
+	max-width: 500px;
+	padding: 0 12px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: var(--studio-gray-0);
+	border-left: 1px solid var(--studio-gray-5);
+	box-sizing: border-box;
+}
+
+.post-stats-card__upload-btn {
+	color: var(--studio-gray-100);
+	font-family: $font-sf-pro-display;
+	font-size: $font-body-small;
+	font-weight: 500;
+	line-height: 20px;
+	letter-spacing: 0.32px;
+	border: 1px solid var(--studio-gray-5);
+	border-radius: 4px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+@media ( max-width: $break-large ) {
+	.post-stats-card__upload {
+		display: none;
+	}
 }
 
 @media ( max-width: $break-small ) {
