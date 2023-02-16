@@ -114,6 +114,7 @@ class StatsPostDetail extends Component {
 			isRequestingStats,
 			countViews,
 			post,
+			postFallback,
 			postId,
 			siteId,
 			translate,
@@ -135,6 +136,12 @@ class StatsPostDetail extends Component {
 			noViewsLabel = translate( 'Your post has not received any views yet!' );
 		}
 
+		// Make title to PostStatsCard for Homepage
+		const passedPost = post ||
+			postFallback || {
+				title: this.getTitle(),
+			};
+
 		return (
 			<Main fullWidthLayout>
 				<PageViewTracker
@@ -155,7 +162,7 @@ class StatsPostDetail extends Component {
 						) }
 					</FixedNavigationHeader>
 
-					<PostDetailHighlightsSection siteId={ siteId } postId={ postId } post={ post } />
+					<PostDetailHighlightsSection siteId={ siteId } postId={ postId } post={ passedPost } />
 
 					<StatsPlaceholder isLoading={ isLoading } />
 
