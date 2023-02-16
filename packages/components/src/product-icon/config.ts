@@ -132,7 +132,9 @@ export type SupportedSlugs =
 	| 'jetpack_backup_addon_storage_1tb_monthly'
 	| 'jetpack_backup_addon_storage_10gb_yearly'
 	| 'jetpack_backup_addon_storage_100gb_yearly'
-	| 'jetpack_backup_addon_storage_1tb_yearly';
+	| 'jetpack_backup_addon_storage_1tb_yearly'
+	| 'jetpack_backup_addon_storage_3tb_yearly'
+	| 'jetpack_backup_addon_storage_5tb_yearly';
 
 export const iconToProductSlugMap: Record< keyof typeof paths, readonly SupportedSlugs[] > = {
 	'wpcom-free': [ 'free_plan' ],
