@@ -329,7 +329,6 @@ object RunAllUnitTests : BuildType({
 	artifactRules = """
 		test_results => test_results
 		artifacts => artifacts
-		checkstyle_results => checkstyle_results
 	""".trimIndent()
 
 	vcs {
@@ -382,107 +381,43 @@ object RunAllUnitTests : BuildType({
 			"""
 		}
 		bashNodeScript {
-			name = "Prevent uncommited changes"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			name = "Check for yarn.lock changes and duplicated packages"
 			scriptContent = """
-				export NODE_ENV="test"
+				function prevent_uncommitted_changes {
+					DIRTY_FILES=${'$'}(git status --porcelain 2>/dev/null)
+					if [ ! -z "${'$'}DIRTY_FILES" ]; then
+						echo "Repository contains uncommitted changes: "
+						echo "${'$'}DIRTY_FILES"
+						echo "You need to checkout the branch, run 'yarn' and commit those files."
+						return 1
+					fi
+				}
+				
+				function prevent_duplicated_packages {
+					if ! DUPLICATED_PACKAGES=${'$'}(
+						set +e
+						yarn dedupe --check
+					); then
+						echo "Repository contains duplicated packages: "
+						echo ""
+						echo "${'$'}DUPLICATED_PACKAGES"
+						echo ""
+						echo "To fix them, you need to checkout the branch, run 'yarn dedupe',"
+						echo "verify that the new packages work and commit the changes in 'yarn.lock'."
+						return 1
+					else
+						echo "No duplicated packages found."
+					fi
+				}
 
-				# Prevent uncommited changes
-				DIRTY_FILES=${'$'}(git status --porcelain 2>/dev/null)
-				if [ ! -z "${'$'}DIRTY_FILES" ]; then
-					echo "Repository contains uncommitted changes: "
-					echo "${'$'}DIRTY_FILES"
-					echo "You need to checkout the branch, run 'yarn' and commit those files."
-					exit 1
-				fi
-			"""
+				prevent_uncommitted_changes & prevent_duplicated_packages
+				wait
+			""".trimIndent()
 		}
 		bashNodeScript {
-			name = "Prevent duplicated packages"
+			name = "Run parallelized tests"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				# Duplicated packages
-				if ! DUPLICATED_PACKAGES=${'$'}(
-					set +e
-					yarn dedupe --check
-				); then
-					echo "Repository contains duplicated packages: "
-					echo ""
-					echo "${'$'}DUPLICATED_PACKAGES"
-					echo ""
-					echo "To fix them, you need to checkout the branch, run 'yarn dedupe',"
-					echo "verify that the new packages work and commit the changes in 'yarn.lock'."
-					exit 1
-				else
-					echo "No duplicated packages found."
-				fi
-			"""
-		}
-		bashNodeScript {
-			name = "Run type checks"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				set -x
-				export NODE_ENV="test"
-
-				# These are not expected to fail
-				yarn tsc --build packages/*/tsconfig.json
-				yarn tsc --build apps/editing-toolkit/tsconfig.json
-				yarn tsc --build client/tsconfig.json
-				yarn tsc --build test/e2e/tsconfig.json
-			"""
-		}
-		bashNodeScript {
-			name = "Run unit tests for client"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				unset NODE_ENV
-				unset CALYPSO_ENV
-
-				# Run client tests
-				yarn test-client --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-teamcity --silent
-			"""
-		}
-		bashNodeScript {
-			name = "Run unit tests for server"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				unset NODE_ENV
-				unset CALYPSO_ENV
-
-				# Run server tests
-				yarn test-server --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-teamcity --silent
-			"""
-		}
-		bashNodeScript {
-			name = "Run unit tests for packages"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				unset NODE_ENV
-				unset CALYPSO_ENV
-
-				# Run packages tests
-				yarn test-packages --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-teamcity --silent
-			"""
-		}
-		bashNodeScript {
-			name = "Run unit tests for build tools"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				unset NODE_ENV
-				unset CALYPSO_ENV
-
-				# Run build-tools tests
-				yarn test-build-tools --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-teamcity --silent
-			"""
-		}
-		bashNodeScript {
-			name = "Run storybook tests"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				set -x
-				yarn workspaces foreach --verbose --parallel run storybook --ci --smoke-test
-			"""
+			scriptContent = "./bin/unit-test-suite.mjs"
 		}
 		bashNodeScript {
 			name = "Tag build"
@@ -512,8 +447,6 @@ object RunAllUnitTests : BuildType({
 	features {
 		feature {
 			type = "xml-report-plugin"
-			param("xmlReportParsing.reportType", "checkstyle")
-			param("xmlReportParsing.reportDirs", "checkstyle_results/*.xml")
 			param("xmlReportParsing.verboseOutput", "true")
 		}
 		perfmon {

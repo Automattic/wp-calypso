@@ -8,7 +8,7 @@ val yarn_install_cmd = """
 	export SKIP_TSC=true
 
 	# Install modules. We save to the file while also outputting it for visibility.
-	yarn_out="yarn-json-output.json"
+	yarn_out="/tmp/yarn-json-output.json"
 	yarn --json | tee -a "${'$'}yarn_out"
 
 	# Yarn --json saves as newline-delimited JSON. To make the JSON file valid,
