@@ -8,6 +8,7 @@ import * as Launch from './launch';
 import * as Onboard from './onboard';
 import oneWeekPersistenceConfig from './one-week-persistence-config';
 import * as Plans from './plans';
+import * as WpcomPlansUI from './plans-ui';
 import * as ProductsList from './products-list';
 import * as Reader from './reader';
 import * as Site from './site';
@@ -41,6 +42,7 @@ export {
 	I18n,
 	Site,
 	Plans,
+	WpcomPlansUI,
 	Launch,
 	WPCOMFeatures,
 	Reader,
