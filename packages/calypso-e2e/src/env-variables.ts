@@ -107,6 +107,7 @@ const castKnownEnvVariable = ( name: string, value: string ): EnvVariableValue =
 					`Invalid CALYPSO_BASE_URL value: ${ output }.\nYou must provide a valid URL.`
 				);
 			}
+			break;
 		}
 		case 'JETPACK_TARGET': {
 			const supportedValues: JetpackTarget[] = [ 'not-wpcom', 'wpcom-production', 'wpcom-staging' ];
@@ -117,6 +118,7 @@ const castKnownEnvVariable = ( name: string, value: string ): EnvVariableValue =
 					) }`
 				);
 			}
+			break;
 		}
 	}
 
