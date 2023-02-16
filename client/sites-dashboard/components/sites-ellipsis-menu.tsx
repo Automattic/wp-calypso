@@ -250,24 +250,28 @@ function useSubmenuItems( siteSlug: string ) {
 	return useMemo(
 		() => [
 			{
-				label: __( 'privacy-settings' ),
+				label: __( 'Privacy settings' ),
 				href: `/settings/general/${ siteSlug }#site-privacy-settings`,
 			},
 			{
-				label: __( 'database-access' ),
+				label: __( 'Database access' ),
 				href: `/hosting-config/${ siteSlug }#database-access`,
 			},
 			{
-				label: __( 'sftp-credentials' ),
+				label: __( 'SFTP/SSH credentials' ),
 				href: `/hosting-config/${ siteSlug }#sftp-credentials`,
 			},
 			{
-				label: __( '/hostingserver-settings' ),
+				label: __( 'Web server settings' ),
 				href: `/hosting-config/${ siteSlug }#web-server-settings`,
 			},
 			{
-				label: __( 'connect-github' ),
+				label: __( 'Connect github' ),
 				href: `/hosting-config/${ siteSlug }#connect-github`,
+			},
+			{
+				label: __( 'Clear cache' ),
+				href: `/hosting-config/${ siteSlug }#cache`,
 			},
 		],
 		[ __, siteSlug ]
