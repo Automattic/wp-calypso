@@ -45,10 +45,10 @@ function wpcom_should_limit_global_styles( $blog_id = 0 ) {
 	}
 
 	// Do not limit Global Styles on sites created before we made it a paid feature (2022-12-15),
-	// that have never used Global Styles.
+	// that had already used Global Styles.
 	if (
 		$blog_id < 213403000 &&
-		defined( 'IS_WPCOM' ) && IS_WPCOM && ! wpcom_global_styles_has_been_used( $blog_id )
+		defined( 'IS_WPCOM' ) && IS_WPCOM && wpcom_global_styles_has_been_used( $blog_id )
 	) {
 		return false;
 	}
