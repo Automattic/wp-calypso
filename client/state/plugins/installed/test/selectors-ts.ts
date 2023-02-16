@@ -363,7 +363,7 @@ describe( 'getPluginOnSite', () => {
 	} );
 } );
 
-describe( 'getPuginsOnSite', () => {
+describe( 'getPluginsOnSite', () => {
 	test( 'Should get an array of undefined if the requested site is not in the current state', () => {
 		expect( getPluginsOnSite( state, siteThreeId, [ 'jetpack' ] ) ).toEqual( [ undefined ] );
 	} );
