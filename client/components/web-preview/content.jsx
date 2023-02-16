@@ -394,6 +394,7 @@ export default class WebPreviewContent extends Component {
 				{ this.props.showExternal && this.props.isModalWindow && ! this.props.isPrivateAtomic && (
 					<DomainUpsellCallout trackEvent="site_preview_domain_upsell_callout" />
 				) }
+				{ this.props.bannerToShow }
 				{ this.props.belowToolbar }
 				{ ( ! isLoaded || this.state.isLoadingSubpage ) && <SpinnerLine /> }
 				<div
