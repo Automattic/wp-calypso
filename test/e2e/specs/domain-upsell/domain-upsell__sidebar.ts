@@ -1,7 +1,3 @@
-/**
- * @group calypso-release
- */
-
 import {
 	DataHelper,
 	DomainSearchComponent,
@@ -9,14 +5,11 @@ import {
 	PlansPage,
 	CartCheckoutPage,
 	TestAccount,
-	RestAPIClient,
 	BrowserManager,
 	SecretsManager,
-	NewSiteResponse,
 	NavbarCartComponent,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
-import { apiDeleteSite } from '../shared';
 
 declare const browser: Browser;
 
@@ -25,32 +18,19 @@ describe(
 		'Domain Upsell: Click on the sidebar Domain Upsell, search for a domain, select the Premium plan and check both items on the checkout page'
 	),
 	function () {
-		const blogName = DataHelper.getBlogName();
 		const planName = 'Premium';
-		let siteCreatedFlag: boolean;
-		let newSiteDetails: NewSiteResponse;
 		let domainSearchComponent: DomainSearchComponent;
 		let cartCheckoutPage: CartCheckoutPage;
 		let plansPage: PlansPage;
 		let sidebarComponent: SidebarComponent;
 		let navbarCartComponent: NavbarCartComponent;
 		let selectedDomain: string;
-		let restAPIClient: RestAPIClient;
 		let page: Page;
+		const credentials = SecretsManager.secrets.testAccounts.simpleSiteFreePlanUser;
+		const siteSlug = credentials.testSites?.primary?.url as string;
+		const blogName = credentials.username as string;
 
 		beforeAll( async function () {
-			// Set up the test site programmatically against simpleSiteFreePlanUser.
-			const credentials = SecretsManager.secrets.testAccounts.simpleSiteFreePlanUser;
-
-			restAPIClient = new RestAPIClient( credentials );
-			console.info( 'Creating a new test site.' );
-			newSiteDetails = await restAPIClient.createSite( {
-				name: blogName,
-				title: blogName,
-			} );
-			console.info( `New site created: ${ newSiteDetails.blog_details.url }` );
-			siteCreatedFlag = true;
-
 			// Launch browser.
 			page = await browser.newPage();
 
@@ -65,17 +45,7 @@ describe(
 			} );
 
 			it( 'Navigate to Home', async function () {
-				await page.goto(
-					DataHelper.getCalypsoURL( `/home/${ newSiteDetails.blog_details.site_slug }` )
-				);
-			} );
-
-			it( 'Click Claim on the sidebar Domain Upsell', async function () {
-				sidebarComponent = new SidebarComponent( page );
-				await sidebarComponent.openNotice(
-					'Upgrade',
-					`**/domains/add/${ newSiteDetails.blog_details.site_slug }?domainAndPlanPackage=true`
-				);
+				await page.goto( DataHelper.getCalypsoURL( `/home/${ siteSlug }` ) );
 			} );
 
 			it( 'If required, clear the cart', async function () {
@@ -85,6 +55,14 @@ describe(
 				if ( cartOpened ) {
 					await navbarCartComponent.emptyCart();
 				}
+			} );
+
+			it( 'Click Claim on the sidebar Domain Upsell', async function () {
+				sidebarComponent = new SidebarComponent( page );
+				await sidebarComponent.openNotice(
+					'Upgrade',
+					`**/domains/add/${ siteSlug }?domainAndPlanPackage=true`
+				);
 			} );
 
 			it( 'Search for a domain name', async function () {
@@ -112,18 +90,6 @@ describe(
 			it( 'See secure payment', async function () {
 				cartCheckoutPage = new CartCheckoutPage( page );
 				await cartCheckoutPage.validateCartItem( selectedDomain );
-			} );
-		} );
-
-		afterAll( async function () {
-			if ( ! siteCreatedFlag ) {
-				return;
-			}
-
-			await apiDeleteSite( restAPIClient, {
-				url: newSiteDetails.blog_details.url,
-				id: newSiteDetails.blog_details.blogid,
-				name: newSiteDetails.blog_details.blogname,
 			} );
 		} );
 	}

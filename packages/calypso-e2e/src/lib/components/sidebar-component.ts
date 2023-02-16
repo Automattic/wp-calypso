@@ -7,7 +7,8 @@ type FocusType = 'Sites' | 'Sidebar';
 
 const selectors = {
 	sidebar: '.sidebar',
-	sidebarNotice: '.sidebar .current-site__notices .banner__action button:visible',
+	sidebarNoticeButton: ( name: string ) =>
+		`.sidebar .current-site__notices button:text("${ name }")`,
 	collapsedSidebar: '.is-sidebar-collapsed',
 	focusedLayout: ( focus: FocusType ) => `.layout.focus-${ focus.toLowerCase() }`,
 
@@ -110,11 +111,11 @@ export class SidebarComponent {
 	/**
 	 * Open a notice of the sidebar menu.
 	 *
-	 * @param {string} item Plaintext representation of the top level heading.
-	 * @param {string} expectedUrl expected URL after clicking on the notice.
+	 * @param {string} noticeButtonName Name of the notice button where the click will be performed.
+	 * @param {string} expectedUrl Expected URL after clicking on the notice.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async openNotice( item: string, expectedUrl: string ): Promise< void > {
+	async openNotice( noticeButtonName: string, expectedUrl?: string ): Promise< void > {
 		await this.waitForSidebarInitialization();
 
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
@@ -122,7 +123,7 @@ export class SidebarComponent {
 		}
 
 		// Top level menu item selector.
-		const itemSelector = `${ selectors.sidebarNotice }`;
+		const itemSelector = selectors.sidebarNoticeButton( noticeButtonName );
 		await this.page.dispatchEvent( itemSelector, 'click' );
 
 		const currentURL = this.page.url();
@@ -135,7 +136,9 @@ export class SidebarComponent {
 			return;
 		}
 
-		await this.page.waitForURL( expectedUrl );
+		if ( expectedUrl ) {
+			await this.page.waitForURL( expectedUrl );
+		}
 	}
 
 	/* Miscellaneous actions on sidebar */
