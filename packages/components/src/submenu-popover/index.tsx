@@ -4,7 +4,20 @@ import { useMemo, useRef, useState } from 'react';
 interface SubmenuPopoverProps extends Popover.Props {
 	isVisible?: boolean;
 	offset?: number;
-	placement?: 'right-start' | 'left-start';
+	placement?:
+		| 'top'
+		| 'top-start'
+		| 'top-end'
+		| 'bottom'
+		| 'bottom-start'
+		| 'bottom-end'
+		| 'right'
+		| 'right-start'
+		| 'right-end'
+		| 'left'
+		| 'left-start'
+		| 'left-end';
+	__unstableForcePosition?: boolean;
 }
 
 function useHasRightSpace( element: HTMLElement | undefined ) {
@@ -18,26 +31,23 @@ function useHasRightSpace( element: HTMLElement | undefined ) {
 	}, [ element ] );
 }
 
-export function useSubenuPopoverProps(
-	options: {
-		placement?: SubmenuPopoverProps[ 'placement' ];
-	} = {}
-) {
-	const { placement = 'right-start' } = options;
+export function useSubenuPopoverProps() {
 	const [ isVisible, setIsVisible ] = useState( false );
 	const anchor = useRef< HTMLElement >();
-	const hasSpace = useHasRightSpace( anchor?.current );
+	const hasRightSpace = useHasRightSpace( anchor?.current );
 
+	const anchorRect = anchor?.current?.getBoundingClientRect();
 	const submenu: Partial< SubmenuPopoverProps > = {
 		isVisible,
-		placement,
-		offset: hasSpace ? 0 : anchor?.current?.offsetWidth,
+		placement: hasRightSpace ? 'right-start' : 'left-start',
+		anchorRect: anchorRect,
+		__unstableForcePosition: true,
 	};
 
 	const parent = {
 		ref: anchor,
 		onMouseOver: () => setIsVisible( true ),
-		// onMouseLeave: () => setIsVisible( false ),
+		onMouseLeave: () => setIsVisible( false ),
 	};
 
 	return {
