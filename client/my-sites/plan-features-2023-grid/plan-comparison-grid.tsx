@@ -94,9 +94,9 @@ const Grid = styled.div< { isInSignup: boolean } >`
 	background: #fff;
 	border: solid 1px #e0e0e0;
 
-	@media ( min-width: 385px ) {
+	${ plansBreakSmall( css`
 		border-radius: 5px;
-	}
+	` ) }
 `;
 const Row = styled.div< { isHiddenInMobile?: boolean } >`
 	justify-content: space-between;
@@ -140,7 +140,7 @@ const TitleRow = styled( Row )`
 	` ) }
 `;
 
-const Cell = styled.div< { textAlign?: string; isInSignup: boolean } >`
+const Cell = styled.div< { textAlign?: string } >`
 	text-align: ${ ( props ) => props.textAlign ?? 'left' };
 	display: flex;
 	flex: 1;
@@ -176,7 +176,7 @@ const Cell = styled.div< { textAlign?: string; isInSignup: boolean } >`
 
 	${ plansBreakSmall( css`
 		padding: 0 14px;
-		min-width: 180px;
+		min-width: 156px;
 		border-right: none;
 
 		&:first-of-type {
@@ -187,19 +187,6 @@ const Cell = styled.div< { textAlign?: string; isInSignup: boolean } >`
 			border-right: none;
 		}
 	` ) }
-
-	${ ( props ) =>
-		props.isInSignup
-			? plansBreakSmall(
-					css`
-						max-width: 180px;
-					`
-			  )
-			: plansBreakSmall(
-					css`
-						max-width: 160px;
-					`
-			  ) }
 
 	${ plansBreakLarge( css`
 		max-width: 200px;
@@ -334,12 +321,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 				const showPlanSelect = ! allVisible && ! current;
 
 				return (
-					<Cell
-						key={ planName }
-						isInSignup={ isInSignup }
-						className={ headerClasses }
-						textAlign="left"
-					>
+					<Cell key={ planName } className={ headerClasses } textAlign="left">
 						{ isBusinessPlan( planName ) && (
 							<div className="plan-features-2023-grid__popular-badge">
 								<PlanPill isInSignup={ isInSignup }>{ translate( 'Popular' ) }</PlanPill>
@@ -647,12 +629,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 											);
 
 											return (
-												<Cell
-													key={ planName }
-													isInSignup={ isInSignup }
-													className={ cellClasses }
-													textAlign="center"
-												>
+												<Cell key={ planName } className={ cellClasses } textAlign="center">
 													{ feature.getIcon && (
 														<span className="plan-comparison-grid__plan-image">
 															{ feature.getIcon() }
@@ -706,12 +683,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 										);
 
 										return (
-											<Cell
-												key={ planName }
-												isInSignup={ isInSignup }
-												className={ cellClasses }
-												textAlign="center"
-											>
+											<Cell key={ planName } className={ cellClasses } textAlign="center">
 												<span className="plan-comparison-grid__plan-title">
 													{ translate( 'Storage' ) }
 												</span>
