@@ -194,6 +194,15 @@ private object EditingToolkit : WPComPluginBuild(
 	}
 )
 
+private object WpcomBlockEditor : WPComPluginBuild(
+	buildId = "WPComPlugins_WpcomBlockEditor",
+	buildName = "Wpcom Block Editor",
+	pluginSlug = "wpcom-block-editor",
+	archiveDir = "./dist/",
+	buildEnv = "development",
+	docsLink = "PCYsg-l4k-p2",
+)
+
 private object Happychat : WPComPluginBuild(
 	buildId = "WPComPlugins_Happychat",
 	buildName = "Happychat",
@@ -210,15 +219,6 @@ private object InlineHelp : WPComPluginBuild(
 	archiveDir = "./dist/",
 	docsLink = "TODO",
 	withPRNotify = "false",
-)
-
-private object WpcomBlockEditor : WPComPluginBuild(
-	buildId = "WPComPlugins_WpcomBlockEditor",
-	buildName = "Wpcom Block Editor",
-	pluginSlug = "wpcom-block-editor",
-	archiveDir = "./dist/",
-	buildEnv = "development",
-	docsLink = "PCYsg-l4k-p2",
 )
 
 private object Notifications : WPComPluginBuild(
