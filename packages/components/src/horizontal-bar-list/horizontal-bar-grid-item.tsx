@@ -1,5 +1,5 @@
 import { decodeEntities } from '@wordpress/html-entities';
-import { Icon, chevronDown, chevronUp, tag } from '@wordpress/icons';
+import { Icon, chevronDown, chevronUp, tag, file } from '@wordpress/icons';
 import classnames from 'classnames';
 import { numberFormat } from 'i18n-calypso';
 import React, { useState } from 'react';
@@ -17,9 +17,11 @@ const HorizontalBarListItem = ( {
 	onClick,
 	hasIndicator,
 	leftSideItem,
+	renderLeftSideItem,
 	renderRightSideItem,
 	useShortLabel,
 	useShortNumber,
+	leftGroupToggle,
 	isStatic,
 	additionalColumns,
 	usePlainCard,
@@ -61,16 +63,21 @@ const HorizontalBarListItem = ( {
 
 	// tags use an array for a label(s)
 	if ( Array.isArray( label ) ) {
-		//labelText = label.length > 1 ? 'Tags' : label[ 0 ].label;
 		// combine all items into one
 		labelText = (
 			<span>
-				{ label.map( ( item ) => (
-					<>
-						<Icon icon={ tag } />
-						<span>{ item.label }</span>
-					</>
-				) ) }
+				{ label.length > 1
+					? label.map( ( item ) => (
+							<>
+								<Icon
+									className="stats-icon"
+									icon={ item.labelIcon === 'folder' ? file : tag }
+									size={ 22 }
+								/>
+								<span>{ decodeEntities( item.label ) }</span>
+							</>
+					  ) )
+					: label[ 0 ].label }
 			</span>
 		);
 	} else {
@@ -87,6 +94,12 @@ const HorizontalBarListItem = ( {
 		rowClick = onClickHandler;
 		rowKeyPress = onKeyDownHandler;
 	}
+
+	const groupChevron = (
+		<span className={ `${ BASE_CLASS_NAME }-group-toggle` }>
+			<Icon icon={ open ? chevronUp : chevronDown } />
+		</span>
+	);
 
 	return (
 		<>
@@ -111,7 +124,11 @@ const HorizontalBarListItem = ( {
 				tabIndex={ 0 }
 			>
 				<div className={ `${ BASE_CLASS_NAME }-item-bar` }>
-					{ leftSideItem && <span>{ leftSideItem }</span> }
+					{ ( leftSideItem || ( renderLeftSideItem && renderLeftSideItem?.( data ) ) ) && (
+						<span className={ `${ BASE_CLASS_NAME }-item__left-icon` }>
+							{ leftSideItem ? leftSideItem : renderLeftSideItem?.( data ) }
+						</span>
+					) }
 					<TagName
 						className={ classnames(
 							`${ BASE_CLASS_NAME }-label`,
@@ -120,12 +137,9 @@ const HorizontalBarListItem = ( {
 						href={ url }
 						tabIndex={ 0 }
 					>
+						{ leftGroupToggle && hasChildren && groupChevron }
 						<span>{ labelText }</span>
-						{ hasChildren && (
-							<span className={ `${ BASE_CLASS_NAME }-group-toggle` }>
-								<Icon icon={ open ? chevronUp : chevronDown } />
-							</span>
-						) }
+						{ ! leftGroupToggle && hasChildren && groupChevron }
 					</TagName>
 					{ renderRightSideItem && (
 						<span className={ `${ BASE_CLASS_NAME }--hover-action` }>
@@ -157,6 +171,7 @@ const HorizontalBarListItem = ( {
 									maxValue={ maxValue }
 									useShortLabel={ useShortLabel }
 									useShortNumber={ useShortNumber }
+									renderLeftSideItem={ renderLeftSideItem }
 									renderRightSideItem={ renderRightSideItem }
 									onClick={ ( e ) => onClick?.( e, child ) }
 									hasIndicator={ hasIndicator }

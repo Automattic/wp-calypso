@@ -141,6 +141,11 @@
 	@include additional-columns-wrapper;
 }
 
+.horizontal-bar-list-item__left-icon {
+	padding-right: 8px;
+	display: flex;
+}
+
 .horizontal-bar-list-group {
 	list-style: none;
 	margin: $space-between-rows 0 $row-height 0;
