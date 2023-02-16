@@ -99,6 +99,7 @@
 		"stats/most-popular-post": false,
 		"stats/new-video-summary": false,
 		"stepper-woocommerce-poc": true,
+		"storage-addon": false,
 		"themes/premium": true,
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
