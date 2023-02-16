@@ -138,12 +138,15 @@
 
 	.plans-interval-toggle__popover:not(.plans-interval-toggle__popover--mobile) {
 		display: none;
-		@media ( min-width: 780px ) {
+		@media ( min-width: 782px ) {
 			display: block;
 		}
 	}
 
 	.plans-interval-toggle--monthly .segmented-control {
 		margin-bottom: 32px;
+		@media (min-width: 782px) {
+			margin-bottom: 0;
+		}
 	}
 }
