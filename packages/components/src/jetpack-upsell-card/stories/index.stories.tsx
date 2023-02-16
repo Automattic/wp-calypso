@@ -1,4 +1,4 @@
-import JetpackUpsellSection from '../';
+import JetpackUpsellSection from '..';
 
 export default { title: 'Jetpack Upsell Section' };
 

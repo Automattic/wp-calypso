@@ -1,17 +1,17 @@
 @import "@automattic/typography/styles/variables";
 @import "@automattic/components/src/styles/typography";
 
-.jetpack-upsell-section {
+.jetpack-upsell-card {
 	--jetpack-yelow-off: #edf2e2;
 }
 
-.jetpack-upsell-section__title {
+.jetpack-upsell-card__title {
 	font-family: $font-sf-pro-display;
 	font-size: $font-title-small;
 	font-weight: 500;
 }
 
-.jetpack-upsell-section__product {
+.jetpack-upsell-card__product {
 	display: grid;
 	grid-template-columns: max-content 3fr max-content max-content;
 	grid-template-areas:
@@ -23,7 +23,7 @@
 	font-family: $font-sf-pro-text;
 }
 
-.jetpack-upsell-section__product-icon {
+.jetpack-upsell-card__product-icon {
 	grid-area: icon;
 	align-self: center;
 	justify-self: center;
@@ -31,20 +31,20 @@
 	background: var(--jetpack-yelow-off);
 	line-height: 1;
 }
-.jetpack-upsell-section__product-title {
+.jetpack-upsell-card__product-title {
 	grid-area: title;
 	margin: 0;
 	font-size: $font-body;
 	letter-spacing: -0.02em;
 	color: var(--studio-gray-100);
 }
-.jetpack-upsell-section__product-description {
+.jetpack-upsell-card__product-description {
 	grid-area: description;
 	margin: 0;
 	letter-spacing: -0.02em;
 	color: var(--studio-gray-80);
 }
-.jetpack-upsell-section__product-link {
+.jetpack-upsell-card__product-link {
 	align-self: center;
 	color: var(--studio-gray-80);
 	display: flex;
@@ -68,7 +68,7 @@
 }
 
 
-.jetpack-upsell-section__product-button {
+.jetpack-upsell-card__product-button {
 	align-self: center;
 	border-color: var(--studio-gray-100);
 	color: var(--studio-gray-100);
