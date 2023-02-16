@@ -223,6 +223,22 @@ function wpcom_track_global_styles( $blog_id, $post, $updated ) {
 add_action( 'save_post_wp_global_styles', 'wpcom_track_global_styles', 10, 3 );
 
 /**
+ * Check if a `wp_global_styles` post contains custom Global Styles.
+ *
+ * @param array $wp_global_styles_post The `wp_global_styles` post.
+ * @return bool Whether the post contains custom Global Styles.
+ */
+function wpcom_global_styles_in_use_by_wp_global_styles_post( array $wp_global_styles_post = array() ) {
+	if ( ! isset( $wp_global_styles_post['post_content'] ) ) {
+		return false;
+	}
+
+	$global_style_keys    = array_keys( json_decode( $wp_global_styles_post['post_content'], true ) ?? array() );
+	$global_styles_in_use = count( array_diff( $global_style_keys, array( 'version', 'isGlobalStylesUserThemeJSON' ) ) ) > 0;
+	return $global_styles_in_use;
+}
+
+/**
  * Checks if the current blog has custom styles in use.
  *
  * @return bool Returns true if custom styles are in use.
@@ -238,14 +254,7 @@ function wpcom_global_styles_in_use() {
 
 	$user_cpt = WP_Theme_JSON_Resolver::get_user_data_from_wp_global_styles( wp_get_theme() );
 
-	if ( ! isset( $user_cpt['post_content'] ) ) {
-		do_action( 'global_styles_log', 'global_styles_not_in_use' );
-		return false;
-	}
-
-	$global_style_keys = array_keys( json_decode( $user_cpt['post_content'], true ) ?? array() );
-
-	$global_styles_in_use = count( array_diff( $global_style_keys, array( 'version', 'isGlobalStylesUserThemeJSON' ) ) ) > 0;
+	$global_styles_in_use = wpcom_global_styles_in_use_by_wp_global_styles_post( $user_cpt );
 
 	if ( $global_styles_in_use ) {
 		do_action( 'global_styles_log', 'global_styles_in_use' );
