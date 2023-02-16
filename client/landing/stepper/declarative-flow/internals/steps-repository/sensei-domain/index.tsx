@@ -37,14 +37,16 @@ const SenseiDomain: Step = ( { navigation } ) => {
 	const domainSuggestion = domain?.domain_name ?? siteTitle;
 
 	return (
-		<SenseiStepContainer stepName="senseiDomain" recordTracksEvent={ recordTracksEvent }>
-			<CalypsoShoppingCartProvider>
+		<SenseiStepContainer
+			stepName="senseiDomain"
+			recordTracksEvent={ recordTracksEvent }
+			formattedHeader={
 				<FormattedHeader
 					id="choose-a-domain-header"
-					headerText="Choose a domain"
+					headerText={ __( 'Choose a domain' ) }
 					subHeaderText={
 						<>
-							{ __( 'Make your course site shine with a custom domain. Not sure yet ?' ) }
+							{ __( 'Make your course site shine with a custom domain. Not sure yet?' ) }{ ' ' }
 							<button
 								className="button navigation-link step-container__navigation-link has-underline is-borderless"
 								onClick={ onSkip }
@@ -55,6 +57,9 @@ const SenseiDomain: Step = ( { navigation } ) => {
 					}
 					align="center"
 				/>
+			}
+		>
+			<CalypsoShoppingCartProvider>
 				<div className="container domains__step-content domains__step-content-domain-step">
 					<RegisterDomainStep
 						vendor="sensei"

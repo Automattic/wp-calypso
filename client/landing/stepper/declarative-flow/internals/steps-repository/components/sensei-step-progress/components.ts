@@ -15,10 +15,10 @@ export const Container = styled.div`
 `;
 
 export const Content = styled.div`
-	max-width: 520px;
+	max-width: 560px;
 	width: 100%;
 	margin: auto 24px;
-	padding: 32px 0 60px;
+	padding: 32px 20px 60px;
 	flex: 0 0 auto;
 	position: relative;
 `;
@@ -39,9 +39,9 @@ export const Subtitle = styled.div`
 
 export const Progress = styled.div`
 	position: absolute;
-	right: 0;
+	right: 20px;
 	bottom: 32px;
-	left: 0;
+	left: 20px;
 	height: 4px;
 	background-color: #fff;
 `;
@@ -60,11 +60,13 @@ export const ProgressValue = styled.div< { progress: number } >`
 export const TopRightImg = styled.img`
 	width: 100%;
 	max-width: 237px;
-	margin-left: auto;
+	margin-left: max( calc( 100vw - 237px ), 22rem );
 	flex: 0 1 auto;
+	position: relative;
 
 	@media ( min-width: 700px ) {
 		max-width: 395px;
+		margin-left: auto;
 	}
 `;
 
