@@ -110,7 +110,11 @@ const castKnownEnvVariable = ( name: string, value: string ): EnvVariableValue =
 			break;
 		}
 		case 'JETPACK_TARGET': {
-			const supportedValues: JetpackTarget[] = [ 'not-wpcom', 'wpcom-production', 'wpcom-staging' ];
+			const supportedValues: JetpackTarget[] = [
+				'remote-site',
+				'wpcom-production',
+				'wpcom-staging',
+			];
 			if ( ! supportedValues.includes( output as JetpackTarget ) ) {
 				throw new Error(
 					`Unknown JETPACK_TARGET value: ${ output }.\nSupported values: ${ supportedValues.join(

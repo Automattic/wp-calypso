@@ -21,7 +21,7 @@ declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
 	const accountName =
-		envVariables.JETPACK_TARGET === 'not-wpcom'
+		envVariables.JETPACK_TARGET === 'remote-site'
 			? 'jetpackUser'
 			: getTestAccountByFeature( envToFeatureKey( envVariables ) );
 	const testAccount = new TestAccount( accountName );
