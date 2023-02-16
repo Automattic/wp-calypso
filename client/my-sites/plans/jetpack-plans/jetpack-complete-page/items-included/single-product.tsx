@@ -12,8 +12,6 @@ type Props = {
 const SingleProduct: React.FC< Props > = ( { product } ) => {
 	const translate = useTranslate();
 
-	// console.log( { product } );
-
 	return (
 		<div className="single-product__wrapper">
 			<div className="single-product__icon">
