@@ -183,7 +183,7 @@ fun editorTrackingBuildType( targetDevice: String, buildUuid: String, atomic: Bo
 
 fun jetpackPlaywrightBuildType( targetDevice: String, buildUuid: String, jetpackTarget: String = "wpcom-production" ): E2EBuildType {
 	return E2EBuildType (
-		buildId = "WPComTests_jetpack_Playwright_$targetDevice",
+		buildId = "WPComTests_jetpack_Playwright_$jetpackTarget_$targetDevice",
 		buildUuid = buildUuid,
 		buildName = "Jetpack E2E Tests [$jetpackTarget] ($targetDevice)",
 		buildDescription = "Runs Jetpack E2E tests as $targetDevice against Jetpack install $jetpackTarget",
