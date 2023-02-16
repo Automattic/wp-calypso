@@ -1,5 +1,4 @@
 import { createSelector } from '@automattic/state-utils';
-import { cloneDeep } from 'lodash';
 import { isRequesting, isRequestingForAllSites } from './selectors';
 import type {
 	InstalledPlugins,
@@ -138,7 +137,7 @@ export const getFilteredAndSortedPlugins = createSelector(
 		// Properties on the objects in allPluginsIndexedBySiteId will be modified and the
 		// selector memoization always returns the same object, so use cloneDeep to avoid
 		// altering it for everyone.
-		const allPluginsForSites: { [ pluginSlug: string ]: Plugin } = cloneDeep(
+		const allPluginsForSites: { [ pluginSlug: string ]: Plugin } = structuredClone(
 			siteIds
 				.map( ( siteId: number ) => allPluginsIndexedBySiteId[ siteId ] )
 				.filter( Boolean )
