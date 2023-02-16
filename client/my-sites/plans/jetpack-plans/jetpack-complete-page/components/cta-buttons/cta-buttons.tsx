@@ -4,6 +4,8 @@ import { useSelector } from 'react-redux';
 import Button from 'calypso/components/forms/form-button';
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 
+import './style.scss';
+
 const CtaButtons = () => {
 	const translate = useTranslate();
 	const planToOffer = PLAN_JETPACK_COMPLETE;
