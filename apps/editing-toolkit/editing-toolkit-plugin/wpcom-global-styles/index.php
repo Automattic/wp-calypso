@@ -34,24 +34,48 @@ function wpcom_should_limit_global_styles( $blog_id = 0 ) {
 		}
 	}
 
-	// Do not limit Global Styles on sites created before we made it a paid feature (2022-12-15).
-	if ( $blog_id < 213403000 ) {
+	// Limit Global Styles on sites with the 'wpcom-limit-global-styles' sticker.
+	if ( wpcom_global_styles_has_blog_sticker( 'wpcom-limit-global-styles', $blog_id ) ) {
+		return true;
+	}
+
+	// Do not limit Global Styles on demo sites.
+	if ( wpcom_global_styles_has_blog_sticker( 'theme-demo-site', $blog_id ) ) {
 		return false;
 	}
 
+	// Do not limit Global Styles on sites created before we made it a paid feature (2022-12-15),
+	// that have never used Global Styles.
+	if (
+		$blog_id < 213403000 &&
+		defined( 'IS_WPCOM' ) && IS_WPCOM && ! wpcom_global_styles_has_been_used( $blog_id )
+	) {
+		return false;
+	}
+
+	// Do not limit Global Styles if the site paid for it.
 	if ( wpcom_site_has_feature( WPCOM_Features::GLOBAL_STYLES, $blog_id ) ) {
 		return false;
 	}
 
-	if ( function_exists( 'has_blog_sticker' ) && has_blog_sticker( 'theme-demo-site', $blog_id ) ) {
-		return false;
-	}
-
-	if ( function_exists( 'wpcomsh_is_site_sticker_active' ) && wpcomsh_is_site_sticker_active( 'theme-demo-site' ) ) {
-		return false;
-	}
-
 	return true;
+}
+
+/**
+ * Wrapper to test a blog sticker on both Simple and Atomic sites at once.
+ *
+ * @param string $blog_sticker The blog sticker.
+ * @param int    $blog_id The WPCOM blog ID.
+ * @return bool Whether the site has the blog sticker.
+ */
+function wpcom_global_styles_has_blog_sticker( $blog_sticker, $blog_id ) {
+	if ( function_exists( 'has_blog_sticker' ) && has_blog_sticker( $blog_sticker, $blog_id ) ) {
+		return true;
+	}
+	if ( function_exists( 'wpcomsh_is_site_sticker_active' ) && wpcomsh_is_site_sticker_active( $blog_sticker ) ) {
+		return true;
+	}
+	return false;
 }
 
 /**
@@ -263,6 +287,39 @@ function wpcom_global_styles_in_use() {
 	}
 
 	return $global_styles_in_use;
+}
+
+/**
+ * Checks if Global Styles has been customized by the given site in the past.
+ *
+ * @param  int $blog_id Blog ID.
+ * @return bool Whether Global Styles have been customized.
+ */
+function wpcom_global_styles_has_been_used( $blog_id = 0 ) {
+	switch_to_blog( $blog_id );
+
+	$global_styles_used = false;
+
+	$wp_global_styles_posts = get_posts(
+		array(
+			'post_type'   => 'wp_global_styles',
+			'numberposts' => 100,
+		)
+	);
+	foreach ( $wp_global_styles_posts as $wp_global_styles_post ) {
+		if ( wpcom_global_styles_in_use_by_wp_global_styles_post( $wp_global_styles_post->to_array() ) ) {
+			$global_styles_used = true;
+			break;
+		}
+	}
+
+	if ( ! $global_styles_used ) {
+		add_blog_sticker( 'wpcom-limit-global-styles', null, null, $blog_id );
+	}
+
+	restore_current_blog();
+
+	return $global_styles_used;
 }
 
 /**
