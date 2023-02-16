@@ -19,7 +19,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback, useEffect, ChangeEvent } from 'react';
 import { useSelector } from 'react-redux';
 import JetpackLogo from 'calypso/components/jetpack-logo';
-import PlanPill from 'calypso/components/plans/plan-pill';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import PlanTypeSelector, {
 	PlanTypeSelectorProps,
@@ -27,6 +26,7 @@ import PlanTypeSelector, {
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import PlanFeatures2023GridActions from './actions';
 import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
+import PopularBadge from './components/popular-badge';
 import PlanFeatures2023GridHeaderPrice from './header-price';
 import useHighlightAdjacencyMatrix from './hooks/use-highlight-adjacency-matrix';
 import { plansBreakSmall, plansBreakLarge } from './media-queries';
