@@ -69,10 +69,12 @@
 
 
 .jetpack-upsell-section__product-button {
-	grid-area: button;
 	align-self: center;
-	justify-self: end;
+	border-color: var(--studio-gray-100);
+	color: var(--studio-gray-100);
 	font-family: inherit;
+	grid-area: button;
+	justify-self: end;
 	transition: background-color 0.1s linear, border-color 0.1s linear;
 
 	&:hover,
