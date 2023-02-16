@@ -166,7 +166,7 @@ export function getEnhancedTasks(
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
-								`/setup/design-post-setup/designSetup?siteSlug=${ siteSlug }&flowToReturnTo=${ flow }`
+								`/setup/update-design/designSetup?siteSlug=${ siteSlug }&flowToReturnTo=${ flow }`
 							);
 						},
 					};

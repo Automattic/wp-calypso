@@ -56,10 +56,8 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	'free-post-setup': () =>
 		import( /* webpackChunkName: "free-post-setup-flow" */ '../declarative-flow/free-post-setup' ),
 
-	'design-post-setup': () =>
-		import(
-			/* webpackChunkName: "design-post-setup-flow" */ '../declarative-flow/design-post-setup'
-		),
+	'update-design': () =>
+		import( /* webpackChunkName: "update-design-flow" */ '../declarative-flow/update-design' ),
 
 	build: () => import( /* webpackChunkName: "build-flow" */ '../declarative-flow/build' ),
 	write: () => import( /* webpackChunkName: "write-flow" */ '../declarative-flow/write' ),

@@ -12,8 +12,8 @@ import Processing from './internals/steps-repository/processing-step';
 import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
 
-const designSetup: Flow = {
-	name: 'design-post-setup',
+const updateDesign: Flow = {
+	name: 'update-design',
 	get title() {
 		return translate( 'Choose Design' );
 	},
@@ -30,7 +30,7 @@ const designSetup: Flow = {
 		const flowToReturnTo = useQuery().get( 'flowToReturnTo' ) || 'free';
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
-			recordSubmitStep( providedDependencies, 'design-post-setup', flowName, currentStep );
+			recordSubmitStep( providedDependencies, 'update-design', flowName, currentStep );
 			switch ( currentStep ) {
 				case 'processing':
 					return window.location.assign(
@@ -61,4 +61,4 @@ const designSetup: Flow = {
 	},
 };
 
-export default designSetup;
+export default updateDesign;
