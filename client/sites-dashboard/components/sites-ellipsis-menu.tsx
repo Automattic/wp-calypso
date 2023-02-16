@@ -309,7 +309,7 @@ function useSubmenuItems( {
 	);
 }
 
-function DeveloperSettings( { site, recordTracks }: SitesMenuItemProps ) {
+function DeveloperSettingsSubmenu( { site, recordTracks }: SitesMenuItemProps ) {
 	const { __ } = useI18n();
 	const submenuItems = useSubmenuItems( {
 		siteSlug: site.slug,
@@ -372,7 +372,7 @@ export const SitesEllipsisMenu = ( {
 				<SiteMenuGroup>
 					{ site.launch_status === 'unlaunched' && <LaunchItem { ...props } /> }
 					<SettingsItem { ...props } />
-					{ isEnabled( 'dev/developer-ux' ) && <DeveloperSettings { ...props } /> }
+					{ isEnabled( 'dev/developer-ux' ) && <DeveloperSettingsSubmenu { ...props } /> }
 					<ManagePluginsItem { ...props } />
 					{ showHosting && <HostingConfigItem { ...props } /> }
 					{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
