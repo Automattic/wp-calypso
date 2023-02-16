@@ -1,5 +1,5 @@
 import { Popover } from '@wordpress/components';
-import { useMemo, useRef, useState } from 'react';
+import { LegacyRef, useMemo, useRef, useState } from 'react';
 
 interface SubmenuPopoverProps extends Popover.Props {
 	isVisible?: boolean;
@@ -31,9 +31,9 @@ function useHasRightSpace( element: HTMLElement | undefined ) {
 	}, [ element ] );
 }
 
-export function useSubenuPopoverProps() {
+export function useSubenuPopoverProps< T extends HTMLElement >() {
 	const [ isVisible, setIsVisible ] = useState( false );
-	const anchor = useRef< HTMLElement >();
+	const anchor = useRef< T >();
 	const hasRightSpace = useHasRightSpace( anchor?.current );
 
 	const anchorRect = anchor?.current?.getBoundingClientRect();
@@ -45,7 +45,7 @@ export function useSubenuPopoverProps() {
 	};
 
 	const parent = {
-		ref: anchor,
+		ref: anchor as LegacyRef< T >,
 		onMouseOver: () => setIsVisible( true ),
 		onMouseLeave: () => setIsVisible( false ),
 	};
