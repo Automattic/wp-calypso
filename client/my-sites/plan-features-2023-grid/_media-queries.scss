@@ -1,50 +1,38 @@
-// Variables
+@import "@automattic/components/src/highlight-cards/variables.scss";
+
 $plan-features-sidebar-width: 272px;
 $plan-features-header-banner-height: 20px;
 
 // Breakpoints
-$plans-2023-small-breakpoint: 880px;
-$plans-2023-medium-breakpoint: 1340px;
-$plans-2023-large-breakpoint: 1500px;
+$plans-2023-small-breakpoint: 780px;
+$plans-2023-medium-breakpoint: 1200px;
 
-/**
- * Media queries for the plans grid in onboarding/signup
- */
+$minWidthToGridWidthMap: (
+	780px: "668px",
+	1024px: "860px",
+	1200px: "1134px",
+	1440px: "1320px",
+	1600px: "1480px",
+);
+
+
 @mixin pricing-grid-breakpoints {
-	max-width: 414px;
+	width: 100%;
 
-	@media ( min-width: $plans-2023-small-breakpoint ) {
-		max-width: 860px;
+	@each $screenMinWidth, $gridWidth in $minWidthToGridWidthMap {
+		@media ( min-width: #{$screenMinWidth} ) {
+			width: #{$gridWidth};
+		}
 	}
 
-	@media ( min-width: $plans-2023-medium-breakpoint ) {
-		max-width: 1320px;
-	}
-
-	@media ( min-width: $plans-2023-large-breakpoint ) {
-		max-width: 1480px;
-	}
 }
 
 /**
  * Media queries for the plans grid on the /plans page.
- * Since there is a sidebar on internal pages,
- * we add the sidebar width to the default breakpoints.
+ * This should stretch to fill it's container.
  */
 @mixin pricing-grid-breakpoints-with-sidebar {
-	max-width: 414px;
-
-	@media ( min-width: $plans-2023-small-breakpoint + $plan-features-sidebar-width ) {
-		max-width: 860px;
-	}
-
-	@media ( min-width: $plans-2023-medium-breakpoint + $plan-features-sidebar-width ) {
-		max-width: 1320px;
-	}
-
-	@media ( min-width: $plans-2023-large-breakpoint + $plan-features-sidebar-width ) {
-		max-width: 1480px;
-	}
+	width: 100%;
 }
 
 /**
@@ -153,6 +141,21 @@ $plans-2023-large-breakpoint: 1500px;
 
 	.is-section-plans.is-sidebar-collapsed & {
 		@media ( min-width: $plans-2023-medium-breakpoint ) {
+			@content;
+		}
+	}
+}
+
+/**
+ * @see client/my-sites/plans/modernized-layout.tsx
+ * This file introduces padding for the header on the plans page
+ * at a custom mobile breakpoint.
+ *
+ * This mixin can be use to target that particular breakpoint.
+ */
+@mixin plans-section-custom-mobile-breakpoint() {
+	.is-section-plans & {
+		@media ( min-width: $custom-mobile-breakpoint ) {
 			@content;
 		}
 	}

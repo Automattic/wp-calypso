@@ -297,6 +297,16 @@ export function getEnhancedTasks(
 						},
 					};
 					break;
+				case 'domain_upsell':
+					taskData = {
+						title: translate( 'Choose a domain' ),
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.assign( `/domains/add/${ siteSlug }?domainAndPlanPackage=true` );
+						},
+						badgeText: translate( 'Upgrade plan' ),
+					};
+					break;
 			}
 			enhancedTaskList.push( { ...task, ...taskData } );
 		} );

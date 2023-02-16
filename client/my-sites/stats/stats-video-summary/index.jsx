@@ -68,6 +68,7 @@ class StatsVideoSummary extends Component {
 					selected={ selectedBar }
 					onClick={ this.selectBar }
 					tabLabel={ tabLabel }
+					type="video"
 				/>
 			</div>
 		);

@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { Icon, video } from '@wordpress/icons';
 import classNames from 'classnames';
@@ -24,6 +23,7 @@ class StatsSummaryChart extends Component {
 		sectionClass: PropTypes.string.isRequired,
 		selected: PropTypes.object,
 		tabLabel: PropTypes.string.isRequired,
+		type: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -104,7 +104,7 @@ class StatsSummaryChart extends Component {
 	}
 
 	render() {
-		const { dataKey, isLoading, chartType, labelKey, numberFormat, selected, tabLabel } =
+		const { dataKey, isLoading, chartType, labelKey, numberFormat, selected, tabLabel, type } =
 			this.props;
 		const label = selected ? ': ' + selected[ labelKey ] : '';
 		const tabOptions = {
@@ -115,12 +115,11 @@ class StatsSummaryChart extends Component {
 			label: tabLabel + label,
 		};
 
-		const isFeatured = config.isEnabled( 'stats/enhance-post-detail' );
+		// The StatsPostSummary has been modernized to fresh styling.
+		const isModernized = 'post' === type;
 
-		return isFeatured ? (
-			<div
-				className={ classNames( 'stats-module', 'is-summary-chart', { 'is-loading': isLoading } ) }
-			>
+		return isModernized ? (
+			<div className={ classNames( 'is-summary-chart', { 'is-loading': isLoading } ) }>
 				<StatsModulePlaceholder className="is-chart" isLoading={ isLoading } />
 				<ElementChart data={ this.buildChartData() } barClick={ this.barClick }>
 					{ this.renderEmptyState() }

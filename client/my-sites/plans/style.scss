@@ -8,9 +8,9 @@
 body.is-section-plans.is-domain-sidebar-experiment-user {
 	background: var(--color-body-background);
 
-	// .layout__content {
-	// 	padding-left: 0 !important;
-	// }
+	.layout__content {
+		padding-left: 0 !important;
+	}
 
 	.plans__has-sidebar {
 		.section-nav {
@@ -109,12 +109,6 @@ body.is-section-plans.is-domain-sidebar-experiment-user {
 		.plan-features-comparison__item-annual-plan-container
 		.plan-features-comparison__item-annual-plan {
 			color: var(--studio-orange-40);
-		}
-	}
-
-	.plans-features-main__group.is-scrollable:not(.is-2023-pricing-grid) {
-		@media ( min-width: 1800px ) {
-			margin-left: -360px;
 		}
 	}
 }

@@ -1,7 +1,7 @@
 import { Gridicon, CircularProgressBar } from '@automattic/components';
 import { useRef, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { StepNavigationLink } from 'calypso/../packages/onboarding/src';
+import { FREE_FLOW, StepNavigationLink } from 'calypso/../packages/onboarding/src';
 import Badge from 'calypso/components/badge';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import Tooltip from 'calypso/components/tooltip';
@@ -63,7 +63,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 
 	const { flowName, title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
 	const arrayOfFilteredTasks: Task[] | null = getArrayOfFilteredTasks( tasks, flow );
-	const enhancedTasks =
+	let enhancedTasks =
 		site &&
 		getEnhancedTasks(
 			arrayOfFilteredTasks,
@@ -77,6 +77,14 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 
 	const currentTask = getTasksProgress( enhancedTasks );
 	const launchTask = enhancedTasks?.find( ( task ) => task.isLaunchTask === true );
+
+	// Free flow - remove domain_upsell task if user is on paid plan
+	if ( flow === FREE_FLOW && ! site?.plan?.is_free && enhancedTasks ) {
+		enhancedTasks = enhancedTasks?.filter( ( task ) => {
+			return task.id !== 'domain_upsell';
+		} );
+	}
+
 	const showLaunchTitle = launchTask && ! launchTask.disabled;
 
 	if ( sidebarDomain ) {
