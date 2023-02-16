@@ -9,6 +9,43 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import './style.scss';
 
 export class BusinessPlanUpgradeUpsell extends PureComponent {
+	constructor( props ) {
+		super( props );
+		this.state = { hours: 0, minutes: 0, seconds: 0 };
+	}
+
+	componentDidMount() {
+		const discountEndDate =
+			moment.utc( this.props.currentPlan?.subscribedDate ).unix() + 24 * 60 * 60;
+		this.getDiscountTimeRemaining( discountEndDate );
+		this.timerID = setInterval( () => this.getDiscountTimeRemaining( discountEndDate ), 1000 );
+	}
+
+	componentWillUnmount() {
+		clearInterval( this.timerID );
+	}
+
+	getDiscountTimeRemaining( discountEndDate ) {
+		const timeDiff = discountEndDate - moment.utc().unix();
+		if ( timeDiff <= 0 ) {
+			clearInterval( this.timerID );
+			this.setState( {
+				hours: 0,
+				minutes: 0,
+				seconds: 0,
+			} );
+			return;
+		}
+
+		this.setState( {
+			hours: Math.floor( ( timeDiff / ( 60 * 60 ) ) % 24 ),
+			minutes: Math.floor( ( timeDiff / 60 ) % 60 ),
+			seconds: Math.floor( timeDiff % 60 )
+				.toString()
+				.padStart( 2, '0' ),
+		} );
+	}
+
 	render() {
 		const { receiptId, translate } = this.props;
 
@@ -74,27 +111,13 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 			planDiscountedRawPrice,
 			currencyCode,
 			hasSevenDayRefundPeriod,
-			currentPlan,
 		} = this.props;
 
-		const getTimeLeftFromSecondsLeft = ( timeDiff ) => {
-			return {
-				hours: Math.floor( ( timeDiff / ( 60 * 60 ) ) % 24 ),
-				minutes: Math.floor( ( timeDiff / 60 ) % 60 ),
-				seconds: Math.floor( timeDiff % 60 )
-					.toString()
-					.padStart( 2, '0' ),
-			};
+		const { hours, minutes, seconds } = {
+			hours: this.state.hours,
+			minutes: this.state.minutes,
+			seconds: this.state.seconds,
 		};
-
-		const expiryDate = moment.utc( currentPlan?.subscribedDate ).unix() + 24 * 60 * 60;
-		const now = moment.utc().unix();
-		const isBeforeExpiry = currentPlan && now <= expiryDate;
-		const { hours, minutes, seconds } = getTimeLeftFromSecondsLeft( expiryDate - now );
-		console.log( 'expiryDate', expiryDate );
-		console.log( 'expiryDateb', moment.utc( currentPlan?.subscribedDate ).unix() );
-		console.log( 'expiryDate-now', now );
-		console.log( 'expiryDate', isBeforeExpiry );
 
 		return (
 			<>
