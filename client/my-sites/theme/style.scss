@@ -256,11 +256,11 @@ body.is-section-theme-i4 {
 	}
 
 	.design-preview__style-variation-wrapper {
-		flex-basis: 120px;
+		flex-basis: 100px;
 		flex-shrink: 0;
 
-		@include breakpoint-deprecated( "<960px" ) {
-			flex-basis: 100px;
+		@include breakpoint-deprecated( ">1024px" ) {
+			flex-basis: 120px;
 		}
 	}
 }
