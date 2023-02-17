@@ -4,13 +4,18 @@ import { PropsOf } from '@emotion/react';
 import { QueryClientProvider, QueryClient } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import CheckoutMain from 'calypso/my-sites/checkout/composite-checkout/components/checkout-main';
-import { mockGetCartEndpointWith, fetchStripeConfiguration, siteId, countryList } from './index';
+import {
+	mockGetCartEndpointWith,
+	fetchStripeConfiguration,
+	siteId,
+	countryList,
+	mockSetCartEndpointWith,
+} from './index';
 import type { CartKey, SetCart, ResponseCart } from '@automattic/shopping-cart';
 import type { Store } from 'redux';
 
 export function MockCheckout( {
 	initialCart,
-	mockSetCartEndpoint,
 	mainCartKey,
 	queryClient,
 	reduxStore,
@@ -19,7 +24,6 @@ export function MockCheckout( {
 	setCart,
 }: {
 	initialCart: ResponseCart;
-	mockSetCartEndpoint: SetCart;
 	mainCartKey: CartKey;
 	queryClient: QueryClient;
 	reduxStore: Store;
@@ -27,6 +31,10 @@ export function MockCheckout( {
 	additionalProps?: Partial< PropsOf< typeof CheckoutMain > >;
 	setCart?: SetCart;
 } ) {
+	const mockSetCartEndpoint = mockSetCartEndpointWith( {
+		currency: initialCart.currency,
+		locale: initialCart.locale,
+	} );
 	const managerClient = createShoppingCartManagerClient( {
 		getCart: mockGetCartEndpointWith( { ...initialCart, ...( cartChanges ?? {} ) } ),
 		setCart: setCart || mockSetCartEndpoint,

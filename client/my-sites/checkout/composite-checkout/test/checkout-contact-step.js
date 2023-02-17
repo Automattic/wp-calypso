@@ -72,7 +72,6 @@ describe( 'Checkout contact step', () => {
 			queryClient,
 			mainCartKey,
 			initialCart,
-			mockSetCartEndpoint,
 		};
 	} );
 
