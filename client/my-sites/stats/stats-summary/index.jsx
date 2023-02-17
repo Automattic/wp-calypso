@@ -67,7 +67,7 @@ class StatsSummaryChart extends Component {
 	}
 
 	renderEmptyState() {
-		return <StatsEmptyState stateType={ this.props.tabLabel } />;
+		return <StatsEmptyState />;
 	}
 
 	buildChartData() {
