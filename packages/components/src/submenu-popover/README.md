@@ -8,37 +8,37 @@ The `SubmenuPopover` component is used to render a popover menu with a submenu.
 
 ## How to use
 
-```js
+```tsx
 import '@wordpress/components/build-style/style.css';
 import { DropdownMenu, Icon, MenuGroup, MenuItem } from '@wordpress/components';
 import { chevronRight } from '@wordpress/icons';
 import SubmenuPopover, { useSubenuPopoverProps } from '.';
 
 export const Menu = () => {
- const submenu = useSubenuPopoverProps< HTMLDivElement >();
- const secondSubmenu = useSubenuPopoverProps< HTMLDivElement >();
- return (
-  <DropdownMenu label="Menu">
-   { () => (
-    <MenuGroup>
-     <MenuItem>Item 1</MenuItem>
-     <div { ...submenu.parent }>
-      <MenuItem>
-       Item 2 <Icon icon={ chevronRight } />
-      </MenuItem>
-      <SubmenuPopover { ...submenu.submenu }>
-       <MenuGroup>
-        <MenuItem>Item 2.1</MenuItem>
-        <MenuItem>Item 2.2</MenuItem>
-        <MenuItem>Item 2.4</MenuItem>
-       </MenuGroup>
-      </SubmenuPopover>
-     </div>
-     <MenuItem>Item 3</MenuItem>
-    </MenuGroup>
-   ) }
-  </DropdownMenu>
- );
+	const submenu = useSubenuPopoverProps();
+	const secondSubmenu = useSubenuPopoverProps();
+	return (
+		<DropdownMenu label="Menu">
+			{ () => (
+				<MenuGroup>
+					<MenuItem>Item 1</MenuItem>
+					<div { ...submenu.parent }>
+						<MenuItem>
+							Item 2 <Icon icon={ chevronRight } />
+						</MenuItem>
+						<SubmenuPopover { ...submenu.submenu }>
+							<MenuGroup>
+								<MenuItem>Item 2.1</MenuItem>
+								<MenuItem>Item 2.2</MenuItem>
+								<MenuItem>Item 2.4</MenuItem>
+							</MenuGroup>
+						</SubmenuPopover>
+					</div>
+					<MenuItem>Item 3</MenuItem>
+				</MenuGroup>
+			) }
+		</DropdownMenu>
+	);
 };
 ```
 
