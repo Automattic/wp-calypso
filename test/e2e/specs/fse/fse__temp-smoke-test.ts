@@ -49,6 +49,8 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 	it( 'Editor canvas loads', async function () {
 		fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
+		// The site editor navigation sidebar opens by default, so we close it
+		await fullSiteEditorPage.closeNavSidebar();
 		await fullSiteEditorPage.waitUntilLoaded();
 	} );
 } );

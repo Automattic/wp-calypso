@@ -394,7 +394,7 @@ export class FullSiteEditorPage {
 	 */
 	async openNavSidebar(): Promise< void > {
 		const openButton = this.editor.locator( 'button[aria-label="Open Navigation Sidebar"]' );
-		const closeButton = this.editor.locator( 'button[aria-label="Open the editor"]' );
+		const closeButton = this.editor.locator( 'button.edit-site-site-hub__edit-button' );
 
 		await Promise.race( [ closeButton.waitFor(), openButton.click() ] );
 	}
@@ -404,7 +404,7 @@ export class FullSiteEditorPage {
 	 */
 	async closeNavSidebar(): Promise< void > {
 		const openButton = this.editor.locator( 'button[aria-label="Open Navigation Sidebar"]' );
-		const closeButton = this.editor.locator( 'button[aria-label="Open the editor"]' );
+		const closeButton = this.editor.locator( 'button.edit-site-site-hub__edit-button' );
 
 		await Promise.race( [ openButton.waitFor(), closeButton.click() ] );
 	}
