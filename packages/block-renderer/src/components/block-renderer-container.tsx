@@ -9,6 +9,8 @@ import { useResizeObserver, useRefEffect } from '@wordpress/compose';
 import { useSelect } from '@wordpress/data';
 import React, { useMemo, useState } from 'react';
 import { BLOCK_MAX_HEIGHT } from '../constants';
+import useParsedAssets from '../hooks/use-parsed-assets';
+import loadStyles from '../utils/load-styles';
 import type { RenderedStyle } from '../types';
 import './block-renderer-container.scss';
 
@@ -27,43 +29,6 @@ interface BlockRendererContainerProps {
 interface ScaledBlockRendererContainerProps extends BlockRendererContainerProps {
 	containerWidth: number;
 }
-
-const useParsedAssets = ( html: string ) => {
-	return useMemo( () => {
-		const doc = document.implementation.createHTMLDocument( '' );
-		doc.body.innerHTML = html;
-		return Array.from( doc.body.children );
-	}, [ html ] );
-};
-
-const loadStyle = async (
-	element: HTMLElement,
-	{ tagName, id, href, rel, media, textContent }: HTMLLinkElement
-) => {
-	return new Promise( ( resolve, reject ) => {
-		const style = element.ownerDocument.createElement( tagName ) as HTMLLinkElement;
-		style.id = id;
-		if ( href ) {
-			style.href = href;
-			style.rel = rel;
-			style.media = media;
-			style.onload = () => resolve( style );
-			style.onerror = () => reject();
-		} else {
-			style.textContent = textContent;
-			resolve( style );
-		}
-
-		element.appendChild( style );
-	} );
-};
-
-const loadStyles = async ( element: HTMLElement, styles: HTMLLinkElement[] ) => {
-	return styles.reduce(
-		( promise, style ): Promise< any > => promise.then( () => loadStyle( element, style ) ),
-		Promise.resolve()
-	);
-};
 
 const ScaledBlockRendererContainer = ( {
 	children,
