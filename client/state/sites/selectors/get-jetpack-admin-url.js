@@ -4,7 +4,7 @@ import getSiteAdminUrl from './get-site-admin-url';
 
 export default function getJetpackAdminUrl( state, siteId ) {
 	const siteAdminUrl = getSiteAdminUrl( state, siteId );
-	if ( ! siteAdminUrl ) {
+	if ( siteAdminUrl === null ) {
 		return undefined;
 	}
 
