@@ -591,6 +591,8 @@
 			border-radius: 20px 20px 0 0;  /* stylelint-disable-line scales/radii */
 			padding-top: 12px;
 			padding-bottom: 2px;
+			box-shadow: 0 5px 15px rgba(0 0 0 / 7%), 0 3px 10px rgba(0 0 0 / 4%);
+			clip-path: inset(-15px -15px 0 -15px);
 		}
 		.domain-upsell-callout__content-text {
 			padding: 0 20px;
