@@ -27,7 +27,7 @@ export function splitCartProducts( cart: ResponseCart ): WpcomJetpackCartInfo {
 	const akismetCost = cart.products
 		.map( ( product ) => ( isAkismetProduct( product ) ? product.cost : 0 ) )
 		.reduce( ( accumulator, cost ) => accumulator + cost, 0 );
-	const wpcomCost = cart.total_cost_integer / 100 - jetpackCost;
+	const wpcomCost = cart.total_cost_integer / 100 - jetpackCost - akismetCost;
 
 	const wpcomProducts = cart.products.filter(
 		( product ) =>
