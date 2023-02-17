@@ -86,6 +86,7 @@ function WelcomeTour() {
 				is_gutenboarding: isGutenboarding,
 				slide_number: currentStepIndex + 1,
 				action: source,
+				intent: intent,
 			} );
 			setShowWelcomeGuide( false, { openedManually: false } );
 		},
@@ -103,6 +104,7 @@ function WelcomeTour() {
 					recordTracksEvent( 'calypso_editor_wpcom_tour_rate', {
 						thumbs_up: rating === 'thumbs-up',
 						is_gutenboarding: false,
+						intent: intent,
 					} );
 				},
 			},
@@ -111,12 +113,14 @@ function WelcomeTour() {
 					recordTracksEvent( 'calypso_editor_wpcom_tour_minimize', {
 						is_gutenboarding: isGutenboarding,
 						slide_number: currentStepIndex + 1,
+						intent: intent,
 					} );
 				},
 				onMaximize: ( currentStepIndex ) => {
 					recordTracksEvent( 'calypso_editor_wpcom_tour_maximize', {
 						is_gutenboarding: isGutenboarding,
 						slide_number: currentStepIndex + 1,
+						intent: intent,
 					} );
 				},
 				onStepViewOnce: ( currentStepIndex ) => {
@@ -128,6 +132,7 @@ function WelcomeTour() {
 						is_last_slide: currentStepIndex === lastStepIndex,
 						slide_heading: heading,
 						is_gutenboarding: isGutenboarding,
+						intent: intent,
 					} );
 				},
 			},
