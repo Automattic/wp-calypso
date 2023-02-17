@@ -164,6 +164,12 @@ export function getEnhancedTasks(
 				case 'design_selected':
 					taskData = {
 						title: translate( 'Select a design' ),
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.assign(
+								`/setup/update-design/designSetup?siteSlug=${ siteSlug }&flowToReturnTo=${ flow }`
+							);
+						},
 					};
 					break;
 				case 'setup_link_in_bio':

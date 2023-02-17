@@ -29,7 +29,7 @@ export const tasks: Task[] = [
 	{
 		id: 'design_selected',
 		completed: true,
-		disabled: true,
+		disabled: false,
 		taskType: 'blog',
 	},
 	{

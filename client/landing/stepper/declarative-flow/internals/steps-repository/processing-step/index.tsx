@@ -3,6 +3,7 @@ import {
 	isNewsletterOrLinkInBioFlow,
 	isLinkInBioFlow,
 	isFreeFlow,
+	isUpdateDesignFlow,
 	ECOMMERCE_FLOW,
 	isWooExpressFlow,
 } from '@automattic/onboarding';
@@ -101,7 +102,7 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 	const isWooCommercePowered = flowName === ECOMMERCE_FLOW;
 
 	// Currently we have the Domains and Plans only for link in bio
-	if ( isLinkInBioFlow( flowName ) || isFreeFlow( flowName ) ) {
+	if ( isLinkInBioFlow( flowName ) || isFreeFlow( flowName ) || isUpdateDesignFlow( flowName ) ) {
 		return <TailoredFlowPreCheckoutScreen flowName={ flowName } />;
 	}
 
