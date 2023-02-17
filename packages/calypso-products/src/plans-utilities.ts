@@ -41,6 +41,10 @@ export function getTermDuration( term: string ): number | undefined {
 
 export const redirectCheckoutToWpAdmin = (): boolean => !! JETPACK_REDIRECT_CHECKOUT_TO_WPADMIN;
 
+/**
+ * Returns if the 2023 Pricing grid optimized design should be visible or not
+ *
+ */
 export const is2023PricingGridEnabled = (): boolean => {
 	const isFeatureFlagEnabled = (): boolean => isEnabled( 'onboarding/2023-pricing-grid' );
 
@@ -50,19 +54,22 @@ export const is2023PricingGridEnabled = (): boolean => {
 	};
 
 	const isActivePage = (): boolean => {
-		const currentRoutePath = window.location.pathname;
+		let currentRoutePath = '';
+		if ( typeof window === 'object' && window.location ) {
+			currentRoutePath = window.location.pathname;
+		}
+
+		const [ firstPathPart, secondPathPart ] = ( currentRoutePath || '' )
+			.split( '/' )
+			.filter( ( i ) => i );
 
 		// Is this the internal plans page /plans/<site-slug> ?
-		if (
-			currentRoutePath.includes( 'plans' ) &&
-			! currentRoutePath.includes( 'start' ) &&
-			! currentRoutePath.includes( 'setup' )
-		) {
+		if ( firstPathPart === 'plans' ) {
 			return true;
 		}
 
-		// Is this the onboarding flow ?
-		if ( currentRoutePath.includes( '/start/plans' ) ) {
+		// Is this the onboarding flow /start/plans?
+		if ( firstPathPart === 'start' && secondPathPart === 'plans' ) {
 			return true;
 		}
 
