@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import Badge from './badge';
 import type { StyleVariation } from '../../types';
 import './style.scss';
@@ -10,7 +10,8 @@ interface BadgesProps {
 	variations: StyleVariation[];
 	onMoreClick?: () => void;
 	onClick?: ( variation: StyleVariation ) => void;
-	selectedStyleVariation?: StyleVariation;
+	selectedVariation?: StyleVariation;
+	firstVariationToShow?: StyleVariation;
 }
 
 const Badges: React.FC< BadgesProps > = ( {
@@ -18,15 +19,9 @@ const Badges: React.FC< BadgesProps > = ( {
 	variations = [],
 	onMoreClick,
 	onClick,
-	selectedStyleVariation,
+	selectedVariation,
+	firstVariationToShow,
 } ) => {
-	const [ firstVariationToShow, setFirstVariationToShow ] = useState< StyleVariation >();
-	useEffect( () => {
-		if ( ! firstVariationToShow && selectedStyleVariation ) {
-			setFirstVariationToShow( selectedStyleVariation );
-		}
-	}, [ selectedStyleVariation, firstVariationToShow ] );
-
 	const variationsToShow = useMemo( () => {
 		return [
 			...( firstVariationToShow ? [ firstVariationToShow ] : [] ),
@@ -47,8 +42,8 @@ const Badges: React.FC< BadgesProps > = ( {
 					variation={ variation }
 					onClick={ onClick }
 					isSelected={
-						( ! selectedStyleVariation && variation.slug === 'default' ) ||
-						variation === selectedStyleVariation
+						( ! selectedVariation && variation.slug === 'default' ) ||
+						variation.slug === selectedVariation?.slug
 					}
 				/>
 			) ) }

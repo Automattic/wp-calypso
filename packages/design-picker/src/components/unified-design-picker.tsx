@@ -7,7 +7,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useInView } from 'calypso/lib/use-in-view'; // eslint-disable-line no-restricted-imports
 import {
 	SHOW_ALL_SLUG,
@@ -169,45 +169,24 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	verticalId,
 	currentPlanFeatures,
 } ) => {
-	const {
-		is_premium = false,
-		is_virtual,
-		preselected_style_variation,
-		style_variations = [],
-	} = design;
+	const { is_virtual, preselected_style_variation, style_variations = [] } = design;
 
 	const { __ } = useI18n();
-	const [ selectedStyleVariation, setSelectedStyleVariation ] = useState< StyleVariation >();
-	const [ title, setTitle ] = useState< string >();
-	const [ isPremium, setIsPremium ] = useState( false );
+	const [ _selectedStyleVariation, setSelectedStyleVariation ] = useState< StyleVariation >();
 
-	const shouldUpgrade = isPremium && ! isPremiumThemeAvailable && ! hasPurchasedTheme;
+	const selectedStyleVariation = _selectedStyleVariation ?? preselected_style_variation;
 	const currentSiteCanInstallWoo = currentPlanFeatures?.includes( FEATURE_WOOP ) ?? false;
 	const designIsBundledWithWoo = design.is_bundled_with_woo_commerce;
-
-	useEffect( () => {
-		if ( ! selectedStyleVariation && preselected_style_variation ) {
-			setSelectedStyleVariation( preselected_style_variation );
-		}
-	}, [ selectedStyleVariation, preselected_style_variation ] );
-
-	useEffect( () => {
-		if ( selectedStyleVariation && selectedStyleVariation.slug !== 'default' ) {
-			setTitle( `${ design.title } – ${ selectedStyleVariation.title }` );
-			return;
-		}
-
-		setTitle( design.title );
-	}, [ design.title, selectedStyleVariation ] );
-
-	useEffect( () => {
-		if ( is_virtual && selectedStyleVariation?.slug === 'default' ) {
-			setIsPremium( false );
-			return;
-		}
-
-		setIsPremium( is_premium );
-	}, [ is_virtual, is_premium, selectedStyleVariation ] );
+	const title =
+		selectedStyleVariation && selectedStyleVariation.slug !== 'default'
+			? `${ design.title } – ${ selectedStyleVariation.title }`
+			: design.title;
+	let isPremium =
+		design.is_premium || ( selectedStyleVariation && selectedStyleVariation?.slug !== 'default' );
+	if ( is_virtual && selectedStyleVariation?.slug === 'default' ) {
+		isPremium = false;
+	}
+	const shouldUpgrade = isPremium && ! isPremiumThemeAvailable && ! hasPurchasedTheme;
 
 	function getPricingDescription() {
 		let text: React.ReactNode = null;
@@ -231,7 +210,10 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 			badge = <WooCommerceBundledBadge />;
 		} else if ( isPremium ) {
 			const toolTip =
-				shouldUpgrade && preselected_style_variation
+				shouldUpgrade &&
+				( is_virtual || ! design.is_premium ) &&
+				selectedStyleVariation &&
+				selectedStyleVariation?.slug !== 'default'
 					? __( 'Unlock this style, and tons of other features, by upgrading to a Premium plan.' )
 					: undefined;
 			badge = (
@@ -255,7 +237,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 		<div className="design-picker__design-option">
 			<button
 				data-e2e-button={ isPremium ? 'paidOption' : 'freeOption' }
-				onClick={ () => onPreview( design ) }
+				onClick={ () => onPreview( design, selectedStyleVariation ) }
 			>
 				<span
 					className={ classnames(
@@ -280,9 +262,10 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 						{ style_variations.length > 0 && (
 							<div className="design-picker__options-style-variations">
 								<StyleVariationBadges
-									selectedStyleVariation={ selectedStyleVariation }
 									variations={ style_variations }
 									onClick={ ( variation ) => setSelectedStyleVariation( variation ) }
+									selectedVariation={ selectedStyleVariation }
+									firstVariationToShow={ preselected_style_variation }
 								/>
 							</div>
 						) }
