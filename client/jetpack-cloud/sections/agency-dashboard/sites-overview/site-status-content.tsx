@@ -184,11 +184,7 @@ export default function SiteStatusContent( {
 			break;
 		}
 		case 'warning': {
-			content = (
-				<Badge className="sites-overview__badge" type="warning">
-					{ value }
-				</Badge>
-			);
+			content = <div className="sites-overview__warning">{ value }</div>;
 			break;
 		}
 		case 'success': {
