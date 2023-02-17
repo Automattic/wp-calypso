@@ -28,6 +28,7 @@
 		"desktop-promo": true,
 		"dev/auth-helper": true,
 		"dev/account-settings-helper": true,
+		"dev/developer-ux": true,
 		"dev/preferences-helper": true,
 		"devdocs": true,
 		"devdocs/color-scheme-picker": true,
@@ -53,6 +54,7 @@
 		"hosting/datacenter-picker": true,
 		"i18n/translation-scanner": true,
 		"importers/substack": true,
+		"importer/unified": true,
 		"inline-help": true,
 		"jetpack/agency-dashboard": true,
 		"jetpack/api-cache": true,
@@ -90,6 +92,7 @@
 		"me/account/color-scheme-picker": true,
 		"me/vat-details": true,
 		"my-sites/add-ons": true,
+		"newsletter/stats": false,
 		"network-connection": true,
 		"onboarding/import": true,
 		"onboarding/import-from-blogger": true,
@@ -163,8 +166,7 @@
 		"user-management-revamp": true,
 		"woop": false,
 		"wordpress-action-search": false,
-		"wpcom-user-bootstrap": true,
-		"newsletter/stats": false
+		"wpcom-user-bootstrap": true
 	},
 	"siftscience_key": "e00e878351",
 	"oauth_client_id": "39911",

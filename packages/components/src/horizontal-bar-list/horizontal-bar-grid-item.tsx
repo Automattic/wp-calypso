@@ -22,6 +22,8 @@ const HorizontalBarListItem = ( {
 	useShortNumber,
 	isStatic,
 	additionalColumns,
+	usePlainCard,
+	isLinkUnderlined,
 }: HorizontalBarListItemProps ) => {
 	const { label, value, shortLabel, children: itemChildren } = data;
 	const fillPercentage = maxValue > 0 ? ( value / maxValue ) * 100 : 0;
@@ -81,11 +83,16 @@ const HorizontalBarListItem = ( {
 				className={ classnames( `${ BASE_CLASS_NAME }-item`, {
 					[ `${ BASE_CLASS_NAME }-item--indicated` ]: hasIndicator,
 					[ `${ BASE_CLASS_NAME }-item--link` ]: isLink || hasChildren,
+					[ `${ BASE_CLASS_NAME }-item--link-underlined` ]: isLinkUnderlined,
 					[ `${ BASE_CLASS_NAME }-item--static` ]: isStatic,
 				} ) }
-				style={ {
-					[ `--${ BASE_CLASS_NAME }-fill` ]: `${ fillPercentage }%`,
-				} }
+				style={
+					! usePlainCard
+						? {
+								[ `--${ BASE_CLASS_NAME }-fill` ]: `${ fillPercentage }%`,
+						  }
+						: {}
+				}
 				onClick={ rowClick } // only execute onClick if url is not defined, otherwise anchor click will be ignored
 				onKeyDown={ rowKeyPress }
 				// eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
@@ -119,7 +126,9 @@ const HorizontalBarListItem = ( {
 					) }
 				</div>
 				<div className="value">
-					{ ! useShortNumber ? numberFormat( value, 0 ) : <ShortenedNumber value={ value } /> }
+					{ usePlainCard ? value : null }
+					{ ! usePlainCard &&
+						( ! useShortNumber ? numberFormat( value, 0 ) : <ShortenedNumber value={ value } /> ) }
 				</div>
 			</li>
 			{ itemChildren && open && (
@@ -137,6 +146,8 @@ const HorizontalBarListItem = ( {
 									onClick={ ( e ) => onClick?.( e, child ) }
 									hasIndicator={ hasIndicator }
 									isStatic={ isStatic }
+									usePlainCard={ usePlainCard }
+									isLinkUnderlined={ isLinkUnderlined }
 								/>
 							);
 						} ) }

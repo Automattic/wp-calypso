@@ -26,7 +26,7 @@ import formatCurrency from '@automattic/format-currency';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
-import { localize, LocalizeProps } from 'i18n-calypso';
+import { localize, LocalizeProps, TranslateResult } from 'i18n-calypso';
 import { last } from 'lodash';
 import page from 'page';
 import { Component, createRef } from 'react';
@@ -153,6 +153,20 @@ type PlanFeatures2023GridType = PlanFeatures2023GridProps &
 type PlanFeatures2023GridState = {
 	showPlansComparisonGrid: boolean;
 };
+
+type ServiceLogoProps = {
+	imgSrc: string;
+	imgAlt: string;
+	hoverText: TranslateResult;
+};
+
+const ServiceLogo = ( props: ServiceLogoProps ) => (
+	<div className="plan-features-2023-grid__plan-logo">
+		<Plans2023Tooltip text={ props.hoverText }>
+			<img src={ props.imgSrc } alt={ props.imgAlt } />{ ' ' }
+		</Plans2023Tooltip>
+	</div>
+);
 
 export class PlanFeatures2023Grid extends Component<
 	PlanFeatures2023GridType,
@@ -477,35 +491,29 @@ export class PlanFeatures2023Grid extends Component<
 					) }
 					<header className={ headerClasses }>
 						{ isBusinessPlan( planName ) && (
-							<Plans2023Tooltip
-								text={ translate(
+							<ServiceLogo
+								hoverText={ translate(
 									'WP Cloud gives you the tools you need to add scalable, highly available, extremely fast WordPress hosting.'
 								) }
-							>
-								<div className="plan-features-2023-grid__plan-logo">
-									<img src={ cloudLogo } alt="WP Cloud logo" />{ ' ' }
-								</div>
-							</Plans2023Tooltip>
+								imgSrc={ cloudLogo }
+								imgAlt="WP Cloud logo"
+							/>
 						) }
 						{ isEcommercePlan( planName ) && (
-							<Plans2023Tooltip
-								text={ translate(
+							<ServiceLogo
+								hoverText={ translate(
 									'Make your online store a reality with the power of WooCommerce.'
 								) }
-							>
-								<div className="plan-features-2023-grid__plan-logo">
-									<img src={ wooLogo } alt="WooCommerce logo" />{ ' ' }
-								</div>
-							</Plans2023Tooltip>
+								imgSrc={ wooLogo }
+								imgAlt="WooCommerce logo"
+							/>
 						) }
 						{ isWpcomEnterpriseGridPlan( planName ) && (
-							<Plans2023Tooltip
-								text={ translate( 'The trusted choice for enterprise WordPress hosting.' ) }
-							>
-								<div className="plan-features-2023-grid__plan-logo">
-									<img src={ vipLogo } alt="WPVIP logo" />{ ' ' }
-								</div>
-							</Plans2023Tooltip>
+							<ServiceLogo
+								hoverText={ translate( 'The trusted choice for enterprise WordPress hosting.' ) }
+								imgSrc={ vipLogo }
+								imgAlt="WPVIP logo"
+							/>
 						) }
 					</header>
 				</Container>

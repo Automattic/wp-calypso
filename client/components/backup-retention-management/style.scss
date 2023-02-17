@@ -29,6 +29,10 @@
 			color: var(--studio-gray-60);
 		}
 	}
+
+	.display-price__billing-time-frame .compact {
+		display: none;
+	}
 }
 
 .backup-retention-management .setting-title {

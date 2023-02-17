@@ -435,6 +435,7 @@ class ThemeShowcase extends Component {
 			vertical: this.props.vertical,
 			siteId: this.props.siteId,
 			upsellUrl: this.props.upsellUrl,
+			upsellBanner: this.props.upsellBanner,
 			search: search,
 			tier: this.props.tier,
 			defaultOption: this.props.defaultOption,
