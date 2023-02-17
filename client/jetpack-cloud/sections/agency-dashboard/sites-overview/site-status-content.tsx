@@ -176,11 +176,7 @@ export default function SiteStatusContent( {
 
 	switch ( status ) {
 		case 'failed': {
-			content = (
-				<Badge className="sites-overview__badge" type="error">
-					{ value }
-				</Badge>
-			);
+			content = <div className="sites-overview__failed">{ value }</div>;
 			break;
 		}
 		case 'warning': {

@@ -382,3 +382,9 @@
 	@extend .sites-overview__column-content;
 	color: var(--color-warning-50);
 }
+
+.sites-overview__failed {
+	@extend .sites-overview__column-content;
+	color: var(--studio-red-50);
+}
+
