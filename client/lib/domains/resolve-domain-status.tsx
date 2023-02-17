@@ -71,7 +71,6 @@ export function resolveDomainStatus(
 					href={ localizeUrl( INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS ) }
 					rel="noopener noreferrer"
 					target="_blank"
-					onClick={ ( e ) => e.stopPropagation() }
 				/>
 			),
 		},
@@ -93,12 +92,7 @@ export function resolveDomainStatus(
 
 	const mappingSetupComponents = {
 		strong: <strong />,
-		a: (
-			<a
-				href={ domainMappingSetup( siteSlug as string, domain.domain, mappingSetupStep ) }
-				onClick={ ( e ) => e.stopPropagation() }
-			/>
-		),
+		a: <a href={ domainMappingSetup( siteSlug as string, domain.domain, mappingSetupStep ) } />,
 	};
 
 	switch ( domain.type ) {
