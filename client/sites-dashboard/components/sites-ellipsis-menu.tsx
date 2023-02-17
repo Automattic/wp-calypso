@@ -203,7 +203,7 @@ const CopySiteItem = ( { recordTracks, site, onClick }: SitesMenuItemProps ) => 
 
 const MenuItemGridIcon = styled( Gridicon )( {
 	insetBlockStart: '-1px',
-	marginInlineStart: '4px',
+	marginLeft: 'auto',
 	position: 'relative',
 } );
 
