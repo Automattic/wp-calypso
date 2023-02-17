@@ -3,6 +3,7 @@ import getUpcomingBillingTransactions from 'calypso/state/selectors/get-upcoming
 import type { IAppState } from '../types';
 import type {
 	BillingTransaction,
+	BillingTransactionsType,
 	BillingTransactionsTypePast,
 	BillingTransactionsTypeUpcoming,
 	UpcomingCharge,
@@ -24,7 +25,7 @@ export function getBillingTransactionsByType(
 ): BillingTransaction[] | null;
 export function getBillingTransactionsByType(
 	state: IAppState,
-	transactionType: BillingTransactionsTypeUpcoming | BillingTransactionsTypePast
+	transactionType: BillingTransactionsType
 ) {
 	return 'upcoming' === transactionType
 		? getUpcomingBillingTransactions( state )
