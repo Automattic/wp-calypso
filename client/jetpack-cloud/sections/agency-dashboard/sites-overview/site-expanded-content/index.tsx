@@ -1,9 +1,9 @@
-import type { SiteData } from '../types';
+import type { SiteNode } from '../types';
 
 import './style.scss';
 
 interface Props {
-	site: SiteData;
+	site: SiteNode;
 }
 
 export const SiteExpandedContent = ( { site }: Props ) => {
