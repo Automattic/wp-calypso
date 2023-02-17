@@ -38,6 +38,7 @@ export default function ( pageBase = '/' ) {
 		'clicks',
 		'countryviews',
 		'authors',
+		'tags-categories',
 		'videoplays',
 		'videodetails',
 		'filedownloads',
