@@ -8,7 +8,7 @@ export function billingHistory( context, next ) {
 }
 
 export function transaction( context, next ) {
-	const receiptId = context.params.receiptId;
+	const receiptId = parseInt( context.params.receiptId, 10 );
 
 	if ( receiptId ) {
 		context.primary = createElement( Receipt, { transactionId: receiptId } );
