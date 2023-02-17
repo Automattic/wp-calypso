@@ -55,11 +55,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 
 	const username = useSelector( ( state ) => getCurrentUserName( state ) );
 
-	const { setPendingAction, setPluginsToVerify } = useDispatch( ONBOARD_STORE );
-
-	if ( isWooExpressFlow( flow ) ) {
-		setPluginsToVerify( [ 'woocommerce' ] );
-	}
+	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 
 	let theme: string;
 	if ( isMigrationFlow( flow ) || isCopySiteFlow( flow ) ) {

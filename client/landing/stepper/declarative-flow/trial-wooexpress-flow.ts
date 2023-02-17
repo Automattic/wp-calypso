@@ -76,7 +76,8 @@ const wooexpress: Flow = {
 		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 		const siteSlugParam = useSiteSlugParam();
 
-		const { setStepProgress } = useDispatch( ONBOARD_STORE );
+		const { setStepProgress, setPluginsToVerify } = useDispatch( ONBOARD_STORE );
+		setPluginsToVerify( [ 'woocommerce' ] );
 
 		const flowProgress = useSiteSetupFlowProgress( currentStep, intent );
 		setStepProgress( flowProgress );
