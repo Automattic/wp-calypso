@@ -34,6 +34,7 @@ export default function () {
 		'referrers',
 		'clicks',
 		'countryviews',
+		'tags-categories',
 		'authors',
 		'videoplays',
 		'videodetails',
