@@ -451,7 +451,6 @@ class RemovePurchase extends Component {
 				return this.renderMarketplaceSubscriptionsDialog();
 			}
 
-			// consider putting this last so that it doesn't block the other dialogs
 			if ( this.shouldShowWordAdsEligibilityWarning() ) {
 				return this.renderWordAdsEligibilityWarningDialog();
 			}
