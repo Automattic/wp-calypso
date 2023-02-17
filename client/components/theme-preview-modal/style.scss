@@ -2,12 +2,6 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
 
-@mixin break-design-preview() {
-	@media (min-width: #{ ($break-xlarge) }) {
-		@content;
-	}
-}
-
 .theme-preview-modal {
 	background-color: #fdfdfd;
 	bottom: 0;
@@ -20,7 +14,7 @@
 	z-index: z-index("root", ".theme-preview-modal");
 	-webkit-font-smoothing: antialiased;
 
-	@include break-design-preview {
+	@include break-xlarge {
 		padding-inline-start: 32px;
 		padding-inline-end: 32px;
 	}
@@ -42,7 +36,7 @@
 	justify-content: space-between;
 	z-index: z-index(".theme-preview-modal", ".theme-preview-modal__navigation");
 
-	@include break-design-preview {
+	@include break-xlarge {
 		gap: 24px;
 		position: absolute;
 		top: 8px;
@@ -61,7 +55,7 @@
 		fill: var(--color-text);
 		margin: 2px 0 0 0;
 
-		@include break-design-preview {
+		@include break-xlarge {
 			display: block;
 		}
 	}
@@ -83,7 +77,7 @@
 			width: 20px;
 		}
 
-		@include break-design-preview {
+		@include break-xlarge {
 			margin-top: 0;
 		}
 	}
@@ -112,7 +106,7 @@
 
 	&-title,
 	&-action {
-		@include break-design-preview {
+		@include break-xlarge {
 			display: none;
 		}
 	}
@@ -124,7 +118,7 @@
 	position: relative;
 	z-index: 1;
 
-	@include break-design-preview {
+	@include break-xlarge {
 		box-sizing: border-box;
 		height: calc(100vh - 24px);
 		margin-top: 24px;
@@ -140,7 +134,7 @@
 		height: calc(100vh - 156px);
 		margin-top: 96px;
 
-		@include break-design-preview {
+		@include break-xlarge {
 			height: calc(100vh - 24px);
 			margin-top: 24px;
 		}
