@@ -59,6 +59,7 @@ body.is-section-theme-i4 {
 
 		.theme__sheet-column-left,
 		.theme__sheet-column-right {
+			align-items: flex-start;
 			box-sizing: border-box;
 			width: 100%;
 		}
@@ -355,7 +356,6 @@ body.is-section-theme-i4 {
 
 .theme__sheet-column-left,
 .theme__sheet-column-right {
-	align-items: flex-start;
 	display: flex;
 	width: 50%;
 	flex-direction: column;
