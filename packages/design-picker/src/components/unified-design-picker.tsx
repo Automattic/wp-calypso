@@ -267,6 +267,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 								onClick={ ( variation ) => setSelectedStyleVariation( variation ) }
 								selectedVariation={ selectedStyleVariation }
 								firstVariationToShow={ preselected_style_variation }
+								onMoreClick={ () => onPreview( design ) }
 							/>
 						</div>
 					) }
