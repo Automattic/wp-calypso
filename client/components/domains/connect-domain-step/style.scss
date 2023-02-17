@@ -21,7 +21,7 @@ body.connect-domain-setup__body-white {
 	&__content-placeholder {
 		p {
 			width: 95%;
-			@include placeholder( --color-neutral-5 );
+			@include placeholder(--color-neutral-5);
 			&:last-child {
 				width: 60%;
 			}
@@ -30,7 +30,7 @@ body.connect-domain-setup__body-white {
 
 	&__sidebar-placeholder {
 		width: 100%;
-		@include placeholder( --color-neutral-5 );
+		@include placeholder(--color-neutral-5);
 		margin: 0;
 	}
 
