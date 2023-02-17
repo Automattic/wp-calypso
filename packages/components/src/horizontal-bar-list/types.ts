@@ -17,6 +17,10 @@ export type HorizontalBarListItemProps = {
 	useShortNumber?: boolean;
 	isStatic?: boolean;
 	additionalColumns?: React.ReactNode;
+	// for values that are not numeric, add this property to display a string in the values column and avoid showing horizontal bars
+	usePlainCard?: boolean;
+	// use underlined links for item lables (variants without horizontal bars)
+	isLinkUnderlined?: boolean;
 };
 
 type StatDataObject = {

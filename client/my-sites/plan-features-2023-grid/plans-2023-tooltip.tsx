@@ -17,6 +17,7 @@ const StyledTooltip = styled( Tooltip )`
 		font-weight: 400;
 		font-size: 1em;
 		padding: 8px 10px;
+		top: -8px;
 	}
 `;
 

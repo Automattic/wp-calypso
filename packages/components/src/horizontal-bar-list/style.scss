@@ -122,6 +122,13 @@
 	cursor: pointer;
 }
 
+.horizontal-bar-list-item--link-underlined {
+	a {
+		font-weight: 400;
+		text-decoration: underline;
+	}
+}
+
 .horizontal-bar-list-item--indicated {
 	box-shadow: inset $item-indicator-width 0 0 var(--color-primary);
 }

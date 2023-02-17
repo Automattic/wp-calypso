@@ -225,7 +225,7 @@ class ThemesSelection extends Component {
 	};
 
 	render() {
-		const { source, query, upsellUrl, siteId } = this.props;
+		const { source, query, upsellUrl, upsellBanner, siteId } = this.props;
 
 		const themes = this.props.customizedThemesList || this.props.themes;
 
@@ -237,6 +237,7 @@ class ThemesSelection extends Component {
 				) }
 				<ThemesList
 					upsellUrl={ upsellUrl }
+					upsellBanner={ upsellBanner }
 					themes={ themes }
 					wpOrgThemes={ this.props.wpOrgThemes }
 					fetchNextPage={ this.fetchNextPage }
