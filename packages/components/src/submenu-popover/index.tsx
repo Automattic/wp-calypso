@@ -61,6 +61,16 @@ function useHasRightSpace( element: HTMLElement | undefined ): boolean {
 	}, [ element ] );
 }
 
+/**
+ * Returns the anchor rect adding a given offsetTop.
+ */
+function useAnchorWithOffset( anchorRect: DOMRect | undefined, { offsetTop = 0 } = {} ) {
+	if ( ! anchorRect || offsetTop === 0 ) {
+		return anchorRect;
+	}
+	return new DOMRect( anchorRect.x, anchorRect.y + offsetTop, anchorRect.width, anchorRect.height );
+}
+
 export function useSubenuPopoverProps< T extends HTMLElement >(
 	options: { offsetTop?: number } = {}
 ) {
@@ -68,20 +78,9 @@ export function useSubenuPopoverProps< T extends HTMLElement >(
 	const [ isVisible, setIsVisible ] = useState( false );
 	const anchor = useRef< T >();
 	const hasRightSpace = useHasRightSpace( anchor?.current );
-
-	function getAnchorWithOffset( anchorRect: DOMRect | undefined ) {
-		if ( ! anchorRect || offsetTop === 0 ) {
-			return anchorRect;
-		}
-		return new DOMRect(
-			anchorRect.x,
-			anchorRect.y + offsetTop,
-			anchorRect.width,
-			anchorRect.height
-		);
-	}
 	const closeSubmenuA11y = useCloseSubmenuA11y();
-	const anchorRect = getAnchorWithOffset( anchor.current?.getBoundingClientRect() );
+	const anchorRect = useAnchorWithOffset( anchor.current?.getBoundingClientRect(), { offsetTop } );
+
 	const submenu: Partial< SubmenuPopoverProps > = {
 		isVisible,
 		placement: hasRightSpace ? 'right-start' : 'left-start',
