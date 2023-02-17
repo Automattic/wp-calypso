@@ -19,6 +19,7 @@ import {
 	domainManagementEdit,
 	domainManagementList,
 	domainUseMyDomain,
+	domainMappingSetup,
 } from 'calypso/my-sites/domains/paths';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -33,7 +34,7 @@ import {
 
 import './style.scss';
 
-function ConnectDomainStep( { domain, selectedSite, initialStep, showErrors, isFirstVisit } ) {
+function ConnectDomainStep( { domain, initialStep, selectedSite, showErrors, isFirstVisit } ) {
 	const { __ } = useI18n();
 	const stepsDefinition = isSubdomain( domain )
 		? connectASubdomainStepsDefinition
@@ -57,11 +58,33 @@ function ConnectDomainStep( { domain, selectedSite, initialStep, showErrors, isF
 
 	const statusRef = useRef( {} );
 
-	useEffect( () => {
-		if ( initialStep && Object.values( stepSlug ).includes( initialStep ) ) {
-			setPageSlug( initialStep );
-		}
-	}, [ initialStep ] );
+	const resolveMappingSetupStep = useCallback(
+		( connectionMode, supportsDomainConnect, domainName ) => {
+			if ( initialStep ) {
+				return initialStep;
+			}
+			// If connectionMode is present we'll send you to the last step of the relevant flow
+			if ( connectionMode ) {
+				if ( isSubdomain( domainName ) ) {
+					return connectionMode === modeType.ADVANCED
+						? stepSlug.SUBDOMAIN_ADVANCED_UPDATE
+						: stepSlug.SUBDOMAIN_SUGGESTED_UPDATE;
+				}
+				if ( connectionMode === modeType.ADVANCED ) {
+					return stepSlug.ADVANCED_UPDATE;
+				} else if ( connectionMode === modeType.DC ) {
+					return stepSlug.DC_START;
+				}
+				return stepSlug.SUGGESTED_UPDATE;
+			}
+			// If connectionMode is not present we'll send you to one of the start steps
+			if ( supportsDomainConnect ) {
+				return stepSlug.DC_START;
+			}
+			return firstStep;
+		},
+		[ initialStep, firstStep ]
+	);
 
 	const verifyConnection = useCallback(
 		( setStepAfterVerify = true ) => {
@@ -117,14 +140,35 @@ function ConnectDomainStep( { domain, selectedSite, initialStep, showErrors, isF
 		setLoadingDomainSetupInfo( true );
 		wpcom
 			.domain( domain )
-			.mappingSetupInfo( selectedSite.ID, domain )
+			.mappingSetupInfo( selectedSite.ID, {
+				return_url:
+					window.location.protocol +
+					'//' +
+					window.location.hostname +
+					( window.location.port ? ':' + window.location.port : '' ) +
+					domainMappingSetup( selectedSite.slug, domain, stepSlug.DC_VERIFYING ),
+			} )
 			.then( ( data ) => {
 				setDomainSetupInfo( { data } );
+				setPageSlug(
+					resolveMappingSetupStep(
+						data?.connection_mode,
+						!! data?.domain_connect_apply_wpcom_hosting,
+						domain
+					)
+				);
 				statusRef.current.hasLoadedStatusInfo = { [ domain ]: true };
 			} )
 			.catch( ( error ) => setDomainSetupInfoError( { error } ) )
 			.finally( () => setLoadingDomainSetupInfo( false ) );
-	}, [ domain, domainSetupInfo, loadingDomainSetupInfo, selectedSite.ID ] );
+	}, [
+		selectedSite,
+		domain,
+		resolveMappingSetupStep,
+		domainSetupInfo,
+		loadingDomainSetupInfo,
+		selectedSite.ID,
+	] );
 
 	useEffect( () => {
 		if ( ! showErrors || statusRef.current?.hasFetchedVerificationStatus ) {
@@ -276,6 +320,7 @@ function ConnectDomainStep( { domain, selectedSite, initialStep, showErrors, isF
 					<ConnectDomainStepSupportInfoLink baseClassName={ baseClassName } mode={ mode } />
 					<ConnectDomainStepSwitchSetupInfoLink
 						baseClassName={ baseClassName }
+						supportsDomainConnect={ !! domainSetupInfo?.data?.domain_connect_apply_wpcom_hosting }
 						currentMode={ mode }
 						currentStep={ step }
 						isSubdomain={ isSubdomain( domain ) }

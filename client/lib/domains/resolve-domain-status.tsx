@@ -1,8 +1,6 @@
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import moment from 'moment';
-import { modeType, stepSlug } from 'calypso/components/domains/connect-domain-step/constants';
-import { isSubdomain } from 'calypso/lib/domains';
 import { isExpiringSoon } from 'calypso/lib/domains/utils/is-expiring-soon';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils/is-recently-registered';
 import { shouldRenderExpiringCreditCard, handleRenewNowClick } from 'calypso/lib/purchases';
@@ -79,20 +77,9 @@ export function resolveDomainStatus(
 		},
 	};
 
-	let mappingSetupStep: string =
-		domain.connectionMode === modeType.ADVANCED
-			? stepSlug.ADVANCED_UPDATE
-			: stepSlug.SUGGESTED_UPDATE;
-	if ( isSubdomain( domain.domain ) ) {
-		mappingSetupStep =
-			domain.connectionMode === modeType.ADVANCED
-				? stepSlug.SUBDOMAIN_ADVANCED_UPDATE
-				: stepSlug.SUBDOMAIN_SUGGESTED_UPDATE;
-	}
-
 	const mappingSetupComponents = {
 		strong: <strong />,
-		a: <a href={ domainMappingSetup( siteSlug as string, domain.domain, mappingSetupStep ) } />,
+		a: <a href={ domainMappingSetup( siteSlug as string, domain.domain ) } />,
 	};
 
 	switch ( domain.type ) {

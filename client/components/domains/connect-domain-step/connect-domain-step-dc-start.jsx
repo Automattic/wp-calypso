@@ -2,6 +2,7 @@ import { Button } from '@automattic/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
+import { useCallback } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import MaterialIcon from 'calypso/components/material-icon';
 import ConnectDomainStepWrapper from './connect-domain-step-wrapper';
@@ -15,10 +16,16 @@ export default function ConnectDomainStepDCStart( {
 	domainSetupInfo,
 	pageSlug,
 	mode,
+	onVerifyConnection,
 	progressStepList,
 } ) {
 	const domainConnectURL = domainSetupInfo?.data?.domain_connect_apply_wpcom_hosting;
 	const { __ } = useI18n();
+
+	const clickHandler = useCallback( () => {
+		onVerifyConnection( false );
+		window.location = domainConnectURL;
+	}, [ onVerifyConnection, domainConnectURL ] );
 
 	const stepContent = (
 		<>
@@ -41,7 +48,7 @@ export default function ConnectDomainStepDCStart( {
 					<br />
 					{ __( 'It can take up to 72 hours for the domain to be fully connected.' ) }
 				</p>
-				<Button primary href={ domainConnectURL }>
+				<Button primary onClick={ clickHandler }>
 					{ __( 'Start setup' ) }
 				</Button>
 				<p className={ className + '__text' }>{ __( 'Opens your DNS provider site' ) }</p>

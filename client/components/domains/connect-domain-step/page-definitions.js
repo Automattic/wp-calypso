@@ -108,14 +108,14 @@ export const connectADomainStepsDefinition = {
 		mode: modeType.DC,
 		step: stepType.CONNECTED,
 		component: ConnectDomainStepDone,
-		prev: stepSlug.ADVANCED_UPDATE,
+		prev: stepSlug.DC_START,
 		singleColumnLayout: true,
 	},
 	[ stepSlug.DC_VERIFYING ]: {
 		mode: modeType.DC,
 		step: stepType.VERIFYING,
 		component: ConnectDomainStepDone,
-		prev: stepSlug.ADVANCED_UPDATE,
+		prev: stepSlug.DC_START,
 		singleColumnLayout: true,
 	},
 };
