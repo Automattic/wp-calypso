@@ -315,6 +315,7 @@ function wpcom_premium_global_styles_is_site_exempt( $blog_id = 0 ) {
 	// other conditions will determine whether they can use GS.
 	$wp_global_styles_cpt = get_post_type_object( 'wp_global_styles' );
 	if ( ! current_user_can( $wp_global_styles_cpt->cap->publish_posts ) ) {
+		restore_current_blog();
 		return false;
 	}
 
