@@ -24,6 +24,7 @@ import {
 	mockGetVatInfoEndpoint,
 } from './util';
 import { MockCheckout } from './util/mock-checkout';
+import type { CartKey } from '@automattic/shopping-cart';
 
 jest.mock( 'calypso/state/sites/selectors' );
 jest.mock( 'calypso/state/sites/domains/selectors' );
@@ -35,9 +36,12 @@ jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
 jest.mock( 'calypso/lib/navigate' );
 
 describe( 'Checkout contact step', () => {
-	let defaultPropsForMockCheckout = {};
-	const mainCartKey = 'foo.com';
+	const mainCartKey = 'foo.com' as CartKey;
 	const initialCart = getBasicCart();
+	const defaultPropsForMockCheckout = {
+		mainCartKey,
+		initialCart,
+	};
 
 	getPlansBySiteId.mockImplementation( () => ( {
 		data: getActivePersonalPlanDataForType( 'yearly' ),
@@ -53,11 +57,6 @@ describe( 'Checkout contact step', () => {
 		nock.cleanAll();
 		nock( 'https://public-api.wordpress.com' ).persist().post( '/rest/v1.1/logstash' ).reply( 200 );
 		mockGetVatInfoEndpoint( {} );
-
-		defaultPropsForMockCheckout = {
-			mainCartKey,
-			initialCart,
-		};
 	} );
 
 	it( 'does not render the contact step when the purchase is free', async () => {
@@ -240,7 +239,19 @@ describe( 'Checkout contact step', () => {
 		{ complete: 'does not', valid: 'invalid', name: 'plan', email: 'fails', logged: 'out' },
 	] )(
 		'$complete complete the contact step when validation is $valid with $name in the cart while logged-$logged and signup validation $email',
-		async ( { complete, valid, name, email, logged } ) => {
+		async ( {
+			complete,
+			valid,
+			name,
+			email,
+			logged,
+		}: {
+			complete: 'does' | 'does not';
+			valid: 'valid' | 'invalid';
+			name: 'plan' | 'domain' | 'gsuite';
+			email: 'fails' | 'passes';
+			logged: 'in' | 'out';
+		} ) => {
 			const user = userEvent.setup();
 
 			const product = ( () => {
