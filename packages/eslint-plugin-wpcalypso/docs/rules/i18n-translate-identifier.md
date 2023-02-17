@@ -1,4 +1,4 @@
-# Disallow declaring variables with unexpected identifier names referring to translation functions.
+# Disallow declaring variables with unexpected identifier names referring to translation functions
 
 When declaring a variable that points to a translate function reference from `i18n-calypso` or `@wordpress/react-i18n` (`@wordpress/i18n`), the identifier name of the variable should match the original name of the translation function, i.e. `translate` for `i18n-calypso`, or `__, _n, _nx, _x` for `@wordpress/react-i18n`.
 
