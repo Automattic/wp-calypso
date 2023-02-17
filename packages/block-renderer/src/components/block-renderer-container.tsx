@@ -28,18 +28,18 @@ interface ScaledBlockRendererContainerProps extends BlockRendererContainerProps 
 	containerWidth: number;
 }
 
-function useParsedAssets( html: string ) {
+const useParsedAssets = ( html: string ) => {
 	return useMemo( () => {
 		const doc = document.implementation.createHTMLDocument( '' );
 		doc.body.innerHTML = html;
 		return Array.from( doc.body.children );
 	}, [ html ] );
-}
+};
 
-async function loadStyle(
+const loadStyle = async (
 	element: HTMLElement,
 	{ tagName, id, href, rel, media, textContent }: HTMLLinkElement
-) {
+) => {
 	return new Promise( ( resolve, reject ) => {
 		const style = element.ownerDocument.createElement( tagName ) as HTMLLinkElement;
 		style.id = id;
@@ -53,9 +53,17 @@ async function loadStyle(
 			style.textContent = textContent;
 			resolve( style );
 		}
-		element.ownerDocument.head.appendChild( style );
+
+		element.appendChild( style );
 	} );
-}
+};
+
+const loadStyles = async ( element: HTMLElement, styles: HTMLLinkElement[] ) => {
+	return styles.reduce(
+		( promise, style ): Promise< any > => promise.then( () => loadStyle( element, style ) ),
+		Promise.resolve()
+	);
+};
 
 const ScaledBlockRendererContainer = ( {
 	children,
@@ -81,7 +89,7 @@ const ScaledBlockRendererContainer = ( {
 		};
 	}, [] );
 
-	const styleAssets = useParsedAssets( assets?.styles );
+	const styleAssets = useParsedAssets( assets?.styles ) as HTMLLinkElement[];
 
 	const editorStyles = useMemo( () => {
 		const mergedStyles = [
@@ -120,13 +128,7 @@ const ScaledBlockRendererContainer = ( {
 
 		// Load styles manually to avoid a flash of unstyled content.
 		// Gutenberg fixed this issue via https://github.com/WordPress/gutenberg/pull/46706 but it requires `@wordpress/block-editor: ^11.2.0`
-		styleAssets
-			.reduce(
-				( promise, style ): Promise< any > =>
-					promise.then( () => loadStyle( bodyElement, style as HTMLLinkElement ) ),
-				Promise.resolve()
-			)
-			.finally( () => setIsLoaded( true ) );
+		loadStyles( bodyElement, styleAssets ).then( () => setIsLoaded( true ) );
 	}, [] );
 
 	const scale = containerWidth / viewportWidth;
