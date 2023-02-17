@@ -5,6 +5,8 @@ import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';
 import * as selectors from './selectors';
 import type { SelectFromMap, DispatchFromMap } from '../mapped-types';
+import type { WpcomPlansUIAction } from './actions';
+import type { Reducer } from 'redux';
 
 export type { State };
 
@@ -16,8 +18,7 @@ export function register(): typeof STORE_KEY {
 		registerStore< State >( STORE_KEY, {
 			actions,
 			controls,
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			reducer: reducer as any,
+			reducer: reducer as Reducer< State, WpcomPlansUIAction >,
 			selectors,
 		} );
 	}
