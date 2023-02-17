@@ -1593,10 +1593,8 @@ const getPlanJetpackSecurityT1Details = (): IncompleteJetpackPlan => ( {
 				components: {
 					ul: <ul />,
 					li: <li />,
-					br: <br />,
 				},
-				comment:
-					'{{ul}}{{ul/}} represents an unorder list, {{li}}{/li} represent an item and {{br/}} represents a line break',
+				comment: '{{ul}}{{ul/}} represents an unorder list, and {{li}}{/li} represent a list item',
 			}
 		),
 	getLightboxDescription: () =>
