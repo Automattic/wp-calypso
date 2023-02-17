@@ -157,7 +157,7 @@ export default function PromotedPosts( { tab }: Props ) {
 				align="left"
 			/>
 
-			{ ! campaignsIsLoading && <PostsListBanner /> }
+			{ ! campaignsIsLoading && ! campaignsData?.length && <PostsListBanner /> }
 
 			<PromotePostTabBar tabs={ tabs } selectedTab={ selectedTab } />
 			{ selectedTab === 'campaigns' ? (
