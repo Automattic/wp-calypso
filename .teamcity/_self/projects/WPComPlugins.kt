@@ -76,7 +76,7 @@ object CalypsoApps: BuildType({
 
 	artifactRules = """
 		apps/happy-blocks/release-files => happy-blocks.zip
-		apps/notifications/dist => notifications.zip
+		apps/happychat/dist/ => happychat.zip
 	""".trimIndent()
 
 	steps {
@@ -92,18 +92,17 @@ object CalypsoApps: BuildType({
 
 				# Install dependencies
 				yarn
-
-				# Set execution permission for additional scripts.
-				chmod +x .teamcity/scripts/WPComPlugins/
 			"""
 		}
 
 		bashNodeScript {
-			name = "Build artifacts"
+			name = "Build apps"
 			scriptContent = """
 				# Run `yarn build-ci` script for the plugins specified in the glob.
 				# `build-ci` is a specialized build for CI environment.
-				yarn workspaces foreach --verbose --parallel --include '{happy-blocks,@automattic/notifications}' run build-ci
+				yarn workspaces foreach --verbose --parallel --include '{happy-blocks,@automattic/happychat-app}' run build-ci
+
+				ls apps/happy-blocks/release-files
 			"""
 		}
 	}
