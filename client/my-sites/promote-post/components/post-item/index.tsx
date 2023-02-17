@@ -10,6 +10,7 @@ import { recordDSPEntryPoint } from 'calypso/lib/promote-post';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 import { useRouteModal } from 'calypso/lib/route-modal';
 import PostRelativeTimeStatus from 'calypso/my-sites/post-relative-time-status';
+import PostActionCounts from 'calypso/my-sites/post-type-list/post-action-counts';
 import { getPostType } from 'calypso/my-sites/promote-post/utils';
 
 export type Post = {
@@ -71,6 +72,7 @@ export default function PostItem( { post }: Props ) {
 							<Gridicon icon="external" size={ 12 } className="post-item__external-icon" />
 						</a>
 					</span>
+					<PostActionCounts globalId={ post.global_ID } />
 				</div>
 			</div>
 
