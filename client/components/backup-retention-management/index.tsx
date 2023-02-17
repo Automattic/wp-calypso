@@ -115,6 +115,12 @@ const BackupRetentionManagement: FunctionComponent< OwnProps > = ( { defaultRete
 	);
 
 	const goToCheckoutPage = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_storage_retention_purchase_click', {
+				retention_option: retentionSelected,
+			} )
+		);
+
 		// The idea is to redirect back to the setting page with the current selected retention period.
 		const redirectBackUrl = addQueryArgs( { retention: retentionSelected }, window.location.href );
 
@@ -131,7 +137,7 @@ const BackupRetentionManagement: FunctionComponent< OwnProps > = ( { defaultRete
 		} );
 
 		window.location.href = storageUpgradeUrl;
-	}, [ retentionSelected, siteSlug, upsellSlug.productSlug ] );
+	}, [ dispatch, retentionSelected, siteSlug, upsellSlug.productSlug ] );
 
 	// Set the retention period selected when the user selects a new option
 	const onRetentionSelectionChange = useCallback(
