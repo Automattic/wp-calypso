@@ -2,6 +2,46 @@
 
 body.is-section-plans.is-ecommerce-trial-plan {
 
+	// Overwrite section nav styles so they look like the desktop version on mobile as well
+	.section-nav {
+		.section-nav__mobile-header {
+			display: none;
+		}
+
+		.section-nav-group {
+			display: flex;
+		}
+
+		.section-nav-tabs__list {
+			display: flex;
+		}
+
+		.section-nav-tab {
+			border-bottom: 2px solid transparent;
+
+			&.is-selected {
+				border-bottom-color: var(--color-neutral-100);
+
+				.section-nav-tab__link {
+					background: none;
+				}
+
+				.section-nav-tab__text {
+					color: var(--color-neutral-100);
+				}
+			}
+		}
+
+		.section-nav-tab__link {
+			display: block;
+			font-weight: inherit;
+		}
+
+		.section-nav-tab__text {
+			display: inline;
+		}
+	}
+
 	&.color-scheme {
 		--color-surface-backdrop: var(--color-surface);
 	}
