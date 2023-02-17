@@ -239,6 +239,11 @@ class ManagePurchase extends Component {
 		return hasNonPrimaryDomainsFlag && isPlan( purchase ) && hasCustomPrimaryDomain;
 	}
 
+	shouldShowWordAdsEligibilityWarning() {
+		const { hasSetupAds, purchase } = this.props;
+		return hasSetupAds && isPlan( purchase );
+	}
+
 	renderRenewButton() {
 		const { purchase, translate } = this.props;
 
@@ -480,6 +485,7 @@ class ManagePurchase extends Component {
 				hasLoadedSites={ hasLoadedSites }
 				hasLoadedUserPurchasesFromServer={ this.props.hasLoadedPurchasesFromServer }
 				hasNonPrimaryDomainsFlag={ hasNonPrimaryDomainsFlag }
+				hasSetupAds={ this.props.hasSetupAds }
 				hasCustomPrimaryDomain={ hasCustomPrimaryDomain }
 				activeSubscriptions={ this.getActiveMarketplaceSubscriptions() }
 				site={ site }
@@ -706,7 +712,7 @@ class ManagePurchase extends Component {
 				link_text: text,
 			} );
 
-			if ( this.props.hasSetupAds ) {
+			if ( this.shouldShowWordAdsEligibilityWarning() ) {
 				event.preventDefault();
 				this.showWordAdsEligibilityWarningDialog( link );
 			}
