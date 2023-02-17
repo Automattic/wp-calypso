@@ -15,7 +15,7 @@ import type { CalypsoDispatch } from 'calypso/state/types';
 import 'calypso/state/billing-transactions/init';
 
 export const requestBillingTransaction =
-	( transactionId: number | string ) => ( dispatch: CalypsoDispatch ) => {
+	( transactionId: number ) => ( dispatch: CalypsoDispatch ) => {
 		dispatch( {
 			type: BILLING_TRANSACTION_REQUEST,
 			transactionId,
@@ -68,7 +68,7 @@ export const requestBillingTransaction =
 			} );
 	};
 
-export const clearBillingTransactionError = ( transactionId: number | string ) => ( {
+export const clearBillingTransactionError = ( transactionId: number ) => ( {
 	type: BILLING_TRANSACTION_ERROR_CLEAR,
 	transactionId,
 } );
