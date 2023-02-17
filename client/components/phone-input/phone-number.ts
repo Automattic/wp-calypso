@@ -32,7 +32,7 @@ function prefixSearch( prefixQuery: string ) {
 		.flat();
 }
 
-export function findCountryFromNumber( inputNumber: string ) {
+export function findCountryFromNumber( inputNumber: string, fallbackCountry?: string ) {
 	let lastExactMatch;
 
 	for ( let i = 1; i <= 6; i++ ) {
@@ -57,6 +57,15 @@ export function findCountryFromNumber( inputNumber: string ) {
 		if ( prefixMatch.length === 1 ) {
 			// not an exact match, but there is only one option with this prefix
 			return countries[ prefixMatch[ 0 ] as keyof typeof countries ];
+		}
+	}
+
+	if ( fallbackCountry && lastExactMatch ) {
+		const fallbackCountryData = lastExactMatch.find(
+			( countryCode ) => fallbackCountry === countryCode
+		);
+		if ( fallbackCountryData ) {
+			return countries[ fallbackCountryData ];
 		}
 	}
 
