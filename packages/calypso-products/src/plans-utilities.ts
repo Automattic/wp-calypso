@@ -41,10 +41,15 @@ export function getTermDuration( term: string ): number | undefined {
 
 export const redirectCheckoutToWpAdmin = (): boolean => !! JETPACK_REDIRECT_CHECKOUT_TO_WPADMIN;
 
-export const is2023PricingGridEnabled = () => {
-	const supportedLocales = [ 'en', 'en-gb', 'es' ];
+export const is2023PricingGridEnabled = (): boolean => {
+	const isFeatureFlagEnabled = (): boolean => isEnabled( 'onboarding/2023-pricing-grid' );
 
-	const isPlans2023ActivePage = () => {
+	const isLocaleSupported = (): boolean => {
+		const supportedLocales = [ 'en', 'en-gb', 'es' ];
+		return supportedLocales.includes( getLocaleSlug() ?? '' );
+	};
+
+	const isActivePage = (): boolean => {
 		const currentRoutePath = window.location.pathname;
 
 		// Is this the internal plans page /plans/<site-slug> ?
@@ -64,9 +69,5 @@ export const is2023PricingGridEnabled = () => {
 		return false;
 	};
 
-	return (
-		isEnabled( 'onboarding/2023-pricing-grid' ) &&
-		supportedLocales.includes( getLocaleSlug() ?? '' ) &&
-		isPlans2023ActivePage()
-	);
+	return isFeatureFlagEnabled() && isLocaleSupported() && isActivePage();
 };
