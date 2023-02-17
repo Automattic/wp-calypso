@@ -572,9 +572,7 @@
 	.domain-upsell-callout {
 		position: initial;
 		transform: none;
-		// width: 95%;
 		margin: auto;
-		// max-width: 95%;
 		transition: max-width 0.2s linear;
 
 		@media ( max-width: 1080px ) {
@@ -619,6 +617,7 @@
 
 		.web-preview__frame-edit-overlay {
 			margin: 10px;
+			margin-top: 40px;
 			border-radius: 30px; /* stylelint-disable-line scales/radii */
 
 			@include break-large {
