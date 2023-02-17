@@ -286,6 +286,9 @@ function wpcom_global_styles_in_use() {
  * it was created before the Premium Global Styles launch date (2022-12-15)
  * and had already customized its Global Styles.
  *
+ * We use blog stickers and other strategies to only perform the intensive check
+ * when strictly needed.
+ *
  * @param  int $blog_id Blog ID.
  * @return bool Whether the site is exempt from Premium Global Styles.
  */
