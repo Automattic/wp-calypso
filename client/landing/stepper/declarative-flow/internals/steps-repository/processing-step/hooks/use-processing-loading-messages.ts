@@ -3,7 +3,7 @@ import { isWooExpressFlow } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
-import { LoadingMessage } from './types';
+import type { LoadingMessage } from './types';
 
 const SiteIntent = Onboard.SiteIntent;
 
