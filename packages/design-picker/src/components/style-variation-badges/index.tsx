@@ -20,24 +20,24 @@ const Badges: React.FC< BadgesProps > = ( {
 	onClick,
 	selectedStyleVariation,
 } ) => {
-	const [ firstStyleVariation, setFirstStyleVariation ] = useState< StyleVariation >();
+	const [ firstVariationToShow, setFirstVariationToShow ] = useState< StyleVariation >();
 	useEffect( () => {
-		if ( ! firstStyleVariation && selectedStyleVariation ) {
-			setFirstStyleVariation( selectedStyleVariation );
+		if ( ! firstVariationToShow && selectedStyleVariation ) {
+			setFirstVariationToShow( selectedStyleVariation );
 		}
-	}, [ selectedStyleVariation, firstStyleVariation ] );
+	}, [ selectedStyleVariation, firstVariationToShow ] );
 
 	const variationsToShow = useMemo( () => {
 		return [
-			...( firstStyleVariation ? [ firstStyleVariation ] : [] ),
-			...( firstStyleVariation
+			...( firstVariationToShow ? [ firstVariationToShow ] : [] ),
+			...( firstVariationToShow
 				? variations
-						.filter( ( variation ) => variation !== firstStyleVariation )
+						.filter( ( variation ) => variation.slug !== firstVariationToShow.slug )
 						.slice( 0, maxVariationsToShow - 1 )
 				: [] ),
-			...( ! firstStyleVariation ? variations.slice( 0, maxVariationsToShow ) : [] ),
+			...( ! firstVariationToShow ? variations.slice( 0, maxVariationsToShow ) : [] ),
 		];
-	}, [ variations, maxVariationsToShow, firstStyleVariation ] );
+	}, [ variations, maxVariationsToShow, firstVariationToShow ] );
 
 	return (
 		<>

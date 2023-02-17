@@ -169,33 +169,45 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	verticalId,
 	currentPlanFeatures,
 } ) => {
-	const { __ } = useI18n();
-	const [ previewedStyleVariation, setPreviewedStyleVariation ] = useState< StyleVariation >();
-	const [ title, setTitle ] = useState< string >();
-
 	const {
-		is_premium: isPremium = false,
+		is_premium = false,
+		is_virtual,
 		preselected_style_variation,
 		style_variations = [],
 	} = design;
+
+	const { __ } = useI18n();
+	const [ selectedStyleVariation, setSelectedStyleVariation ] = useState< StyleVariation >();
+	const [ title, setTitle ] = useState< string >();
+	const [ isPremium, setIsPremium ] = useState( false );
+
 	const shouldUpgrade = isPremium && ! isPremiumThemeAvailable && ! hasPurchasedTheme;
 	const currentSiteCanInstallWoo = currentPlanFeatures?.includes( FEATURE_WOOP ) ?? false;
 	const designIsBundledWithWoo = design.is_bundled_with_woo_commerce;
 
 	useEffect( () => {
-		if ( ! previewedStyleVariation && preselected_style_variation ) {
-			setPreviewedStyleVariation( preselected_style_variation );
+		if ( ! selectedStyleVariation && preselected_style_variation ) {
+			setSelectedStyleVariation( preselected_style_variation );
 		}
-	}, [ previewedStyleVariation, preselected_style_variation ] );
+	}, [ selectedStyleVariation, preselected_style_variation ] );
 
 	useEffect( () => {
-		if ( previewedStyleVariation && previewedStyleVariation.slug !== 'default' ) {
-			setTitle( `${ design.title } – ${ previewedStyleVariation.title }` );
+		if ( selectedStyleVariation && selectedStyleVariation.slug !== 'default' ) {
+			setTitle( `${ design.title } – ${ selectedStyleVariation.title }` );
 			return;
 		}
 
 		setTitle( design.title );
-	}, [ design.title, previewedStyleVariation ] );
+	}, [ design.title, selectedStyleVariation ] );
+
+	useEffect( () => {
+		if ( is_virtual && selectedStyleVariation?.slug === 'default' ) {
+			setIsPremium( false );
+			return;
+		}
+
+		setIsPremium( is_premium );
+	}, [ is_virtual, is_premium, selectedStyleVariation ] );
 
 	function getPricingDescription() {
 		let text: React.ReactNode = null;
@@ -258,7 +270,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 							design={ design }
 							locale={ locale }
 							verticalId={ verticalId }
-							styleVariation={ previewedStyleVariation }
+							styleVariation={ selectedStyleVariation }
 						/>
 					</div>
 				</span>
@@ -268,9 +280,9 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 						{ style_variations.length > 0 && (
 							<div className="design-picker__options-style-variations">
 								<StyleVariationBadges
-									selectedStyleVariation={ previewedStyleVariation }
+									selectedStyleVariation={ selectedStyleVariation }
 									variations={ style_variations }
-									onClick={ ( variation ) => onPreview( design, variation ) }
+									onClick={ ( variation ) => setSelectedStyleVariation( variation ) }
 								/>
 							</div>
 						) }
