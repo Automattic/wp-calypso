@@ -35,6 +35,17 @@ td.site-table__actions {
 	width: 50px;
 }
 
+td.site-table__actions-button {
+	border-right: none;
+	button {
+		margin-inline-end: 15px;
+	}
+}
+
+td.site-table__expand-row {
+	border-left: none;
+}
+
 td.site-table__td-without-border-bottom {
 	border-bottom: none;
 }
@@ -42,7 +53,7 @@ td.site-table__td-without-border-bottom {
 .site-table__expandable-button {
 	display: flex;
 	position: relative;
-	right: 0;
+	right: -10px;
 	top: 2px;
 }
 td.site-table__error {
