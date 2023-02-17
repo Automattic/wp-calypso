@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .single-product__wrapper {
 	display: inline-flex;
 	align-items: center;
@@ -56,7 +58,7 @@
 	row-gap: 1rem;
 }
 
-@media (min-width: 782px) {
+@media ( min-width: $break-medium ) {
 	.items-included__list-table {
 		grid-template-columns: repeat(2, 1fr);
 	}
