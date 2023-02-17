@@ -1,5 +1,4 @@
 import { Button, Gridicon } from '@automattic/components';
-import moment from 'moment';
 import { PureComponent } from 'react';
 import upsellImage from 'calypso/assets/images/checkout-upsell/upsell-rocket-2.png';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -14,8 +13,9 @@ export class BusinessPlanUpgradeUpsellTreatment extends PureComponent {
 	}
 
 	componentDidMount() {
-		const discountEndDate =
-			moment.utc( this.props.currentPlan?.subscribedDate ).unix() + 24 * 60 * 60;
+		const subscribedDate = this.props.currentPlan?.subscribedDate;
+		const discountEndDate = this.getUnixTimestamp( subscribedDate ) + 24 * 60 * 60; // add 24 hours
+
 		this.getDiscountTimeRemaining( discountEndDate );
 		this.timerID = setInterval( () => this.getDiscountTimeRemaining( discountEndDate ), 1000 );
 	}
@@ -24,8 +24,13 @@ export class BusinessPlanUpgradeUpsellTreatment extends PureComponent {
 		clearInterval( this.timerID );
 	}
 
+	getUnixTimestamp( timestamp ) {
+		const date = timestamp ? new Date( Date.parse( timestamp ) ) : new Date();
+		return Math.floor( date.getTime() / 1000 ); // divide by 1000 to get seconds instead of milliseconds
+	}
+
 	getDiscountTimeRemaining( discountEndDate ) {
-		const timeDiff = discountEndDate - moment.utc().unix();
+		const timeDiff = discountEndDate - this.getUnixTimestamp();
 		if ( timeDiff <= 0 ) {
 			clearInterval( this.timerID );
 			this.setState( {
