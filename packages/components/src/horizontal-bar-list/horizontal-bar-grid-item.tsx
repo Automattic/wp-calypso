@@ -65,7 +65,7 @@ const HorizontalBarListItem = ( {
 	if ( Array.isArray( label ) ) {
 		// combine all items into one
 		labelText = (
-			<span>
+			<>
 				{ label.length > 1
 					? label.map( ( item ) => (
 							<>
@@ -78,7 +78,7 @@ const HorizontalBarListItem = ( {
 							</>
 					  ) )
 					: label[ 0 ].label }
-			</span>
+			</>
 		);
 	} else {
 		labelText = decodeEntities( useShortLabel ? shortLabel || '' : label ); // shortLabel as an empty string to make TS happy
@@ -138,7 +138,7 @@ const HorizontalBarListItem = ( {
 						tabIndex={ 0 }
 					>
 						{ leftGroupToggle && hasChildren && groupChevron }
-						<span>{ labelText }</span>
+						<span className={ `${ BASE_CLASS_NAME }__group-label` }>{ labelText }</span>
 						{ ! leftGroupToggle && hasChildren && groupChevron }
 					</TagName>
 					{ renderRightSideItem && (

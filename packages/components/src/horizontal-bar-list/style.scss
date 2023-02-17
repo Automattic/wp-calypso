@@ -155,3 +155,22 @@
 	position: relative;
 	top: 2px;
 }
+
+.horizontal-bar-list__group-label {
+	position: relative;
+	overflow: hidden;
+	text-overflow: ellipsis;
+
+	> svg,
+	> span {
+		vertical-align: middle;
+	}
+
+	> svg + span {
+		padding: 8px;
+	}
+
+	> span + svg {
+		padding-left: 17px;
+	}
+}

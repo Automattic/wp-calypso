@@ -89,7 +89,6 @@ const StatsListCard = ( {
 		} else if ( labelIconType === 'tag' ) {
 			return <Icon className="stats-icon" icon={ tag } size={ 22 } />;
 		}
-		return <></>;
 	};
 
 	const outputLeftItem = ( item ) => {
