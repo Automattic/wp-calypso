@@ -12,7 +12,7 @@ import Image from 'calypso/components/image';
 import SocialLogo from 'calypso/components/social-logo';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { DisconnectGitHubExpander } from '../disconnect-github-expander';
+import { DisconnectGitHubButton } from '../disconnect-github-button';
 import { SearchBranches } from './search-branches';
 import { SearchRepos } from './search-repos';
 import { useGithubConnectMutation } from './use-github-connect';
@@ -20,7 +20,7 @@ import { useGithubConnectMutation } from './use-github-connect';
 import './style.scss';
 
 interface GithubConnectCardProps {
-	connection: ComponentProps< typeof DisconnectGitHubExpander >[ 'connection' ];
+	connection: ComponentProps< typeof DisconnectGitHubButton >[ 'connection' ];
 }
 const noticeOptions = {
 	duration: 3000,
@@ -90,7 +90,7 @@ export const GithubConnectCard = ( { connection }: GithubConnectCardProps ) => {
 						) }
 						{ connection.external_name }
 
-						<DisconnectGitHubExpander connection={ connection } />
+						<DisconnectGitHubButton connection={ connection } />
 					</div>
 				</FormFieldset>
 

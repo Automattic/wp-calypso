@@ -7,11 +7,11 @@ import './style.scss';
 
 type Connection = Parameters< typeof deleteStoredKeyringConnection >[ 0 ];
 
-interface DisconnectGitHubExpanderProps {
+interface DisconnectGitHubButtonProps {
 	connection: Connection;
 }
 
-export function DisconnectGitHubExpander( { connection }: DisconnectGitHubExpanderProps ) {
+export function DisconnectGitHubButton( { connection }: DisconnectGitHubButtonProps ) {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	// Using ReactQuery to manage `isDisconnecting` state because it's not exposed from the Redux store.
