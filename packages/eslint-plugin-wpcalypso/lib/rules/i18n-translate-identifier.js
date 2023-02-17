@@ -1,5 +1,5 @@
 /**
- * @file Disallow declaring variables with unexpected identifier names refering to translation functions.
+ * @file Disallow declaring variables with unexpected identifier names referring to translation functions.
  * @author Automattic
  * @copyright 2023 Automattic. All rights reserved.
  * See LICENSE.md file in root directory for full license.
