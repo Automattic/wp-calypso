@@ -12,12 +12,21 @@ import './style.scss';
 
 type JetpackUpsellCardProps = {
 	purchasedProducts: string[];
-	siteUrl: string;
+	siteSlug?: string | null;
+};
+
+type Product = {
+	description: string;
+	href: string;
+	iconUrl: string;
+	isFree: boolean;
+	slug: string;
+	title: string;
 };
 
 export default function JetpackUpsellCard( {
 	purchasedProducts,
-	siteUrl,
+	siteSlug,
 }: JetpackUpsellCardProps ) {
 	// TODO: Make card collapsible
 
@@ -96,20 +105,20 @@ export default function JetpackUpsellCard( {
 			},
 		],
 		[ translate ]
-	);
+	) as Product[];
 
 	return (
 		<Card className="jetpack-upsell-card">
 			<h2 className="jetpack-upsell-card__title">
-				{ translate( 'Enhance %(siteUrl)s with Jetpack Security, Performance, and Growth tools', {
-					args: { siteUrl },
+				{ translate( 'Enhance %(siteSlug)s with Jetpack Security, Performance, and Growth tools', {
+					args: { siteSlug: siteSlug ?? 'your site' },
 				} ) }
 			</h2>
 			<div className="jetpack-upsell-card__content">
 				{ /* Only upsell products that the customer does not own. */ }
 				{ PRODUCTS.filter( ( product ) => ! purchasedProducts?.includes( product.slug ) ).map(
-					( { title, description, href, isFree, iconUrl } ) => (
-						<div className="jetpack-upsell-card__product">
+					( { title, description, href, isFree, iconUrl, slug } ) => (
+						<div className="jetpack-upsell-card__product" key={ slug }>
 							<div className="jetpack-upsell-card__product-icon">
 								<img src={ iconUrl } alt={ translate( 'included' ) } width="24px" height="24px" />
 							</div>
