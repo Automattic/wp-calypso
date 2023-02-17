@@ -73,7 +73,7 @@
 		"i18n/community-translator": false,
 		"i18n/empathy-mode": true,
 		"i18n/translation-scanner": true,
-		"importer/unified": false,
+		"importer/unified": true,
 		"importers/substack": true,
 		"inline-help": true,
 		"jetpack/agency-dashboard": true,
