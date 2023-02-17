@@ -12,7 +12,7 @@ import { JPC_PATH_PLANS } from 'calypso/jetpack-connect/constants';
 import { successNotice } from 'calypso/state/notices/actions';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import { QueryArgs, Duration } from '../types';
-import CtaButtons from './components/cta-buttons/cta-buttons';
+import CtaButtons from './components/cta-buttons';
 import ShowLicenseActivationLinkIfAvailable from './show-license-activation-link-if-available';
 
 import './style.scss';
