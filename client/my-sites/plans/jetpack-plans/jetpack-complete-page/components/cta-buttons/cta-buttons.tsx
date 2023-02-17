@@ -2,7 +2,8 @@ import { PLAN_JETPACK_COMPLETE } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import Button from 'calypso/components/forms/form-button';
-import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
+import getJetpackAdminUrl from 'calypso/state/sites/selectors/get-jetpack-admin-url';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
@@ -10,22 +11,13 @@ const CtaButtons = () => {
 	const translate = useTranslate();
 	const planToOffer = PLAN_JETPACK_COMPLETE;
 	const siteSlug = useSelector( getSelectedSiteSlug );
+	const siteId = useSelector( getSelectedSiteId );
+	const adminURL = useSelector( ( state ) => getJetpackAdminUrl( state, siteId ) );
+	const getCompleteURL = siteSlug
+		? `/checkout/${ siteSlug }/${ planToOffer }`
+		: `/checkout/${ planToOffer }`;
 
-	// handle no site selected
-	const getCompleteURL = () => {
-		if ( siteSlug ) {
-			return `/checkout/${ siteSlug }/${ planToOffer }`;
-		}
-		return `https://wordpress.com/checkout/${ planToOffer }`;
-	};
-
-	//Start for free with no site, just redirect to jetpack.com
-	const stayFreeURL = () => {
-		if ( siteSlug ) {
-			return `https://${ siteSlug }/wp-admin`;
-		}
-		return `https://jetpack.com/`;
-	};
+	const stayFreeURL = siteSlug ? adminURL : `https://jetpack.com/`;
 	return (
 		<div className="jetpack-complete-page__cta-buttons">
 			<Button
