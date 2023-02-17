@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Badge from './badge';
 import type { StyleVariation } from '../../types';
 import './style.scss';
@@ -10,6 +10,7 @@ interface BadgesProps {
 	variations: StyleVariation[];
 	onMoreClick?: () => void;
 	onClick?: ( variation: StyleVariation ) => void;
+	selectedStyleVariation?: StyleVariation;
 }
 
 const Badges: React.FC< BadgesProps > = ( {
@@ -17,16 +18,39 @@ const Badges: React.FC< BadgesProps > = ( {
 	variations = [],
 	onMoreClick,
 	onClick,
+	selectedStyleVariation,
 } ) => {
-	const variationsToShow = useMemo(
-		() => variations.slice( 0, maxVariationsToShow ),
-		[ variations, maxVariationsToShow ]
-	);
+	const [ firstStyleVariation, setFirstStyleVariation ] = useState< StyleVariation >();
+	useEffect( () => {
+		if ( ! firstStyleVariation && selectedStyleVariation ) {
+			setFirstStyleVariation( selectedStyleVariation );
+		}
+	}, [ selectedStyleVariation, firstStyleVariation ] );
+
+	const variationsToShow = useMemo( () => {
+		return [
+			...( firstStyleVariation ? [ firstStyleVariation ] : [] ),
+			...( firstStyleVariation
+				? variations
+						.filter( ( variation ) => variation !== firstStyleVariation )
+						.slice( 0, maxVariationsToShow - 1 )
+				: [] ),
+			...( ! firstStyleVariation ? variations.slice( 0, maxVariationsToShow ) : [] ),
+		];
+	}, [ variations, maxVariationsToShow, firstStyleVariation ] );
 
 	return (
 		<>
 			{ variationsToShow.map( ( variation ) => (
-				<Badge key={ variation.slug } variation={ variation } onClick={ onClick } />
+				<Badge
+					key={ variation.slug }
+					variation={ variation }
+					onClick={ onClick }
+					isSelected={
+						( ! selectedStyleVariation && variation.slug === 'default' ) ||
+						variation === selectedStyleVariation
+					}
+				/>
 			) ) }
 			{ variations.length > variationsToShow.length && (
 				<div

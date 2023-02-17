@@ -32,6 +32,7 @@
 				position: absolute;
 				right: 0;
 				top: 0;
+				border-radius: 50%;
 			}
 		}
 	}
@@ -40,5 +41,11 @@
 .style-variation__badge-more-wrapper {
 	> * {
 		box-shadow: none;
+	}
+}
+
+.style-variation__badge-is-selected {
+	> * {
+		outline: 2px solid var(--studio-blue-30);
 	}
 }

@@ -7,7 +7,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useInView } from 'calypso/lib/use-in-view'; // eslint-disable-line no-restricted-imports
 import {
 	SHOW_ALL_SLUG,
@@ -39,12 +39,14 @@ interface DesignPreviewImageProps {
 	design: Design;
 	locale: string;
 	verticalId?: string;
+	styleVariation?: StyleVariation;
 }
 
 const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 	design,
 	locale,
 	verticalId,
+	styleVariation,
 } ) => {
 	const isMobile = useViewportMatch( 'small', '<' );
 
@@ -54,6 +56,7 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 				language: locale,
 				vertical_id: design.verticalizable ? verticalId : undefined,
 				use_screenshot_overrides: true,
+				style_variation: styleVariation,
 			} ) }
 			aria-labelledby={ makeOptionId( design ) }
 			alt=""
@@ -167,6 +170,9 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	currentPlanFeatures,
 } ) => {
 	const { __ } = useI18n();
+	const [ previewedStyleVariation, setPreviewedStyleVariation ] = useState< StyleVariation >();
+	const [ title, setTitle ] = useState< string >();
+
 	const {
 		is_premium: isPremium = false,
 		preselected_style_variation,
@@ -174,8 +180,22 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	} = design;
 	const shouldUpgrade = isPremium && ! isPremiumThemeAvailable && ! hasPurchasedTheme;
 	const currentSiteCanInstallWoo = currentPlanFeatures?.includes( FEATURE_WOOP ) ?? false;
-
 	const designIsBundledWithWoo = design.is_bundled_with_woo_commerce;
+
+	useEffect( () => {
+		if ( ! previewedStyleVariation && preselected_style_variation ) {
+			setPreviewedStyleVariation( preselected_style_variation );
+		}
+	}, [ previewedStyleVariation, preselected_style_variation ] );
+
+	useEffect( () => {
+		if ( previewedStyleVariation && previewedStyleVariation.slug !== 'default' ) {
+			setTitle( `${ design.title } – ${ previewedStyleVariation.title }` );
+			return;
+		}
+
+		setTitle( design.title );
+	}, [ design.title, previewedStyleVariation ] );
 
 	function getPricingDescription() {
 		let text: React.ReactNode = null;
@@ -219,14 +239,6 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 		);
 	}
 
-	const getTitle = () => {
-		if ( design.preselected_style_variation ) {
-			return `${ design.title } – ${ design.preselected_style_variation.title }`;
-		}
-
-		return design.title;
-	};
-
 	return (
 		<div className="design-picker__design-option">
 			<button
@@ -242,15 +254,21 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 					) }
 				>
 					<div className="design-picker__image-frame-inside">
-						<DesignPreviewImage design={ design } locale={ locale } verticalId={ verticalId } />
+						<DesignPreviewImage
+							design={ design }
+							locale={ locale }
+							verticalId={ verticalId }
+							styleVariation={ previewedStyleVariation }
+						/>
 					</div>
 				</span>
 				<span className="design-picker__option-overlay">
 					<span id={ makeOptionId( design ) } className="design-picker__option-meta">
-						<span className="design-picker__option-name">{ getTitle() }</span>
+						<span className="design-picker__option-name">{ title }</span>
 						{ style_variations.length > 0 && (
 							<div className="design-picker__options-style-variations">
 								<StyleVariationBadges
+									selectedStyleVariation={ previewedStyleVariation }
 									variations={ style_variations }
 									onClick={ ( variation ) => onPreview( design, variation ) }
 								/>
