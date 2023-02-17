@@ -34,19 +34,19 @@ function wpcom_should_limit_global_styles( $blog_id = 0 ) {
 		}
 	}
 
-	// Do not limit Global Styles on demo sites.
+	// Do not limit Global Styles on theme demo sites.
 	if ( wpcom_global_styles_has_blog_sticker( 'theme-demo-site', $blog_id ) ) {
+		return false;
+	}
+
+	// Do not limit Global Styles if the site paid for it.
+	if ( wpcom_site_has_feature( WPCOM_Features::GLOBAL_STYLES, $blog_id ) ) {
 		return false;
 	}
 
 	// Do not limit Global Styles on sites created before we made it a paid feature (2022-12-15),
 	// that had already used Global Styles.
 	if ( wpcom_premium_global_styles_is_site_exempt( $blog_id ) ) {
-		return false;
-	}
-
-	// Do not limit Global Styles if the site paid for it.
-	if ( wpcom_site_has_feature( WPCOM_Features::GLOBAL_STYLES, $blog_id ) ) {
 		return false;
 	}
 
@@ -300,9 +300,10 @@ function wpcom_premium_global_styles_is_site_exempt( $blog_id = 0 ) {
 		return wpcom_global_styles_has_blog_sticker( 'wpcom-premium-global-styles-exempt', $blog_id );
 	}
 
-	// Non-Simple sites are edge cases; other conditions will determine whether they can use GS.
+	// Non-Simple sites on a lower plan are temporary edge cases.
+	// We exempt them to prevent unexpected temporary changes in their styles.
 	if ( ! defined( 'IS_WPCOM' ) || ! IS_WPCOM ) {
-		return false;
+		return true;
 	}
 
 	switch_to_blog( $blog_id );
