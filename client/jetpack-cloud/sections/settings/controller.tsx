@@ -24,12 +24,18 @@ export const advancedCredentials: PageJS.Callback = ( context, next ) => {
 	const siteId = getSelectedSiteId( context.store.getState() ) as number;
 	const sectionElt = <AdvancedCredentials action={ action } host={ host } role="main" />;
 
+	// This parameter is useful to redirect back from checkout page and select the retention period
+	// the customer previously selected.
+	const retention = Number.isInteger( Number( context.query.retention ) )
+		? Number( context.query.retention )
+		: undefined;
+
 	context.primary = (
 		<>
 			{ config.isEnabled( 'jetpack/backup-retention-settings' ) ? (
 				<HasRetentionCapabilitiesSwitch
 					siteId={ siteId }
-					trueComponent={ <BackupRetentionManagement /> }
+					trueComponent={ <BackupRetentionManagement defaultRetention={ retention } /> }
 					falseComponent={ null }
 					loadingComponent={ <AdvancedCredentialsLoadingPlaceholder /> } // Let's use the same placeholder for now
 				/>
