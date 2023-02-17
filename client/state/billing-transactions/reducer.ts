@@ -12,35 +12,35 @@ import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import individualTransactions from './individual-transactions/reducer';
 import { billingTransactionsSchema } from './schema';
 import ui from './ui/reducer';
+import type { BillingTransactionsState } from './types';
+import type { AnyAction } from 'redux';
 
 /**
  * Returns the updated items state after an action has been dispatched.
  * The state contains all past and upcoming billing transactions.
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @returns {Object}        Updated state
  */
-export const items = withSchemaValidation( billingTransactionsSchema, ( state = {}, action ) => {
-	switch ( action.type ) {
-		case BILLING_TRANSACTIONS_RECEIVE: {
-			const { past, upcoming } = action;
-			return { past, upcoming };
+export const items = withSchemaValidation(
+	billingTransactionsSchema,
+	( state: BillingTransactionsState[ 'items' ] = {}, action: AnyAction ) => {
+		switch ( action.type ) {
+			case BILLING_TRANSACTIONS_RECEIVE: {
+				const { past, upcoming } = action;
+				return { past, upcoming };
+			}
 		}
-	}
 
-	return state;
-} );
+		return state;
+	}
+);
 
 /**
  * Returns the updated requests state after an action has been dispatched.
  * The state contains whether a request for billing transactions is in progress.
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @returns {Object}        Updated state
  */
-export const requesting = ( state = false, action ) => {
+export const requesting = (
+	state: BillingTransactionsState[ 'requesting' ] = false,
+	action: AnyAction
+) => {
 	switch ( action.type ) {
 		case BILLING_TRANSACTIONS_REQUEST:
 			return true;
@@ -56,12 +56,11 @@ export const requesting = ( state = false, action ) => {
 /**
  * Returns the updated sending email requests state after an action has been dispatched.
  * The state contains whether a request for sending a receipt email is in progress.
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @returns {Object}        Updated state
  */
-export const sendingReceiptEmail = ( state = {}, action ) => {
+export const sendingReceiptEmail = (
+	state: BillingTransactionsState[ 'sendingReceiptEmail' ] = {},
+	action: AnyAction
+) => {
 	switch ( action.type ) {
 		case BILLING_RECEIPT_EMAIL_SEND: {
 			const { receiptId } = action;
