@@ -71,7 +71,7 @@ const WaitForPluginInstall: Step = function WaitForAtomic( { navigation, data } 
 			const maxFinishTime = startTime + totalTimeout;
 
 			// Poll for transfer status. If there are no plugins to verify, we can skip this step.
-			let stopPollingPlugins = pluginsToVerify && pluginsToVerify.length > 0;
+			let stopPollingPlugins = ! pluginsToVerify || pluginsToVerify.length <= 0;
 
 			while ( ! stopPollingPlugins ) {
 				await wait( 500 );
