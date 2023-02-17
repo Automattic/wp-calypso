@@ -109,7 +109,7 @@ const WaitForPluginInstall: Step = function WaitForAtomic( { navigation, data } 
 		submit?.();
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ siteId ] );
+	}, [ siteId, siteSlug ] );
 
 	return null;
 };
