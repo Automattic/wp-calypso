@@ -1,4 +1,4 @@
-import { isEnabled } from '@automattic/calypso-config';
+import { is2023PricingGridEnabled } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import { useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
@@ -12,7 +12,7 @@ import './style.scss';
 const DomainUpsellHeader: React.FunctionComponent = () => {
 	const { setShowDomainUpsellDialog } = useDispatch( WPCOM_PLANS_UI_STORE );
 	const translate = useTranslate();
-	const is2023OnboardingPricingGrid = isEnabled( 'onboarding/2023-pricing-grid' );
+	const is2023OnboardingPricingGrid = is2023PricingGridEnabled();
 	const plansDescription = translate(
 		'See and compare the features available on each WordPress.com plan.'
 	);
