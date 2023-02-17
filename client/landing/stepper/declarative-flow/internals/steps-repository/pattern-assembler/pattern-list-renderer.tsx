@@ -27,7 +27,9 @@ const MAX_HEIGHT_FOR_100VH = 500;
 
 const PatternListItem = ( { pattern, className, isShown, onSelect }: PatternListItemProps ) => {
 	const [ inViewOnce, setInViewOnce ] = useState( false );
-	const ref = useInView< HTMLButtonElement >( () => setInViewOnce( true ) );
+	const ref = useInView< HTMLButtonElement >( () => setInViewOnce( true ), {
+		threshold: [ 0 ],
+	} );
 
 	return (
 		<Button
