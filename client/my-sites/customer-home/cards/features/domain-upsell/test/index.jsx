@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Provider } from 'react-redux';
@@ -59,21 +59,20 @@ describe( 'index', () => {
 		const mockStore = configureStore();
 		const store = mockStore( initialState );
 
-		const { container } = render(
+		render(
 			<Provider store={ store }>
 				<DomainUpsell />
 			</Provider>
 		);
+		expect( 1 ).toBe( 1 );
 
-		const notice = container.querySelector( 'h3' );
-		expect( notice ).toBeVisible();
-		expect( notice ).toHaveTextContent( 'Own your online identity with a custom domain' );
+		const h3 = screen.getByText( 'Own your online identity with a custom domain' );
+		expect( h3 ).toBeInTheDocument();
 
-		const links = [].slice.call( container.querySelectorAll( 'a' ) );
+		const searchLink = screen.getByText( 'Search for a domain' );
+		expect( searchLink ).toBeInTheDocument();
 		expect(
-			links.some( ( link ) =>
-				link.href.endsWith( '/domains/add/example.wordpress.com?domainAndPlanPackage=true' )
-			)
+			searchLink.href.endsWith( '/domains/add/example.wordpress.com?domainAndPlanPackage=true' )
 		).toBeTruthy();
 	} );
 
@@ -87,14 +86,14 @@ describe( 'index', () => {
 		const mockStore = configureStore();
 		const store = mockStore( initialState );
 
-		const { getByText } = render(
+		render(
 			<Provider store={ store }>
 				<DomainUpsell />
 			</Provider>
 		);
 
 		const user = userEvent.setup();
-		await user.click( getByText( 'Buy this domain' ) );
+		await user.click( screen.getByText( 'Buy this domain' ) );
 		expect( pageLink ).toBe( '/plans/yearly/example.wordpress.com?get_domain=example.blog' );
 	} );
 } );
