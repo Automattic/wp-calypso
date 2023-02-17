@@ -1,10 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen, within } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import { navigate } from 'calypso/lib/navigate';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
@@ -384,26 +383,4 @@ describe( 'Checkout contact step', () => {
 			/* eslint-enable jest/no-conditional-expect */
 		}
 	);
-
-	it( 'renders the checkout summary', async () => {
-		render( <MockCheckout { ...defaultPropsForMockCheckout } /> );
-		expect( await screen.findByText( 'Purchase Details' ) ).toBeInTheDocument();
-		expect( navigate ).not.toHaveBeenCalled();
-	} );
-
-	it( 'removes a product from the cart after clicking to remove', async () => {
-		const user = userEvent.setup();
-		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
-		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
-		const activeSection = await screen.findByTestId( 'review-order-step--visible' );
-		const removeProductButton = await within( activeSection ).findByLabelText(
-			'Remove WordPress.com Personal from cart'
-		);
-		expect( screen.getAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 1 );
-		await user.click( removeProductButton );
-		const confirmModal = await screen.findByRole( 'dialog' );
-		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
-		await user.click( confirmButton );
-		await expect( screen.findByLabelText( 'WordPress.com Personal' ) ).toNeverAppear();
-	} );
 } );
