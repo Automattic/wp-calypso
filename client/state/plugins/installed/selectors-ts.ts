@@ -135,7 +135,7 @@ export const getFilteredAndSortedPlugins = createSelector(
 		const allPluginsIndexedBySiteId = getAllPluginsIndexedBySiteId( state );
 
 		// Properties on the objects in allPluginsIndexedBySiteId will be modified and the
-		// selector memoization always returns the same object, so use cloneDeep to avoid
+		// selector memoization always returns the same object, so use `structuredClone` to avoid
 		// altering it for everyone.
 		const allPluginsForSites: { [ pluginSlug: string ]: Plugin } = structuredClone(
 			siteIds
