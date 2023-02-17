@@ -1,36 +1,25 @@
 /**
  * @jest-environment jsdom
  */
-import { StripeHookProvider } from '@automattic/calypso-stripe';
-import {
-	ShoppingCartProvider,
-	createShoppingCartManagerClient,
-	convertResponseCartToRequestCart,
-} from '@automattic/shopping-cart';
+import { convertResponseCartToRequestCart } from '@automattic/shopping-cart';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { Provider as ReduxProvider } from 'react-redux';
+import { QueryClient } from 'react-query';
 import { navigate } from 'calypso/lib/navigate';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import CheckoutMain from '../components/checkout-main';
 import {
-	siteId,
 	domainProduct,
 	domainTransferProduct,
 	planWithBundledDomain,
 	planWithoutDomain,
-	fetchStripeConfiguration,
 	mockSetCartEndpointWith,
-	mockGetCartEndpointWith,
 	getActivePersonalPlanDataForType,
 	createTestReduxStore,
-	countryList,
 	gSuiteProduct,
 	caDomainProduct,
 	mockCachedContactDetailsEndpoint,
@@ -40,6 +29,7 @@ import {
 	mockGetVatInfoEndpoint,
 	mockSetVatInfoEndpoint,
 } from './util';
+import { MockCheckout } from './util/mock-checkout';
 
 jest.mock( 'calypso/state/sites/selectors' );
 jest.mock( 'calypso/state/sites/domains/selectors' );
@@ -49,44 +39,6 @@ jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
 jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
 jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
 jest.mock( 'calypso/lib/navigate' );
-
-function MockCheckout( {
-	initialCart, // required
-	mockSetCartEndpoint, // required
-	mainCartKey, // required
-	queryClient, // required
-	reduxStore, // required
-	cartChanges,
-	additionalProps,
-	setCart,
-} ) {
-	const managerClient = createShoppingCartManagerClient( {
-		getCart: mockGetCartEndpointWith( { ...initialCart, ...( cartChanges ?? {} ) } ),
-		setCart: setCart || mockSetCartEndpoint,
-	} );
-	return (
-		<ReduxProvider store={ reduxStore }>
-			<QueryClientProvider client={ queryClient }>
-				<ShoppingCartProvider
-					managerClient={ managerClient }
-					options={ {
-						defaultCartKey: mainCartKey,
-					} }
-				>
-					<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
-						<CheckoutMain
-							siteId={ siteId }
-							siteSlug="foo.com"
-							getStoredCards={ async () => [] }
-							overrideCountryList={ countryList }
-							{ ...additionalProps }
-						/>
-					</StripeHookProvider>
-				</ShoppingCartProvider>
-			</QueryClientProvider>
-		</ReduxProvider>
-	);
-}
 
 describe( 'Checkout contact step', () => {
 	let defaultPropsForMockCheckout = {};
