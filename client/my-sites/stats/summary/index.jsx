@@ -119,7 +119,7 @@ class StatsSummary extends Component {
 				summaryView = (
 					<StatsModule
 						key="tags-categories"
-						path="referrers"
+						path="tags-categories"
 						moduleStrings={ StatsStrings.tags }
 						period={ this.props.period }
 						query={ merge( {}, statsQueryOptions, query ) }
