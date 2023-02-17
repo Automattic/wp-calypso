@@ -3,7 +3,7 @@ import { LegacyRef, useCallback, useMemo, useRef, useState } from 'react';
 
 interface SubmenuPopoverProps extends Popover.Props {
 	isVisible?: boolean;
-	offset?: number;
+	offset?: number | { mainAxis?: number; crossAxis?: number; alignmentAxis?: number | null };
 	placement?:
 		| 'top'
 		| 'top-start'
@@ -17,6 +17,7 @@ interface SubmenuPopoverProps extends Popover.Props {
 		| 'left'
 		| 'left-start'
 		| 'left-end';
+	anchorRef?: React.MutableRefObject< HTMLElement | undefined >;
 	__unstableForcePosition?: boolean;
 }
 
@@ -61,16 +62,6 @@ function useHasRightSpace( element: HTMLElement | undefined ): boolean {
 	}, [ element ] );
 }
 
-/**
- * Returns the anchor rect adding a given offsetTop.
- */
-function useAnchorWithOffset( anchorRect: DOMRect | undefined, { offsetTop = 0 } = {} ) {
-	if ( ! anchorRect || offsetTop === 0 ) {
-		return anchorRect;
-	}
-	return new DOMRect( anchorRect.x, anchorRect.y + offsetTop, anchorRect.width, anchorRect.height );
-}
-
 export function useSubenuPopoverProps< T extends HTMLElement >(
 	options: { offsetTop?: number } = {}
 ) {
@@ -79,12 +70,12 @@ export function useSubenuPopoverProps< T extends HTMLElement >(
 	const anchor = useRef< T >();
 	const hasRightSpace = useHasRightSpace( anchor?.current );
 	const closeSubmenuA11y = useCloseSubmenuA11y();
-	const anchorRect = useAnchorWithOffset( anchor.current?.getBoundingClientRect(), { offsetTop } );
 
 	const submenu: Partial< SubmenuPopoverProps > = {
 		isVisible,
 		placement: hasRightSpace ? 'right-start' : 'left-start',
-		anchorRect: anchorRect,
+		anchorRef: anchor,
+		offset: { crossAxis: offsetTop },
 		__unstableForcePosition: true,
 	};
 
