@@ -1,5 +1,6 @@
 import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { compact, property, snakeCase } from 'lodash';
+import { default as pageRouter } from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import * as React from 'react';
@@ -15,6 +16,7 @@ import { setThemePreviewOptions } from 'calypso/state/themes/actions';
 import {
 	arePremiumThemesEnabled,
 	getPremiumThemePrice,
+	getThemeDetailsUrl,
 	getThemesForQueryIgnoringPage,
 	getThemesFoundForQuery,
 	isRequestingThemesForQuery,
@@ -43,6 +45,7 @@ class ThemesSelection extends Component {
 			PropTypes.shape( { current: PropTypes.any } ),
 		] ),
 		getPremiumThemePrice: PropTypes.func,
+		getThemeDetailsUrl: PropTypes.func,
 		isInstallingTheme: PropTypes.func,
 		isLastPage: PropTypes.bool,
 		isRequesting: PropTypes.bool,
@@ -135,15 +138,8 @@ class ThemesSelection extends Component {
 			);
 		}
 
-		const options = this.getOptions(
-			themeId,
-			variation,
-			`style variation: ${ variation ? variation.slug : 'show more' }`
-		);
-
-		if ( options && options.preview ) {
-			options.preview.action( themeId );
-		}
+		this.props.setThemePreviewOptions( themeId, null, null, variation );
+		pageRouter( this.props.getThemeDetailsUrl( themeId ) );
 	};
 
 	onMoreButtonItemClick = ( themeId, resultsRank, key ) => {
@@ -207,12 +203,7 @@ class ThemesSelection extends Component {
 				} else {
 					defaultOption = options.activate;
 				}
-				this.props.setThemePreviewOptions(
-					themeId,
-					defaultOption,
-					secondaryOption,
-					styleVariation
-				);
+				this.props.setThemePreviewOptions( themeId, defaultOption, secondaryOption, null );
 				return action( t, context );
 			};
 		};
@@ -279,6 +270,10 @@ function bindIsInstallingTheme( state, siteId ) {
 
 function bindGetPremiumThemePrice( state, siteId ) {
 	return ( themeId ) => getPremiumThemePrice( state, themeId, siteId );
+}
+
+function bindGetThemeDetailsUrl( state, siteId ) {
+	return ( themeId ) => getThemeDetailsUrl( state, themeId, siteId );
 }
 
 // Exporting this for use in customized themes lists (recommended-themes.jsx, etc.)
@@ -356,6 +351,7 @@ export const ConnectedThemesSelection = connect(
 			// provides caching, and both are already being rendered by a parent component. So to avoid
 			// redundant AJAX requests, we're not rendering these query components locally.
 			getPremiumThemePrice: bindGetPremiumThemePrice( state, siteId ),
+			getThemeDetailsUrl: bindGetThemeDetailsUrl( state, siteId ),
 			filterString: prependThemeFilterKeys( state, query.filter ),
 			wpOrgThemes,
 		};
