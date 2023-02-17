@@ -33,14 +33,7 @@ import {
 
 import './style.scss';
 
-function ConnectDomainStep( {
-	domain,
-	selectedSite,
-	initialSetupInfo,
-	initialStep,
-	showErrors,
-	isFirstVisit,
-} ) {
+function ConnectDomainStep( { domain, selectedSite, initialStep, showErrors, isFirstVisit } ) {
 	const { __ } = useI18n();
 	const stepsDefinition = isSubdomain( domain )
 		? connectASubdomainStepsDefinition
@@ -68,7 +61,7 @@ function ConnectDomainStep( {
 		if ( initialStep && Object.values( stepSlug ).includes( initialStep ) ) {
 			setPageSlug( initialStep );
 		}
-	}, [ initialStep, setPageSlug ] );
+	}, [ initialStep ] );
 
 	const verifyConnection = useCallback(
 		( setStepAfterVerify = true ) => {
@@ -120,20 +113,18 @@ function ConnectDomainStep( {
 			return;
 		}
 
-		( () => {
-			setDomainSetupInfoError( {} );
-			setLoadingDomainSetupInfo( true );
-			wpcom
-				.domain( domain )
-				.mappingSetupInfo( selectedSite.ID, domain )
-				.then( ( data ) => {
-					setDomainSetupInfo( { data } );
-					statusRef.current.hasLoadedStatusInfo = { [ domain ]: true };
-				} )
-				.catch( ( error ) => setDomainSetupInfoError( { error } ) )
-				.finally( () => setLoadingDomainSetupInfo( false ) );
-		} )();
-	}, [ domain, domainSetupInfo, initialSetupInfo, loadingDomainSetupInfo, selectedSite.ID ] );
+		setDomainSetupInfoError( {} );
+		setLoadingDomainSetupInfo( true );
+		wpcom
+			.domain( domain )
+			.mappingSetupInfo( selectedSite.ID, domain )
+			.then( ( data ) => {
+				setDomainSetupInfo( { data } );
+				statusRef.current.hasLoadedStatusInfo = { [ domain ]: true };
+			} )
+			.catch( ( error ) => setDomainSetupInfoError( { error } ) )
+			.finally( () => setLoadingDomainSetupInfo( false ) );
+	}, [ domain, domainSetupInfo, loadingDomainSetupInfo, selectedSite.ID ] );
 
 	useEffect( () => {
 		if ( ! showErrors || statusRef.current?.hasFetchedVerificationStatus ) {
@@ -221,6 +212,18 @@ function ConnectDomainStep( {
 	};
 
 	const renderContent = () => {
+		if ( loadingDomainSetupInfo === true ) {
+			return (
+				<div className={ baseClassName + '__content-placeholder' }>
+					<p></p>
+					<p></p>
+					<p></p>
+					<p></p>
+					<p></p>
+				</div>
+			);
+		}
+
 		return (
 			<>
 				{ prevPageSlug && (
@@ -247,9 +250,14 @@ function ConnectDomainStep( {
 	};
 
 	const renderSidebar = () => {
+		if ( loadingDomainSetupInfo === true ) {
+			return <div className={ baseClassName + '__sidebar-placeholder' }></div>;
+		}
+
 		if ( ! isStepStart ) {
 			return null;
 		}
+
 		return <DomainTransferRecommendation />;
 	};
 
@@ -263,14 +271,18 @@ function ConnectDomainStep( {
 			) : (
 				renderContent()
 			) }
-			<ConnectDomainStepSupportInfoLink baseClassName={ baseClassName } mode={ mode } />
-			<ConnectDomainStepSwitchSetupInfoLink
-				baseClassName={ baseClassName }
-				currentMode={ mode }
-				currentStep={ step }
-				isSubdomain={ isSubdomain( domain ) }
-				setPage={ setPageSlug }
-			/>
+			{ loadingDomainSetupInfo === false && (
+				<>
+					<ConnectDomainStepSupportInfoLink baseClassName={ baseClassName } mode={ mode } />
+					<ConnectDomainStepSwitchSetupInfoLink
+						baseClassName={ baseClassName }
+						currentMode={ mode }
+						currentStep={ step }
+						isSubdomain={ isSubdomain( domain ) }
+						setPage={ setPageSlug }
+					/>
+				</>
+			) }
 		</>
 	);
 }
