@@ -30,7 +30,7 @@ jest.mock( 'wpcom-proxy-request', () => ( {
 	__esModule: true,
 } ) );
 
-// structuredClone wasn't available in Jest before verson 28 so this creates
+// TODO: structuredClone wasn't available in Jest before verson 28 so this creates
 // a version to be used for the tests. Once Jest is upgraded to 28 this should
 // be removed.
 global.structuredClone = jest.fn( ( value ) => {
