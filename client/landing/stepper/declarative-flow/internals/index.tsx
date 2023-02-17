@@ -7,6 +7,7 @@ import Modal from 'react-modal';
 import { Switch, Route, Redirect, generatePath, useHistory, useLocation } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import WordPressLogo from 'calypso/components/wordpress-logo';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
@@ -42,6 +43,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const { search } = useLocation();
 	const { setStepData } = useDispatch( STEPPER_INTERNAL_STORE );
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
+	const ref = useQuery().get( 'ref' ) || '';
 
 	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
 	const progressValue = stepProgress ? stepProgress.progress / stepProgress.count : 0;
@@ -79,7 +81,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 
 	useEffect( () => {
 		if ( flow && stepProgress !== undefined && stepProgress?.progress === 0 ) {
-			const ref = new URLSearchParams( window.location.search ).get( 'ref' ) || '';
 			recordSignupStart( flow.name, ref );
 			recordFullStoryEvent( `calypso_signup_start_${ flow.name }`, { flow: flow.name } );
 		}
