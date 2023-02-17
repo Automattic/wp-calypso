@@ -4,6 +4,7 @@ import {
 	PLAN_PREMIUM,
 	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 } from '@automattic/calypso-products';
+import { FREE_FLOW, BUILD_FLOW, WRITE_FLOW } from '@automattic/onboarding';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -73,7 +74,7 @@ export function getEnhancedTasks(
 			switch ( task.id ) {
 				case 'setup_write':
 					taskData = {
-						title: translate( 'Personalize your site' ),
+						title: translate( 'Set up your site' ),
 					};
 					break;
 				case 'setup_free':
@@ -163,6 +164,12 @@ export function getEnhancedTasks(
 				case 'design_selected':
 					taskData = {
 						title: translate( 'Select a design' ),
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.assign(
+								`/setup/update-design/designSetup?siteSlug=${ siteSlug }&flowToReturnTo=${ flow }`
+							);
+						},
 					};
 					break;
 				case 'setup_link_in_bio':
@@ -340,4 +347,20 @@ export function getArrayOfFilteredTasks( tasks: Task[], flow: string | null ) {
 			return accumulator;
 		}, [] as Task[] )
 	);
+}
+
+// Returns enhanced task list with domain_upsell task removed
+// Only applies to Free, Write & Build flow sites with paid plan
+export function filterDomainUpsellTask(
+	flow: string | null,
+	enhancedTasks: Task[] | null,
+	site: SiteDetails | null
+) {
+	const flowsAffected = [ FREE_FLOW, BUILD_FLOW, WRITE_FLOW ];
+	if ( flow && flowsAffected.includes( flow ) && enhancedTasks && ! site?.plan?.is_free ) {
+		return enhancedTasks?.filter( ( task ) => {
+			return task.id !== 'domain_upsell';
+		} );
+	}
+	return enhancedTasks;
 }

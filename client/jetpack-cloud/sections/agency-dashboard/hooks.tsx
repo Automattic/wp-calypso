@@ -9,6 +9,8 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import SitesOverviewContext from './sites-overview/context';
 import type { Site, UpdateMonitorSettingsParams } from './sites-overview/types';
 
+const NOTIFICATION_DURATION = 3000;
+
 function getRejectedAndFulfilledRequests(
 	promises: any[],
 	requests: { site: { blog_id: number; url: string } }[]
@@ -141,7 +143,7 @@ export function useToggleActivateMonitor(
 						}
 					);
 				}
-				dispatch( successNotice( successMessage ) );
+				dispatch( successNotice( successMessage, { duration: NOTIFICATION_DURATION } ) );
 			}
 
 			if ( totalRejected ) {
@@ -173,7 +175,7 @@ export function useToggleActivateMonitor(
 						}
 					);
 				}
-				dispatch( errorNotice( errorMessage ) );
+				dispatch( errorNotice( errorMessage, { duration: NOTIFICATION_DURATION } ) );
 			}
 		},
 		[ dispatch, sites, toggleActivateMonitoring, translate ]
@@ -278,7 +280,7 @@ export function useUpdateMonitorSettings( sites: Array< { blog_id: number; url: 
 						}
 					);
 				}
-				dispatch( successNotice( successMessage ) );
+				dispatch( successNotice( successMessage, { duration: NOTIFICATION_DURATION } ) );
 			}
 
 			if ( totalRejected ) {
@@ -306,7 +308,7 @@ export function useUpdateMonitorSettings( sites: Array< { blog_id: number; url: 
 						}
 					);
 				}
-				dispatch( errorNotice( errorMessage ) );
+				dispatch( errorNotice( errorMessage, { duration: NOTIFICATION_DURATION } ) );
 			}
 		},
 		[ dispatch, sites, translate, updateMonitorSettings ]

@@ -10,7 +10,6 @@ import {
 	NOTICE_CELEBRATE_SITE_MIGRATION,
 	NOTICE_CELEBRATE_SITE_COPY,
 	NOTICE_CELEBRATE_SITE_SETUP_COMPLETE,
-	TASK_CLOUDFLARE,
 	TASK_CONNECT_ACCOUNTS,
 	TASK_EARN_FEATURES,
 	TASK_FIND_DOMAIN,
@@ -38,7 +37,6 @@ import CelebrateSiteLaunch from 'calypso/my-sites/customer-home/cards/notices/ce
 import CelebrateSiteMigration from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-migration';
 import CelebrateSiteSetupComplete from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-setup-complete';
 import SiteLaunchSellerUpsell from 'calypso/my-sites/customer-home/cards/notices/site-launch-seller-upsell';
-import Cloudflare from 'calypso/my-sites/customer-home/cards/tasks/cloudflare';
 import ConnectAccounts from 'calypso/my-sites/customer-home/cards/tasks/connect-accounts';
 import EarnFeatures from 'calypso/my-sites/customer-home/cards/tasks/earn-features';
 import FindDomain from 'calypso/my-sites/customer-home/cards/tasks/find-domain';
@@ -64,7 +62,6 @@ const cardComponents = {
 	[ NOTICE_CELEBRATE_SITE_MIGRATION ]: CelebrateSiteMigration,
 	[ NOTICE_CELEBRATE_SITE_COPY ]: CelebrateSiteCopy,
 	[ NOTICE_CELEBRATE_SITE_SETUP_COMPLETE ]: CelebrateSiteSetupComplete,
-	[ TASK_CLOUDFLARE ]: Cloudflare,
 	[ TASK_CONNECT_ACCOUNTS ]: ConnectAccounts,
 	[ TASK_EARN_FEATURES ]: EarnFeatures,
 	[ TASK_FIND_DOMAIN ]: FindDomain,

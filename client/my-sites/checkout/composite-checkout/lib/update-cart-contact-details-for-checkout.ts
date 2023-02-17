@@ -1,4 +1,4 @@
-import { getCountryPostalCodeSupport } from '@automattic/wpcom-checkout';
+import { getCountryPostalCodeSupport, getCountryTaxRequirements } from '@automattic/wpcom-checkout';
 import getContactDetailsType from '../lib/get-contact-details-type';
 import type { ResponseCart, UpdateTaxLocationInCart } from '@automattic/shopping-cart';
 import type {
@@ -23,6 +23,10 @@ export async function updateCartContactDetailsForCheckout(
 			? getCountryPostalCodeSupport( countriesList, contactInfo.countryCode.value )
 			: false;
 	const contactDetailsType = getContactDetailsType( responseCart );
+	const taxRequirements = getCountryTaxRequirements(
+		countriesList,
+		contactInfo?.countryCode?.value ?? ''
+	);
 
 	if ( ! contactInfo || ! areCountriesLoaded ) {
 		return;
@@ -31,7 +35,14 @@ export async function updateCartContactDetailsForCheckout(
 	// The tax form does not include a subdivisionCode field but the server
 	// will sometimes fill in the value on the cart itself so we should not
 	// try to update it when the field does not exist.
-	const subdivisionCode = contactDetailsType === 'tax' ? undefined : contactInfo.state?.value;
+	const subdivisionCode =
+		taxRequirements.subdivision || contactDetailsType !== 'tax'
+			? contactInfo.state?.value
+			: undefined;
+	const organization =
+		vatDetails.name ??
+		( taxRequirements.organization ? contactInfo.organization?.value : undefined ) ??
+		'';
 	return updateLocation( {
 		// Typically the contact country code and the VAT country code will be the
 		// same, but the VAT form has special country codes it sometimes uses like
@@ -41,7 +52,8 @@ export async function updateCartContactDetailsForCheckout(
 		postalCode: arePostalCodesSupported ? contactInfo.postalCode?.value : '',
 		subdivisionCode,
 		vatId: vatDetails.id ?? '',
-		organization: vatDetails.name ?? '',
+		organization,
 		address: vatDetails.address ?? '',
+		city: ( taxRequirements.city ? contactInfo.city?.value : undefined ) ?? '',
 	} );
 }

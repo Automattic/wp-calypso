@@ -1,14 +1,15 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	WPCOM_FEATURES_MANAGE_PLUGINS,
 	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
 } from '@automattic/calypso-products';
-import { Gridicon } from '@automattic/components';
+import { Gridicon, SubmenuPopover, useSubmenuPopoverProps } from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { DropdownMenu, MenuGroup, MenuItem as CoreMenuItem, Modal } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { ComponentType, useEffect, useState } from 'react';
+import { ComponentType, useEffect, useMemo, useState } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import SitePreviewLink from 'calypso/components/site-preview-link';
 import { useSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
@@ -21,6 +22,7 @@ import {
 	getManagePluginsUrl,
 	getPluginsUrl,
 	getSettingsUrl,
+	isCustomDomain,
 	isNotAtomicJetpack,
 } from '../utils';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
@@ -199,9 +201,9 @@ const CopySiteItem = ( { recordTracks, site, onClick }: SitesMenuItemProps ) => 
 	);
 };
 
-const ExternalGridIcon = styled( Gridicon )( {
+const MenuItemGridIcon = styled( Gridicon )( {
 	insetBlockStart: '-1px',
-	marginInlineStart: '4px',
+	marginLeft: 'auto',
 	position: 'relative',
 } );
 
@@ -213,7 +215,7 @@ const WpAdminItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 			href={ site.options?.admin_url }
 			onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_wpadmin_click' ) }
 		>
-			{ __( 'Visit WP Admin' ) } <ExternalGridIcon icon="external" size={ 18 } />
+			{ __( 'Visit WP Admin' ) } <MenuItemGridIcon icon="external" size={ 18 } />
 		</MenuItemLink>
 	);
 };
@@ -236,7 +238,109 @@ const SiteDropdownMenu = styled( DropdownMenu )( {
 	'.components-popover': {
 		zIndex: 177,
 	},
+
+	'.submenu-popover > .components-popover__content': {
+		display: 'flex',
+		flexDirection: 'column',
+	},
 } );
+
+function useSubmenuItems( {
+	siteSlug,
+	isCustomDomain,
+	isAtomic,
+}: {
+	siteSlug: string;
+	isCustomDomain: boolean;
+	isAtomic: boolean;
+} ) {
+	const { __ } = useI18n();
+	return useMemo(
+		() =>
+			[
+				{
+					label: __( 'Privacy settings' ),
+					href: `/settings/general/${ siteSlug }#site-privacy-settings`,
+					eventName: 'calypso_sites_dashboard_site_action_submenu_privacy_settings_click',
+				},
+				{
+					condition: isAtomic,
+					label: __( 'Database access' ),
+					href: `/hosting-config/${ siteSlug }#database-access`,
+					eventName: 'calypso_sites_dashboard_site_action_submenu_database_access_click',
+				},
+				{
+					condition: isAtomic,
+					label: __( 'SFTP/SSH credentials' ),
+					href: `/hosting-config/${ siteSlug }#sftp-credentials`,
+					eventName: 'calypso_sites_dashboard_site_action_submenu_sftp_credentials_click',
+				},
+				{
+					condition: isAtomic,
+					label: __( 'Web server settings' ),
+					href: `/hosting-config/${ siteSlug }#web-server-settings`,
+					eventName: 'calypso_sites_dashboard_site_action_submenu_web_server_settings_click',
+				},
+				{
+					label: __( 'Performance settings' ),
+					href: `/settings/performance/${ siteSlug }`,
+					eventName: 'calypso_sites_dashboard_site_action_submenu_performance_settings_click',
+				},
+				{
+					condition: isCustomDomain,
+					label: __( 'DNS records' ),
+					href: `/domains/manage/${ siteSlug }/dns/${ siteSlug }`,
+					eventName: 'calypso_sites_dashboard_site_action_submenu_dns_records_click',
+				},
+				{
+					condition: isAtomic,
+					label: __( 'Github connection' ),
+					href: `/hosting-config/${ siteSlug }#connect-github`,
+					eventName: 'calypso_sites_dashboard_site_action_submenu_connect_github_click',
+				},
+				{
+					condition: isAtomic,
+					label: __( 'Clear cache' ),
+					href: `/hosting-config/${ siteSlug }#cache`,
+					eventName: 'calypso_sites_dashboard_site_action_submenu_cache_click',
+				},
+			].filter( ( { condition } ) => condition ?? true ),
+		[ __, isAtomic, isCustomDomain, siteSlug ]
+	);
+}
+
+function DeveloperSettingsSubmenu( { site, recordTracks }: SitesMenuItemProps ) {
+	const { __ } = useI18n();
+	const submenuItems = useSubmenuItems( {
+		siteSlug: site.slug,
+		isCustomDomain: isCustomDomain( site.slug ),
+		isAtomic: Boolean( site.is_wpcom_atomic ),
+	} );
+	const developerSubmenuProps = useSubmenuPopoverProps< HTMLDivElement >( { offsetTop: -8 } );
+
+	if ( submenuItems.length === 0 ) {
+		return null;
+	}
+
+	return (
+		<div { ...developerSubmenuProps.parent }>
+			<MenuItemLink>
+				{ __( 'Developer settings' ) } <MenuItemGridIcon icon="chevron-right" size={ 18 } />
+			</MenuItemLink>
+			<SubmenuPopover { ...developerSubmenuProps.submenu }>
+				{ submenuItems.map( ( item ) => (
+					<MenuItemLink
+						key={ item.label }
+						href={ item.href }
+						onClick={ () => recordTracks( item.eventName ) }
+					>
+						{ item.label }
+					</MenuItemLink>
+				) ) }
+			</SubmenuPopover>
+		</div>
+	);
+}
 
 export const SitesEllipsisMenu = ( {
 	className,
@@ -268,6 +372,7 @@ export const SitesEllipsisMenu = ( {
 				<SiteMenuGroup>
 					{ site.launch_status === 'unlaunched' && <LaunchItem { ...props } /> }
 					<SettingsItem { ...props } />
+					{ isEnabled( 'dev/developer-ux' ) && <DeveloperSettingsSubmenu { ...props } /> }
 					<ManagePluginsItem { ...props } />
 					{ showHosting && <HostingConfigItem { ...props } /> }
 					{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }

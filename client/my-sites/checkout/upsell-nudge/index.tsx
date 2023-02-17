@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { isMonthly, getPlanByPathSlug, TERM_MONTHLY } from '@automattic/calypso-products';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CompactCard, Gridicon } from '@automattic/components';
@@ -45,6 +46,7 @@ import {
 	getPlansBySiteId,
 	getSitePlanRawPrice,
 	getPlanDiscountedRawPrice,
+	getCurrentPlan,
 } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
@@ -54,6 +56,7 @@ import {
 } from 'calypso/state/stored-cards/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { BusinessPlanUpgradeUpsell } from './business-plan-upgrade-upsell';
+import { BusinessPlanUpgradeUpsellTreatment } from './business-plan-upgrade-upsell/treatment';
 import PurchaseModal from './purchase-modal';
 import { extractStoredCardMetaValue } from './purchase-modal/util';
 import { QuickstartSessionsRetirement } from './quickstart-sessions-retirement';
@@ -100,6 +103,7 @@ export interface UpsellNudgeAutomaticProps extends WithShoppingCartProps {
 	translate: ReturnType< typeof useTranslate >;
 	cards: PaymentMethod[];
 	currentPlanTerm: string;
+	currentPlan?: object;
 }
 
 export type UpsellNudgeProps = UpsellNudgeManualProps & UpsellNudgeAutomaticProps;
@@ -261,6 +265,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 		const {
 			receiptId,
 			currencyCode,
+			currentPlan,
 			currentPlanTerm,
 			planRawPrice,
 			planDiscountedRawPrice,
@@ -289,6 +294,23 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 				);
 
 			case BUSINESS_PLAN_UPGRADE_UPSELL:
+				if ( config.isEnabled( 'upsell/post-purchase-treatment' ) ) {
+					return isLoading ? (
+						this.renderGenericPlaceholder()
+					) : (
+						<BusinessPlanUpgradeUpsellTreatment
+							currencyCode={ currencyCode }
+							planRawPrice={ planRawPrice }
+							planDiscountedRawPrice={ planDiscountedRawPrice }
+							receiptId={ receiptId }
+							translate={ translate }
+							handleClickAccept={ this.handleClickAccept }
+							handleClickDecline={ this.handleClickDecline }
+							hasSevenDayRefundPeriod={ hasSevenDayRefundPeriod }
+							currentPlan={ currentPlan }
+						/>
+					);
+				}
 				return isLoading ? (
 					this.renderGenericPlaceholder()
 				) : (
@@ -546,6 +568,7 @@ export default connect(
 		const areStoredCardsLoading = hasLoadedCardsFromServer ? isFetchingCards : true;
 		const cards = getStoredCards( state );
 
+		const currentPlan = getCurrentPlan( state, selectedSiteId ) ?? undefined;
 		const currentPlanTerm = getCurrentPlanTerm( state, selectedSiteId ?? 0 ) ?? TERM_MONTHLY;
 		const productSlug = getProductSlug( upsellType, upgradeItem ?? '', currentPlanTerm );
 		const productProperties = pick( getProductBySlug( state, productSlug ?? '' ), [
@@ -563,6 +586,7 @@ export default connect(
 		return {
 			cards,
 			currencyCode: getCurrentUserCurrencyCode( state ),
+			currentPlan,
 			currentPlanTerm,
 			isLoading:
 				areStoredCardsLoading ||

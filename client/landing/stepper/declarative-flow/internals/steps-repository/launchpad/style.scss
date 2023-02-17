@@ -563,6 +563,104 @@
 	.spinner-line {
 		display: none;
 	}
+
+
+}
+
+.launchpad__site-preview-wrapper.has-banner {
+
+	.domain-upsell-callout {
+		position: initial;
+		transform: none;
+		width: 95%;
+		margin: auto;
+		max-width: 95%;
+		transition: max-width 0.2s linear;
+
+		@media ( max-width: 1080px ) {
+			display: block;
+		}
+
+		.domain-upsell-callout__icon {
+			display: block;
+			color: var(--studio-gray-60);
+		}
+
+		.domain-upsell-callout__content {
+			background: var(--color-print);
+			border-radius: 20px 20px 0 0;  /* stylelint-disable-line scales/radii */
+			padding-top: 12px;
+			padding-bottom: 2px;
+			box-shadow: 0 5px 15px rgba(0 0 0 / 7%), 0 3px 10px rgba(0 0 0 / 4%);
+			clip-path: inset(-15px -15px 0 -15px);
+		}
+		.domain-upsell-callout__content-text {
+			padding: 0 20px;
+			justify-content: center;
+			flex-wrap: wrap;
+		}
+
+		&__domain-name {
+			color: var(--studio-gray-100);
+			font-weight: 500;
+		}
+
+	}
+
+	.web-preview__frame-wrapper.is-resizable {
+		background-color: var(--color-print);
+		border-bottom-right-radius: 40px; /* stylelint-disable-line scales/radii */
+		border-bottom-left-radius: 40px; /* stylelint-disable-line scales/radii */
+		box-shadow: 0 5px 15px rgb(0 0 0 / 7%), 0 3px 10px rgb(0 0 0 / 4%);
+
+		@include break-large {
+			box-shadow: 0 5px 15px rgb(0 0 0 / 7%), 0 3px 10px rgb(0 0 0 / 4%);
+			border-bottom-right-radius: 20px; /* stylelint-disable-line scales/radii */
+			border-bottom-left-radius: 20px; /* stylelint-disable-line scales/radii */
+		}
+
+
+		.web-preview__frame-edit-overlay {
+			margin: 10px;
+			border-radius: 30px; /* stylelint-disable-line scales/radii */
+
+			@include break-large {
+				border-radius: 10px; /* stylelint-disable-line scales/radii */
+			}
+		}
+
+
+		.web-preview__frame {
+			box-shadow: none;
+		}
+
+	}
+
+
+	.is-phone {
+		.domain-upsell-callout {
+			@include break-large {
+				max-width: 340px;
+				margin: auto;
+			}
+
+		}
+		.web-preview__frame-wrapper.is-resizable {
+			background-color: var(--color-print);
+			border-bottom-right-radius: 40px; /* stylelint-disable-line scales/radii */
+			border-bottom-left-radius: 40px; /* stylelint-disable-line scales/radii */
+			box-shadow: 0 5px 15px rgb(0 0 0 / 7%), 0 3px 10px rgb(0 0 0 / 4%);
+
+			.web-preview__frame-edit-overlay {
+				margin: 10px;
+				border-radius: 30px; /* stylelint-disable-line scales/radii */
+			}
+
+		}
+
+
+	}
+
 }
 
 // Launchpad - Processing Screens

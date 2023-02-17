@@ -84,13 +84,40 @@ export const countryList: CountryListItem[] = [
 		code: 'CA',
 		name: 'Canada',
 		has_postal_codes: true,
+		tax_needs_city: true,
+		tax_needs_subdivision: true,
 	},
 	{
 		code: 'GB',
 		name: 'United Kingdom',
 		has_postal_codes: true,
+		tax_needs_organization: true, // added for testing, not present in API data
+	},
+	{
+		code: 'IN',
+		name: 'India',
+		has_postal_codes: true,
+		tax_needs_subdivision: true,
+	},
+	{
+		code: 'JP',
+		name: 'Japan',
+		has_postal_codes: true,
+		tax_needs_organization: true,
+	},
+	{
+		code: 'NO',
+		name: 'Norway',
+		has_postal_codes: true,
+		tax_needs_city: true,
+		tax_needs_organization: true,
 	},
 ];
+
+export const stateList = {
+	ca: [ { code: 'QC', name: 'Quebec' } ],
+	in: [ { code: 'KA', name: 'Karnataka' } ],
+};
 
 export const siteId = 13579;
 
@@ -885,6 +912,7 @@ export function createTestReduxStore() {
 			purchases: {},
 			countries: { payments: countryList, domains: countryList },
 			domains: { management: domainManagementReducer( state?.domains?.management ?? {}, action ) },
+			countryStates: { items: stateList },
 		};
 	};
 	return createStore( rootReducer, applyMiddleware( thunk ) );

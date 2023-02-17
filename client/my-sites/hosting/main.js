@@ -31,8 +31,8 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestSite } from 'calypso/state/sites/actions';
 import { isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import CacheCard from './cache-card';
 import { HostingUpsellNudge } from './hosting-upsell-nudge';
-import MiscellaneousCard from './miscellaneous-card';
 import PhpMyAdminCard from './phpmyadmin-card';
 import RestorePlanSoftwareCard from './restore-plan-software-card';
 import SFTPCard from './sftp-card';
@@ -184,7 +184,7 @@ class Hosting extends Component {
 								{ isGitHubEnabled && <GitHubCard /> }
 								<WebServerSettingsCard disabled={ isDisabled } />
 								<RestorePlanSoftwareCard disabled={ isDisabled } />
-								<MiscellaneousCard disabled={ isDisabled } />
+								<CacheCard disabled={ isDisabled } />
 								<WebServerLogsCard disabled={ isDisabled } />
 							</Column>
 							<Column type="sidebar">

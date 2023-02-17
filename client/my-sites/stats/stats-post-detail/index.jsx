@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -27,10 +26,7 @@ import { getPostStat, isRequestingPostStats } from 'calypso/state/stats/posts/se
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PostDetailHighlightsSection from '../post-detail-highlights-section';
 import PostDetailTableSection from '../post-detail-table-section';
-import PostMonths from '../stats-detail-months';
-import PostWeeks from '../stats-detail-weeks';
 import StatsPlaceholder from '../stats-module/placeholder';
-import PostLikes from '../stats-post-likes';
 import PostSummary from '../stats-post-summary';
 
 class StatsPostDetail extends Component {
@@ -139,9 +135,7 @@ class StatsPostDetail extends Component {
 			noViewsLabel = translate( 'Your post has not received any views yet!' );
 		}
 
-		const isFeatured = config.isEnabled( 'stats/enhance-post-detail' );
-
-		return isFeatured ? (
+		return (
 			<Main fullWidthLayout>
 				<PageViewTracker
 					path={ `/stats/${ postType }/:post_id/:site` }
@@ -186,73 +180,6 @@ class StatsPostDetail extends Component {
 
 					<JetpackColophon />
 				</div>
-
-				<WebPreview
-					showPreview={ this.state.showPreview }
-					defaultViewportDevice="tablet"
-					previewUrl={ `${ previewUrl }?demo=true&iframe=true&theme_preview=true` }
-					externalUrl={ previewUrl }
-					onClose={ this.closePreview }
-				>
-					<Button href={ `/post/${ siteSlug }/${ postId }` }>{ translate( 'Edit' ) }</Button>
-				</WebPreview>
-			</Main>
-		) : (
-			<Main className="has-fixed-nav" wideLayout>
-				<PageViewTracker
-					path={ `/stats/${ postType }/:post_id/:site` }
-					title={ `Stats > Single ${ titlecase( postType ) }` }
-				/>
-				{ siteId && ! isLatestPostsHomepage && <QueryPosts siteId={ siteId } postId={ postId } /> }
-				{ siteId && <QueryPostStats siteId={ siteId } postId={ postId } /> }
-
-				<FixedNavigationHeader
-					navigationItems={ this.getNavigationItemsWithTitle( this.getTitle() ) }
-				>
-					{ showViewLink && (
-						<Button onClick={ this.openPreview }>
-							<span>{ actionLabel }</span>
-						</Button>
-					) }
-				</FixedNavigationHeader>
-
-				<StatsPlaceholder isLoading={ isLoading } />
-
-				{ ! isLoading && countViews === 0 && (
-					<EmptyContent
-						title={ noViewsLabel }
-						line={ translate( 'Learn some tips to attract more visitors' ) }
-						action={ translate( 'Get more traffic!' ) }
-						actionURL="https://wordpress.com/support/getting-more-views-and-traffic/"
-						actionTarget="blank"
-						illustration={ IllustrationStats }
-						illustrationWidth={ 150 }
-					/>
-				) }
-
-				{ ! isLoading && countViews > 0 && (
-					<div>
-						<PostSummary siteId={ siteId } postId={ postId } />
-						{ !! postId && <PostLikes siteId={ siteId } postId={ postId } postType={ postType } /> }
-						<PostMonths
-							dataKey="years"
-							title={ translate( 'Months and years' ) }
-							total={ translate( 'Total' ) }
-							siteId={ siteId }
-							postId={ postId }
-						/>
-						<PostMonths
-							dataKey="averages"
-							title={ translate( 'Average per day' ) }
-							total={ translate( 'Overall' ) }
-							siteId={ siteId }
-							postId={ postId }
-						/>
-						<PostWeeks siteId={ siteId } postId={ postId } />
-					</div>
-				) }
-
-				<JetpackColophon />
 
 				<WebPreview
 					showPreview={ this.state.showPreview }

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { PostStatsCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -28,6 +29,7 @@ export default function LatestPostCard( {
 	siteSlug: string;
 } ) {
 	const translate = useTranslate();
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
 	const posts = useSelector( ( state ) =>
 		getPostsForQuery( state, siteId, { status: 'publish', number: 1 } )
@@ -64,6 +66,7 @@ export default function LatestPostCard( {
 					viewCount={ latestPostData?.viewCount }
 					commentCount={ latestPostData?.commentCount }
 					titleLink={ `/stats/post/${ latestPost.ID }/${ siteSlug }` }
+					uploadHref={ ! isOdysseyStats ? `/post/${ siteSlug }/${ latestPost.ID }` : undefined }
 				/>
 			) }
 		</>

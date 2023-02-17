@@ -165,7 +165,8 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 } ) => {
 	const { __ } = useI18n();
 	const { is_premium = false, is_virtual, style_variation, style_variations = [] } = design;
-	const isPremium = is_premium || ( shouldLimitGlobalStyles && is_virtual && style_variation );
+	const isLimitedVirtual = shouldLimitGlobalStyles && is_virtual && style_variation;
+	const isPremium = is_premium || isLimitedVirtual;
 	const shouldUpgrade = isPremium && ! isPremiumThemeAvailable && ! hasPurchasedTheme;
 	const currentSiteCanInstallWoo = currentPlanFeatures?.includes( FEATURE_WOOP ) ?? false;
 
@@ -192,10 +193,15 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 		if ( designIsBundledWithWoo ) {
 			badge = <WooCommerceBundledBadge />;
 		} else if ( isPremium ) {
+			const toolTip =
+				shouldUpgrade && isLimitedVirtual
+					? __( 'Unlock this style, and tons of other features, by upgrading to a Premium plan.' )
+					: undefined;
 			badge = (
 				<PremiumBadge
 					tooltipPosition="bottom right"
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }
+					tooltipContent={ toolTip }
 				/>
 			);
 		}
