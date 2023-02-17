@@ -256,23 +256,23 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 						/>
 					</div>
 				</span>
-				<span className="design-picker__option-overlay">
-					<span id={ makeOptionId( design ) } className="design-picker__option-meta">
-						<span className="design-picker__option-name">{ title }</span>
-						{ style_variations.length > 0 && (
-							<div className="design-picker__options-style-variations">
-								<StyleVariationBadges
-									variations={ style_variations }
-									onClick={ ( variation ) => setSelectedStyleVariation( variation ) }
-									selectedVariation={ selectedStyleVariation }
-									firstVariationToShow={ preselected_style_variation }
-								/>
-							</div>
-						) }
-					</span>
-				</span>
-				{ getPricingDescription() }
 			</button>
+			<span className="design-picker__option-overlay">
+				<span id={ makeOptionId( design ) } className="design-picker__option-meta">
+					<span className="design-picker__option-name">{ title }</span>
+					{ style_variations.length > 0 && (
+						<div className="design-picker__options-style-variations">
+							<StyleVariationBadges
+								variations={ style_variations }
+								onClick={ ( variation ) => setSelectedStyleVariation( variation ) }
+								selectedVariation={ selectedStyleVariation }
+								firstVariationToShow={ preselected_style_variation }
+							/>
+						</div>
+					) }
+				</span>
+			</span>
+			{ getPricingDescription() }
 		</div>
 	);
 };
