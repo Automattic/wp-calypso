@@ -244,16 +244,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	function previewDesign( design: Design, styleVariation?: StyleVariation ) {
 		recordPreviewedDesign( { flow, intent, design, styleVariation } );
 
-		if ( design.is_virtual ) {
+		if ( ! design.is_virtual ) {
+			setSelectedDesign( design );
+		} else {
 			const parentDesign = staticDesigns.find(
 				( staticDesign ) => staticDesign.slug === design.slug && ! staticDesign.is_virtual
 			);
 			setSelectedDesign( parentDesign );
-			if ( ! styleVariation && design.style_variation ) {
-				setSelectedStyleVariation( design.style_variation );
-			}
-		} else {
-			setSelectedDesign( design );
 		}
 
 		if ( styleVariation ) {
@@ -262,6 +259,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 				...getVirtualDesignProps( design, styleVariation ),
 			} );
 			setSelectedStyleVariation( styleVariation );
+		} else if ( design.preselected_style_variation ) {
+			setSelectedStyleVariation( design.preselected_style_variation );
 		}
 
 		setIsPreviewingDesign( true );

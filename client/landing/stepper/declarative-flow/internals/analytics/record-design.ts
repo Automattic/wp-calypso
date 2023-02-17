@@ -90,10 +90,12 @@ export function getDesignEventProps( {
 }
 
 export function getVirtualDesignProps( design: Design, styleVariation?: StyleVariation ) {
-	const variationSlugSuffix =
-		! styleVariation && design.is_virtual && design.style_variation?.slug
-			? `-${ design.style_variation.slug }`
-			: '';
+	let variationSlugSuffix = '';
+	if ( styleVariation && styleVariation.slug !== 'default' ) {
+		variationSlugSuffix = `-${ styleVariation.slug }`;
+	} else if ( ! styleVariation && design.preselected_style_variation ) {
+		variationSlugSuffix = `-${ design.preselected_style_variation.slug }`;
+	}
 
 	return {
 		slug: design.slug + variationSlugSuffix,

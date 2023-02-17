@@ -115,10 +115,9 @@ const useTrackDesignView = ( {
 
 				const trackingCategory = category === SHOW_ALL_SLUG ? undefined : category;
 
-				let variationSlugSuffix = '';
-				if ( design.is_virtual && design.style_variation?.slug ) {
-					variationSlugSuffix = `-${ design.style_variation.slug }`;
-				}
+				const variationSlugSuffix = design.preselected_style_variation
+					? `-${ design.preselected_style_variation.slug }`
+					: '';
 
 				recordTracksEvent( 'calypso_design_picker_design_display', {
 					category: trackingCategory,
@@ -170,11 +169,9 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	const { __ } = useI18n();
 	const {
 		is_premium: isPremium = false,
-		is_virtual,
-		style_variation,
+		preselected_style_variation,
 		style_variations = [],
 	} = design;
-	const isVirtual = is_virtual && style_variation;
 	const shouldUpgrade = isPremium && ! isPremiumThemeAvailable && ! hasPurchasedTheme;
 	const currentSiteCanInstallWoo = currentPlanFeatures?.includes( FEATURE_WOOP ) ?? false;
 
@@ -202,7 +199,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 			badge = <WooCommerceBundledBadge />;
 		} else if ( isPremium ) {
 			const toolTip =
-				shouldUpgrade && isVirtual
+				shouldUpgrade && preselected_style_variation
 					? __( 'Unlock this style, and tons of other features, by upgrading to a Premium plan.' )
 					: undefined;
 			badge = (
@@ -223,8 +220,8 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	}
 
 	const getTitle = () => {
-		if ( design.is_virtual && design.style_variation ) {
-			return `${ design.title } – ${ design.style_variation.title }`;
+		if ( design.preselected_style_variation ) {
+			return `${ design.title } – ${ design.preselected_style_variation.title }`;
 		}
 
 		return design.title;

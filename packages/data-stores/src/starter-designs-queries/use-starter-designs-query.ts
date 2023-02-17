@@ -99,22 +99,22 @@ function apiStarterDesignsStaticToDesign(
 		price,
 		style_variations,
 		software_sets,
-		is_virtual,
 		style_variation_slug,
 	} = design;
+	const is_virtual = design.is_virtual && !! style_variation_slug;
+
 	const is_premium =
 		( design.recipe.stylesheet && design.recipe.stylesheet.startsWith( 'premium/' ) ) ||
-		( shouldLimitGlobalStyles && is_virtual && !! style_variation_slug ) ||
+		( shouldLimitGlobalStyles && is_virtual ) ||
 		false;
 
 	const is_bundled_with_woo_commerce = ( design.software_sets || [] ).some(
 		( { slug } ) => slug === 'woo-on-plans'
 	);
 
-	const style_variation =
-		is_virtual && style_variation_slug
-			? style_variations?.find( ( { slug } ) => slug === style_variation_slug )
-			: null;
+	const preselected_style_variation = is_virtual
+		? style_variations?.find( ( { slug } ) => slug === style_variation_slug )
+		: undefined;
 
 	return {
 		slug,
@@ -130,7 +130,7 @@ function apiStarterDesignsStaticToDesign(
 		design_type: is_premium ? 'premium' : 'standard',
 		style_variations,
 		is_virtual,
-		style_variation,
+		preselected_style_variation,
 		// Deprecated; used for /start flow
 		features: [],
 		template: '',
