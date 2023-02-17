@@ -71,6 +71,7 @@ const rule = ( module.exports = function ( context ) {
 	};
 } );
 
-rule.ERROR_MESSAGE = 'Variable identifier should be named `{{translateFnName}}`';
+rule.ERROR_MESSAGE =
+	'Variable identifier should be named `{{translateFnName}}` in order to be properly detected by the string extraction tools';
 
 rule.schema = [];

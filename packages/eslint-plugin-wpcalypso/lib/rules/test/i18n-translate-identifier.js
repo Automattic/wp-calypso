@@ -39,7 +39,8 @@ new RuleTester( {
 			code: 'const __ = useTranslate();',
 			errors: [
 				{
-					message: 'Variable identifier should be named `translate`',
+					message:
+						'Variable identifier should be named `translate` in order to be properly detected by the string extraction tools',
 				},
 			],
 		},
@@ -47,7 +48,8 @@ new RuleTester( {
 			code: 'const { __: translate } = useI18n();',
 			errors: [
 				{
-					message: 'Variable identifier should be named `__`',
+					message:
+						'Variable identifier should be named `__` in order to be properly detected by the string extraction tools',
 				},
 			],
 		},
@@ -55,7 +57,8 @@ new RuleTester( {
 			code: 'const { _nx: _n } = useI18n();',
 			errors: [
 				{
-					message: 'Variable identifier should be named `_nx`',
+					message:
+						'Variable identifier should be named `_nx` in order to be properly detected by the string extraction tools',
 				},
 			],
 		},
@@ -63,7 +66,8 @@ new RuleTester( {
 			code: 'const { __, _n: translate } = useI18n();',
 			errors: [
 				{
-					message: 'Variable identifier should be named `_n`',
+					message:
+						'Variable identifier should be named `_n` in order to be properly detected by the string extraction tools',
 				},
 			],
 		},
@@ -71,16 +75,20 @@ new RuleTester( {
 			code: 'const { __: a, _n: b, _nx: c, _x: d } = useI18n();',
 			errors: [
 				{
-					message: 'Variable identifier should be named `__`',
+					message:
+						'Variable identifier should be named `__` in order to be properly detected by the string extraction tools',
 				},
 				{
-					message: 'Variable identifier should be named `_n`',
+					message:
+						'Variable identifier should be named `_n` in order to be properly detected by the string extraction tools',
 				},
 				{
-					message: 'Variable identifier should be named `_nx`',
+					message:
+						'Variable identifier should be named `_nx` in order to be properly detected by the string extraction tools',
 				},
 				{
-					message: 'Variable identifier should be named `_x`',
+					message:
+						'Variable identifier should be named `_x` in order to be properly detected by the string extraction tools',
 				},
 			],
 		},
