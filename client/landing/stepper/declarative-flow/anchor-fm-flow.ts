@@ -1,7 +1,5 @@
 import { useSelect } from '@wordpress/data';
-import { useEffect } from 'react';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import DesignSetup from './internals/steps-repository/design-setup';
@@ -23,10 +21,6 @@ const anchorFmFlow: Flow = {
 	name: 'anchor-fm',
 
 	useSteps() {
-		useEffect( () => {
-			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
-		}, [] );
-
 		return [
 			{ slug: 'login', component: LoginStep },
 			{ slug: 'podcastTitle', component: PodcastTitleStep },
