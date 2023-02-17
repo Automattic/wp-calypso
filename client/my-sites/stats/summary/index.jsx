@@ -114,6 +114,21 @@ class StatsSummary extends Component {
 				);
 				break;
 
+			case 'tagscategories':
+				title = translate( 'Tags & categories' );
+				summaryView = (
+					<StatsModule
+						key="tags-categories"
+						path="referrers"
+						moduleStrings={ StatsStrings.tags }
+						period={ this.props.period }
+						query={ merge( {}, statsQueryOptions, query ) }
+						statType="statsTags"
+						summary
+					/>
+				);
+				break;
+
 			case 'authors':
 				title = translate( 'Authors' );
 				// TODO: should be refactored so that className doesn't have to be passed in
