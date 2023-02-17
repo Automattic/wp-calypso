@@ -46,4 +46,4 @@ export { default as formattedNumber } from './number-formatters/formatted-number
 export { default as PostStatsCard } from './post-stats-card';
 export { default as ConfettiAnimation } from './confetti';
 export { default as ComponentSwapper } from './component-swapper';
-export { default as SubmenuPopover, useSubenuPopoverProps } from './submenu-popover';
+export { default as SubmenuPopover, useSubmenuPopoverProps } from './submenu-popover';

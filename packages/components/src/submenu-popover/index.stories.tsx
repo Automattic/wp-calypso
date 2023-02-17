@@ -1,13 +1,13 @@
 import '@wordpress/components/build-style/style.css';
 import { DropdownMenu, Icon, MenuGroup, MenuItem } from '@wordpress/components';
 import { chevronRight } from '@wordpress/icons';
-import SubmenuPopover, { useSubenuPopoverProps } from '.';
+import SubmenuPopover, { useSubmenuPopoverProps } from '.';
 
 export default { title: 'SubmenuPopover' };
 
 export const Default = () => {
-	const submenu = useSubenuPopoverProps< HTMLDivElement >();
-	const secondSubmenu = useSubenuPopoverProps< HTMLDivElement >();
+	const submenu = useSubmenuPopoverProps< HTMLDivElement >();
+	const secondSubmenu = useSubmenuPopoverProps< HTMLDivElement >();
 	return (
 		<DropdownMenu label="Menu">
 			{ () => (

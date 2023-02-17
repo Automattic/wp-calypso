@@ -62,7 +62,7 @@ function useHasRightSpace( element: HTMLElement | undefined ): boolean {
 	}, [ element ] );
 }
 
-export function useSubenuPopoverProps< T extends HTMLElement >(
+export function useSubmenuPopoverProps< T extends HTMLElement >(
 	options: { offsetTop?: number } = {}
 ) {
 	const { offsetTop = 0 } = options;

@@ -12,11 +12,11 @@ The `SubmenuPopover` component is used to render a popover menu with a submenu.
 import '@wordpress/components/build-style/style.css';
 import { DropdownMenu, Icon, MenuGroup, MenuItem } from '@wordpress/components';
 import { chevronRight } from '@wordpress/icons';
-import SubmenuPopover, { useSubenuPopoverProps } from '.';
+import SubmenuPopover, { useSubmenuPopoverProps } from '.';
 
 export const Menu = () => {
-	const submenu = useSubenuPopoverProps();
-	const secondSubmenu = useSubenuPopoverProps();
+	const submenu = useSubmenuPopoverProps();
+	const secondSubmenu = useSubmenuPopoverProps();
 	return (
 		<DropdownMenu label="Menu">
 			{ () => (

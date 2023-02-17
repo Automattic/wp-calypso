@@ -3,7 +3,7 @@ import {
 	WPCOM_FEATURES_MANAGE_PLUGINS,
 	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
 } from '@automattic/calypso-products';
-import { Gridicon, SubmenuPopover, useSubenuPopoverProps } from '@automattic/components';
+import { Gridicon, SubmenuPopover, useSubmenuPopoverProps } from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { DropdownMenu, MenuGroup, MenuItem as CoreMenuItem, Modal } from '@wordpress/components';
@@ -316,7 +316,7 @@ function DeveloperSettingsSubmenu( { site, recordTracks }: SitesMenuItemProps ) 
 		isCustomDomain: isCustomDomain( site.slug ),
 		isAtomic: Boolean( site.is_wpcom_atomic ),
 	} );
-	const developerSubmenuProps = useSubenuPopoverProps< HTMLDivElement >( { offsetTop: -8 } );
+	const developerSubmenuProps = useSubmenuPopoverProps< HTMLDivElement >( { offsetTop: -8 } );
 
 	if ( submenuItems.length === 0 ) {
 		return null;
