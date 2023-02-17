@@ -1,23 +1,24 @@
 import { Button, Card } from '@automattic/components';
 import { ExternalLink } from '@wordpress/components';
-import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
+import classNames from 'classnames';
 import { ComponentProps, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
-import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import Image from 'calypso/components/image';
 import SocialLogo from 'calypso/components/social-logo';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { DisconnectGitHubExpander } from '../disconnect-github-expander';
+import { SearchBranches } from './search-branches';
 import { SearchRepos } from './search-repos';
-import { useGithubBranches } from './use-github-branches';
 import { useGithubConnectMutation } from './use-github-connect';
 
 import './style.scss';
+
 interface GithubConnectCardProps {
 	connection: ComponentProps< typeof DisconnectGitHubExpander >[ 'connection' ];
 }
@@ -29,18 +30,8 @@ export const GithubConnectCard = ( { connection }: GithubConnectCardProps ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const dispatch = useDispatch();
 
-	const [ selectedRepo, setSelectedRepo ] = useState< string >();
-	const [ selectedBranch, setSelectedBranch ] = useState< string >();
-
-	const { data: branches, isLoading: isLoadingBranches } = useGithubBranches(
-		siteId,
-		selectedRepo,
-		{
-			onSuccess( branches ) {
-				setSelectedBranch( branches[ 0 ] );
-			},
-		}
-	);
+	const [ selectedRepo, setSelectedRepo ] = useState< string >( '' );
+	const [ selectedBranch, setSelectedBranch ] = useState< string >( '' );
 
 	const { connectBranch, isLoading: isConnecting } = useGithubConnectMutation( siteId, {
 		onSuccess: () => {
@@ -59,7 +50,6 @@ export const GithubConnectCard = ( { connection }: GithubConnectCardProps ) => {
 		},
 	} );
 
-	const busy = isLoadingBranches || isConnecting;
 	const disabled = ! selectedBranch || ! selectedRepo;
 	const handleRepoSelect = ( repoName: string ) => {
 		setSelectedRepo( repoName );
@@ -89,8 +79,23 @@ export const GithubConnectCard = ( { connection }: GithubConnectCardProps ) => {
 					</ExternalLink>
 				</p>
 
-				<FormFieldset className="connect-branch__fields">
-					<FormFieldset style={ { flex: 2 } }>
+				<FormFieldset style={ { marginBottom: '24px' } }>
+					<FormLabel>{ __( 'Organization' ) }</FormLabel>
+					<div className="connect-branch__organization">
+						{ connection.external_profile_picture && (
+							<Image
+								className="connect-branch__profile-picture"
+								src={ connection.external_profile_picture }
+							/>
+						) }
+						{ connection.external_name }
+
+						<DisconnectGitHubExpander connection={ connection } />
+					</div>
+				</FormFieldset>
+
+				<div className="connect-branch__fields">
+					<FormFieldset style={ { flex: 1 } }>
 						<FormLabel htmlFor="repository">{ __( 'Repository' ) }</FormLabel>
 						<SearchRepos
 							siteId={ siteId }
@@ -99,47 +104,34 @@ export const GithubConnectCard = ( { connection }: GithubConnectCardProps ) => {
 						/>
 					</FormFieldset>
 					<FormFieldset style={ { flex: 1 } }>
-						<FormLabel htmlFor="branch">{ __( 'Branch to deploy' ) }</FormLabel>
-						<FormSelect
-							className="connect-branch__field"
-							onChange={ ( event ) => handleBranchSelect( event.currentTarget.value ) }
-							value={ selectedBranch }
-						>
-							{ branches?.map( ( branch ) => (
-								<option value={ branch } key={ branch }>
-									{ branch }
-								</option>
-							) ) }
-						</FormSelect>
+						<FormLabel htmlFor="branch">{ __( 'Branch' ) }</FormLabel>
+						<SearchBranches
+							siteId={ siteId }
+							repoName={ selectedRepo }
+							onSelect={ handleBranchSelect }
+							selectedBranch={ selectedBranch }
+						/>
 					</FormFieldset>
-					<Button
-						style={ { flex: 1, marginTop: '26px' } }
-						primary
-						busy={ busy }
-						onClick={ () => {
-							connectBranch( {
-								repoName: selectedRepo,
-								branchName: selectedBranch,
-							} );
-						} }
-						disabled={ disabled }
-					>
-						<span>{ __( 'Connect' ) }</span>
-					</Button>
-				</FormFieldset>
+				</div>
+
 				<FormSettingExplanation>
-					{ createInterpolateElement(
-						__(
-							"To connect with an organization repo, prefix it with <code>org/</code>. Don't see the repo? Try authorizing with Github as the organization"
-						),
-						{
-							code: createElement( 'code' ),
-						}
-					) }
+					Don't see a specific repo? Try re-authorizing with Github as a different organization.
 				</FormSettingExplanation>
 			</div>
-			<div className="connect-branch__buttons">
-				<DisconnectGitHubExpander connection={ connection } />
+			<div className={ classNames( 'connect-branch__buttons' ) }>
+				<Button
+					primary
+					onClick={ () => {
+						connectBranch( {
+							repoName: selectedRepo,
+							branchName: selectedBranch,
+						} );
+					} }
+					busy={ isConnecting }
+					disabled={ disabled }
+				>
+					<span>{ __( 'Connect to repository' ) }</span>
+				</Button>
 			</div>
 		</Card>
 	);

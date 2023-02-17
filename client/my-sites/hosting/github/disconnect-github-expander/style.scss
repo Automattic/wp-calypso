@@ -1,31 +1,13 @@
-.disconnect-github-expander__button {
-	display: flex;
-	align-items: center;
-	cursor: pointer;
+.disconnect-github.is-borderless.is-compact {
+	color: var(--color-primary);
+	font-style: inherit;
+	font-weight: 400;
+	line-height: inherit;
+	padding: 0;
+	font-size: inherit;
+	margin-left: 8px;
 
-	&:focus-visible {
-		border-color: var(--color-primary);
-		box-shadow: 0 0 0 2px var(--color-primary-light);
+	&:hover {
+		text-decoration: underline;
 	}
-
-	.gridicon {
-		transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s ease-in;
-		margin-inline-end: 0.3em;
-	}
-
-	&[aria-expanded="true"] .gridicon {
-		transform: rotate(90deg);
-	}
-
-	[dir="rtl"] &[aria-expanded="true"] .gridicon {
-		// Auto-rtl flips the rotate() direction. We specify 90deg so that
-		// ultimately it ends up as -90deg, which is what we actually want. The
-		// processing also adds a scaleX() to flip the icon. We add it so the
-		// transition effect doesn't break.
-		transform: rotate(90deg) scaleX(-1);
-	}
-}
-
-.disconnect-github-expander__panel {
-	padding-top: 1rem;
 }

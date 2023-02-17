@@ -22,11 +22,14 @@ export function DisconnectGitHubExpander( { connection }: DisconnectGitHubExpand
 
 	return (
 		<Button
+			compact
+			className="disconnect-github"
+			borderless
 			onClick={ () => disconnect( connection ) }
 			busy={ isDisconnecting }
 			disabled={ isDisconnecting } // `busy` doesn't actually disable the button
 		>
-			<span>{ __( 'Disconnect from Github' ) }</span>
+			{ __( '(disconnect)' ) }
 		</Button>
 	);
 }

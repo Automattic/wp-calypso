@@ -2,7 +2,6 @@
 	display: flex;
 	flex-direction: row;
 	align-items: flex-start;
-	margin-bottom: 0;
 	gap: 16px;
 
 	.select-dropdown__header {
@@ -12,6 +11,18 @@
 
 .connect-branch-card .form-fieldset {
 	margin-bottom: 0;
+}
+
+.connect-branch__organization {
+	display: flex;
+	align-items: center;
+}
+
+.connect-branch__profile-picture {
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	margin-right: 8px;
 }
 
 .connect-branch__field {
@@ -48,11 +59,18 @@
 }
 
 .connect-branch__buttons {
-	display: inline-flex;
-	gap: 16px;
+	margin-top: 32px;
 }
 
 .connect-branch-card .form-setting-explanation {
 	margin-bottom: 20px;
 	margin-top: 5px;
+}
+
+.spinner.connect-branch__loading {
+	position: absolute;
+	right: 0;
+	top: 0;
+	height: 100%;
+	width: 40px !important;
 }

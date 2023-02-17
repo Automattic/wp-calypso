@@ -31,6 +31,7 @@ export const useGithubBranches = (
 			meta: {
 				persist: false,
 			},
+			refetchOnWindowFocus: false,
 			...options,
 			cacheTime: CACHE_TIME,
 		}
