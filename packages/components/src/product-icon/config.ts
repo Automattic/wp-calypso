@@ -130,6 +130,8 @@ export type SupportedSlugs =
 	| 'jetpack_backup_addon_storage_10gb_monthly'
 	| 'jetpack_backup_addon_storage_100gb_monthly'
 	| 'jetpack_backup_addon_storage_1tb_monthly'
+	| 'jetpack_backup_addon_storage_3tb_monthly'
+	| 'jetpack_backup_addon_storage_5tb_monthly'
 	| 'jetpack_backup_addon_storage_10gb_yearly'
 	| 'jetpack_backup_addon_storage_100gb_yearly'
 	| 'jetpack_backup_addon_storage_1tb_yearly'
