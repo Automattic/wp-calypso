@@ -23,34 +23,20 @@ function renderWithProviders( connection ) {
 	);
 }
 
-test( 'toggles visibility of disconnect button', () => {
-	renderWithProviders( { ID: 1, label: '' } );
-	const toggleButton = screen.getByRole( 'button', { name: 'Disconnect from GitHub' } );
-
-	expect( toggleButton ).toHaveAttribute( 'aria-expanded', 'false' );
-	expect( screen.queryByRole( 'button', { name: 'Disconnect' } ) ).toBeNull();
-
-	fireEvent.click( toggleButton );
-
-	expect( toggleButton ).toHaveAttribute( 'aria-expanded', 'true' );
-	expect( screen.getByRole( 'button', { name: 'Disconnect' } ) ).toBeVisible();
-
-	fireEvent.click( toggleButton );
-
-	expect( toggleButton ).toHaveAttribute( 'aria-expanded', 'false' );
-	expect( screen.queryByRole( 'button', { name: 'Disconnect' } ) ).toBeNull();
-} );
-
 test( 'disconnect button is disabled during request', async () => {
 	renderWithProviders( { ID: 1, label: '' } );
 
-	fireEvent.click( screen.getByRole( 'button', { name: 'Disconnect from GitHub' } ) );
-	const disconnectButton = screen.getByRole( 'button', { name: 'Disconnect' } );
+	const disconnectButton = screen.getByRole( 'button', { name: '(disconnect)' } );
 
 	expect( disconnectButton ).not.toBeDisabled();
 
-	let resolve;
-	( wpcom.req.get as jest.Mock ).mockReturnValue( new Promise( ( r ) => ( resolve = r ) ) );
+	fireEvent.click( disconnectButton );
+
+	await waitFor( () => expect( disconnectButton ).toBeDisabled() );
+
+	( wpcom.req.get as jest.Mock ).mockReturnValue(
+		Promise.resolve( { ID: 28807201, deleted: true } )
+	);
 
 	fireEvent.click( disconnectButton );
 	await waitFor( () => expect( disconnectButton ).toBeDisabled() );
@@ -61,8 +47,6 @@ test( 'disconnect button is disabled during request', async () => {
 			method: 'DELETE',
 		} )
 	);
-
-	resolve( { ID: 28807201, deleted: true } );
 
 	await waitFor( () => expect( disconnectButton ).not.toBeDisabled() );
 } );
@@ -70,13 +54,13 @@ test( 'disconnect button is disabled during request', async () => {
 test( 'disconnect button is re-enabled after error', async () => {
 	renderWithProviders( { ID: 1, label: '' } );
 
-	fireEvent.click( screen.getByRole( 'button', { name: 'Disconnect from GitHub' } ) );
-	const disconnectButton = screen.getByRole( 'button', { name: 'Disconnect' } );
+	const disconnectButton = screen.getByRole( 'button', { name: '(disconnect)' } );
+
+	fireEvent.click( disconnectButton );
 
 	expect( disconnectButton ).not.toBeDisabled();
 
-	let reject;
-	( wpcom.req.get as jest.Mock ).mockReturnValue( new Promise( ( _, r ) => ( reject = r ) ) );
+	( wpcom.req.get as jest.Mock ).mockReturnValue( Promise.reject( { statusCode: 500 } ) );
 
 	fireEvent.click( disconnectButton );
 	await waitFor( () => expect( disconnectButton ).toBeDisabled() );
@@ -87,8 +71,6 @@ test( 'disconnect button is re-enabled after error', async () => {
 			method: 'DELETE',
 		} )
 	);
-
-	reject( { statusCode: 500 } );
 
 	await waitFor( () => expect( disconnectButton ).not.toBeDisabled() );
 } );
