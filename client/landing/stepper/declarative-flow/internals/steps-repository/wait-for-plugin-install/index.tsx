@@ -96,7 +96,7 @@ const WaitForPluginInstall: Step = function WaitForAtomic( { navigation, data } 
 				if ( maxFinishTime < new Date().getTime() ) {
 					handlePluginCheckFailure( {
 						type: 'plugin_check_timeout',
-						error: 'plugin check took too long',
+						error: `plugin check took too long (${ totalTimeout / 1000 }s))`,
 						code: 'plugin_check_timeout',
 					} );
 					throw new Error( 'plugin check timeout' );
