@@ -50,8 +50,46 @@ jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
 jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
 jest.mock( 'calypso/lib/navigate' );
 
+function MockCheckout( {
+	initialCart, // required
+	mockSetCartEndpoint, // required
+	mainCartKey, // required
+	queryClient, // required
+	reduxStore, // required
+	cartChanges,
+	additionalProps,
+	setCart,
+} ) {
+	const managerClient = createShoppingCartManagerClient( {
+		getCart: mockGetCartEndpointWith( { ...initialCart, ...( cartChanges ?? {} ) } ),
+		setCart: setCart || mockSetCartEndpoint,
+	} );
+	return (
+		<ReduxProvider store={ reduxStore }>
+			<QueryClientProvider client={ queryClient }>
+				<ShoppingCartProvider
+					managerClient={ managerClient }
+					options={ {
+						defaultCartKey: mainCartKey,
+					} }
+				>
+					<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
+						<CheckoutMain
+							siteId={ siteId }
+							siteSlug="foo.com"
+							getStoredCards={ async () => [] }
+							overrideCountryList={ countryList }
+							{ ...additionalProps }
+						/>
+					</StripeHookProvider>
+				</ShoppingCartProvider>
+			</QueryClientProvider>
+		</ReduxProvider>
+	);
+}
+
 describe( 'Checkout contact step', () => {
-	let MyCheckout;
+	let defaultPropsForMockCheckout = {};
 	const mainCartKey = 'foo.com';
 	const initialCart = getBasicCart();
 
@@ -75,54 +113,31 @@ describe( 'Checkout contact step', () => {
 		nock( 'https://public-api.wordpress.com' ).persist().post( '/rest/v1.1/logstash' ).reply( 200 );
 		mockGetVatInfoEndpoint( {} );
 
-		const store = createTestReduxStore();
+		const reduxStore = createTestReduxStore();
 		const queryClient = new QueryClient();
-
-		MyCheckout = ( { cartChanges, additionalProps, additionalCartProps, setCart } ) => {
-			const managerClient = createShoppingCartManagerClient( {
-				getCart: mockGetCartEndpointWith( { ...initialCart, ...( cartChanges ?? {} ) } ),
-				setCart: setCart || mockSetCartEndpoint,
-			} );
-			return (
-				<ReduxProvider store={ store }>
-					<QueryClientProvider client={ queryClient }>
-						<ShoppingCartProvider
-							managerClient={ managerClient }
-							options={ {
-								defaultCartKey: mainCartKey,
-							} }
-							{ ...additionalCartProps }
-						>
-							<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
-								<CheckoutMain
-									siteId={ siteId }
-									siteSlug="foo.com"
-									getStoredCards={ async () => [] }
-									overrideCountryList={ countryList }
-									{ ...additionalProps }
-								/>
-							</StripeHookProvider>
-						</ShoppingCartProvider>
-					</QueryClientProvider>
-				</ReduxProvider>
-			);
+		defaultPropsForMockCheckout = {
+			reduxStore,
+			queryClient,
+			mainCartKey,
+			initialCart,
+			mockSetCartEndpoint,
 		};
 	} );
 
 	it( 'does not render the contact step when the purchase is free', async () => {
 		const cartChanges = { total_cost_integer: 0, total_cost_display: '0' };
-		render( <MyCheckout cartChanges={ cartChanges } /> );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await expect( screen.findByText( /Enter your (billing|contact) information/ ) ).toNeverAppear();
 	} );
 
 	it( 'renders the step after the contact step as active if the purchase is free', async () => {
 		const cartChanges = { total_cost_integer: 0, total_cost_display: '0' };
-		render( <MyCheckout cartChanges={ cartChanges } /> );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		expect( await screen.findByText( 'Free Purchase' ) ).toBeVisible();
 	} );
 
 	it( 'renders the contact step when the purchase is not free', async () => {
-		render( <MyCheckout /> );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } /> );
 		expect(
 			await screen.findByText( /Enter your (billing|contact) information/ )
 		).toBeInTheDocument();
@@ -130,7 +145,7 @@ describe( 'Checkout contact step', () => {
 
 	it( 'renders the tax fields only when no domain is in the cart', async () => {
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MyCheckout cartChanges={ cartChanges } /> );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		expect( await screen.findByText( 'Country' ) ).toBeInTheDocument();
 		expect( screen.queryByText( 'Phone' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Email' ) ).not.toBeInTheDocument();
@@ -138,7 +153,7 @@ describe( 'Checkout contact step', () => {
 
 	it( 'renders the domain fields when a domain is in the cart', async () => {
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
-		render( <MyCheckout cartChanges={ cartChanges } /> );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		expect( await screen.findByText( 'Country' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
@@ -146,7 +161,7 @@ describe( 'Checkout contact step', () => {
 
 	it( 'renders the domain fields when a domain transfer is in the cart', async () => {
 		const cartChanges = { products: [ planWithBundledDomain, domainTransferProduct ] };
-		render( <MyCheckout cartChanges={ cartChanges } /> );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		expect( await screen.findByText( 'Country' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
@@ -154,7 +169,7 @@ describe( 'Checkout contact step', () => {
 
 	it( 'does not render country-specific domain fields when no country has been chosen and a domain is in the cart', async () => {
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
-		render( <MyCheckout cartChanges={ cartChanges } /> );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		expect( await screen.findByText( 'Country' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
@@ -167,7 +182,7 @@ describe( 'Checkout contact step', () => {
 	it( 'renders country-specific domain fields when a country has been chosen and a domain is in the cart', async () => {
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
-		render( <MyCheckout cartChanges={ cartChanges } /> );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'US' );
 		expect( await screen.findByText( 'Country' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
@@ -181,7 +196,7 @@ describe( 'Checkout contact step', () => {
 	it( 'renders domain fields with postal code when a country with postal code support has been chosen and a plan is in the cart', async () => {
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MyCheckout cartChanges={ cartChanges } /> );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'US' );
 		expect( await screen.findByText( 'Country' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Postal code' ) ).toBeInTheDocument();
@@ -190,7 +205,7 @@ describe( 'Checkout contact step', () => {
 	it( 'renders domain fields except postal code when a country without postal code support has been chosen and a plan is in the cart', async () => {
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MyCheckout cartChanges={ cartChanges } /> );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'CW' );
 		expect( await screen.findByText( 'Country' ) ).toBeInTheDocument();
 		expect( screen.queryByText( 'Postal code' ) ).not.toBeInTheDocument();
@@ -199,7 +214,7 @@ describe( 'Checkout contact step', () => {
 	it( 'renders domain fields with postal code when a country with postal code support has been chosen and a domain is in the cart', async () => {
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
-		render( <MyCheckout cartChanges={ cartChanges } /> );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'US' );
 		expect( await screen.findByText( 'Country' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
@@ -210,7 +225,7 @@ describe( 'Checkout contact step', () => {
 	it( 'renders domain fields except postal code when a country without postal code support has been chosen and a domain is in the cart', async () => {
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
-		render( <MyCheckout cartChanges={ cartChanges } /> );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'CW' );
 		expect( await screen.findByText( 'Country' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
@@ -222,7 +237,7 @@ describe( 'Checkout contact step', () => {
 
 	it( 'does not complete the contact step when the contact step button has not been clicked and there are no cached details', async () => {
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MyCheckout cartChanges={ cartChanges } /> );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		// Wait for the cart to load
 		await screen.findByText( 'Country' );
 		expect( screen.queryByTestId( 'payment-method-step--visible' ) ).not.toBeInTheDocument();
@@ -235,7 +250,7 @@ describe( 'Checkout contact step', () => {
 		} );
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MyCheckout cartChanges={ cartChanges } /> );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		// Wait for the cart to load
 		await screen.findByLabelText( 'Continue with the entered contact details' );
 		const countryField = await screen.findByLabelText( 'Country' );
@@ -254,7 +269,7 @@ describe( 'Checkout contact step', () => {
 		} );
 		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MyCheckout cartChanges={ cartChanges } /> );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		// Wait for the cart to load
 		await screen.findByText( 'Country' );
 		await expect( screen.findByTestId( 'payment-method-step--visible' ) ).toNeverAppear();
@@ -270,7 +285,7 @@ describe( 'Checkout contact step', () => {
 			messages: { postal_code: [ 'Postal code error message' ] },
 		} );
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MyCheckout cartChanges={ cartChanges } /> );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		// Wait for the cart to load
 		await screen.findByText( 'Country' );
 		await expect( screen.findByText( 'Postal code error message' ) ).toNeverAppear();
@@ -381,7 +396,8 @@ describe( 'Checkout contact step', () => {
 				} );
 
 			render(
-				<MyCheckout
+				<MockCheckout
+					{ ...defaultPropsForMockCheckout }
 					cartChanges={ { products: [ product ] } }
 					additionalProps={ { isLoggedOutCart: logged === 'out' } }
 				/>
@@ -433,7 +449,7 @@ describe( 'Checkout contact step', () => {
 	);
 
 	it( 'renders the checkout summary', async () => {
-		render( <MyCheckout /> );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } /> );
 		expect( await screen.findByText( 'Purchase Details' ) ).toBeInTheDocument();
 		expect( navigate ).not.toHaveBeenCalled();
 	} );
@@ -441,7 +457,7 @@ describe( 'Checkout contact step', () => {
 	it( 'removes a product from the cart after clicking to remove', async () => {
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
-		render( <MyCheckout cartChanges={ cartChanges } /> );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		const activeSection = await screen.findByTestId( 'review-order-step--visible' );
 		const removeProductButton = await within( activeSection ).findByLabelText(
 			'Remove WordPress.com Personal from cart'
@@ -457,7 +473,7 @@ describe( 'Checkout contact step', () => {
 	it( 'does not render the VAT field checkbox if the selected country does not support VAT', async () => {
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MyCheckout cartChanges={ cartChanges } /> );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'US' );
 		expect( screen.queryByLabelText( 'Add VAT details' ) ).not.toBeInTheDocument();
 	} );
@@ -465,7 +481,7 @@ describe( 'Checkout contact step', () => {
 	it( 'renders the VAT field checkbox if the selected country does support VAT', async () => {
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MyCheckout cartChanges={ cartChanges } /> );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'GB' );
 		expect( await screen.findByLabelText( 'Add VAT details' ) ).toBeInTheDocument();
 	} );
@@ -473,7 +489,7 @@ describe( 'Checkout contact step', () => {
 	it( 'does not render the VAT fields if the checkbox is not checked', async () => {
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MyCheckout cartChanges={ cartChanges } /> );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'GB' );
 		expect( await screen.findByLabelText( 'Add VAT details' ) ).not.toBeChecked();
 		expect( screen.queryByLabelText( 'VAT Number' ) ).not.toBeInTheDocument();
@@ -482,7 +498,7 @@ describe( 'Checkout contact step', () => {
 	it( 'renders the VAT fields if the checkbox is checked', async () => {
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MyCheckout cartChanges={ cartChanges } /> );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'GB' );
 		await user.click( await screen.findByLabelText( 'Add VAT details' ) );
 		expect( await screen.findByLabelText( 'Add VAT details' ) ).toBeChecked();
@@ -492,7 +508,7 @@ describe( 'Checkout contact step', () => {
 	it( 'does not render the Northern Ireland checkbox is if the VAT checkbox is checked and the country is EU', async () => {
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MyCheckout cartChanges={ cartChanges } /> );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'ES' );
 		await user.click( await screen.findByLabelText( 'Add VAT details' ) );
 		expect( screen.queryByLabelText( 'Is the VAT for Northern Ireland?' ) ).not.toBeInTheDocument();
@@ -501,7 +517,7 @@ describe( 'Checkout contact step', () => {
 	it( 'renders the Northern Ireland checkbox is if the VAT checkbox is checked and the country is GB', async () => {
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MyCheckout cartChanges={ cartChanges } /> );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'GB' );
 		await user.click( await screen.findByLabelText( 'Add VAT details' ) );
 		expect(
@@ -512,7 +528,7 @@ describe( 'Checkout contact step', () => {
 	it( 'hides the Northern Ireland checkbox is if the VAT checkbox is checked and the country is changed from GB to ES', async () => {
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MyCheckout cartChanges={ cartChanges } /> );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'GB' );
 		await user.click( await screen.findByLabelText( 'Add VAT details' ) );
 		expect(
@@ -536,7 +552,7 @@ describe( 'Checkout contact step', () => {
 			country: 'GB',
 		} );
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MyCheckout cartChanges={ cartChanges } /> );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 
 		// Wait for checkout to load.
 		await screen.findByLabelText( 'Continue with the entered contact details' );
@@ -561,7 +577,7 @@ describe( 'Checkout contact step', () => {
 			country: 'GB',
 		} );
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MyCheckout cartChanges={ cartChanges } /> );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 
 		// Wait for checkout to load.
 		await screen.findByLabelText( 'Continue with the entered contact details' );
@@ -588,7 +604,7 @@ describe( 'Checkout contact step', () => {
 		} );
 		const cartChanges = { products: [ planWithoutDomain ] };
 		const user = userEvent.setup();
-		render( <MyCheckout cartChanges={ cartChanges } /> );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 
 		// Wait for checkout to load.
 		await screen.findByLabelText( 'Continue with the entered contact details' );
@@ -613,7 +629,7 @@ describe( 'Checkout contact step', () => {
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MyCheckout cartChanges={ cartChanges } /> );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 
 		// Wait for the cart to load
 		await screen.findByLabelText( 'Continue with the entered contact details' );
@@ -653,7 +669,7 @@ describe( 'Checkout contact step', () => {
 		} );
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MyCheckout cartChanges={ cartChanges } /> );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 
 		// Wait for the cart to load
 		await screen.findByLabelText( 'Continue with the entered contact details' );
@@ -690,7 +706,7 @@ describe( 'Checkout contact step', () => {
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MyCheckout cartChanges={ cartChanges } /> );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), countryCode );
 		await user.click( await screen.findByLabelText( 'Add VAT details' ) );
 		await user.click( await screen.findByLabelText( 'Is the VAT for Northern Ireland?' ) );
@@ -716,7 +732,7 @@ describe( 'Checkout contact step', () => {
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MyCheckout cartChanges={ cartChanges } /> );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), countryCode );
 		// Check the box
 		await user.click( await screen.findByLabelText( 'Add VAT details' ) );
@@ -747,7 +763,13 @@ describe( 'Checkout contact step', () => {
 
 		const setCart = jest.fn().mockImplementation( mockSetCartEndpoint );
 
-		render( <MyCheckout cartChanges={ cartChanges } setCart={ setCart } /> );
+		render(
+			<MockCheckout
+				{ ...defaultPropsForMockCheckout }
+				cartChanges={ cartChanges }
+				setCart={ setCart }
+			/>
+		);
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), countryCode );
 		await user.type( await screen.findByLabelText( 'Postal code' ), postalCode );
 		// Check the box
@@ -792,7 +814,13 @@ describe( 'Checkout contact step', () => {
 
 		const setCart = jest.fn().mockImplementation( mockSetCartEndpoint );
 
-		render( <MyCheckout cartChanges={ cartChanges } setCart={ setCart } /> );
+		render(
+			<MockCheckout
+				{ ...defaultPropsForMockCheckout }
+				cartChanges={ cartChanges }
+				setCart={ setCart }
+			/>
+		);
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), countryCode );
 		await user.type( await screen.findByLabelText( 'Postal code' ), postalCode );
 		// Check the box
@@ -832,7 +860,13 @@ describe( 'Checkout contact step', () => {
 
 		const setCart = jest.fn().mockImplementation( mockSetCartEndpoint );
 
-		render( <MyCheckout cartChanges={ cartChanges } setCart={ setCart } /> );
+		render(
+			<MockCheckout
+				{ ...defaultPropsForMockCheckout }
+				cartChanges={ cartChanges }
+				setCart={ setCart }
+			/>
+		);
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), countryCode );
 		await user.type( await screen.findByLabelText( 'Postal code' ), postalCode );
 		// Check the box
@@ -867,7 +901,7 @@ describe( 'Checkout contact step', () => {
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MyCheckout cartChanges={ cartChanges } /> );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), countryCode );
 		await user.click( await screen.findByLabelText( 'Add VAT details' ) );
 		await user.type( await screen.findByLabelText( 'VAT Number' ), vatId );
@@ -958,7 +992,13 @@ describe( 'Checkout contact step', () => {
 
 			const setCart = jest.fn().mockImplementation( mockSetCartEndpoint );
 
-			render( <MyCheckout cartChanges={ cartChanges } setCart={ setCart } /> );
+			render(
+				<MockCheckout
+					{ ...defaultPropsForMockCheckout }
+					cartChanges={ cartChanges }
+					setCart={ setCart }
+				/>
+			);
 			for ( const key of Object.keys( tax ) ) {
 				if ( selects[ key ] ) {
 					await user.selectOptions( await screen.findByLabelText( labels[ key ] ), tax[ key ] );
@@ -979,8 +1019,7 @@ describe( 'Checkout contact step', () => {
 					},
 				} )
 			);
-		},
-		10e3
+		}
 	);
 
 	it.each( [
@@ -1008,7 +1047,13 @@ describe( 'Checkout contact step', () => {
 
 			const setCart = jest.fn().mockImplementation( mockSetCartEndpoint );
 
-			render( <MyCheckout cartChanges={ cartChanges } setCart={ setCart } /> );
+			render(
+				<MockCheckout
+					{ ...defaultPropsForMockCheckout }
+					cartChanges={ cartChanges }
+					setCart={ setCart }
+				/>
+			);
 			await user.selectOptions( await screen.findByLabelText( 'Country' ), countryCode );
 			await user.type(
 				await screen.findByLabelText( product === 'plan' ? 'Postal code' : 'Postal Code' ),
@@ -1044,7 +1089,6 @@ describe( 'Checkout contact step', () => {
 					},
 				} )
 			);
-		},
-		10e3
+		}
 	);
 } );
