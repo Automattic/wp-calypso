@@ -43,8 +43,30 @@ export const redirectCheckoutToWpAdmin = (): boolean => !! JETPACK_REDIRECT_CHEC
 
 export const is2023PricingGridEnabled = () => {
 	const supportedLocales = [ 'en', 'en-gb', 'es' ];
+
+	const isPlans2023ActivePage = () => {
+		const currentRoutePath = window.location.pathname;
+
+		// Is this the internal plans page /plans/<site-slug> ?
+		if (
+			currentRoutePath.includes( 'plans' ) &&
+			! currentRoutePath.includes( 'start' ) &&
+			! currentRoutePath.includes( 'setup' )
+		) {
+			return true;
+		}
+
+		// Is this the onboarding flow ?
+		if ( currentRoutePath.includes( '/start/plans' ) ) {
+			return true;
+		}
+
+		return false;
+	};
+
 	return (
 		isEnabled( 'onboarding/2023-pricing-grid' ) &&
-		supportedLocales.includes( getLocaleSlug() ?? '' )
+		supportedLocales.includes( getLocaleSlug() ?? '' ) &&
+		isPlans2023ActivePage()
 	);
 };
