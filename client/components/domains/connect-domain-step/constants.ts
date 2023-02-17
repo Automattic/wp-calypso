@@ -3,6 +3,7 @@ import { __ } from '@wordpress/i18n';
 export const modeType = {
 	SUGGESTED: 'suggested',
 	ADVANCED: 'advanced',
+	DC: 'dc',
 	DONE: 'done',
 	OWNERSHIP_VERIFICATION: 'ownership_verification',
 	TRANSFER: 'transfer',
@@ -33,6 +34,10 @@ export const stepSlug = {
 	ADVANCED_UPDATE: 'advanced_update',
 	ADVANCED_VERIFYING: 'advanced_verifying',
 	ADVANCED_CONNECTED: 'advanced_connected',
+	DC_START: 'dc_start',
+	DC_LOGIN: 'dc_login',
+	DC_VERIFYING: 'dc_verifying',
+	DC_CONNECTED: 'dc_connected',
 	OWNERSHIP_VERIFICATION_LOGIN: 'ownership_verification_login',
 	OWNERSHIP_VERIFICATION_AUTH_CODE: 'ownership_verification_auth_code',
 	TRANSFER_START: 'transfer_start',
