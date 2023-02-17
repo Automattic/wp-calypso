@@ -9,31 +9,32 @@ import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import DomainUpsell from '../';
 
-jest.mock( 'calypso/state/ui/selectors', () => {
-	return {
-		getSelectedSite: () => {
-			return {
-				ID: 1,
-				plan: 'free',
-			};
-		},
-		getSelectedSiteSlug: () => 'example.wordpress.com',
-	};
-} );
+const sites = [];
+sites[ 1 ] = {
+	ID: 1,
+	URL: 'example.wordpress.com',
+	plan: {
+		product_slug: 'free_plan',
+	},
+};
 
-jest.mock( 'calypso/state/sites/domains/selectors', () => {
-	return {
-		getDomainsBySiteId: () => {
-			return [ 'example.wordpress.com' ];
+const initialState = {
+	sites: {
+		items: sites,
+		domains: {
+			items: [ 'example.wordpress.com' ],
 		},
-	};
-} );
-
-jest.mock( '@automattic/calypso-products', () => {
-	return {
-		isFreePlanProduct: () => true,
-	};
-} );
+	},
+	ui: {
+		selectedSiteId: 1,
+	},
+	currentUser: {
+		id: 12,
+		user: {
+			email_verified: true,
+		},
+	},
+};
 
 jest.mock( '@automattic/domain-picker/src', () => {
 	return {
@@ -50,18 +51,11 @@ jest.mock( '@automattic/domain-picker/src', () => {
 	};
 } );
 
-jest.mock( 'calypso/state/current-user/selectors', () => ( {
-	getCurrentUserId: jest.fn( () => 12 ),
-	isUserLoggedIn: jest.fn( () => true ),
-	isCurrentUserEmailVerified: jest.fn( () => true ),
-} ) );
-
 let pageLink = '';
 jest.mock( 'page', () => ( link ) => ( pageLink = link ) );
 
 describe( 'index', () => {
 	test( 'Should show H3 content for the Home domain upsell and test search domain button link', async () => {
-		const initialState = {};
 		const mockStore = configureStore();
 		const store = mockStore( initialState );
 
@@ -87,10 +81,9 @@ describe( 'index', () => {
 		nock.cleanAll();
 		nock( 'https://public-api.wordpress.com' )
 			.persist()
-			.post( '/rest/v1.1/me/shopping-cart/no-site' )
+			.post( '/rest/v1.1/me/shopping-cart/1' )
 			.reply( 200 );
 
-		const initialState = {};
 		const mockStore = configureStore();
 		const store = mockStore( initialState );
 
