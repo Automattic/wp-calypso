@@ -643,6 +643,22 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 											) : null }
 										</RowHead>
 										{ ( visiblePlansProperties ?? [] ).map( ( { planName } ) => {
+											let adjacentToFeatured = false;
+											if (
+												isBusinessPlan( planName ) ||
+												isPremiumPlan( planName ) ||
+												isEcommercePlan( planName )
+											) {
+												if ( featuredVisible ) {
+													console.log( planName, featuredVisible );
+													adjacentToFeatured = true;
+												} else {
+													featuredVisible = true;
+												}
+											} else {
+												featuredVisible = false;
+											}
+
 											const hasFeature =
 												restructuredFeatures.featureMap[ planName ].has( featureSlug );
 											const isHighlight = isBusinessPlan( planName ) || isPremiumPlan( planName );
@@ -705,6 +721,22 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 										</Plans2023Tooltip>
 									</RowHead>
 									{ ( visiblePlansProperties ?? [] ).map( ( { planName } ) => {
+										let adjacentToFeatured = false;
+										if (
+											isBusinessPlan( planName ) ||
+											isPremiumPlan( planName ) ||
+											isEcommercePlan( planName )
+										) {
+											if ( featuredVisible ) {
+												console.log( planName, featuredVisible );
+												adjacentToFeatured = true;
+											} else {
+												featuredVisible = true;
+											}
+										} else {
+											featuredVisible = false;
+										}
+
 										const storageFeature = restructuredFeatures.planStorageOptionsMap[ planName ];
 										const [ featureObject ] = getPlanFeaturesObject( [ storageFeature ] );
 										const isHighlight = isBusinessPlan( planName ) || isPremiumPlan( planName );
