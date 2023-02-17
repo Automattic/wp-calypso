@@ -5,7 +5,6 @@ import { convertResponseCartToRequestCart } from '@automattic/shopping-cart';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import { QueryClient } from 'react-query';
 import { navigate } from 'calypso/lib/navigate';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
@@ -19,7 +18,6 @@ import {
 	planWithoutDomain,
 	mockSetCartEndpointWith,
 	getActivePersonalPlanDataForType,
-	createTestReduxStore,
 	gSuiteProduct,
 	caDomainProduct,
 	mockCachedContactDetailsEndpoint,
@@ -65,11 +63,7 @@ describe( 'Checkout contact step', () => {
 		nock( 'https://public-api.wordpress.com' ).persist().post( '/rest/v1.1/logstash' ).reply( 200 );
 		mockGetVatInfoEndpoint( {} );
 
-		const reduxStore = createTestReduxStore();
-		const queryClient = new QueryClient();
 		defaultPropsForMockCheckout = {
-			reduxStore,
-			queryClient,
 			mainCartKey,
 			initialCart,
 		};

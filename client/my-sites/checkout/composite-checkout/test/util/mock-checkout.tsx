@@ -10,27 +10,26 @@ import {
 	siteId,
 	countryList,
 	mockSetCartEndpointWith,
+	createTestReduxStore,
 } from './index';
 import type { CartKey, SetCart, ResponseCart } from '@automattic/shopping-cart';
-import type { Store } from 'redux';
 
 export function MockCheckout( {
 	initialCart,
 	mainCartKey,
-	queryClient,
-	reduxStore,
 	cartChanges,
 	additionalProps,
 	setCart,
 }: {
 	initialCart: ResponseCart;
 	mainCartKey: CartKey;
-	queryClient: QueryClient;
-	reduxStore: Store;
 	cartChanges?: Partial< ResponseCart >;
 	additionalProps?: Partial< PropsOf< typeof CheckoutMain > >;
 	setCart?: SetCart;
 } ) {
+	const reduxStore = createTestReduxStore();
+	const queryClient = new QueryClient();
+
 	const mockSetCartEndpoint = mockSetCartEndpointWith( {
 		currency: initialCart.currency,
 		locale: initialCart.locale,
