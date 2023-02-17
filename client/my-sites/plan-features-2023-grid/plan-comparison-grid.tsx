@@ -609,10 +609,17 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 											<Plans2023Tooltip text={ feature.getDescription?.() }>
 												{ feature.getTitle() }
 											</Plans2023Tooltip>
-											{ allJetpackFeatures.has( feature.getSlug() ) ? (
-												<JetpackIconContainer>
-													<JetpackLogo size={ 16 } />
-												</JetpackIconContainer>
+											{ allJetpackFeatures.has( feature.getSlug() ) ? ( // TODO: this shouldn't take a linear search.
+												<Plans2023Tooltip
+													text={ translate(
+														// TODO: extract the Jetpack logo + its tooltip out as a shared component with the plan info grid.
+														'Security, performance and growth tools made by the WordPress experts.'
+													) }
+												>
+													<JetpackIconContainer>
+														<JetpackLogo size={ 16 } />
+													</JetpackIconContainer>
+												</Plans2023Tooltip>
 											) : null }
 										</RowHead>
 										{ ( visiblePlansProperties ?? [] ).map( ( { planName } ) => {
