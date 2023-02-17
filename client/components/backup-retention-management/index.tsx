@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useStorageText } from 'calypso/components/backup-storage-space/hooks';
 import { UpsellPrice } from 'calypso/components/backup-storage-space/usage-warning/upsell';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
+import { addQueryArgs } from 'calypso/lib/route';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { updateBackupRetention } from 'calypso/state/rewind/retention/actions';
@@ -28,7 +29,11 @@ import type { RetentionOptionInput } from './types';
 import type { RetentionPeriod } from 'calypso/state/rewind/retention/types';
 import './style.scss';
 
-const BackupRetentionManagement: FunctionComponent = () => {
+interface OwnProps {
+	defaultRetention?: number;
+}
+
+const BackupRetentionManagement: FunctionComponent< OwnProps > = ( { defaultRetention } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -50,8 +55,17 @@ const BackupRetentionManagement: FunctionComponent = () => {
 		getBackupRetentionDays( state, siteId )
 	);
 
-	// The retention days option selected by the customer ( or by default )
-	const [ retentionSelected, setRetentionSelected ] = useState( 0 );
+	// If a valid defaultRetention is passed, use it. Otherwise, use the current retention period.
+	const initializeDefaultRetention = () => {
+		if ( defaultRetention && RETENTION_OPTIONS.includes( defaultRetention as RetentionPeriod ) ) {
+			return defaultRetention;
+		}
+
+		// This is temporary. We should defined a default retention period in the short-term. But given that it will
+		// require additional effort to refactor and enforce `RetentionPeriod` we can keep it as 0 for now.
+		return 0;
+	};
+	const [ retentionSelected, setRetentionSelected ] = useState( initializeDefaultRetention );
 
 	// If the current selection requires an storage upgrade
 	const [ storageUpgradeRequired, setStorageUpgradeRequired ] = useState( false );
@@ -100,10 +114,24 @@ const BackupRetentionManagement: FunctionComponent = () => {
 		/>
 	);
 
-	const storageUpgradeUrl = buildCheckoutURL( siteSlug, upsellSlug.productSlug, {
-		source: 'backup-storage-purchase-not-renewal',
-		redirect_to: window.location.href,
-	} );
+	const goToCheckoutPage = useCallback( () => {
+		// The idea is to redirect back to the setting page with the current selected retention period.
+		const redirectBackUrl = addQueryArgs( { retention: retentionSelected }, window.location.href );
+
+		const storageUpgradeUrl = buildCheckoutURL( siteSlug, upsellSlug.productSlug, {
+			// This `source` flag tells the shopping cart to force "purchase" another storage add-on
+			// as opposed to renew the existing one.
+			source: 'backup-storage-purchase-not-renewal',
+
+			// This redirects after purchasing the storage add-on
+			redirect_to: redirectBackUrl,
+
+			// This redirect back after going back or after removing all products in the shopping cart
+			checkoutBackUrl: redirectBackUrl,
+		} );
+
+		window.location.href = storageUpgradeUrl;
+	}, [ retentionSelected, siteSlug, upsellSlug.productSlug ] );
 
 	// Set the retention period selected when the user selects a new option
 	const onRetentionSelectionChange = useCallback(
@@ -193,7 +221,7 @@ const BackupRetentionManagement: FunctionComponent = () => {
 	const purchaseStorageButton = (
 		<Button
 			primary
-			href={ storageUpgradeUrl }
+			onClick={ goToCheckoutPage }
 			disabled={ disableFormSubmission || isPriceFetching }
 		>
 			{ translate( 'Purchase storage' ) }
