@@ -189,7 +189,7 @@ class TrademarkClaimsNotice extends Component {
 	};
 
 	renderTrademarkClaimsNotice = () => {
-		const { hasScrolledToBottom, showFullNotice, trademarkClaimsNoticeInfo, isLoading } =
+		const { hasScrolledToBottom, isLoading, showFullNotice, trademarkClaimsNoticeInfo } =
 			this.state;
 
 		return (
