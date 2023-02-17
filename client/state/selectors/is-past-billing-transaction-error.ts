@@ -1,6 +1,5 @@
-import { get } from 'lodash';
-
 import 'calypso/state/billing-transactions/init';
+import type { IAppState } from '../types';
 
 /**
  * Returns true if the past billing transaction fetch errored out
@@ -9,5 +8,5 @@ import 'calypso/state/billing-transactions/init';
  * @param  {number}  id      ID of the transaction
  * @returns {boolean}         True if transaction failed to fetch, false otherwise
  */
-export default ( state, id ) =>
-	get( state, [ 'billingTransactions', 'individualTransactions', id, 'error' ], false );
+export default ( state: IAppState, id: number ): boolean =>
+	state.billingTransactions?.individualTransactions?.[ id ]?.error ?? false;
