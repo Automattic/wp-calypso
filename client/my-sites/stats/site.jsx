@@ -37,6 +37,7 @@ import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HighlightsSection from './highlights-section';
+import JetpackUpsellSection from './jetpack-upsell-section';
 import MiniCarousel from './mini-carousel';
 import PromoCards from './promo-cards';
 import ChartTabs from './stats-chart-tabs';
@@ -188,7 +189,6 @@ class StatsSite extends Component {
 						<JetpackBackupCredsBanner event="stats-backup-credentials" />
 					</div>
 				) }
-
 				<FormattedHeader
 					brandFont
 					className="stats__section-header modernized-header"
@@ -209,18 +209,14 @@ class StatsSite extends Component {
 						}
 					) }
 				/>
-
 				<StatsNavigation
 					selectedItem="traffic"
 					interval={ period }
 					siteId={ siteId }
 					slug={ slug }
 				/>
-
 				{ isOdysseyStats && <StatsNotices siteId={ siteId } /> }
-
 				<HighlightsSection siteId={ siteId } />
-
 				<div id="my-stats-content" className={ wrapperClass }>
 					<>
 						<StatsPeriodHeader>
@@ -365,6 +361,7 @@ class StatsSite extends Component {
 						}
 					</div>
 				</div>
+				<JetpackUpsellSection />
 				<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
 				<JetpackColophon />
 			</div>
