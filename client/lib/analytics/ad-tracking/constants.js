@@ -63,8 +63,7 @@ export const TRACKING_IDS = {
 	jetpackGoogleAnalyticsGtag: 'UA-52447-43', // Jetpack Gtag (Analytics) for use in Jetpack x WordPress.com Flows
 	jetpackGoogleGA4Gtag: 'G-YELRMVV4YG',
 	jetpackGoogleAdsGtagPurchase: 'AW-946162814/kIF1CL3ApfsBEP6YlcMD',
-	//todo: figure out full tracking ID
-	akismetGoogleAdsGtagPurchase: 'AW-937350433',
+	akismetGoogleAdsGtagPurchase: 'AW-10778599042/U-01CImL14MDEIK90ZMo', // "Akismet.com Purchase Gtag"
 	jetpackLinkedinId: '4537722',
 	jetpackTwitterPixelId: 'odlje',
 };
