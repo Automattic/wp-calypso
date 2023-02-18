@@ -242,4 +242,170 @@ describe( 'Sidebar', () => {
 			} );
 		} );
 	} );
+
+	describe( 'when the tailored flow includes a task to purchase a domain and plan (domain_upsell)', () => {
+		describe( 'and the site is a write flow site on a free plan', () => {
+			it( 'should display the task on the sidebar checklist', () => {
+				const siteDetails = buildSiteDetails( {
+					options: {
+						...defaultSiteDetails.options,
+						launchpad_screen: 'full',
+						site_intent: 'write',
+					},
+					plan: {
+						is_free: true,
+					},
+				} );
+
+				const writeFlowProps = {
+					...props,
+					flow: 'write',
+				};
+
+				renderSidebar( writeFlowProps, siteDetails );
+
+				const upsellDomainTask = screen.getByRole( 'button', {
+					name: /Choose a domain/i,
+				} );
+
+				expect( upsellDomainTask ).toBeVisible();
+			} );
+		} );
+
+		describe( 'and the site is a write flow site is on a paid plan', () => {
+			it( 'should display the task on the sidebar checklist', () => {
+				const siteDetails = buildSiteDetails( {
+					options: {
+						...defaultSiteDetails.options,
+						launchpad_screen: 'full',
+						site_intent: 'write',
+					},
+					plan: {
+						is_free: false,
+					},
+				} );
+
+				const writeFlowProps = {
+					...props,
+					flow: 'write',
+				};
+
+				renderSidebar( writeFlowProps, siteDetails );
+
+				const upsellDomainTask = screen.queryByRole( 'button', {
+					name: /Choose a domain/i,
+				} );
+				expect( upsellDomainTask ).toBeNull();
+			} );
+		} );
+
+		describe( 'and the site is a build flow site on a free plan', () => {
+			it( 'should display the task on the sidebar checklist', () => {
+				const siteDetails = buildSiteDetails( {
+					options: {
+						...defaultSiteDetails.options,
+						launchpad_screen: 'full',
+						site_intent: 'build',
+					},
+					plan: {
+						is_free: true,
+					},
+				} );
+
+				const buildFlowProps = {
+					...props,
+					flow: 'build',
+				};
+
+				renderSidebar( buildFlowProps, siteDetails );
+				const upsellDomainTask = screen.getByRole( 'button', {
+					name: /Choose a domain/i,
+				} );
+
+				expect( upsellDomainTask ).toBeVisible();
+			} );
+		} );
+
+		describe( 'and the site is a build flow site is on a paid plan', () => {
+			it( 'should display the task on the sidebar checklist', () => {
+				const siteDetails = buildSiteDetails( {
+					options: {
+						...defaultSiteDetails.options,
+						launchpad_screen: 'full',
+						site_intent: 'build',
+					},
+					plan: {
+						is_free: false,
+					},
+				} );
+
+				const buildFlowProps = {
+					...props,
+					flow: 'build',
+				};
+
+				renderSidebar( buildFlowProps, siteDetails );
+
+				const upsellDomainTask = screen.queryByRole( 'button', {
+					name: /Choose a domain/i,
+				} );
+				expect( upsellDomainTask ).toBeNull();
+			} );
+		} );
+
+		describe( 'and the site is a free flow site on a free plan', () => {
+			it( 'should display the task on the sidebar checklist', () => {
+				const siteDetails = buildSiteDetails( {
+					options: {
+						...defaultSiteDetails.options,
+						launchpad_screen: 'full',
+						site_intent: 'free',
+					},
+					plan: {
+						is_free: true,
+					},
+				} );
+
+				const freeFlowProps = {
+					...props,
+					flow: 'free',
+				};
+
+				renderSidebar( freeFlowProps, siteDetails );
+				const upsellDomainTask = screen.getByRole( 'button', {
+					name: /Choose a domain/i,
+				} );
+
+				expect( upsellDomainTask ).toBeVisible();
+			} );
+		} );
+
+		describe( 'and the site is a free flow site is on a paid plan', () => {
+			it( 'should display the task on the sidebar checklist', () => {
+				const siteDetails = buildSiteDetails( {
+					options: {
+						...defaultSiteDetails.options,
+						launchpad_screen: 'full',
+						site_intent: 'free',
+					},
+					plan: {
+						is_free: false,
+					},
+				} );
+
+				const freeFlowProps = {
+					...props,
+					flow: 'free',
+				};
+
+				renderSidebar( freeFlowProps, siteDetails );
+
+				expect(
+					screen.queryByRole( 'button', {
+						name: /Choose a domain/i,
+					} )
+				).toBeNull();
+			} );
+		} );
+	} );
 } );
