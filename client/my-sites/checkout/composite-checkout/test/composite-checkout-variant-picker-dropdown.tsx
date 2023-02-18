@@ -88,6 +88,7 @@ describe( 'CheckoutMain with a variant picker', () => {
 		const store = createTestReduxStore();
 		const queryClient = new QueryClient();
 		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
+		nock( 'https://public-api.wordpress.com' ).get( '/rest/v1.1/me/vat-info' ).reply( 200, {} );
 		Object.defineProperty( window, 'matchMedia', {
 			writable: true,
 			value: jest.fn().mockImplementation( ( query ) => ( {
@@ -217,6 +218,7 @@ describe( 'CheckoutMain with a variant picker', () => {
 			const user = userEvent.setup();
 			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
 			nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
+			nock( 'https://public-api.wordpress.com' ).get( '/rest/v1.1/me/vat-info' ).reply( 200, {} );
 			render( <MyCheckout cartChanges={ cartChanges } /> );
 
 			const openVariantPicker = await screen.findByLabelText( 'Pick a product term' );
@@ -241,6 +243,7 @@ describe( 'CheckoutMain with a variant picker', () => {
 			} ) );
 			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
 			nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
+			nock( 'https://public-api.wordpress.com' ).get( '/rest/v1.1/me/vat-info' ).reply( 200, {} );
 			render( <MyCheckout cartChanges={ cartChanges } /> );
 
 			await expect( screen.findByLabelText( 'Pick a product term' ) ).toNeverAppear();
