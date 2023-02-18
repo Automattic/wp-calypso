@@ -28,6 +28,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getReceiptUrlFor, getBillingHistoryUrlFor } from '../paths';
 import useRedirectToHistoryPageOnInvalidTransaction from './use-redirect-to-history-page-on-invalid-transaction';
 import useRedirectToHistoryPageOnWrongSiteForTransaction from './use-redirect-to-history-page-on-wrong-site-for-transaction';
+import type { IAppState } from 'calypso/state/types';
 
 import './style.scss';
 
@@ -103,7 +104,9 @@ export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
 
 export function ReceiptView( { siteSlug, receiptId }: { siteSlug: string; receiptId: number } ) {
 	const translate = useTranslate();
-	const transaction = useSelector( ( state ) => getPastBillingTransaction( state, receiptId ) );
+	const transaction = useSelector( ( state: IAppState ) =>
+		getPastBillingTransaction( state, receiptId )
+	);
 	const logBillingHistoryError = useLogBillingHistoryError( 'site level receipt view load error' );
 	const reduxDispatch = useDispatch();
 
