@@ -45,7 +45,10 @@
 
 .display-price__billing-time-frame {
 	display: table;
-	margin-top: 7px;
+	margin-top: 12px;
+	@include break-medium {
+		margin-bottom: 7px;
+	}
 }
 
 .item-price__complete .display-price.is-placeholder .plan-price {
