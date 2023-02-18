@@ -21,7 +21,7 @@ type OwnProps = {
 	expiryDate?: Moment;
 };
 
-const Placeholder: React.FC< OwnProps > = ( { billingTerm, expiryDate } ) => {
+const Placeholder: React.FC< OwnProps > = ( { billingTerm, expiryDate, discountedPrice } ) => {
 	return (
 		<>
 			<PlanPrice
@@ -30,8 +30,7 @@ const Placeholder: React.FC< OwnProps > = ( { billingTerm, expiryDate } ) => {
 				rawPrice={ 0.01 }
 				currencyCode="USD"
 			/>
-			{ /* Remove this secondary <PlanPrice/> placeholder if we're not showing discounted prices */ }
-			<PlanPrice discounted rawPrice={ 0.01 } currencyCode="USD" />
+			{ discountedPrice && <PlanPrice discounted rawPrice={ 0.01 } currencyCode="USD" /> }
 			<TimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
 		</>
 	);
