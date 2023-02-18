@@ -6,6 +6,8 @@ import {
 	isBlogger,
 	isPersonal,
 	isPremium,
+	PLAN_ECOMMERCE_MONTHLY,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	TYPE_BUSINESS,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
@@ -26,6 +28,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 const UpgradeNudge = ( { siteSlug, paidPlugins } ) => {
 	const selectedSite = useSelector( getSelectedSite );
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, selectedSite?.ID ) );
+	const isEcommerceTrial = sitePlan?.product_slug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 	const jetpackNonAtomic = useSelector(
 		( state ) =>
 			isJetpackSite( state, selectedSite?.ID ) && ! isAtomicSite( state, selectedSite?.ID )
@@ -114,6 +117,22 @@ const UpgradeNudge = ( { siteSlug, paidPlugins } ) => {
 		type: TYPE_BUSINESS,
 	} );
 
+	// This banner upsells the ability to install free and paid plugins on a eCommerce plan.
+	if ( isEcommerceTrial ) {
+		return (
+			<UpsellNudge
+				event="calypso_plugins_browser_upgrade_nudge"
+				className="plugins-discovery-page__upsell"
+				callToAction={ translate( 'Upgrade now' ) }
+				icon="notice-outline"
+				showIcon={ true }
+				href={ `/checkout/${ siteSlug }/${ PLAN_ECOMMERCE_MONTHLY }` }
+				feature={ FEATURE_INSTALL_PLUGINS }
+				plan={ plan }
+				title={ translate( 'To install additional plugins, please upgrade to a paid plan.' ) }
+			/>
+		);
+	}
 	// This banner upsells the ability to install free and paid plugins on a Pro plan.
 	const isLegacyPlan = isBlogger( sitePlan ) || isPersonal( sitePlan ) || isPremium( sitePlan );
 	const shouldUpsellProPlan = eligibleForProPlan && ! isLegacyPlan;
