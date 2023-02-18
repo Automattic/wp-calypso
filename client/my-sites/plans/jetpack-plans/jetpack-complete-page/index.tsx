@@ -1,9 +1,8 @@
-/* eslint-disable no-console */
 //TODO: Remove this eslnit exception when whole component/child components are finished.
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { PLAN_JETPACK_COMPLETE } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import rnaImageComplete from 'calypso/assets/images/jetpack/rna-image-complete.png';
 import rnaImageComplete2xRetina from 'calypso/assets/images/jetpack/rna-image-complete@2x.png';
