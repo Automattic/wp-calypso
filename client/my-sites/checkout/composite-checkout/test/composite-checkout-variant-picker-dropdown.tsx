@@ -6,6 +6,7 @@ import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automatt
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
@@ -85,6 +86,7 @@ describe( 'CheckoutMain with a variant picker', () => {
 		} );
 
 		const store = createTestReduxStore();
+		const queryClient = new QueryClient();
 		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 		Object.defineProperty( window, 'matchMedia', {
 			writable: true,
@@ -111,23 +113,25 @@ describe( 'CheckoutMain with a variant picker', () => {
 			);
 			return (
 				<ReduxProvider store={ store }>
-					<ShoppingCartProvider
-						managerClient={ managerClient }
-						options={ {
-							defaultCartKey: useUndefinedCartKey ? undefined : mainCartKey,
-						} }
-						{ ...additionalCartProps }
-					>
-						<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
-							<CheckoutMain
-								siteId={ siteId }
-								siteSlug="foo.com"
-								getStoredCards={ async () => [] }
-								overrideCountryList={ countryList }
-								{ ...additionalProps }
-							/>
-						</StripeHookProvider>
-					</ShoppingCartProvider>
+					<QueryClientProvider client={ queryClient }>
+						<ShoppingCartProvider
+							managerClient={ managerClient }
+							options={ {
+								defaultCartKey: useUndefinedCartKey ? undefined : mainCartKey,
+							} }
+							{ ...additionalCartProps }
+						>
+							<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
+								<CheckoutMain
+									siteId={ siteId }
+									siteSlug="foo.com"
+									getStoredCards={ async () => [] }
+									overrideCountryList={ countryList }
+									{ ...additionalProps }
+								/>
+							</StripeHookProvider>
+						</ShoppingCartProvider>
+					</QueryClientProvider>
 				</ReduxProvider>
 			);
 		};
