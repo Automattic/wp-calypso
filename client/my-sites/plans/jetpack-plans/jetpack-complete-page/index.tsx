@@ -81,8 +81,8 @@ const JetpackCompletePage: React.FC< Props > = ( {
 							all CRM extensions, and extra storage for backups and video.
 						</p>
 
-						<ItemPrice item={ item } siteId={ siteId } />
 						<ItemsIncluded />
+						<ItemPrice item={ item } siteId={ siteId } />
 					</>
 				</JetpackRnaDialogCard>
 			</Main>

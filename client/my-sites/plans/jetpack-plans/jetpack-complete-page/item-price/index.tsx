@@ -22,7 +22,7 @@ export const ItemPrice: React.FC< Props > = ( { item, siteId } ) => {
 
 	return (
 		item && (
-			<div className="item-price is-compact">
+			<div className="item-price__complete">
 				<DisplayPrice
 					isFree={ item.isFree }
 					discountedPriceDuration={ discountedPriceDuration }
