@@ -13,6 +13,7 @@ import './style.scss';
 type JetpackUpsellCardProps = {
 	purchasedProducts: string[];
 	siteSlug?: string | null;
+	upgradeUrls: Record< string, string >;
 };
 
 type Product = {
@@ -27,6 +28,7 @@ type Product = {
 export default function JetpackUpsellCard( {
 	purchasedProducts,
 	siteSlug,
+	upgradeUrls,
 }: JetpackUpsellCardProps ) {
 	// TODO: Make card collapsible
 
@@ -132,7 +134,11 @@ export default function JetpackUpsellCard( {
 								</span>
 								<Gridicon icon="external" size={ 16 } />
 							</a>
-							<Button className="jetpack-upsell-card__product-button" primary={ ! isFree }>
+							<Button
+								href={ upgradeUrls[ slug ] }
+								className="jetpack-upsell-card__product-button"
+								primary={ ! isFree }
+							>
 								{ isFree ? translate( 'Install Free' ) : translate( 'Upgrade' ) }
 							</Button>
 						</div>
