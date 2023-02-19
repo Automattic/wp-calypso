@@ -285,6 +285,44 @@ type PlanComparisonGridHeaderProps = {
 	onUpgradeClick: ( properties: PlanProperties ) => void;
 };
 
+const useFeaturedAdjacencyMatrix = ( visiblePlans: string[] ) => {
+	const adjacencyMatrix: {
+		[ key: string ]: { leftOfFeatured: boolean; rightOfFeatured: boolean };
+	} = {};
+
+	const featuredIndices = visiblePlans.reduce< number[] >( ( acc, planName, index ) => {
+		const isfeatured =
+			isBusinessPlan( planName ) || isPremiumPlan( planName ) || isEcommercePlan( planName );
+
+		if ( isfeatured ) {
+			acc.push( index );
+		}
+
+		return acc;
+	}, [] );
+
+	visiblePlans.forEach( ( planName, index ) => {
+		let leftOfFeatured = false;
+		let rightOfFeatured = false;
+
+		featuredIndices.forEach( ( featuredIndex ) => {
+			if ( featuredIndex === index - 1 ) {
+				rightOfFeatured = true;
+			}
+			if ( featuredIndex === index + 1 ) {
+				leftOfFeatured = true;
+			}
+		} );
+
+		adjacencyMatrix[ planName ] = {
+			leftOfFeatured,
+			rightOfFeatured,
+		};
+	} );
+
+	return adjacencyMatrix;
+};
+
 const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 	displayedPlansProperties,
 	visiblePlansProperties,
@@ -298,12 +336,15 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 	canUserPurchasePlan,
 	selectedSiteSlug,
 	onUpgradeClick,
+	visiblePlans,
 } ) => {
 	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const allVisible = visiblePlansProperties.length === displayedPlansProperties.length;
 
+	const featuredAdjacencyMatrix = useFeaturedAdjacencyMatrix( visiblePlans );
 	let featuredVisible = false;
+	console.log( featuredAdjacencyMatrix );
 
 	return (
 		<PlanRow>
@@ -314,14 +355,12 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 			{ visiblePlansProperties.map( ( planProperties, index ) => {
 				const { planName, planConstantObj, availableForPurchase, current, ...planPropertiesObj } =
 					planProperties;
-
 				const isFeatured =
 					isBusinessPlan( planName ) || isPremiumPlan( planName ) || isEcommercePlan( planName );
 
 				let adjacentToFeatured = false;
 				if ( isFeatured ) {
 					if ( featuredVisible ) {
-						console.log( planName, featuredVisible );
 						adjacentToFeatured = true;
 					} else {
 						featuredVisible = true;
@@ -337,8 +376,9 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 						'popular-plan-parent-class': isFeatured,
 						'is-adjacent-to-featured': adjacentToFeatured,
 						'is-last-in-row': index === visiblePlansProperties.length - 1,
-						'is-second-to-last-in-row': index === visiblePlansProperties.length - 2,
 						'plan-is-footer': isFooter,
+						'is-left-of-featured': featuredAdjacencyMatrix[ planName ].leftOfFeatured,
+						'is-right-of-featured': featuredAdjacencyMatrix[ planName ].rightOfFeatured,
 					}
 				);
 
@@ -603,6 +643,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 					canUserPurchasePlan={ canUserPurchasePlan }
 					selectedSiteSlug={ selectedSiteSlug }
 					onUpgradeClick={ onUpgradeClick }
+					visiblePlans={ visiblePlans }
 				/>
 				{ Object.values( featureGroupMap ).map( ( featureGroup: FeatureGroup ) => {
 					const features = featureGroup.get2023PricingGridSignupWpcomFeatures();
@@ -791,6 +832,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 					canUserPurchasePlan={ canUserPurchasePlan }
 					selectedSiteSlug={ selectedSiteSlug }
 					onUpgradeClick={ onUpgradeClick }
+					visiblePlans={ visiblePlans }
 				/>
 			</Grid>
 		</div>
