@@ -309,18 +309,17 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 		<PlanRow>
 			<RowHead
 				key="feature-name"
-				className="plan-comparison-grid__header plan-comparison-grid__interval-toggle"
+				className="plan-comparison-grid__header-cell plan-comparison-grid__interval-toggle"
 			/>
-			{ visiblePlansProperties.map( ( planProperties ) => {
+			{ visiblePlansProperties.map( ( planProperties, index ) => {
 				const { planName, planConstantObj, availableForPurchase, current, ...planPropertiesObj } =
 					planProperties;
 
+				const isFeatured =
+					isBusinessPlan( planName ) || isPremiumPlan( planName ) || isEcommercePlan( planName );
+
 				let adjacentToFeatured = false;
-				if (
-					isBusinessPlan( planName ) ||
-					isPremiumPlan( planName ) ||
-					isEcommercePlan( planName )
-				) {
+				if ( isFeatured ) {
 					if ( featuredVisible ) {
 						console.log( planName, featuredVisible );
 						adjacentToFeatured = true;
@@ -332,15 +331,14 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 				}
 
 				const headerClasses = classNames(
-					'plan-comparison-grid__header',
+					'plan-comparison-grid__header-cell',
 					getPlanClass( planName ),
 					{
-						'popular-plan-parent-class':
-							isBusinessPlan( planName ) ||
-							isPremiumPlan( planName ) ||
-							isEcommercePlan( planName ),
-						'plan-is-footer': isFooter,
+						'popular-plan-parent-class': isFeatured,
 						'is-adjacent-to-featured': adjacentToFeatured,
+						'is-last-in-row': index === visiblePlansProperties.length - 1,
+						'is-second-to-last-in-row': index === visiblePlansProperties.length - 2,
+						'plan-is-footer': isFooter,
 					}
 				);
 

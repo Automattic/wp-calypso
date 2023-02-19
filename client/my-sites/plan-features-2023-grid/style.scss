@@ -799,7 +799,7 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 	.plan-features-2023-gridrison__actions-buttons {
 		min-height: 40px;
 	}
-	.plan-comparison-grid__header {
+	.plan-comparison-grid__header-cell {
 		display: flex;
 		flex-direction: column;
 		align-items: stretch;
@@ -854,15 +854,6 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 					border-style: solid;
 				}
 
-				/* 
-				 * on badge that is on the last popular but not last in grid row 
-				 * (so second to last with last being a "personal" plan).
-				 * fixes the border alignment issue.
-				 */
-				// border-left: 0;
-				// box-sizing: border-box;
-				// left: 1px;
-
 				&:last-of-type {
 					.plan-features-2023-grid__popular-badge {
 						padding-right: 19px;
@@ -878,6 +869,21 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 				&.is-adjacent-to-featured {
 					.plan-features-2023-grid__popular-badge {
 						left: 0;
+					}
+
+					/* 
+					* on badge that is on the last popular but not last in grid row 
+					* (so second to last with last being a "personal" plan).
+					* fixes the border alignment issue.
+					*/
+					&:not(:last-of-type) {
+						&:not(.is-last-in-row) {
+							.plan-features-2023-grid__popular-badge {
+								border-left: 0;
+								box-sizing: border-box;
+								left: 1px;
+							}
+						}
 					}
 				}
 			}
