@@ -85,7 +85,6 @@ HTML;
  * Register happy-blocks.
  */
 function happyblocks_pricing_plans_register() {
-	l( 'Got it' );
 	register_block_type(
 		'happy-blocks/pricing-plans',
 		array(
