@@ -351,6 +351,13 @@ class ThemeSheet extends Component {
 		return isAtomic && isPremium && ! canUserUploadThemes && ! hasUnlimitedPremiumThemes;
 	}
 
+	hasSiteGlobalStyleUpsellBanner() {
+		const { isActive, shouldLimitGlobalStyles } = this.props;
+
+		// Show theme upsell banner on an active Free theme with global style gating.
+		return isActive && shouldLimitGlobalStyles;
+	}
+
 	// Render "Open Live Demo" pseudo-button for mobiles.
 	// This is a legacy hack that shows the button under the preview screenshot for mobiles
 	// but not for desktop (becomes hidden behind the screenshot).
@@ -559,19 +566,18 @@ class ThemeSheet extends Component {
 	};
 
 	renderStyleVariations = () => {
-		const { shouldLimitGlobalStyles, styleVariations, translate } = this.props;
+		const { styleVariations, translate } = this.props;
 
 		return (
 			styleVariations.length > 0 && (
 				<div className="theme__sheet-style-variations">
-					<h2>
-						{ translate( 'Style' ) }
-						<PremiumBadge
-							tooltipContent={ translate(
-								'Unlock this style, and tons of other features, by upgrading to a Premium plan.'
-							) }
-						/>
-					</h2>
+					<div className="theme__sheet-style-variations-header">
+						<h2>
+							{ translate( 'Styles' ) }
+							<PremiumBadge shouldHideTooltip />
+						</h2>
+						<p>{ this.getStyleVariationDescription() }</p>
+					</div>
 					<div className="theme__sheet-style-variations-previews">
 						<AsyncLoad
 							require="@automattic/design-preview/src/components/style-variation"
@@ -579,7 +585,6 @@ class ThemeSheet extends Component {
 							selectedVariation={ this.getSelectedStyleVariation() }
 							variations={ styleVariations }
 							onClick={ this.onStyleVariationClick }
-							showGlobalStylesPremiumBadge={ shouldLimitGlobalStyles }
 						/>
 					</div>
 				</div>
@@ -927,7 +932,12 @@ class ThemeSheet extends Component {
 				return translate( 'Upgrade to a Business plan and subscribe to this theme!' );
 			}
 			return translate( 'Subscribe to this premium theme!' );
+		} else if ( this.hasSiteGlobalStyleUpsellBanner() ) {
+			return translate(
+				'Upgrade to the Premium plan to get access to all additional styles, colors, and fonts!'
+			);
 		}
+
 		return translate( 'Access this theme for FREE with a Premium or Business plan!' );
 	};
 
@@ -951,10 +961,36 @@ class ThemeSheet extends Component {
 				);
 			}
 			return translate( 'Subscribe to this premium theme and unlock all its features.' );
+		} else if ( this.hasSiteGlobalStyleUpsellBanner() ) {
+			return '';
 		}
+
 		return translate(
 			'Instantly unlock all premium themes, more storage space, advanced customization, video support, and more when you upgrade.'
 		);
+	};
+
+	getStyleVariationDescription = () => {
+		const { defaultOption, isActive, isWpcomTheme, themeId, shouldLimitGlobalStyles, translate } =
+			this.props;
+
+		if ( isActive && defaultOption.getUrl ) {
+			return translate( 'Open the {{a}}site editor{{/a}} to change your site’s style.', {
+				components: {
+					a: (
+						<a href={ defaultOption.getUrl( themeId ) } target="_blank" rel="noopener noreferrer" />
+					),
+				},
+			} );
+		}
+
+		if ( ! shouldLimitGlobalStyles ) {
+			return '';
+		}
+
+		return isWpcomTheme
+			? translate( 'Additional styles require the Premium plan or higher.' )
+			: translate( 'Additional styles require the Business plan or higher.' );
 	};
 
 	renderSheet = () => {
@@ -1035,6 +1071,8 @@ class ThemeSheet extends Component {
 		const hasWpOrgThemeUpsellBanner = this.hasWpOrgThemeUpsellBanner();
 		// Show theme upsell banner on Atomic sites.
 		const hasThemeUpsellBannerAtomic = this.hasThemeUpsellBannerAtomic();
+		// Show theme upsell banner on an active Free theme with global style gating.
+		const hasSiteGlobalStyleUpsellBanner = this.hasSiteGlobalStyleUpsellBanner();
 
 		const hasUpsellBanner =
 			hasWpComThemeUpsellBanner || hasWpOrgThemeUpsellBanner || hasThemeUpsellBannerAtomic;
@@ -1051,7 +1089,7 @@ class ThemeSheet extends Component {
 			'theme__page-upsell-disabled': isLoading,
 		} );
 
-		if ( hasWpComThemeUpsellBanner ) {
+		if ( hasWpComThemeUpsellBanner || hasSiteGlobalStyleUpsellBanner ) {
 			const forceDisplay =
 				( isBundledSoftwareSet && ! isSiteBundleEligible ) ||
 				( isExternallyManagedTheme &&
