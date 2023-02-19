@@ -136,8 +136,7 @@ $font-size: rem(14px);
 		}
 
 		.sidebar__expandable-content {
-			background: var(--color-sidebar-submenu-background);
-			padding: 7px 0 8px;
+			padding: 4px 0px 0px 24px;
 
 			.sidebar__menu-link {
 				padding: 5px 12px;
@@ -148,8 +147,8 @@ $font-size: rem(14px);
 
 				&:hover,
 				&:focus {
-					background-color: var(--color-sidebar-submenu-hover-background);
 					color: var(--color-sidebar-submenu-hover-text);
+					box-shadow: none;
 				}
 			}
 
