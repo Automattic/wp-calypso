@@ -14,7 +14,7 @@ function getWebpackConfig( env, argv ) {
 		...webpackConfig,
 		entry: {
 			editor: './src/editor.js',
-			view: './src/view.jsx',
+			view: './src/view.js',
 		},
 		output: {
 			...webpackConfig.output,
