@@ -99,7 +99,7 @@ export function createTransactionEndpointCartFromResponseCart( {
 function createTransactionEndpointTaxFromResponseCartTax(
 	tax: ResponseCartTaxData
 ): RequestCartTaxData {
-	const { country_code, postal_code, subdivision_code, vat_id, organization, address } =
+	const { country_code, postal_code, subdivision_code, vat_id, organization, address, city } =
 		tax.location;
 	return {
 		location: {
@@ -109,6 +109,7 @@ function createTransactionEndpointTaxFromResponseCartTax(
 			vat_id,
 			organization,
 			address,
+			city,
 		},
 	};
 }

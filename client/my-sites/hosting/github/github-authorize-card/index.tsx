@@ -4,9 +4,9 @@ import { translate } from 'i18n-calypso';
 import { useMutation } from 'react-query';
 import { useSelector, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
+import SocialLogo from 'calypso/components/social-logo';
 import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
 import { getKeyringServiceByName } from 'calypso/state/sharing/services/selectors';
-import iconGitHub from '../github.svg';
 
 import '../style.scss';
 
@@ -29,11 +29,11 @@ export const GithubAuthorizeCard = () => {
 
 	return (
 		<Card className="github-hosting-card">
-			<img className="github-hosting-icon" src={ iconGitHub } alt="" />
-			<CardHeading id="connect-github">{ translate( 'Connect GitHub' ) }</CardHeading>
+			<SocialLogo className="material-icon" icon="github" size={ 32 } />
+			<CardHeading>{ translate( 'Deploy from GitHub' ) }</CardHeading>
 			<p>
 				{ translate(
-					'Connect this site to a GitHub repository, choose a branch, and deploy with each push.'
+					'Connect this site to a GitHub repository and automatically deploy branches on push.'
 				) }
 			</p>
 			<Button
@@ -42,7 +42,7 @@ export const GithubAuthorizeCard = () => {
 				disabled={ ! github || isAuthorizing }
 				onClick={ () => authorize( github.connect_URL ) }
 			>
-				{ translate( 'Authorize' ) }
+				{ translate( 'Authorize access to Github' ) }
 			</Button>
 		</Card>
 	);

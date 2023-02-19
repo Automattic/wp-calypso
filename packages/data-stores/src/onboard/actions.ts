@@ -458,6 +458,11 @@ export const setIsMigrateFromWp = ( isMigrateFromWp: boolean ) => ( {
 	isMigrateFromWp,
 } );
 
+export const setPluginsToVerify = ( pluginSlugs: string[] ) => ( {
+	type: 'SET_PLUGIN_SLUGS_TO_VERIFY' as const,
+	pluginSlugs,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -474,6 +479,7 @@ export type OnboardAction = ReturnType<
 	| typeof setIsRedirecting
 	| typeof setLastLocation
 	| typeof setPlanProductId
+	| typeof setPluginsToVerify
 	| typeof setRandomizedDesigns
 	| typeof setSelectedDesign
 	| typeof setSelectedStyleVariation
