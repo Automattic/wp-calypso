@@ -13,6 +13,12 @@ import {
 	PLAN_TRIENNIAL_PERIOD,
 } from './constants';
 
+declare global {
+	interface Window {
+		location: Location;
+	}
+}
+
 export function isBestValue( plan: string ): boolean {
 	return ( BEST_VALUE_PLANS as ReadonlyArray< string > ).includes( plan );
 }
@@ -55,7 +61,7 @@ export const is2023PricingGridEnabled = (): boolean => {
 
 	const isActivePage = (): boolean => {
 		let currentRoutePath = '';
-		currentRoutePath = globalThis.location?.pathname ?? '';
+		currentRoutePath = window.location?.pathname ?? '';
 
 		// Is this the internal plans page /plans/<site-slug> ?
 		if ( currentRoutePath.startsWith( '/plans' ) ) {
