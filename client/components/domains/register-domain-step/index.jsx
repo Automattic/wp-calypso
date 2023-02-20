@@ -74,7 +74,7 @@ import wpcom from 'calypso/lib/wp';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { domainUseMyDomain } from 'calypso/my-sites/domains/paths';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { isDomainSidebarExperimentUser } from 'calypso/state/selectors/is-domain-sidebar-experiment-user';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import AlreadyOwnADomain from './already-own-a-domain';
 import tip from './tip';
 
@@ -391,7 +391,7 @@ class RegisterDomainStep extends Component {
 	}
 
 	render() {
-		const { isSignupStep, showAlreadyOwnADomain, domainSidebarExperimentUser } = this.props;
+		const { isSignupStep, showAlreadyOwnADomain, isDomainAndPlanPackageFlow } = this.props;
 
 		const {
 			availabilityError,
@@ -433,7 +433,7 @@ class RegisterDomainStep extends Component {
 							{ this.renderSearchBar() }
 						</CompactCard>
 					</div>
-					{ domainSidebarExperimentUser && this.renderQuickFilters() }
+					{ isDomainAndPlanPackageFlow && this.renderQuickFilters() }
 
 					{ ! isSignupStep && isQueryInvalid && (
 						<Notice
@@ -564,13 +564,13 @@ class RegisterDomainStep extends Component {
 			ref: this.bindSearchCardReference,
 			isReskinned: this.props.isReskinned,
 			childrenBeforeCloseButton:
-				this.props.domainSidebarExperimentUser && this.renderSearchFilters(),
+				this.props.isDomainAndPlanPackageFlow && this.renderSearchFilters(),
 		};
 
 		return (
 			<>
 				<Search { ...componentProps }></Search>
-				{ false === this.props.domainSidebarExperimentUser && this.renderSearchFilters() }
+				{ false === this.props.isDomainAndPlanPackageFlow && this.renderSearchFilters() }
 			</>
 		);
 	}
@@ -1603,7 +1603,7 @@ export default connect(
 	( state ) => {
 		return {
 			currentUser: getCurrentUser( state ),
-			domainSidebarExperimentUser: isDomainSidebarExperimentUser( state ),
+			isDomainAndPlanPackageFlow: !! getCurrentQueryArguments( state )?.domainAndPlanPackage,
 		};
 	},
 	{
