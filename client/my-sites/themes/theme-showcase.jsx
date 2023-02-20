@@ -26,6 +26,7 @@ import getSiteFeaturesById from 'calypso/state/selectors/get-site-features';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { setBackPath } from 'calypso/state/themes/actions';
 import {
 	arePremiumThemesEnabled,
 	getThemeFilterTerms,
@@ -118,6 +119,10 @@ class ThemeShowcase extends Component {
 		) {
 			this.scrollToSearchInput();
 		}
+	}
+
+	componentWillUnmount() {
+		this.props.setBackPath( this.constructUrl( { searchString: this.props.search } ) );
 	}
 
 	isStaticFilter = ( tabFilter ) => {
@@ -435,6 +440,7 @@ class ThemeShowcase extends Component {
 			vertical: this.props.vertical,
 			siteId: this.props.siteId,
 			upsellUrl: this.props.upsellUrl,
+			upsellBanner: this.props.upsellBanner,
 			search: search,
 			tier: this.props.tier,
 			defaultOption: this.props.defaultOption,
@@ -561,4 +567,4 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
 	};
 };
 
-export default connect( mapStateToProps, null )( localize( ThemeShowcase ) );
+export default connect( mapStateToProps, { setBackPath } )( localize( ThemeShowcase ) );

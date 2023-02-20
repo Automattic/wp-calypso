@@ -165,7 +165,6 @@ export class StartSiteFlow {
 	 * @param {string} themeName Name of theme, e.g. "Zoologist".
 	 */
 	async selectTheme( themeName: string ): Promise< void > {
-		const locator = this.page.locator( selectors.individualThemeContainer( themeName ) );
-		await locator.click();
+		await this.page.getByRole( 'button', { name: themeName } ).click();
 	}
 }

@@ -12,8 +12,8 @@ import { JPC_PATH_PLANS } from 'calypso/jetpack-connect/constants';
 import { successNotice } from 'calypso/state/notices/actions';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import { QueryArgs, Duration } from '../types';
+import ItemsIncluded from './items-included';
 import ShowLicenseActivationLinkIfAvailable from './show-license-activation-link-if-available';
-
 import './style.scss';
 
 interface Props {
@@ -66,6 +66,7 @@ const JetpackCompletePage: React.FC< Props > = ( {
 							The full Jetpack suite with real-time security, instant site search, ad-free video,
 							all CRM extensions, and extra storage for backups and video.
 						</p>
+						<ItemsIncluded />
 					</>
 				</JetpackRnaDialogCard>
 			</Main>

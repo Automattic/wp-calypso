@@ -177,6 +177,7 @@ class StatsComments extends Component {
 							/>
 						}
 						className="stats__modernised-comments"
+						showLeftIcon
 					/>
 				) }
 				{ ! isInsightsPageGridEnabled && (
