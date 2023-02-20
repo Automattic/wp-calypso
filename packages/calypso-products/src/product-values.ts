@@ -74,6 +74,8 @@ export { isJetpackScanSlug } from './is-jetpack-scan-slug';
 export { isJetpackSearch } from './is-jetpack-search';
 export { isJetpackSearchSlug } from './is-jetpack-search-slug';
 export { isJetpackSearchFree } from './is-jetpack-search-free';
+export { isJetpackSocialAdvancedSlug } from './is-jetpack-social-advanced-slug';
+export { isJetpackSocialBasicSlug } from './is-jetpack-social-basic-slug';
 export { isJetpackVideoPress } from './is-jetpack-videopress';
 export { isJetpackBoostSlug } from './is-jetpack-boost-slug';
 export { default as isJetpackLegacyItem } from './is-jetpack-legacy-item';
