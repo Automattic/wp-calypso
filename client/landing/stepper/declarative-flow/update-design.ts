@@ -53,7 +53,7 @@ const updateDesign: Flow = {
 							) }?redirect_to=${ returnUrl }&signup=1`
 						);
 					}
-					return navigate( `processing?siteSlug=${ siteSlug }` );
+					return navigate( `processing?siteSlug=${ siteSlug }&flowToReturnTo=${ flowToReturnTo }` );
 			}
 		}
 
