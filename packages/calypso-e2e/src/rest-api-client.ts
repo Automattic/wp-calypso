@@ -358,7 +358,7 @@ export class RestAPIClient {
 			);
 		}
 
-		if ( ! response.errors.length ) {
+		if ( response.errors.length > 0 && ! response.sent ) {
 			console.log( response );
 			throw new Error( `Failed to create invite: ${ response.errors }` );
 		}
