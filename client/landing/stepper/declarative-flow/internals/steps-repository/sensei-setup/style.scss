@@ -31,7 +31,7 @@
 		padding-top: 64px;
 		padding-right: 20px;
 		position: relative;
-		width: 415px;
+		width: 404px;
 
 		h1 {
 			width: 60%;
@@ -85,7 +85,7 @@
 	.sensei-theme-style-selector {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
-		margin: 24px auto;
+		margin: 24px 0;
 		gap: 20px;
 
 		@media ( max-width: $break-large ) {
@@ -120,7 +120,7 @@
 	}
 
 	.form-radio-with-thumbnail__thumbnail {
-		width: 180px;
+		width: 100%;
 		height: 110px;
 		margin: 0;
 
@@ -146,7 +146,7 @@
 			margin: 10px auto 0 auto;
 			border-bottom: 0;
 			border-radius: 36px 36px 0 0; /* stylelint-disable-line scales/radii */
-			padding: 20px;
+			padding: 0 20px;
 		}
 		@media ( max-width: $break-mobile ) {
 			width: 90%;
