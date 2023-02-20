@@ -158,6 +158,7 @@ interface DesignButtonProps {
 	onCheckout?: any;
 	verticalId?: string;
 	currentPlanFeatures?: string[];
+	shouldLimitGlobalStyles?: boolean;
 }
 
 const DesignButton: React.FC< DesignButtonProps > = ( {
@@ -168,6 +169,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	hasPurchasedTheme = false,
 	verticalId,
 	currentPlanFeatures,
+	shouldLimitGlobalStyles,
 } ) => {
 	const { __ } = useI18n();
 	const [ _selectedStyleVariation, setSelectedStyleVariation ] = useState< StyleVariation >();
@@ -183,7 +185,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 		? design.title
 		: `${ design.title } – ${ selectedStyleVariation.title }`;
 
-	let isPremium = design.is_premium || ! isDefaultVariation;
+	let isPremium = design.is_premium || ( shouldLimitGlobalStyles && ! isDefaultVariation );
 	if ( is_virtual && isDefaultVariation ) {
 		isPremium = false;
 	}
@@ -407,6 +409,7 @@ interface DesignPickerProps {
 	onCheckout?: any;
 	purchasedThemes?: string[];
 	currentPlanFeatures?: string[];
+	shouldLimitGlobalStyles?: boolean;
 }
 
 const DesignPicker: React.FC< DesignPickerProps > = ( {
@@ -422,6 +425,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	verticalId,
 	purchasedThemes,
 	currentPlanFeatures,
+	shouldLimitGlobalStyles,
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
 	const filteredStaticDesigns = useMemo( () => {
@@ -456,6 +460,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						verticalId={ verticalId }
 						hasPurchasedTheme={ wasThemePurchased( purchasedThemes, design ) }
 						currentPlanFeatures={ currentPlanFeatures }
+						shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 					/>
 				) ) }
 				{ categorization?.selection === SHOW_GENERATED_DESIGNS_SLUG &&
@@ -489,6 +494,7 @@ export interface UnifiedDesignPickerProps {
 	onCheckout?: any;
 	purchasedThemes?: string[];
 	currentPlanFeatures?: string[];
+	shouldLimitGlobalStyles?: boolean;
 }
 
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
@@ -506,6 +512,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	onCheckout,
 	purchasedThemes,
 	currentPlanFeatures,
+	shouldLimitGlobalStyles,
 } ) => {
 	const translate = useTranslate();
 	const hasCategories = !! categorization?.categories.length;
@@ -542,6 +549,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					onCheckout={ onCheckout }
 					purchasedThemes={ purchasedThemes }
 					currentPlanFeatures={ currentPlanFeatures }
+					shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 				/>
 				{ ( ! isShowAll || ! hasGeneratedDesigns ) && bottomAnchorContent }
 			</div>
