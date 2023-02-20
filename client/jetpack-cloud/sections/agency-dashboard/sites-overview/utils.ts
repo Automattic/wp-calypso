@@ -297,6 +297,7 @@ export const getRowMetaData = (
 };
 
 const formatBackupData = ( site: Site ) => {
+	const isExpandedBlockEnabled = config.isEnabled( 'jetpack/pro-dashboard-expandable-block' );
 	const backup: BackupNode = {
 		value: '',
 		status: '',
@@ -313,7 +314,7 @@ const formatBackupData = ( site: Site ) => {
 			break;
 		case 'rewind_backup_error':
 		case 'backup_only_error':
-			backup.status = 'critical';
+			backup.status = isExpandedBlockEnabled ? 'critical' : 'failed';
 			backup.value = translate( 'Failed' );
 			break;
 		case 'rewind_backup_complete_warning':

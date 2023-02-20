@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
@@ -5,6 +6,7 @@ import { translate } from 'i18n-calypso';
 import page from 'page';
 import { useRef, useState, useMemo, useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import Badge from 'calypso/components/badge';
 import Tooltip from 'calypso/components/tooltip';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { selectLicense, unselectLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
@@ -43,6 +45,7 @@ export default function SiteStatusContent( {
 	} = getRowMetaData( rows, type, isLargeScreen );
 
 	const { isBulkManagementActive } = useContext( SitesOverviewContext );
+	const isExpandedBlockEnabled = isEnabled( 'jetpack/pro-dashboard-expandable-block' );
 
 	const siteId = rows.site.value.blog_id;
 	const siteUrl = rows.site.value.url;
@@ -179,11 +182,23 @@ export default function SiteStatusContent( {
 			break;
 		}
 		case 'failed': {
-			content = <div className="sites-overview__failed">{ value }</div>;
+			content = isExpandedBlockEnabled ? (
+				<div className="sites-overview__failed">{ value }</div>
+			) : (
+				<Badge className="sites-overview__badge" type="error">
+					{ value }
+				</Badge>
+			);
 			break;
 		}
 		case 'warning': {
-			content = <div className="sites-overview__warning">{ value }</div>;
+			content = isExpandedBlockEnabled ? (
+				<div className="sites-overview__warning">{ value }</div>
+			) : (
+				<Badge className="sites-overview__badge" type="warning">
+					{ value }
+				</Badge>
+			);
 			break;
 		}
 		case 'success': {
