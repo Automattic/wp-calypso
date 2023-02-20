@@ -79,11 +79,13 @@ export default function SiteTableRow( { columns, item, setExpanded, isExpanded }
 					if ( hasSiteError && column.key !== 'site' ) {
 						return null;
 					}
+					const isCritical = 'critical' === row.status;
 					if ( row.type ) {
 						return (
 							<td
 								className={ classNames( column.className, {
 									'site-table__td-without-border-bottom': isExpanded,
+									'site-table__td-critical': isCritical,
 								} ) }
 								key={ `table-data-${ row.type }-${ blogId }` }
 							>

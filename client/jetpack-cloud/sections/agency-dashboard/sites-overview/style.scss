@@ -388,3 +388,8 @@
 	color: var(--studio-red-50);
 }
 
+.sites-overview__critical {
+	@extend .sites-overview__column-content;
+	color: var(--studio-white);
+	padding: 15px;
+}

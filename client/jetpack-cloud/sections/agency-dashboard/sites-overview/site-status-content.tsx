@@ -5,7 +5,6 @@ import { translate } from 'i18n-calypso';
 import page from 'page';
 import { useRef, useState, useMemo, useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import Badge from 'calypso/components/badge';
 import Tooltip from 'calypso/components/tooltip';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { selectLicense, unselectLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
@@ -175,6 +174,10 @@ export default function SiteStatusContent( {
 	let content;
 
 	switch ( status ) {
+		case 'critical': {
+			content = <div className="sites-overview__critical">{ value }</div>;
+			break;
+		}
 		case 'failed': {
 			content = <div className="sites-overview__failed">{ value }</div>;
 			break;

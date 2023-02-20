@@ -164,7 +164,8 @@ const getRowEventName = (
 };
 
 const backupTooltips: StatusTooltip = {
-	failed: translate( 'Latest backup failed' ),
+	critical: translate( 'Latest backup failed' ),
+	failed: translate( 'Running out of backup storage' ),
 	warning: translate( 'Latest backup completed with warnings' ),
 	inactive: translate( 'Add Jetpack VaultPress Backup to this site' ),
 	progress: translate( 'Backup in progress' ),
@@ -312,7 +313,7 @@ const formatBackupData = ( site: Site ) => {
 			break;
 		case 'rewind_backup_error':
 		case 'backup_only_error':
-			backup.status = 'failed';
+			backup.status = 'critical';
 			backup.value = translate( 'Failed' );
 			break;
 		case 'rewind_backup_complete_warning':

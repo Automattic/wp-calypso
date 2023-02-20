@@ -69,3 +69,13 @@ tr.site-table__table-row-site-error {
 	}
 }
 
+
+td.site-table__td-critical {
+	background: var(--studio-red-50);
+	padding: 0;
+	margin: 16px;
+
+	.sites-overview__row-status {
+		max-width: none;
+	}
+}
