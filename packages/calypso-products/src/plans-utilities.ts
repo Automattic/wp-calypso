@@ -55,21 +55,15 @@ export const is2023PricingGridEnabled = (): boolean => {
 
 	const isActivePage = (): boolean => {
 		let currentRoutePath = '';
-		if ( typeof window === 'object' && window.location ) {
-			currentRoutePath = window.location.pathname;
-		}
-
-		const [ firstPathPart, secondPathPart ] = ( currentRoutePath || '' )
-			.split( '/' )
-			.filter( ( i ) => i );
+		currentRoutePath = globalThis.location?.pathname ?? '';
 
 		// Is this the internal plans page /plans/<site-slug> ?
-		if ( firstPathPart === 'plans' ) {
+		if ( currentRoutePath.startsWith( '/plans' ) ) {
 			return true;
 		}
 
-		// Is this the onboarding flow /start/plans?
-		if ( firstPathPart === 'start' && secondPathPart === 'plans' ) {
+		// Is this the onboarding flow?
+		if ( currentRoutePath.startsWith( '/start/plans' ) ) {
 			return true;
 		}
 
