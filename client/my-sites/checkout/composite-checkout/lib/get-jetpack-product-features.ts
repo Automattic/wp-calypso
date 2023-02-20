@@ -1,5 +1,7 @@
 import {
 	isJetpackBackupT1Slug,
+	isJetpackScanSlug,
+	isJetpackSearchSlug,
 	isJetpackSocialBasicSlug,
 	isJetpackSocialAdvancedSlug,
 } from '@automattic/calypso-products';
@@ -17,6 +19,18 @@ export default function getJetpackProductFeatures(
 			translate( '30-day archive & activity log' ),
 			translate( 'One-click restores' ),
 		],
+		scan: [
+			translate( 'Website firewall (WAF beta)' ),
+			translate( 'Automated daily scanning' ),
+			translate( 'One-click fixes for most issues' ),
+			translate( 'Instant email threat notifications' ),
+		],
+		search: [
+			translate( 'Instant search, filtering, and indexing' ),
+			translate( 'Highly relevant search results' ),
+			translate( 'Quick and accurate spelling correction' ),
+			translate( 'Support for 38 languages' ),
+		],
 		socialBasic: [
 			translate( 'Automatically share your posts' ),
 			translate( 'Post to multiple channels at once' ),
@@ -30,6 +44,14 @@ export default function getJetpackProductFeatures(
 
 	if ( isJetpackBackupT1Slug( product.product_slug ) ) {
 		return [ ...productFeatureStrings.backupT1, ...productFeatureStrings.support ];
+	}
+
+	if ( isJetpackScanSlug( product.product_slug ) ) {
+		return [ ...productFeatureStrings.scan, ...productFeatureStrings.support ];
+	}
+
+	if ( isJetpackSearchSlug( product.product_slug ) ) {
+		return productFeatureStrings.search;
 	}
 
 	if ( isJetpackSocialBasicSlug( product.product_slug ) ) {
