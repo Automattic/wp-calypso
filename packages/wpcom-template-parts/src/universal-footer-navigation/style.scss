@@ -421,6 +421,23 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 	display: none;
 }
 
+/**
+ * Automattic Branding Bar
+ */
+.lp-icon__custom-automattic-footer {
+	display: inline-block;
+	margin: 0 0.15em 0 0.1em;
+	position: relative;
+	top: 1px;
+	vertical-align: text-bottom;
+}
+
+.lp-link-work-m {
+	display: none;
+	color: #2c3338;
+	text-decoration: underline;
+}
+
 @include breakpoint( "<1140px" ) {
 	.lpc-footer-automattic-nav {
 		padding-left: 20px;
@@ -546,4 +563,3 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 		margin-bottom: 36px;
 	}
 }
-

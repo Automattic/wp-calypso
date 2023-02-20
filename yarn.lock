@@ -1881,6 +1881,23 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/wpcom-template-parts@workspace:^, @automattic/wpcom-template-parts@workspace:packages/wpcom-template-parts":
+  version: 0.0.0-use.local
+  resolution: "@automattic/wpcom-template-parts@workspace:packages/wpcom-template-parts"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/components": "workspace:^"
+    "@automattic/i18n-utils": "workspace:^"
+    "@types/social-logos": ^2.3.1
+    social-logos: ^2.5.2
+    typescript: ^4.9.5
+  peerDependencies:
+    "@wordpress/data": ^6.1.5
+    react: ^17.0.2
+    react-dom: ^17.0.2
+  languageName: unknown
+  linkType: soft
+
 "@babel/cli@npm:^7.17.6":
   version: 7.17.6
   resolution: "@babel/cli@npm:7.17.6"
@@ -7174,6 +7191,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/social-logos@npm:^2.3.1":
+  version: 2.3.1
+  resolution: "@types/social-logos@npm:2.3.1"
+  dependencies:
+    "@types/react": "*"
+  checksum: 1cbeae892b0e6bd770f2aa74dc5d72320e20ecb4125899f1cda5c17cb2d5863c02adc157fc7a1acb8e961814bdb973134bf56c61c3f1c8ffa4f2bbb67c517210
+  languageName: node
+  linkType: hard
+
 "@types/sockjs@npm:^0.3.33":
   version: 0.3.33
   resolution: "@types/sockjs@npm:0.3.33"
@@ -11785,6 +11811,7 @@ __metadata:
     "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
     "@automattic/webpack-inline-constant-exports-plugin": "workspace:^"
     "@automattic/wpcom-checkout": "workspace:^"
+    "@automattic/wpcom-template-parts": "workspace:^"
     "@babel/core": ^7.17.5
     "@emotion/css": ^11.9.0
     "@emotion/jest": ^11.5.0
@@ -32460,6 +32487,16 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
+"typescript@npm:^4.9.5":
+  version: 4.9.5
+  resolution: "typescript@npm:4.9.5"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 5f6cad2e728a8a063521328e612d7876e12f0d8a8390d3b3aaa452a6a65e24e9ac8ea22beb72a924fd96ea0a49ea63bb4e251fb922b12eedfb7f7a26475e5c56
+  languageName: node
+  linkType: hard
+
 "typescript@patch:typescript@^4.5.5#~builtin<compat/typescript>, typescript@patch:typescript@^4.7.4#~builtin<compat/typescript>":
   version: 4.7.4
   resolution: "typescript@patch:typescript@npm%3A4.7.4#~builtin<compat/typescript>::version=4.7.4&hash=a1c5e5"
@@ -32467,6 +32504,16 @@ resolve@^2.0.0-next.3:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: 2eb6e31b04fabec84a4d07b5d567deb5ef0a2971d89d9adb16895f148f7d8508adfb12074abc2efc6966805d3664e68ab67925060e5b0ebd8da616db4b151906
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@^4.9.5#~builtin<compat/typescript>":
+  version: 4.9.5
+  resolution: "typescript@patch:typescript@npm%3A4.9.5#~builtin<compat/typescript>::version=4.9.5&hash=a1c5e5"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 897c8ac656e01b132fa82be6a8e34c4507b19be63dbf1ff1d8287d775519081a7c91dd0ca3ec62536c8137228141d65b238dfb2e8987a3f5182818f58f83e7d7
   languageName: node
   linkType: hard
 

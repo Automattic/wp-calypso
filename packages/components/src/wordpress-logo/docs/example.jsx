@@ -1,4 +1,4 @@
-import WordPressLogo from '../index';
+import { WordPressLogo, WordPressWordmark } from '../index';
 
 function WordPressLogoExample() {
 	return (
@@ -6,6 +6,11 @@ function WordPressLogoExample() {
 			<h3>WordPress Logo</h3>
 			<div>
 				<WordPressLogo />
+			</div>
+			<br />
+			<h3>WordPress Watermark</h3>
+			<div>
+				<WordPressWordmark />
 			</div>
 		</>
 	);

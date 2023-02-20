@@ -1,10 +1,13 @@
 import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { UniversalNavbarFooter, UniversalNavbarHeader } from '@automattic/wpcom-template-parts';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import { useTranslate, localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import { useCallback, useState } from 'react';
 import { connect } from 'react-redux';
 import { CookieBannerContainerSSR } from 'calypso/blocks/cookie-banner';
+import DoNotSellDialogContainer from 'calypso/blocks/do-not-sell-dialog';
 import AsyncLoad from 'calypso/components/async-load';
 import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
@@ -12,9 +15,8 @@ import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import MasterbarLogin from 'calypso/layout/masterbar/login';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
-import UniversalNavbarFooter from 'calypso/layout/universal-navbar-footer';
-import UniversalNavbarFooterAutomattic from 'calypso/layout/universal-navbar-footer-automattic';
-import UniversalNavbarHeader from 'calypso/layout/universal-navbar-header';
+import { useDoNotSell } from 'calypso/lib/analytics/utils';
+import { preventWidows } from 'calypso/lib/formatting';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
@@ -28,6 +30,34 @@ import { masterbarIsVisible } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 
 import './style.scss';
+
+const DoNotSellLink = () => {
+	const translate = useTranslate();
+	const { shouldSeeDoNotSell, isDoNotSell, onSetDoNotSell } = useDoNotSell();
+	const [ isDialogOpen, setIsDialogOpen ] = useState( false );
+	const openDialog = useCallback( () => {
+		setIsDialogOpen( true );
+	}, [] );
+	const closeDialog = useCallback( () => {
+		setIsDialogOpen( false );
+	}, [] );
+
+	return (
+		shouldSeeDoNotSell && (
+			<li>
+				<button onClick={ openDialog }>
+					{ preventWidows( translate( 'Do Not Sell or Share My Data' ) ) }
+				</button>
+				<DoNotSellDialogContainer
+					isOpen={ isDialogOpen }
+					isActive={ isDoNotSell }
+					onToggleActive={ onSetDoNotSell }
+					onClose={ closeDialog }
+				/>
+			</li>
+		)
+	);
+};
 
 const LayoutLoggedOut = ( {
 	isJetpackLogin,
@@ -50,6 +80,7 @@ const LayoutLoggedOut = ( {
 	isPartnerSignup,
 	isPartnerSignupStart,
 	locale,
+	currentRoute,
 } ) => {
 	const isCheckout = sectionName === 'checkout';
 	const isCheckoutPending = sectionName === 'checkout-pending';
@@ -100,10 +131,8 @@ const LayoutLoggedOut = ( {
 		}
 	} else if ( config.isEnabled( 'jetpack-cloud' ) || isWpMobileApp() || isJetpackThankYou ) {
 		masterbar = null;
-	} else if ( sectionName === 'plugins' ) {
-		masterbar = <UniversalNavbarHeader />;
-	} else if ( sectionName === 'themes' || sectionName === 'theme' ) {
-		masterbar = <UniversalNavbarHeader />;
+	} else if ( [ 'plugins', 'themes', 'theme' ].includes( sectionName ) ) {
+		masterbar = <UniversalNavbarHeader sectionName={ sectionName } />;
 	} else {
 		masterbar = (
 			<MasterbarLoggedOut
@@ -142,8 +171,10 @@ const LayoutLoggedOut = ( {
 
 			{ sectionName === 'plugins' && (
 				<>
-					<UniversalNavbarFooter />
-					<UniversalNavbarFooterAutomattic />
+					<UniversalNavbarFooter
+						currentRoute={ currentRoute }
+						additonalFooterLinks={ <DoNotSellLink /> }
+					/>
 					{ config.isEnabled( 'layout/support-article-dialog' ) && (
 						<AsyncLoad require="calypso/blocks/support-article-dialog" placeholder={ null } />
 					) }
@@ -152,8 +183,7 @@ const LayoutLoggedOut = ( {
 
 			{ [ 'themes', 'theme' ].includes( sectionName ) && (
 				<>
-					<UniversalNavbarFooter />
-					<UniversalNavbarFooterAutomattic />
+					<UniversalNavbarFooter currentRoute={ currentRoute } />
 				</>
 			) }
 		</div>
@@ -216,6 +246,7 @@ export default withCurrentRoute(
 			useOAuth2Layout: showOAuth2Layout( state ),
 			isPartnerSignup,
 			isPartnerSignupStart,
+			currentRoute,
 		};
 	} )( localize( LayoutLoggedOut ) )
 );

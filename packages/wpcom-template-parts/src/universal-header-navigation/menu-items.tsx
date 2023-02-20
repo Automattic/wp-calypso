@@ -1,12 +1,22 @@
-const UniversalNavbarLiMenuItem = ( {
+import { ClickableItemProps, MenuItemProps } from '../types';
+
+export const NonClickableItem = ( { content, className }: MenuItemProps ) => {
+	return (
+		<button role="menuitem" className={ className }>
+			{ content } <span className="x-nav-link-chevron" aria-hidden="true"></span>
+		</button>
+	);
+};
+
+export const ClickableItem = ( {
 	titleValue,
-	elementContent,
+	content,
 	urlValue,
 	className,
 	type,
 	typeClassName,
 	target,
-} ) => {
+}: ClickableItemProps ) => {
 	let liClassName = '';
 	if ( type === 'menu' ) {
 		liClassName = liClassName + ' x-menu-grid-item';
@@ -21,14 +31,11 @@ const UniversalNavbarLiMenuItem = ( {
 				className={ typeClassName ? typeClassName : `x-${ type }-link x-link` }
 				href={ urlValue }
 				title={ titleValue }
-				tabIndex="-1"
+				tabIndex={ -1 }
 				target={ target }
 			>
-				{ elementContent }
-				{ /* <span className="x-menu-link-chevron" aria-hidden="true"></span> */ }
+				{ content }
 			</a>
 		</li>
 	);
 };
-
-export default UniversalNavbarLiMenuItem;
