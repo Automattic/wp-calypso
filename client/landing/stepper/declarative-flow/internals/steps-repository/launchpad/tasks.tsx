@@ -133,6 +133,7 @@ export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 		'domain_upsell',
 		'plan_selected',
 		'subscribers_added',
+		'domain_upsell',
 		'first_post_published',
 	],
 	[ LINK_IN_BIO_FLOW ]: linkInBioTaskList,
