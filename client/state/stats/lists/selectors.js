@@ -243,16 +243,7 @@ export const getMostPopularDatetime = ( state, siteId, query ) => {
 	};
 };
 
-export const getTopPostAndPage = ( state, siteId, query ) => {
-	const data = getSiteStatsForQuery( state, siteId, 'statsTopPosts', query );
-
-	if ( ! data ) {
-		return {
-			post: null,
-			page: null,
-		};
-	}
-
+const getSortedPostsAndPages = ( data ) => {
 	const topPosts = {};
 
 	Object.values( data.days ).forEach( ( { postviews: posts } ) => {
@@ -275,6 +266,21 @@ export const getTopPostAndPage = ( state, siteId, query ) => {
 		return 0;
 	} );
 
+	return sortedTopPosts;
+};
+
+export const getTopPostAndPage = ( state, siteId, query ) => {
+	const data = getSiteStatsForQuery( state, siteId, 'statsTopPosts', query );
+
+	if ( ! data ) {
+		return {
+			post: null,
+			page: null,
+		};
+	}
+
+	const sortedTopPosts = getSortedPostsAndPages( data );
+
 	if ( ! sortedTopPosts.length ) {
 		return {
 			post: null,
@@ -286,4 +292,20 @@ export const getTopPostAndPage = ( state, siteId, query ) => {
 		post: sortedTopPosts.find( ( { type } ) => type === 'post' ),
 		page: sortedTopPosts.find( ( { type } ) => type === 'page' ),
 	};
+};
+
+export const getTopPostAndPages = ( state, siteId, query ) => {
+	const data = getSiteStatsForQuery( state, siteId, 'statsTopPosts', query );
+
+	if ( ! data ) {
+		return null;
+	}
+
+	const sortedTopPosts = getSortedPostsAndPages( data );
+
+	if ( ! sortedTopPosts.length ) {
+		return null;
+	}
+
+	return sortedTopPosts;
 };
