@@ -1,5 +1,2 @@
-const GlobalStyles = () => {
-	return null;
-};
-
-export default GlobalStyles;
+export * from './components';
+export * from './types';
