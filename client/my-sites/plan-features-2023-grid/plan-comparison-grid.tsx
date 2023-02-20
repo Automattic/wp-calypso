@@ -29,6 +29,7 @@ import PlanFeatures2023GridActions from './actions';
 import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
 import PopularBadge from './components/popular-badge';
 import PlanFeatures2023GridHeaderPrice from './header-price';
+import useFeaturedAdjacencyMatrix from './hooks/use-featured-adjacency-matrix';
 import { plansBreakSmall, plansBreakLarge } from './media-queries';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import { PlanProperties } from './types';
@@ -284,42 +285,6 @@ type PlanComparisonGridHeaderProps = {
 	canUserPurchasePlan: boolean;
 	selectedSiteSlug: string | null;
 	onUpgradeClick: ( properties: PlanProperties ) => void;
-};
-
-const useFeaturedAdjacencyMatrix = ( visiblePlans: PlanProperties[] ) => {
-	return useMemo( () => {
-		const adjacencyMatrix: {
-			[ key: string ]: { leftOfFeatured: boolean; rightOfFeatured: boolean };
-		} = {};
-		const featuredIndices = visiblePlans.reduce< number[] >( ( acc, { planName }, index ) => {
-			const isfeatured =
-				isBusinessPlan( planName ) || isPremiumPlan( planName ) || isEcommercePlan( planName );
-
-			if ( isfeatured ) {
-				acc.push( index );
-			}
-
-			return acc;
-		}, [] );
-
-		visiblePlans.forEach( ( { planName }, index ) => {
-			let leftOfFeatured = false;
-			let rightOfFeatured = false;
-
-			featuredIndices.forEach( ( featuredIndex ) => {
-				if ( featuredIndex === index - 1 ) {
-					rightOfFeatured = true;
-				}
-				if ( featuredIndex === index + 1 ) {
-					leftOfFeatured = true;
-				}
-			} );
-
-			adjacencyMatrix[ planName ] = { leftOfFeatured, rightOfFeatured };
-		} );
-
-		return adjacencyMatrix;
-	}, [ visiblePlans ] );
 };
 
 const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
