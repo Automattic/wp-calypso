@@ -78,7 +78,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	const currentTask = getTasksProgress( enhancedTasks );
 	const launchTask = enhancedTasks?.find( ( task ) => task.isLaunchTask === true );
 
-	// Free, Write & Build flows - remove domain_upsell task if user is on paid plan
+	// Free, Write, Build, Link in Bio flows - remove domain_upsell task if user is on paid plan
 	enhancedTasks = filterDomainUpsellTask( flow, enhancedTasks, site );
 
 	const showLaunchTitle = launchTask && ! launchTask.disabled;

@@ -120,6 +120,7 @@ export const tasks: Task[] = [
 
 const linkInBioTaskList = [
 	'design_selected',
+	'domain_upsell',
 	'setup_link_in_bio',
 	'plan_selected',
 	'links_added',
