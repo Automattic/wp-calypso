@@ -138,8 +138,17 @@ class ThemesSelection extends Component {
 			);
 		}
 
-		this.props.setThemePreviewOptions( themeId, null, null, variation );
-		pageRouter( this.props.getThemeDetailsUrl( themeId ) );
+		const url = this.props.getThemeDetailsUrl( themeId );
+		if ( url ) {
+			const [ urlBase, urlQuery ] = url.split( '?' );
+			const params = new URLSearchParams( urlQuery );
+			if ( variation ) {
+				params.set( 'style_variation', variation.slug );
+			}
+
+			const paramsString = params.toString().length ? `?${ params.toString() }` : '';
+			pageRouter( `${ urlBase }${ paramsString }` );
+		}
 	};
 
 	onMoreButtonItemClick = ( themeId, resultsRank, key ) => {

@@ -51,6 +51,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { isUserPaid } from 'calypso/state/purchases/selectors';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
@@ -184,6 +185,18 @@ class ThemeSheet extends Component {
 	onStyleVariationClick = ( variation ) => {
 		const { themeId, primary, secondary } = this.props.themeOptions;
 		this.props.setThemePreviewOptions( themeId, primary, secondary, variation );
+
+		if ( typeof window !== 'undefined' ) {
+			const params = new URLSearchParams( window.location.search );
+			if ( variation?.inline_css !== '' ) {
+				params.set( 'style_variation', variation.slug );
+			} else {
+				params.delete( 'style_variation' );
+			}
+
+			const paramsString = params.toString().length ? `?${ params.toString() }` : '';
+			page( `${ window.location.pathname }${ paramsString }` );
+		}
 	};
 
 	getValidSections = () => {
@@ -539,7 +552,11 @@ class ThemeSheet extends Component {
 	};
 
 	renderStyleVariations = () => {
-		const { shouldLimitGlobalStyles, styleVariations, themeOptions, translate } = this.props;
+		const { selectedVariationSlug, shouldLimitGlobalStyles, styleVariations, translate } =
+			this.props;
+		const selectedVariation = styleVariations.find(
+			( variation ) => variation.slug === selectedVariationSlug
+		);
 
 		return (
 			styleVariations.length > 0 && (
@@ -556,7 +573,7 @@ class ThemeSheet extends Component {
 						<AsyncLoad
 							require="@automattic/design-preview/src/components/style-variation"
 							placeholder={ null }
-							selectedVariation={ themeOptions?.styleVariation }
+							selectedVariation={ selectedVariation }
 							variations={ styleVariations }
 							onClick={ this.onStyleVariationClick }
 							showGlobalStylesPremiumBadge={ shouldLimitGlobalStyles }
@@ -1292,6 +1309,7 @@ export default connect(
 			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 			softLaunched: theme?.soft_launched,
 			styleVariations: theme?.style_variations || [],
+			selectedVariationSlug: getCurrentQueryArguments( state )?.style_variation,
 			isExternallyManagedTheme,
 			isSiteEligibleForManagedExternalThemes: getIsSiteEligibleForManagedExternalThemes(
 				state,
