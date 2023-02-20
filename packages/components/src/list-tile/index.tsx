@@ -1,13 +1,13 @@
 /* eslint-disable no-nested-ternary */
 import classNames from 'classnames';
-import React, { cloneElement, isValidElement } from 'react';
+import { cloneElement, isValidElement, ReactElement, ReactNode } from 'react';
 import './style.scss';
 
 type Props = {
-	title: string | React.ReactElement;
-	subtitle: string | React.ReactElement;
-	leading?: React.ReactNode | React.ReactElement;
-	trailing?: React.ReactNode | React.ReactElement;
+	title: string | ReactElement;
+	subtitle: string | ReactElement;
+	leading?: ReactNode | ReactElement;
+	trailing?: ReactNode | ReactElement;
 	className?: string;
 	contentClassName?: string;
 };
@@ -31,7 +31,7 @@ export const ListTile = ( {
 		typeof leading === 'string' ? (
 			<div className="list-tile__leading">{ leading }</div>
 		) : isValidElement( leading ) ? (
-			cloneElement( leading, {
+			cloneElement( leading as ReactElement< { className: string } >, {
 				className: classNames( 'list-tile__leading', leading.props.className ),
 			} )
 		) : null;
@@ -40,7 +40,7 @@ export const ListTile = ( {
 		typeof trailing === 'string' ? (
 			<div className="list-tile__trailing">{ trailing }</div>
 		) : isValidElement( trailing ) ? (
-			cloneElement( trailing, {
+			cloneElement( trailing as ReactElement< { className: string } >, {
 				className: classNames( 'list-tile__trailing', trailing.props.className ),
 			} )
 		) : null;
