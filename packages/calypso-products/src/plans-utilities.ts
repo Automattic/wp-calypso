@@ -16,6 +16,7 @@ import {
 declare global {
 	interface Window {
 		location: Location;
+		is2023PricingGridShownMemo: Set< string >;
 	}
 }
 
@@ -48,19 +49,45 @@ export function getTermDuration( term: string ): number | undefined {
 export const redirectCheckoutToWpAdmin = (): boolean => !! JETPACK_REDIRECT_CHECKOUT_TO_WPADMIN;
 
 /**
- * Returns if the 2023 Pricing grid feature has been enabled.
- * Currently this depends on the feature flag and on the locale the user is on
+ *
+ * This section contains logic to determine if the 2023 pricing grid will be shown.
+ * This can be cleaned up once 2023 pricing grid is shipped everywhere
  *
  */
+const isPricingGrid2023FeatureFlagEnabled = isEnabled( 'onboarding/2023-pricing-grid' );
+const supportedLocales = new Set( [ 'en', 'en-gb', 'es' ] );
+
+/**
+ * Memoizes the visibility of the 2023 pricing grid.
+ */
+const visibilityMemo = {
+	is2023PricingGridActivePageStates: new Map< string, boolean >(),
+	memoKey: ( path: string, locale: string ) => `${ path }_${ locale }`,
+	store: ( currentRoutePath: string, currentLocale: string, isShown: boolean ) => {
+		visibilityMemo.is2023PricingGridActivePageStates.set(
+			visibilityMemo.memoKey( currentLocale, currentRoutePath ),
+			isShown
+		);
+	},
+	is2023PricingGridActivePageMemoized: ( currentRoutePath: string, currentLocale: string ) =>
+		visibilityMemo.is2023PricingGridActivePageStates.has(
+			visibilityMemo.memoKey( currentLocale, currentRoutePath )
+		),
+	get: ( currentRoutePath: string, currentLocale: string ): boolean =>
+		visibilityMemo.get( currentRoutePath, currentLocale ),
+};
+
+const isLocaleSupported = ( locale: string ): boolean => {
+	return supportedLocales.has( locale ?? '' );
+};
+
+/**
+ * Returns if the 2023 Pricing grid feature has been enabled.
+ * Currently this depends on the feature flag and on the locale the user is on
+ */
 export const is2023PricingGridEnabled = (): boolean => {
-	const isFeatureFlagEnabled = (): boolean => isEnabled( 'onboarding/2023-pricing-grid' );
-
-	const isLocaleSupported = (): boolean => {
-		const supportedLocales = [ 'en', 'en-gb', 'es' ];
-		return supportedLocales.includes( getLocaleSlug() ?? '' );
-	};
-
-	return isFeatureFlagEnabled() && isLocaleSupported();
+	const currentLocale = getLocaleSlug() ?? '';
+	return isPricingGrid2023FeatureFlagEnabled && isLocaleSupported( currentLocale );
 };
 
 /**
@@ -74,17 +101,37 @@ export const is2023PricingGridActivePage = (
 	browserWindow: Window & typeof globalThis
 ): boolean => {
 	const currentRoutePath = browserWindow.location.pathname ?? '';
-	const isPricingGridEnabled = is2023PricingGridEnabled();
+	const currentLocale = getLocaleSlug() ?? '';
+
+	/**
+	 * Escape early if the feature flag is not even enabled
+	 */
+	if ( ! isPricingGrid2023FeatureFlagEnabled ) {
+		return false;
+	}
+
+	/**
+	 * Check if value is memoized and return
+	 */
+	if (
+		currentLocale &&
+		visibilityMemo.is2023PricingGridActivePageMemoized( currentLocale, currentRoutePath )
+	) {
+		return visibilityMemo.get( currentLocale, currentRoutePath );
+	}
 
 	// Is this the internal plans page /plans/<site-slug> ?
 	if ( currentRoutePath.startsWith( '/plans' ) ) {
-		return isPricingGridEnabled;
+		visibilityMemo.store( currentRoutePath, currentLocale, true );
+		return true;
 	}
 
 	// Is this the onboarding flow?
 	if ( currentRoutePath.startsWith( '/start/plans' ) ) {
-		return isPricingGridEnabled;
+		visibilityMemo.store( currentRoutePath, currentLocale, true );
+		return true;
 	}
 
+	visibilityMemo.store( currentRoutePath, currentLocale, false );
 	return false;
 };
