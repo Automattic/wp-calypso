@@ -85,8 +85,7 @@
 	.sensei-theme-style-selector {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
-		margin-top: 24px;
-		margin-bottom: auto;
+		margin: 24px auto;
 		gap: 20px;
 
 		@media ( max-width: $break-large ) {
