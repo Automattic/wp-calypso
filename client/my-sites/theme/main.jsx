@@ -51,6 +51,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { isUserPaid } from 'calypso/state/purchases/selectors';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
@@ -172,7 +173,17 @@ class ThemeSheet extends Component {
 		!! this.props.taxonomies?.theme_status?.find( ( status ) => status.slug === 'removed' );
 
 	onButtonClick = () => {
-		const { defaultOption, themeId } = this.props;
+		const { defaultOption, secondaryOption, themeId } = this.props;
+		const selectedStyleVariation = this.getSelectedStyleVariation();
+		if ( selectedStyleVariation ) {
+			this.props.setThemePreviewOptions(
+				themeId,
+				defaultOption,
+				secondaryOption,
+				selectedStyleVariation
+			);
+		}
+
 		defaultOption.action && defaultOption.action( themeId );
 	};
 
@@ -182,8 +193,17 @@ class ThemeSheet extends Component {
 	};
 
 	onStyleVariationClick = ( variation ) => {
-		const { themeId, primary, secondary } = this.props.themeOptions;
-		this.props.setThemePreviewOptions( themeId, primary, secondary, variation );
+		if ( typeof window !== 'undefined' ) {
+			const params = new URLSearchParams( window.location.search );
+			if ( variation?.inline_css !== '' ) {
+				params.set( 'style_variation', variation.slug );
+			} else {
+				params.delete( 'style_variation' );
+			}
+
+			const paramsString = params.toString().length ? `?${ params.toString() }` : '';
+			page( `${ window.location.pathname }${ paramsString }` );
+		}
 	};
 
 	getValidSections = () => {
@@ -386,7 +406,7 @@ class ThemeSheet extends Component {
 	}
 
 	renderWebPreview = () => {
-		const { locale, stylesheet, themeId, themeOptions } = this.props;
+		const { locale, stylesheet, themeId } = this.props;
 		const url = getDesignPreviewUrl(
 			{ slug: themeId, recipe: { stylesheet } },
 			{ language: locale }
@@ -396,7 +416,7 @@ class ThemeSheet extends Component {
 			<div className="theme__sheet-web-preview">
 				<ThemeWebPreview
 					url={ url }
-					inlineCss={ themeOptions?.styleVariation?.inline_css }
+					inlineCss={ this.getSelectedStyleVariation()?.inline_css }
 					isShowFrameBorder={ false }
 					isShowDeviceSwitcher={ false }
 				/>
@@ -539,7 +559,7 @@ class ThemeSheet extends Component {
 	};
 
 	renderStyleVariations = () => {
-		const { shouldLimitGlobalStyles, styleVariations, themeOptions, translate } = this.props;
+		const { shouldLimitGlobalStyles, styleVariations, translate } = this.props;
 
 		return (
 			styleVariations.length > 0 && (
@@ -556,7 +576,7 @@ class ThemeSheet extends Component {
 						<AsyncLoad
 							require="@automattic/design-preview/src/components/style-variation"
 							placeholder={ null }
-							selectedVariation={ themeOptions?.styleVariation }
+							selectedVariation={ this.getSelectedStyleVariation() }
 							variations={ styleVariations }
 							onClick={ this.onStyleVariationClick }
 							showGlobalStylesPremiumBadge={ shouldLimitGlobalStyles }
@@ -879,6 +899,11 @@ class ThemeSheet extends Component {
 				) }
 			</Button>
 		);
+	};
+
+	getSelectedStyleVariation = () => {
+		const { selectedStyleVariationSlug, styleVariations } = this.props;
+		return styleVariations.find( ( variation ) => variation.slug === selectedStyleVariationSlug );
 	};
 
 	goBack = () => {
@@ -1292,6 +1317,7 @@ export default connect(
 			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 			softLaunched: theme?.soft_launched,
 			styleVariations: theme?.style_variations || [],
+			selectedStyleVariationSlug: getCurrentQueryArguments( state )?.style_variation,
 			isExternallyManagedTheme,
 			isSiteEligibleForManagedExternalThemes: getIsSiteEligibleForManagedExternalThemes(
 				state,
