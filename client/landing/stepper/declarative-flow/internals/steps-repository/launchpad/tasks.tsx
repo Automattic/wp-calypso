@@ -130,7 +130,6 @@ const linkInBioTaskList = [
 export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 	newsletter: [
 		'setup_newsletter',
-		'domain_upsell',
 		'plan_selected',
 		'subscribers_added',
 		'domain_upsell',
