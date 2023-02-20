@@ -5,7 +5,11 @@ import {
 	INSTALL_PLUGIN,
 } from 'calypso/lib/plugins/constants';
 import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
-import { getAllPluginsIndexedByPluginSlug, getAllPluginsIndexedBySiteId } from '../selectors-ts';
+import {
+	getAllPluginsIndexedByPluginSlug,
+	getAllPluginsIndexedBySiteId,
+	getFilteredAndSortedPlugins,
+} from '../selectors-ts';
 import { akismet, helloDolly, jetpack } from './fixtures/plugins';
 
 const siteOneId = 12345;
@@ -211,5 +215,42 @@ describe( 'getAllPluginsIndexedBySiteId', () => {
 		const pluginsTwo = getAllPluginsIndexedBySiteId( state );
 
 		expect( pluginsOne ).toBe( pluginsTwo );
+	} );
+} );
+
+describe( 'getFilteredAndSortedPlugins', () => {
+	test( 'Should get an empty array if the requested site is not in the current state', () => {
+		const plugins = getFilteredAndSortedPlugins( state, [ nonExistingSiteId ], undefined );
+		expect( plugins ).toHaveLength( 0 );
+	} );
+
+	test( 'Should get an empty array if the plugins for this site are still being requested', () => {
+		const plugins = getFilteredAndSortedPlugins( state, [ siteThreeId ], undefined );
+		expect( plugins ).toHaveLength( 0 );
+	} );
+
+	test( 'Should get a plugin list of length 3 if both sites are requested', () => {
+		const plugins = getFilteredAndSortedPlugins( state, [ siteOneId, siteTwoId ], undefined );
+		expect( plugins ).toHaveLength( 3 );
+	} );
+
+	test( 'Should get a plugin list containing all plugins in sorted order if both sites are requested', () => {
+		const plugins = getFilteredAndSortedPlugins( state, [ siteOneId, siteTwoId ], undefined );
+		expect( plugins ).toEqual( [ akismetWithSites, helloDollyWithSites, jetpackWithSites ] );
+	} );
+
+	test( 'Should get a plugin list of length 2 if only site 1 is requested', () => {
+		const plugins = getFilteredAndSortedPlugins( state, [ siteOneId ], undefined );
+		expect( plugins ).toHaveLength( 2 );
+	} );
+
+	test( 'Should get a plugin list of length 2 if active plugins on both sites are requested', () => {
+		const plugins = getFilteredAndSortedPlugins( state, [ siteOneId, siteTwoId ], 'active' );
+		expect( plugins ).toHaveLength( 2 );
+	} );
+
+	test( 'Should get a plugin list of length 1 if inactive plugins on site 1 is requested', () => {
+		const plugins = getFilteredAndSortedPlugins( state, [ siteOneId ], 'inactive' );
+		expect( plugins ).toHaveLength( 1 );
 	} );
 } );
