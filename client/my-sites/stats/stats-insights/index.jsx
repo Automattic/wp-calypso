@@ -26,7 +26,7 @@ import StatShares from '../stats-shares';
 import statsStrings from '../stats-strings';
 
 const StatsInsights = ( props ) => {
-	const { siteId, siteSlug, translate, isOdysseyStats } = props;
+	const { siteId, siteSlug, translate } = props;
 	const moduleStrings = statsStrings();
 
 	const isInsightsPageGridEnabled = config.isEnabled( 'stats/insights-page-grid' );
@@ -77,8 +77,7 @@ const StatsInsights = ( props ) => {
 						/>
 						<Comments path="comments" />
 
-						{ /** TODO: The feature depends on Jetpack Sharing module and is disabled for Odyssey for now. */ }
-						{ ! isOdysseyStats && <StatShares siteId={ siteId } /> }
+						<StatShares siteId={ siteId } />
 
 						<Followers path="followers" />
 						<Reach />
@@ -100,8 +99,7 @@ const StatsInsights = ( props ) => {
 									hideSummaryLink
 									hideNewModule // remove when cleaning 'stats/horizontal-bars-everywhere' FF
 								/>
-								{ /** TODO: The feature depends on Jetpack Sharing module and is disabled for Odyssey for now. */ }
-								{ ! isOdysseyStats && <StatShares siteId={ siteId } /> }
+								<StatShares siteId={ siteId } />
 							</div>
 							<div className="stats__module-column">
 								<Reach />
@@ -133,11 +131,9 @@ StatsInsights.propTypes = {
 
 const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	return {
 		siteId,
 		siteSlug: getSelectedSiteSlug( state, siteId ),
-		isOdysseyStats,
 	};
 } );
 
