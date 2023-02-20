@@ -436,12 +436,12 @@ function recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo ) {
 	if ( mayWeTrackByTracker( 'googleAds' ) && wpcomJetpackCartInfo.containsAkismetProducts ) {
 		const params = [
 			'event',
-			'conversion',
+			'purchase',
 			{
+				transactionId: orderId,
 				send_to: TRACKING_IDS.akismetGoogleAdsGtagPurchase,
-				value: wpcomJetpackCartInfo.akismetCost,
-				currency: cart.currency,
-				transaction_id: orderId,
+				transactionTotal: wpcomJetpackCartInfo.akismetCost,
+				currencyCode: cart.currency,
 			},
 		];
 		debug( 'recordOrderInGoogleAds: Record Akismet Purchase', params );

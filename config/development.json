@@ -26,7 +26,7 @@
 	"dsp_widget_js_src": "https://widgets.wp.com/promote/widget.js",
 	"zendesk_presales_chat_key": "216bf91d-f10f-4f66-bf65-a0cba220cd38",
 	"features": {
-		"ad-tracking": false,
+		"ad-tracking": true,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
