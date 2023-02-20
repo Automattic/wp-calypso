@@ -838,6 +838,15 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 				}
 			}
 
+			&.is-current-plan {
+				.plan-features-2023-grid__popular-badge {
+					.plan-pill {
+						background: #e0e0e0;
+						color: unset;
+					}
+				}
+			}
+
 			@include plans-2023-break-small {
 				.plan-features-2023-grid__popular-badge {
 					padding: 20px 0 25px;
