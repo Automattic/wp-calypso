@@ -169,21 +169,22 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	verticalId,
 	currentPlanFeatures,
 } ) => {
-	const { is_virtual, preselected_style_variation, style_variations = [] } = design;
-
 	const { __ } = useI18n();
 	const [ _selectedStyleVariation, setSelectedStyleVariation ] = useState< StyleVariation >();
 
-	const selectedStyleVariation = _selectedStyleVariation ?? preselected_style_variation;
+	const { is_virtual, preselected_style_variation, style_variations = [] } = design;
 	const currentSiteCanInstallWoo = currentPlanFeatures?.includes( FEATURE_WOOP ) ?? false;
 	const designIsBundledWithWoo = design.is_bundled_with_woo_commerce;
-	const title =
-		selectedStyleVariation && selectedStyleVariation.slug !== 'default'
-			? `${ design.title } – ${ selectedStyleVariation.title }`
-			: design.title;
-	let isPremium =
-		design.is_premium || ( selectedStyleVariation && selectedStyleVariation?.slug !== 'default' );
-	if ( is_virtual && selectedStyleVariation?.slug === 'default' ) {
+
+	const selectedStyleVariation = _selectedStyleVariation ?? preselected_style_variation;
+	const isDefaultVariation = ! selectedStyleVariation || selectedStyleVariation.slug === 'default';
+
+	const title = isDefaultVariation
+		? design.title
+		: `${ design.title } – ${ selectedStyleVariation.title }`;
+
+	let isPremium = design.is_premium || ! isDefaultVariation;
+	if ( is_virtual && isDefaultVariation ) {
 		isPremium = false;
 	}
 	const shouldUpgrade = isPremium && ! isPremiumThemeAvailable && ! hasPurchasedTheme;
