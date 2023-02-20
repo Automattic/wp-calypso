@@ -99,17 +99,15 @@ const StatsListCard = ( {
 			leftSideItem = <StatsListCountryFlag countryCode={ item.countryCode } />;
 		} else if ( showLeftIcon && item?.icon ) {
 			leftSideItem = <StatsCardAvatar url={ item?.icon } altName={ item?.label } />;
-		}
-
-		if ( Array.isArray( item?.label ) ) {
+		} else if ( Array.isArray( item?.label ) ) {
 			// tags without children have one item in its label array;
 			// tags with children have them duplicated in this label array - chevron is added and label is constructed by concatenating items.
 			if ( item?.label?.length === 1 ) {
-				leftSideItem = getLabelIcon( item?.label[ 0 ]?.labelIcon );
+				leftSideItem = getLabelIcon( item.label[ 0 ]?.labelIcon );
 			}
 			// else {} -> either unsupported icon or and an error with labels
 		} else if ( item?.labelIcon ) {
-			leftSideItem = getLabelIcon( item?.labelIcon );
+			leftSideItem = getLabelIcon( item.labelIcon );
 		}
 
 		return leftSideItem;
