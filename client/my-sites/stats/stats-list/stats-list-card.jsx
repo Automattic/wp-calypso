@@ -65,7 +65,7 @@ const StatsListCard = ( {
 		}
 	}, [] );
 
-	const outputRightItem = ( item, key ) => {
+	const generateRightItem = ( item, key ) => {
 		const isVisible = key === visibleRightItemKey;
 
 		return (
@@ -91,7 +91,7 @@ const StatsListCard = ( {
 		}
 	};
 
-	const outputLeftItem = ( item ) => {
+	const generateLeftItem = ( item ) => {
 		let leftSideItem; // undefined value avoids rendering an empty node if nothing generates the output
 
 		// left icon visible for avatars, contry flags or tags and categories.
@@ -144,7 +144,7 @@ const StatsListCard = ( {
 			{ ! loader && (
 				<HorizontalBarList>
 					{ data?.map( ( item, index ) => {
-						const leftSideItem = outputLeftItem( item );
+						const leftSideItem = generateLeftItem( item );
 						const isInteractive = item?.link || item?.page || item?.children;
 						const key = item?.id || index; // not every item has an id
 
@@ -156,8 +156,8 @@ const StatsListCard = ( {
 								hasIndicator={ item?.className?.includes( 'published' ) }
 								onClick={ localClickHandler }
 								leftSideItem={ leftSideItem }
-								renderLeftSideItem={ ( incomingItem ) => outputLeftItem( incomingItem ) }
-								renderRightSideItem={ ( incomingItem ) => outputRightItem( incomingItem, key ) }
+								renderLeftSideItem={ ( incomingItem ) => generateLeftItem( incomingItem ) }
+								renderRightSideItem={ ( incomingItem ) => generateRightItem( incomingItem, key ) }
 								useShortLabel={ useShortLabel }
 								useShortNumber={ useShortNumber }
 								isStatic={ ! isInteractive }
