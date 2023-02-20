@@ -1,7 +1,10 @@
 import {
+	isJetpackAntiSpamSlug,
 	isJetpackBackupT1Slug,
+	isJetpackBoostSlug,
 	isJetpackScanSlug,
 	isJetpackSearchSlug,
+	isJetpackSecuritySlug,
 	isJetpackSocialBasicSlug,
 	isJetpackSocialAdvancedSlug,
 	isJetpackVideoPressSlug,
@@ -14,11 +17,25 @@ export default function getJetpackProductFeatures(
 	translate: ReturnType< typeof useTranslate >
 ): string[] {
 	const productFeatureStrings = {
+		antiSpam: [
+			translate( 'Comment and form spam protection' ),
+			translate( '10K API calls per month' ),
+			translate( 'Akismet technology' ),
+			translate( 'Flexible API' ),
+		],
 		backupT1: [
 			translate( 'Real-time cloud backups' ),
 			translate( '10GB of backup storage' ),
 			translate( '30-day archive & activity log' ),
 			translate( 'One-click restores' ),
+		],
+		boost: [
+			translate( 'Automated critical CSS' ),
+			translate( 'Site performance scores' ),
+			translate( 'One-click optimization' ),
+			translate( 'Deferred non-essential JavaScript' ),
+			translate( 'Optimized CSS loading' ),
+			translate( 'Lazy image loading' ),
 		],
 		scan: [
 			translate( 'Website firewall (WAF beta)' ),
@@ -34,10 +51,10 @@ export default function getJetpackProductFeatures(
 		],
 		socialBasic: [
 			translate( 'Automatically share your posts' ),
-			translate( 'Post to multiple channels at once' ),
-			translate( 'Schedule your posts' ),
-			translate( 'Share to Twitter, Facebook, LinkedIn, and Tumblr' ),
-			translate( 'Recycle content' ),
+			translate( 'Posting to multiple channels at once' ),
+			translate( 'Scheduled posts' ),
+			translate( 'Sharing to Twitter, Facebook, LinkedIn, and Tumblr' ),
+			translate( 'Content recycling' ),
 		],
 		socialAdvanced: [ translate( 'Engagement Optimizer' ) ],
 		support: [ translate( 'Priority support' ) ],
@@ -52,8 +69,16 @@ export default function getJetpackProductFeatures(
 		],
 	};
 
+	if ( isJetpackAntiSpamSlug( product.product_slug ) ) {
+		return productFeatureStrings.antiSpam;
+	}
+
 	if ( isJetpackBackupT1Slug( product.product_slug ) ) {
 		return [ ...productFeatureStrings.backupT1, ...productFeatureStrings.support ];
+	}
+
+	if ( isJetpackBoostSlug( product.product_slug ) ) {
+		return productFeatureStrings.boost;
 	}
 
 	if ( isJetpackScanSlug( product.product_slug ) ) {
@@ -62,6 +87,15 @@ export default function getJetpackProductFeatures(
 
 	if ( isJetpackSearchSlug( product.product_slug ) ) {
 		return productFeatureStrings.search;
+	}
+
+	if ( isJetpackSecuritySlug( product.product_slug ) ) {
+		return [
+			...productFeatureStrings.antiSpam,
+			...productFeatureStrings.backupT1,
+			...productFeatureStrings.scan,
+			...productFeatureStrings.support,
+		];
 	}
 
 	if ( isJetpackSocialBasicSlug( product.product_slug ) ) {

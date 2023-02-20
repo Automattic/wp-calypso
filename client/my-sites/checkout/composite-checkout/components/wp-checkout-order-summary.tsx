@@ -12,6 +12,7 @@ import {
 	isWpComPlan,
 	isWpComPremiumPlan,
 	isJetpackProduct,
+	isJetpackPlan,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import {
@@ -314,6 +315,10 @@ function CheckoutSummaryFeaturesList( props: {
 
 	const jetpackProducts = responseCart.products.filter( isJetpackProduct );
 	const hasJetpackProduct = jetpackProducts.length > 0;
+
+	const jetpackPlans = responseCart.products.filter( isJetpackPlan );
+	const hasJetpackPlan = jetpackPlans.length > 0;
+
 	const hasSingleProduct = responseCart.products.length === 1;
 
 	const translate = useTranslate();
@@ -327,8 +332,10 @@ function CheckoutSummaryFeaturesList( props: {
 					return <CheckoutSummaryFeaturesListDomainItem domain={ domain } key={ domain.uuid } />;
 				} ) }
 
-			{ hasSingleProduct && hasJetpackProduct && (
-				<CheckoutSummaryJetpackProductFeatures product={ jetpackProducts[ 0 ] } />
+			{ hasSingleProduct && ( hasJetpackProduct || hasJetpackPlan ) && (
+				<CheckoutSummaryJetpackProductFeatures
+					product={ hasJetpackProduct ? jetpackProducts[ 0 ] : jetpackPlans[ 0 ] }
+				/>
 			) }
 
 			{ hasPlanInCart && (
