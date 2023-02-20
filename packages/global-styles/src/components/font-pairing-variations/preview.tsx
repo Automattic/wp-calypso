@@ -10,7 +10,14 @@ import {
 import { useMemo } from 'react';
 import { STYLE_PREVIEW_WIDTH, STYLE_PREVIEW_HEIGHT } from '../../constants';
 import GlobalStylesVariationContainer from '../global-styles-variation-container';
+import FontFamiliesLoader from './font-families-loader';
 import type { FontFamily } from '../../types';
+
+const DEFAULT_FONT_STYLES: React.CSSProperties = {
+	whiteSpace: 'nowrap',
+	overflow: 'hidden',
+	textOverflow: 'ellipsis',
+};
 
 const FontPairingVariationPreview = () => {
 	const [ fontFamilies ] = useSetting( 'typography.fontFamilies' );
@@ -45,55 +52,62 @@ const FontPairingVariationPreview = () => {
 			ratio={ ratio }
 			containerResizeListener={ containerResizeListener }
 		>
-			<div
-				style={ {
-					height: STYLE_PREVIEW_HEIGHT * ratio,
-					width: '100%',
-					background: 'white',
-					cursor: 'pointer',
-				} }
-			>
+			<>
 				<div
 					style={ {
-						height: '100%',
-						overflow: 'hidden',
+						height: STYLE_PREVIEW_HEIGHT * ratio,
+						width: '100%',
+						background: 'white',
+						cursor: 'pointer',
 					} }
 				>
-					<HStack
-						spacing={ 10 * ratio }
-						justify="flex-start"
+					<div
 						style={ {
 							height: '100%',
 							overflow: 'hidden',
 						} }
 					>
-						<VStack spacing={ 4 * ratio } style={ { margin: '16px' } }>
-							<div
-								style={ {
-									color: '#000000',
-									fontSize: '16px',
-									fontWeight: 400,
-									fontFamily: headingFontFamily,
-									whiteSpace: 'nowrap',
-								} }
-							>
-								{ headingFontFamilyName }
-							</div>
-							<div
-								style={ {
-									color: '#444444',
-									fontSize: '12px',
-									fontWeight: 400,
-									fontFamily: textFontFamily,
-									whiteSpace: 'nowrap',
-								} }
-							>
-								{ textFontFamilyName }
-							</div>
-						</VStack>
-					</HStack>
+						<HStack
+							spacing={ 10 * ratio }
+							justify="flex-start"
+							style={ {
+								height: '100%',
+								overflow: 'hidden',
+							} }
+						>
+							<VStack spacing={ 4 * ratio } style={ { margin: '16px' } }>
+								<div
+									title={ headingFontFamilyName }
+									aria-label={ headingFontFamilyName }
+									style={ {
+										...DEFAULT_FONT_STYLES,
+										color: '#000000',
+										fontSize: '16px',
+										fontWeight: 400,
+										fontFamily: headingFontFamily,
+									} }
+								>
+									{ headingFontFamilyName }
+								</div>
+								<div
+									title={ textFontFamilyName }
+									aria-label={ textFontFamilyName }
+									style={ {
+										...DEFAULT_FONT_STYLES,
+										color: '#444444',
+										fontSize: '12px',
+										fontWeight: 400,
+										fontFamily: textFontFamily,
+									} }
+								>
+									{ textFontFamilyName }
+								</div>
+							</VStack>
+						</HStack>
+					</div>
 				</div>
-			</div>
+				<FontFamiliesLoader fontFamilies={ fontFamilies } />
+			</>
 		</GlobalStylesVariationContainer>
 	);
 };
