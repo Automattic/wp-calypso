@@ -11,7 +11,7 @@ interface BadgesProps {
 	onMoreClick?: () => void;
 	onClick?: ( variation: StyleVariation ) => void;
 	selectedVariation?: StyleVariation;
-	firstVariationToShow?: StyleVariation;
+	firstVariation?: StyleVariation;
 }
 
 const Badges: React.FC< BadgesProps > = ( {
@@ -20,19 +20,20 @@ const Badges: React.FC< BadgesProps > = ( {
 	onMoreClick,
 	onClick,
 	selectedVariation,
-	firstVariationToShow,
+	firstVariation,
 } ) => {
 	const variationsToShow = useMemo( () => {
-		return [
-			...( firstVariationToShow ? [ firstVariationToShow ] : [] ),
-			...( firstVariationToShow
-				? variations
-						.filter( ( variation ) => variation.slug !== firstVariationToShow.slug )
-						.slice( 0, maxVariationsToShow - 1 )
-				: [] ),
-			...( ! firstVariationToShow ? variations.slice( 0, maxVariationsToShow ) : [] ),
-		];
-	}, [ variations, maxVariationsToShow, firstVariationToShow ] );
+		if ( firstVariation ) {
+			return [
+				firstVariation,
+				...variations
+					.filter( ( variation ) => variation.slug !== firstVariation.slug )
+					.slice( 0, maxVariationsToShow - 1 ),
+			];
+		}
+
+		return variations.slice( 0, maxVariationsToShow );
+	}, [ variations, maxVariationsToShow, firstVariation ] );
 
 	return (
 		<>
