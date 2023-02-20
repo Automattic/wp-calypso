@@ -115,12 +115,17 @@ const useTrackDesignView = ( {
 
 				const trackingCategory = category === SHOW_ALL_SLUG ? undefined : category;
 
+				const variationSlugSuffix = design.preselected_style_variation
+					? `-${ design.preselected_style_variation.slug }`
+					: '';
+
 				recordTracksEvent( 'calypso_design_picker_design_display', {
 					category: trackingCategory,
 					design_type: design.design_type,
 					is_premium: design.is_premium,
 					is_premium_available: isPremiumThemeAvailable,
-					slug: design.slug,
+					slug: design.slug + variationSlugSuffix,
+					is_virtual: design.is_virtual,
 				} );
 
 				if ( category ) {
@@ -150,7 +155,6 @@ interface DesignButtonProps {
 	onCheckout?: any;
 	verticalId?: string;
 	currentPlanFeatures?: string[];
-	shouldLimitGlobalStyles?: boolean;
 }
 
 const DesignButton: React.FC< DesignButtonProps > = ( {
@@ -161,12 +165,13 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	hasPurchasedTheme = false,
 	verticalId,
 	currentPlanFeatures,
-	shouldLimitGlobalStyles,
 } ) => {
 	const { __ } = useI18n();
-	const { is_premium = false, is_virtual, style_variation, style_variations = [] } = design;
-	const isLimitedVirtual = shouldLimitGlobalStyles && is_virtual && style_variation;
-	const isPremium = is_premium || isLimitedVirtual;
+	const {
+		is_premium: isPremium = false,
+		preselected_style_variation,
+		style_variations = [],
+	} = design;
 	const shouldUpgrade = isPremium && ! isPremiumThemeAvailable && ! hasPurchasedTheme;
 	const currentSiteCanInstallWoo = currentPlanFeatures?.includes( FEATURE_WOOP ) ?? false;
 
@@ -194,7 +199,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 			badge = <WooCommerceBundledBadge />;
 		} else if ( isPremium ) {
 			const toolTip =
-				shouldUpgrade && isLimitedVirtual
+				shouldUpgrade && preselected_style_variation
 					? __( 'Unlock this style, and tons of other features, by upgrading to a Premium plan.' )
 					: undefined;
 			badge = (
@@ -214,17 +219,9 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 		);
 	}
 
-	const previewDesign = ( styleVariation?: StyleVariation ) => {
-		if ( design.is_virtual && design.style_variation ) {
-			const parentDesign = { ...design, is_virtual: false, style_variation: null };
-			return onPreview( parentDesign, styleVariation ?? design.style_variation );
-		}
-		return onPreview( design, styleVariation );
-	};
-
 	const getTitle = () => {
-		if ( design.is_virtual && design.style_variation ) {
-			return `${ design.title } – ${ design.style_variation.title }`;
+		if ( design.preselected_style_variation ) {
+			return `${ design.title } – ${ design.preselected_style_variation.title }`;
 		}
 
 		return design.title;
@@ -234,7 +231,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 		<div className="design-picker__design-option">
 			<button
 				data-e2e-button={ isPremium ? 'paidOption' : 'freeOption' }
-				onClick={ () => previewDesign() }
+				onClick={ () => onPreview( design ) }
 			>
 				<span
 					className={ classnames(
@@ -255,7 +252,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 							<div className="design-picker__options-style-variations">
 								<StyleVariationBadges
 									variations={ style_variations }
-									onClick={ ( variation ) => previewDesign( variation ) }
+									onClick={ ( variation ) => onPreview( design, variation ) }
 								/>
 							</div>
 						) }
@@ -397,7 +394,6 @@ interface DesignPickerProps {
 	onCheckout?: any;
 	purchasedThemes?: string[];
 	currentPlanFeatures?: string[];
-	shouldLimitGlobalStyles?: boolean;
 }
 
 const DesignPicker: React.FC< DesignPickerProps > = ( {
@@ -413,7 +409,6 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	verticalId,
 	purchasedThemes,
 	currentPlanFeatures,
-	shouldLimitGlobalStyles,
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
 	const filteredStaticDesigns = useMemo( () => {
@@ -448,7 +443,6 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						verticalId={ verticalId }
 						hasPurchasedTheme={ wasThemePurchased( purchasedThemes, design ) }
 						currentPlanFeatures={ currentPlanFeatures }
-						shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 					/>
 				) ) }
 				{ categorization?.selection === SHOW_GENERATED_DESIGNS_SLUG &&
@@ -482,7 +476,6 @@ export interface UnifiedDesignPickerProps {
 	onCheckout?: any;
 	purchasedThemes?: string[];
 	currentPlanFeatures?: string[];
-	shouldLimitGlobalStyles?: boolean;
 }
 
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
@@ -500,7 +493,6 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	onCheckout,
 	purchasedThemes,
 	currentPlanFeatures,
-	shouldLimitGlobalStyles,
 } ) => {
 	const translate = useTranslate();
 	const hasCategories = !! categorization?.categories.length;
@@ -537,7 +529,6 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					onCheckout={ onCheckout }
 					purchasedThemes={ purchasedThemes }
 					currentPlanFeatures={ currentPlanFeatures }
-					shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 				/>
 				{ ( ! isShowAll || ! hasGeneratedDesigns ) && bottomAnchorContent }
 			</div>
