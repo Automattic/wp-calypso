@@ -1,3 +1,6 @@
+import { isEnabled } from '@automattic/calypso-config';
+import { Button } from '@automattic/components';
+import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 import classNames from 'classnames';
 import { Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,6 +13,7 @@ import {
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
 import SiteActions from '../site-actions';
 import SiteErrorContent from '../site-error-content';
+import { SiteExpandedContent } from '../site-expanded-content';
 import SiteStatusContent from '../site-status-content';
 import type { SiteData, SiteColumns } from '../types';
 
@@ -18,9 +22,11 @@ import './style.scss';
 interface Props {
 	columns: SiteColumns;
 	item: SiteData;
+	setExpanded: () => void;
+	isExpanded: boolean;
 }
 
-export default function SiteTableRow( { columns, item }: Props ) {
+export default function SiteTableRow( { columns, item, setExpanded, isExpanded }: Props ) {
 	const dispatch = useDispatch();
 
 	const site = item.site;
@@ -44,6 +50,8 @@ export default function SiteTableRow( { columns, item }: Props ) {
 	const shouldDisableLicenseSelection =
 		selectedLicenses?.length && ! currentSiteHasSelectedLicenses;
 
+	const hideBorderBottom = isExpanded || site.error;
+
 	return (
 		<Fragment>
 			<tr
@@ -66,10 +74,9 @@ export default function SiteTableRow( { columns, item }: Props ) {
 					if ( row.type ) {
 						return (
 							<td
-								className={ classNames(
-									site.error && 'site-table__td-with-error',
-									column.className
-								) }
+								className={ classNames( column.className, {
+									'site-table__td-without-border-bottom': hideBorderBottom,
+								} ) }
 								key={ `table-data-${ row.type }-${ blogId }` }
 							>
 								<SiteStatusContent
@@ -83,14 +90,31 @@ export default function SiteTableRow( { columns, item }: Props ) {
 					}
 				} ) }
 				<td
-					className={ classNames(
-						site.error && 'site-table__td-with-error',
-						'site-table__actions'
-					) }
+					className={ classNames( 'site-table__actions', {
+						'site-table__td-without-border-bottom': hideBorderBottom,
+					} ) }
 				>
 					<SiteActions isLargeScreen site={ site } siteError={ siteError } />
 				</td>
+				{ isEnabled( 'jetpack/pro-dashboard-expandable-block' ) && (
+					<td
+						className={ classNames( 'site-table__actions', {
+							'site-table__td-without-border-bottom': hideBorderBottom,
+						} ) }
+					>
+						<Button className="site-table__expandable-button" borderless onClick={ setExpanded }>
+							<Icon icon={ isExpanded ? chevronUp : chevronDown } />
+						</Button>
+					</td>
+				) }
 			</tr>
+			{ isExpanded && (
+				<tr className="site-table__table-row-expanded">
+					<td colSpan={ Object.keys( item ).length + 1 }>
+						<SiteExpandedContent site={ site } />
+					</td>
+				</tr>
+			) }
 			{ site.error || ! isSiteConnected ? (
 				<tr className="site-table__connection-error">
 					<td colSpan={ Object.keys( item ).length + 1 }>
