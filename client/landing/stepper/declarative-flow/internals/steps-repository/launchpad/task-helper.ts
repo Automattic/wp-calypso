@@ -11,6 +11,9 @@ import {
 	LINK_IN_BIO_FLOW,
 	LINK_IN_BIO_TLD_FLOW,
 	NEWSLETTER_FLOW,
+	isFreeFlow,
+	isBuildFlow,
+	isWriteFlow,
 } from '@automattic/onboarding';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
@@ -51,6 +54,9 @@ export function getEnhancedTasks(
 
 	const videoPressUploadCompleted =
 		site?.options?.launchpad_checklist_tasks_statuses?.video_uploaded || false;
+
+	const allowUpdateDesign =
+		flow && ( isFreeFlow( flow ) || isBuildFlow( flow ) || isWriteFlow( flow ) );
 
 	const homePageId = site?.options?.page_on_front;
 	// send user to Home page editor, fallback to FSE if page id is not known
@@ -171,6 +177,7 @@ export function getEnhancedTasks(
 				case 'design_selected':
 					taskData = {
 						title: translate( 'Select a design' ),
+						disabled: ! allowUpdateDesign,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(

@@ -74,6 +74,10 @@ export const isBuildFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ BUILD_FLOW ].includes( flowName ) );
 };
 
+export const isWriteFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ WRITE_FLOW ].includes( flowName ) );
+};
+
 export const isUpdateDesignFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ UPDATE_DESIGN_FLOW ].includes( flowName ) );
 };
