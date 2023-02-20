@@ -1,16 +1,17 @@
 import { useQuery, UseQueryResult, UseQueryOptions } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
+import type { BlockRendererSettings } from '../types';
 
 const useBlockRendererSettings = (
 	siteId: number | string,
 	stylesheet: string,
-	queryOptions: UseQueryOptions< unknown, unknown, unknown > = {}
-): UseQueryResult< unknown > => {
+	queryOptions: UseQueryOptions< unknown, unknown, BlockRendererSettings > = {}
+): UseQueryResult< BlockRendererSettings > => {
 	const params = new URLSearchParams( {
 		stylesheet,
 	} );
 
-	return useQuery< any, unknown, unknown >(
+	return useQuery< any, unknown, BlockRendererSettings >(
 		[ siteId, 'block-renderer' ],
 		() =>
 			wpcomRequest( {
