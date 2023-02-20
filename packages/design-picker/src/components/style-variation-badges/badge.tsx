@@ -39,13 +39,19 @@ const Badge: React.FC< BadgeProps > = ( { variation, onClick, isSelected } ) => 
 					: __( 'Preview with this style' )
 			}
 			onClick={ ( e ) => {
-				// Prevent the event from bubbling to the the parent button.
+				if ( isSelected ) {
+					return;
+				}
+				// Prevent the event from bubbling to the parent button.
 				e.stopPropagation();
 				onClick?.( variation );
 			} }
 			onKeyDown={ ( e ) => {
+				if ( isSelected ) {
+					return;
+				}
 				if ( e.keyCode === SPACE_BAR_KEYCODE ) {
-					// Prevent the event from bubbling to the the parent button.
+					// Prevent the event from bubbling to the parent button.
 					e.stopPropagation();
 					onClick?.( variation );
 				}

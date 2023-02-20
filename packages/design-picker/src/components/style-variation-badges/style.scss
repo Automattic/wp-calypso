@@ -46,6 +46,13 @@
 
 .style-variation__badge-is-selected {
 	> * {
+		cursor: default;
 		outline: 2px solid var(--studio-blue-30);
+
+		&:hover {
+			&::after {
+				display: none;
+			}
+		}
 	}
 }
