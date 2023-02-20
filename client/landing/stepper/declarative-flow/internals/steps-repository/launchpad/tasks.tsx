@@ -23,13 +23,13 @@ export const tasks: Task[] = [
 	{
 		id: 'first_post_published',
 		completed: false,
-		disabled: true,
+		disabled: false,
 		taskType: 'blog',
 	},
 	{
 		id: 'design_selected',
 		completed: true,
-		disabled: false,
+		disabled: true,
 		taskType: 'blog',
 	},
 	{
