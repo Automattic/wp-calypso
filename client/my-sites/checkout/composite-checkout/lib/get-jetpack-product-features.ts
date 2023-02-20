@@ -4,6 +4,7 @@ import {
 	isJetpackSearchSlug,
 	isJetpackSocialBasicSlug,
 	isJetpackSocialAdvancedSlug,
+	isJetpackVideoPressSlug,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import type { WithSnakeCaseSlug } from '@automattic/calypso-products';
@@ -40,6 +41,15 @@ export default function getJetpackProductFeatures(
 		],
 		socialAdvanced: [ translate( 'Engagement Optimizer' ) ],
 		support: [ translate( 'Priority support' ) ],
+		videopress: [
+			translate( '1TB of cloud-hosted video' ),
+			translate( 'Customizable video player' ),
+			translate( 'Fast-motion video' ),
+			translate( 'Global CDN' ),
+			translate( 'Powerful and reliable hosting infrastructure' ),
+			translate( 'Video and story blocks' ),
+			translate( 'Unlimited logins for team members' ),
+		],
 	};
 
 	if ( isJetpackBackupT1Slug( product.product_slug ) ) {
@@ -60,6 +70,10 @@ export default function getJetpackProductFeatures(
 
 	if ( isJetpackSocialAdvancedSlug( product.product_slug ) ) {
 		return [ ...productFeatureStrings.socialBasic, ...productFeatureStrings.socialAdvanced ];
+	}
+
+	if ( isJetpackVideoPressSlug( product.product_slug ) ) {
+		return productFeatureStrings.videopress;
 	}
 
 	return [];
