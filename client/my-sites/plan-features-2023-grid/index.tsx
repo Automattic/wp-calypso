@@ -604,7 +604,11 @@ export class PlanFeatures2023Grid extends Component<
 
 		return planPropertiesObj.map( ( properties: PlanProperties ) => {
 			const { planName, isPlaceholder, planConstantObj, current } = properties;
-			const classes = classNames( 'plan-features-2023-grid__table-item', 'is-top-buttons' );
+			const classes = classNames(
+				'plan-features-2023-grid__table-item',
+				'is-top-buttons',
+				'is-bottom-aligned'
+			);
 
 			return (
 				<Container key={ planName } className={ classes } isMobile={ options?.isMobile }>
