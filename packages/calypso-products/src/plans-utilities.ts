@@ -48,7 +48,8 @@ export function getTermDuration( term: string ): number | undefined {
 export const redirectCheckoutToWpAdmin = (): boolean => !! JETPACK_REDIRECT_CHECKOUT_TO_WPADMIN;
 
 /**
- * Returns if the 2023 Pricing grid optimized design should be visible or not
+ * Returns if the 2023 Pricing grid feature has been enabled.
+ * Currently this depends on the feature flag and on the locale the user is on
  *
  */
 export const is2023PricingGridEnabled = (): boolean => {
@@ -59,22 +60,31 @@ export const is2023PricingGridEnabled = (): boolean => {
 		return supportedLocales.includes( getLocaleSlug() ?? '' );
 	};
 
-	const isActivePage = (): boolean => {
-		let currentRoutePath = '';
-		currentRoutePath = window.location?.pathname ?? '';
+	return isFeatureFlagEnabled() && isLocaleSupported();
+};
 
-		// Is this the internal plans page /plans/<site-slug> ?
-		if ( currentRoutePath.startsWith( '/plans' ) ) {
-			return true;
-		}
+/**
+ * This function specifically checks if a given route path will display the pricing grid or not.
+ * However the pricing grid needs to be enabled in the first place for this function to return true.
+ *
+ * @param browserWindow Current browser window
+ * @returns true if the pricing grid maybe shown in a given page
+ */
+export const is2023PricingGridActivePage = (
+	browserWindow: Window & typeof globalThis
+): boolean => {
+	const currentRoutePath = browserWindow.location.pathname ?? '';
+	const isPricingGridEnabled = is2023PricingGridEnabled();
 
-		// Is this the onboarding flow?
-		if ( currentRoutePath.startsWith( '/start/plans' ) ) {
-			return true;
-		}
+	// Is this the internal plans page /plans/<site-slug> ?
+	if ( currentRoutePath.startsWith( '/plans' ) ) {
+		return isPricingGridEnabled;
+	}
 
-		return false;
-	};
+	// Is this the onboarding flow?
+	if ( currentRoutePath.startsWith( '/start/plans' ) ) {
+		return isPricingGridEnabled;
+	}
 
-	return isFeatureFlagEnabled() && isLocaleSupported() && isActivePage();
+	return false;
 };
