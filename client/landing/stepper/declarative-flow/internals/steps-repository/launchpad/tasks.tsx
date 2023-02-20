@@ -128,7 +128,13 @@ const linkInBioTaskList = [
 ];
 
 export const launchpadFlowTasks: LaunchpadFlowTaskList = {
-	newsletter: [ 'setup_newsletter', 'plan_selected', 'subscribers_added', 'first_post_published' ],
+	newsletter: [
+		'setup_newsletter',
+		'plan_selected',
+		'subscribers_added',
+		'domain_upsell',
+		'first_post_published',
+	],
 	[ LINK_IN_BIO_FLOW ]: linkInBioTaskList,
 	[ LINK_IN_BIO_TLD_FLOW ]: linkInBioTaskList,
 	free: [

@@ -85,8 +85,14 @@ describe( 'Task Helpers', () => {
 
 		describe( 'when an existing flow is provided', () => {
 			it( 'then it returns found tasks', () => {
-				expect( getArrayOfFilteredTasks( tasks, 'newsletter' ) ).toEqual(
-					tasks.filter( ( task ) => launchpadFlowTasks[ 'newsletter' ].includes( task.id ) )
+				expect(
+					getArrayOfFilteredTasks( tasks, 'newsletter' )?.sort( ( a, b ) =>
+						a.id < b.id ? -1 : 1
+					)
+				).toEqual(
+					tasks
+						.sort( ( a, b ) => ( a.id < b.id ? -1 : 1 ) )
+						.filter( ( task ) => launchpadFlowTasks[ 'newsletter' ].includes( task.id ) )
 				);
 			} );
 		} );
