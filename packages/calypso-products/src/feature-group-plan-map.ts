@@ -142,7 +142,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 
 	[ FEATURE_GROUP_SUPERIOR_COMMERCE_SOLUTIONS ]: {
 		slug: FEATURE_GROUP_SUPERIOR_COMMERCE_SOLUTIONS,
-		getTitle: () => i18n.translate( 'Advanced commerce solutions' ),
+		getTitle: () => i18n.translate( 'Commerce solutions' ),
 		get2023PricingGridSignupWpcomFeatures: () => [
 			FEATURE_SELL_SHIP,
 			FEATURE_CUSTOM_STORE,
