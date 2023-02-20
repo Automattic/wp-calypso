@@ -50,8 +50,9 @@ export default function SiteTableRow( { columns, item, setExpanded, isExpanded }
 	const shouldDisableLicenseSelection =
 		selectedLicenses?.length && ! currentSiteHasSelectedLicenses;
 
-	const hideBorderBottom = isExpanded || site.error;
-	const showSiteError = site.error || ! isSiteConnected;
+	const hasSiteError = site.error || ! isSiteConnected;
+
+	const isExpandedContentEnabled = isEnabled( 'jetpack/pro-dashboard-expandable-block' );
 
 	return (
 		<Fragment>
@@ -59,7 +60,7 @@ export default function SiteTableRow( { columns, item, setExpanded, isExpanded }
 				className={ classNames( 'site-table__table-row', {
 					'site-table__table-row-disabled': shouldDisableLicenseSelection,
 					'site-table__table-row-active': currentSiteHasSelectedLicenses,
-					'site-table__table-row-site-error': showSiteError,
+					'site-table__table-row-site-error': hasSiteError,
 				} ) }
 				onClick={ ( event ) => {
 					if ( ! shouldDisableLicenseSelection ) {
@@ -73,14 +74,14 @@ export default function SiteTableRow( { columns, item, setExpanded, isExpanded }
 			>
 				{ columns.map( ( column ) => {
 					const row = item[ column.key ];
-					if ( showSiteError && column.key !== 'site' ) {
+					if ( hasSiteError && column.key !== 'site' ) {
 						return null;
 					}
 					if ( row.type ) {
 						return (
 							<td
 								className={ classNames( column.className, {
-									'site-table__td-without-border-bottom': hideBorderBottom,
+									'site-table__td-without-border-bottom': isExpanded,
 								} ) }
 								key={ `table-data-${ row.type }-${ blogId }` }
 							>
@@ -94,22 +95,32 @@ export default function SiteTableRow( { columns, item, setExpanded, isExpanded }
 						);
 					}
 				} ) }
-				{ showSiteError && (
-					<td className="site-table__error" colSpan={ columns.length - 1 }>
+				{ /* Show error content when there is a site error */ }
+				{ hasSiteError && (
+					<td
+						className={ classNames( 'site-table__error', {
+							'site-table__td-without-border-bottom': isExpanded,
+						} ) }
+						// If there is an error, we need to span the whole row because we don't show any column.
+						colSpan={ columns.length - 1 }
+					>
 						<SiteErrorContent siteUrl={ site.value.url } />
 					</td>
 				) }
 				<td
 					className={ classNames( 'site-table__actions', {
-						'site-table__td-without-border-bottom': hideBorderBottom,
+						'site-table__td-without-border-bottom': isExpanded,
 					} ) }
+					// If there is an error, we need to span the whole row because we don't show the expand buttons.
+					colSpan={ hasSiteError && isExpandedContentEnabled ? 2 : 1 }
 				>
 					<SiteActions isLargeScreen site={ site } siteError={ siteError } />
 				</td>
-				{ isEnabled( 'jetpack/pro-dashboard-expandable-block' ) && (
+				{ /* Show expand buttons only when the feature is enabled and there is no site error. */ }
+				{ ! hasSiteError && isExpandedContentEnabled && (
 					<td
 						className={ classNames( 'site-table__actions', {
-							'site-table__td-without-border-bottom': hideBorderBottom,
+							'site-table__td-without-border-bottom': isExpanded,
 						} ) }
 					>
 						<Button className="site-table__expandable-button" borderless onClick={ setExpanded }>
@@ -118,6 +129,7 @@ export default function SiteTableRow( { columns, item, setExpanded, isExpanded }
 					</td>
 				) }
 			</tr>
+			{ /* Show expanded content when expandable block is enabled. */ }
 			{ isExpanded && (
 				<tr className="site-table__table-row-expanded">
 					<td colSpan={ Object.keys( item ).length + 1 }>
@@ -125,13 +137,6 @@ export default function SiteTableRow( { columns, item, setExpanded, isExpanded }
 					</td>
 				</tr>
 			) }
-			{ site.error || ! isSiteConnected ? (
-				<tr className="site-table__connection-error">
-					<td colSpan={ Object.keys( item ).length + 1 }>
-						<SiteErrorContent siteUrl={ site.value.url } />
-					</td>
-				</tr>
-			) : null }
 		</Fragment>
 	);
 }
