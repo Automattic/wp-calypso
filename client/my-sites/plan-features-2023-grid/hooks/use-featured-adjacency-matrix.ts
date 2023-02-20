@@ -5,7 +5,11 @@ import type { PlanProperties } from '../types';
 const useFeaturedAdjacencyMatrix = ( visiblePlans: PlanProperties[] ) => {
 	return useMemo( () => {
 		const adjacencyMatrix: {
-			[ key: string ]: { leftOfFeatured: boolean; rightOfFeatured: boolean };
+			[ key: string ]: {
+				leftOfFeatured: boolean;
+				rightOfFeatured: boolean;
+				isOnlyFeatured?: boolean;
+			};
 		} = {};
 		const featuredIndices = visiblePlans.reduce< number[] >( ( acc, { planName }, index ) => {
 			const isfeatured =
@@ -33,6 +37,10 @@ const useFeaturedAdjacencyMatrix = ( visiblePlans: PlanProperties[] ) => {
 
 			adjacencyMatrix[ planName ] = { leftOfFeatured, rightOfFeatured };
 		} );
+
+		if ( featuredIndices.length === 1 ) {
+			adjacencyMatrix[ visiblePlans[ featuredIndices[ 0 ] ].planName ].isOnlyFeatured = true;
+		}
 
 		return adjacencyMatrix;
 	}, [ visiblePlans ] );

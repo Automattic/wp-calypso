@@ -327,6 +327,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 						'plan-is-footer': isFooter,
 						'is-left-of-featured': featuredAdjacencyMatrix[ planName ]?.leftOfFeatured,
 						'is-right-of-featured': featuredAdjacencyMatrix[ planName ]?.rightOfFeatured,
+						'is-only-featured': featuredAdjacencyMatrix[ planName ]?.isOnlyFeatured,
 					}
 				);
 
@@ -658,6 +659,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 														featuredAdjacencyMatrix[ planName ]?.leftOfFeatured,
 													'is-right-of-featured':
 														featuredAdjacencyMatrix[ planName ]?.rightOfFeatured,
+													'is-only-featured': featuredAdjacencyMatrix[ planName ]?.isOnlyFeatured,
 												}
 											);
 
@@ -719,6 +721,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 												'is-left-of-featured': featuredAdjacencyMatrix[ planName ]?.leftOfFeatured,
 												'is-right-of-featured':
 													featuredAdjacencyMatrix[ planName ]?.rightOfFeatured,
+												'is-only-featured': featuredAdjacencyMatrix[ planName ]?.isOnlyFeatured,
 											}
 										);
 
