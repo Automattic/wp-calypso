@@ -213,7 +213,7 @@ class Plans extends Component {
 				<PlansFeaturesMain
 					redirectToAddDomainFlow={ this.props.redirectToAddDomainFlow }
 					domainAndPlanPackage={ this.props.domainAndPlanPackage }
-					hideFreePlan={ hideFreePlan }
+					hideFreePlan={ true }
 					customerType={ this.props.customerType }
 					intervalType={ this.props.intervalType }
 					selectedFeature={ this.props.selectedFeature }
