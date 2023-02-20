@@ -45,6 +45,13 @@ td.site-table__actions {
 	width: 50px;
 }
 
-td.site-table__td-with-error {
+td.site-table__td-without-border-bottom {
 	border-bottom: none;
+}
+
+.site-table__expandable-button {
+	display: flex;
+	position: relative;
+	right: 0;
+	top: 2px;
 }

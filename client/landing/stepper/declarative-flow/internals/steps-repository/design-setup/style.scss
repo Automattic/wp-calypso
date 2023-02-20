@@ -7,12 +7,6 @@ $gray-100: #101517;
 $gray-60: #50575e;
 $design-button-primary-color: rgb(17, 122, 201);
 
-@mixin break-design-preview() {
-	@media (min-width: #{ ($break-xlarge) }) {
-		@content;
-	}
-}
-
 .design-setup {
 	.step-container {
 		padding-inline-start: 20px;
@@ -583,7 +577,7 @@ $design-button-primary-color: rgb(17, 122, 201);
 			font-weight: 500;
 			line-height: 20px;
 
-			@include break-design-preview {
+			@include break-xlarge {
 				display: none;
 			}
 
@@ -612,7 +606,7 @@ $design-button-primary-color: rgb(17, 122, 201);
 					margin-top: -2px;
 				}
 
-				@include break-design-preview {
+				@include break-xlarge {
 					inset-inline-start: 72px;
 					inset-inline-end: 24px;
 					padding: 1px 0 0;
@@ -644,7 +638,7 @@ $design-button-primary-color: rgb(17, 122, 201);
 			z-index: 1;
 		}
 
-		@include break-design-preview {
+		@include break-xlarge {
 			max-width: none;
 			padding-inline-start: 32px;
 			padding-inline-end: 32px;

@@ -28,7 +28,7 @@ const JetpackRnaDialogCard: React.FC< RnaDialogCardProps > = ( {
 			} ) }
 		>
 			<div className="jetpack-rna-dialog-card__body">
-				<div className="jetpack-rna-dialog-card__content">{ children && children }</div>
+				<div className="jetpack-rna-dialog-card__content">{ children }</div>
 			</div>
 			<div
 				className="jetpack-rna-dialog-card__footer"

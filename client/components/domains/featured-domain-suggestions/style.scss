@@ -209,6 +209,11 @@ body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion
 			margin-top: 0;
 			padding: 0.65em 2.8em;
 		}
+
+		&:focus {
+			border-color: var(--color-primary);
+			box-shadow: 0 0 0 2px var(--color-primary-light);
+		}
 	}
 
 	.domain-registration-suggestion__domain-title {
