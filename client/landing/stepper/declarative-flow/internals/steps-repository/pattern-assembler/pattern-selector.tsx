@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
-import { useAsyncList } from '@wordpress/compose';
 import { __experimentalNavigatorBackButton as NavigatorBackButton } from '@wordpress/components';
+import { useAsyncList } from '@wordpress/compose';
 import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import AsyncLoad from 'calypso/components/async-load';
