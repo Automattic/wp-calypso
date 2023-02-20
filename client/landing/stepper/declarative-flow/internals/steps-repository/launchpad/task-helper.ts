@@ -10,6 +10,7 @@ import {
 	WRITE_FLOW,
 	LINK_IN_BIO_FLOW,
 	LINK_IN_BIO_TLD_FLOW,
+	NEWSLETTER_FLOW,
 } from '@automattic/onboarding';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
@@ -356,7 +357,7 @@ export function getArrayOfFilteredTasks( tasks: Task[], flow: string | null ) {
 }
 
 // Returns enhanced task list with domain_upsell task removed
-// Only applies to Free, Write, Build, Link in Bio flow sites with paid plan
+// Only applies to Free, Write, Build, Link in Bio, & Newsletter flow sites with paid plan
 export function filterDomainUpsellTask(
 	flow: string | null,
 	enhancedTasks: Task[] | null,
@@ -368,6 +369,7 @@ export function filterDomainUpsellTask(
 		WRITE_FLOW,
 		LINK_IN_BIO_FLOW,
 		LINK_IN_BIO_TLD_FLOW,
+		NEWSLETTER_FLOW,
 	];
 	if ( flow && flowsAffected.includes( flow ) && enhancedTasks && ! site?.plan?.is_free ) {
 		return enhancedTasks?.filter( ( task ) => {
