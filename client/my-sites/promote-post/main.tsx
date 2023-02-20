@@ -1,21 +1,29 @@
 import './style.scss';
 import { useTranslate } from 'i18n-calypso';
+import moment from 'moment';
 import page from 'page';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPosts from 'calypso/components/data/query-posts';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import useCampaignsQuery from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import memoizeLast from 'calypso/lib/memoize-last';
 import { usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
 import CampaignsList from 'calypso/my-sites/promote-post/components/campaigns-list';
 import PostsList from 'calypso/my-sites/promote-post/components/posts-list';
 import PostsListBanner from 'calypso/my-sites/promote-post/components/posts-list-banner';
 import PromotePostTabBar from 'calypso/my-sites/promote-post/components/promoted-post-filter';
-import { getPostsForQuery, isRequestingPostsForQuery } from 'calypso/state/posts/selectors';
+import {
+	getSitePost,
+	getPostsForQuery,
+	isRequestingPostsForQuery,
+} from 'calypso/state/posts/selectors';
+import { getTopPostAndPages } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 export type TabType = 'posts' | 'campaigns';
@@ -52,7 +60,17 @@ const ERROR_NO_LOCAL_USER = 'no_local_user';
 
 export default function PromotedPosts( { tab }: Props ) {
 	const selectedTab = tab === 'campaigns' ? 'campaigns' : 'posts';
+
+	const memoizedQuery = memoizeLast( ( period, unit, quantity, endOf ) => ( {
+		period,
+		unit: unit,
+		quantity: quantity,
+		date: endOf,
+	} ) );
 	const selectedSite = useSelector( getSelectedSite );
+	const today = moment().locale( 'en' );
+	const period = 'year';
+	const topPostsQuery = memoizedQuery( period, 'month', 1, today.format( 'YYYY-MM-DD' ) );
 
 	const selectedSiteId = selectedSite?.ID || 0;
 
@@ -80,6 +98,17 @@ export default function PromotedPosts( { tab }: Props ) {
 	const isLoadingProducts = useSelector( ( state ) =>
 		isRequestingPostsForQuery( state, selectedSiteId, queryProducts )
 	);
+	const mostPopularPostAndPages = useSelector( ( state ) => {
+		const topViewedPostAndPages = getTopPostAndPages( state, selectedSiteId, topPostsQuery );
+		const topPosts = [];
+
+		topViewedPostAndPages?.map( ( post ) => {
+			const item = getSitePost( state, selectedSiteId, post.id );
+			item && topPosts.push( item );
+		} );
+
+		return topPosts;
+	} );
 
 	const campaigns = useCampaignsQuery( selectedSiteId ?? 0 );
 	const { isLoading: campaignsIsLoading, isError, error: campaignError } = campaigns;
@@ -141,7 +170,19 @@ export default function PromotedPosts( { tab }: Props ) {
 		);
 	}
 
-	const content = [ ...( posts || [] ), ...( pages || [] ), ...( products || [] ) ];
+	const content = [
+		...( mostPopularPostAndPages || [] ),
+		...( posts || [] ),
+		...( pages || [] ),
+		...( products || [] ),
+	];
+
+	/**
+	 * Some of the posts/pages may be duplicated in the due to mostPopularPostAndPages.
+	 */
+	const contentWithoutDuplicateIds = content.filter(
+		( obj, index ) => content.findIndex( ( item ) => item.ID === obj.ID ) === index
+	);
 
 	const isLoading = isLoadingPage && isLoadingPost && isLoadingProducts;
 
@@ -174,11 +215,13 @@ export default function PromotedPosts( { tab }: Props ) {
 				<PageViewTracker path="/advertising/:site/posts" title="Advertising > Ready to Blaze" />
 			) }
 
+			<QuerySiteStats siteId={ selectedSiteId } statType="statsTopPosts" query={ topPostsQuery } />
 			<QueryPosts siteId={ selectedSiteId } query={ queryPost } postId={ null } />
 			<QueryPosts siteId={ selectedSiteId } query={ queryPage } postId={ null } />
 			<QueryPosts siteId={ selectedSiteId } query={ queryProducts } postId={ null } />
-
-			{ selectedTab === 'posts' && <PostsList content={ content } isLoading={ isLoading } /> }
+			{ selectedTab === 'posts' && (
+				<PostsList content={ contentWithoutDuplicateIds } isLoading={ isLoading } />
+			) }
 		</Main>
 	);
 }
