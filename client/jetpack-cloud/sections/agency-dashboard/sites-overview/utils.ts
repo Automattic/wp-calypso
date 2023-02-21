@@ -165,7 +165,7 @@ const getRowEventName = (
 
 const backupTooltips: StatusTooltip = {
 	critical: translate( 'Latest backup failed' ),
-	failed: translate( 'Running out of backup storage' ),
+	failed: translate( 'Latest backup failed' ),
 	warning: translate( 'Latest backup completed with warnings' ),
 	inactive: translate( 'Add Jetpack VaultPress Backup to this site' ),
 	progress: translate( 'Backup in progress' ),

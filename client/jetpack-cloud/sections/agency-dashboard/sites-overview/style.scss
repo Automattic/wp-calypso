@@ -390,6 +390,10 @@
 
 .sites-overview__critical {
 	@extend .sites-overview__column-content;
-	color: var(--studio-white);
 	padding: 15px;
+	color: var(--studio-red-50);
+
+	@include break-xlarge {
+		color: var(--studio-white);
+	}
 }
