@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 /* eslint-disable import/no-nodejs-modules */
+const spawnSync = require( 'child_process' ).spawnSync;
 const fs = require( 'fs' );
 const path = require( 'path' );
 
@@ -15,6 +16,11 @@ const chunksMap = JSON.parse(
 		encoding: 'utf8',
 	} )
 );
+
+// Generate calypso-strings.pot.
+spawnSync( 'yarn', [ 'translate' ], {
+	cwd: ROOT_DIR,
+} );
 
 const calypsoStrings = fs.readFileSync( CALYPSO_STRINGS_PATH, {
 	encoding: 'utf8',
