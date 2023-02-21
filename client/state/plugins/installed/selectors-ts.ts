@@ -261,10 +261,10 @@ export function getSitesWithPlugin( state: AppState, siteIds: number[], pluginSl
 		return [];
 	}
 
-	// Filter the requested sites list by the list of sites for this plugin
+	// Filter the requested sites list by the list of sites for this plugin.
 	const pluginSites = siteIds.filter( ( siteId ) => plugin.sites.hasOwnProperty( siteId ) );
 
-	// return sortBy( pluginSites, ( siteId ) => getSiteTitle( state, siteId )?.toLowerCase() );
+	// Return the plugins sorted by title.
 	return pluginSites.sort( ( a, b ) => {
 		const siteTitleA = getSiteTitle( state, a )?.toLowerCase() || '';
 		const siteTitleB = getSiteTitle( state, b )?.toLowerCase() || '';
