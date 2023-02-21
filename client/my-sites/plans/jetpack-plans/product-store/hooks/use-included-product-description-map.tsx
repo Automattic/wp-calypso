@@ -66,7 +66,7 @@ export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 
 			...setTranslation(
 				JETPACK_BOOST_PRODUCTS,
-				translate( 'Speed up your site and improve SEO with automatic Critical CSS generation.' )
+				translate( 'Speed up your site and improve SEO with automatic critical CSS generation.' )
 			),
 
 			...setTranslation(
