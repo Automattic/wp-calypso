@@ -469,7 +469,10 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		for ( const plan of planProperties ?? [] ) {
 			const { planName } = plan;
 			const planObject = applyTestFiltersToPlansList( planName, undefined );
-			const wpcomFeatures = planObject.get2023PricingGridSignupWpcomFeatures?.() ?? [];
+			const wpcomFeatures = [
+				...( planObject.get2023PricingGridSignupWpcomFeatures?.() ?? [] ),
+				...( planObject.get2023PricingGridPlanComparisonFeatures?.() ?? [] ),
+			];
 			const jetpackFeatures = planObject.get2023PricingGridSignupJetpackFeatures?.() ?? [];
 			const annualOnlyFeatures = planObject.getAnnualPlansOnlyFeatures?.() ?? [];
 

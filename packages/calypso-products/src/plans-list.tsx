@@ -433,6 +433,23 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SMART_REDIRECTS,
 		FEATURE_ALWAYS_ONLINE,
 	],
+	// this function returns the extra features that are not highlighted
+	// in the plans table. Thus, eventually in the plan comparison component
+	// its return value will be merged with `get2023PricingGridSignupWpcomFeatures()`
+	// to gain the complete feature set.
+	// The gist is that we want the plan comparison grid to be as comprehensive as possible, while keeping the plans table easy to follow.
+	// For more details why they deviates, please refer to p2-pdgrnI-24M#comment-3413
+	get2023PricingGridPlanComparisonFeatures: () => [
+		FEATURE_BANDWIDTH,
+		FEATURE_FAST_DNS,
+		FEATURE_GLOBAL_EDGE_CACHING,
+		FEATURE_CDN,
+		FEATURE_DATACENTRE_FAILOVER,
+		FEATURE_WP_UPDATES,
+		FEATURE_MULTI_SITE,
+		FEATURE_SECURITY_MALWARE,
+		FEATURE_SECURITY_DDOS,
+	],
 	get2023PricingGridSignupJetpackFeatures: () => [
 		FEATURE_STATS_JP,
 		FEATURE_SPAM_JP,
@@ -616,6 +633,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_STYLE_CUSTOMIZATION,
 		FEATURE_SUPPORT_EMAIL,
 	],
+	get2023PricingGridPlanComparisonFeatures: () => [],
 	get2023PricingGridSignupJetpackFeatures: () => [
 		FEATURE_PAID_SUBSCRIBERS_JP,
 		FEATURE_PREMIUM_CONTENT_JP,
@@ -807,6 +825,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SHIPPING_CARRIERS,
 		FEATURE_EXTENSIONS,
 	],
+	get2023PricingGridPlanComparisonFeatures: () => [],
 	get2023PricingGridSignupJetpackFeatures: () => [],
 	get2023PricingGridSignupStorageOptions: () => [ FEATURE_200GB_STORAGE ],
 	// Features not displayed but used for checking plan abilities
@@ -995,6 +1014,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_PREMIUM_THEMES_V2,
 		FEATURE_WORDADS,
 	],
+	get2023PricingGridPlanComparisonFeatures: () => [],
 	get2023PricingGridSignupJetpackFeatures: () => [
 		FEATURE_VIDEOPRESS_JP,
 		FEATURE_UNLTD_SOCIAL_MEDIA_JP,
@@ -1154,6 +1174,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_WP_UPDATES,
 		FEATURE_MULTI_SITE,
 	],
+	get2023PricingGridPlanComparisonFeatures: () => [],
 	get2023PricingGridSignupJetpackFeatures: () => [
 		FEATURE_REALTIME_BACKUPS_JP,
 		FEATURE_ONE_CLICK_RESTORE_V2,
@@ -1319,6 +1340,7 @@ const get2023EnterprisGrideDetails = (): IncompleteWPcomPlan => ( {
 		),
 	getDescription: () => '',
 	get2023PricingGridSignupWpcomFeatures: () => [],
+	get2023PricingGridPlanComparisonFeatures: () => [],
 	get2023PricingGridSignupJetpackFeatures: () => [],
 	get2023PricingGridSignupStorageOptions: () => [],
 } );
