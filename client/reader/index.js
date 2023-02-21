@@ -62,7 +62,6 @@ export default async function () {
 		page(
 			'/read/feeds/:feed_id',
 			blogDiscoveryByFeedId,
-			redirectLoggedOut,
 			updateLastRoute,
 			prettyRedirects,
 			sidebar,
@@ -77,7 +76,6 @@ export default async function () {
 		page( '/read/blogs/:blog_id/posts', incompleteUrlRedirects );
 		page(
 			'/read/blogs/:blog_id',
-			redirectLoggedOut,
 			updateLastRoute,
 			prettyRedirects,
 			sidebar,
