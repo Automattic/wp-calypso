@@ -451,6 +451,57 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 	);
 };
 
+const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
+	feature: FeatureObject;
+	allJetpackFeatures: Set< string >;
+	visiblePlansProperties: PlanProperties[];
+	restructuredFeatures: {
+		featureMap: Record< string, Set< string > >;
+		planStorageOptionsMap: Record< string, string >;
+	};
+	isInSignup: boolean;
+	planName: string;
+	featureSlug: string;
+} > = ( {
+	feature,
+	visiblePlansProperties,
+	restructuredFeatures,
+	isInSignup,
+	planName,
+	featureSlug,
+} ) => {
+	const featuredAdjacencyMatrix = useFeaturedAdjacencyMatrix( visiblePlansProperties );
+	const hasFeature = restructuredFeatures.featureMap[ planName ].has( featureSlug );
+	const featuredLabel = useFeaturedLabel( planName );
+	const cellClasses = classNames( 'plan-comparison-grid__plan', getPlanClass( planName ), {
+		'popular-plan-parent-class': featuredLabel,
+		'has-feature': hasFeature,
+		'title-is-subtitle': 'live-chat-support' === featureSlug,
+		'is-left-of-featured': featuredAdjacencyMatrix[ planName ]?.leftOfFeatured,
+		'is-right-of-featured': featuredAdjacencyMatrix[ planName ]?.rightOfFeatured,
+		'is-only-featured': featuredAdjacencyMatrix[ planName ]?.isOnlyFeatured,
+	} );
+
+	return (
+		<Cell key={ planName } isInSignup={ isInSignup } className={ cellClasses } textAlign="center">
+			{ feature.getIcon && (
+				<span className="plan-comparison-grid__plan-image">{ feature.getIcon() }</span>
+			) }
+			<span className="plan-comparison-grid__plan-title">
+				{ feature.getAlternativeTitle?.() || feature.getTitle() }
+			</span>
+			{ feature.getCompareTitle && (
+				<span className="plan-comparison-grid__plan-subtitle">{ feature.getCompareTitle() }</span>
+			) }
+			{ hasFeature ? (
+				<Gridicon icon="checkmark" color="#0675C4" />
+			) : (
+				<Gridicon icon="minus-small" color="#C3C4C7" />
+			) }
+		</Cell>
+	);
+};
+
 const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	feature: FeatureObject;
 	isHiddenInMobile: boolean;
@@ -470,7 +521,6 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	isInSignup,
 } ) => {
 	const featureSlug = feature.getSlug();
-	const featuredAdjacencyMatrix = useFeaturedAdjacencyMatrix( visiblePlansProperties );
 
 	return (
 		<Row
@@ -488,44 +538,17 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 					</JetpackIconContainer>
 				) : null }
 			</RowHead>
-			{ ( visiblePlansProperties ?? [] ).map( ( { planName } ) => {
-				const hasFeature = restructuredFeatures.featureMap[ planName ].has( featureSlug );
-				const isFeatured = isBusinessPlan( planName ) || isPremiumPlan( planName );
-				const cellClasses = classNames( 'plan-comparison-grid__plan', getPlanClass( planName ), {
-					'popular-plan-parent-class': isFeatured,
-					'has-feature': hasFeature,
-					'title-is-subtitle': 'live-chat-support' === featureSlug,
-					'is-left-of-featured': featuredAdjacencyMatrix[ planName ]?.leftOfFeatured,
-					'is-right-of-featured': featuredAdjacencyMatrix[ planName ]?.rightOfFeatured,
-					'is-only-featured': featuredAdjacencyMatrix[ planName ]?.isOnlyFeatured,
-				} );
-
-				return (
-					<Cell
-						key={ planName }
-						isInSignup={ isInSignup }
-						className={ cellClasses }
-						textAlign="center"
-					>
-						{ feature.getIcon && (
-							<span className="plan-comparison-grid__plan-image">{ feature.getIcon() }</span>
-						) }
-						<span className="plan-comparison-grid__plan-title">
-							{ feature.getAlternativeTitle?.() || feature.getTitle() }
-						</span>
-						{ feature.getCompareTitle && (
-							<span className="plan-comparison-grid__plan-subtitle">
-								{ feature.getCompareTitle() }
-							</span>
-						) }
-						{ hasFeature ? (
-							<Gridicon icon="checkmark" color="#0675C4" />
-						) : (
-							<Gridicon icon="minus-small" color="#C3C4C7" />
-						) }
-					</Cell>
-				);
-			} ) }
+			{ ( visiblePlansProperties ?? [] ).map( ( { planName } ) => (
+				<PlanComparisonGridFeatureGroupRowCell
+					feature={ feature }
+					allJetpackFeatures={ allJetpackFeatures }
+					visiblePlansProperties={ visiblePlansProperties }
+					restructuredFeatures={ restructuredFeatures }
+					isInSignup={ isInSignup }
+					planName={ planName }
+					featureSlug={ featureSlug }
+				/>
+			) ) }
 		</Row>
 	);
 };
@@ -748,7 +771,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 								<Row
 									key="feature-storage"
 									isHiddenInMobile={ isHiddenInMobile }
-									className="plan-comparison-grid__feature-storage"
+									className="plan-comparison-grid__feature-row-storage"
 								>
 									<RowHead
 										key="feature-name"
