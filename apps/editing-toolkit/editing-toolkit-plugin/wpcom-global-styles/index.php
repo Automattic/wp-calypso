@@ -265,6 +265,12 @@ function wpcom_global_styles_in_use_by_wp_global_styles_post( array $wp_global_s
  * @return bool Whether the current user can edit the `wp_global_styles` post type.
  */
 function wpcom_global_styles_current_user_can_edit_wp_global_styles( $blog_id = 0 ) {
+	// Non-Simple sites on a lower plan are temporary edge cases.
+	// We skip this check to prevent fatals on non-multisite installations.
+	if ( ! defined( 'IS_WPCOM' ) || ! IS_WPCOM ) {
+		return true;
+	}
+
 	if ( ! $blog_id ) {
 		$blog_id = get_current_blog_id();
 	}
