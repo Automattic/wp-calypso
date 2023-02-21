@@ -273,6 +273,7 @@ private object HappyBlocks : WPComPluginBuild(
 			scriptContent = """
 				yarn translate
 				cd apps/happy-blocks
+				yarn build-translations-manifest
 
 				# Copy existing dist files to release directory
 				mkdir release-files

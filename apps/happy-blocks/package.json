@@ -6,7 +6,7 @@
 	"main": "build/index.js",
 	"scripts": {
 		"build:block": "wp-scripts build",
-		"build": "NODE_ENV=production yarn dev && yarn build-translations-manifest",
+		"build": "NODE_ENV=production yarn dev",
 		"build-ci": "yarn build && ./bin/prepArtifactForCI.sh",
 		"build-translations-manifest": "node bin/build-translations-manifest.js",
 		"test": "jest test",
