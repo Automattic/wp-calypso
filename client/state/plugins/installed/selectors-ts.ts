@@ -240,5 +240,6 @@ export const getPluginsOnSite = createSelector(
 	},
 	( state, siteId, pluginSlugs ) => [
 		...pluginSlugs.map( ( pluginSlug ) => getPluginOnSite( state, siteId, pluginSlug ) ),
-	]
+	],
+	( state, siteId, pluginSlugs ) => [ siteId, ...pluginSlugs ].join()
 );
