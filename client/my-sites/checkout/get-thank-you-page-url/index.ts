@@ -86,6 +86,7 @@ export interface PostCheckoutUrlArguments {
 	purchaseId?: number | string;
 	feature?: string;
 	cart?: ResponseCart;
+	isAkismetSitelessCheckout: boolean;
 	isJetpackNotAtomic?: boolean;
 	productAliasFromUrl?: string;
 	getUrlFromCookie?: GetUrlFromCookie;
@@ -122,6 +123,7 @@ export default function getThankYouPageUrl( {
 	purchaseId,
 	feature,
 	cart,
+	isAkismetSitelessCheckout = false,
 	isJetpackNotAtomic,
 	productAliasFromUrl,
 	getUrlFromCookie = retrieveSignupDestination,
@@ -232,6 +234,15 @@ export default function getThankYouPageUrl( {
 			},
 			thankYouUrl
 		);
+	}
+
+	// Asismet site-less checkout
+	if ( isAkismetSitelessCheckout ) {
+		// extract a product from the cart, in siteless checkout there should only be one
+		const productSlug = cart?.products[ 0 ]?.product_slug ?? 'no_product';
+
+		debug( 'redirecting to siteless Akismet thank you' );
+		return `/checkout/akismet/thank-you/${ productSlug }`;
 	}
 
 	// If there is no purchase, then send the user to a generic page (not

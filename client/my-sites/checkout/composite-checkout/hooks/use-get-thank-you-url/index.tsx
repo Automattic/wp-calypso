@@ -30,6 +30,7 @@ export default function useGetThankYouUrl( {
 	purchaseId,
 	feature,
 	cart,
+	isAkismetSitelessCheckout = false,
 	isJetpackNotAtomic,
 	productAliasFromUrl,
 	hideNudge,
@@ -49,6 +50,7 @@ export default function useGetThankYouUrl( {
 			purchaseId,
 			feature,
 			cart,
+			isAkismetSitelessCheckout,
 			isJetpackNotAtomic,
 			productAliasFromUrl,
 			hideNudge,
@@ -66,6 +68,7 @@ export default function useGetThankYouUrl( {
 		isInModal,
 		siteSlug,
 		adminUrl,
+		isAkismetSitelessCheckout,
 		isJetpackNotAtomic,
 		productAliasFromUrl,
 		redirectTo,
@@ -85,6 +88,7 @@ export interface GetThankYouUrlProps {
 	purchaseId?: number | undefined;
 	feature?: string | undefined;
 	cart: ResponseCart;
+	isAkismetSitelessCheckout?: boolean;
 	isJetpackNotAtomic?: boolean;
 	productAliasFromUrl?: string | undefined;
 	hideNudge?: boolean;

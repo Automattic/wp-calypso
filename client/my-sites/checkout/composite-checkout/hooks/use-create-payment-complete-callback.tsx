@@ -58,6 +58,7 @@ export default function useCreatePaymentCompleteCallback( {
 	isComingFromUpsell,
 	disabledThankYouPage,
 	siteSlug,
+	isAkismetSitelessCheckout = false,
 	isJetpackCheckout = false,
 	checkoutFlow,
 }: {
@@ -70,6 +71,7 @@ export default function useCreatePaymentCompleteCallback( {
 	isComingFromUpsell?: boolean;
 	disabledThankYouPage?: boolean;
 	siteSlug: string | undefined;
+	isAkismetSitelessCheckout?: boolean;
 	isJetpackCheckout?: boolean;
 	checkoutFlow?: string;
 } ): PaymentEventCallback {
@@ -101,6 +103,7 @@ export default function useCreatePaymentCompleteCallback( {
 
 			// In the case of a Jetpack product site-less purchase, we need to include the blog ID of the
 			// created site in the Thank You page URL.
+			// TODO: It does not seem like this would be needed for Akismet, but marking to follow up
 			let jetpackTemporarySiteId;
 			if ( isJetpackCheckout && ! siteSlug && responseCart.create_new_blog ) {
 				jetpackTemporarySiteId =
@@ -115,6 +118,7 @@ export default function useCreatePaymentCompleteCallback( {
 				purchaseId,
 				feature,
 				cart: responseCart,
+				isAkismetSitelessCheckout,
 				isJetpackNotAtomic,
 				productAliasFromUrl,
 				hideNudge: isComingFromUpsell,

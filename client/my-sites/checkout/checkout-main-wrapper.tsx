@@ -39,6 +39,7 @@ export default function CheckoutMainWrapper( {
 	plan,
 	selectedSite,
 	redirectTo,
+	isAkismetSitelessCheckout,
 	isLoggedOutCart,
 	isNoSiteCart,
 	isJetpackCheckout,
@@ -56,6 +57,7 @@ export default function CheckoutMainWrapper( {
 	plan?: string;
 	selectedSite?: { slug?: string };
 	redirectTo?: string;
+	isAkismetSitelessCheckout?: boolean;
 	isLoggedOutCart?: boolean;
 	isNoSiteCart?: boolean;
 	isJetpackCheckout?: boolean;
@@ -117,6 +119,7 @@ export default function CheckoutMainWrapper( {
 							plan={ plan }
 							isComingFromUpsell={ isComingFromUpsell }
 							infoMessage={ prepurchaseNotices }
+							isAkismetSitelessCheckout={ isAkismetSitelessCheckout }
 							isLoggedOutCart={ isLoggedOutCart }
 							isNoSiteCart={ isNoSiteCart }
 							isJetpackCheckout={ isJetpackCheckout }

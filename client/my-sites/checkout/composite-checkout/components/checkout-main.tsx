@@ -89,8 +89,10 @@ export default function CheckoutMain( {
 	isInModal,
 	onAfterPaymentComplete,
 	disabledThankYouPage,
+	isAkismetSitelessCheckout = false,
 	isJetpackCheckout = false,
 	jetpackSiteSlug,
+	akismetSiteSlug,
 	jetpackPurchaseToken,
 	isUserComingFromLoginForm,
 	customizedPreviousPath,
@@ -117,8 +119,10 @@ export default function CheckoutMain( {
 	// `getThankYouUrl`.
 	onAfterPaymentComplete?: () => void;
 	disabledThankYouPage?: boolean;
+	isAkismetSitelessCheckout?: boolean;
 	isJetpackCheckout?: boolean;
 	jetpackSiteSlug?: string;
+	akismetSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
 	customizedPreviousPath?: string;
@@ -133,9 +137,14 @@ export default function CheckoutMain( {
 	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
 	const createUserAndSiteBeforeTransaction =
-		Boolean( isLoggedOutCart || isNoSiteCart ) && ! isJetpackCheckout;
+		Boolean( isLoggedOutCart || isNoSiteCart ) &&
+		! isJetpackCheckout &&
+		! isAkismetSitelessCheckout;
 	const reduxDispatch = useDispatch();
-	const updatedSiteSlug = isJetpackCheckout ? jetpackSiteSlug : siteSlug;
+	let updatedSiteSlug = isJetpackCheckout ? jetpackSiteSlug : siteSlug;
+	if ( isAkismetSitelessCheckout ) {
+		updatedSiteSlug = akismetSiteSlug;
+	}
 
 	const showErrorMessageBriefly = useCallback(
 		( error ) => {
@@ -152,6 +161,7 @@ export default function CheckoutMain( {
 
 	const checkoutFlow = useCheckoutFlowTrackKey( {
 		hasJetpackSiteSlug: !! jetpackSiteSlug,
+		isAkismetSitelessCheckout,
 		isJetpackCheckout,
 		isJetpackNotAtomic,
 		isLoggedOutCart,
@@ -171,6 +181,7 @@ export default function CheckoutMain( {
 		usesJetpackProducts: isJetpackNotAtomic,
 		isPrivate,
 		siteSlug: updatedSiteSlug,
+		isAkismetSitelessCheckout,
 		isLoggedOutCart,
 		isNoSiteCart,
 		isJetpackCheckout,
@@ -192,7 +203,11 @@ export default function CheckoutMain( {
 		addProductsToCart,
 	} = useShoppingCart( cartKey );
 
-	const updatedSiteId = isJetpackCheckout ? parseInt( String( responseCart.blog_id ), 10 ) : siteId;
+	// For site-less checkouts, get the blog ID from the cart response
+	const updatedSiteId =
+		isJetpackCheckout || isAkismetSitelessCheckout
+			? parseInt( String( responseCart.blog_id ), 10 )
+			: siteId;
 
 	const isInitialCartLoading = useAddProductsFromUrl( {
 		isLoadingCart,
@@ -230,6 +245,7 @@ export default function CheckoutMain( {
 		isJetpackNotAtomic,
 		productAliasFromUrl,
 		hideNudge: !! isComingFromUpsell,
+		isAkismetSitelessCheckout,
 		isInModal,
 		isJetpackCheckout,
 		domains,
@@ -363,6 +379,7 @@ export default function CheckoutMain( {
 		updatedSiteSlug,
 		feature,
 		plan,
+		isAkismetSitelessCheckout,
 		isJetpackCheckout,
 		checkoutFlow
 	);
@@ -557,6 +574,7 @@ export default function CheckoutMain( {
 		isComingFromUpsell,
 		disabledThankYouPage,
 		siteSlug: updatedSiteSlug,
+		isAkismetSitelessCheckout,
 		isJetpackCheckout,
 		checkoutFlow,
 	} );
@@ -680,7 +698,10 @@ export default function CheckoutMain( {
 				path={ analyticsPath }
 				title="Checkout"
 				properties={ analyticsProps }
-				options={ { useJetpackGoogleAnalytics: isJetpackCheckout || isJetpackNotAtomic } }
+				options={ {
+					useJetpackGoogleAnalytics: isJetpackCheckout || isJetpackNotAtomic,
+					useAkismetGoogleAnalytics: isAkismetSitelessCheckout,
+				} }
 			/>
 			<CheckoutProvider
 				total={ total }
@@ -726,6 +747,7 @@ function getAnalyticsPath(
 	selectedSiteSlug: string | undefined,
 	selectedFeature: string | undefined,
 	plan: string | undefined,
+	isAkismetSitelessCheckout: boolean,
 	isJetpackCheckout: boolean,
 	checkoutFlow: string
 ): { analyticsPath: string; analyticsProps: Record< string, string > } {
@@ -735,6 +757,7 @@ function getAnalyticsPath(
 		selectedSiteSlug,
 		selectedFeature,
 		plan,
+		isAkismetSitelessCheckout,
 		isJetpackCheckout,
 		checkoutFlow,
 	} );
@@ -765,6 +788,10 @@ function getAnalyticsPath(
 
 	if ( isJetpackCheckout ) {
 		analyticsPath = analyticsPath.replace( 'checkout', 'checkout/jetpack' );
+	}
+
+	if ( isAkismetSitelessCheckout ) {
+		analyticsPath = analyticsPath.replace( 'checkout', 'checkout/akismet' );
 	}
 
 	return { analyticsPath, analyticsProps };

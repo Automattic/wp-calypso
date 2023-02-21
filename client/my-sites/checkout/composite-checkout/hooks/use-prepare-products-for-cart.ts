@@ -41,6 +41,7 @@ export default function usePrepareProductsForCart( {
 	usesJetpackProducts,
 	isPrivate,
 	siteSlug,
+	isAkismetSitelessCheckout,
 	isLoggedOutCart,
 	isNoSiteCart,
 	isJetpackCheckout,
@@ -55,6 +56,7 @@ export default function usePrepareProductsForCart( {
 	usesJetpackProducts: boolean;
 	isPrivate: boolean;
 	siteSlug: string | undefined;
+	isAkismetSitelessCheckout: boolean;
 	isLoggedOutCart?: boolean;
 	isNoSiteCart?: boolean;
 	isJetpackCheckout?: boolean;
@@ -72,6 +74,8 @@ export default function usePrepareProductsForCart( {
 		originalPurchaseId,
 		'and isLoggedOutCart',
 		isLoggedOutCart,
+		'and isAkismetSitelessCheckout',
+		isAkismetSitelessCheckout,
 		'and isNoSiteCart',
 		isNoSiteCart,
 		'and isJetpackCheckout',
@@ -88,6 +92,7 @@ export default function usePrepareProductsForCart( {
 		isLoading: state.isLoading,
 		originalPurchaseId,
 		productAliasFromUrl,
+		isAkismetSitelessCheckout,
 		isLoggedOutCart,
 		isNoSiteCart,
 		isJetpackCheckout,
@@ -108,6 +113,7 @@ export default function usePrepareProductsForCart( {
 		usesJetpackProducts,
 		isPrivate,
 		addHandler,
+		isAkismetSitelessCheckout,
 		isJetpackCheckout,
 		jetpackSiteSlug,
 		jetpackPurchaseToken,
@@ -125,7 +131,10 @@ export default function usePrepareProductsForCart( {
 	// Do not strip products from url until the URL has been parsed
 	const areProductsRetrievedFromUrl = ! state.isLoading && ! isInModal;
 	const doNotStripProducts = Boolean(
-		! areProductsRetrievedFromUrl || isJetpackCheckout || isGiftPurchase
+		! areProductsRetrievedFromUrl ||
+			isJetpackCheckout ||
+			isAkismetSitelessCheckout ||
+			isGiftPurchase
 	);
 	useStripProductsFromUrl( siteSlug, doNotStripProducts );
 
@@ -165,6 +174,7 @@ function chooseAddHandler( {
 	isLoading,
 	originalPurchaseId,
 	productAliasFromUrl,
+	isAkismetSitelessCheckout,
 	isLoggedOutCart,
 	isNoSiteCart,
 	isJetpackCheckout,
@@ -173,12 +183,13 @@ function chooseAddHandler( {
 	isLoading: boolean;
 	originalPurchaseId: string | number | null | undefined;
 	productAliasFromUrl: string | null | undefined;
+	isAkismetSitelessCheckout: boolean;
 	isLoggedOutCart?: boolean;
 	isNoSiteCart?: boolean;
 	isJetpackCheckout?: boolean;
 	isGiftPurchase?: boolean;
 } ): AddHandler {
-	if ( isJetpackCheckout ) {
+	if ( isJetpackCheckout || isAkismetSitelessCheckout ) {
 		return 'addProductFromSlug';
 	}
 
@@ -316,6 +327,7 @@ function useAddProductFromSlug( {
 	usesJetpackProducts,
 	isPrivate,
 	addHandler,
+	isAkismetSitelessCheckout,
 	isJetpackCheckout,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
@@ -326,6 +338,7 @@ function useAddProductFromSlug( {
 	usesJetpackProducts: boolean;
 	isPrivate: boolean;
 	addHandler: AddHandler;
+	isAkismetSitelessCheckout: boolean;
 	isJetpackCheckout?: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
@@ -360,6 +373,7 @@ function useAddProductFromSlug( {
 			createItemToAddToCart( {
 				productSlug: product.productSlug,
 				productAlias: product.productAlias,
+				isAkismetSitelessCheckout,
 				isJetpackCheckout,
 				jetpackSiteSlug,
 				jetpackPurchaseToken,
@@ -398,6 +412,7 @@ function useAddProductFromSlug( {
 		usesJetpackProducts,
 		productAliasFromUrl,
 		validProducts,
+		isAkismetSitelessCheckout,
 		isJetpackCheckout,
 		dispatch,
 		jetpackSiteSlug,
@@ -509,6 +524,7 @@ function createRenewalItemToAddToCart( {
 function createItemToAddToCart( {
 	productSlug,
 	productAlias,
+	isAkismetSitelessCheckout,
 	isJetpackCheckout,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
@@ -516,6 +532,7 @@ function createItemToAddToCart( {
 }: {
 	productSlug: string;
 	productAlias: string;
+	isAkismetSitelessCheckout?: boolean;
 	isJetpackCheckout?: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
@@ -543,6 +560,7 @@ function createItemToAddToCart( {
 		product_slug: productSlug,
 		quantity,
 		extra: {
+			isAkismetSitelessCheckout,
 			isJetpackCheckout,
 			jetpackSiteSlug,
 			jetpackPurchaseToken,
