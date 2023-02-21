@@ -121,7 +121,6 @@ describe( 'CheckoutMain with a variant picker', () => {
 						>
 							<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
 								<CheckoutMain
-									forceRadioButtons={ true }
 									siteId={ siteId }
 									siteSlug="foo.com"
 									getStoredCards={ async () => [] }
@@ -149,16 +148,18 @@ describe( 'CheckoutMain with a variant picker', () => {
 			getPlansBySiteId.mockImplementation( () => ( {
 				data: getActivePersonalPlanDataForType( activePlan ),
 			} ) );
+			const user = userEvent.setup();
 			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
 			render( <MyCheckout cartChanges={ cartChanges } /> );
 
-			await screen.findByLabelText( 'Pick a product term' );
+			const openVariantPicker = await screen.findByLabelText( 'Pick a product term' );
+			await user.click( openVariantPicker );
 
 			expect(
-				await screen.findByRole( 'radio', {
+				await screen.findByRole( 'option', {
 					name: getVariantItemTextForInterval( expectedVariant ),
 				} )
-			).toBeInTheDocument();
+			).toBeVisible();
 		}
 	);
 
@@ -178,7 +179,8 @@ describe( 'CheckoutMain with a variant picker', () => {
 			render( <MyCheckout cartChanges={ cartChanges } /> );
 
 			// Open the variant picker
-			await screen.findByLabelText( 'Pick a product term' );
+			let openVariantPicker = await screen.findByLabelText( 'Pick a product term' );
+			await user.click( openVariantPicker );
 
 			// Select the new variant
 			const variantOption = await screen.findByLabelText(
@@ -189,11 +191,15 @@ describe( 'CheckoutMain with a variant picker', () => {
 			// Wait for the cart to refresh with the new variant
 			await screen.findByText( getPlanSubtitleTextForInterval( cartPlan ) );
 
+			// Open the variant picker again so we can look for the result
+			openVariantPicker = await screen.findByLabelText( 'Pick a product term' );
+			await user.click( openVariantPicker );
+
 			expect(
-				await screen.findByRole( 'radio', {
+				await screen.findByRole( 'option', {
 					name: getVariantItemTextForInterval( expectedVariant ),
 				} )
-			).toBeInTheDocument();
+			).toBeVisible();
 		}
 	);
 
@@ -206,15 +212,17 @@ describe( 'CheckoutMain with a variant picker', () => {
 			getPlansBySiteId.mockImplementation( () => ( {
 				data: getActivePersonalPlanDataForType( activePlan ),
 			} ) );
+			const user = userEvent.setup();
 			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
 			nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 			nock( 'https://public-api.wordpress.com' ).get( '/rest/v1.1/me/vat-info' ).reply( 200, {} );
 			render( <MyCheckout cartChanges={ cartChanges } /> );
 
-			await screen.findByLabelText( 'Pick a product term' );
+			const openVariantPicker = await screen.findByLabelText( 'Pick a product term' );
+			await user.click( openVariantPicker );
 
 			await expect(
-				screen.findByRole( 'radio', {
+				screen.findByRole( 'option', {
 					name: getVariantItemTextForInterval( expectedVariant ),
 				} )
 			).toNeverAppear();
@@ -227,18 +235,19 @@ describe( 'CheckoutMain with a variant picker', () => {
 			getPlansBySiteId.mockImplementation( () => ( {
 				data: getActivePersonalPlanDataForType( activePlan ),
 			} ) );
+			const user = userEvent.setup();
 			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
 			render( <MyCheckout cartChanges={ cartChanges } /> );
 
-			const variantPicker = await screen.findByLabelText( 'Pick a product term' );
+			const openVariantPicker = await screen.findByLabelText( 'Pick a product term' );
+			await user.click( openVariantPicker );
 
-			const currentVariantItem = await screen.findByRole( 'radio', {
+			const currentVariantItem = await screen.findByRole( 'option', {
 				name: getVariantItemTextForInterval( cartPlan ),
 			} );
-			const variantItem = await screen.findByRole( 'radio', {
+			const variantItem = await screen.findByRole( 'option', {
 				name: getVariantItemTextForInterval( expectedVariant ),
 			} );
-			const variantItemLabel = variantPicker.querySelector( `label[for='${ variantItem.id }']` );
 
 			const currentVariantSlug = currentVariantItem.dataset.productSlug;
 			const variantSlug = variantItem.dataset.productSlug;
@@ -258,7 +267,7 @@ describe( 'CheckoutMain with a variant picker', () => {
 
 			const discountPercentage = Math.floor( 100 - ( finalPrice / priceBeforeDiscount ) * 100 );
 			expect(
-				within( variantItemLabel as HTMLElement ).getByText( `Save ${ discountPercentage }%` )
+				within( variantItem ).getByText( `Save ${ discountPercentage }%` )
 			).toBeInTheDocument();
 		}
 	);
