@@ -1,13 +1,15 @@
 import { Button, Card, Spinner } from '@automattic/components';
+import { sprintf } from '@wordpress/i18n';
 import i18n, { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import SocialLogo from 'calypso/components/social-logo';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { DeploymentStatusBadge } from './deployment-status-badge';
 import { DeploymentStatusExplanation } from './deployment-status-explanation';
 import { useDeploymentStatusQuery } from './use-deployment-status-query';
-
+import { useGithubDisconnectRepoMutation } from './use-disconnect-repo';
 import './style.scss';
 
 type DeploymentCardProps = {
@@ -15,6 +17,10 @@ type DeploymentCardProps = {
 	branch: string;
 	connectionId: number;
 };
+const noticeOptions = {
+	duration: 3000,
+};
+
 export const DeploymentCard = ( { repo, branch, connectionId }: DeploymentCardProps ) => {
 	let deploymentTime = '';
 	let totalFailures = 0;
@@ -31,6 +37,25 @@ export const DeploymentCard = ( { repo, branch, connectionId }: DeploymentCardPr
 			timeStyle: 'short',
 		} ).format( new Date( deployment.last_deployment_timestamp * 1000 ) );
 	}
+
+	const dispatch = useDispatch();
+
+	const { disconnectRepo, isLoading: isDisconnecting } = useGithubDisconnectRepoMutation( siteId, {
+		onSuccess: () => {
+			dispatch( successNotice( translate( 'Disconnected from repository successfully' ) ) );
+		},
+		onError: ( error ) => {
+			dispatch(
+				errorNotice(
+					// translators: "reason" is why disconnecting the branch failed.
+					sprintf( translate( 'Failed to disconnect: %(reason)s' ), { reason: error.message } ),
+					{
+						...noticeOptions,
+					}
+				)
+			);
+		},
+	} );
 
 	return (
 		<Card>
@@ -95,7 +120,7 @@ export const DeploymentCard = ( { repo, branch, connectionId }: DeploymentCardPr
 					</div>
 				) }
 			</div>
-			<Button primary>
+			<Button primary busy={ isDisconnecting } onClick={ () => disconnectRepo( siteId ) }>
 				<span>{ translate( 'Disconnect repository' ) }</span>
 			</Button>
 		</Card>
