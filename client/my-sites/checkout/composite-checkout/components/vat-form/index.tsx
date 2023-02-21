@@ -15,6 +15,7 @@ const countriesSupportingVat = [
 	'AT',
 	'BE',
 	'BG',
+	'CH',
 	'CY',
 	'CZ',
 	'DE',
@@ -24,6 +25,7 @@ const countriesSupportingVat = [
 	'ES',
 	'FI',
 	'FR',
+	'GB',
 	'HR',
 	'HU',
 	'IE',
@@ -39,7 +41,6 @@ const countriesSupportingVat = [
 	'SE',
 	'SI',
 	'SK',
-	'GB',
 	'XI',
 ];
 
