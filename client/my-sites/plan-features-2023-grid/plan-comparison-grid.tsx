@@ -27,6 +27,7 @@ import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
 import PopularBadge from './components/popular-badge';
 import PlanFeatures2023GridHeaderPrice from './header-price';
 import useHighlightAdjacencyMatrix from './hooks/use-highlight-adjacency-matrix';
+import useHighlightLabel from './hooks/use-highlight-label';
 import { plansBreakSmall, plansBreakLarge } from './media-queries';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import { PlanProperties } from './types';
@@ -309,18 +310,18 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 } ) => {
 	const { planName, planConstantObj, availableForPurchase, current, ...planPropertiesObj } =
 		planProperties;
-	const featuredLabel = useFeaturedLabel( planName );
+	const highlightLabel = useHighlightLabel( planName );
 	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
-	const featuredAdjacencyMatrix = useFeaturedAdjacencyMatrix( visiblePlansProperties );
+	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( visiblePlansProperties );
 
 	const headerClasses = classNames( 'plan-comparison-grid__header-cell', getPlanClass( planName ), {
-		'popular-plan-parent-class': featuredLabel,
+		'popular-plan-parent-class': highlightLabel,
 		'is-last-in-row': isLastInRow,
 		'plan-is-footer': isFooter,
-		'is-left-of-featured': featuredAdjacencyMatrix[ planName ]?.leftOfFeatured,
-		'is-right-of-featured': featuredAdjacencyMatrix[ planName ]?.rightOfFeatured,
-		'is-only-featured': featuredAdjacencyMatrix[ planName ]?.isOnlyFeatured,
+		'is-left-of-highlight': highlightAdjacencyMatrix[ planName ]?.leftOfHighlight,
+		'is-right-of-highlight': highlightAdjacencyMatrix[ planName ]?.rightOfHighlight,
+		'is-only-highlight': highlightAdjacencyMatrix[ planName ]?.isOnlyHighlight,
 		'is-current-plan': current,
 	} );
 
@@ -471,21 +472,21 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 } ) => {
 	const translate = useTranslate();
 	const featureSlug = feature?.getSlug();
-	const featuredAdjacencyMatrix = useFeaturedAdjacencyMatrix( visiblePlansProperties );
+	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( visiblePlansProperties );
 	const hasFeature =
 		isStorageFeature ||
 		( featureSlug ? restructuredFeatures.featureMap[ planName ].has( featureSlug ) : false );
 	const storageOption = restructuredFeatures.planStorageOptionsMap[ planName ];
 	const [ storageFeature ] = getPlanFeaturesObject( [ storageOption ] );
 
-	const featuredLabel = useFeaturedLabel( planName );
+	const highlightLabel = useHighlightLabel( planName );
 	const cellClasses = classNames( 'plan-comparison-grid__plan', getPlanClass( planName ), {
-		'popular-plan-parent-class': featuredLabel,
+		'popular-plan-parent-class': highlightLabel,
 		'has-feature': hasFeature,
 		'title-is-subtitle': 'live-chat-support' === featureSlug,
-		'is-left-of-featured': featuredAdjacencyMatrix[ planName ]?.leftOfFeatured,
-		'is-right-of-featured': featuredAdjacencyMatrix[ planName ]?.rightOfFeatured,
-		'is-only-featured': featuredAdjacencyMatrix[ planName ]?.isOnlyFeatured,
+		'is-left-of-highlight': highlightAdjacencyMatrix[ planName ]?.leftOfHighlight,
+		'is-right-of-highlight': highlightAdjacencyMatrix[ planName ]?.rightOfHighlight,
+		'is-only-highlight': highlightAdjacencyMatrix[ planName ]?.isOnlyHighlight,
 	} );
 
 	return (
