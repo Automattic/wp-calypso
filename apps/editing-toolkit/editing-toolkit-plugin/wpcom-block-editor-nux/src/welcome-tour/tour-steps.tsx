@@ -64,7 +64,7 @@ function getTourSteps(
 	referencePositioning = false,
 	isSiteEditor = false,
 	themeName: string | null = null,
-	siteIntent: string | undefined
+	siteIntent: string | undefined = undefined
 ): WpcomStep[] {
 	const completedFlow = getQueryArg( window.location.href, 'completedFlow' );
 	const isVideoMaker = 'videomaker' === ( themeName ?? '' );
