@@ -5,7 +5,7 @@ import {
 	isJetpackCompleteSlug,
 	isJetpackScanSlug,
 	isJetpackSearchSlug,
-	isJetpackSecuritySlug,
+	isJetpackSecurityT1Slug,
 	isJetpackSocialBasicSlug,
 	isJetpackSocialAdvancedSlug,
 	isJetpackVideoPressSlug,
@@ -142,7 +142,7 @@ export default function getJetpackProductFeatures(
 		return getFeatureStrings( 'search', translate );
 	}
 
-	if ( isJetpackSecuritySlug( product.product_slug ) ) {
+	if ( isJetpackSecurityT1Slug( product.product_slug ) ) {
 		// Filter out these strings for Security to avoid clutter
 		const securityExcludes = [
 			translate( '10K API calls per month' ),

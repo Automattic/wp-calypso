@@ -95,6 +95,7 @@ export { isSecurityRealTime } from './is-security-realtime';
 export { isSecurityT1 } from './is-security-t1';
 export { isSecurityT2 } from './is-security-t2';
 export { isJetpackSecuritySlug } from './is-jetpack-security-slug';
+export { isJetpackSecurityT1Slug } from './is-jetpack-security-t1-slug';
 export { isThemePurchase } from './is-theme-purchase';
 export { isTitanMail } from './is-titan-mail';
 export { isTitanMailMonthly } from './is-titan-mail-monthly';
