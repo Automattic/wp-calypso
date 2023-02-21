@@ -28,7 +28,6 @@ export const useDeploymentStatus = (
 			meta: {
 				persist: false,
 			},
-			refetchOnWindowFocus: false,
 			...options,
 			refetchInterval: 5000,
 		}

@@ -69,7 +69,7 @@ export const DeploymentCard = ( { repo, branch }: DeploymentCardProps ) => {
 							<div className="deployment-card__column">
 								<a
 									target="_blank"
-									href={ `https://github.com/${ repo }/${ deployment.last_deployment_sha }` }
+									href={ `https://github.com/${ repo }/commit/${ deployment.last_deployment_sha }` }
 									rel="noreferrer"
 								>
 									{ deployment.last_deployment_sha.substring( 0, 7 ) }
