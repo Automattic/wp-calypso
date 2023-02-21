@@ -3,15 +3,7 @@
  */
 import { filterDomainUpsellTask, getArrayOfFilteredTasks, getEnhancedTasks } from '../task-helper';
 import { tasks, launchpadFlowTasks } from '../tasks';
-import {
-	LINK_IN_BIO_FLOW,
-	FREE_FLOW,
-	WRITE_FLOW,
-	BUILD_FLOW,
-	NEWSLETTER_FLOW,
-	VIDEOPRESS_FLOW,
-} from './../../../../../../../../packages/onboarding/src/utils/flows';
-import { buildTask, buildSiteDetails, defaultSiteDetails } from './lib/fixtures';
+import { buildTask, buildSiteDetails } from './lib/fixtures';
 
 describe( 'Task Helpers', () => {
 	describe( 'getEnhancedTasks', () => {
@@ -100,8 +92,8 @@ describe( 'Task Helpers', () => {
 	} );
 
 	describe( 'filterDomainUpsellTask', () => {
-		describe( 'when site plan is free and affected flow (free, build, write, link-in-bio, newsletter)', () => {
-			it( 'return original enhanceTasks', () => {
+		describe( 'when site plan is free', () => {
+			it( 'return original enchanceTasks', () => {
 				const task = buildTask( {
 					id: 'domain_upsell',
 					completed: false,
@@ -110,38 +102,17 @@ describe( 'Task Helpers', () => {
 					title: 'domain upsell task',
 				} );
 				const tasks = [ task ];
-				const site = defaultSiteDetails;
-				const freeFlow = FREE_FLOW;
-				const writeFlow = WRITE_FLOW;
-				const buildFlow = BUILD_FLOW;
-				const linkInBioFlow = LINK_IN_BIO_FLOW;
-				const newsletterFlow = NEWSLETTER_FLOW;
-				expect( filterDomainUpsellTask( freeFlow, tasks, site ) ).toBe( tasks );
-				expect( filterDomainUpsellTask( writeFlow, tasks, site ) ).toBe( tasks );
-				expect( filterDomainUpsellTask( buildFlow, tasks, site ) ).toBe( tasks );
-				expect( filterDomainUpsellTask( linkInBioFlow, tasks, site ) ).toBe( tasks );
-				expect( filterDomainUpsellTask( newsletterFlow, tasks, site ) ).toBe( tasks );
+				const site = buildSiteDetails( { plan: { is_free: true } } );
+				// domain_upsell is still in the array
+				expect(
+					filterDomainUpsellTask( tasks, site )?.findIndex(
+						( task ) => ( task.id = 'domain_upsell' )
+					)
+				).toBe( 0 );
 			} );
 		} );
-
-		describe( 'when unaffected flow', () => {
-			it( 'return original enhanceTasks', () => {
-				const task = buildTask( {
-					id: 'domain_upsell',
-					completed: false,
-					disabled: true,
-					taskType: 'blog',
-					title: 'domain upsell task',
-				} );
-				const tasks = [ task ];
-				const site = defaultSiteDetails;
-				const videopressFlow = VIDEOPRESS_FLOW;
-				expect( filterDomainUpsellTask( videopressFlow, tasks, site ) ).toBe( tasks );
-			} );
-		} );
-
-		describe( 'when site plan is not free and affected flow (free, build, write, link-in-bio, newsletter)', () => {
-			it( 'return enhanceTask array with domain_upsell task removed', () => {
+		describe( 'when site plan is not free', () => {
+			it( 'filters out the domain_upsell task', () => {
 				const task = buildTask( {
 					id: 'domain_upsell',
 					completed: false,
@@ -151,32 +122,12 @@ describe( 'Task Helpers', () => {
 				} );
 				const tasks = [ task ];
 				const site = buildSiteDetails( { plan: { is_free: false } } );
-
-				const freeFlow = FREE_FLOW;
-				const writeFlow = WRITE_FLOW;
-				const buildFlow = BUILD_FLOW;
-				const linkInBioFlow = LINK_IN_BIO_FLOW;
-				const newsletterFlow = NEWSLETTER_FLOW;
-				expect( filterDomainUpsellTask( freeFlow, tasks, site ) ).toHaveLength( 0 );
-				expect( filterDomainUpsellTask( writeFlow, tasks, site ) ).toHaveLength( 0 );
-				expect( filterDomainUpsellTask( buildFlow, tasks, site ) ).toHaveLength( 0 );
-				expect( filterDomainUpsellTask( linkInBioFlow, tasks, site ) ).toHaveLength( 0 );
-				expect( filterDomainUpsellTask( newsletterFlow, tasks, site ) ).toHaveLength( 0 );
-			} );
-		} );
-
-		describe( 'when site plan is not free and not affected flow', () => {
-			it( 'return enhanceTask array with domain_upsell task removed', () => {
-				const tasks = buildTask( {
-					id: 'domain_upsell',
-					completed: false,
-					disabled: true,
-					taskType: 'blog',
-					title: 'domain upsell task',
-				} );
-				const site = buildSiteDetails( {} );
-				const videopressFlow = VIDEOPRESS_FLOW;
-				expect( filterDomainUpsellTask( videopressFlow, tasks, site ) ).toBe( tasks );
+				// domain_upsell is NOT in the array
+				expect(
+					filterDomainUpsellTask( tasks, site )?.findIndex(
+						( task ) => ( task.id = 'domain_upsell' )
+					)
+				).toBe( -1 );
 			} );
 		} );
 	} );

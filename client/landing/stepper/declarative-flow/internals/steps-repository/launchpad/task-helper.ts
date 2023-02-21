@@ -4,17 +4,6 @@ import {
 	PLAN_PREMIUM,
 	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 } from '@automattic/calypso-products';
-import {
-	FREE_FLOW,
-	BUILD_FLOW,
-	WRITE_FLOW,
-	LINK_IN_BIO_FLOW,
-	LINK_IN_BIO_TLD_FLOW,
-	NEWSLETTER_FLOW,
-	isFreeFlow,
-	isBuildFlow,
-	isWriteFlow,
-} from '@automattic/onboarding';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -363,22 +352,9 @@ export function getArrayOfFilteredTasks( tasks: Task[], flow: string | null ) {
 	);
 }
 
-// Returns enhanced task list with domain_upsell task removed
-// Only applies to Free, Write, Build, Link in Bio, & Newsletter flow sites with paid plan
-export function filterDomainUpsellTask(
-	flow: string | null,
-	enhancedTasks: Task[] | null,
-	site: SiteDetails | null
-) {
-	const flowsAffected = [
-		FREE_FLOW,
-		BUILD_FLOW,
-		WRITE_FLOW,
-		LINK_IN_BIO_FLOW,
-		LINK_IN_BIO_TLD_FLOW,
-		NEWSLETTER_FLOW,
-	];
-	if ( flow && flowsAffected.includes( flow ) && enhancedTasks && ! site?.plan?.is_free ) {
+// Filter out the domain_upsell task from the enhanced task list when the user is not on a free plan anymore
+export function filterDomainUpsellTask( enhancedTasks: Task[] | null, site: SiteDetails | null ) {
+	if ( enhancedTasks && ! site?.plan?.is_free ) {
 		return enhancedTasks?.filter( ( task ) => {
 			return task.id !== 'domain_upsell';
 		} );
