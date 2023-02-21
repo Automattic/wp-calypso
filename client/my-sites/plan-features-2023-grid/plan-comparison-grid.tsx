@@ -810,59 +810,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 									isInSignup={ isInSignup }
 									isStorageFeature={ true }
 								/>
-							) : // 		<Row key="feature-storage" isHiddenInMobile={ isHiddenInMobile }>
-							// 			<RowHead
-							// 				key="feature-name"
-							// 				className="plan-comparison-grid__feature-feature-name storage"
-							// 			>
-							// 				<Plans2023Tooltip
-							// 					text={ translate( 'Space to store your photos, media, and more.' ) }
-							// 				>
-							// 					{ translate( 'Storage' ) }
-							// 				</Plans2023Tooltip>
-							// 			</RowHead>
-							// 			{ ( visiblePlansProperties ?? [] ).map( ( { planName } ) => {
-							// 				const storageFeature = restructuredFeatures.planStorageOptionsMap[ planName ];
-							// 				const [ featureObject ] = getPlanFeaturesObject( [ storageFeature ] );
-
-							// 				const isFeatured =
-							// 					isBusinessPlan( planName ) ||
-							// 					isPremiumPlan( planName ) ||
-							// 					isEcommercePlan( planName );
-							// 				const cellClasses = classNames(
-							// 					'plan-comparison-grid__plan',
-							// 					'has-feature',
-							// 					getPlanClass( planName ),
-							// 					{
-							// 						'popular-plan-parent-class': isFeatured,
-							// 						'is-left-of-featured': featuredAdjacencyMatrix[ planName ]?.leftOfFeatured,
-							// 						'is-right-of-featured':
-							// 							featuredAdjacencyMatrix[ planName ]?.rightOfFeatured,
-							// 						'is-only-featured': featuredAdjacencyMatrix[ planName ]?.isOnlyFeatured,
-							// 					}
-							// 				);
-
-							// 				return (
-							// 					<Cell
-							// 						key={ planName }
-							// 						isInSignup={ isInSignup }
-							// 						className={ cellClasses }
-							// 						textAlign="center"
-							// 					>
-							// 						<span className="plan-comparison-grid__plan-title">
-							// 							{ translate( 'Storage' ) }
-							// 						</span>
-							// 						<StorageButton
-							// 							className="plan-features-2023-grid__storage-button"
-							// 							key={ planName }
-							// 						>
-							// 							{ featureObject.getCompareTitle?.() }
-							// 						</StorageButton>
-							// 					</Cell>
-							// 				);
-							// 			} ) }
-							// 		</Row>
-							null }
+							) : null }
 						</div>
 					);
 				} ) }
