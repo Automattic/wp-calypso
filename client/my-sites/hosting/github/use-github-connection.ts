@@ -28,7 +28,6 @@ export const useGithubConnection = (
 			meta: {
 				persist: false,
 			},
-			refetchOnWindowFocus: false,
 			...options,
 		}
 	);
