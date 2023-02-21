@@ -121,7 +121,7 @@ describe( 'CheckoutMain with a variant picker', () => {
 						>
 							<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
 								<CheckoutMain
-									forceRadioButtons={ true }
+									useVariantPickerRadioButtons={ true }
 									siteId={ siteId }
 									siteSlug="foo.com"
 									getStoredCards={ async () => [] }

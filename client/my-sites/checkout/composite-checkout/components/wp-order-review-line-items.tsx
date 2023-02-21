@@ -14,7 +14,6 @@ import {
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { useExperiment } from 'calypso/lib/explat';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
@@ -64,7 +63,7 @@ export function WPOrderReviewLineItems( {
 	onRemoveProduct,
 	onRemoveProductClick,
 	onRemoveProductCancel,
-	forceRadioButtons,
+	useVariantPickerRadioButtons,
 }: {
 	className?: string;
 	isSummary?: boolean;
@@ -77,9 +76,8 @@ export function WPOrderReviewLineItems( {
 	onRemoveProduct?: ( label: string ) => void;
 	onRemoveProductClick?: ( label: string ) => void;
 	onRemoveProductCancel?: ( label: string ) => void;
-	// TODO: This is just for unit tests. Remove forceRadioButtons everywhere
-	// when calypso_checkout_variant_picker_radio_2212 ExPlat test completes.
-	forceRadioButtons?: boolean;
+	// This is just for unit tests.
+	useVariantPickerRadioButtons?: boolean;
 } ) {
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
@@ -96,7 +94,7 @@ export function WPOrderReviewLineItems( {
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
 			{ responseCart.products.map( ( product ) => (
 				<LineItemWrapper
-					forceRadioButtons={ forceRadioButtons }
+					useVariantPickerRadioButtons={ useVariantPickerRadioButtons }
 					key={ product.product_slug }
 					product={ product }
 					isSummary={ isSummary }
@@ -158,7 +156,7 @@ function LineItemWrapper( {
 	hasPartnerCoupon,
 	isDisabled,
 	initialVariantTerm,
-	forceRadioButtons,
+	useVariantPickerRadioButtons,
 }: {
 	product: ResponseCartProduct;
 	isSummary?: boolean;
@@ -173,9 +171,8 @@ function LineItemWrapper( {
 	hasPartnerCoupon: boolean;
 	isDisabled: boolean;
 	initialVariantTerm: number | null | undefined;
-	// TODO: This is just for unit tests. Remove forceRadioButtons everywhere
-	// when calypso_checkout_variant_picker_radio_2212 ExPlat test completes.
-	forceRadioButtons?: boolean;
+	// This is just for unit tests.
+	useVariantPickerRadioButtons?: boolean;
 } ) {
 	const isRenewal = isWpComProductRenewal( product );
 	const isWooMobile = isWcMobileApp();
@@ -207,14 +204,7 @@ function LineItemWrapper( {
 	} );
 
 	const areThereVariants = variants.length > 1;
-	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
-		'calypso_checkout_variant_picker_radio_2212',
-		{
-			isEligible: areThereVariants && shouldShowVariantSelector && ! isJetpack,
-		}
-	);
-	const shouldUseRadioButtons =
-		forceRadioButtons || ( ! isJetpack && experimentAssignment?.variationName === 'treatment' );
+	const shouldUseRadioButtons = useVariantPickerRadioButtons;
 
 	return (
 		<WPOrderReviewListItem key={ product.uuid }>
@@ -230,17 +220,15 @@ function LineItemWrapper( {
 				onRemoveProductClick={ onRemoveProductClick }
 				onRemoveProductCancel={ onRemoveProductCancel }
 			>
-				{ ( ! isLoadingExperimentAssignment || forceRadioButtons ) &&
-					areThereVariants &&
-					shouldShowVariantSelector && (
-						<ItemVariationPicker
-							selectedItem={ product }
-							onChangeItemVariant={ onChangePlanLength }
-							isDisabled={ isDisabled }
-							variants={ variants }
-							type={ shouldUseRadioButtons ? 'radio' : 'dropdown' }
-						/>
-					) }
+				{ areThereVariants && shouldShowVariantSelector && (
+					<ItemVariationPicker
+						selectedItem={ product }
+						onChangeItemVariant={ onChangePlanLength }
+						isDisabled={ isDisabled }
+						variants={ variants }
+						type={ shouldUseRadioButtons ? 'radio' : 'dropdown' }
+					/>
+				) }
 			</LineItem>
 		</WPOrderReviewListItem>
 	);
