@@ -18,7 +18,7 @@ export const GitHubCard = () => {
 	const gitHub = connections.find( ( connection ) => connection.service === 'github-deploy' );
 
 	if ( gitHub ) {
-		return <DeploymentCard repo="Automattic/testing" branch="main" repoUrl="" />;
+		return <DeploymentCard repo="Automattic/testing" branch="main" />;
 	}
 
 	return <GithubAuthorizeCard />;

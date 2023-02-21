@@ -13,7 +13,6 @@ import './style.scss';
 type DeploymentCardProps = {
 	repo: string;
 	branch: string;
-	repoUrl: string;
 };
 export const DeploymentCard = ( { repo, branch }: DeploymentCardProps ) => {
 	let deploymentTime = '';
