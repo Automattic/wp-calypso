@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPosts from 'calypso/components/data/query-posts';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import QueryStatsRecentPostViews from 'calypso/components/data/query-stats-recent-post-views';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -25,6 +26,7 @@ import {
 } from 'calypso/state/posts/selectors';
 import { getTopPostAndPages } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { PostType } from 'calypso/types';
 
 export type TabType = 'posts' | 'campaigns';
 export type TabOption = {
@@ -41,10 +43,12 @@ const queryPost = {
 	status: 'publish', // do not allow private or unpublished posts
 	type: 'post',
 	order_by: 'comment_count',
+	include: [ 8671, 9310 ],
 };
 const queryPage = {
 	...queryPost,
 	type: 'page',
+	order_by: 'comment_count',
 };
 
 const queryProducts = {
@@ -61,28 +65,20 @@ const ERROR_NO_LOCAL_USER = 'no_local_user';
 export default function PromotedPosts( { tab }: Props ) {
 	const selectedTab = tab === 'campaigns' ? 'campaigns' : 'posts';
 
-	const memoizedQuery = memoizeLast( ( period, unit, quantity, endOf ) => ( {
+	const memoizedQuery = memoizeLast( ( period, unit, quantity, endOf, num ) => ( {
 		period,
-		unit: unit,
-		quantity: quantity,
+		// unit: unit,
+		// quantity: quantity,
 		date: endOf,
+		num: num,
+		max: 20,
 	} ) );
 	const selectedSite = useSelector( getSelectedSite );
 	const today = moment().locale( 'en' );
 	const period = 'year';
-	const topPostsQuery = memoizedQuery( period, 'month', 1, today.format( 'YYYY-MM-DD' ) );
+	const topPostsQuery = memoizedQuery( period, 'month', 20, today.format( 'YYYY-MM-DD' ), -1 );
 
 	const selectedSiteId = selectedSite?.ID || 0;
-
-	const posts = useSelector( ( state ) => {
-		const posts = getPostsForQuery( state, selectedSiteId, queryPost );
-		return posts?.filter( ( post: any ) => ! post.password );
-	} );
-
-	const pages = useSelector( ( state ) => {
-		const pages = getPostsForQuery( state, selectedSiteId, queryPage );
-		return pages?.filter( ( page: any ) => ! page.password );
-	} );
 
 	const products = useSelector( ( state ) => {
 		const products = getPostsForQuery( state, selectedSiteId, queryProducts );
@@ -98,13 +94,15 @@ export default function PromotedPosts( { tab }: Props ) {
 	const isLoadingProducts = useSelector( ( state ) =>
 		isRequestingPostsForQuery( state, selectedSiteId, queryProducts )
 	);
-	const mostPopularPostAndPages = useSelector( ( state ) => {
-		const topViewedPostAndPages = getTopPostAndPages( state, selectedSiteId, topPostsQuery );
-		const topPosts = [];
 
-		topViewedPostAndPages?.map( ( post ) => {
+	let topViewedPostAndPages: any[ PostType ] = [];
+	const mostPopularPostAndPages = useSelector( ( state ) => {
+		topViewedPostAndPages = getTopPostAndPages( state, selectedSiteId, topPostsQuery );
+		const topPosts: any[ PostType ] = [];
+
+		topViewedPostAndPages?.map( ( post: any ) => {
 			const item = getSitePost( state, selectedSiteId, post.id );
-			item && topPosts.push( item );
+			item && topPosts.push( { ...item, views: post.views } );
 		} );
 
 		return topPosts;
@@ -170,21 +168,9 @@ export default function PromotedPosts( { tab }: Props ) {
 		);
 	}
 
-	const content = [
-		...( mostPopularPostAndPages || [] ),
-		...( posts || [] ),
-		...( pages || [] ),
-		...( products || [] ),
-	];
-
-	/**
-	 * Some of the posts/pages may be duplicated in the due to mostPopularPostAndPages.
-	 */
-	const contentWithoutDuplicateIds = content.filter(
-		( obj, index ) => content.findIndex( ( item ) => item.ID === obj.ID ) === index
-	);
-
+	const content = [ ...( mostPopularPostAndPages || [] ), ...( products || [] ) ];
 	const isLoading = isLoadingPage && isLoadingPost && isLoadingProducts;
+	const topViewedPostAndPagesIds = topViewedPostAndPages?.map( ( post: any ) => post.id );
 
 	return (
 		<Main wideLayout className="promote-post">
@@ -216,12 +202,22 @@ export default function PromotedPosts( { tab }: Props ) {
 			) }
 
 			<QuerySiteStats siteId={ selectedSiteId } statType="statsTopPosts" query={ topPostsQuery } />
-			<QueryPosts siteId={ selectedSiteId } query={ queryPost } postId={ null } />
-			<QueryPosts siteId={ selectedSiteId } query={ queryPage } postId={ null } />
-			<QueryPosts siteId={ selectedSiteId } query={ queryProducts } postId={ null } />
-			{ selectedTab === 'posts' && (
-				<PostsList content={ contentWithoutDuplicateIds } isLoading={ isLoading } />
+			{ topViewedPostAndPages && (
+				<QueryStatsRecentPostViews
+					siteId={ selectedSiteId }
+					postIds={ topViewedPostAndPagesIds }
+					num={ 30 }
+				/>
 			) }
+			{ topViewedPostAndPages && (
+				<QueryPosts
+					siteId={ selectedSiteId }
+					query={ { include: topViewedPostAndPagesIds } }
+					postId={ null }
+				/>
+			) }
+			<QueryPosts siteId={ selectedSiteId } query={ queryProducts } postId={ null } />
+			{ selectedTab === 'posts' && <PostsList content={ content } isLoading={ isLoading } /> }
 		</Main>
 	);
 }
