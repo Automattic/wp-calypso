@@ -4,11 +4,9 @@ import {
 	getPlanClass,
 	isWpcomEnterpriseGridPlan,
 	isFreePlan,
-	isBusinessPlan,
 	FEATURE_GROUP_ESSENTIAL_FEATURES,
 	getPlanFeaturesGrouped,
 	PLAN_ENTERPRISE_GRID_WPCOM,
-	isPremiumPlan,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { css } from '@emotion/react';
@@ -453,7 +451,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 };
 
 const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
-	feature: FeatureObject;
+	feature?: FeatureObject;
 	allJetpackFeatures: Set< string >;
 	visiblePlansProperties: PlanProperties[];
 	restructuredFeatures: {
@@ -462,17 +460,24 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	};
 	isInSignup: boolean;
 	planName: string;
-	featureSlug: string;
+	isStorageFeature: boolean;
 } > = ( {
 	feature,
 	visiblePlansProperties,
 	restructuredFeatures,
 	isInSignup,
 	planName,
-	featureSlug,
+	isStorageFeature,
 } ) => {
+	const translate = useTranslate();
+	const featureSlug = feature?.getSlug();
 	const featuredAdjacencyMatrix = useFeaturedAdjacencyMatrix( visiblePlansProperties );
-	const hasFeature = restructuredFeatures.featureMap[ planName ].has( featureSlug );
+	const hasFeature =
+		isStorageFeature ||
+		( featureSlug ? restructuredFeatures.featureMap[ planName ].has( featureSlug ) : false );
+	const storageOption = restructuredFeatures.planStorageOptionsMap[ planName ];
+	const [ storageFeature ] = getPlanFeaturesObject( [ storageOption ] );
+
 	const featuredLabel = useFeaturedLabel( planName );
 	const cellClasses = classNames( 'plan-comparison-grid__plan', getPlanClass( planName ), {
 		'popular-plan-parent-class': featuredLabel,
@@ -485,26 +490,39 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 
 	return (
 		<Cell isInSignup={ isInSignup } className={ cellClasses } textAlign="center">
-			{ feature.getIcon && (
-				<span className="plan-comparison-grid__plan-image">{ feature.getIcon() }</span>
-			) }
-			<span className="plan-comparison-grid__plan-title">
-				{ feature.getAlternativeTitle?.() || feature.getTitle() }
-			</span>
-			{ feature.getCompareTitle && (
-				<span className="plan-comparison-grid__plan-subtitle">{ feature.getCompareTitle() }</span>
-			) }
-			{ hasFeature ? (
-				<Gridicon icon="checkmark" color="#0675C4" />
+			{ isStorageFeature ? (
+				<>
+					<span className="plan-comparison-grid__plan-title">{ translate( 'Storage' ) }</span>
+					<StorageButton className="plan-features-2023-grid__storage-button" key={ planName }>
+						{ storageFeature.getCompareTitle?.() }
+					</StorageButton>
+				</>
 			) : (
-				<Gridicon icon="minus-small" color="#C3C4C7" />
+				<>
+					{ feature?.getIcon && (
+						<span className="plan-comparison-grid__plan-image">{ feature.getIcon() }</span>
+					) }
+					<span className="plan-comparison-grid__plan-title">
+						{ feature?.getAlternativeTitle?.() || feature?.getTitle() }
+					</span>
+					{ feature?.getCompareTitle && (
+						<span className="plan-comparison-grid__plan-subtitle">
+							{ feature.getCompareTitle() }
+						</span>
+					) }
+					{ hasFeature ? (
+						<Gridicon icon="checkmark" color="#0675C4" />
+					) : (
+						<Gridicon icon="minus-small" color="#C3C4C7" />
+					) }
+				</>
 			) }
 		</Cell>
 	);
 };
 
 const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
-	feature: FeatureObject;
+	feature?: FeatureObject;
 	isHiddenInMobile: boolean;
 	allJetpackFeatures: Set< string >;
 	visiblePlansProperties: PlanProperties[];
@@ -513,6 +531,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 		planStorageOptionsMap: Record< string, string >;
 	};
 	isInSignup: boolean;
+	isStorageFeature: boolean;
 } > = ( {
 	feature,
 	isHiddenInMobile,
@@ -520,20 +539,36 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	visiblePlansProperties,
 	restructuredFeatures,
 	isInSignup,
+	isStorageFeature,
 } ) => {
-	const featureSlug = feature.getSlug();
+	const translate = useTranslate();
+	const rowClasses = classNames( 'plan-comparison-grid__feature-row', {
+		'is-storage-feature': isStorageFeature,
+	} );
 
 	return (
-		<Row isHiddenInMobile={ isHiddenInMobile } className="plan-comparison-grid__feature-row">
+		<Row isHiddenInMobile={ isHiddenInMobile } className={ rowClasses }>
 			<RowHead key="feature-name" className="plan-comparison-grid__feature-feature-name">
-				<Plans2023Tooltip text={ feature.getDescription?.() }>
-					{ feature.getTitle() }
-				</Plans2023Tooltip>
-				{ allJetpackFeatures.has( feature.getSlug() ) ? (
-					<JetpackIconContainer>
-						<JetpackLogo size={ 16 } />
-					</JetpackIconContainer>
-				) : null }
+				{ isStorageFeature ? (
+					<Plans2023Tooltip text={ translate( 'Space to store your photos, media, and more.' ) }>
+						{ translate( 'Storage' ) }
+					</Plans2023Tooltip>
+				) : (
+					<>
+						{ feature && (
+							<>
+								<Plans2023Tooltip text={ feature.getDescription?.() }>
+									{ feature.getTitle() }
+								</Plans2023Tooltip>
+								{ allJetpackFeatures.has( feature.getSlug() ) ? (
+									<JetpackIconContainer>
+										<JetpackLogo size={ 16 } />
+									</JetpackIconContainer>
+								) : null }
+							</>
+						) }
+					</>
+				) }
 			</RowHead>
 			{ ( visiblePlansProperties ?? [] ).map( ( { planName } ) => (
 				<PlanComparisonGridFeatureGroupRowCell
@@ -544,7 +579,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 					restructuredFeatures={ restructuredFeatures }
 					isInSignup={ isInSignup }
 					planName={ planName }
-					featureSlug={ featureSlug }
+					isStorageFeature={ isStorageFeature }
 				/>
 			) ) }
 		</Row>
@@ -701,8 +736,6 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		return acc;
 	}, [] );
 
-	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( visiblePlansProperties );
-
 	return (
 		<div className="plan-comparison-grid">
 			<PlanComparisonHeader className="wp-brand-font">
@@ -764,70 +797,72 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 									visiblePlansProperties={ visiblePlansProperties }
 									restructuredFeatures={ restructuredFeatures }
 									isInSignup={ isInSignup }
+									isStorageFeature={ false }
 								/>
 							) ) }
 							{ featureGroup.slug === FEATURE_GROUP_ESSENTIAL_FEATURES ? (
-								<Row
+								<PlanComparisonGridFeatureGroupRow
 									key="feature-storage"
 									isHiddenInMobile={ isHiddenInMobile }
-									className="plan-comparison-grid__feature-row-storage"
-								>
-									<RowHead
-										key="feature-name"
-										className="plan-comparison-grid__feature-feature-name storage"
-									>
-										<Plans2023Tooltip
-											text={ translate( 'Space to store your photos, media, and more.' ) }
-										>
-											{ translate( 'Storage' ) }
-										</Plans2023Tooltip>
-									</RowHead>
-									{ ( visiblePlansProperties ?? [] ).map( ( { planName } ) => {
-										let adjacentToFeatured = false;
-										if ( isBusinessPlan( planName ) || isPremiumPlan( planName ) ) {
-											if ( featuredVisible ) {
-												console.log( planName, featuredVisible );
-												adjacentToFeatured = true;
-											} else {
-												featuredVisible = true;
-											}
-										} else {
-											featuredVisible = false;
-										}
+									allJetpackFeatures={ allJetpackFeatures }
+									visiblePlansProperties={ visiblePlansProperties }
+									restructuredFeatures={ restructuredFeatures }
+									isInSignup={ isInSignup }
+									isStorageFeature={ true }
+								/>
+							) : // 		<Row key="feature-storage" isHiddenInMobile={ isHiddenInMobile }>
+							// 			<RowHead
+							// 				key="feature-name"
+							// 				className="plan-comparison-grid__feature-feature-name storage"
+							// 			>
+							// 				<Plans2023Tooltip
+							// 					text={ translate( 'Space to store your photos, media, and more.' ) }
+							// 				>
+							// 					{ translate( 'Storage' ) }
+							// 				</Plans2023Tooltip>
+							// 			</RowHead>
+							// 			{ ( visiblePlansProperties ?? [] ).map( ( { planName } ) => {
+							// 				const storageFeature = restructuredFeatures.planStorageOptionsMap[ planName ];
+							// 				const [ featureObject ] = getPlanFeaturesObject( [ storageFeature ] );
 
-										const storageFeature = restructuredFeatures.planStorageOptionsMap[ planName ];
-										const [ featureObject ] = getPlanFeaturesObject( [ storageFeature ] );
-										const isHighlight = isBusinessPlan( planName ) || isPremiumPlan( planName );
-										const cellClasses = classNames(
-											'plan-comparison-grid__plan',
-											'has-feature',
-											getPlanClass( planName ),
-											{
-												'popular-plan-parent-class': isHighlight,
-												'is-left-of-highlight':
-													highlightAdjacencyMatrix[ planName ]?.leftOfHighlight,
-												'is-right-of-highlight':
-													highlightAdjacencyMatrix[ planName ]?.rightOfHighlight,
-												'is-only-highlight': highlightAdjacencyMatrix[ planName ]?.isOnlyHighlight,
-											}
-										);
+							// 				const isFeatured =
+							// 					isBusinessPlan( planName ) ||
+							// 					isPremiumPlan( planName ) ||
+							// 					isEcommercePlan( planName );
+							// 				const cellClasses = classNames(
+							// 					'plan-comparison-grid__plan',
+							// 					'has-feature',
+							// 					getPlanClass( planName ),
+							// 					{
+							// 						'popular-plan-parent-class': isFeatured,
+							// 						'is-left-of-featured': featuredAdjacencyMatrix[ planName ]?.leftOfFeatured,
+							// 						'is-right-of-featured':
+							// 							featuredAdjacencyMatrix[ planName ]?.rightOfFeatured,
+							// 						'is-only-featured': featuredAdjacencyMatrix[ planName ]?.isOnlyFeatured,
+							// 					}
+							// 				);
 
-										return (
-											<Cell key={ planName } className={ cellClasses } textAlign="center">
-												<span className="plan-comparison-grid__plan-title">
-													{ translate( 'Storage' ) }
-												</span>
-												<StorageButton
-													className="plan-features-2023-grid__storage-button"
-													key={ planName }
-												>
-													{ featureObject.getCompareTitle?.() }
-												</StorageButton>
-											</Cell>
-										);
-									} ) }
-								</Row>
-							) : null }
+							// 				return (
+							// 					<Cell
+							// 						key={ planName }
+							// 						isInSignup={ isInSignup }
+							// 						className={ cellClasses }
+							// 						textAlign="center"
+							// 					>
+							// 						<span className="plan-comparison-grid__plan-title">
+							// 							{ translate( 'Storage' ) }
+							// 						</span>
+							// 						<StorageButton
+							// 							className="plan-features-2023-grid__storage-button"
+							// 							key={ planName }
+							// 						>
+							// 							{ featureObject.getCompareTitle?.() }
+							// 						</StorageButton>
+							// 					</Cell>
+							// 				);
+							// 			} ) }
+							// 		</Row>
+							null }
 						</div>
 					);
 				} ) }
