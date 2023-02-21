@@ -44,7 +44,13 @@ export const DeploymentCard = ( { repo, branch }: DeploymentCardProps ) => {
 							repo: `${ repo } (${ branch })`,
 						},
 						components: {
-							a: <a target="_blank" href={ `https://github.com/${ repo }` } rel="noreferrer" />,
+							a: (
+								<a
+									target="_blank"
+									href={ `https://github.com/${ repo }/tree/${ branch }` }
+									rel="noreferrer"
+								/>
+							),
 						},
 					} ) }
 				</p>

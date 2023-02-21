@@ -2,9 +2,9 @@ import { useQuery, UseQueryOptions } from 'react-query';
 import wp from 'calypso/lib/wp';
 
 export type DeploymentData = {
-	status: string;
-	move_failures: [];
-	remove_failures: [];
+	status: 'failed' | 'running' | 'success';
+	move_failures: string[];
+	remove_failures: string[];
 	log_file_url: string;
 	last_deployment_timestamp: number;
 	last_deployment_sha: string;
