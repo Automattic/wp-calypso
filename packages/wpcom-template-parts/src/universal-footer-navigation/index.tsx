@@ -5,7 +5,6 @@ import {
 	useIsEnglishLocale,
 } from '@automattic/i18n-utils';
 import { useTranslate, getLocaleSlug } from 'i18n-calypso';
-import page from 'page';
 import SocialLogo from 'social-logos';
 import useAutomatticBrandingNoun from '../hooks/use-automattic-branding-noun';
 import { FooterProps } from '../types';
@@ -15,7 +14,8 @@ import './style.scss';
 const UniversalNavbarFooter = ( {
 	isLoggedIn = false,
 	currentRoute,
-	additonalFooterLinks,
+	additonalCompanyLinks,
+	onLanguageChange,
 }: FooterProps ) => {
 	const translate = useTranslate();
 	const localizeUrl = useLocalizeUrl();
@@ -217,7 +217,7 @@ const UniversalNavbarFooter = ( {
 										<span className="lp-link-chevron-external">{ translate( 'Policy' ) }</span>
 									</a>
 								</li>
-								{ additonalFooterLinks }
+								{ additonalCompanyLinks }
 							</ul>
 						</div>
 					</div>
@@ -230,10 +230,7 @@ const UniversalNavbarFooter = ( {
 								<select
 									className="lp-language-picker__content"
 									title={ translate( 'Change Language' ) }
-									onChange={ ( e ) => {
-										page.show( e.target.value );
-										window.location.reload();
-									} }
+									onChange={ onLanguageChange }
 									defaultValue={ currentRoute }
 								>
 									<option>{ translate( 'Change Language' ) }</option>

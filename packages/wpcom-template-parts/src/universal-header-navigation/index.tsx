@@ -1,9 +1,9 @@
 /* eslint-disable no-restricted-imports */
 import { WordPressWordmark } from '@automattic/components';
 import { useLocalizeUrl, useIsEnglishLocale } from '@automattic/i18n-utils';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate, getLocaleSlug } from 'i18n-calypso';
 import { useState } from 'react';
-import { addQueryArgs } from 'calypso/lib/route';
 import { HeaderProps } from '../types';
 import { NonClickableItem, ClickableItem } from './menu-items';
 
@@ -17,12 +17,16 @@ const UniversalNavbarHeader = ( { isLoggedIn = false, sectionName }: HeaderProps
 	const isEnglishLocale = useIsEnglishLocale();
 
 	const startUrl = addQueryArgs(
-		{
-			ref: sectionName + '-lp',
-		},
+		// url
 		sectionName === 'plugins'
 			? localizeUrl( '//wordpress.com/start/business', locale, isLoggedIn )
-			: localizeUrl( '//wordpress.com/start', locale, isLoggedIn )
+			: localizeUrl( '//wordpress.com/start', locale, isLoggedIn ),
+		// query
+		sectionName
+			? {
+					ref: sectionName + '-lp',
+			  }
+			: {}
 	);
 
 	return (

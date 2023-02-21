@@ -1,12 +1,13 @@
 export interface HeaderProps {
 	isLoggedIn: boolean;
-	sectionName: string;
+	sectionName?: string;
 }
 
 export interface FooterProps {
+	onLanguageChange: React.ChangeEventHandler< HTMLSelectElement >;
 	isLoggedIn: boolean;
 	currentRoute: string;
-	additonalFooterLinks: any;
+	additonalCompanyLinks?: HTMLLIElement;
 }
 
 export interface MenuItemProps {

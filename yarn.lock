@@ -1889,6 +1889,7 @@ __metadata:
     "@automattic/components": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@types/social-logos": ^2.3.1
+    "@wordpress/url": ^3.28.0
     i18n-calypso: "workspace:^"
     social-logos: ^2.5.2
     typescript: ^4.7.4
@@ -9399,13 +9400,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/url@npm:^3.10.0, @wordpress/url@npm:^3.3.1":
-  version: 3.10.0
-  resolution: "@wordpress/url@npm:3.10.0"
+"@wordpress/url@npm:^3.10.0, @wordpress/url@npm:^3.28.0, @wordpress/url@npm:^3.3.1":
+  version: 3.28.0
+  resolution: "@wordpress/url@npm:3.28.0"
   dependencies:
     "@babel/runtime": ^7.16.0
-    lodash: ^4.17.21
-  checksum: 90ef36047c92f9035792604662e118b9c88de503781cd4519adf85f1ca32a482fce5cb00f0a71de96516e7124ccdc025d40a025921202cc3841ab6b89687592e
+    remove-accents: ^0.4.2
+  checksum: b8ee3809bd27a4c6d698ea73848f2466ada531fbe843dc79cda784970d30c8422a5fc8e4b5c554d7a2ff7219c23f8e6269a157c142e69863d024ca64a51011a0
   languageName: node
   linkType: hard
 
