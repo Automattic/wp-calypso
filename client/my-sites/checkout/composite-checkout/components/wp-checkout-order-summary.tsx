@@ -313,11 +313,11 @@ function CheckoutSummaryFeaturesList( props: {
 	const plans = responseCart.products.filter( ( product ) => isPlan( product ) );
 	const hasPlanInCart = plans.length > 0;
 
-	const jetpackProducts = responseCart.products.filter( isJetpackProduct );
-	const hasJetpackProduct = jetpackProducts.length > 0;
+	const jetpackPlansAndProducts = responseCart.products.filter( ( product ) => {
+		return isJetpackProduct( product ) || isJetpackPlan( product );
+	} );
 
-	const jetpackPlans = responseCart.products.filter( isJetpackPlan );
-	const hasJetpackPlan = jetpackPlans.length > 0;
+	const hasJetpackProductOrPlan = jetpackPlansAndProducts.length > 0;
 
 	const hasSingleProduct = responseCart.products.length === 1;
 
@@ -332,10 +332,8 @@ function CheckoutSummaryFeaturesList( props: {
 					return <CheckoutSummaryFeaturesListDomainItem domain={ domain } key={ domain.uuid } />;
 				} ) }
 
-			{ hasSingleProduct && ( hasJetpackProduct || hasJetpackPlan ) && (
-				<CheckoutSummaryJetpackProductFeatures
-					product={ hasJetpackProduct ? jetpackProducts[ 0 ] : jetpackPlans[ 0 ] }
-				/>
+			{ hasSingleProduct && hasJetpackProductOrPlan && (
+				<CheckoutSummaryJetpackProductFeatures product={ jetpackPlansAndProducts[ 0 ] } />
 			) }
 
 			{ hasPlanInCart && (
