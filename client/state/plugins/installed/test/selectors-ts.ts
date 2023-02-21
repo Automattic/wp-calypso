@@ -233,7 +233,7 @@ describe( 'getAllPluginsIndexedBySiteId', () => {
 
 describe( 'getFilteredAndSortedPlugins', () => {
 	test( 'Should get an empty array if the requested site is not in the current state', () => {
-		const plugins = getFilteredAndSortedPlugins( state, [ nonExistingSiteId ], undefined );
+		const plugins = getFilteredAndSortedPlugins( state, [ nonExistingSiteId1 ], undefined );
 		expect( plugins ).toHaveLength( 0 );
 	} );
 
