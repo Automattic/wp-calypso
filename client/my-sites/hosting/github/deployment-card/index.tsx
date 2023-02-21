@@ -47,8 +47,8 @@ export const DeploymentCard = ( { repo, branch, connectionId }: DeploymentCardPr
 		onError: ( error ) => {
 			dispatch(
 				errorNotice(
-					// translators: "reason" is why connecting the branch failed.
-					sprintf( translate( 'Failed to connect: %(reason)s' ), { reason: error.message } ),
+					// translators: "reason" is why disconnecting the branch failed.
+					sprintf( translate( 'Failed to disconnect: %(reason)s' ), { reason: error.message } ),
 					{
 						...noticeOptions,
 					}
