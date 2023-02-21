@@ -433,13 +433,18 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SMART_REDIRECTS,
 		FEATURE_ALWAYS_ONLINE,
 	],
-	// this function returns the extra features that are not highlighted
-	// in the plans table. Thus, eventually in the plan comparison component
-	// its return value will be merged with `get2023PricingGridSignupWpcomFeatures()`
-	// to gain the complete feature set.
+	// This function returns the features that are to be overridden and shown in the plans comparison table.
 	// The gist is that we want the plan comparison grid to be as comprehensive as possible, while keeping the plans table easy to follow.
 	// For more details why they deviates, please refer to p2-pdgrnI-24M#comment-3413
-	get2023PricingGridPlanComparisonFeatures: () => [
+	get2023PlanComparisonFeatureOverride: () => [
+		FEATURE_BEAUTIFUL_THEMES,
+		FEATURE_PAGES,
+		FEATURE_USERS,
+		FEATURE_POST_EDITS_HISTORY,
+		FEATURE_NEWSLETTERS_RSS,
+		FEATURE_SECURITY_BRUTE_FORCE,
+		FEATURE_SMART_REDIRECTS,
+		FEATURE_ALWAYS_ONLINE,
 		FEATURE_BANDWIDTH,
 		FEATURE_FAST_DNS,
 		FEATURE_GLOBAL_EDGE_CACHING,
@@ -633,7 +638,6 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_STYLE_CUSTOMIZATION,
 		FEATURE_SUPPORT_EMAIL,
 	],
-	get2023PricingGridPlanComparisonFeatures: () => [],
 	get2023PricingGridSignupJetpackFeatures: () => [
 		FEATURE_PAID_SUBSCRIBERS_JP,
 		FEATURE_PREMIUM_CONTENT_JP,
@@ -825,7 +829,6 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SHIPPING_CARRIERS,
 		FEATURE_EXTENSIONS,
 	],
-	get2023PricingGridPlanComparisonFeatures: () => [],
 	get2023PricingGridSignupJetpackFeatures: () => [],
 	get2023PricingGridSignupStorageOptions: () => [ FEATURE_200GB_STORAGE ],
 	// Features not displayed but used for checking plan abilities
@@ -1014,7 +1017,6 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_PREMIUM_THEMES_V2,
 		FEATURE_WORDADS,
 	],
-	get2023PricingGridPlanComparisonFeatures: () => [],
 	get2023PricingGridSignupJetpackFeatures: () => [
 		FEATURE_VIDEOPRESS_JP,
 		FEATURE_UNLTD_SOCIAL_MEDIA_JP,
@@ -1174,7 +1176,6 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_WP_UPDATES,
 		FEATURE_MULTI_SITE,
 	],
-	get2023PricingGridPlanComparisonFeatures: () => [],
 	get2023PricingGridSignupJetpackFeatures: () => [
 		FEATURE_REALTIME_BACKUPS_JP,
 		FEATURE_ONE_CLICK_RESTORE_V2,
@@ -1340,7 +1341,6 @@ const get2023EnterprisGrideDetails = (): IncompleteWPcomPlan => ( {
 		),
 	getDescription: () => '',
 	get2023PricingGridSignupWpcomFeatures: () => [],
-	get2023PricingGridPlanComparisonFeatures: () => [],
 	get2023PricingGridSignupJetpackFeatures: () => [],
 	get2023PricingGridSignupStorageOptions: () => [],
 } );
