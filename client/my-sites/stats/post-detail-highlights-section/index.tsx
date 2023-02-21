@@ -65,6 +65,8 @@ export default function PostDetailHighlightsSection( {
 		title: decodeEntities( stripHTML( textTruncator( post?.title, POST_STATS_CARD_TITLE_LIMIT ) ) ),
 	};
 
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+
 	return (
 		<div className="stats__post-detail-highlights-section">
 			{ siteId && (
@@ -77,7 +79,7 @@ export default function PostDetailHighlightsSection( {
 			<div className="highlight-cards">
 				<h1 className="highlight-cards-heading">{ translate( 'Highlights' ) }</h1>
 
-				{ config.isEnabled( 'newsletter/stats' ) && (
+				{ config.isEnabled( 'newsletter/stats' ) && ! isOdysseyStats && (
 					<StatsDetailsNavigation postId={ postId } givenSiteId={ siteId } />
 				) }
 
