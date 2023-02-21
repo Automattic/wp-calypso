@@ -1,10 +1,10 @@
 import {
-	is2023PricingGridEnabled,
 	planHasFeature,
 	FEATURE_UPLOAD_THEMES_PLUGINS,
 	getPlan,
 	PLAN_FREE,
 	isEcommerce,
+	is2023PricingGridActivePage,
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
@@ -274,7 +274,7 @@ export class PlansStep extends Component {
 	}
 
 	getHeaderText() {
-		const { headerText, translate, eligibleForProPlan, locale, isOnboarding2023PricingGrid } =
+		const { headerText, translate, eligibleForProPlan, locale, is2023PricingGridVisible } =
 			this.props;
 
 		if ( headerText ) {
@@ -287,7 +287,7 @@ export class PlansStep extends Component {
 				: translate( 'Choose the plan that’s right for you' );
 		}
 
-		if ( isOnboarding2023PricingGrid ) {
+		if ( is2023PricingGridVisible ) {
 			return translate( 'Choose your flavor of WordPress' );
 		}
 
@@ -306,7 +306,7 @@ export class PlansStep extends Component {
 			locale,
 			translate,
 			useEmailOnboardingSubheader,
-			isOnboarding2023PricingGrid,
+			is2023PricingGridVisible,
 		} = this.props;
 
 		const freePlanButton = <Button onClick={ this.handleFreePlanButtonClick } borderless />;
@@ -351,7 +351,7 @@ export class PlansStep extends Component {
 			);
 		}
 
-		if ( isOnboarding2023PricingGrid ) {
+		if ( is2023PricingGridVisible ) {
 			return;
 		}
 
@@ -384,7 +384,7 @@ export class PlansStep extends Component {
 			translate,
 			hasInitializedSitesBackUrl,
 			steps,
-			isOnboarding2023PricingGrid,
+			is2023PricingGridVisible,
 		} = this.props;
 
 		const headerText = this.getHeaderText();
@@ -397,7 +397,7 @@ export class PlansStep extends Component {
 
 		if ( 0 === positionInFlow && hasInitializedSitesBackUrl ) {
 			backUrl = hasInitializedSitesBackUrl;
-			backLabelText = translate( 'Back to Sites' );
+			backLabelText = translate( 'Back to sites' );
 		}
 
 		let queryParams;
@@ -427,8 +427,8 @@ export class PlansStep extends Component {
 					fallbackHeaderText={ fallbackHeaderText }
 					subHeaderText={ subHeaderText }
 					fallbackSubHeaderText={ fallbackSubHeaderText }
-					isWideLayout={ ! isOnboarding2023PricingGrid }
-					isExtraWideLayout={ isOnboarding2023PricingGrid }
+					isWideLayout={ ! is2023PricingGridVisible }
+					isExtraWideLayout={ is2023PricingGridVisible }
 					stepContent={ this.plansFeaturesList() }
 					allowBackFirstStep={ !! hasInitializedSitesBackUrl }
 					backUrl={ backUrl }
@@ -440,14 +440,12 @@ export class PlansStep extends Component {
 	}
 
 	render() {
-		const is2023OnboardingPricingGrid = is2023PricingGridEnabled();
-
 		const classes = classNames( 'plans plans-step', {
 			'in-vertically-scrolled-plans-experiment':
-				! this.props.isOnboarding2023PricingGrid && this.props.isInVerticalScrollingPlansExperiment,
+				! this.props.is2023PricingGridVisible && this.props.isInVerticalScrollingPlansExperiment,
 			'has-no-sidebar': true,
-			'is-wide-layout': ! is2023OnboardingPricingGrid,
-			'is-extra-wide-layout': is2023OnboardingPricingGrid,
+			'is-wide-layout': ! this.props.is2023PricingGridVisible,
+			'is-extra-wide-layout': this.props.is2023PricingGridVisible,
 		} );
 
 		return (
@@ -515,7 +513,7 @@ export default connect(
 		isInVerticalScrollingPlansExperiment: true,
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
 		eligibleForProPlan: isEligibleForProPlan( state, getSiteBySlug( state, siteSlug )?.ID ),
-		isOnboarding2023PricingGrid: is2023PricingGridEnabled(),
+		is2023PricingGridVisible: is2023PricingGridActivePage( window ),
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep, errorNotice }
 )( localize( PlansStep ) );

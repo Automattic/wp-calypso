@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { Card, PostStatsCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import Count from 'calypso/components/count';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { getPostStat } from 'calypso/state/stats/posts/selectors';
@@ -83,20 +84,18 @@ export default function PostDetailHighlightsSection( {
 				<div className="highlight-cards-list">
 					<PostStatsCard
 						heading={ translate( 'All-time stats' ) }
-						likeCount={ post?.like_count }
+						likeCount={ post?.like_count || 0 }
 						post={ postData }
 						viewCount={ viewCount }
-						commentCount={ post?.discussion?.comment_count }
+						commentCount={ post?.discussion?.comment_count || 0 }
 					/>
 
 					<Card className="highlight-card">
 						<div className="highlight-card-heading">
 							<span>{ translate( 'Post likes' ) }</span>
-							<span className="likes-count">{ post?.like_count || 0 }</span>
+							<Count count={ post?.like_count || 0 } />
 						</div>
-						{ !! postId && (
-							<PostLikes siteId={ siteId } postId={ postId } postType={ post?.type } />
-						) }
+						<PostLikes siteId={ siteId } postId={ postId } postType={ post?.type } />
 					</Card>
 				</div>
 			</div>

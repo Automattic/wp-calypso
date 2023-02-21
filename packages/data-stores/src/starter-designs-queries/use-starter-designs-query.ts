@@ -21,6 +21,7 @@ interface StarterDesignsQueryParams {
 interface Options extends QueryOptions< StarterDesignsResponse, unknown > {
 	enabled?: boolean;
 	select?: ( response: StarterDesigns ) => StarterDesigns;
+	shouldLimitGlobalStyles?: boolean;
 }
 
 interface StarterDesignsResponse {
@@ -51,7 +52,7 @@ interface GeneratedDesign {
 
 export function useStarterDesignsQuery(
 	queryParams: StarterDesignsQueryParams,
-	{ select, ...queryOptions }: Options = {}
+	{ select, shouldLimitGlobalStyles, ...queryOptions }: Options = {}
 ): UseQueryResult< StarterDesigns > {
 	return useQuery( [ 'starter-designs', queryParams ], () => fetchStarterDesigns( queryParams ), {
 		select: ( response: StarterDesignsResponse ) => {
@@ -60,7 +61,9 @@ export function useStarterDesignsQuery(
 					designs: response.generated?.designs?.map( apiStarterDesignsGeneratedToDesign ),
 				},
 				static: {
-					designs: response.static?.designs?.map( apiStarterDesignsStaticToDesign ),
+					designs: response.static?.designs?.map( ( design ) =>
+						apiStarterDesignsStaticToDesign( design, shouldLimitGlobalStyles )
+					),
 				},
 			};
 
@@ -82,7 +85,10 @@ function fetchStarterDesigns(
 	} );
 }
 
-function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
+function apiStarterDesignsStaticToDesign(
+	design: StaticDesign,
+	shouldLimitGlobalStyles?: boolean
+): Design {
 	const {
 		slug,
 		title,
@@ -93,18 +99,22 @@ function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
 		price,
 		style_variations,
 		software_sets,
-		is_virtual,
 		style_variation_slug,
 	} = design;
+	const is_virtual = design.is_virtual && !! style_variation_slug;
+
 	const is_premium =
-		( design.recipe.stylesheet && design.recipe.stylesheet.startsWith( 'premium/' ) ) || false;
+		( design.recipe.stylesheet && design.recipe.stylesheet.startsWith( 'premium/' ) ) ||
+		( shouldLimitGlobalStyles && is_virtual ) ||
+		false;
 
 	const is_bundled_with_woo_commerce = ( design.software_sets || [] ).some(
 		( { slug } ) => slug === 'woo-on-plans'
 	);
 
-	const style_variation =
-		style_variations?.find( ( { slug } ) => slug === style_variation_slug ) ?? null;
+	const preselected_style_variation = is_virtual
+		? style_variations?.find( ( { slug } ) => slug === style_variation_slug )
+		: undefined;
 
 	return {
 		slug,
@@ -120,7 +130,7 @@ function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
 		design_type: is_premium ? 'premium' : 'standard',
 		style_variations,
 		is_virtual,
-		style_variation,
+		preselected_style_variation,
 		// Deprecated; used for /start flow
 		features: [],
 		template: '',

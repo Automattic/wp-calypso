@@ -9,6 +9,9 @@ import {
 
 import 'calypso/state/plugins/init';
 
+// TODO: Much of the functionality in this file is duplicated with selectors.js
+// which needs to be removed when this file is complete.
+
 const _filters = {
 	none: function () {
 		return false;

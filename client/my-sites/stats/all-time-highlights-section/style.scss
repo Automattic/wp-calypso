@@ -59,13 +59,14 @@ $mobile-layout-breakpoint: $break-small;
 	.post-stats-card {
 		flex: 1;
 		max-height: unset;
-		grid-template-columns: minmax(10px, 550px) minmax(0, auto);
+		grid-template-columns: minmax(200px, 550px) minmax(0, auto);
 
 		&:not(:first-child) {
 			margin-left: 24px;
 		}
 
-		.post-stats-card__thumbnail {
+		.post-stats-card__thumbnail,
+		.post-stats-card__upload {
 			margin-left: auto;
 		}
 	}

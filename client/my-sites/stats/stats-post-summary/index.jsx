@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -6,7 +5,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import SectionNav from 'calypso/components/section-nav';
 import SegmentedControl from 'calypso/components/segmented-control';
 import { getPostStats, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 import DatePicker from '../stats-date-picker';
@@ -138,10 +136,7 @@ class StatsPostSummary extends Component {
 			selectedRecord = chartData[ chartData.length - 1 ];
 		}
 
-		const isFeatured = config.isEnabled( 'stats/enhance-post-detail' );
-
-		const summaryWrapperClass = classNames( 'stats-post-summary', {
-			'is-chart-tabs': isFeatured,
+		const summaryWrapperClass = classNames( 'stats-post-summary', 'is-chart-tabs', {
 			'is-period-year': this.state.period === 'year',
 		} );
 
@@ -149,50 +144,35 @@ class StatsPostSummary extends Component {
 			<div className={ summaryWrapperClass }>
 				<QueryPostStats siteId={ siteId } postId={ postId } />
 
-				{ isFeatured ? (
-					<StatsPeriodHeader>
-						<StatsPeriodNavigation showArrows={ false }>
-							<DatePicker period={ this.state.period } date={ selectedRecord?.startDate } isShort />
-						</StatsPeriodNavigation>
-						<SegmentedControl primary>
-							{ periods.map( ( { id, label } ) => (
-								<SegmentedControl.Item
-									key={ id }
-									onClick={ this.selectPeriod( id ) }
-									selected={ this.state.period === id }
-								>
-									{ label }
-								</SegmentedControl.Item>
-							) ) }
-						</SegmentedControl>
-					</StatsPeriodHeader>
-				) : (
-					<SectionNav>
-						<SegmentedControl compact>
-							{ periods.map( ( { id, label } ) => (
-								<SegmentedControl.Item
-									key={ id }
-									onClick={ this.selectPeriod( id ) }
-									selected={ this.state.period === id }
-								>
-									{ label }
-								</SegmentedControl.Item>
-							) ) }
-						</SegmentedControl>
-					</SectionNav>
-				) }
+				<StatsPeriodHeader>
+					<StatsPeriodNavigation showArrows={ false }>
+						<DatePicker period={ this.state.period } date={ selectedRecord?.startDate } isShort />
+					</StatsPeriodNavigation>
+					<SegmentedControl primary>
+						{ periods.map( ( { id, label } ) => (
+							<SegmentedControl.Item
+								key={ id }
+								onClick={ this.selectPeriod( id ) }
+								selected={ this.state.period === id }
+							>
+								{ label }
+							</SegmentedControl.Item>
+						) ) }
+					</SegmentedControl>
+				</StatsPeriodHeader>
 
 				<SummaryChart
 					isLoading={ isRequesting && ! chartData.length }
 					data={ chartData }
-					selected={ selectedRecord }
 					activeKey="period"
 					dataKey="value"
 					labelKey="periodLabel"
 					chartType="views"
 					sectionClass="is-views"
-					tabLabel={ translate( 'Views' ) }
+					selected={ selectedRecord }
 					onClick={ this.selectRecord }
+					tabLabel={ translate( 'Views' ) }
+					type="post"
 				/>
 			</div>
 		);

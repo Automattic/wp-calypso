@@ -280,7 +280,6 @@ import {
 	FEATURE_FAST_DNS,
 	FEATURE_STYLE_CUSTOMIZATION,
 	FEATURE_SUPPORT_EMAIL,
-	FEATURE_DESIGN_TOOLS,
 	FEATURE_PREMIUM_THEMES_V2,
 	FEATURE_WORDADS,
 	FEATURE_PLUGINS_THEMES,
@@ -433,6 +432,28 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SECURITY_BRUTE_FORCE,
 		FEATURE_SMART_REDIRECTS,
 		FEATURE_ALWAYS_ONLINE,
+	],
+	// This function returns the features that are to be overridden and shown in the plans comparison table.
+	// The gist is that we want the plan comparison grid to be as comprehensive as possible, while keeping the plans table easy to follow.
+	// For more details why they deviates, please refer to p2-pdgrnI-24M#comment-3413
+	get2023PlanComparisonFeatureOverride: () => [
+		FEATURE_BEAUTIFUL_THEMES,
+		FEATURE_PAGES,
+		FEATURE_USERS,
+		FEATURE_POST_EDITS_HISTORY,
+		FEATURE_NEWSLETTERS_RSS,
+		FEATURE_SECURITY_BRUTE_FORCE,
+		FEATURE_SMART_REDIRECTS,
+		FEATURE_ALWAYS_ONLINE,
+		FEATURE_BANDWIDTH,
+		FEATURE_FAST_DNS,
+		FEATURE_GLOBAL_EDGE_CACHING,
+		FEATURE_CDN,
+		FEATURE_DATACENTRE_FAILOVER,
+		FEATURE_WP_UPDATES,
+		FEATURE_MULTI_SITE,
+		FEATURE_SECURITY_MALWARE,
+		FEATURE_SECURITY_DDOS,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [
 		FEATURE_STATS_JP,
@@ -993,7 +1014,6 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	get2023PricingGridSignupWpcomFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_LIVE_CHAT_SUPPORT,
-		FEATURE_DESIGN_TOOLS,
 		FEATURE_PREMIUM_THEMES_V2,
 		FEATURE_WORDADS,
 	],
@@ -1590,7 +1610,14 @@ const getPlanJetpackSecurityT1Details = (): IncompleteJetpackPlan => ( {
 		),
 	getFeaturedDescription: () =>
 		translate(
-			'Easy-to-use, comprehensive WordPress site security including backups, malware scanning, and spam protection.'
+			'This bundle includes:{{ul}}{{li}}VaultPress Backup{{/li}}{{li}}Scan{{/li}}{{li}}Akismet Anti-spam{{/li}}{{/ul}}',
+			{
+				components: {
+					ul: <ul />,
+					li: <li />,
+				},
+				comment: '{{ul}}{{ul/}} represents an unorder list, and {{li}}{/li} represent a list item',
+			}
 		),
 	getLightboxDescription: () =>
 		translate(
@@ -1686,7 +1713,13 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 		),
 	getFeaturedDescription: () =>
 		translate(
-			'Get the full Jetpack suite with real-time security tools, improved site performance, and tools to grow your business.'
+			'Get the full Jetpack suite with real-time security tools, improved site performance, and tools to grow your business.{{br/}}{{br/}}',
+			{
+				components: {
+					br: <br />,
+				},
+				comment: '{{br/}} represents a line break',
+			}
 		),
 	getLightboxDescription: () =>
 		translate(

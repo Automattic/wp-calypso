@@ -1,11 +1,11 @@
-.importer-action-buttons__action-button {
-	margin-right: 0.75em;
-}
-
 .importer-action-buttons__container {
 	clear: both;
 	display: flex;
 	margin-top: 1.5em;
 	margin-bottom: 1em;
 	flex-direction: row;
+
+	.importer-action-buttons__action-button {
+		margin-right: 0.75em;
+	}
 }

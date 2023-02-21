@@ -9,6 +9,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryMedia from 'calypso/components/data/query-media';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import Notice from 'calypso/components/notice';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import { withEditMedia } from 'calypso/data/media/use-edit-media-mutation';
 import { withDeleteMedia } from 'calypso/data/media/with-delete-media';
@@ -373,6 +374,20 @@ class Media extends Component {
 					align="left"
 					hasScreenOptions
 				/>
+				{ this.props.selectedSite.is_private && this.props.selectedSite.is_wpcom_atomic && (
+					<Notice
+						showDismiss={ false }
+						status="is-info"
+						text={ translate(
+							'The image CDN is disabled because your site is marked Private. If image thumbnails do not display in your Media Library, you can switch to Coming Soon mode. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+							{
+								components: {
+									learnMoreLink: <InlineSupportLink supportContext="privacy" showIcon={ false } />,
+								},
+							}
+						) }
+					/>
+				) }
 				{ this.showDialog() && (
 					<EditorMediaModalDialog
 						isVisible

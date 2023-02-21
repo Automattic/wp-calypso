@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import SuggestionSearch from 'calypso/components/suggestion-search';
 
 interface SearchProps {
@@ -9,6 +8,8 @@ interface SearchProps {
 	onSelect( option: string ): void;
 	onChange?( query: string, selected: boolean ): void;
 	disabled?: boolean;
+	isSearching: boolean;
+	query: string;
 }
 
 export const Search = ( {
@@ -19,23 +20,22 @@ export const Search = ( {
 	onSelect,
 	onChange,
 	disabled,
+	isSearching,
+	query,
 }: SearchProps ) => {
-	const [ query, setQuery ] = useState( '' );
-
 	return (
 		<SuggestionSearch
 			id={ id }
 			className={ className }
 			placeholder={ placeholder }
 			disabled={ disabled }
-			showIcon={ false }
-			showSuggestionsWithEmptyQuery
+			showIcon={ isSearching }
+			isSearching={ isSearching }
 			onChange={ ( query: string, selected: boolean ) => {
-				setQuery( query );
-
 				if ( selected ) {
-					onSelect( query );
+					return onSelect( query );
 				}
+
 				onChange?.( query, selected );
 			} }
 			value={ query }

@@ -1,5 +1,6 @@
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
 import SectionNav from 'calypso/components/section-nav';
@@ -16,7 +17,7 @@ import {
 import { isPartnerPortal } from 'calypso/state/partner-portal/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPrimarySiteIsJetpack from 'calypso/state/selectors/get-primary-site-is-jetpack';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
@@ -24,16 +25,33 @@ interface Props {
 	className: string;
 }
 
+const useManageSiteLink = () => {
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const isPrimarySiteJetpackSite = useSelector( getPrimarySiteIsJetpack );
+	const currentUser = useSelector( getCurrentUser );
+
+	return useMemo( () => {
+		if ( selectedSiteSlug ) {
+			return `/landing/${ selectedSiteSlug }`;
+		}
+
+		if ( isPrimarySiteJetpackSite && currentUser ) {
+			return `/landing/${ currentUser.primarySiteSlug }`;
+		}
+
+		return '/landing';
+	}, [ selectedSiteSlug, isPrimarySiteJetpackSite, currentUser ] );
+};
+
 export default function PortalNav( { className = '' }: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const hasJetpackPartnerAccess = useSelector( hasJetpackPartnerAccessSelector );
-	const isPrimarySiteJetpackSite = useSelector( getPrimarySiteIsJetpack );
-	const currentUser = useSelector( getCurrentUser );
 	const currentRoute = useSelector( getCurrentRoute );
 	const showDashboard = useSelector( showAgencyDashboard );
 	const isPartnerPortalRoute = useSelector( isPartnerPortal );
 	const selectedSiteId = useSelector( getSelectedSiteId );
+	const manageSiteLink = useManageSiteLink();
 	// Route belongs dashboard when it starts with /dashboard or /plugins and no site is selected(multi-site view).
 	const isDashboardRoute =
 		currentRoute.startsWith( '/dashboard' ) ||
@@ -52,11 +70,6 @@ export default function PortalNav( { className = '' }: Props ) {
 			} )
 		);
 	};
-
-	const manageSiteLink =
-		isPrimarySiteJetpackSite && currentUser
-			? `/landing/${ currentUser.primarySiteSlug }`
-			: '/landing';
 
 	let selectedText = translate( 'Manage Sites' );
 
