@@ -47,14 +47,7 @@ const Badge: React.FC< BadgeProps > = ( { variation, onClick } ) => {
 				}
 			} }
 		>
-			<span
-				style={ {
-					background: `linear-gradient(
-							to right,
-							${ color.background } 0 50%,
-							${ color.text } 50% 100%)`,
-				} }
-			/>
+			<span style={ { background: color.background } } />
 		</div>
 	);
 };
