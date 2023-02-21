@@ -15,7 +15,7 @@ type DeploymentCardProps = {
 	branch: string;
 	repoUrl: string;
 };
-export const DeploymentCard = ( { repo, branch, repoUrl }: DeploymentCardProps ) => {
+export const DeploymentCard = ( { repo, branch }: DeploymentCardProps ) => {
 	let deploymentTime = '';
 	let totalFailures = 0;
 
@@ -45,7 +45,7 @@ export const DeploymentCard = ( { repo, branch, repoUrl }: DeploymentCardProps )
 							repo: `${ repo } (${ branch })`,
 						},
 						components: {
-							a: <a target="_blank" href={ repoUrl } rel="noreferrer" />,
+							a: <a target="_blank" href={ `https://github.com/${ repo }` } rel="noreferrer" />,
 						},
 					} ) }
 				</p>
@@ -64,7 +64,7 @@ export const DeploymentCard = ( { repo, branch, repoUrl }: DeploymentCardProps )
 							<div className="deployment-card__column">
 								<a
 									target="_blank"
-									href={ `${ repoUrl }/${ deployment.last_deployment_sha }` }
+									href={ `https://github.com/${ repo }/${ deployment.last_deployment_sha }` }
 									rel="noreferrer"
 								>
 									{ deployment.last_deployment_sha.substring( 0, 7 ) }

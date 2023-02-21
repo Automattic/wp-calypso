@@ -44,7 +44,7 @@ export const DeploymentStatusExplanation = ( {
 	return (
 		<div className="deployment-card__row" style={ { marginTop: '24px' } }>
 			<div className="deployment-card__column" style={ { flexDirection: 'row', gap: '4px' } }>
-				<Gridicon icon="notice-outline" />
+				<Gridicon icon="notice-outline" color="red" />
 				{ message }
 			</div>
 		</div>
