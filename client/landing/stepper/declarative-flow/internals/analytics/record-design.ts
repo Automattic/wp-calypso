@@ -73,8 +73,8 @@ export function getDesignEventProps( {
 	design: Design;
 	styleVariation?: StyleVariation;
 } ) {
-	const variationSlugSuffix =
-		styleVariation && styleVariation.slug !== 'default' ? `-${ styleVariation.slug }` : '';
+	const is_style_variation = styleVariation && styleVariation.slug !== 'default';
+	const variationSlugSuffix = is_style_variation ? `-${ styleVariation.slug }` : '';
 
 	return {
 		flow,
@@ -86,6 +86,7 @@ export function getDesignEventProps( {
 		design_type: design.design_type,
 		is_premium: design.is_premium,
 		has_style_variations: ( design.style_variations || [] ).length > 0,
+		is_style_variation: is_style_variation,
 	};
 }
 
