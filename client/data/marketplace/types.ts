@@ -31,6 +31,7 @@ export type Plugin = {
 		yearly: { product_slug?: string; product_id?: number };
 	};
 	premium_slug?: string;
+	score?: number;
 };
 
 export type ESIndexResult = {
@@ -69,7 +70,7 @@ export type ESIndexResult = {
 
 export type Railcar = Record< string, string | number >;
 
-export type ESHits = Array< { fields: ESIndexResult; railcar: Railcar } >;
+export type ESHits = Array< { fields: ESIndexResult; railcar: Railcar; _score: number } >;
 
 export type ESResponse = { data: { results: ESHits; total: number; page_handle: string } };
 

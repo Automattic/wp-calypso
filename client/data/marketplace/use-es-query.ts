@@ -39,7 +39,7 @@ const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
 	if ( ! results ) {
 		return [];
 	}
-	return results.map( ( { fields: hit, railcar } ) => {
+	return results.map( ( { _score, fields: hit, railcar } ) => {
 		const plugin: Plugin = {
 			name: hit.plugin.title, // TODO: add localization
 			slug: hit.slug,
@@ -62,6 +62,7 @@ const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
 				yearly: { product_id: hit.plugin.store_product_yearly_id },
 			},
 			railcar,
+			score: _score,
 		};
 
 		plugin.variations = getPreinstalledPremiumPluginsVariations( plugin );

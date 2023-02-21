@@ -123,7 +123,8 @@ export function getAllowedPluginData( plugin ) {
 		'variations',
 		'version',
 		'wp_admin_settings_page_url',
-		'saas_landing_page'
+		'saas_landing_page',
+		'score'
 	);
 }
 

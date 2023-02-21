@@ -173,6 +173,7 @@ const PluginsBrowserListElement = ( props ) => {
 				onClick={ trackPluginLinkClick }
 			>
 				<div className="plugins-browser-item__info">
+					{ plugin.score && <div style={ { float: 'right' } }>{ plugin.score }</div> }
 					<PluginIcon image={ plugin.icon } isPlaceholder={ isPlaceholder } />
 					<div className="plugins-browser-item__title">{ plugin.name }</div>
 					{ variant === PluginsBrowserElementVariant.Extended && (
