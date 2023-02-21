@@ -1881,6 +1881,24 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/wpcom-template-parts@workspace:packages/wpcom-template-parts":
+  version: 0.0.0-use.local
+  resolution: "@automattic/wpcom-template-parts@workspace:packages/wpcom-template-parts"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/components": "workspace:^"
+    "@automattic/i18n-utils": "workspace:^"
+    "@types/social-logos": ^2.3.1
+    i18n-calypso: "workspace:^"
+    social-logos: ^2.5.2
+    typescript: ^4.7.4
+  peerDependencies:
+    "@wordpress/data": ^6.1.5
+    react: ^17.0.2
+    react-dom: ^17.0.2
+  languageName: unknown
+  linkType: soft
+
 "@babel/cli@npm:^7.17.6":
   version: 7.17.6
   resolution: "@babel/cli@npm:7.17.6"
@@ -7171,6 +7189,15 @@ __metadata:
     "@types/mime": ^1
     "@types/node": "*"
   checksum: 7f3de245cbb11f3a9d7977b6e763585c6022ebfc079fa746f8d824411bb6b343521c1cff5407edc0d5196f4b7d6fea431fb36455843f4a6717d295c235065cf2
+  languageName: node
+  linkType: hard
+
+"@types/social-logos@npm:^2.3.1":
+  version: 2.3.1
+  resolution: "@types/social-logos@npm:2.3.1"
+  dependencies:
+    "@types/react": "*"
+  checksum: 1cbeae892b0e6bd770f2aa74dc5d72320e20ecb4125899f1cda5c17cb2d5863c02adc157fc7a1acb8e961814bdb973134bf56c61c3f1c8ffa4f2bbb67c517210
   languageName: node
   linkType: hard
 
