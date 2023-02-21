@@ -10,7 +10,6 @@ import {
 import { STORE_KEY, POLL_APP_PUSH_INTERVAL_SECONDS } from './constants';
 import { remoteLoginUser } from './controls';
 import { getNextTaskId } from './utils';
-import type { WpcomClientCredentials } from '../shared-types';
 import type {
 	AuthOptionsSuccessResponse,
 	AuthOptionsErrorResponse,
@@ -22,6 +21,7 @@ import type {
 	PushNotificationSentData,
 	LoginCompleteData,
 } from './types';
+import type { WpcomClientCredentials } from '../shared-types';
 
 export interface ActionsConfig extends WpcomClientCredentials {
 	/**

@@ -7,10 +7,10 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain } from 'calypso/lib/domains';
-import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import InfoNotice from 'calypso/my-sites/domains/domain-management/components/domain/info-notice';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
+import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import {
 	domainManagementEdit,
 	domainManagementList,

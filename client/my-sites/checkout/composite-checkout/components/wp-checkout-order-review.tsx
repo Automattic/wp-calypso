@@ -17,8 +17,8 @@ import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/s
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
-import type { CouponFieldStateProps } from '../hooks/use-coupon-field-state';
 import type { OnChangeItemVariant } from './item-variation-picker';
+import type { CouponFieldStateProps } from '../hooks/use-coupon-field-state';
 import type { RemoveProductFromCart, CouponStatus } from '@automattic/shopping-cart';
 
 const SiteSummary = styled.div`
