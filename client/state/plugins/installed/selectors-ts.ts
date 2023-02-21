@@ -17,15 +17,24 @@ import type { AppState } from 'calypso/types';
 
 import 'calypso/state/plugins/init';
 
+const emptyObject = {};
+const emptyArray = [];
+
+const getSortCompareNumber = ( a: string, b: string ) => {
+	if ( a < b ) {
+		return -1;
+	} else if ( a > b ) {
+		return 1;
+	}
+	return 0;
+};
+
 const getSiteIdsThatHavePlugins = createSelector(
 	( state: AppState ) => {
 		return Object.keys( state.plugins.installed.plugins ).map( ( siteId ) => Number( siteId ) );
 	},
 	( state: AppState ) => [ state.plugins.installed.plugins ]
 );
-
-const emptyObject = {};
-const emptyArray = [];
 
 /**
  * The server returns plugins store at state.plugins.installed.plugins are indexed by site, which means
@@ -183,12 +192,7 @@ export const getFilteredAndSortedPlugins = createSelector(
 		const sortedPluginListEntries = Object.values( pluginList ).sort( ( pluginA, pluginB ) => {
 			const pluginSlugALower = pluginA.slug.toLowerCase();
 			const pluginSlugBLower = pluginB.slug.toLowerCase();
-			if ( pluginSlugALower < pluginSlugBLower ) {
-				return -1;
-			} else if ( pluginSlugALower > pluginSlugBLower ) {
-				return 1;
-			}
-			return 0;
+			return getSortCompareNumber( pluginSlugALower, pluginSlugBLower );
 		} );
 
 		return sortedPluginListEntries;
@@ -269,13 +273,7 @@ export function getSitesWithPlugin( state: AppState, siteIds: number[], pluginSl
 	return pluginSites.sort( ( a, b ) => {
 		const siteTitleA = getSiteTitle( state, a )?.toLowerCase() || '';
 		const siteTitleB = getSiteTitle( state, b )?.toLowerCase() || '';
-		if ( siteTitleA < siteTitleB ) {
-			return -1;
-		}
-		if ( siteTitleA > siteTitleB ) {
-			return 1;
-		}
-		return 0;
+		return getSortCompareNumber( siteTitleA, siteTitleB );
 	} );
 }
 
