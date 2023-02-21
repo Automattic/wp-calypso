@@ -1,7 +1,7 @@
 import { useQuery, UseQueryOptions } from 'react-query';
 import wp from 'calypso/lib/wp';
 
-const USE_GITHUB_CONNECTION_QUERY_KEY = 'github-connection-query-key';
+export const USE_GITHUB_CONNECTION_QUERY_KEY = 'github-connection-query-key';
 type GithubConnectionData = {
 	ID: number;
 	connected: boolean;

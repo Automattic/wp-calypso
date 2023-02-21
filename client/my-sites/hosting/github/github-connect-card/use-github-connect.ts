@@ -1,8 +1,9 @@
 import { useCallback } from 'react';
 import { useMutation, UseMutationOptions, useQueryClient } from 'react-query';
 import wp from 'calypso/lib/wp';
+import { USE_GITHUB_CONNECTION_QUERY_KEY } from '../use-github-connection';
 
-const USE_GITHUB_CONNECT_QUERY_KEY = 'github-connect-query-key';
+export const USE_GITHUB_CONNECT_QUERY_KEY = 'github-connect-query-key';
 
 interface MutationVariables {
 	repoName: string | undefined;
@@ -37,7 +38,7 @@ export const useGithubConnectMutation = (
 		{
 			...options,
 			onSuccess: async ( ...args ) => {
-				await queryClient.invalidateQueries( [ USE_GITHUB_CONNECT_QUERY_KEY, siteId ] );
+				await queryClient.invalidateQueries( [ USE_GITHUB_CONNECTION_QUERY_KEY, siteId ] );
 				options.onSuccess?.( ...args );
 			},
 		}
