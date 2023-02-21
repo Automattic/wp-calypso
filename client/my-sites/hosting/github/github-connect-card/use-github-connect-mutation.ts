@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 import { useMutation, UseMutationOptions, useQueryClient } from 'react-query';
 import wp from 'calypso/lib/wp';
-
-const USE_GITHUB_CONNECT_QUERY_KEY = 'github-connect-query-key';
+import { GITHUB_INTEGRATION_QUERY_KEY } from '../constants';
+import { GITHUB_CONNECTION_QUERY_KEY } from '../use-github-connection-query';
 
 interface MutationVariables {
 	repoName: string | undefined;
@@ -29,7 +29,7 @@ export const useGithubConnectMutation = (
 		async ( { repoName, branchName, basePath }: MutationVariables ) =>
 			wp.req.post(
 				{
-					path: `/sites/${ siteId }/hosting/github/connect`,
+					path: `/sites/${ siteId }/hosting/github/connection`,
 					apiNamespace: 'wpcom/v2',
 				},
 				{ repo: repoName, branch: branchName, base_path: basePath }
@@ -37,7 +37,11 @@ export const useGithubConnectMutation = (
 		{
 			...options,
 			onSuccess: async ( ...args ) => {
-				await queryClient.invalidateQueries( [ USE_GITHUB_CONNECT_QUERY_KEY, siteId ] );
+				await queryClient.invalidateQueries( [
+					GITHUB_INTEGRATION_QUERY_KEY,
+					siteId,
+					GITHUB_CONNECTION_QUERY_KEY,
+				] );
 				options.onSuccess?.( ...args );
 			},
 		}

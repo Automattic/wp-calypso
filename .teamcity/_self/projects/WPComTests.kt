@@ -49,8 +49,17 @@ object WPComTests : Project({
 	// Editor Tracking Edge
 	buildType(editorTrackingBuildType("desktop", "c752ca9a-e77d-11ec-8fea-0242ac120002", atomic=false, edge=true));
 
-	buildType(jetpackPlaywrightBuildType("desktop", "68fe6336-5869-4244-b236-cca23ba03487"));
-	buildType(jetpackPlaywrightBuildType("mobile", "a80b5c10-1fef-4c7f-9e2c-5c5c30d637c8"));
+	// Jetpack for Connected Non-WPCOM Sites
+	buildType(jetpackPlaywrightBuildType("desktop", "68fe6336-5869-4244-b236-cca23ba03487", jetpackTarget="remote-site"));
+	buildType(jetpackPlaywrightBuildType("mobile", "a80b5c10-1fef-4c7f-9e2c-5c5c30d637c8", jetpackTarget="remote-site"));
+
+	// Jetpack for WPCOM Sites Running Staging
+	buildType(jetpackPlaywrightBuildType("desktop", "3007d7a1-5642-4dbf-9935-d93f3cdb4dcc", jetpackTarget="wpcom-staging"));
+	buildType(jetpackPlaywrightBuildType("mobile", "ccfe7d2c-8f04-406b-8b83-3db6c8475661", jetpackTarget="wpcom-staging"));
+
+	// Jetpack for WPCOM Sites Running Prod
+	buildType(jetpackPlaywrightBuildType("desktop", "de6df2e1-3bad-46a4-9764-9c7e0974d4ff", jetpackTarget="wpcom-production"));
+	buildType(jetpackPlaywrightBuildType("mobile", "79479054-e30e-4177-937f-4197c4846a0f", jetpackTarget="wpcom-production"));
 
 	buildType(I18NTests);
 	buildType(P2E2ETests)
@@ -172,12 +181,13 @@ fun editorTrackingBuildType( targetDevice: String, buildUuid: String, atomic: Bo
 	)
 }
 
-fun jetpackPlaywrightBuildType( targetDevice: String, buildUuid: String): E2EBuildType {
+fun jetpackPlaywrightBuildType( targetDevice: String, buildUuid: String, jetpackTarget: String = "wpcom-production" ): E2EBuildType {
+	val idSafeJetpackTarget = jetpackTarget.replace( "-", "_" );
 	return E2EBuildType (
-		buildId = "WPComTests_jetpack_Playwright_$targetDevice",
+		buildId = "WPComTests_jetpack_Playwright_${idSafeJetpackTarget}_$targetDevice",
 		buildUuid = buildUuid,
-		buildName = "Jetpack E2E Tests ($targetDevice)",
-		buildDescription = "Runs Jetpack E2E tests as $targetDevice",
+		buildName = "Jetpack E2E Tests [${jetpackTarget}] ($targetDevice)",
+		buildDescription = "Runs Jetpack E2E tests as $targetDevice against Jetpack install $jetpackTarget",
 		testGroup = "jetpack",
 		buildParams = {
 			text(
@@ -188,14 +198,18 @@ fun jetpackPlaywrightBuildType( targetDevice: String, buildUuid: String): E2EBui
 				allowEmpty = false
 			)
 			param("env.VIEWPORT_NAME", "$targetDevice")
-			checkbox(
-				name = "env.TEST_ON_JETPACK",
-				value = "true",
-				label = "Test on Jetpack",
-				description = "Use a Jetpack blog to test against",
-				checked = "true",
-				unchecked = "false"
+			select(
+				name = "env.JETPACK_TARGET",
+				value = jetpackTarget,
+				label = "Jetpack Target",
+				description = "Which Jetpack install are we targeting through Calypso?",
+				options = listOf(
+					"wpcom-production",
+					"wpcom-staging",
+					"remote-site"
+				)
 			)
+
 		},
 		buildFeatures = {},
 		buildTriggers = {
