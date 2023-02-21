@@ -1,7 +1,9 @@
 import { useQuery, UseQueryOptions } from 'react-query';
 import wp from 'calypso/lib/wp';
+import { GITHUB_INTEGRATION_QUERY_KEY } from './constants';
 
-export const USE_GITHUB_CONNECTION_QUERY_KEY = 'github-connection-query-key';
+export const GITHUB_CONNECTION_QUERY_KEY = 'github-connection';
+
 type GithubConnectionData = {
 	ID: number;
 	connected: boolean;
@@ -12,12 +14,12 @@ type GithubConnectionData = {
 	label: string;
 	external_name: string;
 };
-export const useGithubConnection = (
+export const useGithubConnectionQuery = (
 	siteId: number | null,
 	options?: UseQueryOptions< GithubConnectionData >
 ) => {
 	return useQuery< GithubConnectionData >(
-		[ USE_GITHUB_CONNECTION_QUERY_KEY, siteId ],
+		[ GITHUB_INTEGRATION_QUERY_KEY, siteId, GITHUB_CONNECTION_QUERY_KEY ],
 		(): GithubConnectionData =>
 			wp.req.get( {
 				path: `/sites/${ siteId }/hosting/github/connection`,

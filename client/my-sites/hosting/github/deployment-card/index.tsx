@@ -6,21 +6,22 @@ import SocialLogo from 'calypso/components/social-logo';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { DeploymentStatusBadge } from './deployment-status-badge';
 import { DeploymentStatusExplanation } from './deployment-status-explanation';
-import { useDeploymentStatus } from './use-deployment-status';
+import { useDeploymentStatusQuery } from './use-deployment-status-query';
 
 import './style.scss';
 
 type DeploymentCardProps = {
 	repo: string;
 	branch: string;
+	connectionId: number;
 };
-export const DeploymentCard = ( { repo, branch }: DeploymentCardProps ) => {
+export const DeploymentCard = ( { repo, branch, connectionId }: DeploymentCardProps ) => {
 	let deploymentTime = '';
 	let totalFailures = 0;
 
 	const siteId = useSelector( getSelectedSiteId );
 
-	const { data: deployment, isLoading } = useDeploymentStatus( siteId );
+	const { data: deployment, isLoading } = useDeploymentStatusQuery( siteId, connectionId );
 	const translate = useTranslate();
 
 	if ( deployment ) {
