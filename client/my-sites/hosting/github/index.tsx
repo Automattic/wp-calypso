@@ -9,16 +9,16 @@ import { useGithubConnection } from './use-github-connection';
 export const GitHubCard = () => {
 	const siteId = useSelector( getSelectedSiteId );
 	const { data: connection, isLoading: isFetching } = useGithubConnection( siteId );
-	if ( isFetching ) {
+	if ( isFetching || ! connection ) {
 		return <GitHubPlaceholderCard />;
 	}
 
-	if ( connection && ! connection.repo ) {
-		return <GithubConnectCard connection={ connection } />;
+	if ( connection.repo ) {
+		return <DeploymentCard repo={ connection.repo } branch={ connection.branch } />;
 	}
 
-	if ( connection && connection.repo ) {
-		return <DeploymentCard repo={ connection.repo } branch={ connection.branch } />;
+	if ( ! connection.repo && connection.connected ) {
+		return <GithubConnectCard connection={ connection } />;
 	}
 
 	return <GithubAuthorizeCard />;
