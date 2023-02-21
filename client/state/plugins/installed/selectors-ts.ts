@@ -212,25 +212,33 @@ export function getPluginOnSites( state: AppState, siteIds: number[], pluginSlug
 	return undefined;
 }
 
-export function getPluginOnSite( state: AppState, siteId: number, pluginSlug: string ) {
-	const plugin = getAllPluginsIndexedByPluginSlug( state )[ pluginSlug ];
+export const getPluginOnSite = createSelector(
+	( state: AppState, siteId: number, pluginSlug: string ) => {
+		const plugin = getAllPluginsIndexedByPluginSlug( state )[ pluginSlug ];
 
-	const { sites, ...pluginWithoutSites } = plugin;
+		const { sites, ...pluginWithoutSites } = plugin;
 
-	if ( ! plugin || ! plugin.sites[ siteId ] ) {
-		return undefined;
-	}
+		if ( ! plugin || ! plugin.sites[ siteId ] ) {
+			return undefined;
+		}
 
-	// To keep compatibility with some behavior that existed before the refactor
-	// in #73296 the returned object has the site specific data lifted onto it, and
-	// the sites property has only the site data for the requested site.
-	return {
-		...pluginWithoutSites,
-		...plugin.sites[ siteId ],
-		...{ sites: { [ siteId ]: plugin.sites[ siteId ] } },
-	};
-}
+		// To keep compatibility with some behavior that existed before the refactor
+		// in #73296 the returned object has the site specific data lifted onto it, and
+		// the sites property has only the site data for the requested site.
+		return {
+			...pluginWithoutSites,
+			...plugin.sites[ siteId ],
+			...{ sites: { [ siteId ]: plugin.sites[ siteId ] } },
+		};
+	},
+	( state ) => [ getAllPluginsIndexedByPluginSlug( state ) ]
+);
 
-export function getPluginsOnSite( state: AppState, siteId: number, pluginSlugs: string[] ) {
-	return pluginSlugs.map( ( pluginSlug ) => getPluginOnSite( state, siteId, pluginSlug ) );
-}
+export const getPluginsOnSite = createSelector(
+	( state: AppState, siteId: number, pluginSlugs: string[] ) => {
+		return pluginSlugs.map( ( pluginSlug ) => getPluginOnSite( state, siteId, pluginSlug ) );
+	},
+	( state, siteId, pluginSlugs ) => [
+		...pluginSlugs.map( ( pluginSlug ) => getPluginOnSite( state, siteId, pluginSlug ) ),
+	]
+);
