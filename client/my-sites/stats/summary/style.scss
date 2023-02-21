@@ -24,4 +24,16 @@
 			border-top: 0;
 		}
 	}
+
+	.stats__summary--narrow-mobile {
+		@media ( max-width: $break-medium ) {
+			padding-left: 32px;
+			padding-right: 32px;
+		}
+
+		@media ( max-width: ($break-small + 1px) ) {
+			padding-left: 16px;
+			padding-right: 16px;
+		}
+	}
 }
