@@ -25,6 +25,7 @@ const getSiteIdsThatHavePlugins = createSelector(
 );
 
 const emptyObject = {};
+const emptyArray = [];
 
 /**
  * The server returns plugins store at state.plugins.installed.plugins are indexed by site, which means
@@ -258,7 +259,7 @@ export const getPluginsOnSite = createSelector(
 export function getSitesWithPlugin( state: AppState, siteIds: number[], pluginSlug: string ) {
 	const plugin = getAllPluginsIndexedByPluginSlug( state )[ pluginSlug ];
 	if ( ! plugin ) {
-		return [];
+		return emptyArray;
 	}
 
 	// Filter the requested sites list by the list of sites for this plugin.
