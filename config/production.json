@@ -134,7 +134,7 @@
 		"ssr/prefetch-timebox": true,
 		"ssr/sample-log-cache-misses": true,
 		"stats/horizontal-bars-everywhere": true,
-		"stats/insights-page-grid": false,
+		"stats/insights-page-grid": true,
 		"stats/latest-post-stats": true,
 		"stats/most-popular-post": false,
 		"stats/new-video-summary": false,
