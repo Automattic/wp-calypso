@@ -24,6 +24,7 @@ export { Spinner } from './spinner';
 export { SpinnerExample } from './spinner/example';
 export { GMClosureNotice } from './gm-closure-notice/gm-closure-notice';
 export { default as WordPressLogo } from './wordpress-logo';
+export { default as WordPressWordmark } from './wordpress-watermark';
 export { default as JetpackLogo } from './jetpack-logo';
 export { default as WooCommerceWooLogo } from './woocommerce-woo-logo';
 export { ListTile } from './list-tile';
