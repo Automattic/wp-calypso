@@ -44,7 +44,10 @@ const UniversalNavbarHeader = () => {
 											href={ localizeUrl( '//wordpress.com' ) }
 											target="_self"
 										>
-											<WordPressWordmark className="x-icon x-icon__logo" />
+											<WordPressWordmark
+												className="x-icon x-icon__logo"
+												color="var(--studio-blue-50)"
+											/>
 											<span className="x-hidden">WordPress.com</span>
 										</a>
 									</li>
