@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 import { useMutation, UseMutationOptions, useQueryClient } from 'react-query';
 import wp from 'calypso/lib/wp';
-
-const USE_GITHUB_DISCONNECT_REPO_QUERY_KEY = 'github-disconnect-repo-query-key';
+import { GITHUB_INTEGRATION_QUERY_KEY } from '../constants';
+import { GITHUB_CONNECTION_QUERY_KEY } from '../use-github-connection-query';
 
 interface MutationError {
 	code: string;
@@ -24,7 +24,11 @@ export const useGithubDisconnectRepoMutation = (
 		{
 			...options,
 			onSuccess: async ( ...args ) => {
-				await queryClient.invalidateQueries( [ USE_GITHUB_DISCONNECT_REPO_QUERY_KEY, siteId ] );
+				await queryClient.invalidateQueries( [
+					GITHUB_INTEGRATION_QUERY_KEY,
+					siteId,
+					GITHUB_CONNECTION_QUERY_KEY,
+				] );
 				options.onSuccess?.( ...args );
 			},
 		}
