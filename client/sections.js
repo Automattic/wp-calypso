@@ -354,6 +354,7 @@ const sections = [
 		paths: [ '/read/search', '/recommendations' ],
 		module: 'calypso/reader/search',
 		group: 'reader',
+		enableLoggedOut: true,
 		trackLoadPerformance: true,
 	},
 	{
