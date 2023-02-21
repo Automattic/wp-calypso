@@ -3,5 +3,6 @@
 	"exclude": [ "node_modules" ],
 	"compilerOptions": {
 		"allowJs": true
-	}
+	},
+	"references": [ { "path": "../../packages/wpcom-template-parts" } ]
 }
