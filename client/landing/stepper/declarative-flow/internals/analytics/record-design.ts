@@ -91,15 +91,19 @@ export function getDesignEventProps( {
 }
 
 export function getVirtualDesignProps( design: Design, styleVariation?: StyleVariation ) {
+	let is_style_variation = false;
 	let variationSlugSuffix = '';
 	if ( styleVariation && styleVariation.slug !== 'default' ) {
+		is_style_variation = true;
 		variationSlugSuffix = `-${ styleVariation.slug }`;
 	} else if ( ! styleVariation && design.preselected_style_variation ) {
+		is_style_variation = true;
 		variationSlugSuffix = `-${ design.preselected_style_variation.slug }`;
 	}
 
 	return {
 		slug: design.slug + variationSlugSuffix,
 		is_virtual: design.is_virtual,
+		is_style_variation: is_style_variation,
 	};
 }
