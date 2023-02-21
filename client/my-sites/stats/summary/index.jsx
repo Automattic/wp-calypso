@@ -122,7 +122,7 @@ class StatsSummary extends Component {
 						path="tags-categories"
 						moduleStrings={ StatsStrings.tags }
 						period={ this.props.period }
-						query={ query }
+						query={ merge( {}, statsQueryOptions, query ) }
 						statType="statsTags"
 						summary
 					/>
