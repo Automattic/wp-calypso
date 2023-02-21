@@ -15,7 +15,6 @@ import {
 	TASK_FIND_DOMAIN,
 	TASK_GO_MOBILE_ANDROID,
 	TASK_GO_MOBILE_IOS,
-	TASK_PODCASTING,
 	TASK_MARKETPLACE,
 	TASK_RENEW_EXPIRED_PLAN,
 	TASK_RENEW_EXPIRING_PLAN,
@@ -42,7 +41,6 @@ import EarnFeatures from 'calypso/my-sites/customer-home/cards/tasks/earn-featur
 import FindDomain from 'calypso/my-sites/customer-home/cards/tasks/find-domain';
 import GoMobile from 'calypso/my-sites/customer-home/cards/tasks/go-mobile';
 import Marketplace from 'calypso/my-sites/customer-home/cards/tasks/marketplace';
-import Podcasting from 'calypso/my-sites/customer-home/cards/tasks/podcasting';
 import PromotePost from 'calypso/my-sites/customer-home/cards/tasks/promote-post';
 import Renew from 'calypso/my-sites/customer-home/cards/tasks/renew';
 import { ReviveAutoRevertedAtomic } from 'calypso/my-sites/customer-home/cards/tasks/revive-auto-reverted-atomic';
@@ -68,7 +66,6 @@ const cardComponents = {
 	[ TASK_GO_MOBILE_ANDROID ]: GoMobile,
 	[ TASK_GO_MOBILE_IOS ]: GoMobile,
 	[ TASK_MARKETPLACE ]: Marketplace,
-	[ TASK_PODCASTING ]: Podcasting,
 	[ TASK_PROMOTE_POST ]: PromotePost,
 	[ TASK_RENEW_EXPIRED_PLAN ]: Renew,
 	[ TASK_RENEW_EXPIRING_PLAN ]: Renew,

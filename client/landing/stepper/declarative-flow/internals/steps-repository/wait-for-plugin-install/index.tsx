@@ -5,21 +5,7 @@ import wpcomRequest from 'wpcom-proxy-request';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { ONBOARD_STORE } from '../../../../stores';
-import type { Step } from '../../types';
-
-export interface Plugin {
-	slug: string;
-}
-
-export interface PluginsResponse {
-	plugins: Plugin[];
-}
-
-export interface FailureInfo {
-	type: string;
-	code: number | string;
-	error: string;
-}
+import type { Step, PluginsResponse, FailureInfo } from '../../types';
 
 export const installedStates = {
 	PENDING: 'pending',

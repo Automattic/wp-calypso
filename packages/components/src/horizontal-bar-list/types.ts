@@ -12,9 +12,11 @@ export type HorizontalBarListItemProps = {
 	onClick?: ( e: React.MouseEvent | React.KeyboardEvent, data: StatDataObject ) => void;
 	hasIndicator?: boolean;
 	leftSideItem?: React.ReactNode | HTMLElement | undefined;
+	renderLeftSideItem?: ( data: StatDataObject ) => React.ReactNode | undefined;
 	renderRightSideItem?: ( data: StatDataObject ) => React.ReactNode;
 	useShortLabel?: boolean;
 	useShortNumber?: boolean;
+	leftGroupToggle?: boolean;
 	isStatic?: boolean;
 	additionalColumns?: React.ReactNode;
 	// for values that are not numeric, add this property to display a string in the values column and avoid showing horizontal bars

@@ -146,6 +146,12 @@ describe( 'CheckoutMain', () => {
 		} );
 	} );
 
+	it( 'renders the checkout summary', async () => {
+		render( <MyCheckout />, container );
+		expect( await screen.findByText( 'Purchase Details' ) ).toBeInTheDocument();
+		expect( navigate ).not.toHaveBeenCalled();
+	} );
+
 	it( 'removes a product from the cart after clicking to remove it', async () => {
 		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );

@@ -255,8 +255,11 @@ export default function SiteStatusContent( {
 				<>
 					<span
 						ref={ statusContentRef }
+						role="button"
+						tabIndex={ 0 }
 						onMouseEnter={ handleShowTooltip }
 						onMouseLeave={ handleHideTooltip }
+						onMouseDown={ handleHideTooltip }
 						className="sites-overview__row-status"
 					>
 						{ updatedContent }

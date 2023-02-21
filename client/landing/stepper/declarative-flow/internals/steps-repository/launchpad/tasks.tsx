@@ -29,7 +29,7 @@ export const tasks: Task[] = [
 	{
 		id: 'design_selected',
 		completed: true,
-		disabled: false,
+		disabled: true,
 		taskType: 'blog',
 	},
 	{
@@ -120,6 +120,7 @@ export const tasks: Task[] = [
 
 const linkInBioTaskList = [
 	'design_selected',
+	'domain_upsell',
 	'setup_link_in_bio',
 	'plan_selected',
 	'links_added',
@@ -127,7 +128,13 @@ const linkInBioTaskList = [
 ];
 
 export const launchpadFlowTasks: LaunchpadFlowTaskList = {
-	newsletter: [ 'setup_newsletter', 'plan_selected', 'subscribers_added', 'first_post_published' ],
+	newsletter: [
+		'setup_newsletter',
+		'plan_selected',
+		'subscribers_added',
+		'domain_upsell',
+		'first_post_published',
+	],
 	[ LINK_IN_BIO_FLOW ]: linkInBioTaskList,
 	[ LINK_IN_BIO_TLD_FLOW ]: linkInBioTaskList,
 	free: [

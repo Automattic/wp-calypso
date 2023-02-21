@@ -2,18 +2,12 @@
 @import "@wordpress/base-styles/mixins";
 @import "@automattic/typography/styles/fonts";
 
-@mixin break-design-preview() {
-	@media (min-width: #{ ($break-xlarge) }) {
-		@content;
-	}
-}
-
 .design-preview {
 	display: flex;
 	flex-direction: column;
 	height: 100%;
 
-	@include break-design-preview {
+	@include break-xlarge {
 		flex-direction: row;
 		margin: 0;
 		gap: 32px;
@@ -50,7 +44,7 @@
 			box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
 		}
 
-		@include break-design-preview {
+		@include break-xlarge {
 			bottom: 8px;
 			display: flex;
 			flex-direction: column;
@@ -64,7 +58,7 @@
 		justify-content: center;
 	}
 
-	@include break-design-preview {
+	@include break-xlarge {
 		border: 0;
 		box-shadow: none;
 		display: block;
@@ -111,7 +105,7 @@
 			}
 		}
 
-		@include break-design-preview {
+		@include break-xlarge {
 			display: block;
 		}
 	}
@@ -120,7 +114,7 @@
 		display: none;
 		font-size: $font-body-small;
 
-		@include break-design-preview {
+		@include break-xlarge {
 			display: block;
 			margin-top: 0.25rem;
 		}
@@ -149,7 +143,7 @@
 			}
 		}
 
-		@include break-design-preview {
+		@include break-xlarge {
 			display: flex;
 			flex-wrap: wrap;
 			gap: 8px 4px;
@@ -179,13 +173,13 @@
 			}
 		}
 
-		@include break-design-preview {
+		@include break-xlarge {
 			display: block;
 			margin-top: 2rem;
 		}
 	}
 
-	@include break-design-preview {
+	@include break-xlarge {
 		h2 {
 			display: block;
 		}
@@ -217,7 +211,7 @@
 		}
 	}
 
-	@include break-design-preview {
+	@include break-xlarge {
 		margin: 2rem 0 0;
 
 		> p {
@@ -287,7 +281,7 @@
 		max-width: 100%;
 		overflow: hidden;
 
-		@include break-design-preview {
+		@include break-xlarge {
 			max-height: 77.2258px;
 		}
 	}
@@ -308,7 +302,7 @@
 	flex-grow: 1;
 	position: relative;
 
-	@include break-design-preview {
+	@include break-xlarge {
 		margin-bottom: 32px;
 	}
 
@@ -329,7 +323,7 @@
 		display: none;
 		margin-top: -11px;
 
-		@include break-design-preview {
+		@include break-xlarge {
 			display: block;
 		}
 	}

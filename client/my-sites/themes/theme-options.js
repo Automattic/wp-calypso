@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { mapValues, pickBy, flowRight as compose } from 'lodash';
 import { connect } from 'react-redux';
@@ -273,7 +274,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		signup,
 		separator,
 		info,
-		help,
+		...( ! isEnabled( 'themes/showcase-i4/details-and-preview' ) && { help } ),
 	};
 }
 

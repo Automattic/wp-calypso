@@ -5,7 +5,6 @@ export const ADDING_TITAN_TO_YOUR_SITE = `${ root }/add-email/adding-professiona
 export const AUTO_RENEWAL = `${ root }/manage-purchases/#automatic-renewal`;
 export const CHANGE_NAME_SERVERS = `${ root }/domains/change-name-servers/`;
 export const CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS = `${ root }/domains/change-name-servers/#find-your-new-name-servers`;
-export const CLEAR_CACHE = `${ root }/clear-your-sites-cache/`;
 export const CONCIERGE_SUPPORT = `${ root }/concierge-support/`;
 export const CONTACT = `${ root }/contact/`;
 export const CALYPSO_CONTACT = '/help/contact';
