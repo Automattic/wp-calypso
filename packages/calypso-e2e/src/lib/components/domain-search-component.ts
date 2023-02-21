@@ -32,18 +32,31 @@ export class DomainSearchComponent {
 	 * @param {string} keyword Keyword to use in domain search.
 	 */
 	async search( keyword: string ): Promise< void > {
-		/**
-		 * Closure to pass into the retry method.
-		 */
-		const searchDomainClosure = async (): Promise< void > => {
-			await Promise.all( [
-				this.page.waitForResponse( /suggestions\?/ ),
-				this.page.waitForResponse( /tlds\?/ ),
-				this.page.fill( selectors.searchInput, keyword ),
-			] );
-		};
+		await this.page.waitForResponse( /tlds\?/ );
 
-		reloadAndRetry( this.page, searchDomainClosure );
+		/**
+		 *
+		 * Closure to pass into the retry method.
+		 *
+		 * @param {Page} page Page object.
+		 */
+		async function searchDomainClosure( page: Page ): Promise< void > {
+			const [ response ] = await Promise.all( [
+				page.waitForResponse( /suggestions\?/ ),
+				page.getByRole( 'searchbox' ).fill( keyword ),
+			] );
+
+			if ( ! response ) {
+				const errorText = await page.getByRole( 'status', { name: 'Notice' } ).innerText();
+				throw new Error(
+					`Encountered error while searching for domain.\nOriginal error: ${ errorText }`
+				);
+			}
+		}
+
+		// Domain lookup service is external to Automattic and sometimes it returns an error.
+		// Retry a few times when this is encountered.
+		await reloadAndRetry( this.page, searchDomainClosure );
 	}
 
 	/**

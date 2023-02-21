@@ -126,6 +126,15 @@ main.business-plan-upgrade-upsell-new-design.main {
 		}
 	}
 
+	&__countdown-counter {
+		display: block;
+		padding: 10px;
+		border-radius: 0;
+		background: #f5f1e1;
+		text-align: center;
+		margin-bottom: 20px;
+	}
+
 	&__footer &__decline-offer-button {
 		color: var(--color-primary);
 

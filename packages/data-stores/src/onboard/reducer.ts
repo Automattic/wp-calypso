@@ -483,6 +483,16 @@ const isMigrateFromWp: Reducer< boolean, OnboardAction > = ( state = false, acti
 	return state;
 };
 
+const pluginsToVerify: Reducer< string[] | undefined, OnboardAction > = ( state, action ) => {
+	if ( action.type === 'SET_PLUGIN_SLUGS_TO_VERIFY' ) {
+		return action.pluginSlugs;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	anchorPodcastId,
 	anchorEpisodeId,
@@ -526,6 +536,7 @@ const reducer = combineReducers( {
 	planCartItem,
 	productCartItems,
 	isMigrateFromWp,
+	pluginsToVerify,
 } );
 
 export type State = ReturnType< typeof reducer >;

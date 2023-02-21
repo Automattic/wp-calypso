@@ -120,6 +120,7 @@ const WaitForAtomic: Step = function WaitForAtomic( { navigation, data } ) {
 
 		submit?.();
 
+		// Only trigger when the siteId changes.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ siteId ] );
 

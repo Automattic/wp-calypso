@@ -218,11 +218,10 @@ export function VatForm( {
 			</div>
 			<div className="vat-form__row">
 				<Field
-					id={ section + '-organization' }
+					id={ section + '-vat-organization' }
 					type="text"
 					label={ String( translate( 'Organization for VAT' ) ) }
 					value={ vatDetailsInForm.name ?? '' }
-					autoComplete="organization"
 					disabled={ isDisabled }
 					onChange={ ( newValue: string ) => {
 						setVatDetailsInForm( {
@@ -247,7 +246,7 @@ export function VatForm( {
 			</div>
 			<div className="vat-form__row vat-form__row--full-width">
 				<Field
-					id={ section + '-address' }
+					id={ section + '-vat-address' }
 					type="text"
 					label={ String( translate( 'Address for VAT' ) ) }
 					value={ vatDetailsInForm.address ?? '' }
