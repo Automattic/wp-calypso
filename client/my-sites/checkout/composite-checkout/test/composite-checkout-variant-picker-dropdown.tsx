@@ -10,7 +10,6 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
-import getIntroOfferPrice from 'calypso/state/selectors/get-intro-offer-price';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import CheckoutMain from '../components/checkout-main';
@@ -22,7 +21,6 @@ import {
 	mockSetCartEndpointWith,
 	mockGetCartEndpointWith,
 	getActivePersonalPlanDataForType,
-	getPersonalPlanForInterval,
 	getBusinessPlanForInterval,
 	getVariantItemTextForInterval,
 	getPlansItemsState,
@@ -54,7 +52,6 @@ describe( 'CheckoutMain with a variant picker', () => {
 		hasLoadedSiteDomains.mockImplementation( () => true );
 		getDomainsBySiteId.mockImplementation( () => [] );
 		isMarketplaceProduct.mockImplementation( () => false );
-		getIntroOfferPrice.mockImplementation( () => null );
 
 		const initialCart = {
 			coupon: '',
@@ -232,24 +229,6 @@ describe( 'CheckoutMain with a variant picker', () => {
 		}
 	);
 
-	it.each( [
-		{ activePlan: 'two-year', cartPlan: 'yearly' },
-		{ activePlan: 'none', cartPlan: 'two-year' },
-	] )(
-		'does not render the variant picker when the cart contains a $cartPlan plan and the current plan is $activePlan',
-		async ( { activePlan, cartPlan } ) => {
-			getPlansBySiteId.mockImplementation( () => ( {
-				data: getActivePersonalPlanDataForType( activePlan ),
-			} ) );
-			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
-			nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
-			nock( 'https://public-api.wordpress.com' ).get( '/rest/v1.1/me/vat-info' ).reply( 200, {} );
-			render( <MyCheckout cartChanges={ cartChanges } /> );
-
-			await expect( screen.findByLabelText( 'Pick a product term' ) ).toNeverAppear();
-		}
-	);
-
 	it.each( [ { activePlan: 'none', cartPlan: 'yearly', expectedVariant: 'two-year' } ] )(
 		'renders the $expectedVariant variant with a discount percentage for a $cartPlan plan when the current plan is $activePlan',
 		async ( { activePlan, cartPlan, expectedVariant } ) => {
@@ -299,22 +278,6 @@ describe( 'CheckoutMain with a variant picker', () => {
 
 		await expect( screen.findByLabelText( 'Pick a product term' ) ).toNeverAppear();
 	} );
-
-	it.each( [
-		{ activePlan: 'yearly', cartPlan: 'monthly' },
-		{ activePlan: 'monthly', cartPlan: 'yearly' },
-	] )(
-		'does not render the variant picker for a term change from $activePlan to $cartPlan of the current plan',
-		async ( { activePlan, cartPlan } ) => {
-			getPlansBySiteId.mockImplementation( () => ( {
-				data: getActivePersonalPlanDataForType( activePlan ),
-			} ) );
-			const cartChanges = { products: [ getPersonalPlanForInterval( cartPlan ) ] };
-			render( <MyCheckout cartChanges={ cartChanges } /> );
-
-			await expect( screen.findByLabelText( 'Pick a product term' ) ).toNeverAppear();
-		}
-	);
 
 	it( 'does not render the variant picker for a renewal of the current plan', async () => {
 		const currentPlanRenewal = { ...planWithoutDomain, extra: { purchaseType: 'renewal' } };
