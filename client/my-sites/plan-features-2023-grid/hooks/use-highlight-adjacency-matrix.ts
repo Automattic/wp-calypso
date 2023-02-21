@@ -1,29 +1,20 @@
 import { isBusinessPlan, isPremiumPlan, isEcommercePlan } from '@automattic/calypso-products';
 import { useMemo } from '@wordpress/element';
-import { useSelector } from 'react-redux';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { PlanProperties } from '../types';
 
 const useHighlightIndices = ( visiblePlans: PlanProperties[] ) => {
-	const selectedSiteId = useSelector( getSelectedSiteId );
-	const currentPlan = useSelector( ( state ) => getCurrentPlan( state, selectedSiteId ) );
-
 	return useMemo( () => {
 		return visiblePlans.reduce< number[] >( ( acc, { planName }, index ) => {
-			const ishighlight =
-				isBusinessPlan( planName ) ||
-				isPremiumPlan( planName ) ||
-				isEcommercePlan( planName ) ||
-				currentPlan?.productSlug === planName;
+			const isHighlight =
+				isBusinessPlan( planName ) || isPremiumPlan( planName ) || isEcommercePlan( planName );
 
-			if ( ishighlight ) {
+			if ( isHighlight ) {
 				acc.push( index );
 			}
 
 			return acc;
 		}, [] );
-	}, [ currentPlan?.productSlug, visiblePlans ] );
+	}, [ visiblePlans ] );
 };
 
 const useHighlightAdjacencyMatrix = ( visiblePlans: PlanProperties[] ) => {
