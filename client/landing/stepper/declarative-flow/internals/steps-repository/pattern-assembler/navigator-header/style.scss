@@ -13,11 +13,17 @@
 	}
 
 	.navigator-header__description {
-		font-size: $font-body-small;
 		font-weight: 400;
 		line-height: 24px;
-		letter-spacing: -0.15px;
+		letter-spacing: -0.1px;
 		color: #50575e;
 		padding-bottom: 24px;
+	}
+}
+
+.pattern-assembler.pattern-assembler__sidebar-revamp {
+	.navigator-header__description {
+		font-size: $font-body-small;
+		letter-spacing: -0.15px;
 	}
 }

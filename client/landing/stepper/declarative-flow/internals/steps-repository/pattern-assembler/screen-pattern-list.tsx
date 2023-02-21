@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import NavigatorHeader from './navigator-header';
 import PatternSelector from './pattern-selector';
@@ -7,25 +8,31 @@ import type { Pattern } from './types';
 interface Props {
 	selectedPattern: Pattern | null;
 	onSelect: ( selectedPattern: Pattern ) => void;
+	onBack: () => void;
 	onDoneClick: () => void;
 }
 
-const ScreenPatternList = ( { selectedPattern, onSelect, onDoneClick }: Props ) => {
+const ScreenPatternList = ( { selectedPattern, onSelect, onBack, onDoneClick }: Props ) => {
 	const translate = useTranslate();
 	const patterns = useSectionPatterns();
+	const isSidebarRevampEnabled = isEnabled( 'pattern-assembler/sidebar-revamp' );
 
 	return (
 		<>
-			<NavigatorHeader
-				title={ translate( 'Add patterns' ) }
-				description={ translate(
-					'Find the right patterns for you by exploring the list of categories below.'
-				) }
-			/>
+			{ isSidebarRevampEnabled && (
+				<NavigatorHeader
+					title={ translate( 'Add patterns' ) }
+					description={ translate(
+						'Find the right patterns for you by exploring the list of categories below.'
+					) }
+				/>
+			) }
 			<div className="screen-container__body">
 				<PatternSelector
+					title={ ! isSidebarRevampEnabled ? translate( 'Add sections' ) : undefined }
 					patterns={ patterns }
 					onSelect={ onSelect }
+					onBack={ onBack }
 					onDoneClick={ onDoneClick }
 					selectedPattern={ selectedPattern }
 				/>

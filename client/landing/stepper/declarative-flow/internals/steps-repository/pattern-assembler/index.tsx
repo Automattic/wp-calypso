@@ -5,6 +5,7 @@ import {
 	__experimentalNavigatorScreen as NavigatorScreen,
 } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useEffect } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
@@ -23,6 +24,7 @@ import ScreenFooter from './screen-footer';
 import ScreenHeader from './screen-header';
 import ScreenHomepage from './screen-homepage';
 import ScreenMain from './screen-main';
+import ScreenMainDeprecated from './screen-main-deprecated';
 import ScreenPatternList from './screen-pattern-list';
 import { encodePatternId, createCustomHomeTemplateContent } from './utils';
 import type { Pattern } from './types';
@@ -37,6 +39,7 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 	const [ footer, setFooter ] = useState< Pattern | null >( null );
 	const [ sections, setSections ] = useState< Pattern[] >( [] );
 	const [ sectionPosition, setSectionPosition ] = useState< number | null >( null );
+	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const incrementIndexRef = useRef( 0 );
 	const [ activePosition, setActivePosition ] = useState( -1 );
 	const { goBack, goNext, submit, goToStep } = navigation;
@@ -50,6 +53,9 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const allPatterns = useAllPatterns();
+
+	const isSidebarRevampEnabled = isEnabled( 'pattern-assembler/sidebar-revamp' );
+
 	const commonEventProps = {
 		flow,
 		step: stepName,
@@ -287,6 +293,13 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 		submit?.();
 	};
 
+	const onPatternSelectorBack = ( type: string ) => {
+		recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_select_back_click', {
+			...commonEventProps,
+			pattern_type: type,
+		} );
+	};
+
 	const onDoneClick = ( type: string ) => {
 		const patterns = getPatterns( type );
 		recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_select_done_click', {
@@ -312,17 +325,52 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 		}
 	};
 
+	const onReplaceSection = ( position: number ) => {
+		setSectionPosition( position );
+	};
+
+	const onDeleteSection = ( position: number ) => {
+		deleteSection( position );
+	};
+
+	const onMoveUpSection = ( position: number ) => {
+		moveUpSection( position );
+	};
+
+	const onMoveDownSection = ( position: number ) => {
+		moveDownSection( position );
+	};
+
 	const stepContent = (
-		<div className="pattern-assembler__wrapper">
+		<div className="pattern-assembler__wrapper" ref={ wrapperRef } tabIndex={ -1 }>
 			<NavigatorProvider className="pattern-assembler__sidebar" initialPath="/">
 				<NavigatorScreen path="/">
-					<ScreenMain onSelect={ onMainItemSelect } onContinueClick={ onContinueClick } />
+					{ isEnabled( 'pattern-assembler/sidebar-revamp' ) ? (
+						<ScreenMain onSelect={ onMainItemSelect } onContinueClick={ onContinueClick } />
+					) : (
+						<ScreenMainDeprecated
+							sections={ sections }
+							header={ header }
+							footer={ footer }
+							onAddSection={ () => trackEventPatternAdd( 'section' ) }
+							onReplaceSection={ onReplaceSection }
+							onDeleteSection={ onDeleteSection }
+							onMoveUpSection={ onMoveUpSection }
+							onMoveDownSection={ onMoveDownSection }
+							onAddHeader={ () => trackEventPatternAdd( 'header' ) }
+							onDeleteHeader={ () => updateHeader( null ) }
+							onAddFooter={ () => trackEventPatternAdd( 'footer' ) }
+							onDeleteFooter={ () => updateFooter( null ) }
+							onContinueClick={ onContinueClick }
+						/>
+					) }
 				</NavigatorScreen>
 
 				<NavigatorScreen path="/header">
 					<ScreenHeader
 						selectedPattern={ header }
 						onSelect={ ( selectedPattern ) => onSelect( 'header', selectedPattern ) }
+						onBack={ () => onPatternSelectorBack( 'header' ) }
 						onDoneClick={ () => onDoneClick( 'header' ) }
 					/>
 				</NavigatorScreen>
@@ -331,6 +379,7 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 					<ScreenFooter
 						selectedPattern={ footer }
 						onSelect={ ( selectedPattern ) => onSelect( 'footer', selectedPattern ) }
+						onBack={ () => onPatternSelectorBack( 'footer' ) }
 						onDoneClick={ () => onDoneClick( 'footer' ) }
 					/>
 				</NavigatorScreen>
@@ -339,30 +388,27 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 					<ScreenHomepage
 						patterns={ sections }
 						onDoneClick={ () => onDoneClick( 'section' ) }
-						onReplaceSection={ ( position: number ) => {
-							setSectionPosition( position );
-						} }
-						onDeleteSection={ ( position: number ) => {
-							deleteSection( position );
-						} }
-						onMoveUpSection={ ( position: number ) => {
-							moveUpSection( position );
-						} }
-						onMoveDownSection={ ( position: number ) => {
-							moveDownSection( position );
-						} }
+						onReplaceSection={ onReplaceSection }
+						onDeleteSection={ onDeleteSection }
+						onMoveUpSection={ onMoveUpSection }
+						onMoveDownSection={ onMoveDownSection }
 					/>
 				</NavigatorScreen>
 				<NavigatorScreen path="/homepage/patterns">
 					<ScreenPatternList
 						selectedPattern={ sectionPosition ? sections[ sectionPosition ] : null }
 						onSelect={ ( selectedPattern ) => onSelect( 'section', selectedPattern ) }
+						onBack={ () => onPatternSelectorBack( 'section' ) }
 						onDoneClick={ () => onDoneClick( 'section' ) }
 					/>
 				</NavigatorScreen>
 
 				<NavigatorListener
-					onLocationChange={ ( navigatorLocation ) => setNavigatorPath( navigatorLocation.path ) }
+					onLocationChange={ ( navigatorLocation ) => {
+						setNavigatorPath( navigatorLocation.path );
+						// Disable focus restoration from the Navigator Screen
+						wrapperRef.current?.focus();
+					} }
 				/>
 			</NavigatorProvider>
 			{ isEnabled( 'pattern-assembler/client-side-render' ) ? (
@@ -379,6 +425,7 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 
 	return (
 		<StepContainer
+			className={ classnames( { 'pattern-assembler__sidebar-revamp': isSidebarRevampEnabled } ) }
 			stepName="pattern-assembler"
 			hideBack={ navigatorPath !== '/' || flow === WITH_THEME_ASSEMBLER_FLOW }
 			goBack={ onBack }

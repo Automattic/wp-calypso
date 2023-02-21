@@ -39,7 +39,7 @@ const ScreenHomepage = ( {
 			/>
 			<div className="screen-container__body">
 				<PatternLayout
-					patterns={ patterns }
+					sections={ patterns }
 					onAddSection={ goToPatternList }
 					onReplaceSection={ ( position ) => {
 						onReplaceSection( position );

@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { __experimentalNavigatorBackButton as NavigatorBackButton } from '@wordpress/components';
 import { useAsyncList } from '@wordpress/compose';
 import { useSelect } from '@wordpress/data';
@@ -9,16 +9,20 @@ import { ONBOARD_STORE } from '../../../../stores';
 import type { Pattern } from './types';
 
 type PatternSelectorProps = {
+	title?: string;
 	patterns: Pattern[];
 	onSelect: ( selectedPattern: Pattern ) => void;
+	onBack: () => void;
 	onDoneClick: () => void;
 	selectedPattern: Pattern | null;
 	emptyPatternText?: string;
 };
 
 const PatternSelector = ( {
+	title,
 	patterns,
 	onSelect,
+	onBack,
 	onDoneClick,
 	selectedPattern,
 	emptyPatternText,
@@ -39,6 +43,19 @@ const PatternSelector = ( {
 
 	return (
 		<div className="pattern-selector">
+			{ title && (
+				<div className="pattern-selector__header">
+					<NavigatorBackButton
+						as={ Button }
+						title={ translate( 'Back' ) }
+						borderless={ true }
+						onClick={ onBack }
+					>
+						<Gridicon icon="chevron-left" size={ 16 } />
+					</NavigatorBackButton>
+					<h1>{ title }</h1>
+				</div>
+			) }
 			<div className="pattern-selector__body">
 				<div className="pattern-selector__block-list" role="listbox">
 					{ isEnabled( 'pattern-assembler/client-side-render' ) ? (
