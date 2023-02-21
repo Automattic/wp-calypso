@@ -1,4 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
+import { ComboboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { ReactChild, useCallback, useState, useMemo, ChangeEvent } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -126,6 +127,24 @@ export default function CompanyDetailsForm( {
 		[ showCountryFields, isLoading, onSubmit, payload ]
 	);
 
+	const options = [
+		{
+			value: 'small',
+			label: 'Small',
+		},
+		{
+			value: 'normal',
+			label: 'Normal',
+		},
+		{
+			value: 'large',
+			label: 'Large',
+		},
+	];
+
+	const [ fontSize, setFontSize ] = useState();
+	const [ filteredOptions, setFilteredOptions ] = useState( options );
+
 	return (
 		<div className="company-details-form">
 			<form onSubmit={ handleSubmit }>
@@ -203,6 +222,20 @@ export default function CompanyDetailsForm( {
 						/>
 					</FormFieldset>
 				) }
+
+				<ComboboxControl
+					label="Country - New"
+					value={ fontSize }
+					onChange={ setFontSize }
+					options={ countryOptions }
+					onFilterValueChange={ ( inputValue ) =>
+						setFilteredOptions(
+							options.filter( ( option ) =>
+								option.label.toLowerCase().startsWith( inputValue.toLowerCase() )
+							)
+						)
+					}
+				/>
 
 				<FormFieldset className="company-details-form__business-address">
 					<FormLabel>{ translate( 'Business address' ) }</FormLabel>

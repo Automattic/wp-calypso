@@ -20,6 +20,8 @@ import { translateInvalidPartnerParameterError } from 'calypso/state/partner-por
 import type { APIError } from 'calypso/state/partner-portal/types';
 import './style.scss';
 
+import { ComboboxControl } from '@wordpress/components';
+
 export default function AgencySignupForm() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
