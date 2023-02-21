@@ -16,7 +16,6 @@ import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { get, isEmpty, partition } from 'lodash';
 import * as React from 'react';
-import { SITE_STORE } from '../../../../editor-site-launch/src/stores';
 import { STORE_KEY, POST_IDS_TO_EXCLUDE } from '../../constants';
 import { Post } from '../../types';
 import CreatePage from '../create-page';
@@ -59,14 +58,7 @@ function WpcomBlockEditorNavSidebar() {
 		];
 	} );
 
-	const siteId = window?._currentSiteId;
 	const siteSlug = window?.location.host;
-	const [ launchpadScreenOption, siteIntent ] = useSelect( ( select ) => {
-		return [
-			siteId && select( SITE_STORE ).getSiteOption( siteId, 'launchpad_screen' ),
-			siteId && select( SITE_STORE ).getSiteOption( siteId, 'site_intent' ),
-		];
-	} );
 
 	const { current: currentPost, drafts: draftPosts, recent: recentPosts } = useNavItems();
 	const statusLabels = usePostStatusLabels();
@@ -117,7 +109,10 @@ function WpcomBlockEditorNavSidebar() {
 	let defaultCloseUrl;
 	let defaultCloseLabel;
 
-	if ( launchpadScreenOption === 'full' ) {
+	const launchpadScreenOption = window?.wpcomBlockEditorNavSidebar?.currentSite?.launchpad_screen;
+	const siteIntent = window?.wpcomBlockEditorNavSidebar?.currentSite?.site_intent;
+
+	if ( launchpadScreenOption === 'full' && siteIntent !== false ) {
 		defaultCloseUrl = `http://wordpress.com/setup/${ siteIntent }/launchpad?siteSlug=${ siteSlug }`;
 		defaultCloseLabel = __( 'Next steps', 'full-site-editing' );
 	} else {
