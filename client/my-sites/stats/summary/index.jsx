@@ -114,15 +114,15 @@ class StatsSummary extends Component {
 				);
 				break;
 
-			case 'tagscategories':
+			case 'tags-categories':
 				title = translate( 'Tags & categories' );
 				summaryView = (
 					<StatsModule
-						key="tags-categories"
+						key="tags-categories-summary"
 						path="tags-categories"
 						moduleStrings={ StatsStrings.tags }
 						period={ this.props.period }
-						query={ merge( {}, statsQueryOptions, query ) }
+						query={ query }
 						statType="statsTags"
 						summary
 					/>
