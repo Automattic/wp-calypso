@@ -128,7 +128,7 @@ const UpgradeNudge = ( { siteSlug, paidPlugins } ) => {
 				showIcon={ true }
 				href={ `/checkout/${ siteSlug }/${ PLAN_ECOMMERCE_MONTHLY }` }
 				feature={ FEATURE_INSTALL_PLUGINS }
-				plan={ plan }
+				plan={ PLAN_ECOMMERCE_MONTHLY }
 				title={ translate( 'To install additional plugins, please upgrade to a paid plan.' ) }
 			/>
 		);
