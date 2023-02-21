@@ -13,12 +13,6 @@ import {
 	PLAN_TRIENNIAL_PERIOD,
 } from './constants';
 
-declare global {
-	interface Window {
-		location: Location;
-	}
-}
-
 export function isBestValue( plan: string ): boolean {
 	return ( BEST_VALUE_PLANS as ReadonlyArray< string > ).includes( plan );
 }
