@@ -1,4 +1,5 @@
 /* eslint-disable no-restricted-imports */
+import { WordPressWordmark } from '@automattic/components';
 import { useLocalizeUrl, useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useTranslate, getLocaleSlug } from 'i18n-calypso';
 import { useState } from 'react';
@@ -40,7 +41,10 @@ const UniversalNavbarHeader = ( { isLoggedIn = false, sectionName }: HeaderProps
 											href={ localizeUrl( '//wordpress.com' ) }
 											target="_self"
 										>
-											{ /* <WordPressWordmark className="x-icon x-icon__logo" /> */ }
+											<WordPressWordmark
+												className="x-icon x-icon__logo"
+												color="var(--studio-blue-50)"
+											/>
 											<span className="x-hidden">WordPress.com</span>
 										</a>
 									</li>
