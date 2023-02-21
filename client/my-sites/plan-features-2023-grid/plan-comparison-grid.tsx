@@ -332,7 +332,7 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 	const showPlanSelect = ! allVisible && ! current;
 
 	return (
-		<Cell key={ planName } isInSignup={ isInSignup } className={ headerClasses } textAlign="left">
+		<Cell isInSignup={ isInSignup } className={ headerClasses } textAlign="left">
 			<PopularBadge isInSignup={ isInSignup } planName={ planName } />
 			<PlanSelector>
 				{ showPlanSelect && (
@@ -430,6 +430,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 			/>
 			{ visiblePlansProperties.map( ( planProperties, index ) => (
 				<PlanComparisonGridHeaderCell
+					key={ planProperties.planName }
 					planProperties={ planProperties }
 					isLastInRow={ index === visiblePlansProperties.length - 1 }
 					isFooter={ isFooter }
@@ -483,7 +484,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	} );
 
 	return (
-		<Cell key={ planName } isInSignup={ isInSignup } className={ cellClasses } textAlign="center">
+		<Cell isInSignup={ isInSignup } className={ cellClasses } textAlign="center">
 			{ feature.getIcon && (
 				<span className="plan-comparison-grid__plan-image">{ feature.getIcon() }</span>
 			) }
@@ -523,11 +524,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	const featureSlug = feature.getSlug();
 
 	return (
-		<Row
-			key={ featureSlug }
-			isHiddenInMobile={ isHiddenInMobile }
-			className="plan-comparison-grid__feature-row"
-		>
+		<Row isHiddenInMobile={ isHiddenInMobile } className="plan-comparison-grid__feature-row">
 			<RowHead key="feature-name" className="plan-comparison-grid__feature-feature-name">
 				<Plans2023Tooltip text={ feature.getDescription?.() }>
 					{ feature.getTitle() }
@@ -540,6 +537,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 			</RowHead>
 			{ ( visiblePlansProperties ?? [] ).map( ( { planName } ) => (
 				<PlanComparisonGridFeatureGroupRowCell
+					key={ planName }
 					feature={ feature }
 					allJetpackFeatures={ allJetpackFeatures }
 					visiblePlansProperties={ visiblePlansProperties }
@@ -759,6 +757,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 							</TitleRow>
 							{ featureObjects.map( ( feature ) => (
 								<PlanComparisonGridFeatureGroupRow
+									key={ feature.getSlug() }
 									feature={ feature }
 									isHiddenInMobile={ isHiddenInMobile }
 									allJetpackFeatures={ allJetpackFeatures }
