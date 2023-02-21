@@ -20,6 +20,7 @@ export function shouldLoadInlineHelp( sectionName: string, currentRoute: string 
 		'/start/videopress',
 		'/start/setup-site',
 		'/start/newsletter',
+		'/start/site-content-collection',
 		'/plugins/domain',
 		'/plugins/marketplace/setup',
 	];
