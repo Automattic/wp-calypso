@@ -1,5 +1,6 @@
 // Test resources
 import {
+	FEATURE_SOCIAL_SHARES_1000,
 	WPCOM_FEATURES_AKISMET,
 	WPCOM_FEATURES_BACKUPS,
 	WPCOM_FEATURES_CDN,
@@ -67,7 +68,8 @@ describe( 'getLandingPath', () => {
 	it.each( [
 		[ WPCOM_FEATURES_SCAN ],
 		[ WPCOM_FEATURES_INSTANT_SEARCH ],
-		[ WPCOM_FEATURES_SCAN, WPCOM_FEATURES_INSTANT_SEARCH ],
+		[ FEATURE_SOCIAL_SHARES_1000 ],
+		[ WPCOM_FEATURES_SCAN, WPCOM_FEATURES_INSTANT_SEARCH, FEATURE_SOCIAL_SHARES_1000 ],
 	] )(
 		'should return /backup/<site> for eligible sites with Backup and other features',
 		( otherFeatures ) => {
@@ -91,7 +93,11 @@ describe( 'getLandingPath', () => {
 		expect( landingPath ).toEqual( `/scan/${ FAKE_SITE_SLUG }` );
 	} );
 
-	it.each( [ [ WPCOM_FEATURES_INSTANT_SEARCH ] ] )(
+	it.each( [
+		[ WPCOM_FEATURES_INSTANT_SEARCH ],
+		[ FEATURE_SOCIAL_SHARES_1000 ],
+		[ WPCOM_FEATURES_INSTANT_SEARCH, FEATURE_SOCIAL_SHARES_1000 ],
+	] )(
 		'should return /scan/<site> for eligible sites with Scan and other non-Backup features',
 		( otherFeatures ) => {
 			isJetpackSite.mockReturnValue( true );
@@ -113,6 +119,27 @@ describe( 'getLandingPath', () => {
 		const landingPath = getLandingPath( {}, 0 );
 		expect( landingPath ).toEqual( `/jetpack-search/${ FAKE_SITE_SLUG }` );
 	} );
+
+	it( 'should return /jetpack-search/<site> for sites with Search and Social', () => {
+		isJetpackSite.mockReturnValue( true );
+		getSiteSlug.mockReturnValue( FAKE_SITE_SLUG );
+		siteHasFeature.mockImplementation(
+			mockSiteFeatures( WPCOM_FEATURES_INSTANT_SEARCH, FEATURE_SOCIAL_SHARES_1000 )
+		);
+
+		const landingPath = getLandingPath( {}, 0 );
+		expect( landingPath ).toEqual( `/jetpack-search/${ FAKE_SITE_SLUG }` );
+	} );
+
+	it( 'should return /jetpack-social/<site> for sites with Social but not Backup, Scan, or Search', () => {
+		isJetpackSite.mockReturnValue( true );
+		getSiteSlug.mockReturnValue( FAKE_SITE_SLUG );
+		siteHasFeature.mockImplementation( mockSiteFeatures( FEATURE_SOCIAL_SHARES_1000 ) );
+
+		const landingPath = getLandingPath( {}, 0 );
+		expect( landingPath ).toEqual( `/jetpack-social/${ FAKE_SITE_SLUG }` );
+	} );
+
 	it.each( [ [ WPCOM_FEATURES_AKISMET ], [ WPCOM_FEATURES_VIDEOPRESS ], [ WPCOM_FEATURES_CDN ] ] )(
 		'should return /backup/<site> for sites with any other feature set',
 		( featureSet ) => {
@@ -124,6 +151,7 @@ describe( 'getLandingPath', () => {
 			expect( landingPath ).toEqual( `/backup/${ FAKE_SITE_SLUG }` );
 		}
 	);
+
 	it( 'should return /backup/<site> when site features are unavailable', () => {
 		isJetpackSite.mockReturnValue( true );
 		getSiteSlug.mockReturnValue( FAKE_SITE_SLUG );
