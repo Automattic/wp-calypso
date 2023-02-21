@@ -48,14 +48,16 @@ import {
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 import type { FC } from 'react';
 
+type translateType = ReturnType< typeof useTranslate >;
+
+const identity = ( x: string ) => x;
+
 const mockConfig = config as unknown as { isEnabled: jest.Mock };
 jest.mock( '@automattic/calypso-config', () => {
 	const mock = () => '';
 	mock.isEnabled = jest.fn();
 	return mock;
 } );
-
-const identity = ( x: string ) => x;
 
 const productMap = [
 	[ 'Akismet Anti-spam', 'monthly', PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ],
@@ -140,10 +142,7 @@ describe( 'WPCheckoutOrderSummary', () => {
 
 			test( `${ productName } feature list shows up if ${ productName } ${ billingTerm } is in the cart`, async () => {
 				const product = convertProductSlugToResponseProduct( productSlug );
-				const productFeatures = getJetpackProductFeatures(
-					product,
-					identity as ReturnType< typeof useTranslate >
-				);
+				const productFeatures = getJetpackProductFeatures( product, identity as translateType );
 				const cartChanges = {
 					products: [ product ],
 				};
@@ -164,10 +163,7 @@ describe( 'WPCheckoutOrderSummary', () => {
 
 			test( `Deprecated T2 plan ${ productName } ${ billingTerm } does not show feature list`, async () => {
 				const product = convertProductSlugToResponseProduct( productSlug );
-				const productFeatures = getJetpackProductFeatures(
-					product,
-					identity as ReturnType< typeof useTranslate >
-				);
+				const productFeatures = getJetpackProductFeatures( product, identity as translateType );
 
 				expect( productFeatures.length ).toEqual( 0 );
 			} );
@@ -187,7 +183,7 @@ describe( 'WPCheckoutOrderSummary', () => {
 				allProducts.reduce( ( featureList: string[], currentProduct ) => {
 					const currentProductFeatures = getJetpackProductFeatures(
 						currentProduct,
-						identity as ReturnType< typeof useTranslate >
+						identity as translateType
 					);
 					return [ ...featureList, ...currentProductFeatures ];
 				}, [] )
@@ -220,7 +216,7 @@ describe( 'WPCheckoutOrderSummary', () => {
 				allProducts.reduce( ( featureList: string[], currentProduct ) => {
 					const currentProductFeatures = getJetpackProductFeatures(
 						currentProduct,
-						identity as ReturnType< typeof useTranslate >
+						identity as translateType
 					);
 					return [ ...featureList, ...currentProductFeatures ];
 				}, [] )
