@@ -1,13 +1,13 @@
 import { Button, Card, Spinner } from '@automattic/components';
-import { PanelBody } from '@wordpress/components';
 import i18n, { useTranslate } from 'i18n-calypso';
-import moment from 'moment';
 import { useSelector } from 'react-redux';
-import Badge from 'calypso/components/badge';
 import CardHeading from 'calypso/components/card-heading';
 import SocialLogo from 'calypso/components/social-logo';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { DeploymentStatusBadge } from './deployment-status-badge';
+import { DeploymentStatusExplanation } from './deployment-status-explanation';
 import { useDeploymentStatus } from './use-deployment-status';
+
 import './style.scss';
 
 type DeploymentCardProps = {
@@ -28,7 +28,7 @@ export const DeploymentCard = ( { repo, branch, repoUrl }: DeploymentCardProps )
 		totalFailures = deployment.move_failures.length + deployment.remove_failures.length;
 		deploymentTime = new Intl.DateTimeFormat( i18n.getLocaleSlug() ?? 'en', {
 			dateStyle: 'medium',
-			timeStyle: 'medium',
+			timeStyle: 'short',
 		} ).format( new Date( deployment.last_deployment_timestamp * 1000 ) );
 	}
 
@@ -37,11 +37,10 @@ export const DeploymentCard = ( { repo, branch, repoUrl }: DeploymentCardProps )
 			<SocialLogo className="material-icon" icon="github" size={ 32 } />
 			<CardHeading className="deployment-card__heading">
 				{ translate( 'Deploy from GitHub' ) }
-				<Badge type="info-green">{ translate( 'Deployed' ) }</Badge>
 			</CardHeading>
 			<div>
 				<p>
-					{ translate( 'Deploying from {{a}}%(repo)s{{/a}}', {
+					{ translate( 'Listening for pushes from {{a}}%(repo)s{{/a}}.', {
 						args: {
 							repo: `${ repo } (${ branch })`,
 						},
@@ -52,49 +51,45 @@ export const DeploymentCard = ( { repo, branch, repoUrl }: DeploymentCardProps )
 				</p>
 			</div>
 			<div>
-				<PanelBody title={ translate( 'Recent Deployment' ) } opened>
-					{ isLoading && <Spinner /> }
-					{ ! isLoading && ! deployment && <p>translate('There are no deployments')</p> }
-
-					{ deployment && (
+				{ isLoading && <Spinner /> }
+				{ deployment && (
+					<div style={ { marginBottom: '24px' } }>
+						<strong style={ { display: 'block', marginBottom: '8px' } }>
+							{ translate( 'Last deployment' ) }
+						</strong>
 						<div className="deployment-card__row">
 							<div className="deployment-card__column">
-								<p>{ moment( deploymentTime ).fromNow() }</p>
+								<span>{ deploymentTime }</span>
 							</div>
 							<div className="deployment-card__column">
-								<p>
-									{ translate( 'commit {{a}}%(commit)s{{/a}}', {
-										args: {
-											commit: deployment?.last_deployment_sha.substring( 0, 7 ),
-										},
-										components: {
-											a: <a target="_blank" href={ repoUrl } rel="noreferrer" />,
-										},
-									} ) }
-								</p>
+								<a
+									target="_blank"
+									href={ `${ repoUrl }/${ deployment.last_deployment_sha }` }
+									rel="noreferrer"
+								>
+									{ deployment.last_deployment_sha.substring( 0, 7 ) }
+								</a>
+							</div>
+							<div
+								className="deployment-card__column"
+								style={ { flexDirection: 'row', gap: '8px' } }
+							>
+								<DeploymentStatusBadge
+									status={ deployment.status }
+									totalFailures={ totalFailures }
+								/>
 							</div>
 						</div>
-					) }
-					{ totalFailures > 0 && (
-						<p>
-							{ translate(
-								'%(totalFailures)s file failed to transfer.',
-								'%(totalFailures)s files failed to transfer.',
-								{
-									count: totalFailures,
-									args: {
-										totalFailures,
-									},
-								}
-							) }{ ' ' }
-							<a target="_blank" href={ repoUrl } rel="noreferrer">
-								{ translate( 'Check logs' ) }
-							</a>
-						</p>
-					) }
-				</PanelBody>
+						{ ( deployment.status === 'failed' || totalFailures > 0 ) && (
+							<DeploymentStatusExplanation
+								status={ deployment.status }
+								totalFailures={ totalFailures }
+							/>
+						) }
+					</div>
+				) }
 			</div>
-			<Button primary style={ { marginTop: '16px' } }>
+			<Button primary>
 				<span>{ translate( 'Disconnect repository' ) }</span>
 			</Button>
 		</Card>

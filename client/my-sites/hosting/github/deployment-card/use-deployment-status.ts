@@ -30,6 +30,7 @@ export const useDeploymentStatus = (
 			},
 			refetchOnWindowFocus: false,
 			...options,
+			refetchInterval: 5000,
 		}
 	);
 };

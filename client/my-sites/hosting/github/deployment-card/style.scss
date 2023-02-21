@@ -1,24 +1,16 @@
-.deployment-card__heading {
-	width: 100%;
-
-	.badge {
-		float: right;
-	}
-}
-
 .deployment-card__row {
 	display: flex;
 	flex-direction: row;
 	align-items: flex-start;
-	gap: 16px;
+	gap: 48px;
+	margin-bottom: 8px;
 }
 
 .deployment-card__column-title {
 	font-weight: 600;
 }
 
-@media ( max-width: 860px ) {
-	.deployment-card__column {
-		flex-direction: column;
-	}
+.deployment-card__column {
+	display: flex;
+	flex-direction: column;
 }
