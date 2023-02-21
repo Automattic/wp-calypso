@@ -1,10 +1,11 @@
 import { Button, Card } from '@automattic/components';
 import requestExternalAccess from '@automattic/request-external-access';
 import { translate } from 'i18n-calypso';
-import { useMutation } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { useSelector, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import SocialLogo from 'calypso/components/social-logo';
+import { USE_GITHUB_REPOS_QUERY_KEY } from 'calypso/my-sites/hosting/github/use-github-connection';
 import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
 import { getKeyringServiceByName } from 'calypso/state/sharing/services/selectors';
 
@@ -19,11 +20,13 @@ export const GithubAuthorizeCard = () => {
 	const github = useSelector( ( state ) =>
 		getKeyringServiceByName( state, 'github-deploy' )
 	) as Service;
+	const queryClient = useQueryClient();
 
 	const { mutate: authorize, isLoading: isAuthorizing } = useMutation< void, unknown, string >(
 		async ( connectURL ) => {
 			await new Promise( ( resolve ) => requestExternalAccess( connectURL, resolve ) );
 			await dispatch( requestKeyringConnections() );
+			await queryClient.invalidateQueries( { queryKey: [ USE_GITHUB_REPOS_QUERY_KEY ] } );
 		}
 	);
 
