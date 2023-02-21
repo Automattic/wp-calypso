@@ -4,6 +4,7 @@ import page from 'page';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPosts from 'calypso/components/data/query-posts';
+import QueryStatsRecentPostViews from 'calypso/components/data/query-stats-recent-post-views';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -32,7 +33,7 @@ const queryPost = {
 	number: 20, // max supported by /me/posts endpoint for all-sites mode
 	status: 'publish', // do not allow private or unpublished posts
 	type: 'post',
-	order_by: 'comment_count',
+	order_by: 'views',
 };
 const queryPage = {
 	...queryPost,
@@ -174,6 +175,11 @@ export default function PromotedPosts( { tab }: Props ) {
 				<PageViewTracker path="/advertising/:site/posts" title="Advertising > Ready to Blaze" />
 			) }
 
+			<QueryStatsRecentPostViews
+				siteId={ selectedSiteId }
+				postIds={ content.map( ( post ) => post.ID ) }
+				num={ 30 }
+			/>
 			<QueryPosts siteId={ selectedSiteId } query={ queryPost } postId={ null } />
 			<QueryPosts siteId={ selectedSiteId } query={ queryPage } postId={ null } />
 			<QueryPosts siteId={ selectedSiteId } query={ queryProducts } postId={ null } />
