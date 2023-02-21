@@ -15,7 +15,7 @@ const getSiteIdsThatHavePlugins = createSelector(
 	( state: AppState ) => {
 		return Object.keys( state.plugins.installed.plugins ).map( ( siteId ) => Number( siteId ) );
 	},
-	( state ) => [ state.plugins.installed.plugins ]
+	( state: AppState ) => [ state.plugins.installed.plugins ]
 );
 
 const emptyObject = {};
@@ -64,10 +64,12 @@ export const getAllPluginsIndexedByPluginSlug = createSelector(
 			{}
 		);
 	},
-	( state ) => [
+	( state: AppState ) => [
 		isRequestingForAllSites( state ),
 		getSiteIdsThatHavePlugins( state ),
-		...getSiteIdsThatHavePlugins( state ).map( ( siteId ) => isRequesting( state, siteId ) ),
+		...getSiteIdsThatHavePlugins( state ).map( ( siteId: number ) =>
+			isRequesting( state, siteId )
+		),
 	]
 ) as { ( state: AppState ): { [ pluginSlug: string ]: Plugin } };
 
@@ -127,7 +129,10 @@ export const getAllPluginsIndexedBySiteId = createSelector(
 			{}
 		);
 	},
-	( state ) => [ getAllPluginsIndexedByPluginSlug( state ), getSiteIdsThatHavePlugins( state ) ]
+	( state: AppState ) => [
+		getAllPluginsIndexedByPluginSlug( state ),
+		getSiteIdsThatHavePlugins( state ),
+	]
 ) as { ( state: AppState ): { [ siteId: number ]: { [ pluginSlug: string ]: Plugin } } };
 
 export const getFilteredAndSortedPlugins = createSelector(
@@ -231,15 +236,15 @@ export const getPluginOnSite = createSelector(
 			...{ sites: { [ siteId ]: plugin.sites[ siteId ] } },
 		};
 	},
-	( state ) => [ getAllPluginsIndexedByPluginSlug( state ) ]
+	( state: AppState ) => [ getAllPluginsIndexedByPluginSlug( state ) ]
 );
 
 export const getPluginsOnSite = createSelector(
 	( state: AppState, siteId: number, pluginSlugs: string[] ) => {
 		return pluginSlugs.map( ( pluginSlug ) => getPluginOnSite( state, siteId, pluginSlug ) );
 	},
-	( state, siteId, pluginSlugs ) => [
+	( state: AppState, siteId: number, pluginSlugs: string[] ) => [
 		...pluginSlugs.map( ( pluginSlug ) => getPluginOnSite( state, siteId, pluginSlug ) ),
 	],
-	( state, siteId, pluginSlugs ) => [ siteId, ...pluginSlugs ].join()
+	( state: AppState, siteId: number, pluginSlugs: string[] ) => [ siteId, ...pluginSlugs ].join()
 );
