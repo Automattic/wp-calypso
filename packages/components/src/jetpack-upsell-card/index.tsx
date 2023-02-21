@@ -104,46 +104,38 @@ export default function JetpackUpsellCard( {
 		[ purchasedProducts, PRODUCTS ]
 	);
 
-	return (
-		hasProductsToUpsell && (
-			<Card className="jetpack-upsell-card">
-				<h2 className="jetpack-upsell-card__title">
-					{ translate(
-						'Enhance %(siteSlug)s with Jetpack Security, Performance, and Growth tools',
-						{
-							args: { siteSlug: siteSlug ?? 'your site' },
-						}
-					) }
-				</h2>
-				<div className="jetpack-upsell-card__content">
-					{ /* Only upsell products that the customer does not own. */ }
-					{ PRODUCTS.filter( ( product ) => ! purchasedProducts?.includes( product.slug ) ).map(
-						( { title, description, href, iconUrl, slug } ) => (
-							<div className="jetpack-upsell-card__product" key={ slug }>
-								<div className="jetpack-upsell-card__product-icon">
-									<img src={ iconUrl } alt={ translate( 'included' ) } width="24px" height="24px" />
-								</div>
-								<h3 className="jetpack-upsell-card__product-title">{ title }</h3>
-								<p className="jetpack-upsell-card__product-description">{ description }</p>
-								<a href={ href } className="jetpack-upsell-card__product-link">
-									<span className="jetpack-upsell-card__product-link-text">
-										{ translate( 'More about %(productName)s', {
-											args: { productName: title },
-										} ) }
-									</span>
-									<Gridicon icon="external" size={ 16 } />
-								</a>
-								<Button
-									href={ upgradeUrls[ slug ] }
-									className="jetpack-upsell-card__product-button"
-								>
-									{ translate( 'Get' ) }
-								</Button>
+	return ! hasProductsToUpsell ? null : (
+		<Card className="jetpack-upsell-card">
+			<h2 className="jetpack-upsell-card__title">
+				{ translate( 'Enhance %(siteSlug)s with Jetpack Security, Performance, and Growth tools', {
+					args: { siteSlug: siteSlug ?? 'your site' },
+				} ) }
+			</h2>
+			<div className="jetpack-upsell-card__content">
+				{ /* Only upsell products that the customer does not own. */ }
+				{ PRODUCTS.filter( ( product ) => ! purchasedProducts?.includes( product.slug ) ).map(
+					( { title, description, href, iconUrl, slug } ) => (
+						<div className="jetpack-upsell-card__product" key={ slug }>
+							<div className="jetpack-upsell-card__product-icon">
+								<img src={ iconUrl } alt={ translate( 'included' ) } width="24px" height="24px" />
 							</div>
-						)
-					) }
-				</div>
-			</Card>
-		)
+							<h3 className="jetpack-upsell-card__product-title">{ title }</h3>
+							<p className="jetpack-upsell-card__product-description">{ description }</p>
+							<a href={ href } className="jetpack-upsell-card__product-link">
+								<span className="jetpack-upsell-card__product-link-text">
+									{ translate( 'More about %(productName)s', {
+										args: { productName: title },
+									} ) }
+								</span>
+								<Gridicon icon="external" size={ 16 } />
+							</a>
+							<Button href={ upgradeUrls[ slug ] } className="jetpack-upsell-card__product-button">
+								{ translate( 'Get' ) }
+							</Button>
+						</div>
+					)
+				) }
+			</div>
+		</Card>
 	);
 }
