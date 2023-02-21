@@ -1,14 +1,13 @@
 #!/usr/bin/env node
 
 /* eslint-disable import/no-nodejs-modules */
-const spawnSync = require( 'child_process' ).spawnSync;
 const fs = require( 'fs' );
 const path = require( 'path' );
 
 const PROJECT_DIR = path.resolve( __dirname, '..' );
 const ROOT_DIR = path.resolve( PROJECT_DIR, '..', '..' );
 const CHUNKS_MAP_PATH = path.resolve( PROJECT_DIR, 'dist', 'chunks-map.json' );
-const CALYPSO_STRINGS_PATH = path.resolve( ROOT_DIR, 'public', 'calypso-strings.pot' );
+const CALYPSO_STRINGS_PATH = path.resolve( PROJECT_DIR, 'dist', 'calypso-strings.pot' );
 const OUTPUT_PATH = path.resolve( PROJECT_DIR, 'dist', 'translations-manifest.json' );
 
 const chunksMap = JSON.parse(
@@ -16,11 +15,6 @@ const chunksMap = JSON.parse(
 		encoding: 'utf8',
 	} )
 );
-
-// Generate calypso-strings.pot.
-spawnSync( 'yarn', [ 'translate' ], {
-	cwd: ROOT_DIR,
-} );
 
 const calypsoStrings = fs.readFileSync( CALYPSO_STRINGS_PATH, {
 	encoding: 'utf8',
@@ -41,4 +35,5 @@ const translationsRefs = Object.fromEntries(
 fs.writeFileSync( OUTPUT_PATH, JSON.stringify( { references: translationsRefs } ) );
 
 // Clean up.
+fs.unlinkSync( CALYPSO_STRINGS_PATH );
 fs.unlinkSync( CHUNKS_MAP_PATH );
