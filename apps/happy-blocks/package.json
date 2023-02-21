@@ -6,8 +6,9 @@
 	"main": "build/index.js",
 	"scripts": {
 		"build:block": "wp-scripts build",
-		"build": "NODE_ENV=production yarn dev",
+		"build": "NODE_ENV=production yarn dev && yarn build-translations-manifest",
 		"build-ci": "yarn build && ./bin/prepArtifactForCI.sh",
+		"build-translations-manifest": "node bin/build-translations-manifest.js",
 		"test": "jest test",
 		"clean": "rm -rf build",
 		"dev": "yarn run calypso-apps-builder --localPath / --remotePath /home/wpcom/public_html/wp-content/a8c-plugins/happy-blocks",
