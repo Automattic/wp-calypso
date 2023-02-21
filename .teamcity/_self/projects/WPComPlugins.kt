@@ -271,6 +271,7 @@ private object HappyBlocks : WPComPluginBuild(
 		bashNodeScript {
 			name = "Create release directory"
 			scriptContent = """
+				yarn translate
 				cd apps/happy-blocks
 
 				# Copy existing dist files to release directory
