@@ -1,7 +1,7 @@
 import { getPlanClass } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import PlanPill from 'calypso/components/plans/plan-pill';
-import useFeaturedLabel from '../hooks/use-featured-label';
+import useHighlightLabel from '../hooks/use-highlight-label';
 
 const PopularBadge: React.FunctionComponent< {
 	isInSignup: boolean;
@@ -13,13 +13,13 @@ const PopularBadge: React.FunctionComponent< {
 		getPlanClass( planName ),
 		additionalClassName
 	);
-	const featuredLabel = useFeaturedLabel( planName );
+	const highlightLabel = useHighlightLabel( planName );
 
 	return (
 		<>
-			{ featuredLabel && (
+			{ highlightLabel && (
 				<div className={ classes }>
-					<PlanPill isInSignup={ isInSignup }>{ featuredLabel }</PlanPill>
+					<PlanPill isInSignup={ isInSignup }>{ highlightLabel }</PlanPill>
 				</div>
 			) }
 		</>

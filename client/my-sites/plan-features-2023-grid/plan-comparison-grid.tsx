@@ -29,7 +29,7 @@ import PlanFeatures2023GridActions from './actions';
 import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
 import PopularBadge from './components/popular-badge';
 import PlanFeatures2023GridHeaderPrice from './header-price';
-import useFeaturedAdjacencyMatrix from './hooks/use-featured-adjacency-matrix';
+import useHighlightAdjacencyMatrix from './hooks/use-highlight-adjacency-matrix';
 import { plansBreakSmall, plansBreakLarge } from './media-queries';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import { PlanProperties } from './types';
@@ -304,7 +304,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const allVisible = visiblePlansProperties.length === displayedPlansProperties.length;
-	const featuredAdjacencyMatrix = useFeaturedAdjacencyMatrix( visiblePlansProperties );
+	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( visiblePlansProperties );
 
 	return (
 		<PlanRow>
@@ -315,19 +315,19 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 			{ visiblePlansProperties.map( ( planProperties, index ) => {
 				const { planName, planConstantObj, availableForPurchase, current, ...planPropertiesObj } =
 					planProperties;
-				const isFeatured =
+				const isHighlight =
 					isBusinessPlan( planName ) || isPremiumPlan( planName ) || isEcommercePlan( planName );
 
 				const headerClasses = classNames(
 					'plan-comparison-grid__header-cell',
 					getPlanClass( planName ),
 					{
-						'popular-plan-parent-class': isFeatured,
+						'popular-plan-parent-class': isHighlight,
 						'is-last-in-row': index === visiblePlansProperties.length - 1,
 						'plan-is-footer': isFooter,
-						'is-left-of-featured': featuredAdjacencyMatrix[ planName ]?.leftOfFeatured,
-						'is-right-of-featured': featuredAdjacencyMatrix[ planName ]?.rightOfFeatured,
-						'is-only-featured': featuredAdjacencyMatrix[ planName ]?.isOnlyFeatured,
+						'is-left-of-highlight': highlightAdjacencyMatrix[ planName ]?.leftOfHighlight,
+						'is-right-of-highlight': highlightAdjacencyMatrix[ planName ]?.rightOfHighlight,
+						'is-only-highlight': highlightAdjacencyMatrix[ planName ]?.isOnlyHighlight,
 					}
 				);
 
@@ -559,7 +559,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		return acc;
 	}, [] );
 
-	const featuredAdjacencyMatrix = useFeaturedAdjacencyMatrix( visiblePlansProperties );
+	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( visiblePlansProperties );
 
 	return (
 		<div className="plan-comparison-grid">
@@ -644,7 +644,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 										{ ( visiblePlansProperties ?? [] ).map( ( { planName } ) => {
 											const hasFeature =
 												restructuredFeatures.featureMap[ planName ].has( featureSlug );
-											const isFeatured =
+											const isHighlight =
 												isBusinessPlan( planName ) ||
 												isPremiumPlan( planName ) ||
 												isEcommercePlan( planName );
@@ -652,14 +652,15 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 												'plan-comparison-grid__plan',
 												getPlanClass( planName ),
 												{
-													'popular-plan-parent-class': isFeatured,
+													'popular-plan-parent-class': isHighlight,
 													'has-feature': hasFeature,
 													'title-is-subtitle': 'live-chat-support' === featureSlug,
-													'is-left-of-featured':
-														featuredAdjacencyMatrix[ planName ]?.leftOfFeatured,
-													'is-right-of-featured':
-														featuredAdjacencyMatrix[ planName ]?.rightOfFeatured,
-													'is-only-featured': featuredAdjacencyMatrix[ planName ]?.isOnlyFeatured,
+													'is-left-of-highlight':
+														highlightAdjacencyMatrix[ planName ]?.leftOfHighlight,
+													'is-right-of-highlight':
+														highlightAdjacencyMatrix[ planName ]?.rightOfHighlight,
+													'is-only-highlight':
+														highlightAdjacencyMatrix[ planName ]?.isOnlyHighlight,
 												}
 											);
 
@@ -708,7 +709,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 									{ ( visiblePlansProperties ?? [] ).map( ( { planName } ) => {
 										const storageFeature = restructuredFeatures.planStorageOptionsMap[ planName ];
 										const [ featureObject ] = getPlanFeaturesObject( [ storageFeature ] );
-										const isFeatured =
+										const isHighlight =
 											isBusinessPlan( planName ) ||
 											isPremiumPlan( planName ) ||
 											isEcommercePlan( planName );
@@ -717,11 +718,12 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 											'has-feature',
 											getPlanClass( planName ),
 											{
-												'popular-plan-parent-class': isFeatured,
-												'is-left-of-featured': featuredAdjacencyMatrix[ planName ]?.leftOfFeatured,
-												'is-right-of-featured':
-													featuredAdjacencyMatrix[ planName ]?.rightOfFeatured,
-												'is-only-featured': featuredAdjacencyMatrix[ planName ]?.isOnlyFeatured,
+												'popular-plan-parent-class': isHighlight,
+												'is-left-of-highlight':
+													highlightAdjacencyMatrix[ planName ]?.leftOfHighlight,
+												'is-right-of-highlight':
+													highlightAdjacencyMatrix[ planName ]?.rightOfHighlight,
+												'is-only-highlight': highlightAdjacencyMatrix[ planName ]?.isOnlyHighlight,
 											}
 										);
 

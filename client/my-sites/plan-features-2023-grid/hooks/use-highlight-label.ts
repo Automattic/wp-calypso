@@ -1,7 +1,7 @@
 import { isBusinessPlan, isEcommercePlan, isPremiumPlan } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 
-const useFeaturedLabel = ( planName: string ) => {
+const useHighlightLabel = ( planName: string ) => {
 	const translate = useTranslate();
 
 	if ( isBusinessPlan( planName ) ) {
@@ -15,4 +15,4 @@ const useFeaturedLabel = ( planName: string ) => {
 	return null;
 };
 
-export default useFeaturedLabel;
+export default useHighlightLabel;
