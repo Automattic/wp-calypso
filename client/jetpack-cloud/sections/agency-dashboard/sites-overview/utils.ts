@@ -38,7 +38,7 @@ export const siteColumns = [
 	},
 	{
 		key: 'plugin',
-		title: translate( 'Plugin Updates' ),
+		title: translate( 'Plugins' ),
 	},
 ];
 
