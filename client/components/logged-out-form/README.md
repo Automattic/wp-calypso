@@ -9,9 +9,9 @@ import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
-import LoggedOutFormFooter from 'calypso/components/logged-out-form-footer';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
+import LoggedOutFormFooter from 'calypso/components/logged-out-form-footer';
 
 class MyLoggedOutForm extends React.Component {
 	handleSubmit = ( event ) => {

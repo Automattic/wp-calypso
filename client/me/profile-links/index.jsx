@@ -7,9 +7,9 @@ import QueryProfileLinks from 'calypso/components/data/query-profile-links';
 import Notice from 'calypso/components/notice';
 import SectionHeader from 'calypso/components/section-header';
 import ProfileLink from 'calypso/me/profile-link';
+import AddProfileLinksButtons from 'calypso/me/profile-links/add-buttons';
 import ProfileLinksAddOther from 'calypso/me/profile-links-add-other';
 import ProfileLinksAddWordPress from 'calypso/me/profile-links-add-wordpress';
-import AddProfileLinksButtons from 'calypso/me/profile-links/add-buttons';
 import {
 	deleteUserProfileLink,
 	resetUserProfileLinkErrors,

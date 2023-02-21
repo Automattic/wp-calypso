@@ -6,8 +6,8 @@ import NoResults from 'calypso/my-sites/no-results';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PeopleListSectionHeader from '../people-list-section-header';
-import type { Member } from '../types';
 import type { UsersQuery } from './types';
+import type { Member } from '../types';
 
 import './style.scss';
 

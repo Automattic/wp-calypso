@@ -12,8 +12,8 @@ import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PeopleListSectionHeader from '../people-list-section-header';
-import type { Member } from '../types';
 import type { FollowersQuery } from './types';
+import type { Member } from '../types';
 
 import './style.scss';
 
