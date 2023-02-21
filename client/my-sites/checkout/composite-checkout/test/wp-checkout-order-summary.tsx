@@ -89,6 +89,22 @@ const nonFeatureListProductMap = [
 	[ 'Security T2', 'yearly', PLAN_JETPACK_SECURITY_T2_YEARLY ],
 ];
 
+const allProducts = productMap.reduce( ( productList: ResponseCartProduct[], currentProduct ) => {
+	productList.push( convertProductSlugToResponseProduct( currentProduct[ 2 ] ) );
+	return productList;
+}, [] );
+
+// Converting to Set to remove duplicate strings to avoid unnecessary loops
+const allFeatures = new Set(
+	allProducts.reduce( ( featureList: string[], currentProduct ) => {
+		const currentProductFeatures = getJetpackProductFeatures(
+			currentProduct,
+			identity as translateType
+		);
+		return [ ...featureList, ...currentProductFeatures ];
+	}, [] )
+);
+
 describe( 'WPCheckoutOrderSummary', () => {
 	let container: HTMLDivElement | null;
 	let MyCheckoutSummary: FC< { cartChanges: Partial< ResponseCart > } >;
@@ -170,25 +186,6 @@ describe( 'WPCheckoutOrderSummary', () => {
 		} );
 
 		test( 'No feature list items show up if there are multiple items in the cart', async () => {
-			const allProducts = productMap.reduce(
-				( productList: ResponseCartProduct[], currentProduct ) => {
-					productList.push( convertProductSlugToResponseProduct( currentProduct[ 2 ] ) );
-					return productList;
-				},
-				[]
-			);
-
-			// Converting to Set to remove duplicate strings to avoid unnecessary loops
-			const allFeatures = new Set(
-				allProducts.reduce( ( featureList: string[], currentProduct ) => {
-					const currentProductFeatures = getJetpackProductFeatures(
-						currentProduct,
-						identity as translateType
-					);
-					return [ ...featureList, ...currentProductFeatures ];
-				}, [] )
-			);
-
 			const cartChanges = {
 				products: allProducts,
 			};
@@ -203,25 +200,6 @@ describe( 'WPCheckoutOrderSummary', () => {
 		} );
 
 		test( 'No feature list items show up if the cart is empty', async () => {
-			const allProducts = productMap.reduce(
-				( productList: ResponseCartProduct[], currentProduct ) => {
-					productList.push( convertProductSlugToResponseProduct( currentProduct[ 2 ] ) );
-					return productList;
-				},
-				[]
-			);
-
-			// Converting to Set to remove duplicate strings to avoid unnecessary loops
-			const allFeatures = new Set(
-				allProducts.reduce( ( featureList: string[], currentProduct ) => {
-					const currentProductFeatures = getJetpackProductFeatures(
-						currentProduct,
-						identity as translateType
-					);
-					return [ ...featureList, ...currentProductFeatures ];
-				}, [] )
-			);
-
 			const cartChanges = { products: [] };
 
 			render( <MyCheckoutSummary cartChanges={ cartChanges } /> );
