@@ -45,7 +45,7 @@ import {
 	getBasicCart,
 	convertProductSlugToResponseProduct,
 } from './util';
-import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
+import type { ResponseCart } from '@automattic/shopping-cart';
 import type { FC } from 'react';
 
 type translateType = ReturnType< typeof useTranslate >;
@@ -89,18 +89,12 @@ const nonFeatureListProductSlugs = [
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
 ];
 
-const allProducts = productSlugs.reduce( ( productList: ResponseCartProduct[], currentProduct ) => {
-	productList.push( convertProductSlugToResponseProduct( currentProduct ) );
-	return productList;
-}, [] );
-
-const allNonFeatureListProducts = nonFeatureListProductSlugs.reduce(
-	( productList: ResponseCartProduct[], currentProduct ) => {
-		productList.push( convertProductSlugToResponseProduct( currentProduct ) );
-		return productList;
-	},
-	[]
-);
+const allProducts = productSlugs.map( ( currentProduct ) => {
+	return convertProductSlugToResponseProduct( currentProduct );
+} );
+const allNonFeatureListProducts = nonFeatureListProductSlugs.map( ( currentProduct ) => {
+	return convertProductSlugToResponseProduct( currentProduct );
+} );
 
 // Converting to Set to remove duplicate strings to avoid unnecessary loops
 const allFeatures = new Set(
