@@ -59,7 +59,7 @@ jest.mock( '@automattic/calypso-config', () => {
 	return mock;
 } );
 
-const productMap = [
+const productSlugs = [
 	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
 	PRODUCT_JETPACK_ANTI_SPAM,
 	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
@@ -82,19 +82,19 @@ const productMap = [
 	PRODUCT_JETPACK_VIDEOPRESS,
 ];
 
-const nonFeatureListProductMap = [
+const nonFeatureListProductSlugs = [
 	PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
 ];
 
-const allProducts = productMap.reduce( ( productList: ResponseCartProduct[], currentProduct ) => {
+const allProducts = productSlugs.reduce( ( productList: ResponseCartProduct[], currentProduct ) => {
 	productList.push( convertProductSlugToResponseProduct( currentProduct ) );
 	return productList;
 }, [] );
 
-const allNonFeatureListProducts = nonFeatureListProductMap.reduce(
+const allNonFeatureListProducts = nonFeatureListProductSlugs.reduce(
 	( productList: ResponseCartProduct[], currentProduct ) => {
 		productList.push( convertProductSlugToResponseProduct( currentProduct ) );
 		return productList;
