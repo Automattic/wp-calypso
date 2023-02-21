@@ -1,24 +1,24 @@
 import { useSelector } from 'react-redux';
 import { GithubAuthorizeCard } from 'calypso/my-sites/hosting/github/github-authorize-card';
-import {
-	getKeyringConnections,
-	isKeyringConnectionsFetching,
-} from 'calypso/state/sharing/keyring/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { DeploymentCard } from './deployment-card';
+import { GithubConnectCard } from './github-connect-card';
 import { GitHubPlaceholderCard } from './github-placeholder-card';
+import { useGithubConnection } from './use-github-connection';
 
 export const GitHubCard = () => {
-	const isFetching = useSelector( isKeyringConnectionsFetching );
-	const connections = useSelector( getKeyringConnections );
-
+	const siteId = useSelector( getSelectedSiteId );
+	const { data: connection, isLoading: isFetching } = useGithubConnection( siteId );
 	if ( isFetching ) {
 		return <GitHubPlaceholderCard />;
 	}
 
-	const gitHub = connections.find( ( connection ) => connection.service === 'github-deploy' );
+	if ( connection && ! connection.repo ) {
+		return <GithubConnectCard connection={ connection } />;
+	}
 
-	if ( gitHub ) {
-		return <DeploymentCard repo="Automattic/testing" branch="main" />;
+	if ( connection && connection.repo ) {
+		return <DeploymentCard repo={ connection.repo } branch={ connection.branch } />;
 	}
 
 	return <GithubAuthorizeCard />;
