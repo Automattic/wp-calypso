@@ -144,9 +144,9 @@ add_action( 'enqueue_block_editor_assets', 'wpcom_global_styles_enqueue_block_ed
  */
 function wpcom_global_styles_enqueue_assets() {
 	if (
+		! wpcom_global_styles_current_user_can_edit_wp_global_styles() ||
 		! wpcom_should_limit_global_styles() ||
-		! wpcom_global_styles_in_use() ||
-		! wpcom_global_styles_current_user_can_edit_wp_global_styles()
+		! wpcom_global_styles_in_use()
 	) {
 		return;
 	}
