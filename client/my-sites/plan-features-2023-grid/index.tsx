@@ -490,13 +490,15 @@ export class PlanFeatures2023Grid extends Component<
 		const { isInSignup, translate } = this.props;
 
 		return planPropertiesObj.map( ( properties ) => {
-			const { planName } = properties;
+			const { planName, current } = properties;
 			const headerClasses = classNames(
 				'plan-features-2023-grid__header-logo',
 				getPlanClass( planName )
 			);
 			const tableItemClasses = classNames( 'plan-features-2023-grid__table-item', {
-				'popular-plan-parent-class': isBusinessPlan( planName ) || isPremiumPlan( planName ),
+				'popular-plan-parent-class':
+					isBusinessPlan( planName ) || isPremiumPlan( planName ) || current,
+				'is-current-plan': current,
 			} );
 
 			const popularBadgeClasses = classNames( {
