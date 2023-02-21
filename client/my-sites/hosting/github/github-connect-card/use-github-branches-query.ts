@@ -1,7 +1,7 @@
 import { useQuery, UseQueryOptions } from 'react-query';
 import wp from 'calypso/lib/wp';
+import { GITHUB_INTEGRATION_QUERY_KEY } from '../constants';
 
-const USE_GITHUB_BRANCHES_QUERY_KEY = 'github-branches-query-key';
 const CACHE_TIME = 1000 * 60 * 5; // 5 mins
 
 const sortBranches = ( a: string, b: string ): number => {
@@ -13,13 +13,14 @@ const sortBranches = ( a: string, b: string ): number => {
 	return a.localeCompare( b );
 };
 
-export const useGithubBranches = (
+export const useGithubBranchesQuery = (
 	siteId: number | null,
 	repoName: string | undefined,
+	connectionId: number,
 	options?: UseQueryOptions< string[] >
 ) => {
 	return useQuery< string[] >(
-		[ USE_GITHUB_BRANCHES_QUERY_KEY, repoName, siteId ],
+		[ GITHUB_INTEGRATION_QUERY_KEY, siteId, connectionId, 'branches', repoName ],
 		(): string[] =>
 			wp.req.get( {
 				path: `/sites/${ siteId }/hosting/github/branches?repo=${ repoName }`,

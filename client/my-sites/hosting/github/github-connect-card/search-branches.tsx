@@ -3,10 +3,11 @@ import { useI18n } from '@wordpress/react-i18n';
 import { ChangeEvent } from 'react';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { useGithubBranches } from './use-github-branches';
+import { useGithubBranchesQuery } from './use-github-branches-query';
 
 interface SearchBranchesProps {
 	siteId: number | null;
+	connectionId: number;
 	onSelect( repo: string ): void;
 	repoName?: string;
 	selectedBranch?: string;
@@ -14,19 +15,25 @@ interface SearchBranchesProps {
 
 export const SearchBranches = ( {
 	siteId,
+	connectionId,
 	onSelect,
 	repoName,
 	selectedBranch,
 }: SearchBranchesProps ) => {
 	const { __ } = useI18n();
 
-	const { data: branches, isLoading: isLoading } = useGithubBranches( siteId, repoName, {
-		onSuccess( branches ) {
-			if ( branches.length < 30 ) {
-				onSelect( branches[ 0 ] );
-			}
-		},
-	} );
+	const { data: branches, isLoading: isLoading } = useGithubBranchesQuery(
+		siteId,
+		repoName,
+		connectionId,
+		{
+			onSuccess( branches ) {
+				if ( branches.length < 30 ) {
+					onSelect( branches[ 0 ] );
+				}
+			},
+		}
+	);
 
 	if ( branches && branches.length < 30 ) {
 		return (
