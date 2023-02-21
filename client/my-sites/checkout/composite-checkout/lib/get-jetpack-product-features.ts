@@ -2,6 +2,7 @@ import {
 	isJetpackAntiSpamSlug,
 	isJetpackBackupT1Slug,
 	isJetpackBoostSlug,
+	isJetpackCompleteSlug,
 	isJetpackScanSlug,
 	isJetpackSearchSlug,
 	isJetpackSecuritySlug,
@@ -12,7 +13,7 @@ import {
 import { useTranslate } from 'i18n-calypso';
 import type { WithSnakeCaseSlug } from '@automattic/calypso-products';
 
-type productString =
+type featureString =
 	| 'anti-spam'
 	| 'backup-t1'
 	| 'boost'
@@ -21,10 +22,11 @@ type productString =
 	| 'social-basic'
 	| 'social-advanced'
 	| 'support'
-	| 'videopress';
+	| 'videopress'
+	| 'complete';
 
 function getFeatureStrings(
-	feature: productString,
+	feature: featureString,
 	translate: ReturnType< typeof useTranslate >
 ): string[] {
 	switch ( feature ) {
@@ -51,6 +53,17 @@ function getFeatureStrings(
 				translate( 'Optimized CSS loading' ),
 				translate( 'Lazy image loading' ),
 			];
+		case 'complete':
+			return [
+				translate( 'Akismet Anti-spam' ),
+				translate( 'VaultPress Backup' ),
+				translate( 'Site Search' ),
+				translate( 'Social' ),
+				translate( 'Scan' ),
+				translate( 'VideoPress' ),
+				translate( 'Boost' ),
+				translate( 'CRM Entrepreneur' ),
+			];
 		case 'scan':
 			return [
 				translate( 'Website firewall (WAF beta)' ),
@@ -65,6 +78,8 @@ function getFeatureStrings(
 				translate( 'Quick and accurate spelling correction' ),
 				translate( 'Support for 38 languages' ),
 			];
+		case 'social-advanced':
+			return [ translate( 'Engagement Optimizer' ) ];
 		case 'social-basic':
 			return [
 				translate( 'Automatically share your posts' ),
@@ -73,8 +88,6 @@ function getFeatureStrings(
 				translate( 'Sharing to Twitter, Facebook, LinkedIn, and Tumblr' ),
 				translate( 'Content recycling' ),
 			];
-		case 'social-advanced':
-			return [ translate( 'Engagement Optimizer' ) ];
 		case 'support':
 			return [ translate( 'Priority support' ) ];
 		case 'videopress':
@@ -111,6 +124,13 @@ export default function getJetpackProductFeatures(
 		return getFeatureStrings( 'boost', translate );
 	}
 
+	if ( isJetpackCompleteSlug( product.product_slug ) ) {
+		return [
+			...getFeatureStrings( 'complete', translate ),
+			...getFeatureStrings( 'support', translate ),
+		];
+	}
+
 	if ( isJetpackScanSlug( product.product_slug ) ) {
 		return [
 			...getFeatureStrings( 'scan', translate ),
@@ -123,12 +143,21 @@ export default function getJetpackProductFeatures(
 	}
 
 	if ( isJetpackSecuritySlug( product.product_slug ) ) {
+		// Filter out these strings for Security to avoid clutter
+		const securityExcludes = [
+			translate( '10K API calls per month' ),
+			translate( 'Akismet technology' ),
+			translate( 'Flexible API' ),
+		];
+
 		return [
 			...getFeatureStrings( 'anti-spam', translate ),
 			...getFeatureStrings( 'backup-t1', translate ),
 			...getFeatureStrings( 'scan', translate ),
 			...getFeatureStrings( 'support', translate ),
-		];
+		].filter( ( productFeature ) => {
+			return ! securityExcludes.includes( productFeature );
+		} );
 	}
 
 	if ( isJetpackSocialBasicSlug( product.product_slug ) ) {
