@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useSyncGlobalStyles } from '@automattic/global-styles';
-import { StepContainer, SITE_SETUP_FLOW, WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
+import { StepContainer, WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import {
 	__experimentalNavigatorProvider as NavigatorProvider,
 	__experimentalNavigatorScreen as NavigatorScreen,
@@ -8,7 +8,7 @@ import {
 import { useDispatch, useSelect } from '@wordpress/data';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -45,7 +45,7 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const incrementIndexRef = useRef( 0 );
 	const [ activePosition, setActivePosition ] = useState( -1 );
-	const { goBack, goNext, submit, goToStep } = navigation;
+	const { goBack, goNext, submit } = navigation;
 	const { setThemeOnSite, runThemeSetupOnSite, createCustomTemplate } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
@@ -87,13 +87,6 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 		title: site?.name,
 		tagline: site?.description || SITE_TAGLINE,
 	};
-
-	useEffect( () => {
-		// Require to start the flow from the first step
-		if ( ! selectedDesign && flow === SITE_SETUP_FLOW ) {
-			goToStep?.( 'goals' );
-		}
-	}, [] );
 
 	useSyncGlobalStyles( selectedVariations, isEnabledColorAndFonts );
 

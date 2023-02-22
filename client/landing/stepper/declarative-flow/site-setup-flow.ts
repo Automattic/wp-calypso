@@ -2,6 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { Design, isBlankCanvasDesign } from '@automattic/design-picker';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { useEffect } from 'react';
 import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -66,6 +67,17 @@ function isLaunchpadIntent( intent: string ) {
 
 const siteSetupFlow: Flow = {
 	name: 'site-setup',
+
+	useSideEffect( navigate ) {
+		const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
+
+		useEffect( () => {
+			// Require to start the flow from the first step
+			if ( ! selectedDesign ) {
+				navigate( 'goals' );
+			}
+		}, [] );
+	},
 
 	useSteps() {
 		return [
