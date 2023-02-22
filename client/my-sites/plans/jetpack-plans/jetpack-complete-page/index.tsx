@@ -51,23 +51,22 @@ const JetpackCompletePage: React.FC< Props > = ( {
 					cardImage={ rnaImageComplete }
 					cardImage2xRetina={ rnaImageComplete2xRetina }
 				>
-					<>
-						{ /* This is just example/fill text here, that should be made into various components */ }
-						<h1
-							style={ {
-								fontSize: '36px',
-								lineHeight: '40px',
-								fontWeight: 700,
-								marginBottom: '16px',
-							} }
-						>
-							{ translate( 'Get Jetpack Complete' ) }
-						</h1>
-						<p style={ { fontSize: '20px', lineHeight: '30px', fontWeight: 500 } }>
-							The full Jetpack suite with real-time security, instant site search, ad-free video,
-							all CRM extensions, and extra storage for backups and video.
-						</p>
-					</>
+					{ /* This is just example/fill text here, that should be made into various components */ }
+					<h1
+						style={ {
+							fontSize: '36px',
+							lineHeight: '40px',
+							fontWeight: 700,
+							marginBottom: '16px',
+						} }
+					>
+						{ translate( 'Get Jetpack Complete' ) }
+					</h1>
+					<p style={ { fontSize: '20px', lineHeight: '30px', fontWeight: 500 } }>
+						The full Jetpack suite with real-time security, instant site search, ad-free video, all
+						CRM extensions, and extra storage for backups and video.
+					</p>
+
 					<CtaButtons />
 				</JetpackRnaDialogCard>
 			</Main>

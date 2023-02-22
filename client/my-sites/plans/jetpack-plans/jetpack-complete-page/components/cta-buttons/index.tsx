@@ -13,21 +13,17 @@ const CtaButtons = () => {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId );
 
+	const checkoutURL = siteSlug
+		? buildCheckoutURL( siteSlug, PLAN_JETPACK_COMPLETE )
+		: `/checkout/${ PLAN_JETPACK_COMPLETE }`;
+
 	const stayFreeURL = useSelector(
 		( state ) => getJetpackAdminUrl( state, siteId ) ?? 'https://jetpack.com/'
 	);
 
 	return (
 		<div className="jetpack-complete-page__cta-buttons">
-			<Button
-				className="jetpack-complete-page__get-complete-button"
-				primary
-				href={
-					siteSlug
-						? buildCheckoutURL( siteSlug, PLAN_JETPACK_COMPLETE )
-						: `/checkout/${ PLAN_JETPACK_COMPLETE }`
-				}
-			>
+			<Button className="jetpack-complete-page__get-complete-button" primary href={ checkoutURL }>
 				{ translate( 'Get Complete' ) }
 			</Button>
 			<Button className="jetpack-complete-page__start-free-button" href={ stayFreeURL }>
