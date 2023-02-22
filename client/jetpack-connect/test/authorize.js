@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import config from '@automattic/calypso-config';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import deepFreeze from 'deep-freeze';
@@ -12,7 +13,7 @@ import siteConnectionReducer from 'calypso/state/site-connection/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from '../../../client/test-helpers/testing-library';
 import { JetpackAuthorize } from '../authorize';
-import { JPC_PATH_PLANS } from '../constants';
+import { JPC_PATH_PLANS, JPC_PATH_PLANS_COMPLETE } from '../constants';
 import { OFFER_RESET_FLOW_TYPES } from '../flow-types';
 
 const noop = () => {};
@@ -77,6 +78,12 @@ jest.mock( '../persistence-utils', () => ( {
 	isSsoApproved: ( clientId ) => clientId === APPROVE_SSO_CLIENT_ID,
 } ) );
 
+jest.mock( '@automattic/calypso-config', () => {
+	const mock = () => '';
+	mock.isEnabled = jest.fn();
+	return mock;
+} );
+
 function renderWithRedux( ui ) {
 	return renderWithProvider( ui, {
 		reducers: {
@@ -89,15 +96,9 @@ function renderWithRedux( ui ) {
 	} );
 }
 
-jest.mock( '@automattic/calypso-config', () => {
-	const mock = () => 'development';
-	mock.isEnabled = jest.fn( ( featureFlag ) => {
-		if ( featureFlag === 'jetpack/magic-link-signup' ) {
-			return false;
-		}
-		return true;
-	} );
-	return mock;
+// If feature flag is jetpack/magic-link-signup then false, else true
+beforeEach( () => {
+	config.isEnabled.mockImplementation( ( flag ) => flag !== 'jetpack/magic-link-signup' );
 } );
 
 describe( 'JetpackAuthorize', () => {
@@ -482,6 +483,59 @@ describe( 'JetpackAuthorize', () => {
 
 			expect( target ).toBe(
 				`${ JPC_PATH_PLANS }/${ SITE_SLUG }?redirect=${ encodeURIComponent(
+					DEFAULT_PROPS.authQuery.redirectAfterAuth
+				) }`
+			);
+		} );
+
+		test( 'should redirect to the /jetpack/connect/plans when feature flag disabled and not multisite', async () => {
+			config.isEnabled.mockImplementation(
+				( flag ) => flag !== 'jetpack/offer-complete-after-activation'
+			);
+			renderWithRedux(
+				<JetpackAuthorize
+					{ ...DEFAULT_PROPS }
+					authQuery={ {
+						...DEFAULT_PROPS.authQuery,
+						alreadyAuthorized: true,
+					} }
+					site={ { is_multisite: false } }
+					isAlreadyOnSitesList
+					isFetchingSites
+				/>
+			);
+
+			await userEvent.click( screen.getByText( 'Return to your site' ) );
+
+			const target = global.window.location.href;
+
+			expect( target ).toBe(
+				`${ JPC_PATH_PLANS }/${ SITE_SLUG }?redirect=${ encodeURIComponent(
+					DEFAULT_PROPS.authQuery.redirectAfterAuth
+				) }`
+			);
+		} );
+
+		test( 'should redirect to the /jetpack/connect/plans/complete when feature flag enabled and not multisite', async () => {
+			renderWithRedux(
+				<JetpackAuthorize
+					{ ...DEFAULT_PROPS }
+					authQuery={ {
+						...DEFAULT_PROPS.authQuery,
+						alreadyAuthorized: true,
+					} }
+					site={ { is_multisite: false } }
+					isAlreadyOnSitesList
+					isFetchingSites
+				/>
+			);
+
+			await userEvent.click( screen.getByText( 'Return to your site' ) );
+
+			const target = global.window.location.href;
+
+			expect( target ).toBe(
+				`${ JPC_PATH_PLANS_COMPLETE }/${ SITE_SLUG }?redirect=${ encodeURIComponent(
 					DEFAULT_PROPS.authQuery.redirectAfterAuth
 				) }`
 			);
