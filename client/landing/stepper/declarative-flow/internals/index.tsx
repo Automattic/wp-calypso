@@ -1,5 +1,9 @@
 import { ProgressBar } from '@automattic/components';
-import { isNewsletterOrLinkInBioFlow, isWooExpressFlow } from '@automattic/onboarding';
+import {
+	isNewsletterOrLinkInBioFlow,
+	isWooExpressFlow,
+	SITE_SETUP_FLOW,
+} from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
 import { useEffect, useState } from 'react';
@@ -146,14 +150,15 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 								{ 'videopress' === flow.name && 'intro' === step.slug && (
 									<VideoPressIntroBackground />
 								) }
-								<ProgressBar
-									// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-									className="flow-progress"
-									value={ progressValue * 100 }
-									total={ 100 }
-									style={ progressBarExtraStyle }
-								/>
-
+								{ flow.name !== SITE_SETUP_FLOW && (
+									<ProgressBar
+										// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+										className="flow-progress"
+										value={ progressValue * 100 }
+										total={ 100 }
+										style={ progressBarExtraStyle }
+									/>
+								) }
 								<SignupHeader pageTitle={ flow.title } showWooLogo={ getShowWooLogo() } />
 								{ renderStep( step ) }
 							</div>
