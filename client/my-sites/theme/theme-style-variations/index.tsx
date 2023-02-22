@@ -23,7 +23,7 @@ const ThemeStyleVariations = ( {
 	onClick,
 }: ThemeStyleVariationsProps ) => {
 	const observerRef = useRef< HTMLDivElement | null >( null );
-	const [ collapsibleMaxHeight, setCollapsibleMaxHeight ] = useState< number | null >( null );
+	const [ collapsibleMaxHeight, setCollapsibleMaxHeight ] = useState< number | undefined >();
 	const [ isCollapsible, setIsCollapsible ] = useState< boolean >( false );
 	const [ isCollapsed, setIsCollapsed ] = useState< boolean >( false );
 
@@ -76,6 +76,7 @@ const ThemeStyleVariations = ( {
 			</div>
 			<div
 				className={ classNames( 'theme__sheet-style-variations-previews', {
+					'theme__sheet-style-variations-previews--is-collapsible': isCollapsible,
 					'theme__sheet-style-variations-previews--is-collapsed': isCollapsed,
 				} ) }
 				style={ {
