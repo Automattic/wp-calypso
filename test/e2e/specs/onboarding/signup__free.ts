@@ -53,7 +53,7 @@ describe( 'Signup: Create a WordPress.com Free site as a new user', function () 
 		} );
 
 		it( 'Enter site name and description', async function () {
-			await freeSignupFlow.enterSitename( testUser.siteName );
+			await freeSignupFlow.enterSiteName( testUser.siteName );
 			await freeSignupFlow.enterDescription( DataHelper.getRandomPhrase() );
 
 			await Promise.all( [
