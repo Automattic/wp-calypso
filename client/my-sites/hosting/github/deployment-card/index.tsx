@@ -30,22 +30,26 @@ export const DeploymentCard = ( { repo, branch, connectionId }: DeploymentCardPr
 
 	const dispatch = useDispatch();
 
-	const { disconnectRepo, isLoading: isDisconnecting } = useGithubDisconnectRepoMutation( siteId, {
-		onSuccess: () => {
-			dispatch( successNotice( translate( 'Disconnected from repository successfully' ) ) );
-		},
-		onError: ( error ) => {
-			dispatch(
-				errorNotice(
-					// translators: "reason" is why disconnecting the branch failed.
-					sprintf( translate( 'Failed to disconnect: %(reason)s' ), { reason: error.message } ),
-					{
-						...noticeOptions,
-					}
-				)
-			);
-		},
-	} );
+	const { disconnectRepo, isLoading: isDisconnecting } = useGithubDisconnectRepoMutation(
+		siteId,
+		connectionId,
+		{
+			onSuccess: () => {
+				dispatch( successNotice( translate( 'Disconnected from repository successfully' ) ) );
+			},
+			onError: ( error ) => {
+				dispatch(
+					errorNotice(
+						// translators: "reason" is why disconnecting the branch failed.
+						sprintf( translate( 'Failed to disconnect: %(reason)s' ), { reason: error.message } ),
+						{
+							...noticeOptions,
+						}
+					)
+				);
+			},
+		}
+	);
 
 	return (
 		<Card>

@@ -11,6 +11,7 @@ interface MutationError {
 
 export const useGithubDisconnectRepoMutation = (
 	siteId: number | null,
+	connectionId: number,
 	options: UseMutationOptions< unknown, MutationError, unknown > = {}
 ) => {
 	const queryClient = useQueryClient();
@@ -24,10 +25,13 @@ export const useGithubDisconnectRepoMutation = (
 		{
 			...options,
 			onSuccess: async ( ...args ) => {
-				await queryClient.invalidateQueries( [
-					GITHUB_INTEGRATION_QUERY_KEY,
-					siteId,
-					GITHUB_CONNECTION_QUERY_KEY,
+				await Promise.all( [
+					queryClient.invalidateQueries( [ GITHUB_INTEGRATION_QUERY_KEY, siteId, connectionId ] ),
+					queryClient.invalidateQueries( [
+						GITHUB_INTEGRATION_QUERY_KEY,
+						siteId,
+						GITHUB_CONNECTION_QUERY_KEY,
+					] ),
 				] );
 				options.onSuccess?.( ...args );
 			},
