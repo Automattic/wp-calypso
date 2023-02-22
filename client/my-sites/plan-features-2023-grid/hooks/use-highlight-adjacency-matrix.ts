@@ -2,9 +2,16 @@ import { isBusinessPlan, isPremiumPlan, isEcommercePlan } from '@automattic/caly
 import { useMemo } from '@wordpress/element';
 import type { PlanProperties } from '../types';
 
-const useHighlightIndices = ( visiblePlans: PlanProperties[] ) => {
+const useHighlightAdjacencyMatrix = ( visiblePlans: PlanProperties[] ) => {
 	return useMemo( () => {
-		return visiblePlans.reduce< number[] >( ( acc, { planName }, index ) => {
+		const adjacencyMatrix: {
+			[ planName: string ]: {
+				leftOfHighlight: boolean;
+				rightOfHighlight: boolean;
+				isOnlyHighlight?: boolean;
+			};
+		} = {};
+		const highlightIndices = visiblePlans.reduce< number[] >( ( acc, { planName }, index ) => {
 			const isHighlight =
 				isBusinessPlan( planName ) || isPremiumPlan( planName ) || isEcommercePlan( planName );
 
@@ -14,20 +21,6 @@ const useHighlightIndices = ( visiblePlans: PlanProperties[] ) => {
 
 			return acc;
 		}, [] );
-	}, [ visiblePlans ] );
-};
-
-const useHighlightAdjacencyMatrix = ( visiblePlans: PlanProperties[] ) => {
-	const highlightIndices = useHighlightIndices( visiblePlans );
-
-	return useMemo( () => {
-		const adjacencyMatrix: {
-			[ key: string ]: {
-				leftOfHighlight: boolean;
-				rightOfHighlight: boolean;
-				isOnlyHighlight?: boolean;
-			};
-		} = {};
 
 		visiblePlans.forEach( ( { planName }, index ) => {
 			let leftOfHighlight = false;
@@ -50,7 +43,7 @@ const useHighlightAdjacencyMatrix = ( visiblePlans: PlanProperties[] ) => {
 		}
 
 		return adjacencyMatrix;
-	}, [ highlightIndices, visiblePlans ] );
+	}, [ visiblePlans ] );
 };
 
 export default useHighlightAdjacencyMatrix;
