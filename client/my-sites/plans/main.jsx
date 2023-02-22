@@ -6,7 +6,7 @@ import {
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	isFreePlan,
 } from '@automattic/calypso-products';
-import { is2023PricingGridEnabled } from '@automattic/calypso-products/src/plans-utilities';
+import { is2023PricingGridActivePage } from '@automattic/calypso-products/src/plans-utilities';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { addQueryArgs } from '@wordpress/url';
@@ -28,9 +28,9 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import { getDomainRegistrations } from 'calypso/lib/cart-values/cart-items';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
-import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
+import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
@@ -229,7 +229,7 @@ class Plans extends Component {
 			);
 		}
 
-		const hideFreePlan = ! is2023PricingGridEnabled();
+		const hideFreePlan = ! is2023PricingGridActivePage( window );
 		if ( this.props.domainSidebarExperimentUser && this.props.domainAndPlanPackage ) {
 			return (
 				<CalypsoShoppingCartProvider>
@@ -280,7 +280,7 @@ class Plans extends Component {
 			canAccessPlans,
 			currentPlan,
 			domainAndPlanPackage,
-			is2023OnboardingPricingGrid,
+			is2023PricingGridVisible,
 			domainSidebarExperimentUser,
 			isJetpackNotAtomic,
 		} = this.props;
@@ -344,8 +344,8 @@ class Plans extends Component {
 						<div id="plans" className="plans plans__has-sidebar">
 							<PlansNavigation path={ this.props.context.path } />
 							<Main
-								fullWidthLayout={ is2023OnboardingPricingGrid && ! isEcommerceTrial }
-								wideLayout={ ! is2023OnboardingPricingGrid || isEcommerceTrial }
+								fullWidthLayout={ is2023PricingGridVisible && ! isEcommerceTrial }
+								wideLayout={ ! is2023PricingGridVisible || isEcommerceTrial }
 							>
 								{ ! domainSidebarExperimentUser && domainAndPlanPackage && (
 									<DomainAndPlanUpsellNotice />
@@ -374,7 +374,7 @@ const ConnectedPlans = connect( ( state ) => {
 	const currentPlanIntervalType = getIntervalTypeForTerm(
 		getPlan( currentPlan?.productSlug )?.term
 	);
-	const is2023OnboardingPricingGrid = is2023PricingGridEnabled();
+	const is2023PricingGridVisible = is2023PricingGridActivePage( window );
 
 	return {
 		currentPlan,
@@ -386,7 +386,7 @@ const ConnectedPlans = connect( ( state ) => {
 		isSiteEligibleForMonthlyPlan: isEligibleForWpComMonthlyPlan( state, selectedSiteId ),
 		showTreatmentPlansReorderTest: isTreatmentPlansReorderTest( state ),
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
-		is2023OnboardingPricingGrid,
+		is2023PricingGridVisible,
 		domainSidebarExperimentUser: isDomainSidebarExperimentUser( state ),
 		isJetpackNotAtomic: isJetpackSite( state, selectedSiteId, { treatAtomicAsJetpackSite: false } ),
 	};

@@ -45,14 +45,12 @@ describe.skip( DataHelper.createSuiteTitle( 'Domains: Add to current site' ), fu
 			await sidebarComponent.navigate( 'Upgrades', 'Domains' );
 		} );
 
+		// TODO: Just use the rest API to clear the cart!
 		it( 'If required, clear the cart', async function () {
 			domainsPage = new DomainsPage( page );
 			navbarCartComponent = new NavbarCartComponent( page );
-			const cartOpened = await navbarCartComponent.openCart();
-			// The cart popover existing implies there are some items that need to be removed.
-			if ( cartOpened ) {
-				await navbarCartComponent.emptyCart();
-			}
+			await navbarCartComponent.openCart();
+			await navbarCartComponent.emptyCart();
 		} );
 
 		it( 'Add domain to site', async function () {

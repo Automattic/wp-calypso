@@ -2,20 +2,12 @@
 @import "@wordpress/base-styles/mixins";
 @import "@automattic/typography/styles/fonts";
 
-$break-design-preview: 1024px;
-
-@mixin break-design-preview() {
-	@media (min-width: #{ ($break-design-preview) }) {
-		@content;
-	}
-}
-
 .design-preview {
 	display: flex;
 	flex-direction: column;
 	height: 100%;
 
-	@include break-design-preview {
+	@include break-xlarge {
 		flex-direction: row;
 		margin: 0;
 		gap: 32px;
@@ -52,7 +44,7 @@ $break-design-preview: 1024px;
 			box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
 		}
 
-		@include break-design-preview {
+		@include break-xlarge {
 			bottom: 8px;
 			display: flex;
 			flex-direction: column;
@@ -66,7 +58,7 @@ $break-design-preview: 1024px;
 		justify-content: center;
 	}
 
-	@include break-design-preview {
+	@include break-xlarge {
 		border: 0;
 		box-shadow: none;
 		display: block;
@@ -113,7 +105,7 @@ $break-design-preview: 1024px;
 			}
 		}
 
-		@include break-design-preview {
+		@include break-xlarge {
 			display: block;
 		}
 	}
@@ -122,7 +114,7 @@ $break-design-preview: 1024px;
 		display: none;
 		font-size: $font-body-small;
 
-		@include break-design-preview {
+		@include break-xlarge {
 			display: block;
 			margin-top: 0.25rem;
 		}
@@ -151,7 +143,7 @@ $break-design-preview: 1024px;
 			}
 		}
 
-		@include break-design-preview {
+		@include break-xlarge {
 			display: flex;
 			flex-wrap: wrap;
 			gap: 8px 4px;
@@ -181,13 +173,13 @@ $break-design-preview: 1024px;
 			}
 		}
 
-		@include break-design-preview {
+		@include break-xlarge {
 			display: block;
 			margin-top: 2rem;
 		}
 	}
 
-	@include break-design-preview {
+	@include break-xlarge {
 		h2 {
 			display: block;
 		}
@@ -219,7 +211,7 @@ $break-design-preview: 1024px;
 		}
 	}
 
-	@include break-design-preview {
+	@include break-xlarge {
 		margin: 2rem 0 0;
 
 		> p {
@@ -289,7 +281,7 @@ $break-design-preview: 1024px;
 		max-width: 100%;
 		overflow: hidden;
 
-		@include break-design-preview {
+		@include break-xlarge {
 			max-height: 77.2258px;
 		}
 	}
@@ -310,13 +302,13 @@ $break-design-preview: 1024px;
 	flex-grow: 1;
 	position: relative;
 
-	@include break-design-preview {
+	@include break-xlarge {
 		margin-bottom: 32px;
 	}
 
 	.theme-preview__frame-wrapper {
 		.theme-preview__frame {
-			@media ( max-width: $break-design-preview ) {
+			@media ( max-width: $break-xlarge ) {
 				border: 0;
 				border-radius: 0;
 				box-shadow: none;
@@ -331,7 +323,7 @@ $break-design-preview: 1024px;
 		display: none;
 		margin-top: -11px;
 
-		@include break-design-preview {
+		@include break-xlarge {
 			display: block;
 		}
 	}

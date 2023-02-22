@@ -38,6 +38,7 @@ import {
 	getDesignTypeProps,
 	recordPreviewedDesign,
 	recordSelectedDesign,
+	getVirtualDesignProps,
 } from '../../analytics/record-design';
 import { getCategorizationOptions } from './categories';
 import { DEFAULT_VARIATION_SLUG, RETIRING_DESIGN_SLUGS, STEP_NAME } from './constants';
@@ -78,6 +79,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const siteVerticalId = useSelect(
 		( select ) => ( site && select( SITE_STORE ).getSiteVerticalId( site.ID ) ) || ''
 	);
+	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles();
 
 	const isAtomic = useSelect( ( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID ) );
 	useEffect( () => {
@@ -129,6 +131,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		{
 			enabled: true,
 			select: selectStarterDesigns,
+			shouldLimitGlobalStyles,
 		}
 	);
 
@@ -240,17 +243,30 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	function previewDesign( design: Design, styleVariation?: StyleVariation ) {
 		recordPreviewedDesign( { flow, intent, design, styleVariation } );
-		setSelectedDesign( design );
+
+		if ( ! design.is_virtual ) {
+			setSelectedDesign( design );
+		} else {
+			const parentDesign = staticDesigns.find(
+				( staticDesign ) => staticDesign.slug === design.slug && ! staticDesign.is_virtual
+			);
+			setSelectedDesign( parentDesign );
+		}
 
 		if ( styleVariation ) {
-			recordTracksEvent(
-				'calypso_signup_design_picker_style_variation_button_click',
-				getEventPropsByDesign( design, styleVariation )
-			);
 			setSelectedStyleVariation( styleVariation );
+		} else if ( design.preselected_style_variation ) {
+			setSelectedStyleVariation( design.preselected_style_variation );
 		}
 
 		setIsPreviewingDesign( true );
+	}
+
+	function onChangeVariation( design: Design, styleVariation?: StyleVariation ) {
+		recordTracksEvent( 'calypso_signup_design_picker_style_variation_button_click', {
+			...getEventPropsByDesign( design, styleVariation ),
+			...getVirtualDesignProps( design, styleVariation ),
+		} );
 	}
 
 	function trackAllDesignsView() {
@@ -358,8 +374,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	}
 
 	// ********** Logic for Premium Global Styles
-
-	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles();
 	const [ showPremiumGlobalStylesModal, setShowPremiumGlobalStylesModal ] = useState( false );
 
 	function unlockPremiumGlobalStyles() {
@@ -700,6 +714,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			onSelect={ pickDesign }
 			onSelectBlankCanvas={ pickBlankCanvasDesign }
 			onPreview={ previewDesign }
+			onChangeVariation={ onChangeVariation }
 			onViewAllDesigns={ trackAllDesignsView }
 			onCheckout={ goToCheckout }
 			heading={ heading }

@@ -1,0 +1,95 @@
+@import "@automattic/typography/styles/variables";
+@import "@automattic/components/src/styles/typography";
+
+.jetpack-upsell-section {
+	--jetpack-yelow-off: #edf2e2;
+}
+
+.jetpack-upsell-section__title {
+	font-family: $font-sf-pro-display;
+	font-size: $font-title-small;
+	font-weight: 500;
+}
+
+.jetpack-upsell-section__product {
+	display: grid;
+	grid-template-columns: max-content 3fr max-content max-content;
+	grid-template-areas:
+		"icon title link button"
+		"icon description link button";
+	column-gap: 1em;
+	padding: $font-body 0;
+	font-size: $font-body;
+	font-family: $font-sf-pro-text;
+}
+
+.jetpack-upsell-section__product-icon {
+	grid-area: icon;
+	align-self: center;
+	justify-self: center;
+	padding: 1em;
+	background: var(--jetpack-yelow-off);
+	line-height: 1;
+}
+.jetpack-upsell-section__product-title {
+	grid-area: title;
+	margin: 0;
+	font-size: $font-body;
+	letter-spacing: -0.02em;
+	color: var(--studio-gray-100);
+}
+.jetpack-upsell-section__product-description {
+	grid-area: description;
+	margin: 0;
+	letter-spacing: -0.02em;
+	color: var(--studio-gray-80);
+}
+.jetpack-upsell-section__product-link {
+	align-self: center;
+	color: var(--studio-gray-80);
+	display: flex;
+	font-size: $font-body-small;
+	grid-area: link;
+	justify-self: end;
+	text-decoration: underline;
+
+	.gridicon {
+		align-self: flex-end;
+		fill: var(--studio-gray-80);
+		margin-left: 3px;
+	}
+
+	&:visited {
+		color: var(--studio-gray-100);
+		.gridicon {
+			fill: var(--studio-gray-100);
+		}
+	}
+}
+
+
+.jetpack-upsell-section__product-button {
+	align-self: center;
+	border-color: var(--studio-gray-100);
+	color: var(--studio-gray-100);
+	font-family: inherit;
+	grid-area: button;
+	justify-self: end;
+	transition: background-color 0.1s linear, border-color 0.1s linear;
+
+	&:hover,
+	&:focus {
+		background: var(--studio-gray-0);
+	}
+
+	&.is-primary {
+		background: var(--studio-gray-100);
+		border-color: var(--studio-gray-100);
+
+		&:hover,
+		&:focus {
+			background: var(--studio-gray-80);
+			border-color: var(--studio-gray-80);
+		}
+	}
+}

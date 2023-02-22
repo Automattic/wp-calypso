@@ -166,6 +166,7 @@ function CountryCodeInput( {
 		'AT',
 		'BE',
 		'BG',
+		'CH',
 		'CY',
 		'CZ',
 		'DE',
@@ -175,6 +176,7 @@ function CountryCodeInput( {
 		'ES',
 		'FI',
 		'FR',
+		'GB',
 		'HR',
 		'HU',
 		'IE',
@@ -190,7 +192,6 @@ function CountryCodeInput( {
 		'SE',
 		'SI',
 		'SK',
-		'GB',
 		'XI',
 	];
 

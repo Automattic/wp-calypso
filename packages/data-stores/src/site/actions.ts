@@ -9,7 +9,6 @@ import {
 	AtomicSoftwareInstallError,
 	GlobalStyles,
 } from './types';
-import type { WpcomClientCredentials } from '../shared-types';
 import type {
 	CreateSiteParams,
 	NewSiteErrorResponse,
@@ -29,6 +28,7 @@ import type {
 	ThemeSetupOptions,
 	ActiveTheme,
 } from './types';
+import type { WpcomClientCredentials } from '../shared-types';
 
 export function createActions( clientCreds: WpcomClientCredentials ) {
 	const fetchSite = () => ( {

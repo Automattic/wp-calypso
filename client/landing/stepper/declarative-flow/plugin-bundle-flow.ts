@@ -130,6 +130,15 @@ const pluginBundleFlow: Flow = {
 			recordSubmitStep( providedDependencies, intent, flowName, currentStep );
 
 			switch ( currentStep ) {
+				case 'checkForWoo':
+					// If WooCommerce is already installed, we should exit the flow.
+					if ( providedDependencies?.hasWooCommerce ) {
+						return exitFlow( `/home/${ siteSlug }` );
+					}
+
+					// Otherwise, we should continue to the next step.
+					return navigate( 'storeAddress' );
+
 				case 'storeAddress':
 					return navigate( 'businessInfo' );
 
@@ -198,7 +207,7 @@ const pluginBundleFlow: Flow = {
 					return navigate( 'businessInfo' );
 
 				default:
-					return navigate( 'storeAddress' );
+					return navigate( 'checkForWoo' );
 			}
 		};
 
@@ -206,7 +215,7 @@ const pluginBundleFlow: Flow = {
 			switch ( currentStep ) {
 				// TODO - Do we need anything here?
 				default:
-					return navigate( 'storeAddress' );
+					return navigate( 'checkForWoo' );
 			}
 		};
 

@@ -1,8 +1,8 @@
 import classNames from 'classnames';
 import { createElement } from 'react';
 import ReactDomServer from 'react-dom/server';
-import { deserialize } from 'calypso/lib/media-serialization';
 import * as MediaUtils from 'calypso/lib/media/utils';
+import { deserialize } from 'calypso/lib/media-serialization';
 import { parse, stringify } from 'calypso/lib/shortcode';
 
 /**

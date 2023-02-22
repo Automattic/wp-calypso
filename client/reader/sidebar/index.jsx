@@ -24,14 +24,14 @@ import { isDiscoverEnabled } from 'calypso/reader/discover/helper';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { getTagStreamUrl } from 'calypso/reader/route';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { getSubscribedLists } from 'calypso/state/reader/lists/selectors';
+import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
 import {
 	toggleReaderSidebarLists,
 	toggleReaderSidebarTags,
 } from 'calypso/state/reader-ui/sidebar/actions';
 import { isListsOpen, isTagsOpen } from 'calypso/state/reader-ui/sidebar/selectors';
-import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { getSubscribedLists } from 'calypso/state/reader/lists/selectors';
-import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import ReaderSidebarHelper from './helper';

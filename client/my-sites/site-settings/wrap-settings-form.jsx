@@ -168,6 +168,9 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 						break;
 				}
 			} );
+			if ( path === '/settings/reading/:site' ) {
+				trackTracksEvent( 'calypso_settings_reading_saved' );
+			}
 			this.submitForm();
 			this.props.trackEvent( 'Clicked Save Settings Button' );
 		};

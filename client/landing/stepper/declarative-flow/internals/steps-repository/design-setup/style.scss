@@ -6,13 +6,6 @@
 $gray-100: #101517;
 $gray-60: #50575e;
 $design-button-primary-color: rgb(17, 122, 201);
-$break-design-preview: 1024px;
-
-@mixin break-design-preview() {
-	@media (min-width: #{ ($break-design-preview) }) {
-		@content;
-	}
-}
 
 .design-setup {
 	.step-container {
@@ -584,7 +577,7 @@ $break-design-preview: 1024px;
 			font-weight: 500;
 			line-height: 20px;
 
-			@include break-design-preview {
+			@include break-xlarge {
 				display: none;
 			}
 
@@ -613,7 +606,7 @@ $break-design-preview: 1024px;
 					margin-top: -2px;
 				}
 
-				@include break-design-preview {
+				@include break-xlarge {
 					inset-inline-start: 72px;
 					inset-inline-end: 24px;
 					padding: 1px 0 0;
@@ -645,7 +638,7 @@ $break-design-preview: 1024px;
 			z-index: 1;
 		}
 
-		@include break-design-preview {
+		@include break-xlarge {
 			max-width: none;
 			padding-inline-start: 32px;
 			padding-inline-end: 32px;
@@ -669,7 +662,7 @@ $break-design-preview: 1024px;
 }
 
 // Free flow
-
+.update-design.design-setup,
 .free.design-setup {
 	.step-container:not(.design-setup__preview) {
 		.navigation-link {
