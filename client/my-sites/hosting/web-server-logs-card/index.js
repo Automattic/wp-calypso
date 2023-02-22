@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
+import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import MaterialIcon from 'calypso/components/material-icon';
 import wpcom from 'calypso/lib/wp';
@@ -34,6 +35,7 @@ const WebServerLogsCard = ( props ) => {
 	const dateTimeFormat = 'YYYY-MM-DD HH:mm:ss';
 	const [ startDateTime, setStartDateTime ] = useState( oneHourAgo.format( dateTimeFormat ) );
 	const [ endDateTime, setEndDateTime ] = useState( now.format( dateTimeFormat ) );
+	const [ logType, setLogType ] = useState( 'php' );
 	const [ downloading, setDownloading ] = useState( false );
 	const [ downloadErrorOccurred, setDownloadErrorOccurred ] = useState( false );
 	const [ progress, setProgress ] = useState( { recordsDownloaded: 0, totalRecordsAvailable: 0 } );
@@ -46,6 +48,17 @@ const WebServerLogsCard = ( props ) => {
 		isValid: true,
 		validationInfo: '',
 	} );
+
+	const logTypes = [
+		{
+			label: translate( 'PHP error' ),
+			value: 'php',
+		},
+		{
+			label: translate( 'Web request' ),
+			value: 'web',
+		},
+	];
 
 	useEffect( () => {
 		const startMoment = moment.utc( startDateTime );
@@ -103,6 +116,17 @@ const WebServerLogsCard = ( props ) => {
 		setProgress( { recordsDownloaded: 0, totalRecordsAvailable: 0 } );
 		setDownloadErrorOccurred( false );
 
+		let path = null;
+		if ( logType === 'php' ) {
+			path = `/sites/${ siteId }/hosting/error-logs`;
+		} else if ( logType === 'web' ) {
+			path = `/sites/${ siteId }/hosting/logs`;
+		} else {
+			downloadErrorNotice( translate( 'Invalid log type specified' ) );
+			setDownloadErrorOccurred( true );
+			return;
+		}
+
 		const startMoment = moment.utc( startDateTime );
 		const endMoment = moment.utc( endDateTime );
 
@@ -132,7 +156,7 @@ const WebServerLogsCard = ( props ) => {
 			await wpcom.req
 				.post(
 					{
-						path: `/sites/${ siteId }/hosting/logs`,
+						path,
 						apiNamespace: 'wpcom/v2',
 					},
 					{
@@ -243,6 +267,16 @@ const WebServerLogsCard = ( props ) => {
 						'To help troubleshoot or debug problems with your site, you may download web server logs between the following dates.'
 					) }
 				</p>
+				<div className="web-server-logs-card__type">
+					<FormFieldset>
+						<FormLabel>{ translate( 'Log type:' ) }</FormLabel>
+						<FormRadiosBar
+							items={ logTypes }
+							checked={ logType }
+							onChange={ ( event ) => setLogType( event.target.value ) }
+						/>
+					</FormFieldset>
+				</div>
 				<div className="web-server-logs-card__dates">
 					<div className="web-server-logs-card__start">
 						<FormFieldset>
