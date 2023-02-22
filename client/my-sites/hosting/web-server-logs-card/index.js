@@ -212,7 +212,8 @@ const WebServerLogsCard = ( props ) => {
 
 		const url = window.URL.createObjectURL( logFile );
 		const link = document.createElement( 'a' );
-		const downloadFilename = siteSlug + '-' + startString + '-' + endString + '.csv';
+		const downloadFilename =
+			siteSlug + '-' + logType + '-logs-' + startString + '-' + endString + '.csv';
 		link.href = url;
 		link.setAttribute( 'download', downloadFilename );
 		link.click();
