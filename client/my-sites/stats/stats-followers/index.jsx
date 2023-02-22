@@ -140,11 +140,8 @@ class StatModuleFollowers extends Component {
 		];
 
 		const summaryPageSlug = siteSlug || '';
-		// email-followers is no available at the moment so fallback everything to the new subscribers URL
-		// let summaryPageLink =
-		// 	'email-followers' === activeFilter
-		// 		? '/people/email-followers/' + summaryPageSlug
-		// 		: '/people/followers/' + summaryPageSlug;
+		// email-followers is no available at the moment so fallback everything to the new subscribers URL.
+		// Old, non-functional path: '/people/email-followers/' + summaryPageSlug.
 		let summaryPageLink = '/people/subscribers/' + summaryPageSlug;
 
 		// Limit scope for Odyssey stats, as the Followers page is not yet available.
