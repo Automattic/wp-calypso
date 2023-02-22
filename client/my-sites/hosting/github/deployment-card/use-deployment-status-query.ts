@@ -8,6 +8,7 @@ export type DeploymentData = {
 	remove_failures: string[];
 	log_file_url: string;
 	last_deployment_timestamp: number;
+	last_deployment_repo: string;
 	last_deployment_sha: string;
 };
 
