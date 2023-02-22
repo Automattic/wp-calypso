@@ -98,7 +98,7 @@ function Chart( {
 				return prevSizing;
 			} );
 		},
-		[ yAxisSize ]
+		[ yAxisRef, yAxisSize.clientWidth ]
 	);
 
 	// Subscribe to changes to element size and position.
@@ -134,15 +134,8 @@ function Chart( {
 			isEmptyChart: Boolean( ! nextVals.some( ( a ) => a > 0 ) ),
 			yMax: getYAxisMax( nextVals ),
 		};
-	}, [ data, maxBars, hasResized, sliceFromBeginning ] );
+	}, [ data, maxBars, sliceFromBeginning ] );
 
-	// Recover the chart with data even if no sizing is updated on the first loading.
-	// If we don't have any sizing info yet, render an empty chart with the ref.
-	// if ( ! hasResized ) {
-	// 	return <div ref={ resizeRef } className="chart" />;
-	// }
-
-	// Otherwise, render full chart.
 	const { isTooltipVisible, tooltipContext, tooltipPosition, tooltipData } = tooltip;
 
 	return (
