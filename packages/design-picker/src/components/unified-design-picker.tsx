@@ -212,16 +212,16 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 		if ( designIsBundledWithWoo ) {
 			badge = <WooCommerceBundledBadge />;
 		} else if ( isPremium ) {
-			const showTooltip =
+			const showStyleVariationTooltip =
 				! isDefaultVariation && shouldUpgrade && ( is_virtual || ! design.is_premium );
-			const toolTip = showTooltip
+			const tooltipText = showStyleVariationTooltip
 				? __( 'Unlock this style, and tons of other features, by upgrading to a Premium plan.' )
 				: undefined;
 			badge = (
 				<PremiumBadge
 					tooltipPosition="bottom right"
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }
-					tooltipContent={ toolTip }
+					tooltipContent={ tooltipText }
 				/>
 			);
 		}
