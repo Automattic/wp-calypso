@@ -32,8 +32,6 @@ export class DomainSearchComponent {
 	 * @param {string} keyword Keyword to use in domain search.
 	 */
 	async search( keyword: string ): Promise< void > {
-		await this.page.waitForResponse( /tlds\?/ );
-
 		/**
 		 *
 		 * Closure to pass into the retry method.
