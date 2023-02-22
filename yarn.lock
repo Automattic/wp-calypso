@@ -8910,6 +8910,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wordpress/element@npm:4.20.0, @wordpress/element@npm:^4.11.0":
+  version: 4.20.0
+  resolution: "@wordpress/element@npm:4.20.0"
+  dependencies:
+    "@babel/runtime": ^7.16.0
+    "@types/react": ^17.0.37
+    "@types/react-dom": ^17.0.11
+    "@wordpress/escape-html": ^2.22.0
+    change-case: ^4.1.2
+    is-plain-object: ^5.0.0
+    react: ^17.0.2
+    react-dom: ^17.0.2
+  checksum: 729a1acd675bcecccb43804afe40a38c8be561a205e556a22faade0638331955389da6a9fc2f8ea103f8eefc8035067464c44f2b91fa4e200f2f9cb3dc2b2d94
+  languageName: node
+  linkType: hard
+
 "@wordpress/element@npm:4.7.0":
   version: 4.7.0
   resolution: "@wordpress/element@npm:4.7.0"
@@ -8955,7 +8971,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/element@npm:^4.1.1, @wordpress/element@npm:^4.11.0, @wordpress/element@npm:^4.19.0, @wordpress/element@npm:^4.5.0, @wordpress/element@npm:^4.7.0":
+"@wordpress/element@npm:^4.1.1, @wordpress/element@npm:^4.19.0, @wordpress/element@npm:^4.5.0, @wordpress/element@npm:^4.7.0":
   version: 4.19.0
   resolution: "@wordpress/element@npm:4.19.0"
   dependencies:
@@ -9018,7 +9034,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/escape-html@npm:^2.13.0, @wordpress/escape-html@npm:^2.2.0, @wordpress/escape-html@npm:^2.21.0, @wordpress/escape-html@npm:^2.27.0, @wordpress/escape-html@npm:^2.9.0":
+"@wordpress/escape-html@npm:^2.13.0, @wordpress/escape-html@npm:^2.2.0, @wordpress/escape-html@npm:^2.21.0, @wordpress/escape-html@npm:^2.22.0, @wordpress/escape-html@npm:^2.27.0, @wordpress/escape-html@npm:^2.9.0":
   version: 2.27.0
   resolution: "@wordpress/escape-html@npm:2.27.0"
   dependencies:
