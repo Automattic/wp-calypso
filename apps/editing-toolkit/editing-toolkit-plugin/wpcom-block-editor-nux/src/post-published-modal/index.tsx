@@ -47,6 +47,9 @@ const PostPublishedModal: React.FC = () => {
 	const { fetchShouldShowFirstPostPublishedModal, setShouldShowFirstPostPublishedModal } =
 		useDispatch( 'automattic/wpcom-welcome-guide' );
 
+	const { siteUrlOption, launchpadScreenOption } = window?.launchpadOptions || {};
+	const siteUrl = siteUrlOption.replace( 'http://', '' );
+
 	useEffect( () => {
 		fetchShouldShowFirstPostPublishedModal();
 	}, [ fetchShouldShowFirstPostPublishedModal ] );
@@ -76,9 +79,16 @@ const PostPublishedModal: React.FC = () => {
 		setShouldShowFirstPostPublishedModal,
 	] );
 
-	const handleClick = ( event: React.MouseEvent ) => {
+	const handleViewPostClick = ( event: React.MouseEvent ) => {
 		event.preventDefault();
 		( window.top as Window ).location.href = link;
+	};
+
+	const handleNextStepsClick = ( event: React.MouseEvent ) => {
+		event.preventDefault();
+		(
+			window.top as Window
+		 ).location.href = `https://wordpress.com/setup/write/launchpad?siteSlug=${ siteUrl }`;
 	};
 
 	return (
@@ -92,9 +102,16 @@ const PostPublishedModal: React.FC = () => {
 			) }
 			imageSrc={ postPublishedImage }
 			actionButtons={
-				<Button isPrimary onClick={ handleClick }>
-					{ __( 'View Post', 'full-site-editing' ) }
-				</Button>
+				<>
+					<Button isPrimary onClick={ handleViewPostClick }>
+						{ __( 'View Post', 'full-site-editing' ) }
+					</Button>
+					{ launchpadScreenOption === 'full' && (
+						<Button isSecondary onClick={ handleNextStepsClick }>
+							{ __( 'Next Steps', 'full-site-editing' ) }
+						</Button>
+					) }
+				</>
 			}
 			onRequestClose={ closeModal }
 			onOpen={ () => recordTracksEvent( 'calypso_editor_wpcom_first_post_published_modal_show' ) }

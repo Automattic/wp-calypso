@@ -17,6 +17,24 @@ class WP_REST_WPCOM_Block_Editor_First_Post_Published_Modal_Controller extends \
 	public function __construct() {
 		$this->namespace = 'wpcom/v2';
 		$this->rest_base = 'block-editor/should-show-first-post-published-modal';
+
+		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script' ), 100 );
+	}
+
+	/**
+	 * Enqueue Launchpad options.
+	 */
+	public function enqueue_script() {
+		$launchpad_options = array(
+			'launchpadScreenOption' => get_option( 'launchpad_screen' ),
+			'siteUrlOption'         => get_option( 'siteurl' ),
+		);
+
+		wp_add_inline_script(
+			'jetpack-blocks-editor',
+			'var launchpadOptions = ' . wp_json_encode( $launchpad_options, JSON_HEX_TAG | JSON_HEX_AMP ) . ';',
+			'before'
+		);
 	}
 
 	/**
