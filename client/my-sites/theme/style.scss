@@ -7,6 +7,11 @@ body.is-section-theme-i4 {
 
 	.layout:not(.has-no-sidebar) .layout__content {
 		padding-top: var(--masterbar-height);
+
+		@include breakpoint-deprecated( "<960px" ) {
+			padding-left: 0;
+			padding-right: 0;
+		}
 	}
 
 	.layout__primary .main {
@@ -231,56 +236,6 @@ body.is-section-theme-i4 {
 
 		svg {
 			top: 2px;
-		}
-	}
-}
-
-.theme__sheet-style-variations {
-	@include breakpoint-deprecated( "<960px" ) {
-		margin-bottom: -16px;
-		padding: 0 0 0 24px;
-
-		.theme__sheet-style-variations-previews {
-			padding: 2px 24px 16px 2px;
-		}
-	}
-
-	&-previews {
-		display: flex;
-		gap: 8px;
-		overflow: scroll;
-		padding: 12px 2px;
-	}
-
-	.theme__sheet-style-variations-header {
-		display: flex;
-		flex-direction: column;
-		gap: 8px;
-
-		p {
-			color: var(--color-neutral-60);
-			font-size: $font-body-small;
-			letter-spacing: -0.15px;
-			line-height: 20px;
-			margin: 0;
-
-			a {
-				color: var(--color-neutral-60);
-				text-decoration: underline;
-			}
-		}
-
-		.premium-badge {
-			-webkit-font-smoothing: antialiased;
-		}
-	}
-
-	.design-preview__style-variation-wrapper {
-		flex-basis: 100px;
-		flex-shrink: 0;
-
-		@include breakpoint-deprecated( ">1024px" ) {
-			flex-basis: 120px;
 		}
 	}
 }
