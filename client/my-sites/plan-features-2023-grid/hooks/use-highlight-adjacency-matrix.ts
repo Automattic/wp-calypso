@@ -2,15 +2,17 @@ import { isBusinessPlan, isPremiumPlan, isEcommercePlan } from '@automattic/caly
 import { useMemo } from '@wordpress/element';
 import type { PlanProperties } from '../types';
 
+interface HighlightAdjacencyMatrix {
+	[ planName: string ]: {
+		leftOfHighlight: boolean;
+		rightOfHighlight: boolean;
+		isOnlyHighlight?: boolean;
+	};
+}
+
 const useHighlightAdjacencyMatrix = ( visiblePlans: PlanProperties[] ) => {
 	return useMemo( () => {
-		const adjacencyMatrix: {
-			[ planName: string ]: {
-				leftOfHighlight: boolean;
-				rightOfHighlight: boolean;
-				isOnlyHighlight?: boolean;
-			};
-		} = {};
+		const adjacencyMatrix: HighlightAdjacencyMatrix = {};
 		const highlightIndices = visiblePlans.reduce< number[] >( ( acc, { planName }, index ) => {
 			const isHighlight =
 				isBusinessPlan( planName ) || isPremiumPlan( planName ) || isEcommercePlan( planName );
