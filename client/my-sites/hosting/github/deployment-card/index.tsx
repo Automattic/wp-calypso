@@ -115,6 +115,8 @@ export const DeploymentCard = ( { repo, branch, connectionId }: DeploymentCardPr
 							<DeploymentStatusExplanation
 								status={ deployment.status }
 								totalFailures={ totalFailures }
+								connectionId={ connectionId }
+								deploymentTimestamp={ deployment.last_deployment_timestamp }
 							/>
 						) }
 					</div>
