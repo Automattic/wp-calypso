@@ -16,10 +16,7 @@ const isWithinAvailableChatDays = ( currentTime: Date ) => {
 
 	//if current hour is within open and close hour range and day is not saturday or sunday, return true
 	return (
-		utcHour >= OPEN_HOUR &&
-		utcHour <= CLOSE_HOUR &&
-		utcWeekDay !== SUNDAY &&
-		utcWeekDay !== SATURDAY
+		utcHour >= OPEN_HOUR && utcHour < CLOSE_HOUR && utcWeekDay !== SUNDAY && utcWeekDay !== SATURDAY
 	);
 };
 
