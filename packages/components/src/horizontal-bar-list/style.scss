@@ -141,6 +141,11 @@
 	@include additional-columns-wrapper;
 }
 
+.horizontal-bar-list-item__left-icon {
+	padding-right: 8px;
+	display: flex;
+}
+
 .horizontal-bar-list-group {
 	list-style: none;
 	margin: $space-between-rows 0 $row-height 0;
@@ -149,4 +154,23 @@
 .horizontal-bar-list-group-toggle {
 	position: relative;
 	top: 2px;
+}
+
+.horizontal-bar-list__group-label {
+	position: relative;
+	overflow: hidden;
+	text-overflow: ellipsis;
+
+	> svg,
+	> span {
+		vertical-align: middle;
+	}
+
+	> svg + span {
+		padding: 8px;
+	}
+
+	> span + svg {
+		padding-left: 17px;
+	}
 }

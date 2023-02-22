@@ -4,7 +4,7 @@ import {
 	PLAN_PREMIUM,
 	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 } from '@automattic/calypso-products';
-import { FREE_FLOW, BUILD_FLOW, WRITE_FLOW } from '@automattic/onboarding';
+import { isFreeFlow, isBuildFlow, isWriteFlow } from '@automattic/onboarding';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -44,6 +44,9 @@ export function getEnhancedTasks(
 
 	const videoPressUploadCompleted =
 		site?.options?.launchpad_checklist_tasks_statuses?.video_uploaded || false;
+
+	const allowUpdateDesign =
+		flow && ( isFreeFlow( flow ) || isBuildFlow( flow ) || isWriteFlow( flow ) );
 
 	const homePageId = site?.options?.page_on_front;
 	// send user to Home page editor, fallback to FSE if page id is not known
@@ -164,6 +167,7 @@ export function getEnhancedTasks(
 				case 'design_selected':
 					taskData = {
 						title: translate( 'Select a design' ),
+						disabled: ! allowUpdateDesign,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
@@ -349,15 +353,9 @@ export function getArrayOfFilteredTasks( tasks: Task[], flow: string | null ) {
 	);
 }
 
-// Returns enhanced task list with domain_upsell task removed
-// Only applies to Free, Write & Build flow sites with paid plan
-export function filterDomainUpsellTask(
-	flow: string | null,
-	enhancedTasks: Task[] | null,
-	site: SiteDetails | null
-) {
-	const flowsAffected = [ FREE_FLOW, BUILD_FLOW, WRITE_FLOW ];
-	if ( flow && flowsAffected.includes( flow ) && enhancedTasks && ! site?.plan?.is_free ) {
+// Filter out the domain_upsell task from the enhanced task list when the user is not on a free plan anymore
+export function filterDomainUpsellTask( enhancedTasks: Task[] | null, site: SiteDetails | null ) {
+	if ( enhancedTasks && ! site?.plan?.is_free ) {
 		return enhancedTasks?.filter( ( task ) => {
 			return task.id !== 'domain_upsell';
 		} );

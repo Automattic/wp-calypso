@@ -18,8 +18,8 @@ import PatternLayout from './pattern-layout';
 import PatternSelectorLoader from './pattern-selector-loader';
 import { useAllPatterns } from './patterns-data';
 import { encodePatternId, createCustomHomeTemplateContent } from './utils';
-import type { Step } from '../../types';
 import type { Pattern } from './types';
+import type { Step } from '../../types';
 import type { DesignRecipe, Design } from '@automattic/design-picker/src/types';
 import './style.scss';
 

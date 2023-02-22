@@ -7,6 +7,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import formatCurrency from 'calypso/../packages/format-currency/src';
 import PlanItem from 'calypso/../packages/plans-grid/src/plans-table/plan-item';
+import FormattedHeader from 'calypso/components/formatted-header';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
@@ -14,7 +15,7 @@ import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client
 import { SenseiStepContainer } from '../components/sensei-step-container';
 import { SenseiStepError } from '../components/sensei-step-error';
 import { SenseiStepProgress } from '../components/sensei-step-progress';
-import { PlansIntervalToggle, Tagline, Title } from './components';
+import { PlansIntervalToggle } from './components';
 import { features, Status } from './constants';
 import { useCreateSenseiSite } from './create-sensei-site';
 import { useBusinessPlanPricing, useSenseiProPricing } from './sensei-plan-products';
@@ -124,15 +125,23 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 	const title = __( 'Sensei Pro Bundle' );
 
 	return (
-		<SenseiStepContainer stepName="senseiPlan" recordTracksEvent={ recordTracksEvent }>
+		<SenseiStepContainer
+			stepName="senseiPlan"
+			recordTracksEvent={ recordTracksEvent }
+			formattedHeader={
+				status === Status.Initial && (
+					<FormattedHeader
+						headerText={ __( 'Choose Monthly or Annually' ) }
+						subHeaderText={ __(
+							'Sensei + WooCommerce + Jetpack + WordPress.com in the ultimate Course Bundle'
+						) }
+						align="center"
+					/>
+				)
+			}
+		>
 			{ status === Status.Initial && (
 				<>
-					<Title>{ __( 'Choose Monthly or Annually' ) }</Title>
-
-					<Tagline>
-						{ __( 'Sensei + WooCommerce + Jetpack + WordPress.com in the ultimate Course Bundle' ) }
-					</Tagline>
-
 					<PlansIntervalToggle
 						intervalType={ billingPeriod }
 						onChange={ setBillingPeriod }

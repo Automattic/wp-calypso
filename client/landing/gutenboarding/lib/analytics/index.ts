@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FLOW_ID } from '../../constants';
-import type { StepNameType } from '../../path';
 import type { ErrorParameters, OnboardingCompleteParameters, TracksEventProperties } from './types';
+import type { StepNameType } from '../../path';
 
 export * from './recaptcha';
 

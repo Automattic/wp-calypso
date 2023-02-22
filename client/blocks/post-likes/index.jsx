@@ -80,17 +80,18 @@ class PostLikes extends PureComponent {
 			noLikesLabel = translate( 'There are no likes on this post yet.' );
 		}
 
-		const isLoading = ! likes;
+		// Prevent loading for postId `0`
+		const isLoading = !! postId && ! likes;
 
 		const classes = classnames( 'post-likes', {
 			'has-display-names': showDisplayNames,
-			'no-likes': likeCount === 0,
+			'no-likes': ! likeCount,
 		} );
 		const extraProps = { onMouseEnter, onMouseLeave };
 
 		return (
 			<div className={ classes } { ...extraProps }>
-				<QueryPostLikes siteId={ siteId } postId={ postId } needsLikers={ true } />
+				{ !! postId && <QueryPostLikes siteId={ siteId } postId={ postId } needsLikers={ true } /> }
 				{ isLoading && (
 					<span key="placeholder" className="post-likes__count is-loading">
 						…
@@ -98,7 +99,7 @@ class PostLikes extends PureComponent {
 				) }
 				{ likes && likes.map( this.renderLike ) }
 				{ this.renderExtraCount() }
-				{ likeCount === 0 && noLikesLabel }
+				{ ! isLoading && ! likeCount && noLikesLabel }
 			</div>
 		);
 	}

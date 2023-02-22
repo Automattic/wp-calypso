@@ -20,9 +20,10 @@ import { Browser, Page } from 'playwright';
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
-	const accountName = envVariables.TEST_ON_JETPACK
-		? 'jetpackUser'
-		: getTestAccountByFeature( envToFeatureKey( envVariables ) );
+	const accountName =
+		envVariables.JETPACK_TARGET === 'remote-site'
+			? 'jetpackUser'
+			: getTestAccountByFeature( envToFeatureKey( envVariables ) );
 	const testAccount = new TestAccount( accountName );
 	const testAccountSiteDomain = testAccount.getSiteURL( { protocol: false } );
 	let sidebarComponent: SidebarComponent;

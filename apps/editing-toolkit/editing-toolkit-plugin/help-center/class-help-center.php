@@ -36,6 +36,12 @@ class Help_Center {
 	 * Help_Center constructor.
 	 */
 	public function __construct() {
+		global $wp_customize;
+
+		if ( isset( $wp_customize ) ) {
+			return;
+		}
+
 		$this->asset_file = include plugin_dir_path( __FILE__ ) . 'dist/help-center.asset.php';
 		$this->version    = $this->asset_file['version'];
 

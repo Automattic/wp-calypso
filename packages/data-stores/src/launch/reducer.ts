@@ -1,9 +1,9 @@
 import { combineReducers } from '@wordpress/data';
 import { LaunchStep } from './data';
-import type { Plans } from '..';
-import type * as DomainSuggestions from '../domain-suggestions';
 import type { LaunchAction } from './actions';
 import type { LaunchStepType } from './types';
+import type { Plans } from '..';
+import type * as DomainSuggestions from '../domain-suggestions';
 import type { Reducer } from 'redux';
 
 const step: Reducer< LaunchStepType, LaunchAction > = ( state = LaunchStep.Name, action ) => {

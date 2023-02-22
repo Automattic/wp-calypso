@@ -23,8 +23,6 @@ import XPostHelper from 'calypso/reader/xpost-helper';
 import { PER_FETCH, INITIAL_FETCH } from 'calypso/state/data-layer/wpcom/read/streams';
 import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
-import { viewStream } from 'calypso/state/reader-ui/actions';
-import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
 import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
@@ -40,6 +38,8 @@ import {
 	getTransformedStreamItems,
 	shouldRequestRecs,
 } from 'calypso/state/reader/streams/selectors';
+import { viewStream } from 'calypso/state/reader-ui/actions';
+import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import EmptyContent from './empty';

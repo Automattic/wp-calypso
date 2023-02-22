@@ -4,10 +4,11 @@ import {
 	StatsCard,
 	StatsCardAvatar,
 } from '@automattic/components';
+import { Icon, tag, file } from '@wordpress/icons';
 import classNames from 'classnames';
 import debugFactory from 'debug';
 import page from 'page';
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import titlecase from 'to-title-case';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import OpenLink from './action-link';
@@ -64,7 +65,7 @@ const StatsListCard = ( {
 		}
 	}, [] );
 
-	const outputRightItem = ( item, key ) => {
+	const generateRightItem = ( item, key ) => {
 		const isVisible = key === visibleRightItemKey;
 
 		return (
@@ -82,17 +83,40 @@ const StatsListCard = ( {
 		);
 	};
 
+	const getLabelIcon = ( labelIconType ) => {
+		if ( labelIconType === 'folder' ) {
+			return <Icon className="stats-icon" icon={ file } size={ 22 } />;
+		} else if ( labelIconType === 'tag' ) {
+			return <Icon className="stats-icon" icon={ tag } size={ 22 } />;
+		}
+	};
+
+	const generateLeftItem = ( item ) => {
+		let leftSideItem; // undefined value avoids rendering an empty node if nothing generates the output
+
+		// left icon visible for avatars, contry flags or tags and categories.
+		if ( item?.countryCode ) {
+			leftSideItem = <StatsListCountryFlag countryCode={ item.countryCode } />;
+		} else if ( showLeftIcon && item?.icon ) {
+			leftSideItem = <StatsCardAvatar url={ item?.icon } altName={ item?.label } />;
+		} else if ( Array.isArray( item?.label ) ) {
+			// tags without children have one item in its label array;
+			// tags with children have them duplicated in this label array - chevron is added and label is constructed by concatenating items.
+			if ( item?.label?.length === 1 ) {
+				leftSideItem = getLabelIcon( item.label[ 0 ]?.labelIcon );
+			}
+			// else {} -> either unsupported icon or and an error with labels
+		} else if ( item?.labelIcon ) {
+			leftSideItem = getLabelIcon( item.labelIcon );
+		}
+
+		return leftSideItem;
+	};
+
 	// Search doesn't have items sorted by value when there are 'Unknown search terms' present.
 	const barMaxValue = data?.length
 		? Math.max( ...data.map( ( item ) => item?.value || 0 ).filter( Number.isFinite ) )
 		: 0;
-
-	let sortedData = data;
-
-	// Include 'Unknown search terms' at a proper place according to its value.
-	if ( moduleType === 'searchterms' ) {
-		sortedData = data?.sort( ( a, b ) => b.value - a.value );
-	}
 
 	return (
 		<StatsCard
@@ -119,17 +143,10 @@ const StatsListCard = ( {
 			{ !! error && error }
 			{ ! loader && (
 				<HorizontalBarList>
-					{ sortedData?.map( ( item, index ) => {
-						let leftSideItem;
+					{ data?.map( ( item, index ) => {
+						const leftSideItem = generateLeftItem( item );
 						const isInteractive = item?.link || item?.page || item?.children;
 						const key = item?.id || index; // not every item has an id
-
-						// left icon visible only for Author avatars and Contry flags.
-						if ( item?.countryCode ) {
-							leftSideItem = <StatsListCountryFlag countryCode={ item.countryCode } />;
-						} else if ( showLeftIcon && item?.icon ) {
-							leftSideItem = <StatsCardAvatar url={ item?.icon } altName={ item?.label } />;
-						}
 
 						return (
 							<HorizontalBarListItem
@@ -139,7 +156,8 @@ const StatsListCard = ( {
 								hasIndicator={ item?.className?.includes( 'published' ) }
 								onClick={ localClickHandler }
 								leftSideItem={ leftSideItem }
-								renderRightSideItem={ ( incomingItem ) => outputRightItem( incomingItem, key ) }
+								renderLeftSideItem={ ( incomingItem ) => generateLeftItem( incomingItem ) }
+								renderRightSideItem={ ( incomingItem ) => generateRightItem( incomingItem, key ) }
 								useShortLabel={ useShortLabel }
 								useShortNumber={ useShortNumber }
 								isStatic={ ! isInteractive }
@@ -147,6 +165,7 @@ const StatsListCard = ( {
 								additionalColumns={ additionalColumns?.body( item ) }
 								usePlainCard={ usePlainCard }
 								isLinkUnderlined={ isLinkUnderlined }
+								leftGroupToggle={ item?.children && moduleType === 'tags-categories' } // tags and categories show toggle on the oposite side
 							/>
 						);
 					} ) }
