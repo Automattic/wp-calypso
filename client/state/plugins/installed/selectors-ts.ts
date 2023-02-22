@@ -6,7 +6,6 @@ import {
 	isJetpackSite,
 	isJetpackSiteSecondaryNetworkSite,
 } from 'calypso/state/sites/selectors';
-import { isRequesting, isRequestingForAllSites } from './selectors';
 import type {
 	InstalledPlugins,
 	InstalledPluginData,
