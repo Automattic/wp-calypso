@@ -339,6 +339,7 @@ const sections = [
 		paths: [ '/tags', '/tag' ],
 		module: 'calypso/reader/tag-stream',
 		group: 'reader',
+		enableLoggedOut: true,
 		trackLoadPerformance: true,
 	},
 	{
