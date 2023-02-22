@@ -26,7 +26,7 @@ const PatternLargePreview = ( { header, sections, footer, activePosition }: Prop
 	const [ viewportHeight, setViewportHeight ] = useState< number | undefined >( 0 );
 
 	const renderPattern = ( key: string, pattern: Pattern ) => (
-		<li key={ key }>
+		<li key={ key } className={ `pattern-large-preview__pattern-${ key }` }>
 			<PatternRenderer
 				patternId={ encodePatternId( pattern.id ) }
 				viewportHeight={ viewportHeight || frameRef.current?.clientHeight }
