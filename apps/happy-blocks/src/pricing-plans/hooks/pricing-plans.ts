@@ -37,7 +37,7 @@ const parsePlans = ( data: ApiPricingPlan[] ): BlockPlan[] => {
 					) ?? '',
 				upgradeLabel: sprintf(
 					// translators: %s is the plan name
-					__( 'Upgrade to %s', 'happy-tools' ),
+					__( 'Upgrade to %s', 'happy-blocks' ),
 					plan.getTitle()
 				),
 			};
