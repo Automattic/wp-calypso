@@ -49,7 +49,7 @@ import getPartnerIdFromQuery from 'calypso/state/selectors/get-partner-id-from-q
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { isRequestingSite, isRequestingSites } from 'calypso/state/sites/selectors';
+import { getSite, isRequestingSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import AuthFormHeader from './auth-form-header';
 import {
 	ALREADY_CONNECTED,
@@ -986,6 +986,7 @@ const connectComponent = connect(
 			partnerID: getPartnerIdFromQuery( state ),
 			partnerSlug: getPartnerSlugFromQuery( state ),
 			selectedPlanSlug,
+			site: getSite( state, authQuery.clientId ),
 			siteHasJetpackPaidProduct: siteHasJetpackProductPurchase( state, authQuery.clientId ),
 			siteHasBackups: siteHasFeature( state, authQuery.clientId, WPCOM_FEATURES_BACKUPS ),
 			user: getCurrentUser( state ),
