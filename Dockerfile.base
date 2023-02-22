@@ -37,7 +37,6 @@ ENV NPM_CONFIG_CACHE=/calypso/.cache
 ENV NODE_OPTIONS=--max-old-space-size=$node_memory
 ENV HOME=/calypso
 ENV SKIP_TSC=true
-ENV PUPPETEER_SKIP_DOWNLOAD=true
 ENV PLAYWRIGHT_SKIP_DOWNLOAD=true
 
 # Add user calypso with uid 1003, give it sudo permissions
@@ -65,7 +64,6 @@ ENTRYPOINT [ "/bin/bash" ]
 #### This image is used to run E2E tests.
 FROM base as ci-e2e
 
-ENV PUPPETEER_SKIP_DOWNLOAD=false
 ENV PLAYWRIGHT_SKIP_DOWNLOAD=false
 ENV DISPLAY=:99
 
