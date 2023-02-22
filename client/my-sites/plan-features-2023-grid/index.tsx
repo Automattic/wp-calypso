@@ -6,12 +6,13 @@ import {
 	getPlan as getPlanFromKey,
 	getPlanClass,
 	isFreePlan,
+	isPersonalPlan,
+	isEcommercePlan,
 	isWpComFreePlan,
 	isWpcomEnterpriseGridPlan,
 	isMonthly,
 	TERM_MONTHLY,
 	isBusinessPlan,
-	isEcommercePlan,
 	TYPE_FREE,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
@@ -21,6 +22,7 @@ import {
 	getPlanPath,
 	PLAN_FREE,
 	PLAN_ENTERPRISE_GRID_WPCOM,
+	isPremiumPlan,
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -48,7 +50,6 @@ import FoldableCard from 'calypso/components/foldable-card';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
-import PlanPill from 'calypso/components/plans/plan-pill';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import { getDiscountByName } from 'calypso/lib/discounts';
@@ -84,6 +85,7 @@ import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provi
 import { getManagePurchaseUrlFor } from '../purchases/paths';
 import PlanFeatures2023GridActions from './actions';
 import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
+import PopularBadge from './components/popular-badge';
 import PlanFeatures2023GridFeatures from './features';
 import PlanFeatures2023GridHeaderPrice from './header-price';
 import { PlanFeaturesItem } from './item';
@@ -479,16 +481,25 @@ export class PlanFeatures2023Grid extends Component<
 				getPlanClass( planName )
 			);
 			const tableItemClasses = classNames( 'plan-features-2023-grid__table-item', {
-				'popular-plan-parent-class': isBusinessPlan( planName ),
+				'popular-plan-parent-class':
+					isBusinessPlan( planName ) || isEcommercePlan( planName ) || isPremiumPlan( planName ),
+			} );
+
+			const popularBadgeClasses = classNames( {
+				'with-plan-logo': ! (
+					isFreePlan( planName ) ||
+					isPersonalPlan( planName ) ||
+					isPremiumPlan( planName )
+				),
 			} );
 
 			return (
 				<Container key={ planName } className={ tableItemClasses } isMobile={ options?.isMobile }>
-					{ isBusinessPlan( planName ) && (
-						<div className="plan-features-2023-grid__popular-badge">
-							<PlanPill isInSignup={ isInSignup }>{ translate( 'Popular' ) }</PlanPill>
-						</div>
-					) }
+					<PopularBadge
+						isInSignup={ isInSignup }
+						planName={ planName }
+						additionalClassName={ popularBadgeClasses }
+					/>
 					<header className={ headerClasses }>
 						{ isBusinessPlan( planName ) && (
 							<ServiceLogo
@@ -593,7 +604,11 @@ export class PlanFeatures2023Grid extends Component<
 
 		return planPropertiesObj.map( ( properties: PlanProperties ) => {
 			const { planName, isPlaceholder, planConstantObj, current } = properties;
-			const classes = classNames( 'plan-features-2023-grid__table-item', 'is-top-buttons' );
+			const classes = classNames(
+				'plan-features-2023-grid__table-item',
+				'is-top-buttons',
+				'is-bottom-aligned'
+			);
 
 			return (
 				<Container key={ planName } className={ classes } isMobile={ options?.isMobile }>
