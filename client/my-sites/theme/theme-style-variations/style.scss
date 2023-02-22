@@ -19,14 +19,6 @@
 		overflow: scroll;
 		padding: 12px 2px;
 
-		@include breakpoint-deprecated( "<960px" ) {
-			flex-wrap: nowrap;
-
-			&--is-collapsed {
-				padding-bottom: 12px;
-			}
-		}
-
 		&--is-collapsible {
 			transition: max-height 0.2s ease-in-out;
 		}
@@ -34,6 +26,15 @@
 		&--is-collapsed {
 			overflow: hidden;
 			padding-bottom: 3px;
+		}
+
+		@include breakpoint-deprecated( "<960px" ) {
+			flex-wrap: nowrap;
+
+			&--is-collapsed {
+				overflow: scroll;
+				padding-bottom: 12px;
+			}
 		}
 	}
 

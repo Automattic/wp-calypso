@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { PremiumBadge } from '@automattic/design-picker';
-import { useEffect, useLayoutEffect, useRef, useState } from '@wordpress/element';
+import { useLayoutEffect, useRef, useState } from '@wordpress/element';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import AsyncLoad from 'calypso/components/async-load';
@@ -41,20 +41,19 @@ const ThemeStyleVariations = ( {
 			}
 
 			// Detect flex wrap.
-			setIsCollapsible( nodeFirstChildRect.top !== nodeLastChildRect.top );
-			setCollapsibleMaxHeight( isCollapsed ? nodeFirstChildRect.height : node.scrollHeight );
+			const currentIsCollapsible = nodeFirstChildRect.top !== nodeLastChildRect.top;
+			const shouldCollapse = isCollapsible !== currentIsCollapsible || isCollapsed;
+
+			setIsCollapsible( currentIsCollapsible );
+			setIsCollapsed( shouldCollapse );
+			setCollapsibleMaxHeight( shouldCollapse ? nodeFirstChildRect.height : node.scrollHeight );
 		} );
 
 		resizeObserver.observe( observerRef.current );
 		return () => {
 			resizeObserver.disconnect();
 		};
-	}, [ isCollapsed ] );
-
-	// Ensure to start collapsed when collapsible, and vice-versa.
-	useEffect( () => {
-		setIsCollapsed( isCollapsible );
-	}, [ isCollapsible ] );
+	}, [ isCollapsible, isCollapsed ] );
 
 	const handleCollapseButtonClick = () => {
 		setIsCollapsed( ! isCollapsed );
@@ -89,6 +88,7 @@ const ThemeStyleVariations = ( {
 					placeholder={ null }
 					selectedVariation={ selectedVariation }
 					variations={ variations }
+					showOnlyHoverViewDefaultVariation
 					onClick={ onClick }
 				/>
 			</div>

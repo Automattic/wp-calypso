@@ -18,6 +18,7 @@ interface StyleVariationPreviewProps {
 	isPremium: boolean;
 	onClick: ( variation: StyleVariation ) => void;
 	showGlobalStylesPremiumBadge: boolean;
+	showOnlyHoverView: boolean;
 }
 
 const StyleVariationPreview: React.FC< StyleVariationPreviewProps > = ( {
@@ -27,6 +28,7 @@ const StyleVariationPreview: React.FC< StyleVariationPreviewProps > = ( {
 	isPremium,
 	onClick,
 	showGlobalStylesPremiumBadge,
+	showOnlyHoverView,
 } ) => {
 	const [ isFocused, setIsFocused ] = useState( false );
 	const context = useMemo( () => {
@@ -72,7 +74,11 @@ const StyleVariationPreview: React.FC< StyleVariationPreviewProps > = ( {
 					/>
 				) }
 				<GlobalStylesContext.Provider value={ context }>
-					<Preview label={ variation.title } isFocused={ isFocused } withHoverView />
+					<Preview
+						label={ variation.title }
+						isFocused={ isFocused || showOnlyHoverView }
+						withHoverView
+					/>
 				</GlobalStylesContext.Provider>
 			</div>
 		</div>
@@ -84,6 +90,7 @@ interface StyleVariationPreviewsProps {
 	selectedVariation?: StyleVariation;
 	onClick: ( variation: StyleVariation ) => void;
 	showGlobalStylesPremiumBadge: boolean;
+	showOnlyHoverViewDefaultVariation: boolean;
 }
 
 const StyleVariationPreviews: React.FC< StyleVariationPreviewsProps > = ( {
@@ -91,6 +98,7 @@ const StyleVariationPreviews: React.FC< StyleVariationPreviewsProps > = ( {
 	selectedVariation,
 	onClick,
 	showGlobalStylesPremiumBadge,
+	showOnlyHoverViewDefaultVariation,
 } ) => {
 	const selectedVariationSlug = selectedVariation?.slug ?? DEFAULT_VARIATION_SLUG;
 	const base = useMemo(
@@ -109,6 +117,9 @@ const StyleVariationPreviews: React.FC< StyleVariationPreviewsProps > = ( {
 					isPremium={ variation.slug !== DEFAULT_VARIATION_SLUG }
 					onClick={ onClick }
 					showGlobalStylesPremiumBadge={ showGlobalStylesPremiumBadge }
+					showOnlyHoverView={
+						showOnlyHoverViewDefaultVariation && variation.slug === DEFAULT_VARIATION_SLUG
+					}
 				/>
 			) ) }
 		</>
