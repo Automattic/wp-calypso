@@ -56,7 +56,7 @@ export class FreeSignupFlow {
 	 * @param {string} name Name of the style.
 	 */
 	async pickDesign( name: string ): Promise< void > {
-		await this.page.getByText( name, { exact: true } ).click();
+		await this.page.getByText( name ).click();
 
 		// FSE styles present a screen to choose a style and a button to
 		// continue with default options, while normal themes only show
