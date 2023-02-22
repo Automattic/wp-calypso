@@ -9,12 +9,12 @@ const useHighlightLabel = ( planName: string ) => {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const currentPlan = useSelector( ( state ) => getCurrentPlan( state, selectedSiteId ) );
 
-	if ( isBusinessPlan( planName ) ) {
+	if ( currentPlan?.productSlug === planName ) {
+		return translate( 'Your plan' );
+	} else if ( isBusinessPlan( planName ) ) {
 		return translate( 'Best for devs' );
 	} else if ( isPremiumPlan( planName ) ) {
 		return translate( 'Popular' );
-	} else if ( currentPlan?.productSlug === planName ) {
-		return translate( 'Your plan' );
 	}
 
 	return null;

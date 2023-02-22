@@ -461,15 +461,15 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	isStorageFeature: boolean;
 } > = ( { feature, visiblePlansProperties, restructuredFeatures, planName, isStorageFeature } ) => {
 	const translate = useTranslate();
-	const featureSlug = feature?.getSlug();
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( visiblePlansProperties );
+	const highlightLabel = useHighlightLabel( planName );
+	const featureSlug = feature?.getSlug();
 	const hasFeature =
 		isStorageFeature ||
 		( featureSlug ? restructuredFeatures.featureMap[ planName ].has( featureSlug ) : false );
-	const storageOption = restructuredFeatures.planStorageOptionsMap[ planName ];
-	const [ storageFeature ] = getPlanFeaturesObject( [ storageOption ] );
-
-	const highlightLabel = useHighlightLabel( planName );
+	const [ storageFeature ] = getPlanFeaturesObject( [
+		restructuredFeatures.planStorageOptionsMap[ planName ],
+	] );
 	const cellClasses = classNames( 'plan-comparison-grid__plan', getPlanClass( planName ), {
 		'popular-plan-parent-class': highlightLabel,
 		'has-feature': hasFeature,
