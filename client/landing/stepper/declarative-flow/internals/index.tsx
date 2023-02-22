@@ -151,6 +151,8 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 									<VideoPressIntroBackground />
 								) }
 								{ flow.name !== SITE_SETUP_FLOW && (
+									// The progress bar is removed from the site-setup due to its fragility.
+									// See https://github.com/Automattic/wp-calypso/pull/73653
 									<ProgressBar
 										// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 										className="flow-progress"
