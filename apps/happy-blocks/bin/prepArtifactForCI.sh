@@ -1,6 +1,7 @@
 #!/bin/bash
-
-set -x
+set -o errexit
+set -o nounset
+set -o pipefail
 
 # Copy build directories to the release directory.
 find ./block-library/* -type d -name "*" -prune |\
