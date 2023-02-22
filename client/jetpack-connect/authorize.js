@@ -62,7 +62,7 @@ import {
 	USER_IS_ALREADY_CONNECTED_TO_SITE,
 	XMLRPC_ERROR,
 } from './connection-notice-types';
-import { JPC_PATH_PLANS, REMOTE_PATH_AUTH } from './constants';
+import { JPC_PATH_PLANS, JPC_PATH_PLANS_COMPLETE, REMOTE_PATH_AUTH } from './constants';
 import Disclaimer from './disclaimer';
 import { OFFER_RESET_FLOW_TYPES } from './flow-types';
 import JetpackConnectHappychatButton from './happychat-button';
@@ -769,6 +769,22 @@ export class JetpackAuthorize extends Component {
 				redirectAfterAuth
 			);
 			return redirectAfterAuth;
+		}
+
+		// We naviage users to complete page if it's not a multisite and feature flag activated
+		if ( config.isEnabled( 'jetpack/offer-complete-after-activation' ) ) {
+			const isMultisite = this.props.site && this.props.site.is_multisite;
+			if ( ! isMultisite && this.props.site ) {
+				const jpcTargetCompete = addQueryArgs(
+					{ redirect: redirectAfterAuth },
+					`${ JPC_PATH_PLANS_COMPLETE }/${ urlToSlug( homeUrl ) }`
+				);
+				debug(
+					'authorization-form: getRedirectionTarget -> Redirection target is: %s',
+					jpcTargetCompete
+				);
+				return jpcTargetCompete;
+			}
 		}
 
 		const jpcTarget = addQueryArgs(
