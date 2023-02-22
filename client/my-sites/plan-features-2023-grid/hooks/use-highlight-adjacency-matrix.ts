@@ -25,19 +25,16 @@ const useHighlightAdjacencyMatrix = ( visiblePlans: PlanProperties[] ) => {
 		}, [] );
 
 		visiblePlans.forEach( ( { planName }, index ) => {
-			let leftOfHighlight = false;
-			let rightOfHighlight = false;
+			adjacencyMatrix[ planName ] = { leftOfHighlight: false, rightOfHighlight: false };
 
 			highlightIndices.forEach( ( highlightIndex ) => {
 				if ( highlightIndex === index - 1 ) {
-					rightOfHighlight = true;
+					adjacencyMatrix[ planName ].rightOfHighlight = true;
 				}
 				if ( highlightIndex === index + 1 ) {
-					leftOfHighlight = true;
+					adjacencyMatrix[ planName ].leftOfHighlight = true;
 				}
 			} );
-
-			adjacencyMatrix[ planName ] = { leftOfHighlight, rightOfHighlight };
 		} );
 
 		if ( highlightIndices.length === 1 ) {
