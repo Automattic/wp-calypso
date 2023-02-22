@@ -133,6 +133,7 @@ type PlanFeatures2023GridProps = {
 	currentSitePlanSlug: string;
 	withDiscount: boolean;
 	discountEndDate: Date;
+	hidePlansFeatureComparison: boolean;
 };
 
 type PlanFeatures2023GridConnectedProps = {
@@ -220,6 +221,7 @@ export class PlanFeatures2023Grid extends Component<
 			canUserPurchasePlan,
 			translate,
 			selectedSiteSlug,
+			hidePlansFeatureComparison,
 		} = this.props;
 		return (
 			<div className="plans-wrapper">
@@ -240,14 +242,16 @@ export class PlanFeatures2023Grid extends Component<
 						</div>
 					</div>
 				</div>
-				<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
-					<Button onClick={ this.toggleShowPlansComparisonGrid }>
-						{ this.state.showPlansComparisonGrid
-							? translate( 'Hide comparison' )
-							: translate( 'Compare plans' ) }
-					</Button>
-				</div>
-				{ this.state.showPlansComparisonGrid ? (
+				{ ! hidePlansFeatureComparison && (
+					<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
+						<Button onClick={ this.toggleShowPlansComparisonGrid }>
+							{ this.state.showPlansComparisonGrid
+								? translate( 'Hide comparison' )
+								: translate( 'Compare plans' ) }
+						</Button>
+					</div>
+				) }
+				{ ! hidePlansFeatureComparison && this.state.showPlansComparisonGrid ? (
 					<div
 						ref={ this.plansComparisonGridContainerRef }
 						className="plan-features-2023-grid__plan-comparison-grid-container"

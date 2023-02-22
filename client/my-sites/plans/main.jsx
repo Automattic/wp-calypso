@@ -8,7 +8,6 @@ import {
 } from '@automattic/calypso-products';
 import { is2023PricingGridActivePage } from '@automattic/calypso-products/src/plans-utilities';
 import { withShoppingCart } from '@automattic/shopping-cart';
-import { withDesktopBreakpoint } from '@automattic/viewport-react';
 import { addQueryArgs } from '@wordpress/url';
 import { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -28,9 +27,9 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import { getDomainRegistrations } from 'calypso/lib/cart-values/cart-items';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
-import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
@@ -150,12 +149,7 @@ class Plans extends Component {
 	};
 
 	renderPlansMain() {
-		const {
-			currentPlan,
-			selectedSite,
-			isWPForTeamsSite,
-			isBreakpointActive: isDesktop,
-		} = this.props;
+		const { currentPlan, selectedSite, isWPForTeamsSite } = this.props;
 
 		if ( ! this.props.plansLoaded || ! currentPlan ) {
 			// Maybe we should show a loading indicator here?
@@ -174,64 +168,8 @@ class Plans extends Component {
 			);
 		}
 
-		const hideFreePlan = ! is2023PricingGridActivePage( window );
-
-		// TODO: Remove handleUpgradeClick this if 2023 layout is used.
-		if ( this.props.isDomainAndPlanPackageFlow && this.props.domainAndPlanPackage ) {
-			const handleUpgradeClick = async ( cartItemForPlan ) => {
-				const selectedSiteSlug = this.props.selectedSite.slug;
-				const redirectTo = this.props.redirectTo;
-				try {
-					// In this flow we redirect to checkout with both the plan and domain
-					// product in the cart.
-					await this.props.shoppingCartManager.addProductsToCart( [
-						{
-							product_slug: cartItemForPlan.product_slug,
-							extra: {
-								afterPurchaseUrl: redirectTo ?? undefined,
-							},
-						},
-					] );
-				} catch {
-					// Nothing needs to be done here. CartMessages will display the error to the user.
-					return;
-				}
-
-				if ( this.props.withDiscount ) {
-					try {
-						await this.props.shoppingCartManager.applyCoupon( this.props.withDiscount );
-					} catch {
-						// If the coupon does not apply, let's continue to checkout anyway.
-					}
-				}
-
-				page( `/checkout/${ selectedSiteSlug }` );
-				return;
-			};
-
-			return (
-				<PlansFeaturesMain
-					redirectToAddDomainFlow={ this.props.redirectToAddDomainFlow }
-					domainAndPlanPackage={ this.props.domainAndPlanPackage }
-					hideFreePlan={ true }
-					customerType={ this.props.customerType }
-					intervalType={ this.props.intervalType }
-					selectedFeature={ this.props.selectedFeature }
-					selectedPlan={ this.props.selectedPlan }
-					redirectTo={ this.props.redirectTo }
-					withDiscount={ this.props.withDiscount }
-					discountEndDate={ this.props.discountEndDate }
-					site={ this.props.selectedSite }
-					showTreatmentPlansReorderTest={ this.props.showTreatmentPlansReorderTest }
-					plansWithScroll={ isDesktop }
-					shouldShowPlansFeatureComparison={ isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
-					isReskinned={ true } // for styles
-					isInSignup={ true } // for styles
-					onUpgradeClick={ handleUpgradeClick }
-					busyOnUpgradeClick={ true }
-				/>
-			);
-		}
+		const hideFreePlan =
+			! is2023PricingGridActivePage( window ) || this.props.isDomainAndPlanPackageFlow;
 
 		return (
 			<PlansFeaturesMain
@@ -248,6 +186,7 @@ class Plans extends Component {
 				site={ selectedSite }
 				plansWithScroll={ false }
 				showTreatmentPlansReorderTest={ this.props.showTreatmentPlansReorderTest }
+				hidePlansFeatureComparison={ this.props.isDomainAndPlanPackageFlow }
 			/>
 		);
 	}
@@ -382,11 +321,7 @@ const ConnectedPlans = connect( ( state ) => {
 		isDomainAndPlanPackageFlow: !! getCurrentQueryArguments( state )?.domainAndPlanPackage,
 		isJetpackNotAtomic: isJetpackSite( state, selectedSiteId, { treatAtomicAsJetpackSite: false } ),
 	};
-} )(
-	withDesktopBreakpoint(
-		withCartKey( withShoppingCart( localize( withTrackingTool( 'HotJar' )( Plans ) ) ) )
-	)
-);
+} )( withCartKey( withShoppingCart( localize( withTrackingTool( 'HotJar' )( Plans ) ) ) ) );
 
 export default function PlansWrapper( props ) {
 	return (
