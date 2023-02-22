@@ -80,5 +80,10 @@ export const is2023PricingGridActivePage = (
 		return isPricingGridEnabled;
 	}
 
+	// Is this the launch site flow?
+	if ( currentRoutePath.startsWith( '/start/launch-site/plans-launch' ) ) {
+		return isPricingGridEnabled;
+	}
+
 	return false;
 };

@@ -1,5 +1,6 @@
 import { useQuery, UseQueryOptions } from 'react-query';
 import wp from 'calypso/lib/wp';
+import { GITHUB_INTEGRATION_QUERY_KEY } from '../constants';
 
 export type DeploymentData = {
 	status: 'failed' | 'running' | 'success';
@@ -10,14 +11,13 @@ export type DeploymentData = {
 	last_deployment_sha: string;
 };
 
-const USE_DEPLOYMENT_STATUS_QUERY_KEY = 'deployment-status-query-key';
-
-export const useDeploymentStatus = (
+export const useDeploymentStatusQuery = (
 	siteId: number | null,
+	connectionId: number,
 	options?: UseQueryOptions< DeploymentData >
 ) => {
 	return useQuery< DeploymentData >(
-		[ USE_DEPLOYMENT_STATUS_QUERY_KEY, siteId ],
+		[ GITHUB_INTEGRATION_QUERY_KEY, siteId, connectionId, 'deployment-status' ],
 		(): DeploymentData =>
 			wp.req.get( {
 				path: `/sites/${ siteId }/hosting/github/deployment-status`,
@@ -28,7 +28,6 @@ export const useDeploymentStatus = (
 			meta: {
 				persist: false,
 			},
-			refetchOnWindowFocus: false,
 			...options,
 			refetchInterval: 5000,
 		}

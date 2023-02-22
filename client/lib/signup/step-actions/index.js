@@ -1,5 +1,10 @@
 import config from '@automattic/calypso-config';
-import { WPCOM_DIFM_LITE } from '@automattic/calypso-products';
+import {
+	WPCOM_DIFM_LITE,
+	planHasFeature,
+	FEATURE_UPLOAD_THEMES_PLUGINS,
+	isEcommerce,
+} from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Site } from '@automattic/data-stores';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
@@ -39,7 +44,6 @@ import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { getWebsiteContent } from 'calypso/state/signup/steps/website-content/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteId } from 'calypso/state/sites/selectors';
-
 const Visibility = Site.Visibility;
 const debug = debugFactory( 'calypso:signup:step-actions' );
 
@@ -1164,3 +1168,79 @@ export function isNewOrExistingSiteFulfilled( stepName, defaultDependencies, nex
 		flows.excludeStep( stepName );
 	}
 }
+
+export const buildUpgradeFunction = ( planProps, cartItem ) => {
+	const {
+		additionalStepData,
+		flowName,
+		launchSite,
+		selectedSite,
+		stepName,
+		stepSectionName,
+		themeSlugWithRepo,
+		goToNextStep,
+		submitSignupStep,
+	} = planProps;
+
+	if ( cartItem ) {
+		planProps.recordTracksEvent( 'calypso_signup_plan_select', {
+			product_slug: cartItem.product_slug,
+			free_trial: cartItem.free_trial,
+			from_section: stepSectionName ? stepSectionName : 'default',
+		} );
+
+		// If we're inside the store signup flow and the cart item is a Business or eCommerce Plan,
+		// set a flag on it. It will trigger Automated Transfer when the product is being
+		// activated at the end of the checkout process.
+		if (
+			flowName === 'ecommerce' &&
+			planHasFeature( cartItem.product_slug, FEATURE_UPLOAD_THEMES_PLUGINS )
+		) {
+			cartItem.extra = Object.assign( cartItem.extra || {}, {
+				is_store_signup: true,
+			} );
+		}
+	} else {
+		planProps.recordTracksEvent( 'calypso_signup_free_plan_select', {
+			from_section: stepSectionName ? stepSectionName : 'default',
+		} );
+	}
+
+	const step = {
+		stepName,
+		stepSectionName,
+		cartItem,
+		...additionalStepData,
+	};
+
+	if ( selectedSite && flowName === 'site-selected' && ! cartItem ) {
+		wpcom.req.post(
+			`/domains/${ selectedSite.ID }/${ selectedSite.name }/convert-domain-only-to-site`,
+			{},
+			( error ) => {
+				if ( error ) {
+					errorNotice( error.message );
+					return;
+				}
+				submitSignupStep( step, {
+					cartItem,
+				} );
+				goToNextStep();
+			}
+		);
+		return;
+	}
+
+	const signupVals = {
+		cartItem,
+		...( themeSlugWithRepo && { themeSlugWithRepo } ),
+		...( launchSite && { comingSoon: 0 } ),
+	};
+
+	if ( cartItem && isEcommerce( cartItem ) ) {
+		signupVals.themeSlugWithRepo = 'pub/twentytwentytwo';
+	}
+
+	submitSignupStep( step, signupVals );
+	goToNextStep();
+};

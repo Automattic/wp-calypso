@@ -1,26 +1,33 @@
 import { Button, Card, Spinner } from '@automattic/components';
+import { sprintf } from '@wordpress/i18n';
 import i18n, { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import SocialLogo from 'calypso/components/social-logo';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { DeploymentStatusBadge } from './deployment-status-badge';
 import { DeploymentStatusExplanation } from './deployment-status-explanation';
-import { useDeploymentStatus } from './use-deployment-status';
-
+import { useDeploymentStatusQuery } from './use-deployment-status-query';
+import { useGithubDisconnectRepoMutation } from './use-disconnect-repo';
 import './style.scss';
 
 type DeploymentCardProps = {
 	repo: string;
 	branch: string;
+	connectionId: number;
 };
-export const DeploymentCard = ( { repo, branch }: DeploymentCardProps ) => {
+const noticeOptions = {
+	duration: 3000,
+};
+
+export const DeploymentCard = ( { repo, branch, connectionId }: DeploymentCardProps ) => {
 	let deploymentTime = '';
 	let totalFailures = 0;
 
 	const siteId = useSelector( getSelectedSiteId );
 
-	const { data: deployment, isLoading } = useDeploymentStatus( siteId );
+	const { data: deployment, isLoading } = useDeploymentStatusQuery( siteId, connectionId );
 	const translate = useTranslate();
 
 	if ( deployment ) {
@@ -30,6 +37,25 @@ export const DeploymentCard = ( { repo, branch }: DeploymentCardProps ) => {
 			timeStyle: 'short',
 		} ).format( new Date( deployment.last_deployment_timestamp * 1000 ) );
 	}
+
+	const dispatch = useDispatch();
+
+	const { disconnectRepo, isLoading: isDisconnecting } = useGithubDisconnectRepoMutation( siteId, {
+		onSuccess: () => {
+			dispatch( successNotice( translate( 'Disconnected from repository successfully' ) ) );
+		},
+		onError: ( error ) => {
+			dispatch(
+				errorNotice(
+					// translators: "reason" is why disconnecting the branch failed.
+					sprintf( translate( 'Failed to disconnect: %(reason)s' ), { reason: error.message } ),
+					{
+						...noticeOptions,
+					}
+				)
+			);
+		},
+	} );
 
 	return (
 		<Card>
@@ -69,7 +95,7 @@ export const DeploymentCard = ( { repo, branch }: DeploymentCardProps ) => {
 							<div className="deployment-card__column">
 								<a
 									target="_blank"
-									href={ `https://github.com/${ repo }/${ deployment.last_deployment_sha }` }
+									href={ `https://github.com/${ repo }/commit/${ deployment.last_deployment_sha }` }
 									rel="noreferrer"
 								>
 									{ deployment.last_deployment_sha.substring( 0, 7 ) }
@@ -94,7 +120,7 @@ export const DeploymentCard = ( { repo, branch }: DeploymentCardProps ) => {
 					</div>
 				) }
 			</div>
-			<Button primary>
+			<Button primary busy={ isDisconnecting } onClick={ () => disconnectRepo( siteId ) }>
 				<span>{ translate( 'Disconnect repository' ) }</span>
 			</Button>
 		</Card>
