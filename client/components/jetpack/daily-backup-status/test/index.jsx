@@ -38,9 +38,6 @@ jest.mock( 'calypso/components/data/query-rewind-policies', () => () => 'query-r
 
 jest.mock( '../status-card/no-backups-yet', () => () => <div data-testid="no-backups-yet" /> );
 jest.mock( '../status-card/backup-scheduled', () => () => <div data-testid="backup-scheduled" /> );
-jest.mock( '../status-card/visible-days-limit', () => () => (
-	<div data-testid="visible-days-limit" />
-) );
 jest.mock( '../status-card/no-backups-on-selected-date', () => () => (
 	<div data-testid="no-backups-on-selected-date" />
 ) );
