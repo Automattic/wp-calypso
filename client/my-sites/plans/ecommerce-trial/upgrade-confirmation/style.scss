@@ -1,0 +1,25 @@
+body {
+	background-color: var(--color-surface);
+
+	.trial-upgrade-confirmation__header {
+		text-align: center;
+		padding: 20px 0;
+
+		.trial-upgrade-confirmation__title {
+			font-size: $font-title-large;
+			padding: 20px;
+		}
+
+		.trial-upgrade-confirmation__subtitle {
+			font-size: $font-body;
+		}
+	}
+
+	.trial-upgrade-confirmation__tasks {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		grid-column-gap: 32px;
+		grid-row-gap: 32px;
+		margin-top: 35px;
+	}
+}
