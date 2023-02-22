@@ -241,9 +241,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		};
 	}
 
-	function previewDesign( design: Design, _styleVariation?: StyleVariation ) {
-		const styleVariation = _styleVariation ?? design.preselected_style_variation;
-
+	function previewDesign( design: Design, styleVariation?: StyleVariation ) {
 		recordPreviewedDesign( { flow, intent, design, styleVariation } );
 
 		if ( ! design.is_virtual ) {
@@ -257,6 +255,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 		if ( styleVariation ) {
 			setSelectedStyleVariation( styleVariation );
+		} else if ( design.preselected_style_variation ) {
+			setSelectedStyleVariation( design.preselected_style_variation );
 		}
 
 		setIsPreviewingDesign( true );
