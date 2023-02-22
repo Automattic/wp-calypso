@@ -58,12 +58,10 @@ class AdsWrapper extends Component {
 	};
 
 	renderInstantActivationToggle( component ) {
-		const { siteId, translate, adsProgramName } = this.props;
+		const { translate, adsProgramName } = this.props;
 
 		return (
 			<div>
-				<QueryWordadsStatus siteId={ siteId } />
-
 				{ this.props.wordAdsError && (
 					<Notice
 						classname="ads__activate-notice"
@@ -294,6 +292,7 @@ class AdsWrapper extends Component {
 			isEnrolledWithIneligiblePlan,
 			isWordadsInstantEligibleButNotOwner,
 			site,
+			siteId,
 			translate,
 		} = this.props;
 
@@ -326,6 +325,7 @@ class AdsWrapper extends Component {
 
 		return (
 			<div>
+				<QueryWordadsStatus siteId={ siteId } />
 				{ notice }
 				{ component }
 			</div>
