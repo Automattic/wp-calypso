@@ -131,7 +131,7 @@ describe( 'useDaysOfBackupsSavedText', () => {
 		expect( link ).toHaveTextContent( '7 days of backups saved' );
 	} );
 
-	test( 'renders `7 days of backups saved` with link to activity log with site-slug in Jetpack Cloud', () => {
+	test( 'renders `7 days of backups saved` with link to settings page with site-slug in Jetpack Cloud', () => {
 		isJetpackCloud.mockImplementation( () => true );
 		const text = renderDaysOfBackupsSavedText( 7, 'site-slug' );
 		const link = text.childNodes[ 0 ];
