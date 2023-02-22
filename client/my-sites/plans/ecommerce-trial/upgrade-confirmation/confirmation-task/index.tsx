@@ -1,10 +1,11 @@
 import { Card } from '@automattic/components';
+import { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
 
 interface ConfirmationTaskProps {
-	title: string;
-	subtitle: string;
+	title: TranslateResult;
+	subtitle: TranslateResult;
 	illustration: string;
 }
 
