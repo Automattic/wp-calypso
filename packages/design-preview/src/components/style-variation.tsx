@@ -90,7 +90,7 @@ interface StyleVariationPreviewsProps {
 	selectedVariation?: StyleVariation;
 	onClick: ( variation: StyleVariation ) => void;
 	showGlobalStylesPremiumBadge: boolean;
-	showOnlyHoverViewDefaultVariation: boolean;
+	showOnlyHoverViewDefaultVariation?: boolean;
 }
 
 const StyleVariationPreviews: React.FC< StyleVariationPreviewsProps > = ( {
