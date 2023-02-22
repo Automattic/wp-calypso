@@ -7,6 +7,7 @@ import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
 import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
+import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import FeatureExample from 'calypso/components/feature-example';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Layout from 'calypso/components/layout';
@@ -71,7 +72,7 @@ class Hosting extends Component {
 
 	render() {
 		const {
-			isGithubIntegrationEnabled,
+			teams,
 			clickActivate,
 			hasSftpFeature,
 			isDisabled,
@@ -166,6 +167,7 @@ class Hosting extends Component {
 		};
 
 		const getContent = () => {
+			const isGithubIntegrationEnabled = isAutomatticTeamMember( teams );
 			const WrapperComponent = isDisabled || isTransferring ? FeatureExample : Fragment;
 
 			return (
@@ -193,6 +195,7 @@ class Hosting extends Component {
 							</Column>
 						</Layout>
 					</WrapperComponent>
+					{ ! teams && <QueryReaderTeams /> }
 				</>
 			);
 		};
@@ -225,7 +228,7 @@ export default connect(
 		const hasSftpFeature = siteHasFeature( state, siteId, FEATURE_SFTP );
 
 		return {
-			isGithubIntegrationEnabled: isAutomatticTeamMember( getReaderTeams( state ) ),
+			teams: getReaderTeams( state ),
 			isECommerceTrial: isSiteOnECommerceTrial( state, siteId ),
 			transferState: getAutomatedTransferStatus( state, siteId ),
 			isTransferring: isAutomatedTransferActive( state, siteId ),
