@@ -24,13 +24,21 @@ jest.mock( 'calypso/state/preferences/selectors', () => ( {
 	getPreference: jest.fn( () => false ),
 } ) );
 
+class MockedDate extends Date {
+	getTimezoneOffset() {
+		return 240;
+	}
+}
+
+const originalDate = global.Date;
+
 describe( 'TimeMismatchWarning', () => {
 	beforeAll( () => {
-		jest.spyOn( global, 'Date' ).mockImplementation( () => ( { getTimezoneOffset: () => 240 } ) );
+		global.Date = MockedDate;
 	} );
 
 	afterAll( () => {
-		jest.spyOn( global, 'Date' ).mockRestore();
+		global.Date = originalDate;
 	} );
 
 	test( 'to render nothing if no site ID is provided', () => {
