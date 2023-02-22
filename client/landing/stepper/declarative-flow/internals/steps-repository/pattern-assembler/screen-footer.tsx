@@ -12,7 +12,7 @@ interface Props {
 	onDoneClick: () => void;
 }
 
-const ScreenHeader = ( { selectedPattern, onSelect, onBack, onDoneClick }: Props ) => {
+const ScreenFooter = ( { selectedPattern, onSelect, onBack, onDoneClick }: Props ) => {
 	const translate = useTranslate();
 	const patterns = useFooterPatterns();
 	const isSidebarRevampEnabled = isEnabled( 'pattern-assembler/sidebar-revamp' );
@@ -42,4 +42,4 @@ const ScreenHeader = ( { selectedPattern, onSelect, onBack, onDoneClick }: Props
 	);
 };
 
-export default ScreenHeader;
+export default ScreenFooter;
