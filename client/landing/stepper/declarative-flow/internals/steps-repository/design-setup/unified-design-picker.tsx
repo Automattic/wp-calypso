@@ -254,16 +254,19 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		}
 
 		if ( styleVariation ) {
-			recordTracksEvent( 'calypso_signup_design_picker_style_variation_button_click', {
-				...getEventPropsByDesign( design, styleVariation ),
-				...getVirtualDesignProps( design, styleVariation ),
-			} );
 			setSelectedStyleVariation( styleVariation );
 		} else if ( design.preselected_style_variation ) {
 			setSelectedStyleVariation( design.preselected_style_variation );
 		}
 
 		setIsPreviewingDesign( true );
+	}
+
+	function onChangeVariation( design: Design, styleVariation?: StyleVariation ) {
+		recordTracksEvent( 'calypso_signup_design_picker_style_variation_button_click', {
+			...getEventPropsByDesign( design, styleVariation ),
+			...getVirtualDesignProps( design, styleVariation ),
+		} );
 	}
 
 	function trackAllDesignsView() {
@@ -711,6 +714,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			onSelect={ pickDesign }
 			onSelectBlankCanvas={ pickBlankCanvasDesign }
 			onPreview={ previewDesign }
+			onChangeVariation={ onChangeVariation }
 			onViewAllDesigns={ trackAllDesignsView }
 			onCheckout={ goToCheckout }
 			heading={ heading }

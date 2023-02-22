@@ -153,6 +153,7 @@ interface DesignButtonProps {
 	locale: string;
 	onSelect: ( design: Design ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
+	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	isPremiumThemeAvailable?: boolean;
 	hasPurchasedTheme?: boolean;
 	onCheckout?: any;
@@ -164,6 +165,7 @@ interface DesignButtonProps {
 const DesignButton: React.FC< DesignButtonProps > = ( {
 	locale,
 	onPreview,
+	onChangeVariation,
 	design,
 	isPremiumThemeAvailable = false,
 	hasPurchasedTheme = false,
@@ -265,7 +267,10 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 						<div className="design-picker__options-style-variations">
 							<StyleVariationBadges
 								variations={ style_variations }
-								onClick={ ( variation ) => setSelectedStyleVariation( variation ) }
+								onClick={ ( variation ) => {
+									onChangeVariation( design, variation );
+									setSelectedStyleVariation( variation );
+								} }
 								selectedVariation={ selectedStyleVariation }
 								firstVariation={ preselected_style_variation }
 								onMoreClick={ () => onPreview( design ) }
@@ -402,6 +407,7 @@ interface DesignPickerProps {
 	onSelect: ( design: Design ) => void;
 	onSelectBlankCanvas: ( design: Design, shouldGoToAssemblerStep: boolean ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
+	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	staticDesigns: Design[];
 	generatedDesigns: Design[];
 	categorization?: Categorization;
@@ -417,6 +423,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	onSelect,
 	onSelectBlankCanvas,
 	onPreview,
+	onChangeVariation,
 	staticDesigns,
 	generatedDesigns,
 	categorization,
@@ -455,6 +462,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						onSelect={ onSelect }
 						onSelectBlankCanvas={ onSelectBlankCanvas }
 						onPreview={ onPreview }
+						onChangeVariation={ onChangeVariation }
 						isPremiumThemeAvailable={ isPremiumThemeAvailable }
 						onCheckout={ onCheckout }
 						verticalId={ verticalId }
@@ -485,6 +493,7 @@ export interface UnifiedDesignPickerProps {
 	onSelect: ( design: Design ) => void;
 	onSelectBlankCanvas: ( design: Design, shouldGoToAssemblerStep: boolean ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
+	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	onViewAllDesigns: () => void;
 	generatedDesigns: Design[];
 	staticDesigns: Design[];
@@ -502,6 +511,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	onSelect,
 	onSelectBlankCanvas,
 	onPreview,
+	onChangeVariation,
 	onViewAllDesigns,
 	verticalId,
 	staticDesigns,
@@ -541,6 +551,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					onSelect={ onSelect }
 					onSelectBlankCanvas={ onSelectBlankCanvas }
 					onPreview={ onPreview }
+					onChangeVariation={ onChangeVariation }
 					staticDesigns={ staticDesigns }
 					generatedDesigns={ generatedDesigns }
 					categorization={ categorization }
