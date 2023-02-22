@@ -190,7 +190,7 @@ export function VatForm( {
 					className="vat-form__expand-button"
 					checked={ isFormActive }
 					onChange={ toggleVatForm }
-					label={ translate( 'Add VAT details' ) }
+					label={ translate( 'Add Business Tax ID details' ) }
 					disabled={ isDisabled }
 				/>
 			</div>
@@ -204,7 +204,7 @@ export function VatForm( {
 					className="vat-form__expand-button"
 					checked={ isFormActive }
 					onChange={ toggleVatForm }
-					label={ translate( 'Add VAT details' ) }
+					label={ translate( 'Add Business Tax ID details' ) }
 					disabled={ isDisabled || Boolean( vatDetailsFromServer.id ) }
 				/>
 				{ countryCode === 'GB' && (
@@ -212,7 +212,7 @@ export function VatForm( {
 						className="vat-form__expand-button"
 						checked={ vatDetailsInForm.country === 'XI' }
 						onChange={ toggleNorthernIreland }
-						label={ translate( 'Is the VAT for Northern Ireland?' ) }
+						label={ translate( 'Is the Business Tax ID for Northern Ireland?' ) }
 						disabled={ isDisabled }
 					/>
 				) }
@@ -221,7 +221,7 @@ export function VatForm( {
 				<Field
 					id={ section + '-vat-organization' }
 					type="text"
-					label={ String( translate( 'Organization for VAT' ) ) }
+					label={ String( translate( 'Organization for Business Tax ID' ) ) }
 					value={ vatDetailsInForm.name ?? '' }
 					disabled={ isDisabled }
 					onChange={ ( newValue: string ) => {
@@ -234,7 +234,7 @@ export function VatForm( {
 				<Field
 					id={ section + '-vat-id' }
 					type="text"
-					label={ String( translate( 'VAT Number' ) ) }
+					label={ String( translate( 'Business Tax ID Number' ) ) }
 					value={ vatDetailsInForm.id ?? '' }
 					disabled={ isDisabled || Boolean( vatDetailsFromServer.id ) }
 					onChange={ ( newValue: string ) => {
@@ -249,7 +249,7 @@ export function VatForm( {
 				<Field
 					id={ section + '-vat-address' }
 					type="text"
-					label={ String( translate( 'Address for VAT' ) ) }
+					label={ String( translate( 'Address for Business Tax ID' ) ) }
 					value={ vatDetailsInForm.address ?? '' }
 					autoComplete="address"
 					disabled={ isDisabled }
@@ -265,7 +265,7 @@ export function VatForm( {
 				<div>
 					<FormSettingExplanation>
 						{ translate(
-							'To change your VAT number, {{contactSupportLink}}please contact support{{/contactSupportLink}}.',
+							'To change your Business Tax ID number, {{contactSupportLink}}please contact support{{/contactSupportLink}}.',
 							{
 								components: {
 									contactSupportLink: (

@@ -94,7 +94,7 @@ function VatForm() {
 				/>
 			</FormFieldset>
 			<FormFieldset className="vat-info__vat-field">
-				<FormLabel htmlFor="vat">{ translate( 'VAT Number' ) }</FormLabel>
+				<FormLabel htmlFor="vat">{ translate( 'Business Tax ID Number' ) }</FormLabel>
 				<FormTextInput
 					name="vat"
 					disabled={ isUpdating || isVatAlreadySet }
