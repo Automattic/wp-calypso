@@ -4,6 +4,7 @@ import {
 	makeSuccessResponse,
 	makeErrorResponse,
 } from '@automattic/composite-checkout';
+import { ManagedContactDetails } from '@automattic/wpcom-checkout';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import wp from 'calypso/lib/wp';
@@ -76,9 +77,10 @@ export async function assignNewCardProcessor(
 			throw new Error( 'Cannot assign payment method if there is no card number' );
 		}
 
-		const { name, countryCode, postalCode, useForAllSubscriptions } = submitData;
+		const { name, countryCode, postalCode, state, city, organization, useForAllSubscriptions } =
+			submitData;
 
-		const contactValidationResponse = await getTaxValidationResult( {
+		const contactInfo: ManagedContactDetails = {
 			countryCode: {
 				value: countryCode,
 				isTouched: true,
@@ -89,7 +91,29 @@ export async function assignNewCardProcessor(
 				isTouched: true,
 				errors: [],
 			},
-		} );
+		};
+		if ( state ) {
+			contactInfo.state = {
+				value: state,
+				isTouched: true,
+				errors: [],
+			};
+		}
+		if ( city ) {
+			contactInfo.city = {
+				value: city,
+				isTouched: true,
+				errors: [],
+			};
+		}
+		if ( organization ) {
+			contactInfo.organization = {
+				value: organization,
+				isTouched: true,
+				errors: [],
+			};
+		}
+		const contactValidationResponse = await getTaxValidationResult( contactInfo );
 		if ( ! contactValidationResponse.success ) {
 			const errorMessage =
 				contactValidationResponse.messages_simple.length > 0
@@ -130,6 +154,9 @@ export async function assignNewCardProcessor(
 				eventSource,
 				postalCode,
 				countryCode,
+				state,
+				city,
+				organization,
 			} );
 
 			return makeSuccessResponse( result );
@@ -142,6 +169,9 @@ export async function assignNewCardProcessor(
 			eventSource,
 			postalCode,
 			countryCode,
+			state,
+			city,
+			organization,
 		} );
 
 		return makeSuccessResponse( result );
@@ -188,6 +218,9 @@ interface NewCardSubmitData {
 	name?: string;
 	countryCode: string;
 	postalCode?: string;
+	state?: string;
+	city?: string;
+	organization?: string;
 	useForAllSubscriptions: boolean;
 }
 
