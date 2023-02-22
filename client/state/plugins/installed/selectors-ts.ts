@@ -351,8 +351,11 @@ export function getStatusForPlugin( state: AppState, siteId: number, pluginId: s
 		return undefined;
 	}
 
-	const status = state.plugins.installed.status[ siteId ][ pluginId ];
-	return Object.assign( {}, status, { siteId: siteId, pluginId: pluginId } );
+	return {
+		...state.plugins.installed.status[ siteId ][ pluginId ],
+		siteId,
+		pluginId,
+	};
 }
 
 /**
