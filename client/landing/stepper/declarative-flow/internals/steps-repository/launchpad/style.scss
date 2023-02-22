@@ -469,7 +469,7 @@
 			0 2px 3px rgba(0 0 0 / 1%);
 		background: var(--color-print);
 		border-radius: 40px; /* stylelint-disable-line scales/radii */
-		max-height: 680px;
+		max-height: 713px;
 		transition: max-width 0.2s linear;
 
 		@include break-large {
@@ -491,6 +491,7 @@
 		@include break-large {
 			width: 95%;
 			border-radius: 20px; /* stylelint-disable-line scales/radii */
+			max-height: 912px;
 		}
 	}
 
@@ -499,7 +500,7 @@
 	}
 
 	.is-phone .web-preview__frame-wrapper.is-resizable {
-		height: 100%;
+		height: 680px;
 
 		@include break-large {
 			margin: 0 auto;
@@ -521,7 +522,7 @@
 		position: relative;
 
 		@include break-large {
-			height: 880px;
+			height: 879px;
 		}
 
 		.web-preview__frame-edit-overlay {
