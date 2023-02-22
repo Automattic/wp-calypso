@@ -6,6 +6,7 @@ import CardHeading from 'calypso/components/card-heading';
 import SocialLogo from 'calypso/components/social-logo';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { EmptyDeployments } from './empty-deployments';
 import { LastDeploymentInformation } from './last-deployment-information';
 import { useDeploymentStatusQuery } from './use-deployment-status-query';
 import { useGithubDisconnectRepoMutation } from './use-disconnect-repo';
@@ -72,13 +73,14 @@ export const DeploymentCard = ( { repo, branch, connectionId }: DeploymentCardPr
 			</div>
 			<div>
 				{ isLoading && <Spinner /> }
-				{ deployment && (
+				{ ! isLoading && deployment && (
 					<LastDeploymentInformation
 						deployment={ deployment }
 						connectedRepo={ repo }
 						connectionId={ connectionId }
 					/>
 				) }
+				{ ! isLoading && ! deployment && <EmptyDeployments /> }
 			</div>
 			<Button primary busy={ isDisconnecting } onClick={ () => disconnectRepo( siteId ) }>
 				<span>{ translate( 'Disconnect repository' ) }</span>
