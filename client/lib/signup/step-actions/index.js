@@ -1180,11 +1180,10 @@ export const buildUpgradeFunction = ( planProps, cartItem ) => {
 		themeSlugWithRepo,
 		goToNextStep,
 		submitSignupStep,
-		recordTracksEvent: rte,
 	} = planProps;
 
 	if ( cartItem ) {
-		rte( 'calypso_signup_plan_select', {
+		planProps.recordTracksEvent( 'calypso_signup_plan_select', {
 			product_slug: cartItem.product_slug,
 			free_trial: cartItem.free_trial,
 			from_section: stepSectionName ? stepSectionName : 'default',
@@ -1202,7 +1201,7 @@ export const buildUpgradeFunction = ( planProps, cartItem ) => {
 			} );
 		}
 	} else {
-		rte( 'calypso_signup_free_plan_select', {
+		planProps.recordTracksEvent( 'calypso_signup_free_plan_select', {
 			from_section: stepSectionName ? stepSectionName : 'default',
 		} );
 	}
