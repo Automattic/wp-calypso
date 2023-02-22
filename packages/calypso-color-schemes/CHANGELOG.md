@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-## 2.1.2
+## 3.0.0
 
 - Added a new color for Mastodon.
 - Switched from `node-sass` to `sass` (Dart Sass) for processing Sass files.
