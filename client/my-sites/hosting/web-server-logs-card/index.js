@@ -142,6 +142,7 @@ const WebServerLogsCard = ( props ) => {
 			site_id: siteId,
 			start_time: startMoment.format( dateTimeFormat ),
 			end_time: endMoment.format( dateTimeFormat ),
+			log_type: logType,
 		};
 
 		recordDownloadStarted( tracksProps );
