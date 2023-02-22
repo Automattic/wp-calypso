@@ -93,7 +93,7 @@
 		"@wordpress/html-entities": "^3.9.0",
 		"@wordpress/i18n": "^4.9.0",
 		"@wordpress/icons": "^9.0.0",
-		"@wordpress/interface": "^4.8.0",
+		"@wordpress/interface": "^5.4.0",
 		"@wordpress/is-shallow-equal": "^4.9.0",
 		"@wordpress/keycodes": "^3.9.0",
 		"@wordpress/notices": "^3.10.0",
