@@ -60,7 +60,7 @@ describe( DataHelper.createSuiteTitle( 'Sidebar: Domain upsell' ), function () {
 	it( 'Navigate to Home', async function () {
 		// We are want to capture the shopping cart load request so we can check if it has items.
 		// So we start listening for it before the navigation.
-		const cartResponsePromise = page.waitForResponse( /me\/shopping-cart/ );
+		const cartResponsePromise = await page.waitForResponse( /me\/shopping-cart/ );
 		await page.goto( DataHelper.getCalypsoURL( `/home/${ siteSlug }` ) );
 		cartResponse = await cartResponsePromise;
 	} );
