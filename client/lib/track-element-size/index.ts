@@ -86,7 +86,7 @@ export function useWindowResizeCallback(
 			window.removeEventListener( 'resize', throttledMeasureElement );
 			throttledMeasureElement.cancel();
 		};
-	}, [ elementRef.current, callback ] );
+	}, [ callback ] );
 
 	return elementRef;
 }

@@ -60,7 +60,6 @@ function Chart( {
 	const [ tooltip, setTooltip ] = useState( { isTooltipVisible: false } );
 	const [ sizing, setSizing ] = useState( { clientWidth: 650, hasResized: false } );
 	const [ yAxisSize, setYAxisSize ] = useState( { clientWidth: 0, hasResized: false } );
-	const { hasResized } = sizing;
 
 	// Callback to handle tooltip changes.
 	// Needs to be memoized to avoid assigning children a new function every render.
