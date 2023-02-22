@@ -17,10 +17,12 @@ const TrialUpgradeConfirmation = () => {
 			<Main wideLayout>
 				<div className="trial-upgrade-confirmation__header">
 					<h1 className="trial-upgrade-confirmation__title">
-						{ translate( 'Woo! Welcome to eCommerce' ) }
+						{ translate( 'Woo! Welcome to Commerce' ) }
 					</h1>
 					<div className="trial-upgrade-confirmation__subtitle">
-						{ translate( 'Your purchase has been completed and you’re on the Commerce plan.' ) }
+						{ translate( "Your purchase has been completed and you're on the %(planName)s plan.", {
+							args: { planName: 'Commerce' },
+						} ) }
 						<br />
 						{ translate( "Now it's time to get creative. What would you like to do next?" ) }
 					</div>
