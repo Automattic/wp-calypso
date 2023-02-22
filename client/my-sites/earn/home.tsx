@@ -17,16 +17,13 @@ import { connect } from 'react-redux';
 import earnSectionImage from 'calypso/assets/images/earn/earn-section.svg';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
-import QueryWordadsStatus from 'calypso/components/data/query-wordads-status';
 import EmptyContent from 'calypso/components/empty-content';
 import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
 import { CtaButton } from 'calypso/components/promo-section/promo-card/cta';
 import wp from 'calypso/lib/wp';
-import { WordAdsStatus } from 'calypso/my-sites/earn/ads/types';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import getSiteWordadsStatus from 'calypso/state/selectors/get-site-wordads-status';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import siteHasWordAds from 'calypso/state/selectors/site-has-wordads';
@@ -57,7 +54,6 @@ interface ConnectedProps {
 	hasDonations: boolean;
 	hasPremiumContent: boolean;
 	hasRecurringPayments: boolean;
-	hasIneligiblePlanforWordAds: boolean;
 }
 
 const Home: FunctionComponent< ConnectedProps > = ( {
@@ -74,7 +70,6 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	hasDonations,
 	hasPremiumContent,
 	hasRecurringPayments,
-	hasIneligiblePlanforWordAds,
 	trackUpgrade,
 	trackLearnLink,
 	trackCtaButton,
@@ -486,24 +481,21 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 							);
 						},
 				  };
-		const title =
-			hasSetupAds && ! hasIneligiblePlanforWordAds
-				? translate( 'View ad dashboard' )
-				: translate( 'Earn ad revenue' );
 
-		const body =
-			hasSetupAds && ! hasIneligiblePlanforWordAds ? (
-				translate(
-					"Check out your ad earnings history, including total earnings, total paid to date, and the amount that you've still yet to be paid."
-				)
-			) : (
-				<>
-					{ translate(
-						'Make money each time someone visits your site by displaying advertisements on all your posts and pages.'
-					) }
-					{ ! hasWordAdsFeature && <em>{ getPremiumPlanNames() }</em> }
-				</>
-			);
+		const title = hasSetupAds ? translate( 'View ad dashboard' ) : translate( 'Earn ad revenue' );
+
+		const body = hasSetupAds ? (
+			translate(
+				"Check out your ad earnings history, including total earnings, total paid to date, and the amount that you've still yet to be paid."
+			)
+		) : (
+			<>
+				{ translate(
+					'Make money each time someone visits your site by displaying advertisements on all your posts and pages.'
+				) }
+				{ ! hasWordAdsFeature && <em>{ getPremiumPlanNames() }</em> }
+			</>
+		);
 
 		const learnMoreLink = ! ( hasWordAdsFeature || hasSetupAds )
 			? { url: 'https://wordads.co/', onClick: () => trackLearnLink( 'ads' ) }
@@ -569,7 +561,6 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 
 	return (
 		<Fragment>
-			{ ! hasWordAdsFeature && <QueryWordadsStatus siteId={ siteId } /> }
 			<QueryMembershipsSettings siteId={ siteId } />
 			{ isLoading && (
 				<div className="earn__placeholder-promo-card">
@@ -606,8 +597,6 @@ export default connect(
 			),
 			isUserAdmin: canCurrentUser( state, siteId, 'manage_options' ),
 			hasWordAdsFeature,
-			hasIneligiblePlanforWordAds:
-				! hasWordAdsFeature && getSiteWordadsStatus( state, siteId ) === WordAdsStatus.ineligible,
 			hasSimplePayments: siteHasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),
 			hasConnectedAccount,
 			eligibleForProPlan: isEligibleForProPlan( state, siteId ),

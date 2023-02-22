@@ -258,13 +258,29 @@ class AdsWrapper extends Component {
 	}
 
 	renderContentWithUpsell( component ) {
-		const { section, siteSlug } = this.props;
+		const { translate, section, siteSlug } = this.props;
 		const allowedSections = [ 'ads-earnings', 'ads-payments' ];
 		const isAllowedSection = allowedSections.includes( section );
 		const url = `/plans/${ siteSlug }?feature=${ FEATURE_WORDADS_INSTANT }&plan=${ PLAN_PREMIUM }`;
 		return (
 			<>
-				{ this.renderUpsell( { forceDisplay: true, url } ) }
+				<UpsellNudge
+					forceDisplay={ true }
+					callToAction={ translate( 'Upgrade' ) }
+					plan={ PLAN_PREMIUM }
+					title={ translate( 'Upgrade to the Premium plan to continue earning' ) }
+					description={ translate(
+						'WordAds is disabled for this site because it does not have an eligible plan. You are no longer earning ad revenue, but you can view your earning and payment history. To restore access to WordAds please upgrade to an eligible plan.'
+					) }
+					feature={ WPCOM_FEATURES_WORDADS }
+					href={ url }
+					showIcon
+					event="calypso_upgrade_nudge_impression"
+					tracksImpressionName="calypso_upgrade_nudge_impression"
+					tracksImpressionProperties={ { cta_name: undefined, cta_size: 'regular' } }
+					tracksClickName="calypso_upgrade_nudge_cta_click"
+					tracksClickProperties={ { cta_name: undefined, cta_size: 'regular' } }
+				/>
 				{ isAllowedSection ? component : <FeatureExample>{ component }</FeatureExample> }
 			</>
 		);
@@ -275,9 +291,8 @@ class AdsWrapper extends Component {
 			canAccessAds,
 			canActivateWordadsInstant,
 			canUpgradeToUseWordAds,
-			hasIneligiblePlanforWordAds,
+			isEnrolledWithIneligiblePlan,
 			isWordadsInstantEligibleButNotOwner,
-			siteId,
 			site,
 			translate,
 		} = this.props;
@@ -305,13 +320,12 @@ class AdsWrapper extends Component {
 			component = null;
 		} else if ( site.options.wordads && site.is_private ) {
 			notice = this.renderNoticeSiteIsPrivate();
-		} else if ( hasIneligiblePlanforWordAds ) {
+		} else if ( isEnrolledWithIneligiblePlan ) {
 			component = this.renderContentWithUpsell( component );
 		}
 
 		return (
 			<div>
-				<QueryWordadsStatus siteId={ siteId } />
 				{ notice }
 				{ component }
 			</div>
@@ -334,8 +348,10 @@ const mapStateToProps = ( state ) => {
 		canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
 		canUpgradeToUseWordAds: ! site.options.wordads && ! hasWordAdsFeature,
 		hasWordAdsFeature,
-		hasIneligiblePlanforWordAds:
-			! hasWordAdsFeature && getSiteWordadsStatus( state, siteId ) === WordAdsStatus.ineligible,
+		isEnrolledWithIneligiblePlan:
+			site?.options?.wordads &&
+			! hasWordAdsFeature &&
+			getSiteWordadsStatus( state, siteId ) === WordAdsStatus.ineligible,
 		requestingWordAdsApproval: isRequestingWordAdsApprovalForSite( state, site ),
 		wordAdsError: getWordAdsErrorForSite( state, site ),
 		wordAdsSuccess: getWordAdsSuccessForSite( state, site ),
