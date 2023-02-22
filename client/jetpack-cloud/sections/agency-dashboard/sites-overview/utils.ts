@@ -39,6 +39,10 @@ export const siteColumns: SiteColumns = [
 	},
 	...extraColumns,
 	{
+		key: 'stats',
+		title: translate( 'Stats' ),
+	},
+	{
 		key: 'backup',
 		title: translate( 'Backup' ),
 		isExpandable: isExpandedBlockEnabled,
@@ -165,6 +169,9 @@ const getRowEventName = (
 ) => {
 	const deviceKey = isLargeScreen ? 'large_screen' : 'small_screen';
 	switch ( type ) {
+		case 'stats': {
+			//return statsEventNames?.[ status ]?.[ deviceKey ];
+		}
 		case 'backup': {
 			return backupEventNames?.[ status ]?.[ deviceKey ];
 		}
@@ -178,6 +185,11 @@ const getRowEventName = (
 			return pluginEventNames?.[ status ]?.[ deviceKey ];
 		}
 	}
+};
+
+const statsTooltips: StatusTooltip = {
+	upward: translate( 'Visitors over the last 7 days' ),
+	downward: translate( 'Visitors over the last 7 days' ),
 };
 
 const backupTooltips: StatusTooltip = {
@@ -209,6 +221,9 @@ const pluginTooltips: StatusTooltip = {
 
 const getTooltip = ( type: AllowedTypes, status: string ) => {
 	switch ( type ) {
+		case 'stats': {
+			return statsTooltips?.[ status ];
+		}
 		case 'backup': {
 			return backupTooltips?.[ status ];
 		}
