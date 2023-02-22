@@ -18,7 +18,7 @@ interface StyleVariationPreviewProps {
 	isPremium: boolean;
 	onClick: ( variation: StyleVariation ) => void;
 	showGlobalStylesPremiumBadge: boolean;
-	showOnlyHoverView: boolean;
+	showOnlyHoverView?: boolean;
 }
 
 const StyleVariationPreview: React.FC< StyleVariationPreviewProps > = ( {
