@@ -193,10 +193,12 @@ export function getSiteObjectsWithoutPlugin( state, siteIds, pluginSlug ) {
 }
 
 export function getStatusForPlugin( state, siteId, pluginId ) {
-	if ( typeof state.plugins.installed.status[ siteId ]?.[ pluginId ] === 'undefined' ) {
-		return undefined;
+	if ( typeof state.plugins.installed.status[ siteId ] === 'undefined' ) {
+		return false;
 	}
-
+	if ( typeof state.plugins.installed.status[ siteId ][ pluginId ] === 'undefined' ) {
+		return false;
+	}
 	const status = state.plugins.installed.status[ siteId ][ pluginId ];
 	return Object.assign( {}, status, { siteId: siteId, pluginId: pluginId } );
 }
