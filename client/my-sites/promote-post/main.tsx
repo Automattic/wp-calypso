@@ -143,8 +143,7 @@ export default function PromotedPosts( { tab }: Props ) {
 	}
 
 	const content = [ ...( posts || [] ), ...( pages || [] ), ...( products || [] ) ];
-
-	const isLoading = isLoadingPage && isLoadingPost && isLoadingProducts;
+	const isLoading = isLoadingPage || isLoadingPost || isLoadingProducts;
 
 	return (
 		<Main wideLayout className="promote-post">
