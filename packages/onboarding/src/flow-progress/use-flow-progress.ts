@@ -40,11 +40,10 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		launchpad: 5,
 	},
 	[ FREE_FLOW ]: {
-		intro: 0,
 		user: 0,
-		freeSetup: 1,
-		designSetup: 2,
-		launchpad: 3,
+		freeSetup: 0,
+		designSetup: 1,
+		launchpad: 2,
 	},
 	videopress: {
 		intro: 0,

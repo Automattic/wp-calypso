@@ -791,6 +791,26 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/global-styles@workspace:^, @automattic/global-styles@workspace:packages/global-styles":
+  version: 0.0.0-use.local
+  resolution: "@automattic/global-styles@workspace:packages/global-styles"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@wordpress/block-editor": ^9.1.0
+    "@wordpress/components": ^19.15.0
+    "@wordpress/compose": ^5.7.0
+    "@wordpress/edit-site": ^4.6.0
+    "@wordpress/keycodes": ^3.9.0
+    classnames: ^2.3.1
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    react-query: ^3.32.1
+    tslib: ^2.3.0
+    typescript: ^4.7.4
+    wpcom-proxy-request: "workspace:^"
+  languageName: unknown
+  linkType: soft
+
 "@automattic/happychat-app@workspace:apps/happychat":
   version: 0.0.0-use.local
   resolution: "@automattic/happychat-app@workspace:apps/happychat"
@@ -11756,6 +11776,7 @@ __metadata:
     "@automattic/explat-client-react-helpers": "workspace:^"
     "@automattic/format-currency": "workspace:^"
     "@automattic/generate-password": "workspace:^"
+    "@automattic/global-styles": "workspace:^"
     "@automattic/happychat-connection": "workspace:^"
     "@automattic/help-center": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"

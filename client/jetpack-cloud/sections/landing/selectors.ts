@@ -1,4 +1,5 @@
 import {
+	FEATURE_SOCIAL_SHARES_1000,
 	WPCOM_FEATURES_BACKUPS,
 	WPCOM_FEATURES_INSTANT_SEARCH,
 	WPCOM_FEATURES_SCAN,
@@ -47,6 +48,11 @@ export const getLandingPath = ( state: AppState, siteId: number | null ) => {
 	const hasSearch = siteHasFeature( state, siteId, WPCOM_FEATURES_INSTANT_SEARCH );
 	if ( hasSearch ) {
 		return `/jetpack-search/${ siteSlug }`;
+	}
+
+	const hasSocial = siteHasFeature( state, siteId, FEATURE_SOCIAL_SHARES_1000 );
+	if ( hasSocial ) {
+		return `/jetpack-social/${ siteSlug }`;
 	}
 
 	// For sites with no eligible capabilities, or in situations where

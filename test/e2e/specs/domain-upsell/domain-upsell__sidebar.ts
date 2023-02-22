@@ -1,3 +1,7 @@
+/**
+ * @group calypso-pr
+ */
+
 import {
 	DataHelper,
 	DomainSearchComponent,
@@ -7,7 +11,7 @@ import {
 	TestAccount,
 	BrowserManager,
 	SecretsManager,
-	NavbarCartComponent,
+	RestAPIClient,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
@@ -19,11 +23,11 @@ describe( DataHelper.createSuiteTitle( 'Sidebar: Domain upsell' ), function () {
 	let cartCheckoutPage: CartCheckoutPage;
 	let plansPage: PlansPage;
 	let sidebarComponent: SidebarComponent;
-	let navbarCartComponent: NavbarCartComponent;
 	let selectedDomain: string;
 	let page: Page;
 	const credentials = SecretsManager.secrets.testAccounts.simpleSiteFreePlanUser;
 	const siteSlug = credentials.testSites?.primary?.url as string;
+	const siteId = credentials.testSites?.primary?.id as number;
 	const blogName = credentials.username as string;
 
 	beforeAll( async function () {
@@ -34,19 +38,21 @@ describe( DataHelper.createSuiteTitle( 'Sidebar: Domain upsell' ), function () {
 		const testAccount = new TestAccount( 'simpleSiteFreePlanUser' );
 		await testAccount.authenticate( page );
 		await BrowserManager.setStoreCookie( page );
+
+		const restApiClient = new RestAPIClient( credentials );
+		try {
+			// Make sure the shopping cart is empty before we start!
+			const response = await restApiClient.clearShoppingCart( siteId );
+			if ( ! response.success ) {
+				console.error( 'Failed to clear the shopping cart, the test may not run as expected.' );
+			}
+		} catch {
+			console.error( 'Failed to clear the shopping cart, the test may not run as expected.' );
+		}
 	} );
 
 	it( 'Navigate to Home', async function () {
 		await page.goto( DataHelper.getCalypsoURL( `/home/${ siteSlug }` ) );
-	} );
-
-	it( 'If required, clear the cart', async function () {
-		navbarCartComponent = new NavbarCartComponent( page );
-		const cartOpened = await navbarCartComponent.openCart();
-		// The cart popover existing implies there are some items that need to be removed.
-		if ( cartOpened ) {
-			await navbarCartComponent.emptyCart();
-		}
 	} );
 
 	it( 'Click Claim on the sidebar Domain Upsell', async function () {

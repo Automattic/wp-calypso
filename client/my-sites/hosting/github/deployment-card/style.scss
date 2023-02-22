@@ -10,3 +10,8 @@
 	display: flex;
 	flex-direction: column;
 }
+
+.deployment-card__different-repo-notice {
+	color: var(--color-text-subtle);
+	font-size: $font-body-small;
+}

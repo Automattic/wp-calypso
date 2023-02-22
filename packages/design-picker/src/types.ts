@@ -133,6 +133,7 @@ export interface DesignPreviewOptions {
 	use_screenshot_overrides?: boolean;
 	disable_viewport_height?: boolean;
 	remove_assets?: boolean;
+	style_variation?: StyleVariation;
 }
 
 /** @deprecated used for Gutenboarding (/new flow) */

@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 $post-item-background-color: var(--color-surface);
 
 .promote-post {
@@ -20,17 +23,25 @@ $post-item-background-color: var(--color-surface);
 	}
 
 	.post-item__meta,
-	.post-item__post-type {
+	.post-item__post-type,
+	.post-item__link {
 		font-size: $font-body-extra-small;
 		color: var(--color-text-subtle);
 	}
 
 	.post-item__meta-time-status {
 		display: inline-block;
-		margin-right: 16px;
+		margin-right: 0;
+		width: 100%;
+
+		@include break-mobile {
+			margin-right: 16px;
+			width: auto;
+		}
 	}
 
-	.post-item__post-type {
+	.post-item__post-type,
+	.post-item__link {
 		margin-right: 16px;
 	}
 
