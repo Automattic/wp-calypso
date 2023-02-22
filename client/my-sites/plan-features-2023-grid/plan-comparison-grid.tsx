@@ -331,7 +331,7 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 	const showPlanSelect = ! allVisible && ! current;
 
 	return (
-		<Cell isInSignup={ isInSignup } className={ headerClasses } textAlign="left">
+		<Cell className={ headerClasses } textAlign="left">
 			<PopularBadge isInSignup={ isInSignup } planName={ planName } />
 			<PlanSelector>
 				{ showPlanSelect && (
@@ -358,9 +358,8 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 					</select>
 				) }
 				<h4 className="plan-comparison-grid__title">
-					{ planConstantObj.getTitle() }
-
-					{ showPlanSelect && <Gridicon icon="chevron-down" size={ 12 } color="#0675C4" /> }
+					<span>{ planConstantObj.getTitle() }</span>
+					{ showPlanSelect && <DropdownIcon /> }
 				</h4>
 			</PlanSelector>
 			<PlanFeatures2023GridHeaderPrice
@@ -419,7 +418,6 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 	onUpgradeClick,
 } ) => {
 	const allVisible = visiblePlansProperties.length === displayedPlansProperties.length;
-	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( visiblePlansProperties );
 
 	return (
 		<PlanRow>
@@ -459,17 +457,9 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 		featureMap: Record< string, Set< string > >;
 		planStorageOptionsMap: Record< string, string >;
 	};
-	isInSignup: boolean;
 	planName: string;
 	isStorageFeature: boolean;
-} > = ( {
-	feature,
-	visiblePlansProperties,
-	restructuredFeatures,
-	isInSignup,
-	planName,
-	isStorageFeature,
-} ) => {
+} > = ( { feature, visiblePlansProperties, restructuredFeatures, planName, isStorageFeature } ) => {
 	const translate = useTranslate();
 	const featureSlug = feature?.getSlug();
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( visiblePlansProperties );
@@ -490,7 +480,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	} );
 
 	return (
-		<Cell isInSignup={ isInSignup } className={ cellClasses } textAlign="center">
+		<Cell className={ cellClasses } textAlign="center">
 			{ isStorageFeature ? (
 				<>
 					<span className="plan-comparison-grid__plan-title">{ translate( 'Storage' ) }</span>
@@ -531,7 +521,6 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 		featureMap: Record< string, Set< string > >;
 		planStorageOptionsMap: Record< string, string >;
 	};
-	isInSignup: boolean;
 	isStorageFeature: boolean;
 } > = ( {
 	feature,
@@ -539,7 +528,6 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	allJetpackFeatures,
 	visiblePlansProperties,
 	restructuredFeatures,
-	isInSignup,
 	isStorageFeature,
 } ) => {
 	const translate = useTranslate();
@@ -578,7 +566,6 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 					allJetpackFeatures={ allJetpackFeatures }
 					visiblePlansProperties={ visiblePlansProperties }
 					restructuredFeatures={ restructuredFeatures }
-					isInSignup={ isInSignup }
 					planName={ planName }
 					isStorageFeature={ isStorageFeature }
 				/>
@@ -797,7 +784,6 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 									allJetpackFeatures={ allJetpackFeatures }
 									visiblePlansProperties={ visiblePlansProperties }
 									restructuredFeatures={ restructuredFeatures }
-									isInSignup={ isInSignup }
 									isStorageFeature={ false }
 								/>
 							) ) }
@@ -808,7 +794,6 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 									allJetpackFeatures={ allJetpackFeatures }
 									visiblePlansProperties={ visiblePlansProperties }
 									restructuredFeatures={ restructuredFeatures }
-									isInSignup={ isInSignup }
 									isStorageFeature={ true }
 								/>
 							) : null }
