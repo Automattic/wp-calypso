@@ -104,6 +104,7 @@ export default function SiteTableRow( { columns, item, setExpanded, isExpanded }
 					<td
 						className={ classNames( 'site-table__error', {
 							'site-table__td-without-border-bottom': isExpanded,
+							'padding-0': isExpandedContentEnabled,
 						} ) }
 						// If there is an error, we need to span the whole row because we don't show any column.
 						colSpan={ columns.length - 1 }
