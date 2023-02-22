@@ -74,11 +74,7 @@ export default function () {
 		p2RedirectToHubPlans,
 		currentPlan
 	);
-	trackedPage(
-		'/plans/my-plan/trial-upgrade-confirmation/:domain',
-		siteSelection,
-		trialUpgradeConfirmation
-	);
+	trackedPage( '/plans/my-plan/trial-upgraded/:domain', siteSelection, trialUpgradeConfirmation );
 	trackedPage(
 		'/plans/my-plan/:site',
 		siteSelection,
