@@ -11,26 +11,11 @@ import {
 	TestAccount,
 	BrowserManager,
 	SecretsManager,
-	NavbarCartComponent,
+	RestAPIClient,
 } from '@automattic/calypso-e2e';
-import { Page, Browser, Response } from 'playwright';
+import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
-
-interface CartResponsePayload {
-	body: {
-		products: unknown[];
-	};
-}
-
-async function cartHasItems( cartReponse: Response ): Promise< boolean > {
-	if ( ! cartReponse.ok() ) {
-		return false;
-	}
-
-	const cartResponsePayload = ( await cartReponse.json() ) as CartResponsePayload;
-	return cartResponsePayload.body.products.length > 0;
-}
 
 describe( DataHelper.createSuiteTitle( 'Sidebar: Domain upsell' ), function () {
 	const planName = 'Premium';
@@ -38,14 +23,12 @@ describe( DataHelper.createSuiteTitle( 'Sidebar: Domain upsell' ), function () {
 	let cartCheckoutPage: CartCheckoutPage;
 	let plansPage: PlansPage;
 	let sidebarComponent: SidebarComponent;
-	let navbarCartComponent: NavbarCartComponent;
 	let selectedDomain: string;
 	let page: Page;
 	const credentials = SecretsManager.secrets.testAccounts.simpleSiteFreePlanUser;
 	const siteSlug = credentials.testSites?.primary?.url as string;
+	const siteId = credentials.testSites?.primary?.id as number;
 	const blogName = credentials.username as string;
-
-	let cartResponse: Response;
 
 	beforeAll( async function () {
 		// Launch browser.
@@ -55,24 +38,21 @@ describe( DataHelper.createSuiteTitle( 'Sidebar: Domain upsell' ), function () {
 		const testAccount = new TestAccount( 'simpleSiteFreePlanUser' );
 		await testAccount.authenticate( page );
 		await BrowserManager.setStoreCookie( page );
+
+		const restApiClient = new RestAPIClient( credentials );
+		try {
+			// Make sure the shopping cart is empty before we start!
+			const response = await restApiClient.clearShoppingCart( siteId );
+			if ( ! response.success ) {
+				console.error( 'Failed to clear the shopping cart, the test may not run as expected.' );
+			}
+		} catch {
+			console.error( 'Failed to clear the shopping cart, the test may not run as expected.' );
+		}
 	} );
 
 	it( 'Navigate to Home', async function () {
-		// We are want to capture the shopping cart load request so we can check if it has items.
-		// So we start listening for it before the navigation.
-		const cartResponsePromise = await page.waitForResponse( /me\/shopping-cart/ );
 		await page.goto( DataHelper.getCalypsoURL( `/home/${ siteSlug }` ) );
-		cartResponse = await cartResponsePromise;
-	} );
-
-	it( 'If required, clear the cart', async function () {
-		navbarCartComponent = new NavbarCartComponent( page );
-		// Checking the API response is the most reliable way to know if we have cart items.
-		// If we know we do, we can wait without risk until the cart icon is finally rendered.
-		if ( await cartHasItems( cartResponse ) ) {
-			await navbarCartComponent.openCart();
-			await navbarCartComponent.emptyCart();
-		}
 	} );
 
 	it( 'Click Claim on the sidebar Domain Upsell', async function () {

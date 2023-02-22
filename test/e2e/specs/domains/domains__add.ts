@@ -45,10 +45,10 @@ describe.skip( DataHelper.createSuiteTitle( 'Domains: Add to current site' ), fu
 			await sidebarComponent.navigate( 'Upgrades', 'Domains' );
 		} );
 
+		// TODO: Just use the rest API to clear the cart!
 		it( 'If required, clear the cart', async function () {
 			domainsPage = new DomainsPage( page );
 			navbarCartComponent = new NavbarCartComponent( page );
-			// TODO: Find someway to check if the cart has items. Either intercept the request, or hit the API directly.
 			await navbarCartComponent.openCart();
 			await navbarCartComponent.emptyCart();
 		} );
