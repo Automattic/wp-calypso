@@ -2,26 +2,40 @@ import { Gridicon } from '@automattic/components';
 import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { ReactChild } from 'react';
+import { useDeploymentLogsURL } from './use-deployment-logs-url';
 
 interface DeploymentStatusBadgeProps {
 	status: string;
 	totalFailures: number;
+	connectionId: number;
+	deploymentTimestamp: number;
 }
 
 export const DeploymentStatusExplanation = ( {
 	status,
 	totalFailures,
+	connectionId,
+	deploymentTimestamp,
 }: DeploymentStatusBadgeProps ) => {
+	const deploymentLogsUrl = useDeploymentLogsURL( {
+		connectionId,
+		deploymentTimestamp,
+	} );
+
 	const translate = useTranslate();
 
 	let message: ReactChild = '';
+
+	if ( ! deploymentLogsUrl ) {
+		return null;
+	}
 
 	if ( status === 'failed' ) {
 		message = translate(
 			'Failed to build. Please {{a}}check the logs{{/a}} for more information.',
 			{
 				components: {
-					a: <ExternalLink href="#" />,
+					a: <ExternalLink href={ deploymentLogsUrl } />,
 				},
 			}
 		);
@@ -35,7 +49,7 @@ export const DeploymentStatusExplanation = ( {
 					totalFailures,
 				},
 				components: {
-					a: <ExternalLink href="#" />,
+					a: <ExternalLink href={ deploymentLogsUrl } />,
 				},
 			}
 		);
