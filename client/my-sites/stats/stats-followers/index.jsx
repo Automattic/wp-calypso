@@ -140,7 +140,7 @@ class StatModuleFollowers extends Component {
 		];
 
 		const summaryPageSlug = siteSlug || '';
-		// email-followers is no available at the moment so fallback everything to the new subscribers URL.
+		// email-followers is no longer available, so fallback to the new subscribers URL.
 		// Old, non-functional path: '/people/email-followers/' + summaryPageSlug.
 		let summaryPageLink = '/people/subscribers/' + summaryPageSlug;
 
