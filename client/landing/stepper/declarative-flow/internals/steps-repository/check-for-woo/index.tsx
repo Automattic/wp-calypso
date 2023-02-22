@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
