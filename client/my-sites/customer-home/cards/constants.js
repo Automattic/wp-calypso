@@ -42,3 +42,4 @@ export const TASK_WP_COURSES = 'home-task-wp-courses';
 export const TASK_UPSELL_TITAN = 'home-task-upsell-titan';
 export const TASK_VERIFY_EMAIL = 'home-task-verify-email';
 export const TASK_USE_BUILT_BY = 'home-task-use-built-by';
+export const TASK_FIVERR = 'home-task-fiverr';
