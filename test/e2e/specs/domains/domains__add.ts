@@ -48,11 +48,9 @@ describe.skip( DataHelper.createSuiteTitle( 'Domains: Add to current site' ), fu
 		it( 'If required, clear the cart', async function () {
 			domainsPage = new DomainsPage( page );
 			navbarCartComponent = new NavbarCartComponent( page );
-			const cartOpened = await navbarCartComponent.openCart();
-			// The cart popover existing implies there are some items that need to be removed.
-			if ( cartOpened ) {
-				await navbarCartComponent.emptyCart();
-			}
+			// TODO: Find someway to check if the cart has items. Either intercept the request, or hit the API directly.
+			await navbarCartComponent.openCart();
+			await navbarCartComponent.emptyCart();
 		} );
 
 		it( 'Add domain to site', async function () {

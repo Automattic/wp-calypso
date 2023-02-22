@@ -13,9 +13,24 @@ import {
 	SecretsManager,
 	NavbarCartComponent,
 } from '@automattic/calypso-e2e';
-import { Page, Browser } from 'playwright';
+import { Page, Browser, Response } from 'playwright';
 
 declare const browser: Browser;
+
+interface CartResponsePayload {
+	body: {
+		products: unknown[];
+	};
+}
+
+async function cartHasItems( cartReponse: Response ): Promise< boolean > {
+	if ( ! cartReponse.ok() ) {
+		return false;
+	}
+
+	const cartResponsePayload = ( await cartReponse.json() ) as CartResponsePayload;
+	return cartResponsePayload.body.products.length > 0;
+}
 
 describe( DataHelper.createSuiteTitle( 'Sidebar: Domain upsell' ), function () {
 	const planName = 'Premium';
@@ -30,6 +45,8 @@ describe( DataHelper.createSuiteTitle( 'Sidebar: Domain upsell' ), function () {
 	const siteSlug = credentials.testSites?.primary?.url as string;
 	const blogName = credentials.username as string;
 
+	let cartResponse: Response;
+
 	beforeAll( async function () {
 		// Launch browser.
 		page = await browser.newPage();
@@ -41,14 +58,19 @@ describe( DataHelper.createSuiteTitle( 'Sidebar: Domain upsell' ), function () {
 	} );
 
 	it( 'Navigate to Home', async function () {
+		// We are want to capture the shopping cart load request so we can check if it has items.
+		// So we start listening for it before the navigation.
+		const cartResponsePromise = page.waitForResponse( /me\/shopping-cart/ );
 		await page.goto( DataHelper.getCalypsoURL( `/home/${ siteSlug }` ) );
+		cartResponse = await cartResponsePromise;
 	} );
 
 	it( 'If required, clear the cart', async function () {
 		navbarCartComponent = new NavbarCartComponent( page );
-		const cartOpened = await navbarCartComponent.openCart();
-		// The cart popover existing implies there are some items that need to be removed.
-		if ( cartOpened ) {
+		// Checking the API response is the most reliable way to know if we have cart items.
+		// If we know we do, we can wait without risk until the cart icon is finally rendered.
+		if ( await cartHasItems( cartResponse ) ) {
+			await navbarCartComponent.openCart();
 			await navbarCartComponent.emptyCart();
 		}
 	} );
