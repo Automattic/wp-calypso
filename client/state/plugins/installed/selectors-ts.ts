@@ -1,4 +1,5 @@
 import { createSelector } from '@automattic/state-utils';
+import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import {
 	getSite,
 	getSiteTitle,
@@ -18,7 +19,7 @@ import type { AppState } from 'calypso/types';
 import 'calypso/state/plugins/init';
 
 const emptyObject = {};
-const emptyArray = [];
+const emptyNumberArray: number[] = [];
 
 const getSortCompareNumber = ( a: string, b: string ) => {
 	if ( a < b ) {
@@ -260,51 +261,63 @@ export const getPluginsOnSite = createSelector(
 	( state: AppState, siteId: number, pluginSlugs: string[] ) => [ siteId, ...pluginSlugs ].join()
 );
 
-export function getSitesWithPlugin( state: AppState, siteIds: number[], pluginSlug: string ) {
-	const plugin = getAllPluginsIndexedByPluginSlug( state )[ pluginSlug ];
-	if ( ! plugin ) {
-		return emptyArray;
-	}
-
-	// Filter the requested sites list by the list of sites for this plugin.
-	const pluginSites = siteIds.filter( ( siteId ) => plugin.sites.hasOwnProperty( siteId ) );
-
-	// Return the plugins sorted by title.
-	return pluginSites.sort( ( a, b ) => {
-		const siteTitleA = getSiteTitle( state, a )?.toLowerCase() || '';
-		const siteTitleB = getSiteTitle( state, b )?.toLowerCase() || '';
-		return getSortCompareNumber( siteTitleA, siteTitleB );
-	} );
-}
-
-export function getSiteObjectsWithPlugin( state: AppState, siteIds: number[], pluginSlug: string ) {
-	const siteIdsWithPlugin = getSitesWithPlugin( state, siteIds, pluginSlug );
-	return siteIdsWithPlugin.map( ( siteId ) => getSite( state, siteId ) );
-}
-
-export function getSitesWithoutPlugin( state: AppState, siteIds: number[], pluginSlug: string ) {
-	const installedOnSiteIds = getSitesWithPlugin( state, siteIds, pluginSlug ) || [];
-
-	return siteIds.filter( ( siteId ) => {
-		if ( ! getSite( state, siteId )?.visible || ! isJetpackSite( state, siteId ) ) {
-			return false;
+export const getSitesWithPlugin = createSelector(
+	( state: AppState, siteIds: number[], pluginSlug: string ) => {
+		const plugin = getAllPluginsIndexedByPluginSlug( state )[ pluginSlug ];
+		if ( ! plugin ) {
+			return emptyNumberArray;
 		}
 
-		if ( isJetpackSiteSecondaryNetworkSite( state, siteId ) ) {
-			return false;
-		}
+		// Filter the requested sites list by the list of sites for this plugin.
+		const pluginSites = siteIds.filter( ( siteId ) => plugin.sites.hasOwnProperty( siteId ) );
 
-		return installedOnSiteIds.every( function ( installedOnSiteId ) {
-			return installedOnSiteId !== siteId;
+		// Return the plugins sorted by title.
+		return pluginSites.sort( ( a, b ) => {
+			const siteTitleA = getSiteTitle( state, a )?.toLowerCase() || '';
+			const siteTitleB = getSiteTitle( state, b )?.toLowerCase() || '';
+			return getSortCompareNumber( siteTitleA, siteTitleB );
 		} );
-	} );
-}
+	},
+	( state: AppState ) => [ getAllPluginsIndexedByPluginSlug( state ), getSitesItems( state ) ],
+	( state: AppState, siteIds: number[], pluginSlug: string ) => [ pluginSlug, ...siteIds ].join()
+);
 
-export function getSiteObjectsWithoutPlugin(
-	state: AppState,
-	siteIds: number[],
-	pluginSlug: string
-) {
-	const siteIdsWithoutPlugin = getSitesWithoutPlugin( state, siteIds, pluginSlug );
-	return siteIdsWithoutPlugin.map( ( siteId ) => getSite( state, siteId ) );
-}
+export const getSiteObjectsWithPlugin = createSelector(
+	( state: AppState, siteIds: number[], pluginSlug: string ) => {
+		const siteIdsWithPlugin = getSitesWithPlugin( state, siteIds, pluginSlug );
+		return siteIdsWithPlugin.map( ( siteId ) => getSite( state, siteId ) );
+	},
+	( state: AppState ) => [ getAllPluginsIndexedByPluginSlug( state ), getSitesItems( state ) ],
+	( state: AppState, siteIds: number[], pluginSlug: string ) => [ pluginSlug, ...siteIds ].join()
+);
+
+export const getSitesWithoutPlugin = createSelector(
+	( state: AppState, siteIds: number[], pluginSlug: string ) => {
+		const installedOnSiteIds = getSitesWithPlugin( state, siteIds, pluginSlug ) || emptyNumberArray;
+
+		return siteIds.filter( ( siteId ) => {
+			if ( ! getSite( state, siteId )?.visible || ! isJetpackSite( state, siteId ) ) {
+				return false;
+			}
+
+			if ( isJetpackSiteSecondaryNetworkSite( state, siteId ) ) {
+				return false;
+			}
+
+			return installedOnSiteIds.every( function ( installedOnSiteId ) {
+				return installedOnSiteId !== siteId;
+			} );
+		} );
+	},
+	( state: AppState ) => [ getAllPluginsIndexedByPluginSlug( state ), getSitesItems( state ) ],
+	( state: AppState, siteIds: number[], pluginSlug: string ) => [ pluginSlug, ...siteIds ].join()
+);
+
+export const getSiteObjectsWithoutPlugin = createSelector(
+	( state: AppState, siteIds: number[], pluginSlug: string ) => {
+		const siteIdsWithoutPlugin = getSitesWithoutPlugin( state, siteIds, pluginSlug );
+		return siteIdsWithoutPlugin.map( ( siteId ) => getSite( state, siteId ) );
+	},
+	( state: AppState ) => [ getAllPluginsIndexedByPluginSlug( state ), getSitesItems( state ) ],
+	( state: AppState, siteIds: number[], pluginSlug: string ) => [ pluginSlug, ...siteIds ].join()
+);
