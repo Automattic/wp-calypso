@@ -58,6 +58,8 @@ function WpcomBlockEditorNavSidebar() {
 		];
 	} );
 
+	const siteSlug = window?.location.host;
+
 	const { current: currentPost, drafts: draftPosts, recent: recentPosts } = useNavItems();
 	const statusLabels = usePostStatusLabels();
 	const prevIsOpen = useRef( isOpen );
@@ -103,17 +105,30 @@ function WpcomBlockEditorNavSidebar() {
 	// (using the filter) to take the user to the customer homepage or themes gallery instance.
 	// `closeLabel` can be overridden in the same way to correctly label where the user will
 	// be taken to after closing the editor.
-	const defaultCloseUrl = addQueryArgs( 'edit.php', { post_type: postType.slug } );
+
+	let defaultCloseUrl;
+	let defaultCloseLabel;
+
+	const launchpadScreenOption = window?.wpcomBlockEditorNavSidebar?.currentSite?.launchpad_screen;
+	const siteIntent = window?.wpcomBlockEditorNavSidebar?.currentSite?.site_intent;
+
+	if ( launchpadScreenOption === 'full' && siteIntent !== false ) {
+		defaultCloseUrl = `http://wordpress.com/setup/${ siteIntent }/launchpad?siteSlug=${ siteSlug }`;
+		defaultCloseLabel = __( 'Next steps', 'full-site-editing' );
+	} else {
+		defaultCloseUrl = addQueryArgs( 'edit.php', { post_type: postType.slug } );
+		defaultCloseLabel = get(
+			postType,
+			[ 'labels', 'all_items' ],
+			__( 'Back', 'full-site-editing' )
+		);
+	}
+
 	const closeUrl = applyFilters(
 		'a8c.WpcomBlockEditorNavSidebar.closeUrl',
 		defaultCloseUrl
 	) as string;
 
-	const defaultCloseLabel = get(
-		postType,
-		[ 'labels', 'all_items' ],
-		__( 'Back', 'full-site-editing' )
-	);
 	const closeLabel = applyFilters(
 		'a8c.WpcomBlockEditorNavSidebar.closeLabel',
 		defaultCloseLabel
