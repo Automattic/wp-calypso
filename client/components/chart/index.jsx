@@ -72,7 +72,8 @@ function Chart( {
 		}
 	}, [] );
 
-	const handleYAxisSizeChange = useCallback( ( contentRect ) => {
+	// Prevent using `useCallback` to keep the Y-Axis refresh via useEffect of `useWindowResizeCallback` with re-rendering.
+	const handleYAxisSizeChange = ( contentRect ) => {
 		setYAxisSize( ( prevSizing ) => {
 			const clientWidth = contentRect.width;
 			if ( ! prevSizing.hasResized || clientWidth !== prevSizing.clientWidth ) {
@@ -80,7 +81,7 @@ function Chart( {
 			}
 			return prevSizing;
 		} );
-	}, [] );
+	};
 
 	const yAxisRef = useWindowResizeCallback( handleYAxisSizeChange );
 
