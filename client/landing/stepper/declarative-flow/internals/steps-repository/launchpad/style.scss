@@ -489,7 +489,7 @@
 		transition: max-width 0.2s linear;
 
 		@include break-large {
-			width: 100%;
+			width: 95%;
 			border-radius: 20px; /* stylelint-disable-line scales/radii */
 		}
 	}
@@ -558,7 +558,7 @@
 		border: 10px solid var(--color-print);
 		border-radius: 40px; /* stylelint-disable-line scales/radii */
 		box-sizing: border-box;
-		min-height: 630px;
+		min-height: 720px;
 
 		@include break-large {
 			margin-top: 0;
