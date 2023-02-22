@@ -217,7 +217,7 @@ const WebServerLogsCard = ( props ) => {
 		link.click();
 		window.URL.revokeObjectURL( url );
 
-		downloadSuccessNotice( 'Logs downloaded successfully.' );
+		downloadSuccessNotice( translate( 'Logs downloaded.' ) );
 		recordDownloadCompleted( {
 			download_filename: downloadFilename,
 			total_log_records_downloaded: totalLogs,
