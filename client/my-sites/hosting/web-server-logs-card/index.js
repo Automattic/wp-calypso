@@ -264,7 +264,7 @@ const WebServerLogsCard = ( props ) => {
 			<>
 				<p className="web-server-logs-card__info">
 					{ translate(
-						'To help troubleshoot or debug problems with your site, you may download web server logs between the following dates.'
+						'Download web server logs to troubleshoot or debug problems with your site.'
 					) }
 				</p>
 				<div className="web-server-logs-card__type">
@@ -319,7 +319,7 @@ const WebServerLogsCard = ( props ) => {
 						disabled={ downloading || ! startDateValidation.isValid || ! endDateValidation.isValid }
 						onClick={ downloadLogs }
 					>
-						Download Logs
+						{ translate( 'Download logs' ) }
 					</Button>
 				</div>
 			</>
