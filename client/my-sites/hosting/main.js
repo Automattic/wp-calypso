@@ -195,7 +195,6 @@ class Hosting extends Component {
 							</Column>
 						</Layout>
 					</WrapperComponent>
-					{ ! teams && <QueryReaderTeams /> }
 				</>
 			);
 		};
@@ -214,6 +213,7 @@ class Hosting extends Component {
 				/>
 				{ hasSftpFeature ? getAtomicActivationNotice() : getUpgradeBanner() }
 				{ getContent() }
+				{ ! teams && <QueryReaderTeams /> }
 			</Main>
 		);
 	}
