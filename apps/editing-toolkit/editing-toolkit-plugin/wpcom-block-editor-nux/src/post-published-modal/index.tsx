@@ -47,8 +47,8 @@ const PostPublishedModal: React.FC = () => {
 	const { fetchShouldShowFirstPostPublishedModal, setShouldShowFirstPostPublishedModal } =
 		useDispatch( 'automattic/wpcom-welcome-guide' );
 
-	const { siteUrlOption, launchpadScreenOption } = window?.launchpadOptions || {};
-	const siteUrl = siteUrlOption.replace( 'http://', '' );
+	const { siteUrlOption, launchpadScreenOption, siteIntentOption } = window?.launchpadOptions || {};
+	const siteUrl = siteUrlOption.replace( /^https?:\/\//, '' );
 
 	useEffect( () => {
 		fetchShouldShowFirstPostPublishedModal();
@@ -106,7 +106,7 @@ const PostPublishedModal: React.FC = () => {
 					<Button isPrimary onClick={ handleViewPostClick }>
 						{ __( 'View Post', 'full-site-editing' ) }
 					</Button>
-					{ launchpadScreenOption === 'full' && (
+					{ launchpadScreenOption === 'full' && siteIntentOption === 'write' && (
 						<Button isSecondary onClick={ handleNextStepsClick }>
 							{ __( 'Next Steps', 'full-site-editing' ) }
 						</Button>

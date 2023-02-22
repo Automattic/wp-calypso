@@ -28,6 +28,7 @@ class WP_REST_WPCOM_Block_Editor_First_Post_Published_Modal_Controller extends \
 		$launchpad_options = array(
 			'launchpadScreenOption' => get_option( 'launchpad_screen' ),
 			'siteUrlOption'         => get_option( 'siteurl' ),
+			'siteIntentOption'      => get_option( 'site_intent' ),
 		);
 
 		wp_add_inline_script(
