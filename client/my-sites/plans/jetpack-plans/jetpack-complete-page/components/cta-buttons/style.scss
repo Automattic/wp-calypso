@@ -8,7 +8,7 @@
 		gap: 24px;
 	}
 	.button {
-		border: 1px solid var(--studio-black);
+		border: 1px solid;
 		border-radius: 4px;
 		font-weight: 600;
 	}
@@ -16,9 +16,11 @@
 		&.form-button {
 			color: var(--studio-white);
 			background-color: var(--studio-black);
+			border-color: var(--studio-black);
 			&:hover,
 			&:active {
 				background-color: var(--studio-gray-90);
+				border-color: var(--studio-black);
 			}
 		}
 	}
@@ -35,7 +37,7 @@
 			&:active {
 				background-color: var(--studio-gray-5);
 				color: var(--studio-black);
-				border: 1px solid var(--studio-black);
+				border-color: var(--studio-black);
 			}
 		}
 	}
