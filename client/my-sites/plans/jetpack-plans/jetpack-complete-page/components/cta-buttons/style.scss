@@ -1,19 +1,18 @@
 .jetpack-complete-page__cta-buttons {
 	display: inline-flex;
 	align-items: center;
-	justify-content: center;
 	width: 100%;
-	& > * {
-		flex: 1;
+	flex-direction: column;
+	@include breakpoint-deprecated( ">960px" ) {
+		flex-direction: row;
+		gap: 24px;
 	}
-	@include breakpoint-deprecated( "<960px" ) {
-		flex-direction: column;
+	.button {
+		border: 1px solid var(--studio-black);
+		border-radius: 4px;
+		font-weight: 600;
 	}
-
 	.jetpack-complete-page__get-complete-button {
-		@include breakpoint-deprecated( ">960px" ) {
-			margin-right: 2em;
-		}
 		&.form-button {
 			color: var(--studio-white);
 			background-color: var(--studio-black);
@@ -24,16 +23,19 @@
 		}
 	}
 	.jetpack-complete-page__start-free-button {
-		@include breakpoint-deprecated( "<960px" ) {
-			margin-top: 1em;
+		margin-block-start: 24px;
+		@include breakpoint-deprecated( ">960px" ) {
+			margin-block-start: unset;
 		}
 		&.form-button {
 			color: var(--studio-black);
 			background-color: var(--studio-white);
-			border: 2px solid var(--studio-black);
+			border-color: var(--studio-black);
 			&:hover,
 			&:active {
 				background-color: var(--studio-gray-5);
+				color: var(--studio-black);
+				border: 1px solid var(--studio-black);
 			}
 		}
 	}
