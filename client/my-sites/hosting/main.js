@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_SFTP, FEATURE_SFTP_DATABASE } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
@@ -39,6 +40,7 @@ import PhpMyAdminCard from './phpmyadmin-card';
 import RestorePlanSoftwareCard from './restore-plan-software-card';
 import SFTPCard from './sftp-card';
 import SiteBackupCard from './site-backup-card';
+import StagingSiteCard from './staging-site-card';
 import SupportCard from './support-card';
 import WebServerLogsCard from './web-server-logs-card';
 import WebServerSettingsCard from './web-server-settings-card';
@@ -169,6 +171,7 @@ class Hosting extends Component {
 		const getContent = () => {
 			const isGithubIntegrationEnabled = isAutomatticTeamMember( teams );
 			const WrapperComponent = isDisabled || isTransferring ? FeatureExample : Fragment;
+			const isStagingSiteEnabled = isEnabled( 'yolo/staging-sites-i1' );
 
 			return (
 				<>
@@ -181,6 +184,7 @@ class Hosting extends Component {
 					<WrapperComponent>
 						<Layout className="hosting__layout">
 							<Column type="main" className="hosting__main-layout-col">
+								{ isStagingSiteEnabled && <StagingSiteCard disabled={ isDisabled } /> }
 								<SFTPCard disabled={ isDisabled } />
 								<PhpMyAdminCard disabled={ isDisabled } />
 								{ isGithubIntegrationEnabled && <GitHubCard /> }
