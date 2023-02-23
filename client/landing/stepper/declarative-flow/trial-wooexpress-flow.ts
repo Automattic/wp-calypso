@@ -95,7 +95,9 @@ const wooexpress: Flow = {
 
 			switch ( currentStep ) {
 				case 'siteCreationStep': {
-					return navigate( 'processing' );
+					return navigate( 'processing', {
+						currentStep,
+					} );
 				}
 
 				case 'processing': {
@@ -127,7 +129,9 @@ const wooexpress: Flow = {
 				}
 
 				case 'waitForAtomic': {
-					return navigate( 'processing' );
+					return navigate( 'processing', {
+						currentStep,
+					} );
 				}
 
 				case 'waitForPluginInstall': {
