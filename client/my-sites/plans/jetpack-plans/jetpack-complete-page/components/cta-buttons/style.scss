@@ -11,6 +11,10 @@
 		border: 1px solid;
 		border-radius: 4px;
 		font-weight: 600;
+		width: 276px;
+		@include breakpoint-deprecated( ">960px" ) {
+			width: 164px;
+		}
 	}
 	.jetpack-complete-page__get-complete-button {
 		&.form-button {
