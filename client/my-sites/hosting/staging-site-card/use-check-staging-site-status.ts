@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import {
@@ -20,9 +19,18 @@ export const useCheckStagingSiteStatus = ( siteId: number ) => {
 		if ( ! siteId || transferStatus === transferStates.COMPLETE ) {
 			return;
 		}
+
+		let transferInterval: NodeJS.Timeout;
+
 		if ( ! isFetchingTransferStatus ) {
-			waitFor( 5 ).then( () => dispatch( fetchAutomatedTransferStatus( siteId ) ) );
+			transferInterval = setInterval(
+				() => dispatch( fetchAutomatedTransferStatus( siteId ) ),
+				5000
+			);
 		}
+		return () => {
+			clearInterval( transferInterval );
+		};
 	}, [ siteId, dispatch, transferStatus, isFetchingTransferStatus ] );
 
 	return transferStatus;
