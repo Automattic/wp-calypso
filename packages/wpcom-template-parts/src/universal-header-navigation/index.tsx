@@ -48,6 +48,10 @@ const UniversalNavbarHeader = ( { isLoggedIn = false, sectionName, logoColor }: 
 											<WordPressWordmark
 												className="x-icon x-icon__logo"
 												color={ logoColor ?? 'var(--studio-blue-50)' }
+												size={ {
+													width: 170,
+													height: 36,
+												} }
 											/>
 											<span className="x-hidden">WordPress.com</span>
 										</a>
