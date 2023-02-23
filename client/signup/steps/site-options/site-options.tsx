@@ -120,7 +120,6 @@ const SiteOptions: React.FC< Props > = ( {
 						name="searchTerms"
 						id="searchTerms"
 						value={ formValues.searchTerms }
-						// isError={ Boolean( searchTermsError ) }
 						onChange={ onChange }
 					/>
 					{ searchTermsExplanation && (
