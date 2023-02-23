@@ -341,7 +341,7 @@ $font-family: "SF Pro Text", $sans;
 
 		&::before {
 			border-width: 10px 16px;
-			border-right-color: #000;
+			border-right-color: var(--studio-black);
 		}
 	}
 
@@ -351,7 +351,7 @@ $font-family: "SF Pro Text", $sans;
 		border-radius: 4px;
 		border: 0;
 		color: #eee;
-		background-color: #000;
+		background-color: var(--studio-black);
 	}
 }
 
