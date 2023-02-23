@@ -4,13 +4,10 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import PulsingDot from 'calypso/components/pulsing-dot';
-import { addQueryArgs } from 'calypso/lib/route';
 import getCustomizeOrEditFrontPageUrl from 'calypso/state/selectors/get-customize-or-edit-front-page-url';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
-import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import shouldCustomizeHomepageWithGutenberg from 'calypso/state/selectors/should-customize-homepage-with-gutenberg';
 import { requestSite } from 'calypso/state/sites/actions';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
 import { clearActivated } from 'calypso/state/themes/actions';
 import {
@@ -24,7 +21,6 @@ import {
 	isInstallingTheme,
 	isWpcomTheme,
 } from 'calypso/state/themes/selectors';
-import { themeHasAutoLoadingHomepage } from 'calypso/state/themes/selectors/theme-has-auto-loading-homepage';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { trackClick } from './helpers';
 import { isFullSiteEditingTheme } from './is-full-site-editing-theme';
@@ -334,19 +330,6 @@ const ConnectedThanksModal = connect(
 		// Note: Gutenberg buttons will only show if the homepage is a page.
 		const shouldEditHomepageWithGutenberg = shouldCustomizeHomepageWithGutenberg( state, siteId );
 
-		const isAtomic = isSiteAtomic( state, siteId );
-		const isJetpack = isJetpackSite( state, siteId );
-		const hasAutoLoadingHomepage = themeHasAutoLoadingHomepage( state, currentThemeId, siteId );
-
-		// Atomic & Jetpack do not have auto-loading-homepage behavior, so we trigger the layout picker for them.
-		const customizeUrl =
-			( isAtomic || isJetpack ) && hasAutoLoadingHomepage
-				? addQueryArgs(
-						{ 'new-homepage': true },
-						getCustomizeOrEditFrontPageUrl( state, currentThemeId, siteId, isFSEActive )
-				  )
-				: getCustomizeOrEditFrontPageUrl( state, currentThemeId, siteId, isFSEActive );
-
 		return {
 			siteId,
 			siteUrl,
@@ -359,7 +342,7 @@ const ConnectedThanksModal = connect(
 			),
 			shouldEditHomepageWithGutenberg,
 			detailsUrl: getThemeDetailsUrl( state, currentThemeId, siteId ),
-			customizeUrl,
+			customizeUrl: getCustomizeOrEditFrontPageUrl( state, currentThemeId, siteId, isFSEActive ),
 			forumUrl: getThemeForumUrl( state, currentThemeId, siteId ),
 			isActivating: !! isActivatingTheme( state, siteId ),
 			isInstalling: isInstallingTheme( state, currentThemeId, siteId ),

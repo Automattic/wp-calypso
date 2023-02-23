@@ -1,15 +1,8 @@
-import { isEnabled } from '@automattic/calypso-config';
-import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { activateTheme } from 'calypso/state/themes/actions/activate-theme';
 import { installAndActivateTheme } from 'calypso/state/themes/actions/install-and-activate-theme';
-import { showAutoLoadingHomepageWarning } from 'calypso/state/themes/actions/show-auto-loading-homepage-warning';
 import { suffixThemeIdForInstall } from 'calypso/state/themes/actions/suffix-theme-id-for-install';
-import {
-	getTheme,
-	hasAutoLoadingHomepageModalAccepted,
-	themeHasAutoLoadingHomepage,
-} from 'calypso/state/themes/selectors';
+import { getTheme } from 'calypso/state/themes/selectors';
 
 import 'calypso/state/themes/init';
 
@@ -32,30 +25,6 @@ export function activate(
 	keepCurrentHomepage = false
 ) {
 	return ( dispatch, getState ) => {
-		let showModalCondition =
-			! isJetpackSite( getState(), siteId ) && ! isSiteAtomic( getState(), siteId );
-
-		if ( isEnabled( 'themes/atomic-homepage-replace' ) ) {
-			showModalCondition =
-				! isJetpackSite( getState(), siteId ) || isSiteAtomic( getState(), siteId );
-		} else {
-			// Keep default behaviour on Atomic. See https://github.com/Automattic/wp-calypso/pull/65846#issuecomment-1192650587
-			keepCurrentHomepage = isSiteAtomic( getState(), siteId ) ? true : keepCurrentHomepage;
-		}
-
-		/**
-		 * Let's check if the theme will change the homepage of the site,
-		 * before to definitely start the theme-activating process,
-		 * allowing cancel it if it's desired.
-		 */
-		if (
-			themeHasAutoLoadingHomepage( getState(), themeId, siteId ) &&
-			showModalCondition &&
-			! hasAutoLoadingHomepageModalAccepted( getState(), themeId )
-		) {
-			return dispatch( showAutoLoadingHomepageWarning( themeId ) );
-		}
-
 		if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
 			const installId = suffixThemeIdForInstall( getState(), siteId, themeId );
 			// If theme is already installed, installation will silently fail,

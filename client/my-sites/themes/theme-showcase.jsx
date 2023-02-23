@@ -19,7 +19,6 @@ import SearchThemes from 'calypso/components/search-themes';
 import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
-import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getSiteFeaturesById from 'calypso/state/selectors/get-site-features';
@@ -538,7 +537,6 @@ class ThemeShowcase extends Component {
 					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 					<QueryProductsList />
 					<ThanksModal source="list" />
-					<AutoLoadingHomepageModal source="list" />
 					<ThemePreview />
 				</div>
 			</div>

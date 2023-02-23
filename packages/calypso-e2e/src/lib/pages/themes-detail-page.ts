@@ -9,10 +9,6 @@ const selectors = {
 	activateDesignButton: 'button:text("Activate this design")',
 	customizeDesignButton: 'span:text("Customize site")',
 
-	// Activate modal
-	activateModal: '.themes__auto-loading-homepage-modal',
-	activateModalButton: '.dialog__action-buttons button:has-text("Activate")',
-
 	// Thanks modal
 	thanksMessage: ':text("Thanks for choosing")',
 };
@@ -54,7 +50,6 @@ export class ThemesDetailPage {
 	 */
 	async activate( { keepModal = false }: { keepModal?: boolean } = {} ): Promise< void > {
 		await this.page.click( selectors.activateDesignButton );
-		await this.page.click( selectors.activateModalButton );
 		await this.page.waitForSelector( selectors.thanksMessage );
 		if ( ! keepModal ) {
 			await this.page.keyboard.press( 'Escape' );

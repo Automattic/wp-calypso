@@ -39,7 +39,6 @@ import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
-import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
 import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
 import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
@@ -1212,7 +1211,6 @@ class ThemeSheet extends Component {
 				{ ! isNewDetailsAndPreview && this.renderBar() }
 				<QueryActiveTheme siteId={ siteId } />
 				<ThanksModal source="details" themeId={ this.props.themeId } />
-				<AutoLoadingHomepageModal source="details" />
 				{ ! isNewDetailsAndPreview && pageUpsellBanner }
 				{ ! isNewDetailsAndPreview && (
 					<HeaderCake

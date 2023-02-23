@@ -1,4 +1,3 @@
-export { acceptAutoLoadingHomepageWarning } from 'calypso/state/themes/actions/accept-auto-loading-homepage-warning';
 export { activate } from 'calypso/state/themes/actions/activate';
 export { activateTheme } from 'calypso/state/themes/actions/activate-theme';
 export { addExternalManagedThemeToCart } from 'calypso/state/themes/actions/add-external-managed-theme-to-cart';
@@ -6,7 +5,6 @@ export { clearActivated } from 'calypso/state/themes/actions/clear-activated';
 export { clearThemeUpload } from 'calypso/state/themes/actions/clear-theme-upload';
 export { confirmDelete } from 'calypso/state/themes/actions/confirm-delete';
 export { deleteTheme } from 'calypso/state/themes/actions/delete-theme';
-export { hideAutoLoadingHomepageWarning } from 'calypso/state/themes/actions/hide-auto-loading-homepage-warning';
 export { hideThemePreview } from 'calypso/state/themes/actions/hide-theme-preview';
 export { installAndActivateTheme } from 'calypso/state/themes/actions/install-and-activate-theme';
 export { installAndTryAndCustomizeTheme } from 'calypso/state/themes/actions/install-and-try-and-customize-theme';
@@ -29,7 +27,6 @@ export { requestThemeFilters } from 'calypso/state/themes/actions/request-theme-
 export { requestThemes } from 'calypso/state/themes/actions/request-themes';
 export { setBackPath } from 'calypso/state/themes/actions/set-back-path';
 export { setThemePreviewOptions } from 'calypso/state/themes/actions/set-theme-preview-options';
-export { showAutoLoadingHomepageWarning } from 'calypso/state/themes/actions/show-auto-loading-homepage-warning';
 export { showThemePreview } from 'calypso/state/themes/actions/show-theme-preview';
 export { themeActivated } from 'calypso/state/themes/actions/theme-activated';
 export { themeStartActivationSync } from 'calypso/state/themes/actions/theme-start-activation-sync';
