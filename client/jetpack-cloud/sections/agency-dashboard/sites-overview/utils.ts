@@ -89,6 +89,18 @@ export const getActionEventName = ( actionType: AllowedActionTypes, isLargeScree
 	return actionEventNames?.[ actionType ]?.[ deviceKey ];
 };
 
+// Scan feature status event names for large screen(>960px) and small screen(<960px)
+const statsEventNames: StatusEventNames = {
+	upward: {
+		small_screen: 'calypso_jetpack_agency_dashboard_stats_upward_click_small_screen',
+		large_screen: 'calypso_jetpack_agency_dashboard_stats_upward_click_large_screen',
+	},
+	downward: {
+		small_screen: 'calypso_jetpack_agency_dashboard_stats_downward_down_click_small_screen',
+		large_screen: 'calypso_jetpack_agency_dashboard_stats_downward_down_click_large_screen',
+	},
+};
+
 // Backup feature status event names for large screen(>960px) and small screen(<960px)
 const backupEventNames: StatusEventNames = {
 	inactive: {
@@ -133,7 +145,7 @@ const scanEventNames: StatusEventNames = {
 	},
 };
 
-// Montitor feature status event names for large screen(>960px) and small screen(<960px)
+// Monitor feature status event names for large screen(>960px) and small screen(<960px)
 const monitorEventNames: StatusEventNames = {
 	disabled: {
 		small_screen: 'calypso_jetpack_agency_dashboard_monitor_inactive_click_small_screen',
@@ -170,7 +182,7 @@ const getRowEventName = (
 	const deviceKey = isLargeScreen ? 'large_screen' : 'small_screen';
 	switch ( type ) {
 		case 'stats': {
-			//return statsEventNames?.[ status ]?.[ deviceKey ];
+			return statsEventNames?.[ status ]?.[ deviceKey ];
 		}
 		case 'backup': {
 			return backupEventNames?.[ status ]?.[ deviceKey ];

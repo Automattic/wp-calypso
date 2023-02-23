@@ -214,6 +214,14 @@ export default function SiteStatusContent( {
 			content = <Gridicon icon="minus-small" size={ 18 } className="sites-overview__icon-active" />;
 			break;
 		}
+		case 'upward': {
+			content = (
+				<Badge className="sites-overview__badge" type="upward">
+					{ value }
+				</Badge>
+			);
+			break;
+		}
 		case 'progress': {
 			content = <Gridicon icon="time" size={ 18 } className="sites-overview__grey-icon" />;
 			break;

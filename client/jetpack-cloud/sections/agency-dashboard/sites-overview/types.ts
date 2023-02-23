@@ -58,7 +58,8 @@ export interface Site {
 	isSelected?: boolean;
 	site_stats: SiteStats;
 	onSelect?: ( value: boolean ) => void;
-	latest_stats: number;
+	stats_views: StatsSettings;
+	week: number;
 }
 export interface SiteNode {
 	value: Site;
