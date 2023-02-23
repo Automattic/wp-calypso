@@ -1,7 +1,7 @@
 import { translate as i18nTranslate } from 'i18n-calypso';
 import customDomain from 'calypso/assets/images/plans/wpcom/custom-domain.png';
 import customize from 'calypso/assets/images/plans/wpcom/customize.png';
-import manage from 'calypso/assets/images/plans/wpcom/manage.png';
+import manageWooCommerce from 'calypso/assets/images/plans/wpcom/manage-woocommerce.png';
 import marketing from 'calypso/assets/images/plans/wpcom/marketing.png';
 import promote from 'calypso/assets/images/plans/wpcom/promote.png';
 import wayToPay from 'calypso/assets/images/plans/wpcom/way-to-pay.png';
@@ -42,7 +42,7 @@ export const getConfirmationTasks = ( { translate }: ConfirmationTasksProps ) =>
 			subtitle: translate( 'Keep customizing your store appearance and make it stand out.' ),
 		},
 		{
-			illustration: manage,
+			illustration: manageWooCommerce,
 			title: translate( 'Manage your store on the go' ),
 			subtitle: translate( 'Manage your store anywhere with the free WooCommerce Mobile App.' ),
 		},
