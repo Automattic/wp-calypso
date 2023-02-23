@@ -1,13 +1,13 @@
 import { Gridicon } from '@automattic/components';
+import { createHigherOrderComponent } from '@wordpress/compose';
+import { localize } from 'i18n-calypso';
 import { defer } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { PureComponent } from 'react';
 import AuthorSelector from 'calypso/blocks/author-selector';
 import User from 'calypso/components/user';
+import useUsersQuery from 'calypso/data/users/use-users-query';
 import { decodeEntities } from 'calypso/lib/formatting';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
-
 import './author-mapping-item.scss';
 
 const userShape = ( nameField ) =>
@@ -17,7 +17,7 @@ const userShape = ( nameField ) =>
 		avatar_URL: PropTypes.string.isRequired,
 	} );
 
-class ImporterAuthorMapping extends Component {
+class ImporterAuthorMapping extends PureComponent {
 	static displayName = 'ImporterAuthorMapping';
 
 	static propTypes = {
@@ -36,8 +36,7 @@ class ImporterAuthorMapping extends Component {
 	};
 
 	componentDidMount() {
-		const { hasSingleAuthor, onSelect: selectAuthor } = this.props;
-
+		const { hasSingleAuthor, onSelect: selectAuthor, users } = this.props;
 		if ( hasSingleAuthor ) {
 			/**
 			 * Using `defer` here is a leftover from using Flux store in the past.
@@ -51,7 +50,7 @@ class ImporterAuthorMapping extends Component {
 			 * TODO: Refactor this to not automate the UI but use proper state
 			 * TODO: A better way might be to handle this call in the backend and leave the UI out of the decision
 			 */
-			defer( () => selectAuthor( this.props.currentUser ) );
+			defer( () => selectAuthor( users[ 0 ] ) );
 		}
 	}
 
@@ -65,7 +64,7 @@ class ImporterAuthorMapping extends Component {
 				name,
 				mappedTo: selectedAuthor = { name: /* Don't translate yet */ 'Choose an author…' },
 			},
-			currentUser,
+			users,
 		} = this.props;
 
 		return (
@@ -91,13 +90,23 @@ class ImporterAuthorMapping extends Component {
 						<User user={ selectedAuthor } />
 					</AuthorSelector>
 				) : (
-					<User user={ currentUser } />
+					<User user={ users[ 0 ] } />
 				) }
 			</div>
 		);
 	}
 }
 
-export default connect( ( state ) => ( {
-	currentUser: getCurrentUser( state ),
-} ) )( ImporterAuthorMapping );
+const withUsers = createHigherOrderComponent(
+	( Component ) => ( props ) => {
+		const { siteId } = props;
+		const { data } = useUsersQuery( siteId );
+
+		const users = data?.users ?? [];
+
+		return <Component users={ users } { ...props } />;
+	},
+	'withTotalUsers'
+);
+
+export default localize( withUsers( ImporterAuthorMapping ) );
