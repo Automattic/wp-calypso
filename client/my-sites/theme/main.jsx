@@ -193,6 +193,11 @@ class ThemeSheet extends Component {
 	};
 
 	onStyleVariationClick = ( variation ) => {
+		this.props.recordTracksEvent( 'calypso_theme_sheet_style_variation_click', {
+			theme: this.props.themeId,
+			style_variation: variation.slug,
+		} );
+
 		if ( typeof window !== 'undefined' ) {
 			const params = new URLSearchParams( window.location.search );
 			if ( variation?.inline_css !== '' ) {
@@ -225,6 +230,13 @@ class ThemeSheet extends Component {
 		return section;
 	};
 
+	trackFeatureClick = ( feature ) => {
+		this.props.recordTracksEvent( 'calypso_theme_sheet_feature_click', {
+			theme_name: this.props.themeId,
+			feature,
+		} );
+	};
+
 	trackButtonClick = ( context ) => {
 		this.props.recordTracksEvent( 'calypso_theme_sheet_button_click', {
 			theme_name: this.props.themeId,
@@ -242,6 +254,10 @@ class ThemeSheet extends Component {
 
 	trackCssClick = () => {
 		this.trackButtonClick( 'css_forum' );
+	};
+
+	trackNextThemeClick = () => {
+		this.trackButtonClick( 'next_theme' );
 	};
 
 	renderBackButton = () => {
@@ -610,7 +626,12 @@ class ThemeSheet extends Component {
 			locale,
 			! isLoggedIn
 		);
-		return <SectionHeader href={ nextThemeHref } label={ translate( 'Next theme' ) } />;
+
+		return (
+			<div onClick={ this.trackNextThemeClick } role="presentation">
+				<SectionHeader href={ nextThemeHref } label={ translate( 'Next theme' ) } />
+			</div>
+		);
 	};
 
 	renderOverviewTab = () => {
@@ -625,6 +646,7 @@ class ThemeSheet extends Component {
 						taxonomies={ taxonomies }
 						siteSlug={ siteSlug }
 						isWpcomTheme={ isWpcomTheme }
+						onClick={ this.trackFeatureClick }
 					/>
 				</div>
 				{ download && ! isPremium && <ThemeDownloadCard href={ download } /> }
@@ -888,7 +910,7 @@ class ThemeSheet extends Component {
 						! isExternallyManagedTheme ||
 						! isLoggedIn ||
 						! config.isEnabled( 'themes/third-party-premium' ) )
-						? getUrl( this.props.themeId )
+						? this.appendSelectedStyleVariationToUrl( getUrl( this.props.themeId ) )
 						: null
 				}
 				onClick={ this.onButtonClick }
@@ -906,13 +928,27 @@ class ThemeSheet extends Component {
 		);
 	};
 
+	appendSelectedStyleVariationToUrl = ( url ) => {
+		const { selectedStyleVariationSlug } = this.props;
+		if ( ! selectedStyleVariationSlug ) {
+			return url;
+		}
+
+		const [ base, query ] = url.split( '?' );
+		const params = new URLSearchParams( query );
+
+		params.set( 'style_variation', selectedStyleVariationSlug );
+		return `${ base }${ params.toString().length ? `?${ params.toString() }` : '' }`;
+	};
+
 	getSelectedStyleVariation = () => {
 		const { selectedStyleVariationSlug, styleVariations } = this.props;
 		return styleVariations.find( ( variation ) => variation.slug === selectedStyleVariationSlug );
 	};
 
 	goBack = () => {
-		const { backPath, locale, isLoggedIn } = this.props;
+		const { backPath, locale, isLoggedIn, themeId } = this.props;
+		this.props.recordTracksEvent( 'calypso_theme_sheet_back_click', { theme_name: themeId } );
 		page( localizeThemesPath( backPath, locale, ! isLoggedIn ) );
 	};
 

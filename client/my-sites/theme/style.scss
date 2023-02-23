@@ -139,7 +139,8 @@ body.is-section-theme-i4 {
 			margin: 0;
 			text-align: left;
 
-			a {
+			a,
+			span {
 				background-color: var(--color-neutral-5);
 				border-radius: 4px;
 				color: var(--color-neutral-80);
@@ -717,7 +718,8 @@ body.is-section-theme-i4 {
 	margin: -10px;
 	padding: 0;
 
-	a {
+	a,
+	span {
 		display: inline-block;
 		position: relative;
 		background: var(--color-neutral-0);
