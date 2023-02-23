@@ -1,5 +1,8 @@
 import { isBusinessPlan, isPremiumPlan } from '@automattic/calypso-products';
 import { useMemo } from '@wordpress/element';
+import { useSelector } from 'react-redux';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { PlanProperties } from '../types';
 
 interface HighlightAdjacencyMatrix {
@@ -10,11 +13,16 @@ interface HighlightAdjacencyMatrix {
 	};
 }
 
-const useHighlightAdjacencyMatrix = ( visiblePlans: PlanProperties[] ) => {
+const useHighlightIndices = ( visiblePlans: PlanProperties[] ) => {
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const currentPlan = useSelector( ( state ) => getCurrentPlan( state, selectedSiteId ) );
+
 	return useMemo( () => {
-		const adjacencyMatrix: HighlightAdjacencyMatrix = {};
-		const highlightIndices = visiblePlans.reduce< number[] >( ( acc, { planName }, index ) => {
-			const isHighlight = isBusinessPlan( planName ) || isPremiumPlan( planName );
+		return visiblePlans.reduce< number[] >( ( acc, { planName }, index ) => {
+			const isHighlight =
+				isBusinessPlan( planName ) ||
+				isPremiumPlan( planName ) ||
+				currentPlan?.productSlug === planName;
 
 			if ( isHighlight ) {
 				acc.push( index );
@@ -22,6 +30,14 @@ const useHighlightAdjacencyMatrix = ( visiblePlans: PlanProperties[] ) => {
 
 			return acc;
 		}, [] );
+	}, [ currentPlan?.productSlug, visiblePlans ] );
+};
+
+const useHighlightAdjacencyMatrix = ( visiblePlans: PlanProperties[] ) => {
+	const highlightIndices = useHighlightIndices( visiblePlans );
+
+	return useMemo( () => {
+		const adjacencyMatrix: HighlightAdjacencyMatrix = {};
 
 		visiblePlans.forEach( ( { planName }, index ) => {
 			adjacencyMatrix[ planName ] = { leftOfHighlight: false, rightOfHighlight: false };
@@ -41,7 +57,7 @@ const useHighlightAdjacencyMatrix = ( visiblePlans: PlanProperties[] ) => {
 		}
 
 		return adjacencyMatrix;
-	}, [ visiblePlans ] );
+	}, [ highlightIndices, visiblePlans ] );
 };
 
 export default useHighlightAdjacencyMatrix;
