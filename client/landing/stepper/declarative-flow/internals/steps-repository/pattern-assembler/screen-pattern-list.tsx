@@ -19,14 +19,7 @@ const ScreenPatternList = ( { selectedPattern, onSelect, onBack, onDoneClick }: 
 
 	return (
 		<>
-			{ isSidebarRevampEnabled && (
-				<NavigatorHeader
-					title={ translate( 'Add patterns' ) }
-					description={ translate(
-						'Find the right patterns for you by exploring the list of categories below.'
-					) }
-				/>
-			) }
+			{ isSidebarRevampEnabled && <NavigatorHeader title={ translate( 'Add patterns' ) } /> }
 			<div className="screen-container__body">
 				<PatternSelector
 					title={ ! isSidebarRevampEnabled ? translate( 'Add sections' ) : undefined }

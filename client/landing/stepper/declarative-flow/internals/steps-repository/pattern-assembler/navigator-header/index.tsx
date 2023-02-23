@@ -3,7 +3,7 @@ import './style.scss';
 
 interface Props {
 	title: string;
-	description: string;
+	description?: string;
 }
 
 const NavigatorHeader = ( { title, description }: Props ) => {
