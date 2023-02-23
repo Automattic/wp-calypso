@@ -22,7 +22,7 @@ export function activate(
 	siteId,
 	source = 'unknown',
 	purchased = false,
-	keepCurrentHomepage = false
+	keepCurrentHomepage = true
 ) {
 	return ( dispatch, getState ) => {
 		if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
