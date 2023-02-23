@@ -9,7 +9,7 @@ import { NonClickableItem, ClickableItem } from './menu-items';
 
 import './style.scss';
 
-const UniversalNavbarHeader = ( { isLoggedIn = false, sectionName }: HeaderProps ) => {
+const UniversalNavbarHeader = ( { isLoggedIn = false, sectionName, logoColor }: HeaderProps ) => {
 	const translate = useTranslate();
 	const localizeUrl = useLocalizeUrl();
 	const locale = getLocaleSlug() ?? undefined;
@@ -47,7 +47,7 @@ const UniversalNavbarHeader = ( { isLoggedIn = false, sectionName }: HeaderProps
 										>
 											<WordPressWordmark
 												className="x-icon x-icon__logo"
-												color="var(--studio-blue-50)"
+												color={ logoColor ?? 'var(--studio-blue-50)' }
 											/>
 											<span className="x-hidden">WordPress.com</span>
 										</a>
@@ -233,13 +233,15 @@ const UniversalNavbarHeader = ( { isLoggedIn = false, sectionName }: HeaderProps
 									/>
 								</ul>
 								<ul className="x-nav-list x-nav-list__right">
-									<ClickableItem
-										className="x-nav-item x-nav-item__wide"
-										titleValue={ translate( 'Log In' ) }
-										content={ translate( 'Log In' ) }
-										urlValue={ localizeUrl( '//wordpress.com/log-in', locale, isLoggedIn ) }
-										type="nav"
-									/>
+									{ ! isLoggedIn && (
+										<ClickableItem
+											className="x-nav-item x-nav-item__wide"
+											titleValue={ translate( 'Log In' ) }
+											content={ translate( 'Log In' ) }
+											urlValue={ localizeUrl( '//wordpress.com/log-in', locale, isLoggedIn ) }
+											type="nav"
+										/>
+									) }
 									<ClickableItem
 										className="x-nav-item x-nav-item__wide"
 										titleValue={ translate( 'Get Started' ) }
@@ -292,20 +294,22 @@ const UniversalNavbarHeader = ( { isLoggedIn = false, sectionName }: HeaderProps
 							</button>
 							<div className="x-menu-list">
 								<div className="x-menu-list-title">{ translate( 'Get Started' ) }</div>
-								<ul className="x-menu-grid">
-									<ClickableItem
-										titleValue={ translate( 'Sign Up' ) }
-										content={ translate( 'Sign Up' ) }
-										urlValue={ startUrl }
-										type="menu"
-									/>
-									<ClickableItem
-										titleValue={ translate( 'Log In' ) }
-										content={ translate( 'Log In' ) }
-										urlValue={ localizeUrl( '//wordpress.com/log-in', locale, isLoggedIn ) }
-										type="menu"
-									/>
-								</ul>
+								{ ! isLoggedIn && (
+									<ul className="x-menu-grid">
+										<ClickableItem
+											titleValue={ translate( 'Sign Up' ) }
+											content={ translate( 'Sign Up' ) }
+											urlValue={ startUrl }
+											type="menu"
+										/>
+										<ClickableItem
+											titleValue={ translate( 'Log In' ) }
+											content={ translate( 'Log In' ) }
+											urlValue={ localizeUrl( '//wordpress.com/log-in', locale, isLoggedIn ) }
+											type="menu"
+										/>
+									</ul>
+								) }
 							</div>
 							<div className="x-menu-list">
 								<div className="x-hidden">{ translate( 'About' ) }</div>

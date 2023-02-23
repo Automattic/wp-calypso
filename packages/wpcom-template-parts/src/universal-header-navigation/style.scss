@@ -1,3 +1,6 @@
+$lp-font-stack-emoji: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+$lp-font-stack-default: -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica", "Arial", sans-serif, $lp-font-stack-emoji;
+$x-content-font-stack: $lp-font-stack-default;
 $studio-blue-15: #e5f4ff;
 $studio-blue-30: #0675c4;
 
@@ -511,11 +514,6 @@ $x-dropdown-item-line-height: 19px;
  * 5. Due to the way Dynamic Type is defined in CSS, some of the properties
  *    have to be overriden by repetition.
  */
-
-$lp-font-stack-emoji: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-$lp-font-stack-default: -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica", "Arial", sans-serif, $lp-font-stack-emoji;
-$x-content-font-stack: $lp-font-stack-default;
-
 %x-text {
 	font-family: $x-content-font-stack;
 	text-rendering: optimizelegibility;

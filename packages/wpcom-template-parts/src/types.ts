@@ -1,6 +1,7 @@
 export interface HeaderProps {
 	isLoggedIn: boolean;
 	sectionName?: string;
+	logoColor?: string;
 }
 
 export interface FooterProps {

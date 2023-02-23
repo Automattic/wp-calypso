@@ -6,8 +6,19 @@ function registerBlocks() {
 		title: 'Universal Header Navigation',
 		icon: 'editor-kitchensink',
 		category: 'embed',
-		description: 'Pricing Plan upgrade block',
-		attributes: {},
+		description: 'WordPress.com Header Template Part',
+		attributes: {
+			isLoggedIn: {
+				type: 'boolean',
+			},
+			logoColor: {
+				type: 'string',
+				default: '#0675c4',
+			},
+			sectionName: {
+				type: 'string',
+			},
+		},
 		edit: Edit,
 	} );
 }
