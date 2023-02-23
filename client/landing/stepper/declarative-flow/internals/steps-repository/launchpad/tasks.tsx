@@ -158,7 +158,6 @@ export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 		'design_selected',
 		'domain_upsell',
 		'first_post_published',
-		'design_edited',
 		'site_launched',
 	],
 	videopress: [ 'videopress_setup', 'plan_selected', 'videopress_upload', 'videopress_launched' ],
