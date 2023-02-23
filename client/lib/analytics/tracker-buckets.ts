@@ -9,12 +9,14 @@ import {
 import { isE2ETest } from 'calypso/lib/e2e';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import isJetpackCheckout from '../jetpack/is-jetpack-checkout';
+import { isWooExpressUpgrade } from './ad-tracking/woo/is-wooexpress-upgrade';
 
 const allAdTrackers = [
 	'bing',
 	'floodlight',
 	'fullstory',
 	'googleAds',
+	'googleTagManager',
 	'ga',
 	'gaEnhancedEcommerce',
 	'hotjar',
@@ -52,6 +54,7 @@ export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 	bing: Bucket.ADVERTISING,
 	floodlight: Bucket.ADVERTISING,
 	googleAds: Bucket.ADVERTISING,
+	googleTagManager: Bucket.ADVERTISING,
 	outbrain: Bucket.ADVERTISING,
 	pinterest: Bucket.ADVERTISING,
 	twitter: Bucket.ADVERTISING,
@@ -73,11 +76,21 @@ export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 
 const checkGtagInit = (): boolean => 'dataLayer' in window && 'gtag' in window;
 
+const checkWooGTMInit = (): boolean => {
+	// Only init GTM for Woo in certain conditions.
+	if ( ! isWooExpressUpgrade ) {
+		return false;
+	}
+	return true;
+	// TODO: need to guard this, e.g. return 'dataLayer' in window && 'google_tag_manager' in window;
+};
+
 export const AdTrackersInitGuards: Partial< { [ key in AdTracker ]: () => boolean } > = {
 	ga: checkGtagInit,
 	gaEnhancedEcommerce: checkGtagInit,
 	floodlight: checkGtagInit,
 	googleAds: checkGtagInit,
+	googleTagManager: checkWooGTMInit,
 	fullstory: () => 'FS' in window,
 	hotjar: () => 'hj' in window,
 	bing: () => 'uetq' in window,

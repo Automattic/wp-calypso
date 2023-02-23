@@ -9,6 +9,7 @@ import {
 	TRACKING_IDS,
 	FACEBOOK_TRACKING_SCRIPT_URL,
 	GOOGLE_GTAG_SCRIPT_URL,
+	GOOGLE_GTM_SCRIPT_URL,
 	BING_TRACKING_SCRIPT_URL,
 	CRITEO_TRACKING_SCRIPT_URL,
 	TWITTER_TRACKING_SCRIPT_URL,
@@ -64,6 +65,11 @@ function getTrackingScriptsToLoad() {
 	].filter( ( id ) => false !== id );
 	if ( enabledGtags.length > 0 ) {
 		scripts.push( GOOGLE_GTAG_SCRIPT_URL + enabledGtags[ 0 ] );
+	}
+
+	// Google tag manager is used by WooCommerce only.
+	if ( mayWeTrackByTracker( 'googleTagManager' ) ) {
+		scripts.push( GOOGLE_GTM_SCRIPT_URL + TRACKING_IDS.wooGoogleTagManagerId );
 	}
 
 	if ( mayWeTrackByTracker( 'bing' ) ) {

@@ -20,6 +20,7 @@ import {
 	Ga4PropertyGtag,
 } from './google-analytics-4';
 import { loadTrackingScripts } from './load-tracking-scripts';
+import { isWooExpressUpgrade } from './woo/is-wooexpress-upgrade';
 
 // Ensure setup has run.
 import './setup';
@@ -29,9 +30,10 @@ import './setup';
  *
  * @param {Object} cart - cart as `ResponseCart` object
  * @param {number} orderId - the order id
+ * @param {import('@automattic/data-stores/src').SiteDetails} selectedSiteData - site details
  * @returns {void}
  */
-export async function recordOrder( cart, orderId ) {
+export async function recordOrder( cart, orderId, selectedSiteData ) {
 	await refreshCountryCodeCookieGdpr();
 
 	await loadTrackingScripts();
@@ -58,6 +60,7 @@ export async function recordOrder( cart, orderId ) {
 	recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInWPcomGA4( cart, orderId, wpcomJetpackCartInfo );
+	recordOrderInWooGTM( cart, orderId, selectedSiteData );
 
 	// Fire a single tracking event without any details about what was purchased
 
@@ -538,6 +541,43 @@ function recordOrderInWPcomGA4( cart, orderId, wpcomJetpackCartInfo ) {
 		Ga4PropertyGtag.WPCOM
 	);
 	debug( 'recordOrderInWPcomGA4: Record WPcom Purchase in GA4' );
+}
+
+/**
+ * Sends a purchase event to Google Tag Manager for eligible Woo Express upgrades.
+ *
+ * @param {import('@automattic/shopping-cart').ResponseCart} cart
+ * @param {string} orderId
+ * @param {import('@automattic/data-stores/src').SiteDetails} selectedSiteData
+ * @returns {void}
+ */
+function recordOrderInWooGTM( cart, orderId, selectedSiteData ) {
+	if (
+		! mayWeTrackByTracker( 'googleTagManager' ) ||
+		! isWooExpressUpgrade( cart, selectedSiteData )
+	) {
+		return;
+	}
+	// The structure of the dataLayer item: event: string, eventName: string, obj: {string: any}.
+	const purchaseEventMeta = [
+		'event',
+		'purchase',
+		{
+			send_to: TRACKING_IDS.wooGoogleTagManagerId,
+			coupon: cart.coupon?.toString() ?? '',
+			transaction_id: orderId,
+			currency: 'USD',
+			items: cart.products.map( ( { product_id, product_name, cost, volume } ) => ( {
+				id: product_id.toString(),
+				name: product_name.toString(),
+				quantity: parseInt( volume ),
+				price: costToUSD( cost, cart.currency ) ?? 0,
+				billing_term: cart.billing?.interval_unit,
+			} ) ),
+			value: cart.total_cost_integer / 100,
+		},
+	];
+	window.dataLayer.push( purchaseEventMeta );
 }
 
 /**
