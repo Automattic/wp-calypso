@@ -7,7 +7,7 @@ export const EmptyDeployments = () => {
 		<div className="deployment-card__empty-deployments">
 			<p>
 				{ translate(
-					'Pushing to the connected branch will trigger a deployment. {{a}}Learn more{{/a}}',
+					'Push to the connected branch to trigger a deployment. {{a}}Learn more{{/a}}',
 					{
 						components: {
 							a: <ExternalLink href="#" />,
