@@ -775,15 +775,12 @@ export class JetpackAuthorize extends Component {
 		if ( config.isEnabled( 'jetpack/offer-complete-after-activation' ) ) {
 			const isMultisite = this.props.site && this.props.site.is_multisite;
 			if ( ! isMultisite && this.props.site ) {
-				const jpcTargetCompete = addQueryArgs(
-					{ redirect: redirectAfterAuth },
-					`${ JPC_PATH_PLANS_COMPLETE }/${ urlToSlug( homeUrl ) }`
-				);
+				const jpcTargetComplete = `${ JPC_PATH_PLANS_COMPLETE }/${ urlToSlug( homeUrl ) }`;
 				debug(
 					'authorization-form: getRedirectionTarget -> Redirection target is: %s',
-					jpcTargetCompete
+					jpcTargetComplete
 				);
-				return jpcTargetCompete;
+				return jpcTargetComplete;
 			}
 		}
 

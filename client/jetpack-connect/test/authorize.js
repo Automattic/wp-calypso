@@ -534,11 +534,7 @@ describe( 'JetpackAuthorize', () => {
 
 			const target = global.window.location.href;
 
-			expect( target ).toBe(
-				`${ JPC_PATH_PLANS_COMPLETE }/${ SITE_SLUG }?redirect=${ encodeURIComponent(
-					DEFAULT_PROPS.authQuery.redirectAfterAuth
-				) }`
-			);
+			expect( target ).toBe( `${ JPC_PATH_PLANS_COMPLETE }/${ SITE_SLUG }` );
 		} );
 	} );
 } );
