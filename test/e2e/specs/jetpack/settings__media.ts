@@ -19,7 +19,7 @@ describe( DataHelper.createSuiteTitle( 'Jetpack Settings: Media' ), function () 
 	beforeAll( async function () {
 		page = await browser.newPage();
 
-		const testAccount = new TestAccount( 'jetpackUser' );
+		const testAccount = new TestAccount( 'jetpackRemoteSiteUser' );
 		await testAccount.authenticate( page );
 	} );
 

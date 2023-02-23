@@ -158,6 +158,7 @@ describe( 'envToFeatureKey', () => {
 		COBLOCKS_EDGE: true,
 		GUTENBERG_EDGE: false,
 		TEST_ON_ATOMIC: false,
+		JETPACK_TARGET: 'wpcom-production',
 	};
 
 	it( 'will return a proper `FeatureKey` object', () => {
