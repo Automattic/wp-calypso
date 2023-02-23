@@ -34,19 +34,19 @@ const ThemeStyleVariations = ( {
 
 		const resizeObserver = new ResizeObserver( ( [ observerNode ] ) => {
 			const node = observerNode.target;
-			const nodeFirstChildRect = ( node.firstChild as HTMLElement )?.getBoundingClientRect();
-			const nodeLastChildRect = ( node.lastChild as HTMLElement )?.getBoundingClientRect();
-			if ( ! nodeFirstChildRect || ! nodeLastChildRect ) {
+			const nodeFirstChild = node.firstChild as HTMLElement;
+			const nodeLastChild = node.lastChild as HTMLElement;
+			if ( ! nodeFirstChild || ! nodeLastChild ) {
 				return;
 			}
 
 			// Detect flex wrap.
-			const currentIsCollapsible = nodeFirstChildRect.top !== nodeLastChildRect.top;
+			const currentIsCollapsible = nodeLastChild.offsetTop > nodeFirstChild.offsetTop;
 			const shouldCollapse = isCollapsible !== currentIsCollapsible || isCollapsed;
 
 			setIsCollapsible( currentIsCollapsible );
 			setIsCollapsed( shouldCollapse );
-			setCollapsibleMaxHeight( shouldCollapse ? nodeFirstChildRect.height : node.scrollHeight );
+			setCollapsibleMaxHeight( shouldCollapse ? nodeFirstChild.offsetHeight : node.scrollHeight );
 		} );
 
 		resizeObserver.observe( observerRef.current );
