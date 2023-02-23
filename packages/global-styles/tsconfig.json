@@ -3,8 +3,7 @@
 	"compilerOptions": {
 		"declarationDir": "dist/types",
 		"outDir": "dist/esm",
-		"rootDir": "src",
-		"types": []
+		"rootDir": "src"
 	},
 	"include": [ "src", "src/*.json" ],
 	"exclude": [ "**/__tests__/*", "**/__mocks__/*" ]

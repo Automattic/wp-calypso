@@ -10,6 +10,10 @@ interface GroupedIndexStore {
 	[ key: string ]: boolean;
 }
 
+interface AnyFunction {
+	( ...args: unknown[] ): unknown;
+}
+
 export default function DropdownGroup( {
 	children,
 	className = '',
@@ -83,7 +87,7 @@ export default function DropdownGroup( {
 		if ( containGroupedIndexes || always ) {
 			return (
 				<Dropdown
-					renderToggle={ ( { onToggle } ) => (
+					renderToggle={ ( { onToggle }: { [ key: string ]: AnyFunction } ) => (
 						<ToolbarButton
 							className={ classnames(
 								'responsive-toolbar-group__more-item',
@@ -98,7 +102,7 @@ export default function DropdownGroup( {
 							<Icon icon={ chevronDown } />
 						</ToolbarButton>
 					) }
-					renderContent={ ( { onClose } ) => (
+					renderContent={ ( { onClose }: { [ key: string ]: AnyFunction } ) => (
 						<MenuGroup>
 							{ getChildrenToRender()
 								.filter( ( { grouped } ) => grouped )
