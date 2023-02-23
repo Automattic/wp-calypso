@@ -41,14 +41,17 @@ const LaunchpadSitePreview = ( {
 		components: { strong: <strong /> },
 	} );
 
+	// We want to show an upsell banner in some conditions, such as free plan.
 	const shouldShowUpsell = site?.plan?.is_free;
 
+	// Track upsell impression when it is shown.
 	useEffect( () => {
 		if ( shouldShowUpsell ) {
 			recordTracksEvent( 'calypso_launchpad_preview_domain_upsell_impression' );
 		}
 	}, [ shouldShowUpsell ] );
 
+	// Create click handler for upsell to send tracks event and navigation.
 	const getUpsellClickHandler = useCallback( () => {
 		recordTracksEvent( 'calypso_launchpad_preview_domain_upsell_click' );
 		window.location.assign( `/domains/add/${ siteSlug }?domainAndPlanPackage=true` );
@@ -110,6 +113,14 @@ const LaunchpadSitePreview = ( {
 		}
 	}
 
+	const upsellBanner = shouldShowUpsell && (
+		<DomainUpsellCalloutContent
+			domain={ siteSlug }
+			ctaClickHandler={ getUpsellClickHandler }
+			dismissClickHandler={ false }
+		/>
+	);
+
 	return (
 		<div
 			className={ classnames( 'launchpad__site-preview-wrapper', {
@@ -135,15 +146,7 @@ const LaunchpadSitePreview = ( {
 				devicesToShow={ devicesToShow }
 				showSiteAddressBar={ false }
 				enableEditOverlay
-				bannerToShow={
-					shouldShowUpsell && (
-						<DomainUpsellCalloutContent
-							domain={ siteSlug }
-							ctaClickHandler={ getUpsellClickHandler }
-							dismissClickHandler={ false }
-						/>
-					)
-				}
+				frameBanner={ upsellBanner }
 			/>
 		</div>
 	);

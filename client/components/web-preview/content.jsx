@@ -394,7 +394,6 @@ export default class WebPreviewContent extends Component {
 				{ this.props.showExternal && this.props.isModalWindow && ! this.props.isPrivateAtomic && (
 					<DomainUpsellCallout trackEvent="site_preview_domain_upsell_callout" />
 				) }
-				{ this.props.bannerToShow }
 				{ this.props.belowToolbar }
 				{ ( ! isLoaded || this.state.isLoadingSubpage ) && <SpinnerLine /> }
 				<div
@@ -412,66 +411,72 @@ export default class WebPreviewContent extends Component {
 					) }
 					{ 'seo' !== this.state.device && (
 						<div
-							onMouseEnter={ () => {
-								if ( this.props.enableEditOverlay ) {
-									this.setState( { showIFrameOverlay: true } );
-								}
-							} }
-							onMouseLeave={ () => {
-								if ( this.props.enableEditOverlay ) {
-									this.setState( { showIFrameOverlay: false } );
-								}
-							} }
 							className={ classNames( 'web-preview__frame-wrapper', {
 								'is-resizable': ! this.props.isModalWindow,
 							} ) }
 						>
-							<iframe
-								ref={ this.setIframeInstance }
-								className="web-preview__frame"
-								style={ {
-									...this.state.iframeStyle,
-									height: this.state.viewport?.height,
-									pointerEvents: this.props.enableEditOverlay ? 'auto' : 'all',
+							{ this.props.frameBanner }
+							<div
+								className="web-preview__overlay-handler"
+								onMouseEnter={ () => {
+									if ( this.props.enableEditOverlay ) {
+										this.setState( { showIFrameOverlay: true } );
+									}
 								} }
-								src="about:blank"
-								onLoad={ () => this.setLoaded( 'iframe-onload' ) }
-								title={ this.props.iframeTitle || translate( 'Preview' ) }
-								fetchpriority={ fetchpriority ? fetchpriority : undefined }
-								scrolling={ autoHeight ? 'no' : undefined }
-								tabIndex={ disableTabbing ? -1 : 0 }
-							/>
-							{ this.props.enableEditOverlay && (
-								<div
-									className="web-preview__frame-edit-overlay"
+								onMouseLeave={ () => {
+									if ( this.props.enableEditOverlay ) {
+										this.setState( { showIFrameOverlay: false } );
+									}
+								} }
+								style={ { height: '100%', width: '100%', position: 'absolute' } }
+							>
+								<iframe
+									ref={ this.setIframeInstance }
+									className="web-preview__frame"
 									style={ {
-										opacity: this.state.showIFrameOverlay ? '1' : '0',
-										background: this.state.showIFrameOverlay
-											? `rgba(16, 21, 23, 0.5)`
-											: 'rgba(16, 21, 23, 0)',
-										transition: 'background 0.2s ease',
-										pointerEvents: 'none',
+										...this.state.iframeStyle,
+										height: this.state.viewport?.height,
+										pointerEvents: this.props.enableEditOverlay ? 'auto' : 'all',
 									} }
-								>
-									<button
+									src="about:blank"
+									onLoad={ () => this.setLoaded( 'iframe-onload' ) }
+									title={ this.props.iframeTitle || translate( 'Preview' ) }
+									fetchpriority={ fetchpriority ? fetchpriority : undefined }
+									scrolling={ autoHeight ? 'no' : undefined }
+									tabIndex={ disableTabbing ? -1 : 0 }
+								/>
+								{ this.props.enableEditOverlay && (
+									<div
+										className="web-preview__frame-edit-overlay"
 										style={ {
-											position: 'relative',
-											top: this.state.showIFrameOverlay ? '0' : '15px',
-											transition: 'all 0.2s ease',
-											pointerEvents: 'all',
+											opacity: this.state.showIFrameOverlay ? '1' : '0',
+											background: this.state.showIFrameOverlay
+												? `rgba(16, 21, 23, 0.5)`
+												: 'rgba(16, 21, 23, 0)',
+											transition: 'background 0.2s ease',
+											pointerEvents: 'none',
 										} }
-										aria-label="Edit your new site"
-										className="web-preview__frame-edit-button"
-										onClick={ () => {
-											window.location.assign( `/site-editor/${ this.props.externalUrl }` );
-										} }
-										onFocus={ () => this.setState( { showIFrameOverlay: true } ) }
-										onBlur={ () => this.setState( { showIFrameOverlay: false } ) }
 									>
-										{ translate( 'Edit' ) }
-									</button>
-								</div>
-							) }
+										<button
+											style={ {
+												position: 'relative',
+												top: this.state.showIFrameOverlay ? '0' : '15px',
+												transition: 'all 0.2s ease',
+												pointerEvents: 'all',
+											} }
+											aria-label="Edit your new site"
+											className="web-preview__frame-edit-button"
+											onClick={ () => {
+												window.location.assign( `/site-editor/${ this.props.externalUrl }` );
+											} }
+											onFocus={ () => this.setState( { showIFrameOverlay: true } ) }
+											onBlur={ () => this.setState( { showIFrameOverlay: false } ) }
+										>
+											{ translate( 'Edit' ) }
+										</button>
+									</div>
+								) }
+							</div>
 						</div>
 					) }
 					{ 'seo' === this.state.device && (
