@@ -5,6 +5,8 @@ import { useSelector } from 'react-redux';
 import Count from 'calypso/components/count';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getPostStat } from 'calypso/state/stats/posts/selectors';
 import StatsDetailsNavigation from '../stats-details-navigation';
 import PostLikes from '../stats-post-likes';
@@ -65,7 +67,13 @@ export default function PostDetailHighlightsSection( {
 		title: decodeEntities( stripHTML( textTruncator( post?.title, POST_STATS_CARD_TITLE_LIMIT ) ) ),
 	};
 
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const isJetpack = useSelector( ( state ) => siteId && isJetpackSite( state, siteId ) );
+	const isAtomic = useSelector( ( state ) => siteId && isSiteWpcomAtomic( state, siteId ) );
+	const isWPcomSite = ! isJetpack || isAtomic;
+
+	// postId > 0: Show the tabs for posts except for the Home Page (postId = 0).
+	// isWPcomSite: The Newsletter Stats is only covering `WPCOM sites` for now.
+	const isEmailTabsAvailable = config.isEnabled( 'newsletter/stats' ) && postId > 0 && isWPcomSite;
 
 	return (
 		<div className="stats__post-detail-highlights-section">
@@ -79,7 +87,7 @@ export default function PostDetailHighlightsSection( {
 			<div className="highlight-cards">
 				<h1 className="highlight-cards-heading">{ translate( 'Highlights' ) }</h1>
 
-				{ config.isEnabled( 'newsletter/stats' ) && ! isOdysseyStats && (
+				{ isEmailTabsAvailable && (
 					<StatsDetailsNavigation postId={ postId } givenSiteId={ siteId } />
 				) }
 
