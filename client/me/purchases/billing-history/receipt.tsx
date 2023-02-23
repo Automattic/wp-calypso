@@ -32,6 +32,7 @@ import {
 	renderTransactionAmount,
 	renderTransactionQuantitySummary,
 } from './utils';
+import { VatVendorDetails } from './vat-vendor-details';
 import type { BillingTransaction } from 'calypso/state/billing-transactions/types';
 import type { IAppState } from 'calypso/state/types';
 import type { LocalizeProps } from 'i18n-calypso';
@@ -265,46 +266,11 @@ function UserVatDetails( { transaction }: { transaction: BillingTransaction } ) 
 	);
 }
 
-function VendorVatDetails() {
-	const translate = useTranslate();
-
-	return (
-		<li>
-			<strong>{ translate( 'Vendor VAT Details' ) }</strong>
-			<span>
-				Aut O’Mattic Ltd.
-				<br />
-				c/o Noone Casey
-				<br />
-				Grand Canal Dock, 25 Herbert Pl
-				<br />
-				Dublin, D02 AY86
-				<br />
-				Ireland
-				<br />
-			</span>
-			<span className="receipt__vat-vendor-details-number">
-				{ translate( '{{strong}}Vendor VAT #:{{/strong}} %(ieVatNumber)s and %(ukVatNumber)s', {
-					components: {
-						strong: <strong />,
-					},
-					args: {
-						ieVatNumber: 'IE 3255131SH',
-						ukVatNumber: 'UK 376 1703 88',
-					},
-					comment:
-						"This is both of Automattic's vendor VAT numbers with 'and' separating the numbers, format 'IE 3255131SH and UK 376 1703 88'.",
-				} ) }
-			</span>
-		</li>
-	);
-}
-
 function VatDetails( { transaction }: { transaction: BillingTransaction } ) {
 	return (
 		<>
 			<UserVatDetails transaction={ transaction } />
-			<VendorVatDetails />
+			<VatVendorDetails transaction={ transaction } />
 		</>
 	);
 }
