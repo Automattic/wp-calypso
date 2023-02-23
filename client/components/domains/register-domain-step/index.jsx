@@ -578,12 +578,13 @@ class RegisterDomainStep extends Component {
 	rejectTrademarkClaim = () => {
 		this.setState( {
 			selectedSuggestion: null,
+			selectedSuggestionPosition: null,
 			trademarkClaimsNoticeInfo: null,
 		} );
 	};
 
 	acceptTrademarkClaim = () => {
-		this.props.onAddDomain( this.state.selectedSuggestion );
+		this.props.onAddDomain( this.state.selectedSuggestion, this.state.selectedSuggestionPosition );
 	};
 
 	renderTrademarkClaimsNotice() {
@@ -1327,7 +1328,7 @@ class RegisterDomainStep extends Component {
 		return <FreeDomainExplainer onSkip={ this.props.hideFreePlan } />;
 	}
 
-	onAddDomain = ( suggestion ) => {
+	onAddDomain = ( suggestion, position ) => {
 		const domain = get( suggestion, 'domain_name' );
 		const { premiumDomains } = this.state;
 
@@ -1365,13 +1366,14 @@ class RegisterDomainStep extends Component {
 						this.setState( {
 							trademarkClaimsNoticeInfo: trademarkClaimsNoticeInfo,
 							selectedSuggestion: suggestion,
+							selectedSuggestionPosition: position,
 						} );
 					} else {
-						this.props.onAddDomain( suggestion );
+						this.props.onAddDomain( suggestion, position );
 					}
 				} );
 		} else {
-			this.props.onAddDomain( suggestion );
+			this.props.onAddDomain( suggestion, position );
 		}
 	};
 

@@ -81,9 +81,9 @@ class DomainSearch extends Component {
 		} );
 	};
 
-	handleAddRemoveDomain = ( suggestion ) => {
+	handleAddRemoveDomain = ( suggestion, position ) => {
 		if ( ! hasDomainInCart( this.props.cart, suggestion.domain_name ) ) {
-			this.addDomain( suggestion );
+			this.addDomain( suggestion, position );
 		} else {
 			this.removeDomain( suggestion );
 		}
@@ -133,7 +133,7 @@ class DomainSearch extends Component {
 		}
 	}
 
-	async addDomain( suggestion ) {
+	async addDomain( suggestion, position ) {
 		const {
 			domain_name: domain,
 			product_slug: productSlug,
@@ -141,7 +141,7 @@ class DomainSearch extends Component {
 			is_premium: isPremium,
 		} = suggestion;
 
-		this.props.recordAddDomainButtonClick( domain, 'domains', isPremium );
+		this.props.recordAddDomainButtonClick( domain, 'domains', position, isPremium );
 
 		let registration = domainRegistration( {
 			domain,
