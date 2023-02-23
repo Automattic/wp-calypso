@@ -64,7 +64,10 @@ export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 				translate( '1TB of ad-free video hosting.' )
 			),
 
-			...setTranslation( JETPACK_BOOST_PRODUCTS, translate( 'Automatic CSS generation.' ) ),
+			...setTranslation(
+				JETPACK_BOOST_PRODUCTS,
+				translate( 'Speed up your site and improve SEO with automatic critical CSS generation.' )
+			),
 
 			...setTranslation(
 				JETPACK_SEARCH_PRODUCTS,

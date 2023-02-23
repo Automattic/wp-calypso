@@ -117,7 +117,7 @@ class WordAdsChartTabs extends Component {
 	}
 
 	render() {
-		const { siteId, query, isDataLoading, activeTab } = this.props;
+		const { siteId, query, isDataLoading } = this.props;
 		const classes = [
 			'is-chart-tabs',
 			{
@@ -133,7 +133,7 @@ class WordAdsChartTabs extends Component {
 					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 					<StatsModulePlaceholder className="is-chart" isLoading={ isDataLoading } />
 					<Chart barClick={ this.props.barClick } data={ this.buildChartData() } minBarWidth={ 35 }>
-						<StatsEmptyState stateType={ activeTab && activeTab.label } />
+						<StatsEmptyState />
 					</Chart>
 					<StatTabs
 						data={ this.props.data }

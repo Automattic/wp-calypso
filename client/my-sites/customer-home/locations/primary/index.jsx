@@ -29,6 +29,7 @@ import {
 	TASK_REACTIVATE_EXPIRED_PLAN,
 	TASK_REACTIVATE_ATOMIC_TRANSFER,
 	TASK_REACTIVATE_RESTORE_BACKUP,
+	TASK_FIVERR,
 } from 'calypso/my-sites/customer-home/cards/constants';
 import CelebrateSiteCopy from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-copy';
 import CelebrateSiteCreation from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-creation';
@@ -39,6 +40,7 @@ import SiteLaunchSellerUpsell from 'calypso/my-sites/customer-home/cards/notices
 import ConnectAccounts from 'calypso/my-sites/customer-home/cards/tasks/connect-accounts';
 import EarnFeatures from 'calypso/my-sites/customer-home/cards/tasks/earn-features';
 import FindDomain from 'calypso/my-sites/customer-home/cards/tasks/find-domain';
+import Fiverr from 'calypso/my-sites/customer-home/cards/tasks/fiverr';
 import GoMobile from 'calypso/my-sites/customer-home/cards/tasks/go-mobile';
 import Marketplace from 'calypso/my-sites/customer-home/cards/tasks/marketplace';
 import PromotePost from 'calypso/my-sites/customer-home/cards/tasks/promote-post';
@@ -79,6 +81,7 @@ const cardComponents = {
 	[ TASK_WP_COURSES ]: WPCourses,
 	[ TASK_VERIFY_EMAIL ]: VerifyEmail,
 	[ TASK_USE_BUILT_BY ]: UseBuiltBy,
+	[ TASK_FIVERR ]: Fiverr,
 };
 
 const urgentTasks = [

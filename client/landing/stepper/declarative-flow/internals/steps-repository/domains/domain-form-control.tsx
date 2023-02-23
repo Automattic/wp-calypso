@@ -26,7 +26,7 @@ import type { DomainSuggestion, DomainForm } from '@automattic/data-stores';
 interface DomainFormControlProps {
 	analyticsSection: string;
 	flow: string | null;
-	onAddDomain: ( suggestion: DomainSuggestion ) => void;
+	onAddDomain: ( suggestion: DomainSuggestion, position: number ) => void;
 	onAddMapping: ( domain: string ) => void;
 	onAddTransfer: ( { domain, authCode }: { domain: string; authCode: string } ) => void;
 	onSkip: ( _googleAppsCartItem?: any, shouldHideFreePlan?: boolean ) => void;

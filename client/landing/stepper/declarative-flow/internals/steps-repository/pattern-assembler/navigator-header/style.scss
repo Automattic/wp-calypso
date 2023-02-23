@@ -1,0 +1,29 @@
+@import "@automattic/typography/styles/fonts";
+
+.pattern-assembler {
+	.navigator-header__title {
+		font-family: Recoleta, sans-serif;
+		font-style: normal;
+		font-weight: 400;
+		font-size: $font-title-large;
+		line-height: 40px;
+		letter-spacing: -0.32px;
+		color: var(--color-neutral-100);
+		margin-bottom: 8px;
+	}
+
+	.navigator-header__description {
+		font-weight: 400;
+		line-height: 24px;
+		letter-spacing: -0.1px;
+		color: var(--color-neutral-60);
+		padding-bottom: 24px;
+	}
+}
+
+.pattern-assembler.pattern-assembler__sidebar-revamp {
+	.navigator-header__description {
+		font-size: $font-body-small;
+		letter-spacing: -0.15px;
+	}
+}

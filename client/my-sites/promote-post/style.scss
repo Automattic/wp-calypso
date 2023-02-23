@@ -33,3 +33,19 @@
 		font-size: $font-body;
 	}
 }
+
+.is-mobile-app-view {
+	.advertising__page-header,
+	.promote-post .posts-list-banner__container,
+	.promote-post .section-nav,
+	.promote-post .post-item__link {
+		display: none;
+	}
+	.layout.has-no-masterbar.is-group-sites.is-section-promote-post .layout__content {
+		padding-top: 0;
+	}
+
+	.layout__primary .main {
+		padding-bottom: 0;
+	}
+}

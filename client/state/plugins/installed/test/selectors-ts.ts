@@ -5,6 +5,7 @@ import {
 	INSTALL_PLUGIN,
 } from 'calypso/lib/plugins/constants';
 import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
+import { getSite } from 'calypso/state/sites/selectors';
 import {
 	getAllPluginsIndexedByPluginSlug,
 	getAllPluginsIndexedBySiteId,
@@ -13,6 +14,11 @@ import {
 	getPluginOnSite,
 	getPluginOnSites,
 	getPluginsOnSite,
+	getSiteObjectsWithPlugin,
+	getSitesWithPlugin,
+	getSitesWithoutPlugin,
+	isRequesting,
+	isRequestingForSites,
 } from '../selectors-ts';
 import { akismet, helloDolly, jetpack } from './fixtures/plugins';
 
@@ -163,6 +169,38 @@ const helloDollyWithSites = deepFreeze( {
 			autoupdate: true,
 		},
 	},
+} );
+
+describe( 'isRequesting', () => {
+	test( 'Should get `false` if this site is not in the current state', () => {
+		expect( isRequesting( state, nonExistingSiteId1 ) ).toBe( false );
+	} );
+
+	test( 'Should get `false` if this site is not being fetched', () => {
+		expect( isRequesting( state, siteOneId ) ).toBe( false );
+	} );
+
+	test( 'Should get `true` if this site is being fetched', () => {
+		expect( isRequesting( state, siteThreeId ) ).toBe( true );
+	} );
+} );
+
+describe( 'isRequestingForSites', () => {
+	test( 'Should get `false` if no sites are being fetched', () => {
+		expect( isRequestingForSites( state, [ siteOneId, siteTwoId ] ) ).toBe( false );
+	} );
+
+	test( 'Should get `true` if any site is being fetched', () => {
+		expect( isRequestingForSites( state, [ siteOneId, siteThreeId ] ) ).toBe( true );
+	} );
+
+	test( 'Should get `true` if any site is being fetched, even if one is not in the current state', () => {
+		expect( isRequestingForSites( state, [ nonExistingSiteId1, siteThreeId ] ) ).toBe( true );
+	} );
+
+	test( 'Should get `false` if sites are not being fetched, including a site not in the current state', () => {
+		expect( isRequestingForSites( state, [ nonExistingSiteId1, siteTwoId ] ) ).toBe( false );
+	} );
 } );
 
 describe( 'getAllPluginsIndexedByPluginSlug', () => {
@@ -384,5 +422,55 @@ describe( 'getPluginsOnSite', () => {
 				},
 			},
 		] );
+	} );
+} );
+
+describe( 'getSitesWithPlugin', () => {
+	test( 'Should get an empty array if the requested site is not in the current state', () => {
+		expect( getSitesWithPlugin( state, [ nonExistingSiteId1 ], 'akismet' ) ).toHaveLength( 0 );
+	} );
+
+	test( "Should get an empty array if the requested plugin doesn't exist on any sites' state", () => {
+		expect( getSitesWithPlugin( state, [ siteOneId, siteTwoId ], 'vaultpress' ) ).toHaveLength( 0 );
+	} );
+
+	test( 'Should get an array of sites with the requested plugin', () => {
+		const siteIds = getSitesWithPlugin( state, [ siteOneId, siteTwoId ], 'jetpack' );
+		expect( siteIds ).toEqual( [ siteTwoId ] );
+	} );
+} );
+
+describe( 'getSiteObjectsWithPlugin', () => {
+	test( 'Should get an empty array if the requested site is not in the current state', () => {
+		expect( getSiteObjectsWithPlugin( state, [ nonExistingSiteId1 ], 'akismet' ) ).toHaveLength(
+			0
+		);
+	} );
+
+	test( "Should get an empty array if the requested plugin doesn't exist on any sites' state", () => {
+		expect(
+			getSiteObjectsWithPlugin( state, [ siteOneId, siteTwoId ], 'vaultpress' )
+		).toHaveLength( 0 );
+	} );
+
+	test( 'Should get an array of sites with the requested plugin', () => {
+		const siteIds = getSiteObjectsWithPlugin( state, [ siteOneId, siteTwoId ], 'jetpack' );
+		expect( siteIds ).toEqual( [ getSite( state, siteTwoId ) ] );
+	} );
+} );
+
+describe( 'getSitesWithoutPlugin', () => {
+	test( 'Should get an empty array if the requested site is not in the current state', () => {
+		expect( getSitesWithoutPlugin( state, [ nonExistingSiteId1 ], 'akismet' ) ).toHaveLength( 0 );
+	} );
+
+	test( "Should get an array of sites that don't have the plugin in their state", () => {
+		const siteIds = getSitesWithoutPlugin( state, [ siteOneId, siteTwoId ], 'akismet' );
+		expect( siteIds ).toEqual( [ siteTwoId ] );
+	} );
+
+	test( 'Should get an empty array if the requested plugin exists on all requested sites', () => {
+		const siteIds = getSitesWithoutPlugin( state, [ siteOneId, siteTwoId ], 'hello-dolly' );
+		expect( siteIds ).toHaveLength( 0 );
 	} );
 } );

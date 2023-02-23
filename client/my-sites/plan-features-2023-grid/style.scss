@@ -568,28 +568,6 @@ body.is-section-signup.is-white-signup,
 			}
 		}
 
-		.plan-pill {
-			font-family: Inter, $sans;
-			font-size: 0.75rem;
-			font-weight: 500;
-			color: var(--studio-white);
-			letter-spacing: 0.2px;
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-			line-height: 1.25rem;
-			padding: 0 9px;
-			right: unset;
-			left: unset;
-			top: unset;
-			bottom: 0;
-			border-radius: 4px;
-			background-color: var(--studio-gray-80);
-			transform: translate(20px, -50px);
-			text-transform: unset;
-			@include plans-2023-break-small {
-				transform: translate(20px, 0);
-			}
-		}
-
 		&.popular-plan-parent-class {
 			position: relative;
 
@@ -603,15 +581,43 @@ body.is-section-signup.is-white-signup,
 
 				@include plans-2023-break-small {
 					position: absolute;
-					top: -38px;
+					top: -35px; // at -35px this covers the top border of the table, including its top-right radius, as intended
 					right: -1px;
 					border-color: #e0e0e0;
 					border-width: 1px 1px 0 1px;
-					/* stylelint-disable-next-line */
+					/* stylelint-disable-next-line scales/radii */
 					border-radius: 5px 5px 0 0;
 					border-style: solid;
 					padding-top: 20px;
 					margin-bottom: 0;
+				}
+
+				.plan-pill {
+					font-family: Inter, $sans;
+					font-size: 0.75rem;
+					font-weight: 500;
+					color: var(--studio-white);
+					letter-spacing: 0.2px;
+					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+					line-height: 1.25rem;
+					padding: 0 9px;
+					right: unset;
+					left: unset;
+					top: unset;
+					bottom: 0;
+					border-radius: 4px;
+					background-color: var(--studio-gray-80);
+					transform: translate(20px, -50px);
+					text-transform: unset;
+					@include plans-2023-break-small {
+						transform: translate(20px, 0);
+					}
+				}
+
+				&:not(.with-plan-logo) {
+					.plan-pill {
+						transform: translate(20px, 0);
+					}
 				}
 			}
 		}
@@ -699,6 +705,38 @@ body.is-section-signup.is-white-signup,
 			margin: 24px 20px;
 		}
 	}
+
+	// adjust border radius for having multiple popular badges in tablet view
+	.plan-features-2023-grid__tablet-view {
+		.plan-features-2023-grid__table-item.plan-features-2023-grid__table-item {
+			&.popular-plan-parent-class {
+				.plan-features-2023-grid__popular-badge {
+					&.is-business-plan {
+						border-top-right-radius: 0;
+					}
+
+					&.is-ecommerce-plan {
+						border-top-left-radius: 0;
+					}
+				}
+			}
+		}
+	}
+	// adjust border radius for having multiple popular badges in desktop view
+	.plan-features-2023-grid__desktop-view {
+		.plan-features-2023-grid__table-item.plan-features-2023-grid__table-item {
+			&.popular-plan-parent-class {
+				.plan-features-2023-grid__popular-badge {
+					&.is-premium-plan {
+						border-top-right-radius: 0;
+					}
+					&.is-business-plan {
+						border-top-left-radius: 0;
+					}
+				}
+			}
+		}
+	}
 }
 
 .plans-features-main.is-pricing-grid-2023-plans-features-main  ul.segmented-control.price-toggle,
@@ -758,7 +796,7 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 	.plan-features-2023-gridrison__actions-buttons {
 		min-height: 40px;
 	}
-	.plan-comparison-grid__header {
+	.plan-comparison-grid__header-cell {
 		display: flex;
 		flex-direction: column;
 		align-items: stretch;
@@ -813,8 +851,55 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 					border-style: solid;
 				}
 
-				&:last-of-type .plan-features-2023-grid__popular-badge {
-					padding-right: 20px;
+				&.is-left-of-highlight {
+					.plan-features-2023-grid__popular-badge {
+						border-top-right-radius: 0;
+					}
+				}
+
+				&.is-right-of-highlight {
+					.plan-features-2023-grid__popular-badge {
+						border-top-left-radius: 0;
+						left: 0;
+					}
+
+					// fixes border alignment
+					// on badge that is on the last popular plan but not last in row
+					// (so second to last with last being a personal plan)
+					&:not(:last-of-type) {
+						&:not(.is-last-in-row) {
+							.plan-features-2023-grid__popular-badge {
+								border-left: 0;
+								box-sizing: border-box;
+								left: 1px;
+							}
+						}
+					}
+
+				}
+
+				&:last-of-type {
+					&:not(.is-only-highlight) {
+						.plan-features-2023-grid__popular-badge {
+							padding-right: 19px;
+						}
+
+						// fixes border alignment
+						// on last popular plan that is not adjacent to another popular plan
+						// (so last with second to last being a personal plan)
+						&:not(.is-right-of-highlight) {
+							.plan-features-2023-grid__popular-badge {
+								padding-right: 20px;
+							}
+						}
+					}
+					// fixes border alignment
+					// on last popular plan that is only popular plan (3 column layout)
+					&.is-only-highlight {
+						.plan-features-2023-grid__popular-badge {
+							padding-right: 20px;
+						}
+					}
 				}
 			}
 		}
@@ -889,7 +974,7 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 	}
 	.popular-plan-parent-class {
 		position: relative;
-		&::before,
+		&:not(.is-right-of-highlight)::before,
 		&::after {
 			content: "";
 			display: none;

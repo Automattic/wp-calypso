@@ -7,6 +7,7 @@ export type HorizontalBarListProps = {
 
 export type HorizontalBarListItemProps = {
 	data: StatDataObject;
+	className?: string;
 	maxValue: number;
 	url?: string;
 	onClick?: ( e: React.MouseEvent | React.KeyboardEvent, data: StatDataObject ) => void;
@@ -52,6 +53,7 @@ type StatsActions = {
 export type StatsCardProps = {
 	children: React.ReactNode;
 	className?: string;
+	headerClassName?: string;
 	title: string;
 	titleURL: string;
 	footerAction?: {

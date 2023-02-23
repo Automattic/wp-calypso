@@ -4,17 +4,7 @@ import {
 	PLAN_PREMIUM,
 	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 } from '@automattic/calypso-products';
-import {
-	FREE_FLOW,
-	BUILD_FLOW,
-	WRITE_FLOW,
-	LINK_IN_BIO_FLOW,
-	LINK_IN_BIO_TLD_FLOW,
-	NEWSLETTER_FLOW,
-	isFreeFlow,
-	isBuildFlow,
-	isWriteFlow,
-} from '@automattic/onboarding';
+import { isFreeFlow, isBuildFlow, isWriteFlow } from '@automattic/onboarding';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -62,7 +52,7 @@ export function getEnhancedTasks(
 	// send user to Home page editor, fallback to FSE if page id is not known
 	const launchpadUploadVideoLink = homePageId
 		? `/page/${ siteSlug }/${ homePageId }`
-		: `/site-editor/${ siteSlug }`;
+		: `/site-editor/${ siteSlug }?canvas=edit`;
 
 	let planWarningText = displayGlobalStylesWarning
 		? translate(
@@ -123,7 +113,7 @@ export function getEnhancedTasks(
 						completed: siteEditCompleted,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, siteEditCompleted, task.id );
-							window.location.assign( `/site-editor/${ siteSlug }` );
+							window.location.assign( `/site-editor/${ siteSlug }?canvas=edit` );
 						},
 					};
 					break;
@@ -203,7 +193,7 @@ export function getEnhancedTasks(
 						completed: linkInBioLinksEditCompleted,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, linkInBioLinksEditCompleted, task.id );
-							window.location.assign( `/site-editor/${ siteSlug }` );
+							window.location.assign( `/site-editor/${ siteSlug }?canvas=edit` );
 						},
 					};
 					break;
@@ -363,22 +353,9 @@ export function getArrayOfFilteredTasks( tasks: Task[], flow: string | null ) {
 	);
 }
 
-// Returns enhanced task list with domain_upsell task removed
-// Only applies to Free, Write, Build, Link in Bio, & Newsletter flow sites with paid plan
-export function filterDomainUpsellTask(
-	flow: string | null,
-	enhancedTasks: Task[] | null,
-	site: SiteDetails | null
-) {
-	const flowsAffected = [
-		FREE_FLOW,
-		BUILD_FLOW,
-		WRITE_FLOW,
-		LINK_IN_BIO_FLOW,
-		LINK_IN_BIO_TLD_FLOW,
-		NEWSLETTER_FLOW,
-	];
-	if ( flow && flowsAffected.includes( flow ) && enhancedTasks && ! site?.plan?.is_free ) {
+// Filter out the domain_upsell task from the enhanced task list when the user is not on a free plan anymore
+export function filterDomainUpsellTask( enhancedTasks: Task[] | null, site: SiteDetails | null ) {
+	if ( enhancedTasks && ! site?.plan?.is_free ) {
 		return enhancedTasks?.filter( ( task ) => {
 			return task.id !== 'domain_upsell';
 		} );

@@ -815,7 +815,7 @@ const mapStateToProps = (
 		...pressThisData,
 		answer_prompt: getQueryArg( window.location.href, 'answer_prompt' ),
 		completedFlow,
-		canvas: 'edit', // Load side editor in edit mode instead of displaying sidebar by default (Gutenberg v15.0.0)
+		canvas: getQueryArg( window.location.href, 'canvas' ), // Site editor can initially load with or without nav sidebar (Gutenberg v15.0.0)
 	} );
 
 	// needed for loading the editor in SU sessions

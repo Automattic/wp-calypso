@@ -8,7 +8,6 @@ import 'calypso/state/data-layer/wpcom/sites/stats/notices';
  * @param {string} id The id of the notice to dismiss
  * @param {string} status The status
  * @param {number} postponed_for The number of seconds to postpone the notice
- *
  * @returns {Object} The dismiss action
  */
 export const updateStatsNoticeStatusDirect = (

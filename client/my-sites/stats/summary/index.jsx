@@ -67,6 +67,7 @@ class StatsSummary extends Component {
 						query={ merge( {}, statsQueryOptions, query ) }
 						statType="statsReferrers"
 						summary
+						listItemClassName="stats__summary--narrow-mobile"
 					/>
 				);
 				break;
@@ -82,6 +83,7 @@ class StatsSummary extends Component {
 						query={ merge( {}, statsQueryOptions, query ) }
 						statType="statsClicks"
 						summary
+						listItemClassName="stats__summary--narrow-mobile"
 					/>
 				);
 				break;
@@ -94,7 +96,8 @@ class StatsSummary extends Component {
 						path="countryviews"
 						period={ this.props.period }
 						query={ merge( {}, statsQueryOptions, query ) }
-						summary={ true }
+						summary
+						listItemClassName="stats__summary--narrow-mobile"
 					/>
 				);
 				break;
@@ -110,6 +113,7 @@ class StatsSummary extends Component {
 						query={ merge( {}, statsQueryOptions, query ) }
 						statType="statsTopPosts"
 						summary
+						listItemClassName="stats__summary--narrow-mobile"
 					/>
 				);
 				break;
@@ -127,7 +131,8 @@ class StatsSummary extends Component {
 						query={ query }
 						statType="statsTopAuthors"
 						className="stats__author-views"
-						summary={ true }
+						summary
+						listItemClassName="stats__summary--narrow-mobile"
 					/>
 				);
 				/* eslint-enable wpcalypso/jsx-classname-namespace */
@@ -144,6 +149,7 @@ class StatsSummary extends Component {
 						query={ query }
 						statType="statsVideoPlays"
 						summary
+						listItemClassName="stats__summary--narrow-mobile"
 					/>
 				);
 				break;
@@ -159,6 +165,7 @@ class StatsSummary extends Component {
 						query={ query }
 						statType="statsFileDownloads"
 						summary
+						listItemClassName="stats__summary--narrow-mobile"
 					/>
 				);
 				break;
@@ -215,6 +222,7 @@ class StatsSummary extends Component {
 						query={ merge( {}, statsQueryOptions, query ) }
 						statType="statsSearchTerms"
 						summary
+						listItemClassName="stats__summary--narrow-mobile"
 					/>
 				);
 				break;
