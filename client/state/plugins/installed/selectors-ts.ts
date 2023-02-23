@@ -12,6 +12,7 @@ import type {
 	Plugin,
 	PluginFilter,
 	PluginSites,
+	PluginStatus,
 } from './types';
 import type { AppState } from 'calypso/types';
 
@@ -343,4 +344,93 @@ export const getSiteObjectsWithoutPlugin = createSelector(
 	},
 	( state: AppState ) => [ getAllPluginsIndexedByPluginSlug( state ), getSitesItems( state ) ],
 	( state: AppState, siteIds: number[], pluginSlug: string ) => [ pluginSlug, ...siteIds ].join()
+);
+
+export function getStatusForPlugin( state: AppState, siteId: number, pluginId: string ) {
+	if ( typeof state.plugins.installed.status[ siteId ]?.[ pluginId ] === 'undefined' ) {
+		return undefined;
+	}
+
+	return {
+		...state.plugins.installed.status[ siteId ][ pluginId ],
+		siteId,
+		pluginId,
+	};
+}
+
+/**
+ * Whether the plugin's status for one or more recent actions matches a specified status.
+ *
+ * @param  {Object}       state    Global state tree
+ * @param  {number}       siteId   ID of the site
+ * @param  {string}       pluginId ID of the plugin
+ * @param  {string|Array} action   Action, or array of actions of interest
+ * @param  {string}       status   Status to check against
+ * @returns {boolean}              True if status is the specified one for one or more actions, false otherwise.
+ */
+export function isPluginActionStatus(
+	state: AppState,
+	siteId: number,
+	pluginId: string,
+	// TODO: refactor to take only string and not string[] to reduce complexity.
+	action: string | string[],
+	status: string
+) {
+	const pluginStatus = getStatusForPlugin( state, siteId, pluginId );
+	if ( ! pluginStatus ) {
+		return false;
+	}
+
+	const actions = Array.isArray( action ) ? action : [ action ];
+	return actions.includes( pluginStatus.action ) && status === pluginStatus.status;
+}
+
+/**
+ * Whether the plugin's status for one or more recent actions is in progress.
+ *
+ * @param  {Object}       state    Global state tree
+ * @param  {number}       siteId   ID of the site
+ * @param  {string}       pluginId ID of the plugin
+ * @param  {string|Array} action   Action, or array of actions of interest
+ * @returns {boolean}              True if one or more specified actions are in progress, false otherwise.
+ */
+// TODO: remove isPluginActionInProgress and use isPluginActionStatus instead.
+export function isPluginActionInProgress(
+	state: AppState,
+	siteId: number,
+	pluginId: string,
+	action: string
+) {
+	return isPluginActionStatus( state, siteId, pluginId, action, 'inProgress' );
+}
+
+/**
+ * Retrieve all plugin statuses of a certain type.
+ *
+ * @param  {Object} state    Global state tree
+ * @param  {string} status   Status of interest
+ * @returns {Array}          Array of plugin status objects
+ */
+export const getPluginStatusesByType = createSelector(
+	( state: AppState, status: string ) => {
+		const statuses: PluginStatus[] = [];
+
+		const pluginStatuses: { [ siteId: number ]: { [ pluginId: string ]: PluginStatus } } =
+			state.plugins.installed.status;
+
+		Object.entries( pluginStatuses ).map( ( [ siteId, siteStatuses ] ) => {
+			Object.entries( siteStatuses ).map( ( [ pluginId, pluginStatus ] ) => {
+				if ( pluginStatus.status === status ) {
+					statuses.push( {
+						...pluginStatus,
+						siteId: Number( siteId ),
+						pluginId,
+					} );
+				}
+			} );
+		} );
+
+		return statuses;
+	},
+	( state: AppState ) => state.plugins.installed.status
 );
