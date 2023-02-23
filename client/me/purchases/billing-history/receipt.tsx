@@ -212,7 +212,7 @@ function ReceiptPaymentMethod( { transaction }: { transaction: BillingTransactio
 	);
 }
 
-function VatDetails( { transaction }: { transaction: BillingTransaction } ) {
+function UserVatDetails( { transaction }: { transaction: BillingTransaction } ) {
 	const translate = useTranslate();
 	const { vatDetails, isLoading, fetchError } = useVatDetails();
 	const reduxDispatch = useDispatch();
@@ -225,72 +225,86 @@ function VatDetails( { transaction }: { transaction: BillingTransaction } ) {
 		};
 	};
 
-	if ( isLoading || fetchError ) {
+	if ( isLoading || fetchError || ! vatDetails.id ) {
 		return null;
 	}
 
 	return (
-		<>
-			<li>
-				<strong>{ translate( 'VAT Details' ) }</strong>
-				<span className="receipt__vat-vendor-details-description">
-					{ translate(
-						'{{noPrint}}You can edit your VAT details {{vatDetailsLink}}on this page{{/vatDetailsLink}}. {{/noPrint}}This is not an official VAT receipt. For an official VAT receipt, {{emailReceiptLink}}email yourself a copy{{/emailReceiptLink}}.',
-						{
-							components: {
-								noPrint: <span className="receipt__no-print" />,
-								vatDetailsLink: <a href={ vatDetailsPath } />,
-								emailReceiptLink: (
-									<Button
-										plain
-										className="receipt__email-button"
-										onClick={ getEmailReceiptLinkClickHandler( transaction.id ) as any }
-									/>
-								),
-							},
-						}
-					) }
-				</span>
-				{ vatDetails.name }
-				<br />
-				{ vatDetails.address }
-				<br />
-				{ translate( 'VAT #: %(vatCountry)s %(vatId)s', {
-					args: {
-						vatCountry: vatDetails.country,
-						vatId: vatDetails.id,
-					},
-					comment: 'This is the user-supplied VAT number, format "UK 553557881".',
-				} ) }
-			</li>
-			<li>
-				<strong>{ translate( 'Vendor VAT Details' ) }</strong>
-				<span>
-					Aut O’Mattic Ltd.
-					<br />
-					c/o Noone Casey
-					<br />
-					Grand Canal Dock, 25 Herbert Pl
-					<br />
-					Dublin, D02 AY86
-					<br />
-					Ireland
-					<br />
-				</span>
-				<span className="receipt__vat-vendor-details-number">
-					{ translate( '{{strong}}Vendor VAT #:{{/strong}} %(ieVatNumber)s and %(ukVatNumber)s', {
+		<li>
+			<strong>{ translate( 'VAT Details' ) }</strong>
+			<span className="receipt__vat-vendor-details-description">
+				{ translate(
+					'{{noPrint}}You can edit your VAT details {{vatDetailsLink}}on this page{{/vatDetailsLink}}. {{/noPrint}}This is not an official VAT receipt. For an official VAT receipt, {{emailReceiptLink}}email yourself a copy{{/emailReceiptLink}}.',
+					{
 						components: {
-							strong: <strong />,
+							noPrint: <span className="receipt__no-print" />,
+							vatDetailsLink: <a href={ vatDetailsPath } />,
+							emailReceiptLink: (
+								<Button
+									plain
+									className="receipt__email-button"
+									onClick={ getEmailReceiptLinkClickHandler( transaction.id ) as any }
+								/>
+							),
 						},
-						args: {
-							ieVatNumber: 'IE 3255131SH',
-							ukVatNumber: 'UK 376 1703 88',
-						},
-						comment:
-							"This is both of Automattic's vendor VAT numbers with 'and' separating the numbers, format 'IE 3255131SH and UK 376 1703 88'.",
-					} ) }
-				</span>
-			</li>
+					}
+				) }
+			</span>
+			{ vatDetails.name }
+			<br />
+			{ vatDetails.address }
+			<br />
+			{ translate( 'VAT #: %(vatCountry)s %(vatId)s', {
+				args: {
+					vatCountry: vatDetails.country,
+					vatId: vatDetails.id,
+				},
+				comment: 'This is the user-supplied VAT number, format "UK 553557881".',
+			} ) }
+		</li>
+	);
+}
+
+function VendorVatDetails() {
+	const translate = useTranslate();
+
+	return (
+		<li>
+			<strong>{ translate( 'Vendor VAT Details' ) }</strong>
+			<span>
+				Aut O’Mattic Ltd.
+				<br />
+				c/o Noone Casey
+				<br />
+				Grand Canal Dock, 25 Herbert Pl
+				<br />
+				Dublin, D02 AY86
+				<br />
+				Ireland
+				<br />
+			</span>
+			<span className="receipt__vat-vendor-details-number">
+				{ translate( '{{strong}}Vendor VAT #:{{/strong}} %(ieVatNumber)s and %(ukVatNumber)s', {
+					components: {
+						strong: <strong />,
+					},
+					args: {
+						ieVatNumber: 'IE 3255131SH',
+						ukVatNumber: 'UK 376 1703 88',
+					},
+					comment:
+						"This is both of Automattic's vendor VAT numbers with 'and' separating the numbers, format 'IE 3255131SH and UK 376 1703 88'.",
+				} ) }
+			</span>
+		</li>
+	);
+}
+
+function VatDetails( { transaction }: { transaction: BillingTransaction } ) {
+	return (
+		<>
+			<UserVatDetails transaction={ transaction } />
+			<VendorVatDetails />
 		</>
 	);
 }
