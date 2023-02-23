@@ -10,9 +10,9 @@ import {
 	getProductDescription,
 	getProductName,
 } from 'calypso/state/products-list/selectors';
-import isStorageAddonAvailable from 'calypso/state/selectors/is-storage-addon-available';
 import customDesignIcon from '../icons/custom-design';
 import unlimitedThemesIcon from '../icons/unlimited-themes';
+import isStorageAddonAvailable from '../is-storage-addon-available';
 import useAddOnDisplayCost from './use-add-on-display-cost';
 import useAddOnFeatureSlugs from './use-add-on-feature-slugs';
 export interface AddOnMeta {
