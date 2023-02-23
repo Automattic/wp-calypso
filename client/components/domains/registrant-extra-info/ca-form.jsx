@@ -71,7 +71,7 @@ export class RegistrantExtraInfoCaForm extends PureComponent {
 			OMK: translate( 'Official Mark', {
 				comment: 'Refers to a Canadian legal concept -- similar to a trademark',
 			} ),
-			MAJ: translate( 'Her Majesty the Queen' ),
+			MAJ: translate( 'His Majesty the King' ),
 		};
 		const legalTypeOptions = map( legalTypes, ( text, optionValue ) => (
 			<option value={ optionValue } key={ optionValue }>
