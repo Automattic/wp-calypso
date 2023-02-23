@@ -78,6 +78,7 @@ const pluginBundleFlow: Flow = {
 		const { setPendingAction, setStepProgress, resetOnboardStoreWithSkipFlags } =
 			useDispatch( ONBOARD_STORE );
 		const { setIntentOnSite, setGoalsOnSite, setThemeOnSite } = useDispatch( SITE_STORE );
+		const siteDetails = useSelect( ( select ) => site && select( SITE_STORE ).getSite( site.ID ) );
 		const dispatch = reduxDispatch();
 
 		// Since we're mimicking a subset of the site-setup-flow, we're safe to use the siteSetupProgress.
@@ -129,11 +130,16 @@ const pluginBundleFlow: Flow = {
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
 			recordSubmitStep( providedDependencies, intent, flowName, currentStep );
 
+			const defaultExitDest = siteDetails?.options
+				? `/theme/${ siteDetails?.options.theme_slug }/${ siteSlug }`
+				: `/home/${ siteSlug }`;
+
 			switch ( currentStep ) {
 				case 'checkForWoo':
 					// If WooCommerce is already installed, we should exit the flow.
 					if ( providedDependencies?.hasWooCommerce ) {
-						return exitFlow( `/home/${ siteSlug }` );
+						// If we have the theme for the site, redirect to the theme page. Otherwise redirect to /home.
+						return exitFlow( defaultExitDest );
 					}
 
 					// Otherwise, we should continue to the next step.
@@ -188,7 +194,7 @@ const pluginBundleFlow: Flow = {
 						return exitFlow( `${ adminUrl }admin.php?page=wc-admin` );
 					}
 
-					return exitFlow( `/home/${ siteSlug }` );
+					return exitFlow( defaultExitDest );
 				}
 
 				case 'wooTransfer':
