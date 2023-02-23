@@ -32,10 +32,26 @@ import {
 	renderTransactionAmount,
 	renderTransactionQuantitySummary,
 } from './utils';
+import type { BillingTransaction } from 'calypso/state/billing-transactions/types';
+import type { IAppState } from 'calypso/state/types';
+import type { LocalizeProps } from 'i18n-calypso';
+import type { FormEvent } from 'react';
 
 import './style.scss';
 
-class BillingReceipt extends Component {
+interface BillingReceiptProps {
+	transactionId: number;
+	recordGoogleEvent: ( key: string, message: string ) => void;
+	clearBillingTransactionError: ( transactionId: number ) => void;
+}
+
+interface BillingReceiptConnectedProps {
+	transactionFetchError?: string;
+	transaction: BillingTransaction | undefined;
+	translate: LocalizeProps[ 'translate' ];
+}
+
+class BillingReceipt extends Component< BillingReceiptProps & BillingReceiptConnectedProps > {
 	componentDidMount() {
 		this.redirectIfInvalidTransaction();
 	}
@@ -44,7 +60,7 @@ class BillingReceipt extends Component {
 		this.redirectIfInvalidTransaction();
 	}
 
-	recordClickEvent = ( action ) => {
+	recordClickEvent = ( action: string ) => {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
 	};
 
@@ -93,10 +109,16 @@ class BillingReceipt extends Component {
 	}
 }
 
-export function ReceiptBody( { transaction, handlePrintLinkClick } ) {
+export function ReceiptBody( {
+	transaction,
+	handlePrintLinkClick,
+}: {
+	transaction: BillingTransaction;
+	handlePrintLinkClick: () => void;
+} ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
-	const title = translate( 'Visit %(url)s', { args: { url: transaction.url } } );
+	const title = translate( 'Visit %(url)s', { args: { url: transaction.url }, textOnly: true } );
 	const serviceLink = <a href={ transaction.url } title={ title } />;
 
 	return (
@@ -151,7 +173,7 @@ export function ReceiptBody( { transaction, handlePrintLinkClick } ) {
 	);
 }
 
-function ReceiptTransactionId( { transaction } ) {
+function ReceiptTransactionId( { transaction }: { transaction: BillingTransaction } ) {
 	const translate = useTranslate();
 	if ( ! transaction.pay_ref ) {
 		return null;
@@ -165,7 +187,7 @@ function ReceiptTransactionId( { transaction } ) {
 	);
 }
 
-function ReceiptPaymentMethod( { transaction } ) {
+function ReceiptPaymentMethod( { transaction }: { transaction: BillingTransaction } ) {
 	const translate = useTranslate();
 	let text;
 
@@ -190,13 +212,13 @@ function ReceiptPaymentMethod( { transaction } ) {
 	);
 }
 
-function VatDetails( { transaction } ) {
+function VatDetails( { transaction }: { transaction: BillingTransaction } ) {
 	const translate = useTranslate();
 	const { vatDetails, isLoading, fetchError } = useVatDetails();
 	const reduxDispatch = useDispatch();
 
-	const getEmailReceiptLinkClickHandler = ( receiptId ) => {
-		return ( event ) => {
+	const getEmailReceiptLinkClickHandler = ( receiptId: string ) => {
+		return ( event: FormEvent< HTMLFormElement > ) => {
 			event.preventDefault();
 			reduxDispatch( recordGoogleEvent( 'Me', 'Clicked on Receipt Email Button' ) );
 			reduxDispatch( sendBillingReceiptEmail( receiptId ) );
@@ -222,7 +244,7 @@ function VatDetails( { transaction } ) {
 									<Button
 										plain
 										className="receipt__email-button"
-										onClick={ getEmailReceiptLinkClickHandler( transaction.id ) }
+										onClick={ getEmailReceiptLinkClickHandler( transaction.id ) as any }
 									/>
 								),
 							},
@@ -273,7 +295,7 @@ function VatDetails( { transaction } ) {
 	);
 }
 
-function ReceiptLineItems( { transaction } ) {
+function ReceiptLineItems( { transaction }: { transaction: BillingTransaction } ) {
 	const translate = useTranslate();
 	const groupedTransactionItems = groupDomainProducts( transaction.items, translate );
 
@@ -334,7 +356,7 @@ function ReceiptLineItems( { transaction } ) {
 	);
 }
 
-function ReceiptDetails( { transaction } ) {
+function ReceiptDetails( { transaction }: { transaction: BillingTransaction } ) {
 	if ( ! transaction.cc_name && ! transaction.cc_email ) {
 		return null;
 	}
@@ -398,7 +420,7 @@ export function ReceiptPlaceholder() {
 	);
 }
 
-function ReceiptLabels( { hideDetailsLabelOnPrint } ) {
+function ReceiptLabels( { hideDetailsLabelOnPrint }: { hideDetailsLabelOnPrint?: boolean } ) {
 	const translate = useTranslate();
 
 	let labelContent = translate(
@@ -427,16 +449,19 @@ function ReceiptLabels( { hideDetailsLabelOnPrint } ) {
 	);
 }
 
-export function ReceiptTitle( { backHref } ) {
+export function ReceiptTitle( { backHref }: { backHref: string } ) {
 	const translate = useTranslate();
 	return <HeaderCake backHref={ backHref }>{ translate( 'Receipt' ) }</HeaderCake>;
 }
 
 export default connect(
-	( state, { transactionId } ) => ( {
-		transaction: getPastBillingTransaction( state, transactionId ),
-		transactionFetchError: isPastBillingTransactionError( state, transactionId ),
-	} ),
+	( state: IAppState, { transactionId }: { transactionId: number } ) => {
+		const transaction = getPastBillingTransaction( state, transactionId );
+		return {
+			transaction: transaction && 'service' in transaction ? transaction : undefined,
+			transactionFetchError: isPastBillingTransactionError( state, transactionId ),
+		};
+	},
 	{
 		clearBillingTransactionError,
 		recordGoogleEvent,
