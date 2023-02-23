@@ -81,7 +81,6 @@ import {
 import { getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
 import { addQueryArgs } from 'calypso/lib/url';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
 import { PreCancellationDialog } from 'calypso/me/purchases/pre-cancellation-dialog';
 import ProductLink from 'calypso/me/purchases/product-link';
@@ -461,11 +460,6 @@ class ManagePurchase extends Component {
 			translate,
 		} = this.props;
 
-		// If site is in a disconnected state, or the purchase owner has been removed from the site
-		if ( ! site ) {
-			return null;
-		}
-
 		if ( canAutoRenewBeTurnedOff( purchase ) ) {
 			return null;
 		}
@@ -645,46 +639,9 @@ class ManagePurchase extends Component {
 		return;
 	};
 
-	renderDisconnectedStateWarning() {
-		const { purchase, translate } = this.props;
-
-		const text = translate(
-			'This purchase is no longer connected with %(siteName)s and cannot be removed, please {{button}}contact support{{/button}}',
-			{
-				args: {
-					siteName: purchase.domain,
-				},
-				components: {
-					button: (
-						<button
-							className="purchase-item__link"
-							onClick={ ( event ) => {
-								event.stopPropagation();
-								event.preventDefault();
-								page( CALYPSO_CONTACT );
-							} }
-							title={ translate( 'Contact Support' ) }
-						/>
-					),
-				},
-			}
-		);
-
-		return (
-			<Card className="manage-purchase__disconnected-notice" highlight="error">
-				{ text }
-			</Card>
-		);
-	}
-
 	renderCancelPurchaseNavItem() {
-		const { isAtomicSite, purchase, site, translate } = this.props;
+		const { isAtomicSite, purchase, translate } = this.props;
 		const { id } = purchase;
-
-		// If site is in a disconnected state, or the purchase owner has been removed from the site
-		if ( ! site ) {
-			return this.renderDisconnectedStateWarning();
-		}
 
 		if ( ! canAutoRenewBeTurnedOff( purchase ) ) {
 			return null;
