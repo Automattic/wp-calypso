@@ -66,7 +66,7 @@ class WPCOM_Documentation_Links {
 			plugins_url( 'dist/', __FILE__ )
 		);
 
-		// This is a way to get the data from the customize-controls script and change the link to the wpcom support page
+		// This is a way to get the data from the customize-controls script and change the link to the wpcom support page.
 		global $wp_scripts;
 		$data = $wp_scripts->get_data( 'customize-controls', 'data' );
 
