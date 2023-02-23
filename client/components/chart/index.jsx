@@ -60,7 +60,6 @@ function Chart( {
 	const [ tooltip, setTooltip ] = useState( { isTooltipVisible: false } );
 	const [ sizing, setSizing ] = useState( { clientWidth: 650, hasResized: false } );
 	const [ yAxisSize, setYAxisSize ] = useState( { clientWidth: 0, hasResized: false } );
-	const { hasResized } = sizing;
 
 	// Callback to handle tooltip changes.
 	// Needs to be memoized to avoid assigning children a new function every render.
@@ -72,7 +71,7 @@ function Chart( {
 		}
 	}, [] );
 
-	const handleYAxisSizeChange = useCallback( ( contentRect ) => {
+	const handleYAxisSizeChange = ( contentRect ) => {
 		setYAxisSize( ( prevSizing ) => {
 			const clientWidth = contentRect.width;
 			if ( ! prevSizing.hasResized || clientWidth !== prevSizing.clientWidth ) {
@@ -80,7 +79,7 @@ function Chart( {
 			}
 			return prevSizing;
 		} );
-	}, [] );
+	};
 
 	const yAxisRef = useWindowResizeCallback( handleYAxisSizeChange );
 
@@ -98,7 +97,7 @@ function Chart( {
 				return prevSizing;
 			} );
 		},
-		[ yAxisSize ]
+		[ yAxisRef, yAxisSize.clientWidth ]
 	);
 
 	// Subscribe to changes to element size and position.
@@ -134,15 +133,8 @@ function Chart( {
 			isEmptyChart: Boolean( ! nextVals.some( ( a ) => a > 0 ) ),
 			yMax: getYAxisMax( nextVals ),
 		};
-	}, [ data, maxBars, hasResized, sliceFromBeginning ] );
+	}, [ data, maxBars, sliceFromBeginning ] );
 
-	// Recover the chart with data even if no sizing is updated on the first loading.
-	// If we don't have any sizing info yet, render an empty chart with the ref.
-	// if ( ! hasResized ) {
-	// 	return <div ref={ resizeRef } className="chart" />;
-	// }
-
-	// Otherwise, render full chart.
 	const { isTooltipVisible, tooltipContext, tooltipPosition, tooltipData } = tooltip;
 
 	return (
