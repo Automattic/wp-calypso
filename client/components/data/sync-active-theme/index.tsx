@@ -31,6 +31,8 @@ const SyncActiveTheme = ( {
 
 	const [ attempts, setAttempts ] = useState( 0 );
 	const [ exceededMaxAttempts, setExceededMaxAttempts ] = useState( false );
+	const [ checkCompleted, setCheckCompleted ] = useState( false );
+	const [ lastRequestStarted, setLastRequestStarted ] = useState( true );
 
 	useEffect( () => {
 		if ( exceededMaxAttempts ) {
@@ -48,11 +50,22 @@ const SyncActiveTheme = ( {
 	}, [ exceededMaxAttempts, delay, maxAttempts, themeId, translate ] );
 
 	useEffect( () => {
+		if ( checkCompleted ) {
+			return;
+		}
+
 		if ( activeTheme === themeId ) {
+			setCheckCompleted( true );
 			return onAtomicThemeActive();
 		}
-		if ( ! requestStarted && attempts < maxAttempts ) {
+
+		if ( requestStarted ) {
+			setLastRequestStarted( true );
+		}
+
+		if ( ! requestStarted && lastRequestStarted && attempts < maxAttempts ) {
 			setAttempts( attempts + 1 );
+			setLastRequestStarted( false );
 			waitFor( delay ).then( () => dispatch( requestActiveTheme( siteId ) ) );
 		} else if ( attempts >= maxAttempts ) {
 			setExceededMaxAttempts( true );
@@ -66,6 +79,10 @@ const SyncActiveTheme = ( {
 		delay,
 		siteId,
 		setExceededMaxAttempts,
+		checkCompleted,
+		setCheckCompleted,
+		lastRequestStarted,
+		setLastRequestStarted,
 	] );
 
 	return null;
