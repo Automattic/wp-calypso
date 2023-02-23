@@ -1,9 +1,9 @@
 import './nav-style.scss';
+import { WordPressWordmark } from '@automattic/components';
 import { useLocalizeUrl, useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useTranslate, getLocaleSlug } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import WordPressWordmark from 'calypso/components/wordpress-wordmark';
 import UniversalNavbarBtnMenuItem from 'calypso/layout/universal-navbar-header/btn-menu-item.jsx';
 import UniversalNavbarLiMenuItem from 'calypso/layout/universal-navbar-header/li-menu-item.jsx';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -44,7 +44,10 @@ const UniversalNavbarHeader = () => {
 											href={ localizeUrl( '//wordpress.com' ) }
 											target="_self"
 										>
-											<WordPressWordmark className="x-icon x-icon__logo" />
+											<WordPressWordmark
+												className="x-icon x-icon__logo"
+												color="var(--studio-blue-50)"
+											/>
 											<span className="x-hidden">WordPress.com</span>
 										</a>
 									</li>

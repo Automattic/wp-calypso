@@ -16,12 +16,7 @@ import WebPreview from 'calypso/components/web-preview';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { getSitePost, getPostPreviewUrl } from 'calypso/state/posts/selectors';
-import {
-	getSiteOption,
-	getSiteSlug,
-	isJetpackSite,
-	isSitePreviewable,
-} from 'calypso/state/sites/selectors';
+import { getSiteSlug, isJetpackSite, isSitePreviewable } from 'calypso/state/sites/selectors';
 import { getPostStat, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PostDetailHighlightsSection from '../post-detail-highlights-section';
@@ -91,9 +86,9 @@ class StatsPostDetail extends Component {
 	};
 
 	getTitle() {
-		const { isLatestPostsHomepage, post, postFallback, translate } = this.props;
+		const { isPostHomepage, post, postFallback, translate } = this.props;
 
-		if ( isLatestPostsHomepage ) {
+		if ( isPostHomepage ) {
 			return translate( 'Home page / Archives' );
 		}
 
@@ -110,10 +105,11 @@ class StatsPostDetail extends Component {
 
 	render() {
 		const {
-			isLatestPostsHomepage,
+			isPostHomepage,
 			isRequestingStats,
 			countViews,
 			post,
+			postFallback,
 			postId,
 			siteId,
 			translate,
@@ -135,13 +131,19 @@ class StatsPostDetail extends Component {
 			noViewsLabel = translate( 'Your post has not received any views yet!' );
 		}
 
+		// Make title to PostStatsCard for Homepage
+		const passedPost = post ||
+			postFallback || {
+				title: this.getTitle(),
+			};
+
 		return (
 			<Main fullWidthLayout>
 				<PageViewTracker
 					path={ `/stats/${ postType }/:post_id/:site` }
 					title={ `Stats > Single ${ titlecase( postType ) }` }
 				/>
-				{ siteId && ! isLatestPostsHomepage && <QueryPosts siteId={ siteId } postId={ postId } /> }
+				{ siteId && ! isPostHomepage && <QueryPosts siteId={ siteId } postId={ postId } /> }
 				{ siteId && <QueryPostStats siteId={ siteId } postId={ postId } /> }
 
 				<div className="stats has-fixed-nav">
@@ -155,7 +157,7 @@ class StatsPostDetail extends Component {
 						) }
 					</FixedNavigationHeader>
 
-					<PostDetailHighlightsSection siteId={ siteId } postId={ postId } post={ post } />
+					<PostDetailHighlightsSection siteId={ siteId } postId={ postId } post={ passedPost } />
 
 					<StatsPlaceholder isLoading={ isLoading } />
 
@@ -199,18 +201,17 @@ const connectComponent = connect( ( state, { postId } ) => {
 	const siteId = getSelectedSiteId( state );
 	const isJetpack = isJetpackSite( state, siteId );
 	const isPreviewable = isSitePreviewable( state, siteId );
-	const isLatestPostsHomepage =
-		getSiteOption( state, siteId, 'show_on_front' ) === 'posts' && postId === 0;
+	const isPostHomepage = postId === 0;
 
 	return {
 		post: getSitePost( state, siteId, postId ),
 		// NOTE: Post object from the stats response does not conform to the data structure returned by getSitePost!
 		postFallback: getPostStat( state, siteId, postId, 'post' ),
-		isLatestPostsHomepage,
+		isPostHomepage,
 		countViews: getPostStat( state, siteId, postId, 'views' ),
 		isRequestingStats: isRequestingPostStats( state, siteId, postId ),
 		siteSlug: getSiteSlug( state, siteId ),
-		showViewLink: ! isJetpack && ! isLatestPostsHomepage && isPreviewable,
+		showViewLink: ! isJetpack && ! isPostHomepage && isPreviewable,
 		previewUrl: getPostPreviewUrl( state, siteId, postId ),
 		siteId,
 	};

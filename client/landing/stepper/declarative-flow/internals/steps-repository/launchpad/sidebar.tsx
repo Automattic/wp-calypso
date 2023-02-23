@@ -1,7 +1,7 @@
 import { Gridicon, CircularProgressBar } from '@automattic/components';
 import { useRef, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { FREE_FLOW, StepNavigationLink } from 'calypso/../packages/onboarding/src';
+import { StepNavigationLink } from 'calypso/../packages/onboarding/src';
 import Badge from 'calypso/components/badge';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import Tooltip from 'calypso/components/tooltip';
@@ -12,7 +12,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import Checklist from './checklist';
-import { getArrayOfFilteredTasks, getEnhancedTasks } from './task-helper';
+import { filterDomainUpsellTask, getArrayOfFilteredTasks, getEnhancedTasks } from './task-helper';
 import { tasks } from './tasks';
 import { getLaunchpadTranslations } from './translations';
 import { Task } from './types';
@@ -78,12 +78,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	const currentTask = getTasksProgress( enhancedTasks );
 	const launchTask = enhancedTasks?.find( ( task ) => task.isLaunchTask === true );
 
-	// Free flow - remove domain_upsell task if user is on paid plan
-	if ( flow === FREE_FLOW && ! site?.plan?.is_free && enhancedTasks ) {
-		enhancedTasks = enhancedTasks?.filter( ( task ) => {
-			return task.id !== 'domain_upsell';
-		} );
-	}
+	enhancedTasks = filterDomainUpsellTask( enhancedTasks, site );
 
 	const showLaunchTitle = launchTask && ! launchTask.disabled;
 

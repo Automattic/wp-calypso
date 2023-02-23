@@ -66,6 +66,7 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+		flex-wrap: wrap;
 	}
 
 	.stats-card-header__additional {
@@ -98,7 +99,6 @@
 
 .stats-card-avatar {
 	display: flex;
-	padding-right: $stats-avatar-spacer;
 
 	.stats-card-avatar-image {
 		width: $stats-avatar-size;

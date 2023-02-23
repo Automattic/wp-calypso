@@ -34,6 +34,7 @@ const queryPost = {
 	status: 'publish', // do not allow private or unpublished posts
 	type: 'post',
 	order_by: 'views',
+	order_by: 'comment_count',
 };
 const queryPage = {
 	...queryPost,
@@ -143,6 +144,7 @@ export default function PromotedPosts( { tab }: Props ) {
 	}
 
 	const content = [ ...( posts || [] ), ...( pages || [] ), ...( products || [] ) ];
+
 	const isLoading = isLoadingPage || isLoadingPost || isLoadingProducts;
 
 	return (

@@ -62,14 +62,15 @@ export const StatsReach = ( props ) => {
 			wpData.actions = [
 				{
 					type: 'link',
-					data: `/people/followers/${ siteSlug }`,
+					data: `/people/subscribers/${ siteSlug }`,
 				},
 			];
 
 			emailData.actions = [
 				{
 					type: 'link',
-					data: `/people/email-followers/${ siteSlug }`,
+					// default to subscribers because `/people/email-followers/${ siteSlug }`, is not available at the moment
+					data: `/people/subscribers/${ siteSlug }`,
 				},
 			];
 		}

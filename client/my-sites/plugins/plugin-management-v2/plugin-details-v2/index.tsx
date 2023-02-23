@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import QueryAllJetpackSitesPlugins from 'calypso/components/data/query-all-jetpack-sites-plugins';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QueryJetpackSitesFeatures from 'calypso/components/data/query-jetpack-sites-features';
@@ -76,7 +77,11 @@ export default function PluginDetailsV2( {
 
 	return (
 		<div className="plugin-details-v2">
-			<QueryJetpackPlugins siteIds={ siteIds } />
+			{ siteIds.length === 1 ? (
+				<QueryJetpackPlugins siteIds={ siteIds } />
+			) : (
+				<QueryAllJetpackSitesPlugins />
+			) }
 			<QueryEligibility siteId={ selectedSite?.ID } />
 			<QueryJetpackSitesFeatures />
 			<QueryProductsList persist />

@@ -112,9 +112,10 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 		);
 		const logFilePath = path.join( this.testArtifactsPath, `${ this.testFilename }.log` );
 
-		// Start the browser.
+		// Start the browser and sets launch options.
 		const browser = await browserType.launch( {
 			...config.launchOptions,
+			args: [ browserType.name() === 'chromium' ? '--disable-dev-shm-usage' : '' ],
 			logger: {
 				log: async ( name: string, severity: string, message: string ) => {
 					await fs.appendFile(

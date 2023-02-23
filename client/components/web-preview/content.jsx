@@ -409,6 +409,7 @@ export default class WebPreviewContent extends Component {
 							<span className="web-preview__loading-message">{ this.props.loadingMessage }</span>
 						</div>
 					) }
+					{ this.props.bannerToShow }
 					{ 'seo' !== this.state.device && (
 						<div
 							onMouseEnter={ () => {
@@ -467,7 +468,7 @@ export default class WebPreviewContent extends Component {
 										onFocus={ () => this.setState( { showIFrameOverlay: true } ) }
 										onBlur={ () => this.setState( { showIFrameOverlay: false } ) }
 									>
-										{ translate( 'Edit' ) }
+										{ translate( 'Edit design' ) }
 									</button>
 								</div>
 							) }

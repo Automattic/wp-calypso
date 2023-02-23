@@ -11,6 +11,7 @@ import ErrorStep from './internals/steps-repository/error-step';
 import ProcessingStep, { ProcessingResult } from './internals/steps-repository/processing-step';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import WaitForAtomic from './internals/steps-repository/wait-for-atomic';
+import WaitForPluginInstall from './internals/steps-repository/wait-for-plugin-install';
 import { AssertConditionState } from './internals/types';
 import type { AssertConditionResult, Flow, ProvidedDependencies } from './internals/types';
 
@@ -23,6 +24,7 @@ const wooexpress: Flow = {
 			{ slug: 'processing', component: ProcessingStep },
 			{ slug: 'assignTrialPlan', component: AssignTrialPlanStep },
 			{ slug: 'waitForAtomic', component: WaitForAtomic },
+			{ slug: 'waitForPluginInstall', component: WaitForPluginInstall },
 			{ slug: 'error', component: ErrorStep },
 		];
 	},
@@ -74,7 +76,8 @@ const wooexpress: Flow = {
 		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 		const siteSlugParam = useSiteSlugParam();
 
-		const { setStepProgress } = useDispatch( ONBOARD_STORE );
+		const { setStepProgress, setPluginsToVerify } = useDispatch( ONBOARD_STORE );
+		setPluginsToVerify( [ 'woocommerce' ] );
 
 		const flowProgress = useSiteSetupFlowProgress( currentStep, intent );
 		setStepProgress( flowProgress );
@@ -92,7 +95,9 @@ const wooexpress: Flow = {
 
 			switch ( currentStep ) {
 				case 'siteCreationStep': {
-					return navigate( 'processing' );
+					return navigate( 'processing', {
+						currentStep,
+					} );
 				}
 
 				case 'processing': {
@@ -103,6 +108,10 @@ const wooexpress: Flow = {
 					}
 
 					if ( providedDependencies?.finishedWaitingForAtomic ) {
+						return navigate( 'waitForPluginInstall', { siteId, siteSlug } );
+					}
+
+					if ( providedDependencies?.pluginsInstalled ) {
 						return exitFlow( `/home/${ siteSlug }` );
 					}
 
@@ -120,6 +129,12 @@ const wooexpress: Flow = {
 				}
 
 				case 'waitForAtomic': {
+					return navigate( 'processing', {
+						currentStep,
+					} );
+				}
+
+				case 'waitForPluginInstall': {
 					return navigate( 'processing' );
 				}
 			}

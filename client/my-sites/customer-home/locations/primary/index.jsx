@@ -15,7 +15,6 @@ import {
 	TASK_FIND_DOMAIN,
 	TASK_GO_MOBILE_ANDROID,
 	TASK_GO_MOBILE_IOS,
-	TASK_PODCASTING,
 	TASK_MARKETPLACE,
 	TASK_RENEW_EXPIRED_PLAN,
 	TASK_RENEW_EXPIRING_PLAN,
@@ -30,6 +29,7 @@ import {
 	TASK_REACTIVATE_EXPIRED_PLAN,
 	TASK_REACTIVATE_ATOMIC_TRANSFER,
 	TASK_REACTIVATE_RESTORE_BACKUP,
+	TASK_FIVERR,
 } from 'calypso/my-sites/customer-home/cards/constants';
 import CelebrateSiteCopy from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-copy';
 import CelebrateSiteCreation from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-creation';
@@ -40,9 +40,9 @@ import SiteLaunchSellerUpsell from 'calypso/my-sites/customer-home/cards/notices
 import ConnectAccounts from 'calypso/my-sites/customer-home/cards/tasks/connect-accounts';
 import EarnFeatures from 'calypso/my-sites/customer-home/cards/tasks/earn-features';
 import FindDomain from 'calypso/my-sites/customer-home/cards/tasks/find-domain';
+import Fiverr from 'calypso/my-sites/customer-home/cards/tasks/fiverr';
 import GoMobile from 'calypso/my-sites/customer-home/cards/tasks/go-mobile';
 import Marketplace from 'calypso/my-sites/customer-home/cards/tasks/marketplace';
-import Podcasting from 'calypso/my-sites/customer-home/cards/tasks/podcasting';
 import PromotePost from 'calypso/my-sites/customer-home/cards/tasks/promote-post';
 import Renew from 'calypso/my-sites/customer-home/cards/tasks/renew';
 import { ReviveAutoRevertedAtomic } from 'calypso/my-sites/customer-home/cards/tasks/revive-auto-reverted-atomic';
@@ -68,7 +68,6 @@ const cardComponents = {
 	[ TASK_GO_MOBILE_ANDROID ]: GoMobile,
 	[ TASK_GO_MOBILE_IOS ]: GoMobile,
 	[ TASK_MARKETPLACE ]: Marketplace,
-	[ TASK_PODCASTING ]: Podcasting,
 	[ TASK_PROMOTE_POST ]: PromotePost,
 	[ TASK_RENEW_EXPIRED_PLAN ]: Renew,
 	[ TASK_RENEW_EXPIRING_PLAN ]: Renew,
@@ -82,6 +81,7 @@ const cardComponents = {
 	[ TASK_WP_COURSES ]: WPCourses,
 	[ TASK_VERIFY_EMAIL ]: VerifyEmail,
 	[ TASK_USE_BUILT_BY ]: UseBuiltBy,
+	[ TASK_FIVERR ]: Fiverr,
 };
 
 const urgentTasks = [

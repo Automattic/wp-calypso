@@ -75,6 +75,22 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/google-analytics/#get-your-measurement-id',
 		post_id: 98905,
 	},
+	'hosting-sftp': {
+		link: 'https://wordpress.com/support/sftp/',
+		post_id: 159771,
+	},
+	'hosting-clear-cache': {
+		link: 'https://wordpress.com/support/clear-your-sites-cache/',
+		post_id: 164969,
+	},
+	'hosting-connect-to-ssh': {
+		link: 'https://wordpress.com/support/connect-to-ssh-on-wordpress-com/',
+		post_id: 213309,
+	},
+	'hosting-mysql': {
+		link: 'https://wordpress.com/support/phpmyadmin-and-mysql/',
+		post_id: 159822,
+	},
 	import: {
 		link: 'https://wordpress.com/support/import/',
 		post_id: 41,

@@ -34,6 +34,7 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
+import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-valid-checkout-back-url';
 import { leaveCheckout } from 'calypso/my-sites/checkout/composite-checkout/lib/leave-checkout';
@@ -145,7 +146,7 @@ export default function WPCheckout( {
 	areThereErrors,
 	isInitialCartLoading,
 	customizedPreviousPath,
-	forceRadioButtons,
+	useVariantPickerRadioButtons,
 }: {
 	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
 	changePlanLength: OnChangeItemVariant;
@@ -162,9 +163,8 @@ export default function WPCheckout( {
 	areThereErrors: boolean;
 	isInitialCartLoading: boolean;
 	customizedPreviousPath?: string;
-	// TODO: This is just for unit tests. Remove forceRadioButtons everywhere
-	// when calypso_checkout_variant_picker_radio_2212 ExPlat test completes.
-	forceRadioButtons?: boolean;
+	// This is just for unit tests.
+	useVariantPickerRadioButtons?: boolean;
 } ) {
 	const cartKey = useCartKey();
 	const {
@@ -266,6 +266,7 @@ export default function WPCheckout( {
 			<MainContentWrapper>
 				<NonCheckoutContentWrapper>
 					<NonCheckoutContentInnerWrapper>
+						<PerformanceTrackerStop />
 						<CheckoutCompleteRedirecting />
 						<SubmitButtonWrapper>
 							<Button buttonType="primary" fullWidth isBusy disabled>
@@ -292,6 +293,7 @@ export default function WPCheckout( {
 			<MainContentWrapper>
 				<NonCheckoutContentWrapper>
 					<NonCheckoutContentInnerWrapper>
+						<PerformanceTrackerStop />
 						<EmptyCart />
 						<SubmitButtonWrapper>
 							<Button buttonType="primary" fullWidth onClick={ goToPreviousPage }>
@@ -343,6 +345,7 @@ export default function WPCheckout( {
 				</CheckoutSummaryArea>
 			}
 		>
+			<PerformanceTrackerStop />
 			{ infoMessage }
 			<CheckoutStepBody
 				onError={ onReviewError }
@@ -353,7 +356,7 @@ export default function WPCheckout( {
 				titleContent={ <OrderReviewTitle /> }
 				completeStepContent={
 					<WPCheckoutOrderReview
-						forceRadioButtons={ forceRadioButtons }
+						useVariantPickerRadioButtons={ useVariantPickerRadioButtons }
 						removeProductFromCart={ removeProductFromCart }
 						couponFieldStateProps={ couponFieldStateProps }
 						onChangePlanLength={ changePlanLength }

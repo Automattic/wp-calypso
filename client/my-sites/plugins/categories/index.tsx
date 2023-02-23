@@ -58,7 +58,9 @@ const Categories = ( { selected, noSelection }: { selected?: string; noSelection
 			forceSwipe={ 'undefined' === typeof window }
 		>
 			{ categories.map( ( category ) => (
-				<span key={ `category-${ category.slug }` }>{ category.menu }</span>
+				<span key={ `category-${ category.slug }` } title={ category.menu }>
+					{ category.menu }
+				</span>
 			) ) }
 		</ResponsiveToolbarGroup>
 	);

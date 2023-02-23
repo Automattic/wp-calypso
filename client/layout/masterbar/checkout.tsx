@@ -1,3 +1,4 @@
+import { WordPressWordmark } from '@automattic/components';
 import { checkoutTheme, CheckoutModal } from '@automattic/composite-checkout';
 import { HelpCenter } from '@automattic/data-stores';
 import { HelpIcon } from '@automattic/help-center';
@@ -11,7 +12,6 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
-import WordPressWordmark from 'calypso/components/wordpress-wordmark';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-valid-checkout-back-url';
 import { leaveCheckout } from 'calypso/my-sites/checkout/composite-checkout/lib/leave-checkout';

@@ -9,9 +9,15 @@ import type { ConfigData } from '@automattic/create-calypso-config';
 
 const isWithinAvailableChatDays = ( currentTime: Date ) => {
 	const [ SUNDAY, SATURDAY ] = [ 0, 6 ];
+	//open and close hours, currently 09:00 - 19:00 UTC
+	const [ OPEN_HOUR, CLOSE_HOUR ] = [ 9, 19 ];
+	const utcHour = currentTime.getUTCHours();
 	const utcWeekDay = currentTime.getUTCDay();
 
-	return utcWeekDay !== SUNDAY && utcWeekDay !== SATURDAY;
+	//if current hour is within open and close hour range and day is not saturday or sunday, return true
+	return (
+		utcHour >= OPEN_HOUR && utcHour < CLOSE_HOUR && utcWeekDay !== SUNDAY && utcWeekDay !== SATURDAY
+	);
 };
 
 const isWithinShutdownDates = ( currentTime: Date ) => {

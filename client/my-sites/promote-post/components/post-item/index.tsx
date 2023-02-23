@@ -66,7 +66,7 @@ export default function PostItem( { post }: Props ) {
 						) }
 					</span>
 					<span className="post-item__post-type">{ getPostType( post.type ) }</span>
-					<span className="post-item__post-type">
+					<span className="post-item__link">
 						<a href={ post.URL } className="post-item__title-view">
 							{ __( 'View' ) }{ ' ' }
 							<Gridicon icon="external" size={ 12 } className="post-item__external-icon" />
