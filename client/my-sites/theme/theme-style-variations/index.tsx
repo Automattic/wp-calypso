@@ -26,6 +26,7 @@ const ThemeStyleVariations = ( {
 	const [ collapsibleMaxHeight, setCollapsibleMaxHeight ] = useState< number | undefined >();
 	const [ isCollapsible, setIsCollapsible ] = useState< boolean >( false );
 	const [ isCollapsed, setIsCollapsed ] = useState< boolean >( false );
+	const isCollapsibleRef = useRef( false );
 
 	useLayoutEffect( () => {
 		if ( ! observerRef.current ) {
@@ -42,9 +43,11 @@ const ThemeStyleVariations = ( {
 
 			// Detect flex wrap.
 			const currentIsCollapsible = nodeLastChild.offsetTop > nodeFirstChild.offsetTop;
-			const shouldCollapse = isCollapsible !== currentIsCollapsible || isCollapsed;
+			const shouldCollapse = isCollapsibleRef.current !== currentIsCollapsible || isCollapsed;
 
 			setIsCollapsible( currentIsCollapsible );
+			isCollapsibleRef.current = currentIsCollapsible;
+
 			setIsCollapsed( shouldCollapse );
 			setCollapsibleMaxHeight( shouldCollapse ? nodeFirstChild.offsetHeight : node.scrollHeight );
 		} );
@@ -53,7 +56,7 @@ const ThemeStyleVariations = ( {
 		return () => {
 			resizeObserver.disconnect();
 		};
-	}, [ isCollapsible, isCollapsed ] );
+	}, [ isCollapsed ] );
 
 	const handleCollapseButtonClick = () => {
 		setIsCollapsed( ! isCollapsed );
