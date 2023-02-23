@@ -394,7 +394,6 @@ export default class WebPreviewContent extends Component {
 				{ this.props.showExternal && this.props.isModalWindow && ! this.props.isPrivateAtomic && (
 					<DomainUpsellCallout trackEvent="site_preview_domain_upsell_callout" />
 				) }
-				{ this.props.bannerToShow }
 				{ this.props.belowToolbar }
 				{ ( ! isLoaded || this.state.isLoadingSubpage ) && <SpinnerLine /> }
 				<div
@@ -410,6 +409,7 @@ export default class WebPreviewContent extends Component {
 							<span className="web-preview__loading-message">{ this.props.loadingMessage }</span>
 						</div>
 					) }
+					{ this.props.bannerToShow }
 					{ 'seo' !== this.state.device && (
 						<div
 							onMouseEnter={ () => {
