@@ -43,7 +43,7 @@ interface Props {
 }
 
 export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
-	const __ = useTranslate();
+	const translate = useTranslate();
 	const HANDLED_ERROR = {
 		IMPORT_LIMIT: 'subscriber_import_limit_reached',
 		IMPORT_BLOCKED: 'blocked_import',
@@ -56,7 +56,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		showSubtitle,
 		showCsvUpload,
 		showFormManualListLabel,
-		submitBtnName = __( 'Add subscribers' ),
+		submitBtnName = translate( 'Add subscribers' ),
 		submitBtnAlwaysEnable,
 		allowEmptyFormSubmit,
 		manualListEmailInviting,
@@ -76,9 +76,9 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	 */
 	const emailControlMaxNum = 6;
 	const emailControlPlaceholder = [
-		__( 'sibling@example.com' ),
-		__( 'parents@example.com' ),
-		__( 'friend@example.com' ),
+		translate( 'sibling@example.com' ),
+		translate( 'parents@example.com' ),
+		translate( 'friend@example.com' ),
 	];
 	const inProgress = useInProgressState();
 	const prevInProgress = useRef( inProgress );
@@ -214,7 +214,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 			currentEmailFormControlsNum === validEmailsNum
 		) {
 			const controls = Array.from( emailFormControls );
-			controls.push( __( 'Add another email' ) );
+			controls.push( translate( 'Add another email' ) );
 
 			setEmailFormControls( controls );
 		}
@@ -263,14 +263,14 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 						switch ( error.code ) {
 							case HANDLED_ERROR.IMPORT_LIMIT:
 								return createInterpolateElement(
-									__(
+									translate(
 										'We couldn’t import your subscriber list as you’ve hit the 100 email limit for our free plan. The good news? You can upload a list of any size after upgrading to any paid plan. If you’d like to import a smaller list now, you can <uploadBtn>upload a different file</uploadBtn>.'
 									),
 									{ uploadBtn: formFileUploadElement }
 								);
 
 							case HANDLED_ERROR.IMPORT_BLOCKED:
-								return __(
+								return translate(
 									'We ran into a security issue with your subscriber list. It’s nothing to worry about. If you reach out to our support team when you’ve finished setting things up, they’ll help resolve this for you.'
 								);
 
@@ -288,7 +288,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 			! isSelectedFileValid && (
 				<FormInputValidation isError={ true } text="">
 					{ createInterpolateElement(
-						__(
+						translate(
 							'Sorry, you can only upload CSV files right now. Most providers will let you export this from your settings. <uploadBtn>Select another file</uploadBtn>'
 						),
 						{ uploadBtn: formFileUploadElement }
@@ -300,11 +300,11 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 	function renderEmptyFormValidationMsg() {
 		const validationMsg = showCsvUpload
-			? __(
+			? translate(
 					"You'll need to add at least one email address " +
 						'or upload a CSV file of current subscribers to continue.'
 			  )
-			: __( "You'll need to add at least one subscriber to continue." );
+			: translate( "You'll need to add at least one subscriber to continue." );
 
 		return (
 			!! submitAttemptCount &&
@@ -319,7 +319,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 			emailControlMaxNum === isValidEmails.filter( ( x ) => x ).length && (
 				<FormInputValidation icon="tip" isError={ false } text="">
 					<Icon icon={ tip } />
-					{ __( 'Great start! You’ll be able to add more subscribers after setup.' ) }
+					{ translate( 'Great start! You’ll be able to add more subscribers after setup.' ) }
 				</FormInputValidation>
 			)
 		);
@@ -332,7 +332,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 					{ createInterpolateElement(
 						sprintf(
 							/* translators: the first string variable shows CTA button name */
-							__(
+							translate(
 								'By clicking "%s", you represent that you\'ve obtained the appropriate consent to email each person. <Button>Learn more</Button>'
 							),
 							submitBtnName
@@ -354,10 +354,12 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 	function renderImportCsvLabel() {
 		const ariaLabelMsg = isSiteOnFreePlan
-			? __(
+			? translate(
 					'Or bring your mailing list up to 100 emails from other newsletter services by uploading a CSV file.'
 			  )
-			: __( 'Or bring your mailing list from other newsletter services by uploading a CSV file.' );
+			: translate(
+					'Or bring your mailing list from other newsletter services by uploading a CSV file.'
+			  );
 
 		return (
 			isSelectedFileValid &&
@@ -365,10 +367,10 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 				<label aria-label={ ariaLabelMsg }>
 					{ createInterpolateElement(
 						isSiteOnFreePlan
-							? __(
+							? translate(
 									'Or bring your mailing list up to 100 emails from other newsletter services by <uploadBtn>uploading a CSV file.</uploadBtn>'
 							  )
-							: __(
+							: translate(
 									'Or bring your mailing list from other newsletter services by <uploadBtn>uploading a CSV file.</uploadBtn>'
 							  ),
 						{ uploadBtn: formFileUploadElement }
@@ -386,7 +388,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 					{ createInterpolateElement(
 						sprintf(
 							/* translators: the first string variable shows a selected file name, Replace and Remove are links */
-							__(
+							translate(
 								'<strong>%s</strong> <uploadBtn>Replace</uploadBtn> | <removeBtn>Remove</removeBtn>'
 							),
 							selectedFile?.name
@@ -410,7 +412,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 			isSelectedFileValid &&
 			! selectedFile && (
 				<label>
-					{ __(
+					{ translate(
 						"If you enter an email address that has a WordPress.com account, they'll become a follower."
 					) }
 				</label>
@@ -422,10 +424,10 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		<div className="add-subscriber">
 			{ ( showTitle || showSubtitle ) && (
 				<div className="add-subscriber__title-container">
-					{ showTitle && <Title>{ __( 'Let’s add your first subscribers' ) }</Title> }
+					{ showTitle && <Title>{ translate( 'Let’s add your first subscribers' ) }</Title> }
 					{ showSubtitle && (
 						<SubTitle>
-							{ __(
+							{ translate(
 								'Your subscribers will receive an email notification whenever you publish a new post.'
 							) }
 						</SubTitle>
@@ -442,7 +444,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 							<div key={ i }>
 								{ showFormManualListLabel && i === 0 && (
 									<label className="add-subscriber__form-label-emails">
-										<strong>{ __( 'Emails' ) }</strong>
+										<strong>{ translate( 'Emails' ) }</strong>
 									</label>
 								) }
 								<TextControl
@@ -451,14 +453,14 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 									placeholder={ placeholder }
 									value={ emails[ i ] || '' }
 									help={ isValidEmails[ i ] ? <Icon icon={ check } /> : undefined }
-									onChange={ ( value ) => onEmailChange( value, i ) }
+									onChange={ ( value: string ) => onEmailChange( value, i ) }
 									onBlur={ () => setIsDirtyEmail( emails[ i ], i ) }
 								/>
 
 								{ showError && (
 									<FormInputValidation
 										isError={ true }
-										text={ __( 'The format of the email is invalid' ) }
+										text={ translate( 'The format of the email is invalid' ) }
 									/>
 								) }
 							</div>
