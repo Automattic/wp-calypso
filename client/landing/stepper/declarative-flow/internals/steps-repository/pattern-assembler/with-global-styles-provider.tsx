@@ -13,6 +13,11 @@ const withGlobalStylesProvider = createHigherOrderComponent(
 			const siteSlug = useSiteSlugParam();
 			const siteId = useSiteIdParam();
 			const siteSlugOrId = siteSlug ? siteSlug : siteId;
+			const stylesheet = selectedDesign?.recipe?.stylesheet;
+
+			if ( ! siteSlugOrId || ! stylesheet ) {
+				return null;
+			}
 
 			if ( ! isEnabled( 'pattern-assembler/color-and-fonts' ) ) {
 				return <InnerComponent { ...props } />;
@@ -20,10 +25,7 @@ const withGlobalStylesProvider = createHigherOrderComponent(
 
 			// TODO: We might need to lazy load the GlobalStylesProvider
 			return (
-				<GlobalStylesProvider
-					siteId={ siteSlugOrId }
-					stylesheet={ selectedDesign?.recipe?.stylesheet }
-				>
+				<GlobalStylesProvider siteId={ siteSlugOrId } stylesheet={ stylesheet }>
 					<InnerComponent { ...props } />
 				</GlobalStylesProvider>
 			);

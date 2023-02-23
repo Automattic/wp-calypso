@@ -71,7 +71,7 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 		useState< GlobalStylesObject | null >( null );
 
 	const selectedVariations = useMemo(
-		() => [ selectedColorPaletteVariation ],
+		() => [ selectedColorPaletteVariation ].filter( Boolean ) as GlobalStylesObject[],
 		[ selectedColorPaletteVariation ]
 	);
 

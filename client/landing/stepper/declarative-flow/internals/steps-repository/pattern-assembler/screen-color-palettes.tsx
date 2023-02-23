@@ -9,7 +9,7 @@ interface Props {
 	siteId: number | string;
 	stylesheet: string;
 	selectedColorPaletteVariation: GlobalStylesObject | null;
-	onSelect: ( colorPaletteVariation: GlobalStylesObject ) => void;
+	onSelect: ( colorPaletteVariation: GlobalStylesObject | null ) => void;
 	onDoneClick: () => void;
 }
 
