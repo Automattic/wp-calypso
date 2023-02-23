@@ -34,4 +34,4 @@ function happyblocks_universal_header_register() {
 
 }
 
-add_action( 'init', 'happyblocks_universal_header_register', 100 );
+add_action( 'init', 'happyblocks_universal_header_register', 1 );
