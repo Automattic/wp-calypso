@@ -1,6 +1,6 @@
 import * as selectors from './selectors';
-import type { SelectFromMap } from '../mapped-types';
 import type { DataStatus } from './constants';
+import type { SelectFromMap } from '../mapped-types';
 
 export interface DomainSuggestionQuery {
 	/**
