@@ -63,6 +63,7 @@ export default function SiteTableRow( { columns, item, setExpanded, isExpanded }
 					'site-table__table-row-disabled': shouldDisableLicenseSelection,
 					'site-table__table-row-active': currentSiteHasSelectedLicenses,
 					'site-table__table-row-site-error': hasSiteError,
+					'is-expanded': isExpanded,
 				} ) }
 				onClick={ ( event ) => {
 					if ( ! shouldDisableLicenseSelection ) {
