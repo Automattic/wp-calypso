@@ -372,6 +372,7 @@ export function isPluginActionStatus(
 	state: AppState,
 	siteId: number,
 	pluginId: string,
+	// TODO: refactor to take only string and not string[] to reduce complexity.
 	action: string | string[],
 	status: string
 ) {
@@ -393,6 +394,7 @@ export function isPluginActionStatus(
  * @param  {string|Array} action   Action, or array of actions of interest
  * @returns {boolean}              True if one or more specified actions are in progress, false otherwise.
  */
+// TODO: remove isPluginActionInProgress and use isPluginActionStatus instead.
 export function isPluginActionInProgress(
 	state: AppState,
 	siteId: number,
