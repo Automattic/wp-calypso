@@ -93,7 +93,7 @@ export type IndividualTransactionsRecord = Record< ReceiptId, IndividualTransact
 export interface IndividualTransactionsState {
 	requesting: boolean;
 	error: boolean;
-	data: IndividualReceipt | null;
+	data: BillingTransaction;
 }
 
 export interface BillingTransactionsState {

@@ -1,6 +1,6 @@
 import { createSelector } from '@automattic/state-utils';
 import getPastBillingTransactions from 'calypso/state/selectors/get-past-billing-transactions';
-import type { IndividualReceipt } from '../billing-transactions/types';
+import type { BillingTransaction } from '../billing-transactions/types';
 import type { IAppState } from '../types';
 
 import 'calypso/state/billing-transactions/init';
@@ -11,7 +11,7 @@ import 'calypso/state/billing-transactions/init';
 const getIndividualBillingTransaction = (
 	state: IAppState,
 	id: number
-): IndividualReceipt | null =>
+): BillingTransaction | null =>
 	state.billingTransactions?.individualTransactions?.[ id ]?.data ?? null;
 
 /**
