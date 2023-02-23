@@ -194,7 +194,7 @@ class ThemeSheet extends Component {
 
 	onStyleVariationClick = ( variation ) => {
 		this.props.recordTracksEvent( 'calypso_theme_sheet_style_variation_click', {
-			theme: this.props.themeId,
+			theme_name: this.props.themeId,
 			style_variation: variation.slug,
 		} );
 
