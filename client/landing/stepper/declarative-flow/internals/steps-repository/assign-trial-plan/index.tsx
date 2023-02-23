@@ -50,7 +50,7 @@ const AssignTrialPlanStep: Step = function AssignTrialPlanStep( { navigation, da
 	}, [] );
 
 	const getCurrentMessage = () => {
-		return __( 'Woo! We’re creating your store ' );
+		return __( 'Woo! We’re creating your store' );
 	};
 
 	const getSubTitle = () => {

@@ -150,7 +150,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 
 	const getCurrentMessage = () => {
 		return isWooExpressFlow( flow )
-			? __( 'Woo! We’re creating your store ' )
+			? __( 'Woo! We’re creating your store' )
 			: __( 'Creating your site' );
 	};
 
