@@ -35,6 +35,7 @@ export interface DIFMDependencies {
 	siteTitle: string;
 	siteDescription: string;
 	tagline: string;
+	searchTerms: string;
 	selectedDesign: Design;
 	selectedSiteCategory: string;
 	isLetUsChooseSelected: boolean;
