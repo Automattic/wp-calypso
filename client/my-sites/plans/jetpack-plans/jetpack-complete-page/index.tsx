@@ -83,8 +83,8 @@ const JetpackCompletePage: React.FC< Props > = ( {
 
 						<ItemsIncluded />
 						<ItemPrice item={ item } siteId={ siteId } />
-            
-            <CtaButtons />
+
+						<CtaButtons />
 					</>
 				</JetpackRnaDialogCard>
 			</Main>
