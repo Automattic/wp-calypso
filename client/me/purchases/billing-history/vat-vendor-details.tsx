@@ -23,7 +23,9 @@ interface VatVendorInfo {
 	vatId: string;
 }
 
-function isCountryInEu( country: string ): boolean {
+function isCountryInEu( country: string, date?: string ): boolean {
+	const time = Date.parse( date ?? 'now' );
+	const brexitTime = Date.parse( '2020-01-31 23:00 GMT' );
 	const countries = [
 		'AT',
 		'BE',
@@ -55,14 +57,18 @@ function isCountryInEu( country: string ): boolean {
 		'SK',
 		'XI',
 	];
+	if ( country === 'GB' && time < brexitTime ) {
+		return true;
+	}
 	return countries.includes( country );
 }
 
 function getVatVendorInfo(
 	country: string,
+	date: string,
 	translate: ReturnType< typeof useTranslate >
 ): VatVendorInfo | undefined {
-	if ( isCountryInEu( country ) ) {
+	if ( isCountryInEu( country, date ) ) {
 		return {
 			country,
 			taxName: translate( 'VAT', { textOnly: true } ),
@@ -112,7 +118,7 @@ function getVatVendorInfo(
 
 export function VatVendorDetails( { transaction }: { transaction: BillingTransaction } ) {
 	const translate = useTranslate();
-	const vendorInfo = getVatVendorInfo( transaction.tax_country_code, translate );
+	const vendorInfo = getVatVendorInfo( transaction.tax_country_code, transaction.date, translate );
 	if ( ! vendorInfo ) {
 		return null;
 	}
