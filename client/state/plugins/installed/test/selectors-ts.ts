@@ -480,12 +480,12 @@ describe( 'getSitesWithoutPlugin', () => {
 } );
 
 describe( 'getStatusForPlugin', () => {
-	test( 'Should get `false` if the requested site is not in the current state', () => {
-		expect( getStatusForPlugin( state, nonExistingSiteId1, 'akismet/akismet' ) ).toBe( false );
+	test( 'Should get `undefined` if the requested site is not in the current state', () => {
+		expect( getStatusForPlugin( state, nonExistingSiteId1, 'akismet/akismet' ) ).toBe( undefined );
 	} );
 
-	test( 'Should get `false` if the requested plugin on this site is not in the current state', () => {
-		expect( getStatusForPlugin( state, siteOneId, 'hello-dolly/hello' ) ).toBe( false );
+	test( 'Should get `undefined` if the requested plugin on this site is not in the current state', () => {
+		expect( getStatusForPlugin( state, siteOneId, 'hello-dolly/hello' ) ).toBe( undefined );
 	} );
 
 	test( 'Should get the log if the requested site & plugin have logs', () => {
