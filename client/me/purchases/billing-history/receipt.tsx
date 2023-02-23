@@ -225,7 +225,7 @@ function VatDetails( { transaction }: { transaction: BillingTransaction } ) {
 		};
 	};
 
-	if ( isLoading || fetchError || ! vatDetails.id ) {
+	if ( isLoading || fetchError ) {
 		return null;
 	}
 
