@@ -35,6 +35,7 @@ const StatsListCard = ( {
 	usePlainCard,
 	showLeftIcon,
 	isLinkUnderlined,
+	listItemClassName,
 } ) => {
 	const moduleNameTitle = titlecase( moduleType );
 	const debug = debugFactory( `calypso:stats:list:${ moduleType }` );
@@ -132,6 +133,7 @@ const StatsListCard = ( {
 			emptyMessage={ emptyMessage }
 			isEmpty={ ! loader && ( ! data || ! data?.length ) }
 			className={ classNames( `list-${ moduleType }`, className ) }
+			headerClassName={ listItemClassName }
 			metricLabel={ metricLabel }
 			heroElement={ heroElement }
 			splitHeader={ splitHeader }
@@ -152,6 +154,7 @@ const StatsListCard = ( {
 							<HorizontalBarListItem
 								key={ key }
 								data={ item }
+								className={ listItemClassName }
 								maxValue={ barMaxValue }
 								hasIndicator={ item?.className?.includes( 'published' ) }
 								onClick={ localClickHandler }

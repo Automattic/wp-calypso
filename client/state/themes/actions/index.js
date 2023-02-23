@@ -32,6 +32,7 @@ export { setThemePreviewOptions } from 'calypso/state/themes/actions/set-theme-p
 export { showAutoLoadingHomepageWarning } from 'calypso/state/themes/actions/show-auto-loading-homepage-warning';
 export { showThemePreview } from 'calypso/state/themes/actions/show-theme-preview';
 export { themeActivated } from 'calypso/state/themes/actions/theme-activated';
+export { themeStartActivationSync } from 'calypso/state/themes/actions/theme-start-activation-sync';
 export { themeRequestFailure } from 'calypso/state/themes/actions/theme-request-failure';
 export {
 	initiateThemeTransfer,

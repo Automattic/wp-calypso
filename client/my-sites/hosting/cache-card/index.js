@@ -9,8 +9,6 @@ import getRequest from 'calypso/state/selectors/get-request';
 import { shouldRateLimitAtomicCacheClear } from 'calypso/state/selectors/should-rate-limit-atomic-cache-clear';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-import './style.scss';
-
 const CacheCard = ( {
 	disabled,
 	shouldRateLimitCacheClear,

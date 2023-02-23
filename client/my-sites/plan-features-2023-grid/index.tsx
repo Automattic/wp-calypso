@@ -481,8 +481,7 @@ export class PlanFeatures2023Grid extends Component<
 				getPlanClass( planName )
 			);
 			const tableItemClasses = classNames( 'plan-features-2023-grid__table-item', {
-				'popular-plan-parent-class':
-					isBusinessPlan( planName ) || isEcommercePlan( planName ) || isPremiumPlan( planName ),
+				'popular-plan-parent-class': isBusinessPlan( planName ) || isPremiumPlan( planName ),
 			} );
 
 			const popularBadgeClasses = classNames( {
