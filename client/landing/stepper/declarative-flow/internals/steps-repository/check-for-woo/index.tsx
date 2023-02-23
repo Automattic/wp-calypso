@@ -15,14 +15,21 @@ const CheckForWoo: Step = function CheckForWoo( { navigation } ) {
 		}
 
 		const checkForWoo = async () => {
-			const response: PluginsResponse = await wpcomRequest( {
-				path: `/sites/${ site?.ID }/plugins`,
-				apiVersion: '1.1',
-			} );
+			let hasWooCommerce;
 
-			const hasWooCommerce =
-				response?.plugins.find( ( plugin: { slug: string } ) => plugin.slug === 'woocommerce' ) !==
-				undefined;
+			try {
+				const response: PluginsResponse = await wpcomRequest( {
+					path: `/sites/${ site?.ID }/plugins`,
+					apiVersion: '1.1',
+				} );
+
+				hasWooCommerce =
+					response?.plugins.find(
+						( plugin: { slug: string } ) => plugin.slug === 'woocommerce'
+					) !== undefined;
+			} catch ( error ) {
+				hasWooCommerce = false;
+			}
 
 			submit?.( { hasWooCommerce } );
 		};
