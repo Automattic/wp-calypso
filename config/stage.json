@@ -155,6 +155,7 @@
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
+		"yolo/staging-sites-i1": true,
 		"newsletter/stats": false
 	},
 	"siftscience_key": "e00e878351",
