@@ -542,7 +542,8 @@ ul.module-content-list-item-action-submenu {
 	}
 
 	// Color follow action when already following
-	.module-content-list-item-action-wrapper.following .module-content-list-item-action-label, .module-content-list-item-action-wrapper.following .module-content-list-item-action-label:hover {
+	.module-content-list-item-action-wrapper.following .module-content-list-item-action-label,
+	.module-content-list-item-action-wrapper.following .module-content-list-item-action-label:hover {
 		color: var(--studio-white);
 	}
 
