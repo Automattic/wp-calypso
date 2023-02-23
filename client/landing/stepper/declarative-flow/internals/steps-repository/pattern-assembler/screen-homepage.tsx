@@ -11,6 +11,7 @@ import type { Pattern } from './types';
 interface Props {
 	patterns: Pattern[];
 	onDoneClick: () => void;
+	onAddSection: () => void;
 	onReplaceSection: ( position: number ) => void;
 	onDeleteSection: ( position: number ) => void;
 	onMoveUpSection: ( position: number ) => void;
@@ -20,6 +21,7 @@ interface Props {
 const ScreenHomepage = ( {
 	patterns,
 	onDoneClick,
+	onAddSection,
 	onReplaceSection,
 	onDeleteSection,
 	onMoveUpSection,
@@ -40,7 +42,10 @@ const ScreenHomepage = ( {
 			<div className="screen-container__body">
 				<PatternLayout
 					sections={ patterns }
-					onAddSection={ goToPatternList }
+					onAddSection={ () => {
+						onAddSection();
+						goToPatternList();
+					} }
 					onReplaceSection={ ( position ) => {
 						onReplaceSection( position );
 						goToPatternList();

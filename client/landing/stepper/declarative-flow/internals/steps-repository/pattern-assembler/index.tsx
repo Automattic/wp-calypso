@@ -325,6 +325,11 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 		}
 	};
 
+	const onAddSection = () => {
+		trackEventPatternAdd( 'section' );
+		setSectionPosition( null );
+	};
+
 	const onReplaceSection = ( position: number ) => {
 		setSectionPosition( position );
 	};
@@ -352,7 +357,7 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 							sections={ sections }
 							header={ header }
 							footer={ footer }
-							onAddSection={ () => trackEventPatternAdd( 'section' ) }
+							onAddSection={ onAddSection }
 							onReplaceSection={ onReplaceSection }
 							onDeleteSection={ onDeleteSection }
 							onMoveUpSection={ onMoveUpSection }
@@ -388,6 +393,7 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 					<ScreenHomepage
 						patterns={ sections }
 						onDoneClick={ () => onDoneClick( 'section' ) }
+						onAddSection={ onAddSection }
 						onReplaceSection={ onReplaceSection }
 						onDeleteSection={ onDeleteSection }
 						onMoveUpSection={ onMoveUpSection }
