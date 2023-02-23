@@ -34,7 +34,7 @@ const ThemeStyleVariations = ( {
 
 	const updateCollapsibleMaxHeight = ( shouldCollapse: boolean ) => {
 		const node = observerRef.current;
-		const nodeFirstChild = node.firstChild as HTMLElement;
+		const nodeFirstChild = node?.firstChild as HTMLElement;
 		if ( ! node || ! nodeFirstChild ) {
 			return null;
 		}
