@@ -18,9 +18,14 @@
 			background-color: var(--studio-black);
 			border-color: var(--studio-black);
 			&:hover,
-			&:active {
-				background-color: var(--studio-gray-90);
+			&:active{
+				background-color: var(--studio-gray-60);
 				border-color: var(--studio-black);
+			}
+			&:focus {
+				background-color: var(--studio-gray-60);
+				border-color: var(--studio-white);
+				box-shadow: 0 0 0 2px var(--studio-black);
 			}
 		}
 	}
@@ -34,7 +39,8 @@
 			background-color: var(--studio-white);
 			border-color: var(--studio-black);
 			&:hover,
-			&:active {
+			&:active,
+			&:focus {
 				background-color: var(--studio-gray-5);
 				color: var(--studio-black);
 				border-color: var(--studio-black);
