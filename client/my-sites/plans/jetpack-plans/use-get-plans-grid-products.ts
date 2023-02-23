@@ -126,7 +126,10 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 	// If neither Social Basic or Social Advanced backups are owned, then show Social Basic Plan.
 	// Otherwise the one owned will be displayed via purchasedProducts.
 	if ( ! ownsSocialBasic && ! ownsSocialAdvanced ) {
-		socialProductsToShow.push( PRODUCT_JETPACK_SOCIAL_BASIC, PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY );
+		socialProductsToShow.push(
+			PRODUCT_JETPACK_SOCIAL_ADVANCED,
+			PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY
+		);
 	}
 
 	availableProducts = [ ...availableProducts, ...socialProductsToShow ];
