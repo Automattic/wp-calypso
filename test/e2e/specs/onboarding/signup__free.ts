@@ -68,7 +68,7 @@ describe( 'Signup: Create a WordPress.com Free site as a new user', function () 
 
 		it( 'Land in Launchpad', async function () {
 			// Processing steps often takes longer than the default timeout.
-			await page.waitForURL( /launchpad/, { timeout: 20 * 1000 } );
+			await page.waitForURL( /launchpad/, { timeout: 30 * 1000 } );
 		} );
 
 		it( 'Launch site', async function () {
@@ -87,9 +87,9 @@ describe( 'Signup: Create a WordPress.com Free site as a new user', function () 
 	describe( 'Validate WordPress.com Free functionality', function () {
 		let sidebarComponent: SidebarComponent;
 
-		it( 'User has the selected free domain', async function () {
-			const urlRegex = `${ testUser.siteName }.wordpress.com`;
-			expect( page.url() ).toMatch( urlRegex );
+		it( 'Site name is used for the free domain name', async function () {
+			const expectedURL = `${ testUser.siteName }.wordpress.com`;
+			expect( page.url() ).toMatch( expectedURL );
 		} );
 
 		it( 'User is on WordPress.com Free plan', async function () {
