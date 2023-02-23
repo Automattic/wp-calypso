@@ -1,16 +1,22 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .confirmation-task__card {
 	--subtitle-font-size: 0.8125rem;
 	border-radius: 2px;
 	box-shadow: 0 0 0 1px var(--color-neutral-5);
 	cursor: pointer;
 
-	&:hover {
-		box-shadow: 0 0 0 2px var(--color-accent-50);
-	}
-
 	margin: 0;
 	padding: 40px 25px;
 	text-align: center;
+
+	@media (max-width: $break-mobile) {
+		padding: 32px;
+	}
+
+	&:hover {
+		box-shadow: 0 0 0 2px var(--color-accent-50);
+	}
 
 	.confirmation-task__illustration {
 		width: 124px;
