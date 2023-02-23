@@ -587,6 +587,7 @@ const Summary: React.FunctionComponent = () => {
 			key={ stepIndex }
 			value={ title || '' }
 			onChange={ updateTitle }
+			onBlur={ undefined }
 		/>
 	);
 

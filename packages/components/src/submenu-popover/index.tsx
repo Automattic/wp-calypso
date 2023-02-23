@@ -1,7 +1,7 @@
 import { Popover } from '@wordpress/components';
 import { LegacyRef, useCallback, useMemo, useRef, useState } from 'react';
 
-interface SubmenuPopoverProps extends Popover.Props {
+interface SubmenuPopoverProps {
 	children?: React.ReactChild;
 	isVisible?: boolean;
 	offset?: number | { mainAxis?: number; crossAxis?: number; alignmentAxis?: number | null };
