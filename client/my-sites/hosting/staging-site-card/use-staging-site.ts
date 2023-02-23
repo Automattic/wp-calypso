@@ -25,7 +25,7 @@ export const useStagingSite = ( siteId: number, options: UseQueryOptions ) => {
 			meta: {
 				persist: false,
 			},
-			refetchOnWindowFocus: false,
+			staleTime: 10 * 1000,
 		}
 	);
 };
