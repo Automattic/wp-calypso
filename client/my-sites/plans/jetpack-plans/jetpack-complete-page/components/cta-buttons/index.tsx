@@ -18,7 +18,7 @@ const CtaButtons = () => {
 		: `/checkout/${ PLAN_JETPACK_COMPLETE }`;
 
 	const stayFreeURL = useSelector(
-		( state ) => getJetpackAdminUrl( state, siteId ) ?? '/pricing/jetpack-free/welcome'
+		( state ) => getJetpackAdminUrl( state, siteId ) ?? 'https://jetpack.com'
 	);
 
 	return (
