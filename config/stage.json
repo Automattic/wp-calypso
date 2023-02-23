@@ -95,6 +95,7 @@
 		"page/export": true,
 		"pattern-assembler/client-side-render": true,
 		"pattern-assembler/logged-out-showcase": true,
+		"pattern-assembler/sidebar-revamp": false,
 		"pattern-assembler/write-flow": true,
 		"plans/personal-plan": true,
 		"plans/pro-plan": false,
