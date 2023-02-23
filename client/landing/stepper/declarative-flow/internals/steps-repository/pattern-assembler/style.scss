@@ -354,3 +354,13 @@ $font-family: "SF Pro Text", $sans;
 		background-color: #000;
 	}
 }
+
+/**
+ * Revamp styles
+ */
+.pattern-assembler.pattern-assembler__sidebar-revamp {
+	.pattern-layout {
+		overflow-y: auto;
+		margin-bottom: 32px;
+	}
+}
