@@ -36,6 +36,9 @@ export function getEnhancedTasks(
 
 	const siteEditCompleted = site?.options?.launchpad_checklist_tasks_statuses?.site_edited || false;
 
+	const chooseDomainCompleted =
+		site?.options?.launchpad_checklist_tasks_statuses?.domain_upsell || false;
+
 	const siteLaunchCompleted =
 		site?.options?.launchpad_checklist_tasks_statuses?.site_launched || false;
 
@@ -311,8 +314,10 @@ export function getEnhancedTasks(
 				case 'domain_upsell':
 					taskData = {
 						title: translate( 'Choose a domain' ),
+						completed: chooseDomainCompleted,
+						disabled: chooseDomainCompleted,
 						actionDispatch: () => {
-							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							recordTaskClickTracksEvent( flow, chooseDomainCompleted, task.id );
 							window.location.assign( `/domains/add/${ siteSlug }?domainAndPlanPackage=true` );
 						},
 						badgeText: translate( 'Upgrade plan' ),
@@ -351,14 +356,4 @@ export function getArrayOfFilteredTasks( tasks: Task[], flow: string | null ) {
 			return accumulator;
 		}, [] as Task[] )
 	);
-}
-
-// Filter out the domain_upsell task from the enhanced task list when the user is not on a free plan anymore
-export function filterDomainUpsellTask( enhancedTasks: Task[] | null, site: SiteDetails | null ) {
-	if ( enhancedTasks && ! site?.plan?.is_free ) {
-		return enhancedTasks?.filter( ( task ) => {
-			return task.id !== 'domain_upsell';
-		} );
-	}
-	return enhancedTasks;
 }

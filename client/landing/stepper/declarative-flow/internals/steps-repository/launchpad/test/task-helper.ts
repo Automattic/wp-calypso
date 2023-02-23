@@ -1,9 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-import { filterDomainUpsellTask, getArrayOfFilteredTasks, getEnhancedTasks } from '../task-helper';
+import { getArrayOfFilteredTasks, getEnhancedTasks } from '../task-helper';
 import { tasks, launchpadFlowTasks } from '../tasks';
-import { buildTask, buildSiteDetails } from './lib/fixtures';
+import { buildTask } from './lib/fixtures';
 
 describe( 'Task Helpers', () => {
 	describe( 'getEnhancedTasks', () => {
@@ -87,47 +87,6 @@ describe( 'Task Helpers', () => {
 						.sort( ( a, b ) => ( a.id < b.id ? -1 : 1 ) )
 						.filter( ( task ) => launchpadFlowTasks[ 'newsletter' ].includes( task.id ) )
 				);
-			} );
-		} );
-	} );
-
-	describe( 'filterDomainUpsellTask', () => {
-		describe( 'when site plan is free', () => {
-			it( 'return original enchanceTasks', () => {
-				const task = buildTask( {
-					id: 'domain_upsell',
-					completed: false,
-					disabled: true,
-					taskType: 'blog',
-					title: 'domain upsell task',
-				} );
-				const tasks = [ task ];
-				const site = buildSiteDetails( { plan: { is_free: true } } );
-				// domain_upsell is still in the array
-				expect(
-					filterDomainUpsellTask( tasks, site )?.findIndex(
-						( task ) => ( task.id = 'domain_upsell' )
-					)
-				).toBe( 0 );
-			} );
-		} );
-		describe( 'when site plan is not free', () => {
-			it( 'filters out the domain_upsell task', () => {
-				const task = buildTask( {
-					id: 'domain_upsell',
-					completed: false,
-					disabled: true,
-					taskType: 'blog',
-					title: 'domain upsell task',
-				} );
-				const tasks = [ task ];
-				const site = buildSiteDetails( { plan: { is_free: false } } );
-				// domain_upsell is NOT in the array
-				expect(
-					filterDomainUpsellTask( tasks, site )?.findIndex(
-						( task ) => ( task.id = 'domain_upsell' )
-					)
-				).toBe( -1 );
 			} );
 		} );
 	} );
