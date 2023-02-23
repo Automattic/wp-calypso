@@ -29,7 +29,7 @@
 			&:focus {
 				background-color: var(--studio-gray-60);
 				border-color: var(--studio-white);
-				box-shadow: 0 0 0 2px var(--studio-black);
+				box-shadow: 0 0 0 1px var(--studio-black) !important;
 			}
 		}
 	}
@@ -43,11 +43,16 @@
 			background-color: var(--studio-white);
 			border-color: var(--studio-black);
 			&:hover,
-			&:active,
-			&:focus {
+			&:active {
 				background-color: var(--studio-gray-5);
 				color: var(--studio-black);
 				border-color: var(--studio-black);
+			}
+			&:focus {
+				background-color: var(--studio-gray-5);
+				color: var(--studio-black);
+				border-color: var(--studio-white);
+				box-shadow: 0 0 0 1px var(--studio-black) !important;
 			}
 		}
 	}
