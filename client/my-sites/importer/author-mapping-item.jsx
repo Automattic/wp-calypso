@@ -106,7 +106,7 @@ const withUsers = createHigherOrderComponent(
 
 		return <Component users={ users } { ...props } />;
 	},
-	'withTotalUsers'
+	'withUsers'
 );
 
 export default localize( withUsers( ImporterAuthorMapping ) );
