@@ -5,7 +5,6 @@ export function isCountryInEu( country: string, date?: string ): boolean {
 		'AT',
 		'BE',
 		'BG',
-		'CH',
 		'CY',
 		'CZ',
 		'DE',
@@ -30,9 +29,10 @@ export function isCountryInEu( country: string, date?: string ): boolean {
 		'SE',
 		'SI',
 		'SK',
-		'XI',
 	];
-	if ( country === 'GB' && time < brexitTime ) {
+	// GB is a real country code but sometimes this might be called with the
+	// invalid 'UK' code.
+	if ( ( country === 'GB' || country === 'UK' ) && time < brexitTime ) {
 		return true;
 	}
 	return countries.includes( country );
