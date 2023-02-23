@@ -325,6 +325,10 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 		'is-current-plan': current,
 	} );
 
+	const popularBadgeClasses = classNames( {
+		'is-current-plan': current,
+	} );
+
 	const rawPrice = planPropertiesObj.rawPrice;
 	const isLargeCurrency = rawPrice ? rawPrice > 99000 : false;
 
@@ -332,7 +336,11 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 
 	return (
 		<Cell className={ headerClasses } textAlign="left">
-			<PopularBadge isInSignup={ isInSignup } planName={ planName } />
+			<PopularBadge
+				isInSignup={ isInSignup }
+				planName={ planName }
+				additionalClassName={ popularBadgeClasses }
+			/>
 			<PlanSelector>
 				{ showPlanSelect && (
 					<select
