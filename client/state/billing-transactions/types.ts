@@ -13,6 +13,7 @@ export interface IndividualReceipt {
 export interface BillingTransaction {
 	address: string;
 	amount: string;
+	tax_country_code: string;
 	cc_email: string;
 	cc_name: string;
 	cc_num: string;
