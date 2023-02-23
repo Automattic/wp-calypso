@@ -11,24 +11,26 @@ export interface IndividualReceipt {
 }
 
 export interface BillingTransaction {
-	id: string;
-	service: string;
+	address: string;
 	amount: string;
-	tax_amount: string;
-	icon: string;
+	cc_email: string;
+	cc_name: string;
+	cc_num: string;
+	cc_type: string;
+	credit: string;
 	date: string;
 	desc: string;
-	org: string;
-	url: string;
-	support: string;
-	pay_ref: string;
-	pay_part: string;
-	cc_type: string;
-	cc_num: string;
-	cc_name: string;
-	cc_email: string;
-	credit: string;
+	icon: string;
+	id: string;
 	items: BillingTransactionItem[];
+	org: string;
+	pay_part: string;
+	pay_ref: string;
+	service: string;
+	subtotal: string;
+	support: string;
+	tax: string;
+	url: string;
 }
 
 export interface BillingTransactionItem {
