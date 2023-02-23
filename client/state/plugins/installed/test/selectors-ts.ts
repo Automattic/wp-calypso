@@ -17,6 +17,8 @@ import {
 	getSiteObjectsWithPlugin,
 	getSitesWithPlugin,
 	getSitesWithoutPlugin,
+	isRequesting,
+	isRequestingForSites,
 } from '../selectors-ts';
 import { akismet, helloDolly, jetpack } from './fixtures/plugins';
 
@@ -167,6 +169,38 @@ const helloDollyWithSites = deepFreeze( {
 			autoupdate: true,
 		},
 	},
+} );
+
+describe( 'isRequesting', () => {
+	test( 'Should get `false` if this site is not in the current state', () => {
+		expect( isRequesting( state, nonExistingSiteId1 ) ).toBe( false );
+	} );
+
+	test( 'Should get `false` if this site is not being fetched', () => {
+		expect( isRequesting( state, siteOneId ) ).toBe( false );
+	} );
+
+	test( 'Should get `true` if this site is being fetched', () => {
+		expect( isRequesting( state, siteThreeId ) ).toBe( true );
+	} );
+} );
+
+describe( 'isRequestingForSites', () => {
+	test( 'Should get `false` if no sites are being fetched', () => {
+		expect( isRequestingForSites( state, [ siteOneId, siteTwoId ] ) ).toBe( false );
+	} );
+
+	test( 'Should get `true` if any site is being fetched', () => {
+		expect( isRequestingForSites( state, [ siteOneId, siteThreeId ] ) ).toBe( true );
+	} );
+
+	test( 'Should get `true` if any site is being fetched, even if one is not in the current state', () => {
+		expect( isRequestingForSites( state, [ nonExistingSiteId1, siteThreeId ] ) ).toBe( true );
+	} );
+
+	test( 'Should get `false` if sites are not being fetched, including a site not in the current state', () => {
+		expect( isRequestingForSites( state, [ nonExistingSiteId1, siteTwoId ] ) ).toBe( false );
+	} );
 } );
 
 describe( 'getAllPluginsIndexedByPluginSlug', () => {

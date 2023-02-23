@@ -6,7 +6,6 @@ import {
 	isJetpackSite,
 	isJetpackSiteSecondaryNetworkSite,
 } from 'calypso/state/sites/selectors';
-import { isRequesting, isRequestingForAllSites } from './selectors';
 import type {
 	InstalledPlugins,
 	InstalledPluginData,
@@ -29,6 +28,30 @@ const getSortCompareNumber = ( a: string, b: string ) => {
 	}
 	return 0;
 };
+
+export function isEqualSlugOrId( pluginSlug: string, plugin: Plugin ) {
+	return plugin.slug === pluginSlug || plugin?.id?.split( '/' ).shift() === pluginSlug;
+}
+
+export function isRequesting( state: AppState, siteId: number ) {
+	if ( typeof state.plugins.installed.isRequesting[ siteId ] === 'undefined' ) {
+		return false;
+	}
+	return state.plugins.installed.isRequesting[ siteId ];
+}
+
+export function isRequestingForSites( state: AppState, sites: number[] ) {
+	// As long as any sites have isRequesting true, we consider this group requesting
+	return sites.some( ( siteId ) => isRequesting( state, siteId ) );
+}
+
+export function isRequestingForAllSites( state: AppState ) {
+	return state.plugins.installed.isRequestingAll;
+}
+
+export function requestPluginsError( state: AppState ) {
+	return state.plugins.installed.requestError;
+}
 
 const getSiteIdsThatHavePlugins = createSelector(
 	( state: AppState ) => {
