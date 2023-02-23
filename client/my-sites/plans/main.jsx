@@ -8,7 +8,6 @@ import {
 } from '@automattic/calypso-products';
 import { is2023PricingGridActivePage } from '@automattic/calypso-products/src/plans-utilities';
 import { withShoppingCart } from '@automattic/shopping-cart';
-import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { addQueryArgs } from '@wordpress/url';
 import { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -35,7 +34,7 @@ import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { isDomainSidebarExperimentUser } from 'calypso/state/selectors/is-domain-sidebar-experiment-user';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
@@ -47,6 +46,7 @@ import DomainAndPlanPackageNavigation from '../domains/components/domain-and-pla
 import ECommerceTrialPlansPage from './ecommerce-trial';
 import PlansHeader from './header';
 import ModernizedLayout from './modernized-layout';
+
 import './style.scss';
 
 function DomainAndPlanUpsellNotice() {
@@ -64,67 +64,6 @@ function DomainAndPlanUpsellNotice() {
 	);
 }
 
-function PlansFeaturesMainWithComparison( props ) {
-	const isDesktop = useDesktopBreakpoint();
-	// TODO: Remove handleUpgradeClick this if 2023 layout is used.
-	const handleUpgradeClick = async ( cartItemForPlan ) => {
-		const selectedSiteSlug = props.selectedSite.slug;
-		const redirectTo = props.redirectTo;
-		try {
-			// In this flow we redirect to checkout with both the plan and domain
-			// product in the cart.
-			await props.shoppingCartManager.addProductsToCart( [
-				{
-					product_slug: cartItemForPlan.product_slug,
-					extra: {
-						afterPurchaseUrl: redirectTo ?? undefined,
-					},
-				},
-			] );
-		} catch {
-			// Nothing needs to be done here. CartMessages will display the error to the user.
-			return;
-		}
-
-		if ( props.withDiscount ) {
-			try {
-				await props.shoppingCartManager.applyCoupon( props.withDiscount );
-			} catch {
-				// If the coupon does not apply, let's continue to checkout anyway.
-			}
-		}
-
-		page( `/checkout/${ selectedSiteSlug }` );
-		return;
-	};
-	return (
-		<PlansFeaturesMain
-			redirectToAddDomainFlow={ props.redirectToAddDomainFlow }
-			domainAndPlanPackage={ props.domainAndPlanPackage }
-			hideFreePlan={ props.hideFreePlan }
-			customerType={ props.customerType }
-			intervalType={ props.intervalType }
-			selectedFeature={ props.selectedFeature }
-			selectedPlan={ props.selectedPlan }
-			redirectTo={ props.redirectTo }
-			withDiscount={ props.withDiscount }
-			discountEndDate={ props.discountEndDate }
-			site={ props.selectedSite }
-			showTreatmentPlansReorderTest={ props.showTreatmentPlansReorderTest }
-			plansWithScroll={ isDesktop }
-			shouldShowPlansFeatureComparison={ isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
-			isReskinned={ true } // for styles
-			isInSignup={ true } // for styles
-			onUpgradeClick={ handleUpgradeClick }
-			busyOnUpgradeClick={ true }
-		/>
-	);
-}
-
-const DomainSidebarUpsellExperimentPlansFeaturesMain = withCartKey(
-	withShoppingCart( PlansFeaturesMainWithComparison )
-);
-
 class Plans extends Component {
 	static propTypes = {
 		context: PropTypes.object.isRequired,
@@ -135,7 +74,7 @@ class Plans extends Component {
 		selectedFeature: PropTypes.string,
 		redirectTo: PropTypes.string,
 		selectedSite: PropTypes.object,
-		domainSidebarExperimentUser: PropTypes.bool,
+		isDomainAndPlanPackageFlow: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -145,8 +84,8 @@ class Plans extends Component {
 	componentDidMount() {
 		this.redirectIfInvalidPlanInterval();
 
-		if ( this.props.domainSidebarExperimentUser ) {
-			document.body.classList.add( 'is-domain-sidebar-experiment-user' );
+		if ( this.props.isDomainAndPlanPackageFlow ) {
+			document.body.classList.add( 'is-domain-plan-package-flow' );
 		}
 
 		// Scroll to the top
@@ -156,8 +95,8 @@ class Plans extends Component {
 	}
 
 	componentWillUnmount() {
-		if ( document.body.classList.contains( 'is-domain-sidebar-experiment-user' ) ) {
-			document.body.classList.remove( 'is-domain-sidebar-experiment-user' );
+		if ( document.body.classList.contains( 'is-domain-plan-package-flow' ) ) {
+			document.body.classList.remove( 'is-domain-plan-package-flow' );
 		}
 	}
 
@@ -229,17 +168,8 @@ class Plans extends Component {
 			);
 		}
 
-		const hideFreePlan = ! is2023PricingGridActivePage( window );
-		if ( this.props.domainSidebarExperimentUser && this.props.domainAndPlanPackage ) {
-			return (
-				<CalypsoShoppingCartProvider>
-					<DomainSidebarUpsellExperimentPlansFeaturesMain
-						hideFreePlan={ hideFreePlan }
-						{ ...this.props }
-					/>
-				</CalypsoShoppingCartProvider>
-			);
-		}
+		const hideFreePlan =
+			! is2023PricingGridActivePage( window ) || this.props.isDomainAndPlanPackageFlow;
 
 		return (
 			<PlansFeaturesMain
@@ -256,6 +186,7 @@ class Plans extends Component {
 				site={ selectedSite }
 				plansWithScroll={ false }
 				showTreatmentPlansReorderTest={ this.props.showTreatmentPlansReorderTest }
+				hidePlansFeatureComparison={ this.props.isDomainAndPlanPackageFlow }
 			/>
 		);
 	}
@@ -281,7 +212,7 @@ class Plans extends Component {
 			currentPlan,
 			domainAndPlanPackage,
 			is2023PricingGridVisible,
-			domainSidebarExperimentUser,
+			isDomainAndPlanPackageFlow,
 			isJetpackNotAtomic,
 		} = this.props;
 
@@ -292,7 +223,7 @@ class Plans extends Component {
 		const currentPlanSlug = selectedSite?.plan?.product_slug;
 		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 
-		const allDomains = domainSidebarExperimentUser ? getDomainRegistrations( this.props.cart ) : [];
+		const allDomains = isDomainAndPlanPackageFlow ? getDomainRegistrations( this.props.cart ) : [];
 		const yourDomainName = allDomains.length
 			? allDomains.slice( -1 )[ 0 ]?.meta
 			: translate( 'your domain name' );
@@ -313,8 +244,8 @@ class Plans extends Component {
 				<TrackComponentView eventName="calypso_plans_view" />
 				{ canAccessPlans && (
 					<div>
-						{ ! domainSidebarExperimentUser && <PlansHeader /> }
-						{ domainSidebarExperimentUser && (
+						{ ! isDomainAndPlanPackageFlow && <PlansHeader /> }
+						{ isDomainAndPlanPackageFlow && (
 							<>
 								<div className="plans__header">
 									<DomainAndPlanPackageNavigation goBackLink={ goBackLink } step={ 2 } />
@@ -347,7 +278,7 @@ class Plans extends Component {
 								fullWidthLayout={ is2023PricingGridVisible && ! isEcommerceTrial }
 								wideLayout={ ! is2023PricingGridVisible || isEcommerceTrial }
 							>
-								{ ! domainSidebarExperimentUser && domainAndPlanPackage && (
+								{ ! isDomainAndPlanPackageFlow && domainAndPlanPackage && (
 									<DomainAndPlanUpsellNotice />
 								) }
 								{ isEcommerceTrial ? this.renderEcommerceTrialPage() : this.renderPlansMain() }
@@ -387,7 +318,7 @@ const ConnectedPlans = connect( ( state ) => {
 		showTreatmentPlansReorderTest: isTreatmentPlansReorderTest( state ),
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
 		is2023PricingGridVisible,
-		domainSidebarExperimentUser: isDomainSidebarExperimentUser( state ),
+		isDomainAndPlanPackageFlow: !! getCurrentQueryArguments( state )?.domainAndPlanPackage,
 		isJetpackNotAtomic: isJetpackSite( state, selectedSiteId, { treatAtomicAsJetpackSite: false } ),
 	};
 } )( withCartKey( withShoppingCart( localize( withTrackingTool( 'HotJar' )( Plans ) ) ) ) );

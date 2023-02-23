@@ -127,6 +127,7 @@ export class PlansFeaturesMain extends Component {
 			intervalType,
 			planTypeSelectorProps,
 			busyOnUpgradeClick,
+			hidePlansFeatureComparison,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -159,6 +160,7 @@ export class PlansFeaturesMain extends Component {
 				isReskinned,
 				isPlansInsideStepper,
 				intervalType,
+				hidePlansFeatureComparison,
 			};
 			const asyncPlanFeatures2023Grid = (
 				<AsyncLoad
