@@ -97,6 +97,9 @@ function a8c_happyblocks_view_assets() {
 		$assets['version'],
 		true
 	);
+	if ( function_exists( 'wp_set_script_translations' ) ) {
+		wp_set_script_translations( 'a8c-happyblock-view-js', 'happy-blocks' );
+	}
 }
 add_action( 'enqueue_block_editor_assets', 'a8c_happyblocks_edit_assets' );
 add_action( 'wp_enqueue_scripts', 'a8c_happyblocks_view_assets' );

@@ -5,3 +5,8 @@ export type Pattern = {
 	category_slug: string;
 	key?: string;
 };
+
+export interface NavigatorLocation {
+	path: string;
+	isInitial: boolean;
+}

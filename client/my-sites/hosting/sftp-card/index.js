@@ -1,6 +1,5 @@
 import { FEATURE_SFTP, FEATURE_SSH } from '@automattic/calypso-products';
 import { Card, Button, Spinner } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { PanelBody, ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
@@ -11,6 +10,7 @@ import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import ExternalLink from 'calypso/components/external-link';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import MaterialIcon from 'calypso/components/material-icon';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
@@ -184,13 +184,7 @@ export const SftpCard = ( {
 						{
 							components: {
 								supportLink: (
-									<ExternalLink
-										icon
-										target="_blank"
-										href={ localizeUrl(
-											'https://wordpress.com/support/connect-to-ssh-on-wordpress-com/'
-										) }
-									/>
+									<InlineSupportLink supportContext="hosting-connect-to-ssh" showIcon={ false } />
 								),
 							},
 						}
@@ -229,13 +223,7 @@ export const SftpCard = ( {
 								'Use the credentials below to access and edit your website files using an SFTP client. {{a}}Learn more about SFTP on WordPress.com{{/a}}.',
 								{
 									components: {
-										a: (
-											<ExternalLink
-												icon
-												target="_blank"
-												href={ localizeUrl( 'https://wordpress.com/support/sftp/' ) }
-											/>
-										),
+										a: <InlineSupportLink supportContext="hosting-sftp" showIcon={ false } />,
 									},
 								}
 						  )
@@ -252,11 +240,7 @@ export const SftpCard = ( {
 								components: {
 									a: <ExternalLink icon target="_blank" href={ FILEZILLA_URL } />,
 									supportLink: (
-										<ExternalLink
-											icon
-											target="_blank"
-											href={ localizeUrl( 'https://wordpress.com/support/sftp/' ) }
-										/>
+										<InlineSupportLink supportContext="hosting-sftp" showIcon={ false } />
 									),
 								},
 							}
@@ -270,12 +254,9 @@ export const SftpCard = ( {
 								{
 									components: {
 										supportLink: (
-											<ExternalLink
-												icon
-												target="_blank"
-												href={ localizeUrl(
-													'https://wordpress.com/support/connect-to-ssh-on-wordpress-com/'
-												) }
+											<InlineSupportLink
+												supportContext="hosting-connect-to-ssh"
+												showIcon={ false }
 											/>
 										),
 									},
@@ -313,7 +294,7 @@ export const SftpCard = ( {
 					<FormLabel htmlFor="password">{ translate( 'Password' ) }</FormLabel>
 					{ renderPasswordField() }
 					{ siteHasSshFeature && (
-						<SftpSshLabel htmlFor="ssh">{ translate( 'SSH Access' ) }</SftpSshLabel>
+						<SftpSshLabel htmlFor="ssh">{ translate( 'SSH access' ) }</SftpSshLabel>
 					) }
 					{ siteHasSshFeature && renderSshField() }
 					<ReauthRequired twoStepAuthorization={ twoStepAuthorization }>

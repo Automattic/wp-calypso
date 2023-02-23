@@ -1,8 +1,9 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { eye } from '@automattic/components/src/icons';
 import { Icon, commentContent, starEmpty } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import { Card, ShortenedNumber } from '../';
+import { Card, ShortenedNumber, Button } from '../';
 import './style.scss';
 
 type PostStatsCardProps = {
@@ -16,6 +17,7 @@ type PostStatsCardProps = {
 		title: string;
 	};
 	titleLink?: string | undefined;
+	uploadHref?: string | undefined;
 };
 
 export default function PostStatsCard( {
@@ -25,10 +27,20 @@ export default function PostStatsCard( {
 	post,
 	viewCount,
 	titleLink,
+	uploadHref,
 }: PostStatsCardProps ) {
 	const translate = useTranslate();
 	const parsedDate = useMemo( () => new Date( post?.date ).toLocaleDateString(), [ post?.date ] );
 	const TitleTag = titleLink ? 'a' : 'div';
+
+	const recordClickOnUploadImageButton = () => {
+		recordTracksEvent( 'calypso_stats_insights_upload_image_button_click', { href: uploadHref } );
+
+		if ( uploadHref ) {
+			window.location.href = uploadHref;
+		}
+	};
+
 	return (
 		<Card className="post-stats-card">
 			<div className="post-stats-card__heading">{ heading }</div>
@@ -79,6 +91,16 @@ export default function PostStatsCard( {
 						textOnly: true,
 					} ) }
 				/>
+			) }
+			{ uploadHref && ! post?.post_thumbnail && (
+				<div className="post-stats-card__upload">
+					<Button
+						className="post-stats-card__upload-btn"
+						onClick={ recordClickOnUploadImageButton }
+					>
+						{ translate( 'Add featured image' ) }
+					</Button>
+				</div>
 			) }
 		</Card>
 	);

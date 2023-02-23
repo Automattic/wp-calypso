@@ -97,7 +97,8 @@
 		line-height: 26px;
 	}
 
-	.likes-count {
+	// Overwrite the styles from component Count
+	.count {
 		margin-left: 8px;
 		padding: 4px 8px;
 		background-color: var(--color-neutral-5);
@@ -105,6 +106,7 @@
 		font-weight: 500;
 		font-size: $font-body-extra-small;
 		line-height: 20px;
+		border: 0;
 	}
 
 	.card.stats-post-likes {
@@ -130,8 +132,8 @@
 
 		.post-likes__count {
 			vertical-align: bottom;
-			margin: 0 0 7px 25px;
-			padding: 0;
+			margin: 0;
+			padding: 6px 16px;
 			border: 0;
 			color: var(--color-neutral-60);
 			font-size: $font-body-small;

@@ -823,7 +823,7 @@ class DomainsStep extends Component {
 		const [ sitesBackLabelText, defaultBackUrl ] =
 			userSiteCount && userSiteCount === 1
 				? [ translate( 'Back to My Home' ), '/home' ]
-				: [ translate( 'Back to Sites' ), '/sites' ];
+				: [ translate( 'Back to sites' ), '/sites' ];
 
 		if ( previousStepBackUrl ) {
 			backUrl = previousStepBackUrl;

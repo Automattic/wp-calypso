@@ -91,7 +91,7 @@ function SshKeys( { siteId, siteSlug, username, disabled }: SshKeysProps ) {
 	return (
 		<div className="ssh-keys">
 			<label htmlFor="attach-ssh-key" className="form-label">
-				{ __( 'SSH Keys' ) }
+				{ __( 'SSH keys' ) }
 			</label>
 
 			{ keys?.map( ( sshKey ) => (

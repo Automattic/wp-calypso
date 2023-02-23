@@ -7,6 +7,7 @@ export type EnvVariables = {
 
 export type ViewportName = string;
 export type TestLocales = string[];
+export type JetpackTarget = 'remote-site' | 'wpcom-production' | 'wpcom-staging';
 
 export interface SupportedEnvVariables extends EnvVariables {
 	VIEWPORT_NAME: ViewportName;
@@ -20,7 +21,7 @@ export interface SupportedEnvVariables extends EnvVariables {
 	SLOW_MO: number;
 	TIMEOUT: number;
 	TEST_ON_ATOMIC: boolean;
-	TEST_ON_JETPACK: boolean;
+	JETPACK_TARGET: JetpackTarget;
 	CALYPSO_BASE_URL: string;
 	BROWSER_NAME: string;
 	ALLURE_RESULTS_PATH: string;

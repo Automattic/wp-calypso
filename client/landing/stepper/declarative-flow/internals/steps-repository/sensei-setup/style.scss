@@ -31,7 +31,7 @@
 		padding-top: 64px;
 		padding-right: 20px;
 		position: relative;
-		width: 415px;
+		width: 404px;
 
 		h1 {
 			width: 60%;
@@ -85,8 +85,7 @@
 	.sensei-theme-style-selector {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
-		margin-top: 24px;
-		margin-bottom: auto;
+		margin: 24px 0;
 		gap: 20px;
 
 		@media ( max-width: $break-large ) {
@@ -117,11 +116,11 @@
 	}
 
 	.form-radio-with-thumbnail__thumbnail.checked {
-		box-shadow: 0 0 0 2px $sensei-color, 0 1px 2px var(--color-neutral-0);
+		box-shadow: 0 0 0 1px #000, 0 1px 2px var(--color-neutral-0);
 	}
 
 	.form-radio-with-thumbnail__thumbnail {
-		width: 180px;
+		width: 100%;
 		height: 110px;
 		margin: 0;
 
@@ -147,7 +146,7 @@
 			margin: 10px auto 0 auto;
 			border-bottom: 0;
 			border-radius: 36px 36px 0 0; /* stylelint-disable-line scales/radii */
-			padding: 20px;
+			padding: 0 20px;
 		}
 		@media ( max-width: $break-mobile ) {
 			width: 90%;
@@ -262,7 +261,6 @@
 	}
 
 	button {
-		background-color: $sensei-color;
 
 		@media ( max-width: $break-large ) {
 			margin-top: 20px;

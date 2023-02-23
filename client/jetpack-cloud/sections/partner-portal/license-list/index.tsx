@@ -5,9 +5,9 @@ import CSSTransition from 'react-transition-group/CSSTransition';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
 import QueryJetpackPartnerPortalLicenses from 'calypso/components/data/query-jetpack-partner-portal-licenses';
 import Pagination from 'calypso/components/pagination';
-import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
 import LicenseListEmpty from 'calypso/jetpack-cloud/sections/partner-portal/license-list/empty';
 import LicenseListHeader from 'calypso/jetpack-cloud/sections/partner-portal/license-list/header';
+import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
 import LicensePreview, {
 	LicensePreviewPlaceholder,
 } from 'calypso/jetpack-cloud/sections/partner-portal/license-preview';

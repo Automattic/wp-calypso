@@ -99,7 +99,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const { __ } = useI18n();
 	const translatedStatus = useSiteLaunchStatusLabel( site );
 	const [ inViewOnce, setInViewOnce ] = useState( false );
-	const ref = useInView< HTMLTableCellElement >( () => setInViewOnce( true ) );
+	const ref = useInView< HTMLTableRowElement >( () => setInViewOnce( true ) );
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 
 	const isP2Site = site.options?.is_wpforteams_site;
@@ -110,7 +110,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	}
 
 	return (
-		<Row>
+		<Row ref={ ref }>
 			<Column>
 				<SiteListTile
 					contentClassName={ css`
@@ -121,7 +121,11 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 							href={ getDashboardUrl( site.slug ) }
 							title={ __( 'Visit Dashboard' ) }
 						>
-							<SiteItemThumbnail displayMode="list" site={ site } />
+							<SiteItemThumbnail
+								displayMode="list"
+								showPlaceholder={ ! inViewOnce }
+								site={ site }
+							/>
 						</ListTileLeading>
 					}
 					title={
@@ -168,7 +172,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 			<Column mobileHidden>
 				{ site.options?.updated_at ? <TimeSince date={ site.options.updated_at } /> : '' }
 			</Column>
-			<Column ref={ ref } mobileHidden>
+			<Column mobileHidden>
 				{ inViewOnce && (
 					<a href={ `/stats/day/${ site.slug }` }>
 						<StatsSparkline siteId={ site.ID } showLoader={ true }></StatsSparkline>
@@ -176,7 +180,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 				) }
 			</Column>
 			<Column style={ { width: '24px' } }>
-				<SitesEllipsisMenu site={ site } />
+				{ inViewOnce && <SitesEllipsisMenu site={ site } /> }
 			</Column>
 		</Row>
 	);

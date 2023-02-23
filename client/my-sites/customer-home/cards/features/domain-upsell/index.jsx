@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
+import { addQueryArgs } from 'calypso/lib/url';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
@@ -54,7 +55,12 @@ export function RenderDomainUpsell() {
 	const domainSuggestionName = domainSuggestion?.domain_name ?? siteSubDomain + '.blog';
 	const domainSuggestionProductSlug = domainSuggestion?.product_slug;
 
-	const searchLink = '/domains/add/' + siteSlug;
+	const searchLink = addQueryArgs(
+		{
+			domainAndPlanPackage: true,
+		},
+		`/domains/add/${ siteSlug }`
+	);
 	const getSearchClickHandler = () => {
 		recordTracksEvent( 'calypso_my_home_domain_upsell_search_click', {
 			button_url: searchLink,
@@ -63,7 +69,12 @@ export function RenderDomainUpsell() {
 		} );
 	};
 
-	const purchaseLink = '/plans/' + siteSlug + '?get_domain=' + domainSuggestionName;
+	const purchaseLink = addQueryArgs(
+		{
+			get_domain: domainSuggestionName,
+		},
+		`/plans/yearly/${ siteSlug }`
+	);
 	const [ ctaIsBusy, setCtaIsBusy ] = useState( false );
 	const getCtaClickHandler = async () => {
 		setCtaIsBusy( true );

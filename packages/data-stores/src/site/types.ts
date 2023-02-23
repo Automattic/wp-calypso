@@ -1,6 +1,6 @@
+import type { ActionCreators } from './actions';
 import type { DispatchFromMap } from '../mapped-types';
 import type { FeatureId } from '../wpcom-features';
-import type { ActionCreators } from './actions';
 
 export interface Dispatch {
 	dispatch: DispatchFromMap< ActionCreators >;

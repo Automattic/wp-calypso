@@ -120,7 +120,7 @@ class DomainSearch extends Component {
 	}
 
 	componentWillUnmount() {
-		if ( this.props.domainSidebarExperimentUser ) {
+		if ( document.body.classList.contains( 'is-domain-sidebar-experiment-user' ) ) {
 			document.body.classList.remove( 'is-domain-sidebar-experiment-user' );
 		}
 

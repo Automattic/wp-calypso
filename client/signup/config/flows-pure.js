@@ -139,7 +139,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'onboarding-pm',
-			steps: [ 'user', 'domains', 'plans' ],
+			steps: [ 'user', 'domains', 'plans-pm' ],
 			destination: getSignupDestination,
 			description:
 				'Paid media version of the onboarding flow. Read more in https://wp.me/pau2Xa-4Kk.',

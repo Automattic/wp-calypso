@@ -17,11 +17,7 @@ export default function SiteErrorContent( { siteUrl }: { siteUrl: string } ) {
 				<Gridicon size={ 18 } icon="notice-outline" />
 			</span>
 			<span className="sites-overview__error-message sites-overview__error-message-large-screen">
-				{ translate( 'Jetpack is unable to connect to %(siteUrl)s', {
-					args: {
-						siteUrl,
-					},
-				} ) }
+				{ translate( 'Jetpack is unable to connect to this site' ) }
 			</span>
 			<span className="sites-overview__error-message sites-overview__error-message-small-screen">
 				{ translate( 'Jetpack is unable to connect' ) }

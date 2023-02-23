@@ -1,3 +1,5 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { PLAN_ECOMMERCE_MONTHLY } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
@@ -39,8 +41,16 @@ const ECommerceTrialCurrentPlan = () => {
 	const isMobile = useMediaQuery( '(max-width: 480px)' );
 	const displayAllIncluded = ! isMobile || showAllTrialFeaturesInMobileView;
 
-	const gotoPlansPage = () => {
-		page.redirect( '/plans/' + selectedSite?.slug );
+	/**
+	 * Redirects to the checkout page with the ecommerce plan.
+	 *
+	 * @param ctaPosition - The position of the CTA that triggered the redirect.
+	 */
+	const goToCheckoutWithEcommercePlan = ( ctaPosition: string ) => {
+		recordTracksEvent( `calypso_wooexpress_my_plan_cta`, {
+			cta_position: ctaPosition,
+		} );
+		page.redirect( `/checkout/${ selectedSite?.slug }/${ PLAN_ECOMMERCE_MONTHLY }` );
 	};
 
 	// TODO: translate when final copy is available
@@ -146,7 +156,7 @@ const ECommerceTrialCurrentPlan = () => {
 		<Button
 			className="e-commerce-trial-current-plan__trial-card-cta"
 			primary
-			onClick={ gotoPlansPage }
+			onClick={ () => goToCheckoutWithEcommercePlan( 'card' ) }
 		>
 			{ translate( 'Upgrade now' ) }
 		</Button>
@@ -206,7 +216,10 @@ const ECommerceTrialCurrentPlan = () => {
 			</div>
 
 			<div className="e-commerce-trial-current-plan__cta-wrapper">
-				<Button className="e-commerce-trial-current-plan__cta is-primary" onClick={ gotoPlansPage }>
+				<Button
+					className="e-commerce-trial-current-plan__cta is-primary"
+					onClick={ () => goToCheckoutWithEcommercePlan( 'footer' ) }
+				>
 					{ translate( 'Upgrade now' ) }
 				</Button>
 			</div>

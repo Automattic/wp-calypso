@@ -1,9 +1,11 @@
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import { connect } from 'react-redux';
 import siteCopyIllustration from 'calypso/assets/images/customer-home/illustration--import-complete.svg';
 import { useSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
+import { navigate } from 'calypso/lib/navigate';
 import { TASK_SITE_RESUME_COPY } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 import { getSite, getSiteOption } from 'calypso/state/sites/selectors';
@@ -11,10 +13,12 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 
 const SiteResumeCopy = ( { siteSlug, sourceSite, sourceSiteSlug } ) => {
 	const translate = useTranslate();
-	const { startSiteCopy } = useSiteCopy( sourceSite );
+	const [ isAddingProducts, setIsAddingProducts ] = useState( false );
+	const { resumeSiteCopy } = useSiteCopy( sourceSite );
 
 	return (
 		<Task
+			actionBusy={ isAddingProducts }
 			isUrgent
 			title={ translate( 'Ready to finish copying your site?' ) }
 			description={ preventWidows(
@@ -23,10 +27,13 @@ const SiteResumeCopy = ( { siteSlug, sourceSite, sourceSiteSlug } ) => {
 				)
 			) }
 			actionText={ translate( 'Finish setting it up' ) }
-			actionUrl={ `/setup/copy-site?sourceSlug=${ sourceSiteSlug }&siteSlug=${ siteSlug }` }
-			actionOnClick={ () => {
+			actionOnClick={ async () => {
 				recordTracksEvent( 'calypso_resume_copy_site_click' );
-				startSiteCopy();
+				setIsAddingProducts( true );
+				await resumeSiteCopy( siteSlug );
+				navigate(
+					`/setup/copy-site/resuming?sourceSlug=${ sourceSiteSlug }&siteSlug=${ siteSlug }`
+				);
 			} }
 			illustration={ siteCopyIllustration }
 			taskId={ TASK_SITE_RESUME_COPY }
