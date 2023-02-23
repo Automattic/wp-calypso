@@ -28,6 +28,8 @@ import {
 	isRequesting as isRequestingInstalledPlugins,
 } from 'calypso/state/plugins/installed/selectors';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
+import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
 import {
 	canCurrentUserUseCustomerHome,
@@ -43,6 +45,8 @@ const Home = ( {
 	canUserUseCustomerHome,
 	hasWooCommerceInstalled,
 	isRequestingSitePlugins,
+	ssoModuleActive,
+	fetchingJetpackModules,
 	site,
 	siteId,
 	trackViewSiteAction,
@@ -90,7 +94,11 @@ const Home = ( {
 
 	// Ecommerce Plan's Home redirects to WooCommerce Home, so we show a placeholder
 	// while doing the redirection.
-	if ( isEcommerce( sitePlan ) && ( isRequestingSitePlugins || hasWooCommerceInstalled ) ) {
+	if (
+		isEcommerce( sitePlan ) &&
+		( isRequestingSitePlugins || hasWooCommerceInstalled ) &&
+		( fetchingJetpackModules || ssoModuleActive )
+	) {
 		return <WooCommerceHomePlaceholder />;
 	}
 
@@ -160,6 +168,8 @@ Home.propTypes = {
 	hasWooCommerceInstalled: PropTypes.bool.isRequired,
 	isStaticHomePage: PropTypes.bool.isRequired,
 	isRequestingSitePlugins: PropTypes.bool.isRequired,
+	ssoModuleActive: PropTypes.bool.isRequired,
+	fetchingJetpackModules: PropTypes.bool.isRequired,
 	site: PropTypes.object.isRequired,
 	siteId: PropTypes.number.isRequired,
 	trackViewSiteAction: PropTypes.func.isRequired,
@@ -180,6 +190,8 @@ const mapStateToProps = ( state ) => {
 			! isClassicEditor && 'page' === getSiteOption( state, siteId, 'show_on_front' ),
 		hasWooCommerceInstalled: !! ( installedWooCommercePlugin && installedWooCommercePlugin.active ),
 		isRequestingSitePlugins: isRequestingInstalledPlugins( state, siteId ),
+		ssoModuleActive: !! isJetpackModuleActive( state, siteId, 'sso' ),
+		fetchingJetpackModules: !! isFetchingJetpackModules( state, siteId ),
 	};
 };
 

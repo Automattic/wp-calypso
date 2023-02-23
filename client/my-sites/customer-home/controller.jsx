@@ -1,7 +1,9 @@
 import { isEcommerce } from '@automattic/calypso-products/src';
 import page from 'page';
+import { fetchModuleList } from 'calypso/state/jetpack/modules/actions';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import { requestSite } from 'calypso/state/sites/actions';
 import {
 	canCurrentUserUseCustomerHome,
@@ -78,10 +80,14 @@ export async function maybeRedirect( context, next ) {
 			// We need to make sure that sites on the eCommerce plan actually have WooCommerce installed before we redirect to the WooCommerce Home
 			// So we need to trigger a fetch of site plugins
 			await context.store.dispatch( fetchSitePlugins( siteId ) );
+			await context.store.dispatch( fetchModuleList( siteId ) );
 
 			const refetchedState = context.store.getState();
+
 			const installedWooCommercePlugin = getPluginOnSite( refetchedState, siteId, 'woocommerce' );
-			if ( installedWooCommercePlugin && installedWooCommercePlugin.active ) {
+			const isSSOEnabled = !! isJetpackModuleActive( refetchedState, siteId, 'sso' );
+
+			if ( isSSOEnabled && installedWooCommercePlugin && installedWooCommercePlugin.active ) {
 				window.location.replace( siteUrl + '/wp-admin/admin.php?page=wc-admin' );
 			}
 		}
