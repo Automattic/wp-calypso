@@ -1,3 +1,4 @@
+import { LocaleProvider } from '@automattic/i18n-utils';
 import { UniversalNavbarHeader } from '@automattic/wpcom-template-parts';
 import { render } from '@wordpress/element';
 
@@ -6,5 +7,10 @@ import { render } from '@wordpress/element';
 	const block = document.querySelector( '.happy-blocks-universal-header-block' );
 	const attributes = JSON.parse( ( block as HTMLElement )?.dataset?.attributes ?? `{}` );
 
-	render( <UniversalNavbarHeader { ...attributes } isLoggedIn={ isLoggedIn } />, block );
+	render(
+		<LocaleProvider localeSlug={ attributes.locale }>
+			<UniversalNavbarHeader { ...attributes } isLoggedIn={ isLoggedIn } />
+		</LocaleProvider>,
+		block
+	);
 } )();
