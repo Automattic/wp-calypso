@@ -468,7 +468,7 @@ export default class WebPreviewContent extends Component {
 										onFocus={ () => this.setState( { showIFrameOverlay: true } ) }
 										onBlur={ () => this.setState( { showIFrameOverlay: false } ) }
 									>
-										{ translate( 'Edit' ) }
+										{ translate( 'Edit design' ) }
 									</button>
 								</div>
 							) }
