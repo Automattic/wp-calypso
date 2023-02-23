@@ -13,7 +13,7 @@ const TrialUpgradeConfirmation = () => {
 
 	return (
 		<>
-			<BodySectionCssClass bodyClass={ [ 'trial-upgraded' ] } />
+			<BodySectionCssClass bodyClass={ [ 'ecommerce-trial-upgraded' ] } />
 			<Main wideLayout>
 				<div className="trial-upgrade-confirmation__header">
 					<h1 className="trial-upgrade-confirmation__title">

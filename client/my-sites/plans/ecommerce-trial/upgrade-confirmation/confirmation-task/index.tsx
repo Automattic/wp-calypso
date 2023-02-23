@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import { TranslateResult } from 'i18n-calypso';
+import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
 

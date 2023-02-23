@@ -1,6 +1,8 @@
-body.trial-upgraded {
+@import "@automattic/components/src/styles/typography";
+
+body.ecommerce-trial-upgraded {
 	background-color: var(--color-surface);
-	font-family: "SF Pro Text", $sans;
+	font-family: $font-sf-pro-text;
 
 	.trial-upgrade-confirmation__header {
 		text-align: center;
