@@ -588,12 +588,13 @@ class RegisterDomainStep extends Component {
 
 	renderTrademarkClaimsNotice() {
 		const { isSignupStep } = this.props;
-		const { selectedSuggestion, trademarkClaimsNoticeInfo } = this.state;
+		const { selectedSuggestion, trademarkClaimsNoticeInfo, isLoading } = this.state;
 		const domain = get( selectedSuggestion, 'domain_name' );
 
 		return (
 			<TrademarkClaimsNotice
 				domain={ domain }
+				isLoading={ isLoading }
 				isSignupStep={ isSignupStep }
 				onAccept={ this.acceptTrademarkClaim }
 				onGoBack={ this.rejectTrademarkClaim }
