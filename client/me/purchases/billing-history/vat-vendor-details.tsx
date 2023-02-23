@@ -1,4 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
+import { isCountryInEu } from '../is-country-in-eu';
 import type { BillingTransaction } from 'calypso/state/billing-transactions/types';
 
 interface VatVendorInfo {
@@ -21,46 +22,6 @@ interface VatVendorInfo {
 	 * The vendor's VAT id.
 	 */
 	vatId: string;
-}
-
-function isCountryInEu( country: string, date?: string ): boolean {
-	const time = Date.parse( date ?? 'now' );
-	const brexitTime = Date.parse( '2020-01-31 23:00 GMT' );
-	const countries = [
-		'AT',
-		'BE',
-		'BG',
-		'CH',
-		'CY',
-		'CZ',
-		'DE',
-		'DK',
-		'EE',
-		'EL',
-		'ES',
-		'FI',
-		'FR',
-		'HR',
-		'HU',
-		'IE',
-		'IT',
-		'LT',
-		'LU',
-		'LV',
-		'MT',
-		'NL',
-		'PL',
-		'PT',
-		'RO',
-		'SE',
-		'SI',
-		'SK',
-		'XI',
-	];
-	if ( country === 'GB' && time < brexitTime ) {
-		return true;
-	}
-	return countries.includes( country );
 }
 
 function getVatVendorInfo(
