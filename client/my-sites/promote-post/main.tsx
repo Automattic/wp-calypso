@@ -2,6 +2,7 @@ import './style.scss';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import page from 'page';
+import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPosts from 'calypso/components/data/query-posts';
@@ -121,6 +122,9 @@ export default function PromotedPosts( { tab }: Props ) {
 		{ id: 'campaigns', name: translate( 'Campaigns' ) },
 	];
 
+	const topViewedPostAndPagesIds = topViewedPostAndPages?.map( ( post: any ) => post.id );
+	const memoizedQuery = useMemo( () => ( { include: topViewedPostAndPagesIds } ), [] );
+
 	if ( usePromoteWidget() === PromoteWidgetStatus.DISABLED ) {
 		page( '/' );
 	}
@@ -170,7 +174,6 @@ export default function PromotedPosts( { tab }: Props ) {
 
 	const content = [ ...( mostPopularPostAndPages || [] ), ...( products || [] ) ];
 	const isLoading = isLoadingPage && isLoadingPost && isLoadingProducts;
-	const topViewedPostAndPagesIds = topViewedPostAndPages?.map( ( post: any ) => post.id );
 
 	return (
 		<Main wideLayout className="promote-post">
@@ -210,11 +213,7 @@ export default function PromotedPosts( { tab }: Props ) {
 				/>
 			) }
 			{ topViewedPostAndPages && (
-				<QueryPosts
-					siteId={ selectedSiteId }
-					query={ { include: topViewedPostAndPagesIds } }
-					postId={ null }
-				/>
+				<QueryPosts siteId={ selectedSiteId } query={ memoizedQuery } postId={ null } />
 			) }
 			<QueryPosts siteId={ selectedSiteId } query={ queryProducts } postId={ null } />
 			{ selectedTab === 'posts' && <PostsList content={ content } isLoading={ isLoading } /> }
