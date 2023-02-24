@@ -6,6 +6,7 @@ import { WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import { Icon, addTemplate, brush, cloudUpload } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { isEmpty, times } from 'lodash';
+import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
@@ -15,11 +16,13 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { upsellCardDisplayed as upsellCardDisplayedAction } from 'calypso/state/themes/actions';
+import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
+const noop = () => {};
 /* Used for second upsell nudge */
 const getGridColumns = ( gridContainerRef, minColumnWidth, margin ) => {
 	const container = gridContainerRef.current;
@@ -136,6 +139,49 @@ export const ThemesList = ( props ) => {
 			<InfiniteScroll nextPageMethod={ fetchNextPage } />
 		</div>
 	);
+};
+
+ThemesList.propTypes = {
+	themes: PropTypes.array.isRequired,
+	wpOrgThemes: PropTypes.array,
+	loading: PropTypes.bool.isRequired,
+	recordTracksEvent: PropTypes.func.isRequired,
+	fetchNextPage: PropTypes.func.isRequired,
+	getButtonOptions: PropTypes.func,
+	getScreenshotUrl: PropTypes.func,
+	onScreenshotClick: PropTypes.func.isRequired,
+	onStyleVariationClick: PropTypes.func,
+	onMoreButtonClick: PropTypes.func,
+	onMoreButtonItemClick: PropTypes.func,
+	getActionLabel: PropTypes.func,
+	isActive: PropTypes.func,
+	getPrice: PropTypes.func,
+	isInstalling: PropTypes.func,
+	// i18n function provided by localize()
+	translate: PropTypes.func,
+	placeholderCount: PropTypes.number,
+	bookmarkRef: PropTypes.oneOfType( [
+		PropTypes.func,
+		PropTypes.shape( { current: PropTypes.any } ),
+	] ),
+	siteId: PropTypes.number,
+	searchTerm: PropTypes.string,
+	upsellCardDisplayed: PropTypes.func,
+};
+
+ThemesList.defaultProps = {
+	loading: false,
+	searchTerm: '',
+	themes: [],
+	wpOrgThemes: [],
+	recordTracksEvent: noop,
+	fetchNextPage: noop,
+	placeholderCount: DEFAULT_THEME_QUERY.number,
+	optionsGenerator: () => [],
+	getActionLabel: () => '',
+	isActive: () => false,
+	getPrice: () => '',
+	isInstalling: () => false,
 };
 
 function ThemeBlock( props ) {
