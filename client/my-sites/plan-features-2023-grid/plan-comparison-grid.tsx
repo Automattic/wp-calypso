@@ -431,7 +431,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 		<PlanRow>
 			<RowHead
 				key="feature-name"
-				className="plan-comparison-grid__header-cell plan-comparison-grid__interval-toggle"
+				className="plan-comparison-grid__header-cell plan-comparison-grid__interval-toggle is-placeholder-header-cell"
 			/>
 			{ visiblePlansProperties.map( ( planProperties, index ) => (
 				<PlanComparisonGridHeaderCell
