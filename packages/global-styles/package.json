@@ -35,6 +35,7 @@
 		"@wordpress/edit-site": "^4.6.0",
 		"@wordpress/keycodes": "^3.9.0",
 		"classnames": "^2.3.1",
+		"i18n-calypso": "workspace:^",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
 		"react-query": "^3.32.1",

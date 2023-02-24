@@ -170,7 +170,6 @@ $font-family: "SF Pro Text", $sans;
 		.pattern-layout__add-button-container {
 			position: relative;
 			margin-right: auto;
-			margin-bottom: 32px;
 		}
 
 		.pattern-layout__icon {
@@ -312,7 +311,8 @@ $font-family: "SF Pro Text", $sans;
 		display: flex;
 		flex-direction: column;
 		padding: 2px;
-		overflow: hidden;
+		margin-bottom: 32px;
+		overflow-y: auto;
 	}
 
 	.screen-container__footer {
