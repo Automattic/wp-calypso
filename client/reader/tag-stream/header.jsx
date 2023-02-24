@@ -96,7 +96,7 @@ class TagStreamHeader extends Component {
 				<div className="tag-stream__header-follow">
 					{ showFollow && (
 						<FollowButton
-							followLabel={ translate( 'Follow Tag' ) }
+							followLabel={ translate( 'Follow tag' ) }
 							followingLabel={ translate( 'Following tag' ) }
 							iconSize={ 24 }
 							following={ following }
