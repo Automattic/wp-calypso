@@ -178,33 +178,14 @@ export default function CampaignItem( { campaign }: Props ) {
 				hideSummary={ true }
 				className="campaign-item__foldable-card"
 			>
-				{ campaignStatus === 'rejected' && moderation_reason && (
-					<Notice isDismissible={ false } className="campaign-item__notice" status="warning">
+				<div className="campaign-item__row">
+					<Notice isDismissible={ false } className="campaign-item__notice" status="info">
 						<Gridicon className="campaign-item__notice-icon" icon="info-outline" />
 						{ translate(
-							'Your ad was not approved, please review our {{wpcomTos}}WordPress.com Terms{{/wpcomTos}} and {{advertisingTos}}Advertising Policy{{/advertisingTos}}.',
-							{
-								components: {
-									wpcomTos: (
-										<a
-											href="https://wordpress.com/tos/"
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
-									advertisingTos: (
-										<a
-											href="https://automattic.com/advertising-policy/"
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
-								},
-							}
+							'Statistics are not in real-time, there can be a short delay before they update.'
 						) }
 					</Notice>
-				) }
-
+				</div>
 				<div className="campaign-item__section campaign-item__stats">
 					<div className="campaign-item__row campaign-item__stats-row1">
 						<div className="campaign-item__column campaign-item__reach">
@@ -309,6 +290,33 @@ export default function CampaignItem( { campaign }: Props ) {
 						</Button>
 					) }
 				</div>
+
+				{ campaignStatus === 'rejected' && moderation_reason && (
+					<Notice isDismissible={ false } className="campaign-item__notice" status="warning">
+						<Gridicon className="campaign-item__notice-icon" icon="info-outline" />
+						{ translate(
+							'Your ad was not approved, please review our {{wpcomTos}}WordPress.com Terms{{/wpcomTos}} and {{advertisingTos}}Advertising Policy{{/advertisingTos}}.',
+							{
+								components: {
+									wpcomTos: (
+										<a
+											href="https://wordpress.com/tos/"
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+									advertisingTos: (
+										<a
+											href="https://automattic.com/advertising-policy/"
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
+						) }
+					</Notice>
+				) }
 			</FoldableCard>
 		</>
 	);
