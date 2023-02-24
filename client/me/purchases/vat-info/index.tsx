@@ -50,7 +50,7 @@ export default function VatInfoPage() {
 					</CardHeading>
 					<p className="vat-info__sidebar-paragraph">
 						{ translate(
-							"We currently only provide Business Tax ID invoices to users who are properly listed in Business Tax ID databases. Business Tax ID information saved on this page will be applied to all of your account's receipts."
+							"We currently only provide Business Tax ID invoices to users who are properly registered. Business Tax ID information saved on this page will be applied to all of your account's receipts."
 						) }
 					</p>
 				</Card>
