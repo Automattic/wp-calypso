@@ -36,62 +36,6 @@
  */
 
 /**
- * Load the shared assets for the custom block (view and editor).
- *
- * @return void
- */
-function a8c_happyblocks_shared_assets() {
-	$assets = require plugin_dir_path( __FILE__ ) . 'dist/editor.min.asset.php';
-
-	$style_file = 'dist/view' . ( is_rtl() ? '.rtl.css' : '.css' );
-	wp_enqueue_style(
-		'a8c-happyblocks-view-css',
-		plugins_url( $style_file, __FILE__ ),
-		array(),
-		$assets['version']
-	);
-}
-
-/**
- * Load editor assets.
- */
-function a8c_happyblocks_edit_assets() {
-	a8c_happyblocks_shared_assets();
-
-	$assets = require plugin_dir_path( __FILE__ ) . 'dist/editor.min.asset.php';
-
-	wp_enqueue_script(
-		'a8c-happyblocks-edit-js',
-		plugins_url( 'dist/editor.min.js', __FILE__ ),
-		$assets['dependencies'],
-		$assets['version'],
-		true
-	);
-}
-
-/**
- * Load view assets.
- */
-function a8c_happyblocks_view_assets() {
-	a8c_happyblocks_shared_assets();
-
-	$assets = require plugin_dir_path( __FILE__ ) . 'dist/view.min.asset.php';
-
-	$script_file = 'dist/view.js';
-	wp_enqueue_script(
-		'a8c-happyblocks-view-js',
-		plugins_url( $script_file, __FILE__ ),
-		$assets['dependencies'],
-		$assets['version'],
-		true
-	);
-
-	wp_set_script_translations( 'a8c-happyblocks-view-js', 'happy-blocks' );
-}
-add_action( 'enqueue_block_editor_assets', 'a8c_happyblocks_edit_assets' );
-add_action( 'wp_enqueue_scripts', 'a8c_happyblocks_view_assets' );
-
-/**
  * Load Pricing Plans Block
  */
 require_once __DIR__ . '/src/pricing-plans/index.php';

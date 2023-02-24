@@ -14,12 +14,14 @@ function getWebpackConfig( env, argv ) {
 	return {
 		...webpackConfig,
 		entry: {
-			editor: './src/editor.js',
-			view: './src/view.js',
+			'universal-header/index': './src/universal-header/index.tsx',
+			'universal-header/view': './src/universal-header/view.tsx',
+			'pricing-plans/index': './src/pricing-plans/index.jsx',
+			'pricing-plans/view': './src/pricing-plans/view.tsx',
 		},
 		output: {
 			...webpackConfig.output,
-			filename: '[name].min.js',
+			filename: '[name].js',
 		},
 		plugins: [
 			...webpackConfig.plugins,

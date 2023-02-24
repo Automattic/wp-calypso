@@ -15,7 +15,7 @@
  * @return string
  */
 function universal_header_render_callback( $attributes ) {
-	// inject the current locale to the attributes
+	// inject the current locale to the attributes.
 	$attributes['locale'] = get_locale();
 
 	$json_attributes = htmlspecialchars( wp_json_encode( $attributes ), ENT_QUOTES, 'UTF-8' );
@@ -30,13 +30,11 @@ function universal_header_render_callback( $attributes ) {
  */
 function happyblocks_universal_header_register() {
 	register_block_type(
-		'happy-blocks/universal-header',
+		__DIR__ . ( is_rtl() ? '/rtl/block.json' : '/block.json' ),
 		array(
-			'textdomain' => 'happy-blocks',
 			'render_callback' => 'universal_header_render_callback',
 		)
 	);
-
 }
 
-add_action( 'init', 'happyblocks_universal_header_register', 1 );
+add_action( 'init', 'happyblocks_universal_header_register' );

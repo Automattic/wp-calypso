@@ -84,14 +84,13 @@ HTML;
 /**
  * Register happy-blocks.
  */
-function happyblocks_pricing_plans_register() {
+function happyblocks_pricing_plan_register() {
 	register_block_type(
-		'happy-blocks/pricing-plans',
+		__DIR__ . ( is_rtl() ? '/rtl/block.json' : '/block.json' ),
 		array(
 			'render_callback' => 'happyblocks_pricing_plans_render_callback',
 		)
 	);
-
 }
 
-add_action( 'init', 'happyblocks_pricing_plans_register' );
+add_action( 'init', 'happyblocks_pricing_plan_register' );
