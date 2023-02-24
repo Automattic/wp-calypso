@@ -44,3 +44,8 @@ require_once __DIR__ . '/src/pricing-plans/index.php';
  * Load Universal Header Block
  */
 require_once __DIR__ . '/src/universal-header/index.php';
+
+/**
+ * Load Universal Foooter Block
+ */
+require_once __DIR__ . '/src/universal-footer/index.php';
