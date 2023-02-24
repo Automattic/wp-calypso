@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import wordAdsImage from 'calypso/assets/images/illustrations/dotcom-wordads.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import ActionCard from 'calypso/components/action-card';
+import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySites from 'calypso/components/data/query-sites';
 import QueryWordadsStatus from 'calypso/components/data/query-wordads-status';
 import EmptyContent from 'calypso/components/empty-content';
@@ -327,6 +328,7 @@ class AdsWrapper extends Component {
 		return (
 			<div>
 				<QuerySites siteId={ siteId } />
+				<QuerySiteFeatures siteIds={ [ siteId ] } />
 				<QueryWordadsStatus siteId={ siteId } />
 				{ notice }
 				{ component }
