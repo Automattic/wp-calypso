@@ -547,6 +547,16 @@ describe( 'Checkout contact step', () => {
 			expect: 'state',
 		},
 		{
+			tax: { country_code: 'CH', address: 'CH Address', postal_code: '123-4567' },
+			product: 'plan',
+			expect: 'address',
+		},
+		{
+			tax: { country_code: 'CH', address: 'CH Address', postal_code: '123-4567' },
+			product: 'plan with domain',
+			expect: 'address',
+		},
+		{
 			tax: { country_code: 'JP', organization: 'JP Organization', postal_code: '123-4567' },
 			product: 'plan',
 			expect: 'organization',
@@ -594,6 +604,7 @@ describe( 'Checkout contact step', () => {
 				organization: 'Organization',
 				postal_code: product === 'plan' ? 'Postal code' : 'Postal Code',
 				country_code: 'Country',
+				address: 'Address for taxes',
 				...labels,
 			};
 			mockContactDetailsValidationEndpoint( product === 'plan' ? 'tax' : 'domain', {
@@ -618,6 +629,9 @@ describe( 'Checkout contact step', () => {
 				if ( selects[ key ] ) {
 					await user.selectOptions( await screen.findByLabelText( labels[ key ] ), tax[ key ] );
 				} else {
+					if ( ! labels[ key ] ) {
+						throw new Error( `There is a missing label for the key "${ key }".` );
+					}
 					await user.type( await screen.findByLabelText( labels[ key ] ), tax[ key ] );
 				}
 			}
