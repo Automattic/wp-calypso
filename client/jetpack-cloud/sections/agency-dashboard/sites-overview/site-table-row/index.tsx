@@ -140,7 +140,7 @@ export default function SiteTableRow( { columns, item, setExpanded, isExpanded }
 			{ isExpanded && (
 				<tr className="site-table__table-row-expanded">
 					<td colSpan={ Object.keys( item ).length + 1 }>
-						<SiteExpandedContent site={ site } />
+						<SiteExpandedContent site={ site.value } />
 					</td>
 				</tr>
 			) }

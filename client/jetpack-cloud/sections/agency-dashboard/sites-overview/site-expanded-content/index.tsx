@@ -1,16 +1,16 @@
 import InsightsStats from './insights-stats';
-import type { SiteNode } from '../types';
+import type { Site } from '../types';
 
 import './style.scss';
 
 interface Props {
-	site: SiteNode;
+	site: Site;
 }
 
 const columns = [ 'stats' ];
 
 export default function SiteExpandedContent( { site }: Props ) {
-	const stats = site.value?.site_stats;
+	const stats = site.site_stats;
 
 	return (
 		<div className="site-expanded-content">
