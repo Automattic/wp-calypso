@@ -7,17 +7,10 @@ async function fetchTaxInfoFromServer( storedDetailsId: string ): Promise< TaxGe
 	return await wpcom.req.get( `/me/payment-methods/${ storedDetailsId }/tax-location` );
 }
 
-async function setTaxInfoOnServer(
-	storedDetailsId: string,
-	taxPostalCode: string,
-	taxCountryCode: string
-): Promise< TaxInfo > {
+async function setTaxInfoOnServer( storedDetailsId: string, taxInfo: TaxInfo ): Promise< TaxInfo > {
 	return await wpcom.req.post( {
 		path: `/me/payment-methods/${ storedDetailsId }/tax-location`,
-		body: {
-			tax_country_code: taxCountryCode,
-			tax_postal_code: taxPostalCode,
-		},
+		body: taxInfo,
 	} );
 }
 
@@ -37,17 +30,11 @@ export function usePaymentMethodTaxInfo( storedDetailsId: string ): {
 	);
 
 	const mutation = useMutation(
-		( mutationInputValues: TaxInfo ) =>
-			setTaxInfoOnServer(
-				storedDetailsId,
-				mutationInputValues.tax_postal_code,
-				mutationInputValues.tax_country_code
-			),
+		( mutationInputValues: TaxInfo ) => setTaxInfoOnServer( storedDetailsId, mutationInputValues ),
 		{
 			onSuccess: ( onSuccessInputValues: TaxInfo ) => {
 				queryClient.setQueryData( queryKey, {
-					tax_postal_code: onSuccessInputValues.tax_postal_code,
-					tax_country_code: onSuccessInputValues.tax_country_code,
+					...onSuccessInputValues,
 					is_tax_info_set: true,
 				} );
 			},

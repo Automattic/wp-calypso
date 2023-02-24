@@ -24,9 +24,15 @@ export default function ContactFields( {
 	const onChangeContactInfo = ( newInfo: {
 		countryCode?: { value?: string };
 		postalCode?: { value?: string };
+		state?: { value?: string };
+		city?: { value?: string };
+		organization?: { value?: string };
 	} ) => {
 		setFieldValue( 'countryCode', newInfo.countryCode?.value ?? '' );
 		setFieldValue( 'postalCode', newInfo.postalCode?.value ?? '' );
+		setFieldValue( 'state', newInfo.state?.value ?? '' );
+		setFieldValue( 'city', newInfo.city?.value ?? '' );
+		setFieldValue( 'organization', newInfo.organization?.value ?? '' );
 	};
 
 	return (
