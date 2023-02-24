@@ -8,7 +8,7 @@ export interface FooterProps {
 	onLanguageChange: React.ChangeEventHandler< HTMLSelectElement >;
 	isLoggedIn: boolean;
 	currentRoute: string;
-	additonalCompanyLinks?: HTMLLIElement;
+	additonalCompanyLinks?: React.ReactChild;
 }
 
 export interface MenuItemProps {

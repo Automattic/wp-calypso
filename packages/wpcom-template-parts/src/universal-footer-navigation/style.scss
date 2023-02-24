@@ -339,7 +339,7 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 
 .lp-footer-language {
 	display: flex;
-	justify-content: space-between;
+	justify-content: flex-end;
 	align-items: center;
 	order: 2;
 	flex-wrap: nowrap;

@@ -16,6 +16,8 @@ function getWebpackConfig( env, argv ) {
 		entry: {
 			'universal-header/index': './src/universal-header/index.tsx',
 			'universal-header/view': './src/universal-header/view.tsx',
+			'universal-footer/index': './src/universal-footer/index.tsx',
+			'universal-footer/view': './src/universal-footer/view.tsx',
 			'pricing-plans/index': './src/pricing-plans/index.jsx',
 			'pricing-plans/view': './src/pricing-plans/view.tsx',
 		},
