@@ -52,6 +52,7 @@ $font-family: "SF Pro Text", $sans;
 		height: 100%;
 		width: 100%;
 		margin: 0;
+		overflow-y: auto;
 
 		button {
 			display: flex;
@@ -360,7 +361,6 @@ $font-family: "SF Pro Text", $sans;
  */
 .pattern-assembler.pattern-assembler__sidebar-revamp {
 	.pattern-layout {
-		overflow-y: auto;
 		margin-bottom: 32px;
 
 		.pattern-action-bar {
