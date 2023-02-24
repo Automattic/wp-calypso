@@ -15,8 +15,6 @@ const ViewAllProductsLink: React.FC< Props > = ( { siteSlug } ) => {
 			className="view-all-products-link"
 			onClick={ () => recordTracksEvent( 'calypso_view_individual_products_link_click' ) }
 			href={ `https://cloud.jetpack.com/pricing/${ siteSlug }` }
-			target="_blank"
-			rel="noreferrer"
 		>
 			{ translate( 'View individual products' ) }
 		</a>
