@@ -50,7 +50,7 @@
 		"wpcom-proxy-request": "workspace:^"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "~6.9.0",
+		"@wordpress/data": "~6.7.0",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
 		"reakit-utils": "^0.15.1",
