@@ -7,6 +7,9 @@ set -o pipefail
 mkdir ./release-files
 cp -r ./dist ./release-files/dist/
 
+# Copy the README file.
+cp README.md ./release-files
+
 # Add the index.php file
 cp ./index.php ./release-files/
 

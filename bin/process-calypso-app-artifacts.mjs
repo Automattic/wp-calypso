@@ -20,6 +20,12 @@ const apps = [
 		newReleaseDir: path.resolve( appRoot, 'happy-blocks/release-files' ),
 		slackNotify: true,
 	},
+	{
+		slug: 'notifications',
+		dir: path.resolve( appRoot, 'notifications' ),
+		newReleaseDir: path.resolve( appRoot, 'notifications/dist' ),
+		slackNotify: true,
+	},
 ];
 
 // STEP 1: Check if any apps have changed. If skipping the diff, continue as if all apps have changed.
