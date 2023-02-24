@@ -24,7 +24,7 @@ const ThemeFeaturesCard = ( { isWpcomTheme, siteSlug, features, translate, onCli
 							onClick={ () => onClick?.( slug ) }
 						>
 							{ ! isWpcomTheme ? (
-								<span href="">{ name }</span>
+								<span>{ name }</span>
 							) : (
 								<a href={ `/themes/filter/${ term }/${ siteSlug || '' }` }>{ name }</a>
 							) }
