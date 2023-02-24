@@ -123,7 +123,10 @@ export default function PromotedPosts( { tab }: Props ) {
 	];
 
 	const topViewedPostAndPagesIds = topViewedPostAndPages?.map( ( post: any ) => post.id );
-	const memoizedQuery = useMemo( () => ( { include: topViewedPostAndPagesIds } ), [] );
+	const memoizedQuery = useMemo(
+		() => ( { include: topViewedPostAndPagesIds } ),
+		[ JSON.stringify( topViewedPostAndPagesIds ) ]
+	);
 
 	if ( usePromoteWidget() === PromoteWidgetStatus.DISABLED ) {
 		page( '/' );
