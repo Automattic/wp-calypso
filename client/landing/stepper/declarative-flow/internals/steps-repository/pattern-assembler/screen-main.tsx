@@ -66,7 +66,7 @@ const ScreenMain = ( { onSelect, onContinueClick }: Props ) => {
 								path="/color-palettes"
 								icon={ styles }
 								aria-label={ translate( 'Change colours' ) }
-								onClick={ () => onSelect( 'homepage' ) }
+								onClick={ () => onSelect( 'color-palettes' ) }
 							>
 								<span className="pattern-layout__list-item-text">
 									{ translate( 'Change colours' ) }

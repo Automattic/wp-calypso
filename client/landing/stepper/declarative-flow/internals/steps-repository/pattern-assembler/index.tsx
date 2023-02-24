@@ -323,6 +323,11 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 		} else if ( name === 'homepage' ) {
 			trackEventPatternAdd( 'section' );
 		}
+
+		recordTracksEvent( 'calypso_signup_pattern_assembler_main_item_select', {
+			...commonEventProps,
+			name,
+		} );
 	};
 
 	const onAddSection = () => {
