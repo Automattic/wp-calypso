@@ -25,7 +25,10 @@ import {
 	getPostsForQuery,
 	isRequestingPostsForQuery,
 } from 'calypso/state/posts/selectors';
-import { getTopPostAndPages } from 'calypso/state/stats/lists/selectors';
+import {
+	getTopPostAndPages,
+	hasSiteStatsForQuerySucceed,
+} from 'calypso/state/stats/lists/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { PostType } from 'calypso/types';
 
@@ -43,6 +46,12 @@ const queryProducts = {
 	number: 20, // max supported by /me/posts endpoint for all-sites mode
 	status: 'publish', // do not allow private or unpublished posts
 	type: 'product',
+};
+
+const queryPageAndPostsByComments = {
+	...queryProducts,
+	type: 'any',
+	order_by: 'comment_count',
 };
 
 export type DSPMessage = {
@@ -70,6 +79,11 @@ export default function PromotedPosts( { tab }: Props ) {
 
 	const products = useSelector( ( state ) => {
 		const products = getPostsForQuery( state, selectedSiteId, queryProducts );
+		return products?.filter( ( product: any ) => ! product.password );
+	} );
+
+	const postAndPagesByComments = useSelector( ( state ) => {
+		const products = getPostsForQuery( state, selectedSiteId, queryPageAndPostsByComments );
 		return products?.filter( ( product: any ) => ! product.password );
 	} );
 
@@ -111,8 +125,8 @@ export default function PromotedPosts( { tab }: Props ) {
 		[ JSON.stringify( topViewedPostAndPagesIds ) ]
 	);
 
-	const isLoadingMemoizedPostsAndPages = useSelector( ( state ) =>
-		isRequestingPostsForQuery( state, selectedSiteId, memoizedQuery )
+	const hasTopPostsRequested = useSelector( ( state ) =>
+		hasSiteStatsForQuerySucceed( state, selectedSiteId, 'statsTopPosts', topPostsQuery )
 	);
 
 	if ( usePromoteWidget() === PromoteWidgetStatus.DISABLED ) {
@@ -162,8 +176,12 @@ export default function PromotedPosts( { tab }: Props ) {
 		);
 	}
 
-	const content = [ ...( mostPopularPostAndPages || [] ), ...( products || [] ) ];
-	const isLoading = isLoadingProducts || isLoadingMemoizedPostsAndPages;
+	const content = [
+		...( mostPopularPostAndPages || [] ),
+		...( postAndPagesByComments || [] ),
+		...( products || [] ),
+	];
+	const isLoading = isLoadingProducts || ! hasTopPostsRequested;
 
 	return (
 		<Main wideLayout className="promote-post">
@@ -204,6 +222,13 @@ export default function PromotedPosts( { tab }: Props ) {
 			) }
 			{ topViewedPostAndPages && (
 				<QueryPosts siteId={ selectedSiteId } query={ memoizedQuery } postId={ null } />
+			) }
+			{ hasTopPostsRequested && ! topViewedPostAndPages && (
+				<QueryPosts
+					siteId={ selectedSiteId }
+					query={ queryPageAndPostsByComments }
+					postId={ null }
+				/>
 			) }
 			<QueryPosts siteId={ selectedSiteId } query={ queryProducts } postId={ null } />
 			{ selectedTab === 'posts' && <PostsList content={ content } isLoading={ isLoading } /> }

@@ -21,6 +21,23 @@ export function isRequestingSiteStatsForQuery( state, siteId, statType, query ) 
 }
 
 /**
+ * Returns true if the stats request for the statType and query combo has succeed, or false
+ * otherwise.
+ *
+ * @param   {Object}  state    Global state tree
+ * @param   {number}  siteId   Site ID
+ * @param   {string}  statType Type of stat
+ * @param   {Object}  query    Stats query object
+ * @returns {boolean}          Whether stats are being requested
+ */
+export function hasSiteStatsForQuerySucceed( state, siteId, statType, query ) {
+	const serializedQuery = getSerializedStatsQuery( query );
+	return (
+		get( state.stats.lists.requests, [ siteId, statType, serializedQuery, 'status' ] ) === 'success'
+	);
+}
+
+/**
  * Returns true if the stats request for the statType and query combo has failed, or false
  * otherwise.
  *
