@@ -3,6 +3,7 @@
  */
 
 const path = require( 'path' );
+const BuildMetaPlugin = require( '@automattic/calypso-apps-builder/build-meta-webpack-plugin.cjs' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 const ReadableJsAssetsWebpackPlugin = require( '@wordpress/readable-js-assets-webpack-plugin' );
@@ -79,6 +80,7 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 			concatenateModules: false,
 		},
 		plugins: [
+			BuildMetaPlugin( { outputPath } ),
 			...webpackConfig.plugins.filter(
 				( plugin ) => plugin.constructor.name !== 'DependencyExtractionWebpackPlugin'
 			),
