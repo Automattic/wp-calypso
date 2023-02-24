@@ -1,3 +1,6 @@
+$color-green: var(--studio-jetpack-green-40);
+$color-red: var(--studio-red-50);
+
 .site-expanded-content {
 	padding-inline-start: 54px;
 
@@ -35,4 +38,63 @@
 	padding: 0 26px;
 	word-break: break-word;
 }
+
+.site-expanded-content__card-content {
+	margin-block: 16px;
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.site-expanded-content__card-content-column {
+	flex: auto;
+}
+
+.site-expanded-content__card-content-count {
+	font-weight: 500;
+	font-size: 1.25rem;
+
+	span {
+		font-size: 1rem;
+
+		svg {
+			position: relative;
+			inset-block-start: 0.125rem;
+			inset-inline-start: 0.125rem;
+
+			path {
+				stroke-width: 0.5px;
+			}
+		}
+	}
+}
+
+
+@mixin svg-color($color, $fill, $stroke) {
+	color: $color;
+
+	span svg {
+		fill: $fill;
+
+		path {
+			stroke: $stroke;
+		}
+	}
+}
+
+.is-up {
+	@include svg-color($color-green, $color-green, $color-green);
+}
+
+.is-down {
+	@include svg-color($color-red, $color-red, $color-red);
+}
+
+.site-expanded-content__card-content-count-title {
+	font-size: 0.75rem;
+	color: var(--studio-gray-40);
+}
+
+button.site-expanded-content__card-button {
+	color: var(--studio-black) !important;
+	border-color: var(--studio-black);
 }

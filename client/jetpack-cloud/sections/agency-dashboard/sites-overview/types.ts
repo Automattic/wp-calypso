@@ -33,7 +33,7 @@ interface StatsObject {
 	trend: 'up' | 'down' | 'same';
 	trend_change: number;
 }
-interface SiteStats {
+export interface SiteStats {
 	views: StatsObject;
 	visitors: StatsObject;
 }

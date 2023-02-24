@@ -475,3 +475,15 @@ export const getSiteCountText = ( sites: Array< Site > ) => {
 		comment: '%(siteCount) is no of sites selected, e.g. "2 sites"',
 	} );
 };
+
+export const getHumanReadableCount = ( count: number ) => {
+	if ( count > 1000 ) {
+		return translate( '%(count)dk', {
+			args: {
+				count: Math.round( count / 1000 ),
+			},
+			comment: 'Show the count in thousands',
+		} );
+	}
+	return count;
+};
