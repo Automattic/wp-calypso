@@ -6,8 +6,7 @@ import { WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import { Icon, addTemplate, brush, cloudUpload } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { isEmpty, times } from 'lodash';
-import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import Theme from 'calypso/components/theme';
@@ -16,15 +15,42 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { upsellCardDisplayed as upsellCardDisplayedAction } from 'calypso/state/themes/actions';
-import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
-const noop = () => {};
+/* Used for second upsell nudge */
+const getGridColumns = ( gridContainerRef, minColumnWidth, margin ) => {
+	const container = gridContainerRef.current;
+	if ( ! container ) {
+		return null;
+	}
+	const containerWidth = container.offsetWidth;
+	const availableWidth = containerWidth - margin;
+	const columnsPerRow = Math.floor( availableWidth / ( minColumnWidth + margin ) );
+	return columnsPerRow;
+};
 
 export const ThemesList = ( props ) => {
+	const themesListRef = useRef( null );
+	const [ showSecondUpsellNudge, setShowSecondUpsellNudge ] = useState( false );
+	const updateShowSecondUpsellNudge = useCallback( () => {
+		const minColumnWidth = 320; // $theme-item-min-width: 320px;
+		const margin = 32; // $theme-item-horizontal-margin: 32px;
+		const columnsPerRow = getGridColumns( themesListRef, minColumnWidth, margin );
+		const result = columnsPerRow && props.themes.length >= columnsPerRow * 6;
+		setShowSecondUpsellNudge( result );
+	}, [ props.themes.length ] );
+
+	useEffect( () => {
+		updateShowSecondUpsellNudge();
+		window.addEventListener( 'resize', updateShowSecondUpsellNudge );
+		return () => {
+			window.removeEventListener( 'resize', updateShowSecondUpsellNudge );
+		};
+	}, [ updateShowSecondUpsellNudge ] );
+
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const isPatternAssemblerCTAEnabled =
@@ -82,6 +108,14 @@ export const ThemesList = ( props ) => {
 		);
 	}
 
+	// const showSecondUpsellNudge = () => {
+	// 	const minColumnWidth = 320; // minimum column width in pixels
+	// 	const margin = 32; // horizontal margin in pixels
+	// 	const columnsPerRow = getGridColumns( themesListRef, minColumnWidth, margin );
+	// 	// Show second upsell nudge at 7th row
+	// 	return columnsPerRow && props.themes.length >= columnsPerRow * 6;
+	// };
+
 	const SecondUpsellNudge = props.upsellBanner && (
 		<div className="second-upsell-wrapper">
 			{ React.cloneElement( props.upsellBanner, {
@@ -91,12 +125,13 @@ export const ThemesList = ( props ) => {
 	);
 
 	return (
-		<div className="themes-list">
+		<div className="themes-list" ref={ themesListRef }>
 			{ props.themes.map( ( theme, index ) => (
 				<ThemeBlock key={ 'theme-block' + index } theme={ theme } index={ index } { ...props } />
 			) ) }
-			{ /* Add a second plan upsell at 7th row and the behavior is controlled by CSS */ }
-			{ props.themes.length > 0 && SecondUpsellNudge }
+			{ /* Don't show second upsell nudge when less than 6 rows are present.
+				 Second plan upsell at 7th row is implemented through CSS. */ }
+			{ showSecondUpsellNudge && SecondUpsellNudge }
 			{ /* The Pattern Assembler CTA will display on the 9th row and the behavior is controlled by CSS */ }
 			{ isPatternAssemblerCTAEnabled && props.themes.length > 0 && (
 				<PatternAssemblerCta onButtonClick={ goToSiteAssemblerFlow } />
@@ -105,49 +140,6 @@ export const ThemesList = ( props ) => {
 			<InfiniteScroll nextPageMethod={ fetchNextPage } />
 		</div>
 	);
-};
-
-ThemesList.propTypes = {
-	themes: PropTypes.array.isRequired,
-	wpOrgThemes: PropTypes.array,
-	loading: PropTypes.bool.isRequired,
-	recordTracksEvent: PropTypes.func.isRequired,
-	fetchNextPage: PropTypes.func.isRequired,
-	getButtonOptions: PropTypes.func,
-	getScreenshotUrl: PropTypes.func,
-	onScreenshotClick: PropTypes.func.isRequired,
-	onStyleVariationClick: PropTypes.func,
-	onMoreButtonClick: PropTypes.func,
-	onMoreButtonItemClick: PropTypes.func,
-	getActionLabel: PropTypes.func,
-	isActive: PropTypes.func,
-	getPrice: PropTypes.func,
-	isInstalling: PropTypes.func,
-	// i18n function provided by localize()
-	translate: PropTypes.func,
-	placeholderCount: PropTypes.number,
-	bookmarkRef: PropTypes.oneOfType( [
-		PropTypes.func,
-		PropTypes.shape( { current: PropTypes.any } ),
-	] ),
-	siteId: PropTypes.number,
-	searchTerm: PropTypes.string,
-	upsellCardDisplayed: PropTypes.func,
-};
-
-ThemesList.defaultProps = {
-	loading: false,
-	searchTerm: '',
-	themes: [],
-	wpOrgThemes: [],
-	recordTracksEvent: noop,
-	fetchNextPage: noop,
-	placeholderCount: DEFAULT_THEME_QUERY.number,
-	optionsGenerator: () => [],
-	getActionLabel: () => '',
-	isActive: () => false,
-	getPrice: () => '',
-	isInstalling: () => false,
 };
 
 function ThemeBlock( props ) {
