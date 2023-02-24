@@ -184,9 +184,9 @@ class Hosting extends Component {
 					<WrapperComponent>
 						<Layout className="hosting__layout">
 							<Column type="main" className="hosting__main-layout-col">
-								{ isStagingSiteEnabled && <StagingSiteCard disabled={ isDisabled } /> }
 								<SFTPCard disabled={ isDisabled } />
 								<PhpMyAdminCard disabled={ isDisabled } />
+								{ isStagingSiteEnabled && <StagingSiteCard disabled={ isDisabled } /> }
 								{ isGithubIntegrationEnabled && <GitHubCard /> }
 								<WebServerSettingsCard disabled={ isDisabled } />
 								<RestorePlanSoftwareCard disabled={ isDisabled } />
