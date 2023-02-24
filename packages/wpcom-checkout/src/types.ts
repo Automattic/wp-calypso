@@ -253,6 +253,7 @@ export type ManagedContactDetailsShape< T > = {
 	phoneNumberCountry?: T;
 	address1?: T;
 	address2?: T;
+	fullAddress?: T;
 	city?: T;
 	state?: T;
 	postalCode?: T;
