@@ -24,13 +24,13 @@
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"dependencies": {
 		"@automattic/tour-kit": "workspace:^",
-		"@wordpress/dom": "~3.9.0",
-		"@wordpress/i18n": "~4.9.0",
-		"@wordpress/icons": "~9.0.0",
+		"@wordpress/dom": "^3.9.0",
+		"@wordpress/i18n": "^4.9.0",
+		"@wordpress/icons": "^9.0.0",
 		"classnames": "^2.3.1"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "~6.1.5",
+		"@wordpress/data": "^6.1.5",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
 		"reakit-utils": "^0.15.1",
