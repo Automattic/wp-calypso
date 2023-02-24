@@ -72,6 +72,11 @@ export type UseStepNavigationHook< FlowSteps extends StepperStep[] > = (
 
 export type UseAssertConditionsHook = () => AssertConditionResult;
 
+export type UseSideEffectHook< FlowSteps extends StepperStep[] > = (
+	currentStepSlug: FlowSteps[ number ][ 'slug' ],
+	navigate: Navigate< FlowSteps >
+) => void;
+
 export type Flow = {
 	name: string;
 	title?: string;
@@ -82,7 +87,7 @@ export type Flow = {
 	/**
 	 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..
 	 */
-	useSideEffect?: ( navigate: Navigate< ReturnType< Flow[ 'useSteps' ] > > ) => void;
+	useSideEffect?: UseSideEffectHook< ReturnType< Flow[ 'useSteps' ] > >;
 };
 
 export type StepProps = {

@@ -68,12 +68,12 @@ function isLaunchpadIntent( intent: string ) {
 const siteSetupFlow: Flow = {
 	name: 'site-setup',
 
-	useSideEffect( navigate ) {
+	useSideEffect( currentStep, navigate ) {
 		const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 
 		useEffect( () => {
 			// Require to start the flow from the first step
-			if ( ! selectedDesign ) {
+			if ( currentStep === 'patternAssembler' && ! selectedDesign ) {
 				navigate( 'goals' );
 			}
 		}, [] );

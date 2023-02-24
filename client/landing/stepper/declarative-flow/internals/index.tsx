@@ -90,7 +90,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	// Retrieve any extra step data from the stepper-internal store. This will be passed as a prop to the current step.
 	const stepData = useSelect( ( select ) => select( STEPPER_INTERNAL_STORE ).getStepData() );
 
-	flow.useSideEffect?.( navigate );
+	flow.useSideEffect?.( currentStepRoute, navigate );
 
 	useEffect( () => {
 		window.scrollTo( 0, 0 );
