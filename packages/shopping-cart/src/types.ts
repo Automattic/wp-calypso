@@ -621,6 +621,7 @@ export type DomainContactDetails = {
 	fax?: string;
 	vatId?: string;
 	extra?: DomainContactDetailsExtra;
+	fullAddress?: string;
 };
 
 export type DomainContactDetailsExtra = {

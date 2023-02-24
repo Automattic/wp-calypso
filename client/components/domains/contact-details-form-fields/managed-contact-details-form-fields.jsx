@@ -353,6 +353,17 @@ export class ManagedContactDetailsFormFields extends Component {
 						contactDetailsErrors={ this.props.contactDetailsErrors }
 					/>
 				) }
+
+				{ taxRequirements.address && (
+					<div className="contact-details-form-fields__row">
+						<Input
+							label={ this.props.translate( 'Address for taxes' ) }
+							{ ...this.getFieldProps( 'fullAddress', {
+								customErrorMessage: this.props.contactDetailsErrors?.fullAddress,
+							} ) }
+						/>
+					</div>
+				) }
 			</div>
 		);
 	}
