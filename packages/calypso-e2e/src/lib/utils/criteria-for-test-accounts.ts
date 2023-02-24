@@ -80,14 +80,25 @@ const defaultCriteria: FeatureCriteria[] = [
 	{ gutenberg: 'stable', variant: 'i18n', siteType: 'atomic', accountName: 'i18nUser' },
 
 	// Jetpack users
-	{ siteType: 'simple', jetpackTarget: 'wpcom-staging', accountName: 'jetpackStagingUser' },
 	{
 		siteType: 'simple',
 		jetpackTarget: 'wpcom-staging',
+		gutenberg: 'stable',
+		accountName: 'jetpackStagingUser',
+	},
+	{
+		siteType: 'simple',
+		jetpackTarget: 'wpcom-staging',
+		gutenberg: 'stable',
 		variant: 'siteEditor',
 		accountName: 'jetpackStagingFseUser',
 	},
-	{ siteType: 'simple', jetpackTarget: 'remote-site', accountName: 'jetpackRemoteSiteUser' },
+	{
+		siteType: 'simple',
+		gutenberg: 'stable',
+		jetpackTarget: 'remote-site',
+		accountName: 'jetpackRemoteSiteUser',
+	},
 
 	// They aren't run in atomic.
 ];
