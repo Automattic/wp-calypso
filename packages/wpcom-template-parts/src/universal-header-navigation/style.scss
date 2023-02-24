@@ -546,19 +546,8 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 
 .x-menu {
 	@extend %x-text;
-	position: absolute;
-	z-index: $x-content-min-z-index + 2;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	left: 0;
-	display: none;
 }
 
-.x-menu__active {
-	display: block;
-	z-index: 1000000001;
-}
 
 .x-menu-overlay {
 	position: fixed;
@@ -568,19 +557,18 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 	left: 0;
 	background: rgba($studio-gray-100, 0.65);
 	opacity: 0;
-
-	.x-menu__active & {
-		transition: opacity 0.25s ease-out;
-	}
+	transition: opacity 0.15s ease-in-out;
+	z-index: 1000000000;
+	pointer-events: none;
 
 	.x-menu__open & {
 		opacity: 1;
-		transition-timing-function: ease-in-out;
-		z-index: 12;
+		pointer-events: all;
 	}
 }
 
 .x-menu-content {
+	z-index: 1000000001;
 	position: absolute;
 	top: $x-menu-outer-offset;
 	right: $x-menu-outer-offset;
@@ -590,8 +578,9 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 	font-size: $x-menu-item-font-size-narrow;
 	line-height: $x-menu-item-line-height-narrow;
 	transform: scale(0);
-	transform-origin: 100% 0;
 	transform-origin: calc(100% - 19px) 15px; /* 2 */
+	pointer-events: none;
+	transition: transform 0.35s ease-in-out;
 
 	@media ( min-width: $x-nav-breakpoint-small ) {
 		left: auto;
@@ -604,15 +593,9 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 		line-height: $x-menu-item-line-height-wide;
 	}
 
-	.x-menu__active & {
-		transition: transform 0.25s ease-in-out;
-	}
-
 	.x-menu__open & {
 		transform: scale(1);
-		transition-duration: 0.35s;
-		transition-timing-function: cubic-bezier(0.1, 0.6, 0.2, 1);
-		z-index: 850;
+		pointer-events: all;
 	}
 }
 
