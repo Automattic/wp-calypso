@@ -38,9 +38,7 @@ export default function SiteOptionsStep( props: Props ) {
 					headerText: translate( "First, let's give your store a name" ),
 					headerImage: storeImageUrl,
 					siteTitleLabel: translate( 'Store name' ),
-					siteTitleExplanation: translate(
-						'Enter the name of your business or store as it should appear on your site.'
-					),
+					siteTitleExplanation: translate( 'Enter the name of your business or store.' ),
 					taglineExplanation: translate( 'In a few words, explain what your store is about.' ),
 					isSiteTitleRequired: true,
 					acceptSearchTerms: true,
@@ -53,9 +51,7 @@ export default function SiteOptionsStep( props: Props ) {
 					headerText: translate( "First, let's give your site a name" ),
 					headerImage: siteOptionsImage,
 					siteTitleLabel: translate( 'Site name' ),
-					siteTitleExplanation: translate(
-						'Enter the name of your business or project as it should appear on your site.'
-					),
+					siteTitleExplanation: translate( 'Enter the name of your business or project.' ),
 					taglineExplanation: translate( 'In a few words, explain what your site is about.' ),
 					isSiteTitleRequired: true,
 					acceptSearchTerms: true,
