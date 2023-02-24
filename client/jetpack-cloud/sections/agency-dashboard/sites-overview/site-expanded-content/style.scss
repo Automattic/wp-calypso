@@ -2,7 +2,10 @@ $color-green: var(--studio-jetpack-green-40);
 $color-red: var(--studio-red-50);
 
 .site-expanded-content {
-	padding-inline-start: 54px;
+	display: flex;
+	flex-wrap: wrap;
+	padding-block: 1em;
+}
 
 .expanded-card {
 	min-height: 160px;
@@ -67,7 +70,6 @@ $color-red: var(--studio-red-50);
 		}
 	}
 }
-
 
 @mixin svg-color($color, $fill, $stroke) {
 	color: $color;

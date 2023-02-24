@@ -13,7 +13,7 @@ import {
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
 import SiteActions from '../site-actions';
 import SiteErrorContent from '../site-error-content';
-import { SiteExpandedContent } from '../site-expanded-content';
+import SiteExpandedContent from '../site-expanded-content';
 import SiteStatusContent from '../site-status-content';
 import type { SiteData, SiteColumns } from '../types';
 
