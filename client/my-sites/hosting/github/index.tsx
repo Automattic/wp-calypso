@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
-import { GithubAuthorizeCard } from 'calypso/my-sites/hosting/github/github-authorize-card';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { DeploymentCard } from './deployment-card';
+import { GithubAuthorizeCard } from './github-authorize-card';
 import { GithubConnectCard } from './github-connect-card';
 import { GitHubPlaceholderCard } from './github-placeholder-card';
 import { useGithubConnectionQuery } from './use-github-connection-query';
