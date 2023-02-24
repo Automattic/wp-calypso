@@ -170,7 +170,9 @@ class AuthorMappingPane extends PureComponent {
 const withTotalUsers = createHigherOrderComponent(
 	( Component ) => ( props ) => {
 		const { siteId } = props;
-		const { data } = useUsersQuery( siteId );
+		const { data } = useUsersQuery( siteId, {
+			authors_only: 1,
+		} );
 
 		const totalUsers = data?.total ?? 0;
 

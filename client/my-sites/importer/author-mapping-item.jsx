@@ -100,7 +100,9 @@ class ImporterAuthorMapping extends PureComponent {
 const withUsers = createHigherOrderComponent(
 	( Component ) => ( props ) => {
 		const { siteId } = props;
-		const { data } = useUsersQuery( siteId );
+		const { data } = useUsersQuery( siteId, {
+			authors_only: 1,
+		} );
 
 		const users = data?.users ?? [];
 
