@@ -50,10 +50,10 @@ const PatternLayout = ( {
 
 	if ( ! isSidebarRevampEnabled ) {
 		return (
-			<AsyncLoad require="./animate-list" featureName="domMax" placeholder={ <div /> }>
-				{ ( m: any ) => (
-					<m.div className="pattern-layout" layoutScroll>
-						<ul className="pattern-layout__list">
+			<div className="pattern-layout">
+				<AsyncLoad require="./animate-list" featureName="domMax" placeholder={ <div /> }>
+					{ ( m: any ) => (
+						<m.ul className="pattern-layout__list" layoutScroll>
 							{ selectedHeader ? (
 								<li className="pattern-layout__list-item">
 									<Icon className="pattern-layout__icon" icon={ header } size={ 24 } />
@@ -132,19 +132,19 @@ const PatternLayout = ( {
 									</Button>
 								</li>
 							) }
-						</ul>
-					</m.div>
-				) }
-			</AsyncLoad>
+						</m.ul>
+					) }
+				</AsyncLoad>
+			</div>
 		);
 	}
 
 	return (
-		<AsyncLoad require="./animate-list" featureName="domMax" placeholder={ <div /> }>
-			{ ( m: any ) => (
-				<m.div className="pattern-layout" layoutScroll>
-					{ sections.length > 0 && (
-						<ul className="pattern-layout__list">
+		<div className="pattern-layout">
+			{ sections.length > 0 && (
+				<AsyncLoad require="./animate-list" featureName="domMax" placeholder={ <div /> }>
+					{ ( m: any ) => (
+						<m.ul className="pattern-layout__list" layoutScroll>
 							{ sections.map( ( { category, key }: Pattern, index ) => {
 								return (
 									<m.li
@@ -169,30 +169,30 @@ const PatternLayout = ( {
 									</m.li>
 								);
 							} ) }
-						</ul>
+						</m.ul>
 					) }
-					<div
-						className="pattern-layout__add-button-container"
-						ref={ addButtonContainerRef }
-						onMouseEnter={ () => setIsPopoverVisible( true ) }
-						onMouseLeave={ () => setIsPopoverVisible( false ) }
-					>
-						<Button className="pattern-layout__add-button" onClick={ () => onAddSection() }>
-							<Icon icon={ plus } size={ 32 } />
-						</Button>
-						<Popover
-							className="pattern-layout__add-button-popover"
-							context={ addButtonContainerRef.current }
-							isVisible={ isPopoverVisible }
-							position="right"
-							focusOnShow
-						>
-							{ translate( 'Add your next pattern' ) }
-						</Popover>
-					</div>
-				</m.div>
+				</AsyncLoad>
 			) }
-		</AsyncLoad>
+			<div
+				className="pattern-layout__add-button-container"
+				ref={ addButtonContainerRef }
+				onMouseEnter={ () => setIsPopoverVisible( true ) }
+				onMouseLeave={ () => setIsPopoverVisible( false ) }
+			>
+				<Button className="pattern-layout__add-button" onClick={ () => onAddSection() }>
+					<Icon icon={ plus } size={ 32 } />
+				</Button>
+				<Popover
+					className="pattern-layout__add-button-popover"
+					context={ addButtonContainerRef.current }
+					isVisible={ isPopoverVisible }
+					position="right"
+					focusOnShow
+				>
+					{ translate( 'Add your next pattern' ) }
+				</Popover>
+			</div>
+		</div>
 	);
 };
 

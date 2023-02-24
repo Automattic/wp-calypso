@@ -52,7 +52,6 @@ $font-family: "SF Pro Text", $sans;
 		height: 100%;
 		width: 100%;
 		margin: 0;
-		overflow-y: auto;
 
 		button {
 			display: flex;
@@ -118,6 +117,7 @@ $font-family: "SF Pro Text", $sans;
 			color: #101517;
 			letter-spacing: -0.24px;
 			user-select: none;
+			overflow-y: auto;
 		}
 
 		.pattern-layout__list-item {
@@ -170,6 +170,7 @@ $font-family: "SF Pro Text", $sans;
 		.pattern-layout__add-button-container {
 			position: relative;
 			margin-right: auto;
+			margin-bottom: 32px;
 		}
 
 		.pattern-layout__icon {
@@ -361,7 +362,9 @@ $font-family: "SF Pro Text", $sans;
  */
 .pattern-assembler.pattern-assembler__sidebar-revamp {
 	.pattern-layout {
-		margin-bottom: 32px;
+		.pattern-layout__list {
+			margin: 0 0 16px;
+		}
 
 		.pattern-action-bar {
 			right: 2px;
