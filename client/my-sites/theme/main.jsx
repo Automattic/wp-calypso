@@ -6,11 +6,7 @@ import {
 	WPCOM_FEATURES_PREMIUM_THEMES,
 } from '@automattic/calypso-products';
 import { Button, Card, Gridicon } from '@automattic/components';
-import {
-	getDesignPreviewUrl,
-	PremiumBadge,
-	ThemePreview as ThemeWebPreview,
-} from '@automattic/design-picker';
+import { getDesignPreviewUrl, ThemePreview as ThemeWebPreview } from '@automattic/design-picker';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import classNames from 'classnames';
@@ -91,6 +87,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ThemeDownloadCard from './theme-download-card';
 import ThemeFeaturesCard from './theme-features-card';
 import ThemeNotFoundError from './theme-not-found-error';
+import ThemeStyleVariations from './theme-style-variations';
 
 import './style.scss';
 
@@ -585,28 +582,16 @@ class ThemeSheet extends Component {
 	};
 
 	renderStyleVariations = () => {
-		const { styleVariations, translate } = this.props;
+		const { styleVariations } = this.props;
 
 		return (
 			styleVariations.length > 0 && (
-				<div className="theme__sheet-style-variations">
-					<div className="theme__sheet-style-variations-header">
-						<h2>
-							{ translate( 'Styles' ) }
-							<PremiumBadge shouldHideTooltip />
-						</h2>
-						<p>{ this.getStyleVariationDescription() }</p>
-					</div>
-					<div className="theme__sheet-style-variations-previews">
-						<AsyncLoad
-							require="@automattic/design-preview/src/components/style-variation"
-							placeholder={ null }
-							selectedVariation={ this.getSelectedStyleVariation() }
-							variations={ styleVariations }
-							onClick={ this.onStyleVariationClick }
-						/>
-					</div>
-				</div>
+				<ThemeStyleVariations
+					description={ this.getStyleVariationDescription() }
+					selectedVariation={ this.getSelectedStyleVariation() }
+					variations={ styleVariations }
+					onClick={ this.onStyleVariationClick }
+				/>
 			)
 		);
 	};
