@@ -5,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useLaunchpad } from 'calypso/data/sites/use-launchpad';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useRecordSignupComplete } from 'calypso/landing/stepper/hooks/use-record-signup-complete';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
@@ -30,7 +31,8 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 	const siteSlug = useSiteSlugParam();
 	const verifiedParam = useQuery().get( 'verified' );
 	const site = useSite();
-	const launchpadScreenOption = site?.options?.launchpad_screen;
+	const { data } = useLaunchpad( siteSlug || '', false );
+	const { launchpad_screen } = data || {};
 	const recordSignupComplete = useRecordSignupComplete( flow );
 	const dispatch = useDispatch();
 	const isLoggedIn = useSelector( isUserLoggedIn );
@@ -57,21 +59,18 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 	}, [ verifiedParam, translate, dispatch ] );
 
 	useEffect( () => {
-		// launchpadScreenOption changes from undefined to either 'off' or 'full'
+		// launchpad_screen changes from undefined to either 'off' or 'full'
 		// we need to check if it's defined to avoid recording the same action twice
-		if ( launchpadScreenOption !== undefined ) {
+		if ( launchpad_screen !== undefined ) {
 			// The screen option returns false for sites that have never set the option
-			if (
-				( 'videopress' !== flow && launchpadScreenOption === false ) ||
-				launchpadScreenOption === 'off'
-			) {
+			if ( ( 'videopress' !== flow && launchpad_screen === false ) || launchpad_screen === 'off' ) {
 				window.location.replace( `/home/${ siteSlug }` );
 				recordTracksEvent( 'calypso_launchpad_redirect_to_home', { flow: flow } );
 			} else {
 				recordTracksEvent( 'calypso_launchpad_loaded', { flow: flow } );
 			}
 		}
-	}, [ launchpadScreenOption, siteSlug, flow ] );
+	}, [ launchpad_screen, siteSlug, flow ] );
 
 	useEffect( () => {
 		if ( siteSlug && site && localStorage.getItem( 'launchpad_siteSlug' ) !== siteSlug ) {
