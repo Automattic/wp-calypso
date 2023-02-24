@@ -107,21 +107,21 @@ describe( 'Task Helpers', () => {
 			} );
 		} );
 		describe( 'when flow is write', () => {
-			it( 'does not include upsell task', () => {
+			it( 'does include upsell task', () => {
 				expect(
 					launchpadFlowTasks[ 'write' ].filter( ( task ) => task === 'domain_upsell' ).length
 				).toBe( 1 );
 			} );
 		} );
 		describe( 'when flow is build', () => {
-			it( 'does not include upsell task', () => {
+			it( 'does include upsell task', () => {
 				expect(
 					launchpadFlowTasks[ 'build' ].filter( ( task ) => task === 'domain_upsell' ).length
 				).toBe( 1 );
 			} );
 		} );
 		describe( 'when flow is free', () => {
-			it( 'does not include upsell task', () => {
+			it( 'does include upsell task', () => {
 				expect(
 					launchpadFlowTasks[ 'free' ].filter( ( task ) => task === 'domain_upsell' ).length
 				).toBe( 1 );
