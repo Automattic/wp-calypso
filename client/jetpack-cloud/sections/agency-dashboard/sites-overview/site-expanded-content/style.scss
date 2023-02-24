@@ -1,3 +1,38 @@
 .site-expanded-content {
 	padding-inline-start: 54px;
+
+.expanded-card {
+	min-height: 160px;
+	width: calc(25% - 15px);
+	margin: 0 10px;
+	padding: 16px !important;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+	border-radius: 0.5rem;
+	border-color: var(--studio-gray-5);
+	position: relative;
+
+	&:nth-child(1) {
+		margin-inline-start: 0;
+	}
+
+	&:nth-child(4) {
+		margin-inline-end: 0;
+	}
+}
+
+.expanded-card__header {
+	font-size: 0.875rem;
+	color: var(--studio-gray-80);
+}
+
+.expanded-card__empty-content {
+	display: flex;
+	align-items: center;
+	height: 100%;
+	justify-content: center;
+	color: var(--studio-gray-40);
+	font-size: 0.875rem;
+	padding: 0 26px;
+	word-break: break-word;
+}
 }
