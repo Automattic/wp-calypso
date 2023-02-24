@@ -101,7 +101,7 @@ const Grid = styled.div< { isInSignup: boolean } >`
 	` ) }
 `;
 
-const Row = styled.div< { isHiddenInMobile?: boolean } >`
+const Row = styled.div< { isHiddenInMobile?: boolean; className?: string } >`
 	justify-content: space-between;
 	margin-bottom: -1px;
 	align-items: stretch;
@@ -478,14 +478,19 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	const [ storageFeature ] = getPlanFeaturesObject( [
 		restructuredFeatures.planStorageOptionsMap[ planName ],
 	] );
-	const cellClasses = classNames( 'plan-comparison-grid__plan', getPlanClass( planName ), {
-		'popular-plan-parent-class': highlightLabel,
-		'has-feature': hasFeature,
-		'title-is-subtitle': 'live-chat-support' === featureSlug,
-		'is-left-of-highlight': highlightAdjacencyMatrix[ planName ]?.leftOfHighlight,
-		'is-right-of-highlight': highlightAdjacencyMatrix[ planName ]?.rightOfHighlight,
-		'is-only-highlight': highlightAdjacencyMatrix[ planName ]?.isOnlyHighlight,
-	} );
+	const cellClasses = classNames(
+		'plan-comparison-grid__feature-group-row-cell',
+		'plan-comparison-grid__plan',
+		getPlanClass( planName ),
+		{
+			'popular-plan-parent-class': highlightLabel,
+			'has-feature': hasFeature,
+			'title-is-subtitle': 'live-chat-support' === featureSlug,
+			'is-left-of-highlight': highlightAdjacencyMatrix[ planName ]?.leftOfHighlight,
+			'is-right-of-highlight': highlightAdjacencyMatrix[ planName ]?.rightOfHighlight,
+			'is-only-highlight': highlightAdjacencyMatrix[ planName ]?.isOnlyHighlight,
+		}
+	);
 
 	return (
 		<Cell className={ cellClasses } textAlign="center">
@@ -539,13 +544,16 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	isStorageFeature,
 } ) => {
 	const translate = useTranslate();
-	const rowClasses = classNames( 'plan-comparison-grid__feature-row', {
+	const rowClasses = classNames( 'plan-comparison-grid__feature-group-row', {
 		'is-storage-feature': isStorageFeature,
 	} );
 
 	return (
 		<Row isHiddenInMobile={ isHiddenInMobile } className={ rowClasses }>
-			<RowHead key="feature-name" className="plan-comparison-grid__feature-feature-name">
+			<RowHead
+				key="feature-name"
+				className="plan-comparison-grid__feature-group-row-cell plan-comparison-grid__feature-feature-name"
+			>
 				{ isStorageFeature ? (
 					<Plans2023Tooltip text={ translate( 'Space to store your photos, media, and more.' ) }>
 						{ translate( 'Storage' ) }
