@@ -39,10 +39,19 @@ export async function updateCartContactDetailsForCheckout(
 		taxRequirements.subdivision || contactDetailsType !== 'tax'
 			? contactInfo.state?.value
 			: undefined;
+
+	// Organization and Address exist both in the contact info store and in
+	// the VAT info store. We give priority to the VAT info for the cart, but
+	// we use the contact info store if the VAT info is not set.
 	const organization =
 		vatDetails.name ??
 		( taxRequirements.organization ? contactInfo.organization?.value : undefined ) ??
 		'';
+	const address =
+		vatDetails.address ??
+		( taxRequirements.address ? contactInfo.fullAddress?.value : undefined ) ??
+		'';
+
 	return updateLocation( {
 		// Typically the contact country code and the VAT country code will be the
 		// same, but the VAT form has special country codes it sometimes uses like
@@ -53,7 +62,7 @@ export async function updateCartContactDetailsForCheckout(
 		subdivisionCode,
 		vatId: vatDetails.id ?? '',
 		organization,
-		address: vatDetails.address ?? '',
+		address,
 		city: ( taxRequirements.city ? contactInfo.city?.value : undefined ) ?? '',
 	} );
 }
