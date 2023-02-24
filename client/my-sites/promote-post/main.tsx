@@ -39,20 +39,9 @@ interface Props {
 	tab?: TabType;
 }
 
-const queryPost = {
+const queryProducts = {
 	number: 20, // max supported by /me/posts endpoint for all-sites mode
 	status: 'publish', // do not allow private or unpublished posts
-	type: 'post',
-	order_by: 'comment_count',
-};
-const queryPage = {
-	...queryPost,
-	type: 'page',
-	order_by: 'comment_count',
-};
-
-const queryProducts = {
-	...queryPost,
 	type: 'product',
 };
 
@@ -64,8 +53,8 @@ const ERROR_NO_LOCAL_USER = 'no_local_user';
 
 const memoizedQuery = memoizeLast( ( period, unit, quantity, endOf, num ) => ( {
 	period,
-	// unit: unit,
-	// quantity: quantity,
+	unit: unit,
+	quantity: quantity,
 	date: endOf,
 	num: num,
 	max: 20,
@@ -84,12 +73,6 @@ export default function PromotedPosts( { tab }: Props ) {
 		return products?.filter( ( product: any ) => ! product.password );
 	} );
 
-	const isLoadingPost = useSelector( ( state ) =>
-		isRequestingPostsForQuery( state, selectedSiteId, queryPost )
-	);
-	const isLoadingPage = useSelector( ( state ) =>
-		isRequestingPostsForQuery( state, selectedSiteId, queryPage )
-	);
 	const isLoadingProducts = useSelector( ( state ) =>
 		isRequestingPostsForQuery( state, selectedSiteId, queryProducts )
 	);
@@ -101,7 +84,7 @@ export default function PromotedPosts( { tab }: Props ) {
 	const mostPopularPostAndPages = useSelector( ( state ) => {
 		const topPosts: any[ PostType ] = [];
 
-		topViewedPostAndPages?.map( ( post: any ) => {
+		topViewedPostAndPages?.forEach( ( post: any ) => {
 			const item = getSitePost( state, selectedSiteId, post.id );
 			item && topPosts.push( { ...item, views: post.views } );
 		} );
@@ -126,6 +109,10 @@ export default function PromotedPosts( { tab }: Props ) {
 	const memoizedQuery = useMemo(
 		() => ( { include: topViewedPostAndPagesIds } ),
 		[ JSON.stringify( topViewedPostAndPagesIds ) ]
+	);
+
+	const isLoadingMemoizedPostsAndPages = useSelector( ( state ) =>
+		isRequestingPostsForQuery( state, selectedSiteId, memoizedQuery )
 	);
 
 	if ( usePromoteWidget() === PromoteWidgetStatus.DISABLED ) {
@@ -176,7 +163,7 @@ export default function PromotedPosts( { tab }: Props ) {
 	}
 
 	const content = [ ...( mostPopularPostAndPages || [] ), ...( products || [] ) ];
-	const isLoading = isLoadingPage && isLoadingPost && isLoadingProducts;
+	const isLoading = isLoadingProducts || isLoadingMemoizedPostsAndPages;
 
 	return (
 		<Main wideLayout className="promote-post">
