@@ -49,7 +49,7 @@ export async function updateCartContactDetailsForCheckout(
 		'';
 	const address =
 		vatDetails.address ??
-		( taxRequirements.address ? contactInfo.fullAddress?.value : undefined ) ??
+		( taxRequirements.address ? contactInfo.address1?.value : undefined ) ??
 		'';
 
 	return updateLocation( {

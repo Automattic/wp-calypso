@@ -604,7 +604,7 @@ describe( 'Checkout contact step', () => {
 				organization: 'Organization',
 				postal_code: product === 'plan' ? 'Postal code' : 'Postal Code',
 				country_code: 'Country',
-				address: 'Address for taxes',
+				address: 'Address',
 				...labels,
 			};
 			mockContactDetailsValidationEndpoint( product === 'plan' ? 'tax' : 'domain', {
@@ -759,7 +759,7 @@ describe( 'Checkout contact step', () => {
 				await screen.findByLabelText( product === 'plan' ? 'Postal code' : 'Postal Code' ),
 				postalCode
 			);
-			await user.type( await screen.findByLabelText( 'Address for taxes' ), 'Contact Address' );
+			await user.type( await screen.findByLabelText( 'Address' ), 'Contact Address' );
 
 			// Check the box
 			await user.click( await screen.findByLabelText( 'Add VAT details' ) );

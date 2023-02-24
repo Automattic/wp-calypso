@@ -58,7 +58,7 @@ export default function TaxFields( {
 	isDisabled?: boolean;
 } ) {
 	const translate = useTranslate();
-	const { postalCode, countryCode, city, state, organization, fullAddress } = taxInfo;
+	const { postalCode, countryCode, city, state, organization, address1 } = taxInfo;
 	const arePostalCodesSupported =
 		countriesList.length && countryCode?.value
 			? getCountryPostalCodeSupport( countriesList, countryCode.value )
@@ -78,7 +78,7 @@ export default function TaxFields( {
 							city,
 							state,
 							organization,
-							address: fullAddress,
+							address: address1,
 						},
 						arePostalCodesSupported,
 						taxRequirements
@@ -113,7 +113,7 @@ export default function TaxFields( {
 								city,
 								state,
 								organization,
-								address: fullAddress,
+								address: address1,
 							},
 							arePostalCodesSupported,
 							taxRequirements
@@ -143,7 +143,7 @@ export default function TaxFields( {
 								city: { value: newValue, errors: [], isTouched: true },
 								state,
 								organization,
-								address: fullAddress,
+								address: address1,
 							},
 							arePostalCodesSupported,
 							taxRequirements
@@ -172,7 +172,7 @@ export default function TaxFields( {
 								city,
 								state: { value: event.target.value, errors: [], isTouched: true },
 								organization,
-								address: fullAddress,
+								address: address1,
 							},
 							arePostalCodesSupported,
 							taxRequirements
@@ -199,7 +199,7 @@ export default function TaxFields( {
 								city,
 								state,
 								organization: { value: newValue, errors: [], isTouched: true },
-								address: fullAddress,
+								address: address1,
 							},
 							arePostalCodesSupported,
 							taxRequirements
@@ -215,8 +215,8 @@ export default function TaxFields( {
 			<Field
 				id={ section + '-taxes-address' }
 				type="text"
-				label={ String( translate( 'Address for taxes' ) ) }
-				value={ fullAddress?.value ?? '' }
+				label={ String( translate( 'Address' ) ) }
+				value={ address1?.value ?? '' }
 				disabled={ isDisabled }
 				onChange={ ( newValue: string ) => {
 					onChange(
@@ -263,7 +263,7 @@ function updateOnChangePayload(
 		city: ManagedContactDetails[ 'city' ] | undefined;
 		state: ManagedContactDetails[ 'state' ] | undefined;
 		organization: ManagedContactDetails[ 'organization' ] | undefined;
-		address: ManagedContactDetails[ 'fullAddress' ] | undefined;
+		address: ManagedContactDetails[ 'address1' ] | undefined;
 	},
 	arePostalCodesSupported: boolean,
 	taxRequirements: CountryTaxRequirements
@@ -274,7 +274,7 @@ function updateOnChangePayload(
 		city: taxRequirements.city ? taxInfo.city : undefined,
 		state: taxRequirements.subdivision ? taxInfo.state : undefined,
 		organization: taxRequirements.organization ? taxInfo.organization : undefined,
-		fullAddress: taxRequirements.address ? taxInfo.address : undefined,
+		address1: taxRequirements.address ? taxInfo.address : undefined,
 	};
 }
 
