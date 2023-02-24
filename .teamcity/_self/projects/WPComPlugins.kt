@@ -76,7 +76,12 @@ object CalypsoApps: BuildType({
 
 	artifactRules = """
 		apps/happy-blocks/release-files => happy-blocks.zip
+		apps/happychat/dist => happychat.zip
+		apps/inline-help/dist => inline-help.zip
 		apps/notifications/dist => notifications.zip
+		apps/o2-blocks/release-files => o2-blocks.zip
+		apps/odyssey-stats/dist => odyssey-stats.zip
+		apps/wpcom-block-editor/dist => wpcom-block-editor.zip
 	""".trimIndent()
 
 	steps {
