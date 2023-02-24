@@ -69,7 +69,7 @@ const JetpackCompletePage: React.FC< Props > = ( {
 				>
 					<>
 						<ProductHeader item={ item } />
-						<PricingPageLink siteSlug={ ( siteSlug || urlQueryArgs?.site ) ?? '' } />
+						<PricingPageLink siteSlug={ siteSlug || urlQueryArgs?.site } />
 						<ItemsIncluded />
 						<ItemPrice item={ item } siteId={ siteId } />
 
