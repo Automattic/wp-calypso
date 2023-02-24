@@ -43,7 +43,6 @@ const queryPost = {
 	status: 'publish', // do not allow private or unpublished posts
 	type: 'post',
 	order_by: 'comment_count',
-	include: [ 8671, 9310 ],
 };
 const queryPage = {
 	...queryPost,
@@ -62,22 +61,21 @@ export type DSPMessage = {
 
 const ERROR_NO_LOCAL_USER = 'no_local_user';
 
+const memoizedQuery = memoizeLast( ( period, unit, quantity, endOf, num ) => ( {
+	period,
+	// unit: unit,
+	// quantity: quantity,
+	date: endOf,
+	num: num,
+	max: 20,
+} ) );
+const today = moment().locale( 'en' );
+const period = 'year';
+const topPostsQuery = memoizedQuery( period, 'month', 20, today.format( 'YYYY-MM-DD' ), -1 );
+
 export default function PromotedPosts( { tab }: Props ) {
 	const selectedTab = tab === 'campaigns' ? 'campaigns' : 'posts';
-
-	const memoizedQuery = memoizeLast( ( period, unit, quantity, endOf, num ) => ( {
-		period,
-		// unit: unit,
-		// quantity: quantity,
-		date: endOf,
-		num: num,
-		max: 20,
-	} ) );
 	const selectedSite = useSelector( getSelectedSite );
-	const today = moment().locale( 'en' );
-	const period = 'year';
-	const topPostsQuery = memoizedQuery( period, 'month', 20, today.format( 'YYYY-MM-DD' ), -1 );
-
 	const selectedSiteId = selectedSite?.ID || 0;
 
 	const products = useSelector( ( state ) => {
@@ -95,9 +93,11 @@ export default function PromotedPosts( { tab }: Props ) {
 		isRequestingPostsForQuery( state, selectedSiteId, queryProducts )
 	);
 
-	let topViewedPostAndPages: any[ PostType ] = [];
+	const topViewedPostAndPages = useSelector( ( state ) =>
+		getTopPostAndPages( state, selectedSiteId, topPostsQuery )
+	);
+
 	const mostPopularPostAndPages = useSelector( ( state ) => {
-		topViewedPostAndPages = getTopPostAndPages( state, selectedSiteId, topPostsQuery );
 		const topPosts: any[ PostType ] = [];
 
 		topViewedPostAndPages?.map( ( post: any ) => {
