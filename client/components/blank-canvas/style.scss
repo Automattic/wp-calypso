@@ -154,15 +154,10 @@
 }
 
 .has-blank-canvas {
-	touch-action: none;
 	overscroll-behavior: none;
-	-webkit-overflow-scrolling: auto;
-
-	.layout {
-		max-height: 100vh;
-		overflow: hidden;
-		touch-action: none;
-		overscroll-behavior: none;
-		-webkit-overflow-scrolling: auto;
-	}
+	touch-action: none;
+}
+.has-blank-canvas .layout {
+	max-height: 100vh;
+	overflow: hidden;
 }
