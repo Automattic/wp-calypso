@@ -557,6 +557,7 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 
 .x-menu__active {
 	display: block;
+	z-index: 1000000001;
 }
 
 .x-menu-overlay {
@@ -580,7 +581,7 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 }
 
 .x-menu-content {
-	position: fixed;
+	position: absolute;
 	top: $x-menu-outer-offset;
 	right: $x-menu-outer-offset;
 	left: $x-menu-outer-offset;

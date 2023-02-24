@@ -281,7 +281,12 @@ const UniversalNavbarHeader = ( { isLoggedIn = false, sectionName, logoColor }: 
 						aria-label={ __( 'WordPress.com Navigation Menu', __i18n_text_domain__ ) }
 						aria-hidden="true"
 					>
-						<div className="x-menu-overlay"></div>
+						{ /* eslint-disable-next-line jsx-a11y/no-static-element-interactions */ }
+						<div
+							className="x-menu-overlay"
+							onKeyDown={ () => setMobileMenuOpen( false ) }
+							onClick={ () => setMobileMenuOpen( false ) }
+						/>
 						<div className="x-menu-content">
 							<button
 								className="x-menu-button x-link"
