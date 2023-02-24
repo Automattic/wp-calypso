@@ -314,12 +314,14 @@ export function getEnhancedTasks(
 					taskData = {
 						title: translate( 'Choose a domain' ),
 						completed: isPaidPlan,
-						disabled: isPaidPlan,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, isPaidPlan, task.id );
-							window.location.assign( `/domains/add/${ siteSlug }?domainAndPlanPackage=true` );
+							const destinationUrl = isPaidPlan
+								? `/domains/manage/${ siteSlug }`
+								: `/domains/add/${ siteSlug }?domainAndPlanPackage=true`;
+							window.location.assign( destinationUrl );
 						},
-						badgeText: translate( 'Upgrade plan' ),
+						badgeText: isPaidPlan ? '' : translate( 'Upgrade plan' ),
 					};
 					break;
 			}
