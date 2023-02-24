@@ -7,12 +7,7 @@ function registerBlocks() {
 		icon: 'editor-kitchensink',
 		category: 'embed',
 		description: 'WordPress.com Footer Template Part',
-		attributes: {
-			locale: {
-				type: 'string',
-				default: 'en',
-			},
-		},
+		attributes: {},
 		edit: Edit,
 	} );
 }
