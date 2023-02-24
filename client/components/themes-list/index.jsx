@@ -28,7 +28,11 @@ const getGridColumns = ( gridContainerRef, minColumnWidth, margin ) => {
 	}
 	const containerWidth = container.offsetWidth;
 	const availableWidth = containerWidth - margin;
-	const columnsPerRow = Math.floor( availableWidth / ( minColumnWidth + margin ) );
+
+	// Changing from desktop to mobile view can cause the container width to be smaller than the
+	// minimum column width because it calculates before hiding the sidebar, which would result
+	// in a division by zero. In that case, we just assume that there's only one column.
+	const columnsPerRow = Math.floor( availableWidth / ( minColumnWidth + margin ) ) || 1;
 	return columnsPerRow;
 };
 
@@ -107,14 +111,6 @@ export const ThemesList = ( props ) => {
 			/>
 		);
 	}
-
-	// const showSecondUpsellNudge = () => {
-	// 	const minColumnWidth = 320; // minimum column width in pixels
-	// 	const margin = 32; // horizontal margin in pixels
-	// 	const columnsPerRow = getGridColumns( themesListRef, minColumnWidth, margin );
-	// 	// Show second upsell nudge at 7th row
-	// 	return columnsPerRow && props.themes.length >= columnsPerRow * 6;
-	// };
 
 	const SecondUpsellNudge = props.upsellBanner && (
 		<div className="second-upsell-wrapper">
