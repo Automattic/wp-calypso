@@ -25,6 +25,11 @@ const apps = [
 		dir: path.resolve( appRoot, 'notifications' ),
 		newReleaseDir: path.resolve( appRoot, 'notifications/dist' ),
 		slackNotify: true,
+		customNormalize: exec( `./bin/prepArtifactForCI.sh`, {
+			encoding: 'UTF-8',
+			cwd: path.resolve( appRoot, 'notifications' ),
+			stdio: 'inherit',
+		} ),
 	},
 ];
 
