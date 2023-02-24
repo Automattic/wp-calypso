@@ -722,4 +722,72 @@ describe( 'Checkout contact step', () => {
 			);
 		}
 	);
+
+	it.each( [
+		{ withVatAddress: 'with', product: 'plan' },
+		{ withVatAddress: 'without', product: 'plan' },
+		{ withVatAddress: 'with', product: 'plan with domain' },
+		{ withVatAddress: 'without', product: 'plan with domain' },
+	] )(
+		'sends both contact details and tax data to the shopping cart endpoint when a plan with domain is in the cart and VAT details have been added $withVatAddress VAT address',
+		async ( { withVatAddress, product } ) => {
+			const vatId = '12345';
+			const vatAddress = withVatAddress === 'with' ? 'VAT Address' : 'Contact Address';
+			const countryCode = 'CH';
+			const postalCode = 'NW1 4NP';
+			mockSetVatInfoEndpoint();
+			mockContactDetailsValidationEndpoint( product === 'plan' ? 'tax' : 'domain', {
+				success: true,
+			} );
+			const user = userEvent.setup();
+			const cartChanges =
+				product === 'plan'
+					? { products: [ planWithoutDomain ] }
+					: { products: [ planWithBundledDomain, domainProduct ] };
+
+			const setCart = jest.fn().mockImplementation( mockSetCartEndpoint );
+
+			render(
+				<MockCheckout
+					{ ...defaultPropsForMockCheckout }
+					cartChanges={ cartChanges }
+					setCart={ setCart }
+				/>
+			);
+			await user.selectOptions( await screen.findByLabelText( 'Country' ), countryCode );
+			await user.type(
+				await screen.findByLabelText( product === 'plan' ? 'Postal code' : 'Postal Code' ),
+				postalCode
+			);
+			await user.type( await screen.findByLabelText( 'Address for taxes' ), 'Contact Address' );
+
+			// Check the box
+			await user.click( await screen.findByLabelText( 'Add VAT details' ) );
+
+			// Fill in the details
+			await user.type( await screen.findByLabelText( 'VAT Number' ), vatId );
+			if ( withVatAddress === 'with' ) {
+				await user.type( await screen.findByLabelText( 'Address for VAT' ), vatAddress );
+			}
+
+			await user.click( screen.getByText( 'Continue' ) );
+			expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
+			expect( setCart ).toHaveBeenCalledWith(
+				mainCartKey,
+				convertResponseCartToRequestCart( {
+					...initialCart,
+					...cartChanges,
+					tax: {
+						display_taxes: true,
+						location: {
+							country_code: countryCode,
+							postal_code: postalCode,
+							vat_id: vatId,
+							address: vatAddress,
+						},
+					},
+				} )
+			);
+		}
+	);
 } );
