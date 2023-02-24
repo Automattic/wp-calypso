@@ -55,7 +55,10 @@ class SiteSettingsPerformance extends Component {
 		const siteIsJetpackNonAtomic = siteIsJetpack && ! siteIsAtomic;
 
 		return (
-			<Main className="settings-performance site-settings site-settings__performance-settings">
+			<Main
+				className="settings-performance site-settings site-settings__performance-settings"
+				scrollToTopOnMount
+			>
 				<DocumentHead title={ translate( 'Performance Settings' ) } />
 				<JetpackDevModeNotice />
 				<FormattedHeader
