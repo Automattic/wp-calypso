@@ -28,6 +28,16 @@ export interface MonitorSettings {
 	monitor_user_wp_note_notifications: boolean;
 }
 
+interface StatsObject {
+	total: number;
+	trend: 'up' | 'down' | 'same';
+	trend_change: number;
+}
+interface SiteStats {
+	views: StatsObject;
+	visitors: StatsObject;
+}
+
 export interface Site {
 	blog_id: number;
 	url: string;
@@ -44,6 +54,7 @@ export interface Site {
 	monitor_settings: MonitorSettings;
 	monitor_last_status_change: string;
 	isSelected?: boolean;
+	site_stats: SiteStats;
 	onSelect?: ( value: boolean ) => void;
 }
 export interface SiteNode {
@@ -53,6 +64,11 @@ export interface SiteNode {
 	status: AllowedStatusTypes | string;
 }
 
+export interface StatsNode {
+	type: AllowedTypes;
+	status: AllowedStatusTypes | string;
+	data: SiteStats;
+}
 export interface BackupNode {
 	type: AllowedTypes;
 	status: AllowedStatusTypes | string;
