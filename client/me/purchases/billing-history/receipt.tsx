@@ -32,10 +32,27 @@ import {
 	renderTransactionAmount,
 	renderTransactionQuantitySummary,
 } from './utils';
+import { VatVendorDetails } from './vat-vendor-details';
+import type { BillingTransaction } from 'calypso/state/billing-transactions/types';
+import type { IAppState } from 'calypso/state/types';
+import type { LocalizeProps } from 'i18n-calypso';
+import type { FormEvent } from 'react';
 
 import './style.scss';
 
-class BillingReceipt extends Component {
+interface BillingReceiptProps {
+	transactionId: number;
+	recordGoogleEvent: ( key: string, message: string ) => void;
+	clearBillingTransactionError: ( transactionId: number ) => void;
+}
+
+interface BillingReceiptConnectedProps {
+	transactionFetchError?: string;
+	transaction: BillingTransaction | undefined;
+	translate: LocalizeProps[ 'translate' ];
+}
+
+class BillingReceipt extends Component< BillingReceiptProps & BillingReceiptConnectedProps > {
 	componentDidMount() {
 		this.redirectIfInvalidTransaction();
 	}
@@ -44,7 +61,7 @@ class BillingReceipt extends Component {
 		this.redirectIfInvalidTransaction();
 	}
 
-	recordClickEvent = ( action ) => {
+	recordClickEvent = ( action: string ) => {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
 	};
 
@@ -93,10 +110,16 @@ class BillingReceipt extends Component {
 	}
 }
 
-export function ReceiptBody( { transaction, handlePrintLinkClick } ) {
+export function ReceiptBody( {
+	transaction,
+	handlePrintLinkClick,
+}: {
+	transaction: BillingTransaction;
+	handlePrintLinkClick: () => void;
+} ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
-	const title = translate( 'Visit %(url)s', { args: { url: transaction.url } } );
+	const title = translate( 'Visit %(url)s', { args: { url: transaction.url }, textOnly: true } );
 	const serviceLink = <a href={ transaction.url } title={ title } />;
 
 	return (
@@ -151,7 +174,7 @@ export function ReceiptBody( { transaction, handlePrintLinkClick } ) {
 	);
 }
 
-function ReceiptTransactionId( { transaction } ) {
+function ReceiptTransactionId( { transaction }: { transaction: BillingTransaction } ) {
 	const translate = useTranslate();
 	if ( ! transaction.pay_ref ) {
 		return null;
@@ -165,7 +188,7 @@ function ReceiptTransactionId( { transaction } ) {
 	);
 }
 
-function ReceiptPaymentMethod( { transaction } ) {
+function ReceiptPaymentMethod( { transaction }: { transaction: BillingTransaction } ) {
 	const translate = useTranslate();
 	let text;
 
@@ -190,13 +213,13 @@ function ReceiptPaymentMethod( { transaction } ) {
 	);
 }
 
-function VatDetails( { transaction } ) {
+function UserVatDetails( { transaction }: { transaction: BillingTransaction } ) {
 	const translate = useTranslate();
 	const { vatDetails, isLoading, fetchError } = useVatDetails();
 	const reduxDispatch = useDispatch();
 
-	const getEmailReceiptLinkClickHandler = ( receiptId ) => {
-		return ( event ) => {
+	const getEmailReceiptLinkClickHandler = ( receiptId: string ) => {
+		return ( event: FormEvent< HTMLFormElement > ) => {
 			event.preventDefault();
 			reduxDispatch( recordGoogleEvent( 'Me', 'Clicked on Receipt Email Button' ) );
 			reduxDispatch( sendBillingReceiptEmail( receiptId ) );
@@ -208,72 +231,51 @@ function VatDetails( { transaction } ) {
 	}
 
 	return (
-		<>
-			<li>
-				<strong>{ translate( 'VAT Details' ) }</strong>
-				<span className="receipt__vat-vendor-details-description">
-					{ translate(
-						'{{noPrint}}You can edit your VAT details {{vatDetailsLink}}on this page{{/vatDetailsLink}}. {{/noPrint}}This is not an official VAT receipt. For an official VAT receipt, {{emailReceiptLink}}email yourself a copy{{/emailReceiptLink}}.',
-						{
-							components: {
-								noPrint: <span className="receipt__no-print" />,
-								vatDetailsLink: <a href={ vatDetailsPath } />,
-								emailReceiptLink: (
-									<Button
-										plain
-										className="receipt__email-button"
-										onClick={ getEmailReceiptLinkClickHandler( transaction.id ) }
-									/>
-								),
-							},
-						}
-					) }
-				</span>
-				{ vatDetails.name }
-				<br />
-				{ vatDetails.address }
-				<br />
-				{ translate( 'VAT #: %(vatCountry)s %(vatId)s', {
-					args: {
-						vatCountry: vatDetails.country,
-						vatId: vatDetails.id,
-					},
-					comment: 'This is the user-supplied VAT number, format "UK 553557881".',
-				} ) }
-			</li>
-			<li>
-				<strong>{ translate( 'Vendor VAT Details' ) }</strong>
-				<span>
-					Aut O’Mattic Ltd.
-					<br />
-					c/o Noone Casey
-					<br />
-					Grand Canal Dock, 25 Herbert Pl
-					<br />
-					Dublin, D02 AY86
-					<br />
-					Ireland
-					<br />
-				</span>
-				<span className="receipt__vat-vendor-details-number">
-					{ translate( '{{strong}}Vendor VAT #:{{/strong}} %(ieVatNumber)s and %(ukVatNumber)s', {
+		<li>
+			<strong>{ translate( 'VAT Details' ) }</strong>
+			<span className="receipt__vat-vendor-details-description">
+				{ translate(
+					'{{noPrint}}You can edit your VAT details {{vatDetailsLink}}on this page{{/vatDetailsLink}}. {{/noPrint}}This is not an official VAT receipt. For an official VAT receipt, {{emailReceiptLink}}email yourself a copy{{/emailReceiptLink}}.',
+					{
 						components: {
-							strong: <strong />,
+							noPrint: <span className="receipt__no-print" />,
+							vatDetailsLink: <a href={ vatDetailsPath } />,
+							emailReceiptLink: (
+								<Button
+									plain
+									className="receipt__email-button"
+									onClick={ getEmailReceiptLinkClickHandler( transaction.id ) as any }
+								/>
+							),
 						},
-						args: {
-							ieVatNumber: 'IE 3255131SH',
-							ukVatNumber: 'UK 376 1703 88',
-						},
-						comment:
-							"This is both of Automattic's vendor VAT numbers with 'and' separating the numbers, format 'IE 3255131SH and UK 376 1703 88'.",
-					} ) }
-				</span>
-			</li>
+					}
+				) }
+			</span>
+			{ vatDetails.name }
+			<br />
+			{ vatDetails.address }
+			<br />
+			{ translate( 'VAT #: %(vatCountry)s %(vatId)s', {
+				args: {
+					vatCountry: vatDetails.country,
+					vatId: vatDetails.id,
+				},
+				comment: 'This is the user-supplied VAT number, format "UK 553557881".',
+			} ) }
+		</li>
+	);
+}
+
+function VatDetails( { transaction }: { transaction: BillingTransaction } ) {
+	return (
+		<>
+			<UserVatDetails transaction={ transaction } />
+			<VatVendorDetails transaction={ transaction } />
 		</>
 	);
 }
 
-function ReceiptLineItems( { transaction } ) {
+function ReceiptLineItems( { transaction }: { transaction: BillingTransaction } ) {
 	const translate = useTranslate();
 	const groupedTransactionItems = groupDomainProducts( transaction.items, translate );
 
@@ -334,7 +336,7 @@ function ReceiptLineItems( { transaction } ) {
 	);
 }
 
-function ReceiptDetails( { transaction } ) {
+function ReceiptDetails( { transaction }: { transaction: BillingTransaction } ) {
 	if ( ! transaction.cc_name && ! transaction.cc_email ) {
 		return null;
 	}
@@ -398,7 +400,7 @@ export function ReceiptPlaceholder() {
 	);
 }
 
-function ReceiptLabels( { hideDetailsLabelOnPrint } ) {
+function ReceiptLabels( { hideDetailsLabelOnPrint }: { hideDetailsLabelOnPrint?: boolean } ) {
 	const translate = useTranslate();
 
 	let labelContent = translate(
@@ -427,16 +429,19 @@ function ReceiptLabels( { hideDetailsLabelOnPrint } ) {
 	);
 }
 
-export function ReceiptTitle( { backHref } ) {
+export function ReceiptTitle( { backHref }: { backHref: string } ) {
 	const translate = useTranslate();
 	return <HeaderCake backHref={ backHref }>{ translate( 'Receipt' ) }</HeaderCake>;
 }
 
 export default connect(
-	( state, { transactionId } ) => ( {
-		transaction: getPastBillingTransaction( state, transactionId ),
-		transactionFetchError: isPastBillingTransactionError( state, transactionId ),
-	} ),
+	( state: IAppState, { transactionId }: { transactionId: number } ) => {
+		const transaction = getPastBillingTransaction( state, transactionId );
+		return {
+			transaction: transaction && 'service' in transaction ? transaction : undefined,
+			transactionFetchError: isPastBillingTransactionError( state, transactionId ),
+		};
+	},
 	{
 		clearBillingTransactionError,
 		recordGoogleEvent,
