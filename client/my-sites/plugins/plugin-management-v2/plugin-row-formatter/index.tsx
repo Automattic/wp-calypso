@@ -101,9 +101,15 @@ export default function PluginRowFormatter( {
 
 	const allStatuses = getPluginActionStatuses( state );
 
-	const currentSiteStatuses = allStatuses.filter(
+	let currentSiteStatuses = allStatuses.filter(
 		( status ) => status.pluginId === item.id && status.action !== UPDATE_PLUGIN
 	);
+
+	if ( 'site-name' === columnKey ) {
+		currentSiteStatuses = currentSiteStatuses.filter(
+			( status ) => parseInt( status.siteId ) === selectedSite?.ID
+		);
+	}
 
 	const pluginActionStatus =
 		currentSiteStatuses.length > 0 ? (
@@ -120,6 +126,9 @@ export default function PluginRowFormatter( {
 					<span className="plugin-row-formatter__site-name">{ selectedSite?.domain }</span>
 					{ /* Overlay for small screen is added in the card component */ }
 					{ ! isSmallScreen && <span className="plugin-row-formatter__overlay"></span> }
+					{ pluginActionStatus && (
+						<div className="plugin-row-formatter__action-status">{ pluginActionStatus }</div>
+					) }
 				</span>
 			);
 		case 'plugin':

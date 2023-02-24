@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { isMonthly, getPlanByPathSlug, TERM_MONTHLY } from '@automattic/calypso-products';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CompactCard, Gridicon } from '@automattic/components';
@@ -15,6 +14,7 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
 import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import Main from 'calypso/components/main';
+import { Experiment } from 'calypso/lib/explat';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import { TITAN_MAIL_MONTHLY_SLUG, TITAN_MAIL_YEARLY_SLUG } from 'calypso/lib/titan/constants';
 import {
@@ -294,35 +294,37 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 				);
 
 			case BUSINESS_PLAN_UPGRADE_UPSELL:
-				if ( config.isEnabled( 'upsell/post-purchase-treatment' ) ) {
-					return isLoading ? (
-						this.renderGenericPlaceholder()
-					) : (
-						<BusinessPlanUpgradeUpsellTreatment
-							currencyCode={ currencyCode }
-							planRawPrice={ planRawPrice }
-							planDiscountedRawPrice={ planDiscountedRawPrice }
-							receiptId={ receiptId }
-							translate={ translate }
-							handleClickAccept={ this.handleClickAccept }
-							handleClickDecline={ this.handleClickDecline }
-							hasSevenDayRefundPeriod={ hasSevenDayRefundPeriod }
-							currentPlan={ currentPlan }
-						/>
-					);
-				}
 				return isLoading ? (
 					this.renderGenericPlaceholder()
 				) : (
-					<BusinessPlanUpgradeUpsell
-						currencyCode={ currencyCode }
-						planRawPrice={ planRawPrice }
-						planDiscountedRawPrice={ planDiscountedRawPrice }
-						receiptId={ receiptId }
-						translate={ translate }
-						handleClickAccept={ this.handleClickAccept }
-						handleClickDecline={ this.handleClickDecline }
-						hasSevenDayRefundPeriod={ hasSevenDayRefundPeriod }
+					<Experiment
+						name="calypso_postpurchase_upsell_countdown_timer"
+						defaultExperience={
+							<BusinessPlanUpgradeUpsell
+								currencyCode={ currencyCode }
+								planRawPrice={ planRawPrice }
+								planDiscountedRawPrice={ planDiscountedRawPrice }
+								receiptId={ receiptId }
+								translate={ translate }
+								handleClickAccept={ this.handleClickAccept }
+								handleClickDecline={ this.handleClickDecline }
+								hasSevenDayRefundPeriod={ hasSevenDayRefundPeriod }
+							/>
+						}
+						treatmentExperience={
+							<BusinessPlanUpgradeUpsellTreatment
+								currencyCode={ currencyCode }
+								planRawPrice={ planRawPrice }
+								planDiscountedRawPrice={ planDiscountedRawPrice }
+								receiptId={ receiptId }
+								translate={ translate }
+								handleClickAccept={ this.handleClickAccept }
+								handleClickDecline={ this.handleClickDecline }
+								hasSevenDayRefundPeriod={ hasSevenDayRefundPeriod }
+								currentPlan={ currentPlan }
+							/>
+						}
+						loadingExperience={ null }
 					/>
 				);
 

@@ -120,8 +120,8 @@ export const getCampaignClickthroughRate = ( clicks_total: number, impressions_t
 export const getCampaignDurationFormatted = ( start_date: string, end_date: string ) => {
 	const campaignDays = getCampaignDurationDays( start_date, end_date );
 
-	const dateStartFormatted = moment( start_date ).format( 'MMM D' );
-	const dateEndFormatted = moment( end_date ).format( 'MMM D' );
+	const dateStartFormatted = moment.utc( start_date ).format( 'MMM D' );
+	const dateEndFormatted = moment.utc( end_date ).format( 'MMM D' );
 	const durationFormatted = `${ dateStartFormatted } - ${ dateEndFormatted } (${ campaignDays } ${ __(
 		'days'
 	) })`;

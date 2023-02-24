@@ -117,6 +117,7 @@ $font-family: "SF Pro Text", $sans;
 			color: #101517;
 			letter-spacing: -0.24px;
 			user-select: none;
+			overflow-y: auto;
 		}
 
 		.pattern-layout__list-item {
@@ -310,7 +311,8 @@ $font-family: "SF Pro Text", $sans;
 		display: flex;
 		flex-direction: column;
 		padding: 2px;
-		overflow: hidden;
+		margin-bottom: 32px;
+		overflow-y: auto;
 	}
 
 	.screen-container__footer {
@@ -360,7 +362,12 @@ $font-family: "SF Pro Text", $sans;
  */
 .pattern-assembler.pattern-assembler__sidebar-revamp {
 	.pattern-layout {
-		overflow-y: auto;
-		margin-bottom: 32px;
+		.pattern-layout__list {
+			margin: 0 0 16px;
+		}
+
+		.pattern-action-bar {
+			right: 2px;
+		}
 	}
 }

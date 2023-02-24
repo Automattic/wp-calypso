@@ -51,30 +51,33 @@ const PatternLayout = ( {
 	if ( ! isSidebarRevampEnabled ) {
 		return (
 			<div className="pattern-layout">
-				<ul className="pattern-layout__list">
-					{ selectedHeader ? (
-						<li className="pattern-layout__list-item">
-							<Icon className="pattern-layout__icon" icon={ header } size={ 24 } />
-							<span className="pattern-layout__list-item-text" title={ selectedHeader.category }>
-								{ selectedHeader.category }
-							</span>
-							<PatternActionBar
-								patternType="header"
-								onReplace={ onReplaceHeader }
-								onDelete={ onDeleteHeader }
-							/>
-						</li>
-					) : (
-						<li className="pattern-layout__list-item">
-							<Button className="pattern-layout__add-button" onClick={ onAddHeader }>
-								<span className="pattern-layout__add-button-icon">+</span>
-								{ translate( 'Add a header' ) }
-							</Button>
-						</li>
-					) }
-					{ sections.length > 0 && (
-						<AsyncLoad require="./animate-list" featureName="domMax" placeholder={ <div /> }>
-							{ ( m: any ) =>
+				<AsyncLoad require="./animate-list" featureName="domMax" placeholder={ <div /> }>
+					{ ( m: any ) => (
+						<m.ul className="pattern-layout__list" layoutScroll>
+							{ selectedHeader ? (
+								<li className="pattern-layout__list-item">
+									<Icon className="pattern-layout__icon" icon={ header } size={ 24 } />
+									<span
+										className="pattern-layout__list-item-text"
+										title={ selectedHeader.category }
+									>
+										{ selectedHeader.category }
+									</span>
+									<PatternActionBar
+										patternType="header"
+										onReplace={ onReplaceHeader }
+										onDelete={ onDeleteHeader }
+									/>
+								</li>
+							) : (
+								<li className="pattern-layout__list-item">
+									<Button className="pattern-layout__add-button" onClick={ onAddHeader }>
+										<span className="pattern-layout__add-button-icon">+</span>
+										{ translate( 'Add a header' ) }
+									</Button>
+								</li>
+							) }
+							{ sections.length > 0 &&
 								sections.map( ( { category, key }: Pattern, index ) => {
 									return (
 										<m.li
@@ -99,37 +102,39 @@ const PatternLayout = ( {
 											/>
 										</m.li>
 									);
-								} )
-							}
-						</AsyncLoad>
+								} ) }
+							<li className="pattern-layout__list-item">
+								<Button className="pattern-layout__add-button" onClick={ () => onAddSection() }>
+									<span className="pattern-layout__add-button-icon">+</span>
+									{ translate( 'Add sections' ) }
+								</Button>
+							</li>
+							{ selectedFooter ? (
+								<li className="pattern-layout__list-item">
+									<Icon className="pattern-layout__icon" icon={ footer } size={ 24 } />
+									<span
+										className="pattern-layout__list-item-text"
+										title={ selectedFooter.category }
+									>
+										{ selectedFooter.category }
+									</span>
+									<PatternActionBar
+										patternType="footer"
+										onReplace={ onReplaceFooter }
+										onDelete={ onDeleteFooter }
+									/>
+								</li>
+							) : (
+								<li className="pattern-layout__list-item">
+									<Button className="pattern-layout__add-button" onClick={ onAddFooter }>
+										<span className="pattern-layout__add-button-icon">+</span>
+										{ translate( 'Add a footer' ) }
+									</Button>
+								</li>
+							) }
+						</m.ul>
 					) }
-					<li className="pattern-layout__list-item">
-						<Button className="pattern-layout__add-button" onClick={ () => onAddSection() }>
-							<span className="pattern-layout__add-button-icon">+</span>
-							{ translate( 'Add sections' ) }
-						</Button>
-					</li>
-					{ selectedFooter ? (
-						<li className="pattern-layout__list-item">
-							<Icon className="pattern-layout__icon" icon={ footer } size={ 24 } />
-							<span className="pattern-layout__list-item-text" title={ selectedFooter.category }>
-								{ selectedFooter.category }
-							</span>
-							<PatternActionBar
-								patternType="footer"
-								onReplace={ onReplaceFooter }
-								onDelete={ onDeleteFooter }
-							/>
-						</li>
-					) : (
-						<li className="pattern-layout__list-item">
-							<Button className="pattern-layout__add-button" onClick={ onAddFooter }>
-								<span className="pattern-layout__add-button-icon">+</span>
-								{ translate( 'Add a footer' ) }
-							</Button>
-						</li>
-					) }
-				</ul>
+				</AsyncLoad>
 			</div>
 		);
 	}
@@ -137,10 +142,10 @@ const PatternLayout = ( {
 	return (
 		<div className="pattern-layout">
 			{ sections.length > 0 && (
-				<ul className="pattern-layout__list">
-					<AsyncLoad require="./animate-list" featureName="domMax" placeholder={ <div /> }>
-						{ ( m: any ) =>
-							sections.map( ( { category, key }: Pattern, index ) => {
+				<AsyncLoad require="./animate-list" featureName="domMax" placeholder={ <div /> }>
+					{ ( m: any ) => (
+						<m.ul className="pattern-layout__list" layoutScroll>
+							{ sections.map( ( { category, key }: Pattern, index ) => {
 								return (
 									<m.li
 										key={ key }
@@ -163,10 +168,10 @@ const PatternLayout = ( {
 										/>
 									</m.li>
 								);
-							} )
-						}
-					</AsyncLoad>
-				</ul>
+							} ) }
+						</m.ul>
+					) }
+				</AsyncLoad>
 			) }
 			<div
 				className="pattern-layout__add-button-container"

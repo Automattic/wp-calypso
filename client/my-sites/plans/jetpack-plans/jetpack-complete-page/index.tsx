@@ -18,6 +18,7 @@ import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-
 import { successNotice } from 'calypso/state/notices/actions';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import { QueryArgs, Duration } from '../types';
+import CtaButtons from './components/cta-buttons';
 import { ItemPrice } from './item-price';
 import ItemsIncluded from './items-included';
 import ShowLicenseActivationLinkIfAvailable from './show-license-activation-link-if-available';
@@ -82,6 +83,8 @@ const JetpackCompletePage: React.FC< Props > = ( {
 
 						<ItemsIncluded />
 						<ItemPrice item={ item } siteId={ siteId } />
+
+						<CtaButtons />
 					</>
 				</JetpackRnaDialogCard>
 			</Main>

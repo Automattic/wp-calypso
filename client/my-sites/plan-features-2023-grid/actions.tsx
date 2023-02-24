@@ -8,11 +8,16 @@ import {
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
+import { useDispatch } from '@wordpress/data';
+import { useCallback } from '@wordpress/element';
 import classNames from 'classnames';
 import { localize, TranslateResult, useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
+import { WPCOM_PLANS_UI_STORE } from './store';
 
 type PlanFeaturesActionsButtonProps = {
 	availableForPurchase: boolean;
@@ -150,10 +155,24 @@ const LoggedInPlansFeatureActionButton = ( {
 	forceDisplayButton: boolean;
 	selectedSiteSlug: string | null;
 } ) => {
+	const { setShowDomainUpsellDialog } = useDispatch( WPCOM_PLANS_UI_STORE );
 	const translate = useTranslate();
+	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
+
+	const showDomainUpsellDialog = useCallback( () => {
+		setShowDomainUpsellDialog( true );
+	}, [ setShowDomainUpsellDialog ] );
 
 	if ( freePlan ) {
 		if ( currentSitePlanSlug && isFreePlan( currentSitePlanSlug ) ) {
+			if ( domainFromHomeUpsellFlow ) {
+				return (
+					<Button className={ classes } onClick={ showDomainUpsellDialog }>
+						{ translate( 'Keep my plan', { context: 'verb' } ) }
+					</Button>
+				);
+			}
+
 			return (
 				<Button
 					className={ classes }

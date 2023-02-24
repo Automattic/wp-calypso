@@ -4,7 +4,7 @@ import { GITHUB_INTEGRATION_QUERY_KEY } from './constants';
 
 export const GITHUB_CONNECTION_QUERY_KEY = 'github-connection';
 
-type GithubConnectionData = {
+export interface GithubConnectionData {
 	ID: number;
 	connected: boolean;
 	external_profile_picture: string;
@@ -13,7 +13,8 @@ type GithubConnectionData = {
 	base_path: string;
 	label: string;
 	external_name: string;
-};
+}
+
 export const useGithubConnectionQuery = (
 	siteId: number | null,
 	options?: UseQueryOptions< GithubConnectionData >

@@ -50,6 +50,7 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 	const redirectTo = get( currentQuery, 'redirect_to', '' );
 	const signupFlow = get( currentQuery, 'signup_flow' );
 	const wccomFrom = get( currentQuery, 'wccom-from' );
+	const isFromMigrationPlugin = includes( redirectTo, 'wpcom-migration' );
 
 	if (
 		// Match locales like `/log-in/jetpack/es`
@@ -116,7 +117,10 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 		signupUrl = `${ signupUrl }/wpcc?${ oauth2Params.toString() }`;
 	}
 
-	if ( includes( redirectTo, 'action=jetpack-sso' ) && includes( redirectTo, 'sso_nonce=' ) ) {
+	if (
+		isFromMigrationPlugin ||
+		( includes( redirectTo, 'action=jetpack-sso' ) && includes( redirectTo, 'sso_nonce=' ) )
+	) {
 		const params = new URLSearchParams( {
 			redirect_to: redirectTo,
 		} );

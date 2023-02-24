@@ -39,6 +39,8 @@ import {
 	THEME_ACCEPT_AUTO_LOADING_HOMEPAGE_WARNING,
 	UPSELL_CARD_DISPLAYED,
 	THEMES_LOADING_CART,
+	THEME_START_ACTIVATION_SYNC,
+	THEME_STOP_ACTIVATION_SYNC,
 } from 'calypso/state/themes/action-types';
 import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import {
@@ -618,6 +620,28 @@ export function isLoadingCart( state = false, action ) {
 	return state;
 }
 
+export function startActivationSync( state = {}, { type, siteId, themeId } ) {
+	switch ( type ) {
+		case THEME_START_ACTIVATION_SYNC: {
+			return {
+				...state,
+				[ siteId ]: {
+					...state[ siteId ],
+					[ themeId ]: true,
+				},
+			};
+		}
+		case THEME_STOP_ACTIVATION_SYNC: {
+			return {
+				...state,
+				[ siteId ]: omit( state[ siteId ], themeId ),
+			};
+		}
+	}
+
+	return state;
+}
+
 const combinedReducer = combineReducers( {
 	queries,
 	queryRequests,
@@ -642,6 +666,7 @@ const combinedReducer = combineReducers( {
 	themesUpdate,
 	upsellCardDisplayed,
 	isLoadingCart,
+	startActivationSync,
 } );
 const themesReducer = withStorageKey( 'themes', combinedReducer );
 
