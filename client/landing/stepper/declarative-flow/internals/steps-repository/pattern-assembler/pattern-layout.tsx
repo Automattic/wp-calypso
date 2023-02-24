@@ -135,12 +135,12 @@ const PatternLayout = ( {
 	}
 
 	return (
-		<div className="pattern-layout">
-			{ sections.length > 0 && (
-				<ul className="pattern-layout__list">
-					<AsyncLoad require="./animate-list" featureName="domMax" placeholder={ <div /> }>
-						{ ( m: any ) =>
-							sections.map( ( { category, key }: Pattern, index ) => {
+		<AsyncLoad require="./animate-list" featureName="domMax" placeholder={ <div /> }>
+			{ ( m: any ) => (
+				<m.div className="pattern-layout" layoutScroll>
+					{ sections.length > 0 && (
+						<ul className="pattern-layout__list">
+							{ sections.map( ( { category, key }: Pattern, index ) => {
 								return (
 									<m.li
 										key={ key }
@@ -163,31 +163,31 @@ const PatternLayout = ( {
 										/>
 									</m.li>
 								);
-							} )
-						}
-					</AsyncLoad>
-				</ul>
+							} ) }
+						</ul>
+					) }
+					<div
+						className="pattern-layout__add-button-container"
+						ref={ addButtonContainerRef }
+						onMouseEnter={ () => setIsPopoverVisible( true ) }
+						onMouseLeave={ () => setIsPopoverVisible( false ) }
+					>
+						<Button className="pattern-layout__add-button" onClick={ () => onAddSection() }>
+							<Icon icon={ plus } size={ 32 } />
+						</Button>
+						<Popover
+							className="pattern-layout__add-button-popover"
+							context={ addButtonContainerRef.current }
+							isVisible={ isPopoverVisible }
+							position="right"
+							focusOnShow
+						>
+							{ translate( 'Add your next pattern' ) }
+						</Popover>
+					</div>
+				</m.div>
 			) }
-			<div
-				className="pattern-layout__add-button-container"
-				ref={ addButtonContainerRef }
-				onMouseEnter={ () => setIsPopoverVisible( true ) }
-				onMouseLeave={ () => setIsPopoverVisible( false ) }
-			>
-				<Button className="pattern-layout__add-button" onClick={ () => onAddSection() }>
-					<Icon icon={ plus } size={ 32 } />
-				</Button>
-				<Popover
-					className="pattern-layout__add-button-popover"
-					context={ addButtonContainerRef.current }
-					isVisible={ isPopoverVisible }
-					position="right"
-					focusOnShow
-				>
-					{ translate( 'Add your next pattern' ) }
-				</Popover>
-			</div>
-		</div>
+		</AsyncLoad>
 	);
 };
 
