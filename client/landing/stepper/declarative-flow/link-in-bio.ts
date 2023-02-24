@@ -2,9 +2,6 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, LINK_IN_BIO_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
-import { useEffect } from 'react';
-import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
 import {
 	clearSignupDestinationCookie,
@@ -31,11 +28,6 @@ const linkInBio: Flow = {
 		return translate( 'Link in Bio' );
 	},
 	useSteps() {
-		useEffect( () => {
-			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
-			recordFullStoryEvent( 'calypso_signup_start_link_in_bio', { flow: this.name } );
-		}, [] );
-
 		return [
 			{ slug: 'intro', component: Intro },
 			{ slug: 'linkInBioSetup', component: LinkInBioSetup },

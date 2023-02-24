@@ -2,13 +2,16 @@ import { ProgressBar } from '@automattic/components';
 import { isNewsletterOrLinkInBioFlow, isWooExpressFlow } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Modal from 'react-modal';
 import { Switch, Route, Redirect, generatePath, useHistory, useLocation } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import WordPressLogo from 'calypso/components/wordpress-logo';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
+import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
+import { recordSignupStart } from 'calypso/lib/analytics/signup';
 import SignupHeader from 'calypso/signup/signup-header';
 import { ONBOARD_STORE } from '../../stores';
 import recordStepStart from './analytics/record-step-start';
@@ -40,6 +43,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const { search } = useLocation();
 	const { setStepData } = useDispatch( STEPPER_INTERNAL_STORE );
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
+	const ref = useQuery().get( 'ref' ) || '';
 
 	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
 	const progressValue = stepProgress ? stepProgress.progress / stepProgress.count : 0;
@@ -47,6 +51,19 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		stepProgress ? stepProgress.progress : 0
 	);
 	const previousProgressValue = stepProgress ? previousProgress / stepProgress.count : 0;
+
+	const isFlowStart = useCallback( () => {
+		if ( ! flow || ! stepProgress ) {
+			return false;
+		}
+		if ( stepProgress?.progress === 0 ) {
+			return true;
+		}
+		if ( flow.name === 'sensei' && stepProgress?.progress === 1 ) {
+			return true;
+		}
+		return false;
+	}, [ flow, stepProgress ] );
 
 	const stepNavigation = flow.useStepNavigation(
 		currentStepRoute,
@@ -74,6 +91,13 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	useEffect( () => {
 		window.scrollTo( 0, 0 );
 	}, [ location ] );
+
+	useEffect( () => {
+		if ( isFlowStart() ) {
+			recordSignupStart( flow.name, ref );
+			recordFullStoryEvent( `calypso_signup_start_${ flow.name }`, { flow: flow.name } );
+		}
+	}, [ flow, ref, isFlowStart ] );
 
 	useEffect( () => {
 		// We record the event only when the step is not empty. Additionally, we should not fire this event whenever the intent is changed
