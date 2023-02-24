@@ -27,7 +27,7 @@ import {
 } from 'calypso/state/posts/selectors';
 import {
 	getTopPostAndPages,
-	hasSiteStatsForQuerySucceed,
+	hasSiteStatsForQueryFinished,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { PostType } from 'calypso/types';
@@ -96,14 +96,14 @@ export default function PromotedPosts( { tab }: Props ) {
 	);
 
 	const mostPopularPostAndPages = useSelector( ( state ) => {
-		const topPosts: any[ PostType ] = [];
+		const topPostsAndPages: any[ PostType ] = [];
 
 		topViewedPostAndPages?.forEach( ( post: any ) => {
 			const item = getSitePost( state, selectedSiteId, post.id );
-			item && topPosts.push( { ...item, views: post.views } );
+			item && topPostsAndPages.push( { ...item, views: post.views } );
 		} );
 
-		return topPosts;
+		return topPostsAndPages;
 	} );
 
 	const campaigns = useCampaignsQuery( selectedSiteId ?? 0 );
@@ -125,8 +125,16 @@ export default function PromotedPosts( { tab }: Props ) {
 		[ JSON.stringify( topViewedPostAndPagesIds ) ]
 	);
 
-	const hasTopPostsRequested = useSelector( ( state ) =>
-		hasSiteStatsForQuerySucceed( state, selectedSiteId, 'statsTopPosts', topPostsQuery )
+	const hasTopPostsFinished = useSelector( ( state ) =>
+		hasSiteStatsForQueryFinished( state, selectedSiteId, 'statsTopPosts', topPostsQuery )
+	);
+
+	const isLoadingMemoizedQuery = useSelector( ( state ) =>
+		isRequestingPostsForQuery( state, selectedSiteId, memoizedQuery )
+	);
+
+	const isLoadingByCommentsQuery = useSelector( ( state ) =>
+		isRequestingPostsForQuery( state, selectedSiteId, queryPageAndPostsByComments )
 	);
 
 	if ( usePromoteWidget() === PromoteWidgetStatus.DISABLED ) {
@@ -181,7 +189,11 @@ export default function PromotedPosts( { tab }: Props ) {
 		...( postAndPagesByComments || [] ),
 		...( products || [] ),
 	];
-	const isLoading = isLoadingProducts || ! hasTopPostsRequested;
+	const isLoading =
+		isLoadingByCommentsQuery ||
+		isLoadingMemoizedQuery ||
+		isLoadingProducts ||
+		! hasTopPostsFinished;
 
 	return (
 		<Main wideLayout className="promote-post">
@@ -223,7 +235,7 @@ export default function PromotedPosts( { tab }: Props ) {
 			{ topViewedPostAndPages && (
 				<QueryPosts siteId={ selectedSiteId } query={ memoizedQuery } postId={ null } />
 			) }
-			{ hasTopPostsRequested && ! topViewedPostAndPages && (
+			{ hasTopPostsFinished && ( ! topViewedPostAndPages || topViewedPostAndPages.length < 10 ) && (
 				<QueryPosts
 					siteId={ selectedSiteId }
 					query={ queryPageAndPostsByComments }
