@@ -11,6 +11,7 @@ import {
 	dismissAtomicTransferDialog,
 	activate as activateTheme,
 	initiateThemeTransfer,
+	requestActiveTheme,
 } from 'calypso/state/themes/actions';
 import {
 	getCanonicalTheme,
@@ -39,6 +40,7 @@ interface AtomicTransferDialogProps {
 	dispatchActivateTheme: typeof activateTheme;
 	dispatchRecordTracksEvent: typeof recordTracksEvent;
 	dispatchInitiateThemeTransfer: typeof initiateThemeTransfer;
+	dispatchRequestActiveTheme: ( siteId: number ) => Promise< void >;
 }
 
 class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
@@ -51,18 +53,18 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 		dispatchInitiateThemeTransfer( siteId, null, '' );
 	}
 
-	getCurrentPath = () => {
+	getAtomicSitePath = () => {
 		const { origin, href } = window.location;
 
-		return href.replace( origin, '' );
+		return href.replace( origin, '' ).replace( /\b.wordpress.com/, '.wpcomstaging.com' );
 	};
 
 	componentDidUpdate( prevProps: Readonly< AtomicTransferDialogProps > ): void {
-		const { siteId, siteSlug, isTransferred } = this.props;
+		const { siteId, siteSlug, isTransferred, dispatchRequestActiveTheme } = this.props;
 		if ( siteId && siteSlug && prevProps.isTransferred !== isTransferred && isTransferred ) {
-			window.location.replace(
-				this.getCurrentPath().replace( /\b.wordpress.com/, '.wpcomstaging.com' )
-			);
+			dispatchRequestActiveTheme( siteId ).then( () => {
+				window.location.replace( this.getAtomicSitePath() );
+			} );
 		}
 	}
 
@@ -119,7 +121,7 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 				{ this.renderSuccessfulTransfer() }
 
 				<EligibilityWarnings
-					isContinueButtonDisabled={ inProgress }
+					disableContinueButton={ inProgress }
 					currentContext="plugin-details"
 					isMarketplace={ isMarketplaceProduct }
 					standaloneProceed
@@ -156,5 +158,6 @@ export default connect(
 		dispatchActivateTheme: activateTheme,
 		dispatchRecordTracksEvent: recordTracksEvent,
 		dispatchInitiateThemeTransfer: initiateThemeTransfer,
+		dispatchRequestActiveTheme: requestActiveTheme,
 	}
 )( localize( AtomicTransferDialog ) );

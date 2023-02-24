@@ -45,7 +45,7 @@ export { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-
 export { getWpcomParentThemeId } from 'calypso/state/themes/selectors/get-wpcom-parent-theme-id';
 export { hasActivatedTheme } from 'calypso/state/themes/selectors/has-activated-theme';
 export { hasAutoLoadingHomepageModalAccepted } from 'calypso/state/themes/selectors/has-auto-loading-homepage-modal-accepted';
-export { hasAtomicTransferDialogAccepted } from 'calypso/state/themes/selectors/has-atomic-transfer-dialog-accepted';
+export { wasAtomicTransferDialogAccepted } from 'calypso/state/themes/selectors/was-atomic-transfer-dialog-accepted';
 export { isActivatingTheme } from 'calypso/state/themes/selectors/is-activating-theme';
 export { isAmbiguousThemeFilterTerm } from 'calypso/state/themes/selectors/is-ambiguous-theme-filter-term';
 export { isDownloadableFromWpcom } from 'calypso/state/themes/selectors/is-downloadable-from-wpcom';

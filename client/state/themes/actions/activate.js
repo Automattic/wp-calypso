@@ -10,7 +10,7 @@ import {
 	getTheme,
 	hasAutoLoadingHomepageModalAccepted,
 	themeHasAutoLoadingHomepage,
-	hasAtomicTransferDialogAccepted,
+	wasAtomicTransferDialogAccepted,
 	doesThemeRequireAtomicSite,
 } from 'calypso/state/themes/selectors';
 
@@ -54,7 +54,7 @@ export function activate(
 			doesThemeRequireAtomicSite( getState(), themeId ) &&
 			! isJetpackSite( getState(), siteId ) &&
 			! isSiteAtomic( getState(), siteId ) &&
-			! hasAtomicTransferDialogAccepted( getState(), themeId )
+			! wasAtomicTransferDialogAccepted( getState(), themeId )
 		) {
 			return dispatch( showAtomicTransferDialog( themeId ) );
 		}
