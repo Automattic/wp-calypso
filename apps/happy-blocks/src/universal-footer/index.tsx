@@ -8,15 +8,9 @@ function registerBlocks() {
 		category: 'embed',
 		description: 'WordPress.com Footer Template Part',
 		attributes: {
-			isLoggedIn: {
-				type: 'boolean',
-			},
-			logoColor: {
+			locale: {
 				type: 'string',
-				default: '#0675c4',
-			},
-			sectionName: {
-				type: 'string',
+				default: 'en',
 			},
 		},
 		edit: Edit,
