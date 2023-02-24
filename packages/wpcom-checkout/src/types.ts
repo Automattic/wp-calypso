@@ -504,4 +504,5 @@ export interface CountryListItem {
 	tax_needs_city?: boolean;
 	tax_needs_subdivision?: boolean;
 	tax_needs_organization?: boolean;
+	tax_needs_address?: boolean;
 }
