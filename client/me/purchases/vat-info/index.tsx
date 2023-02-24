@@ -46,7 +46,7 @@ export default function VatInfoPage() {
 			<Column type="sidebar">
 				<Card className="vat-info__sidebar-card">
 					<CardHeading tagName="h1" size={ 16 } isBold={ true } className="vat-info__sidebar-title">
-						{ translate( 'Business Tax ID Information' ) }
+						{ translate( 'Business Tax ID details' ) }
 					</CardHeading>
 					<p className="vat-info__sidebar-paragraph">
 						{ translate(

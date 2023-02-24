@@ -212,7 +212,7 @@ export function VatForm( {
 						className="vat-form__expand-button"
 						checked={ vatDetailsInForm.country === 'XI' }
 						onChange={ toggleNorthernIreland }
-						label={ translate( 'Is the Business Tax ID for Northern Ireland?' ) }
+						label={ translate( 'Is the tax ID for Northern Ireland?' ) }
 						disabled={ isDisabled }
 					/>
 				) }
@@ -221,7 +221,7 @@ export function VatForm( {
 				<Field
 					id={ section + '-vat-organization' }
 					type="text"
-					label={ String( translate( 'Organization for Business Tax ID' ) ) }
+					label={ String( translate( 'Organization for tax ID' ) ) }
 					value={ vatDetailsInForm.name ?? '' }
 					disabled={ isDisabled }
 					onChange={ ( newValue: string ) => {
@@ -249,7 +249,7 @@ export function VatForm( {
 				<Field
 					id={ section + '-vat-address' }
 					type="text"
-					label={ String( translate( 'Address for Business Tax ID' ) ) }
+					label={ String( translate( 'Address for tax ID' ) ) }
 					value={ vatDetailsInForm.address ?? '' }
 					autoComplete="address"
 					disabled={ isDisabled }
