@@ -395,7 +395,7 @@ export default function WPCheckout( {
 									reduxDispatch(
 										errorNotice(
 											translate(
-												'Your VAT details are not valid. Please check each field and try again.'
+												'Your Business Tax ID details are not valid. Please check each field and try again.'
 											),
 											{ id: 'vat_info_notice' }
 										)
