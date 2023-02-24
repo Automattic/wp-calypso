@@ -384,10 +384,15 @@ class ThemeSheet extends Component {
 	}
 
 	hasSiteGlobalStyleUpsellBanner() {
-		const { isActive, shouldLimitGlobalStyles } = this.props;
+		const { shouldLimitGlobalStyles } = this.props;
 
-		// Show theme upsell banner on an active Free theme with global style gating.
-		return isActive && shouldLimitGlobalStyles;
+		// Show theme upsell banner on a Free theme with global style gating.
+		// Don't show if other upsell banners are displayed.
+		return (
+			! this.hasWpComThemeUpsellBanner() &&
+			! this.hasThemeUpsellBannerAtomic() &&
+			shouldLimitGlobalStyles
+		);
 	}
 
 	// Render "Open Live Demo" pseudo-button for mobiles.
