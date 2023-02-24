@@ -1,5 +1,8 @@
+import { Gridicon } from '@automattic/components';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { useMemo } from 'react';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { settingsPath } from 'calypso/lib/jetpack/paths';
 
 export enum StorageUnits {
 	Gigabyte = 2 ** 30,
@@ -96,18 +99,68 @@ export const useDaysOfBackupsSavedText = (
 			return null;
 		}
 
-		const daysOfBackupsSavedLinkTarget = `/activity-log/${ siteSlug }?group=rewind`;
+		const daysOfBackupsSavedLinkTarget = isJetpackCloud()
+			? settingsPath( siteSlug )
+			: `/activity-log/${ siteSlug }?group=rewind`;
 
 		return translate(
-			'{{a}}%(daysOfBackupsSaved)d day of backups saved{{/a}}',
-			'{{a}}%(daysOfBackupsSaved)d days of backups saved{{/a}}',
+			'{{a}}%(daysOfBackupsSaved)d day of backups saved {{icon/}}{{/a}}',
+			'{{a}}%(daysOfBackupsSaved)d days of backups saved {{icon/}}{{/a}}',
 			{
 				count: daysOfBackupsSaved,
 				args: { daysOfBackupsSaved },
 				components: {
 					a: <a href={ daysOfBackupsSavedLinkTarget } />,
+					icon: isJetpackCloud() ? <Gridicon icon="cog" size={ 16 } /> : <></>,
 				},
 			}
 		);
 	}, [ translate, daysOfBackupsSaved, siteSlug ] );
+};
+
+/**
+ * The idea is to convert any storage amount in bytes to a human readable format.
+ *
+ * @param storageInBytes The storage amount in bytes
+ * @returns				 The storage amount in a human readable format
+ */
+export const useStorageText = ( storageInBytes: number ): TranslateResult | string => {
+	const translate = useTranslate();
+
+	return useMemo( () => {
+		if ( storageInBytes && storageInBytes >= 0 ) {
+			const { unitAmount, unit } = convertBytesToUnitAmount( storageInBytes );
+
+			switch ( unit ) {
+				case StorageUnits.Gigabyte:
+					if ( unitAmount % 1 === 0 ) {
+						return translate( '%(storageInBytes)dGB', {
+							args: { storageInBytes: unitAmount },
+							comment: 'Must use unit abbreviation; describes an storage amounts (e.g., 20GB)',
+						} );
+					}
+
+					return translate( '%(storageInBytes).1fGB', {
+						args: { storageInBytes: unitAmount },
+						comment:
+							'Must use unit abbreviation; describes an storage amounts with 1 decimal point (e.g., 20.0GB)',
+					} );
+				case StorageUnits.Terabyte:
+					if ( unitAmount % 1 === 0 ) {
+						return translate( '%(storageInBytes)dTB', {
+							args: { storageInBytes: unitAmount },
+							comment: 'Must use unit abbreviation; describes an storage amounts (e.g., 1TB)',
+						} );
+					}
+
+					return translate( '%(storageInBytes).1fTB', {
+						args: { storageInBytes: unitAmount },
+						comment:
+							'Must use unit abbreviation; describes an storage amounts with 1 decimal point (e.g., 1.5TB)',
+					} );
+			}
+		}
+
+		return '';
+	}, [ translate, storageInBytes ] );
 };

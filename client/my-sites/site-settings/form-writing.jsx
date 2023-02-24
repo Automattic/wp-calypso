@@ -203,7 +203,7 @@ const getFormSettings = ( settings ) => {
 		'timezone_string',
 		'podcasting_category_id',
 		'wpcom_publish_posts_with_markdown',
-		'jetpack_blogging_prompts_enabled',
+		'featured_image_email_enabled',
 	] );
 
 	// handling `gmt_offset` and `timezone_string` values

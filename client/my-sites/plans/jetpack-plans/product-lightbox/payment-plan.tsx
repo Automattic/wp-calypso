@@ -1,9 +1,10 @@
+import formatCurrency from '@automattic/format-currency';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import TimeFrame from 'calypso/components/jetpack/card/jetpack-product-card/display-price/time-frame';
-import PlanPrice, { priceAsString } from 'calypso/my-sites/plan-price';
+import PlanPrice from 'calypso/my-sites/plan-price';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { useItemPriceCompact } from '../product-store/hooks/use-item-price-compact';
 import ItemPriceMessage from '../product-store/item-price/item-price-message';
@@ -85,7 +86,9 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 								<TimeFrame
 									billingTerm={ billingTerm }
 									discountedPriceDuration={ discountedPriceDuration }
-									formattedOriginalPrice={ priceAsString( originalPrice, currencyCode ) }
+									formattedOriginalPrice={ formatCurrency( originalPrice, currencyCode, {
+										stripZeros: true,
+									} ) }
 								/>
 							</div>
 						</div>

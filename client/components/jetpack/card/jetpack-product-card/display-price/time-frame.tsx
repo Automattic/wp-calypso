@@ -111,11 +111,11 @@ const PartialDiscountTimeFrame: React.FC< PartialDiscountTimeFrameProps & A11yPr
 		if (
 			getLocaleSlug() === 'en' ||
 			getLocaleSlug() === 'en-gb' ||
-			i18n.hasTranslation( 'for the first month, then %(original_price)s /month billed monthly' )
+			i18n.hasTranslation( 'for the first month, then %(original_price)s /month, billed monthly' )
 		) {
 			text = translate(
-				'for the first month, then %(original_price)s /month billed monthly',
-				'for the first %(months)d months, then %(original_price)s /month billed monthly',
+				'for the first month, then %(original_price)s /month, billed monthly',
+				'for the first %(months)d months, then %(original_price)s /month, billed monthly',
 				opts
 			);
 		} else {
@@ -130,11 +130,11 @@ const PartialDiscountTimeFrame: React.FC< PartialDiscountTimeFrameProps & A11yPr
 		if (
 			getLocaleSlug() === 'en' ||
 			getLocaleSlug() === 'en-gb' ||
-			i18n.hasTranslation( 'for the first month, then %(original_price)s /month billed yearly' )
+			i18n.hasTranslation( 'for the first month, then %(original_price)s /month, billed yearly' )
 		) {
 			text = translate(
-				'for the first month, then %(original_price)s /month billed yearly',
-				'for the first %(months)d months, then %(original_price)s /month billed yearly',
+				'for the first month, then %(original_price)s /month, billed yearly',
+				'for the first %(months)d months, then %(original_price)s /month, billed yearly',
 				opts
 			);
 		} else {

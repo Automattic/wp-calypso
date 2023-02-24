@@ -22,7 +22,7 @@ interface Props {
 	search?: string;
 }
 function SubscribersTeam( props: Props ) {
-	const _ = useTranslate();
+	const translate = useTranslate();
 	const { filter, search } = props;
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 
@@ -50,8 +50,8 @@ function SubscribersTeam( props: Props ) {
 			<FormattedHeader
 				brandFont
 				className="people__page-heading"
-				headerText={ _( 'Users' ) }
-				subHeaderText={ _(
+				headerText={ translate( 'Users' ) }
+				subHeaderText={ translate(
 					'Invite subscribers and team members to your site and manage their access settings. {{learnMore}}Learn more{{/learnMore}}.',
 					{
 						components: {

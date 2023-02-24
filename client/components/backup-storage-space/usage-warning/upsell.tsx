@@ -26,7 +26,7 @@ type UpsellPriceProps = {
 	isPriceFetching: boolean | null;
 	currencyCode: string | null;
 };
-const UpsellPrice: React.FC< UpsellPriceProps > = ( {
+export const UpsellPrice: React.FC< UpsellPriceProps > = ( {
 	upsellSlug,
 	originalPrice,
 	isPriceFetching,
@@ -75,7 +75,12 @@ const UsageWarningUpsell: React.FC< UpsellProps > = ( {
 	}, [ dispatch, usageLevel, bytesUsed ] );
 
 	const price = <UpsellPrice { ...priceInfo } upsellSlug={ upsellSlug } />;
-	const storageUpgradeUrl = buildCheckoutURL( siteSlug, upsellSlug.productSlug, {} );
+	const storageUpgradeUrl = buildCheckoutURL( siteSlug, upsellSlug.productSlug, {
+		// When attempting to purchase a 2nd identical storage add-on product, this
+		// 'source' flag tells the shopping cart to force "purchase" another storage add-on
+		// as opposed to renew the existing one.
+		source: 'backup-storage-purchase-not-renewal',
+	} );
 
 	return (
 		<ActionButton

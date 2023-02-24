@@ -4,6 +4,7 @@
 @import "../../sensei-variables";
 
 .sensei.sensei-domain {
+
 	.step-container__content > div {
 		height: auto;
 	}
@@ -12,11 +13,21 @@
 		max-width: 1160px;
 	}
 
+	.domain-search-results {
+		margin: 32px -24px;
+
+		@include break-large {
+			margin: 32px 0;
+		}
+
+	}
+
 	.domain-search-results__domain-suggestions {
 		.card {
 			box-shadow: none;
 			border-bottom: 1px solid var(--color-border-subtle);
 			border-top: 1px solid #fff;
+			transition: ease 300ms;
 			background: none;
 			margin: 0;
 
@@ -27,13 +38,17 @@
 		}
 	}
 	.domains__step-content {
-		display: flex;
-		margin-top: 50px;
+		margin: 0;
+		padding: 24px;
+		max-width: 100%;
+
+		@include break-large {
+			display: flex;
+		}
 
 		.domains__domain-side-content-container {
 			flex-direction: column;
 			margin-top: 40px;
-			display: none;
 
 			@include break-large {
 				width: 30vw;
@@ -82,14 +97,8 @@
 	}
 
 	.register-domain-step__search {
-		@media (min-width: $sensei-mobile-layout-width) {
-			padding-top: 8px;
-			padding-left: 0;
-			padding-right: 0;
-		}
-
-		padding: 20px;
-		padding-bottom: 24px;
+		margin: 0;
+		padding: 0;
 	}
 
 	.step-container__content {
@@ -161,22 +170,23 @@
 		}
 	}
 
-	.formatted-header__subtitle {
-		text-align: center !important;
-	}
-
-	.step-container__navigation-link {
-		font-size: 1rem;
-		line-height: 1.55;
-		margin-left: 5px;
-	}
-
 	.register-domain-step__search-card {
 		border-radius: 4px;
+		box-shadow: none;
+		border: 1px solid #a7aaad;
+		&:focus-within {
+			border-color: #646970;
+
+		}
 	}
 
 	.search-component {
 		box-shadow: none;
+		min-width: 0;
+
+		&.is-open.has-focus:hover {
+			box-shadow: unset;
+		}
 
 		button,
 		.components-button:focus:not(:disabled),
@@ -220,15 +230,22 @@
 	}
 
 	.featured-domain-suggestions {
-		.domain-suggestion__action {
-			border: none;
-			border-radius: 4px;
-			background-color: $sensei-color;
-			color: #fff;
+		.domain-registration-suggestion__title-wrapper {
+			flex-wrap: wrap-reverse;
+		}
 
-			&:hover {
-				background: darken($sensei-color, 10%);
-			}
+		.domain-registration-suggestion__title {
+			align-self: unset;
+		}
+
+		.domain-registration-suggestion__badges {
+			margin-bottom: 5px;
+			margin-left: 0;
+		}
+
+		.domain-suggestion__action {
+			@include sensei-button;
+			padding: 0.25em 3em;
 		}
 	}
 
@@ -237,7 +254,7 @@
 	}
 
 	.domain-product-price .domain-product-price__free-price {
-		color: $sensei-color;
+		color: $sensei-green-60;
 	}
 
 	.register-domain-step__next-page {
@@ -260,10 +277,10 @@
 }
 .search-filters__popover {
 	.button.is-primary {
-		background: $sensei-color;
-		border-color: $sensei-color;
+		@include sensei-button;
 	}
+
 	.token-field__suggestion.is-selected {
-		background-color: darken($sensei-color, 10);
+		background-color: $sensei-green-60;
 	}
 }

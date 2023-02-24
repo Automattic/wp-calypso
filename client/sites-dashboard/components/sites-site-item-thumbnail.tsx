@@ -25,11 +25,32 @@ interface SiteItemThumbnailProps extends Omit< ComponentProps< typeof SiteThumbn
 	displayMode: SitesDisplayMode;
 	site: SiteExcerptData;
 	alt?: string;
+	showPlaceholder?: boolean;
 }
 
-export const SiteItemThumbnail = ( { displayMode, site, ...props }: SiteItemThumbnailProps ) => {
+export const SiteItemThumbnail = ( {
+	displayMode,
+	showPlaceholder,
+	site,
+	...props
+}: SiteItemThumbnailProps ) => {
 	const { __ } = useI18n();
 	const classes = classNames( props.className, disallowSelection );
+
+	// Allow parent component to lazy load the entire component.
+	if ( showPlaceholder === true ) {
+		return (
+			<SiteThumbnail
+				{ ...props }
+				className={ classes }
+				alt={ site.title || __( 'Site thumbnail' ) }
+			>
+				<NoIcon role="img" aria-label={ __( 'Site Icon' ) }>
+					{ getFirstGrapheme( site.title ?? '' ) }
+				</NoIcon>
+			</SiteThumbnail>
+		);
+	}
 
 	const shouldUseScreenshot = getSiteLaunchStatus( site ) === 'public';
 

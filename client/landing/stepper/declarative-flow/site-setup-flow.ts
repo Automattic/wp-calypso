@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
-import { Design } from '@automattic/design-picker';
+import { Design, isBlankCanvasDesign } from '@automattic/design-picker';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
@@ -26,13 +26,13 @@ import EditEmail from './internals/steps-repository/edit-email';
 import ErrorStep from './internals/steps-repository/error-step';
 import GoalsStep from './internals/steps-repository/goals';
 import ImportStep from './internals/steps-repository/import';
+import { redirect } from './internals/steps-repository/import/util';
 import ImportLight from './internals/steps-repository/import-light';
 import ImportList from './internals/steps-repository/import-list';
 import ImportReady from './internals/steps-repository/import-ready';
 import ImportReadyNot from './internals/steps-repository/import-ready-not';
 import ImportReadyPreview from './internals/steps-repository/import-ready-preview';
 import ImportReadyWpcom from './internals/steps-repository/import-ready-wpcom';
-import { redirect } from './internals/steps-repository/import/util';
 import ImporterBlogger from './internals/steps-repository/importer-blogger';
 import ImporterMedium from './internals/steps-repository/importer-medium';
 import ImporterSquarespace from './internals/steps-repository/importer-squarespace';
@@ -180,9 +180,13 @@ const siteSetupFlow: Flow = {
 						);
 					}
 
-					// Add Launchpad to selected intents in General Onboarding
-					if ( isLaunchpadIntent( intent ) && typeof siteId === 'number' ) {
-						pendingActions.push( saveSiteSettings( siteId, { launchpad_screen: 'full' } ) );
+					// Update Launchpad option based on site intent
+					if ( typeof siteId === 'number' ) {
+						pendingActions.push(
+							saveSiteSettings( siteId, {
+								launchpad_screen: isLaunchpadIntent( intent ) ? 'full' : 'off',
+							} )
+						);
 					}
 
 					let redirectionUrl = to;
@@ -237,7 +241,7 @@ const siteSetupFlow: Flow = {
 					}
 
 					// End of Pattern Assembler flow
-					if ( selectedDesign?.design_type === 'assembler' ) {
+					if ( isBlankCanvasDesign( selectedDesign ) ) {
 						window.sessionStorage.setItem( 'wpcom_signup_completed_flow', 'pattern_assembler' );
 						return exitFlow( `/site-editor/${ siteSlug }` );
 					}

@@ -1,5 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 
 import './style.scss';
 
@@ -7,7 +8,11 @@ export default function DomainAndPlanPackageNavigation( props ) {
 	const translate = useTranslate();
 
 	const goBack = () => {
-		window.history.go( -1 );
+		if ( props.goBackLink ) {
+			page( props.goBackLink );
+		} else {
+			window.history.go( -1 );
+		}
 	};
 
 	const step = props.step ? props.step : 1;
@@ -21,7 +26,11 @@ export default function DomainAndPlanPackageNavigation( props ) {
 			<div className="domain-and-plan-package-navigation__back">
 				<Button borderless="true" onClick={ goBack }>
 					<Gridicon icon="chevron-left" />
-					<span>{ translate( 'Back' ) }</span>
+					{ props.step !== 1 ? (
+						<span>{ translate( 'Back' ) }</span>
+					) : (
+						<span>{ translate( 'Home' ) }</span>
+					) }
 				</Button>
 			</div>
 			<ol className="domain-and-plan-package-navigation__steps">

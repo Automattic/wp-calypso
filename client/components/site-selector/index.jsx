@@ -422,7 +422,6 @@ export class SiteSelector extends Component {
 			>
 				<SearchComponent
 					onSearch={ this.onSearch }
-					delaySearch={ true }
 					placeholder={ this.props.searchPlaceholder }
 					// eslint-disable-next-line jsx-a11y/no-autofocus
 					autoFocus={ this.props.autoFocus }

@@ -4,12 +4,13 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { CSSProperties } from 'react';
+import { CSSProperties, useEffect } from 'react';
 import FormRadioWithThumbnail from 'calypso/components/forms/form-radio-with-thumbnail';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { preventWidows } from 'calypso/lib/formatting';
 import { ONBOARD_STORE } from '../../../../stores';
 import { SenseiStepContainer } from '../components/sensei-step-container';
-import { Title, Label, Input, Button, Hint } from './components';
+import { Title, Label, Input, Hint } from './components';
 import type { StyleVariation } from 'calypso/../packages/design-picker/src/types';
 import type { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import './style.scss';
@@ -69,6 +70,11 @@ const SenseiSetup: Step = ( { navigation } ) => {
 
 	const { submit } = navigation;
 	const dispatch = useDispatch( ONBOARD_STORE );
+
+	useEffect( () => {
+		dispatch.resetOnboardStore();
+	}, [ dispatch ] );
+
 	const handleSubmit = useCallback( () => {
 		dispatch.setSiteTitle( siteTitle );
 		const variation = styles.find( ( style ) => style.name === checked ) || styles[ 0 ];
@@ -85,7 +91,7 @@ const SenseiSetup: Step = ( { navigation } ) => {
 		<SenseiStepContainer stepName="senseiSetup" recordTracksEvent={ recordTracksEvent }>
 			<div className="sensei-start-row">
 				<div className="sensei-onboarding-main-content">
-					<Title>{ __( 'Set up your course site' ) }</Title>
+					<Title>{ preventWidows( __( 'Set up your course site' ) ) }</Title>
 					<Label htmlFor="sensei_site_title">{ __( 'Site name' ) }</Label>
 					<Input
 						id="sensei_site_title"
@@ -116,9 +122,9 @@ const SenseiSetup: Step = ( { navigation } ) => {
 						) ) }
 					</div>
 					{ ! isDesktop && preview }
-					<Button disabled={ ! siteTitle } onClick={ handleSubmit }>
+					<button className="sensei-button" disabled={ ! siteTitle } onClick={ handleSubmit }>
 						{ __( 'Continue' ) }
-					</Button>
+					</button>
 					<p className="sensei-style-notice">
 						<Gridicon icon="notice-outline" />
 						{ __( 'You can change all of this later, too.' ) }

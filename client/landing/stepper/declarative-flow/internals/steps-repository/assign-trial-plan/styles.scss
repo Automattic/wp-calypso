@@ -3,17 +3,31 @@
 
 
 .wooexpress.assign-trial-plan {
-	padding: 1.5em;
+	padding: 0;
 	max-width: 540px;
 	text-align: center;
 	margin: 0 auto;
+
+	.assign-trial-step {
+		padding: 1em;
+		max-width: 540px;
+		text-align: center;
+		margin: 16vh auto 0;
+	}
+
+	> .assign-trial-step {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		margin-top: 25vh;
+	}
 
 	.step-container {
 		display: flex;
 	}
 
-	.step-container__content {
-		width: 100%;
-		margin-top: 16vh;
+	.assign-trial-step__progress-step {
+		line-height: 40px;
+		letter-spacing: -0.4px;
 	}
 }

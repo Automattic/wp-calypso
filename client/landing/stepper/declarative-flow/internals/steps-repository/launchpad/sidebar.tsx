@@ -12,7 +12,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import Checklist from './checklist';
-import { getArrayOfFilteredTasks, getEnhancedTasks } from './task-helper';
+import { filterDomainUpsellTask, getArrayOfFilteredTasks, getEnhancedTasks } from './task-helper';
 import { tasks } from './tasks';
 import { getLaunchpadTranslations } from './translations';
 import { Task } from './types';
@@ -63,7 +63,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 
 	const { flowName, title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
 	const arrayOfFilteredTasks: Task[] | null = getArrayOfFilteredTasks( tasks, flow );
-	const enhancedTasks =
+	let enhancedTasks =
 		site &&
 		getEnhancedTasks(
 			arrayOfFilteredTasks,
@@ -77,6 +77,9 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 
 	const currentTask = getTasksProgress( enhancedTasks );
 	const launchTask = enhancedTasks?.find( ( task ) => task.isLaunchTask === true );
+
+	enhancedTasks = filterDomainUpsellTask( enhancedTasks, site );
+
 	const showLaunchTitle = launchTask && ! launchTask.disabled;
 
 	if ( sidebarDomain ) {
@@ -99,7 +102,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 					<div className="launchpad__progress-bar-container">
 						<CircularProgressBar
 							size={ 40 }
-							enableDesktopScaling={ true }
+							enableDesktopScaling
 							currentStep={ currentTask }
 							numberOfSteps={ enhancedTasks?.length }
 						/>
@@ -168,7 +171,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 						recordTracksEvent( 'calypso_launchpad_go_to_admin_clicked', { flow: flow } );
 						goNext?.();
 					} }
-					label={ translate( 'Go to Admin' ) }
+					label={ translate( 'Skip to dashboard' ) }
 					borderless={ true }
 				/>
 			</div>

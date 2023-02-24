@@ -24,6 +24,7 @@ export { Spinner } from './spinner';
 export { SpinnerExample } from './spinner/example';
 export { GMClosureNotice } from './gm-closure-notice/gm-closure-notice';
 export { default as WordPressLogo } from './wordpress-logo';
+export { default as WordPressWordmark } from './wordpress-wordmark';
 export { default as JetpackLogo } from './jetpack-logo';
 export { default as WooCommerceWooLogo } from './woocommerce-woo-logo';
 export { ListTile } from './list-tile';
@@ -46,3 +47,4 @@ export { default as formattedNumber } from './number-formatters/formatted-number
 export { default as PostStatsCard } from './post-stats-card';
 export { default as ConfettiAnimation } from './confetti';
 export { default as ComponentSwapper } from './component-swapper';
+export { default as SubmenuPopover, useSubmenuPopoverProps } from './submenu-popover';

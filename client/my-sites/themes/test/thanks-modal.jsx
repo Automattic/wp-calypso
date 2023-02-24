@@ -64,7 +64,7 @@ const setupStore = ( { site = defaultSite, theme = defaultTheme } = {} ) => {
 
 describe( 'thanks-modal', () => {
 	describe( 'when activating an FSE theme', () => {
-		test( 'displays the "Edit site" call to action and links it to the site editor', async () => {
+		test( 'displays the "Customize site" call to action and links it to the site editor', async () => {
 			const store = setupStore( {
 				theme: {
 					...defaultTheme,
@@ -77,7 +77,7 @@ describe( 'thanks-modal', () => {
 			render( <TestComponent store={ store } /> );
 
 			await waitFor( () => {
-				const editSiteCallToAction = screen.getByText( 'Edit site' );
+				const editSiteCallToAction = screen.getByText( 'Customize site' );
 
 				expect( editSiteCallToAction ).toBeInTheDocument();
 				expect( editSiteCallToAction.closest( 'a' ) ).toHaveAttribute(

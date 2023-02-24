@@ -23,9 +23,9 @@ import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+import { setUnseenCount } from 'calypso/state/notifications/actions';
 import { didForceRefresh } from 'calypso/state/notifications-panel/actions';
 import { shouldForceRefresh } from 'calypso/state/notifications-panel/selectors';
-import { setUnseenCount } from 'calypso/state/notifications/actions';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-variant';
 

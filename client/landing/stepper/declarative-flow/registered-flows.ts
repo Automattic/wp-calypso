@@ -50,11 +50,14 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	free: () => import( /* webpackChunkName: "free-flow" */ '../declarative-flow/free' ),
 
-	'site-assembler': () =>
-		import( /* webpackChunkName: "site-assembler-flow" */ './site-assembler-flow' ),
+	'with-theme-assembler': () =>
+		import( /* webpackChunkName: "with-theme-assembler-flow" */ './with-theme-assembler-flow' ),
 
 	'free-post-setup': () =>
 		import( /* webpackChunkName: "free-post-setup-flow" */ '../declarative-flow/free-post-setup' ),
+
+	'update-design': () =>
+		import( /* webpackChunkName: "update-design-flow" */ '../declarative-flow/update-design' ),
 
 	build: () => import( /* webpackChunkName: "build-flow" */ '../declarative-flow/build' ),
 	write: () => import( /* webpackChunkName: "write-flow" */ '../declarative-flow/write' ),

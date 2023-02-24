@@ -1,6 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 
-.is-section-plans .formatted-header.navigation {
+.is-section-plans .plans__section-header-navigation {
 	display: flex;
 	justify-content: space-between;
 	margin: 0;
@@ -11,8 +11,11 @@
 	}
 }
 
-.is-section-plans .formatted-header.header-text {
-	max-width: $break-medium;
+.is-section-plans .plans__section-header {
+	.formatted-header__title,
+	.formatted-header__subtitle {
+		max-width: $break-medium;
+	}
 }
 
 .dialog.planspage__domain-upsell {
@@ -50,22 +53,5 @@
 		color: var(--color-text-subtle);
 		font-size: 1rem;
 		margin: 0 24px;
-	}
-}
-
-
-.is-2023-pricing-grid {
-	.formatted-header.formatted-header,
-	.notice.notice,
-	.section-nav.section-nav {
-		max-width: 1040px;
-		margin-left: auto;
-		margin-right: auto;
-	}
-
-	@media (max-width: 660px) {
-		.formatted-header.formatted-header {
-			margin: 16px;
-		}
 	}
 }

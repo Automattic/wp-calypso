@@ -74,7 +74,8 @@ button {
 .free-setup,
 .free-post-setup,
 .free,
-.site-assembler {
+.with-theme-assembler,
+.update-design {
 	padding: 60px 0 0;
 	box-sizing: border-box;
 
@@ -281,7 +282,8 @@ button {
 }
 
 .free,
-.free-post-setup {
+.free-post-setup,
+.update-design {
 	.signup-header h1 {
 		display: none;
 	}
@@ -368,6 +370,7 @@ button {
 		display: none;
 	}
 	.loading-bar {
+		background-color: var(--studio-woocommerce-purple-5);
 		width: 520px;
 		max-width: 100%;
 		margin-left: auto;

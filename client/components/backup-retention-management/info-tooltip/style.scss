@@ -1,0 +1,74 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.retention-setting-info-tooltip {
+	line-height: normal;
+
+	&__tooltip.popover {
+		&.is-right .popover__arrow {
+			border-right-color: #fff;
+		}
+
+		&.is-top-right .popover__arrow {
+			border-top-color: #fff;
+		}
+
+		&.is-bottom-right .popover__arrow {
+			border-bottom-color: #fff;
+		}
+
+		.popover__inner {
+			padding: 16px;
+			color: var(--studio-gray-70);
+			background: #fff;
+			border-radius: 2px;
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+			p {
+				padding-right: 24px;
+				font-size: 0.875rem;
+				color: var(--studio-gray-60);
+				margin: 0;
+			}
+
+			hr {
+				margin-bottom: 0.25rem;
+			}
+
+			a {
+				font-size: 0.875rem;
+				text-decoration: underline;
+			}
+		}
+
+		@include break-mobile() {
+			max-width: 270px;
+		}
+	}
+
+	&__toggle-tooltip {
+		vertical-align: middle;
+
+		&.button.is-borderless {
+			padding: 0;
+			height: 20px;
+
+			.gridicon {
+				top: 0;
+				color: var(--studio-gray-60);
+			}
+		}
+	}
+
+	&__close-tooltip {
+		position: absolute;
+		right: 16px;
+		top: 16px;
+		color: var(--studio-gray-40);
+
+		&.button {
+			height: 18px;
+			padding: 0;
+		}
+	}
+}

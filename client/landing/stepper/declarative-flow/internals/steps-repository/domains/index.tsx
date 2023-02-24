@@ -192,11 +192,12 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		submit?.();
 	};
 
-	const handleAddDomain = ( suggestion: DomainSuggestion ) => {
+	const handleAddDomain = ( suggestion: DomainSuggestion, position: number ) => {
 		dispatch(
 			recordAddDomainButtonClick(
 				suggestion.domain_name,
 				getAnalyticsSection(),
+				position,
 				suggestion?.is_premium
 			)
 		);
@@ -221,9 +222,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		<StepContainer
 			stepName="domains"
 			isWideLayout={ true }
-			shouldStickyNavButtons={ isCopySiteFlow( flow ) }
 			hideBack={ ! isCopySiteFlow( flow ) }
-			backLabelText={ __( 'Back to Sites' ) }
+			backLabelText={ __( 'Back to sites' ) }
 			hideSkip={ true }
 			flowName={ isCopySiteFlow( flow ) ? ( flow as string ) : 'linkInBio' }
 			stepContent={ <div className="domains__content">{ renderContent() }</div> }

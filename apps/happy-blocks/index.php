@@ -36,33 +36,12 @@
  */
 
 /**
- * Load editor assets.
+ * Load the shared assets for the custom block (view and editor).
+ *
+ * @return void
  */
-function a8c_happyblocks_assets() {
-	$assets = require_once plugin_dir_path( __FILE__ ) . 'dist/editor.min.asset.php';
-
-	wp_enqueue_script(
-		'a8c-happyblocks-edit-js',
-		plugins_url( 'dist/editor.min.js', __FILE__ ),
-		array_merge( array( 'a8c-happyblocks-pricing-plans' ), $assets['dependencies'] ),
-		$assets['version'],
-		true
-	);
-
-	$style_file = 'dist/editor' . ( is_rtl() ? '.rtl.css' : '.css' );
-	wp_enqueue_style(
-		'a8c-happyblocks-edit-css',
-		plugins_url( $style_file, __FILE__ ),
-		array( 'wp-edit-blocks' ),
-		$assets['version']
-	);
-}
-
-/**
- * Load front-end view assets.
- */
-function a8c_happyblocks_view_assets() {
-	$assets = require plugin_dir_path( __FILE__ ) . 'dist/view.min.asset.php';
+function a8c_happyblocks_shared_assets() {
+	$assets = require plugin_dir_path( __FILE__ ) . 'dist/editor.min.asset.php';
 
 	wp_register_script( 'a8c-happyblocks-pricing-plans', '', array(), '20221212', true );
 	wp_enqueue_script( 'a8c-happyblocks-pricing-plans' );
@@ -83,6 +62,32 @@ function a8c_happyblocks_view_assets() {
 		array(),
 		$assets['version']
 	);
+}
+
+/**
+ * Load editor assets.
+ */
+function a8c_happyblocks_edit_assets() {
+	a8c_happyblocks_shared_assets();
+
+	$assets = require plugin_dir_path( __FILE__ ) . 'dist/editor.min.asset.php';
+
+	wp_enqueue_script(
+		'a8c-happyblocks-edit-js',
+		plugins_url( 'dist/editor.min.js', __FILE__ ),
+		array_merge( array( 'a8c-happyblocks-pricing-plans' ), $assets['dependencies'] ),
+		$assets['version'],
+		true
+	);
+}
+
+/**
+ * Load view assets.
+ */
+function a8c_happyblocks_view_assets() {
+	a8c_happyblocks_shared_assets();
+
+	$assets = require plugin_dir_path( __FILE__ ) . 'dist/view.min.asset.php';
 
 	$script_file = 'dist/view.js';
 	wp_enqueue_script(
@@ -92,8 +97,11 @@ function a8c_happyblocks_view_assets() {
 		$assets['version'],
 		true
 	);
+	if ( function_exists( 'wp_set_script_translations' ) ) {
+		wp_set_script_translations( 'a8c-happyblock-view-js', 'happy-blocks' );
+	}
 }
-add_action( 'enqueue_block_editor_assets', 'a8c_happyblocks_assets' );
+add_action( 'enqueue_block_editor_assets', 'a8c_happyblocks_edit_assets' );
 add_action( 'wp_enqueue_scripts', 'a8c_happyblocks_view_assets' );
 
 /**
@@ -161,4 +169,5 @@ function a8c_happyblocks_register() {
 	);
 
 }
+
 add_action( 'init', 'a8c_happyblocks_register' );

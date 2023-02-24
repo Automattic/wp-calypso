@@ -218,18 +218,19 @@ import {
 	FEATURE_PREMIUM_CONTENT_JP,
 	FEATURE_SITE_ACTIVITY_LOG_JP,
 	FEATURE_GLOBAL_EDGE_CACHING,
+	is2023PricingGridEnabled,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n, { TranslateResult } from 'i18n-calypso';
 import { MemoExoticComponent } from 'react';
 import SupportIcon from 'calypso/assets/images/onboarding/support.svg';
-import ThemeImage from 'calypso/assets/images/onboarding/theme.jpg';
+import Theme2Image from 'calypso/assets/images/onboarding/theme-2.jpg';
 import ExternalLink from 'calypso/components/external-link';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import MaterialIcon from 'calypso/components/material-icon';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'calypso/lib/url/support';
 
-const is2023OnboardingPricingGrid = isEnabled( 'onboarding/2023-pricing-grid' );
+const is2023OnboardingPricingGrid = is2023PricingGridEnabled();
 
 export type FeatureObject = {
 	getSlug: () => string;
@@ -575,7 +576,12 @@ export const FEATURES_LIST: FeatureList = {
 			}
 			if ( is2023OnboardingPricingGrid ) {
 				return i18n.translate(
-					'Get a custom domain – like yoursite.com – free for the first year.'
+					'Get a custom domain – like {{i}}yourgroovydomain.com{{/i}} – free for the first year.',
+					{
+						components: {
+							i: <i />,
+						},
+					}
 				);
 			}
 			return i18n.translate(
@@ -1739,7 +1745,7 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_PREMIUM_THEMES_V2 ]: {
 		getSlug: () => FEATURE_PREMIUM_THEMES_V2,
 		getTitle: () => i18n.translate( 'Premium themes' ),
-		getIcon: () => <img src={ ThemeImage } alt={ i18n.translate( 'Premium themes' ) } />,
+		getIcon: () => <img src={ Theme2Image } alt={ i18n.translate( 'Premium themes' ) } />,
 		getCompareTitle: () => i18n.translate( 'A collection of premium design templates' ),
 		getDescription: () => i18n.translate( 'Switch between a collection of premium design themes.' ),
 	},
@@ -1753,7 +1759,7 @@ export const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_PLUGINS_THEMES,
 		getTitle: () => i18n.translate( 'Install plugins & themes' ),
 		getDescription: () =>
-			i18n.translate( 'Unlock access to 50,000+ add-ons, design templates, and integrations.' ),
+			i18n.translate( 'Unlock access to 50,000+ plugins, design templates, and integrations.' ),
 	},
 	[ FEATURE_BANDWIDTH ]: {
 		getSlug: () => FEATURE_BANDWIDTH,

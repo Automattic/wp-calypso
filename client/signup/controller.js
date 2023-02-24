@@ -288,13 +288,10 @@ export default {
 		const refParameter = query && query.ref;
 		// Set theme parameter in signup depencency store so we can retrieve it in getChecklistThemeDestination().
 		const themeParameter = query && query.theme;
-		// Set destination parameter in signup depencency store so we can retrieve it in getChecklistThemeDestination().
-		const destinationFlowParameter = query && query.destination_flow;
 
 		const additionalDependencies = {
 			...( refParameter && { refParameter } ),
 			...( themeParameter && { themeParameter } ),
-			...( destinationFlowParameter && { destinationFlowParameter } ),
 		};
 		if ( ! isEmpty( additionalDependencies ) ) {
 			context.store.dispatch( updateDependencies( additionalDependencies ) );

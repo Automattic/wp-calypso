@@ -44,7 +44,10 @@ const sensei: Flow = {
 		const siteSlug = useSiteSlug();
 		setStepProgress( flowProgress );
 
-		const submit = () => {
+		const submit = ( deps: any, stepResult?: string ) => {
+			if ( stepResult ) {
+				return navigate( stepResult );
+			}
 			switch ( _currentStep ) {
 				case 'senseiSetup':
 					return navigate( 'senseiDomain' );
@@ -58,7 +61,11 @@ const sensei: Flow = {
 			}
 		};
 
-		return { submit };
+		const goToStep = ( step: string ) => {
+			navigate( step );
+		};
+
+		return { submit, goToStep };
 	},
 
 	useAssertConditions() {

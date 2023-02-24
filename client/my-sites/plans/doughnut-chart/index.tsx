@@ -1,7 +1,7 @@
 import { CSSProperties } from 'react';
 import './style.scss';
 
-interface Props {
+interface DoughnutChartProps {
 	progress: number;
 	text: string;
 }
@@ -10,7 +10,7 @@ interface CustomPercentageVariable extends CSSProperties {
 	'--percentage': number;
 }
 
-const DoughnutChart: React.FunctionComponent< Props > = ( props ) => {
+const DoughnutChart = ( props: DoughnutChartProps ) => {
 	const { progress, text } = props;
 
 	const style: CustomPercentageVariable = { '--percentage': progress * 100 };

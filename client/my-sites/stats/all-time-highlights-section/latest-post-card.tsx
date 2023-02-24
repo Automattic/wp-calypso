@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { PostStatsCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -6,7 +7,7 @@ import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { getPostsForQuery } from 'calypso/state/posts/selectors';
 import { getPostStat } from 'calypso/state/stats/posts/selectors';
 
-const POST_STATS_CARD_TITLE_LIMIT = 40;
+const POST_STATS_CARD_TITLE_LIMIT = 60;
 
 // Use ellipsis when characters count over the limit.
 // TODO: Extract to shared utilities
@@ -28,6 +29,7 @@ export default function LatestPostCard( {
 	siteSlug: string;
 } ) {
 	const translate = useTranslate();
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
 	const posts = useSelector( ( state ) =>
 		getPostsForQuery( state, siteId, { status: 'publish', number: 1 } )
@@ -64,6 +66,7 @@ export default function LatestPostCard( {
 					viewCount={ latestPostData?.viewCount }
 					commentCount={ latestPostData?.commentCount }
 					titleLink={ `/stats/post/${ latestPost.ID }/${ siteSlug }` }
+					uploadHref={ ! isOdysseyStats ? `/post/${ siteSlug }/${ latestPost.ID }` : undefined }
 				/>
 			) }
 		</>

@@ -16,11 +16,7 @@ import QueryEmailStats from 'calypso/components/data/query-email-stats';
 import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import Main from 'calypso/components/main';
-import SectionNav from 'calypso/components/section-nav';
-import NavItem from 'calypso/components/section-nav/item';
-import NavTabs from 'calypso/components/section-nav/tabs';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import memoizeLast from 'calypso/lib/memoize-last';
 import StatsEmailModule from 'calypso/my-sites/stats/stats-email-module';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
@@ -32,12 +28,18 @@ import { getEmailStat, isRequestingEmailStats } from 'calypso/state/stats/emails
 import { getPeriodWithFallback, getCharts } from 'calypso/state/stats/emails/utils';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import DatePicker from '../stats-date-picker';
+import StatsDetailsNavigation from '../stats-details-navigation';
 import ChartTabs from '../stats-email-chart-tabs';
 import StatsEmailTopRow from '../stats-email-top-row';
 import { StatsNoContentBanner } from '../stats-no-content-banner';
 import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
 import './style.scss';
+
+const pageTitles = {
+	opens: translate( 'Email opens' ),
+	clicks: translate( 'Email clicks' ),
+};
 
 function getPageUrl() {
 	return getUrlParts( page.current );
@@ -139,15 +141,7 @@ class StatsEmailDetail extends Component {
 		window.scrollTo( 0, 0 );
 	}
 
-	getTitle() {
-		const { post } = this.props;
-
-		if ( typeof post?.title === 'string' && post.title.length ) {
-			return decodeEntities( stripHTML( post.title ) );
-		}
-
-		return null;
-	}
+	getTitle = ( statType ) => pageTitles[ statType ];
 
 	onChangeLegend = ( activeLegend ) => this.setState( { activeLegend } );
 
@@ -192,24 +186,12 @@ class StatsEmailDetail extends Component {
 			path: `/stats/email/${ statType }`,
 		};
 
-		const navItems = [ 'opens', 'clicks' ].map( ( item ) => {
-			const attr = {
-				key: item,
-				path: `/stats/email/${ item }/${ period }/${ postId }/${ givenSiteId }`,
-				selected: statType === item,
-			};
-
-			// uppercase first character of item
-
-			return <NavItem { ...attr }>{ item.charAt( 0 ).toUpperCase() + item.slice( 1 ) }</NavItem>;
-		} );
-
 		const query = memoizedQuery( period, endOf );
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ traffic.path }/{{ interval }}/${ postId }${ slugPath }`;
 		return (
 			<>
-				<Main className="has-fixed-nav stats__email-detail" wideLayout>
+				<Main className="has-fixed-nav stats__email-detail">
 					<QueryEmailStats
 						siteId={ siteId }
 						postId={ postId }
@@ -229,7 +211,7 @@ class StatsEmailDetail extends Component {
 					/>
 
 					<FixedNavigationHeader
-						navigationItems={ this.getNavigationItemsWithTitle( this.getTitle() ) }
+						navigationItems={ this.getNavigationItemsWithTitle( this.getTitle( statType ) ) }
 					></FixedNavigationHeader>
 
 					{ ! isRequestingStats && ! countViews && post && (
@@ -245,14 +227,15 @@ class StatsEmailDetail extends Component {
 					) }
 					{ post ? (
 						<>
-							<div>
-								<h1>{ this.getTitle() }</h1>
+							<div className="main-container">
+								<h1>{ this.getTitle( statType ) }</h1>
 
-								<SectionNav>
-									<NavTabs label="Stats" selectedText="Opens">
-										{ navItems }
-									</NavTabs>
-								</SectionNav>
+								<StatsDetailsNavigation
+									postId={ postId }
+									period={ period }
+									statType={ statType }
+									givenSiteId={ givenSiteId }
+								/>
 
 								<StatsEmailTopRow siteId={ siteId } postId={ postId } statType={ statType } />
 

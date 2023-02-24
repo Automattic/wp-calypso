@@ -44,9 +44,13 @@ import {
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_3TB_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_5TB_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_YEARLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_YEARLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_YEARLY,
+	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_3TB_YEARLY,
+	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_5TB_YEARLY,
 } from './constants';
 import type { SelectorProductFeaturesItem } from './types';
 import type { TranslateResult } from 'i18n-calypso';
@@ -158,8 +162,8 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 		},
 	} );
 	const boost = translate( 'Boost' );
-	const socialBasic = translate( 'Social Basic', { context: 'Jetpack product name' } );
-	const socialAdvanced = translate( 'Social Advanced (Beta)', { context: 'Jetpack product name' } );
+	const socialBasic = translate( 'Social', { context: 'Jetpack product name' } );
+	const socialAdvanced = translate( 'Social', { context: 'Jetpack product name' } );
 
 	const text10gb = translate( '%(numberOfGigabytes)dGB', '%(numberOfGigabytes)dGB', {
 		comment:
@@ -181,6 +185,18 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 		count: 1,
 		args: { numberOfTerabytes: 1 },
 	} );
+	const text3tb = translate( '%(numberOfTerabytes)dTB', '%(numberOfTerabytes)dTB', {
+		comment:
+			'Displays an amount of terabytes. Plural string used in case TB needs to be pluralized.',
+		count: 3,
+		args: { numberOfTerabytes: 3 },
+	} );
+	const text5tb = translate( '%(numberOfTerabytes)dTB', '%(numberOfTerabytes)dTB', {
+		comment:
+			'Displays an amount of terabytes. Plural string used in case TB needs to be pluralized.',
+		count: 5,
+		args: { numberOfTerabytes: 5 },
+	} );
 
 	//Backup Add-on products
 	const backupAddon10gb = translate( 'VaultPress Backup Add-on Storage (%(storageAmount)s)', {
@@ -191,6 +207,12 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 	} );
 	const backupAddon1tb = translate( 'VaultPress Backup Add-on Storage (%(storageAmount)s)', {
 		args: { storageAmount: text1tb },
+	} );
+	const backupAddon3tb = translate( 'VaultPress Backup Add-on Storage (%(storageAmount)s)', {
+		args: { storageAmount: text3tb },
+	} );
+	const backupAddon5tb = translate( 'VaultPress Backup Add-on Storage (%(storageAmount)s)', {
+		args: { storageAmount: text5tb },
 	} );
 
 	return {
@@ -223,9 +245,13 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY ]: backupAddon10gb,
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_MONTHLY ]: backupAddon100gb,
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_MONTHLY ]: backupAddon1tb,
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_3TB_MONTHLY ]: backupAddon3tb,
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_5TB_MONTHLY ]: backupAddon5tb,
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_YEARLY ]: backupAddon10gb,
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_YEARLY ]: backupAddon100gb,
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_YEARLY ]: backupAddon1tb,
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_3TB_YEARLY ]: backupAddon3tb,
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_5TB_YEARLY ]: backupAddon5tb,
 	};
 };
 

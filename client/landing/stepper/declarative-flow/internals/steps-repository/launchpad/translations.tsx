@@ -11,7 +11,7 @@ import { TranslatedLaunchpadStrings } from './types';
 
 export function getLaunchpadTranslations( flow: string | null ): TranslatedLaunchpadStrings {
 	const translatedStrings: TranslatedLaunchpadStrings = {
-		flowName: translate( 'WordPress' ),
+		flowName: translate( 'WordPress.com' ),
 		title: translate( 'Your website is ready!' ),
 		subtitle: translate( 'Keep up the momentum with these final steps.' ),
 	};

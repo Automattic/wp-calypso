@@ -1,37 +1,34 @@
-import { Button, Card } from '@automattic/components';
-import { useLocale } from '@automattic/i18n-utils';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { PLAN_ECOMMERCE_MONTHLY } from '@automattic/calypso-products';
+import { Button } from '@automattic/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import bestInClassHosting from 'calypso/assets/images/plans/wpcom/ecommerce-trial/best-in-class-hosting.svg';
+import connect from 'calypso/assets/images/plans/wpcom/ecommerce-trial/connect.png';
+import googleAnalytics from 'calypso/assets/images/plans/wpcom/ecommerce-trial/google-analytics.svg';
+import launch from 'calypso/assets/images/plans/wpcom/ecommerce-trial/launch.png';
+import premiumThemes from 'calypso/assets/images/plans/wpcom/ecommerce-trial/premium-themes.svg';
+import prioritySupport from 'calypso/assets/images/plans/wpcom/ecommerce-trial/priority-support.svg';
+import promote from 'calypso/assets/images/plans/wpcom/ecommerce-trial/promote.png';
+import securityPerformance from 'calypso/assets/images/plans/wpcom/ecommerce-trial/security-performance.svg';
+import seoTools from 'calypso/assets/images/plans/wpcom/ecommerce-trial/seo-tools.svg';
+import shipping from 'calypso/assets/images/plans/wpcom/ecommerce-trial/shipping2.png';
+import simpleCustomization from 'calypso/assets/images/plans/wpcom/ecommerce-trial/simple-customization.svg';
+import unlimitedProducts from 'calypso/assets/images/plans/wpcom/ecommerce-trial/unlimited-products.svg';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
-import {
-	getCurrentPlan,
-	getECommerceTrialDaysLeft,
-	getECommerceTrialExpiration,
-	isECommerceTrialExpired,
-} from 'calypso/state/sites/plans/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import DoughnutChart from '../../doughnut-chart';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import ECommerceTrialBanner from '../../ecommerce-trial/ecommerce-trial-banner';
 import FeatureIncludedCard from '../feature-included-card';
 import FeatureNotIncludedCard from '../feature-not-included-card';
 
 import './style.scss';
 
 const ECommerceTrialCurrentPlan = () => {
-	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || -1;
+	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
 
-	const { currentPlan, eCommerceTrialDaysLeft, isTrialExpired, eCommerceTrialExpiration } =
-		useSelector( ( state ) => ( {
-			currentPlan: getCurrentPlan( state, selectedSiteId ),
-			isTrialExpired: isECommerceTrialExpired( state, selectedSiteId ),
-			eCommerceTrialDaysLeft: Math.round( getECommerceTrialDaysLeft( state, selectedSiteId ) || 0 ),
-			eCommerceTrialExpiration: getECommerceTrialExpiration( state, selectedSiteId ),
-		} ) );
-
-	const locale = useLocale();
-	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 
 	const [ showAllTrialFeaturesInMobileView, setShowAllTrialFeaturesInMobileView ] =
@@ -44,40 +41,56 @@ const ECommerceTrialCurrentPlan = () => {
 	const isMobile = useMediaQuery( '(max-width: 480px)' );
 	const displayAllIncluded = ! isMobile || showAllTrialFeaturesInMobileView;
 
+	/**
+	 * Redirects to the checkout page with the ecommerce plan.
+	 *
+	 * @param ctaPosition - The position of the CTA that triggered the redirect.
+	 */
+	const goToCheckoutWithEcommercePlan = ( ctaPosition: string ) => {
+		recordTracksEvent( `calypso_wooexpress_my_plan_cta`, {
+			cta_position: ctaPosition,
+		} );
+		page.redirect( `/checkout/${ selectedSite?.slug }/${ PLAN_ECOMMERCE_MONTHLY }` );
+	};
+
 	// TODO: translate when final copy is available
 	const allIncludedFeatures = [
 		{
 			title: translate( 'Priority support' ),
 			text: translate( 'Need help? Reach out to us anytime, anywhere.' ),
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/priority-support.svg',
+			illustration: prioritySupport,
 			showButton: true,
 			buttonText: translate( 'Ask a question' ),
 		},
 		{
-			title: 'Premium themes',
-			text: 'Explore a diverse selection of beautifully designed premium themes.',
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/premium-themes.svg',
+			title: translate( 'Premium themes' ),
+			text: translate( 'Choose from a wide selection of beautifully designed themes.' ),
+			illustration: premiumThemes,
 			showButton: true,
-			buttonText: 'Browse premium themes',
+			buttonText: translate( 'Browse premium themes' ),
 		},
 		{
-			title: translate( 'Advanced customization' ),
-			text: translate( "Change your store's appearance in a few clicks!" ),
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/advanced-customization.svg',
+			title: translate( 'Simple customization' ),
+			text: translate(
+				"Change your store's look and feel, update your cart and checkout pages, and more."
+			),
+			illustration: simpleCustomization,
 			showButton: true,
 			buttonText: translate( 'Design your store' ),
 		},
 		{
 			title: translate( 'Unlimited products' ),
-			text: translate( 'List as many products or services as you’d like and offer subscriptions.' ),
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/unlimited-products.svg',
+			text: translate(
+				"Create as many products or services as you'd like, including subscriptions."
+			),
+			illustration: unlimitedProducts,
 			showButton: true,
 			buttonText: translate( 'Add a product' ),
 		},
 		{
-			title: translate( 'Jetpack features' ),
+			title: translate( 'Security & performance' ),
 			text: translate( 'Get auto real-time backups, malware scans, and spam protection.' ),
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/jetpack-features.svg',
+			illustration: securityPerformance,
 			showButton: true,
 			buttonText: translate( 'Keep your store safe' ),
 		},
@@ -86,25 +99,21 @@ const ECommerceTrialCurrentPlan = () => {
 			text: translate(
 				'Boost traffic with tools that make your content more findable on search engines.'
 			),
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/seo-tools.svg',
+			illustration: seoTools,
 			showButton: true,
 			buttonText: translate( 'Increase visibility' ),
 		},
 		{
 			title: translate( 'Google Analytics' ),
-			text: translate(
-				'Understand visitors and traffic patterns in more depth with Google stats.'
-			),
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/google-analytics.svg',
+			text: translate( "See where your visitors come from and what they're doing on your store." ),
+			illustration: googleAnalytics,
 			showButton: true,
 			buttonText: translate( 'Connect Google Analytics' ),
 		},
 		{
 			title: translate( 'Best-in-class hosting' ),
-			text: translate(
-				'Hosting is included with your plan, eliminating additional cost and technical hassle.'
-			),
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/best-in-class-hosting.svg',
+			text: translate( 'We take care of hosting your store so you can focus on selling.' ),
+			illustration: bestInClassHosting,
 			showButton: false,
 		},
 	];
@@ -117,101 +126,49 @@ const ECommerceTrialCurrentPlan = () => {
 	const whatsNotIncluded = [
 		{
 			title: translate( 'Launch your store to the world' ),
-			text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio ullamcorper efficitur.',
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/launch.png',
-		},
-		{
-			title: translate( 'Access all premium themes' ),
-			text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio ullamcorper efficitur.',
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/themes.png',
-		},
-		{
-			title: translate( 'Sell your products' ),
-			text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio ullamcorper efficitur.',
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/money.png',
-		},
-		{
-			title: translate( 'Connect with your customers' ),
-			text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio ullamcorper efficitur.',
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/email.png',
+			text: translate( 'Once you upgrade, you can publish your store and start taking orders.' ),
+			illustration: launch,
 		},
 		{
 			title: translate( 'Promote your products' ),
-			text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio ullamcorper efficitur.',
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/promote.png',
+			text: translate(
+				'Advertise and sell on popular marketplaces and social media platforms using your product catalog.'
+			),
+			illustration: promote,
+		},
+		{
+			title: translate( 'Connect with your customers' ),
+			text: translate(
+				'Get access to email features that let you communicate with your customers and prospects.'
+			),
+			illustration: connect,
 		},
 		{
 			title: translate( 'Integrate top shipping carriers' ),
-			text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis quis magna ac odio ullamcorper efficitur.',
-			illustration: '/calypso/images/plans/wpcom/ecommerce-trial/shipping.png',
+			text: translate(
+				'Customize your shipping rates, print labels right from your store, and more.'
+			),
+			illustration: shipping,
 		},
 	];
 
-	const trialStart = moment( currentPlan?.subscribedDate );
-	const trialEnd = moment( currentPlan?.expiryDate );
-	const trialDuration = trialEnd.diff( trialStart, 'days' );
-
-	/**
-	 * Trial progress from 0 to 1
-	 */
-	const trialProgress = 1 - eCommerceTrialDaysLeft / trialDuration;
-	const eCommerceTrialDaysLeftToDisplay = isTrialExpired ? 0 : eCommerceTrialDaysLeft;
-
-	// moment.js doesn't have a format option to display the long form in a localized way without the year
-	// https://github.com/moment/moment/issues/3341
-	const readableExpirationDate = eCommerceTrialExpiration?.toDate().toLocaleDateString( locale, {
-		month: 'long',
-		day: 'numeric',
-	} );
+	const bannerCallToAction = (
+		<Button
+			className="e-commerce-trial-current-plan__trial-card-cta"
+			primary
+			onClick={ () => goToCheckoutWithEcommercePlan( 'card' ) }
+		>
+			{ translate( 'Upgrade now' ) }
+		</Button>
+	);
 
 	return (
 		<>
-			<BodySectionCssClass bodyClass={ [ 'is-trial-plan' ] } />
+			<BodySectionCssClass bodyClass={ [ 'is-ecommerce-trial-plan' ] } />
 
-			<Card className="e-commerce-trial-current-plan__trial-card">
-				<div className="e-commerce-trial-current-plan__trial-card-content">
-					<p className="e-commerce-trial-current-plan__card-title">
-						{ translate( 'You’re in a free trial' ) }
-					</p>
-					<p className="e-commerce-trial-current-plan__card-subtitle">
-						{ isTrialExpired
-							? translate(
-									'Your free trial has expired. Sign up to a plan to unlock new features and keep your store running.'
-							  )
-							: translate(
-									'Your free trial will end in %(daysLeft)d day. Sign up to a plan by %(expirationdate)s to unlock new features and keep your store running.',
-									'Your free trial will end in %(daysLeft)d days. Sign up to a plan by %(expirationdate)s to unlock new features and keep your store running.',
-									{
-										count: eCommerceTrialDaysLeft,
-										args: {
-											daysLeft: eCommerceTrialDaysLeft,
-											expirationdate: readableExpirationDate,
-										},
-									}
-							  ) }
-					</p>
-					<Button className="e-commerce-trial-current-plan__trial-card-cta" primary>
-						{
-							// TODO: translate when final copy is available
-							'Get Commerce'
-						}
-					</Button>
-				</div>
-				<div className="plans__chart-wrapper">
-					<DoughnutChart
-						progress={ trialProgress }
-						text={ eCommerceTrialDaysLeftToDisplay?.toString() }
-					/>
-					<br />
-					<span className="plans__chart-label">
-						{ isTrialExpired
-							? translate( 'Your free trial has expired' )
-							: translate( 'day left in trial', 'days left in trial', {
-									count: eCommerceTrialDaysLeft,
-							  } ) }
-					</span>
-				</div>
-			</Card>
+			<div className="e-commerce-trial-current-plan__banner-wrapper">
+				<ECommerceTrialBanner callToAction={ bannerCallToAction } />
+			</div>
 
 			<h2 className="e-commerce-trial-current-plan__section-title">
 				{ translate( 'What’s included in your free trial' ) }
@@ -239,15 +196,12 @@ const ECommerceTrialCurrentPlan = () => {
 			</div>
 
 			<h2 className="e-commerce-trial-current-plan__section-title">
-				{ translate( 'Do you want more?' ) }
+				{ translate( 'Ready to start selling?' ) }
 			</h2>
 			<p className="e-commerce-trial-current-plan__section-subtitle">
-				{ translate( 'The free trial doesn’t support the following features.' ) }
-				<br />
-				{
-					// TODO: translate when final copy is available
-					'Get the most value out of WooCommerce and get Pro.'
-				}
+				{ translate(
+					'Upgrade your free trial to launch your store and get the next-level features you need to grow.'
+				) }
 			</p>
 
 			<div className="e-commerce-trial-current-plan__more-wrapper">
@@ -262,11 +216,11 @@ const ECommerceTrialCurrentPlan = () => {
 			</div>
 
 			<div className="e-commerce-trial-current-plan__cta-wrapper">
-				<Button className="e-commerce-trial-current-plan__cta is-primary">
-					{
-						// TODO: translate when final copy is available
-						'Enhance your store and get Commerce'
-					}
+				<Button
+					className="e-commerce-trial-current-plan__cta is-primary"
+					onClick={ () => goToCheckoutWithEcommercePlan( 'footer' ) }
+				>
+					{ translate( 'Upgrade now' ) }
 				</Button>
 			</div>
 		</>

@@ -96,6 +96,8 @@ export interface Design {
 	price?: string;
 	software_sets?: SoftwareSet[];
 	is_bundled_with_woo_commerce?: boolean;
+	is_virtual?: boolean;
+	preselected_style_variation?: StyleVariation; // Preselected style variation on virtual themes.
 
 	/** @deprecated used for Gutenboarding (/new flow) */
 	stylesheet?: string;
@@ -131,6 +133,7 @@ export interface DesignPreviewOptions {
 	use_screenshot_overrides?: boolean;
 	disable_viewport_height?: boolean;
 	remove_assets?: boolean;
+	style_variation?: StyleVariation;
 }
 
 /** @deprecated used for Gutenboarding (/new flow) */

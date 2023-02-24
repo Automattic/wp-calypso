@@ -62,6 +62,13 @@
 		}
 	}
 
+	.stats-card-header--main {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		flex-wrap: wrap;
+	}
+
 	.stats-card-header__additional {
 		@include additional-columns-wrapper;
 	}
@@ -92,7 +99,6 @@
 
 .stats-card-avatar {
 	display: flex;
-	padding-right: $stats-avatar-spacer;
 
 	.stats-card-avatar-image {
 		width: $stats-avatar-size;

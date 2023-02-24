@@ -579,6 +579,12 @@ describe( 'actions', () => {
 			sites: {
 				items: {},
 			},
+			productsList: {
+				items: {},
+			},
+			purchases: {
+				data: {},
+			},
 		} );
 
 		const trackingData = {

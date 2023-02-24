@@ -105,7 +105,7 @@ describe( '<SiteTableRow>', () => {
 
 	test( 'should render correctly and have the error message and the link to fix the issue', async () => {
 		await waitFor( () => {
-			expect( getByText( 'Jetpack is unable to connect to test.jurassic.ninja' ) ).toBeVisible();
+			expect( getByText( 'Jetpack is unable to connect to this site' ) ).toBeVisible();
 			expect( getByText( /fix now/i ) ).toBeVisible();
 		} );
 	} );

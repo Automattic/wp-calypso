@@ -1,6 +1,7 @@
+import formatCurrency from '@automattic/format-currency';
 import { TranslateResult } from 'i18n-calypso';
 import InfoPopover from 'calypso/components/info-popover';
-import PlanPrice, { priceAsString } from 'calypso/my-sites/plan-price';
+import PlanPrice from 'calypso/my-sites/plan-price';
 import PriceAriaLabel from './price-aria-label';
 import TimeFrame from './time-frame';
 import type { Duration } from 'calypso/my-sites/plans/jetpack-plans/types';
@@ -20,7 +21,7 @@ type OwnProps = {
 	expiryDate?: Moment;
 };
 
-const Placeholder: React.FC< OwnProps > = ( { billingTerm, expiryDate } ) => {
+const Placeholder: React.FC< OwnProps > = ( { billingTerm, expiryDate, discountedPrice } ) => {
 	return (
 		<>
 			<PlanPrice
@@ -29,8 +30,7 @@ const Placeholder: React.FC< OwnProps > = ( { billingTerm, expiryDate } ) => {
 				rawPrice={ 0.01 }
 				currencyCode="USD"
 			/>
-			{ /* Remove this secondary <PlanPrice/> placeholder if we're not showing discounted prices */ }
-			<PlanPrice discounted rawPrice={ 0.01 } currencyCode="USD" />
+			{ discountedPrice && <PlanPrice discounted rawPrice={ 0.01 } currencyCode="USD" /> }
 			<TimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
 		</>
 	);
@@ -104,7 +104,9 @@ const Paid: React.FC< OwnProps > = ( props ) => {
 		return <Placeholder { ...props } />;
 	}
 
-	const formattedOriginalPrice = priceAsString( originalPrice, currencyCode );
+	const formattedOriginalPrice = formatCurrency( originalPrice, currencyCode, {
+		stripZeros: true,
+	} );
 
 	let priceComponent = isDiscounted ? (
 		<DiscountedPrice { ...props } finalPrice={ finalPrice } />

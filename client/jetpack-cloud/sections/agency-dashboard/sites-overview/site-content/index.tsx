@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import page from 'page';
@@ -49,18 +48,16 @@ export default function SiteContent( { data, isLoading, currentPage, isFavorites
 				<SiteTable isLoading={ isLoading } columns={ siteColumns } items={ sites } />
 			</div>
 			<div className="site-content__small-screen-view">
-				{ isEnabled( 'jetpack/partner-portal-downtime-monitoring-updates' ) && (
-					<Card className="site-content__bulk-select">
-						{ isBulkManagementActive ? (
-							<SiteBulkSelect sites={ sites } isLoading={ isLoading } />
-						) : (
-							<>
-								<span className="site-content__bulk-select-label">{ siteColumns[ 0 ].title }</span>
-								<EditButton sites={ sites } />
-							</>
-						) }
-					</Card>
-				) }
+				<Card className="site-content__bulk-select">
+					{ isBulkManagementActive ? (
+						<SiteBulkSelect sites={ sites } isLoading={ isLoading } />
+					) : (
+						<>
+							<span className="site-content__bulk-select-label">{ siteColumns[ 0 ].title }</span>
+							<EditButton sites={ sites } />
+						</>
+					) }
+				</Card>
 				<div className="site-content__mobile-view">
 					<>
 						{ isLoading ? (

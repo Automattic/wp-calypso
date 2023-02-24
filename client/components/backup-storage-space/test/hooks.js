@@ -21,6 +21,7 @@ import { renderHook } from '@testing-library/react-hooks';
 import {
 	useDaysOfBackupsSavedText,
 	useStorageUsageText,
+	useStorageText,
 } from 'calypso/components/backup-storage-space/hooks';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
@@ -123,10 +124,34 @@ describe( 'useDaysOfBackupsSavedText', () => {
 		expect( text ).toHaveTextContent( '7 days of backups saved' );
 	} );
 
-	test( 'renders `7 days of backups saved` with link to activity log with site-slug', () => {
+	test( 'renders `7 days of backups saved` with link to activity log with site-slug in Calypso Blue', () => {
 		const text = renderDaysOfBackupsSavedText( 7, 'site-slug' );
-		expect( text.childNodes[ 0 ] ).toContainHTML(
-			'<a href="/activity-log/site-slug?group=rewind">7 days of backups saved</a>'
-		);
+		const link = text.childNodes[ 0 ];
+		expect( link ).toHaveAttribute( 'href', '/activity-log/site-slug?group=rewind' );
+		expect( link ).toHaveTextContent( '7 days of backups saved' );
+	} );
+
+	test( 'renders `7 days of backups saved` with link to settings page with site-slug in Jetpack Cloud', () => {
+		isJetpackCloud.mockImplementation( () => true );
+		const text = renderDaysOfBackupsSavedText( 7, 'site-slug' );
+		const link = text.childNodes[ 0 ];
+		expect( link ).toHaveAttribute( 'href', '/settings/site-slug' );
+		expect( link ).toHaveTextContent( '7 days of backups saved' );
+	} );
+} );
+
+describe( 'useStorageText', () => {
+	test.each( [
+		[ 2 ** 30 / 2, '0.5GB' ],
+		[ 2 ** 30, '1GB' ],
+		[ 2 ** 30 * 3, '3GB' ],
+		[ 2 ** 40 / 2, '512GB' ],
+		[ 2 ** 40 * 2, '2TB' ],
+		[ 2 ** 40 * 3.5, '3.5TB' ],
+		[ null, '' ],
+		[ -1, '' ],
+	] )( 'renders storage in human readable format for %s bytes', ( storageInBytes, expected ) => {
+		const { result } = renderHook( () => useStorageText( storageInBytes ) );
+		expect( result.current ).toBe( expected );
 	} );
 } );

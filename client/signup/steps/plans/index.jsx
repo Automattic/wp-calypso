@@ -1,20 +1,13 @@
-import { isEnabled } from '@automattic/calypso-config';
-import {
-	planHasFeature,
-	FEATURE_UPLOAD_THEMES_PLUGINS,
-	getPlan,
-	PLAN_FREE,
-	isEcommerce,
-} from '@automattic/calypso-products';
-import { getUrlParts } from '@automattic/calypso-url';
+import { is2023PricingGridActivePage, getPlan, PLAN_FREE } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import {
 	isLinkInBioFlow,
-	NEWSLETTER_FLOW,
+	isHostingLPFlow,
 	isNewsletterOrLinkInBioFlow,
-	SITE_ASSEMBLER_FLOW,
+	isSiteAssemblerFlow,
+	isTailoredSignupFlow,
+	NEWSLETTER_FLOW,
 } from '@automattic/onboarding';
-import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
 import i18n, { localize } from 'i18n-calypso';
@@ -28,6 +21,7 @@ import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
 import { getTld, isSubdomain } from 'calypso/lib/domains';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
+import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
 import wp from 'calypso/lib/wp';
 import PlansComparison, {
 	isEligibleForProPlan,
@@ -44,6 +38,7 @@ import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
+import { getDomainName, getIntervalType } from './util';
 import './style.scss';
 
 export class PlansStep extends Component {
@@ -76,84 +71,8 @@ export class PlansStep extends Component {
 		this.unsubscribe();
 	}
 
-	onSelectPlan = ( cartItem ) => {
-		const {
-			additionalStepData,
-			stepSectionName,
-			stepName,
-			flowName,
-			themeSlugWithRepo,
-			launchSite,
-			goToNextStep,
-		} = this.props;
-
-		if ( cartItem ) {
-			this.props.recordTracksEvent( 'calypso_signup_plan_select', {
-				product_slug: cartItem.product_slug,
-				free_trial: cartItem.free_trial,
-				from_section: stepSectionName ? stepSectionName : 'default',
-			} );
-
-			// If we're inside the store signup flow and the cart item is a Business or eCommerce Plan,
-			// set a flag on it. It will trigger Automated Transfer when the product is being
-			// activated at the end of the checkout process.
-			if (
-				flowName === 'ecommerce' &&
-				planHasFeature( cartItem.product_slug, FEATURE_UPLOAD_THEMES_PLUGINS )
-			) {
-				cartItem.extra = Object.assign( cartItem.extra || {}, {
-					is_store_signup: true,
-				} );
-			}
-		} else {
-			this.props.recordTracksEvent( 'calypso_signup_free_plan_select', {
-				from_section: stepSectionName ? stepSectionName : 'default',
-			} );
-		}
-
-		const step = {
-			stepName,
-			stepSectionName,
-			cartItem,
-			...additionalStepData,
-		};
-
-		if ( flowName === 'site-selected' && ! cartItem ) {
-			wp.req.post(
-				`/domains/${ this.props.selectedSite.ID }/${ this.props.selectedSite.name }/convert-domain-only-to-site`,
-				{},
-				( error ) => {
-					if ( error ) {
-						this.props.errorNotice( error.message );
-						return;
-					}
-					this.props.submitSignupStep( step, {
-						cartItem,
-					} );
-					goToNextStep();
-				}
-			);
-			return;
-		}
-
-		const signupVals = {
-			cartItem,
-			...( themeSlugWithRepo && { themeSlugWithRepo } ),
-			...( launchSite && { comingSoon: 0 } ),
-		};
-
-		if ( cartItem && isEcommerce( cartItem ) ) {
-			signupVals.themeSlugWithRepo = 'pub/twentytwentytwo';
-		}
-
-		this.props.submitSignupStep( step, signupVals );
-		goToNextStep();
-	};
-
-	getDomainName() {
-		return (
-			this.props.signupDependencies.domainItem && this.props.signupDependencies.domainItem.meta
-		);
+	onSelectPlan( cartItem ) {
+		buildUpgradeFunction( this.props, cartItem );
 	}
 
 	getCustomerType() {
@@ -165,22 +84,6 @@ export class PlansStep extends Component {
 			getSiteTypePropertyValue( 'slug', this.props.siteType, 'customerType' ) || 'personal';
 
 		return customerType;
-	}
-
-	handleFreePlanButtonClick = () => {
-		this.onSelectPlan( null ); // onUpgradeClick expects a cart item -- null means Free Plan.
-	};
-
-	getIntervalType() {
-		const urlParts = getUrlParts( typeof window !== 'undefined' ? window.location?.href : '' );
-		const intervalType = urlParts?.searchParams.get( 'intervalType' );
-
-		if ( [ 'yearly', 'monthly' ].includes( intervalType ) ) {
-			return intervalType;
-		}
-
-		// Default value
-		return 'yearly';
 	}
 
 	plansFeaturesList() {
@@ -215,7 +118,7 @@ export class PlansStep extends Component {
 		if ( eligibleForProPlan ) {
 			const selectedDomainConnection =
 				this.props.progress?.domains?.domainItem?.product_slug === 'domain_map';
-			const intervalType = this.getIntervalType();
+			const intervalType = getIntervalType();
 			return (
 				<div>
 					{ errorDisplay }
@@ -228,7 +131,7 @@ export class PlansStep extends Component {
 					<PlansComparison
 						isInSignup={ true }
 						intervalType={ intervalType }
-						onSelectPlan={ this.onSelectPlan }
+						onSelectPlan={ ( cartItem ) => this.onSelectPlan( cartItem ) }
 						selectedSiteId={ selectedSite?.ID || undefined }
 						selectedDomainConnection={ selectedDomainConnection }
 					/>
@@ -246,9 +149,9 @@ export class PlansStep extends Component {
 					hideEcommercePlan={ this.shouldHideEcommercePlan() }
 					isInSignup={ true }
 					isLaunchPage={ isLaunchPage }
-					intervalType={ this.getIntervalType() }
-					onUpgradeClick={ this.onSelectPlan }
-					domainName={ this.getDomainName() }
+					intervalType={ getIntervalType() }
+					onUpgradeClick={ ( cartItem ) => this.onSelectPlan( cartItem ) }
+					domainName={ getDomainName( this.props.signupDependencies.domainItem ) }
 					customerType={ this.getCustomerType() }
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
 					plansWithScroll={ this.state.isDesktop }
@@ -273,7 +176,7 @@ export class PlansStep extends Component {
 	}
 
 	getHeaderText() {
-		const { headerText, translate, eligibleForProPlan, locale, isOnboarding2023PricingGrid } =
+		const { headerText, translate, eligibleForProPlan, locale, is2023PricingGridVisible } =
 			this.props;
 
 		if ( headerText ) {
@@ -286,7 +189,7 @@ export class PlansStep extends Component {
 				: translate( 'Choose the plan that’s right for you' );
 		}
 
-		if ( isOnboarding2023PricingGrid ) {
+		if ( is2023PricingGridVisible ) {
 			return translate( 'Choose your flavor of WordPress' );
 		}
 
@@ -305,10 +208,12 @@ export class PlansStep extends Component {
 			locale,
 			translate,
 			useEmailOnboardingSubheader,
-			isOnboarding2023PricingGrid,
+			is2023PricingGridVisible,
 		} = this.props;
 
-		const freePlanButton = <Button onClick={ this.handleFreePlanButtonClick } borderless />;
+		const freePlanButton = (
+			<Button onClick={ () => buildUpgradeFunction( this.props, null ) } borderless />
+		);
 
 		if ( flowName === NEWSLETTER_FLOW ) {
 			return hideFreePlan
@@ -350,7 +255,7 @@ export class PlansStep extends Component {
 			);
 		}
 
-		if ( isOnboarding2023PricingGrid ) {
+		if ( is2023PricingGridVisible ) {
 			return;
 		}
 
@@ -371,8 +276,8 @@ export class PlansStep extends Component {
 	}
 
 	shouldHideEcommercePlan() {
-		// Site Assembler doesn't support atomic site, so we have to hide the plan
-		return this.props.signupDependencies.destinationFlowParameter === SITE_ASSEMBLER_FLOW;
+		// The flow with the Site Assembler step doesn't support atomic site, so we have to hide the plan
+		return isSiteAssemblerFlow( this.props.flowName );
 	}
 
 	plansFeaturesSelection() {
@@ -383,7 +288,7 @@ export class PlansStep extends Component {
 			translate,
 			hasInitializedSitesBackUrl,
 			steps,
-			isOnboarding2023PricingGrid,
+			is2023PricingGridVisible,
 		} = this.props;
 
 		const headerText = this.getHeaderText();
@@ -396,7 +301,7 @@ export class PlansStep extends Component {
 
 		if ( 0 === positionInFlow && hasInitializedSitesBackUrl ) {
 			backUrl = hasInitializedSitesBackUrl;
-			backLabelText = translate( 'Back to Sites' );
+			backLabelText = translate( 'Back to sites' );
 		}
 
 		let queryParams;
@@ -422,12 +327,12 @@ export class PlansStep extends Component {
 					stepName={ stepName }
 					positionInFlow={ positionInFlow }
 					headerText={ headerText }
-					shouldHideNavButtons={ this.isTailoredFlow() }
+					shouldHideNavButtons={ this.isTailoredFlow() || isHostingLPFlow( this.props.flowName ) }
 					fallbackHeaderText={ fallbackHeaderText }
 					subHeaderText={ subHeaderText }
 					fallbackSubHeaderText={ fallbackSubHeaderText }
-					isWideLayout={ ! isOnboarding2023PricingGrid }
-					isExtraWideLayout={ isOnboarding2023PricingGrid }
+					isWideLayout={ ! is2023PricingGridVisible }
+					isExtraWideLayout={ is2023PricingGridVisible }
 					stepContent={ this.plansFeaturesList() }
 					allowBackFirstStep={ !! hasInitializedSitesBackUrl }
 					backUrl={ backUrl }
@@ -439,14 +344,12 @@ export class PlansStep extends Component {
 	}
 
 	render() {
-		const is2023OnboardingPricingGrid = isEnabled( 'onboarding/2023-pricing-grid' );
-
 		const classes = classNames( 'plans plans-step', {
 			'in-vertically-scrolled-plans-experiment':
-				! this.props.isOnboarding2023PricingGrid && this.props.isInVerticalScrollingPlansExperiment,
+				! this.props.is2023PricingGridVisible && this.props.isInVerticalScrollingPlansExperiment,
 			'has-no-sidebar': true,
-			'is-wide-layout': ! is2023OnboardingPricingGrid,
-			'is-extra-wide-layout': is2023OnboardingPricingGrid,
+			'is-wide-layout': ! this.props.is2023PricingGridVisible,
+			'is-extra-wide-layout': this.props.is2023PricingGridVisible,
 		} );
 
 		return (
@@ -514,7 +417,7 @@ export default connect(
 		isInVerticalScrollingPlansExperiment: true,
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
 		eligibleForProPlan: isEligibleForProPlan( state, getSiteBySlug( state, siteSlug )?.ID ),
-		isOnboarding2023PricingGrid: isEnabled( 'onboarding/2023-pricing-grid' ),
+		is2023PricingGridVisible: is2023PricingGridActivePage( window ),
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep, errorNotice }
 )( localize( PlansStep ) );

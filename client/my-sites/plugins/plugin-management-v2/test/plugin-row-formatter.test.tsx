@@ -4,7 +4,6 @@
 import userEvent from '@testing-library/user-event';
 import moment from 'moment';
 import React from 'react';
-import { ACTIVATE_PLUGIN } from 'calypso/lib/plugins/constants';
 import documentHead from 'calypso/state/document-head/reducer';
 import plugins from 'calypso/state/plugins/reducer';
 import productsList from 'calypso/state/products-list/reducer';
@@ -26,14 +25,6 @@ const initialReduxState = {
 			isRequestingAll: false,
 			plugins: {
 				[ `${ site.ID }` ]: [ plugin ],
-			},
-			status: {
-				[ `${ site.ID }` ]: {
-					[ plugin.id ]: {
-						status: 'completed',
-						action: ACTIVATE_PLUGIN,
-					},
-				},
 			},
 		},
 	},

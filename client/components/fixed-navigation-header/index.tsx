@@ -49,7 +49,8 @@ const Container = styled.div`
 		margin: auto;
 	}
 
-	.stats & {
+	.stats &,
+	.stats__email-detail & {
 		max-width: 1224px;
 		margin: auto;
 	}

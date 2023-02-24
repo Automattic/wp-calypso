@@ -788,7 +788,7 @@ export const normalizers = {
 
 		const { startOf } = rangeOfPeriod( query.period, query.date );
 		const dataPath = query.summarize ? [ 'summary', 'groups' ] : [ 'days', startOf, 'groups' ];
-		const statsData = get( data, dataPath, [] );
+		let statsData = get( data, dataPath, [] );
 
 		const parseItem = ( item ) => {
 			let children;
@@ -810,6 +810,18 @@ export const normalizers = {
 
 			return record;
 		};
+
+		// If there's only one item in a group, then we expand the children to the parent level.
+		statsData = statsData.map( ( item ) => {
+			if ( item.results?.length === 1 ) {
+				return {
+					...item.results[ 0 ],
+					group: item.results[ 0 ].name,
+					total: item.results[ 0 ].views,
+				};
+			}
+			return item;
+		} );
 
 		return statsData.map( ( item ) => {
 			let actions = [];
@@ -972,5 +984,17 @@ export const normalizers = {
 				],
 			};
 		} );
+	},
+	/**
+	 * Returns a normalized statsEmailsSummaryByOpens array, ready for use in stats-module
+	 *
+	 * @param   {Object} data   Stats data
+	 * @param   {Object} query  Stats query
+	 * @param   {number} siteId  Site ID
+	 * @param   {Object} site    Site object
+	 * @returns {Array}       Normalized stats data
+	 */
+	statsEmailsSummaryByOpens: ( data, query, siteId, site ) => {
+		return normalizers.statsEmailsSummary( data, query, siteId, site );
 	},
 };

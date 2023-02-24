@@ -15,6 +15,7 @@ const countriesSupportingVat = [
 	'AT',
 	'BE',
 	'BG',
+	'CH',
 	'CY',
 	'CZ',
 	'DE',
@@ -24,6 +25,7 @@ const countriesSupportingVat = [
 	'ES',
 	'FI',
 	'FR',
+	'GB',
 	'HR',
 	'HU',
 	'IE',
@@ -39,7 +41,6 @@ const countriesSupportingVat = [
 	'SE',
 	'SI',
 	'SK',
-	'GB',
 	'XI',
 ];
 
@@ -204,6 +205,7 @@ export function VatForm( {
 					checked={ isFormActive }
 					onChange={ toggleVatForm }
 					label={ translate( 'Add VAT details' ) }
+					disabled={ isDisabled || Boolean( vatDetailsFromServer.id ) }
 				/>
 				{ countryCode === 'GB' && (
 					<CheckboxControl
@@ -217,11 +219,10 @@ export function VatForm( {
 			</div>
 			<div className="vat-form__row">
 				<Field
-					id={ section + '-organization' }
+					id={ section + '-vat-organization' }
 					type="text"
 					label={ String( translate( 'Organization for VAT' ) ) }
 					value={ vatDetailsInForm.name ?? '' }
-					autoComplete="organization"
 					disabled={ isDisabled }
 					onChange={ ( newValue: string ) => {
 						setVatDetailsInForm( {
@@ -246,7 +247,7 @@ export function VatForm( {
 			</div>
 			<div className="vat-form__row vat-form__row--full-width">
 				<Field
-					id={ section + '-address' }
+					id={ section + '-vat-address' }
 					type="text"
 					label={ String( translate( 'Address for VAT' ) ) }
 					value={ vatDetailsInForm.address ?? '' }

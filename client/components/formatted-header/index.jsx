@@ -16,6 +16,7 @@ function FormattedHeader( {
 	align,
 	isSecondary,
 	hasScreenOptions,
+	children,
 } ) {
 	const classes = classNames( 'formatted-header', className, {
 		'is-without-subhead': ! subHeaderText,
@@ -34,6 +35,7 @@ function FormattedHeader( {
 
 	return (
 		<header id={ id } className={ classes }>
+			{ children }
 			{ ! isSecondary && (
 				<h1 className={ headerClasses }>
 					{ preventWidows( headerText, 2 ) } { tooltip }
@@ -62,6 +64,7 @@ FormattedHeader.propTypes = {
 	isSecondary: PropTypes.bool,
 	align: PropTypes.oneOf( [ 'center', 'left', 'right' ] ),
 	hasScreenOptions: PropTypes.bool,
+	children: PropTypes.node,
 };
 
 FormattedHeader.defaultProps = {

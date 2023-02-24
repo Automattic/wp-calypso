@@ -19,6 +19,8 @@ const StatsCard = ( {
 	metricLabel,
 	mainItemLabel,
 	additionalHeaderColumns,
+	toggleControl,
+	headerClassName,
 }: StatsCardProps ) => {
 	const translate = useTranslate();
 
@@ -32,7 +34,7 @@ const StatsCard = ( {
 
 	// On one line shows card title and value column header
 	const simpleHeaderNode = (
-		<div className={ `${ BASE_CLASS_NAME }-header` }>
+		<div className={ classNames( `${ BASE_CLASS_NAME }-header`, headerClassName ) }>
 			{ titleNode }
 			{ ! isEmpty && <div>{ metricLabel ?? translate( 'Views' ) }</div> }
 		</div>
@@ -42,7 +44,10 @@ const StatsCard = ( {
 	// (main item, optional additional columns and value)
 	const splitHeaderNode = (
 		<div className={ `${ BASE_CLASS_NAME }-header ${ BASE_CLASS_NAME }-header--split` }>
-			{ titleNode }
+			<div className={ `${ BASE_CLASS_NAME }-header--main` }>
+				{ titleNode }
+				{ toggleControl }
+			</div>
 			{ ! isEmpty && (
 				<div className={ `${ BASE_CLASS_NAME }--column-header` }>
 					<div className={ `${ BASE_CLASS_NAME }--column-header__left` }>

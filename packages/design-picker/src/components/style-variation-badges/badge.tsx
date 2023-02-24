@@ -1,5 +1,6 @@
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import classnames from 'classnames';
 import { useMemo } from 'react';
 import { getStylesColorFromVariation } from './utils';
 import type { StyleVariation } from '../../types';
@@ -10,9 +11,10 @@ const SPACE_BAR_KEYCODE = 32;
 interface BadgeProps {
 	variation: StyleVariation;
 	onClick?: ( variation: StyleVariation ) => void;
+	isSelected?: boolean;
 }
 
-const Badge: React.FC< BadgeProps > = ( { variation, onClick } ) => {
+const Badge: React.FC< BadgeProps > = ( { variation, onClick, isSelected } ) => {
 	const { __ } = useI18n();
 	const color = useMemo(
 		() => variation && getStylesColorFromVariation( variation ),
@@ -25,7 +27,9 @@ const Badge: React.FC< BadgeProps > = ( { variation, onClick } ) => {
 
 	return (
 		<div
-			className="style-variation__badge-wrapper"
+			className={ classnames( 'style-variation__badge-wrapper', {
+				'style-variation__badge-is-selected': isSelected,
+			} ) }
 			tabIndex={ 0 }
 			role="button"
 			aria-label={
@@ -35,13 +39,19 @@ const Badge: React.FC< BadgeProps > = ( { variation, onClick } ) => {
 					: __( 'Preview with this style' )
 			}
 			onClick={ ( e ) => {
-				// Prevent the event from bubbling to the the parent button.
+				if ( isSelected ) {
+					return;
+				}
+				// Prevent the event from bubbling to the parent button.
 				e.stopPropagation();
 				onClick?.( variation );
 			} }
 			onKeyDown={ ( e ) => {
+				if ( isSelected ) {
+					return;
+				}
 				if ( e.keyCode === SPACE_BAR_KEYCODE ) {
-					// Prevent the event from bubbling to the the parent button.
+					// Prevent the event from bubbling to the parent button.
 					e.stopPropagation();
 					onClick?.( variation );
 				}

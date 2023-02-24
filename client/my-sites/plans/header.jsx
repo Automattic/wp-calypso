@@ -110,6 +110,7 @@ export default function PlansHeader() {
 	if ( null === domainFromHomeUpsellFlow ) {
 		return (
 			<FormattedHeader
+				className="plans__section-header modernized-header"
 				brandFont
 				headerText={ translate( 'Plans' ) }
 				subHeaderText={ plansDescription }
@@ -121,25 +122,27 @@ export default function PlansHeader() {
 	return (
 		<>
 			{ renderDeleteDialog() }
-			<header className="formatted-header navigation">
-				<Button onClick={ onBackClick } className="inline-help__cancel-button" borderless>
-					<Gridicon icon="arrow-left" size={ 18 } />
-					{ translate( 'Back' ) }
-				</Button>
-
-				<Button onClick={ onSkipClick } borderless href="/">
-					{ translate( 'Skip' ) }
-					<Gridicon icon="arrow-right" size={ 18 } />
-				</Button>
-			</header>
-
 			<FormattedHeader
-				className="header-text"
+				className="header-text plans__section-header modernized-header"
 				brandFont
 				headerText={ translate( 'Free for the first year!' ) }
 				subHeaderText={ domainUpsellDescription }
 				align="left"
-			/>
+			>
+				<div>
+					<div className="plans__section-header-navigation">
+						<Button onClick={ onBackClick } className="inline-help__cancel-button" borderless>
+							<Gridicon icon="arrow-left" size={ 18 } />
+							{ translate( 'Back' ) }
+						</Button>
+
+						<Button onClick={ onSkipClick } borderless href="/">
+							{ translate( 'Skip' ) }
+							<Gridicon icon="arrow-right" size={ 18 } />
+						</Button>
+					</div>
+				</div>
+			</FormattedHeader>
 		</>
 	);
 }

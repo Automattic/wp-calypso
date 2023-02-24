@@ -4,6 +4,7 @@ import {
 	PLAN_PREMIUM,
 	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 } from '@automattic/calypso-products';
+import { isFreeFlow, isBuildFlow, isWriteFlow } from '@automattic/onboarding';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -44,11 +45,14 @@ export function getEnhancedTasks(
 	const videoPressUploadCompleted =
 		site?.options?.launchpad_checklist_tasks_statuses?.video_uploaded || false;
 
+	const allowUpdateDesign =
+		flow && ( isFreeFlow( flow ) || isBuildFlow( flow ) || isWriteFlow( flow ) );
+
 	const homePageId = site?.options?.page_on_front;
 	// send user to Home page editor, fallback to FSE if page id is not known
 	const launchpadUploadVideoLink = homePageId
 		? `/page/${ siteSlug }/${ homePageId }`
-		: `/site-editor/${ siteSlug }`;
+		: `/site-editor/${ siteSlug }?canvas=edit`;
 
 	let planWarningText = displayGlobalStylesWarning
 		? translate(
@@ -73,7 +77,7 @@ export function getEnhancedTasks(
 			switch ( task.id ) {
 				case 'setup_write':
 					taskData = {
-						title: translate( 'Personalize your site' ),
+						title: translate( 'Set up your site' ),
 					};
 					break;
 				case 'setup_free':
@@ -109,7 +113,7 @@ export function getEnhancedTasks(
 						completed: siteEditCompleted,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, siteEditCompleted, task.id );
-							window.location.assign( `/site-editor/${ siteSlug }` );
+							window.location.assign( `/site-editor/${ siteSlug }?canvas=edit` );
 						},
 					};
 					break;
@@ -163,6 +167,13 @@ export function getEnhancedTasks(
 				case 'design_selected':
 					taskData = {
 						title: translate( 'Select a design' ),
+						disabled: ! allowUpdateDesign,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.assign(
+								`/setup/update-design/designSetup?siteSlug=${ siteSlug }&flowToReturnTo=${ flow }`
+							);
+						},
 					};
 					break;
 				case 'setup_link_in_bio':
@@ -182,7 +193,7 @@ export function getEnhancedTasks(
 						completed: linkInBioLinksEditCompleted,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, linkInBioLinksEditCompleted, task.id );
-							window.location.assign( `/site-editor/${ siteSlug }` );
+							window.location.assign( `/site-editor/${ siteSlug }?canvas=edit` );
 						},
 					};
 					break;
@@ -297,6 +308,16 @@ export function getEnhancedTasks(
 						},
 					};
 					break;
+				case 'domain_upsell':
+					taskData = {
+						title: translate( 'Choose a domain' ),
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.assign( `/domains/add/${ siteSlug }?domainAndPlanPackage=true` );
+						},
+						badgeText: translate( 'Upgrade plan' ),
+					};
+					break;
 			}
 			enhancedTaskList.push( { ...task, ...taskData } );
 		} );
@@ -330,4 +351,14 @@ export function getArrayOfFilteredTasks( tasks: Task[], flow: string | null ) {
 			return accumulator;
 		}, [] as Task[] )
 	);
+}
+
+// Filter out the domain_upsell task from the enhanced task list when the user is not on a free plan anymore
+export function filterDomainUpsellTask( enhancedTasks: Task[] | null, site: SiteDetails | null ) {
+	if ( enhancedTasks && ! site?.plan?.is_free ) {
+		return enhancedTasks?.filter( ( task ) => {
+			return task.id !== 'domain_upsell';
+		} );
+	}
+	return enhancedTasks;
 }

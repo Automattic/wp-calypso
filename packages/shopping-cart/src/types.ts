@@ -207,6 +207,7 @@ export type RequestCartTaxData = null | {
 		vat_id?: string;
 		organization?: string;
 		address?: string;
+		city?: string;
 	};
 };
 
@@ -317,6 +318,7 @@ export interface ResponseCartTaxData {
 		vat_id?: string;
 		organization?: string;
 		address?: string;
+		city?: string;
 	};
 	display_taxes: boolean;
 }
@@ -339,6 +341,7 @@ export type TempResponseCart = ResponseCart< RequestCartProduct >;
 export interface ResponseCartMessages {
 	errors?: ResponseCartMessage[];
 	success?: ResponseCartMessage[];
+	persistent_errors?: ResponseCartMessage[];
 }
 
 export interface ResponseCartMessage {
@@ -531,6 +534,7 @@ export interface CartLocation {
 	vatId?: string;
 	organization?: string;
 	address?: string;
+	city?: string;
 }
 
 export interface ResponseCartProductExtra {

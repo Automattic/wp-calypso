@@ -11,7 +11,7 @@ interface Props {
 	children?: ReactChild | ReactChildren;
 }
 export default function SsoNotice( props: Props ) {
-	const _ = useTranslate();
+	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const { siteId, children } = props;
@@ -25,9 +25,9 @@ export default function SsoNotice( props: Props ) {
 			<Notice
 				status="is-warning"
 				showDismiss={ false }
-				text={ _( 'Inviting users requires WordPress.com sign in' ) }
+				text={ translate( 'Inviting users requires WordPress.com sign in' ) }
 			>
-				<NoticeAction onClick={ enableSSO }>{ _( 'Enable' ) }</NoticeAction>
+				<NoticeAction onClick={ enableSSO }>{ translate( 'Enable' ) }</NoticeAction>
 			</Notice>
 			<FeatureExample>{ children }</FeatureExample>
 		</div>

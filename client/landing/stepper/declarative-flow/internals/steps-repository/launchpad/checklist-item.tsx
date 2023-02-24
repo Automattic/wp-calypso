@@ -11,6 +11,11 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 	// Display chevron if task is incomplete. Don't display chevron and badge at the same time.
 	const shouldDisplayChevron = ! completed && ! disabled && ! task.badgeText;
 
+	const handlePrimaryAction = () => {
+		localStorage.removeItem( 'launchpad_siteSlug' );
+		actionDispatch && actionDispatch();
+	};
+
 	return (
 		<li
 			className={ classnames( 'launchpad__task', {
@@ -25,7 +30,7 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 					className="launchpad__checklist-primary-button"
 					disabled={ disabled }
 					data-task={ id }
-					onClick={ actionDispatch }
+					onClick={ handlePrimaryAction }
 				>
 					{ title }
 				</Button>

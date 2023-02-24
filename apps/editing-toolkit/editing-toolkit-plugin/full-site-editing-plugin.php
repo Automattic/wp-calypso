@@ -334,22 +334,6 @@ function load_wpcom_block_editor_sidebar() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_sidebar' );
 
 /**
- * Coming soon module.
- */
-function load_coming_soon() {
-	if (
-		( defined( 'WPCOM_PUBLIC_COMING_SOON' ) && WPCOM_PUBLIC_COMING_SOON ) ||
-		apply_filters( 'a8c_enable_public_coming_soon', false )
-	) {
-		require_once __DIR__ . '/coming-soon/coming-soon.php';
-	}
-}
-// Todo: once coming-soon is migrated to the new jetpack-mu-wpcom plugin, coming-soon can be removed from ETK.
-if ( has_action( 'plugins_loaded', 'Automattic\Jetpack\Jetpack_Mu_Wpcom::load_coming_soon' ) === false ) {
-	add_action( 'plugins_loaded', __NAMESPACE__ . '\load_coming_soon' );
-}
-
-/**
  * What's New section of the Tools menu.
  */
 function load_whats_new() {

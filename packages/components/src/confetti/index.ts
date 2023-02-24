@@ -28,6 +28,8 @@ function fireConfetti() {
 				startVelocity: opts.startVelocity ? scale * opts.startVelocity : undefined,
 				spread: scale * opts.spread,
 				scalar: opts.scalar ? scale * opts.scalar : scale,
+				// counter react-modal very high z index, always render the confetti on top
+				zIndex: 100000,
 			} )
 		);
 	}

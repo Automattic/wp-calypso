@@ -1,7 +1,6 @@
 import { CompactCard, Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
-import * as React from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -15,7 +14,7 @@ import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
 import useVatDetails from './use-vat-details';
-import type { UpdateError } from './use-vat-details';
+import type { UpdateError, FetchError } from './use-vat-details';
 import type { VatDetails } from '@automattic/wpcom-checkout';
 
 import './style.scss';
@@ -23,6 +22,8 @@ import './style.scss';
 export default function VatInfoPage() {
 	const translate = useTranslate();
 	const { isLoading, fetchError } = useVatDetails();
+
+	useRecordVatEvents( { fetchError } );
 
 	if ( fetchError ) {
 		return (
@@ -69,7 +70,7 @@ function VatForm() {
 	};
 
 	useDisplayVatNotices( { error: updateError, success: isUpdateSuccessful } );
-	useRecordVatEvents( { error: updateError, success: isUpdateSuccessful } );
+	useRecordVatEvents( { updateError, isUpdateSuccessful } );
 
 	const clickSupport = () => {
 		reduxDispatch( recordTracksEvent( 'calypso_vat_details_support_click' ) );
@@ -165,6 +166,7 @@ function CountryCodeInput( {
 		'AT',
 		'BE',
 		'BG',
+		'CH',
 		'CY',
 		'CZ',
 		'DE',
@@ -174,6 +176,7 @@ function CountryCodeInput( {
 		'ES',
 		'FI',
 		'FR',
+		'GB',
 		'HR',
 		'HU',
 		'IE',
@@ -189,7 +192,6 @@ function CountryCodeInput( {
 		'SE',
 		'SI',
 		'SK',
-		'GB',
 		'XI',
 	];
 
@@ -268,22 +270,44 @@ function useDisplayVatNotices( {
 	}, [ error, success, reduxDispatch, translate ] );
 }
 
-function useRecordVatEvents( { error, success }: { error: UpdateError | null; success: boolean } ) {
+function useRecordVatEvents( {
+	updateError,
+	fetchError,
+	isUpdateSuccessful,
+}: {
+	updateError?: UpdateError | null;
+	fetchError?: FetchError | null;
+	isUpdateSuccessful?: boolean;
+} ) {
 	const reduxDispatch = useDispatch();
+	const lastFetchError = useRef< FetchError >();
+	const lastUpdateError = useRef< UpdateError >();
 
 	useEffect( () => {
-		if ( error ) {
+		if ( fetchError && lastFetchError.current !== fetchError ) {
 			reduxDispatch(
-				recordTracksEvent( 'calypso_vat_details_validation_failure', { error: error.error } )
+				recordTracksEvent( 'calypso_vat_details_fetch_failure', {
+					error: fetchError.error,
+					message: fetchError.message,
+				} )
 			);
+			lastFetchError.current = fetchError;
 			return;
 		}
 
-		if ( success ) {
+		if ( updateError && lastUpdateError.current !== updateError ) {
+			reduxDispatch(
+				recordTracksEvent( 'calypso_vat_details_validation_failure', { error: updateError.error } )
+			);
+			lastUpdateError.current = updateError;
+			return;
+		}
+
+		if ( isUpdateSuccessful ) {
 			reduxDispatch( recordTracksEvent( 'calypso_vat_details_validation_success' ) );
 			return;
 		}
-	}, [ error, success, reduxDispatch ] );
+	}, [ fetchError, updateError, isUpdateSuccessful, reduxDispatch ] );
 }
 
 function LoadingPlaceholder() {

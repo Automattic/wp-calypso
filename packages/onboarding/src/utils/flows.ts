@@ -1,5 +1,6 @@
 export const NEWSLETTER_FLOW = 'newsletter';
 export const NEWSLETTER_POST_SETUP_FLOW = 'newsletter-post-setup';
+export const HOSTING_LP_FLOW = 'hosting';
 export const LINK_IN_BIO_FLOW = 'link-in-bio';
 export const LINK_IN_BIO_TLD_FLOW = 'link-in-bio-tld';
 export const LINK_IN_BIO_POST_SETUP_FLOW = 'link-in-bio-post-setup';
@@ -14,8 +15,10 @@ export const MIGRATION_FLOW = 'import-focused';
 export const COPY_SITE_FLOW = 'copy-site';
 export const BUILD_FLOW = 'build';
 export const WRITE_FLOW = 'write';
-export const SITE_ASSEMBLER_FLOW = 'site-assembler';
 export const SITE_SETUP_FLOW = 'site-setup';
+export const WITH_THEME_FLOW = 'with-theme';
+export const WITH_THEME_ASSEMBLER_FLOW = 'with-theme-assembler';
+export const UPDATE_DESIGN_FLOW = 'update-design';
 
 export const isLinkInBioFlow = ( flowName: string | null ) => {
 	return Boolean(
@@ -26,6 +29,10 @@ export const isLinkInBioFlow = ( flowName: string | null ) => {
 
 export const isFreeFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ FREE_FLOW, FREE_POST_SETUP_FLOW ].includes( flowName ) );
+};
+
+export const isHostingLPFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && HOSTING_LP_FLOW === flowName );
 };
 
 export const isNewsletterOrLinkInBioFlow = ( flowName: string | null ) => {
@@ -65,6 +72,26 @@ export const isWooExpressFlow = ( flowName: string | null ) => {
 
 export const isBuildFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ BUILD_FLOW ].includes( flowName ) );
+};
+
+export const isWriteFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ WRITE_FLOW ].includes( flowName ) );
+};
+
+export const isUpdateDesignFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ UPDATE_DESIGN_FLOW ].includes( flowName ) );
+};
+
+export const isSiteAssemblerFlow = ( flowName: string | null ) => {
+	const SITE_ASSEMBLER_FLOWS = [ WITH_THEME_ASSEMBLER_FLOW ];
+
+	return !! flowName && SITE_ASSEMBLER_FLOWS.includes( flowName );
+};
+
+export const isWithThemeFlow = ( flowName: string | null ) => {
+	const WITH_THEME_FLOWS = [ WITH_THEME_FLOW, WITH_THEME_ASSEMBLER_FLOW ];
+
+	return !! flowName && WITH_THEME_FLOWS.includes( flowName );
 };
 
 export const ecommerceFlowRecurTypes = {

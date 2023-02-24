@@ -1,3 +1,7 @@
+@import "@automattic/typography/styles/fonts";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 body.is-section-business-plan-upgrade-upsell-new-design {
 	--color-surface-backdrop: var(--studio-white);
 }
@@ -14,15 +18,15 @@ main.business-plan-upgrade-upsell-new-design.main {
 	}
 
 	&__header {
-		text-align: center;
+		grid-area: header;
 		@extend .wp-brand-font;
 		font-size: $font-title-large;
 		font-weight: 400;
 		line-height: 40px;
 		color: var(--studio-blue-90);
-		margin-bottom: 50px;
+		margin-bottom: 24px;
 
-		@include breakpoint-deprecated( "<660px" ) {
+		@include breakpoint-deprecated( "<960px" ) {
 			font-size: $font-title-small;
 			margin-bottom: 0;
 		}
@@ -32,21 +36,19 @@ main.business-plan-upgrade-upsell-new-design.main {
 		text-transform: uppercase;
 		font-family: "SF Pro Text", $sans;
 		font-size: $font-body;
-		@include breakpoint-deprecated( "<660px" ) {
+		@include breakpoint-deprecated( "<960px" ) {
 			text-align: left;
 		}
 	}
 
 	&__header-title {
-		text-align: center;
 		@extend .wp-brand-font;
 		font-size: 2.75rem;
+		line-height: 1.1;
 		font-weight: 400;
-		line-height: 40px;
 		color: var(--studio-blue-90);
-		padding: 20px 0;
 
-		@include breakpoint-deprecated( "<660px" ) {
+		@include breakpoint-deprecated( "<960px" ) {
 			font-size: $font-headline-small;
 			text-align: left;
 			padding: 0 0 20px;
@@ -54,15 +56,18 @@ main.business-plan-upgrade-upsell-new-design.main {
 	}
 
 	&__image-container {
-		min-width: 200px;
 		grid-area: images;
-		text-align: center;
-		@include breakpoint-deprecated( "<660px" ) {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		@include breakpoint-deprecated( "<960px" ) {
 			padding: 20px 0;
 		}
 
 		img {
-			max-width: 60%;
+			@include breakpoint-deprecated( ">660px" ) {
+				margin: 0 0 0 30px;
+			}
 		}
 	}
 
@@ -77,36 +82,35 @@ main.business-plan-upgrade-upsell-new-design.main {
 	}
 
 	&__container {
-		max-width: 746px;
+		max-width: 1034px;
 		margin: 0 auto;
 		display: grid;
-		grid-auto-rows: auto 1fr;
-		grid-template-columns: minmax(0, 1fr) 50%;
+		grid-template-columns: fit-content(500px) auto;
 		grid-template-areas:
-			"body body images"
-			"countdown countdown images"
-			"buttons buttons images";
-		@include breakpoint-deprecated( "<660px" ) {
+			"header images"
+			"body images"
+			"buttons images";
+		@include breakpoint-deprecated( "<960px" ) {
 			grid-auto-rows: auto;
-			grid-template-columns: 1fr;
+			grid-template-columns: auto;
 			grid-template-areas:
-				"body body body"
-				"countdown countdown countdown"
-				"buttons buttons buttons"
-				"images images images";
+				"header"
+				"body"
+				"buttons"
+				"images";
 		}
 	}
 
 	&__checklist {
-		margin: 0 0 0.75em;
+		margin: 0 0 1.75em;
 
 		&-item {
+			max-width: 80%;
 			display: flex;
-			width: 100%;
 			align-items: flex-start;
-			margin-bottom: 0.5em;
+			margin: 0 0 10px 20px;
 
-			@include breakpoint-deprecated( "<660px" ) {
+			@include breakpoint-deprecated( "<960px" ) {
 				align-items: flex-start;
 			}
 		}
@@ -122,16 +126,18 @@ main.business-plan-upgrade-upsell-new-design.main {
 		}
 	}
 
+	&__countdown-counter {
+		display: block;
+		padding: 10px;
+		border-radius: 0;
+		background: #f5f1e1;
+		text-align: center;
+		margin-bottom: 20px;
+	}
+
 	&__footer &__decline-offer-button {
 		color: var(--color-primary);
 
-		@include breakpoint-deprecated( "<480px" ) {
-			width: 100%;
-		}
-
-	}
-
-	&__footer &__accept-offer-button {
 		@include breakpoint-deprecated( "<480px" ) {
 			width: 100%;
 			margin-bottom: 20px;
@@ -139,6 +145,13 @@ main.business-plan-upgrade-upsell-new-design.main {
 
 		@include breakpoint-deprecated( ">480px" ) {
 			margin-left: 20px;
+		}
+	}
+
+	&__footer &__accept-offer-button {
+		@include breakpoint-deprecated( "<480px" ) {
+			width: 100%;
+			margin-bottom: 10px;
 		}
 	}
 }

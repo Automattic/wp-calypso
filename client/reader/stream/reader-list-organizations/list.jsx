@@ -6,10 +6,10 @@ import { connect } from 'react-redux';
 import AutomatticLogo from 'calypso/assets/images/icons/a8c-logo.svg';
 import P2Logo from 'calypso/assets/images/icons/p2-logo.svg';
 import SVGIcon from 'calypso/components/svg-icon';
-import { toggleReaderSidebarOrganization } from 'calypso/state/reader-ui/sidebar/actions';
-import { isOrganizationOpen } from 'calypso/state/reader-ui/sidebar/selectors';
 import getOrganizationSites from 'calypso/state/reader/follows/selectors/get-reader-follows-organization';
 import { AUTOMATTIC_ORG_ID } from 'calypso/state/reader/organizations/constants';
+import { toggleReaderSidebarOrganization } from 'calypso/state/reader-ui/sidebar/actions';
+import { isOrganizationOpen } from 'calypso/state/reader-ui/sidebar/selectors';
 import ReaderListOrganizationsListItem from './list-item';
 import '../style.scss';
 

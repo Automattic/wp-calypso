@@ -4,6 +4,10 @@ declare global {
 	interface Window {
 		wpcomBlockEditorNavSidebar?: {
 			postIdsToExclude: string[];
+			currentSite: {
+				launchpad_screen: boolean | string;
+				site_intent: boolean | string;
+			};
 		};
 	}
 }

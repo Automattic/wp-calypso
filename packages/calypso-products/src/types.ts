@@ -151,6 +151,7 @@ export type Plan = BillingTerm & {
 	availableFor?: ( plan: PlanSlug ) => boolean;
 	getSignupCompareAvailableFeatures?: () => string[];
 	get2023PricingGridSignupWpcomFeatures?: () => Feature[];
+	get2023PlanComparisonFeatureOverride?: () => Feature[];
 	get2023PricingGridSignupJetpackFeatures?: () => Feature[];
 	get2023PricingGridSignupStorageOptions?: () => Feature[];
 	getProductId: () => number;

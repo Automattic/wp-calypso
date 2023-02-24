@@ -9,6 +9,7 @@ import SeoPreviewPane from 'calypso/components/seo-preview-pane';
 import SpinnerLine from 'calypso/components/spinner-line';
 import { addQueryArgs } from 'calypso/lib/route';
 import { hasTouch } from 'calypso/lib/touch-detect';
+import DomainUpsellCallout from '../domains/domain-upsell-callout';
 import Toolbar from './toolbar';
 
 import './style.scss';
@@ -390,6 +391,9 @@ export default class WebPreviewContent extends Component {
 					isLoading={ this.state.isLoadingSubpage }
 					isSticky={ this.props.isStickyToolbar }
 				/>
+				{ this.props.showExternal && this.props.isModalWindow && ! this.props.isPrivateAtomic && (
+					<DomainUpsellCallout trackEvent="site_preview_domain_upsell_callout" />
+				) }
 				{ this.props.belowToolbar }
 				{ ( ! isLoaded || this.state.isLoadingSubpage ) && <SpinnerLine /> }
 				<div
@@ -405,6 +409,7 @@ export default class WebPreviewContent extends Component {
 							<span className="web-preview__loading-message">{ this.props.loadingMessage }</span>
 						</div>
 					) }
+					{ this.props.bannerToShow }
 					{ 'seo' !== this.state.device && (
 						<div
 							onMouseEnter={ () => {
@@ -463,7 +468,7 @@ export default class WebPreviewContent extends Component {
 										onFocus={ () => this.setState( { showIFrameOverlay: true } ) }
 										onBlur={ () => this.setState( { showIFrameOverlay: false } ) }
 									>
-										{ translate( 'Edit' ) }
+										{ translate( 'Edit design' ) }
 									</button>
 								</div>
 							) }

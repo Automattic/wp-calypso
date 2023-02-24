@@ -50,6 +50,8 @@ export function keyToString( postKey ) {
 
 	if ( postKey.isRecommendationBlock ) {
 		return `rec-${ postKey.index }`;
+	} else if ( postKey.isPromptBlock ) {
+		return `prompt-${ postKey.index }`;
 	} else if ( postKey.feedId ) {
 		return `${ postKey.postId }-${ postKey.feedId }`;
 	} else if ( postKey.blogId ) {

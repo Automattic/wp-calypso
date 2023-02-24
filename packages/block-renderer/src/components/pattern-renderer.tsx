@@ -9,6 +9,7 @@ interface Props {
 	minHeight?: number;
 	maxHeight?: string | number;
 	maxHeightFor100vh?: number;
+	placeholder?: JSX.Element;
 }
 
 const PatternRenderer = ( {

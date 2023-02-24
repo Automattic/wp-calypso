@@ -1,5 +1,11 @@
 import config from '@automattic/calypso-config';
-import { isJetpackPlanSlug, PRODUCT_JETPACK_SOCIAL_BASIC } from '@automattic/calypso-products';
+import {
+	isJetpackPlanSlug,
+	PRODUCT_JETPACK_SOCIAL_ADVANCED,
+	PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
+	PRODUCT_JETPACK_SOCIAL_BASIC,
+	PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
+} from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { useStoreItemInfoContext } from '../context/store-item-info-context';
 import { ItemPrice } from '../item-price';
@@ -95,15 +101,20 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 						isSuperseded
 					);
 
+					const isSocialProduct = [
+						PRODUCT_JETPACK_SOCIAL_ADVANCED,
+						PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
+						PRODUCT_JETPACK_SOCIAL_BASIC,
+						PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
+					].includes( item.productSlug );
+
 					// Go to the checkout page for all products when they click on the 'GET' CTA, except for Jetpack Social where we open a modal.
 					const ctaHref =
-						item.productSlug === PRODUCT_JETPACK_SOCIAL_BASIC &&
-						config.isEnabled( 'jetpack-social/advanced-plan' )
-							? '#${item.productSlug}'
+						isSocialProduct && config.isEnabled( 'jetpack-social/advanced-plan' )
+							? `#${ item.productSlug }`
 							: getCheckoutURL( item );
 					const onClickCta =
-						item.productSlug === PRODUCT_JETPACK_SOCIAL_BASIC &&
-						config.isEnabled( 'jetpack-social/advanced-plan' )
+						isSocialProduct && config.isEnabled( 'jetpack-social/advanced-plan' )
 							? onClickMoreInfoFactory( item )
 							: getOnClickPurchase( item );
 

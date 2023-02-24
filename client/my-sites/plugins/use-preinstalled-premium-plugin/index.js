@@ -1,6 +1,5 @@
 import { isJetpackSearchFree, isJetpackSearch } from '@automattic/calypso-products';
 import { useSelector } from 'react-redux';
-import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import { getSitesWithPlugin } from 'calypso/state/plugins/installed/selectors';
@@ -19,8 +18,6 @@ export default function usePreinstalledPremiumPlugin( pluginSlug ) {
 
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const billingPeriod = useSelector( getBillingInterval );
-
-	useQuerySitePurchases( selectedSiteId );
 
 	const isPreinstalledPremiumPluginUpgraded = useSelector(
 		( state ) =>

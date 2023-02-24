@@ -85,7 +85,7 @@ export type Flow = {
 
 export type StepProps = {
 	navigation: NavigationControls;
-	stepName?: string | null;
+	stepName: string;
 	flow: string | null;
 	data?: Record< string, unknown >;
 };
@@ -104,3 +104,17 @@ export type AssertConditionResult = {
 	state: AssertConditionState;
 	message?: string;
 };
+
+export interface Plugin {
+	slug: string;
+}
+
+export interface PluginsResponse {
+	plugins: Plugin[];
+}
+
+export interface FailureInfo {
+	type: string;
+	code: number | string;
+	error: string;
+}

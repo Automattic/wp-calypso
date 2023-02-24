@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -17,20 +16,12 @@ import WebPreview from 'calypso/components/web-preview';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { getSitePost, getPostPreviewUrl } from 'calypso/state/posts/selectors';
-import {
-	getSiteOption,
-	getSiteSlug,
-	isJetpackSite,
-	isSitePreviewable,
-} from 'calypso/state/sites/selectors';
+import { getSiteSlug, isJetpackSite, isSitePreviewable } from 'calypso/state/sites/selectors';
 import { getPostStat, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PostDetailHighlightsSection from '../post-detail-highlights-section';
 import PostDetailTableSection from '../post-detail-table-section';
-import PostMonths from '../stats-detail-months';
-import PostWeeks from '../stats-detail-weeks';
 import StatsPlaceholder from '../stats-module/placeholder';
-import PostLikes from '../stats-post-likes';
 import PostSummary from '../stats-post-summary';
 
 class StatsPostDetail extends Component {
@@ -95,9 +86,9 @@ class StatsPostDetail extends Component {
 	};
 
 	getTitle() {
-		const { isLatestPostsHomepage, post, postFallback, translate } = this.props;
+		const { isPostHomepage, post, postFallback, translate } = this.props;
 
-		if ( isLatestPostsHomepage ) {
+		if ( isPostHomepage ) {
 			return translate( 'Home page / Archives' );
 		}
 
@@ -114,10 +105,11 @@ class StatsPostDetail extends Component {
 
 	render() {
 		const {
-			isLatestPostsHomepage,
+			isPostHomepage,
 			isRequestingStats,
 			countViews,
 			post,
+			postFallback,
 			postId,
 			siteId,
 			translate,
@@ -139,15 +131,19 @@ class StatsPostDetail extends Component {
 			noViewsLabel = translate( 'Your post has not received any views yet!' );
 		}
 
-		const isFeatured = config.isEnabled( 'stats/enhance-post-detail' );
+		// Make title to PostStatsCard for Homepage
+		const passedPost = post ||
+			postFallback || {
+				title: this.getTitle(),
+			};
 
-		return isFeatured ? (
+		return (
 			<Main fullWidthLayout>
 				<PageViewTracker
 					path={ `/stats/${ postType }/:post_id/:site` }
 					title={ `Stats > Single ${ titlecase( postType ) }` }
 				/>
-				{ siteId && ! isLatestPostsHomepage && <QueryPosts siteId={ siteId } postId={ postId } /> }
+				{ siteId && ! isPostHomepage && <QueryPosts siteId={ siteId } postId={ postId } /> }
 				{ siteId && <QueryPostStats siteId={ siteId } postId={ postId } /> }
 
 				<div className="stats has-fixed-nav">
@@ -161,7 +157,7 @@ class StatsPostDetail extends Component {
 						) }
 					</FixedNavigationHeader>
 
-					<PostDetailHighlightsSection siteId={ siteId } postId={ postId } post={ post } />
+					<PostDetailHighlightsSection siteId={ siteId } postId={ postId } post={ passedPost } />
 
 					<StatsPlaceholder isLoading={ isLoading } />
 
@@ -197,73 +193,6 @@ class StatsPostDetail extends Component {
 					<Button href={ `/post/${ siteSlug }/${ postId }` }>{ translate( 'Edit' ) }</Button>
 				</WebPreview>
 			</Main>
-		) : (
-			<Main className="has-fixed-nav" wideLayout>
-				<PageViewTracker
-					path={ `/stats/${ postType }/:post_id/:site` }
-					title={ `Stats > Single ${ titlecase( postType ) }` }
-				/>
-				{ siteId && ! isLatestPostsHomepage && <QueryPosts siteId={ siteId } postId={ postId } /> }
-				{ siteId && <QueryPostStats siteId={ siteId } postId={ postId } /> }
-
-				<FixedNavigationHeader
-					navigationItems={ this.getNavigationItemsWithTitle( this.getTitle() ) }
-				>
-					{ showViewLink && (
-						<Button onClick={ this.openPreview }>
-							<span>{ actionLabel }</span>
-						</Button>
-					) }
-				</FixedNavigationHeader>
-
-				<StatsPlaceholder isLoading={ isLoading } />
-
-				{ ! isLoading && countViews === 0 && (
-					<EmptyContent
-						title={ noViewsLabel }
-						line={ translate( 'Learn some tips to attract more visitors' ) }
-						action={ translate( 'Get more traffic!' ) }
-						actionURL="https://wordpress.com/support/getting-more-views-and-traffic/"
-						actionTarget="blank"
-						illustration={ IllustrationStats }
-						illustrationWidth={ 150 }
-					/>
-				) }
-
-				{ ! isLoading && countViews > 0 && (
-					<div>
-						<PostSummary siteId={ siteId } postId={ postId } />
-						{ !! postId && <PostLikes siteId={ siteId } postId={ postId } postType={ postType } /> }
-						<PostMonths
-							dataKey="years"
-							title={ translate( 'Months and years' ) }
-							total={ translate( 'Total' ) }
-							siteId={ siteId }
-							postId={ postId }
-						/>
-						<PostMonths
-							dataKey="averages"
-							title={ translate( 'Average per day' ) }
-							total={ translate( 'Overall' ) }
-							siteId={ siteId }
-							postId={ postId }
-						/>
-						<PostWeeks siteId={ siteId } postId={ postId } />
-					</div>
-				) }
-
-				<JetpackColophon />
-
-				<WebPreview
-					showPreview={ this.state.showPreview }
-					defaultViewportDevice="tablet"
-					previewUrl={ `${ previewUrl }?demo=true&iframe=true&theme_preview=true` }
-					externalUrl={ previewUrl }
-					onClose={ this.closePreview }
-				>
-					<Button href={ `/post/${ siteSlug }/${ postId }` }>{ translate( 'Edit' ) }</Button>
-				</WebPreview>
-			</Main>
 		);
 	}
 }
@@ -272,18 +201,17 @@ const connectComponent = connect( ( state, { postId } ) => {
 	const siteId = getSelectedSiteId( state );
 	const isJetpack = isJetpackSite( state, siteId );
 	const isPreviewable = isSitePreviewable( state, siteId );
-	const isLatestPostsHomepage =
-		getSiteOption( state, siteId, 'show_on_front' ) === 'posts' && postId === 0;
+	const isPostHomepage = postId === 0;
 
 	return {
 		post: getSitePost( state, siteId, postId ),
 		// NOTE: Post object from the stats response does not conform to the data structure returned by getSitePost!
 		postFallback: getPostStat( state, siteId, postId, 'post' ),
-		isLatestPostsHomepage,
+		isPostHomepage,
 		countViews: getPostStat( state, siteId, postId, 'views' ),
 		isRequestingStats: isRequestingPostStats( state, siteId, postId ),
 		siteSlug: getSiteSlug( state, siteId ),
-		showViewLink: ! isJetpack && ! isLatestPostsHomepage && isPreviewable,
+		showViewLink: ! isJetpack && ! isPostHomepage && isPreviewable,
 		previewUrl: getPostPreviewUrl( state, siteId, postId ),
 		siteId,
 	};

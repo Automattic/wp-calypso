@@ -5,15 +5,27 @@
 	padding-top: 17px;
 }
 
-body.is-section-plans.is-domain-sidebar-experiment-user {
+body.is-section-plans.is-domain-plan-package-flow {
 	background: var(--color-body-background);
 
 	.layout__content {
 		padding-left: 0 !important;
 	}
 
+	.plans__has-sidebar {
+		.section-nav {
+			display: none;
+		}
+	}
+
 	.plans__header {
 		display: block;
+		overflow: auto;
+
+		.formatted-header__title,
+		.formatted-header__subtitle {
+			max-width: unset;
+		}
 
 		h1 {
 			font-family: $brand-serif;
@@ -36,77 +48,6 @@ body.is-section-plans.is-domain-sidebar-experiment-user {
 			p {
 				padding: 0 80px;
 			}
-		}
-	}
-
-	.main.is-wide-layout {
-		max-width: $break-medium;
-	}
-
-	// plans comparison grid
-	.plan-features-comparison__table-item {
-		border-left: none;
-		background-color: transparent;
-
-		&:last-of-type {
-			border-right: none;
-		}
-
-		.plan-pill.is-in-signup {
-			font-size: 0.75rem;
-			font-weight: 500;
-			letter-spacing: 0.2px;
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-			line-height: 1.25rem;
-			padding: 0 8px;
-			right: 52%;
-			transform: translate(50%);
-			border-radius: 4px;
-			background-color: var(--studio-green-5);
-			color: var(--studio-gray-80);
-		}
-	}
-
-	.plan-features-comparison__header {
-		background-color: transparent;
-	}
-
-	.plan-features-comparison__row:last-of-type .plan-features-comparison__table-item {
-		border-bottom: none;
-	}
-
-	.plan-features--signup .is-premium-plan .plan-features-comparison__header-title {
-		font-weight: 500;
-	}
-
-	.plan-features--signup .plan-features-comparison__pricing {
-		.plan-price {
-			font-weight: 500;
-
-			.plan-price__integer {
-				font-weight: 500;
-			}
-		}
-
-		.plan-features-comparison__header-billing-info {
-			font-weight: 500;
-		}
-	}
-
-	.plan-features-comparison__item-title {
-		color: var(--studio-gray-60);
-	}
-
-	.plan-features-comparison__item.plan-features-comparison__item-available {
-		.plan-features-comparison__item-annual-plan-container
-		.plan-features-comparison__item-annual-plan {
-			color: var(--studio-orange-40);
-		}
-	}
-
-	.plans-features-main__group.is-scrollable:not(.is-2023-pricing-grid) {
-		@media ( min-width: 1800px ) {
-			margin-left: -360px;
 		}
 	}
 }

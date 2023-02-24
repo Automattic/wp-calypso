@@ -7,6 +7,7 @@ import {
 	ENABLE_AUTOUPDATE_PLUGIN,
 	REMOVE_PLUGIN,
 	UPDATE_PLUGIN,
+	INSTALL_PLUGIN,
 } from 'calypso/lib/plugins/constants';
 import {
 	PLUGIN_INSTALLATION_COMPLETED,
@@ -159,6 +160,11 @@ export const getPluginActionStatusMessages = (
 				? translate( 'Failed' )
 				: translate( 'Failed on %(count)s site', 'Failed on %(count)s sites', translationArgs ),
 			[ PLUGIN_INSTALLATION_UP_TO_DATE ]: translate( 'Plugin already up to date' ),
+		},
+		[ INSTALL_PLUGIN ]: {
+			[ PLUGIN_INSTALLATION_IN_PROGRESS ]: translate( 'Installing' ),
+			[ PLUGIN_INSTALLATION_COMPLETED ]: translate( 'Installed' ),
+			[ PLUGIN_INSTALLATION_ERROR ]: translate( 'Failed to install' ),
 		},
 	};
 };

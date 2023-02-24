@@ -40,6 +40,14 @@ Get plugins installed on a list of sites (can also be just one site, but it shou
 
 Get the most recent status for a plugin action (including "inProgress" for currently-running actions).
 
+### `getAllPluginsIndexedByPluginSlug( state: Object )`
+
+Get an object of all installed plugins in all sites, indexed by the plugin slug.
+
+### `getAllPluginsIndexedBySiteId( state: Object )`
+
+Get an object of all installed plugins of each site, indexed by site ID.
+
 ## Reducer
 
 Data from the aforementioned actions is added to the global state tree, under `plugins.installed`, with the following structure:

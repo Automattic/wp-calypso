@@ -1,6 +1,46 @@
 @import "@wordpress/base-styles/breakpoints";
 
-body.is-section-plans.is-trial-plan {
+body.is-section-plans.is-ecommerce-trial-plan {
+
+	// Overwrite section nav styles so they look like the desktop version on mobile as well
+	.section-nav {
+		.section-nav__mobile-header {
+			display: none;
+		}
+
+		.section-nav-group {
+			display: flex;
+		}
+
+		.section-nav-tabs__list {
+			display: flex;
+		}
+
+		.section-nav-tab {
+			border-bottom: 2px solid transparent;
+
+			&.is-selected {
+				border-bottom-color: var(--color-neutral-100);
+
+				.section-nav-tab__link {
+					background: none;
+				}
+
+				.section-nav-tab__text {
+					color: var(--color-neutral-100);
+				}
+			}
+		}
+
+		.section-nav-tab__link {
+			display: block;
+			font-weight: inherit;
+		}
+
+		.section-nav-tab__text {
+			display: inline;
+		}
+	}
 
 	&.color-scheme {
 		--color-surface-backdrop: var(--color-surface);
@@ -9,6 +49,10 @@ body.is-section-plans.is-trial-plan {
 	.current-plan__content {
 		.section-nav {
 			box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+		}
+
+		.e-commerce-trial-current-plan__banner-wrapper {
+			margin: 20px 0;
 		}
 
 		.e-commerce-trial-current-plan__trial-card {
@@ -89,6 +133,7 @@ body.is-section-plans.is-trial-plan {
 			text-align: center;
 			font-size: $font-body;
 			color: var(--color-neutral-40);
+			padding: 0 25%;
 
 			@media (max-width: $break-mobile) {
 				text-align: left;

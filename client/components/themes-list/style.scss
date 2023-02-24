@@ -18,10 +18,21 @@
 
 	.pattern-assembler-cta-wrapper {
 		grid-column: 1/-1;
-		grid-row-start: 4;
+		grid-row-start: 9;
 		background: #fff;
 		box-shadow: 0 0 0 1px var(--color-border-subtle);
 		margin: 0 16px 48px;
+	}
+
+	.second-upsell-wrapper {
+		grid-column: 1/-1;
+		grid-row-start: 7;
+		padding: 0 16px;
+
+		.upsell-nudge {
+			margin-top: 0 !important;
+			margin-bottom: 2rem !important;
+		}
 	}
 }
 

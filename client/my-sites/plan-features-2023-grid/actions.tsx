@@ -1,10 +1,10 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	getPlanClass,
 	isMonthly,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_P2_FREE,
 	isFreePlan,
+	is2023PricingGridActivePage,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
@@ -204,9 +204,9 @@ const LoggedInPlansFeatureActionButton = ( {
 		);
 	}
 
-	const is2023OnboardingPricingGrid = isEnabled( 'onboarding/2023-pricing-grid' );
+	const is2023PricingGridVisible = is2023PricingGridActivePage( window );
 	if ( ! availableForPurchase ) {
-		if ( is2023OnboardingPricingGrid ) {
+		if ( is2023PricingGridVisible ) {
 			return (
 				<Plans2023Tooltip text={ translate( 'Please contact support to downgrade your plan.' ) }>
 					<DummyDisabledButton>
