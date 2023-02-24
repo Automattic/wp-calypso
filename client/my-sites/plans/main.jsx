@@ -35,6 +35,7 @@ import { getPlanSlug } from 'calypso/state/plans/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
@@ -43,8 +44,9 @@ import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provider';
 import withCartKey from '../checkout/with-cart-key';
 import DomainAndPlanPackageNavigation from '../domains/components/domain-and-plan-package/navigation';
+import DomainUpsellDialog from './components/domain-upsell-dialog';
+import PlansHeader from './components/plans-header';
 import ECommerceTrialPlansPage from './ecommerce-trial';
-import PlansHeader from './header';
 import ModernizedLayout from './modernized-layout';
 
 import './style.scss';
@@ -75,6 +77,7 @@ class Plans extends Component {
 		redirectTo: PropTypes.string,
 		selectedSite: PropTypes.object,
 		isDomainAndPlanPackageFlow: PropTypes.bool,
+		domainFromHomeUpsellFlow: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -214,6 +217,7 @@ class Plans extends Component {
 			is2023PricingGridVisible,
 			isDomainAndPlanPackageFlow,
 			isJetpackNotAtomic,
+			domainFromHomeUpsellFlow,
 		} = this.props;
 
 		if ( ! selectedSite || this.isInvalidPlanInterval() || ! currentPlan ) {
@@ -222,7 +226,6 @@ class Plans extends Component {
 
 		const currentPlanSlug = selectedSite?.plan?.product_slug;
 		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
-
 		const allDomains = isDomainAndPlanPackageFlow ? getDomainRegistrations( this.props.cart ) : [];
 		const yourDomainName = allDomains.length
 			? allDomains.slice( -1 )[ 0 ]?.meta
@@ -230,6 +233,17 @@ class Plans extends Component {
 		const goBackLink = addQueryArgs( `/domains/add/${ selectedSite.slug }`, {
 			domainAndPlanPackage: true,
 		} );
+		const domainUpsellDescription = translate(
+			'With an annual plan, you can get {{strong}}%(domainName)s for free{{/strong}} for the first year, Jetpack essential features, live chat support, and all the features that will take your site to the next level.',
+			{
+				args: {
+					domainName: domainFromHomeUpsellFlow,
+				},
+				components: {
+					strong: <strong />,
+				},
+			}
+		);
 
 		return (
 			<div>
@@ -242,9 +256,12 @@ class Plans extends Component {
 				<QueryContactDetailsCache />
 				<QueryPlans />
 				<TrackComponentView eventName="calypso_plans_view" />
+				<DomainUpsellDialog domain={ domainFromHomeUpsellFlow } />
 				{ canAccessPlans && (
 					<div>
-						{ ! isDomainAndPlanPackageFlow && <PlansHeader /> }
+						{ ! isDomainAndPlanPackageFlow && (
+							<PlansHeader domainFromHomeUpsellFlow={ domainFromHomeUpsellFlow } />
+						) }
 						{ isDomainAndPlanPackageFlow && (
 							<>
 								<div className="plans__header">
@@ -278,6 +295,15 @@ class Plans extends Component {
 								fullWidthLayout={ is2023PricingGridVisible && ! isEcommerceTrial }
 								wideLayout={ ! is2023PricingGridVisible || isEcommerceTrial }
 							>
+								{ ! isDomainAndPlanPackageFlow && domainFromHomeUpsellFlow && (
+									<FormattedHeader
+										className="header-text plans__formatted-header is-domain-upsell"
+										brandFont
+										headerText={ translate( 'Free for the first year!' ) }
+										subHeaderText={ domainUpsellDescription }
+										align="center"
+									/>
+								) }
 								{ ! isDomainAndPlanPackageFlow && domainAndPlanPackage && (
 									<DomainAndPlanUpsellNotice />
 								) }
@@ -320,6 +346,7 @@ const ConnectedPlans = connect( ( state ) => {
 		is2023PricingGridVisible,
 		isDomainAndPlanPackageFlow: !! getCurrentQueryArguments( state )?.domainAndPlanPackage,
 		isJetpackNotAtomic: isJetpackSite( state, selectedSiteId, { treatAtomicAsJetpackSite: false } ),
+		domainFromHomeUpsellFlow: getDomainFromHomeUpsellInQuery( state ),
 	};
 } )( withCartKey( withShoppingCart( localize( withTrackingTool( 'HotJar' )( Plans ) ) ) ) );
 

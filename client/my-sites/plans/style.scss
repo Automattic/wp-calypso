@@ -3,6 +3,23 @@
 
 .plans main {
 	padding-top: 17px;
+	// a formatted-header instance used within main (not as section header)
+	.plans__formatted-header {
+		&.is-domain-upsell {
+			margin-top: 30px;
+			display: flex;
+			justify-content: center;
+
+			.formatted-header__title,
+			.formatted-header__subtitle {
+				max-width: $break-medium;
+			}
+
+			.formatted-header__title {
+				font-size: 2rem;
+			}
+		}
+	}
 }
 
 body.is-section-plans.is-domain-plan-package-flow {
