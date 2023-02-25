@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Button, Gridicon } from '@automattic/components';
+import { Button, Gridicon, ShortenedNumber } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
@@ -214,11 +214,36 @@ export default function SiteStatusContent( {
 			content = <Gridicon icon="minus-small" size={ 18 } className="sites-overview__icon-active" />;
 			break;
 		}
-		case 'upward': {
+		case 'up': {
 			content = (
-				<Badge className="sites-overview__badge" type="upward">
-					{ value }
-				</Badge>
+				<>
+					<Gridicon icon="arrow-up" size={ 18 } className="sites-overview__icon-up" />
+					<div className="sites-overview__stats">
+						<ShortenedNumber value={ value } />
+					</div>
+				</>
+			);
+			break;
+		}
+		case 'down': {
+			content = (
+				<>
+					<Gridicon icon="arrow-down" size={ 18 } className="sites-overview__icon-down" />
+					<div className="sites-overview__stats">
+						<ShortenedNumber value={ value } />
+					</div>
+				</>
+			);
+			break;
+		}
+		case 'same': {
+			content = (
+				<>
+					<Gridicon icon="ellipsis-circle" size={ 18 } className="sites-overview__icon-same" />
+					<div className="sites-overview__stats">
+						<ShortenedNumber value={ value } />
+					</div>
+				</>
 			);
 			break;
 		}

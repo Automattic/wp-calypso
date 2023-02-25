@@ -139,6 +139,24 @@
 	vertical-align: middle;
 	color: var(--studio-gray-5);
 }
+.sites-overview__icon-up {
+	vertical-align: middle;
+	color: var(--studio-gray-5);
+}
+
+.sites-overview__icon-up {
+	vertical-align: middle;
+	color: var(--studio-jetpack-green-50);
+}
+.sites-overview__icon-down {
+	vertical-align: middle;
+	color: var(--studio-gray-5);
+	fill: var(--studio-gray-5);
+}
+.sites-overview__icon-same {
+	vertical-align: middle;
+	color: var(--studio-gray-5);
+}
 .sites-overview__disabled {
 	color: var(--studio-gray-5);
 	cursor: not-allowed;
@@ -246,6 +264,13 @@
 	@include break-wide() {
 		max-width: fit-content;
 	}
+}
+
+.sites-overview__stats {
+	display: inline-block;
+	line-height: 17px;
+	height: 18px;
+	padding: 2px 5px;
 }
 .sites-overview__tooltip {
 	.popover__arrow {
