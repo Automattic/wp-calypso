@@ -94,6 +94,18 @@ export const tasks: Task[] = [
 		completed: false,
 		disabled: true,
 	},
+	{
+		id: 'stripe_account_connected',
+		completed: true,
+		disabled: false,
+		taskType: 'blog',
+	},
+	{
+		id: 'paid_plan_created',
+		completed: true,
+		disabled: false,
+		taskType: 'blog',
+	},
 ];
 
 const linkInBioTaskList = [
@@ -111,6 +123,8 @@ export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 		'subscribers_added',
 		'verify_email',
 		'first_post_published',
+		'stripe_account_connected',
+		'paid_plan_created',
 	],
 	[ LINK_IN_BIO_FLOW ]: linkInBioTaskList,
 	[ LINK_IN_BIO_TLD_FLOW ]: linkInBioTaskList,

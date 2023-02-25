@@ -341,6 +341,26 @@ export function getEnhancedTasks(
 						title: translate( 'Confirm Email (Check Your Inbox)' ),
 					};
 					break;
+				case 'stripe_account_connected':
+					taskData = {
+						title: translate( 'Connect Stripe Account' ),
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.assign( `/setup/connect-stripe-account/${ siteSlug }` );
+						},
+					};
+					break;
+				case 'paid_plan_created':
+					taskData = {
+						title: translate( 'Set the Newsletter Price' ),
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.assign(
+								`/setup/newsletter-post-setup/newsletterPostSetup?siteSlug=${ siteSlug }`
+							);
+						},
+					};
+					break;
 			}
 			enhancedTaskList.push( { ...task, ...taskData } );
 		} );
