@@ -1,9 +1,10 @@
 import config from '@automattic/calypso-config';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
+import { UniversalNavbarHeader, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { CookieBannerContainerSSR } from 'calypso/blocks/cookie-banner';
 import AsyncLoad from 'calypso/components/async-load';
 import { withCurrentRoute } from 'calypso/components/route';
@@ -12,17 +13,17 @@ import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import MasterbarLogin from 'calypso/layout/masterbar/login';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
-import UniversalNavbarFooter from 'calypso/layout/universal-navbar-footer';
-import UniversalNavbarFooterAutomattic from 'calypso/layout/universal-navbar-footer-automattic';
-import UniversalNavbarHeader from 'calypso/layout/universal-navbar-header';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
+import { navigate } from 'calypso/lib/navigate';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { isPartnerSignupQuery } from 'calypso/state/login/utils';
 import {
 	getCurrentOAuth2Client,
 	showOAuth2Layout,
 } from 'calypso/state/oauth2-clients/ui/selectors';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import { masterbarIsVisible } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
@@ -51,6 +52,10 @@ const LayoutLoggedOut = ( {
 	isPartnerSignupStart,
 	locale,
 } ) => {
+	const localizeUrl = useLocalizeUrl();
+	const isLoggedIn = useSelector( isUserLoggedIn );
+	const currentRoute = useSelector( getCurrentRoute );
+
 	const isCheckout = sectionName === 'checkout';
 	const isCheckoutPending = sectionName === 'checkout-pending';
 	const isJetpackCheckout =
@@ -101,9 +106,9 @@ const LayoutLoggedOut = ( {
 	} else if ( config.isEnabled( 'jetpack-cloud' ) || isWpMobileApp() || isJetpackThankYou ) {
 		masterbar = null;
 	} else if ( sectionName === 'plugins' ) {
-		masterbar = <UniversalNavbarHeader />;
+		masterbar = <UniversalNavbarHeader isLoggedIn={ isLoggedIn } sectionName={ sectionName } />;
 	} else if ( sectionName === 'themes' || sectionName === 'theme' ) {
-		masterbar = <UniversalNavbarHeader />;
+		masterbar = <UniversalNavbarHeader isLoggedIn={ isLoggedIn } sectionName={ sectionName } />;
 	} else {
 		masterbar = (
 			<MasterbarLoggedOut
@@ -142,8 +147,14 @@ const LayoutLoggedOut = ( {
 
 			{ sectionName === 'plugins' && (
 				<>
-					<UniversalNavbarFooter />
-					<UniversalNavbarFooterAutomattic />
+					<UniversalNavbarFooter
+						currentRoute={ currentRoute }
+						isLoggedIn={ isLoggedIn }
+						onLanguageChange={ ( e ) => {
+							navigate( e.target.value );
+							window.location.reload();
+						} }
+					/>
 					{ config.isEnabled( 'layout/support-article-dialog' ) && (
 						<AsyncLoad require="calypso/blocks/support-article-dialog" placeholder={ null } />
 					) }
@@ -151,10 +162,14 @@ const LayoutLoggedOut = ( {
 			) }
 
 			{ [ 'themes', 'theme' ].includes( sectionName ) && (
-				<>
-					<UniversalNavbarFooter />
-					<UniversalNavbarFooterAutomattic />
-				</>
+				<UniversalNavbarFooter
+					onLanguageChange={ ( e ) => {
+						navigate( e.target.value );
+						window.location.reload();
+					} }
+					currentRoute={ currentRoute }
+					isLoggedIn={ isLoggedIn }
+				/>
 			) }
 		</div>
 	);
