@@ -77,7 +77,12 @@ export function useLocale(): string {
 		} );
 	}, [ providerHasLocale ] );
 
-	return fromProvider || fromWpI18n || window?._currentUserLocale || 'en';
+	return (
+		fromProvider ||
+		fromWpI18n ||
+		( typeof window !== 'undefined' && window._currentUserLocale ) ||
+		'en'
+	);
 }
 
 /**
