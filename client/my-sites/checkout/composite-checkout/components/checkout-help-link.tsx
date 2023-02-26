@@ -147,7 +147,7 @@ export default function CheckoutHelpLink() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 
-	const cartErrors = responseCart.messages?.errors || [];
+	const cartErrors = responseCart.messages?.persistent_errors || [];
 	const purchasesAreBlocked = cartErrors.some(
 		( error: ResponseCartMessage ) => error.code === 'blocked'
 	);
