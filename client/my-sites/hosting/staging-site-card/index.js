@@ -107,7 +107,7 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 
 	return (
 		<Card className="staging-site-card">
-			<MaterialIcon icon="build" size={ 24 } />
+			<MaterialIcon icon="share" size={ 24 } />
 			<CardHeading id="staging-site">{ translate( 'Staging site' ) }</CardHeading>
 			{ showAddStagingSite && ! addingStagingSite && getNewStagingSiteContent() }
 			{ showManageStagingSite && isStagingSiteTransferComplete && getManageStagingSiteContent() }
