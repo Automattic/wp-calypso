@@ -71,7 +71,14 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 						'A staging site is a test version of your website you can use to preview and troubleshoot changes before applying them to your production site.'
 					) }
 				</p>
-				<Button primary disabled={ disabled || addingStagingSite } onClick={ addStagingSite }>
+				<Button
+					primary
+					disabled={ disabled || addingStagingSite }
+					onClick={ () => {
+						dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_click' ) );
+						addStagingSite();
+					} }
+				>
 					<span>{ translate( 'Add staging site' ) }</span>
 				</Button>
 			</div>
