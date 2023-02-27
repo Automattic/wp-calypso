@@ -8,7 +8,6 @@ import Button from 'calypso/components/forms/form-button';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
-import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
 import getRewindBackups from 'calypso/state/selectors/get-rewind-backups';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useDatesWithNoSuccessfulBackups } from '../status/hooks';
@@ -43,13 +42,6 @@ const BackupDatePicker: FC< Props > = ( { selectedDate, onDateChange } ) => {
 	const oldestDateAvailable = useDateWithOffset(
 		firstKnownBackupAttempt.backupAttempt?.activityTs
 	);
-	// Get the oldest visible backup date.
-	// This is added into the state via QueryRewindPolicies
-	const visibleDays = useSelector( ( state ) => getActivityLogVisibleDays( state, siteId ) );
-	// If the number of visible days is falsy, then use the oldest date as the first visible backup date.
-	const firstVisibleBackupDate = visibleDays
-		? today.clone().subtract( visibleDays, 'days' )
-		: oldestDateAvailable;
 
 	const hasNoBackups = useSelector( ( state ) => {
 		const backups = getRewindBackups( state, siteId ) || [];
@@ -58,9 +50,10 @@ const BackupDatePicker: FC< Props > = ( { selectedDate, onDateChange } ) => {
 	} );
 
 	const canGoToDate = useCanGoToDate( siteId, selectedDate, oldestDateAvailable, hasNoBackups );
+
 	const datesWithNoBackups = useDatesWithNoSuccessfulBackups(
 		siteId,
-		firstVisibleBackupDate,
+		oldestDateAvailable,
 		today.clone()
 	);
 
@@ -221,7 +214,7 @@ const BackupDatePicker: FC< Props > = ( { selectedDate, onDateChange } ) => {
 			<DateButton
 				onDateSelected={ goToCalendarDate }
 				selectedDate={ selectedDate }
-				firstBackupDate={ firstVisibleBackupDate }
+				firstBackupDate={ oldestDateAvailable }
 				disabledDates={ datesWithNoBackups.dates }
 			/>
 		</div>
