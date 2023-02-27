@@ -40,6 +40,7 @@
 		"@wordpress/element": "^4.7.0",
 		"@wordpress/i18n": "^4.9.0",
 		"classnames": "^2.3.2",
+		"copy-webpack-plugin": "^11.0.0",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2"
 	},

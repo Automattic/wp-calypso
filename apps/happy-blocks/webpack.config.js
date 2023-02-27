@@ -2,8 +2,10 @@
  *WARNING: No ES6 modules here. Not transpiled! ****
  */
 
+const path = require( 'path' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const ReadableJsAssetsWebpackPlugin = require( '@wordpress/readable-js-assets-webpack-plugin' );
+const CopyPlugin = require( 'copy-webpack-plugin' );
 const webpack = require( 'webpack' );
 const GenerateChunksMapPlugin = require( '../../build-tools/webpack/generate-chunks-map-plugin' );
 
@@ -27,6 +29,14 @@ function getWebpackConfig( env, argv ) {
 		},
 		plugins: [
 			...webpackConfig.plugins,
+			new CopyPlugin( {
+				patterns: [
+					{
+						from: 'src/**/index.php',
+						to: path.resolve( __dirname, 'dist', '[name][ext]' ),
+					},
+				],
+			} ),
 			new ReadableJsAssetsWebpackPlugin(),
 			new webpack.DefinePlugin( {
 				__i18n_text_domain__: JSON.stringify( 'happy-blocks' ),
