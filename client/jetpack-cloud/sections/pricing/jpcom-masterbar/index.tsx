@@ -57,7 +57,7 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 						href: `${ JETPACK_COM_BASE_URL }/features/security/`,
 						items: [
 							{
-								label: translate( 'VaultPress' ),
+								label: translate( 'VaultPress Backup' ),
 								tagline: translate( 'Save every change in real-time' ),
 								href: `${ JETPACK_COM_BASE_URL }/upgrade/backup/`,
 							},
