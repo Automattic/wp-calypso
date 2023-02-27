@@ -69,11 +69,11 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 			<div>
 				<p>
 					{ translate(
-						'A staging site is a test version of your website you can use to preview and troubleshoot changes before bringing them to your production site.'
+						'A staging site is a test version of your website you can use to preview and troubleshoot changes before applying them to your production site.'
 					) }
 				</p>
 				<Button primary disabled={ disabled || addingStagingSite } onClick={ addStagingSite }>
-					<span>{ translate( 'Create staging site' ) }</span>
+					<span>{ translate( 'Add staging site' ) }</span>
 				</Button>
 			</div>
 		);
