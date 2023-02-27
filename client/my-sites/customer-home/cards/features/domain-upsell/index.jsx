@@ -41,7 +41,9 @@ export function RenderDomainUpsell() {
 	const siteSubDomain = siteSlug.split( '.' )[ 0 ];
 	const locale = useLocale();
 	const { allDomainSuggestions } =
-		useDomainSuggestions( siteSubDomain, 3, undefined, locale ) || {};
+		useDomainSuggestions( siteSubDomain, 3, undefined, locale, {
+			vendor: 'domain-upsell',
+		} ) || {};
 
 	const cartKey = useCartKey();
 	const shoppingCartManager = useShoppingCart( cartKey );
