@@ -21,8 +21,9 @@ const createSubscriptions: Callback = ( context, next ) => {
 };
 
 const checkFeatureFlag: Callback = ( context, next ) => {
-	if ( ! config.isEnabled( 'subscription-management' ) ) {
+	if ( config.isEnabled( 'subscription-management' ) ) {
 		next();
+		return;
 	}
 	page.redirect( '/' );
 };
