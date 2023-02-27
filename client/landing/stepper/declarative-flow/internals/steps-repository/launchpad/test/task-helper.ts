@@ -16,7 +16,7 @@ describe( 'Task Helpers', () => {
 				];
 				expect(
 					// eslint-disable-next-line @typescript-eslint/no-empty-function
-					getEnhancedTasks( fakeTasks, 'fake.wordpress.com', null, () => {}, false )
+					getEnhancedTasks( fakeTasks, 'fake.wordpress.com', null, () => {}, false, {} )
 				).toEqual( fakeTasks );
 			} );
 		} );
@@ -29,7 +29,8 @@ describe( 'Task Helpers', () => {
 					null,
 					// eslint-disable-next-line @typescript-eslint/no-empty-function
 					() => {},
-					false
+					false,
+					{}
 				);
 				expect( enhancedTasks[ 0 ].isLaunchTask ).toEqual( true );
 			} );
@@ -43,7 +44,8 @@ describe( 'Task Helpers', () => {
 					null,
 					// eslint-disable-next-line @typescript-eslint/no-empty-function
 					() => {},
-					true
+					true,
+					{}
 				);
 				expect( enhancedTasks[ 0 ].completed ).toEqual( false );
 				expect( enhancedTasks[ 0 ].warning ).toEqual( true );
@@ -56,7 +58,10 @@ describe( 'Task Helpers', () => {
 					null,
 					// eslint-disable-next-line @typescript-eslint/no-empty-function
 					() => {},
-					false
+					false,
+					{
+						plan_completed: true,
+					}
 				);
 				expect( enhancedTasks[ 0 ].completed ).toEqual( true );
 			} );

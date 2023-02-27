@@ -6,6 +6,7 @@ import Badge from 'calypso/components/badge';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import Tooltip from 'calypso/components/tooltip';
 import WordPressLogo from 'calypso/components/wordpress-logo';
+import { useLaunchpad } from 'calypso/data/sites/use-launchpad';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -58,6 +59,8 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	const site = useSite();
 	const clipboardButtonEl = useRef< HTMLButtonElement >( null );
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
+	const { data } = useLaunchpad( siteSlug || '' );
+	const { checklist } = data || {};
 
 	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles();
 
@@ -71,6 +74,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 			site,
 			submit,
 			globalStylesInUse && shouldLimitGlobalStyles,
+			checklist,
 			goToStep,
 			flow
 		);

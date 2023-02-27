@@ -16,7 +16,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isVideoPressFlow } from 'calypso/signup/utils';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { launchpadFlowTasks } from './tasks';
-import { Task } from './types';
+import { Task, LaunchpadStatuses } from './types';
 
 export function getEnhancedTasks(
 	tasks: Task[] | null,
@@ -24,6 +24,7 @@ export function getEnhancedTasks(
 	site: SiteDetails | null,
 	submit: NavigationControls[ 'submit' ],
 	displayGlobalStylesWarning: boolean,
+	checklistStatuses: LaunchpadStatuses,
 	goToStep?: NavigationControls[ 'goToStep' ],
 	flow?: string | null
 ) {
@@ -31,19 +32,15 @@ export function getEnhancedTasks(
 	const productSlug = site?.plan?.product_slug;
 	const translatedPlanName = productSlug ? PLANS_LIST[ productSlug ].getTitle() : '';
 
-	const linkInBioLinksEditCompleted =
-		site?.options?.launchpad_checklist_tasks_statuses?.links_edited || false;
+	const linkInBioLinksEditCompleted = checklistStatuses?.links_edited || false;
 
-	const siteEditCompleted = site?.options?.launchpad_checklist_tasks_statuses?.site_edited || false;
+	const siteEditCompleted = checklistStatuses?.site_edited || false;
 
-	const siteLaunchCompleted =
-		site?.options?.launchpad_checklist_tasks_statuses?.site_launched || false;
+	const siteLaunchCompleted = checklistStatuses?.site_launched || false;
 
-	const firstPostPublishedCompleted =
-		site?.options?.launchpad_checklist_tasks_statuses?.first_post_published || false;
+	const firstPostPublishedCompleted = checklistStatuses?.first_post_published || false;
 
-	const videoPressUploadCompleted =
-		site?.options?.launchpad_checklist_tasks_statuses?.video_uploaded || false;
+	const videoPressUploadCompleted = checklistStatuses?.video_uploaded || false;
 
 	const allowUpdateDesign =
 		flow && ( isFreeFlow( flow ) || isBuildFlow( flow ) || isWriteFlow( flow ) );
@@ -302,8 +299,7 @@ export function getEnhancedTasks(
 				case 'sensei_publish_first_course':
 					taskData = {
 						title: translate( 'Publish your first Course' ),
-						completed:
-							site?.options?.launchpad_checklist_tasks_statuses?.publish_first_course || false,
+						completed: checklistStatuses?.publish_first_course || false,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign( `${ site?.URL }/wp-admin/post-new.php?post_type=course` );
