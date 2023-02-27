@@ -6,7 +6,7 @@ import FormsButton from 'calypso/components/forms/form-button';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 
-const Mastodon = ( { service, action, connectAnother, connections } ) => {
+const Mastodon = ( { service, action, connectAnother, connections, isConnecting } ) => {
 	const translate = useTranslate();
 	const [ instance, setInstance ] = useState( '' );
 	const [ error, setError ] = useState( null );
@@ -71,7 +71,7 @@ const Mastodon = ( { service, action, connectAnother, connections } ) => {
 					<FormsButton
 						primary
 						type="submit"
-						disabled={ ! isValidUsername( instance ) || showError }
+						disabled={ ! isValidUsername( instance ) || showError || isConnecting }
 					>
 						{ connections.length >= 1
 							? translate( 'Connect one more account' )
@@ -88,6 +88,7 @@ Mastodon.propTypes = {
 	action: PropTypes.func.isRequired,
 	connectAnother: PropTypes.func.isRequired,
 	connections: PropTypes.array.isRequired,
+	isConnecting: PropTypes.bool.isRequired,
 };
 
 export default Mastodon;
