@@ -40,7 +40,7 @@ import {
 } from 'calypso/state/domains/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
-import { isDomainSidebarExperimentUser } from 'calypso/state/selectors/is-domain-sidebar-experiment-user';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import isSiteOnMonthlyPlan from 'calypso/state/selectors/is-site-on-monthly-plan';
 import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
@@ -64,7 +64,7 @@ class DomainSearch extends Component {
 		selectedSiteId: PropTypes.number,
 		selectedSiteSlug: PropTypes.string,
 		domainAndPlanUpsellFlow: PropTypes.bool,
-		domainSidebarExperimentUser: PropTypes.bool,
+		isDomainAndPlanPackageFlow: PropTypes.bool,
 	};
 
 	isMounted = false;
@@ -81,9 +81,9 @@ class DomainSearch extends Component {
 		} );
 	};
 
-	handleAddRemoveDomain = ( suggestion ) => {
+	handleAddRemoveDomain = ( suggestion, position ) => {
 		if ( ! hasDomainInCart( this.props.cart, suggestion.domain_name ) ) {
-			this.addDomain( suggestion );
+			this.addDomain( suggestion, position );
 		} else {
 			this.removeDomain( suggestion );
 		}
@@ -105,8 +105,8 @@ class DomainSearch extends Component {
 	};
 
 	componentDidMount() {
-		if ( this.props.domainSidebarExperimentUser ) {
-			document.body.classList.add( 'is-domain-sidebar-experiment-user' );
+		if ( this.props.isDomainAndPlanPackageFlow ) {
+			document.body.classList.add( 'is-domain-plan-package-flow' );
 		}
 		this.checkSiteIsUpgradeable();
 
@@ -120,8 +120,8 @@ class DomainSearch extends Component {
 	}
 
 	componentWillUnmount() {
-		if ( document.body.classList.contains( 'is-domain-sidebar-experiment-user' ) ) {
-			document.body.classList.remove( 'is-domain-sidebar-experiment-user' );
+		if ( document.body.classList.contains( 'is-domain-plan-package-flow' ) ) {
+			document.body.classList.remove( 'is-domain-plan-package-flow' );
 		}
 
 		this.isMounted = false;
@@ -133,7 +133,7 @@ class DomainSearch extends Component {
 		}
 	}
 
-	async addDomain( suggestion ) {
+	async addDomain( suggestion, position ) {
 		const {
 			domain_name: domain,
 			product_slug: productSlug,
@@ -141,7 +141,7 @@ class DomainSearch extends Component {
 			is_premium: isPremium,
 		} = suggestion;
 
-		this.props.recordAddDomainButtonClick( domain, 'domains', isPremium );
+		this.props.recordAddDomainButtonClick( domain, 'domains', position, isPremium );
 
 		let registration = domainRegistration( {
 			domain,
@@ -213,7 +213,7 @@ class DomainSearch extends Component {
 			translate,
 			isManagingAllDomains,
 			cart,
-			domainSidebarExperimentUser,
+			isDomainAndPlanPackageFlow,
 		} = this.props;
 
 		if ( ! selectedSite ) {
@@ -260,7 +260,7 @@ class DomainSearch extends Component {
 			content = (
 				<span>
 					<div className="domain-search__content">
-						{ ! domainSidebarExperimentUser && (
+						{ ! isDomainAndPlanPackageFlow && (
 							<BackButton
 								className="domain-search__go-back"
 								href={ domainManagementList( selectedSiteSlug ) }
@@ -272,7 +272,7 @@ class DomainSearch extends Component {
 
 						{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 						<div className="domains__header">
-							{ domainSidebarExperimentUser && (
+							{ isDomainAndPlanPackageFlow && (
 								<>
 									<DomainAndPlanPackageNavigation
 										goBackLink={ `/home/${ selectedSiteSlug }` }
@@ -295,7 +295,7 @@ class DomainSearch extends Component {
 								</>
 							) }
 
-							{ ! domainSidebarExperimentUser && (
+							{ ! isDomainAndPlanPackageFlow && (
 								<FormattedHeader
 									brandFont
 									headerText={
@@ -360,7 +360,7 @@ export default connect(
 			isSiteOnMonthlyPlan: isSiteOnMonthlyPlan( state, siteId ),
 			productsList: getProductsList( state ),
 			userCanPurchaseGSuite: canUserPurchaseGSuite( state ),
-			domainSidebarExperimentUser: isDomainSidebarExperimentUser( state ),
+			isDomainAndPlanPackageFlow: !! getCurrentQueryArguments( state )?.domainAndPlanPackage,
 		};
 	},
 	{

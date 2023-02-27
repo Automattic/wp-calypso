@@ -363,3 +363,37 @@
 		padding: 0.5rem;
 	}
 }
+
+.sites-overview__column-content {
+	font-size: 0.75rem !important;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	vertical-align: middle;
+	@include break-xlarge {
+		max-width: 70px;
+	}
+	@include break-wide() {
+		max-width: fit-content;
+	}
+}
+
+.sites-overview__warning {
+	@extend .sites-overview__column-content;
+	color: var(--color-warning-50);
+}
+
+.sites-overview__failed {
+	@extend .sites-overview__column-content;
+	color: var(--studio-red-50);
+}
+
+.sites-overview__critical {
+	@extend .sites-overview__column-content;
+	padding: 15px;
+	color: var(--studio-red-50);
+
+	@include break-xlarge {
+		color: var(--studio-white);
+	}
+}

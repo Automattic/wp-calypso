@@ -9,7 +9,6 @@ import {
 	getPlanFeaturesGrouped,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	isPremiumPlan,
-	isEcommercePlan,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { css } from '@emotion/react';
@@ -315,8 +314,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 			{ visiblePlansProperties.map( ( planProperties, index ) => {
 				const { planName, planConstantObj, availableForPurchase, current, ...planPropertiesObj } =
 					planProperties;
-				const isHighlight =
-					isBusinessPlan( planName ) || isPremiumPlan( planName ) || isEcommercePlan( planName );
+				const isHighlight = isBusinessPlan( planName ) || isPremiumPlan( planName );
 
 				const headerClasses = classNames(
 					'plan-comparison-grid__header-cell',
@@ -644,10 +642,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 										{ ( visiblePlansProperties ?? [] ).map( ( { planName } ) => {
 											const hasFeature =
 												restructuredFeatures.featureMap[ planName ].has( featureSlug );
-											const isHighlight =
-												isBusinessPlan( planName ) ||
-												isPremiumPlan( planName ) ||
-												isEcommercePlan( planName );
+											const isHighlight = isBusinessPlan( planName ) || isPremiumPlan( planName );
 											const cellClasses = classNames(
 												'plan-comparison-grid__plan',
 												getPlanClass( planName ),
@@ -709,10 +704,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 									{ ( visiblePlansProperties ?? [] ).map( ( { planName } ) => {
 										const storageFeature = restructuredFeatures.planStorageOptionsMap[ planName ];
 										const [ featureObject ] = getPlanFeaturesObject( [ storageFeature ] );
-										const isHighlight =
-											isBusinessPlan( planName ) ||
-											isPremiumPlan( planName ) ||
-											isEcommercePlan( planName );
+										const isHighlight = isBusinessPlan( planName ) || isPremiumPlan( planName );
 										const cellClasses = classNames(
 											'plan-comparison-grid__plan',
 											'has-feature',

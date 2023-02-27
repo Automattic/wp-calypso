@@ -20,13 +20,18 @@ function LaunchWpcomWelcomeTour() {
 			select( 'automattic/starter-page-layouts' ).isOpen(),
 		isManuallyOpened: select( 'automattic/wpcom-welcome-guide' ).isWelcomeGuideManuallyOpened(),
 	} ) );
+	const { siteIntent, siteIntentFetched } = useSiteIntent();
 	const localeSlug = useLocale();
 
 	// Preload first card image (others preloaded after open state confirmed)
-	usePrefetchTourAssets( [ getTourSteps( localeSlug, false )[ 0 ] ] );
+	usePrefetchTourAssets( [ getTourSteps( localeSlug, false, false, null, siteIntent )[ 0 ] ] );
 
 	useEffect( () => {
 		if ( ! show && ! isNewPageLayoutModalOpen ) {
+			return;
+		}
+
+		if ( ! siteIntentFetched ) {
 			return;
 		}
 
@@ -34,19 +39,19 @@ function LaunchWpcomWelcomeTour() {
 		recordTracksEvent( 'calypso_editor_wpcom_tour_open', {
 			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
 			is_manually_opened: isManuallyOpened,
+			intent: siteIntent,
 		} );
-	}, [ isNewPageLayoutModalOpen, isManuallyOpened, show ] );
+	}, [ isNewPageLayoutModalOpen, isManuallyOpened, show, siteIntent, siteIntentFetched ] );
 
 	if ( ! show || isNewPageLayoutModalOpen ) {
 		return null;
 	}
 
-	return <WelcomeTour />;
+	return <WelcomeTour { ...{ siteIntent } } />;
 }
 
-function WelcomeTour() {
+function WelcomeTour( { siteIntent }: { siteIntent?: string } ) {
 	const sitePlan = useSitePlan( window._currentSiteId );
-	const intent = useSiteIntent();
 	const localeSlug = useLocale();
 	const { setShowWelcomeGuide } = useDispatch( 'automattic/wpcom-welcome-guide' );
 	const isGutenboarding = window.calypsoifyGutenberg?.isGutenboarding;
@@ -60,10 +65,16 @@ function WelcomeTour() {
 	const currentTheme = useSelect( ( select ) => select( 'core' ).getCurrentTheme() );
 	const themeName = currentTheme?.name?.raw?.toLowerCase() ?? null;
 
-	const tourSteps = getTourSteps( localeSlug, isWelcomeTourNext(), isSiteEditor, themeName );
+	const tourSteps = getTourSteps(
+		localeSlug,
+		isWelcomeTourNext(),
+		isSiteEditor,
+		themeName,
+		siteIntent
+	);
 
 	// Only keep Payment block step if user comes from seller simple flow
-	if ( ! ( 'sell' === intent && sitePlan && 'ecommerce-bundle' !== sitePlan.product_slug ) ) {
+	if ( ! ( 'sell' === siteIntent && sitePlan && 'ecommerce-bundle' !== sitePlan.product_slug ) ) {
 		const paymentBlockIndex = tourSteps.findIndex( ( step ) => step.slug === 'payment-block' );
 		tourSteps.splice( paymentBlockIndex, 1 );
 	}
@@ -86,6 +97,7 @@ function WelcomeTour() {
 				is_gutenboarding: isGutenboarding,
 				slide_number: currentStepIndex + 1,
 				action: source,
+				intent: siteIntent,
 			} );
 			setShowWelcomeGuide( false, { openedManually: false } );
 		},
@@ -103,6 +115,7 @@ function WelcomeTour() {
 					recordTracksEvent( 'calypso_editor_wpcom_tour_rate', {
 						thumbs_up: rating === 'thumbs-up',
 						is_gutenboarding: false,
+						intent: siteIntent,
 					} );
 				},
 			},
@@ -111,12 +124,14 @@ function WelcomeTour() {
 					recordTracksEvent( 'calypso_editor_wpcom_tour_minimize', {
 						is_gutenboarding: isGutenboarding,
 						slide_number: currentStepIndex + 1,
+						intent: siteIntent,
 					} );
 				},
 				onMaximize: ( currentStepIndex ) => {
 					recordTracksEvent( 'calypso_editor_wpcom_tour_maximize', {
 						is_gutenboarding: isGutenboarding,
 						slide_number: currentStepIndex + 1,
+						intent: siteIntent,
 					} );
 				},
 				onStepViewOnce: ( currentStepIndex ) => {
@@ -128,6 +143,7 @@ function WelcomeTour() {
 						is_last_slide: currentStepIndex === lastStepIndex,
 						slide_heading: heading,
 						is_gutenboarding: isGutenboarding,
+						intent: siteIntent,
 					} );
 				},
 			},

@@ -62,6 +62,9 @@ export default function CreditCardPayButton( {
 							paymentPartner,
 							countryCode: fields?.countryCode?.value ?? '',
 							postalCode: fields?.postalCode?.value ?? '',
+							state: fields?.state?.value,
+							city: fields?.city?.value,
+							organization: fields?.organization?.value,
 							useForAllSubscriptions,
 							eventSource: 'checkout',
 						} );

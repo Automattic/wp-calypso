@@ -22,6 +22,7 @@ import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-s
 import WebPreview from 'calypso/components/web-preview/content';
 import { useSiteVerticalQueryById } from 'calypso/data/site-verticals';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useExperiment } from 'calypso/lib/explat';
 import { urlToSlug } from 'calypso/lib/url';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
@@ -120,16 +121,20 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		return allDesigns;
 	};
 
+	const [ isLoadingVirtualThemesExperiment, virtualThemesExperiment ] = useExperiment(
+		'calypso_signup_design_picker_virtual_themes_v1'
+	);
+
 	const { data: allDesigns, isLoading: isLoadingDesigns } = useStarterDesignsQuery(
 		{
 			vertical_id: siteVerticalId,
 			intent,
 			seed: siteSlugOrId || undefined,
 			_locale: locale,
-			include_virtual_designs: isEnabled( 'virtual-themes/onboarding' ),
+			include_virtual_designs: virtualThemesExperiment?.variationName === 'treatment',
 		},
 		{
-			enabled: true,
+			enabled: ! isLoadingVirtualThemesExperiment,
 			select: selectStarterDesigns,
 			shouldLimitGlobalStyles,
 		}

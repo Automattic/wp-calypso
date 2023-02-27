@@ -47,7 +47,7 @@ const VideoCelebrationModalInner = () => {
 		};
 	} );
 
-	const intent = useSiteIntent();
+	const { siteIntent: intent } = useSiteIntent();
 
 	useEffect( () => {
 		const maybeRenderVideoCelebrationModal = async () => {
@@ -117,7 +117,7 @@ const VideoCelebrationModalInner = () => {
 };
 
 const VideoCelebrationModal = () => {
-	const intent = useSiteIntent();
+	const { siteIntent: intent } = useSiteIntent();
 	if ( 'videopress' === intent ) {
 		return <VideoCelebrationModalInner />;
 	}

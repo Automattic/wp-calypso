@@ -18,9 +18,13 @@ import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-
 import { successNotice } from 'calypso/state/notices/actions';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import { QueryArgs, Duration } from '../types';
+import CtaButtons from './components/cta-buttons';
 import { ItemPrice } from './item-price';
 import ItemsIncluded from './items-included';
+import ProductHeader from './product-header';
 import ShowLicenseActivationLinkIfAvailable from './show-license-activation-link-if-available';
+import PricingPageLink from './view-all-products-link';
+
 import './style.scss';
 
 interface Props {
@@ -64,24 +68,12 @@ const JetpackCompletePage: React.FC< Props > = ( {
 					cardImage2xRetina={ rnaImageComplete2xRetina }
 				>
 					<>
-						{ /* This is just example/fill text here, that should be made into various components */ }
-						<h1
-							style={ {
-								fontSize: '36px',
-								lineHeight: '40px',
-								fontWeight: 700,
-								marginBottom: '16px',
-							} }
-						>
-							{ translate( 'Get Jetpack Complete' ) }
-						</h1>
-						<p style={ { fontSize: '20px', lineHeight: '30px', fontWeight: 500 } }>
-							The full Jetpack suite with real-time security, instant site search, ad-free video,
-							all CRM extensions, and extra storage for backups and video.
-						</p>
-
+						<ProductHeader item={ item } />
+						<PricingPageLink siteSlug={ siteSlug || urlQueryArgs?.site } />
 						<ItemsIncluded />
 						<ItemPrice item={ item } siteId={ siteId } />
+
+						<CtaButtons />
 					</>
 				</JetpackRnaDialogCard>
 			</Main>

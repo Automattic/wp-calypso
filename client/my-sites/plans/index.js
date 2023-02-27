@@ -18,6 +18,7 @@ import {
 	redirectToPlansIfNotJetpack,
 } from './controller';
 import { currentPlan } from './current-plan/controller';
+import { trialUpgradeConfirmation } from './ecommerce-trial/controlller';
 
 const trackedPage = ( url, ...rest ) => {
 	page( url, ...rest, makeLayout, clientRender );
@@ -73,6 +74,7 @@ export default function () {
 		p2RedirectToHubPlans,
 		currentPlan
 	);
+	trackedPage( '/plans/my-plan/trial-upgraded/:domain', siteSelection, trialUpgradeConfirmation );
 	trackedPage(
 		'/plans/my-plan/:site',
 		siteSelection,

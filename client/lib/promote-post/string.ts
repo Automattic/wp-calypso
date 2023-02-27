@@ -21,6 +21,11 @@ const BlazePressStrings = () => {
 	translate( 'Ad destination' );
 	translate( 'Audience' );
 	translate( 'Budget & Duration' );
+	translate( 'Save' );
+	translate( 'Save selection' );
+	translate( 'Use post image' );
+	translate( 'Upload' );
+	translate( 'Use + / - or simply drag the image to adjust it' );
 	translate( 'Payment' );
 	translate( 'You won’t be charged until the ad is approved and starts running.' );
 	translate( 'You can pause spending at any time.' );
@@ -62,7 +67,6 @@ const BlazePressStrings = () => {
 	translate( 'Checking payment information' );
 	translate( 'Appearance' );
 	translate( 'Image' );
-	translate( 'Change' );
 	translate( 'Title' );
 	translate( '%(charactersLeft)s characters remaining' );
 	translate( 'Snippet' );
@@ -82,11 +86,11 @@ const BlazePressStrings = () => {
 	translate( 'Next' );
 	translate( 'Drop image here' );
 	translate( 'Click or Drag an image here' );
-	translate( 'Reset' );
-	translate( 'Save selection' );
-	translate( 'Crop ad image' );
 	translate( 'All fields marked as required' );
 	translate( 'must be completed to continue' );
+	translate( 'All' );
+	translate( 'Mobile devices' );
+	translate( 'Desktop devices' );
 };
 
 if ( window.BlazePress ) {

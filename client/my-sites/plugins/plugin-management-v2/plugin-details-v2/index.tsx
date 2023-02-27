@@ -1,12 +1,12 @@
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import QueryAllJetpackSitesPlugins from 'calypso/components/data/query-all-jetpack-sites-plugins';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QueryJetpackSitesFeatures from 'calypso/components/data/query-jetpack-sites-features';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
-import PluginNotices from 'calypso/my-sites/plugins/notices';
 import PluginDetailsBody from 'calypso/my-sites/plugins/plugin-details-body';
 import PluginDetailsHeader from 'calypso/my-sites/plugins/plugin-details-header';
 import PluginAvailableOnSitesList from 'calypso/my-sites/plugins/plugin-management-v2/plugin-details-v2/plugin-available-on-sites-list';
@@ -76,7 +76,11 @@ export default function PluginDetailsV2( {
 
 	return (
 		<div className="plugin-details-v2">
-			<QueryJetpackPlugins siteIds={ siteIds } />
+			{ siteIds.length === 1 ? (
+				<QueryJetpackPlugins siteIds={ siteIds } />
+			) : (
+				<QueryAllJetpackSitesPlugins />
+			) }
 			<QueryEligibility siteId={ selectedSite?.ID } />
 			<QueryJetpackSitesFeatures />
 			<QueryProductsList persist />
@@ -85,14 +89,9 @@ export default function PluginDetailsV2( {
 				compactBreadcrumb={ false }
 				navigationItems={ breadcrumbs }
 			/>
-			<PluginNotices
-				pluginId={ fullPlugin.id }
-				sites={ sitesWithPlugins }
-				plugins={ [ fullPlugin ] }
-			/>
 			<div className="plugin-details-v2__top-container">
 				<div className="plugin-details__page legacy">
-					<div className="plugin-details__layout plugin-details__top-section">
+					<div>
 						<div className="plugin-details__layout-col-left">
 							<PluginDetailsHeader
 								isJetpackCloud

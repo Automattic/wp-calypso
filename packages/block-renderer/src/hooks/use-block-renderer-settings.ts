@@ -12,7 +12,7 @@ const useBlockRendererSettings = (
 	} );
 
 	return useQuery< any, unknown, BlockRendererSettings >(
-		[ siteId, 'block-renderer' ],
+		[ siteId, 'block-renderer', stylesheet ],
 		() =>
 			wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteId ) }/block-renderer/settings`,

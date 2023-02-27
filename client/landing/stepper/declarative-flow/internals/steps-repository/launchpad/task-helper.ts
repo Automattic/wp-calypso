@@ -48,11 +48,13 @@ export function getEnhancedTasks(
 	const allowUpdateDesign =
 		flow && ( isFreeFlow( flow ) || isBuildFlow( flow ) || isWriteFlow( flow ) );
 
+	const isPaidPlan = ! site?.plan?.is_free;
+
 	const homePageId = site?.options?.page_on_front;
 	// send user to Home page editor, fallback to FSE if page id is not known
 	const launchpadUploadVideoLink = homePageId
 		? `/page/${ siteSlug }/${ homePageId }`
-		: `/site-editor/${ siteSlug }`;
+		: `/site-editor/${ siteSlug }?canvas=edit`;
 
 	let planWarningText = displayGlobalStylesWarning
 		? translate(
@@ -113,7 +115,7 @@ export function getEnhancedTasks(
 						completed: siteEditCompleted,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, siteEditCompleted, task.id );
-							window.location.assign( `/site-editor/${ siteSlug }` );
+							window.location.assign( `/site-editor/${ siteSlug }?canvas=edit` );
 						},
 					};
 					break;
@@ -193,7 +195,7 @@ export function getEnhancedTasks(
 						completed: linkInBioLinksEditCompleted,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, linkInBioLinksEditCompleted, task.id );
-							window.location.assign( `/site-editor/${ siteSlug }` );
+							window.location.assign( `/site-editor/${ siteSlug }?canvas=edit` );
 						},
 					};
 					break;
@@ -311,11 +313,15 @@ export function getEnhancedTasks(
 				case 'domain_upsell':
 					taskData = {
 						title: translate( 'Choose a domain' ),
+						completed: isPaidPlan,
 						actionDispatch: () => {
-							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							window.location.assign( `/domains/add/${ siteSlug }?domainAndPlanPackage=true` );
+							recordTaskClickTracksEvent( flow, isPaidPlan, task.id );
+							const destinationUrl = isPaidPlan
+								? `/domains/manage/${ siteSlug }`
+								: `/domains/add/${ siteSlug }?domainAndPlanPackage=true`;
+							window.location.assign( destinationUrl );
 						},
-						badgeText: translate( 'Upgrade plan' ),
+						badgeText: isPaidPlan ? '' : translate( 'Upgrade plan' ),
 					};
 					break;
 			}
@@ -351,14 +357,4 @@ export function getArrayOfFilteredTasks( tasks: Task[], flow: string | null ) {
 			return accumulator;
 		}, [] as Task[] )
 	);
-}
-
-// Filter out the domain_upsell task from the enhanced task list when the user is not on a free plan anymore
-export function filterDomainUpsellTask( enhancedTasks: Task[] | null, site: SiteDetails | null ) {
-	if ( enhancedTasks && ! site?.plan?.is_free ) {
-		return enhancedTasks?.filter( ( task ) => {
-			return task.id !== 'domain_upsell';
-		} );
-	}
-	return enhancedTasks;
 }

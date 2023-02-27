@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import SocialLogo from 'calypso/components/social-logo';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { EmptyDeployments } from './empty-deployments';
@@ -50,6 +51,13 @@ export const DeploymentCard = ( { repo, branch, connectionId }: DeploymentCardPr
 					)
 				);
 			},
+			onSettled: ( _, error ) => {
+				dispatch(
+					recordTracksEvent( 'calypso_hosting_github_disconnect_complete', {
+						disconnected: ! error,
+					} )
+				);
+			},
 		}
 	);
 
@@ -88,7 +96,14 @@ export const DeploymentCard = ( { repo, branch, connectionId }: DeploymentCardPr
 				) }
 				{ ! isLoading && ! deployment && <EmptyDeployments /> }
 			</div>
-			<Button primary busy={ isDisconnecting } onClick={ () => disconnectRepo( siteId ) }>
+			<Button
+				primary
+				busy={ isDisconnecting }
+				onClick={ () => {
+					dispatch( recordTracksEvent( 'calypso_hosting_github_disconnect_click' ) );
+					disconnectRepo( siteId );
+				} }
+			>
 				<span>{ translate( 'Disconnect repository' ) }</span>
 			</Button>
 		</Card>

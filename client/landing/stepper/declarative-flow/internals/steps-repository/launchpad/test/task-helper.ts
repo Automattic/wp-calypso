@@ -1,9 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-import { filterDomainUpsellTask, getArrayOfFilteredTasks, getEnhancedTasks } from '../task-helper';
+import { getArrayOfFilteredTasks, getEnhancedTasks } from '../task-helper';
 import { tasks, launchpadFlowTasks } from '../tasks';
-import { buildTask, buildSiteDetails } from './lib/fixtures';
+import { buildTask } from './lib/fixtures';
 
 describe( 'Task Helpers', () => {
 	describe( 'getEnhancedTasks', () => {
@@ -91,43 +91,40 @@ describe( 'Task Helpers', () => {
 		} );
 	} );
 
-	describe( 'filterDomainUpsellTask', () => {
-		describe( 'when site plan is free', () => {
-			it( 'return original enchanceTasks', () => {
-				const task = buildTask( {
-					id: 'domain_upsell',
-					completed: false,
-					disabled: true,
-					taskType: 'blog',
-					title: 'domain upsell task',
-				} );
-				const tasks = [ task ];
-				const site = buildSiteDetails( { plan: { is_free: true } } );
-				// domain_upsell is still in the array
+	describe( 'domain upsell task', () => {
+		describe( 'when flow is newsletter', () => {
+			it( 'does not include upsell task', () => {
 				expect(
-					filterDomainUpsellTask( tasks, site )?.findIndex(
-						( task ) => ( task.id = 'domain_upsell' )
-					)
+					launchpadFlowTasks[ 'newsletter' ].filter( ( task ) => task === 'domain_upsell' ).length
 				).toBe( 0 );
 			} );
 		} );
-		describe( 'when site plan is not free', () => {
-			it( 'filters out the domain_upsell task', () => {
-				const task = buildTask( {
-					id: 'domain_upsell',
-					completed: false,
-					disabled: true,
-					taskType: 'blog',
-					title: 'domain upsell task',
-				} );
-				const tasks = [ task ];
-				const site = buildSiteDetails( { plan: { is_free: false } } );
-				// domain_upsell is NOT in the array
+		describe( 'when flow is link-in-bio', () => {
+			it( 'does not include upsell task', () => {
 				expect(
-					filterDomainUpsellTask( tasks, site )?.findIndex(
-						( task ) => ( task.id = 'domain_upsell' )
-					)
-				).toBe( -1 );
+					launchpadFlowTasks[ 'link-in-bio' ].filter( ( task ) => task === 'domain_upsell' ).length
+				).toBe( 0 );
+			} );
+		} );
+		describe( 'when flow is write', () => {
+			it( 'does include upsell task', () => {
+				expect(
+					launchpadFlowTasks[ 'write' ].filter( ( task ) => task === 'domain_upsell' ).length
+				).toBe( 1 );
+			} );
+		} );
+		describe( 'when flow is build', () => {
+			it( 'does include upsell task', () => {
+				expect(
+					launchpadFlowTasks[ 'build' ].filter( ( task ) => task === 'domain_upsell' ).length
+				).toBe( 1 );
+			} );
+		} );
+		describe( 'when flow is free', () => {
+			it( 'does include upsell task', () => {
+				expect(
+					launchpadFlowTasks[ 'free' ].filter( ( task ) => task === 'domain_upsell' ).length
+				).toBe( 1 );
 			} );
 		} );
 	} );

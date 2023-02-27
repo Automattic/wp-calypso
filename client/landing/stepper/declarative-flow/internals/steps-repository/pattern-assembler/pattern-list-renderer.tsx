@@ -3,6 +3,7 @@ import { Button } from '@automattic/components';
 import classnames from 'classnames';
 import { useState } from 'react';
 import { useInView } from 'calypso/lib/use-in-view';
+import EmptyPattern from './empty-pattern';
 import { encodePatternId } from './utils';
 import type { Pattern } from './types';
 import './pattern-list-renderer.scss';
@@ -19,6 +20,7 @@ interface PatternListRendererProps {
 	shownPatterns: Pattern[];
 	selectedPattern: Pattern | null;
 	activeClassName: string;
+	emptyPatternText?: string;
 	onSelect: ( selectedPattern: Pattern | null ) => void;
 }
 
@@ -58,10 +60,20 @@ const PatternListRenderer = ( {
 	shownPatterns,
 	selectedPattern,
 	activeClassName,
+	emptyPatternText,
 	onSelect,
 }: PatternListRendererProps ) => {
 	return (
 		<>
+			{ emptyPatternText && (
+				<EmptyPattern
+					className={ classnames( 'pattern-list-renderer__pattern-list-item', {
+						[ activeClassName ]: ! selectedPattern,
+					} ) }
+					text={ emptyPatternText }
+					onSelect={ () => onSelect( null ) }
+				/>
+			) }
 			{ patterns.map( ( pattern, index ) => (
 				<PatternListItem
 					key={ `${ index }-${ pattern.id }` }

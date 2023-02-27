@@ -103,7 +103,7 @@ const SellerCelebrationModalInner = () => {
 		};
 	} );
 
-	const intent = useSiteIntent();
+	const { siteIntent: intent } = useSiteIntent();
 
 	useEffect( () => {
 		if (
@@ -160,7 +160,7 @@ const SellerCelebrationModalInner = () => {
 };
 
 const SellerCelebrationModal = () => {
-	const intent = useSiteIntent();
+	const { siteIntent: intent } = useSiteIntent();
 	if ( intent === 'sell' ) {
 		return <SellerCelebrationModalInner />;
 	}

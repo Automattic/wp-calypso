@@ -192,11 +192,12 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		submit?.();
 	};
 
-	const handleAddDomain = ( suggestion: DomainSuggestion ) => {
+	const handleAddDomain = ( suggestion: DomainSuggestion, position: number ) => {
 		dispatch(
 			recordAddDomainButtonClick(
 				suggestion.domain_name,
 				getAnalyticsSection(),
+				position,
 				suggestion?.is_premium
 			)
 		);

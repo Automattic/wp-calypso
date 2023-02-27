@@ -339,7 +339,7 @@ function guessCountryFromValueOrGetSelected(
 	freezeSelection: boolean
 ) {
 	if ( shouldGuessCountry( value, fallbackCountryCode, freezeSelection ) ) {
-		return findCountryFromNumber( value ) || getCountry( 'world' );
+		return findCountryFromNumber( value, fallbackCountryCode ) || getCountry( 'world' );
 	}
 
 	return getCountry( fallbackCountryCode );

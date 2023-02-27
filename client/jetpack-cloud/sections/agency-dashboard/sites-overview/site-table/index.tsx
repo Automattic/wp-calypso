@@ -25,8 +25,14 @@ export default function SiteTable( { isLoading, columns, items }: Props ) {
 		setExpandedRow( expandedRow === blogId ? null : blogId );
 	};
 
+	const isExpandedBlockEnabled = isEnabled( 'jetpack/pro-dashboard-expandable-block' );
+
 	return (
-		<table className="site-table__table">
+		<table
+			className={ classNames( 'site-table__table', {
+				'site-table__table-v2': isExpandedBlockEnabled,
+			} ) }
+		>
 			<thead>
 				<tr>
 					{ isBulkManagementActive ? (
@@ -46,7 +52,7 @@ export default function SiteTable( { isLoading, columns, items }: Props ) {
 									</span>
 								</th>
 							) ) }
-							<th colSpan={ isEnabled( 'jetpack/pro-dashboard-expandable-block' ) ? 2 : 1 }>
+							<th colSpan={ isExpandedBlockEnabled ? 2 : 1 }>
 								<div className="plugin-common-table__bulk-actions">
 									<EditButton isLargeScreen sites={ items } />
 								</div>
