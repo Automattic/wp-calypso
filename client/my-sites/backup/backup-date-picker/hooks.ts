@@ -51,7 +51,7 @@ export const useCanGoToDate: CanGoToDateHook = (
 			// then everything's fine (this should never happen)
 			return true;
 		},
-		[ true, selectedDate, today, oldestDateAvailable, hasNoBackups ]
+		[ selectedDate, today, oldestDateAvailable, hasNoBackups ]
 	);
 };
 
