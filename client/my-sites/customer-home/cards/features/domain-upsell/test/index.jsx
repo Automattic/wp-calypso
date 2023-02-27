@@ -95,6 +95,8 @@ describe( 'index', () => {
 
 		const user = userEvent.setup();
 		await user.click( screen.getByRole( 'button', { name: 'Buy this domain' } ) );
-		expect( pageLink ).toBe( '/plans/yearly/example.wordpress.com?get_domain=example.com' );
+		expect( pageLink ).toBe(
+			'/plans/yearly/example.wordpress.com?get_domain=example.com&domainAndPlanPackage=true'
+		);
 	} );
 } );
