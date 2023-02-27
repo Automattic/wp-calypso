@@ -67,14 +67,12 @@ const JetpackCompletePage: React.FC< Props > = ( {
 					cardImage={ rnaImageComplete }
 					cardImage2xRetina={ rnaImageComplete2xRetina }
 				>
-					<>
-						<ProductHeader item={ item } />
-						<PricingPageLink siteSlug={ siteSlug || urlQueryArgs?.site } />
-						<ItemsIncluded />
-						<ItemPrice item={ item } siteId={ siteId } />
+					<ProductHeader item={ item } />
+					<PricingPageLink siteSlug={ siteSlug || urlQueryArgs?.site } />
+					<ItemsIncluded />
+					<ItemPrice item={ item } siteId={ siteId } />
 
-						<CtaButtons />
-					</>
+					<CtaButtons />
 				</JetpackRnaDialogCard>
 			</Main>
 		</>
