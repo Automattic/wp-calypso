@@ -262,32 +262,15 @@ function useSubmenuItems( site: SiteExcerptData ) {
 		return [
 			{
 				info: upsellInfo,
-				label: __( 'Database access' ),
-				href: `/hosting-config/${ siteSlug }#database-access`,
-				eventName: 'calypso_sites_dashboard_site_action_submenu_database_access_click',
-			},
-			{
-				info: upsellInfo,
 				label: __( 'SFTP/SSH credentials' ),
 				href: `/hosting-config/${ siteSlug }#sftp-credentials`,
 				eventName: 'calypso_sites_dashboard_site_action_submenu_sftp_credentials_click',
 			},
 			{
 				info: upsellInfo,
-				label: __( 'Web server settings' ),
-				href: `/hosting-config/${ siteSlug }#web-server-settings`,
-				eventName: 'calypso_sites_dashboard_site_action_submenu_web_server_settings_click',
-			},
-			{
-				label: __( 'Performance settings' ),
-				href: `/settings/performance/${ siteSlug }`,
-				eventName: 'calypso_sites_dashboard_site_action_submenu_performance_settings_click',
-			},
-			{
-				condition: hasCustomDomain,
-				label: __( 'DNS records' ),
-				href: `/domains/manage/${ siteSlug }/dns/${ siteSlug }`,
-				eventName: 'calypso_sites_dashboard_site_action_submenu_dns_records_click',
+				label: __( 'Database access' ),
+				href: `/hosting-config/${ siteSlug }#database-access`,
+				eventName: 'calypso_sites_dashboard_site_action_submenu_database_access_click',
 			},
 			{
 				info: upsellInfo,
@@ -297,15 +280,32 @@ function useSubmenuItems( site: SiteExcerptData ) {
 			},
 			{
 				info: upsellInfo,
+				label: __( 'Web server settings' ),
+				href: `/hosting-config/${ siteSlug }#web-server-settings`,
+				eventName: 'calypso_sites_dashboard_site_action_submenu_web_server_settings_click',
+			},
+			{
+				info: upsellInfo,
 				label: __( 'Clear cache' ),
 				href: `/hosting-config/${ siteSlug }#cache`,
 				eventName: 'calypso_sites_dashboard_site_action_submenu_cache_click',
+			},
+			{
+				label: __( 'Performance settings' ),
+				href: `/settings/performance/${ siteSlug }`,
+				eventName: 'calypso_sites_dashboard_site_action_submenu_performance_settings_click',
 			},
 			{
 				condition: isLaunched,
 				label: __( 'Privacy settings' ),
 				href: `/settings/general/${ siteSlug }#site-privacy-settings`,
 				eventName: 'calypso_sites_dashboard_site_action_submenu_privacy_settings_click',
+			},
+			{
+				condition: hasCustomDomain,
+				label: __( 'DNS records' ),
+				href: `/domains/manage/${ siteSlug }/dns/${ siteSlug }`,
+				eventName: 'calypso_sites_dashboard_site_action_submenu_dns_records_click',
 			},
 		].filter( ( { condition } ) => condition ?? true );
 	}, [ __, siteSlug, hasCustomDomain, isLaunched, upsellInfo ] );
