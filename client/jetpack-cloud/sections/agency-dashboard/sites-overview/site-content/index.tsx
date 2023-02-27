@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import page from 'page';
@@ -10,7 +11,7 @@ import SitesOverviewContext from '../context';
 import SiteBulkSelect from '../site-bulk-select';
 import SiteCard from '../site-card';
 import SiteTable from '../site-table';
-import { formatSites, siteColumns } from '../utils';
+import { formatSites, siteColumns, siteColumnswithStats } from '../utils';
 
 import './style.scss';
 
@@ -37,6 +38,8 @@ export default function SiteContent( { data, isLoading, currentPage, isFavorites
 		addPageArgs( pageNumber );
 	};
 
+	const isExpandedBlockEnabled = ! isEnabled( 'jetpack/pro-dashboard-expandable-block' );
+
 	return (
 		<>
 			{
@@ -45,7 +48,11 @@ export default function SiteContent( { data, isLoading, currentPage, isFavorites
 				// styles applied using the CSS breakpoint which is true for width >= some value
 			 }
 			<div className="site-content__large-screen-view">
-				<SiteTable isLoading={ isLoading } columns={ siteColumns } items={ sites } />
+				<SiteTable
+					isLoading={ isLoading }
+					columns={ isExpandedBlockEnabled ? siteColumns : siteColumnswithStats }
+					items={ sites }
+				/>
 			</div>
 			<div className="site-content__small-screen-view">
 				<Card className="site-content__bulk-select">
@@ -53,7 +60,9 @@ export default function SiteContent( { data, isLoading, currentPage, isFavorites
 						<SiteBulkSelect sites={ sites } isLoading={ isLoading } />
 					) : (
 						<>
-							<span className="site-content__bulk-select-label">{ siteColumns[ 0 ].title }</span>
+							<span className="site-content__bulk-select-label">
+								{ siteColumnswithStats[ 0 ].title }
+							</span>
 							<EditButton sites={ sites } />
 						</>
 					) }
@@ -68,7 +77,11 @@ export default function SiteContent( { data, isLoading, currentPage, isFavorites
 							<>
 								{ sites.length > 0 &&
 									sites.map( ( rows, index ) => (
-										<SiteCard key={ index } columns={ siteColumns } rows={ rows } />
+										<SiteCard
+											key={ index }
+											columns={ isExpandedBlockEnabled ? siteColumns : siteColumnswithStats }
+											rows={ rows }
+										/>
 									) ) }
 							</>
 						) }

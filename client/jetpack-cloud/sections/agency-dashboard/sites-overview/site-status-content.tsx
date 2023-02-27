@@ -239,7 +239,7 @@ export default function SiteStatusContent( {
 		case 'same': {
 			content = (
 				<>
-					<Gridicon icon="ellipsis-circle" size={ 18 } className="sites-overview__icon-same" />
+					<div className="sites-overview__icon-same" />
 					<div className="sites-overview__stats">
 						<ShortenedNumber value={ value } />
 					</div>

@@ -141,21 +141,21 @@
 }
 .sites-overview__icon-up {
 	vertical-align: middle;
-	color: var(--studio-gray-5);
-}
-
-.sites-overview__icon-up {
-	vertical-align: middle;
 	color: var(--studio-jetpack-green-50);
 }
 .sites-overview__icon-down {
 	vertical-align: middle;
-	color: var(--studio-gray-5);
-	fill: var(--studio-gray-5);
+	color: var(--color-error);
 }
 .sites-overview__icon-same {
 	vertical-align: middle;
 	color: var(--studio-gray-5);
+	height: 10px;
+	width: 10px;
+	border-radius: 50%;
+	background: var(--studio-gray-5);
+	display: inline-block;
+	margin-right: 10px;
 }
 .sites-overview__disabled {
 	color: var(--studio-gray-5);

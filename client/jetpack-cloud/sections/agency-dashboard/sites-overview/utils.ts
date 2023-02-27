@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import { urlToSlug } from 'calypso/lib/url';
 import type {
@@ -38,6 +37,30 @@ export const siteColumns: SiteColumns = [
 		title: translate( 'Site' ),
 	},
 	...extraColumns,
+	{
+		key: 'backup',
+		title: translate( 'Backup' ),
+	},
+	{
+		key: 'scan',
+		title: translate( 'Scan' ),
+	},
+	{
+		key: 'monitor',
+		title: translate( 'Monitor' ),
+		className: 'min-width-100px',
+	},
+	{
+		key: 'plugin',
+		title: translate( 'Plugin Updates' ),
+	},
+];
+
+export const siteColumnswithStats = [
+	{
+		key: 'site',
+		title: translate( 'Site' ),
+	},
 	{
 		key: 'stats',
 		title: translate( 'Stats' ),
