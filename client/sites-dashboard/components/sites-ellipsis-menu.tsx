@@ -261,12 +261,6 @@ function useSubmenuItems( {
 		() =>
 			[
 				{
-					condition: isLaunched,
-					label: __( 'Privacy settings' ),
-					href: `/settings/general/${ siteSlug }#site-privacy-settings`,
-					eventName: 'calypso_sites_dashboard_site_action_submenu_privacy_settings_click',
-				},
-				{
 					condition: isAtomic,
 					label: __( 'Database access' ),
 					href: `/hosting-config/${ siteSlug }#database-access`,
@@ -306,6 +300,12 @@ function useSubmenuItems( {
 					label: __( 'Clear cache' ),
 					href: `/hosting-config/${ siteSlug }#cache`,
 					eventName: 'calypso_sites_dashboard_site_action_submenu_cache_click',
+				},
+				{
+					condition: isLaunched,
+					label: __( 'Privacy settings' ),
+					href: `/settings/general/${ siteSlug }#site-privacy-settings`,
+					eventName: 'calypso_sites_dashboard_site_action_submenu_privacy_settings_click',
 				},
 			].filter( ( { condition } ) => condition ?? true ),
 		[ __, isAtomic, isCustomDomain, isLaunched, siteSlug ]
