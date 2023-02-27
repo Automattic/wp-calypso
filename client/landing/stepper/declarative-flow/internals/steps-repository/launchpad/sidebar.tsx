@@ -60,7 +60,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	const clipboardButtonEl = useRef< HTMLButtonElement >( null );
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 	const { data } = useLaunchpad( siteSlug || '' );
-	const { checklist } = data || {};
+	const { checklist_statuses } = data || {};
 
 	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles();
 
@@ -74,7 +74,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 			site,
 			submit,
 			globalStylesInUse && shouldLimitGlobalStyles,
-			checklist,
+			checklist_statuses,
 			goToStep,
 			flow
 		);
