@@ -27,7 +27,7 @@ const sidebarDomain = buildDomainResponse( {
 } );
 
 const upgradeDomainBadgeText = 'Customize';
-const upgradeDomainBadgeLink = `/domains/add/${ sidebarDomain.domain }`;
+const upgradeDomainBadgeLink = `/domains/add/${ sidebarDomain.domain }?domainAndPlanPackage=true`;
 
 const props = {
 	sidebarDomain,
