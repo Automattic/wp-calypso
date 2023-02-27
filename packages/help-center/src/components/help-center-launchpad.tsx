@@ -3,12 +3,10 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { CircularProgressBar } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { useSelect } from '@wordpress/data';
 import { chevronRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
-import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { SITE_STORE } from '../stores';
+import { getSectionName } from 'calypso/state/ui/selectors';
 
 const getEnvironmentHostname = () => {
 	try {
@@ -28,13 +26,10 @@ const getEnvironmentHostname = () => {
 
 export const HelpCenterLaunchpad = () => {
 	const { __ } = useI18n();
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
-	const site = useSelect( ( select ) => siteId && select( SITE_STORE ).getSite( siteId ) );
-	const siteIntent = site && site?.options?.site_intent;
-	const siteSlug = site && new URL( site.URL ).host;
+	const siteIntent = window?.helpCenterData?.currentSite?.site_intent;
+	const siteSlug = window?.location?.host;
 	const launchpadURL = `${ getEnvironmentHostname() }/setup/${ siteIntent }/launchpad?siteSlug=${ siteSlug }`;
 	const sectionName = useSelector( ( state ) => getSectionName( state ) );
-
 	const handleLaunchpadHelpLinkClick = () => {
 		recordTracksEvent( 'calypso_help_launchpad_click', {
 			link: launchpadURL,
@@ -44,7 +39,7 @@ export const HelpCenterLaunchpad = () => {
 		} );
 	};
 
-	if ( ! site || ! siteIntent || ! siteSlug ) {
+	if ( ! siteIntent || ! siteSlug ) {
 		return null;
 	}
 	return (
