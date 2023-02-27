@@ -1,6 +1,6 @@
 import siteHasWordAds from 'calypso/state/selectors/site-has-wordads';
 
-const siteId = '123001';
+const siteId = '123002';
 
 describe( 'selectors', () => {
 	describe( '#siteHasWordAds()', () => {
@@ -9,7 +9,7 @@ describe( 'selectors', () => {
 			const state = {
 				sites: {
 					features: {
-						123001: {
+						123002: {
 							data: {
 								active: activeFeatures,
 							},
@@ -27,7 +27,7 @@ describe( 'selectors', () => {
 			const state = {
 				sites: {
 					features: {
-						123001: {
+						123002: {
 							data: {
 								active: activeFeatures,
 							},
