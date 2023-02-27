@@ -21,7 +21,8 @@ const UniversalNavbarFooter = ( {
 	const localizeUrl = useLocalizeUrl();
 	const locale = useLocale();
 	const isEnglishLocale = useIsEnglishLocale();
-	const pathNameWithoutLocale = removeLocaleFromPathLocaleInFront( currentRoute ).slice( 1 );
+	const pathNameWithoutLocale =
+		currentRoute && removeLocaleFromPathLocaleInFront( currentRoute ).slice( 1 );
 	const automatticBranding = useAutomatticBrandingNoun();
 
 	return (

@@ -33883,6 +33883,7 @@ fsevents@^1.2.7:
     "@automattic/viewport": "workspace:^"
     "@automattic/whats-new": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
+    "@automattic/wpcom-template-parts": "workspace:^"
     "@babel/core": ^7.17.5
     "@babel/eslint-parser": ^7.17.0
     "@babel/register": ^7.17.0

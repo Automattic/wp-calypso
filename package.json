@@ -149,6 +149,7 @@
 		"@automattic/viewport": "workspace:^",
 		"@automattic/whats-new": "workspace:^",
 		"@automattic/wp-babel-makepot": "workspace:^",
+		"@automattic/wpcom-template-parts": "workspace:^",
 		"@types/cookie": "^0.4.1",
 		"@types/debug": "^4.1.7",
 		"@types/fast-json-stable-stringify": "^2.0.0",
