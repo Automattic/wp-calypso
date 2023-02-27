@@ -249,16 +249,19 @@ function useSubmenuItems( {
 	siteSlug,
 	isCustomDomain,
 	isAtomic,
+	isLaunched,
 }: {
 	siteSlug: string;
 	isCustomDomain: boolean;
 	isAtomic: boolean;
+	isLaunched: boolean;
 } ) {
 	const { __ } = useI18n();
 	return useMemo(
 		() =>
 			[
 				{
+					condition: isLaunched,
 					label: __( 'Privacy settings' ),
 					href: `/settings/general/${ siteSlug }#site-privacy-settings`,
 					eventName: 'calypso_sites_dashboard_site_action_submenu_privacy_settings_click',
@@ -305,7 +308,7 @@ function useSubmenuItems( {
 					eventName: 'calypso_sites_dashboard_site_action_submenu_cache_click',
 				},
 			].filter( ( { condition } ) => condition ?? true ),
-		[ __, isAtomic, isCustomDomain, siteSlug ]
+		[ __, isAtomic, isCustomDomain, isLaunched, siteSlug ]
 	);
 }
 
@@ -315,6 +318,7 @@ function DeveloperSettingsSubmenu( { site, recordTracks }: SitesMenuItemProps ) 
 		siteSlug: site.slug,
 		isCustomDomain: isCustomDomain( site.slug ),
 		isAtomic: Boolean( site.is_wpcom_atomic ),
+		isLaunched: site.launch_status !== 'unlaunched',
 	} );
 	const developerSubmenuProps = useSubmenuPopoverProps< HTMLDivElement >( { offsetTop: -8 } );
 
