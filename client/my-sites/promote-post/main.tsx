@@ -141,7 +141,9 @@ export default function PromotedPosts( { tab }: Props ) {
 		);
 	}
 
-	const content = [ ...( posts || [] ), ...( pages || [] ), ...( products || [] ) ];
+	const content = [ ...( posts || [] ), ...( pages || [] ), ...( products || [] ) ].sort(
+		( a, b ) => b.ID - a.ID
+	);
 
 	const isLoading = isLoadingPage && isLoadingPost && isLoadingProducts;
 
