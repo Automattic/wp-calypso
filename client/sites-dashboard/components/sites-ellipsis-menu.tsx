@@ -252,69 +252,45 @@ const SiteDropdownMenu = styled( DropdownMenu )( {
 function useSubmenuItems( site: SiteExcerptData ) {
 	const { __ } = useI18n();
 	const siteSlug = site.slug;
-	const hasCustomDomain = isCustomDomain( site.slug );
-	const isLaunched = site.launch_status !== 'unlaunched';
-	const upsellInfo = useUpsellInfo( site );
 
 	return useMemo<
 		{ label: string; href: string; eventName: string; info?: string; condition?: boolean }[]
 	>( () => {
 		return [
 			{
-				info: upsellInfo,
 				label: __( 'SFTP/SSH credentials' ),
 				href: `/hosting-config/${ siteSlug }#sftp-credentials`,
 				eventName: 'calypso_sites_dashboard_site_action_submenu_sftp_credentials_click',
 			},
 			{
-				info: upsellInfo,
 				label: __( 'Database access' ),
 				href: `/hosting-config/${ siteSlug }#database-access`,
 				eventName: 'calypso_sites_dashboard_site_action_submenu_database_access_click',
 			},
 			{
-				info: upsellInfo,
 				label: __( 'Github connection' ),
 				href: `/hosting-config/${ siteSlug }#connect-github`,
 				eventName: 'calypso_sites_dashboard_site_action_submenu_connect_github_click',
 			},
 			{
-				info: upsellInfo,
 				label: __( 'Web server settings' ),
 				href: `/hosting-config/${ siteSlug }#web-server-settings`,
 				eventName: 'calypso_sites_dashboard_site_action_submenu_web_server_settings_click',
 			},
 			{
-				info: upsellInfo,
 				label: __( 'Clear cache' ),
 				href: `/hosting-config/${ siteSlug }#cache`,
 				eventName: 'calypso_sites_dashboard_site_action_submenu_cache_click',
 			},
-			{
-				label: __( 'Performance settings' ),
-				href: `/settings/performance/${ siteSlug }`,
-				eventName: 'calypso_sites_dashboard_site_action_submenu_performance_settings_click',
-			},
-			{
-				condition: isLaunched,
-				label: __( 'Privacy settings' ),
-				href: `/settings/general/${ siteSlug }#site-privacy-settings`,
-				eventName: 'calypso_sites_dashboard_site_action_submenu_privacy_settings_click',
-			},
-			{
-				condition: hasCustomDomain,
-				label: __( 'DNS records' ),
-				href: `/domains/manage/${ siteSlug }/dns/${ siteSlug }`,
-				eventName: 'calypso_sites_dashboard_site_action_submenu_dns_records_click',
-			},
-		].filter( ( { condition } ) => condition ?? true );
-	}, [ __, siteSlug, hasCustomDomain, isLaunched, upsellInfo ] );
+		];
+	}, [ __, siteSlug ] );
 }
 
 function DeveloperSettingsSubmenu( { site, recordTracks }: SitesMenuItemProps ) {
 	const { __ } = useI18n();
 	const submenuItems = useSubmenuItems( site );
 	const developerSubmenuProps = useSubmenuPopoverProps< HTMLDivElement >( { offsetTop: -8 } );
+	const upsellInfo = useUpsellInfo( site );
 
 	if ( submenuItems.length === 0 ) {
 		return null;
@@ -322,8 +298,8 @@ function DeveloperSettingsSubmenu( { site, recordTracks }: SitesMenuItemProps ) 
 
 	return (
 		<div { ...developerSubmenuProps.parent }>
-			<MenuItemLink>
-				{ __( 'Developer settings' ) } <MenuItemGridIcon icon="chevron-right" size={ 18 } />
+			<MenuItemLink info={ upsellInfo }>
+				{ __( 'Hosting configuration' ) } <MenuItemGridIcon icon="chevron-right" size={ 18 } />
 			</MenuItemLink>
 			<SubmenuPopover { ...developerSubmenuProps.submenu }>
 				{ submenuItems.map( ( item ) => (
@@ -349,17 +325,19 @@ export const SitesEllipsisMenu = ( {
 	site: SiteExcerptData;
 } ) => {
 	const dispatch = useReduxDispatch();
-
 	const { __ } = useI18n();
+	function recordTracks( eventName: string, extraProps = {} ) {
+		dispatch( recordTracksEvent( eventName, extraProps ) );
+	}
 	const props: SitesMenuItemProps = {
 		site,
-		recordTracks: ( eventName, extraProps = {} ) => {
-			dispatch( recordTracksEvent( eventName, extraProps ) );
-		},
+		recordTracks,
 	};
 
 	const hasHostingPage = ! isNotAtomicJetpack( site ) && ! isP2Site( site );
 	const { shouldShowSiteCopyItem, startSiteCopy } = useSiteCopy( site );
+	const hasCustomDomain = isCustomDomain( site.slug );
+	const isLaunched = site.launch_status !== 'unlaunched';
 
 	return (
 		<SiteDropdownMenu
@@ -369,15 +347,47 @@ export const SitesEllipsisMenu = ( {
 		>
 			{ () => (
 				<SiteMenuGroup>
-					{ site.launch_status === 'unlaunched' && <LaunchItem { ...props } /> }
+					{ ! isLaunched && <LaunchItem { ...props } /> }
 					<SettingsItem { ...props } />
 					{ isEnabled( 'dev/developer-ux' ) && hasHostingPage && (
 						<DeveloperSettingsSubmenu { ...props } />
 					) }
 					<ManagePluginsItem { ...props } />
-					{ hasHostingPage && <HostingConfigItem { ...props } /> }
+					{ ! isEnabled( 'dev/developer-ux' ) && hasHostingPage && (
+						<HostingConfigItem { ...props } />
+					) }
 					{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
 					{ shouldShowSiteCopyItem && <CopySiteItem { ...props } onClick={ startSiteCopy } /> }
+					<MenuItemLink
+						href={ `/settings/performance/${ site.slug }` }
+						onClick={ () =>
+							recordTracks(
+								'calypso_sites_dashboard_site_action_submenu_performance_settings_click'
+							)
+						}
+					>
+						{ __( 'Performance settings' ) }
+					</MenuItemLink>
+					{ isLaunched && (
+						<MenuItemLink
+							href={ `/settings/general/${ site.slug }#site-privacy-settings` }
+							onClick={ () =>
+								recordTracks( 'calypso_sites_dashboard_site_action_submenu_privacy_settings_click' )
+							}
+						>
+							{ __( 'Privacy settings' ) }
+						</MenuItemLink>
+					) }
+					{ hasCustomDomain && (
+						<MenuItemLink
+							href={ `/domains/manage/${ site.slug }/dns/${ site.slug }` }
+							onClick={ () =>
+								recordTracks( 'calypso_sites_dashboard_site_action_submenu_dns_records_click' )
+							}
+						>
+							{ __( 'DNS records' ) }
+						</MenuItemLink>
+					) }
 					<WpAdminItem { ...props } />
 				</SiteMenuGroup>
 			) }
