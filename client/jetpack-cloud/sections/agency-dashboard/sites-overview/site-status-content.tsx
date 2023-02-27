@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
@@ -44,6 +45,7 @@ export default function SiteStatusContent( {
 	} = getRowMetaData( rows, type, isLargeScreen );
 
 	const { isBulkManagementActive } = useContext( SitesOverviewContext );
+	const isExpandedBlockEnabled = isEnabled( 'jetpack/pro-dashboard-expandable-block' );
 
 	const siteId = rows.site.value.blog_id;
 	const siteUrl = rows.site.value.url;
@@ -175,8 +177,14 @@ export default function SiteStatusContent( {
 	let content;
 
 	switch ( status ) {
+		case 'critical': {
+			content = <div className="sites-overview__critical">{ value }</div>;
+			break;
+		}
 		case 'failed': {
-			content = (
+			content = isExpandedBlockEnabled ? (
+				<div className="sites-overview__failed">{ value }</div>
+			) : (
 				<Badge className="sites-overview__badge" type="error">
 					{ value }
 				</Badge>
@@ -184,7 +192,9 @@ export default function SiteStatusContent( {
 			break;
 		}
 		case 'warning': {
-			content = (
+			content = isExpandedBlockEnabled ? (
+				<div className="sites-overview__warning">{ value }</div>
+			) : (
 				<Badge className="sites-overview__badge" type="warning">
 					{ value }
 				</Badge>
