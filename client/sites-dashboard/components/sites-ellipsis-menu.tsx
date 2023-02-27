@@ -24,6 +24,7 @@ import {
 	getSettingsUrl,
 	isCustomDomain,
 	isNotAtomicJetpack,
+	isP2Site,
 } from '../utils';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
@@ -359,7 +360,7 @@ export const SitesEllipsisMenu = ( {
 		},
 	};
 
-	const showHosting = ! isNotAtomicJetpack( site ) && ! site.options?.is_wpforteams_site;
+	const hasHostingPage = ! isNotAtomicJetpack( site ) && ! isP2Site( site );
 	const { shouldShowSiteCopyItem, startSiteCopy } = useSiteCopy( site );
 
 	return (
@@ -372,9 +373,11 @@ export const SitesEllipsisMenu = ( {
 				<SiteMenuGroup>
 					{ site.launch_status === 'unlaunched' && <LaunchItem { ...props } /> }
 					<SettingsItem { ...props } />
-					{ isEnabled( 'dev/developer-ux' ) && <DeveloperSettingsSubmenu { ...props } /> }
+					{ isEnabled( 'dev/developer-ux' ) && hasHostingPage && (
+						<DeveloperSettingsSubmenu { ...props } />
+					) }
 					<ManagePluginsItem { ...props } />
-					{ showHosting && <HostingConfigItem { ...props } /> }
+					{ hasHostingPage && <HostingConfigItem { ...props } /> }
 					{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
 					{ shouldShowSiteCopyItem && <CopySiteItem { ...props } onClick={ startSiteCopy } /> }
 					<WpAdminItem { ...props } />
