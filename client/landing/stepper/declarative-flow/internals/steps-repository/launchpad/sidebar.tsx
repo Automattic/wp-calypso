@@ -79,6 +79,9 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	const launchTask = enhancedTasks?.find( ( task ) => task.isLaunchTask === true );
 
 	const showLaunchTitle = launchTask && ! launchTask.disabled;
+	const domainUpgradeBadgeUrl = ! site?.plan?.is_free
+		? `/domains/manage/${ siteSlug }`
+		: `/domains/add/${ siteSlug }?domainAndPlanPackage=true`;
 
 	if ( sidebarDomain ) {
 		const { domain, isPrimary, isWPCOMDomain, sslStatus } = sidebarDomain;
@@ -143,7 +146,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 						) }
 					</div>
 					{ sidebarDomain?.isWPCOMDomain && (
-						<a href={ `/domains/add/${ siteSlug }` }>
+						<a href={ domainUpgradeBadgeUrl }>
 							<Badge className="launchpad__domain-upgrade-badge" type="info-blue">
 								{ translate( 'Customize' ) }
 							</Badge>
