@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
@@ -9,6 +10,7 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import GooglePlusDeprication from './google-plus-deprecation';
+import Mastodon from './mastodon';
 import ServiceExample from './service-example';
 
 /**
@@ -36,6 +38,7 @@ const SERVICES_WITH_EXAMPLES = [
 	'mailchimp',
 	'p2_slack',
 	'p2_github',
+	'mastodon',
 ];
 
 class SharingServiceExamples extends Component {
@@ -44,6 +47,9 @@ class SharingServiceExamples extends Component {
 		site: PropTypes.object,
 		hasJetpack: PropTypes.bool,
 		translate: PropTypes.func,
+		action: PropTypes.func.isRequired,
+		connections: PropTypes.array.isRequired,
+		connectAnother: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
@@ -443,6 +449,17 @@ class SharingServiceExamples extends Component {
 
 		if ( 'google_plus' === this.props.service.ID ) {
 			return <GooglePlusDeprication />;
+		}
+
+		if ( 'mastodon' === this.props.service.ID && config.isEnabled( 'mastodon' ) ) {
+			return (
+				<Mastodon
+					service={ this.props.service }
+					action={ this.props.action }
+					connectAnother={ this.props.connectAnother }
+					connections={ this.props.connections }
+				/>
+			);
 		}
 
 		const examples = this[ this.props.service.ID.replace( /-/g, '_' ) ]();

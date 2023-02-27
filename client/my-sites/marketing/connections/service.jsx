@@ -4,7 +4,7 @@ import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { isEqual, find, some, get } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, cloneElement } from 'react';
 import { connect } from 'react-redux';
 import FoldableCard from 'calypso/components/foldable-card';
 import Notice from 'calypso/components/notice';
@@ -502,6 +502,13 @@ export class SharingService extends Component {
 		return get( this, 'props.service.ID' ) === 'mailchimp';
 	};
 
+	isMastodonService = () => {
+		if ( ! config.isEnabled( 'mastodon' ) ) {
+			return false;
+		}
+		return get( this, 'props.service.ID' ) === 'mastodon';
+	};
+
 	isPicasaMigration( status ) {
 		if ( status === 'must-disconnect' && get( this, 'props.service.ID' ) === 'google_photos' ) {
 			return true;
@@ -572,14 +579,21 @@ export class SharingService extends Component {
 					expanded={ this.shouldBeExpanded( connectionStatus ) }
 					compact
 					summary={ action }
-					expandedSummary={ action }
+					expandedSummary={
+						this.isMastodonService() ? cloneElement( action, { isExpanded: true } ) : action
+					}
 				>
 					<div
 						className={ classnames( 'sharing-service__content', {
 							'is-placeholder': this.props.isFetching,
 						} ) }
 					>
-						<ServiceExamples service={ this.props.service } />
+						<ServiceExamples
+							service={ this.props.service }
+							action={ this.performAction }
+							connectAnother={ this.connectAnother }
+							connections={ connections }
+						/>
 
 						{ this.isPicasaMigration( connectionStatus ) && <PicasaMigration /> }
 
