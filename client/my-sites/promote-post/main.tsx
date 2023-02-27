@@ -32,7 +32,7 @@ const queryPost = {
 	number: 20, // max supported by /me/posts endpoint for all-sites mode
 	status: 'publish', // do not allow private or unpublished posts
 	type: 'post',
-	order_by: 'comment_count',
+	order_by: 'id',
 };
 const queryPage = {
 	...queryPost,
