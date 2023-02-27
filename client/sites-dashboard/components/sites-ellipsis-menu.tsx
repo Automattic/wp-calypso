@@ -17,6 +17,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
+import { useUpsellInfo } from '../hooks/use-upsell-info';
 import {
 	getHostingConfigUrl,
 	getManagePluginsUrl,
@@ -85,6 +86,7 @@ const ManagePluginsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	const hasManagePluginsFeature = useSelector( ( state ) =>
 		siteHasFeature( state, site.ID, WPCOM_FEATURES_MANAGE_PLUGINS )
 	);
+	const upsellInfo = useUpsellInfo( site );
 
 	// If the site can't manage plugins then go to the main plugins page instead
 	// because it shows an upsell message.
@@ -100,6 +102,7 @@ const ManagePluginsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 					has_manage_plugins_feature: hasManagePluginsFeature,
 				} )
 			}
+			info={ upsellInfo }
 		>
 			{ label }
 		</MenuItemLink>
@@ -245,22 +248,16 @@ const SiteDropdownMenu = styled( DropdownMenu )( {
 	},
 } );
 
-function useSubmenuItems( {
-	siteSlug,
-	isCustomDomain,
-	isAtomic,
-	isLaunched,
-}: {
-	siteSlug: string;
-	isCustomDomain: boolean;
-	isAtomic: boolean;
-	isLaunched: boolean;
-} ) {
+function useSubmenuItems( site: SiteExcerptData ) {
 	const { __ } = useI18n();
+	const siteSlug = site.slug;
+	const hasCustomDomain = isCustomDomain( site.slug );
+	const isLaunched = site.launch_status !== 'unlaunched';
+	const upsellInfo = useUpsellInfo( site );
+
 	return useMemo<
 		{ label: string; href: string; eventName: string; info?: string; condition?: boolean }[]
 	>( () => {
-		const upsellInfo = isAtomic ? __( 'Included in your plan' ) : __( 'Requires a Business Plan' );
 		return [
 			{
 				info: upsellInfo,
@@ -286,7 +283,7 @@ function useSubmenuItems( {
 				eventName: 'calypso_sites_dashboard_site_action_submenu_performance_settings_click',
 			},
 			{
-				condition: isCustomDomain,
+				condition: hasCustomDomain,
 				label: __( 'DNS records' ),
 				href: `/domains/manage/${ siteSlug }/dns/${ siteSlug }`,
 				eventName: 'calypso_sites_dashboard_site_action_submenu_dns_records_click',
@@ -310,17 +307,12 @@ function useSubmenuItems( {
 				eventName: 'calypso_sites_dashboard_site_action_submenu_privacy_settings_click',
 			},
 		].filter( ( { condition } ) => condition ?? true );
-	}, [ __, isAtomic, isCustomDomain, isLaunched, siteSlug ] );
+	}, [ __, siteSlug, hasCustomDomain, isLaunched, upsellInfo ] );
 }
 
 function DeveloperSettingsSubmenu( { site, recordTracks }: SitesMenuItemProps ) {
 	const { __ } = useI18n();
-	const submenuItems = useSubmenuItems( {
-		siteSlug: site.slug,
-		isCustomDomain: isCustomDomain( site.slug ),
-		isAtomic: Boolean( site.is_wpcom_atomic ),
-		isLaunched: site.launch_status !== 'unlaunched',
-	} );
+	const submenuItems = useSubmenuItems( site );
 	const developerSubmenuProps = useSubmenuPopoverProps< HTMLDivElement >( { offsetTop: -8 } );
 
 	if ( submenuItems.length === 0 ) {
