@@ -7,7 +7,6 @@
 
 	.plugins-results-header__titles {
 		margin-bottom: 6px; // +18 from elements = 24 gap
-		margin-right: 6px;
 
 		.plugins-results-header__title {
 			@extend .wp-brand-font;
@@ -27,6 +26,7 @@
 		justify-content: space-between;
 		margin-top: auto;
 		margin-bottom: 6px; // +20 from elements = 26 gap
+		margin-left: 6px;
 
 		.plugins-results-header__action {
 			font-size: $font-body-small;
