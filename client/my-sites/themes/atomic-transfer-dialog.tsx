@@ -40,7 +40,7 @@ interface AtomicTransferDialogProps {
 	dispatchActivateTheme: typeof activateTheme;
 	dispatchRecordTracksEvent: typeof recordTracksEvent;
 	dispatchInitiateThemeTransfer: typeof initiateThemeTransfer;
-	dispatchRequestActiveTheme: ( siteId: number ) => Promise< void >;
+	dispatchRequestActiveTheme: typeof requestActiveTheme;
 }
 
 class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
@@ -59,12 +59,21 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 		return href.replace( origin, '' ).replace( /\b.wordpress.com/, '.wpcomstaging.com' );
 	};
 
+	updateActiveThemeStateAndRedirect = async ( siteId: number ) => {
+		const { dispatchRequestActiveTheme } = this.props;
+		try {
+			await dispatchRequestActiveTheme( siteId );
+		} catch ( e ) {
+			/* do nothing */
+		}
+		// Redirect to the Atomic site even if the active theme request fails
+		window.location.replace( this.getAtomicSitePath() );
+	};
+
 	componentDidUpdate( prevProps: Readonly< AtomicTransferDialogProps > ): void {
-		const { siteId, siteSlug, isTransferred, dispatchRequestActiveTheme } = this.props;
+		const { siteId, siteSlug, isTransferred } = this.props;
 		if ( siteId && siteSlug && prevProps.isTransferred !== isTransferred && isTransferred ) {
-			dispatchRequestActiveTheme( siteId ).then( () => {
-				window.location.replace( this.getAtomicSitePath() );
-			} );
+			this.updateActiveThemeStateAndRedirect( siteId );
 		}
 	}
 
