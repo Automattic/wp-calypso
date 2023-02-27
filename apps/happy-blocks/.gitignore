@@ -1,1 +1,3 @@
-/build
+/dist
+/src/*/dist
+/release-files
