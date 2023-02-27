@@ -6,6 +6,7 @@ import { useDispatch, useSelect, dispatch } from '@wordpress/data';
 import { useEffect, useMemo } from '@wordpress/element';
 import useSiteIntent from '../../../dotcom-fse/lib/site-intent/use-site-intent';
 import useSitePlan from '../../../dotcom-fse/lib/site-plan/use-site-plan';
+import { getEditorType } from './get-editor-type';
 import getTourSteps from './tour-steps';
 import './style-tour.scss';
 import type { WpcomConfig } from '@automattic/tour-kit';
@@ -22,6 +23,7 @@ function LaunchWpcomWelcomeTour() {
 	} ) );
 	const { siteIntent, siteIntentFetched } = useSiteIntent();
 	const localeSlug = useLocale();
+	const editorType = getEditorType();
 
 	// Preload first card image (others preloaded after open state confirmed)
 	usePrefetchTourAssets( [ getTourSteps( localeSlug, false, false, null, siteIntent )[ 0 ] ] );
@@ -40,8 +42,16 @@ function LaunchWpcomWelcomeTour() {
 			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
 			is_manually_opened: isManuallyOpened,
 			intent: siteIntent,
+			editor_type: editorType,
 		} );
-	}, [ isNewPageLayoutModalOpen, isManuallyOpened, show, siteIntent, siteIntentFetched ] );
+	}, [
+		isNewPageLayoutModalOpen,
+		isManuallyOpened,
+		show,
+		siteIntent,
+		siteIntentFetched,
+		editorType,
+	] );
 
 	if ( ! show || isNewPageLayoutModalOpen ) {
 		return null;
@@ -90,6 +100,8 @@ function WelcomeTour( { siteIntent }: { siteIntent?: string } ) {
 		isSidebarOpened ||
 		( isWithinBreakpoint( '<782px' ) && ( isInserterOpened || isSettingsOpened ) );
 
+	const editorType = getEditorType();
+
 	const tourConfig: WpcomConfig = {
 		steps: tourSteps,
 		closeHandler: ( _steps, currentStepIndex, source ) => {
@@ -98,6 +110,7 @@ function WelcomeTour( { siteIntent }: { siteIntent?: string } ) {
 				slide_number: currentStepIndex + 1,
 				action: source,
 				intent: siteIntent,
+				editor_type: editorType,
 			} );
 			setShowWelcomeGuide( false, { openedManually: false } );
 		},
@@ -116,6 +129,7 @@ function WelcomeTour( { siteIntent }: { siteIntent?: string } ) {
 						thumbs_up: rating === 'thumbs-up',
 						is_gutenboarding: false,
 						intent: siteIntent,
+						editor_type: editorType,
 					} );
 				},
 			},
@@ -125,6 +139,7 @@ function WelcomeTour( { siteIntent }: { siteIntent?: string } ) {
 						is_gutenboarding: isGutenboarding,
 						slide_number: currentStepIndex + 1,
 						intent: siteIntent,
+						editor_type: editorType,
 					} );
 				},
 				onMaximize: ( currentStepIndex ) => {
@@ -132,6 +147,7 @@ function WelcomeTour( { siteIntent }: { siteIntent?: string } ) {
 						is_gutenboarding: isGutenboarding,
 						slide_number: currentStepIndex + 1,
 						intent: siteIntent,
+						editor_type: editorType,
 					} );
 				},
 				onStepViewOnce: ( currentStepIndex ) => {
@@ -144,6 +160,7 @@ function WelcomeTour( { siteIntent }: { siteIntent?: string } ) {
 						slide_heading: heading,
 						is_gutenboarding: isGutenboarding,
 						intent: siteIntent,
+						editor_type: editorType,
 					} );
 				},
 			},
