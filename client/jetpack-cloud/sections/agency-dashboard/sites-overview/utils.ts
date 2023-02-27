@@ -38,7 +38,7 @@ export const siteColumns = [
 	},
 	{
 		key: 'plugin',
-		title: translate( 'Plugin Updates' ),
+		title: translate( 'Plugins' ),
 	},
 ];
 
@@ -164,6 +164,7 @@ const getRowEventName = (
 };
 
 const backupTooltips: StatusTooltip = {
+	critical: translate( 'Latest backup failed' ),
 	failed: translate( 'Latest backup failed' ),
 	warning: translate( 'Latest backup completed with warnings' ),
 	inactive: translate( 'Add Jetpack VaultPress Backup to this site' ),
@@ -296,6 +297,7 @@ export const getRowMetaData = (
 };
 
 const formatBackupData = ( site: Site ) => {
+	const isExpandedBlockEnabled = config.isEnabled( 'jetpack/pro-dashboard-expandable-block' );
 	const backup: BackupNode = {
 		value: '',
 		status: '',
@@ -312,7 +314,7 @@ const formatBackupData = ( site: Site ) => {
 			break;
 		case 'rewind_backup_error':
 		case 'backup_only_error':
-			backup.status = 'failed';
+			backup.status = isExpandedBlockEnabled ? 'critical' : 'failed';
 			backup.value = translate( 'Failed' );
 			break;
 		case 'rewind_backup_complete_warning':

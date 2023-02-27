@@ -196,6 +196,7 @@
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
+		"yolo/staging-sites-i1": true,
 		"newsletter/stats": true
 	}
 }

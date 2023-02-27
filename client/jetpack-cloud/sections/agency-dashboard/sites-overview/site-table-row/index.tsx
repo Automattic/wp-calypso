@@ -54,6 +54,8 @@ export default function SiteTableRow( { columns, item, setExpanded, isExpanded }
 
 	const isExpandedContentEnabled = isEnabled( 'jetpack/pro-dashboard-expandable-block' );
 
+	const isExpandedBlockEnabled = isEnabled( 'jetpack/pro-dashboard-expandable-block' );
+
 	return (
 		<Fragment>
 			<tr
@@ -77,11 +79,13 @@ export default function SiteTableRow( { columns, item, setExpanded, isExpanded }
 					if ( hasSiteError && column.key !== 'site' ) {
 						return null;
 					}
+					const isCritical = 'critical' === row.status;
 					if ( row.type ) {
 						return (
 							<td
 								className={ classNames( column.className, {
 									'site-table__td-without-border-bottom': isExpanded,
+									'site-table__td-critical': isCritical,
 								} ) }
 								key={ `table-data-${ row.type }-${ blogId }` }
 							>
@@ -100,6 +104,7 @@ export default function SiteTableRow( { columns, item, setExpanded, isExpanded }
 					<td
 						className={ classNames( 'site-table__error', {
 							'site-table__td-without-border-bottom': isExpanded,
+							'padding-0': isExpandedContentEnabled,
 						} ) }
 						// If there is an error, we need to span the whole row because we don't show any column.
 						colSpan={ columns.length - 1 }
@@ -110,6 +115,7 @@ export default function SiteTableRow( { columns, item, setExpanded, isExpanded }
 				<td
 					className={ classNames( 'site-table__actions', {
 						'site-table__td-without-border-bottom': isExpanded,
+						'site-table__actions-button': isExpandedBlockEnabled,
 					} ) }
 					// If there is an error, we need to span the whole row because we don't show the expand buttons.
 					colSpan={ hasSiteError && isExpandedContentEnabled ? 2 : 1 }
@@ -119,7 +125,7 @@ export default function SiteTableRow( { columns, item, setExpanded, isExpanded }
 				{ /* Show expand buttons only when the feature is enabled and there is no site error. */ }
 				{ ! hasSiteError && isExpandedContentEnabled && (
 					<td
-						className={ classNames( 'site-table__actions', {
+						className={ classNames( 'site-table__actions site-table__expand-row', {
 							'site-table__td-without-border-bottom': isExpanded,
 						} ) }
 					>
