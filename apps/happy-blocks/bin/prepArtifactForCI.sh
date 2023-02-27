@@ -11,6 +11,6 @@ do
 done
 
 # Add the index.php file
-cp ../index.php ../release-files/
+cp ../src/happy-blocks.php ../release-files/
 
 printf "Finished configuration of the @automattic/happy-blocks plugin artifacts directory.\n"
