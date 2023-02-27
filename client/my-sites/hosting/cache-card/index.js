@@ -53,7 +53,7 @@ const CacheCard = ( {
 	//autorenew
 	return (
 		<Card className="cache-card">
-			<MaterialIcon icon="autorenew" size={ 24 } />
+			<MaterialIcon icon="autorenew" size={ 32 } />
 			<CardHeading id="cache">{ translate( 'Cache' ) }</CardHeading>
 			{ getClearCacheContent() }
 		</Card>
