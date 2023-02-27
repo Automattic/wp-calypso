@@ -67,7 +67,7 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 								href: `${ JETPACK_COM_BASE_URL }/upgrade/scan/`,
 							},
 							{
-								label: translate( 'Akismet' ),
+								label: translate( 'Akismet Anti-spam' ),
 								tagline: translate( 'Stop comment and form spam' ),
 								href: `${ JETPACK_COM_BASE_URL }/upgrade/anti-spam/`,
 							},
