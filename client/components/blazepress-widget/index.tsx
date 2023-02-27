@@ -1,5 +1,6 @@
 import { getUrlParts } from '@automattic/calypso-url';
 import { Dialog } from '@automattic/components';
+import { useLocale } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { TranslateOptionsText, useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -46,6 +47,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, selectedSiteId ) );
 	const { closeModal } = useRouteModal( 'blazepress-widget', keyValue );
 	const queryClient = useQueryClient();
+	const localeSlug = useLocale();
 
 	// Scroll to top on initial load regardless of previous page position
 	useEffect( () => {
@@ -96,7 +98,8 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 					},
 					widgetContainer.current,
 					handleShowCancel,
-					handleGetStartedMessageClose
+					handleGetStartedMessageClose,
+					localeSlug
 				);
 				setIsLoading( false );
 			} )();
