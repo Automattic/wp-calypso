@@ -33,6 +33,28 @@
 		}
 	}
 
+	&__skip {
+		height: 24px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin: 0;
+		padding: 0 0 0 48px;
+		position: absolute;
+		right: 24px;
+
+		.gridicons-chevron-right {
+			float: right;
+			top: 2px !important;
+		}
+
+		button {
+			margin: 0;
+			padding: 0;
+			color: #101517;
+		}
+	}
+
 	&__steps {
 		display: none;
 	}

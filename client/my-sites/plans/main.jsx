@@ -230,9 +230,6 @@ class Plans extends Component {
 		const yourDomainName = allDomains.length
 			? allDomains.slice( -1 )[ 0 ]?.meta
 			: translate( 'your domain name' );
-		const goBackLink = addQueryArgs( `/domains/add/${ selectedSite.slug }`, {
-			domainAndPlanPackage: true,
-		} );
 		const domainUpsellDescription = translate(
 			'With an annual plan, you can get {{strong}}%(domainName)s for free{{/strong}} for the first year, Jetpack essential features, live chat support, and all the features that will take your site to the next level.',
 			{
@@ -256,7 +253,7 @@ class Plans extends Component {
 				<QueryContactDetailsCache />
 				<QueryPlans />
 				<TrackComponentView eventName="calypso_plans_view" />
-				<DomainUpsellDialog domain={ domainFromHomeUpsellFlow } />
+				<DomainUpsellDialog domain={ selectedSite.slug } />
 				{ canAccessPlans && (
 					<div>
 						{ ! isDomainAndPlanPackageFlow && (
@@ -265,7 +262,7 @@ class Plans extends Component {
 						{ isDomainAndPlanPackageFlow && (
 							<>
 								<div className="plans__header">
-									<DomainAndPlanPackageNavigation goBackLink={ goBackLink } step={ 2 } />
+									<DomainAndPlanPackageNavigation step={ 2 } showSkipPlans={ true } />
 
 									<FormattedHeader
 										brandFont

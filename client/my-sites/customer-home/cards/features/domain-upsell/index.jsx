@@ -74,6 +74,7 @@ export function RenderDomainUpsell() {
 	const purchaseLink = addQueryArgs(
 		{
 			get_domain: domainSuggestionName,
+			domainAndPlanPackage: true,
 		},
 		`/plans/yearly/${ siteSlug }`
 	);
