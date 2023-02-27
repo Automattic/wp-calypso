@@ -2,6 +2,7 @@ import { Button, Card, Spinner } from '@automattic/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { localize } from 'i18n-calypso';
+import { useEffect } from 'react';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import MaterialIcon from 'calypso/components/material-icon';
@@ -13,10 +14,6 @@ import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-
-const noticeOptions = {
-	duration: 3000,
-};
 
 const stagingSiteAddFailureNoticeId = 'staging-site-add-failure';
 
@@ -37,13 +34,16 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 	const transferStatus = useCheckStagingSiteStatus( stagingSite.id );
 	const isStagingSiteTransferComplete = transferStatus === transferStates.COMPLETE;
 
+	useEffect( () => {
+		if ( isStagingSiteTransferComplete ) {
+			dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_success' ) );
+			dispatch( successNotice( __( 'Staging site added.' ) ) );
+		}
+	}, [ dispatch, __, isStagingSiteTransferComplete ] );
+
 	const { addStagingSite, isLoading: addingStagingSite } = useAddStagingSiteMutation( siteId, {
 		onMutate: () => {
 			dispatch( removeNotice( stagingSiteAddFailureNoticeId ) );
-		},
-		onSuccess: () => {
-			dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_success' ) );
-			dispatch( successNotice( __( 'Staging site was added.' ), noticeOptions ) );
 		},
 		onError: ( error ) => {
 			dispatch(
@@ -56,7 +56,6 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 					// translators: "reason" is why adding the staging site failed.
 					sprintf( __( 'Failed to add staging site: %(reason)s' ), { reason: error.message } ),
 					{
-						...noticeOptions,
 						id: stagingSiteAddFailureNoticeId,
 					}
 				)
