@@ -8,7 +8,12 @@ import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { addQueryArgs } from 'calypso/lib/route';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import { getSiteBySlug, getSite, isJetpackSite } from 'calypso/state/sites/selectors';
+import {
+	getSiteBySlug,
+	getSite,
+	isJetpackSite,
+	hasAllSitesList,
+} from 'calypso/state/sites/selectors';
 import { Importer, ImportJob, StepNavigator } from '../types';
 import { ContentChooser } from './content-chooser';
 import ImportContentOnly from './import-content-only';
@@ -43,6 +48,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	);
 	const isSiteAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 	const isSiteJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+	const hasAllSitesFetched = useSelector( ( state ) => hasAllSitesList( state ) );
 	const fromSiteAnalyzedData = useSelector( getUrlData );
 	const { setIsMigrateFromWp } = useDispatch( ONBOARD_STORE );
 	const isMigrateFromWp = useSelect( ( select ) => select( ONBOARD_STORE ).getIsMigrateFromWp() );
@@ -124,7 +130,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	return (
 		<>
 			{ ( () => {
-				if ( isNotAtomicJetpack() ) {
+				if ( isNotAtomicJetpack() || ! hasAllSitesFetched ) {
 					return <LoadingEllipsis />;
 				} else if ( undefined === option && fromSite ) {
 					return (
