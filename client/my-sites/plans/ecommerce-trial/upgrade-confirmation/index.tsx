@@ -1,3 +1,4 @@
+import { Confetti } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
@@ -15,6 +16,8 @@ const TrialUpgradeConfirmation = () => {
 		<>
 			<BodySectionCssClass bodyClass={ [ 'ecommerce-trial-upgraded' ] } />
 			<Main wideLayout>
+				<Confetti className="trial-upgrade-confirmation__confetti" />
+
 				<div className="trial-upgrade-confirmation__header">
 					<h1 className="trial-upgrade-confirmation__title">
 						{ translate( 'Woo! Welcome to Commerce' ) }

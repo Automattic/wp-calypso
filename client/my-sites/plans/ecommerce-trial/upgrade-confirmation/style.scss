@@ -1,4 +1,5 @@
 @import "@automattic/components/src/styles/typography";
+@import "@wordpress/base-styles/breakpoints";
 
 body.ecommerce-trial-upgraded {
 	background-color: var(--color-surface);
@@ -24,5 +25,18 @@ body.ecommerce-trial-upgraded {
 		grid-column-gap: 32px;
 		grid-row-gap: 32px;
 		margin: 55px 0;
+	}
+
+	.trial-upgrade-confirmation__confetti {
+		width: 550px;
+		position: absolute;
+		top: -20px;
+		left: 0;
+		right: 0;
+		margin: auto;
+
+		@media (max-width: $break-mobile) {
+			display: none;
+		}
 	}
 }
