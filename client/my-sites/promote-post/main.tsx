@@ -189,6 +189,14 @@ export default function PromotedPosts( { tab }: Props ) {
 		...( postAndPagesByComments || [] ),
 		...( products || [] ),
 	];
+
+	/**
+	 * Some of the posts/pages may be duplicated as we load them by popularity and sometimes by comments.
+	 */
+	const contentWithoutDuplicatedIds = content.filter(
+		( obj, index ) => content.findIndex( ( item ) => item.ID === obj.ID ) === index
+	);
+
 	const isLoading =
 		isLoadingByCommentsQuery ||
 		isLoadingMemoizedQuery ||
@@ -243,7 +251,9 @@ export default function PromotedPosts( { tab }: Props ) {
 				/>
 			) }
 			<QueryPosts siteId={ selectedSiteId } query={ queryProducts } postId={ null } />
-			{ selectedTab === 'posts' && <PostsList content={ content } isLoading={ isLoading } /> }
+			{ selectedTab === 'posts' && (
+				<PostsList content={ contentWithoutDuplicatedIds } isLoading={ isLoading } />
+			) }
 		</Main>
 	);
 }
