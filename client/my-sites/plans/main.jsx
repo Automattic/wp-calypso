@@ -78,6 +78,7 @@ class Plans extends Component {
 		selectedSite: PropTypes.object,
 		isDomainAndPlanPackageFlow: PropTypes.bool,
 		domainFromHomeUpsellFlow: PropTypes.string,
+		isMyHomeDomainUpsell: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -218,6 +219,7 @@ class Plans extends Component {
 			isDomainAndPlanPackageFlow,
 			isJetpackNotAtomic,
 			domainFromHomeUpsellFlow,
+			isMyHomeDomainUpsell,
 		} = this.props;
 
 		if ( ! selectedSite || this.isInvalidPlanInterval() || ! currentPlan ) {
@@ -253,7 +255,7 @@ class Plans extends Component {
 				<QueryContactDetailsCache />
 				<QueryPlans />
 				<TrackComponentView eventName="calypso_plans_view" />
-				<DomainUpsellDialog domain={ selectedSite.slug } />
+				{ isMyHomeDomainUpsell && <DomainUpsellDialog domain={ selectedSite.slug } /> }
 				{ canAccessPlans && (
 					<div>
 						{ ! isDomainAndPlanPackageFlow && (
@@ -262,7 +264,10 @@ class Plans extends Component {
 						{ isDomainAndPlanPackageFlow && (
 							<>
 								<div className="plans__header">
-									<DomainAndPlanPackageNavigation step={ 2 } showSkipPlans={ true } />
+									<DomainAndPlanPackageNavigation
+										step={ 2 }
+										showSkipPlans={ isMyHomeDomainUpsell }
+									/>
 
 									<FormattedHeader
 										brandFont
@@ -344,6 +349,7 @@ const ConnectedPlans = connect( ( state ) => {
 		isDomainAndPlanPackageFlow: !! getCurrentQueryArguments( state )?.domainAndPlanPackage,
 		isJetpackNotAtomic: isJetpackSite( state, selectedSiteId, { treatAtomicAsJetpackSite: false } ),
 		domainFromHomeUpsellFlow: getDomainFromHomeUpsellInQuery( state ),
+		isMyHomeDomainUpsell: !! getCurrentQueryArguments( state )?.get_domain,
 	};
 } )( withCartKey( withShoppingCart( localize( withTrackingTool( 'HotJar' )( Plans ) ) ) ) );
 
