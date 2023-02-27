@@ -385,7 +385,7 @@ export const SitesEllipsisMenu = ( {
 								recordTracks( 'calypso_sites_dashboard_site_action_submenu_dns_records_click' )
 							}
 						>
-							{ __( 'DNS records' ) }
+							{ __( 'Domains and DNS' ) }
 						</MenuItemLink>
 					) }
 					<WpAdminItem { ...props } />
