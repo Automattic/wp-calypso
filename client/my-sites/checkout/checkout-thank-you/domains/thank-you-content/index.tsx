@@ -116,7 +116,7 @@ export function buildDomainStepForLaunchpadNextSteps(
 	domainType: DomainThankYouType,
 	primary: boolean
 ): ThankYouNextStepProps | null {
-	if ( launchpadScreen !== 'full' || ! siteIntent ) {
+	if ( launchpadScreen !== 'full' || ! siteIntent || ! selectedSiteSlug ) {
 		return null;
 	}
 
