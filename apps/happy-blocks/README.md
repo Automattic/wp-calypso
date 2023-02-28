@@ -11,16 +11,16 @@ This package contains the source code for the blocks used on WordPress.com sites
 
 1. Deploy the entire Calypso project following the usual deployment process.
 
-# Blocks
+## Blocks
 
-## Pricing Plan
+### Pricing Plan
 
 [ Needs documentation ]
 
-## Universal Header
+### Universal Header
 
 This is a block version of the unified WordPress.com header. It should match the current version at WordPress.com homepage (logged out) for continuity as users browse arounf all our sites. The block is built from `@automattic/wpcom-template-parts`. You can see this in action on [Forums](https://wordpress.com/forums) and [Support](https://wordpress.com/support).
 
-## Universal Footer
+### Universal Footer
 
 This is a block version of the unified WordPress.com footer. It should match the current version at WordPress.com homepage (logged out) for continuity as users browse arounf all our sites. The block is built from `@automattic/wpcom-template-parts`. You can see this in action on [Forums](https://wordpress.com/forums) and [Support](https://wordpress.com/support).
