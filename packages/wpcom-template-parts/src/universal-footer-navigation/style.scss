@@ -1,15 +1,16 @@
 $wpc-gray-150: #141517;
 $lp-font-stack-emoji: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-$lp-font-stack-default: -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica", "Arial", sans-serif, $lp-font-stack-emoji;
+$lp-font-stack-default: -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica",
+	"Arial", sans-serif, $lp-font-stack-emoji;
 
-@function static-url($path: "") {
-	@return "//s1.wp.com/wp-content/themes/h4/landing/marketing/" + $path;
+@function static-url( $path: "" ) {
+	@return "//s1.wp.com/wp-content/themes/h4/landing/marketing/pages/_common/components/footer-nav/media/" + $path;
 }
 
 $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 1600px; // Think very carefully before adding a new breakpoint
 
 @mixin breakpoint( $size ) {
-	@if type-of($size) == string {
+	@if type-of( $size ) == string {
 		$approved-value: 0;
 		@each $breakpoint in $breakpoints {
 			$and-larger: ">" + $breakpoint;
@@ -20,15 +21,13 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 				@media ( max-width: $breakpoint ) {
 					@content;
 				}
-			}
-			@else {
+			} @else {
 				@if $size == $and-larger {
 					$approved-value: 2;
 					@media ( min-width: $breakpoint + 1 ) {
 						@content;
 					}
-				}
-				@else {
+				} @else {
 					@each $breakpoint-end in $breakpoints {
 						$range: $breakpoint + "-" + $breakpoint-end;
 						@if $size == $range {
@@ -49,8 +48,7 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 			// TODO - change this to use @error, when it is supported by node-sass
 			@warn "ERROR in breakpoint( #{ $size } ): You can only use these sizes[ #{$sizes} ] using the following syntax [ <#{ nth( $breakpoints, 1 ) } >#{ nth( $breakpoints, 1 ) } #{ nth( $breakpoints, 1 ) }-#{ nth( $breakpoints, 2 ) } ]";
 		}
-	}
-	@else {
+	} @else {
 		$sizes: "";
 		@each $breakpoint in $breakpoints {
 			$sizes: $sizes + " " + $breakpoint;
@@ -168,7 +166,6 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 	}
 }
 
-
 .lpc-footer-mobile-apps {
 	display: flex;
 	flex: 1;
@@ -218,7 +215,6 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 	&:active {
 		opacity: 0.85; /* 1 */
 	}
-
 
 	&::before {
 		content: "";
@@ -360,16 +356,21 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 .lp-language-picker__icon {
 	@extend %lp-language-picker__icon;
 
-	-webkit-mask: url(static-url("pages/_common/components/footer-nav/media/icon-language.svg")) center center no-repeat;
-	-webkit-mask-size: contain;
+	background-image: url(static-url( 'icon-language.svg') );
+	background-position: center center;
+	background-repeat: no-repeat;
+	filter: invert(0.7);
+	background-color: transparent;
 	left: 0.85em;
 }
 
 .lp-language-picker__chevron {
 	@extend %lp-language-picker__icon;
-
-	-webkit-mask: url(static-url("pages/_common/components/footer-nav/media/icon-chevron-down.svg")) center center no-repeat;
-	-webkit-mask-size: contain;
+	background-image: url(static-url( 'icon-chevron-down.svg') );
+	background-position: center center;
+	background-repeat: no-repeat;
+	filter: invert(0.7);
+	background-color: transparent;
 	right: 0.65em;
 }
 
@@ -398,7 +399,16 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 
 	&::after {
 		content: "\00a0\2197";
-		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+		font-family:
+			-apple-system,
+			BlinkMacSystemFont,
+			"Segoe UI",
+			Roboto,
+			Oxygen-Sans,
+			Ubuntu,
+			Cantarell,
+			"Helvetica Neue",
+			sans-serif;
 		display: inline-block;
 		font-weight: 600;
 		left: 0.165em;
@@ -476,7 +486,7 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 	}
 }
 
-@include breakpoint("<782px") {
+@include breakpoint( "<782px" ) {
 	.lpc-footer-nav-container {
 		right: auto;
 		grid-template-columns: 1fr 1fr;
@@ -505,7 +515,7 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 	}
 }
 
-@include breakpoint("<660px") {
+@include breakpoint( "<660px" ) {
 	.lpc-footer-nav {
 		padding: 0 16px;
 	}
@@ -515,7 +525,7 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 	}
 }
 
-@include breakpoint("<480px") {
+@include breakpoint( "<480px" ) {
 	.lpc-footer-nav-container,
 	.lpc-footer-subnav-container,
 	.lpc-footer-automattic-nav-wrapper {

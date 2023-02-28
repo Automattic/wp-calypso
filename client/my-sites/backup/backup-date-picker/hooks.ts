@@ -2,7 +2,7 @@ import { Moment } from 'moment';
 import { useCallback } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
-import { useIsDateVisible, useFirstMatchingBackupAttempt } from '../hooks';
+import { useFirstMatchingBackupAttempt } from '../hooks';
 
 type CanGoToDateHook = (
 	siteId: number,
@@ -19,7 +19,6 @@ export const useCanGoToDate: CanGoToDateHook = (
 ) => {
 	const moment = useLocalizedMoment();
 	const today = useDateWithOffset( moment() );
-	const selectedDateIsVisible = useIsDateVisible( siteId )( selectedDate );
 
 	return useCallback(
 		( desiredDate ) => {
@@ -27,16 +26,6 @@ export const useCanGoToDate: CanGoToDateHook = (
 			const goingBackwardInTime = desiredDate.isBefore( selectedDate, 'day' );
 
 			if ( goingBackwardInTime ) {
-				// If we're already further back in time than this site's
-				// display rules allow, don't go any further
-				//
-				// NOTE: We intentionally allow navigation to one day
-				// past the limit of visible days, so we can show eligible
-				// users the opportunity to upgrade
-				if ( ! selectedDateIsVisible ) {
-					return false;
-				}
-
 				// If there are no backups, we won't show the navigation
 				if ( hasNoBackups ) {
 					return false;
@@ -62,7 +51,7 @@ export const useCanGoToDate: CanGoToDateHook = (
 			// then everything's fine (this should never happen)
 			return true;
 		},
-		[ selectedDateIsVisible, selectedDate, today, oldestDateAvailable, hasNoBackups ]
+		[ selectedDate, today, oldestDateAvailable, hasNoBackups ]
 	);
 };
 

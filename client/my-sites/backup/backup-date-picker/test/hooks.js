@@ -6,14 +6,12 @@ jest.mock( 'calypso/components/localized-moment' );
 jest.mock( 'calypso/lib/jetpack/hooks/use-date-with-offset' );
 jest.mock( 'calypso/my-sites/backup/hooks', () => ( {
 	...jest.requireActual( 'calypso/my-sites/backup/hooks' ),
-	useIsDateVisible: jest.fn(),
 } ) );
 
 import moment from 'moment';
 import { useCallback } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
-import { useIsDateVisible } from 'calypso/my-sites/backup/hooks';
 import { useCanGoToDate } from '../hooks';
 
 describe( 'useCanGoToDate', () => {
@@ -23,7 +21,6 @@ describe( 'useCanGoToDate', () => {
 		useCallback.mockImplementation( ( fn ) => fn );
 		useLocalizedMoment.mockImplementation( () => moment );
 		useDateWithOffset.mockImplementation( ( date ) => date );
-		useIsDateVisible.mockImplementation( () => () => true );
 	} );
 
 	test( 'Allows both forward and backward navigation between the oldest date and the present (inclusive)', () => {
@@ -120,20 +117,9 @@ describe( 'useCanGoToDate', () => {
 	test( 'Allows backward navigation to one day past the number of visible days', () => {
 		const today = moment().startOf( 'day' );
 
-		useIsDateVisible.mockImplementation( () => ( date ) => date.isSameOrAfter( today ) );
 		const canGoToDate = useCanGoToDate( 0, today );
 
 		const yesterday = moment( today ).subtract( 1, 'day' );
 		expect( canGoToDate( yesterday ) ).toEqual( true );
-	} );
-
-	test( 'Disallows backward navigation to >1 day past the number of visible days', () => {
-		const today = moment().startOf( 'day' );
-
-		useIsDateVisible.mockImplementation( () => ( date ) => date.isAfter( today ) );
-		const canGoToDate = useCanGoToDate( 0, today );
-
-		const yesterday = moment( today ).subtract( 1, 'day' );
-		expect( canGoToDate( yesterday ) ).toEqual( false );
 	} );
 } );

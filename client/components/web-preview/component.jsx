@@ -65,8 +65,6 @@ export class WebPreviewModal extends Component {
 		disableTabbing: PropTypes.bool,
 		// Edit overlay that redirects to the Site Editor
 		enableEditOverlay: PropTypes.bool,
-		// Optional banner to show above preview
-		bannerToShow: PropTypes.Component,
 	};
 
 	static defaultProps = {
@@ -86,7 +84,6 @@ export class WebPreviewModal extends Component {
 		overridePost: null,
 		autoHeight: false,
 		enableEditOverlay: false,
-		bannerToShow: null,
 	};
 
 	constructor( props ) {
