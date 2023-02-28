@@ -36,6 +36,8 @@ export default function JetpackUpsellSection() {
 	}
 
 	// Build checkout URL prefixed with WordPress.com.
+	// TODO: Change URL to point at plugin installation within wp-admin.
+	//       (e.g., /wp-admin/update.php?action=install-plugin&plugin=plugin-name&_wpnonce=valid-nonce).
 	const upgradeUrls: Record< string, string > = ! siteSlug
 		? {}
 		: {
