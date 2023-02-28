@@ -162,6 +162,8 @@ export class PlansStep extends Component {
 					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 					shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
 					isReskinned={ isReskinned }
+					hidePremiumPlan={ isHostingLPFlow( this.props.flowName ) }
+					hidePersonalPlan={ isHostingLPFlow( this.props.flowName ) }
 				/>
 			</div>
 		);

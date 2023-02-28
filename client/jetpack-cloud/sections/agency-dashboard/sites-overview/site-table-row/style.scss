@@ -2,13 +2,14 @@
 @import "@wordpress/base-styles/mixins";
 
 .site-table__table-row {
-	&:hover {
+	&:hover:not(.is-expanded):not(.site-table__table-row-site-error) {
 		background: var(--studio-gray-0);
 
 		.sites-overview__overlay {
 			background: linear-gradient(to right, rgba(246, 247, 247, 0.8) 30%, rgba(246, 247, 247, 1) 100%);
 		}
-
+	}
+	&:hover {
 		.site-set-favorite__favorite-icon {
 			visibility: visible;
 		}
@@ -78,5 +79,12 @@ td.site-table__td-critical {
 
 	.sites-overview__row-status {
 		max-width: none;
+	}
+}
+
+tr.site-table__table-row-expanded {
+	background: var(--studio-gray-0);
+	td {
+		border-top: none;
 	}
 }

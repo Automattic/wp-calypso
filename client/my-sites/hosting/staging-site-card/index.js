@@ -1,11 +1,10 @@
-import { Button, Card, Spinner } from '@automattic/components';
+import { Button, Card, Spinner, Gridicon } from '@automattic/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { localize } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
-import MaterialIcon from 'calypso/components/material-icon';
 import { useAddStagingSiteMutation } from 'calypso/my-sites/hosting/staging-site-card/use-add-staging-site';
 import { useCheckStagingSiteStatus } from 'calypso/my-sites/hosting/staging-site-card/use-check-staging-site-status';
 import { useStagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
@@ -31,15 +30,15 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 	const showAddStagingSite = ! isLoadingStagingSites && stagingSites && stagingSites.length === 0;
 	const showManageStagingSite = ! isLoadingStagingSites && stagingSites && stagingSites.length > 0;
 
+	const [ wasCreating, setWasCreating ] = useState( false );
 	const transferStatus = useCheckStagingSiteStatus( stagingSite.id );
 	const isStagingSiteTransferComplete = transferStatus === transferStates.COMPLETE;
 
 	useEffect( () => {
-		if ( isStagingSiteTransferComplete ) {
-			dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_success' ) );
+		if ( wasCreating && isStagingSiteTransferComplete ) {
 			dispatch( successNotice( __( 'Staging site added.' ) ) );
 		}
-	}, [ dispatch, __, isStagingSiteTransferComplete ] );
+	}, [ dispatch, __, isStagingSiteTransferComplete, wasCreating ] );
 
 	const { addStagingSite, isLoading: addingStagingSite } = useAddStagingSiteMutation( siteId, {
 		onMutate: () => {
@@ -76,6 +75,7 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 					disabled={ disabled || addingStagingSite }
 					onClick={ () => {
 						dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_click' ) );
+						setWasCreating( true );
 						addStagingSite();
 					} }
 				>
@@ -107,7 +107,10 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 
 	return (
 		<Card className="staging-site-card">
-			<MaterialIcon icon="share" size={ 24 } />
+			{
+				// eslint-disable-next-line wpcalypso/jsx-gridicon-size
+				<Gridicon icon="share-computer" size={ 32 } />
+			}
 			<CardHeading id="staging-site">{ translate( 'Staging site' ) }</CardHeading>
 			{ showAddStagingSite && ! addingStagingSite && getNewStagingSiteContent() }
 			{ showManageStagingSite && isStagingSiteTransferComplete && getManageStagingSiteContent() }
