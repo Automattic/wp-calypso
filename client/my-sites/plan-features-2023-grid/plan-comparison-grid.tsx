@@ -28,7 +28,7 @@ import PopularBadge from './components/popular-badge';
 import PlanFeatures2023GridHeaderPrice from './header-price';
 import useHighlightAdjacencyMatrix from './hooks/use-highlight-adjacency-matrix';
 import useHighlightLabel from './hooks/use-highlight-label';
-import { plansBreakSmall, plansBreakLarge } from './media-queries';
+import { plansBreakSmall } from './media-queries';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import { PlanProperties } from './types';
 import { usePricingBreakpoint } from './util';
@@ -188,10 +188,6 @@ const Cell = styled.div< { textAlign?: string } >`
 			padding-right: 0;
 			border-right: none;
 		}
-	` ) }
-
-	${ plansBreakLarge( css`
-		max-width: 200px;
 	` ) }
 `;
 
