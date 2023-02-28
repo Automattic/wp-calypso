@@ -18508,8 +18508,9 @@ fsevents@^1.2.7:
     "@wordpress/element": ^4.7.0
     "@wordpress/i18n": ^4.9.0
     "@wordpress/readable-js-assets-webpack-plugin": ^1.0.4
-    "@wordpress/scripts": ^23.1.0
     classnames: ^2.3.2
+    copy-webpack-plugin: ^10.1.0
+    glob: ^7.1.6
     jest: ^27.3.1
     postcss: ^8.4.5
     react: ^17.0.2

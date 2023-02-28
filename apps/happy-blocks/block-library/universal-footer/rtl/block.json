@@ -5,7 +5,7 @@
 	"category": "layout",
 	"textdomain": "happy-blocks",
 	"title": "Universal Footer",
-	"viewScript": "file:../../../dist/universal-footer/view.js",
-	"editorScript": "file:../../../dist/universal-footer/index.js",
-	"style": "file:../../../dist/universal-footer/view.rtl.css"
+	"viewScript": "file:../view.js",
+	"editorScript": "file:../index.js",
+	"style": "file:../view.rtl.css"
 }
