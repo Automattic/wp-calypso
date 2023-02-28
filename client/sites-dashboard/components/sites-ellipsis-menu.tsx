@@ -296,7 +296,7 @@ function DeveloperSettingsSubmenu( { site, recordTracks }: SitesMenuItemProps ) 
 
 	return (
 		<div { ...developerSubmenuProps.parent }>
-			<MenuItemLink info={ hasFeatureSFTP && __( 'Requires a Business Plan' ) }>
+			<MenuItemLink info={ ! hasFeatureSFTP && __( 'Requires a Business Plan' ) }>
 				{ __( 'Hosting configuration' ) } <MenuItemGridIcon icon="chevron-right" size={ 18 } />
 			</MenuItemLink>
 			<SubmenuPopover { ...developerSubmenuProps.submenu }>
