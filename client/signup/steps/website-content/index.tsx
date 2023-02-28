@@ -31,8 +31,9 @@ import {
 	WebsiteContentStateModel,
 	hasUnsavedChanges as hasUnsavedWebsiteContentChanges,
 } from 'calypso/state/signup/steps/website-content/selectors';
-import { getSiteId } from 'calypso/state/sites/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
 import { sectionGenerator } from './section-generator';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { ValidationErrors } from 'calypso/signup/accordion-form/types';
 import type { WebsiteContentServerState } from 'calypso/state/signup/steps/website-content/types';
 import type { SiteId } from 'calypso/types';
@@ -89,23 +90,15 @@ const Container = styled.div`
 `;
 
 interface WebsiteContentStepProps {
-	additionalStepData: object;
-	submitSignupStep: ( step: { stepName: string } ) => void;
-	goToNextStep: () => void;
-	flowName: string;
-	stepName: string;
-	positionInFlow: string;
 	siteId: SiteId | null;
 	websiteContentServerState: WebsiteContentServerState;
+	onSubmit: () => void;
 }
 
 function WebsiteContentStep( {
-	additionalStepData,
-	stepName,
-	submitSignupStep,
-	goToNextStep,
 	siteId,
 	websiteContentServerState,
+	onSubmit,
 }: WebsiteContentStepProps ) {
 	const [ formErrors, setFormErrors ] = useState< ValidationErrors >( {} );
 	const dispatch = useDispatch();
@@ -153,19 +146,6 @@ function WebsiteContentStep( {
 			dispatch( initializeWebsiteContentForm( websiteContentServerState, translatedPageTitles ) );
 		}
 	}, [ dispatch, siteId, translatedPageTitles, websiteContentServerState ] );
-
-	useEffect( () => {
-		dispatch( saveSignupStep( { stepName } ) );
-	}, [ dispatch, stepName ] );
-
-	const onSubmit = () => {
-		const step = {
-			stepName,
-			...additionalStepData,
-		};
-		submitSignupStep( step );
-		goToNextStep();
-	};
 
 	const onChangeField = useCallback(
 		( { target: { name } }: ChangeEvent< HTMLInputElement > ) => {
@@ -253,31 +233,20 @@ function Loader() {
 	);
 }
 
-function WrapperWebsiteContent(
-	props: {
-		flowName: string;
-		stepName: string;
-		positionInFlow: string;
-		queryObject: {
-			siteSlug?: string;
-			siteId?: string;
-		};
-	} & WebsiteContentStepProps
-) {
-	const { queryObject } = props;
+function WrapperWebsiteContent( props: { site: SiteDetails | null; onSubmit: () => void } ) {
+	const { site, onSubmit } = props;
 	const translate = useTranslate();
-	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
 
-	const { isLoading, isError, data } = useGetWebsiteContentQuery( queryObject.siteSlug );
+	const { isLoading, isError, data } = useGetWebsiteContentQuery( site?.slug );
 
 	useEffect( () => {
-		if ( data?.isWebsiteContentSubmitted ) {
+		if ( data?.isWebsiteContentSubmitted && site?.slug ) {
 			debug( 'Website content content already submitted, redirecting to home' );
-			page( `/home/${ queryObject.siteSlug }` );
+			page( `/home/${ site.slug }` );
 		}
-	}, [ data, queryObject.siteSlug ] );
+	}, [ data, site?.slug ] );
 
-	if ( isLoading ) {
+	if ( isLoading || site == null ) {
 		return <Loader />;
 	}
 
@@ -301,27 +270,62 @@ function WrapperWebsiteContent(
 		);
 	}
 
-	return <WebsiteContentStep { ...props } websiteContentServerState={ data } siteId={ siteId } />;
+	return (
+		<WebsiteContentStep
+			websiteContentServerState={ data }
+			siteId={ site.ID }
+			onSubmit={ onSubmit }
+		/>
+	);
 }
 
-export default function WrapperWrapper(
-	props: {
-		flowName: string;
-		stepName: string;
-		positionInFlow: string;
-		queryObject: {
-			siteSlug?: string;
-			siteId?: string;
+/**
+ * All legacy signup framework related logic should remain in this functional component.
+ */
+export default function ( props: {
+	flowName: string;
+	stepName: string;
+	positionInFlow: string;
+	additionalStepData: object;
+	submitSignupStep: ( step: { stepName: string } ) => void;
+	goToNextStep: () => void;
+	queryObject: {
+		siteSlug?: string;
+		siteId?: string;
+	};
+} ) {
+	const {
+		flowName,
+		stepName,
+		positionInFlow,
+		additionalStepData,
+		submitSignupStep,
+		goToNextStep,
+		queryObject,
+	} = props;
+	const dispatch = useDispatch();
+
+	useEffect( () => {
+		dispatch( saveSignupStep( { stepName } ) );
+	}, [ dispatch, stepName ] );
+
+	const site = useSelector( ( state ) => getSite( state, queryObject.siteSlug as string ) || null );
+
+	const onSubmit = () => {
+		const step = {
+			stepName,
+			...additionalStepData,
 		};
-	} & WebsiteContentStepProps
-) {
-	const { flowName, stepName, positionInFlow } = props;
+		submitSignupStep( step );
+		goToNextStep();
+	};
+
 	return (
 		<StepWrapper
 			flowName={ flowName }
 			stepName={ stepName }
 			positionInFlow={ positionInFlow }
-			stepContent={ <WrapperWebsiteContent { ...props } /> }
+			stepContent={ <WrapperWebsiteContent site={ site } onSubmit={ onSubmit } /> }
 			goToNextStep={ false }
 			hideFormattedHeader={ true }
 			hideBack={ false }
