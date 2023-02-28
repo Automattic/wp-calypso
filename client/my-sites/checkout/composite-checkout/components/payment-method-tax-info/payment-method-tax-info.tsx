@@ -197,7 +197,7 @@ export function TaxInfoArea( {
 			tax_subdivision_code: inputValues?.state?.value,
 			tax_city: inputValues?.city?.value,
 			tax_organization: inputValues?.organization?.value,
-			tax_address: inputValues?.address?.value,
+			tax_address: inputValues?.address1?.value,
 		} )
 			.then( closeDialog )
 			.catch( setUpdateError );
