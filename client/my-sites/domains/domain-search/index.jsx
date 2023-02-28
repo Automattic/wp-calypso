@@ -168,7 +168,7 @@ class DomainSearch extends Component {
 				addQueryArgs(
 					{
 						domainAndPlanPackage: true,
-						domain: this.props.isDomainUpsell ? true : undefined,
+						domain: this.props.isDomainUpsell ? domain : undefined,
 					},
 					`/plans/${ intervalTypePath }${ this.props.selectedSiteSlug }`
 				)
@@ -220,6 +220,7 @@ class DomainSearch extends Component {
 			isManagingAllDomains,
 			cart,
 			isDomainAndPlanPackageFlow,
+			isDomainUpsell,
 		} = this.props;
 
 		if ( ! selectedSite ) {
@@ -292,11 +293,17 @@ class DomainSearch extends Component {
 
 									<p>
 										{ translate(
-											'Stake your claim on your corner of the web with a custom domain name that’s easy to find, share, and follow. Not sure yet?'
+											'Stake your claim on your corner of the web with a custom domain name that’s easy to find, share, and follow.'
 										) }
-										<a className="domains__header-decide-later" href={ hrefForDecideLater }>
-											{ translate( 'Decide later.' ) }
-										</a>
+										{ ! isDomainUpsell && (
+											<>
+												{ ' ' }
+												{ translate( 'Not sure yet?' ) }
+												<a className="domains__header-decide-later" href={ hrefForDecideLater }>
+													{ translate( 'Decide later.' ) }
+												</a>
+											</>
+										) }
 									</p>
 								</>
 							) }

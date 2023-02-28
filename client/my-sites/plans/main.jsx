@@ -99,7 +99,8 @@ class Plans extends Component {
 		redirectTo: PropTypes.string,
 		selectedSite: PropTypes.object,
 		isDomainAndPlanPackageFlow: PropTypes.bool,
-		isMyHomeDomainUpsell: PropTypes.bool,
+		isDomainUpsell: PropTypes.bool,
+		isDomainUpsellSuggested: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -240,6 +241,7 @@ class Plans extends Component {
 			isDomainAndPlanPackageFlow,
 			isJetpackNotAtomic,
 			isDomainUpsell,
+			isDomainUpsellSuggested,
 		} = this.props;
 
 		if ( ! selectedSite || this.isInvalidPlanInterval() || ! currentPlan ) {
@@ -252,11 +254,12 @@ class Plans extends Component {
 		const yourDomainName = allDomains.length
 			? allDomains.slice( -1 )[ 0 ]?.meta
 			: translate( 'your domain name' );
-		const goBackLink = isDomainUpsell
-			? addQueryArgs( `/home/${ selectedSite.slug }` )
-			: addQueryArgs( `/domains/add/${ selectedSite.slug }`, {
-					domainAndPlanPackage: true,
-			  } );
+		const goBackLink =
+			isDomainUpsell && isDomainUpsellSuggested
+				? addQueryArgs( `/home/${ selectedSite.slug }` )
+				: addQueryArgs( `/domains/add/${ selectedSite.slug }`, {
+						domainAndPlanPackage: true,
+				  } );
 		return (
 			<div>
 				{ ! isJetpackNotAtomic && (
@@ -353,6 +356,7 @@ const ConnectedPlans = connect( ( state ) => {
 		isDomainUpsell:
 			!! getCurrentQueryArguments( state )?.domainAndPlanPackage &&
 			!! getCurrentQueryArguments( state )?.domain,
+		isDomainUpsellSuggested: getCurrentQueryArguments( state )?.domain === 'true',
 	};
 } )( withCartKey( withShoppingCart( localize( withTrackingTool( 'HotJar' )( Plans ) ) ) ) );
 
