@@ -24,7 +24,7 @@ export default function ConnectDomainStepDCStart( {
 
 	const clickHandler = useCallback( () => {
 		onVerifyConnection( false );
-		window.location = domainConnectURL;
+		window.location.href = domainConnectURL;
 	}, [ onVerifyConnection, domainConnectURL ] );
 
 	const stepContent = (
@@ -49,9 +49,8 @@ export default function ConnectDomainStepDCStart( {
 					{ __( 'It can take up to 72 hours for the domain to be fully connected.' ) }
 				</p>
 				<Button primary onClick={ clickHandler }>
-					{ __( 'Start setup' ) }
+					{ __( 'Start setup' ) } <MaterialIcon icon="launch" size={ 16 } />
 				</Button>
-				<p className={ className + '__text' }>{ __( 'Opens your DNS provider site' ) }</p>
 			</div>
 		</>
 	);

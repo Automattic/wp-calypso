@@ -270,6 +270,13 @@ body.connect-domain-setup__body-white {
 		}
 	}
 
+	&__suggested-start {
+		button .material-icon {
+			fill: var(--color-text-inverted);
+			vertical-align: text-bottom;
+		}
+	}
+
 	&__suggested-records {
 		.connect-domain-step__records-list-record {
 			width: 100%;

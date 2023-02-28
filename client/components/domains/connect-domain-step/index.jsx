@@ -34,7 +34,15 @@ import {
 
 import './style.scss';
 
-function ConnectDomainStep( { domain, initialStep, selectedSite, showErrors, isFirstVisit } ) {
+function ConnectDomainStep( {
+	domain,
+	initialStep,
+	selectedSite,
+	showErrors,
+	isFirstVisit,
+	queryError,
+	queryErrorDescription,
+} ) {
 	const { __ } = useI18n();
 	const stepsDefinition = isSubdomain( domain )
 		? connectASubdomainStepsDefinition
@@ -142,11 +150,8 @@ function ConnectDomainStep( { domain, initialStep, selectedSite, showErrors, isF
 			.domain( domain )
 			.mappingSetupInfo( selectedSite.ID, {
 				return_url:
-					window.location.protocol +
-					'//' +
-					window.location.hostname +
-					( window.location.port ? ':' + window.location.port : '' ) +
-					domainMappingSetup( selectedSite.slug, domain, stepSlug.DC_VERIFYING ),
+					'https://wordpress.com' +
+					domainMappingSetup( selectedSite.slug, domain, stepSlug.DC_RETURN ),
 			} )
 			.then( ( data ) => {
 				setDomainSetupInfo( { data } );
@@ -288,6 +293,8 @@ function ConnectDomainStep( { domain, initialStep, selectedSite, showErrors, isF
 					domainSetupInfo={ domainSetupInfo }
 					domainSetupInfoError={ domainSetupInfoError }
 					showErrors={ showErrors }
+					queryError={ queryError }
+					queryErrorDescription={ queryErrorDescription }
 				/>
 			</>
 		);
@@ -340,6 +347,8 @@ ConnectDomainStep.propTypes = {
 	showErrors: PropTypes.bool,
 	hasSiteDomainsLoaded: PropTypes.bool,
 	isFirstVisit: PropTypes.bool,
+	queryError: PropTypes.string,
+	queryErrorDescription: PropTypes.string,
 };
 
 export default connect( ( state ) => {

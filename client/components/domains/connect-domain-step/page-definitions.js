@@ -104,7 +104,7 @@ export const connectADomainStepsDefinition = {
 		step: stepType.START,
 		component: ConnectDomainStepDCStart,
 	},
-	[ stepSlug.DC_VERIFYING ]: {
+	[ stepSlug.DC_RETURN ]: {
 		mode: modeType.DC,
 		step: stepType.VERIFYING,
 		component: ConnectDomainStepDone,
