@@ -79,8 +79,8 @@ const StatsInsights = ( props ) => {
 						/>
 						<Comments path="comments" />
 
-						{ /** TODO: The feature depends on Jetpack Sharing module and is disabled for Odyssey for now. */ }
-						{ ! isOdysseyStats && <StatShares siteId={ siteId } /> }
+						{ /** TODO: The feature depends on Jetpack Sharing module and is disabled for all Jetpack Sites for now. */ }
+						{ ! isJetpack && <StatShares siteId={ siteId } /> }
 
 						<Followers path="followers" />
 						<Reach />
@@ -102,8 +102,8 @@ const StatsInsights = ( props ) => {
 									hideSummaryLink
 									hideNewModule // remove when cleaning 'stats/horizontal-bars-everywhere' FF
 								/>
-								{ /** TODO: The feature depends on Jetpack Sharing module and is disabled for Odyssey for now. */ }
-								{ ! isOdysseyStats && <StatShares siteId={ siteId } /> }
+								{ /** TODO: The feature depends on Jetpack Sharing module and is disabled for all Jetpack Sites for now. */ }
+								{ ! isJetpack && <StatShares siteId={ siteId } /> }
 							</div>
 							<div className="stats__module-column">
 								<Reach />
