@@ -351,7 +351,7 @@ export const SitesEllipsisMenu = ( {
 					{ isEnabled( 'dev/developer-ux' ) && hasHostingPage && (
 						<DeveloperSettingsSubmenu { ...props } />
 					) }
-					<ManagePluginsItem { ...props } />
+					{ ! isP2Site( site ) && <ManagePluginsItem { ...props } /> }
 					{ ! isEnabled( 'dev/developer-ux' ) && hasHostingPage && (
 						<HostingConfigItem { ...props } />
 					) }
