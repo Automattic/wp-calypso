@@ -14,6 +14,8 @@ import {
 } from '@automattic/calypso-products';
 import { JetpackUpsellCard } from '@automattic/components';
 import { useSelector } from 'react-redux';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import { getSitePlan, getSiteProducts } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -62,6 +64,12 @@ export default function JetpackUpsellSection() {
 	return (
 		isJetpack && (
 			<div className="jetpack-upsell-section">
+				{ siteId && (
+					<>
+						<QuerySitePlans siteId={ siteId } />
+						<QuerySiteProducts siteId={ siteId } />
+					</>
+				) }
 				<JetpackUpsellCard
 					purchasedProducts={ purchasedProducts }
 					siteSlug={ siteSlug }
