@@ -41,9 +41,7 @@ export function RenderDomainUpsell() {
 	const siteSubDomain = siteSlug.split( '.' )[ 0 ];
 	const locale = useLocale();
 	const { allDomainSuggestions } =
-		useDomainSuggestions( siteSubDomain, 3, undefined, locale, {
-			vendor: 'domain-upsell',
-		} ) || {};
+		useDomainSuggestions( siteSubDomain, 3, undefined, locale ) || {};
 
 	const cartKey = useCartKey();
 	const shoppingCartManager = useShoppingCart( cartKey );
@@ -53,13 +51,14 @@ export function RenderDomainUpsell() {
 		( suggestion ) => ! suggestion.is_free
 	)[ 0 ];
 
-	// It takes awhile to suggest a domain name. Set a default to siteSubDomain.blog.
-	const domainSuggestionName = domainSuggestion?.domain_name ?? siteSubDomain + '.blog';
+	// It takes awhile to suggest a domain name. Set a default to siteSubDomain.com.
+	const domainSuggestionName = domainSuggestion?.domain_name ?? siteSubDomain + '.com';
 	const domainSuggestionProductSlug = domainSuggestion?.product_slug;
 
 	const searchLink = addQueryArgs(
 		{
 			domainAndPlanPackage: true,
+			domain: true,
 		},
 		`/domains/add/${ siteSlug }`
 	);
@@ -73,7 +72,8 @@ export function RenderDomainUpsell() {
 
 	const purchaseLink = addQueryArgs(
 		{
-			get_domain: domainSuggestionName,
+			domain: true,
+			domainAndPlanPackage: true,
 		},
 		`/plans/yearly/${ siteSlug }`
 	);
