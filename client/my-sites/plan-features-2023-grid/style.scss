@@ -140,15 +140,10 @@
 	margin: 0 auto;
 	padding: 28px 0 10px;
 	transform: translateY(-20px);
-	overflow-x: hidden;
+	overflow-x: visible;
 
 	@include plans-2023-break-small {
 		padding-top: 64px;
-		overflow-x: auto;
-	}
-
-	@include plans-2023-break-medium {
-		overflow-x: auto;
 	}
 }
 
