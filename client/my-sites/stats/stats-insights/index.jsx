@@ -35,6 +35,7 @@ const StatsInsights = ( props ) => {
 
 	const statsModuleListClass = classNames( 'stats__module-list stats__module--unified', {
 		'is-insights-page-enabled': isInsightsPageGridEnabled,
+		'is-odyssey-stats': isOdysseyStats,
 		'is-jetpack': isJetpack,
 	} );
 
