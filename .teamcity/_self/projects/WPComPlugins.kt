@@ -277,8 +277,8 @@ private object HappyBlocks : WPComPluginBuild(
 				find ../block-library/* -type d -name "*" -prune |\
 				while read -r block;
 				do
-					mkdir -p ../release-files/${block//\.\.\//};
-					cp -r $block/build/* ../release-files/${block//\.\.\//}/;
+					mkdir -p "../release-files/${block//\.\.\//}";
+					cp -r "$block/build/*" "../release-files/${block//\.\.\//}/";
 				done
 
 				# Add the index.php file
