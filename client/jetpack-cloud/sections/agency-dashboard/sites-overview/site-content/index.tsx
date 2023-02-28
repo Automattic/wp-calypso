@@ -48,11 +48,7 @@ export default function SiteContent( { data, isLoading, currentPage, isFavorites
 				// styles applied using the CSS breakpoint which is true for width >= some value
 			 }
 			<div className="site-content__large-screen-view">
-				<SiteTable
-					isLoading={ isLoading }
-					columns={ isExpandedBlockEnabled ? siteColumns : siteColumnswithStats }
-					items={ sites }
-				/>
+				<SiteTable isLoading={ isLoading } columns={ siteColumns } items={ sites } />
 			</div>
 			<div className="site-content__small-screen-view">
 				<Card className="site-content__bulk-select">
@@ -60,9 +56,7 @@ export default function SiteContent( { data, isLoading, currentPage, isFavorites
 						<SiteBulkSelect sites={ sites } isLoading={ isLoading } />
 					) : (
 						<>
-							<span className="site-content__bulk-select-label">
-								{ siteColumnswithStats[ 0 ].title }
-							</span>
+							<span className="site-content__bulk-select-label">{ siteColumns[ 0 ].title }</span>
 							<EditButton sites={ sites } />
 						</>
 					) }

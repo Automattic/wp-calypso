@@ -49,6 +49,7 @@ export default function SiteStatusContent( {
 
 	const siteId = rows.site.value.blog_id;
 	const siteUrl = rows.site.value.url;
+	const statTrend = rows.stats.data.views.trend;
 
 	const isLicenseSelected = useSelector( ( state ) =>
 		hasSelectedLicensesOfType( state, siteId, type )
@@ -173,13 +174,22 @@ export default function SiteStatusContent( {
 			/>
 		);
 	}
+	let content;
 
 	if ( type === 'stats' ) {
-		// Content will be added later
-		return null;
+		return (
+			<>
+				<Gridicon
+					icon={ `arrow-${ statTrend }` }
+					size={ 18 }
+					className={ `sites-overview__icon-${ statTrend }` }
+				/>
+				<div className="sites-overview__stats">
+					<ShortenedNumber value={ value } />{ ' ' }
+				</div>
+			</>
+		);
 	}
-
-	let content;
 
 	switch ( status ) {
 		case 'critical': {
@@ -212,39 +222,6 @@ export default function SiteStatusContent( {
 		}
 		case 'disabled': {
 			content = <Gridicon icon="minus-small" size={ 18 } className="sites-overview__icon-active" />;
-			break;
-		}
-		case 'up': {
-			content = (
-				<>
-					<Gridicon icon="arrow-up" size={ 18 } className="sites-overview__icon-up" />
-					<div className="sites-overview__stats">
-						<ShortenedNumber value={ value } />
-					</div>
-				</>
-			);
-			break;
-		}
-		case 'down': {
-			content = (
-				<>
-					<Gridicon icon="arrow-down" size={ 18 } className="sites-overview__icon-down" />
-					<div className="sites-overview__stats">
-						<ShortenedNumber value={ value } />
-					</div>
-				</>
-			);
-			break;
-		}
-		case 'same': {
-			content = (
-				<>
-					<div className="sites-overview__icon-same" />
-					<div className="sites-overview__stats">
-						<ShortenedNumber value={ value } />
-					</div>
-				</>
-			);
 			break;
 		}
 		case 'progress': {

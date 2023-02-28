@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import { urlToSlug } from 'calypso/lib/url';
 import type {
@@ -53,36 +54,6 @@ export const siteColumns: SiteColumns = [
 	{
 		key: 'plugin',
 		title: translate( 'Plugin Updates' ),
-	},
-];
-
-export const siteColumnswithStats = [
-	{
-		key: 'site',
-		title: translate( 'Site' ),
-	},
-	{
-		key: 'stats',
-		title: translate( 'Stats' ),
-	},
-	{
-		key: 'backup',
-		title: translate( 'Backup' ),
-		isExpandable: isExpandedBlockEnabled,
-	},
-	{
-		key: 'scan',
-		title: translate( 'Scan' ),
-	},
-	{
-		key: 'monitor',
-		title: translate( 'Monitor' ),
-		className: 'min-width-100px',
-		isExpandable: isExpandedBlockEnabled,
-	},
-	{
-		key: 'plugin',
-		title: translate( 'Plugins' ),
 	},
 ];
 
@@ -370,13 +341,6 @@ const formatStatsData = ( site: Site ) => {
 		value: site.site_stats,
 	};
 	return statsData;
-		settings: site.site_stats,
-	};
-	const weeklyStats = site.site_stats.views.total;
-	stats.status = site.site_stats.views.trend;
-	// stats.status = 'same';
-	stats.value = weeklyStats;
-	return stats;
 };
 
 const formatBackupData = ( site: Site ) => {
