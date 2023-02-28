@@ -45,6 +45,14 @@ function usePurchasedProucts( siteId: number | null ) {
 	return products;
 }
 
+const URL_PREFIX = 'https://wordpress.com';
+const QUERY_VALUES = {
+	source: 'jetpack-stats-upsell-section',
+
+	// Redirects to Odyssey Stats after after removing all products from the shopping cart.
+	checkoutBackUrl: window.location.href,
+};
+
 export default function JetpackUpsellSection() {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
@@ -53,12 +61,15 @@ export default function JetpackUpsellSection() {
 	const upgradeUrls: Record< string, string > = ! siteSlug
 		? {}
 		: {
-				backup: buildCheckoutURL( siteSlug, PRODUCT_JETPACK_BACKUP_T1_YEARLY ),
-				boost: buildCheckoutURL( siteSlug, PRODUCT_JETPACK_BOOST ),
-				search: buildCheckoutURL( siteSlug, PRODUCT_JETPACK_SEARCH ),
-				security: buildCheckoutURL( siteSlug, PLAN_JETPACK_SECURITY_T1_YEARLY ),
-				social: buildCheckoutURL( siteSlug, PRODUCT_JETPACK_SOCIAL_BASIC ),
-				video: buildCheckoutURL( siteSlug, PRODUCT_JETPACK_VIDEOPRESS ),
+				backup:
+					URL_PREFIX + buildCheckoutURL( siteSlug, PRODUCT_JETPACK_BACKUP_T1_YEARLY, QUERY_VALUES ),
+				boost: URL_PREFIX + buildCheckoutURL( siteSlug, PRODUCT_JETPACK_BOOST, QUERY_VALUES ),
+				search: URL_PREFIX + buildCheckoutURL( siteSlug, PRODUCT_JETPACK_SEARCH, QUERY_VALUES ),
+				security:
+					URL_PREFIX + buildCheckoutURL( siteSlug, PLAN_JETPACK_SECURITY_T1_YEARLY, QUERY_VALUES ),
+				social:
+					URL_PREFIX + buildCheckoutURL( siteSlug, PRODUCT_JETPACK_SOCIAL_BASIC, QUERY_VALUES ),
+				video: URL_PREFIX + buildCheckoutURL( siteSlug, PRODUCT_JETPACK_VIDEOPRESS, QUERY_VALUES ),
 		  };
 
 	return (
