@@ -98,11 +98,7 @@ describe( 'index', () => {
 		const user = userEvent.setup();
 		await user.click( screen.getByRole( 'button', { name: 'Buy this domain' } ) );
 		expect( pageLink ).toBe(
-<<<<<<< HEAD
-			'/plans/yearly/example.wordpress.com?get_domain=example.com&domainAndPlanPackage=true'
-=======
 			'/plans/yearly/example.wordpress.com?domain=true&domainAndPlanPackage=true'
->>>>>>> 89d7ccde7b (Fix tests)
 		);
 	} );
 } );
