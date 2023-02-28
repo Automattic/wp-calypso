@@ -15,6 +15,7 @@ export type PageData = {
 	id: PageId;
 	title: string;
 	content: string;
+	useFillerContent: boolean;
 	media: Array< Media >;
 };
 

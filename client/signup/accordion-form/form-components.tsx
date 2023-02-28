@@ -1,13 +1,15 @@
-import { FormInputValidation } from '@automattic/components';
+import { FormInputValidation, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { Icon } from '@wordpress/icons';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import { ChangeEvent, ReactChild } from 'react';
+import { ChangeEvent, ChangeEventHandler, ReactChild, useRef, useState } from 'react';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextArea from 'calypso/components/forms/form-textarea';
 import SocialLogo from 'calypso/components/social-logo';
+import Tooltip from 'calypso/components/tooltip';
 import { tip } from 'calypso/signup/icons';
 
 // TODO: This probably should be moved out to a more suitable folder name like difm-components
@@ -112,6 +114,41 @@ const StyledFormInputValidation = styled( FormInputValidation )`
 	}
 `;
 
+const FlexFormFieldset = styled( FormFieldset )`
+	display: flex;
+`;
+
+const StyledFormCheckbox = styled( FormCheckbox )`
+	margin-right: 6px;
+`;
+
+const ClickableLabel = styled( Label )`
+	cursor: pointer;
+`;
+
+const TooltipContainer = styled.span`
+	.gridicon {
+		cursor: pointer;
+		margin-left: 8px;
+	}
+`;
+
+const StyledTooltip = styled( Tooltip )`
+	&.tooltip.popover .popover__inner {
+		background: var( --color-masterbar-background );
+		text-align: center;
+		border-radius: 4px;
+		min-height: 32px;
+		width: 210px;
+		align-items: center;
+		font-style: normal;
+		font-weight: 400;
+		font-size: 1em;
+		padding: 8px 10px;
+		top: -8px;
+	}
+`;
+
 interface TextInputFieldProps {
 	name: string;
 	label?: TranslateResult;
@@ -121,6 +158,7 @@ interface TextInputFieldProps {
 	sublabel?: TranslateResult;
 	rows?: number;
 	explanation?: TranslateResult;
+	disabled?: boolean;
 	onChange?: ( event: ChangeEvent< HTMLInputElement > ) => void;
 }
 
@@ -176,6 +214,50 @@ export function TextAreaField( props: TextAreaFieldProps ) {
 			/>
 			{ props.error && <StyledFormInputValidation isError text={ props.error } /> }
 		</FormFieldset>
+	);
+}
+
+export function CheckboxField( props: {
+	checked: boolean;
+	name: string;
+	value: string;
+	onChange: ChangeEventHandler< HTMLInputElement >;
+	label: TranslateResult;
+	helpText: TranslateResult;
+} ) {
+	const [ isVisible, setIsVisible ] = useState( false );
+	const tooltipRef = useRef< HTMLDivElement >( null );
+	return (
+		<FlexFormFieldset>
+			<ClickableLabel>
+				<>
+					<StyledFormCheckbox
+						name={ props.name }
+						value={ props.value }
+						checked={ props.checked }
+						onChange={ props.onChange }
+					/>
+					{ props.label }
+				</>
+			</ClickableLabel>
+			<TooltipContainer>
+				<span
+					onMouseEnter={ () => setIsVisible( true ) }
+					onMouseLeave={ () => setIsVisible( false ) }
+					ref={ tooltipRef }
+				>
+					<Gridicon size={ 18 } icon="info-outline" />
+				</span>
+				<StyledTooltip
+					position="top"
+					context={ tooltipRef.current }
+					hideArrow
+					isVisible={ isVisible }
+				>
+					{ props.helpText }
+				</StyledTooltip>
+			</TooltipContainer>
+		</FlexFormFieldset>
 	);
 }
 
