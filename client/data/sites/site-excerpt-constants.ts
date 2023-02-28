@@ -14,7 +14,7 @@ export const SITE_EXCERPT_REQUEST_FIELDS = [
 	'plan',
 	'jetpack',
 	'is_wpcom_atomic',
-	'is_staging_site',
+	'is_wpcom_staging_site',
 	'user_interactions',
 	'lang',
 	'site_owner',
