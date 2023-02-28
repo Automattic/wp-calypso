@@ -116,7 +116,7 @@ export default function AccordionForm< T >( {
 	};
 
 	return (
-		<>
+		<div>
 			{ sections.map( ( section, index ) => (
 				<AccordionFormSection
 					key={ `${ index }` }
@@ -135,6 +135,6 @@ export default function AccordionForm< T >( {
 					hasUnsavedChanges={ hasUnsavedChanges }
 				/>
 			) ) }
-		</>
+		</div>
 	);
 }

@@ -3,22 +3,21 @@
 
 .signup__step.is-website-content {
 	.step-wrapper {
-		@include break-small {
-			&.is-horizontal-layout {
-				margin-top: 17vh;
-			}
-		}
+		// @include break-small {
+		// 	&.is-horizontal-layout {
+		// 		margin-top: 17vh;
+		// 	}
+		// }
 
-		body.is-section-signup .layout:not(.dops) & {
-			max-width: 1440px;
-			@include break-small {
-				padding: 0 72px;
-			}
-		}
+		// body.is-section-signup .layout:not(.dops) & {
+		// 	max-width: 1440px;
+		// 	@include break-small {
+		// 		padding: 0 72px;
+		// 	}
+		// }
 
 		.step-wrapper__content {
-			flex-basis: 55%;
-			margin-bottom: 64px;
+			width: 100%;
 		}
 	}
 }

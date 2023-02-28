@@ -6,6 +6,7 @@ import page from 'page';
 import { useEffect, useState, ChangeEvent, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import errorIllustration from 'calypso/assets/images/customer-home/disconnected.svg';
+import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import AccordionForm from 'calypso/signup/accordion-form/accordion-form';
 import {
@@ -76,6 +77,15 @@ const PagesNotAvailable = styled( LoadingContainer )`
 		max-height: 200px;
 		padding: 24px;
 	}
+`;
+
+const Container = styled.div`
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	margin: 17vh auto 0 auto;
+	padding: 0 72px;
+	max-width: 1440px;
 `;
 
 interface WebsiteContentStepProps {
@@ -186,6 +196,15 @@ function WebsiteContentStep( {
 		</DialogButton>,
 	];
 
+	const headerText = translate( 'Website Content' );
+	const subHeaderText = websiteContentServerState.isStoreFlow
+		? translate(
+				'Provide content for your website build. You can add products later with the WordPress editor.'
+		  )
+		: translate(
+				'Provide content for your website build. You will be able to edit all content later using the WordPress editor.'
+		  );
+
 	return (
 		<>
 			<Dialog
@@ -203,20 +222,23 @@ function WebsiteContentStep( {
 				</DialogContent>
 			</Dialog>
 
-			<AccordionForm
-				generatedSections={ generatedSections }
-				onErrorUpdates={ ( errors ) => setFormErrors( errors ) }
-				formValues={ websiteContent }
-				currentIndex={ currentIndex }
-				updateCurrentIndex={ ( currentIndex ) => {
-					dispatch( updateWebsiteContentCurrentIndex( currentIndex ) );
-				} }
-				onSubmit={ () => setIsConfirmDialogOpen( true ) }
-				saveFormValues={ saveFormValues }
-				blockNavigation={ isImageUploading }
-				isSaving={ isSaving }
-				hasUnsavedChanges={ hasUnsavedChanges }
-			/>
+			<Container>
+				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } align="left" />
+				<AccordionForm
+					generatedSections={ generatedSections }
+					onErrorUpdates={ ( errors ) => setFormErrors( errors ) }
+					formValues={ websiteContent }
+					currentIndex={ currentIndex }
+					updateCurrentIndex={ ( currentIndex ) => {
+						dispatch( updateWebsiteContentCurrentIndex( currentIndex ) );
+					} }
+					onSubmit={ () => setIsConfirmDialogOpen( true ) }
+					saveFormValues={ saveFormValues }
+					blockNavigation={ isImageUploading }
+					isSaving={ isSaving }
+					hasUnsavedChanges={ hasUnsavedChanges }
+				/>
+			</Container>
 		</>
 	);
 }
@@ -231,7 +253,7 @@ function Loader() {
 	);
 }
 
-export default function WrapperWebsiteContent(
+function WrapperWebsiteContent(
 	props: {
 		flowName: string;
 		stepName: string;
@@ -242,20 +264,11 @@ export default function WrapperWebsiteContent(
 		};
 	} & WebsiteContentStepProps
 ) {
-	const { flowName, stepName, positionInFlow, queryObject } = props;
+	const { queryObject } = props;
 	const translate = useTranslate();
 	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
 
 	const { isLoading, isError, data } = useGetWebsiteContentQuery( queryObject.siteSlug );
-
-	const headerText = translate( 'Website Content' );
-	const subHeaderText = data?.isStoreFlow
-		? translate(
-				'Provide content for your website build. You can add products later with the WordPress editor.'
-		  )
-		: translate(
-				'Provide content for your website build. You will be able to edit all content later using the WordPress editor.'
-		  );
 
 	useEffect( () => {
 		if ( data?.isWebsiteContentSubmitted ) {
@@ -288,24 +301,33 @@ export default function WrapperWebsiteContent(
 		);
 	}
 
+	return <WebsiteContentStep { ...props } websiteContentServerState={ data } siteId={ siteId } />;
+}
+
+export default function WrapperWrapper(
+	props: {
+		flowName: string;
+		stepName: string;
+		positionInFlow: string;
+		queryObject: {
+			siteSlug?: string;
+			siteId?: string;
+		};
+	} & WebsiteContentStepProps
+) {
+	const { flowName, stepName, positionInFlow } = props;
 	return (
 		<StepWrapper
-			headerText={ headerText }
-			subHeaderText={ subHeaderText }
-			fallbackHeaderText={ headerText }
-			fallbackSubHeaderText={ subHeaderText }
 			flowName={ flowName }
 			stepName={ stepName }
 			positionInFlow={ positionInFlow }
-			stepContent={
-				<WebsiteContentStep { ...props } websiteContentServerState={ data } siteId={ siteId } />
-			}
+			stepContent={ <WrapperWebsiteContent { ...props } /> }
 			goToNextStep={ false }
-			hideFormattedHeader={ false }
+			hideFormattedHeader={ true }
 			hideBack={ false }
 			align="left"
-			isHorizontalLayout={ true }
-			isWideLayout={ true }
+			isHorizontalLayout={ false }
+			isFullLayout={ true }
 		/>
 	);
 }
