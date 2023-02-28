@@ -6,7 +6,7 @@ import {
 	JETPACK_SOCIAL_PRODUCTS,
 	JETPACK_VIDEOPRESS_PRODUCTS,
 } from '@automattic/calypso-products';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 //
 // WARNING: This hook will only work within Odyssey Stats!
@@ -54,12 +54,14 @@ export default function usePurchasedProducts() {
 	const [ isLoading, setIsLoading ] = useState( true );
 	const [ error, setError ] = useState();
 
-	fetchPurchases( 'jetpack/v4/site/purchases' )
-		.then( ( purchases ) => {
-			setIsLoading( false );
-			setPurchasedProducts( formatResponse( purchases ) );
-		} )
-		.catch( ( error ) => setError( error ) );
+	useEffect( () => {
+		fetchPurchases( 'jetpack/v4/site/purchases' )
+			.then( ( purchases ) => {
+				setIsLoading( false );
+				setPurchasedProducts( formatResponse( purchases ) );
+			} )
+			.catch( ( error ) => setError( error ) );
+	}, [] );
 
 	return {
 		purchasedProducts,
