@@ -34,7 +34,7 @@ export default function ConnectDomainStepDCStart( {
 					{ sprintf(
 						// translators: %s is the domain name
 						__(
-							'Good news! Your DNS provider for %s supports Domain Connect - that is a user friendly way to point your domain to an external service. To finish connecting your domain to WordPress.com just click on the button below and follow the instructions on your DNS provider site.'
+							'Good news! Your DNS provider for %s supports a simple click-through way to connect your domain to WordPress.com. Use the button below and follow the on-screen instructions. You might need to log in to your DNS provider account so make sure you have your credentials at hand.'
 						),
 						domain
 					) }

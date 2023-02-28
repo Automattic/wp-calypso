@@ -71,7 +71,7 @@ const ConnectDomainStepDone = ( {
 					sprintf(
 						/* translators: %s: the domain name that is being connected (ex.: example.com) */
 						__(
-							'You might want to start over or use another method to connect %s to WordPress.com.'
+							'You might want to start over or use one of the alternative methods to connect %s to WordPress.com.'
 						),
 						domain
 					),
@@ -82,7 +82,7 @@ const ConnectDomainStepDone = ( {
 					sprintf(
 						/* translators: %s: the domain name that is being connected (ex.: example.com) */
 						__(
-							"We got an error when trying to connect %s to WordPress.com. You might start over and try again or contact your DNS provider to figure out what's wrong."
+							'We got an error when trying to connect %s to WordPress.com. You might try again or get in contact with your DNS provider to figure out what went wrong.'
 						),
 						domain
 					),
