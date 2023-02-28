@@ -41,7 +41,9 @@ export function RenderDomainUpsell() {
 	const siteSubDomain = siteSlug.split( '.' )[ 0 ];
 	const locale = useLocale();
 	const { allDomainSuggestions } =
-		useDomainSuggestions( siteSubDomain, 3, undefined, locale ) || {};
+		useDomainSuggestions( siteSubDomain, 3, undefined, locale, {
+			vendor: 'domain-upsell',
+		} ) || {};
 
 	const cartKey = useCartKey();
 	const shoppingCartManager = useShoppingCart( cartKey );
@@ -58,7 +60,6 @@ export function RenderDomainUpsell() {
 	const searchLink = addQueryArgs(
 		{
 			domainAndPlanPackage: true,
-			domain: true,
 		},
 		`/domains/add/${ siteSlug }`
 	);
@@ -72,7 +73,7 @@ export function RenderDomainUpsell() {
 
 	const purchaseLink = addQueryArgs(
 		{
-			domain: true,
+			get_domain: domainSuggestionName,
 			domainAndPlanPackage: true,
 		},
 		`/plans/yearly/${ siteSlug }`
