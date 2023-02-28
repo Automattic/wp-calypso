@@ -11,6 +11,7 @@ import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 interface ExternalProps {
 	siteId: number;
 	minJetpackVersion: string;
+	warningRequirement?: string;
 }
 
 /**
@@ -19,10 +20,12 @@ interface ExternalProps {
  * @param {Object} props - the id of the current site
  * @param {number} props.siteId – the ID of the current site
  * @param {string} props.minJetpackVersion – the minimum accepted Jetpack version
+ * @param {string?} props.warningRequirement – the requirement that triggered the warning
  */
 export const JetpackPluginUpdateWarning: FC< ExternalProps > = ( {
 	siteId,
 	minJetpackVersion,
+	warningRequirement,
 }: ExternalProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -59,8 +62,7 @@ export const JetpackPluginUpdateWarning: FC< ExternalProps > = ( {
 			{ preventWidows(
 				translate(
 					'Your Jetpack plugin is out of date. ' +
-						'To make sure it will work with our recommended' +
-						' plans, {{JetpackUpdateLink}}update Jetpack{{/JetpackUpdateLink}}.',
+						'{{WarningRequirement/}}, {{JetpackUpdateLink}}update Jetpack{{/JetpackUpdateLink}}.',
 					{
 						components: {
 							JetpackUpdateLink: (
@@ -69,6 +71,12 @@ export const JetpackPluginUpdateWarning: FC< ExternalProps > = ( {
 									onClick={ updatePluginClick }
 									target="_blank"
 								/>
+							),
+							WarningRequirement: (
+								<>
+									{ warningRequirement ??
+										translate( 'To make sure it will work with our recommended plans' ) }
+								</>
 							),
 						},
 					}

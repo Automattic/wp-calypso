@@ -14,7 +14,6 @@ import {
 	getBackupErrorCode,
 } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
-import { useIsDateVisible } from 'calypso/my-sites/backup/hooks';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
 import {
 	getInProgressBackupForSite,
@@ -30,7 +29,6 @@ import BackupScheduled from './status-card/backup-scheduled';
 import BackupSuccessful from './status-card/backup-successful';
 import NoBackupsOnSelectedDate from './status-card/no-backups-on-selected-date';
 import NoBackupsYet from './status-card/no-backups-yet';
-import VisibleDaysLimit from './status-card/visible-days-limit';
 
 import './style.scss';
 
@@ -70,14 +68,6 @@ const DailyBackupStatus = ( {
 			backupPreviouslyInProgress.current = backupCurrentlyInProgress;
 		}
 	}, [ backupCurrentlyInProgress ] );
-
-	// If display rules are enabled,
-	// and we're looking at a date that should not be visible,
-	// display a status to reflect this.
-	const isDateVisible = useIsDateVisible( siteId );
-	if ( ! isDateVisible( selectedDate ) ) {
-		return <VisibleDaysLimit selectedDate={ selectedDate } />;
-	}
 
 	// The backup "period" property is represented by
 	// an integer number of seconds since the Unix epoch

@@ -4,6 +4,7 @@
 
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const ReadableJsAssetsWebpackPlugin = require( '@wordpress/readable-js-assets-webpack-plugin' );
+const webpack = require( 'webpack' );
 const GenerateChunksMapPlugin = require( '../../build-tools/webpack/generate-chunks-map-plugin' );
 
 function getWebpackConfig( env, argv ) {
@@ -13,16 +14,23 @@ function getWebpackConfig( env, argv ) {
 	return {
 		...webpackConfig,
 		entry: {
-			editor: './src/editor.js',
-			view: './src/view.jsx',
+			'universal-header/index': './src/universal-header/index.tsx',
+			'universal-header/view': './src/universal-header/view.tsx',
+			'universal-footer/index': './src/universal-footer/index.tsx',
+			'universal-footer/view': './src/universal-footer/view.tsx',
+			'pricing-plans/index': './src/pricing-plans/index.jsx',
+			'pricing-plans/view': './src/pricing-plans/view.tsx',
 		},
 		output: {
 			...webpackConfig.output,
-			filename: '[name].min.js',
+			filename: '[name].js',
 		},
 		plugins: [
 			...webpackConfig.plugins,
 			new ReadableJsAssetsWebpackPlugin(),
+			new webpack.DefinePlugin( {
+				__i18n_text_domain__: JSON.stringify( 'happy-blocks' ),
+			} ),
 			...( isProduction
 				? [ new GenerateChunksMapPlugin( { output: './dist/chunks-map.json' } ) ]
 				: [] ),

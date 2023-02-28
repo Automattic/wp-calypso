@@ -462,6 +462,11 @@ body.is-section-signup.is-white-signup {
 					padding: 0.65em 2.8em;
 					width: auto;
 				}
+
+				&:focus {
+					border-color: var(--color-primary);
+					box-shadow: 0 0 0 2px var(--color-primary-light);
+				}
 			}
 
 			&.domain-transfer-suggestion {
