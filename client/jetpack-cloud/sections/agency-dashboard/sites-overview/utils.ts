@@ -11,6 +11,7 @@ import type {
 	AllowedActionTypes,
 	StatusTooltip,
 	RowMetaData,
+	StatsNode,
 	BackupNode,
 	ScanNode,
 	MonitorNode,
@@ -296,6 +297,15 @@ export const getRowMetaData = (
 	};
 };
 
+const formatStatsData = ( site: Site ) => {
+	const statsData: StatsNode = {
+		status: 'active',
+		type: 'stats',
+		data: site.site_stats,
+	};
+	return statsData;
+};
+
 const formatBackupData = ( site: Site ) => {
 	const isExpandedBlockEnabled = config.isEnabled( 'jetpack/pro-dashboard-expandable-block' );
 	const backup: BackupNode = {
@@ -399,6 +409,7 @@ export const formatSites = ( sites: Array< Site > = [] ): Array< SiteData > | []
 				status: '',
 				type: 'site',
 			},
+			stats: formatStatsData( site ),
 			backup: formatBackupData( site ),
 			scan: formatScanData( site ),
 			monitor: formatMonitorData( site ),
