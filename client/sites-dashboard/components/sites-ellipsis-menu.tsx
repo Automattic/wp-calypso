@@ -18,7 +18,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
-import { useUpsellInfo } from '../hooks/use-upsell-info';
+import { UPSELL_TEXT, useUpsellInfo } from '../hooks/use-upsell-info';
 import {
 	getHostingConfigUrl,
 	getManagePluginsUrl,
@@ -85,11 +85,9 @@ const SettingsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 
 const ManagePluginsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
-	const hasManagePluginsFeature = useSelector( ( state ) =>
-		siteHasFeature( state, site.ID, WPCOM_FEATURES_MANAGE_PLUGINS )
-	);
-	const upsellInfo = useUpsellInfo( site, WPCOM_FEATURES_MANAGE_PLUGINS );
-
+	const hasManagePluginsFeature =
+		useSelector( ( state ) => siteHasFeature( state, site.ID, WPCOM_FEATURES_MANAGE_PLUGINS ) ) ||
+		isNotAtomicJetpack( site );
 	// If the site can't manage plugins then go to the main plugins page instead
 	// because it shows an upsell message.
 	const [ href, label ] = hasManagePluginsFeature
@@ -104,7 +102,7 @@ const ManagePluginsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 					has_manage_plugins_feature: hasManagePluginsFeature,
 				} )
 			}
-			info={ upsellInfo }
+			info={ ! hasManagePluginsFeature && UPSELL_TEXT }
 		>
 			{ label }
 		</MenuItemLink>
