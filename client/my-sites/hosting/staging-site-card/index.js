@@ -36,7 +36,6 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 
 	useEffect( () => {
 		if ( isStagingSiteTransferComplete ) {
-			dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_success' ) );
 			dispatch( successNotice( __( 'Staging site added.' ) ) );
 		}
 	}, [ dispatch, __, isStagingSiteTransferComplete ] );
