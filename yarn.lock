@@ -7503,13 +7503,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/wordpress__notices@npm:*":
-  version: 1.5.4
-  resolution: "@types/wordpress__notices@npm:1.5.4"
-  dependencies:
-    "@types/react": "*"
-    "@types/wordpress__data": "*"
-  checksum: 98559901f709e49e523d677ac1fdb8c0839f0d492b463773a8dd28a1816c08032db9fac74014471bc677775b1ff9c05191e95a69f90213a6e1ce28d46aff0e73
+"@types/wordpress__notices@npm:noop-package@1.0.0, @types/wordpress__rich-text@npm:noop-package@1.0.0":
+  version: 1.0.0
+  resolution: "noop-package@npm:1.0.0"
+  checksum: f53edc897025b1c2c6d084607ec6588718ff5fc92b1549e97f87453b0404fa15acc12f3b1c7b4fa144f376b73b3bd40e3fe8da4fa89a944dfeb33343afbcf5b4
   languageName: node
   linkType: hard
 
@@ -7521,17 +7518,6 @@ __metadata:
     "@types/wordpress__components": "*"
     "@wordpress/element": ^3.0.0
   checksum: 3b9003ed8eaa003b8ca8df3120bfe0895736c1608f86590459e5872f7ac3d4e69313d2024c67b0c5fce8660545db4e8524a6cbf6a2f44e5c9b86da97df4cf025
-  languageName: node
-  linkType: hard
-
-"@types/wordpress__rich-text@npm:*":
-  version: 3.4.5
-  resolution: "@types/wordpress__rich-text@npm:3.4.5"
-  dependencies:
-    "@types/react": "*"
-    "@types/wordpress__data": "*"
-    "@types/wordpress__rich-text": "*"
-  checksum: e78bacf5304fc65b778330006a96519d2c9fa5fe9f058dd6412baafe91af1c8aab5db91c3e381919640c494f5cc92a2c3b2dade33a0f41365379f2019db1b5a0
   languageName: node
   linkType: hard
 
