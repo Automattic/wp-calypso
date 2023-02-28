@@ -562,6 +562,12 @@ const sections = [
 		module: 'calypso/my-sites/promote-post',
 		group: 'sites',
 	},
+	{
+		name: 'subscriptions',
+		paths: [ '/subscriptions' ],
+		module: 'calypso/my-sites/subscriptions',
+		group: 'sites',
+	},
 ];
 
 module.exports = sections;
