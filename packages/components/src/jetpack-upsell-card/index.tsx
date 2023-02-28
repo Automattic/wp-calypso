@@ -130,7 +130,7 @@ export default function JetpackUpsellCard( {
 								<Gridicon icon="external" size={ 16 } />
 							</a>
 							<Button href={ upgradeUrls[ slug ] } className="jetpack-upsell-card__product-button">
-								{ translate( 'Get' ) }
+								{ translate( 'Upgrade' ) }
 							</Button>
 						</div>
 					)
