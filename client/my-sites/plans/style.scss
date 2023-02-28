@@ -60,6 +60,7 @@ body.is-section-plans.is-domain-plan-package-flow {
 			button.plans__copy-button {
 				font-size: $font-body;
 				text-decoration: underline;
+				cursor: pointer;
 			}
 		}
 	}
