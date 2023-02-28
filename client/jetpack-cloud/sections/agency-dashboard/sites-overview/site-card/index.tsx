@@ -139,6 +139,7 @@ export default function SiteCard( { rows, columns }: Props ) {
 										</div>
 										{ expandedColumn === column.key && (
 											<SiteExpandedContent
+												isSmallScreen
 												site={ rows.site.value }
 												columns={ [ column.key ] }
 											/>
