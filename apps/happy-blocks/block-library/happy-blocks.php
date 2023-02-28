@@ -38,14 +38,14 @@
 /**
  * Load Pricing Plans Block
  */
-require_once __DIR__ . '/block-library/pricing-plans/index.php';
+require_once __DIR__ . '/pricing-plans/index.php';
 
 /**
  * Load Universal Header Block
  */
-require_once __DIR__ . '/block-library/universal-header/index.php';
+require_once __DIR__ . '/universal-header/index.php';
 
 /**
  * Load Universal Foooter Block
  */
-require_once __DIR__ . '/block-library/universal-footer/index.php';
+require_once __DIR__ . '/universal-footer/index.php';

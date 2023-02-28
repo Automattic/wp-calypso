@@ -5,7 +5,7 @@
 	"category": "layout",
 	"textdomain": "happy-blocks",
 	"title": "Universal Header",
-	"viewScript": "file:../../../dist/universal-header/view.js",
-	"editorScript": "file:../../../dist/universal-header/index.js",
-	"style": "file:../../../dist/universal-header/view.rtl.css"
+	"viewScript": "file:../view.js",
+	"editorScript": "file:../index.js",
+	"style": "file:../view.rtl.css"
 }

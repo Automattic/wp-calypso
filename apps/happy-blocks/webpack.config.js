@@ -31,7 +31,7 @@ function getWebpackConfig( env = { block: '' }, argv ) {
 		entry,
 		output: {
 			...webpackConfig.output,
-			path: path.join( blockPath, '/dist/' ),
+			path: path.join( blockPath, '/build/' ),
 			filename: '[name].js',
 		},
 		plugins: [
@@ -40,16 +40,12 @@ function getWebpackConfig( env = { block: '' }, argv ) {
 			new CopyPlugin( {
 				patterns: [
 					{
-						from: path.resolve( blockPath, 'index.php' ),
-						to: path.resolve( blockPath, 'dist', '[name][ext]' ),
-					},
-					{
 						from: path.resolve( blockPath, 'block.json' ),
-						to: path.resolve( blockPath, 'dist', '[name][ext]' ),
+						to: path.resolve( blockPath, 'build', '[name][ext]' ),
 					},
 					{
 						from: path.resolve( blockPath, 'rtl/block.json' ),
-						to: path.resolve( blockPath, 'dist/rtl', '[name][ext]' ),
+						to: path.resolve( blockPath, 'build/rtl', '[name][ext]' ),
 					},
 				],
 			} ),
@@ -59,7 +55,7 @@ function getWebpackConfig( env = { block: '' }, argv ) {
 			...( isProduction
 				? [
 						new GenerateChunksMapPlugin( {
-							output: path.join( blockPath, 'dist/chunks-map.json' ),
+							output: path.join( blockPath, 'build/chunks-map.json' ),
 						} ),
 				  ]
 				: [] ),

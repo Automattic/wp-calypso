@@ -2,12 +2,12 @@
 
 set -x
 
-# Copy dist directories to the release directory.
+# Copy build directories to the release directory.
 find ../block-library/* -type d -name "*" -prune |\
 while read -r block;
 do
 	mkdir -p ../release-files/${block//\.\.\//}; 
-	cp -r $block/dist/* ../release-files/${block//\.\.\//}/; 
+	cp -r $block/build/* ../release-files/${block//\.\.\//}/; 
 done
 
 # Add the index.php file
