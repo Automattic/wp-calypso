@@ -301,7 +301,8 @@
 		"newspack-components/@wordpress/i18n": "4.9.0",
 		"keytar@npm:7.7.0/node-addon-api": "3.1.0",
 		"lzma-native": "^8.0.5",
-		"@wordpress/interface@^4.8.0": "patch:@wordpress/interface@npm%3A4.8.0#./.yarn/patches/@wordpress-interface-npm-4.8.0-8a39ad37cf.patch"
+		"@wordpress/interface@^4.8.0": "patch:@wordpress/interface@npm%3A4.8.0#./.yarn/patches/@wordpress-interface-npm-4.8.0-8a39ad37cf.patch",
+		"@wordpress/element": "4.20.0"
 	},
 	"packageManager": "yarn@3.2.3",
 	"dependenciesMeta": {
