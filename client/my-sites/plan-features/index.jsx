@@ -307,7 +307,7 @@ export class PlanFeatures extends Component {
 	renderMobileView() {
 		const {
 			redirectToAddDomainFlow,
-			hideInterval,
+			hidePlanTypeSelector,
 			basePlansPath,
 			canPurchase,
 			isInSignup,
@@ -355,7 +355,7 @@ export class PlanFeatures extends Component {
 		let buttonText = null;
 		let forceDisplayButton = false;
 
-		if ( redirectToAddDomainFlow === true || hideInterval ) {
+		if ( redirectToAddDomainFlow === true || hidePlanTypeSelector ) {
 			buttonText = translate( 'Add to Cart' );
 			forceDisplayButton = true;
 		}
@@ -578,7 +578,7 @@ export class PlanFeatures extends Component {
 			selectedSiteSlug,
 			shoppingCartManager,
 			redirectToAddDomainFlow,
-			hideInterval,
+			hidePlanTypeSelector,
 		} = this.props;
 
 		const {
@@ -603,7 +603,7 @@ export class PlanFeatures extends Component {
 			return;
 		}
 
-		if ( hideInterval ) {
+		if ( hidePlanTypeSelector ) {
 			try {
 				// In this flow we redirect to checkout with both the plan and domain
 				// product in the cart.
