@@ -8601,15 +8601,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/data-controls@npm:^2.22.0":
-  version: 2.27.0
-  resolution: "@wordpress/data-controls@npm:2.27.0"
+"@wordpress/data-controls@npm:2.22.0":
+  version: 2.22.0
+  resolution: "@wordpress/data-controls@npm:2.22.0"
   dependencies:
     "@babel/runtime": ^7.16.0
-    "@wordpress/api-fetch": ^6.24.0
-    "@wordpress/data": ^8.4.0
-    "@wordpress/deprecated": ^3.27.0
-  checksum: b92f2087d611ae9a2ae9ad92ee065c00cabe6e97f05d533c34a02b017ca50df80ca716251fc9cfbe372cc7ca809c41c79688525c2c3a82c4c7501b2834046780
+    "@wordpress/api-fetch": ^6.19.0
+    "@wordpress/data": ^7.6.0
+    "@wordpress/deprecated": ^3.22.0
+  peerDependencies:
+    react: ^17.0.0
+  checksum: df423889a99f40ba04f1c0f07500e0aa6d9670d52abdc31a8a9e110c853f6a17ac002eb34dee7602cd7435d965f90523fffe66b2ba328eb94334260b7960aef4
   languageName: node
   linkType: hard
 
