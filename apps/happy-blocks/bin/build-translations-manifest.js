@@ -8,7 +8,7 @@ const glob = require( 'glob' );
 const PROJECT_DIR = path.resolve( __dirname, '..' );
 const ROOT_DIR = path.resolve( PROJECT_DIR, '..', '..' );
 const CHUNKS_MAP_PATHS = glob.sync(
-	path.resolve( PROJECT_DIR, 'block-library/*/dist/', 'chunks-map.json' )
+	path.resolve( PROJECT_DIR, 'block-library/*/build/', 'chunks-map.json' )
 );
 const CALYPSO_STRINGS_PATH = path.resolve( PROJECT_DIR, 'dist', 'calypso-strings.pot' );
 const OUTPUT_PATH = path.resolve( PROJECT_DIR, 'dist', 'translations-manifest.json' );
