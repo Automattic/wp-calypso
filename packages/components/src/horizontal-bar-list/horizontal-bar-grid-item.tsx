@@ -12,6 +12,7 @@ const BASE_CLASS_NAME = 'horizontal-bar-list';
 
 const HorizontalBarListItem = ( {
 	data,
+	className,
 	maxValue,
 	url,
 	onClick,
@@ -104,12 +105,16 @@ const HorizontalBarListItem = ( {
 	return (
 		<>
 			<li
-				className={ classnames( `${ BASE_CLASS_NAME }-item`, {
-					[ `${ BASE_CLASS_NAME }-item--indicated` ]: hasIndicator,
-					[ `${ BASE_CLASS_NAME }-item--link` ]: isLink || hasChildren,
-					[ `${ BASE_CLASS_NAME }-item--link-underlined` ]: isLinkUnderlined,
-					[ `${ BASE_CLASS_NAME }-item--static` ]: isStatic,
-				} ) }
+				className={ classnames(
+					`${ BASE_CLASS_NAME }-item`,
+					{
+						[ `${ BASE_CLASS_NAME }-item--indicated` ]: hasIndicator,
+						[ `${ BASE_CLASS_NAME }-item--link` ]: isLink || hasChildren,
+						[ `${ BASE_CLASS_NAME }-item--link-underlined` ]: isLinkUnderlined,
+						[ `${ BASE_CLASS_NAME }-item--static` ]: isStatic,
+					},
+					className
+				) }
 				style={
 					! usePlainCard
 						? {
@@ -168,6 +173,7 @@ const HorizontalBarListItem = ( {
 								<HorizontalBarListItem
 									key={ `group-${ child?.id || index }` }
 									data={ child }
+									className={ className }
 									maxValue={ maxValue }
 									useShortLabel={ useShortLabel }
 									useShortNumber={ useShortNumber }

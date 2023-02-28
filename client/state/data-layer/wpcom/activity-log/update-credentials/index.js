@@ -14,9 +14,9 @@ import {
 } from 'calypso/state/action-types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { transformApi } from 'calypso/state/data-layer/wpcom/sites/rewind/api-transformer';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { transformApi } from 'calypso/state/data-layer/wpcom/sites/rewind/api-transformer';
 import { markCredentialsAsValid } from 'calypso/state/jetpack/credentials/actions';
 import { successNotice, errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import getJetpackCredentialsUpdateProgress from 'calypso/state/selectors/get-jetpack-credentials-update-progress';

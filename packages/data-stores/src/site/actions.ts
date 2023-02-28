@@ -9,7 +9,6 @@ import {
 	AtomicSoftwareInstallError,
 	GlobalStyles,
 } from './types';
-import type { WpcomClientCredentials } from '../shared-types';
 import type {
 	CreateSiteParams,
 	NewSiteErrorResponse,
@@ -28,7 +27,9 @@ import type {
 	SiteSettings,
 	ThemeSetupOptions,
 	ActiveTheme,
+	CurrentTheme,
 } from './types';
+import type { WpcomClientCredentials } from '../shared-types';
 
 export function createActions( clientCreds: WpcomClientCredentials ) {
 	const fetchSite = () => ( {
@@ -168,6 +169,12 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		type: 'RECEIVE_SITE_DOMAINS' as const,
 		siteId,
 		domains,
+	} );
+
+	const receiveSiteTheme = ( siteId: number, theme: CurrentTheme ) => ( {
+		type: 'RECEIVE_SITE_THEME' as const,
+		siteId,
+		theme,
 	} );
 
 	const receiveSiteSettings = ( siteId: number, settings: SiteSettings ) => ( {
@@ -659,6 +666,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 	return {
 		receiveSiteDomains,
 		receiveSiteSettings,
+		receiveSiteTheme,
 		saveSiteTitle,
 		saveSiteSettings,
 		setIntentOnSite,
@@ -721,6 +729,7 @@ export type Action =
 			| ActionCreators[ 'fetchSite' ]
 			| ActionCreators[ 'receiveSiteDomains' ]
 			| ActionCreators[ 'receiveSiteSettings' ]
+			| ActionCreators[ 'receiveSiteTheme' ]
 			| ActionCreators[ 'receiveNewSite' ]
 			| ActionCreators[ 'receiveSiteTitle' ]
 			| ActionCreators[ 'receiveNewSiteFailed' ]

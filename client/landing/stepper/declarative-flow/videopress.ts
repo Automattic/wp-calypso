@@ -2,8 +2,6 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, VIDEOPRESS_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
-import { useEffect } from 'react';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import './internals/videopress.scss';
@@ -22,10 +20,6 @@ const videopress: Flow = {
 		return translate( 'Video' );
 	},
 	useSteps() {
-		useEffect( () => {
-			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
-		}, [] );
-
 		return [
 			{ slug: 'intro', component: Intro },
 			{ slug: 'videomakerSetup', component: VideomakerSetup },

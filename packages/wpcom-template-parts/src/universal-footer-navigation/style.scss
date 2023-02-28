@@ -1,0 +1,575 @@
+$wpc-gray-150: #141517;
+$lp-font-stack-emoji: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+$lp-font-stack-default: -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica",
+	"Arial", sans-serif, $lp-font-stack-emoji;
+
+@function static-url( $path: "" ) {
+	@return "//s1.wp.com/wp-content/themes/h4/landing/marketing/pages/_common/components/footer-nav/media/" + $path;
+}
+
+$breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 1600px; // Think very carefully before adding a new breakpoint
+
+@mixin breakpoint( $size ) {
+	@if type-of( $size ) == string {
+		$approved-value: 0;
+		@each $breakpoint in $breakpoints {
+			$and-larger: ">" + $breakpoint;
+			$and-smaller: "<" + $breakpoint;
+
+			@if $size == $and-smaller {
+				$approved-value: 1;
+				@media ( max-width: $breakpoint ) {
+					@content;
+				}
+			} @else {
+				@if $size == $and-larger {
+					$approved-value: 2;
+					@media ( min-width: $breakpoint + 1 ) {
+						@content;
+					}
+				} @else {
+					@each $breakpoint-end in $breakpoints {
+						$range: $breakpoint + "-" + $breakpoint-end;
+						@if $size == $range {
+							$approved-value: 3;
+							@media ( min-width: $breakpoint + 1 ) and ( max-width: $breakpoint-end ) {
+								@content;
+							}
+						}
+					}
+				}
+			}
+		}
+		@if $approved-value == 0 {
+			$sizes: "";
+			@each $breakpoint in $breakpoints {
+				$sizes: $sizes + " " + $breakpoint;
+			}
+			// TODO - change this to use @error, when it is supported by node-sass
+			@warn "ERROR in breakpoint( #{ $size } ): You can only use these sizes[ #{$sizes} ] using the following syntax [ <#{ nth( $breakpoints, 1 ) } >#{ nth( $breakpoints, 1 ) } #{ nth( $breakpoints, 1 ) }-#{ nth( $breakpoints, 2 ) } ]";
+		}
+	} @else {
+		$sizes: "";
+		@each $breakpoint in $breakpoints {
+			$sizes: $sizes + " " + $breakpoint;
+		}
+		// TODO - change this to use @error, when it is supported by node-sass
+		@warn "ERROR in breakpoint( #{ $size } ): Please wrap the breakpoint $size in parenthesis. You can use these sizes[ #{$sizes} ] using the following syntax [ <#{ nth( $breakpoints, 1 ) } >#{ nth( $breakpoints, 1 ) } #{ nth( $breakpoints, 1 ) }-#{ nth( $breakpoints, 2 ) } ]";
+	}
+}
+
+.lpc-footer-nav {
+	font-size: 1rem;
+	line-height: 36px;
+	font-family: $lp-font-stack-default;
+	background: #141517;
+	padding: 25px 20px 80px;
+
+	ul {
+		margin: 0;
+		padding: 0;
+	}
+}
+
+.lpc-footer-automattic-nav {
+	padding: 1rem 7%;
+	font-size: 1rem;
+	line-height: 36px;
+	font-family: $lp-font-stack-default;
+	background: #fff;
+}
+
+.lpc-footer-nav-wrapper,
+.lpc-footer-automattic-nav-wrapper {
+	max-width: 1056px;
+	margin: 0 auto;
+}
+
+.lpc-footer-automattic-nav-wrapper {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	color: #2c3338;
+
+	a {
+		display: block;
+		padding: 5px 0;
+		text-decoration: underline;
+		color: inherit;
+	}
+
+	.lp-logo-label-spacer {
+		grid-column: span 2;
+	}
+
+	.lp-logo-label {
+		white-space: nowrap;
+		text-decoration: none;
+		margin-right: 18px;
+		color: #0675c4;
+	}
+}
+
+.lpc-footer-nav-container {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	justify-content: space-between;
+	margin-bottom: 52px;
+	position: relative;
+	column-gap: 18px;
+
+	& > div {
+		margin: 20px 0;
+		flex-shrink: 1;
+	}
+
+	h3 {
+		color: #fff;
+		font-weight: 600;
+		font-size: 1rem;
+	}
+
+	ul {
+		margin-top: 10px;
+		list-style: none;
+	}
+
+	li {
+		list-style: none;
+	}
+
+	a,
+	button {
+		text-align: left;
+		text-decoration: underline;
+		display: block;
+		padding: 0;
+		color: #c3c4c7;
+		transition: opacity 0.15s ease-out;
+		font-size: 1rem;
+		line-height: inherit;
+		cursor: pointer;
+
+		&:hover {
+			opacity: 0.85;
+		}
+	}
+}
+
+.lpc-footer-subnav-container {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	justify-content: space-between;
+	align-items: center;
+
+	ul {
+		list-style: none;
+	}
+}
+
+.lpc-footer-mobile-apps {
+	display: flex;
+	flex: 1;
+	grid-column: span 2;
+	grid-row: span 2;
+
+	li:first-child {
+		padding-right: 10px;
+	}
+}
+
+.lp-footer-mobile-icons {
+	display: flex;
+	justify-content: center;
+}
+
+/*
+ * App Button styles
+ *
+ * 1. Used by the default link and button styles.
+ */
+
+.lp-app-button {
+	position: relative;
+	display: inline-block;
+	vertical-align: top;
+	padding: 0.5em 0.65em calc(0.5em - 1px);
+	font-weight: 600;
+	line-height: 1.1;
+	text-align: left;
+	white-space: nowrap;
+	text-decoration: none;
+	// prettier-ignore
+	font-size: 1.25rem;
+
+	&:link,
+	&:visited {
+		color: #fff;
+	}
+
+	&:hover,
+	&:active {
+		opacity: 1; /* 1 */
+		text-decoration: none;
+	}
+
+	&:active {
+		opacity: 0.85; /* 1 */
+	}
+
+	&::before {
+		content: "";
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		border: 1px solid #50575e;
+		border-radius: 4px;
+		background: #000;
+	}
+}
+
+.lp-app-button__content {
+	position: relative;
+	display: flex;
+	align-items: center;
+}
+
+.lp-app-button__content--icon {
+	width: 1em;
+	margin-right: 0.5em;
+	fill: rgb(195, 196, 199);
+
+	.lp-app-button--type-app-store & {
+		position: relative;
+		top: -1px;
+	}
+
+	.lp-app-button--type-google-play & {
+		width: 1.1em;
+		margin-right: 0.4em;
+	}
+}
+
+.lp-footer-social-media {
+	order: 1;
+}
+.lp-footer-social-icons {
+	display: flex;
+	justify-content: flex-start;
+	margin: 0 18px;
+
+	a {
+		display: block;
+		padding: 12px 9px;
+	}
+
+	.lp-icon {
+		width: 24px;
+		height: 24px;
+		background-size: 24px;
+	}
+}
+
+.lp-icon {
+	display: block;
+	fill: rgb(195, 196, 199);
+}
+
+/*
+ * App Button labels
+ */
+
+.lp-app-button__line {
+	display: block;
+}
+
+.lp-app-button__line--top {
+	padding-bottom: 1px;
+	// prettier-ignore
+	font-size: 0.75rem;
+	font-weight: 500;
+}
+
+.lp-app-button__line--bottom {
+	.lp-app-button:hover &,
+	.lp-app-button:active & {
+		text-decoration: underline;
+	}
+}
+
+/*
+ * Language Picker styles
+ *
+ * 1. Explicitely show the element when masks are supported in order to avoid
+ *    a flash of full-bleed color fill.
+ */
+
+.lp-icon--custom-automattic-footer {
+	display: inline-block;
+	height: 12px;
+	margin: 0 0.15em 0 0.1em;
+	position: relative;
+	top: 1px;
+	vertical-align: baseline;
+	width: 143px;
+	fill: inherit;
+}
+
+.lp-language-picker {
+	position: relative;
+
+	&::before {
+		background: #1d2327;
+		border: 1px solid #3c434a;
+		border-radius: 4px;
+		bottom: 0;
+		content: "";
+		left: 0;
+		pointer-events: none;
+		position: absolute;
+		right: 0;
+		top: 0;
+	}
+}
+
+.lp-footer-language {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	order: 2;
+	flex-wrap: nowrap;
+	color: #a7aaad;
+	text-align: center;
+}
+
+%lp-language-picker__icon {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	width: 16px;
+	background: currentColor;
+	pointer-events: none;
+	margin-right: 5px;
+}
+
+.lp-language-picker__icon {
+	@extend %lp-language-picker__icon;
+
+	background-image: url(static-url( 'icon-language.svg') );
+	background-position: center center;
+	background-repeat: no-repeat;
+	filter: invert(0.7);
+	background-color: transparent;
+	left: 0.85em;
+}
+
+.lp-language-picker__chevron {
+	@extend %lp-language-picker__icon;
+	background-image: url(static-url( 'icon-chevron-down.svg') );
+	background-position: center center;
+	background-repeat: no-repeat;
+	filter: invert(0.7);
+	background-color: transparent;
+	right: 0.65em;
+}
+
+.lp-language-picker__content {
+	border: none;
+	color: #c3c4c7;
+	cursor: pointer;
+	display: block;
+	font-family: inherit;
+	font-weight: 600;
+	padding: 16px 45px;
+	position: relative;
+	text-overflow: ellipsis;
+	width: 100%;
+	appearance: none;
+	-webkit-appearance: none;
+	background: none;
+
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
+.lp-link-chevron-external {
+	white-space: nowrap;
+
+	&::after {
+		content: "\00a0\2197";
+		font-family:
+			-apple-system,
+			BlinkMacSystemFont,
+			"Segoe UI",
+			Roboto,
+			Oxygen-Sans,
+			Ubuntu,
+			Cantarell,
+			"Helvetica Neue",
+			sans-serif;
+		display: inline-block;
+		font-weight: 600;
+		left: 0.165em;
+		margin-right: -0.095em;
+		top: 0.055em;
+		transform: scale(0.55, 0.55);
+		transform-origin: 0 0;
+		transition: transform 0.15s ease-out 0s;
+	}
+
+	&:hover,
+	&:active {
+		&::after {
+			transform: scale(0.55, 0.55) translate(0.15em, -0.065em);
+		}
+	}
+}
+
+.lp-hidden {
+	display: none;
+}
+
+/**
+ * Automattic Branding Bar
+ */
+.lp-icon__custom-automattic-footer {
+	display: inline-block;
+	margin: 0 0.15em 0 0.1em;
+	position: relative;
+	top: 1px;
+	vertical-align: text-bottom;
+}
+
+.lp-link-work-m {
+	display: none;
+	color: #2c3338;
+	text-decoration: underline;
+}
+
+@include breakpoint( "<1140px" ) {
+	.lpc-footer-automattic-nav {
+		padding-left: 20px;
+		padding-right: 20px;
+		margin-left: 0 !important;
+		margin-right: 0 !important;
+	}
+}
+
+@include breakpoint( "<960px" ) {
+	.lp-footer-mobile-icons {
+		flex-direction: column;
+	}
+
+	.lp-footer-mobile-icons li {
+		padding-bottom: 10px;
+	}
+
+	.lpc-footer-nav .lp-footer-social-icons {
+		padding: 10px 0;
+	}
+
+	.lp-footer-social-media,
+	.lp-footer-language {
+		grid-column: span 2;
+		order: 1;
+	}
+
+	.lpc-footer-automattic-nav-wrapper {
+		grid-template-columns: 1fr 1fr;
+	}
+
+	.lpc-footer-automattic-nav {
+		padding-top: 24px;
+		padding-bottom: 24px;
+	}
+}
+
+@include breakpoint( "<782px" ) {
+	.lpc-footer-nav-container {
+		right: auto;
+		grid-template-columns: 1fr 1fr;
+		margin-bottom: 20px;
+	}
+
+	.lp-app-button__line--bottom {
+		font-size: 1rem;
+	}
+
+	.lp-language-picker__content {
+		font-size: 0.875rem;
+		padding-top: 15px;
+		padding-bottom: 15px;
+	}
+
+	.lpc-footer-nav,
+	.lpc-footer-automattic-nav {
+		font-size: 0.875rem;
+		line-height: 30px;
+	}
+
+	.lpc-footer-automattic-nav {
+		padding-top: 16px;
+		padding-bottom: 16px;
+	}
+}
+
+@include breakpoint( "<660px" ) {
+	.lpc-footer-nav {
+		padding: 0 16px;
+	}
+
+	.lpc-footer-automattic-nav {
+		margin: auto !important;
+	}
+}
+
+@include breakpoint( "<480px" ) {
+	.lpc-footer-nav-container,
+	.lpc-footer-subnav-container,
+	.lpc-footer-automattic-nav-wrapper {
+		grid-template-columns: 1fr;
+	}
+
+	.lpc-footer-nav-container {
+		ul {
+			margin-top: 6px;
+		}
+
+		& > div {
+			margin: 10px 0;
+		}
+	}
+
+	.lp-footer-language {
+		order: 0;
+		display: block;
+	}
+
+	.lpc-footer-nav .lp-footer-mobile-icons {
+		flex-direction: row;
+		padding-top: 20px;
+	}
+
+	.lpc-footer-mobile-apps {
+		justify-content: center;
+	}
+
+	.lpc-footer-nav .lp-footer-social-icons {
+		justify-content: center;
+		padding: 0;
+	}
+
+	.lp-link-work {
+		display: none !important;
+	}
+
+	.lp-link-work-m {
+		display: block !important;
+	}
+
+	.lp-footer-social-media {
+		margin-bottom: 36px;
+	}
+}

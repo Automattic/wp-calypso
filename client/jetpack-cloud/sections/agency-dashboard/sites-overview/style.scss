@@ -188,8 +188,10 @@
 	display: flex;
 	align-items: center;
 	height: 40px;
+	position: relative;
 	@include break-xlarge {
-		margin: 8px;
+		margin: 0;
+		height: inherit;
 	}
 }
 .sites-overview__error-icon {
@@ -202,6 +204,7 @@
 	justify-content: center;
 	@include break-xlarge {
 		width: auto;
+		padding: 16px;
 	}
 }
 .sites-overview__error-message {
@@ -224,10 +227,12 @@
 }
 .sites-overview__error-message-link {
 	font-size: 0.75rem;
-	color: #bbb !important;
+	color: var(--studio-white) !important;
 	padding: 6px;
 	position: absolute;
 	inset-inline-end: 16px;
+	text-decoration: underline;
+	font-weight: 500;
 }
 .sites-overview__badge {
 	font-size: 0.75rem !important;
@@ -356,5 +361,39 @@
 	@include breakpoint-deprecated( ">660px" ) {
 		left: var(--sidebar-width-min);
 		padding: 0.5rem;
+	}
+}
+
+.sites-overview__column-content {
+	font-size: 0.75rem !important;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	vertical-align: middle;
+	@include break-xlarge {
+		max-width: 70px;
+	}
+	@include break-wide() {
+		max-width: fit-content;
+	}
+}
+
+.sites-overview__warning {
+	@extend .sites-overview__column-content;
+	color: var(--color-warning-50);
+}
+
+.sites-overview__failed {
+	@extend .sites-overview__column-content;
+	color: var(--studio-red-50);
+}
+
+.sites-overview__critical {
+	@extend .sites-overview__column-content;
+	padding: 15px;
+	color: var(--studio-red-50);
+
+	@include break-xlarge {
+		color: var(--studio-white);
 	}
 }

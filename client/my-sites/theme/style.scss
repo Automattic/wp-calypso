@@ -7,6 +7,11 @@ body.is-section-theme-i4 {
 
 	.layout:not(.has-no-sidebar) .layout__content {
 		padding-top: var(--masterbar-height);
+
+		@include breakpoint-deprecated( "<960px" ) {
+			padding-left: 0;
+			padding-right: 0;
+		}
 	}
 
 	.layout__primary .main {
@@ -45,7 +50,7 @@ body.is-section-theme-i4 {
 			grid-area: header;
 
 			h2 {
-				margin: 0 0 12px 0;
+				margin: 0;
 			}
 		}
 
@@ -139,7 +144,8 @@ body.is-section-theme-i4 {
 			margin: 0;
 			text-align: left;
 
-			a {
+			a,
+			span {
 				background-color: var(--color-neutral-5);
 				border-radius: 4px;
 				color: var(--color-neutral-80);
@@ -235,37 +241,6 @@ body.is-section-theme-i4 {
 	}
 }
 
-.theme__sheet-style-variations {
-	@include breakpoint-deprecated( "<960px" ) {
-		margin-bottom: -16px;
-		padding: 0 0 0 24px;
-
-		.theme__sheet-style-variations-previews {
-			padding: 2px 24px 16px 2px;
-		}
-	}
-
-	&-previews {
-		display: flex;
-		gap: 8px;
-		overflow: scroll;
-		padding: 12px 2px;
-	}
-
-	.premium-badge {
-		-webkit-font-smoothing: antialiased;
-	}
-
-	.design-preview__style-variation-wrapper {
-		flex-basis: 100px;
-		flex-shrink: 0;
-
-		@include breakpoint-deprecated( ">1024px" ) {
-			flex-basis: 120px;
-		}
-	}
-}
-
 .theme__sheet-columns {
 	display: flex;
 	flex-direction: row;
@@ -349,8 +324,8 @@ body.is-section-theme-i4 {
 		color: var(--color-neutral-60);
 		font-size: $font-body;
 		font-weight: 400;
+		letter-spacing: -0.32px;
 		line-height: 24px;
-		-webkit-font-smoothing: antialiased;
 	}
 }
 
@@ -401,6 +376,22 @@ body.is-section-theme-i4 {
 .theme__sheet-customize-button {
 	.gridicon {
 		margin-right: 4px;
+	}
+	&.spin {
+		.gridicons-sync > use:first-child,
+		.gridicons-sync > g:first-child {
+			animation: spinning-sync-icon linear 2s infinite;
+			transform-origin: center;
+		}
+	}
+}
+
+@keyframes spinning-sync-icon {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
 	}
 }
 
@@ -698,7 +689,8 @@ body.is-section-theme-i4 {
 	margin: -10px;
 	padding: 0;
 
-	a {
+	a,
+	span {
 		display: inline-block;
 		position: relative;
 		background: var(--color-neutral-0);

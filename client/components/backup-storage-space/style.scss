@@ -113,6 +113,12 @@
 
 	a {
 		text-decoration: underline;
+		display: inline-flex;
+		align-items: center;
+
+		svg.gridicon {
+			margin-left: 6px;
+		}
 	}
 }
 

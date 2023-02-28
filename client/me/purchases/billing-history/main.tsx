@@ -32,8 +32,8 @@ export function BillingHistoryContent( {
 function BillingHistory() {
 	const translate = useTranslate();
 	const { vatDetails } = useVatDetails();
-	const editVatText = translate( 'Edit VAT details (for Europe only)' );
-	const addVatText = translate( 'Add VAT details (for Europe only)' );
+	const editVatText = translate( 'Edit Business Tax ID details' );
+	const addVatText = translate( 'Add Business Tax ID details' );
 	const vatText = vatDetails.id ? editVatText : addVatText;
 
 	return (

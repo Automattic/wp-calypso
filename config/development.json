@@ -67,7 +67,6 @@
 		"gutenboarding/alpha-templates": false,
 		"happychat": true,
 		"help": true,
-		"hosting/github-integration": true,
 		"home/layout-dev": true,
 		"hosting/datacenter-picker": true,
 		"i18n/community-translator": false,
@@ -132,7 +131,9 @@
 		"p2/p2-plus": true,
 		"page/export": true,
 		"pattern-assembler/client-side-render": true,
+		"pattern-assembler/color-and-fonts": true,
 		"pattern-assembler/logged-out-showcase": true,
+		"pattern-assembler/sidebar-revamp": true,
 		"pattern-assembler/write-flow": true,
 		"plans/personal-plan": true,
 		"plans/pro-plan": false,
@@ -179,6 +180,7 @@
 		"subscriber-csv-upload": true,
 		"subscriber-importer": true,
 		"subscription-gifting": true,
+		"subscription-management": true,
 		"themes/atomic-homepage-replace": true,
 		"themes/premium": true,
 		"themes/showcase-i4/details-and-preview": true,
@@ -192,10 +194,10 @@
 		"upgrades/wpcom-monthly-plans": true,
 		"upsell/concierge-session": true,
 		"user-management-revamp": true,
-		"virtual-themes/onboarding": true,
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
+		"yolo/staging-sites-i1": true,
 		"newsletter/stats": true
 	}
 }

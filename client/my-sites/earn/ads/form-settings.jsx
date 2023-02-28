@@ -404,7 +404,7 @@ class AdsFormSettings extends Component {
 							/>
 							<FormSettingExplanation>
 								{ translate(
-									'Adds a link to your privacy policy to the bottom of the sale opt-out notice popup (optional).'
+									'Adds a link to your privacy policy to the notice popup triggered by the do not sell link (optional).'
 								) }
 							</FormSettingExplanation>
 						</FormFieldset>

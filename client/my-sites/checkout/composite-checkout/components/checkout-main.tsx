@@ -91,7 +91,7 @@ export default function CheckoutMain( {
 	jetpackPurchaseToken,
 	isUserComingFromLoginForm,
 	customizedPreviousPath,
-	forceRadioButtons,
+	useVariantPickerRadioButtons,
 }: {
 	siteSlug: string | undefined;
 	siteId: number | undefined;
@@ -119,9 +119,8 @@ export default function CheckoutMain( {
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
 	customizedPreviousPath?: string;
-	// TODO: This is just for unit tests. Remove forceRadioButtons everywhere
-	// when calypso_checkout_variant_picker_radio_2212 ExPlat test completes.
-	forceRadioButtons?: boolean;
+	// This is just for unit tests.
+	useVariantPickerRadioButtons?: boolean;
 } ) {
 	const translate = useTranslate();
 	const isJetpackNotAtomic =
@@ -693,7 +692,7 @@ export default function CheckoutMain( {
 				selectFirstAvailablePaymentMethod
 			>
 				<WPCheckout
-					forceRadioButtons={ forceRadioButtons }
+					useVariantPickerRadioButtons={ useVariantPickerRadioButtons }
 					customizedPreviousPath={ customizedPreviousPath }
 					isRemovingProductFromCart={ isRemovingProductFromCart }
 					areThereErrors={ areThereErrors }

@@ -10,12 +10,13 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import Image from 'calypso/components/image';
 import SocialLogo from 'calypso/components/social-logo';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { DisconnectGitHubButton } from '../disconnect-github-button';
 import { SearchBranches } from './search-branches';
 import { SearchRepos } from './search-repos';
-import { useGithubConnectMutation } from './use-github-connect';
+import { useGithubConnectMutation } from './use-github-connect-mutation';
 
 import './style.scss';
 
@@ -46,6 +47,11 @@ export const GithubConnectCard = ( { connection }: GithubConnectCardProps ) => {
 						...noticeOptions,
 					}
 				)
+			);
+		},
+		onSettled: ( _, error ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_hosting_github_connect_complete', { connected: ! error } )
 			);
 		},
 	} );
@@ -99,6 +105,7 @@ export const GithubConnectCard = ( { connection }: GithubConnectCardProps ) => {
 						<FormLabel htmlFor="repository">{ __( 'Repository' ) }</FormLabel>
 						<SearchRepos
 							siteId={ siteId }
+							connectionId={ connection.ID }
 							onSelect={ handleRepoSelect }
 							onChange={ resetRepoSelection }
 						/>
@@ -107,6 +114,7 @@ export const GithubConnectCard = ( { connection }: GithubConnectCardProps ) => {
 						<FormLabel htmlFor="branch">{ __( 'Branch' ) }</FormLabel>
 						<SearchBranches
 							siteId={ siteId }
+							connectionId={ connection.ID }
 							repoName={ selectedRepo }
 							onSelect={ handleBranchSelect }
 							selectedBranch={ selectedBranch }
@@ -122,6 +130,7 @@ export const GithubConnectCard = ( { connection }: GithubConnectCardProps ) => {
 				<Button
 					primary
 					onClick={ () => {
+						dispatch( recordTracksEvent( 'calypso_hosting_github_connect_click' ) );
 						connectBranch( {
 							repoName: selectedRepo,
 							branchName: selectedBranch,

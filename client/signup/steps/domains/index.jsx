@@ -160,7 +160,7 @@ class DomainsStep extends Component {
 		);
 	};
 
-	handleAddDomain = ( suggestion ) => {
+	handleAddDomain = ( suggestion, position ) => {
 		const stepData = {
 			stepName: this.props.stepName,
 			suggestion,
@@ -169,6 +169,7 @@ class DomainsStep extends Component {
 		this.props.recordAddDomainButtonClick(
 			suggestion.domain_name,
 			this.getAnalyticsSection(),
+			position,
 			suggestion?.is_premium
 		);
 		this.props.saveSignupStep( stepData );

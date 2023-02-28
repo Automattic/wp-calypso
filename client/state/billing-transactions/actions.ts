@@ -10,8 +10,8 @@ import {
 	BILLING_TRANSACTIONS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import type { CalypsoDispatch } from '../types';
 import type { BillingTransaction, UpcomingCharge } from './types';
+import type { CalypsoDispatch } from '../types';
 
 import 'calypso/state/billing-transactions/init';
 

@@ -5,18 +5,34 @@ import {
 	INSTALL_PLUGIN,
 } from 'calypso/lib/plugins/constants';
 import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
+import { getSite } from 'calypso/state/sites/selectors';
 import {
 	getAllPluginsIndexedByPluginSlug,
 	getAllPluginsIndexedBySiteId,
 	getFilteredAndSortedPlugins,
+	getPluginsOnSites,
+	getPluginOnSite,
+	getPluginOnSites,
+	getPluginsOnSite,
+	getSiteObjectsWithPlugin,
+	getSitesWithPlugin,
+	getSitesWithoutPlugin,
+	isRequesting,
+	isRequestingForSites,
+	getStatusForPlugin,
+	isPluginActionStatus,
+	isPluginActionInProgress,
+	getPluginStatusesByType,
 } from '../selectors-ts';
 import { akismet, helloDolly, jetpack } from './fixtures/plugins';
 
 const siteOneId = 12345;
 const siteTwoId = 54321;
 const siteThreeId = 21435;
+const siteFourId = 54312;
 
-const nonExistingSiteId = 0;
+const nonExistingSiteId1 = 0;
+const nonExistingSiteId2 = 1;
 
 const createError = function ( error, message, name = false ) {
 	const errorObj = new Error( message );
@@ -31,6 +47,7 @@ const state = deepFreeze( {
 				[ siteOneId ]: false,
 				[ siteTwoId ]: false,
 				[ siteThreeId ]: true,
+				[ siteFourId ]: false,
 			},
 			plugins: {
 				[ siteOneId ]: [ akismet, helloDolly ],
@@ -67,6 +84,12 @@ const state = deepFreeze( {
 			},
 			[ siteTwoId ]: {
 				ID: siteTwoId,
+				jetpack: true,
+				visible: true,
+				name: 'Two Site',
+			},
+			[ siteFourId ]: {
+				ID: siteFourId,
 				jetpack: true,
 				visible: true,
 				name: 'Two Site',
@@ -152,6 +175,38 @@ const helloDollyWithSites = deepFreeze( {
 	},
 } );
 
+describe( 'isRequesting', () => {
+	test( 'Should get `false` if this site is not in the current state', () => {
+		expect( isRequesting( state, nonExistingSiteId1 ) ).toBe( false );
+	} );
+
+	test( 'Should get `false` if this site is not being fetched', () => {
+		expect( isRequesting( state, siteOneId ) ).toBe( false );
+	} );
+
+	test( 'Should get `true` if this site is being fetched', () => {
+		expect( isRequesting( state, siteThreeId ) ).toBe( true );
+	} );
+} );
+
+describe( 'isRequestingForSites', () => {
+	test( 'Should get `false` if no sites are being fetched', () => {
+		expect( isRequestingForSites( state, [ siteOneId, siteTwoId ] ) ).toBe( false );
+	} );
+
+	test( 'Should get `true` if any site is being fetched', () => {
+		expect( isRequestingForSites( state, [ siteOneId, siteThreeId ] ) ).toBe( true );
+	} );
+
+	test( 'Should get `true` if any site is being fetched, even if one is not in the current state', () => {
+		expect( isRequestingForSites( state, [ nonExistingSiteId1, siteThreeId ] ) ).toBe( true );
+	} );
+
+	test( 'Should get `false` if sites are not being fetched, including a site not in the current state', () => {
+		expect( isRequestingForSites( state, [ nonExistingSiteId1, siteTwoId ] ) ).toBe( false );
+	} );
+} );
+
 describe( 'getAllPluginsIndexedByPluginSlug', () => {
 	test( 'Returns the jetpack plugin', () => {
 		const plugins = getAllPluginsIndexedByPluginSlug( state );
@@ -207,7 +262,7 @@ describe( 'getAllPluginsIndexedBySiteId', () => {
 	test( 'Returns undefined for a non-existing site.', () => {
 		const plugins = getAllPluginsIndexedBySiteId( state );
 
-		expect( plugins[ nonExistingSiteId ] ).toEqual( undefined );
+		expect( plugins[ nonExistingSiteId1 ] ).toEqual( undefined );
 	} );
 
 	test( 'Memozies the returned plugins object', () => {
@@ -220,7 +275,7 @@ describe( 'getAllPluginsIndexedBySiteId', () => {
 
 describe( 'getFilteredAndSortedPlugins', () => {
 	test( 'Should get an empty array if the requested site is not in the current state', () => {
-		const plugins = getFilteredAndSortedPlugins( state, [ nonExistingSiteId ], undefined );
+		const plugins = getFilteredAndSortedPlugins( state, [ nonExistingSiteId1 ], undefined );
 		expect( plugins ).toHaveLength( 0 );
 	} );
 
@@ -252,5 +307,280 @@ describe( 'getFilteredAndSortedPlugins', () => {
 	test( 'Should get a plugin list of length 1 if inactive plugins on site 1 is requested', () => {
 		const plugins = getFilteredAndSortedPlugins( state, [ siteOneId ], 'inactive' );
 		expect( plugins ).toHaveLength( 1 );
+	} );
+} );
+
+describe( 'getPluginsOnSites', () => {
+	it( 'returns an object with plugins that are on the specified sites', () => {
+		const plugins = [ jetpackWithSites, akismetWithSites ];
+
+		const result = getPluginsOnSites( state, plugins );
+
+		expect( result ).toEqual( {
+			jetpack: jetpackWithSites,
+			akismet: akismetWithSites,
+		} );
+	} );
+
+	it( 'returns an empty object if the sites have no plugins', () => {
+		const plugins = [
+			{ ...jetpackWithSites, ...{ sites: {} } },
+			{ ...akismetWithSites, ...{ sites: {} } },
+		];
+
+		const result = getPluginsOnSites( state, plugins );
+
+		expect( result ).toEqual( {} );
+	} );
+
+	it( 'returns an empty object for an empty plugins array', () => {
+		const result = getPluginsOnSites( state, [] );
+
+		expect( result ).toEqual( {} );
+	} );
+
+	it( 'returns undefined for a plugin object with an invalid slug', () => {
+		const invalidPlugin = { ...jetpackWithSites, ...{ slug: 'invalid-slug' } };
+
+		const result = getPluginsOnSites( state, [ invalidPlugin ] );
+
+		expect( result ).toEqual( { 'invalid-plugin': undefined } );
+	} );
+} );
+
+describe( 'getPluginOnSites', () => {
+	test( 'Should get an undefined value if the requested sites are not in the current state', () => {
+		const siteIds = [ nonExistingSiteId1, nonExistingSiteId2 ];
+		expect( getPluginOnSites( state, siteIds, 'akismet' ) ).toBeUndefined();
+	} );
+
+	test( 'Should get an undefined value if the requested plugin on these sites is not in the current state', () => {
+		expect( getPluginOnSites( state, [ siteOneId ], 'jetpack' ) ).toBeUndefined();
+	} );
+
+	test( 'Should get the plugin if the it exists on one or more of the requested sites', () => {
+		const siteIds = [ siteOneId, siteTwoId ];
+		const plugin = getPluginOnSites( state, siteIds, 'hello-dolly' );
+		const sitesWithPlugins = {
+			[ siteOneId ]: {
+				active: helloDolly.active,
+				autoupdate: helloDolly.autoupdate,
+				update: helloDolly.update,
+				version: helloDolly.version,
+			},
+			[ siteTwoId ]: {
+				active: helloDolly.active,
+				autoupdate: helloDolly.autoupdate,
+				update: helloDolly.update,
+				version: helloDolly.version,
+			},
+		};
+		const { active, autoupdate, update, version, ...pluginProperties } = helloDolly;
+		expect( plugin ).toEqual( { ...pluginProperties, sites: sitesWithPlugins } );
+	} );
+} );
+
+describe( 'getPluginOnSite', () => {
+	test( 'Should get an undefined value if the requested site is not in the current state', () => {
+		expect( getPluginOnSite( state, nonExistingSiteId1, 'akismet' ) ).toBeUndefined();
+	} );
+
+	test( 'Should get an undefined value if the requested plugin on this site is not in the current state', () => {
+		expect( getPluginOnSite( state, siteOneId, 'jetpack' ) ).toBeUndefined();
+	} );
+
+	test( 'Should get the plugin if the it exists on the requested site', () => {
+		const plugin = getPluginOnSite( state, siteOneId, 'akismet' );
+		const siteProperties = {
+			active: akismet.active,
+			autoupdate: akismet.autoupdate,
+			update: akismet.update,
+			version: akismet.version,
+		};
+		const expectedPlugin = {
+			...akismet,
+			...{ sites: { [ siteOneId ]: siteProperties } },
+		};
+		expect( plugin ).toEqual( expectedPlugin );
+	} );
+} );
+
+describe( 'getPluginsOnSite', () => {
+	test( 'Should get an array of undefined if the requested site is not in the current state', () => {
+		expect( getPluginsOnSite( state, siteThreeId, [ 'jetpack' ] ) ).toEqual( [ undefined ] );
+	} );
+
+	test( 'Should get an  array of undefined if the requested site has no plugins', () => {
+		expect( getPluginsOnSite( state, siteFourId, [ 'akismet' ] ) ).toEqual( [ undefined ] );
+	} );
+
+	test( 'Should get an array with the plugin objects for the requested plugins with site properties lifted onto the plugin object', () => {
+		const plugins = getPluginsOnSite( state, siteOneId, [ 'akismet' ] );
+		expect( plugins ).toEqual( [
+			{
+				...akismetWithSites,
+				...{
+					active: akismetWithSites.sites[ siteOneId ].active,
+					autoupdate: akismetWithSites.sites[ siteOneId ].autoupdate,
+					version: akismetWithSites.sites[ siteOneId ].version,
+				},
+			},
+		] );
+	} );
+} );
+
+describe( 'getSitesWithPlugin', () => {
+	test( 'Should get an empty array if the requested site is not in the current state', () => {
+		expect( getSitesWithPlugin( state, [ nonExistingSiteId1 ], 'akismet' ) ).toHaveLength( 0 );
+	} );
+
+	test( "Should get an empty array if the requested plugin doesn't exist on any sites' state", () => {
+		expect( getSitesWithPlugin( state, [ siteOneId, siteTwoId ], 'vaultpress' ) ).toHaveLength( 0 );
+	} );
+
+	test( 'Should get an array of sites with the requested plugin', () => {
+		const siteIds = getSitesWithPlugin( state, [ siteOneId, siteTwoId ], 'jetpack' );
+		expect( siteIds ).toEqual( [ siteTwoId ] );
+	} );
+} );
+
+describe( 'getSiteObjectsWithPlugin', () => {
+	test( 'Should get an empty array if the requested site is not in the current state', () => {
+		expect( getSiteObjectsWithPlugin( state, [ nonExistingSiteId1 ], 'akismet' ) ).toHaveLength(
+			0
+		);
+	} );
+
+	test( "Should get an empty array if the requested plugin doesn't exist on any sites' state", () => {
+		expect(
+			getSiteObjectsWithPlugin( state, [ siteOneId, siteTwoId ], 'vaultpress' )
+		).toHaveLength( 0 );
+	} );
+
+	test( 'Should get an array of sites with the requested plugin', () => {
+		const siteIds = getSiteObjectsWithPlugin( state, [ siteOneId, siteTwoId ], 'jetpack' );
+		expect( siteIds ).toEqual( [ getSite( state, siteTwoId ) ] );
+	} );
+} );
+
+describe( 'getSitesWithoutPlugin', () => {
+	test( 'Should get an empty array if the requested site is not in the current state', () => {
+		expect( getSitesWithoutPlugin( state, [ nonExistingSiteId1 ], 'akismet' ) ).toHaveLength( 0 );
+	} );
+
+	test( "Should get an array of sites that don't have the plugin in their state", () => {
+		const siteIds = getSitesWithoutPlugin( state, [ siteOneId, siteTwoId ], 'akismet' );
+		expect( siteIds ).toEqual( [ siteTwoId ] );
+	} );
+
+	test( 'Should get an empty array if the requested plugin exists on all requested sites', () => {
+		const siteIds = getSitesWithoutPlugin( state, [ siteOneId, siteTwoId ], 'hello-dolly' );
+		expect( siteIds ).toHaveLength( 0 );
+	} );
+} );
+
+describe( 'getStatusForPlugin', () => {
+	test( 'Should get `undefined` if the requested site is not in the current state', () => {
+		expect( getStatusForPlugin( state, nonExistingSiteId1, 'akismet/akismet' ) ).toBe( undefined );
+	} );
+
+	test( 'Should get `undefined` if the requested plugin on this site is not in the current state', () => {
+		expect( getStatusForPlugin( state, siteOneId, 'hello-dolly/hello' ) ).toBe( undefined );
+	} );
+
+	test( 'Should get the log if the requested site & plugin have logs', () => {
+		expect( getStatusForPlugin( state, siteOneId, 'akismet/akismet' ) ).toEqual( {
+			status: 'inProgress',
+			siteId: siteOneId,
+			pluginId: 'akismet/akismet',
+			action: ENABLE_AUTOUPDATE_PLUGIN,
+		} );
+	} );
+} );
+
+describe( 'isPluginActionStatus', () => {
+	test( 'Should get `false` if the requested site is not in the current state', () => {
+		expect(
+			isPluginActionStatus(
+				state,
+				nonExistingSiteId1,
+				'jetpack/jetpack',
+				DEACTIVATE_PLUGIN,
+				'completed'
+			)
+		).toBe( false );
+	} );
+
+	test( 'Should get `false` if the plugin status for the action does not exist.', () => {
+		expect(
+			isPluginActionStatus( state, siteOneId, 'jetpack/jetpack', INSTALL_PLUGIN, 'completed' )
+		).toBe( false );
+	} );
+
+	test( 'Should get `false` if the plugin status for the action does not match the status.', () => {
+		expect(
+			isPluginActionStatus( state, siteOneId, 'jetpack/jetpack', DEACTIVATE_PLUGIN, 'inProgress' )
+		).toBe( false );
+	} );
+
+	test( 'Should get `false` if the plugin status for none of the actions matches the status.', () => {
+		expect(
+			isPluginActionStatus(
+				state,
+				siteOneId,
+				'jetpack/jetpack',
+				[ INSTALL_PLUGIN, ENABLE_AUTOUPDATE_PLUGIN ],
+				'completed'
+			)
+		).toBe( false );
+	} );
+
+	test( 'Should get `true` if the plugin status for the action matches the status.', () => {
+		expect(
+			isPluginActionStatus( state, siteOneId, 'jetpack/jetpack', DEACTIVATE_PLUGIN, 'completed' )
+		).toBe( true );
+	} );
+
+	test( 'Should get `true` if the plugin status for one of the actions matches the status.', () => {
+		expect(
+			isPluginActionStatus(
+				state,
+				siteOneId,
+				'jetpack/jetpack',
+				[ INSTALL_PLUGIN, DEACTIVATE_PLUGIN ],
+				'completed'
+			)
+		).toBe( true );
+	} );
+} );
+
+describe( 'isPluginActionInProgress', () => {
+	test( 'Should get `false` if the plugin status for the action is not "inProgress".', () => {
+		expect(
+			isPluginActionInProgress( state, siteOneId, 'jetpack/jetpack', DEACTIVATE_PLUGIN )
+		).toBe( false );
+	} );
+
+	test( 'Should get `true` if the plugin status for the action is "inProgress".', () => {
+		expect(
+			isPluginActionInProgress( state, siteOneId, 'akismet/akismet', ENABLE_AUTOUPDATE_PLUGIN )
+		).toBe( true );
+	} );
+} );
+
+describe( 'getPluginStatusesByType', () => {
+	test( 'Should return a list of all plugin statuses, and add siteId and pluginId to each status.', () => {
+		expect( getPluginStatusesByType( state, 'completed' ) ).toEqual( [
+			{
+				siteId: siteOneId,
+				pluginId: 'jetpack/jetpack',
+				action: DEACTIVATE_PLUGIN,
+				status: 'completed',
+			},
+		] );
+	} );
+
+	test( 'Should return an empty array if there are no matching statuses of that type.', () => {
+		expect( getPluginStatusesByType( state, 'someOtherType' ) ).toEqual( [] );
 	} );
 } );

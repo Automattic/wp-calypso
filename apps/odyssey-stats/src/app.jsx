@@ -47,7 +47,7 @@ async function AppBoot() {
 	if ( ! window.location?.hash ) {
 		window.location.hash = `#!/stats/day/${ siteId }`;
 	}
-	registerStatsPages( config( 'admin_page_base' ) );
+	registerStatsPages( window.location.pathname + window.location.search );
 }
 
 AppBoot();

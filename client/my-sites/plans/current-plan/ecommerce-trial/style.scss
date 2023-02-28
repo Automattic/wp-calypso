@@ -55,66 +55,6 @@ body.is-section-plans.is-ecommerce-trial-plan {
 			margin: 20px 0;
 		}
 
-		.e-commerce-trial-current-plan__trial-card {
-			display: flex;
-			padding: 40px;
-			background-color: rgba(var(--color-neutral-0-rgb), 0.8);
-			box-shadow: none;
-
-			@media (max-width: $break-mobile) {
-				padding: 24px;
-				margin: 0 20px;
-			}
-
-			.e-commerce-trial-current-plan__trial-card-content {
-				flex: 1;
-
-				.e-commerce-trial-current-plan__card-title {
-					font-size: $font-title-medium;
-					font-weight: 400;
-					color: var(--studio-black);
-					margin: 0;
-
-					@media (max-width: $break-mobile) {
-						font-size: $font-body-small;
-					}
-				}
-
-				.e-commerce-trial-current-plan__card-subtitle {
-					font-size: $font-body;
-					font-weight: 400;
-					margin: 15px 0;
-					color: var(--color-neutral-40);
-
-					@media (max-width: $break-mobile) {
-						font-size: $font-body-extra-small;
-						color: var(--color-neutral-80);
-					}
-				}
-			}
-
-			.e-commerce-trial-current-plan__trial-card-cta {
-				@media (max-width: $break-mobile) {
-					width: 100%;
-					line-height: 30px;
-				}
-			}
-
-			.plans__chart-wrapper {
-				@media (max-width: $break-mobile) {
-					display: none;
-				}
-
-				margin-left: 50px;
-				text-align: center;
-				padding: 0 20px;
-
-				.plans__chart-label {
-					color: var(--color-neutral);
-				}
-			}
-		}
-
 		.e-commerce-trial-current-plan__section-title {
 			font-size: $font-title-medium;
 			text-align: center;

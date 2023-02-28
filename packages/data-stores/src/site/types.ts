@@ -1,6 +1,6 @@
+import type { ActionCreators } from './actions';
 import type { DispatchFromMap } from '../mapped-types';
 import type { FeatureId } from '../wpcom-features';
-import type { ActionCreators } from './actions';
 
 export interface Dispatch {
 	dispatch: DispatchFromMap< ActionCreators >;
@@ -480,6 +480,10 @@ export interface ActiveTheme {
 	_links: {
 		'wp:user-global-styles': { href: string }[];
 	};
+}
+
+export interface CurrentTheme {
+	id: string;
 }
 
 export interface SourceSiteMigrationDetails {

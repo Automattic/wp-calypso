@@ -63,7 +63,8 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 		it( `${ ImageBlock.blockName } block: upload image file with reserved URL characters`, async function () {
 			const blockHandle = await editorPage.addBlockFromSidebar(
 				ImageBlock.blockName,
-				ImageBlock.blockEditorSelector
+				ImageBlock.blockEditorSelector,
+				{ noSearch: true }
 			);
 			const imageBlock = new ImageBlock( blockHandle );
 			await imageBlock.upload( testFiles.imageReservedName.fullpath );
@@ -72,7 +73,8 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 		it( `${ ImageBlock.blockName } block: upload image file using Calypso media modal `, async function () {
 			const blockHandle = await editorPage.addBlockFromSidebar(
 				ImageBlock.blockName,
-				ImageBlock.blockEditorSelector
+				ImageBlock.blockEditorSelector,
+				{ noSearch: true }
 			);
 			const imageBlock = new ImageBlock( blockHandle );
 			await imageBlock.uploadThroughMediaLibrary( testFiles.image.fullpath );
@@ -81,7 +83,8 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 		it( `${ AudioBlock.blockName } block: upload audio file`, async function () {
 			const blockHandle = await editorPage.addBlockFromSidebar(
 				AudioBlock.blockName,
-				AudioBlock.blockEditorSelector
+				AudioBlock.blockEditorSelector,
+				{ noSearch: true }
 			);
 			const audioBlock = new AudioBlock( blockHandle );
 			await audioBlock.upload( testFiles.audio.fullpath );
@@ -90,7 +93,8 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 		it( `${ FileBlock.blockName } block: upload audio file`, async function () {
 			const blockHandle = await editorPage.addBlockFromSidebar(
 				FileBlock.blockName,
-				FileBlock.blockEditorSelector
+				FileBlock.blockEditorSelector,
+				{ noSearch: true }
 			);
 			const fileBlock = new FileBlock( blockHandle );
 			await fileBlock.upload( testFiles.audio.fullpath );

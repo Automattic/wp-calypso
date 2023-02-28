@@ -12,7 +12,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import Checklist from './checklist';
-import { filterDomainUpsellTask, getArrayOfFilteredTasks, getEnhancedTasks } from './task-helper';
+import { getArrayOfFilteredTasks, getEnhancedTasks } from './task-helper';
 import { tasks } from './tasks';
 import { getLaunchpadTranslations } from './translations';
 import { Task } from './types';
@@ -30,11 +30,11 @@ function getUrlInfo( url: string ) {
 	const urlWithoutProtocol = url.replace( /^https?:\/\//, '' );
 
 	// Ex. mytest.wordpress.com matches mytest
-	const siteName = urlWithoutProtocol.match( /^[^.]*/ );
+	const siteName = urlWithoutProtocol.match( /^[^.]*/ )?.[ 0 ] || '';
 	// Ex. mytest.wordpress.com matches .wordpress.com
-	const topLevelDomain = urlWithoutProtocol.match( /\..*/ ) || [];
+	const topLevelDomain = urlWithoutProtocol.match( /\..*/ )?.[ 0 ] || '';
 
-	return [ siteName ? siteName[ 0 ] : '', topLevelDomain ? topLevelDomain[ 0 ] : '' ];
+	return [ siteName, topLevelDomain ];
 }
 
 function getTasksProgress( tasks: Task[] | null ) {
@@ -63,7 +63,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 
 	const { flowName, title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
 	const arrayOfFilteredTasks: Task[] | null = getArrayOfFilteredTasks( tasks, flow );
-	let enhancedTasks =
+	const enhancedTasks =
 		site &&
 		getEnhancedTasks(
 			arrayOfFilteredTasks,
@@ -77,10 +77,6 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 
 	const currentTask = getTasksProgress( enhancedTasks );
 	const launchTask = enhancedTasks?.find( ( task ) => task.isLaunchTask === true );
-
-	// Free, Write, Build, Link in Bio, & Newsletter flows - remove domain_upsell task if
-	// user is on paid plan
-	enhancedTasks = filterDomainUpsellTask( flow, enhancedTasks, site );
 
 	const showLaunchTitle = launchTask && ! launchTask.disabled;
 

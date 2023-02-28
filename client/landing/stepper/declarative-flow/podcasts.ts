@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import ChooseADomain from './internals/steps-repository/choose-a-domain';
 import LetsGetStarted from './internals/steps-repository/lets-get-started';
@@ -8,10 +6,6 @@ import type { Flow, ProvidedDependencies } from './internals/types';
 const podcasts: Flow = {
 	name: 'podcasts',
 	useSteps() {
-		useEffect( () => {
-			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
-		}, [] );
-
 		return [
 			{ slug: 'letsGetStarted', component: LetsGetStarted },
 			{ slug: 'chooseADomain', component: ChooseADomain },

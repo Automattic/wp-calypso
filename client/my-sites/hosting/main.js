@@ -8,6 +8,7 @@ import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
 import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
+import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import FeatureExample from 'calypso/components/feature-example';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Layout from 'calypso/components/layout';
@@ -19,6 +20,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
 import { GitHubCard } from 'calypso/my-sites/hosting/github';
+import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
@@ -30,6 +32,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestSite } from 'calypso/state/sites/actions';
 import { isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import CacheCard from './cache-card';
 import { HostingUpsellNudge } from './hosting-upsell-nudge';
@@ -37,10 +40,10 @@ import PhpMyAdminCard from './phpmyadmin-card';
 import RestorePlanSoftwareCard from './restore-plan-software-card';
 import SFTPCard from './sftp-card';
 import SiteBackupCard from './site-backup-card';
+import StagingSiteCard from './staging-site-card';
 import SupportCard from './support-card';
 import WebServerLogsCard from './web-server-logs-card';
 import WebServerSettingsCard from './web-server-settings-card';
-
 import './style.scss';
 
 class Hosting extends Component {
@@ -71,6 +74,7 @@ class Hosting extends Component {
 
 	render() {
 		const {
+			teams,
 			clickActivate,
 			hasSftpFeature,
 			isDisabled,
@@ -165,12 +169,13 @@ class Hosting extends Component {
 		};
 
 		const getContent = () => {
+			const isGithubIntegrationEnabled = isAutomatticTeamMember( teams );
 			const WrapperComponent = isDisabled || isTransferring ? FeatureExample : Fragment;
-			const isGitHubEnabled = isEnabled( 'hosting/github-integration' );
+			const isStagingSiteEnabled = isEnabled( 'yolo/staging-sites-i1' );
 
 			return (
 				<>
-					{ isGitHubEnabled && (
+					{ isGithubIntegrationEnabled && (
 						<>
 							<QueryKeyringServices />
 							<QueryKeyringConnections />
@@ -181,7 +186,8 @@ class Hosting extends Component {
 							<Column type="main" className="hosting__main-layout-col">
 								<SFTPCard disabled={ isDisabled } />
 								<PhpMyAdminCard disabled={ isDisabled } />
-								{ isGitHubEnabled && <GitHubCard /> }
+								{ isStagingSiteEnabled && <StagingSiteCard disabled={ isDisabled } /> }
+								{ isGithubIntegrationEnabled && <GitHubCard /> }
 								<WebServerSettingsCard disabled={ isDisabled } />
 								<RestorePlanSoftwareCard disabled={ isDisabled } />
 								<CacheCard disabled={ isDisabled } />
@@ -211,6 +217,7 @@ class Hosting extends Component {
 				/>
 				{ hasSftpFeature ? getAtomicActivationNotice() : getUpgradeBanner() }
 				{ getContent() }
+				<QueryReaderTeams />
 			</Main>
 		);
 	}
@@ -225,6 +232,7 @@ export default connect(
 		const hasSftpFeature = siteHasFeature( state, siteId, FEATURE_SFTP );
 
 		return {
+			teams: getReaderTeams( state ),
 			isECommerceTrial: isSiteOnECommerceTrial( state, siteId ),
 			transferState: getAutomatedTransferStatus( state, siteId ),
 			isTransferring: isAutomatedTransferActive( state, siteId ),

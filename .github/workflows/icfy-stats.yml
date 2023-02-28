@@ -18,8 +18,6 @@ jobs:
       - name: Fetch git history
         run: git fetch --prune --unshallow
       - name: Install dependencies
-        env:
-          PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: true
         run: yarn install --inline-builds
       - name: Build ICFY stats
         env:

@@ -32,7 +32,12 @@
 	}
 
 	&-domain {
-		padding-left: 8px;
+		padding: 0 8px;
+
+		// prevent text overflow
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
 	}
 
 	&-buttons {

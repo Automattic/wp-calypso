@@ -46,6 +46,7 @@ class StatsModule extends Component {
 		metricLabel: PropTypes.string,
 		mainItemLabel: PropTypes.string,
 		additionalColumns: PropTypes.object,
+		listItemClassName: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -137,6 +138,7 @@ class StatsModule extends Component {
 			metricLabel,
 			additionalColumns,
 			mainItemLabel,
+			listItemClassName,
 		} = this.props;
 
 		const noData = data && this.state.loaded && ! data.length;
@@ -197,6 +199,7 @@ class StatsModule extends Component {
 								period={ period }
 								hideNavigation={ summary && ! isAllTime }
 								navigationSwap={ headerCSVButton }
+								listItemClassName={ listItemClassName }
 							/>
 						) }
 						<StatsListCard
@@ -228,6 +231,7 @@ class StatsModule extends Component {
 							splitHeader={ !! additionalColumns }
 							mainItemLabel={ mainItemLabel }
 							showLeftIcon={ path === 'authors' }
+							listItemClassName={ listItemClassName }
 						/>
 						{ isAllTime && (
 							<div className={ footerClass }>

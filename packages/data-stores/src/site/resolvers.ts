@@ -1,6 +1,13 @@
 // wpcomRequest is a temporary rename while we're working on migrating generators to thunks
 import wpcomRequest from 'wpcom-proxy-request';
-import type { SiteDetails, Domain, SiteSettings, Dispatch, NewSiteErrorResponse } from './types';
+import type {
+	CurrentTheme,
+	SiteDetails,
+	Domain,
+	SiteSettings,
+	Dispatch,
+	NewSiteErrorResponse,
+} from './types';
 
 /**
  * Attempt to find a site based on its id, and if not return undefined.
@@ -54,4 +61,20 @@ export const getSiteSettings =
 		} );
 
 		dispatch.receiveSiteSettings( siteId, result?.settings );
+	};
+
+/**
+ * Get current site theme
+ *
+ * @param siteId {number} The site id
+ */
+export const getSiteTheme =
+	( siteId: number ) =>
+	async ( { dispatch }: Dispatch ) => {
+		const theme: CurrentTheme = await wpcomRequest( {
+			path: '/sites/' + encodeURIComponent( siteId ) + '/themes/mine',
+			apiVersion: '1.1',
+		} );
+
+		dispatch.receiveSiteTheme( siteId, theme );
 	};
