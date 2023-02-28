@@ -259,7 +259,7 @@ class Plans extends Component {
 			  } );
 		return (
 			<div>
-				{ ! isJetpackNotAtomic && (
+				{ ! isJetpackNotAtomic && ! isDomainAndPlanPackageFlow && (
 					<ModernizedLayout dropShadowOnHeader={ isFreePlan( currentPlanSlug ) } />
 				) }
 				{ selectedSite.ID && <QuerySitePurchases siteId={ selectedSite.ID } /> }
