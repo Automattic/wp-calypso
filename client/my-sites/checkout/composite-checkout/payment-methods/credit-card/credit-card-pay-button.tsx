@@ -65,7 +65,7 @@ export default function CreditCardPayButton( {
 							state: fields?.state?.value,
 							city: fields?.city?.value,
 							organization: fields?.organization?.value,
-							address: fields?.address1?.value, // TODO: is this address1 or address?
+							address: fields?.address1?.value,
 							useForAllSubscriptions,
 							eventSource: 'checkout',
 						} );
