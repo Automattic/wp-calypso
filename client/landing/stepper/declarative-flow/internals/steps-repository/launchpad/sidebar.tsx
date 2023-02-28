@@ -30,11 +30,11 @@ function getUrlInfo( url: string ) {
 	const urlWithoutProtocol = url.replace( /^https?:\/\//, '' );
 
 	// Ex. mytest.wordpress.com matches mytest
-	const siteName = urlWithoutProtocol.match( /^[^.]*/ );
+	const siteName = urlWithoutProtocol.match( /^[^.]*/ )?.[ 0 ] || '';
 	// Ex. mytest.wordpress.com matches .wordpress.com
-	const topLevelDomain = urlWithoutProtocol.match( /\..*/ ) || [];
+	const topLevelDomain = urlWithoutProtocol.match( /\..*/ )?.[ 0 ] || '';
 
-	return [ siteName ? siteName[ 0 ] : '', topLevelDomain ? topLevelDomain[ 0 ] : '' ];
+	return [ siteName, topLevelDomain ];
 }
 
 function getTasksProgress( tasks: Task[] | null ) {
