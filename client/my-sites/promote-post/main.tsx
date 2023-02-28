@@ -32,7 +32,7 @@ const queryPost = {
 	number: 20, // max supported by /me/posts endpoint for all-sites mode
 	status: 'publish', // do not allow private or unpublished posts
 	type: 'post',
-	order_by: 'comment_count',
+	order_by: 'id',
 };
 const queryPage = {
 	...queryPost,
@@ -141,7 +141,9 @@ export default function PromotedPosts( { tab }: Props ) {
 		);
 	}
 
-	const content = [ ...( posts || [] ), ...( pages || [] ), ...( products || [] ) ];
+	const content = [ ...( posts || [] ), ...( pages || [] ), ...( products || [] ) ].sort(
+		( a, b ) => b.ID - a.ID
+	);
 
 	const isLoading = isLoadingPage && isLoadingPost && isLoadingProducts;
 
