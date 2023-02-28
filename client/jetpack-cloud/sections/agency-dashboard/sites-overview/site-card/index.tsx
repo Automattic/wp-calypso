@@ -1,4 +1,5 @@
-import { Card, Gridicon } from '@automattic/components';
+import { Card, Gridicon, Button } from '@automattic/components';
+import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useState, useCallback, MouseEvent, KeyboardEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,7 +13,7 @@ import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partn
 import SiteActions from '../site-actions';
 import SiteErrorContent from '../site-error-content';
 import SiteStatusContent from '../site-status-content';
-import type { SiteData, SiteColumns } from '../types';
+import type { SiteData, SiteColumns, AllowedTypes } from '../types';
 
 import './style.scss';
 
@@ -26,12 +27,17 @@ export default function SiteCard( { rows, columns }: Props ) {
 	const isPartnerOAuthTokenLoaded = useSelector( getIsPartnerOAuthTokenLoaded );
 
 	const [ isExpanded, setIsExpanded ] = useState( false );
+	const [ expandedColumn, setExpandedColumn ] = useState< AllowedTypes | null >( null );
 	const blogId = rows.site.value.blog_id;
 	const isConnectionHealthy = rows.site.value?.is_connection_healthy;
 
 	const { data } = useFetchTestConnection( isPartnerOAuthTokenLoaded, isConnectionHealthy, blogId );
 
 	const isSiteConnected = data ? data.connected : true;
+
+	const handleSetExpandedColumn = ( column: AllowedTypes ) => {
+		setExpandedColumn( expandedColumn === column ? null : column );
+	};
 
 	const toggleIsExpanded = useCallback(
 		( event: MouseEvent< HTMLSpanElement > | KeyboardEvent< HTMLSpanElement > ) => {
@@ -110,10 +116,26 @@ export default function SiteCard( { rows, columns }: Props ) {
 										) }
 										key={ index }
 									>
-										<span className="site-card__expanded-content-key">{ column.title }</span>
-										<span className="site-card__expanded-content-value">
-											<SiteStatusContent rows={ rows } type={ row.type } />
-										</span>
+										<div className="site-card__expanded-content-header">
+											<span className="site-card__expanded-content-key">{ column.title }</span>
+											<span className="site-card__expanded-content-value">
+												<span className="site-card__expanded-content-status">
+													<SiteStatusContent rows={ rows } type={ row.type } />
+												</span>
+												<span className="site-card__expanded-column">
+													{ column.isExpandable && (
+														<Button
+															borderless
+															onClick={ () => handleSetExpandedColumn( column.key ) }
+														>
+															<Icon
+																icon={ expandedColumn === column.key ? chevronUp : chevronDown }
+															/>
+														</Button>
+													) }
+												</span>
+											</span>
+										</div>
 									</div>
 								);
 							}
