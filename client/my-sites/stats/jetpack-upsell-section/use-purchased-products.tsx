@@ -6,7 +6,7 @@ import {
 	JETPACK_SOCIAL_PRODUCTS,
 	JETPACK_VIDEOPRESS_PRODUCTS,
 } from '@automattic/calypso-products';
-import useSWR from 'swr';
+import { useState } from 'react';
 
 //
 // WARNING: This hook will only work within Odyssey Stats!
@@ -15,7 +15,7 @@ import useSWR from 'swr';
 //
 
 // Include data from stats-admin initialization for making resource requests.
-const purchasesFetcher = ( resource: string, options = {} ) =>
+const fetchPurchases = ( resource: string, options = {} ) =>
 	// Prefix resource with api_root for the site.
 	fetch( window.configData?.api_root + resource, {
 		...options,
@@ -50,13 +50,19 @@ function formatResponse( responseData?: Record< string, string >[] ) {
 }
 
 export default function usePurchasedProducts() {
-	const {
-		data: responseData,
-		error,
-		isLoading,
-	} = useSWR( 'jetpack/v4/site/purchases', purchasesFetcher );
+	const [ purchasedProducts, setPurchasedProducts ] = useState( [] as string[] );
+	const [ isLoading, setIsLoading ] = useState( true );
+	const [ error, setError ] = useState();
+
+	fetchPurchases( 'jetpack/v4/site/purchases' )
+		.then( ( purchases ) => {
+			setIsLoading( false );
+			setPurchasedProducts( formatResponse( purchases ) );
+		} )
+		.catch( ( error ) => setError( error ) );
+
 	return {
-		purchasedProducts: formatResponse( responseData ),
+		purchasedProducts,
 		error,
 		isLoading,
 	};
