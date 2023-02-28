@@ -77,8 +77,16 @@ export async function assignNewCardProcessor(
 			throw new Error( 'Cannot assign payment method if there is no card number' );
 		}
 
-		const { name, countryCode, postalCode, state, city, organization, useForAllSubscriptions } =
-			submitData;
+		const {
+			name,
+			countryCode,
+			postalCode,
+			state,
+			city,
+			organization,
+			address,
+			useForAllSubscriptions,
+		} = submitData;
 
 		const contactInfo: ManagedContactDetails = {
 			countryCode: {
@@ -109,6 +117,13 @@ export async function assignNewCardProcessor(
 		if ( organization ) {
 			contactInfo.organization = {
 				value: organization,
+				isTouched: true,
+				errors: [],
+			};
+		}
+		if ( address ) {
+			contactInfo.address1 = {
+				value: address,
 				isTouched: true,
 				errors: [],
 			};
@@ -157,6 +172,7 @@ export async function assignNewCardProcessor(
 				state,
 				city,
 				organization,
+				address,
 			} );
 
 			return makeSuccessResponse( result );
@@ -172,6 +188,7 @@ export async function assignNewCardProcessor(
 			state,
 			city,
 			organization,
+			address,
 		} );
 
 		return makeSuccessResponse( result );
@@ -221,6 +238,7 @@ interface NewCardSubmitData {
 	state?: string;
 	city?: string;
 	organization?: string;
+	address?: string;
 	useForAllSubscriptions: boolean;
 }
 
