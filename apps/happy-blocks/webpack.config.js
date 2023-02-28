@@ -13,7 +13,7 @@ function getWebpackConfig( env = { block: '' }, argv ) {
 	const isProduction = process.env.NODE_ENV === 'production';
 
 	const blockName = env.block.split( '/' ).pop();
-	const blockPath = path.join( __dirname, 'src/', blockName );
+	const blockPath = path.join( __dirname, 'block-library/', blockName );
 
 	if ( ! blockName ) {
 		throw new Error( 'No block specified.' );

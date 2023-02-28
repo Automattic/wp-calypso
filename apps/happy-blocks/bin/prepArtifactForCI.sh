@@ -2,15 +2,15 @@
 
 set -x
 
-# Copy dist files to the release directory.
-find ../src/* -type d -name "*" -prune |\
-while read -r dist;
+# Copy dist directories to the release directory.
+find ../block-library/* -type d -name "*" -prune |\
+while read -r block;
 do
-	mkdir -p ../release-files/${dist//\.\.\//}; 
-	cp -r $dist/dist/* ../release-files/${dist//\.\.\//}/; 
+	mkdir -p ../release-files/${block//\.\.\//}; 
+	cp -r $block/dist/* ../release-files/${block//\.\.\//}/; 
 done
 
 # Add the index.php file
-cp ../src/happy-blocks.php ../release-files/
+cp ../block-library/happy-blocks.php ../release-files/
 
 printf "Finished configuration of the @automattic/happy-blocks plugin artifacts directory.\n"
