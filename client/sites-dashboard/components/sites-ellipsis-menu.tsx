@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import {
+	FEATURE_SFTP,
 	WPCOM_FEATURES_MANAGE_PLUGINS,
 	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
 } from '@automattic/calypso-products';
@@ -87,7 +88,7 @@ const ManagePluginsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	const hasManagePluginsFeature = useSelector( ( state ) =>
 		siteHasFeature( state, site.ID, WPCOM_FEATURES_MANAGE_PLUGINS )
 	);
-	const upsellInfo = useUpsellInfo( site );
+	const upsellInfo = useUpsellInfo( site, WPCOM_FEATURES_MANAGE_PLUGINS );
 
 	// If the site can't manage plugins then go to the main plugins page instead
 	// because it shows an upsell message.
@@ -290,7 +291,7 @@ function DeveloperSettingsSubmenu( { site, recordTracks }: SitesMenuItemProps ) 
 	const { __ } = useI18n();
 	const submenuItems = useSubmenuItems( site );
 	const developerSubmenuProps = useSubmenuPopoverProps< HTMLDivElement >( { offsetTop: -8 } );
-	const upsellInfo = useUpsellInfo( site );
+	const upsellInfo = useUpsellInfo( site, FEATURE_SFTP );
 
 	if ( submenuItems.length === 0 ) {
 		return null;
