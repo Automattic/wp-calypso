@@ -14,6 +14,7 @@ export const SITE_EXCERPT_REQUEST_FIELDS = [
 	'plan',
 	'jetpack',
 	'is_wpcom_atomic',
+	'is_staging_site',
 	'user_interactions',
 	'lang',
 	'site_owner',
@@ -29,4 +30,6 @@ export const SITE_EXCERPT_REQUEST_OPTIONS = [
 	'site_intent',
 	'unmapped_url',
 	'updated_at',
+	'wpcom_production_blog_id',
+	'wpcom_staging_blog_ids',
 ] as const;
