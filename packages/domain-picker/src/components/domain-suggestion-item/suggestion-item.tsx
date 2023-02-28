@@ -124,6 +124,7 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 
 	const selectButtonLabelSelected = __( 'Selected', __i18n_text_domain__ );
 	const selectButtonLabelUnselected = __( 'Select', __i18n_text_domain__ );
+
 	return (
 		<WrappingComponent
 			ref={ buttonRef }
