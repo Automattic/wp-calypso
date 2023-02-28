@@ -1,22 +1,21 @@
 import {
+	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_BOOST_PRODUCTS,
+	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_SECURITY_PLANS,
 	JETPACK_SOCIAL_PRODUCTS,
+	JETPACK_VIDEOPRESS_PRODUCTS,
 	PLAN_JETPACK_SECURITY_T1_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	PRODUCT_JETPACK_BOOST,
 	PRODUCT_JETPACK_SEARCH,
 	PRODUCT_JETPACK_SOCIAL_BASIC,
 	PRODUCT_JETPACK_VIDEOPRESS,
-	WPCOM_FEATURES_BACKUPS,
-	WPCOM_FEATURES_INSTANT_SEARCH,
-	WPCOM_FEATURES_VIDEOPRESS,
 } from '@automattic/calypso-products';
 import { JetpackUpsellCard } from '@automattic/components';
 import { useSelector } from 'react-redux';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { getSitePlan, getSiteProducts, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSitePlan, getSiteProducts } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 interface SiteProduct {
@@ -31,17 +30,15 @@ function usePurchasedProucts( siteId: number | null ) {
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const siteProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) );
 
-	return useSelector( ( state ) => {
-		const products = [] as string[];
-		siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS ) && products.push( 'backup' );
-		hasAnyProduct( siteProducts, JETPACK_BOOST_PRODUCTS ) && products.push( 'boost' );
-		siteHasFeature( state, siteId, WPCOM_FEATURES_INSTANT_SEARCH ) && products.push( 'search' );
-		( JETPACK_SECURITY_PLANS as readonly string[] ).includes( sitePlan?.product_slug ?? '' ) &&
-			products.push( 'security' );
-		hasAnyProduct( siteProducts, JETPACK_SOCIAL_PRODUCTS ) && products.push( 'social' );
-		siteHasFeature( state, siteId, WPCOM_FEATURES_VIDEOPRESS ) && products.push( 'video' );
-		return products;
-	} );
+	const products = [] as string[];
+	hasAnyProduct( siteProducts, JETPACK_BACKUP_PRODUCTS ) && products.push( 'backup' );
+	hasAnyProduct( siteProducts, JETPACK_BOOST_PRODUCTS ) && products.push( 'boost' );
+	hasAnyProduct( siteProducts, JETPACK_SEARCH_PRODUCTS ) && products.push( 'search' );
+	( JETPACK_SECURITY_PLANS as readonly string[] ).includes( sitePlan?.product_slug ?? '' ) &&
+		products.push( 'security' );
+	hasAnyProduct( siteProducts, JETPACK_SOCIAL_PRODUCTS ) && products.push( 'social' );
+	hasAnyProduct( siteProducts, JETPACK_VIDEOPRESS_PRODUCTS ) && products.push( 'video' );
+	return products;
 }
 
 export default function JetpackUpsellSection() {
