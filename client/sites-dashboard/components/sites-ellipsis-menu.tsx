@@ -18,7 +18,6 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
-import { UPSELL_TEXT, useUpsellInfo } from '../hooks/use-upsell-info';
 import {
 	getHostingConfigUrl,
 	getManagePluginsUrl,
@@ -102,7 +101,7 @@ const ManagePluginsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 					has_manage_plugins_feature: hasManagePluginsFeature,
 				} )
 			}
-			info={ ! hasManagePluginsFeature && UPSELL_TEXT }
+			info={ ! hasManagePluginsFeature && __( 'Requires a Business Plan' ) }
 		>
 			{ label }
 		</MenuItemLink>
@@ -252,9 +251,7 @@ function useSubmenuItems( site: SiteExcerptData ) {
 	const { __ } = useI18n();
 	const siteSlug = site.slug;
 
-	return useMemo<
-		{ label: string; href: string; eventName: string; info?: string; condition?: boolean }[]
-	>( () => {
+	return useMemo< { label: string; href: string; eventName: string }[] >( () => {
 		return [
 			{
 				label: __( 'SFTP/SSH credentials' ),
@@ -289,7 +286,9 @@ function DeveloperSettingsSubmenu( { site, recordTracks }: SitesMenuItemProps ) 
 	const { __ } = useI18n();
 	const submenuItems = useSubmenuItems( site );
 	const developerSubmenuProps = useSubmenuPopoverProps< HTMLDivElement >( { offsetTop: -8 } );
-	const upsellInfo = useUpsellInfo( site, FEATURE_SFTP );
+	const hasFeatureSFTP = useSafeSiteHasFeature( site.ID, FEATURE_SFTP );
+
+	__( 'Requires a Business Plan' );
 
 	if ( submenuItems.length === 0 ) {
 		return null;
@@ -297,7 +296,7 @@ function DeveloperSettingsSubmenu( { site, recordTracks }: SitesMenuItemProps ) 
 
 	return (
 		<div { ...developerSubmenuProps.parent }>
-			<MenuItemLink info={ upsellInfo }>
+			<MenuItemLink info={ hasFeatureSFTP && __( 'Requires a Business Plan' ) }>
 				{ __( 'Hosting configuration' ) } <MenuItemGridIcon icon="chevron-right" size={ 18 } />
 			</MenuItemLink>
 			<SubmenuPopover { ...developerSubmenuProps.submenu }>
@@ -306,7 +305,6 @@ function DeveloperSettingsSubmenu( { site, recordTracks }: SitesMenuItemProps ) 
 						key={ item.label }
 						href={ item.href }
 						onClick={ () => recordTracks( item.eventName ) }
-						info={ item.info }
 					>
 						{ item.label }
 					</MenuItemLink>
