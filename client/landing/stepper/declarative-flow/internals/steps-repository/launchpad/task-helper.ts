@@ -324,6 +324,11 @@ export function getEnhancedTasks(
 						badgeText: isPaidPlan ? '' : translate( 'Upgrade plan' ),
 					};
 					break;
+				case 'verify_email':
+					taskData = {
+						title: translate( 'Verify Email (Check Your Inbox)' ),
+					};
+					break;
 			}
 			enhancedTaskList.push( { ...task, ...taskData } );
 		} );
@@ -356,5 +361,22 @@ export function getArrayOfFilteredTasks( tasks: Task[], flow: string | null ) {
 			} );
 			return accumulator;
 		}, [] as Task[] )
+	);
+}
+
+// If email is verified, filter out verify_email task
+// If email is not verified, disable all other tasks
+export function updateTasksBasedOnEmailVerification(
+	enhancedTasks: Task[] | null,
+	isEmailVerified: boolean
+) {
+	if ( ! enhancedTasks ) {
+		return enhancedTasks;
+	}
+	if ( isEmailVerified ) {
+		return enhancedTasks.filter( ( task ) => task.id !== 'verify_email' );
+	}
+	return enhancedTasks.map( ( task ) =>
+		task.id === 'verify_email' ? task : { ...task, disabled: true }
 	);
 }

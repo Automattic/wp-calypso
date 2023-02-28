@@ -116,23 +116,37 @@ export const tasks: Task[] = [
 		disabled: false,
 		taskType: 'blog',
 	},
+	{
+		id: 'verify_email',
+		completed: false,
+		disabled: true,
+		taskType: 'blog',
+	},
 ];
 
 const linkInBioTaskList = [
 	'design_selected',
 	'setup_link_in_bio',
 	'plan_selected',
+	'verify_email',
 	'links_added',
 	'link_in_bio_launched',
 ];
 
 export const launchpadFlowTasks: LaunchpadFlowTaskList = {
-	newsletter: [ 'setup_newsletter', 'plan_selected', 'subscribers_added', 'first_post_published' ],
+	newsletter: [
+		'setup_newsletter',
+		'plan_selected',
+		'subscribers_added',
+		'verify_email',
+		'first_post_published',
+	],
 	[ LINK_IN_BIO_FLOW ]: linkInBioTaskList,
 	[ LINK_IN_BIO_TLD_FLOW ]: linkInBioTaskList,
 	free: [
 		'setup_free',
 		'design_selected',
+		'verify_email',
 		'domain_upsell',
 		'first_post_published',
 		'design_edited',
@@ -141,6 +155,7 @@ export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 	build: [
 		'setup_general',
 		'design_selected',
+		'verify_email',
 		'domain_upsell',
 		'first_post_published',
 		'design_edited',
@@ -149,10 +164,17 @@ export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 	write: [
 		'setup_write',
 		'design_selected',
+		'verify_email',
 		'domain_upsell',
 		'first_post_published',
 		'site_launched',
 	],
-	videopress: [ 'videopress_setup', 'plan_selected', 'videopress_upload', 'videopress_launched' ],
+	videopress: [
+		'videopress_setup',
+		'plan_selected',
+		'verify_email',
+		'videopress_upload',
+		'videopress_launched',
+	],
 	sensei: [ 'sensei_setup', 'plan_selected', 'sensei_publish_first_course' ],
 };
