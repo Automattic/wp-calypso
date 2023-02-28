@@ -1,7 +1,6 @@
 import { Button, Card, FormInputValidation, ProgressBar } from '@automattic/components';
 import { localize, useTranslate } from 'i18n-calypso';
 import { get, isEmpty, map } from 'lodash';
-import moment from 'moment';
 import { useState, useCallback, useRef } from 'react';
 import { connect } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
@@ -11,6 +10,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import MaterialIcon from 'calypso/components/material-icon';
 import wpcom from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -32,6 +32,7 @@ const DateRangeInputsWithValidation = ( {
 	onValidate,
 	...props
 } ) => {
+	const moment = useLocalizedMoment();
 	const showValidation =
 		typeof onValidate === 'function' && startValidationInfo && endValidationInfo;
 	const uniqueIdRef = useRef( uuidv4() );
@@ -146,7 +147,9 @@ const DateRangeInputsWithValidation = ( {
 
 	return (
 		<FormFieldset className="date-range__date-inputs">
-			<legend className="date-range__date-inputs-legend">Start and End Dates</legend>
+			<legend className="date-range__date-inputs-legend">
+				{ translate( 'Start and End Dates' ) }
+			</legend>
 			<div className="date-range__date-inputs-inner">
 				<div className="date-range__date-input date-range__date-input--from">
 					<FormLabel htmlFor={ startDateID }>
@@ -215,12 +218,16 @@ const WebServerLogsCard = ( props ) => {
 		atomicLogsDownloadCompleted: recordDownloadCompleted,
 		atomicLogsDownloadError: recordDownloadError,
 	} = props;
-	const now = moment.utc();
-	const startOfDay = now.clone().startOf( 'day' );
-	const endOfDay = now.clone().add( 1, 'day' ).startOf( 'day' );
-	const dateTimeFormat = 'MM/DD/YYYY';
-	const [ startDateTime, setStartDateTime ] = useState( startOfDay );
-	const [ endDateTime, setEndDateTime ] = useState( endOfDay );
+	const moment = useLocalizedMoment();
+	const now = moment();
+	const localeDateFormat = moment.localeData().longDateFormat( 'L' );
+	const initialStartDate = now.clone().startOf( 'day' ).add( 1, 'day' ).subtract( 1, 'week' );
+	const initialEndDate = now.clone().endOf( 'day' );
+	// First selectable date is 2 weeks (14 days) before the initial end date
+	// eg if end date is 2023-02-28 29:59:59, the first selectable date is 2023-02-15 00:00:00
+	const firstSelectableDate = initialStartDate.clone().subtract( 1, 'week' );
+	const [ startDateTime, setStartDateTime ] = useState( initialStartDate );
+	const [ endDateTime, setEndDateTime ] = useState( initialEndDate );
 	const [ logType, setLogType ] = useState( 'php' );
 	const [ downloading, setDownloading ] = useState( false );
 	const [ downloadErrorOccurred, setDownloadErrorOccurred ] = useState( false );
@@ -248,8 +255,8 @@ const WebServerLogsCard = ( props ) => {
 
 	const onValidateInputs = useCallback(
 		( start, end ) => {
-			const startMoment = moment.utc( start );
-			const endMoment = moment.utc( end );
+			const startMoment = moment( start, localeDateFormat );
+			const endMoment = moment( end, localeDateFormat );
 			const startDateIsValid = startMoment.isValid();
 			const endDateIsValid = endMoment.isValid();
 
@@ -280,20 +287,22 @@ const WebServerLogsCard = ( props ) => {
 				};
 			}
 
-			if ( startMoment.isBefore( moment.utc().subtract( 14, 'days' ) ) ) {
+			if ( startMoment.isBefore( firstSelectableDate ) ) {
 				startValidatorResults = {
 					isValid: false,
 					validationInfo: translate( 'Start date must be less than 14 days ago.' ),
 				};
 			}
+
 			setStartDateValidation( startValidatorResults );
 			setEndDateValidation( endValidatorResults );
 			return [ startValidatorResults, endValidatorResults ];
 		},
-		[ translate ]
+		[ translate, moment, localeDateFormat, firstSelectableDate ]
 	);
 
 	const updateStartEndTime = ( start, end ) => {
+		onValidateInputs( start, end );
 		setStartDateTime( start );
 		setEndDateTime( end );
 	};
@@ -315,8 +324,8 @@ const WebServerLogsCard = ( props ) => {
 			return;
 		}
 
-		const startMoment = moment.utc( startDateTime.format( dateTimeFormat ) );
-		const endMoment = moment.utc( endDateTime.format( dateTimeFormat ) );
+		const startMoment = moment.utc( startDateTime, localeDateFormat );
+		const endMoment = moment.utc( endDateTime, localeDateFormat );
 
 		const dateFormat = 'YYYYMMDDHHmmss';
 		const startString = startMoment.format( dateFormat );
@@ -471,6 +480,8 @@ const WebServerLogsCard = ( props ) => {
 				<div className="web-server-logs-card__dates">
 					<div className="web-server-logs-card__dates">
 						<DateRange
+							moment={ moment }
+							firstSelectableDate={ firstSelectableDate }
 							showTriggerClear={ false }
 							onDateCommit={ updateStartEndTime }
 							selectedStartDate={ startDateTime }
