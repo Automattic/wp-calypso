@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_BOOST_PRODUCTS,
@@ -20,6 +21,7 @@ import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purch
 import { getSitePlan, getSiteProducts } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
+const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 interface SiteProduct {
 	productSlug: string;
 }
@@ -46,7 +48,6 @@ function usePurchasedProucts( siteId: number | null ) {
 export default function JetpackUpsellSection() {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
-	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 
 	const purchasedProducts = usePurchasedProucts( siteId );
 	const upgradeUrls: Record< string, string > = ! siteSlug
@@ -60,9 +61,8 @@ export default function JetpackUpsellSection() {
 				video: buildCheckoutURL( siteSlug, PRODUCT_JETPACK_VIDEOPRESS ),
 		  };
 
-	// TODO: Limit upsell section to just Odyssey.
 	return (
-		isJetpack && (
+		isOdysseyStats && (
 			<div className="jetpack-upsell-section">
 				{ siteId && (
 					<>
