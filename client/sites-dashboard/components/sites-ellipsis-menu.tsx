@@ -3,7 +3,12 @@ import {
 	WPCOM_FEATURES_MANAGE_PLUGINS,
 	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
 } from '@automattic/calypso-products';
-import { Gridicon, SubmenuPopover, useSubmenuPopoverProps } from '@automattic/components';
+import {
+	Gridicon,
+	SubmenuPopover,
+	useSubmenuPopoverProps,
+	withScrollTopOnClick,
+} from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { DropdownMenu, MenuGroup, MenuItem as CoreMenuItem, Modal } from '@wordpress/components';
@@ -48,9 +53,9 @@ const MenuItem = styled( CoreMenuItem )`
 	&:hover:not( :disabled ) {
 		color: var( --color-accent-60 );
 	}
-`;
+` as ComponentType< MenuItemLinkProps >;
 
-const MenuItemLink = MenuItem as ComponentType< MenuItemLinkProps >;
+const MenuItemLink = withScrollTopOnClick< HTMLButtonElement, MenuItemLinkProps >( MenuItem );
 
 const LaunchItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
