@@ -75,14 +75,16 @@ function DomainUpsellDescription() {
 		dispatch( WPCOM_PLANS_UI_STORE ).setShowDomainUpsellDialog( true );
 	};
 	return (
-		<p>
-			{ translate( 'See and compare the features available on each WordPress.com plan' ) }
-			<div>
+		<>
+			<p className="plans__copy-domain-upsell">
+				{ translate( 'See and compare the features available on each WordPress.com plan' ) }
+			</p>
+			<p>
 				<button className="plans__copy-button" onClick={ skipPlan }>
 					{ translate( 'Or continue with the free plan.' ) }
 				</button>
-			</div>
-		</p>
+			</p>
+		</>
 	);
 }
 
