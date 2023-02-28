@@ -1,3 +1,5 @@
+@import "@automattic/components/src/styles/mixins";
+
 @include breakpoint-deprecated( ">480px" ) {
 	.wordads .stats-tabs .stats-tab {
 		width: 33.33%;
@@ -40,5 +42,27 @@
 		p:last-child {
 			margin: 0;
 		}
+	}
+}
+
+.ads__table-header {
+	margin-bottom: 1em;
+	display: flex;
+}
+
+.ads__table-header-title {
+	@include stats-section-header;
+	margin-right: 4px;
+}
+
+.ads__table-header-button {
+	color: var(--studio-gray-50);
+}
+
+.earnings_history {
+	border-radius: 4px;
+
+	table {
+		margin: 0;
 	}
 }
