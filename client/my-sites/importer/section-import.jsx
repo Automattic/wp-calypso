@@ -32,7 +32,7 @@ import {
 	isImporterStatusHydrated,
 } from 'calypso/state/imports/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { getSiteTitle } from 'calypso/state/sites/selectors';
+import { getSiteTitle, getSiteOption } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -292,6 +292,9 @@ class SectionImport extends Component {
 			options: { is_wpcom_atomic: isAtomic },
 		} = site;
 
+		const jetpackVersionInCompatible =
+			this.props.siteJetpackVersion < JETPACK_IMPORT_MIN_PLUGIN_VERSION;
+
 		return (
 			<Main>
 				<ScreenOptionsTab wpAdminPath="import.php" />
@@ -324,7 +327,9 @@ class SectionImport extends Component {
 									warningRequirement={ translate( 'To make sure you can import reliably' ) }
 								/>
 							) }
-							{ this.renderImportersList() }
+							{ jetpackVersionInCompatible
+								? this.renderIdleImporters( appStates.DISABLED )
+								: this.renderImportersList() }
 						</>
 					) }
 				</EmailVerificationGate>
@@ -344,6 +349,7 @@ export default connect(
 			siteImports: getImporterStatusForSiteId( state, siteId ),
 			canImport: canCurrentUser( state, siteId, 'manage_options' ),
 			isImporterStatusHydrated: isImporterStatusHydrated( state ),
+			siteJetpackVersion: getSiteOption( state, siteId, 'jetpack_version' ),
 		};
 	},
 	{ recordTracksEvent, startImport, fetchImporterState, cancelImport }
