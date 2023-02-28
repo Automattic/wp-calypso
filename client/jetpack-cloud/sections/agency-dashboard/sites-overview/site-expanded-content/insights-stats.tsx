@@ -1,8 +1,7 @@
-import { Button } from '@automattic/components';
+import { Button, ShortenedNumber } from '@automattic/components';
 import { Icon, arrowUp, arrowDown } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { getHumanReadableCount } from '../utils';
 import ExpandedCard from './expanded-card';
 import type { SiteStats } from '../types';
 
@@ -58,7 +57,7 @@ export default function InsightsStats( { stats }: Props ) {
 			<div className="site-expanded-content__card-content">
 				<div className="site-expanded-content__card-content-column">
 					<div className="site-expanded-content__card-content-count">
-						{ getHumanReadableCount( data.visitors ) }
+						<ShortenedNumber value={ data.visitors } />
 						{ getTrendContent( data.visitorsTrend, data.visitorsChange ) }
 					</div>
 					<div className="site-expanded-content__card-content-count-title">
@@ -67,7 +66,7 @@ export default function InsightsStats( { stats }: Props ) {
 				</div>
 				<div className="site-expanded-content__card-content-column">
 					<div className="site-expanded-content__card-content-count">
-						{ getHumanReadableCount( data.views ) }
+						<ShortenedNumber value={ data.views } />
 						{ getTrendContent( data.viewsTrend, data.viewsChange ) }
 					</div>
 					<div className="site-expanded-content__card-content-count-title">
