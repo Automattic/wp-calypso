@@ -12,6 +12,7 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import AllTimelHighlightsSection from '../all-time-highlights-section';
 import AllTimeViewsSection from '../all-time-views-section';
@@ -26,7 +27,7 @@ import StatShares from '../stats-shares';
 import statsStrings from '../stats-strings';
 
 const StatsInsights = ( props ) => {
-	const { siteId, siteSlug, translate, isOdysseyStats } = props;
+	const { siteId, siteSlug, translate, isOdysseyStats, isJetpack } = props;
 	const moduleStrings = statsStrings();
 
 	const isInsightsPageGridEnabled = config.isEnabled( 'stats/insights-page-grid' );
@@ -34,7 +35,7 @@ const StatsInsights = ( props ) => {
 
 	const statsModuleListClass = classNames( 'stats__module-list stats__module--unified', {
 		'is-insights-page-enabled': isInsightsPageGridEnabled,
-		'is-odyssey-stats': isOdysseyStats,
+		'is-jetpack': isJetpack,
 	} );
 
 	// Track the last viewed tab.
@@ -139,6 +140,7 @@ const connectComponent = connect( ( state ) => {
 		siteId,
 		siteSlug: getSelectedSiteSlug( state, siteId ),
 		isOdysseyStats,
+		isJetpack: isJetpackSite( state, siteId ),
 	};
 } );
 
