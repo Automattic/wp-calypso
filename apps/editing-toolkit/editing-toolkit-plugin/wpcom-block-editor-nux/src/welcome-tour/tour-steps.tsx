@@ -63,7 +63,8 @@ function getTourSteps(
 	localeSlug: string,
 	referencePositioning = false,
 	isSiteEditor = false,
-	themeName: string | null = null
+	themeName: string | null = null,
+	siteIntent: string | undefined = undefined
 ): WpcomStep[] {
 	const completedFlow = getQueryArg( window.location.href, 'completedFlow' );
 	const isVideoMaker = 'videomaker' === ( themeName ?? '' );
@@ -72,6 +73,7 @@ function getTourSteps(
 	const onSiteEditorCourseLinkClick = () => {
 		recordTracksEvent( 'calypso_editor_wpcom_tour_site_editor_course_link_click', {
 			is_pattern_assembler: isPatternAssemblerFlow,
+			intent: siteIntent,
 		} );
 	};
 

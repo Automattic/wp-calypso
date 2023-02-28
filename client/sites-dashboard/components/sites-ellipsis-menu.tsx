@@ -24,6 +24,7 @@ import {
 	getSettingsUrl,
 	isCustomDomain,
 	isNotAtomicJetpack,
+	isP2Site,
 } from '../utils';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
@@ -249,20 +250,17 @@ function useSubmenuItems( {
 	siteSlug,
 	isCustomDomain,
 	isAtomic,
+	isLaunched,
 }: {
 	siteSlug: string;
 	isCustomDomain: boolean;
 	isAtomic: boolean;
+	isLaunched: boolean;
 } ) {
 	const { __ } = useI18n();
 	return useMemo(
 		() =>
 			[
-				{
-					label: __( 'Privacy settings' ),
-					href: `/settings/general/${ siteSlug }#site-privacy-settings`,
-					eventName: 'calypso_sites_dashboard_site_action_submenu_privacy_settings_click',
-				},
 				{
 					condition: isAtomic,
 					label: __( 'Database access' ),
@@ -304,8 +302,14 @@ function useSubmenuItems( {
 					href: `/hosting-config/${ siteSlug }#cache`,
 					eventName: 'calypso_sites_dashboard_site_action_submenu_cache_click',
 				},
+				{
+					condition: isLaunched,
+					label: __( 'Privacy settings' ),
+					href: `/settings/general/${ siteSlug }#site-privacy-settings`,
+					eventName: 'calypso_sites_dashboard_site_action_submenu_privacy_settings_click',
+				},
 			].filter( ( { condition } ) => condition ?? true ),
-		[ __, isAtomic, isCustomDomain, siteSlug ]
+		[ __, isAtomic, isCustomDomain, isLaunched, siteSlug ]
 	);
 }
 
@@ -315,6 +319,7 @@ function DeveloperSettingsSubmenu( { site, recordTracks }: SitesMenuItemProps ) 
 		siteSlug: site.slug,
 		isCustomDomain: isCustomDomain( site.slug ),
 		isAtomic: Boolean( site.is_wpcom_atomic ),
+		isLaunched: site.launch_status !== 'unlaunched',
 	} );
 	const developerSubmenuProps = useSubmenuPopoverProps< HTMLDivElement >( { offsetTop: -8 } );
 
@@ -359,7 +364,7 @@ export const SitesEllipsisMenu = ( {
 		},
 	};
 
-	const showHosting = ! isNotAtomicJetpack( site ) && ! site.options?.is_wpforteams_site;
+	const hasHostingPage = ! isNotAtomicJetpack( site ) && ! isP2Site( site );
 	const { shouldShowSiteCopyItem, startSiteCopy } = useSiteCopy( site );
 
 	return (
@@ -372,9 +377,11 @@ export const SitesEllipsisMenu = ( {
 				<SiteMenuGroup>
 					{ site.launch_status === 'unlaunched' && <LaunchItem { ...props } /> }
 					<SettingsItem { ...props } />
-					{ isEnabled( 'dev/developer-ux' ) && <DeveloperSettingsSubmenu { ...props } /> }
+					{ isEnabled( 'dev/developer-ux' ) && hasHostingPage && (
+						<DeveloperSettingsSubmenu { ...props } />
+					) }
 					<ManagePluginsItem { ...props } />
-					{ showHosting && <HostingConfigItem { ...props } /> }
+					{ hasHostingPage && <HostingConfigItem { ...props } /> }
 					{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
 					{ shouldShowSiteCopyItem && <CopySiteItem { ...props } onClick={ startSiteCopy } /> }
 					<WpAdminItem { ...props } />

@@ -2,9 +2,6 @@ import { useLocale } from '@automattic/i18n-utils';
 import { SENSEI_FLOW, useFlowProgress } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
-import { useEffect } from 'react';
-import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
 import ProcessingStep from './internals/steps-repository/processing-step';
@@ -22,11 +19,6 @@ const sensei: Flow = {
 		return translate( 'Sensei' );
 	},
 	useSteps() {
-		useEffect( () => {
-			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
-			recordFullStoryEvent( 'calypso_signup_start_sensei', { flow: this.name } );
-		}, [] );
-
 		return [
 			{ slug: 'senseiSetup', component: SenseiSetup },
 			{ slug: 'senseiDomain', component: SenseiDomain },

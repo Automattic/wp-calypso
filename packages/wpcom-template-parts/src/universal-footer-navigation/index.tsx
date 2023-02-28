@@ -3,8 +3,9 @@ import {
 	useLocalizeUrl,
 	removeLocaleFromPathLocaleInFront,
 	useIsEnglishLocale,
+	useLocale,
 } from '@automattic/i18n-utils';
-import { useTranslate, getLocaleSlug } from 'i18n-calypso';
+import { __ } from '@wordpress/i18n';
 import SocialLogo from 'social-logos';
 import useAutomatticBrandingNoun from '../hooks/use-automattic-branding-noun';
 import { FooterProps } from '../types';
@@ -17,11 +18,11 @@ const UniversalNavbarFooter = ( {
 	additonalCompanyLinks,
 	onLanguageChange,
 }: FooterProps ) => {
-	const translate = useTranslate();
 	const localizeUrl = useLocalizeUrl();
-	const locale = getLocaleSlug() ?? undefined;
+	const locale = useLocale();
 	const isEnglishLocale = useIsEnglishLocale();
-	const pathNameWithoutLocale = removeLocaleFromPathLocaleInFront( currentRoute ).slice( 1 );
+	const pathNameWithoutLocale =
+		currentRoute && removeLocaleFromPathLocaleInFront( currentRoute ).slice( 1 );
 	const automatticBranding = useAutomatticBrandingNoun();
 
 	return (
@@ -36,16 +37,16 @@ const UniversalNavbarFooter = ( {
 				<div className="lpc-footer-nav-wrapper">
 					<div className="lpc-footer-nav-container">
 						<div>
-							<h3>{ translate( 'Products' ) }</h3>
+							<h3>{ __( 'Products', __i18n_text_domain__ ) }</h3>
 							<ul>
 								<li>
 									<a href={ localizeUrl( 'https://wordpress.com/hosting/' ) } target="_self">
-										{ translate( 'WordPress Hosting' ) }
+										{ __( 'WordPress Hosting', __i18n_text_domain__ ) }
 									</a>
 								</li>
 								<li>
 									<a href={ localizeUrl( 'https://wordpress.com/domains/' ) } target="_self">
-										{ translate( 'Domain Names' ) }
+										{ __( 'Domain Names', __i18n_text_domain__ ) }
 									</a>
 								</li>
 								<li>
@@ -53,12 +54,12 @@ const UniversalNavbarFooter = ( {
 										href={ localizeUrl( 'https://wordpress.com/website-builder/' ) }
 										target="_self"
 									>
-										{ translate( 'Website Builder' ) }
+										{ __( 'Website Builder', __i18n_text_domain__ ) }
 									</a>
 								</li>
 								<li>
 									<a href={ localizeUrl( 'https://wordpress.com/create-blog/' ) } target="_self">
-										{ translate( 'Create a Blog' ) }
+										{ __( 'Create a Blog', __i18n_text_domain__ ) }
 									</a>
 								</li>
 								<li>
@@ -66,7 +67,7 @@ const UniversalNavbarFooter = ( {
 										href={ localizeUrl( 'https://wordpress.com/professional-email/' ) }
 										target="_self"
 									>
-										{ translate( 'Professional Email' ) }
+										{ __( 'Professional Email', __i18n_text_domain__ ) }
 									</a>
 								</li>
 								<li>
@@ -74,13 +75,15 @@ const UniversalNavbarFooter = ( {
 										href={ localizeUrl( 'https://wordpress.com/p2/?ref=wpcom-product-menu' ) }
 										target="_self"
 									>
-										{ translate( 'P2: WordPress for Teams' ) }
+										{ __( 'P2: WordPress for Teams', __i18n_text_domain__ ) }
 									</a>
 								</li>
 								<li>
 									<a href="https://wpvip.com/" data-is_external="1" target="_self">
-										{ translate( 'Enterprise' ) }{ ' ' }
-										<span className="lp-link-chevron-external">{ translate( 'Solutions' ) }</span>
+										{ __( 'Enterprise', __i18n_text_domain__ ) }{ ' ' }
+										<span className="lp-link-chevron-external">
+											{ __( 'Solutions', __i18n_text_domain__ ) }
+										</span>
 									</a>
 								</li>
 								<li>
@@ -89,13 +92,13 @@ const UniversalNavbarFooter = ( {
 										title="WordPress Website Building Service"
 										target="_self"
 									>
-										{ translate( 'Built by WordPress.com' ) }
+										{ __( 'Built by WordPress.com', __i18n_text_domain__ ) }
 									</a>
 								</li>
 							</ul>
 						</div>
 						<div>
-							<h3>{ translate( 'Features' ) }</h3>
+							<h3>{ __( 'Features', __i18n_text_domain__ ) }</h3>
 							<ul>
 								<li>
 									<a
@@ -103,7 +106,7 @@ const UniversalNavbarFooter = ( {
 										title="WordPress.com Features"
 										target="_self"
 									>
-										{ translate( 'Overview' ) }
+										{ __( 'Overview', __i18n_text_domain__ ) }
 									</a>
 								</li>
 								<li>
@@ -111,7 +114,7 @@ const UniversalNavbarFooter = ( {
 										href={ localizeUrl( 'https://wordpress.com/themes', locale, isLoggedIn ) }
 										target="_self"
 									>
-										{ translate( 'WordPress Themes' ) }
+										{ __( 'WordPress Themes', __i18n_text_domain__ ) }
 									</a>
 								</li>
 								<li>
@@ -119,37 +122,37 @@ const UniversalNavbarFooter = ( {
 										href={ localizeUrl( 'https://wordpress.com/plugins/', locale, isLoggedIn ) }
 										target="_self"
 									>
-										{ translate( 'WordPress Plugins' ) }
+										{ __( 'WordPress Plugins', __i18n_text_domain__ ) }
 									</a>
 								</li>
 								<li>
 									<a href={ localizeUrl( 'https://wordpress.com/google/' ) } target="_self">
-										{ translate( 'Google Apps' ) }
+										{ __( 'Google Apps', __i18n_text_domain__ ) }
 									</a>
 								</li>
 							</ul>
 						</div>
 						<div>
-							<h3>{ translate( 'Resources' ) }</h3>
+							<h3>{ __( 'Resources', __i18n_text_domain__ ) }</h3>
 							<ul>
 								<li>
 									<a href={ localizeUrl( 'https://wordpress.com/support/' ) } target="_self">
-										{ translate( 'WordPress.com Support' ) }
+										{ __( 'WordPress.com Support', __i18n_text_domain__ ) }
 									</a>
 								</li>
 								<li>
 									<a href={ localizeUrl( 'https://wordpress.com/forums/' ) } target="_self">
-										{ translate( 'WordPress Forums' ) }
+										{ __( 'WordPress Forums', __i18n_text_domain__ ) }
 									</a>
 								</li>
 								<li>
 									<a href={ localizeUrl( 'https://wordpress.com/blog/' ) } target="_self">
-										{ translate( 'WordPress News' ) }
+										{ __( 'WordPress News', __i18n_text_domain__ ) }
 									</a>
 								</li>
 								<li>
 									<a href={ localizeUrl( 'https://wordpress.com/go/' ) } target="_self">
-										{ translate( 'Website Building Tips' ) }
+										{ __( 'Website Building Tips', __i18n_text_domain__ ) }
 									</a>
 								</li>
 								<li>
@@ -157,23 +160,23 @@ const UniversalNavbarFooter = ( {
 										href={ localizeUrl( 'https://wordpress.com/business-name-generator/' ) }
 										target="_self"
 									>
-										{ translate( 'Business Name Generator' ) }
+										{ __( 'Business Name Generator', __i18n_text_domain__ ) }
 									</a>
 								</li>
 								<li>
 									<a href={ localizeUrl( 'https://wordpress.com/logo-maker/' ) } target="_self">
-										{ translate( 'Logo Maker' ) }
+										{ __( 'Logo Maker', __i18n_text_domain__ ) }
 									</a>
 								</li>
 								<li>
 									<a href={ localizeUrl( 'https://wordpress.com/webinars/' ) } target="_self">
-										{ translate( 'Daily Webinars' ) }
+										{ __( 'Daily Webinars', __i18n_text_domain__ ) }
 									</a>
 								</li>
 								<li>
 									{ isEnglishLocale && (
 										<a href={ localizeUrl( 'https://wordpress.com/learn/' ) } target="_self">
-											{ translate( 'Learn WordPress' ) }
+											{ __( 'Learn WordPress', __i18n_text_domain__ ) }
 										</a>
 									) }
 								</li>
@@ -182,39 +185,45 @@ const UniversalNavbarFooter = ( {
 										href={ localizeUrl( 'https://developer.wordpress.com/' ) }
 										data-is_external="1"
 									>
-										{ translate( 'Developer' ) }{ ' ' }
-										<span className="lp-link-chevron-external">{ translate( 'Resources' ) }</span>
+										{ __( 'Developer', __i18n_text_domain__ ) }{ ' ' }
+										<span className="lp-link-chevron-external">
+											{ __( 'Resources', __i18n_text_domain__ ) }
+										</span>
 									</a>
 								</li>
 							</ul>
 						</div>
 						<div>
-							<h3>{ translate( 'Company' ) }</h3>
+							<h3>{ __( 'Company', __i18n_text_domain__ ) }</h3>
 							<ul>
 								<li>
 									<a href={ localizeUrl( 'https://wordpress.com/about/' ) } target="_self">
-										{ translate( 'About' ) }
+										{ __( 'About', __i18n_text_domain__ ) }
 									</a>
 								</li>
 								<li>
 									<a href={ localizeUrl( 'https://wordpress.com/partners/' ) } target="_self">
-										{ translate( 'Partners' ) }
+										{ __( 'Partners', __i18n_text_domain__ ) }
 									</a>
 								</li>
 								<li>
 									<a href="https://automattic.com/press/" data-is_external="1">
-										<span className="lp-link-chevron-external">{ translate( 'Press' ) }</span>
+										<span className="lp-link-chevron-external">
+											{ __( 'Press', __i18n_text_domain__ ) }
+										</span>
 									</a>
 								</li>
 								<li>
 									<a href={ localizeUrl( 'https://wordpress.com/tos/' ) } target="_self">
-										{ translate( 'Terms of Service' ) }
+										{ __( 'Terms of Service', __i18n_text_domain__ ) }
 									</a>
 								</li>
 								<li>
 									<a href="https://automattic.com/privacy/" data-is_external="1">
-										{ translate( 'Privacy' ) }{ ' ' }
-										<span className="lp-link-chevron-external">{ translate( 'Policy' ) }</span>
+										{ __( 'Privacy', __i18n_text_domain__ ) }{ ' ' }
+										<span className="lp-link-chevron-external">
+											{ __( 'Policy', __i18n_text_domain__ ) }
+										</span>
 									</a>
 								</li>
 								{ additonalCompanyLinks }
@@ -223,17 +232,17 @@ const UniversalNavbarFooter = ( {
 					</div>
 					<div className="lpc-footer-subnav-container">
 						<div className="lp-footer-language">
-							<h2 className="lp-hidden">{ translate( 'Language' ) }</h2>
+							<h2 className="lp-hidden">{ __( 'Language', __i18n_text_domain__ ) }</h2>
 							<div className="lp-language-picker">
 								<div className="lp-language-picker__icon"></div>
 								<div className="lp-language-picker__chevron"></div>
 								<select
 									className="lp-language-picker__content"
-									title={ translate( 'Change Language' ) }
+									title={ __( 'Change Language', __i18n_text_domain__ ) }
 									onChange={ onLanguageChange }
 									defaultValue={ currentRoute }
 								>
-									<option>{ translate( 'Change Language' ) }</option>
+									<option>{ __( 'Change Language', __i18n_text_domain__ ) }</option>
 									<option lang="es" value={ `/es/${ pathNameWithoutLocale }` }>
 										Español
 									</option>
@@ -295,7 +304,7 @@ const UniversalNavbarFooter = ( {
 							</div>
 						</div>
 						<div className="lpc-footer-mobile-apps">
-							<h2 className="lp-hidden">{ translate( 'Mobile Apps' ) }</h2>
+							<h2 className="lp-hidden">{ __( 'Mobile Apps', __i18n_text_domain__ ) }</h2>
 							<ul className="lp-footer-mobile-icons">
 								<li>
 									<a
@@ -346,7 +355,7 @@ const UniversalNavbarFooter = ( {
 											</svg>
 											<span className="lp-app-button__content--label">
 												<span className="lp-app-button__line lp-app-button__line--top">
-													{ translate( 'Get it on' ) }
+													{ __( 'Get it on', __i18n_text_domain__ ) }
 												</span>
 												<span className="lp-app-button__line lp-app-button__line--bottom">
 													Google Play
@@ -374,7 +383,7 @@ const UniversalNavbarFooter = ( {
 											</svg>
 											<span className="lp-app-button__content--label">
 												<span className="lp-app-button__line lp-app-button__line--top">
-													{ translate( 'Download on the' ) }
+													{ __( 'Download on the', __i18n_text_domain__ ) }
 												</span>
 												<span className="lp-app-button__line lp-app-button__line--bottom">
 													App Store
@@ -387,11 +396,13 @@ const UniversalNavbarFooter = ( {
 						</div>
 
 						<div className="lp-footer-social-media">
-							<h2 className="lp-hidden">{ translate( 'Social Media' ) }</h2>
+							<h2 className="lp-hidden">{ __( 'Social Media', __i18n_text_domain__ ) }</h2>
 							<ul className="lp-footer-social-icons">
 								<li>
 									<a href="https://twitter.com/wordpressdotcom" title="WordPress.com on Twitter">
-										<span className="lp-hidden">{ translate( 'WordPress.com on Twitter' ) }</span>
+										<span className="lp-hidden">
+											{ __( 'WordPress.com on Twitter', __i18n_text_domain__ ) }
+										</span>
 										<SocialLogo size={ 24 } icon="twitter-alt" className="lp-icon" />
 									</a>
 								</li>
@@ -400,7 +411,9 @@ const UniversalNavbarFooter = ( {
 										href="https://www.facebook.com/WordPresscom/"
 										title="WordPress.com on Facebook"
 									>
-										<span className="lp-hidden">{ translate( 'WordPress.com on Facebook' ) }</span>
+										<span className="lp-hidden">
+											{ __( 'WordPress.com on Facebook', __i18n_text_domain__ ) }
+										</span>
 										<SocialLogo size={ 24 } icon="facebook" className="lp-icon" />
 									</a>
 								</li>
@@ -409,7 +422,9 @@ const UniversalNavbarFooter = ( {
 										href="https://www.instagram.com/wordpressdotcom/"
 										title="WordPress.com on Instagram"
 									>
-										<span className="lp-hidden">{ translate( 'WordPress.com on Instagram' ) }</span>
+										<span className="lp-hidden">
+											{ __( 'WordPress.com on Instagram', __i18n_text_domain__ ) }
+										</span>
 										<SocialLogo size={ 24 } icon="instagram" className="lp-icon" />
 									</a>
 								</li>
@@ -418,7 +433,9 @@ const UniversalNavbarFooter = ( {
 										href="https://www.youtube.com/WordPressdotcom"
 										title="WordPress.com on YouTube"
 									>
-										<span className="lp-hidden">{ translate( 'WordPress.com on YouTube' ) }</span>
+										<span className="lp-hidden">
+											{ __( 'WordPress.com on YouTube', __i18n_text_domain__ ) }
+										</span>
 										<SocialLogo size={ 24 } icon="youtube" className="lp-icon" />
 									</a>
 								</li>
@@ -444,11 +461,15 @@ const UniversalNavbarFooter = ( {
 					</a>
 					<div className="lp-logo-label-spacer"></div>
 					<a className="lp-link-work" href="https://automattic.com/work-with-us/">
-						<span className="lp-link-chevron-external">{ translate( 'Work With Us' ) }</span>
+						<span className="lp-link-chevron-external">
+							{ __( 'Work With Us', __i18n_text_domain__ ) }
+						</span>
 					</a>
 				</div>
 				<a className="lp-link-work-m" href="https://automattic.com/work-with-us/">
-					<span className="lp-link-chevron-external">{ translate( 'Work With Us' ) }</span>
+					<span className="lp-link-chevron-external">
+						{ __( 'Work With Us', __i18n_text_domain__ ) }
+					</span>
 				</a>
 			</div>
 		</>

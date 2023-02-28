@@ -12,7 +12,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import Checklist from './checklist';
-import { filterDomainUpsellTask, getArrayOfFilteredTasks, getEnhancedTasks } from './task-helper';
+import { getArrayOfFilteredTasks, getEnhancedTasks } from './task-helper';
 import { tasks } from './tasks';
 import { getLaunchpadTranslations } from './translations';
 import { Task } from './types';
@@ -63,7 +63,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 
 	const { flowName, title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
 	const arrayOfFilteredTasks: Task[] | null = getArrayOfFilteredTasks( tasks, flow );
-	let enhancedTasks =
+	const enhancedTasks =
 		site &&
 		getEnhancedTasks(
 			arrayOfFilteredTasks,
@@ -77,8 +77,6 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 
 	const currentTask = getTasksProgress( enhancedTasks );
 	const launchTask = enhancedTasks?.find( ( task ) => task.isLaunchTask === true );
-
-	enhancedTasks = filterDomainUpsellTask( enhancedTasks, site );
 
 	const showLaunchTitle = launchTask && ! launchTask.disabled;
 

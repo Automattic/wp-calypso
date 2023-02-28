@@ -5,8 +5,6 @@ import { translate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
-import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
@@ -75,11 +73,6 @@ const copySite: Flow = {
 	},
 
 	useSteps() {
-		useEffect( () => {
-			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
-			recordFullStoryEvent( 'calypso_signup_start_copy_site', { flow: this.name } );
-		}, [] );
-
 		return [
 			{ slug: 'domains', component: DomainsStep },
 			{ slug: 'site-creation-step', component: SiteCreationStep },

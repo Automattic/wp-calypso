@@ -14,8 +14,8 @@ export interface CountryTaxRequirements {
  * before calling this.
  */
 export function getCountryTaxRequirements(
-	countries: CountryListItem[],
-	countryCode: string
+	countries: CountryListItem[] | undefined,
+	countryCode: string | undefined
 ): CountryTaxRequirements {
 	if ( ! countryCode ) {
 		return {};

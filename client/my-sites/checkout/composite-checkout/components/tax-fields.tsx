@@ -63,10 +63,7 @@ export default function TaxFields( {
 		countriesList.length && countryCode?.value
 			? getCountryPostalCodeSupport( countriesList, countryCode.value )
 			: false;
-	const taxRequirements =
-		countriesList.length && countryCode?.value
-			? getCountryTaxRequirements( countriesList, countryCode.value )
-			: {};
+	const taxRequirements = getCountryTaxRequirements( countriesList, countryCode?.value );
 	const isVatSupported = config.isEnabled( 'checkout/vat-form' ) && allowVat;
 
 	const fields: JSX.Element[] = [

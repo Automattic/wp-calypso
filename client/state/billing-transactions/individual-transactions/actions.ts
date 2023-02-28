@@ -9,7 +9,7 @@ import {
 	BILLING_TRANSACTION_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import { errorNotice } from 'calypso/state/notices/actions';
-import type { IndividualReceipt } from '../types';
+import type { BillingTransaction } from '../types';
 import type { CalypsoDispatch } from 'calypso/state/types';
 
 import 'calypso/state/billing-transactions/init';
@@ -23,7 +23,7 @@ export const requestBillingTransaction =
 
 		return wp.req
 			.get( `/me/billing-history/receipt/${ transactionId }`, { format: 'display' } )
-			.then( ( receipt: IndividualReceipt ) => {
+			.then( ( receipt: BillingTransaction ) => {
 				dispatch( {
 					type: BILLING_TRANSACTION_REQUEST_SUCCESS,
 					transactionId,

@@ -69,6 +69,10 @@ export const getSiteSettings = ( state: State, siteId: number ) => {
 	return state.sitesSettings[ siteId ];
 };
 
+export const getSiteTheme = ( state: State, siteId: number ) => {
+	return state.siteTheme[ siteId ];
+};
+
 export const getSiteGlobalStyles = ( state: State, siteId: number ) => {
 	return state.sitesGlobalStyles[ siteId ];
 };

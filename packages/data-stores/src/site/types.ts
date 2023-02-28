@@ -482,6 +482,10 @@ export interface ActiveTheme {
 	};
 }
 
+export interface CurrentTheme {
+	id: string;
+}
+
 export interface SourceSiteMigrationDetails {
 	status: string;
 	target_blog_id?: number;
