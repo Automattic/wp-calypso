@@ -5,11 +5,15 @@ import './style.scss';
 
 interface Props {
 	site: Site;
+	columns?: string[];
 }
 
-const columns = [ 'stats' ];
+const defaultColumns = [ 'stats' ];
 
-export default function SiteExpandedContent( { site }: Props ) {
+export default function SiteExpandedContent( {
+	site,
+	columns = defaultColumns,
+}: Props ) {
 	const stats = site.site_stats;
 
 	return (

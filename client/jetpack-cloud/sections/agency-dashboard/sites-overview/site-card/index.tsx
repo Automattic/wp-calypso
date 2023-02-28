@@ -12,6 +12,7 @@ import {
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
 import SiteActions from '../site-actions';
 import SiteErrorContent from '../site-error-content';
+import SiteExpandedContent from '../site-expanded-content';
 import SiteStatusContent from '../site-status-content';
 import type { SiteData, SiteColumns, AllowedTypes } from '../types';
 
@@ -136,6 +137,12 @@ export default function SiteCard( { rows, columns }: Props ) {
 												</span>
 											</span>
 										</div>
+										{ expandedColumn === column.key && (
+											<SiteExpandedContent
+												site={ rows.site.value }
+												columns={ [ column.key ] }
+											/>
+										) }
 									</div>
 								);
 							}
