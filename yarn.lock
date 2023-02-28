@@ -11930,6 +11930,7 @@ __metadata:
     striptags: ^3.1.1
     superagent: ^3.8.3
     supertest: ^6.1.6
+    swr: ^2.0.4
     textarea-caret: ^3.1.0
     to-title-case: ^1.0.0
     tracekit: ^0.4.5
@@ -31428,6 +31429,17 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
+"swr@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "swr@npm:2.0.4"
+  dependencies:
+    use-sync-external-store: ^1.2.0
+  peerDependencies:
+    react: ^16.11.0 || ^17.0.0 || ^18.0.0
+  checksum: a28869a374007fc3993d415600bf779eb5070eebb0293b7d3a79ce5b5478cc952bce1b8f4e8827173b6379e1f22ec5b79da24ba7956c223c2ff9677749c501bd
+  languageName: node
+  linkType: hard
+
 "symbol-tree@npm:^3.2.4":
   version: 3.2.4
   resolution: "symbol-tree@npm:3.2.4"
@@ -33067,6 +33079,15 @@ resolve@^2.0.0-next.3:
   peerDependencies:
     react: ^16.8.0 || ^17.0.0
   checksum: 0de6185cd5890a0640cd08b616f9de7875c41d51e6570894eb2bb83fa48c6137eaa56c360edb8fb9f7f253b9705e103bca52fbcd9f86b03d07c6467d282758fc
+  languageName: node
+  linkType: hard
+
+"use-sync-external-store@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "use-sync-external-store@npm:1.2.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+  checksum: ac4814e5592524f242921157e791b022efe36e451fe0d4fd4d204322d5433a4fc300d63b0ade5185f8e0735ded044c70bcf6d2352db0f74d097a238cebd2da02
   languageName: node
   linkType: hard
 
