@@ -117,7 +117,7 @@ export default function JetpackUpsellCard( {
 					( { title, description, href, iconUrl, slug } ) => (
 						<div className="jetpack-upsell-card__product" key={ slug }>
 							<div className="jetpack-upsell-card__product-icon">
-								<img src={ iconUrl } alt={ translate( 'included' ) } width="24px" height="24px" />
+								<img src={ iconUrl } alt={ title } width="24px" height="24px" />
 							</div>
 							<h3 className="jetpack-upsell-card__product-title">{ title }</h3>
 							<p className="jetpack-upsell-card__product-description">{ description }</p>

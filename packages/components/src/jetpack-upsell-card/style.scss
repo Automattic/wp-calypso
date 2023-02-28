@@ -70,29 +70,13 @@
 
 .jetpack-upsell-card__content > .jetpack-upsell-card__product > .jetpack-upsell-card__product-button {
 	align-self: center;
-	background: var(--studio-white);
-	border-color: var(--studio-gray-100);
+	background: var(--studio-black);
+	border-color: var(--studio-black);
 	border-radius: 4px;
-	color: var(--studio-gray-100);
+	color: var(--studio-white);
 	font-family: inherit;
 	grid-area: button;
 	justify-self: end;
 	padding: 0.5em 1.5em;
 	transition: background-color 0.1s linear, border-color 0.1s linear;
-
-	&:hover,
-	&:focus {
-		background: var(--studio-gray-0);
-	}
-
-	&.is-primary {
-		background: var(--studio-gray-100);
-		border-color: var(--studio-gray-100);
-
-		&:hover,
-		&:focus {
-			background: var(--studio-gray-80);
-			border-color: var(--studio-gray-80);
-		}
-	}
 }
