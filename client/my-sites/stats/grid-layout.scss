@@ -32,7 +32,7 @@ $grid-vertical-gutters: 32px;
 
 .stats__module-list.stats__module--unified.is-insights-page-enabled {
 
-	&.is-odyssey-stats {
+	&.is-jetpack {
 		@include stats-desktop-grid(
 			"tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories comments comments comments comments comments comments"
 			"followers followers followers followers followers followers publicize publicize publicize publicize publicize publicize"
