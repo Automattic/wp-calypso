@@ -4,6 +4,7 @@ import { hasRenewableSubscription } from 'calypso/lib/cart-values/cart-items';
 import AdditionalTermsOfServiceInCart from './additional-terms-of-service-in-cart';
 import BundledDomainNotice from './bundled-domain-notice';
 import DomainRegistrationAgreement from './domain-registration-agreement';
+import DomainRegistrationDotGay from './domain-registration-dot-gay';
 import DomainRegistrationHsts from './domain-registration-hsts';
 import { EbanxTermsOfService } from './ebanx-terms-of-service';
 import { InternationalFeeNotice } from './international-fee-notice';
@@ -37,6 +38,7 @@ class CheckoutTerms extends Component {
 				/>
 				{ ! isGiftPurchase && <DomainRegistrationAgreement cart={ cart } /> }
 				{ ! isGiftPurchase && <DomainRegistrationHsts cart={ cart } /> }
+				{ ! isGiftPurchase && <DomainRegistrationDotGay cart={ cart } /> }
 				<RefundPolicies cart={ cart } />
 				{ ! isGiftPurchase && <BundledDomainNotice cart={ cart } /> }
 				{ ! isGiftPurchase && <TitanTermsOfService cart={ cart } /> }

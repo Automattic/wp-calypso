@@ -26,6 +26,7 @@ interface Props {
 	isLoading?: boolean;
 	cost?: string;
 	hstsRequired?: boolean;
+	isDotGayNoticeRequired?: boolean;
 	isFree?: boolean;
 	isExistingSubdomain?: boolean;
 	isRecommended?: boolean;
@@ -33,7 +34,6 @@ interface Props {
 	onRender: () => void;
 	onSelect: ( domain: string ) => void;
 	selected?: boolean;
-	showDotGayNotice?: boolean;
 	type?: SUGGESTION_ITEM_TYPE;
 	buttonRef?: React.Ref< HTMLButtonElement >;
 }
@@ -45,13 +45,13 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 	cost,
 	railcarId,
 	hstsRequired = false,
+	isDotGayNoticeRequired = false,
 	isFree = false,
 	isExistingSubdomain = false,
 	isRecommended = false,
 	onSelect,
 	onRender,
 	selected,
-	showDotGayNotice = false,
 	type = SUGGESTION_ITEM_TYPE_RADIO,
 	buttonRef,
 } ) => {
@@ -124,7 +124,6 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 
 	const selectButtonLabelSelected = __( 'Selected', __i18n_text_domain__ );
 	const selectButtonLabelUnselected = __( 'Select', __i18n_text_domain__ );
-	// console.log( 'showDotGayNotice', showDotGayNotice );
 	return (
 		<WrappingComponent
 			ref={ buttonRef }
@@ -158,7 +157,7 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 				<div className="domain-picker__suggestion-item-name-inner">
 					<span
 						className={ classnames( 'domain-picker__domain-wrapper', {
-							'with-margin': ! ( hstsRequired || showDotGayNotice ),
+							'with-margin': ! ( hstsRequired || isDotGayNoticeRequired ),
 						} ) }
 					>
 						<span className="domain-picker__domain-sub-domain">{ domainName }</span>
@@ -193,27 +192,15 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 							) }
 						</InfoTooltip>
 					) }
-					{ showDotGayNotice && (
+					{ isDotGayNoticeRequired && (
 						<InfoTooltip
 							position={ isMobile ? 'bottom center' : 'middle right' }
 							noArrow={ false }
 							className="domain-picker__info-tooltip"
 						>
-							{ createInterpolateElement(
-								__(
-									'All domains ending with <tld /> require an SSL certificate to host a website. When you host this domain at WordPress.com an SSL certificate is included. <learn_more_link>Learn more</learn_more_link>',
-									__i18n_text_domain__
-								),
-								{
-									tld: <b>{ domainTld }</b>,
-									learn_more_link: (
-										<a
-											target="_blank"
-											rel="noreferrer"
-											href={ localizeUrl( 'https://wordpress.com/support/domains/https-ssl/' ) }
-										/>
-									),
-								}
+							{ __(
+								'Any anti-LGBTQ content is prohibited and can result in registration termination. The registry will donate 20% of all registration revenue to LGBTQ non-profit organizations.',
+								__i18n_text_domain__
 							) }
 						</InfoTooltip>
 					) }
