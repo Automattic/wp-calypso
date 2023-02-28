@@ -143,7 +143,7 @@ const TitleRow = styled( Row )`
 	` ) }
 `;
 
-const Cell = styled.div< { textAlign?: string } >`
+const Cell = styled.div< { textAlign?: string; isFeatureTitleCell?: boolean } >`
 	text-align: ${ ( props ) => props.textAlign ?? 'left' };
 	display: flex;
 	flex: 1;
@@ -179,7 +179,6 @@ const Cell = styled.div< { textAlign?: string } >`
 
 	${ plansBreakSmall( css`
 		padding: 0 14px;
-		min-width: 156px;
 		border-right: none;
 
 		&:first-of-type {
@@ -196,12 +195,13 @@ const Cell = styled.div< { textAlign?: string } >`
 	` ) }
 `;
 
-const RowHead = styled.div`
+const RowTitleCell = styled.div`
 	display: none;
 	font-size: 14px;
 	${ plansBreakSmall( css`
 		display: block;
 		flex: 1;
+		min-width: 290px;
 	` ) }
 `;
 
@@ -429,7 +429,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 
 	return (
 		<PlanRow>
-			<RowHead
+			<RowTitleCell
 				key="feature-name"
 				className="plan-comparison-grid__header-cell plan-comparison-grid__interval-toggle is-placeholder-header-cell"
 			/>
@@ -550,10 +550,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 
 	return (
 		<Row isHiddenInMobile={ isHiddenInMobile } className={ rowClasses }>
-			<RowHead
-				key="feature-name"
-				className="plan-comparison-grid__feature-group-row-cell plan-comparison-grid__feature-feature-name"
-			>
+			<RowTitleCell key="feature-name" className="is-feature-group-row-title-cell">
 				{ isStorageFeature ? (
 					<Plans2023Tooltip text={ translate( 'Space to store your photos, media, and more.' ) }>
 						{ translate( 'Storage' ) }
@@ -574,7 +571,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 						) }
 					</>
 				) }
-			</RowHead>
+			</RowTitleCell>
 			{ ( visiblePlansProperties ?? [] ).map( ( { planName } ) => (
 				<PlanComparisonGridFeatureGroupRowCell
 					key={ planName }
@@ -775,19 +772,15 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 				{ Object.values( featureGroupMap ).map( ( featureGroup: FeatureGroup ) => {
 					const features = featureGroup.get2023PricingGridSignupWpcomFeatures();
 					const featureObjects = getPlanFeaturesObject( features );
-					const featureGroupClass = `feature-group-title-${ featureGroup.slug }`;
 					const isHiddenInMobile = ! visibleFeatureGroups.includes( featureGroup.slug );
 
 					return (
-						<div key={ featureGroupClass } className={ featureGroup.slug }>
+						<div key={ featureGroup.slug } className="plan-comparison-grid__feature-group">
 							<TitleRow
-								className="plan-comparison-grid__group-title-row"
+								className="plan-comparison-grid__feature-group-title-row"
 								onClick={ () => toggleFeatureGroup( featureGroup.slug ) }
 							>
-								<Title
-									isHiddenInMobile={ isHiddenInMobile }
-									className={ `plan-comparison-grid__group-${ featureGroup.slug }` }
-								>
+								<Title isHiddenInMobile={ isHiddenInMobile }>
 									<Gridicon icon="chevron-up" size={ 12 } color="#1E1E1E" />
 									{ featureGroup.getTitle() }
 								</Title>
