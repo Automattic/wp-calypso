@@ -254,7 +254,7 @@ export class PlansFeaturesMain extends Component {
 			plansWithScroll,
 			isInVerticalScrollingPlansExperiment,
 			redirectToAddDomainFlow,
-			domainAndPlanPackage,
+			hideInterval,
 			translate,
 			locale,
 			flowName,
@@ -305,7 +305,7 @@ export class PlansFeaturesMain extends Component {
 				{ this.renderSecondaryFormattedHeader() }
 				<PlanFeatures
 					redirectToAddDomainFlow={ redirectToAddDomainFlow }
-					domainAndPlanPackage={ domainAndPlanPackage }
+					hideInterval={ hideInterval }
 					basePlansPath={ basePlansPath }
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
 					domainName={ domainName }
@@ -587,7 +587,7 @@ export class PlansFeaturesMain extends Component {
 		const {
 			siteId,
 			redirectToAddDomainFlow,
-			domainAndPlanPackage,
+			hideInterval,
 			is2023PricingGridVisible,
 			planTypeSelectorProps,
 		} = this.props;
@@ -602,7 +602,7 @@ export class PlansFeaturesMain extends Component {
 
 		// In the "purchase a plan and free domain" flow we do not want to show
 		// monthly plans because monthly plans do not come with a free domain.
-		if ( redirectToAddDomainFlow !== undefined || domainAndPlanPackage ) {
+		if ( redirectToAddDomainFlow !== undefined || hideInterval ) {
 			hidePlanSelector = true;
 		}
 
@@ -645,7 +645,7 @@ export class PlansFeaturesMain extends Component {
 
 PlansFeaturesMain.propTypes = {
 	redirectToAddDomainFlow: PropTypes.bool,
-	domainAndPlanPackage: PropTypes.string,
+	hideInterval: PropTypes.bool,
 	basePlansPath: PropTypes.string,
 	hideFreePlan: PropTypes.bool,
 	hidePersonalPlan: PropTypes.bool,

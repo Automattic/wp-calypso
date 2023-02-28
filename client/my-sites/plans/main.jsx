@@ -8,6 +8,7 @@ import {
 } from '@automattic/calypso-products';
 import { is2023PricingGridActivePage } from '@automattic/calypso-products/src/plans-utilities';
 import { withShoppingCart } from '@automattic/shopping-cart';
+import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -24,9 +25,11 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import { getDomainRegistrations } from 'calypso/lib/cart-values/cart-items';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import { WPCOM_PLANS_UI_STORE } from 'calypso/my-sites/plan-features-2023-grid/store';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
@@ -35,7 +38,6 @@ import { getPlanSlug } from 'calypso/state/plans/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
-import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
@@ -65,6 +67,24 @@ function DomainAndPlanUpsellNotice() {
 		/>
 	);
 }
+function DomainUpsellDescription() {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+	const skipPlan = () => {
+		recordTracksEvent( 'calypso_plans_page_domain_upsell_skip_click' );
+		dispatch( WPCOM_PLANS_UI_STORE ).setShowDomainUpsellDialog( true );
+	};
+	return (
+		<p>
+			{ translate( 'See and compare the features available on each WordPress.com plan' ) }
+			<div>
+				<button className="plans__copy-button" onClick={ skipPlan }>
+					{ translate( 'Or continue with the free plan.' ) }
+				</button>
+			</div>
+		</p>
+	);
+}
 
 class Plans extends Component {
 	static propTypes = {
@@ -77,7 +97,6 @@ class Plans extends Component {
 		redirectTo: PropTypes.string,
 		selectedSite: PropTypes.object,
 		isDomainAndPlanPackageFlow: PropTypes.bool,
-		domainFromHomeUpsellFlow: PropTypes.string,
 		isMyHomeDomainUpsell: PropTypes.bool,
 	};
 
@@ -178,7 +197,7 @@ class Plans extends Component {
 		return (
 			<PlansFeaturesMain
 				redirectToAddDomainFlow={ this.props.redirectToAddDomainFlow }
-				domainAndPlanPackage={ this.props.domainAndPlanPackage }
+				hideInterval={ this.props.domainAndPlanPackage && ! this.props.isDomainUpsell }
 				hideFreePlan={ hideFreePlan }
 				customerType={ this.props.customerType }
 				intervalType={ this.props.intervalType }
@@ -218,8 +237,7 @@ class Plans extends Component {
 			is2023PricingGridVisible,
 			isDomainAndPlanPackageFlow,
 			isJetpackNotAtomic,
-			domainFromHomeUpsellFlow,
-			isMyHomeDomainUpsell,
+			isDomainUpsell,
 		} = this.props;
 
 		if ( ! selectedSite || this.isInvalidPlanInterval() || ! currentPlan ) {
@@ -232,18 +250,11 @@ class Plans extends Component {
 		const yourDomainName = allDomains.length
 			? allDomains.slice( -1 )[ 0 ]?.meta
 			: translate( 'your domain name' );
-		const domainUpsellDescription = translate(
-			'With an annual plan, you can get {{strong}}%(domainName)s for free{{/strong}} for the first year, Jetpack essential features, live chat support, and all the features that will take your site to the next level.',
-			{
-				args: {
-					domainName: domainFromHomeUpsellFlow,
-				},
-				components: {
-					strong: <strong />,
-				},
-			}
-		);
-
+		const goBackLink = isDomainUpsell
+			? addQueryArgs( `/home/${ selectedSite.slug }` )
+			: addQueryArgs( `/domains/add/${ selectedSite.slug }`, {
+					domainAndPlanPackage: true,
+			  } );
 		return (
 			<div>
 				{ ! isJetpackNotAtomic && (
@@ -255,19 +266,14 @@ class Plans extends Component {
 				<QueryContactDetailsCache />
 				<QueryPlans />
 				<TrackComponentView eventName="calypso_plans_view" />
-				{ isMyHomeDomainUpsell && <DomainUpsellDialog domain={ selectedSite.slug } /> }
+				{ isDomainUpsell && <DomainUpsellDialog domain={ selectedSite.slug } /> }
 				{ canAccessPlans && (
 					<div>
-						{ ! isDomainAndPlanPackageFlow && (
-							<PlansHeader domainFromHomeUpsellFlow={ domainFromHomeUpsellFlow } />
-						) }
+						{ ! isDomainAndPlanPackageFlow && <PlansHeader /> }
 						{ isDomainAndPlanPackageFlow && (
 							<>
 								<div className="plans__header">
-									<DomainAndPlanPackageNavigation
-										step={ 2 }
-										showSkipPlans={ isMyHomeDomainUpsell }
-									/>
+									<DomainAndPlanPackageNavigation goBackLink={ goBackLink } step={ 2 } />
 
 									<FormattedHeader
 										brandFont
@@ -275,19 +281,22 @@ class Plans extends Component {
 										align="center"
 									/>
 
-									<p>
-										{ translate(
-											'With your annual plan, you’ll get %(domainName)s {{strong}}free for the first year{{/strong}}. You’ll also unlock advanced features that make it easy to build and grow your site.',
-											{
-												args: {
-													domainName: yourDomainName,
-												},
-												components: {
-													strong: <strong />,
-												},
-											}
-										) }
-									</p>
+									{ isDomainUpsell && <DomainUpsellDescription /> }
+									{ ! isDomainUpsell && (
+										<p>
+											{ translate(
+												'With your annual plan, you’ll get %(domainName)s {{strong}}free for the first year{{/strong}}. You’ll also unlock advanced features that make it easy to build and grow your site.',
+												{
+													args: {
+														domainName: yourDomainName,
+													},
+													components: {
+														strong: <strong />,
+													},
+												}
+											) }
+										</p>
+									) }
 								</div>
 							</>
 						) }
@@ -297,15 +306,6 @@ class Plans extends Component {
 								fullWidthLayout={ is2023PricingGridVisible && ! isEcommerceTrial }
 								wideLayout={ ! is2023PricingGridVisible || isEcommerceTrial }
 							>
-								{ ! isDomainAndPlanPackageFlow && domainFromHomeUpsellFlow && (
-									<FormattedHeader
-										className="header-text plans__formatted-header is-domain-upsell"
-										brandFont
-										headerText={ translate( 'Free for the first year!' ) }
-										subHeaderText={ domainUpsellDescription }
-										align="center"
-									/>
-								) }
 								{ ! isDomainAndPlanPackageFlow && domainAndPlanPackage && (
 									<DomainAndPlanUpsellNotice />
 								) }
@@ -348,8 +348,9 @@ const ConnectedPlans = connect( ( state ) => {
 		is2023PricingGridVisible,
 		isDomainAndPlanPackageFlow: !! getCurrentQueryArguments( state )?.domainAndPlanPackage,
 		isJetpackNotAtomic: isJetpackSite( state, selectedSiteId, { treatAtomicAsJetpackSite: false } ),
-		domainFromHomeUpsellFlow: getDomainFromHomeUpsellInQuery( state ),
-		isMyHomeDomainUpsell: !! getCurrentQueryArguments( state )?.get_domain,
+		isDomainUpsell:
+			!! getCurrentQueryArguments( state )?.domainAndPlanPackage &&
+			!! getCurrentQueryArguments( state )?.domain,
 	};
 } )( withCartKey( withShoppingCart( localize( withTrackingTool( 'HotJar' )( Plans ) ) ) ) );
 

@@ -165,7 +165,13 @@ class DomainSearch extends Component {
 			// Monthly plans don't have free domains
 			const intervalTypePath = this.props.isSiteOnMonthlyPlan ? 'yearly/' : '';
 			page(
-				`/plans/${ intervalTypePath }${ this.props.selectedSiteSlug }?domainAndPlanPackage=true`
+				addQueryArgs(
+					{
+						domainAndPlanPackage: true,
+						domain: this.props.isDomainUpsell ? true : undefined,
+					},
+					`/plans/${ intervalTypePath }${ this.props.selectedSiteSlug }`
+				)
 			);
 			return;
 		}
@@ -361,6 +367,9 @@ export default connect(
 			productsList: getProductsList( state ),
 			userCanPurchaseGSuite: canUserPurchaseGSuite( state ),
 			isDomainAndPlanPackageFlow: !! getCurrentQueryArguments( state )?.domainAndPlanPackage,
+			isDomainUpsell:
+				!! getCurrentQueryArguments( state )?.domainAndPlanPackage &&
+				!! getCurrentQueryArguments( state )?.domain,
 		};
 	},
 	{

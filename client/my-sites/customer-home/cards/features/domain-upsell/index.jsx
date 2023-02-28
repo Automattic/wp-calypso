@@ -60,6 +60,7 @@ export function RenderDomainUpsell() {
 	const searchLink = addQueryArgs(
 		{
 			domainAndPlanPackage: true,
+			domain: true,
 		},
 		`/domains/add/${ siteSlug }`
 	);
@@ -73,7 +74,7 @@ export function RenderDomainUpsell() {
 
 	const purchaseLink = addQueryArgs(
 		{
-			get_domain: domainSuggestionName,
+			domain: true,
 			domainAndPlanPackage: true,
 		},
 		`/plans/yearly/${ siteSlug }`
