@@ -33,6 +33,7 @@ interface Props {
 	onRender: () => void;
 	onSelect: ( domain: string ) => void;
 	selected?: boolean;
+	showDotGayNotice?: boolean;
 	type?: SUGGESTION_ITEM_TYPE;
 	buttonRef?: React.Ref< HTMLButtonElement >;
 }
@@ -50,6 +51,7 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 	onSelect,
 	onRender,
 	selected,
+	showDotGayNotice = false,
 	type = SUGGESTION_ITEM_TYPE_RADIO,
 	buttonRef,
 } ) => {
@@ -122,7 +124,7 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 
 	const selectButtonLabelSelected = __( 'Selected', __i18n_text_domain__ );
 	const selectButtonLabelUnselected = __( 'Select', __i18n_text_domain__ );
-
+	// console.log( 'showDotGayNotice', showDotGayNotice );
 	return (
 		<WrappingComponent
 			ref={ buttonRef }
@@ -156,7 +158,7 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 				<div className="domain-picker__suggestion-item-name-inner">
 					<span
 						className={ classnames( 'domain-picker__domain-wrapper', {
-							'with-margin': ! hstsRequired,
+							'with-margin': ! ( hstsRequired || showDotGayNotice ),
 						} ) }
 					>
 						<span className="domain-picker__domain-sub-domain">{ domainName }</span>
@@ -168,6 +170,30 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 						</div>
 					) }
 					{ hstsRequired && (
+						<InfoTooltip
+							position={ isMobile ? 'bottom center' : 'middle right' }
+							noArrow={ false }
+							className="domain-picker__info-tooltip"
+						>
+							{ createInterpolateElement(
+								__(
+									'All domains ending with <tld /> require an SSL certificate to host a website. When you host this domain at WordPress.com an SSL certificate is included. <learn_more_link>Learn more</learn_more_link>',
+									__i18n_text_domain__
+								),
+								{
+									tld: <b>{ domainTld }</b>,
+									learn_more_link: (
+										<a
+											target="_blank"
+											rel="noreferrer"
+											href={ localizeUrl( 'https://wordpress.com/support/domains/https-ssl/' ) }
+										/>
+									),
+								}
+							) }
+						</InfoTooltip>
+					) }
+					{ showDotGayNotice && (
 						<InfoTooltip
 							position={ isMobile ? 'bottom center' : 'middle right' }
 							noArrow={ false }
