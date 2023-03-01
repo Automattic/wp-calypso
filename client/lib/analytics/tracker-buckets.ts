@@ -9,7 +9,6 @@ import {
 import { isE2ETest } from 'calypso/lib/e2e';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import isJetpackCheckout from '../jetpack/is-jetpack-checkout';
-import { isWooExpressUpgrade } from './ad-tracking/woo/is-wooexpress-upgrade';
 
 const allAdTrackers = [
 	'bing',
@@ -77,10 +76,6 @@ export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 const checkGtagInit = (): boolean => 'dataLayer' in window && 'gtag' in window;
 
 const checkWooGTMInit = (): boolean => {
-	// Only init GTM for Woo in certain conditions.
-	if ( ! isWooExpressUpgrade ) {
-		return false;
-	}
 	return true;
 	// TODO: need to guard this, e.g. return 'dataLayer' in window && 'google_tag_manager' in window;
 };
