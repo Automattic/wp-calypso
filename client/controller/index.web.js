@@ -148,8 +148,7 @@ export function redirectLoggedOutToSignup( context, next ) {
 		return;
 	}
 
-	window.location = createAccountUrl( { redirectTo: context.path } );
-	return;
+	return page.redirect( createAccountUrl( { redirectTo: context.path } ) );
 }
 
 /**
