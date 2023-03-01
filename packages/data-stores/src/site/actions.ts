@@ -1,6 +1,9 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Design, DesignOptions } from '@automattic/design-picker/src/types';
+import { __ } from '@wordpress/i18n';
 import { SiteGoal } from '../onboard';
 import { wpcomRequest } from '../wpcom-request-controls';
+import { PLACEHOLDER_SITE_ID } from './constants';
 import {
 	SiteLaunchError,
 	AtomicTransferError,
@@ -386,6 +389,36 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		}
 	}
 
+	function createCustomHomeTemplateContent(
+		stylesheet: string,
+		hasHeader: boolean,
+		hasFooter: boolean,
+		hasSections: boolean
+	) {
+		const content: string[] = [];
+		if ( hasHeader ) {
+			content.push(
+				`<!-- wp:template-part {"slug":"header","tagName":"header","theme":"${ stylesheet }"} /-->`
+			);
+		}
+
+		if ( hasSections ) {
+			content.push( `
+	<!-- wp:group {"tagName":"main"} -->
+		<main class="wp-block-group">
+		</main>
+	<!-- /wp:group -->` );
+		}
+
+		if ( hasFooter ) {
+			content.push(
+				`<!-- wp:template-part {"slug":"footer","tagName":"footer","theme":"${ stylesheet }","className":"site-footer-container"} /-->`
+			);
+		}
+
+		return content.join( '\n' );
+	}
+
 	function* runThemeSetupOnSite(
 		siteSlug: string,
 		selectedDesign: Design,
@@ -478,6 +511,37 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 				is_wp_suggestion: true,
 			},
 			method: 'POST',
+		} );
+	}
+
+	function* applyThemeWithPatterns( siteSlug: string, design: Design, globalStyles: GlobalStyles ) {
+		const stylesheet = design.recipe!.stylesheet!;
+		const theme = stylesheet?.split( '/' )[ 1 ] || design.theme;
+
+		// We have to switch theme first. Otherwise, the unique suffix might append to
+		// the slug of newly created Home template if the current activated theme has
+		// modified Home template.
+		yield setThemeOnSite( siteSlug, theme, undefined, false );
+
+		if ( isEnabled( 'pattern-assembler/color-and-fonts' ) ) {
+			yield setGlobalStyles( siteSlug, stylesheet, globalStyles );
+		}
+
+		const hasHeader = !! design?.recipe?.header_pattern_ids?.length;
+		const hasFooter = !! design?.recipe?.footer_pattern_ids?.length;
+		const hasSections = !! design?.recipe?.pattern_ids?.length;
+
+		yield createCustomTemplate(
+			siteSlug,
+			stylesheet,
+			'home',
+			__( 'Home' ),
+			createCustomHomeTemplateContent( stylesheet, hasHeader, hasFooter, hasSections )
+		);
+
+		yield runThemeSetupOnSite( siteSlug, design, {
+			trimContent: false,
+			posts_source_site_id: PLACEHOLDER_SITE_ID,
 		} );
 	}
 
@@ -681,6 +745,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		runThemeSetupOnSite,
 		setDesignOnSite,
 		createCustomTemplate,
+		applyThemeWithPatterns,
 		createSite,
 		receiveSite,
 		receiveSiteFailed,
