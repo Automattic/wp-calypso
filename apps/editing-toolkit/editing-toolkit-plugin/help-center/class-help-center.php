@@ -220,7 +220,7 @@ class Help_Center {
 		global $wp_admin_bar, $current_screen;
 
 		$is_site_editor = ( function_exists( 'gutenberg_is_edit_site_page' ) && gutenberg_is_edit_site_page( $current_screen->id ) );
-		if ( ! is_object( $wp_admin_bar ) || $is_site_editor || $current_screen->is_block_editor ) {
+		if ( ! is_user_logged_in() || ! is_object( $wp_admin_bar ) || $is_site_editor || $current_screen->is_block_editor ) {
 			return;
 		}
 
