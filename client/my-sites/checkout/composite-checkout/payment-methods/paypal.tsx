@@ -31,7 +31,7 @@ const debug = debugFactory( 'calypso:paypal-payment-method' );
 
 const storeKey = 'paypal';
 type StoreKey = typeof storeKey;
-type NounsInStore = 'postalCode' | 'countryCode';
+type NounsInStore = 'postalCode' | 'countryCode' | 'address1';
 type PayPalStore = PaymentMethodStore< NounsInStore >;
 
 declare module '@wordpress/data' {
@@ -46,6 +46,9 @@ const actions: StoreActions< NounsInStore > = {
 	changeCountryCode( payload ) {
 		return { type: 'COUNTRY_CODE_SET', payload };
 	},
+	changeAddress1( payload ) {
+		return { type: 'ADDRESS_SET', payload };
+	},
 };
 
 const selectors: StoreSelectorsWithState< NounsInStore > = {
@@ -54,6 +57,9 @@ const selectors: StoreSelectorsWithState< NounsInStore > = {
 	},
 	getCountryCode( state ) {
 		return state.countryCode || '';
+	},
+	getAddress1( state ) {
+		return state.address1 || '';
 	},
 };
 
@@ -64,6 +70,7 @@ export function createPayPalStore(): PayPalStore {
 			state: StoreState< NounsInStore > = {
 				postalCode: { value: '', isTouched: false },
 				countryCode: { value: '', isTouched: false },
+				address1: { value: '', isTouched: false },
 			},
 			action
 		): StoreState< NounsInStore > {
@@ -72,6 +79,8 @@ export function createPayPalStore(): PayPalStore {
 					return { ...state, postalCode: { value: action.payload, isTouched: true } };
 				case 'COUNTRY_CODE_SET':
 					return { ...state, countryCode: { value: action.payload, isTouched: true } };
+				case 'ADDRESS_SET':
+					return { ...state, address1: { value: action.payload, isTouched: true } };
 			}
 			return state;
 		},
@@ -143,17 +152,20 @@ function PayPalTaxFields() {
 	const countriesList = useCountryList();
 	const postalCode = useSelect( ( select ) => select( storeKey ).getPostalCode() );
 	const countryCode = useSelect( ( select ) => select( storeKey ).getCountryCode() );
+	const address1 = useSelect( ( select ) => select( storeKey ).getAddress1() );
 	const fields = useMemo(
 		() => ( {
 			postalCode: { ...postalCode, errors: [] },
 			countryCode: { ...countryCode, errors: [] },
+			address1: { ...address1, errors: [] },
 		} ),
-		[ postalCode, countryCode ]
+		[ postalCode, countryCode, address1 ]
 	);
-	const { changePostalCode, changeCountryCode } = useDispatch( storeKey );
+	const { changePostalCode, changeCountryCode, changeAddress1 } = useDispatch( storeKey );
 	const onChangeContactInfo = ( newInfo: ManagedContactDetails ) => {
 		changeCountryCode( newInfo.countryCode?.value ?? '' );
 		changePostalCode( newInfo.postalCode?.value ?? '' );
+		changeAddress1( newInfo.address1?.value ?? '' );
 	};
 	return (
 		<PayPalFieldsWrapper>
@@ -211,6 +223,7 @@ function PayPalSubmitButton( {
 	const { transactionStatus } = useTransactionStatus();
 	const postalCode = useSelect( ( select ) => select( storeKey )?.getPostalCode() );
 	const countryCode = useSelect( ( select ) => select( storeKey )?.getCountryCode() );
+	const address1 = useSelect( ( select ) => select( storeKey )?.getAddress1() );
 
 	const handleButtonPress = () => {
 		if ( ! onClick ) {
@@ -221,6 +234,7 @@ function PayPalSubmitButton( {
 		onClick( {
 			postalCode: postalCode?.value,
 			countryCode: countryCode?.value,
+			address: address1?.value,
 		} );
 	};
 	return (
