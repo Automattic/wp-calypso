@@ -296,7 +296,11 @@ function DeveloperSettingsSubmenu( { site, recordTracks }: SitesMenuItemProps ) 
 
 	return (
 		<div { ...developerSubmenuProps.parent }>
-			<MenuItemLink info={ ! hasFeatureSFTP && __( 'Requires a Business Plan' ) }>
+			<MenuItemLink
+				href={ getHostingConfigUrl( site.slug ) }
+				onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_hosting_config_click' ) }
+				info={ ! hasFeatureSFTP && __( 'Requires a Business Plan' ) }
+			>
 				{ __( 'Hosting configuration' ) } <MenuItemGridIcon icon="chevron-right" size={ 18 } />
 			</MenuItemLink>
 			<SubmenuPopover { ...developerSubmenuProps.submenu }>
