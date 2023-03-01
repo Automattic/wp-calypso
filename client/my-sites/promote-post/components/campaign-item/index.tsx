@@ -23,6 +23,7 @@ import {
 	getCampaignStatus,
 	getCampaignStatusBadgeColor,
 	getPostType,
+	normalizeCampaignStatus,
 } from 'calypso/my-sites/promote-post/utils';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -40,7 +41,6 @@ export default function CampaignItem( { campaign }: Props ) {
 
 	const {
 		impressions_total,
-		status: campaignStatus,
 		clicks_total,
 		target_url,
 		type,
@@ -54,6 +54,8 @@ export default function CampaignItem( { campaign }: Props ) {
 		display_delivery_estimate,
 		display_name,
 	} = campaign;
+
+	const campaignStatus = useMemo( () => normalizeCampaignStatus( campaign ), [ campaign.status ] );
 
 	const overallSpending = useMemo(
 		() => getCampaignOverallSpending( spent_budget_cents, budget_cents, start_date, end_date ),
