@@ -125,6 +125,7 @@
 		"reader": true,
 		"reader/full-errors": true,
 		"reader/list-management": true,
+		"reader/public-tag-pages": false,
 		"recommend-plugins": true,
 		"redirect-fallback-browsers": true,
 		"rum-tracking/logstash": true,

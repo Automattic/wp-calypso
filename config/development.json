@@ -152,6 +152,7 @@
 		"reader/comment-polling": false,
 		"reader/full-errors": true,
 		"reader/list-management": true,
+		"reader/public-tag-pages": true,
 		"recommend-plugins": true,
 		"redirect-fallback-browsers": false,
 		"rum-tracking/logstash": true,
