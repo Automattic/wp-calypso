@@ -28,13 +28,19 @@ const getEnvironmentHostname = () => {
 
 export const HelpCenterLaunchpad = () => {
 	const { __ } = useI18n();
+
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const site = useSelect( ( select ) => siteId && select( SITE_STORE ).getSite( siteId ) );
-	const siteIntent = site && site?.options?.site_intent;
-	const siteSlug = site && new URL( site.URL ).host;
+	let siteIntent = site && site?.options?.site_intent;
+	let siteSlug = site && new URL( site.URL ).host;
+
+	if ( ! siteIntent || ! siteSlug ) {
+		siteIntent = window?.helpCenterData?.currentSite?.site_intent;
+		siteSlug = window?.location?.host;
+	}
+
 	const launchpadURL = `${ getEnvironmentHostname() }/setup/${ siteIntent }/launchpad?siteSlug=${ siteSlug }`;
 	const sectionName = useSelector( ( state ) => getSectionName( state ) );
-
 	const handleLaunchpadHelpLinkClick = () => {
 		recordTracksEvent( 'calypso_help_launchpad_click', {
 			link: launchpadURL,
@@ -44,7 +50,7 @@ export const HelpCenterLaunchpad = () => {
 		} );
 	};
 
-	if ( ! site || ! siteIntent || ! siteSlug ) {
+	if ( ! siteIntent || ! siteSlug ) {
 		return null;
 	}
 	return (

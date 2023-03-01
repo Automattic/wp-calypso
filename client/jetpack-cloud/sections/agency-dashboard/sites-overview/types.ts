@@ -1,13 +1,14 @@
 import type { ReactChild } from 'react';
 
 // All types based on which the data is populated on the agency dashboard table rows
-export type AllowedTypes = 'site' | 'backup' | 'scan' | 'monitor' | 'plugin';
+export type AllowedTypes = 'site' | 'stats' | 'backup' | 'scan' | 'monitor' | 'plugin';
 
 // Site column object which holds key and title of each column
 export type SiteColumns = Array< {
-	key: string;
+	key: AllowedTypes;
 	title: ReactChild;
 	className?: string;
+	isExpandable?: boolean;
 } >;
 
 export type AllowedStatusTypes =
@@ -28,6 +29,16 @@ export interface MonitorSettings {
 	monitor_user_wp_note_notifications: boolean;
 }
 
+interface StatsObject {
+	total: number;
+	trend: 'up' | 'down' | 'same';
+	trend_change: number;
+}
+export interface SiteStats {
+	views: StatsObject;
+	visitors: StatsObject;
+}
+
 export interface Site {
 	blog_id: number;
 	url: string;
@@ -44,6 +55,7 @@ export interface Site {
 	monitor_settings: MonitorSettings;
 	monitor_last_status_change: string;
 	isSelected?: boolean;
+	site_stats: SiteStats;
 	onSelect?: ( value: boolean ) => void;
 }
 export interface SiteNode {
@@ -53,6 +65,10 @@ export interface SiteNode {
 	status: AllowedStatusTypes | string;
 }
 
+export interface StatsNode {
+	type: AllowedTypes;
+	data: SiteStats;
+}
 export interface BackupNode {
 	type: AllowedTypes;
 	status: AllowedStatusTypes | string;

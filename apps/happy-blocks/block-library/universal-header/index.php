@@ -30,7 +30,7 @@ function universal_header_render_callback( $attributes ) {
  */
 function happyblocks_universal_header_register() {
 	register_block_type(
-		__DIR__ . ( is_rtl() ? '/rtl/block.json' : '/block.json' ),
+		__DIR__ . ( is_rtl() ? '/build/rtl/block.json' : '/build/block.json' ),
 		array(
 			'render_callback' => 'universal_header_render_callback',
 		)

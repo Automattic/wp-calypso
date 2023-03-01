@@ -151,23 +151,15 @@ const BackupRetentionManagement: FunctionComponent< OwnProps > = ( { defaultRete
 							retention_option: value,
 						} )
 					);
-
-					const selectedOption = retentionOptionsCards.find(
-						( option ) => option.id === value
-					) as RetentionOptionInput;
-
-					if ( selectedOption.upgradeRequired !== storageUpgradeRequired ) {
-						setStorageUpgradeRequired( selectedOption.upgradeRequired );
-					}
 				}
 			}
 		},
-		[ dispatch, retentionOptionsCards, retentionSelected, storageUpgradeRequired ]
+		[ dispatch, retentionSelected ]
 	);
 
 	const disableFormSubmission =
 		! retentionSelected ||
-		retentionSelected === currentRetentionPlan ||
+		( retentionSelected === currentRetentionPlan && ! storageUpgradeRequired ) ||
 		updateRetentionRequestStatus === BACKUP_RETENTION_UPDATE_REQUEST.PENDING;
 
 	const [ confirmationDialogVisible, setConfirmationDialogVisible ] = useState( false );
@@ -204,6 +196,17 @@ const BackupRetentionManagement: FunctionComponent< OwnProps > = ( { defaultRete
 			setRetentionSelected( currentRetentionPlan );
 		}
 	}, [ currentRetentionPlan, isFetching ] );
+
+	// Determinate if storage upgrade is required when the retention period selected changes
+	useEffect( () => {
+		const selectedOption = retentionOptionsCards.find(
+			( option ) => option.id === retentionSelected
+		) as RetentionOptionInput;
+
+		if ( selectedOption && selectedOption.upgradeRequired !== storageUpgradeRequired ) {
+			setStorageUpgradeRequired( selectedOption.upgradeRequired );
+		}
+	}, [ retentionOptionsCards, retentionSelected, storageUpgradeRequired ] );
 
 	useEffect( () => {
 		if (

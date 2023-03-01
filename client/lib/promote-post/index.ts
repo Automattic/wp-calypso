@@ -1,7 +1,9 @@
 import config from '@automattic/calypso-config';
 import { loadScript } from '@automattic/load-script';
+import { __ } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
 import request, { requestAllBlogsAccess } from 'wpcom-proxy-request';
+import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
@@ -23,6 +25,7 @@ declare global {
 				translateFn?: ( value: string, options?: any ) => string;
 				showDialog?: boolean;
 				setShowCancelButton?: ( show: boolean ) => void;
+				uploadImageLabel?: string;
 			} ) => void;
 			strings: any;
 		};
@@ -70,6 +73,7 @@ export async function showDSP(
 				translateFn: translateFn,
 				urn: `urn:wpcom:post:${ siteId }:${ postId || 0 }`,
 				setShowCancelButton: setShowCancelButton,
+				uploadImageLabel: isWpMobileApp() ? __( 'Tap to add image' ) : undefined,
 			} );
 		} else {
 			reject( false );

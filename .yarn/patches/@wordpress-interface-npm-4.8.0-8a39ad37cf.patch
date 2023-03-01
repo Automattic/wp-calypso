@@ -1,0 +1,74 @@
+diff --git a/build-module/store/selectors.js b/build-module/store/selectors.js
+index f213c22d1685c56a2b7686a35ef0c53481569993..aebaaed394b4bb310b908cdbbe994a3a89977609 100644
+--- a/build-module/store/selectors.js
++++ b/build-module/store/selectors.js
+@@ -25,12 +25,25 @@ export const getActiveComplementaryArea = createRegistrySelector(select => (stat
+   } // Return `null` to indicate the user hid the complementary area.
+ 
+ 
+-  if (!isComplementaryAreaVisible) {
++  if ( isComplementaryAreaVisible === false ) {
+     return null;
+   }
+ 
+   return state === null || state === void 0 ? void 0 : (_state$complementaryA = state.complementaryAreas) === null || _state$complementaryA === void 0 ? void 0 : _state$complementaryA[scope];
+ });
++
++export const isComplementaryAreaLoading = createRegistrySelector(
++	( select ) => ( state, scope ) => {
++		const isVisible = select( preferencesStore ).get(
++			scope,
++			'isComplementaryAreaVisible'
++		);
++		const identifier = state?.complementaryAreas?.[ scope ];
++
++		return isVisible && identifier === undefined;
++	}
++);
++
+ /**
+  * Returns a boolean indicating if an item is pinned or not.
+  *
+diff --git a/src/components/complementary-area/index.js b/src/components/complementary-area/index.js
+index 71fb6a610d6a32e8e381032743769222ba05df9a..f240ab8bb2f08261c062b99f3f2982b41d72174d 100644
+--- a/src/components/complementary-area/index.js
++++ b/src/components/complementary-area/index.js
+@@ -98,13 +98,14 @@ function ComplementaryArea( {
+ 	isActiveByDefault,
+ 	showIconLabels = false,
+ } ) {
+-	const { isActive, isPinned, activeArea, isSmall, isLarge } = useSelect(
++	const { isLoading, isActive, isPinned, activeArea, isSmall, isLarge } = useSelect(
+ 		( select ) => {
+-			const { getActiveComplementaryArea, isItemPinned } = select(
++			const { getActiveComplementaryArea, isComplementaryAreaLoading, isItemPinned } = select(
+ 				interfaceStore
+ 			);
+ 			const _activeArea = getActiveComplementaryArea( scope );
+ 			return {
++				isLoading: isComplementaryAreaLoading( scope ),
+ 				isActive: _activeArea === identifier,
+ 				isPinned: isItemPinned( scope, identifier ),
+ 				activeArea: _activeArea,
+@@ -129,8 +130,13 @@ function ComplementaryArea( {
+ 	} = useDispatch( interfaceStore );
+ 
+ 	useEffect( () => {
++		// Set initial visibility: For large screens, enable if it's active by
++		// default. For small screens, always initially disable.
+ 		if ( isActiveByDefault && activeArea === undefined && ! isSmall ) {
+ 			enableComplementaryArea( scope, identifier );
++		} else if ( activeArea === undefined && isSmall ) {
++			disableComplementaryArea( scope, identifier );
++
+ 		}
+ 	}, [ activeArea, isActiveByDefault, scope, identifier, isSmall ] );
+ 
+@@ -146,6 +152,7 @@ function ComplementaryArea( {
+ 								isActive && ( ! showIconLabels || isLarge )
+ 							}
+ 							aria-expanded={ isActive }
++							aria-disabled={ isLoading }
+ 							label={ title }
+ 							icon={ showIconLabels ? check : icon }
+ 							showTooltip={ ! showIconLabels }

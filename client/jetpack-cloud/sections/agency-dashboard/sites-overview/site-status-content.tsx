@@ -174,6 +174,11 @@ export default function SiteStatusContent( {
 		);
 	}
 
+	if ( type === 'stats' ) {
+		// Content will be added later
+		return null;
+	}
+
 	let content;
 
 	switch ( status ) {
