@@ -117,6 +117,18 @@ class DomainSearch extends Component {
 		if ( prevProps.selectedSiteId !== this.props.selectedSiteId ) {
 			this.checkSiteIsUpgradeable();
 		}
+		if (
+			this.props.isDomainAndPlanPackageFlow &&
+			! document.body.classList.contains( 'is-domain-plan-package-flow' )
+		) {
+			document.body.classList.add( 'is-domain-plan-package-flow' );
+		}
+		if (
+			! this.props.isDomainAndPlanPackageFlow &&
+			document.body.classList.contains( 'is-domain-plan-package-flow' )
+		) {
+			document.body.classList.remove( 'is-domain-plan-package-flow' );
+		}
 	}
 
 	componentWillUnmount() {
