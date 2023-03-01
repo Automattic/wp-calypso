@@ -85,7 +85,7 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 				headerBackgroundColor="var( --studio-white )"
 				containerClassName="checkout-thank-you__domains"
 				sections={ thankYouProps.sections }
-				showSupportSection={ launchpadScreen !== 'full' }
+				showSupportSection={ ! isLaunchpadEnabled }
 				thankYouImage={ thankYouProps.thankYouImage }
 				thankYouTitle={ thankYouProps.thankYouTitle }
 				thankYouSubtitle={ thankYouProps.thankYouSubtitle }
