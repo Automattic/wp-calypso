@@ -1,8 +1,9 @@
-import { Button, Card, Spinner, Gridicon } from '@automattic/components';
+import { Button, Card, Spinner, Gridicon, LoadingPlaceholder } from '@automattic/components';
+import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { localize } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import { useAddStagingSiteMutation } from 'calypso/my-sites/hosting/staging-site-card/use-add-staging-site';
@@ -15,6 +16,21 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const stagingSiteAddFailureNoticeId = 'staging-site-add-failure';
+
+const FirstPlaceholder = styled( LoadingPlaceholder )( {
+	height: 24,
+	width: '85%',
+	marginBottom: '0.25em',
+} );
+const SecondPlaceholder = styled( LoadingPlaceholder )( {
+	height: 24,
+	width: '60%',
+	marginBottom: '1.5em',
+} );
+const ButtonPlaceholder = styled( LoadingPlaceholder )( {
+	width: '148px',
+	height: '40px',
+} );
 
 const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 	const { __ } = useI18n();
@@ -105,6 +121,16 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 		);
 	};
 
+	const getLoadingStagingSitesPlaceholder = () => {
+		return (
+			<Fragment>
+				<FirstPlaceholder />
+				<SecondPlaceholder />
+				<ButtonPlaceholder />
+			</Fragment>
+		);
+	};
+
 	return (
 		<Card className="staging-site-card">
 			{
@@ -114,9 +140,10 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 			<CardHeading id="staging-site">{ translate( 'Staging site' ) }</CardHeading>
 			{ showAddStagingSite && ! addingStagingSite && getNewStagingSiteContent() }
 			{ showManageStagingSite && isStagingSiteTransferComplete && getManageStagingSiteContent() }
-			{ ( isLoadingStagingSites ||
-				addingStagingSite ||
-				( showManageStagingSite && ! isStagingSiteTransferComplete ) ) && <Spinner /> }
+			{ isLoadingStagingSites && getLoadingStagingSitesPlaceholder() }
+			{ ( addingStagingSite || ( showManageStagingSite && ! isStagingSiteTransferComplete ) ) && (
+				<Spinner />
+			) }
 		</Card>
 	);
 };
