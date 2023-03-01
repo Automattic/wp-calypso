@@ -1,22 +1,11 @@
 import config from '@automattic/calypso-config';
+import { SubscriptionManagerContainer } from '@automattic/subscription-manager';
 import page, { Callback } from 'page';
 import { createElement } from 'react';
-import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
-import Main from 'calypso/components/main';
 import { makeLayout, render } from 'calypso/controller';
 
-const Subscriptions = () => {
-	return (
-		<Main className="site-settings">
-			<DocumentHead title="Subscriptions" />
-			<FormattedHeader brandFont headerText="Subscriptions" align="left" />
-		</Main>
-	);
-};
-
 const createSubscriptions: Callback = ( context, next ) => {
-	context.primary = createElement( Subscriptions );
+	context.primary = createElement( SubscriptionManagerContainer );
 	next();
 };
 

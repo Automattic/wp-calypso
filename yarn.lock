@@ -1558,6 +1558,21 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/subscription-manager@workspace:^, @automattic/subscription-manager@workspace:packages/subscription-manager":
+  version: 0.0.0-use.local
+  resolution: "@automattic/subscription-manager@workspace:packages/subscription-manager"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    typescript: ^4.5.5
+  peerDependencies:
+    "@wordpress/data": ^6.1.5
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    reakit-utils: ^0.15.1
+    redux: ^4.1.2
+  languageName: unknown
+  linkType: soft
+
 "@automattic/tour-kit@workspace:^, @automattic/tour-kit@workspace:packages/tour-kit":
   version: 0.0.0-use.local
   resolution: "@automattic/tour-kit@workspace:packages/tour-kit"
@@ -11775,6 +11790,7 @@ __metadata:
     "@automattic/social-previews": "workspace:^"
     "@automattic/state-utils": "workspace:^"
     "@automattic/subscriber": "workspace:^"
+    "@automattic/subscription-manager": "workspace:^"
     "@automattic/tree-select": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@automattic/viewport-react": "workspace:^"
