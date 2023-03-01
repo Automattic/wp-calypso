@@ -118,6 +118,7 @@
 
 	tr {
 		border-bottom: 1px solid var(--studio-white);
+		padding: 0 1rem;
 
 		@media (max-width: $break-large) {
 			display: block;
