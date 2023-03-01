@@ -134,7 +134,7 @@ class Help_Center {
 	 * Get current site details.
 	 */
 	public function get_current_site() {
-		$is_support_site = defined( 'WPCOM_SUPPORT_BLOG_IDS' ) && in_array( get_current_blog_id(), WPCOM_SUPPORT_BLOG_IDS );
+		$is_support_site = defined( 'WPCOM_SUPPORT_BLOG_IDS' ) && in_array( get_current_blog_id(), WPCOM_SUPPORT_BLOG_IDS, true );
 
 		if ( $is_support_site ) {
 			$user_id = get_current_user_id();
