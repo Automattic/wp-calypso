@@ -247,6 +247,9 @@ class DomainSearch extends Component {
 
 		let content;
 
+		const launchpadScreen = this.props.selectedSite?.options?.launchpad_screen;
+		const siteIntent = this.props.selectedSite?.options?.site_intent;
+
 		if ( ! this.state.domainRegistrationAvailable ) {
 			let maintenanceEndTime = translate( 'shortly', {
 				comment: 'If a specific maintenance end time is unavailable, we will show this instead.',
@@ -269,6 +272,16 @@ class DomainSearch extends Component {
 				/>
 			);
 		} else {
+			const goBackButtonProps =
+				launchpadScreen === 'full'
+					? {
+							goBackText: translate( 'Next Steps' ),
+							goBackLink: `/setup/${ siteIntent }/launchpad?siteSlug=${ selectedSiteSlug }`,
+					  }
+					: {
+							goBackLink: `/home/${ selectedSiteSlug }`,
+					  };
+
 			content = (
 				<span>
 					<div className="domain-search__content">
@@ -286,10 +299,7 @@ class DomainSearch extends Component {
 						<div className="domains__header">
 							{ isDomainAndPlanPackageFlow && (
 								<>
-									<DomainAndPlanPackageNavigation
-										goBackLink={ `/home/${ selectedSiteSlug }` }
-										step={ 1 }
-									/>
+									<DomainAndPlanPackageNavigation { ...goBackButtonProps } step={ 1 } />
 									<FormattedHeader
 										brandFont
 										headerText={ translate( 'Claim your domain' ) }
