@@ -3,6 +3,7 @@ import { Title, SubTitle, NextButton, Notice } from '@automattic/onboarding';
 import { sprintf } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import { getQueryArg } from '@wordpress/url';
 import classnames from 'classnames';
 import React, { useState, useEffect } from 'react';
 import { UrlData } from 'calypso/blocks/import/types';
@@ -23,6 +24,7 @@ interface Props {
 	isTargetSitePlanCompatible: boolean;
 	showConfirmDialog: boolean;
 	startImport: () => void;
+	isMigrateFromWp: boolean;
 }
 
 export const Confirm: React.FunctionComponent< Props > = ( props ) => {
@@ -40,6 +42,7 @@ export const Confirm: React.FunctionComponent< Props > = ( props ) => {
 		isTargetSitePlanCompatible,
 		showConfirmDialog,
 		startImport,
+		isMigrateFromWp,
 	} = props;
 	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = useState( false );
 	const [ showUpgradePlanScreen, setShowUpgradePlanScreen ] = useState( false );
@@ -48,7 +51,11 @@ export const Confirm: React.FunctionComponent< Props > = ( props ) => {
 	 ↓ Effects
 	 */
 	useEffect( () => {
+		const skipCta = getQueryArg( window.location.href, 'skipCta' );
 		recordTracksEvent( 'calypso_site_importer_migration_confirmation' );
+		if ( isTargetSitePlanCompatible && isMigrateFromWp && skipCta ) {
+			startImportCta();
+		}
 	}, [] );
 
 	/**
@@ -60,6 +67,14 @@ export const Confirm: React.FunctionComponent< Props > = ( props ) => {
 		} else {
 			startImport();
 		}
+	}
+	function startImportCta() {
+		recordTracksEvent( 'calypso_signup_step_start', {
+			flow: 'importer',
+			step: 'importerWordpress',
+			action: 'startImport',
+		} );
+		showConfirmDialogOrStartImport();
 	}
 
 	return (
@@ -143,18 +158,7 @@ export const Confirm: React.FunctionComponent< Props > = ( props ) => {
 						) }
 
 						{ isTargetSitePlanCompatible && (
-							<NextButton
-								onClick={ () => {
-									recordTracksEvent( 'calypso_signup_step_start', {
-										flow: 'importer',
-										step: 'importerWordpress',
-										action: 'startImport',
-									} );
-									showConfirmDialogOrStartImport();
-								} }
-							>
-								{ __( 'Start import' ) }
-							</NextButton>
+							<NextButton onClick={ startImportCta }>{ __( 'Start import' ) }</NextButton>
 						) }
 					</>
 				) }
