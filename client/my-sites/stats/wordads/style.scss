@@ -1,5 +1,3 @@
-@import "@automattic/components/src/styles/mixins";
-
 @include breakpoint-deprecated( ">480px" ) {
 	.wordads .stats-tabs .stats-tab {
 		width: 33.33%;
@@ -16,53 +14,3 @@
 	}
 }
 
-.highlight-cards.wordads {
-	h1 {
-		display: flex;
-		flex-flow: nowrap;
-		align-items: center;
-	}
-	.highlight-card {
-		min-width: 240px;
-	}
-	.info-wrapper {
-		display: flex;
-		margin-left: 8px;
-	}
-	.info-icon {
-		fill: var(--studio-gray-40);
-	}
-}
-
-.tooltip-wordads {
-	.highlight-card-tooltip-content {
-		display: block;
-		max-width: 260px;
-
-		p:last-child {
-			margin: 0;
-		}
-	}
-}
-
-.ads__table-header {
-	margin-bottom: 1em;
-	display: flex;
-}
-
-.ads__table-header-title {
-	@include stats-section-header;
-	margin-right: 4px;
-}
-
-.ads__table-header-button {
-	color: var(--studio-gray-50);
-}
-
-.earnings_history {
-	border-radius: 4px;
-
-	table {
-		margin: 0;
-	}
-}

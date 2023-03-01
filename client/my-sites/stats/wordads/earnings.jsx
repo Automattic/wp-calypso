@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import QueryWordadsEarnings from 'calypso/components/data/query-wordads-earnings';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getWordAdsEarnings } from 'calypso/state/wordads/earnings/selectors';
+import './earnings.scss';
 
 class WordAdsEarnings extends Component {
 	static propTypes = {
