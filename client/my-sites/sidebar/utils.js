@@ -71,5 +71,9 @@ export const itemLinkMatches = ( path, currentPath ) => {
 		return isManageAllSitesPluginsPath( path );
 	}
 
+	if ( pathIncludes( currentPath, 'stats', 1 ) || pathIncludes( currentPath, 'stats', 2 ) ) {
+		return pathIncludes( path, 'stats', 1 );
+	}
+
 	return fragmentIsEqual( path, currentPath, 1 );
 };
