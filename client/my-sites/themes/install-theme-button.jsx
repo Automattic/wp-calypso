@@ -7,7 +7,6 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSiteMultiSite, isJetpackSite } from 'calypso/state/sites/selectors';
-import { isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { trackClick } from './helpers';
 
@@ -21,9 +20,8 @@ const InstallThemeButton = ( {
 	siteCanInstallThemes,
 	dispatchTracksEvent,
 	atomicSite,
-	isCommerceTrial,
 } ) => {
-	if ( ! isLoggedIn || isMultisite || isCommerceTrial ) {
+	if ( ! isLoggedIn || isMultisite ) {
 		return null;
 	}
 
@@ -78,7 +76,6 @@ const mapStateToProps = ( state ) => {
 		isLoggedIn: isUserLoggedIn( state ),
 		isMultisite: isJetpackSiteMultiSite( state, selectedSiteId ),
 		jetpackSite: isJetpackSite( state, selectedSiteId ),
-		isCommerceTrial: isSiteOnECommerceTrial( state, selectedSiteId ),
 		siteCanInstallThemes:
 			siteHasFeature( state, selectedSiteId, FEATURE_INSTALL_THEMES ) && atomicSite,
 		atomicSite,
