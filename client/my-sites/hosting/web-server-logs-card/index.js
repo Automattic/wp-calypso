@@ -15,7 +15,6 @@ import MaterialIcon from 'calypso/components/material-icon';
 import wpcom from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
-import { isAtomicSiteLogAccessEnabled } from 'calypso/state/selectors/is-atomic-site-log-access-enabled';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -213,7 +212,6 @@ const WebServerLogsCard = ( props ) => {
 		siteId,
 		siteSlug,
 		translate,
-		isAtomicSiteLogAccessEnabled: siteLogsEnabled,
 		atomicLogsDownloadStarted: recordDownloadStarted,
 		atomicLogsDownloadCompleted: recordDownloadCompleted,
 		atomicLogsDownloadError: recordDownloadError,
@@ -511,10 +509,6 @@ const WebServerLogsCard = ( props ) => {
 		);
 	};
 
-	if ( ! siteLogsEnabled ) {
-		return null;
-	}
-
 	return (
 		<Card className="web-server-logs-card">
 			<MaterialIcon icon="settings" size={ 32 } />
@@ -538,7 +532,6 @@ export default connect(
 		return {
 			siteId: getSelectedSiteId( state ),
 			siteSlug: getSelectedSiteSlug( state ),
-			isAtomicSiteLogAccessEnabled: isAtomicSiteLogAccessEnabled( state ),
 		};
 	},
 	{
