@@ -1,5 +1,5 @@
-// This file is a copy of the Gutenberg file packages/edit-site/src/components/global-styles/preview.js (7005d47).
-// The only changes made are the internal depedency import paths.
+// This file is a copy of https://github.com/WordPress/gutenberg/blob/7005d47/packages/edit-site/src/components/global-styles/preview.js.
+// Customizations are indicated with a "Custom WP.com code" comment.
 //
 // The reason this component is not imported directly from @wordpress/edit-site is that currently Calypso
 // uses version 4.6.0. Updating @wordpress/edit-site affects other packages which also depends on 4.6.0.
@@ -96,7 +96,9 @@ const StylesPreview = ( { label, isFocused, withHoverView } ) => {
 			return [
 				...styles,
 				{
-					css: 'html{overflow:hidden}body{min-width: 0;padding: 0;border: none;}',
+					// Custom WP.com code - START.
+					css: 'html{overflow:hidden}body{min-width: 0;padding: 0;border: none;transform:scale(1);}',
+					// Custom WP.com code - END.
 					isGlobalStyles: true,
 				},
 			];
