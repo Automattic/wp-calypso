@@ -122,7 +122,6 @@ export function buildDomainStepForLaunchpadNextSteps(
 
 	return {
 		stepKey: `domain_${ domainType }_whats_next_launchpad_next_steps`,
-		stepTitle: translate( 'Launch your site' ),
 		stepDescription: translate(
 			'You are a few steps away from bringing your site to life. Check out the next steps that will help you to launch your site.'
 		),
