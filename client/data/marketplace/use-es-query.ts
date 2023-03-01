@@ -117,11 +117,15 @@ export const getESPluginsInfiniteQueryParams = (
 	const [ searchTerm, author ] = extractSearchInformation( options.searchTerm );
 	const pageSize = options.pageSize ?? DEFAULT_PAGE_SIZE;
 	const cacheKey = getPluginsListKey( 'DEBUG-new-site-seach', options, true );
+	const groupId =
+		config.isEnabled( 'marketplace-jetpack-plugin-search' ) && options.category !== 'popular'
+			? 'marketplace'
+			: 'wporg';
 	const fetchFn = ( { pageParam = 1 } ) =>
 		search( {
 			query: searchTerm,
 			author,
-			groupId: config.isEnabled( 'marketplace-jetpack-plugin-search' ) ? 'marketplace' : 'wporg',
+			groupId,
 			category: options.category,
 			pageHandle: pageParam + '',
 			pageSize,
