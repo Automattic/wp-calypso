@@ -1,4 +1,5 @@
 import accessibleFocus from '@automattic/accessible-focus';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
@@ -220,6 +221,15 @@ const utils = () => {
 	Modal.setAppElement( document.getElementById( 'wpcom' ) );
 };
 
+const isLoginDateDiffAboveThreshold = ( currentUser, daysInterval ) => {
+	return currentUser.lastSeenDayInterval > daysInterval;
+};
+
+const isResurrectedUser = ( currentUser ) => {
+	// Last login date diff > 1 year
+	return isLoginDateDiffAboveThreshold( currentUser, 365 );
+};
+
 const configureReduxStore = ( currentUser, reduxStore ) => {
 	debug( 'Executing Calypso configure Redux store.' );
 
@@ -241,6 +251,16 @@ const configureReduxStore = ( currentUser, reduxStore ) => {
 		if ( config.isEnabled( 'push-notifications' ) ) {
 			// If the browser is capable, registers a service worker & exposes the API
 			reduxStore.dispatch( pushNotificationsInit() );
+		}
+
+		currentUser.lastSeenDayInterval = 368; // @todo set the lastSeenDayInterval in WPCOM backend.
+
+		if ( isResurrectedUser( currentUser ) ) {
+			// And fire off a Tracks event anywhere for "tagging" the user.
+			// e.g. so we can use it in Funnel. E.g. by dispatching an action.
+			recordTracksEvent( 'calypso_user_resurrected', {
+				last_seen: currentUser.lastSeenDayInterval,
+			} );
 		}
 	}
 };
