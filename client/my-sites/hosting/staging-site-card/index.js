@@ -80,7 +80,7 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 
 	const getNewStagingSiteContent = () => {
 		return (
-			<div>
+			<Fragment>
 				<p>
 					{ translate(
 						'A staging site is a test version of your website you can use to preview and troubleshoot changes before applying them to your production site.'
@@ -97,13 +97,13 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 				>
 					<span>{ translate( 'Add staging site' ) }</span>
 				</Button>
-			</div>
+			</Fragment>
 		);
 	};
 
 	const getManageStagingSiteContent = () => {
 		return (
-			<div>
+			<Fragment>
 				<p>
 					{ translate( 'Your staging site is available at {{a}}%(stagingSiteName)s{{/a}}.', {
 						args: {
@@ -117,7 +117,7 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 				<Button primary href={ `/home/${ stagingSiteSlug }` } disabled={ disabled }>
 					<span>{ translate( 'Manage staging site' ) }</span>
 				</Button>
-			</div>
+			</Fragment>
 		);
 	};
 
