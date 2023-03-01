@@ -4887,18 +4887,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@signal-noise/stylelint-scales@npm:^2.0.3":
-  version: 2.0.3
-  resolution: "@signal-noise/stylelint-scales@npm:2.0.3"
-  dependencies:
-    css-global-keywords: ^1.0.1
-    font-family: ^0.2.0
-    parse-css-font: ^4.0.0
-    postcss-values-parser: ^6.0.1
-  checksum: 09b948c7615b3fc2b946a3ee59ac4772861abce98ce1509030c239355f389d61efa97a10154dbd8a207ed0d65784ed2b8b00d7b46db359b1c87f9dc2c5eb6dea
-  languageName: node
-  linkType: hard
-
 "@sindresorhus/is@npm:^0.14.0":
   version: 0.14.0
   resolution: "@sindresorhus/is@npm:0.14.0"
@@ -13618,52 +13606,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"css-font-size-keywords@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "css-font-size-keywords@npm:1.0.0"
-  checksum: afc3e296a20e533da5fe84e1436914b5ec789d2db851b856688a1aa80f88c2ee408580a8a0a1e0581cc0952b65bfb37a769c841df185c7b1d95198c563996465
-  languageName: node
-  linkType: hard
-
-"css-font-stretch-keywords@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "css-font-stretch-keywords@npm:1.0.1"
-  checksum: 9f5c405c99962f2bf77ed79f9f137ac7eecbc2e0f64cfe448277af9924ec2717214369d0e9a02b4520e3e0812b6a5289fad36911678a13f5505e972889cb27a9
-  languageName: node
-  linkType: hard
-
-"css-font-style-keywords@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "css-font-style-keywords@npm:1.0.1"
-  checksum: 431bb7ee0346302abc9c94a74df0c20b8f5173ef8b29284c571bbba4eec4e22a461dcb6a7d0ae764f9b02f9a7a185612193906122c744af96eb6e4be72e646d2
-  languageName: node
-  linkType: hard
-
-"css-font-weight-keywords@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "css-font-weight-keywords@npm:1.0.0"
-  checksum: 99fbf6ca55ca86cbb083786f6ca83d47c0284eab1a96929b71401a50969e18a901474ffe8b1a895226f9bbde461c77d88ca50fcc871ce8a8926a2d2ba65bb847
-  languageName: node
-  linkType: hard
-
 "css-functions-list@npm:^3.1.0":
   version: 3.1.0
   resolution: "css-functions-list@npm:3.1.0"
   checksum: 609e73f955bdf904bf5742a13d9585a5b3bfe00f5943abc00963ee5ea11c867ebd5b3305164c4dc6b8c65e0bd8c764503aa5802aea378c4db2b5406fb8584fd7
-  languageName: node
-  linkType: hard
-
-"css-global-keywords@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "css-global-keywords@npm:1.0.1"
-  checksum: c49de806fa532fda2c2ba5b27b3443a2ad3d7b05a0a80d9eeae81231a67b7fa09b772dc87226d82a62b8a429141001a62f9eb3b78a4ad8ee85551beb65215a48
-  languageName: node
-  linkType: hard
-
-"css-list-helpers@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "css-list-helpers@npm:2.0.0"
-  checksum: 5a86b54ee8c78c190d2c5aafbf93b541ea36fe361d51bad69c6fc8666d0d71c31eb36dda7d0ddb4debf63581f5d6385c55522ebe1030c2fd4f47d5cccc480e35
   languageName: node
   linkType: hard
 
@@ -13774,13 +13720,6 @@ __metadata:
     domutils: 1.5.1
     nth-check: ~1.0.1
   checksum: 16e91cd4a8606e76eb2d93ded43e2d20fe315effa7e1dedf16e81fab5c6bbd18b394f78cb59c04e2dddc7d4c68e31a0617b7f4f196dff48398cf3ac83e78475c
-  languageName: node
-  linkType: hard
-
-"css-system-font-keywords@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "css-system-font-keywords@npm:1.0.0"
-  checksum: 8eb3c1d70f70f4727d273cfdc37c53cb0e312286c070f9ec1cf24b7c2602cf8b128f2a127004f1f9feca45848442ad99c22875a440457a238fcd3b9307c8f0ce
   languageName: node
   linkType: hard
 
@@ -17305,13 +17244,6 @@ __metadata:
     debug:
       optional: true
   checksum: ea21337fe38eac8d75f5af12c425cc40e0bb44dcc3091fd0bde1c828596251a7a9638b5720fee5a0a5c62524450cbe16c52aae1dce88c6aee68577e441842e7f
-  languageName: node
-  linkType: hard
-
-"font-family@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "font-family@npm:0.2.0"
-  checksum: 0cf274db53ff02d775ab7c4a0c0be3000612ee041dc48f1f1f6e6a865005f65e3901339f51cdbfe25f5fbbb7e775dde73deca5e1752d0704de9bd182ef72d69e
   languageName: node
   linkType: hard
 
@@ -25018,21 +24950,6 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"parse-css-font@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "parse-css-font@npm:4.0.0"
-  dependencies:
-    css-font-size-keywords: ^1.0.0
-    css-font-stretch-keywords: ^1.0.1
-    css-font-style-keywords: ^1.0.1
-    css-font-weight-keywords: ^1.0.0
-    css-list-helpers: ^2.0.0
-    css-system-font-keywords: ^1.0.0
-    unquote: ^1.1.1
-  checksum: 4fb6ee7658dc20891c26464c71cc3e5caf495ec88e22d948a35445cfce1f6b2c1a7a5f0537007869e23f8fa7d1d468e1f4bde0859231866f56445506a8c8c0f0
-  languageName: node
-  linkType: hard
-
 "parse-entities@npm:^1.0.2, parse-entities@npm:^1.1.0":
   version: 1.2.2
   resolution: "parse-entities@npm:1.2.2"
@@ -26171,16 +26088,16 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"postcss-values-parser@npm:^6.0.1":
-  version: 6.0.1
-  resolution: "postcss-values-parser@npm:6.0.1"
+"postcss-values-parser@npm:^6.0.2":
+  version: 6.0.2
+  resolution: "postcss-values-parser@npm:6.0.2"
   dependencies:
     color-name: ^1.1.4
     is-url-superb: ^4.0.0
     quote-unquote: ^1.0.0
   peerDependencies:
     postcss: ^8.2.9
-  checksum: 8506326a4b5e242b98fb791153be920eb32b55778b4e2338b5f890ed60743fa7a5181f87e6c1af06a28bc3b3e98afdd409dcfc58bb2a4bad651965a3fd67be11
+  checksum: 633b8bc7c46f7b6e2b1cb1f33aa0222a5cacb7f485eb41e6f902b5f37ab9884cd8e7e7b0706afb7e3c7766d85096b59e65f59a1eaefac55e2fc952a24f23bcb8
   languageName: node
   linkType: hard
 
@@ -30951,6 +30868,15 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"stylelint-scales@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "stylelint-scales@npm:3.0.0"
+  dependencies:
+    postcss-values-parser: ^6.0.2
+  checksum: c980589b1263186a60ba321439d52eedf39673522bda8ee63824a1616b0e974de3c5a33aaff43adb2daad08463678637e54f37405cf94986f3f59b6f7754c2df
+  languageName: node
+  linkType: hard
+
 "stylelint-scss@npm:^4.0.0":
   version: 4.2.0
   resolution: "stylelint-scss@npm:4.2.0"
@@ -32648,13 +32574,6 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"unquote@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "unquote@npm:1.1.1"
-  checksum: de59fb48cbaadc636002c6563dcb6b1bce95c91ebecb92addbc9bb47982cb03e7d8a8371c9617267b9e5746bbcb4403394139bc1310106b9ac4c26790ed57859
-  languageName: node
-  linkType: hard
-
 "unset-value@npm:^1.0.0":
   version: 1.0.0
   resolution: "unset-value@npm:1.0.0"
@@ -33889,7 +33808,6 @@ fsevents@^1.2.7:
     "@babel/register": ^7.17.0
     "@babel/runtime": ^7.17.2
     "@bartekbp/typescript-checkstyle": ^5.0.0
-    "@signal-noise/stylelint-scales": ^2.0.3
     "@testing-library/jest-dom": ^5.16.2
     "@types/cookie": ^0.4.1
     "@types/debug": ^4.1.7
@@ -34004,6 +33922,7 @@ fsevents@^1.2.7:
     stackframe: ^1.1.1
     stacktrace-gps: ^3.0.3
     stylelint: ^14.11.0
+    stylelint-scales: ^3.0.0
     tslib: ^2.3.0
     typescript: ^4.7.4
     v8-profiler-next: ^1.9.0
