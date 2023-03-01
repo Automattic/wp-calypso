@@ -98,7 +98,7 @@ export const DeploymentCard = ( { repo, branch, connectionId }: DeploymentCardPr
 					disconnectRepo( siteId );
 				} }
 			>
-				<span>{ translate( 'Disconnect from repository' ) }</span>
+				<span>{ translate( 'Disconnect repository' ) }</span>
 			</Button>
 		</Card>
 	);
