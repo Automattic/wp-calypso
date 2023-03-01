@@ -255,8 +255,8 @@ const WebServerLogsCard = ( props ) => {
 
 	const onValidateInputs = useCallback(
 		( start, end ) => {
-			const startMoment = moment( start, localeDateFormat );
-			const endMoment = moment( end, localeDateFormat );
+			const startMoment = moment( start, localeDateFormat )?.startOf( 'day' );
+			const endMoment = moment( end, localeDateFormat )?.endOf( 'day' );
 			const startDateIsValid = startMoment.isValid();
 			const endDateIsValid = endMoment.isValid();
 
@@ -302,8 +302,6 @@ const WebServerLogsCard = ( props ) => {
 	);
 
 	const updateStartEndTime = ( start, end ) => {
-		start?.startOf( 'day' );
-		end?.endOf( 'day' );
 		onValidateInputs( start, end );
 		setStartDateTime( start );
 		setEndDateTime( end );
@@ -326,8 +324,8 @@ const WebServerLogsCard = ( props ) => {
 			return;
 		}
 
-		const startMoment = moment.utc( startDateTime, localeDateFormat );
-		const endMoment = moment.utc( endDateTime, localeDateFormat );
+		const startMoment = moment.utc( startDateTime, localeDateFormat ).startOf( 'day' );
+		const endMoment = moment.utc( endDateTime, localeDateFormat ).endOf( 'day' );
 
 		const dateFormat = 'YYYYMMDDHHmmss';
 		const startString = startMoment.format( dateFormat );
