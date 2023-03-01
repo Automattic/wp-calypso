@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { convertToFriendlyWebsiteName } from 'calypso/blocks/import/util';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { addQueryArgs } from 'calypso/lib/route';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
@@ -40,7 +41,10 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	/**
 	 ↓ Fields
 	 */
-	const [ option, setOption ] = useState< WPImportOption >();
+	const queryParams = useQuery();
+	const [ option, setOption ] = useState< WPImportOption | undefined >(
+		getValidOptionParam( queryParams.get( 'option' ) )
+	);
 	const { job, fromSite, siteSlug, siteId, stepNavigator, showConfirmDialog } = props;
 	const siteItem = useSelector( ( state ) => getSite( state, siteId ) );
 	const fromSiteItem = useSelector( ( state ) =>
@@ -56,7 +60,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	/**
 	 ↓ Effects
 	 */
-	useEffect( checkOptionQueryParam );
+	useEffect( checkOptionQueryParam, [ queryParams.get( 'option' ) ] );
 	useEffect( checkImporterAvailability, [ siteId ] );
 	useEffect( () => {
 		if ( isMigrateFromWp ) {
@@ -96,15 +100,18 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	}
 
 	function checkOptionQueryParam() {
-		const urlSearchParams = new URLSearchParams( window.location.search );
-		const optionParam = urlSearchParams.get( 'option' );
+		const optionParam = queryParams.get( 'option' );
+		setOption( getValidOptionParam( optionParam ) );
+	}
+
+	function getValidOptionParam( param: string | null ) {
 		const options: string[] = Object.values( WPImportOption );
 
-		if ( optionParam && options.indexOf( optionParam ) >= 0 ) {
-			setOption( optionParam as WPImportOption );
-		} else {
-			setOption( undefined );
+		if ( param && options.indexOf( param ) >= 0 ) {
+			return param as WPImportOption;
 		}
+
+		return undefined;
 	}
 
 	function updateCurrentPageQueryParam( params: {
