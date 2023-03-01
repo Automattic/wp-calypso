@@ -315,12 +315,14 @@ export function getEnhancedTasks(
 					taskData = {
 						title: translate( 'Choose a domain' ),
 						completed: chooseDomainCompleted,
-						disabled: chooseDomainCompleted,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, chooseDomainCompleted, task.id );
-							window.location.assign( `/domains/add/${ siteSlug }?domainAndPlanPackage=true` );
+							const redirectURL = chooseDomainCompleted
+								? `/domains/manage/${ siteSlug }`
+								: `/domains/add/${ siteSlug }?domainAndPlanPackage=true`;
+							window.location.assign( redirectURL );
 						},
-						badgeText: translate( 'Upgrade plan' ),
+						badgeText: ! chooseDomainCompleted ? translate( 'Upgrade plan' ) : null,
 					};
 					break;
 			}
