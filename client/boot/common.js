@@ -253,7 +253,7 @@ const configureReduxStore = ( currentUser, reduxStore ) => {
 			reduxStore.dispatch( pushNotificationsInit() );
 		}
 
-		currentUser.lastSeenDayInterval = 368; // @todo set the lastSeenDayInterval in WPCOM backend.
+		currentUser.lastSeenDayInterval = 368; // @todo set the lastSeenDayInterval in User meta API in WP.
 
 		if ( isResurrectedUser( currentUser ) ) {
 			// And fire off a Tracks event anywhere for "tagging" the user.
