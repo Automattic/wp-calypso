@@ -22,20 +22,31 @@ export const SearchBranches = ( {
 }: SearchBranchesProps ) => {
 	const { __ } = useI18n();
 
-	const { data: branches, isLoading: isLoading } = useGithubBranchesQuery(
-		siteId,
-		repoName,
-		connectionId,
-		{
-			onSuccess( branches ) {
-				if ( branches.length < 30 ) {
-					onSelect( branches[ 0 ] );
-				}
-			},
-		}
-	);
+	const { data: branches, isFetching } = useGithubBranchesQuery( siteId, repoName, connectionId, {
+		onSuccess( branches ) {
+			if ( branches.length < 30 ) {
+				onSelect( branches[ 0 ] );
+			}
+		},
+	} );
 
-	if ( branches && branches.length < 30 ) {
+	if ( ! repoName || isFetching ) {
+		return (
+			<div style={ { position: 'relative' } }>
+				<FormTextInput
+					id="branch"
+					disabled={ ! repoName || isFetching }
+					className="connect-branch__repository-field"
+					placeholder={ branches ? __( 'Type a branch' ) : __( 'Choose a branch' ) }
+					onChange={ ( e: ChangeEvent< HTMLInputElement > ) => onSelect( e.target.value ) }
+					value={ selectedBranch }
+				/>
+				{ isFetching && <Spinner className="connect-branch__loading" /> }
+			</div>
+		);
+	}
+
+	if ( branches && branches.length > 0 && branches.length < 30 ) {
 		return (
 			<FormSelect
 				id="branch"
@@ -54,16 +65,12 @@ export const SearchBranches = ( {
 	}
 
 	return (
-		<div style={ { position: 'relative' } }>
-			<FormTextInput
-				id="branch"
-				disabled={ ! repoName || isLoading }
-				className="connect-branch__repository-field"
-				placeholder={ branches ? __( 'Type a branch' ) : __( 'Choose a branch' ) }
-				onChange={ ( e: ChangeEvent< HTMLInputElement > ) => onSelect( e.target.value ) }
-				value={ selectedBranch }
-			/>
-			{ isLoading && <Spinner className="connect-branch__loading" /> }
-		</div>
+		<FormTextInput
+			id="branch"
+			disabled
+			className="connect-branch__repository-field"
+			placeholder={ __( 'No branches found' ) }
+			value=""
+		/>
 	);
 };
