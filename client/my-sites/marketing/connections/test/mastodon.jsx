@@ -3,7 +3,7 @@
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Mastodon } from '../mastodon';
+import { Mastodon, isValidUsername } from '../mastodon';
 
 const props = {
 	service: {
@@ -87,5 +87,22 @@ describe( 'Mastodon', () => {
 
 		expect( screen.queryByRole( 'alert' ) ).toBeNull();
 		expect( container.getElementsByClassName( 'spinner' ).length ).toBe( 0 );
+	} );
+
+	describe( 'isValidUsername', () => {
+		test( 'returns true when username is valid', () => {
+			expect( isValidUsername( '@user@example.com' ) ).toBe( true );
+			expect( isValidUsername( 'user@example.com' ) ).toBe( true );
+			expect( isValidUsername( '@user@subdomain.example.com' ) ).toBe( true );
+			expect( isValidUsername( '@user@subdomain.example.com:9000' ) ).toBe( true );
+			expect( isValidUsername( '@12345@instance.com' ) ).toBe( true );
+		} );
+
+		test( 'returns false when username is not valid', () => {
+			expect( isValidUsername( '@example.com' ) ).toBe( false );
+			expect( isValidUsername( '@user@example.c' ) ).toBe( false );
+			expect( isValidUsername( 'invalid instance' ) ).toBe( false );
+			expect( isValidUsername( ' instance' ) ).toBe( false );
+		} );
 	} );
 } );

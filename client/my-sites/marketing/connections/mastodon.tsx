@@ -59,6 +59,12 @@ const InstanceContainer = styled.div( {
 	gap: '10px',
 } );
 
+/**
+ * Checks if username matches a valid Mastodon username.
+ */
+export const isValidUsername = ( username: string ) =>
+	/@?\b([A-Z0-9_]+)@([A-Z0-9.-]+\.[A-Z]{2,})\b/gi.test( username );
+
 export const Mastodon: React.FC< Props > = ( {
 	service,
 	action,
@@ -69,12 +75,6 @@ export const Mastodon: React.FC< Props > = ( {
 	const translate = useTranslate();
 	const [ instance, setInstance ] = useState( '' );
 	const [ error, setError ] = useState( '' );
-
-	/**
-	 * Checks if username matches a valid Mastodon username.
-	 */
-	const isValidUsername = ( username: string ) =>
-		/@?\b([A-Z0-9_]+)@([A-Z0-9.-]+\.[A-Z]{2,})\b/gi.test( username );
 
 	const validateInstance = useCallback( () => {
 		if ( isValidUsername( instance ) || ! instance ) {
