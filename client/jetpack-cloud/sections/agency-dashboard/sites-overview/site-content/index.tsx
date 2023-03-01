@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import page from 'page';
@@ -11,7 +10,7 @@ import SitesOverviewContext from '../context';
 import SiteBulkSelect from '../site-bulk-select';
 import SiteCard from '../site-card';
 import SiteTable from '../site-table';
-import { formatSites, siteColumns, siteColumnswithStats } from '../utils';
+import { formatSites, siteColumns } from '../utils';
 
 import './style.scss';
 
@@ -37,8 +36,6 @@ export default function SiteContent( { data, isLoading, currentPage, isFavorites
 	const handlePageClick = ( pageNumber: number ) => {
 		addPageArgs( pageNumber );
 	};
-
-	const isExpandedBlockEnabled = ! isEnabled( 'jetpack/pro-dashboard-expandable-block' );
 
 	return (
 		<>
@@ -71,11 +68,7 @@ export default function SiteContent( { data, isLoading, currentPage, isFavorites
 							<>
 								{ sites.length > 0 &&
 									sites.map( ( rows, index ) => (
-										<SiteCard
-											key={ index }
-											columns={ isExpandedBlockEnabled ? siteColumns : siteColumnswithStats }
-											rows={ rows }
-										/>
+										<SiteCard key={ index } columns={ siteColumns } rows={ rows } />
 									) ) }
 							</>
 						) }

@@ -49,7 +49,6 @@ export default function SiteStatusContent( {
 
 	const siteId = rows.site.value.blog_id;
 	const siteUrl = rows.site.value.url;
-	const statTrend = rows.stats.data.views.trend;
 
 	const isLicenseSelected = useSelector( ( state ) =>
 		hasSelectedLicensesOfType( state, siteId, type )
@@ -183,7 +182,7 @@ export default function SiteStatusContent( {
 				<Gridicon
 					icon={ `arrow-${ viewsTrend }` }
 					size={ 18 }
-					className={ `sites-overview__icon-${ statTrend }` }
+					className={ `sites-overview__icon-${ viewsTrend }` }
 				/>
 				<div className="sites-overview__stats">
 					<ShortenedNumber value={ totalViews } />{ ' ' }
