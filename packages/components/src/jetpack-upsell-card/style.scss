@@ -1,5 +1,6 @@
 @import "@automattic/typography/styles/variables";
 @import "@automattic/components/src/styles/typography";
+@import "@wordpress/base-styles/breakpoints";
 
 .jetpack-upsell-card {
 	--jetpack-yelow-off: #edf2e2;
@@ -13,7 +14,7 @@
 
 .jetpack-upsell-card__product {
 	display: grid;
-	grid-template-columns: max-content 3fr max-content max-content;
+	grid-template-columns: max-content 1fr max-content max-content;
 	grid-template-areas:
 		"icon title link button"
 		"icon description link button";
@@ -32,11 +33,12 @@
 	line-height: 1;
 }
 .jetpack-upsell-card__product-title {
-	grid-area: title;
-	margin: 0;
-	font-size: $font-body;
-	letter-spacing: -0.02em;
 	color: var(--studio-gray-100);
+	font-size: $font-body;
+	font-weight: 600;
+	grid-area: title;
+	letter-spacing: -0.02em;
+	margin: 0;
 }
 .jetpack-upsell-card__product-description {
 	grid-area: description;
@@ -51,6 +53,7 @@
 	font-size: $font-body-small;
 	grid-area: link;
 	justify-self: end;
+	margin-bottom: 0.5em;
 	text-decoration: underline;
 
 	.gridicon {
@@ -68,15 +71,42 @@
 }
 
 
-.jetpack-upsell-card__content > .jetpack-upsell-card__product > .jetpack-upsell-card__product-button {
+.jetpack-upsell-card__product-button {
 	align-self: center;
-	background: var(--studio-black);
-	border-color: var(--studio-black);
-	border-radius: 4px;
-	color: var(--studio-white);
 	font-family: inherit;
 	grid-area: button;
 	justify-self: end;
-	padding: 0.5em 1.5em;
 	transition: background-color 0.1s linear, border-color 0.1s linear;
+
+	// Increase specificity to override existing wp-admin styles.
+	.jetpack-upsell-card__content > .jetpack-upsell-card__product > & {
+		background: var(--studio-black);
+		border-color: var(--studio-black);
+		border-radius: 4px;
+		color: var(--studio-white);
+		font-size: $font-body;
+		line-height: 1.375;
+		min-height: initial;
+		padding: 0.5em 1.5em;
+	}
+}
+
+@media (max-width: $break-medium ) {
+	.jetpack-upsell-card__product {
+		grid-template-areas:
+			"title title icon"
+			"description description icon"
+			"button link link";
+		grid-template-columns: 1fr max-content max-content;
+		row-gap: 0.5em;
+	}
+
+	.jetpack-upsell-card__product-icon {
+		align-self: start;
+		justify-self: end;
+	}
+
+	.jetpack-upsell-card__product-button {
+		justify-self: start;
+	}
 }
