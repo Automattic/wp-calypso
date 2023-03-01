@@ -73,7 +73,7 @@ const BackupRetentionManagement: FunctionComponent< OwnProps > = ( {
 	const [ retentionSelected, setRetentionSelected ] = useState( initializeDefaultRetention );
 
 	// If the current selection requires an storage upgrade
-	const [ storageUpgradeRequired, setStorageUpgradeRequired ] = useState< boolean >( null );
+	const [ storageUpgradeRequired, setStorageUpgradeRequired ] = useState< boolean | null >( null );
 
 	// The retention days that currently applies for this customer.
 	const currentRetentionPlan = customerRetentionPeriod || planRetentionPeriod || 0;
