@@ -60,6 +60,29 @@ body.is-section-theme-i4 {
 
 		.theme__sheet-column-right {
 			grid-area: preview;
+
+			.sticky-panel {
+				width: 100%;
+
+				&.is-sticky .sticky-panel__content {
+					margin-top: 16px;
+
+					@include breakpoint-deprecated( "<960px" ) {
+						margin-top: 0;
+						position: relative;
+					}
+				}
+
+				.sticky-panel__content {
+					transition: all 200ms ease-in-out;
+				}
+
+				.sticky-panel__spacer {
+					@include breakpoint-deprecated( "<960px" ) {
+						display: none;
+					}
+				}
+			}
 		}
 
 		.theme__sheet-column-left,
