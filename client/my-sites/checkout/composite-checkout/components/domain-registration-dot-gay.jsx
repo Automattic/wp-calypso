@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import { isEmpty, merge, reduce } from 'lodash';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { getDomainRegistrations, getDomainTransfers } from 'calypso/lib/cart-values/cart-items';
@@ -12,27 +11,23 @@ import { getProductsList } from 'calypso/state/products-list/selectors';
 class DomainRegistrationDotGay extends PureComponent {
 	getDotGayTlds = () => {
 		const { cart, productsList } = this.props;
-		const domains = merge( getDomainRegistrations( cart ), getDomainTransfers( cart ) );
+		const domains = [ ...getDomainRegistrations( cart ), ...getDomainTransfers( cart ) ];
 
-		if ( isEmpty( domains ) ) {
+		if ( ! domains.length ) {
 			return null;
 		}
 
-		const dotGayTlds = reduce(
-			domains,
-			( tlds, domain ) => {
-				if ( isDotGayNoticeRequired( domain.product_slug, productsList ) ) {
-					const tld = '.' + getTld( domain.meta );
+		const dotGayTlds = domains.reduce( ( tlds, domain ) => {
+			if ( isDotGayNoticeRequired( domain.product_slug, productsList ) ) {
+				const tld = '.' + getTld( domain.meta );
 
-					if ( tlds.indexOf( tld ) === -1 ) {
-						tlds.push( tld );
-					}
+				if ( tlds.indexOf( tld ) === -1 ) {
+					tlds.push( tld );
 				}
+			}
 
-				return tlds;
-			},
-			[]
-		);
+			return tlds;
+		}, [] );
 
 		return dotGayTlds.join( ', ' );
 	};

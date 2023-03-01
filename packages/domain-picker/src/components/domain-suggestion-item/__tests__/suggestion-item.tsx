@@ -13,6 +13,10 @@ const renderComponent = ( props = {} ): RenderResult =>
 	render( <SuggestionItem { ...MOCK_SUGGESTION_ITEM_PARTIAL_PROPS } { ...props } /> );
 
 describe( 'traintracks events', () => {
+	beforeEach( () => {
+		global.ResizeObserver = require( 'resize-observer-polyfill' );
+	} );
+
 	afterEach( () => {
 		jest.clearAllMocks();
 	} );
@@ -63,7 +67,6 @@ describe( 'traintracks events', () => {
 			renderComponent();
 
 			fireEvent.click( screen.getByRole( 'button' ) );
-
 			expect( MOCK_SUGGESTION_ITEM_PARTIAL_PROPS.onSelect ).toHaveBeenCalledWith(
 				MOCK_SUGGESTION_ITEM_PARTIAL_PROPS.domain
 			);
@@ -129,23 +132,17 @@ describe( 'conditional elements', () => {
 
 	it.skip( 'clicking info tooltip icon reveals popover for .gay information notice', async () => {
 		const testRequiredProps = {
+			...MOCK_SUGGESTION_ITEM_PARTIAL_PROPS,
 			domain: 'testdomain.gay',
 			cost: '€37.00',
 			railcarId: 'id',
+			isDotGayNoticeRequired: true,
 		};
 
-		render(
-			<SuggestionItem
-				{ ...testRequiredProps }
-				onSelect={ jest.fn() }
-				onRender={ jest.fn() }
-				isDotGayNoticeRequired={ true }
-			/>
-		);
-
+		render( <SuggestionItem { ...testRequiredProps } /> );
 		fireEvent.click( screen.getByTestId( 'info-tooltip' ) );
 
-		expect( screen.queryByText( /LGBT content/i ) ).toBeTruthy();
+		expect( screen.queryByText( /Any anti-LGBTQ content/i ) ).toBeTruthy();
 	} );
 	/*eslint-enable*/
 
