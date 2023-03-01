@@ -292,7 +292,7 @@ function useSubmenuItems( {
 				},
 				{
 					condition: isAtomic,
-					label: __( 'Github connection' ),
+					label: __( 'GitHub connection' ),
 					href: `/hosting-config/${ siteSlug }#connect-github`,
 					eventName: 'calypso_sites_dashboard_site_action_submenu_connect_github_click',
 				},

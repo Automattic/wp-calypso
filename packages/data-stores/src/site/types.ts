@@ -113,6 +113,7 @@ export interface SiteDetails {
 	is_private?: boolean;
 	is_vip?: boolean;
 	is_wpcom_atomic?: boolean;
+	is_wpcom_staging_site?: boolean;
 	jetpack: boolean;
 	lang?: string;
 	launch_status: string;
@@ -230,6 +231,8 @@ export interface SiteDetailsOptions {
 	wordads?: boolean;
 	launchpad_screen?: false | 'off' | 'full' | 'minimized';
 	launchpad_checklist_tasks_statuses?: LaunchPadCheckListTasksStatuses;
+	wpcom_production_blog_id?: number;
+	wpcom_staging_blog_ids?: number[];
 }
 
 export type SiteOption = keyof SiteDetails[ 'options' ];

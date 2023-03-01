@@ -93,10 +93,10 @@ export const StatsReach = ( props ) => {
 				<StatsListCard
 					moduleType="publicize"
 					data={ data }
-					title={ translate( 'Social subscribers' ) }
+					title={ translate( 'Number of Subscribers' ) }
 					emptyMessage={ translate( 'No subscribers recorded' ) }
-					mainItemLabel={ translate( 'Service' ) }
-					metricLabel={ translate( 'Total subscribers' ) }
+					mainItemLabel=""
+					metricLabel=""
 					splitHeader
 					useShortNumber
 					// Shares don't have a summary page yet.

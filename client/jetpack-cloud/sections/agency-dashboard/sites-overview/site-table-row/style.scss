@@ -63,7 +63,7 @@ td.site-table__error {
 }
 
 tr.site-table__table-row-site-error {
-	background: var(--studio-red-0);
+	background: var(--studio-red-0) !important;
 	&:hover,
 	&:hover .sites-overview__overlay,
 	.sites-overview__overlay {
