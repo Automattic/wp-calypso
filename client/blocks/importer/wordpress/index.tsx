@@ -62,14 +62,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	 */
 	useEffect( checkOptionQueryParam, [ queryParams.get( 'option' ) ] );
 	useEffect( checkImporterAvailability, [ siteId ] );
-	useEffect( () => {
-		if ( isMigrateFromWp ) {
-			storeMigrateSource();
-		}
-		if ( 'true' === retrieveMigrateSource() ) {
-			setIsMigrateFromWp( true );
-		}
-	}, [] );
+	useEffect( checkIfImportInitFromMigratePlugin, [] );
 
 	/**
 	 ↓ Methods
@@ -89,6 +82,15 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 		isSiteAtomic
 			? redirectToWpAdminWordPressImporter()
 			: updateCurrentPageQueryParam( { option: WPImportOption.CONTENT_ONLY } );
+	}
+
+	function checkIfImportInitFromMigratePlugin() {
+		if ( isMigrateFromWp ) {
+			storeMigrateSource();
+		}
+		if ( 'true' === retrieveMigrateSource() ) {
+			setIsMigrateFromWp( true );
+		}
 	}
 
 	function checkImporterAvailability() {
