@@ -94,6 +94,15 @@ export default function SiteStatusContent( {
 		dispatch( unselectLicense( siteId, type ) );
 	};
 
+	function getStatTrendIcon( trend: string ) {
+		if ( trend === 'up' ) {
+			return 'arrow-up';
+		} else if ( trend === 'down' ) {
+			return 'arrow-down';
+		}
+		return 'same';
+	}
+
 	if ( type === 'site' ) {
 		// Site issues is the sum of scan threats and plugin updates
 		let siteIssuesCount = rows.scan.threats + rows.plugin.updates;
@@ -179,13 +188,9 @@ export default function SiteStatusContent( {
 		const { total: totalViews, trend: viewsTrend } = rows.stats.data.views;
 		return (
 			<>
-				<Gridicon
-					icon={ `arrow-${ viewsTrend }` }
-					size={ 18 }
-					className={ `sites-overview__icon-${ viewsTrend }` }
-				/>
+				<Gridicon icon={ getStatTrendIcon( viewsTrend ) } size={ 18 } />
 				<div className="sites-overview__stats">
-					<ShortenedNumber value={ totalViews } />{ ' ' }
+					<ShortenedNumber value={ totalViews } />
 				</div>
 			</>
 		);
