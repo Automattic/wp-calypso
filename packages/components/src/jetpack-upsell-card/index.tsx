@@ -107,9 +107,17 @@ export default function JetpackUpsellCard( {
 	return ! hasProductsToUpsell ? null : (
 		<Card className="jetpack-upsell-card">
 			<h2 className="jetpack-upsell-card__title">
-				{ translate( 'Enhance %(siteSlug)s with Jetpack Security, Performance, and Growth tools', {
-					args: { siteSlug: siteSlug ?? 'your site' },
-				} ) }
+				<span className="jetpack-upsell-card__title--long">
+					{ translate(
+						'Enhance %(siteSlug)s with Jetpack Security, Performance, and Growth tools',
+						{
+							args: { siteSlug: siteSlug ?? 'your site' },
+						}
+					) }
+				</span>
+				<span className="jetpack-upsell-card__title--short">
+					{ translate( 'Explore more tools by Jetpack' ) }
+				</span>
 			</h2>
 			<div className="jetpack-upsell-card__content">
 				{ /* Only upsell products that the customer does not own. */ }

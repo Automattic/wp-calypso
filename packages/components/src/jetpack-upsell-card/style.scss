@@ -91,6 +91,19 @@
 	}
 }
 
+.jetpack-upsell-card__title--short {
+	display: none;
+}
+
+@media (max-width: $break-small ) {
+	.jetpack-upsell-card__title--short {
+		display: inline;
+	}
+	.jetpack-upsell-card__title--long {
+		display: none;
+	}
+}
+
 @media (max-width: $break-medium ) {
 	.jetpack-upsell-card__product {
 		grid-template-areas:
