@@ -31,7 +31,6 @@ export default function ( router ) {
 		scrollTopIfNoHash,
 		siteSelection,
 		renderProvisionPlugins,
-		redirectTrialSites,
 		makeLayout,
 		clientRender
 	);
@@ -68,7 +67,6 @@ export default function ( router ) {
 		scrollTopIfNoHash,
 		siteSelection,
 		sites,
-		redirectTrialSites,
 		makeLayout,
 		clientRender
 	);
@@ -91,7 +89,6 @@ export default function ( router ) {
 		scrollTopIfNoHash,
 		siteSelection,
 		navigationIfLoggedIn,
-		redirectTrialSites,
 		browsePlugins,
 		makeLayout,
 		clientRender
