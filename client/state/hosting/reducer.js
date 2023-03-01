@@ -34,6 +34,14 @@ export const sftpUsers = ( state = {}, { type, users } ) => {
 	return state;
 };
 
+export const isLoadingSftpUsers = ( state = true, { type } ) => {
+	if ( type === HOSTING_SFTP_USERS_SET ) {
+		return false;
+	}
+
+	return state;
+};
+
 const geoAffinity = ( state = null, { type, setting } ) => {
 	switch ( type ) {
 		case HOSTING_GEO_AFFINITY_SET:
@@ -107,6 +115,7 @@ const atomicHostingReducer = combineReducers( {
 	isFetchingGeoAffinity,
 	phpVersion,
 	sftpUsers,
+	isLoadingSftpUsers,
 	sshAccess,
 	isLoadingSshAccess,
 	staticFile404,
