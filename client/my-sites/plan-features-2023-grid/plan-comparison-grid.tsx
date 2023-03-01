@@ -484,7 +484,10 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 				? planObject.get2023PlanComparisonFeatureOverride().slice()
 				: planObject.get2023PricingGridSignupWpcomFeatures?.().slice() ?? [];
 
-			const jetpackFeatures = planObject.get2023PricingGridSignupJetpackFeatures?.() ?? [];
+			const jetpackFeatures = planObject.get2023PlanComparisonJetpackFeatureOverride
+				? planObject.get2023PlanComparisonJetpackFeatureOverride().slice()
+				: planObject.get2023PricingGridSignupJetpackFeatures?.().slice() ?? [];
+
 			const annualOnlyFeatures = planObject.getAnnualPlansOnlyFeatures?.() ?? [];
 
 			let featuresAvailable = [ ...wpcomFeatures, ...jetpackFeatures ];

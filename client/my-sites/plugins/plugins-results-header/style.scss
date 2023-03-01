@@ -4,6 +4,7 @@
 	align-items: center;
 	justify-content: space-between;
 	flex-wrap: wrap;
+	column-gap: 12px;
 
 	.plugins-results-header__titles {
 		margin-bottom: 6px; // +18 from elements = 24 gap

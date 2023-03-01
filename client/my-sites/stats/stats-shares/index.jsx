@@ -60,10 +60,10 @@ const StatShares = ( { siteId } ) => {
 				<StatsListCard
 					moduleType="shares"
 					data={ data }
-					title={ translate( 'Shares' ) }
+					title={ translate( 'Number of Shares' ) }
 					emptyMessage={ translate( 'No shares recorded' ) }
-					mainItemLabel={ translate( 'Service' ) }
-					metricLabel={ translate( 'Total shares' ) }
+					mainItemLabel=""
+					metricLabel=""
 					splitHeader
 					useShortNumber
 					// Shares don't have a summary page yet.
