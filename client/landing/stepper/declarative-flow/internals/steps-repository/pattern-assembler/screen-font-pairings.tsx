@@ -9,7 +9,7 @@ interface Props {
 	siteId: number | string;
 	stylesheet: string;
 	selectedFontPairingVariation: GlobalStylesObject | null;
-	onSelect: ( fontPairingVariation: GlobalStylesObject ) => void;
+	onSelect: ( fontPairingVariation: GlobalStylesObject | null ) => void;
 	onDoneClick: () => void;
 }
 
