@@ -177,15 +177,16 @@ export default function SiteStatusContent( {
 	let content;
 
 	if ( type === 'stats' ) {
+		const { total: totalViews, trend: viewsTrend } = rows.stats.data.views;
 		return (
 			<>
 				<Gridicon
-					icon={ `arrow-${ statTrend }` }
+					icon={ `arrow-${ viewsTrend }` }
 					size={ 18 }
 					className={ `sites-overview__icon-${ statTrend }` }
 				/>
 				<div className="sites-overview__stats">
-					<ShortenedNumber value={ value } />{ ' ' }
+					<ShortenedNumber value={ totalViews } />{ ' ' }
 				</div>
 			</>
 		);
