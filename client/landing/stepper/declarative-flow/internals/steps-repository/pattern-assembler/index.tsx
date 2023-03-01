@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { useSyncGlobalStyles } from '@automattic/global-styles';
+import { useSyncGlobalStylesUserConfig } from '@automattic/global-styles';
 import { StepContainer, WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import {
 	__experimentalNavigatorProvider as NavigatorProvider,
@@ -46,7 +46,8 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 	const incrementIndexRef = useRef( 0 );
 	const [ activePosition, setActivePosition ] = useState( -1 );
 	const { goBack, goNext, submit } = navigation;
-	const { setThemeOnSite, runThemeSetupOnSite, createCustomTemplate } = useDispatch( SITE_STORE );
+	const { setThemeOnSite, runThemeSetupOnSite, createCustomTemplate, setGlobalStyles } =
+		useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
@@ -75,6 +76,11 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 		[ selectedColorPaletteVariation ]
 	);
 
+	const syncedGlobalStylesUserConfig = useSyncGlobalStylesUserConfig(
+		selectedVariations,
+		isEnabledColorAndFonts
+	);
+
 	const largePreviewProps = {
 		placeholder: null,
 		header,
@@ -87,8 +93,6 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 		title: site?.name,
 		tagline: site?.description || SITE_TAGLINE,
 	};
-
-	useSyncGlobalStyles( selectedVariations, isEnabledColorAndFonts );
 
 	const getPatterns = ( patternType?: string | null ) => {
 		let patterns = [ header, ...sections, footer ];
@@ -279,6 +283,11 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 			// the slug of newly created Home template if the current activated theme has
 			// modified Home template.
 			setThemeOnSite( siteSlugOrId, theme, undefined, false )
+				.then( () => {
+					if ( isEnabledColorAndFonts ) {
+						return setGlobalStyles( siteSlugOrId, stylesheet, syncedGlobalStylesUserConfig );
+					}
+				} )
 				.then( () =>
 					createCustomTemplate(
 						siteSlugOrId,
