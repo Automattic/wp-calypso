@@ -55,9 +55,7 @@ export default function DomainUpsell( { context } ) {
 			isP2Site( primarySite ) ||
 			isNotAtomicJetpack( primarySite ) );
 
-	const shouldNotShowMyHomeUpsell =
-		! isProfileUpsell &&
-		( siteDomainsLength || ! isEmailVerified || ( ! isFreePlan && isMonthlyPlan ) );
+	const shouldNotShowMyHomeUpsell = ! isProfileUpsell && ( siteDomainsLength || ! isEmailVerified );
 
 	if ( shouldNotShowProfileUpsell || shouldNotShowMyHomeUpsell ) {
 		return null;
