@@ -35,6 +35,7 @@ const options = {
 	promotion: 'promotion',
 	news: 'news',
 	digest: 'digest',
+	reports: 'reports',
 	jetpack_marketing: 'jetpack_marketing',
 	jetpack_research: 'jetpack_research',
 	jetpack_promotion: 'jetpack_promotion',
@@ -120,10 +121,14 @@ class WPCOMNotifications extends Component {
 					name={ options.digest }
 					isEnabled={ get( settings, options.digest ) }
 					title={ translate( 'Digests' ) }
-					description={ translate(
-						'Popular content from the blogs you follow, and reports on ' +
-							'your own site and its performance.'
-					) }
+					description={ translate( 'Popular content from the blogs you follow.' ) }
+				/>
+
+				<EmailCategory
+					name={ options.reports }
+					isEnabled={ get( settings, options.reports ) }
+					title={ translate( 'Reports' ) }
+					description={ translate( 'Monthly reports on your own site and its performance.' ) }
 				/>
 
 				{ this.props.hasJetpackSites ? (
