@@ -1,4 +1,4 @@
-import { Button, Card, Spinner, Gridicon, LoadingPlaceholder } from '@automattic/components';
+import { Button, Card, Gridicon, LoadingPlaceholder } from '@automattic/components';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -6,6 +6,7 @@ import { localize } from 'i18n-calypso';
 import { useState, useEffect, Fragment } from 'react';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
+import { LoadingBar } from 'calypso/components/loading-bar';
 import { useAddStagingSiteMutation } from 'calypso/my-sites/hosting/staging-site-card/use-add-staging-site';
 import { useCheckStagingSiteStatus } from 'calypso/my-sites/hosting/staging-site-card/use-check-staging-site-status';
 import { useStagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
@@ -32,6 +33,10 @@ const ButtonPlaceholder = styled( LoadingPlaceholder )( {
 	height: '40px',
 } );
 
+const StyledLoadingBar = styled( LoadingBar )( {
+	marginBottom: '1em',
+} );
+
 const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
@@ -47,6 +52,7 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 	const showManageStagingSite = ! isLoadingStagingSites && stagingSites && stagingSites.length > 0;
 
 	const [ wasCreating, setWasCreating ] = useState( false );
+	const [ progress, setProgress ] = useState( 1 );
 	const transferStatus = useCheckStagingSiteStatus( stagingSite.id );
 	const isStagingSiteTransferComplete = transferStatus === transferStates.COMPLETE;
 
@@ -55,6 +61,10 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 			dispatch( successNotice( __( 'Staging site added.' ) ) );
 		}
 	}, [ dispatch, __, isStagingSiteTransferComplete, wasCreating ] );
+
+	useEffect( () => {
+		setProgress( ( prevProgress ) => prevProgress + 0.1 );
+	}, [ transferStatus ] );
 
 	const { addStagingSite, isLoading: addingStagingSite } = useAddStagingSiteMutation( siteId, {
 		onMutate: () => {
@@ -92,6 +102,7 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 					onClick={ () => {
 						dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_click' ) );
 						setWasCreating( true );
+						setProgress( 0.1 );
 						addStagingSite();
 					} }
 				>
@@ -142,7 +153,14 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 			{ showManageStagingSite && isStagingSiteTransferComplete && getManageStagingSiteContent() }
 			{ isLoadingStagingSites && getLoadingStagingSitesPlaceholder() }
 			{ ( addingStagingSite || ( showManageStagingSite && ! isStagingSiteTransferComplete ) ) && (
-				<Spinner />
+				<Fragment>
+					<StyledLoadingBar progress={ progress } />
+					<p>
+						{ __(
+							'Feel free to continue working while we create your staging site. We’ll email you once it is ready.'
+						) }
+					</p>
+				</Fragment>
 			) }
 		</Card>
 	);
