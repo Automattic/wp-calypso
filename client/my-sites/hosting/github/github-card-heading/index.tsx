@@ -6,7 +6,8 @@ export function GitHubCardHeading() {
 	return (
 		<>
 			<SocialLogo className="material-icon" icon="github" size={ 32 } />
-			<CardHeading>{ translate( 'Deploy from GitHub' ) }</CardHeading>
+			{ /* Element ID allows direct linking from the /sites page */ }
+			<CardHeading id="connect-github">{ translate( 'Deploy from GitHub' ) }</CardHeading>
 		</>
 	);
 }
