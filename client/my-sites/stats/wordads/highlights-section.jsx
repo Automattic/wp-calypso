@@ -1,10 +1,9 @@
-import { Popover } from '@automattic/components';
+import { HighlightCardSimple, Popover } from '@automattic/components';
 import { Icon, info, payment, receipt, tip } from '@wordpress/icons';
 import { numberFormat, translate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getWordAdsEarnings } from 'calypso/state/wordads/earnings/selectors';
-import HighlightCardSimple from './highlight-card-simple';
 
 // TODO: HighlightCard does not accept string values.
 // Should refactor to accept strings and move the business logic into the callers.
