@@ -3,14 +3,23 @@ import { ColorPaletteVariations } from '@automattic/global-styles';
 import { __experimentalNavigatorBackButton as NavigatorBackButton } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import NavigatorHeader from './navigator-header';
+import type { GlobalStylesObject } from '@automattic/global-styles';
 
 interface Props {
 	siteId: number | string;
 	stylesheet: string;
+	selectedColorPaletteVariation: GlobalStylesObject | null;
+	onSelect: ( colorPaletteVariation: GlobalStylesObject | null ) => void;
 	onDoneClick: () => void;
 }
 
-const ScreenColorPalettes = ( { siteId, stylesheet, onDoneClick }: Props ) => {
+const ScreenColorPalettes = ( {
+	siteId,
+	stylesheet,
+	selectedColorPaletteVariation,
+	onSelect,
+	onDoneClick,
+}: Props ) => {
 	const translate = useTranslate();
 
 	return (
@@ -20,7 +29,12 @@ const ScreenColorPalettes = ( { siteId, stylesheet, onDoneClick }: Props ) => {
 				description={ translate( 'Foreground and background colours used throughout your site.' ) }
 			/>
 			<div className="screen-container__body">
-				<ColorPaletteVariations siteId={ siteId } stylesheet={ stylesheet } />
+				<ColorPaletteVariations
+					siteId={ siteId }
+					stylesheet={ stylesheet }
+					selectedColorPaletteVariation={ selectedColorPaletteVariation }
+					onSelect={ onSelect }
+				/>
 			</div>
 			<div className="screen-container__footer">
 				<NavigatorBackButton
