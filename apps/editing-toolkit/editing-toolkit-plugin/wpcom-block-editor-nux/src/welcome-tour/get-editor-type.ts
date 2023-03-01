@@ -15,8 +15,6 @@ import { select } from '@wordpress/data';
 type PostType =
 	| 'post'
 	| 'page'
-	| 'post'
-	| 'page'
 	| 'attachment'
 	| 'revision'
 	| 'nav_menu_item'
