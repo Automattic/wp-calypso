@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import { getStepModuleName } from 'calypso/signup/config/step-components';
-import { ProgressState } from './schema';
+import { ProgressState } from './types';
 import 'calypso/state/signup/init';
 
 const initialState: ProgressState = {};

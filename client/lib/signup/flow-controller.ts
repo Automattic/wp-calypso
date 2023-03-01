@@ -42,10 +42,10 @@ import {
 	invalidateStep,
 	processStep,
 } from 'calypso/state/signup/progress/actions';
-import { ProgressState } from 'calypso/state/signup/progress/schema';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import type { Flow, Dependencies } from '../../signup/types';
+import type { ProgressState } from 'calypso/state/signup/progress/types';
 
 const debug = debugModule( 'calypso:signup' );
 
