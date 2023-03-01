@@ -40,7 +40,7 @@ const wpcomCreatePayPalAgreement = (
 	tax_address: string,
 	tax_organization: string,
 	tax_city: string,
-	tax_state: string
+	tax_subdivision_code: string
 ): Promise< string > =>
 	wp.req.post( {
 		path: '/payment-methods/create-paypal-agreement',
@@ -53,7 +53,7 @@ const wpcomCreatePayPalAgreement = (
 			tax_address,
 			tax_organization,
 			tax_city,
-			tax_state,
+			tax_subdivision_code,
 		},
 		apiVersion: '1',
 	} );
