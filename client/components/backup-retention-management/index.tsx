@@ -1,5 +1,6 @@
 import { Button, Card, Dialog, Spinner } from '@automattic/components';
 import { useEffect, useState, useCallback } from '@wordpress/element';
+import { removeQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -31,9 +32,13 @@ import './style.scss';
 
 interface OwnProps {
 	defaultRetention?: number;
+	storagePurchased?: boolean;
 }
 
-const BackupRetentionManagement: FunctionComponent< OwnProps > = ( { defaultRetention } ) => {
+const BackupRetentionManagement: FunctionComponent< OwnProps > = ( {
+	defaultRetention,
+	storagePurchased,
+} ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -68,7 +73,7 @@ const BackupRetentionManagement: FunctionComponent< OwnProps > = ( { defaultRete
 	const [ retentionSelected, setRetentionSelected ] = useState( initializeDefaultRetention );
 
 	// If the current selection requires an storage upgrade
-	const [ storageUpgradeRequired, setStorageUpgradeRequired ] = useState( false );
+	const [ storageUpgradeRequired, setStorageUpgradeRequired ] = useState();
 
 	// The retention days that currently applies for this customer.
 	const currentRetentionPlan = customerRetentionPeriod || planRetentionPeriod || 0;
@@ -80,6 +85,8 @@ const BackupRetentionManagement: FunctionComponent< OwnProps > = ( { defaultRete
 	const lastBackupSize = useSelector( ( state ) =>
 		getBackupCurrentSiteSize( state, siteId )
 	) as number;
+
+	const hasStorageInfoLoaded = lastBackupSize !== undefined && storageLimitBytes !== undefined;
 
 	const estimatedCurrentSiteSize = lastBackupSize * ( STORAGE_ESTIMATION_ADDITIONAL_BUFFER + 1 );
 	const currentSiteSizeText = useStorageText( estimatedCurrentSiteSize );
@@ -121,8 +128,16 @@ const BackupRetentionManagement: FunctionComponent< OwnProps > = ( { defaultRete
 			} )
 		);
 
+		// Clean storage_purchased query param from the URL
+		const currentUrl = removeQueryArgs( window.location.href, 'storage_purchased' );
+
 		// The idea is to redirect back to the setting page with the current selected retention period.
-		const redirectBackUrl = addQueryArgs( { retention: retentionSelected }, window.location.href );
+		const backUrl = addQueryArgs( { retention: retentionSelected }, currentUrl );
+
+		const purchaseSuccessUrl = addQueryArgs(
+			{ retention: retentionSelected, storage_purchased: 1 },
+			currentUrl
+		);
 
 		const storageUpgradeUrl = buildCheckoutURL( siteSlug, upsellSlug.productSlug, {
 			// This `source` flag tells the shopping cart to force "purchase" another storage add-on
@@ -130,10 +145,10 @@ const BackupRetentionManagement: FunctionComponent< OwnProps > = ( { defaultRete
 			source: 'backup-storage-purchase-not-renewal',
 
 			// This redirects after purchasing the storage add-on
-			redirect_to: redirectBackUrl,
+			redirect_to: purchaseSuccessUrl,
 
 			// This redirect back after going back or after removing all products in the shopping cart
-			checkoutBackUrl: redirectBackUrl,
+			checkoutBackUrl: backUrl,
 		} );
 
 		window.location.href = storageUpgradeUrl;
@@ -192,10 +207,10 @@ const BackupRetentionManagement: FunctionComponent< OwnProps > = ( { defaultRete
 
 	// Set the retention period selected when we fetch the current plan retention period
 	useEffect( () => {
-		if ( ! isFetching ) {
+		if ( ! isFetching && ! defaultRetention ) {
 			setRetentionSelected( currentRetentionPlan );
 		}
-	}, [ currentRetentionPlan, isFetching ] );
+	}, [ currentRetentionPlan, defaultRetention, isFetching ] );
 
 	// Determinate if storage upgrade is required when the retention period selected changes
 	useEffect( () => {
@@ -203,10 +218,14 @@ const BackupRetentionManagement: FunctionComponent< OwnProps > = ( { defaultRete
 			( option ) => option.id === retentionSelected
 		) as RetentionOptionInput;
 
-		if ( selectedOption && selectedOption.upgradeRequired !== storageUpgradeRequired ) {
+		if (
+			selectedOption &&
+			selectedOption.upgradeRequired !== storageUpgradeRequired &&
+			hasStorageInfoLoaded
+		) {
 			setStorageUpgradeRequired( selectedOption.upgradeRequired );
 		}
-	}, [ retentionOptionsCards, retentionSelected, storageUpgradeRequired ] );
+	}, [ hasStorageInfoLoaded, retentionOptionsCards, retentionSelected, storageUpgradeRequired ] );
 
 	useEffect( () => {
 		if (
@@ -216,6 +235,38 @@ const BackupRetentionManagement: FunctionComponent< OwnProps > = ( { defaultRete
 			setConfirmationDialogVisible( false );
 		}
 	}, [ updateRetentionRequestStatus ] );
+
+	// Update retention period automatically after being redirect from checkout
+	useEffect( () => {
+		/**
+		 * This should only work when:
+		 * - The retention period selected is the one passed on URL
+		 * - The retention period selected is not the current plan
+		 * - The storage upgrade is not required. This is because there are cases where
+		 *   the storage purchased is not enough to cover the retention period selected.
+		 * - storagePurchased query arg is true
+		 * - The storage info has been loaded
+		 */
+		if (
+			retentionSelected === defaultRetention &&
+			currentRetentionPlan !== defaultRetention &&
+			storageUpgradeRequired === false &&
+			updateRetentionRequestStatus === BACKUP_RETENTION_UPDATE_REQUEST.UNSUBMITTED &&
+			storagePurchased &&
+			hasStorageInfoLoaded
+		) {
+			updateRetentionPeriod();
+		}
+	}, [
+		currentRetentionPlan,
+		defaultRetention,
+		hasStorageInfoLoaded,
+		retentionSelected,
+		storagePurchased,
+		storageUpgradeRequired,
+		updateRetentionPeriod,
+		updateRetentionRequestStatus,
+	] );
 
 	const updateSettingsButton = (
 		<Button primary onClick={ handleUpdateRetention } disabled={ disableFormSubmission }>
@@ -233,7 +284,7 @@ const BackupRetentionManagement: FunctionComponent< OwnProps > = ( { defaultRete
 			onClick={ goToCheckoutPage }
 			disabled={ disableFormSubmission || isPriceFetching }
 		>
-			{ translate( 'Purchase storage' ) }
+			{ translate( 'Purchase and update' ) }
 		</Button>
 	);
 
