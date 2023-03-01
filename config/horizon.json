@@ -101,7 +101,7 @@
 		"purchases/new-payment-methods": true,
 		"reader": true,
 		"reader/list-management": true,
-		"reader/public-tag-pages": true,
+		"reader/public-tag-pages": false,
 		"redirect-fallback-browsers": true,
 		"safari-idb-mitigation": true,
 		"security/security-checkup": true,
