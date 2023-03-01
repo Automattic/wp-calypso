@@ -14,7 +14,7 @@ function CelebrateLaunchModal( { setModalIsOpen, site } ) {
 		window.history.replaceState(
 			null,
 			'',
-			window.location.href.replace( '?celebrateLaunch=true', '' )
+			window.location.href.replace( '&celebrateLaunch=true', '' )
 		);
 	}, [] );
 
