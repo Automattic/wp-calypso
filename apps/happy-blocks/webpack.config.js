@@ -40,6 +40,13 @@ function getWebpackConfig( env = { block: '' }, argv ) {
 			new CopyPlugin( {
 				patterns: [
 					{
+						from: path.resolve( blockPath, 'index.php' ),
+						to: path.resolve( blockPath, 'build', '[name][ext]' ),
+						transform( content ) {
+							return content.toString().replace( '/build/rtl', '/rtl' ).replace( '/build', '/' );
+						},
+					},
+					{
 						from: path.resolve( blockPath, 'block.json' ),
 						to: path.resolve( blockPath, 'build', '[name][ext]' ),
 					},
