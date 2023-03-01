@@ -40,7 +40,7 @@ function formatResponse( responseData?: Record< string, string >[] ) {
 	// Find active purchase product slugs.
 	const purchasedProductSlugs =
 		responseData?.filter( ( p ) => p.active === '1' )?.map( ( p ) => p.product_slug ) ?? [];
-	// Append active product sulgs to the products array.
+	// Append active product slugs to the products array.
 	KEY_SLUG_MAP.forEach( ( value, key ) => {
 		if ( purchasedProductSlugs.some( ( slug ) => value.includes( slug ) ) ) {
 			products.push( key );
