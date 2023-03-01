@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { localize } from 'i18n-calypso';
-import { useState, useEffect, Fragment } from 'react';
+import { useState, useEffect } from 'react';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import { LoadingBar } from 'calypso/components/loading-bar';
@@ -90,7 +90,7 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 
 	const getNewStagingSiteContent = () => {
 		return (
-			<Fragment>
+			<>
 				<p>
 					{ translate(
 						'A staging site is a test version of your website you can use to preview and troubleshoot changes before applying them to your production site.'
@@ -108,13 +108,13 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 				>
 					<span>{ translate( 'Add staging site' ) }</span>
 				</Button>
-			</Fragment>
+			</>
 		);
 	};
 
 	const getManageStagingSiteContent = () => {
 		return (
-			<Fragment>
+			<>
 				<p>
 					{ translate( 'Your staging site is available at {{a}}%(stagingSiteName)s{{/a}}.', {
 						args: {
@@ -128,17 +128,17 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 				<Button primary href={ `/home/${ stagingSiteSlug }` } disabled={ disabled }>
 					<span>{ translate( 'Manage staging site' ) }</span>
 				</Button>
-			</Fragment>
+			</>
 		);
 	};
 
 	const getLoadingStagingSitesPlaceholder = () => {
 		return (
-			<Fragment>
+			<>
 				<FirstPlaceholder />
 				<SecondPlaceholder />
 				<ButtonPlaceholder />
-			</Fragment>
+			</>
 		);
 	};
 
@@ -153,14 +153,14 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 			{ showManageStagingSite && isStagingSiteTransferComplete && getManageStagingSiteContent() }
 			{ isLoadingStagingSites && getLoadingStagingSitesPlaceholder() }
 			{ ( addingStagingSite || ( showManageStagingSite && ! isStagingSiteTransferComplete ) ) && (
-				<Fragment>
+				<>
 					<StyledLoadingBar progress={ progress } />
 					<p>
 						{ __(
 							'Feel free to continue working while we create your staging site. We’ll email you once it is ready.'
 						) }
 					</p>
-				</Fragment>
+				</>
 			) }
 		</Card>
 	);
