@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { StepContainer, SITE_SETUP_FLOW, WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
+import { useSyncGlobalStylesUserConfig } from '@automattic/global-styles';
+import { StepContainer, WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import {
 	__experimentalNavigatorProvider as NavigatorProvider,
 	__experimentalNavigatorScreen as NavigatorScreen,
@@ -7,7 +8,7 @@ import {
 import { useDispatch, useSelect } from '@wordpress/data';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -27,9 +28,11 @@ import ScreenMain from './screen-main';
 import ScreenMainDeprecated from './screen-main-deprecated';
 import ScreenPatternList from './screen-pattern-list';
 import { encodePatternId, createCustomHomeTemplateContent } from './utils';
+import withGlobalStylesProvider from './with-global-styles-provider';
 import type { Pattern } from './types';
 import type { Step } from '../../types';
 import type { DesignRecipe, Design } from '@automattic/design-picker/src/types';
+import type { GlobalStylesObject } from '@automattic/global-styles';
 import './style.scss';
 
 const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
@@ -42,8 +45,9 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const incrementIndexRef = useRef( 0 );
 	const [ activePosition, setActivePosition ] = useState( -1 );
-	const { goBack, goNext, submit, goToStep } = navigation;
-	const { setThemeOnSite, runThemeSetupOnSite, createCustomTemplate } = useDispatch( SITE_STORE );
+	const { goBack, goNext, submit } = navigation;
+	const { setThemeOnSite, runThemeSetupOnSite, createCustomTemplate, setGlobalStyles } =
+		useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
@@ -62,6 +66,21 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 		intent,
 	};
 
+	const isEnabledColorAndFonts = isEnabled( 'pattern-assembler/color-and-fonts' );
+
+	const [ selectedColorPaletteVariation, setSelectedColorPaletteVariation ] =
+		useState< GlobalStylesObject | null >( null );
+
+	const selectedVariations = useMemo(
+		() => [ selectedColorPaletteVariation ].filter( Boolean ) as GlobalStylesObject[],
+		[ selectedColorPaletteVariation ]
+	);
+
+	const syncedGlobalStylesUserConfig = useSyncGlobalStylesUserConfig(
+		selectedVariations,
+		isEnabledColorAndFonts
+	);
+
 	const largePreviewProps = {
 		placeholder: null,
 		header,
@@ -74,13 +93,6 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 		title: site?.name,
 		tagline: site?.description || SITE_TAGLINE,
 	};
-
-	useEffect( () => {
-		// Require to start the flow from the first step
-		if ( ! selectedDesign && flow === SITE_SETUP_FLOW ) {
-			goToStep?.( 'goals' );
-		}
-	}, [] );
 
 	const getPatterns = ( patternType?: string | null ) => {
 		let patterns = [ header, ...sections, footer ];
@@ -271,6 +283,11 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 			// the slug of newly created Home template if the current activated theme has
 			// modified Home template.
 			setThemeOnSite( siteSlugOrId, theme, undefined, false )
+				.then( () => {
+					if ( isEnabledColorAndFonts ) {
+						return setGlobalStyles( siteSlugOrId, stylesheet, syncedGlobalStylesUserConfig );
+					}
+				} )
 				.then( () =>
 					createCustomTemplate(
 						siteSlugOrId,
@@ -414,13 +431,15 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 					/>
 				</NavigatorScreen>
 
-				{ isEnabled( 'pattern-assembler/color-and-fonts' ) && (
+				{ isEnabledColorAndFonts && (
 					<NavigatorScreen path="/color-palettes">
 						<AsyncLoad
 							require="./screen-color-palettes"
 							placeholder={ null }
 							siteId={ site?.ID }
 							stylesheet={ selectedDesign?.recipe?.stylesheet }
+							selectedColorPaletteVariation={ selectedColorPaletteVariation }
+							onSelect={ setSelectedColorPaletteVariation }
 						/>
 					</NavigatorScreen>
 				) }
@@ -477,4 +496,4 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 	);
 };
 
-export default PatternAssembler;
+export default withGlobalStylesProvider( PatternAssembler );

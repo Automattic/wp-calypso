@@ -12,6 +12,7 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import AllTimelHighlightsSection from '../all-time-highlights-section';
 import AllTimeViewsSection from '../all-time-views-section';
@@ -26,7 +27,7 @@ import StatShares from '../stats-shares';
 import statsStrings from '../stats-strings';
 
 const StatsInsights = ( props ) => {
-	const { siteId, siteSlug, translate, isOdysseyStats } = props;
+	const { siteId, siteSlug, translate, isOdysseyStats, isJetpack } = props;
 	const moduleStrings = statsStrings();
 
 	const isInsightsPageGridEnabled = config.isEnabled( 'stats/insights-page-grid' );
@@ -34,6 +35,8 @@ const StatsInsights = ( props ) => {
 
 	const statsModuleListClass = classNames( 'stats__module-list stats__module--unified', {
 		'is-insights-page-enabled': isInsightsPageGridEnabled,
+		'is-odyssey-stats': isOdysseyStats,
+		'is-jetpack': isJetpack,
 	} );
 
 	// Track the last viewed tab.
@@ -77,8 +80,8 @@ const StatsInsights = ( props ) => {
 						/>
 						<Comments path="comments" />
 
-						{ /** TODO: The feature depends on Jetpack Sharing module and is disabled for Odyssey for now. */ }
-						{ ! isOdysseyStats && <StatShares siteId={ siteId } /> }
+						{ /** TODO: The feature depends on Jetpack Sharing module and is disabled for all Jetpack Sites for now. */ }
+						{ ! isJetpack && <StatShares siteId={ siteId } /> }
 
 						<Followers path="followers" />
 						<Reach />
@@ -100,8 +103,8 @@ const StatsInsights = ( props ) => {
 									hideSummaryLink
 									hideNewModule // remove when cleaning 'stats/horizontal-bars-everywhere' FF
 								/>
-								{ /** TODO: The feature depends on Jetpack Sharing module and is disabled for Odyssey for now. */ }
-								{ ! isOdysseyStats && <StatShares siteId={ siteId } /> }
+								{ /** TODO: The feature depends on Jetpack Sharing module and is disabled for all Jetpack Sites for now. */ }
+								{ ! isJetpack && <StatShares siteId={ siteId } /> }
 							</div>
 							<div className="stats__module-column">
 								<Reach />
@@ -138,6 +141,7 @@ const connectComponent = connect( ( state ) => {
 		siteId,
 		siteSlug: getSelectedSiteSlug( state, siteId ),
 		isOdysseyStats,
+		isJetpack: isJetpackSite( state, siteId ),
 	};
 } );
 
