@@ -89,11 +89,13 @@ $color-yellow: var(--studio-yellow-50);
 	}
 }
 
-.is-up {
+.is-up,
+.is-free {
 	@include svg-color($color-green, $color-green, $color-green);
 }
 
-.is-down {
+.is-down,
+.is-full {
 	@include svg-color($color-red, $color-red, $color-red);
 }
 
@@ -157,6 +159,11 @@ button.site-expanded-content__card-button {
 		.site-expanded-content__device-score {
 			margin-inline-start: 8px;
 		}
+	}
+
+	.expanded-card__empty-content {
+		padding: 0 0 16px;
+		justify-content: flex-start;
 	}
 }
 

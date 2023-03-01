@@ -105,6 +105,10 @@ const backupEventNames: StatusEventNames = {
 		small_screen: 'calypso_jetpack_agency_dashboard_backup_failed_click_small_screen',
 		large_screen: 'calypso_jetpack_agency_dashboard_backup_failed_click_large_screen',
 	},
+	critical: {
+		small_screen: 'calypso_jetpack_agency_dashboard_backup_failed_click_small_screen',
+		large_screen: 'calypso_jetpack_agency_dashboard_backup_failed_click_large_screen',
+	},
 	warning: {
 		small_screen: 'calypso_jetpack_agency_dashboard_backup_warning_click_small_screen',
 		large_screen: 'calypso_jetpack_agency_dashboard_backup_warning_click_large_screen',
