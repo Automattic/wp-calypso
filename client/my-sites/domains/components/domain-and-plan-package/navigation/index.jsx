@@ -1,6 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 
 import './style.scss';
 
@@ -9,7 +8,7 @@ export default function DomainAndPlanPackageNavigation( props ) {
 
 	const goBack = () => {
 		if ( props.goBackLink ) {
-			page( props.goBackLink );
+			window.location.assign( props.goBackLink );
 		} else {
 			window.history.go( -1 );
 		}
