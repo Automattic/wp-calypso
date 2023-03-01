@@ -2,11 +2,10 @@ import { Button, Card, Spinner } from '@automattic/components';
 import { sprintf } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
-import CardHeading from 'calypso/components/card-heading';
-import SocialLogo from 'calypso/components/social-logo';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { GitHubCardHeading } from '../github-card-heading';
 import { EmptyDeployments } from './empty-deployments';
 import { LastDeploymentInformation } from './last-deployment-information';
 import { useDeploymentStatusQuery } from './use-deployment-status-query';
@@ -63,10 +62,7 @@ export const DeploymentCard = ( { repo, branch, connectionId }: DeploymentCardPr
 
 	return (
 		<Card>
-			<SocialLogo className="material-icon" icon="github" size={ 32 } />
-			<CardHeading className="deployment-card__heading">
-				{ translate( 'Deploy from GitHub' ) }
-			</CardHeading>
+			<GitHubCardHeading />
 			<div>
 				<p>
 					{ translate( 'Listening for pushes from {{a}}%(repo)s{{/a}}.', {
