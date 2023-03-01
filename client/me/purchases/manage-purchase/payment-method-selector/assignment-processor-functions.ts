@@ -37,7 +37,10 @@ const wpcomCreatePayPalAgreement = (
 	cancel_url: string,
 	tax_country_code: string,
 	tax_postal_code: string,
-	tax_address: string
+	tax_address: string,
+	tax_organization: string,
+	tax_city: string,
+	tax_state: string
 ): Promise< string > =>
 	wp.req.post( {
 		path: '/payment-methods/create-paypal-agreement',
@@ -48,6 +51,9 @@ const wpcomCreatePayPalAgreement = (
 			tax_postal_code,
 			tax_country_code,
 			tax_address,
+			tax_organization,
+			tax_city,
+			tax_state,
 		},
 		apiVersion: '1',
 	} );
@@ -284,6 +290,9 @@ interface PayPalSubmitData {
 	postalCode?: string;
 	countryCode: string;
 	address?: string;
+	organization?: string;
+	city?: string;
+	state?: string;
 }
 
 function isValidPayPalData( data: unknown ): data is PayPalSubmitData {
@@ -310,7 +319,10 @@ export async function assignPayPalProcessor(
 			window.location.href,
 			submitData.countryCode,
 			submitData.postalCode ?? '',
-			submitData.address ?? ''
+			submitData.address ?? '',
+			submitData.organization ?? '',
+			submitData.city ?? '',
+			submitData.state ?? ''
 		);
 		return makeRedirectResponse( data );
 	} catch ( error ) {
