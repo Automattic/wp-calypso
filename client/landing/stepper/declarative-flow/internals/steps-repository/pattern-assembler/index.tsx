@@ -46,7 +46,8 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 	const incrementIndexRef = useRef( 0 );
 	const [ activePosition, setActivePosition ] = useState( -1 );
 	const { goBack, goNext, submit } = navigation;
-	const { setThemeOnSite, runThemeSetupOnSite, createCustomTemplate, setGlobalStyles } = useDispatch( SITE_STORE );
+	const { setThemeOnSite, runThemeSetupOnSite, createCustomTemplate, setGlobalStyles } =
+		useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
