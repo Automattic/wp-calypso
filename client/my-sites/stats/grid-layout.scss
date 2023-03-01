@@ -31,6 +31,34 @@ $grid-vertical-gutters: 32px;
 
 
 .stats__module-list.stats__module--unified.is-insights-page-enabled {
+
+	&.is-jetpack {
+		@include stats-desktop-grid(
+			"tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories comments comments comments comments comments comments"
+			"followers followers followers followers followers followers publicize publicize publicize publicize publicize publicize"
+			"latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary social-followers social-followers social-followers social-followers social-followers social-followers",
+			3
+		);
+
+		@include stats-tablet-grid(
+			"tags-categories tags-categories tags-categories tags-categories comments comments comments comments"
+			"followers followers followers followers followers followers followers followers"
+			"publicize publicize publicize publicize latest-post-summary latest-post-summary latest-post-summary latest-post-summary"
+			"social-followers social-followers social-followers social-followers social-followers social-followers social-followers social-followers",
+			4
+		);
+
+		@include stats-mobile-grid(
+			"tags-categories tags-categories tags-categories tags-categories"
+			"comments comments comments comments"
+			"followers followers followers followers"
+			"publicize publicize publicize publicize"
+			"latest-post-summary latest-post-summary latest-post-summary latest-post-summary"
+			"social-followers social-followers social-followers social-followers",
+			6
+		);
+	}
+
 	@include stats-desktop-grid(
 		"tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories comments comments comments comments comments comments"
 		"shares shares shares shares followers followers followers followers publicize publicize publicize publicize"
@@ -59,6 +87,27 @@ $grid-vertical-gutters: 32px;
 
 	@media (max-width: 660px) {
 		padding: 0 16px;
+	}
+
+	// Temporary change until all cards are replaced with new components. Remove when cleaning 'stats/insights-page-grid' FF.
+	@media (min-width: 661px) {
+		.stats__module-wrapper--tags-categories {
+			display: flex;
+			flex-direction: column;
+			align-items: stretch;
+
+			& > * {
+				margin: 0;
+
+				& + div {
+					flex: 1 0 auto;
+				}
+			}
+
+			.card.stats-module {
+				margin-bottom: 0;
+			}
+		}
 	}
 
 	.stats__module-wrapper--tags-categories,
@@ -97,13 +146,14 @@ $grid-vertical-gutters: 32px;
 	}
 }
 
+
 .is-section-stats .stats__module-list--traffic {
 	@include stats-desktop-grid(
 		"posts posts posts posts posts posts posts referrers referrers referrers referrers referrers"
 		"country country country country country country country country country country country country"
 		"authors authors authors authors search search search search clicks clicks clicks clicks"
 		"videos videos videos videos videos videos downloads downloads downloads downloads downloads downloads"
-		"emails-open emails-open emails-open emails-open emails-open emails-open emails-click emails-click emails-click emails-click emails-click emails-click",
+		"emails emails emails emails emails emails emails emails emails emails emails emails",
 		6
 	);
 
@@ -113,7 +163,7 @@ $grid-vertical-gutters: 32px;
 		"authors authors authors authors search search search search"
 		"clicks clicks clicks clicks videos videos videos videos"
 		"downloads downloads downloads downloads downloads downloads downloads downloads"
-		"emails-open emails-open emails-open emails-open emails-click emails-click emails-click emails-click",
+		"emails emails emails emails emails emails emails emails",
 		7
 	);
 
@@ -126,8 +176,7 @@ $grid-vertical-gutters: 32px;
 		"clicks clicks clicks clicks"
 		"videos videos videos videos"
 		"downloads downloads downloads downloads"
-		"emails-open emails-open"
-		"emails-click emails-click",
+		"emails emails emails emails",
 		10
 	);
 
@@ -204,12 +253,7 @@ $grid-vertical-gutters: 32px;
 	}
 
 	.stats__module-wrapper--emails,
-	.list-emails-open {
-		grid-area: emails-open;
-	}
-
-	.stats__module-wrapper--emails,
-	.list-emails-click {
-		grid-area: emails-click;
+	.list-emails {
+		grid-area: emails;
 	}
 }

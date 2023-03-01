@@ -158,7 +158,7 @@ export class PlanFeaturesComparison extends Component {
 	}
 
 	renderTopButtons() {
-		const { isInSignup, isLaunchPage, planProperties } = this.props;
+		const { isInSignup, isLaunchPage, planProperties, busyOnUpgradeClick } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const {
@@ -187,6 +187,7 @@ export class PlanFeaturesComparison extends Component {
 						planName={ planConstantObj.getTitle() }
 						planType={ planName }
 						primaryUpgrade={ primaryUpgrade }
+						busyOnUpgradeClick={ busyOnUpgradeClick }
 					/>
 				</td>
 			);
@@ -301,6 +302,7 @@ PlanFeaturesComparison.propTypes = {
 	purchaseId: PropTypes.number,
 	flowName: PropTypes.string,
 	siteId: PropTypes.number,
+	busyOnUpgradeClick: PropTypes.bool,
 };
 
 PlanFeaturesComparison.defaultProps = {
@@ -308,6 +310,7 @@ PlanFeaturesComparison.defaultProps = {
 	isInSignup: true,
 	siteId: null,
 	onUpgradeClick: noop,
+	busyOnUpgradeClick: false,
 };
 
 export const calculatePlanCredits = ( state, siteId, planProperties ) =>

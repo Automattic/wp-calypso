@@ -20,6 +20,10 @@ $common-border-radius: 4px;
 		.highlight-card {
 			padding: 32px;
 			min-width: 380px;
+
+			@media ( max-width: $break-mobile ) {
+				min-width: unset;
+			}
 		}
 
 		@media ( max-width: $custom-mobile-breakpoint ) {
@@ -45,6 +49,10 @@ $common-border-radius: 4px;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+
+		.segmented-control__text {
+			white-space: normal;
+		}
 
 		@media ( max-width: $custom-mobile-breakpoint ) {
 			display: block;

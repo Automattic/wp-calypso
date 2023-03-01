@@ -5,6 +5,7 @@
 import { render } from '@testing-library/react';
 import { translate } from 'i18n-calypso';
 import nock from 'nock';
+import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
@@ -114,14 +115,6 @@ describe( '<SiteTable>', () => {
 		expect( scanEle.getAttribute( 'href' ) ).toEqual( `/scan/${ siteUrl }` );
 		expect( scanEle.getElementsByClassName( 'sites-overview__badge' )[ 0 ].textContent ).toEqual(
 			`${ scanThreats } Threats`
-		);
-
-		const monitorEle = getByTestId( `row-${ blogId }-monitor` );
-		expect( monitorEle.getAttribute( 'href' ) ).toEqual(
-			`https://jptools.wordpress.com/debug/?url=${ siteUrl }`
-		);
-		expect( monitorEle.getElementsByClassName( 'sites-overview__badge' )[ 0 ].textContent ).toEqual(
-			'Site Down'
 		);
 
 		const pluginEle = getByTestId( `row-${ blogId }-plugin` );

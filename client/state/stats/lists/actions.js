@@ -33,8 +33,8 @@ const wpcomV1Endpoints = {
 	statsInsights: 'stats/insights',
 	statsFileDownloads: 'stats/file-downloads',
 	statsAds: 'wordads/stats',
-	statsEmailsOpen: 'stats/opens/emails/summary',
-	statsEmailsClick: 'stats/clicks/emails/summary',
+	statsEmailsSummary: 'stats/emails/summary',
+	statsEmailsSummaryByOpens: 'stats/emails/summary',
 };
 
 const wpcomV2Endpoints = {
@@ -76,14 +76,24 @@ export function requestSiteStats( siteId, statType, query ) {
 			switch ( statType ) {
 				case 'statsVideo':
 					return query.postId;
-				case 'statsEmailsOpen':
-				case 'statsEmailsClick':
-					return { period: PERIOD_ALL_TIME, quantity: 10 };
+				case 'statsEmailsSummary':
+					return {
+						period: PERIOD_ALL_TIME,
+						quantity: query.quantity ?? 10,
+						sort_field: query.sort_field ?? 'post_id',
+						sort_order: query.sort_order ?? 'desc',
+					};
+				case 'statsEmailsSummaryByOpens':
+					return {
+						period: PERIOD_ALL_TIME,
+						quantity: query.quantity ?? 10,
+						sort_field: 'opens',
+						sort_order: 'desc',
+					};
 				default:
 					return query;
 			}
 		} )();
-
 		const requestStats = subpath
 			? wpcom.req.get(
 					{

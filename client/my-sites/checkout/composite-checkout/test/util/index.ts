@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY } from '@automattic/calypso-products';
 import {
 	getEmptyResponseCart,
 	getEmptyResponseCartProduct,
@@ -83,13 +84,46 @@ export const countryList: CountryListItem[] = [
 		code: 'CA',
 		name: 'Canada',
 		has_postal_codes: true,
+		tax_needs_city: true,
+		tax_needs_subdivision: true,
+	},
+	{
+		code: 'CH',
+		name: 'Switzerland',
+		has_postal_codes: true,
+		tax_needs_address: true,
 	},
 	{
 		code: 'GB',
 		name: 'United Kingdom',
 		has_postal_codes: true,
+		tax_needs_organization: true, // added for testing, not present in API data
+	},
+	{
+		code: 'IN',
+		name: 'India',
+		has_postal_codes: true,
+		tax_needs_subdivision: true,
+	},
+	{
+		code: 'JP',
+		name: 'Japan',
+		has_postal_codes: true,
+		tax_needs_organization: true,
+	},
+	{
+		code: 'NO',
+		name: 'Norway',
+		has_postal_codes: true,
+		tax_needs_city: true,
+		tax_needs_organization: true,
 	},
 ];
+
+export const stateList = {
+	ca: [ { code: 'QC', name: 'Quebec' } ],
+	in: [ { code: 'KA', name: 'Karnataka' } ],
+};
 
 export const siteId = 13579;
 
@@ -329,22 +363,105 @@ export function mockSetCartEndpointWith( { currency, locale } ): SetCart {
 	};
 }
 
-export function convertProductSlugToResponseProduct( productSlug: string ) {
+export function convertProductSlugToResponseProduct( productSlug: string ): ResponseCartProduct {
 	switch ( productSlug ) {
+		case 'jetpack_anti_spam_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2111,
+				product_name: 'Jetpack Akismet Anti-spam',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'jetpack_anti_spam':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2110,
+				product_name: 'Jetpack Akismet Anti-spam',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
 		case 'jetpack_backup_t1_monthly':
 			return {
 				...getEmptyResponseCartProduct(),
-				product_id: 2100,
+				product_id: 2113,
 				product_name: 'Jetpack VaultPress Backup (10GB)',
-				product_slug: 'jetpack_backup_t1_monthly',
+				product_slug: productSlug,
+				bill_period: 'monthly',
 				currency: 'USD',
 			};
 		case 'jetpack_backup_t1_yearly':
 			return {
 				...getEmptyResponseCartProduct(),
-				product_id: 2100,
+				product_id: 2112,
 				product_name: 'Jetpack VaultPress Backup (10GB)',
-				product_slug: 'jetpack_backup_t1_yearly',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_backup_t2_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2115,
+				product_name: 'Jetpack VaultPress Backup (1TB)',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'jetpack_backup_t2_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2114,
+				product_name: 'Jetpack VaultPress Backup (1TB)',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_boost_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2400,
+				product_name: 'Jetpack Boost',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'jetpack_boost_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2401,
+				product_name: 'Jetpack Boost',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_complete_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2015,
+				product_name: 'Jetpack Complete',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'jetpack_complete':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2014,
+				product_name: 'Jetpack Complete',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_scan_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2107,
+				product_name: 'Jetpack Scan',
+				product_slug: productSlug,
+				bill_period: 'monthly',
 				currency: 'USD',
 			};
 		case 'jetpack_scan':
@@ -352,7 +469,116 @@ export function convertProductSlugToResponseProduct( productSlug: string ) {
 				...getEmptyResponseCartProduct(),
 				product_id: 2106,
 				product_name: 'Jetpack Scan Daily',
-				product_slug: 'jetpack_scan',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_search_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2105,
+				product_name: 'Jetpack Search',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'jetpack_search':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2104,
+				product_name: 'Jetpack Search',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_security_t1_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2017,
+				product_name: 'Jetpack Security T1',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'jetpack_security_t1_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2016,
+				product_name: 'Jetpack Security T1',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_security_t2_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2020,
+				product_name: 'Jetpack Security T2',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'jetpack_security_t2_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2019,
+				product_name: 'Jetpack Security T2',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_social_basic_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2504,
+				product_name: 'Jetpack Social Basic',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'jetpack_social_basic_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2503,
+				product_name: 'Jetpack Social Basic',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_social_advanced_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2603,
+				product_name: 'Jetpack Social Advanced',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'jetpack_social_advanced_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2602,
+				product_name: 'Jetpack Social Advanced',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_videopress_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2117,
+				product_name: 'Jetpack VideoPress',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'jetpack_videopress_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2116,
+				product_name: 'Jetpack VideoPress',
+				product_slug: productSlug,
+				bill_period: 'yearly',
 				currency: 'USD',
 			};
 		default:
@@ -441,6 +667,38 @@ function convertRequestProductToResponseProduct(
 					meta: product.meta,
 					volume: 1,
 					extra: {},
+				};
+			case GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY:
+				return {
+					...getEmptyResponseCartProduct(),
+					product_id: 690,
+					// Adding the quantity to the name is a hacky way to validate that it
+					// is passed to the endpoint correctly.
+					product_name: `Google Workspace for '${ product.meta ?? '' }' and quantity '${
+						product.quantity ?? ''
+					}'`,
+					product_slug: GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
+					currency: currency,
+					is_domain_registration: false,
+					item_original_cost_integer: 7000,
+					item_original_cost_display: 'R$70',
+					item_subtotal_integer: 7000,
+					bill_period: '365',
+					months_per_bill_period: 12,
+					item_tax: 0,
+					meta: product.meta,
+					quantity: product.quantity,
+					extra: {
+						google_apps_users: [
+							{
+								email: 'foo@bar.com',
+								firstname: 'Human',
+								lastname: 'Person',
+								recoveryEmail: 'foo@example.com',
+								hash: '1234567',
+							},
+						],
+					},
 				};
 			case 'premium_theme':
 				return {
@@ -852,6 +1110,7 @@ export function createTestReduxStore() {
 			purchases: {},
 			countries: { payments: countryList, domains: countryList },
 			domains: { management: domainManagementReducer( state?.domains?.management ?? {}, action ) },
+			countryStates: { items: stateList },
 		};
 	};
 	return createStore( rootReducer, applyMiddleware( thunk ) );
@@ -1221,4 +1480,67 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 	}
 
 	throw new Error( `No variants found for product_slug ${ data.product_slug }` );
+}
+
+/**
+ * Helper to prepare to mock Stripe Elements.
+ *
+ * To use this, you'll need to call it inside `jest.mock()` as follows:
+ *
+ * ```
+ * jest.mock( '@stripe/react-stripe-js', () => {
+ *   const stripe = jest.requireActual( '@stripe/react-stripe-js' );
+ *   return { ...stripe, ...mockStripeElements() };
+ * } );
+ *
+ * jest.mock( '@stripe/stripe-js', () => {
+ *   return {
+ *     loadStripe: async () => mockStripeElements().useStripe(),
+ *   };
+ * } );
+ * ```
+ */
+export function mockStripeElements() {
+	const mockElement = () => ( {
+		mount: jest.fn(),
+		destroy: jest.fn(),
+		on: jest.fn(),
+		update: jest.fn(),
+	} );
+
+	const mockElements = () => {
+		const elements = {};
+		return {
+			create: jest.fn( ( type ) => {
+				elements[ type ] = mockElement();
+				return elements[ type ];
+			} ),
+			getElement: jest.fn( ( type ) => {
+				return elements[ type ] || null;
+			} ),
+		};
+	};
+
+	const mockStripe = () => ( {
+		elements: jest.fn( () => mockElements() ),
+		createToken: jest.fn(),
+		createSource: jest.fn(),
+		createPaymentMethod: jest.fn(),
+		confirmCardPayment: jest.fn(),
+		confirmCardSetup: jest.fn(),
+		paymentRequest: jest.fn(),
+		_registerWrapper: jest.fn(),
+	} );
+
+	return {
+		Element: () => {
+			return mockElement();
+		},
+		useStripe: () => {
+			return mockStripe();
+		},
+		useElements: () => {
+			return mockElements();
+		},
+	};
 }

@@ -22,6 +22,7 @@ const logos = [
 	'instagram',
 	'linkedin',
 	'mail',
+	'mastodon',
 	'medium',
 	'pinterest',
 	'pinterest-alt',

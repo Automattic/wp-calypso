@@ -37,6 +37,7 @@ export interface Theme {
 	name: string;
 	next: string;
 	popularity_rank: string;
+	product_details?: MarketplaceThemeProductDetails[];
 	preview_url: string;
 	screenshot: string;
 	screenshots: string[];
@@ -52,6 +53,11 @@ export interface Theme {
 	theme_uri: string;
 	trending_rank: number;
 	version: string;
+}
+
+interface MarketplaceThemeProductDetails {
+	product_id: number;
+	product_slug: string;
 }
 
 interface ThemeCost {

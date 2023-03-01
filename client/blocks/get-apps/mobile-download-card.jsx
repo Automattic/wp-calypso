@@ -203,7 +203,9 @@ class MobileDownloadCard extends Component {
 								a: (
 									<a
 										className="get-apps__jetpack-branded-link"
-										href="https://apps.wordpress.com/get?campaign=calypso-get-apps-link"
+										href={ localizeUrl(
+											'https://apps.wordpress.com/get?campaign=calypso-get-apps-link'
+										) }
 									/>
 								),
 							},

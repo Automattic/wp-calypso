@@ -342,6 +342,10 @@ export type ManagedContactDetailsUpdaters = {
 	updatePostalCode: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
 	updateEmail: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
 	updateCountryCode: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
+	updateTaxFields: (
+		arg0: ManagedContactDetails,
+		arg1: ManagedContactDetails
+	) => ManagedContactDetails;
 	updateDomainContactFields: (
 		arg0: ManagedContactDetails,
 		arg1: DomainContactDetails
@@ -495,5 +499,9 @@ export type RawDomainContactValidationResponse =
 export interface CountryListItem {
 	code: string;
 	name: string;
-	has_postal_codes: boolean;
+	has_postal_codes?: boolean;
+	tax_needs_city?: boolean;
+	tax_needs_subdivision?: boolean;
+	tax_needs_organization?: boolean;
+	tax_needs_address?: boolean;
 }

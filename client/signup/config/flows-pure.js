@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { setupSiteAfterCreation } from '@automattic/onboarding';
+import { HOSTING_LP_FLOW, setupSiteAfterCreation } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 
 const noop = () => {};
@@ -16,8 +16,18 @@ export function generateFlows( {
 	getDestinationFromIntent = noop,
 	getDIFMSignupDestination = noop,
 	getDIFMSiteContentCollectionDestination = noop,
+	getHomeDestination = noop,
 } = {} ) {
 	const flows = [
+		{
+			name: HOSTING_LP_FLOW,
+			steps: [ 'plans', 'user', 'domains' ],
+			destination: getHomeDestination,
+			description:
+				'Create an account and a blog and give the user the option of adding a domain and plan to the cart.',
+			lastModified: '2023-02-09',
+			showRecaptcha: true,
+		},
 		{
 			name: 'account',
 			steps: [ 'user' ],
@@ -86,6 +96,14 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
+			name: 'with-theme-assembler',
+			steps: [ 'user', 'domains-theme-preselected', 'plans' ],
+			destination: getChecklistThemeDestination,
+			description: 'Preselect a theme to activate/buy from an external source with the assembler.',
+			lastModified: '2023-02-06',
+			showRecaptcha: true,
+		},
+		{
 			name: 'design-first',
 			steps: [
 				'template-first-themes',
@@ -121,7 +139,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'onboarding-pm',
-			steps: [ 'user', 'domains', 'plans' ],
+			steps: [ 'user', 'domains', 'plans-pm' ],
 			destination: getSignupDestination,
 			description:
 				'Paid media version of the onboarding flow. Read more in https://wp.me/pau2Xa-4Kk.',

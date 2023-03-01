@@ -226,3 +226,26 @@ export function isMagnificentLocale( locale: string ): boolean {
 export function isTranslatedIncompletely( locale: string ) {
 	return getLanguage( locale )?.isTranslatedIncompletely === true;
 }
+
+/**
+ * Removes the locale slug in the start of the path, if it is present.
+ * '/en/themes' => '/themes', '/themes' => '/themes', '/fr/plugins' => '/plugins'
+ *
+ * @param  path - original path
+ * @returns original path minus locale slug
+ */
+export function removeLocaleFromPathLocaleInFront( path: string ): string {
+	// Remove the first '/'.
+	path = path.slice( 1 );
+
+	const urlParts = getUrlParts( path );
+	const queryString = urlParts.search || '';
+	const parts = getPathParts( urlParts.pathname );
+	const locale = parts.shift();
+
+	if ( 'undefined' === typeof getLanguage( locale ) ) {
+		parts.unshift( locale as string );
+	}
+
+	return '/' + parts.join( '/' ) + queryString;
+}

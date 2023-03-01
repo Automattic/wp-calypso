@@ -11,73 +11,94 @@ import {
 	envToFeatureKey,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
-import { skipDescribeIf } from '../../jest-helpers';
+import { skipItIf } from '../../jest-helpers';
 
 declare const browser: Browser;
 
-const features = envToFeatureKey( envVariables );
+const isAtomic = envVariables.TEST_ON_ATOMIC;
+const isSimple = ! envVariables.TEST_ON_ATOMIC;
+const features = envToFeatureKey( {
+	...envVariables,
+	// CoBlocks on Atomic: https://github.com/Automattic/wp-calypso/pull/73052
+	COBLOCKS_EDGE: isAtomic || envVariables.COBLOCKS_EDGE,
+} );
 
-skipDescribeIf( features.siteType === 'atomic' )(
-	DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Gutter Control' ),
-	() => {
-		const accountName = getTestAccountByFeature( features );
+describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Gutter Control' ), () => {
+	const accountName = getTestAccountByFeature( features );
 
-		let page: Page;
-		let testAccount: TestAccount;
-		let editorPage: EditorPage;
-		let pricingTableBlock: PricingTableBlock;
+	let page: Page;
+	let testAccount: TestAccount;
+	let editorPage: EditorPage;
+	let pricingTableBlock: PricingTableBlock;
 
-		beforeAll( async () => {
-			page = await browser.newPage();
-			testAccount = new TestAccount( accountName );
-			editorPage = new EditorPage( page, { target: features.siteType } );
+	beforeAll( async () => {
+		page = await browser.newPage();
+		testAccount = new TestAccount( accountName );
+		editorPage = new EditorPage( page, { target: features.siteType } );
 
-			await testAccount.authenticate( page );
-		} );
+		await testAccount.authenticate( page );
+	} );
 
-		it( 'Go to the new post page', async () => {
-			await editorPage.visit( 'post' );
-		} );
+	it( 'Go to the new post page', async () => {
+		await editorPage.visit( 'post' );
+	} );
 
-		it( 'Insert Pricing Table block', async () => {
-			const blockHandle = await editorPage.addBlockFromSidebar(
-				PricingTableBlock.blockName,
-				PricingTableBlock.blockEditorSelector
-			);
-			pricingTableBlock = new PricingTableBlock( blockHandle );
-		} );
-
-		it( 'Open settings sidebar', async () => {
-			await editorPage.openSettings();
-		} );
-
-		it.each( PricingTableBlock.gutterValues )(
-			'Verify "%s" gutter button is present',
-			async ( value ) => {
-				const editorWindowLocator = editorPage.getEditorWindowLocator();
-				await editorWindowLocator.locator( `button[aria-label="${ value }"]` ).waitFor();
-			}
+	it( 'Insert Pricing Table block', async () => {
+		const blockHandle = await editorPage.addBlockFromSidebar(
+			PricingTableBlock.blockName,
+			PricingTableBlock.blockEditorSelector
 		);
+		pricingTableBlock = new PricingTableBlock( blockHandle );
+	} );
 
-		it( 'Set gutter to "Huge"', async () => {
-			await pricingTableBlock.setGutter( 'Huge' );
-		} );
+	it( 'Open settings sidebar', async () => {
+		await editorPage.openSettings();
+	} );
 
-		it( 'Close settings sidebar', async () => {
-			await editorPage.closeSettings();
-		} );
+	skipItIf( isAtomic )( 'Verify "None" gutter is available', async () => {
+		await pricingTableBlock.setGutter( 'None' );
+	} );
 
-		it( 'Fill the price fields so the block is visible', async () => {
-			await pricingTableBlock.enterPrice( 1, 4.99 );
-			await pricingTableBlock.enterPrice( 2, 9.99 );
-		} );
+	it( 'Verify "Small" gutter is available', async () => {
+		await pricingTableBlock.setGutter( 'Small' );
+	} );
 
-		it( 'Publish and visit the post', async () => {
-			await editorPage.publish( { visit: true } );
-		} );
+	it( 'Verify "Medium" gutter is available', async () => {
+		await pricingTableBlock.setGutter( 'Medium' );
+	} );
 
-		it( 'Verify the class for "Huge" gutter is present', async () => {
-			await page.waitForSelector( '.wp-block-coblocks-pricing-table .has-huge-gutter' );
-		} );
-	}
-);
+	it( 'Verify "Large" gutter is available', async () => {
+		await pricingTableBlock.setGutter( 'Large' );
+	} );
+
+	skipItIf( isAtomic )( 'Verify "Huge" gutter is available', async () => {
+		await pricingTableBlock.setGutter( 'Huge' );
+	} );
+
+	skipItIf( isSimple )( 'Verify "Custom" gutter is available', async () => {
+		await pricingTableBlock.setGutter( 'Custom', 2.7 );
+	} );
+
+	it( 'Close settings sidebar', async () => {
+		await editorPage.closeSettings();
+	} );
+
+	it( 'Fill the price fields so the block is visible', async () => {
+		await pricingTableBlock.enterPrice( 1, 4.99 );
+		await pricingTableBlock.enterPrice( 2, 9.99 );
+	} );
+
+	it( 'Publish and visit the post', async () => {
+		await editorPage.publish( { visit: true } );
+	} );
+
+	skipItIf( isAtomic )( 'Verify the class for "Huge" gutter is present', async () => {
+		await page.locator( '.wp-block-coblocks-pricing-table .has-huge-gutter' ).waitFor();
+	} );
+
+	skipItIf( isSimple )( 'Verify the proper value for "Custom" gutter is set', async () => {
+		await page
+			.locator( '.wp-block-coblocks-pricing-table [style="--coblocks-custom-gutter:2.7em"]' )
+			.waitFor();
+	} );
+} );

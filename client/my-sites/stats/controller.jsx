@@ -1,21 +1,39 @@
+import config from '@automattic/calypso-config';
+import { Spinner } from '@automattic/components';
 import i18n from 'i18n-calypso';
 import { find, pick } from 'lodash';
 import moment from 'moment';
 import page from 'page';
+import AsyncLoad from 'calypso/components/async-load';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { getSiteFragment, getStatsDefaultSitePage } from 'calypso/lib/route';
 import { getSite, getSiteOption } from 'calypso/state/sites/selectors';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import StatsCommentFollows from './comment-follows';
-import StatsOverview from './overview';
 import StatsSite from './site';
 import StatsEmailDetail from './stats-email-detail';
-import StatsInsights from './stats-insights';
-import StatsPostDetail from './stats-post-detail';
-import StatsSummary from './summary';
-import WordAds from './wordads';
+import StatsEmailSummary from './stats-email-summary';
+
+const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+
+const PageLoading = (
+	<div
+		style={ {
+			minHeight: 'calc( 100vh - 100px )',
+			width: '100%',
+			display: 'flex',
+			justifyContent: 'center',
+			alignItems: 'center',
+		} }
+	>
+		{ isOdysseyStats ? (
+			<img width="32" height="32" alt="Loading" src="//en.wordpress.com/i/loading/loading-64.gif" />
+		) : (
+			<Spinner />
+		) }
+	</div>
+);
 
 function rangeOfPeriod( period, date ) {
 	const periodRange = {
@@ -124,6 +142,12 @@ function getSiteFilters( siteId ) {
 			id: 'stats-email-clicks-day',
 			period: 'day',
 		},
+		{
+			title: i18n.translate( 'Days' ),
+			path: `/stats/day/emails`,
+			id: 'stats-email-summary',
+			period: 'day',
+		},
 	];
 }
 
@@ -194,7 +218,9 @@ export function redirectToDefaultModulePage( context ) {
 }
 
 export function insights( context, next ) {
-	context.primary = <StatsInsights />;
+	context.primary = (
+		<AsyncLoad require="calypso/my-sites/stats/stats-insights" placeholder={ PageLoading } />
+	);
 	next();
 }
 
@@ -231,7 +257,14 @@ export function overview( context, next ) {
 
 	bumpStat( 'calypso_stats_overview_period', activeFilter.period );
 
-	context.primary = <StatsOverview period={ activeFilter.period } path={ context.pathname } />;
+	context.primary = (
+		<AsyncLoad
+			require="calypso/my-sites/stats/overview"
+			placeholder={ PageLoading }
+			period={ activeFilter.period }
+			path={ context.pathname }
+		/>
+	);
 	next();
 }
 
@@ -357,7 +390,9 @@ export function summary( context, next ) {
 	}
 
 	context.primary = (
-		<StatsSummary
+		<AsyncLoad
+			require="calypso/my-sites/stats/summary"
+			placeholder={ PageLoading }
 			path={ context.pathname }
 			statsQueryOptions={ statsQueryOptions }
 			date={ date }
@@ -381,7 +416,15 @@ export function post( context, next ) {
 		return next();
 	}
 
-	context.primary = <StatsPostDetail path={ context.path } postId={ postId } context={ context } />;
+	context.primary = (
+		<AsyncLoad
+			require="calypso/my-sites/stats/stats-post-detail"
+			placeholder={ PageLoading }
+			path={ context.path }
+			postId={ postId }
+			context={ context }
+		/>
+	);
 
 	next();
 }
@@ -410,7 +453,9 @@ export function follows( context, next ) {
 	}
 
 	context.primary = (
-		<StatsCommentFollows
+		<AsyncLoad
+			require="calypso/my-sites/stats/comment-follows"
+			placeholder={ PageLoading }
 			path={ context.path }
 			page={ pageNum }
 			perPage="20"
@@ -453,7 +498,9 @@ export function wordAds( context, next ) {
 	bumpStat( 'calypso_wordads_stats_site_period', activeFilter.period + numPeriodAgo );
 
 	context.primary = (
-		<WordAds
+		<AsyncLoad
+			require="calypso/my-sites/stats/wordads"
+			placeholder={ PageLoading }
 			path={ context.pathname }
 			date={ date }
 			chartTab={ queryOptions.tab || 'impressions' }
@@ -510,6 +557,32 @@ export function emailStats( context, next ) {
 			isValidStartDate={ isValidStartDate }
 		/>
 	);
+
+	next();
+}
+
+export function emailSummary( context, next ) {
+	const givenSiteId = context.params.site;
+
+	const selectedSite = getSite( context.store.getState(), givenSiteId );
+	const siteId = selectedSite ? selectedSite.ID || 0 : 0;
+
+	if ( 0 === siteId ) {
+		window.location = '/stats';
+		return next();
+	}
+
+	const filters = getSiteFilters( givenSiteId );
+	const activeFilter = find( filters, ( filter ) => {
+		return (
+			context.path.indexOf( filter.path ) >= 0 ||
+			( filter.altPaths && context.path.indexOf( filter.altPaths ) >= 0 )
+		);
+	} );
+
+	const date = moment().locale( 'en' );
+
+	context.primary = <StatsEmailSummary period={ rangeOfPeriod( activeFilter.period, date ) } />;
 
 	next();
 }

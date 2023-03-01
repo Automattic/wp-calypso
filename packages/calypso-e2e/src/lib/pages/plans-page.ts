@@ -16,7 +16,7 @@ const selectors = {
 		if ( name === 'Free' ) {
 			// Free plan is a pseudo-button presented as a
 			// link.
-			return `button:text-matches("${ name }", "i")`;
+			return `button:text-matches("${ name }", "i"):visible`;
 		}
 		return `button.is-${ name.toLowerCase() }-plan:visible`;
 	},
@@ -33,7 +33,7 @@ const selectors = {
 		const viewportSuffix = envVariables.VIEWPORT_NAME === 'mobile' ? 'mobile' : 'table';
 		return `.plan-features__${ viewportSuffix } >> .plan-features__actions-button.is-${ plan.toLowerCase() }-plan:has-text("${ buttonText }")`;
 	},
-	activePlan: ( plan: Plans ) => `th .is-${ plan.toLowerCase() }-plan:has(.plan-pill)`,
+	activePlan: ( plan: Plans ) => `a.is-${ plan.toLowerCase() }-plan.is-current-plan:visible`,
 
 	// My Plans tab
 	myPlanTitle: ( planName: Plans ) => `.my-plan-card__title:has-text("${ planName }")`,
@@ -104,7 +104,10 @@ export class PlansPage {
 	async validateActivePlan( expectedPlan: Plans ): Promise< void > {
 		await Promise.race( [
 			this.page.locator( selectors.myPlanTitle( expectedPlan ) ).waitFor(),
-			this.page.locator( selectors.activePlan( expectedPlan ) ).waitFor(),
+			// There can be lots of these link buttons for different viewports.
+			// We only need one to be there! We must use strict selection.
+			// Any of these link buttons means the right plan is selected.
+			this.page.locator( selectors.activePlan( expectedPlan ) ).first().waitFor(),
 		] );
 	}
 

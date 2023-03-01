@@ -99,7 +99,7 @@ const PluginDetailsSidebar = ( {
 					id="woo"
 					title={ translate( 'Your store foundations' ) }
 					description={ translate(
-						'This plugin requires the WooCommerce plugin to work.{{br/}}If you do not have it installed, it will be installed automatically for free.',
+						'This plugin requires WooCommerce to work.{{br/}}If you do not have it installed, it will be installed automatically for free.',
 						{
 							components: {
 								br: <br />,

@@ -15,6 +15,7 @@ import {
 	getSiteOptions,
 	getSiteOption,
 	getBundledPluginSlug,
+	getSiteTheme,
 } from '../selectors';
 import { SiteDetails } from '../types';
 import type { State } from '../reducer';
@@ -48,6 +49,23 @@ describe( 'getBundledPluginSlug', () => {
 		};
 
 		expect( getBundledPluginSlug( state, siteSlug ) ).toEqual( pluginSlug );
+	} );
+} );
+
+describe( 'getSiteTheme', () => {
+	it( 'retrieves the site theme from the store', () => {
+		const siteId = 1234;
+		const themeSlug = 'tazza';
+
+		const state: State = {
+			siteTheme: {
+				[ siteId ]: {
+					id: themeSlug,
+				},
+			},
+		};
+
+		expect( getSiteTheme( state, siteId ).id ).toEqual( themeSlug );
 	} );
 } );
 

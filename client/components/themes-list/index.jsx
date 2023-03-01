@@ -1,18 +1,19 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { FEATURE_INSTALL_THEMES, PLAN_BUSINESS } from '@automattic/calypso-products';
+import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { PatternAssemblerCta, BLANK_CANVAS_DESIGN } from '@automattic/design-picker';
+import { WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
+import { Icon, addTemplate, brush, cloudUpload } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { isEmpty, times } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
-import { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
-import proThemesBanner from 'calypso/assets/images/themes/pro-themes-banner.svg';
-import EmptyContent from 'calypso/components/empty-content';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import Theme from 'calypso/components/theme';
+import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { upsellCardDisplayed as upsellCardDisplayedAction } from 'calypso/state/themes/actions';
 import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
@@ -22,9 +23,45 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';
 
 const noop = () => {};
+/* Used for second upsell nudge */
+const getGridColumns = ( gridContainerRef, minColumnWidth, margin ) => {
+	const container = gridContainerRef.current;
+	if ( ! container ) {
+		return null;
+	}
+	const containerWidth = container.offsetWidth;
+	const availableWidth = containerWidth - margin;
+
+	// Changing from desktop to mobile view can cause the container width to be smaller than the
+	// minimum column width because it calculates before hiding the sidebar, which would result
+	// in a division by zero. In that case, we just assume that there's only one column.
+	const columnsPerRow = Math.floor( availableWidth / ( minColumnWidth + margin ) ) || 1;
+	return columnsPerRow;
+};
 
 export const ThemesList = ( props ) => {
+	const themesListRef = useRef( null );
+	const [ showSecondUpsellNudge, setShowSecondUpsellNudge ] = useState( false );
+	const updateShowSecondUpsellNudge = useCallback( () => {
+		const minColumnWidth = 320; // $theme-item-min-width: 320px;
+		const margin = 32; // $theme-item-horizontal-margin: 32px;
+		const columnsPerRow = getGridColumns( themesListRef, minColumnWidth, margin );
+		const result = columnsPerRow && props.themes.length >= columnsPerRow * 6;
+		setShowSecondUpsellNudge( result );
+	}, [ props.themes.length ] );
+
+	useEffect( () => {
+		updateShowSecondUpsellNudge();
+		window.addEventListener( 'resize', updateShowSecondUpsellNudge );
+		return () => {
+			window.removeEventListener( 'resize', updateShowSecondUpsellNudge );
+		};
+	}, [ updateShowSecondUpsellNudge ] );
+
 	const isLoggedIn = useSelector( isUserLoggedIn );
+
+	const isPatternAssemblerCTAEnabled =
+		isEnabled( 'pattern-assembler/logged-out-showcase' ) && ! isLoggedIn;
 
 	const fetchNextPage = useCallback(
 		( options ) => {
@@ -33,37 +70,71 @@ export const ThemesList = ( props ) => {
 		[ props.fetchNextPage ]
 	);
 
+	const goToSiteAssemblerFlow = ( shouldGoToAssemblerStep ) => {
+		props.recordTracksEvent( 'calypso_themeshowcase_pattern_assembler_cta_click', {
+			goes_to_assembler_step: shouldGoToAssemblerStep,
+		} );
+
+		const params = new URLSearchParams( {
+			ref: 'calypshowcase',
+			theme: BLANK_CANVAS_DESIGN.slug,
+		} );
+		window.location.assign( `/start/${ WITH_THEME_ASSEMBLER_FLOW }?${ params }` );
+	};
+
+	const matchingWpOrgThemes = useMemo(
+		() =>
+			props.wpOrgThemes?.filter(
+				( wpOrgTheme ) =>
+					wpOrgTheme?.name?.toLowerCase() === props.searchTerm.toLowerCase() ||
+					wpOrgTheme?.id?.toLowerCase() === props.searchTerm.toLowerCase()
+			) || [],
+		[ props.wpOrgThemes, props.searchTerm ]
+	);
+
 	if ( ! props.loading && props.themes.length === 0 ) {
+		if ( matchingWpOrgThemes.length ) {
+			return (
+				<>
+					<WPOrgMatchingThemes matchingThemes={ matchingWpOrgThemes } { ...props } />
+					{ isPatternAssemblerCTAEnabled && (
+						<PatternAssemblerCta onButtonClick={ goToSiteAssemblerFlow } />
+					) }
+				</>
+			);
+		}
+
 		return (
 			<Empty
-				emptyContent={ props.emptyContent }
+				isFSEActive={ props.isFSEActive }
+				recordTracksEvent={ props.recordTracksEvent }
 				searchTerm={ props.searchTerm }
 				translate={ props.translate }
-				recordTracksEvent={ props.recordTracksEvent }
 				upsellCardDisplayed={ props.upsellCardDisplayed }
-				wpOrgThemes={ props.wpOrgThemes }
-				{ ...props }
 			/>
 		);
 	}
 
+	const SecondUpsellNudge = props.upsellBanner && (
+		<div className="second-upsell-wrapper">
+			{ React.cloneElement( props.upsellBanner, {
+				event: `${ props.upsellBanner.props.event }_second_upsell_nudge`,
+			} ) }
+		</div>
+	);
+
 	return (
-		<div className="themes-list">
+		<div className="themes-list" ref={ themesListRef }>
 			{ props.themes.map( ( theme, index ) => (
 				<ThemeBlock key={ 'theme-block' + index } theme={ theme } index={ index } { ...props } />
 			) ) }
-			{ /* The Pattern Assembler CTA will display on the fourth row and the behavior is controlled by CSS */ }
-			{ isEnabled( 'pattern-assembler/logged-out-showcase' ) &&
-				props.themes.length > 0 &&
-				! isLoggedIn && (
-					<PatternAssemblerCta
-						onButtonClick={ () =>
-							window.location.assign(
-								`/start/with-theme?ref=calypshowcase&theme=${ BLANK_CANVAS_DESIGN.slug }`
-							)
-						}
-					/>
-				) }
+			{ /* Don't show second upsell nudge when less than 6 rows are present.
+				 Second plan upsell at 7th row is implemented through CSS. */ }
+			{ showSecondUpsellNudge && SecondUpsellNudge }
+			{ /* The Pattern Assembler CTA will display on the 9th row and the behavior is controlled by CSS */ }
+			{ isPatternAssemblerCTAEnabled && props.themes.length > 0 && (
+				<PatternAssemblerCta onButtonClick={ goToSiteAssemblerFlow } />
+			) }
 			{ props.loading && <LoadingPlaceholders placeholderCount={ props.placeholderCount } /> }
 			<InfiniteScroll nextPageMethod={ fetchNextPage } />
 		</div>
@@ -73,7 +144,6 @@ export const ThemesList = ( props ) => {
 ThemesList.propTypes = {
 	themes: PropTypes.array.isRequired,
 	wpOrgThemes: PropTypes.array,
-	emptyContent: PropTypes.element,
 	loading: PropTypes.bool.isRequired,
 	recordTracksEvent: PropTypes.func.isRequired,
 	fetchNextPage: PropTypes.func.isRequired,
@@ -146,70 +216,167 @@ function ThemeBlock( props ) {
 	);
 }
 
-function Empty( props ) {
-	const { wpOrgThemes, emptyContent, searchTerm, upsellCardDisplayed, translate } = props;
+function Options( { isFSEActive, recordTracksEvent, searchTerm, translate, upsellCardDisplayed } ) {
+	const isLoggedInShowcase = useSelector( isUserLoggedIn );
 	const selectedSite = useSelector( getSelectedSite );
-	const shouldUpgradeToInstallThemes = useSelector(
-		( state ) => ! siteHasFeature( state, selectedSite?.ID, FEATURE_INSTALL_THEMES )
+	const canInstallTheme = useSelector( ( state ) =>
+		siteHasFeature( state, selectedSite?.ID, FEATURE_INSTALL_THEMES )
 	);
+	const isAtomic = useSelector( ( state ) => isAtomicSite( state, selectedSite?.ID ) );
+	const sitePlan = selectedSite?.plan?.product_slug;
 
-	const matchingThemes = useMemo(
-		() =>
-			wpOrgThemes?.filter(
-				( wpOrgTheme ) =>
-					wpOrgTheme?.name?.toLowerCase() === searchTerm.toLowerCase() ||
-					wpOrgTheme?.id?.toLowerCase() === searchTerm.toLowerCase()
-			) || [],
-		[ wpOrgThemes, searchTerm ]
-	);
+	const options = [];
 
 	useEffect( () => {
-		if ( shouldUpgradeToInstallThemes && ! emptyContent ) {
-			upsellCardDisplayed( true );
-		} else {
-			upsellCardDisplayed( false );
-		}
+		upsellCardDisplayed( true );
 		return () => {
 			upsellCardDisplayed( false );
 		};
-	}, [ emptyContent, shouldUpgradeToInstallThemes, upsellCardDisplayed ] );
+	}, [ upsellCardDisplayed ] );
 
-	if ( emptyContent ) {
-		return emptyContent;
+	// Design your own theme / homepage.
+	if ( isLoggedInShowcase ) {
+		// This should start the Pattern Assembler ideally, but it's not ready yet for the
+		// logged-in showcase, so we use the site editor as a fallback.
+		if ( isFSEActive ) {
+			options.push( {
+				title: translate( 'Design your own' ),
+				icon: addTemplate,
+				description: translate( 'Jump right into the editor to design your homepage.' ),
+				onClick: () =>
+					recordTracksEvent( 'calypso_themeshowcase_more_options_design_homepage_click', {
+						site_plan: sitePlan,
+						search_term: searchTerm,
+						destination: 'site-editor',
+					} ),
+				url: `/site-editor/${ selectedSite.slug }`,
+				buttonText: translate( 'Open the editor' ),
+			} );
+		}
+	} else {
+		// This should also start the Pattern Assembler, which is currently in development for
+		// the logged-out showcase. Since there isn't any proper fallback for the meantime, we
+		// just don't include this option.
 	}
 
-	return shouldUpgradeToInstallThemes ? (
-		<div className="themes-list__empty-container">
-			{ matchingThemes.length ? (
-				<WPOrgMatchingThemes
-					matchingThemes={ matchingThemes }
-					selectedSite={ selectedSite }
-					{ ...props }
-				/>
-			) : (
-				<>
-					<div className="themes-list__not-found-text">
-						{ translate( 'No themes match your search' ) }
+	// Do it for me.
+	options.push( {
+		title: translate( 'Hire our team of experts to design one for you', {
+			comment:
+				'"One" could mean "theme" or "site" in this context (i.e. "Hire our team of experts to design a theme for you")',
+		} ),
+		icon: brush,
+		description: translate(
+			'A WordPress.com professional will create layouts for up to 5 pages of your site.'
+		),
+		onClick: () => {
+			recordTracksEvent( 'calypso_themeshowcase_more_options_difm_click', {
+				site_plan: sitePlan,
+				search_term: searchTerm,
+			} );
+			window.location.replace( 'https://wordpress.com/do-it-for-me/' );
+		},
+		url: 'https://wordpress.com/do-it-for-me/',
+		buttonText: translate( 'Hire an expert' ),
+	} );
+
+	// Upload a theme.
+	if ( ! isLoggedInShowcase ) {
+		options.push( {
+			title: translate( 'Upload a theme' ),
+			icon: cloudUpload,
+			description: translate(
+				'With a Business plan, you can upload and install third-party themes, including your own themes.'
+			),
+			onClick: () =>
+				recordTracksEvent( 'calypso_themeshowcase_more_options_upload_theme_click', {
+					site_plan: sitePlan,
+					search_term: searchTerm,
+					destination: 'signup',
+				} ),
+			url: '/start/business',
+			buttonText: translate( 'Get started' ),
+		} );
+	} else if ( canInstallTheme ) {
+		options.push( {
+			title: translate( 'Upload a theme' ),
+			icon: cloudUpload,
+			description: translate(
+				'You can upload and install third-party themes, including your own themes.'
+			),
+			onClick: () =>
+				recordTracksEvent( 'calypso_themeshowcase_more_options_upload_theme_click', {
+					site_plan: sitePlan,
+					search_term: searchTerm,
+					destination: 'upload-theme',
+				} ),
+			url: isAtomic
+				? `https://${ selectedSite.slug }/wp-admin/theme-install.php`
+				: `/themes/upload/${ selectedSite.slug }`,
+			buttonText: translate( 'Upload theme' ),
+		} );
+	} else {
+		options.push( {
+			title: translate( 'Upload a theme' ),
+			icon: cloudUpload,
+			description: translate(
+				'With a Business plan, you can upload and install third-party themes, including your own themes.'
+			),
+			onClick: () =>
+				recordTracksEvent( 'calypso_themeshowcase_more_options_upload_theme_click', {
+					site_plan: sitePlan,
+					search_term: searchTerm,
+					destination: 'checkout',
+				} ),
+			url: `/checkout/${ selectedSite.slug }/business?redirect_to=/themes/upload/${ selectedSite.slug }`,
+			buttonText: translate( 'Upgrade your plan' ),
+		} );
+	}
+
+	return (
+		<div className="themes-list__options">
+			<div className="themes-list__options-heading">
+				{ translate( "Can't find what you're looking for?" ) }
+			</div>
+			<div className="themes-list__options-subheading">
+				{ translate( 'Here are a few more options:' ) }
+			</div>
+			{ options.map( ( option, index ) => (
+				<div className="themes-list__option" key={ index }>
+					<Icon className="themes-list__option-icon" icon={ option.icon } size={ 28 } />
+					<div className="themes-list__option-content">
+						<div className="themes-list__option-text">
+							<div className="themes-list__option-title">{ option.title }</div>
+							<div className="themes-list__option-description">{ option.description }</div>
+						</div>
+						<Button
+							primary={ index === 0 }
+							className="themes-list__option-button"
+							href={ option.url }
+							onClick={ option.onClick }
+						>
+							{ option.buttonText }
+						</Button>
 					</div>
-					<PlanUpgradeCTA
-						selectedSite={ selectedSite }
-						searchTerm={ searchTerm }
-						translate={ translate }
-						recordTracksEvent={ props.recordTracksEvent }
-					/>
-				</>
-			) }
+				</div>
+			) ) }
 		</div>
-	) : (
+	);
+}
+
+function Empty( props ) {
+	return (
 		<>
-			{ matchingThemes.length ? (
-				<WPOrgMatchingThemes matchingThemes={ matchingThemes } { ...props } />
-			) : (
-				<EmptyContent
-					title={ translate( 'Sorry, no themes found.' ) }
-					line={ translate( 'Try a different search or more filters?' ) }
-				/>
-			) }
+			<div className="themes-list__empty-search-text">
+				{ props.translate( 'No themes match your search' ) }
+			</div>
+			<Options
+				isFSEActive={ props.isFSEActive }
+				recordTracksEvent={ props.recordTracksEvent }
+				searchTerm={ props.searchTerm }
+				translate={ props.translate }
+				upsellCardDisplayed={ props.upsellCardDisplayed }
+			/>
 		</>
 	);
 }
@@ -244,65 +411,6 @@ function WPOrgMatchingThemes( props ) {
 	);
 }
 
-function PlanUpgradeCTA( { selectedSite, searchTerm, translate, recordTracksEvent } ) {
-	const isLoggedIn = useSelector( isUserLoggedIn );
-
-	const onUpgradeClick = useCallback( () => {
-		recordTracksEvent( 'calypso_themeshowcase_search_empty_results_upgrade_plan', {
-			site_plan: selectedSite?.plan?.product_slug,
-			search_term: searchTerm,
-		} );
-
-		if ( ! selectedSite?.slug ) {
-			return page( `/checkout/${ PLAN_BUSINESS }?redirect_to=/themes` );
-		}
-
-		return page(
-			`/checkout/${ selectedSite.slug }/${ PLAN_BUSINESS }?redirect_to=/themes/${ selectedSite.slug }`
-		);
-	}, [ selectedSite, searchTerm, recordTracksEvent ] );
-
-	const onGetStartedClick = useCallback( () => {
-		recordTracksEvent( 'calypso_themeshowcase_search_empty_results_get_started', {
-			search_term: searchTerm,
-		} );
-
-		return page( `/start/business` );
-	}, [ searchTerm, recordTracksEvent ] );
-
-	return (
-		<div className="themes-list__upgrade-section-wrapper">
-			<div className="themes-list__upgrade-section-title">
-				{ translate( 'Use any theme on WordPress.com' ) }
-			</div>
-			<div className="themes-list__upgrade-section-subtitle">
-				{ translate(
-					'Have a theme in mind that we don’t show here? Unlock the ability to use any theme, including Astra, with a Business plan.'
-				) }
-			</div>
-
-			{ isLoggedIn ? (
-				<Button primary className="themes-list__upgrade-section-cta" onClick={ onUpgradeClick }>
-					{ translate( 'Upgrade your plan' ) }
-				</Button>
-			) : (
-				<Button primary className="themes-list__upgrade-section-cta" onClick={ onGetStartedClick }>
-					{ translate( 'Get started' ) }
-				</Button>
-			) }
-
-			<div className="themes-list__themes-images">
-				<img
-					src={ proThemesBanner }
-					alt={ translate(
-						'Themes banner featuring Astra, Neve, GeneratePress, and Hestia theme'
-					) }
-				/>
-			</div>
-		</div>
-	);
-}
-
 function LoadingPlaceholders( { placeholderCount } ) {
 	return times( placeholderCount, function ( i ) {
 		return (
@@ -323,4 +431,7 @@ const mapDispatchToProps = {
 	upsellCardDisplayed: upsellCardDisplayedAction,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( ThemesList ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)( localize( withIsFSEActive( ThemesList ) ) );

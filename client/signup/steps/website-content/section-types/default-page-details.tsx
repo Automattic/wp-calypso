@@ -18,7 +18,7 @@ import {
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { MediaUploadData, WordpressMediaUpload } from '../wordpress-media-upload';
 import type { BBETranslationContext } from 'calypso/signup/difm/translation-hooks';
-import type { PageData } from 'calypso/state/signup/steps/website-content/schema';
+import type { PageData } from 'calypso/state/signup/steps/website-content/types';
 
 export const CONTENT_SUFFIX = 'Content';
 export const IMAGE_PREFIX = 'Image';

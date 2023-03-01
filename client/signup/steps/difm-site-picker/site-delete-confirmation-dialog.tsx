@@ -69,7 +69,7 @@ function SiteDeleteConfirmationDialog( {
 	const siteDomain = useSelector( ( state ) => getSiteDomain( state, siteId ?? 0 ) );
 	const siteTitle = useSelector( ( state ) => getSiteTitle( state, siteId ) );
 	const translate = useTranslate();
-	const TRANSLATED_DELETE_WORD = translate( 'DELETE' );
+	const TRANSLATED_DELETE_WORD = translate( 'YES' );
 	const deleteDisabled = confirmText !== TRANSLATED_DELETE_WORD;
 
 	return (
@@ -80,7 +80,7 @@ function SiteDeleteConfirmationDialog( {
 			buttons={ [
 				<DialogButton onClick={ onClose }>{ translate( 'Cancel' ) }</DialogButton>,
 				<DialogButton primary disabled={ deleteDisabled } onClick={ onConfirm }>
-					{ translate( 'Delete site content' ) }
+					{ translate( 'Use Existing Site' ) }
 				</DialogButton>,
 			] }
 			onClose={ onClose }
@@ -92,14 +92,14 @@ function SiteDeleteConfirmationDialog( {
 				<FormattedHeader
 					align="center"
 					brandFont
-					headerText={ translate( 'Site Reset Confirmation' ) }
+					headerText={ translate( 'Content Confirmation' ) }
 				/>
 				<Subtitle>
 					<ul>
 						<li>
 							{ translate(
-								'The current content of your website {{strong}}%(siteTitle)s{{/strong}} (%(siteAddress)s) will be deleted. ' +
-									'This includes pages, posts, media, comments, third party plugins and themes.',
+								'The current content of your website {{strong}}%(siteTitle)s{{/strong}} (%(siteAddress)s) may be edited or deleted as part of our build process. ' +
+									'This includes pages, posts, products, media, plugins, and themes.',
 								{
 									components: {
 										strong: <strong />,
@@ -118,7 +118,7 @@ function SiteDeleteConfirmationDialog( {
 						</li>
 						<li>
 							{ translate(
-								"If you don't want your site content to be deleted you can create a {{a}}new site{{/a}} instead.",
+								'If you do not want your content to be edited or deleted, you can create a {{a}}new site{{/a}} instead.',
 								{
 									components: {
 										a: <a href="/start/do-it-for-me" />,
@@ -129,21 +129,19 @@ function SiteDeleteConfirmationDialog( {
 					</ul>
 				</Subtitle>
 				<FormLabel htmlFor="confirmTextChangeInput">
-					{ translate(
-						'Type {{strong}}%(deleteWord)s{{/strong}} to confirm that your site’s current content will be deleted after purchase.',
-						{
-							components: {
-								strong: <strong />,
-							},
-							args: {
-								deleteWord: TRANSLATED_DELETE_WORD,
-							},
-						}
-					) }
+					{ translate( 'Type {{strong}}%(deleteWord)s{{/strong}} to confirm and continue.', {
+						components: {
+							strong: <strong />,
+						},
+						args: {
+							deleteWord: TRANSLATED_DELETE_WORD,
+						},
+					} ) }
 				</FormLabel>
 
 				<FormTextInput
 					autoCapitalize="off"
+					autoComplete="off"
 					onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
 						setConfirmText( event.target.value )
 					}

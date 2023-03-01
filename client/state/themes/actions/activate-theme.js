@@ -7,10 +7,18 @@ import {
 	getGlobalStylesVariations,
 	updateGlobalStyles,
 } from 'calypso/state/global-styles/actions';
+import {
+	productsReinstall,
+	productsReinstallNotStarted,
+} from 'calypso/state/marketplace/products-reinstall/actions';
+import { requestedReinstallProducts } from 'calypso/state/marketplace/products-reinstall/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { THEME_ACTIVATE, THEME_ACTIVATE_FAILURE } from 'calypso/state/themes/action-types';
 import { themeActivated } from 'calypso/state/themes/actions/theme-activated';
-import { getThemePreviewThemeOptions } from 'calypso/state/themes/selectors';
+import {
+	getThemePreviewThemeOptions,
+	isMarketplaceThemeSubscribed,
+} from 'calypso/state/themes/selectors';
 
 import 'calypso/state/themes/init';
 
@@ -78,6 +86,12 @@ export function activateTheme(
 				);
 			} )
 			.catch( ( error ) => {
+				if ( isMarketplaceThemeSubscribed( getState(), themeId, siteId ) ) {
+					if ( ! requestedReinstallProducts( getState(), siteId ) ) {
+						return dispatch( productsReinstall( siteId, themeId ) );
+					}
+					dispatch( productsReinstallNotStarted( siteId ) );
+				}
 				dispatch( {
 					type: THEME_ACTIVATE_FAILURE,
 					themeId,

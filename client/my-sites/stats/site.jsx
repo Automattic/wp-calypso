@@ -43,6 +43,7 @@ import ChartTabs from './stats-chart-tabs';
 import Countries from './stats-countries';
 import DatePicker from './stats-date-picker';
 import StatsModule from './stats-module';
+import StatsNotices from './stats-notices';
 import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
 import statsStrings from './stats-strings';
@@ -108,6 +109,7 @@ Object.defineProperty( CHART_COMMENTS, 'label', {
 } );
 
 const getActiveTab = ( chartTab ) => find( CHARTS, { attr: chartTab } ) || CHARTS[ 0 ];
+
 class StatsSite extends Component {
 	static defaultProps = {
 		chartTab: 'views',
@@ -215,6 +217,8 @@ class StatsSite extends Component {
 					slug={ slug }
 				/>
 
+				{ isOdysseyStats && <StatsNotices siteId={ siteId } /> }
+
 				<HighlightsSection siteId={ siteId } />
 
 				<div id="my-stats-content" className={ wrapperClass }>
@@ -317,25 +321,29 @@ class StatsSite extends Component {
 							statType="statsVideoPlays"
 							showSummaryLink
 						/>
-						{ config.isEnabled( 'newsletter/stats' ) && (
+						{ config.isEnabled( 'newsletter/stats' ) && ! isOdysseyStats && (
 							<>
 								<StatsModule
-									path="emails-open"
-									moduleStrings={ moduleStrings.emailsOpenStats }
+									additionalColumns={ {
+										header: (
+											<>
+												<span>{ translate( 'Opens' ) }</span>
+											</>
+										),
+										body: ( item ) => (
+											<>
+												<span>{ item.opens }</span>
+											</>
+										),
+									} }
+									path="emails"
+									moduleStrings={ moduleStrings.emails }
 									period={ this.props.period }
 									query={ query }
-									statType="statsEmailsOpen"
-									hideSummaryLink
-									metricLabel={ translate( 'Opens' ) }
-								/>
-								<StatsModule
-									path="emails-click"
-									moduleStrings={ moduleStrings.emailsClickStats }
-									period={ this.props.period }
-									query={ query }
-									statType="statsEmailsClick"
-									hideSummaryLink
+									statType="statsEmailsSummary"
+									mainItemLabel={ translate( 'Latest Emails' ) }
 									metricLabel={ translate( 'Clicks' ) }
+									showSummaryLink
 								/>
 							</>
 						) }
@@ -357,12 +365,7 @@ class StatsSite extends Component {
 						}
 					</div>
 				</div>
-				<PromoCards
-					isJetpack={ isJetpack }
-					isOdysseyStats={ isOdysseyStats }
-					pageSlug="traffic"
-					slug={ slug }
-				/>
+				<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
 				<JetpackColophon />
 			</div>
 		);
@@ -416,6 +419,7 @@ class StatsSite extends Component {
 		);
 	}
 }
+
 const enableJetpackStatsModule = ( siteId, path ) =>
 	withAnalytics(
 		recordTracksEvent( 'calypso_jetpack_module_toggle', {

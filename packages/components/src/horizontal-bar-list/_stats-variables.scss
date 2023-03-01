@@ -4,7 +4,7 @@ $row-height: 36px;
 $row-font-size: 14px;
 $row-line-height: 20px;
 $bar-left-spacing: 10px;
-$value-column-width: 50px;
+$value-column-width: 75px;
 $border-radius: 5px; // stylelint-disable-line scales/radii
 $item-transition: 0.1s ease-out;
 $item-indicator-width: 4px;
@@ -17,3 +17,16 @@ $header-font-size: 20px;
 $header-line-height: 26px;
 $stats-avatar-size: 20px;
 $stats-avatar-spacer: 8px;
+
+@mixin additional-columns-wrapper() {
+	display: flex;
+	text-align: right;
+	gap: 0 4px;
+	padding: 0 4px;
+	font-weight: 400;
+
+	> div,
+	> span {
+		min-width: 120px;
+	}
+}

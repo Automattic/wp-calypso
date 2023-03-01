@@ -1,8 +1,9 @@
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import QRCode from 'qrcode.react';
 import './style.scss';
 import iconWoo from './images/icon-woo.png';
-import qrCodeJetpack from './images/qr-code-jetpack.png';
 import qrCodeWoo from './images/qr-code-woo.png';
 import storeBadgeApple from './images/store-apple.png';
 import storeBadgeGoogle from './images/store-google.png';
@@ -55,6 +56,7 @@ export default function AppPromoFullWidth( {
 	clickHandler,
 }: AppPromoFullWidthProps ) {
 	const translate = useTranslate();
+	const localizeUrl = useLocalizeUrl();
 	// Basic user agent testing so we can show app store badges on moble.
 	const userAgent = window.navigator.userAgent.toLowerCase();
 	const isApple = userAgent.includes( 'iphone' ) || userAgent.includes( 'ipad' );
@@ -101,7 +103,7 @@ export default function AppPromoFullWidth( {
 					a: (
 						<a
 							className="jetpack"
-							href="https://apps.wordpress.com/get?campaign=calypso-stats-promo"
+							href={ localizeUrl( 'https://apps.wordpress.com/get/?campaign=calypso-stats-promo' ) }
 							onClick={ () => onClickHandler( CLICK_EVENTS.jetpackClickA8C ) }
 						/>
 					),
@@ -150,7 +152,11 @@ export default function AppPromoFullWidth( {
 		return isWoo ? (
 			<img className="promo-qr-code" src={ qrCodeWoo } alt="QR Code for Woo mobile app" />
 		) : (
-			<img className="promo-qr-code" src={ qrCodeJetpack } alt="QR Code for Woo mobile app" />
+			<QRCode
+				className="promo-qr-code"
+				value={ localizeUrl( 'https://apps.wordpress.com/get/?campaign=calypso-qrcode-apps' ) }
+				size={ 300 }
+			/>
 		);
 	};
 

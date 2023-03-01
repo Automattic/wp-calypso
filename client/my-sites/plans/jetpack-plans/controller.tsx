@@ -7,7 +7,7 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSlugInTerm } from './convert-slug-terms';
 import getParamsFromContext from './get-params-from-context';
-import JetpackCompletePage from './jetpack-complete';
+import JetpackCompletePage from './jetpack-complete-page';
 import { getPlanRecommendationFromContext } from './plan-upgrade/utils';
 import SelectorPage from './selector';
 import { StoragePricing } from './storage-pricing';
@@ -90,7 +90,16 @@ export const productSelect =
 	};
 
 export function offerJetpackComplete( context: PageJS.Context, next: () => void ): void {
-	context.primary = <JetpackCompletePage />;
+	const { site, lang } = context.params;
+	const urlQueryArgs: QueryArgs = context.query;
+	context.primary = (
+		<JetpackCompletePage
+			defaultDuration={ TERM_ANNUALLY }
+			urlQueryArgs={ urlQueryArgs }
+			siteSlug={ site || context.query.site }
+			locale={ lang }
+		/>
+	);
 	next();
 }
 

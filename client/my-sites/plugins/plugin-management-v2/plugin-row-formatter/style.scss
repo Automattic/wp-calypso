@@ -156,3 +156,10 @@ a.button.plugin-row-formatter__plugin-name-card {
 		}
 	}
 }
+
+.plugin-row-formatter__action-status {
+	margin-block-start: 12px;
+	@include break-xlarge {
+		margin-block-start: 6px;
+	}
+}

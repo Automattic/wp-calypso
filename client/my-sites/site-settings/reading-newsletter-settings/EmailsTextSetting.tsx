@@ -1,3 +1,5 @@
+import { useLocale } from '@automattic/i18n-utils';
+import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -18,6 +20,8 @@ type SubscriptionOption = {
 
 export const EmailsTextSetting = ( { value, disabled, updateFields }: EmailsTextSettingProps ) => {
 	const translate = useTranslate();
+	const locale = useLocale();
+	const { hasTranslation } = useI18n();
 
 	const updateSubscriptionOptions =
 		( option: string ) => ( event: React.ChangeEvent< HTMLInputElement > ) => {
@@ -36,32 +40,44 @@ export const EmailsTextSetting = ( { value, disabled, updateFields }: EmailsText
 		};
 
 	return (
-		<div className="site-settings__emails-test-settings-container">
+		<div className="site-settings__emails-text-settings-container">
 			<FormFieldset>
 				{ /* @ts-expect-error FormLegend is not typed and is causing errors */ }
 				<FormLegend>
-					These settings change the emails sent from your site to your readers
+					{ translate( 'These settings change the emails sent from your site to your readers' ) }
 				</FormLegend>
-				<FormLabel htmlFor="welcome_email_text">{ translate( 'Welcome email text' ) }</FormLabel>
+				<FormLabel htmlFor="confirmation_email_message">
+					{ hasTranslation( 'Confirmation email message' ) || locale.startsWith( 'en' )
+						? translate( 'Confirmation email message' )
+						: translate( 'Welcome email text' ) }
+				</FormLabel>
 				<FormTextarea
-					name="welcome_email_text"
-					id="welcome_email_text"
+					name="confirmation_email_message"
+					id="confirmation_email_message"
 					value={ value?.invitation }
 					onChange={ updateSubscriptionOptions( 'invitation' ) }
 					disabled={ disabled }
 					autoCapitalize="none"
 				/>
 				<FormSettingExplanation>
-					{ translate(
-						'The welcome message sent out to new readers when they subscribe to your blog.'
-					) }
+					{ hasTranslation(
+						'The confirmation message sent out to new readers when they subscribe to your blog.'
+					) || locale.startsWith( 'en' )
+						? translate(
+								'The confirmation message sent out to new readers when they subscribe to your blog.'
+						  )
+						: translate(
+								'The welcome message sent out to new readers when they subscribe to your blog.'
+						  ) }
 				</FormSettingExplanation>
-				<FormLabel htmlFor="comment_follow_email_text">
-					{ translate( 'Comment follow email text' ) }
+				<FormLabel htmlFor="comment_follow_email_message">
+					{ hasTranslation( 'Comment follow email message' ) || locale.startsWith( 'en' )
+						? translate( 'Comment follow email message' )
+						: translate( 'Comment follow email text' ) }
 				</FormLabel>
 				<FormTextarea
-					name="comment_follow_email_text"
-					id="comment_follow_email_text"
+					name="comment_follow_email_message"
+					id="comment_follow_email_message"
 					value={ value?.comment_follow }
 					onChange={ updateSubscriptionOptions( 'comment_follow' ) }
 					disabled={ disabled }

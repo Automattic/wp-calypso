@@ -27,7 +27,7 @@ describe( 'Translations', () => {
 		describe( 'when no flow is specified', () => {
 			it( 'provides generic text', () => {
 				const translations = getLaunchpadTranslations( null );
-				expect( translations.flowName ).toEqual( 'WordPress' );
+				expect( translations.flowName ).toEqual( 'WordPress.com' );
 				expect( translations.title ).toEqual( 'Your website is ready!' );
 				expect( translations.subtitle ).toEqual( 'Keep up the momentum with these final steps.' );
 			} );

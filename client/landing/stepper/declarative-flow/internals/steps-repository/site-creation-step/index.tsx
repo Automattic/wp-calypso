@@ -10,6 +10,7 @@ import {
 	isCopySiteFlow,
 	isWooExpressFlow,
 	StepContainer,
+	addProductsToCart,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -18,6 +19,8 @@ import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import useAddTempSiteToSourceOptionMutation from 'calypso/data/site-migration/use-add-temp-site-mutation';
+import { useSiteQuery } from 'calypso/data/sites/use-site-query';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
@@ -36,23 +39,23 @@ const DEFAULT_LINK_IN_BIO_THEME = 'pub/lynx';
 const DEFAULT_WOOEXPRESS_FLOW = 'pub/twentytwentytwo';
 const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
 
-const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } ) {
+const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, data } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
 	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
 
-	const { domainCartItem, planCartItem, siteAccentColor, getSelectedSiteTitle } = useSelect(
-		( select ) => ( {
+	const { domainCartItem, planCartItem, siteAccentColor, getSelectedSiteTitle, productCartItems } =
+		useSelect( ( select ) => ( {
 			domainCartItem: select( ONBOARD_STORE ).getDomainCartItem(),
 			siteAccentColor: select( ONBOARD_STORE ).getSelectedSiteAccentColor(),
 			planCartItem: select( ONBOARD_STORE ).getPlanCartItem(),
+			productCartItems: select( ONBOARD_STORE ).getProductCartItems(),
 			getSelectedSiteTitle: select( ONBOARD_STORE ).getSelectedSiteTitle(),
-		} )
-	);
+		} ) );
 
 	const username = useSelector( ( state ) => getCurrentUserName( state ) );
 
-	const { setPendingAction, setIsMigrateFromWp } = useDispatch( ONBOARD_STORE );
+	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 
 	let theme: string;
 	if ( isMigrationFlow( flow ) || isCopySiteFlow( flow ) ) {
@@ -69,21 +72,17 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 
 	// Default visibility is public
 	let siteVisibility = Site.Visibility.PublicIndexed;
+	const wooFlows = [ ECOMMERCE_FLOW, WOOEXPRESS_FLOW ];
 
-	// Link-in-bio flow defaults to "Coming Soon"
+	// These flows default to "Coming Soon"
 	if (
 		isLinkInBioFlow( flow ) ||
 		isFreeFlow( flow ) ||
 		isMigrationFlow( flow ) ||
-		isCopySiteFlow( flow )
+		isCopySiteFlow( flow ) ||
+		wooFlows.includes( flow || '' )
 	) {
 		siteVisibility = Site.Visibility.PublicNotIndexed;
-	}
-
-	// Certain flows should default to private.
-	const privateFlows = [ ECOMMERCE_FLOW, WOOEXPRESS_FLOW ];
-	if ( privateFlows.includes( flow || '' ) ) {
-		siteVisibility = Site.Visibility.Private;
 	}
 
 	const signupDestinationCookieExists = retrieveSignupDestination();
@@ -94,6 +93,10 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 		wasSignupCheckoutPageUnloaded() && signupDestinationCookieExists && isReEnteringFlow
 	);
 	const blogTitle = isFreeFlow( 'free' ) ? getSelectedSiteTitle : '';
+	const { addTempSiteToSourceOption } = useAddTempSiteToSourceOptionMutation();
+	const search = window.location.search;
+	const sourceSiteSlug = new URLSearchParams( search ).get( 'from' ) || '';
+	const { data: siteData } = useSiteQuery( sourceSiteSlug, isCopySiteFlow( flow ) );
 
 	async function createSite() {
 		if ( isManageSiteFlow ) {
@@ -113,11 +116,21 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 			siteAccentColor,
 			true,
 			username,
-			domainCartItem
+			domainCartItem,
+			data?.sourceSlug as string
 		);
 
 		if ( planCartItem ) {
 			await addPlanToCart( site?.siteSlug as string, flow as string, true, theme, planCartItem );
+		}
+
+		if ( productCartItems?.length ) {
+			await addProductsToCart( site?.siteSlug as string, flow as string, productCartItems );
+		}
+
+		if ( isMigrationFlow( flow ) ) {
+			// Store temporary target blog id to source site option
+			addTempSiteToSourceOption( site?.siteId as number, siteData?.ID as number );
 		}
 
 		return {
@@ -128,11 +141,6 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 
 	useEffect( () => {
 		setProgress( 0.1 );
-
-		if ( isMigrationFlow( flow ) ) {
-			setIsMigrateFromWp( true );
-		}
-
 		if ( submit ) {
 			setPendingAction( createSite );
 			submit();
@@ -142,9 +150,20 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 
 	const getCurrentMessage = () => {
 		return isWooExpressFlow( flow )
-			? __( "Woo! We're creating your store" )
+			? __( 'Woo! We’re creating your store' )
 			: __( 'Creating your site' );
 	};
+
+	const getSubTitle = () => {
+		if ( isWooExpressFlow( flow ) ) {
+			return __(
+				'#FunWooFact: Did you know that Woo powers almost 4 million stores worldwide? You’re in good company.'
+			);
+		}
+		return null;
+	};
+
+	const subTitle = getSubTitle();
 
 	return (
 		<>
@@ -163,6 +182,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 						) : (
 							<LoadingEllipsis />
 						) }
+						{ subTitle && <p className="processing-step__subtitle">{ subTitle }</p> }
 					</>
 				}
 				stepProgress={ stepProgress }

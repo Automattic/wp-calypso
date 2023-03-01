@@ -1,6 +1,13 @@
-$sensei-mobile-layout-width: 1200px;
-$sensei-color: #43af99;
+@import "@automattic/typography/styles/variables";
+@import "@automattic/onboarding/styles/mixins";
+@import "sensei-variables";
 
 .sensei .progress-bar__progress {
-	background-color: $sensei-color;
+	background-color: $sensei-green-50;
+}
+
+.sensei {
+	.sensei-button {
+		@include sensei-button;
+	}
 }

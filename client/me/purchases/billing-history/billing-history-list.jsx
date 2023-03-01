@@ -4,7 +4,6 @@ import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import titleCase from 'to-title-case';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Pagination from 'calypso/components/pagination';
 import { capitalPDangit } from 'calypso/lib/formatting';
@@ -71,7 +70,7 @@ class BillingHistoryList extends Component {
 
 		return this.serviceNameDescription( {
 			...transactionItem,
-			plan: capitalPDangit( titleCase( transactionItem.variation ) ),
+			plan: capitalPDangit( transactionItem.variation ),
 		} );
 	};
 

@@ -31,8 +31,11 @@ function fetchHasNeverPublishedPost(
 	siteId: number | null,
 	includePages: boolean
 ): Promise< boolean > {
-	return wpcom.req.get( {
-		path: `/sites/${ siteId }/site-has-never-published-post?include-pages=${ includePages }`,
-		apiNamespace: 'wpcom/v2',
-	} );
+	return wpcom.req.get(
+		{
+			path: `/sites/${ siteId }/site-has-never-published-post`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{ 'include-pages': includePages }
+	);
 }

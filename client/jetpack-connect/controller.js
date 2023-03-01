@@ -389,7 +389,7 @@ export function signupForm( context, next ) {
 	const isLoggedIn = isUserLoggedIn( context.store.getState() );
 	const { query } = context;
 	const from = query.from;
-	if ( from && startsWith( from, 'jetpack-migration' ) ) {
+	if ( from && startsWith( from, 'wpcom-migration' ) ) {
 		const signupUrl = config( 'signup_url' );
 		const urlQueryArgs = {
 			redirect_to: context.path,

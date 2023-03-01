@@ -1,0 +1,70 @@
+.launched__modal {
+	max-width: 640px;
+
+	.components-modal__content {
+		margin: 0;
+		padding: 48px;
+	}
+
+	&-content {
+		display: flex;
+		flex-direction: column;
+		gap: 32px;
+	}
+
+	&-heading {
+		color: var(--studio-gray-100);
+		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+		font-size: 2rem;
+		line-height: 40px;
+		font-weight: 400;
+		letter-spacing: 0.2px;
+		margin: 0;
+		padding-bottom: 8px;
+	}
+
+	&-body,
+	&-domain {
+		margin: 0;
+		color: var(--studio-gray-80);
+		font-size: 1rem;
+		line-height: 24px;
+	}
+
+	&-domain {
+		padding: 0 8px;
+
+		// prevent text overflow
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
+	}
+
+	&-buttons {
+		display: flex;
+		flex-direction: row;
+		justify-content: end;
+		gap: 16px;
+	}
+
+	&-site {
+		padding: 8px;
+		background: var(--studio-gray-0);
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	&-customize {
+		color: var(--studio-blue-50);
+		font-size: 0.875rem;
+		display: inline-flex;
+		flex-direction: row;
+		justify-content: start;
+		gap: 6px;
+		padding: 0;
+		margin: 0;
+		margin-top: 16px;
+	}
+}

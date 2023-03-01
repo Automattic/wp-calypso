@@ -53,13 +53,29 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	@include stats-section-header;
 
 	margin-bottom: $header-margin-bottom;
+
 	small {
 		font-family: $highlight-card-heading-font;
 		font-size: $font-body-small;
 		line-height: 1.5;
 		color: var(--studio-gray-50);
 		font-weight: 400;
+
+		@media ( max-width: $break-mobile ) {
+			display: block;
+		}
 	}
+
+	svg {
+		fill: var(--studio-gray-50);
+	}
+}
+
+.highlight-cards-heading-icon {
+	display: inline-flex;
+	width: 24px;
+	height: 24px;
+	cursor: pointer;
 }
 
 .highlight-cards-list {
@@ -109,6 +125,10 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	font-size: 36px; // stylelint-disable-line declaration-property-unit-allowed-list
 	font-weight: 400;
 	line-height: 40px;
+
+	&.is-pointer {
+		cursor: pointer;
+	}
 }
 
 .highlight-card-count-value {
@@ -154,7 +174,7 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 .tooltip.popover.highlight-card-tooltip { // overload tooltip's styles
 	.popover__inner {
 		padding: 16px 24px;
-		min-width: 244px;
+		width: 244px;
 		box-sizing: border-box;
 		border-radius: 5px; // stylelint-disable-line scales/radii
 	}
@@ -167,6 +187,35 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	font-weight: 500;
 	line-height: 20px;
 	font-family: $highlight-card-tooltip-font;
+
+	&.comparing-info {
+		display: block;
+
+		& > p {
+			margin-bottom: 10px;
+		}
+
+		& > div {
+			height: 66px;
+			text-align: center;
+		}
+
+		.comparing-info-chart {
+			& > small {
+				display: block;
+				font-family: $font-sf-pro-text;
+				font-weight: 400;
+				color: var(--studio-gray-0);
+				margin-bottom: -8px;
+				letter-spacing: -0.02em;
+
+				& > span {
+					color: var(--studio-gray-30);
+					margin: 0 6px;
+				}
+			}
+		}
+	}
 
 	.highlight-card-tooltip-label {
 		display: flex;
@@ -204,11 +253,6 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 
 	.card.highlight-card {
 		padding: 16px 24px;
-	}
-
-	.highlight-cards-heading {
-		display: flex;
-		flex-flow: column;
 	}
 
 	.highlight-card-icon {

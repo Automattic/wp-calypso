@@ -116,6 +116,11 @@ export function getEligibleKeyringServices( state, siteId, type ) {
 			return false;
 		}
 
+		// Omit the GitHub deployment app so it doesn't appear in the list of "other" services
+		if ( 'github-deploy' === service.ID ) {
+			return false;
+		}
+
 		return true;
 	} );
 }

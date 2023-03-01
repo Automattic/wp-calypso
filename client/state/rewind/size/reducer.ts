@@ -1,5 +1,6 @@
 import { AnyAction } from 'redux';
 import {
+	JETPACK_BACKUP_RETENTION_SET,
 	REWIND_SIZE_REQUEST,
 	REWIND_SIZE_REQUEST_FAILURE,
 	REWIND_SIZE_REQUEST_SUCCESS,
@@ -65,10 +66,34 @@ const daysOfBackupsSaved = (
 	return size.daysOfBackupsSaved ?? null;
 };
 
+const retentionDays = ( state: AppState = null, action: AnyAction ): AppState | number | null => {
+	switch ( action.type ) {
+		case REWIND_SIZE_SET:
+			return action.size.retentionDays ?? null;
+		case JETPACK_BACKUP_RETENTION_SET:
+			return action.retentionDays ?? null;
+	}
+
+	return state;
+};
+
+const lastBackupSize = (
+	state: AppState = null,
+	{ type, size }: AnyAction
+): AppState | number | null => {
+	if ( type !== REWIND_SIZE_SET ) {
+		return state;
+	}
+
+	return size.lastBackupSize ?? null;
+};
+
 export default combineReducers( {
 	requestStatus,
 	bytesUsed,
 	minDaysOfBackupsAllowed,
 	daysOfBackupsAllowed,
 	daysOfBackupsSaved,
+	retentionDays,
+	lastBackupSize,
 } );

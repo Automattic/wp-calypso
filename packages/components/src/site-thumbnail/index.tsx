@@ -76,14 +76,14 @@ export const SiteThumbnail = ( {
 					style={ { backgroundImage: `url(${ bgColorImgUrl })` } }
 				></div>
 			) }
-			{ isLoading && (
+			{ ( isLoading || isError ) && (
 				<div
 					className={ classnames( { 'site-thumbnail-loader': showLoader }, 'site-thumbnail-icon' ) }
 				>
 					{ children }
 				</div>
 			) }
-			{ imgProps.src && ! isLoading && (
+			{ imgProps.src && ! isLoading && ! isError && (
 				<img
 					className="site-thumbnail__image"
 					alt={ alt }

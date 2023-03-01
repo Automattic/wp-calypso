@@ -30,8 +30,8 @@ const platformFeatureList: { [ key: string ]: { [ key: string ]: FeatureName[] }
 		unsupported: [ 'styles', 'themes', 'colors', 'fonts' ],
 	},
 	wordpress: {
-		supported: [ 'posts', 'pages', 'themes', 'plugins' ],
-		unsupported: [ 'styles', 'fonts', 'colors' ],
+		supported: [ 'posts', 'pages' ],
+		unsupported: [ 'themes', 'plugins', 'styles', 'fonts', 'colors' ],
 	},
 	medium: {
 		supported: [ 'posts', 'tags' ],

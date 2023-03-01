@@ -12,12 +12,12 @@ const StyledTooltip = styled( Tooltip )`
 		border-radius: 4px;
 		min-height: 32px;
 		width: 210px;
-		display: flex;
 		align-items: center;
 		font-style: normal;
 		font-weight: 400;
 		font-size: 1em;
 		padding: 8px 10px;
+		top: -8px;
 	}
 `;
 

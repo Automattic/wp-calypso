@@ -1,0 +1,144 @@
+:root {
+	--font-body: 16px;
+	--jp-black: #000;
+	--jp-gray-5: #dcdcde;
+	--jp-red: #d63639;
+	--jp-yellow-20: #f0c930;
+	--jp-green: #069e08;
+	--spacing-base: 8px;
+}
+.notice-banner {
+	display: flex;
+	align-items: flex-start;
+
+	font-size: var(--font-body);
+
+	background-color: var(--studio-white);
+
+	border: 1px solid var(--jp-black);
+	border-radius: 4px;
+	border-color: var(--jp-gray-5);
+	border-left-width: 6px;
+
+	padding: 24px 31px 27px 18px;
+}
+
+.notice-banner__icon-wrapper {
+	margin-right: 20px;
+	width: calc(var(--spacing-base) * 3);
+	height: calc(var(--spacing-base) * 3);
+}
+
+.notice-banner__close-button {
+	width: calc(var(--spacing-base) * 3);
+	height: calc(var(--spacing-base) * 3);
+
+	background-color: transparent;
+	border: none;
+	cursor: pointer;
+	outline: none;
+}
+
+// Mobile layout differences.
+@media screen and (max-width: 600px) {
+	.notice-banner {
+		position: relative;
+		padding-top: 68px;
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.06);
+	}
+
+	.notice-banner__icon-wrapper {
+		position: absolute;
+		top: 24px;
+		left: 24px;
+	}
+
+	.notice-banner__close-button {
+		position: absolute;
+		top: 24px;
+		right: 24px;
+	}
+}
+
+.notice-banner__main-content {
+	flex-grow: 1;
+}
+
+.notice-banner__title {
+	font-weight: 600;
+	margin-bottom: 8px;
+}
+
+.notice-banner__action-bar {
+	display: flex;
+	align-items: center;
+	margin-top: 20px;
+
+	a {
+		&,
+		&:hover,
+		&:active,
+		&:focus {
+			color: var(--jp-black);
+		}
+	}
+
+	> * {
+		margin-right: 24px;
+	}
+}
+
+.notice-banner.is-error {
+	border-left-color: var(--jp-red);
+
+	.notice-banner__icon {
+		fill: var(--jp-red);
+	}
+}
+
+.notice-banner.is-warning {
+	border-left-color: var(--jp-yellow-20);
+
+	.notice-banner__icon {
+		fill: var(--jp-yellow-20);
+	}
+}
+
+.notice-banner.is-info {
+	border-left-color: var(--jp-black);
+
+	.notice-banner__icon {
+		fill: var(--jp-black);
+	}
+
+	.notice-banner__action-button,
+	.notice-banner__action-link {
+		cursor: pointer;
+
+		margin-top: 16px;
+		margin-right: 8px;
+	}
+
+	.notice-banner__action-button {
+		background-color: var(--jp-black);
+		border-radius: 4px;
+		color: var(--studio-white);
+		padding: 8px;
+	}
+
+	.notice-banner__action-link {
+		color: var(--jp-black);
+		text-decoration: underline;
+		font-weight: 600;
+		margin-left: 16px;
+	}
+}
+
+
+.notice-banner.is-success {
+	border-left-color: var(--jp-green);
+
+	.notice-banner__icon {
+		fill: var(--jp-green);
+	}
+}

@@ -102,7 +102,7 @@ export default function CheckoutMainWrapper( {
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logCheckoutError }
 			>
-				<CalypsoShoppingCartProvider>
+				<CalypsoShoppingCartProvider shouldShowPersistentErrors>
 					<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration } locale={ locale }>
 						<CheckoutOrderBanner />
 						<CheckoutMain

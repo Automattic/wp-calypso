@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
+import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import MaterialIcon from 'calypso/components/material-icon';
 import wpcom from 'calypso/lib/wp';
@@ -34,6 +35,7 @@ const WebServerLogsCard = ( props ) => {
 	const dateTimeFormat = 'YYYY-MM-DD HH:mm:ss';
 	const [ startDateTime, setStartDateTime ] = useState( oneHourAgo.format( dateTimeFormat ) );
 	const [ endDateTime, setEndDateTime ] = useState( now.format( dateTimeFormat ) );
+	const [ logType, setLogType ] = useState( 'php' );
 	const [ downloading, setDownloading ] = useState( false );
 	const [ downloadErrorOccurred, setDownloadErrorOccurred ] = useState( false );
 	const [ progress, setProgress ] = useState( { recordsDownloaded: 0, totalRecordsAvailable: 0 } );
@@ -46,6 +48,17 @@ const WebServerLogsCard = ( props ) => {
 		isValid: true,
 		validationInfo: '',
 	} );
+
+	const logTypes = [
+		{
+			label: translate( 'PHP error' ),
+			value: 'php',
+		},
+		{
+			label: translate( 'Web request' ),
+			value: 'web',
+		},
+	];
 
 	useEffect( () => {
 		const startMoment = moment.utc( startDateTime );
@@ -103,6 +116,17 @@ const WebServerLogsCard = ( props ) => {
 		setProgress( { recordsDownloaded: 0, totalRecordsAvailable: 0 } );
 		setDownloadErrorOccurred( false );
 
+		let path = null;
+		if ( logType === 'php' ) {
+			path = `/sites/${ siteId }/hosting/error-logs`;
+		} else if ( logType === 'web' ) {
+			path = `/sites/${ siteId }/hosting/logs`;
+		} else {
+			downloadErrorNotice( translate( 'Invalid log type specified' ) );
+			setDownloadErrorOccurred( true );
+			return;
+		}
+
 		const startMoment = moment.utc( startDateTime );
 		const endMoment = moment.utc( endDateTime );
 
@@ -118,6 +142,7 @@ const WebServerLogsCard = ( props ) => {
 			site_id: siteId,
 			start_time: startMoment.format( dateTimeFormat ),
 			end_time: endMoment.format( dateTimeFormat ),
+			log_type: logType,
 		};
 
 		recordDownloadStarted( tracksProps );
@@ -132,7 +157,7 @@ const WebServerLogsCard = ( props ) => {
 			await wpcom.req
 				.post(
 					{
-						path: `/sites/${ siteId }/hosting/logs`,
+						path,
 						apiNamespace: 'wpcom/v2',
 					},
 					{
@@ -187,13 +212,14 @@ const WebServerLogsCard = ( props ) => {
 
 		const url = window.URL.createObjectURL( logFile );
 		const link = document.createElement( 'a' );
-		const downloadFilename = siteSlug + '-' + startString + '-' + endString + '.csv';
+		const downloadFilename =
+			siteSlug + '-' + logType + '-logs-' + startString + '-' + endString + '.csv';
 		link.href = url;
 		link.setAttribute( 'download', downloadFilename );
 		link.click();
 		window.URL.revokeObjectURL( url );
 
-		downloadSuccessNotice( 'Logs downloaded successfully.' );
+		downloadSuccessNotice( translate( 'Logs downloaded.' ) );
 		recordDownloadCompleted( {
 			download_filename: downloadFilename,
 			total_log_records_downloaded: totalLogs,
@@ -240,13 +266,23 @@ const WebServerLogsCard = ( props ) => {
 			<>
 				<p className="web-server-logs-card__info">
 					{ translate(
-						'To help troubleshoot or debug problems with your site, you may download web server logs between the following dates.'
+						'Download web server logs to troubleshoot or debug problems with your site.'
 					) }
 				</p>
+				<div className="web-server-logs-card__type">
+					<FormFieldset>
+						<FormLabel>{ translate( 'Log type:' ) }</FormLabel>
+						<FormRadiosBar
+							items={ logTypes }
+							checked={ logType }
+							onChange={ ( event ) => setLogType( event.target.value ) }
+						/>
+					</FormFieldset>
+				</div>
 				<div className="web-server-logs-card__dates">
 					<div className="web-server-logs-card__start">
 						<FormFieldset>
-							<FormLabel>{ translate( 'Log Start:' ) }</FormLabel>
+							<FormLabel>{ translate( 'Log start:' ) }</FormLabel>
 							<FormTextInput
 								value={ startDateTime }
 								onChange={ updateStartDateTime }
@@ -261,7 +297,7 @@ const WebServerLogsCard = ( props ) => {
 					</div>
 					<div className="web-server-logs-card__end">
 						<FormFieldset>
-							<FormLabel>{ translate( 'Log End:' ) }</FormLabel>
+							<FormLabel>{ translate( 'Log end:' ) }</FormLabel>
 							<FormTextInput
 								value={ endDateTime }
 								onChange={ updateEndDateTime }
@@ -285,7 +321,7 @@ const WebServerLogsCard = ( props ) => {
 						disabled={ downloading || ! startDateValidation.isValid || ! endDateValidation.isValid }
 						onClick={ downloadLogs }
 					>
-						Download Logs
+						{ translate( 'Download logs' ) }
 					</Button>
 				</div>
 			</>
@@ -299,7 +335,7 @@ const WebServerLogsCard = ( props ) => {
 	return (
 		<Card className="web-server-logs-card">
 			<MaterialIcon icon="settings" size={ 32 } />
-			<CardHeading>{ translate( 'Download Web Server Logs' ) }</CardHeading>
+			<CardHeading>{ translate( 'Web server logs' ) }</CardHeading>
 			{ getContent() }
 		</Card>
 	);

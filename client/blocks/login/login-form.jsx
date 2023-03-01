@@ -352,9 +352,9 @@ export class LoginForm extends Component {
 
 	showJetpackConnectSiteOnly = () => {
 		const { currentQuery } = this.props;
-		const isFromJetpackMigration = currentQuery?.redirect_to?.includes( 'jetpack-migration' );
+		const isFromMigrationPlugin = currentQuery?.redirect_to?.includes( 'wpcom-migration' );
 		return (
-			( currentQuery?.skip_user || currentQuery?.allow_site_connection ) && ! isFromJetpackMigration
+			( currentQuery?.skip_user || currentQuery?.allow_site_connection ) && ! isFromMigrationPlugin
 		);
 	};
 

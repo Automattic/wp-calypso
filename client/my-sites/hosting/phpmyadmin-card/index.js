@@ -1,11 +1,10 @@
 import { Card, Button } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { PanelBody } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
-import ExternalLink from 'calypso/components/external-link';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import MaterialIcon from 'calypso/components/material-icon';
 import wpcom from 'calypso/lib/wp';
 import {
@@ -59,7 +58,7 @@ export default function PhpMyAdminCard( { disabled } ) {
 	return (
 		<Card className="phpmyadmin-card">
 			<MaterialIcon icon="dns" size={ 32 } />
-			<CardHeading>{ translate( 'Database Access' ) }</CardHeading>
+			<CardHeading id="database-access">{ translate( 'Database access' ) }</CardHeading>
 			<p>
 				{ translate(
 					'For the tech-savvy, manage your database with phpMyAdmin and run a wide range of operations with MySQL.'
@@ -71,13 +70,7 @@ export default function PhpMyAdminCard( { disabled } ) {
 						"It is a free open source software tool that allows you to administer your site's MySQL database over the Web. For more information see {{a}}phpMyAdmin and MySQL{{/a}}",
 						{
 							components: {
-								a: (
-									<ExternalLink
-										icon
-										target="_blank"
-										href={ localizeUrl( 'https://wordpress.com/support/phpmyadmin-and-mysql/' ) }
-									/>
-								),
+								a: <InlineSupportLink supportContext="hosting-mysql" showIcon={ false } />,
 							},
 						}
 					) }

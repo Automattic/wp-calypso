@@ -44,6 +44,9 @@ class StatsModule extends Component {
 		showSummaryLink: PropTypes.bool,
 		translate: PropTypes.func,
 		metricLabel: PropTypes.string,
+		mainItemLabel: PropTypes.string,
+		additionalColumns: PropTypes.object,
+		listItemClassName: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -133,6 +136,9 @@ class StatsModule extends Component {
 			useShortLabel,
 			hideNewModule, // remove when cleaning 'stats/horizontal-bars-everywhere' FF
 			metricLabel,
+			additionalColumns,
+			mainItemLabel,
+			listItemClassName,
 		} = this.props;
 
 		const noData = data && this.state.loaded && ! data.length;
@@ -193,6 +199,7 @@ class StatsModule extends Component {
 								period={ period }
 								hideNavigation={ summary && ! isAllTime }
 								navigationSwap={ headerCSVButton }
+								listItemClassName={ listItemClassName }
 							/>
 						) }
 						<StatsListCard
@@ -220,6 +227,11 @@ class StatsModule extends Component {
 							error={ hasError && <ErrorPanel /> }
 							loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
 							heroElement={ path === 'countryviews' && <Geochart query={ query } /> }
+							additionalColumns={ additionalColumns }
+							splitHeader={ !! additionalColumns }
+							mainItemLabel={ mainItemLabel }
+							showLeftIcon={ path === 'authors' }
+							listItemClassName={ listItemClassName }
 						/>
 						{ isAllTime && (
 							<div className={ footerClass }>

@@ -30,18 +30,47 @@
 		padding-bottom: $card-vertical-space;
 	}
 
-	.stats-card--header {
+	.stats-card-header {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
 		padding: 0 $padding-outside $header-spacer $padding-outside;
 
-		.stats-card--header--title,
-		.stats-card--header--title:visited {
+		.stats-card-header__title,
+		.stats-card-header__title:visited {
 			font-size: $header-font-size;
 			line-height: $header-line-height;
 			color: var(--color-text);
 		}
+
+		&.stats-card-header--split {
+			display: block;
+		}
+		.stats-card--column-header {
+			display: flex;
+			justify-content: space-between;
+			padding-top: $header-spacer;
+		}
+		.stats-card--column-header__left {
+			display: flex;
+			width: calc(100% - $value-column-width);
+			justify-content: space-between;
+		}
+		.stats-card--column-header__right {
+			width: $value-column-width;
+			text-align: right;
+		}
+	}
+
+	.stats-card-header--main {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		flex-wrap: wrap;
+	}
+
+	.stats-card-header__additional {
+		@include additional-columns-wrapper;
 	}
 
 	.stats-card--body-empty {
@@ -70,7 +99,6 @@
 
 .stats-card-avatar {
 	display: flex;
-	padding-right: $stats-avatar-spacer;
 
 	.stats-card-avatar-image {
 		width: $stats-avatar-size;

@@ -40,6 +40,22 @@ describe( 'Site Actions', () => {
 			expect( setBundledPluginSlug( siteSlug, pluginSlug ) ).toEqual( expected );
 		} );
 	} );
+	describe( 'Site Theme Actions', () => {
+		it( 'should return a RECEIVE_SITE_THEME Action', () => {
+			const siteId = 12345;
+			const theme = {
+				id: 'tazza',
+			};
+			const { receiveSiteTheme } = createActions( mockedClientCredentials );
+			const expected = {
+				type: 'RECEIVE_SITE_THEME',
+				siteId,
+				theme,
+			};
+
+			expect( receiveSiteTheme( siteId, theme ) ).toEqual( expected );
+		} );
+	} );
 	describe( 'LAUNCH_SITE Actions', () => {
 		it( 'should return a LAUNCH_SITE_START Action', () => {
 			const { launchSiteStart } = createActions( mockedClientCredentials );

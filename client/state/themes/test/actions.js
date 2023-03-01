@@ -46,6 +46,7 @@ import {
 	receiveThemes,
 	requestThemes,
 	requestTheme,
+	requestThemeOnAtomic,
 	pollThemeTransferStatus,
 	initiateThemeTransfer,
 	installTheme,
@@ -577,6 +578,12 @@ describe( 'actions', () => {
 			},
 			sites: {
 				items: {},
+			},
+			productsList: {
+				items: {},
+			},
+			purchases: {
+				data: {},
 			},
 		} );
 
@@ -1439,6 +1446,57 @@ describe( 'actions', () => {
 			await expect(
 				addExternalManagedThemeToCart( twentyfifteenTheme.id, siteId )( spy, getState )
 			).rejects.toThrowError( 'Theme is already purchased' );
+		} );
+	} );
+
+	describe( '#requestThemeOnAtomic()', () => {
+		useNock( ( nock ) => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
+				.get( '/wp/v2/sites/1234/themes/makoney' )
+				.reply( 200, { id: 'makoney', name: 'Makoney' } )
+				.get( '/wp/v2/sites/1234/themes/solarone' )
+				.reply( 404, {
+					error: 'unknown_theme',
+					message: 'Unknown theme',
+				} );
+		} );
+
+		test( 'should dispatch THEME_REQUEST', () => {
+			requestThemeOnAtomic( 'makoney', 1234 )( spy );
+
+			expect( spy ).toBeCalledWith( {
+				type: THEME_REQUEST,
+				siteId: 1234,
+				themeId: 'makoney',
+			} );
+		} );
+
+		test( 'should dispatch THEME_REQUEST_SUCCESS on success', () => {
+			return requestThemeOnAtomic(
+				'makoney',
+				1234
+			)( spy ).then( () => {
+				expect( spy ).toBeCalledWith( {
+					type: THEME_REQUEST_SUCCESS,
+					siteId: 1234,
+					themeId: 'makoney',
+				} );
+			} );
+		} );
+
+		test( 'should dispatch THEME_REQUEST_FAILURE on failure', () => {
+			return requestThemeOnAtomic(
+				'solarone',
+				1234
+			)( spy ).finally( () => {
+				expect( spy ).toBeCalledWith( {
+					type: THEME_REQUEST_FAILURE,
+					siteId: 1234,
+					themeId: 'solarone',
+					error: expect.objectContaining( { message: 'Unknown theme' } ),
+				} );
+			} );
 		} );
 	} );
 } );

@@ -12,12 +12,25 @@ class WordAdsEarnings extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
 		earnings: PropTypes.object,
+		showTotals: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		showTotals: true,
 	};
 
 	state = {
+		showEarningsNotice: false,
 		showWordadsInfo: false,
 		showSponsoredInfo: false,
 		showAdjustmentInfo: false,
+	};
+
+	handleEarningsNoticeToggle = ( event ) => {
+		event.preventDefault();
+		this.setState( {
+			showEarningsNotice: ! this.state.showEarningsNotice,
+		} );
 	};
 
 	handleInfoToggle = ( type ) => ( event ) => {
@@ -101,6 +114,36 @@ class WordAdsEarnings extends Component {
 		);
 	}
 
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	payoutNotice() {
+		const { earnings, numberFormat, translate } = this.props;
+		const owed =
+			earnings && earnings.total_amount_owed
+				? numberFormat( earnings.total_amount_owed, 2 )
+				: '0.00';
+		const notice = translate(
+			'Outstanding amount of $%(amountOwed)s does not exceed the minimum $100 needed to make the payment. ' +
+				'Payment will be made as soon as the total outstanding amount has reached $100.',
+			{
+				comment: 'Insufficient balance for payout.',
+				args: { amountOwed: owed },
+			}
+		);
+		const payout = translate(
+			'Outstanding amount of $%(amountOwed)s will be paid approximately 45 days following the end of the month in which it was earned.',
+			{
+				comment: 'Payout will proceed.',
+				args: { amountOwed: owed },
+			}
+		);
+
+		return (
+			<div className="ads__module-content-text module-content-text module-content-text-info">
+				<p>{ owed < 100 ? notice : payout }</p>
+			</div>
+		);
+	}
+
 	infoNotice() {
 		const { translate } = this.props;
 
@@ -144,6 +187,36 @@ class WordAdsEarnings extends Component {
 					</em>
 				</p>
 			</div>
+		);
+	}
+
+	earningsBreakdown() {
+		const { earnings, numberFormat, translate } = this.props;
+		const total = earnings && earnings.total_earnings ? Number( earnings.total_earnings ) : 0;
+		const owed = earnings && earnings.total_amount_owed ? Number( earnings.total_amount_owed ) : 0;
+		const paid = total - owed;
+
+		return (
+			<ul className="ads__earnings-breakdown-list">
+				<li className="ads__earnings-breakdown-item">
+					<span className="ads__earnings-breakdown-label">
+						{ translate( 'Total earnings', { context: 'Sum of earnings' } ) }
+					</span>
+					<span className="ads__earnings-breakdown-value">${ numberFormat( total, 2 ) }</span>
+				</li>
+				<li className="ads__earnings-breakdown-item">
+					<span className="ads__earnings-breakdown-label">
+						{ translate( 'Total paid', { context: 'Sum of earnings that have been distributed' } ) }
+					</span>
+					<span className="ads__earnings-breakdown-value">${ numberFormat( paid, 2 ) }</span>
+				</li>
+				<li className="ads__earnings-breakdown-item">
+					<span className="ads__earnings-breakdown-label">
+						{ translate( 'Outstanding amount', { context: 'Sum earnings left unpaid' } ) }
+					</span>
+					<span className="ads__earnings-breakdown-value">${ numberFormat( owed, 2 ) }</span>
+				</li>
+			</ul>
 		);
 	}
 
@@ -210,12 +283,43 @@ class WordAdsEarnings extends Component {
 	}
 
 	render() {
-		const { siteId, earnings, translate } = this.props;
+		const { showTotals, siteId, earnings, translate } = this.props;
+		const infoIcon = this.state.showEarningsNotice ? 'info' : 'info-outline';
+		const classes = classNames( 'earnings_breakdown', {
+			'is-showing-info': this.state.showEarningsNotice,
+		} );
 
 		return (
 			<div>
 				<QueryWordadsEarnings siteId={ siteId } />
 
+				{ showTotals && (
+					<Card className={ classes }>
+						<div className="ads__module-header module-header">
+							<h1 className="ads__module-header-title module-header-title">
+								{ translate( 'Totals' ) }
+							</h1>
+							<ul className="ads__module-header-actions module-header-actions">
+								<li className="ads__module-header-action module-header-action toggle-info">
+									{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
+									<a
+										href="#"
+										className="ads__module-header-action-link module-header-action-link"
+										aria-label={ translate( 'Show or hide panel information' ) }
+										title={ translate( 'Show or hide panel information' ) }
+										onClick={ this.handleEarningsNoticeToggle }
+									>
+										<Gridicon icon={ infoIcon } />
+									</a>
+								</li>
+							</ul>
+						</div>
+						<div className="ads__module-content module-content">
+							{ this.payoutNotice() }
+							{ this.earningsBreakdown() }
+						</div>
+					</Card>
+				) }
 				{ earnings && this.checkSize( earnings.wordads )
 					? this.earningsTable( earnings.wordads, translate( 'Earnings history' ), 'wordads' )
 					: null }

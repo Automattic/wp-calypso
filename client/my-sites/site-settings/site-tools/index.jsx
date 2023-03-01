@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { compose } from '@wordpress/compose';
 import { addQueryArgs } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
@@ -98,11 +97,12 @@ class SiteTools extends Component {
 						description={ translate( "Register a new domain or change your site's address." ) }
 					/>
 				) }
-				{ isEnabled( 'sites/copy-site' ) && shouldShowSiteCopyItem && (
+				{ shouldShowSiteCopyItem && (
 					<SiteToolsLink
 						href={ copySiteUrl }
 						onClick={ () => {
-							startSiteCopy( 'calypso_settings_copy_site_option_click' );
+							recordTracksEvent( 'calypso_settings_copy_site_option_click' );
+							startSiteCopy();
 						} }
 						title={ copyTitle }
 						description={ copyText }

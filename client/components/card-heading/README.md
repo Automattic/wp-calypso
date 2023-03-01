@@ -22,3 +22,4 @@ function render() {
 - `size` (`int`) - The font size of the heading
 - `isBold` (`bool`) - Sets the heading to bold
 - `className` (`string`) - Adds additional class names to the component
+- `id` (`string`) - Adds id attribute to the component

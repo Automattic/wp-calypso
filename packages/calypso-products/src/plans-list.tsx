@@ -259,12 +259,12 @@ import {
 	PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
 	PRODUCT_JETPACK_VIDEOPRESS,
 	PRODUCT_JETPACK_BOOST,
-	PRODUCT_JETPACK_SOCIAL_BASIC,
+	PRODUCT_JETPACK_SOCIAL_ADVANCED,
 	PRODUCT_JETPACK_SEARCH,
 	PRODUCT_JETPACK_CRM,
 	PRODUCT_JETPACK_CRM_MONTHLY,
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
-	PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
+	PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
 	PRODUCT_JETPACK_BOOST_MONTHLY,
 	PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
 	FEATURE_BEAUTIFUL_THEMES,
@@ -278,7 +278,6 @@ import {
 	FEATURE_FAST_DNS,
 	FEATURE_STYLE_CUSTOMIZATION,
 	FEATURE_SUPPORT_EMAIL,
-	FEATURE_DESIGN_TOOLS,
 	FEATURE_PREMIUM_THEMES_V2,
 	FEATURE_WORDADS,
 	FEATURE_PLUGINS_THEMES,
@@ -309,7 +308,6 @@ import {
 	FEATURE_VIDEOPRESS_JP,
 	FEATURE_UNLTD_SOCIAL_MEDIA_JP,
 	FEATURE_SEO_JP,
-	FEATURE_BRUTE_PROTECT_JP,
 	FEATURE_REALTIME_BACKUPS_JP,
 	FEATURE_UPTIME_MONITOR_JP,
 	FEATURE_ES_SEARCH_JP,
@@ -320,6 +318,7 @@ import {
 	FEATURE_CLOUD_CRITICAL_CSS,
 	FEATURE_GLOBAL_EDGE_CACHING,
 } from './constants';
+import { is2023PricingGridEnabled } from './plans-utilities';
 import type {
 	BillingTerm,
 	Plan,
@@ -432,12 +431,40 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SMART_REDIRECTS,
 		FEATURE_ALWAYS_ONLINE,
 	],
+
+	get2023PlanComparisonFeatureOverride: () => [
+		FEATURE_BEAUTIFUL_THEMES,
+		FEATURE_PAGES,
+		FEATURE_USERS,
+		FEATURE_POST_EDITS_HISTORY,
+		FEATURE_NEWSLETTERS_RSS,
+		FEATURE_SECURITY_BRUTE_FORCE,
+		FEATURE_SMART_REDIRECTS,
+		FEATURE_ALWAYS_ONLINE,
+		FEATURE_BANDWIDTH,
+		FEATURE_FAST_DNS,
+		FEATURE_GLOBAL_EDGE_CACHING,
+		FEATURE_CDN,
+		FEATURE_DATACENTRE_FAILOVER,
+		FEATURE_WP_UPDATES,
+		FEATURE_MULTI_SITE,
+		FEATURE_SECURITY_MALWARE,
+		FEATURE_SECURITY_DDOS,
+	],
 	get2023PricingGridSignupJetpackFeatures: () => [
 		FEATURE_STATS_JP,
 		FEATURE_SPAM_JP,
 		FEATURE_LTD_SOCIAL_MEDIA_JP,
 		FEATURE_CONTACT_FORM_JP,
 	],
+	get2023PlanComparisonJetpackFeatureOverride: () => [
+		FEATURE_STATS_JP,
+		FEATURE_SPAM_JP,
+		FEATURE_LTD_SOCIAL_MEDIA_JP,
+		FEATURE_CONTACT_FORM_JP,
+		FEATURE_SITE_ACTIVITY_LOG_JP,
+	],
+
 	get2023PricingGridSignupStorageOptions: () => [ FEATURE_1GB_STORAGE ],
 	getIncludedFeatures: () => [],
 	getInferiorFeatures: () => [],
@@ -612,7 +639,6 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_AD_FREE_EXPERIENCE,
 		FEATURE_FAST_DNS,
-		FEATURE_STYLE_CUSTOMIZATION,
 		FEATURE_SUPPORT_EMAIL,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [
@@ -692,7 +718,8 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		},
 	} ),
 } );
-const is2023OnboardingPricingGrid = isEnabled( 'onboarding/2023-pricing-grid' );
+
+const is2023OnboardingPricingGrid = is2023PricingGridEnabled();
 
 const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
@@ -990,16 +1017,14 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	get2023PricingGridSignupWpcomFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_LIVE_CHAT_SUPPORT,
-		FEATURE_DESIGN_TOOLS,
 		FEATURE_PREMIUM_THEMES_V2,
 		FEATURE_WORDADS,
+		FEATURE_STYLE_CUSTOMIZATION,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [
 		FEATURE_VIDEOPRESS_JP,
 		FEATURE_UNLTD_SOCIAL_MEDIA_JP,
-		FEATURE_SEO_JP,
 		FEATURE_SITE_ACTIVITY_LOG_JP,
-		FEATURE_BRUTE_PROTECT_JP,
 	],
 	get2023PricingGridSignupStorageOptions: () => [ FEATURE_13GB_STORAGE ],
 	// Features not displayed but used for checking plan abilities
@@ -1160,6 +1185,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_UPTIME_MONITOR_JP,
 		FEATURE_ES_SEARCH_JP,
 		FEATURE_PLUGIN_AUTOUPDATE_JP,
+		FEATURE_SEO_JP,
 	],
 	get2023PricingGridSignupStorageOptions: () => [ FEATURE_200GB_STORAGE ],
 	// Features not displayed but used for checking plan abilities
@@ -1588,7 +1614,14 @@ const getPlanJetpackSecurityT1Details = (): IncompleteJetpackPlan => ( {
 		),
 	getFeaturedDescription: () =>
 		translate(
-			'Easy-to-use, comprehensive WordPress site security including backups, malware scanning, and spam protection.'
+			'This bundle includes:{{ul}}{{li}}VaultPress Backup{{/li}}{{li}}Scan{{/li}}{{li}}Akismet Anti-spam{{/li}}{{/ul}}',
+			{
+				components: {
+					ul: <ul />,
+					li: <li />,
+				},
+				comment: '{{ul}}{{ul/}} represents an unorder list, and {{li}}{/li} represent a list item',
+			}
 		),
 	getLightboxDescription: () =>
 		translate(
@@ -1684,7 +1717,13 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 		),
 	getFeaturedDescription: () =>
 		translate(
-			'Get the full Jetpack suite with real-time security tools, improved site performance, and tools to grow your business.'
+			'Get the full Jetpack suite with real-time security tools, improved site performance, and tools to grow your business.{{br/}}{{br/}}',
+			{
+				components: {
+					br: <br />,
+				},
+				comment: '{{br/}} represents a line break',
+			}
 		),
 	getLightboxDescription: () =>
 		translate(
@@ -2297,7 +2336,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 			PRODUCT_JETPACK_ANTI_SPAM,
 			PRODUCT_JETPACK_VIDEOPRESS,
 			PRODUCT_JETPACK_BOOST,
-			PRODUCT_JETPACK_SOCIAL_BASIC,
+			PRODUCT_JETPACK_SOCIAL_ADVANCED,
 			PRODUCT_JETPACK_SEARCH,
 			PRODUCT_JETPACK_CRM,
 		],
@@ -2311,7 +2350,9 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 			translate( 'VideoPress: 1TB of ad-free video hosting' ),
 			translate( 'Boost: Automatic CSS generation' ),
 			translate( 'Site Search: Up to 100k records and 100k requests/mo.' ),
-			translate( 'Social: Basic with unlimited shares' ),
+			translate(
+				'Social: Get unlimited shares and share as a post by attaching images or videos.'
+			),
 			translate( 'CRM: Entrepreneur with 30 extensions' ),
 		],
 	},
@@ -2328,7 +2369,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 			PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
 			PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
 			PRODUCT_JETPACK_BOOST_MONTHLY,
-			PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
+			PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
 			PRODUCT_JETPACK_SEARCH_MONTHLY,
 			PRODUCT_JETPACK_CRM_MONTHLY,
 		],
@@ -2342,7 +2383,9 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 			translate( 'VideoPress: 1TB of ad-free video hosting' ),
 			translate( 'Boost: Automatic CSS generation' ),
 			translate( 'Site Search: Up to 100k records and 100k requests/mo.' ),
-			translate( 'Social: Basic with unlimited shares' ),
+			translate(
+				'Social: Get unlimited shares and share as a post by attaching images or videos.'
+			),
 			translate( 'CRM: Entrepreneur with 30 extensions' ),
 		],
 	},

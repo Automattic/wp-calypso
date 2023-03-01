@@ -38,17 +38,21 @@ export default function HighlightCard( {
 	showValueTooltip,
 }: HighlightCardProps ) {
 	const difference = subtract( count, previousCount );
+	const differenceMagnitude = Math.abs( difference as number );
 	const percentage = Number.isFinite( difference )
 		? percentCalculator( Math.abs( difference as number ), previousCount )
 		: null;
 	const textRef = useRef( null );
 	const [ isTooltipVisible, setTooltipVisible ] = useState( false );
+
 	return (
 		<Card className="highlight-card">
 			<div className="highlight-card-icon">{ icon }</div>
 			<div className="highlight-card-heading">{ heading }</div>
 			<div
-				className="highlight-card-count"
+				className={ classNames( 'highlight-card-count', {
+					'is-pointer': showValueTooltip,
+				} ) }
 				onMouseEnter={ () => setTooltipVisible( true ) }
 				onMouseLeave={ () => setTooltipVisible( false ) }
 			>
@@ -71,7 +75,8 @@ export default function HighlightCard( {
 							{ difference > 0 && <Icon size={ 18 } icon={ arrowUp } /> }
 						</span>
 						<span className="highlight-card-difference-absolute-value">
-							{ Math.abs( difference ) }
+							{ differenceMagnitude <= 9999 && formattedNumber( differenceMagnitude ) }
+							{ differenceMagnitude > 9999 && <ShortenedNumber value={ differenceMagnitude } /> }
 						</span>
 						{ percentage !== null && (
 							<span className="highlight-card-difference-absolute-percentage">

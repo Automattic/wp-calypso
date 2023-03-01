@@ -65,6 +65,15 @@ export default function LicenseBundleCardDescription( { product }: Props ) {
 				'High-quality, ad-free video built specifically for WordPress.'
 			);
 			break;
+		case 'jetpack-social-basic':
+			textDescription = translate( 'Write once, post everywhere.' );
+			break;
+		case 'jetpack-social-advanced':
+			textDescription = translate( 'Write once, post everywhere.' );
+			break;
+		case 'jetpack-search':
+			textDescription = translate( 'Help your site visitors find answers instantly.' );
+			break;
 	}
 
 	return (

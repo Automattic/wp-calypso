@@ -102,7 +102,7 @@ describe( 'logged-out', () => {
 		render( <TestComponent store={ store } /> );
 
 		await waitFor( () => {
-			expect( screen.getByText( 'Sorry, no themes found.' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'No themes match your search' ) ).toBeInTheDocument();
 		} );
 	} );
 
@@ -116,7 +116,7 @@ describe( 'logged-out', () => {
 			themes.forEach( ( theme ) => {
 				expect( screen.getByText( theme.name ) ).toBeInTheDocument();
 			} );
-			expect( screen.queryByText( 'Sorry, no themes found.' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'No themes match your search' ) ).not.toBeInTheDocument();
 		} );
 	} );
 
@@ -133,7 +133,7 @@ describe( 'logged-out', () => {
 		render( <TestComponent store={ store } /> );
 
 		await waitFor( () => {
-			expect( screen.queryByText( 'Sorry, no themes found.' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'No themes match your search' ) ).toBeInTheDocument();
 		} );
 	} );
 } );

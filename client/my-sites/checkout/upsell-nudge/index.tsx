@@ -14,6 +14,7 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
 import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import Main from 'calypso/components/main';
+import { Experiment } from 'calypso/lib/explat';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import { TITAN_MAIL_MONTHLY_SLUG, TITAN_MAIL_YEARLY_SLUG } from 'calypso/lib/titan/constants';
 import {
@@ -45,6 +46,7 @@ import {
 	getPlansBySiteId,
 	getSitePlanRawPrice,
 	getPlanDiscountedRawPrice,
+	getCurrentPlan,
 } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
@@ -54,11 +56,13 @@ import {
 } from 'calypso/state/stored-cards/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { BusinessPlanUpgradeUpsell } from './business-plan-upgrade-upsell';
+import { BusinessPlanUpgradeUpsellTreatment } from './business-plan-upgrade-upsell/treatment';
 import PurchaseModal from './purchase-modal';
 import { extractStoredCardMetaValue } from './purchase-modal/util';
 import { QuickstartSessionsRetirement } from './quickstart-sessions-retirement';
 import type { WithShoppingCartProps, MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { PaymentMethod } from 'calypso/lib/checkout/payment-methods';
+import type { IAppState } from 'calypso/state/types';
 
 import './style.scss';
 
@@ -99,6 +103,7 @@ export interface UpsellNudgeAutomaticProps extends WithShoppingCartProps {
 	translate: ReturnType< typeof useTranslate >;
 	cards: PaymentMethod[];
 	currentPlanTerm: string;
+	currentPlan?: object;
 }
 
 export type UpsellNudgeProps = UpsellNudgeManualProps & UpsellNudgeAutomaticProps;
@@ -260,6 +265,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 		const {
 			receiptId,
 			currencyCode,
+			currentPlan,
 			currentPlanTerm,
 			planRawPrice,
 			planDiscountedRawPrice,
@@ -291,15 +297,34 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 				return isLoading ? (
 					this.renderGenericPlaceholder()
 				) : (
-					<BusinessPlanUpgradeUpsell
-						currencyCode={ currencyCode }
-						planRawPrice={ planRawPrice }
-						planDiscountedRawPrice={ planDiscountedRawPrice }
-						receiptId={ receiptId }
-						translate={ translate }
-						handleClickAccept={ this.handleClickAccept }
-						handleClickDecline={ this.handleClickDecline }
-						hasSevenDayRefundPeriod={ hasSevenDayRefundPeriod }
+					<Experiment
+						name="calypso_postpurchase_upsell_countdown_timer"
+						defaultExperience={
+							<BusinessPlanUpgradeUpsell
+								currencyCode={ currencyCode }
+								planRawPrice={ planRawPrice }
+								planDiscountedRawPrice={ planDiscountedRawPrice }
+								receiptId={ receiptId }
+								translate={ translate }
+								handleClickAccept={ this.handleClickAccept }
+								handleClickDecline={ this.handleClickDecline }
+								hasSevenDayRefundPeriod={ hasSevenDayRefundPeriod }
+							/>
+						}
+						treatmentExperience={
+							<BusinessPlanUpgradeUpsellTreatment
+								currencyCode={ currencyCode }
+								planRawPrice={ planRawPrice }
+								planDiscountedRawPrice={ planDiscountedRawPrice }
+								receiptId={ receiptId }
+								translate={ translate }
+								handleClickAccept={ this.handleClickAccept }
+								handleClickDecline={ this.handleClickDecline }
+								hasSevenDayRefundPeriod={ hasSevenDayRefundPeriod }
+								currentPlan={ currentPlan }
+							/>
+						}
+						loadingExperience={ null }
 					/>
 				);
 
@@ -521,7 +546,7 @@ const getProductSlug = ( upsellType: string, productAlias: string, planTerm: str
 };
 
 export default connect(
-	( state: UpsellNudgeState, props: UpsellNudgeManualProps ) => {
+	( state: IAppState, props: UpsellNudgeManualProps ) => {
 		const { siteSlugParam, upgradeItem, upsellType } = props;
 		const selectedSiteId = getSelectedSiteId( state );
 		const productsList = getProductsList( state );
@@ -545,6 +570,7 @@ export default connect(
 		const areStoredCardsLoading = hasLoadedCardsFromServer ? isFetchingCards : true;
 		const cards = getStoredCards( state );
 
+		const currentPlan = getCurrentPlan( state, selectedSiteId ) ?? undefined;
 		const currentPlanTerm = getCurrentPlanTerm( state, selectedSiteId ?? 0 ) ?? TERM_MONTHLY;
 		const productSlug = getProductSlug( upsellType, upgradeItem ?? '', currentPlanTerm );
 		const productProperties = pick( getProductBySlug( state, productSlug ?? '' ), [
@@ -562,6 +588,7 @@ export default connect(
 		return {
 			cards,
 			currencyCode: getCurrentUserCurrencyCode( state ),
+			currentPlan,
 			currentPlanTerm,
 			isLoading:
 				areStoredCardsLoading ||

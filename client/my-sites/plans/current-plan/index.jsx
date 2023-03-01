@@ -15,6 +15,7 @@ import {
 	isFreeJetpackPlan,
 	isFreePlanProduct,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	isFreePlan,
 } from '@automattic/calypso-products';
 import { Dialog } from '@automattic/components';
 import classNames from 'classnames';
@@ -40,11 +41,12 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { isCloseToExpiration } from 'calypso/lib/purchases';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
-import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import JetpackChecklist from 'calypso/my-sites/plans/current-plan/jetpack-checklist';
 import PlanRenewalMessage from 'calypso/my-sites/plans/jetpack-plans/plan-renewal-message';
 import legacyPlanNotice from 'calypso/my-sites/plans/legacy-plan-notice';
+import ModernizedLayout from 'calypso/my-sites/plans/modernized-layout';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
+import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -62,6 +64,7 @@ import VideoPressProductThankYou from './current-plan-thank-you/jetpack-videopre
 import PaidPlanThankYou from './current-plan-thank-you/paid-plan-thank-you';
 import ScanProductThankYou from './current-plan-thank-you/scan-thank-you';
 import SearchProductThankYou from './current-plan-thank-you/search-thank-you';
+import ECommerceTrialCurrentPlan from './ecommerce-trial';
 import PurchasesListing from './purchases-listing';
 
 import './style.scss';
@@ -193,7 +196,7 @@ class CurrentPlan extends Component {
 	}
 
 	renderEcommerceTrialPage() {
-		return <div className="current-plan__ecommerce-trial-wrapper">{ this.renderMain() }</div>;
+		return <ECommerceTrialCurrentPlan />;
 	}
 
 	render() {
@@ -208,11 +211,11 @@ class CurrentPlan extends Component {
 			showThankYou,
 			translate,
 			eligibleForProPlan,
+			isJetpackNotAtomic,
 		} = this.props;
 
 		const currentPlanSlug = selectedSite.plan.product_slug;
 		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
-
 		const shouldQuerySiteDomains = selectedSiteId && shouldShowDomainWarnings;
 		const showDomainWarnings = hasDomainsLoaded && shouldShowDomainWarnings;
 
@@ -232,71 +235,76 @@ class CurrentPlan extends Component {
 		}
 
 		return (
-			<Main className="current-plan" wideLayout>
+			<div>
+				{ ! isJetpackNotAtomic && (
+					<ModernizedLayout dropShadowOnHeader={ isFreePlan( currentPlanSlug ) } />
+				) }
 				<DocumentHead title={ translate( 'My Plan' ) } />
-				<FormattedHeader
-					brandFont
-					className="current-plan__page-heading"
-					headerText={ translate( 'Plans' ) }
-					subHeaderText={ translate(
-						'Learn about the features included in your WordPress.com plan.'
-					) }
-					align="left"
-				/>
-				<div className="current-plan__content">
-					{ selectedSiteId && (
-						// key={ selectedSiteId } ensures data is refetched for changing selectedSiteId
-						<QueryConciergeInitial key={ selectedSiteId } siteId={ selectedSiteId } />
-					) }
-					<QuerySites siteId={ selectedSiteId } />
-					<QuerySitePlans siteId={ selectedSiteId } />
-					<QuerySitePurchases siteId={ selectedSiteId } />
-					<QuerySiteProducts siteId={ selectedSiteId } />
-					{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
+				{ selectedSiteId && (
+					<QueryConciergeInitial key={ selectedSiteId } siteId={ selectedSiteId } />
+				) }
+				<QuerySites siteId={ selectedSiteId } />
+				<QuerySitePlans siteId={ selectedSiteId } />
+				<QuerySitePurchases siteId={ selectedSiteId } />
+				<QuerySiteProducts siteId={ selectedSiteId } />
+				{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
+				<div>
+					<FormattedHeader
+						brandFont
+						className="current-plan__section-header modernized-header"
+						headerText={ translate( 'Plans' ) }
+						subHeaderText={ translate(
+							'Learn about the features included in your WordPress.com plan.'
+						) }
+						align="left"
+					/>
+					<div className="current-plan current-plan__content">
+						{ showThankYou && ! this.state.hideThankYouModal && (
+							<Dialog
+								baseClassName="current-plan__dialog dialog__content dialog__backdrop"
+								isVisible={ showThankYou }
+								onClose={ this.hideThankYouModalOnClose }
+							>
+								{ this.renderThankYou() }
+							</Dialog>
+						) }
 
-					{ showThankYou && ! this.state.hideThankYouModal && (
-						<Dialog
-							baseClassName="current-plan__dialog dialog__content dialog__backdrop"
-							isVisible={ showThankYou }
-							onClose={ this.hideThankYouModalOnClose }
-						>
-							{ this.renderThankYou() }
-						</Dialog>
-					) }
+						<PlansNavigation path={ path } />
 
-					<PlansNavigation path={ path } />
+						<Main wideLayout>
+							{ showDomainWarnings && (
+								<DomainWarnings
+									domains={ domains }
+									position="current-plan"
+									selectedSite={ selectedSite }
+									allowedRules={ [
+										'newDomainsWithPrimary',
+										'newDomains',
+										'unverifiedDomainsCanManage',
+										'unverifiedDomainsCannotManage',
+										'wrongNSMappedDomains',
+										'newTransfersWrongNS',
+									] }
+								/>
+							) }
 
-					{ showDomainWarnings && (
-						<DomainWarnings
-							domains={ domains }
-							position="current-plan"
-							selectedSite={ selectedSite }
-							allowedRules={ [
-								'newDomainsWithPrimary',
-								'newDomains',
-								'unverifiedDomainsCanManage',
-								'unverifiedDomainsCannotManage',
-								'wrongNSMappedDomains',
-								'newTransfersWrongNS',
-							] }
-						/>
-					) }
+							{ showExpiryNotice && (
+								<Notice status="is-info" text={ <PlanRenewalMessage /> } showDismiss={ false }>
+									<NoticeAction href={ `/plans/${ selectedSite.slug || '' }` }>
+										{ translate( 'View plans' ) }
+									</NoticeAction>
+								</Notice>
+							) }
 
-					{ showExpiryNotice && (
-						<Notice status="is-info" text={ <PlanRenewalMessage /> } showDismiss={ false }>
-							<NoticeAction href={ `/plans/${ selectedSite.slug || '' }` }>
-								{ translate( 'View plans' ) }
-							</NoticeAction>
-						</Notice>
-					) }
+							{ legacyPlanNotice( eligibleForProPlan, selectedSite ) }
 
-					{ legacyPlanNotice( eligibleForProPlan, selectedSite ) }
+							{ isEcommerceTrial ? this.renderEcommerceTrialPage() : this.renderMain() }
 
-					{ isEcommerceTrial ? this.renderEcommerceTrialPage() : this.renderMain() }
-
-					<TrackComponentView eventName="calypso_plans_my_plan_view" />
+							<TrackComponentView eventName="calypso_plans_my_plan_view" />
+						</Main>
+					</div>
 				</div>
-			</Main>
+			</div>
 		);
 	}
 }
@@ -329,5 +337,6 @@ export default connect( ( state, { requestThankYou } ) => {
 		showThankYou: requestThankYou && isJetpackNotAtomic,
 		scheduleId: getConciergeScheduleId( state ),
 		eligibleForProPlan,
+		isJetpackNotAtomic,
 	};
 } )( localize( CurrentPlan ) );

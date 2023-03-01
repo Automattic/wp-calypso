@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import cookie from 'cookie';
 import { useCallback, useEffect, useState } from 'react';
 import isRegionInCcpaZone from './is-region-in-ccpa-zone';
@@ -33,6 +34,15 @@ export default () => {
 		( isActive: boolean ) => {
 			// isActive = true means user has opted out of "advertising" tracking
 			const prefs = setTrackingPrefs( { ok: true, buckets: { advertising: ! isActive } } );
+
+			if ( isActive ) {
+				recordTracksEvent( 'a8c_ccpa_optout', {
+					source: 'calypso',
+					hostname: window.location.hostname,
+					pathname: window.location.pathname,
+				} );
+			}
+
 			setIsDoNotSell( ! prefs.buckets.advertising );
 		},
 		[ setIsDoNotSell ]

@@ -24,7 +24,7 @@ interface Props {
 	subscriberType: string;
 }
 export default function SubscriberDetails( props: Props ) {
-	const _ = useTranslate();
+	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const dispatch = useDispatch();
 	const { removeFollower, isSuccess: isRemoveFollowerSuccess } = useRemoveFollowerMutation();
@@ -84,12 +84,14 @@ export default function SubscriberDetails( props: Props ) {
 			<div>
 				<p>
 					{ subscriberType === 'wpcom' &&
-						_(
+						translate(
 							'Removing followers makes them stop receiving updates from your site. ' +
 								'If they choose to, they can still visit your site, and follow it again.'
 						) }
 					{ subscriberType === 'email' &&
-						_( 'Removing email subscribers makes them stop receiving updates from your site.' ) }
+						translate(
+							'Removing email subscribers makes them stop receiving updates from your site.'
+						) }
 				</p>
 			</div>,
 			( accepted: boolean ) => {
@@ -110,7 +112,7 @@ export default function SubscriberDetails( props: Props ) {
 					);
 				}
 			},
-			_( 'Remove', { context: 'Confirm Remove follower button text.' } )
+			translate( 'Remove', { context: 'Confirm Remove follower button text.' } )
 		);
 	}
 
@@ -121,14 +123,14 @@ export default function SubscriberDetails( props: Props ) {
 			<FormattedHeader
 				brandFont
 				className="people__page-heading"
-				headerText={ _( 'Users' ) }
-				subHeaderText={ _( 'People who have subscribed to your site and team members.' ) }
+				headerText={ translate( 'Users' ) }
+				subHeaderText={ translate( 'People who have subscribed to your site and team members.' ) }
 				align="left"
 				hasScreenOptions
 			/>
 
 			<HeaderCake isCompact onClick={ onBackClick }>
-				{ _( 'User Details' ) }
+				{ translate( 'User Details' ) }
 			</HeaderCake>
 
 			{ templateState === 'loading' && (
@@ -138,7 +140,7 @@ export default function SubscriberDetails( props: Props ) {
 			) }
 
 			{ templateState === 'not-found' && (
-				<EmptyContent title={ _( 'The requested subscriber does not exist.' ) } />
+				<EmptyContent title={ translate( 'The requested subscriber does not exist.' ) } />
 			) }
 
 			{ templateState === 'default' && (
@@ -152,10 +154,10 @@ export default function SubscriberDetails( props: Props ) {
 					<div className="people-member-details__meta">
 						{ subscriber?.date_subscribed && (
 							<div className="people-member-details__meta-item">
-								<strong>{ _( 'Status' ) }</strong>
+								<strong>{ translate( 'Status' ) }</strong>
 								<div>
 									<span className="people-member-details__meta-status-active">
-										{ _( 'Active' ) }
+										{ translate( 'Active' ) }
 									</span>
 								</div>
 							</div>
@@ -163,7 +165,7 @@ export default function SubscriberDetails( props: Props ) {
 
 						{ subscriber?.date_subscribed && (
 							<div className="people-member-details__meta-item">
-								<strong>{ _( 'Subscriber since' ) }</strong>
+								<strong>{ translate( 'Subscriber since' ) }</strong>
 								<div>
 									<span>{ moment( subscriber?.date_subscribed ).format( 'LLL' ) }</span>
 								</div>
@@ -172,7 +174,7 @@ export default function SubscriberDetails( props: Props ) {
 
 						{ subscriber?.url && (
 							<div className="people-member-details__meta-item">
-								<strong>{ _( 'Source' ) }</strong>
+								<strong>{ translate( 'Source' ) }</strong>
 								<div>
 									<span>{ subscriber.url }</span>
 								</div>

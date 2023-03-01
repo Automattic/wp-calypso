@@ -1,0 +1,70 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.plans main {
+	padding-top: 17px;
+	// a formatted-header instance used within main (not as section header)
+	.plans__formatted-header {
+		&.is-domain-upsell {
+			margin-top: 30px;
+			display: flex;
+			justify-content: center;
+
+			.formatted-header__title,
+			.formatted-header__subtitle {
+				max-width: $break-medium;
+			}
+
+			.formatted-header__title {
+				font-size: 2rem;
+			}
+		}
+	}
+}
+
+body.is-section-plans.is-domain-plan-package-flow {
+	background: var(--color-body-background);
+
+	.layout__content {
+		padding-left: 0 !important;
+	}
+
+	.plans__has-sidebar {
+		.section-nav {
+			display: none;
+		}
+	}
+
+	.plans__header {
+		display: block;
+		overflow: auto;
+
+		.formatted-header__title,
+		.formatted-header__subtitle {
+			max-width: unset;
+		}
+
+		h1 {
+			font-family: $brand-serif;
+			font-size: $font-headline-small;
+		}
+
+		p {
+			font-size: $font-body;
+			color: var(--color-text-subtle);
+			text-align: center;
+			padding: 0 10px;
+		}
+	}
+
+	@include break-small {
+		.plans__header {
+			h1 {
+				font-size: $font-headline-medium;
+			}
+			p {
+				padding: 0 80px;
+			}
+		}
+	}
+}

@@ -3,6 +3,7 @@ import {
 	isNewsletterOrLinkInBioFlow,
 	isLinkInBioFlow,
 	isFreeFlow,
+	isUpdateDesignFlow,
 	ECOMMERCE_FLOW,
 	isWooExpressFlow,
 } from '@automattic/onboarding';
@@ -39,7 +40,7 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 
 	const { __ } = useI18n();
 	const videoPressLoadingMessages = useVideoPressLoadingMessages();
-	const defaultLoadingMessages = useProcessingLoadingMessages();
+	const defaultLoadingMessages = useProcessingLoadingMessages( flow );
 	const loadingMessages =
 		'videopress' === flow ? videoPressLoadingMessages : defaultLoadingMessages;
 
@@ -96,14 +97,20 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ hasActionSuccessfullyRun ] );
 
+	const getSubtitle = () => {
+		return props.subtitle || loadingMessages[ currentMessageIndex ]?.subtitle;
+	};
+
 	const flowName = props.flow || '';
 	const isJetpackPowered = isNewsletterOrLinkInBioFlow( flowName );
 	const isWooCommercePowered = flowName === ECOMMERCE_FLOW;
 
 	// Currently we have the Domains and Plans only for link in bio
-	if ( isLinkInBioFlow( flowName ) || isFreeFlow( flowName ) ) {
+	if ( isLinkInBioFlow( flowName ) || isFreeFlow( flowName ) || isUpdateDesignFlow( flowName ) ) {
 		return <TailoredFlowPreCheckoutScreen flowName={ flowName } />;
 	}
+
+	const subtitle = getSubtitle();
 
 	return (
 		<>
@@ -124,7 +131,7 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 							) : (
 								<LoadingEllipsis />
 							) }
-							{ props.subtitle && <p className="processing-step__subtitle">{ props.subtitle }</p> }
+							{ subtitle && <p className="processing-step__subtitle">{ subtitle }</p> }
 						</div>
 					</>
 				}

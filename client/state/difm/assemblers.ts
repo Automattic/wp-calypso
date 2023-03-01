@@ -1,30 +1,17 @@
-import type { Design } from '@automattic/design-picker';
+import { mapRecordKeysRecursively, camelToSnakeCase } from '@automattic/js-utils';
+import type {
+	DIFMDependencies,
+	WebsiteContent,
+	WebsiteContentRequestDTO,
+} from 'calypso/state/signup/steps/website-content/types';
 
-interface Dependencies {
-	newOrExistingSiteChoice: boolean;
-	siteTitle: string;
-	siteDescription: string;
-	tagline: string;
-	selectedDesign: Design;
-	selectedSiteCategory: string;
-	isLetUsChooseSelected: boolean;
-	twitterUrl: string;
-	facebookUrl: string;
-	linkedinUrl: string;
-	instagramUrl: string;
-	displayEmail: string;
-	displayPhone: string;
-	displayAddress: string;
-	selectedPageTitles: string[];
-	isStoreFlow: boolean;
-}
-
-export function buildDIFMCartExtrasObject( dependencies: Partial< Dependencies > ) {
+export function buildDIFMCartExtrasObject( dependencies: Partial< DIFMDependencies > ) {
 	const {
 		newOrExistingSiteChoice,
 		siteTitle,
 		siteDescription,
 		tagline,
+		searchTerms,
 		selectedDesign,
 		selectedSiteCategory,
 		isLetUsChooseSelected,
@@ -43,6 +30,7 @@ export function buildDIFMCartExtrasObject( dependencies: Partial< Dependencies >
 		new_or_existing_site_choice: newOrExistingSiteChoice,
 		site_title: siteTitle,
 		site_description: siteDescription || tagline,
+		search_terms: searchTerms,
 		selected_design: selectedDesign?.theme,
 		site_category: selectedSiteCategory,
 		let_us_choose_selected: isLetUsChooseSelected,
@@ -55,5 +43,21 @@ export function buildDIFMCartExtrasObject( dependencies: Partial< Dependencies >
 		display_address: displayAddress,
 		selected_page_titles: selectedPageTitles,
 		is_store_flow: isStoreFlow,
+	};
+}
+
+export function buildDIFMWebsiteContentRequestDTO(
+	websiteContent: WebsiteContent
+): WebsiteContentRequestDTO {
+	const {
+		pages,
+		siteLogoSection: { siteLogoUrl: site_logo_url },
+		feedbackSection: { genericFeedback: generic_feedback },
+	} = websiteContent;
+	const pagesDTO = pages.map( ( page ) => mapRecordKeysRecursively( page, camelToSnakeCase ) );
+	return {
+		pages: pagesDTO,
+		site_logo_url: site_logo_url ?? '',
+		generic_feedback: generic_feedback ?? '',
 	};
 }

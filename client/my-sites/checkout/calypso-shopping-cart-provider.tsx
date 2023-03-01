@@ -7,7 +7,19 @@ import { cartManagerClient } from './cart-manager-client';
 // for calypso and to display error and success messages returned from calls to
 // the cart endpoint.
 // eslint-disable-next-line @typescript-eslint/ban-types
-export default function CalypsoShoppingCartProvider( { children }: PropsWithChildren< {} > ) {
+export default function CalypsoShoppingCartProvider( {
+	children,
+	shouldShowPersistentErrors,
+}: PropsWithChildren< {
+	/**
+	 * Persistent errors like "Purchases are disabled for this site" are returned
+	 * during cart fetch (regular cart errors are transient and only are returned
+	 * when changing the cart). We want to display these errors only in certain
+	 * contexts where they will make sense (like checkout), not in every place
+	 * that happens to render this component (like the plans page).
+	 */
+	shouldShowPersistentErrors?: boolean;
+} > ) {
 	const options = useMemo(
 		() => ( {
 			refetchOnWindowFocus: true,
@@ -17,7 +29,7 @@ export default function CalypsoShoppingCartProvider( { children }: PropsWithChil
 
 	return (
 		<ShoppingCartProvider managerClient={ cartManagerClient } options={ options }>
-			<CartMessages />
+			<CartMessages shouldShowPersistentErrors={ shouldShowPersistentErrors } />
 			{ children }
 		</ShoppingCartProvider>
 	);

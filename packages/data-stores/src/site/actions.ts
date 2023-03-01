@@ -9,7 +9,6 @@ import {
 	AtomicSoftwareInstallError,
 	GlobalStyles,
 } from './types';
-import type { WpcomClientCredentials } from '../shared-types';
 import type {
 	CreateSiteParams,
 	NewSiteErrorResponse,
@@ -28,7 +27,9 @@ import type {
 	SiteSettings,
 	ThemeSetupOptions,
 	ActiveTheme,
+	CurrentTheme,
 } from './types';
+import type { WpcomClientCredentials } from '../shared-types';
 
 export function createActions( clientCreds: WpcomClientCredentials ) {
 	const fetchSite = () => ( {
@@ -170,6 +171,12 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		domains,
 	} );
 
+	const receiveSiteTheme = ( siteId: number, theme: CurrentTheme ) => ( {
+		type: 'RECEIVE_SITE_THEME' as const,
+		siteId,
+		theme,
+	} );
+
 	const receiveSiteSettings = ( siteId: number, settings: SiteSettings ) => ( {
 		type: 'RECEIVE_SITE_SETTINGS' as const,
 		siteId,
@@ -211,9 +218,11 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 
 	function* setGlobalStyles(
 		siteIdOrSlug: number | string,
-		globalStylesId: number,
+		stylesheet: string,
 		globalStyles: GlobalStyles
 	) {
+		const globalStylesId: number = yield getGlobalStylesId( siteIdOrSlug, stylesheet );
+
 		const updatedGlobalStyles: GlobalStyles = yield wpcomRequest( {
 			path: `/sites/${ encodeURIComponent( siteIdOrSlug ) }/global-styles/${ globalStylesId }`,
 			apiNamespace: 'wp/v2',
@@ -372,11 +381,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			);
 
 			if ( currentVariation ) {
-				const globalStylesId: number = yield getGlobalStylesId(
-					siteSlug,
-					activatedTheme.stylesheet
-				);
-				yield setGlobalStyles( siteSlug, globalStylesId, currentVariation );
+				yield setGlobalStyles( siteSlug, activatedTheme.stylesheet, currentVariation );
 			}
 		}
 	}
@@ -398,8 +403,12 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		}
 
 		const themeSetupOptions: ThemeSetupOptions = {
-			trim_content: true,
+			trim_content: options?.trimContent ?? true,
 		};
+
+		if ( options?.posts_source_site_id ) {
+			themeSetupOptions.posts_source_site_id = options.posts_source_site_id;
+		}
 
 		if ( verticalizable ) {
 			themeSetupOptions.vertical_id = options?.verticalId;
@@ -655,6 +664,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 	return {
 		receiveSiteDomains,
 		receiveSiteSettings,
+		receiveSiteTheme,
 		saveSiteTitle,
 		saveSiteSettings,
 		setIntentOnSite,
@@ -686,6 +696,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		getCart,
 		setCart,
 		getGlobalStyles,
+		setGlobalStyles,
 		receiveSiteGlobalStyles,
 		setSiteSetupError,
 		clearSiteSetupError,
@@ -717,6 +728,7 @@ export type Action =
 			| ActionCreators[ 'fetchSite' ]
 			| ActionCreators[ 'receiveSiteDomains' ]
 			| ActionCreators[ 'receiveSiteSettings' ]
+			| ActionCreators[ 'receiveSiteTheme' ]
 			| ActionCreators[ 'receiveNewSite' ]
 			| ActionCreators[ 'receiveSiteTitle' ]
 			| ActionCreators[ 'receiveNewSiteFailed' ]

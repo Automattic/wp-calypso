@@ -23,6 +23,7 @@ export {
 } from 'calypso/state/themes/actions/trending-themes';
 export { requestActiveTheme } from 'calypso/state/themes/actions/request-active-theme';
 export { requestTheme } from 'calypso/state/themes/actions/request-theme';
+export { requestThemeOnAtomic } from 'calypso/state/themes/actions/request-theme-on-atomic';
 export { requestThenActivate } from 'calypso/state/themes/actions/request-then-activate';
 export { requestThemeFilters } from 'calypso/state/themes/actions/request-theme-filters';
 export { requestThemes } from 'calypso/state/themes/actions/request-themes';
@@ -31,6 +32,7 @@ export { setThemePreviewOptions } from 'calypso/state/themes/actions/set-theme-p
 export { showAutoLoadingHomepageWarning } from 'calypso/state/themes/actions/show-auto-loading-homepage-warning';
 export { showThemePreview } from 'calypso/state/themes/actions/show-theme-preview';
 export { themeActivated } from 'calypso/state/themes/actions/theme-activated';
+export { themeStartActivationSync } from 'calypso/state/themes/actions/theme-start-activation-sync';
 export { themeRequestFailure } from 'calypso/state/themes/actions/theme-request-failure';
 export {
 	initiateThemeTransfer,

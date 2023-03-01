@@ -25,6 +25,7 @@ import {
 	optionNameType,
 } from '../hooks/use-site-settings';
 import type { WooCommerceStoreAddressProps } from '..';
+import type { IAppState } from 'calypso/state/types';
 import './style.scss';
 
 const CityZipRow = styled.div`
@@ -48,7 +49,8 @@ export default function StepStoreAddress( props: WooCommerceStoreAddressProps ) 
 
 	const siteId = useSelector( getSelectedSiteId ) as number;
 
-	const countriesList = useSelector( ( state ) => getCountries( state, 'woocommerce' ) ) || [];
+	const countriesList =
+		useSelector( ( state: IAppState ) => getCountries( state, 'woocommerce' ) ) || {};
 	const countriesAsOptions = Object.entries( countriesList ).map( ( [ key, value ] ) => {
 		return { value: key, label: value };
 	} );

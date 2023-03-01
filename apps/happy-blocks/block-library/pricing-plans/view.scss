@@ -1,0 +1,321 @@
+@import "~@automattic/typography/styles/variables";
+@import "~@automattic/color-studio/dist/color-variables";
+@import "~@wordpress/base-styles/colors";
+@import "~@wordpress/base-styles/breakpoints";
+@import "~@wordpress/base-styles/mixins";
+
+$brand-text: "SF Pro Text", $sans;
+$brand-display: "SF Pro Display", $sans;
+
+@keyframes hb-pricing-plans-embed__skeleton__animation {
+	0% {
+		opacity: 0.5;
+	}
+
+	50% {
+		opacity: 1;
+	}
+
+	100% {
+		opacity: 0.5;
+	}
+}
+
+.hb-pricing-plans-embed {
+	flex-wrap: wrap;
+	padding: 28px;
+	margin: 24px 0;
+	border: 1px solid $studio-gray-5;
+	border-radius: 2px;
+	gap: 22px;
+	background-color: $studio-white;
+	word-break: initial;
+
+
+	&__settings {
+		select {
+			min-height: 30px;
+			height: 36px;
+			padding: 0 26px 0 16px;
+			margin: 0;
+			border-color: $gray-600;
+		}
+
+		.components-panel__row {
+			display: block;
+			margin-bottom: 15px;
+		}
+
+		.components-radio-control__option {
+			display: flex;
+			gap: 10px;
+		}
+
+		.components-flex.components-h-stack.components-v-stack {
+			margin-top: 12px;
+			flex-direction: row;
+			gap: 17px;
+			justify-content: flex-start;
+		}
+
+		&-checkbox--disabled {
+			opacity: 0.6;
+		}
+
+		&-domain:has(.components-base-control__help) {
+			.components-base-control__field {
+				margin-bottom: 0;
+			}
+		}
+	}
+
+	&__skeleton {
+		color: $studio-gray-0;
+		background-color: $studio-gray-5;
+		width: 100%;
+		margin: 24px 0;
+		min-height: 215px;
+
+		animation: hb-pricing-plans-embed__skeleton__animation 1.6s ease-in-out infinite;
+
+		&::after {
+			content: "";
+		}
+	}
+
+	&__tabs {
+		display: flex;
+		background: $studio-gray-0;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 6px;
+		padding: 4px;
+		width: min-content;
+		margin-bottom: 16px;
+
+		&-label {
+			background: $studio-gray-0;
+			padding: 4px 16px;
+			height: 28px;
+			font-family: $brand-display;
+			font-weight: 500;
+			font-size: 0.875rem;
+			line-height: 20px;
+			border: none;
+			/* stylelint-disable-next-line scales/radii */
+			border-radius: 5px;
+			margin: 0;
+
+			&:hover {
+				background: $studio-gray-0;
+			}
+
+			&--active {
+				background: $white;
+				border: 0.5px solid rgba(0, 0, 0, 0.04);
+				box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12), 0 3px 1px rgba(0, 0, 0, 0.04);
+				/* stylelint-disable-next-line scales/radii */
+				border-radius: 5px;
+				z-index: 1;
+			}
+		}
+	}
+
+	&__tab {
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+
+		@include break-medium {
+			flex-direction: row;
+		}
+	}
+
+	&__header {
+		flex: 1;
+
+		&-label {
+			font-family: $brand-serif;
+			font-weight: 400;
+			font-size: 2rem;
+			line-height: 1;
+			display: flex;
+			letter-spacing: -0.32px;
+			color: $studio-gray-100;
+		}
+
+		&-domain {
+			font-family: $brand-text;
+			font-weight: 400;
+			font-size: 0.75rem;
+			line-height: 1.66;
+			color: $studio-gray-60;
+		}
+
+		&-learn-more {
+			text-decoration: none;
+
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+
+		&-description {
+			font-family: $brand-text;
+			font-weight: 400;
+			font-size: 0.875rem;
+			align-items: center;
+			letter-spacing: -0.24px;
+			color: $studio-gray-80;
+			margin-top: 8px;
+
+			p:first-of-type {
+				overflow: hidden;
+				text-overflow: ellipsis;
+				display: -webkit-box;
+				line-clamp: 2;
+				-webkit-line-clamp: 2;
+				-webkit-box-orient: vertical;
+			}
+
+			p {
+				margin: 0;
+				line-height: 1.33;
+			}
+
+			@include break-medium {
+				p {
+					line-height: 1.57;
+				}
+			}
+		}
+	}
+
+	&__billing-info {
+		display: flex;
+		align-items: baseline;
+		gap: 8px;
+
+		&-value {
+			font-family: $brand-serif;
+
+			font-weight: 400;
+			font-size: 2rem;
+			line-height: 1;
+			color: $studio-gray-100;
+		}
+
+		&-description {
+			font-family: $brand-text;
+			font-weight: 400;
+			font-size: 0.75rem;
+			line-height: 1.66;
+			color: $studio-gray-60;
+		}
+	}
+
+	&__promo {
+		font-family: $brand-text;
+		font-weight: 400;
+		font-size: 0.75rem;
+		line-height: 1.42;
+		display: flex;
+		align-items: center;
+		color: $studio-green-50;
+	}
+
+	&__billing-options {
+		display: flex;
+		flex-wrap: wrap;
+		margin: 18px 0;
+		row-gap: 8px;
+		column-gap: 26px;
+	}
+
+	&__billing-option-input {
+		margin: 0;
+		height: 20px;
+		width: 20px;
+	}
+
+	&__billing-option-label {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		font-family: $brand-text;
+
+		font-weight: 400;
+		font-size: 0.875rem;
+		line-height: 1.42;
+		letter-spacing: -0.15px;
+		color: $studio-gray-60;
+	}
+
+
+	&__detail {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+
+		&-cta {
+			color: $studio-blue-0;
+			font-family: $brand-display;
+			font-size: 0.875rem;
+			font-weight: 500;
+			background: $studio-blue-50;
+			text-decoration: none;
+			width: 100%;
+			border-radius: 4px;
+			display: flex;
+			justify-content: center;
+			padding: 10px 0;
+		}
+	}
+}
+
+/*
+Note:
+  These are overrides for BBPress due to 104-gh-Automattic/lighthouse-forums.
+	Once this issue is resolved, we can remove the declarations below.
+*/
+#bbpress-forums {
+	a.hb-pricing-plans-embed__detail-cta {
+		&:link,
+		&:visited {
+			color: $studio-blue-0;
+			font-family: $brand-display;
+			font-size: 0.875rem;
+			font-weight: 500;
+			background: $studio-blue-50;
+			text-decoration: none;
+			width: 100%;
+			border-radius: 4px;
+			display: flex;
+			justify-content: center;
+			padding: 10px 0;
+		}
+	}
+
+	fieldset.bbp-form label.hb-pricing-plans-embed__billing-option-label {
+		display: flex;
+	}
+
+	fieldset.bbp-form input.hb-pricing-plans-embed__billing-option-input {
+		margin: 0;
+	}
+
+	div.bbp-reply-content a.hb-pricing-plans-embed__header-learn-more {
+		text-decoration: none;
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+
+	fieldset.bbp-form select.components-select-control__input {
+		min-height: 30px;
+		height: 36px;
+		padding: 0 26px 0 16px;
+		margin: 0;
+		border-color: $gray-600;
+	}
+}

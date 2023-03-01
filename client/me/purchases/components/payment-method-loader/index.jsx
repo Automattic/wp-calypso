@@ -16,7 +16,7 @@ export default function PaymentMethodLoader( { title } ) {
 					<Card className="payment-method-loader__credit-card-content credit-card-form__content">
 						<CreditCardFormFieldsLoadingPlaceholder />
 
-						<FormButton isPrimary={ false } />
+						<FormButton isPrimary={ false } disabled />
 					</Card>
 				</Column>
 				<Column type="sidebar">

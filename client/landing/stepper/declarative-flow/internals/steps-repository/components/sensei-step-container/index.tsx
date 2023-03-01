@@ -4,6 +4,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { Icon, wordpress } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
+import DocumentHead from 'calypso/components/data/document-head';
 import { Container, TitleContainer, Title, Footer, FooterText } from './components';
 import './styles.scss';
 
@@ -34,6 +35,7 @@ export const SenseiStepContainer: React.FC< SenseiStepContainerProps > = ( {
 				<Container>
 					<TitleContainer>
 						<Icon icon={ wordpress } />
+						<DocumentHead title={ __( 'Course Creator' ) } />
 						<Title>{ __( 'Course Creator' ) }</Title>
 					</TitleContainer>
 					{ formattedHeader && <div className="step-container__header">{ formattedHeader }</div> }

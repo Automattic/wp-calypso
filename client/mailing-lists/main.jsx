@@ -114,6 +114,8 @@ class MainComponent extends Component {
 			return this.props.translate( 'Jetpack Reports' );
 		} else if ( 'akismet_marketing' === category ) {
 			return this.props.translate( 'Akismet Marketing' );
+		} else if ( 'woopay_marketing' === category ) {
+			return this.props.translate( 'WooPay Marketing' );
 		}
 
 		return category;
@@ -157,6 +159,8 @@ class MainComponent extends Component {
 			return this.props.translate(
 				'Relevant tips and new features to get the most out of Akismet'
 			);
+		} else if ( 'woopay_marketing' === category ) {
+			return this.props.translate( 'Tips for getting the most out of WooPay.' );
 		}
 
 		return null;

@@ -36,6 +36,12 @@ class Help_Center {
 	 * Help_Center constructor.
 	 */
 	public function __construct() {
+		global $wp_customize;
+
+		if ( isset( $wp_customize ) ) {
+			return;
+		}
+
 		$this->asset_file = include plugin_dir_path( __FILE__ ) . 'dist/help-center.asset.php';
 		$this->version    = $this->asset_file['version'];
 
@@ -121,11 +127,10 @@ class Help_Center {
 	 * Get current site details.
 	 */
 	public function get_current_site() {
-		$site       = \Jetpack_Options::get_option( 'id' );
-		$logo_id    = get_option( 'site_logo' );
-		$products   = wpcom_get_site_purchases();
-		$at_options = get_option( 'at_options' );
-		$plan       = array_pop(
+		$site     = \Jetpack_Options::get_option( 'id' );
+		$logo_id  = get_option( 'site_logo' );
+		$products = wpcom_get_site_purchases();
+		$plan     = array_pop(
 			array_filter(
 				$products,
 				function ( $product ) {
@@ -135,19 +140,21 @@ class Help_Center {
 		);
 
 		return array(
-			'ID'              => $site,
-			'name'            => get_bloginfo( 'name' ),
-			'URL'             => get_bloginfo( 'url' ),
-			'plan'            => array(
+			'ID'               => $site,
+			'name'             => get_bloginfo( 'name' ),
+			'URL'              => get_bloginfo( 'url' ),
+			'plan'             => array(
 				'product_slug' => $plan->product_slug,
 			),
-			'is_wpcom_atomic' => boolval( $at_options ),
-			'jetpack'         => true === apply_filters( 'is_jetpack_site', false, $site ),
-			'logo'            => array(
+			'is_wpcom_atomic'  => defined( 'IS_ATOMIC' ) && IS_ATOMIC,
+			'jetpack'          => true === apply_filters( 'is_jetpack_site', false, $site ),
+			'logo'             => array(
 				'id'    => $logo_id,
 				'sizes' => array(),
 				'url'   => wp_get_attachment_image_src( $logo_id, 'thumbnail' )[0],
 			),
+			'launchpad_screen' => get_option( 'launchpad_screen' ),
+			'site_intent'      => get_option( 'site_intent' ),
 		);
 	}
 
@@ -177,6 +184,10 @@ class Help_Center {
 
 		require_once __DIR__ . '/class-wp-rest-help-center-ticket.php';
 		$controller = new WP_REST_Help_Center_Ticket();
+		$controller->register_rest_route();
+
+		require_once __DIR__ . '/class-wp-rest-help-center-forum.php';
+		$controller = new WP_REST_Help_Center_Forum();
 		$controller->register_rest_route();
 	}
 

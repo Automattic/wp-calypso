@@ -75,7 +75,7 @@ export default function AnnualHighlightCards( {
 					showValueTooltip
 				/>
 				<HighlightCard
-					heading={ translate( 'Followers' ) }
+					heading={ translate( 'Subscribers' ) }
 					icon={ <Icon icon={ people } /> }
 					count={ counts?.followers ?? null }
 					showValueTooltip

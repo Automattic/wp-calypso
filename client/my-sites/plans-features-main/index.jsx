@@ -28,6 +28,7 @@ import {
 	PLAN_PERSONAL,
 	TITAN_MAIL_MONTHLY_SLUG,
 	PLAN_FREE,
+	is2023PricingGridActivePage,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
@@ -122,15 +123,17 @@ export class PlansFeaturesMain extends Component {
 			isReskinned,
 			isFAQCondensedExperiment,
 			isPlansInsideStepper,
-			is2023OnboardingPricingGrid,
+			is2023PricingGridVisible,
 			intervalType,
 			planTypeSelectorProps,
+			busyOnUpgradeClick,
+			hidePlansFeatureComparison,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
 
-		if ( is2023OnboardingPricingGrid ) {
+		if ( is2023PricingGridVisible ) {
 			const asyncProps = {
 				basePlansPath,
 				domainName,
@@ -157,6 +160,7 @@ export class PlansFeaturesMain extends Component {
 				isReskinned,
 				isPlansInsideStepper,
 				intervalType,
+				hidePlansFeatureComparison,
 			};
 			const asyncPlanFeatures2023Grid = (
 				<AsyncLoad
@@ -222,6 +226,7 @@ export class PlansFeaturesMain extends Component {
 					isReskinned={ isReskinned }
 					isFAQCondensedExperiment={ isFAQCondensedExperiment }
 					isPlansInsideStepper={ isPlansInsideStepper }
+					busyOnUpgradeClick={ busyOnUpgradeClick }
 				/>
 			</div>
 		);
@@ -351,10 +356,11 @@ export class PlansFeaturesMain extends Component {
 			hideFreePlan,
 			hidePersonalPlan,
 			hidePremiumPlan,
+			hideEcommercePlan,
 			sitePlanSlug,
 			showTreatmentPlansReorderTest,
 			flowName,
-			is2023OnboardingPricingGrid,
+			is2023PricingGridVisible,
 		} = this.props;
 
 		const hideBloggerPlan = ! isBloggerPlan( selectedPlan ) && ! isBloggerPlan( sitePlanSlug );
@@ -366,7 +372,7 @@ export class PlansFeaturesMain extends Component {
 			plans = plansFromProps;
 		} else {
 			const isBloggerPlanVisible = hideBloggerPlan === true ? false : true;
-			const isEnterprisePlanVisible = is2023OnboardingPricingGrid;
+			const isEnterprisePlanVisible = is2023PricingGridVisible;
 			plans = [
 				findPlansKeys( { group: GROUP_WPCOM, type: TYPE_FREE } )[ 0 ],
 				isBloggerPlanVisible &&
@@ -390,6 +396,10 @@ export class PlansFeaturesMain extends Component {
 
 		if ( hidePremiumPlan ) {
 			plans = plans.filter( ( planSlug ) => ! isPremiumPlan( planSlug ) );
+		}
+
+		if ( hideEcommercePlan ) {
+			plans = plans.filter( ( planSlug ) => ! isEcommercePlan( planSlug ) );
 		}
 
 		if ( isNewsletterOrLinkInBioFlow( flowName ) ) {
@@ -437,7 +447,7 @@ export class PlansFeaturesMain extends Component {
 			isAllPaidPlansShown,
 			isInMarketplace,
 			sitePlanSlug,
-			is2023OnboardingPricingGrid,
+			is2023PricingGridVisible,
 		} = this.props;
 
 		const isPlanOneOfType = ( plan, types ) =>
@@ -457,7 +467,7 @@ export class PlansFeaturesMain extends Component {
 			  } )
 			: availablePlans;
 
-		if ( is2023OnboardingPricingGrid ) {
+		if ( is2023PricingGridVisible ) {
 			return plans.filter( ( plan ) =>
 				isPlanOneOfType( plan, [
 					TYPE_FREE,
@@ -562,9 +572,9 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	renderPlansGrid() {
-		const { shouldShowPlansFeatureComparison, is2023OnboardingPricingGrid } = this.props;
+		const { shouldShowPlansFeatureComparison, is2023PricingGridVisible } = this.props;
 
-		if ( is2023OnboardingPricingGrid ) {
+		if ( is2023PricingGridVisible ) {
 			return this.show2023OnboardingPricingGrid();
 		}
 
@@ -578,7 +588,7 @@ export class PlansFeaturesMain extends Component {
 			siteId,
 			redirectToAddDomainFlow,
 			domainAndPlanPackage,
-			is2023OnboardingPricingGrid,
+			is2023PricingGridVisible,
 			planTypeSelectorProps,
 		} = this.props;
 
@@ -599,7 +609,7 @@ export class PlansFeaturesMain extends Component {
 		return (
 			<div
 				className={ classNames( 'plans-features-main', {
-					'is-pricing-grid-2023-plans-features-main ': is2023OnboardingPricingGrid,
+					'is-pricing-grid-2023-plans-features-main ': is2023PricingGridVisible,
 				} ) }
 			>
 				<QueryPlans />
@@ -640,6 +650,7 @@ PlansFeaturesMain.propTypes = {
 	hideFreePlan: PropTypes.bool,
 	hidePersonalPlan: PropTypes.bool,
 	hidePremiumPlan: PropTypes.bool,
+	hideEcommercePlan: PropTypes.bool,
 	customerType: PropTypes.string,
 	flowName: PropTypes.string,
 	intervalType: PropTypes.oneOf( [ 'monthly', 'yearly' ] ),
@@ -660,6 +671,7 @@ PlansFeaturesMain.propTypes = {
 	isReskinned: PropTypes.bool,
 	isPlansInsideStepper: PropTypes.bool,
 	planTypeSelector: PropTypes.string,
+	busyOnUpgradeClick: PropTypes.bool,
 };
 
 PlansFeaturesMain.defaultProps = {
@@ -676,6 +688,7 @@ PlansFeaturesMain.defaultProps = {
 	isReskinned: false,
 	planTypeSelector: 'interval',
 	isPlansInsideStepper: false,
+	busyOnUpgradeClick: false,
 };
 
 export default connect(
@@ -703,7 +716,7 @@ export default connect(
 		) {
 			customerType = 'business';
 		}
-		const is2023OnboardingPricingGrid = isEnabled( 'onboarding/2023-pricing-grid' );
+		const is2023PricingGridVisible = is2023PricingGridActivePage( window );
 		const planTypeSelectorProps = {
 			basePlansPath: props.basePlansPath,
 			isInSignup: props.isInSignup,
@@ -729,8 +742,8 @@ export default connect(
 			sitePlanSlug,
 			eligibleForWpcomMonthlyPlans,
 			titanMonthlyRenewalCost,
-			is2023OnboardingPricingGrid,
-			showFAQ: !! props.showFAQ && ! is2023OnboardingPricingGrid,
+			is2023PricingGridVisible,
+			showFAQ: !! props.showFAQ && ! is2023PricingGridVisible,
 			planTypeSelectorProps,
 		};
 	},

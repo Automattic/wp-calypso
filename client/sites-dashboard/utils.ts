@@ -28,8 +28,16 @@ export const displaySiteUrl = ( siteUrl: string ) => {
 	return siteUrl.replace( 'https://', '' ).replace( 'http://', '' );
 };
 
+export function isCustomDomain( siteSlug: string ): boolean {
+	return ! siteSlug.endsWith( '.wordpress.com' ) && ! siteSlug.endsWith( '.wpcomstaging.com' );
+}
+
 export const isNotAtomicJetpack = ( site: SiteExcerptNetworkData ) => {
 	return site.jetpack && ! site?.is_wpcom_atomic;
+};
+
+export const isP2Site = ( site: SiteExcerptNetworkData ) => {
+	return site.options?.is_wpforteams_site;
 };
 
 export const SMALL_MEDIA_QUERY = 'screen and ( max-width: 600px )';

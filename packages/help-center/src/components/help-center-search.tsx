@@ -1,13 +1,19 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 /* eslint-disable no-restricted-imports */
+import { useSelect } from '@wordpress/data';
 import { useState, useCallback, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import InlineHelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { SITE_STORE } from '../stores';
+import { HelpCenterLaunchpad } from './help-center-launchpad';
 import { HelpCenterMoreResources } from './help-center-more-resources';
 import HelpCenterSearchResults from './help-center-search-results';
 import './help-center-search.scss';
+import './help-center-launchpad.scss';
 import { SibylArticles } from './help-center-sibyl-articles';
 
 export const HelpCenterSearch = () => {
@@ -17,6 +23,14 @@ export const HelpCenterSearch = () => {
 	const query = params.get( 'query' );
 
 	const [ searchQuery, setSearchQuery ] = useState( query || '' );
+
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const site = useSelect( ( select ) => siteId && select( SITE_STORE ).getSite( siteId ) );
+	let launchpadEnabled = site && site?.options.launchpad_screen === 'full';
+
+	if ( ! launchpadEnabled ) {
+		launchpadEnabled = window?.helpCenterData?.currentSite?.launchpad_screen === 'full';
+	}
 
 	// Search query can be a query param, if the user searches or clears the search field
 	// we need to keep the query param up-to-date with that
@@ -52,6 +66,7 @@ export const HelpCenterSearch = () => {
 
 	return (
 		<div className="inline-help__search">
+			{ launchpadEnabled && <HelpCenterLaunchpad /> }
 			<InlineHelpSearchCard
 				searchQuery={ searchQuery }
 				onSearch={ setSearchQuery }

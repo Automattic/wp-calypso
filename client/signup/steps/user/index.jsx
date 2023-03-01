@@ -292,7 +292,11 @@ export class UserStep extends Component {
 			},
 		};
 
-		this.props.recordTracksEvent( 'calypso_signup_user_step_submit', analyticsData );
+		this.props.recordTracksEvent( 'calypso_signup_user_step_submit', {
+			flow: this.props.flowName,
+			step: this.props.stepName,
+			...analyticsData,
+		} );
 
 		const isRecaptchaLoaded = typeof this.state.recaptchaClientId === 'number';
 

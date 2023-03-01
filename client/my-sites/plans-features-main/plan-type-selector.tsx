@@ -40,6 +40,7 @@ export type PlanTypeSelectorProps = {
 	eligibleForWpcomMonthlyPlans?: boolean;
 	isPlansInsideStepper: boolean;
 	hideDiscountLabel: boolean;
+	redirectTo?: string | null;
 };
 
 interface PathArgs {
@@ -121,6 +122,7 @@ export type IntervalTypeProps = Pick<
 	| 'eligibleForWpcomMonthlyPlans'
 	| 'isPlansInsideStepper'
 	| 'hideDiscountLabel'
+	| 'redirectTo'
 >;
 
 export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
@@ -137,6 +139,8 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		return null;
 	}
 
+	const additionalPathProps = props.redirectTo ? { redirect_to: props.redirectTo } : {};
+
 	const domainFromHomeUpsellFlow = new URLSearchParams( window.location.search ).get(
 		'get_domain'
 	);
@@ -152,6 +156,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 					path={ generatePath( props, {
 						intervalType: 'monthly',
 						get_domain: domainFromHomeUpsellFlow,
+						...additionalPathProps,
 					} ) }
 					isPlansInsideStepper={ props.isPlansInsideStepper }
 				>
@@ -163,6 +168,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 					path={ generatePath( props, {
 						intervalType: 'yearly',
 						get_domain: domainFromHomeUpsellFlow,
+						...additionalPathProps,
 					} ) }
 					isPlansInsideStepper={ props.isPlansInsideStepper }
 				>

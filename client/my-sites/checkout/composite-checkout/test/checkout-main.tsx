@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY } from '@automattic/calypso-products';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
 import { render, fireEvent, screen, within, waitFor, act } from '@testing-library/react';
@@ -143,6 +144,12 @@ describe( 'CheckoutMain', () => {
 				.getAllByLabelText( 'Total' )
 				.map( ( element ) => expect( element ).toHaveTextContent( 'R$156' ) );
 		} );
+	} );
+
+	it( 'renders the checkout summary', async () => {
+		render( <MyCheckout />, container );
+		expect( await screen.findByText( 'Purchase Details' ) ).toBeInTheDocument();
+		expect( navigate ).not.toHaveBeenCalled();
 	} );
 
 	it( 'removes a product from the cart after clicking to remove it', async () => {
@@ -306,7 +313,7 @@ describe( 'CheckoutMain', () => {
 		expect( navigate ).not.toHaveBeenCalled();
 	} );
 
-	it( 'adds the domain mapping product to the cart when the url has a theme', async () => {
+	it( 'adds the theme product to the cart when the url has a theme', async () => {
 		const cartChanges = { products: [ planWithoutDomain ] };
 		const additionalProps = { productAliasFromUrl: 'theme:ovation' };
 		render(
@@ -321,6 +328,33 @@ describe( 'CheckoutMain', () => {
 				.getAllByLabelText( 'Premium Theme: Ovation' )
 				.map( ( element ) => expect( element ).toHaveTextContent( 'R$69' ) );
 		} );
+	} );
+
+	it( 'adds the product quantity and domain to the cart when the url has a product with a quantity', async () => {
+		const domainName = 'example.com';
+		const quantity = 12;
+		const productSlug = GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY;
+		const additionalProps = {
+			productAliasFromUrl: `${ productSlug }:${ domainName }:-q-${ quantity }`,
+		};
+		render( <MyCheckout additionalProps={ additionalProps } />, container );
+		expect(
+			await screen.findByLabelText(
+				`Google Workspace for '${ domainName }' and quantity '${ quantity }'`
+			)
+		).toBeInTheDocument();
+	} );
+
+	it( 'adds the product quantity to the cart when the url has a product with a quantity but no domain', async () => {
+		const quantity = 12;
+		const productSlug = GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY;
+		const additionalProps = {
+			productAliasFromUrl: `${ productSlug }:-q-${ quantity }`,
+		};
+		render( <MyCheckout additionalProps={ additionalProps } />, container );
+		expect(
+			await screen.findByLabelText( `Google Workspace for '' and quantity '${ quantity }'` )
+		).toBeInTheDocument();
 	} );
 
 	it( 'does not redirect if the cart is empty when it loads but the url has a domain map', async () => {

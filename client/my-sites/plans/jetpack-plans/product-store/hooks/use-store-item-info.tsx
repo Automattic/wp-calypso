@@ -253,26 +253,40 @@ export const useStoreItemInfo = ( {
 	);
 
 	const getLightBoxCtaLabel = useCallback(
-		( item: SelectorProduct ) => {
-			const shouldShowCart = getShouldShowCart( item );
+		( item: SelectorProduct, fallbackLabel = translate( 'Proceed to checkout' ) ) => {
 			const isProductInCart = getIsProductInCart( item );
-
-			if ( ! shouldShowCart ) {
-				return <>{ translate( 'Proceed to checkout' ) }</>;
-			}
+			const lightBoxCtaLabel = productButtonLabel( {
+				product: item,
+				isOwned: getIsOwned( item ),
+				isUpgradeableToYearly: getIsUpgradeableToYearly( item ),
+				isDeprecated: getIsDeprecated( item ),
+				isSuperseded: getIsSuperseded( item ),
+				currentPlan: sitePlan,
+				fallbackLabel: getShouldShowCart( item ) ? translate( 'Add to cart' ) : fallbackLabel,
+				isInCart: isProductInCart,
+				isJetpackPlan: isJetpackPlanSlug( item.productSlug ),
+			} );
 
 			if ( isProductInCart ) {
 				return (
 					<>
 						<Gridicon icon="checkmark" />
-						{ translate( 'View Cart' ) }
+						{ lightBoxCtaLabel }
 					</>
 				);
 			}
 
-			return <>{ translate( 'Add to cart' ) }</>;
+			return lightBoxCtaLabel;
 		},
-		[ getIsProductInCart, getShouldShowCart, translate ]
+		[
+			getIsProductInCart,
+			getShouldShowCart,
+			getIsOwned,
+			getIsUpgradeableToYearly,
+			getIsSuperseded,
+			sitePlan,
+			translate,
+		]
 	);
 
 	const getCtaLabel = useCallback(

@@ -150,8 +150,35 @@ export type Plan = BillingTerm & {
 	type: string;
 	availableFor?: ( plan: PlanSlug ) => boolean;
 	getSignupCompareAvailableFeatures?: () => string[];
+
+	/**
+	 * Features to be shown in the plan details table and the plans comparison table.
+	 * If get2023PricingGridSignupWpcomFeature exists,
+	 * this feature list will be ignored in the plans comparison table only.
+	 * Context - pdgrnI-26j
+	 */
 	get2023PricingGridSignupWpcomFeatures?: () => Feature[];
+
+	/**
+	 * This function returns the features that are to be overridden and shown in the plans comparison table.
+	 * Context - pdgrnI-26j
+	 */
+	get2023PlanComparisonFeatureOverride?: () => Feature[];
+
+	/**
+	 * Features to be shown in the plan details jetpack section and the jetpack features in the plans comparison table.
+	 * If get2023PlanComparisonJetpackFeatureOverride exists,
+	 * this feature list will be ignored in the plans comparison table only.
+	 * Context - pdgrnI-26j
+	 */
 	get2023PricingGridSignupJetpackFeatures?: () => Feature[];
+
+	/**
+	 * This function returns the Jetpack features that are to be overridden and shown in the plans comparison table.
+	 * Context - pdgrnI-26j
+	 */
+	get2023PlanComparisonJetpackFeatureOverride?: () => Feature[];
+
 	get2023PricingGridSignupStorageOptions?: () => Feature[];
 	getProductId: () => number;
 	getPathSlug?: () => string;

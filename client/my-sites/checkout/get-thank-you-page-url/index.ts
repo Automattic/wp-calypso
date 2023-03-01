@@ -70,6 +70,13 @@ type ReceiptId = number;
 type ReceiptIdPlaceholder = ':receiptId';
 type ReceiptIdOrPlaceholder = ReceiptIdPlaceholder | PurchaseId | ReceiptId;
 
+const allowedExternalSites = [
+	'cloud.jetpack.com',
+	'jetpack.cloud.localhost',
+	'jetpack.com',
+	'akismet.com',
+];
+
 export interface PostCheckoutUrlArguments {
 	siteSlug?: string;
 	adminUrl?: string;
@@ -162,8 +169,8 @@ export default function getThankYouPageUrl( {
 			return sanitizedRedirectTo;
 		}
 
-		if ( hostname === 'cloud.jetpack.com' || hostname === 'jetpack.cloud.localhost' ) {
-			debug( 'returning Jetpack cloud redirectTo', redirectTo );
+		if ( allowedExternalSites.includes( hostname ) ) {
+			debug( 'returning Jetpack.com, Jetpack Cloud, or Akismet redirectTo', redirectTo );
 			return redirectTo;
 		}
 

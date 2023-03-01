@@ -4,6 +4,7 @@ import {
 	PLAN_PREMIUM,
 	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 } from '@automattic/calypso-products';
+import { isFreeFlow, isBuildFlow, isWriteFlow } from '@automattic/onboarding';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -44,11 +45,16 @@ export function getEnhancedTasks(
 	const videoPressUploadCompleted =
 		site?.options?.launchpad_checklist_tasks_statuses?.video_uploaded || false;
 
+	const allowUpdateDesign =
+		flow && ( isFreeFlow( flow ) || isBuildFlow( flow ) || isWriteFlow( flow ) );
+
+	const isPaidPlan = ! site?.plan?.is_free;
+
 	const homePageId = site?.options?.page_on_front;
 	// send user to Home page editor, fallback to FSE if page id is not known
 	const launchpadUploadVideoLink = homePageId
 		? `/page/${ siteSlug }/${ homePageId }`
-		: `/site-editor/${ siteSlug }`;
+		: `/site-editor/${ siteSlug }?canvas=edit`;
 
 	let planWarningText = displayGlobalStylesWarning
 		? translate(
@@ -73,7 +79,7 @@ export function getEnhancedTasks(
 			switch ( task.id ) {
 				case 'setup_write':
 					taskData = {
-						title: translate( 'Personalize your site' ),
+						title: translate( 'Set up your site' ),
 					};
 					break;
 				case 'setup_free':
@@ -109,7 +115,7 @@ export function getEnhancedTasks(
 						completed: siteEditCompleted,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, siteEditCompleted, task.id );
-							window.location.assign( `/site-editor/${ siteSlug }` );
+							window.location.assign( `/site-editor/${ siteSlug }?canvas=edit` );
 						},
 					};
 					break;
@@ -163,6 +169,13 @@ export function getEnhancedTasks(
 				case 'design_selected':
 					taskData = {
 						title: translate( 'Select a design' ),
+						disabled: ! allowUpdateDesign,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.assign(
+								`/setup/update-design/designSetup?siteSlug=${ siteSlug }&flowToReturnTo=${ flow }`
+							);
+						},
 					};
 					break;
 				case 'setup_link_in_bio':
@@ -182,7 +195,7 @@ export function getEnhancedTasks(
 						completed: linkInBioLinksEditCompleted,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, linkInBioLinksEditCompleted, task.id );
-							window.location.assign( `/site-editor/${ siteSlug }` );
+							window.location.assign( `/site-editor/${ siteSlug }?canvas=edit` );
 						},
 					};
 					break;
@@ -295,6 +308,20 @@ export function getEnhancedTasks(
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign( `${ site?.URL }/wp-admin/post-new.php?post_type=course` );
 						},
+					};
+					break;
+				case 'domain_upsell':
+					taskData = {
+						title: translate( 'Choose a domain' ),
+						completed: isPaidPlan,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, isPaidPlan, task.id );
+							const destinationUrl = isPaidPlan
+								? `/domains/manage/${ siteSlug }`
+								: `/domains/add/${ siteSlug }?domainAndPlanPackage=true`;
+							window.location.assign( destinationUrl );
+						},
+						badgeText: isPaidPlan ? '' : translate( 'Upgrade plan' ),
 					};
 					break;
 			}

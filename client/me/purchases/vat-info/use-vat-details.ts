@@ -10,12 +10,17 @@ export interface UpdateError {
 	error: string;
 }
 
+export interface FetchError {
+	message: string;
+	error: string;
+}
+
 export interface VatDetailsManager {
 	vatDetails: VatDetails;
 	isLoading: boolean;
 	isUpdating: boolean;
 	isUpdateSuccessful: boolean;
-	fetchError: Error | null;
+	fetchError: FetchError | null;
 	updateError: UpdateError | null;
 	setVatDetails: SetVatDetails;
 }
@@ -35,7 +40,7 @@ const emptyVatDetails = {};
 
 export default function useVatDetails(): VatDetailsManager {
 	const queryClient = useQueryClient();
-	const query = useQuery< VatDetails, Error >( 'vat-details', fetchVatDetails );
+	const query = useQuery< VatDetails, FetchError >( 'vat-details', fetchVatDetails );
 	const mutation = useMutation< VatDetails, UpdateError, VatDetails >( setVatDetails, {
 		onSuccess: ( data ) => {
 			queryClient.setQueryData( 'vat-details', data );

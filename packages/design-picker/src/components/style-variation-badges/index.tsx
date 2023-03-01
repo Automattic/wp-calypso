@@ -10,6 +10,8 @@ interface BadgesProps {
 	variations: StyleVariation[];
 	onMoreClick?: () => void;
 	onClick?: ( variation: StyleVariation ) => void;
+	selectedVariation?: StyleVariation;
+	firstVariation?: StyleVariation;
 }
 
 const Badges: React.FC< BadgesProps > = ( {
@@ -17,16 +19,34 @@ const Badges: React.FC< BadgesProps > = ( {
 	variations = [],
 	onMoreClick,
 	onClick,
+	selectedVariation,
+	firstVariation,
 } ) => {
-	const variationsToShow = useMemo(
-		() => variations.slice( 0, maxVariationsToShow ),
-		[ variations, maxVariationsToShow ]
-	);
+	const variationsToShow = useMemo( () => {
+		if ( firstVariation ) {
+			return [
+				firstVariation,
+				...variations
+					.filter( ( variation ) => variation.slug !== firstVariation.slug )
+					.slice( 0, maxVariationsToShow - 1 ),
+			];
+		}
+
+		return variations.slice( 0, maxVariationsToShow );
+	}, [ variations, maxVariationsToShow, firstVariation ] );
 
 	return (
 		<>
 			{ variationsToShow.map( ( variation ) => (
-				<Badge key={ variation.slug } variation={ variation } onClick={ onClick } />
+				<Badge
+					key={ variation.slug }
+					variation={ variation }
+					onClick={ onClick }
+					isSelected={
+						( ! selectedVariation && variation.slug === 'default' ) ||
+						variation.slug === selectedVariation?.slug
+					}
+				/>
 			) ) }
 			{ variations.length > variationsToShow.length && (
 				<div

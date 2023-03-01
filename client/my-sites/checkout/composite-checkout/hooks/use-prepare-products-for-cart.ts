@@ -406,9 +406,53 @@ function useAddProductFromSlug( {
 	] );
 }
 
+/**
+ * Split up a product alias (typically used in a URL string) into its parts.
+ *
+ * An alias like `personal` refers to a simple Personal plan.
+ *
+ * An alias like `domain_map:example.com` refers to a domain mapping product
+ * for the domain `example.com`.
+ *
+ * An alias like `theme:ovation` refers to a Premium theme with the theme slug
+ * `ovation`.
+ *
+ * An alias like `wp_google_workspace_business_starter_yearly:example.com:-q-12`
+ * refers to a Google Workspace subscription with a quantity of 12.
+ *
+ * To add support for additional metadata in the future, follow the pattern
+ * implemented by quantity: use a string code surrounded by hyphens
+ * (`-label-DATA`). Since domain names cannot start with a hyphen we will know
+ * that the label refers to something else.
+ */
+function getProductPartsFromAlias( productAlias: string ): {
+	slug: string;
+	meta: null | string;
+	quantity: null | number;
+} {
+	const [ slug, ...productParts ] = productAlias.split( ':' );
+
+	let meta: string | null = null;
+	let quantity: number | null = null;
+
+	productParts.forEach( ( part ) => {
+		if ( /^-q-\d+$/.test( part ) ) {
+			quantity = parseInt( part.replace( /^-q-/, '' ), 10 );
+			return;
+		}
+		meta = part;
+	} );
+
+	return {
+		slug,
+		meta,
+		quantity,
+	};
+}
+
 // Transform a fake slug like 'theme:ovation' into a real slug like 'premium_theme'
 function getProductSlugFromAlias( productAlias: string ): string {
-	const [ encodedAlias ] = productAlias.split( ':' );
+	const { slug: encodedAlias } = getProductPartsFromAlias( productAlias );
 	// Some product slugs contain slashes, so we decode them
 	const decodedAlias = decodeProductFromUrl( encodedAlias );
 	if ( decodedAlias === 'domain-mapping' ) {
@@ -437,7 +481,8 @@ function createRenewalItemToAddToCart( {
 	purchaseId: string | number | undefined | null;
 	isGiftPurchase?: boolean;
 } ): RequestCartProduct | null {
-	const [ slug, meta ] = productAlias.split( ':' );
+	const { slug, meta, quantity } = getProductPartsFromAlias( productAlias );
+
 	// Some product slugs contain slashes, so we decode them
 	const productSlug = decodeProductFromUrl( slug );
 
@@ -450,10 +495,11 @@ function createRenewalItemToAddToCart( {
 		purchaseType: 'renewal',
 		isGiftPurchase,
 	};
+
 	return {
 		// Some meta values include slashes, so we decode them
 		meta: meta ? decodeProductFromUrl( meta ) : '',
-		quantity: null,
+		quantity,
 		volume: 1,
 		product_slug: productSlug,
 		extra: renewalItemExtra,
@@ -477,14 +523,25 @@ function createItemToAddToCart( {
 } ): RequestCartProduct {
 	// Allow setting meta (theme name or domain name) from products in the URL by
 	// using a colon between the product slug and the meta.
-	const [ , meta ] = productAlias.split( ':' );
+	const { meta, quantity } = getProductPartsFromAlias( productAlias );
+
 	// Some meta values contain slashes, so we decode them
 	const cartMeta = meta ? decodeProductFromUrl( meta ) : '';
 
-	debug( 'creating product with', productSlug, 'from alias', productAlias, 'with meta', cartMeta );
+	debug(
+		'creating product with',
+		productSlug,
+		'from alias',
+		productAlias,
+		'with meta',
+		cartMeta,
+		'and quantity',
+		quantity
+	);
 
 	return createRequestCartProduct( {
 		product_slug: productSlug,
+		quantity,
 		extra: {
 			isJetpackCheckout,
 			jetpackSiteSlug,

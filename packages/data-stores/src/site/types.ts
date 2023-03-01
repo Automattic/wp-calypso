@@ -1,6 +1,6 @@
+import type { ActionCreators } from './actions';
 import type { DispatchFromMap } from '../mapped-types';
 import type { FeatureId } from '../wpcom-features';
-import type { ActionCreators } from './actions';
 
 export interface Dispatch {
 	dispatch: DispatchFromMap< ActionCreators >;
@@ -113,6 +113,7 @@ export interface SiteDetails {
 	is_private?: boolean;
 	is_vip?: boolean;
 	is_wpcom_atomic?: boolean;
+	is_wpcom_staging_site?: boolean;
 	jetpack: boolean;
 	lang?: string;
 	launch_status: string;
@@ -230,6 +231,8 @@ export interface SiteDetailsOptions {
 	wordads?: boolean;
 	launchpad_screen?: false | 'off' | 'full' | 'minimized';
 	launchpad_checklist_tasks_statuses?: LaunchPadCheckListTasksStatuses;
+	wpcom_production_blog_id?: number;
+	wpcom_staging_blog_ids?: number[];
 }
 
 export type SiteOption = keyof SiteDetails[ 'options' ];
@@ -472,6 +475,7 @@ export interface ThemeSetupOptions {
 	pattern_ids?: number[] | string[];
 	header_pattern_ids?: number[] | string[];
 	footer_pattern_ids?: number[] | string[];
+	posts_source_site_id?: number;
 }
 
 export interface ActiveTheme {
@@ -479,4 +483,16 @@ export interface ActiveTheme {
 	_links: {
 		'wp:user-global-styles': { href: string }[];
 	};
+}
+
+export interface CurrentTheme {
+	id: string;
+}
+
+export interface SourceSiteMigrationDetails {
+	status: string;
+	target_blog_id?: number;
+	is_target_blog_admin?: boolean;
+	is_target_blog_upgraded?: boolean;
+	target_blog_slug?: string;
 }

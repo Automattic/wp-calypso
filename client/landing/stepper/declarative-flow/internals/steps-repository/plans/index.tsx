@@ -1,3 +1,4 @@
+import { is2023PricingGridActivePage } from '@automattic/calypso-products';
 import { StepContainer } from '@automattic/onboarding';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import PlansWrapper from './plans-wrapper';
@@ -9,13 +10,14 @@ const plans: Step = function plans( { navigation, flow } ) {
 	const handleSubmit = () => {
 		submit?.();
 	};
-
+	const is2023PricingGridVisible = is2023PricingGridActivePage( window );
 	return (
 		<StepContainer
 			stepName="plans"
 			goBack={ goBack }
 			isHorizontalLayout={ false }
-			isWideLayout={ true }
+			isWideLayout={ ! is2023PricingGridVisible }
+			isFullLayout={ is2023PricingGridVisible }
 			hideFormattedHeader={ true }
 			isLargeSkipLayout={ false }
 			hideBack={ true }

@@ -110,6 +110,12 @@ export const tasks: Task[] = [
 		disabled: true,
 		taskType: 'blog',
 	},
+	{
+		id: 'domain_upsell',
+		completed: false,
+		disabled: false,
+		taskType: 'blog',
+	},
 ];
 
 const linkInBioTaskList = [
@@ -127,6 +133,7 @@ export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 	free: [
 		'setup_free',
 		'design_selected',
+		'domain_upsell',
 		'first_post_published',
 		'design_edited',
 		'site_launched',
@@ -134,6 +141,7 @@ export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 	build: [
 		'setup_general',
 		'design_selected',
+		'domain_upsell',
 		'first_post_published',
 		'design_edited',
 		'site_launched',
@@ -141,8 +149,8 @@ export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 	write: [
 		'setup_write',
 		'design_selected',
+		'domain_upsell',
 		'first_post_published',
-		'design_edited',
 		'site_launched',
 	],
 	videopress: [ 'videopress_setup', 'plan_selected', 'videopress_upload', 'videopress_launched' ],

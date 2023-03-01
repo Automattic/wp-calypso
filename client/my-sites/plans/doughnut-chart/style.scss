@@ -1,0 +1,47 @@
+.doughnut-chart__wrapper {
+
+	// percentage (0 to 100)
+	@property --percentage {
+		syntax: "<number>";
+		inherits: true;
+		initial-value: 0;
+	}
+	--width: 80px;
+	--line-width: 9px;
+	--main-color: var(--color-accent-rgb);
+
+	background-color: var(--color-surface);
+	width: var(--width);
+	aspect-ratio: 1;
+	position: relative;
+	display: inline-grid;
+	margin: 15px 0;
+	place-content: center;
+	font-size: $font-title-medium;
+	border-radius: 50%;
+	box-shadow:
+		inset 0 0 0 var(--line-width) rgba(var(--main-color), 0.1),
+		inset 0 0 0 10px var(--color-surface);
+
+	&::before,
+	&::after {
+		content: "";
+		position: absolute;
+		border-radius: 50%;
+	}
+
+	&::before {
+		inset: 0;
+		background:
+			radial-gradient(farthest-side, rgb(var(--main-color)) 98%, transparent) top/var(--line-width) var(--line-width) no-repeat,
+			conic-gradient(rgb(var(--main-color)) calc(var(--percentage) * 1%), transparent 0);
+		-webkit-mask: radial-gradient(farthest-side, transparent calc(99% - var(--line-width)), var(--studio-black) calc(100% - var(--line-width)));
+		mask: radial-gradient(farthest-side, transparent calc(99% - var(--line-width)), var(--studio-black) calc(100% - var(--line-width)));
+	}
+
+	&::after {
+		inset: calc(50% - var(--line-width) / 2);
+		background: rgb(var(--main-color));
+		transform: rotate(calc(var(--percentage) * 3.6deg)) translateY(calc(50% - var(--width) / 2));
+	}
+}

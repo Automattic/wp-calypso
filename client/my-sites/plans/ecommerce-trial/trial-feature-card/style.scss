@@ -1,0 +1,121 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.trial-feature-card {
+	display: flex;
+	flex-direction: column;
+	padding: 0;
+	margin: 0;
+
+	@media (max-width: $break-mobile) {
+		padding: 24px 16px;
+	}
+
+	.trial-feature-card:last-child {
+		border-radius: 0 0 2px 2px;
+	}
+
+	.trial-feature-card__header {
+		display: flex;
+		padding: 24px;
+		cursor: pointer;
+		text-align: left;
+		line-height: 1.5;
+
+		@media (max-width: $break-mobile) {
+			padding: 0;
+		}
+
+		.trial-feature-card__illustration {
+			width: 115px;
+			height: 65px;
+
+			@media (max-width: $break-mobile) {
+				display: none;
+			}
+		}
+
+		.trial-feature-card__header-text {
+			flex: 1;
+			padding: 0 24px;
+
+			@media (max-width: $break-mobile) {
+				padding: 0;
+			}
+
+			.trial-feature-card__title {
+				font-size: $font-title-small;
+				font-weight: 500;
+			}
+
+			.trial-feature-card__subtitle {
+				font-size: $font-body;
+				color: var(--color-neutral-40);
+				font-weight: 400;
+
+				@media (max-width: $break-mobile) {
+					display: none;
+				}
+			}
+		}
+
+		.trial-feature-card__accordion-toggle {
+			cursor: pointer;
+			margin-top: 25px;
+
+			@media (max-width: $break-mobile) {
+				margin-top: 10px;
+			}
+
+			.gridicons-chevron-down,
+			.gridicons-chevron-up {
+				fill: var(--color-neutral-90);
+			}
+		}
+	}
+
+	.trial-feature-card__items {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		max-width: 590px;
+		margin-left: 140px;
+		// Special padding-top to match designs
+		padding: 10px 24px 24px 24px;
+
+
+		@media (max-width: $break-mobile) {
+			padding: 0;
+			margin-top: 30px;
+			margin-left: 0;
+		}
+
+		.trial-feature-card__item {
+			display: flex;
+			padding: 7px 0;
+
+			.trial-feature-card__item-icon {
+				padding: 3px 0;
+
+				.gridicons-checkmark {
+					fill: var(--color-success-40);
+				}
+			}
+
+			.trial-feature-card__item-content {
+				flex: 1;
+				display: flex;
+				flex-direction: column;
+				margin-left: 16px;
+
+				.trial-feature-card__item-title {
+					font-size: $font-body;
+				}
+
+				.trial-feature-card__item-subtitle {
+					font-size: $font-body-extra-small;
+					color: var(--color-neutral-40);
+				}
+			}
+		}
+	}
+}

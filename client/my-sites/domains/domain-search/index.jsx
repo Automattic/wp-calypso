@@ -23,7 +23,9 @@ import {
 	updatePrivacyForDomain,
 } from 'calypso/lib/cart-values/cart-items';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import { addQueryArgs } from 'calypso/lib/url';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
+import DomainAndPlanPackageNavigation from 'calypso/my-sites/domains/components/domain-and-plan-package/navigation';
 import NewDomainsRedirectionNoticeUpsell from 'calypso/my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
 import {
 	domainAddEmailUpsell,
@@ -38,6 +40,7 @@ import {
 } from 'calypso/state/domains/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import isSiteOnMonthlyPlan from 'calypso/state/selectors/is-site-on-monthly-plan';
 import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
@@ -61,6 +64,7 @@ class DomainSearch extends Component {
 		selectedSiteId: PropTypes.number,
 		selectedSiteSlug: PropTypes.string,
 		domainAndPlanUpsellFlow: PropTypes.bool,
+		isDomainAndPlanPackageFlow: PropTypes.bool,
 	};
 
 	isMounted = false;
@@ -77,9 +81,9 @@ class DomainSearch extends Component {
 		} );
 	};
 
-	handleAddRemoveDomain = ( suggestion ) => {
+	handleAddRemoveDomain = ( suggestion, position ) => {
 		if ( ! hasDomainInCart( this.props.cart, suggestion.domain_name ) ) {
-			this.addDomain( suggestion );
+			this.addDomain( suggestion, position );
 		} else {
 			this.removeDomain( suggestion );
 		}
@@ -101,6 +105,9 @@ class DomainSearch extends Component {
 	};
 
 	componentDidMount() {
+		if ( this.props.isDomainAndPlanPackageFlow ) {
+			document.body.classList.add( 'is-domain-plan-package-flow' );
+		}
 		this.checkSiteIsUpgradeable();
 
 		this.isMounted = true;
@@ -113,6 +120,10 @@ class DomainSearch extends Component {
 	}
 
 	componentWillUnmount() {
+		if ( document.body.classList.contains( 'is-domain-plan-package-flow' ) ) {
+			document.body.classList.remove( 'is-domain-plan-package-flow' );
+		}
+
 		this.isMounted = false;
 	}
 
@@ -122,7 +133,7 @@ class DomainSearch extends Component {
 		}
 	}
 
-	async addDomain( suggestion ) {
+	async addDomain( suggestion, position ) {
 		const {
 			domain_name: domain,
 			product_slug: productSlug,
@@ -130,7 +141,7 @@ class DomainSearch extends Component {
 			is_premium: isPremium,
 		} = suggestion;
 
-		this.props.recordAddDomainButtonClick( domain, 'domains', isPremium );
+		this.props.recordAddDomainButtonClick( domain, 'domains', position, isPremium );
 
 		let registration = domainRegistration( {
 			domain,
@@ -196,7 +207,14 @@ class DomainSearch extends Component {
 	}
 
 	render() {
-		const { selectedSite, selectedSiteSlug, translate, isManagingAllDomains, cart } = this.props;
+		const {
+			selectedSite,
+			selectedSiteSlug,
+			translate,
+			isManagingAllDomains,
+			cart,
+			isDomainAndPlanPackageFlow,
+		} = this.props;
 
 		if ( ! selectedSite ) {
 			return null;
@@ -208,6 +226,12 @@ class DomainSearch extends Component {
 		const { domainRegistrationMaintenanceEndTime } = this.state;
 
 		const hasPlanInCart = hasPlan( cart );
+		const hrefForDecideLater = addQueryArgs(
+			{
+				domainAndPlanPackage: true,
+			},
+			`/plans/yearly/${ selectedSiteSlug }`
+		);
 
 		let content;
 
@@ -236,24 +260,52 @@ class DomainSearch extends Component {
 			content = (
 				<span>
 					<div className="domain-search__content">
-						<BackButton
-							className="domain-search__go-back"
-							href={ domainManagementList( selectedSiteSlug ) }
-						>
-							<Gridicon icon="arrow-left" size={ 18 } />
-							{ translate( 'Back' ) }
-						</BackButton>
+						{ ! isDomainAndPlanPackageFlow && (
+							<BackButton
+								className="domain-search__go-back"
+								href={ domainManagementList( selectedSiteSlug ) }
+							>
+								<Gridicon icon="arrow-left" size={ 18 } />
+								{ translate( 'Back' ) }
+							</BackButton>
+						) }
+
 						{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 						<div className="domains__header">
-							<FormattedHeader
-								brandFont
-								headerText={
-									isManagingAllDomains
-										? translate( 'All Domains' )
-										: translate( 'Search for a domain' )
-								}
-								align="left"
-							/>
+							{ isDomainAndPlanPackageFlow && (
+								<>
+									<DomainAndPlanPackageNavigation
+										goBackLink={ `/home/${ selectedSiteSlug }` }
+										step={ 1 }
+									/>
+									<FormattedHeader
+										brandFont
+										headerText={ translate( 'Claim your domain' ) }
+										align="center"
+									/>
+
+									<p>
+										{ translate(
+											'Stake your claim on your corner of the web with a custom domain name that’s easy to find, share, and follow. Not sure yet?'
+										) }
+										<a className="domains__header-decide-later" href={ hrefForDecideLater }>
+											{ translate( 'Decide later.' ) }
+										</a>
+									</p>
+								</>
+							) }
+
+							{ ! isDomainAndPlanPackageFlow && (
+								<FormattedHeader
+									brandFont
+									headerText={
+										isManagingAllDomains
+											? translate( 'All Domains' )
+											: translate( 'Search for a domain' )
+									}
+									align="left"
+								/>
+							) }
 						</div>
 
 						<EmailVerificationGate
@@ -308,6 +360,7 @@ export default connect(
 			isSiteOnMonthlyPlan: isSiteOnMonthlyPlan( state, siteId ),
 			productsList: getProductsList( state ),
 			userCanPurchaseGSuite: canUserPurchaseGSuite( state ),
+			isDomainAndPlanPackageFlow: !! getCurrentQueryArguments( state )?.domainAndPlanPackage,
 		};
 	},
 	{

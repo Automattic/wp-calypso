@@ -219,6 +219,8 @@ function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean
 		'calypso.localhost',
 		'jetpack.cloud.localhost',
 		'cloud.jetpack.com',
+		'jetpack.com',
+		'akismet.com',
 		siteSlug,
 	];
 

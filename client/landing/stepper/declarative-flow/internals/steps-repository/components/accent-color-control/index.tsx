@@ -60,31 +60,31 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 	const getColorOptions = useCallback(
 		(): ColorOption[] => [
 			{
-				label: 'Lettre',
+				label: __( 'Lettre' ),
 				value: COLORS.Lettre,
 				icon: <ColorSwatch color={ COLORS.Lettre } />,
 				isPremium: false,
 			},
 			{
-				label: 'Black',
+				label: __( 'Black' ),
 				value: COLORS.Black,
 				icon: <ColorSwatch color={ COLORS.Black } />,
 				isPremium: shouldLimitGlobalStyles,
 			},
 			{
-				label: 'Vivid red',
+				label: __( 'Vivid red' ),
 				value: COLORS.VividRed,
 				icon: <ColorSwatch color={ COLORS.VividRed } />,
 				isPremium: shouldLimitGlobalStyles,
 			},
 			{
-				label: 'Vivid purple',
+				label: __( 'Vivid purple' ),
 				value: COLORS.VividPurple,
 				icon: <ColorSwatch color={ COLORS.VividPurple } />,
 				isPremium: shouldLimitGlobalStyles,
 			},
 			{
-				label: 'Custom',
+				label: __( 'Custom' ),
 				value: 'custom',
 				icon: <Icon className="custom_color_icon" icon={ color } width={ 22 } height={ 22 } />,
 				isPremium: shouldLimitGlobalStyles,

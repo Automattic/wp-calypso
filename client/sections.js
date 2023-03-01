@@ -262,6 +262,7 @@ const sections = [
 		module: 'calypso/my-sites/checkout',
 		group: 'sites',
 		enableLoggedOut: true,
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'plans',
@@ -559,6 +560,12 @@ const sections = [
 		name: 'promote-post',
 		paths: [ '/advertising', '/advertising/[^\\/]+(/[^\\/])?' ],
 		module: 'calypso/my-sites/promote-post',
+		group: 'sites',
+	},
+	{
+		name: 'subscriptions',
+		paths: [ '/subscriptions' ],
+		module: 'calypso/my-sites/subscriptions',
 		group: 'sites',
 	},
 ];

@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { fetchPaymentCountries } from 'calypso/state/countries/actions';
 import getCountries from 'calypso/state/selectors/get-countries';
 import type { CountryListItem } from '@automattic/wpcom-checkout';
+import type { IAppState } from 'calypso/state/types';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-country-list' );
 
@@ -17,7 +18,7 @@ export default function useCountryList(
 
 	const reduxDispatch = useDispatch();
 	const globalCountryList =
-		useSelector( ( state ) => getCountries( state, 'payments' ) ) || emptyList;
+		useSelector( ( state: IAppState ) => getCountries( state, 'payments' ) ) || emptyList;
 
 	// Has the global list been populated?
 	const isListFetched = globalCountryList.length > 0;

@@ -76,7 +76,7 @@ const usePlugins = ( {
 	} ) as WPORGResponse;
 
 	const { data: dotComPlugins = [], isLoading: isFetchingDotCom } = useWPCOMPluginsList(
-		'all',
+		config.isEnabled( 'marketplace-fetch-all-dynamic-products' ) ? 'all' : 'launched',
 		search,
 		tag,
 		{

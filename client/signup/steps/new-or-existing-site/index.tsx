@@ -88,7 +88,7 @@ export default function NewOrExistingSiteStep( props: Props ) {
 			description: (
 				<p>
 					{ translate(
-						'Use an existing site. Any existing content will be deleted, but you will be able to submit your content for your new site in later steps.'
+						'Use an existing site. Current site content may be deleted, we will build your new site using the content you provide in the following steps.'
 					) }
 				</p>
 			),

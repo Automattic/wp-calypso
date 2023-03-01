@@ -50,7 +50,18 @@ const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
 const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
 const cachePath = path.resolve( '.cache', extraPath );
 const shouldUsePersistentCache = process.env.PERSISTENT_CACHE === 'true';
-const shouldUseReadonlyCache = process.env.READONLY_CACHE === 'true';
+
+// Readonly cache prevents writing to the cache directory, which is good for performance.
+// However, on trunk (and when generating cache images), we want to write to the cache
+// so that we can then update the cache to use in subsequent builds. While this costs
+// a minute in the current build, an updated cache saves 2 minutes in many future builds.
+// Note that in local builds, IS_DEFAULT_BRANCH is not set, in which case we should also write to the cache.
+const shouldUseReadonlyCache = ! (
+	process.env.IS_DEFAULT_BRANCH === 'true' ||
+	process.env.GENERATE_CACHE_IMAGE === 'true' ||
+	process.env.IS_DEFAULT_BRANCH === undefined
+);
+
 const shouldProfile = process.env.PROFILE === 'true';
 
 const shouldCreateSentryRelease =
@@ -114,7 +125,7 @@ function filterEntrypoints( entrypoints ) {
  * Note this is not the same as looking for `__dirname+'/node_modules/'+pkgName`, as the package may be in a parent
  * `node_modules`
  *
- * @param {string} pkgName Name of the package to search for
+ * @param {string} pkgName Name of the package to search for.
  */
 function findPackage( pkgName ) {
 	const fullPath = require.resolve( pkgName );

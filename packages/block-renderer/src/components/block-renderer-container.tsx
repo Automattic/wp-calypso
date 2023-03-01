@@ -1,14 +1,15 @@
 // The idea of this file is from the Gutenberg file packages/block-editor/src/components/block-preview/auto.js (d50e613).
 import {
-	store as blockEditorStore,
 	__unstableIframe as Iframe,
 	__unstableEditorStyles as EditorStyles,
 	__unstablePresetDuotoneFilter as PresetDuotoneFilter,
 } from '@wordpress/block-editor';
 import { useResizeObserver, useRefEffect } from '@wordpress/compose';
-import { useSelect } from '@wordpress/data';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useContext } from 'react';
 import { BLOCK_MAX_HEIGHT } from '../constants';
+import useParsedAssets from '../hooks/use-parsed-assets';
+import loadStyles from '../utils/load-styles';
+import BlockRendererContext from './block-renderer-context';
 import type { RenderedStyle } from '../types';
 import './block-renderer-container.scss';
 
@@ -40,27 +41,22 @@ const ScaledBlockRendererContainer = ( {
 	isMinHeight100vh,
 	maxHeightFor100vh,
 }: ScaledBlockRendererContainerProps ) => {
+	const [ isLoaded, setIsLoaded ] = useState( false );
 	const [ contentResizeListener, { height: contentHeight } ] = useResizeObserver();
-	const { styles, assets, duotone } = useSelect( ( select ) => {
-		// @ts-expect-error Type definition is outdated
-		const settings = select( blockEditorStore ).getSettings();
-		return {
+	const { settings } = useContext( BlockRendererContext );
+	const { styles, assets, duotone } = useMemo(
+		() => ( {
 			styles: settings.styles,
 			assets: settings.__unstableResolvedAssets,
 			duotone: settings.__experimentalFeatures?.color?.duotone,
-		};
-	}, [] );
+		} ),
+		[ settings ]
+	);
+
+	const styleAssets = useParsedAssets( assets?.styles ) as HTMLLinkElement[];
 
 	const editorStyles = useMemo( () => {
-		const mergedStyles = [
-			...( styles || [] ),
-			...( customStyles || [] ),
-			// Avoid scrollbars for pattern previews.
-			{
-				css: 'body{height:auto;overflow:hidden;}',
-				__unstableType: 'presets',
-			},
-		];
+		const mergedStyles = [ ...( styles || [] ), ...( customStyles || [] ) ];
 
 		if ( ! inlineCss ) {
 			return mergedStyles;
@@ -85,6 +81,10 @@ const ScaledBlockRendererContainer = ( {
 		bodyElement.style.boxSizing = 'border-box';
 		bodyElement.style.position = 'absolute';
 		bodyElement.style.width = '100%';
+
+		// Load styles manually to avoid a flash of unstyled content.
+		// Gutenberg fixed this issue via https://github.com/WordPress/gutenberg/pull/46706 but it requires `@wordpress/block-editor: ^11.2.0`
+		loadStyles( bodyElement, styleAssets ).then( () => setIsLoaded( true ) );
 	}, [] );
 
 	const scale = containerWidth / viewportWidth;
@@ -94,7 +94,7 @@ const ScaledBlockRendererContainer = ( {
 		scaledHeight = maxHeightFor100vh * scale;
 	}
 
-	let iframeHeight = ( contentHeight as number ) || minHeight;
+	let iframeHeight = contentHeight as number;
 	if ( isMinHeight100vh ) {
 		if ( viewportHeight ) {
 			iframeHeight = viewportHeight;
@@ -113,18 +113,15 @@ const ScaledBlockRendererContainer = ( {
 					maxHeight !== 'none' && ( contentHeight as number ) > maxHeight
 						? ( maxHeight as number ) * scale
 						: undefined,
-				minHeight: '1px',
-				// Try to avoid showing the content when the styles are not ready
-				opacity: contentHeight ? 1 : 0,
-				transition: 'opacity 0.3s ease-in-out',
 			} }
 		>
 			<Iframe
 				head={ <EditorStyles styles={ editorStyles } /> }
-				assets={ assets }
+				assets={ { scripts: assets?.scripts } }
 				contentRef={ contentRef }
 				aria-hidden
 				tabIndex={ -1 }
+				loading="lazy"
 				style={ {
 					position: 'absolute',
 					width: viewportWidth,
@@ -133,9 +130,11 @@ const ScaledBlockRendererContainer = ( {
 					// This is a catch-all max-height for patterns.
 					// See: https://github.com/WordPress/gutenberg/pull/38175.
 					maxHeight,
+					// Avoid showing the unstyled content
+					opacity: isLoaded ? 1 : 0,
 				} }
 			>
-				{ contentResizeListener }
+				{ isLoaded ? contentResizeListener : null }
 				{
 					/* Filters need to be rendered before children to avoid Safari rendering issues. */
 					svgFilters.map( ( preset ) => (

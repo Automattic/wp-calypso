@@ -1,0 +1,55 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.feature-not-included-card__card {
+	width: 490px;
+	display: flex;
+	box-shadow: none;
+	align-items: flex-start;
+
+	@media (max-width: $break-mobile) {
+		padding: 0;
+	}
+
+	.feature-not-included-card__illustration {
+		width: 130px;
+		height: fit-content;
+
+		@media (max-width: $break-mobile) {
+			display: none;
+		}
+	}
+
+	.feature-not-included-card__cross {
+		display: none;
+
+		@media (max-width: $break-mobile) {
+			display: block;
+			fill: var(--color-neutral-20);
+		}
+	}
+
+	.feature-not-included-card__content {
+		padding-left: 25px;
+
+		.feature-not-included-card__title {
+			font-weight: 600;
+			font-size: $font-body;
+			margin-bottom: 1rem;
+
+			@media (max-width: $break-mobile) {
+				font-weight: 400;
+				margin-bottom: 0.25rem;
+			}
+		}
+
+		.feature-not-included-card__text {
+			font-weight: 400;
+			font-size: $font-body-small;
+			color: var(--color-neutral-40);
+
+			@media (max-width: $break-mobile) {
+				font-size: $font-body-extra-small;
+			}
+		}
+	}
+}

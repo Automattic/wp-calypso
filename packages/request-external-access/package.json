@@ -6,6 +6,7 @@
 	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.js",
 	"sideEffects": false,
+	"types": "dist/types",
 	"keywords": [
 		"wordpress",
 		"access",

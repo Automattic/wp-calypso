@@ -929,6 +929,7 @@
 @include sharing-button-service( "skype", var( --color-skype ) );
 @include sharing-button-service( "telegram", var( --color-telegram ) );
 @include sharing-button-service( "jetpack-whatsapp", var( --color-whatsapp ) );
+@include sharing-button-service( "mastodon", var( --color-mastodon ) );
 
 .sharing-buttons-preview__panel {
 	position: relative;

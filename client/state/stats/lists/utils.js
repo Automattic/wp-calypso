@@ -788,7 +788,7 @@ export const normalizers = {
 
 		const { startOf } = rangeOfPeriod( query.period, query.date );
 		const dataPath = query.summarize ? [ 'summary', 'groups' ] : [ 'days', startOf, 'groups' ];
-		const statsData = get( data, dataPath, [] );
+		let statsData = get( data, dataPath, [] );
 
 		const parseItem = ( item ) => {
 			let children;
@@ -810,6 +810,18 @@ export const normalizers = {
 
 			return record;
 		};
+
+		// If there's only one item in a group, then we expand the children to the parent level.
+		statsData = statsData.map( ( item ) => {
+			if ( item.results?.length === 1 ) {
+				return {
+					...item.results[ 0 ],
+					group: item.results[ 0 ].name,
+					total: item.results[ 0 ].views,
+				};
+			}
+			return item;
+		} );
 
 		return statsData.map( ( item ) => {
 			let actions = [];
@@ -937,7 +949,7 @@ export const normalizers = {
 	},
 
 	/**
-	 * Returns a normalized statsEmailsOpen array, ready for use in stats-module
+	 * Returns a normalized statsEmailsSummary array, ready for use in stats-module
 	 *
 	 * @param   {Object} data   Stats data
 	 * @param   {Object} query  Stats query
@@ -945,14 +957,14 @@ export const normalizers = {
 	 * @param   {Object} site    Site object
 	 * @returns {Array}       Normalized stats data
 	 */
-	statsEmailsOpen( data, query = {}, siteId, site ) {
-		if ( ! data || ! query.period || ! query.date ) {
+	statsEmailsSummary( data, query, siteId, site ) {
+		if ( ! data ) {
 			return [];
 		}
 
 		const emailsData = get( data, [ 'posts' ], [] );
 
-		return emailsData.map( ( { id, href, date, title, type, opens } ) => {
+		return emailsData.map( ( { id, href, date, title, type, opens, clicks } ) => {
 			const detailPage = site ? `/stats/email/opens/day/${ id }/${ site.slug }` : null;
 			return {
 				id,
@@ -960,7 +972,9 @@ export const normalizers = {
 				date,
 				label: title,
 				type,
-				value: opens || '0',
+				value: clicks || '0',
+				opens: opens || '0',
+				clicks: clicks || '0',
 				page: detailPage,
 				actions: [
 					{
@@ -971,9 +985,8 @@ export const normalizers = {
 			};
 		} );
 	},
-
 	/**
-	 * Returns a normalized statsEmailsClick array, ready for use in stats-module
+	 * Returns a normalized statsEmailsSummaryByOpens array, ready for use in stats-module
 	 *
 	 * @param   {Object} data   Stats data
 	 * @param   {Object} query  Stats query
@@ -981,30 +994,7 @@ export const normalizers = {
 	 * @param   {Object} site    Site object
 	 * @returns {Array}       Normalized stats data
 	 */
-	statsEmailsClick( data, query = {}, siteId, site ) {
-		if ( ! data || ! query.period || ! query.date ) {
-			return [];
-		}
-
-		const emailsData = get( data, [ 'posts' ], [] );
-
-		return emailsData.map( ( { id, href, date, title, type, clicks } ) => {
-			const detailPage = site ? `/stats/email/clicks/day/${ id }/${ site.slug }` : null;
-			return {
-				id,
-				href,
-				date,
-				label: title,
-				type,
-				value: clicks || '0',
-				page: detailPage,
-				actions: [
-					{
-						type: 'link',
-						data: href,
-					},
-				],
-			};
-		} );
+	statsEmailsSummaryByOpens: ( data, query, siteId, site ) => {
+		return normalizers.statsEmailsSummary( data, query, siteId, site );
 	},
 };

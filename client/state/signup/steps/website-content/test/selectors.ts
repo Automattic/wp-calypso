@@ -1,5 +1,5 @@
 import { ABOUT_PAGE, HOME_PAGE, PORTFOLIO_PAGE } from '../../../../../signup/difm/constants';
-import { initialState, MEDIA_UPLOAD_STATES } from '../schema';
+import { initialState, MEDIA_UPLOAD_STATES } from '../constants';
 import {
 	getWebsiteContent,
 	getWebsiteContentDataCollectionIndex,

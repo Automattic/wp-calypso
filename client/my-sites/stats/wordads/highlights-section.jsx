@@ -11,14 +11,15 @@ import HighlightCardSimple from './highlight-card-simple';
 // Then refactor this Comp to use HighlightCard again.
 
 function getAmountAsFormattedString( amount ) {
+	if ( amount === 0 ) {
+		// Per design spec we don't want "$0.00" as a result.
+		// https://github.com/Automattic/wp-calypso/issues/72045
+		// We'll return "$0" in this scenario.
+		return '$0';
+	}
 	// Takes a Number, formats it to 2 decimal places, and prepends a "$".
-	// This mimics the existing behaviour. I'm assuming we only view/report
-	// on earnings in USD.
-	const formattedAmount = '$' + numberFormat( amount, 2 );
-	// Differs from previous behaviour in that we don't want "$0.00" as a result.
-	// Per design spec we'll return "$0" in this scenario.
-	// https://github.com/Automattic/wp-calypso/issues/72045
-	return formattedAmount === '$0.00' ? '$0' : formattedAmount;
+	// Amounts are in USD with localized formatting.
+	return '$' + numberFormat( amount, 2 );
 }
 
 function getHighlights( earnings ) {

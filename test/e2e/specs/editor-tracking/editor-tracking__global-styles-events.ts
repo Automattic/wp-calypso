@@ -184,10 +184,10 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Global styles events' )
 		describe( 'Updating styles directly', function () {
 			it( 'Update the global background color', async function () {
 				// We can always guarantee a target color event if we click a different one first.
-				await fullSiteEditorPage.setGlobalColorStlye( 'Background', {
+				await fullSiteEditorPage.setGlobalColorStyle( 'Background', {
 					colorName: 'Primary',
 				} );
-				await fullSiteEditorPage.setGlobalColorStlye( 'Background', {
+				await fullSiteEditorPage.setGlobalColorStyle( 'Background', {
 					colorName: 'Background',
 				} );
 			} );

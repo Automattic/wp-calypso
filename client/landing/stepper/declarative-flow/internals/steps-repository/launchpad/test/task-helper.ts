@@ -78,9 +78,53 @@ describe( 'Task Helpers', () => {
 
 		describe( 'when an existing flow is provided', () => {
 			it( 'then it returns found tasks', () => {
-				expect( getArrayOfFilteredTasks( tasks, 'newsletter' ) ).toEqual(
-					tasks.filter( ( task ) => launchpadFlowTasks[ 'newsletter' ].includes( task.id ) )
+				expect(
+					getArrayOfFilteredTasks( tasks, 'newsletter' )?.sort( ( a, b ) =>
+						a.id < b.id ? -1 : 1
+					)
+				).toEqual(
+					tasks
+						.sort( ( a, b ) => ( a.id < b.id ? -1 : 1 ) )
+						.filter( ( task ) => launchpadFlowTasks[ 'newsletter' ].includes( task.id ) )
 				);
+			} );
+		} );
+	} );
+
+	describe( 'domain upsell task', () => {
+		describe( 'when flow is newsletter', () => {
+			it( 'does not include upsell task', () => {
+				expect(
+					launchpadFlowTasks[ 'newsletter' ].filter( ( task ) => task === 'domain_upsell' ).length
+				).toBe( 0 );
+			} );
+		} );
+		describe( 'when flow is link-in-bio', () => {
+			it( 'does not include upsell task', () => {
+				expect(
+					launchpadFlowTasks[ 'link-in-bio' ].filter( ( task ) => task === 'domain_upsell' ).length
+				).toBe( 0 );
+			} );
+		} );
+		describe( 'when flow is write', () => {
+			it( 'does include upsell task', () => {
+				expect(
+					launchpadFlowTasks[ 'write' ].filter( ( task ) => task === 'domain_upsell' ).length
+				).toBe( 1 );
+			} );
+		} );
+		describe( 'when flow is build', () => {
+			it( 'does include upsell task', () => {
+				expect(
+					launchpadFlowTasks[ 'build' ].filter( ( task ) => task === 'domain_upsell' ).length
+				).toBe( 1 );
+			} );
+		} );
+		describe( 'when flow is free', () => {
+			it( 'does include upsell task', () => {
+				expect(
+					launchpadFlowTasks[ 'free' ].filter( ( task ) => task === 'domain_upsell' ).length
+				).toBe( 1 );
 			} );
 		} );
 	} );

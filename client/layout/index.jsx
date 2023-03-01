@@ -34,6 +34,7 @@ import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-act
 import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
@@ -381,10 +382,12 @@ export default withCurrentRoute(
 		const siteId = getSelectedSiteId( state );
 		const sectionJitmPath = getMessagePathForJITM( currentRoute );
 		const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
+		const isDomainAndPlanPackageFlow = !! getCurrentQueryArguments( state )?.domainAndPlanPackage;
 		const isJetpack =
 			( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) ||
 			currentRoute.startsWith( '/checkout/jetpack' );
-		const noMasterbarForRoute = isJetpackLogin || currentRoute === '/me/account/closed';
+		const noMasterbarForRoute =
+			isJetpackLogin || currentRoute === '/me/account/closed' || isDomainAndPlanPackageFlow;
 		const noMasterbarForSection = [ 'signup', 'jetpack-connect' ].includes( sectionName );
 		const masterbarIsHidden =
 			! masterbarIsVisible( state ) ||
@@ -409,7 +412,7 @@ export default withCurrentRoute(
 			'plugins',
 			'comments',
 		].includes( sectionName );
-		const sidebarIsHidden = ! secondary || isWcMobileApp();
+		const sidebarIsHidden = ! secondary || isWcMobileApp() || isDomainAndPlanPackageFlow;
 		const chatIsDocked = ! [ 'reader', 'theme' ].includes( sectionName ) && ! sidebarIsHidden;
 
 		const userAllowedToHelpCenter =

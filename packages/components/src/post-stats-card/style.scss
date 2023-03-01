@@ -2,6 +2,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/components/src/styles/mixins";
 @import "@automattic/components/src/styles/typography";
+@import "@automattic/components/src/highlight-cards/variables.scss";
 
 $card-padding: 24px;
 $border-radius: 5px; // stylelint-disable-line scales/radii
@@ -23,6 +24,11 @@ $break-wpcom-smallest: 320px;
 	max-height: 255px;
 	padding: $card-padding;
 	gap: $card-padding;
+
+	// Eliminate the `::after` pseudo-element from frequently accompanied .card
+	&.card::after {
+		display: none;
+	}
 }
 
 .post-stats-card__heading {
@@ -38,6 +44,10 @@ $break-wpcom-smallest: 320px;
 .post-stats-card__post-title {
 	@include stats-section-header;
 	margin-bottom: 4px;
+
+	&:visited {
+		color: var(--studio-gray-100);
+	}
 }
 
 .post-stats-card__post-info {
@@ -54,7 +64,7 @@ $break-wpcom-smallest: 320px;
 	display: flex;
 	flex-flow: row;
 	grid-area: counts;
-	justify-content: space-between;
+	gap: 64px;
 }
 
 .post-stats-card__count {
@@ -75,7 +85,8 @@ $break-wpcom-smallest: 320px;
 	color: var(--studio-gray-100);
 }
 
-.post-stats-card__thumbnail {
+.post-stats-card__thumbnail,
+.post-stats-card__upload {
 	border-radius: 0 $border-radius $border-radius 0;
 	grid-area: thumbnail;
 	height: calc(100% + #{$card-padding * 2});
@@ -85,7 +96,36 @@ $break-wpcom-smallest: 320px;
 	width: calc(100% + #{$card-padding});
 }
 
-@media ( max-width: $break-small ) {
+.post-stats-card__upload {
+	max-width: 500px;
+	padding: 0 12px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: var(--studio-gray-0);
+	border-left: 1px solid var(--studio-gray-5);
+	box-sizing: border-box;
+}
+
+.post-stats-card__upload-btn {
+	color: var(--studio-gray-100);
+	font-family: $font-sf-pro-display;
+	font-size: $font-body-small;
+	font-weight: 500;
+	line-height: 20px;
+	letter-spacing: 0.32px;
+	border: 1px solid var(--studio-gray-5);
+	border-radius: 4px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+@media ( max-width: $break-large ) {
+	.post-stats-card__upload {
+		display: none;
+	}
+}
+
+@media ( max-width: $custom-mobile-breakpoint ) {
 	.post-stats-card {
 		border-bottom: 1px solid var(--color-border-subtle);
 		border-radius: 0;

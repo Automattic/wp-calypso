@@ -49,7 +49,7 @@ import getPartnerIdFromQuery from 'calypso/state/selectors/get-partner-id-from-q
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { isRequestingSite, isRequestingSites } from 'calypso/state/sites/selectors';
+import { getSite, isRequestingSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import AuthFormHeader from './auth-form-header';
 import {
 	ALREADY_CONNECTED,
@@ -62,7 +62,7 @@ import {
 	USER_IS_ALREADY_CONNECTED_TO_SITE,
 	XMLRPC_ERROR,
 } from './connection-notice-types';
-import { JPC_PATH_PLANS, REMOTE_PATH_AUTH } from './constants';
+import { JPC_PATH_PLANS, JPC_PATH_PLANS_COMPLETE, REMOTE_PATH_AUTH } from './constants';
 import Disclaimer from './disclaimer';
 import { OFFER_RESET_FLOW_TYPES } from './flow-types';
 import JetpackConnectHappychatButton from './happychat-button';
@@ -291,8 +291,8 @@ export class JetpackAuthorize extends Component {
 		} else if ( this.isFromJetpackBackupPlugin() && ! siteHasBackups ) {
 			debug( `Redirecting directly to cart with ${ PRODUCT_JETPACK_BACKUP_T1_YEARLY } in cart.` );
 			navigate( `/checkout/${ urlToSlug( homeUrl ) }/${ PRODUCT_JETPACK_BACKUP_T1_YEARLY }` );
-		} else if ( this.isFromJetpackMigration() ) {
-			navigate( `/setup/import-focused/siteCreationStep?from=${ urlToSlug( homeUrl ) }` );
+		} else if ( this.isFromMigrationPlugin() ) {
+			navigate( `/setup/import-focused/migrationHandler?from=${ urlToSlug( homeUrl ) }` );
 		} else {
 			const redirectionTarget = this.getRedirectionTarget();
 			debug( `Redirecting to: ${ redirectionTarget }` );
@@ -418,9 +418,9 @@ export class JetpackAuthorize extends Component {
 		return startsWith( from, 'jetpack-partner-coupon' );
 	}
 
-	isFromJetpackMigration( props = this.props ) {
+	isFromMigrationPlugin( props = this.props ) {
 		const { from } = props.authQuery;
-		return startsWith( from, 'jetpack-migration' );
+		return startsWith( from, 'wpcom-migration' );
 	}
 
 	shouldRedirectJetpackStart( props = this.props ) {
@@ -771,6 +771,19 @@ export class JetpackAuthorize extends Component {
 			return redirectAfterAuth;
 		}
 
+		// We naviage users to complete page if it's not a multisite and feature flag activated
+		if ( config.isEnabled( 'jetpack/offer-complete-after-activation' ) ) {
+			const isMultisite = this.props.site && this.props.site.is_multisite;
+			if ( ! isMultisite && this.props.site ) {
+				const jpcTargetComplete = `${ JPC_PATH_PLANS_COMPLETE }/${ urlToSlug( homeUrl ) }`;
+				debug(
+					'authorization-form: getRedirectionTarget -> Redirection target is: %s',
+					jpcTargetComplete
+				);
+				return jpcTargetComplete;
+			}
+		}
+
 		const jpcTarget = addQueryArgs(
 			{ redirect: redirectAfterAuth },
 			`${ JPC_PATH_PLANS }/${ urlToSlug( homeUrl ) }`
@@ -970,6 +983,7 @@ const connectComponent = connect(
 			partnerID: getPartnerIdFromQuery( state ),
 			partnerSlug: getPartnerSlugFromQuery( state ),
 			selectedPlanSlug,
+			site: getSite( state, authQuery.clientId ),
 			siteHasJetpackPaidProduct: siteHasJetpackProductPurchase( state, authQuery.clientId ),
 			siteHasBackups: siteHasFeature( state, authQuery.clientId, WPCOM_FEATURES_BACKUPS ),
 			user: getCurrentUser( state ),

@@ -128,6 +128,7 @@ export function* createSenseiSite( {
 			use_patterns: true,
 			site_intent: 'sensei',
 			selected_features: selectedFeatures,
+			wpcom_public_coming_soon: 1,
 			...( selectedDesign && { is_blank_canvas: isBlankCanvasDesign( selectedDesign ) } ),
 		},
 	} );
@@ -264,6 +265,11 @@ export const setPlanProductId = ( planProductId: number | undefined ) => ( {
 export const setPlanCartItem = ( planCartItem: MinimalRequestCartProduct | null ) => ( {
 	type: 'SET_PLAN_CART_ITEM' as const,
 	planCartItem,
+} );
+
+export const setProductCartItems = ( productCartItems: MinimalRequestCartProduct[] | null ) => ( {
+	type: 'SET_PRODUCT_CART_ITEMS' as const,
+	productCartItems,
 } );
 
 export const setRandomizedDesigns = ( randomizedDesigns: { featured: Design[] } ) => ( {
@@ -453,6 +459,11 @@ export const setIsMigrateFromWp = ( isMigrateFromWp: boolean ) => ( {
 	isMigrateFromWp,
 } );
 
+export const setPluginsToVerify = ( pluginSlugs: string[] ) => ( {
+	type: 'SET_PLUGIN_SLUGS_TO_VERIFY' as const,
+	pluginSlugs,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -469,6 +480,7 @@ export type OnboardAction = ReturnType<
 	| typeof setIsRedirecting
 	| typeof setLastLocation
 	| typeof setPlanProductId
+	| typeof setPluginsToVerify
 	| typeof setRandomizedDesigns
 	| typeof setSelectedDesign
 	| typeof setSelectedStyleVariation
@@ -503,6 +515,7 @@ export type OnboardAction = ReturnType<
 	| typeof setStoreLocationCountryCode
 	| typeof setEcommerceFlowRecurType
 	| typeof setHideFreePlan
+	| typeof setProductCartItems
 	| typeof setPlanCartItem
 	| typeof setIsMigrateFromWp
 >;

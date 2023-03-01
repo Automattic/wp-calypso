@@ -1,4 +1,8 @@
-import { VIDEOPRESS_FLOW, isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
+import {
+	VIDEOPRESS_FLOW,
+	isNewsletterOrLinkInBioFlow,
+	isWithThemeFlow,
+} from '@automattic/onboarding';
 import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
@@ -156,7 +160,7 @@ class DomainsStep extends Component {
 		);
 	};
 
-	handleAddDomain = ( suggestion ) => {
+	handleAddDomain = ( suggestion, position ) => {
 		const stepData = {
 			stepName: this.props.stepName,
 			suggestion,
@@ -165,6 +169,7 @@ class DomainsStep extends Component {
 		this.props.recordAddDomainButtonClick(
 			suggestion.domain_name,
 			this.getAnalyticsSection(),
+			position,
 			suggestion?.is_premium
 		);
 		this.props.saveSignupStep( stepData );
@@ -722,7 +727,7 @@ class DomainsStep extends Component {
 	}
 
 	shouldHideNavButtons() {
-		return 'with-theme' === this.props.flowName || this.isTailoredFlow();
+		return isWithThemeFlow( this.props.flowName ) || this.isTailoredFlow();
 	}
 
 	renderContent() {
@@ -819,7 +824,7 @@ class DomainsStep extends Component {
 		const [ sitesBackLabelText, defaultBackUrl ] =
 			userSiteCount && userSiteCount === 1
 				? [ translate( 'Back to My Home' ), '/home' ]
-				: [ translate( 'Back to Sites' ), '/sites' ];
+				: [ translate( 'Back to sites' ), '/sites' ];
 
 		if ( previousStepBackUrl ) {
 			backUrl = previousStepBackUrl;

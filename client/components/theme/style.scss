@@ -148,6 +148,9 @@ $soft-launch-badge-font-size: 0.725rem;
 		.popover__arrow {
 			display: none;
 		}
+		.components-button {
+			font-size: inherit;
+		}
 	}
 	.theme__upsell-header {
 		font-weight: 500;

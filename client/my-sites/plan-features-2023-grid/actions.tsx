@@ -1,18 +1,23 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	getPlanClass,
 	isMonthly,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_P2_FREE,
 	isFreePlan,
+	is2023PricingGridActivePage,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
+import { useDispatch } from '@wordpress/data';
+import { useCallback } from '@wordpress/element';
 import classNames from 'classnames';
 import { localize, TranslateResult, useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
+import { WPCOM_PLANS_UI_STORE } from './store';
 
 type PlanFeaturesActionsButtonProps = {
 	availableForPurchase: boolean;
@@ -27,7 +32,7 @@ type PlanFeaturesActionsButtonProps = {
 	isPopular?: boolean;
 	isInSignup: boolean;
 	isLaunchPage?: boolean;
-	onUpgradeClick?: () => void;
+	onUpgradeClick: () => void;
 	planName: TranslateResult;
 	planType: string;
 	flowName: string;
@@ -150,10 +155,24 @@ const LoggedInPlansFeatureActionButton = ( {
 	forceDisplayButton: boolean;
 	selectedSiteSlug: string | null;
 } ) => {
+	const { setShowDomainUpsellDialog } = useDispatch( WPCOM_PLANS_UI_STORE );
 	const translate = useTranslate();
+	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
+
+	const showDomainUpsellDialog = useCallback( () => {
+		setShowDomainUpsellDialog( true );
+	}, [ setShowDomainUpsellDialog ] );
 
 	if ( freePlan ) {
 		if ( currentSitePlanSlug && isFreePlan( currentSitePlanSlug ) ) {
+			if ( domainFromHomeUpsellFlow ) {
+				return (
+					<Button className={ classes } onClick={ showDomainUpsellDialog }>
+						{ translate( 'Keep my plan', { context: 'verb' } ) }
+					</Button>
+				);
+			}
+
 			return (
 				<Button
 					className={ classes }
@@ -167,7 +186,7 @@ const LoggedInPlansFeatureActionButton = ( {
 
 		return (
 			<Button className={ classes } disabled={ true }>
-				{ translate( 'Constact support', { context: 'verb' } ) }
+				{ translate( 'Contact support', { context: 'verb' } ) }
 			</Button>
 		);
 	}
@@ -204,9 +223,9 @@ const LoggedInPlansFeatureActionButton = ( {
 		);
 	}
 
-	const is2023OnboardingPricingGrid = isEnabled( 'onboarding/2023-pricing-grid' );
+	const is2023PricingGridVisible = is2023PricingGridActivePage( window );
 	if ( ! availableForPurchase ) {
-		if ( is2023OnboardingPricingGrid ) {
+		if ( is2023PricingGridVisible ) {
 			return (
 				<Plans2023Tooltip text={ translate( 'Please contact support to downgrade your plan.' ) }>
 					<DummyDisabledButton>

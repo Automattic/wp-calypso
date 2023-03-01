@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { isBlogger } from '@automattic/calypso-products';
-import { Button, CompactCard } from '@automattic/components';
+import { Button, CompactCard, ResponsiveToolbarGroup } from '@automattic/components';
 import Search from '@automattic/search';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { Icon } from '@wordpress/icons';
@@ -74,6 +74,7 @@ import wpcom from 'calypso/lib/wp';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { domainUseMyDomain } from 'calypso/my-sites/domains/paths';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import AlreadyOwnADomain from './already-own-a-domain';
 import tip from './tip';
 
@@ -390,7 +391,7 @@ class RegisterDomainStep extends Component {
 	}
 
 	render() {
-		const { isSignupStep, showAlreadyOwnADomain } = this.props;
+		const { isSignupStep, showAlreadyOwnADomain, isDomainAndPlanPackageFlow } = this.props;
 
 		const {
 			availabilityError,
@@ -432,6 +433,8 @@ class RegisterDomainStep extends Component {
 							{ this.renderSearchBar() }
 						</CompactCard>
 					</div>
+					{ isDomainAndPlanPackageFlow && this.renderQuickFilters() }
+
 					{ ! isSignupStep && isQueryInvalid && (
 						<Notice
 							className="register-domain-step__notice"
@@ -498,6 +501,50 @@ class RegisterDomainStep extends Component {
 		);
 	}
 
+	getActiveIndexByKey( items, tlds ) {
+		if ( undefined === tlds[ 0 ] ) {
+			return 0;
+		}
+
+		return items.findIndex( ( item ) => item.key === tlds[ 0 ] );
+	}
+
+	renderQuickFilters() {
+		const items = [
+			{ key: 'all', text: 'All' },
+			{ key: 'blog', text: '.blog' },
+			{ key: 'com', text: '.com' },
+			{ key: 'news', text: '.news' },
+			{ key: 'email', text: '.email' },
+			{ key: 'info', text: '.info' },
+			{ key: 'help', text: '.help' },
+			{ key: 'press', text: '.press' },
+			{ key: 'report', text: '.report' },
+		];
+
+		const handleClick = ( index ) => {
+			const option = items[ index ].key;
+			if ( 'all' === option ) {
+				this.onFiltersReset();
+			} else {
+				this.onFiltersChange( { tlds: [ option ] }, { shouldSubmit: true } );
+			}
+		};
+
+		return (
+			<ResponsiveToolbarGroup
+				className="register-domain-step__domains-quickfilter-group"
+				initialActiveIndex={ this.getActiveIndexByKey( items, this.state.filters.tlds ) }
+				forceSwipe={ 'undefined' === typeof window }
+				onClick={ handleClick }
+			>
+				{ items.map( ( item ) => (
+					<span key={ `domains-quickfilter-group-item-${ item.key }` }>{ item.text }</span>
+				) ) }
+			</ResponsiveToolbarGroup>
+		);
+	}
+
 	renderSearchBar() {
 		const componentProps = {
 			className: this.state.clickedExampleSuggestion ? 'is-refocused' : undefined,
@@ -516,12 +563,14 @@ class RegisterDomainStep extends Component {
 			onSearchChange: this.onSearchChange,
 			ref: this.bindSearchCardReference,
 			isReskinned: this.props.isReskinned,
+			childrenBeforeCloseButton:
+				this.props.isDomainAndPlanPackageFlow && this.renderSearchFilters(),
 		};
 
 		return (
 			<>
 				<Search { ...componentProps }></Search>
-				{ this.renderSearchFilters() }
+				{ false === this.props.isDomainAndPlanPackageFlow && this.renderSearchFilters() }
 			</>
 		);
 	}
@@ -529,22 +578,24 @@ class RegisterDomainStep extends Component {
 	rejectTrademarkClaim = () => {
 		this.setState( {
 			selectedSuggestion: null,
+			selectedSuggestionPosition: null,
 			trademarkClaimsNoticeInfo: null,
 		} );
 	};
 
 	acceptTrademarkClaim = () => {
-		this.props.onAddDomain( this.state.selectedSuggestion );
+		this.props.onAddDomain( this.state.selectedSuggestion, this.state.selectedSuggestionPosition );
 	};
 
 	renderTrademarkClaimsNotice() {
 		const { isSignupStep } = this.props;
-		const { selectedSuggestion, trademarkClaimsNoticeInfo } = this.state;
+		const { selectedSuggestion, trademarkClaimsNoticeInfo, isLoading } = this.state;
 		const domain = get( selectedSuggestion, 'domain_name' );
 
 		return (
 			<TrademarkClaimsNotice
 				domain={ domain }
+				isLoading={ isLoading }
 				isSignupStep={ isSignupStep }
 				onAccept={ this.acceptTrademarkClaim }
 				onGoBack={ this.rejectTrademarkClaim }
@@ -842,6 +893,7 @@ class RegisterDomainStep extends Component {
 				pending: false,
 				is_premium: data.is_premium,
 				cost: data.cost,
+				sale_cost: data.sale_cost,
 				is_price_limit_exceeded: data.is_price_limit_exceeded,
 			} ) )
 			.catch( ( error ) => ( {
@@ -920,6 +972,14 @@ class RegisterDomainStep extends Component {
 						config.isEnabled( 'domains/premium-domain-purchases' ) &&
 						AVAILABLE_PREMIUM === status &&
 						result?.is_supported_premium_domain;
+
+					/**
+					 * In rare cases we don't get the FQDN as suggestion from the suggestion engine but only
+					 * from the availability endpoint. Let's make sure the `is_premium` flag is set.
+					 */
+					if ( result?.is_supported_premium_domain ) {
+						result.is_premium = true;
+					}
 
 					// Mapped status always overrides other statuses.
 					const availabilityStatus = isDomainMapped ? mappable : status;
@@ -1268,7 +1328,7 @@ class RegisterDomainStep extends Component {
 		return <FreeDomainExplainer onSkip={ this.props.hideFreePlan } />;
 	}
 
-	onAddDomain = ( suggestion ) => {
+	onAddDomain = ( suggestion, position ) => {
 		const domain = get( suggestion, 'domain_name' );
 		const { premiumDomains } = this.state;
 
@@ -1306,13 +1366,14 @@ class RegisterDomainStep extends Component {
 						this.setState( {
 							trademarkClaimsNoticeInfo: trademarkClaimsNoticeInfo,
 							selectedSuggestion: suggestion,
+							selectedSuggestionPosition: position,
 						} );
 					} else {
-						this.props.onAddDomain( suggestion );
+						this.props.onAddDomain( suggestion, position );
 					}
 				} );
 		} else {
-			this.props.onAddDomain( suggestion );
+			this.props.onAddDomain( suggestion, position );
 		}
 	};
 
@@ -1545,6 +1606,7 @@ export default connect(
 	( state ) => {
 		return {
 			currentUser: getCurrentUser( state ),
+			isDomainAndPlanPackageFlow: !! getCurrentQueryArguments( state )?.domainAndPlanPackage,
 		};
 	},
 	{

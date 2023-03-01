@@ -7,8 +7,8 @@
 
 	&.desktop-scaling {
 		@include break-mobile {
-			// mobile: 40px, desktop: 48px (1.2x scale)
-			transform: scale(1.2);
+			// mobile first, upscale for desktop
+			transform: scale(1.3);
 		}
 	}
 
@@ -24,8 +24,10 @@
 	}
 
 	&-text {
-		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
-		font-size: 0.75rem;
+		font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+		font-size: 11.5px; // 11.5px mobile, 15px desktop (30% upscaling)
+		font-weight: 500;
 		letter-spacing: 0.05em;
 
 		// center the text inside the circle

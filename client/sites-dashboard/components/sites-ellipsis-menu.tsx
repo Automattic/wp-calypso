@@ -1,24 +1,19 @@
 import { isEnabled } from '@automattic/calypso-config';
 import {
-	WPCOM_FEATURES_COPY_SITE,
 	WPCOM_FEATURES_MANAGE_PLUGINS,
 	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
 } from '@automattic/calypso-products';
-import { Gridicon } from '@automattic/components';
+import { Gridicon, SubmenuPopover, useSubmenuPopoverProps } from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { DropdownMenu, MenuGroup, MenuItem as CoreMenuItem, Modal } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { ComponentType, useEffect, useState } from 'react';
+import { ComponentType, useEffect, useMemo, useState } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import SitePreviewLink from 'calypso/components/site-preview-link';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
+import { useSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
@@ -27,13 +22,17 @@ import {
 	getManagePluginsUrl,
 	getPluginsUrl,
 	getSettingsUrl,
+	isCustomDomain,
 	isNotAtomicJetpack,
+	isP2Site,
 } from '../utils';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 interface SitesMenuItemProps {
 	site: SiteExcerptData;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	recordTracks: ( eventName: string, extraProps?: Record< string, any > ) => void;
+	onClick?: () => void;
 }
 
 interface MenuItemLinkProps extends Omit< CoreMenuItem.Props, 'href' > {
@@ -184,18 +183,8 @@ const PreviewSiteModalItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 	);
 };
 
-const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
+const CopySiteItem = ( { recordTracks, site, onClick }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
-	const hasCopySiteFeature = useSafeSiteHasFeature( site.ID, WPCOM_FEATURES_COPY_SITE );
-	const isAtomic = useSelector( ( state ) => isSiteAtomic( state, site.ID ) );
-	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
-	const plan = site.plan;
-	const isSiteOwner = site.site_owner === userId;
-	const { setPlanCartItem } = useDispatch( ONBOARD_STORE );
-
-	if ( ! hasCopySiteFeature || ! isSiteOwner || ! plan || ! isAtomic ) {
-		return null;
-	}
 
 	const copySiteHref = addQueryArgs( `/setup/copy-site`, {
 		sourceSlug: site.slug,
@@ -204,9 +193,8 @@ const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 		<MenuItemLink
 			href={ copySiteHref }
 			onClick={ () => {
-				clearSignupDestinationCookie();
-				setPlanCartItem( { product_slug: plan.product_slug } );
 				recordTracks( 'calypso_sites_dashboard_site_action_copy_site_click' );
+				onClick?.();
 			} }
 		>
 			{ __( 'Copy site' ) }
@@ -214,9 +202,9 @@ const CopySiteItem = ( { recordTracks, site }: SitesMenuItemProps ) => {
 	);
 };
 
-const ExternalGridIcon = styled( Gridicon )( {
+const MenuItemGridIcon = styled( Gridicon )( {
 	insetBlockStart: '-1px',
-	marginInlineStart: '4px',
+	marginLeft: 'auto',
 	position: 'relative',
 } );
 
@@ -228,7 +216,7 @@ const WpAdminItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 			href={ site.options?.admin_url }
 			onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_wpadmin_click' ) }
 		>
-			{ __( 'Visit WP Admin' ) } <ExternalGridIcon icon="external" size={ 18 } />
+			{ __( 'Visit WP Admin' ) } <MenuItemGridIcon icon="external" size={ 18 } />
 		</MenuItemLink>
 	);
 };
@@ -251,7 +239,113 @@ const SiteDropdownMenu = styled( DropdownMenu )( {
 	'.components-popover': {
 		zIndex: 177,
 	},
+
+	'.submenu-popover > .components-popover__content': {
+		display: 'flex',
+		flexDirection: 'column',
+	},
 } );
+
+function useSubmenuItems( {
+	siteSlug,
+	isCustomDomain,
+	isAtomic,
+	isLaunched,
+}: {
+	siteSlug: string;
+	isCustomDomain: boolean;
+	isAtomic: boolean;
+	isLaunched: boolean;
+} ) {
+	const { __ } = useI18n();
+	return useMemo(
+		() =>
+			[
+				{
+					condition: isAtomic,
+					label: __( 'Database access' ),
+					href: `/hosting-config/${ siteSlug }#database-access`,
+					eventName: 'calypso_sites_dashboard_site_action_submenu_database_access_click',
+				},
+				{
+					condition: isAtomic,
+					label: __( 'SFTP/SSH credentials' ),
+					href: `/hosting-config/${ siteSlug }#sftp-credentials`,
+					eventName: 'calypso_sites_dashboard_site_action_submenu_sftp_credentials_click',
+				},
+				{
+					condition: isAtomic,
+					label: __( 'Web server settings' ),
+					href: `/hosting-config/${ siteSlug }#web-server-settings`,
+					eventName: 'calypso_sites_dashboard_site_action_submenu_web_server_settings_click',
+				},
+				{
+					label: __( 'Performance settings' ),
+					href: `/settings/performance/${ siteSlug }`,
+					eventName: 'calypso_sites_dashboard_site_action_submenu_performance_settings_click',
+				},
+				{
+					condition: isCustomDomain,
+					label: __( 'DNS records' ),
+					href: `/domains/manage/${ siteSlug }/dns/${ siteSlug }`,
+					eventName: 'calypso_sites_dashboard_site_action_submenu_dns_records_click',
+				},
+				{
+					condition: isAtomic,
+					label: __( 'GitHub connection' ),
+					href: `/hosting-config/${ siteSlug }#connect-github`,
+					eventName: 'calypso_sites_dashboard_site_action_submenu_connect_github_click',
+				},
+				{
+					condition: isAtomic,
+					label: __( 'Clear cache' ),
+					href: `/hosting-config/${ siteSlug }#cache`,
+					eventName: 'calypso_sites_dashboard_site_action_submenu_cache_click',
+				},
+				{
+					condition: isLaunched,
+					label: __( 'Privacy settings' ),
+					href: `/settings/general/${ siteSlug }#site-privacy-settings`,
+					eventName: 'calypso_sites_dashboard_site_action_submenu_privacy_settings_click',
+				},
+			].filter( ( { condition } ) => condition ?? true ),
+		[ __, isAtomic, isCustomDomain, isLaunched, siteSlug ]
+	);
+}
+
+function DeveloperSettingsSubmenu( { site, recordTracks }: SitesMenuItemProps ) {
+	const { __ } = useI18n();
+	const submenuItems = useSubmenuItems( {
+		siteSlug: site.slug,
+		isCustomDomain: isCustomDomain( site.slug ),
+		isAtomic: Boolean( site.is_wpcom_atomic ),
+		isLaunched: site.launch_status !== 'unlaunched',
+	} );
+	const developerSubmenuProps = useSubmenuPopoverProps< HTMLDivElement >( { offsetTop: -8 } );
+
+	if ( submenuItems.length === 0 ) {
+		return null;
+	}
+
+	return (
+		<div { ...developerSubmenuProps.parent }>
+			<MenuItemLink>
+				{ __( 'Developer settings' ) } <MenuItemGridIcon icon="chevron-right" size={ 18 } />
+			</MenuItemLink>
+			<SubmenuPopover { ...developerSubmenuProps.submenu }>
+				{ submenuItems.map( ( item ) => (
+					<MenuItemLink
+						key={ item.label }
+						href={ item.href }
+						onClick={ () => recordTracks( item.eventName ) }
+					>
+						{ item.label }
+					</MenuItemLink>
+				) ) }
+			</SubmenuPopover>
+		</div>
+	);
+}
 
 export const SitesEllipsisMenu = ( {
 	className,
@@ -261,6 +355,7 @@ export const SitesEllipsisMenu = ( {
 	site: SiteExcerptData;
 } ) => {
 	const dispatch = useReduxDispatch();
+
 	const { __ } = useI18n();
 	const props: SitesMenuItemProps = {
 		site,
@@ -269,7 +364,8 @@ export const SitesEllipsisMenu = ( {
 		},
 	};
 
-	const showHosting = ! isNotAtomicJetpack( site ) && ! site.options?.is_wpforteams_site;
+	const hasHostingPage = ! isNotAtomicJetpack( site ) && ! isP2Site( site );
+	const { shouldShowSiteCopyItem, startSiteCopy } = useSiteCopy( site );
 
 	return (
 		<SiteDropdownMenu
@@ -281,10 +377,13 @@ export const SitesEllipsisMenu = ( {
 				<SiteMenuGroup>
 					{ site.launch_status === 'unlaunched' && <LaunchItem { ...props } /> }
 					<SettingsItem { ...props } />
+					{ isEnabled( 'dev/developer-ux' ) && hasHostingPage && (
+						<DeveloperSettingsSubmenu { ...props } />
+					) }
 					<ManagePluginsItem { ...props } />
-					{ showHosting && <HostingConfigItem { ...props } /> }
+					{ hasHostingPage && <HostingConfigItem { ...props } /> }
 					{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
-					{ isEnabled( 'sites/copy-site' ) && <CopySiteItem { ...props } /> }
+					{ shouldShowSiteCopyItem && <CopySiteItem { ...props } onClick={ startSiteCopy } /> }
 					<WpAdminItem { ...props } />
 				</SiteMenuGroup>
 			) }

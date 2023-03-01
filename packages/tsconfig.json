@@ -40,6 +40,7 @@
 		{ "path": "./photon" },
 		{ "path": "./plans-grid" },
 		{ "path": "./privacy-toolset" },
+		{ "path": "./request-external-access" },
 		{ "path": "./search" },
 		{ "path": "./shopping-cart" },
 		{ "path": "./sites" },
