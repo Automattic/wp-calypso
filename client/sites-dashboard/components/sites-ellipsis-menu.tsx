@@ -103,7 +103,21 @@ const ManagePluginsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 			}
 			info={ ! hasManagePluginsFeature && __( 'Requires a Business Plan' ) }
 		>
-			{ label }
+			<span>
+				{ label }
+				{ ! hasManagePluginsFeature && (
+					<Gridicon
+						style={ {
+							color: '#FFF',
+							borderRadius: '100%',
+							backgroundColor: 'var(--color-accent)',
+							marginLeft: '4px',
+						} }
+						icon="star"
+						size={ 12 }
+					/>
+				) }
+			</span>
 		</MenuItemLink>
 	);
 };
@@ -288,8 +302,6 @@ function DeveloperSettingsSubmenu( { site, recordTracks }: SitesMenuItemProps ) 
 	const developerSubmenuProps = useSubmenuPopoverProps< HTMLDivElement >( { offsetTop: -8 } );
 	const hasFeatureSFTP = useSafeSiteHasFeature( site.ID, FEATURE_SFTP );
 
-	__( 'Requires a Business Plan' );
-
 	if ( submenuItems.length === 0 ) {
 		return null;
 	}
@@ -301,7 +313,22 @@ function DeveloperSettingsSubmenu( { site, recordTracks }: SitesMenuItemProps ) 
 				onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_hosting_config_click' ) }
 				info={ ! hasFeatureSFTP && __( 'Requires a Business Plan' ) }
 			>
-				{ __( 'Hosting configuration' ) } <MenuItemGridIcon icon="chevron-right" size={ 18 } />
+				<span>
+					{ __( 'Hosting configuration' ) }
+					{ ! hasFeatureSFTP && (
+						<Gridicon
+							style={ {
+								color: '#FFF',
+								borderRadius: '100%',
+								backgroundColor: 'var(--color-accent)',
+								marginLeft: '4px',
+							} }
+							icon="star"
+							size={ 12 }
+						/>
+					) }
+				</span>
+				<MenuItemGridIcon icon="chevron-right" size={ 18 } />
 			</MenuItemLink>
 			<SubmenuPopover { ...developerSubmenuProps.submenu }>
 				{ submenuItems.map( ( item ) => (
@@ -310,7 +337,21 @@ function DeveloperSettingsSubmenu( { site, recordTracks }: SitesMenuItemProps ) 
 						href={ item.href }
 						onClick={ () => recordTracks( item.eventName ) }
 					>
-						{ item.label }
+						<span>
+							{ item.label }
+							{ ! hasFeatureSFTP && (
+								<Gridicon
+									style={ {
+										color: '#FFF',
+										borderRadius: '100%',
+										backgroundColor: 'var(--color-accent)',
+										marginLeft: '4px',
+									} }
+									icon="star"
+									size={ 12 }
+								/>
+							) }
+						</span>
 					</MenuItemLink>
 				) ) }
 			</SubmenuPopover>
