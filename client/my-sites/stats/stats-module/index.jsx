@@ -116,6 +116,7 @@ class StatsModule extends Component {
 			'statsReferrers',
 			'statsEmailsOpen',
 			'statsEmailsClick',
+			'statsTags',
 		];
 		return summary && includes( summarizedTypes, statType );
 	}
@@ -302,13 +303,13 @@ class StatsModule extends Component {
 						</Card>
 						{ isAllTime && (
 							<div className="stats-module__footer-actions">
-								<DownloadCsv
+								{ /* <DownloadCsv
 									statType={ statType }
 									query={ query }
 									path={ path }
 									borderless
 									period={ period }
-								/>
+								/> */ }
 							</div>
 						) }
 					</div>

@@ -343,6 +343,7 @@ export function summary( context, next ) {
 		'referrers',
 		'clicks',
 		'countryviews',
+		'tags-categories',
 		'authors',
 		'videoplays',
 		'videodetails',

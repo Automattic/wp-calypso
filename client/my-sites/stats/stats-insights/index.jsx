@@ -75,7 +75,7 @@ const StatsInsights = ( props ) => {
 							path="tags-categories"
 							moduleStrings={ moduleStrings.tags }
 							statType="statsTags"
-							hideSummaryLink
+							showSummaryLink
 							//hideNewModule // remove when cleaning 'stats/horizontal-bars-everywhere' FF
 						/>
 						<Comments path="comments" />
@@ -100,8 +100,8 @@ const StatsInsights = ( props ) => {
 									path="tags-categories"
 									moduleStrings={ moduleStrings.tags }
 									statType="statsTags"
-									hideSummaryLink
-									hideNewModule // remove when cleaning 'stats/horizontal-bars-everywhere' FF
+									// hideSummaryLink
+									// hideNewModule // remove when cleaning 'stats/horizontal-bars-everywhere' FF
 								/>
 								{ /** TODO: The feature depends on Jetpack Sharing module and is disabled for all Jetpack Sites for now. */ }
 								{ ! isJetpack && <StatShares siteId={ siteId } /> }
