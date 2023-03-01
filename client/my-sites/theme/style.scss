@@ -88,8 +88,13 @@ body.is-section-theme-i4 {
 
 	.theme__sheet-content {
 		box-shadow: none;
+		font-size: 1rem;
 		min-height: auto;
 		padding: 0;
+
+		h2 {
+			font-size: 1.25rem;
+		}
 
 		.notes {
 			background: transparent;
@@ -439,7 +444,7 @@ body.is-section-theme-i4 {
 		margin-top: 0;
 		top: 0;
 		width: 100%;
-		height: 75vw; // force proportions
+		height: 100vw; // force proportions
 		overflow: hidden;
 		box-shadow: none;
 
@@ -465,10 +470,12 @@ body.is-section-theme-i4 {
 }
 
 .theme__sheet-web-preview {
+	pointer-events: none;
 	position: relative;
 
 	@include breakpoint-deprecated( ">960px" ) {
-		height: 85vh;
+		height: calc(100vh - 128px);
+		pointer-events: all;
 	}
 }
 
