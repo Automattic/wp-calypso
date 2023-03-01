@@ -7,10 +7,16 @@ import {
 import { Gridicon, SubmenuPopover, useSubmenuPopoverProps } from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
-import { DropdownMenu, MenuGroup, MenuItem as CoreMenuItem, Modal } from '@wordpress/components';
+import {
+	Button,
+	DropdownMenu,
+	MenuGroup,
+	MenuItem as CoreMenuItem,
+	Modal,
+} from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { ComponentType, useEffect, useMemo, useState } from 'react';
+import { ComponentType, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import SitePreviewLink from 'calypso/components/site-preview-link';
 import { useSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
@@ -69,6 +75,26 @@ const LaunchItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	);
 };
 
+function UpsellIcon() {
+	const { __ } = useI18n();
+	const ref = useRef( null );
+	return (
+		<span ref={ ref }>
+			<Button label={ __( 'Requires a Business Plan' ) }>
+				<Gridicon
+					style={ {
+						color: '#FFF',
+						borderRadius: '100%',
+						backgroundColor: 'var(--color-accent)',
+					} }
+					icon="star"
+					size={ 12 }
+				/>
+			</Button>
+		</span>
+	);
+}
+
 const SettingsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
 
@@ -101,22 +127,10 @@ const ManagePluginsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 					has_manage_plugins_feature: hasManagePluginsFeature,
 				} )
 			}
-			info={ ! hasManagePluginsFeature && __( 'Requires a Business Plan' ) }
 		>
 			<span>
 				{ label }
-				{ ! hasManagePluginsFeature && (
-					<Gridicon
-						style={ {
-							color: '#FFF',
-							borderRadius: '100%',
-							backgroundColor: 'var(--color-accent)',
-							marginLeft: '4px',
-						} }
-						icon="star"
-						size={ 12 }
-					/>
-				) }
+				{ ! hasManagePluginsFeature && <UpsellIcon /> }
 			</span>
 		</MenuItemLink>
 	);
@@ -311,23 +325,9 @@ function DeveloperSettingsSubmenu( { site, recordTracks }: SitesMenuItemProps ) 
 			<MenuItemLink
 				href={ getHostingConfigUrl( site.slug ) }
 				onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_hosting_config_click' ) }
-				info={ ! hasFeatureSFTP && __( 'Requires a Business Plan' ) }
+				info={ __( 'SSH & SFTP, database access, GitHub integration, and more …' ) }
 			>
-				<span>
-					{ __( 'Hosting configuration' ) }
-					{ ! hasFeatureSFTP && (
-						<Gridicon
-							style={ {
-								color: '#FFF',
-								borderRadius: '100%',
-								backgroundColor: 'var(--color-accent)',
-								marginLeft: '4px',
-							} }
-							icon="star"
-							size={ 12 }
-						/>
-					) }
-				</span>
+				<span>{ __( 'Hosting configuration' ) }</span>
 				<MenuItemGridIcon icon="chevron-right" size={ 18 } />
 			</MenuItemLink>
 			<SubmenuPopover { ...developerSubmenuProps.submenu }>
@@ -339,18 +339,7 @@ function DeveloperSettingsSubmenu( { site, recordTracks }: SitesMenuItemProps ) 
 					>
 						<span>
 							{ item.label }
-							{ ! hasFeatureSFTP && (
-								<Gridicon
-									style={ {
-										color: '#FFF',
-										borderRadius: '100%',
-										backgroundColor: 'var(--color-accent)',
-										marginLeft: '4px',
-									} }
-									icon="star"
-									size={ 12 }
-								/>
-							) }
+							{ ! hasFeatureSFTP && <UpsellIcon /> }
 						</span>
 					</MenuItemLink>
 				) ) }
