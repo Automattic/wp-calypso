@@ -302,6 +302,8 @@ const WebServerLogsCard = ( props ) => {
 	);
 
 	const updateStartEndTime = ( start, end ) => {
+		start?.startOf( 'day' );
+		end?.endOf( 'day' );
 		onValidateInputs( start, end );
 		setStartDateTime( start );
 		setEndDateTime( end );
