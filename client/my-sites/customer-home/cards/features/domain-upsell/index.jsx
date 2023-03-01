@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { isFreePlanProduct } from '@automattic/calypso-products';
+import { isFreePlanProduct, isMonthly } from '@automattic/calypso-products';
 import { Button, Card, Spinner } from '@automattic/components';
 import { useDomainSuggestions } from '@automattic/domain-picker/src';
 import { useLocale } from '@automattic/i18n-utils';
@@ -23,19 +23,24 @@ export default function DomainUpsell() {
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 	const isEmailVerified = useSelector( ( state ) => isCurrentUserEmailVerified( state ) );
 	const siteDomains = useSelector( ( state ) => getDomainsBySiteId( state, site.ID ) );
+	const isMonthlyOrFreePlan = isMonthly( site.plan?.product_slug );
 
-	if ( siteDomains.length > 1 || ! isEmailVerified || ! isFreePlanProduct( site.plan ) ) {
+	if (
+		siteDomains.filter( ( domain ) => ! domain.isWPCOMDomain ).length ||
+		! isEmailVerified ||
+		( ! isFreePlanProduct( site.plan ) && isMonthlyOrFreePlan )
+	) {
 		return null;
 	}
 
 	return (
 		<CalypsoShoppingCartProvider>
-			<RenderDomainUpsell />
+			<RenderDomainUpsell isMonthlyOrFreePlan={ isMonthlyOrFreePlan } />
 		</CalypsoShoppingCartProvider>
 	);
 }
 
-export function RenderDomainUpsell() {
+export function RenderDomainUpsell( { isMonthlyOrFreePlan } ) {
 	const translate = useTranslate();
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
 	const siteSubDomain = siteSlug.split( '.' )[ 0 ];
@@ -106,13 +111,26 @@ export function RenderDomainUpsell() {
 		<Card className="domain-upsell__card customer-home__card">
 			<TrackComponentView eventName="calypso_my_home_domain_upsell_impression" />
 			<div>
-				<h3>{ translate( 'Own your online identity with a custom domain' ) }</h3>
-				<p>
-					{ translate(
-						"Stake your claim on your corner of the web with a site address that's easy to find, share, and follow."
-					) }
-				</p>
-
+				{ ! isMonthlyOrFreePlan && (
+					<>
+						<h3>{ translate( 'You still have a free domain to claim!' ) }</h3>
+						<p>
+							{ translate(
+								'Own your online identity giving your site a memorable domain name. Your plan includes one for free for one year, so you can still claim it.'
+							) }
+						</p>
+					</>
+				) }
+				{ isMonthlyOrFreePlan && (
+					<>
+						<h3>{ translate( 'Own your online identity with a custom domain' ) }</h3>
+						<p>
+							{ translate(
+								"Stake your claim on your corner of the web with a site address that's easy to find, share, and follow."
+							) }
+						</p>
+					</>
+				) }
 				<div className="suggested-domain-name">
 					<div className="card">
 						<span>
