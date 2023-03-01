@@ -4,7 +4,13 @@ import {
 	WPCOM_FEATURES_MANAGE_PLUGINS,
 	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
 } from '@automattic/calypso-products';
-import { Gridicon, SubmenuPopover, useSubmenuPopoverProps } from '@automattic/components';
+import {
+	Button,
+	Gridicon,
+	SubmenuPopover,
+	UpsellMenuGroup,
+	useSubmenuPopoverProps,
+} from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { DropdownMenu, MenuGroup, MenuItem as CoreMenuItem, Modal } from '@wordpress/components';
@@ -101,7 +107,11 @@ const ManagePluginsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 					has_manage_plugins_feature: hasManagePluginsFeature,
 				} )
 			}
-			info={ ! hasManagePluginsFeature && __( 'Requires a Business Plan' ) }
+			info={
+				isEnabled( 'dev/developer-ux' ) &&
+				! hasManagePluginsFeature &&
+				__( 'Requires a Business Plan' )
+			}
 		>
 			{ label }
 		</MenuItemLink>
@@ -288,8 +298,6 @@ function DeveloperSettingsSubmenu( { site, recordTracks }: SitesMenuItemProps ) 
 	const developerSubmenuProps = useSubmenuPopoverProps< HTMLDivElement >( { offsetTop: -8 } );
 	const hasFeatureSFTP = useSafeSiteHasFeature( site.ID, FEATURE_SFTP );
 
-	__( 'Requires a Business Plan' );
-
 	if ( submenuItems.length === 0 ) {
 		return null;
 	}
@@ -303,16 +311,30 @@ function DeveloperSettingsSubmenu( { site, recordTracks }: SitesMenuItemProps ) 
 			>
 				{ __( 'Hosting configuration' ) } <MenuItemGridIcon icon="chevron-right" size={ 18 } />
 			</MenuItemLink>
-			<SubmenuPopover { ...developerSubmenuProps.submenu }>
-				{ submenuItems.map( ( item ) => (
-					<MenuItemLink
-						key={ item.label }
-						href={ item.href }
-						onClick={ () => recordTracks( item.eventName ) }
-					>
-						{ item.label }
-					</MenuItemLink>
-				) ) }
+			<SubmenuPopover
+				{ ...developerSubmenuProps.submenu }
+				focusOnMount={ hasFeatureSFTP ? 'firstElement' : false }
+			>
+				{ hasFeatureSFTP ? (
+					submenuItems.map( ( item ) => (
+						<MenuItemLink
+							key={ item.label }
+							href={ item.href }
+							onClick={ () => recordTracks( item.eventName ) }
+						>
+							{ item.label }
+						</MenuItemLink>
+					) )
+				) : (
+					<UpsellMenuGroup>
+						{ __(
+							'Upgrade to Business Plan to enable SFTP & SSH, database access, GitHub connection and more …'
+						) }
+						<Button compact primary href={ getHostingConfigUrl( site.slug ) }>
+							{ __( 'Check full feature list' ) }
+						</Button>
+					</UpsellMenuGroup>
+				) }
 			</SubmenuPopover>
 		</div>
 	);
