@@ -52,7 +52,7 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 	const showManageStagingSite = ! isLoadingStagingSites && stagingSites && stagingSites.length > 0;
 
 	const [ wasCreating, setWasCreating ] = useState( false );
-	const [ progress, setProgress ] = useState( 1 );
+	const [ progress, setProgress ] = useState( 0.3 );
 	const transferStatus = useCheckStagingSiteStatus( stagingSite.id );
 	const isStagingSiteTransferComplete = transferStatus === transferStates.COMPLETE;
 
