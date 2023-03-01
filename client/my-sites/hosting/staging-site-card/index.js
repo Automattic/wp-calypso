@@ -1,10 +1,12 @@
-import { Button, Card, Spinner, Gridicon } from '@automattic/components';
+import { Button, Card, Gridicon, LoadingPlaceholder } from '@automattic/components';
+import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { localize } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
+import { LoadingBar } from 'calypso/components/loading-bar';
 import { useAddStagingSiteMutation } from 'calypso/my-sites/hosting/staging-site-card/use-add-staging-site';
 import { useCheckStagingSiteStatus } from 'calypso/my-sites/hosting/staging-site-card/use-check-staging-site-status';
 import { useStagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
@@ -15,6 +17,25 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const stagingSiteAddFailureNoticeId = 'staging-site-add-failure';
+
+const FirstPlaceholder = styled( LoadingPlaceholder )( {
+	height: 24,
+	width: '85%',
+	marginBottom: '0.25em',
+} );
+const SecondPlaceholder = styled( LoadingPlaceholder )( {
+	height: 24,
+	width: '60%',
+	marginBottom: '1.5em',
+} );
+const ButtonPlaceholder = styled( LoadingPlaceholder )( {
+	width: '148px',
+	height: '40px',
+} );
+
+const StyledLoadingBar = styled( LoadingBar )( {
+	marginBottom: '1em',
+} );
 
 const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 	const { __ } = useI18n();
@@ -31,6 +52,7 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 	const showManageStagingSite = ! isLoadingStagingSites && stagingSites && stagingSites.length > 0;
 
 	const [ wasCreating, setWasCreating ] = useState( false );
+	const [ progress, setProgress ] = useState( 0.3 );
 	const transferStatus = useCheckStagingSiteStatus( stagingSite.id );
 	const isStagingSiteTransferComplete = transferStatus === transferStates.COMPLETE;
 
@@ -39,6 +61,10 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 			dispatch( successNotice( __( 'Staging site added.' ) ) );
 		}
 	}, [ dispatch, __, isStagingSiteTransferComplete, wasCreating ] );
+
+	useEffect( () => {
+		setProgress( ( prevProgress ) => prevProgress + 0.1 );
+	}, [ transferStatus ] );
 
 	const { addStagingSite, isLoading: addingStagingSite } = useAddStagingSiteMutation( siteId, {
 		onMutate: () => {
@@ -64,7 +90,7 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 
 	const getNewStagingSiteContent = () => {
 		return (
-			<div>
+			<>
 				<p>
 					{ translate(
 						'A staging site is a test version of your website you can use to preview and troubleshoot changes before applying them to your production site.'
@@ -76,18 +102,19 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 					onClick={ () => {
 						dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_click' ) );
 						setWasCreating( true );
+						setProgress( 0.1 );
 						addStagingSite();
 					} }
 				>
 					<span>{ translate( 'Add staging site' ) }</span>
 				</Button>
-			</div>
+			</>
 		);
 	};
 
 	const getManageStagingSiteContent = () => {
 		return (
-			<div>
+			<>
 				<p>
 					{ translate( 'Your staging site is available at {{a}}%(stagingSiteName)s{{/a}}.', {
 						args: {
@@ -101,7 +128,17 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 				<Button primary href={ `/home/${ stagingSiteSlug }` } disabled={ disabled }>
 					<span>{ translate( 'Manage staging site' ) }</span>
 				</Button>
-			</div>
+			</>
+		);
+	};
+
+	const getLoadingStagingSitesPlaceholder = () => {
+		return (
+			<>
+				<FirstPlaceholder />
+				<SecondPlaceholder />
+				<ButtonPlaceholder />
+			</>
 		);
 	};
 
@@ -114,9 +151,17 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 			<CardHeading id="staging-site">{ translate( 'Staging site' ) }</CardHeading>
 			{ showAddStagingSite && ! addingStagingSite && getNewStagingSiteContent() }
 			{ showManageStagingSite && isStagingSiteTransferComplete && getManageStagingSiteContent() }
-			{ ( isLoadingStagingSites ||
-				addingStagingSite ||
-				( showManageStagingSite && ! isStagingSiteTransferComplete ) ) && <Spinner /> }
+			{ isLoadingStagingSites && getLoadingStagingSitesPlaceholder() }
+			{ ( addingStagingSite || ( showManageStagingSite && ! isStagingSiteTransferComplete ) ) && (
+				<>
+					<StyledLoadingBar progress={ progress } />
+					<p>
+						{ __(
+							'Feel free to continue working while we create your staging site. We’ll email you once it is ready.'
+						) }
+					</p>
+				</>
+			) }
 		</Card>
 	);
 };

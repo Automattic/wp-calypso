@@ -27,7 +27,7 @@ import {
 import { analyzeUrl } from 'calypso/state/imports/url-analyzer/actions';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { getSite } from 'calypso/state/sites/selectors';
+import { getSite, hasAllSitesList } from 'calypso/state/sites/selectors';
 import { StepProps } from '../../types';
 import { useAtomicTransferQueryParamUpdate } from './hooks/use-atomic-transfer-query-param-update';
 import { useInitialQueryRun } from './hooks/use-initial-query-run';
@@ -56,6 +56,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		const canImport = useSelector( ( state ) => canCurrentUser( state, siteId, 'manage_options' ) );
 		const siteItem = useSelector( ( state ) => getSite( state, siteId ) );
 		const siteImports = useSelector( ( state ) => getImporterStatusForSiteId( state, siteId ) );
+		const hasAllSitesFetched = useSelector( ( state ) => hasAllSitesList( state ) );
 		const isImporterStatusHydrated = useSelector( isImporterStatusHydratedSelector );
 		const isMigrateFromWp = useSelect( ( select ) => select( ONBOARD_STORE ).getIsMigrateFromWp() );
 
@@ -113,7 +114,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		}
 
 		function isLoading(): boolean {
-			return ! isImporterStatusHydrated;
+			return ! isImporterStatusHydrated || ! hasAllSitesFetched;
 		}
 
 		function checkFromSiteData(): void {

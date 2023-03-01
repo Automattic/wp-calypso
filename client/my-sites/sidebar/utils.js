@@ -6,6 +6,14 @@ const pathIncludes = ( currentPath, term, position ) =>
 const fragmentIsEqual = ( path, currentPath, position ) =>
 	currentPath.split( /[/,?]/ )?.[ position ] === path.split( /[/,?]/ )?.[ position ];
 
+const fragmentIsEqualDifferentPositions = (
+	path,
+	pathPosition,
+	currentPath,
+	currentPathPosition
+) =>
+	currentPath.split( /[/,?]/ )?.[ currentPathPosition ] === path.split( /[/,?]/ )?.[ pathPosition ];
+
 const isManageAllSitesPluginsPath = ( path ) =>
 	path.match( /^\/plugins\/(?:manage|active|inactive|updates)/ ) !== null;
 
@@ -69,6 +77,14 @@ export const itemLinkMatches = ( path, currentPath ) => {
 	// Account for plugins in all-sites view where '/plugins/manage' isn't a child view of '/plugins'.
 	if ( isManageAllSitesPluginsPath( currentPath ) ) {
 		return isManageAllSitesPluginsPath( path );
+	}
+
+	if ( pathIncludes( path, 'stats', 1 ) ) {
+		// For /store/stats and /google-my-business/stats paths.
+		return (
+			fragmentIsEqual( path, currentPath, 1 ) ||
+			fragmentIsEqualDifferentPositions( path, 1, currentPath, 2 )
+		);
 	}
 
 	return fragmentIsEqual( path, currentPath, 1 );
