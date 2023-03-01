@@ -5,9 +5,10 @@ export type AllowedTypes = 'site' | 'stats' | 'backup' | 'scan' | 'monitor' | 'p
 
 // Site column object which holds key and title of each column
 export type SiteColumns = Array< {
-	key: string;
+	key: AllowedTypes;
 	title: ReactChild;
 	className?: string;
+	isExpandable?: boolean;
 } >;
 
 export type AllowedStatusTypes =
@@ -66,7 +67,6 @@ export interface SiteNode {
 
 export interface StatsNode {
 	type: AllowedTypes;
-	status: AllowedStatusTypes | string;
 	data: SiteStats;
 }
 export interface BackupNode {

@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { PremiumBadge } from '@automattic/design-picker';
-import { useLayoutEffect, useRef, useState } from '@wordpress/element';
+import { useEffect, useRef, useState } from '@wordpress/element';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import AsyncLoad from 'calypso/components/async-load';
@@ -42,7 +42,7 @@ const ThemeStyleVariations = ( {
 		setCollapsibleMaxHeight( shouldCollapse ? nodeFirstChild.offsetHeight : node.scrollHeight );
 	};
 
-	useLayoutEffect( () => {
+	useEffect( () => {
 		if ( ! observerRef.current ) {
 			return;
 		}
@@ -86,7 +86,12 @@ const ThemeStyleVariations = ( {
 					<PremiumBadge shouldHideTooltip />
 					{ isCollapsible && (
 						<Button borderless onClick={ handleCollapseButtonClick }>
-							{ isCollapsed ? translate( 'Show all' ) : translate( 'Show less' ) }
+							{ isCollapsed
+								? translate( 'Show all (%(variationsCount)d)', {
+										args: { variationsCount: variations?.length },
+										comment: 'The number of style variations',
+								  } )
+								: translate( 'Show less' ) }
 						</Button>
 					) }
 				</h2>

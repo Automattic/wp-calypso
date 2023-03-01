@@ -5,7 +5,7 @@
 	"category": "embed",
 	"textdomain": "happy-blocks",
 	"title": "Pricing Plan",
-	"viewScript": "file:../../../dist/pricing-plan/view.js",
-	"editorScript": "file:../../../dist/pricing-plan/index.js",
-	"style": "file:../../../dist/pricing-plan/view.rtl.css"
+	"viewScript": "file:../view.js",
+	"editorScript": "file:../index.js",
+	"style": "file:../view.rtl.css"
 }

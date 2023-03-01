@@ -1,1 +1,3 @@
-/build
+/dist
+/block-library/*/build
+/release-files

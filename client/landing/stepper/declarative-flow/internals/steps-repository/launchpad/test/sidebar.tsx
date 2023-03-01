@@ -27,7 +27,7 @@ const sidebarDomain = buildDomainResponse( {
 } );
 
 const upgradeDomainBadgeText = 'Customize';
-const upgradeDomainBadgeLink = `/domains/add/${ sidebarDomain.domain }`;
+const upgradeDomainBadgeLink = `/domains/add/${ sidebarDomain.domain }?domainAndPlanPackage=true`;
 
 const props = {
 	sidebarDomain,
@@ -239,6 +239,123 @@ describe( 'Sidebar', () => {
 
 				const title = screen.getByRole( 'heading', { name: /link and launch/i } );
 				expect( title ).toBeVisible();
+			} );
+		} );
+	} );
+
+	describe( 'when the tailored flow includes a upsell task', () => {
+		describe( 'and the site is on a free plan', () => {
+			it( 'displays the upgrade plan badge on the "Choose a domain" task for free flow', () => {
+				const freeFlowProps = { ...props, flow: 'free' };
+
+				const siteDetails = buildSiteDetails( {
+					options: {
+						...defaultSiteDetails.options,
+					},
+					plan: {
+						is_free: true,
+					},
+				} );
+				renderSidebar( freeFlowProps, siteDetails );
+
+				const domainUpsellTaskFreeFlow = screen.queryByText( 'Choose a domain' );
+				const domainUpsellTaskBadgeFreeFlow = screen.queryByText( 'Upgrade plan' );
+				expect( domainUpsellTaskFreeFlow ).toBeVisible();
+				expect( domainUpsellTaskBadgeFreeFlow ).toBeVisible();
+			} );
+
+			it( 'displays the upgrade plan badge on the "Choose a domain" task for write flow', () => {
+				const writeFlowProps = { ...props, flow: 'write' };
+
+				const siteDetails = buildSiteDetails( {
+					options: {
+						...defaultSiteDetails.options,
+					},
+					plan: {
+						is_free: true,
+					},
+				} );
+				renderSidebar( writeFlowProps, siteDetails );
+
+				const domainUpsellTaskFreeFlow = screen.queryByText( 'Choose a domain' );
+				const domainUpsellTaskBadgeFreeFlow = screen.queryByText( 'Upgrade plan' );
+				expect( domainUpsellTaskFreeFlow ).toBeVisible();
+				expect( domainUpsellTaskBadgeFreeFlow ).toBeVisible();
+			} );
+
+			it( 'displays the upgrade plan badge on the "Choose a domain" task for build flow', () => {
+				const buildFlowProps = { ...props, flow: 'build' };
+
+				const siteDetails = buildSiteDetails( {
+					options: {
+						...defaultSiteDetails.options,
+					},
+					plan: {
+						is_free: true,
+					},
+				} );
+				renderSidebar( buildFlowProps, siteDetails );
+
+				const domainUpsellTaskFreeFlow = screen.queryByText( 'Choose a domain' );
+				const domainUpsellTaskBadgeFreeFlow = screen.queryByText( 'Upgrade plan' );
+				expect( domainUpsellTaskFreeFlow ).toBeVisible();
+				expect( domainUpsellTaskBadgeFreeFlow ).toBeVisible();
+			} );
+		} );
+
+		describe( 'and the site is on a paid plan', () => {
+			it( 'does not display the upgrade plan badge on the "Choose a domain" task for free flow', () => {
+				const freeFlowProps = { ...props, flow: 'free' };
+				const siteDetails = buildSiteDetails( {
+					options: {
+						...defaultSiteDetails.options,
+					},
+					plan: {
+						is_free: false,
+					},
+				} );
+				renderSidebar( freeFlowProps, siteDetails );
+
+				const domainUpsellTask = screen.queryByText( 'Choose a domain' );
+				const domainUpsellTaskBadge = screen.queryByText( 'Upgrade plan' );
+				expect( domainUpsellTask ).toBeVisible();
+				expect( domainUpsellTaskBadge ).toBeNull();
+			} );
+
+			it( 'does not display the upgrade plan badge on the "Choose a domain" task for write flow', () => {
+				const writeFlowProps = { ...props, flow: 'write' };
+				const siteDetails = buildSiteDetails( {
+					options: {
+						...defaultSiteDetails.options,
+					},
+					plan: {
+						is_free: false,
+					},
+				} );
+				renderSidebar( writeFlowProps, siteDetails );
+
+				const domainUpsellTask = screen.queryByText( 'Choose a domain' );
+				const domainUpsellTaskBadge = screen.queryByText( 'Upgrade plan' );
+				expect( domainUpsellTask ).toBeVisible();
+				expect( domainUpsellTaskBadge ).toBeNull();
+			} );
+
+			it( 'does not display the upgrade plan badge on the "Choose a domain" task for build flow', () => {
+				const buildFlowProps = { ...props, flow: 'build' };
+				const siteDetails = buildSiteDetails( {
+					options: {
+						...defaultSiteDetails.options,
+					},
+					plan: {
+						is_free: false,
+					},
+				} );
+				renderSidebar( buildFlowProps, siteDetails );
+
+				const domainUpsellTask = screen.queryByText( 'Choose a domain' );
+				const domainUpsellTaskBadge = screen.queryByText( 'Upgrade plan' );
+				expect( domainUpsellTask ).toBeVisible();
+				expect( domainUpsellTaskBadge ).toBeNull();
 			} );
 		} );
 	} );
