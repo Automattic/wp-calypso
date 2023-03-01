@@ -2,6 +2,7 @@ import { ConfettiAnimation, Gridicon } from '@automattic/components';
 import { Button, Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import { omitUrlParams } from 'calypso/lib/url';
 
 import './celebrate-launch-modal.scss';
 
@@ -14,7 +15,7 @@ function CelebrateLaunchModal( { setModalIsOpen, site } ) {
 		window.history.replaceState(
 			null,
 			'',
-			window.location.href.replace( '&celebrateLaunch=true', '' )
+			omitUrlParams( window.location.href, 'celebrateLaunch' )
 		);
 	}, [] );
 
