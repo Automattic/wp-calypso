@@ -148,7 +148,7 @@ const DateRangeInputsWithValidation = ( {
 	return (
 		<FormFieldset className="date-range__date-inputs">
 			<legend className="date-range__date-inputs-legend">
-				{ translate( 'Start and End Dates' ) }
+				{ translate( 'Start and end dates' ) }
 			</legend>
 			<div className="date-range__date-inputs-inner">
 				<div className="date-range__date-input date-range__date-input--from">
