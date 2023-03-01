@@ -255,8 +255,8 @@ const WebServerLogsCard = ( props ) => {
 
 	const onValidateInputs = useCallback(
 		( start, end ) => {
-			const startMoment = moment( start, localeDateFormat )?.startOf( 'day' );
-			const endMoment = moment( end, localeDateFormat )?.endOf( 'day' );
+			const startMoment = moment( start, localeDateFormat );
+			const endMoment = moment( end, localeDateFormat );
 			const startDateIsValid = startMoment.isValid();
 			const endDateIsValid = endMoment.isValid();
 
@@ -280,7 +280,7 @@ const WebServerLogsCard = ( props ) => {
 				return [ startValidatorResults, endValidatorResults ];
 			}
 
-			if ( ! startMoment.isBefore( endMoment ) ) {
+			if ( startMoment.isAfter( endMoment ) ) {
 				startValidatorResults = {
 					isValid: false,
 					validationInfo: translate( 'Start date must be earlier than end date.' ),
