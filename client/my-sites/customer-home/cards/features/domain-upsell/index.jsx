@@ -13,50 +13,49 @@ import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { addQueryArgs } from 'calypso/lib/url';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
-import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import { getCurrentUser, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
-import { getDomainsBySite, getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import { getSite, getSiteBySlug } from 'calypso/state/sites/selectors';
+import { getDomainsBySite } from 'calypso/state/sites/domains/selectors';
+import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 import './style.scss';
 
 export default function DomainUpsell( { context } ) {
 	const isProfileUpsell = context === 'profile';
-	const user = useSelector( ( state ) => getCurrentUser( state ) );
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
-	const primarySiteSlug = useSelector( ( state ) => getPrimarySiteSlug( state ) );
-	const isEmailVerified = useSelector( ( state ) => isCurrentUserEmailVerified( state ) );
-	const primarySite = useSelector( ( state ) =>
-		getSiteBySlug( state, isProfileUpsell ? primarySiteSlug : site.slug )
-	);
-	const siteDomains = useSelector( ( state ) =>
-		getDomainsBySite( state, isProfileUpsell ? primarySite : site )
-	);
-	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
 
-	if (
-		siteDomains.length > 1 ||
-		! isEmailVerified ||
-		! isFreePlanProduct( isProfileUpsell ? primarySite.plan : site.plan )
-	) {
-		return null;
+	const user = useSelector( getCurrentUser );
+	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
+	const selectedSite = useSelector( getSelectedSite );
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const primarySiteSlug = useSelector( getPrimarySiteSlug );
+	const primarySite = useSelector( ( state ) => getSiteBySlug( state, primarySiteSlug ) );
+	const siteDomainsLength = useSelector(
+		( state ) => getDomainsBySite( state, isProfileUpsell ? primarySite : selectedSite ).length
+	);
+
+	const sitePlan = isProfileUpsell ? primarySite?.plan : selectedSite?.plan;
+
+	const shouldNotShowProfileUpsell =
+		isProfileUpsell &&
+		( user.site_count !== 1 || isFreePlanProduct( sitePlan ) || siteDomainsLength !== 0 );
+
+	const shouldNotShowMyHomeUpsell =
+		! isProfileUpsell &&
+		( siteDomainsLength > 1 || ! isEmailVerified || ! isFreePlanProduct( sitePlan ) );
+
+	if ( shouldNotShowProfileUpsell || shouldNotShowMyHomeUpsell ) {
+		// return null;
 	}
-	console.log( user );
-	let searchTerm = user?.display_name;
-	if ( ! isProfileUpsell && siteSlug ) {
-		searchTerm = siteSlug?.split( '.' )[ 0 ];
-	}
-	console.log( 'searchTerm', searchTerm );
+
+	const searchTerm = isProfileUpsell ? user?.display_name : selectedSiteSlug?.split( '.' )[ 0 ];
 
 	return (
 		<CalypsoShoppingCartProvider>
 			<RenderDomainUpsell
 				isProfileUpsell={ isProfileUpsell }
 				searchTerm={ searchTerm }
-				siteSlug={ isProfileUpsell ? primarySiteSlug : siteSlug }
+				siteSlug={ isProfileUpsell ? primarySiteSlug : selectedSiteSlug }
 			/>
 		</CalypsoShoppingCartProvider>
 	);
@@ -64,6 +63,8 @@ export default function DomainUpsell( { context } ) {
 
 export function RenderDomainUpsell( { isProfileUpsell, searchTerm, siteSlug } ) {
 	const translate = useTranslate();
+
+	const tracksContext = isProfileUpsell ? 'profile' : 'my-home';
 
 	const locale = useLocale();
 	const { allDomainSuggestions } =
@@ -79,7 +80,7 @@ export function RenderDomainUpsell( { isProfileUpsell, searchTerm, siteSlug } ) 
 		( suggestion ) => ! suggestion.is_free
 	)[ 0 ];
 
-	// It takes awhile to suggest a domain name. Set a default to empty string.
+	// It takes awhile to suggest a domain name. Set a default to an empty string.
 	const domainSuggestionName = domainSuggestion?.domain_name ?? '';
 
 	const domainSuggestionProductSlug = domainSuggestion?.product_slug;
@@ -92,7 +93,7 @@ export function RenderDomainUpsell( { isProfileUpsell, searchTerm, siteSlug } ) 
 		`/domains/add/${ siteSlug }`
 	);
 	const getSearchClickHandler = () => {
-		recordTracksEvent( 'calypso_my_home_domain_upsell_search_click', {
+		recordTracksEvent( 'calypso_' + tracksContext + '_domain_upsell_search_click', {
 			button_url: searchLink,
 			domain_suggestion: domainSuggestionName,
 			product_slug: domainSuggestionProductSlug,
@@ -109,7 +110,7 @@ export function RenderDomainUpsell( { isProfileUpsell, searchTerm, siteSlug } ) 
 	const [ ctaIsBusy, setCtaIsBusy ] = useState( false );
 	const getCtaClickHandler = async () => {
 		setCtaIsBusy( true );
-		recordTracksEvent( 'calypso_my_home_domain_upsell_cta_click', {
+		recordTracksEvent( 'calypso_' + tracksContext + '_domain_upsell_cta_click', {
 			button_url: purchaseLink,
 			domain_suggestion: domainSuggestionName,
 			product_slug: domainSuggestionProductSlug,
@@ -131,7 +132,7 @@ export function RenderDomainUpsell( { isProfileUpsell, searchTerm, siteSlug } ) 
 
 	return (
 		<Card className="domain-upsell__card customer-home__card">
-			<TrackComponentView eventName="calypso_my_home_domain_upsell_impression" />
+			<TrackComponentView eventName={ 'calypso_' + tracksContext + '_domain_upsell_impression' } />
 			<div>
 				<h3>{ translate( 'Own your online identity with a custom domain' ) }</h3>
 				<p>
