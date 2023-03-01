@@ -34,16 +34,15 @@ $mobile-icon-height: 175px;
 		margin-bottom: 15px;
 		width: $mobile-icon-height;
 		height: $mobile-icon-height;
+		flex-shrink: 0;
 	}
 }
 
 .plugin-details-header__title-container {
 	margin-top: 30px;
-	width: auto;
 
 	@include break-mobile {
 		margin-top: 0;
-		width: calc(100% - 72px - 20px); // full width - icon width - icon margin
 	}
 }
 
