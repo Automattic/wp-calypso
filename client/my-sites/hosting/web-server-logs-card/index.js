@@ -242,11 +242,11 @@ const WebServerLogsCard = ( props ) => {
 
 	const logTypes = [
 		{
-			label: translate( 'PHP error' ),
+			label: translate( 'PHP error logs' ),
 			value: 'php',
 		},
 		{
-			label: translate( 'Web request' ),
+			label: translate( 'Web request logs' ),
 			value: 'web',
 		},
 	];
