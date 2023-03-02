@@ -109,7 +109,7 @@ const ProductLightbox: React.FC< Props > = ( {
 		} ) );
 	}, [ product.productSlug ] );
 
-	const shouldShowOptions = variantOptions.length;
+	const shouldShowOptions = variantOptions.length > 1;
 
 	const isMultiSiteIncompatible = isMultisite && ! getIsMultisiteCompatible( product );
 
