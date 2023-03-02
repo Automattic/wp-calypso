@@ -11,8 +11,8 @@ export function GitHubCardHeading() {
 			{ /* Element ID allows direct linking from the /sites page */ }
 			<CardHeading id="connect-github">
 				{ translate( 'Deploy from GitHub' ) }
-				<Badge className="github-hosting-heading-badge" type="info-purple">
-					Beta
+				<Badge className="github-hosting-heading-badge" type="info">
+					{ translate( 'beta' ) }
 				</Badge>
 			</CardHeading>
 		</>
