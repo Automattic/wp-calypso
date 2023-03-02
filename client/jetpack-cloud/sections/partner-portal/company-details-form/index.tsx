@@ -222,9 +222,8 @@ export default function CompanyDetailsForm( {
 						/>
 					</FormFieldset>
 				) }
-
+				<FormLabel>{ translate( 'Country' ) }</FormLabel>
 				<ComboboxControl
-					label="Country - New"
 					value={ fontSize }
 					onChange={ setFontSize }
 					options={ countryOptions }
@@ -236,6 +235,24 @@ export default function CompanyDetailsForm( {
 						)
 					}
 				/>
+
+				{ showCountryFields && stateOptions && fontSize && (
+					<FormFieldset>
+						<FormLabel>{ translate( 'State - New' ) }</FormLabel>
+						<ComboboxControl
+							value={ state }
+							onChange={ setFontSize }
+							options={ stateOptions }
+							onFilterValueChange={ ( inputValue ) =>
+								setFilteredOptions(
+									options.filter( ( option ) =>
+										option.label.toLowerCase().startsWith( inputValue.toLowerCase() )
+									)
+								)
+							}
+						/>
+					</FormFieldset>
+				) }
 
 				<FormFieldset className="company-details-form__business-address">
 					<FormLabel>{ translate( 'Business address' ) }</FormLabel>
