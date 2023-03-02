@@ -91,8 +91,10 @@ HTML;
  */
 function happyblocks_pricing_plans_normalize_translations_relative_path( $relative, $src ) {
 	// Rewrite our CDN path to a relative path to calculate the right filename.
-	if ( preg_match( '#https?://s[0123]\.wp\.com/wp-content/a8c-plugins/happy-blocks/(block-library.*\.js)#', $src, $m ) ) {
-		return $m[1];
+	if ( preg_match( '#https?://s[0123]\.wp\.com/wp-content/a8c-plugins/happy-blocks/(.*\.js)#', $src, $m ) ) {
+		// Fix the path to support `yarn dev --sync`.
+		$relative = str_replace( 'build/', '', $m[1] );
+		return $relative;
 	}
 	return $relative;
 }
@@ -111,10 +113,9 @@ function happyblocks_pricing_plans_normalize_translations_filepath( $file, $hand
 	}
 	// Fix the filepath to use the correct location for the translation file.
 	if ( 'happy-blocks' === $domain ) {
-		$languages_path = '/home/wpcom/public_html/wp-content/languages/';
-		$old_path       = $languages_path . 'happy-blocks';
-		$new_path       = $languages_path . 'a8c-plugins/happy-blocks';
-		$file           = str_replace( $old_path, $new_path, $file );
+		$old_path = WP_LANG_DIR . 'happy-blocks';
+		$new_path = WP_LANG_DIR . 'a8c-plugins/happy-blocks';
+		$file     = str_replace( $old_path, $new_path, $file );
 	}
 	return $file;
 }
