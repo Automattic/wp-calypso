@@ -20,7 +20,7 @@ import {
 	Ga4PropertyGtag,
 } from './google-analytics-4';
 import { loadTrackingScripts } from './load-tracking-scripts';
-import { isWooExpressUpgrade } from './woo/is-wooexpress-upgrade';
+import { initWooGTMContainer, isWooExpressUpgrade, loadWooGTMContainer } from './woo';
 
 // Ensure setup has run.
 import './setup';
@@ -558,26 +558,34 @@ function recordOrderInWooGTM( cart, orderId, selectedSiteData ) {
 	) {
 		return;
 	}
-	// The structure of the dataLayer item: event: string, eventName: string, obj: {string: any}.
-	const purchaseEventMeta = [
-		'event',
-		'purchase',
-		{
-			send_to: TRACKING_IDS.wooGoogleTagManagerId,
-			coupon: cart.coupon?.toString() ?? '',
-			transaction_id: orderId,
-			currency: 'USD',
-			items: cart.products.map( ( { product_id, product_name, cost, volume } ) => ( {
-				id: product_id.toString(),
-				name: product_name.toString(),
-				quantity: parseInt( volume ),
-				price: costToUSD( cost, cart.currency ) ?? 0,
-				billing_term: cart.billing?.interval_unit,
-			} ) ),
-			value: cart.total_cost_integer / 100,
-		},
-	];
-	window.dataLayer.push( purchaseEventMeta );
+	loadWooGTMContainer()
+		.then( () => initWooGTMContainer() )
+		.then( () => {
+			debug(
+				`recordOrderInWooGTM: Initialized GTM container ${ TRACKING_IDS.wooGoogleTagManagerId }`
+			);
+			const purchaseEventMeta = {
+				event: 'purchase',
+				ecommerce: {
+					coupon: cart.coupon?.toString() ?? '',
+					transaction_id: orderId,
+					currency: 'USD',
+					items: cart.products.map( ( { product_id, product_name, cost, volume } ) => ( {
+						id: product_id.toString(),
+						name: product_name.toString(),
+						quantity: parseInt( volume ),
+						price: costToUSD( cost, cart.currency ) ?? 0,
+						billing_term: cart.billing?.interval_unit,
+					} ) ),
+					value: cart.total_cost_integer / 100,
+				},
+			};
+
+			window.dataLayer.push( purchaseEventMeta );
+		} )
+		.catch( ( error ) => {
+			debug( 'recordOrderInWooGTM: Error loading GTM container', error );
+		} );
 }
 
 /**

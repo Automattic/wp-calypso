@@ -74,11 +74,6 @@ if ( typeof window !== 'undefined' ) {
 	if ( mayWeInitTracker( 'adroll' ) ) {
 		setupAdRollGlobal();
 	}
-
-	// Google Tag Manager
-	if ( mayWeInitTracker( 'googleTagManager' ) ) {
-		setupGoogleTagManager();
-	}
 }
 
 /**
@@ -226,18 +221,5 @@ function setupWpcomFloodlightGtag() {
 
 	if ( mayWeTrackByTracker( 'floodlight' ) ) {
 		window.gtag( 'config', TRACKING_IDS.wpcomFloodlightGtag );
-	}
-}
-
-function setupGoogleTagManager() {
-	if ( window.google_tag_manager && window.dataLayer ) {
-		return;
-	}
-	if ( mayWeTrackByTracker( 'googleTagManager' ) ) {
-		window.dataLayer = window.dataLayer || [];
-		window.google_tag_manager = function () {
-			window.dataLayer.push( arguments );
-		};
-		window.google_tag_manager( 'gtm.start', new Date() );
 	}
 }
