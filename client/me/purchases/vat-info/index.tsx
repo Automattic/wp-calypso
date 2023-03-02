@@ -1,5 +1,5 @@
 import { CompactCard, Button, Card } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useEffect, useState, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
@@ -25,13 +25,44 @@ export default function VatInfoPage() {
 
 	useRecordVatEvents( { fetchError } );
 
+	let errorText = translate( 'An error occurred while fetching Business Tax ID details.' );
+	if (
+		getLocaleSlug() !== 'en' ||
+		getLocaleSlug() !== 'en-gb' ||
+		! i18n.hasTranslation( 'An error occurred while fetching Business Tax ID details.' )
+	) {
+		errorText = translate( 'An error occurred while fetching VAT details.' );
+	}
+
 	if ( fetchError ) {
 		return (
 			<div className="vat-info">
-				<CompactCard>
-					{ translate( 'An error occurred while fetching Business Tax ID details.' ) }
-				</CompactCard>
+				<CompactCard>{ errorText }</CompactCard>
 			</div>
+		);
+	}
+
+	let headerText = translate( 'Business Tax ID details' );
+	if (
+		getLocaleSlug() !== 'en' ||
+		getLocaleSlug() !== 'en-gb' ||
+		! i18n.hasTranslation( 'Business Tax ID details' )
+	) {
+		headerText = translate( 'VAT Information' );
+	}
+
+	let sidebarText = translate(
+		"We currently only provide Business Tax ID invoices to users who are properly registered. Business Tax ID information saved on this page will be applied to all of your account's receipts."
+	);
+	if (
+		getLocaleSlug() !== 'en' ||
+		getLocaleSlug() !== 'en-gb' ||
+		! i18n.hasTranslation(
+			"We currently only provide Business Tax ID invoices to users who are properly registered. Business Tax ID information saved on this page will be applied to all of your account's receipts."
+		)
+	) {
+		sidebarText = translate(
+			"We currently only provide VAT invoices to users who are properly listed in the VIES (VAT Information Exchange System) or the UK VAT databases. VAT information saved on this page will be applied to all of your account's receipts."
 		);
 	}
 
@@ -46,13 +77,9 @@ export default function VatInfoPage() {
 			<Column type="sidebar">
 				<Card className="vat-info__sidebar-card">
 					<CardHeading tagName="h1" size={ 16 } isBold={ true } className="vat-info__sidebar-title">
-						{ translate( 'Business Tax ID details' ) }
+						{ headerText }
 					</CardHeading>
-					<p className="vat-info__sidebar-paragraph">
-						{ translate(
-							"We currently only provide Business Tax ID invoices to users who are properly registered. Business Tax ID information saved on this page will be applied to all of your account's receipts."
-						) }
-					</p>
+					<p className="vat-info__sidebar-paragraph">{ sidebarText }</p>
 				</Card>
 			</Column>
 		</Layout>
@@ -80,6 +107,44 @@ function VatForm() {
 
 	const isVatAlreadySet = !! vatDetails.id;
 
+	let vatNumberHeader = translate( 'Business Tax ID Number' );
+	if (
+		getLocaleSlug() !== 'en' ||
+		getLocaleSlug() !== 'en-gb' ||
+		! i18n.hasTranslation( 'Business Tax ID Number' )
+	) {
+		vatNumberHeader = translate( 'VAT Number' );
+	}
+
+	let vatNumberWarning = translate(
+		'To change your Business Tax ID number, {{contactSupportLink}}please contact support{{/contactSupportLink}}.',
+		{
+			components: {
+				contactSupportLink: (
+					<a target="_blank" href={ CALYPSO_CONTACT } rel="noreferrer" onClick={ clickSupport } />
+				),
+			},
+		}
+	);
+	if (
+		getLocaleSlug() !== 'en' ||
+		getLocaleSlug() !== 'en-gb' ||
+		! i18n.hasTranslation(
+			'To change your Business Tax ID number, {{contactSupportLink}}please contact support{{/contactSupportLink}}.'
+		)
+	) {
+		vatNumberWarning = translate(
+			'To change your VAT number, {{contactSupportLink}}please contact support{{/contactSupportLink}}.',
+			{
+				components: {
+					contactSupportLink: (
+						<a target="_blank" href={ CALYPSO_CONTACT } rel="noreferrer" onClick={ clickSupport } />
+					),
+				},
+			}
+		);
+	}
+
 	return (
 		<>
 			<FormFieldset className="vat-info__country-field">
@@ -94,7 +159,7 @@ function VatForm() {
 				/>
 			</FormFieldset>
 			<FormFieldset className="vat-info__vat-field">
-				<FormLabel htmlFor="vat">{ translate( 'Business Tax ID Number' ) }</FormLabel>
+				<FormLabel htmlFor="vat">{ vatNumberHeader }</FormLabel>
 				<FormTextInput
 					name="vat"
 					disabled={ isUpdating || isVatAlreadySet }
@@ -103,25 +168,7 @@ function VatForm() {
 						setCurrentVatDetails( { ...currentVatDetails, id: event.target.value } )
 					}
 				/>
-				{ isVatAlreadySet && (
-					<FormSettingExplanation>
-						{ translate(
-							'To change your Business Tax ID number, {{contactSupportLink}}please contact support{{/contactSupportLink}}.',
-							{
-								components: {
-									contactSupportLink: (
-										<a
-											target="_blank"
-											href={ CALYPSO_CONTACT }
-											rel="noreferrer"
-											onClick={ clickSupport }
-										/>
-									),
-								},
-							}
-						) }
-					</FormSettingExplanation>
-				) }
+				{ isVatAlreadySet && <FormSettingExplanation>{ vatNumberWarning }</FormSettingExplanation> }
 			</FormFieldset>
 			<FormFieldset className="vat-info__name-field">
 				<FormLabel htmlFor="name">{ translate( 'Name' ) }</FormLabel>
@@ -233,31 +280,58 @@ function useDisplayVatNotices( {
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 
+	let vatFailedMessage = translate(
+		'Your Business Tax ID details are not valid. Please check each field and try again.'
+	);
+	if (
+		getLocaleSlug() !== 'en' ||
+		getLocaleSlug() !== 'en-gb' ||
+		! i18n.hasTranslation(
+			'Your Business Tax ID details are not valid. Please check each field and try again.'
+		)
+	) {
+		vatFailedMessage = translate(
+			'Your VAT details are not valid. Please check each field and try again.'
+		);
+	}
+
+	let vatUpdateError = translate(
+		'An error occurred while updating your Business Tax ID details. Please try again or contact support.'
+	);
+	if (
+		getLocaleSlug() !== 'en' ||
+		getLocaleSlug() !== 'en-gb' ||
+		! i18n.hasTranslation(
+			'An error occurred while updating your Business Tax ID details. Please try again or contact support.'
+		)
+	) {
+		vatUpdateError = translate(
+			'An error occurred while updating your VAT details. Please try again or contact support.'
+		);
+	}
+
+	const vatSuccessNotice = translate( 'Your Business Tax ID details have been updated!' );
+	if (
+		getLocaleSlug() !== 'en' ||
+		getLocaleSlug() !== 'en-gb' ||
+		! i18n.hasTranslation( 'Your Business Tax ID details have been updated!' )
+	) {
+		vatUpdateError = translate( 'Your VAT details have been updated!' );
+	}
+
 	useEffect( () => {
 		if ( error?.error === 'validation_failed' ) {
 			reduxDispatch( removeNotice( 'vat_info_notice' ) );
-			reduxDispatch(
-				errorNotice(
-					translate(
-						'Your Business Tax ID details are not valid. Please check each field and try again.'
-					),
-					{ id: 'vat_info_notice' }
-				)
-			);
+			reduxDispatch( errorNotice( vatFailedMessage, { id: 'vat_info_notice' } ) );
 			return;
 		}
 
 		if ( error ) {
 			reduxDispatch( removeNotice( 'vat_info_notice' ) );
 			reduxDispatch(
-				errorNotice(
-					translate(
-						'An error occurred while updating your Business Tax ID details. Please try again or contact support.'
-					),
-					{
-						id: 'vat_info_notice',
-					}
-				)
+				errorNotice( vatUpdateError, {
+					id: 'vat_info_notice',
+				} )
 			);
 			return;
 		}
@@ -265,13 +339,21 @@ function useDisplayVatNotices( {
 		if ( success ) {
 			reduxDispatch( removeNotice( 'vat_info_notice' ) );
 			reduxDispatch(
-				successNotice( translate( 'Your Business Tax ID details have been updated!' ), {
+				successNotice( vatSuccessNotice, {
 					id: 'vat_info_notice',
 				} )
 			);
 			return;
 		}
-	}, [ error, success, reduxDispatch, translate ] );
+	}, [
+		error,
+		success,
+		reduxDispatch,
+		translate,
+		vatFailedMessage,
+		vatSuccessNotice,
+		vatUpdateError,
+	] );
 }
 
 function useRecordVatEvents( {

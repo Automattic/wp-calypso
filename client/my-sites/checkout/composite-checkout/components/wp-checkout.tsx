@@ -22,7 +22,7 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled } from '@automattic/wpcom-checkout';
 import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import MaterialIcon from 'calypso/components/material-icon';
@@ -308,6 +308,21 @@ export default function WPCheckout( {
 
 	const isDIFMInCart = hasDIFMProduct( responseCart );
 
+	let vatFailedMessage = translate(
+		'Your Business Tax ID details are not valid. Please check each field and try again.'
+	);
+	if (
+		getLocaleSlug() !== 'en' ||
+		getLocaleSlug() !== 'en-gb' ||
+		! i18n.hasTranslation(
+			'Your Business Tax ID details are not valid. Please check each field and try again.'
+		)
+	) {
+		vatFailedMessage = translate(
+			'Your VAT details are not valid. Please check each field and try again.'
+		);
+	}
+
 	return (
 		<CheckoutStepGroup
 			stepAreaHeader={
@@ -392,14 +407,7 @@ export default function WPCheckout( {
 							} catch ( error ) {
 								reduxDispatch( removeNotice( 'vat_info_notice' ) );
 								if ( shouldShowContactDetailsValidationErrors ) {
-									reduxDispatch(
-										errorNotice(
-											translate(
-												'Your Business Tax ID details are not valid. Please check each field and try again.'
-											),
-											{ id: 'vat_info_notice' }
-										)
-									);
+									reduxDispatch( errorNotice( vatFailedMessage, { id: 'vat_info_notice' } ) );
 								}
 								return false;
 							}

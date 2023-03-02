@@ -1,4 +1,4 @@
-import i18n from 'i18n-calypso';
+import i18n, { getLocaleSlug } from 'i18n-calypso';
 
 const titles = {
 	addCreditCard: i18n.translate( 'Add Credit Card' ),
@@ -56,7 +56,17 @@ Object.defineProperties( titles, {
 		get: () => i18n.translate( 'Payment Methods' ),
 	},
 	vatDetails: {
-		get: () => i18n.translate( 'Business Tax ID details' ),
+		get: () => {
+			if (
+				getLocaleSlug() !== 'en' ||
+				getLocaleSlug() !== 'en-gb' ||
+				! i18n.hasTranslation( 'Business Tax ID details' )
+			) {
+				return i18n.translate( 'VAT Details' );
+			}
+
+			return i18n.translate( 'Business Tax ID details' );
+		},
 	},
 } );
 

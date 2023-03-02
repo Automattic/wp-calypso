@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { CompactCard, Card } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryBillingTransactions from 'calypso/components/data/query-billing-transactions';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -32,8 +32,16 @@ export function BillingHistoryContent( {
 function BillingHistory() {
 	const translate = useTranslate();
 	const { vatDetails } = useVatDetails();
-	const editVatText = translate( 'Edit Business Tax ID details' );
-	const addVatText = translate( 'Add Business Tax ID details' );
+	let editVatText = translate( 'Edit Business Tax ID details' );
+	let addVatText = translate( 'Add Business Tax ID details' );
+	if (
+		getLocaleSlug() !== 'en' ||
+		getLocaleSlug() !== 'en-gb' ||
+		! i18n.hasTranslation( 'Edit Business Tax ID details' )
+	) {
+		editVatText = translate( 'Edit VAT details (for Europe only)' );
+		addVatText = translate( 'Add VAT details (for Europe only)' );
+	}
 	const vatText = vatDetails.id ? editVatText : addVatText;
 
 	return (

@@ -1,7 +1,7 @@
 import { Field } from '@automattic/wpcom-checkout';
 import { CheckboxControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -183,6 +183,79 @@ export function VatForm( {
 		reduxDispatch( recordTracksEvent( 'calypso_vat_details_support_click' ) );
 	};
 
+	let vatButtonText = translate( 'Add Business Tax ID details' );
+	if (
+		getLocaleSlug() !== 'en' ||
+		getLocaleSlug() !== 'en-gb' ||
+		! i18n.hasTranslation( 'Add Business Tax ID details' )
+	) {
+		vatButtonText = translate( 'Add VAT details' );
+	}
+
+	let northernIrelandText = translate( 'Is the tax ID for Northern Ireland?' );
+	if (
+		getLocaleSlug() !== 'en' ||
+		getLocaleSlug() !== 'en-gb' ||
+		! i18n.hasTranslation( 'Is the VAT for Northern Ireland?' )
+	) {
+		northernIrelandText = translate( 'Add VAT details' );
+	}
+
+	let vatOrgLabel = translate( 'Organization for tax ID' );
+	if (
+		getLocaleSlug() !== 'en' ||
+		getLocaleSlug() !== 'en-gb' ||
+		! i18n.hasTranslation( 'Organization for tax ID' )
+	) {
+		vatOrgLabel = translate( 'Organization for VAT' );
+	}
+
+	let vatNumberHeader = translate( 'Business Tax ID Number' );
+	if (
+		getLocaleSlug() !== 'en' ||
+		getLocaleSlug() !== 'en-gb' ||
+		! i18n.hasTranslation( 'Business Tax ID Number' )
+	) {
+		vatNumberHeader = translate( 'VAT Number' );
+	}
+	let vatAddressLabel = translate( 'Address for tax ID' );
+	if (
+		getLocaleSlug() !== 'en' ||
+		getLocaleSlug() !== 'en-gb' ||
+		! i18n.hasTranslation( 'Address for tax ID' )
+	) {
+		vatAddressLabel = translate( 'Address for VAT' );
+	}
+
+	let vatNumberWarning = translate(
+		'To change your Business Tax ID number, {{contactSupportLink}}please contact support{{/contactSupportLink}}.',
+		{
+			components: {
+				contactSupportLink: (
+					<a target="_blank" href={ CALYPSO_CONTACT } rel="noreferrer" onClick={ clickSupport } />
+				),
+			},
+		}
+	);
+	if (
+		getLocaleSlug() !== 'en' ||
+		getLocaleSlug() !== 'en-gb' ||
+		! i18n.hasTranslation(
+			'To change your Business Tax ID number, {{contactSupportLink}}please contact support{{/contactSupportLink}}.'
+		)
+	) {
+		vatNumberWarning = translate(
+			'To change your VAT number, {{contactSupportLink}}please contact support{{/contactSupportLink}}.',
+			{
+				components: {
+					contactSupportLink: (
+						<a target="_blank" href={ CALYPSO_CONTACT } rel="noreferrer" onClick={ clickSupport } />
+					),
+				},
+			}
+		);
+	}
+
 	if ( ! isFormActive ) {
 		return (
 			<div className="vat-form__row">
@@ -190,7 +263,7 @@ export function VatForm( {
 					className="vat-form__expand-button"
 					checked={ isFormActive }
 					onChange={ toggleVatForm }
-					label={ translate( 'Add Business Tax ID details' ) }
+					label={ vatButtonText }
 					disabled={ isDisabled }
 				/>
 			</div>
@@ -204,7 +277,7 @@ export function VatForm( {
 					className="vat-form__expand-button"
 					checked={ isFormActive }
 					onChange={ toggleVatForm }
-					label={ translate( 'Add Business Tax ID details' ) }
+					label={ vatButtonText }
 					disabled={ isDisabled || Boolean( vatDetailsFromServer.id ) }
 				/>
 				{ countryCode === 'GB' && (
@@ -212,7 +285,7 @@ export function VatForm( {
 						className="vat-form__expand-button"
 						checked={ vatDetailsInForm.country === 'XI' }
 						onChange={ toggleNorthernIreland }
-						label={ translate( 'Is the tax ID for Northern Ireland?' ) }
+						label={ northernIrelandText }
 						disabled={ isDisabled }
 					/>
 				) }
@@ -221,7 +294,7 @@ export function VatForm( {
 				<Field
 					id={ section + '-vat-organization' }
 					type="text"
-					label={ String( translate( 'Organization for tax ID' ) ) }
+					label={ String( vatOrgLabel ) }
 					value={ vatDetailsInForm.name ?? '' }
 					disabled={ isDisabled }
 					onChange={ ( newValue: string ) => {
@@ -234,7 +307,7 @@ export function VatForm( {
 				<Field
 					id={ section + '-vat-id' }
 					type="text"
-					label={ String( translate( 'Business Tax ID Number' ) ) }
+					label={ String( vatNumberHeader ) }
 					value={ vatDetailsInForm.id ?? '' }
 					disabled={ isDisabled || Boolean( vatDetailsFromServer.id ) }
 					onChange={ ( newValue: string ) => {
@@ -249,7 +322,7 @@ export function VatForm( {
 				<Field
 					id={ section + '-vat-address' }
 					type="text"
-					label={ String( translate( 'Address for tax ID' ) ) }
+					label={ String( vatAddressLabel ) }
 					value={ vatDetailsInForm.address ?? '' }
 					autoComplete="address"
 					disabled={ isDisabled }
@@ -263,23 +336,7 @@ export function VatForm( {
 			</div>
 			{ vatDetailsFromServer.id && (
 				<div>
-					<FormSettingExplanation>
-						{ translate(
-							'To change your Business Tax ID number, {{contactSupportLink}}please contact support{{/contactSupportLink}}.',
-							{
-								components: {
-									contactSupportLink: (
-										<a
-											target="_blank"
-											href={ CALYPSO_CONTACT }
-											rel="noreferrer"
-											onClick={ clickSupport }
-										/>
-									),
-								},
-							}
-						) }
-					</FormSettingExplanation>
+					<FormSettingExplanation>{ vatNumberWarning }</FormSettingExplanation>
 				</div>
 			) }
 		</>
