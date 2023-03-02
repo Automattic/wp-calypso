@@ -6,7 +6,7 @@ import {
 import { WPCOM_FEATURES_BACKUPS } from '@automattic/calypso-products/src';
 import { SUPPORT_HAPPYCHAT } from '@automattic/help-center';
 import { Button as GutenbergButton, CheckboxControl } from '@wordpress/components';
-import { localize } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 import { shuffle } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -670,7 +670,18 @@ class CancelPurchaseForm extends Component {
 					<BlankCanvas className="cancel-purchase-form">
 						<BlankCanvas.Header onBackClick={ this.closeDialog }>
 							{ this.getHeaderTitle() }
-							<span className="cancel-purchase-form__site-slug">{ site.slug }</span>
+							<span className="cancel-purchase-form__site-slug">
+								{ ( () => {
+									switch ( purchase.productName ) {
+										case 'Domain Connection':
+											return purchase.productName + translate( ' for ' ) + purchase.meta;
+										case 'Site Redirect':
+											return purchase.productName + translate( ' to ' ) + purchase.meta;
+										default:
+											return purchase.productName + translate( ' for ' ) + site.slug;
+									}
+								} )() }
+							</span>
 							{ shouldShowChatButton && (
 								<PrecancellationChatButton
 									icon="chat_bubble"
