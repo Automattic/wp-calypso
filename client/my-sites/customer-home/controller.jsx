@@ -1,5 +1,6 @@
 import { isEcommerce } from '@automattic/calypso-products/src';
 import page from 'page';
+import { getQueryArgs } from 'calypso/lib/query-args';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
@@ -38,7 +39,6 @@ export async function maybeRedirect( context, next ) {
 
 	const siteId = getSelectedSiteId( state );
 	const maybeStalelaunchpadScreenOption = getSiteOptions( state, siteId )?.launchpad_screen;
-	const currentUrl = window.location.href;
 
 	// We need the latest site info to determine if a user should be redirected to Launchpad.
 	// As a result, we can't use locally cached data, which might think that Launchpad is
@@ -48,7 +48,7 @@ export async function maybeRedirect( context, next ) {
 	// See https://cylonp2.wordpress.com/2022/09/19/question-about-infinite-redirect/#comment-1731
 	if (
 		( maybeStalelaunchpadScreenOption && maybeStalelaunchpadScreenOption === 'full' ) ||
-		currentUrl?.includes( 'showLaunchpad=true' )
+		getQueryArgs()?.showLaunchpad === 'true'
 	) {
 		await context.store.dispatch( requestSite( siteId ) );
 	}
@@ -58,13 +58,13 @@ export async function maybeRedirect( context, next ) {
 		refetchedOptions?.launchpad_screen === 'full' &&
 		// Temporary hack/band-aid to resolve a stale issue with atomic that the requestSite
 		// dispatch above doesnt always seem to resolve.
-		! currentUrl?.includes( 'launchpadComplete=true' );
+		! getQueryArgs()?.launchpadComplete === 'true';
 
 	if ( shouldRedirectToLaunchpad ) {
 		// The new stepper launchpad onboarding flow isn't registered within the "page"
 		// client-side router, so page.redirect won't work. We need to use the
 		// traditional window.location Web API.
-		const verifiedParam = new URLSearchParams( window.location.search ).has( 'verified' );
+		const verifiedParam = getQueryArgs()?.verified;
 		redirectToLaunchpad( slug, refetchedOptions?.site_intent, verifiedParam );
 		return;
 	}
