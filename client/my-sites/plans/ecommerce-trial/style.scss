@@ -1,3 +1,4 @@
+@import "@automattic/typography/styles/woo-commerce";
 @import "@wordpress/base-styles/breakpoints";
 
 body.is-section-plans.is-ecommerce-trial-plan {
@@ -52,12 +53,12 @@ body.is-section-plans.is-ecommerce-trial-plan {
 			flex-direction: column;
 
 			.e-commerce-trial-plans__price-card-title {
-				font-size: $font-title-medium;
+				font-size: $woo-font-title-medium;
 			}
 
 			.e-commerce-trial-plans__price-card-subtitle {
 				flex: 1;
-				font-size: $font-body-small;
+				font-size: $woo-font-body-small;
 				color: var(--color-neutral-80);
 			}
 		}
@@ -84,11 +85,11 @@ body.is-section-plans.is-ecommerce-trial-plan {
 			}
 
 			.e-commerce-trial-plans__price-card-value {
-				font-size: $font-title-large;
+				font-size: $woo-font-title-large;
 				font-weight: 500;
 
 				@media (max-width: $break-mobile) {
-					font-size: $font-headline-small;
+					font-size: $woo-font-headline-small;
 					margin-top: 30px;
 					font-weight: 400;
 				}
@@ -96,12 +97,12 @@ body.is-section-plans.is-ecommerce-trial-plan {
 
 			.e-commerce-trial-plans__price-card-interval {
 				color: var(--color-neutral-50);
-				font-size: $font-body-extra-small;
+				font-size: $woo-font-body-extra-small;
 			}
 
 			.e-commerce-trial-plans__price-card-savings {
 				color: var(--color-success-60);
-				font-size: $font-body-extra-small;
+				font-size: $woo-font-body-extra-small;
 				font-weight: 600;
 				text-transform: uppercase;
 				padding: 5px 0;

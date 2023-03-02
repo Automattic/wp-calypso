@@ -4,6 +4,20 @@ export interface Color {
 	slug: string;
 }
 
+export interface FontFamily {
+	fontFamily: string;
+	name: string;
+	slug: string;
+}
+
+export interface Typography {
+	fontFamily?: string;
+	fontSize?: string;
+	fontStyle?: string;
+	fontWeight?: string;
+	lineHeight?: string;
+}
+
 export interface GlobalStylesObject {
 	id?: number;
 	title?: string;
@@ -17,13 +31,9 @@ export interface GlobalStylesObject {
 	styles: {
 		elements?: {
 			heading: {
-				typography: {
-					fontFamily: string;
-				};
+				typography: Typography;
 			};
 		};
-		typography?: {
-			fontFamily: string;
-		};
+		typography?: Typography;
 	};
 }

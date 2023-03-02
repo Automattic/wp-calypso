@@ -4,6 +4,7 @@ export interface CountryTaxRequirements {
 	city?: true;
 	subdivision?: true;
 	organization?: true;
+	address?: true;
 }
 
 /**
@@ -46,6 +47,9 @@ export function getCountryTaxRequirements(
 	}
 	if ( countryListItem.tax_needs_organization ) {
 		requirements.organization = true;
+	}
+	if ( countryListItem.tax_needs_address ) {
+		requirements.address = true;
 	}
 	return requirements;
 }

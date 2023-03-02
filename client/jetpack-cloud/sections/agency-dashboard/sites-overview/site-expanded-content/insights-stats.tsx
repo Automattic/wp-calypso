@@ -54,30 +54,32 @@ export default function InsightsStats( { stats }: Props ) {
 
 	return (
 		<ExpandedCard header={ translate( '7 days insights stats' ) }>
-			<div className="site-expanded-content__card-content">
-				<div className="site-expanded-content__card-content-column">
-					<div className="site-expanded-content__card-content-count">
-						<ShortenedNumber value={ data.visitors } />
-						{ getTrendContent( data.visitorsTrend, data.visitorsChange ) }
+			<div className="site-expanded-content__card-content-container">
+				<div className="site-expanded-content__card-content">
+					<div className="site-expanded-content__card-content-column">
+						<div className="site-expanded-content__card-content-count">
+							<ShortenedNumber value={ data.visitors } />
+							{ getTrendContent( data.visitorsTrend, data.visitorsChange ) }
+						</div>
+						<div className="site-expanded-content__card-content-count-title">
+							{ translate( 'Visitors' ) }
+						</div>
 					</div>
-					<div className="site-expanded-content__card-content-count-title">
-						{ translate( 'Visitors' ) }
+					<div className="site-expanded-content__card-content-column">
+						<div className="site-expanded-content__card-content-count">
+							<ShortenedNumber value={ data.views } />
+							{ getTrendContent( data.viewsTrend, data.viewsChange ) }
+						</div>
+						<div className="site-expanded-content__card-content-count-title">
+							{ translate( 'Views' ) }
+						</div>
 					</div>
 				</div>
-				<div className="site-expanded-content__card-content-column">
-					<div className="site-expanded-content__card-content-count">
-						<ShortenedNumber value={ data.views } />
-						{ getTrendContent( data.viewsTrend, data.viewsChange ) }
-					</div>
-					<div className="site-expanded-content__card-content-count-title">
-						{ translate( 'Views' ) }
-					</div>
+				<div className="site-expanded-content__card-footer">
+					<Button className="site-expanded-content__card-button" compact>
+						{ translate( 'See all stats' ) }
+					</Button>
 				</div>
-			</div>
-			<div className="site-expanded-content__card-footer">
-				<Button className="site-expanded-content__card-button" compact>
-					{ translate( 'See all stats' ) }
-				</Button>
 			</div>
 		</ExpandedCard>
 	);

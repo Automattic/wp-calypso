@@ -54,6 +54,14 @@ body.is-section-plans.is-domain-plan-package-flow {
 			color: var(--color-text-subtle);
 			text-align: center;
 			padding: 0 10px;
+			&.plans__copy-domain-upsell {
+				margin-bottom: 0;
+			}
+			button.plans__copy-button {
+				font-size: $font-body;
+				text-decoration: underline;
+				cursor: pointer;
+			}
 		}
 	}
 

@@ -1,4 +1,5 @@
-import { Card } from '@automattic/components';
+import { Card } from '..';
+import './style.scss';
 
 function HighlightCardSimple( { heading, icon, value } ) {
 	const displayValue = typeof value === 'string' ? value : '-';

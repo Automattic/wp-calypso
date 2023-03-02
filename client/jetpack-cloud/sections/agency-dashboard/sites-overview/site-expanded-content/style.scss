@@ -100,3 +100,41 @@ button.site-expanded-content__card-button {
 	color: var(--studio-black) !important;
 	border-color: var(--studio-black);
 }
+
+.is-small-screen {
+	padding-block: 8px 0;
+
+	.expanded-card {
+		width: 100%;
+		margin: 0;
+		box-shadow: none;
+		padding: 0 !important;
+		min-height: auto;
+		background: none;
+	}
+
+	.expanded-card__header {
+		display: none;
+	}
+
+	.site-expanded-content__card-content-container {
+		display: flex;
+	}
+
+	.site-expanded-content__card-content {
+		margin-block: 0;
+		width: auto;
+	}
+
+	.site-expanded-content__card-content-column {
+		padding-inline-end: 24px;
+	}
+
+	.site-expanded-content__card-footer {
+		padding: 10px;
+
+		.site-expanded-content__card-button {
+			white-space: nowrap;
+		}
+	}
+}
