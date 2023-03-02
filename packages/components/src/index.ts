@@ -41,6 +41,7 @@ export {
 	default as HighlightCard,
 	percentCalculator as PercentCalculator,
 } from './highlight-cards/highlight-card';
+export { default as HighlightCardSimple } from './highlight-cards/highlight-card-simple';
 export { default as AppPromoFullWidth } from './app-promo-full-width';
 export { default as ShortenedNumber } from './number-formatters';
 export { default as formattedNumber } from './number-formatters/formatted-number';

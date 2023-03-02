@@ -35,9 +35,7 @@ export const DeploymentCard = ( { repo, branch, connectionId }: DeploymentCardPr
 		connectionId,
 		{
 			onSuccess: () => {
-				dispatch(
-					successNotice( translate( 'Disconnected from repository successfully' ), noticeOptions )
-				);
+				dispatch( successNotice( translate( 'Repository disconnected.' ), noticeOptions ) );
 			},
 			onError: ( error ) => {
 				dispatch(

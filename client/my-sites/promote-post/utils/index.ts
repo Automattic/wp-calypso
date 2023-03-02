@@ -1,10 +1,6 @@
 import { __, sprintf } from '@wordpress/i18n';
 import moment from 'moment';
-import {
-	AudienceList,
-	AudienceListKeys,
-	Campaign,
-} from 'calypso/data/promote-post/use-promote-post-campaigns-query';
+import { Campaign } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 
 export const campaignStatus = {
 	SCHEDULED: 'scheduled',
@@ -194,19 +190,6 @@ export const getCampaignEstimatedImpressions = ( displayDeliveryEstimate: string
 	}
 	const [ minEstimate, maxEstimate ] = displayDeliveryEstimate.split( ':' );
 	return `${ ( +minEstimate ).toLocaleString() } - ${ ( +maxEstimate ).toLocaleString() }`;
-};
-
-export const getCampaignAudienceString = ( audience_list: AudienceList ) => {
-	if ( ! audience_list ) {
-		return '';
-	}
-	const audience = Object.keys( audience_list )
-		.reduce( ( acc, key ) => {
-			return `${ acc }, ${ audience_list[ key as keyof typeof AudienceListKeys ] }`;
-		}, '' )
-		.substring( 2 );
-
-	return audience;
 };
 
 export const canCancelCampaign = ( status: string ) => {
