@@ -44,7 +44,7 @@ jest.mock( 'calypso/state/sites/hooks/use-premium-global-styles', () => ( {
 } ) );
 
 jest.mock( 'calypso/lib/explat', () => ( {
-	useExperiment: () => [ false, 'control' ],
+	useExperiment: () => [ false, null ],
 } ) );
 
 /**
