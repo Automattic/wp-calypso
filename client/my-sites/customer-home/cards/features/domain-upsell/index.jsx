@@ -41,7 +41,7 @@ export default function DomainUpsell( { context } ) {
 		isProfileUpsell &&
 		( user.site_count !== 1 ||
 			! isFreePlanProduct( sitePlan ) ||
-			siteDomainsLength > 0 ||
+			siteDomainsLength > 1 ||
 			! isEmailVerified ||
 			isP2Site( primarySite ) ||
 			isNotAtomicJetpack( primarySite ) );
