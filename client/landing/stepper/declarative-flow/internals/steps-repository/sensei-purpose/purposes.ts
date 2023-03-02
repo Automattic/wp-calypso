@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n';
+import wpcom from 'calypso/lib/wp';
 
 export type SitePurpose = {
 	selected: string[];
@@ -46,7 +47,7 @@ export const purposes: Purpose[] = [
 ];
 const STORAGE_KEY = 'sensei-site-purpose';
 
-export function saveSelectedPurposes( value: SitePurpose ) {
+export function setSelectedPurposes( value: SitePurpose ) {
 	window.sessionStorage.setItem( STORAGE_KEY, ( value && JSON.stringify( value ) ) || '' );
 }
 
@@ -72,4 +73,26 @@ export function getSelectedPlugins(): Plugin[] {
 				purpose.plugins ? plugins.concat( purpose.plugins as [] ) : plugins,
 			[]
 		);
+}
+
+export async function saveSelectedPurposesAsSenseiSiteSettings( siteId: number ) {
+	const purpose = getSelectedPurposes();
+	if ( ! purpose || ! siteId ) {
+		return;
+	}
+	try {
+		return await wpcom.req.post(
+			{
+				path: `/sites/${ siteId }/settings`,
+				apiNamespace: 'wp/v2',
+			},
+			{
+				sensei_setup_wizard_data: { purpose },
+			}
+		);
+	} catch ( e ) {
+		// eslint-disable-next-line no-console
+		console.error( 'Failed to save Sensei purpose step data', e );
+		return false;
+	}
 }
