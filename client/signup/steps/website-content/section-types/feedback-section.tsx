@@ -27,7 +27,7 @@ export function FeedbackSection( {
 				rows={ 3 }
 				name="generic_feedback"
 				onChange={ onContentChange }
-				value={ data.genericFeedback }
+				value={ data.genericFeedback || '' }
 				label={ translate(
 					'Optional: Is there anything else you would like the site builder to know?'
 				) }

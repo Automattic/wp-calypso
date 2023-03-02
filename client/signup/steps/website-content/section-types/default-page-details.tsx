@@ -1,3 +1,4 @@
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -41,6 +42,7 @@ export function DefaultPageDetails( {
 	const pageTitle = page.title;
 	const pageID = page.id;
 	const description = useTranslatedPageDescriptions( pageID, context );
+	const isEnglishLocale = useIsEnglishLocale();
 
 	const onMediaUploadFailed = ( { mediaIndex }: MediaUploadData ) => {
 		dispatch(
@@ -150,16 +152,18 @@ export function DefaultPageDetails( {
 				label={ description }
 				disabled={ !! page.useFillerContent }
 			/>
-			<CheckboxField
-				name="useFillerContent"
-				checked={ page.useFillerContent || false }
-				value="true"
-				onChange={ onCheckboxChanged }
-				label={ translate( 'Build this page with AI-generated text.' ) }
-				helpText={ translate(
-					'When building your site, we will use AI to generate copy based on the search phrases you have provided. The copy can be edited later with the WordPress editor.'
-				) }
-			/>
+			{ isEnglishLocale && (
+				<CheckboxField
+					name="useFillerContent"
+					checked={ page.useFillerContent || false }
+					value="true"
+					onChange={ onCheckboxChanged }
+					label={ translate( 'Build this page with AI-generated text.' ) }
+					helpText={ translate(
+						'When building your site, we will use AI to generate copy based on the search phrases you have provided. The copy can be edited later with the WordPress editor.'
+					) }
+				/>
+			) }
 			<LabelBlock>{ getMediaCaption() }</LabelBlock>
 			<HorizontalGrid>
 				{ page.media.map( ( media, i ) => (
