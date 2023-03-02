@@ -34,7 +34,7 @@ const SiteSettingsJetpack = ( {
 	storagePurchased,
 } ) => {
 	//todo: this check makes sense in Jetpack section?
-	if ( ! siteIsJetpack ) {
+	if ( ! siteIsJetpack || site.is_wpcom_atomic ) {
 		return (
 			<EmptyContent
 				action={ translate( 'Manage general settings for %(site)s', {
