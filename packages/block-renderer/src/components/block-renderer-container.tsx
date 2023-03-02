@@ -1,16 +1,15 @@
 // The idea of this file is from the Gutenberg file packages/block-editor/src/components/block-preview/auto.js (d50e613).
 import {
-	store as blockEditorStore,
 	__unstableIframe as Iframe,
 	__unstableEditorStyles as EditorStyles,
 	__unstablePresetDuotoneFilter as PresetDuotoneFilter,
 } from '@wordpress/block-editor';
 import { useResizeObserver, useRefEffect } from '@wordpress/compose';
-import { useSelect } from '@wordpress/data';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useContext } from 'react';
 import { BLOCK_MAX_HEIGHT } from '../constants';
 import useParsedAssets from '../hooks/use-parsed-assets';
 import loadStyles from '../utils/load-styles';
+import BlockRendererContext from './block-renderer-context';
 import type { RenderedStyle } from '../types';
 import './block-renderer-container.scss';
 
@@ -44,28 +43,20 @@ const ScaledBlockRendererContainer = ( {
 }: ScaledBlockRendererContainerProps ) => {
 	const [ isLoaded, setIsLoaded ] = useState( false );
 	const [ contentResizeListener, { height: contentHeight } ] = useResizeObserver();
-	const { styles, assets, duotone } = useSelect( ( select ) => {
-		// @ts-expect-error Type definition is outdated
-		const settings = select( blockEditorStore ).getSettings();
-		return {
+	const { settings } = useContext( BlockRendererContext );
+	const { styles, assets, duotone } = useMemo(
+		() => ( {
 			styles: settings.styles,
 			assets: settings.__unstableResolvedAssets,
 			duotone: settings.__experimentalFeatures?.color?.duotone,
-		};
-	}, [] );
+		} ),
+		[ settings ]
+	);
 
 	const styleAssets = useParsedAssets( assets?.styles ) as HTMLLinkElement[];
 
 	const editorStyles = useMemo( () => {
-		const mergedStyles = [
-			...( styles || [] ),
-			...( customStyles || [] ),
-			// Avoid scrollbars for pattern previews.
-			{
-				css: 'body{height:auto;overflow:hidden;}',
-				__unstableType: 'presets',
-			},
-		];
+		const mergedStyles = [ ...( styles || [] ), ...( customStyles || [] ) ];
 
 		if ( ! inlineCss ) {
 			return mergedStyles;

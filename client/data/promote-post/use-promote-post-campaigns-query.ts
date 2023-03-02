@@ -12,6 +12,7 @@ export const AudienceListKeys = {
 	topics: 'topics',
 	countries: 'countries',
 	devices: 'devices',
+	OSs: 'OSs',
 };
 
 export type AudienceList = {
