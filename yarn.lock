@@ -8912,16 +8912,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/hooks@npm:^3.13.0, @wordpress/hooks@npm:^3.22.0, @wordpress/hooks@npm:^3.27.0, @wordpress/hooks@npm:^3.9.0":
-  version: 3.27.0
-  resolution: "@wordpress/hooks@npm:3.27.0"
-  dependencies:
-    "@babel/runtime": ^7.16.0
-  checksum: f82c96f79a4ec2b9e5cc72e199a539823ed90b38b855577664fb66467dc9803d1387885d3bc2aa962656d6b2a91331e8b0db8b64ab5612a5ce075d0332b4bf2b
-  languageName: node
-  linkType: hard
-
-"@wordpress/hooks@npm:^3.28.0":
+"@wordpress/hooks@npm:^3.13.0, @wordpress/hooks@npm:^3.22.0, @wordpress/hooks@npm:^3.27.0, @wordpress/hooks@npm:^3.28.0, @wordpress/hooks@npm:^3.9.0":
   version: 3.28.0
   resolution: "@wordpress/hooks@npm:3.28.0"
   dependencies:
@@ -8956,23 +8947,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/i18n@npm:^4.13.0, @wordpress/i18n@npm:^4.22.0, @wordpress/i18n@npm:^4.27.0":
-  version: 4.27.0
-  resolution: "@wordpress/i18n@npm:4.27.0"
-  dependencies:
-    "@babel/runtime": ^7.16.0
-    "@wordpress/hooks": ^3.27.0
-    gettext-parser: ^1.3.1
-    memize: ^1.1.0
-    sprintf-js: ^1.1.1
-    tannin: ^1.2.0
-  bin:
-    pot-to-php: tools/pot-to-php.js
-  checksum: e881fd4ec54c6a9789312a8c3919bc909a6ac619d8f9ed6ba77b14e1f1265c4b3b4a17c32f87fd62001f240e902ef12718d5cdae59121d3e3be98b889fa086bf
-  languageName: node
-  linkType: hard
-
-"@wordpress/i18n@npm:^4.2.4":
+"@wordpress/i18n@npm:^4.13.0, @wordpress/i18n@npm:^4.2.4, @wordpress/i18n@npm:^4.22.0, @wordpress/i18n@npm:^4.27.0":
   version: 4.28.0
   resolution: "@wordpress/i18n@npm:4.28.0"
   dependencies:
@@ -9440,17 +9415,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/url@npm:^3.23.0, @wordpress/url@npm:^3.28.0":
-  version: 3.28.0
-  resolution: "@wordpress/url@npm:3.28.0"
-  dependencies:
-    "@babel/runtime": ^7.16.0
-    remove-accents: ^0.4.2
-  checksum: b8ee3809bd27a4c6d698ea73848f2466ada531fbe843dc79cda784970d30c8422a5fc8e4b5c554d7a2ff7219c23f8e6269a157c142e69863d024ca64a51011a0
-  languageName: node
-  linkType: hard
-
-"@wordpress/url@npm:^3.3.2":
+"@wordpress/url@npm:^3.23.0, @wordpress/url@npm:^3.28.0, @wordpress/url@npm:^3.3.2":
   version: 3.29.0
   resolution: "@wordpress/url@npm:3.29.0"
   dependencies:
@@ -27721,16 +27686,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"redux@npm:^4.0.0, redux@npm:^4.0.1, redux@npm:^4.0.4, redux@npm:^4.1.2, redux@npm:^4.2.0":
-  version: 4.2.0
-  resolution: "redux@npm:4.2.0"
-  dependencies:
-    "@babel/runtime": ^7.9.2
-  checksum: 6b8b543499c9b8aa6afa01ef68950f4b2ea68d803381ac65797b1a5a7e39ba88ee3650c2a5a1dd500c78ad022de45cd5ed4a5f41fe7d51db8b07d12fbe84d146
-  languageName: node
-  linkType: hard
-
-"redux@npm:^4.1.0":
+"redux@npm:^4.0.0, redux@npm:^4.0.1, redux@npm:^4.0.4, redux@npm:^4.1.0, redux@npm:^4.1.2, redux@npm:^4.2.0":
   version: 4.2.1
   resolution: "redux@npm:4.2.1"
   dependencies:
