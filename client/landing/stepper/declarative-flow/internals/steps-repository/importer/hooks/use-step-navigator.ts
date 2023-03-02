@@ -36,10 +36,10 @@ export function useStepNavigator(
 		} );
 	}
 
-	function goToCheckoutPage() {
+	function goToCheckoutPage( extraArgs = {} ) {
 		navigation.submit?.( {
 			type: 'redirect',
-			url: getCheckoutUrl(),
+			url: getCheckoutUrl( extraArgs ),
 		} );
 	}
 
@@ -60,21 +60,22 @@ export function useStepNavigator(
 		} );
 	}
 
-	function getWordpressImportEverythingUrl(): string {
+	function getWordpressImportEverythingUrl( extraArgs = {} ): string {
 		const queryParams = {
 			siteSlug: siteSlug,
 			from: fromSite,
 			option: WPImportOption.EVERYTHING,
 			run: true,
+			...extraArgs,
 		};
 
 		return addQueryArgs( queryParams, `/${ BASE_STEPPER_ROUTE }/${ flow }/importerWordpress` );
 	}
 
-	function getCheckoutUrl() {
+	function getCheckoutUrl( extraArgs = {} ) {
 		const path = checkoutUrl;
 		const queryParams = {
-			redirect_to: getWordpressImportEverythingUrl(),
+			redirect_to: getWordpressImportEverythingUrl( extraArgs ),
 			cancel_to: getWordpressImportEverythingUrl(),
 		};
 

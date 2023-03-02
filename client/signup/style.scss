@@ -890,6 +890,11 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 	button.is-borderless {
 		box-shadow: none;
 		border: 0;
+
+		&:focus {
+			border-color: var(--color-primary);
+			box-shadow: 0 0 0 2px var(--color-primary-light);
+		}
 	}
 
 	.inline-help {

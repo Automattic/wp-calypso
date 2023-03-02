@@ -1,4 +1,3 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FEATURE_VIDEO_UPLOADS, planHasFeature } from '@automattic/calypso-products';
 import { DEVICE_TYPES } from '@automattic/components';
 import {
@@ -9,10 +8,7 @@ import {
 	SENSEI_FLOW,
 } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
-import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect } from 'react';
-import { DomainUpsellCalloutContent } from 'calypso/components/domains/domain-upsell-callout';
 import WebPreview from 'calypso/components/web-preview/component';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSitePreviewShareCode } from 'calypso/landing/stepper/hooks/use-site-preview-share-code';
@@ -40,19 +36,6 @@ const LaunchpadSitePreview = ( {
 	let loadingMessage = translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
 		components: { strong: <strong /> },
 	} );
-
-	const shouldShowUpsell = site?.plan?.is_free;
-
-	useEffect( () => {
-		if ( shouldShowUpsell ) {
-			recordTracksEvent( 'calypso_launchpad_preview_domain_upsell_impression' );
-		}
-	}, [ shouldShowUpsell ] );
-
-	const getUpsellClickHandler = useCallback( () => {
-		recordTracksEvent( 'calypso_launchpad_preview_domain_upsell_click' );
-		window.location.assign( `/domains/add/${ siteSlug }?domainAndPlanPackage=true` );
-	}, [ siteSlug ] );
 
 	if ( isInVideoPressFlow || isSenseiFlow ) {
 		const windowWidth = window.innerWidth;
@@ -111,11 +94,7 @@ const LaunchpadSitePreview = ( {
 	}
 
 	return (
-		<div
-			className={ classnames( 'launchpad__site-preview-wrapper', {
-				'has-banner': shouldShowUpsell,
-			} ) }
-		>
+		<div className="launchpad__site-preview-wrapper">
 			<WebPreview
 				className="launchpad__-web-preview"
 				disableTabbing
@@ -135,15 +114,6 @@ const LaunchpadSitePreview = ( {
 				devicesToShow={ devicesToShow }
 				showSiteAddressBar={ false }
 				enableEditOverlay
-				bannerToShow={
-					shouldShowUpsell && (
-						<DomainUpsellCalloutContent
-							domain={ siteSlug }
-							ctaClickHandler={ getUpsellClickHandler }
-							dismissClickHandler={ false }
-						/>
-					)
-				}
 			/>
 		</div>
 	);

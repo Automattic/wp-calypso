@@ -146,7 +146,9 @@ const importFlow: Flow = {
 				case 'processing': {
 					if ( providedDependencies?.siteSlug ) {
 						const from = urlQueryParams.get( 'from' );
-						return navigate( `import?siteSlug=${ providedDependencies?.siteSlug }&from=${ from }` );
+						return ! from
+							? navigate( `import?siteSlug=${ providedDependencies?.siteSlug }` )
+							: navigate( `import?siteSlug=${ providedDependencies?.siteSlug }&from=${ from }` );
 					}
 					// End of Pattern Assembler flow
 					if ( isBlankCanvasDesign( selectedDesign ) ) {

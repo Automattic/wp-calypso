@@ -88,6 +88,12 @@ export const countryList: CountryListItem[] = [
 		tax_needs_subdivision: true,
 	},
 	{
+		code: 'CH',
+		name: 'Switzerland',
+		has_postal_codes: true,
+		tax_needs_address: true,
+	},
+	{
 		code: 'GB',
 		name: 'United Kingdom',
 		has_postal_codes: true,

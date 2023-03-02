@@ -1,15 +1,31 @@
-import type { SiteNode } from '../types';
+import classNames from 'classnames';
+import InsightsStats from './insights-stats';
+import type { Site } from '../types';
 
 import './style.scss';
 
 interface Props {
-	site: SiteNode;
+	site: Site;
+	columns?: string[];
+	isSmallScreen?: boolean;
 }
 
-export const SiteExpandedContent = ( { site }: Props ) => {
+const defaultColumns = [ 'stats' ];
+
+export default function SiteExpandedContent( {
+	site,
+	columns = defaultColumns,
+	isSmallScreen = false,
+}: Props ) {
+	const stats = site.site_stats;
+
 	return (
-		<div className="site-expanded-content">
-			Expanded content for { site.value.blog_id } | { site.value.url }
+		<div
+			className={ classNames( 'site-expanded-content', {
+				'is-small-screen': isSmallScreen,
+			} ) }
+		>
+			{ columns.includes( 'stats' ) && stats && <InsightsStats stats={ stats } /> }
 		</div>
 	);
-};
+}

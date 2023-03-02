@@ -149,6 +149,7 @@
 		"@automattic/viewport": "workspace:^",
 		"@automattic/whats-new": "workspace:^",
 		"@automattic/wp-babel-makepot": "workspace:^",
+		"@automattic/wpcom-template-parts": "workspace:^",
 		"@types/cookie": "^0.4.1",
 		"@types/debug": "^4.1.7",
 		"@types/fast-json-stable-stringify": "^2.0.0",
@@ -296,7 +297,8 @@
 		"newspack-components/@wordpress/element": "4.7.0",
 		"newspack-components/@wordpress/i18n": "4.9.0",
 		"keytar@npm:7.7.0/node-addon-api": "3.1.0",
-		"lzma-native": "^8.0.5"
+		"lzma-native": "^8.0.5",
+		"@wordpress/interface@^4.8.0": "patch:@wordpress/interface@npm%3A4.8.0#./.yarn/patches/@wordpress-interface-npm-4.8.0-8a39ad37cf.patch"
 	},
 	"packageManager": "yarn@3.2.3",
 	"dependenciesMeta": {
