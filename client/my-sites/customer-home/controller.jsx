@@ -48,7 +48,7 @@ export async function maybeRedirect( context, next ) {
 	// See https://cylonp2.wordpress.com/2022/09/19/question-about-infinite-redirect/#comment-1731
 	if (
 		( maybeStalelaunchpadScreenOption && maybeStalelaunchpadScreenOption === 'full' ) ||
-		getQueryArgs()?.showLaunchpad === true
+		getQueryArgs()?.showLaunchpad === 'true'
 	) {
 		await context.store.dispatch( requestSite( siteId ) );
 	}
@@ -58,7 +58,7 @@ export async function maybeRedirect( context, next ) {
 		refetchedOptions?.launchpad_screen === 'full' &&
 		// Temporary hack/band-aid to resolve a stale issue with atomic that the requestSite
 		// dispatch above doesnt always seem to resolve.
-		! getQueryArgs()?.launchpadComplete === true;
+		! getQueryArgs()?.launchpadComplete === 'true';
 
 	if ( shouldRedirectToLaunchpad ) {
 		// The new stepper launchpad onboarding flow isn't registered within the "page"
