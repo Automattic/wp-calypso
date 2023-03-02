@@ -250,11 +250,12 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	function previewDesign( design: Design, styleVariation?: StyleVariation ) {
 		recordPreviewedDesign( { flow, intent, design, styleVariation } );
 
-		if ( ! design.preselected_style_variation ) ) {
+		if ( ! design.preselected_style_variation ) {
 			setSelectedDesign( design );
 		} else {
 			const parentDesign = staticDesigns.find(
-				( staticDesign ) => staticDesign.slug === design.slug && ! staticDesign.is_virtual
+				( staticDesign ) =>
+					staticDesign.slug === design.slug && ! staticDesign.preselected_style_variation
 			);
 			setSelectedDesign( parentDesign );
 		}

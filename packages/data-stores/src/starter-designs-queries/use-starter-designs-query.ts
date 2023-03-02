@@ -113,7 +113,7 @@ function apiStarterDesignsStaticToDesign(
 		( { slug } ) => slug === 'woo-on-plans'
 	);
 
-	const preselected_style_variation = is_virtual
+	const preselected_style_variation = style_variation_slug
 		? style_variations?.find( ( { slug } ) => slug === style_variation_slug )
 		: undefined;
 
