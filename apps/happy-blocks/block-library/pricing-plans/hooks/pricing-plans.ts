@@ -1,8 +1,7 @@
 import { calculateMonthlyPriceForPlan, getPlan, Plan } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { useEffect, useState } from '@wordpress/element';
-import { sprintf, __, getLocaleData } from '@wordpress/i18n';
-import i18n from 'i18n-calypso';
+import { sprintf, __ } from '@wordpress/i18n';
 import config from '../config';
 import { ApiPricingPlan } from '../types.js';
 
@@ -62,7 +61,6 @@ const usePricingPlans = () => {
 				const response = await fetch( PLANS_API_URL );
 				const data = await response.json();
 				setPlans( parsePlans( data ) );
-				i18n.addTranslations( getLocaleData( 'happy-blocks' ) );
 			} catch ( e: unknown ) {
 				setError( e );
 			} finally {
