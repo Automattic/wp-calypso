@@ -10,7 +10,6 @@ export default function Main( {
 	wideLayout = false,
 	fullWidthLayout = false,
 	isLoggedOut = false,
-	scrollToTopOnMount = false,
 } ) {
 	const classes = classNames( className, 'main', {
 		'is-wide-layout': wideLayout,
@@ -20,7 +19,7 @@ export default function Main( {
 
 	return (
 		<main className={ classes } id={ id || null } role="main">
-			{ scrollToTopOnMount && <ScrollToTopOnMount /> }
+			<ScrollToTopOnMount />
 			{ children }
 		</main>
 	);

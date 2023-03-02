@@ -35,7 +35,6 @@ export const MySitesSidebarUnifiedItem = ( {
 		}
 
 		reduxDispatch( collapseAllMySitesSidebarSections() );
-		window.scrollTo( 0, 0 );
 	};
 
 	return (

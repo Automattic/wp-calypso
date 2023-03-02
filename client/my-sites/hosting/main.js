@@ -204,7 +204,7 @@ class Hosting extends Component {
 		};
 
 		return (
-			<Main wideLayout className="hosting" scrollToTopOnMount>
+			<Main wideLayout className="hosting">
 				<PageViewTracker path="/hosting-config/:site" title="Hosting Configuration" />
 				<DocumentHead title={ translate( 'Hosting Configuration' ) } />
 				<FormattedHeader
