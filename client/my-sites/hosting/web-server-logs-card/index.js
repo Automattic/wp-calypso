@@ -170,7 +170,7 @@ const DateRangeInputsWithValidation = ( {
 					/>
 					{ showValidation && (
 						<FormInputValidation
-							ariaLabel="Start date input validation"
+							ariaLabel={ translate( 'Start date input validation' ) }
 							isError={ ! startValidationInfo.isValid }
 							text={ startValidationInfo.validationInfo }
 						/>
@@ -196,7 +196,7 @@ const DateRangeInputsWithValidation = ( {
 					/>
 					{ showValidation && (
 						<FormInputValidation
-							ariaLabel="End date input validation"
+							ariaLabel={ translate( 'End date input validation' ) }
 							isError={ ! endValidationInfo.isValid }
 							text={ endValidationInfo.validationInfo }
 						/>
