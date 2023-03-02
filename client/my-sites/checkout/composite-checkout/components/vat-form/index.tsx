@@ -185,8 +185,8 @@ export function VatForm( {
 
 	let vatButtonText = translate( 'Add Business Tax ID details' );
 	if (
-		getLocaleSlug() !== 'en' ||
-		getLocaleSlug() !== 'en-gb' ||
+		getLocaleSlug() !== 'en' &&
+		getLocaleSlug() !== 'en-gb' &&
 		! i18n.hasTranslation( 'Add Business Tax ID details' )
 	) {
 		vatButtonText = translate( 'Add VAT details' );
@@ -194,17 +194,17 @@ export function VatForm( {
 
 	let northernIrelandText = translate( 'Is the tax ID for Northern Ireland?' );
 	if (
-		getLocaleSlug() !== 'en' ||
-		getLocaleSlug() !== 'en-gb' ||
-		! i18n.hasTranslation( 'Is the VAT for Northern Ireland?' )
+		getLocaleSlug() !== 'en' &&
+		getLocaleSlug() !== 'en-gb' &&
+		! i18n.hasTranslation( 'Is the tax ID for Northern Ireland?' )
 	) {
-		northernIrelandText = translate( 'Add VAT details' );
+		northernIrelandText = translate( 'Is the VAT for Northern Ireland?' );
 	}
 
 	let vatOrgLabel = translate( 'Organization for tax ID' );
 	if (
-		getLocaleSlug() !== 'en' ||
-		getLocaleSlug() !== 'en-gb' ||
+		getLocaleSlug() !== 'en' &&
+		getLocaleSlug() !== 'en-gb' &&
 		! i18n.hasTranslation( 'Organization for tax ID' )
 	) {
 		vatOrgLabel = translate( 'Organization for VAT' );
@@ -212,16 +212,16 @@ export function VatForm( {
 
 	let vatNumberHeader = translate( 'Business Tax ID Number' );
 	if (
-		getLocaleSlug() !== 'en' ||
-		getLocaleSlug() !== 'en-gb' ||
+		getLocaleSlug() !== 'en' &&
+		getLocaleSlug() !== 'en-gb' &&
 		! i18n.hasTranslation( 'Business Tax ID Number' )
 	) {
 		vatNumberHeader = translate( 'VAT Number' );
 	}
 	let vatAddressLabel = translate( 'Address for tax ID' );
 	if (
-		getLocaleSlug() !== 'en' ||
-		getLocaleSlug() !== 'en-gb' ||
+		getLocaleSlug() !== 'en' &&
+		getLocaleSlug() !== 'en-gb' &&
 		! i18n.hasTranslation( 'Address for tax ID' )
 	) {
 		vatAddressLabel = translate( 'Address for VAT' );
@@ -238,8 +238,8 @@ export function VatForm( {
 		}
 	);
 	if (
-		getLocaleSlug() !== 'en' ||
-		getLocaleSlug() !== 'en-gb' ||
+		getLocaleSlug() !== 'en' &&
+		getLocaleSlug() !== 'en-gb' &&
 		! i18n.hasTranslation(
 			'To change your Business Tax ID number, {{contactSupportLink}}please contact support{{/contactSupportLink}}.'
 		)

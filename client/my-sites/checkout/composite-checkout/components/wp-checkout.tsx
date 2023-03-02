@@ -312,8 +312,8 @@ export default function WPCheckout( {
 		'Your Business Tax ID details are not valid. Please check each field and try again.'
 	);
 	if (
-		getLocaleSlug() !== 'en' ||
-		getLocaleSlug() !== 'en-gb' ||
+		getLocaleSlug() !== 'en' &&
+		getLocaleSlug() !== 'en-gb' &&
 		! i18n.hasTranslation(
 			'Your Business Tax ID details are not valid. Please check each field and try again.'
 		)

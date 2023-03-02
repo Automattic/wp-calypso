@@ -27,8 +27,8 @@ export default function VatInfoPage() {
 
 	let errorText = translate( 'An error occurred while fetching Business Tax ID details.' );
 	if (
-		getLocaleSlug() !== 'en' ||
-		getLocaleSlug() !== 'en-gb' ||
+		getLocaleSlug() !== 'en' &&
+		getLocaleSlug() !== 'en-gb' &&
 		! i18n.hasTranslation( 'An error occurred while fetching Business Tax ID details.' )
 	) {
 		errorText = translate( 'An error occurred while fetching VAT details.' );
@@ -44,8 +44,8 @@ export default function VatInfoPage() {
 
 	let headerText = translate( 'Business Tax ID details' );
 	if (
-		getLocaleSlug() !== 'en' ||
-		getLocaleSlug() !== 'en-gb' ||
+		getLocaleSlug() !== 'en' &&
+		getLocaleSlug() !== 'en-gb' &&
 		! i18n.hasTranslation( 'Business Tax ID details' )
 	) {
 		headerText = translate( 'VAT Information' );
@@ -55,8 +55,8 @@ export default function VatInfoPage() {
 		"We currently only provide Business Tax ID invoices to users who are properly registered. Business Tax ID information saved on this page will be applied to all of your account's receipts."
 	);
 	if (
-		getLocaleSlug() !== 'en' ||
-		getLocaleSlug() !== 'en-gb' ||
+		getLocaleSlug() !== 'en' &&
+		getLocaleSlug() !== 'en-gb' &&
 		! i18n.hasTranslation(
 			"We currently only provide Business Tax ID invoices to users who are properly registered. Business Tax ID information saved on this page will be applied to all of your account's receipts."
 		)
@@ -109,8 +109,8 @@ function VatForm() {
 
 	let vatNumberHeader = translate( 'Business Tax ID Number' );
 	if (
-		getLocaleSlug() !== 'en' ||
-		getLocaleSlug() !== 'en-gb' ||
+		getLocaleSlug() !== 'en' &&
+		getLocaleSlug() !== 'en-gb' &&
 		! i18n.hasTranslation( 'Business Tax ID Number' )
 	) {
 		vatNumberHeader = translate( 'VAT Number' );
@@ -127,8 +127,8 @@ function VatForm() {
 		}
 	);
 	if (
-		getLocaleSlug() !== 'en' ||
-		getLocaleSlug() !== 'en-gb' ||
+		getLocaleSlug() !== 'en' &&
+		getLocaleSlug() !== 'en-gb' &&
 		! i18n.hasTranslation(
 			'To change your Business Tax ID number, {{contactSupportLink}}please contact support{{/contactSupportLink}}.'
 		)
@@ -284,8 +284,8 @@ function useDisplayVatNotices( {
 		'Your Business Tax ID details are not valid. Please check each field and try again.'
 	);
 	if (
-		getLocaleSlug() !== 'en' ||
-		getLocaleSlug() !== 'en-gb' ||
+		getLocaleSlug() !== 'en' &&
+		getLocaleSlug() !== 'en-gb' &&
 		! i18n.hasTranslation(
 			'Your Business Tax ID details are not valid. Please check each field and try again.'
 		)
@@ -299,8 +299,8 @@ function useDisplayVatNotices( {
 		'An error occurred while updating your Business Tax ID details. Please try again or contact support.'
 	);
 	if (
-		getLocaleSlug() !== 'en' ||
-		getLocaleSlug() !== 'en-gb' ||
+		getLocaleSlug() !== 'en' &&
+		getLocaleSlug() !== 'en-gb' &&
 		! i18n.hasTranslation(
 			'An error occurred while updating your Business Tax ID details. Please try again or contact support.'
 		)
@@ -312,8 +312,8 @@ function useDisplayVatNotices( {
 
 	const vatSuccessNotice = translate( 'Your Business Tax ID details have been updated!' );
 	if (
-		getLocaleSlug() !== 'en' ||
-		getLocaleSlug() !== 'en-gb' ||
+		getLocaleSlug() !== 'en' &&
+		getLocaleSlug() !== 'en-gb' &&
 		! i18n.hasTranslation( 'Your Business Tax ID details have been updated!' )
 	) {
 		vatUpdateError = translate( 'Your VAT details have been updated!' );

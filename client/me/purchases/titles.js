@@ -58,8 +58,8 @@ Object.defineProperties( titles, {
 	vatDetails: {
 		get: () => {
 			if (
-				getLocaleSlug() !== 'en' ||
-				getLocaleSlug() !== 'en-gb' ||
+				getLocaleSlug() !== 'en' &&
+				getLocaleSlug() !== 'en-gb' &&
 				! i18n.hasTranslation( 'Business Tax ID details' )
 			) {
 				return i18n.translate( 'VAT Details' );

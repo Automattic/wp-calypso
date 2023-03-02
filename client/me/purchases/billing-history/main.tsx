@@ -35,8 +35,8 @@ function BillingHistory() {
 	let editVatText = translate( 'Edit Business Tax ID details' );
 	let addVatText = translate( 'Add Business Tax ID details' );
 	if (
-		getLocaleSlug() !== 'en' ||
-		getLocaleSlug() !== 'en-gb' ||
+		getLocaleSlug() !== 'en' &&
+		getLocaleSlug() !== 'en-gb' &&
 		! i18n.hasTranslation( 'Edit Business Tax ID details' )
 	) {
 		editVatText = translate( 'Edit VAT details (for Europe only)' );
