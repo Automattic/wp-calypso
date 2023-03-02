@@ -14,6 +14,7 @@ import illustration404 from 'calypso/assets/images/illustrations/illustration-40
 import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
+import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
@@ -188,7 +189,6 @@ class StatsSite extends Component {
 						<JetpackBackupCredsBanner event="stats-backup-credentials" />
 					</div>
 				) }
-
 				<FormattedHeader
 					brandFont
 					className="stats__section-header modernized-header"
@@ -209,18 +209,14 @@ class StatsSite extends Component {
 						}
 					) }
 				/>
-
 				<StatsNavigation
 					selectedItem="traffic"
 					interval={ period }
 					siteId={ siteId }
 					slug={ slug }
 				/>
-
 				{ isOdysseyStats && <StatsNotices siteId={ siteId } /> }
-
 				<HighlightsSection siteId={ siteId } />
-
 				<div id="my-stats-content" className={ wrapperClass }>
 					<>
 						<StatsPeriodHeader>
@@ -365,6 +361,10 @@ class StatsSite extends Component {
 						}
 					</div>
 				</div>
+				{ /* Only load Jetpack Upsell Section for Odyssey Stats */ }
+				{ ! isOdysseyStats ? null : (
+					<AsyncLoad require="calypso/my-sites/stats/jetpack-upsell-section" />
+				) }
 				<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
 				<JetpackColophon />
 			</div>
