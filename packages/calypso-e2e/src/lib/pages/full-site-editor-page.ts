@@ -132,6 +132,16 @@ export class FullSiteEditorPage {
 	}
 
 	/**
+	 *
+	 */
+	async openEditor(): Promise< void > {
+		await this.editor
+			.frameLocator( 'iframe.edit-site-visual-editor__editor-canvas' )
+			.locator( 'body' )
+			.click();
+	}
+
+	/**
 	 * Waits until the site editor is fully loaded.
 	 */
 	async waitUntilLoaded(): Promise< void > {

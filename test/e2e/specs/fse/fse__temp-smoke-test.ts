@@ -44,14 +44,14 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	} );
 
 	it( 'Editor endpoint loads', async function () {
-		await page.waitForURL( /.*site-editor.*/ );
+		await page.waitForURL( /site-editor/ );
 	} );
 
-	// Skipping test until we have a way to reliably close the nav sidebar.
-	it.skip( 'Editor canvas loads', async function () {
+	it( 'Editor canvas loads', async function () {
 		fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
 		// The site editor navigation sidebar opens by default, so we close it
-		await fullSiteEditorPage.closeNavSidebar();
+		// await fullSiteEditorPage.closeNavSidebar();
+		await fullSiteEditorPage.openEditor();
 		await fullSiteEditorPage.waitUntilLoaded();
 	} );
 } );
