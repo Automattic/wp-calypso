@@ -19,7 +19,7 @@ const InputPlaceholder = styled( ParagraphPlaceholder )( {
 	marginBottom: 20,
 } );
 
-export function SshKeyLoadingSkeleton() {
+export function SftpCardLoadingPlaceholder() {
 	return (
 		<PlaceholderGroup>
 			<ParagraphPlaceholder />

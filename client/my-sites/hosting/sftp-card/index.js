@@ -36,7 +36,7 @@ import { getAtomicHostingSftpUsers } from 'calypso/state/selectors/get-atomic-ho
 import { getAtomicHostingSshAccess } from 'calypso/state/selectors/get-atomic-hosting-ssh-access';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { SshKeyLoadingSkeleton } from './ssh-key-loading-skeleton';
+import { SftpCardLoadingPlaceholder } from './sftp-card-loading-placeholder';
 import SshKeys from './ssh-keys';
 
 const FILEZILLA_URL = 'https://filezilla-project.org/';
@@ -315,7 +315,7 @@ export const SftpCard = ( {
 				</FormFieldset>
 			) }
 			{ isLoading && <Spinner /> }
-			{ hasSftpFeatureAndIsLoading && <SshKeyLoadingSkeleton /> }
+			{ hasSftpFeatureAndIsLoading && <SftpCardLoadingPlaceholder /> }
 		</Card>
 	);
 };
