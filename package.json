@@ -171,6 +171,7 @@
 		"@types/wordpress__components": "^14.0.10",
 		"@types/wordpress__compose": "^4.0.1",
 		"@types/wordpress__data": "^4.6.10",
+		"@types/wordpress__data-controls": "^2.2.0",
 		"@wordpress/base-styles": "^4.13.0",
 		"@wordpress/components": "^22.1.0",
 		"@wordpress/data": "^7.6.0",
@@ -290,7 +291,6 @@
 	"resolutions": {
 		"react-dates": "17.1.1",
 		"@types/wordpress__block-editor": "npm:noop-package@1.0.0",
-		"@types/wordpress__data-controls": "npm:noop-package@1.0.0",
 		"@types/wordpress__editor": "npm:noop-package@1.0.0",
 		"@types/wordpress__notices": "npm:noop-package@1.0.0",
 		"@types/wordpress__rich-text": "npm:noop-package@1.0.0",

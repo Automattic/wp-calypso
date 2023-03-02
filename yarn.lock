@@ -7406,6 +7406,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/wordpress__data-controls@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "@types/wordpress__data-controls@npm:2.2.0"
+  dependencies:
+    "@types/wordpress__data": "*"
+    "@wordpress/api-fetch": ^5.2.5
+  checksum: 392d3b27e262c283f5dfb0b25c9a2bdf798dfd328346356bd96d9bcbf07fcea1034a4b9d7eed64fd09f9f03f6cff88be11b8afa8a61d934e1d4271246901b972
+  languageName: node
+  linkType: hard
+
+"@types/wordpress__data@npm:*":
+  version: 6.0.2
+  resolution: "@types/wordpress__data@npm:6.0.2"
+  dependencies:
+    "@types/react": "*"
+    redux: ^4.1.0
+  checksum: 73d64a15d873c1a11d9fbf5bfb68201a09f9883e57ff89a99ea663ddb179964e917191268b8421fb06732db83dbc99909014cf189990f7d0a0f231d4ca0618a3
+  languageName: node
+  linkType: hard
+
 "@types/wordpress__data@npm:^4.6.10":
   version: 4.6.10
   resolution: "@types/wordpress__data@npm:4.6.10"
@@ -8113,6 +8133,17 @@ __metadata:
     "@wordpress/dom-ready": ^3.27.0
     "@wordpress/i18n": ^4.27.0
   checksum: dc4c97f087d3d6dfa5e930ad6d1f8882c15d1461a600c38aeb052f2fcb351aff6d2679b13465ee898d35e4e0642ffb41f2e3cff0d1203ed089eb93404f539a8f
+  languageName: node
+  linkType: hard
+
+"@wordpress/api-fetch@npm:^5.2.5":
+  version: 5.2.7
+  resolution: "@wordpress/api-fetch@npm:5.2.7"
+  dependencies:
+    "@babel/runtime": ^7.16.0
+    "@wordpress/i18n": ^4.2.4
+    "@wordpress/url": ^3.3.2
+  checksum: 6d5754173000122ab70748b72dddb15c58542c9be3dc4140c10d5f0e6cf831838ea87fac15a8af3356f16ad2523d532101e72cefcd47468feae622e392d4dfb6
   languageName: node
   linkType: hard
 
@@ -8890,6 +8921,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wordpress/hooks@npm:^3.28.0":
+  version: 3.28.0
+  resolution: "@wordpress/hooks@npm:3.28.0"
+  dependencies:
+    "@babel/runtime": ^7.16.0
+  checksum: 4c53add48cd3d31fbf26cec27c45aeee7a9286f8855ee2ba623eca5ed46b7ab514858e183e584b24bdd58d31fd5c56411978f771d175a3885842b56c61f14f7d
+  languageName: node
+  linkType: hard
+
 "@wordpress/html-entities@npm:^3.22.0":
   version: 3.27.0
   resolution: "@wordpress/html-entities@npm:3.27.0"
@@ -8929,6 +8969,22 @@ __metadata:
   bin:
     pot-to-php: tools/pot-to-php.js
   checksum: e881fd4ec54c6a9789312a8c3919bc909a6ac619d8f9ed6ba77b14e1f1265c4b3b4a17c32f87fd62001f240e902ef12718d5cdae59121d3e3be98b889fa086bf
+  languageName: node
+  linkType: hard
+
+"@wordpress/i18n@npm:^4.2.4":
+  version: 4.28.0
+  resolution: "@wordpress/i18n@npm:4.28.0"
+  dependencies:
+    "@babel/runtime": ^7.16.0
+    "@wordpress/hooks": ^3.28.0
+    gettext-parser: ^1.3.1
+    memize: ^1.1.0
+    sprintf-js: ^1.1.1
+    tannin: ^1.2.0
+  bin:
+    pot-to-php: tools/pot-to-php.js
+  checksum: a332b340086a02340b69821ecbb6e5ac0c720876e89de4fbcdc21f7eb8086991ac5d6d1c65236cbd6e0bd66dd0e42e66af9dcc555e4ac0cc40a5f96f0f56507a
   languageName: node
   linkType: hard
 
@@ -9391,6 +9447,16 @@ __metadata:
     "@babel/runtime": ^7.16.0
     remove-accents: ^0.4.2
   checksum: b8ee3809bd27a4c6d698ea73848f2466ada531fbe843dc79cda784970d30c8422a5fc8e4b5c554d7a2ff7219c23f8e6269a157c142e69863d024ca64a51011a0
+  languageName: node
+  linkType: hard
+
+"@wordpress/url@npm:^3.3.2":
+  version: 3.29.0
+  resolution: "@wordpress/url@npm:3.29.0"
+  dependencies:
+    "@babel/runtime": ^7.16.0
+    remove-accents: ^0.4.2
+  checksum: 861a517939731984500ac4e89594b5b0bf83a47096b3d581c800dd40cc5d2335857ca5e46c892c3144ba457fd11ffe762dbd36c49a51dd186b2a978b44f7b255
   languageName: node
   linkType: hard
 
@@ -27664,6 +27730,15 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"redux@npm:^4.1.0":
+  version: 4.2.1
+  resolution: "redux@npm:4.2.1"
+  dependencies:
+    "@babel/runtime": ^7.9.2
+  checksum: 136d98b3d5dbed1cd6279c8c18a6a74c416db98b8a432a46836bdd668475de6279a2d4fd9d1363f63904e00f0678a8a3e7fa532c897163340baf1e71bb42c742
+  languageName: node
+  linkType: hard
+
 "reflect.ownkeys@npm:^0.2.0":
   version: 0.2.0
   resolution: "reflect.ownkeys@npm:0.2.0"
@@ -33663,6 +33738,7 @@ fsevents@^1.2.7:
     "@types/wordpress__components": ^14.0.10
     "@types/wordpress__compose": ^4.0.1
     "@types/wordpress__data": ^4.6.10
+    "@types/wordpress__data-controls": ^2.2.0
     "@typescript-eslint/eslint-plugin": ^5.53.0
     "@typescript-eslint/parser": ^5.53.0
     "@wordpress/base-styles": ^4.13.0
