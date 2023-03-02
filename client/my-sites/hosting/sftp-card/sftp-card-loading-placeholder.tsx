@@ -24,7 +24,7 @@ export function SftpCardLoadingPlaceholder() {
 		<PlaceholderGroup>
 			<ParagraphPlaceholder />
 			<LinkPlaceholder />
-			{ [ 1, 2, 3 ].map( ( i ) => (
+			{ [ 1, 2 ].map( ( i ) => (
 				<PlaceholderGroup key={ i }>
 					<LabelPlaceholder />
 					<InputPlaceholder />
