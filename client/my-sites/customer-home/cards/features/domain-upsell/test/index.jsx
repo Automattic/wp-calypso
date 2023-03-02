@@ -24,6 +24,11 @@ const initialState = {
 		domains: {
 			items: [ 'example.wordpress.com' ],
 		},
+		plans: {
+			1: {
+				product_slug: 'free_plan',
+			},
+		},
 	},
 	ui: {
 		selectedSiteId: 1,
@@ -64,7 +69,6 @@ describe( 'index', () => {
 				<DomainUpsell />
 			</Provider>
 		);
-		expect( 1 ).toBe( 1 );
 
 		expect(
 			screen.getByRole( 'heading', { name: 'Own your online identity with a custom domain' } )
