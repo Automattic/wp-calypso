@@ -129,6 +129,8 @@ describe( 'reducer', () => {
 				sftpUsers: [ 1, 2, 3 ],
 				sshAccess: null,
 				staticFile404: null,
+				isLoadingSftpUsers: false,
+				isLoadingSshAccess: true,
 			},
 		} );
 	} );
@@ -143,6 +145,8 @@ describe( 'reducer', () => {
 				sftpUsers: [ 1, 2, 3 ],
 				sshAccess: null,
 				staticFile404: null,
+				isLoadingSftpUsers: false,
+				isLoadingSshAccess: true,
 			},
 		};
 		const state = reducer( previousState, {
@@ -160,6 +164,8 @@ describe( 'reducer', () => {
 				sftpUsers: [ 1, 2, 3 ],
 				sshAccess: null,
 				staticFile404: null,
+				isLoadingSftpUsers: false,
+				isLoadingSshAccess: true,
 			},
 			9876543: {
 				lastCacheClearTimestamp: null,
@@ -169,6 +175,8 @@ describe( 'reducer', () => {
 				sftpUsers: [ 9, 8, 7 ],
 				sshAccess: null,
 				staticFile404: null,
+				isLoadingSftpUsers: false,
+				isLoadingSshAccess: true,
 			},
 		} );
 	} );
