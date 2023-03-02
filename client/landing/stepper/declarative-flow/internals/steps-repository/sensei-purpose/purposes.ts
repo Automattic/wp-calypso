@@ -22,17 +22,7 @@ export const purposes: Purpose[] = [
 	{
 		id: 'sell_courses',
 		label: __( 'Sell courses and generate income' ),
-		plugins: [
-			{
-				softwareSet: 'woo-on-plans',
-				slug: 'woocommerce',
-			},
-			{
-				slug: 'woocommerce-google-analytics-integration',
-				id: 'woocommerce-google-analytics-integration/woocommerce-google-analytics-integration',
-			},
-		],
-		description: __( 'WooCommerce will be installed for free.' ),
+		plugins: [],
 	},
 	{
 		id: 'provide_certification',
