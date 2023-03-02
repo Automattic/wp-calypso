@@ -128,7 +128,9 @@ class WPCOMNotifications extends Component {
 					name={ options.reports }
 					isEnabled={ get( settings, options.reports ) }
 					title={ translate( 'Reports' ) }
-					description={ translate( 'Monthly reports on your own site and its performance.' ) }
+					description={ translate(
+						'Complimentary reports and updates regarding site performance and traffic.'
+					) }
 				/>
 
 				{ this.props.hasJetpackSites ? (
