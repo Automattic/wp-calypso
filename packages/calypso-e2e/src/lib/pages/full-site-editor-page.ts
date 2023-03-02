@@ -132,7 +132,7 @@ export class FullSiteEditorPage {
 	}
 
 	/**
-	 *
+	 * Clicks on the preview pane on the right to launch the editor window.
 	 */
 	async openEditor(): Promise< void > {
 		await this.editor
