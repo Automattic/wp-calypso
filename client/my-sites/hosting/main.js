@@ -47,6 +47,8 @@ import WebServerLogsCard from './web-server-logs-card';
 import WebServerSettingsCard from './web-server-settings-card';
 import './style.scss';
 
+const HEADING_OFFSET = 30;
+
 class Hosting extends Component {
 	state = {
 		clickOutside: false,
@@ -206,7 +208,7 @@ class Hosting extends Component {
 
 		return (
 			<Main wideLayout className="hosting">
-				{ ! isLoadingSftpData && <ScrollToAnchorOnMount /> }
+				{ ! isLoadingSftpData && <ScrollToAnchorOnMount offset={ HEADING_OFFSET } /> }
 				<PageViewTracker path="/hosting-config/:site" title="Hosting Configuration" />
 				<DocumentHead title={ translate( 'Hosting Configuration' ) } />
 				<FormattedHeader

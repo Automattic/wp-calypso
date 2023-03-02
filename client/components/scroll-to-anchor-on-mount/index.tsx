@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
 
-export function ScrollToAnchorOnMount() {
+export function ScrollToAnchorOnMount( { offset = 0, timeout = 100 } ) {
 	useEffect( () => {
 		setTimeout( () => {
-			scrollToAnchor( { offset: 30 } );
-		}, 100 );
-	}, [] );
+			scrollToAnchor( { offset } );
+		}, timeout );
+	}, [ offset, timeout ] );
 	return null;
 }
