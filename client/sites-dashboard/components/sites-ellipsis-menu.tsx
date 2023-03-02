@@ -328,7 +328,7 @@ function DeveloperSettingsSubmenu( { site, recordTracks }: SitesMenuItemProps ) 
 				) : (
 					<UpsellMenuGroup>
 						{ __(
-							'Upgrade to Business Plan to enable SFTP & SSH, database access, GitHub connection and more …'
+							'Upgrade to the Business Plan to enable SFTP & SSH, database access, GitHub deploys, and more…'
 						) }
 						<Button compact primary href={ getHostingConfigUrl( site.slug ) }>
 							{ __( 'Check full feature list' ) }
