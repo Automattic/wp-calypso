@@ -309,7 +309,13 @@ class DomainSearch extends Component {
 						<div className="domains__header">
 							{ isDomainAndPlanPackageFlow && (
 								<>
-									<DomainAndPlanPackageNavigation { ...goBackButtonProps } step={ 1 } />
+									<DomainAndPlanPackageNavigation
+										{ ...goBackButtonProps }
+										hidePlansPage={
+											! this.props.isSiteOnFreePlan && ! this.props.isSiteOnMonthlyPlan
+										}
+										step={ 1 }
+									/>
 									<FormattedHeader
 										brandFont
 										headerText={ translate( 'Claim your domain' ) }
