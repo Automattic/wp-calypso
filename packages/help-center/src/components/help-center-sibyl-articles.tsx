@@ -106,6 +106,13 @@ export function SibylArticles( {
 
 	const sectionName = useSelector( getSectionName );
 	const articles = useMemo( () => {
+		if ( sibylArticles?.length ) {
+			recordTracksEvent( 'calypso_helpcenter_sibyl_display_results', {
+				location: 'help-center',
+				resultsCount: sibylArticles.length,
+			} );
+		}
+
 		return (
 			sibylArticles?.length
 				? sibylArticles
