@@ -512,7 +512,7 @@ const WebServerLogsCard = ( props ) => {
 	return (
 		<Card className="web-server-logs-card">
 			<MaterialIcon icon="settings" size={ 32 } />
-			<CardHeading>{ translate( 'Web server logs' ) }</CardHeading>
+			<CardHeading id="web-server-logs">{ translate( 'Web server logs' ) }</CardHeading>
 			{ getContent() }
 		</Card>
 	);
