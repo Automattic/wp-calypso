@@ -275,9 +275,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	}
 
 	function trackAllDesignsView() {
-		if ( isLoadingVirtualThemesExperiment || isLoadingDesigns ) {
-			return;
-		}
 		recordTracksEvent( 'calypso_signup_design_scrolled_to_end', {
 			intent,
 			category: categorization?.selection,
@@ -584,7 +581,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	// ********** Main render logic
 
 	// Don't render until we've done fetching all the data needed for initial render.
-	if ( ! site || isLoadingSiteVertical || isLoadingDesigns ) {
+	if ( ! site || isLoadingSiteVertical || isLoadingDesigns || isLoadingVirtualThemesExperiment ) {
 		return null;
 	}
 
