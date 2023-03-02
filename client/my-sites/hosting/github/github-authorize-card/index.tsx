@@ -58,7 +58,7 @@ export const GithubAuthorizeCard = () => {
 				disabled={ ! github || isAuthorizing }
 				onClick={ () => authorize( github.connect_URL ) }
 			>
-				{ translate( 'Authorize access to Github' ) }
+				{ translate( 'Authorize access to GitHub' ) }
 			</Button>
 		</Card>
 	);

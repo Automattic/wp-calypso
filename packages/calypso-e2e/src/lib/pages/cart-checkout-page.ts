@@ -15,6 +15,7 @@ const selectors = {
 		`[data-testid="review-order-step--visible"] .checkout-line-item >> text=${ itemName.trim() }`,
 	removeCartItemButton: ( itemName: string ) =>
 		`[data-testid="review-order-step--visible"] button[aria-label*="Remove ${ itemName.trim() } from cart"]`,
+	cartItems: `[data-testid="review-order-step--visible"] .checkout-line-item`,
 
 	// Order Summary
 	editOrderButton: 'button[aria-label="Edit your order"]',
@@ -119,6 +120,19 @@ export class CartCheckoutPage {
 	async removeCartItem( cartItemName: string ): Promise< void > {
 		await this.page.click( selectors.removeCartItemButton( cartItemName ) );
 		await this.page.click( selectors.modalContinueButton );
+	}
+
+	/**
+	 * Validates that the cart contains the expected number of items.
+	 */
+	async validateCartItemsCount( totalItems: number ): Promise< void > {
+		await this.page.waitForSelector( selectors.cartItems );
+		const cartItemsLocator = this.page.locator( selectors.cartItems );
+		const itemsCount = await cartItemsLocator.count();
+		console.log( itemsCount, totalItems );
+		if ( itemsCount !== totalItems ) {
+			throw new Error( `Expected ${ totalItems } items in cart, but found ${ itemsCount }` );
+		}
 	}
 
 	/**
