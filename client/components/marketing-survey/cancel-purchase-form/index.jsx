@@ -672,10 +672,12 @@ class CancelPurchaseForm extends Component {
 							{ this.getHeaderTitle() }
 							<span className="cancel-purchase-form__site-slug">
 								{ ( () => {
-									switch ( purchase.productName ) {
-										case 'Domain Connection':
+									switch ( purchase.productId ) {
+										// product.Id 5 is Domain Mapping
+										case 5:
 											return purchase.productName + translate( ' for ' ) + purchase.meta;
-										case 'Site Redirect':
+										// product.Id 36 is a Site Redirect
+										case 36:
 											return purchase.productName + translate( ' to ' ) + purchase.meta;
 										default:
 											return purchase.productName + translate( ' for ' ) + site.slug;
