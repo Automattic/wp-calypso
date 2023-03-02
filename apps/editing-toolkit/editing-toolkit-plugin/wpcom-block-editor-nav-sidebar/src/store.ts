@@ -27,7 +27,7 @@ const reducer = combineReducers( { opened, closing } );
 
 type State = ReturnType< typeof reducer >;
 
-const selectors = {
+export const selectors = {
 	isSidebarOpened: ( state: State ) => state.opened,
 	isSidebarClosing: ( state: State ) => state.closing,
 };

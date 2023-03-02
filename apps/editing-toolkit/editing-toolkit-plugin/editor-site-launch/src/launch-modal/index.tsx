@@ -10,6 +10,7 @@ import Launch from '../launch';
 import LaunchProgress from '../launch-progress';
 import LaunchSidebar from '../launch-sidebar';
 import { LAUNCH_STORE, SITE_STORE, PLANS_STORE } from '../stores';
+import type { LaunchSelect, PlansSelect } from '@automattic/data-stores';
 
 import './styles.scss';
 
@@ -21,8 +22,9 @@ interface Props {
 const LaunchModal: React.FunctionComponent< Props > = ( { onClose, isLaunchImmediately } ) => {
 	const { siteId } = React.useContext( LaunchContext );
 
-	const { step: currentStep, isSidebarFullscreen } = useSelect( ( select ) =>
-		select( LAUNCH_STORE ).getState()
+	const { step: currentStep, isSidebarFullscreen } = useSelect(
+		( select ) => ( select( LAUNCH_STORE ) as LaunchSelect ).getState(),
+		[]
 	);
 	const [ isLaunching, setIsLaunching ] = React.useState( false );
 	const [ isImmediateLaunchStarted, setIsImmediateLaunchStarted ] = React.useState( false );
@@ -32,8 +34,9 @@ const LaunchModal: React.FunctionComponent< Props > = ( { onClose, isLaunchImmed
 
 	const locale = useLocale();
 	const { setPlanProductId } = useDispatch( LAUNCH_STORE );
-	const defaultFreePlan = useSelect( ( select ) =>
-		select( PLANS_STORE ).getDefaultFreePlan( locale )
+	const defaultFreePlan = useSelect(
+		( select ) => ( select( PLANS_STORE ) as PlansSelect ).getDefaultFreePlan( locale ),
+		[]
 	);
 
 	const handleLaunch = React.useCallback( () => {

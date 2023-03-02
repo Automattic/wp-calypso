@@ -7,6 +7,7 @@ import { inIframe } from '../../block-inserter-modifications/contextual-tips/uti
 import { IMMEDIATE_LAUNCH_QUERY_ARG } from './constants';
 import { LAUNCH_STORE, SITE_STORE } from './stores';
 import { openCheckout, redirectToWpcomPath, getCurrentLaunchFlowUrl } from './utils';
+import type { LaunchSelect, SiteSelect } from '@automattic/data-stores';
 
 const registerPlugin = ( name: string, settings: Omit< PluginSettings, 'icon' > ) =>
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -17,12 +18,12 @@ registerPlugin( 'a8c-editor-editor-focused-launch', {
 		const currentSiteId = window._currentSiteId;
 
 		const isSiteLaunched = useSelect(
-			( select ) => select( SITE_STORE ).isSiteLaunched( currentSiteId ),
+			( select ) => ( select( SITE_STORE ) as SiteSelect ).isSiteLaunched( currentSiteId ),
 			[ currentSiteId ]
 		);
 
 		const { isFocusedLaunchOpen, isAnchorFm } = useSelect(
-			( select ) => select( LAUNCH_STORE ).getState(),
+			( select ) => ( select( LAUNCH_STORE ) as LaunchSelect ).getState(),
 			[]
 		);
 

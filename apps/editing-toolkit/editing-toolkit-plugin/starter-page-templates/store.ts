@@ -14,7 +14,7 @@ const actions = {
 	} ),
 };
 
-const selectors = {
+export const selectors = {
 	isOpen: ( state: OpenState ): boolean => 'CLOSED' !== state,
 	isPatternPicker: ( state: OpenState ): boolean => 'OPEN_FOR_BLANK_CANVAS' === state,
 };
