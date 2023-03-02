@@ -10,6 +10,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import useCampaignsQuery from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
 import CampaignsList from 'calypso/my-sites/promote-post/components/campaigns-list';
 import PostsList from 'calypso/my-sites/promote-post/components/posts-list';
@@ -145,7 +146,9 @@ export default function PromotedPosts( { tab }: Props ) {
 		( a, b ) => b.ID - a.ID
 	);
 
-	const isLoading = isLoadingPage && isLoadingPost && isLoadingProducts;
+	const isLoading = isWpMobileApp()
+		? isLoadingPage && isLoadingPost
+		: isLoadingPage && isLoadingPost && isLoadingProducts;
 
 	return (
 		<Main wideLayout className="promote-post">
@@ -178,7 +181,9 @@ export default function PromotedPosts( { tab }: Props ) {
 
 			<QueryPosts siteId={ selectedSiteId } query={ queryPost } postId={ null } />
 			<QueryPosts siteId={ selectedSiteId } query={ queryPage } postId={ null } />
-			<QueryPosts siteId={ selectedSiteId } query={ queryProducts } postId={ null } />
+			{ ! isWpMobileApp() && (
+				<QueryPosts siteId={ selectedSiteId } query={ queryProducts } postId={ null } />
+			) }
 
 			{ selectedTab === 'posts' && <PostsList content={ content } isLoading={ isLoading } /> }
 		</Main>

@@ -204,7 +204,6 @@ describe( 'utils', () => {
 						value: sites[ 0 ],
 					},
 					stats: {
-						status: 'active',
 						type: 'stats',
 						data: sites[ 0 ].site_stats,
 					},
