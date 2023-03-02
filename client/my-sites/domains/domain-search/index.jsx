@@ -177,7 +177,13 @@ class DomainSearch extends Component {
 			// Monthly plans don't have free domains
 			const intervalTypePath = this.props.isSiteOnMonthlyPlan ? 'yearly/' : '';
 			page(
-				`/plans/${ intervalTypePath }${ this.props.selectedSiteSlug }?domainAndPlanPackage=true`
+				addQueryArgs(
+					{
+						domainAndPlanPackage: true,
+						domain: this.props.isDomainUpsell ? domain : undefined,
+					},
+					`/plans/${ intervalTypePath }${ this.props.selectedSiteSlug }`
+				)
 			);
 			return;
 		}
@@ -226,6 +232,7 @@ class DomainSearch extends Component {
 			isManagingAllDomains,
 			cart,
 			isDomainAndPlanPackageFlow,
+			isDomainUpsell,
 		} = this.props;
 
 		if ( ! selectedSite ) {
@@ -308,11 +315,17 @@ class DomainSearch extends Component {
 
 									<p>
 										{ translate(
-											'Stake your claim on your corner of the web with a custom domain name that’s easy to find, share, and follow. Not sure yet?'
+											'Stake your claim on your corner of the web with a custom domain name that’s easy to find, share, and follow.'
 										) }
-										<a className="domains__header-decide-later" href={ hrefForDecideLater }>
-											{ translate( 'Decide later.' ) }
-										</a>
+										{ ! isDomainUpsell && (
+											<>
+												{ ' ' }
+												{ translate( 'Not sure yet?' ) }
+												<a className="domains__header-decide-later" href={ hrefForDecideLater }>
+													{ translate( 'Decide later.' ) }
+												</a>
+											</>
+										) }
 									</p>
 								</>
 							) }
@@ -383,6 +396,9 @@ export default connect(
 			productsList: getProductsList( state ),
 			userCanPurchaseGSuite: canUserPurchaseGSuite( state ),
 			isDomainAndPlanPackageFlow: !! getCurrentQueryArguments( state )?.domainAndPlanPackage,
+			isDomainUpsell:
+				!! getCurrentQueryArguments( state )?.domainAndPlanPackage &&
+				!! getCurrentQueryArguments( state )?.domain,
 		};
 	},
 	{
