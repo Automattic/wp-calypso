@@ -275,6 +275,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	}
 
 	function trackAllDesignsView() {
+		if ( isLoadingVirtualThemesExperiment || isLoadingDesigns ) {
+			return;
+		}
 		recordTracksEvent( 'calypso_signup_design_scrolled_to_end', {
 			intent,
 			category: categorization?.selection,
