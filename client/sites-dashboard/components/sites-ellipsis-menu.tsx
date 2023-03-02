@@ -274,7 +274,7 @@ function useSubmenuItems( site: SiteExcerptData ) {
 				eventName: 'calypso_sites_dashboard_site_action_submenu_database_access_click',
 			},
 			{
-				label: __( 'Github connection' ),
+				label: __( 'Deploy from GitHub' ),
 				href: `/hosting-config/${ siteSlug }#connect-github`,
 				eventName: 'calypso_sites_dashboard_site_action_submenu_connect_github_click',
 			},
