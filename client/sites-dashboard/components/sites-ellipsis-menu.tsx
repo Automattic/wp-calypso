@@ -279,10 +279,10 @@ function useSubmenuItems( site: SiteExcerptData ) {
 	}, [ __, siteSlug ] );
 }
 
-function DeveloperSettingsSubmenu( { site, recordTracks }: SitesMenuItemProps ) {
+function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps ) {
 	const { __ } = useI18n();
 	const submenuItems = useSubmenuItems( site );
-	const developerSubmenuProps = useSubmenuPopoverProps< HTMLDivElement >( { offsetTop: -8 } );
+	const submenuProps = useSubmenuPopoverProps< HTMLDivElement >( { offsetTop: -8 } );
 	const hasFeatureSFTP = useSafeSiteHasFeature( site.ID, FEATURE_SFTP );
 
 	if ( submenuItems.length === 0 ) {
@@ -290,7 +290,7 @@ function DeveloperSettingsSubmenu( { site, recordTracks }: SitesMenuItemProps ) 
 	}
 
 	return (
-		<div { ...developerSubmenuProps.parent }>
+		<div { ...submenuProps.parent }>
 			<MenuItemLink
 				href={ getHostingConfigUrl( site.slug ) }
 				onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_hosting_config_click' ) }
@@ -299,7 +299,7 @@ function DeveloperSettingsSubmenu( { site, recordTracks }: SitesMenuItemProps ) 
 				{ __( 'Hosting configuration' ) } <MenuItemGridIcon icon="chevron-right" size={ 18 } />
 			</MenuItemLink>
 			<SubmenuPopover
-				{ ...developerSubmenuProps.submenu }
+				{ ...submenuProps.submenu }
 				focusOnMount={ hasFeatureSFTP ? 'firstElement' : false }
 			>
 				{ hasFeatureSFTP ? (
@@ -359,7 +359,7 @@ export const SitesEllipsisMenu = ( {
 				<SiteMenuGroup>
 					{ ! isLaunched && <LaunchItem { ...props } /> }
 					<SettingsItem { ...props } />
-					{ hasHostingPage && <DeveloperSettingsSubmenu { ...props } /> }
+					{ hasHostingPage && <HostingConfigurationSubmenu { ...props } /> }
 					{ ! isP2Site( site ) && <ManagePluginsItem { ...props } /> }
 					{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
 					{ shouldShowSiteCopyItem && <CopySiteItem { ...props } onClick={ startSiteCopy } /> }
