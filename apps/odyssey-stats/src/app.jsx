@@ -48,6 +48,13 @@ async function AppBoot() {
 		window.location.hash = `#!/stats/day/${ siteId }`;
 	}
 	registerStatsPages( window.location.pathname + window.location.search );
+
+	// HACK: page.js adds a `?...page=stats&...` query param to the URL in Odyssey on page refresh everytime.
+	// Test whether there are two query strings (two '?').
+	if ( window.location.hash.replaceAll( /[^?]/g, '' ).length > 1 ) {
+		// If so, we remove the last '?' and the query string following it with the lazy match regex.
+		window.location.hash = window.location.hash.replace( /\?[^?]*?page=stats[^?]*?$/, '' );
+	}
 }
 
 AppBoot();

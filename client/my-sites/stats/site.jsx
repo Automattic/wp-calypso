@@ -60,7 +60,7 @@ function updateQueryString( url = null, query = {} ) {
 	}
 
 	return {
-		...parseQs( search.substring( 1 ) ),
+		...parseQs( search.substring( 1 ), { parseArrays: false } ),
 		...query,
 	};
 }
