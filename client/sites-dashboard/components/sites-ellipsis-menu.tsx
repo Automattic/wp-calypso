@@ -288,6 +288,11 @@ function useSubmenuItems( site: SiteExcerptData ) {
 				href: `/hosting-config/${ siteSlug }#cache`,
 				eventName: 'calypso_sites_dashboard_site_action_submenu_cache_click',
 			},
+			{
+				label: __( 'Web server logs' ),
+				href: `/hosting-config/${ siteSlug }#web-server-logs`,
+				eventName: 'calypso_sites_dashboard_site_action_submenu_logs_click',
+			},
 		];
 	}, [ __, siteSlug ] );
 }
