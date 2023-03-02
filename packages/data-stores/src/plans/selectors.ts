@@ -15,6 +15,7 @@ import type {
 	PlanProduct,
 	PlanPath,
 	PlanSlug,
+	PlansSelect,
 	StorePlanSlug,
 } from './types';
 
@@ -37,7 +38,7 @@ export const getPlanByProductId = (
 		return undefined;
 	}
 
-	return select( STORE_KEY )
+	return ( select( STORE_KEY ) as PlansSelect )
 		.getSupportedPlans( locale )
 		.find( ( plan: Plan ) => plan.productIds.indexOf( productId ) > -1 );
 };
@@ -50,7 +51,7 @@ export const getPlanProductById = (
 		return undefined;
 	}
 
-	return select( STORE_KEY )
+	return ( select( STORE_KEY ) as PlansSelect )
 		.getPlansProducts()
 		.find( ( product: PlanProduct ) => product.productId === productId );
 };
@@ -63,19 +64,19 @@ export const getPlanByPeriodAgnosticSlug = (
 	if ( ! slug ) {
 		return undefined;
 	}
-	return select( STORE_KEY )
+	return ( select( STORE_KEY ) as PlansSelect )
 		.getSupportedPlans( locale )
 		.find( ( plan: Plan ) => plan.periodAgnosticSlug === slug );
 };
 
 export const getDefaultPaidPlan = ( _: State, locale: string ): Plan | undefined => {
-	return select( STORE_KEY )
+	return ( select( STORE_KEY ) as PlansSelect )
 		.getSupportedPlans( locale )
 		.find( ( plan: Plan ) => plan.periodAgnosticSlug === DEFAULT_PAID_PLAN );
 };
 
 export const getDefaultFreePlan = ( _: State, locale: string ): Plan | undefined => {
-	return select( STORE_KEY )
+	return ( select( STORE_KEY ) as PlansSelect )
 		.getSupportedPlans( locale )
 		.find( ( plan: Plan ) => plan.periodAgnosticSlug === TIMELESS_PLAN_FREE );
 };
@@ -97,7 +98,7 @@ export const getPrices = ( _state: State, _locale: string ): Record< StorePlanSl
 	deprecate( 'getPrices', {
 		alternative: 'getPlanProduct().price',
 	} );
-	return select( STORE_KEY )
+	return ( select( STORE_KEY ) as PlansSelect )
 		.getPlansProducts()
 		.reduce( ( prices: Record< StorePlanSlug, string >, plan: PlanProduct ) => {
 			prices[ plan.storeSlug ] = plan.price;
@@ -114,7 +115,7 @@ export const getPlanByPath = (
 		return undefined;
 	}
 
-	const planProduct = select( STORE_KEY )
+	const planProduct = ( select( STORE_KEY ) as PlansSelect )
 		.getPlansProducts()
 		.find( ( product: PlanProduct ) => product.pathSlug === path );
 
@@ -122,7 +123,7 @@ export const getPlanByPath = (
 		return undefined;
 	}
 
-	return select( STORE_KEY )
+	return ( select( STORE_KEY ) as PlansSelect )
 		.getSupportedPlans( locale )
 		.find( ( plan: Plan ) => plan.periodAgnosticSlug === planProduct.periodAgnosticSlug );
 };
@@ -136,7 +137,7 @@ export const getPlanProduct = (
 		return undefined;
 	}
 
-	return select( STORE_KEY )
+	return ( select( STORE_KEY ) as PlansSelect )
 		.getPlansProducts()
 		.find( ( product: PlanProduct ) => {
 			const matchesSlug = product.periodAgnosticSlug === periodAgnosticSlug;

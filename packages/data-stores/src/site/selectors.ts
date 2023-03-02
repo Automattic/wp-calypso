@@ -1,6 +1,6 @@
 import { select } from '@wordpress/data';
 import { STORE_KEY } from './constants';
-import { Domain, SiteLaunchStatus, SiteOption } from './types';
+import { Domain, SiteLaunchStatus, SiteDetails, SiteOption, SiteSelect } from './types';
 import type { State } from './reducer';
 
 export const getState = ( state: State ) => state;
@@ -19,7 +19,10 @@ export const isNewSite = ( state: State ) => !! state.newSite.data;
  * @param state {State}		state object
  * @param siteId {number}	id of the site to look up
  */
-export const getSite = ( state: State, siteId: number | string ) => {
+export const getSite: ( state: State, siteId: number | string ) => SiteDetails | undefined = (
+	state,
+	siteId
+) => {
 	return (
 		// Try matching numeric site ID
 		state.sites[ siteId ] ||
@@ -33,15 +36,17 @@ export const getSite = ( state: State, siteId: number | string ) => {
 	);
 };
 
-export const getSiteIdBySlug = ( _: State, slug: string ) => {
-	return select( STORE_KEY ).getSite( slug )?.ID;
+export const getSiteIdBySlug: ( _: State, slug: string ) => number | undefined = ( _, slug ) => {
+	return ( select( STORE_KEY ) as SiteSelect ).getSite( slug )?.ID;
 };
 
-export const getSiteTitle = ( _: State, siteId: number ) =>
-	select( STORE_KEY ).getSite( siteId )?.name;
+export const getSiteTitle: ( _: State, siteId: number ) => string | undefined = ( _, siteId ) =>
+	( select( STORE_KEY ) as SiteSelect ).getSite( siteId )?.name;
 
-export const getSiteVerticalId = ( _: State, siteId: number ) =>
-	select( STORE_KEY ).getSite( siteId )?.options?.site_vertical_id;
+export const getSiteVerticalId: ( _: State, siteId: number ) => string | null | undefined = (
+	_,
+	siteId
+) => ( select( STORE_KEY ) as SiteSelect ).getSite( siteId )?.options?.site_vertical_id;
 
 // @TODO: Return LaunchStatus instead of a boolean
 export const isSiteLaunched = ( state: State, siteId: number ) => {
@@ -53,12 +58,17 @@ export const isSiteLaunching = ( state: State, siteId: number ) => {
 	return state.launchStatus[ siteId ]?.status === SiteLaunchStatus.IN_PROGRESS;
 };
 
-export const isSiteAtomic = ( state: State, siteId: number | string ) => {
-	return select( STORE_KEY ).getSite( siteId )?.options?.is_wpcom_atomic === true;
+export const isSiteAtomic: ( _: State, siteId: number | string ) => boolean = ( state, siteId ) => {
+	return ( select( STORE_KEY ) as SiteSelect ).getSite( siteId )?.options?.is_wpcom_atomic === true;
 };
 
-export const isSiteWPForTeams = ( state: State, siteId: number | string ) => {
-	return select( STORE_KEY ).getSite( siteId )?.options?.is_wpforteams_site === true;
+export const isSiteWPForTeams: ( _: State, siteId: number | string ) => boolean = (
+	state,
+	siteId
+) => {
+	return (
+		( select( STORE_KEY ) as SiteSelect ).getSite( siteId )?.options?.is_wpforteams_site === true
+	);
 };
 
 export const getSiteDomains = ( state: State, siteId: number ) => {
@@ -89,13 +99,16 @@ export const getSiteOption = ( state: State, siteId: number, optionName: SiteOpt
 	return state.sites[ siteId ]?.options?.[ optionName ];
 };
 
-export const getPrimarySiteDomain = ( _: State, siteId: number ) =>
-	select( STORE_KEY )
+export const getPrimarySiteDomain: ( _: State, siteId: number ) => Domain | undefined = (
+	_,
+	siteId
+) =>
+	( select( STORE_KEY ) as SiteSelect )
 		.getSiteDomains( siteId )
 		?.find( ( domain: Domain ) => domain.primary_domain );
 
-export const getSiteSubdomain = ( _: State, siteId: number ) =>
-	select( STORE_KEY )
+export const getSiteSubdomain: ( _: State, siteId: number ) => Domain | undefined = ( _, siteId ) =>
+	( select( STORE_KEY ) as SiteSelect )
 		.getSiteDomains( siteId )
 		?.find( ( domain: Domain ) => domain.is_subdomain );
 
@@ -129,16 +142,23 @@ export const siteHasFeature = (
 	featureKey: string
 ): boolean => {
 	return Boolean(
-		siteId && select( STORE_KEY ).getSite( siteId )?.plan?.features.active.includes( featureKey )
+		siteId &&
+			( select( STORE_KEY ) as SiteSelect )
+				.getSite( siteId )
+				?.plan?.features.active.includes( featureKey )
 	);
 };
 
-export const requiresUpgrade = ( state: State, siteId: number | null ) => {
-	return siteId && ! select( STORE_KEY ).siteHasFeature( siteId, 'woop' );
+// TODO: The `0` here seems wrong and should likely be addressed.
+export const requiresUpgrade: ( state: State, siteId: number | null ) => boolean | 0 | null = (
+	state,
+	siteId
+) => {
+	return siteId && ! ( select( STORE_KEY ) as SiteSelect ).siteHasFeature( siteId, 'woop' );
 };
 
 export function isJetpackSite( state: State, siteId?: number ): boolean {
-	return Boolean( siteId && select( STORE_KEY ).getSite( siteId )?.jetpack );
+	return Boolean( siteId && ( select( STORE_KEY ) as SiteSelect ).getSite( siteId )?.jetpack );
 }
 
 export function isEligibleForProPlan( state: State, siteId?: number ): boolean {
