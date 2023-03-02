@@ -1,4 +1,5 @@
 import React from 'react';
+import { navigate } from 'calypso/lib/navigate';
 
 export function withScrollTopOnClick<
 	T,
@@ -8,7 +9,9 @@ export function withScrollTopOnClick<
 		function handleClick( event: React.MouseEvent< T > ) {
 			const { onClick, href } = props;
 			if ( href ) {
+				event.preventDefault();
 				window.scrollTo( 0, 0 );
+				navigate( href );
 			}
 			if ( typeof onClick === 'function' ) {
 				onClick( event );

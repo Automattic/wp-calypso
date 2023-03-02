@@ -10,7 +10,6 @@ import {
 	SubmenuPopover,
 	UpsellMenuGroup,
 	useSubmenuPopoverProps,
-	withScrollTopOnClick,
 } from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
@@ -21,6 +20,7 @@ import { ComponentType, useEffect, useMemo, useState } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import SitePreviewLink from 'calypso/components/site-preview-link';
 import { useSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
+import { withScrollTopOnClick } from 'calypso/lib/with-scroll-top-on-click';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
