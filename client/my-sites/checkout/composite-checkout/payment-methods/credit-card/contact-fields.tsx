@@ -3,6 +3,7 @@ import { useSelect } from '@wordpress/data';
 import TaxFields from 'calypso/my-sites/checkout/composite-checkout/components/tax-fields';
 import useCountryList from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
 import { CountrySpecificPaymentFields } from '../../components/country-specific-payment-fields';
+import { CardFieldState } from './types';
 import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 export default function ContactFields( {
@@ -21,7 +22,9 @@ export default function ContactFields( {
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 	const countriesList = useCountryList();
-	const fields = useSelect( ( select ) => select( 'wpcom-credit-card' ).getFields() );
+	const fields: CardFieldState = useSelect( ( select ) =>
+		select( 'wpcom-credit-card' ).getFields()
+	);
 	const onChangeContactInfo = ( newInfo: ManagedContactDetails ) => {
 		setFieldValue( 'countryCode', newInfo.countryCode?.value ?? '' );
 		setFieldValue( 'postalCode', newInfo.postalCode?.value ?? '' );

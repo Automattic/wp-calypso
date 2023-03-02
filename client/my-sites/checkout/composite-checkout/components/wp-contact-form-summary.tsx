@@ -26,7 +26,9 @@ export default function WPContactFormSummary( {
 	isGSuiteInCart: boolean;
 	isLoggedOutCart: boolean;
 } ) {
-	const contactInfo = useSelect( ( select ) => select( 'wpcom-checkout' )?.getContactInfo() ?? {} );
+	const contactInfo: ManagedContactDetails = useSelect(
+		( select ) => select( 'wpcom-checkout' )?.getContactInfo() ?? {}
+	);
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const isRenewal = hasOnlyRenewalItems( responseCart );

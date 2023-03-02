@@ -10,6 +10,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import CreditCardElementField from './credit-card-element-field';
 import CreditCardLoading from './credit-card-loading';
 import SetAsPrimaryPaymentMethod from './set-as-primary-payment-method';
+import type { StoreState } from '@automattic/wpcom-checkout';
 import type { StripeElementChangeEvent, StripeElementStyle } from '@stripe/stripe-js';
 
 import './style.scss';
@@ -17,8 +18,10 @@ import './style.scss';
 export default function CreditCardFields() {
 	const { __ } = useI18n();
 	const [ isStripeFullyLoaded, setIsStripeFullyLoaded ] = useState( false );
-	const fields = useSelect( ( select ) => select( 'credit-card' ).getFields() );
-	const useAsPrimaryPaymentMethod = useSelect( ( select ) =>
+	const fields: StoreState< string > = useSelect( ( select ) =>
+		select( 'credit-card' ).getFields()
+	);
+	const useAsPrimaryPaymentMethod: boolean = useSelect( ( select ) =>
 		select( 'credit-card' ).useAsPrimaryPaymentMethod()
 	);
 	const getField = ( key: string | number ) => fields[ key ] || {};

@@ -60,7 +60,11 @@ import WPCheckout from './wp-checkout';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import type { CountryListItem, CheckoutPaymentMethodSlug } from '@automattic/wpcom-checkout';
+import type {
+	CountryListItem,
+	CheckoutPaymentMethodSlug,
+	ManagedContactDetails,
+} from '@automattic/wpcom-checkout';
 
 const { colors } = colorStudio;
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
@@ -336,8 +340,10 @@ export default function CheckoutMain( {
 		// Only wait for stored cards to load if we are using cards
 		( allowedPaymentMethods.includes( 'card' ) && isLoadingStoredCards );
 
-	const contactDetails = useSelect( ( select ) => select( 'wpcom-checkout' )?.getContactInfo() );
-	const recaptchaClientId = useSelect( ( select ) =>
+	const contactDetails: ManagedContactDetails = useSelect( ( select ) =>
+		select( 'wpcom-checkout' )?.getContactInfo()
+	);
+	const recaptchaClientId: number = useSelect( ( select ) =>
 		select( 'wpcom-checkout' )?.getRecaptchaClientId()
 	);
 

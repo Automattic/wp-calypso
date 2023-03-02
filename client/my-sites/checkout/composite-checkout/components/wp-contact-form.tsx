@@ -3,7 +3,11 @@ import styled from '@emotion/styled';
 import { useSelect } from '@wordpress/data';
 import useCachedDomainContactDetails from '../hooks/use-cached-domain-contact-details';
 import ContactDetailsContainer from './contact-details-container';
-import type { CountryListItem, ContactDetailsType } from '@automattic/wpcom-checkout';
+import type {
+	CountryListItem,
+	ContactDetailsType,
+	ManagedContactDetails,
+} from '@automattic/wpcom-checkout';
 
 const BillingFormFields = styled.div`
 	margin-bottom: 16px;
@@ -34,7 +38,9 @@ export default function WPContactForm( {
 	isLoggedOutCart: boolean;
 	setShouldShowContactDetailsValidationErrors: ( allowed: boolean ) => void;
 } ) {
-	const contactInfo = useSelect( ( select ) => select( 'wpcom-checkout' )?.getContactInfo() ?? {} );
+	const contactInfo: ManagedContactDetails = useSelect(
+		( select ) => select( 'wpcom-checkout' )?.getContactInfo() ?? {}
+	);
 	const { formStatus } = useFormStatus();
 	const isStepActive = useIsStepActive();
 	const isDisabled = ! isStepActive || formStatus !== FormStatus.READY;

@@ -68,7 +68,11 @@ import WPContactFormSummary from './wp-contact-form-summary';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
 import type { RemoveProductFromCart, MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import type { CountryListItem } from '@automattic/wpcom-checkout';
+import type {
+	CountryListItem,
+	ManagedContactDetails,
+	VatDetails,
+} from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
@@ -185,9 +189,15 @@ export default function WPCheckout( {
 
 	const contactDetailsType = getContactDetailsType( responseCart );
 
-	const contactInfo = useSelect( ( sel ) => sel( 'wpcom-checkout' )?.getContactInfo() ?? {} );
+	const contactInfo: ManagedContactDetails = useSelect(
+		( sel ) => ( sel( 'wpcom-checkout' ) as WpcomCheckoutStoreSelectors )?.getContactInfo() ?? {},
+		[]
+	);
 
-	const vatDetailsInForm = useSelect( ( sel ) => sel( 'wpcom-checkout' )?.getVatDetails() ?? {} );
+	const vatDetailsInForm: VatDetails = useSelect(
+		( sel ) => ( sel( 'wpcom-checkout' ) as WpcomCheckoutStoreSelectors )?.getVatDetails() ?? {},
+		[]
+	);
 	const { setVatDetails, vatDetails: vatDetailsFromServer } = useVatDetails();
 
 	const checkoutActions = useDispatch( 'wpcom-checkout' );

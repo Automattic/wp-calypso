@@ -1,4 +1,4 @@
-import { register, registerStore } from '@wordpress/data';
+import { registerStore } from '@wordpress/data';
 import { useRef } from 'react';
 import {
 	emptyManagedContactDetails,
@@ -40,7 +40,7 @@ type WpcomStoreAction =
 
 export const STORE_KEY = 'wpcom-checkout';
 
-export interface WpcomCheckoutStore extends ReturnType< typeof register > {
+export interface WpcomCheckoutStore extends ReturnType< typeof registerStore > {
 	getState: () => WpcomStoreState;
 }
 

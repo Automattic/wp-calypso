@@ -61,7 +61,7 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 		() => [ stripeMethod ].filter( isValueTruthy ),
 		[ stripeMethod ]
 	);
-	const useAsPrimaryPaymentMethod = useSelect( ( select ) =>
+	const useAsPrimaryPaymentMethod: boolean = useSelect( ( select ) =>
 		select( 'credit-card' ).useAsPrimaryPaymentMethod()
 	);
 
