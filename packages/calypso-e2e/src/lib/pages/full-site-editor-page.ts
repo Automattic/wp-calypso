@@ -138,7 +138,7 @@ export class FullSiteEditorPage {
 		await this.editor
 			.frameLocator( 'iframe.edit-site-visual-editor__editor-canvas' )
 			.locator( 'body' )
-			.click();
+			.click( { timeout: 20 * 1000 } );
 	}
 
 	/**
