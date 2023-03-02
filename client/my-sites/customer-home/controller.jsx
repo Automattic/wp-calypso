@@ -58,7 +58,7 @@ export async function maybeRedirect( context, next ) {
 		refetchedOptions?.launchpad_screen === 'full' &&
 		// Temporary hack/band-aid to resolve a stale issue with atomic that the requestSite
 		// dispatch above doesnt always seem to resolve.
-		! getQueryArgs()?.launchpadComplete === 'true';
+		getQueryArgs()?.launchpadComplete !== 'true';
 
 	if ( shouldRedirectToLaunchpad ) {
 		// The new stepper launchpad onboarding flow isn't registered within the "page"
