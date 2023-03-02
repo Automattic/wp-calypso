@@ -13,6 +13,7 @@ import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { addQueryArgs } from 'calypso/lib/url';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { isNotAtomicJetpack, isP2Site } from 'calypso/sites-dashboard/utils';
 import { getCurrentUser, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
 import { getDomainsBySite } from 'calypso/state/sites/domains/selectors';
@@ -38,14 +39,19 @@ export default function DomainUpsell( { context } ) {
 
 	const shouldNotShowProfileUpsell =
 		isProfileUpsell &&
-		( user.site_count !== 1 || isFreePlanProduct( sitePlan ) || siteDomainsLength !== 0 );
+		( user.site_count !== 1 ||
+			! isFreePlanProduct( sitePlan ) ||
+			siteDomainsLength > 0 ||
+			! isEmailVerified ||
+			isP2Site( primarySite ) ||
+			isNotAtomicJetpack( primarySite ) );
 
 	const shouldNotShowMyHomeUpsell =
 		! isProfileUpsell &&
 		( siteDomainsLength > 1 || ! isEmailVerified || ! isFreePlanProduct( sitePlan ) );
 
 	if ( shouldNotShowProfileUpsell || shouldNotShowMyHomeUpsell ) {
-		// return null;
+		return null;
 	}
 
 	const searchTerm = isProfileUpsell ? user?.display_name : selectedSiteSlug?.split( '.' )[ 0 ];
@@ -64,7 +70,7 @@ export default function DomainUpsell( { context } ) {
 export function RenderDomainUpsell( { isProfileUpsell, searchTerm, siteSlug } ) {
 	const translate = useTranslate();
 
-	const tracksContext = isProfileUpsell ? 'profile' : 'my-home';
+	const tracksContext = isProfileUpsell ? 'profile' : 'my_home';
 
 	const locale = useLocale();
 	const { allDomainSuggestions } =

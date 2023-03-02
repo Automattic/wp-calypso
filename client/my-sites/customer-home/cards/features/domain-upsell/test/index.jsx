@@ -2,25 +2,24 @@
  * @jest-environment jsdom
  */
 
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import DomainUpsell from '../';
 
-const sites = [];
-sites[ 1 ] = {
-	ID: 1,
-	URL: 'example.wordpress.com',
-	plan: {
-		product_slug: 'free_plan',
-	},
-};
-
 const initialState = {
 	sites: {
-		items: sites,
+		items: {
+			1: {
+				ID: 1,
+				URL: 'example.wordpress.com',
+				plan: {
+					product_slug: 'free_plan',
+				},
+			},
+		},
 		domains: {
 			items: [ 'example.wordpress.com' ],
 		},
@@ -32,6 +31,8 @@ const initialState = {
 		id: 12,
 		user: {
 			email_verified: true,
+			site_count: 1,
+			primary_blog: 1,
 		},
 	},
 };
@@ -59,12 +60,13 @@ describe( 'index', () => {
 		const mockStore = configureStore();
 		const store = mockStore( initialState );
 
-		render(
-			<Provider store={ store }>
-				<DomainUpsell />
-			</Provider>
-		);
-		expect( 1 ).toBe( 1 );
+		await act( async () => {
+			render(
+				<Provider store={ store }>
+					<DomainUpsell />
+				</Provider>
+			);
+		} );
 
 		expect(
 			screen.getByRole( 'heading', { name: 'Own your online identity with a custom domain' } )
@@ -100,5 +102,82 @@ describe( 'index', () => {
 		expect( pageLink ).toBe(
 			'/plans/yearly/example.wordpress.com?domain=true&domainAndPlanPackage=true'
 		);
+	} );
+
+	test( 'Should show the domain upsell in the context of the profile page', async () => {
+		const mockStore = configureStore();
+		const store = mockStore( initialState );
+
+		await act( async () => {
+			render(
+				<Provider store={ store }>
+					<DomainUpsell context="profile" />
+				</Provider>
+			);
+		} );
+
+		expect(
+			screen.getByRole( 'heading', { name: 'Own your online identity with a custom domain' } )
+		).toBeInTheDocument();
+	} );
+
+	test( 'Should NOT show the domain upsell in the context of the profile page if more than one site', async () => {
+		const newInitialState = {
+			...initialState,
+			currentUser: {
+				...initialState.currentUser,
+				user: {
+					...initialState.currentUser.user,
+					site_count: 2,
+				},
+			},
+		};
+
+		const mockStore = configureStore();
+		const store = mockStore( newInitialState );
+
+		await act( async () => {
+			render(
+				<Provider store={ store }>
+					<DomainUpsell context="profile" />
+				</Provider>
+			);
+		} );
+
+		expect(
+			screen.queryByRole( 'heading', { name: 'Own your online identity with a custom domain' } )
+		).not.toBeInTheDocument();
+	} );
+
+	test( 'Should NOT show the domain upsell in the context of the profile page if Jetpack Non-Atomic site', async () => {
+		const newInitialState = {
+			...initialState,
+			sites: {
+				...initialState.sites,
+				items: {
+					...initialState.sites.items,
+					1: {
+						...initialState.sites.items[ 1 ],
+						is_wpcom_atomic: false,
+						jetpack: true,
+					},
+				},
+			},
+		};
+
+		const mockStore = configureStore();
+		const store = mockStore( newInitialState );
+
+		await act( async () => {
+			render(
+				<Provider store={ store }>
+					<DomainUpsell context="profile" />
+				</Provider>
+			);
+		} );
+
+		expect(
+			screen.queryByRole( 'heading', { name: 'Own your online identity with a custom domain' } )
+		).not.toBeInTheDocument();
 	} );
 } );
