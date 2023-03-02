@@ -45,7 +45,7 @@ const JetpackCompletePage: React.FC< Props > = ( { urlQueryArgs, siteSlug } ) =>
 		}
 
 		dispatch(
-			recordTracksEvent( 'calypso_jetpack_complete_page_render', {
+			recordTracksEvent( 'calypso_jetpack_complete_page_open', {
 				site_id: siteId,
 			} )
 		);
