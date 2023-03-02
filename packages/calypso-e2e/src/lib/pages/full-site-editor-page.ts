@@ -132,16 +132,6 @@ export class FullSiteEditorPage {
 	}
 
 	/**
-	 * Clicks on the preview pane on the right to launch the editor window.
-	 */
-	async openEditor(): Promise< void > {
-		await this.editor
-			.frameLocator( 'iframe.edit-site-visual-editor__editor-canvas' )
-			.locator( 'body' )
-			.click( { timeout: 20 * 1000 } );
-	}
-
-	/**
 	 * Waits until the site editor is fully loaded.
 	 */
 	async waitUntilLoaded(): Promise< void > {
@@ -179,6 +169,14 @@ export class FullSiteEditorPage {
 				}
 			} );
 		}
+	}
+
+	/**
+	 * Clicks on a button with the exact name.
+	 */
+	async clickFullSiteNavigatorButton( text: string ): Promise< void > {
+		// await this.editor.locator( `button:has-text("${ text }")` ).click();
+		await this.editor.getByRole( 'button', { name: text, exact: true } ).click();
 	}
 
 	//#endregion

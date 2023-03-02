@@ -47,10 +47,17 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		await page.waitForURL( /site-editor/ );
 	} );
 
+	it( 'Open the Page template', async function () {
+		fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
+
+		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Templates' );
+		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Page' );
+		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Edit' );
+	} );
+
 	it( 'Editor canvas loads', async function () {
 		fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
 
-		await fullSiteEditorPage.openEditor();
 		await fullSiteEditorPage.waitUntilLoaded();
 	} );
 } );
