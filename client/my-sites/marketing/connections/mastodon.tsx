@@ -1,7 +1,7 @@
 import { FormInputValidation, Spinner } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect, useCallback, FormEvent, ChangeEvent } from 'react';
+import { useState, FormEvent, ChangeEvent } from 'react';
 import FormsButton from 'calypso/components/forms/form-button';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -76,21 +76,14 @@ export const Mastodon: React.FC< Props > = ( {
 	const [ instance, setInstance ] = useState( '' );
 	const [ error, setError ] = useState( '' );
 
-	const validateInstance = useCallback( () => {
+	const handleInstanceChange = ( e: ChangeEvent< HTMLInputElement > ) => {
+		const instance = e.target.value.trim();
+		setInstance( instance );
 		if ( isValidUsername( instance ) || ! instance ) {
 			setError( '' );
 		} else {
 			setError( translate( 'This username is not valid.' ) );
 		}
-	}, [ instance, translate ] );
-
-	useEffect( () => {
-		validateInstance();
-	}, [ validateInstance ] );
-
-	const handleInstanceChange = ( e: ChangeEvent< HTMLInputElement > ) => {
-		setInstance( e.target.value.trim() );
-		validateInstance();
 	};
 
 	/**
