@@ -121,7 +121,9 @@ export const GithubConnectCard = ( { connection }: GithubConnectCardProps ) => {
 				</div>
 
 				<FormSettingExplanation>
-					Don't see a specific repo? Try re-authorizing with Github as a different organization.
+					{ __(
+						"Don't see a specific repo? Try re-authorizing with GitHub as a different organization."
+					) }
 				</FormSettingExplanation>
 			</div>
 			<div className={ classNames( 'connect-branch__buttons' ) }>
