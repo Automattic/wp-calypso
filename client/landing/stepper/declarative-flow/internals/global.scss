@@ -376,6 +376,9 @@ button {
 		margin-left: auto;
 		margin-right: auto;
 	}
+	p.processing-step__subtitle {
+		font-family: "SF Pro Text", $sans;
+	}
 	.loading-bar::before {
 		background: var(--wooexpress-purple);
 	}

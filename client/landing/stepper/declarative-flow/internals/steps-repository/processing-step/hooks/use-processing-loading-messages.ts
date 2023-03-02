@@ -23,17 +23,36 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 	}
 
 	if ( isWooExpressFlow( flow || null ) ) {
-		return stepData.currentStep === 'siteCreationStep'
-			? [
+		switch ( stepData.currentStep ) {
+			case 'siteCreationStep':
+				return [
 					{
-						title: __( 'Woo! We’re creating your store' ),
+						title: __( "Woo! We're creating your store" ),
 						subtitle: __(
-							'#FunWooFact: Did you know that Woo powers almost 4 million stores worldwide? You’re in good company.'
+							"#FunWooFact: Did you know that Woo powers almost 4 million stores worldwide? You're in good company."
 						),
-						duration: 2000,
+						duration: 15000,
 					},
-			  ]
-			: [
+				];
+			case 'waitForAtomic':
+				return [
+					{
+						title: __( 'Building the foundations' ),
+						subtitle: __(
+							'#FunWooFact: Did you know that Woo was founded by two South Africans and a Norwegian? Here are three alternative ways to say "store" in those countries - Winkel, ivenkile, and butikk.'
+						),
+						duration: 15000,
+					},
+					{
+						title: __( 'Organizing the stock room' ),
+						subtitle: __(
+							'#FunWooFact: Are you Team Cat or Team Dog? The Woo team is split 50/50!'
+						),
+						duration: 15000,
+					},
+				];
+			default:
+				return [
 					{
 						title: __( 'Applying the finishing touches' ),
 						subtitle: __(
@@ -43,11 +62,19 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 					},
 					{
 						title: __( 'Turning on the lights' ),
+						subtitle: __(
+							'#FunWooFact: The Woo team is made up of over 350 talented individuals, distributed across 30+ countries.'
+						),
+						duration: 15000,
+					},
+					{
+						title: __( 'Opening the doors' ),
 						subtitle: __( '#FunWooFact: Our favorite color is purple 💜' ),
 						// Set a very long duration to make sure it shows until the step is completed
 						duration: 150000,
 					},
-			  ];
+				];
+		}
 	}
 
 	switch ( stepData.intent ) {
