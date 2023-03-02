@@ -7,6 +7,7 @@ export default function HelpResults( {
 	compact,
 	footer,
 	helpLinks,
+	onLinksDisplay,
 	header,
 	iconTypeDescription,
 	onClick,
@@ -15,6 +16,8 @@ export default function HelpResults( {
 	if ( ! helpLinks.length ) {
 		return null;
 	}
+
+	onLinksDisplay( helpLinks );
 
 	return (
 		<>

@@ -36,6 +36,14 @@ import { generateSubjectFromMessage } from './utils';
 
 import './style.scss';
 
+const trackSibylResultsDisplayed = ( results ) =>
+	composeAnalytics(
+		bumpStat( 'sibyl_results_displayed' ),
+		recordTracksEventAction( 'calypso_sibyl_display_results', {
+			resultsCount: results.length,
+		} )
+	);
+
 const trackSibylClick = ( event, helpLink ) =>
 	composeAnalytics(
 		bumpStat( 'sibyl_question_clicks', helpLink.id ),
@@ -622,6 +630,7 @@ export class HelpContactForm extends PureComponent {
 						helpLinks={ this.state.qanda }
 						iconTypeDescription="book"
 						onClick={ this.trackSibylClick }
+						onLinksDisplay={ this.props.trackSibylResultsDisplayed }
 						compact
 					/>
 				) }
@@ -668,6 +677,7 @@ const mapDispatchToProps = {
 	onChangeSite: selectSiteId,
 	recordTracksEventAction,
 	requestSite,
+	trackSibylResultsDisplayed,
 	trackSibylClick,
 	trackSibylFirstClick,
 	trackSupportAfterSibylClick,
