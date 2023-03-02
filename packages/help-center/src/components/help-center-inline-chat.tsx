@@ -15,7 +15,6 @@ document.body.appendChild( theIframe );
 theIframe.style.display = 'none';
 theIframe.style.position = 'fixed';
 theIframe.style.zIndex = '100000';
-theIframe.style.border = 'none';
 
 // cache for a day
 const cacheBuster = Math.floor( Date.now() / 1000 / 60 / 60 / 24 );

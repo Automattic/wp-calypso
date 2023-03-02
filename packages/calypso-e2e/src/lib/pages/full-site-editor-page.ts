@@ -171,6 +171,13 @@ export class FullSiteEditorPage {
 		}
 	}
 
+	/**
+	 * Clicks on a button with the exact name.
+	 */
+	async clickFullSiteNavigatorButton( text: string ): Promise< void > {
+		await this.editor.getByRole( 'button', { name: text, exact: true } ).click();
+	}
+
 	//#endregion
 
 	//#region Block Actions

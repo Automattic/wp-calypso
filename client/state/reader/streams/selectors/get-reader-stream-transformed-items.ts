@@ -17,12 +17,13 @@ import 'calypso/state/reader/init';
  * function( state, { streamKey: string, recsStreamKey: string }): Array
  */
 export const getTransformedStreamItems = treeSelect(
-	( state, { streamKey, recsStreamKey } ) => [
+	( state, { streamKey, recsStreamKey }: { streamKey: string; recsStreamKey: string } ) => [
 		getReaderStream( state, streamKey ).items,
 		getReaderStream( state, recsStreamKey ).items,
 		getReaderFollows( state ),
 	],
-	( [ items, recs, follows ] ) => {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	( [ items, recs, follows ]: Array< any > ) => {
 		if ( items.length === 0 ) {
 			return [];
 		}
