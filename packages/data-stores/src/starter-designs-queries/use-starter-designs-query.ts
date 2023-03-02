@@ -16,6 +16,7 @@ interface StarterDesignsQueryParams {
 	seed?: string;
 	_locale: string;
 	include_virtual_designs?: boolean;
+	include_pattern_virtual_designs?: boolean;
 }
 
 interface Options extends QueryOptions< StarterDesignsResponse, unknown > {
@@ -101,11 +102,11 @@ function apiStarterDesignsStaticToDesign(
 		software_sets,
 		style_variation_slug,
 	} = design;
-	const is_virtual = design.is_virtual && !! style_variation_slug;
+	const is_virtual = design.is_virtual;
 
 	const is_premium =
 		( design.recipe.stylesheet && design.recipe.stylesheet.startsWith( 'premium/' ) ) ||
-		( shouldLimitGlobalStyles && is_virtual ) ||
+		( shouldLimitGlobalStyles && !! style_variation_slug ) ||
 		false;
 
 	const is_bundled_with_woo_commerce = ( design.software_sets || [] ).some(

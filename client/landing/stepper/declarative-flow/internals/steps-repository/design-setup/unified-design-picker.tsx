@@ -132,6 +132,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			seed: siteSlugOrId || undefined,
 			_locale: locale,
 			include_virtual_designs: virtualThemesExperiment?.variationName === 'treatment',
+			include_pattern_virtual_designs: isEnabled( 'virtual-themes/onboarding' ),
 		},
 		{
 			enabled: ! isLoadingVirtualThemesExperiment,
@@ -249,7 +250,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	function previewDesign( design: Design, styleVariation?: StyleVariation ) {
 		recordPreviewedDesign( { flow, intent, design, styleVariation } );
 
-		if ( ! design.is_virtual ) {
+		if ( ! design.is_virtual || ( design.is_virtual && ! design.preselected_style_variation ) ) {
 			setSelectedDesign( design );
 		} else {
 			const parentDesign = staticDesigns.find(
