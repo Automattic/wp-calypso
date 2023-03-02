@@ -27,7 +27,7 @@ const fetchPurchases = ( resource: string, options = {} ) =>
 		.then( ( json ) => JSON.parse( json.data ) );
 
 const KEY_SLUG_MAP = new Map( [
-	[ 'backup', JETPACK_BACKUP_PRODUCTS as readonly string[] ],
+	[ 'backup', [ ...JETPACK_BACKUP_PRODUCTS, ...JETPACK_SECURITY_PLANS ] as readonly string[] ],
 	[ 'boost', JETPACK_BOOST_PRODUCTS as readonly string[] ],
 	[ 'search', JETPACK_SEARCH_PRODUCTS as readonly string[] ],
 	[ 'security', JETPACK_SECURITY_PLANS as readonly string[] ],
