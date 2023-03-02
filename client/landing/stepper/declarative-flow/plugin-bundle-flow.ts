@@ -130,7 +130,7 @@ const pluginBundleFlow: Flow = {
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
 			recordSubmitStep( providedDependencies, intent, flowName, currentStep );
 
-			const defaultExitDest = siteDetails?.options
+			const defaultExitDest = siteDetails?.options?.theme_slug
 				? `/theme/${ siteDetails?.options.theme_slug }/${ siteSlug }`
 				: `/home/${ siteSlug }`;
 
