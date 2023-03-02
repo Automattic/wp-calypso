@@ -1,4 +1,4 @@
-import { Card } from '@automattic/components';
+import { Button, Card, CompactCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import useGetInvitesQuery from 'calypso/data/invites/use-get-invites-query';
@@ -10,8 +10,13 @@ import type { Invite } from './types';
 
 import './style.scss';
 
-function TeamInvites() {
+interface Props {
+	singleInviteView?: boolean;
+}
+
+function TeamInvites( props: Props ) {
 	const translate = useTranslate();
+	const { singleInviteView } = props;
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 	const siteId = site?.ID as number;
 	const pendingInvites = useSelector( ( state ) => getPendingInvitesForSite( state, siteId ) );
@@ -46,8 +51,28 @@ function TeamInvites() {
 								count: pendingInvites?.length as number,
 							}
 						) }
-					/>
-					<Card className="people-team-invites-list">{ pendingInvites?.map( renderInvite ) }</Card>
+					>
+						{ singleInviteView && (
+							<Button compact primary>
+								{ translate( 'Add a team member' ) }
+							</Button>
+						) }
+					</PeopleListSectionHeader>
+					{ ! singleInviteView && (
+						<Card className="people-team-invites-list">
+							{ pendingInvites?.map( renderInvite ) }
+						</Card>
+					) }
+					{ singleInviteView && (
+						<>
+							<Card className="people-team-invites-list">
+								{ renderInvite( pendingInvites?.[ 0 ] ) }
+								{ pendingInvites.length > 1 && (
+									<CompactCard href="pending-invites">{ translate( 'View all' ) }</CompactCard>
+								) }
+							</Card>
+						</>
+					) }
 				</>
 			) }
 		</>
