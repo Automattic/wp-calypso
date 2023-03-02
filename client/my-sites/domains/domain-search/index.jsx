@@ -1,3 +1,4 @@
+import { isFreePlanProduct } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { BackButton } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
@@ -176,15 +177,17 @@ class DomainSearch extends Component {
 			}
 			// Monthly plans don't have free domains
 			const intervalTypePath = this.props.isSiteOnMonthlyPlan ? 'yearly/' : '';
-			page(
-				addQueryArgs(
-					{
-						domainAndPlanPackage: true,
-						domain: this.props.isDomainUpsell ? domain : undefined,
-					},
-					`/plans/${ intervalTypePath }${ this.props.selectedSiteSlug }`
-				)
-			);
+			const nextStepLink =
+				! this.props.isSiteOnFreePlan && ! this.props.isSiteOnMonthlyPlan
+					? `/checkout/${ this.props.selectedSiteSlug }`
+					: addQueryArgs(
+							{
+								domainAndPlanPackage: true,
+								domain: this.props.isDomainUpsell ? domain : undefined,
+							},
+							`/plans/${ intervalTypePath }${ this.props.selectedSiteSlug }`
+					  );
+			page( nextStepLink );
 			return;
 		}
 
@@ -383,6 +386,7 @@ class DomainSearch extends Component {
 
 export default connect(
 	( state ) => {
+		const site = getSelectedSite( state );
 		const siteId = getSelectedSiteId( state );
 
 		return {
@@ -399,6 +403,7 @@ export default connect(
 			isDomainUpsell:
 				!! getCurrentQueryArguments( state )?.domainAndPlanPackage &&
 				!! getCurrentQueryArguments( state )?.domain,
+			isSiteOnFreePlan: isFreePlanProduct( site.plan ),
 		};
 	},
 	{
