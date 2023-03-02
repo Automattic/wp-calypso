@@ -33,7 +33,6 @@ const SiteSettingsJetpack = ( {
 	retention,
 	storagePurchased,
 } ) => {
-	//todo: this check makes sense in Jetpack section?
 	if ( ! siteIsJetpack || site.is_wpcom_atomic ) {
 		return (
 			<EmptyContent
