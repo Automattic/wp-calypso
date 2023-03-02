@@ -28,7 +28,6 @@
 		"desktop-promo": true,
 		"dev/auth-helper": true,
 		"dev/account-settings-helper": true,
-		"dev/developer-ux": true,
 		"dev/preferences-helper": true,
 		"devdocs": true,
 		"devdocs/color-scheme-picker": true,

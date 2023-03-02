@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_SFTP,
 	WPCOM_FEATURES_MANAGE_PLUGINS,
@@ -107,26 +106,9 @@ const ManagePluginsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 					has_manage_plugins_feature: hasManagePluginsFeature,
 				} )
 			}
-			info={
-				isEnabled( 'dev/developer-ux' ) &&
-				! hasManagePluginsFeature &&
-				__( 'Requires a Business Plan' )
-			}
+			info={ ! hasManagePluginsFeature && __( 'Requires a Business Plan' ) }
 		>
 			{ label }
-		</MenuItemLink>
-	);
-};
-
-const HostingConfigItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
-	const { __ } = useI18n();
-
-	return (
-		<MenuItemLink
-			href={ getHostingConfigUrl( site.slug ) }
-			onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_hosting_config_click' ) }
-		>
-			{ __( 'Hosting configuration' ) }
 		</MenuItemLink>
 	);
 };
@@ -377,13 +359,8 @@ export const SitesEllipsisMenu = ( {
 				<SiteMenuGroup>
 					{ ! isLaunched && <LaunchItem { ...props } /> }
 					<SettingsItem { ...props } />
-					{ isEnabled( 'dev/developer-ux' ) && hasHostingPage && (
-						<DeveloperSettingsSubmenu { ...props } />
-					) }
+					{ hasHostingPage && <DeveloperSettingsSubmenu { ...props } /> }
 					{ ! isP2Site( site ) && <ManagePluginsItem { ...props } /> }
-					{ ! isEnabled( 'dev/developer-ux' ) && hasHostingPage && (
-						<HostingConfigItem { ...props } />
-					) }
 					{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
 					{ shouldShowSiteCopyItem && <CopySiteItem { ...props } onClick={ startSiteCopy } /> }
 					<MenuItemLink

@@ -40,7 +40,6 @@
 		"desktop-promo": true,
 		"dev/auth-helper": true,
 		"dev/account-settings-helper": true,
-		"dev/developer-ux": true,
 		"dev/features-helper": true,
 		"dev/preferences-helper": true,
 		"dev/react-query-devtools": true,
