@@ -139,6 +139,11 @@ export interface DomainSuggestion {
 	hsts_required?: boolean;
 
 	/**
+	 * Whether the domain requires to show the notice for .gay tld
+	 */
+	is_dot_gay_notice_required?: boolean;
+
+	/**
 	 * Whether the domain is unavailable
 	 */
 	unavailable: boolean;
@@ -211,6 +216,11 @@ export interface DomainAvailability {
 	 * Whether the domain requires HSTS
 	 */
 	hsts_required?: boolean;
+
+	/**
+	 * Whether the domain requires to show the notice for .gay tld
+	 */
+	is_dot_gay_notice_required?: boolean;
 }
 
 export type TimestampMS = ReturnType< typeof Date.now >;

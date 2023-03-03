@@ -37,10 +37,12 @@ export default function DomainAndPlanPackageNavigation( props ) {
 					{ translate( 'Select a domain' ) }
 					<Gridicon icon="chevron-right" />
 				</li>
-				<li className={ step === 2 ? 'domain-and-plan-package-navigation__active' : '' }>
-					{ translate( 'Select a plan' ) }
-					<Gridicon icon="chevron-right" />
-				</li>
+				{ ! props.hidePlansPage && (
+					<li className={ step === 2 ? 'domain-and-plan-package-navigation__active' : '' }>
+						{ translate( 'Select a plan' ) }
+						<Gridicon icon="chevron-right" />
+					</li>
+				) }
 				<li>{ translate( 'Complete your purchase' ) }</li>
 			</ol>
 			<div className="domain-and-plan-package-navigation__step-indication">{ stepIndication }</div>
