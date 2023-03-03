@@ -32,6 +32,11 @@ const useBlockRendererContext = (
 						css: 'body{height:auto;overflow:hidden;}',
 						__unstableType: 'presets',
 					},
+					// Avoid unwanted editor styles
+					{
+						css: 'body{padding:0;}',
+						__unstableType: 'presets',
+					},
 				],
 			},
 		} ),
