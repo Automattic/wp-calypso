@@ -67,6 +67,7 @@ describe( 'traintracks events', () => {
 			renderComponent();
 
 			fireEvent.click( screen.getByRole( 'button' ) );
+
 			expect( MOCK_SUGGESTION_ITEM_PARTIAL_PROPS.onSelect ).toHaveBeenCalledWith(
 				MOCK_SUGGESTION_ITEM_PARTIAL_PROPS.domain
 			);

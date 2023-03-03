@@ -44,7 +44,7 @@ class DomainRegistrationDotGay extends PureComponent {
 		return (
 			<CheckoutTermsItem>
 				{ translate(
-					'Any anti-LGBTQ content is prohibited and can result in registration termination. The registry will donate 20% of all registration revenue to LGBTQ non-profit organizations.'
+					'The use of .gay domains to host any anti-LGBTQ content is prohibited and can result in registration termination. The registry will donate 20% of all registration revenue to LGBTQ non-profit organizations.'
 				) }
 			</CheckoutTermsItem>
 		);
