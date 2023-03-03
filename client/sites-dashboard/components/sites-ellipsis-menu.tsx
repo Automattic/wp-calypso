@@ -16,7 +16,7 @@ import styled from '@emotion/styled';
 import { DropdownMenu, MenuGroup, MenuItem as CoreMenuItem, Modal } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { ComponentType, useEffect, useMemo, useState } from 'react';
+import { ComponentType, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import SitePreviewLink from 'calypso/components/site-preview-link';
 import { useSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
@@ -297,11 +297,23 @@ function useSubmenuItems( site: SiteExcerptData ) {
 	}, [ __, siteSlug ] );
 }
 
-function DeveloperSettingsSubmenu( { site, recordTracks }: SitesMenuItemProps ) {
+function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps ) {
 	const { __ } = useI18n();
 	const submenuItems = useSubmenuItems( site );
-	const developerSubmenuProps = useSubmenuPopoverProps< HTMLDivElement >( { offsetTop: -8 } );
+	const onSubmenuIsVisible = useCallback( () => {
+		recordTracks( 'calypso_sites_dashboard_site_action_hosting_config_submenu_open' );
+	}, [ recordTracks ] );
+	const developerSubmenuProps = useSubmenuPopoverProps< HTMLDivElement >( {
+		offsetTop: -8,
+		onVisible: onSubmenuIsVisible,
+	} );
 	const hasFeatureSFTP = useSafeSiteHasFeature( site.ID, FEATURE_SFTP );
+
+	useEffect( () => {
+		recordTracks( 'calypso_sites_dashboard_site_action_hosting_config_view', {
+			product_slug: site.plan?.product_slug,
+		} );
+	}, [ recordTracks, site.plan?.product_slug ] );
 
 	if ( submenuItems.length === 0 ) {
 		return null;
@@ -335,7 +347,14 @@ function DeveloperSettingsSubmenu( { site, recordTracks }: SitesMenuItemProps ) 
 						{ __(
 							'Upgrade to the Business Plan to enable SFTP & SSH, database access, GitHub deploys, and more…'
 						) }
-						<Button compact primary href={ getHostingConfigUrl( site.slug ) }>
+						<Button
+							compact
+							primary
+							href={ getHostingConfigUrl( site.slug ) }
+							onClick={ () =>
+								recordTracks( 'calypso_sites_dashboard_site_action_hosting_config_upsell_click' )
+							}
+						>
 							{ __( 'Check full feature list' ) }
 						</Button>
 					</UpsellMenuGroup>
@@ -378,7 +397,7 @@ export const SitesEllipsisMenu = ( {
 					{ ! isLaunched && <LaunchItem { ...props } /> }
 					<SettingsItem { ...props } />
 					{ isEnabled( 'dev/developer-ux' ) && hasHostingPage && (
-						<DeveloperSettingsSubmenu { ...props } />
+						<HostingConfigurationSubmenu { ...props } />
 					) }
 					{ ! isP2Site( site ) && <ManagePluginsItem { ...props } /> }
 					{ ! isEnabled( 'dev/developer-ux' ) && hasHostingPage && (
