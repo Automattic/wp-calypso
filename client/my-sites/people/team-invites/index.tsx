@@ -21,6 +21,7 @@ function TeamInvites( props: Props ) {
 	const siteId = site?.ID as number;
 	const pendingInvites = useSelector( ( state ) => getPendingInvitesForSite( state, siteId ) );
 	const addTeamMemberLink = `/people/new/${ site?.slug }`;
+	const viewAllPendingInvitesLink = `/people/pending-invites/${ site?.slug }`;
 
 	useGetInvitesQuery( siteId );
 
@@ -69,7 +70,10 @@ function TeamInvites( props: Props ) {
 							<Card className="people-team-invites-list">
 								{ renderInvite( pendingInvites?.[ 0 ] ) }
 								{ pendingInvites.length > 1 && (
-									<CompactCard href={ `/people/pending-invites/${ site?.slug }` }>
+									<CompactCard
+										className="people-team-invites-list-view-all"
+										href={ viewAllPendingInvitesLink }
+									>
 										{ translate( 'View all' ) }
 									</CompactCard>
 								) }
