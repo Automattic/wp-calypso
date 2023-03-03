@@ -1,24 +1,34 @@
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import { Button, Card, Gridicon } from '../';
+import { Button, Card, Gridicon } from '..';
 import SecurityIcon from '../../assets/jetpack-icon-lock.svg';
 import BackupIcon from '../../assets/jetpack-product-icon-backup.svg';
 import BoostIcon from '../../assets/jetpack-product-icon-boost.svg';
-import CrmIcon from '../../assets/jetpack-product-icon-crm.svg';
 import SearchIcon from '../../assets/jetpack-product-icon-search.svg';
 import SocialIcon from '../../assets/jetpack-product-icon-social.svg';
 import VideoPressIcon from '../../assets/jetpack-product-icon-videopress.svg';
 import './style.scss';
 
-type JetpackUpsellSectionProps = {
+type JetpackUpsellCardProps = {
 	purchasedProducts: string[];
-	siteUrl: string;
+	siteSlug?: string | null;
+	upgradeUrls: Record< string, string >;
 };
 
-export default function JetpackUpsellSection( {
+type Product = {
+	description: string;
+	href: string;
+	iconUrl: string;
+	isFree: boolean;
+	slug: string;
+	title: string;
+};
+
+export default function JetpackUpsellCard( {
 	purchasedProducts,
-	siteUrl,
-}: JetpackUpsellSectionProps ) {
+	siteSlug,
+	upgradeUrls = {},
+}: JetpackUpsellCardProps ) {
 	// TODO: Make card collapsible
 
 	const translate = useTranslate();
@@ -84,51 +94,53 @@ export default function JetpackUpsellSection( {
 				slug: 'social',
 				title: translate( 'Social' ),
 			},
-			{
-				description: translate(
-					'Sell more and get more leads with the free Jetpack CRM plugin built specifically for WordPress.'
-				),
-				href: 'https://jetpackcrm.com/',
-				iconUrl: CrmIcon,
-				isFree: true,
-				slug: 'crm',
-				title: translate( 'CRM' ),
-			},
+			// TODO: Add Jetpack CRM upsell.
 		],
 		[ translate ]
-	);
+	) as Product[];
 
-	return (
-		<Card className="jetpack-upsell-section">
-			<h2 className="jetpack-upsell-section__title">
-				{ translate( 'Enhance %(siteUrl)s with Jetpack Security, Performance, and Growth tools', {
-					args: { siteUrl },
-				} ) }
+	const visibleProducts = PRODUCTS.filter(
+		( { slug } ) => ! purchasedProducts?.includes( slug ) && slug in upgradeUrls
+	);
+	const hasProductsToUpsell = visibleProducts.length > 0;
+
+	return ! hasProductsToUpsell ? null : (
+		<Card className="jetpack-upsell-card">
+			<h2 className="jetpack-upsell-card__title">
+				<span className="jetpack-upsell-card__title--long">
+					{ translate(
+						'Enhance %(siteSlug)s with Jetpack Security, Performance, and Growth tools',
+						{
+							args: { siteSlug: siteSlug ?? 'your site' },
+						}
+					) }
+				</span>
+				<span className="jetpack-upsell-card__title--short">
+					{ translate( 'Explore more tools by Jetpack' ) }
+				</span>
 			</h2>
-			<div className="jetpack-upsell-section__content">
+			<div className="jetpack-upsell-card__content">
 				{ /* Only upsell products that the customer does not own. */ }
-				{ PRODUCTS.filter( ( product ) => ! purchasedProducts?.includes( product.slug ) ).map(
-					( { title, description, href, isFree, iconUrl } ) => (
-						<div className="jetpack-upsell-section__product">
-							<div className="jetpack-upsell-section__product-icon">
-								<img src={ iconUrl } alt={ translate( 'included' ) } width="24px" height="24px" />
-							</div>
-							<h3 className="jetpack-upsell-section__product-title">{ title }</h3>
-							<p className="jetpack-upsell-section__product-description">{ description }</p>
-							<a href={ href } className="jetpack-upsell-section__product-link">
-								<span className="jetpack-upsell-section__product-link-text">
-									{ translate( 'More about %(productName)s', {
-										args: { productName: title },
-									} ) }
-								</span>
-								<Gridicon icon="external" size={ 16 } />
-							</a>
-							<Button className="jetpack-upsell-section__product-button" primary={ ! isFree }>
-								{ isFree ? translate( 'Install Free' ) : translate( 'Upgrade' ) }
-							</Button>
+				{ visibleProducts.map( ( { title, description, href, iconUrl, slug } ) => (
+					<div className="jetpack-upsell-card__product" key={ slug }>
+						<div className="jetpack-upsell-card__product-icon">
+							<img src={ iconUrl } alt={ title } width="24px" height="24px" />
 						</div>
-					)
-				) }
+						<h3 className="jetpack-upsell-card__product-title">{ title }</h3>
+						<p className="jetpack-upsell-card__product-description">{ description }</p>
+						<a href={ href } className="jetpack-upsell-card__product-link">
+							<span className="jetpack-upsell-card__product-link-text">
+								{ translate( 'More about %(productName)s', {
+									args: { productName: title },
+								} ) }
+							</span>
+							<Gridicon icon="external" size={ 16 } />
+						</a>
+						<Button href={ upgradeUrls[ slug ] } className="jetpack-upsell-card__product-button">
+							{ translate( 'Upgrade' ) }
+						</Button>
+					</div>
+				) ) }
 			</div>
 		</Card>
 	);

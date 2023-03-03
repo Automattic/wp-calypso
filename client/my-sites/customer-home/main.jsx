@@ -16,6 +16,7 @@ import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import { preventWidows } from 'calypso/lib/formatting';
+import { getQueryArgs } from 'calypso/lib/query-args';
 import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
@@ -50,7 +51,7 @@ const Home = ( {
 	isNew7DUser,
 } ) => {
 	const [ celebrateLaunchModalIsOpen, setCelebrateLaunchModalIsOpen ] = useState(
-		window.location.href.includes( 'celebrateLaunch=true' )
+		getQueryArgs().celebrateLaunch === 'true'
 	);
 
 	const translate = useTranslate();

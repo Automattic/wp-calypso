@@ -65,11 +65,11 @@ const ScreenMain = ( { onSelect, onContinueClick }: Props ) => {
 							<NavigationButtonAsItem
 								path="/color-palettes"
 								icon={ styles }
-								aria-label={ translate( 'Change colours' ) }
+								aria-label={ translate( 'Change colors' ) }
 								onClick={ () => onSelect( 'color-palettes' ) }
 							>
 								<span className="pattern-layout__list-item-text">
-									{ translate( 'Change colours' ) }
+									{ translate( 'Change colors' ) }
 								</span>
 							</NavigationButtonAsItem>
 							<Divider />
