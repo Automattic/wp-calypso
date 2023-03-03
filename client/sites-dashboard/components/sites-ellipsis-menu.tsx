@@ -329,29 +329,15 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 			<MenuItemLink
 				href={ getHostingConfigUrl( site.slug ) }
 				onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_hosting_config_click' ) }
-				info={ ! displayUpsell && __( 'Requires a Business Plan' ) }
+				info={ displayUpsell && __( 'Requires a Business Plan' ) }
 			>
 				{ __( 'Hosting configuration' ) } <MenuItemGridIcon icon="chevron-right" size={ 18 } />
 			</MenuItemLink>
 			<SubmenuPopover
 				{ ...developerSubmenuProps.submenu }
-				focusOnMount={ displayUpsell ? 'firstElement' : false }
+				focusOnMount={ displayUpsell ? false : 'firstElement' }
 			>
 				{ displayUpsell ? (
-					submenuItems.map( ( item ) => (
-						<MenuItemLink
-							key={ item.label }
-							href={ item.href }
-							onClick={ () =>
-								recordTracks( 'calypso_sites_dashboard_site_action_hosting_config_submenu_click', {
-									section: item.sectionName,
-								} )
-							}
-						>
-							{ item.label }
-						</MenuItemLink>
-					) )
-				) : (
 					<UpsellMenuGroup>
 						{ __(
 							'Upgrade to the Business Plan to enable SFTP & SSH, database access, GitHub deploys, and more…'
@@ -367,6 +353,20 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 							{ __( 'Check full feature list' ) }
 						</Button>
 					</UpsellMenuGroup>
+				) : (
+					submenuItems.map( ( item ) => (
+						<MenuItemLink
+							key={ item.label }
+							href={ item.href }
+							onClick={ () =>
+								recordTracks( 'calypso_sites_dashboard_site_action_hosting_config_submenu_click', {
+									section: item.sectionName,
+								} )
+							}
+						>
+							{ item.label }
+						</MenuItemLink>
+					) )
 				) }
 			</SubmenuPopover>
 		</div>
