@@ -252,11 +252,7 @@ class StatsSite extends Component {
 						/>
 					</>
 
-					<MiniCarousel
-						isOdysseyStats={ isOdysseyStats }
-						slug={ slug }
-						isSitePrivate={ isSitePrivate }
-					/>
+					{ ! isOdysseyStats && <MiniCarousel slug={ slug } isSitePrivate={ isSitePrivate } /> }
 
 					<div className="stats__module-list stats__module-list--traffic is-events stats__module--unified">
 						<StatsModule

@@ -25,7 +25,7 @@ export const useProductsToCompare = () => {
 			},
 			{
 				id: 'SECURITY',
-				name: translate( 'Security' ),
+				name: translate( 'Security', { context: 'Jetpack product name' } ),
 				productSlug: PLAN_JETPACK_SECURITY_T1_YEARLY,
 			},
 			{

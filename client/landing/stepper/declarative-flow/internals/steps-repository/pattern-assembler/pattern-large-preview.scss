@@ -15,15 +15,13 @@
 	margin: 0;
 	list-style-type: none;
 	overflow: auto;
-	// @TODO: Use theme setting "styles.color.background"
-	background: var(--studio-white);
+	background: var(--pattern-large-preview-background);
 
-	// @TODO: Use theme setting "styles.spacing.blockGap"
 	.pattern-large-preview__pattern-header {
-		margin-block-end: 1.5rem;
+		margin-block-end: var(--pattern-large-preview-block-gap);
 	}
 	.pattern-large-preview__pattern-footer {
-		margin-block-start: 1.5rem;
+		margin-block-start: var(--pattern-large-preview-block-gap);
 	}
 }
 
