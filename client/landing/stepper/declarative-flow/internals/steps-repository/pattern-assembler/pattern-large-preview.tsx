@@ -27,10 +27,10 @@ const PatternLargePreview = ( { header, sections, footer, activePosition }: Prop
 	const [ viewportHeight, setViewportHeight ] = useState< number | undefined >( 0 );
 	const [ blockGap ] = useStyle( 'spacing.blockGap' );
 	const [ backgroundColor ] = useStyle( 'color.background' );
-	const patternLargePreviewStyle = {
+	const [ patternLargePreviewStyle, setPatternLargePreviewStyle ] = useState( {
 		'--pattern-large-preview-block-gap': blockGap,
 		'--pattern-large-preview-background': backgroundColor,
-	} as CSSProperties;
+	} as CSSProperties );
 
 	const renderPattern = ( key: string, pattern: Pattern ) => (
 		<li key={ key } className={ `pattern-large-preview__pattern-${ key }` }>
@@ -83,6 +83,15 @@ const PatternLargePreview = ( { header, sections, footer, activePosition }: Prop
 
 		return () => window.removeEventListener( 'resize', handleResize );
 	} );
+
+	// Delay updating the styles to make the transition smooth
+	// See https://github.com/Automattic/wp-calypso/pull/74033#issuecomment-1453056703
+	useEffect( () => {
+		setPatternLargePreviewStyle( {
+			'--pattern-large-preview-block-gap': blockGap,
+			'--pattern-large-preview-background': backgroundColor,
+		} as CSSProperties );
+	}, [ blockGap, backgroundColor ] );
 
 	return (
 		<DeviceSwitcher
