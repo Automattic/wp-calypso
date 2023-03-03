@@ -1,7 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { useMemo } from 'react';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { settingsPath } from 'calypso/lib/jetpack/paths';
 
 export enum StorageUnits {
@@ -99,9 +98,7 @@ export const useDaysOfBackupsSavedText = (
 			return null;
 		}
 
-		const daysOfBackupsSavedLinkTarget = isJetpackCloud()
-			? settingsPath( siteSlug )
-			: `/activity-log/${ siteSlug }?group=rewind`;
+		const daysOfBackupsSavedLinkTarget = settingsPath( siteSlug );
 
 		return translate(
 			'{{a}}%(daysOfBackupsSaved)d day of backups saved {{icon/}}{{/a}}',
@@ -111,7 +108,7 @@ export const useDaysOfBackupsSavedText = (
 				args: { daysOfBackupsSaved },
 				components: {
 					a: <a href={ daysOfBackupsSavedLinkTarget } />,
-					icon: isJetpackCloud() ? <Gridicon icon="cog" size={ 16 } /> : <></>,
+					icon: <Gridicon icon="cog" size={ 16 } />,
 				},
 			}
 		);

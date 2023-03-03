@@ -44,6 +44,7 @@
 		"importers/substack": true,
 		"inline-help": true,
 		"jetpack/agency-dashboard": true,
+		"jetpack/backup-retention-settings": true,
 		"jetpack/cancel-through-main-flow": true,
 		"jetpack/concierge-sessions": false,
 		"jetpack/features-section/atomic": true,
