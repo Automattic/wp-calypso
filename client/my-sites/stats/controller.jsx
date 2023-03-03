@@ -190,11 +190,13 @@ export function redirectToActivity( context ) {
 }
 
 export function redirectToDefaultSitePage( context ) {
+	const siteFragment = getSiteFragment( context.path );
+
 	// if we are redirecting we need to retain our intended layout-focus
 	const currentLayoutFocus = getCurrentLayoutFocus( context.store.getState() );
 	context.store.dispatch( setNextLayoutFocus( currentLayoutFocus ) );
 
-	page.redirect( getStatsDefaultSitePage() );
+	page.redirect( getStatsDefaultSitePage( siteFragment ) );
 }
 
 export function redirectToDefaultWordAdsPeriod( context ) {
