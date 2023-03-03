@@ -42,7 +42,7 @@ export default function JetpackUpsellCard( {
 				iconUrl: SecurityIcon,
 				isFree: false,
 				slug: 'security',
-				title: translate( 'Security' ),
+				title: translate( 'Security', { context: 'Jetpack product name' } ),
 			},
 			{
 				description: translate(
