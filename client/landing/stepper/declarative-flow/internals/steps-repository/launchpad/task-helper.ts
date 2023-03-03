@@ -8,6 +8,7 @@ import { isFreeFlow, isBuildFlow, isWriteFlow, isNewsletterFlow } from '@automat
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
+import { useSelector } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import { PLANS_LIST } from 'calypso/../packages/calypso-products/src/plans-list';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
@@ -42,6 +43,18 @@ export function getEnhancedTasks(
 	const firstPostPublishedCompleted = checklistStatuses?.first_post_published || false;
 
 	const videoPressUploadCompleted = checklistStatuses?.video_uploaded || false;
+
+	const stripeAccountConnected =
+		site?.options?.launchpad_checklist_tasks_statuses?.stripe_connected || false;
+
+	// const stripeConnectUrl = useSelector( ( state ) => {
+	// 	// getStripeConnectUrl( state )
+	// 	console.log( 'state', state );
+	// 	debugger;
+	// } );
+
+	const newsletterPlanCreated =
+		site?.options?.launchpad_checklist_tasks_statuses?.newsletter_plan_created || false;
 
 	const allowUpdateDesign =
 		flow && ( isFreeFlow( flow ) || isBuildFlow( flow ) || isWriteFlow( flow ) );
@@ -344,19 +357,21 @@ export function getEnhancedTasks(
 				case 'stripe_account_connected':
 					taskData = {
 						title: translate( 'Connect Stripe Account' ),
+						completed: stripeAccountConnected,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign( `/setup/connect-stripe-account/${ siteSlug }` );
 						},
 					};
 					break;
-				case 'paid_plan_created':
+				case 'newsletter_plan_created':
 					taskData = {
-						title: translate( 'Set the Newsletter Price' ),
+						title: translate( 'Create a Paid Newsletter' ),
+						completed: newsletterPlanCreated,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
-								`/setup/newsletter-post-setup/newsletterPostSetup?siteSlug=${ siteSlug }`
+								`/earn/payments-plans/${ siteSlug }#add-newsletter-payment-plan`
 							);
 						},
 					};
