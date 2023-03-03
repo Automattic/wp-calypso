@@ -9,6 +9,7 @@ import {
 	getSelectedPlugins,
 	saveSelectedPurposesAsSenseiSiteSettings,
 } from '../sensei-purpose/purposes';
+import { useAtomicSiteChecklist } from './use-atomic-site-checklist';
 import { useAtomicSitePlugins } from './use-atomic-site-plugins';
 import { useSubSteps, wait } from './use-sub-steps';
 import type { Step } from '../../types';
@@ -21,6 +22,7 @@ const SenseiLaunch: Step = ( { navigation: { submit } } ) => {
 	const siteId = useSite()?.ID as number;
 
 	const { pollPlugins, isPluginInstalled, queuePlugin } = useAtomicSitePlugins();
+	const { requestChecklist, isSenseiIncluded } = useAtomicSiteChecklist();
 	const additionalPlugins = useMemo( () => getSelectedPlugins(), [] );
 
 	const allPlugins = useMemo(
@@ -39,9 +41,20 @@ const SenseiLaunch: Step = ( { navigation: { submit } } ) => {
 			await wait( 3000 );
 			return arePluginsInstalled;
 		},
+		async function waitForJetpackTransfer( retries ) {
+			// Calling reqeustChecklist() below is causing Jetpack Identity Crisis if used to early so we wait a bit
+			// to give more time jetpack sync to complete.
+			await wait( 5000 );
+			return retries >= 3;
+		},
 		async function savePurposeData() {
 			await saveSelectedPurposesAsSenseiSiteSettings( siteId );
 			return true;
+		},
+		async function waitForChecklist() {
+			requestChecklist();
+			await wait( 5000 );
+			return isSenseiIncluded();
 		},
 		async function done() {
 			setTimeout( () => submit?.(), 1000 );
