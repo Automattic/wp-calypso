@@ -285,7 +285,7 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 	const hasFeatureSFTP = useSafeSiteHasFeature( site.ID, FEATURE_SFTP );
 	const displayUpsell = ! hasFeatureSFTP;
 	const submenuItems = useSubmenuItems( site );
-	const developerSubmenuProps = useSubmenuPopoverProps< HTMLDivElement >( {
+	const submenuProps = useSubmenuPopoverProps< HTMLDivElement >( {
 		offsetTop: -8,
 	} );
 
@@ -294,7 +294,7 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 	}
 
 	return (
-		<div { ...developerSubmenuProps.parent }>
+		<div { ...submenuProps.parent }>
 			<TrackComponentView
 				eventName="calypso_sites_dashboard_site_action_hosting_config_view"
 				eventProperties={ {
@@ -310,7 +310,7 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 				{ __( 'Hosting configuration' ) } <MenuItemGridIcon icon="chevron-right" size={ 18 } />
 			</MenuItemLink>
 			<SubmenuPopover
-				{ ...developerSubmenuProps.submenu }
+				{ ...submenuProps.submenu }
 				focusOnMount={ displayUpsell ? false : 'firstElement' }
 			>
 				{ displayUpsell ? (
