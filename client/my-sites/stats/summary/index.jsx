@@ -14,7 +14,9 @@ import AnnualSiteStats from 'calypso/my-sites/stats/annual-site-stats';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import Countries from '../stats-countries';
+import DownloadCsv from '../stats-download-csv';
 import StatsModule from '../stats-module';
+import AllTimeNav from '../stats-module/all-time-nav';
 import statsStringsFactory from '../stats-strings';
 import VideoPlayDetails from '../stats-video-details';
 import StatsVideoSummary from '../stats-video-summary';
@@ -29,6 +31,26 @@ class StatsSummary extends Component {
 		window.scrollTo( 0, 0 );
 	}
 
+	renderSummaryHeader( path, statType, hideNavigation, query ) {
+		const period = this.props.period;
+
+		const headerCSVButton = (
+			<div className="stats-module__heaver-nav-button">
+				<DownloadCsv statType={ statType } query={ query } path={ path } period={ period } />
+			</div>
+		);
+
+		return (
+			<AllTimeNav
+				path={ path }
+				query={ query }
+				period={ period }
+				hideNavigation={ hideNavigation }
+				navigationSwap={ headerCSVButton }
+			/>
+		);
+	}
+
 	render() {
 		const { translate, statsQueryOptions, siteId } = this.props;
 		const summaryViews = [];
@@ -36,6 +58,8 @@ class StatsSummary extends Component {
 		let summaryView;
 		let chartTitle;
 		let barChart;
+		let path;
+		let statType;
 
 		// Navigation settings. One of the following, depending on the summary view.
 		// Traffic => /stats/day/
@@ -53,120 +77,165 @@ class StatsSummary extends Component {
 			date: endOf.format( 'YYYY-MM-DD' ),
 			max: 0,
 		};
+		const moduleQuery = merge( {}, statsQueryOptions, query );
 		const urlParams = new URLSearchParams( this.props.context.querystring );
+		const listItemClassName = 'stats__summary--narrow-mobile';
 
 		switch ( this.props.context.params.module ) {
 			case 'referrers':
 				title = translate( 'Referrers' );
+				path = 'referrers';
+				statType = 'statsReferrers';
+
 				summaryView = (
-					<StatsModule
-						key="referrers-summary"
-						path="referrers"
-						moduleStrings={ StatsStrings.referrers }
-						period={ this.props.period }
-						query={ merge( {}, statsQueryOptions, query ) }
-						statType="statsReferrers"
-						summary
-						listItemClassName="stats__summary--narrow-mobile"
-					/>
+					<>
+						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
+						<StatsModule
+							key="referrers-summary"
+							path={ path }
+							moduleStrings={ StatsStrings.referrers }
+							period={ this.props.period }
+							query={ moduleQuery }
+							statType={ statType }
+							summary
+							listItemClassName={ listItemClassName }
+						/>
+					</>
 				);
 				break;
 
 			case 'clicks':
 				title = translate( 'Clicks' );
+				path = 'clicks';
+				statType = 'statsClicks';
+
 				summaryView = (
-					<StatsModule
-						key="clicks-summary"
-						path="clicks"
-						moduleStrings={ StatsStrings.clicks }
-						period={ this.props.period }
-						query={ merge( {}, statsQueryOptions, query ) }
-						statType="statsClicks"
-						summary
-						listItemClassName="stats__summary--narrow-mobile"
-					/>
+					<>
+						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
+						<StatsModule
+							key="clicks-summary"
+							path={ path }
+							moduleStrings={ StatsStrings.clicks }
+							period={ this.props.period }
+							query={ moduleQuery }
+							statType={ statType }
+							summary
+							listItemClassName={ listItemClassName }
+						/>
+					</>
 				);
 				break;
 
 			case 'countryviews':
 				title = translate( 'Countries' );
+				path = 'countryviews';
+				statType = 'statsCountryViews';
+
 				summaryView = (
-					<Countries
-						key="countries-summary"
-						path="countryviews"
-						period={ this.props.period }
-						query={ merge( {}, statsQueryOptions, query ) }
-						summary
-						listItemClassName="stats__summary--narrow-mobile"
-					/>
+					<>
+						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
+						<Countries
+							key="countries-summary"
+							path={ path }
+							period={ this.props.period }
+							query={ moduleQuery }
+							summary
+							listItemClassName={ listItemClassName }
+						/>
+					</>
 				);
 				break;
 
 			case 'posts':
 				title = translate( 'Posts & pages' );
+				path = 'posts';
+				statType = 'statsTopPosts';
+
 				summaryView = (
-					<StatsModule
-						key="posts-summary"
-						path="posts"
-						moduleStrings={ StatsStrings.posts }
-						period={ this.props.period }
-						query={ merge( {}, statsQueryOptions, query ) }
-						statType="statsTopPosts"
-						summary
-						listItemClassName="stats__summary--narrow-mobile"
-					/>
+					<>
+						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
+						<StatsModule
+							key="posts-summary"
+							path={ path }
+							moduleStrings={ StatsStrings.posts }
+							period={ this.props.period }
+							query={ moduleQuery }
+							statType={ statType }
+							summary
+							listItemClassName={ listItemClassName }
+						/>
+					</>
 				);
 				break;
 
 			case 'authors':
 				title = translate( 'Authors' );
+				path = 'authors';
+				statType = 'statsTopAuthors';
+
 				// TODO: should be refactored so that className doesn't have to be passed in
 				/* eslint-disable wpcalypso/jsx-classname-namespace */
 				summaryView = (
-					<StatsModule
-						key="authors-summary"
-						path="authors"
-						moduleStrings={ StatsStrings.authors }
-						period={ this.props.period }
-						query={ query }
-						statType="statsTopAuthors"
-						className="stats__author-views"
-						summary
-						listItemClassName="stats__summary--narrow-mobile"
-					/>
+					<>
+						{ this.renderSummaryHeader( path, statType, true, query ) }
+						<StatsModule
+							key="authors-summary"
+							path={ path }
+							moduleStrings={ StatsStrings.authors }
+							period={ this.props.period }
+							query={ query }
+							statType={ statType }
+							className="stats__author-views"
+							summary
+							listItemClassName={ listItemClassName }
+						/>
+					</>
 				);
 				/* eslint-enable wpcalypso/jsx-classname-namespace */
 				break;
 
 			case 'videoplays':
 				title = translate( 'Videos' );
+				path = 'videoplays';
+				statType = 'statsVideoPlays';
+
 				summaryView = (
-					<VideoPressStatsModule
-						key="videopress-stats-module"
-						path="videoplays"
-						moduleStrings={ StatsStrings.videoplays }
-						period={ this.props.period }
-						query={ query }
-						statType="statsVideoPlays"
-						summary
-						listItemClassName="stats__summary--narrow-mobile"
-					/>
+					<>
+						{ /* For CSV button to work, video page needs to pass custom data to the button.
+								It can't use the shared header as long as the CSV download button stays there. */ }
+						<VideoPressStatsModule
+							key="videopress-stats-module"
+							path={ path }
+							moduleStrings={ StatsStrings.videoplays }
+							period={ this.props.period }
+							query={ query }
+							statType={ statType }
+							summary
+							listItemClassName={ listItemClassName }
+						/>
+					</>
 				);
 				break;
 
 			case 'filedownloads':
 				title = translate( 'File Downloads' );
+				path = 'filedownloads';
+				statType = 'statsFileDownloads';
+
 				summaryView = (
-					<StatsModule
-						key="filedownloads-summary"
-						path="filedownloads"
-						moduleStrings={ StatsStrings.filedownloads }
-						period={ this.props.period }
-						query={ query }
-						statType="statsFileDownloads"
-						summary
-						listItemClassName="stats__summary--narrow-mobile"
-					/>
+					<>
+						{ this.renderSummaryHeader( path, statType, true, query ) }
+						<StatsModule
+							key="filedownloads-summary"
+							path={ path }
+							moduleStrings={ StatsStrings.filedownloads }
+							period={ this.props.period }
+							query={ query }
+							statType={ statType }
+							summary
+							listItemClassName={ listItemClassName }
+						/>
+					</>
 				);
 				break;
 
@@ -213,17 +282,23 @@ class StatsSummary extends Component {
 
 			case 'searchterms':
 				title = translate( 'Search Terms' );
+				path = 'searchterms';
+				statType = 'statsSearchTerms';
+
 				summaryView = (
-					<StatsModule
-						key="search-terms-summary"
-						path="searchterms"
-						moduleStrings={ StatsStrings.search }
-						period={ this.props.period }
-						query={ merge( {}, statsQueryOptions, query ) }
-						statType="statsSearchTerms"
-						summary
-						listItemClassName="stats__summary--narrow-mobile"
-					/>
+					<>
+						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
+						<StatsModule
+							key="search-terms-summary"
+							path={ path }
+							moduleStrings={ StatsStrings.search }
+							period={ this.props.period }
+							query={ moduleQuery }
+							statType={ statType }
+							summary
+							listItemClassName={ listItemClassName }
+						/>
+					</>
 				);
 				break;
 			case 'annualstats':
@@ -262,7 +337,6 @@ class StatsSummary extends Component {
 				<FixedNavigationHeader navigationItems={ navigationItems } />
 
 				<div id="my-stats-content" className={ cardParentClassName }>
-					{ /* TODO: move the header <AllTimeNav /> here when modernising summary detail page */ }
 					{ summaryViews }
 					<JetpackColophon />
 				</div>
