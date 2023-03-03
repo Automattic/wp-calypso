@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import BoostSitePerformance from './boost-site-performance';
 import InsightsStats from './insights-stats';
 import type { Site } from '../types';
 
@@ -10,7 +11,7 @@ interface Props {
 	isSmallScreen?: boolean;
 }
 
-const defaultColumns = [ 'stats' ];
+const defaultColumns = [ 'stats', 'boost' ];
 
 export default function SiteExpandedContent( {
 	site,
@@ -18,6 +19,7 @@ export default function SiteExpandedContent( {
 	isSmallScreen = false,
 }: Props ) {
 	const stats = site.site_stats;
+	const boostData = site.jetpack_boost_scores;
 
 	return (
 		<div
@@ -26,6 +28,10 @@ export default function SiteExpandedContent( {
 			} ) }
 		>
 			{ columns.includes( 'stats' ) && stats && <InsightsStats stats={ stats } /> }
+			{ columns.includes( 'boost' ) && (
+				// FIXME: hasBoost is a temporary prop to show the component
+				<BoostSitePerformance boostData={ boostData } hasBoost={ true } />
+			) }
 		</div>
 	);
 }

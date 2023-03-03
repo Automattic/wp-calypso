@@ -16,6 +16,7 @@ import type {
 	ScanNode,
 	MonitorNode,
 	SiteColumns,
+	BoostNode,
 } from './types';
 
 const INITIAL_UNIX_EPOCH = '1970-01-01 00:00:00';
@@ -27,6 +28,11 @@ const extraColumns: SiteColumns = isExpandedBlockEnabled
 			{
 				key: 'stats',
 				title: translate( 'Stats' ),
+				isExpandable: true,
+			},
+			{
+				key: 'boost',
+				title: translate( 'Boost' ),
 				isExpandable: true,
 			},
 	  ]
@@ -322,6 +328,14 @@ const formatStatsData = ( site: Site ) => {
 	return statsData;
 };
 
+const formatBoostData = ( site: Site ) => {
+	const boostData: BoostNode = {
+		type: 'boost',
+		data: site.jetpack_boost_scores,
+	};
+	return boostData;
+};
+
 const formatBackupData = ( site: Site ) => {
 	const backup: BackupNode = {
 		value: '',
@@ -425,6 +439,7 @@ export const formatSites = ( sites: Array< Site > = [] ): Array< SiteData > | []
 				type: 'site',
 			},
 			stats: formatStatsData( site ),
+			boost: formatBoostData( site ),
 			backup: formatBackupData( site ),
 			scan: formatScanData( site ),
 			monitor: formatMonitorData( site ),
@@ -489,4 +504,37 @@ export const getSiteCountText = ( sites: Array< Site > ) => {
 		args: { siteCount: sites.length },
 		comment: '%(siteCount) is no of sites selected, e.g. "2 sites"',
 	} );
+};
+
+export const getBoostRating = ( boostScore: number ) => {
+	if ( boostScore > 90 ) {
+		return 'A';
+	}
+	if ( boostScore > 75 ) {
+		return 'B';
+	}
+	if ( boostScore > 50 ) {
+		return 'C';
+	}
+	if ( boostScore > 35 ) {
+		return 'D';
+	}
+	if ( boostScore > 25 ) {
+		return 'E';
+	}
+	return 'F';
+};
+
+export const getBoostRatingClass = ( boostScore: number ) => {
+	if ( boostScore > 70 ) {
+		return 'boost-score-good';
+	}
+
+	if ( boostScore > 50 ) {
+		return 'boost-score-okay';
+	}
+
+	if ( boostScore ) {
+		return 'boost-score-bad';
+	}
 };

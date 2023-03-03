@@ -1,5 +1,6 @@
 $color-green: var(--studio-jetpack-green-40);
 $color-red: var(--studio-red-50);
+$color-orange: var(--studio-orange-20);
 
 .site-expanded-content {
 	display: flex;
@@ -52,7 +53,7 @@ $color-red: var(--studio-red-50);
 	flex: auto;
 }
 
-.site-expanded-content__card-content-count {
+.site-expanded-content__card-content-score {
 	font-weight: 500;
 	font-size: 1.25rem;
 
@@ -83,15 +84,23 @@ $color-red: var(--studio-red-50);
 	}
 }
 
-.is-up {
+.is-up,
+.is-free {
 	@include svg-color($color-green, $color-green, $color-green);
 }
 
-.is-down {
+.is-down,
+.is-full {
 	@include svg-color($color-red, $color-red, $color-red);
 }
 
-.site-expanded-content__card-content-count-title {
+.is-free,
+.is-full {
+	position: relative;
+	inset-inline-start: 0.5rem;
+}
+
+.site-expanded-content__card-content-score-title {
 	font-size: 0.75rem;
 	color: var(--studio-gray-40);
 }
@@ -137,4 +146,65 @@ button.site-expanded-content__card-button {
 			white-space: nowrap;
 		}
 	}
+
+	.site-expanded-content__card-content-column-mobile {
+		.site-expanded-content__device-icon {
+			inset-inline-start: 0.2rem !important;
+		}
+	}
+}
+
+.site-expanded-content__help-icon {
+	fill: var(--studio-gray-10);
+	position: relative;
+	inset-block-start: 0.25rem;
+	inset-inline-start: 0.5rem;
+
+	path {
+		stroke-width: 0.5px;
+		stroke: var(--studio-gray-10);
+	}
+}
+
+.site-expanded-content__device-score-container {
+	display: flex;
+
+	.site-expanded-content__card-content-column {
+		position: relative;
+		inset-block-start: -5px;
+
+		.site-expanded-content__device-icon {
+			position: relative;
+			inset-block-start: 0.5rem;
+			inset-inline-start: -0.1rem;
+		}
+
+		.site-expanded-content__device-score {
+			font-size: 0.875rem;
+			color: var(--studio-gray-80);
+			margin-inline-start: 4px;
+		}
+	}
+
+	.site-expanded-content__card-content-column-mobile {
+		.site-expanded-content__device-score {
+			margin-inline-start: 8px;
+		}
+
+		.site-expanded-content__device-icon {
+			inset-inline-start: 0.4rem;
+		}
+	}
+}
+
+.boost-score-good {
+	color: $color-green;
+}
+
+.boost-score-okay {
+	color: $color-orange;
+}
+
+.boost-score-bad {
+	color: $color-red;
 }

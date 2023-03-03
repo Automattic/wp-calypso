@@ -179,6 +179,11 @@ export default function SiteStatusContent( {
 		return null;
 	}
 
+	if ( type === 'boost' ) {
+		// Content will be added later
+		return null;
+	}
+
 	let content;
 
 	switch ( status ) {
