@@ -10,6 +10,7 @@ import {
 	useQuery,
 } from 'react-query';
 import { useSelector } from 'react-redux';
+import { decodeEntities } from 'calypso/lib/formatting';
 import {
 	extractSearchInformation,
 	getPreinstalledPremiumPluginsVariations,
@@ -41,8 +42,8 @@ const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
 	}
 	return results.map( ( { fields: hit, railcar } ) => {
 		const plugin: Plugin = {
-			name: hit.plugin?.title, // TODO: add localization
-			slug: hit.slug,
+			name: decodeEntities( hit.plugin?.title ), // TODO: add localization
+			slug: decodeEntities( hit.slug ),
 			version: hit[ 'plugin.stable_tag' ],
 			author: hit.author,
 			author_name: hit.plugin?.author,
@@ -54,9 +55,9 @@ const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
 			support_threads_resolved: hit[ 'plugin.support_threads_resolved' ],
 			active_installs: hit.plugin?.active_installs,
 			last_updated: hit.modified,
-			short_description: hit.plugin?.excerpt, // TODO: add localization
+			short_description: decodeEntities( hit.plugin?.excerpt ), // TODO: add localization
 			icon: getIconUrl( hit.slug, hit.plugin?.icons ),
-			premium_slug: hit.plugin?.premium_slug,
+			premium_slug: decodeEntities( hit.plugin?.premium_slug ),
 			variations: {
 				monthly: { product_id: hit.plugin?.store_product_monthly_id },
 				yearly: { product_id: hit.plugin?.store_product_yearly_id },

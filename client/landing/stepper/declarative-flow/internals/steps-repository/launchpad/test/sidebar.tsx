@@ -108,6 +108,22 @@ describe( 'Sidebar', () => {
 		expect( upgradeDomainBadgeElement ).not.toBeInTheDocument;
 	} );
 
+	it( 'does not display customize badge for a flow with a redundant domain upsell task', () => {
+		props.sidebarDomain = buildDomainResponse( {
+			domain: 'paidtestlinkinbio.blog',
+			flow: 'free',
+			isWPCOMDomain: true,
+		} );
+
+		renderSidebar( props );
+
+		const upgradeDomainBadgeElement = screen.queryByRole( 'link', {
+			name: 'upgradeDomainBadgeText',
+		} );
+
+		expect( upgradeDomainBadgeElement ).not.toBeInTheDocument;
+	} );
+
 	it( 'displays a progress bar based off of task completion', () => {
 		renderSidebar( props );
 

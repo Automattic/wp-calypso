@@ -31,10 +31,12 @@ import {
 	enableAtomicSshAccess,
 	disableAtomicSshAccess,
 } from 'calypso/state/hosting/actions';
+import { getAtomicHostingIsLoadingSftpData } from 'calypso/state/selectors/get-atomic-hosting-is-loading-sftp-data';
 import { getAtomicHostingSftpUsers } from 'calypso/state/selectors/get-atomic-hosting-sftp-users';
 import { getAtomicHostingSshAccess } from 'calypso/state/selectors/get-atomic-hosting-ssh-access';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { SftpCardLoadingPlaceholder } from './sftp-card-loading-placeholder';
 import SshKeys from './ssh-keys';
 
 const FILEZILLA_URL = 'https://filezilla-project.org/';
@@ -78,6 +80,7 @@ export const SftpCard = ( {
 	siteHasSftpFeature,
 	siteHasSshFeature,
 	isSshAccessEnabled,
+	isLoadingSftpData,
 	requestSshAccess,
 	enableSshAccess,
 	disableSshAccess,
@@ -87,6 +90,7 @@ export const SftpCard = ( {
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isPasswordLoading, setPasswordLoading ] = useState( false );
 	const [ isSshAccessLoading, setSshAccessLoading ] = useState( false );
+	const hasSftpFeatureAndIsLoading = siteHasSftpFeature && isLoadingSftpData;
 
 	const sshConnectString = `ssh ${ username }@sftp.wp.com`;
 
@@ -197,7 +201,7 @@ export const SftpCard = ( {
 		);
 	};
 
-	const displayQuestionsAndButton = ! ( username || isLoading );
+	const displayQuestionsAndButton = ! hasSftpFeatureAndIsLoading && ! ( username || isLoading );
 	const showSshPanel = ! siteHasSftpFeature || siteHasSshFeature;
 
 	const featureExplanation = siteHasSshFeature
@@ -216,20 +220,22 @@ export const SftpCard = ( {
 					? translate( 'SFTP/SSH credentials' )
 					: translate( 'SFTP credentials' ) }
 			</CardHeading>
-			<div className="sftp-card__body">
-				<p>
-					{ username
-						? translate(
-								'Use the credentials below to access and edit your website files using an SFTP client. {{a}}Learn more about SFTP on WordPress.com{{/a}}.',
-								{
-									components: {
-										a: <InlineSupportLink supportContext="hosting-sftp" showIcon={ false } />,
-									},
-								}
-						  )
-						: featureExplanation }
-				</p>
-			</div>
+			{ ! hasSftpFeatureAndIsLoading && (
+				<div className="sftp-card__body">
+					<p>
+						{ username
+							? translate(
+									'Use the credentials below to access and edit your website files using an SFTP client. {{a}}Learn more about SFTP on WordPress.com{{/a}}.',
+									{
+										components: {
+											a: <InlineSupportLink supportContext="hosting-sftp" showIcon={ false } />,
+										},
+									}
+							  )
+							: featureExplanation }
+					</p>
+				</div>
+			) }
 			{ displayQuestionsAndButton && (
 				<SftpQuestionsContainer>
 					<PanelBody title={ translate( 'What is SFTP?' ) } initialOpen={ false }>
@@ -309,6 +315,7 @@ export const SftpCard = ( {
 				</FormFieldset>
 			) }
 			{ isLoading && <Spinner /> }
+			{ hasSftpFeatureAndIsLoading && <SftpCardLoadingPlaceholder /> }
 		</Card>
 	);
 };
@@ -386,6 +393,7 @@ export default connect(
 			siteHasSftpFeature: siteHasFeature( state, siteId, FEATURE_SFTP ),
 			siteHasSshFeature: siteHasFeature( state, siteId, FEATURE_SSH ),
 			isSshAccessEnabled: 'ssh' === getAtomicHostingSshAccess( state, siteId ),
+			isLoadingSftpData: getAtomicHostingIsLoadingSftpData( state, siteId ),
 		};
 	},
 	{
