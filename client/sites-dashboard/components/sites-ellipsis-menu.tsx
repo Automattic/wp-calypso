@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_SFTP,
 	WPCOM_FEATURES_MANAGE_PLUGINS,
@@ -108,26 +107,9 @@ const ManagePluginsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 					has_manage_plugins_feature: hasManagePluginsFeature,
 				} )
 			}
-			info={
-				isEnabled( 'dev/developer-ux' ) &&
-				! hasManagePluginsFeature &&
-				__( 'Requires a Business Plan' )
-			}
+			info={ ! hasManagePluginsFeature && __( 'Requires a Business Plan' ) }
 		>
 			{ label }
-		</MenuItemLink>
-	);
-};
-
-const HostingConfigItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
-	const { __ } = useI18n();
-
-	return (
-		<MenuItemLink
-			href={ getHostingConfigUrl( site.slug ) }
-			onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_hosting_config_click' ) }
-		>
-			{ __( 'Hosting configuration' ) }
 		</MenuItemLink>
 	);
 };
@@ -303,7 +285,7 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 	const hasFeatureSFTP = useSafeSiteHasFeature( site.ID, FEATURE_SFTP );
 	const displayUpsell = ! hasFeatureSFTP;
 	const submenuItems = useSubmenuItems( site );
-	const developerSubmenuProps = useSubmenuPopoverProps< HTMLDivElement >( {
+	const submenuProps = useSubmenuPopoverProps< HTMLDivElement >( {
 		offsetTop: -8,
 	} );
 
@@ -312,7 +294,7 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 	}
 
 	return (
-		<div { ...developerSubmenuProps.parent }>
+		<div { ...submenuProps.parent }>
 			<TrackComponentView
 				eventName="calypso_sites_dashboard_site_action_hosting_config_view"
 				eventProperties={ {
@@ -328,7 +310,7 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 				{ __( 'Hosting configuration' ) } <MenuItemGridIcon icon="chevron-right" size={ 18 } />
 			</MenuItemLink>
 			<SubmenuPopover
-				{ ...developerSubmenuProps.submenu }
+				{ ...submenuProps.submenu }
 				focusOnMount={ displayUpsell ? false : 'firstElement' }
 			>
 				{ displayUpsell ? (
@@ -407,13 +389,8 @@ export const SitesEllipsisMenu = ( {
 				<SiteMenuGroup>
 					{ ! isLaunched && <LaunchItem { ...props } /> }
 					<SettingsItem { ...props } />
-					{ isEnabled( 'dev/developer-ux' ) && hasHostingPage && (
-						<HostingConfigurationSubmenu { ...props } />
-					) }
+					{ hasHostingPage && <HostingConfigurationSubmenu { ...props } /> }
 					{ ! isP2Site( site ) && <ManagePluginsItem { ...props } /> }
-					{ ! isEnabled( 'dev/developer-ux' ) && hasHostingPage && (
-						<HostingConfigItem { ...props } />
-					) }
 					{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
 					{ shouldShowSiteCopyItem && <CopySiteItem { ...props } onClick={ startSiteCopy } /> }
 					<MenuItemLink
