@@ -387,7 +387,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
  * @param {Array<string>} pluginTags - array of tags of a plugin
  * @returns string | undefined - category name or undefined if no category is found
  */
-export function getCategory( pluginTags: Array< string > ) {
+export function getFirstCategoryFromTags( pluginTags: Array< string > ) {
 	const categories = getCategories();
 
 	return Object.keys( categories ).find( ( category ) => {
