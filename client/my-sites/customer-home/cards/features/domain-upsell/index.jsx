@@ -4,6 +4,7 @@ import { Button, Card, Spinner } from '@automattic/components';
 import { useDomainSuggestions } from '@automattic/domain-picker/src';
 import { useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import { useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useState } from 'react';
@@ -16,11 +17,9 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isNotAtomicJetpack, isP2Site } from 'calypso/sites-dashboard/utils';
 import { getCurrentUser, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
+import isSiteOnMonthlyPlan from 'calypso/state/selectors/is-site-on-monthly-plan';
 import { getDomainsBySite } from 'calypso/state/sites/domains/selectors';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
-import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
-import isSiteOnMonthlyPlan from 'calypso/state/selectors/is-site-on-monthly-plan';
-import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -30,31 +29,37 @@ export default function DomainUpsell( { context } ) {
 
 	const user = useSelector( getCurrentUser );
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
+
 	const selectedSite = useSelector( getSelectedSite );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+
 	const primarySiteSlug = useSelector( getPrimarySiteSlug );
 	const primarySite = useSelector( ( state ) => getSiteBySlug( state, primarySiteSlug ) );
-	const siteDomainsLength = useSelector(
-		( state ) => getDomainsBySite( state, isProfileUpsell ? primarySite : selectedSite ).length
-	);
+	const site = isProfileUpsell ? primarySite : selectedSite;
 
-	const sitePlan = isProfileUpsell ? primarySite?.plan : selectedSite?.plan;
+	const isMonthlyPlan = useSelector( ( state ) => isSiteOnMonthlyPlan( state, site?.ID ) );
+	const isFreePlan = isFreePlanProduct( site?.plan );
+
+	const siteDomains = useSelector( ( state ) => getDomainsBySite( state, site ) );
+	const siteDomainsLength = useMemo(
+		() => siteDomains.filter( ( domain ) => ! domain.isWPCOMDomain ).length,
+		[ siteDomains ]
+	);
 
 	const shouldNotShowProfileUpsell =
 		isProfileUpsell &&
 		( user.site_count !== 1 ||
-			! isFreePlanProduct( sitePlan ) ||
-			siteDomainsLength > 1 ||
+			! isFreePlan ||
+			siteDomainsLength ||
 			! isEmailVerified ||
 			isP2Site( primarySite ) ||
 			isNotAtomicJetpack( primarySite ) );
 
 	const shouldNotShowMyHomeUpsell =
 		! isProfileUpsell &&
-		( siteDomainsLength > 1 || ! isEmailVerified || ! isFreePlanProduct( sitePlan ) );
+		( siteDomainsLength || ! isEmailVerified || ( ! isFreePlan && isMonthlyPlan ) );
 
 	if ( shouldNotShowProfileUpsell || shouldNotShowMyHomeUpsell ) {
-
 		return null;
 	}
 
@@ -63,7 +68,8 @@ export default function DomainUpsell( { context } ) {
 	return (
 		<CalypsoShoppingCartProvider>
 			<RenderDomainUpsell
-    		isFreePlan={ isFreePlan } isMonthlyPlan={ isMonthlyPlan }
+				isFreePlan={ isFreePlan }
+				isMonthlyPlan={ isMonthlyPlan }
 				isProfileUpsell={ isProfileUpsell }
 				searchTerm={ searchTerm }
 				siteSlug={ isProfileUpsell ? primarySiteSlug : selectedSiteSlug }
@@ -72,7 +78,13 @@ export default function DomainUpsell( { context } ) {
 	);
 }
 
-export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, isProfileUpsell, searchTerm, siteSlug } ) {
+export function RenderDomainUpsell( {
+	isFreePlan,
+	isMonthlyPlan,
+	isProfileUpsell,
+	searchTerm,
+	siteSlug,
+} ) {
 	const translate = useTranslate();
 
 	const tracksContext = isProfileUpsell ? 'profile' : 'my_home';
