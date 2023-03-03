@@ -42,8 +42,8 @@ const SenseiLaunch: Step = ( { navigation: { submit } } ) => {
 			return arePluginsInstalled;
 		},
 		async function waitForJetpackTransfer( retries ) {
-			// Calling reqeustChecklist() below is causing Jetpack Identity Crisis if used to early so we wait a bit
-			// to give more time jetpack sync to complete.
+			// Calling requestChecklist() below is causing Jetpack Identity Crisis (IDC) if used too early, so we wait
+			// a bit to give more time jetpack sync to complete.
 			await wait( 5000 );
 			return retries >= 3;
 		},
