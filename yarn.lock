@@ -18512,6 +18512,7 @@ fsevents@^1.2.7:
     classnames: ^2.3.2
     copy-webpack-plugin: ^10.1.0
     glob: ^7.1.6
+    i18n-calypso: "workspace:^"
     jest: ^27.3.1
     postcss: ^8.4.5
     react: ^17.0.2

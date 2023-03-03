@@ -2,6 +2,7 @@ import { useBlockProps } from '@wordpress/block-editor';
 import { BlockEditProps } from '@wordpress/blocks';
 import { useEffect } from '@wordpress/element';
 import { FunctionComponent } from 'react';
+import useI18nCalypsoTranslations from '../shared/use-i18n-calypso-translations';
 import BlockSettings from './components/block-settings';
 import PricingPlans from './components/pricing-plans';
 import Skeleton from './components/skeleton';
@@ -13,6 +14,7 @@ export const Edit: FunctionComponent< BlockEditProps< BlockAttributes > > = ( {
 	setAttributes,
 } ) => {
 	const { data: plans, isLoading } = usePricingPlans();
+	useI18nCalypsoTranslations();
 	// Set default values for attributes which are required when rendering the block
 	// See https://github.com/WordPress/gutenberg/issues/7342
 	useEffect( () => {

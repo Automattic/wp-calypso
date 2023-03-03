@@ -4,7 +4,7 @@ import {
 	__experimentalItemGroup as ItemGroup,
 	__experimentalDivider as Divider,
 } from '@wordpress/components';
-import { header, footer, layout, styles } from '@wordpress/icons';
+import { header, footer, layout, styles, typography } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { NavigationButtonAsItem } from './navigator-buttons';
 import NavigatorHeader from './navigator-header';
@@ -65,11 +65,22 @@ const ScreenMain = ( { onSelect, onContinueClick }: Props ) => {
 							<NavigationButtonAsItem
 								path="/color-palettes"
 								icon={ styles }
-								aria-label={ translate( 'Change colours' ) }
+								aria-label={ translate( 'Change colors' ) }
 								onClick={ () => onSelect( 'color-palettes' ) }
 							>
 								<span className="pattern-layout__list-item-text">
-									{ translate( 'Change colours' ) }
+									{ translate( 'Change colors' ) }
+								</span>
+							</NavigationButtonAsItem>
+							<Divider />
+							<NavigationButtonAsItem
+								path="/font-pairings"
+								icon={ typography }
+								aria-label={ translate( 'Change fonts' ) }
+								onClick={ () => onSelect( 'font-pairings' ) }
+							>
+								<span className="pattern-layout__list-item-text">
+									{ translate( 'Change fonts' ) }
 								</span>
 							</NavigationButtonAsItem>
 						</>

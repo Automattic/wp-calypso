@@ -70,10 +70,15 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 
 	const [ selectedColorPaletteVariation, setSelectedColorPaletteVariation ] =
 		useState< GlobalStylesObject | null >( null );
+	const [ selectedFontPairingVariation, setSelectedFontPairingVariation ] =
+		useState< GlobalStylesObject | null >( null );
 
 	const selectedVariations = useMemo(
-		() => [ selectedColorPaletteVariation ].filter( Boolean ) as GlobalStylesObject[],
-		[ selectedColorPaletteVariation ]
+		() =>
+			[ selectedColorPaletteVariation, selectedFontPairingVariation ].filter(
+				Boolean
+			) as GlobalStylesObject[],
+		[ selectedColorPaletteVariation, selectedFontPairingVariation ]
 	);
 
 	const syncedGlobalStylesUserConfig = useSyncGlobalStylesUserConfig(
@@ -440,6 +445,19 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 							stylesheet={ selectedDesign?.recipe?.stylesheet }
 							selectedColorPaletteVariation={ selectedColorPaletteVariation }
 							onSelect={ setSelectedColorPaletteVariation }
+						/>
+					</NavigatorScreen>
+				) }
+
+				{ isEnabledColorAndFonts && (
+					<NavigatorScreen path="/font-pairings">
+						<AsyncLoad
+							require="./screen-font-pairings"
+							placeholder={ null }
+							siteId={ site?.ID }
+							stylesheet={ selectedDesign?.recipe?.stylesheet }
+							selectedFontPairingVariation={ selectedFontPairingVariation }
+							onSelect={ setSelectedFontPairingVariation }
 						/>
 					</NavigatorScreen>
 				) }

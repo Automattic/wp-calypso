@@ -134,6 +134,7 @@ type PlanFeatures2023GridProps = {
 	withDiscount: boolean;
 	discountEndDate: Date;
 	hidePlansFeatureComparison: boolean;
+	hideFreePlan: boolean;
 };
 
 type PlanFeatures2023GridConnectedProps = {
@@ -308,9 +309,19 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderTabletView() {
-		const { planProperties } = this.props;
-		const topRowPlans = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM ];
-		const bottomRowPlans = [ TYPE_BUSINESS, TYPE_ECOMMERCE, TYPE_ENTERPRISE_GRID_WPCOM ];
+		const { planProperties, hideFreePlan } = this.props;
+		const plansToShow = hideFreePlan
+			? [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE, TYPE_ENTERPRISE_GRID_WPCOM ]
+			: [
+					TYPE_FREE,
+					TYPE_PERSONAL,
+					TYPE_PREMIUM,
+					TYPE_BUSINESS,
+					TYPE_ECOMMERCE,
+					TYPE_ENTERPRISE_GRID_WPCOM,
+			  ];
+		const topRowPlans = plansToShow.slice( 0, 3 );
+		const bottomRowPlans = plansToShow.slice( 3, 6 );
 		const planPropertiesForTopRow = planProperties.filter( ( properties: PlanProperties ) =>
 			topRowPlans.includes( properties.planConstantObj.type )
 		);

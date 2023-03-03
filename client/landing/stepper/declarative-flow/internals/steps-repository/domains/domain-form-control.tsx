@@ -135,7 +135,7 @@ export function DomainFormControl( {
 
 	const getOtherManagedSubdomainsCountOverride = () => {
 		if ( flow === LINK_IN_BIO_TLD_FLOW ) {
-			return 2;
+			return 1;
 		}
 	};
 

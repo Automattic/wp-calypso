@@ -1,6 +1,7 @@
 import './view.scss';
 import domReady from '@wordpress/dom-ready';
 import { useState, render } from '@wordpress/element';
+import useI18nCalypsoTranslations from '../shared/use-i18n-calypso-translations';
 import PricingPlans from './components/pricing-plans';
 import Skeleton from './components/skeleton';
 import usePricingPlans from './hooks/pricing-plans';
@@ -12,6 +13,7 @@ const ViewPricingPlans = ( { attributes }: { attributes: BlockAttributes } ) => 
 	const setAttributes = ( newValues: Partial< BlockAttributes > ) => {
 		setDummyAttributes( ( values: BlockAttributes ) => ( { ...values, ...newValues } ) );
 	};
+	useI18nCalypsoTranslations();
 
 	if ( isLoading || ! plans?.length ) {
 		return <Skeleton />;

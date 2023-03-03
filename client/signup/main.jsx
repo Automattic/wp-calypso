@@ -6,7 +6,11 @@ import {
 	is2023PricingGridActivePage,
 } from '@automattic/calypso-products';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
-import { isNewsletterOrLinkInBioFlow, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
+import {
+	isNewsletterOrLinkInBioFlow,
+	isNewsletterFlow,
+	LINK_IN_BIO_TLD_FLOW,
+} from '@automattic/onboarding';
 import debugModule from 'debug';
 import {
 	clone,
@@ -255,7 +259,11 @@ class Signup extends Component {
 		debug( 'Signup component mounted' );
 		this.props.flowName === 'onboarding' && ! this.props.isLoggedIn && addHotJarScript();
 		this.startTrackingForBusinessSite();
-		recordSignupStart( this.props.flowName, this.props.refParameter, this.getRecordProps() );
+
+		if ( ! isNewsletterFlow( this.props.flowName ) ) {
+			recordSignupStart( this.props.flowName, this.props.refParameter, this.getRecordProps() );
+		}
+
 		if ( ! this.state.shouldShowLoadingScreen ) {
 			recordSignupStep( this.props.flowName, this.props.stepName, this.getRecordProps() );
 		}
