@@ -352,7 +352,7 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 								} )
 							}
 						>
-							{ __( 'Check full feature list' ) }
+							{ __( 'See full feature list' ) }
 						</Button>
 					</UpsellMenuGroup>
 				) : (
