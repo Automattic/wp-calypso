@@ -76,7 +76,7 @@ export const itemLinkMatches = ( path, currentPath ) => {
 		currentPath.startsWith( '/store/stats/' ) ||
 		currentPath.startsWith( '/google-my-business/stats/' )
 	) {
-		return fragmentIsEqual( path, '/stats', 1 );
+		return path.startsWith( '/stats/' );
 	}
 
 	return fragmentIsEqual( path, currentPath, 1 );
