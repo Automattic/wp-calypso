@@ -7,10 +7,15 @@ export interface Props {
 	siteId: number | string;
 	stylesheet?: string;
 	children: JSX.Element;
+	useInlineStyles?: boolean;
 }
 
-const useBlockRendererContext = ( siteId: number | string, stylesheet: string ) => {
-	const { data: settings } = useBlockRendererSettings( siteId, stylesheet );
+const useBlockRendererContext = (
+	siteId: number | string,
+	stylesheet: string,
+	useInlineStyles = false
+) => {
+	const { data: settings } = useBlockRendererSettings( siteId, stylesheet, useInlineStyles );
 
 	const [ globalStyles ] = useGlobalStylesOutput();
 
@@ -27,6 +32,11 @@ const useBlockRendererContext = ( siteId: number | string, stylesheet: string ) 
 						css: 'body{height:auto;overflow:hidden;}',
 						__unstableType: 'presets',
 					},
+					// Avoid unwanted editor styles
+					{
+						css: 'body{padding:0;}',
+						__unstableType: 'presets',
+					},
 				],
 			},
 		} ),
@@ -36,8 +46,13 @@ const useBlockRendererContext = ( siteId: number | string, stylesheet: string ) 
 	return context;
 };
 
-const BlockRendererProvider = ( { siteId, stylesheet = '', children }: Props ) => {
-	const context = useBlockRendererContext( siteId, stylesheet );
+const BlockRendererProvider = ( {
+	siteId,
+	stylesheet = '',
+	children,
+	useInlineStyles = false,
+}: Props ) => {
+	const context = useBlockRendererContext( siteId, stylesheet, useInlineStyles );
 
 	if ( ! context.isReady ) {
 		return null;

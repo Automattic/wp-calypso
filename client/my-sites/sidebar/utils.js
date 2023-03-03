@@ -6,14 +6,6 @@ const pathIncludes = ( currentPath, term, position ) =>
 const fragmentIsEqual = ( path, currentPath, position ) =>
 	currentPath.split( /[/,?]/ )?.[ position ] === path.split( /[/,?]/ )?.[ position ];
 
-const fragmentIsEqualDifferentPositions = (
-	path,
-	pathPosition,
-	currentPath,
-	currentPathPosition
-) =>
-	currentPath.split( /[/,?]/ )?.[ currentPathPosition ] === path.split( /[/,?]/ )?.[ pathPosition ];
-
 const isManageAllSitesPluginsPath = ( path ) =>
 	path.match( /^\/plugins\/(?:manage|active|inactive|updates)/ ) !== null;
 
@@ -79,12 +71,12 @@ export const itemLinkMatches = ( path, currentPath ) => {
 		return isManageAllSitesPluginsPath( path );
 	}
 
-	if ( pathIncludes( path, 'stats', 1 ) ) {
-		// For /store/stats and /google-my-business/stats paths.
-		return (
-			fragmentIsEqual( path, currentPath, 1 ) ||
-			fragmentIsEqualDifferentPositions( path, 1, currentPath, 2 )
-		);
+	// For `/store/stats/*` and `/google-my-business/stats/*` paths, show Stats menu as selected.
+	if (
+		currentPath.startsWith( '/store/stats/' ) ||
+		currentPath.startsWith( '/google-my-business/stats/' )
+	) {
+		return path.startsWith( '/stats/' );
 	}
 
 	return fragmentIsEqual( path, currentPath, 1 );

@@ -23,6 +23,11 @@ const initialState = {
 		domains: {
 			items: [ 'example.wordpress.com' ],
 		},
+		plans: {
+			1: {
+				product_slug: 'free_plan',
+			},
+		},
 	},
 	ui: {
 		selectedSiteId: 1,

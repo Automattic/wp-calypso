@@ -18,6 +18,9 @@ import { getCurrentUser, isCurrentUserEmailVerified } from 'calypso/state/curren
 import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
 import { getDomainsBySite } from 'calypso/state/sites/domains/selectors';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
+import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import isSiteOnMonthlyPlan from 'calypso/state/selectors/is-site-on-monthly-plan';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -51,6 +54,7 @@ export default function DomainUpsell( { context } ) {
 		( siteDomainsLength > 1 || ! isEmailVerified || ! isFreePlanProduct( sitePlan ) );
 
 	if ( shouldNotShowProfileUpsell || shouldNotShowMyHomeUpsell ) {
+
 		return null;
 	}
 
@@ -59,6 +63,7 @@ export default function DomainUpsell( { context } ) {
 	return (
 		<CalypsoShoppingCartProvider>
 			<RenderDomainUpsell
+    		isFreePlan={ isFreePlan } isMonthlyPlan={ isMonthlyPlan }
 				isProfileUpsell={ isProfileUpsell }
 				searchTerm={ searchTerm }
 				siteSlug={ isProfileUpsell ? primarySiteSlug : selectedSiteSlug }
@@ -67,7 +72,7 @@ export default function DomainUpsell( { context } ) {
 	);
 }
 
-export function RenderDomainUpsell( { isProfileUpsell, searchTerm, siteSlug } ) {
+export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, isProfileUpsell, searchTerm, siteSlug } ) {
 	const translate = useTranslate();
 
 	const tracksContext = isProfileUpsell ? 'profile' : 'my_home';
@@ -106,13 +111,16 @@ export function RenderDomainUpsell( { isProfileUpsell, searchTerm, siteSlug } ) 
 		} );
 	};
 
-	const purchaseLink = addQueryArgs(
-		{
-			domain: true,
-			domainAndPlanPackage: true,
-		},
-		`/plans/yearly/${ siteSlug }`
-	);
+	const purchaseLink =
+		! isFreePlan && ! isMonthlyPlan
+			? `/checkout/${ siteSlug }`
+			: addQueryArgs(
+					{
+						domain: true,
+						domainAndPlanPackage: true,
+					},
+					`/plans/yearly/${ siteSlug }`
+			  );
 	const [ ctaIsBusy, setCtaIsBusy ] = useState( false );
 	const getCtaClickHandler = async () => {
 		setCtaIsBusy( true );
@@ -136,17 +144,26 @@ export function RenderDomainUpsell( { isProfileUpsell, searchTerm, siteSlug } ) 
 		page( purchaseLink );
 	};
 
+	const cardTitle =
+		! isFreePlan && ! isMonthlyPlan
+			? translate( 'You still have a free domain to claim!' )
+			: translate( 'Own your online identity with a custom domain' );
+
+	const cardSubtitle =
+		! isFreePlan && ! isMonthlyPlan
+			? translate(
+					'Own your online identity giving your site a memorable domain name. Your plan includes one for free for one year, so you can still claim it.'
+			  )
+			: translate(
+					"Stake your claim on your corner of the web with a site address that's easy to find, share, and follow."
+			  );
+
 	return (
 		<Card className="domain-upsell__card customer-home__card">
 			<TrackComponentView eventName={ 'calypso_' + tracksContext + '_domain_upsell_impression' } />
 			<div>
-				<h3>{ translate( 'Own your online identity with a custom domain' ) }</h3>
-				<p>
-					{ translate(
-						"Stake your claim on your corner of the web with a site address that's easy to find, share, and follow."
-					) }
-				</p>
-
+				<h3>{ cardTitle }</h3>
+				<p>{ cardSubtitle }</p>
 				<div className="suggested-domain-name">
 					<div className="card">
 						<span>

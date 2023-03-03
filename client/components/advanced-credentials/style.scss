@@ -1,7 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.advanced-credentials.main {
+.advanced-credentials {
 	.step-progress {
 		margin-top: 16px;
 		margin-bottom: 16px;
@@ -22,15 +22,13 @@
 		}
 	}
 
-	// remove the margin for everything but the top section header at smaller widths
-	> :not(:first-child) {
-		margin-left: -16px;
-		margin-right: -16px;
+	// remove the margin for everything at smaller widths
+	margin-left: -16px;
+	margin-right: -16px;
 
-		@include break-medium {
-			margin-left: auto;
-			margin-right: auto;
-		}
+	@include break-medium {
+		margin-left: auto;
+		margin-right: auto;
 	}
 }
 

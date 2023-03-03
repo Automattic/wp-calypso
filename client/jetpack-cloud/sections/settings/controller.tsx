@@ -1,9 +1,13 @@
 import config from '@automattic/calypso-config';
+import { translate } from 'i18n-calypso';
 import AdvancedCredentials from 'calypso/components/advanced-credentials';
 import BackupRetentionManagement from 'calypso/components/backup-retention-management';
+import DocumentHead from 'calypso/components/data/document-head';
 import HasSitePurchasesSwitch from 'calypso/components/has-site-purchases-switch';
 import IsCurrentUserAdminSwitch from 'calypso/components/jetpack/is-current-user-admin-switch';
 import NotAuthorizedPage from 'calypso/components/jetpack/not-authorized-page';
+import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import { dashboardPath } from 'calypso/lib/jetpack/paths';
 import DisconnectSite from 'calypso/my-sites/site-settings/disconnect-site';
 import ConfirmDisconnection from 'calypso/my-sites/site-settings/disconnect-site/confirm';
@@ -30,12 +34,22 @@ export const advancedCredentials: PageJS.Callback = ( context, next ) => {
 		? Number( context.query.retention )
 		: undefined;
 
+	// It means that the customer has purchased storage
+	const storagePurchased = Boolean( context.query.storage_purchased );
+
 	context.primary = (
-		<>
+		<Main>
+			<DocumentHead title={ translate( 'Settings' ) } />
+			<SidebarNavigation />
 			{ config.isEnabled( 'jetpack/backup-retention-settings' ) ? (
 				<HasRetentionCapabilitiesSwitch
 					siteId={ siteId }
-					trueComponent={ <BackupRetentionManagement defaultRetention={ retention } /> }
+					trueComponent={
+						<BackupRetentionManagement
+							defaultRetention={ retention }
+							storagePurchased={ storagePurchased }
+						/>
+					}
 					falseComponent={ null }
 					loadingComponent={ <AdvancedCredentialsLoadingPlaceholder /> } // Let's use the same placeholder for now
 				/>
@@ -53,7 +67,7 @@ export const advancedCredentials: PageJS.Callback = ( context, next ) => {
 				}
 				loadingComponent={ <AdvancedCredentialsLoadingPlaceholder /> }
 			/>
-		</>
+		</Main>
 	);
 
 	next();

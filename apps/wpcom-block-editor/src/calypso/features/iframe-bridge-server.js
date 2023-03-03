@@ -1023,6 +1023,7 @@ function handleSiteEditorBackButton( calypsoPort ) {
 	// have to do this event delegation style because the Editor isn't fully initialized yet.
 	document.getElementById( 'wpwrap' ).addEventListener( 'click', ( event ) => {
 		const clickedElement = event.target;
+
 		const isOldDashboardButton =
 			clickedElement.classList.contains( 'edit-site-navigation-panel__back-to-dashboard' ) ||
 			// The above fails if user clicked internal SVG. So check the parent again.
@@ -1042,7 +1043,17 @@ function handleSiteEditorBackButton( calypsoPort ) {
 			clickedElement.attributes?.href?.value &&
 			clickedElement.attributes?.href?.value === dashboardLink;
 
-		if ( isOldDashboardButton || isNewDashboardButton ) {
+		// The new NEW dashboard button is also failing us.
+		let isNewNewButton = false;
+		if ( ! ( isOldDashboardButton || isNewDashboardButton ) ) {
+			const classItem = 'edit-site-sidebar-navigation-screen__back';
+			isNewNewButton =
+				clickedElement?.classList.contains( classItem ) ||
+				clickedElement.parentElement?.classList.contains( classItem ) ||
+				clickedElement.parentElement?.parentElement?.classList.contains( classItem );
+		}
+
+		if ( isOldDashboardButton || isNewDashboardButton || isNewNewButton ) {
 			event.preventDefault();
 			calypsoPort.postMessage( { action: 'navigateToHome' } );
 		}

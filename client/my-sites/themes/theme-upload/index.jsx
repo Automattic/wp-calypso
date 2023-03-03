@@ -3,6 +3,7 @@ import {
 	PLAN_WPCOM_PRO,
 	FEATURE_UPLOAD_THEMES,
 	FEATURE_UPLOAD_PLUGINS,
+	PLAN_ECOMMERCE,
 } from '@automattic/calypso-products';
 import { Card, ProgressBar, Button } from '@automattic/components';
 import debugFactory from 'debug';
@@ -43,6 +44,7 @@ import {
 } from 'calypso/state/purchases/selectors';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import {
 	getSiteAdminUrl,
 	isJetpackSite,
@@ -205,20 +207,28 @@ class Upload extends Component {
 	};
 
 	renderUpgradeBanner() {
-		const { siteId, eligibleForProPlan, translate } = this.props;
-		const redirectTo = encodeURIComponent( `/themes/upload/${ siteId }` );
+		const { siteSlug, isCommerceTrial, eligibleForProPlan, translate } = this.props;
+		const redirectTo = encodeURIComponent( `/themes/upload/${ siteSlug }` );
 
-		const upsellPlan = eligibleForProPlan ? PLAN_WPCOM_PRO : PLAN_BUSINESS;
-		const title = eligibleForProPlan
-			? translate( 'Upgrade to the Pro plan to access the theme install features' )
-			: translate( 'Upgrade to the Business plan to access the theme install features' );
-		const planSlug = eligibleForProPlan ? 'pro' : 'business';
+		let upsellPlan = PLAN_BUSINESS;
+		let title = translate( 'Upgrade to the Business plan to access the theme install features' );
+		let upgradeUrl = `/checkout/${ siteSlug }/business?redirect_to=${ redirectTo }`;
+
+		if ( isCommerceTrial ) {
+			upsellPlan = PLAN_ECOMMERCE;
+			title = translate( 'Upgrade your plan to access the theme install features' );
+			upgradeUrl = `/plans/${ siteSlug }`;
+		} else if ( eligibleForProPlan ) {
+			upsellPlan = PLAN_WPCOM_PRO;
+			title = translate( 'Upgrade to the Pro plan to access the theme install features' );
+			upgradeUrl = `/checkout/${ siteSlug }/pro?redirect_to=${ redirectTo }`;
+		}
 
 		return (
 			<UpsellNudge
 				title={ title }
 				event="calypso_theme_install_upgrade_click"
-				href={ `/checkout/${ siteId }/${ planSlug }?redirect_to=${ redirectTo }` }
+				href={ upgradeUrl }
 				plan={ upsellPlan }
 				feature={ FEATURE_UPLOAD_THEMES }
 				showIcon={ true }
@@ -390,6 +400,7 @@ const mapStateToProps = ( state ) => {
 		siteSlug: getSelectedSiteSlug( state ),
 		selectedSite: getSelectedSite( state ),
 		isAtomic,
+		isCommerceTrial: isSiteOnECommerceTrial( state, siteId ),
 		isJetpack,
 		isStandaloneJetpack,
 		inProgress: isUploadInProgress( state, siteId ),
