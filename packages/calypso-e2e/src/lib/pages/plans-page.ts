@@ -34,7 +34,7 @@ const selectors = {
 		return `.plan-features__${ viewportSuffix } >> .plan-features__actions-button.is-${ plan.toLowerCase() }-plan:has-text("${ buttonText }")`;
 	},
 	activePlan: ( plan: Plans ) => `a.is-${ plan.toLowerCase() }-plan.is-current-plan:visible`,
-	SkipPlanButton: '.plans__copy-button',
+	ContinueWithPlanButton: ( buttonText: string ) => `button:has-text("${ buttonText }")`,
 	SkipPlanConfirmButton: ( message: string ) => `.dialog__button-label:has-text("${ message }")`,
 
 	// My Plans tab
@@ -186,8 +186,8 @@ export class PlansPage {
 	/**
 	 * Click on skip button on the plan page.
 	 */
-	async clickSkipPlanActionButton(): Promise< void > {
-		await this.page.click( selectors.SkipPlanButton );
+	async clickSkipPlanActionButton( buttonText: string ): Promise< void > {
+		await this.page.click( selectors.ContinueWithPlanButton( buttonText ) );
 	}
 
 	/**
