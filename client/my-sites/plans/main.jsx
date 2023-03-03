@@ -67,43 +67,65 @@ function DomainAndPlanUpsellNotice() {
 		/>
 	);
 }
-function DomainUpsellDescription( { planType, yourDomainName, siteSlug } ) {
+function DescriptionMessage( { isDomainUpsell, isFreePlan, yourDomainName, siteSlug } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	// show Warning only on free plans.
+	if ( ! isDomainUpsell ) {
+		return (
+			<>
+				<p>
+					{ translate(
+						'With your annual plan, you’ll get %(domainName)s {{strong}}free for the first year{{/strong}}.',
+						{
+							args: {
+								domainName: yourDomainName,
+							},
+							components: {
+								strong: <strong />,
+							},
+						}
+					) }
+				</p>
+				<p>
+					{ translate(
+						'You’ll also unlock advanced features that make it easy to build and grow your site.'
+					) }
+				</p>
+			</>
+		);
+	}
+
 	const skipPlan = () => {
 		recordTracksEvent( 'calypso_plans_page_domain_upsell_skip_click' );
-		planType === 'free'
+		// show Warning only on free plans.
+		isFreePlan === 'free'
 			? dispatch( WPCOM_PLANS_UI_STORE ).setShowDomainUpsellDialog( true )
 			: page( `/checkout/${ siteSlug }` );
 	};
 
-	const subtitle =
-		planType === 'free'
-			? translate( 'See and compare the features available on each WordPress.com plan' )
-			: translate( 'All of our annual plans include a free domain name for one year.' );
+	const subtitle = isFreePlan
+		? translate( 'See and compare the features available on each WordPress.com plan' )
+		: translate( 'All of our annual plans include a free domain name for one year.' );
 
-	const subtitle2 =
-		planType === 'free'
-			? ''
-			: translate(
-					'Upgrade to a yearly plan and claim {{strong}}%(domainName)s for free{{/strong}}.',
-					{
-						args: {
-							domainName: yourDomainName,
-						},
-						components: {
-							strong: <strong />,
-							br: <br />,
-						},
-					}
-			  );
+	const subtitle2 = isFreePlan
+		? ''
+		: translate(
+				'Upgrade to a yearly plan and claim {{strong}}%(domainName)s for free{{/strong}}.',
+				{
+					args: {
+						domainName: yourDomainName,
+					},
+					components: {
+						strong: <strong />,
+						br: <br />,
+					},
+				}
+		  );
 
-	const skipText =
-		planType === 'free'
-			? translate( 'Or continue with the free plan.' )
-			: translate( 'Or continue with your monthly plan.' );
+	const skipText = isFreePlan
+		? translate( 'Or continue with the free plan.' )
+		: translate( 'Or continue with your monthly plan.' );
 
 	return (
 		<>
@@ -320,28 +342,12 @@ class Plans extends Component {
 
 									<FormattedHeader brandFont headerText={ headline } align="center" />
 
-									{ isDomainUpsell && (
-										<DomainUpsellDescription
-											planType={ isFreePlan ? 'free' : currentPlanIntervalType }
-											yourDomainName={ yourDomainName }
-											siteSlug={ selectedSite.slug }
-										/>
-									) }
-									{ ! isDomainUpsell && (
-										<p>
-											{ translate(
-												'With your annual plan, you’ll get %(domainName)s {{strong}}free for the first year{{/strong}}. You’ll also unlock advanced features that make it easy to build and grow your site.',
-												{
-													args: {
-														domainName: yourDomainName,
-													},
-													components: {
-														strong: <strong />,
-													},
-												}
-											) }
-										</p>
-									) }
+									<DescriptionMessage
+										isFreePlan={ isFreePlan }
+										yourDomainName={ yourDomainName }
+										siteSlug={ selectedSite.slug }
+										isDomainUpsell={ isDomainUpsell }
+									/>
 								</div>
 							</>
 						) }
