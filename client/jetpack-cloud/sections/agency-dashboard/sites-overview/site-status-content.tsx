@@ -182,7 +182,6 @@ export default function SiteStatusContent( {
 			/>
 		);
 	}
-	let content;
 
 	if ( type === 'stats' ) {
 		const { total: totalViews, trend: viewsTrend } = rows.stats.data.views;
@@ -195,6 +194,8 @@ export default function SiteStatusContent( {
 			</>
 		);
 	}
+
+	let content;
 
 	switch ( status ) {
 		case 'critical': {

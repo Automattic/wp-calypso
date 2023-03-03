@@ -1,3 +1,4 @@
+import { EmptyObject } from 'redux';
 import type { ReactChild } from 'react';
 
 // All types based on which the data is populated on the agency dashboard table rows
@@ -19,7 +20,8 @@ export type AllowedStatusTypes =
 	| 'warning'
 	| 'success'
 	| 'disabled'
-	| 'critical';
+	| 'critical'
+	| null;
 
 export interface MonitorSettings {
 	monitor_active: boolean;
@@ -58,7 +60,6 @@ export interface Site {
 	isSelected?: boolean;
 	site_stats: SiteStats;
 	onSelect?: ( value: boolean ) => void;
-	total: number;
 }
 export interface SiteNode {
 	value: Site;

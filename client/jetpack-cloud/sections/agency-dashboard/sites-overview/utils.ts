@@ -53,7 +53,7 @@ export const siteColumns: SiteColumns = [
 	},
 	{
 		key: 'plugin',
-		title: translate( 'Plugin Updates' ),
+		title: translate( 'Plugin' ),
 	},
 ];
 
@@ -81,18 +81,6 @@ export const actionEventNames: ActionEventNames = {
 export const getActionEventName = ( actionType: AllowedActionTypes, isLargeScreen: boolean ) => {
 	const deviceKey = isLargeScreen ? 'large_screen' : 'small_screen';
 	return actionEventNames?.[ actionType ]?.[ deviceKey ];
-};
-
-// Scan feature status event names for large screen(>960px) and small screen(<960px)
-const statsEventNames: StatusEventNames = {
-	up: {
-		small_screen: 'calypso_jetpack_agency_dashboard_stats_up_click_small_screen',
-		large_screen: 'calypso_jetpack_agency_dashboard_stats_up_click_large_screen',
-	},
-	down: {
-		small_screen: 'calypso_jetpack_agency_dashboard_stats_down_down_click_small_screen',
-		large_screen: 'calypso_jetpack_agency_dashboard_stats_down_down_click_large_screen',
-	},
 };
 
 // Backup feature status event names for large screen(>960px) and small screen(<960px)
@@ -175,9 +163,6 @@ const getRowEventName = (
 ) => {
 	const deviceKey = isLargeScreen ? 'large_screen' : 'small_screen';
 	switch ( type ) {
-		case 'stats': {
-			return statsEventNames?.[ status ]?.[ deviceKey ];
-		}
 		case 'backup': {
 			return backupEventNames?.[ status ]?.[ deviceKey ];
 		}
@@ -191,11 +176,6 @@ const getRowEventName = (
 			return pluginEventNames?.[ status ]?.[ deviceKey ];
 		}
 	}
-};
-
-const statsTooltips: StatusTooltip = {
-	upward: translate( 'Visitors over the last 7 days' ),
-	downward: translate( 'Visitors over the last 7 days' ),
 };
 
 const backupTooltips: StatusTooltip = {
@@ -227,9 +207,6 @@ const pluginTooltips: StatusTooltip = {
 
 const getTooltip = ( type: AllowedTypes, status: string ) => {
 	switch ( type ) {
-		case 'stats': {
-			return statsTooltips?.[ status ];
-		}
 		case 'backup': {
 			return backupTooltips?.[ status ];
 		}
