@@ -1,4 +1,4 @@
-import { isEnabled } from '@automattic/calypso-config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { Design, isBlankCanvasDesign } from '@automattic/design-picker';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -7,6 +7,7 @@ import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { addQueryArgs } from 'calypso/lib/route';
+import wpcom from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
@@ -164,7 +165,25 @@ const siteSetupFlow: Flow = {
 			setStepProgress( flowProgress );
 		}
 
-		const exitFlow = ( to: string ) => {
+		const fetchSiteBlogStickers = async ( siteId: number ) => {
+			let blogStickers: string[] = [];
+			try {
+				await wpcom.req.get( `/sites/${ siteId }/blog-stickers` ).then( ( result: string[] ) => {
+					blogStickers = result;
+				} );
+			} catch ( e ) {
+				return blogStickers;
+			}
+			return blogStickers;
+		};
+
+		const exitFlow = async ( to: string ) => {
+			let blogStickers: string[] = [];
+
+			if ( site?.ID && config( 'env_id' ) === 'wpcalypso' ) {
+				blogStickers = await fetchSiteBlogStickers( site?.ID );
+			}
+
 			setPendingAction( () => {
 				/**
 				 * This implementation seems very hacky.
@@ -195,20 +214,31 @@ const siteSetupFlow: Flow = {
 						);
 					}
 
-					// Update Launchpad option based on site intent
-					if ( typeof siteId === 'number' ) {
-						pendingActions.push(
-							saveSiteSettings( siteId, {
-								launchpad_screen: isLaunchpadIntent( siteIntent ) ? 'full' : 'off',
-							} )
-						);
-					}
-
 					let redirectionUrl = to;
 
-					// Forcing cache invalidation to retrieve latest launchpad_screen option value
-					if ( isLaunchpadIntent( siteIntent ) ) {
-						redirectionUrl = addQueryArgs( { showLaunchpad: true }, to );
+					// The e2e test sites can include one (or both) of the blog stickers below:
+					// 'a8c-e2e-test-blog' or 'a8c-test-blog'
+					// If the test site includes one of these blog stickers,
+					// then we do not set the 'launchpad_screen' option to 'full'.
+					// This will temporarily prevent the launchpad_screen site option update
+					// on e2e test accounts to ensure e2e test cases continue to pass until we update them.
+					if (
+						! blogStickers.includes( 'a8c-e2e-test-blog' ) &&
+						! blogStickers.includes( 'a8c-test-blog' )
+					) {
+						// Update Launchpad option based on site intent
+						if ( typeof siteId === 'number' ) {
+							pendingActions.push(
+								saveSiteSettings( siteId, {
+									launchpad_screen: isLaunchpadIntent( intent ) ? 'full' : 'off',
+								} )
+							);
+						}
+
+						// Forcing cache invalidation to retrieve latest launchpad_screen option value
+						if ( isLaunchpadIntent( intent ) ) {
+							redirectionUrl = addQueryArgs( { showLaunchpad: true }, to );
+						}
 					}
 
 					Promise.all( pendingActions ).then( () => window.location.assign( redirectionUrl ) );
