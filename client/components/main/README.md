@@ -16,4 +16,3 @@ function render() {
 
 - `className`: Add your own CSS class to the wrapper.
 - `wideLayout`: Use wide layout (larger `max-width`) for the section.
-- `scrollToTopOnMount`: Scroll to top when the component is mounted to avoid showing the previous scroll position.
