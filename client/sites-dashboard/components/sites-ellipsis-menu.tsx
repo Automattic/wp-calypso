@@ -261,37 +261,37 @@ function useSubmenuItems( site: SiteExcerptData ) {
 	const { __ } = useI18n();
 	const siteSlug = site.slug;
 
-	return useMemo< { label: string; href: string; eventName: string }[] >( () => {
+	return useMemo< { label: string; href: string; sectionName: string }[] >( () => {
 		return [
 			{
 				label: __( 'SFTP/SSH credentials' ),
 				href: `/hosting-config/${ siteSlug }#sftp-credentials`,
-				eventName: 'calypso_sites_dashboard_site_action_submenu_sftp_credentials_click',
+				sectionName: 'sftp_credentials',
 			},
 			{
 				label: __( 'Database access' ),
 				href: `/hosting-config/${ siteSlug }#database-access`,
-				eventName: 'calypso_sites_dashboard_site_action_submenu_database_access_click',
+				sectionName: 'database_access',
 			},
 			{
 				label: __( 'Deploy from GitHub' ),
 				href: `/hosting-config/${ siteSlug }#connect-github`,
-				eventName: 'calypso_sites_dashboard_site_action_submenu_connect_github_click',
+				sectionName: 'connect_github',
 			},
 			{
 				label: __( 'Web server settings' ),
 				href: `/hosting-config/${ siteSlug }#web-server-settings`,
-				eventName: 'calypso_sites_dashboard_site_action_submenu_web_server_settings_click',
+				sectionName: 'web_server_settings',
 			},
 			{
 				label: __( 'Clear cache' ),
 				href: `/hosting-config/${ siteSlug }#cache`,
-				eventName: 'calypso_sites_dashboard_site_action_submenu_cache_click',
+				sectionName: 'cache',
 			},
 			{
 				label: __( 'Web server logs' ),
 				href: `/hosting-config/${ siteSlug }#web-server-logs`,
-				eventName: 'calypso_sites_dashboard_site_action_submenu_logs_click',
+				sectionName: 'logs',
 			},
 		];
 	}, [ __, siteSlug ] );
@@ -337,7 +337,11 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 						<MenuItemLink
 							key={ item.label }
 							href={ item.href }
-							onClick={ () => recordTracks( item.eventName ) }
+							onClick={ () =>
+								recordTracks( 'calypso_sites_dashboard_site_action_hosting_config_submenu_click', {
+									section: item.sectionName,
+								} )
+							}
 						>
 							{ item.label }
 						</MenuItemLink>
