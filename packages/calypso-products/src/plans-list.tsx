@@ -1606,7 +1606,7 @@ const getPlanJetpackSecurityT1Details = (): IncompleteJetpackPlan => ( {
 	...getJetpackCommonPlanDetails(),
 	group: GROUP_JETPACK,
 	type: TYPE_SECURITY_T1,
-	getTitle: () => translate( 'Security' ),
+	getTitle: () => translate( 'Security', { context: 'Jetpack product name' } ),
 	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
 	getDescription: () =>
 		translate(
