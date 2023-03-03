@@ -230,13 +230,13 @@ const siteSetupFlow: Flow = {
 						if ( typeof siteId === 'number' ) {
 							pendingActions.push(
 								saveSiteSettings( siteId, {
-									launchpad_screen: isLaunchpadIntent( intent ) ? 'full' : 'off',
+									launchpad_screen: isLaunchpadIntent( siteIntent ) ? 'full' : 'off',
 								} )
 							);
 						}
 
 						// Forcing cache invalidation to retrieve latest launchpad_screen option value
-						if ( isLaunchpadIntent( intent ) ) {
+						if ( isLaunchpadIntent( siteIntent ) ) {
 							redirectionUrl = addQueryArgs( { showLaunchpad: true }, to );
 						}
 					}
