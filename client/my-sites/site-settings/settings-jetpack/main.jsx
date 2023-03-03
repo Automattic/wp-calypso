@@ -31,6 +31,7 @@ const SiteSettingsJetpack = ( {
 	action,
 	translate,
 	retention,
+	storagePurchased,
 } ) => {
 	//todo: this check makes sense in Jetpack section?
 	if ( ! siteIsJetpack ) {
@@ -65,7 +66,12 @@ const SiteSettingsJetpack = ( {
 				// component
 				<HasRetentionCapabilitiesSwitch
 					siteId={ siteId }
-					trueComponent={ <BackupRetentionManagement defaultRetention={ retention } /> }
+					trueComponent={
+						<BackupRetentionManagement
+							defaultRetention={ retention }
+							storagePurchased={ storagePurchased }
+						/>
+					}
 					falseComponent={ null }
 					loadingComponent={ <AdvancedCredentialsLoadingPlaceholder /> } // Let's use the same placeholder for now
 				/>
@@ -93,6 +99,9 @@ export default connect( ( state ) => {
 		? Number( getCurrentQueryArguments( state ).retention )
 		: undefined;
 
+	// It means that the customer has purchased storage
+	const storagePurchased = Boolean( getCurrentQueryArguments( state ).storage_purchased );
+
 	return {
 		site,
 		siteId,
@@ -104,5 +113,6 @@ export default connect( ( state ) => {
 		host,
 		action,
 		retention,
+		storagePurchased,
 	};
 } )( localize( SiteSettingsJetpack ) );
