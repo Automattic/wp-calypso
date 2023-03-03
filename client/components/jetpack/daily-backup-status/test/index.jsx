@@ -9,7 +9,6 @@ import {
 	isSuccessfulDailyBackup,
 	isSuccessfulRealtimeBackup,
 } from 'calypso/lib/jetpack/backup-utils';
-import { useIsDateVisible } from 'calypso/my-sites/backup/hooks';
 import { getRewindStorageUsageLevel } from 'calypso/state/rewind/selectors';
 import { StorageUsageLevels } from 'calypso/state/rewind/storage/types';
 import getSiteFeatures from 'calypso/state/selectors/get-site-features';
@@ -20,7 +19,6 @@ const render = ( el, options ) => renderWithProvider( el, { ...options } );
 
 jest.mock( 'calypso/my-sites/backup/hooks', () => ( {
 	...jest.requireActual( 'calypso/my-sites/backup/hooks' ),
-	useIsDateVisible: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/state/ui/selectors/get-selected-site-id' );
@@ -40,9 +38,6 @@ jest.mock( 'calypso/components/data/query-rewind-policies', () => () => 'query-r
 
 jest.mock( '../status-card/no-backups-yet', () => () => <div data-testid="no-backups-yet" /> );
 jest.mock( '../status-card/backup-scheduled', () => () => <div data-testid="backup-scheduled" /> );
-jest.mock( '../status-card/visible-days-limit', () => () => (
-	<div data-testid="visible-days-limit" />
-) );
 jest.mock( '../status-card/no-backups-on-selected-date', () => () => (
 	<div data-testid="no-backups-on-selected-date" />
 ) );
@@ -63,7 +58,6 @@ describe( 'DailyBackupStatus', () => {
 	} );
 
 	beforeEach( () => {
-		useIsDateVisible.mockImplementation( () => () => true );
 		getSiteFeatures.mockReset();
 		isSuccessfulDailyBackup.mockReset();
 		isSuccessfulRealtimeBackup.mockReset();
@@ -105,13 +99,6 @@ describe( 'DailyBackupStatus', () => {
 
 		render( <DailyBackupStatus selectedDate={ now } lastBackupDate={ {} } /> );
 		expect( screen.queryByTestId( 'backup-scheduled' ) ).toBeNull();
-	} );
-
-	test( 'shows a visible limit status when the selected date does not fall within display rules', () => {
-		useIsDateVisible.mockImplementation( () => () => false );
-
-		render( <DailyBackupStatus selectedDate={ ARBITRARY_DATE } /> );
-		expect( screen.queryByTestId( 'visible-days-limit' ) ).toBeVisible();
 	} );
 
 	test( 'shows "no backups on this date" when no backup is provided and the selected date is not today', () => {

@@ -780,7 +780,7 @@ export function generateSteps( {
 		},
 		'difm-options': {
 			stepName: 'site-options',
-			providesDependencies: [ 'siteTitle', 'tagline', 'newOrExistingSiteChoice' ],
+			providesDependencies: [ 'siteTitle', 'tagline', 'searchTerms', 'newOrExistingSiteChoice' ],
 			optionalDependencies: [ 'newOrExistingSiteChoice' ],
 			defaultDependencies: {
 				newOrExistingSiteChoice: 'existing-site',
@@ -791,7 +791,7 @@ export function generateSteps( {
 		},
 		'difm-store-options': {
 			stepName: 'site-options',
-			providesDependencies: [ 'siteTitle', 'tagline', 'newOrExistingSiteChoice' ],
+			providesDependencies: [ 'siteTitle', 'tagline', 'searchTerms', 'newOrExistingSiteChoice' ],
 			optionalDependencies: [ 'newOrExistingSiteChoice' ],
 			defaultDependencies: {
 				newOrExistingSiteChoice: 'existing-site',

@@ -34,6 +34,9 @@ export const advancedCredentials: PageJS.Callback = ( context, next ) => {
 		? Number( context.query.retention )
 		: undefined;
 
+	// It means that the customer has purchased storage
+	const storagePurchased = Boolean( context.query.storage_purchased );
+
 	context.primary = (
 		<Main>
 			<DocumentHead title={ translate( 'Settings' ) } />
@@ -41,7 +44,12 @@ export const advancedCredentials: PageJS.Callback = ( context, next ) => {
 			{ config.isEnabled( 'jetpack/backup-retention-settings' ) ? (
 				<HasRetentionCapabilitiesSwitch
 					siteId={ siteId }
-					trueComponent={ <BackupRetentionManagement defaultRetention={ retention } /> }
+					trueComponent={
+						<BackupRetentionManagement
+							defaultRetention={ retention }
+							storagePurchased={ storagePurchased }
+						/>
+					}
 					falseComponent={ null }
 					loadingComponent={ <AdvancedCredentialsLoadingPlaceholder /> } // Let's use the same placeholder for now
 				/>

@@ -28,19 +28,11 @@ import PricingPageLink from './view-all-products-link';
 import './style.scss';
 
 interface Props {
-	defaultDuration: Duration;
 	urlQueryArgs?: QueryArgs;
 	siteSlug?: string;
-	locale?: string;
 }
 
-const JetpackCompletePage: React.FC< Props > = ( {
-	// these unused props I think will be needed later for the price componentt and the getCheckoutUrl() functions/buttons
-	defaultDuration,
-	urlQueryArgs,
-	siteSlug,
-	locale,
-} ) => {
+const JetpackCompletePage: React.FC< Props > = ( { urlQueryArgs, siteSlug } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId );
@@ -67,14 +59,12 @@ const JetpackCompletePage: React.FC< Props > = ( {
 					cardImage={ rnaImageComplete }
 					cardImage2xRetina={ rnaImageComplete2xRetina }
 				>
-					<>
-						<ProductHeader item={ item } />
-						<PricingPageLink siteSlug={ siteSlug || urlQueryArgs?.site } />
-						<ItemsIncluded />
-						<ItemPrice item={ item } siteId={ siteId } />
+					<ProductHeader item={ item } />
+					<PricingPageLink siteSlug={ siteSlug || urlQueryArgs?.site } />
+					<ItemsIncluded />
+					<ItemPrice item={ item } siteId={ siteId } />
 
-						<CtaButtons />
-					</>
+					<CtaButtons />
 				</JetpackRnaDialogCard>
 			</Main>
 		</>

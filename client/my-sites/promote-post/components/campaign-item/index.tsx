@@ -14,7 +14,6 @@ import resizeImageUrl from 'calypso/lib/resize-image-url';
 import {
 	canCancelCampaign,
 	formatCents,
-	getCampaignAudienceString,
 	getCampaignBudgetData,
 	getCampaignClickthroughRate,
 	getCampaignDurationFormatted,
@@ -23,8 +22,10 @@ import {
 	getCampaignStatus,
 	getCampaignStatusBadgeColor,
 	getPostType,
+	normalizeCampaignStatus,
 } from 'calypso/my-sites/promote-post/utils';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import AudienceBlock from '../audience-block';
 
 type Props = {
 	campaign: Campaign;
@@ -40,7 +41,6 @@ export default function CampaignItem( { campaign }: Props ) {
 
 	const {
 		impressions_total,
-		status: campaignStatus,
 		clicks_total,
 		target_url,
 		type,
@@ -54,6 +54,8 @@ export default function CampaignItem( { campaign }: Props ) {
 		display_delivery_estimate,
 		display_name,
 	} = campaign;
+
+	const campaignStatus = useMemo( () => normalizeCampaignStatus( campaign ), [ campaign.status ] );
 
 	const overallSpending = useMemo(
 		() => getCampaignOverallSpending( spent_budget_cents, budget_cents, start_date, end_date ),
@@ -80,8 +82,6 @@ export default function CampaignItem( { campaign }: Props ) {
 		() => getCampaignEstimatedImpressions( display_delivery_estimate ),
 		[ display_delivery_estimate ]
 	);
-
-	const audience = useMemo( () => getCampaignAudienceString( audience_list ), [ audience_list ] );
 
 	const safeUrl = safeImageUrl( content_config.imageUrl );
 	const adCreativeUrl = safeUrl && resizeImageUrl( safeUrl, { h: 80 }, 0 );
@@ -293,7 +293,7 @@ export default function CampaignItem( { campaign }: Props ) {
 								{ __( 'Audience' ) }
 							</div>
 							<div className="campaign-item__block_value campaign-item__audience-value">
-								{ audience }
+								<AudienceBlock audienceList={ audience_list } />
 							</div>
 						</div>
 					</div>

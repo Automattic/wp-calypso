@@ -63,7 +63,7 @@ export function useTranslatedPageDescriptions(
 	const translate = useTranslate();
 	const defaultDescriptions: Record< PageId, TranslateResult > = {
 		[ HOME_PAGE ]: translate(
-			'An overview of you, your writing, or your business. What phrases would someone search on Google to find you? What can visitors expect on this site?'
+			'An introduction of your business, writing, or yourself. What can visitors expect to find on your site?'
 		),
 		[ ABOUT_PAGE ]: translate(
 			'Provide background information about you or the business. Why did you start this website? What is your personal story?'
@@ -123,13 +123,13 @@ export function useTranslatedPageDescriptions(
 		[ BBE_STORE_ONBOARDING_PAGE_PICKER_STEP ]: {
 			...defaultDescriptions,
 			[ HOME_PAGE ]: translate(
-				'An overview of you, your shop, or your business. What phrases would someone search on Google to find you? What can visitors purchase on this site?'
+				'An introduction of your business, shop, or yourself. What can visitors expect to find on your site?'
 			),
 		},
 		[ BBE_STORE_WEBSITE_CONTENT_FILLING_STEP ]: {
 			...defaultDescriptions,
 			[ HOME_PAGE ]: translate(
-				'An overview of you, your shop, or your business. What phrases would someone search on Google to find you? What can visitors purchase on this site?'
+				'An introduction of your business, shop, or yourself. What can visitors expect to find on your site?'
 			),
 		},
 	};

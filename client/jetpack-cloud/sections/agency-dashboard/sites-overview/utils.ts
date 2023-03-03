@@ -11,21 +11,37 @@ import type {
 	AllowedActionTypes,
 	StatusTooltip,
 	RowMetaData,
+	StatsNode,
 	BackupNode,
 	ScanNode,
 	MonitorNode,
+	SiteColumns,
 } from './types';
 
 const INITIAL_UNIX_EPOCH = '1970-01-01 00:00:00';
 
-export const siteColumns = [
+const isExpandedBlockEnabled = config.isEnabled( 'jetpack/pro-dashboard-expandable-block' );
+
+const extraColumns: SiteColumns = isExpandedBlockEnabled
+	? [
+			{
+				key: 'stats',
+				title: translate( 'Stats' ),
+				isExpandable: true,
+			},
+	  ]
+	: [];
+
+export const siteColumns: SiteColumns = [
 	{
 		key: 'site',
 		title: translate( 'Site' ),
 	},
+	...extraColumns,
 	{
 		key: 'backup',
 		title: translate( 'Backup' ),
+		isExpandable: isExpandedBlockEnabled,
 	},
 	{
 		key: 'scan',
@@ -35,10 +51,11 @@ export const siteColumns = [
 		key: 'monitor',
 		title: translate( 'Monitor' ),
 		className: 'min-width-100px',
+		isExpandable: isExpandedBlockEnabled,
 	},
 	{
 		key: 'plugin',
-		title: translate( 'Plugin Updates' ),
+		title: translate( 'Plugins' ),
 	},
 ];
 
@@ -164,6 +181,7 @@ const getRowEventName = (
 };
 
 const backupTooltips: StatusTooltip = {
+	critical: translate( 'Latest backup failed' ),
 	failed: translate( 'Latest backup failed' ),
 	warning: translate( 'Latest backup completed with warnings' ),
 	inactive: translate( 'Add Jetpack VaultPress Backup to this site' ),
@@ -295,6 +313,14 @@ export const getRowMetaData = (
 	};
 };
 
+const formatStatsData = ( site: Site ) => {
+	const statsData: StatsNode = {
+		type: 'stats',
+		data: site.site_stats,
+	};
+	return statsData;
+};
+
 const formatBackupData = ( site: Site ) => {
 	const backup: BackupNode = {
 		value: '',
@@ -312,7 +338,7 @@ const formatBackupData = ( site: Site ) => {
 			break;
 		case 'rewind_backup_error':
 		case 'backup_only_error':
-			backup.status = 'failed';
+			backup.status = isExpandedBlockEnabled ? 'critical' : 'failed';
 			backup.value = translate( 'Failed' );
 			break;
 		case 'rewind_backup_complete_warning':
@@ -397,6 +423,7 @@ export const formatSites = ( sites: Array< Site > = [] ): Array< SiteData > | []
 				status: '',
 				type: 'site',
 			},
+			stats: formatStatsData( site ),
 			backup: formatBackupData( site ),
 			scan: formatScanData( site ),
 			monitor: formatMonitorData( site ),

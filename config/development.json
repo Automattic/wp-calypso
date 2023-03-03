@@ -181,6 +181,7 @@
 		"subscriber-csv-upload": true,
 		"subscriber-importer": true,
 		"subscription-gifting": true,
+		"subscription-management": true,
 		"themes/atomic-homepage-replace": true,
 		"themes/premium": true,
 		"themes/showcase-i4/details-and-preview": true,
@@ -197,6 +198,7 @@
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
+		"yolo/staging-sites-i1": true,
 		"newsletter/stats": true
 	}
 }

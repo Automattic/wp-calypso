@@ -4,16 +4,15 @@ import { sprintf, __ } from '@wordpress/i18n';
 import classNames from 'classnames';
 import { ComponentProps, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import CardHeading from 'calypso/components/card-heading';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import Image from 'calypso/components/image';
-import SocialLogo from 'calypso/components/social-logo';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { DisconnectGitHubButton } from '../disconnect-github-button';
+import { GitHubCardHeading } from '../github-card-heading';
 import { SearchBranches } from './search-branches';
 import { SearchRepos } from './search-repos';
 import { useGithubConnectMutation } from './use-github-connect-mutation';
@@ -36,7 +35,7 @@ export const GithubConnectCard = ( { connection }: GithubConnectCardProps ) => {
 
 	const { connectBranch, isLoading: isConnecting } = useGithubConnectMutation( siteId, {
 		onSuccess: () => {
-			dispatch( successNotice( __( 'Branch connected successfully' ), noticeOptions ) );
+			dispatch( successNotice( __( 'Repository connected.' ), noticeOptions ) );
 		},
 		onError: ( error ) => {
 			dispatch(
@@ -75,8 +74,7 @@ export const GithubConnectCard = ( { connection }: GithubConnectCardProps ) => {
 
 	return (
 		<Card className="connect-branch-card">
-			<SocialLogo className="material-icon" icon="github" size={ 32 } />
-			<CardHeading>{ __( 'Deploy from GitHub' ) }</CardHeading>
+			<GitHubCardHeading />
 			<div>
 				<p>
 					{ __( 'Changes pushed to the selected branch will be automatically deployed. ' ) }
@@ -123,7 +121,9 @@ export const GithubConnectCard = ( { connection }: GithubConnectCardProps ) => {
 				</div>
 
 				<FormSettingExplanation>
-					Don't see a specific repo? Try re-authorizing with Github as a different organization.
+					{ __(
+						"Don't see a specific repo? Try re-authorizing with GitHub as a different organization."
+					) }
 				</FormSettingExplanation>
 			</div>
 			<div className={ classNames( 'connect-branch__buttons' ) }>

@@ -273,12 +273,8 @@ private object HappyBlocks : WPComPluginBuild(
 			scriptContent = """
 				cd apps/happy-blocks
 
-				# Copy existing dist files to release directory
-				mkdir release-files
-				cp -r dist release-files/dist/
-
-				# Add index.php file
-				cp index.php release-files/
+				# Run build release script
+				yarn build-ci
 			"""
 		}
 	}

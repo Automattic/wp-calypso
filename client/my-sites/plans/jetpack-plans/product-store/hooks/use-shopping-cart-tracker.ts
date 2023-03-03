@@ -52,7 +52,10 @@ export const useShoppingCartTracker = () => {
 				eventData = {
 					...eventData,
 					...reduceProducts( responseCart.products ),
-					product_slugs_concatenated: responseCart.products.sort().join( '-' ),
+					product_slugs_concatenated: responseCart.products
+						.map( ( product ) => product.product_slug )
+						.sort()
+						.join( ',' ),
 					number_of_products: responseCart.products.length,
 				};
 			}
