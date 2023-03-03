@@ -9,16 +9,16 @@ import { Button, Card } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useCallback, useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { useCallback, useEffect, useMemo } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import SegmentedControl from 'calypso/components/segmented-control';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getECommerceTrialCheckoutUrl } from 'calypso/lib/ecommerce-trial/get-ecommerce-trial-checkout-url';
+import { loadTrackingTool } from 'calypso/state/analytics/actions';
 import { getPlanRawPrice, getPlan } from 'calypso/state/plans/selectors';
 import { getECommerceFeatureSets } from './ecommerce-features';
 import ECommerceTrialBanner from './ecommerce-trial-banner';
 import TrialFeatureCard from './trial-feature-card';
-
 import './style.scss';
 
 interface ECommerceTrialPlansPageProps {
@@ -31,6 +31,7 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 	const siteSlug = props.siteSlug;
 
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const eCommercePlanAnnual = getPlans()[ PLAN_ECOMMERCE ];
 	const eCommercePlanMonthly = getPlans()[ PLAN_ECOMMERCE_MONTHLY ];
@@ -71,6 +72,13 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 
 	const monthlyPriceWrapper = <span className="e-commerce-trial-plans__price-card-value" />;
 	const priceDescription = <span className="e-commerce-trial-plans__price-card-interval" />;
+
+	useEffect( () => {
+		// Hotjar tracking for this component/route.
+		// Privacy compliance/consent handled in client/lib/analytics/tracker-buckets.ts.
+		// https://github.com/Automattic/wp-calypso/blob/trunk/client/state/analytics/README_HotJar.md
+		dispatch( loadTrackingTool( 'HotJar' ) );
+	}, [ dispatch ] );
 
 	const priceContent = isAnnualSubscription
 		? translate(
