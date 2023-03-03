@@ -51,11 +51,7 @@ async function AppBoot() {
 
 	registerStatsPages( window.location.pathname + window.location.search );
 
-	// HACK: page.js adds a `?...page=stats...` query param to the URL in Odyssey on page refresh everytime.
-	const newHash = `#!${ getPathWithUpdatedQueryString() }`;
-	if ( newHash !== window.location.hash ) {
-		window.location.hash = `#!${ getPathWithUpdatedQueryString() }`;
-	}
+	window.location.hash = `#!${ getPathWithUpdatedQueryString() }`;
 }
 
 AppBoot();
