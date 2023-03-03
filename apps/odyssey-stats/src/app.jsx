@@ -7,6 +7,7 @@ import '@automattic/calypso-polyfills';
 import { QueryClient } from 'react-query';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunkMiddleware from 'redux-thunk';
+import { getPathWithUpdatedQueryString } from 'calypso/my-sites/stats/utils';
 import consoleDispatcher from 'calypso/state/console-dispatch';
 import currentUser from 'calypso/state/current-user/reducer';
 import wpcomApiMiddleware from 'calypso/state/data-layer/wpcom-api-middleware';
@@ -47,13 +48,13 @@ async function AppBoot() {
 	if ( ! window.location?.hash ) {
 		window.location.hash = `#!/stats/day/${ siteId }`;
 	}
+
 	registerStatsPages( window.location.pathname + window.location.search );
 
-	// HACK: page.js adds a `?...page=stats&...` query param to the URL in Odyssey on page refresh everytime.
-	// Test whether there are two query strings (two '?').
-	if ( window.location.hash.replaceAll( /[^?]/g, '' ).length > 1 ) {
-		// If so, we remove the last '?' and the query string following it with the lazy match regex.
-		window.location.hash = window.location.hash.replace( /(\?[^?]*)\?.*page=stats.*$/, '$1' );
+	// HACK: page.js adds a `?...page=stats...` query param to the URL in Odyssey on page refresh everytime.
+	const newHash = `#!${ getPathWithUpdatedQueryString() }`;
+	if ( newHash !== window.location.hash ) {
+		window.location.hash = `#!${ getPathWithUpdatedQueryString() }`;
 	}
 }
 
