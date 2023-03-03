@@ -3,12 +3,12 @@ import { useSiteLaunchStatusLabel } from '@automattic/sites';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import { memo, useState } from 'react';
+import { memo } from 'react';
+import { useInView } from 'react-intersection-observer';
 import { useSelector } from 'react-redux';
 import StatsSparkline from 'calypso/blocks/stats-sparkline';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TimeSince from 'calypso/components/time-since';
-import { useInView } from 'calypso/lib/use-in-view';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { displaySiteUrl, getDashboardUrl, isNotAtomicJetpack, MEDIA_QUERIES } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
@@ -98,8 +98,7 @@ const PlanRenewNagContainer = styled.div`
 export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const { __ } = useI18n();
 	const translatedStatus = useSiteLaunchStatusLabel( site );
-	const [ inViewOnce, setInViewOnce ] = useState( false );
-	const ref = useInView< HTMLTableRowElement >( () => setInViewOnce( true ) );
+	const { ref, inView } = useInView( { triggerOnce: true } );
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 
 	const isP2Site = site.options?.is_wpforteams_site;
@@ -121,11 +120,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 							href={ getDashboardUrl( site.slug ) }
 							title={ __( 'Visit Dashboard' ) }
 						>
-							<SiteItemThumbnail
-								displayMode="list"
-								showPlaceholder={ ! inViewOnce }
-								site={ site }
-							/>
+							<SiteItemThumbnail displayMode="list" showPlaceholder={ ! inView } site={ site } />
 						</ListTileLeading>
 					}
 					title={
@@ -173,15 +168,13 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 				{ site.options?.updated_at ? <TimeSince date={ site.options.updated_at } /> : '' }
 			</Column>
 			<Column mobileHidden>
-				{ inViewOnce && (
+				{ inView && (
 					<a href={ `/stats/day/${ site.slug }` }>
 						<StatsSparkline siteId={ site.ID } showLoader={ true }></StatsSparkline>
 					</a>
 				) }
 			</Column>
-			<Column style={ { width: '24px' } }>
-				{ inViewOnce && <SitesEllipsisMenu site={ site } /> }
-			</Column>
+			<Column style={ { width: '24px' } }>{ inView && <SitesEllipsisMenu site={ site } /> }</Column>
 		</Row>
 	);
 } );
