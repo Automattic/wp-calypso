@@ -34,7 +34,8 @@ const selectors = {
 		return `.plan-features__${ viewportSuffix } >> .plan-features__actions-button.is-${ plan.toLowerCase() }-plan:has-text("${ buttonText }")`;
 	},
 	activePlan: ( plan: Plans ) => `a.is-${ plan.toLowerCase() }-plan.is-current-plan:visible`,
-	ContinueWithPlanButton: ( buttonText: string ) => `button:has-text("${ buttonText }")`,
+	ContinueWithPlanButton: ( buttonText: string ) =>
+		`.plans__header button:has-text("${ buttonText }")`,
 	SkipPlanConfirmButton: ( message: string ) => `.dialog__button-label:has-text("${ message }")`,
 
 	// My Plans tab
