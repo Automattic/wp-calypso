@@ -36,7 +36,7 @@ const ScreenHomepage = ( {
 			<NavigatorHeader
 				title={ translate( 'Create your home' ) }
 				description={ translate(
-					'Add new patterns or re-arrange existing ones to create the structure of your page.'
+					'Add patterns and then re-arrange them to create the structure of your homepage.'
 				) }
 			/>
 			<div className="screen-container__body">

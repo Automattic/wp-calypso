@@ -54,11 +54,7 @@ import type { StarterDesigns } from '@automattic/data-stores';
 import type { Design, StyleVariation } from '@automattic/design-picker';
 
 const SiteIntent = Onboard.SiteIntent;
-const SITE_ASSEMBLER_AVAILABLE_INTENTS: string[] = [ SiteIntent.Build ];
-
-if ( isEnabled( 'pattern-assembler/write-flow' ) ) {
-	SITE_ASSEMBLER_AVAILABLE_INTENTS.push( SiteIntent.Write );
-}
+const SITE_ASSEMBLER_AVAILABLE_INTENTS: string[] = [ SiteIntent.Build, SiteIntent.Write ];
 
 const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const { goBack, submit, exitFlow } = navigation;

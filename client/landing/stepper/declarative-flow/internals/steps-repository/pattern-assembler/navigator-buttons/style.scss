@@ -3,12 +3,18 @@
 .pattern-assembler {
 	.navigator-button {
 		height: 56px;
-		line-height: 56px;
+		line-height: 52px;
 		padding: 0;
 		font-size: $font-body-small;
 		font-weight: 500;
 		letter-spacing: -0.15px;
 		color: var(--studio-gray-100);
+		border-width: 2px;
+
+		&:focus {
+			border-radius: 3px;
+			border-color: var(--color-primary-light);
+		}
 
 		svg {
 			flex-shrink: 0;
