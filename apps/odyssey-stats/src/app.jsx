@@ -49,7 +49,7 @@ async function AppBoot() {
 	if ( ! window.location?.hash ) {
 		window.location.hash = `#!/stats/day/${ siteId }`;
 	} else {
-		// The URL could already be broken by page.js by the appended `?page=stats`.
+		// The URL could already get broken by page.js by the appended `?page=stats`.
 		window.location.hash = `#!${ getPathWithUpdatedQueryString(
 			{},
 			window.location.hash.substring( 2 )
