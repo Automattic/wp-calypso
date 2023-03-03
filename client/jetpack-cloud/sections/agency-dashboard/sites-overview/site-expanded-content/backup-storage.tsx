@@ -50,7 +50,17 @@ export default function BackupStorage( { site }: Props ) {
 				<div className="site-expanded-content__card-content">
 					<div className="site-expanded-content__card-content-column">
 						<div className="site-expanded-content__card-content-count">{ displayDate }</div>
-						<div className="site-expanded-content__card-content-count-title">2 posts, 1 page</div>
+						<div className="site-expanded-content__card-content-count-title">
+							{ translate( '%(totalPosts)d post', '%(totalPosts)d posts', {
+								args: { totalPosts: data.backupInfo.backedUpItems.posts },
+								count: data.backupInfo.backedUpItems.posts,
+							} ) }
+							,&nbsp;
+							{ translate( '%(totalPages)d page', '%(totalPages)d pages', {
+								args: { totalPages: data.backupInfo.backedUpItems.pages },
+								count: data.backupInfo.backedUpItems.pages,
+							} ) }
+						</div>
 					</div>
 				</div>
 				<div className="site-expanded-content__card-footer">
