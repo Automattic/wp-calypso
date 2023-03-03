@@ -53,7 +53,7 @@ async function AppBoot() {
 	// Test whether there are two query strings (two '?').
 	if ( window.location.hash.replaceAll( /[^?]/g, '' ).length > 1 ) {
 		// If so, we remove the last '?' and the query string following it with the lazy match regex.
-		window.location.hash = window.location.hash.replace( /\?[^?]*?page=stats[^?]*?$/, '' );
+		window.location.hash = window.location.hash.replace( /(\?[^?]*)\?.*page=stats.*$/, '$1' );
 	}
 }
 
