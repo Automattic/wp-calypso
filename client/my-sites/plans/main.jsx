@@ -99,7 +99,7 @@ function DescriptionMessage( { isDomainUpsell, isFreePlan, yourDomainName, siteS
 	const skipPlan = () => {
 		recordTracksEvent( 'calypso_plans_page_domain_upsell_skip_click' );
 		// show Warning only on free plans.
-		isFreePlan === 'free'
+		isFreePlan
 			? dispatch( WPCOM_PLANS_UI_STORE ).setShowDomainUpsellDialog( true )
 			: page( `/checkout/${ siteSlug }` );
 	};
