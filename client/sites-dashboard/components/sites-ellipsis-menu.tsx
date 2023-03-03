@@ -299,21 +299,26 @@ function useSubmenuItems( site: SiteExcerptData ) {
 
 function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps ) {
 	const { __ } = useI18n();
+	const hasFeatureSFTP = useSafeSiteHasFeature( site.ID, FEATURE_SFTP );
+	const displayUpsell = ! hasFeatureSFTP;
 	const submenuItems = useSubmenuItems( site );
 	const onSubmenuIsVisible = useCallback( () => {
-		recordTracks( 'calypso_sites_dashboard_site_action_hosting_config_submenu_open' );
-	}, [ recordTracks ] );
+		recordTracks( 'calypso_sites_dashboard_site_action_hosting_config_submenu_open', {
+			display_upsell: displayUpsell,
+			product_slug: site.plan?.product_slug,
+		} );
+	}, [ displayUpsell, recordTracks, site.plan?.product_slug ] );
 	const developerSubmenuProps = useSubmenuPopoverProps< HTMLDivElement >( {
 		offsetTop: -8,
 		onVisible: onSubmenuIsVisible,
 	} );
-	const hasFeatureSFTP = useSafeSiteHasFeature( site.ID, FEATURE_SFTP );
 
 	useEffect( () => {
 		recordTracks( 'calypso_sites_dashboard_site_action_hosting_config_view', {
+			display_upsell: displayUpsell,
 			product_slug: site.plan?.product_slug,
 		} );
-	}, [ recordTracks, site.plan?.product_slug ] );
+	}, [ displayUpsell, recordTracks, site.plan?.product_slug ] );
 
 	if ( submenuItems.length === 0 ) {
 		return null;
@@ -324,15 +329,15 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 			<MenuItemLink
 				href={ getHostingConfigUrl( site.slug ) }
 				onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_hosting_config_click' ) }
-				info={ ! hasFeatureSFTP && __( 'Requires a Business Plan' ) }
+				info={ ! displayUpsell && __( 'Requires a Business Plan' ) }
 			>
 				{ __( 'Hosting configuration' ) } <MenuItemGridIcon icon="chevron-right" size={ 18 } />
 			</MenuItemLink>
 			<SubmenuPopover
 				{ ...developerSubmenuProps.submenu }
-				focusOnMount={ hasFeatureSFTP ? 'firstElement' : false }
+				focusOnMount={ displayUpsell ? 'firstElement' : false }
 			>
-				{ hasFeatureSFTP ? (
+				{ displayUpsell ? (
 					submenuItems.map( ( item ) => (
 						<MenuItemLink
 							key={ item.label }
