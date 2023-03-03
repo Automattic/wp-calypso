@@ -419,9 +419,7 @@ export const SitesEllipsisMenu = ( {
 					<MenuItemLink
 						href={ `/settings/performance/${ site.slug }` }
 						onClick={ () =>
-							recordTracks(
-								'calypso_sites_dashboard_site_action_submenu_performance_settings_click'
-							)
+							recordTracks( 'calypso_sites_dashboard_site_action_performance_settings_click' )
 						}
 					>
 						{ __( 'Performance settings' ) }
@@ -430,7 +428,7 @@ export const SitesEllipsisMenu = ( {
 						<MenuItemLink
 							href={ `/settings/general/${ site.slug }#site-privacy-settings` }
 							onClick={ () =>
-								recordTracks( 'calypso_sites_dashboard_site_action_submenu_privacy_settings_click' )
+								recordTracks( 'calypso_sites_dashboard_site_action_privacy_settings_click' )
 							}
 						>
 							{ __( 'Privacy settings' ) }
@@ -440,7 +438,7 @@ export const SitesEllipsisMenu = ( {
 						<MenuItemLink
 							href={ `/domains/manage/${ site.slug }/dns/${ site.slug }` }
 							onClick={ () =>
-								recordTracks( 'calypso_sites_dashboard_site_action_submenu_dns_records_click' )
+								recordTracks( 'calypso_sites_dashboard_site_action_dns_records_click' )
 							}
 						>
 							{ __( 'Domains and DNS' ) }
