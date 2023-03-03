@@ -26,5 +26,10 @@ export function getPathWithUpdatedQueryString( query = {}, path = page.current )
 		...query,
 	};
 
-	return `${ pathname }?${ stringifyQs( updatedSearch ) }`;
+	const updatedSearchString = stringifyQs( updatedSearch );
+	if ( ! updatedSearchString ) {
+		return pathname;
+	}
+
+	return `${ pathname }?${ updatedSearchString }`;
 }

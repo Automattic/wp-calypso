@@ -52,7 +52,11 @@ async function AppBoot() {
 	registerStatsPages( window.location.pathname + window.location.search );
 
 	// HACK: getPathWithUpdatedQueryString filters duplicate query parameters added by `page.js`.
-	window.location.hash = `#!${ getPathWithUpdatedQueryString() }`;
+	// It has to come after `registerStatsPages` because the duplicate string added in the function.
+	window.location.hash = `#!${ getPathWithUpdatedQueryString(
+		{},
+		window.location.hash.substring( 2 )
+	) }`;
 }
 
 AppBoot();
