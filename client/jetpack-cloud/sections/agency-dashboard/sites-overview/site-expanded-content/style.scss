@@ -89,24 +89,22 @@ $color-yellow: var(--studio-yellow-50);
 	}
 }
 
-.is-up,
-.is-free {
+.is-up {
 	@include svg-color($color-green, $color-green, $color-green);
 }
 
-.is-down,
-.is-full {
+.is-down {
 	@include svg-color($color-red, $color-red, $color-red);
 }
 
-.site-expanded-content__card-content-score-title {
+.site-expanded-content__card-content-count-title {
 	font-size: 0.75rem;
 	color: var(--studio-gray-40);
 }
 
-button.site-expanded-content__card-button {
+.site-expanded-content__card-button {
 	color: var(--studio-black) !important;
-	border-color: var(--studio-black);
+	width: fit-content;
 }
 
 .is-small-screen {
