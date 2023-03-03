@@ -20,6 +20,7 @@ import { ComponentType, useEffect, useMemo, useState } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import SitePreviewLink from 'calypso/components/site-preview-link';
 import { useSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
@@ -261,47 +262,50 @@ function useSubmenuItems( site: SiteExcerptData ) {
 	const { __ } = useI18n();
 	const siteSlug = site.slug;
 
-	return useMemo< { label: string; href: string; eventName: string }[] >( () => {
+	return useMemo< { label: string; href: string; sectionName: string }[] >( () => {
 		return [
 			{
 				label: __( 'SFTP/SSH credentials' ),
 				href: `/hosting-config/${ siteSlug }#sftp-credentials`,
-				eventName: 'calypso_sites_dashboard_site_action_submenu_sftp_credentials_click',
+				sectionName: 'sftp_credentials',
 			},
 			{
 				label: __( 'Database access' ),
 				href: `/hosting-config/${ siteSlug }#database-access`,
-				eventName: 'calypso_sites_dashboard_site_action_submenu_database_access_click',
+				sectionName: 'database_access',
 			},
 			{
 				label: __( 'Deploy from GitHub' ),
 				href: `/hosting-config/${ siteSlug }#connect-github`,
-				eventName: 'calypso_sites_dashboard_site_action_submenu_connect_github_click',
+				sectionName: 'connect_github',
 			},
 			{
 				label: __( 'Web server settings' ),
 				href: `/hosting-config/${ siteSlug }#web-server-settings`,
-				eventName: 'calypso_sites_dashboard_site_action_submenu_web_server_settings_click',
+				sectionName: 'web_server_settings',
 			},
 			{
 				label: __( 'Clear cache' ),
 				href: `/hosting-config/${ siteSlug }#cache`,
-				eventName: 'calypso_sites_dashboard_site_action_submenu_cache_click',
+				sectionName: 'cache',
 			},
 			{
 				label: __( 'Web server logs' ),
 				href: `/hosting-config/${ siteSlug }#web-server-logs`,
-				eventName: 'calypso_sites_dashboard_site_action_submenu_logs_click',
+				sectionName: 'logs',
 			},
 		];
 	}, [ __, siteSlug ] );
 }
 
-function DeveloperSettingsSubmenu( { site, recordTracks }: SitesMenuItemProps ) {
+function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps ) {
 	const { __ } = useI18n();
-	const submenuItems = useSubmenuItems( site );
-	const developerSubmenuProps = useSubmenuPopoverProps< HTMLDivElement >( { offsetTop: -8 } );
 	const hasFeatureSFTP = useSafeSiteHasFeature( site.ID, FEATURE_SFTP );
+	const displayUpsell = ! hasFeatureSFTP;
+	const submenuItems = useSubmenuItems( site );
+	const developerSubmenuProps = useSubmenuPopoverProps< HTMLDivElement >( {
+		offsetTop: -8,
+	} );
 
 	if ( submenuItems.length === 0 ) {
 		return null;
@@ -309,36 +313,62 @@ function DeveloperSettingsSubmenu( { site, recordTracks }: SitesMenuItemProps ) 
 
 	return (
 		<div { ...developerSubmenuProps.parent }>
+			<TrackComponentView
+				eventName="calypso_sites_dashboard_site_action_hosting_config_view"
+				eventProperties={ {
+					display_upsell: displayUpsell,
+					product_slug: site.plan?.product_slug,
+				} }
+			/>
 			<MenuItemLink
 				href={ getHostingConfigUrl( site.slug ) }
 				onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_hosting_config_click' ) }
-				info={ ! hasFeatureSFTP && __( 'Requires a Business Plan' ) }
+				info={ displayUpsell && __( 'Requires a Business Plan' ) }
 			>
 				{ __( 'Hosting configuration' ) } <MenuItemGridIcon icon="chevron-right" size={ 18 } />
 			</MenuItemLink>
 			<SubmenuPopover
 				{ ...developerSubmenuProps.submenu }
-				focusOnMount={ hasFeatureSFTP ? 'firstElement' : false }
+				focusOnMount={ displayUpsell ? false : 'firstElement' }
 			>
-				{ hasFeatureSFTP ? (
+				{ displayUpsell ? (
+					<UpsellMenuGroup>
+						<TrackComponentView
+							eventName="calypso_sites_dashboard_site_action_hosting_config_upsell_view"
+							eventProperties={ {
+								product_slug: site.plan?.product_slug,
+							} }
+						/>
+						{ __(
+							'Upgrade to the Business Plan to enable SFTP & SSH, database access, GitHub deploys, and more…'
+						) }
+						<Button
+							compact
+							primary
+							href={ getHostingConfigUrl( site.slug ) }
+							onClick={ () =>
+								recordTracks( 'calypso_sites_dashboard_site_action_hosting_config_upsell_click', {
+									product_slug: site.plan?.product_slug,
+								} )
+							}
+						>
+							{ __( 'See full feature list' ) }
+						</Button>
+					</UpsellMenuGroup>
+				) : (
 					submenuItems.map( ( item ) => (
 						<MenuItemLink
 							key={ item.label }
 							href={ item.href }
-							onClick={ () => recordTracks( item.eventName ) }
+							onClick={ () =>
+								recordTracks( 'calypso_sites_dashboard_site_action_hosting_config_submenu_click', {
+									section: item.sectionName,
+								} )
+							}
 						>
 							{ item.label }
 						</MenuItemLink>
 					) )
-				) : (
-					<UpsellMenuGroup>
-						{ __(
-							'Upgrade to the Business Plan to enable SFTP & SSH, database access, GitHub deploys, and more…'
-						) }
-						<Button compact primary href={ getHostingConfigUrl( site.slug ) }>
-							{ __( 'Check full feature list' ) }
-						</Button>
-					</UpsellMenuGroup>
 				) }
 			</SubmenuPopover>
 		</div>
@@ -378,7 +408,7 @@ export const SitesEllipsisMenu = ( {
 					{ ! isLaunched && <LaunchItem { ...props } /> }
 					<SettingsItem { ...props } />
 					{ isEnabled( 'dev/developer-ux' ) && hasHostingPage && (
-						<DeveloperSettingsSubmenu { ...props } />
+						<HostingConfigurationSubmenu { ...props } />
 					) }
 					{ ! isP2Site( site ) && <ManagePluginsItem { ...props } /> }
 					{ ! isEnabled( 'dev/developer-ux' ) && hasHostingPage && (
@@ -389,9 +419,7 @@ export const SitesEllipsisMenu = ( {
 					<MenuItemLink
 						href={ `/settings/performance/${ site.slug }` }
 						onClick={ () =>
-							recordTracks(
-								'calypso_sites_dashboard_site_action_submenu_performance_settings_click'
-							)
+							recordTracks( 'calypso_sites_dashboard_site_action_performance_settings_click' )
 						}
 					>
 						{ __( 'Performance settings' ) }
@@ -400,7 +428,7 @@ export const SitesEllipsisMenu = ( {
 						<MenuItemLink
 							href={ `/settings/general/${ site.slug }#site-privacy-settings` }
 							onClick={ () =>
-								recordTracks( 'calypso_sites_dashboard_site_action_submenu_privacy_settings_click' )
+								recordTracks( 'calypso_sites_dashboard_site_action_privacy_settings_click' )
 							}
 						>
 							{ __( 'Privacy settings' ) }
@@ -410,7 +438,7 @@ export const SitesEllipsisMenu = ( {
 						<MenuItemLink
 							href={ `/domains/manage/${ site.slug }/dns/${ site.slug }` }
 							onClick={ () =>
-								recordTracks( 'calypso_sites_dashboard_site_action_submenu_dns_records_click' )
+								recordTracks( 'calypso_sites_dashboard_site_action_dns_records_click' )
 							}
 						>
 							{ __( 'Domains and DNS' ) }
