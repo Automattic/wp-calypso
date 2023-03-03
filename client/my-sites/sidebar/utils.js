@@ -75,7 +75,8 @@ export const itemLinkMatches = ( path, currentPath ) => {
 		// For `/store/stats/*` and `/google-my-business/stats/*` paths, show Stats menu as selected.
 		return (
 			currentPath.startsWith( '/store/stats/' ) ||
-			currentPath.startsWith( '/google-my-business/stats/' )
+			currentPath.startsWith( '/google-my-business/stats/' ) ||
+			fragmentIsEqual( path, currentPath, 1 )
 		);
 	}
 
