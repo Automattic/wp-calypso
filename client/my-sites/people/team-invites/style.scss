@@ -1,3 +1,17 @@
 .people-team-invites-list {
 	padding: 0;
 }
+
+.people-team-invites-list-single-view {
+	.people-list-item.card.is-compact {
+		border-bottom: solid 1px var(--color-border-subtle);
+	}
+
+	.people-list-item-view-all.card {
+		font-size: 0.875rem;
+	}
+}
+
+.people-list-item-view-all {
+	box-shadow: none;
+}

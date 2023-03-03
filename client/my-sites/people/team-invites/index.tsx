@@ -67,11 +67,11 @@ function TeamInvites( props: Props ) {
 					) }
 					{ singleInviteView && (
 						<>
-							<Card className="people-team-invites-list">
+							<Card className="people-team-invites-list people-team-invites-list-single-view">
 								{ renderInvite( pendingInvites?.[ 0 ] ) }
 								{ pendingInvites.length > 1 && (
 									<CompactCard
-										className="people-team-invites-list-view-all"
+										className="people-list-item-view-all"
 										href={ viewAllPendingInvitesLink }
 									>
 										{ translate( 'View all' ) }
