@@ -30,7 +30,6 @@ import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { getFirstCategoryFromTags } from '../categories/use-categories';
 import { PluginCustomDomainDialog } from '../plugin-custom-domain-dialog';
 import { getPeriodVariationValue } from '../plugin-price';
 import usePreinstalledPremiumPlugin from '../use-preinstalled-premium-plugin';
@@ -236,8 +235,6 @@ function onClickInstallPlugin( {
 	preinstalledPremiumPluginProduct,
 	productsList,
 } ) {
-	const tags = Object.keys( plugin.tags );
-
 	dispatch( removePluginStatuses( 'completed', 'error', 'up-to-date' ) );
 
 	dispatch(
@@ -255,8 +252,6 @@ function onClickInstallPlugin( {
 			blog_id: selectedSite?.ID,
 			marketplace_product: isMarketplaceProduct,
 			needs_plan_upgrade: upgradeAndInstall,
-			tags: tags.join( ',' ),
-			category: getFirstCategoryFromTags( tags ),
 		} )
 	);
 

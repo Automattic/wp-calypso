@@ -381,20 +381,6 @@ export const getCategories: () => Record< string, Category > = () => ( {
 	},
 } );
 
-/**
- * Get the first matching category from a collection of tags
- *
- * @param {Array<string>} pluginTags - array of tags of a plugin
- * @returns string | undefined - category name or undefined if no category is found
- */
-export function getFirstCategoryFromTags( pluginTags: Array< string > ) {
-	const categories = getCategories();
-
-	return Object.keys( categories ).find( ( category ) => {
-		return pluginTags.some( ( pluginTag ) => categories[ category ].tags.includes( pluginTag ) );
-	} );
-}
-
 export function useCategories(
 	allowedCategories = ALLOWED_CATEGORIES
 ): Record< string, Category > {
