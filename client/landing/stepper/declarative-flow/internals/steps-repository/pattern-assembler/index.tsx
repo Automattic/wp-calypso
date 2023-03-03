@@ -20,6 +20,8 @@ import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign } from '../../analytics/record-design';
 import { SITE_TAGLINE, PLACEHOLDER_SITE_ID } from './constants';
 import NavigatorListener from './navigator-listener';
+import PatternAssemblerContainer from './pattern-assembler-container';
+import PatternLargePreview from './pattern-large-preview';
 import { useAllPatterns } from './patterns-data';
 import ScreenFooter from './screen-footer';
 import ScreenHeader from './screen-header';
@@ -57,6 +59,7 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const allPatterns = useAllPatterns();
+	const stylesheet = selectedDesign?.recipe?.stylesheet || '';
 
 	const isSidebarRevampEnabled = isEnabled( 'pattern-assembler/sidebar-revamp' );
 
@@ -85,14 +88,6 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 		selectedVariations,
 		isEnabledColorAndFonts
 	);
-
-	const largePreviewProps = {
-		placeholder: null,
-		header,
-		sections,
-		footer,
-		activePosition,
-	};
 
 	const siteInfo = {
 		title: site?.name,
@@ -239,12 +234,12 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 		updateActivePatternPosition( position - 1 );
 	};
 
-	const onSelect = ( type: string, selectedPattern: Pattern ) => {
+	const onSelect = ( type: string, selectedPattern: Pattern | null ) => {
 		if ( type ) {
 			trackEventPatternSelect( {
 				patternType: type,
-				patternId: selectedPattern?.id,
-				patternName: selectedPattern?.name,
+				patternId: selectedPattern?.id || 0,
+				patternName: selectedPattern?.name || '',
 			} );
 		}
 
@@ -254,7 +249,7 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 		if ( 'footer' === type ) {
 			updateFooter( selectedPattern );
 		}
-		if ( 'section' === type ) {
+		if ( 'section' === type && selectedPattern ) {
 			if ( sectionPosition !== null ) {
 				replaceSection( selectedPattern );
 			} else {
@@ -442,7 +437,7 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 							require="./screen-color-palettes"
 							placeholder={ null }
 							siteId={ site?.ID }
-							stylesheet={ selectedDesign?.recipe?.stylesheet }
+							stylesheet={ stylesheet }
 							selectedColorPaletteVariation={ selectedColorPaletteVariation }
 							onSelect={ setSelectedColorPaletteVariation }
 						/>
@@ -455,7 +450,7 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 							require="./screen-font-pairings"
 							placeholder={ null }
 							siteId={ site?.ID }
-							stylesheet={ selectedDesign?.recipe?.stylesheet }
+							stylesheet={ stylesheet }
 							selectedFontPairingVariation={ selectedFontPairingVariation }
 							onSelect={ setSelectedFontPairingVariation }
 						/>
@@ -470,11 +465,12 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 					} }
 				/>
 			</NavigatorProvider>
-			{ isEnabled( 'pattern-assembler/client-side-render' ) ? (
-				<AsyncLoad require="./pattern-large-preview" { ...largePreviewProps } />
-			) : (
-				<AsyncLoad require="./pattern-assembler-preview" { ...largePreviewProps } />
-			) }
+			<PatternLargePreview
+				header={ header }
+				sections={ sections }
+				footer={ footer }
+				activePosition={ activePosition }
+			/>
 		</div>
 	);
 
@@ -493,20 +489,14 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 			isFullLayout={ true }
 			hideSkip={ true }
 			stepContent={
-				isEnabled( 'pattern-assembler/client-side-render' ) ? (
-					<AsyncLoad
-						require="./pattern-assembler-container"
-						placeholder={ null }
-						siteId={ site?.ID }
-						stylesheet={ selectedDesign?.recipe?.stylesheet }
-						patternIds={ allPatterns.map( ( pattern ) => encodePatternId( pattern.id ) ) }
-						siteInfo={ siteInfo }
-					>
-						{ stepContent }
-					</AsyncLoad>
-				) : (
-					stepContent
-				)
+				<PatternAssemblerContainer
+					siteId={ site?.ID }
+					stylesheet={ stylesheet }
+					patternIds={ allPatterns.map( ( pattern ) => encodePatternId( pattern.id ) ) }
+					siteInfo={ siteInfo }
+				>
+					{ stepContent }
+				</PatternAssemblerContainer>
 			}
 			recordTracksEvent={ recordTracksEvent }
 			stepSectionName={ navigatorPath !== '/' ? 'pattern-selector' : undefined }
