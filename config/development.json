@@ -192,6 +192,7 @@
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
+		"virtual-themes/onboarding": true,
 		"upsell/concierge-session": true,
 		"user-management-revamp": true,
 		"woop": false,
