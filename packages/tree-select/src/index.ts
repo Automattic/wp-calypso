@@ -26,7 +26,7 @@ interface Options< A extends unknown[] > {
 	getCacheKey?: GenerateCacheKey< A >;
 }
 
-interface CachedSelector< S, A extends unknown[], R = unknown > {
+export interface CachedSelector< S, A extends unknown[], R = unknown > {
 	( state: S, ...args: A ): R;
 	clearCache: () => void;
 }
