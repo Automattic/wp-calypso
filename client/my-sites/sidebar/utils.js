@@ -71,13 +71,12 @@ export const itemLinkMatches = ( path, currentPath ) => {
 		return isManageAllSitesPluginsPath( path );
 	}
 
-	if ( pathIncludes( path, 'stats', 1 ) ) {
-		// For `/store/stats/*` and `/google-my-business/stats/*` paths, show Stats menu as selected.
-		return (
-			currentPath.startsWith( '/store/stats/' ) ||
-			currentPath.startsWith( '/google-my-business/stats/' ) ||
-			fragmentIsEqual( path, currentPath, 1 )
-		);
+	// For `/store/stats/*` and `/google-my-business/stats/*` paths, show Stats menu as selected.
+	if (
+		currentPath.startsWith( '/store/stats/' ) ||
+		currentPath.startsWith( '/google-my-business/stats/' )
+	) {
+		return fragmentIsEqual( path, '/stats', 1 );
 	}
 
 	return fragmentIsEqual( path, currentPath, 1 );
