@@ -180,7 +180,7 @@ const siteSetupFlow: Flow = {
 		const exitFlow = async ( to: string ) => {
 			let blogStickers: string[] = [];
 
-			if ( site?.ID && config( 'env_id' ) === 'wpcalypso' ) {
+			if ( site?.ID && config( 'env_id' ) === 'stage' ) {
 				blogStickers = await fetchSiteBlogStickers( site?.ID );
 			}
 
