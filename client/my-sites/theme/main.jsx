@@ -1069,8 +1069,11 @@ class ThemeSheet extends Component {
 			this.getPremiumGlobalStylesEventProps()
 		);
 
+		const params = new URLSearchParams();
+		params.append( 'redirect_to', window.location.href.replace( window.location.origin, '' ) );
+
 		this.setState( { showUnlockStyleUpgradeModal: false } );
-		page( `/checkout/${ this.props.siteSlug || '' }/premium` );
+		page( `/checkout/${ this.props.siteSlug || '' }/premium?${ params.toString() }` );
 	};
 
 	onPremiumGlobalStylesUpgradeModalTryStyle = () => {
