@@ -27,7 +27,7 @@ const ScreenFontPairings = ( {
 			<NavigatorHeader
 				title={ translate( 'Fonts' ) }
 				description={ translate(
-					'We’ve hand picked a selection of font pairings that you can customise later.'
+					'We’ve hand picked a selection of font pairings that you can customize later.'
 				) }
 			/>
 			<div className="screen-container__body">
