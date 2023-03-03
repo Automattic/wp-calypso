@@ -6,7 +6,7 @@ import {
 import { WPCOM_FEATURES_BACKUPS } from '@automattic/calypso-products/src';
 import { SUPPORT_HAPPYCHAT } from '@automattic/help-center';
 import { Button as GutenbergButton, CheckboxControl } from '@wordpress/components';
-import { localize, translate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { shuffle } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -652,7 +652,8 @@ class CancelPurchaseForm extends Component {
 	}
 
 	render() {
-		const { isChatActive, isChatAvailable, purchase, site, supportVariation } = this.props;
+		const { isChatActive, isChatAvailable, purchase, site, supportVariation, translate } =
+			this.props;
 		const { surveyStep } = this.state;
 		const shouldShowChatButton =
 			( isChatAvailable || isChatActive ) && supportVariation === SUPPORT_HAPPYCHAT;
