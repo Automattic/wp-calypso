@@ -79,17 +79,23 @@ function DomainUpsellDescription( { planType, yourDomainName, siteSlug } ) {
 			: page( `/checkout/${ siteSlug }` );
 	};
 
-	const mainText =
+	const subtitle =
 		planType === 'free'
 			? translate( 'See and compare the features available on each WordPress.com plan' )
+			: translate( 'All of our annual plans include a free domain name for one year.' );
+
+	const subtitle2 =
+		planType === 'free'
+			? ''
 			: translate(
-					'All of our annual plans include a free domain name for one year. Upgrade to a yearly plan and claim {{strong}}%(domainName)s for free{{/strong}}.',
+					'Upgrade to a yearly plan and claim {{strong}}%(domainName)s for free{{/strong}}.',
 					{
 						args: {
 							domainName: yourDomainName,
 						},
 						components: {
 							strong: <strong />,
+							br: <br />,
 						},
 					}
 			  );
@@ -101,11 +107,10 @@ function DomainUpsellDescription( { planType, yourDomainName, siteSlug } ) {
 
 	return (
 		<>
-			<p className="plans__copy-domain-upsell">{ mainText }</p>
+			<p>{ subtitle }</p>
+			{ subtitle2 && <p>{ subtitle2 }</p> }
 			<p>
-				<button className="plans__copy-button" onClick={ skipPlan }>
-					{ skipText }
-				</button>
+				<button onClick={ skipPlan }>{ skipText }</button>
 			</p>
 		</>
 	);
