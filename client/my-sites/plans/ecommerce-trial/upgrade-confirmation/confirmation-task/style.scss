@@ -7,15 +7,22 @@
 	cursor: pointer;
 
 	margin: 0;
-	padding: 40px 25px;
 	text-align: center;
 
-	@media (max-width: $break-mobile) {
-		padding: 32px;
+	&.card.is-card-link {
+		padding: 40px 25px;
+
+		@media (max-width: $break-mobile) {
+			padding: 32px;
+		}
 	}
 
 	&:hover {
 		box-shadow: 0 0 0 2px var(--color-accent-50);
+	}
+
+	.card__link-indicator {
+		display: none;
 	}
 
 	.confirmation-task__illustration {
