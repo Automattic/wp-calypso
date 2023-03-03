@@ -1,13 +1,14 @@
-import { FormInputValidation, Gridicon } from '@automattic/components';
+import { FormInputValidation } from '@automattic/components';
 import styled from '@emotion/styled';
 import { Icon } from '@wordpress/icons';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import { ChangeEvent, ChangeEventHandler, ReactChild, useRef, useState } from 'react';
+import { ChangeEvent, ChangeEventHandler, ReactChild } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextArea from 'calypso/components/forms/form-textarea';
+import InfoPopover from 'calypso/components/info-popover';
 import SocialLogo from 'calypso/components/social-logo';
 import Tooltip from 'calypso/components/tooltip';
 import { tip } from 'calypso/signup/icons';
@@ -118,35 +119,16 @@ const FlexFormFieldset = styled( FormFieldset )`
 	display: flex;
 `;
 
+const StyledFormFieldset = styled( FormFieldset )`
+	margin-bottom: ${ ( props ) => ( props.hasFillerContentCheckbox ? '12px' : '20px' ) };
+`;
+
 const StyledFormCheckbox = styled( FormCheckbox )`
 	margin-right: 6px;
 `;
 
 const ClickableLabel = styled( Label )`
 	cursor: pointer;
-`;
-
-const TooltipContainer = styled.span`
-	.gridicon {
-		cursor: pointer;
-		margin-left: 8px;
-	}
-`;
-
-const StyledTooltip = styled( Tooltip )`
-	&.tooltip.popover .popover__inner {
-		background: var( --color-masterbar-background );
-		text-align: center;
-		border-radius: 4px;
-		min-height: 32px;
-		width: 210px;
-		align-items: center;
-		font-style: normal;
-		font-weight: 400;
-		font-size: 1em;
-		padding: 8px 10px;
-		top: -8px;
-	}
 `;
 
 interface TextInputFieldProps {
@@ -197,11 +179,12 @@ export function TextInputField( props: TextInputFieldProps ) {
 
 interface TextAreaFieldProps extends TextInputFieldProps {
 	rows?: number;
+	hasFillerContentCheckbox?: boolean;
 }
 
 export function TextAreaField( props: TextAreaFieldProps ) {
 	return (
-		<FormFieldset>
+		<StyledFormFieldset hasFillerContentCheckbox={ props.hasFillerContentCheckbox }>
 			{ props.label && <LabelBlock inputName={ props.name }>{ props.label } </LabelBlock> }
 			{ props.sublabel && <SubLabel htmlFor={ props.name }>{ props.sublabel }</SubLabel> }
 			<TextArea
@@ -213,7 +196,7 @@ export function TextAreaField( props: TextAreaFieldProps ) {
 				spellCheck="false"
 			/>
 			{ props.error && <StyledFormInputValidation isError text={ props.error } /> }
-		</FormFieldset>
+		</StyledFormFieldset>
 	);
 }
 
@@ -225,8 +208,6 @@ export function CheckboxField( props: {
 	label: TranslateResult;
 	helpText: TranslateResult;
 } ) {
-	const [ isVisible, setIsVisible ] = useState( false );
-	const tooltipRef = useRef< HTMLDivElement >( null );
 	return (
 		<FlexFormFieldset>
 			<ClickableLabel>
@@ -240,23 +221,9 @@ export function CheckboxField( props: {
 					{ props.label }
 				</>
 			</ClickableLabel>
-			<TooltipContainer>
-				<span
-					onMouseEnter={ () => setIsVisible( true ) }
-					onMouseLeave={ () => setIsVisible( false ) }
-					ref={ tooltipRef }
-				>
-					<Gridicon size={ 18 } icon="info-outline" />
-				</span>
-				<StyledTooltip
-					position="top"
-					context={ tooltipRef.current }
-					hideArrow
-					isVisible={ isVisible }
-				>
-					{ props.helpText }
-				</StyledTooltip>
-			</TooltipContainer>
+			<InfoPopover showOnHover={ true } position="top">
+				{ props.helpText }
+			</InfoPopover>
 		</FlexFormFieldset>
 	);
 }

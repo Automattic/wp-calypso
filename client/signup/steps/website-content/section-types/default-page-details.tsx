@@ -151,6 +151,7 @@ export function DefaultPageDetails( {
 				error={ formErrors[ fieldName ] }
 				label={ description }
 				disabled={ !! page.useFillerContent }
+				hasFillerContentCheckbox={ isEnglishLocale }
 			/>
 			{ isEnglishLocale && (
 				<CheckboxField
