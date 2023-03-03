@@ -31,36 +31,42 @@ const SenseiLaunch: Step = ( { navigation: { submit } } ) => {
 	);
 	const arePluginsInstalled = allPlugins.every( isPluginInstalled );
 
-	const percentage = useSubSteps( [
-		async function queueAdditionalPlugins() {
-			additionalPlugins.forEach( queuePlugin );
-			return true;
-		},
-		async function waitForAllPlugins() {
-			pollPlugins();
-			await wait( 3000 );
-			return arePluginsInstalled;
-		},
-		async function waitForJetpackTransfer( retries ) {
-			// Calling requestChecklist() below is causing Jetpack Identity Crisis (IDC) if used too early, so we wait
-			// a bit to give more time jetpack sync to complete.
-			await wait( 5000 );
-			return retries >= 3;
-		},
-		async function savePurposeData() {
-			await saveSelectedPurposesAsSenseiSiteSettings( siteId );
-			return true;
-		},
-		async function waitForChecklist() {
-			requestChecklist();
-			await wait( 5000 );
-			return isSenseiIncluded();
-		},
-		async function done() {
-			setTimeout( () => submit?.(), 1000 );
-			return true;
-		},
-	] );
+	const percentage = useSubSteps(
+		[
+			async function queueAdditionalPlugins() {
+				additionalPlugins.forEach( queuePlugin );
+				return true;
+			},
+			async function waitForAllPlugins() {
+				pollPlugins();
+				await wait( 3000 );
+				return arePluginsInstalled;
+			},
+			async function waitForJetpackTransfer( retries ) {
+				// Calling requestChecklist() below is causing Jetpack Identity Crisis (IDC) if used too early, so we wait
+				// a bit to give more time jetpack sync to complete.
+				await wait( 5000 );
+				return retries >= 3;
+			},
+			async function savePurposeData() {
+				await saveSelectedPurposesAsSenseiSiteSettings( siteId );
+				return true;
+			},
+			async function waitForChecklist() {
+				requestChecklist();
+				await wait( 5000 );
+				return isSenseiIncluded();
+			},
+			async function done() {
+				setTimeout( () => submit?.(), 1000 );
+				return true;
+			},
+		],
+		{
+			maxRetries: 40,
+			onFail: () => submit?.(),
+		}
+	);
 
 	const progress: Progress = {
 		percentage,

@@ -6,7 +6,6 @@ export const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, m
  * A step in a linear installation process.
  *
  * @param {number} retries Number of times this step was executed.
- *
  * @returns Should resolve to true if the step was completed, false if it needs to be run again.
  */
 type SubStep = ( retries: number ) => Promise< boolean >;
@@ -16,6 +15,11 @@ type StepStatus = {
 	retries: number;
 };
 
+type SubStepSettings = {
+	maxRetries: number;
+	onFail: () => void;
+};
+
 /**
  * Run a series of steps in order, re-running each step until it's complete.
  *
@@ -23,10 +27,12 @@ type StepStatus = {
  * to false when they are ready to run again, or true when they are complete and we can proceed
  * with the next step.
  *
- * @param {SubStep[]} steps
  * @returns {number} Progress percentage.
  */
-export const useSubSteps = ( steps: SubStep[] ) => {
+export const useSubSteps = (
+	steps: SubStep[],
+	{ maxRetries, onFail }: SubStepSettings
+): number => {
 	const [ { current, retries }, setStepStatus ] = useState< StepStatus >( {
 		current: 0,
 		retries: 0,
@@ -34,6 +40,12 @@ export const useSubSteps = ( steps: SubStep[] ) => {
 
 	useEffect( () => {
 		const stepFunction = steps[ current ];
+
+		if ( retries > maxRetries ) {
+			onFail();
+			return;
+		}
+
 		if ( ! stepFunction ) {
 			return;
 		}
