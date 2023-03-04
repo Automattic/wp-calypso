@@ -1,5 +1,3 @@
-const SubscriptionManager = () => {
-	return <div>Subscription Manager</div>;
-};
+import SitesList from './components/SitesList';
 
-export default SubscriptionManager;
+export default SitesList;
