@@ -3,6 +3,7 @@ import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
+import { NEWSLETTER_FLOW } from 'calypso/../packages/onboarding/src';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useLaunchpad } from 'calypso/data/sites/use-launchpad';
@@ -13,6 +14,7 @@ import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-pa
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { requestSettings as membershipsRequestSettings } from 'calypso/state/memberships/settings/actions';
 import { successNotice } from 'calypso/state/notices/actions';
 import { useQuery } from '../../../../hooks/use-query';
 import StepContent from './step-content';
@@ -20,7 +22,6 @@ import { areLaunchpadTasksCompleted } from './task-helper';
 import { launchpadFlowTasks } from './tasks';
 import type { Step } from '../../types';
 import type { SiteSelect } from '@automattic/data-stores';
-
 import './style.scss';
 
 type LaunchpadProps = {
@@ -94,6 +95,16 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 			localStorage.setItem( 'launchpad_siteSlug', siteSlug );
 		}
 	}, [ recordSignupComplete, siteSlug, site ] );
+
+	// If the user is in the newsletter flow, we need to fetch the memberships
+	// settings for the stripe connect url.
+	useEffect( () => {
+		const stripeConnected =
+			site?.options?.launchpad_checklist_tasks_statuses?.stripe_connected || false;
+		if ( stripeConnected === false && site?.ID && flow === NEWSLETTER_FLOW ) {
+			dispatch( membershipsRequestSettings( site?.ID ) );
+		}
+	}, [ site, flow, dispatch ] );
 
 	return (
 		<>

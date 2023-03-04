@@ -1,5 +1,6 @@
 import { Gridicon, CircularProgressBar } from '@automattic/components';
 import { useRef, useState } from '@wordpress/element';
+import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { StepNavigationLink } from 'calypso/../packages/onboarding/src';
@@ -77,6 +78,8 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 		isEmailVerified
 	);
 
+	const state = useSelector( ( state ) => state );
+
 	const enhancedTasks: Task[] | null =
 		site &&
 		getEnhancedTasks(
@@ -88,7 +91,8 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 			goToStep,
 			flow,
 			isEmailVerified,
-			checklist_statuses
+			checklist_statuses,
+			state
 		);
 
 	const currentTask = getTasksProgress( enhancedTasks );
