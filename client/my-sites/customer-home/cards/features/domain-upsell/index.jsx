@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { isFreePlanProduct } from '@automattic/calypso-products';
-import { Button, Card, Spinner } from '@automattic/components';
+import { getPlan, isFreePlanProduct, getIntervalTypeForTerm } from '@automattic/calypso-products';
+import { Button, Card, Gridicon, Spinner } from '@automattic/components';
 import { useDomainSuggestions } from '@automattic/domain-picker/src';
 import { useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
@@ -8,7 +8,7 @@ import { useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -16,9 +16,12 @@ import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopp
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isNotAtomicJetpack, isP2Site } from 'calypso/sites-dashboard/utils';
 import { getCurrentUser, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import { savePreference } from 'calypso/state/preferences/actions';
+import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
 import isSiteOnMonthlyPlan from 'calypso/state/selectors/is-site-on-monthly-plan';
 import { getDomainsBySite } from 'calypso/state/sites/domains/selectors';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
@@ -38,6 +41,7 @@ export default function DomainUpsell( { context } ) {
 	const site = isProfileUpsell ? primarySite : selectedSite;
 
 	const isMonthlyPlan = useSelector( ( state ) => isSiteOnMonthlyPlan( state, site?.ID ) );
+
 	const isFreePlan = isFreePlanProduct( site?.plan );
 
 	const siteDomains = useSelector( ( state ) => getDomainsBySite( state, site ) );
@@ -45,6 +49,12 @@ export default function DomainUpsell( { context } ) {
 		() => siteDomains.filter( ( domain ) => ! domain.isWPCOMDomain ).length,
 		[ siteDomains ]
 	);
+
+	const dismissPreference = `calypso_my_home_domain_upsell_dismiss-${ site.ID }`;
+	const hasPreferences = useSelector( hasReceivedRemotePreferences );
+	const isDismissed = useSelector( ( state ) => getPreference( state, dismissPreference ) );
+
+	const shouldNotShowUpselDismissed = ! hasPreferences || isDismissed;
 
 	const shouldNotShowProfileUpsell =
 		isProfileUpsell &&
@@ -57,7 +67,7 @@ export default function DomainUpsell( { context } ) {
 
 	const shouldNotShowMyHomeUpsell = ! isProfileUpsell && ( siteDomainsLength || ! isEmailVerified );
 
-	if ( shouldNotShowProfileUpsell || shouldNotShowMyHomeUpsell ) {
+	if ( shouldNotShowUpselDismissed || shouldNotShowProfileUpsell || shouldNotShowMyHomeUpsell ) {
 		return null;
 	}
 
@@ -71,6 +81,7 @@ export default function DomainUpsell( { context } ) {
 				isProfileUpsell={ isProfileUpsell }
 				searchTerm={ searchTerm }
 				siteSlug={ isProfileUpsell ? primarySiteSlug : selectedSiteSlug }
+				dismissPreference={ dismissPreference }
 			/>
 		</CalypsoShoppingCartProvider>
 	);
@@ -82,11 +93,13 @@ export function RenderDomainUpsell( {
 	isProfileUpsell,
 	searchTerm,
 	siteSlug,
+	dismissPreference,
 } ) {
 	const translate = useTranslate();
 
 	const tracksContext = isProfileUpsell ? 'profile' : 'my_home';
 
+	const dispatch = useDispatch();
 	const locale = useLocale();
 	const { allDomainSuggestions } =
 		useDomainSuggestions( searchTerm, 3, undefined, locale, {
@@ -131,6 +144,11 @@ export function RenderDomainUpsell( {
 					},
 					`/plans/yearly/${ siteSlug }`
 			  );
+
+	const getDismissClickHandler = () => {
+		recordTracksEvent( 'calypso_my_home_domain_upsell_dismiss_click' );
+		dispatch( savePreference( dismissPreference, 1 ) );
+	};
 	const [ ctaIsBusy, setCtaIsBusy ] = useState( false );
 	const getCtaClickHandler = async () => {
 		setCtaIsBusy( true );
@@ -172,6 +190,11 @@ export function RenderDomainUpsell( {
 		<Card className="domain-upsell__card customer-home__card">
 			<TrackComponentView eventName={ 'calypso_' + tracksContext + '_domain_upsell_impression' } />
 			<div>
+				<div className="domain-upsell__card-dismiss">
+					<button onClick={ getDismissClickHandler }>
+						<Gridicon icon="cross" />
+					</button>
+				</div>
 				<h3>{ cardTitle }</h3>
 				<p>{ cardSubtitle }</p>
 				<div className="suggested-domain-name">
