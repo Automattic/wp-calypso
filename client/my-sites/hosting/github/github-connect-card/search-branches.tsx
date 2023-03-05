@@ -13,6 +13,10 @@ interface SearchBranchesProps {
 	selectedBranch?: string;
 }
 
+// If there are too many branches we're forcing the user to type its name because GH API
+// has no search functionality for branches.
+const SEARCH_BRANCHES_LIMIT = 30;
+
 export const SearchBranches = ( {
 	siteId,
 	connectionId,
@@ -24,7 +28,7 @@ export const SearchBranches = ( {
 
 	const { data: branches, isFetching } = useGithubBranchesQuery( siteId, repoName, connectionId, {
 		onSuccess( branches ) {
-			if ( branches.length < 30 ) {
+			if ( branches.length < SEARCH_BRANCHES_LIMIT ) {
 				onSelect( branches[ 0 ] );
 			}
 		},
@@ -46,7 +50,7 @@ export const SearchBranches = ( {
 		);
 	}
 
-	if ( branches && branches.length > 0 && branches.length < 30 ) {
+	if ( branches && branches.length > 0 && branches.length < SEARCH_BRANCHES_LIMIT ) {
 		return (
 			<FormSelect
 				id="branch"
