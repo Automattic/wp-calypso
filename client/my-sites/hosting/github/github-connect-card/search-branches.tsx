@@ -28,7 +28,11 @@ export const SearchBranches = ( {
 
 	const { data: branches, isFetching } = useGithubBranchesQuery( siteId, repoName, connectionId, {
 		onSuccess( branches ) {
-			if ( branches.length < SEARCH_BRANCHES_LIMIT ) {
+			if (
+				branches.length > 0 &&
+				branches.length < SEARCH_BRANCHES_LIMIT &&
+				( ! selectedBranch || ! branches.includes( selectedBranch ) )
+			) {
 				onSelect( branches[ 0 ] );
 			}
 		},
