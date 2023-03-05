@@ -38,23 +38,37 @@ export const SearchBranches = ( {
 		},
 	} );
 
-	if ( ! repoName || isFetching ) {
+	if ( ! repoName || ! branches ) {
 		return (
 			<div style={ { position: 'relative' } }>
 				<FormTextInput
 					id="branch"
-					disabled={ ! repoName || isFetching }
+					disabled
 					className="connect-branch__repository-field"
-					placeholder={ branches ? __( 'Type a branch' ) : __( 'Choose a branch' ) }
-					onChange={ ( e: ChangeEvent< HTMLInputElement > ) => onSelect( e.target.value ) }
-					value={ selectedBranch }
+					placeholder={ __( 'Choose a branch' ) }
+					value=""
 				/>
 				{ isFetching && <Spinner className="connect-branch__loading" /> }
 			</div>
 		);
 	}
 
-	if ( branches && branches.length > 0 && branches.length < SEARCH_BRANCHES_LIMIT ) {
+	if ( branches.length === 0 ) {
+		return (
+			<div style={ { position: 'relative' } }>
+				<FormTextInput
+					id="branch"
+					disabled
+					className="connect-branch__repository-field"
+					placeholder={ __( 'No branches found' ) }
+					value=""
+				/>
+				{ isFetching && <Spinner className="connect-branch__loading" /> }
+			</div>
+		);
+	}
+
+	if ( branches.length < SEARCH_BRANCHES_LIMIT ) {
 		return (
 			<FormSelect
 				id="branch"
@@ -73,12 +87,16 @@ export const SearchBranches = ( {
 	}
 
 	return (
-		<FormTextInput
-			id="branch"
-			disabled
-			className="connect-branch__repository-field"
-			placeholder={ __( 'No branches found' ) }
-			value=""
-		/>
+		<div style={ { position: 'relative' } }>
+			<FormTextInput
+				id="branch"
+				disabled={ isFetching }
+				className="connect-branch__repository-field"
+				placeholder={ __( 'Type a branch' ) }
+				onChange={ ( e: ChangeEvent< HTMLInputElement > ) => onSelect( e.target.value ) }
+				value={ selectedBranch }
+			/>
+			{ isFetching && <Spinner className="connect-branch__loading" /> }
+		</div>
 	);
 };
