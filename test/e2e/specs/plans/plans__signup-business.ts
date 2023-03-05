@@ -72,11 +72,15 @@ describe(
 				await cartCheckoutPage.purchase( { timeout: 60 * 1000 } );
 			} );
 
-			it( 'Skip to dashboard', async function () {
+			it( 'Skip Onboarding', async function () {
 				const startSiteFlow = new StartSiteFlow( page );
+				await startSiteFlow.clickButton( 'Skip to dashboard' );
+			} );
+
+			it( 'Skip the Launchpad', async function () {
 				await Promise.all( [
-					page.waitForNavigation( { url: /.*\/home\/.*/ } ),
-					startSiteFlow.clickButton( 'Skip to dashboard' ),
+					page.waitForNavigation( { url: /.*\/view\/.*/ } ),
+					await page.click( 'button:text("Skip to dashboard")' ),
 				] );
 			} );
 		} );
