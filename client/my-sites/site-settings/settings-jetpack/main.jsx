@@ -33,7 +33,9 @@ const SiteSettingsJetpack = ( {
 	retention,
 	storagePurchased,
 } ) => {
-	if ( ! siteIsJetpack || site.is_wpcom_atomic ) {
+	// Sites hosted on WordPress.com cannot modify Jetpack credentials
+	const managedJetpackCreds = ! siteIsJetpack || site.is_wpcom_atomic;
+	if ( managedJetpackCreds ) {
 		return (
 			<EmptyContent
 				action={ translate( 'Manage general settings for %(site)s', {
