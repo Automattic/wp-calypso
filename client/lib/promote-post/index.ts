@@ -26,8 +26,12 @@ declare global {
 				showDialog?: boolean;
 				setShowCancelButton?: ( show: boolean ) => void;
 				uploadImageLabel?: string;
+<<<<<<< HEAD
 				showGetStartedMessage?: boolean;
 				onGetStartedMessageClose?: ( dontShowAgain: boolean ) => void;
+=======
+				source?: string;
+>>>>>>> 97dc728c20 (Blaze: Add source to the widget so that we can better track where the blazes are created from on the app side.)
 			} ) => void;
 			strings: any;
 		};
@@ -53,6 +57,7 @@ export async function showDSP(
 	siteId: number | string,
 	postId: number | string,
 	onClose: () => void,
+	source?: string,
 	translateFn: ( value: string, options?: any ) => string,
 	domNodeOrId?: HTMLElement | string | null,
 	setShowCancelButton?: ( show: boolean ) => void,
@@ -79,6 +84,7 @@ export async function showDSP(
 				uploadImageLabel: isWpMobileApp() ? __( 'Tap to add image' ) : undefined,
 				showGetStartedMessage: ! isWpMobileApp(), // Don't show the GetStartedMessage in the mobile app.
 				onGetStartedMessageClose: onGetStartedMessageClose,
+				source: source,
 			} );
 		} else {
 			reject( false );
