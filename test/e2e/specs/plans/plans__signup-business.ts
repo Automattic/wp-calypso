@@ -77,7 +77,7 @@ describe(
 				await startSiteFlow.clickButton( 'Skip to dashboard' );
 			} );
 
-			it( 'Skip the Launchpad', async function () {
+			it( 'Skip Launchpad', async function () {
 				await Promise.all( [
 					page.waitForNavigation( { url: /.*\/view\/.*/ } ),
 					await page.click( 'button:text("Skip to dashboard")' ),
