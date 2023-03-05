@@ -1,5 +1,10 @@
-import { HAPPYCHAT_GROUP_WPCOM, HAPPYCHAT_GROUP_JPOP } from 'calypso/state/happychat/constants';
+import {
+	HAPPYCHAT_GROUP_WPCOM,
+	HAPPYCHAT_GROUP_JPOP,
+	HAPPYCHAT_GROUP_WOO,
+} from 'calypso/state/happychat/constants';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSectionName } from 'calypso/state/ui/selectors';
 
@@ -20,6 +25,11 @@ export default ( state, siteId ) => {
 	// AT sites should go to WP.com even though they are jetpack also
 	if ( isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId ) ) {
 		return [ HAPPYCHAT_GROUP_JPOP ];
+	}
+
+	// Sites running the Ecommerce Trial should go to Woo
+	if ( isSiteOnECommerceTrial( state, siteId ) ) {
+		return [ HAPPYCHAT_GROUP_WOO ];
 	}
 
 	return [ HAPPYCHAT_GROUP_WPCOM ];
