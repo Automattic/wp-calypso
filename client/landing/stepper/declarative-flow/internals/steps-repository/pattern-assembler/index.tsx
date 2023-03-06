@@ -362,6 +362,7 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 
 	const onDeleteSection = ( position: number ) => {
 		deleteSection( position );
+		setSectionPosition( null );
 	};
 
 	const onMoveUpSection = ( position: number ) => {
