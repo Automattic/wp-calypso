@@ -44,6 +44,7 @@ export function recordSelectedDesign( {
 		recordTracksEvent( 'calypso_signup_select_design', {
 			...getDesignEventProps( { flow, intent, design, styleVariation } ),
 			...getDesignTypeProps( design ),
+			...getVirtualDesignProps( design, styleVariation ),
 			...optionalProps,
 		} );
 
@@ -76,13 +77,6 @@ export function getDesignEventProps( {
 	const is_style_variation = styleVariation && styleVariation.slug !== 'default';
 	const variationSlugSuffix = is_style_variation ? `-${ styleVariation.slug }` : '';
 
-	/**
-	 * If the design is virtual, and it has a recipe with pattern_ids,
-	 * then we assume that it's a pattern based virtual theme.
-	 */
-	const virtual_theme_pattern =
-		design.is_virtual && design.recipe?.pattern_ids ? design.recipe?.pattern_ids[ 0 ] : null;
-
 	return {
 		flow,
 		intent,
@@ -94,7 +88,6 @@ export function getDesignEventProps( {
 		is_premium: design.is_premium,
 		has_style_variations: ( design.style_variations || [] ).length > 0,
 		is_style_variation: is_style_variation,
-		virtual_theme_pattern,
 	};
 }
 
@@ -114,7 +107,9 @@ export function getVirtualDesignProps( design: Design, styleVariation?: StyleVar
 	 * then we assume that it's a pattern based virtual theme.
 	 */
 	const virtual_theme_pattern =
-		design.is_virtual && design.recipe?.pattern_ids ? design.recipe?.pattern_ids[ 0 ] : null;
+		design.is_virtual && design.recipe?.pattern_ids?.length
+			? design.recipe?.pattern_ids[ 0 ]
+			: null;
 
 	return {
 		slug: design.slug + variationSlugSuffix,
