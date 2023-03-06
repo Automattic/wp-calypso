@@ -1,5 +1,5 @@
 .woocommerce-bundled-badge {
-	--woo-purple-50: #7f54b3;
+	--woocommerce-purple-50: #7f54b3;
 
 	display: inline-flex;
 	align-items: center;
@@ -10,7 +10,7 @@
 	box-sizing: border-box;
 	font-size: 0.75rem;
 	color: var(--studio-white);
-	background: var(--woo-purple-50);
+	background: var(--woocommerce-purple-50);
 	z-index: 1;
 
 	svg {
@@ -18,7 +18,7 @@
 		margin-right: 5px;
 
 		.cls-1 {
-			fill: var(--woo-purple-50);
+			fill: var(--woocommerce-purple-50);
 		}
 
 		.cls-2 {
