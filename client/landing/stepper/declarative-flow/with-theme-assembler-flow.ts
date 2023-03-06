@@ -7,7 +7,7 @@ import { useQuery } from '../hooks/use-query';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import PatternAssembler from './internals/steps-repository/pattern-assembler';
+import PatternAssembler from './internals/steps-repository/pattern-assembler/lazy';
 import Processing from './internals/steps-repository/processing-step';
 import { Flow, ProvidedDependencies } from './internals/types';
 import type { Design } from '@automattic/design-picker/src/types';

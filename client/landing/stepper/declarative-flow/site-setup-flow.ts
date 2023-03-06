@@ -40,7 +40,7 @@ import ImporterSquarespace from './internals/steps-repository/importer-squarespa
 import ImporterWix from './internals/steps-repository/importer-wix';
 import ImporterWordpress from './internals/steps-repository/importer-wordpress';
 import IntentStep from './internals/steps-repository/intent-step';
-import PatternAssembler from './internals/steps-repository/pattern-assembler';
+import PatternAssembler from './internals/steps-repository/pattern-assembler/lazy';
 import ProcessingStep, { ProcessingResult } from './internals/steps-repository/processing-step';
 import SiteOptions from './internals/steps-repository/site-options';
 import SiteVertical from './internals/steps-repository/site-vertical';
