@@ -149,7 +149,7 @@ function ConnectDomainStep( {
 		wpcom
 			.domain( domain )
 			.mappingSetupInfo( selectedSite.ID, {
-				return_url:
+				redirect_uri:
 					'https://wordpress.com' +
 					domainMappingSetup( selectedSite.slug, domain, stepSlug.DC_RETURN ),
 			} )
