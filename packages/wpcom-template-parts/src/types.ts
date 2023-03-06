@@ -1,3 +1,6 @@
+import type useAutomatticBrandingNoun from './hooks/use-automattic-branding-noun';
+import type { useLocalizeUrl } from '@automattic/i18n-utils';
+
 export interface HeaderProps {
 	isLoggedIn: boolean;
 	sectionName?: string;
@@ -5,10 +8,16 @@ export interface HeaderProps {
 }
 
 export interface FooterProps {
-	onLanguageChange: React.ChangeEventHandler< HTMLSelectElement >;
-	isLoggedIn: boolean;
-	currentRoute: string;
-	additonalCompanyLinks?: React.ReactChild;
+	onLanguageChange?: React.ChangeEventHandler< HTMLSelectElement >;
+	isLoggedIn?: boolean;
+	currentRoute?: string;
+	additonalCompanyLinks?: React.ReactChild | null;
+}
+export interface PureFooterProps extends FooterProps {
+	localizeUrl?: ReturnType< typeof useLocalizeUrl >;
+	locale?: string;
+	isEnglishLocale?: boolean;
+	automatticBranding?: ReturnType< typeof useAutomatticBrandingNoun >;
 }
 
 export interface MenuItemProps {

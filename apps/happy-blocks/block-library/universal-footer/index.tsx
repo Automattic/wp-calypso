@@ -1,5 +1,6 @@
 import { registerBlockType } from '@wordpress/blocks';
 import Edit from './edit';
+import save from './save';
 
 function registerBlocks() {
 	registerBlockType( 'happy-blocks/universal-footer', {
@@ -9,6 +10,7 @@ function registerBlocks() {
 		description: 'WordPress.com Footer Template Part',
 		attributes: {},
 		edit: Edit,
+		save,
 	} );
 }
 

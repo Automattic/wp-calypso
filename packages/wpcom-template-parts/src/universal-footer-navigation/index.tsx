@@ -4,26 +4,37 @@ import {
 	removeLocaleFromPathLocaleInFront,
 	useIsEnglishLocale,
 	useLocale,
+	localizeUrl as pureLocalizeUrl,
 } from '@automattic/i18n-utils';
 import { __ } from '@wordpress/i18n';
 import SocialLogo from 'social-logos';
 import useAutomatticBrandingNoun from '../hooks/use-automattic-branding-noun';
-import { FooterProps } from '../types';
+import { FooterProps, PureFooterProps } from '../types';
 
 import './style.scss';
 
-const UniversalNavbarFooter = ( {
-	isLoggedIn = false,
-	currentRoute,
-	additonalCompanyLinks,
-	onLanguageChange,
-}: FooterProps ) => {
-	const localizeUrl = useLocalizeUrl();
-	const locale = useLocale();
-	const isEnglishLocale = useIsEnglishLocale();
+/**
+ * This component doesn't depend on any hooks or state. To it's Gutenberg save.js friendly.
+ */
+export const PureUniversalNavbarFooter = ( {
+	isLoggedIn = typeof window !== 'undefined'
+		? document.body.classList.contains( 'logged-in' )
+		: false,
+	currentRoute = typeof window !== 'undefined' ? window.location.pathname : '/',
+	additonalCompanyLinks = null,
+	onLanguageChange = () => {
+		window.console.error( 'onLanguageChange is not implemented' );
+	},
+	localizeUrl = pureLocalizeUrl,
+	locale = 'en',
+	isEnglishLocale = true,
+	automatticBranding = {
+		article: __( 'An' ),
+		noun: __( 'thingamajig' ),
+	},
+}: PureFooterProps ) => {
 	const pathNameWithoutLocale =
 		currentRoute && removeLocaleFromPathLocaleInFront( currentRoute ).slice( 1 );
-	const automatticBranding = useAutomatticBrandingNoun();
 
 	return (
 		<>
@@ -473,6 +484,33 @@ const UniversalNavbarFooter = ( {
 				</a>
 			</div>
 		</>
+	);
+};
+
+const UniversalNavbarFooter = ( {
+	isLoggedIn = false,
+	currentRoute,
+	additonalCompanyLinks,
+	onLanguageChange,
+}: FooterProps ) => {
+	const localizeUrl = useLocalizeUrl();
+	const locale = useLocale();
+	const isEnglishLocale = useIsEnglishLocale();
+	const pathNameWithoutLocale =
+		currentRoute && removeLocaleFromPathLocaleInFront( currentRoute ).slice( 1 );
+	const automatticBranding = useAutomatticBrandingNoun();
+
+	return (
+		<PureUniversalNavbarFooter
+			locale={ locale }
+			isEnglishLocale={ isEnglishLocale }
+			automatticBranding={ automatticBranding }
+			isLoggedIn={ isLoggedIn }
+			currentRoute={ pathNameWithoutLocale }
+			additonalCompanyLinks={ additonalCompanyLinks }
+			onLanguageChange={ onLanguageChange }
+			localizeUrl={ localizeUrl }
+		/>
 	);
 };
 

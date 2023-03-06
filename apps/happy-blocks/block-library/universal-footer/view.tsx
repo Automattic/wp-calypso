@@ -22,5 +22,5 @@ domReady( () => {
 	const block = document.querySelector( '.happy-blocks-universal-footer-block' );
 	const attributes = JSON.parse( ( block as HTMLElement )?.dataset?.attributes ?? `{}` );
 
-	render( <View isLoggedIn={ isLoggedIn } attributes={ attributes } />, block );
+	//render( <View isLoggedIn={ isLoggedIn } attributes={ attributes } />, block );
 } );
