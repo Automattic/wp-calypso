@@ -651,9 +651,21 @@ class CancelPurchaseForm extends Component {
 		return translate( 'Cancel product' );
 	}
 
+	getCanceledProduct() {
+		const { purchase, site, translate } = this.props;
+		switch ( purchase.productId ) {
+			// product.Id 5 is Domain Mapping
+			case 5:
+				return ' ' + purchase.productName + translate( ' for ' ) + purchase.meta;
+			// product.Id 36 is a Site Redirect
+			case 36:
+				return ' ' + purchase.productName + translate( ' to ' ) + purchase.meta;
+			default:
+				return ' ' + purchase.productName + translate( ' for ' ) + site.slug;
+		}
+	}
 	render() {
-		const { isChatActive, isChatAvailable, purchase, site, supportVariation, translate } =
-			this.props;
+		const { isChatActive, isChatAvailable, purchase, site, supportVariation } = this.props;
 		const { surveyStep } = this.state;
 		const shouldShowChatButton =
 			( isChatAvailable || isChatActive ) && supportVariation === SUPPORT_HAPPYCHAT;
@@ -670,20 +682,9 @@ class CancelPurchaseForm extends Component {
 				{ this.props.isVisible && (
 					<BlankCanvas className="cancel-purchase-form">
 						<BlankCanvas.Header onBackClick={ this.closeDialog }>
-							{ this.getHeaderTitle() }
 							<span className="cancel-purchase-form__site-slug">
-								{ ( () => {
-									switch ( purchase.productId ) {
-										// product.Id 5 is Domain Mapping
-										case 5:
-											return purchase.productName + translate( ' for ' ) + purchase.meta;
-										// product.Id 36 is a Site Redirect
-										case 36:
-											return purchase.productName + translate( ' to ' ) + purchase.meta;
-										default:
-											return purchase.productName + translate( ' for ' ) + site.slug;
-									}
-								} )() }
+								{ this.getHeaderTitle() }
+								{ this.getCanceledProduct() }
 							</span>
 							{ shouldShowChatButton && (
 								<PrecancellationChatButton
