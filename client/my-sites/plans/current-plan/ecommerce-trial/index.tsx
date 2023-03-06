@@ -19,6 +19,7 @@ import shipping from 'calypso/assets/images/plans/wpcom/ecommerce-trial/shipping
 import simpleCustomization from 'calypso/assets/images/plans/wpcom/ecommerce-trial/simple-customization.svg';
 import unlimitedProducts from 'calypso/assets/images/plans/wpcom/ecommerce-trial/unlimited-products.svg';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
+import { getECommerceTrialCheckoutUrl } from 'calypso/lib/ecommerce-trial/get-ecommerce-trial-checkout-url';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ECommerceTrialBanner from '../../ecommerce-trial/ecommerce-trial-banner';
 import FeatureIncludedCard from '../feature-included-card';
@@ -50,7 +51,13 @@ const ECommerceTrialCurrentPlan = () => {
 		recordTracksEvent( `calypso_wooexpress_my_plan_cta`, {
 			cta_position: ctaPosition,
 		} );
-		page.redirect( `/checkout/${ selectedSite?.slug }/${ PLAN_ECOMMERCE_MONTHLY }` );
+
+		const checkoutUrl = getECommerceTrialCheckoutUrl( {
+			productSlug: PLAN_ECOMMERCE_MONTHLY,
+			siteSlug: selectedSite?.slug ?? '',
+		} );
+
+		page.redirect( checkoutUrl );
 	};
 
 	// TODO: translate when final copy is available
