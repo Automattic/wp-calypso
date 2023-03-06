@@ -137,77 +137,71 @@ function Chart( {
 
 	const { isTooltipVisible, tooltipContext, tooltipPosition, tooltipData } = tooltip;
 
-	return (
-		<>
-			{
-				// This is a hack to avoid the flickering on page load.
-				// The component listens on the resize event of its own, which would resize on initialization.
-				// The hack renders an empty div, which triggers the resize event, and then the actual component would be rendered.
-			 }
-			{ width <= 0 && <div ref={ resizeRef }></div> }
-			{ width > 0 && (
-				<div
-					ref={ resizeRef }
-					className={ classNames( 'chart', { 'is-placeholder': isPlaceholder } ) }
-				>
-					<div className="chart__y-axis-markers">
-						<div className="chart__y-axis-marker is-hundred" />
-						<div className="chart__y-axis-marker is-fifty" />
-						<div className="chart__y-axis-marker is-zero" />
+	// This is a hack to avoid the flickering on page load.
+	// The component listens on the resize event of its own, which would resize on initialization.
+	// The hack renders an empty div, which triggers the resize event, and then the actual component would be rendered.
+	if ( width <= 0 ) {
+		return <div ref={ resizeRef }></div>;
+	}
 
-						{ ( isPlaceholder || isEmptyChart ) && (
-							<div className="chart__empty">
-								{ children || (
-									<Notice
-										className="chart__empty-notice"
-										status="is-warning"
-										isCompact
-										text={ translate( 'No activity this period', {
-											context: 'Message on empty bar chart in Stats',
-											comment: 'Should be limited to 32 characters to prevent wrapping',
-										} ) }
-										showDismiss={ false }
-									/>
-								) }
-							</div>
+	return (
+		<div ref={ resizeRef } className={ classNames( 'chart', { 'is-placeholder': isPlaceholder } ) }>
+			<div className="chart__y-axis-markers">
+				<div className="chart__y-axis-marker is-hundred" />
+				<div className="chart__y-axis-marker is-fifty" />
+				<div className="chart__y-axis-marker is-zero" />
+
+				{ ( isPlaceholder || isEmptyChart ) && (
+					<div className="chart__empty">
+						{ children || (
+							<Notice
+								className="chart__empty-notice"
+								status="is-warning"
+								isCompact
+								text={ translate( 'No activity this period', {
+									context: 'Message on empty bar chart in Stats',
+									comment: 'Should be limited to 32 characters to prevent wrapping',
+								} ) }
+								showDismiss={ false }
+							/>
 						) }
 					</div>
-					{ ! isPlaceholder && (
-						<div ref={ yAxisRef } className="chart__y-axis">
-							<div className="chart__y-axis-width-fix">{ numberFormat( 1e5 ) }</div>
-							<div className="chart__y-axis-label is-hundred">
-								{ yMax > 1 ? numberFormat( yMax ) : numberFormat( yMax, 2 ) }
-							</div>
-							<div className="chart__y-axis-label is-fifty">
-								{ yMax > 1 ? numberFormat( yMax / 2 ) : numberFormat( yMax / 2, 2 ) }
-							</div>
-							<div className="chart__y-axis-label is-zero">{ numberFormat( 0 ) }</div>
-						</div>
-					) }
-					<BarContainer
-						barClick={ barClick }
-						chartWidth={ width }
-						data={ chartData }
-						isPlaceholder={ isPlaceholder }
-						isRtl={ isRtl }
-						isTouch={ hasTouch() }
-						setTooltip={ handleTooltipChange }
-						yAxisMax={ yMax }
-					/>
-					{ isTooltipVisible && (
-						<Tooltip
-							className="chart__tooltip"
-							id="popover__chart-bar"
-							context={ tooltipContext }
-							isVisible={ isTooltipVisible }
-							position={ tooltipPosition }
-						>
-							<ul>{ tooltipData }</ul>
-						</Tooltip>
-					) }
+				) }
+			</div>
+			{ ! isPlaceholder && (
+				<div ref={ yAxisRef } className="chart__y-axis">
+					<div className="chart__y-axis-width-fix">{ numberFormat( 1e5 ) }</div>
+					<div className="chart__y-axis-label is-hundred">
+						{ yMax > 1 ? numberFormat( yMax ) : numberFormat( yMax, 2 ) }
+					</div>
+					<div className="chart__y-axis-label is-fifty">
+						{ yMax > 1 ? numberFormat( yMax / 2 ) : numberFormat( yMax / 2, 2 ) }
+					</div>
+					<div className="chart__y-axis-label is-zero">{ numberFormat( 0 ) }</div>
 				</div>
 			) }
-		</>
+			<BarContainer
+				barClick={ barClick }
+				chartWidth={ width }
+				data={ chartData }
+				isPlaceholder={ isPlaceholder }
+				isRtl={ isRtl }
+				isTouch={ hasTouch() }
+				setTooltip={ handleTooltipChange }
+				yAxisMax={ yMax }
+			/>
+			{ isTooltipVisible && (
+				<Tooltip
+					className="chart__tooltip"
+					id="popover__chart-bar"
+					context={ tooltipContext }
+					isVisible={ isTooltipVisible }
+					position={ tooltipPosition }
+				>
+					<ul>{ tooltipData }</ul>
+				</Tooltip>
+			) }
+		</div>
 	);
 }
 
