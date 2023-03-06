@@ -1,27 +1,58 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, Card } from '@automattic/components';
+import { useCallback, useMemo } from 'react';
+import type { GetFeatureHrefProps, IncludedFeatures } from '../ecommerce-trial/trial-features';
 
 import './style.scss';
 
-interface Props {
-	title: string;
-	text: string;
-	illustration: string;
-	showButton: boolean;
-	buttonText?: string;
-	buttonClick?: () => void;
-}
+interface FeatureIncludedCardProps extends IncludedFeatures, GetFeatureHrefProps {}
 
-const FeatureIncludedCard = ( props: Props ) => {
-	const { illustration, title, text, showButton, buttonText, buttonClick } = props;
+const FeatureIncludedCard = ( {
+	buttonText,
+	getHref,
+	id,
+	illustration,
+	onButtonClick,
+	showButton,
+	siteSlug,
+	text,
+	title,
+	wpAdminUrl,
+}: FeatureIncludedCardProps ) => {
+	const onCardLinkClick = useCallback( () => {
+		if ( ! showButton ) {
+			return;
+		}
+
+		recordTracksEvent( 'calypso_wooexpress_included_feature_cta_clicked', { feature: id } );
+
+		onButtonClick?.();
+	}, [ id, onButtonClick, showButton ] );
+
+	const cardLinkHref = useMemo( () => {
+		if ( ! showButton || ! getHref ) {
+			return '';
+		}
+
+		return getHref( { siteSlug, wpAdminUrl } );
+	}, [ id, getHref, showButton, siteSlug, wpAdminUrl ] );
 
 	return (
 		<Card className="feature-included-card__card">
-			<img className="feature-included-card__illustration" alt={ title } src={ illustration } />
+			<img
+				className="feature-included-card__illustration"
+				alt={ String( title ) }
+				src={ illustration }
+			/>
 			<div className="feature-included-card__content">
 				<p className="feature-included-card__title">{ title }</p>
 				<p className="feature-included-card__text">{ text }</p>
 				{ showButton && (
-					<Button className="feature-included-card__link" onClick={ buttonClick }>
+					<Button
+						className="feature-included-card__link"
+						href={ cardLinkHref }
+						onClick={ onCardLinkClick }
+					>
 						{ buttonText }
 					</Button>
 				) }
