@@ -109,7 +109,7 @@ export function SibylArticles( {
 		if ( sibylArticles?.length ) {
 			recordTracksEvent( 'calypso_helpcenter_sibyl_display_results', {
 				location: 'help-center',
-				resultsCount: sibylArticles.length,
+				results_count: sibylArticles.length,
 			} );
 		}
 
