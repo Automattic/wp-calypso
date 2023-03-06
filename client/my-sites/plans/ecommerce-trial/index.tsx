@@ -48,13 +48,18 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 		( 1 - eCommercePlanPrices.annualPlanMonthlyPrice / eCommercePlanPrices.monthlyPlanPrice ) * 100
 	);
 
-	const redirectToCheckoutForPlan = useCallback( ( tracksLocation: string ) => {
-		recordTracksEvent( 'calypso_wooexpress_plans_page_upgrade_cta_clicked', { location: tracksLocation } );
+	const redirectToCheckoutForPlan = useCallback(
+		( tracksLocation: string ) => {
+			recordTracksEvent( 'calypso_wooexpress_plans_page_upgrade_cta_clicked', {
+				location: tracksLocation,
+			} );
 
-		const checkoutUrl = `/checkout/${ siteSlug }/${ targetECommercePlan.getStoreSlug() }`;
+			const checkoutUrl = `/checkout/${ siteSlug }/${ targetECommercePlan.getStoreSlug() }`;
 
-		page.redirect( checkoutUrl );
-	}, [ siteSlug, targetECommercePlan ] );
+			page.redirect( checkoutUrl );
+		},
+		[ siteSlug, targetECommercePlan ]
+	);
 
 	const eCommercePlanFeatureSets = useMemo( () => {
 		return getECommerceFeatureSets( { translate } );
