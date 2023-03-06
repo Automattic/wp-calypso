@@ -6,6 +6,7 @@ import page from 'page';
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { isP2Site } from 'calypso/sites-dashboard/utils';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
@@ -43,7 +44,8 @@ const DomainUpsellCallout = ( { trackEvent } ) => {
 		isDismissed ||
 		siteDomains.length > 1 ||
 		! isEmailVerified ||
-		! isFreePlanProduct( site.plan )
+		! isFreePlanProduct( site.plan ) ||
+		isP2Site
 	) {
 		return null;
 	}
