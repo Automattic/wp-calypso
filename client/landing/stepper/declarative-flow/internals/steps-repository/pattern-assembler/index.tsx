@@ -79,8 +79,8 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 				step: stepName,
 				intent,
 				stylesheet,
-				color_style_slug: selectedColorPaletteVariation?.title,
-				font_style_slug: selectedFontPairingVariation?.title,
+				color_style_title: selectedColorPaletteVariation?.title,
+				font_style_title: selectedFontPairingVariation?.title,
 			} ),
 		[
 			flow,
