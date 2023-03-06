@@ -397,18 +397,6 @@ class ThemeSheet extends Component {
 		return isAtomic && isPremium && ! canUserUploadThemes && ! hasUnlimitedPremiumThemes;
 	}
 
-	hasSiteGlobalStyleUpsellBanner() {
-		const { shouldLimitGlobalStyles } = this.props;
-
-		// Show theme upsell banner on a Free theme with global style gating.
-		// Don't show if other upsell banners are displayed.
-		return (
-			! this.hasWpComThemeUpsellBanner() &&
-			! this.hasThemeUpsellBannerAtomic() &&
-			shouldLimitGlobalStyles
-		);
-	}
-
 	// Render "Open Live Demo" pseudo-button for mobiles.
 	// This is a legacy hack that shows the button under the preview screenshot for mobiles
 	// but not for desktop (becomes hidden behind the screenshot).
@@ -1017,10 +1005,6 @@ class ThemeSheet extends Component {
 				return translate( 'Upgrade to a Business plan and subscribe to this theme!' );
 			}
 			return translate( 'Subscribe to this premium theme!' );
-		} else if ( this.hasSiteGlobalStyleUpsellBanner() ) {
-			return translate(
-				'Upgrade to the Premium plan to get access to all additional styles, colors, and fonts!'
-			);
 		}
 
 		return translate( 'Access this theme for FREE with a Premium or Business plan!' );
@@ -1046,8 +1030,6 @@ class ThemeSheet extends Component {
 				);
 			}
 			return translate( 'Subscribe to this premium theme and unlock all its features.' );
-		} else if ( this.hasSiteGlobalStyleUpsellBanner() ) {
-			return '';
 		}
 
 		return translate(
@@ -1214,8 +1196,6 @@ class ThemeSheet extends Component {
 		const hasWpOrgThemeUpsellBanner = this.hasWpOrgThemeUpsellBanner();
 		// Show theme upsell banner on Atomic sites.
 		const hasThemeUpsellBannerAtomic = this.hasThemeUpsellBannerAtomic();
-		// Show theme upsell banner on an active Free theme with global style gating.
-		const hasSiteGlobalStyleUpsellBanner = this.hasSiteGlobalStyleUpsellBanner();
 
 		const hasUpsellBanner =
 			hasWpComThemeUpsellBanner || hasWpOrgThemeUpsellBanner || hasThemeUpsellBannerAtomic;
@@ -1232,7 +1212,7 @@ class ThemeSheet extends Component {
 			'theme__page-upsell-disabled': this.isLoading(),
 		} );
 
-		if ( hasWpComThemeUpsellBanner || hasSiteGlobalStyleUpsellBanner ) {
+		if ( hasWpComThemeUpsellBanner ) {
 			const forceDisplay =
 				( isBundledSoftwareSet && ! isSiteBundleEligible ) ||
 				( isExternallyManagedTheme &&
