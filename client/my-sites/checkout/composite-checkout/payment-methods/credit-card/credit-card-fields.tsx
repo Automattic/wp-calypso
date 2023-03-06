@@ -18,6 +18,7 @@ import CreditCardExpiryField from './credit-card-expiry-field';
 import CreditCardLoading from './credit-card-loading';
 import CreditCardNumberField from './credit-card-number-field';
 import { FieldRow, CreditCardFieldsWrapper, CreditCardField } from './form-layout-components';
+import type { WpcomCreditCardSelectors } from './store';
 import type { CardFieldState, StripeFieldChangeInput } from './types';
 
 const StripeFields = styled.div`
@@ -47,11 +48,14 @@ export default function CreditCardFields( {
 	const { __ } = useI18n();
 	const theme = useTheme();
 	const [ isStripeFullyLoaded, setIsStripeFullyLoaded ] = useState( false );
-	const fields: CardFieldState = useSelect( ( select ) =>
-		select( 'wpcom-credit-card' ).getFields()
+	const fields: CardFieldState = useSelect(
+		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getFields(),
+		[]
 	);
-	const useForAllSubscriptions: boolean = useSelect( ( select ) =>
-		select( 'wpcom-credit-card' ).useForAllSubscriptions()
+	const useForAllSubscriptions: boolean = useSelect(
+		( select ) =>
+			( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).useForAllSubscriptions(),
+		[]
 	);
 	const getField = ( key: string ) => fields[ key ] || {};
 	const getFieldValue = ( key: string ) => getField( key ).value ?? '';
