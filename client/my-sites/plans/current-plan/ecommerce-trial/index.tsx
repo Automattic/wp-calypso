@@ -8,8 +8,8 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import bestInClassHosting from 'calypso/assets/images/plans/wpcom/ecommerce-trial/best-in-class-hosting.svg';
 import connect from 'calypso/assets/images/plans/wpcom/ecommerce-trial/connect.png';
-import googleAnalytics from 'calypso/assets/images/plans/wpcom/ecommerce-trial/google-analytics.svg';
 import launch from 'calypso/assets/images/plans/wpcom/ecommerce-trial/launch.png';
+import paymentCardChecked from 'calypso/assets/images/plans/wpcom/ecommerce-trial/payment-card-checked.svg';
 import premiumThemes from 'calypso/assets/images/plans/wpcom/ecommerce-trial/premium-themes.svg';
 import prioritySupport from 'calypso/assets/images/plans/wpcom/ecommerce-trial/priority-support.svg';
 import promote from 'calypso/assets/images/plans/wpcom/ecommerce-trial/promote.png';
@@ -104,11 +104,13 @@ const ECommerceTrialCurrentPlan = () => {
 			buttonText: translate( 'Increase visibility' ),
 		},
 		{
-			title: translate( 'Google Analytics' ),
-			text: translate( "See where your visitors come from and what they're doing on your store." ),
-			illustration: googleAnalytics,
+			title: translate( 'Get ready to be paid' ),
+			text: translate(
+				'Set up one (or more!) payment methods and get your checkout process ready for launch.'
+			),
+			illustration: paymentCardChecked,
 			showButton: true,
-			buttonText: translate( 'Connect Google Analytics' ),
+			buttonText: translate( 'Get ready to take payments' ),
 		},
 		{
 			title: translate( 'Best-in-class hosting' ),
