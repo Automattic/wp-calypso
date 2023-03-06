@@ -105,9 +105,7 @@ const ECommerceTrialCurrentPlan = () => {
 		},
 		{
 			title: translate( 'Get ready to be paid' ),
-			text: translate(
-				'Set up one (or more!) payment methods and get your checkout process ready for launch.'
-			),
+			text: translate( 'Set up one (or more!) payment methods and test your checkout process.' ),
 			illustration: paymentCardChecked,
 			showButton: true,
 			buttonText: translate( 'Get ready to take payments' ),
