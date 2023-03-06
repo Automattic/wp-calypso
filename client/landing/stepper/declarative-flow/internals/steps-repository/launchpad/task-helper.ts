@@ -383,8 +383,17 @@ function recordTaskClickTracksEvent(
 }
 
 // Returns list of tasks/checklist items for a specific flow
-export function getArrayOfFilteredTasks( tasks: Task[], flow: string | null ) {
-	const currentFlowTasksIds = flow ? launchpadFlowTasks[ flow ] : null;
+export function getArrayOfFilteredTasks(
+	tasks: Task[],
+	flow: string | null,
+	isEmailVerified: boolean
+) {
+	let currentFlowTasksIds = flow ? launchpadFlowTasks[ flow ] : null;
+
+	if ( isEmailVerified && currentFlowTasksIds ) {
+		currentFlowTasksIds = currentFlowTasksIds.filter( ( task ) => task !== 'verify_email' );
+	}
+
 	return (
 		currentFlowTasksIds &&
 		currentFlowTasksIds.reduce( ( accumulator, currentTaskId ) => {

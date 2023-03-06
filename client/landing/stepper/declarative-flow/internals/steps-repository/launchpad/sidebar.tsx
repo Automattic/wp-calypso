@@ -66,7 +66,13 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	const isEmailVerified = useSelector( ( state ) => isCurrentUserEmailVerified( state ) );
 
 	const { flowName, title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
-	const arrayOfFilteredTasks: Task[] | null = getArrayOfFilteredTasks( tasks, flow );
+
+	const arrayOfFilteredTasks: Task[] | null = getArrayOfFilteredTasks(
+		tasks,
+		flow,
+		isEmailVerified
+	);
+
 	const enhancedTasks =
 		site &&
 		getEnhancedTasks(
