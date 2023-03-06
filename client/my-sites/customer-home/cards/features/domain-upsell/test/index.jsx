@@ -36,6 +36,11 @@ const initialState = {
 			},
 		},
 	},
+	preferences: {
+		remoteValues: {
+			'calypso_my_home_domain_upsell_dismiss-1': false,
+		},
+	},
 	ui: {
 		selectedSiteId: 1,
 	},
