@@ -1,7 +1,5 @@
 /**
  * @jest-environment jsdom
- * To run this test file:
- * yarn run test-client client/my-sites/customer-home/cards/features/domain-upsell/test/index.jsx
  */
 
 import { render, screen } from '@testing-library/react';
