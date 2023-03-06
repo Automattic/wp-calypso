@@ -58,7 +58,7 @@ export default class ChartBar extends PureComponent {
 
 	getScaleY() {
 		const scaleY = this.props.data.value / this.props.max;
-		// Hack: We use an invisible but non-zero value here, becaue zero scaleY-ed bars grows to max and then disappear when combined with container animation in Chrome.
+		// Hack: We use an invisible but non-zero value here, becaue zero scaleY-ed bars grows to max and then disappear when combined with container animation on initialization in Chrome.
 		return scaleY < 1e-4 ? '0.0001' : scaleY.toFixed( 4 );
 	}
 
