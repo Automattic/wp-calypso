@@ -11,6 +11,7 @@ import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { globe } from '@wordpress/icons';
 
 import './style.scss';
 
@@ -54,7 +55,7 @@ const DomainUpsellCallout = ( { trackEvent } ) => {
 			<div className="domain-upsell-callout">
 				<div className="domain-upsell-callout__content">
 					<div className="domain-upsell-callout__content-text">
-						<Gridicon icon="globe" size={ 16 } className="domain-upsell-callout__icon" />
+						{ globe }
 						<span className="domain-upsell-callout__domain-name">{ site.domain }</span>
 						<button className="domain-upsell-callout__button" onClick={ getCtaClickHandler }>
 							<span className="domain-upsell-callout__button-text-desktop">
