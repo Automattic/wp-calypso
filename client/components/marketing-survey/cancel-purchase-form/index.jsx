@@ -652,16 +652,27 @@ class CancelPurchaseForm extends Component {
 	}
 
 	getCanceledProduct() {
-		const { purchase, site, translate } = this.props;
-		switch ( purchase.productId ) {
-			// product.Id 5 is Domain Mapping
-			case 5:
-				return ' ' + purchase.productName + translate( ' for ' ) + purchase.meta;
-			// product.Id 36 is a Site Redirect
-			case 36:
-				return ' ' + purchase.productName + translate( ' to ' ) + purchase.meta;
+		const {
+			purchase: { productSlug, productName, meta },
+			site: { slug },
+			translate,
+		} = this.props;
+		const headerTitle = this.getHeaderTitle();
+		const args = { headerTitle, productName, purchaseMeta: meta, siteSlug: slug };
+		// Example output: 'Remove product: Domain Connection for mygroovydomain.com'
+		switch ( productSlug ) {
+			case 'domain_map':
+				return translate( '%(headerTitle)s: %(productName)s for %(purchaseMeta)s', {
+					args,
+				} );
+			case 'offsite_redirect':
+				return translate( '%(headerTitle)s: %(productName)s to %(purchaseMeta)s', {
+					args,
+				} );
 			default:
-				return ' ' + purchase.productName + translate( ' for ' ) + site.slug;
+				return translate( '%(headerTitle)s: %(productName)s for %(siteSlug)s', {
+					args,
+				} );
 		}
 	}
 	render() {
@@ -682,10 +693,7 @@ class CancelPurchaseForm extends Component {
 				{ this.props.isVisible && (
 					<BlankCanvas className="cancel-purchase-form">
 						<BlankCanvas.Header onBackClick={ this.closeDialog }>
-							<span className="cancel-purchase-form__site-slug">
-								{ this.getHeaderTitle() }
-								{ this.getCanceledProduct() }
-							</span>
+							<span className="cancel-purchase-form__site-slug">{ this.getCanceledProduct() }</span>
 							{ shouldShowChatButton && (
 								<PrecancellationChatButton
 									icon="chat_bubble"
