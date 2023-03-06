@@ -24,6 +24,7 @@ const ScreenMain = ( { onSelect, onContinueClick }: Props ) => {
 				description={ translate(
 					'Use our library of styles and patterns to design your own theme.'
 				) }
+				hideBack
 			/>
 			<div className="screen-container__body">
 				<ItemGroup>

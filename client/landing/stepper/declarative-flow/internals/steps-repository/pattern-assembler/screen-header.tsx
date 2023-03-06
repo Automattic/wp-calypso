@@ -25,6 +25,7 @@ const ScreenHeader = ( { selectedPattern, onSelect, onBack, onDoneClick }: Props
 					description={ translate(
 						'Your header will be added to all pages and is usually where your site navigation lives.'
 					) }
+					onBack={ onBack }
 				/>
 			) }
 			<div className="screen-container__body">

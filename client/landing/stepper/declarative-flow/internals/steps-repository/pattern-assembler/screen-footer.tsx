@@ -25,6 +25,7 @@ const ScreenFooter = ( { selectedPattern, onSelect, onBack, onDoneClick }: Props
 					description={ translate(
 						'Your footer will be added to all pages and can be used to show information or links that will help visitors take the next step.'
 					) }
+					onBack={ onBack }
 				/>
 			) }
 			<div className="screen-container__body">
