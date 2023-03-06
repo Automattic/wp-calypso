@@ -360,7 +360,7 @@ export function getEnhancedTasks(
 				case 'verify_email':
 					taskData = {
 						completed: isEmailVerified,
-						title: translate( 'Verify Email (Check Your Inbox)' ),
+						title: translate( 'Confirm email (check your inbox)' ),
 					};
 					break;
 			}
