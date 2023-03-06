@@ -243,7 +243,7 @@ export class PlanFeatures extends Component {
 		return ReactDOM.createPortal(
 			<Notice
 				className="plan-features__notice-credits"
-				showDismiss={ true }
+				showDismiss={ false }
 				icon="info-outline"
 				status="is-success"
 			>
