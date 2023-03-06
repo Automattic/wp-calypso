@@ -46,8 +46,8 @@ function TeamInvites( props: Props ) {
 				<>
 					<PeopleListSectionHeader
 						label={ translate(
-							'You have a pending invite for %(number)d user',
-							'You have a pending invite for %(number)d users',
+							'You have %(number)d pending invite',
+							'You have %(number)d pending invites',
 							{
 								args: { number: pendingInvites?.length },
 								count: pendingInvites?.length as number,
