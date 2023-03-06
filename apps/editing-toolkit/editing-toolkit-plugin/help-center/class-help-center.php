@@ -134,7 +134,7 @@ class Help_Center {
 	 * Get current site details.
 	 */
 	public function get_current_site() {
-		$is_support_site = defined( 'WPCOM_SUPPORT_BLOG_IDS' ) && in_array( get_current_blog_id(), WPCOM_SUPPORT_BLOG_IDS, true );
+		$is_support_site = defined( 'WPCOM_SUPPORT_BLOG_IDS' ) && $this->is_support_site();
 
 		if ( $is_support_site ) {
 			$user_id = get_current_user_id();
@@ -229,7 +229,7 @@ class Help_Center {
 
 		$is_site_editor = ( function_exists( 'gutenberg_is_edit_site_page' ) && gutenberg_is_edit_site_page( $current_screen->id ) );
 
-		if ( ( ! is_support_site() ) && ( ! is_admin() || ! is_object( $wp_admin_bar ) || $is_site_editor || $current_screen->is_block_editor ) ) {
+		if ( ( ! $this->is_support_site() ) && ( ! is_admin() || ! is_object( $wp_admin_bar ) || $is_site_editor || $current_screen->is_block_editor ) ) {
 			return;
 		}
 
