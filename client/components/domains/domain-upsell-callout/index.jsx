@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isFreePlanProduct } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
+import { globe } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
 import { useCallback } from 'react';
@@ -11,7 +12,6 @@ import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { globe } from '@wordpress/icons';
 
 import './style.scss';
 
