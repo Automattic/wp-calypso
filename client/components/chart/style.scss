@@ -201,7 +201,7 @@ $y-axis-padding: 0 20px;
 	bottom: 0; // 1
 	left: 16%; // 1
 	height: 100%;
-	transform: scaleY(0); // 2
+	transform: scaleY(0.01); // 2
 	transition: transform 0.3s ease-in-out; // 3
 	transform-origin: 0% 100%; // 4
 	z-index: z-index("root", ".chart__bar-section");
