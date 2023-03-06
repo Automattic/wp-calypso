@@ -182,7 +182,7 @@ const ECommerceTrialCurrentPlan = () => {
 						illustration={ feature.illustration }
 						title={ feature.title }
 						text={ feature.text }
-						showButton={ feature.showButton }
+						showButton={ false }
 						buttonText={ feature.buttonText }
 					></FeatureIncludedCard>
 				) ) }
