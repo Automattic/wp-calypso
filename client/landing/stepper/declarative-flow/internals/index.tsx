@@ -164,7 +164,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	}
 
 	return (
-		<Suspense fallback={ <WordPressLogo size={ 72 } className="wpcom-site__logo" /> }>
+		<Suspense fallback={ <StepperLoader /> }>
 			<DocumentHead title={ getDocumentHeadTitle() } />
 			<Switch>
 				{ flowSteps.map( ( step ) => {
