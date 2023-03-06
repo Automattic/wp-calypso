@@ -47,6 +47,7 @@ class Help_Center {
 
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script' ), 100 );
 		add_action( 'rest_api_init', array( $this, 'register_rest_api' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_wp_admin_scripts' ), 100 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_wp_admin_scripts' ), 100 );
 	}
 
@@ -78,7 +79,13 @@ class Help_Center {
 	 * Enqueue Help Center assets.
 	 */
 	public function enqueue_script() {
-		$script_dependencies = $this->asset_file['dependencies'];
+		// Remove wp-preferences from the dependencies array because it is not available on the support page.
+		$script_dependencies = array_filter(
+			$this->asset_file['dependencies'],
+			function ( $dep ) {
+				return 'wp-preferences' !== $dep;
+			}
+		);
 
 		wp_enqueue_script(
 			'help-center-script',
@@ -127,7 +134,17 @@ class Help_Center {
 	 * Get current site details.
 	 */
 	public function get_current_site() {
-		$site     = \Jetpack_Options::get_option( 'id' );
+		$is_support_site = defined( 'WPCOM_SUPPORT_BLOG_IDS' ) && in_array( get_current_blog_id(), WPCOM_SUPPORT_BLOG_IDS, true );
+
+		if ( $is_support_site ) {
+			$user_id = get_current_user_id();
+			$user    = get_userdata( $user_id );
+			$site    = $user->primary_blog;
+			switch_to_blog( $site );
+		} else {
+			$site = \Jetpack_Options::get_option( 'id' );
+		}
+
 		$logo_id  = get_option( 'site_logo' );
 		$products = wpcom_get_site_purchases();
 		$plan     = array_pop(
@@ -139,7 +156,7 @@ class Help_Center {
 			)
 		);
 
-		return array(
+		$return_data = array(
 			'ID'               => $site,
 			'name'             => get_bloginfo( 'name' ),
 			'URL'              => get_bloginfo( 'url' ),
@@ -156,6 +173,12 @@ class Help_Center {
 			'launchpad_screen' => get_option( 'launchpad_screen' ),
 			'site_intent'      => get_option( 'site_intent' ),
 		);
+
+		if ( $is_support_site ) {
+			restore_current_blog();
+		}
+
+		return $return_data;
 	}
 
 	/**
@@ -190,17 +213,23 @@ class Help_Center {
 		$controller = new WP_REST_Help_Center_Forum();
 		$controller->register_rest_route();
 	}
-
+	/**
+	 * Returns true if the current site is a support site.
+	 */
+	public function is_support_site() {
+		return in_array( get_current_blog_id(), WPCOM_SUPPORT_BLOG_IDS, true );
+	}
 	/**
 	 * Add icon to WP-ADMIN admin bar.
 	 */
 	public function enqueue_wp_admin_scripts() {
+
 		require_once ABSPATH . 'wp-admin/includes/screen.php';
 		global $wp_admin_bar, $current_screen;
 
 		$is_site_editor = ( function_exists( 'gutenberg_is_edit_site_page' ) && gutenberg_is_edit_site_page( $current_screen->id ) );
 
-		if ( ! is_admin() || ! is_object( $wp_admin_bar ) || $is_site_editor || $current_screen->is_block_editor ) {
+		if ( ( ! is_support_site() ) && ( ! is_admin() || ! is_object( $wp_admin_bar ) || $is_site_editor || $current_screen->is_block_editor ) ) {
 			return;
 		}
 
