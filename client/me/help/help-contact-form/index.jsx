@@ -36,14 +36,6 @@ import { generateSubjectFromMessage } from './utils';
 
 import './style.scss';
 
-const trackSibylResultsDisplayed = ( results ) =>
-	composeAnalytics(
-		bumpStat( 'sibyl_results_displayed' ),
-		recordTracksEventAction( 'calypso_sibyl_display_results', {
-			resultsCount: results.length,
-		} )
-	);
-
 const trackSibylClick = ( event, helpLink ) =>
 	composeAnalytics(
 		bumpStat( 'sibyl_question_clicks', helpLink.id ),
@@ -213,15 +205,21 @@ export class HelpContactForm extends PureComponent {
 
 		wpcom.req
 			.get( '/help/qanda', { query, site } )
-			.then( ( qanda ) =>
+			.then( ( qanda ) => {
+				const sameQuestionsReturned = areSameQuestions( this.state.qanda, qanda );
+				if ( ! sameQuestionsReturned ) {
+					recordTracksEvent( 'calypso_sibyl_display_results', {
+						results_count: qanda.length,
+					} );
+				}
 				this.setState( {
 					qanda: Array.isArray( qanda ) ? qanda : [],
 					// only keep sibylClicked true if the user is seeing the same set of questions
 					// we don't want to track "questions -> question click -> different questions -> support click",
 					// so we need to set sibylClicked to false here if the questions have changed
-					sibylClicked: this.state.sibylClicked && areSameQuestions( this.state.qanda, qanda ),
-				} )
-			)
+					sibylClicked: this.state.sibylClicked && sameQuestionsReturned,
+				} );
+			} )
 			.catch( () => this.setState( { qanda: [], sibylClicked: false } ) );
 	};
 
@@ -630,7 +628,6 @@ export class HelpContactForm extends PureComponent {
 						helpLinks={ this.state.qanda }
 						iconTypeDescription="book"
 						onClick={ this.trackSibylClick }
-						onLinksDisplay={ this.props.trackSibylResultsDisplayed }
 						compact
 					/>
 				) }
@@ -677,7 +674,6 @@ const mapDispatchToProps = {
 	onChangeSite: selectSiteId,
 	recordTracksEventAction,
 	requestSite,
-	trackSibylResultsDisplayed,
 	trackSibylClick,
 	trackSibylFirstClick,
 	trackSupportAfterSibylClick,
