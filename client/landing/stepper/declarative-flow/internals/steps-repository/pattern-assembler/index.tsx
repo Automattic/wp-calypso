@@ -82,7 +82,14 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 				color_style_slug: selectedColorPaletteVariation?.title,
 				font_style_slug: selectedFontPairingVariation?.title,
 			} ),
-		[ flow, stepName, intent ]
+		[
+			flow,
+			stepName,
+			intent,
+			stylesheet,
+			selectedColorPaletteVariation,
+			selectedFontPairingVariation,
+		]
 	);
 
 	const selectedVariations = useMemo(
