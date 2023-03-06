@@ -63,7 +63,7 @@ const SenseiLaunch: Step = ( { navigation: { submit } } ) => {
 			},
 		],
 		{
-			maxRetries: 40,
+			maxRetries: 25,
 			onFail: () => submit?.(),
 		}
 	);
