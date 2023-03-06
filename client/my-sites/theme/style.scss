@@ -70,6 +70,7 @@ body.is-section-theme-i4 {
 					@include breakpoint-deprecated( "<960px" ) {
 						margin-top: 0;
 						position: relative;
+						top: auto !important;
 					}
 				}
 
@@ -499,6 +500,13 @@ body.is-section-theme-i4 {
 	@include breakpoint-deprecated( ">960px" ) {
 		height: calc(100vh - 128px);
 		pointer-events: all;
+
+		.theme-preview__frame-wrapper .theme-preview__frame {
+			height: 200%;
+			max-width: 200%;
+			transform: scale(0.5) !important;
+			width: 200%;
+		}
 	}
 }
 
