@@ -276,13 +276,7 @@
 		box-shadow: 0 0 0 1px rgb(0 0 0 / 10%);
 		border: 0;
 		display: block;
-		max-height: 61.2903px;
 		max-width: 100%;
-		overflow: hidden;
-
-		@include break-xlarge {
-			max-height: 77.2258px;
-		}
 	}
 
 	.design-picker__premium-badge {

@@ -1,4 +1,4 @@
-// This file is a copy of https://github.com/WordPress/gutenberg/blob/7005d47/packages/edit-site/src/components/global-styles/preview.js.
+// This file is a copy of https://github.com/WordPress/gutenberg/blob/8a4916feb4317234d3187435f2286e95a8a95d55/packages/edit-site/src/components/global-styles/preview.js.
 // Customizations are indicated with a "Custom WP.com code" comment.
 //
 // The reason this component is not imported directly from @wordpress/edit-site is that currently Calypso
@@ -106,148 +106,152 @@ const StylesPreview = ( { label, isFocused, withHoverView } ) => {
 
 		return styles;
 	}, [ styles ] );
+	const isReady = !! width;
 
 	return (
-		<Iframe
-			className="edit-site-global-styles-preview__iframe"
-			head={ <EditorStyles styles={ editorStyles } /> }
-			style={ {
-				height: normalizedHeight * ratio,
-				visibility: ! width ? 'hidden' : 'visible',
-			} }
-			onMouseEnter={ () => setIsHovered( true ) }
-			onMouseLeave={ () => setIsHovered( false ) }
-			tabIndex={ -1 }
-		>
-			{ containerResizeListener }
-			<motion.div
-				style={ {
-					height: normalizedHeight * ratio,
-					width: '100%',
-					background: gradientValue ?? backgroundColor,
-					cursor: 'pointer',
-				} }
-				initial="start"
-				animate={ ( isHovered || isFocused ) && ! disableMotion && label ? 'hover' : 'start' }
-			>
-				<motion.div
-					variants={ firstFrame }
+		<>
+			<div style={ { position: 'relative' } }>{ containerResizeListener }</div>
+			{ isReady && (
+				<Iframe
+					className="edit-site-global-styles-preview__iframe"
+					head={ <EditorStyles styles={ editorStyles } /> }
 					style={ {
-						height: '100%',
-						overflow: 'hidden',
+						height: normalizedHeight * ratio,
 					} }
+					onMouseEnter={ () => setIsHovered( true ) }
+					onMouseLeave={ () => setIsHovered( false ) }
+					tabIndex={ -1 }
 				>
-					<HStack
-						spacing={ 10 * ratio }
-						justify="center"
+					<motion.div
 						style={ {
-							height: '100%',
-							overflow: 'hidden',
+							height: normalizedHeight * ratio,
+							width: '100%',
+							background: gradientValue ?? backgroundColor,
+							cursor: 'pointer',
 						} }
+						initial="start"
+						animate={ ( isHovered || isFocused ) && ! disableMotion && label ? 'hover' : 'start' }
 					>
 						<motion.div
+							variants={ firstFrame }
 							style={ {
-								fontFamily: headingFontFamily,
-								fontSize: 65 * ratio,
-								color: headingColor,
-								fontWeight: headingFontWeight,
+								height: '100%',
+								overflow: 'hidden',
 							} }
-							animate={ { scale: 1, opacity: 1 } }
-							initial={ { scale: 0.1, opacity: 0 } }
-							transition={ { delay: 0.3, type: 'tween' } }
 						>
-							Aa
-						</motion.div>
-						<VStack spacing={ 4 * ratio }>
-							{ highlightedColors.map( ( { slug, color }, index ) => (
+							<HStack
+								spacing={ 10 * ratio }
+								justify="center"
+								style={ {
+									height: '100%',
+									overflow: 'hidden',
+								} }
+							>
 								<motion.div
-									key={ slug }
 									style={ {
-										height: normalizedColorSwatchSize * ratio,
-										width: normalizedColorSwatchSize * ratio,
-										background: color,
-										borderRadius: ( normalizedColorSwatchSize * ratio ) / 2,
+										fontFamily: headingFontFamily,
+										fontSize: 65 * ratio,
+										color: headingColor,
+										fontWeight: headingFontWeight,
 									} }
 									animate={ { scale: 1, opacity: 1 } }
 									initial={ { scale: 0.1, opacity: 0 } }
-									transition={ {
-										delay: index === 1 ? 0.2 : 0.1,
-									} }
-								/>
-							) ) }
-						</VStack>
-					</HStack>
-				</motion.div>
-				<motion.div
-					variants={ withHoverView && midFrame }
-					style={ {
-						height: '100%',
-						width: '100%',
-						position: 'absolute',
-						top: 0,
-						overflow: 'hidden',
-						filter: 'blur(60px)',
-						opacity: 0.1,
-					} }
-				>
-					<HStack
-						spacing={ 0 }
-						justify="flex-start"
-						style={ {
-							height: '100%',
-							overflow: 'hidden',
-						} }
-					>
-						{ paletteColors.slice( 0, 4 ).map( ( { color }, index ) => (
-							<div
-								key={ index }
+									transition={ { delay: 0.3, type: 'tween' } }
+								>
+									Aa
+								</motion.div>
+								<VStack spacing={ 4 * ratio }>
+									{ highlightedColors.map( ( { slug, color }, index ) => (
+										<motion.div
+											key={ slug }
+											style={ {
+												height: normalizedColorSwatchSize * ratio,
+												width: normalizedColorSwatchSize * ratio,
+												background: color,
+												borderRadius: ( normalizedColorSwatchSize * ratio ) / 2,
+											} }
+											animate={ { scale: 1, opacity: 1 } }
+											initial={ { scale: 0.1, opacity: 0 } }
+											transition={ {
+												delay: index === 1 ? 0.2 : 0.1,
+											} }
+										/>
+									) ) }
+								</VStack>
+							</HStack>
+						</motion.div>
+						<motion.div
+							variants={ withHoverView && midFrame }
+							style={ {
+								height: '100%',
+								width: '100%',
+								position: 'absolute',
+								top: 0,
+								overflow: 'hidden',
+								filter: 'blur(60px)',
+								opacity: 0.1,
+							} }
+						>
+							<HStack
+								spacing={ 0 }
+								justify="flex-start"
 								style={ {
 									height: '100%',
-									background: color,
-									flexGrow: 1,
-								} }
-							/>
-						) ) }
-					</HStack>
-				</motion.div>
-				<motion.div
-					variants={ secondFrame }
-					style={ {
-						height: '100%',
-						width: '100%',
-						overflow: 'hidden',
-						position: 'absolute',
-						top: 0,
-					} }
-				>
-					<VStack
-						spacing={ 3 * ratio }
-						justify="center"
-						style={ {
-							height: '100%',
-							overflow: 'hidden',
-							padding: 10 * ratio,
-							boxSizing: 'border-box',
-						} }
-					>
-						{ label && (
-							<div
-								style={ {
-									fontSize: 40 * ratio,
-									fontFamily: headingFontFamily,
-									color: headingColor,
-									fontWeight: headingFontWeight,
-									lineHeight: '1em',
-									textAlign: 'center',
+									overflow: 'hidden',
 								} }
 							>
-								{ label }
-							</div>
-						) }
-					</VStack>
-				</motion.div>
-			</motion.div>
-		</Iframe>
+								{ paletteColors.slice( 0, 4 ).map( ( { color }, index ) => (
+									<div
+										key={ index }
+										style={ {
+											height: '100%',
+											background: color,
+											flexGrow: 1,
+										} }
+									/>
+								) ) }
+							</HStack>
+						</motion.div>
+						<motion.div
+							variants={ secondFrame }
+							style={ {
+								height: '100%',
+								width: '100%',
+								overflow: 'hidden',
+								position: 'absolute',
+								top: 0,
+							} }
+						>
+							<VStack
+								spacing={ 3 * ratio }
+								justify="center"
+								style={ {
+									height: '100%',
+									overflow: 'hidden',
+									padding: 10 * ratio,
+									boxSizing: 'border-box',
+								} }
+							>
+								{ label && (
+									<div
+										style={ {
+											fontSize: 40 * ratio,
+											fontFamily: headingFontFamily,
+											color: headingColor,
+											fontWeight: headingFontWeight,
+											lineHeight: '1em',
+											textAlign: 'center',
+										} }
+									>
+										{ label }
+									</div>
+								) }
+							</VStack>
+						</motion.div>
+					</motion.div>
+				</Iframe>
+			) }
+		</>
 	);
 };
 
