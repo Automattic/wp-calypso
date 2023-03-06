@@ -162,6 +162,7 @@ type PlanFeatures2023GridType = PlanFeatures2023GridProps &
 
 type PlanFeatures2023GridState = {
 	showPlansComparisonGrid: boolean;
+	noticeDismissed: boolean;
 };
 
 type ServiceLogoProps = {
@@ -255,9 +256,14 @@ export class PlanFeatures2023Grid extends Component<
 > {
 	state = {
 		showPlansComparisonGrid: false,
+		noticeDismissed: false,
 	};
 
 	plansComparisonGridContainerRef = createRef< HTMLDivElement >();
+
+	handleDismissNotice = () => {
+		this.setState( { noticeDismissed: true } );
+	};
 
 	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_wp_plans_test_view' );
@@ -839,12 +845,18 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderNotice() {
-		return (
-			this.renderUpgradeDisabledNotice() ||
-			this.renderDiscountNotice() ||
-			this.renderCreditNotice() ||
-			this.renderMarketingMessage()
-		);
+		const { noticeDismissed } = this.state;
+
+		if ( ! noticeDismissed ) {
+			return (
+				this.renderUpgradeDisabledNotice() ||
+				this.renderDiscountNotice() ||
+				this.renderCreditNotice() ||
+				this.renderMarketingMessage()
+			);
+		}
+
+		return this.renderMarketingMessage();
 	}
 
 	renderMarketingMessage() {
@@ -869,13 +881,16 @@ export class PlanFeatures2023Grid extends Component<
 
 		const bannerContainer = this.getBannerContainer();
 		const activeDiscount = getDiscountByName( this.props.withDiscount );
+
 		if ( ! bannerContainer || ! activeDiscount ) {
 			return false;
 		}
+
 		return ReactDOM.createPortal(
 			<Notice
 				className="plan-features__notice-credits"
-				showDismiss={ false }
+				showDismiss={ true }
+				onDismissClick={ this.handleDismissNotice }
 				icon="info-outline"
 				status="is-success"
 			>
@@ -903,7 +918,12 @@ export class PlanFeatures2023Grid extends Component<
 			return false;
 		}
 		return ReactDOM.createPortal(
-			<Notice className="plan-features__notice" showDismiss={ false } status="is-info">
+			<Notice
+				className="plan-features__notice"
+				showDismiss={ true }
+				onDismissClick={ this.handleDismissNotice }
+				status="is-info"
+			>
 				{ translate(
 					'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.'
 				) }
@@ -938,7 +958,8 @@ export class PlanFeatures2023Grid extends Component<
 		return ReactDOM.createPortal(
 			<Notice
 				className="plan-features__notice-credits"
-				showDismiss={ false }
+				showDismiss={ true }
+				onDismissClick={ this.handleDismissNotice }
 				icon="info-outline"
 				status="is-success"
 			>
