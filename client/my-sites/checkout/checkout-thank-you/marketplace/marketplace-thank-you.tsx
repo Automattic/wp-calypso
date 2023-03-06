@@ -6,6 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import QueryTheme from 'calypso/components/data/query-theme';
 import { ThankYou } from 'calypso/components/thank-you';
 import { ThankYouSectionProps } from 'calypso/components/thank-you/types';
 import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
@@ -31,6 +32,7 @@ import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/w
 import { areFetched, areFetching, getPlugins } from 'calypso/state/plugins/wporg/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getThemes } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { ThankYouPluginSection } from './marketplace-thank-you-plugin-section';
 import './style.scss';
@@ -96,24 +98,30 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		! new URLSearchParams( document.location.search ).has( 'hide-progress-bar' )
 	);
 
-	const areAllPluginsOnSite =
-		!! pluginsOnSite.length && pluginsOnSite.every( ( pluginOnSite ) => !! pluginOnSite );
+	// Retrieve theme information
+	const wpComThemes = useSelector( ( state ) => getThemes( state, 'wpcom', productSlugs ) );
+
+	const isAllDataFetched =
+		!! pluginsOnSite.length &&
+		pluginsOnSite.every( ( pluginOnSite, index ) => !! pluginOnSite || !! wpComThemes[ index ] );
 
 	// Consolidate the plugin information from the .org and .com sources in a single list
-	const pluginInformationList = useMemo( () => {
+	const productInformationList = useMemo( () => {
 		return pluginsOnSite.reduce(
 			( pluginsList: Array< any >, pluginOnSite: Plugin, index: number ) => {
 				pluginsList.push( {
 					...pluginOnSite,
 					...wpComPluginsData[ index ],
 					...wporgPlugins[ index ],
+					...wpComThemes[ index ],
+					isTheme: !! wpComThemes[ index ],
 				} );
 
 				return pluginsList;
 			},
 			[]
 		);
-	}, [ pluginsOnSite, wpComPluginsData, wporgPlugins ] );
+	}, [ pluginsOnSite, wpComPluginsData, wporgPlugins, wpComThemes ] );
 
 	// Site is transferring to Atomic.
 	// Poll the transfer status.
@@ -159,7 +167,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		}
 
 		// Update the menu after the plugin has been installed, since that might change some menu items.
-		if ( areAllPluginsOnSite ) {
+		if ( isAllDataFetched ) {
 			dispatch( requestAdminMenu( siteId ) );
 			return;
 		}
@@ -169,7 +177,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		}
 	}, [
 		isRequestingPlugins,
-		areAllPluginsOnSite,
+		isAllDataFetched,
 		dispatch,
 		siteId,
 		transferStatus,
@@ -183,7 +191,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 			return;
 		}
 
-		setShowProgressBar( ! areAllPluginsOnSite );
+		setShowProgressBar( ! isAllDataFetched );
 
 		// Sites already transferred to Atomic or self-hosted Jetpack sites no longer need to change the current step.
 		if ( isJetpack ) {
@@ -199,7 +207,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		} else if ( transferStatus === transferStates.COMPLETE ) {
 			setCurrentStep( 3 );
 		}
-	}, [ transferStatus, areAllPluginsOnSite, showProgressBar, isJetpack ] );
+	}, [ transferStatus, isAllDataFetched, showProgressBar, isJetpack ] );
 
 	const steps = useMemo(
 		() =>
@@ -219,10 +227,12 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 
 	const pluginsSection: ThankYouSectionProps = {
 		sectionKey: 'plugin_information',
-		nextSteps: pluginInformationList.map( ( plugin: any ) => ( {
-			stepKey: `plugin_information_${ plugin.slug }`,
-			stepSection: <ThankYouPluginSection plugin={ plugin } />,
-		} ) ),
+		nextSteps: productInformationList
+			.filter( ( product ) => product.isTheme === false )
+			.map( ( plugin: any ) => ( {
+				stepKey: `plugin_information_${ plugin.slug }`,
+				stepSection: <ThankYouPluginSection plugin={ plugin } />,
+			} ) ),
 	};
 
 	const sendTrackEvent = useCallback(
@@ -313,8 +323,11 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 			<MasterbarStyled
 				onClick={ () => page( `/plugins/${ siteSlug }` ) }
 				backText={ translate( 'Back to plugins' ) }
-				canGoBack={ areAllPluginsOnSite }
+				canGoBack={ isAllDataFetched }
 			/>
+			{ productSlugs.map( ( productSlug, index ) => (
+				<QueryTheme key={ 'query-theme-' + index } siteId="wpcom" themeId={ productSlug } />
+			) ) }
 			{ showProgressBar && (
 				// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 				<div className="marketplace-plugin-install__root">
