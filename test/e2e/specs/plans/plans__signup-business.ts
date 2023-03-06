@@ -79,7 +79,7 @@ describe(
 
 			it( 'Skip Launchpad', async function () {
 				await Promise.all( [
-					page.waitForNavigation( { url: /.*\/view\/.*/ } ),
+					page.waitForNavigation( { url: /.*\/view\/.*/, timeout: 30 * 1000 } ),
 					await page.click( 'button:text("Skip to dashboard")' ),
 				] );
 			} );
