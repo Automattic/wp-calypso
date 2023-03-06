@@ -8,6 +8,7 @@ export interface Props {
 	stylesheet?: string;
 	children: JSX.Element;
 	useInlineStyles?: boolean;
+	placeholder?: JSX.Element | null;
 }
 
 const useBlockRendererContext = (
@@ -51,11 +52,12 @@ const BlockRendererProvider = ( {
 	stylesheet = '',
 	children,
 	useInlineStyles = false,
+	placeholder = null,
 }: Props ) => {
 	const context = useBlockRendererContext( siteId, stylesheet, useInlineStyles );
 
 	if ( ! context.isReady ) {
-		return null;
+		return placeholder;
 	}
 
 	return (

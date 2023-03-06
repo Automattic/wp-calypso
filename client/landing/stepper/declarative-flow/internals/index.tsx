@@ -10,7 +10,6 @@ import { useEffect, useState, useCallback } from 'react';
 import Modal from 'react-modal';
 import { Switch, Route, Redirect, generatePath, useHistory, useLocation } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
@@ -19,6 +18,7 @@ import { recordSignupStart } from 'calypso/lib/analytics/signup';
 import SignupHeader from 'calypso/signup/signup-header';
 import { ONBOARD_STORE } from '../../stores';
 import recordStepStart from './analytics/record-step-start';
+import StepperLoader from './components/stepper-loader';
 import VideoPressIntroBackground from './steps-repository/intro/videopress-intro-background';
 import { AssertConditionState, Flow, StepperStep } from './types';
 import './global.scss';
@@ -125,7 +125,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		switch ( assertCondition.state ) {
 			case AssertConditionState.CHECKING:
 				/* eslint-disable wpcalypso/jsx-classname-namespace */
-				return <WordPressLogo size={ 72 } className="wpcom-site__logo" />;
+				return <StepperLoader />;
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 			case AssertConditionState.FAILURE:
 				throw new Error( assertCondition.message ?? 'An error has occurred.' );

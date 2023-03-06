@@ -1,5 +1,6 @@
 import { BlockRendererProvider, PatternsRendererProvider } from '@automattic/block-renderer';
 import { isEnabled } from '@automattic/calypso-config';
+import StepperLoader from '../../components/stepper-loader';
 import { PLACEHOLDER_SITE_ID } from './constants';
 import type { SiteInfo } from '@automattic/block-renderer';
 
@@ -22,6 +23,7 @@ const PatternAssemblerContainer = ( {
 		siteId={ siteId }
 		stylesheet={ stylesheet }
 		useInlineStyles={ isEnabled( 'pattern-assembler/inline-styles' ) }
+		placeholder={ <StepperLoader /> }
 	>
 		<PatternsRendererProvider
 			// Site used to render site-related things on the previews,
