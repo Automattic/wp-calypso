@@ -80,12 +80,7 @@ class Help_Center {
 	 */
 	public function enqueue_script() {
 		// Remove wp-preferences from the dependencies array because it is not available on the support page.
-		$script_dependencies = array_filter(
-			$this->asset_file['dependencies'],
-			function ( $dep ) {
-				return 'wp-preferences' !== $dep;
-			}
-		);
+		$script_dependencies = $this->asset_file['dependencies'];
 
 		wp_enqueue_script(
 			'help-center-script',
