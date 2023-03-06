@@ -86,6 +86,7 @@
 		"reader": true,
 		"reader/full-errors": true,
 		"reader/list-management": true,
+		"reader/public-tag-pages": true,
 		"redirect-fallback-browsers": true,
 		"rum-tracking/logstash": false,
 		"security/security-checkup": true,

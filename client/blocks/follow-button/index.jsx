@@ -1,7 +1,11 @@
+import { getUrlParts } from '@automattic/calypso-url';
 import { omitBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { navigate } from 'calypso/lib/navigate';
+import { createAccountUrl } from 'calypso/lib/paths';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { follow, unfollow } from 'calypso/state/reader/follows/actions';
 import { isFollowing } from 'calypso/state/reader/follows/selectors';
 import FollowButton from './button';
@@ -26,6 +30,10 @@ class FollowButtonContainer extends Component {
 	};
 
 	handleFollowToggle = ( following ) => {
+		if ( ! this.props.isLoggedIn ) {
+			const { pathname } = getUrlParts( window.location.href );
+			return navigate( createAccountUrl( { redirectTo: pathname } ) );
+		}
 		if ( following ) {
 			const followData = omitBy(
 				{
@@ -63,6 +71,7 @@ class FollowButtonContainer extends Component {
 export default connect(
 	( state, ownProps ) => ( {
 		following: isFollowing( state, { feedUrl: ownProps.siteUrl } ),
+		isLoggedIn: isUserLoggedIn( state ),
 	} ),
 	{
 		follow,
