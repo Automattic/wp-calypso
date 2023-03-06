@@ -148,7 +148,7 @@ export function redirectLoggedOutToSignup( context, next ) {
 		return;
 	}
 
-	return page.redirect( createAccountUrl( { redirectTo: context.path } ) );
+	return page.redirect( createAccountUrl( { redirectTo: context.path, ref: 'reader-lp' } ) );
 }
 
 /**
