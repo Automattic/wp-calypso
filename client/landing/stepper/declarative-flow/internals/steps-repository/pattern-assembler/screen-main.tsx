@@ -90,7 +90,7 @@ const ScreenMain = ( { shouldUnlockGlobalStyles, onSelect, onContinueClick }: Pr
 			</div>
 			<div className="screen-container__footer">
 				<Button className="pattern-assembler__button" onClick={ onContinueClick } primary>
-					{ shouldUnlockGlobalStyles ? translate( 'Unlock this design' ) : translate( 'Continue' ) }
+					{ shouldUnlockGlobalStyles ? translate( 'Unlock this style' ) : translate( 'Continue' ) }
 				</Button>
 			</div>
 		</>
