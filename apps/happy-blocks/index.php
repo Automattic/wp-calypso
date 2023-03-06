@@ -49,3 +49,55 @@ require_once __DIR__ . '/block-library/universal-header/index.php';
  * Load Universal Foooter Block
  */
 require_once __DIR__ . '/block-library/universal-footer/index.php';
+
+/**
+ * Allow SVG, select and input tags in the footer.
+ *
+ * @param array $tags Allowed tags, attributes, and/or entities.
+ * @return array
+ */
+function happyblocks_allow_footer_tags( $tags ) {
+	$tags['svg']            = array(
+		'xmlns'       => array(),
+		'fill'        => array(),
+		'viewbox'     => array(),
+		'role'        => array(),
+		'aria-hidden' => array(),
+		'focusable'   => array(),
+		'class'       => array(),
+	);
+	$tags['path']           = array(
+		'd'    => array(),
+		'fill' => array(),
+	);
+	$tags['select']         = array(
+		'class' => array(),
+		'title' => array(),
+	);
+	$tags['option']         = array(
+		'value'    => array(),
+		'disabled' => array(),
+		'lang'     => array(),
+	);
+	$tags['stop']           = array(
+		'stopColor' => array(),
+		'offset'    => array(),
+	);
+	$tags['linearGradient'] = array(
+		'id' => array(),
+		'x1' => array(),
+		'x2' => array(),
+		'y1' => array(),
+		'y2' => array(),
+	);
+	$tags['defs']           = array();
+
+	return $tags;
+}
+
+add_filter(
+	'wp_kses_allowed_html',
+	'happyblocks_allow_footer_tags',
+	10,
+	2
+);
