@@ -1,16 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-import { filterDomainUpsellTask, getArrayOfFilteredTasks, getEnhancedTasks } from '../task-helper';
+import { getArrayOfFilteredTasks, getEnhancedTasks } from '../task-helper';
 import { tasks, launchpadFlowTasks } from '../tasks';
-import {
-	LINK_IN_BIO_FLOW,
-	FREE_FLOW,
-	WRITE_FLOW,
-	BUILD_FLOW,
-	NEWSLETTER_FLOW,
-} from './../../../../../../../../packages/onboarding/src/utils/flows';
-import { buildTask, buildSiteDetails, defaultSiteDetails } from './lib/fixtures';
+import { buildTask } from './lib/fixtures';
 
 describe( 'Task Helpers', () => {
 	describe( 'getEnhancedTasks', () => {
@@ -98,78 +91,40 @@ describe( 'Task Helpers', () => {
 		} );
 	} );
 
-	describe( 'filterDomainUpsellTask', () => {
-		describe( 'when site plan is free and affected flow (free, build, write)', () => {
-			it( 'return original enhanceTasks', () => {
-				const task = buildTask( {
-					id: 'domain_upsell',
-					completed: false,
-					disabled: true,
-					taskType: 'blog',
-					title: 'domain upsell task',
-				} );
-				const tasks = [ task ];
-				const site = defaultSiteDetails;
-				const freeFlow = FREE_FLOW;
-				const writeFlow = WRITE_FLOW;
-				const buildFlow = BUILD_FLOW;
-				expect( filterDomainUpsellTask( freeFlow, tasks, site ) ).toBe( tasks );
-				expect( filterDomainUpsellTask( writeFlow, tasks, site ) ).toBe( tasks );
-				expect( filterDomainUpsellTask( buildFlow, tasks, site ) ).toBe( tasks );
+	describe( 'domain upsell task', () => {
+		describe( 'when flow is newsletter', () => {
+			it( 'does not include upsell task', () => {
+				expect(
+					launchpadFlowTasks[ 'newsletter' ].filter( ( task ) => task === 'domain_upsell' ).length
+				).toBe( 0 );
 			} );
 		} );
-
-		describe( 'when unaffected flow', () => {
-			it( 'return original enhanceTasks', () => {
-				const task = buildTask( {
-					id: 'domain_upsell',
-					completed: false,
-					disabled: true,
-					taskType: 'blog',
-					title: 'domain upsell task',
-				} );
-				const tasks = [ task ];
-				const site = defaultSiteDetails;
-				const newsletterFlow = NEWSLETTER_FLOW;
-				expect( filterDomainUpsellTask( newsletterFlow, tasks, site ) ).toBe( tasks );
+		describe( 'when flow is link-in-bio', () => {
+			it( 'does not include upsell task', () => {
+				expect(
+					launchpadFlowTasks[ 'link-in-bio' ].filter( ( task ) => task === 'domain_upsell' ).length
+				).toBe( 0 );
 			} );
 		} );
-
-		describe( 'when site plan is not free and affected flow (free, build, write)', () => {
-			it( 'return enhanceTask array with domain_upsell task removed', () => {
-				const task = buildTask( {
-					id: 'domain_upsell',
-					completed: false,
-					disabled: true,
-					taskType: 'blog',
-					title: 'domain upsell task',
-				} );
-				const tasks = [ task ];
-				const site = buildSiteDetails( { plan: { is_free: false } } );
-
-				const freeFlow = FREE_FLOW;
-				const writeFlow = WRITE_FLOW;
-				const buildFlow = BUILD_FLOW;
-				expect( filterDomainUpsellTask( freeFlow, tasks, site ) ).toHaveLength( 0 );
-				expect( filterDomainUpsellTask( writeFlow, tasks, site ) ).toHaveLength( 0 );
-				expect( filterDomainUpsellTask( buildFlow, tasks, site ) ).toHaveLength( 0 );
+		describe( 'when flow is write', () => {
+			it( 'does include upsell task', () => {
+				expect(
+					launchpadFlowTasks[ 'write' ].filter( ( task ) => task === 'domain_upsell' ).length
+				).toBe( 1 );
 			} );
 		} );
-
-		describe( 'when site plan is not free and not affected flow', () => {
-			it( 'return enhanceTask array with domain_upsell task removed', () => {
-				const tasks = buildTask( {
-					id: 'domain_upsell',
-					completed: false,
-					disabled: true,
-					taskType: 'blog',
-					title: 'domain upsell task',
-				} );
-				const site = buildSiteDetails( {} );
-				const newsletterFlow = NEWSLETTER_FLOW;
-				const linkInBioFlow = LINK_IN_BIO_FLOW;
-				expect( filterDomainUpsellTask( newsletterFlow, tasks, site ) ).toBe( tasks );
-				expect( filterDomainUpsellTask( linkInBioFlow, tasks, site ) ).toBe( tasks );
+		describe( 'when flow is build', () => {
+			it( 'does include upsell task', () => {
+				expect(
+					launchpadFlowTasks[ 'build' ].filter( ( task ) => task === 'domain_upsell' ).length
+				).toBe( 1 );
+			} );
+		} );
+		describe( 'when flow is free', () => {
+			it( 'does include upsell task', () => {
+				expect(
+					launchpadFlowTasks[ 'free' ].filter( ( task ) => task === 'domain_upsell' ).length
+				).toBe( 1 );
 			} );
 		} );
 	} );

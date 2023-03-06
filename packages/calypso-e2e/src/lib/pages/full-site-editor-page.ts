@@ -171,6 +171,13 @@ export class FullSiteEditorPage {
 		}
 	}
 
+	/**
+	 * Clicks on a button with the exact name.
+	 */
+	async clickFullSiteNavigatorButton( text: string ): Promise< void > {
+		await this.editor.getByRole( 'button', { name: text, exact: true } ).click();
+	}
+
 	//#endregion
 
 	//#region Block Actions
@@ -394,7 +401,7 @@ export class FullSiteEditorPage {
 	 */
 	async openNavSidebar(): Promise< void > {
 		const openButton = this.editor.locator( 'button[aria-label="Open Navigation Sidebar"]' );
-		const closeButton = this.editor.locator( 'button[aria-label="Open the editor"]' );
+		const closeButton = this.editor.locator( '.edit-site-site-hub button.is-primary' );
 
 		await Promise.race( [ closeButton.waitFor(), openButton.click() ] );
 	}
@@ -404,7 +411,7 @@ export class FullSiteEditorPage {
 	 */
 	async closeNavSidebar(): Promise< void > {
 		const openButton = this.editor.locator( 'button[aria-label="Open Navigation Sidebar"]' );
-		const closeButton = this.editor.locator( 'button[aria-label="Open the editor"]' );
+		const closeButton = this.editor.locator( '.edit-site-site-hub button.is-primary' );
 
 		await Promise.race( [ openButton.waitFor(), closeButton.click() ] );
 	}

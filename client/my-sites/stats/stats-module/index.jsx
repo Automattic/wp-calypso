@@ -46,6 +46,7 @@ class StatsModule extends Component {
 		metricLabel: PropTypes.string,
 		mainItemLabel: PropTypes.string,
 		additionalColumns: PropTypes.object,
+		listItemClassName: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -113,6 +114,8 @@ class StatsModule extends Component {
 			'statsSearchTerms',
 			'statsClicks',
 			'statsReferrers',
+			// statsEmailsOpen and statsEmailsClick are not used. statsEmailsSummary and statsEmailsSummaryByOpens are used at the moment,
+			// besides this, email page uses separate summary component: <StatsEmailSummary />
 			'statsEmailsOpen',
 			'statsEmailsClick',
 		];
@@ -137,6 +140,7 @@ class StatsModule extends Component {
 			metricLabel,
 			additionalColumns,
 			mainItemLabel,
+			listItemClassName,
 		} = this.props;
 
 		const noData = data && this.state.loaded && ! data.length;
@@ -175,12 +179,6 @@ class StatsModule extends Component {
 		const shouldShowNewModule =
 			! hideNewModule && ( ! summary || isHorizontalBarComponentEnabledEverywhere );
 
-		const headerCSVButton = (
-			<div className="stats-module__heaver-nav-button">
-				<DownloadCsv statType={ statType } query={ query } path={ path } period={ period } />
-			</div>
-		);
-
 		return (
 			<>
 				{ siteId && statType && (
@@ -188,17 +186,6 @@ class StatsModule extends Component {
 				) }
 				{ shouldShowNewModule && (
 					<>
-						{ /* TODO: Move this header to the summary page when modernising it */ }
-						{ /* TODO: Remove hideNavigation and navigationSwap when unifying headers for all summary pages */ }
-						{ summary && (
-							<AllTimeNav
-								path={ path }
-								query={ query }
-								period={ period }
-								hideNavigation={ summary && ! isAllTime }
-								navigationSwap={ headerCSVButton }
-							/>
-						) }
 						<StatsListCard
 							moduleType={ path }
 							data={ data }
@@ -228,6 +215,7 @@ class StatsModule extends Component {
 							splitHeader={ !! additionalColumns }
 							mainItemLabel={ mainItemLabel }
 							showLeftIcon={ path === 'authors' }
+							listItemClassName={ listItemClassName }
 						/>
 						{ isAllTime && (
 							<div className={ footerClass }>

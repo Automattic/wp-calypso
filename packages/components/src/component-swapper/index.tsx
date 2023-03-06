@@ -9,10 +9,10 @@ const ComponentSwapper = ( {
 	onSwap,
 	children,
 }: {
-	children: ReactChild[];
+	children?: ReactChild[];
 	breakpoint: string;
-	breakpointActiveComponent: React.Component;
-	breakpointInactiveComponent: React.Component;
+	breakpointActiveComponent: React.Component | React.ReactElement;
+	breakpointInactiveComponent: React.Component | React.ReactElement;
 	onSwap?: () => void;
 	className?: string;
 } ) => {

@@ -1,4 +1,9 @@
+import '../get-editor-type';
 import getTourSteps from '../tour-steps';
+
+jest.mock( '../get-editor-type', () => {
+	return { getEditorType: () => 'post' };
+} );
 
 describe( 'Welcome Tour', () => {
 	describe( 'Tour Steps', () => {

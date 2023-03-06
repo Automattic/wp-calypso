@@ -127,8 +127,12 @@ export function addExternalManagedThemeToCart( themeId: string, siteId: number )
 		const { origin = 'https://wordpress.com' } =
 			typeof window !== 'undefined' ? window.location : {};
 
+		const redirectTo = addQueryArgs( `${ origin }/theme/${ themeId }/${ siteSlug }`, {
+			...( ! isSiteEligibleForManagedExternalThemes ? { 'sync-active-theme': 'true' } : {} ),
+		} );
+
 		const redirectUrl = addQueryArgs( `/checkout/${ siteSlug }`, {
-			redirect_to: `${ origin }/theme/${ themeId }/${ siteSlug }`,
+			redirect_to: redirectTo,
 		} );
 
 		dispatch( isLoadingCart( true ) );

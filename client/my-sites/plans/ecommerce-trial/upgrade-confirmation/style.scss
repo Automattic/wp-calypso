@@ -1,0 +1,63 @@
+@import "@automattic/components/src/styles/typography";
+@import "@wordpress/base-styles/breakpoints";
+
+body.ecommerce-trial-upgraded {
+	background-color: var(--color-surface);
+	font-family: $font-sf-pro-text;
+
+	.trial-upgrade-confirmation__header {
+		text-align: center;
+		padding: 20px 0;
+		margin-top: 20px;
+
+		@media (max-width: $break-mobile) {
+			text-align: left;
+		}
+
+		.trial-upgrade-confirmation__title {
+			font-size: $font-title-large;
+			padding: 0 20px;
+
+			@media (max-width: $break-mobile) {
+				font-size: $font-title-medium;
+			}
+		}
+
+		.trial-upgrade-confirmation__subtitle {
+			padding: 20px;
+			font-size: $font-body;
+
+			@media (max-width: $break-mobile) {
+				padding-bottom: 0;
+			}
+
+			.trial-upgrade-confirmation__subtitle-line {
+				display: block;
+
+				@media (max-width: $break-mobile) {
+					display: inline;
+
+					// Add space between sentences when they are inline
+					&::after {
+						content: " ";
+					}
+				}
+			}
+		}
+	}
+
+	.trial-upgrade-confirmation__tasks {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, 320px);
+		grid-column-gap: 32px;
+		grid-row-gap: 32px;
+		margin: 55px 0;
+		justify-content: center;
+
+		@media (max-width: $break-mobile) {
+			margin-top: 10px;
+			padding: 0 20px;
+			grid-template-columns: repeat(1, auto);
+		}
+	}
+}

@@ -54,6 +54,11 @@ export type StepperStep = {
 	component: React.FC< StepProps >;
 };
 
+export type Navigate< FlowSteps extends StepperStep[] > = (
+	stepName: FlowSteps[ number ][ 'slug' ] | `${ FlowSteps[ number ][ 'slug' ] }?${ string }`,
+	extraData?: any
+) => void;
+
 /**
  * This is the return type of useSteps hook
  */
@@ -61,14 +66,16 @@ export type UseStepsHook = () => StepperStep[];
 
 export type UseStepNavigationHook< FlowSteps extends StepperStep[] > = (
 	currentStepSlug: FlowSteps[ number ][ 'slug' ],
-	navigate: (
-		stepName: FlowSteps[ number ][ 'slug' ] | `${ FlowSteps[ number ][ 'slug' ] }?${ string }`,
-		extraData?: any
-	) => void,
+	navigate: Navigate< FlowSteps >,
 	steps?: FlowSteps[ number ][ 'slug' ][]
 ) => NavigationControls;
 
 export type UseAssertConditionsHook = () => AssertConditionResult;
+
+export type UseSideEffectHook< FlowSteps extends StepperStep[] > = (
+	currentStepSlug: FlowSteps[ number ][ 'slug' ],
+	navigate: Navigate< FlowSteps >
+) => void;
 
 export type Flow = {
 	name: string;
@@ -80,7 +87,7 @@ export type Flow = {
 	/**
 	 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..
 	 */
-	useSideEffect?: () => void;
+	useSideEffect?: UseSideEffectHook< ReturnType< Flow[ 'useSteps' ] > >;
 };
 
 export type StepProps = {

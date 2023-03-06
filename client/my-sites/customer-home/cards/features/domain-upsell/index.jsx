@@ -14,6 +14,7 @@ import { addQueryArgs } from 'calypso/lib/url';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import isSiteOnMonthlyPlan from 'calypso/state/selectors/is-site-on-monthly-plan';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
@@ -23,25 +24,33 @@ export default function DomainUpsell() {
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 	const isEmailVerified = useSelector( ( state ) => isCurrentUserEmailVerified( state ) );
 	const siteDomains = useSelector( ( state ) => getDomainsBySiteId( state, site.ID ) );
+	const isMonthlyPlan = useSelector( ( state ) => isSiteOnMonthlyPlan( state, site.ID ) );
+	const isFreePlan = isFreePlanProduct( site.plan );
 
-	if ( siteDomains.length > 1 || ! isEmailVerified || ! isFreePlanProduct( site.plan ) ) {
+	if (
+		siteDomains.filter( ( domain ) => ! domain.isWPCOMDomain ).length ||
+		! isEmailVerified ||
+		( ! isFreePlan && isMonthlyPlan )
+	) {
 		return null;
 	}
 
 	return (
 		<CalypsoShoppingCartProvider>
-			<RenderDomainUpsell />
+			<RenderDomainUpsell isFreePlan={ isFreePlan } isMonthlyPlan={ isMonthlyPlan } />
 		</CalypsoShoppingCartProvider>
 	);
 }
 
-export function RenderDomainUpsell() {
+export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan } ) {
 	const translate = useTranslate();
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
 	const siteSubDomain = siteSlug.split( '.' )[ 0 ];
 	const locale = useLocale();
 	const { allDomainSuggestions } =
-		useDomainSuggestions( siteSubDomain, 3, undefined, locale ) || {};
+		useDomainSuggestions( siteSubDomain, 3, undefined, locale, {
+			vendor: 'domain-upsell',
+		} ) || {};
 
 	const cartKey = useCartKey();
 	const shoppingCartManager = useShoppingCart( cartKey );
@@ -51,13 +60,14 @@ export function RenderDomainUpsell() {
 		( suggestion ) => ! suggestion.is_free
 	)[ 0 ];
 
-	// It takes awhile to suggest a domain name. Set a default to siteSubDomain.blog.
-	const domainSuggestionName = domainSuggestion?.domain_name ?? siteSubDomain + '.blog';
+	// It takes awhile to suggest a domain name. Set a default to siteSubDomain.com.
+	const domainSuggestionName = domainSuggestion?.domain_name ?? siteSubDomain + '.com';
 	const domainSuggestionProductSlug = domainSuggestion?.product_slug;
 
 	const searchLink = addQueryArgs(
 		{
 			domainAndPlanPackage: true,
+			domain: true,
 		},
 		`/domains/add/${ siteSlug }`
 	);
@@ -69,12 +79,16 @@ export function RenderDomainUpsell() {
 		} );
 	};
 
-	const purchaseLink = addQueryArgs(
-		{
-			get_domain: domainSuggestionName,
-		},
-		`/plans/yearly/${ siteSlug }`
-	);
+	const purchaseLink =
+		! isFreePlan && ! isMonthlyPlan
+			? `/checkout/${ siteSlug }`
+			: addQueryArgs(
+					{
+						domain: true,
+						domainAndPlanPackage: true,
+					},
+					`/plans/yearly/${ siteSlug }`
+			  );
 	const [ ctaIsBusy, setCtaIsBusy ] = useState( false );
 	const getCtaClickHandler = async () => {
 		setCtaIsBusy( true );
@@ -98,17 +112,26 @@ export function RenderDomainUpsell() {
 		page( purchaseLink );
 	};
 
+	const cardTitle =
+		! isFreePlan && ! isMonthlyPlan
+			? translate( 'You still have a free domain to claim!' )
+			: translate( 'Own your online identity with a custom domain' );
+
+	const cardSubtitle =
+		! isFreePlan && ! isMonthlyPlan
+			? translate(
+					'Own your online identity giving your site a memorable domain name. Your plan includes one for free for one year, so you can still claim it.'
+			  )
+			: translate(
+					"Stake your claim on your corner of the web with a site address that's easy to find, share, and follow."
+			  );
+
 	return (
 		<Card className="domain-upsell__card customer-home__card">
 			<TrackComponentView eventName="calypso_my_home_domain_upsell_impression" />
 			<div>
-				<h3>{ translate( 'Own your online identity with a custom domain' ) }</h3>
-				<p>
-					{ translate(
-						"Stake your claim on your corner of the web with a site address that's easy to find, share, and follow."
-					) }
-				</p>
-
+				<h3>{ cardTitle }</h3>
+				<p>{ cardSubtitle }</p>
 				<div className="suggested-domain-name">
 					<div className="card">
 						<span>

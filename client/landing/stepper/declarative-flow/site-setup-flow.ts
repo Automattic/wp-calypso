@@ -2,6 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { Design, isBlankCanvasDesign } from '@automattic/design-picker';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { useEffect } from 'react';
 import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -26,20 +27,20 @@ import EditEmail from './internals/steps-repository/edit-email';
 import ErrorStep from './internals/steps-repository/error-step';
 import GoalsStep from './internals/steps-repository/goals';
 import ImportStep from './internals/steps-repository/import';
+import { redirect } from './internals/steps-repository/import/util';
 import ImportLight from './internals/steps-repository/import-light';
 import ImportList from './internals/steps-repository/import-list';
 import ImportReady from './internals/steps-repository/import-ready';
 import ImportReadyNot from './internals/steps-repository/import-ready-not';
 import ImportReadyPreview from './internals/steps-repository/import-ready-preview';
 import ImportReadyWpcom from './internals/steps-repository/import-ready-wpcom';
-import { redirect } from './internals/steps-repository/import/util';
 import ImporterBlogger from './internals/steps-repository/importer-blogger';
 import ImporterMedium from './internals/steps-repository/importer-medium';
 import ImporterSquarespace from './internals/steps-repository/importer-squarespace';
 import ImporterWix from './internals/steps-repository/importer-wix';
 import ImporterWordpress from './internals/steps-repository/importer-wordpress';
 import IntentStep from './internals/steps-repository/intent-step';
-import PatternAssembler from './internals/steps-repository/pattern-assembler';
+import PatternAssembler from './internals/steps-repository/pattern-assembler/lazy';
 import ProcessingStep, { ProcessingResult } from './internals/steps-repository/processing-step';
 import SiteOptions from './internals/steps-repository/site-options';
 import SiteVertical from './internals/steps-repository/site-vertical';
@@ -66,6 +67,17 @@ function isLaunchpadIntent( intent: string ) {
 
 const siteSetupFlow: Flow = {
 	name: 'site-setup',
+
+	useSideEffect( currentStep, navigate ) {
+		const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
+
+		useEffect( () => {
+			// Require to start the flow from the first step
+			if ( currentStep === 'patternAssembler' && ! selectedDesign ) {
+				navigate( 'goals' );
+			}
+		}, [] );
+	},
 
 	useSteps() {
 		return [

@@ -74,7 +74,7 @@ import wpcom from 'calypso/lib/wp';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { domainUseMyDomain } from 'calypso/my-sites/domains/paths';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { isDomainSidebarExperimentUser } from 'calypso/state/selectors/is-domain-sidebar-experiment-user';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import AlreadyOwnADomain from './already-own-a-domain';
 import tip from './tip';
 
@@ -391,7 +391,7 @@ class RegisterDomainStep extends Component {
 	}
 
 	render() {
-		const { isSignupStep, showAlreadyOwnADomain, domainSidebarExperimentUser } = this.props;
+		const { isSignupStep, showAlreadyOwnADomain, isDomainAndPlanPackageFlow } = this.props;
 
 		const {
 			availabilityError,
@@ -433,7 +433,7 @@ class RegisterDomainStep extends Component {
 							{ this.renderSearchBar() }
 						</CompactCard>
 					</div>
-					{ domainSidebarExperimentUser && this.renderQuickFilters() }
+					{ isDomainAndPlanPackageFlow && this.renderQuickFilters() }
 
 					{ ! isSignupStep && isQueryInvalid && (
 						<Notice
@@ -510,17 +510,15 @@ class RegisterDomainStep extends Component {
 	}
 
 	renderQuickFilters() {
-		const items = [
-			{ key: 'all', text: 'All' },
-			{ key: 'blog', text: '.blog' },
-			{ key: 'com', text: '.com' },
-			{ key: 'news', text: '.news' },
-			{ key: 'email', text: '.email' },
-			{ key: 'info', text: '.info' },
-			{ key: 'help', text: '.help' },
-			{ key: 'press', text: '.press' },
-			{ key: 'report', text: '.report' },
-		];
+		if ( this.state.availableTlds.length === 0 ) {
+			return;
+		}
+
+		const items = this.state.availableTlds.slice( 0, 10 ).map( ( tld ) => {
+			return { key: `${ tld }`, text: `.${ tld }` };
+		} );
+
+		items.unshift( { key: 'all', text: 'All' } );
 
 		const handleClick = ( index ) => {
 			const option = items[ index ].key;
@@ -564,13 +562,13 @@ class RegisterDomainStep extends Component {
 			ref: this.bindSearchCardReference,
 			isReskinned: this.props.isReskinned,
 			childrenBeforeCloseButton:
-				this.props.domainSidebarExperimentUser && this.renderSearchFilters(),
+				this.props.isDomainAndPlanPackageFlow && this.renderSearchFilters(),
 		};
 
 		return (
 			<>
 				<Search { ...componentProps }></Search>
-				{ false === this.props.domainSidebarExperimentUser && this.renderSearchFilters() }
+				{ false === this.props.isDomainAndPlanPackageFlow && this.renderSearchFilters() }
 			</>
 		);
 	}
@@ -578,22 +576,24 @@ class RegisterDomainStep extends Component {
 	rejectTrademarkClaim = () => {
 		this.setState( {
 			selectedSuggestion: null,
+			selectedSuggestionPosition: null,
 			trademarkClaimsNoticeInfo: null,
 		} );
 	};
 
 	acceptTrademarkClaim = () => {
-		this.props.onAddDomain( this.state.selectedSuggestion );
+		this.props.onAddDomain( this.state.selectedSuggestion, this.state.selectedSuggestionPosition );
 	};
 
 	renderTrademarkClaimsNotice() {
 		const { isSignupStep } = this.props;
-		const { selectedSuggestion, trademarkClaimsNoticeInfo } = this.state;
+		const { selectedSuggestion, trademarkClaimsNoticeInfo, isLoading } = this.state;
 		const domain = get( selectedSuggestion, 'domain_name' );
 
 		return (
 			<TrademarkClaimsNotice
 				domain={ domain }
+				isLoading={ isLoading }
 				isSignupStep={ isSignupStep }
 				onAccept={ this.acceptTrademarkClaim }
 				onGoBack={ this.rejectTrademarkClaim }
@@ -1326,7 +1326,7 @@ class RegisterDomainStep extends Component {
 		return <FreeDomainExplainer onSkip={ this.props.hideFreePlan } />;
 	}
 
-	onAddDomain = ( suggestion ) => {
+	onAddDomain = ( suggestion, position ) => {
 		const domain = get( suggestion, 'domain_name' );
 		const { premiumDomains } = this.state;
 
@@ -1364,13 +1364,14 @@ class RegisterDomainStep extends Component {
 						this.setState( {
 							trademarkClaimsNoticeInfo: trademarkClaimsNoticeInfo,
 							selectedSuggestion: suggestion,
+							selectedSuggestionPosition: position,
 						} );
 					} else {
-						this.props.onAddDomain( suggestion );
+						this.props.onAddDomain( suggestion, position );
 					}
 				} );
 		} else {
-			this.props.onAddDomain( suggestion );
+			this.props.onAddDomain( suggestion, position );
 		}
 	};
 
@@ -1603,7 +1604,7 @@ export default connect(
 	( state ) => {
 		return {
 			currentUser: getCurrentUser( state ),
-			domainSidebarExperimentUser: isDomainSidebarExperimentUser( state ),
+			isDomainAndPlanPackageFlow: !! getCurrentQueryArguments( state )?.domainAndPlanPackage,
 		};
 	},
 	{

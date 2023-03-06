@@ -34,24 +34,40 @@ function wpcom_should_limit_global_styles( $blog_id = 0 ) {
 		}
 	}
 
-	// Do not limit Global Styles on sites created before we made it a paid feature (2022-12-15).
-	if ( $blog_id < 213403000 ) {
+	// Do not limit Global Styles on theme demo sites.
+	if ( wpcom_global_styles_has_blog_sticker( 'theme-demo-site', $blog_id ) ) {
 		return false;
 	}
 
+	// Do not limit Global Styles if the site paid for it.
 	if ( wpcom_site_has_feature( WPCOM_Features::GLOBAL_STYLES, $blog_id ) ) {
 		return false;
 	}
 
-	if ( function_exists( 'has_blog_sticker' ) && has_blog_sticker( 'theme-demo-site', $blog_id ) ) {
-		return false;
-	}
-
-	if ( function_exists( 'wpcomsh_is_site_sticker_active' ) && wpcomsh_is_site_sticker_active( 'theme-demo-site' ) ) {
+	// Do not limit Global Styles on sites created before we made it a paid feature (2022-12-15),
+	// that had already used Global Styles.
+	if ( wpcom_premium_global_styles_is_site_exempt( $blog_id ) ) {
 		return false;
 	}
 
 	return true;
+}
+
+/**
+ * Wrapper to test a blog sticker on both Simple and Atomic sites at once.
+ *
+ * @param string $blog_sticker The blog sticker.
+ * @param int    $blog_id The WPCOM blog ID.
+ * @return bool Whether the site has the blog sticker.
+ */
+function wpcom_global_styles_has_blog_sticker( $blog_sticker, $blog_id ) {
+	if ( function_exists( 'has_blog_sticker' ) && has_blog_sticker( $blog_sticker, $blog_id ) ) {
+		return true;
+	}
+	if ( function_exists( 'wpcomsh_is_site_sticker_active' ) && wpcomsh_is_site_sticker_active( $blog_sticker ) ) {
+		return true;
+	}
+	return false;
 }
 
 /**
@@ -127,7 +143,11 @@ add_action( 'enqueue_block_editor_assets', 'wpcom_global_styles_enqueue_block_ed
  * @return void
  */
 function wpcom_global_styles_enqueue_assets() {
-	if ( ! wpcom_should_limit_global_styles() ) {
+	if (
+		! wpcom_global_styles_current_user_can_edit_wp_global_styles() ||
+		! wpcom_should_limit_global_styles() ||
+		! wpcom_global_styles_in_use()
+	) {
 		return;
 	}
 
@@ -223,6 +243,44 @@ function wpcom_track_global_styles( $blog_id, $post, $updated ) {
 add_action( 'save_post_wp_global_styles', 'wpcom_track_global_styles', 10, 3 );
 
 /**
+ * Check if a `wp_global_styles` post contains custom Global Styles.
+ *
+ * @param array $wp_global_styles_post The `wp_global_styles` post.
+ * @return bool Whether the post contains custom Global Styles.
+ */
+function wpcom_global_styles_in_use_by_wp_global_styles_post( array $wp_global_styles_post = array() ) {
+	if ( ! isset( $wp_global_styles_post['post_content'] ) ) {
+		return false;
+	}
+
+	$global_style_keys    = array_keys( json_decode( $wp_global_styles_post['post_content'], true ) ?? array() );
+	$global_styles_in_use = count( array_diff( $global_style_keys, array( 'version', 'isGlobalStylesUserThemeJSON' ) ) ) > 0;
+	return $global_styles_in_use;
+}
+
+/**
+ * Checks if the current user can edit the `wp_global_styles` post type.
+ *
+ * @param int $blog_id Blog ID.
+ * @return bool Whether the current user can edit the `wp_global_styles` post type.
+ */
+function wpcom_global_styles_current_user_can_edit_wp_global_styles( $blog_id = 0 ) {
+	// Non-Simple sites on a lower plan are temporary edge cases.
+	// We skip this check to prevent fatals on non-multisite installations.
+	if ( ! defined( 'IS_WPCOM' ) || ! IS_WPCOM ) {
+		return true;
+	}
+
+	if ( ! $blog_id ) {
+		$blog_id = get_current_blog_id();
+	}
+	switch_to_blog( $blog_id );
+	$wp_global_styles_cpt = get_post_type_object( 'wp_global_styles' );
+	restore_current_blog();
+	return current_user_can( $wp_global_styles_cpt->cap->publish_posts );
+}
+
+/**
  * Checks if the current blog has custom styles in use.
  *
  * @return bool Returns true if custom styles are in use.
@@ -238,14 +296,7 @@ function wpcom_global_styles_in_use() {
 
 	$user_cpt = WP_Theme_JSON_Resolver::get_user_data_from_wp_global_styles( wp_get_theme() );
 
-	if ( ! isset( $user_cpt['post_content'] ) ) {
-		do_action( 'global_styles_log', 'global_styles_not_in_use' );
-		return false;
-	}
-
-	$global_style_keys = array_keys( json_decode( $user_cpt['post_content'], true ) ?? array() );
-
-	$global_styles_in_use = count( array_diff( $global_style_keys, array( 'version', 'isGlobalStylesUserThemeJSON' ) ) ) > 0;
+	$global_styles_in_use = wpcom_global_styles_in_use_by_wp_global_styles_post( $user_cpt );
 
 	if ( $global_styles_in_use ) {
 		do_action( 'global_styles_log', 'global_styles_in_use' );
@@ -254,6 +305,68 @@ function wpcom_global_styles_in_use() {
 	}
 
 	return $global_styles_in_use;
+}
+
+/**
+ * Checks whether the site is exempt from Premium Global Styles because
+ * it was created before the Premium Global Styles launch date (2022-12-15)
+ * and had already customized its Global Styles.
+ *
+ * We use blog stickers and other strategies to only perform the intensive check
+ * when strictly needed.
+ *
+ * @param  int $blog_id Blog ID.
+ * @return bool Whether the site is exempt from Premium Global Styles.
+ */
+function wpcom_premium_global_styles_is_site_exempt( $blog_id = 0 ) {
+	// Sites created after we made GS a paid feature (2022-12-15) are never exempt.
+	if ( $blog_id >= 213403000 ) {
+		return false;
+	}
+
+	// If the exemption check has already been performed, just return if the site is exempt.
+	if ( wpcom_global_styles_has_blog_sticker( 'wpcom-premium-global-styles-exemption-checked', $blog_id ) ) {
+		return wpcom_global_styles_has_blog_sticker( 'wpcom-premium-global-styles-exempt', $blog_id );
+	}
+
+	// Non-Simple sites on a lower plan are temporary edge cases.
+	// We exempt them to prevent unexpected temporary changes in their styles.
+	if ( ! defined( 'IS_WPCOM' ) || ! IS_WPCOM ) {
+		return true;
+	}
+
+	// If the current user cannot modify the `wp_global_styles` CPT, the exemption check is not needed;
+	// other conditions will determine whether they can use GS.
+	if ( ! wpcom_global_styles_current_user_can_edit_wp_global_styles( $blog_id ) ) {
+		return false;
+	}
+
+	switch_to_blog( $blog_id );
+
+	add_blog_sticker( 'wpcom-premium-global-styles-exemption-checked', null, null, $blog_id );
+
+	$global_styles_used = false;
+
+	$wp_global_styles_posts = get_posts(
+		array(
+			'post_type'   => 'wp_global_styles',
+			'numberposts' => 100,
+		)
+	);
+	foreach ( $wp_global_styles_posts as $wp_global_styles_post ) {
+		if ( wpcom_global_styles_in_use_by_wp_global_styles_post( $wp_global_styles_post->to_array() ) ) {
+			$global_styles_used = true;
+			break;
+		}
+	}
+
+	if ( $global_styles_used ) {
+		add_blog_sticker( 'wpcom-premium-global-styles-exempt', null, null, $blog_id );
+	}
+
+	restore_current_blog();
+
+	return $global_styles_used;
 }
 
 /**

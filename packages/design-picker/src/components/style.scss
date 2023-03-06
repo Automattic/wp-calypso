@@ -210,7 +210,7 @@
 		align-items: center;
 		display: inline-flex;
 		flex-wrap: wrap; // If theme name and premium badge don't fit on one line
-		margin-top: 8px;
+		margin-top: 3px;
 		flex: 1;
 
 		> * {
@@ -294,10 +294,10 @@
 		.design-picker__image-frame::after {
 			border-color: var(--studio-white);
 		}
+	}
 
-		.design-picker__design-option .design-picker__image-frame::after {
-			background-color: rgba(255, 255, 255, 0.42);
-		}
+	.design-button-container .design-picker__design-option .design-picker__image-frame:hover::after {
+		background-color: rgba(255, 255, 255, 0.42);
 	}
 }
 
@@ -331,10 +331,10 @@
 		.design-picker__image-frame::after {
 			border-color: #a7aaad;
 		}
+	}
 
-		.design-picker__design-option .design-picker__image-frame::after {
-			background-color: rgba(255, 255, 255, 0.72);
-		}
+	.design-button-container .design-picker__design-option .design-picker__image-frame:hover::after {
+		background-color: rgba(255, 255, 255, 0.72);
 	}
 }
 

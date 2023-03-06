@@ -31,6 +31,34 @@ $grid-vertical-gutters: 32px;
 
 
 .stats__module-list.stats__module--unified.is-insights-page-enabled {
+
+	&.is-jetpack {
+		@include stats-desktop-grid(
+			"tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories comments comments comments comments comments comments"
+			"followers followers followers followers followers followers publicize publicize publicize publicize publicize publicize"
+			"latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary latest-post-summary social-followers social-followers social-followers social-followers social-followers social-followers",
+			3
+		);
+
+		@include stats-tablet-grid(
+			"tags-categories tags-categories tags-categories tags-categories comments comments comments comments"
+			"followers followers followers followers followers followers followers followers"
+			"publicize publicize publicize publicize latest-post-summary latest-post-summary latest-post-summary latest-post-summary"
+			"social-followers social-followers social-followers social-followers social-followers social-followers social-followers social-followers",
+			4
+		);
+
+		@include stats-mobile-grid(
+			"tags-categories tags-categories tags-categories tags-categories"
+			"comments comments comments comments"
+			"followers followers followers followers"
+			"publicize publicize publicize publicize"
+			"latest-post-summary latest-post-summary latest-post-summary latest-post-summary"
+			"social-followers social-followers social-followers social-followers",
+			6
+		);
+	}
+
 	@include stats-desktop-grid(
 		"tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories comments comments comments comments comments comments"
 		"shares shares shares shares followers followers followers followers publicize publicize publicize publicize"
@@ -117,6 +145,7 @@ $grid-vertical-gutters: 32px;
 		grid-area: publicize;
 	}
 }
+
 
 .is-section-stats .stats__module-list--traffic {
 	@include stats-desktop-grid(

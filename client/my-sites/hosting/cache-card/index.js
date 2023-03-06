@@ -9,8 +9,6 @@ import getRequest from 'calypso/state/selectors/get-request';
 import { shouldRateLimitAtomicCacheClear } from 'calypso/state/selectors/should-rate-limit-atomic-cache-clear';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-import './style.scss';
-
 const CacheCard = ( {
 	disabled,
 	shouldRateLimitCacheClear,
@@ -28,7 +26,7 @@ const CacheCard = ( {
 			<div>
 				<p>
 					{ translate(
-						'Be careful, clearing the cache may make your site unresponsive while it is being rebuilt. {{a}}Learn more about clearing your site’s cache{{/a}}',
+						'Be careful, clearing the cache may make your site unresponsive while it is being rebuilt. {{a}}Learn more about clearing your site’s cache{{/a}}.',
 						{
 							components: {
 								a: <InlineSupportLink supportContext="hosting-clear-cache" showIcon={ false } />,
@@ -55,7 +53,7 @@ const CacheCard = ( {
 	//autorenew
 	return (
 		<Card className="cache-card">
-			<MaterialIcon icon="autorenew" size={ 24 } />
+			<MaterialIcon icon="autorenew" size={ 32 } />
 			<CardHeading id="cache">{ translate( 'Cache' ) }</CardHeading>
 			{ getClearCacheContent() }
 		</Card>

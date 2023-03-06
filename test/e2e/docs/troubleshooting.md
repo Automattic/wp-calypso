@@ -8,9 +8,8 @@
 <!-- TOC -->
 
 - [Troubleshooting](#troubleshooting)
-  - [git pre-commit hook/husky](#git-pre-commit-hookhusky)
-  - [Chromium binary is not available for arm64](#chromium-binary-is-not-available-for-arm64)
-  - [Package 'lcms2', required by 'vips', not found](#package-lcms2-required-by-vips-not-found)
+    - [git pre-commit hook/husky](#git-pre-commit-hookhusky)
+    - [Package 'lcms2', required by 'vips', not found](#package-lcms2-required-by-vips-not-found)
 
 <!-- /TOC -->
 
@@ -41,37 +40,6 @@ yarn install
 ```
 
 Once complete, running `git commit` should no longer trigger the git pre-commit hook error.
-
-## Chromium binary is not available for arm64
-
-Problem:
-
-```
-The chromium binary is not available for arm64:
-If you are on Ubuntu, you can install with:
-
- apt-get install chromium-browser
-
-/Calypso/wp-calypso/node_modules/backstopjs/node_modules/puppeteer/lib/cjs/puppeteer/node/BrowserFetcher.js:112
-            throw new Error();
-            ^
-
-Error
-    at /Calypso/wp-calypso/node_modules/backstopjs/node_modules/puppeteer/lib/cjs/puppeteer/node/BrowserFetcher.js:112:19
-    at FSReqCallback.oncomplete (node:fs:198:21)
-
-```
-
-Solution:
-
-```
-PUPPETEER_SKIP_DOWNLOAD=true
-```
-
-Description:
-This issue occurs for Apple Silicon users. At the time of writing, the version of Puppeteer used in `wp-calypso` pre-dates Apple Silicon.
-
-This issue should go away once Puppeteer version is bumped to an Apple Silicon-compatible version.
 
 ## Package 'lcms2', required by 'vips', not found
 

@@ -150,9 +150,20 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 
 	const getCurrentMessage = () => {
 		return isWooExpressFlow( flow )
-			? __( "Woo! We're creating your store" )
+			? __( 'Woo! We’re creating your store' )
 			: __( 'Creating your site' );
 	};
+
+	const getSubTitle = () => {
+		if ( isWooExpressFlow( flow ) ) {
+			return __(
+				'#FunWooFact: Did you know that Woo powers almost 4 million stores worldwide? You’re in good company.'
+			);
+		}
+		return null;
+	};
+
+	const subTitle = getSubTitle();
 
 	return (
 		<>
@@ -171,6 +182,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 						) : (
 							<LoadingEllipsis />
 						) }
+						{ subTitle && <p className="processing-step__subtitle">{ subTitle }</p> }
 					</>
 				}
 				stepProgress={ stepProgress }

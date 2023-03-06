@@ -6,7 +6,7 @@ import {
 	BILLING_TRANSACTION_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import { combineReducers, keyedReducer } from 'calypso/state/utils';
-import type { IndividualReceipt } from '../types';
+import type { BillingTransaction } from '../types';
 import type { AnyAction } from 'redux';
 
 /**
@@ -47,7 +47,7 @@ export const error = ( state = false, action: AnyAction ): boolean => {
  * Returns the updated data state after an action has been dispatched.
  * The state contains the transaction data after a successful fetch
  */
-export const data = ( state = null, action: AnyAction ): IndividualReceipt | null => {
+export const data = ( state = null, action: AnyAction ): BillingTransaction | null => {
 	switch ( action.type ) {
 		case BILLING_TRANSACTION_RECEIVE: {
 			const { receipt } = action;

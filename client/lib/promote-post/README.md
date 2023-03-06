@@ -7,5 +7,6 @@ Allow users to promote their posts via WordPress.com and/or Tumblr.
 This is implemented by invoking our DSP Widget which handles the promote process.
 
 In order to translate:
+
 - Execute `yarn translate` in DSP-client project
 - copy `dsp-client/build/strings.ts` in this folder

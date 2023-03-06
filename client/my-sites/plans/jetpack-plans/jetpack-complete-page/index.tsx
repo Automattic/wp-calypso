@@ -15,28 +15,25 @@ import JetpackRnaDialogCard from 'calypso/components/jetpack/card/jetpack-rna-di
 import Main from 'calypso/components/main';
 import { JPC_PATH_PLANS } from 'calypso/jetpack-connect/constants';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { successNotice } from 'calypso/state/notices/actions';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
-import { QueryArgs, Duration } from '../types';
+import { QueryArgs } from '../types';
+import CtaButtons from './components/cta-buttons';
 import { ItemPrice } from './item-price';
 import ItemsIncluded from './items-included';
+import ProductHeader from './product-header';
 import ShowLicenseActivationLinkIfAvailable from './show-license-activation-link-if-available';
+import PricingPageLink from './view-all-products-link';
+
 import './style.scss';
 
 interface Props {
-	defaultDuration: Duration;
 	urlQueryArgs?: QueryArgs;
 	siteSlug?: string;
-	locale?: string;
 }
 
-const JetpackCompletePage: React.FC< Props > = ( {
-	// these unused props I think will be needed later for the price componentt and the getCheckoutUrl() functions/buttons
-	defaultDuration,
-	urlQueryArgs,
-	siteSlug,
-	locale,
-} ) => {
+const JetpackCompletePage: React.FC< Props > = ( { urlQueryArgs, siteSlug } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId );
@@ -46,6 +43,12 @@ const JetpackCompletePage: React.FC< Props > = ( {
 		if ( window.location.pathname.startsWith( JPC_PATH_PLANS ) ) {
 			dispatch( successNotice( translate( 'Jetpack is successfully connected' ) ) );
 		}
+
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_complete_page_open', {
+				site_id: siteId,
+			} )
+		);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
@@ -63,26 +66,12 @@ const JetpackCompletePage: React.FC< Props > = ( {
 					cardImage={ rnaImageComplete }
 					cardImage2xRetina={ rnaImageComplete2xRetina }
 				>
-					<>
-						{ /* This is just example/fill text here, that should be made into various components */ }
-						<h1
-							style={ {
-								fontSize: '36px',
-								lineHeight: '40px',
-								fontWeight: 700,
-								marginBottom: '16px',
-							} }
-						>
-							{ translate( 'Get Jetpack Complete' ) }
-						</h1>
-						<p style={ { fontSize: '20px', lineHeight: '30px', fontWeight: 500 } }>
-							The full Jetpack suite with real-time security, instant site search, ad-free video,
-							all CRM extensions, and extra storage for backups and video.
-						</p>
+					<ProductHeader item={ item } />
+					<PricingPageLink siteSlug={ siteSlug || urlQueryArgs?.site } />
+					<ItemsIncluded />
+					<ItemPrice item={ item } siteId={ siteId } />
 
-						<ItemsIncluded />
-						<ItemPrice item={ item } siteId={ siteId } />
-					</>
+					<CtaButtons />
 				</JetpackRnaDialogCard>
 			</Main>
 		</>

@@ -2,6 +2,11 @@
 	color: var(--color-text-subtle);
 }
 
+.web-server-logs-card__type .form-radios-bar {
+	display: flex;
+	gap: 1em;
+}
+
 .web-server-logs-card__dates {
 	display: flex;
 	flex-direction: row;

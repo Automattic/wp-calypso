@@ -141,8 +141,10 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 
 	const additionalPathProps = props.redirectTo ? { redirect_to: props.redirectTo } : {};
 
-	const domainFromHomeUpsellFlow = new URLSearchParams( window.location.search ).get(
-		'get_domain'
+	const isDomainUpsellFlow = new URLSearchParams( window.location.search ).get( 'domain' );
+
+	const isDomainAndPlanPackageFlow = new URLSearchParams( window.location.search ).get(
+		'domainAndPlanPackage'
 	);
 
 	return (
@@ -155,7 +157,8 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 					selected={ intervalType === 'monthly' }
 					path={ generatePath( props, {
 						intervalType: 'monthly',
-						get_domain: domainFromHomeUpsellFlow,
+						domain: isDomainUpsellFlow,
+						domainAndPlanPackage: isDomainAndPlanPackageFlow,
 						...additionalPathProps,
 					} ) }
 					isPlansInsideStepper={ props.isPlansInsideStepper }
@@ -167,7 +170,8 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 					selected={ intervalType === 'yearly' }
 					path={ generatePath( props, {
 						intervalType: 'yearly',
-						get_domain: domainFromHomeUpsellFlow,
+						domain: isDomainUpsellFlow,
+						domainAndPlanPackage: isDomainAndPlanPackageFlow,
 						...additionalPathProps,
 					} ) }
 					isPlansInsideStepper={ props.isPlansInsideStepper }

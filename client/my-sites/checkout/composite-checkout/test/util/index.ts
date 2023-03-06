@@ -88,6 +88,12 @@ export const countryList: CountryListItem[] = [
 		tax_needs_subdivision: true,
 	},
 	{
+		code: 'CH',
+		name: 'Switzerland',
+		has_postal_codes: true,
+		tax_needs_address: true,
+	},
+	{
 		code: 'GB',
 		name: 'United Kingdom',
 		has_postal_codes: true,
@@ -357,22 +363,105 @@ export function mockSetCartEndpointWith( { currency, locale } ): SetCart {
 	};
 }
 
-export function convertProductSlugToResponseProduct( productSlug: string ) {
+export function convertProductSlugToResponseProduct( productSlug: string ): ResponseCartProduct {
 	switch ( productSlug ) {
+		case 'jetpack_anti_spam_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2111,
+				product_name: 'Jetpack Akismet Anti-spam',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'jetpack_anti_spam':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2110,
+				product_name: 'Jetpack Akismet Anti-spam',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
 		case 'jetpack_backup_t1_monthly':
 			return {
 				...getEmptyResponseCartProduct(),
-				product_id: 2100,
+				product_id: 2113,
 				product_name: 'Jetpack VaultPress Backup (10GB)',
-				product_slug: 'jetpack_backup_t1_monthly',
+				product_slug: productSlug,
+				bill_period: 'monthly',
 				currency: 'USD',
 			};
 		case 'jetpack_backup_t1_yearly':
 			return {
 				...getEmptyResponseCartProduct(),
-				product_id: 2100,
+				product_id: 2112,
 				product_name: 'Jetpack VaultPress Backup (10GB)',
-				product_slug: 'jetpack_backup_t1_yearly',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_backup_t2_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2115,
+				product_name: 'Jetpack VaultPress Backup (1TB)',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'jetpack_backup_t2_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2114,
+				product_name: 'Jetpack VaultPress Backup (1TB)',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_boost_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2400,
+				product_name: 'Jetpack Boost',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'jetpack_boost_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2401,
+				product_name: 'Jetpack Boost',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_complete_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2015,
+				product_name: 'Jetpack Complete',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'jetpack_complete':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2014,
+				product_name: 'Jetpack Complete',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_scan_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2107,
+				product_name: 'Jetpack Scan',
+				product_slug: productSlug,
+				bill_period: 'monthly',
 				currency: 'USD',
 			};
 		case 'jetpack_scan':
@@ -380,7 +469,116 @@ export function convertProductSlugToResponseProduct( productSlug: string ) {
 				...getEmptyResponseCartProduct(),
 				product_id: 2106,
 				product_name: 'Jetpack Scan Daily',
-				product_slug: 'jetpack_scan',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_search_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2105,
+				product_name: 'Jetpack Search',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'jetpack_search':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2104,
+				product_name: 'Jetpack Search',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_security_t1_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2017,
+				product_name: 'Jetpack Security T1',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'jetpack_security_t1_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2016,
+				product_name: 'Jetpack Security T1',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_security_t2_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2020,
+				product_name: 'Jetpack Security T2',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'jetpack_security_t2_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2019,
+				product_name: 'Jetpack Security T2',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_social_basic_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2504,
+				product_name: 'Jetpack Social Basic',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'jetpack_social_basic_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2503,
+				product_name: 'Jetpack Social Basic',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_social_advanced_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2603,
+				product_name: 'Jetpack Social Advanced',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'jetpack_social_advanced_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2602,
+				product_name: 'Jetpack Social Advanced',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_videopress_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2117,
+				product_name: 'Jetpack VideoPress',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'jetpack_videopress_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2116,
+				product_name: 'Jetpack VideoPress',
+				product_slug: productSlug,
+				bill_period: 'yearly',
 				currency: 'USD',
 			};
 		default:

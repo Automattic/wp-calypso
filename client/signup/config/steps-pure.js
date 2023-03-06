@@ -205,6 +205,15 @@ export function generateSteps( {
 			fulfilledStepCallback: isPlanFulfilled,
 		},
 
+		'plans-pm': {
+			stepName: 'plans-pm',
+			apiRequestFunction: addPlanToCart,
+			dependencies: [ 'siteSlug' ],
+			optionalDependencies: [ 'emailItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			fulfilledStepCallback: isPlanFulfilled,
+		},
+
 		'plans-newsletter': {
 			stepName: 'plans',
 			apiRequestFunction: addPlanToCart,
@@ -771,7 +780,7 @@ export function generateSteps( {
 		},
 		'difm-options': {
 			stepName: 'site-options',
-			providesDependencies: [ 'siteTitle', 'tagline', 'newOrExistingSiteChoice' ],
+			providesDependencies: [ 'siteTitle', 'tagline', 'searchTerms', 'newOrExistingSiteChoice' ],
 			optionalDependencies: [ 'newOrExistingSiteChoice' ],
 			defaultDependencies: {
 				newOrExistingSiteChoice: 'existing-site',
@@ -782,7 +791,7 @@ export function generateSteps( {
 		},
 		'difm-store-options': {
 			stepName: 'site-options',
-			providesDependencies: [ 'siteTitle', 'tagline', 'newOrExistingSiteChoice' ],
+			providesDependencies: [ 'siteTitle', 'tagline', 'searchTerms', 'newOrExistingSiteChoice' ],
 			optionalDependencies: [ 'newOrExistingSiteChoice' ],
 			defaultDependencies: {
 				newOrExistingSiteChoice: 'existing-site',

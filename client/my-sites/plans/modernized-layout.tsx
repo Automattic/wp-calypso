@@ -134,10 +134,11 @@ const ModernizedLayout: React.FunctionComponent< { dropShadowOnHeader?: boolean 
 			// this overrides the default .layout__content that adds unwanted padding
 			& .layout__content,
 			&.theme-default .focus-content .layout__content {
-				padding: ${ layoutContentPaddingTop } 0 0 0;
+				padding: 0;
+				padding-block-start: ${ layoutContentPaddingTop };
 
 				@media ( min-width: ${ sidebarAppearanceBreakPoint } ) {
-					padding: ${ layoutContentPaddingTop } 0 0 calc( var( --sidebar-width-max ) + 1px );
+					padding-inline-start: calc( var( --sidebar-width-max ) + 1px );
 				}
 
 				.jetpack-colophon {

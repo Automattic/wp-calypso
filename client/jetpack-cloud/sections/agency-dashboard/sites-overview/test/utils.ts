@@ -4,7 +4,7 @@
 
 import { translate } from 'i18n-calypso';
 import * as utils from '../utils';
-import type { SiteData } from '../types';
+import type { SiteData, Site } from '../types';
 
 describe( 'utils', () => {
 	describe( '#getActionEventName()', () => {
@@ -27,7 +27,7 @@ describe( 'utils', () => {
 		const scanThreats = 4;
 		const pluginUpdates = [ 'plugin-1', 'plugin-2', 'plugin-3' ];
 		const siteUrl = 'test.jurassic.ninja';
-		const siteObj = {
+		const siteObj: Site = {
 			blog_id: 1234,
 			url: 'test.jurassic.ninja',
 			url_with_scheme: 'https://test.jurassic.ninja/',
@@ -46,6 +46,20 @@ describe( 'utils', () => {
 				last_down_time: '',
 				monitor_deferment_time: 5,
 				monitor_user_emails: [],
+				monitor_user_email_notifications: true,
+				monitor_user_wp_note_notifications: true,
+			},
+			site_stats: {
+				views: {
+					total: 0,
+					trend: 'up',
+					trend_change: 0,
+				},
+				visitors: {
+					total: 0,
+					trend: 'up',
+					trend_change: 0,
+				},
 			},
 		};
 		const rows: SiteData = {
@@ -167,6 +181,18 @@ describe( 'utils', () => {
 					monitor_settings: {
 						monitor_active: true,
 					},
+					site_stats: {
+						views: {
+							total: 0,
+							trend: 'up',
+							trend_change: 0,
+						},
+						visitors: {
+							total: 0,
+							trend: 'up',
+							trend_change: 0,
+						},
+					},
 				},
 			];
 			expect( formatSites( sites ) ).toEqual( [
@@ -176,6 +202,10 @@ describe( 'utils', () => {
 						status: '',
 						type: 'site',
 						value: sites[ 0 ],
+					},
+					stats: {
+						type: 'stats',
+						data: sites[ 0 ].site_stats,
 					},
 					backup: {
 						status: 'success',

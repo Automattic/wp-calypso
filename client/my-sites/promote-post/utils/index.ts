@@ -1,9 +1,16 @@
 import { __, sprintf } from '@wordpress/i18n';
 import moment from 'moment';
-import {
-	AudienceList,
-	AudienceListKeys,
-} from 'calypso/data/promote-post/use-promote-post-campaigns-query';
+import { Campaign } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
+
+export const campaignStatus = {
+	SCHEDULED: 'scheduled',
+	CREATED: 'created',
+	REJECTED: 'rejected',
+	APPROVED: 'approved',
+	ACTIVE: 'active',
+	CANCELED: 'canceled',
+	FINISHED: 'finished',
+};
 
 export const getPostType = ( type: string ) => {
 	switch ( type ) {
@@ -23,22 +30,25 @@ export const getPostType = ( type: string ) => {
 
 export const getCampaignStatusBadgeColor = ( status: string ) => {
 	switch ( status ) {
-		case 'created': {
+		case campaignStatus.SCHEDULED: {
 			return 'info-blue';
 		}
-		case 'rejected': {
+		case campaignStatus.CREATED: {
+			return 'info-blue';
+		}
+		case campaignStatus.REJECTED: {
 			return 'error';
 		}
-		case 'approved': {
+		case campaignStatus.APPROVED: {
 			return 'info-blue';
 		}
-		case 'active': {
+		case campaignStatus.ACTIVE: {
 			return 'info-green';
 		}
-		case 'canceled': {
+		case campaignStatus.CANCELED: {
 			return 'error';
 		}
-		case 'finished': {
+		case campaignStatus.FINISHED: {
 			return 'info-purple';
 		}
 		default:
@@ -48,27 +58,42 @@ export const getCampaignStatusBadgeColor = ( status: string ) => {
 
 export const getCampaignStatus = ( status: string ) => {
 	switch ( status ) {
-		case 'created': {
+		case campaignStatus.SCHEDULED: {
+			return __( 'Scheduled' );
+		}
+		case campaignStatus.CREATED: {
 			return __( 'Pending review' );
 		}
-		case 'rejected': {
+		case campaignStatus.REJECTED: {
 			return __( 'Rejected' );
 		}
-		case 'approved': {
+		case campaignStatus.APPROVED: {
 			return __( 'Approved' );
 		}
-		case 'active': {
+		case campaignStatus.ACTIVE: {
 			return __( 'Active' );
 		}
-		case 'canceled': {
+		case campaignStatus.CANCELED: {
 			return __( 'Canceled' );
 		}
-		case 'finished': {
+		case campaignStatus.FINISHED: {
 			return __( 'Finished' );
 		}
 		default:
 			return status;
 	}
+};
+
+export const normalizeCampaignStatus = ( campaign: Campaign ): string => {
+	// This is a transactional status, so we just alter this in calypso
+	if (
+		campaign.status === campaignStatus.ACTIVE &&
+		moment().isBefore( campaign.start_date, 'day' )
+	) {
+		return campaignStatus.SCHEDULED;
+	}
+
+	return campaign.status;
 };
 
 export const getCampaignDurationDays = ( start_date: string, end_date: string ) => {
@@ -120,8 +145,8 @@ export const getCampaignClickthroughRate = ( clicks_total: number, impressions_t
 export const getCampaignDurationFormatted = ( start_date: string, end_date: string ) => {
 	const campaignDays = getCampaignDurationDays( start_date, end_date );
 
-	const dateStartFormatted = moment( start_date ).format( 'MMM D' );
-	const dateEndFormatted = moment( end_date ).format( 'MMM D' );
+	const dateStartFormatted = moment.utc( start_date ).format( 'MMM D' );
+	const dateEndFormatted = moment.utc( end_date ).format( 'MMM D' );
 	const durationFormatted = `${ dateStartFormatted } - ${ dateEndFormatted } (${ campaignDays } ${ __(
 		'days'
 	) })`;
@@ -167,19 +192,8 @@ export const getCampaignEstimatedImpressions = ( displayDeliveryEstimate: string
 	return `${ ( +minEstimate ).toLocaleString() } - ${ ( +maxEstimate ).toLocaleString() }`;
 };
 
-export const getCampaignAudienceString = ( audience_list: AudienceList ) => {
-	if ( ! audience_list ) {
-		return '';
-	}
-	const audience = Object.keys( audience_list )
-		.reduce( ( acc, key ) => {
-			return `${ acc }, ${ audience_list[ key as keyof typeof AudienceListKeys ] }`;
-		}, '' )
-		.substring( 2 );
-
-	return audience;
-};
-
-export const canCancelCampaign = ( campaignStatus: string ) => {
-	return [ 'created', 'active' ].includes( campaignStatus );
+export const canCancelCampaign = ( status: string ) => {
+	return [ campaignStatus.SCHEDULED, campaignStatus.CREATED, campaignStatus.ACTIVE ].includes(
+		status
+	);
 };

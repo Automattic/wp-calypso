@@ -3,8 +3,8 @@ import { shuffle } from '@automattic/js-utils';
 import { addQueryArgs } from '@wordpress/url';
 import { DEFAULT_VIEWPORT_WIDTH, MOBILE_VIEWPORT_WIDTH } from '../constants';
 import { availableDesignsConfig } from './available-designs-config';
-import type { Design, DesignUrlOptions } from '../types';
 import type { AvailableDesigns } from './available-designs-config';
+import type { Design, DesignUrlOptions } from '../types';
 import type { MShotsOptions } from '@automattic/onboarding';
 
 /** @deprecated used for Gutenboarding (/new flow) */
@@ -123,5 +123,5 @@ export function isBlankCanvasDesign( design?: Design ): boolean {
 	if ( ! design ) {
 		return false;
 	}
-	return /blank-canvas/i.test( design.slug );
+	return /blank-canvas/i.test( design.slug ) && ! design.is_virtual;
 }

@@ -28,7 +28,9 @@ export default function VatInfoPage() {
 	if ( fetchError ) {
 		return (
 			<div className="vat-info">
-				<CompactCard>{ translate( 'An error occurred while fetching VAT details.' ) }</CompactCard>
+				<CompactCard>
+					{ translate( 'An error occurred while fetching Business Tax ID details.' ) }
+				</CompactCard>
 			</div>
 		);
 	}
@@ -44,11 +46,11 @@ export default function VatInfoPage() {
 			<Column type="sidebar">
 				<Card className="vat-info__sidebar-card">
 					<CardHeading tagName="h1" size={ 16 } isBold={ true } className="vat-info__sidebar-title">
-						{ translate( 'VAT Information' ) }
+						{ translate( 'Business Tax ID details' ) }
 					</CardHeading>
 					<p className="vat-info__sidebar-paragraph">
 						{ translate(
-							"We currently only provide VAT invoices to users who are properly listed in the VIES (VAT Information Exchange System) or the UK VAT databases. VAT information saved on this page will be applied to all of your account's receipts."
+							"We currently only provide Business Tax ID invoices to users who are properly registered. Business Tax ID information saved on this page will be applied to all of your account's receipts."
 						) }
 					</p>
 				</Card>
@@ -92,7 +94,7 @@ function VatForm() {
 				/>
 			</FormFieldset>
 			<FormFieldset className="vat-info__vat-field">
-				<FormLabel htmlFor="vat">{ translate( 'VAT Number' ) }</FormLabel>
+				<FormLabel htmlFor="vat">{ translate( 'Business Tax ID Number' ) }</FormLabel>
 				<FormTextInput
 					name="vat"
 					disabled={ isUpdating || isVatAlreadySet }
@@ -104,7 +106,7 @@ function VatForm() {
 				{ isVatAlreadySet && (
 					<FormSettingExplanation>
 						{ translate(
-							'To change your VAT number, {{contactSupportLink}}please contact support{{/contactSupportLink}}.',
+							'To change your Business Tax ID number, {{contactSupportLink}}please contact support{{/contactSupportLink}}.',
 							{
 								components: {
 									contactSupportLink: (
@@ -166,6 +168,7 @@ function CountryCodeInput( {
 		'AT',
 		'BE',
 		'BG',
+		'CH',
 		'CY',
 		'CZ',
 		'DE',
@@ -175,6 +178,7 @@ function CountryCodeInput( {
 		'ES',
 		'FI',
 		'FR',
+		'GB',
 		'HR',
 		'HU',
 		'IE',
@@ -190,7 +194,6 @@ function CountryCodeInput( {
 		'SE',
 		'SI',
 		'SK',
-		'GB',
 		'XI',
 	];
 
@@ -235,7 +238,9 @@ function useDisplayVatNotices( {
 			reduxDispatch( removeNotice( 'vat_info_notice' ) );
 			reduxDispatch(
 				errorNotice(
-					translate( 'Your VAT details are not valid. Please check each field and try again.' ),
+					translate(
+						'Your Business Tax ID details are not valid. Please check each field and try again.'
+					),
 					{ id: 'vat_info_notice' }
 				)
 			);
@@ -247,7 +252,7 @@ function useDisplayVatNotices( {
 			reduxDispatch(
 				errorNotice(
 					translate(
-						'An error occurred while updating your VAT details. Please try again or contact support.'
+						'An error occurred while updating your Business Tax ID details. Please try again or contact support.'
 					),
 					{
 						id: 'vat_info_notice',
@@ -260,7 +265,7 @@ function useDisplayVatNotices( {
 		if ( success ) {
 			reduxDispatch( removeNotice( 'vat_info_notice' ) );
 			reduxDispatch(
-				successNotice( translate( 'Your VAT details have been updated!' ), {
+				successNotice( translate( 'Your Business Tax ID details have been updated!' ), {
 					id: 'vat_info_notice',
 				} )
 			);

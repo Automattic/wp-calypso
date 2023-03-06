@@ -10,9 +10,9 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import useCampaignsQuery from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
 import CampaignsList from 'calypso/my-sites/promote-post/components/campaigns-list';
-import { Post } from 'calypso/my-sites/promote-post/components/post-item';
 import PostsList from 'calypso/my-sites/promote-post/components/posts-list';
 import PostsListBanner from 'calypso/my-sites/promote-post/components/posts-list-banner';
 import PromotePostTabBar from 'calypso/my-sites/promote-post/components/promoted-post-filter';
@@ -33,6 +33,7 @@ const queryPost = {
 	number: 20, // max supported by /me/posts endpoint for all-sites mode
 	status: 'publish', // do not allow private or unpublished posts
 	type: 'post',
+	order_by: 'id',
 };
 const queryPage = {
 	...queryPost,
@@ -47,19 +48,6 @@ const queryProducts = {
 export type DSPMessage = {
 	errorCode?: string;
 };
-
-function sortItemsByPublishedDate( items: Post[] ) {
-	return items.slice( 0 ).sort( function ( a, b ) {
-		if ( a.date && b.date ) {
-			const dateCompare = Date.parse( b.date ) - Date.parse( a.date );
-			if ( 0 !== dateCompare ) {
-				return dateCompare;
-			}
-		}
-		// ...otherwise, we return the greater of the two item IDs
-		return b.ID - a.ID;
-	} );
-}
 
 const ERROR_NO_LOCAL_USER = 'no_local_user';
 
@@ -154,13 +142,13 @@ export default function PromotedPosts( { tab }: Props ) {
 		);
 	}
 
-	const content = sortItemsByPublishedDate( [
-		...( posts || [] ),
-		...( pages || [] ),
-		...( products || [] ),
-	] );
+	const content = [ ...( posts || [] ), ...( pages || [] ), ...( products || [] ) ].sort(
+		( a, b ) => b.ID - a.ID
+	);
 
-	const isLoading = isLoadingPage && isLoadingPost && isLoadingProducts;
+	const isLoading = isWpMobileApp()
+		? isLoadingPage && isLoadingPost
+		: isLoadingPage && isLoadingPost && isLoadingProducts;
 
 	return (
 		<Main wideLayout className="promote-post">
@@ -193,7 +181,9 @@ export default function PromotedPosts( { tab }: Props ) {
 
 			<QueryPosts siteId={ selectedSiteId } query={ queryPost } postId={ null } />
 			<QueryPosts siteId={ selectedSiteId } query={ queryPage } postId={ null } />
-			<QueryPosts siteId={ selectedSiteId } query={ queryProducts } postId={ null } />
+			{ ! isWpMobileApp() && (
+				<QueryPosts siteId={ selectedSiteId } query={ queryProducts } postId={ null } />
+			) }
 
 			{ selectedTab === 'posts' && <PostsList content={ content } isLoading={ isLoading } /> }
 		</Main>

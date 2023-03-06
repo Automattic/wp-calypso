@@ -24,6 +24,11 @@ const initialState = {
 		domains: {
 			items: [ 'example.wordpress.com' ],
 		},
+		plans: {
+			1: {
+				product_slug: 'free_plan',
+			},
+		},
 	},
 	ui: {
 		selectedSiteId: 1,
@@ -64,7 +69,6 @@ describe( 'index', () => {
 				<DomainUpsell />
 			</Provider>
 		);
-		expect( 1 ).toBe( 1 );
 
 		expect(
 			screen.getByRole( 'heading', { name: 'Own your online identity with a custom domain' } )
@@ -73,7 +77,9 @@ describe( 'index', () => {
 		const searchLink = screen.getByRole( 'link', { name: 'Search for a domain' } );
 		expect( searchLink ).toBeInTheDocument();
 		expect(
-			searchLink.href.endsWith( '/domains/add/example.wordpress.com?domainAndPlanPackage=true' )
+			searchLink.href.endsWith(
+				'/domains/add/example.wordpress.com?domainAndPlanPackage=true&domain=true'
+			)
 		).toBeTruthy();
 	} );
 
@@ -95,6 +101,8 @@ describe( 'index', () => {
 
 		const user = userEvent.setup();
 		await user.click( screen.getByRole( 'button', { name: 'Buy this domain' } ) );
-		expect( pageLink ).toBe( '/plans/yearly/example.wordpress.com?get_domain=example.blog' );
+		expect( pageLink ).toBe(
+			'/plans/yearly/example.wordpress.com?domain=true&domainAndPlanPackage=true'
+		);
 	} );
 } );

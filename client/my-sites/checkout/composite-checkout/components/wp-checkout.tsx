@@ -146,7 +146,7 @@ export default function WPCheckout( {
 	areThereErrors,
 	isInitialCartLoading,
 	customizedPreviousPath,
-	forceRadioButtons,
+	useVariantPickerRadioButtons,
 }: {
 	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
 	changePlanLength: OnChangeItemVariant;
@@ -163,9 +163,8 @@ export default function WPCheckout( {
 	areThereErrors: boolean;
 	isInitialCartLoading: boolean;
 	customizedPreviousPath?: string;
-	// TODO: This is just for unit tests. Remove forceRadioButtons everywhere
-	// when calypso_checkout_variant_picker_radio_2212 ExPlat test completes.
-	forceRadioButtons?: boolean;
+	// This is just for unit tests.
+	useVariantPickerRadioButtons?: boolean;
 } ) {
 	const cartKey = useCartKey();
 	const {
@@ -357,7 +356,7 @@ export default function WPCheckout( {
 				titleContent={ <OrderReviewTitle /> }
 				completeStepContent={
 					<WPCheckoutOrderReview
-						forceRadioButtons={ forceRadioButtons }
+						useVariantPickerRadioButtons={ useVariantPickerRadioButtons }
 						removeProductFromCart={ removeProductFromCart }
 						couponFieldStateProps={ couponFieldStateProps }
 						onChangePlanLength={ changePlanLength }
@@ -396,7 +395,7 @@ export default function WPCheckout( {
 									reduxDispatch(
 										errorNotice(
 											translate(
-												'Your VAT details are not valid. Please check each field and try again.'
+												'Your Business Tax ID details are not valid. Please check each field and try again.'
 											),
 											{ id: 'vat_info_notice' }
 										)

@@ -65,6 +65,16 @@ class WPCOM_Documentation_Links {
 			'wpcomDocumentationLinksAssetsUrl',
 			plugins_url( 'dist/', __FILE__ )
 		);
+
+		// This is a way to get the data from the customize-controls script and change the link to the wpcom support page.
+		global $wp_scripts;
+		$data = $wp_scripts->get_data( 'customize-controls', 'data' );
+
+		if ( $data ) {
+			$data = str_replace( 'https:\\/\\/wordpress.org\\/support\\/article\\/site-editor\\/\\', 'https:\\/\\/wordpress.com\\/support\\/site-editor\\/\\', $data );
+			$wp_scripts->registered['customize-controls']->extra['data'] = $data;
+		}
+
 		wp_localize_script(
 			'wpcom-documentation-links-script',
 			'wpcomDocumentationLinksLocale',

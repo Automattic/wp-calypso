@@ -2,6 +2,7 @@ import {
 	PLAN_PREMIUM,
 	PLAN_JETPACK_SECURITY_DAILY,
 	WPCOM_FEATURES_WORDADS,
+	FEATURE_WORDADS_INSTANT,
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
@@ -11,14 +12,18 @@ import { connect } from 'react-redux';
 import wordAdsImage from 'calypso/assets/images/illustrations/dotcom-wordads.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import ActionCard from 'calypso/components/action-card';
+import QuerySiteFeatures from 'calypso/components/data/query-site-features';
+import QuerySites from 'calypso/components/data/query-sites';
 import QueryWordadsStatus from 'calypso/components/data/query-wordads-status';
 import EmptyContent from 'calypso/components/empty-content';
 import FeatureExample from 'calypso/components/feature-example';
 import FormButton from 'calypso/components/forms/form-button';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import { WordAdsStatus } from 'calypso/my-sites/earn/ads/types';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import getSiteWordadsStatus from 'calypso/state/selectors/get-site-wordads-status';
+import siteHasWordAds from 'calypso/state/selectors/site-has-wordads';
 import { canAccessWordAds, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
@@ -55,12 +60,10 @@ class AdsWrapper extends Component {
 	};
 
 	renderInstantActivationToggle( component ) {
-		const { siteId, translate, adsProgramName } = this.props;
+		const { translate, adsProgramName } = this.props;
 
 		return (
 			<div>
-				<QueryWordadsStatus siteId={ siteId } />
-
 				{ this.props.wordAdsError && (
 					<Notice
 						classname="ads__activate-notice"
@@ -187,11 +190,13 @@ class AdsWrapper extends Component {
 		);
 	}
 
-	renderUpsell() {
+	renderUpsell( options = {} ) {
+		const { forceDisplay = false, url } = options;
 		const { siteSlug, translate } = this.props;
-		const bannerURL = `/checkout/${ siteSlug }/premium`;
+		const bannerURL = url || `/checkout/${ siteSlug }/premium`;
 		return (
 			<UpsellNudge
+				forceDisplay={ forceDisplay }
 				callToAction={ translate( 'Upgrade' ) }
 				plan={ PLAN_PREMIUM }
 				title={ translate( 'Upgrade to the Premium plan and start earning' ) }
@@ -252,13 +257,44 @@ class AdsWrapper extends Component {
 		);
 	}
 
+	renderContentWithUpsell( component ) {
+		const { translate, section, siteSlug } = this.props;
+		const allowedSections = [ 'ads-earnings', 'ads-payments' ];
+		const isAllowedSection = allowedSections.includes( section );
+		const url = `/plans/${ siteSlug }?feature=${ FEATURE_WORDADS_INSTANT }&plan=${ PLAN_PREMIUM }`;
+		return (
+			<>
+				<UpsellNudge
+					forceDisplay={ true }
+					callToAction={ translate( 'Upgrade' ) }
+					plan={ PLAN_PREMIUM }
+					title={ translate( 'Upgrade to the Premium plan to continue earning' ) }
+					description={ translate(
+						'WordAds is disabled for this site because it does not have an eligible plan. You are no longer earning ad revenue, but you can view your earning and payment history. To restore access to WordAds please upgrade to an eligible plan.'
+					) }
+					feature={ WPCOM_FEATURES_WORDADS }
+					href={ url }
+					showIcon
+					event="calypso_upgrade_nudge_impression"
+					tracksImpressionName="calypso_upgrade_nudge_impression"
+					tracksImpressionProperties={ { cta_name: undefined, cta_size: 'regular' } }
+					tracksClickName="calypso_upgrade_nudge_cta_click"
+					tracksClickProperties={ { cta_name: undefined, cta_size: 'regular' } }
+				/>
+				{ isAllowedSection ? component : <FeatureExample>{ component }</FeatureExample> }
+			</>
+		);
+	}
+
 	render() {
 		const {
 			canAccessAds,
 			canActivateWordadsInstant,
 			canUpgradeToUseWordAds,
+			isEnrolledWithIneligiblePlan,
 			isWordadsInstantEligibleButNotOwner,
 			site,
+			siteId,
 			translate,
 		} = this.props;
 
@@ -285,10 +321,15 @@ class AdsWrapper extends Component {
 			component = null;
 		} else if ( site.options.wordads && site.is_private ) {
 			notice = this.renderNoticeSiteIsPrivate();
+		} else if ( isEnrolledWithIneligiblePlan ) {
+			component = this.renderContentWithUpsell( component );
 		}
 
 		return (
 			<div>
+				<QuerySites siteId={ siteId } />
+				<QuerySiteFeatures siteIds={ [ siteId ] } />
+				<QueryWordadsStatus siteId={ siteId } />
 				{ notice }
 				{ component }
 			</div>
@@ -299,7 +340,7 @@ class AdsWrapper extends Component {
 const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
-	const hasWordAdsFeature = siteHasFeature( state, siteId, WPCOM_FEATURES_WORDADS );
+	const hasWordAdsFeature = siteHasWordAds( state, siteId );
 	const canActivateWordAds = canCurrentUser( state, siteId, 'activate_wordads' );
 
 	return {
@@ -310,6 +351,11 @@ const mapStateToProps = ( state ) => {
 		canActivateWordadsInstant: ! site.options.wordads && canActivateWordAds && hasWordAdsFeature,
 		canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
 		canUpgradeToUseWordAds: ! site.options.wordads && ! hasWordAdsFeature,
+		hasWordAdsFeature,
+		isEnrolledWithIneligiblePlan:
+			site?.options?.wordads &&
+			! hasWordAdsFeature &&
+			getSiteWordadsStatus( state, siteId ) === WordAdsStatus.ineligible,
 		requestingWordAdsApproval: isRequestingWordAdsApprovalForSite( state, site ),
 		wordAdsError: getWordAdsErrorForSite( state, site ),
 		wordAdsSuccess: getWordAdsSuccessForSite( state, site ),

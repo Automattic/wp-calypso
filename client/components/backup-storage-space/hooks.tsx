@@ -1,5 +1,7 @@
+import { Gridicon } from '@automattic/components';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { settingsPath } from 'calypso/lib/jetpack/paths';
 
 export enum StorageUnits {
 	Gigabyte = 2 ** 30,
@@ -96,16 +98,17 @@ export const useDaysOfBackupsSavedText = (
 			return null;
 		}
 
-		const daysOfBackupsSavedLinkTarget = `/activity-log/${ siteSlug }?group=rewind`;
+		const daysOfBackupsSavedLinkTarget = settingsPath( siteSlug );
 
 		return translate(
-			'{{a}}%(daysOfBackupsSaved)d day of backups saved{{/a}}',
-			'{{a}}%(daysOfBackupsSaved)d days of backups saved{{/a}}',
+			'{{a}}%(daysOfBackupsSaved)d day of backups saved {{icon/}}{{/a}}',
+			'{{a}}%(daysOfBackupsSaved)d days of backups saved {{icon/}}{{/a}}',
 			{
 				count: daysOfBackupsSaved,
 				args: { daysOfBackupsSaved },
 				components: {
 					a: <a href={ daysOfBackupsSavedLinkTarget } />,
+					icon: <Gridicon icon="cog" size={ 16 } />,
 				},
 			}
 		);

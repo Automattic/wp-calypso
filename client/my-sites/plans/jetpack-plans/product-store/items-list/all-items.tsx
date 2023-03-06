@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	isJetpackPlanSlug,
 	PRODUCT_JETPACK_SOCIAL_ADVANCED,
@@ -109,14 +108,10 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 					].includes( item.productSlug );
 
 					// Go to the checkout page for all products when they click on the 'GET' CTA, except for Jetpack Social where we open a modal.
-					const ctaHref =
-						isSocialProduct && config.isEnabled( 'jetpack-social/advanced-plan' )
-							? `#${ item.productSlug }`
-							: getCheckoutURL( item );
-					const onClickCta =
-						isSocialProduct && config.isEnabled( 'jetpack-social/advanced-plan' )
-							? onClickMoreInfoFactory( item )
-							: getOnClickPurchase( item );
+					const ctaHref = isSocialProduct ? `#${ item.productSlug }` : getCheckoutURL( item );
+					const onClickCta = isSocialProduct
+						? onClickMoreInfoFactory( item )
+						: getOnClickPurchase( item );
 
 					return (
 						<li key={ item.productSlug }>

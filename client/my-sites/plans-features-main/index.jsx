@@ -127,6 +127,8 @@ export class PlansFeaturesMain extends Component {
 			intervalType,
 			planTypeSelectorProps,
 			busyOnUpgradeClick,
+			hidePlansFeatureComparison,
+			hideFreePlan,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -159,6 +161,8 @@ export class PlansFeaturesMain extends Component {
 				isReskinned,
 				isPlansInsideStepper,
 				intervalType,
+				hidePlansFeatureComparison,
+				hideFreePlan,
 			};
 			const asyncPlanFeatures2023Grid = (
 				<AsyncLoad
@@ -252,7 +256,7 @@ export class PlansFeaturesMain extends Component {
 			plansWithScroll,
 			isInVerticalScrollingPlansExperiment,
 			redirectToAddDomainFlow,
-			domainAndPlanPackage,
+			hidePlanTypeSelector,
 			translate,
 			locale,
 			flowName,
@@ -303,7 +307,7 @@ export class PlansFeaturesMain extends Component {
 				{ this.renderSecondaryFormattedHeader() }
 				<PlanFeatures
 					redirectToAddDomainFlow={ redirectToAddDomainFlow }
-					domainAndPlanPackage={ domainAndPlanPackage }
+					hidePlanTypeSelector={ hidePlanTypeSelector }
 					basePlansPath={ basePlansPath }
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
 					domainName={ domainName }
@@ -585,7 +589,7 @@ export class PlansFeaturesMain extends Component {
 		const {
 			siteId,
 			redirectToAddDomainFlow,
-			domainAndPlanPackage,
+			hidePlanTypeSelector,
 			is2023PricingGridVisible,
 			planTypeSelectorProps,
 		} = this.props;
@@ -600,7 +604,7 @@ export class PlansFeaturesMain extends Component {
 
 		// In the "purchase a plan and free domain" flow we do not want to show
 		// monthly plans because monthly plans do not come with a free domain.
-		if ( redirectToAddDomainFlow !== undefined || domainAndPlanPackage ) {
+		if ( redirectToAddDomainFlow !== undefined || hidePlanTypeSelector ) {
 			hidePlanSelector = true;
 		}
 
@@ -643,7 +647,7 @@ export class PlansFeaturesMain extends Component {
 
 PlansFeaturesMain.propTypes = {
 	redirectToAddDomainFlow: PropTypes.bool,
-	domainAndPlanPackage: PropTypes.string,
+	hidePlanTypeSelector: PropTypes.bool,
 	basePlansPath: PropTypes.string,
 	hideFreePlan: PropTypes.bool,
 	hidePersonalPlan: PropTypes.bool,

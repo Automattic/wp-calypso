@@ -3,10 +3,12 @@
  */
 import './load-config';
 import config from '@automattic/calypso-config';
+import page from 'page';
 import '@automattic/calypso-polyfills';
 import { QueryClient } from 'react-query';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunkMiddleware from 'redux-thunk';
+import { getPathWithUpdatedQueryString } from 'calypso/my-sites/stats/utils';
 import consoleDispatcher from 'calypso/state/console-dispatch';
 import currentUser from 'calypso/state/current-user/reducer';
 import wpcomApiMiddleware from 'calypso/state/data-layer/wpcom-api-middleware';
@@ -46,8 +48,19 @@ async function AppBoot() {
 
 	if ( ! window.location?.hash ) {
 		window.location.hash = `#!/stats/day/${ siteId }`;
+	} else {
+		// The URL could already get broken by page.js by the appended `?page=stats`.
+		window.location.hash = `#!${ getPathWithUpdatedQueryString(
+			{},
+			window.location.hash.substring( 2 )
+		) }`;
 	}
-	registerStatsPages( config( 'admin_page_base' ) );
+
+	registerStatsPages( window.location.pathname + window.location.search );
+
+	// HACK: getPathWithUpdatedQueryString filters duplicate query parameters added by `page.js`.
+	// It has to come after `registerStatsPages` because the duplicate string added in the function.
+	page.show( `${ getPathWithUpdatedQueryString( {}, window.location.hash.substring( 2 ) ) }` );
 }
 
 AppBoot();

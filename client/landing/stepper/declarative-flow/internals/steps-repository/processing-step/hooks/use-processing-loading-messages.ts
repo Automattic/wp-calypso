@@ -1,11 +1,13 @@
 import { Onboard } from '@automattic/data-stores';
+import { isWooExpressFlow } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
+import type { LoadingMessage } from './types';
 
 const SiteIntent = Onboard.SiteIntent;
 
-export function useProcessingLoadingMessages( flow?: string | null ) {
+export function useProcessingLoadingMessages( flow?: string | null ): LoadingMessage[] {
 	const { __ } = useI18n();
 	let loadingMessages = [];
 
@@ -18,6 +20,34 @@ export function useProcessingLoadingMessages( flow?: string | null ) {
 			{ title: __( 'Enabling encryption' ), duration: 5000 },
 			{ title: __( 'Applying a shiny top coat' ), duration: 4000 },
 		];
+	}
+
+	if ( isWooExpressFlow( flow || null ) ) {
+		return stepData.currentStep === 'siteCreationStep'
+			? [
+					{
+						title: __( 'Woo! We’re creating your store' ),
+						subtitle: __(
+							'#FunWooFact: Did you know that Woo powers almost 4 million stores worldwide? You’re in good company.'
+						),
+						duration: 2000,
+					},
+			  ]
+			: [
+					{
+						title: __( 'Applying the finishing touches' ),
+						subtitle: __(
+							'#FunWooFact: There are more than 150 WooCommerce meetups held all over the world! A great way to meet fellow store owners.'
+						),
+						duration: 10000,
+					},
+					{
+						title: __( 'Turning on the lights' ),
+						subtitle: __( '#FunWooFact: Our favorite color is purple 💜' ),
+						// Set a very long duration to make sure it shows until the step is completed
+						duration: 150000,
+					},
+			  ];
 	}
 
 	switch ( stepData.intent ) {

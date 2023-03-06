@@ -15,6 +15,7 @@ import * as StepperInternal from './stepper-internal';
 import * as Subscriber from './subscriber';
 import * as User from './user';
 import * as WPCOMFeatures from './wpcom-features';
+import * as WpcomPlansUI from './wpcom-plans-ui';
 export { useHappinessEngineersQuery } from './queries/use-happiness-engineers-query';
 export { useHas3PC } from './queries/use-has-3rd-party-cookies';
 export { useSiteAnalysis } from './queries/use-site-analysis';
@@ -41,6 +42,7 @@ export {
 	I18n,
 	Site,
 	Plans,
+	WpcomPlansUI,
 	Launch,
 	WPCOMFeatures,
 	Reader,

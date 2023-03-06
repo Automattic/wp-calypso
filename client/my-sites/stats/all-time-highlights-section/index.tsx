@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import {
 	Card,
+	ComponentSwapper,
 	PercentCalculator as percentCalculator,
 	ShortenedNumber,
 	formattedNumber,
@@ -151,6 +152,124 @@ export default function AllTimeHighlightsSection( {
 	const isLatestPostReplaced = config.isEnabled( 'stats/latest-post-stats' );
 	const isMostPopularPostShow = config.isEnabled( 'stats/most-popular-post' );
 
+	const mobileCards = (
+		<div className="highlight-cards-mobile">
+			<h1 className="highlight-cards-heading">{ translate( 'Highlights' ) }</h1>
+			<DotPager>
+				<Card className="highlight-card">
+					<div className="highlight-card-heading">{ translate( 'All-time stats' ) }</div>
+					<div className="highlight-card-info-item-list">
+						{ infoItems
+							.filter( ( i ) => ! i.hidden )
+							.map( ( info ) => {
+								return (
+									<div key={ info.id } className="highlight-card-info-item">
+										<Icon icon={ info.icon } />
+
+										<span className="highlight-card-info-item-title">{ info.title }</span>
+
+										<span
+											className="highlight-card-info-item-count"
+											title={ Number.isFinite( info.count ) ? String( info.count ) : undefined }
+										>
+											{ formattedNumber( info.count ) }
+										</span>
+									</div>
+								);
+							} ) }
+					</div>
+				</Card>
+
+				{ [ mostPopularTimeItems, bestViewsEverItems ].map( ( card ) => {
+					return (
+						<Card key={ card.id } className="highlight-card">
+							<div className="highlight-card-heading">{ card.heading }</div>
+							<div className="highlight-card-detail-item-list">
+								{ card.items.map( ( item ) => {
+									return (
+										<div key={ item.id } className="highlight-card-detail-item">
+											<div className="highlight-card-detail-item-header">{ item.header }</div>
+
+											<div className="highlight-card-detail-item-content">{ item.content }</div>
+
+											<div className="highlight-card-detail-item-footer">{ item.footer }</div>
+										</div>
+									);
+								} ) }
+							</div>
+						</Card>
+					);
+				} ) }
+			</DotPager>
+
+			<div className="highlight-cards-list">
+				<LatestPostCard siteId={ siteId } siteSlug={ siteSlug } />
+			</div>
+		</div>
+	);
+
+	const highlightCards = (
+		<div className="highlight-cards">
+			<h1 className="highlight-cards-heading">{ translate( 'All-time highlights' ) }</h1>
+
+			<div className="highlight-cards-list">
+				<Card className="highlight-card">
+					<div className="highlight-card-heading">{ translate( 'All-time stats' ) }</div>
+					<div className="highlight-card-info-item-list">
+						{ infoItems
+							.filter( ( i ) => ! i.hidden )
+							.map( ( info ) => {
+								return (
+									<div key={ info.id } className="highlight-card-info-item">
+										<Icon icon={ info.icon } />
+
+										<span className="highlight-card-info-item-title">{ info.title }</span>
+
+										<span
+											className="highlight-card-info-item-count"
+											title={ Number.isFinite( info.count ) ? String( info.count ) : undefined }
+										>
+											{ formattedNumber( info.count ) }
+										</span>
+									</div>
+								);
+							} ) }
+					</div>
+				</Card>
+
+				{ [ mostPopularTimeItems, bestViewsEverItems ].map( ( card ) => {
+					return (
+						<Card key={ card.id } className="highlight-card">
+							<div className="highlight-card-heading">{ card.heading }</div>
+							<div className="highlight-card-detail-item-list">
+								{ card.items.map( ( item ) => {
+									return (
+										<div key={ item.id } className="highlight-card-detail-item">
+											<div className="highlight-card-detail-item-header">{ item.header }</div>
+
+											<div className="highlight-card-detail-item-content">{ item.content }</div>
+
+											<div className="highlight-card-detail-item-footer">{ item.footer }</div>
+										</div>
+									);
+								} ) }
+							</div>
+						</Card>
+					);
+				} ) }
+			</div>
+
+			{ isLatestPostReplaced && (
+				<div className="highlight-cards-list">
+					<LatestPostCard siteId={ siteId } siteSlug={ siteSlug } />
+					{ isMostPopularPostShow && (
+						<MostPopularPostCard siteId={ siteId } siteSlug={ siteSlug } />
+					) }
+				</div>
+			) }
+		</div>
+	);
+
 	return (
 		<div className="stats__all-time-highlights-section">
 			{ siteId && (
@@ -165,119 +284,12 @@ export default function AllTimeHighlightsSection( {
 				</>
 			) }
 
-			<div className="stats__all-time-highlights-mobile">
-				<h1 className="highlight-cards-heading">{ translate( 'Highlights' ) }</h1>
-				<DotPager>
-					<Card className="highlight-card">
-						<div className="highlight-card-heading">{ translate( 'All-time stats' ) }</div>
-						<div className="highlight-card-info-item-list">
-							{ infoItems
-								.filter( ( i ) => ! i.hidden )
-								.map( ( info ) => {
-									return (
-										<div key={ info.id } className="highlight-card-info-item">
-											<Icon icon={ info.icon } />
-
-											<span className="highlight-card-info-item-title">{ info.title }</span>
-
-											<span
-												className="highlight-card-info-item-count"
-												title={ Number.isFinite( info.count ) ? String( info.count ) : undefined }
-											>
-												{ formattedNumber( info.count ) }
-											</span>
-										</div>
-									);
-								} ) }
-						</div>
-					</Card>
-
-					{ [ mostPopularTimeItems, bestViewsEverItems ].map( ( card ) => {
-						return (
-							<Card key={ card.id } className="highlight-card">
-								<div className="highlight-card-heading">{ card.heading }</div>
-								<div className="highlight-card-detail-item-list">
-									{ card.items.map( ( item ) => {
-										return (
-											<div key={ item.id } className="highlight-card-detail-item">
-												<div className="highlight-card-detail-item-header">{ item.header }</div>
-
-												<div className="highlight-card-detail-item-content">{ item.content }</div>
-
-												<div className="highlight-card-detail-item-footer">{ item.footer }</div>
-											</div>
-										);
-									} ) }
-								</div>
-							</Card>
-						);
-					} ) }
-				</DotPager>
-
-				<div className="highlight-cards-list">
-					<LatestPostCard siteId={ siteId } siteSlug={ siteSlug } />
-				</div>
-			</div>
-
-			<div className="highlight-cards">
-				<h1 className="highlight-cards-heading">{ translate( 'All-time highlights' ) }</h1>
-
-				<div className="highlight-cards-list">
-					<Card className="highlight-card">
-						<div className="highlight-card-heading">{ translate( 'All-time stats' ) }</div>
-						<div className="highlight-card-info-item-list">
-							{ infoItems
-								.filter( ( i ) => ! i.hidden )
-								.map( ( info ) => {
-									return (
-										<div key={ info.id } className="highlight-card-info-item">
-											<Icon icon={ info.icon } />
-
-											<span className="highlight-card-info-item-title">{ info.title }</span>
-
-											<span
-												className="highlight-card-info-item-count"
-												title={ Number.isFinite( info.count ) ? String( info.count ) : undefined }
-											>
-												{ formattedNumber( info.count ) }
-											</span>
-										</div>
-									);
-								} ) }
-						</div>
-					</Card>
-
-					{ [ mostPopularTimeItems, bestViewsEverItems ].map( ( card ) => {
-						return (
-							<Card key={ card.id } className="highlight-card">
-								<div className="highlight-card-heading">{ card.heading }</div>
-								<div className="highlight-card-detail-item-list">
-									{ card.items.map( ( item ) => {
-										return (
-											<div key={ item.id } className="highlight-card-detail-item">
-												<div className="highlight-card-detail-item-header">{ item.header }</div>
-
-												<div className="highlight-card-detail-item-content">{ item.content }</div>
-
-												<div className="highlight-card-detail-item-footer">{ item.footer }</div>
-											</div>
-										);
-									} ) }
-								</div>
-							</Card>
-						);
-					} ) }
-				</div>
-
-				{ isLatestPostReplaced && (
-					<div className="highlight-cards-list">
-						<LatestPostCard siteId={ siteId } siteSlug={ siteSlug } />
-						{ isMostPopularPostShow && (
-							<MostPopularPostCard siteId={ siteId } siteSlug={ siteSlug } />
-						) }
-					</div>
-				) }
-			</div>
+			<ComponentSwapper
+				className="all-time-highlights-section__highlight-cards-swapper"
+				breakpoint="<660px"
+				breakpointActiveComponent={ mobileCards }
+				breakpointInactiveComponent={ highlightCards }
+			/>
 		</div>
 	);
 }

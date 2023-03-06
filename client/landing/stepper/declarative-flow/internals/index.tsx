@@ -1,17 +1,24 @@
 import { ProgressBar } from '@automattic/components';
-import { isNewsletterOrLinkInBioFlow, isWooExpressFlow } from '@automattic/onboarding';
+import {
+	isNewsletterOrLinkInBioFlow,
+	isWooExpressFlow,
+	SITE_SETUP_FLOW,
+} from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, Suspense } from 'react';
 import Modal from 'react-modal';
 import { Switch, Route, Redirect, generatePath, useHistory, useLocation } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
-import WordPressLogo from 'calypso/components/wordpress-logo';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
+import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
+import { recordSignupStart } from 'calypso/lib/analytics/signup';
 import SignupHeader from 'calypso/signup/signup-header';
 import { ONBOARD_STORE } from '../../stores';
 import recordStepStart from './analytics/record-step-start';
+import StepperLoader from './components/stepper-loader';
 import VideoPressIntroBackground from './steps-repository/intro/videopress-intro-background';
 import { AssertConditionState, Flow, StepperStep } from './types';
 import './global.scss';
@@ -40,6 +47,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const { search } = useLocation();
 	const { setStepData } = useDispatch( STEPPER_INTERNAL_STORE );
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
+	const ref = useQuery().get( 'ref' ) || '';
 
 	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
 	const progressValue = stepProgress ? stepProgress.progress / stepProgress.count : 0;
@@ -48,32 +56,52 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	);
 	const previousProgressValue = stepProgress ? previousProgress / stepProgress.count : 0;
 
-	const stepNavigation = flow.useStepNavigation(
-		currentStepRoute,
-		async ( path, extraData = null ) => {
-			// If any extra data is passed to the navigate() function, store it to the stepper-internal store.
-			setStepData( {
-				path: path,
-				intent: intent,
-				...extraData,
-			} );
-
-			const _path = path.includes( '?' ) // does path contain search params
-				? generatePath( `/${ flow.name }/${ path }` )
-				: generatePath( `/${ flow.name }/${ path }${ search }` );
-
-			history.push( _path, stepPaths );
-			setPreviousProgress( stepProgress?.progress ?? 0 );
+	const isFlowStart = useCallback( () => {
+		if ( ! flow || ! stepProgress ) {
+			return false;
 		}
-	);
+		if ( stepProgress?.progress === 0 ) {
+			return true;
+		}
+		if ( flow.name === 'sensei' && stepProgress?.progress === 1 ) {
+			return true;
+		}
+		return false;
+	}, [ flow, stepProgress ] );
+
+	const navigate = async ( path: string, extraData = {} ) => {
+		// If any extra data is passed to the navigate() function, store it to the stepper-internal store.
+		setStepData( {
+			path: path,
+			intent: intent,
+			...extraData,
+		} );
+
+		const _path = path.includes( '?' ) // does path contain search params
+			? generatePath( `/${ flow.name }/${ path }` )
+			: generatePath( `/${ flow.name }/${ path }${ search }` );
+
+		history.push( _path, stepPaths );
+		setPreviousProgress( stepProgress?.progress ?? 0 );
+	};
+
+	const stepNavigation = flow.useStepNavigation( currentStepRoute, navigate );
+
 	// Retrieve any extra step data from the stepper-internal store. This will be passed as a prop to the current step.
 	const stepData = useSelect( ( select ) => select( STEPPER_INTERNAL_STORE ).getStepData() );
 
-	flow.useSideEffect?.();
+	flow.useSideEffect?.( currentStepRoute, navigate );
 
 	useEffect( () => {
 		window.scrollTo( 0, 0 );
 	}, [ location ] );
+
+	useEffect( () => {
+		if ( isFlowStart() ) {
+			recordSignupStart( flow.name, ref );
+			recordFullStoryEvent( `calypso_signup_start_${ flow.name }`, { flow: flow.name } );
+		}
+	}, [ flow, ref, isFlowStart ] );
 
 	useEffect( () => {
 		// We record the event only when the step is not empty. Additionally, we should not fire this event whenever the intent is changed
@@ -97,7 +125,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		switch ( assertCondition.state ) {
 			case AssertConditionState.CHECKING:
 				/* eslint-disable wpcalypso/jsx-classname-namespace */
-				return <WordPressLogo size={ 72 } className="wpcom-site__logo" />;
+				return <StepperLoader />;
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 			case AssertConditionState.FAILURE:
 				throw new Error( assertCondition.message ?? 'An error has occurred.' );
@@ -136,7 +164,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	}
 
 	return (
-		<>
+		<Suspense fallback={ <StepperLoader /> }>
 			<DocumentHead title={ getDocumentHeadTitle() } />
 			<Switch>
 				{ flowSteps.map( ( step ) => {
@@ -146,14 +174,17 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 								{ 'videopress' === flow.name && 'intro' === step.slug && (
 									<VideoPressIntroBackground />
 								) }
-								<ProgressBar
-									// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-									className="flow-progress"
-									value={ progressValue * 100 }
-									total={ 100 }
-									style={ progressBarExtraStyle }
-								/>
-
+								{ flow.name !== SITE_SETUP_FLOW && (
+									// The progress bar is removed from the site-setup due to its fragility.
+									// See https://github.com/Automattic/wp-calypso/pull/73653
+									<ProgressBar
+										// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+										className="flow-progress"
+										value={ progressValue * 100 }
+										total={ 100 }
+										style={ progressBarExtraStyle }
+									/>
+								) }
 								<SignupHeader pageTitle={ flow.title } showWooLogo={ getShowWooLogo() } />
 								{ renderStep( step ) }
 							</div>
@@ -164,6 +195,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 					<Redirect to={ `/${ flow.name }/${ stepPaths[ 0 ] }${ search }` } />
 				</Route>
 			</Switch>
-		</>
+		</Suspense>
 	);
 };
