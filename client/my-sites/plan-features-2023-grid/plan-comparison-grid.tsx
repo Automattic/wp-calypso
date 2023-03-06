@@ -4,11 +4,9 @@ import {
 	getPlanClass,
 	isWpcomEnterpriseGridPlan,
 	isFreePlan,
-	isBusinessPlan,
 	FEATURE_GROUP_ESSENTIAL_FEATURES,
 	getPlanFeaturesGrouped,
 	PLAN_ENTERPRISE_GRID_WPCOM,
-	isPremiumPlan,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { css } from '@emotion/react';
@@ -19,7 +17,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback, useEffect, ChangeEvent } from 'react';
 import { useSelector } from 'react-redux';
 import JetpackLogo from 'calypso/components/jetpack-logo';
-import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
+import { FeatureObject, getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import PlanTypeSelector, {
 	PlanTypeSelectorProps,
 } from 'calypso/my-sites/plans-features-main/plan-type-selector';
@@ -29,7 +27,8 @@ import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
 import PopularBadge from './components/popular-badge';
 import PlanFeatures2023GridHeaderPrice from './header-price';
 import useHighlightAdjacencyMatrix from './hooks/use-highlight-adjacency-matrix';
-import { plansBreakSmall, plansBreakLarge } from './media-queries';
+import useHighlightLabel from './hooks/use-highlight-label';
+import { plansBreakSmall } from './media-queries';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import { PlanProperties } from './types';
 import { usePricingBreakpoint } from './util';
@@ -102,7 +101,7 @@ const Grid = styled.div< { isInSignup: boolean } >`
 	` ) }
 `;
 
-const Row = styled.div< { isHiddenInMobile?: boolean } >`
+const Row = styled.div< { isHiddenInMobile?: boolean; className?: string } >`
 	justify-content: space-between;
 	margin-bottom: -1px;
 	align-items: stretch;
@@ -180,7 +179,6 @@ const Cell = styled.div< { textAlign?: string } >`
 
 	${ plansBreakSmall( css`
 		padding: 0 14px;
-		min-width: 156px;
 		border-right: none;
 
 		&:first-of-type {
@@ -191,18 +189,15 @@ const Cell = styled.div< { textAlign?: string } >`
 			border-right: none;
 		}
 	` ) }
-
-	${ plansBreakLarge( css`
-		max-width: 200px;
-	` ) }
 `;
 
-const RowHead = styled.div`
+const RowTitleCell = styled.div`
 	display: none;
 	font-size: 14px;
 	${ plansBreakSmall( css`
 		display: block;
 		flex: 1;
+		min-width: 290px;
 	` ) }
 `;
 
@@ -286,6 +281,132 @@ type PlanComparisonGridHeaderProps = {
 	onUpgradeClick: ( properties: PlanProperties ) => void;
 };
 
+const PlanComparisonGridHeaderCell: React.FunctionComponent<
+	PlanComparisonGridHeaderProps & {
+		planProperties: PlanProperties;
+		allVisible: boolean;
+		isLastInRow: boolean;
+	}
+> = ( {
+	planProperties,
+	allVisible,
+	isLastInRow,
+	isFooter,
+	isInSignup,
+	visiblePlansProperties,
+	onPlanChange,
+	displayedPlansProperties,
+	currentSitePlanSlug,
+	manageHref,
+	canUserPurchasePlan,
+	isLaunchPage,
+	flowName,
+	selectedSiteSlug,
+	onUpgradeClick,
+} ) => {
+	const { planName, planConstantObj, availableForPurchase, current, ...planPropertiesObj } =
+		planProperties;
+	const highlightLabel = useHighlightLabel( planName );
+	const translate = useTranslate();
+	const currencyCode = useSelector( getCurrentUserCurrencyCode );
+	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( visiblePlansProperties );
+
+	const headerClasses = classNames( 'plan-comparison-grid__header-cell', getPlanClass( planName ), {
+		'popular-plan-parent-class': highlightLabel,
+		'is-last-in-row': isLastInRow,
+		'plan-is-footer': isFooter,
+		'is-left-of-highlight': highlightAdjacencyMatrix[ planName ]?.leftOfHighlight,
+		'is-right-of-highlight': highlightAdjacencyMatrix[ planName ]?.rightOfHighlight,
+		'is-only-highlight': highlightAdjacencyMatrix[ planName ]?.isOnlyHighlight,
+		'is-current-plan': current,
+	} );
+
+	const popularBadgeClasses = classNames( {
+		'is-current-plan': current,
+	} );
+
+	const rawPrice = planPropertiesObj.rawPrice;
+	const isLargeCurrency = rawPrice ? rawPrice > 99000 : false;
+
+	const showPlanSelect = ! allVisible && ! current;
+
+	return (
+		<Cell className={ headerClasses } textAlign="left">
+			<PopularBadge
+				isInSignup={ isInSignup }
+				planName={ planName }
+				additionalClassName={ popularBadgeClasses }
+			/>
+			<PlanSelector>
+				{ showPlanSelect && (
+					<select
+						onChange={ ( event: ChangeEvent ) => onPlanChange( planName, event ) }
+						className="plan-comparison-grid__title-select"
+						value={ planName }
+					>
+						{ displayedPlansProperties.map( ( { planName: otherPlan, planConstantObj } ) => {
+							const isVisiblePlan = visiblePlansProperties.find(
+								( { planName } ) => planName === otherPlan
+							);
+
+							if ( isVisiblePlan && otherPlan !== planName ) {
+								return null;
+							}
+
+							return (
+								<option key={ otherPlan } value={ otherPlan }>
+									{ planConstantObj.getTitle() }
+								</option>
+							);
+						} ) }
+					</select>
+				) }
+				<h4 className="plan-comparison-grid__title">
+					<span>{ planConstantObj.getTitle() }</span>
+					{ showPlanSelect && <DropdownIcon /> }
+				</h4>
+			</PlanSelector>
+			<PlanFeatures2023GridHeaderPrice
+				currencyCode={ currencyCode }
+				discountPrice={ planPropertiesObj.discountPrice }
+				rawPrice={ rawPrice || 0 }
+				planName={ planName }
+				is2023OnboardingPricingGrid={ true }
+				isLargeCurrency={ isLargeCurrency }
+			/>
+			<div className="plan-comparison-grid__billing-info">
+				<PlanFeatures2023GridBillingTimeframe
+					rawPrice={ rawPrice }
+					rawPriceAnnual={ planPropertiesObj.rawPriceAnnual }
+					currencyCode={ planPropertiesObj.currencyCode }
+					annualPricePerMonth={ planPropertiesObj.annualPricePerMonth }
+					isMonthlyPlan={ planPropertiesObj.isMonthlyPlan }
+					translate={ translate }
+					billingTimeframe={ planConstantObj.getBillingTimeFrame() }
+				/>
+			</div>
+			<PlanFeatures2023GridActions
+				currentSitePlanSlug={ currentSitePlanSlug }
+				manageHref={ manageHref }
+				canUserPurchasePlan={ canUserPurchasePlan }
+				current={ current ?? false }
+				availableForPurchase={ availableForPurchase }
+				className={ getPlanClass( planName ) }
+				freePlan={ isFreePlan( planName ) }
+				isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planName ) }
+				isPlaceholder={ planPropertiesObj.isPlaceholder }
+				isInSignup={ isInSignup }
+				isLaunchPage={ isLaunchPage }
+				planName={ planConstantObj.getTitle() }
+				planType={ planName }
+				flowName={ flowName }
+				selectedSiteSlug={ selectedSiteSlug }
+				onUpgradeClick={ () => onUpgradeClick( planProperties ) }
+			/>
+		</Cell>
+	);
+};
+
 const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 	displayedPlansProperties,
 	visiblePlansProperties,
@@ -300,113 +421,165 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 	selectedSiteSlug,
 	onUpgradeClick,
 } ) => {
-	const translate = useTranslate();
-	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const allVisible = visiblePlansProperties.length === displayedPlansProperties.length;
-	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( visiblePlansProperties );
 
 	return (
 		<PlanRow>
-			<RowHead
+			<RowTitleCell
 				key="feature-name"
-				className="plan-comparison-grid__header-cell plan-comparison-grid__interval-toggle"
+				className="plan-comparison-grid__header-cell plan-comparison-grid__interval-toggle is-placeholder-header-cell"
 			/>
-			{ visiblePlansProperties.map( ( planProperties, index ) => {
-				const { planName, planConstantObj, availableForPurchase, current, ...planPropertiesObj } =
-					planProperties;
-				const isHighlight = isBusinessPlan( planName ) || isPremiumPlan( planName );
-
-				const headerClasses = classNames(
-					'plan-comparison-grid__header-cell',
-					getPlanClass( planName ),
-					{
-						'popular-plan-parent-class': isHighlight,
-						'is-last-in-row': index === visiblePlansProperties.length - 1,
-						'plan-is-footer': isFooter,
-						'is-left-of-highlight': highlightAdjacencyMatrix[ planName ]?.leftOfHighlight,
-						'is-right-of-highlight': highlightAdjacencyMatrix[ planName ]?.rightOfHighlight,
-						'is-only-highlight': highlightAdjacencyMatrix[ planName ]?.isOnlyHighlight,
-					}
-				);
-
-				const rawPrice = planPropertiesObj.rawPrice;
-				const isLargeCurrency = rawPrice ? rawPrice > 99000 : false;
-
-				const showPlanSelect = ! allVisible && ! current;
-
-				return (
-					<Cell key={ planName } className={ headerClasses } textAlign="left">
-						<PopularBadge isInSignup={ isInSignup } planName={ planName } />
-						<PlanSelector>
-							{ showPlanSelect && (
-								<select
-									onChange={ ( event: ChangeEvent ) => onPlanChange( planName, event ) }
-									className="plan-comparison-grid__title-select"
-									value={ planName }
-								>
-									{ displayedPlansProperties.map( ( { planName: otherPlan, planConstantObj } ) => {
-										const isVisiblePlan = visiblePlansProperties.find(
-											( { planName } ) => planName === otherPlan
-										);
-
-										if ( isVisiblePlan && otherPlan !== planName ) {
-											return null;
-										}
-
-										return (
-											<option key={ otherPlan } value={ otherPlan }>
-												{ planConstantObj.getTitle() }
-											</option>
-										);
-									} ) }
-								</select>
-							) }
-							<h4 className="plan-comparison-grid__title">
-								<span>{ planConstantObj.getTitle() }</span>
-								{ showPlanSelect && <DropdownIcon /> }
-							</h4>
-						</PlanSelector>
-						<PlanFeatures2023GridHeaderPrice
-							currencyCode={ currencyCode }
-							discountPrice={ planPropertiesObj.discountPrice }
-							rawPrice={ rawPrice || 0 }
-							planName={ planName }
-							is2023OnboardingPricingGrid={ true }
-							isLargeCurrency={ isLargeCurrency }
-						/>
-						<div className="plan-comparison-grid__billing-info">
-							<PlanFeatures2023GridBillingTimeframe
-								rawPrice={ rawPrice }
-								rawPriceAnnual={ planPropertiesObj.rawPriceAnnual }
-								currencyCode={ planPropertiesObj.currencyCode }
-								annualPricePerMonth={ planPropertiesObj.annualPricePerMonth }
-								isMonthlyPlan={ planPropertiesObj.isMonthlyPlan }
-								translate={ translate }
-								billingTimeframe={ planConstantObj.getBillingTimeFrame() }
-							/>
-						</div>
-						<PlanFeatures2023GridActions
-							currentSitePlanSlug={ currentSitePlanSlug }
-							manageHref={ manageHref }
-							canUserPurchasePlan={ canUserPurchasePlan }
-							current={ current ?? false }
-							availableForPurchase={ availableForPurchase }
-							className={ getPlanClass( planName ) }
-							freePlan={ isFreePlan( planName ) }
-							isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planName ) }
-							isPlaceholder={ planPropertiesObj.isPlaceholder }
-							isInSignup={ isInSignup }
-							isLaunchPage={ isLaunchPage }
-							planName={ planConstantObj.getTitle() }
-							planType={ planName }
-							flowName={ flowName }
-							selectedSiteSlug={ selectedSiteSlug }
-							onUpgradeClick={ () => onUpgradeClick( planProperties ) }
-						/>
-					</Cell>
-				);
-			} ) }
+			{ visiblePlansProperties.map( ( planProperties, index ) => (
+				<PlanComparisonGridHeaderCell
+					key={ planProperties.planName }
+					planProperties={ planProperties }
+					isLastInRow={ index === visiblePlansProperties.length - 1 }
+					isFooter={ isFooter }
+					allVisible={ allVisible }
+					isInSignup={ isInSignup }
+					visiblePlansProperties={ visiblePlansProperties }
+					onPlanChange={ onPlanChange }
+					displayedPlansProperties={ displayedPlansProperties }
+					currentSitePlanSlug={ currentSitePlanSlug }
+					manageHref={ manageHref }
+					canUserPurchasePlan={ canUserPurchasePlan }
+					flowName={ flowName }
+					selectedSiteSlug={ selectedSiteSlug }
+					onUpgradeClick={ onUpgradeClick }
+					isLaunchPage={ isLaunchPage }
+				/>
+			) ) }
 		</PlanRow>
+	);
+};
+
+const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
+	feature?: FeatureObject;
+	allJetpackFeatures: Set< string >;
+	visiblePlansProperties: PlanProperties[];
+	restructuredFeatures: {
+		featureMap: Record< string, Set< string > >;
+		planStorageOptionsMap: Record< string, string >;
+	};
+	planName: string;
+	isStorageFeature: boolean;
+} > = ( { feature, visiblePlansProperties, restructuredFeatures, planName, isStorageFeature } ) => {
+	const translate = useTranslate();
+	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( visiblePlansProperties );
+	const highlightLabel = useHighlightLabel( planName );
+	const featureSlug = feature?.getSlug();
+	const hasFeature =
+		isStorageFeature ||
+		( featureSlug ? restructuredFeatures.featureMap[ planName ].has( featureSlug ) : false );
+	const [ storageFeature ] = getPlanFeaturesObject( [
+		restructuredFeatures.planStorageOptionsMap[ planName ],
+	] );
+	const cellClasses = classNames(
+		'plan-comparison-grid__feature-group-row-cell',
+		'plan-comparison-grid__plan',
+		getPlanClass( planName ),
+		{
+			'popular-plan-parent-class': highlightLabel,
+			'has-feature': hasFeature,
+			'title-is-subtitle': 'live-chat-support' === featureSlug,
+			'is-left-of-highlight': highlightAdjacencyMatrix[ planName ]?.leftOfHighlight,
+			'is-right-of-highlight': highlightAdjacencyMatrix[ planName ]?.rightOfHighlight,
+			'is-only-highlight': highlightAdjacencyMatrix[ planName ]?.isOnlyHighlight,
+		}
+	);
+
+	return (
+		<Cell className={ cellClasses } textAlign="center">
+			{ isStorageFeature ? (
+				<>
+					<span className="plan-comparison-grid__plan-title">{ translate( 'Storage' ) }</span>
+					<StorageButton className="plan-features-2023-grid__storage-button" key={ planName }>
+						{ storageFeature.getCompareTitle?.() }
+					</StorageButton>
+				</>
+			) : (
+				<>
+					{ feature?.getIcon && (
+						<span className="plan-comparison-grid__plan-image">{ feature.getIcon() }</span>
+					) }
+					<span className="plan-comparison-grid__plan-title">
+						{ feature?.getAlternativeTitle?.() || feature?.getTitle() }
+					</span>
+					{ feature?.getCompareTitle && (
+						<span className="plan-comparison-grid__plan-subtitle">
+							{ feature.getCompareTitle() }
+						</span>
+					) }
+					{ hasFeature ? (
+						<Gridicon icon="checkmark" color="#0675C4" />
+					) : (
+						<Gridicon icon="minus-small" color="#C3C4C7" />
+					) }
+				</>
+			) }
+		</Cell>
+	);
+};
+
+const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
+	feature?: FeatureObject;
+	isHiddenInMobile: boolean;
+	allJetpackFeatures: Set< string >;
+	visiblePlansProperties: PlanProperties[];
+	restructuredFeatures: {
+		featureMap: Record< string, Set< string > >;
+		planStorageOptionsMap: Record< string, string >;
+	};
+	isStorageFeature: boolean;
+} > = ( {
+	feature,
+	isHiddenInMobile,
+	allJetpackFeatures,
+	visiblePlansProperties,
+	restructuredFeatures,
+	isStorageFeature,
+} ) => {
+	const translate = useTranslate();
+	const rowClasses = classNames( 'plan-comparison-grid__feature-group-row', {
+		'is-storage-feature': isStorageFeature,
+	} );
+
+	return (
+		<Row isHiddenInMobile={ isHiddenInMobile } className={ rowClasses }>
+			<RowTitleCell key="feature-name" className="is-feature-group-row-title-cell">
+				{ isStorageFeature ? (
+					<Plans2023Tooltip text={ translate( 'Space to store your photos, media, and more.' ) }>
+						{ translate( 'Storage' ) }
+					</Plans2023Tooltip>
+				) : (
+					<>
+						{ feature && (
+							<>
+								<Plans2023Tooltip text={ feature.getDescription?.() }>
+									{ feature.getTitle() }
+								</Plans2023Tooltip>
+								{ allJetpackFeatures.has( feature.getSlug() ) ? (
+									<JetpackIconContainer>
+										<JetpackLogo size={ 16 } />
+									</JetpackIconContainer>
+								) : null }
+							</>
+						) }
+					</>
+				) }
+			</RowTitleCell>
+			{ ( visiblePlansProperties ?? [] ).map( ( { planName } ) => (
+				<PlanComparisonGridFeatureGroupRowCell
+					key={ planName }
+					feature={ feature }
+					allJetpackFeatures={ allJetpackFeatures }
+					visiblePlansProperties={ visiblePlansProperties }
+					restructuredFeatures={ restructuredFeatures }
+					planName={ planName }
+					isStorageFeature={ isStorageFeature }
+				/>
+			) ) }
+		</Row>
 	);
 };
 
@@ -560,8 +733,6 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		return acc;
 	}, [] );
 
-	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( visiblePlansProperties );
-
 	return (
 		<div className="plan-comparison-grid">
 			<PlanComparisonHeader className="wp-brand-font">
@@ -597,146 +768,39 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 				{ Object.values( featureGroupMap ).map( ( featureGroup: FeatureGroup ) => {
 					const features = featureGroup.get2023PricingGridSignupWpcomFeatures();
 					const featureObjects = getPlanFeaturesObject( features );
-					const featureGroupClass = `feature-group-title-${ featureGroup.slug }`;
 					const isHiddenInMobile = ! visibleFeatureGroups.includes( featureGroup.slug );
 
 					return (
-						<div key={ featureGroupClass } className={ featureGroup.slug }>
+						<div key={ featureGroup.slug } className="plan-comparison-grid__feature-group">
 							<TitleRow
-								className="plan-comparison-grid__group-title-row"
+								className="plan-comparison-grid__feature-group-title-row"
 								onClick={ () => toggleFeatureGroup( featureGroup.slug ) }
 							>
-								<Title
-									isHiddenInMobile={ isHiddenInMobile }
-									className={ `plan-comparison-grid__group-${ featureGroup.slug }` }
-								>
+								<Title isHiddenInMobile={ isHiddenInMobile }>
 									<Gridicon icon="chevron-up" size={ 12 } color="#1E1E1E" />
 									{ featureGroup.getTitle() }
 								</Title>
 							</TitleRow>
-							{ featureObjects.map( ( feature ) => {
-								const featureSlug = feature.getSlug();
-								return (
-									<Row
-										key={ featureSlug }
-										isHiddenInMobile={ isHiddenInMobile }
-										className="plan-comparison-grid__feature-row"
-									>
-										<RowHead
-											key="feature-name"
-											className="plan-comparison-grid__feature-feature-name"
-										>
-											<Plans2023Tooltip text={ feature.getDescription?.() }>
-												{ feature.getTitle() }
-											</Plans2023Tooltip>
-											{ allJetpackFeatures.has( feature.getSlug() ) ? ( // TODO: this shouldn't take a linear search.
-												<Plans2023Tooltip
-													text={ translate(
-														// TODO: extract the Jetpack logo + its tooltip out as a shared component with the plan info grid.
-														'Security, performance and growth tools made by the WordPress experts.'
-													) }
-												>
-													<JetpackIconContainer>
-														<JetpackLogo size={ 16 } />
-													</JetpackIconContainer>
-												</Plans2023Tooltip>
-											) : null }
-										</RowHead>
-										{ ( visiblePlansProperties ?? [] ).map( ( { planName } ) => {
-											const hasFeature =
-												restructuredFeatures.featureMap[ planName ].has( featureSlug );
-											const isHighlight = isBusinessPlan( planName ) || isPremiumPlan( planName );
-											const cellClasses = classNames(
-												'plan-comparison-grid__plan',
-												getPlanClass( planName ),
-												{
-													'popular-plan-parent-class': isHighlight,
-													'has-feature': hasFeature,
-													'title-is-subtitle': 'live-chat-support' === featureSlug,
-													'is-left-of-highlight':
-														highlightAdjacencyMatrix[ planName ]?.leftOfHighlight,
-													'is-right-of-highlight':
-														highlightAdjacencyMatrix[ planName ]?.rightOfHighlight,
-													'is-only-highlight':
-														highlightAdjacencyMatrix[ planName ]?.isOnlyHighlight,
-												}
-											);
-
-											return (
-												<Cell key={ planName } className={ cellClasses } textAlign="center">
-													{ feature.getIcon && (
-														<span className="plan-comparison-grid__plan-image">
-															{ feature.getIcon() }
-														</span>
-													) }
-													<span className="plan-comparison-grid__plan-title">
-														{ feature.getAlternativeTitle?.() || feature.getTitle() }
-													</span>
-													{ feature.getCompareTitle && (
-														<span className="plan-comparison-grid__plan-subtitle">
-															{ feature.getCompareTitle() }
-														</span>
-													) }
-													{ hasFeature ? (
-														<Gridicon icon="checkmark" color="#0675C4" size={ 18 } />
-													) : (
-														<Gridicon icon="minus-small" color="#C3C4C7" />
-													) }
-												</Cell>
-											);
-										} ) }
-									</Row>
-								);
-							} ) }
+							{ featureObjects.map( ( feature ) => (
+								<PlanComparisonGridFeatureGroupRow
+									key={ feature.getSlug() }
+									feature={ feature }
+									isHiddenInMobile={ isHiddenInMobile }
+									allJetpackFeatures={ allJetpackFeatures }
+									visiblePlansProperties={ visiblePlansProperties }
+									restructuredFeatures={ restructuredFeatures }
+									isStorageFeature={ false }
+								/>
+							) ) }
 							{ featureGroup.slug === FEATURE_GROUP_ESSENTIAL_FEATURES ? (
-								<Row
+								<PlanComparisonGridFeatureGroupRow
 									key="feature-storage"
 									isHiddenInMobile={ isHiddenInMobile }
-									className="plan-comparison-grid__feature-storage"
-								>
-									<RowHead
-										key="feature-name"
-										className="plan-comparison-grid__feature-feature-name storage"
-									>
-										<Plans2023Tooltip
-											text={ translate( 'Space to store your photos, media, and more.' ) }
-										>
-											{ translate( 'Storage' ) }
-										</Plans2023Tooltip>
-									</RowHead>
-									{ ( visiblePlansProperties ?? [] ).map( ( { planName } ) => {
-										const storageFeature = restructuredFeatures.planStorageOptionsMap[ planName ];
-										const [ featureObject ] = getPlanFeaturesObject( [ storageFeature ] );
-										const isHighlight = isBusinessPlan( planName ) || isPremiumPlan( planName );
-										const cellClasses = classNames(
-											'plan-comparison-grid__plan',
-											'has-feature',
-											getPlanClass( planName ),
-											{
-												'popular-plan-parent-class': isHighlight,
-												'is-left-of-highlight':
-													highlightAdjacencyMatrix[ planName ]?.leftOfHighlight,
-												'is-right-of-highlight':
-													highlightAdjacencyMatrix[ planName ]?.rightOfHighlight,
-												'is-only-highlight': highlightAdjacencyMatrix[ planName ]?.isOnlyHighlight,
-											}
-										);
-
-										return (
-											<Cell key={ planName } className={ cellClasses } textAlign="center">
-												<span className="plan-comparison-grid__plan-title">
-													{ translate( 'Storage' ) }
-												</span>
-												<StorageButton
-													className="plan-features-2023-grid__storage-button"
-													key={ planName }
-												>
-													{ featureObject.getCompareTitle?.() }
-												</StorageButton>
-											</Cell>
-										);
-									} ) }
-								</Row>
+									allJetpackFeatures={ allJetpackFeatures }
+									visiblePlansProperties={ visiblePlansProperties }
+									restructuredFeatures={ restructuredFeatures }
+									isStorageFeature={ true }
+								/>
 							) : null }
 						</div>
 					);
