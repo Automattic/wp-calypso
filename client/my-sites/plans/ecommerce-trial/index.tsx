@@ -13,6 +13,7 @@ import { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import SegmentedControl from 'calypso/components/segmented-control';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
+import { getECommerceTrialCheckoutUrl } from 'calypso/lib/ecommerce-trial/get-ecommerce-trial-checkout-url';
 import { getPlanRawPrice, getPlan } from 'calypso/state/plans/selectors';
 import { getECommerceFeatureSets } from './ecommerce-features';
 import ECommerceTrialBanner from './ecommerce-trial-banner';
@@ -54,7 +55,10 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 				location: tracksLocation,
 			} );
 
-			const checkoutUrl = `/checkout/${ siteSlug }/${ targetECommercePlan.getStoreSlug() }`;
+			const checkoutUrl = getECommerceTrialCheckoutUrl( {
+				productSlug: targetECommercePlan.getStoreSlug(),
+				siteSlug,
+			} );
 
 			page.redirect( checkoutUrl );
 		},
