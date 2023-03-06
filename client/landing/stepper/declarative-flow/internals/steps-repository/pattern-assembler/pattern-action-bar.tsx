@@ -2,15 +2,15 @@ import { Button } from '@wordpress/components';
 import { chevronUp, chevronDown, closeSmall, edit } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import './pattern-action-bar.scss';
 
 type PatternActionBarProps = {
-	onReplace: () => void;
+	onReplace?: () => void;
 	onDelete: () => void;
 	onMoveUp?: () => void;
 	onMoveDown?: () => void;
 	disableMoveUp?: boolean;
 	disableMoveDown?: boolean;
-	enableMoving?: boolean;
 	patternType: string;
 };
 
@@ -21,7 +21,6 @@ const PatternActionBar = ( {
 	onMoveDown,
 	disableMoveUp,
 	disableMoveDown,
-	enableMoving,
 	patternType,
 }: PatternActionBarProps ) => {
 	const translate = useTranslate();
@@ -31,7 +30,7 @@ const PatternActionBar = ( {
 			role="menubar"
 			aria-label={ translate( 'Pattern actions' ) }
 		>
-			{ enableMoving && (
+			{ onMoveUp && onMoveDown && (
 				<div className="pattern-action-bar__block">
 					<Button
 						className="pattern-action-bar__action pattern-action-bar__action--move-up"
@@ -59,19 +58,21 @@ const PatternActionBar = ( {
 					/>
 				</div>
 			) }
-			<Button
-				className="pattern-action-bar__block pattern-action-bar__action"
-				role="menuitem"
-				label={ translate( 'Replace' ) }
-				onClick={ () => {
-					recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_replace_click', {
-						pattern_type: patternType,
-					} );
-					onReplace();
-				} }
-				icon={ edit }
-				iconSize={ 20 }
-			/>
+			{ onReplace && (
+				<Button
+					className="pattern-action-bar__block pattern-action-bar__action"
+					role="menuitem"
+					label={ translate( 'Replace' ) }
+					onClick={ () => {
+						recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_replace_click', {
+							pattern_type: patternType,
+						} );
+						onReplace();
+					} }
+					icon={ edit }
+					iconSize={ 20 }
+				/>
+			) }
 			<Button
 				className="pattern-action-bar__block pattern-action-bar__action"
 				role="menuitem"

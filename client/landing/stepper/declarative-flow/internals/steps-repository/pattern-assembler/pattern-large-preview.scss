@@ -1,3 +1,5 @@
+@import "./keyframes";
+
 .pattern-large-preview {
 	flex: 1;
 	position: relative;
@@ -20,8 +22,39 @@
 	.pattern-large-preview__pattern-header {
 		margin-block-end: var(--pattern-large-preview-block-gap);
 	}
+
 	.pattern-large-preview__pattern-footer {
 		margin-block-start: var(--pattern-large-preview-block-gap);
+	}
+}
+
+.pattern-large-preview__pattern {
+	position: relative;
+
+	.pattern-action-bar {
+		position: absolute;
+		top: 15px;
+		right: 15px;
+		padding: 6px;
+		border: 1px solid #dcdcde;
+		border-radius: 4px;
+		background-color: #fff;
+		opacity: 0;
+
+		> .pattern-action-bar__action {
+			min-width: 28px;
+			height: 28px;
+			padding: 2px;
+		}
+	}
+
+	&:hover,
+	&:focus,
+	&:focus-within {
+		.pattern-action-bar {
+			animation: slideInShort 0.2s forwards, fadeIn 0.3s forwards;
+			animation-timing-function: cubic-bezier(0.445, 0.05, 0.55, 0.95);
+		}
 	}
 }
 

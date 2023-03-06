@@ -93,7 +93,6 @@ const PatternLayout = ( {
 												onDelete={ () => onDeleteSection( index ) }
 												onMoveUp={ () => onMoveUpSection( index ) }
 												onMoveDown={ () => onMoveDownSection( index ) }
-												enableMoving={ true }
 												disableMoveUp={ index === 0 }
 												disableMoveDown={ sections?.length === index + 1 }
 											/>
@@ -159,7 +158,6 @@ const PatternLayout = ( {
 											onDelete={ () => onDeleteSection( index ) }
 											onMoveUp={ () => onMoveUpSection( index ) }
 											onMoveDown={ () => onMoveDownSection( index ) }
-											enableMoving={ true }
 											disableMoveUp={ index === 0 }
 											disableMoveDown={ sections?.length === index + 1 }
 										/>
