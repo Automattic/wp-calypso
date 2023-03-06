@@ -10,11 +10,12 @@ import { NavigationButtonAsItem } from './navigator-buttons';
 import NavigatorHeader from './navigator-header';
 
 interface Props {
+	shouldUnlockGlobalStyles: boolean;
 	onSelect: ( name: string ) => void;
 	onContinueClick: () => void;
 }
 
-const ScreenMain = ( { onSelect, onContinueClick }: Props ) => {
+const ScreenMain = ( { shouldUnlockGlobalStyles, onSelect, onContinueClick }: Props ) => {
 	const translate = useTranslate();
 
 	return (
@@ -89,7 +90,7 @@ const ScreenMain = ( { onSelect, onContinueClick }: Props ) => {
 			</div>
 			<div className="screen-container__footer">
 				<Button className="pattern-assembler__button" onClick={ onContinueClick } primary>
-					{ translate( 'Continue' ) }
+					{ shouldUnlockGlobalStyles ? translate( 'Unlock this style' ) : translate( 'Continue' ) }
 				</Button>
 			</div>
 		</>
