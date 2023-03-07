@@ -1,5 +1,5 @@
 import { Button } from '@wordpress/components';
-import { chevronUp, chevronDown, closeSmall, edit } from '@wordpress/icons';
+import { chevronUp, chevronDown, close, edit } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import './pattern-action-bar.scss';
@@ -83,7 +83,7 @@ const PatternActionBar = ( {
 					} );
 					onDelete();
 				} }
-				icon={ closeSmall }
+				icon={ close }
 				iconSize={ 23 }
 			/>
 		</div>
