@@ -2,7 +2,7 @@ import { Button, FormStatus, useTotal, useFormStatus } from '@automattic/composi
 import { snakeToCamelCase } from '@automattic/js-utils';
 import { Field } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
-import { useSelect, useDispatch, registerStore } from '@wordpress/data';
+import { useSelect, useDispatch, register, registerStore } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
@@ -38,8 +38,7 @@ type NetBankingStoreState< N extends string > = Record< N, StoreStateValue > & {
 	fields: FieldsType;
 };
 
-interface NetBankingPaymentMethodStore< N extends string >
-	extends ReturnType< typeof registerStore > {
+interface NetBankingPaymentMethodStore< N extends string > extends ReturnType< typeof register > {
 	getState: () => NetBankingStoreState< N >;
 }
 type NetBankingStore = NetBankingPaymentMethodStore< NounsInStore >;
