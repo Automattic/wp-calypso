@@ -20,8 +20,7 @@ export type AllowedStatusTypes =
 	| 'warning'
 	| 'success'
 	| 'disabled'
-	| 'critical'
-	| null;
+	| 'critical';
 
 export interface MonitorSettings {
 	monitor_active: boolean;

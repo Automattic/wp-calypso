@@ -41,6 +41,7 @@ export const siteColumns: SiteColumns = [
 	{
 		key: 'backup',
 		title: translate( 'Backup' ),
+		isExpandable: isExpandedBlockEnabled,
 	},
 	{
 		key: 'scan',
@@ -50,10 +51,11 @@ export const siteColumns: SiteColumns = [
 		key: 'monitor',
 		title: translate( 'Monitor' ),
 		className: 'min-width-100px',
+		isExpandable: isExpandedBlockEnabled,
 	},
 	{
 		key: 'plugin',
-		title: translate( 'Plugin' ),
+		title: translate( 'Plugins' ),
 	},
 ];
 
@@ -127,7 +129,7 @@ const scanEventNames: StatusEventNames = {
 	},
 };
 
-// Monitor feature status event names for large screen(>960px) and small screen(<960px)
+// Montitor feature status event names for large screen(>960px) and small screen(<960px)
 const monitorEventNames: StatusEventNames = {
 	disabled: {
 		small_screen: 'calypso_jetpack_agency_dashboard_monitor_inactive_click_small_screen',

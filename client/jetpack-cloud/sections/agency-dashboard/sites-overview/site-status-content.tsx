@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon, ShortenedNumber } from '@automattic/components';
+import { Icon, arrowUp, arrowDown } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
@@ -94,11 +95,11 @@ export default function SiteStatusContent( {
 		dispatch( unselectLicense( siteId, type ) );
 	};
 
-	function getStatTrendIcon( trend: string ) {
-		if ( trend === 'up' ) {
-			return 'arrow-up';
-		} else if ( trend === 'down' ) {
-			return 'arrow-down';
+	function getTrendIcon( viewsTrend: string ) {
+		if ( viewsTrend === 'up' ) {
+			return 'arrowUp';
+		} else if ( viewsTrend === 'down' ) {
+			return 'arrowDown';
 		}
 		return 'same';
 	}
@@ -185,13 +186,20 @@ export default function SiteStatusContent( {
 
 	if ( type === 'stats' ) {
 		const { total: totalViews, trend: viewsTrend } = rows.stats.data.views;
+		const trendIcon = getTrendIcon( viewsTrend );
 		return (
-			<>
-				<Gridicon icon={ getStatTrendIcon( viewsTrend ) } size={ 18 } />
+			<span
+				className={ classNames( 'site-expanded-content__card-content-count', {
+					'is-up': viewsTrend === 'up',
+					'is-down': viewsTrend === 'down',
+				} ) }
+			>
+				<Icon icon={ getTrendIcon( viewsTrend ) } size={ 16 } />
 				<div className="sites-overview__stats">
 					<ShortenedNumber value={ totalViews } />
+					{ trendIcon }
 				</div>
-			</>
+			</span>
 		);
 	}
 
