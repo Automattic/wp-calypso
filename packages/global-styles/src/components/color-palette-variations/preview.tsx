@@ -32,6 +32,7 @@ const ColorPaletteVariationPreview = ( { title }: Props ) => {
 	const [ themeColors ] = useSetting( 'color.palette.theme' );
 	const [ containerResizeListener, { width } ] = useResizeObserver();
 	const ratio = width ? width / STYLE_PREVIEW_WIDTH : 1;
+	const normalizedSwatchSize = STYLE_PREVIEW_COLOR_SWATCH_SIZE * ratio * 2;
 
 	const uniqueColors = [ ...new Set< string >( themeColors.map( ( { color }: Color ) => color ) ) ];
 	const highlightedColors = uniqueColors
@@ -70,19 +71,17 @@ const ColorPaletteVariationPreview = ( { title }: Props ) => {
 								overflow: 'hidden',
 							} }
 						>
-							<VStack spacing={ 4 * ratio }>
-								{ highlightedColors.map( ( color, index ) => (
-									<div
-										key={ index }
-										style={ {
-											height: STYLE_PREVIEW_COLOR_SWATCH_SIZE * ratio,
-											width: STYLE_PREVIEW_COLOR_SWATCH_SIZE * ratio,
-											background: color,
-											borderRadius: ( STYLE_PREVIEW_COLOR_SWATCH_SIZE * ratio ) / 2,
-										} }
-									/>
-								) ) }
-							</VStack>
+							{ highlightedColors.map( ( color, index ) => (
+								<div
+									key={ index }
+									style={ {
+										height: normalizedSwatchSize,
+										width: normalizedSwatchSize,
+										background: color,
+										borderRadius: normalizedSwatchSize / 2,
+									} }
+								/>
+							) ) }
 						</HStack>
 					) : (
 						<VStack
