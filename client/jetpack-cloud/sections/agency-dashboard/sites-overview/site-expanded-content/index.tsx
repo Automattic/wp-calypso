@@ -29,8 +29,7 @@ export default function SiteExpandedContent( {
 		>
 			{ columns.includes( 'stats' ) && stats && <InsightsStats stats={ stats } /> }
 			{ columns.includes( 'boost' ) && (
-				// FIXME: hasBoost is a temporary prop to show the component
-				<BoostSitePerformance boostData={ boostData } hasBoost={ true } />
+				<BoostSitePerformance boostData={ boostData } hasBoost={ site.has_boost } />
 			) }
 		</div>
 	);

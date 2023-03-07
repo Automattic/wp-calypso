@@ -54,6 +54,7 @@ export interface Site {
 	monitor_site_status: boolean;
 	has_scan: boolean;
 	has_backup: boolean;
+	has_boost: boolean;
 	latest_scan_threats_found: Array< any >;
 	latest_backup_status: string;
 	is_connection_healthy: boolean;

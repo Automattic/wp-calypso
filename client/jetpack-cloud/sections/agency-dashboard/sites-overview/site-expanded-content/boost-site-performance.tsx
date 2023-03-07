@@ -23,7 +23,7 @@ export default function BoostSitePerformance( { boostData, hasBoost }: Props ) {
 	return (
 		<ExpandedCard
 			header={ translate( 'Boost site performance' ) }
-			isEnabled={ hasBoost }
+			isEnabled={ !! hasBoost }
 			emptyContent={ translate(
 				'Add {{strong}}Boost{{/strong}} to see your site performance scores',
 				{
