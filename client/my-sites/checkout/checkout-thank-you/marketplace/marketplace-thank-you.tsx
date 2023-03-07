@@ -101,7 +101,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	// Retrieve theme information
 	const wpComThemes = useSelector( ( state ) => getThemes( state, 'wpcom', productSlugs ) );
 
-	const isAllDataFetched =
+	const areAllProductsFetched =
 		!! pluginsOnSite.length &&
 		pluginsOnSite.every( ( pluginOnSite, index ) => !! pluginOnSite || !! wpComThemes[ index ] );
 
@@ -167,7 +167,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		}
 
 		// Update the menu after the plugin has been installed, since that might change some menu items.
-		if ( isAllDataFetched ) {
+		if ( areAllProductsFetched ) {
 			dispatch( requestAdminMenu( siteId ) );
 			return;
 		}
@@ -177,7 +177,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		}
 	}, [
 		isRequestingPlugins,
-		isAllDataFetched,
+		areAllProductsFetched,
 		dispatch,
 		siteId,
 		transferStatus,
@@ -191,7 +191,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 			return;
 		}
 
-		setShowProgressBar( ! isAllDataFetched );
+		setShowProgressBar( ! areAllProductsFetched );
 
 		// Sites already transferred to Atomic or self-hosted Jetpack sites no longer need to change the current step.
 		if ( isJetpack ) {
@@ -207,7 +207,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		} else if ( transferStatus === transferStates.COMPLETE ) {
 			setCurrentStep( 3 );
 		}
-	}, [ transferStatus, isAllDataFetched, showProgressBar, isJetpack ] );
+	}, [ transferStatus, areAllProductsFetched, showProgressBar, isJetpack ] );
 
 	const steps = useMemo(
 		() =>
@@ -323,7 +323,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 			<MasterbarStyled
 				onClick={ () => page( `/plugins/${ siteSlug }` ) }
 				backText={ translate( 'Back to plugins' ) }
-				canGoBack={ isAllDataFetched }
+				canGoBack={ areAllProductsFetched }
 			/>
 			{ productSlugs.map( ( productSlug, index ) => (
 				<QueryTheme key={ 'query-theme-' + index } siteId="wpcom" themeId={ productSlug } />
