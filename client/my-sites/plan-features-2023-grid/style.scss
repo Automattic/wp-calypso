@@ -140,15 +140,10 @@
 	margin: 0 auto;
 	padding: 28px 0 10px;
 	transform: translateY(-20px);
-	overflow-x: hidden;
+	overflow-x: visible;
 
 	@include plans-2023-break-small {
 		padding-top: 64px;
-		overflow-x: auto;
-	}
-
-	@include plans-2023-break-medium {
-		overflow-x: auto;
 	}
 }
 
@@ -619,6 +614,29 @@ body.is-section-signup.is-white-signup,
 						transform: translate(20px, 0);
 					}
 				}
+
+				&.is-current-plan {
+					color: unset;
+					.plan-pill {
+						background: #e0e0e0;
+						color: var(--studio-gray-100);
+					}
+				}
+			}
+
+			&.is-left-of-highlight {
+				&:not(.is-last-in-row) {
+					.plan-features-2023-grid__popular-badge {
+						border-top-right-radius: 0;
+					}
+				}
+			}
+			&.is-right-of-highlight {
+				&:not(.is-first-in-row) {
+					.plan-features-2023-grid__popular-badge {
+						border-top-left-radius: 0;
+					}
+				}
 			}
 		}
 
@@ -703,38 +721,6 @@ body.is-section-signup.is-white-signup,
 
 		@include plans-2023-break-small {
 			margin: 24px 20px;
-		}
-	}
-
-	// adjust border radius for having multiple popular badges in tablet view
-	.plan-features-2023-grid__tablet-view {
-		.plan-features-2023-grid__table-item.plan-features-2023-grid__table-item {
-			&.popular-plan-parent-class {
-				.plan-features-2023-grid__popular-badge {
-					&.is-business-plan {
-						border-top-right-radius: 0;
-					}
-
-					&.is-ecommerce-plan {
-						border-top-left-radius: 0;
-					}
-				}
-			}
-		}
-	}
-	// adjust border radius for having multiple popular badges in desktop view
-	.plan-features-2023-grid__desktop-view {
-		.plan-features-2023-grid__table-item.plan-features-2023-grid__table-item {
-			&.popular-plan-parent-class {
-				.plan-features-2023-grid__popular-badge {
-					&.is-premium-plan {
-						border-top-right-radius: 0;
-					}
-					&.is-business-plan {
-						border-top-left-radius: 0;
-					}
-				}
-			}
 		}
 	}
 }
@@ -824,6 +810,17 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 		@include plans-2023-break-medium {
 			&.plan-is-footer {
 				padding-top: 110px;
+			}
+		}
+
+		&.popular-plan-parent-class {
+			.plan-features-2023-grid__popular-badge {
+				&.is-current-plan {
+					.plan-pill {
+						background: #e0e0e0;
+						color: var(--studio-gray-100);
+					}
+				}
 			}
 		}
 

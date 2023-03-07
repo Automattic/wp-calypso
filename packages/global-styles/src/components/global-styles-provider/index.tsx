@@ -81,13 +81,14 @@ interface Props {
 	siteId: number | string;
 	stylesheet: string;
 	children: JSX.Element;
+	placeholder: JSX.Element | null;
 }
 
-const GlobalStylesProvider = ( { siteId, stylesheet, children }: Props ) => {
+const GlobalStylesProvider = ( { siteId, stylesheet, children, placeholder = null }: Props ) => {
 	const context = useGlobalStylesContext( siteId, stylesheet );
 
 	if ( ! context.isReady ) {
-		return null;
+		return placeholder;
 	}
 
 	return (

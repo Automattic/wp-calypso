@@ -124,10 +124,10 @@ describe( 'useDaysOfBackupsSavedText', () => {
 		expect( text ).toHaveTextContent( '7 days of backups saved' );
 	} );
 
-	test( 'renders `7 days of backups saved` with link to activity log with site-slug in Calypso Blue', () => {
+	test( 'renders `7 days of backups saved` with link to settings page with site-slug in Calypso Blue', () => {
 		const text = renderDaysOfBackupsSavedText( 7, 'site-slug' );
 		const link = text.childNodes[ 0 ];
-		expect( link ).toHaveAttribute( 'href', '/activity-log/site-slug?group=rewind' );
+		expect( link ).toHaveAttribute( 'href', '/settings/jetpack/site-slug' );
 		expect( link ).toHaveTextContent( '7 days of backups saved' );
 	} );
 

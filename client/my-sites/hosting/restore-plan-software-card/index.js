@@ -36,7 +36,7 @@ export default function RestorePlanSoftwareCard() {
 
 	return (
 		<Card className="restore-plan-software-card">
-			<MaterialIcon icon="apps" />
+			<MaterialIcon icon="apps" size={ 32 } />
 			<CardHeading>{ translate( 'Restore plugins and themes' ) }</CardHeading>
 			<p>
 				{ translate(

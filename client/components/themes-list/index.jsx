@@ -7,7 +7,7 @@ import { Icon, addTemplate, brush, cloudUpload } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { isEmpty, times } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import Theme from 'calypso/components/theme';
@@ -23,8 +23,41 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';
 
 const noop = () => {};
+/* Used for second upsell nudge */
+const getGridColumns = ( gridContainerRef, minColumnWidth, margin ) => {
+	const container = gridContainerRef.current;
+	if ( ! container ) {
+		return null;
+	}
+	const containerWidth = container.offsetWidth;
+	const availableWidth = containerWidth - margin;
+
+	// Changing from desktop to mobile view can cause the container width to be smaller than the
+	// minimum column width because it calculates before hiding the sidebar, which would result
+	// in a division by zero. In that case, we just assume that there's only one column.
+	const columnsPerRow = Math.floor( availableWidth / ( minColumnWidth + margin ) ) || 1;
+	return columnsPerRow;
+};
 
 export const ThemesList = ( props ) => {
+	const themesListRef = useRef( null );
+	const [ showSecondUpsellNudge, setShowSecondUpsellNudge ] = useState( false );
+	const updateShowSecondUpsellNudge = useCallback( () => {
+		const minColumnWidth = 320; // $theme-item-min-width: 320px;
+		const margin = 32; // $theme-item-horizontal-margin: 32px;
+		const columnsPerRow = getGridColumns( themesListRef, minColumnWidth, margin );
+		const result = columnsPerRow && props.themes.length >= columnsPerRow * 6;
+		setShowSecondUpsellNudge( result );
+	}, [ props.themes.length ] );
+
+	useEffect( () => {
+		updateShowSecondUpsellNudge();
+		window.addEventListener( 'resize', updateShowSecondUpsellNudge );
+		return () => {
+			window.removeEventListener( 'resize', updateShowSecondUpsellNudge );
+		};
+	}, [ updateShowSecondUpsellNudge ] );
+
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const isPatternAssemblerCTAEnabled =
@@ -91,12 +124,13 @@ export const ThemesList = ( props ) => {
 	);
 
 	return (
-		<div className="themes-list">
+		<div className="themes-list" ref={ themesListRef }>
 			{ props.themes.map( ( theme, index ) => (
 				<ThemeBlock key={ 'theme-block' + index } theme={ theme } index={ index } { ...props } />
 			) ) }
-			{ /* Add a second plan upsell at 7th row and the behavior is controlled by CSS */ }
-			{ props.themes.length > 0 && SecondUpsellNudge }
+			{ /* Don't show second upsell nudge when less than 6 rows are present.
+				 Second plan upsell at 7th row is implemented through CSS. */ }
+			{ showSecondUpsellNudge && SecondUpsellNudge }
 			{ /* The Pattern Assembler CTA will display on the 9th row and the behavior is controlled by CSS */ }
 			{ isPatternAssemblerCTAEnabled && props.themes.length > 0 && (
 				<PatternAssemblerCta onButtonClick={ goToSiteAssemblerFlow } />

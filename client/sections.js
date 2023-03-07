@@ -339,6 +339,7 @@ const sections = [
 		paths: [ '/tags', '/tag' ],
 		module: 'calypso/reader/tag-stream',
 		group: 'reader',
+		enableLoggedOut: true,
 		trackLoadPerformance: true,
 	},
 	{
@@ -560,6 +561,12 @@ const sections = [
 		name: 'promote-post',
 		paths: [ '/advertising', '/advertising/[^\\/]+(/[^\\/])?' ],
 		module: 'calypso/my-sites/promote-post',
+		group: 'sites',
+	},
+	{
+		name: 'subscriptions',
+		paths: [ '/subscriptions' ],
+		module: 'calypso/my-sites/subscriptions',
 		group: 'sites',
 	},
 ];

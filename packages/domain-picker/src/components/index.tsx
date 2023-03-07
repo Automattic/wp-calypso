@@ -395,6 +395,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 																isCheckingDomainAvailability
 															}
 															hstsRequired={ suggestion.hsts_required }
+															isDotGayNoticeRequired={ suggestion.is_dot_gay_notice_required }
 															isFree={ suggestion.is_free }
 															isRecommended={ showRecommendationLabel && isRecommended }
 															railcarId={

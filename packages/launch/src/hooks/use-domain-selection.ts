@@ -58,6 +58,7 @@ export function useDomainSuggestionFromCart(): DomainSuggestions.DomainSuggestio
 	) {
 		return {
 			hsts_required: domainDetails.hsts_required,
+			is_dot_gay_notice_required: domainDetails.is_dot_gay_notice_required,
 			domain_name: domainName,
 			raw_price: domainProductFromCart.cost,
 			currency_code: domainProductFromCart.currency,

@@ -5,7 +5,6 @@ import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import BlazePressWidget from 'calypso/components/blazepress-widget';
 import { recordDSPEntryPoint } from 'calypso/lib/promote-post';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 import { useRouteModal } from 'calypso/lib/route-modal';
@@ -37,7 +36,7 @@ export default function PostItem( { post }: Props ) {
 	const [ loading ] = useState( false );
 	const dispatch = useDispatch();
 	const keyValue = 'post-' + post.ID;
-	const { isModalOpen, value, openModal } = useRouteModal( 'blazepress-widget', keyValue );
+	const { openModal } = useRouteModal( 'blazepress-widget', keyValue );
 
 	const onClickPromote = async () => {
 		openModal();
@@ -83,12 +82,6 @@ export default function PostItem( { post }: Props ) {
 			) }
 
 			<div className="post-item__promote-link">
-				<BlazePressWidget
-					isVisible={ isModalOpen && value === keyValue }
-					siteId={ post.site_ID }
-					postId={ post.ID }
-					keyValue={ keyValue }
-				/>
 				<Button
 					isPrimary={ true }
 					isBusy={ loading }

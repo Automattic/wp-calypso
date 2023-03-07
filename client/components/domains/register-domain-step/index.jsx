@@ -510,17 +510,15 @@ class RegisterDomainStep extends Component {
 	}
 
 	renderQuickFilters() {
-		const items = [
-			{ key: 'all', text: 'All' },
-			{ key: 'blog', text: '.blog' },
-			{ key: 'com', text: '.com' },
-			{ key: 'news', text: '.news' },
-			{ key: 'email', text: '.email' },
-			{ key: 'info', text: '.info' },
-			{ key: 'help', text: '.help' },
-			{ key: 'press', text: '.press' },
-			{ key: 'report', text: '.report' },
-		];
+		if ( this.state.availableTlds.length === 0 ) {
+			return;
+		}
+
+		const items = this.state.availableTlds.slice( 0, 10 ).map( ( tld ) => {
+			return { key: `${ tld }`, text: `.${ tld }` };
+		} );
+
+		items.unshift( { key: 'all', text: 'All' } );
 
 		const handleClick = ( index ) => {
 			const option = items[ index ].key;

@@ -715,33 +715,6 @@ ul.module-header-actions {
 	}
 }
 
-.stats__module-headerless--unified {
-	.store-stats-widget-list,
-	.earnings_breakdown,
-	.earnings_history,
-	.ads__module-header,
-	.ads__module-header-actions {
-		border-radius: 5px; /* stylelint-disable-line scales/radii */
-	}
-
-	.ads__module-header-title {
-		font-size: 20px; /* stylelint-disable-line declaration-property-unit-allowed-list */
-		color: var(--studio-gray-100);
-		line-height: 26px;
-		padding: 24px 0 12px;
-		height: auto;
-	}
-
-	.ads__module-header-actions {
-		top: 14px;
-	}
-
-	.ads__module-header {
-		height: auto;
-		line-height: normal;
-	}
-}
-
 .stats-module__footer-actions--summary {
 	padding-top: 24px;
 }

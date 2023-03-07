@@ -82,6 +82,8 @@ class StatModuleFollowers extends Component {
 	}
 
 	calculateOffset( pastValue ) {
+		const { translate } = this.props;
+
 		const now = new Date();
 		const value = new Date( pastValue );
 		const difference = now.getTime() - value.getTime();
@@ -94,11 +96,11 @@ class StatModuleFollowers extends Component {
 		let result = '';
 
 		if ( days > 0 ) {
-			result = days + ' days';
+			result = translate( '%d days', { args: days } );
 		} else if ( hours > 0 ) {
-			result = hours + ' hours';
+			result = translate( '%d hours', { args: hours } );
 		} else if ( minutes > 0 ) {
-			result = minutes + ' minutes';
+			result = translate( '%d minutes', { args: minutes } );
 		}
 
 		return result;

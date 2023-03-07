@@ -7,7 +7,7 @@ import type { Pattern } from './types';
 
 interface Props {
 	selectedPattern: Pattern | null;
-	onSelect: ( selectedPattern: Pattern ) => void;
+	onSelect: ( selectedPattern: Pattern | null ) => void;
 	onBack: () => void;
 	onDoneClick: () => void;
 }

@@ -13,6 +13,10 @@ const renderComponent = ( props = {} ): RenderResult =>
 	render( <SuggestionItem { ...MOCK_SUGGESTION_ITEM_PARTIAL_PROPS } { ...props } /> );
 
 describe( 'traintracks events', () => {
+	beforeEach( () => {
+		global.ResizeObserver = require( 'resize-observer-polyfill' );
+	} );
+
 	afterEach( () => {
 		jest.clearAllMocks();
 	} );
@@ -117,6 +121,29 @@ describe( 'conditional elements', () => {
 
 		// use `queryBy` to avoid throwing an error with `getBy`
 		expect( screen.queryByTestId( 'info-tooltip' ) ).toBeFalsy();
+	} );
+
+	it.skip( 'renders info tooltip for domains that require .gay information notice', async () => {
+		render(
+			<SuggestionItem { ...MOCK_SUGGESTION_ITEM_PARTIAL_PROPS } isDotGayNoticeRequired={ true } />
+		);
+
+		expect( screen.getByTestId( 'info-tooltip' ) ).toBeInTheDocument();
+	} );
+
+	it.skip( 'clicking info tooltip icon reveals popover for .gay information notice', async () => {
+		const testRequiredProps = {
+			...MOCK_SUGGESTION_ITEM_PARTIAL_PROPS,
+			domain: 'testdomain.gay',
+			cost: '€37.00',
+			railcarId: 'id',
+			isDotGayNoticeRequired: true,
+		};
+
+		render( <SuggestionItem { ...testRequiredProps } /> );
+		fireEvent.click( screen.getByTestId( 'info-tooltip' ) );
+
+		expect( screen.queryByText( /Any anti-LGBTQ content/i ) ).toBeTruthy();
 	} );
 	/*eslint-enable*/
 

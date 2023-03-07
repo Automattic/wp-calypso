@@ -88,6 +88,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@wordpress/block-editor": ^9.1.0
     "@wordpress/compose": ^5.7.0
+    "@wordpress/edit-site": ^4.6.0
     classnames: ^2.3.1
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -8947,7 +8948,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/interface@npm:^4.8.0":
+"@wordpress/interface@npm:4.8.0":
   version: 4.8.0
   resolution: "@wordpress/interface@npm:4.8.0"
   dependencies:
@@ -8969,6 +8970,31 @@ __metadata:
     react: ^17.0.0
     react-dom: ^17.0.0
   checksum: 2b77361bcfdb6ff1e61d26ad4804bf6701efb4c59418a6e0427857dcd74511c28888c83e195f0e2b25a04c5d49a3f52a8e19fd09826063a085a7c468303583be
+  languageName: node
+  linkType: hard
+
+"@wordpress/interface@patch:@wordpress/interface@npm%3A4.8.0#./.yarn/patches/@wordpress-interface-npm-4.8.0-8a39ad37cf.patch::locator=wp-calypso%40workspace%3A.":
+  version: 4.8.0
+  resolution: "@wordpress/interface@patch:@wordpress/interface@npm%3A4.8.0#./.yarn/patches/@wordpress-interface-npm-4.8.0-8a39ad37cf.patch::version=4.8.0&hash=2df8dc&locator=wp-calypso%40workspace%3A."
+  dependencies:
+    "@babel/runtime": ^7.16.0
+    "@wordpress/a11y": ^3.9.0
+    "@wordpress/components": ^19.11.0
+    "@wordpress/compose": ^5.7.0
+    "@wordpress/data": ^6.9.0
+    "@wordpress/deprecated": ^3.9.0
+    "@wordpress/element": ^4.7.0
+    "@wordpress/i18n": ^4.9.0
+    "@wordpress/icons": ^9.0.0
+    "@wordpress/plugins": ^4.7.0
+    "@wordpress/preferences": ^2.1.0
+    "@wordpress/viewport": ^4.7.0
+    classnames: ^2.3.1
+    lodash: ^4.17.21
+  peerDependencies:
+    react: ^17.0.0
+    react-dom: ^17.0.0
+  checksum: 135ac4a7970a958c49fc04cd040f20d24a03d3a866507a42d4d6b6e25a6516b090bdec0a464618f6cbcfe31283e2cf553a33e5aaa8936713d4e2c7ba9c7802b0
   languageName: node
   linkType: hard
 
@@ -11878,6 +11904,7 @@ __metadata:
     react-day-picker: ^7.4.10
     react-dom: ^17.0.2
     react-element-to-jsx-string: ^14.3.2
+    react-intersection-observer: ^9.4.3
     react-live: ^2.3.0
     react-modal: ^3.14.3
     react-query: ^3.32.1
@@ -12018,9 +12045,9 @@ __metadata:
   linkType: hard
 
 "caniuse-lite@npm:^1.0.0, caniuse-lite@npm:^1.0.30001109, caniuse-lite@npm:^1.0.30001196, caniuse-lite@npm:^1.0.30001313":
-  version: 1.0.30001387
-  resolution: "caniuse-lite@npm:1.0.30001387"
-  checksum: 4da02e20c3932632a6fd9d0bfef172da8edc2936c524e47877746e4028d5a22f41994f9749b64b4ee23ac864fdbf5e3dc8664bd874ad016bdda018428545d38d
+  version: 1.0.30001458
+  resolution: "caniuse-lite@npm:1.0.30001458"
+  checksum: 92ddb0819736d5d2e0efcbb0a729c172ddebc409c4fc39f2a8a8b5e0083fed795cf3efbaec299215298979d4f88da94e6be0ad2f1988cb25ec9be0772c29d0af
   languageName: node
   linkType: hard
 
@@ -18483,8 +18510,10 @@ fsevents@^1.2.7:
     "@wordpress/element": ^4.7.0
     "@wordpress/i18n": ^4.9.0
     "@wordpress/readable-js-assets-webpack-plugin": ^1.0.4
-    "@wordpress/scripts": ^23.1.0
     classnames: ^2.3.2
+    copy-webpack-plugin: ^10.1.0
+    glob: ^7.1.6
+    i18n-calypso: "workspace:^"
     jest: ^27.3.1
     postcss: ^8.4.5
     react: ^17.0.2
@@ -27152,6 +27181,15 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"react-intersection-observer@npm:^9.4.3":
+  version: 9.4.3
+  resolution: "react-intersection-observer@npm:9.4.3"
+  peerDependencies:
+    react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+  checksum: ac0bf29c1105abbe3edff875469f2c6cc55431de02269dbd2e4529babced1a77a7d4e61a325a3a9cc03a844d97b9329ba6e546f79db818c9e53cbad0b43c143d
+  languageName: node
+  linkType: hard
+
 "react-is@npm:^16.12.0 || ^17.0.0, react-is@npm:^17.0.0, react-is@npm:^17.0.1, react-is@npm:^17.0.2":
   version: 17.0.2
   resolution: "react-is@npm:17.0.2"
@@ -33883,6 +33921,7 @@ fsevents@^1.2.7:
     "@automattic/viewport": "workspace:^"
     "@automattic/whats-new": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
+    "@automattic/wpcom-template-parts": "workspace:^"
     "@babel/core": ^7.17.5
     "@babel/eslint-parser": ^7.17.0
     "@babel/register": ^7.17.0
@@ -33989,6 +34028,7 @@ fsevents@^1.2.7:
     prettier: "npm:wp-prettier@2.6.2"
     react: ^17.0.2
     react-dom: ^17.0.2
+    react-intersection-observer: ^9.4.3
     react-modal: ^3.14.3
     readline-sync: ^1.4.10
     reakit-utils: ^0.15.1

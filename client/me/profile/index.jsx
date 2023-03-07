@@ -21,6 +21,7 @@ import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import withFormBase from 'calypso/me/form-base/with-form-base';
 import ProfileLinks from 'calypso/me/profile-links';
 import ReauthRequired from 'calypso/me/reauth-required';
+import DomainUpsell from 'calypso/my-sites/customer-home/cards/features/domain-upsell';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import UpdatedGravatarString from './updated-gravatar-string';
@@ -143,6 +144,8 @@ class Profile extends Component {
 						</p>
 					</form>
 				</Card>
+
+				<DomainUpsell context="profile" />
 
 				<ProfileLinks />
 			</Main>
