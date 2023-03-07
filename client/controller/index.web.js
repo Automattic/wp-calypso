@@ -128,6 +128,13 @@ export function redirectLoggedOut( context, next ) {
 		loginParameters.locale = login_locale;
 	}
 
+	if ( context.query.unlinked ) {
+		loginParameters.isJetpack = true;
+		loginParameters.redirectTo = context.query.redirectTo;
+		// eslint-disable-next-line
+		console.log( context );
+	}
+
 	// force full page reload to avoid SSR hydration issues.
 	window.location = login( loginParameters );
 	return;
