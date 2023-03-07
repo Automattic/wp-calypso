@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -20,15 +19,11 @@ const useHeaderPatterns = () => {
 				category: header,
 				category_slug: 'header',
 			},
-			/*
-		Discarded because there is a menu option named Blog
-		and for now the blogger flow is not supported
-		{
-			id: 5608,
-			name: 'Centered header with logo and navigation',
-			category: header,
-		},
-		*/
+			{
+				id: 5608,
+				name: 'Centered header with logo and navigation',
+				category: header,
+			},
 			{
 				id: 5582,
 				name: 'Simple header',
@@ -542,24 +537,20 @@ const useSectionPatterns = () => {
 				category_slug: 'posts',
 			},
 		];
-		if ( isEnabled( 'pattern-assembler/write-flow' ) ) {
-			if ( intent === SiteIntent.Write ) {
-				// In the Write flow, move posts patterns to the first position
-				patterns = patterns.sort( ( a, b ) => {
-					if ( a.category === b.category ) {
-						return 0;
-					} else if ( a.category === posts ) {
-						return -1;
-					} else if ( b.category === posts ) {
-						return 1;
-					}
 
+		if ( intent === SiteIntent.Write ) {
+			// In the Write flow, move posts patterns to the first position
+			patterns = patterns.sort( ( a, b ) => {
+				if ( a.category === b.category ) {
 					return 0;
-				} );
-			}
-		} else {
-			// Remove posts patterns
-			patterns = patterns.filter( ( { category } ) => category !== posts );
+				} else if ( a.category === posts ) {
+					return -1;
+				} else if ( b.category === posts ) {
+					return 1;
+				}
+
+				return 0;
+			} );
 		}
 
 		return patterns;
