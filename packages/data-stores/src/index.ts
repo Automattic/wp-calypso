@@ -69,4 +69,5 @@ export type { I18nSelect } from './i18n/types';
 export type { HelpCenterSite, HelpCenterSelect } from './help-center/types';
 export type { ProductsListSelect } from './products-list/types';
 export type { OnboardSelect } from './onboard';
+export type { StepperInternalSelect } from './stepper-internal';
 export type { WpcomFeaturesSelect } from './wpcom-features/types';

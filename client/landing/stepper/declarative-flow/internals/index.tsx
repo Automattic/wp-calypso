@@ -22,7 +22,7 @@ import StepperLoader from './components/stepper-loader';
 import VideoPressIntroBackground from './steps-repository/intro/videopress-intro-background';
 import { AssertConditionState, Flow, StepperStep } from './types';
 import './global.scss';
-import type { OnboardSelect } from '@automattic/data-stores';
+import type { OnboardSelect, StepperInternalSelect } from '@automattic/data-stores';
 
 const kebabCase = ( value: string ) => value.replace( /([a-z0-9])([A-Z])/g, '$1-$2' ).toLowerCase();
 
@@ -95,7 +95,10 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const stepNavigation = flow.useStepNavigation( currentStepRoute, navigate );
 
 	// Retrieve any extra step data from the stepper-internal store. This will be passed as a prop to the current step.
-	const stepData = useSelect( ( select ) => select( STEPPER_INTERNAL_STORE ).getStepData() );
+	const stepData = useSelect(
+		( select ) => ( select( STEPPER_INTERNAL_STORE ) as StepperInternalSelect ).getStepData(),
+		[]
+	);
 
 	flow.useSideEffect?.( currentStepRoute, navigate );
 

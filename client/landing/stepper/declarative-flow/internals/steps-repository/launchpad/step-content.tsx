@@ -15,6 +15,7 @@ import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
 import EmailValidationBanner from './email-validation-banner';
 import LaunchpadSitePreview from './launchpad-site-preview';
 import Sidebar from './sidebar';
+import type { SiteSelect } from '@automattic/data-stores';
 
 type StepContentProps = {
 	siteSlug: string | null;
@@ -31,7 +32,9 @@ function sortByRegistrationDate( domainObjectA: ResponseDomain, domainObjectB: R
 const StepContent = ( { siteSlug, submit, goNext, goToStep, flow }: StepContentProps ) => {
 	const site = useSite();
 	const adminUrl = useSelect(
-		( select ) => site && select( SITE_STORE ).getSiteOption( site.ID, 'admin_url' )
+		( select ) =>
+			site && ( select( SITE_STORE ) as SiteSelect ).getSiteOption( site.ID, 'admin_url' ),
+		[]
 	);
 	const { data: allDomains = [] } = useGetDomainsQuery( site?.ID ?? null, {
 		retry: false,

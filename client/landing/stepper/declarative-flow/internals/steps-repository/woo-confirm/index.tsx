@@ -88,7 +88,7 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 			select( AUTOMATED_ELIGIBILITY_STORE ).getWpcomSubdomainWarning( siteId ),
 		[]
 	);
-	const warnings: any = useSelect(
+	const warnings = useSelect(
 		( select ) =>
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore Until createRegistrySelector is typed correctly
