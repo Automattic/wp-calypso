@@ -1,7 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	getPlans,
 	plansLink,
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_MONTHLY,
 	PLAN_WOOEXPRESS_MEDIUM,
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 } from '@automattic/calypso-products';
@@ -32,28 +35,25 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 
 	const translate = useTranslate();
 
-	const wooExpressMediumPlanAnnual = getPlans()[ PLAN_WOOEXPRESS_MEDIUM ];
-	const wooExpressMediumPlanMonthly = getPlans()[ PLAN_WOOEXPRESS_MEDIUM_MONTHLY ];
+	const targetPlanAnnual = isEnabled( 'plans/wooexpress-medium' )
+		? getPlans()[ PLAN_WOOEXPRESS_MEDIUM ]
+		: getPlans()[ PLAN_ECOMMERCE ];
+	const targetPlanMonthly = isEnabled( 'plans/wooexpress-medium' )
+		? getPlans()[ PLAN_WOOEXPRESS_MEDIUM_MONTHLY ]
+		: getPlans()[ PLAN_ECOMMERCE_MONTHLY ];
 
-	const wooExpressMediumPlanPrices = useSelector( ( state ) => ( {
-		annualPlanPrice:
-			getPlanRawPrice( state, wooExpressMediumPlanAnnual.getProductId(), false ) || 0,
-		annualPlanMonthlyPrice:
-			getPlanRawPrice( state, wooExpressMediumPlanAnnual.getProductId(), true ) || 0,
-		monthlyPlanPrice: getPlanRawPrice( state, wooExpressMediumPlanMonthly.getProductId() ) || 0,
-		currencyCode: getPlan( state, wooExpressMediumPlanAnnual.getProductId() )?.currency_code || '',
+	const targetPlanPrices = useSelector( ( state ) => ( {
+		annualPlanPrice: getPlanRawPrice( state, targetPlanAnnual.getProductId(), false ) || 0,
+		annualPlanMonthlyPrice: getPlanRawPrice( state, targetPlanAnnual.getProductId(), true ) || 0,
+		monthlyPlanPrice: getPlanRawPrice( state, targetPlanMonthly.getProductId() ) || 0,
+		currencyCode: getPlan( state, targetPlanAnnual.getProductId() )?.currency_code || '',
 	} ) );
 
 	const isAnnualSubscription = interval === 'yearly';
-	const targetWooExpressPlan = isAnnualSubscription
-		? wooExpressMediumPlanAnnual
-		: wooExpressMediumPlanMonthly;
+	const targetPlan = isAnnualSubscription ? targetPlanAnnual : targetPlanMonthly;
 
 	const percentageSavings = Math.floor(
-		( 1 -
-			wooExpressMediumPlanPrices.annualPlanMonthlyPrice /
-				wooExpressMediumPlanPrices.monthlyPlanPrice ) *
-			100
+		( 1 - targetPlanPrices.annualPlanMonthlyPrice / targetPlanPrices.monthlyPlanPrice ) * 100
 	);
 
 	const redirectToCheckoutForPlan = useCallback(
@@ -63,15 +63,16 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 			} );
 
 			const checkoutUrl = getECommerceTrialCheckoutUrl( {
-				productSlug: targetWooExpressPlan.getStoreSlug(),
+				productSlug: targetPlan.getStoreSlug(),
 				siteSlug,
 			} );
 
 			page.redirect( checkoutUrl );
 		},
-		[ siteSlug, targetWooExpressPlan ]
+		[ siteSlug, targetPlan ]
 	);
 
+	// WX Medium and Commerce have the same features
 	const wooExpressMediumPlanFeatureSets = useMemo( () => {
 		return getWooExpressMediumFeatureSets( { translate } );
 	}, [ translate ] );
@@ -85,13 +86,13 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 				{
 					args: {
 						monthlyPrice: formatCurrency(
-							wooExpressMediumPlanPrices.annualPlanMonthlyPrice,
-							wooExpressMediumPlanPrices.currencyCode,
+							targetPlanPrices.annualPlanMonthlyPrice,
+							targetPlanPrices.currencyCode,
 							{ stripZeros: true }
 						),
 						annualPrice: formatCurrency(
-							wooExpressMediumPlanPrices.annualPlanPrice,
-							wooExpressMediumPlanPrices.currencyCode,
+							targetPlanPrices.annualPlanPrice,
+							targetPlanPrices.currencyCode,
 							{ stripZeros: true }
 						),
 					},
@@ -106,8 +107,8 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 				{
 					args: {
 						monthlyPrice: formatCurrency(
-							wooExpressMediumPlanPrices.monthlyPlanPrice,
-							wooExpressMediumPlanPrices.currencyCode,
+							targetPlanPrices.monthlyPlanPrice,
+							targetPlanPrices.currencyCode,
 							{ stripZeros: true }
 						),
 					},
@@ -155,7 +156,7 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 			<Card className="e-commerce-trial-plans__price-card">
 				<div className="e-commerce-trial-plans__price-card-text">
 					<span className="e-commerce-trial-plans__price-card-title">
-						{ targetWooExpressPlan.getTitle() }
+						{ targetPlan.getTitle() }
 					</span>
 					<span className="e-commerce-trial-plans__price-card-subtitle">
 						{ translate( 'Accelerate your growth with advanced features.' ) }
