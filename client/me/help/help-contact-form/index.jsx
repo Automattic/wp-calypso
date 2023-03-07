@@ -209,7 +209,7 @@ export class HelpContactForm extends PureComponent {
 				const sameQuestionsReturned = areSameQuestions( this.state.qanda, qanda );
 				if ( ! sameQuestionsReturned ) {
 					recordTracksEvent( 'calypso_sibyl_display_results', {
-						results_count: qanda.length,
+						results_count: qanda?.length,
 					} );
 				}
 				this.setState( {
