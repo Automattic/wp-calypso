@@ -108,7 +108,13 @@ const LayoutLoggedOut = ( {
 	} else if (
 		[ 'plugins', 'themes', 'theme', 'reader', 'subscriptions' ].includes( sectionName )
 	) {
-		masterbar = <UniversalNavbarHeader isLoggedIn={ isLoggedIn } sectionName={ sectionName } />;
+		masterbar = (
+			<UniversalNavbarHeader
+				isLoggedIn={ isLoggedIn }
+				sectionName={ sectionName }
+				{ ...( sectionName === 'subscriptions' && { variant: 'minimal' } ) }
+			/>
+		);
 	} else {
 		masterbar = (
 			<MasterbarLoggedOut
