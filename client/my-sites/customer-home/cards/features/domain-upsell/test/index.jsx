@@ -75,6 +75,7 @@ jest.mock( 'page', () => ( link ) => ( pageLink = link ) );
 const domainUpsellHeadingPaidPlan = 'You still have a free domain to claim!';
 const domainUpsellHeadingFreePlan = 'Own your online identity with a custom domain';
 const searchForDomainCta = 'Search for a domain';
+const buyThisDomainCta = 'Buy this domain';
 
 describe( 'index', () => {
 	test( 'Should show H3 content for the Home domain upsell and test search domain button link', async () => {
@@ -100,7 +101,7 @@ describe( 'index', () => {
 		).toBeTruthy();
 	} );
 
-	test( 'Should test the purchase button link', async () => {
+	test( 'Should test the purchase button link on Free and Monthly plans', async () => {
 		nock.cleanAll();
 		nock( 'https://public-api.wordpress.com' )
 			.persist()
@@ -117,10 +118,51 @@ describe( 'index', () => {
 		);
 
 		const user = userEvent.setup();
-		await user.click( screen.getByRole( 'button', { name: 'Buy this domain' } ) );
+		await user.click( screen.getByRole( 'button', { name: buyThisDomainCta } ) );
 		expect( pageLink ).toBe(
 			'/plans/yearly/example.wordpress.com?domain=true&domainAndPlanPackage=true'
 		);
+	} );
+
+	test( 'Should test the purchase button link on Yearly plans', async () => {
+		nock.cleanAll();
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.post( '/rest/v1.1/me/shopping-cart/1' )
+			.reply( 200 );
+
+		const newInitialState = {
+			...initialState,
+			sites: {
+				...initialState.sites,
+				items: {
+					1: {
+						...initialState.sites.items[ 1 ],
+						plan: {
+							product_slug: 'business-bundle',
+						},
+					},
+				},
+				plans: {
+					1: {
+						product_slug: 'business-bundle',
+					},
+				},
+			},
+		};
+
+		const mockStore = configureStore();
+		const store = mockStore( newInitialState );
+
+		render(
+			<Provider store={ store }>
+				<DomainUpsell />
+			</Provider>
+		);
+
+		const user = userEvent.setup();
+		await user.click( screen.getByRole( 'button', { name: buyThisDomainCta } ) );
+		expect( pageLink ).toBe( '/checkout/example.wordpress.com' );
 	} );
 
 	test( 'Should show H3 content for the Home domain upsell if paid plan with no domains', async () => {
@@ -210,6 +252,30 @@ describe( 'index', () => {
 
 		expect(
 			screen.queryByRole( 'heading', { name: domainUpsellHeadingPaidPlan } )
+		).not.toBeInTheDocument();
+	} );
+
+	test( 'Should not show Home domain upsell if was dismissed', async () => {
+		const newInitialState = {
+			...initialState,
+			preferences: {
+				remoteValues: {
+					'calypso_my_home_domain_upsell_dismiss-1': true,
+				},
+			},
+		};
+
+		const mockStore = configureStore();
+		const store = mockStore( newInitialState );
+
+		render(
+			<Provider store={ store }>
+				<DomainUpsell />
+			</Provider>
+		);
+
+		expect(
+			screen.queryByRole( 'heading', { name: domainUpsellHeadingFreePlan } )
 		).not.toBeInTheDocument();
 	} );
 
