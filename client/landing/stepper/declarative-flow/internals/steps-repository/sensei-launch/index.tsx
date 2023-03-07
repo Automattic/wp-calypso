@@ -1,8 +1,10 @@
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
 import { SenseiStepContainer } from '../components/sensei-step-container';
 import { Progress, SenseiStepProgress } from '../components/sensei-step-progress';
 import {
@@ -20,6 +22,7 @@ const SENSEI_PRO_PLUGIN_SLUG = 'sensei-pro';
 
 const SenseiLaunch: Step = ( { navigation: { submit } } ) => {
 	const siteId = useSite()?.ID as number;
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) ) as string;
 
 	const { pollPlugins, isPluginInstalled, queuePlugin } = useAtomicSitePlugins();
 	const { requestChecklist, isSenseiIncluded } = useAtomicSiteChecklist();
@@ -49,7 +52,7 @@ const SenseiLaunch: Step = ( { navigation: { submit } } ) => {
 				return retries >= 3;
 			},
 			async function savePurposeData() {
-				await saveSelectedPurposesAsSenseiSiteSettings( siteId );
+				await saveSelectedPurposesAsSenseiSiteSettings( siteSlug );
 				return true;
 			},
 			async function waitForChecklist() {

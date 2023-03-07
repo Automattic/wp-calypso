@@ -75,15 +75,15 @@ export function getSelectedPlugins(): Plugin[] {
 		);
 }
 
-export async function saveSelectedPurposesAsSenseiSiteSettings( siteId: number ) {
+export async function saveSelectedPurposesAsSenseiSiteSettings( siteSlug: string ) {
 	const purpose = getSelectedPurposes();
-	if ( ! purpose || ! siteId ) {
+	if ( ! purpose || ! siteSlug ) {
 		return;
 	}
 	try {
 		return await wpcom.req.post(
 			{
-				path: `/sites/${ siteId }/settings`,
+				path: `/sites/${ siteSlug }/settings`,
 				apiNamespace: 'wp/v2',
 			},
 			{
