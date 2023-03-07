@@ -1,7 +1,7 @@
 import type { ReactChild } from 'react';
 
 // All types based on which the data is populated on the agency dashboard table rows
-export type AllowedTypes = 'site' | 'stats' | 'backup' | 'scan' | 'monitor' | 'plugin';
+export type AllowedTypes = 'site' | 'stats' | 'boost' | 'backup' | 'scan' | 'monitor' | 'plugin';
 
 // Site column object which holds key and title of each column
 export type SiteColumns = Array< {
@@ -40,6 +40,12 @@ export interface SiteStats {
 	visitors: StatsObject;
 }
 
+export interface BoostObject {
+	desktop: number;
+	mobile: number;
+	overall: any;
+}
+
 export interface Site {
 	blog_id: number;
 	url: string;
@@ -58,6 +64,7 @@ export interface Site {
 	isSelected?: boolean;
 	site_stats: SiteStats;
 	onSelect?: ( value: boolean ) => void;
+	jetpack_boost_scores: BoostObject;
 }
 export interface SiteNode {
 	value: Site;
@@ -70,6 +77,11 @@ export interface StatsNode {
 	type: AllowedTypes;
 	status: AllowedStatusTypes;
 	value: SiteStats;
+}
+
+export interface BoostNode {
+	type: AllowedTypes;
+	data: BoostObject;
 }
 export interface BackupNode {
 	type: AllowedTypes;
@@ -100,6 +112,7 @@ export interface MonitorNode {
 export interface SiteData {
 	site: SiteNode;
 	stats: StatsNode;
+	boost: BoostNode;
 	backup: BackupNode;
 	scan: ScanNode;
 	plugin: PluginNode;

@@ -179,6 +179,11 @@ export default function SiteStatusContent( {
 		return null;
 	}
 
+	if ( type === 'boost' ) {
+		//const overall = rows.jetpack_boost_scores.data.overall;
+		return 100;
+	}
+
 	let content;
 
 	switch ( status ) {

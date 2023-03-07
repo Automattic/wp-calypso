@@ -12,6 +12,7 @@ import type {
 	StatusTooltip,
 	RowMetaData,
 	StatsNode,
+	BoostNode,
 	BackupNode,
 	ScanNode,
 	MonitorNode,
@@ -27,6 +28,11 @@ const extraColumns: SiteColumns = isExpandedBlockEnabled
 			{
 				key: 'stats',
 				title: translate( 'Stats' ),
+				isExpandable: true,
+			},
+			{
+				key: 'boost',
+				title: translate( 'Boost' ),
 				isExpandable: true,
 			},
 	  ]
@@ -322,6 +328,14 @@ const formatStatsData = ( site: Site ) => {
 	return statsData;
 };
 
+const formatBoostData = ( site: Site ) => {
+	const boost: BoostNode = {
+		type: 'boost',
+		data: 100,
+	};
+	return boost;
+};
+
 const formatBackupData = ( site: Site ) => {
 	const backup: BackupNode = {
 		value: '',
@@ -425,6 +439,7 @@ export const formatSites = ( sites: Array< Site > = [] ): Array< SiteData > | []
 				type: 'site',
 			},
 			stats: formatStatsData( site ),
+			boost: formatBoostData( site ),
 			backup: formatBackupData( site ),
 			scan: formatScanData( site ),
 			monitor: formatMonitorData( site ),
