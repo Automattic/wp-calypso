@@ -105,7 +105,9 @@ const LayoutLoggedOut = ( {
 		}
 	} else if ( config.isEnabled( 'jetpack-cloud' ) || isWpMobileApp() || isJetpackThankYou ) {
 		masterbar = null;
-	} else if ( [ 'plugins', 'themes', 'theme', 'reader' ].includes( sectionName ) ) {
+	} else if (
+		[ 'plugins', 'themes', 'theme', 'reader', 'subscriptions' ].includes( sectionName )
+	) {
 		masterbar = <UniversalNavbarHeader isLoggedIn={ isLoggedIn } sectionName={ sectionName } />;
 	} else {
 		masterbar = (
