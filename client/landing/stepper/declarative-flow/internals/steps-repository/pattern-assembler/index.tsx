@@ -22,7 +22,7 @@ import { recordSelectedDesign } from '../../analytics/record-design';
 import { SITE_TAGLINE, PLACEHOLDER_SITE_ID } from './constants';
 import useGlobalStylesUpgradeModal from './hooks/use-global-styles-upgrade-modal';
 import usePatternCategoriesFromAPI from './hooks/use-pattern-categories-from-api';
-import useSectionsMapByCategory from './hooks/use-sections-map-by-category';
+import usePatternsMapByCategory from './hooks/use-patterns-map-by-category';
 import NavigatorListener from './navigator-listener';
 import PatternAssemblerContainer from './pattern-assembler-container';
 import PatternLargePreview from './pattern-large-preview';
@@ -73,7 +73,7 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 	const sectionPatterns = useSectionPatterns();
 	const categoriesQuery = usePatternCategoriesFromAPI( site?.ID );
 	const categories = ( categoriesQuery?.data || [] ) as Category[];
-	const sectionsMapByCategory = useSectionsMapByCategory( sectionPatterns, categories );
+	const sectionsMapByCategory = usePatternsMapByCategory( sectionPatterns, categories );
 	const stylesheet = selectedDesign?.recipe?.stylesheet || '';
 
 	const isEnabledColorAndFonts = isEnabled( 'pattern-assembler/color-and-fonts' );
@@ -303,7 +303,7 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 	};
 
 	const handleClosePatternList = ( event: React.MouseEvent ) => {
-		// Click on large preview to close Pattern List
+		// Click on large preview to close the PatternListPanel
 		if ( ( event.target as HTMLElement ).closest( '.pattern-large-preview' ) ) {
 			setOpenPatternList( null );
 			setCategory( null );

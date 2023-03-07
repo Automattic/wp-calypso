@@ -1,5 +1,5 @@
 import AnimateMotion from './animate-motion';
-import useSectionPatternsMapByCategory from './hooks/use-sections-map-by-category';
+import useSectionPatternsMapByCategory from './hooks/use-patterns-map-by-category';
 import PatternSelector from './pattern-selector';
 import type { Pattern, Category } from './types';
 import './pattern-list-panel.scss';

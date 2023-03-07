@@ -64,8 +64,8 @@ const ScreenCategoryList = ( {
 									setOpenPatternList( false );
 									setCategory( null );
 								} else {
-									setCategory( name );
 									setOpenPatternList( true );
+									setCategory( name );
 								}
 							} }
 						>

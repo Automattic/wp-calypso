@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import type { Pattern, Category } from '../types';
 
-const useSectionsMapByCategory = ( patterns: Pattern[], categories: Category[] ) => {
+const usePatternsMapByCategory = ( patterns: Pattern[], categories: Category[] ) => {
 	return useMemo(
 		() =>
 			categories.reduce( ( categoriesMap: { [ key: string ]: Pattern[] }, category ) => {
@@ -18,4 +18,4 @@ const useSectionsMapByCategory = ( patterns: Pattern[], categories: Category[] )
 	);
 };
 
-export default useSectionsMapByCategory;
+export default usePatternsMapByCategory;

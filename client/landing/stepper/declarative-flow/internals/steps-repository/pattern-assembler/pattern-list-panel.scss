@@ -1,0 +1,15 @@
+.pattern-list-panel__wrapper {
+	position: absolute;
+	top: -60px;
+	left: 0;
+	width: 343px;
+	z-index: 2;
+	background: var(--studio-gray-0);
+	border-left: 1px solid rgba(0, 0, 0, 0.03);
+	box-shadow: 183px 0 110px rgb(0 0 0 / 2%), 81px 0 81px rgb(0 0 0 / 3%), 20px 0 45px rgb(0 0 0 / 3%), 0 0 0 rgb(0 0 0 / 3%);
+	padding: 24px;
+	max-height: 100vh;
+	min-height: 100vh;
+	overflow-y: auto;
+	box-sizing: border-box;
+}
