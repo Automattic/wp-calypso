@@ -6,7 +6,6 @@ import { Site } from '@automattic/data-stores';
 import { render, screen } from '@testing-library/react';
 import { useDispatch } from '@wordpress/data';
 import React from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import * as redux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { createReduxStore } from 'calypso/state';
@@ -68,7 +67,6 @@ function renderSidebar( props, siteDetails = defaultSiteDetails, emailVerified =
 		initialReducer
 	);
 	setStore( reduxStore, getStateFromCache( user.ID ) );
-	const queryClient = new QueryClient();
 
 	function TestSidebar( props ) {
 		const SITE_STORE = Site.register( {
@@ -82,13 +80,9 @@ function renderSidebar( props, siteDetails = defaultSiteDetails, emailVerified =
 
 		return (
 			<redux.Provider store={ reduxStore }>
-				<QueryClientProvider client={ queryClient }>
-					<MemoryRouter
-						initialEntries={ [ `/setup/link-in-bio/launchpad?siteSlug=${ siteSlug }` ] }
-					>
-						<Sidebar { ...props } />
-					</MemoryRouter>
-				</QueryClientProvider>
+				<MemoryRouter initialEntries={ [ `/setup/link-in-bio/launchpad?siteSlug=${ siteSlug }` ] }>
+					<Sidebar { ...props } />
+				</MemoryRouter>
 			</redux.Provider>
 		);
 	}
