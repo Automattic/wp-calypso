@@ -3,12 +3,17 @@
 .pattern-large-preview {
 	flex: 1;
 	position: relative;
-	height: 100vh;
-	padding: 32px 0;
-	margin-inline-start: 32px;
-	margin-top: -60px;
+	height: calc(100vh - 42px);
+	margin-inline-end: 32px;
+	margin-top: -50px;
 	box-sizing: border-box;
 	z-index: 1;
+
+	.device-switcher__frame {
+		box-shadow: none;
+		border-radius: 20px;
+		border: 12px solid var(--color-print);
+	}
 }
 
 .pattern-large-preview__patterns {

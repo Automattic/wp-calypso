@@ -1,3 +1,4 @@
+@import "@automattic/components/src/styles/typography";
 @import "./keyframes";
 
 @font-face {
@@ -6,8 +7,6 @@
 	font-display: swap;
 	src: url(https://s0.wp.com/i/fonts/inter/Inter-Medium.woff2?v=3.19) format("woff2");
 }
-
-$font-family: "SF Pro Text", $sans;
 
 .pattern-assembler {
 	display: flex;
@@ -23,7 +22,6 @@ $font-family: "SF Pro Text", $sans;
 	.step-container__content {
 		display: flex;
 		width: 100%;
-		margin: 0 32px;
 	}
 
 	.pattern-assembler__wrapper {
@@ -31,16 +29,19 @@ $font-family: "SF Pro Text", $sans;
 		flex-direction: row;
 		flex: 1;
 		outline: none;
+		position: relative;
 	}
 
 	.pattern-assembler__sidebar {
 		display: flex;
 		flex-direction: column;
-		width: 284px;
+		width: 343px;
 		box-sizing: border-box;
-		margin-top: 50px;
-		margin-bottom: 32px;
+		padding-top: 46px;
+		padding-bottom: 30px;
+		background-color: var(--color-body-background);
 		position: relative;
+		z-index: 3;
 	}
 
 	/**
@@ -170,7 +171,6 @@ $font-family: "SF Pro Text", $sans;
 		flex-direction: column;
 		height: 100%;
 		width: 100%;
-		background: #fdfdfd;
 
 		.pattern-selector__header {
 			display: flex;
@@ -196,7 +196,7 @@ $font-family: "SF Pro Text", $sans;
 			}
 
 			h1 {
-				font-family: $font-family;
+				font-family: $font-sf-pro-text;
 				font-size: $font-title-small;
 				font-weight: 500;
 				line-height: 26px;
@@ -250,12 +250,26 @@ $font-family: "SF Pro Text", $sans;
 	/**
 	 * Screen Container
 	 */
-	.screen-container__body {
+	.screen-container__body,
+	.screen-container__body--no-margin {
 		display: flex;
 		flex-direction: column;
 		padding: 2px;
 		margin-bottom: 32px;
 		overflow-y: auto;
+
+		&.screen-main__body {
+			margin: 0 -5px;
+		}
+
+		&.screen-category-list__body {
+			margin: 0 -7px;
+		}
+
+		&.screen-container__body--no-margin {
+			margin-bottom: 0;
+		}
+
 	}
 
 	.screen-container__body--no-padding {
@@ -263,8 +277,10 @@ $font-family: "SF Pro Text", $sans;
 	}
 
 	.screen-container__footer {
-		padding: 0 2px;
+		padding: 2px;
 		margin-top: auto;
+		margin-left: -2px;
+		margin-right: -2px;
 	}
 
 	.screen-container__description {
@@ -286,6 +302,7 @@ $font-family: "SF Pro Text", $sans;
 		display: flex;
 		flex-direction: column;
 		flex-grow: 1;
+		padding: 0 32px;
 	}
 }
 

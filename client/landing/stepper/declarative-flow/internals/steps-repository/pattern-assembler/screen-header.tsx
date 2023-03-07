@@ -26,13 +26,14 @@ const ScreenHeader = ( { selectedPattern, onSelect, onBack, onDoneClick }: Props
 				) }
 				onBack={ onBack }
 			/>
-			<div className="screen-container__body">
+			<div className="screen-container__body--no-margin">
 				<PatternSelector
 					patterns={ patterns }
 					onSelect={ onSelect }
 					onBack={ onBack }
 					selectedPattern={ selectedPattern }
 					emptyPatternText={ translate( 'No Header' ) }
+					showDoneButton
 				/>
 			</div>
 			<div className="screen-container__footer">

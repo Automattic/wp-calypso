@@ -37,7 +37,7 @@ const PatternLayout = ( {
 				<AsyncLoad require="./animate-list" featureName="domMax" placeholder={ <div /> }>
 					{ ( m: any ) => (
 						<m.ul className="pattern-layout__list" layoutScroll>
-							{ sections.map( ( { category, key }: Pattern, index ) => {
+							{ sections.map( ( { name, category, key }: Pattern, index ) => {
 								return (
 									<m.li
 										key={ key }
@@ -45,8 +45,8 @@ const PatternLayout = ( {
 										exit={ { opacity: 0, x: -50, transition: { duration: 0.2 } } }
 										className="pattern-layout__list-item"
 									>
-										<span className="pattern-layout__list-item-text" title={ category }>
-											{ `${ index + 1 }. ${ category }` }
+										<span className="pattern-layout__list-item-text" title={ name }>
+											{ `${ index + 1 }. ${ category?.label }` }
 										</span>
 										<PatternActionBar
 											patternType="section"

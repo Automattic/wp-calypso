@@ -4,7 +4,6 @@ import {
 	__experimentalUseNavigator as useNavigator,
 } from '@wordpress/components';
 import { usePrevious } from '@wordpress/compose';
-import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import NavigatorHeader from './navigator-header';
 import PatternSelector from './pattern-selector';
@@ -19,7 +18,6 @@ interface Props {
 }
 
 const ScreenPatternList = ( { selectedPattern, onSelect, onBack, onDoneClick }: Props ) => {
-	const translate = useTranslate();
 	const patterns = useSectionPatterns();
 	const navigator = useNavigator();
 	const prevSelectedPattern = usePrevious( selectedPattern );
