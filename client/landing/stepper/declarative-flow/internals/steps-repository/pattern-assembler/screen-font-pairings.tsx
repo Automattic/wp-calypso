@@ -29,6 +29,7 @@ const ScreenFontPairings = ( {
 				description={ translate(
 					'We’ve hand picked a selection of font pairings that you can customize later.'
 				) }
+				isPremium
 			/>
 			<div className="screen-container__body">
 				<FontPairingVariations
