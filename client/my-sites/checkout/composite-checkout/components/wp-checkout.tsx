@@ -66,6 +66,7 @@ import WPCheckoutOrderSummary from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import WPContactFormSummary from './wp-contact-form-summary';
 import type { OnChangeItemVariant } from './item-variation-picker';
+import type { WpcomCheckoutStoreSelectors } from '../hooks/wpcom-store';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
 import type { RemoveProductFromCart, MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type {

@@ -57,6 +57,7 @@ import weChatProcessor from '../lib/we-chat-processor';
 import webPayProcessor from '../lib/web-pay-processor';
 import { StoredCard } from '../types/stored-cards';
 import WPCheckout from './wp-checkout';
+import type { WpcomCheckoutStoreSelectors } from '../hooks/wpcom-store';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -340,11 +341,14 @@ export default function CheckoutMain( {
 		// Only wait for stored cards to load if we are using cards
 		( allowedPaymentMethods.includes( 'card' ) && isLoadingStoredCards );
 
-	const contactDetails: ManagedContactDetails = useSelect( ( select ) =>
-		select( 'wpcom-checkout' )?.getContactInfo()
+	const contactDetails: ManagedContactDetails = useSelect(
+		( select ) => ( select( 'wpcom-checkout' ) as WpcomCheckoutStoreSelectors )?.getContactInfo(),
+		[]
 	);
-	const recaptchaClientId: number = useSelect( ( select ) =>
-		select( 'wpcom-checkout' )?.getRecaptchaClientId()
+	const recaptchaClientId: number = useSelect(
+		( select ) =>
+			( select( 'wpcom-checkout' ) as WpcomCheckoutStoreSelectors )?.getRecaptchaClientId(),
+		[]
 	);
 
 	const paymentMethods = arePaymentMethodsLoading

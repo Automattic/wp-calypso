@@ -3,6 +3,7 @@ import { PremiumBadge, WooCommerceBundledBadge } from '@automattic/design-picker
 import { useSelect } from '@wordpress/data';
 import { useSite } from '../../../../hooks/use-site';
 import { SITE_STORE } from '../../../../stores';
+import type { SiteSelect } from '@automattic/data-stores';
 import type { Design } from '@automattic/design-picker';
 import type { FC } from 'react';
 
@@ -19,7 +20,12 @@ const DesignPickerDesignTitle: FC< Props > = ( { designTitle, selectedDesign } )
 	const isPremiumThemeAvailable = Boolean(
 		useSelect(
 			( select ) =>
-				site && select( SITE_STORE ).siteHasFeature( site.ID, WPCOM_FEATURES_PREMIUM_THEMES )
+				site &&
+				( select( SITE_STORE ) as SiteSelect ).siteHasFeature(
+					site.ID,
+					WPCOM_FEATURES_PREMIUM_THEMES
+				),
+			[]
 		)
 	);
 

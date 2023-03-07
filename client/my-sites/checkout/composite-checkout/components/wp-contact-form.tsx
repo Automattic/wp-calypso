@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { useSelect } from '@wordpress/data';
 import useCachedDomainContactDetails from '../hooks/use-cached-domain-contact-details';
 import ContactDetailsContainer from './contact-details-container';
+import type { WpcomCheckoutStoreSelectors } from '../hooks/wpcom-store';
 import type {
 	CountryListItem,
 	ContactDetailsType,
@@ -39,7 +40,9 @@ export default function WPContactForm( {
 	setShouldShowContactDetailsValidationErrors: ( allowed: boolean ) => void;
 } ) {
 	const contactInfo: ManagedContactDetails = useSelect(
-		( select ) => select( 'wpcom-checkout' )?.getContactInfo() ?? {}
+		( select ) =>
+			( select( 'wpcom-checkout' ) as WpcomCheckoutStoreSelectors )?.getContactInfo() ?? {},
+		[]
 	);
 	const { formStatus } = useFormStatus();
 	const isStepActive = useIsStepActive();

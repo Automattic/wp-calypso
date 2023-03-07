@@ -16,6 +16,7 @@ import {
 import getSiteFeatures from 'calypso/state/selectors/get-site-features';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
+import type { SiteSelect } from '@automattic/data-stores';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
@@ -69,7 +70,8 @@ export const useSiteCopy = (
 		return siteFeatures ? siteFeatures : { isRequesting: true };
 	} );
 	const isAtomic = useSelect(
-		( select ) => site && options.enabled && select( SITE_STORE ).isSiteAtomic( site?.ID ),
+		( select ) =>
+			site && options.enabled && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( site?.ID ),
 		[ site?.ID, options.enabled ]
 	);
 	const plan = site?.plan;

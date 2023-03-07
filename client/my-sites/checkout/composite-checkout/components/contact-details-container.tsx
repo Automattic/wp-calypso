@@ -17,6 +17,7 @@ import {
 } from '../types/wpcom-store-state';
 import DomainContactDetails from './domain-contact-details';
 import TaxFields from './tax-fields';
+import type { WpcomCheckoutStoreSelectors } from '../hooks/wpcom-store';
 import type { DomainContactDetails as DomainContactDetailsData } from '@automattic/shopping-cart';
 import type {
 	CountryListItem,
@@ -53,7 +54,11 @@ export default function ContactDetailsContainer( {
 		.filter( ( product ) => ! isDomainMapping( product ) )
 		.map( getDomain );
 	const checkoutActions = useDispatch( 'wpcom-checkout' );
-	const { email } = useSelect( ( select ) => select( 'wpcom-checkout' )?.getContactInfo() ?? {} );
+	const { email } = useSelect(
+		( select ) =>
+			( select( 'wpcom-checkout' ) as WpcomCheckoutStoreSelectors )?.getContactInfo() ?? {},
+		[]
+	);
 
 	if ( ! checkoutActions ) {
 		return null;
