@@ -6,7 +6,7 @@ import {
 	PRODUCT_JETPACK_SEARCH,
 	PRODUCT_JETPACK_SOCIAL_BASIC,
 	PRODUCT_JETPACK_VIDEOPRESS,
-} from '@automattic/calypso-products';
+} from '@automattic/calypso-products/src/constants/jetpack';
 import { JetpackUpsellCard } from '@automattic/components';
 import { useSelector } from 'react-redux';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
