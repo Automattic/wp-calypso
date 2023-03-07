@@ -8,8 +8,8 @@ import {
 	useStyle,
 } from '@wordpress/edit-site/build-module/components/global-styles/hooks';
 import { translate } from 'i18n-calypso';
-import { useMemo } from 'react';
-import { STYLE_PREVIEW_WIDTH, STYLE_PREVIEW_HEIGHT } from '../../constants';
+import { useMemo, useState } from 'react';
+import { STYLE_PREVIEW_WIDTH, STYLE_PREVIEW_HEIGHT, SYSTEM_FONT_SLUG } from '../../constants';
 import GlobalStylesVariationContainer from '../global-styles-variation-container';
 import FontFamiliesLoader from './font-families-loader';
 import type { FontFamily } from '../../types';
@@ -25,19 +25,18 @@ interface Props {
 }
 
 const FontPairingVariationPreview = ( { title }: Props ) => {
-	const [ fontFamilies ] = useSetting( 'typography.fontFamilies' );
+	const [ fontFamilies ] = useSetting( 'typography.fontFamilies' ) as [ FontFamily[] ];
 	const [ textFontFamily = 'serif' ] = useStyle( 'typography.fontFamily' );
 	const [ headingFontFamily = textFontFamily ] = useStyle(
 		'elements.heading.typography.fontFamily'
 	);
 	const [ containerResizeListener, { width } ] = useResizeObserver();
 	const ratio = width ? width / STYLE_PREVIEW_WIDTH : 1;
+	const externalFontFamilies = fontFamilies.filter( ( { slug } ) => slug !== SYSTEM_FONT_SLUG );
+	const [ isLoaded, setIsLoaded ] = useState( ! externalFontFamilies.length );
 
 	const getFontFamilyName = ( targetFontFamily: string ) => {
-		const fontFamily = fontFamilies.find(
-			( { fontFamily }: FontFamily ) => fontFamily === targetFontFamily
-		);
-
+		const fontFamily = fontFamilies.find( ( { fontFamily } ) => fontFamily === targetFontFamily );
 		return fontFamily ? fontFamily.name : targetFontFamily;
 	};
 
@@ -51,6 +50,8 @@ const FontPairingVariationPreview = ( { title }: Props ) => {
 		[ headingFontFamily, fontFamilies ]
 	);
 
+	const handleOnLoad = () => setIsLoaded( true );
+
 	return (
 		<GlobalStylesVariationContainer
 			width={ width }
@@ -63,6 +64,7 @@ const FontPairingVariationPreview = ( { title }: Props ) => {
 						height: STYLE_PREVIEW_HEIGHT * ratio,
 						width: '100%',
 						background: 'white',
+						opacity: isLoaded ? 1 : 0,
 						cursor: 'pointer',
 					} }
 				>
@@ -137,7 +139,7 @@ const FontPairingVariationPreview = ( { title }: Props ) => {
 						) }
 					</div>
 				</div>
-				<FontFamiliesLoader fontFamilies={ fontFamilies } />
+				<FontFamiliesLoader fontFamilies={ externalFontFamilies } onLoad={ handleOnLoad } />
 			</>
 		</GlobalStylesVariationContainer>
 	);
