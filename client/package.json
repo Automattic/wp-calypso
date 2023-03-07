@@ -60,6 +60,7 @@
 		"@automattic/social-previews": "workspace:^",
 		"@automattic/state-utils": "workspace:^",
 		"@automattic/subscriber": "workspace:^",
+		"@automattic/subscription-manager": "workspace:^",
 		"@automattic/tree-select": "workspace:^",
 		"@automattic/viewport": "workspace:^",
 		"@automattic/viewport-react": "workspace:^",
