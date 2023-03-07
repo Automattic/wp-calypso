@@ -29,6 +29,7 @@
 }
 
 .pattern-large-preview__pattern {
+	$pattern-large-preview-outer-border-radius: calc(var(--device-switcher-border-radius) / 2);
 	position: relative;
 
 	.pattern-action-bar {
@@ -38,7 +39,7 @@
 		right: unset;
 		padding: 6px;
 		border: 1px solid #1e1e1e;
-		border-radius: 4px;
+		border-radius: 2px;
 		background-color: #fff;
 		opacity: 0;
 
@@ -56,8 +57,17 @@
 		right: 2px;
 		top: 2px;
 		bottom: 2px;
-		/* stylelint-disable-next-line scales/radii */
-		border-radius: 10px;
+		border-radius: 2px;
+	}
+
+	&:first-child::after {
+		border-top-left-radius: $pattern-large-preview-outer-border-radius;
+		border-top-right-radius: $pattern-large-preview-outer-border-radius;
+	}
+
+	&:last-child::after {
+		border-bottom-left-radius: $pattern-large-preview-outer-border-radius;
+		border-bottom-right-radius: $pattern-large-preview-outer-border-radius;
 	}
 
 	&:hover,

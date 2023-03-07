@@ -28,10 +28,11 @@
 
 	.device-switcher__container--frame-bordered & {
 		$frame-border-width: 10px;
+		border-radius: var(--device-switcher-border-radius);
 
 		@include break-small {
+			--device-switcher-border-radius: 40px; /* stylelint-disable-line scales/radii */
 			border: $frame-border-width solid var(--color-print);
-			border-radius: 40px; /* stylelint-disable-line scales/radii */
 			box-sizing: border-box;
 			box-shadow:
 				0 5px 15px rgb(0 0 0 / 7%),
@@ -39,8 +40,8 @@
 		}
 
 		@include break-large {
+			--device-switcher-border-radius: 20px; /* stylelint-disable-line scales/radii */
 			border: $frame-border-width solid var(--color-print);
-			border-radius: 20px; /* stylelint-disable-line scales/radii */
 			box-shadow:
 				0 15px 20px rgb(0 0 0 / 4%),
 				0 13px 10px rgb(0 0 0 / 3%),
@@ -54,9 +55,9 @@
 	}
 
 	.device-switcher__container--is-phone & {
+		--device-switcher-border-radius: 40px; /* stylelint-disable-line scales/radii */
 		max-width: 340px;
 		max-height: 680px;
-		border-radius: 40px; /* stylelint-disable-line scales/radii */
 		box-shadow:
 			0 76px 65px rgb(0 0 0 / 4%),
 			0 50px 40px rgb(0 0 0 / 3%),
