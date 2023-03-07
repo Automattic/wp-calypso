@@ -180,8 +180,19 @@ export default function SiteStatusContent( {
 	}
 
 	if ( type === 'boost' ) {
-		//const overall = rows.jetpack_boost_scores.data.overall;
-		return 100;
+		const overall = rows.site.value.jetpack_boost_scores.overall;
+		if ( overall >= 91 ) {
+			return <div className="sites-overview__boost-green">A Score</div>;
+		} else if ( overall >= 75 ) {
+			return <div className="sites-overview__boost-green">B Score</div>;
+		} else if ( overall >= 50 ) {
+			return <div className="sites-overview__boost-yellow">C Score</div>;
+		} else if ( overall >= 35 ) {
+			return <div className="sites-overview__boost-yellow">D Score</div>;
+		} else if ( overall >= 25 ) {
+			return <div className="sites-overview__boost-red">E Score</div>;
+		}
+		return <div className="sites-overview__boost-red">F Score</div>;
 	}
 
 	let content;
