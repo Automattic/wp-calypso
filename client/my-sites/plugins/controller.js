@@ -179,8 +179,6 @@ export async function redirectTrialSites( context, next ) {
 			page.redirect( `/plans/${ selectedSite.slug }` );
 			return false;
 		}
-
-		next();
 	}
 
 	next();
