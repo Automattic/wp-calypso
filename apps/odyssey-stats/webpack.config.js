@@ -163,6 +163,10 @@ module.exports = {
 			/^calypso\/components\/formatted-header$/,
 			'calypso/components/jetpack/jetpack-header'
 		),
+		new webpack.NormalModuleReplacementPlugin(
+			/^calypso\/components\/web-preview.*$/,
+			'lodash/noop'
+		),
 		shouldEmitStats &&
 			new BundleAnalyzerPlugin( {
 				analyzerMode: 'server',
