@@ -25,6 +25,7 @@
 		{ "path": "./explat-client-react-helpers" },
 		{ "path": "./format-currency" },
 		{ "path": "./generate-password" },
+		{ "path": "./global-styles" },
 		{ "path": "./happychat-connection" },
 		{ "path": "./help-center" },
 		{ "path": "./i18n-utils" },
