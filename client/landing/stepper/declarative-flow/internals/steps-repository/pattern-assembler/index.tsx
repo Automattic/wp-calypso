@@ -438,7 +438,6 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 				<NavigatorScreen path="/homepage">
 					<ScreenHomepage
 						patterns={ sections }
-						onDoneClick={ () => onDoneClick( 'section' ) }
 						onAddSection={ onAddSection }
 						onReplaceSection={ onReplaceSection }
 						onDeleteSection={ onDeleteSection }

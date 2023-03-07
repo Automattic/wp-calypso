@@ -58,7 +58,7 @@ function Chart( {
 	onChangeMaxBars,
 } ) {
 	const [ tooltip, setTooltip ] = useState( { isTooltipVisible: false } );
-	const [ sizing, setSizing ] = useState( { clientWidth: 650, hasResized: false } );
+	const [ sizing, setSizing ] = useState( { clientWidth: 0, hasResized: false } );
 	const [ yAxisSize, setYAxisSize ] = useState( { clientWidth: 0, hasResized: false } );
 
 	// Callback to handle tooltip changes.
@@ -136,6 +136,13 @@ function Chart( {
 	}, [ data, maxBars, sliceFromBeginning ] );
 
 	const { isTooltipVisible, tooltipContext, tooltipPosition, tooltipData } = tooltip;
+
+	// This is a hack to avoid the flickering on page load.
+	// The component listens on the resize event of its own, which would resize on initialization.
+	// The hack renders an empty div, which triggers the resize event, and then the actual component would be rendered.
+	if ( width <= 0 ) {
+		return <div ref={ resizeRef }></div>;
+	}
 
 	return (
 		<div ref={ resizeRef } className={ classNames( 'chart', { 'is-placeholder': isPlaceholder } ) }>

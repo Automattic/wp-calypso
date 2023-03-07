@@ -12,7 +12,7 @@ import {
 	clearSelectedPurposes,
 	SitePurpose,
 	purposes as purposeOptions,
-	saveSelectedPurposes,
+	setSelectedPurposes,
 } from './purposes';
 import type { Step } from '../../types';
 import './style.scss';
@@ -59,7 +59,7 @@ const SenseiPurpose: Step = ( { navigation: { submit } } ) => {
 	};
 
 	const submitPage = async () => {
-		saveSelectedPurposes( sitePurpose );
+		setSelectedPurposes( sitePurpose );
 		submit?.();
 	};
 
