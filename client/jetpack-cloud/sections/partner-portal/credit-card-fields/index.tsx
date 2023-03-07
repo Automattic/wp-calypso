@@ -12,17 +12,19 @@ import CreditCardLoading from './credit-card-loading';
 import SetAsPrimaryPaymentMethod from './set-as-primary-payment-method';
 import type { StoreState } from '@automattic/wpcom-checkout';
 import type { StripeElementChangeEvent, StripeElementStyle } from '@stripe/stripe-js';
-
+import type { CreditCardSelectors } from 'calypso/state/partner-portal/types';
 import './style.scss';
 
 export default function CreditCardFields() {
 	const { __ } = useI18n();
 	const [ isStripeFullyLoaded, setIsStripeFullyLoaded ] = useState( false );
-	const fields: StoreState< string > = useSelect( ( select ) =>
-		select( 'credit-card' ).getFields()
+	const fields: StoreState< string > = useSelect(
+		( select ) => ( select( 'credit-card' ) as CreditCardSelectors ).getFields(),
+		[]
 	);
-	const useAsPrimaryPaymentMethod: boolean = useSelect( ( select ) =>
-		select( 'credit-card' ).useAsPrimaryPaymentMethod()
+	const useAsPrimaryPaymentMethod: boolean = useSelect(
+		( select ) => ( select( 'credit-card' ) as CreditCardSelectors ).useAsPrimaryPaymentMethod(),
+		[]
 	);
 	const getField = ( key: string | number ) => fields[ key ] || {};
 	const getErrorMessagesForField = ( key: string | number ) => {
