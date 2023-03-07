@@ -337,8 +337,10 @@ class StatsSite extends Component {
 						}
 					</div>
 				</div>
-				{ /* The section is excluded on build in Odyssey */ }
-				<AsyncLoad require="calypso/my-sites/stats/jetpack-upsell-section" />
+				{ /* Only load Jetpack Upsell Section for Odyssey Stats */ }
+				{ ! isOdysseyStats ? null : (
+					<AsyncLoad require="calypso/my-sites/stats/jetpack-upsell-section" />
+				) }
 				<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
 				<JetpackColophon />
 			</div>
