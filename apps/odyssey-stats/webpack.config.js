@@ -128,9 +128,15 @@ module.exports = {
 						'@wordpress/primitives',
 						'@wordpress/url',
 						'@wordpress/warning',
+						'moment',
+						'../moment',
 					].includes( request )
 				) {
 					return;
+				}
+				// moment locales requires moment.js main file, so we need to handle it as an external as well.
+				if ( request === '../moment' ) {
+					request = 'moment';
 				}
 				return defaultRequestToExternal( request );
 			},
@@ -146,7 +152,7 @@ module.exports = {
 			/^calypso\/server\/lib\/logger$/,
 			'calypso/lib/explat/internals/logger-browser-replacement'
 		),
-		new webpack.IgnorePlugin( { resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ } ),
+		// new webpack.IgnorePlugin( { resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ } ),
 		new ExtensiveLodashReplacementPlugin(),
 		new InlineConstantExportsPlugin( /\/client\/state\/action-types.[tj]s$/ ),
 		new InlineConstantExportsPlugin( /\/client\/state\/themes\/action-types.[tj]s$/ ),
