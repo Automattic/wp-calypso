@@ -73,7 +73,7 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 							<>
 								<strong>{ __( '#FunWooFact: ' ) }</strong>
 								{ __(
-									'There are more than 150 WooCommerce meetups held all over the world! A great way to meet fellow store owners.'
+									'There are more than 150 Woo meetups held all over the world! A great way to meet fellow store owners.'
 								) }
 							</>
 						),
