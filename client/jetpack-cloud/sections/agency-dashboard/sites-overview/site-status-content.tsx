@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon, ShortenedNumber } from '@automattic/components';
-import { Icon, arrowUp, arrowDown } from '@wordpress/icons';
+import { Icon, arrowUp, arrowDown, arrowLeft } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
@@ -97,11 +97,11 @@ export default function SiteStatusContent( {
 
 	function getTrendIcon( viewsTrend: string ) {
 		if ( viewsTrend === 'up' ) {
-			return 'arrowUp';
+			return arrowUp;
 		} else if ( viewsTrend === 'down' ) {
-			return 'arrowDown';
+			return arrowDown;
 		}
-		return 'same';
+		return arrowLeft;
 	}
 
 	if ( type === 'site' ) {
@@ -194,10 +194,9 @@ export default function SiteStatusContent( {
 					'is-down': viewsTrend === 'down',
 				} ) }
 			>
-				<Icon icon={ getTrendIcon( viewsTrend ) } size={ 16 } />
+				<Icon icon={ trendIcon } size={ 16 } />
 				<div className="sites-overview__stats">
 					<ShortenedNumber value={ totalViews } />
-					{ trendIcon }
 				</div>
 			</span>
 		);
