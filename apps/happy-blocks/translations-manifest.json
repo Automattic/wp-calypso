@@ -1,0 +1,36 @@
+{
+	"references": {
+		"block-library/pricing-plans/index.js": [
+			"apps/happy-blocks/block-library/pricing-plans/index.jsx",
+			"apps/happy-blocks/block-library/pricing-plans/components/billing-info.tsx",
+			"apps/happy-blocks/block-library/pricing-plans/components/pricing-plans.tsx",
+			"apps/happy-blocks/block-library/pricing-plans/components/billing-options.tsx",
+			"apps/happy-blocks/block-library/pricing-plans/components/block-settings.tsx",
+			"apps/happy-blocks/block-library/pricing-plans/components/pricing-plans-header.tsx",
+			"apps/happy-blocks/block-library/pricing-plans/hooks/plan-variants.ts",
+			"apps/happy-blocks/block-library/pricing-plans/hooks/pricing-plans.ts",
+			"packages/calypso-products/src/plans-list.tsx",
+			"packages/calypso-products/src/main.ts"
+		],
+		"block-library/pricing-plans/view.js": [
+			"apps/happy-blocks/block-library/pricing-plans/components/pricing-plans.tsx",
+			"apps/happy-blocks/block-library/pricing-plans/components/billing-info.tsx",
+			"apps/happy-blocks/block-library/pricing-plans/components/billing-options.tsx",
+			"apps/happy-blocks/block-library/pricing-plans/components/pricing-plans-header.tsx",
+			"apps/happy-blocks/block-library/pricing-plans/hooks/pricing-plans.ts",
+			"packages/calypso-products/src/plans-list.tsx",
+			"packages/calypso-products/src/main.ts",
+			"apps/happy-blocks/block-library/pricing-plans/hooks/plan-variants.ts"
+		],
+		"block-library/universal-footer/index.js": [
+			"packages/wpcom-template-parts/src/universal-footer-navigation/index.tsx"
+		],
+		"block-library/universal-footer/view.js": [
+			"packages/wpcom-template-parts/src/universal-footer-navigation/index.tsx"
+		],
+		"block-library/universal-header/index.js": [],
+		"block-library/universal-header/view.js": [
+			"packages/wpcom-template-parts/src/universal-header-navigation/index.tsx"
+		]
+	}
+}
