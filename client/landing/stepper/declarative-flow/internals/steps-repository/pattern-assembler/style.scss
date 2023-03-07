@@ -193,6 +193,8 @@ $font-family: "SF Pro Text", $sans;
 			&:hover,
 			&:focus,
 			&:focus-within {
+				color: var(--color-link-dark);
+
 				.pattern-layout__add-button-icon {
 					background-color: var(--color-link-dark);
 				}

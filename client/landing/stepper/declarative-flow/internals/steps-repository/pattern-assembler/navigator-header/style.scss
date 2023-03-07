@@ -13,6 +13,10 @@
 			line-height: 40px;
 			letter-spacing: -0.32px;
 		}
+
+		.button.is-borderless .gridicon {
+			top: 4px;
+		}
 	}
 
 	.navigator-header__description {
