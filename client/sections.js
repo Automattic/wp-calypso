@@ -568,6 +568,7 @@ const sections = [
 		paths: [ '/subscriptions' ],
 		module: 'calypso/my-sites/subscriptions',
 		group: 'sites',
+		enableLoggedOut: true,
 	},
 ];
 
