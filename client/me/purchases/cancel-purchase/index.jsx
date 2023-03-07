@@ -136,8 +136,7 @@ class CancelPurchase extends Component {
 
 	renderFooterText = () => {
 		const { purchase } = this.props;
-		const { currencyCode, refundAmount, expiryDate, totalRefundInteger, totalRefundCurrency } =
-			purchase;
+		const { expiryDate, refundInteger, totalRefundInteger, totalRefundCurrency } = purchase;
 		if ( hasAmountAvailableToRefund( purchase ) ) {
 			if ( this.state.cancelBundledDomain && this.props.includedDomainPurchase ) {
 				return this.props.translate( '%(refundText)s to be refunded', {
@@ -150,7 +149,11 @@ class CancelPurchase extends Component {
 				} );
 			}
 			return this.props.translate( '%(refundText)s to be refunded', {
-				args: { refundText: formatCurrency( refundAmount, currencyCode ) },
+				args: {
+					refundText: formatCurrency( refundInteger, totalRefundCurrency, {
+						isSmallestUnit: true,
+					} ),
+				},
 				context: 'refundText is of the form "[currency-symbol][amount]" i.e. "$20"',
 			} );
 		}
