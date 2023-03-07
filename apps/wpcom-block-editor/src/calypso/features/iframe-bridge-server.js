@@ -1037,7 +1037,7 @@ function handleSiteEditorBackButton( calypsoPort ) {
 	// have to do this event delegation style because the Editor isn't fully initialized yet.
 	document.getElementById( 'wpwrap' ).addEventListener( 'click', ( event ) => {
 		const dashboardLink = select( 'core/edit-site' )?.getSettings?.().__experimentalDashboardLink;
-		// The link has changed. Pray it doesn't change again.
+		// The link has changed. Pray it doesn't change any further.
 		// This is how to find it in Gutenberg 15.2.
 		const isDashboardLink = traverseToFindLink( event.target, dashboardLink );
 
