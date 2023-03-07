@@ -373,6 +373,10 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 		moveDownSection( position );
 	};
 
+	const onDeleteHeader = () => onSelect( 'header', null );
+
+	const onDeleteFooter = () => onSelect( 'footer', null );
+
 	const stepContent = (
 		<div className="pattern-assembler__wrapper" ref={ wrapperRef } tabIndex={ -1 }>
 			<NavigatorProvider className="pattern-assembler__sidebar" initialPath="/">
@@ -394,9 +398,9 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 							onMoveUpSection={ onMoveUpSection }
 							onMoveDownSection={ onMoveDownSection }
 							onAddHeader={ () => trackEventPatternAdd( 'header' ) }
-							onDeleteHeader={ () => updateHeader( null ) }
+							onDeleteHeader={ onDeleteHeader }
 							onAddFooter={ () => trackEventPatternAdd( 'footer' ) }
-							onDeleteFooter={ () => updateFooter( null ) }
+							onDeleteFooter={ onDeleteFooter }
 							onContinueClick={ onContinueClick }
 						/>
 					) }
@@ -481,6 +485,8 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 				onDeleteSection={ onDeleteSection }
 				onMoveUpSection={ onMoveUpSection }
 				onMoveDownSection={ onMoveDownSection }
+				onDeleteHeader={ onDeleteHeader }
+				onDeleteFooter={ onDeleteFooter }
 			/>
 			<PremiumGlobalStylesUpgradeModal { ...globalStylesUpgradeModalProps } />
 		</div>

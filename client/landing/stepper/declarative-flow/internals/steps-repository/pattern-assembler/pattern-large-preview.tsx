@@ -19,6 +19,8 @@ interface Props {
 	onDeleteSection: ( position: number ) => void;
 	onMoveUpSection: ( position: number ) => void;
 	onMoveDownSection: ( position: number ) => void;
+	onDeleteHeader: () => void;
+	onDeleteFooter: () => void;
 }
 
 // The pattern renderer element has 1px min height before the pattern is loaded
@@ -32,6 +34,8 @@ const PatternLargePreview = ( {
 	onDeleteSection,
 	onMoveUpSection,
 	onMoveDownSection,
+	onDeleteHeader,
+	onDeleteFooter,
 }: Props ) => {
 	const translate = useTranslate();
 	const hasSelectedPattern = header || sections.length || footer;
@@ -47,13 +51,28 @@ const PatternLargePreview = ( {
 
 	const renderPattern = ( type: string, pattern: Pattern, position = -1 ) => {
 		const key = type === 'section' ? pattern.key : type;
+		const getActionBarProps = () => {
+			if ( type === 'header' ) {
+				return { onDelete: onDeleteHeader };
+			} else if ( type === 'footer' ) {
+				return { onDelete: onDeleteFooter };
+			}
+
+			return {
+				disableMoveUp: position === 0,
+				disableMoveDown: sections?.length === position + 1,
+				onDelete: () => onDeleteSection( position ),
+				onMoveUp: () => onMoveUpSection( position ),
+				onMoveDown: () => onMoveDownSection( position ),
+			};
+		};
 
 		return (
 			<li
 				key={ key }
 				className={ classnames(
 					'pattern-large-preview__pattern',
-					`pattern-large-preview__pattern-${ key }`
+					`pattern-large-preview__pattern-${ type }`
 				) }
 			>
 				<PatternRenderer
@@ -62,16 +81,7 @@ const PatternLargePreview = ( {
 					// Disable default max-height
 					maxHeight="none"
 				/>
-				{ type === 'section' && (
-					<PatternActionBar
-						patternType={ type }
-						disableMoveUp={ position === 0 }
-						disableMoveDown={ sections?.length === position + 1 }
-						onDelete={ () => onDeleteSection( position ) }
-						onMoveUp={ () => onMoveUpSection( position ) }
-						onMoveDown={ () => onMoveDownSection( position ) }
-					/>
-				) }
+				<PatternActionBar patternType={ type } { ...getActionBarProps() } />
 			</li>
 		);
 	};
