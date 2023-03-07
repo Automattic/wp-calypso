@@ -6,7 +6,6 @@ import {
 	__experimentalNavigatorScreen as NavigatorScreen,
 } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import classnames from 'classnames';
 import { useState, useRef, useMemo } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
@@ -30,7 +29,6 @@ import ScreenFooter from './screen-footer';
 import ScreenHeader from './screen-header';
 import ScreenHomepage from './screen-homepage';
 import ScreenMain from './screen-main';
-import ScreenMainDeprecated from './screen-main-deprecated';
 import ScreenPatternList from './screen-pattern-list';
 import { encodePatternId } from './utils';
 import withGlobalStylesProvider from './with-global-styles-provider';
@@ -69,7 +67,6 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 	const allPatterns = useAllPatterns();
 	const stylesheet = selectedDesign?.recipe?.stylesheet || '';
 
-	const isSidebarRevampEnabled = isEnabled( 'pattern-assembler/sidebar-revamp' );
 	const isEnabledColorAndFonts = isEnabled( 'pattern-assembler/color-and-fonts' );
 
 	const [ selectedColorPaletteVariation, setSelectedColorPaletteVariation ] =
@@ -382,29 +379,11 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 		<div className="pattern-assembler__wrapper" ref={ wrapperRef } tabIndex={ -1 }>
 			<NavigatorProvider className="pattern-assembler__sidebar" initialPath="/">
 				<NavigatorScreen path="/">
-					{ isEnabled( 'pattern-assembler/sidebar-revamp' ) ? (
-						<ScreenMain
-							shouldUnlockGlobalStyles={ shouldUnlockGlobalStyles }
-							onSelect={ onMainItemSelect }
-							onContinueClick={ onContinueClick }
-						/>
-					) : (
-						<ScreenMainDeprecated
-							sections={ sections }
-							header={ header }
-							footer={ footer }
-							onAddSection={ onAddSection }
-							onReplaceSection={ onReplaceSection }
-							onDeleteSection={ onDeleteSection }
-							onMoveUpSection={ onMoveUpSection }
-							onMoveDownSection={ onMoveDownSection }
-							onAddHeader={ () => trackEventPatternAdd( 'header' ) }
-							onDeleteHeader={ onDeleteHeader }
-							onAddFooter={ () => trackEventPatternAdd( 'footer' ) }
-							onDeleteFooter={ onDeleteFooter }
-							onContinueClick={ onContinueClick }
-						/>
-					) }
+					<ScreenMain
+						shouldUnlockGlobalStyles={ shouldUnlockGlobalStyles }
+						onSelect={ onMainItemSelect }
+						onContinueClick={ onContinueClick }
+					/>
 				</NavigatorScreen>
 
 				<NavigatorScreen path="/header">
@@ -499,7 +478,7 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 
 	return (
 		<StepContainer
-			className={ classnames( { 'pattern-assembler__sidebar-revamp': isSidebarRevampEnabled } ) }
+			className="pattern-assembler__sidebar-revamp"
 			stepName="pattern-assembler"
 			hideBack={ navigatorPath !== '/' || flow === WITH_THEME_ASSEMBLER_FLOW }
 			goBack={ onBack }

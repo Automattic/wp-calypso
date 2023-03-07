@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { __experimentalNavigatorBackButton as NavigatorBackButton } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -17,27 +16,23 @@ interface Props {
 const ScreenFooter = ( { selectedPattern, onSelect, onBack, onDoneClick }: Props ) => {
 	const translate = useTranslate();
 	const patterns = useFooterPatterns();
-	const isSidebarRevampEnabled = isEnabled( 'pattern-assembler/sidebar-revamp' );
 
 	return (
 		<>
-			{ isSidebarRevampEnabled && (
-				<NavigatorHeader
-					title={ translate( 'Footer' ) }
-					description={ translate(
-						'Your footer will be added to all pages and can be used to show information or links that will help visitors take the next step.'
-					) }
-					onBack={ onBack }
-				/>
-			) }
+			<NavigatorHeader
+				title={ translate( 'Footer' ) }
+				description={ translate(
+					'Your footer will be added to all pages and can be used to show information or links that will help visitors take the next step.'
+				) }
+				onBack={ onBack }
+			/>
 			<div className="screen-container__body">
 				<PatternSelector
-					title={ ! isSidebarRevampEnabled ? translate( 'Add a footer' ) : undefined }
 					patterns={ patterns }
 					onSelect={ onSelect }
 					onBack={ onBack }
 					selectedPattern={ selectedPattern }
-					emptyPatternText={ isSidebarRevampEnabled ? translate( 'No Footer' ) : undefined }
+					emptyPatternText={ translate( 'No Footer' ) }
 				/>
 			</div>
 			<div className="screen-container__footer">
