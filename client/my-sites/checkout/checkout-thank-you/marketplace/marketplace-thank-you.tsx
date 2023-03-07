@@ -108,16 +108,15 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	// Consolidate the plugin information from the .org and .com sources in a single list
 	const productInformationList = useMemo( () => {
 		return pluginsOnSite.reduce(
-			( pluginsList: Array< any >, pluginOnSite: Plugin, index: number ) => {
-				pluginsList.push( {
-					...pluginOnSite,
+			( productsList: Array< any >, pluginOnSite: Plugin, index: number ) => {
+				productsList.push( {
 					...wpComPluginsData[ index ],
 					...wporgPlugins[ index ],
 					...wpComThemes[ index ],
 					isTheme: !! wpComThemes[ index ],
 				} );
 
-				return pluginsList;
+				return productsList;
 			},
 			[]
 		);
