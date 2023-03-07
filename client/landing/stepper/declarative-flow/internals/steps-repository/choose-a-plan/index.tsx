@@ -5,7 +5,6 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
-import { Plans } from 'calypso/../packages/data-stores/src';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import { PlansIntervalToggle } from 'calypso/../packages/plans-grid/src';
 import { useSupportedPlans } from 'calypso/../packages/plans-grid/src/hooks';
@@ -18,8 +17,14 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import type { Step } from '../../types';
-import type { PlansSelect, OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
-import type { PlanSimplifiedFeature } from 'calypso/../packages/data-stores/src/plans';
+import type {
+	Plans,
+	PlansSelect,
+	PlanSimplifiedFeature,
+	OnboardSelect,
+	SiteSelect,
+	UserSelect,
+} from '@automattic/data-stores';
 
 import 'calypso/../packages/plans-grid/src/plans-grid/style.scss';
 import 'calypso/../packages/plans-grid/src/plans-table/style.scss';

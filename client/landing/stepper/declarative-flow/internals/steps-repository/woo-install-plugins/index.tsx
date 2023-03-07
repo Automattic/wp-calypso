@@ -7,8 +7,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import type { Step } from '../../types';
-import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
-import type { AtomicSoftwareStatus } from 'calypso/../packages/data-stores/src/site';
+import type { AtomicSoftwareStatus, OnboardSelect, SiteSelect } from '@automattic/data-stores';
 
 const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
 
