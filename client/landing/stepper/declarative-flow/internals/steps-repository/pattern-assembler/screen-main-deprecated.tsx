@@ -52,6 +52,7 @@ const ScreenMainDeprecated = ( {
 				description={ translate(
 					'Choose from our library of patterns to quickly put together the structure of your homepage.'
 				) }
+				hideBack
 			/>
 			<div className="screen-container__body">
 				<PatternLayout
