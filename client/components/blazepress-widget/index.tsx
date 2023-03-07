@@ -119,7 +119,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	return (
 		<>
 			{ isVisible && (
-				<BlankCanvas className="blazepress-widget">
+				<BlankCanvas className="blazepress-widget hidden-header">
 					<div className="blazepress-widget__header-bar">
 						<BlazeLogo />
 						<h2>{ translate( 'Blaze' ) }</h2>
