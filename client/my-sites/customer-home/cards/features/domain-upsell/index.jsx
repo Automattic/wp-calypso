@@ -194,7 +194,7 @@ export function RenderDomainUpsell( {
 			<div>
 				<div className="domain-upsell__card-dismiss">
 					<button onClick={ getDismissClickHandler }>
-						<Gridicon icon="cross" />
+						<Gridicon icon="cross" width={ 18 } />
 					</button>
 				</div>
 				<h3>{ cardTitle }</h3>
