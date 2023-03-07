@@ -6,7 +6,13 @@ import { Site } from '@automattic/data-stores';
 import { render, screen } from '@testing-library/react';
 import { useDispatch } from '@wordpress/data';
 import React from 'react';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import * as redux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
+import { createReduxStore } from 'calypso/state';
+import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
+import initialReducer from 'calypso/state/reducer';
+import { setStore } from 'calypso/state/redux-store';
 import Sidebar from '../sidebar';
 import { defaultSiteDetails, buildSiteDetails, buildDomainResponse } from './lib/fixtures';
 
@@ -40,7 +46,30 @@ const props = {
 	/* eslint-enable @typescript-eslint/no-empty-function */
 };
 
-function renderSidebar( props, siteDetails = defaultSiteDetails ) {
+const user = {
+	ID: 1234,
+	username: 'testUser',
+	email: 'testemail@wordpress.com',
+	email_verified: false,
+};
+
+function renderSidebar( props, siteDetails = defaultSiteDetails, emailVerified = false ) {
+	const initialState = getInitialState( initialReducer, user.ID );
+	const reduxStore = createReduxStore(
+		{
+			...initialState,
+			currentUser: {
+				user: {
+					...user,
+					email_verified: emailVerified,
+				},
+			},
+		},
+		initialReducer
+	);
+	setStore( reduxStore, getStateFromCache( user.ID ) );
+	const queryClient = new QueryClient();
+
 	function TestSidebar( props ) {
 		const SITE_STORE = Site.register( {
 			client_id: config( 'wpcom_signup_id' ),
@@ -52,9 +81,15 @@ function renderSidebar( props, siteDetails = defaultSiteDetails ) {
 		receiveSite( siteDetails.ID, siteDetails );
 
 		return (
-			<MemoryRouter initialEntries={ [ `/setup/link-in-bio/launchpad?siteSlug=${ siteSlug }` ] }>
-				<Sidebar { ...props } />
-			</MemoryRouter>
+			<redux.Provider store={ reduxStore }>
+				<QueryClientProvider client={ queryClient }>
+					<MemoryRouter
+						initialEntries={ [ `/setup/link-in-bio/launchpad?siteSlug=${ siteSlug }` ] }
+					>
+						<Sidebar { ...props } />
+					</MemoryRouter>
+				</QueryClientProvider>
+			</redux.Provider>
 		);
 	}
 
