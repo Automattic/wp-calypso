@@ -52,7 +52,7 @@ export default function DomainUpsell( { context } ) {
 		[ siteDomains ]
 	);
 
-	const dismissPreference = `calypso_my_home_domain_upsell_dismiss-${ site.ID }`;
+	const dismissPreference = `calypso_my_home_domain_upsell_dismiss-${ site?.ID }`;
 	const hasPreferences = useSelector( hasReceivedRemotePreferences );
 	const isDismissed = useSelector( ( state ) => getPreference( state, dismissPreference ) );
 
