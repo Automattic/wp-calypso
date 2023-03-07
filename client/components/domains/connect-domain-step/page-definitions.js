@@ -5,6 +5,7 @@ import TransferDomainStepStart from 'calypso/components/domains/connect-domain-s
 import TransferDomainStepUnlock from 'calypso/components/domains/connect-domain-step/transfer-domain-step-unlock';
 import ConnectDomainStepAdvancedRecords from './connect-domain-step-advanced-records';
 import ConnectDomainStepAdvancedStart from './connect-domain-step-advanced-start';
+import ConnectDomainStepDCStart from './connect-domain-step-dc-start';
 import ConnectDomainStepDone from './connect-domain-step-done';
 import ConnectDomainStepLogin from './connect-domain-step-login';
 import ConnectDomainStepOwnershipAuthCode from './connect-domain-step-ownership-auth-code';
@@ -94,6 +95,20 @@ export const connectADomainStepsDefinition = {
 		step: stepType.VERIFYING,
 		component: ConnectDomainStepDone,
 		prev: stepSlug.ADVANCED_UPDATE,
+		singleColumnLayout: true,
+	},
+
+	// Domain Connect flow
+	[ stepSlug.DC_START ]: {
+		mode: modeType.DC,
+		step: stepType.START,
+		component: ConnectDomainStepDCStart,
+	},
+	[ stepSlug.DC_RETURN ]: {
+		mode: modeType.DC,
+		step: stepType.VERIFYING,
+		component: ConnectDomainStepDone,
+		prev: stepSlug.DC_START,
 		singleColumnLayout: true,
 	},
 };
