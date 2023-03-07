@@ -941,6 +941,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_WPCOM_STARTER,
 			PLAN_WPCOM_FLEXIBLE,
 			PLAN_WPCOM_PRO,
+			PLAN_WOOEXPRESS_MEDIUM,
 		] );
 		expect( findPlansKeys( { term: TERM_MONTHLY } ) ).toEqual( [
 			PLAN_PERSONAL_MONTHLY,
@@ -959,6 +960,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_P2_PLUS,
 			PLAN_WPCOM_PRO_MONTHLY,
 			PLAN_ECOMMERCE_TRIAL_MONTHLY,
+			PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 		] );
 	} );
 
@@ -1029,6 +1031,8 @@ describe( 'findPlansKeys', () => {
 			PLAN_WPCOM_PRO,
 			PLAN_WPCOM_PRO_MONTHLY,
 			PLAN_ECOMMERCE_TRIAL_MONTHLY,
+			PLAN_WOOEXPRESS_MEDIUM,
+			PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 		] );
 		expect( findPlansKeys( { group: GROUP_JETPACK } ) ).toEqual( [
 			PLAN_JETPACK_FREE,
