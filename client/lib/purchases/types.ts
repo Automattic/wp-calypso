@@ -55,10 +55,41 @@ export interface Purchase {
 	productSlug: string;
 	productType: string;
 	purchaseRenewalQuantity: number | null;
+
+	/**
+	 * The refund amount for the purchase, not including bundled domains, as a
+	 * float.
+	 *
+	 * Note that this currency may differ from the purchase's currency, so use
+	 * `totalRefundCurrency` when formatting!
+	 *
+	 * @deprecated use `refundInteger`.
+	 */
 	refundAmount: number;
+
+	/**
+	 * The refund amount for the purchase, not including bundled domains, as an
+	 * integer in the currency's smallest unit.
+	 *
+	 * Note that this currency may differ from the purchase's currency, so use
+	 * `totalRefundCurrency` when formatting!
+	 */
+	refundInteger: number;
+
 	refundOptions: RefundOptions | null;
 	refundPeriodInDays: number;
+
+	/**
+	 * The refund amount for the purchase, not including bundled domains, as a
+	 * formatted string.
+	 *
+	 * Note that this currency may differ from the purchase's currency, so use
+	 * `totalRefundCurrency` when formatting!
+	 *
+	 * @deprecated use `refundInteger`.
+	 */
 	refundText: string;
+
 	regularPriceText: string;
 
 	/**
@@ -76,7 +107,8 @@ export interface Purchase {
 	subscriptionStatus: 'active' | 'inactive';
 
 	/**
-	 * The refund amount in the currency's smallest unit.
+	 * The refund amount, including bundled domains, in the currency's smallest
+	 * unit.
 	 *
 	 * Note that this currency may differ from the purchase's currency, so use
 	 * `totalRefundCurrency` when formatting!
@@ -84,7 +116,7 @@ export interface Purchase {
 	totalRefundInteger: number;
 
 	/**
-	 * The refund amount for the purchase as a float.
+	 * The refund amount, including bundled domains, for the purchase as a float.
 	 *
 	 * Note that this currency may differ from the purchase's currency, so use
 	 * `totalRefundCurrency` when formatting!
@@ -101,7 +133,8 @@ export interface Purchase {
 	totalRefundCurrency: string;
 
 	/**
-	 * The refund amount for the purchase as a formatted string.
+	 * The refund amount for the purchase, including bundled domains, as a
+	 * formatted string.
 	 *
 	 * @deprecated use `totalRefundInteger` and `formatCurrency()`.
 	 */
@@ -191,6 +224,7 @@ export interface RawPurchase {
 	total_refund_integer: number;
 	total_refund_text: string;
 	refund_amount: number;
+	refund_integer: number;
 	refund_text: string;
 	refund_currency_symbol: string;
 	refund_options: RefundOptions | null;

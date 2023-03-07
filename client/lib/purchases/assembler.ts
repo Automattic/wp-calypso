@@ -95,6 +95,7 @@ function createPurchaseObject( purchase: RawPurchase | RawPurchaseCreditCard ): 
 		totalRefundCurrency: purchase.total_refund_currency,
 		totalRefundText: purchase.total_refund_text,
 		refundAmount: Number( purchase.refund_amount ),
+		refundInteger: Number( purchase.refund_integer ),
 		refundOptions: purchase.refund_options,
 		refundText: purchase.refund_text,
 		refundPeriodInDays: purchase.refund_period_in_days,
