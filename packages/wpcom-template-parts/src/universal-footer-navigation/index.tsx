@@ -2,6 +2,7 @@
 import {
 	useLocalizeUrl,
 	removeLocaleFromPathLocaleInFront,
+	retrieveLocaleFromPathLocaleInFront,
 	useIsEnglishLocale,
 	useLocale,
 	localizeUrl as pureLocalizeUrl,
@@ -13,6 +14,13 @@ import { FooterProps, PureFooterProps } from '../types';
 
 import './style.scss';
 
+const defaultOnLanguageChange: React.ChangeEventHandler< HTMLSelectElement > = ( event ) => {
+	const newURL = `${ event.target.value }${ removeLocaleFromPathLocaleInFront(
+		window.location.pathname
+	) }`;
+	window.location.href = newURL;
+};
+
 /**
  * This component doesn't depend on any hooks or state. To it's Gutenberg save.js friendly.
  */
@@ -20,21 +28,16 @@ export const PureUniversalNavbarFooter = ( {
 	isLoggedIn = typeof window !== 'undefined'
 		? document.body.classList.contains( 'logged-in' )
 		: false,
-	currentRoute = typeof window !== 'undefined' ? window.location.pathname : '/',
-	additonalCompanyLinks = null,
-	onLanguageChange = () => {
-		window.console.error( 'onLanguageChange is not implemented' );
-	},
+	additionalCompanyLinks = null,
+	onLanguageChange = defaultOnLanguageChange,
 	localizeUrl = pureLocalizeUrl,
-	locale = 'en',
-	isEnglishLocale = true,
 	automatticBranding = {
-		article: __( 'An' ),
-		noun: __( 'thingamajig' ),
+		article: __( 'An', __i18n_text_domain__ ),
+		noun: __( 'thingamajig', __i18n_text_domain__ ),
 	},
 }: PureFooterProps ) => {
-	const pathNameWithoutLocale =
-		currentRoute && removeLocaleFromPathLocaleInFront( currentRoute ).slice( 1 );
+	const locale = retrieveLocaleFromPathLocaleInFront( window.location.pathname );
+	const isEnglishLocale = locale === 'en';
 
 	return (
 		<>
@@ -237,7 +240,7 @@ export const PureUniversalNavbarFooter = ( {
 										</span>
 									</a>
 								</li>
-								{ additonalCompanyLinks }
+								{ additionalCompanyLinks }
 							</ul>
 						</div>
 					</div>
@@ -251,64 +254,64 @@ export const PureUniversalNavbarFooter = ( {
 									className="lp-language-picker__content"
 									title={ __( 'Change Language', __i18n_text_domain__ ) }
 									onChange={ onLanguageChange }
-									defaultValue={ currentRoute }
+									defaultValue={ locale }
 								>
 									<option>{ __( 'Change Language', __i18n_text_domain__ ) }</option>
-									<option lang="es" value={ `/es/${ pathNameWithoutLocale }` }>
+									<option lang="es" value="/es">
 										Español
 									</option>
-									<option lang="pt-br" value={ `/pt-br/${ pathNameWithoutLocale }` }>
+									<option lang="pt-br" value="/pt-br">
 										Português do Brasil
 									</option>
-									<option lang="de" value={ `/de/${ pathNameWithoutLocale }` }>
+									<option lang="de" value="/de">
 										Deutsch
 									</option>
-									<option lang="fr" value={ `/fr/${ pathNameWithoutLocale }` }>
+									<option lang="fr" value="/fr">
 										Français
 									</option>
-									<option lang="he" value={ `/he/${ pathNameWithoutLocale }` }>
+									<option lang="he" value="/he">
 										עִבְרִית
 									</option>
-									<option lang="ja" value={ `/ja/${ pathNameWithoutLocale }` }>
+									<option lang="ja" value="/ja">
 										日本語
 									</option>
-									<option lang="it" value={ `/it/${ pathNameWithoutLocale }` }>
+									<option lang="it" value="/it">
 										Italiano
 									</option>
-									<option lang="nl" value={ `/nl/${ pathNameWithoutLocale }` }>
+									<option lang="nl" value="/nl">
 										Nederlands
 									</option>
-									<option lang="ru" value={ `/ru/${ pathNameWithoutLocale }` }>
+									<option lang="ru" value="/ru">
 										Русский
 									</option>
-									<option lang="tr" value={ `/tr/${ pathNameWithoutLocale }` }>
+									<option lang="tr" value="/tr">
 										Türkçe
 									</option>
-									<option lang="id" value={ `/id/${ pathNameWithoutLocale }` }>
+									<option lang="id" value="/id">
 										Bahasa Indonesia
 									</option>
-									<option lang="zh-cn" value={ `/zh-cn/${ pathNameWithoutLocale }` }>
+									<option lang="zh-cn" value="/zh-cn">
 										简体中文
 									</option>
-									<option lang="zh-tw" value={ `/zh-tw/${ pathNameWithoutLocale }` }>
+									<option lang="zh-tw" value="/zh-tw">
 										繁體中文
 									</option>
-									<option lang="ko" value={ `/ko/${ pathNameWithoutLocale }` }>
+									<option lang="ko" value="/ko">
 										한국어
 									</option>
-									<option lang="ar" value={ `/ar/${ pathNameWithoutLocale }` }>
+									<option lang="ar" value="/ar">
 										العربية
 									</option>
-									<option lang="sv" value={ `/sv/${ pathNameWithoutLocale }` }>
+									<option lang="sv" value="/sv">
 										Svenska
 									</option>
-									<option lang="el" value={ `/el/${ pathNameWithoutLocale }` }>
+									<option lang="el" value="/el">
 										Ελληνικά
 									</option>
-									<option lang="en" value={ `/${ pathNameWithoutLocale }` }>
+									<option lang="en" value="/">
 										English
 									</option>
-									<option lang="ro" value={ `/ro/${ pathNameWithoutLocale }` }>
+									<option lang="ro" value="/ro">
 										Română
 									</option>
 								</select>
@@ -473,7 +476,7 @@ export const PureUniversalNavbarFooter = ( {
 const UniversalNavbarFooter = ( {
 	isLoggedIn = false,
 	currentRoute,
-	additonalCompanyLinks,
+	additionalCompanyLinks,
 	onLanguageChange,
 }: FooterProps ) => {
 	const localizeUrl = useLocalizeUrl();
@@ -490,7 +493,7 @@ const UniversalNavbarFooter = ( {
 			automatticBranding={ automatticBranding }
 			isLoggedIn={ isLoggedIn }
 			currentRoute={ pathNameWithoutLocale }
-			additonalCompanyLinks={ additonalCompanyLinks }
+			additionalCompanyLinks={ additionalCompanyLinks }
 			onLanguageChange={ onLanguageChange }
 			localizeUrl={ localizeUrl }
 		/>

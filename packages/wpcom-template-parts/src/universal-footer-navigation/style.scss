@@ -109,6 +109,8 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 	}
 }
 
+// useful to increase specificity in the editor
+.editor-styles-wrapper .lpc-footer-nav-container,
 .lpc-footer-nav-container {
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);

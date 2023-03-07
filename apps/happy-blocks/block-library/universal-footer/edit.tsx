@@ -9,7 +9,7 @@ export default function Edit() {
 	useI18nCalypsoTranslations();
 	return (
 		<div { ...useBlockProps() }>
-			<PureUniversalNavbarFooter currentRoute="/" isLoggedIn onLanguageChange={ noop } />
+			<PureUniversalNavbarFooter isLoggedIn onLanguageChange={ noop } />
 		</div>
 	);
 }
