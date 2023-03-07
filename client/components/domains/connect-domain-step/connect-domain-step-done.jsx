@@ -13,7 +13,14 @@ import { stepType } from './constants';
 
 import './style.scss';
 
-const ConnectDomainStepDone = ( { className, domain, step, selectedSiteSlug } ) => {
+const ConnectDomainStepDone = ( {
+	className,
+	domain,
+	step,
+	selectedSiteSlug,
+	queryError,
+	queryErrorDescription,
+} ) => {
 	const { __ } = useI18n();
 	const siteDomainsUrl = domainManagementList( selectedSiteSlug );
 
@@ -56,6 +63,32 @@ const ConnectDomainStepDone = ( { className, domain, step, selectedSiteSlug } ) 
 				a: createElement( 'a', { href: siteDomainsUrl } ),
 			} ),
 		];
+
+		if ( queryError ) {
+			if ( queryError === 'access_denied' && queryErrorDescription.startsWith( 'user_cancel' ) ) {
+				heading = __( 'Connecting your domain to WordPress.com was cancelled' );
+				contentLines = [
+					sprintf(
+						/* translators: %s: the domain name that is being connected (ex.: example.com) */
+						__(
+							'You might want to start over or use one of the alternative methods to connect %s to WordPress.com.'
+						),
+						domain
+					),
+				];
+			} else {
+				heading = __( 'There was a problem connecting your domain' );
+				contentLines = [
+					sprintf(
+						/* translators: %s: the domain name that is being connected (ex.: example.com) */
+						__(
+							'We got an error when trying to connect %s to WordPress.com. You might try again or get in contact with your DNS provider to figure out what went wrong.'
+						),
+						domain
+					),
+				];
+			}
+		}
 	}
 
 	return (
@@ -87,6 +120,8 @@ ConnectDomainStepDone.propTypes = {
 	domain: PropTypes.string.isRequired,
 	step: PropTypes.oneOf( Object.values( stepType ) ).isRequired,
 	selectedSiteSlug: PropTypes.string,
+	queryError: PropTypes.string,
+	queryErrorDescription: PropTypes.string,
 };
 
 export default connect( ( state ) => ( { selectedSiteSlug: getSelectedSiteSlug( state ) } ) )(
