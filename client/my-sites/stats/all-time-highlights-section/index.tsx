@@ -9,6 +9,7 @@ import {
 import { eye } from '@automattic/components/src/icons';
 import { Icon, people, postContent, starEmpty, commentContent } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import moment from 'moment';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import QueryPosts from 'calypso/components/data/query-posts';
@@ -112,7 +113,14 @@ export default function AllTimeHighlightsSection( {
 		let bestViewsEverYear = '';
 
 		if ( viewsBestDay && ! isStatsLoading ) {
-			const theDay = new Date( viewsBestDay );
+			const theMoment = moment( viewsBestDay ).local();
+
+			const year = theMoment.year();
+			const month = theMoment.month();
+			const day = theMoment.date();
+
+			const theDay = new Date( year, month, day );
+
 			bestViewsEverMonthDay = theDay.toLocaleDateString( undefined, {
 				month: 'long',
 				day: 'numeric',
