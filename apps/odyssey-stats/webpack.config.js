@@ -163,10 +163,14 @@ module.exports = {
 			/^calypso\/components\/formatted-header$/,
 			'calypso/components/jetpack/jetpack-header'
 		),
+		// Exclude WPCOM web preview section on post detail page, which doesn't work for Jetpack.
 		new webpack.NormalModuleReplacementPlugin(
 			/^calypso\/components\/web-preview.*$/,
 			'lodash/noop'
 		),
+		// Exclude irrelevant WPCOM upsell nudge.
+		new webpack.NormalModuleReplacementPlugin( /^calypso\/blocks\/upsell-nudge.*$/, 'lodash/noop' ),
+
 		shouldEmitStats &&
 			new BundleAnalyzerPlugin( {
 				analyzerMode: 'server',
