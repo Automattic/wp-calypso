@@ -698,7 +698,7 @@ async function openLinksInParentFrame( calypsoPort ) {
 		}
 	} );
 	const popoverSlotElem = document.querySelector( '.interface-interface-skeleton ~ .popover-slot' );
-	popoverSlotObserver.observe( popoverSlotElem, { childList: true } );
+	popoverSlotElem && popoverSlotObserver.observe( popoverSlotElem, { childList: true } );
 
 	// Sidebar might already be open before this script is executed.
 	// post and site editors
