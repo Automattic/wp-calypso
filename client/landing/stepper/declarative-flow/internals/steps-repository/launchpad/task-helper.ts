@@ -54,9 +54,7 @@ export function getEnhancedTasks(
 	// send user to Home page editor, fallback to FSE if page id is not known
 	const launchpadUploadVideoLink = homePageId
 		? `/page/${ siteSlug }/${ homePageId }`
-		: addQueryArgs( `/site-editor/${ siteSlug }`, {
-				canvas: 'edit',
-		  } );
+		: `/site-editor/${ siteSlug }?canvas=edit`;
 
 	let planWarningText = displayGlobalStylesWarning
 		? translate(
@@ -90,9 +88,7 @@ export function getEnhancedTasks(
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
-								addQueryArgs( `/setup/free-post-setup/freePostSetup`, {
-									siteSlug,
-								} )
+								`/setup/free-post-setup/freePostSetup?siteSlug=${ siteSlug }`
 							);
 						},
 					};
@@ -103,9 +99,7 @@ export function getEnhancedTasks(
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
-								addQueryArgs( `/setup/newsletter-post-setup/newsletterPostSetup`, {
-									siteSlug,
-								} )
+								`/setup/newsletter-post-setup/newsletterPostSetup?siteSlug=${ siteSlug }`
 							);
 						},
 					};
@@ -121,11 +115,7 @@ export function getEnhancedTasks(
 						completed: siteEditCompleted,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, siteEditCompleted, task.id );
-							window.location.assign(
-								addQueryArgs( `/site-editor/${ siteSlug }`, {
-									canvas: 'edit',
-								} )
-							);
+							window.location.assign( `/site-editor/${ siteSlug }?canvas=edit` );
 						},
 					};
 					break;
@@ -183,10 +173,7 @@ export function getEnhancedTasks(
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
-								addQueryArgs( `/setup/update-design/designSetup`, {
-									siteSlug,
-									flowToReturnTo: flow,
-								} )
+								`/setup/update-design/designSetup?siteSlug=${ siteSlug }&flowToReturnTo=${ flow }`
 							);
 						},
 					};
@@ -197,9 +184,7 @@ export function getEnhancedTasks(
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
-								addQueryArgs( `/setup/link-in-bio-post-setup/linkInBioPostSetup`, {
-									siteSlug,
-								} )
+								`/setup/link-in-bio-post-setup/linkInBioPostSetup?siteSlug=${ siteSlug }`
 							);
 						},
 					};
@@ -210,11 +195,7 @@ export function getEnhancedTasks(
 						completed: linkInBioLinksEditCompleted,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, linkInBioLinksEditCompleted, task.id );
-							window.location.assign(
-								addQueryArgs( `/site-editor/${ siteSlug }`, {
-									canvas: 'edit',
-								} )
-							);
+							window.location.assign( `/site-editor/${ siteSlug }?canvas=edit` );
 						},
 					};
 					break;
@@ -304,11 +285,7 @@ export function getEnhancedTasks(
 
 									// Waits for half a second so that the loading screen doesn't flash away too quickly
 									await new Promise( ( res ) => setTimeout( res, 500 ) );
-									window.location.replace(
-										addQueryArgs( `/home/${ siteSlug }`, {
-											forceLoadLaunchpadData: true,
-										} )
-									);
+									window.location.replace( `/home/${ siteSlug }?forceLoadLaunchpadData=true` );
 								} );
 
 								submit?.();
@@ -324,9 +301,7 @@ export function getEnhancedTasks(
 							recordTaskClickTracksEvent( flow, isPaidPlan, task.id );
 							const destinationUrl = isPaidPlan
 								? `/domains/manage/${ siteSlug }`
-								: addQueryArgs( `/domains/add/${ siteSlug }`, {
-										domainAndPlanPackage: true,
-								  } );
+								: `/domains/add/${ siteSlug }?domainAndPlanPackage=true`;
 							window.location.assign( destinationUrl );
 						},
 						badgeText: isPaidPlan ? '' : translate( 'Upgrade plan' ),
