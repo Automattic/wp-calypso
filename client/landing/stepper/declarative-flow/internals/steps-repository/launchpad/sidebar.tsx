@@ -63,7 +63,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 
 	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles();
 
-	const isEmailVerified = useSelector( ( state ) => isCurrentUserEmailVerified( state ) );
+	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 
 	const { flowName, title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
 
