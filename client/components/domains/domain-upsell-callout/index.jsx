@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isFreePlanProduct } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
+import { useMemo } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
 import { useCallback } from 'react';
@@ -24,6 +25,10 @@ const DomainUpsellCallout = ( { trackEvent } ) => {
 	const dismissPreference = `${ trackEvent }-${ site?.ID }`;
 	const isEmailVerified = useSelector( ( state ) => isCurrentUserEmailVerified( state ) );
 	const siteDomains = useSelector( ( state ) => getDomainsBySiteId( state, site?.ID ) );
+	const siteDomainsLength = useMemo(
+		() => siteDomains.filter( ( domain ) => ! domain.isWPCOMDomain ).length,
+		[ siteDomains ]
+	);
 	const hasPreferences = useSelector( hasReceivedRemotePreferences );
 	const isDismissed = useSelector( ( state ) => getPreference( state, dismissPreference ) );
 	const { __ } = useI18n();
@@ -42,10 +47,10 @@ const DomainUpsellCallout = ( { trackEvent } ) => {
 		! site ||
 		! hasPreferences ||
 		isDismissed ||
-		siteDomains.length > 1 ||
+		siteDomainsLength ||
 		! isEmailVerified ||
 		! isFreePlanProduct( site.plan ) ||
-		isP2Site
+		isP2Site( site )
 	) {
 		return null;
 	}
