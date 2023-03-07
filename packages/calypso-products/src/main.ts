@@ -174,6 +174,7 @@ export function planHasAtLeastOneFeature( plan: string | Plan, features: string[
  */
 export function getAllFeaturesForPlan( plan: Plan | string ): TranslateResult[] {
 	const planObj = getPlan( plan );
+	// console.log( 'planObj: Products Included', planObj.getProductsIncluded() );
 	if ( ! planObj ) {
 		return [];
 	}
@@ -198,6 +199,9 @@ export function getAllFeaturesForPlan( plan: Plan | string ): TranslateResult[] 
 			: [] ),
 		...( 'getIncludedFeatures' in planObj && planObj.getIncludedFeatures
 			? planObj.getIncludedFeatures()
+			: [] ),
+		...( 'getProductsIncluded' in planObj && planObj.getProductsIncluded
+			? planObj.getProductsIncluded()
 			: [] ),
 	];
 }

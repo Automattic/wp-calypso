@@ -8,9 +8,11 @@ import {
 	isJetpackScan,
 	isJetpackScanSlug,
 	planHasFeature,
+	JETPACK_SOCIAL_PRODUCTS,
 	WPCOM_FEATURES_ANTISPAM,
 	WPCOM_FEATURES_BACKUPS,
 	WPCOM_FEATURES_SCAN,
+	JETPACK_SOCIAL_ADVANCED_PRODUCTS,
 } from '@automattic/calypso-products';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useEffect } from 'react';
@@ -40,10 +42,10 @@ const PrePurchaseNotices = () => {
 
 	const selectedSite = useSelector( getSelectedSite );
 	const siteId = selectedSite?.ID;
-
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const cartItemSlugs = responseCart.products.map( ( item ) => item.product_slug );
+	const isMonthly = cartItemSlugs.some( ( slug ) => slug.includes( 'monthly' ) );
 
 	/**
 	 * Ensure site rewind capabilities are loaded, for use by isPlanIncludingSiteBackup().
@@ -72,14 +74,23 @@ const PrePurchaseNotices = () => {
 		return products.filter( ( p ) => ! p.expired );
 	} );
 
-	/**
-	 * The active product on the current site that overlaps/conflicts with the plan currently in the cart.
-	 */
 	const siteProductThatOverlapsCartPlan = useSelector( ( state ) => {
 		const planSlugInCart = cartItemSlugs.find( isJetpackPlanSlug );
 
 		if ( ! planSlugInCart ) {
 			return null;
+		}
+		// console.log( planHasFeature( planSlugInCart, siteHasSocial.productSlug ) );
+		const socialProductSlug = isMonthly
+			? JETPACK_SOCIAL_ADVANCED_PRODUCTS.find( ( slug ) => slug.includes( 'monthly' ) )
+			: JETPACK_SOCIAL_ADVANCED_PRODUCTS.find( ( slug ) => ! slug.includes( 'monthly' ) );
+
+		const siteHasSocial = currentSiteProducts.find( ( product ) =>
+			JETPACK_SOCIAL_PRODUCTS.includes( product.productSlug )
+		);
+
+		if ( siteHasSocial && planHasFeature( planSlugInCart, socialProductSlug ) ) {
+			return siteHasSocial;
 		}
 
 		if (
