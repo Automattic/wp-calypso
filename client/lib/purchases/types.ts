@@ -74,8 +74,39 @@ export interface Purchase {
 	siteName: string;
 	subscribedDate: string;
 	subscriptionStatus: 'active' | 'inactive';
+
+	/**
+	 * The refund amount in the currency's smallest unit.
+	 *
+	 * Note that this currency may differ from the purchase's currency, so use
+	 * `totalRefundCurrency` when formatting!
+	 */
+	totalRefundInteger: number;
+
+	/**
+	 * The refund amount for the purchase as a float.
+	 *
+	 * Note that this currency may differ from the purchase's currency, so use
+	 * `totalRefundCurrency` when formatting!
+	 *
+	 * @deprecated use `totalRefundInteger`.
+	 */
 	totalRefundAmount: number;
+
+	/**
+	 * The refund amount currency.
+	 *
+	 * Note that this currency may differ from the purchase's currency!
+	 */
+	totalRefundCurrency: string;
+
+	/**
+	 * The refund amount for the purchase as a formatted string.
+	 *
+	 * @deprecated use `totalRefundInteger` and `formatCurrency()`.
+	 */
 	totalRefundText: string;
+
 	userId: number;
 	userIsOwner?: boolean;
 	partnerKeyId: number | undefined;
@@ -156,6 +187,8 @@ export interface RawPurchase {
 	product_display_price: string;
 	price_integer: number;
 	total_refund_amount: number | undefined;
+	total_refund_currency: string;
+	total_refund_integer: number;
 	total_refund_text: string;
 	refund_amount: number;
 	refund_text: string;
