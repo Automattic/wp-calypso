@@ -7,6 +7,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import type { Step } from '../../types';
+import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
 import type { AtomicSoftwareStatus } from 'calypso/../packages/data-stores/src/site';
 
 const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
@@ -22,10 +23,10 @@ const WooInstallPlugins: Step = function WooInstallPlugins( { navigation } ) {
 	const { setPendingAction, setProgressTitle, setProgress } = useDispatch( ONBOARD_STORE );
 	const { initiateSoftwareInstall, requestAtomicSoftwareStatus } = useDispatch( SITE_STORE );
 	const { getAtomicSoftwareInstallError, getAtomicSoftwareStatus, getAtomicSoftwareError } =
-		useSelect( ( select ) => select( SITE_STORE ) );
+		useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
 	const site = useSite();
 	const softwareSet = 'woo-on-plans';
-	const { getIntent } = useSelect( ( select ) => select( ONBOARD_STORE ) );
+	const { getIntent } = useSelect( ( select ) => select( ONBOARD_STORE ) as OnboardSelect, [] );
 
 	const handleTransferFailure = ( failureInfo: FailureInfo ) => {
 		recordTracksEvent( 'calypso_woocommerce_dashboard_snag_error', {

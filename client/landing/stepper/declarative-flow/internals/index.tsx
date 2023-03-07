@@ -22,6 +22,7 @@ import StepperLoader from './components/stepper-loader';
 import VideoPressIntroBackground from './steps-repository/intro/videopress-intro-background';
 import { AssertConditionState, Flow, StepperStep } from './types';
 import './global.scss';
+import type { OnboardSelect } from '@automattic/data-stores';
 
 const kebabCase = ( value: string ) => value.replace( /([a-z0-9])([A-Z])/g, '$1-$2' ).toLowerCase();
 
@@ -46,10 +47,16 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const history = useHistory();
 	const { search } = useLocation();
 	const { setStepData } = useDispatch( STEPPER_INTERNAL_STORE );
-	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
+	const intent = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
+		[]
+	);
 	const ref = useQuery().get( 'ref' ) || '';
 
-	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
+	const stepProgress = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
+		[]
+	);
 	const progressValue = stepProgress ? stepProgress.progress / stepProgress.count : 0;
 	const [ previousProgress, setPreviousProgress ] = useState(
 		stepProgress ? stepProgress.progress : 0

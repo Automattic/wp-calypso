@@ -6,6 +6,7 @@ import { ONBOARD_STORE } from '../stores/onboard';
 import { SITE_STORE } from '../stores/site';
 import { USER_STORE } from '../stores/user';
 import { useNewSiteVisibility } from './use-selected-plan';
+import type { SiteSelect, UserSelect } from '@automattic/data-stores';
 
 /**
  * After signup a site is automatically created using the username and bearerToken
@@ -15,8 +16,14 @@ export default function useOnSignup(): void {
 	const locale = useLocale();
 	const { createSite } = useDispatch( ONBOARD_STORE );
 
-	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
-	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
+	const newUser = useSelect(
+		( select ) => ( select( USER_STORE ) as UserSelect ).getNewUser(),
+		[]
+	);
+	const newSite = useSelect(
+		( select ) => ( select( SITE_STORE ) as SiteSelect ).getNewSite(),
+		[]
+	);
 	const visibility = useNewSiteVisibility();
 	const isAnchorFmSignup = useIsAnchorFm();
 	const { anchorFmPodcastId, anchorFmEpisodeId, anchorFmSpotifyUrl } = useAnchorFmParams();

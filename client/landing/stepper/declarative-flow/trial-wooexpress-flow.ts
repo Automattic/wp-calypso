@@ -14,6 +14,7 @@ import WaitForAtomic from './internals/steps-repository/wait-for-atomic';
 import WaitForPluginInstall from './internals/steps-repository/wait-for-plugin-install';
 import { AssertConditionState } from './internals/types';
 import type { AssertConditionResult, Flow, ProvidedDependencies } from './internals/types';
+import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 
 const wooexpress: Flow = {
 	name: 'wooexpress',
@@ -29,7 +30,10 @@ const wooexpress: Flow = {
 		];
 	},
 	useAssertConditions(): AssertConditionResult {
-		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
+		const userIsLoggedIn = useSelect(
+			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+			[]
+		);
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 
 		const flowName = this.name;
@@ -73,7 +77,10 @@ const wooexpress: Flow = {
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
-		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
+		const intent = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
+			[]
+		);
 		const siteSlugParam = useSiteSlugParam();
 
 		const { setStepProgress, setPluginsToVerify } = useDispatch( ONBOARD_STORE );
@@ -82,7 +89,7 @@ const wooexpress: Flow = {
 		const flowProgress = useSiteSetupFlowProgress( currentStep, intent );
 		setStepProgress( flowProgress );
 
-		const { getSiteIdBySlug } = useSelect( ( select ) => select( SITE_STORE ) );
+		const { getSiteIdBySlug } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
 
 		const exitFlow = ( to: string ) => {
 			window.location.assign( to );

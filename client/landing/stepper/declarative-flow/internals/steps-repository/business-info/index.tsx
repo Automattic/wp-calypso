@@ -11,6 +11,7 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
+import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
 import './style.scss';
 
 const ActionSection = styled.div`
@@ -36,13 +37,19 @@ const BusinessInfo: Step = function ( props ) {
 	const { goNext, goBack, submit } = props.navigation;
 
 	const { __ } = useI18n();
-	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
+	const intent = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
+		[]
+	);
 	const siteSlug = useQuery().get( 'siteSlug' );
 	const siteId = useSelect(
-		( select ) => siteSlug && select( SITE_STORE ).getSiteIdBySlug( siteSlug )
+		( select ) => siteSlug && ( select( SITE_STORE ) as SiteSelect ).getSiteIdBySlug( siteSlug ),
+		[]
 	);
 	const settings = useSelect(
-		( select ) => ( siteId && select( SITE_STORE ).getSiteSettings( siteId ) ) || {}
+		( select ) =>
+			( siteId && ( select( SITE_STORE ) as SiteSelect ).getSiteSettings( siteId ) ) || {},
+		[]
 	);
 	const onboardingProfile = settings?.woocommerce_onboarding_profile || {};
 	const [ profileChanges, setProfileChanges ] = useState< {
@@ -51,7 +58,10 @@ const BusinessInfo: Step = function ( props ) {
 
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
 
-	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
+	const stepProgress = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
+		[]
+	);
 
 	function updateProductTypes( type: string ) {
 		const productTypes = getProfileValue( 'product_types' ) || [];

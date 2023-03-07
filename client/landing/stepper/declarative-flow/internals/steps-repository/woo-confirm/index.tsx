@@ -22,6 +22,7 @@ import { ActionSection, StyledNextButton } from 'calypso/signup/steps/woocommerc
 import { eligibilityHolds as eligibilityHoldsConstants } from 'calypso/state/automated-transfer/constants';
 import SupportCard from '../store-address/support-card';
 import type { Step } from '../../types';
+import type { ProductsListSelect, OnboardSelect, SiteSelect } from '@automattic/data-stores';
 import type { TransferEligibilityError } from '@automattic/data-stores/src/automated-transfer-eligibility/types';
 import './style.scss';
 
@@ -45,13 +46,18 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 	const { __ } = useI18n();
 	const site = useSite();
 	const siteId = site && site?.ID;
-	const isAtomicSite = useSelect( ( select ) =>
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore Until createRegistrySelector is typed correctly
-		select( SITE_STORE ).isSiteAtomic( siteId )
+	const isAtomicSite = useSelect(
+		( select ) =>
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore Until createRegistrySelector is typed correctly
+			( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( siteId ),
+		[]
 	);
 	const { requestLatestAtomicTransfer } = useDispatch( SITE_STORE );
-	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
+	const stepProgress = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
+		[]
+	);
 
 	useEffect( () => {
 		if ( ! siteId ) {
@@ -61,38 +67,56 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 		requestLatestAtomicTransfer( siteId );
 	}, [ requestLatestAtomicTransfer, siteId ] );
 
-	const eligibilityHolds = useSelect( ( select ) =>
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore Until createRegistrySelector is typed correctly
-		select( AUTOMATED_ELIGIBILITY_STORE ).getEligibilityHolds( siteId )
+	const eligibilityHolds = useSelect(
+		( select ) =>
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore Until createRegistrySelector is typed correctly
+			select( AUTOMATED_ELIGIBILITY_STORE ).getEligibilityHolds( siteId ),
+		[]
 	);
-	const eligibilityWarnings = useSelect( ( select ) =>
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore Until createRegistrySelector is typed correctly
-		select( AUTOMATED_ELIGIBILITY_STORE ).getEligibilityWarnings( siteId )
+	const eligibilityWarnings = useSelect(
+		( select ) =>
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore Until createRegistrySelector is typed correctly
+			select( AUTOMATED_ELIGIBILITY_STORE ).getEligibilityWarnings( siteId ),
+		[]
 	);
-	const wpcomSubdomainWarning = useSelect( ( select ) =>
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore Until createRegistrySelector is typed correctly
-		select( AUTOMATED_ELIGIBILITY_STORE ).getWpcomSubdomainWarning( siteId )
+	const wpcomSubdomainWarning = useSelect(
+		( select ) =>
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore Until createRegistrySelector is typed correctly
+			select( AUTOMATED_ELIGIBILITY_STORE ).getWpcomSubdomainWarning( siteId ),
+		[]
 	);
-	const warnings: any = useSelect( ( select ) =>
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore Until createRegistrySelector is typed correctly
-		select( AUTOMATED_ELIGIBILITY_STORE ).getNonSubdomainWarnings( siteId )
+	const warnings: any = useSelect(
+		( select ) =>
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore Until createRegistrySelector is typed correctly
+			select( AUTOMATED_ELIGIBILITY_STORE ).getNonSubdomainWarnings( siteId ),
+		[]
 	);
-	const latestAtomicTransfer = useSelect( ( select ) =>
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore Until createRegistrySelector is typed correctly
-		select( SITE_STORE ).getSiteLatestAtomicTransfer( siteId || 0 )
+	const latestAtomicTransfer = useSelect(
+		( select ) =>
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore Until createRegistrySelector is typed correctly
+			( select( SITE_STORE ) as SiteSelect ).getSiteLatestAtomicTransfer( siteId || 0 ),
+		[]
 	);
-	const latestAtomicTransferError = useSelect( ( select ) =>
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore Until createRegistrySelector is typed correctly
-		select( SITE_STORE ).getSiteLatestAtomicTransferError( siteId || 0 )
+	const latestAtomicTransferError = useSelect(
+		( select ) =>
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore Until createRegistrySelector is typed correctly
+			( select( SITE_STORE ) as SiteSelect ).getSiteLatestAtomicTransferError( siteId || 0 ),
+		[]
 	);
-	const productsList = useSelect( ( select ) => select( PRODUCTS_LIST_STORE ).getProductsList() );
-	const requiresUpgrade = useSelect( ( select ) => select( SITE_STORE ).requiresUpgrade( siteId ) );
+	const productsList = useSelect(
+		( select ) => ( select( PRODUCTS_LIST_STORE ) as ProductsListSelect ).getProductsList(),
+		[]
+	);
+	const requiresUpgrade = useSelect(
+		( select ) => ( select( SITE_STORE ) as SiteSelect ).requiresUpgrade( siteId ),
+		[]
+	);
 
 	const wpcomDomain = site?.URL?.replace( /http[s]*:\/\//, '' );
 	const stagingDomain = wpcomDomain?.replace( /\b\.wordpress\.com/, '.wpcomstaging.com' ) || null;

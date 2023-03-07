@@ -9,6 +9,7 @@ import { PLANS_STORE } from '../stores/plans';
 import { SITE_STORE } from '../stores/site';
 import { USER_STORE } from '../stores/user';
 import { useSelectedPlan, useShouldRedirectToEditorAfterCheckout } from './use-selected-plan';
+import type { PlansSelect, OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 
 /**
  * After a new site has been created there are 3 scenarios to cover:
@@ -18,18 +19,36 @@ import { useSelectedPlan, useShouldRedirectToEditorAfterCheckout } from './use-s
  */
 
 export default function useOnSiteCreation(): void {
-	const { domain } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
-	const isRedirecting = useSelect( ( select ) => select( ONBOARD_STORE ).getIsRedirecting() );
-	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
-	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
+	const { domain } = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getState(),
+		[]
+	);
+	const isRedirecting = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIsRedirecting(),
+		[]
+	);
+	const newSite = useSelect(
+		( select ) => ( select( SITE_STORE ) as SiteSelect ).getNewSite(),
+		[]
+	);
+	const newUser = useSelect(
+		( select ) => ( select( USER_STORE ) as UserSelect ).getNewUser(),
+		[]
+	);
 	const selectedPlan = useSelectedPlan();
 	const shouldRedirectToEditorAfterCheckout = useShouldRedirectToEditorAfterCheckout();
-	const design = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
-	const selectedPlanProductId = useSelect( ( select ) =>
-		select( ONBOARD_STORE ).getPlanProductId()
+	const design = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
+		[]
 	);
-	const planProductSource = useSelect( ( select ) =>
-		select( PLANS_STORE ).getPlanProductById( selectedPlanProductId )
+	const selectedPlanProductId = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanProductId(),
+		[]
+	);
+	const planProductSource = useSelect(
+		( select ) =>
+			( select( PLANS_STORE ) as PlansSelect ).getPlanProductById( selectedPlanProductId ),
+		[]
 	);
 
 	const flow = useOnboardingFlow();

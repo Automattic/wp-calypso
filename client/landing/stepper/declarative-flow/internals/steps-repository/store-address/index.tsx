@@ -17,6 +17,7 @@ import { ActionSection, StyledNextButton } from 'calypso/signup/steps/woocommerc
 import { useCountries } from '../../../../hooks/use-countries';
 import SupportCard from './support-card';
 import type { Step } from '../../types';
+import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 import './style.scss';
 
 type FormFields =
@@ -48,17 +49,28 @@ const CityZipRow = styled.div`
 
 const StoreAddress: Step = function StoreAddress( { navigation } ) {
 	const { goNext, submit } = navigation;
-	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
+	const intent = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
+		[]
+	);
 	const site = useSite();
 	const settings = useSelect(
-		( select ) => ( site?.ID && select( SITE_STORE ).getSiteSettings( site.ID ) ) || {}
+		( select ) =>
+			( site?.ID && ( select( SITE_STORE ) as SiteSelect ).getSiteSettings( site.ID ) ) || {},
+		[]
 	);
-	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() || null );
+	const currentUser = useSelect(
+		( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser() || null,
+		[]
+	);
 	const { data: countries } = useCountries();
 	const { __ } = useI18n();
 	const [ errors, setErrors ] = useState( {} as Record< FormFields, string > );
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
-	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
+	const stepProgress = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
+		[]
+	);
 
 	const [ settingChanges, setSettingChanges ] = useState< {
 		[ key: string ]: string;

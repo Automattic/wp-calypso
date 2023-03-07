@@ -4,13 +4,17 @@ import { useLocation } from 'react-router-dom';
 import { isAnchorPodcastIdValid } from '../path';
 import { ONBOARD_STORE } from '../stores/onboard';
 import usePodcastTitle from './use-podcast-title';
+import type { OnboardSelect } from '@automattic/data-stores';
 
 export default function useSiteTitle(): void {
 	const { setSiteTitle } = useDispatch( ONBOARD_STORE );
 	const podcastTitle = usePodcastTitle();
-	const { hasSiteTitle } = useSelect( ( select ) => ( {
-		hasSiteTitle: select( ONBOARD_STORE ).getSelectedSiteTitle().length > 0,
-	} ) );
+	const { hasSiteTitle } = useSelect(
+		( select ) => ( {
+			hasSiteTitle: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle().length > 0,
+		} ),
+		[]
+	);
 
 	// When first loading a url including an ?anchor_podcast query param, clear
 	// the title.

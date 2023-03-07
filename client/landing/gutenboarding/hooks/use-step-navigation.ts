@@ -7,6 +7,7 @@ import { USER_STORE } from '../stores/user';
 import { useNewSiteVisibility } from './use-selected-plan';
 import useSignup from './use-signup';
 import useSteps from './use-steps';
+import type { UserSelect } from '@automattic/data-stores';
 
 /**
  * A React hook that returns callback to navigate to previous and next steps in Gutenboarding flow
@@ -25,8 +26,14 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	const steps = useSteps();
 
 	// @TODO: move site creation to a separate hook or an action on the ONBOARD store
-	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
-	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
+	const currentUser = useSelect(
+		( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
+		[]
+	);
+	const newUser = useSelect(
+		( select ) => ( select( USER_STORE ) as UserSelect ).getNewUser(),
+		[]
+	);
 	const { anchorFmPodcastId, anchorFmEpisodeId, anchorFmSpotifyUrl } = useAnchorFmParams();
 
 	const { createSite } = useDispatch( ONBOARD_STORE );

@@ -12,6 +12,7 @@ import NewsletterSetup from './internals/steps-repository/newsletter-setup';
 import Subscribers from './internals/steps-repository/subscribers';
 import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
+import type { UserSelect } from '@automattic/data-stores';
 
 const newsletter: Flow = {
 	name: NEWSLETTER_FLOW,
@@ -29,7 +30,10 @@ const newsletter: Flow = {
 
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
-		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
+		const userIsLoggedIn = useSelect(
+			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+			[]
+		);
 		const siteSlug = useSiteSlug();
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( {
