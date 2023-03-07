@@ -23,7 +23,7 @@ const ScreenMain = ( { shouldUnlockGlobalStyles, onSelect, onContinueClick }: Pr
 			<NavigatorHeader
 				title={ translate( 'Let’s get creative' ) }
 				description={ translate(
-					'Use our library of styles and patterns to design your own theme.'
+					'Use our library of styles and patterns to design your own homepage.'
 				) }
 				hideBack
 			/>
