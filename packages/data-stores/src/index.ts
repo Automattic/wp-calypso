@@ -65,6 +65,7 @@ export { getContextResults } from './contextual-help/contextual-help';
 export { generateAdminSections } from './contextual-help/admin-sections';
 export type { LinksForSection } from './contextual-help/contextual-help';
 export * from './contextual-help/constants';
+export type { AnalyzerSelect } from './analyzer/types';
 export type { I18nSelect } from './i18n/types';
 export type { HelpCenterSite, HelpCenterSelect } from './help-center/types';
 export type { ProductsListSelect } from './products-list/types';
