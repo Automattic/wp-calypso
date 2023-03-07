@@ -19,7 +19,6 @@ import { getCurrentUser, isCurrentUserEmailVerified } from 'calypso/state/curren
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
-import isSiteOnMonthlyPlan from 'calypso/state/selectors/is-site-on-monthly-plan';
 import { getDomainsBySite } from 'calypso/state/sites/domains/selectors';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
@@ -40,7 +39,10 @@ export default function DomainUpsell( { context } ) {
 	const primarySite = useSelector( ( state ) => getSiteBySlug( state, primarySiteSlug ) );
 	const site = isProfileUpsell ? primarySite : selectedSite;
 
-	const isMonthlyPlan = useSelector( ( state ) => isSiteOnMonthlyPlan( state, site?.ID ) );
+	const currentPlan = useSelector( ( state ) => getCurrentPlan( state, site?.ID ) );
+	const currentPlanIntervalType = getIntervalTypeForTerm(
+		getPlan( currentPlan?.productSlug )?.term
+	);
 
 	const isFreePlan = isFreePlanProduct( site?.plan );
 
@@ -77,7 +79,7 @@ export default function DomainUpsell( { context } ) {
 		<CalypsoShoppingCartProvider>
 			<RenderDomainUpsell
 				isFreePlan={ isFreePlan }
-				isMonthlyPlan={ isMonthlyPlan }
+				isMonthlyPlan={ currentPlanIntervalType === 'monthly' }
 				isProfileUpsell={ isProfileUpsell }
 				searchTerm={ searchTerm }
 				siteSlug={ isProfileUpsell ? primarySiteSlug : selectedSiteSlug }
