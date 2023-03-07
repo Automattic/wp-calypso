@@ -33,10 +33,11 @@
 
 	.pattern-action-bar {
 		position: absolute;
-		top: 15px;
-		right: 15px;
+		top: 16px;
+		left: 16px;
+		right: unset;
 		padding: 6px;
-		border: 1px solid #dcdcde;
+		border: 1px solid #1e1e1e;
 		border-radius: 4px;
 		background-color: #fff;
 		opacity: 0;
@@ -48,12 +49,26 @@
 		}
 	}
 
+	&::after {
+		content: "";
+		position: absolute;
+		left: 2px;
+		right: 2px;
+		top: 2px;
+		bottom: 2px;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 10px;
+	}
+
 	&:hover,
 	&:focus,
 	&:focus-within {
 		.pattern-action-bar {
-			animation: slideInShort 0.2s forwards, fadeIn 0.3s forwards;
-			animation-timing-function: cubic-bezier(0.445, 0.05, 0.55, 0.95);
+			opacity: 1;
+		}
+
+		&::after {
+			box-shadow: 0 0 0 2px var(--studio-blue-50);
 		}
 	}
 }
