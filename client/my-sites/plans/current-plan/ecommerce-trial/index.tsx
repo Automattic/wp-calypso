@@ -1,5 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { PLAN_WOOEXPRESS_MEDIUM_MONTHLY } from '@automattic/calypso-products';
+import {
+	PLAN_ECOMMERCE_MONTHLY,
+	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
+} from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
@@ -20,6 +23,7 @@ import simpleCustomization from 'calypso/assets/images/plans/wpcom/ecommerce-tri
 import unlimitedProducts from 'calypso/assets/images/plans/wpcom/ecommerce-trial/unlimited-products.svg';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getECommerceTrialCheckoutUrl } from 'calypso/lib/ecommerce-trial/get-ecommerce-trial-checkout-url';
+import { isEnabled } from 'calypso/server/config';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ECommerceTrialBanner from '../../ecommerce-trial/ecommerce-trial-banner';
 import FeatureIncludedCard from '../feature-included-card';
@@ -42,18 +46,22 @@ const ECommerceTrialCurrentPlan = () => {
 	const isMobile = useMediaQuery( '(max-width: 480px)' );
 	const displayAllIncluded = ! isMobile || showAllTrialFeaturesInMobileView;
 
+	const targetPlan = isEnabled( 'plans/wooexpress-medium' )
+		? PLAN_WOOEXPRESS_MEDIUM_MONTHLY
+		: PLAN_ECOMMERCE_MONTHLY;
+
 	/**
-	 * Redirects to the checkout page with the WX Medium Plan.
+	 * Redirects to the checkout page with Plan on cart.
 	 *
 	 * @param ctaPosition - The position of the CTA that triggered the redirect.
 	 */
-	const goToCheckoutWithWooExpressPlan = ( ctaPosition: string ) => {
+	const goToCheckoutWithPlan = ( ctaPosition: string ) => {
 		recordTracksEvent( `calypso_wooexpress_my_plan_cta`, {
 			cta_position: ctaPosition,
 		} );
 
 		const checkoutUrl = getECommerceTrialCheckoutUrl( {
-			productSlug: PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
+			productSlug: targetPlan,
 			siteSlug: selectedSite?.slug ?? '',
 		} );
 
@@ -163,7 +171,7 @@ const ECommerceTrialCurrentPlan = () => {
 		<Button
 			className="e-commerce-trial-current-plan__trial-card-cta"
 			primary
-			onClick={ () => goToCheckoutWithWooExpressPlan( 'card' ) }
+			onClick={ () => goToCheckoutWithPlan( 'card' ) }
 		>
 			{ translate( 'Upgrade now' ) }
 		</Button>
@@ -225,7 +233,7 @@ const ECommerceTrialCurrentPlan = () => {
 			<div className="e-commerce-trial-current-plan__cta-wrapper">
 				<Button
 					className="e-commerce-trial-current-plan__cta is-primary"
-					onClick={ () => goToCheckoutWithWooExpressPlan( 'footer' ) }
+					onClick={ () => goToCheckoutWithPlan( 'footer' ) }
 				>
 					{ translate( 'Upgrade now' ) }
 				</Button>
