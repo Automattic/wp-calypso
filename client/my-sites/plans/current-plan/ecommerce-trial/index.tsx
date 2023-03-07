@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	PLAN_ECOMMERCE_MONTHLY,
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
@@ -23,7 +24,6 @@ import simpleCustomization from 'calypso/assets/images/plans/wpcom/ecommerce-tri
 import unlimitedProducts from 'calypso/assets/images/plans/wpcom/ecommerce-trial/unlimited-products.svg';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getECommerceTrialCheckoutUrl } from 'calypso/lib/ecommerce-trial/get-ecommerce-trial-checkout-url';
-import { isEnabled } from 'calypso/server/config';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ECommerceTrialBanner from '../../ecommerce-trial/ecommerce-trial-banner';
 import FeatureIncludedCard from '../feature-included-card';
