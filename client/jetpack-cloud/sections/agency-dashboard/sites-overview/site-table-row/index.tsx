@@ -13,7 +13,7 @@ import {
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
 import SiteActions from '../site-actions';
 import SiteErrorContent from '../site-error-content';
-import { SiteExpandedContent } from '../site-expanded-content';
+import SiteExpandedContent from '../site-expanded-content';
 import SiteStatusContent from '../site-status-content';
 import type { SiteData, SiteColumns } from '../types';
 
@@ -63,6 +63,7 @@ export default function SiteTableRow( { columns, item, setExpanded, isExpanded }
 					'site-table__table-row-disabled': shouldDisableLicenseSelection,
 					'site-table__table-row-active': currentSiteHasSelectedLicenses,
 					'site-table__table-row-site-error': hasSiteError,
+					'is-expanded': isExpanded,
 				} ) }
 				onClick={ ( event ) => {
 					if ( ! shouldDisableLicenseSelection ) {
@@ -139,7 +140,7 @@ export default function SiteTableRow( { columns, item, setExpanded, isExpanded }
 			{ isExpanded && (
 				<tr className="site-table__table-row-expanded">
 					<td colSpan={ Object.keys( item ).length + 1 }>
-						<SiteExpandedContent site={ site } />
+						<SiteExpandedContent site={ site.value } />
 					</td>
 				</tr>
 			) }

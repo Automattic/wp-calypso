@@ -51,7 +51,9 @@ export function getEnhancedTasks(
 	// send user to Home page editor, fallback to FSE if page id is not known
 	const launchpadUploadVideoLink = homePageId
 		? `/page/${ siteSlug }/${ homePageId }`
-		: `/site-editor/${ siteSlug }?canvas=edit`;
+		: addQueryArgs( `/site-editor/${ siteSlug }`, {
+				canvas: 'edit',
+		  } );
 
 	let planWarningText = displayGlobalStylesWarning
 		? translate(
@@ -85,7 +87,9 @@ export function getEnhancedTasks(
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
-								`/setup/free-post-setup/freePostSetup?siteSlug=${ siteSlug }`
+								addQueryArgs( `/setup/free-post-setup/freePostSetup`, {
+									siteSlug,
+								} )
 							);
 						},
 					};
@@ -96,7 +100,9 @@ export function getEnhancedTasks(
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
-								`/setup/newsletter-post-setup/newsletterPostSetup?siteSlug=${ siteSlug }`
+								addQueryArgs( `/setup/newsletter-post-setup/newsletterPostSetup`, {
+									siteSlug,
+								} )
 							);
 						},
 					};
@@ -112,7 +118,11 @@ export function getEnhancedTasks(
 						completed: siteEditCompleted,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, siteEditCompleted, task.id );
-							window.location.assign( `/site-editor/${ siteSlug }?canvas=edit` );
+							window.location.assign(
+								addQueryArgs( `/site-editor/${ siteSlug }`, {
+									canvas: 'edit',
+								} )
+							);
 						},
 					};
 					break;
@@ -170,7 +180,10 @@ export function getEnhancedTasks(
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
-								`/setup/update-design/designSetup?siteSlug=${ siteSlug }&flowToReturnTo=${ flow }`
+								addQueryArgs( `/setup/update-design/designSetup`, {
+									siteSlug,
+									flowToReturnTo: flow,
+								} )
 							);
 						},
 					};
@@ -181,7 +194,9 @@ export function getEnhancedTasks(
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
-								`/setup/link-in-bio-post-setup/linkInBioPostSetup?siteSlug=${ siteSlug }`
+								addQueryArgs( `/setup/link-in-bio-post-setup/linkInBioPostSetup`, {
+									siteSlug,
+								} )
 							);
 						},
 					};
@@ -192,7 +207,11 @@ export function getEnhancedTasks(
 						completed: linkInBioLinksEditCompleted,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, linkInBioLinksEditCompleted, task.id );
-							window.location.assign( `/site-editor/${ siteSlug }?canvas=edit` );
+							window.location.assign(
+								addQueryArgs( `/site-editor/${ siteSlug }`, {
+									canvas: 'edit',
+								} )
+							);
 						},
 					};
 					break;
@@ -282,7 +301,11 @@ export function getEnhancedTasks(
 
 									// Waits for half a second so that the loading screen doesn't flash away too quickly
 									await new Promise( ( res ) => setTimeout( res, 500 ) );
-									window.location.replace( `/home/${ siteSlug }?forceLoadLaunchpadData=true` );
+									window.location.replace(
+										addQueryArgs( `/home/${ siteSlug }`, {
+											forceLoadLaunchpadData: true,
+										} )
+									);
 								} );
 
 								submit?.();
@@ -302,7 +325,11 @@ export function getEnhancedTasks(
 						completed: checklistStatuses?.publish_first_course || false,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							window.location.assign( `${ site?.URL }/wp-admin/post-new.php?post_type=course` );
+							window.location.assign(
+								addQueryArgs( `${ site?.URL }/wp-admin/post-new.php?`, {
+									post_type: 'course',
+								} )
+							);
 						},
 					};
 					break;
@@ -314,7 +341,9 @@ export function getEnhancedTasks(
 							recordTaskClickTracksEvent( flow, isPaidPlan, task.id );
 							const destinationUrl = isPaidPlan
 								? `/domains/manage/${ siteSlug }`
-								: `/domains/add/${ siteSlug }?domainAndPlanPackage=true`;
+								: addQueryArgs( `/domains/add/${ siteSlug }`, {
+										domainAndPlanPackage: true,
+								  } );
 							window.location.assign( destinationUrl );
 						},
 						badgeText: isPaidPlan ? '' : translate( 'Upgrade plan' ),

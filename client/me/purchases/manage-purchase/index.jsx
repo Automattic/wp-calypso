@@ -86,6 +86,7 @@ import { PreCancellationDialog } from 'calypso/me/purchases/pre-cancellation-dia
 import ProductLink from 'calypso/me/purchases/product-link';
 import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
+import WordAdsEligibilityWarningDialog from 'calypso/me/purchases/wordads-eligibility-warning-dialog';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import PlanRenewalMessage from 'calypso/my-sites/plans/jetpack-plans/plan-renewal-message';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
@@ -111,6 +112,7 @@ import { getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
 import { cancelPurchase, managePurchase, purchasesRoot } from '../paths';
 import PurchaseSiteHeader from '../purchases-site/header';
 import RemovePurchase from '../remove-purchase';
@@ -167,6 +169,7 @@ class ManagePurchase extends Component {
 	state = {
 		showNonPrimaryDomainWarningDialog: false,
 		showRemoveSubscriptionWarningDialog: false,
+		showWordAdsEligibilityWarningDialog: false,
 		cancelLink: null,
 		isRemoving: false,
 		isCancelSurveyVisible: false,
@@ -234,6 +237,11 @@ class ManagePurchase extends Component {
 	shouldShowNonPrimaryDomainWarning() {
 		const { hasNonPrimaryDomainsFlag, hasCustomPrimaryDomain, purchase } = this.props;
 		return hasNonPrimaryDomainsFlag && isPlan( purchase ) && hasCustomPrimaryDomain;
+	}
+
+	shouldShowWordAdsEligibilityWarning() {
+		const { hasSetupAds, purchase } = this.props;
+		return hasSetupAds && isPlan( purchase );
 	}
 
 	renderRenewButton() {
@@ -477,6 +485,7 @@ class ManagePurchase extends Component {
 				hasLoadedSites={ hasLoadedSites }
 				hasLoadedUserPurchasesFromServer={ this.props.hasLoadedPurchasesFromServer }
 				hasNonPrimaryDomainsFlag={ hasNonPrimaryDomainsFlag }
+				hasSetupAds={ this.props.hasSetupAds }
 				hasCustomPrimaryDomain={ hasCustomPrimaryDomain }
 				activeSubscriptions={ this.getActiveMarketplaceSubscriptions() }
 				site={ site }
@@ -494,6 +503,7 @@ class ManagePurchase extends Component {
 		this.setState( {
 			showNonPrimaryDomainWarningDialog: true,
 			showRemoveSubscriptionWarningDialog: false,
+			showWordAdsEligibilityWarningDialog: false,
 			isRemoving: false,
 			isCancelSurveyVisible: false,
 			cancelLink,
@@ -504,6 +514,18 @@ class ManagePurchase extends Component {
 		this.setState( {
 			showNonPrimaryDomainWarningDialog: false,
 			showRemoveSubscriptionWarningDialog: true,
+			showWordAdsEligibilityWarningDialog: false,
+			isRemoving: false,
+			isCancelSurveyVisible: false,
+			cancelLink,
+		} );
+	}
+
+	showWordAdsEligibilityWarningDialog( cancelLink ) {
+		this.setState( {
+			showNonPrimaryDomainWarningDialog: false,
+			showRemoveSubscriptionWarningDialog: false,
+			showWordAdsEligibilityWarningDialog: true,
 			isRemoving: false,
 			isCancelSurveyVisible: false,
 			cancelLink,
@@ -514,6 +536,7 @@ class ManagePurchase extends Component {
 		this.setState( {
 			showNonPrimaryDomainWarningDialog: false,
 			showRemoveSubscriptionWarningDialog: false,
+			showWordAdsEligibilityWarningDialog: false,
 			isRemoving: false,
 			isCancelSurveyVisible: true,
 			cancelLink,
@@ -524,6 +547,7 @@ class ManagePurchase extends Component {
 		this.setState( {
 			showNonPrimaryDomainWarningDialog: false,
 			showRemoveSubscriptionWarningDialog: false,
+			showWordAdsEligibilityWarningDialog: false,
 			isRemoving: false,
 			isCancelSurveyVisible: false,
 			cancelLink: null,
@@ -546,6 +570,22 @@ class ManagePurchase extends Component {
 					planName={ getName( purchase ) }
 					oldDomainName={ site.domain }
 					newDomainName={ site.wpcom_url }
+					hasSetupAds={ this.props.hasSetupAds }
+				/>
+			);
+		}
+
+		return null;
+	}
+
+	renderWordAdsEligibilityWarningDialog( purchase ) {
+		if ( this.state.showWordAdsEligibilityWarningDialog ) {
+			return (
+				<WordAdsEligibilityWarningDialog
+					isDialogVisible={ this.state.showWordAdsEligibilityWarningDialog }
+					closeDialog={ this.closeDialog }
+					removePlan={ this.goToCancelLink }
+					planName={ getName( purchase ) }
 				/>
 			);
 		}
@@ -671,6 +711,11 @@ class ManagePurchase extends Component {
 				is_atomic: isAtomicSite,
 				link_text: text,
 			} );
+
+			if ( this.shouldShowWordAdsEligibilityWarning() ) {
+				event.preventDefault();
+				this.showWordAdsEligibilityWarningDialog( link );
+			}
 
 			if ( this.shouldShowNonPrimaryDomainWarning() ) {
 				event.preventDefault();
@@ -1125,6 +1170,7 @@ class ManagePurchase extends Component {
 					purchase={ this.props.purchase }
 				/>
 				{ this.renderPurchaseDetail( preventRenewal ) }
+				{ this.renderWordAdsEligibilityWarningDialog( purchase ) }
 				{ site && this.renderNonPrimaryDomainWarningDialog( site, purchase ) }
 				{ site && this.renderRemoveSubscriptionWarningDialog( site, purchase ) }
 			</Fragment>
@@ -1210,6 +1256,7 @@ export default connect(
 		const relatedMonthlyPlanSlug = getMonthlyPlanByYearly( purchase?.productSlug );
 		const relatedMonthlyPlanPrice = getSitePlanRawPrice( state, siteId, relatedMonthlyPlanSlug );
 		const primaryDomain = getPrimaryDomainBySiteId( state, siteId );
+
 		return {
 			hasLoadedDomains,
 			hasLoadedSites,
@@ -1220,6 +1267,9 @@ export default connect(
 				? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 				: false,
 			hasCustomPrimaryDomain: hasCustomDomain( site ),
+			hasSetupAds: Boolean(
+				site?.options?.wordads || isRequestingWordAdsApprovalForSite( state, site )
+			),
 			productsList,
 			purchase,
 			purchases,

@@ -14,10 +14,11 @@ import './style.scss';
 interface Props {
 	search?: string;
 	usersQuery: UsersQuery;
+	showAddTeamMembersBtn?: boolean;
 }
 function TeamMembers( props: Props ) {
 	const translate = useTranslate();
-	const { search, usersQuery } = props;
+	const { search, usersQuery, showAddTeamMembersBtn = true } = props;
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 
 	const listKey = [ 'team-members', site?.ID, search ].join( '-' );
@@ -78,9 +79,11 @@ function TeamMembers( props: Props ) {
 			return (
 				<>
 					<PeopleListSectionHeader isPlaceholder={ isLoading } label={ getHeaderLabel() }>
-						<Button compact primary href={ addTeamMemberLink }>
-							{ translate( 'Add a team member' ) }
-						</Button>
+						{ showAddTeamMembersBtn && (
+							<Button compact primary href={ addTeamMemberLink }>
+								{ translate( 'Add a team member' ) }
+							</Button>
+						) }
 					</PeopleListSectionHeader>
 					<Card className="people-team-members-list">
 						{ isLoading && renderLoadingPeople() }

@@ -10,6 +10,19 @@ body .customer-home__layout .domain-upsell__card {
 	}
 }
 
+.profile .domain-upsell__card {
+	h3 {
+		font-size: rem(16px);
+		font-family: $sans;
+		font-style: normal;
+		font-weight: bold;
+	}
+
+	.card {
+		background-color: #f6f7f7;
+	}
+}
+
 .domain-upsell__card {
 	h3 {
 		font-family: $brand-serif;

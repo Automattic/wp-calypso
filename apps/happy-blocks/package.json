@@ -1,25 +1,24 @@
 {
 	"name": "happy-blocks",
-	"version": "0.1.0",
-	"author": "The WordPress Contributors",
+	"version": "1.0.0",
+	"private": true,
+	"author": "Automattic Inc.",
 	"license": "GPL-2.0-or-later",
-	"main": "build/index.js",
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/happy-blocks"
+	},
 	"scripts": {
-		"build:block": "wp-scripts build",
 		"build": "NODE_ENV=production yarn dev && yarn run build-translations-manifest",
 		"build-ci": "yarn build && ./bin/prepArtifactForCI.sh",
 		"build-calypso-strings": "wp-babel-makepot '../../{client,packages,apps}/**/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base '../../' --dir 'dist/strings' --output './dist/calypso-strings.pot' && rm -rf dist/strings",
+		"build:pricing-plans": "calypso-build --env block='pricing-plans'",
+		"build:universal-header": "calypso-build --env block='universal-header'",
+		"build:universal-footer": "calypso-build --env block='universal-footer'",
 		"build-translations-manifest": "yarn run build-calypso-strings && node bin/build-translations-manifest.js",
-		"test": "jest test",
-		"clean": "rm -rf build",
-		"dev": "yarn run calypso-apps-builder --localPath / --remotePath /home/wpcom/public_html/wp-content/a8c-plugins/happy-blocks",
-		"build:happy-blocks": "calypso-build",
-		"format": "wp-scripts format",
-		"lint:css": "wp-scripts lint-style",
-		"lint:js": "wp-scripts lint-js",
-		"packages-update": "wp-scripts packages-update",
-		"plugin-zip": "wp-scripts plugin-zip",
-		"start": "wp-scripts start"
+		"clean": "rm -rf dist block-library/*/build || true",
+		"dev": "yarn run calypso-apps-builder --localPath / --remotePath /home/wpcom/public_html/wp-content/a8c-plugins/happy-blocks"
 	},
 	"dependencies": {
 		"@automattic/calypso-analytics": "workspace:^",
@@ -40,6 +39,8 @@
 		"@wordpress/element": "^4.7.0",
 		"@wordpress/i18n": "^4.9.0",
 		"classnames": "^2.3.2",
+		"glob": "^7.1.6",
+		"i18n-calypso": "workspace:^",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2"
 	},
@@ -48,7 +49,8 @@
 		"@emotion/react": "^11.4.1",
 		"@testing-library/react": "^12.1.3",
 		"@wordpress/readable-js-assets-webpack-plugin": "^1.0.4",
-		"@wordpress/scripts": "^23.1.0",
+		"copy-webpack-plugin": "^10.1.0",
+		"glob": "^7.1.6",
 		"jest": "^27.3.1",
 		"postcss": "^8.4.5",
 		"webpack": "^5.68.0"

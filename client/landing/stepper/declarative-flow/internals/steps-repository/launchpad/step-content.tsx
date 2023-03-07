@@ -62,7 +62,7 @@ const StepContent = ( { siteSlug, submit, goNext, goToStep, flow }: StepContentP
 		if ( email && ! isEmailVerified && flow === NEWSLETTER_FLOW ) {
 			setShowEmailValidationBanner( true );
 		}
-	}, [ email, isEmailVerified ] );
+	}, [ email, isEmailVerified, flow ] );
 
 	return (
 		<main className="launchpad__container">

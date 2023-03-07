@@ -2,9 +2,9 @@ import { useSiteLaunchStatusLabel, getSiteLaunchStatus } from '@automattic/sites
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import { AnchorHTMLAttributes, memo, useState } from 'react';
+import { AnchorHTMLAttributes, memo } from 'react';
+import { useInView } from 'react-intersection-observer';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
-import { useInView } from 'calypso/lib/use-in-view';
 import { displaySiteUrl, getDashboardUrl } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import { SitesGridActionRenew } from './sites-grid-action-renew';
@@ -78,8 +78,7 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 	const isP2Site = site.options?.is_wpforteams_site;
 	const translatedStatus = useSiteLaunchStatusLabel( site );
 
-	const [ inViewOnce, setInViewOnce ] = useState( false );
-	const ref = useInView< HTMLDivElement >( () => setInViewOnce( true ) );
+	const { ref, inView } = useInView( { triggerOnce: true } );
 
 	const siteDashboardUrlProps: AnchorHTMLAttributes< HTMLAnchorElement > = {
 		href: getDashboardUrl( site.slug ),
@@ -100,7 +99,7 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 						<SiteItemThumbnail
 							displayMode="tile"
 							className={ siteThumbnail }
-							showPlaceholder={ ! inViewOnce }
+							showPlaceholder={ ! inView }
 							site={ site }
 							width={ THUMBNAIL_DIMENSION.width }
 							height={ THUMBNAIL_DIMENSION.height }
@@ -122,7 +121,7 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 							<SitesLaunchStatusBadge>{ translatedStatus }</SitesLaunchStatusBadge>
 						) }
 						<EllipsisMenuContainer>
-							{ inViewOnce && <SitesEllipsisMenu className={ ellipsis } site={ site } /> }
+							{ inView && <SitesEllipsisMenu className={ ellipsis } site={ site } /> }
 						</EllipsisMenuContainer>
 					</div>
 				</>

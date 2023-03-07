@@ -176,7 +176,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	const { __ } = useI18n();
 	const [ _selectedStyleVariation, setSelectedStyleVariation ] = useState< StyleVariation >();
 
-	const { is_virtual, preselected_style_variation, style_variations = [] } = design;
+	const { preselected_style_variation, style_variations = [] } = design;
 	const currentSiteCanInstallWoo = currentPlanFeatures?.includes( FEATURE_WOOP ) ?? false;
 	const designIsBundledWithWoo = design.is_bundled_with_woo_commerce;
 
@@ -188,7 +188,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 		: `${ design.title } – ${ selectedStyleVariation.title }`;
 
 	let isPremium = design.is_premium || ( shouldLimitGlobalStyles && ! isDefaultVariation );
-	if ( is_virtual && isDefaultVariation ) {
+	if ( preselected_style_variation && isDefaultVariation ) {
 		isPremium = false;
 	}
 	const shouldUpgrade = isPremium && ! isPremiumThemeAvailable && ! hasPurchasedTheme;
@@ -215,7 +215,9 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 			badge = <WooCommerceBundledBadge />;
 		} else if ( isPremium ) {
 			const showStyleVariationTooltip =
-				! isDefaultVariation && shouldUpgrade && ( is_virtual || ! design.is_premium );
+				! isDefaultVariation &&
+				shouldUpgrade &&
+				( preselected_style_variation || ! design.is_premium );
 			const tooltipText = showStyleVariationTooltip
 				? __( 'Unlock this style, and tons of other features, by upgrading to a Premium plan.' )
 				: undefined;

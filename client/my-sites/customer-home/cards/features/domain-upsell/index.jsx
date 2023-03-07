@@ -4,6 +4,7 @@ import { Button, Card, Spinner } from '@automattic/components';
 import { useDomainSuggestions } from '@automattic/domain-picker/src';
 import { useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import { useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useState } from 'react';
@@ -13,35 +14,84 @@ import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { addQueryArgs } from 'calypso/lib/url';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
-import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { isNotAtomicJetpack, isP2Site } from 'calypso/sites-dashboard/utils';
+import { getCurrentUser, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
+import isSiteOnMonthlyPlan from 'calypso/state/selectors/is-site-on-monthly-plan';
+import { getDomainsBySite } from 'calypso/state/sites/domains/selectors';
+import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
-export default function DomainUpsell() {
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
-	const isEmailVerified = useSelector( ( state ) => isCurrentUserEmailVerified( state ) );
-	const siteDomains = useSelector( ( state ) => getDomainsBySiteId( state, site.ID ) );
+export default function DomainUpsell( { context } ) {
+	const isProfileUpsell = context === 'profile';
 
-	if ( siteDomains.length > 1 || ! isEmailVerified || ! isFreePlanProduct( site.plan ) ) {
+	const user = useSelector( getCurrentUser );
+	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
+
+	const selectedSite = useSelector( getSelectedSite );
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+
+	const primarySiteSlug = useSelector( getPrimarySiteSlug );
+	const primarySite = useSelector( ( state ) => getSiteBySlug( state, primarySiteSlug ) );
+	const site = isProfileUpsell ? primarySite : selectedSite;
+
+	const isMonthlyPlan = useSelector( ( state ) => isSiteOnMonthlyPlan( state, site?.ID ) );
+	const isFreePlan = isFreePlanProduct( site?.plan );
+
+	const siteDomains = useSelector( ( state ) => getDomainsBySite( state, site ) );
+	const siteDomainsLength = useMemo(
+		() => siteDomains.filter( ( domain ) => ! domain.isWPCOMDomain ).length,
+		[ siteDomains ]
+	);
+
+	const shouldNotShowProfileUpsell =
+		isProfileUpsell &&
+		( user.site_count !== 1 ||
+			! isFreePlan ||
+			siteDomainsLength ||
+			! isEmailVerified ||
+			isP2Site( primarySite ) ||
+			isNotAtomicJetpack( primarySite ) );
+
+	const shouldNotShowMyHomeUpsell = ! isProfileUpsell && ( siteDomainsLength || ! isEmailVerified );
+
+	if ( shouldNotShowProfileUpsell || shouldNotShowMyHomeUpsell ) {
 		return null;
 	}
 
+	const searchTerm = isProfileUpsell ? user?.display_name : selectedSiteSlug?.split( '.' )[ 0 ];
+
 	return (
 		<CalypsoShoppingCartProvider>
-			<RenderDomainUpsell />
+			<RenderDomainUpsell
+				isFreePlan={ isFreePlan }
+				isMonthlyPlan={ isMonthlyPlan }
+				isProfileUpsell={ isProfileUpsell }
+				searchTerm={ searchTerm }
+				siteSlug={ isProfileUpsell ? primarySiteSlug : selectedSiteSlug }
+			/>
 		</CalypsoShoppingCartProvider>
 	);
 }
 
-export function RenderDomainUpsell() {
+export function RenderDomainUpsell( {
+	isFreePlan,
+	isMonthlyPlan,
+	isProfileUpsell,
+	searchTerm,
+	siteSlug,
+} ) {
 	const translate = useTranslate();
-	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
-	const siteSubDomain = siteSlug.split( '.' )[ 0 ];
+
+	const tracksContext = isProfileUpsell ? 'profile' : 'my_home';
+
 	const locale = useLocale();
 	const { allDomainSuggestions } =
-		useDomainSuggestions( siteSubDomain, 3, undefined, locale ) || {};
+		useDomainSuggestions( searchTerm, 3, undefined, locale, {
+			vendor: 'domain-upsell',
+		} ) || {};
 
 	const cartKey = useCartKey();
 	const shoppingCartManager = useShoppingCart( cartKey );
@@ -51,34 +101,40 @@ export function RenderDomainUpsell() {
 		( suggestion ) => ! suggestion.is_free
 	)[ 0 ];
 
-	// It takes awhile to suggest a domain name. Set a default to siteSubDomain.blog.
-	const domainSuggestionName = domainSuggestion?.domain_name ?? siteSubDomain + '.blog';
+	// It takes awhile to suggest a domain name. Set a default to an empty string.
+	const domainSuggestionName = domainSuggestion?.domain_name ?? '';
+
 	const domainSuggestionProductSlug = domainSuggestion?.product_slug;
 
 	const searchLink = addQueryArgs(
 		{
 			domainAndPlanPackage: true,
+			domain: true,
 		},
 		`/domains/add/${ siteSlug }`
 	);
 	const getSearchClickHandler = () => {
-		recordTracksEvent( 'calypso_my_home_domain_upsell_search_click', {
+		recordTracksEvent( 'calypso_' + tracksContext + '_domain_upsell_search_click', {
 			button_url: searchLink,
 			domain_suggestion: domainSuggestionName,
 			product_slug: domainSuggestionProductSlug,
 		} );
 	};
 
-	const purchaseLink = addQueryArgs(
-		{
-			get_domain: domainSuggestionName,
-		},
-		`/plans/yearly/${ siteSlug }`
-	);
+	const purchaseLink =
+		! isFreePlan && ! isMonthlyPlan
+			? `/checkout/${ siteSlug }`
+			: addQueryArgs(
+					{
+						domain: true,
+						domainAndPlanPackage: true,
+					},
+					`/plans/yearly/${ siteSlug }`
+			  );
 	const [ ctaIsBusy, setCtaIsBusy ] = useState( false );
 	const getCtaClickHandler = async () => {
 		setCtaIsBusy( true );
-		recordTracksEvent( 'calypso_my_home_domain_upsell_cta_click', {
+		recordTracksEvent( 'calypso_' + tracksContext + '_domain_upsell_cta_click', {
 			button_url: purchaseLink,
 			domain_suggestion: domainSuggestionName,
 			product_slug: domainSuggestionProductSlug,
@@ -98,17 +154,26 @@ export function RenderDomainUpsell() {
 		page( purchaseLink );
 	};
 
+	const cardTitle =
+		! isFreePlan && ! isMonthlyPlan
+			? translate( 'You still have a free domain to claim!' )
+			: translate( 'Own your online identity with a custom domain' );
+
+	const cardSubtitle =
+		! isFreePlan && ! isMonthlyPlan
+			? translate(
+					'Own your online identity giving your site a memorable domain name. Your plan includes one for free for one year, so you can still claim it.'
+			  )
+			: translate(
+					"Stake your claim on your corner of the web with a site address that's easy to find, share, and follow."
+			  );
+
 	return (
 		<Card className="domain-upsell__card customer-home__card">
-			<TrackComponentView eventName="calypso_my_home_domain_upsell_impression" />
+			<TrackComponentView eventName={ 'calypso_' + tracksContext + '_domain_upsell_impression' } />
 			<div>
-				<h3>{ translate( 'Own your online identity with a custom domain' ) }</h3>
-				<p>
-					{ translate(
-						"Stake your claim on your corner of the web with a site address that's easy to find, share, and follow."
-					) }
-				</p>
-
+				<h3>{ cardTitle }</h3>
+				<p>{ cardSubtitle }</p>
 				<div className="suggested-domain-name">
 					<div className="card">
 						<span>

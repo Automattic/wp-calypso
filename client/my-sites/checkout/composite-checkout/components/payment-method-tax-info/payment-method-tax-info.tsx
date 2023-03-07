@@ -136,6 +136,13 @@ function contactDetailsToTaxInfo( info?: TaxInfo ): ManagedContactDetails {
 			errors: [],
 		};
 	}
+	if ( info?.tax_address ) {
+		taxInfo.address1 = {
+			value: info.tax_address,
+			isTouched: true,
+			errors: [],
+		};
+	}
 	return taxInfo;
 }
 
@@ -190,6 +197,7 @@ export function TaxInfoArea( {
 			tax_subdivision_code: inputValues?.state?.value,
 			tax_city: inputValues?.city?.value,
 			tax_organization: inputValues?.organization?.value,
+			tax_address: inputValues?.address1?.value,
 		} )
 			.then( closeDialog )
 			.catch( setUpdateError );

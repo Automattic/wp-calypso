@@ -3,9 +3,9 @@
 	"compilerOptions": {
 		"declarationDir": "dist/types",
 		"outDir": "dist/esm",
-		"rootDir": "src"
+		"rootDir": "block-library"
 	},
-	"include": [ "src" ],
+	"include": [ "block-library" ],
 	"exclude": [ "node_modules" ],
 	"references": [ { "path": "../../packages/wpcom-template-parts" } ]
 }

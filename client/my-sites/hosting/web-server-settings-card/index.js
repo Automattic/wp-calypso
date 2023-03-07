@@ -1,4 +1,5 @@
-import { Button, Card, Spinner } from '@automattic/components';
+import { Button, Card, LoadingPlaceholder } from '@automattic/components';
+import styled from '@emotion/styled';
 import { localize } from 'i18n-calypso';
 import { useState } from 'react';
 import { connect } from 'react-redux';
@@ -22,6 +23,24 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
+const ParagraphPlaceholder = styled( LoadingPlaceholder )( {
+	height: 24,
+	width: '85%',
+	marginBottom: '1.25em',
+} );
+
+const LabelPlaceholder = styled( LoadingPlaceholder )( {
+	height: 16,
+	width: '80px',
+	marginBottom: '.25em',
+} );
+
+const InputPlaceholder = styled( LoadingPlaceholder )( {
+	height: 24,
+	width: '220px',
+	marginBottom: '1em',
+} );
+
 const WebServerSettingsCard = ( {
 	disabled,
 	isGettingGeoAffinity,
@@ -39,6 +58,8 @@ const WebServerSettingsCard = ( {
 } ) => {
 	const [ selectedPhpVersion, setSelectedPhpVersion ] = useState( '' );
 	const [ selectedStaticFile404, setSelectedStaticFile404 ] = useState( '' );
+
+	const isLoading = isGettingGeoAffinity || isGettingPhpVersion || isGettingStaticFile404;
 
 	const getGeoAffinityContent = () => {
 		if ( isGettingGeoAffinity || ! geoAffinity ) {
@@ -261,6 +282,18 @@ const WebServerSettingsCard = ( {
 		);
 	};
 
+	const getPlaceholderContent = () => {
+		return (
+			<>
+				<ParagraphPlaceholder />
+				<LabelPlaceholder />
+				<InputPlaceholder />
+				<LabelPlaceholder />
+				<InputPlaceholder />
+			</>
+		);
+	};
+
 	return (
 		<Card className="web-server-settings-card">
 			<QuerySiteGeoAffinity siteId={ siteId } />
@@ -273,10 +306,10 @@ const WebServerSettingsCard = ( {
 					'For sites with specialized needs, fine-tune how the web server runs your website.'
 				) }
 			</p>
-			{ getGeoAffinityContent() }
-			{ getPhpVersionContent() }
-			{ getStaticFile404Content() }
-			{ ( isGettingGeoAffinity || isGettingPhpVersion || isGettingStaticFile404 ) && <Spinner /> }
+			{ ! isLoading && getGeoAffinityContent() }
+			{ ! isLoading && getPhpVersionContent() }
+			{ ! isLoading && getStaticFile404Content() }
+			{ isLoading && getPlaceholderContent() }
 		</Card>
 	);
 };

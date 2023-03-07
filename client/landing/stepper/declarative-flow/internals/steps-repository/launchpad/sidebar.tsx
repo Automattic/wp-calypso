@@ -14,7 +14,7 @@ import { ResponseDomain } from 'calypso/lib/domains/types';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import Checklist from './checklist';
 import { getArrayOfFilteredTasks, getEnhancedTasks } from './task-helper';
-import { tasks } from './tasks';
+import { DOMAIN_UPSELL, tasks } from './tasks';
 import { getLaunchpadTranslations } from './translations';
 import { Task } from './types';
 
@@ -31,11 +31,11 @@ function getUrlInfo( url: string ) {
 	const urlWithoutProtocol = url.replace( /^https?:\/\//, '' );
 
 	// Ex. mytest.wordpress.com matches mytest
-	const siteName = urlWithoutProtocol.match( /^[^.]*/ );
+	const siteName = urlWithoutProtocol.match( /^[^.]*/ )?.[ 0 ] || '';
 	// Ex. mytest.wordpress.com matches .wordpress.com
-	const topLevelDomain = urlWithoutProtocol.match( /\..*/ ) || [];
+	const topLevelDomain = urlWithoutProtocol.match( /\..*/ )?.[ 0 ] || '';
 
-	return [ siteName ? siteName[ 0 ] : '', topLevelDomain ? topLevelDomain[ 0 ] : '' ];
+	return [ siteName, topLevelDomain ];
 }
 
 function getTasksProgress( tasks: Task[] | null ) {
@@ -83,6 +83,11 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	const launchTask = enhancedTasks?.find( ( task ) => task.isLaunchTask === true );
 
 	const showLaunchTitle = launchTask && ! launchTask.disabled;
+	const domainUpgradeBadgeUrl = ! site?.plan?.is_free
+		? `/domains/manage/${ siteSlug }`
+		: `/domains/add/${ siteSlug }?domainAndPlanPackage=true`;
+	const showDomainUpgradeBadge =
+		sidebarDomain?.isWPCOMDomain && ! enhancedTasks?.find( ( task ) => task.id === DOMAIN_UPSELL );
 
 	if ( sidebarDomain ) {
 		const { domain, isPrimary, isWPCOMDomain, sslStatus } = sidebarDomain;
@@ -146,8 +151,8 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 							</>
 						) }
 					</div>
-					{ sidebarDomain?.isWPCOMDomain && (
-						<a href={ `/domains/add/${ siteSlug }` }>
+					{ showDomainUpgradeBadge && (
+						<a href={ domainUpgradeBadgeUrl }>
 							<Badge className="launchpad__domain-upgrade-badge" type="info-blue">
 								{ translate( 'Customize' ) }
 							</Badge>

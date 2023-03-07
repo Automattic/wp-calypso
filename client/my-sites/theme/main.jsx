@@ -31,10 +31,12 @@ import SyncActiveTheme from 'calypso/components/data/sync-active-theme';
 import HeaderCake from 'calypso/components/header-cake';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
+import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import SectionHeader from 'calypso/components/section-header';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import StickyPanel from 'calypso/components/sticky-panel';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
@@ -91,6 +93,7 @@ import ThemeStyleVariations from './theme-style-variations';
 
 import './style.scss';
 
+const DEFAULT_VARIATION_SLUG = 'default';
 const noop = () => {};
 
 class ThemeSheet extends Component {
@@ -146,7 +149,9 @@ class ThemeSheet extends Component {
 		section: '',
 	};
 
-	state = {};
+	state = {
+		showUnlockStyleUpgradeModal: false,
+	};
 
 	scrollToTop = () => {
 		window.scroll( 0, 0 );
@@ -201,6 +206,10 @@ class ThemeSheet extends Component {
 		}
 
 		defaultOption.action && defaultOption.action( themeId );
+	};
+
+	onUnlockStyleButtonClick = () => {
+		this.setState( { showUnlockStyleUpgradeModal: true } );
 	};
 
 	onSecondaryButtonClick = () => {
@@ -341,6 +350,11 @@ class ThemeSheet extends Component {
 		return this.isThemeAvailable() && ! this.isThemeCurrentOne() && ! isWPForTeamsSite;
 	}
 
+	shouldRenderUnlockStyleButton() {
+		const { selectedStyleVariationSlug, shouldLimitGlobalStyles, styleVariations } = this.props;
+		return shouldLimitGlobalStyles && styleVariations.length > 0 && !! selectedStyleVariationSlug;
+	}
+
 	isThemeCurrentOne() {
 		return this.props.isActive;
 	}
@@ -381,18 +395,6 @@ class ThemeSheet extends Component {
 
 		// Show theme upsell banner on Atomic sites.
 		return isAtomic && isPremium && ! canUserUploadThemes && ! hasUnlimitedPremiumThemes;
-	}
-
-	hasSiteGlobalStyleUpsellBanner() {
-		const { shouldLimitGlobalStyles } = this.props;
-
-		// Show theme upsell banner on a Free theme with global style gating.
-		// Don't show if other upsell banners are displayed.
-		return (
-			! this.hasWpComThemeUpsellBanner() &&
-			! this.hasThemeUpsellBannerAtomic() &&
-			shouldLimitGlobalStyles
-		);
 	}
 
 	// Render "Open Live Demo" pseudo-button for mobiles.
@@ -457,14 +459,16 @@ class ThemeSheet extends Component {
 		);
 
 		return (
-			<div className="theme__sheet-web-preview">
-				<ThemeWebPreview
-					url={ url }
-					inlineCss={ this.getSelectedStyleVariation()?.inline_css }
-					isShowFrameBorder={ false }
-					isShowDeviceSwitcher={ false }
-				/>
-			</div>
+			<StickyPanel>
+				<div className="theme__sheet-web-preview">
+					<ThemeWebPreview
+						url={ url }
+						inlineCss={ this.getSelectedStyleVariation()?.inline_css }
+						isShowFrameBorder={ false }
+						isShowDeviceSwitcher={ false }
+					/>
+				</div>
+			</StickyPanel>
 		);
 	};
 
@@ -583,7 +587,10 @@ class ThemeSheet extends Component {
 						<span className="theme__sheet-main-info-tag">{ tag }</span>
 					</div>
 					<div className="theme__sheet-main-actions">
-						{ shouldRenderButton && this.renderButton() }
+						{ shouldRenderButton &&
+							( this.shouldRenderUnlockStyleButton()
+								? this.renderUnlockStyleButton()
+								: this.renderButton() ) }
 						{ this.shouldRenderPreviewButton() && (
 							<Button
 								onClick={ ( e ) => {
@@ -945,6 +952,19 @@ class ThemeSheet extends Component {
 		);
 	};
 
+	renderUnlockStyleButton = () => {
+		return (
+			<Button
+				className="theme__sheet-primary-button"
+				primary
+				disabled={ this.isLoading() }
+				onClick={ this.onUnlockStyleButtonClick }
+			>
+				{ this.props.translate( 'Unlock this style' ) }
+			</Button>
+		);
+	};
+
 	appendSelectedStyleVariationToUrl = ( url ) => {
 		const { selectedStyleVariationSlug } = this.props;
 		if ( ! selectedStyleVariationSlug ) {
@@ -985,10 +1005,6 @@ class ThemeSheet extends Component {
 				return translate( 'Upgrade to a Business plan and subscribe to this theme!' );
 			}
 			return translate( 'Subscribe to this premium theme!' );
-		} else if ( this.hasSiteGlobalStyleUpsellBanner() ) {
-			return translate(
-				'Upgrade to the Premium plan to get access to all additional styles, colors, and fonts!'
-			);
 		}
 
 		return translate( 'Access this theme for FREE with a Premium or Business plan!' );
@@ -1014,13 +1030,51 @@ class ThemeSheet extends Component {
 				);
 			}
 			return translate( 'Subscribe to this premium theme and unlock all its features.' );
-		} else if ( this.hasSiteGlobalStyleUpsellBanner() ) {
-			return '';
 		}
 
 		return translate(
 			'Instantly unlock all premium themes, more storage space, advanced customization, video support, and more when you upgrade.'
 		);
+	};
+
+	getPremiumGlobalStylesEventProps = () => {
+		const { selectedStyleVariationSlug, themeId } = this.props;
+		return {
+			theme_name: themeId,
+			style_variation: selectedStyleVariationSlug ?? DEFAULT_VARIATION_SLUG,
+		};
+	};
+
+	onPremiumGlobalStylesUpgradeModalCheckout = () => {
+		this.props.recordTracksEvent(
+			'calypso_theme_sheet_global_styles_gating_modal_checkout_button_click',
+			this.getPremiumGlobalStylesEventProps()
+		);
+
+		const params = new URLSearchParams();
+		params.append( 'redirect_to', window.location.href.replace( window.location.origin, '' ) );
+
+		this.setState( { showUnlockStyleUpgradeModal: false } );
+		page( `/checkout/${ this.props.siteSlug || '' }/premium?${ params.toString() }` );
+	};
+
+	onPremiumGlobalStylesUpgradeModalTryStyle = () => {
+		this.props.recordTracksEvent(
+			'calypso_theme_sheet_global_styles_gating_modal_try_button_click',
+			this.getPremiumGlobalStylesEventProps()
+		);
+
+		this.setState( { showUnlockStyleUpgradeModal: false } );
+		this.onButtonClick();
+	};
+
+	onPremiumGlobalStylesUpgradeModalClose = () => {
+		this.props.recordTracksEvent(
+			'calypso_theme_sheet_global_styles_gating_modal_close_button_click',
+			this.getPremiumGlobalStylesEventProps()
+		);
+
+		this.setState( { showUnlockStyleUpgradeModal: false } );
 	};
 
 	onAtomicThemeActive = () => {
@@ -1142,8 +1196,6 @@ class ThemeSheet extends Component {
 		const hasWpOrgThemeUpsellBanner = this.hasWpOrgThemeUpsellBanner();
 		// Show theme upsell banner on Atomic sites.
 		const hasThemeUpsellBannerAtomic = this.hasThemeUpsellBannerAtomic();
-		// Show theme upsell banner on an active Free theme with global style gating.
-		const hasSiteGlobalStyleUpsellBanner = this.hasSiteGlobalStyleUpsellBanner();
 
 		const hasUpsellBanner =
 			hasWpComThemeUpsellBanner || hasWpOrgThemeUpsellBanner || hasThemeUpsellBannerAtomic;
@@ -1160,7 +1212,7 @@ class ThemeSheet extends Component {
 			'theme__page-upsell-disabled': this.isLoading(),
 		} );
 
-		if ( hasWpComThemeUpsellBanner || hasSiteGlobalStyleUpsellBanner ) {
+		if ( hasWpComThemeUpsellBanner ) {
 			const forceDisplay =
 				( isBundledSoftwareSet && ! isSiteBundleEligible ) ||
 				( isExternallyManagedTheme &&
@@ -1286,6 +1338,12 @@ class ThemeSheet extends Component {
 					) }
 				</div>
 				<ThemePreview belowToolbar={ previewUpsellBanner } />
+				<PremiumGlobalStylesUpgradeModal
+					checkout={ this.onPremiumGlobalStylesUpgradeModalCheckout }
+					tryStyle={ this.onPremiumGlobalStylesUpgradeModalTryStyle }
+					closeModal={ this.onPremiumGlobalStylesUpgradeModalClose }
+					isOpen={ this.state.showUnlockStyleUpgradeModal }
+				/>
 				<PerformanceTrackerStop />
 				{ isThemeActivationSyncStarted && (
 					<SyncActiveTheme

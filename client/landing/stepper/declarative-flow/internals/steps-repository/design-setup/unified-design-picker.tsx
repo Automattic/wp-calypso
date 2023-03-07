@@ -41,6 +41,7 @@ import {
 	recordSelectedDesign,
 	getVirtualDesignProps,
 } from '../../analytics/record-design';
+import StepperLoader from '../../components/stepper-loader';
 import { getCategorizationOptions } from './categories';
 import { DEFAULT_VARIATION_SLUG, RETIRING_DESIGN_SLUGS, STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
@@ -132,6 +133,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			seed: siteSlugOrId || undefined,
 			_locale: locale,
 			include_virtual_designs: virtualThemesExperiment?.variationName === 'treatment',
+			include_pattern_virtual_designs: isEnabled( 'virtual-themes/onboarding' ),
 		},
 		{
 			enabled: ! isLoadingVirtualThemesExperiment,
@@ -249,11 +251,12 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	function previewDesign( design: Design, styleVariation?: StyleVariation ) {
 		recordPreviewedDesign( { flow, intent, design, styleVariation } );
 
-		if ( ! design.is_virtual ) {
+		if ( ! design.preselected_style_variation ) {
 			setSelectedDesign( design );
 		} else {
 			const parentDesign = staticDesigns.find(
-				( staticDesign ) => staticDesign.slug === design.slug && ! staticDesign.is_virtual
+				( staticDesign ) =>
+					staticDesign.slug === design.slug && ! staticDesign.preselected_style_variation
 			);
 			setSelectedDesign( parentDesign );
 		}
@@ -581,8 +584,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	// ********** Main render logic
 
 	// Don't render until we've done fetching all the data needed for initial render.
-	if ( ! site || isLoadingSiteVertical || isLoadingDesigns ) {
-		return null;
+	if ( ! site || isLoadingSiteVertical || isLoadingDesigns || isLoadingVirtualThemesExperiment ) {
+		return <StepperLoader />;
 	}
 
 	if ( selectedDesign && isPreviewingDesign ) {

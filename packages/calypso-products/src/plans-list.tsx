@@ -431,9 +431,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SMART_REDIRECTS,
 		FEATURE_ALWAYS_ONLINE,
 	],
-	// This function returns the features that are to be overridden and shown in the plans comparison table.
-	// The gist is that we want the plan comparison grid to be as comprehensive as possible, while keeping the plans table easy to follow.
-	// For more details why they deviates, please refer to p2-pdgrnI-24M#comment-3413
+
 	get2023PlanComparisonFeatureOverride: () => [
 		FEATURE_BEAUTIFUL_THEMES,
 		FEATURE_PAGES,
@@ -459,6 +457,14 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_LTD_SOCIAL_MEDIA_JP,
 		FEATURE_CONTACT_FORM_JP,
 	],
+	get2023PlanComparisonJetpackFeatureOverride: () => [
+		FEATURE_STATS_JP,
+		FEATURE_SPAM_JP,
+		FEATURE_LTD_SOCIAL_MEDIA_JP,
+		FEATURE_CONTACT_FORM_JP,
+		FEATURE_SITE_ACTIVITY_LOG_JP,
+	],
+
 	get2023PricingGridSignupStorageOptions: () => [ FEATURE_1GB_STORAGE ],
 	getIncludedFeatures: () => [],
 	getInferiorFeatures: () => [],
@@ -633,7 +639,6 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_AD_FREE_EXPERIENCE,
 		FEATURE_FAST_DNS,
-		FEATURE_STYLE_CUSTOMIZATION,
 		FEATURE_SUPPORT_EMAIL,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [
@@ -1014,11 +1019,11 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_LIVE_CHAT_SUPPORT,
 		FEATURE_PREMIUM_THEMES_V2,
 		FEATURE_WORDADS,
+		FEATURE_STYLE_CUSTOMIZATION,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [
 		FEATURE_VIDEOPRESS_JP,
 		FEATURE_UNLTD_SOCIAL_MEDIA_JP,
-		FEATURE_SEO_JP,
 		FEATURE_SITE_ACTIVITY_LOG_JP,
 	],
 	get2023PricingGridSignupStorageOptions: () => [ FEATURE_13GB_STORAGE ],
@@ -1180,6 +1185,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_UPTIME_MONITOR_JP,
 		FEATURE_ES_SEARCH_JP,
 		FEATURE_PLUGIN_AUTOUPDATE_JP,
+		FEATURE_SEO_JP,
 	],
 	get2023PricingGridSignupStorageOptions: () => [ FEATURE_200GB_STORAGE ],
 	// Features not displayed but used for checking plan abilities
@@ -1600,7 +1606,7 @@ const getPlanJetpackSecurityT1Details = (): IncompleteJetpackPlan => ( {
 	...getJetpackCommonPlanDetails(),
 	group: GROUP_JETPACK,
 	type: TYPE_SECURITY_T1,
-	getTitle: () => translate( 'Security' ),
+	getTitle: () => translate( 'Security', { context: 'Jetpack product name' } ),
 	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
 	getDescription: () =>
 		translate(

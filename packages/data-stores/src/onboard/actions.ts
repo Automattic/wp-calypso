@@ -128,6 +128,7 @@ export function* createSenseiSite( {
 			use_patterns: true,
 			site_intent: 'sensei',
 			selected_features: selectedFeatures,
+			wpcom_public_coming_soon: 1,
 			...( selectedDesign && { is_blank_canvas: isBlankCanvasDesign( selectedDesign ) } ),
 		},
 	} );
