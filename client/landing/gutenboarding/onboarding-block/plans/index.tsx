@@ -13,7 +13,7 @@ import { useTrackStep } from '../../hooks/use-track-step';
 import { Step, usePath } from '../../path';
 import { ONBOARD_STORE } from '../../stores/onboard';
 import { PLANS_STORE } from '../../stores/plans';
-import type { Plans } from '@automattic/data-stores';
+import type { Plans, PlansSelect, OnboardSelect } from '@automattic/data-stores';
 
 interface Props {
 	isModal?: boolean;
@@ -30,21 +30,21 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 	const [ billingPeriod, setBillingPeriod ] = React.useState< Plans.PlanBillingPeriod >();
 
 	const { domain, selectedFeatures, selectedPlanProductId } = useSelect( ( select ) => {
-		const onboardStore = select( ONBOARD_STORE );
+		const onboardStore: OnboardSelect = select( ONBOARD_STORE );
 		return {
 			domain: onboardStore.getSelectedDomain(),
 			selectedFeatures: onboardStore.getSelectedFeatures(),
 			selectedPlanProductId: onboardStore.getPlanProductId(),
 		};
-	} );
+	}, [] );
 
 	const { isPlanProductFree, selectedPlanProduct } = useSelect( ( select ) => {
-		const plansStore = select( PLANS_STORE );
+		const plansStore: PlansSelect = select( PLANS_STORE );
 		return {
 			isPlanProductFree: plansStore.isPlanProductFree,
 			selectedPlanProduct: plansStore.getPlanProductById( selectedPlanProductId ),
 		};
-	} );
+	}, [] );
 
 	const { setDomain, updatePlan, setHasUsedPlansStep } = useDispatch( ONBOARD_STORE );
 	React.useEffect( () => {
