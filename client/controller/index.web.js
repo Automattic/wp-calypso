@@ -128,6 +128,16 @@ export function redirectLoggedOut( context, next ) {
 		loginParameters.locale = login_locale;
 	}
 
+	const queryParams = Object.fromEntries( new URLSearchParams( window.location.search ) );
+	if (
+		'1' === queryParams?.unlinked &&
+		loginParameters.redirectTo &&
+		loginParameters.redirectTo.startsWith( '/checkout/' )
+	) {
+		loginParameters.isJetpack = true;
+		loginParameters.redirectTo = 'https://wordpress.com' + loginParameters.redirectTo;
+	}
+
 	// force full page reload to avoid SSR hydration issues.
 	window.location = login( loginParameters );
 	return;
