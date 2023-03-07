@@ -22,10 +22,11 @@ const ColorPaletteVariationPreview = () => {
 	const [ containerResizeListener, { width } ] = useResizeObserver();
 	const ratio = width ? width / STYLE_PREVIEW_WIDTH : 1;
 
-	const highlightedColors: Color[] = themeColors
+	const uniqueColors = [ ...new Set< string >( themeColors.map( ( { color }: Color ) => color ) ) ];
+	const highlightedColors = uniqueColors
 		.filter(
 			// we exclude background color because it is already visible in the preview.
-			( { color }: Color ) => color !== backgroundColor
+			( color ) => color !== backgroundColor
 		)
 		.slice( 0, 2 );
 
@@ -58,7 +59,7 @@ const ColorPaletteVariationPreview = () => {
 						} }
 					>
 						<VStack spacing={ 4 * ratio }>
-							{ highlightedColors.map( ( { color }, index ) => (
+							{ highlightedColors.map( ( color, index ) => (
 								<div
 									key={ index }
 									style={ {
