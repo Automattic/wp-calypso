@@ -113,7 +113,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 					...wpComPluginsData[ index ],
 					...wporgPlugins[ index ],
 					...wpComThemes[ index ],
-					isTheme: !! wpComThemes[ index ],
+					product_type: getProductType( wpComThemes, index ),
 				} );
 
 				return productsList;
@@ -227,7 +227,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	const pluginsSection: ThankYouSectionProps = {
 		sectionKey: 'plugin_information',
 		nextSteps: productInformationList
-			.filter( ( product ) => product.isTheme === false )
+			.filter( ( product ) => product.product_type === 'plugin' )
 			.map( ( plugin: any ) => ( {
 				stepKey: `plugin_information_${ plugin.slug }`,
 				stepSection: <ThankYouPluginSection plugin={ plugin } />,
@@ -360,6 +360,21 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		</ThemeProvider>
 	);
 };
+
+/**
+ * Returns the type of the product, having 'plugin' as default
+ *
+ * @param themes list of themes
+ * @param index current index to search on the list
+ * @returns 'theme'| 'plugin' the type of the product
+ */
+function getProductType( themes: [], index: number ): 'theme' | 'plugin' {
+	if ( themes[ index ] ) {
+		return 'theme';
+	}
+
+	return 'plugin';
+}
 
 function FooterIcon( { icon }: { icon: string } ) {
 	return (
