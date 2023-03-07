@@ -289,7 +289,7 @@ class Plans extends Component {
 	}
 
 	renderWooExpressMediumPage() {
-		return <p>WooExpress</p>;
+		return <p>Woo Express Performance</p>;
 	}
 
 	renderMainContent() {
@@ -302,7 +302,9 @@ class Plans extends Component {
 
 			case PLAN_WOOEXPRESS_MEDIUM:
 			case PLAN_WOOEXPRESS_MEDIUM_MONTHLY:
-				return this.renderWooExpressMediumPage();
+				if ( isEnabled( 'plans/wooexpress-medium' ) ) {
+					return this.renderWooExpressMediumPage();
+				}
 
 			default:
 				return this.renderPlansMain();
