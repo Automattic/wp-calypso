@@ -271,13 +271,12 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 			// because it's used in tracks and as pattern name in the list
 			selectedPattern.category = categories.find( ( { name } ) => name === categorySelected );
 
-			if ( selectedPattern.category ) {
-				trackEventPatternSelect( {
-					patternType: selectedPattern.category.name,
-					patternId: selectedPattern.id,
-					patternName: selectedPattern.name,
-				} );
-			}
+			trackEventPatternSelect( {
+				patternType: selectedPattern.category?.name || type,
+				patternId: selectedPattern.id,
+				patternName: selectedPattern.name,
+			} );
+
 			if ( 'section' === type ) {
 				if ( sectionPosition !== null ) {
 					replaceSection( selectedPattern );
@@ -448,7 +447,7 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 					) : (
 						<ScreenPatternList
 							selectedPattern={ sectionPosition !== null ? sections[ sectionPosition ] : null }
-							onSelect={ ( selectedPattern ) => onSelect( 'section', selectedPattern, 'section' ) }
+							onSelect={ ( selectedPattern ) => onSelect( 'section', selectedPattern, null ) }
 							onBack={ () => onPatternSelectorBack( 'section' ) }
 							onDoneClick={ () => onDoneClick( 'section' ) }
 						/>
