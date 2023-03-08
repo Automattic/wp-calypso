@@ -365,13 +365,13 @@ const useSectionPatterns = () => {
 			},
 			{
 				id: 6309,
-				name: '6309',
+				name: 'Names List',
 				category: about,
 				category_slug: 'about',
 			},
 			{
 				id: 6306,
-				name: 'Names List',
+				name: 'Team',
 				category: about,
 				category_slug: 'about',
 			},
