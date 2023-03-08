@@ -1,6 +1,7 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
 import {
@@ -93,7 +94,10 @@ const linkInBio: Flow = {
 				case 'processing':
 					if ( providedDependencies?.goToHome && providedDependencies?.siteSlug ) {
 						return window.location.replace(
-							`/home/${ providedDependencies?.siteSlug }?celebrateLaunch=true&launchpadComplete=true`
+							addQueryArgs( `/home/${ providedDependencies?.siteSlug }`, {
+								celebrateLaunch: true,
+								launchpadComplete: true,
+							} )
 						);
 					}
 					if ( providedDependencies?.goToCheckout ) {
