@@ -37,7 +37,6 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HighlightsSection from './highlights-section';
 import MiniCarousel from './mini-carousel';
-import PromoCards from './promo-cards';
 import ChartTabs from './stats-chart-tabs';
 import Countries from './stats-countries';
 import DatePicker from './stats-date-picker';
@@ -341,7 +340,12 @@ class StatsSite extends Component {
 				{ ! isOdysseyStats ? null : (
 					<AsyncLoad require="calypso/my-sites/stats/jetpack-upsell-section" />
 				) }
-				<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
+				<AsyncLoad
+					require="calypso/my-sites/stats/promo-cards"
+					isOdysseyStats={ isOdysseyStats }
+					pageSlug="traffic"
+					slug={ slug }
+				/>
 				<JetpackColophon />
 			</div>
 		);
