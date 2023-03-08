@@ -316,27 +316,6 @@ export function getEnhancedTasks(
 						},
 					};
 					break;
-				case 'sensei_setup':
-					taskData = {
-						title: translate( 'Set up Course Site' ),
-						completed: true,
-					};
-					break;
-				case 'sensei_publish_first_course':
-					taskData = {
-						title: translate( 'Publish your first Course' ),
-						completed:
-							site?.options?.launchpad_checklist_tasks_statuses?.publish_first_course || false,
-						actionDispatch: () => {
-							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							window.location.assign(
-								addQueryArgs( `${ site?.URL }/wp-admin/post-new.php?`, {
-									post_type: 'course',
-								} )
-							);
-						},
-					};
-					break;
 				case 'domain_upsell':
 					taskData = {
 						title: translate( 'Choose a domain' ),
