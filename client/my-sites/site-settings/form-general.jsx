@@ -788,7 +788,7 @@ export class SiteSettingsFormGeneral extends Component {
 					? this.renderLaunchSite()
 					: this.privacySettings() }
 
-				{ this.giftOptions() }
+				{ ! site.is_wpcom_staging_site && this.giftOptions() }
 				{ ! isWPForTeamsSite && ! ( siteIsJetpack && ! siteIsAtomic ) && (
 					<div className="site-settings__footer-credit-container">
 						<SettingsSectionHeader
