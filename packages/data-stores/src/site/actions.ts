@@ -3,7 +3,6 @@ import { Design, DesignOptions } from '@automattic/design-picker/src/types';
 import { __ } from '@wordpress/i18n';
 import { SiteGoal } from '../onboard';
 import { wpcomRequest } from '../wpcom-request-controls';
-import { PLACEHOLDER_SITE_ID } from './constants';
 import {
 	SiteLaunchError,
 	AtomicTransferError,
@@ -514,7 +513,12 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		} );
 	}
 
-	function* applyThemeWithPatterns( siteSlug: string, design: Design, globalStyles: GlobalStyles ) {
+	function* applyThemeWithPatterns(
+		siteSlug: string,
+		design: Design,
+		globalStyles: GlobalStyles,
+		sourceSiteId: number
+	) {
 		const stylesheet = design?.recipe?.stylesheet || '';
 		const theme = stylesheet?.split( '/' )[ 1 ] || design.theme;
 
@@ -541,7 +545,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 
 		yield runThemeSetupOnSite( siteSlug, design, {
 			trimContent: false,
-			posts_source_site_id: PLACEHOLDER_SITE_ID,
+			posts_source_site_id: sourceSiteId,
 		} );
 	}
 

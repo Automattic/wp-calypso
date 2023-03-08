@@ -19,7 +19,7 @@ import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign } from '../../analytics/record-design';
-import { SITE_TAGLINE } from './constants';
+import { SITE_TAGLINE, PLACEHOLDER_SITE_ID } from './constants';
 import useGlobalStylesUpgradeModal from './hooks/use-global-styles-upgrade-modal';
 import NavigatorListener from './navigator-listener';
 import PatternAssemblerContainer from './pattern-assembler-container';
@@ -288,9 +288,12 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 		}
 
 		setPendingAction( () =>
-			applyThemeWithPatterns( siteSlugOrId, design, syncedGlobalStylesUserConfig ).then( () =>
-				reduxDispatch( requestActiveTheme( site?.ID || -1 ) )
-			)
+			applyThemeWithPatterns(
+				siteSlugOrId,
+				design,
+				syncedGlobalStylesUserConfig,
+				PLACEHOLDER_SITE_ID
+			).then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) )
 		);
 
 		recordSelectedDesign( { flow, intent, design } );
