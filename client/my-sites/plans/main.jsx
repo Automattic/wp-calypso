@@ -292,23 +292,14 @@ class Plans extends Component {
 		return <p>Woo Express Performance</p>;
 	}
 
-	renderMainContent() {
-		const { selectedSite } = this.props;
-		const currentPlanSlug = selectedSite?.plan?.product_slug;
-
-		switch ( currentPlanSlug ) {
-			case PLAN_ECOMMERCE_TRIAL_MONTHLY:
-				return this.renderEcommerceTrialPage();
-
-			case PLAN_WOOEXPRESS_MEDIUM:
-			case PLAN_WOOEXPRESS_MEDIUM_MONTHLY:
-				if ( isEnabled( 'plans/wooexpress-medium' ) ) {
-					return this.renderWooExpressMediumPage();
-				}
-
-			default:
-				return this.renderPlansMain();
+	renderMainContent( { isEcommerceTrial, isWooExpressPlan } ) {
+		if ( isEcommerceTrial ) {
+			return this.renderEcommerceTrialPage();
 		}
+		if ( isWooExpressPlan && isEnabled( 'plans/wooexpress-medium' ) ) {
+			return this.renderWooExpressMediumPage();
+		}
+		return this.renderPlansMain();
 	}
 
 	render() {
@@ -398,7 +389,7 @@ class Plans extends Component {
 								{ ! isDomainAndPlanPackageFlow && domainAndPlanPackage && (
 									<DomainAndPlanUpsellNotice />
 								) }
-								{ this.renderMainContent() }
+								{ this.renderMainContent( { isEcommerceTrial, isWooExpressPlan } ) }
 								<PerformanceTrackerStop />
 							</Main>
 						</div>
