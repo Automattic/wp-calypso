@@ -5,6 +5,7 @@ const path = require( 'path' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const ReadableJsAssetsWebpackPlugin = require( '@wordpress/readable-js-assets-webpack-plugin' );
 const CopyPlugin = require( 'copy-webpack-plugin' );
+const HtmlWebpackPlugin = require( 'html-webpack-plugin' );
 const webpack = require( 'webpack' );
 const GenerateChunksMapPlugin = require( '../../build-tools/webpack/generate-chunks-map-plugin' );
 
@@ -37,6 +38,14 @@ function getWebpackConfig( env = { block: '' }, argv ) {
 		plugins: [
 			...webpackConfig.plugins,
 			new ReadableJsAssetsWebpackPlugin(),
+			new HtmlWebpackPlugin( {
+				filename: path.join( blockPath, '/build/', 'index.html' ),
+				template: `!!prerender-loader?string&entry=./block-library/universal-header/view.tsx!${ path.join(
+					blockPath,
+					'index.html'
+				) }`,
+				inject: 'head',
+			} ),
 			new CopyPlugin( {
 				patterns: [
 					{
