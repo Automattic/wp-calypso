@@ -399,13 +399,16 @@
 }
 
 .sites-overview__boost-green {
+	@extend .sites-overview__column-content;
 	color: var(--studio-green-50);
 }
 
 .sites-overview__boost-yellow {
+	@extend .sites-overview__column-content;
 	color: var(--studio-yellow-50);
 }
 
 .sites-overview__boost-red {
+	@extend .sites-overview__column-content;
 	color: var(--studio-red-50);
 }
