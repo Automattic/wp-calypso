@@ -128,9 +128,8 @@ export function redirectLoggedOut( context, next ) {
 		loginParameters.locale = login_locale;
 	}
 
-	const queryParams = Object.fromEntries( new URLSearchParams( window.location.search ) );
 	if (
-		'1' === queryParams?.unlinked &&
+		'1' === context.query?.unlinked &&
 		loginParameters.redirectTo &&
 		loginParameters.redirectTo.startsWith( '/checkout/' )
 	) {
