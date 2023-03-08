@@ -48,7 +48,6 @@ class Help_Center {
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script' ), 100 );
 		add_action( 'rest_api_init', array( $this, 'register_rest_api' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_wp_admin_scripts' ), 100 );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_wp_admin_scripts' ), 100 );
 	}
 
 	/**

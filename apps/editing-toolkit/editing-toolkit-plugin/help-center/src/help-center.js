@@ -1,11 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import HelpCenter, { HelpIcon } from '@automattic/help-center';
 import { LocaleProvider } from '@automattic/i18n-utils';
-import { Button } from '@wordpress/components';
+import { Button, Fill } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
-import { PinnedItems } from '@wordpress/interface';
 import { registerPlugin } from '@wordpress/plugins';
 import cx from 'classnames';
 import { QueryClientProvider } from 'react-query';
@@ -13,6 +12,10 @@ import { useSelector } from 'react-redux';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import { whatsNewQueryClient } from '../../common/what-new-query-client';
 import CalypsoStateProvider from './CalypsoStateProvider';
+
+function PinnedItems( { scope, ...props } ) {
+	return <Fill name={ `PinnedItems/${ scope }` } { ...props } />;
+}
 
 function HelpCenterContent() {
 	const [ helpIconRef, setHelpIconRef ] = useState();
