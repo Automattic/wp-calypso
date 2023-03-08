@@ -658,28 +658,27 @@ class CancelPurchaseForm extends Component {
 			translate,
 		} = this.props;
 		const headerTitle = this.getHeaderTitle();
-		const args = { headerTitle, productName, purchaseMeta: meta, siteSlug: slug };
 		switch ( productSlug ) {
 			case 'domain_map':
 				/* 	Translators: If canceled product is domain connection,
 					displays canceled product and domain connection being canceled
 					eg: "Remove product: Domain Connection for externaldomain.com" */
 				return translate( '%(headerTitle)s: %(productName)s for %(purchaseMeta)s', {
-					args,
+					args: { headerTitle, productName, purchaseMeta: meta },
 				} );
 			case 'offsite_redirect':
 				/* 	Translators: If canceled product is site redirect,
 					displays canceled product and domain site is being directed to 
 					eg: "Remove product: Site Redirect to redirectedsite.com" */
 				return translate( '%(headerTitle)s: %(productName)s to %(purchaseMeta)s', {
-					args,
+					args: { headerTitle, productName, purchaseMeta: meta },
 				} );
 			default:
 				/* Translators: If canceled product is site plan or other product,
 					displays plan or product being canceled and primary address of product being canceled 
 					eg: "Cancel plan: WordPress.com Business for primarydomain.com" */
 				return translate( '%(headerTitle)s: %(productName)s for %(siteSlug)s', {
-					args,
+					args: { headerTitle, productName, siteSlug: slug },
 				} );
 		}
 	}
