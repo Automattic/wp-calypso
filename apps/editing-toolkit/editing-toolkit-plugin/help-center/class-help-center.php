@@ -42,13 +42,10 @@ class Help_Center {
 			return;
 		}
 
-		$this->asset_file = include plugin_dir_path( __FILE__ ) . 'dist/help-center.asset.php';
-		$this->version    = $this->asset_file['version'];
-
-		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script' ), 100 );
+		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_help_center_editor' ), 100 );
 		add_action( 'rest_api_init', array( $this, 'register_rest_api' ) );
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_wp_admin_scripts' ), 100 );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_wp_admin_scripts' ), 100 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_help_center_editor' ), 99 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_help_center_admin_bar' ), 100 );
 	}
 
 	/**
@@ -75,42 +72,47 @@ class Help_Center {
 		);
 	}
 
+	public function enqueue_help_center_editor() {
+		$this->enqueue_help_center_script( 'editor' );
+	}
+
+	public function enqueue_help_center_admin_bar() {
+		$this->enqueue_help_center_script( 'admin-bar' );
+	}
+
 	/**
 	 * Enqueue Help Center assets.
 	 */
-	public function enqueue_script() {
-		// Remove wp-preferences from the dependencies array because it is not available on the support page.
-		$script_dependencies = array_filter(
-			$this->asset_file['dependencies'],
-			function ( $dep ) {
-				return 'wp-preferences' !== $dep;
-			}
-		);
+	public function enqueue_help_center_script( $variant ) {
+		$asset_file = include plugin_dir_path( __FILE__ ) . "dist/src/help-center-{$variant}.asset.php";
+
+		$script_dependencies = $asset_file->dependencies;
+		$version             = $asset_file->version;
 
 		wp_enqueue_script(
-			'help-center-script',
-			plugins_url( 'dist/help-center.min.js', __FILE__ ),
+			"help-center-{$variant}-script",
+			plugins_url( "dist/src/help-center-{$variant}.js", __FILE__ ),
 			is_array( $script_dependencies ) ? $script_dependencies : array(),
-			$this->version,
+			$version,
 			true
 		);
 
 		wp_enqueue_style(
-			'help-center-style',
+			"help-center-{$variant}-style",
 			plugins_url( 'dist/help-center' . ( is_rtl() ? '.rtl.css' : '.css' ), __FILE__ ),
 			array(),
-			$this->version
+			$version
 		);
 
 		wp_localize_script(
-			'help-center-script',
+			"help-center-{$variant}-script",
 			'helpCenterLocale',
 			\A8C\FSE\Common\get_iso_639_locale( determine_locale() )
 		);
 
 		// Adds feature flags for development.
 		wp_add_inline_script(
-			'help-center-script',
+			"help-center-{$variant}-script",
 			'const helpCenterFeatureFlags = ' . wp_json_encode(
 				array(
 					'loadNextStepsTutorial' => self::is_next_steps_tutorial_enabled(),
@@ -120,14 +122,14 @@ class Help_Center {
 		);
 
 		wp_localize_script(
-			'help-center-script',
+			"help-center-{$variant}-script",
 			'helpCenterData',
 			array(
 				'currentSite' => $this->get_current_site(),
 			)
 		);
 
-		wp_set_script_translations( 'help-center-script', 'full-site-editing' );
+		wp_set_script_translations( "help-center-{$variant}-script", 'full-site-editing' );
 	}
 
 	/**
@@ -230,7 +232,7 @@ class Help_Center {
 				'wp-components',
 				gutenberg_url( 'build/components/style' . ( is_rtl() ? '.rtl.css' : '.css' ) ),
 				array( 'dashicons' ),
-				$this->version
+				$version
 			);
 		}
 
@@ -242,7 +244,7 @@ class Help_Center {
 				global $wp_admin_bar;
 
 				wp_localize_script(
-					'help-center-script',
+					'help-center-admin-bar-script',
 					'helpCenterAdminBar',
 					array(
 						'isLoaded' => true,
@@ -263,8 +265,6 @@ class Help_Center {
 			},
 			100000
 		);
-
-		$this->enqueue_script();
 	}
 }
 add_action( 'init', array( __NAMESPACE__ . '\Help_Center', 'init' ) );

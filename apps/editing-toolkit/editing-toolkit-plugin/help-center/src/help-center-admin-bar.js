@@ -1,4 +1,6 @@
+import './config';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { HelpCenter as HelpCenterStore } from '@automattic/data-stores';
 import HelpCenter from '@automattic/help-center';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
@@ -6,6 +8,9 @@ import * as ReactDOM from 'react-dom';
 import { QueryClientProvider } from 'react-query';
 import { whatsNewQueryClient } from '../../common/what-new-query-client';
 import CalypsoStateProvider from './CalypsoStateProvider';
+import './help-center.scss';
+
+HelpCenterStore.register();
 
 function AdminHelpCenterContent() {
 	const { setShowHelpCenter } = useDispatch( 'automattic/help-center' );
