@@ -151,7 +151,7 @@ export class HelpContactForm extends PureComponent {
 		} );
 	};
 
-	getSibylQuery = () => ( this.state.subject + ' ' + this.state.message ).trim();
+	getSibylQuery = () => this.state.message.trim();
 
 	doRequestSite = () => {
 		if ( resemblesUrl( this.state.userDeclaredUrl ) ) {
