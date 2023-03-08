@@ -41,11 +41,11 @@ CHUNKS_MAP_PATHS.map( ( CHUNKS_MAP_PATH ) => {
 		),
 	};
 
-	//fs.unlinkSync( CHUNKS_MAP_PATH );
+	fs.unlinkSync( CHUNKS_MAP_PATH );
 } );
 
 // Write translatios manifest file.
 fs.writeFileSync( OUTPUT_PATH, JSON.stringify( { references: translationsRefs } ) );
 
 // Clean up.
-//fs.unlinkSync( CALYPSO_STRINGS_PATH );
+fs.unlinkSync( CALYPSO_STRINGS_PATH );
