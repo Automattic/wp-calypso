@@ -99,11 +99,15 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	);
 
 	// Retrieve theme information
-	const wpComThemes = useSelector( ( state ) => getThemes( state, 'wpcom', productSlugs ) );
+	const dotComThemes = useSelector( ( state ) => getThemes( state, 'wpcom', productSlugs ) );
+	const dotOrgThemes = useSelector( ( state ) => getThemes( state, 'wporg', productSlugs ) );
 
 	const areAllProductsFetched =
 		!! pluginsOnSite.length &&
-		pluginsOnSite.every( ( pluginOnSite, index ) => !! pluginOnSite || !! wpComThemes[ index ] );
+		pluginsOnSite.every(
+			( pluginOnSite, index ) =>
+				!! pluginOnSite || !! dotComThemes[ index ] || !! dotOrgThemes[ index ]
+		);
 
 	// Consolidate the plugin information from the .org and .com sources in a single list
 	const productInformationList = useMemo( () => {
@@ -112,15 +116,17 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 				productsList.push( {
 					...wpComPluginsData[ index ],
 					...wporgPlugins[ index ],
-					...wpComThemes[ index ],
-					product_type: getProductType( wpComThemes, index ),
+					...pluginOnSite,
+					...dotComThemes[ index ],
+					...dotOrgThemes[ index ],
+					product_type: getProductType( dotComThemes, dotOrgThemes, index ),
 				} );
 
 				return productsList;
 			},
 			[]
 		);
-	}, [ pluginsOnSite, wpComPluginsData, wporgPlugins, wpComThemes ] );
+	}, [ pluginsOnSite, wpComPluginsData, wporgPlugins, dotComThemes, dotOrgThemes ] );
 
 	// Site is transferring to Atomic.
 	// Poll the transfer status.
@@ -325,7 +331,10 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 				canGoBack={ areAllProductsFetched }
 			/>
 			{ productSlugs.map( ( productSlug, index ) => (
-				<QueryTheme key={ 'query-theme-' + index } siteId="wpcom" themeId={ productSlug } />
+				<>
+					<QueryTheme key={ 'query-theme-' + index } siteId="wpcom" themeId={ productSlug } />
+					<QueryTheme key={ 'query-theme-' + index } siteId="wporg" themeId={ productSlug } />
+				</>
 			) ) }
 			{ showProgressBar && (
 				// eslint-disable-next-line wpcalypso/jsx-classname-namespace
@@ -364,12 +373,13 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 /**
  * Returns the type of the product, having 'plugin' as default
  *
- * @param themes list of themes
+ * @param dotComThemes list of WordPress.com themes
+ * @param dotOrgThemes list of WordPress.org themes
  * @param index current index to search on the list
  * @returns 'theme'| 'plugin' the type of the product
  */
-function getProductType( themes: [], index: number ): 'theme' | 'plugin' {
-	if ( themes[ index ] ) {
+function getProductType( dotComThemes: [], dotOrgThemes: [], index: number ): 'theme' | 'plugin' {
+	if ( dotComThemes[ index ] || dotOrgThemes[ index ] ) {
 		return 'theme';
 	}
 
