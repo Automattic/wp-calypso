@@ -1,5 +1,4 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { getLocaleSlug } from 'i18n-calypso';
 import {
 	JETPACK_REDIRECT_CHECKOUT_TO_WPADMIN,
 	BEST_VALUE_PLANS,
@@ -43,18 +42,11 @@ export const redirectCheckoutToWpAdmin = (): boolean => !! JETPACK_REDIRECT_CHEC
 
 /**
  * Returns if the 2023 Pricing grid feature has been enabled.
- * Currently this depends on the feature flag and on the locale the user is on
+ * Currently this depends on the feature flag.
  *
  */
 export const is2023PricingGridEnabled = (): boolean => {
-	const isFeatureFlagEnabled = (): boolean => isEnabled( 'onboarding/2023-pricing-grid' );
-
-	const isLocaleSupported = (): boolean => {
-		const supportedLocales = [ 'en', 'en-gb', 'es' ];
-		return supportedLocales.includes( getLocaleSlug() ?? '' );
-	};
-
-	return isFeatureFlagEnabled() && isLocaleSupported();
+	return isEnabled( 'onboarding/2023-pricing-grid' );
 };
 
 /**

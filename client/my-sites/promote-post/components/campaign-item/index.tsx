@@ -72,7 +72,7 @@ export default function CampaignItem( { campaign }: Props ) {
 		[ start_date, end_date ]
 	);
 
-	const { totalBudget, totalBudgetLeft } = useMemo(
+	const { totalBudget, totalBudgetLeft, campaignDays } = useMemo(
 		() => getCampaignBudgetData( budget_cents, start_date, end_date, spent_budget_cents ),
 		[ budget_cents, spent_budget_cents ]
 	);
@@ -149,6 +149,8 @@ export default function CampaignItem( { campaign }: Props ) {
 			label: __( 'Ok' ),
 		},
 	];
+
+	const budgetString = campaignDays ? `$${ totalBudget } ${ totalBudgetLeftString }` : '-';
 
 	return (
 		<>
@@ -257,7 +259,9 @@ export default function CampaignItem( { campaign }: Props ) {
 							<div className="campaign-item__block_label campaign-item__budget-label">
 								{ __( 'Budget' ) }
 							</div>
-							<div className="campaign-item__block_value campaign-item__budget-value">{ `$${ totalBudget } ${ totalBudgetLeftString }` }</div>
+							<div className="campaign-item__block_value campaign-item__budget-value">
+								{ budgetString }
+							</div>
 						</div>
 					</div>
 

@@ -18,7 +18,7 @@ import {
 	redirectToPlansIfNotJetpack,
 } from './controller';
 import { currentPlan } from './current-plan/controller';
-import { trialUpgradeConfirmation } from './ecommerce-trial/controlller';
+import { trialUpgradeConfirmation } from './ecommerce-trial/controller';
 
 const trackedPage = ( url, ...rest ) => {
 	page( url, ...rest, makeLayout, clientRender );

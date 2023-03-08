@@ -187,7 +187,6 @@ export interface APIToggleFavorite {
 export interface UpdateMonitorSettingsAPIResponse {
 	success: boolean;
 	settings: {
-		monitor_active: boolean;
 		email_notifications: boolean;
 		wp_note_notifications: boolean;
 		jetmon_defer_status_down_minutes: number;
@@ -195,7 +194,6 @@ export interface UpdateMonitorSettingsAPIResponse {
 }
 
 export interface UpdateMonitorSettingsParams {
-	monitor_active?: boolean;
 	wp_note_notifications?: boolean;
 	email_notifications?: boolean;
 	jetmon_defer_status_down_minutes?: number;
@@ -208,3 +206,12 @@ export interface UpdateMonitorSettingsArgs {
 export type SiteMonitorStatus = {
 	[ siteId: number ]: 'loading' | 'completed';
 };
+
+export interface ToggleActivaateMonitorAPIResponse {
+	code: 'success' | 'error';
+	message: string;
+}
+export interface ToggleActivateMonitorArgs {
+	siteId: number;
+	params: { monitor_active: boolean };
+}

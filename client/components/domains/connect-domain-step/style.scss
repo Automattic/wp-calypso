@@ -18,6 +18,22 @@ body.connect-domain-setup__body-white {
 		padding: 0;
 	}
 
+	&__content-placeholder {
+		p {
+			width: 95%;
+			@include placeholder(--color-neutral-5);
+			&:last-child {
+				width: 60%;
+			}
+		}
+	}
+
+	&__sidebar-placeholder {
+		width: 100%;
+		@include placeholder(--color-neutral-5);
+		margin: 0;
+	}
+
 	&.card {
 		margin-bottom: 16px;
 	}
@@ -251,6 +267,13 @@ body.connect-domain-setup__body-white {
 					}
 				}
 			}
+		}
+	}
+
+	&__suggested-start {
+		button .material-icon {
+			fill: var(--color-text-inverted);
+			vertical-align: text-bottom;
 		}
 	}
 
