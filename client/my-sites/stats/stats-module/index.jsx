@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
-import { FEATURE_GOOGLE_ANALYTICS } from '@automattic/calypso-products/src/constants/features';
-import { PLAN_PREMIUM } from '@automattic/calypso-products/src/constants/wpcom';
+import { FEATURE_GOOGLE_ANALYTICS, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';

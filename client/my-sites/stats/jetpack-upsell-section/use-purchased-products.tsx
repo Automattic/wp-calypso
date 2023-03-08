@@ -5,7 +5,7 @@ import {
 	JETPACK_SECURITY_PLANS,
 	JETPACK_SOCIAL_PRODUCTS,
 	JETPACK_VIDEOPRESS_PRODUCTS,
-} from '@automattic/calypso-products/src/constants/jetpack';
+} from '@automattic/calypso-products';
 import { useEffect, useState } from 'react';
 
 //

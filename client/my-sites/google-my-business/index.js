@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { FEATURE_GOOGLE_MY_BUSINESS } from '@automattic/calypso-products/src/constants/features';
+import { FEATURE_GOOGLE_MY_BUSINESS } from '@automattic/calypso-products';
 import page from 'page';
 import { makeLayout } from 'calypso/controller';
 import { navigation, sites, siteSelection } from 'calypso/my-sites/controller';
