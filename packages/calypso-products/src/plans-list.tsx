@@ -2161,7 +2161,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 			[ PLAN_FREE, PLAN_WOOEXPRESS_MEDIUM_MONTHLY, PLAN_ECOMMERCE_TRIAL_MONTHLY ].includes( plan ),
 		getProductId: () => 1055,
 		getStoreSlug: () => PLAN_WOOEXPRESS_MEDIUM,
-		getPathSlug: () => 'wooexpress-medium',
+		getPathSlug: () => 'wooexpress-medium-yearly',
 	},
 
 	// Not a real plan. This is used to show the Enterprise (VIP) offering in
