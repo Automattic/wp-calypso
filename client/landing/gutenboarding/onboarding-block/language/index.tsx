@@ -34,7 +34,7 @@ const LanguageStep: React.FunctionComponent< Props > = ( { previousStep } ) => {
 			( select( I18N_STORE ) as I18nSelect ).getLocalizedLanguageNames(
 				currentUser?.language ?? LOCALIZED_LANGUAGE_NAMES_FALLBACK_LOCALE
 			),
-		[]
+		[ currentUser?.language ]
 	);
 
 	// keep a static reference to the previous step

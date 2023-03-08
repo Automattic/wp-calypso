@@ -34,7 +34,7 @@ const StepContent = ( { siteSlug, submit, goNext, goToStep, flow }: StepContentP
 	const adminUrl = useSelect(
 		( select ) =>
 			site && ( select( SITE_STORE ) as SiteSelect ).getSiteOption( site.ID, 'admin_url' ),
-		[]
+		[ site ]
 	);
 	const { data: allDomains = [] } = useGetDomainsQuery( site?.ID ?? null, {
 		retry: false,

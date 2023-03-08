@@ -58,7 +58,7 @@ const PlanAccordionItem: React.FunctionComponent< Props > = ( {
 
 	const planProduct = useSelect(
 		( select ) => ( select( PLANS_STORE ) as PlansSelect ).getPlanProduct( slug, billingPeriod ),
-		[]
+		[ slug, billingPeriod ]
 	);
 
 	// show a nbsp in price while loading to prevent a jump in the UI

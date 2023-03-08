@@ -83,13 +83,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const siteVerticalId = useSelect(
 		( select ) =>
 			( site && ( select( SITE_STORE ) as SiteSelect ).getSiteVerticalId( site.ID ) ) || '',
-		[]
+		[ site ]
 	);
 	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles();
 
 	const isAtomic = useSelect(
 		( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( site.ID ),
-		[]
+		[ site ]
 	);
 	useEffect( () => {
 		if ( isAtomic ) {
@@ -105,7 +105,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 					site.ID,
 					WPCOM_FEATURES_PREMIUM_THEMES
 				),
-			[]
+			[ site ]
 		)
 	);
 
@@ -334,7 +334,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	const isEligibleForProPlan = useSelect(
 		( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isEligibleForProPlan( site.ID ),
-		[]
+		[ site ]
 	);
 
 	function upgradePlan() {

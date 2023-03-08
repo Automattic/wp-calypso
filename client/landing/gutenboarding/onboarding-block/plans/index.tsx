@@ -38,13 +38,16 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 		};
 	}, [] );
 
-	const { isPlanProductFree, selectedPlanProduct } = useSelect( ( select ) => {
-		const plansStore: PlansSelect = select( PLANS_STORE );
-		return {
-			isPlanProductFree: plansStore.isPlanProductFree,
-			selectedPlanProduct: plansStore.getPlanProductById( selectedPlanProductId ),
-		};
-	}, [] );
+	const { isPlanProductFree, selectedPlanProduct } = useSelect(
+		( select ) => {
+			const plansStore: PlansSelect = select( PLANS_STORE );
+			return {
+				isPlanProductFree: plansStore.isPlanProductFree,
+				selectedPlanProduct: plansStore.getPlanProductById( selectedPlanProductId ),
+			};
+		},
+		[ selectedPlanProductId ]
+	);
 
 	const { setDomain, updatePlan, setHasUsedPlansStep } = useDispatch( ONBOARD_STORE );
 	React.useEffect( () => {

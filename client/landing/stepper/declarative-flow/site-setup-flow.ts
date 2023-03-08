@@ -164,11 +164,11 @@ const siteSetupFlow: Flow = {
 		const adminUrl = useSelect(
 			( select ) =>
 				site && ( select( SITE_STORE ) as SiteSelect ).getSiteOption( site.ID, 'admin_url' ),
-			[]
+			[ site ]
 		);
 		const isAtomic = useSelect(
 			( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( site.ID ),
-			[]
+			[ site ]
 		);
 		const storeType = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStoreType(),

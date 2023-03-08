@@ -64,7 +64,7 @@ export default function useSteps(): Array< StepType > {
 	const plan = useSelect(
 		( select ) =>
 			( select( PLANS_STORE ) as PlansSelect ).getPlanByProductId( planProductId, locale ),
-		[]
+		[ planProductId, locale ]
 	);
 	const hasPlanFromPath = !! usePlanFromPath();
 

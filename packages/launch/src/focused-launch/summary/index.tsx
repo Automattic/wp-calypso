@@ -287,14 +287,17 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 		};
 	}, [] );
 
-	const { selectedPlan, selectedPlanProduct } = useSelect( ( select ) => {
-		const plansStore: PlansSelect = select( PLANS_STORE );
+	const { selectedPlan, selectedPlanProduct } = useSelect(
+		( select ) => {
+			const plansStore: PlansSelect = select( PLANS_STORE );
 
-		return {
-			selectedPlan: plansStore.getPlanByProductId( selectedPlanProductId, locale ),
-			selectedPlanProduct: plansStore.getPlanProductById( selectedPlanProductId ),
-		};
-	}, [] );
+			return {
+				selectedPlan: plansStore.getPlanByProductId( selectedPlanProductId, locale ),
+				selectedPlanProduct: plansStore.getPlanProductById( selectedPlanProductId ),
+			};
+		},
+		[ selectedPlanProductId, locale ]
+	);
 
 	// persist non-default selected paid plan if it's paid in order to keep displaying it in the plan picker
 	const [ nonDefaultPaidPlan, setNonDefaultPaidPlan ] = React.useState< Plan | undefined >();

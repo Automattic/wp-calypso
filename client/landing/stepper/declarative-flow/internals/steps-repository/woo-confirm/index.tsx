@@ -51,7 +51,7 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore Until createRegistrySelector is typed correctly
 			( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( siteId ),
-		[]
+		[ siteId ]
 	);
 	const { requestLatestAtomicTransfer } = useDispatch( SITE_STORE );
 	const stepProgress = useSelect(
@@ -72,42 +72,42 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore Until createRegistrySelector is typed correctly
 			select( AUTOMATED_ELIGIBILITY_STORE ).getEligibilityHolds( siteId ),
-		[]
+		[ siteId ]
 	);
 	const eligibilityWarnings = useSelect(
 		( select ) =>
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore Until createRegistrySelector is typed correctly
 			select( AUTOMATED_ELIGIBILITY_STORE ).getEligibilityWarnings( siteId ),
-		[]
+		[ siteId ]
 	);
 	const wpcomSubdomainWarning = useSelect(
 		( select ) =>
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore Until createRegistrySelector is typed correctly
 			select( AUTOMATED_ELIGIBILITY_STORE ).getWpcomSubdomainWarning( siteId ),
-		[]
+		[ siteId ]
 	);
 	const warnings = useSelect(
 		( select ) =>
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore Until createRegistrySelector is typed correctly
 			select( AUTOMATED_ELIGIBILITY_STORE ).getNonSubdomainWarnings( siteId ),
-		[]
+		[ siteId ]
 	);
 	const latestAtomicTransfer = useSelect(
 		( select ) =>
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore Until createRegistrySelector is typed correctly
 			( select( SITE_STORE ) as SiteSelect ).getSiteLatestAtomicTransfer( siteId || 0 ),
-		[]
+		[ siteId ]
 	);
 	const latestAtomicTransferError = useSelect(
 		( select ) =>
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore Until createRegistrySelector is typed correctly
 			( select( SITE_STORE ) as SiteSelect ).getSiteLatestAtomicTransferError( siteId || 0 ),
-		[]
+		[ siteId ]
 	);
 	const productsList = useSelect(
 		( select ) => ( select( PRODUCTS_LIST_STORE ) as ProductsListSelect ).getProductsList(),
@@ -115,7 +115,7 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 	);
 	const requiresUpgrade = useSelect(
 		( select ) => ( select( SITE_STORE ) as SiteSelect ).requiresUpgrade( siteId ),
-		[]
+		[ siteId ]
 	);
 
 	const wpcomDomain = site?.URL?.replace( /http[s]*:\/\//, '' );

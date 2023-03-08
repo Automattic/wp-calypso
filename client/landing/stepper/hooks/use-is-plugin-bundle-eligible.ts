@@ -8,12 +8,12 @@ export function useIsPluginBundleEligible(): boolean | null {
 	const site = useSite();
 	const hasWooFeature = useSelect(
 		( select ) => ( select( SITE_STORE ) as SiteSelect ).siteHasFeature( site?.ID, FEATURE_WOOP ),
-		[]
+		[ site ]
 	);
 	const hasAtomicFeature = useSelect(
 		( select ) =>
 			( select( SITE_STORE ) as SiteSelect ).siteHasFeature( site?.ID, WPCOM_FEATURES_ATOMIC ),
-		[]
+		[ site ]
 	);
 
 	return hasWooFeature && hasAtomicFeature;

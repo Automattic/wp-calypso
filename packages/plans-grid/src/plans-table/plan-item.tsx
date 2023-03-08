@@ -86,7 +86,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 
 	const planProduct = useSelect(
 		( select ) => ( select( PLANS_STORE ) as PlansSelect ).getPlanProduct( slug, billingPeriod ),
-		[]
+		[ slug, billingPeriod ]
 	);
 
 	const [ isOpenInternalState, setIsOpenInternalState ] = React.useState( false );

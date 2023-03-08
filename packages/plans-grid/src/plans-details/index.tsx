@@ -21,21 +21,24 @@ type Props = {
 const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale, billingPeriod } ) => {
 	const { __, hasTranslation } = useI18n();
 
-	const { supportedPlans, planProducts, features, featuresByType } = useSelect( ( select ) => {
-		const { getPlanProduct, getFeatures, getFeaturesByType, getSupportedPlans }: PlansSelect =
-			select( PLANS_STORE );
-		const supportedPlans = getSupportedPlans( locale );
-		const planProducts = supportedPlans.map( ( plan ) =>
-			getPlanProduct( plan.periodAgnosticSlug, billingPeriod )
-		);
+	const { supportedPlans, planProducts, features, featuresByType } = useSelect(
+		( select ) => {
+			const { getPlanProduct, getFeatures, getFeaturesByType, getSupportedPlans }: PlansSelect =
+				select( PLANS_STORE );
+			const supportedPlans = getSupportedPlans( locale );
+			const planProducts = supportedPlans.map( ( plan ) =>
+				getPlanProduct( plan.periodAgnosticSlug, billingPeriod )
+			);
 
-		return {
-			supportedPlans,
-			planProducts,
-			features: getFeatures( locale ),
-			featuresByType: getFeaturesByType( locale ),
-		};
-	}, [] );
+			return {
+				supportedPlans,
+				planProducts,
+				features: getFeatures( locale ),
+				featuresByType: getFeaturesByType( locale ),
+			};
+		},
+		[ locale, billingPeriod ]
+	);
 
 	const isLoading = ! supportedPlans?.length;
 	const placeholderPlans = [ 1, 2, 3, 4, 5 ];

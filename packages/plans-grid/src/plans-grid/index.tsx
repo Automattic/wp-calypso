@@ -66,7 +66,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 		( select ) =>
 			( select( PLANS_STORE ) as PlansSelect ).getPlanProductById( currentPlanProductId )
 				?.billingPeriod,
-		[]
+		[ currentPlanProductId ]
 	);
 
 	const [ billingPeriod, setBillingPeriod ] = React.useState< Plans.PlanBillingPeriod >(

@@ -97,7 +97,7 @@ export function useDomainSelection(): DomainSelection {
 	} = useSelect( ( select ) => ( select( LAUNCH_STORE ) as LaunchSelect ).getState(), [] );
 	const isPlanFree = useSelect(
 		( select ) => ( select( PLANS_STORE ) as PlansSelect ).isPlanProductFree( planProductId ),
-		[]
+		[ planProductId ]
 	);
 	const { siteSubdomain, hasPaidDomain, sitePrimaryDomain } = useSiteDomains();
 

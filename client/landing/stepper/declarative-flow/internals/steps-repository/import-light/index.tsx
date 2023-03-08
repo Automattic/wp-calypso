@@ -30,7 +30,7 @@ const ImportLight: Step = function ImportStep( props ) {
 	const { analyzeColors } = useDispatch( ANALYZER_STORE );
 	const colorsData = useSelect(
 		( select ) => ( select( ANALYZER_STORE ) as AnalyzerSelect ).getSiteColors( url ),
-		[]
+		[ url ]
 	);
 	const fetchingColorsInProgress = useSelect(
 		( select ) => ( select( ANALYZER_STORE ) as AnalyzerSelect ).isSiteColorsInAnalysis(),

@@ -16,7 +16,7 @@ export const useOnLaunch = () => {
 	);
 	const isPlanFree = useSelect(
 		( select ) => ( select( PLANS_STORE ) as PlansSelect ).isPlanProductFree( planProductId ),
-		[]
+		[ planProductId ]
 	);
 
 	const { isSiteLaunched } = useSite();

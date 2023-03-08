@@ -37,7 +37,7 @@ const pluginBundleFlow: Flow = {
 		const pluginSlug = useSelect(
 			( select ) =>
 				( select( SITE_STORE ) as SiteSelect ).getBundledPluginSlug( siteSlugParam || '' ),
-			[]
+			[ siteSlugParam ]
 		) as BundledPlugin;
 
 		const steps = [
@@ -86,11 +86,11 @@ const pluginBundleFlow: Flow = {
 		const adminUrl = useSelect(
 			( select ) =>
 				site && ( select( SITE_STORE ) as SiteSelect ).getSiteOption( site.ID, 'admin_url' ),
-			[]
+			[ site ]
 		);
 		const isAtomic = useSelect(
 			( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( site.ID ),
-			[]
+			[ site ]
 		);
 		const storeType = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStoreType(),
@@ -101,7 +101,7 @@ const pluginBundleFlow: Flow = {
 		const { setIntentOnSite, setGoalsOnSite, setThemeOnSite } = useDispatch( SITE_STORE );
 		const siteDetails = useSelect(
 			( select ) => site && ( select( SITE_STORE ) as SiteSelect ).getSite( site.ID ),
-			[]
+			[ site ]
 		);
 		const dispatch = reduxDispatch();
 

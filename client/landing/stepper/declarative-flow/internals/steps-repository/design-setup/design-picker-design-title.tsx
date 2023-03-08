@@ -25,7 +25,7 @@ const DesignPickerDesignTitle: FC< Props > = ( { designTitle, selectedDesign } )
 					site.ID,
 					WPCOM_FEATURES_PREMIUM_THEMES
 				),
-			[]
+			[ site ]
 		)
 	);
 

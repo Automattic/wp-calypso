@@ -51,7 +51,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 			plan: ( select( PLANS_STORE ) as PlansSelect ).getPlanByProductId( planProductId, locale ),
 			planProduct: ( select( PLANS_STORE ) as PlansSelect ).getPlanProductById( planProductId ),
 		} ),
-		[]
+		[ planProductId, locale ]
 	);
 
 	const { title } = useTitle();

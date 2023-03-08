@@ -10,7 +10,7 @@ export function useCanUserManageOptions() {
 	const siteSlug = useSiteSlugParam();
 	const siteId = useSelect(
 		( select ) => siteSlug && ( select( SITE_STORE ) as SiteSelect ).getSiteIdBySlug( siteSlug ),
-		[]
+		[ siteSlug ]
 	);
 	const isRequesting = useSelector( ( state ) => isRequestingSites( state ) );
 	const hasManageOptionsCap = useSelector( ( state ) =>

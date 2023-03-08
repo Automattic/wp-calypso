@@ -9,7 +9,7 @@ export function useSite() {
 	const siteIdParam = useSiteIdParam();
 	const siteId = useSelect(
 		( select ) => siteSlug && ( select( SITE_STORE ) as SiteSelect ).getSiteIdBySlug( siteSlug ),
-		[]
+		[ siteSlug ]
 	);
 	const site = useSelect(
 		( select ) =>
@@ -17,7 +17,7 @@ export function useSite() {
 			( select( SITE_STORE ) as SiteSelect ).getSite(
 				( siteId ?? siteIdParam ) as string | number
 			),
-		[ siteId ]
+		[ siteId, siteIdParam ]
 	);
 
 	if ( ( siteSlug || siteIdParam ) && site ) {

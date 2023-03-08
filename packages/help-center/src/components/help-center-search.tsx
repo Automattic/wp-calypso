@@ -28,7 +28,7 @@ export const HelpCenterSearch = () => {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const site = useSelect(
 		( select ) => siteId && ( select( SITE_STORE ) as SiteSelect ).getSite( siteId ),
-		[]
+		[ siteId ]
 	);
 	let launchpadEnabled = site && site?.options.launchpad_screen === 'full';
 

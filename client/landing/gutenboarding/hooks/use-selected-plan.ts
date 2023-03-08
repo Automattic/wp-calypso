@@ -25,7 +25,7 @@ export function usePlanFromPath(): Plan | undefined {
 			planFromPath: ( select( PLANS_STORE ) as PlansSelect ).getPlanByPath( planPath, locale ),
 			selectedFeatures: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedFeatures(),
 		} ),
-		[]
+		[ planPath, locale ]
 	);
 
 	// don't return Free plan if any feature is currently selected
@@ -41,7 +41,7 @@ export function useSelectedPlan(): Plan | undefined {
 	// Pre-load the plans details to ensure the plans are fetched early from the API endpoint.
 	useSelect(
 		( select ) => ( select( PLANS_STORE ) as PlansSelect ).getSupportedPlans( locale ),
-		[]
+		[ locale ]
 	);
 
 	const selectedFeatures = useSelect(
@@ -58,7 +58,7 @@ export function useSelectedPlan(): Plan | undefined {
 			( select( WPCOM_FEATURES_STORE ) as WpcomFeaturesSelect ).getRecommendedPlanSlug(
 				selectedFeatures
 			),
-		[]
+		[ selectedFeatures ]
 	);
 
 	const recommendedPlan = useSelect(
@@ -67,13 +67,13 @@ export function useSelectedPlan(): Plan | undefined {
 				recommendedPlanSlug,
 				locale
 			),
-		[]
+		[ recommendedPlanSlug, locale ]
 	);
 
 	const selectedPlan = useSelect(
 		( select ) =>
 			( select( PLANS_STORE ) as PlansSelect ).getPlanByProductId( selectedPlanProductId, locale ),
-		[]
+		[ selectedPlanProductId, locale ]
 	);
 
 	const planFromPath = usePlanFromPath();
@@ -97,6 +97,6 @@ export function useShouldRedirectToEditorAfterCheckout(): boolean {
 	const currentSlug = useSelectedPlan()?.periodAgnosticSlug;
 	return ! useSelect(
 		( select ) => ( select( PLANS_STORE ) as PlansSelect ).isPlanEcommerce( currentSlug ),
-		[]
+		[ currentSlug ]
 	);
 }

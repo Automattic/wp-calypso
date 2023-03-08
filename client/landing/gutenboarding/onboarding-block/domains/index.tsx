@@ -60,7 +60,7 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 					isResolving: ( store: string, resolver: string, args: Array< unknown > ) => boolean;
 				}
 			 ).isResolving( DOMAIN_SUGGESTIONS_STORE, 'isAvailable', [ domain?.domain_name ] ),
-		[]
+		[ domain?.domain_name ]
 	);
 
 	const { setDomain, setDomainSearch, setHasUsedDomainsStep } = useDispatch( ONBOARD_STORE );

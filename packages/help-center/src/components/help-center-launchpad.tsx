@@ -33,7 +33,7 @@ export const HelpCenterLaunchpad = () => {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const site = useSelect(
 		( select ) => siteId && ( select( SITE_STORE ) as SiteSelect ).getSite( siteId ),
-		[]
+		[ siteId ]
 	);
 	let siteIntent = site && site?.options?.site_intent;
 	let siteSlug = site && new URL( site.URL ).host;

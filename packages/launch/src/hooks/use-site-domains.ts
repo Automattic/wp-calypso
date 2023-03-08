@@ -8,11 +8,11 @@ export function useSiteDomains() {
 	const { siteId } = useContext( LaunchContext );
 	const sitePrimaryDomain = useSelect(
 		( select ) => ( select( SITE_STORE ) as SiteSelect ).getPrimarySiteDomain( siteId ),
-		[]
+		[ siteId ]
 	);
 	const siteSubdomain = useSelect(
 		( select ) => ( select( SITE_STORE ) as SiteSelect ).getSiteSubdomain( siteId ),
-		[]
+		[ siteId ]
 	);
 	const hasPaidDomain = sitePrimaryDomain && ! sitePrimaryDomain?.is_subdomain;
 

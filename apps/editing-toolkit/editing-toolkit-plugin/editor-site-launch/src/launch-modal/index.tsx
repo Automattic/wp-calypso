@@ -36,7 +36,7 @@ const LaunchModal: React.FunctionComponent< Props > = ( { onClose, isLaunchImmed
 	const { setPlanProductId } = useDispatch( LAUNCH_STORE );
 	const defaultFreePlan = useSelect(
 		( select ) => ( select( PLANS_STORE ) as PlansSelect ).getDefaultFreePlan( locale ),
-		[]
+		[ locale ]
 	);
 
 	const handleLaunch = React.useCallback( () => {

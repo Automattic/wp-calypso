@@ -56,19 +56,22 @@ const PlansAccordion: React.FunctionComponent< Props > = ( {
 	const placeholderPlans = [ 1, 2, 3, 4 ];
 
 	// Primary plan
-	const { popularPlan, getPlanProduct } = useSelect( ( select ) => {
-		const plansStore: PlansSelect = select( PLANS_STORE );
-		return {
-			popularPlan: plansStore.getDefaultPaidPlan( locale ),
-			getPlanProduct: plansStore.getPlanProduct,
-		};
-	}, [] );
+	const { popularPlan, getPlanProduct } = useSelect(
+		( select ) => {
+			const plansStore: PlansSelect = select( PLANS_STORE );
+			return {
+				popularPlan: plansStore.getDefaultPaidPlan( locale ),
+				getPlanProduct: plansStore.getPlanProduct,
+			};
+		},
+		[ locale ]
+	);
 	const recommendedPlanSlug = useSelect(
 		( select ) =>
 			( select( WPCOM_FEATURES_STORE ) as WpcomFeaturesSelect ).getRecommendedPlanSlug(
 				selectedFeatures
 			),
-		[]
+		[ selectedFeatures ]
 	);
 
 	const recommendedPlan = useSelect(
@@ -77,7 +80,7 @@ const PlansAccordion: React.FunctionComponent< Props > = ( {
 				recommendedPlanSlug,
 				locale
 			),
-		[]
+		[ recommendedPlanSlug, locale ]
 	);
 
 	const primaryPlan = recommendedPlan || popularPlan;

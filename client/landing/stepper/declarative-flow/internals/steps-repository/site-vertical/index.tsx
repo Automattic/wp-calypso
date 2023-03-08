@@ -24,7 +24,7 @@ const SiteVertical: Step = function SiteVertical( { navigation } ) {
 	const siteVertical = useSelect(
 		( select ) =>
 			( site && ( select( SITE_STORE ) as SiteSelect ).getSiteVerticalId( site?.ID ) ) || undefined,
-		[]
+		[ site ]
 	);
 	const translate = useTranslate();
 	const headerText = translate( 'What’s your website about?' );

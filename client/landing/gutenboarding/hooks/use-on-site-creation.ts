@@ -48,7 +48,7 @@ export default function useOnSiteCreation(): void {
 	const planProductSource = useSelect(
 		( select ) =>
 			( select( PLANS_STORE ) as PlansSelect ).getPlanProductById( selectedPlanProductId ),
-		[]
+		[ selectedPlanProductId ]
 	);
 
 	const flow = useOnboardingFlow();

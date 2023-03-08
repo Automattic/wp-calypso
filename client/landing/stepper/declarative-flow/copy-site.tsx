@@ -36,16 +36,19 @@ function useIsValidSite() {
 		isFetchingSiteDetails,
 		isFetchingError,
 		site: sourceSite,
-	} = useSelect( ( select ) => {
-		if ( ! sourceSlug ) {
-			return {};
-		}
-		return {
-			isFetchingError: ( select( SITE_STORE ) as SiteSelect ).getFetchingSiteError(),
-			isFetchingSiteDetails: ( select( SITE_STORE ) as SiteSelect ).isFetchingSiteDetails(),
-			site: ( select( SITE_STORE ) as SiteSelect ).getSite( sourceSlug ),
-		};
-	}, [] );
+	} = useSelect(
+		( select ) => {
+			if ( ! sourceSlug ) {
+				return {};
+			}
+			return {
+				isFetchingError: ( select( SITE_STORE ) as SiteSelect ).getFetchingSiteError(),
+				isFetchingSiteDetails: ( select( SITE_STORE ) as SiteSelect ).isFetchingSiteDetails(),
+				site: ( select( SITE_STORE ) as SiteSelect ).getSite( sourceSlug ),
+			};
+		},
+		[ sourceSlug ]
+	);
 
 	useEffect( () => {
 		if ( isFetchingSiteDetails && siteRequestStatus === 'init' ) {

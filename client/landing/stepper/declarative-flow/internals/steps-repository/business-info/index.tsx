@@ -44,12 +44,12 @@ const BusinessInfo: Step = function ( props ) {
 	const siteSlug = useQuery().get( 'siteSlug' );
 	const siteId = useSelect(
 		( select ) => siteSlug && ( select( SITE_STORE ) as SiteSelect ).getSiteIdBySlug( siteSlug ),
-		[]
+		[ siteSlug ]
 	);
 	const settings = useSelect(
 		( select ) =>
 			( siteId && ( select( SITE_STORE ) as SiteSelect ).getSiteSettings( siteId ) ) || {},
-		[]
+		[ siteId ]
 	);
 	const onboardingProfile = settings?.woocommerce_onboarding_profile || {};
 	const [ profileChanges, setProfileChanges ] = useState< {

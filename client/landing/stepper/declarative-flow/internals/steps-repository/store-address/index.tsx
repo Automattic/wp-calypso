@@ -57,7 +57,7 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 	const settings = useSelect(
 		( select ) =>
 			( site?.ID && ( select( SITE_STORE ) as SiteSelect ).getSiteSettings( site.ID ) ) || {},
-		[]
+		[ site ]
 	);
 	const currentUser = useSelect(
 		( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser() || null,
