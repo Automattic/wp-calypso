@@ -59,15 +59,15 @@ export const PluginCustomDomainDialog = ( {
 				<div className="plugin-custom-domain-dialog__description">
 					{ hasNonPrimaryCustomDomain
 						? translate(
-								'%(pluginName)s will help you optimize your site around your primary domain. We recommend setting your custom domain as your primary before installing.',
+								'{{pluginName/}} will help you optimize your site around your primary domain. We recommend setting your custom domain as your primary before installing.',
 								{
-									args: { pluginName: plugin.name },
+									components: { pluginName: <strong>{ plugin.name }</strong> },
 								}
 						  )
 						: translate(
-								'%(pluginName)s will help you optimize your site around your primary domain. We recommend adding a custom domain before installing.',
+								'{{pluginName/}} will help you optimize your site around your primary domain. We recommend adding a custom domain before installing.',
 								{
-									args: { pluginName: plugin.name },
+									components: { pluginName: <strong>{ plugin.name }</strong> },
 								}
 						  ) }
 				</div>
