@@ -441,15 +441,22 @@ export function siteSelection( context, next ) {
 	const currentUser = getCurrentUser( getState() );
 	const hasOneSite = currentUser && currentUser.visible_site_count === 1;
 
+	// Making sure non-connected users get redirected to user connection flow.
+	// Details: p9dueE-6Hf-p2
+	const isUnlinkedCheckout =
+		'1' === context.query?.unlinked &&
+		context.pathname.match( /^\/checkout\/[^/]+\/jetpack_/i ) &&
+		! context.pathname.includes( 'jetpack_boost' );
+
 	// The user doesn't have any sites: render `NoSitesMessage`
-	if ( currentUser && currentUser.site_count === 0 ) {
+	if ( currentUser && currentUser.site_count === 0 && ! isUnlinkedCheckout ) {
 		renderEmptySites( context );
 		recordNoSitesPageView( context, siteFragment );
 		return;
 	}
 
 	// The user has all sites set as hidden: render help message with how to make them visible
-	if ( currentUser && currentUser.visible_site_count === 0 ) {
+	if ( currentUser && currentUser.visible_site_count === 0 && ! isUnlinkedCheckout ) {
 		renderNoVisibleSites( context );
 		recordNoVisibleSitesPageView( context, siteFragment );
 		return;
@@ -500,13 +507,6 @@ export function siteSelection( context, next ) {
 	}
 
 	const siteId = getSiteId( getState(), siteFragment );
-
-	// Making sure non-connected users get redirected to user connection flow.
-	// Details: p9dueE-6Hf-p2
-	const isUnlinkedCheckout =
-		'1' === context.query?.unlinked &&
-		context.pathname.match( /^\/checkout\/[^/]+\/jetpack_/i ) &&
-		! context.pathname.includes( 'jetpack_boost' );
 
 	if ( siteId && ! isUnlinkedCheckout ) {
 		// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
