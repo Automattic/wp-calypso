@@ -1,4 +1,3 @@
-@import "@automattic/components/src/styles/typography";
 @import "./keyframes";
 
 @font-face {
@@ -7,6 +6,8 @@
 	font-display: swap;
 	src: url(https://s0.wp.com/i/fonts/inter/Inter-Medium.woff2?v=3.19) format("woff2");
 }
+
+$font-family: "SF Pro Text", $sans;
 
 .pattern-assembler {
 	display: flex;
@@ -22,6 +23,7 @@
 	.step-container__content {
 		display: flex;
 		width: 100%;
+		margin: 0 32px;
 	}
 
 	.pattern-assembler__wrapper {
@@ -35,10 +37,10 @@
 	.pattern-assembler__sidebar {
 		display: flex;
 		flex-direction: column;
-		width: 343px;
+		width: 284px;
 		box-sizing: border-box;
-		padding-top: 46px;
-		padding-bottom: 30px;
+		margin-top: 50px;
+		margin-bottom: 32px;
 		background-color: var(--color-body-background);
 		position: relative;
 		z-index: 3;
@@ -196,7 +198,7 @@
 			}
 
 			h1 {
-				font-family: $font-sf-pro-text;
+				font-family: $font-family;
 				font-size: $font-title-small;
 				font-weight: 500;
 				line-height: 26px;
@@ -250,26 +252,12 @@
 	/**
 	 * Screen Container
 	 */
-	.screen-container__body,
-	.screen-container__body--no-margin {
+	.screen-container__body {
 		display: flex;
 		flex-direction: column;
 		padding: 2px;
 		margin-bottom: 32px;
 		overflow-y: auto;
-
-		&.screen-main__body {
-			margin: 0 -5px;
-		}
-
-		&.screen-category-list__body {
-			margin: 0 -7px;
-		}
-
-		&.screen-container__body--no-margin {
-			margin-bottom: 0;
-		}
-
 	}
 
 	.screen-container__body--no-padding {
@@ -302,7 +290,6 @@
 		display: flex;
 		flex-direction: column;
 		flex-grow: 1;
-		padding: 0 32px;
 	}
 }
 

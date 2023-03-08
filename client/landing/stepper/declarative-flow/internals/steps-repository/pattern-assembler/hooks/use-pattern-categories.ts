@@ -1,7 +1,7 @@
 import { useQuery, UseQueryResult, UseQueryOptions } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 
-const usePatternCategoriesFromAPI = (
+const usePatternCategories = (
 	siteId: number | undefined,
 	queryOptions: UseQueryOptions = {}
 ): UseQueryResult => {
@@ -29,4 +29,4 @@ const usePatternCategoriesFromAPI = (
 	);
 };
 
-export default usePatternCategoriesFromAPI;
+export default usePatternCategories;

@@ -21,7 +21,7 @@ import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign } from '../../analytics/record-design';
 import { SITE_TAGLINE, PLACEHOLDER_SITE_ID } from './constants';
 import useGlobalStylesUpgradeModal from './hooks/use-global-styles-upgrade-modal';
-import usePatternCategoriesFromAPI from './hooks/use-pattern-categories-from-api';
+import usePatternCategories from './hooks/use-pattern-categories';
 import usePatternsMapByCategory from './hooks/use-patterns-map-by-category';
 import NavigatorListener from './navigator-listener';
 import PatternAssemblerContainer from './pattern-assembler-container';
@@ -71,7 +71,7 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const allPatterns = useAllPatterns();
 	const sectionPatterns = useSectionPatterns();
-	const categoriesQuery = usePatternCategoriesFromAPI( site?.ID );
+	const categoriesQuery = usePatternCategories( site?.ID );
 	const categories = ( categoriesQuery?.data || [] ) as Category[];
 	const sectionsMapByCategory = usePatternsMapByCategory( sectionPatterns, categories );
 	const stylesheet = selectedDesign?.recipe?.stylesheet || '';

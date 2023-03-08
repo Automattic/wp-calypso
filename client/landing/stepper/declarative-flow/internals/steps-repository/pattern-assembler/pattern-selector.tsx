@@ -1,9 +1,4 @@
-import { isEnabled } from '@automattic/calypso-config';
-import { Button } from '@automattic/components';
-import { __experimentalNavigatorBackButton as NavigatorBackButton } from '@wordpress/components';
 import { useAsyncList } from '@wordpress/compose';
-import { useTranslate } from 'i18n-calypso';
-import NavigatorHeader from './navigator-header';
 import PatternListRenderer from './pattern-list-renderer';
 import type { Pattern } from './types';
 
@@ -14,8 +9,6 @@ type PatternSelectorProps = {
 	emptyPatternText?: string;
 	onDoneClick?: () => void;
 	onBack?: () => void;
-	showDoneButton?: boolean;
-	showHeader?: boolean;
 };
 
 const PatternSelector = ( {
@@ -23,20 +16,11 @@ const PatternSelector = ( {
 	onSelect,
 	selectedPattern,
 	emptyPatternText,
-	onDoneClick,
-	showDoneButton,
-	showHeader,
 }: PatternSelectorProps ) => {
-	const translate = useTranslate();
 	const shownPatterns = useAsyncList( patterns );
 
 	return (
 		<div className="pattern-selector">
-			{ ! isEnabled( 'pattern-assembler/categories' ) && showHeader && (
-				<NavigatorHeader
-					title={ selectedPattern ? translate( 'Replace pattern' ) : translate( 'Add patterns' ) }
-				/>
-			) }
 			<div className="pattern-selector__body">
 				<div className="pattern-selector__block-list" role="listbox">
 					<PatternListRenderer
@@ -51,18 +35,6 @@ const PatternSelector = ( {
 					/>
 				</div>
 			</div>
-			{ showDoneButton && (
-				<div className="screen-container__footer">
-					<NavigatorBackButton
-						as={ Button }
-						className="pattern-assembler__button"
-						onClick={ onDoneClick }
-						primary
-					>
-						{ translate( 'Done' ) }
-					</NavigatorBackButton>
-				</div>
-			) }
 		</div>
 	);
 };
