@@ -331,7 +331,8 @@ const formatStatsData = ( site: Site ) => {
 const formatBoostData = ( site: Site ) => {
 	const boost: BoostNode = {
 		type: 'boost',
-		data: 100,
+		data: site.jetpack_boost_scores,
+		status: 'active',
 	};
 	return boost;
 };
