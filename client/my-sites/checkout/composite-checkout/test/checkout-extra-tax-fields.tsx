@@ -35,6 +35,13 @@ jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
 jest.mock( 'calypso/lib/navigate' );
 
 describe( 'Checkout contact step extra tax fields', () => {
+	// These tests seem to be particularly slow (it might be because of using
+	// it.each; it's not clear but the timeout might apply to the whole loop
+	// rather that each iteration?), so we need to increase the timeout for their
+	// operation. The standard timeout (at the time of writing) is 5 seconds so
+	// we are increasing this to 8 seconds.
+	jest.setTimeout( 8000 );
+
 	const mainCartKey: CartKey = 'foo.com' as CartKey;
 	const initialCart = getBasicCart();
 	const defaultPropsForMockCheckout = {
