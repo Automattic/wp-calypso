@@ -101,9 +101,10 @@
 	position: relative;
 	display: flex;
 	align-items: flex-start;
-	padding: 0 0 8px 20px;
+	padding-inline: 20px 0;
+	padding-block: 0 8px;
 	background-color: var(--color-surface);
-	justify-content: left;
+	justify-content: flex-start;
 	font-weight: 400;
 }
 
