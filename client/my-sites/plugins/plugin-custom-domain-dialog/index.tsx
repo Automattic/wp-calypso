@@ -44,9 +44,7 @@ export const PluginCustomDomainDialog = ( {
 		{
 			className: 'plugin-custom-domain-dialog__install_plugin',
 			action: 'install-plugin',
-			label: translate( 'Install %(pluginName)s', {
-				args: { pluginName: plugin.name },
-			} ),
+			label: translate( 'Install' ),
 			isPrimary: true,
 			onClick: onProceed,
 		},
