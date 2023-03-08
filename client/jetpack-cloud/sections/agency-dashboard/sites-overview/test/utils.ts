@@ -61,6 +61,11 @@ describe( 'utils', () => {
 					trend_change: 0,
 				},
 			},
+			jetpack_boost_scores: {
+				desktop: 100,
+				mobile: 100,
+				overall: 100,
+			},
 		};
 		const rows: SiteData = {
 			site: {
@@ -68,6 +73,11 @@ describe( 'utils', () => {
 				error: false,
 				type: 'site',
 				status: '',
+			},
+			boost: {
+				type: 'boost',
+				status: 'active',
+				data: 100,
 			},
 			backup: {
 				type: 'backup',
@@ -193,6 +203,11 @@ describe( 'utils', () => {
 							trend_change: 0,
 						},
 					},
+					jetpack_boost_scores: {
+						desktop: 100,
+						mobile: 100,
+						overall: 100,
+					},
 				},
 			];
 			expect( formatSites( sites ) ).toEqual( [
@@ -207,6 +222,11 @@ describe( 'utils', () => {
 						status: 'active',
 						type: 'stats',
 						value: sites[ 0 ].site_stats,
+					},
+					boost: {
+						type: 'boost',
+						status: 'active',
+						data: sites[ 0 ].jetpack_boost_scores,
 					},
 					backup: {
 						status: 'success',
