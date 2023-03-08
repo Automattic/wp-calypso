@@ -1872,7 +1872,7 @@ __metadata:
     "@wordpress/edit-post": ^6.19.0
     "@wordpress/editor": ^12.21.0
     "@wordpress/element": ^4.20.0
-    "@wordpress/env": ^5.7.0
+    "@wordpress/env": ^4.7.0
     "@wordpress/escape-html": ^2.22.0
     "@wordpress/eslint-plugin": ^13.6.0
     "@wordpress/hooks": ^3.22.0
@@ -4941,6 +4941,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sindresorhus/is@npm:^2.0.0":
+  version: 2.1.1
+  resolution: "@sindresorhus/is@npm:2.1.1"
+  checksum: 0e19eb3024a44e2de575e169e49a3a7fcea5558b52f2173ce249d57ad3d45fe6d0401b0d0c0a190feb92974c9be523bd0dfd6d660f651c74d8c2b4532b748105
+  languageName: node
+  linkType: hard
+
 "@sindresorhus/is@npm:^4.0.0":
   version: 4.2.0
   resolution: "@sindresorhus/is@npm:4.2.0"
@@ -6254,12 +6261,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@szmarczak/http-timer@npm:^4.0.5":
-  version: 4.0.5
-  resolution: "@szmarczak/http-timer@npm:4.0.5"
+"@szmarczak/http-timer@npm:^4.0.0, @szmarczak/http-timer@npm:^4.0.5":
+  version: 4.0.6
+  resolution: "@szmarczak/http-timer@npm:4.0.6"
   dependencies:
     defer-to-connect: ^2.0.0
-  checksum: de3f5054e08b72762b88e9ee837018d4e513e5df20e1d9f8c671d813f22b0972148509e0781b85c1de7fc60a7c9be10c2b7d4b8372ba80ffc11c43e6a24e945f
+  checksum: 73946918c025339db68b09abd91fa3001e87fc749c619d2e9c2003a663039d4c3cb89836c98a96598b3d47dec2481284ba85355392644911f5ecd2336536697f
   languageName: node
   linkType: hard
 
@@ -8824,15 +8831,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/env@npm:^5.7.0":
-  version: 5.12.0
-  resolution: "@wordpress/env@npm:5.12.0"
+"@wordpress/env@npm:^4.7.0":
+  version: 4.9.0
+  resolution: "@wordpress/env@npm:4.9.0"
   dependencies:
     chalk: ^4.0.0
     copy-dir: ^1.3.0
     docker-compose: ^0.22.2
     extract-zip: ^1.6.7
-    got: ^11.8.5
+    got: ^10.7.0
     inquirer: ^7.1.0
     js-yaml: ^3.13.1
     ora: ^4.0.2
@@ -8842,7 +8849,7 @@ __metadata:
     yargs: ^17.3.0
   bin:
     wp-env: bin/wp-env
-  checksum: 901055c5a0306f60114ea705ded5759d24e204949c7d37f077032ee3f26dbe524a1390ac21858348cc9a4062ff380771cef8d432cf053b9a8e5886e204b2fde5
+  checksum: affe6177da88e74639f6d9086f0cfb3a3470b68d45101103db3e96b64187a937e4dda20fb719d0c3139585014624f1b13be35f2c6e483313532379afcc360bc4
   languageName: node
   linkType: hard
 
@@ -11616,6 +11623,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cacheable-lookup@npm:^2.0.0":
+  version: 2.0.1
+  resolution: "cacheable-lookup@npm:2.0.1"
+  dependencies:
+    "@types/keyv": ^3.1.1
+    keyv: ^4.0.0
+  checksum: d9ac1e91736939ea619ad9bec50f09347f57308c7d9fb15e0d1de1e8d0d5152df364f6d8c7e611f62a53c35d059fc867858c0431d66366438247557e68f7e4b0
+  languageName: node
+  linkType: hard
+
 "cacheable-lookup@npm:^5.0.3":
   version: 5.0.4
   resolution: "cacheable-lookup@npm:5.0.4"
@@ -11638,7 +11655,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cacheable-request@npm:^7.0.2":
+"cacheable-request@npm:^7.0.1, cacheable-request@npm:^7.0.2":
   version: 7.0.2
   resolution: "cacheable-request@npm:7.0.2"
   dependencies:
@@ -14254,6 +14271,15 @@ __metadata:
   dependencies:
     mimic-response: ^2.0.0
   checksum: 5e4821be332e80e3639acee2441c41d245fc07ac3ee85a6f28893c10c079d66d9bf09e8d84bffeae5656a4625e09e9b93fb4a5705adbe6b07202eea64fae1c8d
+  languageName: node
+  linkType: hard
+
+"decompress-response@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "decompress-response@npm:5.0.0"
+  dependencies:
+    mimic-response: ^2.0.0
+  checksum: d76c4fc4fa21f4b39a7bf711a655b2b56d37b44c99754c3fb44d64b83a8132cfd916c81951477c94478d2cba47058cf8c73da26bb999b07f1b9c8d466a2b4346
   languageName: node
   linkType: hard
 
@@ -18255,7 +18281,30 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"got@npm:^11.7.0, got@npm:^11.8.5":
+"got@npm:^10.7.0":
+  version: 10.7.0
+  resolution: "got@npm:10.7.0"
+  dependencies:
+    "@sindresorhus/is": ^2.0.0
+    "@szmarczak/http-timer": ^4.0.0
+    "@types/cacheable-request": ^6.0.1
+    cacheable-lookup: ^2.0.0
+    cacheable-request: ^7.0.1
+    decompress-response: ^5.0.0
+    duplexer3: ^0.1.4
+    get-stream: ^5.0.0
+    lowercase-keys: ^2.0.0
+    mimic-response: ^2.1.0
+    p-cancelable: ^2.0.0
+    p-event: ^4.0.0
+    responselike: ^2.0.0
+    to-readable-stream: ^2.0.0
+    type-fest: ^0.10.0
+  checksum: 3972cbbd2f99b8331f3447596e92849adb0e486c6c4feebbbedbf243e95f0ed79e62c34d8ff354d2e861ba69dd18c8870842aefae15cf3db3d5bb1019e8b837b
+  languageName: node
+  linkType: hard
+
+"got@npm:^11.7.0":
   version: 11.8.6
   resolution: "got@npm:11.8.6"
   dependencies:
@@ -23109,7 +23158,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"mimic-response@npm:^2.0.0":
+"mimic-response@npm:^2.0.0, mimic-response@npm:^2.1.0":
   version: 2.1.0
   resolution: "mimic-response@npm:2.1.0"
   checksum: 717475c840f20deca87a16cb2f7561f9115f5de225ea2377739e09890c81aec72f43c81fd4984650c4044e66be5a846fa7a517ac7908f01009e1e624e19864d5
@@ -24634,7 +24683,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"p-event@npm:^4.1.0":
+"p-event@npm:^4.0.0, p-event@npm:^4.1.0":
   version: 4.2.0
   resolution: "p-event@npm:4.2.0"
   dependencies:
@@ -31470,6 +31519,13 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"to-readable-stream@npm:^2.0.0":
+  version: 2.1.0
+  resolution: "to-readable-stream@npm:2.1.0"
+  checksum: c0d7269a5232a4c4d254073478a7bfdc302f955999d3afbd417af15cbdf98aeacbc66318957426bbe5b84b681e4d0eba4be640bed6c1ee8cf705f500d4521289
+  languageName: node
+  linkType: hard
+
 "to-regex-range@npm:^2.1.0":
   version: 2.1.1
   resolution: "to-regex-range@npm:2.1.1"
@@ -31875,6 +31931,13 @@ fsevents@^1.2.7:
   version: 4.0.8
   resolution: "type-detect@npm:4.0.8"
   checksum: 8fb9a51d3f365a7de84ab7f73b653534b61b622aa6800aecdb0f1095a4a646d3f5eb295322127b6573db7982afcd40ab492d038cf825a42093a58b1e1353e0bd
+  languageName: node
+  linkType: hard
+
+"type-fest@npm:^0.10.0":
+  version: 0.10.0
+  resolution: "type-fest@npm:0.10.0"
+  checksum: 6c079d80dce172b4c182238c46add55e77549b9e2a360f08d291f64c2eb5bc72aa955a10389cd55bac0da9464044c9f7317069c8b9ce7557c18b5007874fd5fb
   languageName: node
   linkType: hard
 
