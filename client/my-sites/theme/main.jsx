@@ -76,7 +76,6 @@ import {
 	getThemeRequestErrors,
 	getThemeForumUrl,
 	getThemeDemoUrl,
-	getThemePreviewThemeOptions,
 	shouldShowTryAndCustomize,
 	isExternallyManagedTheme as getIsExternallyManagedTheme,
 	isSiteEligibleForManagedExternalThemes as getIsSiteEligibleForManagedExternalThemes,
@@ -340,7 +339,8 @@ class ThemeSheet extends Component {
 		this.props.setThemePreviewOptions(
 			this.props.themeId,
 			this.props.defaultOption,
-			this.props.secondaryOption
+			this.props.secondaryOption,
+			this.getSelectedStyleVariation()
 		);
 		return preview.action( this.props.themeId );
 	};
@@ -351,8 +351,14 @@ class ThemeSheet extends Component {
 	}
 
 	shouldRenderUnlockStyleButton() {
-		const { selectedStyleVariationSlug, shouldLimitGlobalStyles, styleVariations } = this.props;
-		return shouldLimitGlobalStyles && styleVariations.length > 0 && !! selectedStyleVariationSlug;
+		const { defaultOption, selectedStyleVariationSlug, shouldLimitGlobalStyles, styleVariations } =
+			this.props;
+		return (
+			shouldLimitGlobalStyles &&
+			defaultOption?.key === 'activate' &&
+			styleVariations.length > 0 &&
+			!! selectedStyleVariationSlug
+		);
 	}
 
 	isThemeCurrentOne() {
@@ -1463,7 +1469,6 @@ export default connect(
 		return {
 			...theme,
 			themeId,
-			themeOptions: getThemePreviewThemeOptions( state ),
 			price: getPremiumThemePrice( state, themeId, siteId ),
 			error,
 			siteId,
