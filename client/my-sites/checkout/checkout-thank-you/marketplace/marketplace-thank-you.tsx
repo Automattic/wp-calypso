@@ -55,7 +55,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 
 	// retrieve WPCom plugin data
 	const wpComPluginsDataResults = useWPCOMPlugins( productSlugs );
-	const wpComPluginsData = wpComPluginsDataResults.map(
+	const wpComPluginsData: Plugin[] = wpComPluginsDataResults.map(
 		( wpComPluginData ) => wpComPluginData.data
 	);
 	const softwareSlugs = wpComPluginsData.map( ( wpComPluginData, i ) =>
@@ -119,7 +119,13 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 					...pluginOnSite,
 					...dotComThemes[ index ],
 					...dotOrgThemes[ index ],
-					product_type: getProductType( dotComThemes, dotOrgThemes, index ),
+					product_type: getProductType(
+						dotComThemes,
+						dotOrgThemes,
+						wpComPluginsData,
+						wporgPlugins,
+						index
+					),
 				} );
 
 				return productsList;
@@ -371,19 +377,31 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 };
 
 /**
- * Returns the type of the product, having 'plugin' as default
+ * Returns the type of the product
  *
  * @param dotComThemes list of WordPress.com themes
  * @param dotOrgThemes list of WordPress.org themes
+ * @param dotComPlugins list of WordPress.com plugins
+ * @param dotOrgPlugins list of WordPress.org plugins
  * @param index current index to search on the list
- * @returns 'theme'| 'plugin' the type of the product
+ * @returns 'theme'| 'plugin' | undefined the type of the product
  */
-function getProductType( dotComThemes: [], dotOrgThemes: [], index: number ): 'theme' | 'plugin' {
+function getProductType(
+	dotComThemes: [],
+	dotOrgThemes: [],
+	dotComPlugins: Array< Plugin >,
+	dotOrgPlugins: Array< Plugin >,
+	index: number
+): 'theme' | 'plugin' | undefined {
 	if ( dotComThemes[ index ] || dotOrgThemes[ index ] ) {
 		return 'theme';
 	}
 
-	return 'plugin';
+	if ( dotComPlugins[ index ] || dotOrgPlugins[ index ]?.fetched ) {
+		return 'plugin';
+	}
+
+	return undefined;
 }
 
 function FooterIcon( { icon }: { icon: string } ) {
