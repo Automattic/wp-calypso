@@ -28,7 +28,7 @@ import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/type
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 import { getPluginsOnSite, isRequesting } from 'calypso/state/plugins/installed/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
-import { areFetched, getPlugins } from 'calypso/state/plugins/wporg/selectors';
+import { areFetched, areFetching, getPlugins } from 'calypso/state/plugins/wporg/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -74,7 +74,12 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 				);
 			} )
 	);
-	const areWporgPluginsFetched = useSelector( ( state ) => areFetched( state, productSlugs ) );
+	const areWporgPluginsFetched: Array< boolean > = useSelector( ( state ) =>
+		areFetched( state, productSlugs )
+	);
+	const areWporgPluginsFetching: Array< boolean > = useSelector( ( state ) =>
+		areFetching( state, productSlugs )
+	);
 	const areAllWporgPluginsFetched = areWporgPluginsFetched.every( Boolean );
 	const isFetchingTransferStatus = useSelector( ( state ) =>
 		isFetchingAutomatedTransferStatus( state, siteId )
@@ -97,9 +102,9 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		return pluginsOnSite.reduce(
 			( pluginsList: Array< any >, pluginOnSite: Plugin, index: number ) => {
 				pluginsList.push( {
+					...pluginOnSite,
 					...wpComPluginsData[ index ],
 					...wporgPlugins[ index ],
-					...pluginOnSite,
 				} );
 
 				return pluginsList;
@@ -131,9 +136,21 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	// retrieve wporg plugin data if not available
 	useEffect( () => {
 		if ( ! areAllWporgPluginsFetched ) {
-			productSlugs.forEach( ( productSlug ) => dispatch( wporgFetchPluginData( productSlug ) ) );
+			areWporgPluginsFetched.forEach( ( isPluginFetched, index ) => {
+				const isPluginFeching = areWporgPluginsFetching[ index ];
+				if ( ! isPluginFetched && ! isPluginFeching ) {
+					dispatch( wporgFetchPluginData( productSlugs[ index ] ) );
+				}
+			} );
 		}
-	}, [ areAllWporgPluginsFetched, productSlugs, dispatch, wporgPlugins ] );
+	}, [
+		areAllWporgPluginsFetched,
+		areWporgPluginsFetched,
+		areWporgPluginsFetching,
+		productSlugs,
+		dispatch,
+		wporgPlugins,
+	] );
 
 	// Site is already Atomic (or just transferred).
 	// Poll the plugin installation status.
