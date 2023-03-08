@@ -128,9 +128,15 @@ module.exports = {
 						'@wordpress/primitives',
 						'@wordpress/url',
 						'@wordpress/warning',
+						'moment',
+						'../moment',
 					].includes( request )
 				) {
 					return;
+				}
+				// moment locales requires moment.js main file, so we need to handle it as an external as well.
+				if ( request === '../moment' ) {
+					request = 'moment';
 				}
 				return defaultRequestToExternal( request );
 			},
