@@ -123,6 +123,19 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 		signupUrl = `/start/account?${ params.toString() }`;
 	}
 
+	/**
+	 *  Include redirects to public.api/connect/?action=verify&service={some service}
+	 *  If the signup is from the Highlander Comments flow, the signup page will be in a popup modal
+	 *  We need to redirect back to public.api/connect/ to do an external login and close modal
+	 *  Ref: PCYsg-Hfw-p2
+	 */
+	if ( includes( redirectTo, 'public.api/connect/?action=verify' ) ) {
+		const params = new URLSearchParams( {
+			redirect_to: redirectTo,
+		} );
+		signupUrl = `/start/account?${ params.toString() }`;
+	}
+
 	return signupUrl;
 }
 
