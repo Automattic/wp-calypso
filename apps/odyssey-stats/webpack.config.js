@@ -172,36 +172,39 @@ module.exports = {
 		// Inline support link only exists in WPCOM header which is already replaced.
 		new webpack.NormalModuleReplacementPlugin(
 			/^calypso\/components\/inline-support-link$/,
-			'lodash/noop'
+			path.resolve( __dirname, 'src/components/nothing' )
 		),
 		// Exclude WPCOM web preview section on post detail page, which doesn't work for Jetpack.
 		new webpack.NormalModuleReplacementPlugin(
 			/^calypso\/components\/web-preview.*$/,
-			'lodash/noop'
+			path.resolve( __dirname, 'src/components/nothing' )
 		),
 		// Exclude irrelevant WPCOM upsell nudge.
-		new webpack.NormalModuleReplacementPlugin( /^calypso\/blocks\/upsell-nudge.*$/, 'lodash/noop' ),
+		new webpack.NormalModuleReplacementPlugin(
+			/^calypso\/blocks\/upsell-nudge.*$/,
+			path.resolve( __dirname, 'src/components/nothing' )
+		),
 		new webpack.NormalModuleReplacementPlugin(
 			/^calypso\/my-sites\/stats\/mini-carousel.*$/,
-			'lodash/noop'
+			path.resolve( __dirname, 'src/components/nothing' )
 		),
 		// Exclude Backup banner.
 		new webpack.NormalModuleReplacementPlugin(
 			/^calypso\/blocks\/jetpack-backup-creds-banner.*$/,
-			'lodash/noop'
+			path.resolve( __dirname, 'src/components/nothing' )
 		),
 		// Exclude several unused queries.
 		new webpack.NormalModuleReplacementPlugin(
 			/^calypso\/components\/data\/query-keyring-connections$/,
-			'lodash/noop'
+			path.resolve( __dirname, 'src/components/nothing' )
 		),
 		new webpack.NormalModuleReplacementPlugin(
 			/^calypso\/components\/data\/query-jetpack-modules$/,
-			'lodash/noop'
+			path.resolve( __dirname, 'src/components/nothing' )
 		),
 		new webpack.NormalModuleReplacementPlugin(
 			/^calypso\/components\/data\/query-site-keyrings$/,
-			'lodash/noop'
+			path.resolve( __dirname, 'src/components/nothing' )
 		),
 		shouldEmitStats &&
 			new BundleAnalyzerPlugin( {
