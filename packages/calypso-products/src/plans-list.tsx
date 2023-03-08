@@ -317,6 +317,8 @@ import {
 	FEATURE_SITE_ACTIVITY_LOG_JP,
 	FEATURE_CLOUD_CRITICAL_CSS,
 	FEATURE_GLOBAL_EDGE_CACHING,
+	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
+	PLAN_WOOEXPRESS_MEDIUM,
 } from './constants';
 import { is2023PricingGridEnabled } from './plans-utilities';
 import type {
@@ -880,6 +882,14 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			andMore: true,
 		},
 	} ),
+} );
+const getPlanWooExpressMediumDetails = (): IncompleteWPcomPlan => ( {
+	...getPlanEcommerceDetails(),
+	getTitle: () => i18n.translate( 'Woo Express Performance' ),
+	getTagline: () =>
+		i18n.translate(
+			'Learn more about everything included with Woo Express Performance and take advantage of its powerful marketplace features.'
+		),
 } );
 
 const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
@@ -2132,6 +2142,26 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductId: () => 1031,
 		getStoreSlug: () => PLAN_ECOMMERCE_2_YEARS,
 		getPathSlug: () => 'ecommerce-2-years',
+	},
+
+	[ PLAN_WOOEXPRESS_MEDIUM_MONTHLY ]: {
+		...getPlanWooExpressMediumDetails(),
+		...getMonthlyTimeframe(),
+		availableFor: ( plan ) => [ PLAN_FREE, PLAN_ECOMMERCE_TRIAL_MONTHLY ].includes( plan ),
+		getProductId: () => 1053,
+		getStoreSlug: () => PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
+		getPathSlug: () => 'wooexpress-medium-monthly',
+	},
+
+	[ PLAN_WOOEXPRESS_MEDIUM ]: {
+		...getPlanWooExpressMediumDetails(),
+		term: TERM_ANNUALLY,
+		getBillingTimeFrame: WPComGetBillingTimeframe,
+		availableFor: ( plan ) =>
+			[ PLAN_FREE, PLAN_WOOEXPRESS_MEDIUM_MONTHLY, PLAN_ECOMMERCE_TRIAL_MONTHLY ].includes( plan ),
+		getProductId: () => 1055,
+		getStoreSlug: () => PLAN_WOOEXPRESS_MEDIUM,
+		getPathSlug: () => 'wooexpress-medium-yearly',
 	},
 
 	// Not a real plan. This is used to show the Enterprise (VIP) offering in
