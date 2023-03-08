@@ -31,7 +31,7 @@ export default function BoostSitePerformance( { boostData, hasBoost }: Props ) {
 				}
 			) }
 		>
-			<div className="site-expanded-content__card-content-container">
+			<div className="site-expanded-content__card-content-container site-expanded-content__boost">
 				<div className="site-expanded-content__card-content">
 					<div className="site-expanded-content__card-content-column">
 						<div

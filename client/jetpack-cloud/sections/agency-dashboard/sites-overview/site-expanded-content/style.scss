@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 $color-green: var(--studio-jetpack-green-40);
 $color-red: var(--studio-red-50);
 $color-orange: var(--studio-orange-20);
@@ -47,6 +50,7 @@ $color-orange: var(--studio-orange-20);
 	margin-block: 16px;
 	display: flex;
 	flex-wrap: wrap;
+
 }
 
 .site-expanded-content__card-content-column {
@@ -207,4 +211,19 @@ button.site-expanded-content__card-button {
 
 .boost-score-bad {
 	color: $color-red;
+}
+
+.site-expanded-content__boost {
+	.site-expanded-content__card-content {
+		display: block;
+		@include break-small {
+			display: flex;
+		}
+	}
+	.site-expanded-content__card-content-column {
+		margin-block-start: 8px;
+		@include break-small {
+			margin-block-start: 0;
+		}
+	}
 }
