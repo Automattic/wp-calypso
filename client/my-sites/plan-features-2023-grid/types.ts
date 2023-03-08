@@ -8,6 +8,7 @@ export type TransformedFeatureObject = FeatureObject & {
 };
 
 export type PlanProperties = {
+	billingPeriod?: number;
 	cartItemForPlan: {
 		product_slug: string;
 	} | null;

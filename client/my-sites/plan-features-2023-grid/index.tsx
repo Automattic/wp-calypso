@@ -534,6 +534,7 @@ export class PlanFeatures2023Grid extends Component<
 				currencyCode,
 				annualPricePerMonth,
 				isMonthlyPlan,
+				billingPeriod,
 			} = properties;
 
 			const classes = classNames(
@@ -552,6 +553,7 @@ export class PlanFeatures2023Grid extends Component<
 						planName={ planName }
 						translate={ translate }
 						billingTimeframe={ planConstantObj.getBillingTimeFrame() }
+						billingPeriod={ billingPeriod }
 					/>
 				</Container>
 			);
@@ -979,6 +981,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 			const planConstantObj = applyTestFiltersToPlansList( plan, undefined );
 			const planProductId = planConstantObj.getProductId();
 			const planObject = getPlan( state, planProductId );
+			const billingPeriod = planObject?.bill_period;
 			const isMonthlyPlan = isMonthly( plan );
 			const showMonthly = ! isMonthlyPlan;
 			const relatedMonthlyPlan = showMonthly
@@ -1100,6 +1103,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 				isMonthlyPlan,
 				tagline,
 				storageOptions,
+				billingPeriod,
 			};
 		} );
 

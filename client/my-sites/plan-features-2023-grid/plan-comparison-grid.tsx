@@ -310,7 +310,6 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( visiblePlansProperties );
-
 	const headerClasses = classNames( 'plan-comparison-grid__header-cell', getPlanClass( planName ), {
 		'popular-plan-parent-class': highlightLabel,
 		'is-last-in-row': isLastInRow,
@@ -320,14 +319,11 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 		'is-only-highlight': highlightAdjacencyMatrix[ planName ]?.isOnlyHighlight,
 		'is-current-plan': current,
 	} );
-
 	const popularBadgeClasses = classNames( {
 		'is-current-plan': current,
 	} );
-
 	const rawPrice = planPropertiesObj.rawPrice;
 	const isLargeCurrency = rawPrice ? rawPrice > 99000 : false;
-
 	const showPlanSelect = ! allVisible && ! current;
 
 	return (
@@ -383,6 +379,7 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 					isMonthlyPlan={ planPropertiesObj.isMonthlyPlan }
 					translate={ translate }
 					billingTimeframe={ planConstantObj.getBillingTimeFrame() }
+					billingPeriod={ planPropertiesObj.billingPeriod }
 				/>
 			</div>
 			<PlanFeatures2023GridActions
@@ -750,6 +747,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 				basePlansPath={ planTypeSelectorProps.basePlansPath }
 				siteSlug={ planTypeSelectorProps.siteSlug }
 				hideDiscountLabel={ true }
+				shouldShowBiannualToggle={ true }
 			/>
 			<Grid isInSignup={ isInSignup }>
 				<PlanComparisonGridHeader

@@ -59,7 +59,7 @@ export interface PricedAPIPlan {
 	path_slug?: PlanPath;
 	product_slug: StorePlanSlug;
 	product_name_short: string;
-	bill_period: -1 | 31 | 365;
+	bill_period: -1 | 31 | 365 | 730;
 	raw_price: number;
 	orig_cost?: number | null;
 	currency_code: string;

@@ -11,6 +11,7 @@ function getPerMonthDescription( {
 	isMonthlyPlan,
 	planName,
 	translate,
+	billingPeriod,
 } ) {
 	if ( isWpComFreePlan( planName ) || isWpcomEnterpriseGridPlan( planName ) ) {
 		return null;
@@ -25,9 +26,17 @@ function getPerMonthDescription( {
 		const annualPriceObj = getCurrencyObject( rawPriceAnnual, currencyCode );
 		const annualPriceText = `${ annualPriceObj?.symbol }${ annualPriceObj?.integer }`;
 
-		return translate( 'per month, %(annualPriceText)s billed annually', {
-			args: { annualPriceText },
-		} );
+		if ( billingPeriod === 365 ) {
+			return translate( 'per month, %(annualPriceText)s billed annually', {
+				args: { annualPriceText },
+			} );
+		}
+
+		if ( billingPeriod === 730 ) {
+			return translate( 'per month, %(annualPriceText)s billed every two years', {
+				args: { annualPriceText },
+			} );
+		}
 	}
 
 	return null;
@@ -55,6 +64,7 @@ const PlanFeatures2023GridBillingTimeframe = ( props ) => {
 PlanFeatures2023GridBillingTimeframe.propTypes = {
 	planName: PropTypes.string,
 	billingTimeframe: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ),
+	billingPeriod: PropTypes.number,
 	translate: PropTypes.func,
 	rawPrice: PropTypes.number,
 	rawPriceAnnual: PropTypes.number,
