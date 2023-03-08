@@ -23,6 +23,10 @@ const selectors = {
 	// Edit File modal
 	editFileModal: '.editor-media-modal__content',
 	editImageButton: 'button:has-text("Edit Image"):visible',
+	editModalDeleteButton: '.editor-media-modal button:has-text("Delete"):visible',
+
+	// Popup confirmation
+	confirmationDeleteButton: '.dialog:has-text("Are you sure") button:has-text("Delete")',
 
 	// Iamge Editor
 	imageEditorCanvas: '.image-editor__canvas-container',
@@ -187,6 +191,17 @@ export class MediaPage {
 	async cancelImageEdit(): Promise< void > {
 		await this.page.click( selectors.imageEditorCancelButton );
 		await this.page.waitForSelector( selectors.editFileModal );
+	}
+
+	/**
+	 * Delete the current selected image from the edit modal. Assumes the modal is open.
+	 */
+	async deleteImageFromModal(): Promise< void > {
+		const modalDeleteButtonLocator = this.page.locator( selectors.editModalDeleteButton );
+		await modalDeleteButtonLocator.click();
+
+		const confirmationDeleteButtonLocator = this.page.locator( selectors.confirmationDeleteButton );
+		await confirmationDeleteButtonLocator.click();
 	}
 
 	/**
