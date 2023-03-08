@@ -47,10 +47,7 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 	const site = useSite();
 	const siteId = site && site?.ID;
 	const isAtomicSite = useSelect(
-		( select ) =>
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore Until createRegistrySelector is typed correctly
-			( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( siteId ),
+		( select ) => siteId && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( siteId ),
 		[ siteId ]
 	);
 	const { requestLatestAtomicTransfer } = useDispatch( SITE_STORE );
@@ -96,16 +93,11 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 		[ siteId ]
 	);
 	const latestAtomicTransfer = useSelect(
-		( select ) =>
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore Until createRegistrySelector is typed correctly
-			( select( SITE_STORE ) as SiteSelect ).getSiteLatestAtomicTransfer( siteId || 0 ),
+		( select ) => ( select( SITE_STORE ) as SiteSelect ).getSiteLatestAtomicTransfer( siteId || 0 ),
 		[ siteId ]
 	);
 	const latestAtomicTransferError = useSelect(
 		( select ) =>
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore Until createRegistrySelector is typed correctly
 			( select( SITE_STORE ) as SiteSelect ).getSiteLatestAtomicTransferError( siteId || 0 ),
 		[ siteId ]
 	);
@@ -126,8 +118,6 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 	const upgradingPlan = productName ? productsList?.[ productName ] : null;
 
 	// Filter the Woop transferring blockers.
-	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	// @ts-ignore Until createRegistrySelector is typed correctly
 	const transferringBlockers = eligibilityHolds?.filter(
 		( hold: TransferEligibilityError ) => ! TRANSFERRING_NOT_BLOCKERS.includes( hold.code )
 	);
@@ -168,8 +158,6 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 	 * Check whether the site transferring is blocked.
 	 * True as default, meaning it's True when requesting data.
 	 */
-	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	// @ts-ignore Until createRegistrySelector is typed correctly
 	const isTransferringBlocked =
 		latestAtomicTransfer && ( ! transferringDataIsAvailable || transferringBlockers?.length > 0 );
 
@@ -178,8 +166,6 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 		isReadyToStart =
 			isReadyToStart &&
 			! isTransferringBlocked && // there is no blockers from eligibility (holds).
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore Until createRegistrySelector is typed correctly
 			! ( eligibilityWarnings && eligibilityWarnings?.length ); // there is no warnings from eligibility (warnings).
 	}
 
@@ -241,8 +227,6 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 			);
 		}
 
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore Until createRegistrySelector is typed correctly
 		if ( warnings?.length ) {
 			return (
 				<WarningsOrHoldsSection>

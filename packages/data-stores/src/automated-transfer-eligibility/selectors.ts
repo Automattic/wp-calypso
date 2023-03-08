@@ -69,8 +69,6 @@ export const getEligibilityWarnings = createRegistrySelector(
 export const getNonSubdomainWarnings = createRegistrySelector(
 	( select: TransferSelectFn ) =>
 		( state: State, siteId: number | null ): TransferEligibilityWarning[] | null => {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore Until createRegistrySelector is typed correctly
 			const eligibilityWarnings = select( STORE_KEY ).getEligibilityWarnings( siteId );
 
 			if ( ! eligibilityWarnings ) {
@@ -86,8 +84,6 @@ export const getNonSubdomainWarnings = createRegistrySelector(
 export const getWpcomSubdomainWarning = createRegistrySelector(
 	( select: TransferSelectFn ) =>
 		( state: State, siteId: number | null ): TransferEligibilityWarning | null => {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore Until createRegistrySelector is typed correctly
 			const eligibilityWarnings = select( STORE_KEY ).getEligibilityWarnings( siteId );
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore Until createRegistrySelector is typed correctly
