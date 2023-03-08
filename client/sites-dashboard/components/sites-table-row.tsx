@@ -131,7 +131,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 								{ site.title }
 							</SiteName>
 							{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
-							{ isStagingSite && <SitesStagingBadge>Staging</SitesStagingBadge> }
+							{ isStagingSite && <SitesStagingBadge>{ __( 'Staging' ) }</SitesStagingBadge> }
 						</ListTileTitle>
 					}
 					subtitle={
