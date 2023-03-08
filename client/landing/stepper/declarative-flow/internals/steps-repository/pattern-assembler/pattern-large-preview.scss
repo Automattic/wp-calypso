@@ -6,9 +6,12 @@
 	height: 100vh;
 	padding: 32px 0;
 	margin-inline-end: 32px;
+	// To hide the shadow when the patterns panel shows
+	// @TODO: Remove the shadow and use a 20px border as in the design
+	margin-inline-start: 10px;
 	margin-top: -60px;
 	box-sizing: border-box;
-	z-index: 2;
+	z-index: 1;
 }
 
 .pattern-large-preview__patterns {

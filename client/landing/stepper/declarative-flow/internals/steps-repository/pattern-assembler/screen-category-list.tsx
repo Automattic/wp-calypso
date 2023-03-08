@@ -24,7 +24,7 @@ interface Props {
 	) => void;
 	replacePatternMode: boolean;
 	selectedPattern: Pattern | null;
-	wrapperRef: React.RefObject< HTMLInputElement >;
+	wrapperRef: React.RefObject< HTMLDivElement > | null;
 }
 
 const ScreenCategoryList = ( {
@@ -119,7 +119,7 @@ const ScreenCategoryList = ( {
 				/>,
 				// Using the pattern-assembler__wrapper as parent
 				// because the panel must slide from behind the sidebar
-				wrapperRef.current as HTMLInputElement
+				wrapperRef?.current as HTMLDivElement
 			) }
 		</div>
 	);
