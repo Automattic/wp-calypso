@@ -22,6 +22,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
+import PromoCard from 'calypso/components/promo-section/promo-card';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import memoizeLast from 'calypso/lib/memoize-last';
 import {
@@ -334,12 +335,7 @@ class StatsSite extends Component {
 				{ ! isOdysseyStats ? null : (
 					<AsyncLoad require="calypso/my-sites/stats/jetpack-upsell-section" />
 				) }
-				<AsyncLoad
-					require="calypso/my-sites/stats/promo-cards"
-					isOdysseyStats={ isOdysseyStats }
-					pageSlug="traffic"
-					slug={ slug }
-				/>
+				<PromoCard isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
 				<JetpackColophon />
 			</div>
 		);
