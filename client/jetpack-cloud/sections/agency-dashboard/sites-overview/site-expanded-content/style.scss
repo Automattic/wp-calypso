@@ -88,20 +88,12 @@ $color-orange: var(--studio-orange-20);
 	}
 }
 
-.is-up,
-.is-free {
+.is-up {
 	@include svg-color($color-green, $color-green, $color-green);
 }
 
-.is-down,
-.is-full {
+.is-down {
 	@include svg-color($color-red, $color-red, $color-red);
-}
-
-.is-free,
-.is-full {
-	position: relative;
-	inset-inline-start: 0.5rem;
 }
 
 .site-expanded-content__card-content-score-title {
