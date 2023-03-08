@@ -23,6 +23,7 @@ const useHeaderPatterns = () => {
 				id: 5608,
 				name: 'Centered header with logo and navigation',
 				category: header,
+				category_slug: 'header',
 			},
 			{
 				id: 5582,
