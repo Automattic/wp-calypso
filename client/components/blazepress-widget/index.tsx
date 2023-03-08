@@ -9,7 +9,6 @@ import { useSelector } from 'react-redux';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
 import BlazeLogo from 'calypso/components/blaze-logo';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { showDSP, usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
 import './style.scss';
 import { useRouteModal } from 'calypso/lib/route-modal';
@@ -37,7 +36,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	const [ isLoading, setIsLoading ] = useState( true );
 	const [ showCancelDialog, setShowCancelDialog ] = useState( false );
 	const [ showCancelButton, setShowCancelButton ] = useState( true );
-	const [ hiddenHeader, setHiddenHeader ] = useState( ! isWpMobileApp() );
+	const [ hiddenHeader, setHiddenHeader ] = useState( true );
 	const widgetContainer = useRef< HTMLDivElement >( null );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate() as BlazePressTranslatable;
