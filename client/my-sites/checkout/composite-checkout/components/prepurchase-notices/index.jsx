@@ -80,7 +80,7 @@ const PrePurchaseNotices = () => {
 		if ( ! planSlugInCart ) {
 			return null;
 		}
-		// console.log( planHasFeature( planSlugInCart, siteHasSocial.productSlug ) );
+
 		const socialProductSlug = isMonthly
 			? JETPACK_SOCIAL_ADVANCED_PRODUCTS.find( ( slug ) => slug.includes( 'monthly' ) )
 			: JETPACK_SOCIAL_ADVANCED_PRODUCTS.find( ( slug ) => ! slug.includes( 'monthly' ) );
