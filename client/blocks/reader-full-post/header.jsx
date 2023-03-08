@@ -1,5 +1,4 @@
 import classNames from 'classnames';
-import { trim } from 'lodash';
 import PropTypes from 'prop-types';
 import TagsList from 'calypso/blocks/reader-post-card/tags-list';
 import AutoDirection from 'calypso/components/auto-direction';
@@ -19,7 +18,7 @@ const ReaderFullPostHeader = ( { post, referralPost } ) => {
 	};
 
 	const classes = { 'reader-full-post__header': true };
-	if ( ! post.title || trim( post.title ).length < 1 ) {
+	if ( ! post.title || post.title?.trim().length < 1 ) {
 		classes[ 'is-missing-title' ] = true;
 	}
 
