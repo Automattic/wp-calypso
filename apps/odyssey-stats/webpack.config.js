@@ -169,9 +169,10 @@ module.exports = {
 			/^calypso\/components\/formatted-header$/,
 			'calypso/components/jetpack/jetpack-header'
 		),
+		// Inline support link only exists in WPCOM header which is already replaced.
 		new webpack.NormalModuleReplacementPlugin(
 			/^calypso\/components\/inline-support-link$/,
-			path.resolve( __dirname, 'src/components/simple-support-link' )
+			'lodash/noop'
 		),
 		// Exclude WPCOM web preview section on post detail page, which doesn't work for Jetpack.
 		new webpack.NormalModuleReplacementPlugin(
@@ -180,7 +181,28 @@ module.exports = {
 		),
 		// Exclude irrelevant WPCOM upsell nudge.
 		new webpack.NormalModuleReplacementPlugin( /^calypso\/blocks\/upsell-nudge.*$/, 'lodash/noop' ),
-
+		new webpack.NormalModuleReplacementPlugin(
+			/^calypso\/my-sites\/stats\/mini-carousel.*$/,
+			'lodash/noop'
+		),
+		// Exclude Backup banner.
+		new webpack.NormalModuleReplacementPlugin(
+			/^calypso\/blocks\/jetpack-backup-creds-banner.*$/,
+			'lodash/noop'
+		),
+		// Exclude several unused queries.
+		new webpack.NormalModuleReplacementPlugin(
+			/^calypso\/components\/data\/query-keyring-connections$/,
+			'lodash/noop'
+		),
+		new webpack.NormalModuleReplacementPlugin(
+			/^calypso\/components\/data\/query-jetpack-modules$/,
+			'lodash/noop'
+		),
+		new webpack.NormalModuleReplacementPlugin(
+			/^calypso\/components\/data\/query-site-keyrings$/,
+			'lodash/noop'
+		),
 		shouldEmitStats &&
 			new BundleAnalyzerPlugin( {
 				analyzerMode: 'server',
