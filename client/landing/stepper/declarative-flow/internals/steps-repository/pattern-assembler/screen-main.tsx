@@ -92,10 +92,8 @@ const ScreenMain = ( { shouldUnlockGlobalStyles, onSelect, onContinueClick }: Pr
 			<div className="screen-container__footer">
 				<span className="screen-container__description">
 					{ shouldUnlockGlobalStyles
-						? translate( 'You’ve selected Premium fonts or colors for your site' )
-						: translate(
-								'Open the editor where you can further customize your homepage as desired'
-						  ) }
+						? translate( 'You’ve selected Premium fonts or colors for your site.' )
+						: translate( 'Click Continue to further customize your site.' ) }
 				</span>
 				<Button className="pattern-assembler__button" onClick={ onContinueClick } primary>
 					{ shouldUnlockGlobalStyles ? translate( 'Unlock this style' ) : translate( 'Continue' ) }
