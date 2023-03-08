@@ -29,6 +29,25 @@ const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
 const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
 const cachePath = path.resolve( '.cache', extraPath );
 
+const excludedPackages = [
+	/^calypso\/components\/inline-support-link$/,
+	/^calypso\/components\/web-preview.*$/,
+	/^calypso\/blocks\/upsell-nudge.*$/,
+	/^calypso\/my-sites\/stats\/mini-carousel.*$/,
+	/^calypso\/blocks\/jetpack-backup-creds-banner.*$/,
+	/^calypso\/components\/data\/query-keyring-connections$/,
+	/^calypso\/components\/data\/query-jetpack-modules$/,
+	/^calypso\/components\/data\/query-site-keyrings$/,
+];
+
+const excludedPackagePlugins = excludedPackages.map(
+	( package ) =>
+		new webpack.NormalModuleReplacementPlugin(
+			package,
+			path.resolve( __dirname, 'src/components/nothing' )
+		)
+);
+
 module.exports = {
 	bail: ! isDevelopment,
 	entry: path.join( __dirname, 'src', 'app' ),
@@ -169,43 +188,7 @@ module.exports = {
 			/^calypso\/components\/formatted-header$/,
 			'calypso/components/jetpack/jetpack-header'
 		),
-		// Inline support link only exists in WPCOM header which is already replaced.
-		new webpack.NormalModuleReplacementPlugin(
-			/^calypso\/components\/inline-support-link$/,
-			path.resolve( __dirname, 'src/components/nothing' )
-		),
-		// Exclude WPCOM web preview section on post detail page, which doesn't work for Jetpack.
-		new webpack.NormalModuleReplacementPlugin(
-			/^calypso\/components\/web-preview.*$/,
-			path.resolve( __dirname, 'src/components/nothing' )
-		),
-		// Exclude irrelevant WPCOM upsell nudge.
-		new webpack.NormalModuleReplacementPlugin(
-			/^calypso\/blocks\/upsell-nudge.*$/,
-			path.resolve( __dirname, 'src/components/nothing' )
-		),
-		new webpack.NormalModuleReplacementPlugin(
-			/^calypso\/my-sites\/stats\/mini-carousel.*$/,
-			path.resolve( __dirname, 'src/components/nothing' )
-		),
-		// Exclude Backup banner.
-		new webpack.NormalModuleReplacementPlugin(
-			/^calypso\/blocks\/jetpack-backup-creds-banner.*$/,
-			path.resolve( __dirname, 'src/components/nothing' )
-		),
-		// Exclude several unused queries.
-		new webpack.NormalModuleReplacementPlugin(
-			/^calypso\/components\/data\/query-keyring-connections$/,
-			path.resolve( __dirname, 'src/components/nothing' )
-		),
-		new webpack.NormalModuleReplacementPlugin(
-			/^calypso\/components\/data\/query-jetpack-modules$/,
-			path.resolve( __dirname, 'src/components/nothing' )
-		),
-		new webpack.NormalModuleReplacementPlugin(
-			/^calypso\/components\/data\/query-site-keyrings$/,
-			path.resolve( __dirname, 'src/components/nothing' )
-		),
+		...excludedPackagePlugins,
 		shouldEmitStats &&
 			new BundleAnalyzerPlugin( {
 				analyzerMode: 'server',
