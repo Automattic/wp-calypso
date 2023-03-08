@@ -19,7 +19,7 @@
 			max-width: 30px;
 
 			svg {
-				fill: #2c3338;
+				fill: var(--studio-gray-80);
 
 				&:hover {
 					transform: scale(1.05);
