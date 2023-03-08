@@ -1,8 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Button, Popover } from '@automattic/components';
-import { Icon, plus, header, footer, group } from '@wordpress/icons';
+import { Button } from '@automattic/components';
+import { Icon, header, footer, group } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useRef } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import PatternActionBar from './pattern-action-bar';
 import type { Pattern } from './types';
@@ -44,8 +43,6 @@ const PatternLayout = ( {
 	onDeleteFooter = noop,
 }: PatternLayoutProps ) => {
 	const translate = useTranslate();
-	const [ isPopoverVisible, setIsPopoverVisible ] = useState( false );
-	const addButtonContainerRef = useRef< HTMLDivElement | null >( null );
 	const isSidebarRevampEnabled = isEnabled( 'pattern-assembler/sidebar-revamp' );
 
 	if ( ! isSidebarRevampEnabled ) {
@@ -173,25 +170,10 @@ const PatternLayout = ( {
 					) }
 				</AsyncLoad>
 			) }
-			<div
-				className="pattern-layout__add-button-container"
-				ref={ addButtonContainerRef }
-				onMouseEnter={ () => setIsPopoverVisible( true ) }
-				onMouseLeave={ () => setIsPopoverVisible( false ) }
-			>
-				<Button className="pattern-layout__add-button" onClick={ () => onAddSection() }>
-					<Icon icon={ plus } size={ 32 } />
-				</Button>
-				<Popover
-					className="pattern-layout__add-button-popover"
-					context={ addButtonContainerRef.current }
-					isVisible={ isPopoverVisible }
-					position="right"
-					focusOnShow
-				>
-					{ translate( 'Add your next pattern' ) }
-				</Popover>
-			</div>
+			<Button className="pattern-layout__add-button" onClick={ () => onAddSection() }>
+				<span className="pattern-layout__add-button-icon">+</span>
+				{ translate( 'Add patterns' ) }
+			</Button>
 		</div>
 	);
 };

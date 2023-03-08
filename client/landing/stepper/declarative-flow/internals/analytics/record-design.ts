@@ -44,6 +44,7 @@ export function recordSelectedDesign( {
 		recordTracksEvent( 'calypso_signup_select_design', {
 			...getDesignEventProps( { flow, intent, design, styleVariation } ),
 			...getDesignTypeProps( design ),
+			...getVirtualDesignProps( design, styleVariation ),
 			...optionalProps,
 		} );
 
@@ -101,9 +102,19 @@ export function getVirtualDesignProps( design: Design, styleVariation?: StyleVar
 		variationSlugSuffix = `-${ design.preselected_style_variation.slug }`;
 	}
 
+	/**
+	 * If the design is virtual, and it has a recipe with pattern_ids,
+	 * then we assume that it's a pattern based virtual theme.
+	 */
+	const virtual_theme_pattern =
+		design.is_virtual && design.recipe?.pattern_ids?.length
+			? design.recipe?.pattern_ids[ 0 ]
+			: null;
+
 	return {
 		slug: design.slug + variationSlugSuffix,
 		is_virtual: design.is_virtual,
 		is_style_variation: is_style_variation,
+		virtual_theme_pattern,
 	};
 }

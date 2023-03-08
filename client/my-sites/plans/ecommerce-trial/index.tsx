@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import {
 	getPlans,
 	plansLink,
@@ -12,6 +13,7 @@ import { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import SegmentedControl from 'calypso/components/segmented-control';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
+import { getECommerceTrialCheckoutUrl } from 'calypso/lib/ecommerce-trial/get-ecommerce-trial-checkout-url';
 import { getPlanRawPrice, getPlan } from 'calypso/state/plans/selectors';
 import { getECommerceFeatureSets } from './ecommerce-features';
 import ECommerceTrialBanner from './ecommerce-trial-banner';
@@ -47,11 +49,21 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 		( 1 - eCommercePlanPrices.annualPlanMonthlyPrice / eCommercePlanPrices.monthlyPlanPrice ) * 100
 	);
 
-	const redirectToCheckoutForPlan = useCallback( () => {
-		const checkoutUrl = `/checkout/${ siteSlug }/${ targetECommercePlan.getStoreSlug() }`;
+	const redirectToCheckoutForPlan = useCallback(
+		( tracksLocation: string ) => {
+			recordTracksEvent( 'calypso_wooexpress_plans_page_upgrade_cta_clicked', {
+				location: tracksLocation,
+			} );
 
-		page.redirect( checkoutUrl );
-	}, [ siteSlug, targetECommercePlan ] );
+			const checkoutUrl = getECommerceTrialCheckoutUrl( {
+				productSlug: targetECommercePlan.getStoreSlug(),
+				siteSlug,
+			} );
+
+			page.redirect( checkoutUrl );
+		},
+		[ siteSlug, targetECommercePlan ]
+	);
 
 	const eCommercePlanFeatureSets = useMemo( () => {
 		return getECommerceFeatureSets( { translate } );
@@ -156,7 +168,7 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 					<Button
 						className="e-commerce-trial-plans__price-card-cta"
 						primary
-						onClick={ redirectToCheckoutForPlan }
+						onClick={ () => redirectToCheckoutForPlan( 'main-price-card' ) }
 					>
 						{ translate( 'Upgrade now' ) }
 					</Button>
@@ -171,7 +183,7 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 			<div className="e-commerce-trial-plans__cta-wrapper">
 				<Button
 					className="e-commerce-trial-plans__cta is-primary"
-					onClick={ redirectToCheckoutForPlan }
+					onClick={ () => redirectToCheckoutForPlan( 'footer' ) }
 				>
 					{ translate( 'Upgrade now' ) }
 				</Button>
