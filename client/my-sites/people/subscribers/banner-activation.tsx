@@ -3,6 +3,7 @@ import { Notice } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import useBannerDismissReducer from 'calypso/my-sites/people/subscribers/hooks/use-banner-dismiss-reducer';
 import useSubscriptionBanner from 'calypso/my-sites/people/subscribers/hooks/use-subscription-banner';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
@@ -18,6 +19,12 @@ export default function BannerActivation() {
 
 	function onEnableSubscriptionsModule() {
 		dispatch( activateModule( site?.ID, 'subscriptions' ) );
+		recordTracksEvent( 'calypso_subscriptions_module_enable' );
+	}
+
+	function onNoticeDismiss() {
+		bannerDispatch( { type: 'dismiss', payload: true } );
+		recordTracksEvent( 'calypso_subscriptions_banner_dismiss' );
 	}
 
 	return (
@@ -27,7 +34,7 @@ export default function BannerActivation() {
 				<Card className="people-subscription-banner">
 					<Notice
 						status="info"
-						onRemove={ () => bannerDispatch( { type: 'dismiss', payload: true } ) }
+						onRemove={ onNoticeDismiss }
 						actions={ [
 							{
 								label: translate( 'Enable' ),
