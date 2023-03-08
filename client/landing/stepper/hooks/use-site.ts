@@ -17,7 +17,7 @@ export function useSite() {
 			( select( SITE_STORE ) as SiteSelect ).getSite(
 				( siteId ?? siteIdParam ) as string | number
 			),
-		[]
+		[ siteId ]
 	);
 
 	if ( ( siteSlug || siteIdParam ) && site ) {
