@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isFreePlanProduct } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
+import { globe, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
 import { useCallback } from 'react';
@@ -54,7 +55,7 @@ const DomainUpsellCallout = ( { trackEvent } ) => {
 			<div className="domain-upsell-callout">
 				<div className="domain-upsell-callout__content">
 					<div className="domain-upsell-callout__content-text">
-						<Gridicon icon="globe" size={ 16 } className="domain-upsell-callout__icon" />
+						<Icon icon={ globe } size={ 16 } />
 						<span className="domain-upsell-callout__domain-name">{ site.domain }</span>
 						<button className="domain-upsell-callout__button" onClick={ getCtaClickHandler }>
 							<span className="domain-upsell-callout__button-text-desktop">

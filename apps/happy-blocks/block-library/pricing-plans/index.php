@@ -113,8 +113,8 @@ function happyblocks_pricing_plans_normalize_translations_filepath( $file, $hand
 	}
 	// Fix the filepath to use the correct location for the translation file.
 	if ( 'happy-blocks' === $domain ) {
-		$old_path = WP_LANG_DIR . 'happy-blocks';
-		$new_path = WP_LANG_DIR . 'a8c-plugins/happy-blocks';
+		$old_path = WP_LANG_DIR . '/happy-blocks';
+		$new_path = WP_LANG_DIR . '/a8c-plugins/happy-blocks';
 		$file     = str_replace( $old_path, $new_path, $file );
 	}
 	return $file;

@@ -28,7 +28,7 @@ import formatCurrency from '@automattic/format-currency';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
-import { localize, LocalizeProps, TranslateResult } from 'i18n-calypso';
+import { localize, LocalizeProps, TranslateResult, useTranslate } from 'i18n-calypso';
 import { last } from 'lodash';
 import page from 'page';
 import { Component, createRef } from 'react';
@@ -88,12 +88,13 @@ import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
 import PopularBadge from './components/popular-badge';
 import PlanFeatures2023GridFeatures from './features';
 import PlanFeatures2023GridHeaderPrice from './header-price';
+import useHighlightAdjacencyMatrix from './hooks/use-highlight-adjacency-matrix';
+import useHighlightLabel from './hooks/use-highlight-label';
 import { PlanFeaturesItem } from './item';
 import { PlanComparisonGrid } from './plan-comparison-grid';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import { PlanProperties, TransformedFeatureObject } from './types';
 import { getStorageStringFromFeature } from './util';
-
 import './style.scss';
 
 type PlanRowOptions = {
@@ -171,6 +172,77 @@ const ServiceLogo = ( props: ServiceLogoProps ) => (
 		</Plans2023Tooltip>
 	</div>
 );
+
+const PlanLogo: React.FunctionComponent< {
+	planPropertiesObj: PlanProperties[];
+	planIndex: number;
+	planProperties: PlanProperties;
+	isMobile?: boolean;
+	isInSignup: boolean;
+} > = ( { planPropertiesObj, planProperties, planIndex, isMobile, isInSignup } ) => {
+	const { planName, current } = planProperties;
+	const translate = useTranslate();
+	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( planPropertiesObj );
+	const highlightLabel = useHighlightLabel( planName );
+	const headerClasses = classNames(
+		'plan-features-2023-grid__header-logo',
+		getPlanClass( planName )
+	);
+	const tableItemClasses = classNames( 'plan-features-2023-grid__table-item', {
+		'popular-plan-parent-class': highlightLabel,
+		'is-left-of-highlight': highlightAdjacencyMatrix[ planName ]?.leftOfHighlight,
+		'is-right-of-highlight': highlightAdjacencyMatrix[ planName ]?.rightOfHighlight,
+		'is-only-highlight': highlightAdjacencyMatrix[ planName ]?.isOnlyHighlight,
+		'is-current-plan': current,
+		'is-first-in-row': planIndex === 0,
+		'is-last-in-row': planIndex === planPropertiesObj.length - 1,
+	} );
+	const popularBadgeClasses = classNames( {
+		'with-plan-logo': ! (
+			isFreePlan( planName ) ||
+			isPersonalPlan( planName ) ||
+			isPremiumPlan( planName )
+		),
+		'is-current-plan': current,
+	} );
+
+	return (
+		<Container key={ planName } className={ tableItemClasses } isMobile={ isMobile }>
+			<PopularBadge
+				isInSignup={ isInSignup }
+				planName={ planName }
+				additionalClassName={ popularBadgeClasses }
+			/>
+			<header className={ headerClasses }>
+				{ isBusinessPlan( planName ) && (
+					<ServiceLogo
+						hoverText={ translate(
+							'WP Cloud gives you the tools you need to add scalable, highly available, extremely fast WordPress hosting.'
+						) }
+						imgSrc={ cloudLogo }
+						imgAlt="WP Cloud logo"
+					/>
+				) }
+				{ isEcommercePlan( planName ) && (
+					<ServiceLogo
+						hoverText={ translate(
+							'Make your online store a reality with the power of WooCommerce.'
+						) }
+						imgSrc={ wooLogo }
+						imgAlt="WooCommerce logo"
+					/>
+				) }
+				{ isWpcomEnterpriseGridPlan( planName ) && (
+					<ServiceLogo
+						hoverText={ translate( 'The trusted choice for enterprise WordPress hosting.' ) }
+						imgSrc={ vipLogo }
+						imgAlt="WPVIP logo"
+					/>
+				) }
+			</header>
+		</Container>
+	);
+};
 
 export class PlanFeatures2023Grid extends Component<
 	PlanFeatures2023GridType,
@@ -487,61 +559,18 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanLogos( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { isInSignup, translate } = this.props;
+		const { isInSignup } = this.props;
 
-		return planPropertiesObj.map( ( properties ) => {
-			const { planName } = properties;
-			const headerClasses = classNames(
-				'plan-features-2023-grid__header-logo',
-				getPlanClass( planName )
-			);
-			const tableItemClasses = classNames( 'plan-features-2023-grid__table-item', {
-				'popular-plan-parent-class': isBusinessPlan( planName ) || isPremiumPlan( planName ),
-			} );
-
-			const popularBadgeClasses = classNames( {
-				'with-plan-logo': ! (
-					isFreePlan( planName ) ||
-					isPersonalPlan( planName ) ||
-					isPremiumPlan( planName )
-				),
-			} );
-
+		return planPropertiesObj.map( ( properties, index ) => {
 			return (
-				<Container key={ planName } className={ tableItemClasses } isMobile={ options?.isMobile }>
-					<PopularBadge
-						isInSignup={ isInSignup }
-						planName={ planName }
-						additionalClassName={ popularBadgeClasses }
-					/>
-					<header className={ headerClasses }>
-						{ isBusinessPlan( planName ) && (
-							<ServiceLogo
-								hoverText={ translate(
-									'WP Cloud gives you the tools you need to add scalable, highly available, extremely fast WordPress hosting.'
-								) }
-								imgSrc={ cloudLogo }
-								imgAlt="WP Cloud logo"
-							/>
-						) }
-						{ isEcommercePlan( planName ) && (
-							<ServiceLogo
-								hoverText={ translate(
-									'Make your online store a reality with the power of WooCommerce.'
-								) }
-								imgSrc={ wooLogo }
-								imgAlt="WooCommerce logo"
-							/>
-						) }
-						{ isWpcomEnterpriseGridPlan( planName ) && (
-							<ServiceLogo
-								hoverText={ translate( 'The trusted choice for enterprise WordPress hosting.' ) }
-								imgSrc={ vipLogo }
-								imgAlt="WPVIP logo"
-							/>
-						) }
-					</header>
-				</Container>
+				<PlanLogo
+					key={ properties.planName }
+					planIndex={ index }
+					planPropertiesObj={ planPropertiesObj }
+					planProperties={ properties }
+					isMobile={ options?.isMobile }
+					isInSignup={ isInSignup }
+				/>
 			);
 		} );
 	}

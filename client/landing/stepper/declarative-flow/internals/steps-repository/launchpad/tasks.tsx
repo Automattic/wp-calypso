@@ -71,18 +71,6 @@ export const tasks: Task[] = [
 		disabled: true,
 	},
 	{
-		id: 'sensei_setup',
-		completed: true,
-		taskType: 'blog',
-		disabled: true,
-	},
-	{
-		id: 'sensei_publish_first_course',
-		completed: false,
-		taskType: 'blog',
-		disabled: false,
-	},
-	{
 		id: 'setup_free',
 		completed: true,
 		disabled: false,
@@ -156,5 +144,4 @@ export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 		'site_launched',
 	],
 	videopress: [ 'videopress_setup', 'plan_selected', 'videopress_upload', 'videopress_launched' ],
-	sensei: [ 'sensei_setup', 'plan_selected', 'sensei_publish_first_course' ],
 };

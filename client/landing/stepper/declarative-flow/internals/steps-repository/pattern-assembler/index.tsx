@@ -11,7 +11,9 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useMemo } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
+import { createRecordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
@@ -19,6 +21,7 @@ import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign } from '../../analytics/record-design';
 import { SITE_TAGLINE, PLACEHOLDER_SITE_ID } from './constants';
+import useGlobalStylesUpgradeModal from './hooks/use-global-styles-upgrade-modal';
 import NavigatorListener from './navigator-listener';
 import PatternAssemblerContainer from './pattern-assembler-container';
 import PatternLargePreview from './pattern-large-preview';
@@ -62,19 +65,32 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 	const stylesheet = selectedDesign?.recipe?.stylesheet || '';
 
 	const isSidebarRevampEnabled = isEnabled( 'pattern-assembler/sidebar-revamp' );
-
-	const commonEventProps = {
-		flow,
-		step: stepName,
-		intent,
-	};
-
 	const isEnabledColorAndFonts = isEnabled( 'pattern-assembler/color-and-fonts' );
 
 	const [ selectedColorPaletteVariation, setSelectedColorPaletteVariation ] =
 		useState< GlobalStylesObject | null >( null );
 	const [ selectedFontPairingVariation, setSelectedFontPairingVariation ] =
 		useState< GlobalStylesObject | null >( null );
+
+	const recordTracksEvent = useMemo(
+		() =>
+			createRecordTracksEvent( {
+				flow,
+				step: stepName,
+				intent,
+				stylesheet,
+				color_style_title: selectedColorPaletteVariation?.title,
+				font_style_title: selectedFontPairingVariation?.title,
+			} ),
+		[
+			flow,
+			stepName,
+			intent,
+			stylesheet,
+			selectedColorPaletteVariation,
+			selectedFontPairingVariation,
+		]
+	);
 
 	const selectedVariations = useMemo(
 		() =>
@@ -83,6 +99,9 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 			) as GlobalStylesObject[],
 		[ selectedColorPaletteVariation, selectedFontPairingVariation ]
 	);
+
+	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles();
+	const shouldUnlockGlobalStyles = shouldLimitGlobalStyles && selectedVariations.length > 0;
 
 	const syncedGlobalStylesUserConfig = useSyncGlobalStylesUserConfig(
 		selectedVariations,
@@ -112,7 +131,6 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 
 	const trackEventPatternAdd = ( patternType: string ) => {
 		recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_add_click', {
-			...commonEventProps,
 			pattern_type: patternType,
 		} );
 	};
@@ -127,7 +145,6 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 		patternName: string;
 	} ) => {
 		recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_select_click', {
-			...commonEventProps,
 			pattern_type: patternType,
 			pattern_id: patternId,
 			pattern_name: patternName,
@@ -137,7 +154,6 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 	const trackEventContinue = () => {
 		const patterns = getPatterns();
 		recordTracksEvent( 'calypso_signup_pattern_assembler_continue_click', {
-			...commonEventProps,
 			pattern_types: [ header && 'header', sections.length && 'section', footer && 'footer' ]
 				.filter( Boolean )
 				.join( ',' ),
@@ -147,7 +163,6 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 		} );
 		patterns.forEach( ( { id, name, category_slug } ) => {
 			recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_final_select', {
-				...commonEventProps,
 				pattern_id: id,
 				pattern_name: name,
 				pattern_category: category_slug,
@@ -261,7 +276,6 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 	const onBack = () => {
 		const patterns = getPatterns();
 		recordTracksEvent( 'calypso_signup_pattern_assembler_back_click', {
-			...commonEventProps,
 			has_selected_patterns: patterns.length > 0,
 			pattern_count: patterns.length,
 		} );
@@ -270,13 +284,12 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 	};
 
 	const onSubmit = () => {
+		const design = getDesign();
+		const theme = stylesheet?.split( '/' )[ 1 ] || design.theme;
+
 		if ( ! siteSlugOrId ) {
 			return;
 		}
-
-		const design = getDesign();
-		const stylesheet = design.recipe!.stylesheet!;
-		const theme = stylesheet?.split( '/' )[ 1 ] || design.theme;
 
 		setPendingAction( () =>
 			// We have to switch theme first. Otherwise, the unique suffix might append to
@@ -310,9 +323,14 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 		submit?.();
 	};
 
+	const { openModal: openGlobalStylesUpgradeModal, ...globalStylesUpgradeModalProps } =
+		useGlobalStylesUpgradeModal( {
+			onSubmit,
+			recordTracksEvent,
+		} );
+
 	const onPatternSelectorBack = ( type: string ) => {
 		recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_select_back_click', {
-			...commonEventProps,
 			pattern_type: type,
 		} );
 	};
@@ -320,7 +338,6 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 	const onDoneClick = ( type: string ) => {
 		const patterns = getPatterns( type );
 		recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_select_done_click', {
-			...commonEventProps,
 			pattern_type: type,
 			pattern_ids: patterns.map( ( { id } ) => id ).join( ',' ),
 			pattern_names: patterns.map( ( { name } ) => name ).join( ',' ),
@@ -329,6 +346,12 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 
 	const onContinueClick = () => {
 		trackEventContinue();
+
+		if ( shouldLimitGlobalStyles && selectedVariations.length > 0 ) {
+			openGlobalStylesUpgradeModal();
+			return;
+		}
+
 		onSubmit();
 	};
 
@@ -341,10 +364,7 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 			trackEventPatternAdd( 'section' );
 		}
 
-		recordTracksEvent( 'calypso_signup_pattern_assembler_main_item_select', {
-			...commonEventProps,
-			name,
-		} );
+		recordTracksEvent( 'calypso_signup_pattern_assembler_main_item_select', { name } );
 	};
 
 	const onAddSection = () => {
@@ -373,7 +393,11 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 			<NavigatorProvider className="pattern-assembler__sidebar" initialPath="/">
 				<NavigatorScreen path="/">
 					{ isEnabled( 'pattern-assembler/sidebar-revamp' ) ? (
-						<ScreenMain onSelect={ onMainItemSelect } onContinueClick={ onContinueClick } />
+						<ScreenMain
+							shouldUnlockGlobalStyles={ shouldUnlockGlobalStyles }
+							onSelect={ onMainItemSelect }
+							onContinueClick={ onContinueClick }
+						/>
 					) : (
 						<ScreenMainDeprecated
 							sections={ sections }
@@ -414,7 +438,6 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 				<NavigatorScreen path="/homepage">
 					<ScreenHomepage
 						patterns={ sections }
-						onDoneClick={ () => onDoneClick( 'section' ) }
 						onAddSection={ onAddSection }
 						onReplaceSection={ onReplaceSection }
 						onDeleteSection={ onDeleteSection }
@@ -471,6 +494,7 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 				footer={ footer }
 				activePosition={ activePosition }
 			/>
+			<PremiumGlobalStylesUpgradeModal { ...globalStylesUpgradeModalProps } />
 		</div>
 	);
 

@@ -118,7 +118,7 @@ export const getCampaignOverallSpending = (
 			? budget_cents * campaignDays
 			: spent_budget_cents;
 
-	const totalBudgetUsed = spentBudgetCents / 100;
+	const totalBudgetUsed = ( spentBudgetCents / 100 ).toFixed( 2 );
 	let daysRun = moment().diff( moment( start_date ), 'days' );
 	daysRun = daysRun > campaignDays ? campaignDays : daysRun;
 
@@ -145,11 +145,16 @@ export const getCampaignClickthroughRate = ( clicks_total: number, impressions_t
 export const getCampaignDurationFormatted = ( start_date: string, end_date: string ) => {
 	const campaignDays = getCampaignDurationDays( start_date, end_date );
 
-	const dateStartFormatted = moment.utc( start_date ).format( 'MMM D' );
-	const dateEndFormatted = moment.utc( end_date ).format( 'MMM D' );
-	const durationFormatted = `${ dateStartFormatted } - ${ dateEndFormatted } (${ campaignDays } ${ __(
-		'days'
-	) })`;
+	let durationFormatted;
+	if ( campaignDays === 0 ) {
+		durationFormatted = '-';
+	} else {
+		const dateStartFormatted = moment.utc( start_date ).format( 'MMM D' );
+		const dateEndFormatted = moment.utc( end_date ).format( 'MMM D' );
+		durationFormatted = `${ dateStartFormatted } - ${ dateEndFormatted } (${ campaignDays } ${ __(
+			'days'
+		) })`;
+	}
 
 	return durationFormatted;
 };
@@ -161,6 +166,7 @@ export const getCampaignBudgetData = (
 	spent_budget_cents: number
 ) => {
 	const campaignDays = getCampaignDurationDays( start_date, end_date );
+
 	const spentBudgetCents =
 		spent_budget_cents > budget_cents * campaignDays
 			? budget_cents * campaignDays
@@ -173,6 +179,7 @@ export const getCampaignBudgetData = (
 		totalBudget,
 		totalBudgetUsed,
 		totalBudgetLeft,
+		campaignDays,
 	};
 };
 
