@@ -169,6 +169,10 @@ module.exports = {
 			/^calypso\/components\/formatted-header$/,
 			'calypso/components/jetpack/jetpack-header'
 		),
+		new webpack.NormalModuleReplacementPlugin(
+			/^calypso\/components\/inline-support-link$/,
+			path.resolve( __dirname, 'src/components/simple-support-link' )
+		),
 		// Exclude WPCOM web preview section on post detail page, which doesn't work for Jetpack.
 		new webpack.NormalModuleReplacementPlugin(
 			/^calypso\/components\/web-preview.*$/,
