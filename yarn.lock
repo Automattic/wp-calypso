@@ -8196,17 +8196,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wordpress/base-styles@npm:4.13.0":
+  version: 4.13.0
+  resolution: "@wordpress/base-styles@npm:4.13.0"
+  checksum: aa7b28362d159c0b343273c9789ddd10946b3313c3c274937e0ecaa17a3514f2fa9a531ee2fb8a695c026b5f6263c8df58cf27a8d754dcca0060d72aaa6df4b0
+  languageName: node
+  linkType: hard
+
 "@wordpress/base-styles@npm:4.5.0":
   version: 4.5.0
   resolution: "@wordpress/base-styles@npm:4.5.0"
   checksum: 3553d08575c4b4bb116363610403bb1b3f3335e50fbb857c3d0c47eb47ff64d84be5c8edcc295c59b0f2fcfb9ed6414289ee97a22cc017fa8b8ae75f30edc427
-  languageName: node
-  linkType: hard
-
-"@wordpress/base-styles@npm:^4.13.0, @wordpress/base-styles@npm:^4.18.0":
-  version: 4.18.0
-  resolution: "@wordpress/base-styles@npm:4.18.0"
-  checksum: 33639a0ddb45f6baaad724dff022629432d5b6a36554e444709e98b1107ef1fb7b64c1204f864eb3df47ee09e9ea02f06718d6d42f140e1db42a45e103297daf
   languageName: node
   linkType: hard
 
