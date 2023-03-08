@@ -11,7 +11,7 @@ import {
 } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
-import { useViewportMatch } from '@wordpress/compose';
+import { useViewportMatch, useMediaQuery } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { ReactChild, useRef, useState, useEffect } from 'react';
@@ -70,6 +70,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const locale = useLocale();
 
 	const isMobile = ! useViewportMatch( 'small' );
+	const isXLargeScreen = useMediaQuery( '(min-width: 1080px)' );
 
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 
@@ -604,7 +605,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			vertical_id: selectedDesign.verticalizable ? siteVerticalId : undefined,
 		} );
 
-		const hasMoreInfo = selectedDesignHasStyleVariations || selectedDesign.is_virtual;
+		const hasMoreInfo =
+			selectedDesignHasStyleVariations || ( selectedDesign.is_virtual && isXLargeScreen );
 
 		const pickDesignText =
 			selectedDesign.design_type === 'vertical' || hasMoreInfo
@@ -624,7 +626,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			<PatternAssemblerCta
 				hasPrimaryButton={ false }
 				onButtonClick={ () => pickBlankCanvasDesign( selectedDesign, true ) }
-				showSiteEditorFallback={ false }
+				showEditorFallback={ false }
 				compact={ true }
 			/>
 		);
