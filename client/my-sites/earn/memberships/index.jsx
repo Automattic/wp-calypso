@@ -697,7 +697,7 @@ class MembershipsSection extends Component {
 
 		return (
 			<div>
-				<QueryMembershipsSettings siteId={ this.props.siteId } />
+				<QueryMembershipsSettings siteId={ this.props.siteId } source={ this.props.source } />
 				{ this.props.connectedAccountId && this.renderStripeConnected() }
 				{ this.props.connectUrl && ! this.props.connectedAccountId && this.renderConnectStripe() }
 			</div>
@@ -729,6 +729,7 @@ const mapStateToProps = ( state ) => {
 			siteHasFeature( state, siteId, FEATURE_DONATIONS ) ||
 			siteHasFeature( state, siteId, FEATURE_RECURRING_PAYMENTS ),
 		isJetpack: isJetpackSite( state, siteId ),
+		source: window.location.hash === '#add-newsletter-payment-plan' ? 'earn-newsletter' : 'calypso',
 	};
 };
 
