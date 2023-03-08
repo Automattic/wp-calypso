@@ -515,7 +515,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 	}
 
 	function* applyThemeWithPatterns( siteSlug: string, design: Design, globalStyles: GlobalStyles ) {
-		const stylesheet = design.recipe!.stylesheet!;
+		const stylesheet = design?.recipe?.stylesheet || '';
 		const theme = stylesheet?.split( '/' )[ 1 ] || design.theme;
 
 		// We have to switch theme first. Otherwise, the unique suffix might append to
