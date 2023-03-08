@@ -55,7 +55,7 @@ export function useStarterDesignsQuery(
 	queryParams: StarterDesignsQueryParams,
 	{ select, shouldLimitGlobalStyles, ...queryOptions }: Options = {}
 ): UseQueryResult< StarterDesigns > {
-	return useQuery( [ 'starter-designs-7', queryParams ], () => fetchStarterDesigns( queryParams ), {
+	return useQuery( [ 'starter-designs', queryParams ], () => fetchStarterDesigns( queryParams ), {
 		select: ( response: StarterDesignsResponse ) => {
 			const allDesigns = {
 				generated: {
