@@ -47,7 +47,7 @@ function DropdownIcon() {
 }
 
 const JetpackIconContainer = styled.div`
-	padding-left: 6px;
+	padding-inline-start: 6px;
 	display: inline-block;
 	vertical-align: middle;
 	line-height: 1;
@@ -80,7 +80,7 @@ const Title = styled.div< { isHiddenInMobile?: boolean } >`
 	}
 
 	${ plansBreakSmall( css`
-		padding-left: 0;
+		padding-inline-start: 0;
 		border: none;
 		padding: 0;
 
@@ -143,8 +143,8 @@ const TitleRow = styled( Row )`
 	` ) }
 `;
 
-const Cell = styled.div< { textAlign?: string } >`
-	text-align: ${ ( props ) => props.textAlign ?? 'left' };
+const Cell = styled.div< { textAlign?: 'start' | 'center' | 'end' } >`
+	text-align: ${ ( props ) => props.textAlign ?? 'start' };
 	display: flex;
 	flex: 1;
 	justify-content: space-between;
@@ -182,10 +182,10 @@ const Cell = styled.div< { textAlign?: string } >`
 		border-right: none;
 
 		&:first-of-type {
-			padding-left: 0;
+			padding-inline-start: 0;
 		}
 		&:last-of-type {
-			padding-right: 0;
+			padding-inline-end: 0;
 			border-right: none;
 		}
 	` ) }
@@ -206,7 +206,7 @@ const PlanSelector = styled.header`
 
 	.plan-comparison-grid__title {
 		.gridicon {
-			margin-left: 6px;
+			margin-inline-start: 6px;
 		}
 	}
 
@@ -331,7 +331,7 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 	const showPlanSelect = ! allVisible && ! current;
 
 	return (
-		<Cell className={ headerClasses } textAlign="left">
+		<Cell className={ headerClasses } textAlign="start">
 			<PopularBadge
 				isInSignup={ isInSignup }
 				planName={ planName }
