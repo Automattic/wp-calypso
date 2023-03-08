@@ -51,6 +51,14 @@ require_once __DIR__ . '/block-library/universal-header/index.php';
 require_once __DIR__ . '/block-library/universal-footer/index.php';
 
 /**
+ * Returns the current site locale.
+ */
+function happy_blocks_get_site_locale() {
+	$lang = get_blog_lang_code( get_current_blog_id() );
+	return $lang;
+}
+
+/**
  * Return the correct asset relative path to determine the translation file name,
  * when loading the translation files from wp.com CDN.
  *
@@ -59,6 +67,12 @@ require_once __DIR__ . '/block-library/universal-footer/index.php';
  * @return string|false          The new relative path
  */
 function happyblocks_normalize_translations_relative_path( $relative, $src ) {
+	// happy blocks use the site language, not the user language.
+	if ( stripos( $src, 'a8c-plugins/happy-blocks' ) !== false ) {
+		add_filter( 'determine_locale', 'happy_blocks_get_site_locale' );
+	} else {
+		remove_filter( 'determine_locale', 'happy_blocks_get_site_locale' );
+	}
 	// Rewrite our CDN path to a relative path to calculate the right filename.
 	if ( preg_match( '#/wp-content/a8c-plugins/happy-blocks/(.*\.js)#', $src, $m ) ) {
 		// Fix the path to support `yarn dev --sync`.
