@@ -302,11 +302,7 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 					product_slug: site.plan?.product_slug,
 				} }
 			/>
-			<MenuItemLink
-				href={ getHostingConfigUrl( site.slug ) }
-				onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_hosting_config_click' ) }
-				info={ displayUpsell && __( 'Requires a Business Plan' ) }
-			>
+			<MenuItemLink info={ displayUpsell && __( 'Requires a Business Plan' ) }>
 				{ __( 'Hosting configuration' ) } <MenuItemGridIcon icon="chevron-right" size={ 18 } />
 			</MenuItemLink>
 			<SubmenuPopover
