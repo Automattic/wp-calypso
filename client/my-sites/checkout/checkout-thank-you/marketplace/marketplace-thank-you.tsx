@@ -74,8 +74,10 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 				);
 			} )
 	);
-	const areWporgPluginsFetched: Array< boolean > = useSelector( ( state ) =>
-		areFetched( state, productSlugs )
+	const areWporgPluginsFetched: Array< boolean > = useSelector(
+		( state ) => areFetched( state, productSlugs ),
+		( newValues: Array< boolean >, oldValues: Array< boolean > ) =>
+			newValues.every( ( newValue, i ) => newValue === oldValues[ i ] )
 	);
 	const areWporgPluginsFetching: Array< boolean > = useSelector( ( state ) =>
 		areFetching( state, productSlugs )
@@ -143,14 +145,11 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 				}
 			} );
 		}
-	}, [
-		areAllWporgPluginsFetched,
-		areWporgPluginsFetched,
-		areWporgPluginsFetching,
-		productSlugs,
-		dispatch,
-		wporgPlugins,
-	] );
+
+		// We don't want it to run at every change of areWporgPluginsFetching,
+		// we only rerun when areWporgPluginsFetched changes
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ areAllWporgPluginsFetched, areWporgPluginsFetched, productSlugs, dispatch, wporgPlugins ] );
 
 	// Site is already Atomic (or just transferred).
 	// Poll the plugin installation status.
