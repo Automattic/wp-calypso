@@ -9,12 +9,6 @@
 		font-weight: 400;
 		letter-spacing: -0.15px;
 		color: var(--studio-gray-100);
-		border-width: 2px;
-
-		&:focus {
-			border-radius: 3px;
-			border-color: var(--color-primary-light);
-		}
 
 		svg {
 			flex-shrink: 0;

@@ -1,42 +1,59 @@
 import { Button } from '@automattic/components';
 import { __experimentalNavigatorBackButton as NavigatorBackButton } from '@wordpress/components';
+import { __experimentalUseFocusOutside as useFocusOutside } from '@wordpress/compose';
 import { Icon, chevronRight } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import useCategoriesOrder from './hooks/use-categories-order';
 import NavigatorHeader from './navigator-header';
+import PatternListPanel from './pattern-list-panel';
+import { useSectionPatterns } from './patterns-data';
 import type { Pattern, Category } from './types';
 import './screen-category-list.scss';
 
 interface Props {
 	categories: Category[];
-	categorySelected: string | null;
 	sectionsMapByCategory: { [ key: string ]: Pattern[] };
-	setCategory: ( name: string | null ) => void;
 	onDoneClick: () => void;
-	setOpenPatternList: ( open: boolean ) => void;
+	onSelect: (
+		type: string,
+		selectedPattern: Pattern | null,
+		categorySelected: string | null
+	) => void;
 	replacePatternMode: boolean;
+	selectedPattern: Pattern | null;
+	wrapperRef: React.RefObject< HTMLInputElement >;
 }
 
 const ScreenCategoryList = ( {
 	sectionsMapByCategory,
 	categories,
-	setCategory,
-	categorySelected,
 	onDoneClick,
-	setOpenPatternList,
 	replacePatternMode,
+	onSelect,
+	selectedPattern,
+	wrapperRef,
 }: Props ) => {
 	const translate = useTranslate();
+	const [ categorySelected, setCategory ] = useState< string | null >( null );
+	const [ openPatternList, setOpenPatternList ] = useState< boolean | null >( null );
+	const sectionPatterns = useSectionPatterns();
 	const categoriesInOrder = useCategoriesOrder( categories );
+
 	const categoriesWithPatterns = useMemo( () => {
 		// Render only categories with patterns
 		return categoriesInOrder.filter( ( { name } ) => sectionsMapByCategory[ name ]?.length );
 	}, [ categoriesInOrder, sectionsMapByCategory ] );
 
+	const handleFocusOutside = () => {
+		setOpenPatternList( false );
+		setCategory( null );
+	};
+
 	return (
-		<>
+		<div className="components-navigator-screen" { ...useFocusOutside( handleFocusOutside ) }>
 			<NavigatorHeader
 				title={ replacePatternMode ? translate( 'Replace pattern' ) : translate( 'Add patterns' ) }
 				description={
@@ -56,7 +73,7 @@ const ScreenCategoryList = ( {
 						<Button
 							key={ name }
 							className={ classNames( 'screen-category-list__category-button', {
-								'--is-open': isOpen,
+								'screen-category-list__category-button--is-open': isOpen,
 							} ) }
 							title={ description }
 							onClick={ () => {
@@ -89,7 +106,22 @@ const ScreenCategoryList = ( {
 					{ translate( 'Done' ) }
 				</NavigatorBackButton>
 			</div>
-		</>
+			{ createPortal(
+				<PatternListPanel
+					onSelect={ ( selectedPattern ) =>
+						onSelect( 'section', selectedPattern, categorySelected )
+					}
+					selectedPattern={ selectedPattern }
+					patterns={ sectionPatterns }
+					openPatternList={ openPatternList }
+					categorySelected={ categorySelected }
+					categories={ categories }
+				/>,
+				// Using the pattern-assembler__wrapper as parent
+				// because the panel must slide from behind the sidebar
+				wrapperRef.current as HTMLInputElement
+			) }
+		</div>
 	);
 };
 

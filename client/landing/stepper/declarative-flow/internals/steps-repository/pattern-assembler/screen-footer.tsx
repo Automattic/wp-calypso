@@ -8,7 +8,7 @@ import type { Pattern } from './types';
 
 interface Props {
 	selectedPattern: Pattern | null;
-	onSelect: ( selectedPattern: Pattern | null ) => void;
+	onSelect: ( type: string, selectedPattern: Pattern | null, selectedCategory: string ) => void;
 	onBack: () => void;
 	onDoneClick: () => void;
 }
@@ -29,7 +29,7 @@ const ScreenFooter = ( { selectedPattern, onSelect, onBack, onDoneClick }: Props
 			<div className="screen-container__body">
 				<PatternSelector
 					patterns={ patterns }
-					onSelect={ onSelect }
+					onSelect={ ( selectedPattern ) => onSelect( 'footer', selectedPattern, 'footer' ) }
 					onBack={ onBack }
 					selectedPattern={ selectedPattern }
 					emptyPatternText={ translate( 'No Footer' ) }
@@ -39,8 +39,10 @@ const ScreenFooter = ( { selectedPattern, onSelect, onBack, onDoneClick }: Props
 				<NavigatorBackButton
 					as={ Button }
 					className="pattern-assembler__button"
+					onClick={ () => {
+						onDoneClick();
+					} }
 					primary
-					onClick={ onDoneClick }
 				>
 					{ translate( 'Save' ) }
 				</NavigatorBackButton>
