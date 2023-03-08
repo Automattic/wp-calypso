@@ -169,10 +169,10 @@ function getFilterByCategory( category: string ): {
 			should: [
 				// matching wp.org categories and tags
 				{ term: { 'taxonomy.plugin_category.slug': category } },
-				{ terms: { 'taxonomy.plugin_tags.slug': categoryTags } },
+				{ terms: { 'taxonomy.plugin_tags.slug': categoryTags || [ category ] } },
 				// matching wc.com categories and tags
 				{ term: { 'taxonomy.wpcom_marketplace_categories.slug': category } },
-				{ terms: { 'taxonomy.plugin_tag.slug': categoryTags } },
+				{ terms: { 'taxonomy.plugin_tag.slug': categoryTags || [ category ] } },
 			],
 		},
 	};

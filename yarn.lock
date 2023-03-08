@@ -1558,6 +1558,21 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/subscription-manager@workspace:^, @automattic/subscription-manager@workspace:packages/subscription-manager":
+  version: 0.0.0-use.local
+  resolution: "@automattic/subscription-manager@workspace:packages/subscription-manager"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    typescript: ^4.5.5
+  peerDependencies:
+    "@wordpress/data": ^6.1.5
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    reakit-utils: ^0.15.1
+    redux: ^4.1.2
+  languageName: unknown
+  linkType: soft
+
 "@automattic/tour-kit@workspace:^, @automattic/tour-kit@workspace:packages/tour-kit":
   version: 0.0.0-use.local
   resolution: "@automattic/tour-kit@workspace:packages/tour-kit"
@@ -11775,6 +11790,7 @@ __metadata:
     "@automattic/social-previews": "workspace:^"
     "@automattic/state-utils": "workspace:^"
     "@automattic/subscriber": "workspace:^"
+    "@automattic/subscription-manager": "workspace:^"
     "@automattic/tree-select": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@automattic/viewport-react": "workspace:^"
@@ -11904,6 +11920,7 @@ __metadata:
     react-day-picker: ^7.4.10
     react-dom: ^17.0.2
     react-element-to-jsx-string: ^14.3.2
+    react-intersection-observer: ^9.4.3
     react-live: ^2.3.0
     react-modal: ^3.14.3
     react-query: ^3.32.1
@@ -18512,6 +18529,7 @@ fsevents@^1.2.7:
     classnames: ^2.3.2
     copy-webpack-plugin: ^10.1.0
     glob: ^7.1.6
+    i18n-calypso: "workspace:^"
     jest: ^27.3.1
     postcss: ^8.4.5
     react: ^17.0.2
@@ -27179,6 +27197,15 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"react-intersection-observer@npm:^9.4.3":
+  version: 9.4.3
+  resolution: "react-intersection-observer@npm:9.4.3"
+  peerDependencies:
+    react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+  checksum: ac0bf29c1105abbe3edff875469f2c6cc55431de02269dbd2e4529babced1a77a7d4e61a325a3a9cc03a844d97b9329ba6e546f79db818c9e53cbad0b43c143d
+  languageName: node
+  linkType: hard
+
 "react-is@npm:^16.12.0 || ^17.0.0, react-is@npm:^17.0.0, react-is@npm:^17.0.1, react-is@npm:^17.0.2":
   version: 17.0.2
   resolution: "react-is@npm:17.0.2"
@@ -34017,6 +34044,7 @@ fsevents@^1.2.7:
     prettier: "npm:wp-prettier@2.6.2"
     react: ^17.0.2
     react-dom: ^17.0.2
+    react-intersection-observer: ^9.4.3
     react-modal: ^3.14.3
     readline-sync: ^1.4.10
     reakit-utils: ^0.15.1

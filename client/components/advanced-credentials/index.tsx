@@ -3,10 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { FunctionComponent, useCallback, useMemo, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
-import Main from 'calypso/components/main';
-import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import StepProgress from 'calypso/components/step-progress';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { settingsPath } from 'calypso/lib/jetpack/paths';
@@ -372,10 +369,8 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 	};
 
 	return (
-		<Main className="advanced-credentials">
+		<div className="advanced-credentials">
 			<QuerySiteCredentials siteId={ siteId } />
-			<DocumentHead title={ translate( 'Settings' ) } />
-			<SidebarNavigation />
 			<PageViewTracker
 				path={ settingsPath( ':site' ) }
 				title="Advanced Credentials"
@@ -391,7 +386,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 				{ startedWithoutConnection && <StepProgress currentStep={ currentStep } steps={ steps } /> }
 				{ render() }
 			</Card>
-		</Main>
+		</div>
 	);
 };
 

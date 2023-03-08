@@ -1,6 +1,8 @@
 import { LINK_IN_BIO_FLOW, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
 import { LaunchpadFlowTaskList, Task } from './types';
 
+export const DOMAIN_UPSELL = 'domain_upsell';
+
 export const tasks: Task[] = [
 	{
 		id: 'setup_newsletter',
@@ -69,18 +71,6 @@ export const tasks: Task[] = [
 		disabled: true,
 	},
 	{
-		id: 'sensei_setup',
-		completed: true,
-		taskType: 'blog',
-		disabled: true,
-	},
-	{
-		id: 'sensei_publish_first_course',
-		completed: false,
-		taskType: 'blog',
-		disabled: false,
-	},
-	{
 		id: 'setup_free',
 		completed: true,
 		disabled: false,
@@ -111,7 +101,7 @@ export const tasks: Task[] = [
 		taskType: 'blog',
 	},
 	{
-		id: 'domain_upsell',
+		id: DOMAIN_UPSELL,
 		completed: false,
 		disabled: false,
 		taskType: 'blog',
@@ -133,7 +123,7 @@ export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 	free: [
 		'setup_free',
 		'design_selected',
-		'domain_upsell',
+		DOMAIN_UPSELL,
 		'first_post_published',
 		'design_edited',
 		'site_launched',
@@ -141,7 +131,7 @@ export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 	build: [
 		'setup_general',
 		'design_selected',
-		'domain_upsell',
+		DOMAIN_UPSELL,
 		'first_post_published',
 		'design_edited',
 		'site_launched',
@@ -149,10 +139,9 @@ export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 	write: [
 		'setup_write',
 		'design_selected',
-		'domain_upsell',
+		DOMAIN_UPSELL,
 		'first_post_published',
 		'site_launched',
 	],
 	videopress: [ 'videopress_setup', 'plan_selected', 'videopress_upload', 'videopress_launched' ],
-	sensei: [ 'sensei_setup', 'plan_selected', 'sensei_publish_first_course' ],
 };

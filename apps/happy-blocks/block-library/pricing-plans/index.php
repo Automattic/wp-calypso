@@ -82,6 +82,46 @@ HTML;
 }
 
 /**
+ * Return the correct asset relative path to determine the translation file name,
+ * when loading the translation files from wp.com CDN.
+ *
+ * @param string|false $relative The relative path of the script. False if it could not be determined.
+ * @param string       $src      The full source URL of the script.
+ * @return string|false          The new relative path
+ */
+function happyblocks_pricing_plans_normalize_translations_relative_path( $relative, $src ) {
+	// Rewrite our CDN path to a relative path to calculate the right filename.
+	if ( preg_match( '#https?://s[0123]\.wp\.com/wp-content/a8c-plugins/happy-blocks/(.*\.js)#', $src, $m ) ) {
+		// Fix the path to support `yarn dev --sync`.
+		$relative = str_replace( 'build/', '', $m[1] );
+		return $relative;
+	}
+	return $relative;
+}
+add_filter( 'load_script_textdomain_relative_path', 'happyblocks_pricing_plans_normalize_translations_relative_path', 10, 2 );
+
+/**
+ * Adjust the file path for loading script translations to match the files structure on WordPress.com
+ *
+ * @param string|false $file   Path to the translation file to load. False if there isn't one.
+ * @param string       $handle Name of the script to register a translation domain to.
+ * @param string       $domain The text domain.
+ */
+function happyblocks_pricing_plans_normalize_translations_filepath( $file, $handle, $domain ) {
+	if ( ! $file ) {
+		return $file;
+	}
+	// Fix the filepath to use the correct location for the translation file.
+	if ( 'happy-blocks' === $domain ) {
+		$old_path = WP_LANG_DIR . '/happy-blocks';
+		$new_path = WP_LANG_DIR . '/a8c-plugins/happy-blocks';
+		$file     = str_replace( $old_path, $new_path, $file );
+	}
+	return $file;
+}
+add_filter( 'load_script_translation_file', 'happyblocks_pricing_plans_normalize_translations_filepath', 10, 3 );
+
+/**
  * Register happy-blocks.
  */
 function happyblocks_pricing_plan_register() {

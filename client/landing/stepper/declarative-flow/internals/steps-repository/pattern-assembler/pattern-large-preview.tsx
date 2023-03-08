@@ -1,8 +1,9 @@
 import { PatternRenderer } from '@automattic/block-renderer';
 import { DeviceSwitcher } from '@automattic/components';
+import { useStyle } from '@automattic/global-styles';
 import { Icon, layout } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, CSSProperties } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { encodePatternId } from './utils';
 import type { Pattern } from './types';
@@ -24,6 +25,12 @@ const PatternLargePreview = ( { header, sections, footer, activePosition }: Prop
 	const frameRef = useRef< HTMLDivElement | null >( null );
 	const listRef = useRef< HTMLUListElement | null >( null );
 	const [ viewportHeight, setViewportHeight ] = useState< number | undefined >( 0 );
+	const [ blockGap ] = useStyle( 'spacing.blockGap' );
+	const [ backgroundColor ] = useStyle( 'color.background' );
+	const [ patternLargePreviewStyle, setPatternLargePreviewStyle ] = useState( {
+		'--pattern-large-preview-block-gap': blockGap,
+		'--pattern-large-preview-background': backgroundColor,
+	} as CSSProperties );
 
 	const renderPattern = ( key: string, pattern: Pattern ) => (
 		<li key={ key } className={ `pattern-large-preview__pattern-${ key }` }>
@@ -77,6 +84,15 @@ const PatternLargePreview = ( { header, sections, footer, activePosition }: Prop
 		return () => window.removeEventListener( 'resize', handleResize );
 	} );
 
+	// Delay updating the styles to make the transition smooth
+	// See https://github.com/Automattic/wp-calypso/pull/74033#issuecomment-1453056703
+	useEffect( () => {
+		setPatternLargePreviewStyle( {
+			'--pattern-large-preview-block-gap': blockGap,
+			'--pattern-large-preview-background': backgroundColor,
+		} as CSSProperties );
+	}, [ blockGap, backgroundColor ] );
+
 	return (
 		<DeviceSwitcher
 			className="pattern-large-preview"
@@ -90,7 +106,11 @@ const PatternLargePreview = ( { header, sections, footer, activePosition }: Prop
 			} }
 		>
 			{ hasSelectedPattern ? (
-				<ul className="pattern-large-preview__patterns" ref={ listRef }>
+				<ul
+					className="pattern-large-preview__patterns"
+					style={ patternLargePreviewStyle }
+					ref={ listRef }
+				>
 					{ header && renderPattern( 'header', header ) }
 					{ sections.map( ( pattern ) => renderPattern( pattern.key!, pattern ) ) }
 					{ footer && renderPattern( 'footer', footer ) }

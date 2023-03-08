@@ -65,11 +65,11 @@ describe( DataHelper.createSuiteTitle( 'Sidebar: Domain upsell' ), function () {
 
 	it( 'Search for a domain name', async function () {
 		domainSearchComponent = new DomainSearchComponent( page );
-		await domainSearchComponent.search( blogName + '.live' );
+		await domainSearchComponent.search( blogName + '.com' );
 	} );
 
-	it( 'Choose the .live TLD', async function () {
-		selectedDomain = await domainSearchComponent.selectDomain( '.live' );
+	it( 'Choose the .com TLD', async function () {
+		selectedDomain = await domainSearchComponent.selectDomain( '.com' );
 	} );
 
 	it( 'View available plans', async function () {

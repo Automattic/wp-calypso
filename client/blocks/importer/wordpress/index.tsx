@@ -4,11 +4,17 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { convertToFriendlyWebsiteName } from 'calypso/blocks/import/util';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { addQueryArgs } from 'calypso/lib/route';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import { getSiteBySlug, getSite, isJetpackSite } from 'calypso/state/sites/selectors';
+import {
+	getSiteBySlug,
+	getSite,
+	isJetpackSite,
+	hasAllSitesList,
+} from 'calypso/state/sites/selectors';
 import { Importer, ImportJob, StepNavigator } from '../types';
 import { ContentChooser } from './content-chooser';
 import ImportContentOnly from './import-content-only';
@@ -35,7 +41,10 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	/**
 	 ↓ Fields
 	 */
-	const [ option, setOption ] = useState< WPImportOption >();
+	const queryParams = useQuery();
+	const [ option, setOption ] = useState< WPImportOption | undefined >(
+		getValidOptionParam( queryParams.get( 'option' ) )
+	);
 	const { job, fromSite, siteSlug, siteId, stepNavigator, showConfirmDialog } = props;
 	const siteItem = useSelector( ( state ) => getSite( state, siteId ) );
 	const fromSiteItem = useSelector( ( state ) =>
@@ -43,6 +52,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	);
 	const isSiteAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 	const isSiteJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+	const hasAllSitesFetched = useSelector( ( state ) => hasAllSitesList( state ) );
 	const fromSiteAnalyzedData = useSelector( getUrlData );
 	const { setIsMigrateFromWp } = useDispatch( ONBOARD_STORE );
 	const isMigrateFromWp = useSelect( ( select ) => select( ONBOARD_STORE ).getIsMigrateFromWp() );
@@ -50,16 +60,9 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	/**
 	 ↓ Effects
 	 */
-	useEffect( checkOptionQueryParam );
+	useEffect( checkOptionQueryParam, [ queryParams.get( 'option' ) ] );
 	useEffect( checkImporterAvailability, [ siteId ] );
-	useEffect( () => {
-		if ( isMigrateFromWp ) {
-			storeMigrateSource();
-		}
-		if ( 'true' === retrieveMigrateSource() ) {
-			setIsMigrateFromWp( true );
-		}
-	}, [] );
+	useEffect( checkIfImportInitFromMigratePlugin, [] );
 
 	/**
 	 ↓ Methods
@@ -81,6 +84,15 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 			: updateCurrentPageQueryParam( { option: WPImportOption.CONTENT_ONLY } );
 	}
 
+	function checkIfImportInitFromMigratePlugin() {
+		if ( isMigrateFromWp ) {
+			storeMigrateSource();
+		}
+		if ( 'true' === retrieveMigrateSource() ) {
+			setIsMigrateFromWp( true );
+		}
+	}
+
 	function checkImporterAvailability() {
 		isNotAtomicJetpack() && redirectToWpAdminImportPage();
 	}
@@ -90,15 +102,18 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	}
 
 	function checkOptionQueryParam() {
-		const urlSearchParams = new URLSearchParams( window.location.search );
-		const optionParam = urlSearchParams.get( 'option' );
+		const optionParam = queryParams.get( 'option' );
+		setOption( getValidOptionParam( optionParam ) );
+	}
+
+	function getValidOptionParam( param: string | null ) {
 		const options: string[] = Object.values( WPImportOption );
 
-		if ( optionParam && options.indexOf( optionParam ) >= 0 ) {
-			setOption( optionParam as WPImportOption );
-		} else {
-			setOption( undefined );
+		if ( param && options.indexOf( param ) >= 0 ) {
+			return param as WPImportOption;
 		}
+
+		return undefined;
 	}
 
 	function updateCurrentPageQueryParam( params: {
@@ -124,7 +139,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	return (
 		<>
 			{ ( () => {
-				if ( isNotAtomicJetpack() ) {
+				if ( isNotAtomicJetpack() || ! hasAllSitesFetched ) {
 					return <LoadingEllipsis />;
 				} else if ( undefined === option && fromSite ) {
 					return (
