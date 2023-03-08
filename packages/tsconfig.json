@@ -47,6 +47,7 @@
 		{ "path": "./sites" },
 		{ "path": "./state-utils" },
 		{ "path": "./subscriber" },
+		{ "path": "./subscription-manager" },
 		{ "path": "./tree-select" },
 		{ "path": "./viewport" },
 		{ "path": "./viewport-react" },

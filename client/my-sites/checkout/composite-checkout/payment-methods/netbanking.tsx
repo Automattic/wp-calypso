@@ -75,7 +75,7 @@ export function createNetBankingPaymentMethodStore(): NetBankingStore {
 	debug( 'creating a new netbanking payment method store' );
 	const store = registerStore( 'netbanking', {
 		reducer(
-			state = {
+			state: NetBankingStoreState< NounsInStore > = {
 				customerName: { value: '', isTouched: false },
 				fields: {},
 			},
