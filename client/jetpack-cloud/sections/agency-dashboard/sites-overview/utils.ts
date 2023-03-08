@@ -506,3 +506,36 @@ export const getSiteCountText = ( sites: Array< Site > ) => {
 		comment: '%(siteCount) is no of sites selected, e.g. "2 sites"',
 	} );
 };
+
+export const getBoostRating = ( boostScore: number ) => {
+	if ( boostScore > 90 ) {
+		return 'A';
+	}
+	if ( boostScore > 75 ) {
+		return 'B';
+	}
+	if ( boostScore > 50 ) {
+		return 'C';
+	}
+	if ( boostScore > 35 ) {
+		return 'D';
+	}
+	if ( boostScore > 25 ) {
+		return 'E';
+	}
+	return 'F';
+};
+
+export const getBoostRatingClass = ( boostScore: number ) => {
+	if ( boostScore > 75 ) {
+		return 'boost-score-good';
+	}
+
+	if ( boostScore > 35 ) {
+		return 'boost-score-okay';
+	}
+
+	if ( boostScore ) {
+		return 'boost-score-bad';
+	}
+};

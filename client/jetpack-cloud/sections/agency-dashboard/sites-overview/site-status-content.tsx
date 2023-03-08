@@ -15,7 +15,12 @@ import ToggleActivateMonitoring from '../downtime-monitoring/toggle-activate-mon
 import SitesOverviewContext from './context';
 import SiteSelectCheckbox from './site-select-checkbox';
 import SiteSetFavorite from './site-set-favorite';
-import { getRowMetaData, getProductSlugFromProductType } from './utils';
+import {
+	getRowMetaData,
+	getProductSlugFromProductType,
+	getBoostRating,
+	getBoostRatingClass,
+} from './utils';
 import type { AllowedTypes, SiteData } from './types';
 
 interface Props {
@@ -180,19 +185,18 @@ export default function SiteStatusContent( {
 	}
 
 	if ( type === 'boost' ) {
-		const overall = rows.site.value.jetpack_boost_scores.overall;
-		if ( overall >= 91 ) {
-			return <div className="sites-overview__boost-green">A Score</div>;
-		} else if ( overall >= 75 ) {
-			return <div className="sites-overview__boost-green">B Score</div>;
-		} else if ( overall >= 50 ) {
-			return <div className="sites-overview__boost-yellow">C Score</div>;
-		} else if ( overall >= 35 ) {
-			return <div className="sites-overview__boost-yellow">D Score</div>;
-		} else if ( overall >= 25 ) {
-			return <div className="sites-overview__boost-red">E Score</div>;
-		}
-		return <div className="sites-overview__boost-red">F Score</div>;
+		//const overallScore = rows.site.value.jetpack_boost_scores.overall;
+		const overallScore = 74;
+		return (
+			<div
+				className={ classNames(
+					'site-expanded-content__card-content-score',
+					getBoostRatingClass( overallScore )
+				) }
+			>
+				{ getBoostRating( overallScore ) } Score
+			</div>
+		);
 	}
 
 	let content;

@@ -77,7 +77,11 @@ describe( 'utils', () => {
 			boost: {
 				type: 'boost',
 				status: 'active',
-				data: 100,
+				data: {
+					desktop: 100,
+					mobile: 100,
+					overall: 100,
+				},
 			},
 			backup: {
 				type: 'backup',
