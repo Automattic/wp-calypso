@@ -67,7 +67,7 @@ describe( DataHelper.createSuiteTitle( 'My Home: Domain upsell' ), function () {
 	} );
 
 	it( 'Click button to skip plan', async function () {
-		await plansPage.clickSkipPlanActionButton();
+		await plansPage.clickSkipPlanActionButton( 'Or continue with the free plan.' );
 	} );
 
 	it( 'Continue to checkout without a plan', async function () {

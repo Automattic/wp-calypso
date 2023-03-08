@@ -163,16 +163,22 @@ function waitForState( context ) {
 }
 
 export async function redirectTrialSites( context, next ) {
-	const { store } = context;
-	// Make sure state is populated with plan info
-	await waitForState( context );
-	const state = store.getState();
-	const selectedSite = getSelectedSite( state );
+	// If we have a site ID, we can check the user's plan.
+	const siteFragment =
+		context.params.site || context.params.site_id || getSiteFragment( context.path );
 
-	// If the site is on an ecommerce trial, redirect to the plans page
-	if ( isSiteOnECommerceTrial( state, selectedSite?.ID ) ) {
-		page.redirect( `/plans/${ selectedSite.slug }` );
-		return false;
+	if ( siteFragment ) {
+		const { store } = context;
+		// Make sure state is populated with plan info.
+		await waitForState( context );
+		const state = store.getState();
+		const selectedSite = getSelectedSite( state );
+
+		// If the site is on an ecommerce trial, redirect to the plans page.
+		if ( isSiteOnECommerceTrial( state, selectedSite?.ID ) ) {
+			page.redirect( `/plans/${ selectedSite.slug }` );
+			return false;
+		}
 	}
 
 	next();
