@@ -101,8 +101,6 @@ const ScreenCategoryList = ( {
 					className="pattern-assembler__button"
 					onClick={ () => {
 						onDoneClick();
-						setOpenPatternList( false );
-						setCategory( null );
 					} }
 					primary
 				>
