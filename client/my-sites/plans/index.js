@@ -61,7 +61,7 @@ export default function () {
 		p2RedirectToHubPlans,
 		redirectToPlans
 	);
-	trackedPage( '/plans/features/:feature/:domain', features );
+	trackedPage( '/plans/features/:feature/:domain', stagingSiteNotSupportedRedirect, features );
 	trackedPage(
 		'/plans/my-plan',
 		...commonHandlers,
@@ -70,7 +70,12 @@ export default function () {
 		p2RedirectToHubPlans,
 		currentPlan
 	);
-	trackedPage( '/plans/my-plan/trial-upgraded/:domain', siteSelection, trialUpgradeConfirmation );
+	trackedPage(
+		'/plans/my-plan/trial-upgraded/:domain',
+		stagingSiteNotSupportedRedirect,
+		siteSelection,
+		trialUpgradeConfirmation
+	);
 	trackedPage(
 		'/plans/my-plan/:site',
 		...commonHandlers,
