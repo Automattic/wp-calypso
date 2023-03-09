@@ -244,44 +244,10 @@ const SiteDropdownMenu = styled( DropdownMenu )( {
 function useSubmenuItems( site: SiteExcerptData ) {
 	const { __ } = useI18n();
 	const siteSlug = site.slug;
-	const stagingSite = site.is_wpcom_staging_site;
+	const isStagingSite = site.is_wpcom_staging_site;
 	const isStagingSiteEnabled = isEnabled( 'yolo/staging-sites-i1' );
 
 	return useMemo< { label: string; href: string; sectionName: string }[] >( () => {
-		if ( stagingSite || ! isStagingSiteEnabled ) {
-			return [
-				{
-					label: __( 'SFTP/SSH credentials' ),
-					href: `/hosting-config/${ siteSlug }#sftp-credentials`,
-					sectionName: 'sftp_credentials',
-				},
-				{
-					label: __( 'Database access' ),
-					href: `/hosting-config/${ siteSlug }#database-access`,
-					sectionName: 'database_access',
-				},
-				{
-					label: __( 'Deploy from GitHub' ),
-					href: `/hosting-config/${ siteSlug }#connect-github`,
-					sectionName: 'connect_github',
-				},
-				{
-					label: __( 'Web server settings' ),
-					href: `/hosting-config/${ siteSlug }#web-server-settings`,
-					sectionName: 'web_server_settings',
-				},
-				{
-					label: __( 'Clear cache' ),
-					href: `/hosting-config/${ siteSlug }#cache`,
-					sectionName: 'cache',
-				},
-				{
-					label: __( 'Web server logs' ),
-					href: `/hosting-config/${ siteSlug }#web-server-logs`,
-					sectionName: 'logs',
-				},
-			];
-		}
 		return [
 			{
 				label: __( 'SFTP/SSH credentials' ),
@@ -294,6 +260,7 @@ function useSubmenuItems( site: SiteExcerptData ) {
 				sectionName: 'database_access',
 			},
 			{
+				condition: ! isStagingSite && isStagingSiteEnabled,
 				label: __( 'Staging site' ),
 				href: `/hosting-config/${ siteSlug }#staging-site`,
 				sectionName: 'staging_site',
@@ -318,8 +285,8 @@ function useSubmenuItems( site: SiteExcerptData ) {
 				href: `/hosting-config/${ siteSlug }#web-server-logs`,
 				sectionName: 'logs',
 			},
-		];
-	}, [ __, isStagingSiteEnabled, siteSlug, stagingSite ] );
+		].filter( ( { condition } ) => condition ?? true );
+	}, [ __, isStagingSiteEnabled, siteSlug, isStagingSite ] );
 }
 
 function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps ) {
