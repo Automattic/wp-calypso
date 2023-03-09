@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { localize, translate } from 'i18n-calypso';
@@ -15,8 +14,6 @@ import { fetchUserSettings } from 'calypso/state/user-settings/actions';
 import './style.scss';
 
 const noop = () => {};
-
-const displayJetpackAppBranding = config.isEnabled( 'jetpack/app-branding' );
 
 const getRandomPromo = () => {
 	const desktopAppLink = <span className="app-promo__wp-app-link" />;
@@ -159,20 +156,14 @@ export class AppPromoSidebar extends Component {
 	mobilePromo = ( promoItem ) => {
 		const { location } = this.props;
 
-		const message = displayJetpackAppBranding
-			? translate( '{{span}}Get the Jetpack app{{/span}} to use Reader anywhere, any time.', {
-					components: {
-						span: <span className="app-promo__jetpack-app-link" />,
-					},
-			  } )
-			: translate(
-					'WordPress.com in the palm of your hands — {{span}}download the mobile app{{/span}}.',
-					{
-						components: {
-							span: <span className="app-promo__wp-app-link" />,
-						},
-					}
-			  );
+		const message = translate(
+			'{{span}}Get the Jetpack app{{/span}} to use Reader anywhere, any time.',
+			{
+				components: {
+					span: <span className="app-promo__jetpack-app-link" />,
+				},
+			}
+		);
 
 		return (
 			<Button
@@ -185,9 +176,9 @@ export class AppPromoSidebar extends Component {
 			>
 				<img
 					className="app-promo__icon"
-					src={ displayJetpackAppBranding ? jetpackLogoImage : wordpressLogoImage }
-					width={ displayJetpackAppBranding ? 25 : 32 }
-					height={ displayJetpackAppBranding ? 43 : 32 }
+					src={ jetpackLogoImage }
+					width={ 25 }
+					height={ 43 }
 					alt=""
 				/>
 				<p className="app-promo__paragraph">{ message }</p>
@@ -196,9 +187,6 @@ export class AppPromoSidebar extends Component {
 	};
 
 	render() {
-		if ( ! this.state.showPromo ) {
-			return null;
-		}
 		const { promoItem } = this.state;
 		return (
 			<div className="app-promo">

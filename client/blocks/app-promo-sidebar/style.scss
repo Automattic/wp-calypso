@@ -41,11 +41,6 @@
 			color: var(--studio-jetpack-green-40);
 			border-bottom: 1.5px solid var(--studio-jetpack-green-40);
 		}
-
-		&.app-promo__wp-app-link {
-			color: var(--color-link);
-			border-bottom: 1.5px solid var(--color-link);
-		}
 	}
 
 	&:active,
@@ -59,10 +54,6 @@
 
 			&.app-promo__jetpack-app-link {
 				color: var(--studio-jetpack-green-60);
-			}
-
-			&.app-promo__wp-app-link {
-				color: var(--color-link-dark);
 			}
 		}
 	}
