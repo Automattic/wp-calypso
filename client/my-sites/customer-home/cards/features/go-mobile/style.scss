@@ -25,24 +25,6 @@
 	width: 50%;
 }
 
-.go-mobile__email-link {
-	padding-top: 8px;
-	color: var(--color-text-subtle);
-	display: none;
-
-	@include break-large {
-		display: block;
-	}
-
-	@include break-xlarge {
-		padding-top: 18px;
-	}
-}
-
-.go-mobile__email-link-button {
-	margin-top: 14px;
-}
-
 .go-mobile__row.has-2-cols {
 	display: flex;
 }
@@ -103,23 +85,5 @@
 	// image instead.
 	.get-apps__app-badge.android-app-badge img {
 		transform: scale(1.14) translate(-11px, -7px);
-	}
-
-	.go-mobile__email-link-button {
-		color: var(--studio-jetpack-green-40);
-		margin-top: 0;
-		text-decoration: underline;
-		text-underline-offset: 3px;
-		font-size: rem(15px); //typography-exception
-		font-weight: 600;
-
-		&:hover,
-		&:focus,
-		&:active,
-		&.is-active {
-			color: var(--studio-jetpack-green-60);
-			box-shadow: none;
-			text-decoration: none;
-		}
 	}
 }
