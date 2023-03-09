@@ -181,9 +181,7 @@ export default function CampaignItem( { campaign }: Props ) {
 				<div className="campaign-item__row">
 					<Notice isDismissible={ false } className="campaign-item__notice" status="info">
 						<Gridicon className="campaign-item__notice-icon" icon="info-outline" />
-						{ translate(
-							'Campaign statistics may be delayed by up to 3 hours.'
-						) }
+						{ translate( 'Campaign statistics may be delayed by up to 3 hours.' ) }
 					</Notice>
 				</div>
 				<div className="campaign-item__section campaign-item__stats">
