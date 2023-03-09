@@ -1,5 +1,6 @@
 import { getUrlParts } from '@automattic/calypso-url';
 import { Dialog } from '@automattic/components';
+import classNames from 'classnames';
 import { TranslateOptionsText, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useRef, useState } from 'react';
@@ -35,6 +36,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	const [ isLoading, setIsLoading ] = useState( true );
 	const [ showCancelDialog, setShowCancelDialog ] = useState( false );
 	const [ showCancelButton, setShowCancelButton ] = useState( true );
+	const [ hiddenHeader, setHiddenHeader ] = useState( true );
 	const widgetContainer = useRef< HTMLDivElement >( null );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate() as BlazePressTranslatable;
@@ -52,6 +54,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	}, [ isVisible ] );
 
 	const handleShowCancel = ( show: boolean ) => setShowCancelButton( show );
+	const handleGetStartedMessageClose = () => setHiddenHeader( false );
 
 	const onClose = ( goToCampaigns?: boolean ) => {
 		if ( goToCampaigns ) {
@@ -89,7 +92,8 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 						return translate( original );
 					},
 					widgetContainer.current,
-					handleShowCancel
+					handleShowCancel,
+					handleGetStartedMessageClose
 				);
 				setIsLoading( false );
 			} )();
@@ -119,7 +123,11 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	return (
 		<>
 			{ isVisible && (
-				<BlankCanvas className="blazepress-widget">
+				<BlankCanvas
+					className={ classNames( 'blazepress-widget', {
+						'hidden-header': hiddenHeader,
+					} ) }
+				>
 					<div className="blazepress-widget__header-bar">
 						<BlazeLogo />
 						<h2>{ translate( 'Blaze' ) }</h2>
