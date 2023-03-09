@@ -61,6 +61,7 @@ import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isStagingSite from 'calypso/state/selectors/is-staging-site';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSite, getSiteId, getSiteOption, getSiteSlug } from 'calypso/state/sites/selectors';
@@ -634,6 +635,25 @@ export function redirectWithoutSite( redirectPath ) {
 
 		return next();
 	};
+}
+
+/**
+ * Use this middleware to prevent navigation to pages which are not supported by staging sites.
+ *
+ * @param {Object} context -- Middleware context
+ * @param {Function} next -- Call next middleware in chain
+ */
+export function stagingSiteNotSupportedRedirect( context, next ) {
+	const store = context.store;
+	const selectedSite = getSelectedSite( store.getState() );
+
+	if ( selectedSite && isStagingSite( store.getState(), selectedSite.ID ) ) {
+		const siteSlug = getSiteSlug( store.getState(), selectedSite.ID );
+
+		return page.redirect( `/home/${ siteSlug }` );
+	}
+
+	next();
 }
 
 /**

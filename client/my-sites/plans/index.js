@@ -6,6 +6,7 @@ import {
 	sites,
 	wpForTeamsP2PlusNotSupportedRedirect,
 	p2RedirectToHubPlans,
+	stagingSiteNotSupportedRedirect,
 } from 'calypso/my-sites/controller';
 import jetpackPlans from 'calypso/my-sites/plans/jetpack-plans';
 import { jetpackStoragePlans } from 'calypso/my-sites/plans/jetpack-plans/jetpack-storage-plans';
@@ -30,6 +31,7 @@ export default function () {
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
 		p2RedirectToHubPlans,
+		stagingSiteNotSupportedRedirect,
 		sites
 	);
 	trackedPage(
@@ -38,6 +40,7 @@ export default function () {
 		wpForTeamsP2PlusNotSupportedRedirect,
 		navigation,
 		p2RedirectToHubPlans,
+		stagingSiteNotSupportedRedirect,
 		redirectToPlans
 	);
 	trackedPage(
@@ -46,6 +49,7 @@ export default function () {
 		wpForTeamsP2PlusNotSupportedRedirect,
 		navigation,
 		p2RedirectToHubPlans,
+		stagingSiteNotSupportedRedirect,
 		redirectToPlans
 	);
 	trackedPage(
@@ -54,6 +58,7 @@ export default function () {
 		wpForTeamsP2PlusNotSupportedRedirect,
 		navigation,
 		p2RedirectToHubPlans,
+		stagingSiteNotSupportedRedirect,
 		redirectToPlans
 	);
 	trackedPage(
@@ -62,6 +67,7 @@ export default function () {
 		wpForTeamsP2PlusNotSupportedRedirect,
 		navigation,
 		p2RedirectToHubPlans,
+		stagingSiteNotSupportedRedirect,
 		redirectToPlans
 	);
 	trackedPage( '/plans/features/:feature/:domain', features );
@@ -72,6 +78,7 @@ export default function () {
 		sites,
 		navigation,
 		p2RedirectToHubPlans,
+		stagingSiteNotSupportedRedirect,
 		currentPlan
 	);
 	trackedPage( '/plans/my-plan/trial-upgraded/:domain', siteSelection, trialUpgradeConfirmation );
@@ -81,6 +88,7 @@ export default function () {
 		wpForTeamsP2PlusNotSupportedRedirect,
 		navigation,
 		p2RedirectToHubPlans,
+		stagingSiteNotSupportedRedirect,
 		currentPlan
 	);
 	trackedPage(
@@ -88,6 +96,7 @@ export default function () {
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
 		p2RedirectToHubPlans,
+		stagingSiteNotSupportedRedirect,
 		redirectToCheckout
 	);
 
@@ -99,6 +108,7 @@ export default function () {
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
 		redirectToPlansIfNotJetpack,
+		stagingSiteNotSupportedRedirect,
 		navigation
 	);
 
@@ -108,6 +118,7 @@ export default function () {
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
 		redirectToPlansIfNotJetpack,
+		stagingSiteNotSupportedRedirect,
 		navigation
 	);
 
@@ -117,6 +128,7 @@ export default function () {
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
 		p2RedirectToHubPlans,
+		stagingSiteNotSupportedRedirect,
 		navigation,
 		plans
 	);
@@ -125,6 +137,7 @@ export default function () {
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
 		redirectToPlansIfNotJetpack,
+		stagingSiteNotSupportedRedirect,
 		navigation
 	);
 }
