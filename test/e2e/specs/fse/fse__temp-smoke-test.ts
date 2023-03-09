@@ -51,6 +51,8 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
 
 		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Back' );
+		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Back' );
+		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Templates' );
 		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Page' );
 		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Edit' );
 	} );
