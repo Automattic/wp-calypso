@@ -181,7 +181,6 @@ export default function CheckoutMain( {
 	const {
 		applyCoupon,
 		replaceProductInCart,
-		replaceProductsInCart,
 		isLoading: isLoadingCart,
 		isPendingUpdate: isCartPendingUpdate,
 		responseCart,
@@ -200,7 +199,6 @@ export default function CheckoutMain( {
 		couponCodeFromUrl,
 		applyCoupon,
 		addProductsToCart,
-		replaceProductsInCart,
 	} );
 
 	useRecordCartLoaded( {
