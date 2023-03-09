@@ -48,7 +48,7 @@ const translations: Translations = {
 				blockEditorSelector: '[data-type="core/image"]',
 				blockEditorContent: [
 					'.components-placeholder__label:has-text("Image")',
-					'.jetpack-external-media-button-menu:text("Select Image")', // Jetpack extension
+					'.jetpack-external-media-button-menu:has-text("Select Image")', // Jetpack extension
 				],
 				blockPanelTitle: 'Image',
 			},
@@ -117,7 +117,7 @@ const translations: Translations = {
 				blockEditorSelector: '[data-type="core/image"]',
 				blockEditorContent: [
 					'.components-placeholder__label:has-text("Image")',
-					'.jetpack-external-media-button-menu:text("Sélectionner une image")', // Jetpack extension
+					'.jetpack-external-media-button-menu:has-text("Sélectionner une image")', // Jetpack extension
 				],
 				blockPanelTitle: 'Image',
 			},
@@ -188,7 +188,7 @@ const translations: Translations = {
 				blockEditorSelector: '[data-type="core/image"]',
 				blockEditorContent: [
 					'.components-placeholder__label:has-text("תמונה")',
-					'.jetpack-external-media-button-menu:text("לבחור תמונה")', // Jetpack extension
+					'.jetpack-external-media-button-menu:has-text("לבחור תמונה")', // Jetpack extension
 				],
 				blockPanelTitle: 'תמונה',
 			},
