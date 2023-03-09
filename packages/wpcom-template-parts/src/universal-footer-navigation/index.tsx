@@ -2,7 +2,6 @@
 import {
 	useLocalizeUrl,
 	removeLocaleFromPathLocaleInFront,
-	retrieveLocaleFromPathLocaleInFront,
 	useIsEnglishLocale,
 	useLocale,
 	localizeUrl as pureLocalizeUrl,
@@ -35,8 +34,8 @@ export const PureUniversalNavbarFooter = ( {
 		article: __( 'An', __i18n_text_domain__ ),
 		noun: __( 'thingamajig', __i18n_text_domain__ ),
 	},
+	locale,
 }: PureFooterProps ) => {
-	const locale = retrieveLocaleFromPathLocaleInFront( window.location.pathname );
 	const isEnglishLocale = locale === 'en';
 
 	return (

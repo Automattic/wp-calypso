@@ -111,7 +111,7 @@ add_filter( 'load_script_translation_file', 'happyblocks_normalize_translations_
  * @return array
  */
 function happyblocks_allow_footer_tags( $tags ) {
-	$tags['svg']            = array(
+	$tags['svg']    = array(
 		'xmlns'       => array(),
 		'fill'        => array(),
 		'viewbox'     => array(),
@@ -120,31 +120,31 @@ function happyblocks_allow_footer_tags( $tags ) {
 		'focusable'   => array(),
 		'class'       => array(),
 	);
-	$tags['path']           = array(
+	$tags['path']   = array(
 		'd'    => array(),
 		'fill' => array(),
 	);
-	$tags['select']         = array(
+	$tags['select'] = array(
 		'class' => array(),
 		'title' => array(),
 	);
-	$tags['option']         = array(
+	$tags['option'] = array(
 		'value'    => array(),
 		'disabled' => array(),
 		'lang'     => array(),
 	);
-	$tags['stop']           = array(
+	$tags['stop']   = array(
 		'stopColor' => array(),
 		'offset'    => array(),
 	);
-	$tags['linearGradient'] = array(
-		'id' => array(),
-		'x1' => array(),
-		'x2' => array(),
-		'y1' => array(),
-		'y2' => array(),
+	$tags['defs']   = array();
+
+	$tags['footer'] = array_merge(
+		$tags['footer'],
+		array(
+			'data-locale' => array(),
+		)
 	);
-	$tags['defs']           = array();
 
 	return $tags;
 }

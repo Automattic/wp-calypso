@@ -13,7 +13,15 @@
  */
 function happyblocks_universal_footer_register() {
 	register_block_type(
-		__DIR__ . ( is_rtl() ? '/build/rtl' : '/build' )
+		__DIR__ . ( is_rtl() ? '/build/rtl' : '/build' ),
+		array(
+			'attributes' => array(
+				'locale' => array(
+					'type'    => 'string',
+					'default' => happy_blocks_get_site_locale(),
+				),
+			),
+		)
 	);
 }
 

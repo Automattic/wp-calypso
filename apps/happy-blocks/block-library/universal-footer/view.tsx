@@ -4,6 +4,7 @@ import { hydrate } from 'react-dom';
 
 domReady( () => {
 	document.querySelectorAll( `.wp-block-happy-blocks-universal-footer` ).forEach( ( el ) => {
-		hydrate( <PureUniversalNavbarFooter />, el );
+		const locale = el.getAttribute( 'data-locale' ) as string;
+		hydrate( <PureUniversalNavbarFooter locale={ locale } />, el );
 	} );
 } );
