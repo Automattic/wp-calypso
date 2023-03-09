@@ -28,6 +28,7 @@ import {
 	SIGNUP_STEPS_WEBSITE_FIELD_CHANGED,
 	SIGNUP_STEPS_WEBSITE_CONTENT_FEEDBACK_CHANGE,
 	SIGNUP_STEPS_WEBSITE_CONTENT_CHANGES_SAVED,
+	SIGNUP_STEPS_WEBSITE_CONTENT_SEARCH_TERMS_CHANGED,
 } from 'calypso/state/action-types';
 import { Media, MediaUploadType, WebsiteContentServerState } from './types';
 import 'calypso/state/signup/init';
@@ -94,6 +95,13 @@ export function updateFeedback( feedback: string ) {
 	return {
 		type: SIGNUP_STEPS_WEBSITE_CONTENT_FEEDBACK_CHANGE,
 		payload: { feedback },
+	};
+}
+
+export function updateSearchTerms( searchTerms: string ) {
+	return {
+		type: SIGNUP_STEPS_WEBSITE_CONTENT_SEARCH_TERMS_CHANGED,
+		payload: { searchTerms },
 	};
 }
 
@@ -174,7 +182,8 @@ export function initializeWebsiteContentForm(
 	websiteContentServerState: WebsiteContentServerState,
 	translatedPageTitles: Record< PageId, TranslateResult >
 ) {
-	const { selectedPageTitles, pages, siteLogoUrl, genericFeedback } = websiteContentServerState;
+	const { selectedPageTitles, pages, siteLogoUrl, searchTerms, genericFeedback } =
+		websiteContentServerState;
 
 	const generatedPages = selectedPageTitles.map( ( pageId ) => {
 		const savedContent = pages.find( ( page ) => page.id === pageId );
@@ -194,7 +203,7 @@ export function initializeWebsiteContentForm(
 		type: SIGNUP_STEPS_WEBSITE_CONTENT_INITIALIZE_PAGES,
 		payload: {
 			pages: generatedPages,
-			siteLogoSection: { siteLogoUrl },
+			siteInformationSection: { siteLogoUrl, searchTerms },
 			feedbackSection: { genericFeedback },
 		},
 	};

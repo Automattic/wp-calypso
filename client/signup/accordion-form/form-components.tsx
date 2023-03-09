@@ -1,11 +1,14 @@
 import { FormInputValidation } from '@automattic/components';
 import styled from '@emotion/styled';
+import { Icon } from '@wordpress/icons';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { ChangeEvent, ReactChild } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextArea from 'calypso/components/forms/form-textarea';
 import SocialLogo from 'calypso/components/social-logo';
+import { tip } from 'calypso/signup/icons';
 
 // TODO: This probably should be moved out to a more suitable folder name like difm-components
 export const Label = styled.label`
@@ -87,6 +90,20 @@ const AddressField = styled.div`
 	flex-basis: 100%;
 `;
 
+const FormSettingExplanationContainer = styled.div`
+	.form-setting-explanation {
+		display: flex;
+		align-items: center;
+		margin: 16px 0;
+		font-style: normal;
+		color: var( --studio-gray-40 );
+
+		.site-options__form-icon {
+			margin-right: 8px;
+		}
+	}
+`;
+
 interface TextInputFieldProps {
 	name: string;
 	label?: TranslateResult;
@@ -95,6 +112,7 @@ interface TextInputFieldProps {
 	error?: TranslateResult | null;
 	sublabel?: TranslateResult;
 	rows?: number;
+	explanation?: TranslateResult;
 	onChange?: ( event: ChangeEvent< HTMLInputElement > ) => void;
 }
 
@@ -119,6 +137,14 @@ export function TextInputField( props: TextInputFieldProps ) {
 			{ props.sublabel && <SubLabel htmlFor={ props.name }>{ props.sublabel }</SubLabel> }
 			<TextInput { ...props } isError={ !! props.error } />
 			{ props.error && <FormInputValidation isError text={ props.error } /> }
+			{ props.explanation && (
+				<FormSettingExplanationContainer>
+					<FormSettingExplanation>
+						<Icon className="site-options__form-icon" icon={ tip } size={ 20 } />
+						{ props.explanation }
+					</FormSettingExplanation>
+				</FormSettingExplanationContainer>
+			) }
 		</FormFieldset>
 	);
 }
