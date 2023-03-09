@@ -137,13 +137,10 @@ export const useStoreItemInfo = ( {
 			// be considered as included in the Complete plan ("Part of the current plan").
 			const siteHasCompletePlan =
 				sitePlan?.product_slug &&
-				( JETPACK_COMPLETE_PLANS as ReadonlyArray< string > ).includes(
-					sitePlan.product_slug
-				);
-			const itemIsSecurity =
-				( JETPACK_SECURITY_PLANS as ReadonlyArray< string > ).includes(
-					item.productSlug
-				);
+				( JETPACK_COMPLETE_PLANS as ReadonlyArray< string > ).includes( sitePlan.product_slug );
+			const itemIsSecurity = ( JETPACK_SECURITY_PLANS as ReadonlyArray< string > ).includes(
+				item.productSlug
+			);
 
 			if ( siteHasCompletePlan && itemIsSecurity ) {
 				return true;
