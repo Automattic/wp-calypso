@@ -25,119 +25,81 @@ const trackedPage = ( url, ...rest ) => {
 	page( url, ...rest, makeLayout, clientRender );
 };
 
+const commonHandlers = [
+	siteSelection,
+	wpForTeamsP2PlusNotSupportedRedirect,
+	stagingSiteNotSupportedRedirect,
+];
+
 export default function () {
-	trackedPage(
-		'/plans',
-		siteSelection,
-		wpForTeamsP2PlusNotSupportedRedirect,
-		p2RedirectToHubPlans,
-		stagingSiteNotSupportedRedirect,
-		sites
-	);
+	trackedPage( '/plans', ...commonHandlers, p2RedirectToHubPlans, sites );
 	trackedPage(
 		'/plans/compare',
-		siteSelection,
-		wpForTeamsP2PlusNotSupportedRedirect,
+		...commonHandlers,
 		navigation,
 		p2RedirectToHubPlans,
-		stagingSiteNotSupportedRedirect,
 		redirectToPlans
 	);
 	trackedPage(
 		'/plans/compare/:domain',
-		siteSelection,
-		wpForTeamsP2PlusNotSupportedRedirect,
+		...commonHandlers,
 		navigation,
 		p2RedirectToHubPlans,
-		stagingSiteNotSupportedRedirect,
 		redirectToPlans
 	);
 	trackedPage(
 		'/plans/features',
-		siteSelection,
-		wpForTeamsP2PlusNotSupportedRedirect,
+		...commonHandlers,
 		navigation,
 		p2RedirectToHubPlans,
-		stagingSiteNotSupportedRedirect,
 		redirectToPlans
 	);
 	trackedPage(
 		'/plans/features/:domain',
-		siteSelection,
-		wpForTeamsP2PlusNotSupportedRedirect,
+		...commonHandlers,
 		navigation,
 		p2RedirectToHubPlans,
-		stagingSiteNotSupportedRedirect,
 		redirectToPlans
 	);
 	trackedPage( '/plans/features/:feature/:domain', features );
 	trackedPage(
 		'/plans/my-plan',
-		siteSelection,
-		wpForTeamsP2PlusNotSupportedRedirect,
+		...commonHandlers,
 		sites,
 		navigation,
 		p2RedirectToHubPlans,
-		stagingSiteNotSupportedRedirect,
 		currentPlan
 	);
 	trackedPage( '/plans/my-plan/trial-upgraded/:domain', siteSelection, trialUpgradeConfirmation );
 	trackedPage(
 		'/plans/my-plan/:site',
-		siteSelection,
-		wpForTeamsP2PlusNotSupportedRedirect,
+		...commonHandlers,
 		navigation,
 		p2RedirectToHubPlans,
-		stagingSiteNotSupportedRedirect,
 		currentPlan
 	);
 	trackedPage(
 		'/plans/select/:plan/:domain',
-		siteSelection,
-		wpForTeamsP2PlusNotSupportedRedirect,
+		...commonHandlers,
 		p2RedirectToHubPlans,
-		stagingSiteNotSupportedRedirect,
 		redirectToCheckout
 	);
 
 	// This is a special plans page just for Jetpack Backup storage plans.
 	// It needs to be defined before the other plans pages so that /plans/storage/:site
 	// will take precedence over /plans/:intervalType?/:site.
-	jetpackStoragePlans(
-		'/plans',
-		siteSelection,
-		wpForTeamsP2PlusNotSupportedRedirect,
-		redirectToPlansIfNotJetpack,
-		stagingSiteNotSupportedRedirect,
-		navigation
-	);
+	jetpackStoragePlans( '/plans', ...commonHandlers, redirectToPlansIfNotJetpack, navigation );
 
 	// Upsell page between pricing and checkout pages when purchasing some Jetpack products.
-	jetpackUpsell(
-		'/plans',
-		siteSelection,
-		wpForTeamsP2PlusNotSupportedRedirect,
-		redirectToPlansIfNotJetpack,
-		stagingSiteNotSupportedRedirect,
-		navigation
-	);
+	jetpackUpsell( '/plans', ...commonHandlers, redirectToPlansIfNotJetpack, navigation );
 
 	// This route renders the plans page for both WPcom and Jetpack sites.
 	trackedPage(
 		'/plans/:intervalType?/:site',
-		siteSelection,
-		wpForTeamsP2PlusNotSupportedRedirect,
+		...commonHandlers,
 		p2RedirectToHubPlans,
-		stagingSiteNotSupportedRedirect,
 		navigation,
 		plans
 	);
-	jetpackPlans(
-		'/plans',
-		siteSelection,
-		wpForTeamsP2PlusNotSupportedRedirect,
-		redirectToPlansIfNotJetpack,
-		stagingSiteNotSupportedRedirect,
-		navigation
-	);
+	jetpackPlans( '/plans', ...commonHandlers, redirectToPlansIfNotJetpack, navigation );
 }

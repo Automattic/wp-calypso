@@ -6,6 +6,7 @@ import {
 	siteSelection,
 	sites,
 	wpForTeamsGeneralNotSupportedRedirect,
+	stagingSiteNotSupportedRedirect,
 } from 'calypso/my-sites/controller';
 import domainsController from './controller';
 import domainManagementController from './domain-management/controller';
@@ -29,7 +30,12 @@ function getCommonHandlers( {
 	noSitePath = paths.domainManagementRoot(),
 	warnIfJetpack = true,
 } = {} ) {
-	const handlers = [ siteSelection, navigation, wpForTeamsGeneralNotSupportedRedirect ];
+	const handlers = [
+		siteSelection,
+		navigation,
+		wpForTeamsGeneralNotSupportedRedirect,
+		stagingSiteNotSupportedRedirect,
+	];
 
 	if ( noSitePath ) {
 		handlers.push( domainsController.redirectIfNoSite( noSitePath ) );

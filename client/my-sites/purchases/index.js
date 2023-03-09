@@ -1,6 +1,11 @@
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
+import {
+	navigation,
+	siteSelection,
+	stagingSiteNotSupportedRedirect,
+	sites,
+} from 'calypso/my-sites/controller';
 import {
 	purchases,
 	redirectToPurchases,
@@ -14,33 +19,20 @@ import {
 	addPaymentMethod,
 } from './controller';
 
+const commonHandlers = [ siteSelection, stagingSiteNotSupportedRedirect, navigation ];
+
 export default ( router ) => {
-	page( '/purchases', siteSelection, navigation, sites, makeLayout, clientRender );
+	page( '/purchases', ...commonHandlers, sites, makeLayout, clientRender );
 
-	page( '/purchases/subscriptions', siteSelection, navigation, sites, makeLayout, clientRender );
+	page( '/purchases/subscriptions', ...commonHandlers, sites, makeLayout, clientRender );
 
-	page(
-		'/purchases/:site',
-		siteSelection,
-		navigation,
-		redirectToPurchases,
-		makeLayout,
-		clientRender
-	);
+	page( '/purchases/:site', ...commonHandlers, redirectToPurchases, makeLayout, clientRender );
 
-	page(
-		'/purchases/subscriptions/:site',
-		siteSelection,
-		navigation,
-		purchases,
-		makeLayout,
-		clientRender
-	);
+	page( '/purchases/subscriptions/:site', ...commonHandlers, purchases, makeLayout, clientRender );
 
 	page(
 		'/purchases/subscriptions/:site/:purchaseId',
-		siteSelection,
-		navigation,
+		...commonHandlers,
 		purchaseDetails,
 		makeLayout,
 		clientRender
@@ -48,8 +40,7 @@ export default ( router ) => {
 
 	page(
 		'/purchases/subscriptions/:site/:purchaseId/cancel',
-		siteSelection,
-		navigation,
+		...commonHandlers,
 		purchaseCancel,
 		makeLayout,
 		clientRender
@@ -57,8 +48,7 @@ export default ( router ) => {
 
 	page(
 		'/purchases/subscriptions/:site/:purchaseId/confirm-cancel-domain',
-		siteSelection,
-		navigation,
+		...commonHandlers,
 		purchaseCancelDomain,
 		makeLayout,
 		clientRender
@@ -66,8 +56,7 @@ export default ( router ) => {
 
 	page(
 		'/purchases/subscriptions/:site/:purchaseId/payment-method/add',
-		siteSelection,
-		navigation,
+		...commonHandlers,
 		purchaseChangePaymentMethod,
 		makeLayout,
 		clientRender
@@ -75,8 +64,7 @@ export default ( router ) => {
 
 	page(
 		'/purchases/subscriptions/:site/:purchaseId/payment-method/change/:cardId',
-		siteSelection,
-		navigation,
+		...commonHandlers,
 		purchaseChangePaymentMethod,
 		makeLayout,
 		clientRender
@@ -84,8 +72,7 @@ export default ( router ) => {
 
 	page(
 		'/purchases/add-payment-method/:site',
-		siteSelection,
-		navigation,
+		...commonHandlers,
 		addPaymentMethod,
 		makeLayout,
 		clientRender
@@ -93,8 +80,7 @@ export default ( router ) => {
 
 	page(
 		'/purchases/billing-history/:site',
-		siteSelection,
-		navigation,
+		...commonHandlers,
 		billingHistory,
 		makeLayout,
 		clientRender
@@ -102,8 +88,7 @@ export default ( router ) => {
 
 	page(
 		'/purchases/billing-history/:site/:receiptId',
-		siteSelection,
-		navigation,
+		...commonHandlers,
 		receiptView,
 		makeLayout,
 		clientRender
@@ -111,8 +96,7 @@ export default ( router ) => {
 
 	page(
 		'/purchases/payment-methods/:site',
-		siteSelection,
-		navigation,
+		...commonHandlers,
 		paymentMethods,
 		makeLayout,
 		clientRender
