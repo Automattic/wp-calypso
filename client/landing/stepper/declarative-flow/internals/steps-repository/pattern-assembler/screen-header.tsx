@@ -13,7 +13,7 @@ interface Props {
 	onDoneClick: () => void;
 }
 
-const ScreenHeader = ( { selectedPattern, onSelect, onBack, onDoneClick }: Props ) => {
+const ScreenHeader = ( { selectedPattern, onSelect, onDoneClick }: Props ) => {
 	const translate = useTranslate();
 	const patterns = useHeaderPatterns();
 
@@ -30,7 +30,6 @@ const ScreenHeader = ( { selectedPattern, onSelect, onBack, onDoneClick }: Props
 				<PatternSelector
 					patterns={ patterns }
 					onSelect={ ( selectedPattern ) => onSelect( 'header', selectedPattern, 'header' ) }
-					onBack={ onBack }
 					selectedPattern={ selectedPattern }
 					emptyPatternText={ translate( 'No Header' ) }
 				/>
