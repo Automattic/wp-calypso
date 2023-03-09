@@ -118,6 +118,8 @@ $font-family: "SF Pro Text", $sans;
 			overflow-y: auto;
 			overflow-x: hidden;
 			scrollbar-width: none;
+			// Fix for tooltip position issue
+			padding-bottom: 25px;
 
 			&::-webkit-scrollbar {
 				display: none;
