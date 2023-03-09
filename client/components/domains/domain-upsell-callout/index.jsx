@@ -16,7 +16,6 @@ import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 import './style.scss';
-
 const DomainUpsellCallout = ( { trackEvent } ) => {
 	const dispatch = useDispatch();
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
