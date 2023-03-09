@@ -56,7 +56,7 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	const currentSite = window?.helpCenterData?.currentSite;
 	const site = useSelect(
 		( select ) => ( select( SITE_STORE ) as SiteSelect ).getSite( siteId || primarySiteId ),
-		[ siteId, primarySiteId ]
+		[ siteId || primarySiteId ]
 	);
 
 	setSite( currentSite ? currentSite : site );
