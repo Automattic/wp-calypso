@@ -197,9 +197,15 @@ describe( '#localizeUrl', () => {
 		expect( localizeUrl( 'https://wordpress.com/go/', 'es' ) ).toEqual(
 			'https://wordpress.com/es/go/'
 		);
-		// Don't rewrite specific posts.
-		expect( localizeUrl( 'https://wordpress.com/go/category/test/', 'pt-br' ) ).toEqual(
-			'https://wordpress.com/go/category/test/'
+		// Rewrite specific posts only for Spanish.
+		expect( localizeUrl( 'https://wordpress.com/go/category/a-post/', 'pt-br' ) ).toEqual(
+			'https://wordpress.com/go/category/a-post/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/go/category/a-post/', 'pl' ) ).toEqual(
+			'https://wordpress.com/go/category/a-post/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/go/category/a-post/', 'es' ) ).toEqual(
+			'https://wordpress.com/es/go/category/a-post/'
 		);
 	} );
 

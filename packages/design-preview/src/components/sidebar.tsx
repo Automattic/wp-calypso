@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { useState } from '@wordpress/element';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import StyleVariationPreviews from './style-variation';
 import type { Category, StyleVariation } from '@automattic/design-picker/src/types';
 
@@ -37,6 +37,7 @@ interface SidebarProps {
 	onClickCategory?: ( category: Category ) => void;
 	actionButtons: React.ReactNode;
 	showGlobalStylesPremiumBadge: boolean;
+	patternAssemblerCTA?: React.ReactNode;
 }
 
 const Sidebar: React.FC< SidebarProps > = ( {
@@ -52,7 +53,9 @@ const Sidebar: React.FC< SidebarProps > = ( {
 	onClickCategory,
 	actionButtons,
 	showGlobalStylesPremiumBadge,
+	patternAssemblerCTA,
 } ) => {
+	const translate = useTranslate();
 	const [ isShowFullDescription, setIsShowFullDescription ] = useState( false );
 	const isShowDescriptionToggle = shortDescription && description !== shortDescription;
 
@@ -116,6 +119,7 @@ const Sidebar: React.FC< SidebarProps > = ( {
 			{ actionButtons && (
 				<div className="design-preview__sidebar-action-buttons">{ actionButtons }</div>
 			) }
+			{ patternAssemblerCTA }
 		</div>
 	);
 };

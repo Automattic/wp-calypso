@@ -25,6 +25,7 @@ const ScreenMain = ( { shouldUnlockGlobalStyles, onSelect, onContinueClick }: Pr
 				description={ translate(
 					'Use our library of styles and patterns to design your own theme.'
 				) }
+				hideBack
 			/>
 			<div className="screen-container__body">
 				<ItemGroup>
