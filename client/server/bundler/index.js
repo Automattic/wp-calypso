@@ -100,7 +100,15 @@ function middleware( app ) {
 	}
 
 	app.use( waitForCompiler );
-	app.use( webpackMiddleware( compiler ) );
+	app.use(
+		webpackMiddleware( compiler, {
+			headers: ( req, res ) => {
+				if ( /\.(?:gif|jpg|jpeg|png|svg)$/i.test( req.originalUrl ) ) {
+					res.setHeader( 'Cache-Control', 'max-age=3600' );
+				}
+			},
+		} )
+	);
 }
 
 module.exports = middleware;
