@@ -345,6 +345,10 @@
 		padding: 0;
 	}
 
+	.gridicon {
+		transform: rotate(90deg);
+	}
+
 	@include break-mobile {
 		flex: 6 6 0;
 		margin: 0;

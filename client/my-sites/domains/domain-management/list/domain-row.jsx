@@ -1,5 +1,5 @@
-import { Button, Spinner } from '@automattic/components';
-import { Icon, home, info, moreVertical, redo, plus } from '@wordpress/icons';
+import { Button, Gridicon, Spinner } from '@automattic/components';
+import { Icon, home, info, redo, plus } from '@wordpress/icons';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
@@ -379,7 +379,7 @@ class DomainRow extends PureComponent {
 					disabled={ disabled || isBusy }
 					onClick={ this.stopPropagation }
 					toggleTitle={ translate( 'Options' ) }
-					icon={ <Icon icon={ moreVertical } size={ 28 } className="gridicon" /> }
+					icon={ <Gridicon icon="ellipsis" className="gridicon" /> }
 					popoverClassName="domain-row__popover"
 					position="bottom"
 				>
