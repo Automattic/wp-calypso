@@ -1,0 +1,51 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@wordpress/base-styles/breakpoints";
+
+.wpcom-site {
+	background-color: $studio-white;
+
+	.layout__content {
+		padding: 48px 62px;
+
+		.main {
+			max-width: 1440px;
+
+			.formatted-header {
+				margin: 0;
+
+				.formatted-header__title {
+					font-size: $font-headline-medium !important;
+					line-height: $font-headline-large;
+					color: $studio-gray-100;
+					margin-bottom: 16px;
+				}
+
+				.formatted-header__subtitle {
+					font-size: $font-body !important;
+					line-height: $font-title-medium;
+					color: $studio-gray-60;
+				}
+			}
+		}
+
+	}
+
+
+	@media screen and ( max-width: $break-medium ) {
+		.layout__content {
+			padding: 4px 24px;
+
+			.main {
+				.formatted-header {
+					.formatted-header__title {
+						font-size: $font-title-medium !important;
+						line-height: $font-title-large;
+						margin-bottom: 8px;
+					}
+				}
+			}
+		}
+	}
+
+}
+
