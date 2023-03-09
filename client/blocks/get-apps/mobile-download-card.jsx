@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { Card, Button } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { compose } from '@wordpress/compose';
 import classnames from 'classnames';
@@ -248,60 +248,6 @@ class MobileDownloadCard extends Component {
 		);
 	}
 
-	getWordPressBrandedPanel() {
-		const { isMobile } = userAgent;
-		const featureIsEnabled = ! isMobile;
-
-		return (
-			<>
-				<div className="get-apps__store-subpanel">
-					<div className="get-apps__card-text">
-						<h3 className="get-apps__card-title">{ translate( 'Mobile Apps' ) }</h3>
-						<p className="get-apps__description">
-							{ translate( 'WordPress at your fingertips.' ) }
-						</p>
-					</div>
-					<div className="get-apps__badges">
-						<AppsBadge storeName="android" utm_source="calypso-get-apps" />
-						<AppsBadge storeName="ios" utm_source="calypso-get-apps-button" />
-					</div>
-				</div>
-
-				{ featureIsEnabled && (
-					<div className="get-apps__qr-code-subpanel">
-						<p>
-							<strong>{ translate( 'Ready to WordPress on the go?' ) }</strong>
-							<br />
-							{ translate( 'Scan the code using your mobile phone to download the app.' ) }
-						</p>
-
-						<QRCode
-							value={ localizeUrl( 'https://apps.wordpress.com/get?campaign=calypso-qrcode-apps' ) }
-							size={ 180 }
-						/>
-					</div>
-				) }
-
-				<div className="get-apps__magic-link-subpanel">
-					<div className="get-apps__card-text">
-						<p>
-							<strong>{ translate( 'Instantly log in to the mobile app' ) }</strong>
-							<br />
-							{ translate(
-								'Send yourself links to download the app and instantly log in on your mobile device.'
-							) }
-						</p>
-					</div>
-					<div>
-						<Button className="get-apps__magic-link-button" onClick={ this.onSubmitLink }>
-							{ translate( 'Email me a log in link' ) }
-						</Button>
-					</div>
-				</div>
-			</>
-		);
-	}
-
 	render() {
 		return (
 			<Card
@@ -310,9 +256,7 @@ class MobileDownloadCard extends Component {
 				} ) }
 			>
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
-				{ displayJetpackAppBranding
-					? this.getJetpackBrandedPanel()
-					: this.getWordPressBrandedPanel() }
+				{ this.getJetpackBrandedPanel() }
 			</Card>
 		);
 	}
