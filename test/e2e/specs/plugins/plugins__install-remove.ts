@@ -42,7 +42,6 @@ describe( DataHelper.createSuiteTitle( 'Jetpack: Plugin' ), function () {
 
 		const testAccount = new TestAccount( 'jetpackRemoteSiteUser' );
 		await testAccount.authenticate( page );
-		await page.waitForLoadState( 'networkidle' );
 		siteURL = SecretsManager.secrets.testAccounts.jetpackRemoteSiteUser.testSites?.primary
 			.url as string;
 		pluginsPage = new PluginsPage( page );
