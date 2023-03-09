@@ -118,7 +118,9 @@ function WelcomeTour( { siteIntent }: { siteIntent?: string } ) {
 			 ).isInserterOpened(),
 			isSidebarOpened:
 				(
-					select( 'automattic/block-editor-nav-sidebar' ) as WpcomBlockEditorNavSidebarSelectors
+					select( 'automattic/block-editor-nav-sidebar' ) as
+						| WpcomBlockEditorNavSidebarSelectors
+						| undefined
 				 )?.isSidebarOpened() ?? false, // The sidebar store may not always be loaded.
 			isSettingsOpened:
 				( select( 'core/interface' ) as CoreInterfacePlaceholder ).getActiveComplementaryArea(

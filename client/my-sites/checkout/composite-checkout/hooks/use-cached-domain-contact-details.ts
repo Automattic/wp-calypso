@@ -57,7 +57,8 @@ function useCachedContactDetailsForCheckoutForm(
 			? getCountryPostalCodeSupport( countriesList, cachedContactDetails.countryCode )
 			: false;
 
-	const checkoutStoreActions: CheckoutStoreMappedActions = useDispatch( 'wpcom-checkout' );
+	const checkoutStoreActions: CheckoutStoreMappedActions | undefined =
+		useDispatch( 'wpcom-checkout' );
 	if ( ! checkoutStoreActions?.loadDomainContactDetailsFromCache ) {
 		throw new Error(
 			'useCachedContactDetailsForCheckoutForm must be run after the checkout data store has been initialized'

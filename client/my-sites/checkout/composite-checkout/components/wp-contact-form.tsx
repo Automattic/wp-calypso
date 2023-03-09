@@ -4,11 +4,7 @@ import { useSelect } from '@wordpress/data';
 import useCachedDomainContactDetails from '../hooks/use-cached-domain-contact-details';
 import ContactDetailsContainer from './contact-details-container';
 import type { WpcomCheckoutStoreSelectors } from '../hooks/wpcom-store';
-import type {
-	CountryListItem,
-	ContactDetailsType,
-	ManagedContactDetails,
-} from '@automattic/wpcom-checkout';
+import type { CountryListItem, ContactDetailsType } from '@automattic/wpcom-checkout';
 
 const BillingFormFields = styled.div`
 	margin-bottom: 16px;
@@ -39,9 +35,10 @@ export default function WPContactForm( {
 	isLoggedOutCart: boolean;
 	setShouldShowContactDetailsValidationErrors: ( allowed: boolean ) => void;
 } ) {
-	const contactInfo: ManagedContactDetails = useSelect(
+	const contactInfo = useSelect(
 		( select ) =>
-			( select( 'wpcom-checkout' ) as WpcomCheckoutStoreSelectors )?.getContactInfo() ?? {},
+			( select( 'wpcom-checkout' ) as WpcomCheckoutStoreSelectors | undefined )?.getContactInfo() ??
+			{},
 		[]
 	);
 	const { formStatus } = useFormStatus();

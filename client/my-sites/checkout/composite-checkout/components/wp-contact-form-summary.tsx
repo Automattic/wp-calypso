@@ -27,9 +27,10 @@ export default function WPContactFormSummary( {
 	isGSuiteInCart: boolean;
 	isLoggedOutCart: boolean;
 } ) {
-	const contactInfo: ManagedContactDetails = useSelect(
+	const contactInfo = useSelect(
 		( select ) =>
-			( select( 'wpcom-checkout' ) as WpcomCheckoutStoreSelectors )?.getContactInfo() ?? {},
+			( select( 'wpcom-checkout' ) as WpcomCheckoutStoreSelectors | undefined )?.getContactInfo() ??
+			{},
 		[]
 	);
 	const cartKey = useCartKey();

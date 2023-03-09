@@ -56,7 +56,8 @@ export default function ContactDetailsContainer( {
 	const checkoutActions = useDispatch( 'wpcom-checkout' );
 	const { email } = useSelect(
 		( select ) =>
-			( select( 'wpcom-checkout' ) as WpcomCheckoutStoreSelectors )?.getContactInfo() ?? {},
+			( select( 'wpcom-checkout' ) as WpcomCheckoutStoreSelectors | undefined )?.getContactInfo() ??
+			{},
 		[]
 	);
 
