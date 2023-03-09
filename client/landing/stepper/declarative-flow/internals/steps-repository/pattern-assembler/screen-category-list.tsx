@@ -53,7 +53,7 @@ const ScreenCategoryList = ( {
 	};
 
 	return (
-		<div className="components-navigator-screen" { ...useFocusOutside( handleFocusOutside ) }>
+		<div className="screen-container" { ...useFocusOutside( handleFocusOutside ) }>
 			<NavigatorHeader
 				title={ replacePatternMode ? translate( 'Replace pattern' ) : translate( 'Add patterns' ) }
 				description={

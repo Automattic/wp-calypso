@@ -37,8 +37,10 @@ $font-family: "SF Pro Text", $sans;
 		display: flex;
 		flex-direction: column;
 		width: 348px;
+		height: 100vh;
 		box-sizing: border-box;
-		padding: 50px 32px 32px;
+		padding: 110px 32px 32px;
+		margin-top: -60px;
 		background-color: var(--color-body-background);
 		position: relative;
 		z-index: 2;
@@ -251,6 +253,12 @@ $font-family: "SF Pro Text", $sans;
 	/**
 	 * Screen Container
 	 */
+	.screen-container {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+	}
+
 	.screen-container__body {
 		display: flex;
 		flex-direction: column;
