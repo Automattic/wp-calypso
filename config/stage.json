@@ -121,7 +121,6 @@
 		"safari-idb-mitigation": true,
 		"security/security-checkup": true,
 		"seller-experience": true,
-		"sensei/onboarding": true,
 		"server-side-rendering": true,
 		"settings/modernize-reading-settings": true,
 		"settings/security/monitor": true,
