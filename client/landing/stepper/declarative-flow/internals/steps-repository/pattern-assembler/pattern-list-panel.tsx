@@ -33,8 +33,7 @@ const PatternListPanel = ( {
 						key="pattern-list-panel"
 						className="pattern-list-panel__wrapper"
 						layoutScroll
-						initial={ { opacity: 0, transform: 'translateX(0)' } }
-						animate={ { opacity: 1, transform: 'translateX(348px)' } }
+						animate={ { transform: 'translateX(100%)' } }
 						transition={ {
 							type: 'spring',
 							stiffness: 150,

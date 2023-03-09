@@ -80,8 +80,11 @@ const ScreenCategoryList = ( {
 								if ( isOpen ) {
 									setOpenPatternList( false );
 									setCategory( null );
-								} else {
+								} else if ( ! openPatternList ) {
 									setOpenPatternList( true );
+									// Delay to prioritize the start of the panel animation
+									setTimeout( () => setCategory( name ), 100 );
+								} else {
 									setCategory( name );
 								}
 							} }
