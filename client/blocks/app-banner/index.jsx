@@ -125,14 +125,10 @@ export class AppBanner extends Component {
 		const { currentRoute, currentSection } = this.props;
 
 		if ( this.isAndroid() ) {
-			const displayJetpackAppBranding = config.isEnabled( 'jetpack/app-branding' );
-			const scheme = displayJetpackAppBranding ? 'jetpack' : 'wordpress';
-			const packageName = displayJetpackAppBranding
-				? 'com.jetpack.android'
-				: 'org.wordpress.android';
+			const scheme = 'jetpack';
+			const packageName = 'com.jetpack.android';
 			const utmDetails = `utm_source%3Dcalypso%26utm_campaign%3Dcalypso-mobile-banner`;
 
-			//TODO: update when section deep links are available.
 			switch ( currentSection ) {
 				case GUTENBERG:
 					return `intent://details?id=${ packageName }&url=${ scheme }://post&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
