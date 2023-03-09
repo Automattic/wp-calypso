@@ -79,7 +79,7 @@ class MembershipsProductsSection extends Component {
 		// This will take the hash into account only when ading a new product
 		const subscribe_as_site_subscriber = this.state.product
 			? this.state.product?.subscribe_as_site_subscriber
-			: window.location.hash === '#add-newsletter-payment-plan';
+			: window.location.hash === ADD_NEWSLETTER_PAYMENT_PLAN_HASH;
 
 		return (
 			<div>

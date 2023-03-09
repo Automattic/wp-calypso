@@ -729,7 +729,8 @@ const mapStateToProps = ( state ) => {
 			siteHasFeature( state, siteId, FEATURE_DONATIONS ) ||
 			siteHasFeature( state, siteId, FEATURE_RECURRING_PAYMENTS ),
 		isJetpack: isJetpackSite( state, siteId ),
-		source: window.location.hash === '#add-newsletter-payment-plan' ? 'earn-newsletter' : 'calypso',
+		source:
+			window.location.hash === ADD_NEWSLETTER_PAYMENT_PLAN_HASH ? 'earn-newsletter' : 'calypso',
 	};
 };
 
