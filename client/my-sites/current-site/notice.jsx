@@ -103,7 +103,9 @@ export class SiteNotice extends Component {
 		const siteRedirectNotice = this.getSiteRedirectNotice( site );
 
 		const showJitms =
-			! this.props.isSiteWPForTeams && ( discountOrFreeToPaid || config.isEnabled( 'jitms' ) );
+			! this.props.isSiteWPForTeams &&
+			! this.props.isStagingSite &&
+			( discountOrFreeToPaid || config.isEnabled( 'jitms' ) );
 
 		return (
 			<div className="current-site__notices">
@@ -132,6 +134,7 @@ export default connect( ( state, ownProps ) => {
 		isDomainOnly: isDomainOnlySite( state, siteId ),
 		activeDiscount: getActiveDiscount( state ),
 		isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
+		isStagingSite: ownProps.site.is_wpcom_staging_site,
 		isMigrationInProgress,
 	};
 } )( localize( SiteNotice ) );
