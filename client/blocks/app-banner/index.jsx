@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button, Card } from '@automattic/components';
 import { compose } from '@wordpress/compose';
 import classNames from 'classnames';
@@ -156,57 +155,6 @@ export class AppBanner extends Component {
 		return (
 			<div className={ classNames( 'app-banner-overlay' ) } ref={ this.preventNotificationsClose }>
 				<Card
-					className={ classNames( 'app-banner', 'is-compact', currentSection, 'jetpack' ) }
-					ref={ this.preventNotificationsClose }
-				>
-					<TrackComponentView
-						eventName="calypso_mobile_app_banner_impression"
-						eventProperties={ {
-							page: currentSection,
-						} }
-						statGroup="calypso_mobile_app_banner"
-						statName="impression"
-					/>
-					<AnimatedIcon className="app-banner__icon" icon={ icon } />
-					<div className="app-banner__text-content jetpack">
-						<div className="app-banner__title jetpack">
-							<span> { title } </span>
-						</div>
-						<div className="app-banner__copy jetpack">
-							<span> { copy } </span>
-						</div>
-					</div>
-					<div className="app-banner__buttons jetpack">
-						<Button
-							primary
-							className="app-banner__open-button jetpack"
-							onClick={ this.openApp }
-							href={ this.getDeepLink() }
-						>
-							{ translate( 'Open in the Jetpack app' ) }
-						</Button>
-						<Button className="app-banner__no-thanks-button jetpack" onClick={ this.dismiss }>
-							{ translate( 'Continue in browser' ) }
-						</Button>
-					</div>
-				</Card>
-			</div>
-		);
-	};
-
-	getWordpressAppBanner = ( { translate, currentSection } ) => {
-		const { title, copy } = getAppBannerData( translate, currentSection );
-
-		// This conditional will be unnecessary once the 'jetpack/app-branding'
-		// feature flag is removed and its features are made the default
-		// experience, as getAppBannerData will then not include conditionals.
-		if ( ! title || ! copy ) {
-			return null;
-		}
-
-		return (
-			<div className={ classNames( 'app-banner-overlay' ) } ref={ this.preventNotificationsClose }>
-				<Card
 					className={ classNames( 'app-banner', 'is-compact', currentSection ) }
 					ref={ this.preventNotificationsClose }
 				>
@@ -218,9 +166,7 @@ export class AppBanner extends Component {
 						statGroup="calypso_mobile_app_banner"
 						statName="impression"
 					/>
-					<div className="app-banner__circle is-top-left is-yellow" />
-					<div className="app-banner__circle is-top-right is-blue" />
-					<div className="app-banner__circle is-bottom-right is-red" />
+					<AnimatedIcon className="app-banner__icon" icon={ icon } />
 					<div className="app-banner__text-content">
 						<div className="app-banner__title">
 							<span> { title } </span>
@@ -236,10 +182,10 @@ export class AppBanner extends Component {
 							onClick={ this.openApp }
 							href={ this.getDeepLink() }
 						>
-							{ translate( 'Open in app' ) }
+							{ translate( 'Open in the Jetpack app' ) }
 						</Button>
 						<Button className="app-banner__no-thanks-button" onClick={ this.dismiss }>
-							{ translate( 'No thanks' ) }
+							{ translate( 'Continue in browser' ) }
 						</Button>
 					</div>
 				</Card>
@@ -252,11 +198,7 @@ export class AppBanner extends Component {
 			return null;
 		}
 
-		const displayJetpackAppBranding = config.isEnabled( 'jetpack/app-branding' );
-
-		return displayJetpackAppBranding
-			? this.getJetpackAppBanner( this.props )
-			: this.getWordpressAppBanner( this.props );
+		return this.getJetpackAppBanner( this.props );
 	}
 }
 
