@@ -516,7 +516,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 	function* applyThemeWithPatterns(
 		siteSlug: string,
 		design: Design,
-		globalStyles: GlobalStyles,
+		globalStyles: GlobalStyles | null,
 		sourceSiteId: number
 	) {
 		const stylesheet = design?.recipe?.stylesheet || '';
@@ -527,7 +527,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		// modified Home template.
 		yield setThemeOnSite( siteSlug, theme, undefined, false );
 
-		if ( isEnabled( 'pattern-assembler/color-and-fonts' ) ) {
+		if ( isEnabled( 'pattern-assembler/color-and-fonts' ) && globalStyles ) {
 			yield setGlobalStyles( siteSlug, stylesheet, globalStyles );
 		}
 

@@ -43,6 +43,7 @@ import {
 	getVirtualDesignProps,
 } from '../../analytics/record-design';
 import StepperLoader from '../../components/stepper-loader';
+import { PLACEHOLDER_SITE_ID } from '../pattern-assembler/constants';
 import { getCategorizationOptions } from './categories';
 import { DEFAULT_VARIATION_SLUG, RETIRING_DESIGN_SLUGS, STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
@@ -453,7 +454,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	// ********** Logic for submitting the selected design
 
-	const { setDesignOnSite } = useDispatch( SITE_STORE );
+	const { setDesignOnSite, applyThemeWithPatterns } = useDispatch( SITE_STORE );
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 
 	function pickDesign( _selectedDesign: Design | undefined = selectedDesign ) {
@@ -467,12 +468,20 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 					( design ) => design.slug === _selectedDesign.slug
 				);
 			}
-			setPendingAction( () =>
-				setDesignOnSite( siteSlugOrId, _selectedDesign, {
+			setPendingAction( () => {
+				if ( _selectedDesign.is_virtual && _selectedDesign.recipe?.pattern_ids?.length ) {
+					return applyThemeWithPatterns(
+						siteSlugOrId,
+						_selectedDesign,
+						null,
+						PLACEHOLDER_SITE_ID
+					).then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) );
+				}
+				return setDesignOnSite( siteSlugOrId, _selectedDesign, {
 					styleVariation: selectedStyleVariation,
 					verticalId: siteVerticalId,
-				} ).then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) )
-			);
+				} ).then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) );
+			} );
 
 			handleSubmit(
 				{
