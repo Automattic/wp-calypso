@@ -135,12 +135,17 @@ export const useStoreItemInfo = ( {
 		( item: SelectorProduct ) => {
 			// If user owns the Jetpack Complete Plan/bundle, then JetPack Security plan/bundle should
 			// be considered as included in the Complete plan ("Part of the current plan").
-			if (
+			const siteHasCompletePlan =
+				sitePlan?.product_slug &&
 				( JETPACK_COMPLETE_PLANS as ReadonlyArray< string > ).includes(
-					( sitePlan && sitePlan.product_slug ) || ''
-				) &&
-				( JETPACK_SECURITY_PLANS as ReadonlyArray< string > ).includes( item.productSlug )
-			) {
+					sitePlan.product_slug
+				);
+			const itemIsSecurity =
+				( JETPACK_SECURITY_PLANS as ReadonlyArray< string > ).includes(
+					item.productSlug
+				);
+
+			if ( siteHasCompletePlan && itemIsSecurity ) {
 				return true;
 			}
 			return ! getIsOwned( item ) && getIsPlanFeature( item );
