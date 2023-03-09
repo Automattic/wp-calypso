@@ -1,8 +1,6 @@
-import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { compose } from '@wordpress/compose';
-import classnames from 'classnames';
 import i18n, { localize, translate, withRtl } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import QRCode from 'qrcode.react';
@@ -28,8 +26,6 @@ import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import hasUserSettings from 'calypso/state/selectors/has-user-settings';
 import { fetchUserSettings } from 'calypso/state/user-settings/actions';
 import AppsBadge from './apps-badge';
-
-const displayJetpackAppBranding = config.isEnabled( 'jetpack/app-branding' );
 
 function sendSMS( phone ) {
 	function onSuccess( dispatch ) {
@@ -174,8 +170,8 @@ class MobileDownloadCard extends Component {
 		const isIos = isiPad || isiPod || isiPhone;
 
 		return (
-			<div className="get-apps__badges jetpack">
-				<p className="get-apps__card-text jetpack">
+			<div className="get-apps__badges">
+				<p className="get-apps__card-text">
 					{ translate(
 						'Everything you need to publish, manage, and grow your site anywhere, any time.'
 					) }
@@ -190,12 +186,12 @@ class MobileDownloadCard extends Component {
 
 	getQrCode() {
 		return (
-			<div className="get-apps__qr-code-subpanel jetpack">
+			<div className="get-apps__qr-code-subpanel">
 				<QRCode
 					value={ localizeUrl( 'https://apps.wordpress.com/get?campaign=calypso-qrcode-apps' ) }
 					size={ 150 }
 				/>
-				<p className="get-apps__card-text jetpack">
+				<p className="get-apps__card-text">
 					{ translate(
 						'Visit {{a}}wp.com/app{{/a}} from your mobile device, or scan the code to download the Jetpack mobile app.',
 						{
@@ -221,14 +217,14 @@ class MobileDownloadCard extends Component {
 		return (
 			<>
 				<div className="get-apps__store-subpanel">
-					<div className="get-apps__card-text jetpack">
+					<div className="get-apps__card-text">
 						<AnimatedIcon
 							icon={ `/calypso/animations/app-promo/wp-to-jp${
 								this.props.isRtl ? '-rtl' : ''
 							}.json` }
 							className="get-apps__mobile-icon"
 						/>
-						<h1 className="get-apps__card-title jetpack">
+						<h1 className="get-apps__card-title">
 							{ translate(
 								'Take WordPress on the go with the {{span}}Jetpack{{/span}} mobile app',
 								{
@@ -250,11 +246,7 @@ class MobileDownloadCard extends Component {
 
 	render() {
 		return (
-			<Card
-				className={ classnames( 'get-apps__mobile', {
-					jetpack: displayJetpackAppBranding,
-				} ) }
-			>
+			<Card className="get-apps__mobile">
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				{ this.getJetpackBrandedPanel() }
 			</Card>
