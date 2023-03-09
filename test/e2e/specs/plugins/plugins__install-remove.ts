@@ -1,5 +1,5 @@
 /**
- * @group quarantined
+ * @group jetpack-remote-site
  */
 
 import {

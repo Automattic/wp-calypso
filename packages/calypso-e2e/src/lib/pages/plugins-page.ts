@@ -273,11 +273,8 @@ export class PluginsPage {
 	 * Deactivate the plugin on the current plugin page.
 	 */
 	async clickDeactivatePlugin(): Promise< void > {
-		const deactivateButtonLocator = this.page.locator( selectors.deactivateButton );
-		await deactivateButtonLocator.click();
-
-		const activateButtonLocator = this.page.locator( selectors.activateButton );
-		await activateButtonLocator.waitFor();
+		await this.page.getByRole( 'button', { name: 'Deactivate', exact: true } ).click();
+		await this.page.getByRole( 'button', { name: 'Activate', exact: true } ).waitFor();
 	}
 
 	/**
