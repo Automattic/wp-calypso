@@ -162,10 +162,6 @@ body.get-apps__body {
 
 .get-apps__mobile {
 
-	@include breakpoint-deprecated(">480px") {
-		order: inherit;
-	}
-
 	.get-apps__store-subpanel {
 
 		@include breakpoint-deprecated(">800px") {
@@ -274,7 +270,6 @@ body.get-apps__body {
 	color: var(--studio-blue-80);
 	margin-top: 50px;
 	margin-bottom: 80px;
-	font-style: inherit;
 	font-size: $font-body-large;
 
 	p {
