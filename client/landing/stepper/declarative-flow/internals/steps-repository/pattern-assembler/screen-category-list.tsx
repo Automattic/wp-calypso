@@ -83,7 +83,7 @@ const ScreenCategoryList = ( {
 								} else if ( ! openPatternList ) {
 									setOpenPatternList( true );
 									// Delay to prioritize the start of the panel animation
-									setTimeout( () => setCategory( name ), 100 );
+									setTimeout( () => setCategory( name ), 200 );
 								} else {
 									setCategory( name );
 								}
