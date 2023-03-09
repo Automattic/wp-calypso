@@ -154,11 +154,7 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 			{ ( addingStagingSite || ( showManageStagingSite && ! isStagingSiteTransferComplete ) ) && (
 				<>
 					<StyledLoadingBar progress={ progress } />
-					<p>
-						{ __(
-							'Feel free to continue working while we create your staging site. We’ll email you once it is ready.'
-						) }
-					</p>
+					<p>{ __( 'We are setting up your staging site. We’ll email you once it is ready.' ) }</p>
 				</>
 			) }
 		</Card>
