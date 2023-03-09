@@ -161,10 +161,7 @@ function Chart( {
 	// The hack renders an empty div, which triggers the resize event, and then the actual component would be rendered.
 	if ( sizing.clientWidth <= 0 || yAxisSize.clientWidth <= 0 ) {
 		return (
-			<div
-				ref={ resizeRef }
-				className={ classNames( 'chart', { 'is-placeholder': isPlaceholder } ) }
-			>
+			<div ref={ resizeRef } className="chart">
 				<ChartYAxis />
 			</div>
 		);
