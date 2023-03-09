@@ -303,13 +303,13 @@ body.get-apps__body {
 	font-weight: 500;
 	padding: 10px 24px;
 	width: fit-content;
+	max-width: 366px;
+	min-width: 110px;
+	display: block;
+	font-size: rem(18px); //typography-exception;
 
 	&:visited {
 		color: var(--studio-blue-80);
-	}
-
-	@include breakpoint-deprecated(">480px") {
-		margin-left: 24px;
 	}
 }
 
