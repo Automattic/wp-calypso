@@ -13,14 +13,14 @@
 			.formatted-header {
 				margin: 0;
 
-				.formatted-header__title {
+				&__title {
 					font-size: $font-headline-medium !important;
 					line-height: $font-headline-large;
 					color: $studio-gray-100;
 					margin-bottom: 16px;
 				}
 
-				.formatted-header__subtitle {
+				&__subtitle {
 					font-size: $font-body !important;
 					line-height: $font-title-medium;
 					color: $studio-gray-60;
@@ -37,7 +37,7 @@
 
 			.subscription-manager-container {
 				.formatted-header {
-					.formatted-header__title {
+					&__title {
 						font-size: $font-title-medium !important;
 						line-height: $font-title-large;
 						margin-bottom: 8px;
