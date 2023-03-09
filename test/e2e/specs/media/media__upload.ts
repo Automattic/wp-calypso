@@ -1,6 +1,7 @@
 /**
  * @group calypso-pr
- * @group jetpack
+ * @group jetpack-remote-site
+ * @group jetpack-wpcom-integration
  */
 
 import assert from 'assert';
