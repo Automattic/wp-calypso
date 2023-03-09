@@ -1,6 +1,5 @@
 /**
  * @group calypso-pr
- * @group jetpack
  */
 
 import {

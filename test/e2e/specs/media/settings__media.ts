@@ -1,5 +1,6 @@
 /**
- * @group jetpack
+ * @group jetpack-remote-site
+ * @group jetpack-wpcom-integration
  */
 
 import {
@@ -18,6 +19,7 @@ declare const browser: Browser;
 
 // We care about these settings in all Jetpack sites, but they are in a different place
 // depending on whether the site is a WPCOM site or a remote site.
+// So, we have to do some condition case logic here.
 describe( DataHelper.createSuiteTitle( 'Jetpack Settings: Media' ), function () {
 	let page: Page;
 

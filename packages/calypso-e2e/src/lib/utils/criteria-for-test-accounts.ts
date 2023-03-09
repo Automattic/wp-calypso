@@ -94,7 +94,7 @@ const defaultCriteria: FeatureCriteria[] = [
 		accountName: 'jetpackStagingFseUser',
 	},
 	{
-		siteType: 'simple',
+		siteType: 'atomic',
 		gutenberg: 'stable',
 		jetpackTarget: 'remote-site',
 		accountName: 'jetpackRemoteSiteUser',

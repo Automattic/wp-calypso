@@ -1,6 +1,6 @@
 /**
  * @group calypso-pr
- * @group jetpack
+ * @group jetpack-remote-site
  */
 
 import {

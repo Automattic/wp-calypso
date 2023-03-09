@@ -16,7 +16,7 @@ const selectors = {
 	uploadSpinner: '.media-library__list-item-spinner',
 	notReadyOverlay: `.is-transient`,
 	editButton: 'button[data-e2e-button="edit"]',
-	deleteButton: 'button[data-e2e-button="delete"]',
+	deleteButton: '.media-library__header button[data-e2e-button="delete"]',
 	fileInput: 'input.media-library__upload-button-input',
 	uploadRejectionNotice: 'text=/could not be uploaded/i',
 
@@ -194,11 +194,22 @@ export class MediaPage {
 	}
 
 	/**
-	 * Delete the current selected image from the edit modal. Assumes the modal is open.
+	 * Delete the current selected media from the edit modal. Assumes the modal is open.
 	 */
-	async deleteImageFromModal(): Promise< void > {
+	async deleteMediaFromModal(): Promise< void > {
 		const modalDeleteButtonLocator = this.page.locator( selectors.editModalDeleteButton );
 		await modalDeleteButtonLocator.click();
+
+		const confirmationDeleteButtonLocator = this.page.locator( selectors.confirmationDeleteButton );
+		await confirmationDeleteButtonLocator.click();
+	}
+
+	/**
+	 * Delete all currently selected media from the main media library page.
+	 */
+	async deleteSelectedMediaFromLibrary(): Promise< void > {
+		const deleteButtonLocator = this.page.locator( selectors.deleteButton );
+		await deleteButtonLocator.click();
 
 		const confirmationDeleteButtonLocator = this.page.locator( selectors.confirmationDeleteButton );
 		await confirmationDeleteButtonLocator.click();

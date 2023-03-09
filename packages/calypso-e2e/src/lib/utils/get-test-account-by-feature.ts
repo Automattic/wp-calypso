@@ -123,6 +123,15 @@ export function envToFeatureKey( envVariables: TestAccountEnvVariables ): Featur
 		jetpackTarget = envVariables.JETPACK_TARGET as JetpackTarget;
 	}
 
+	let siteType: SiteType;
+	if ( envVariables.JETPACK_TARGET === 'remote-site' ) {
+		// All remote sites have similar handling to atomic sites in places like the editor,
+		// so we should classify these runs as atomic.
+		siteType = 'atomic';
+	} else {
+		siteType = envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple';
+	}
+
 	return {
 		// CoBlocks doesn't have any rule for "stable" as it re-uses the regular
 		// Gutenberg stable test site, so we just pass `undefined` if the env
@@ -131,7 +140,7 @@ export function envToFeatureKey( envVariables: TestAccountEnvVariables ): Featur
 		// criteria for CoBlocks stable)
 		coblocks: envVariables.COBLOCKS_EDGE ? 'edge' : undefined,
 		gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
-		siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
+		siteType: siteType,
 		jetpackTarget: jetpackTarget,
 	};
 }

@@ -1,6 +1,7 @@
 /**
  * @group calypso-pr
- * @group jetpack
+ * @group jetpack-remote-site
+ * @group jetpack-wpcom-integration
  */
 
 import {
@@ -66,6 +67,6 @@ describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 	// For the majority of cases where we get to this point, let's just clean up the image here.
 	// This makes this test more re-usable across target platforms (like Pressable).
 	it( 'Delete image', async function () {
-		await mediaPage.deleteImageFromModal();
+		await mediaPage.deleteMediaFromModal();
 	} );
 } );
