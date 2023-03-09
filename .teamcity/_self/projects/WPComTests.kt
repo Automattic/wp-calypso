@@ -183,12 +183,13 @@ fun editorTrackingBuildType( targetDevice: String, buildUuid: String, atomic: Bo
 
 fun jetpackPlaywrightBuildType( targetDevice: String, buildUuid: String, jetpackTarget: String = "wpcom-production" ): E2EBuildType {
 	val idSafeJetpackTarget = jetpackTarget.replace( "-", "_" );
+	val targetJestGroup = if (jetpackTarget == "remote-site") "jetpack-remote-site" else "jetpack-wpcom-integration";
 	return E2EBuildType (
 		buildId = "WPComTests_jetpack_Playwright_${idSafeJetpackTarget}_$targetDevice",
 		buildUuid = buildUuid,
 		buildName = "Jetpack E2E Tests [${jetpackTarget}] ($targetDevice)",
 		buildDescription = "Runs Jetpack E2E tests as $targetDevice against Jetpack install $jetpackTarget",
-		testGroup = "jetpack",
+		testGroup = targetJestGroup,
 		buildParams = {
 			text(
 				name = "env.CALYPSO_BASE_URL",
@@ -198,18 +199,7 @@ fun jetpackPlaywrightBuildType( targetDevice: String, buildUuid: String, jetpack
 				allowEmpty = false
 			)
 			param("env.VIEWPORT_NAME", "$targetDevice")
-			select(
-				name = "env.JETPACK_TARGET",
-				value = jetpackTarget,
-				label = "Jetpack Target",
-				description = "Which Jetpack install are we targeting through Calypso?",
-				options = listOf(
-					"wpcom-production",
-					"wpcom-staging",
-					"remote-site"
-				)
-			)
-
+			param("env.JETPACK_TARGET", jetpackTarget)
 		},
 		buildFeatures = {},
 		buildTriggers = {
