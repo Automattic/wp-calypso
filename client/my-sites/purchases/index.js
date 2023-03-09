@@ -19,7 +19,7 @@ import {
 	addPaymentMethod,
 } from './controller';
 
-const commonHandlers = [ siteSelection, stagingSiteNotSupportedRedirect, navigation ];
+const commonHandlers = [ siteSelection, navigation, stagingSiteNotSupportedRedirect ];
 
 export default ( router ) => {
 	page( '/purchases', ...commonHandlers, sites, makeLayout, clientRender );
