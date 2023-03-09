@@ -56,7 +56,6 @@
 		"inline-help": true,
 		"jetpack/agency-dashboard": true,
 		"jetpack/api-cache": true,
-		"jetpack/app-branding": true,
 		"jetpack/backup-retention-settings": true,
 		"jetpack/cancel-through-main-flow": true,
 		"jetpack/concierge-sessions": false,

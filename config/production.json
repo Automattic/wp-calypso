@@ -48,7 +48,6 @@
 		"inline-help": true,
 		"jetpack/agency-dashboard": true,
 		"jetpack/api-cache": false,
-		"jetpack/app-branding": true,
 		"jetpack/backup-messaging-i3": true,
 		"jetpack/backup-retention-settings": true,
 		"jetpack/cancel-through-main-flow": true,
