@@ -23,7 +23,7 @@ const ScreenFooter = ( { selectedPattern, onSelect, onBack, onDoneClick }: Props
 		<>
 			{ isSidebarRevampEnabled && (
 				<NavigatorHeader
-					title={ translate( 'Choose a footer' ) }
+					title={ translate( 'Footer' ) }
 					description={ translate(
 						'Your footer will be added to all pages and can be used to show information or links that will help visitors take the next step.'
 					) }
@@ -47,7 +47,7 @@ const ScreenFooter = ( { selectedPattern, onSelect, onBack, onDoneClick }: Props
 					primary
 					onClick={ onDoneClick }
 				>
-					{ translate( 'Done' ) }
+					{ translate( 'Save' ) }
 				</NavigatorBackButton>
 			</div>
 		</>
