@@ -10,6 +10,10 @@ class QueryMembershipsSettings extends Component {
 		source: PropTypes.string,
 	};
 
+	static defaultProps = {
+		source: 'calypso',
+	};
+
 	request() {
 		if ( this.props.requesting ) {
 			return;
@@ -36,9 +40,5 @@ class QueryMembershipsSettings extends Component {
 		return null;
 	}
 }
-
-QueryMembershipsSettings.defaultProps = {
-	source: 'calypso',
-};
 
 export default connect( null, { requestSettings } )( QueryMembershipsSettings );
