@@ -4,9 +4,9 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { Spinner, GMClosureNotice } from '@automattic/components';
+import { GMClosureNotice, Spinner } from '@automattic/components';
 import { useSupportAvailability } from '@automattic/data-stores';
-import { isDefaultLocale, getLanguage, useLocale } from '@automattic/i18n-utils';
+import { getLanguage, isDefaultLocale, useLocale } from '@automattic/i18n-utils';
 import { Notice } from '@wordpress/components';
 import { useEffect, useMemo } from '@wordpress/element';
 import { hasTranslation, sprintf } from '@wordpress/i18n';
@@ -26,9 +26,10 @@ import { BackButton } from '..';
 import { useShouldRenderChatOption } from '../hooks/use-should-render-chat-option';
 import { useShouldRenderEmailOption } from '../hooks/use-should-render-email-option';
 import { useStillNeedHelpURL } from '../hooks/use-still-need-help-url';
-import { Mail, Forum } from '../icons';
+import { Forum, Mail } from '../icons';
 import { HelpCenterActiveTicketNotice } from './help-center-notice';
 import { SibylArticles } from './help-center-sibyl-articles';
+import './help-center-contact-page.scss';
 
 const ConditionalLink: FC< { active: boolean } & LinkProps > = ( { active, ...props } ) => {
 	if ( active ) {

@@ -1,0 +1,104 @@
+@import "@automattic/typography/styles/variables";
+
+.help-center-contact-page__boxes {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	gap: 16px;
+
+	a {
+		text-decoration: none;
+		color: #1d2327;
+	}
+
+	.help-center-contact-page__box {
+		display: flex;
+		flex-direction: row;
+		border: 1px solid var(--studio-gray-5);
+		overflow: hidden;
+		border-radius: 2px;
+		cursor: pointer;
+
+		&.chat {
+			.help-center-contact-page__box-icon {
+				background-color: var(--studio-pink-50);
+			}
+
+			svg path {
+				stroke: none;
+			}
+
+			&.is-disabled {
+				cursor: auto;
+
+				.help-center-contact-page__box-icon {
+					background-color: var(--studio-gray-0);
+
+					svg {
+						fill: var(--studio-gray-20);
+					}
+				}
+
+				h2,
+				p {
+					color: var(--studio-gray-60);
+				}
+			}
+		}
+		&.email {
+			.help-center-contact-page__box-icon {
+				background-color: var(--studio-blue-70);
+			}
+		}
+		&.forum {
+			.help-center-contact-page__box-icon {
+				background-color: var(--studio-purple-70);
+			}
+		}
+
+		.help-center-contact-page__box-icon {
+			border-radius: 2px 0 0 2px;
+			display: flex;
+			width: 56px;
+
+			svg {
+				fill: #fff;
+				display: block;
+				margin: auto;
+			}
+		}
+
+		h2 {
+			font-size: $font-body-small !important;
+		}
+
+		p {
+			font-size: $font-body-extra-small !important;
+			color: var(--studio-gray-60);
+		}
+
+		// Text box
+		:not(.help-center-contact-page__box-icon) {
+			padding: 0 15px;
+			margin: 16px 0;
+
+			> * {
+				padding: 0;
+				margin: 0;
+			}
+
+			p {
+				margin-top: 2px;
+			}
+
+			h2 {
+				font-weight: 500;
+				font-size: $font-body;
+			}
+		}
+	}
+
+	.disabled {
+		order: 3;
+	}
+}
