@@ -89,9 +89,13 @@ function getLaunchDestination( dependencies ) {
 	return `/home/${ dependencies.siteSlug }`;
 }
 
-function getDomainSignupFlowDestination( { domainItem, cartItem, siteId, designType, siteSlug } ) {
-	if ( domainItem && cartItem && designType !== 'existing-site' ) {
-		return addQueryArgs( { siteId }, '/start/setup-site' );
+function getDomainSignupFlowDestination( { siteId, designType, siteSlug, refParameter } ) {
+	if ( designType === 'page' ) {
+		const queryParam = { siteId };
+		if ( refParameter ) {
+			queryParam.ref = refParameter;
+		}
+		return addQueryArgs( queryParam, '/setup/setup-site' );
 	} else if ( designType === 'existing-site' ) {
 		return `/checkout/thank-you/${ siteSlug }`;
 	}

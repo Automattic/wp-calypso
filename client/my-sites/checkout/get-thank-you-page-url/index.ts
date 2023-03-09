@@ -297,13 +297,18 @@ export default function getThankYouPageUrl( {
 		( cart?.create_new_blog || signupFlowName === 'domain' ) &&
 		! isDomainOnly &&
 		urlFromCookie &&
-		receiptIdOrPlaceholder &&
-		! urlFromCookie.includes( '/start/setup-site' )
+		receiptIdOrPlaceholder
 	) {
-		clearSignupCompleteFlowName();
-		const newBlogReceiptUrl = `${ urlFromCookie }/${ receiptIdOrPlaceholder }`;
-		debug( 'new blog created, so returning', newBlogReceiptUrl );
-		return newBlogReceiptUrl;
+		if ( urlFromCookie.includes( '/setup/setup-site' ) ) {
+			const noticeType = getNoticeType( cart );
+			return getUrlWithQueryParam( urlFromCookie, noticeType );
+		}
+		if ( ! urlFromCookie.includes( '/start/setup-site' ) ) {
+			clearSignupCompleteFlowName();
+			const newBlogReceiptUrl = `${ urlFromCookie }/${ receiptIdOrPlaceholder }`;
+			debug( 'new blog created, so returning', newBlogReceiptUrl );
+			return newBlogReceiptUrl;
+		}
 	}
 
 	// disable upsell for tailored signup users
