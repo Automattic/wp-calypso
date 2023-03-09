@@ -13,6 +13,10 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 import { whatsNewQueryClient } from '../../common/what-new-query-client';
 import CalypsoStateProvider from './CalypsoStateProvider';
 
+// Implement PinnedItems to avoid importing @wordpress/interface.
+// Because @wordpress/interface depends on @wordpress/preferences which is not always available outside the editor,
+// causing the script to not be enqueued due to the missing dependency.
+// check https://github.com/Automattic/wp-calypso/pull/74122 for more details.
 function PinnedItems( { scope, ...props } ) {
 	return <Fill name={ `PinnedItems/${ scope }` } { ...props } />;
 }
