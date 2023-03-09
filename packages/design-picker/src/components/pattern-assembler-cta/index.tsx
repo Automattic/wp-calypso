@@ -1,14 +1,23 @@
 import { Button } from '@automattic/components';
 import { useViewportMatch } from '@wordpress/compose';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import blankCanvasImage from '../assets/images/blank-canvas-cta.svg';
 import './style.scss';
 
 type PatternAssemblerCtaProps = {
+	compact?: boolean;
+	hasPrimaryButton?: boolean;
 	onButtonClick: ( shouldGoToAssemblerStep: boolean ) => void;
+	showEditorFallback?: boolean;
 };
 
-const PatternAssemblerCta = ( { onButtonClick }: PatternAssemblerCtaProps ) => {
+const PatternAssemblerCta = ( {
+	compact = false,
+	hasPrimaryButton = true,
+	onButtonClick,
+	showEditorFallback = true,
+}: PatternAssemblerCtaProps ) => {
 	const translate = useTranslate();
 	const isDesktop = useViewportMatch( 'large' );
 
@@ -18,8 +27,12 @@ const PatternAssemblerCta = ( { onButtonClick }: PatternAssemblerCtaProps ) => {
 		onButtonClick( shouldGoToAssemblerStep );
 	};
 
+	if ( ! shouldGoToAssemblerStep && ! showEditorFallback ) {
+		return null;
+	}
+
 	return (
-		<div className="pattern-assembler-cta-wrapper">
+		<div className={ classnames( 'pattern-assembler-cta-wrapper', { 'is-compact': compact } ) }>
 			<div className="pattern-assembler-cta__image-wrapper">
 				<img className="pattern-assembler-cta__image" src={ blankCanvasImage } alt="Blank Canvas" />
 			</div>
@@ -33,7 +46,11 @@ const PatternAssemblerCta = ( { onButtonClick }: PatternAssemblerCtaProps ) => {
 							"Can't find something you like? Jump right into the editor to design your homepage from scratch."
 					  ) }
 			</p>
-			<Button className="pattern-assembler-cta__button" onClick={ handleButtonClick } primary>
+			<Button
+				className="pattern-assembler-cta__button"
+				onClick={ handleButtonClick }
+				primary={ hasPrimaryButton }
+			>
 				{ shouldGoToAssemblerStep
 					? translate( 'Start designing' )
 					: translate( 'Open the editor' ) }

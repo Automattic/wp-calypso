@@ -7,10 +7,11 @@ import {
 	useCategorization,
 	getDesignPreviewUrl,
 	isBlankCanvasDesign,
+	PatternAssemblerCta,
 } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
-import { useViewportMatch } from '@wordpress/compose';
+import { useViewportMatch, useMediaQuery } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { ReactChild, useRef, useState, useEffect } from 'react';
@@ -69,6 +70,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const locale = useLocale();
 
 	const isMobile = ! useViewportMatch( 'small' );
+	const isXLargeScreen = useMediaQuery( '(min-width: 1080px)' );
 
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 
@@ -603,18 +605,30 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			vertical_id: selectedDesign.verticalizable ? siteVerticalId : undefined,
 		} );
 
+		const hasMoreInfo =
+			selectedDesignHasStyleVariations || ( selectedDesign.is_virtual && isXLargeScreen );
+
 		const pickDesignText =
-			selectedDesign.design_type === 'vertical' || selectedDesignHasStyleVariations
+			selectedDesign.design_type === 'vertical' || hasMoreInfo
 				? translate( 'Continue' )
 				: translate( 'Start with %(designTitle)s', { args: { designTitle } } );
 
 		const actionButtons = (
 			<>
-				{ selectedDesignHasStyleVariations && (
-					<div className="action-buttons__title">{ headerDesignTitle }</div>
-				) }
+				{ hasMoreInfo && <div className="action-buttons__title">{ headerDesignTitle }</div> }
 				<div>{ getPrimaryActionButton( pickDesignText ) }</div>
 			</>
+		);
+
+		const showPatternAssemblerCTA =
+			selectedDesign.is_virtual && selectedDesign.recipe?.pattern_ids?.length;
+		const patternAssemblerCTA = showPatternAssemblerCTA && (
+			<PatternAssemblerCta
+				hasPrimaryButton={ false }
+				onButtonClick={ () => pickBlankCanvasDesign( selectedDesign, true ) }
+				showEditorFallback={ false }
+				compact={ true }
+			/>
 		);
 
 		const stepContent = (
@@ -631,7 +645,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 					isOpen={ showPremiumGlobalStylesModal }
 					tryStyle={ tryPremiumGlobalStyles }
 				/>
-				{ selectedDesignHasStyleVariations ? (
+				{ hasMoreInfo ? (
 					<AsyncLoad
 						require="@automattic/design-preview"
 						placeholder={ null }
@@ -644,6 +658,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 						actionButtons={ actionButtons }
 						recordDeviceClick={ recordDeviceClick }
 						showGlobalStylesPremiumBadge={ shouldLimitGlobalStyles }
+						patternAssemblerCTA={ patternAssemblerCTA }
 					/>
 				) : (
 					<WebPreview
@@ -669,7 +684,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			</>
 		);
 
-		return selectedDesignHasStyleVariations ? (
+		return hasMoreInfo ? (
 			<StepContainer
 				stepName={ STEP_NAME }
 				stepContent={ stepContent }
