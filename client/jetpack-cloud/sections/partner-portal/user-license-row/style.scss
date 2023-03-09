@@ -1,0 +1,18 @@
+.user-license-row {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+
+.user-license-row__description,
+.user-license-row__date,
+.user-license-row__action {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	flex-basis: 100%;
+}
+
+.user-license-row__action .button {
+	width: 70px;
+}
