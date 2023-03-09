@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import classnames from 'classnames';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import DesktopDownloadCard from './desktop-download-card.jsx';
-import GetAppsIllustration from './illustration.jsx';
 import MobileDownloadCard from './mobile-download-card.jsx';
 
 import './style.scss';
@@ -16,11 +15,7 @@ export const GetApps = () => {
 				jetpack: displayJetpackAppBranding,
 			} ) }
 		>
-			{ displayJetpackAppBranding ? (
-				<BodySectionCssClass bodyClass={ [ 'get-apps__body' ] } />
-			) : (
-				<GetAppsIllustration />
-			) }
+			<BodySectionCssClass bodyClass={ [ 'get-apps__body' ] } />
 			<MobileDownloadCard />
 			{ ! config( 'env_id' ).startsWith( 'desktop' ) && <DesktopDownloadCard /> }
 		</div>
