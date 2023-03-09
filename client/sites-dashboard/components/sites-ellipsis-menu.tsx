@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_SFTP,
 	WPCOM_FEATURES_MANAGE_PLUGINS,
@@ -244,9 +245,10 @@ function useSubmenuItems( site: SiteExcerptData ) {
 	const { __ } = useI18n();
 	const siteSlug = site.slug;
 	const stagingSite = site.is_wpcom_staging_site;
+	const isStagingSiteEnabled = isEnabled( 'yolo/staging-sites-i1' );
 
 	return useMemo< { label: string; href: string; sectionName: string }[] >( () => {
-		if ( stagingSite ) {
+		if ( stagingSite || ! isStagingSiteEnabled ) {
 			return [
 				{
 					label: __( 'SFTP/SSH credentials' ),
@@ -317,7 +319,7 @@ function useSubmenuItems( site: SiteExcerptData ) {
 				sectionName: 'logs',
 			},
 		];
-	}, [ __, siteSlug, stagingSite ] );
+	}, [ __, isStagingSiteEnabled, siteSlug, stagingSite ] );
 }
 
 function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps ) {
