@@ -1,10 +1,10 @@
 /* eslint-disable no-restricted-imports */
 import {
-	useLocalizeUrl,
+	localizeUrl as pureLocalizeUrl,
 	removeLocaleFromPathLocaleInFront,
 	useIsEnglishLocale,
 	useLocale,
-	localizeUrl as pureLocalizeUrl,
+	useLocalizeUrl,
 } from '@automattic/i18n-utils';
 import { __ } from '@wordpress/i18n';
 import SocialLogo from 'social-logos';
@@ -253,7 +253,7 @@ export const PureUniversalNavbarFooter = ( {
 									className="lp-language-picker__content"
 									title={ __( 'Change Language', __i18n_text_domain__ ) }
 									onChange={ onLanguageChange }
-									defaultValue={ locale }
+									defaultValue={ `/${ locale }` }
 								>
 									<option>{ __( 'Change Language', __i18n_text_domain__ ) }</option>
 									<option lang="es" value="/es">
