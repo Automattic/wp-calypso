@@ -76,7 +76,7 @@ function Chart( {
 			return;
 		}
 		setYAxisSize( ( prevSizing ) => {
-			const clientWidth = contentRect?.width;
+			const clientWidth = contentRect.width;
 			if ( ! prevSizing.hasResized || clientWidth !== prevSizing.clientWidth ) {
 				return { clientWidth, hasResized: true };
 			}
