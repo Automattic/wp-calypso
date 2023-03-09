@@ -29,7 +29,7 @@ const GlobalStylesVariationContainer = ( {
 			return [
 				...styles,
 				{
-					css: 'html{overflow:hidden}body{min-width: 0;padding: 0;border: none;}',
+					css: 'html{overflow:hidden}body{min-width: 0;padding: 0;border: none;transform:scale(1);}',
 					isGlobalStyles: true,
 				},
 			];
