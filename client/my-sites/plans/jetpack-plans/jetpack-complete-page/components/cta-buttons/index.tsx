@@ -37,7 +37,7 @@ const CtaButtons = () => {
 		: `/checkout/${ PLAN_JETPACK_COMPLETE }`;
 
 	const stayFreeURL = useSelector(
-		( state ) => getJetpackRecommendationsUrl( state, siteId ) ?? 'https://jetpack.com'
+		( state ) => getJetpackRecommendationsUrl( state ) ?? 'https://jetpack.com'
 	);
 
 	return (
