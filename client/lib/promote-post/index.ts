@@ -26,12 +26,9 @@ declare global {
 				showDialog?: boolean;
 				setShowCancelButton?: ( show: boolean ) => void;
 				uploadImageLabel?: string;
-<<<<<<< HEAD
 				showGetStartedMessage?: boolean;
 				onGetStartedMessageClose?: ( dontShowAgain: boolean ) => void;
-=======
 				source?: string;
->>>>>>> 97dc728c20 (Blaze: Add source to the widget so that we can better track where the blazes are created from on the app side.)
 			} ) => void;
 			strings: any;
 		};
