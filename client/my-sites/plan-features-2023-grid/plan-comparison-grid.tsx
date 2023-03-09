@@ -747,7 +747,6 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 				basePlansPath={ planTypeSelectorProps.basePlansPath }
 				siteSlug={ planTypeSelectorProps.siteSlug }
 				hideDiscountLabel={ true }
-				shouldShowBiannualToggle={ true }
 			/>
 			<Grid isInSignup={ isInSignup }>
 				<PlanComparisonGridHeader
