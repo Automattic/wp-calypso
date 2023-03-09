@@ -1,9 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
+import { englishLocales, useLocale } from '@automattic/i18n-utils';
 import {
 	__experimentalItemGroup as ItemGroup,
 	__experimentalDivider as Divider,
 } from '@wordpress/components';
+import { hasTranslation } from '@wordpress/i18n';
 import { header, footer, layout, styles, typography } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { NavigationButtonAsItem } from './navigator-buttons';
@@ -17,6 +19,12 @@ interface Props {
 
 const ScreenMain = ( { shouldUnlockGlobalStyles, onSelect, onContinueClick }: Props ) => {
 	const translate = useTranslate();
+	const locale = useLocale();
+	const defaultCTADescription =
+		englishLocales.includes( locale ) ||
+		hasTranslation( 'Click Continue to further customize your site.' )
+			? translate( 'Click Continue to further customize your site.' )
+			: '';
 
 	return (
 		<>
@@ -93,7 +101,7 @@ const ScreenMain = ( { shouldUnlockGlobalStyles, onSelect, onContinueClick }: Pr
 				<span className="screen-container__description">
 					{ shouldUnlockGlobalStyles
 						? translate( 'You’ve selected Premium fonts or colors for your site.' )
-						: translate( 'Click Continue to further customize your site.' ) }
+						: defaultCTADescription }
 				</span>
 				<Button className="pattern-assembler__button" onClick={ onContinueClick } primary>
 					{ shouldUnlockGlobalStyles ? translate( 'Unlock this style' ) : translate( 'Continue' ) }
