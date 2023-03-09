@@ -55,11 +55,11 @@ export default function CampaignItem( { campaign }: Props ) {
 		display_name,
 	} = campaign;
 
-	const campaignStatus = useMemo( () => normalizeCampaignStatus( campaign ), [ campaign.status ] );
+	const campaignStatus = useMemo( () => normalizeCampaignStatus( campaign ), [ campaign ] );
 
 	const overallSpending = useMemo(
 		() => getCampaignOverallSpending( spent_budget_cents, budget_cents, start_date, end_date ),
-		[ spent_budget_cents, start_date, end_date ]
+		[ spent_budget_cents, budget_cents, start_date, end_date ]
 	);
 
 	const clickthroughRate = useMemo(
@@ -74,7 +74,7 @@ export default function CampaignItem( { campaign }: Props ) {
 
 	const { totalBudget, totalBudgetLeft, campaignDays } = useMemo(
 		() => getCampaignBudgetData( budget_cents, start_date, end_date, spent_budget_cents ),
-		[ budget_cents, spent_budget_cents ]
+		[ budget_cents, end_date, spent_budget_cents, start_date ]
 	);
 	const totalBudgetLeftString = `($${ formatCents( totalBudgetLeft || 0 ) } ${ __( 'left' ) })`;
 
