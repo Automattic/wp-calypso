@@ -35,7 +35,7 @@ export type PlanTypeSelectorProps = {
 	siteSlug?: string | null;
 	selectedPlan?: string;
 	selectedFeature?: string;
-	shortestTermOption?: 'monthly' | '1year';
+	showBiannualToggle?: boolean;
 	isInSignup: boolean;
 	plans: string[];
 	eligibleForWpcomMonthlyPlans?: boolean;
@@ -124,7 +124,7 @@ export type IntervalTypeProps = Pick<
 	| 'isPlansInsideStepper'
 	| 'hideDiscountLabel'
 	| 'redirectTo'
-	| 'shortestTermOption'
+	| 'showBiannualToggle'
 >;
 
 export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
@@ -134,7 +134,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		isInSignup,
 		eligibleForWpcomMonthlyPlans,
 		hideDiscountLabel,
-		shortestTermOption,
+		showBiannualToggle,
 	} = props;
 	const [ spanRef, setSpanRef ] = useState< HTMLSpanElement >();
 	const segmentClasses = classNames( 'plan-features__interval-type', 'price-toggle', {
@@ -154,8 +154,8 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 	const isDomainAndPlanPackageFlow = new URLSearchParams( window.location.search ).get(
 		'domainAndPlanPackage'
 	);
-	const shouldHideMonthly = shortestTermOption === '1year';
-	const intervalTabs = shouldHideMonthly ? [ 'yearly', '2yearly' ] : [ 'monthly', 'yearly' ];
+
+	const intervalTabs = showBiannualToggle ? [ 'yearly', '2yearly' ] : [ 'monthly', 'yearly' ];
 
 	return (
 		<IntervalTypeToggleWrapper
@@ -177,11 +177,11 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 					>
 						<span ref={ intervalType === 'monthly' ? ( ref ) => ref && setSpanRef( ref ) : null }>
 							{ interval === 'monthly' ? translate( 'Pay monthly' ) : null }
-							{ interval === 'yearly' && ! shouldHideMonthly ? translate( 'Pay annually' ) : null }
-							{ interval === 'yearly' && shouldHideMonthly ? translate( 'Pay 1 year' ) : null }
+							{ interval === 'yearly' && ! showBiannualToggle ? translate( 'Pay annually' ) : null }
+							{ interval === 'yearly' && showBiannualToggle ? translate( 'Pay 1 year' ) : null }
 							{ interval === '2yearly' ? translate( 'Pay 2 years' ) : null }
 						</span>
-						{ ! shouldHideMonthly && hideDiscountLabel ? null : (
+						{ ! showBiannualToggle && hideDiscountLabel ? null : (
 							<PopupMessages context={ spanRef } isVisible={ popupIsVisible }>
 								{ translate(
 									'Save up to %(maxDiscount)d%% by paying annually and get a free domain for one year',
