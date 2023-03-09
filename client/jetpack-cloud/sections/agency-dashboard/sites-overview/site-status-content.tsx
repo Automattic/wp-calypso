@@ -21,13 +21,15 @@ import {
 	getBoostRating,
 	getBoostRatingClass,
 } from './utils';
-import type { AllowedTypes, SiteData } from './types';
+import type { AllowedTypes, BoostData, SiteData } from './types';
 
 interface Props {
 	rows: SiteData;
 	type: AllowedTypes;
 	isLargeScreen?: boolean;
 	isFavorite?: boolean;
+	hasBoost: boolean;
+	boostData: BoostData;
 }
 
 export default function SiteStatusContent( {
@@ -98,6 +100,8 @@ export default function SiteStatusContent( {
 	const handleDeselectLicenseAction = () => {
 		dispatch( unselectLicense( siteId, type ) );
 	};
+
+	const hasBoost = rows.site.value.has_boost;
 
 	if ( type === 'site' ) {
 		// Site issues is the sum of scan threats and plugin updates
@@ -185,18 +189,20 @@ export default function SiteStatusContent( {
 	}
 
 	if ( type === 'boost' ) {
-		//const overallScore = rows.site.value.jetpack_boost_scores.overall;
-		const overallScore = 74;
-		return (
-			<div
-				className={ classNames(
-					'site-expanded-content__card-content-score',
-					getBoostRatingClass( overallScore )
-				) }
-			>
-				{ getBoostRating( overallScore ) } Score
-			</div>
-		);
+		const overallScore = rows.site.value.jetpack_boost_scores.overall;
+		if ( hasBoost ) {
+			return (
+				<div
+					className={ classNames(
+						'site-expanded-content__card-content-score',
+						getBoostRatingClass( overallScore )
+					) }
+				>
+					{ getBoostRating( overallScore ) } Score
+				</div>
+			);
+		}
+		return <div></div>;
 	}
 
 	let content;
