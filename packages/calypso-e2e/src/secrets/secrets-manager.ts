@@ -189,7 +189,7 @@ export class SecretsManager {
 				jetpackRemoteSiteUser: {
 					...fakeAccount,
 					userID: 0,
-					testSites: { primary: { id: 0, url: 'FAKE_VALUE' } },
+					testSites: { primary: { id: 0, url: 'FAKE_VALUE', remotePassword: 'FAKE_VALUE' } },
 				},
 				jetpackStagingUser: {
 					...fakeAccount,
