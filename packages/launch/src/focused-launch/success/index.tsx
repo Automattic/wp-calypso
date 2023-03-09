@@ -21,7 +21,7 @@ const Success: React.FunctionComponent = () => {
 
 	const isSiteLaunching = useSelect(
 		( select ) => ( select( SITE_STORE ) as SiteSelect ).isSiteLaunching( siteId ),
-		[]
+		[ siteId ]
 	);
 
 	const [ isSelectedPlanPaid, selectedDomain ] = useSelect( ( select ) => {

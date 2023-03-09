@@ -72,7 +72,7 @@ export const useSiteCopy = (
 	const isAtomic = useSelect(
 		( select ) =>
 			site && options.enabled && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( site?.ID ),
-		[ site?.ID, options.enabled ]
+		[ site, options.enabled ]
 	);
 	const plan = site?.plan;
 	const isSiteOwner = site?.site_owner === userId;
