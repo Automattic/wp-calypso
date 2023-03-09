@@ -7,8 +7,6 @@ type PatternSelectorProps = {
 	onSelect: ( selectedPattern: Pattern | null ) => void;
 	selectedPattern: Pattern | null;
 	emptyPatternText?: string;
-	onDoneClick?: () => void;
-	onBack?: () => void;
 };
 
 const PatternSelector = ( {
