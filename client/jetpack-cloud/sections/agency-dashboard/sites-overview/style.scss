@@ -139,11 +139,16 @@
 	vertical-align: middle;
 	color: var(--studio-gray-5);
 }
-.site-table__table-row .gridicons-arrow-up,
-.site-card__expanded-content-value .gridicons-arrow-up {
+.sites-overview__stats-trend.is-up {
 	vertical-align: middle;
-	color: var(--studio-jetpack-green-50);
+	fill: var(--studio-jetpack-green-40);
 }
+
+.sites-overview__stats-trend.is-down {
+	vertical-align: middle;
+	fill: var(--studio-red-50);
+}
+
 .site-table__table-row .gridicons-arrow-down,
 .site-card__expanded-content-value .gridicons-arrow-down {
 	vertical-align: middle;
@@ -278,6 +283,7 @@
 }
 
 .sites-overview__stats {
+	color: var(--studio-black);
 	display: inline-block;
 	line-height: 17px;
 	height: 18px;

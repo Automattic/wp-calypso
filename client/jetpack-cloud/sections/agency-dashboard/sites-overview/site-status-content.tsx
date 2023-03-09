@@ -189,7 +189,7 @@ export default function SiteStatusContent( {
 		const trendIcon = getTrendIcon( viewsTrend );
 		return (
 			<span
-				className={ classNames( 'site-expanded-content__card-content-count', {
+				className={ classNames( 'sites-overview__stats-trend', {
 					'is-up': viewsTrend === 'up',
 					'is-down': viewsTrend === 'down',
 				} ) }
