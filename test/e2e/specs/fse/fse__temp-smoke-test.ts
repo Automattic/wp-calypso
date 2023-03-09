@@ -24,7 +24,7 @@ declare const browser: Browser;
  * The goal here is to catch major breaks with the integration -- i.e. Calypso navigation no long working,
  * or getting a WSOD when trying to load the editor.
  */
-describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () {
+describe( DataHelper.createSuiteTitle( 'Site Editor Smoke Test' ), function () {
 	let page: Page;
 	let fullSiteEditorPage: FullSiteEditorPage;
 
@@ -50,6 +50,8 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 	it( 'Open the Page template', async function () {
 		fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
+
+		await fullSiteEditorPage.prepareForInteraction();
 
 		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Back' );
 		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Back' );
