@@ -300,8 +300,8 @@ export default function getThankYouPageUrl( {
 		receiptIdOrPlaceholder
 	) {
 		if ( urlFromCookie.includes( '/setup/setup-site' ) ) {
-			const noticeType = getNoticeType( cart );
-			return getUrlWithQueryParam( urlFromCookie, noticeType );
+			debug( 'domain only signup with free site selection' );
+			return urlFromCookie;
 		}
 		if ( ! urlFromCookie.includes( '/start/setup-site' ) ) {
 			clearSignupCompleteFlowName();
