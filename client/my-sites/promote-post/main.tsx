@@ -15,6 +15,7 @@ import Main from 'calypso/components/main';
 import useCampaignsQuery from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import memoizeLast from 'calypso/lib/memoize-last';
+import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
 import CampaignsList from 'calypso/my-sites/promote-post/components/campaigns-list';
 import PostsList from 'calypso/my-sites/promote-post/components/posts-list';
@@ -197,11 +198,12 @@ export default function PromotedPosts( { tab }: Props ) {
 		( obj, index ) => content.findIndex( ( item ) => item.ID === obj.ID ) === index
 	);
 
-	const isLoading =
-		isLoadingByCommentsQuery ||
-		isLoadingMemoizedQuery ||
-		isLoadingProducts ||
-		! hasTopPostsFinished;
+	const isLoading = isWpMobileApp()
+		? isLoadingByCommentsQuery || isLoadingMemoizedQuery || ! hasTopPostsFinished
+		: isLoadingByCommentsQuery ||
+		  isLoadingMemoizedQuery ||
+		  isLoadingProducts ||
+		  ! hasTopPostsFinished;
 
 	return (
 		<Main wideLayout className="promote-post">
@@ -250,9 +252,11 @@ export default function PromotedPosts( { tab }: Props ) {
 					postId={ null }
 				/>
 			) }
-			<QueryPosts siteId={ selectedSiteId } query={ queryProducts } postId={ null } />
 			{ selectedTab === 'posts' && (
 				<PostsList content={ contentWithoutDuplicatedIds } isLoading={ isLoading } />
+			) }
+			{ ! isWpMobileApp() && (
+				<QueryPosts siteId={ selectedSiteId } query={ queryProducts } postId={ null } />
 			) }
 		</Main>
 	);

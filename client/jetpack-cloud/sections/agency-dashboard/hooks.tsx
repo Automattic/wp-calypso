@@ -4,6 +4,7 @@ import { useQueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setSiteMonitorStatus } from 'calypso/state/jetpack-agency-dashboard/actions';
+import useToggleActivateMonitorMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-toggle-activate-monitor-mutation';
 import useUpdateMonitorSettingsMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-update-monitor-settings-mutation';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import SitesOverviewContext from './sites-overview/context';
@@ -48,11 +49,11 @@ export function useToggleActivateMonitor(
 	const { filter, search, currentPage } = useContext( SitesOverviewContext );
 	const queryKey = [ 'jetpack-agency-dashboard-sites', search, currentPage, filter ];
 
-	const toggleActivateMonitoring = useUpdateMonitorSettingsMutation( {
+	const toggleActivateMonitoring = useToggleActivateMonitorMutation( {
 		onMutate: async ( { siteId } ) => {
 			dispatch( setSiteMonitorStatus( siteId, 'loading' ) );
 		},
-		onSuccess: async ( data, { siteId } ) => {
+		onSuccess: async ( _data, { siteId, params } ) => {
 			// Cancel any current refetches, so they don't overwrite our update
 			await queryClient.cancelQueries( queryKey );
 
@@ -66,7 +67,7 @@ export function useToggleActivateMonitor(
 								...site,
 								monitor_settings: {
 									...site.monitor_settings,
-									monitor_active: data.settings.monitor_active,
+									monitor_active: params.monitor_active,
 								},
 							};
 						}

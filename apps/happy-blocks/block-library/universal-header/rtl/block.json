@@ -1,0 +1,11 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "happy-blocks/universal-header",
+	"category": "layout",
+	"textdomain": "happy-blocks",
+	"title": "Universal Header",
+	"viewScript": "file:../view.js",
+	"editorScript": "file:../index.js",
+	"style": "file:../view.rtl.css"
+}

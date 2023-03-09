@@ -7,10 +7,11 @@ import {
 	useCategorization,
 	getDesignPreviewUrl,
 	isBlankCanvasDesign,
+	PatternAssemblerCta,
 } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
-import { useViewportMatch } from '@wordpress/compose';
+import { useViewportMatch, useMediaQuery } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { ReactChild, useRef, useState, useEffect } from 'react';
@@ -41,6 +42,7 @@ import {
 	recordSelectedDesign,
 	getVirtualDesignProps,
 } from '../../analytics/record-design';
+import StepperLoader from '../../components/stepper-loader';
 import { getCategorizationOptions } from './categories';
 import { DEFAULT_VARIATION_SLUG, RETIRING_DESIGN_SLUGS, STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
@@ -68,6 +70,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const locale = useLocale();
 
 	const isMobile = ! useViewportMatch( 'small' );
+	const isXLargeScreen = useMediaQuery( '(min-width: 1080px)' );
 
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 
@@ -132,6 +135,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			seed: siteSlugOrId || undefined,
 			_locale: locale,
 			include_virtual_designs: virtualThemesExperiment?.variationName === 'treatment',
+			include_pattern_virtual_designs: isEnabled( 'virtual-themes/onboarding' ),
 		},
 		{
 			enabled: ! isLoadingVirtualThemesExperiment,
@@ -249,11 +253,12 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	function previewDesign( design: Design, styleVariation?: StyleVariation ) {
 		recordPreviewedDesign( { flow, intent, design, styleVariation } );
 
-		if ( ! design.is_virtual ) {
+		if ( ! design.preselected_style_variation ) {
 			setSelectedDesign( design );
 		} else {
 			const parentDesign = staticDesigns.find(
-				( staticDesign ) => staticDesign.slug === design.slug && ! staticDesign.is_virtual
+				( staticDesign ) =>
+					staticDesign.slug === design.slug && ! staticDesign.preselected_style_variation
 			);
 			setSelectedDesign( parentDesign );
 		}
@@ -581,8 +586,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	// ********** Main render logic
 
 	// Don't render until we've done fetching all the data needed for initial render.
-	if ( ! site || isLoadingSiteVertical || isLoadingDesigns ) {
-		return null;
+	if ( ! site || isLoadingSiteVertical || isLoadingDesigns || isLoadingVirtualThemesExperiment ) {
+		return <StepperLoader />;
 	}
 
 	if ( selectedDesign && isPreviewingDesign ) {
@@ -600,18 +605,30 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			vertical_id: selectedDesign.verticalizable ? siteVerticalId : undefined,
 		} );
 
+		const hasMoreInfo =
+			selectedDesignHasStyleVariations || ( selectedDesign.is_virtual && isXLargeScreen );
+
 		const pickDesignText =
-			selectedDesign.design_type === 'vertical' || selectedDesignHasStyleVariations
+			selectedDesign.design_type === 'vertical' || hasMoreInfo
 				? translate( 'Continue' )
 				: translate( 'Start with %(designTitle)s', { args: { designTitle } } );
 
 		const actionButtons = (
 			<>
-				{ selectedDesignHasStyleVariations && (
-					<div className="action-buttons__title">{ headerDesignTitle }</div>
-				) }
+				{ hasMoreInfo && <div className="action-buttons__title">{ headerDesignTitle }</div> }
 				<div>{ getPrimaryActionButton( pickDesignText ) }</div>
 			</>
+		);
+
+		const showPatternAssemblerCTA =
+			selectedDesign.is_virtual && selectedDesign.recipe?.pattern_ids?.length;
+		const patternAssemblerCTA = showPatternAssemblerCTA && (
+			<PatternAssemblerCta
+				hasPrimaryButton={ false }
+				onButtonClick={ () => pickBlankCanvasDesign( selectedDesign, true ) }
+				showEditorFallback={ false }
+				compact={ true }
+			/>
 		);
 
 		const stepContent = (
@@ -628,7 +645,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 					isOpen={ showPremiumGlobalStylesModal }
 					tryStyle={ tryPremiumGlobalStyles }
 				/>
-				{ selectedDesignHasStyleVariations ? (
+				{ hasMoreInfo ? (
 					<AsyncLoad
 						require="@automattic/design-preview"
 						placeholder={ null }
@@ -641,6 +658,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 						actionButtons={ actionButtons }
 						recordDeviceClick={ recordDeviceClick }
 						showGlobalStylesPremiumBadge={ shouldLimitGlobalStyles }
+						patternAssemblerCTA={ patternAssemblerCTA }
 					/>
 				) : (
 					<WebPreview
@@ -666,7 +684,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			</>
 		);
 
-		return selectedDesignHasStyleVariations ? (
+		return hasMoreInfo ? (
 			<StepContainer
 				stepName={ STEP_NAME }
 				stepContent={ stepContent }

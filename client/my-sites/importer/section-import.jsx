@@ -327,7 +327,7 @@ class SectionImport extends Component {
 									warningRequirement={ translate( 'To make sure you can import reliably' ) }
 								/>
 							) }
-							{ jetpackVersionInCompatible
+							{ isJetpack && ! isAtomic && jetpackVersionInCompatible
 								? this.renderIdleImporters( appStates.DISABLED )
 								: this.renderImportersList() }
 						</>

@@ -1,5 +1,7 @@
 @import "@automattic/onboarding/styles/mixins";
 
+$theme-sheet-content-max-width: 1462px;
+
 body.is-section-theme-i4 {
 	&.theme-default.color-scheme {
 		--color-surface-backdrop: var(--studio-white);
@@ -20,6 +22,28 @@ body.is-section-theme-i4 {
 		}
 	}
 
+	.theme__sheet-action-bar-container {
+		box-shadow: 0 1px var(--color-border-subtle);
+	}
+
+	.theme__sheet-action-bar {
+		box-shadow: none;
+		box-sizing: content-box;
+		margin: 0 auto;
+		max-width: $theme-sheet-content-max-width;
+		min-height: 70px;
+		padding: 0 20px;
+		position: relative;
+
+		@include breakpoint-deprecated( "<960px" ) {
+			margin: 0 0 32px 0;
+		}
+
+		@include breakpoint-deprecated( "<960px" ) {
+			min-height: 60px;
+		}
+	}
+
 	.theme__sheet-columns {
 		display: grid;
 		gap: 0 32px;
@@ -28,7 +52,7 @@ body.is-section-theme-i4 {
 			"content preview";
 		grid-template-columns: 1fr 1fr;
 		grid-template-rows: auto 1fr;
-		max-width: 1462px;
+		max-width: $theme-sheet-content-max-width;
 		padding: 48px 20px;
 
 		h2,
@@ -60,6 +84,30 @@ body.is-section-theme-i4 {
 
 		.theme__sheet-column-right {
 			grid-area: preview;
+
+			.sticky-panel {
+				width: 100%;
+
+				&.is-sticky .sticky-panel__content {
+					margin-top: 16px;
+
+					@include breakpoint-deprecated( "<960px" ) {
+						margin-top: 0;
+						position: relative;
+						top: auto !important;
+					}
+				}
+
+				.sticky-panel__content {
+					transition: all 200ms ease-in-out;
+				}
+
+				.sticky-panel__spacer {
+					@include breakpoint-deprecated( "<960px" ) {
+						display: none;
+					}
+				}
+			}
 		}
 
 		.theme__sheet-column-left,
@@ -88,8 +136,13 @@ body.is-section-theme-i4 {
 
 	.theme__sheet-content {
 		box-shadow: none;
+		font-size: 1rem;
 		min-height: auto;
 		padding: 0;
+
+		h2 {
+			font-size: 1.25rem;
+		}
 
 		.notes {
 			background: transparent;
@@ -439,7 +492,7 @@ body.is-section-theme-i4 {
 		margin-top: 0;
 		top: 0;
 		width: 100%;
-		height: 75vw; // force proportions
+		height: 100vw; // force proportions
 		overflow: hidden;
 		box-shadow: none;
 
@@ -465,10 +518,19 @@ body.is-section-theme-i4 {
 }
 
 .theme__sheet-web-preview {
+	pointer-events: none;
 	position: relative;
 
 	@include breakpoint-deprecated( ">960px" ) {
-		height: 85vh;
+		height: calc(100vh - 128px);
+		pointer-events: all;
+
+		.theme-preview__frame-wrapper .theme-preview__frame {
+			height: 200%;
+			max-width: 200%;
+			transform: scale(0.5) !important;
+			width: 200%;
+		}
 	}
 }
 

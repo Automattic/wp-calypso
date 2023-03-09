@@ -123,5 +123,5 @@ export function isBlankCanvasDesign( design?: Design ): boolean {
 	if ( ! design ) {
 		return false;
 	}
-	return /blank-canvas/i.test( design.slug );
+	return /blank-canvas/i.test( design.slug ) && ! design.is_virtual;
 }

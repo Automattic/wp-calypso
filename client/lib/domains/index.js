@@ -23,6 +23,7 @@ export { getUnformattedDomainSalePrice } from './get-unformatted-domain-sale-pri
 export { isDomainUpdateable } from './is-domain-updateable';
 export { isDomainInGracePeriod } from './is-domain-in-grace-period';
 export { isHstsRequired } from './is-hsts-required';
+export { isDotGayNoticeRequired } from './is-dot-gay-notice-required';
 export { isSubdomain } from './is-subdomain';
 export {
 	getMappedDomains,

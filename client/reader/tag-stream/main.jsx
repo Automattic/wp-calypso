@@ -1,3 +1,4 @@
+import { getUrlParts } from '@automattic/calypso-url';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
@@ -6,10 +7,13 @@ import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryReaderFollowedTags from 'calypso/components/data/query-reader-followed-tags';
 import QueryReaderTag from 'calypso/components/data/query-reader-tag';
+import { navigate } from 'calypso/lib/navigate';
+import { createAccountUrl } from 'calypso/lib/paths';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import HeaderBack from 'calypso/reader/header-back';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import Stream from 'calypso/reader/stream';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { requestFollowTag, requestUnfollowTag } from 'calypso/state/reader/tags/items/actions';
 import { getReaderTags, getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
@@ -73,6 +77,12 @@ class TagStream extends Component {
 		const { decodedTagSlug, unfollowTag, followTag } = this.props;
 		const isFollowing = this.isSubscribed(); // this is the current state, not the new state
 		const toggleAction = isFollowing ? unfollowTag : followTag;
+
+		if ( ! this.props.isLoggedIn ) {
+			const { pathname } = getUrlParts( window.location.href );
+			return navigate( createAccountUrl( { redirectTo: pathname } ) );
+		}
+
 		toggleAction( decodedTagSlug );
 		recordAction( isFollowing ? 'unfollowed_topic' : 'followed_topic' );
 		recordGaEvent(
@@ -152,6 +162,7 @@ export default connect(
 	( state ) => ( {
 		followedTags: getReaderFollowedTags( state ),
 		tags: getReaderTags( state ),
+		isLoggedIn: isUserLoggedIn( state ),
 	} ),
 	{
 		followTag: requestFollowTag,

@@ -14,6 +14,7 @@ import {
 	renderProvisionPlugins,
 	jetpackCanUpdate,
 	plugins,
+	redirectTrialSites,
 	scrollTopIfNoHash,
 	navigationIfLoggedIn,
 	maybeRedirectLoggedOut,
@@ -41,6 +42,7 @@ export default function ( router ) {
 		scrollTopIfNoHash,
 		siteSelection,
 		renderProvisionPlugins,
+		redirectTrialSites,
 		makeLayout,
 		clientRender
 	);
@@ -52,6 +54,7 @@ export default function ( router ) {
 		scrollTopIfNoHash,
 		siteSelection,
 		navigationIfLoggedIn,
+		redirectTrialSites,
 		browsePlugins,
 		makeLayout,
 		clientRender
@@ -74,6 +77,7 @@ export default function ( router ) {
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
+		redirectTrialSites,
 		upload,
 		makeLayout,
 		clientRender
@@ -99,6 +103,7 @@ export default function ( router ) {
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
+		redirectTrialSites,
 		plans,
 		makeLayout,
 		clientRender
@@ -111,6 +116,7 @@ export default function ( router ) {
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
+		redirectTrialSites,
 		plugins,
 		makeLayout,
 		clientRender
@@ -123,6 +129,7 @@ export default function ( router ) {
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
+		redirectTrialSites,
 		jetpackCanUpdate,
 		plugins,
 		makeLayout,
@@ -136,6 +143,7 @@ export default function ( router ) {
 		scrollTopIfNoHash,
 		siteSelection,
 		navigationIfLoggedIn,
+		redirectTrialSites,
 		browsePluginsOrPlugin,
 		makeLayout,
 		clientRender
@@ -148,6 +156,7 @@ export default function ( router ) {
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
+		redirectTrialSites,
 		renderPluginWarnings,
 		makeLayout,
 		clientRender

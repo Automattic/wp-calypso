@@ -376,6 +376,20 @@ button {
 		margin-left: auto;
 		margin-right: auto;
 	}
+	p.processing-step__subtitle {
+		font-family: "SF Pro Text", $sans;
+		font-weight: 400;
+
+		.woo-inline-purple-heart {
+			width: 18px;
+			height: 15px;
+			margin-bottom: -2px; // bring visual center inline with the text
+		}
+
+		strong {
+			font-weight: 500;
+		}
+	}
 	.loading-bar::before {
 		background: var(--wooexpress-purple);
 	}

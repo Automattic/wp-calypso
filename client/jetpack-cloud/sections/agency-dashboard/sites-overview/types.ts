@@ -5,9 +5,10 @@ export type AllowedTypes = 'site' | 'stats' | 'backup' | 'scan' | 'monitor' | 'p
 
 // Site column object which holds key and title of each column
 export type SiteColumns = Array< {
-	key: string;
+	key: AllowedTypes;
 	title: ReactChild;
 	className?: string;
+	isExpandable?: boolean;
 } >;
 
 export type AllowedStatusTypes =
@@ -66,7 +67,6 @@ export interface SiteNode {
 
 export interface StatsNode {
 	type: AllowedTypes;
-	status: AllowedStatusTypes | string;
 	data: SiteStats;
 }
 export interface BackupNode {
@@ -187,7 +187,6 @@ export interface APIToggleFavorite {
 export interface UpdateMonitorSettingsAPIResponse {
 	success: boolean;
 	settings: {
-		monitor_active: boolean;
 		email_notifications: boolean;
 		wp_note_notifications: boolean;
 		jetmon_defer_status_down_minutes: number;
@@ -195,7 +194,6 @@ export interface UpdateMonitorSettingsAPIResponse {
 }
 
 export interface UpdateMonitorSettingsParams {
-	monitor_active?: boolean;
 	wp_note_notifications?: boolean;
 	email_notifications?: boolean;
 	jetmon_defer_status_down_minutes?: number;
@@ -208,3 +206,12 @@ export interface UpdateMonitorSettingsArgs {
 export type SiteMonitorStatus = {
 	[ siteId: number ]: 'loading' | 'completed';
 };
+
+export interface ToggleActivaateMonitorAPIResponse {
+	code: 'success' | 'error';
+	message: string;
+}
+export interface ToggleActivateMonitorArgs {
+	siteId: number;
+	params: { monitor_active: boolean };
+}

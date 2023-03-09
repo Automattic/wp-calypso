@@ -27,6 +27,12 @@ export const isLinkInBioFlow = ( flowName: string | null ) => {
 	);
 };
 
+export const isNewsletterFlow = ( flowName: string | null ) => {
+	return Boolean(
+		flowName && [ NEWSLETTER_FLOW, NEWSLETTER_POST_SETUP_FLOW ].includes( flowName )
+	);
+};
+
 export const isFreeFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ FREE_FLOW, FREE_POST_SETUP_FLOW ].includes( flowName ) );
 };

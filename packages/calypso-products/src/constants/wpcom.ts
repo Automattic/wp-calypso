@@ -30,6 +30,10 @@ export const PLAN_ECOMMERCE_MONTHLY = 'ecommerce-bundle-monthly';
 export const PLAN_ECOMMERCE = 'ecommerce-bundle';
 export const PLAN_ECOMMERCE_2_YEARS = 'ecommerce-bundle-2y';
 export const PLAN_ECOMMERCE_TRIAL_MONTHLY = 'ecommerce-trial-bundle-monthly';
+export const PLAN_WOOEXPRESS_SMALL = 'wooexpress-small-bundle-yearly';
+export const PLAN_WOOEXPRESS_SMALL_MONTHLY = 'wooexpress-small-bundle-monthly';
+export const PLAN_WOOEXPRESS_MEDIUM = 'wooexpress-medium-bundle-yearly';
+export const PLAN_WOOEXPRESS_MEDIUM_MONTHLY = 'wooexpress-medium-bundle-monthly';
 export const PLAN_ECOMMERCE_3_YEARS = 'ecommerce-bundle-3y';
 export const PLAN_FREE = 'free_plan';
 export const PLAN_HOST_BUNDLE = 'host-bundle';
@@ -76,6 +80,8 @@ export const WPCOM_PLANS = <const>[
 	PLAN_WPCOM_PRO_MONTHLY,
 	PLAN_WPCOM_STARTER,
 	PLAN_ENTERPRISE_GRID_WPCOM,
+	PLAN_WOOEXPRESS_MEDIUM,
+	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 ];
 
 export const WPCOM_MONTHLY_PLANS = <const>[
@@ -84,6 +90,7 @@ export const WPCOM_MONTHLY_PLANS = <const>[
 	PLAN_PERSONAL_MONTHLY,
 	PLAN_ECOMMERCE_MONTHLY,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 	PLAN_WPCOM_PRO_MONTHLY,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	PLAN_FREE,

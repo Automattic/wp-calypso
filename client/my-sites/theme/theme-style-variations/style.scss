@@ -3,12 +3,19 @@
 @import "@wordpress/base-styles/mixins";
 
 .theme__sheet-style-variations {
+	position: relative;
+
 	@include breakpoint-deprecated( "<960px" ) {
 		margin-bottom: -16px;
 		padding: 0 0 0 24px;
 
+		&::after {
+			@include long-content-fade( $direction: right, $size: 24px );
+			height: 100%;
+		}
+
 		.theme__sheet-style-variations-previews {
-			padding: 2px 24px 16px 2px;
+			padding: 12px 24px 16px 2px;
 		}
 	}
 
@@ -18,23 +25,14 @@
 		gap: 8px;
 		overflow: scroll;
 		padding: 12px 2px;
+		scrollbar-width: none;
 
-		&--is-collapsible {
-			transition: max-height 0.2s ease-in-out;
-		}
-
-		&--is-collapsed {
-			overflow: hidden;
-			padding-bottom: 3px;
+		&::-webkit-scrollbar {
+			display: none;
 		}
 
 		@include breakpoint-deprecated( "<960px" ) {
 			flex-wrap: nowrap;
-
-			&--is-collapsed {
-				overflow: scroll;
-				padding-bottom: 12px;
-			}
 		}
 	}
 
@@ -46,18 +44,6 @@
 		@include breakpoint-deprecated( "<960px" ) {
 			button {
 				display: none;
-			}
-		}
-
-		button {
-			color: var(--color-link);
-			float: right;
-			padding: 0;
-
-			&:active,
-			&:focus,
-			&:hover {
-				color: var(--color-link-dark);
 			}
 		}
 

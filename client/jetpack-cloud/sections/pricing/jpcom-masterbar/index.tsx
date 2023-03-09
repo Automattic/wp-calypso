@@ -52,7 +52,7 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 				id: 'products',
 				items: [
 					{
-						label: translate( 'Security' ),
+						label: translate( 'Security', { context: 'Jetpack product name' } ),
 						tagline: translate( 'Protect your site' ),
 						href: `${ JETPACK_COM_BASE_URL }/features/security/`,
 						items: [
@@ -148,7 +148,7 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 					href: `${ JETPACK_COM_BASE_URL }/complete/`,
 				},
 				{
-					label: translate( 'Security' ),
+					label: translate( 'Security', { context: 'Jetpack product name' } ),
 					tagline: translate( 'Comprehensive site security' ),
 					href: `${ JETPACK_COM_BASE_URL }/features/security/`,
 				},

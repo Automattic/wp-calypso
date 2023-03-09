@@ -16,9 +16,9 @@ import Column from 'calypso/components/layout/column';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import { ScrollToAnchorOnMount } from 'calypso/components/scroll-to-anchor-on-mount';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
 import { GitHubCard } from 'calypso/my-sites/hosting/github';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -28,12 +28,17 @@ import {
 	getAutomatedTransferStatus,
 	isAutomatedTransferActive,
 } from 'calypso/state/automated-transfer/selectors';
+import { getAtomicHostingIsLoadingSftpData } from 'calypso/state/selectors/get-atomic-hosting-is-loading-sftp-data';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestSite } from 'calypso/state/sites/actions';
 import { isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSiteId,
+	getSelectedSite,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 import CacheCard from './cache-card';
 import { HostingUpsellNudge } from './hosting-upsell-nudge';
 import PhpMyAdminCard from './phpmyadmin-card';
@@ -45,6 +50,8 @@ import SupportCard from './support-card';
 import WebServerLogsCard from './web-server-logs-card';
 import WebServerSettingsCard from './web-server-settings-card';
 import './style.scss';
+
+const HEADING_OFFSET = 30;
 
 class Hosting extends Component {
 	state = {
@@ -69,7 +76,6 @@ class Hosting extends Component {
 			// Try to refresh the transfer state
 			this.props.fetchAutomatedTransferStatus( this.props.siteId );
 		}
-		setTimeout( () => scrollToAnchor( { offset: 30 } ), 2000 );
 	}
 
 	render() {
@@ -79,12 +85,14 @@ class Hosting extends Component {
 			hasSftpFeature,
 			isDisabled,
 			isECommerceTrial,
+			isStagingSite,
 			isTransferring,
 			requestSiteById,
 			siteId,
 			siteSlug,
 			translate,
 			transferState,
+			isLoadingSftpData,
 		} = this.props;
 
 		const getUpgradeBanner = () => {
@@ -186,7 +194,9 @@ class Hosting extends Component {
 							<Column type="main" className="hosting__main-layout-col">
 								<SFTPCard disabled={ isDisabled } />
 								<PhpMyAdminCard disabled={ isDisabled } />
-								{ isStagingSiteEnabled && <StagingSiteCard disabled={ isDisabled } /> }
+								{ isStagingSiteEnabled && ! isStagingSite && (
+									<StagingSiteCard disabled={ isDisabled } />
+								) }
 								{ isGithubIntegrationEnabled && <GitHubCard /> }
 								<WebServerSettingsCard disabled={ isDisabled } />
 								<RestorePlanSoftwareCard disabled={ isDisabled } />
@@ -205,6 +215,7 @@ class Hosting extends Component {
 
 		return (
 			<Main wideLayout className="hosting">
+				{ ! isLoadingSftpData && <ScrollToAnchorOnMount offset={ HEADING_OFFSET } /> }
 				<PageViewTracker path="/hosting-config/:site" title="Hosting Configuration" />
 				<DocumentHead title={ translate( 'Hosting Configuration' ) } />
 				<FormattedHeader
@@ -229,6 +240,7 @@ export const clickActivate = () =>
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
+		const site = getSelectedSite( state );
 		const hasSftpFeature = siteHasFeature( state, siteId, FEATURE_SFTP );
 
 		return {
@@ -237,9 +249,11 @@ export default connect(
 			transferState: getAutomatedTransferStatus( state, siteId ),
 			isTransferring: isAutomatedTransferActive( state, siteId ),
 			isDisabled: ! hasSftpFeature || ! isSiteAutomatedTransfer( state, siteId ),
+			isLoadingSftpData: getAtomicHostingIsLoadingSftpData( state, siteId ),
 			hasSftpFeature,
 			siteSlug: getSelectedSiteSlug( state ),
 			siteId,
+			isStagingSite: site.is_wpcom_staging_site,
 		};
 	},
 	{

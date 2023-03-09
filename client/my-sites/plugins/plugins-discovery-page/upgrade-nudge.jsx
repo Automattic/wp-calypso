@@ -28,7 +28,9 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 const UpgradeNudge = ( { siteSlug, paidPlugins } ) => {
 	const selectedSite = useSelector( getSelectedSite );
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, selectedSite?.ID ) );
-	const isEcommerceTrial = sitePlan?.product_slug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+
+	// Use selectedSite.plan because getSitePlan() doesn't return expired plans.
+	const isEcommerceTrial = selectedSite?.plan?.product_slug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 	const jetpackNonAtomic = useSelector(
 		( state ) =>
 			isJetpackSite( state, selectedSite?.ID ) && ! isAtomicSite( state, selectedSite?.ID )
@@ -126,7 +128,7 @@ const UpgradeNudge = ( { siteSlug, paidPlugins } ) => {
 				callToAction={ translate( 'Upgrade now' ) }
 				icon="notice-outline"
 				showIcon={ true }
-				href={ `/checkout/${ siteSlug }/${ PLAN_ECOMMERCE_MONTHLY }` }
+				href={ `/plans/${ siteSlug }` }
 				feature={ FEATURE_INSTALL_PLUGINS }
 				plan={ PLAN_ECOMMERCE_MONTHLY }
 				title={ translate( 'To install additional plugins, please upgrade to a paid plan.' ) }

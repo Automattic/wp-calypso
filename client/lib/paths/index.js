@@ -21,3 +21,7 @@ export function newPost( site ) {
 	const sitePath = editorPathFromSite( site );
 	return '/post' + sitePath;
 }
+
+export function createAccountUrl( { redirectTo } ) {
+	return `/start/account?redirect_to=${ redirectTo }`;
+}

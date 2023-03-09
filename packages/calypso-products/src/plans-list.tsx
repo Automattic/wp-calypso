@@ -317,6 +317,8 @@ import {
 	FEATURE_SITE_ACTIVITY_LOG_JP,
 	FEATURE_CLOUD_CRITICAL_CSS,
 	FEATURE_GLOBAL_EDGE_CACHING,
+	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
+	PLAN_WOOEXPRESS_MEDIUM,
 } from './constants';
 import { is2023PricingGridEnabled } from './plans-utilities';
 import type {
@@ -431,9 +433,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SMART_REDIRECTS,
 		FEATURE_ALWAYS_ONLINE,
 	],
-	// This function returns the features that are to be overridden and shown in the plans comparison table.
-	// The gist is that we want the plan comparison grid to be as comprehensive as possible, while keeping the plans table easy to follow.
-	// For more details why they deviates, please refer to p2-pdgrnI-24M#comment-3413
+
 	get2023PlanComparisonFeatureOverride: () => [
 		FEATURE_BEAUTIFUL_THEMES,
 		FEATURE_PAGES,
@@ -459,6 +459,14 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_LTD_SOCIAL_MEDIA_JP,
 		FEATURE_CONTACT_FORM_JP,
 	],
+	get2023PlanComparisonJetpackFeatureOverride: () => [
+		FEATURE_STATS_JP,
+		FEATURE_SPAM_JP,
+		FEATURE_LTD_SOCIAL_MEDIA_JP,
+		FEATURE_CONTACT_FORM_JP,
+		FEATURE_SITE_ACTIVITY_LOG_JP,
+	],
+
 	get2023PricingGridSignupStorageOptions: () => [ FEATURE_1GB_STORAGE ],
 	getIncludedFeatures: () => [],
 	getInferiorFeatures: () => [],
@@ -633,7 +641,6 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_AD_FREE_EXPERIENCE,
 		FEATURE_FAST_DNS,
-		FEATURE_STYLE_CUSTOMIZATION,
 		FEATURE_SUPPORT_EMAIL,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [
@@ -876,6 +883,14 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		},
 	} ),
 } );
+const getPlanWooExpressMediumDetails = (): IncompleteWPcomPlan => ( {
+	...getPlanEcommerceDetails(),
+	getTitle: () => i18n.translate( 'Woo Express Performance' ),
+	getTagline: () =>
+		i18n.translate(
+			'Learn more about everything included with Woo Express Performance and take advantage of its powerful marketplace features.'
+		),
+} );
 
 const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
@@ -1014,11 +1029,11 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_LIVE_CHAT_SUPPORT,
 		FEATURE_PREMIUM_THEMES_V2,
 		FEATURE_WORDADS,
+		FEATURE_STYLE_CUSTOMIZATION,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [
 		FEATURE_VIDEOPRESS_JP,
 		FEATURE_UNLTD_SOCIAL_MEDIA_JP,
-		FEATURE_SEO_JP,
 		FEATURE_SITE_ACTIVITY_LOG_JP,
 	],
 	get2023PricingGridSignupStorageOptions: () => [ FEATURE_13GB_STORAGE ],
@@ -1180,6 +1195,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_UPTIME_MONITOR_JP,
 		FEATURE_ES_SEARCH_JP,
 		FEATURE_PLUGIN_AUTOUPDATE_JP,
+		FEATURE_SEO_JP,
 	],
 	get2023PricingGridSignupStorageOptions: () => [ FEATURE_200GB_STORAGE ],
 	// Features not displayed but used for checking plan abilities
@@ -1600,7 +1616,7 @@ const getPlanJetpackSecurityT1Details = (): IncompleteJetpackPlan => ( {
 	...getJetpackCommonPlanDetails(),
 	group: GROUP_JETPACK,
 	type: TYPE_SECURITY_T1,
-	getTitle: () => translate( 'Security' ),
+	getTitle: () => translate( 'Security', { context: 'Jetpack product name' } ),
 	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
 	getDescription: () =>
 		translate(
@@ -2126,6 +2142,26 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductId: () => 1031,
 		getStoreSlug: () => PLAN_ECOMMERCE_2_YEARS,
 		getPathSlug: () => 'ecommerce-2-years',
+	},
+
+	[ PLAN_WOOEXPRESS_MEDIUM_MONTHLY ]: {
+		...getPlanWooExpressMediumDetails(),
+		...getMonthlyTimeframe(),
+		availableFor: ( plan ) => [ PLAN_FREE, PLAN_ECOMMERCE_TRIAL_MONTHLY ].includes( plan ),
+		getProductId: () => 1053,
+		getStoreSlug: () => PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
+		getPathSlug: () => 'wooexpress-medium-monthly',
+	},
+
+	[ PLAN_WOOEXPRESS_MEDIUM ]: {
+		...getPlanWooExpressMediumDetails(),
+		term: TERM_ANNUALLY,
+		getBillingTimeFrame: WPComGetBillingTimeframe,
+		availableFor: ( plan ) =>
+			[ PLAN_FREE, PLAN_WOOEXPRESS_MEDIUM_MONTHLY, PLAN_ECOMMERCE_TRIAL_MONTHLY ].includes( plan ),
+		getProductId: () => 1055,
+		getStoreSlug: () => PLAN_WOOEXPRESS_MEDIUM,
+		getPathSlug: () => 'wooexpress-medium-yearly',
 	},
 
 	// Not a real plan. This is used to show the Enterprise (VIP) offering in

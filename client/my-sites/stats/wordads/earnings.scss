@@ -1,0 +1,38 @@
+@import "@automattic/components/src/styles/mixins";
+@import "@automattic/typography/styles/variables";
+
+
+.ads__table-header {
+	margin-bottom: 1em;
+	display: flex;
+
+	// Keep synced with $custom-mobile-breakpoint in packages/components/src/highlight-cards/variables.scss.
+	@media ( max-width: 660px ) {
+		margin-left: $font-body-small;
+		margin-right: $font-body-small;
+	}
+}
+
+.ads__table-header-title {
+	@include stats-section-header;
+	margin-right: 4px;
+}
+
+.ads__table-header-button {
+	color: var(--studio-gray-50);
+	cursor: pointer;
+}
+
+.earnings_history {
+	border-radius: 4px;
+
+	table {
+		margin: 0;
+	}
+
+	// Keep synced with $custom-mobile-breakpoint in packages/components/src/highlight-cards/variables.scss.
+	@media ( max-width: 660px ) {
+		margin-left: $font-body-small;
+		margin-right: $font-body-small;
+	}
+}

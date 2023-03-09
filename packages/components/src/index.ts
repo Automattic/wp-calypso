@@ -41,6 +41,7 @@ export {
 	default as HighlightCard,
 	percentCalculator as PercentCalculator,
 } from './highlight-cards/highlight-card';
+export { default as HighlightCardSimple } from './highlight-cards/highlight-card-simple';
 export { default as AppPromoFullWidth } from './app-promo-full-width';
 export { default as ShortenedNumber } from './number-formatters';
 export { default as formattedNumber } from './number-formatters/formatted-number';
@@ -48,3 +49,5 @@ export { default as PostStatsCard } from './post-stats-card';
 export { default as ConfettiAnimation } from './confetti';
 export { default as ComponentSwapper } from './component-swapper';
 export { default as SubmenuPopover, useSubmenuPopoverProps } from './submenu-popover';
+export { default as JetpackUpsellCard } from './jetpack-upsell-card';
+export { UpsellMenuGroup } from './upsell-menu-group';
