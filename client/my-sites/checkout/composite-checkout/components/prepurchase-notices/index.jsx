@@ -81,12 +81,14 @@ const PrePurchaseNotices = () => {
 			return null;
 		}
 
-		const socialProductSlug = isMonthly
-			? JETPACK_SOCIAL_ADVANCED_PRODUCTS.find( ( slug ) => slug.includes( 'monthly' ) )
-			: JETPACK_SOCIAL_ADVANCED_PRODUCTS.find( ( slug ) => ! slug.includes( 'monthly' ) );
+		const socialProductSlug = JETPACK_SOCIAL_ADVANCED_PRODUCTS.filter( ( slug ) =>
+			isMonthly ? slug.includes( 'monthly' ) : ! slug.includes( 'monthly' )
+		)[ 0 ];
 
-		const siteHasSocial = currentSiteProducts.find( ( product ) =>
-			JETPACK_SOCIAL_PRODUCTS.includes( product.productSlug )
+		const siteHasSocial = currentSiteProducts.find(
+			( product ) =>
+				product.productSlug === socialProductSlug &&
+				JETPACK_SOCIAL_PRODUCTS.includes( product.productSlug )
 		);
 
 		if ( siteHasSocial && planHasFeature( planSlugInCart, socialProductSlug ) ) {
