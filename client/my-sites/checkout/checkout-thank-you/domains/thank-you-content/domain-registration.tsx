@@ -103,7 +103,7 @@ const DomainRegistrationThankYouProps = ( {
 			width: '150px',
 			height: 'auto',
 		},
-		thankYouTitle: translate( 'All ready to go!' ),
+		thankYouTitle: translate( 'All ready to go!!' ),
 		thankYouSubtitle: translate(
 			'Your new domain {{strong}}%(domain)s{{/strong}} is being set up.',
 			{
