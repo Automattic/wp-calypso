@@ -11,18 +11,18 @@
 /**
  * Render happy-tools/universal-header placeholder. Accepts attributes and content to filter the save before its displayed.
  *
- * @param array $attributes Block attributes.
+ * @param array $block_attributes Block attributes.
  * @return string
  */
-function universal_header_render_callback( $attributes ) {
-	// inject the current locale to the attributes.
-	$attributes['locale'] = get_locale();
+function universal_header_render_callback( $block_attributes ) {
+	$json_attributes = htmlspecialchars( wp_json_encode( $block_attributes ), ENT_QUOTES, 'UTF-8' );
+	$logo_color      = $block_attributes['logoColor'] ?? '#0675c4'; // Default to WordPress.com blue.
+	$header          = file_get_contents( plugin_dir_path( __FILE__ ) . '/build/index.html' );
 
-	$json_attributes = htmlspecialchars( wp_json_encode( $attributes ), ENT_QUOTES, 'UTF-8' );
+	// Set the logo color.
+	$header = str_replace( '%LOGO-COLOR%', $logo_color, $header );
 
-	return '
-		<div data-attributes="' . $json_attributes . '" class="happy-blocks-universal-header-block" />
-	';
+	return '<header><div data-attributes="' . $json_attributes . '" class="happy-blocks-universal-header-block" >' . $header . '</div></header>';
 }
 
 /**

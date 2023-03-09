@@ -460,17 +460,7 @@ const UniversalNavbarFooter = ( {
 						{ automatticBranding.noun }
 					</a>
 					<div className="lp-logo-label-spacer"></div>
-					<a className="lp-link-work" href="https://automattic.com/work-with-us/">
-						<span className="lp-link-chevron-external">
-							{ __( 'Work With Us', __i18n_text_domain__ ) }
-						</span>
-					</a>
 				</div>
-				<a className="lp-link-work-m" href="https://automattic.com/work-with-us/">
-					<span className="lp-link-chevron-external">
-						{ __( 'Work With Us', __i18n_text_domain__ ) }
-					</span>
-				</a>
 			</div>
 		</>
 	);

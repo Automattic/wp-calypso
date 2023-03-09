@@ -1,26 +1,21 @@
-import { LocaleProvider } from '@automattic/i18n-utils';
 import { UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import domReady from '@wordpress/dom-ready';
 import { render } from '@wordpress/element';
-import useI18nCalypsoTranslations from '../shared/use-i18n-calypso-translations';
+import { renderToStaticMarkup } from 'react-dom/server';
 
-function View( { isLoggedIn = false, attributes = {} as any } ) {
-	useI18nCalypsoTranslations();
-	return (
-		<LocaleProvider localeSlug={ attributes.locale }>
-			<UniversalNavbarFooter
-				currentRoute={ window.location.pathname }
-				onLanguageChange={ ( event ) => window.location.assign( event.target.value ) }
-				isLoggedIn={ isLoggedIn }
-			/>
-		</LocaleProvider>
-	);
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
+
+function View() {
+	return <UniversalNavbarFooter onLanguageChange={ noop } isLoggedIn currentRoute="/" />;
 }
 
 domReady( () => {
-	const isLoggedIn = document.body.classList.contains( 'logged-in' );
 	const block = document.querySelector( '.happy-blocks-universal-footer-block' );
-	const attributes = JSON.parse( ( block as HTMLElement )?.dataset?.attributes ?? `{}` );
 
-	render( <View isLoggedIn={ isLoggedIn } attributes={ attributes } />, block );
+	if ( block ) {
+		render( <View />, block );
+	}
 } );
+
+export default async () => renderToStaticMarkup( <View /> );

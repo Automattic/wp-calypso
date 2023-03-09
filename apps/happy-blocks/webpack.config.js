@@ -8,6 +8,7 @@ const CopyPlugin = require( 'copy-webpack-plugin' );
 const HtmlWebpackPlugin = require( 'html-webpack-plugin' );
 const webpack = require( 'webpack' );
 const GenerateChunksMapPlugin = require( '../../build-tools/webpack/generate-chunks-map-plugin' );
+const BlockToHtmlFilter = require( './bin/block-to-html' );
 
 function getWebpackConfig( env = { block: '' }, argv ) {
 	const webpackConfig = getBaseWebpackConfig( { ...env, WP: true }, argv );
@@ -38,14 +39,18 @@ function getWebpackConfig( env = { block: '' }, argv ) {
 		plugins: [
 			...webpackConfig.plugins,
 			new ReadableJsAssetsWebpackPlugin(),
-			new HtmlWebpackPlugin( {
-				filename: path.join( blockPath, '/build/', 'index.html' ),
-				template: `!!prerender-loader?string&entry=./block-library/universal-header/view.tsx!${ path.join(
-					blockPath,
-					'index.html'
-				) }`,
-				inject: 'head',
-			} ),
+			// We are building the full HTML for the block to use in render_callback.
+			...( [ 'universal-header', 'universal-footer' ].includes( blockName )
+				? [
+						new HtmlWebpackPlugin( {
+							filename: path.join( blockPath, '/build/', 'index.html' ),
+							template: `!!prerender-loader?string&entry=./block-library/${ blockName }/view.tsx!./block-library/shared/index.html`,
+							inject: false,
+						} ),
+						// This strips all the tags added by HtmlWebpackPlugin and leaves only the block content.
+						new BlockToHtmlFilter(),
+				  ]
+				: [] ),
 			new CopyPlugin( {
 				patterns: [
 					{
