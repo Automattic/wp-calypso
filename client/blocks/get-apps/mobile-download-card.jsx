@@ -17,8 +17,7 @@ import {
 	getAccountRecoveryPhone,
 	isAccountRecoverySettingsReady,
 } from 'calypso/state/account-recovery/settings/selectors';
-import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
-import { sendEmailLogin } from 'calypso/state/auth/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import getCountries from 'calypso/state/selectors/get-countries';
@@ -275,18 +274,7 @@ class MobileDownloadCard extends Component {
 		const phoneNumber = this.getPreferredNumber().numberFull;
 		this.props.sendSMS( phoneNumber );
 	};
-
-	onSubmitLink = () => {
-		const email = this.props.userSettings.user_email;
-		this.props.sendMagicLink( email );
-	};
 }
-
-const sendMagicLink = ( email ) =>
-	withAnalytics(
-		recordTracksEvent( 'calypso_get_apps_magic_link_button_click' ),
-		sendEmailLogin( email, { showGlobalNotices: true, isMobileAppLogin: true } )
-	);
 
 export default compose(
 	connect(
@@ -297,7 +285,7 @@ export default compose(
 			userSettings: getUserSettings( state ),
 			hasUserSettings: hasUserSettings( state ),
 		} ),
-		{ sendSMS, sendMagicLink, fetchUserSettings, accountRecoverySettingsFetch, recordTracksEvent }
+		{ sendSMS, fetchUserSettings, accountRecoverySettingsFetch, recordTracksEvent }
 	),
 	withRtl,
 	localize

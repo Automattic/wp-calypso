@@ -142,24 +142,6 @@ body.get-apps__body {
 	}
 }
 
-.get-apps__description {
-	font-size: $font-body-small;
-	margin-bottom: 4px;
-
-	@include breakpoint-deprecated(">480px") {
-		font-size: $font-body;
-	}
-}
-
-.get-apps__also-available,
-.get-apps__description:last-child {
-	margin-bottom: 12px;
-
-	@include breakpoint-deprecated(">480px") {
-		margin-bottom: 0;
-	}
-}
-
 .get-apps__mobile {
 
 	.get-apps__store-subpanel {
@@ -199,10 +181,6 @@ body.get-apps__body {
 		.get-apps__app-badge {
 			margin-left: 0;
 		}
-	}
-
-	.get-apps__magic-link-subpanel {
-		margin-top: 64px;
 	}
 
 	.get-apps__qr-code-subpanel {
