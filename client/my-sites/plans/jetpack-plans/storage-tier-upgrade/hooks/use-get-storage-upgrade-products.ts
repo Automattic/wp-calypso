@@ -10,7 +10,7 @@ import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-
 import type { ProductSlug, PlanSlug } from '@automattic/calypso-products';
 import type { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 
-type StorageUpgradeGetter = ( slug: string ) => SelectorProduct;
+type StorageUpgradeGetter = ( slug: string ) => SelectorProduct[];
 
 function getDisclaimerLink() {
 	const backupStorageFaqId = 'backup-storage-limits-faq';
@@ -30,14 +30,14 @@ function getDisclaimerLink() {
 		: `https://cloud.jetpack.com/pricing#${ backupStorageFaqId }`;
 }
 
-export const useGetTier1UpgradeProduct = (): StorageUpgradeGetter => {
+export const useGetTier1UpgradeProducts = (): StorageUpgradeGetter => {
 	const translate = useTranslate();
 
 	// Security and Backup share the same per-tier storage limits
 	const storageAmount = useJetpack10GbStorageAmountText();
 
 	return useCallback(
-		( slug: string ): SelectorProduct => {
+		( slug: string ): SelectorProduct[] => {
 			const features = {
 				items: [
 					{
@@ -64,32 +64,34 @@ export const useGetTier1UpgradeProduct = (): StorageUpgradeGetter => {
 			};
 			const product = slugToSelectorProduct( slug );
 
-			return {
-				...product,
-				displayName: storageAmount,
-				subheader: translate( 'of backup storage' ),
-				buttonLabel: translate( 'Upgrade storage' ),
-				// description: <the default description of the product being upgraded>,
-				features: features,
-				disclaimer: getJetpackProductDisclaimer(
-					product?.productSlug as ProductSlug | PlanSlug,
-					features.items,
-					getDisclaimerLink()
-				),
-			} as SelectorProduct;
+			return [
+				{
+					...product,
+					displayName: storageAmount,
+					subheader: translate( 'of backup storage' ),
+					buttonLabel: translate( 'Upgrade storage' ),
+					// description: <the default description of the product being upgraded>,
+					features: features,
+					disclaimer: getJetpackProductDisclaimer(
+						product?.productSlug as ProductSlug | PlanSlug,
+						features.items,
+						getDisclaimerLink()
+					),
+				} as SelectorProduct,
+			];
 		},
 		[ storageAmount, translate ]
 	);
 };
 
-export const useGetTier2UpgradeProduct = (): StorageUpgradeGetter => {
+export const useGetTier2UpgradeProducts = (): StorageUpgradeGetter => {
 	const translate = useTranslate();
 
 	// Security and Backup share the same per-tier storage limits
 	const storageAmount = useJetpack1TbStorageAmountText();
 
 	return useCallback(
-		( slug: string ): SelectorProduct => {
+		( slug: string ): SelectorProduct[] => {
 			const features = {
 				items: [
 					{
@@ -118,45 +120,48 @@ export const useGetTier2UpgradeProduct = (): StorageUpgradeGetter => {
 				],
 			};
 			const product = slugToSelectorProduct( slug );
-			return {
-				...product,
-				displayName: storageAmount,
-				subheader: translate( 'of backup storage' ),
-				buttonLabel: translate( 'Upgrade storage' ),
-				description: translate(
-					'Go back in time and recover all your information for up to a year, with %(storageAmount)s storage space.',
-					{ args: { storageAmount } }
-				),
-				features: features,
-				disclaimer: getJetpackProductDisclaimer(
-					product?.productSlug as ProductSlug | PlanSlug,
-					features.items,
-					getDisclaimerLink()
-				),
-			} as SelectorProduct;
+
+			return [
+				{
+					...product,
+					displayName: storageAmount,
+					subheader: translate( 'of backup storage' ),
+					buttonLabel: translate( 'Upgrade storage' ),
+					description: translate(
+						'Go back in time and recover all your information for up to a year, with %(storageAmount)s storage space.',
+						{ args: { storageAmount } }
+					),
+					features: features,
+					disclaimer: getJetpackProductDisclaimer(
+						product?.productSlug as ProductSlug | PlanSlug,
+						features.items,
+						getDisclaimerLink()
+					),
+				} as SelectorProduct,
+			];
 		},
 		[ storageAmount, translate ]
 	);
 };
 
-const useGetStorageUpgradeProduct = () => {
-	const getTier1Upgrade = useGetTier1UpgradeProduct();
-	const getTier2Upgrade = useGetTier2UpgradeProduct();
+const useGetStorageUpgradeProducts = () => {
+	const getTier1Upgrades = useGetTier1UpgradeProducts();
+	const getTier2Upgrades = useGetTier2UpgradeProducts();
 
 	return useCallback(
-		( slug: string ): SelectorProduct | null => {
+		( slug: string ): SelectorProduct[] | null => {
 			if ( TIER_1_SLUGS.includes( slug ) ) {
-				return getTier1Upgrade( slug );
+				return getTier1Upgrades( slug );
 			}
 
 			if ( TIER_2_SLUGS.includes( slug ) ) {
-				return getTier2Upgrade( slug );
+				return getTier2Upgrades( slug );
 			}
 
 			return null;
 		},
-		[ getTier1Upgrade, getTier2Upgrade ]
+		[ getTier1Upgrades, getTier2Upgrades ]
 	);
 };
 
-export default useGetStorageUpgradeProduct;
+export default useGetStorageUpgradeProducts;
