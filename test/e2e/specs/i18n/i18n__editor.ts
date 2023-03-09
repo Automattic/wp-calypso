@@ -275,7 +275,7 @@ describe( 'I18N: Editor', function () {
 	describe.each( locales )( `Locale: %s`, function ( locale ) {
 		beforeAll( async function () {
 			await restAPIClient.setMySettings( { language: locale } );
-			await page.reload( { waitUntil: 'networkidle', timeout: 20 * 1000 } );
+			await page.reload();
 		} );
 
 		describe( 'Editing Toolkit Plugin', function () {
