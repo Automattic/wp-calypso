@@ -4,7 +4,7 @@ import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
 
-export interface ECommercePlanFeatureSet {
+export interface WooExpressMediumPlanFeatureSet {
 	illustration: string;
 	title: string;
 	subtitle: TranslateResult;
@@ -15,7 +15,7 @@ export interface ECommercePlanFeatureSet {
 	expanded?: boolean;
 }
 
-export default function TrialFeatureCard( props: ECommercePlanFeatureSet ) {
+export default function TrialFeatureCard( props: WooExpressMediumPlanFeatureSet ) {
 	const { illustration, title, subtitle, items } = props;
 
 	const [ expanded, setExpanded ] = useState( !! props.expanded );

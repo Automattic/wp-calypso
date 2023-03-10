@@ -16,6 +16,7 @@ export const settingLabels = {
 	mentions: () => i18n.translate( 'Username mentions' ),
 	scheduled_publicize: () => i18n.translate( 'Post Publicized' ),
 	blogging_prompt: () => i18n.translate( 'Daily Writing Prompts' ),
+	draft_post_prompt: () => i18n.translate( 'Draft Post Prompts' ),
 	store_order: () => i18n.translate( 'New order' ),
 };
 

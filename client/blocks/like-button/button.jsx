@@ -48,7 +48,7 @@ class LikeButton extends PureComponent {
 	toggleLiked( event ) {
 		if ( ! this.props.isLoggedIn ) {
 			const { pathname } = getUrlParts( window.location.href );
-			return navigate( createAccountUrl( { redirectTo: pathname } ) );
+			return navigate( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ) );
 		}
 		if ( event ) {
 			event.preventDefault();
