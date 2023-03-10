@@ -1489,6 +1489,25 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/jetpack/thank-you/foo.bar/jetpack_backup_daily' );
 	} );
 
+	it( 'redirects to the akismet checkout thank you when akismet siteless arg is set', () => {
+		const cart = {
+			...getEmptyResponseCart(),
+			products: [
+				{
+					...getEmptyResponseCartProduct(),
+					product_slug: 'ak_plus_yearly_2',
+				},
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+			isAkismetSitelessCheckout: true,
+		} );
+		expect( url ).toBe( '/checkout/akismet/thank-you/ak_plus_yearly_2' );
+	} );
+
 	it( 'redirects to the jetpack checkout thank you with `no_product` when jetpack checkout arg is set and the cart is empty', () => {
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
