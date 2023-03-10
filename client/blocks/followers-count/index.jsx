@@ -19,7 +19,7 @@ class FollowersCount extends Component {
 				{ typeof followers === 'number' && (
 					<Button
 						borderless
-						href={ '/people/followers/' + slug }
+						href={ '/people/subscribers/' + slug }
 						title={ translate( 'Total of WordPress and Email Subscribers' ) }
 					>
 						{ translate( 'Subscribers' ) } <Count count={ followers } />
