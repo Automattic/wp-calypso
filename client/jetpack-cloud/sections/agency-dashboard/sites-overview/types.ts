@@ -40,7 +40,7 @@ export interface SiteStats {
 	visitors: StatsObject;
 }
 
-export interface BoostObject {
+export interface BoostData {
 	desktop: number;
 	mobile: number;
 	overall: number;
@@ -65,7 +65,7 @@ export interface Site {
 	isSelected?: boolean;
 	site_stats: SiteStats;
 	onSelect?: ( value: boolean ) => void;
-	jetpack_boost_scores: BoostObject;
+	jetpack_boost_scores: BoostData;
 }
 export interface SiteNode {
 	value: Site;
@@ -82,7 +82,7 @@ export interface StatsNode {
 
 export interface BoostNode {
 	type: AllowedTypes;
-	data: BoostObject;
+	data: BoostData;
 	status: AllowedStatusTypes | string;
 }
 export interface BackupNode {

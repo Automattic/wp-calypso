@@ -329,12 +329,12 @@ const formatStatsData = ( site: Site ) => {
 };
 
 const formatBoostData = ( site: Site ) => {
-	const boost: BoostNode = {
+	const boostData: BoostNode = {
 		type: 'boost',
 		data: site.jetpack_boost_scores,
 		status: 'active',
 	};
-	return boost;
+	return boostData;
 };
 
 const formatBackupData = ( site: Site ) => {

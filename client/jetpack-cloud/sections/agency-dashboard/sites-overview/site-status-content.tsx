@@ -21,7 +21,7 @@ import {
 	getBoostRating,
 	getBoostRatingClass,
 } from './utils';
-import type { AllowedTypes, BoostData, SiteData } from './types';
+import type { AllowedTypes, SiteData } from './types';
 
 interface Props {
 	rows: SiteData;
@@ -29,7 +29,6 @@ interface Props {
 	isLargeScreen?: boolean;
 	isFavorite?: boolean;
 	hasBoost: boolean;
-	boostData: BoostData;
 }
 
 export default function SiteStatusContent( {
