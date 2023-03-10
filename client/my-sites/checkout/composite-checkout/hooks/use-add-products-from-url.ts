@@ -4,7 +4,6 @@ import type {
 	RequestCartProduct,
 	ApplyCouponToCart,
 	AddProductsToCart,
-	ReplaceProductsInCart,
 } from '@automattic/shopping-cart';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-add-products-from-url' );
@@ -28,7 +27,6 @@ export default function useAddProductsFromUrl( {
 	couponCodeFromUrl,
 	applyCoupon,
 	addProductsToCart,
-	replaceProductsInCart,
 }: {
 	isLoadingCart: boolean;
 	isCartPendingUpdate: boolean;
@@ -37,7 +35,6 @@ export default function useAddProductsFromUrl( {
 	couponCodeFromUrl: string | null | undefined;
 	applyCoupon: ApplyCouponToCart;
 	addProductsToCart: AddProductsToCart;
-	replaceProductsInCart: ReplaceProductsInCart;
 } ): isPendingAddingProductsFromUrl {
 	const isMounted = useRef( true );
 	useEffect( () => {
@@ -112,7 +109,6 @@ export default function useAddProductsFromUrl( {
 		applyCoupon,
 		productsForCart,
 		addProductsToCart,
-		replaceProductsInCart,
 	] );
 
 	debug( 'useAddProductsFromUrl isLoading', isLoading );

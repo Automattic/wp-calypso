@@ -718,7 +718,8 @@ export default connect(
 		) {
 			customerType = 'business';
 		}
-		const is2023PricingGridVisible = is2023PricingGridActivePage( window );
+		const is2023PricingGridVisible =
+			props.is2023PricingGridVisible ?? is2023PricingGridActivePage( window );
 		const planTypeSelectorProps = {
 			basePlansPath: props.basePlansPath,
 			isInSignup: props.isInSignup,

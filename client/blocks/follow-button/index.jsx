@@ -32,7 +32,7 @@ class FollowButtonContainer extends Component {
 	handleFollowToggle = ( following ) => {
 		if ( ! this.props.isLoggedIn ) {
 			const { pathname } = getUrlParts( window.location.href );
-			return navigate( createAccountUrl( { redirectTo: pathname } ) );
+			return navigate( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ) );
 		}
 		if ( following ) {
 			const followData = omitBy(

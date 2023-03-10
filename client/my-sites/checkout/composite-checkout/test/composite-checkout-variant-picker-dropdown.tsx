@@ -39,6 +39,13 @@ jest.mock( 'calypso/state/sites/domains/selectors' );
 jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
 jest.mock( 'calypso/state/sites/selectors' );
 
+// These tests seem to be particularly slow (it might be because of using
+// it.each; it's not clear but the timeout might apply to the whole loop
+// rather that each iteration?), so we need to increase the timeout for their
+// operation. The standard timeout (at the time of writing) is 5 seconds so
+// we are increasing this to 12 seconds.
+jest.setTimeout( 12000 );
+
 /* eslint-disable jest/no-conditional-expect */
 
 describe( 'CheckoutMain with a variant picker', () => {

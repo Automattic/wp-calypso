@@ -80,7 +80,7 @@ class TagStream extends Component {
 
 		if ( ! this.props.isLoggedIn ) {
 			const { pathname } = getUrlParts( window.location.href );
-			return navigate( createAccountUrl( { redirectTo: pathname } ) );
+			return navigate( createAccountUrl( { redirectTo: pathname, ref: 'reader-lp' } ) );
 		}
 
 		toggleAction( decodedTagSlug );
