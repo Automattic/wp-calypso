@@ -67,7 +67,10 @@ export default function () {
 			paths.domainManagementEmail( ':site', ':domain' ),
 			paths.domainManagementEmail( ':site' ),
 		],
-		handlers: [ domainManagementController.domainManagementEmailRedirect ],
+		handlers: [
+			stagingSiteNotSupportedRedirect,
+			domainManagementController.domainManagementEmailRedirect,
+		],
 	} );
 
 	registerStandardDomainManagementPages(
@@ -168,6 +171,7 @@ export default function () {
 
 	page(
 		'/domains/add',
+		stagingSiteNotSupportedRedirect,
 		siteSelection,
 		domainsController.domainsAddHeader,
 		domainsController.redirectToUseYourDomainIfVipSite(),
@@ -179,6 +183,7 @@ export default function () {
 
 	page(
 		'/domains/add/mapping',
+		stagingSiteNotSupportedRedirect,
 		siteSelection,
 		domainsController.domainsAddHeader,
 		domainsController.jetpackNoDomainsWarning,
@@ -189,6 +194,7 @@ export default function () {
 
 	page(
 		'/domains/add/transfer',
+		stagingSiteNotSupportedRedirect,
 		siteSelection,
 		domainsController.domainsAddHeader,
 		domainsController.jetpackNoDomainsWarning,
@@ -199,6 +205,7 @@ export default function () {
 
 	page(
 		'/domains/add/site-redirect',
+		stagingSiteNotSupportedRedirect,
 		siteSelection,
 		domainsController.domainsAddRedirectHeader,
 		domainsController.jetpackNoDomainsWarning,
@@ -209,6 +216,7 @@ export default function () {
 
 	page(
 		'/domains/add/:domain',
+		stagingSiteNotSupportedRedirect,
 		siteSelection,
 		navigation,
 		domainsController.redirectIfNoSite( '/domains/add' ),
@@ -221,6 +229,7 @@ export default function () {
 
 	page(
 		'/domains/add/:domain/email/:siteSlug',
+		stagingSiteNotSupportedRedirect,
 		siteSelection,
 		navigation,
 		domainsController.redirectIfNoSite( '/domains/add' ),
@@ -232,6 +241,7 @@ export default function () {
 
 	page(
 		'/domains/add/suggestion/:suggestion/:domain',
+		stagingSiteNotSupportedRedirect,
 		siteSelection,
 		navigation,
 		domainsController.redirectIfNoSite( '/domains/add' ),
@@ -242,6 +252,7 @@ export default function () {
 
 	page(
 		'/domains/add/mapping/:domain',
+		stagingSiteNotSupportedRedirect,
 		siteSelection,
 		navigation,
 		domainsController.redirectIfNoSite( '/domains/add/mapping' ),
@@ -253,6 +264,7 @@ export default function () {
 
 	page(
 		paths.domainMappingSetup( ':site', ':domain' ),
+		stagingSiteNotSupportedRedirect,
 		siteSelection,
 		navigation,
 		domainsController.jetpackNoDomainsWarning,
@@ -263,6 +275,7 @@ export default function () {
 
 	page(
 		'/domains/add/site-redirect/:domain',
+		stagingSiteNotSupportedRedirect,
 		siteSelection,
 		navigation,
 		domainsController.redirectIfNoSite( '/domains/add/site-redirect' ),
@@ -274,6 +287,7 @@ export default function () {
 
 	page(
 		paths.domainTransferIn( ':domain' ),
+		stagingSiteNotSupportedRedirect,
 		siteSelection,
 		navigation,
 		domainsController.redirectIfNoSite( '/domains/add/transfer' ),
@@ -285,6 +299,7 @@ export default function () {
 
 	page(
 		paths.domainUseYourDomain( ':site' ),
+		stagingSiteNotSupportedRedirect,
 		siteSelection,
 		navigation,
 		domainsController.redirectIfNoSite( '/domains/add' ),
@@ -296,6 +311,7 @@ export default function () {
 
 	page(
 		paths.domainUseMyDomain( ':site' ),
+		stagingSiteNotSupportedRedirect,
 		siteSelection,
 		navigation,
 		domainsController.redirectIfNoSite( '/domains/add' ),
@@ -307,6 +323,7 @@ export default function () {
 
 	page(
 		paths.domainManagementTransferInPrecheck( ':site', ':domain' ),
+		stagingSiteNotSupportedRedirect,
 		siteSelection,
 		navigation,
 		domainsController.redirectIfNoSite( '/domains/manage' ),
@@ -318,6 +335,7 @@ export default function () {
 
 	page(
 		paths.domainManagementRoot() + '/:domain/edit',
+		stagingSiteNotSupportedRedirect,
 		domainsController.redirectDomainToSite,
 		makeLayout,
 		clientRender
@@ -325,6 +343,7 @@ export default function () {
 
 	page(
 		'/domains/:site',
+		stagingSiteNotSupportedRedirect,
 		siteSelection,
 		navigation,
 		domainsController.jetpackNoDomainsWarning,
