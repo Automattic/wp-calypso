@@ -55,6 +55,7 @@ export default function CampaignItem( { campaign }: Props ) {
 		impressions_total = 0,
 		clicks_total = 0,
 		target_url = '',
+		campaign_stats_loading,
 	} = campaign;
 
 	const campaignStatus = useMemo( () => normalizeCampaignStatus( campaign ), [ campaign ] );
@@ -193,7 +194,7 @@ export default function CampaignItem( { campaign }: Props ) {
 								{ __( 'Impressions' ) }
 							</div>
 							<div className="campaign-item__block_value campaign-item__reach-value">
-								{ impressions_total ? impressions_total.toLocaleString() : '-' }
+								{ campaign_stats_loading ? '-' : impressions_total.toLocaleString() }
 							</div>
 						</div>
 						<div className="campaign-item__column campaign-item__clicks">
@@ -201,7 +202,7 @@ export default function CampaignItem( { campaign }: Props ) {
 								{ __( 'Clicks' ) }
 							</div>
 							<div className="campaign-item__block_value campaign-item__clicks-value">
-								{ clicks_total ? clicks_total.toLocaleString() : '-' }
+								{ campaign_stats_loading ? '-' : clicks_total.toLocaleString() }
 							</div>
 						</div>
 						<div className="campaign-item__placeholder"></div>
@@ -220,7 +221,7 @@ export default function CampaignItem( { campaign }: Props ) {
 								{ __( 'Click-through rate' ) }
 							</div>
 							<div className="campaign-item__block_value campaign-item__clickthrough-value">
-								{ clickthroughRate || '-' }%
+								{ campaign_stats_loading ? '-' : clickthroughRate }%
 							</div>
 						</div>
 					</div>

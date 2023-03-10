@@ -51,6 +51,7 @@ export type Campaign = {
 	display_name: string;
 	avatar_url: string;
 	creative_html: string;
+	campaign_stats_loading: boolean;
 };
 
 export type CampaignStats = {

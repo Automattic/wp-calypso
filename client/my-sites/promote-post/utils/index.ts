@@ -138,13 +138,11 @@ export const getCampaignOverallSpending = (
 
 export const getCampaignClickthroughRate = ( clicks_total: number, impressions_total: number ) => {
 	const clickthroughRate = ( clicks_total * 100 ) / impressions_total || 0;
-	return clickthroughRate
-		? clickthroughRate.toLocaleString( undefined, {
-				useGrouping: true,
-				minimumFractionDigits: 0,
-				maximumFractionDigits: 2,
-		  } )
-		: '-';
+	return clickthroughRate.toLocaleString( undefined, {
+		useGrouping: true,
+		minimumFractionDigits: 0,
+		maximumFractionDigits: 2,
+	} );
 };
 
 export const getCampaignDurationFormatted = ( start_date: string, end_date: string ) => {
@@ -217,6 +215,7 @@ export const unifyCampaigns = ( campaigns: Campaign[], campaignsStats: CampaignS
 		);
 		return {
 			...campaign,
+			campaign_stats_loading: ! campaignsStats.length,
 			...( campaignStats ? campaignStats : {} ),
 		};
 	} );
