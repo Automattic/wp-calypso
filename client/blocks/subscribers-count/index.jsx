@@ -9,20 +9,20 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
-class FollowersCount extends Component {
+class SubscribersCount extends Component {
 	render() {
-		const { slug, followers, translate, siteId } = this.props;
+		const { slug, subscribers, translate, siteId } = this.props;
 
 		return (
-			<div className="followers-count">
+			<div className="subscribers-count">
 				{ siteId && <QuerySiteStats statType="stats" siteId={ siteId } /> }
-				{ typeof followers === 'number' && (
+				{ typeof subscribers === 'number' && (
 					<Button
 						borderless
 						href={ '/people/subscribers/' + slug }
 						title={ translate( 'Total of WordPress and Email Subscribers' ) }
 					>
-						{ translate( 'Subscribers' ) } <Count count={ followers } />
+						{ translate( 'Subscribers' ) } <Count count={ subscribers } />
 					</Button>
 				) }
 			</div>
@@ -34,11 +34,11 @@ export default connect( ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = get( site, 'ID' );
 	const data = getSiteStatsNormalizedData( state, siteId, 'stats' );
-	const siteFollowers = get( site, 'subscribers_count' );
+	const siteSubscribers = get( site, 'subscribers_count' );
 
 	return {
 		slug: getSiteSlug( state, siteId ),
-		followers: get( data, 'followersBlog', siteFollowers ),
+		subscribers: get( data, 'followersBlog', siteSubscribers ),
 		siteId,
 	};
-} )( localize( FollowersCount ) );
+} )( localize( SubscribersCount ) );
