@@ -16,6 +16,7 @@ import getActiveDiscount from 'calypso/state/selectors/get-active-discount';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migration-active-route';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
+import isSiteStaging from 'calypso/state/selectors/is-site-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 
 export class SiteNotice extends Component {
@@ -134,7 +135,7 @@ export default connect( ( state, ownProps ) => {
 		isDomainOnly: isDomainOnlySite( state, siteId ),
 		activeDiscount: getActiveDiscount( state ),
 		isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
-		isStagingSite: ownProps.site.is_wpcom_staging_site,
+		isStagingSite: isSiteStaging( state, siteId ),
 		isMigrationInProgress,
 	};
 } )( localize( SiteNotice ) );
