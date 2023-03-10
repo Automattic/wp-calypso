@@ -10,7 +10,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
-import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
+import { getSignupProgressByFlow } from 'calypso/state/signup/progress/selectors';
 import { getFilteredSteps } from '../utils';
 import './style.scss';
 
@@ -197,12 +197,12 @@ export class NavigationLink extends Component {
 }
 
 export default connect(
-	( state ) => {
+	( state, ownProps ) => {
 		const { intent } = getSignupDependencyStore( state );
 
 		return {
 			userLoggedIn: isUserLoggedIn( state ),
-			signupProgress: getSignupProgress( state ),
+			signupProgress: getSignupProgressByFlow( state, ownProps.flowName ),
 			intent,
 		};
 	},

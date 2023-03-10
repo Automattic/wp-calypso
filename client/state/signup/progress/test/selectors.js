@@ -1,4 +1,8 @@
-import { getSignupProgress, isPlanStepExistsAndSkipped } from '../selectors';
+import {
+	getSignupProgress,
+	getSignupProgressByFlow,
+	isPlanStepExistsAndSkipped,
+} from '../selectors';
 
 describe( 'selectors', () => {
 	test( 'should return empty, plain object as a default state', () => {
@@ -16,6 +20,24 @@ describe( 'selectors', () => {
 		const state = { signup: { progress } };
 
 		expect( getSignupProgress( state ) ).toEqual( progress );
+	} );
+
+	test( 'should select progress steps from state, filtered by flowName', () => {
+		const progress = {
+			stepA: {
+				status: 'completed',
+				stepName: 'stepA',
+				lastKnownFlow: 'test-flow',
+			},
+			stepB: {
+				status: 'completed',
+				stepName: 'stepB',
+				lastKnownFlow: 'test-flow-2',
+			},
+		};
+		const state = { signup: { progress } };
+
+		expect( getSignupProgressByFlow( state, 'test-flow' ) ).toEqual( { stepA: progress.stepA } );
 	} );
 
 	test( 'isPlanStepExistsAndSkipped : An aliased skipped step should return true', () => {

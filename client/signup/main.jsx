@@ -65,7 +65,7 @@ import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { submitSignupStep, removeStep, addStep } from 'calypso/state/signup/progress/actions';
-import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
+import { getSignupProgressByFlow } from 'calypso/state/signup/progress/selectors';
 import { submitSiteType } from 'calypso/state/signup/steps/site-type/actions';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
@@ -919,7 +919,7 @@ class Signup extends Component {
 }
 
 export default connect(
-	( state ) => {
+	( state, ownProps ) => {
 		const signupDependencies = getSignupDependencyStore( state );
 
 		// Use selectedSiteId which was set by setSelectedSiteForSignup of controller
@@ -935,7 +935,7 @@ export default connect(
 				? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS ) // this is intentional, not a mistake
 				: true,
 			isDomainOnlySite: isDomainOnlySite( state, siteId ),
-			progress: getSignupProgress( state ),
+			progress: getSignupProgressByFlow( state, ownProps.flowName ),
 			signupDependencies,
 			isLoggedIn: isUserLoggedIn( state ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),

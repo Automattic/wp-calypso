@@ -43,7 +43,10 @@ import {
 	processStep,
 } from 'calypso/state/signup/progress/actions';
 import { ProgressState } from 'calypso/state/signup/progress/schema';
-import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
+import {
+	getSignupProgress,
+	getSignupProgressByFlow,
+} from 'calypso/state/signup/progress/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import type { Flow, Dependencies } from '../../signup/types';
 
@@ -325,8 +328,9 @@ export default class SignupFlowController {
 
 	_process() {
 		const currentSteps = this._getFlowSteps();
-		const signupProgress = filter( getSignupProgress( this._reduxStore.getState() ), ( step ) =>
-			includes( currentSteps, step.stepName )
+		const signupProgress = filter(
+			getSignupProgressByFlow( this._reduxStore.getState(), this._flowName ),
+			( step ) => includes( currentSteps, step.stepName )
 		);
 		const pendingSteps = filter( signupProgress, { status: 'pending' } );
 		const completedSteps = filter( signupProgress, { status: 'completed' } );
@@ -354,7 +358,7 @@ export default class SignupFlowController {
 		const dependenciesSatisfied = dependencies.length === keys( dependenciesFound ).length;
 		const currentSteps = this._getFlowSteps();
 		const signupProgress = filter(
-			getSignupProgress( this._reduxStore.getState() ),
+			getSignupProgressByFlow( this._reduxStore.getState(), this._flowName ),
 			( { stepName } ) => includes( currentSteps, stepName )
 		);
 		const allStepsSubmitted =
@@ -469,7 +473,7 @@ export default class SignupFlowController {
 		);
 
 		return reduce(
-			getSignupProgress( this._reduxStore.getState() ),
+			getSignupProgressByFlow( this._reduxStore.getState(), this._flowName ),
 			( current, step ) => ( {
 				...current,
 				...pick( step.providedDependencies, requiredDependencies ),

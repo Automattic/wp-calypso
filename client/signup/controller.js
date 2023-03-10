@@ -12,7 +12,7 @@ import { updateDependencies } from 'calypso/state/signup/actions';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { setCurrentFlowName, setPreviousFlowName } from 'calypso/state/signup/flow/actions';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
-import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
+import { getSignupProgressByFlow } from 'calypso/state/signup/progress/selectors';
 import { setSiteType } from 'calypso/state/signup/steps/site-type/actions';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
@@ -154,7 +154,7 @@ export default {
 		const flowName = getFlowName( context.params, userLoggedIn );
 		const localeFromParams = context.params.lang;
 		const localeFromStore = ! userLoggedIn ? store.get( 'signup-locale' ) : '';
-		const signupProgress = getSignupProgress( context.store.getState() );
+		const signupProgress = getSignupProgressByFlow( context.store.getState(), flowName );
 
 		// Special case for the user step which may use oauth2 redirect flow
 		// Check if there is a valid flow in progress to resume

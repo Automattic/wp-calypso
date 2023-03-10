@@ -31,6 +31,7 @@ export interface StepState {
 	providedDependencies?: Dependencies;
 	status: 'completed' | 'processing' | 'pending' | 'in-progress' | 'invalid';
 	stepName: string;
+	lastKnownFlow: string;
 	wasSkipped?: boolean;
 }
 
