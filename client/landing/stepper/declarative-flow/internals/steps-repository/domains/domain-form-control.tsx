@@ -88,7 +88,6 @@ export function DomainFormControl( {
 
 	if ( flow === DOMAIN_UPSELL_FLOW ) {
 		includeWordPressDotCom = true;
-		showSkipButton = true;
 	}
 
 	const domainsWithPlansOnly = true;
