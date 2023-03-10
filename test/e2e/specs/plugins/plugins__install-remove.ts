@@ -1,5 +1,5 @@
 /**
- * @group jetpack
+ * @group jetpack-remote-site
  */
 
 import {
@@ -27,8 +27,9 @@ describe( DataHelper.createSuiteTitle( 'Jetpack: Plugin' ), function () {
 
 	beforeAll( async function () {
 		// Ensure known good state by removing the plugin if already installed.
-		restAPIClient = new RestAPIClient( SecretsManager.secrets.testAccounts.jetpackUser );
-		const siteID = SecretsManager.secrets.testAccounts.jetpackUser.testSites?.primary.id as number;
+		restAPIClient = new RestAPIClient( SecretsManager.secrets.testAccounts.jetpackRemoteSiteUser );
+		const siteID = SecretsManager.secrets.testAccounts.jetpackRemoteSiteUser.testSites?.primary
+			.id as number;
 		const response = await restAPIClient.removePluginIfInstalled( siteID, pluginName );
 
 		if ( response ) {
@@ -39,10 +40,10 @@ describe( DataHelper.createSuiteTitle( 'Jetpack: Plugin' ), function () {
 
 		page = await browser.newPage();
 
-		const testAccount = new TestAccount( 'jetpackUser' );
+		const testAccount = new TestAccount( 'jetpackRemoteSiteUser' );
 		await testAccount.authenticate( page );
-		await page.waitForLoadState( 'networkidle' );
-		siteURL = SecretsManager.secrets.testAccounts.jetpackUser.testSites?.primary.url as string;
+		siteURL = SecretsManager.secrets.testAccounts.jetpackRemoteSiteUser.testSites?.primary
+			.url as string;
 		pluginsPage = new PluginsPage( page );
 		await pluginsPage.visit( siteURL );
 	} );
@@ -53,25 +54,26 @@ describe( DataHelper.createSuiteTitle( 'Jetpack: Plugin' ), function () {
 			await pluginsPage.clickInstallPlugin();
 		} );
 
-		it( `Return to ${ pluginName } page`, async function () {
-			await page.goBack();
-			noticeComponent = new NoticeComponent( page );
-			const message = `Successfully installed and activated ${ pluginName } on ${ siteURL }`;
-			await noticeComponent.noticeShown( message, { type: 'Success' } );
-			await noticeComponent.dismiss( message );
+		it( 'See confirmation page', async function () {
+			await pluginsPage.validateConfirmationPagePostInstall( pluginName );
+		} );
+
+		it( `Click manage plugin`, async function () {
+			await pluginsPage.clickManageInstalledPluginButton();
 		} );
 	} );
 
 	describe( 'Plugin: Deactivate', function () {
 		it( 'Deactivate plugin', async function () {
-			await pluginsPage.setPluginAttribute( 'off' );
+			await pluginsPage.clickDeactivatePlugin();
 		} );
 	} );
 
 	describe( 'Plugin: Remove', function () {
 		it( 'Remove plugin', async function () {
 			await pluginsPage.clickRemovePlugin();
-			const message = `Successfully removed ${ pluginName } on ${ siteURL }.`;
+			noticeComponent = new NoticeComponent( page );
+			const message = `Successfully removed ${ pluginName }`;
 			await noticeComponent.noticeShown( message, {
 				type: 'Success',
 			} );
