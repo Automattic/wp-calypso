@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	applyTestFiltersToPlansList,
 	FeatureGroup,
@@ -747,6 +748,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 				basePlansPath={ planTypeSelectorProps.basePlansPath }
 				siteSlug={ planTypeSelectorProps.siteSlug }
 				hideDiscountLabel={ true }
+				showBiannualToggle={ config.isEnabled( 'plans/biannual-toggle' ) }
 			/>
 			<Grid isInSignup={ isInSignup }>
 				<PlanComparisonGridHeader

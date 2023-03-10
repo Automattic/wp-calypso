@@ -729,6 +729,7 @@ export default connect(
 			customerType: customerType,
 			hidePersonalPlan: props.hidePersonalPlan,
 			siteSlug,
+			showBiannualToggle: isEnabled( 'plans/biannual-toggle' ) && is2023PricingGridVisible,
 		};
 
 		return {
