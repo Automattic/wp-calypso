@@ -92,15 +92,46 @@ class StatsPostDetail extends Component {
 			return translate( 'Home page / Archives' );
 		}
 
-		if ( typeof post?.title === 'string' && post.title.length ) {
+		if ( typeof post?.title === 'string' && post?.title.length ) {
 			return decodeEntities( stripHTML( post.title ) );
 		}
 
-		if ( typeof postFallback?.post_title === 'string' && postFallback.post_title.length ) {
+		if ( typeof postFallback?.post_title === 'string' && postFallback?.post_title.length ) {
 			return decodeEntities( stripHTML( postFallback.post_title ) );
 		}
 
 		return null;
+	}
+
+	getPost() {
+		const { isPostHomepage, post, postFallback } = this.props;
+
+		if ( typeof post === 'object' && post?.title.length ) {
+			return {
+				title: this.getTitle(),
+				date: post?.date,
+				post_thumbnail: post?.post_thumbnail,
+				like_count: post?.like_count,
+				comment_count: post?.discussion?.comment_count,
+				type: post?.type,
+			};
+		}
+
+		if ( typeof postFallback === 'object' && postFallback?.post_title.length ) {
+			return {
+				title: this.getTitle(),
+				date: postFallback?.post_date_gmt,
+				post_thumbnail: null,
+				like_count: null,
+				comment_count: parseInt( postFallback?.comment_count, 10 ),
+				type: postFallback?.post_type,
+			};
+		}
+
+		return {
+			title: this.getTitle(),
+			type: isPostHomepage ? 'page' : 'post',
+		};
 	}
 
 	render() {
@@ -108,8 +139,6 @@ class StatsPostDetail extends Component {
 			isPostHomepage,
 			isRequestingStats,
 			countViews,
-			post,
-			postFallback,
 			postId,
 			siteId,
 			translate,
@@ -117,9 +146,13 @@ class StatsPostDetail extends Component {
 			showViewLink,
 			previewUrl,
 		} = this.props;
+
 		const isLoading = isRequestingStats && ! countViews;
 
-		const postType = post && post.type !== null ? post.type : 'post';
+		// Prepare post details to PostStatsCard from post or postFallback.
+		const passedPost = this.getPost();
+
+		const postType = passedPost && passedPost.type !== null ? passedPost.type : 'post';
 		let actionLabel;
 		let noViewsLabel;
 
@@ -130,12 +163,6 @@ class StatsPostDetail extends Component {
 			actionLabel = translate( 'View Post' );
 			noViewsLabel = translate( 'Your post has not received any views yet!' );
 		}
-
-		// Make title to PostStatsCard for Homepage
-		const passedPost = post ||
-			postFallback || {
-				title: this.getTitle(),
-			};
 
 		return (
 			<Main fullWidthLayout>
