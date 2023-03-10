@@ -18,6 +18,7 @@ export interface PureFooterProps extends FooterProps {
 	locale?: string;
 	isEnglishLocale?: boolean;
 	automatticBranding?: ReturnType< typeof useAutomatticBrandingNoun >;
+	languageOptions?: LanguageOptions;
 }
 
 export interface MenuItemProps {
@@ -32,3 +33,5 @@ export interface ClickableItemProps extends MenuItemProps {
 	typeClassName?: string;
 	target?: string;
 }
+
+export type LanguageOptions = Record< string, string >;

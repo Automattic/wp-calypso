@@ -9,7 +9,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import SocialLogo from 'social-logos';
 import useAutomatticBrandingNoun from '../hooks/use-automattic-branding-noun';
-import { FooterProps, PureFooterProps } from '../types';
+import type { FooterProps, PureFooterProps, LanguageOptions } from '../types';
 
 import './style.scss';
 
@@ -20,8 +20,30 @@ const defaultOnLanguageChange: React.ChangeEventHandler< HTMLSelectElement > = (
 	window.location.href = newURL;
 };
 
+const allLangaugeOptions: LanguageOptions = {
+	es: 'Español',
+	'pt-br': 'Português do Brasil',
+	de: 'Deutsch',
+	fr: 'Français',
+	he: 'עִבְרִית',
+	ja: '日本語',
+	it: 'Italiano',
+	nl: 'Nederlands',
+	ru: 'Русский',
+	tr: 'Türkçe',
+	id: 'Bahasa Indonesia',
+	'zh-cn': '简体中文',
+	'zh-tw': '繁體中文',
+	ko: '한국어',
+	ar: 'العربية',
+	sv: 'Svenska',
+	el: 'Ελληνικά',
+	en: 'English',
+	ro: 'Română',
+};
+
 /**
- * This component doesn't depend on any hooks or state. To it's Gutenberg save.js friendly.
+ * This component doesn't depend on any hooks or state. This makes it Gutenberg save.js friendly.
  */
 export const PureUniversalNavbarFooter = ( {
 	isLoggedIn = typeof window !== 'undefined'
@@ -35,8 +57,11 @@ export const PureUniversalNavbarFooter = ( {
 		noun: __( 'thingamajig', __i18n_text_domain__ ),
 	},
 	locale,
+	languageOptions = allLangaugeOptions,
 }: PureFooterProps ) => {
 	const isEnglishLocale = locale === 'en';
+
+	const languageEntries = Object.entries( languageOptions );
 
 	return (
 		<>
@@ -256,63 +281,11 @@ export const PureUniversalNavbarFooter = ( {
 									defaultValue={ `/${ locale }` }
 								>
 									<option>{ __( 'Change Language', __i18n_text_domain__ ) }</option>
-									<option lang="es" value="/es">
-										Español
-									</option>
-									<option lang="pt-br" value="/pt-br">
-										Português do Brasil
-									</option>
-									<option lang="de" value="/de">
-										Deutsch
-									</option>
-									<option lang="fr" value="/fr">
-										Français
-									</option>
-									<option lang="he" value="/he">
-										עִבְרִית
-									</option>
-									<option lang="ja" value="/ja">
-										日本語
-									</option>
-									<option lang="it" value="/it">
-										Italiano
-									</option>
-									<option lang="nl" value="/nl">
-										Nederlands
-									</option>
-									<option lang="ru" value="/ru">
-										Русский
-									</option>
-									<option lang="tr" value="/tr">
-										Türkçe
-									</option>
-									<option lang="id" value="/id">
-										Bahasa Indonesia
-									</option>
-									<option lang="zh-cn" value="/zh-cn">
-										简体中文
-									</option>
-									<option lang="zh-tw" value="/zh-tw">
-										繁體中文
-									</option>
-									<option lang="ko" value="/ko">
-										한국어
-									</option>
-									<option lang="ar" value="/ar">
-										العربية
-									</option>
-									<option lang="sv" value="/sv">
-										Svenska
-									</option>
-									<option lang="el" value="/el">
-										Ελληνικά
-									</option>
-									<option lang="en" value="/">
-										English
-									</option>
-									<option lang="ro" value="/ro">
-										Română
-									</option>
+									{ languageEntries.map( ( option ) => (
+										<option lang={ option[ 0 ] } value={ option[ 0 ] }>
+											{ allLangaugeOptions[ option[ 0 ] ] }
+										</option>
+									) ) }
 								</select>
 							</div>
 						</div>
