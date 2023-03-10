@@ -13,14 +13,16 @@ export const useProductsToDisplay = ( { siteId, duration }: ItemToDisplayProps )
 		useGetPlansGridProducts( siteId );
 
 	return useMemo( () => {
-		const crmIncludedOrPurchased = [ ...purchasedProducts, ...includedInPlanProducts ].some(
-			( p ) => ( JETPACK_CRM_PRODUCTS as ReadonlyArray< string > ).includes( p.productSlug )
-		);
+		const crmPurchasedOrIncluded = [ ...purchasedProducts, ...includedInPlanProducts ]
+			.filter( ( p ) => Boolean( p?.productSlug ) )
+			.some( ( p ) =>
+				( JETPACK_CRM_PRODUCTS as ReadonlyArray< string > ).includes( p.productSlug )
+			);
 
 		const allAvailableProducts: SelectorProduct[] = [ ...availableProducts ];
 
 		// Guard against double-including CRM in the list of products
-		if ( ! crmIncludedOrPurchased ) {
+		if ( ! crmPurchasedOrIncluded ) {
 			const externalCrmProducts = JETPACK_CRM_PRODUCTS.map(
 				slugToSelectorProduct
 			) as SelectorProduct[];
