@@ -20,27 +20,32 @@ const defaultOnLanguageChange: React.ChangeEventHandler< HTMLSelectElement > = (
 	window.location.href = newURL;
 };
 
-const allLangaugeOptions: LanguageOptions = {
-	es: 'Español',
-	'pt-br': 'Português do Brasil',
-	de: 'Deutsch',
-	fr: 'Français',
-	he: 'עִבְרִית',
-	ja: '日本語',
-	it: 'Italiano',
-	nl: 'Nederlands',
-	ru: 'Русский',
-	tr: 'Türkçe',
-	id: 'Bahasa Indonesia',
-	'zh-cn': '简体中文',
-	'zh-tw': '繁體中文',
-	ko: '한국어',
+const allLanguageOptions: LanguageOptions = {
 	ar: 'العربية',
-	sv: 'Svenska',
+	de: 'Deutsch',
 	el: 'Ελληνικά',
 	en: 'English',
+	es: 'Español',
+	fr: 'Français',
+	he: 'עִבְרִית',
+	id: 'Bahasa Indonesia',
+	it: 'Italiano',
+	ja: '日本語',
+	ko: '한국어',
+	nl: 'Nederlands',
+	'pt-br': 'Português do Brasil',
 	ro: 'Română',
-};
+	ru: 'Русский',
+	sv: 'Svenska',
+	tr: 'Türkçe',
+	'zh-cn': '简体中文',
+	'zh-tw': '繁體中文',
+} as const;
+
+const normalizedLocales: Record< string, keyof typeof allLanguageOptions > = {
+	'zh-Hans': 'zh-cn',
+	'zh-Hant': 'zh-tw',
+} as const;
 
 /**
  * This component doesn't depend on any hooks or state. This makes it Gutenberg save.js friendly.
@@ -57,7 +62,7 @@ export const PureUniversalNavbarFooter = ( {
 		noun: __( 'thingamajig', __i18n_text_domain__ ),
 	},
 	locale,
-	languageOptions = allLangaugeOptions,
+	languageOptions = allLanguageOptions,
 }: PureFooterProps ) => {
 	const isEnglishLocale = locale === 'en';
 
@@ -281,11 +286,15 @@ export const PureUniversalNavbarFooter = ( {
 									defaultValue={ `/${ locale }` }
 								>
 									<option>{ __( 'Change Language', __i18n_text_domain__ ) }</option>
-									{ languageEntries.map( ( option ) => (
-										<option lang={ option[ 0 ] } value={ option[ 0 ] }>
-											{ allLangaugeOptions[ option[ 0 ] ] }
-										</option>
-									) ) }
+									{ languageEntries.map( ( option ) => {
+										const locale = option[ 0 ];
+										return (
+											<option key={ locale } lang={ locale } value={ locale }>
+												{ allLanguageOptions[ locale ] ||
+													allLanguageOptions[ normalizedLocales[ locale ] ] }
+											</option>
+										);
+									} ) }
 								</select>
 							</div>
 						</div>

@@ -1,7 +1,7 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { PureUniversalNavbarFooter, LanguageOptions } from '@automattic/wpcom-template-parts';
 import domReady from '@wordpress/dom-ready';
-import { hydrate } from 'react-dom';
+import { render } from 'react-dom';
 
 domReady( () => {
 	const props: {
@@ -34,7 +34,7 @@ domReady( () => {
 
 	document.querySelectorAll( `.wp-block-happy-blocks-universal-footer` ).forEach( ( el ) => {
 		const locale = el.getAttribute( 'data-locale' ) as string;
-		hydrate(
+		render(
 			<PureUniversalNavbarFooter
 				onLanguageChange={ onLanguageChange }
 				locale={ locale }
