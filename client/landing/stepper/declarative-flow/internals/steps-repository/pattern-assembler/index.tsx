@@ -151,15 +151,18 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 		patternType,
 		patternId,
 		patternName,
+		patternCategory,
 	}: {
 		patternType: string;
 		patternId: number;
 		patternName: string;
+		patternCategory: string | undefined;
 	} ) => {
 		recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_select_click', {
 			pattern_type: patternType,
 			pattern_id: patternId,
 			pattern_name: patternName,
+			pattern_category: patternCategory,
 		} );
 	};
 
@@ -269,12 +272,15 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 		if ( selectedPattern ) {
 			// Inject the selected pattern category or the first category
 			// because it's used in tracks and as pattern name in the list
-			selectedPattern.category = categories.find( ( { name } ) => name === selectedCategory );
+			selectedPattern.category = categories.find(
+				( { name } ) => name === selectedCategory || selectedPattern.categories[ 0 ]
+			);
 
 			trackEventPatternSelect( {
-				patternType: selectedPattern.category?.name || type,
+				patternType: type,
 				patternId: selectedPattern.id,
 				patternName: selectedPattern.name,
+				patternCategory: selectedPattern.category?.name,
 			} );
 
 			if ( 'section' === type ) {
@@ -342,6 +348,7 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 			pattern_type: type,
 			pattern_ids: patterns.map( ( { id } ) => id ).join( ',' ),
 			pattern_names: patterns.map( ( { name } ) => name ).join( ',' ),
+			pattern_categories: patterns.map( ( { category } ) => category?.name ).join( ',' ),
 		} );
 	};
 
