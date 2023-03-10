@@ -1,6 +1,9 @@
 import { __, sprintf } from '@wordpress/i18n';
 import moment from 'moment';
-import { Campaign } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
+import {
+	Campaign,
+	CampaignStats,
+} from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 
 export const campaignStatus = {
 	SCHEDULED: 'scheduled',
@@ -135,11 +138,13 @@ export const getCampaignOverallSpending = (
 
 export const getCampaignClickthroughRate = ( clicks_total: number, impressions_total: number ) => {
 	const clickthroughRate = ( clicks_total * 100 ) / impressions_total || 0;
-	return clickthroughRate.toLocaleString( undefined, {
-		useGrouping: true,
-		minimumFractionDigits: 0,
-		maximumFractionDigits: 2,
-	} );
+	return clickthroughRate
+		? clickthroughRate.toLocaleString( undefined, {
+				useGrouping: true,
+				minimumFractionDigits: 0,
+				maximumFractionDigits: 2,
+		  } )
+		: '-';
 };
 
 export const getCampaignDurationFormatted = ( start_date: string, end_date: string ) => {
@@ -203,4 +208,16 @@ export const canCancelCampaign = ( status: string ) => {
 	return [ campaignStatus.SCHEDULED, campaignStatus.CREATED, campaignStatus.ACTIVE ].includes(
 		status
 	);
+};
+
+export const unifyCampaigns = ( campaigns: Campaign[], campaignsStats: CampaignStats[] ) => {
+	return campaigns.map( ( campaign ) => {
+		const campaignStats = campaignsStats.find(
+			( cs: CampaignStats ) => cs.campaign_id === campaign.campaign_id
+		);
+		return {
+			...campaign,
+			...( campaignStats ? campaignStats : {} ),
+		};
+	} );
 };

@@ -25,6 +25,7 @@ import {
 	normalizeCampaignStatus,
 } from 'calypso/my-sites/promote-post/utils';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import AdPreview from '../ad-preview';
 import AudienceBlock from '../audience-block';
 
 type Props = {
@@ -40,9 +41,6 @@ export default function CampaignItem( { campaign }: Props ) {
 	const { cancelCampaign } = useCancelCampaignMutation( () => setShowErrorDialog( true ) );
 
 	const {
-		impressions_total,
-		clicks_total,
-		target_url,
 		type,
 		content_config,
 		moderation_reason,
@@ -53,6 +51,10 @@ export default function CampaignItem( { campaign }: Props ) {
 		audience_list,
 		display_delivery_estimate,
 		display_name,
+		creative_html,
+		impressions_total = 0,
+		clicks_total = 0,
+		target_url = '',
 	} = campaign;
 
 	const campaignStatus = useMemo( () => normalizeCampaignStatus( campaign ), [ campaign.status ] );
@@ -212,7 +214,7 @@ export default function CampaignItem( { campaign }: Props ) {
 								{ __( 'Impressions' ) }
 							</div>
 							<div className="campaign-item__block_value campaign-item__reach-value">
-								{ impressions_total.toLocaleString() || 0 }
+								{ impressions_total ? impressions_total.toLocaleString() : '-' }
 							</div>
 						</div>
 						<div className="campaign-item__column campaign-item__clicks">
@@ -220,7 +222,7 @@ export default function CampaignItem( { campaign }: Props ) {
 								{ __( 'Clicks' ) }
 							</div>
 							<div className="campaign-item__block_value campaign-item__clicks-value">
-								{ clicks_total.toLocaleString() || 0 }
+								{ clicks_total ? clicks_total.toLocaleString() : '-' }
 							</div>
 						</div>
 						<div className="campaign-item__placeholder"></div>
@@ -239,7 +241,7 @@ export default function CampaignItem( { campaign }: Props ) {
 								{ __( 'Click-through rate' ) }
 							</div>
 							<div className="campaign-item__block_value campaign-item__clickthrough-value">
-								{ clickthroughRate }%
+								{ clickthroughRate || '-' }%
 							</div>
 						</div>
 					</div>
@@ -299,6 +301,13 @@ export default function CampaignItem( { campaign }: Props ) {
 							<div className="campaign-item__block_value campaign-item__audience-value">
 								<AudienceBlock audienceList={ audience_list } />
 							</div>
+						</div>
+
+						<div className="campaign-item__column campaign-item__adpreview">
+							<div className="campaign-item__block_label campaign-item__adpreview-label">
+								{ __( 'Ad Preview' ) }
+							</div>
+							<AdPreview htmlCode={ creative_html } />
 						</div>
 					</div>
 				</div>

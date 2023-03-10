@@ -50,6 +50,18 @@ export type Campaign = {
 	audience_list: AudienceList;
 	display_name: string;
 	avatar_url: string;
+	creative_html: string;
+};
+
+export type CampaignStats = {
+	campaign_id: number;
+	display_delivery_estimate: string;
+	impressions_total: number;
+	delivery_percent: number;
+	target_url: string;
+	clicks_total: number;
+	spent_budget_cents: number;
+	deliver_margin_multiplier: number;
 };
 
 const useCampaignsQuery = ( siteId: number, queryOptions = {} ) => {
@@ -58,7 +70,7 @@ const useCampaignsQuery = ( siteId: number, queryOptions = {} ) => {
 		async () => {
 			const { results: campaigns } = await requestDSP< { results: Campaign[] } >(
 				siteId,
-				`/campaigns/site/${ siteId }/full`
+				`/campaigns/site/${ siteId }/summary`
 			);
 			return campaigns;
 		},
