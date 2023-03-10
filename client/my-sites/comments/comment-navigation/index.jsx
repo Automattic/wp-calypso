@@ -1,7 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get, includes, isEqual, map } from 'lodash';
-import { Component } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import ButtonGroup from 'calypso/components/button-group';
 import Count from 'calypso/components/count';
@@ -304,9 +304,19 @@ export class CommentNavigation extends Component {
 					) }
 
 					{ hasComments && (
-						<Button compact onClick={ toggleBulkMode }>
-							{ translate( 'Bulk edit' ) }
-						</Button>
+						<Fragment>
+							<Button compact onClick={ toggleBulkMode }>
+								{ translate( 'Bulk edit' ) }
+							</Button>
+
+							{ [ 'spam', 'trash' ].includes( this.props.status ) && (
+								<Button compact scary className="comment-navigation__button-empty">
+									{ this.props.status === 'spam'
+										? translate( 'Empty spam' )
+										: translate( 'Empty trash' ) }
+								</Button>
+							) }
+						</Fragment>
 					) }
 				</CommentNavigationTab>
 
