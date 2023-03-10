@@ -55,7 +55,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 
 	// retrieve WPCom plugin data
 	const wpComPluginsDataResults = useWPCOMPlugins( productSlugs );
-	const wpComPluginsData: Plugin[] = wpComPluginsDataResults.map(
+	const wpComPluginsData: Array< any > = wpComPluginsDataResults.map(
 		( wpComPluginData ) => wpComPluginData.data
 	);
 	const softwareSlugs = wpComPluginsData.map( ( wpComPluginData, i ) =>
