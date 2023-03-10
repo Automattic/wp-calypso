@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
+import type { CheckoutType } from '@automattic/composite-checkout';
 
 interface Props {
 	hasJetpackSiteSlug: boolean;
-	isAkismetSitelessCheckout: boolean;
-	isJetpackCheckout: boolean;
+	checkoutType: CheckoutType;
 	isJetpackNotAtomic: boolean;
 	isLoggedOutCart?: boolean;
 	isUserComingFromLoginForm?: boolean;
@@ -11,16 +11,15 @@ interface Props {
 
 export default function useCheckoutFlowTrackKey( {
 	hasJetpackSiteSlug,
-	isAkismetSitelessCheckout,
-	isJetpackCheckout, // this flag is used for both "siteless checkout" and "site-only(userless) checkout"
+	checkoutType, // the value of 'jetpack' is used for both "siteless checkout" and "site-only(userless) checkout"
 	isJetpackNotAtomic,
 	isLoggedOutCart,
 	isUserComingFromLoginForm,
 }: Props ): string {
 	return useMemo( () => {
-		const isSitelessJetpackCheckout = isJetpackCheckout && ! hasJetpackSiteSlug;
+		const isSitelessJetpackCheckout = checkoutType === 'jetpack' && ! hasJetpackSiteSlug;
 
-		if ( isJetpackCheckout ) {
+		if ( checkoutType === 'jetpack' ) {
 			if ( isUserComingFromLoginForm ) {
 				// this allows us to track the flow: Checkout --> Login --> Checkout
 				return isSitelessJetpackCheckout
@@ -30,7 +29,7 @@ export default function useCheckoutFlowTrackKey( {
 			return isSitelessJetpackCheckout ? 'jetpack_siteless_checkout' : 'jetpack_site_only_checkout';
 		}
 
-		if ( isAkismetSitelessCheckout ) {
+		if ( checkoutType === 'akismet' ) {
 			// TODO: do we need to handle checking out with a site slug but without a logged in user?
 			return 'akismet_siteless_checkout';
 		}
@@ -41,7 +40,7 @@ export default function useCheckoutFlowTrackKey( {
 		return isJetpackNotAtomic ? 'jetpack_checkout' : 'wpcom_checkout';
 	}, [
 		hasJetpackSiteSlug,
-		isJetpackCheckout,
+		checkoutType,
 		isJetpackNotAtomic,
 		isLoggedOutCart,
 		isUserComingFromLoginForm,

@@ -14,6 +14,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import CheckoutMain from './composite-checkout/components/checkout-main';
 import PrePurchaseNotices from './composite-checkout/components/prepurchase-notices';
+import type { CheckoutType } from '@automattic/composite-checkout';
 
 const logCheckoutError = ( error: Error ) => {
 	logToLogstash( {
@@ -39,10 +40,9 @@ export default function CheckoutMainWrapper( {
 	plan,
 	selectedSite,
 	redirectTo,
-	isAkismetSitelessCheckout,
+	checkoutType,
 	isLoggedOutCart,
 	isNoSiteCart,
-	isJetpackCheckout,
 	isGiftPurchase,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
@@ -57,10 +57,9 @@ export default function CheckoutMainWrapper( {
 	plan?: string;
 	selectedSite?: { slug?: string };
 	redirectTo?: string;
-	isAkismetSitelessCheckout?: boolean;
+	checkoutType: CheckoutType;
 	isLoggedOutCart?: boolean;
 	isNoSiteCart?: boolean;
-	isJetpackCheckout?: boolean;
 	isGiftPurchase?: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
@@ -119,10 +118,9 @@ export default function CheckoutMainWrapper( {
 							plan={ plan }
 							isComingFromUpsell={ isComingFromUpsell }
 							infoMessage={ prepurchaseNotices }
-							isAkismetSitelessCheckout={ isAkismetSitelessCheckout }
+							checkoutType={ checkoutType }
 							isLoggedOutCart={ isLoggedOutCart }
 							isNoSiteCart={ isNoSiteCart }
-							isJetpackCheckout={ isJetpackCheckout }
 							isGiftPurchase={ isGiftPurchase }
 							jetpackSiteSlug={ jetpackSiteSlug }
 							jetpackPurchaseToken={ jetpackPurchaseToken }

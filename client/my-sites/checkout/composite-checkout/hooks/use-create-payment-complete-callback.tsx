@@ -31,6 +31,7 @@ import normalizeTransactionResponse from '../lib/normalize-transaction-response'
 import { absoluteRedirectThroughPending, redirectThroughPending } from '../lib/pending-page';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '../lib/translate-payment-method-names';
 import type {
+	CheckoutType,
 	PaymentEventCallback,
 	PaymentEventCallbackArguments,
 } from '@automattic/composite-checkout';
@@ -58,8 +59,7 @@ export default function useCreatePaymentCompleteCallback( {
 	isComingFromUpsell,
 	disabledThankYouPage,
 	siteSlug,
-	isAkismetSitelessCheckout = false,
-	isJetpackCheckout = false,
+	checkoutType,
 	checkoutFlow,
 }: {
 	createUserAndSiteBeforeTransaction?: boolean;
@@ -71,8 +71,7 @@ export default function useCreatePaymentCompleteCallback( {
 	isComingFromUpsell?: boolean;
 	disabledThankYouPage?: boolean;
 	siteSlug: string | undefined;
-	isAkismetSitelessCheckout?: boolean;
-	isJetpackCheckout?: boolean;
+	checkoutType?: CheckoutType;
 	checkoutFlow?: string;
 } ): PaymentEventCallback {
 	const cartKey = useCartKey();
@@ -105,7 +104,7 @@ export default function useCreatePaymentCompleteCallback( {
 			// created site in the Thank You page URL.
 			// TODO: It does not seem like this would be needed for Akismet, but marking to follow up
 			let jetpackTemporarySiteId;
-			if ( isJetpackCheckout && ! siteSlug && responseCart.create_new_blog ) {
+			if ( checkoutType === 'jetpack' && ! siteSlug && responseCart.create_new_blog ) {
 				jetpackTemporarySiteId =
 					transactionResult.purchases && Object.keys( transactionResult.purchases ).pop();
 			}
@@ -118,12 +117,11 @@ export default function useCreatePaymentCompleteCallback( {
 				purchaseId,
 				feature,
 				cart: responseCart,
-				isAkismetSitelessCheckout,
+				checkoutType,
 				isJetpackNotAtomic,
 				productAliasFromUrl,
 				hideNudge: isComingFromUpsell,
 				isInModal,
-				isJetpackCheckout,
 				jetpackTemporarySiteId,
 				adminPageRedirect,
 				domains,
@@ -238,7 +236,7 @@ export default function useCreatePaymentCompleteCallback( {
 			responseCart,
 			createUserAndSiteBeforeTransaction,
 			disabledThankYouPage,
-			isJetpackCheckout,
+			checkoutType,
 			checkoutFlow,
 			adminPageRedirect,
 			domains,

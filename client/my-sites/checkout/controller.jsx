@@ -44,11 +44,11 @@ import { getProductSlugFromContext, isContextJetpackSitelessCheckout } from './u
 const debug = debugFactory( 'calypso:checkout-controller' );
 
 export function checkoutJetpackSiteless( context, next ) {
-	sitelessCheckout( context, next, { isJetpackCheckout: true } );
+	sitelessCheckout( context, next, { checkoutType: 'jetpack' } );
 }
 
 export function checkoutAkismetSiteless( context, next ) {
-	sitelessCheckout( context, next, { isAkismetSitelessCheckout: true } );
+	sitelessCheckout( context, next, { checkoutType: 'akismet' } );
 }
 
 function sitelessCheckout( context, next, extraProps ) {
@@ -193,7 +193,7 @@ export function checkout( context, next ) {
 				// TODO: in theory, isJetpackCheckout should always be false here if it is indicating whether this is a siteless Jetpack purchase
 				// However, in this case, it's indicating that this checkout is a logged-out site purchase for Jetpack.
 				// This is creating some mixed use cases for the isJetpackCheckout prop
-				isJetpackCheckout={ isJetpackCheckout }
+				checkoutType={ isJetpackCheckout ? 'jetpack' : undefined }
 				isGiftPurchase={ isGiftPurchase }
 				jetpackSiteSlug={ jetpackSiteSlug }
 				jetpackPurchaseToken={ jetpackPurchaseToken || jetpackPurchaseNonce }

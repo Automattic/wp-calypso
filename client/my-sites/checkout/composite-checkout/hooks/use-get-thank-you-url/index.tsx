@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import type { CheckoutType } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { PostCheckoutUrlArguments } from 'calypso/my-sites/checkout/get-thank-you-page-url';
@@ -30,12 +31,11 @@ export default function useGetThankYouUrl( {
 	purchaseId,
 	feature,
 	cart,
-	isAkismetSitelessCheckout = false,
+	checkoutType,
 	isJetpackNotAtomic,
 	productAliasFromUrl,
 	hideNudge,
 	isInModal,
-	isJetpackCheckout = false,
 	domains,
 }: GetThankYouUrlProps ): GetThankYouUrl {
 	const selectedSiteData = useSelector( ( state ) => getSelectedSite( state ) );
@@ -50,12 +50,11 @@ export default function useGetThankYouUrl( {
 			purchaseId,
 			feature,
 			cart,
-			isAkismetSitelessCheckout,
+			checkoutType,
 			isJetpackNotAtomic,
 			productAliasFromUrl,
 			hideNudge,
 			isInModal,
-			isJetpackCheckout,
 			domains,
 		};
 
@@ -68,7 +67,6 @@ export default function useGetThankYouUrl( {
 		isInModal,
 		siteSlug,
 		adminUrl,
-		isAkismetSitelessCheckout,
 		isJetpackNotAtomic,
 		productAliasFromUrl,
 		redirectTo,
@@ -76,7 +74,7 @@ export default function useGetThankYouUrl( {
 		purchaseId,
 		cart,
 		hideNudge,
-		isJetpackCheckout,
+		checkoutType,
 		domains,
 	] );
 	return getThankYouUrl;
@@ -88,11 +86,10 @@ export interface GetThankYouUrlProps {
 	purchaseId?: number | undefined;
 	feature?: string | undefined;
 	cart: ResponseCart;
-	isAkismetSitelessCheckout?: boolean;
-	isJetpackNotAtomic?: boolean;
+	checkoutType: CheckoutType;
 	productAliasFromUrl?: string | undefined;
 	hideNudge?: boolean;
 	isInModal?: boolean;
-	isJetpackCheckout?: boolean;
+	isJetpackNotAtomic?: boolean;
 	domains: ResponseDomain[] | undefined;
 }

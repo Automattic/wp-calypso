@@ -57,6 +57,7 @@ import {
 	persistSignupDestination,
 	retrieveSignupDestination,
 } from 'calypso/signup/storageUtils';
+import type { CheckoutType } from '@automattic/composite-checkout';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 
@@ -86,14 +87,13 @@ export interface PostCheckoutUrlArguments {
 	purchaseId?: number | string;
 	feature?: string;
 	cart?: ResponseCart;
-	isAkismetSitelessCheckout?: boolean;
 	isJetpackNotAtomic?: boolean;
 	productAliasFromUrl?: string;
 	getUrlFromCookie?: GetUrlFromCookie;
 	saveUrlToCookie?: SaveUrlToCookie;
 	hideNudge?: boolean;
 	isInModal?: boolean;
-	isJetpackCheckout?: boolean;
+	checkoutType?: CheckoutType;
 	jetpackTemporarySiteId?: string;
 	adminPageRedirect?: string;
 	domains?: ResponseDomain[];
@@ -123,14 +123,13 @@ export default function getThankYouPageUrl( {
 	purchaseId,
 	feature,
 	cart,
-	isAkismetSitelessCheckout = false,
+	checkoutType,
 	isJetpackNotAtomic,
 	productAliasFromUrl,
 	getUrlFromCookie = retrieveSignupDestination,
 	saveUrlToCookie = persistSignupDestination,
 	hideNudge,
 	isInModal,
-	isJetpackCheckout = false,
 	jetpackTemporarySiteId,
 	adminPageRedirect,
 	domains,
@@ -214,7 +213,7 @@ export default function getThankYouPageUrl( {
 	debug( 'receiptIdOrPlaceholder is', receiptIdOrPlaceholder );
 
 	// jetpack userless & siteless checkout uses a special thank you page
-	if ( isJetpackCheckout ) {
+	if ( checkoutType === 'jetpack' ) {
 		// extract a product from the cart, in userless/siteless checkout there should only be one
 		const productSlug = cart?.products[ 0 ]?.product_slug ?? 'no_product';
 
@@ -237,7 +236,7 @@ export default function getThankYouPageUrl( {
 	}
 
 	// Asismet site-less checkout
-	if ( isAkismetSitelessCheckout ) {
+	if ( checkoutType === 'akismet' ) {
 		// extract a product from the cart, in siteless checkout there should only be one
 		const productSlug = cart?.products[ 0 ]?.product_slug ?? 'no_product';
 

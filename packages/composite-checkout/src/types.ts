@@ -124,6 +124,8 @@ export interface CheckoutProviderProps {
 	children: React.ReactNode;
 }
 
+export type CheckoutType = 'jetpack' | 'akismet' | undefined;
+
 export interface PaymentProcessorProp {
 	[ key: string ]: PaymentProcessorFunction;
 }
