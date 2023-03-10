@@ -24,7 +24,7 @@ export function useDomainSuggestion(): DomainSuggestions.DomainSuggestion | unde
 				}
 			);
 		},
-		[ domainSearch ]
+		[ domainSearch, locale ]
 	)?.[ 0 ];
 
 	return suggestion;
