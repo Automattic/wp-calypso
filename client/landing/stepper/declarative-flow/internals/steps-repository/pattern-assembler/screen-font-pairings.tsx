@@ -27,8 +27,9 @@ const ScreenFontPairings = ( {
 			<NavigatorHeader
 				title={ translate( 'Fonts' ) }
 				description={ translate(
-					'We’ve hand picked a selection of font pairings that you can customise later.'
+					'Select from our hand-picked font pairings or expanded library when you upgrade to the Premium plan or higher.'
 				) }
+				isPremium
 			/>
 			<div className="screen-container__body">
 				<FontPairingVariations

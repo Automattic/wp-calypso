@@ -54,7 +54,6 @@
 		"jetpack/simplify-pricing-structure": false,
 		"jetpack/standalone-plugin-onboarding-update-v1": true,
 		"jetpack/zendesk-chat-for-logged-in-users": true,
-		"jetpack-social/advanced-plan": true,
 		"layout/app-banner": false,
 		"layout/guided-tours": false,
 		"layout/query-selected-editor": false,

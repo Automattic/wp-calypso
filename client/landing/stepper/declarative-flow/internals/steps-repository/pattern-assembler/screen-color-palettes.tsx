@@ -25,8 +25,11 @@ const ScreenColorPalettes = ( {
 	return (
 		<>
 			<NavigatorHeader
-				title={ translate( 'Colours' ) }
-				description={ translate( 'Foreground and background colours used throughout your site.' ) }
+				title={ translate( 'Colors' ) }
+				description={ translate(
+					'Select from our curated color palettes or tweak to your heart’s content when you upgrade to the Premium plan or higher.'
+				) }
+				isPremium
 			/>
 			<div className="screen-container__body">
 				<ColorPaletteVariations

@@ -1,6 +1,7 @@
 import { Gridicon, CircularProgressBar } from '@automattic/components';
 import { useRef, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import { StepNavigationLink } from 'calypso/../packages/onboarding/src';
 import Badge from 'calypso/components/badge';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
@@ -10,10 +11,11 @@ import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/int
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
+import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import Checklist from './checklist';
 import { getArrayOfFilteredTasks, getEnhancedTasks } from './task-helper';
-import { tasks } from './tasks';
+import { DOMAIN_UPSELL, tasks } from './tasks';
 import { getLaunchpadTranslations } from './translations';
 import { Task } from './types';
 
@@ -61,8 +63,16 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 
 	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles();
 
+	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
+
 	const { flowName, title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
-	const arrayOfFilteredTasks: Task[] | null = getArrayOfFilteredTasks( tasks, flow );
+
+	const arrayOfFilteredTasks: Task[] | null = getArrayOfFilteredTasks(
+		tasks,
+		flow,
+		isEmailVerified
+	);
+
 	const enhancedTasks =
 		site &&
 		getEnhancedTasks(
@@ -72,7 +82,8 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 			submit,
 			globalStylesInUse && shouldLimitGlobalStyles,
 			goToStep,
-			flow
+			flow,
+			isEmailVerified
 		);
 
 	const currentTask = getTasksProgress( enhancedTasks );
@@ -82,6 +93,8 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	const domainUpgradeBadgeUrl = ! site?.plan?.is_free
 		? `/domains/manage/${ siteSlug }`
 		: `/domains/add/${ siteSlug }?domainAndPlanPackage=true`;
+	const showDomainUpgradeBadge =
+		sidebarDomain?.isWPCOMDomain && ! enhancedTasks?.find( ( task ) => task.id === DOMAIN_UPSELL );
 
 	if ( sidebarDomain ) {
 		const { domain, isPrimary, isWPCOMDomain, sslStatus } = sidebarDomain;
@@ -145,7 +158,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 							</>
 						) }
 					</div>
-					{ sidebarDomain?.isWPCOMDomain && (
+					{ showDomainUpgradeBadge && (
 						<a href={ domainUpgradeBadgeUrl }>
 							<Badge className="launchpad__domain-upgrade-badge" type="info-blue">
 								{ translate( 'Customize' ) }

@@ -353,50 +353,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/calypso-stats@workspace:apps/odyssey-stats":
-  version: 0.0.0-use.local
-  resolution: "@automattic/calypso-stats@workspace:apps/odyssey-stats"
-  dependencies:
-    "@automattic/babel-plugin-transform-wpcalypso-async": "workspace:^"
-    "@automattic/calypso-apps-builder": "workspace:^"
-    "@automattic/calypso-babel-config": "workspace:^"
-    "@automattic/calypso-build": "workspace:^"
-    "@automattic/calypso-config": "workspace:^"
-    "@automattic/calypso-eslint-overrides": "workspace:^"
-    "@automattic/calypso-polyfills": "workspace:^"
-    "@automattic/calypso-url": "workspace:^"
-    "@automattic/languages": "workspace:^"
-    "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
-    "@automattic/webpack-inline-constant-exports-plugin": "workspace:^"
-    "@automattic/wp-babel-makepot": "workspace:^"
-    "@wordpress/dependency-extraction-webpack-plugin": ^4.4.0
-    autoprefixer: ^10.2.5
-    calypso: "workspace:^"
-    classnames: ^2.3.1
-    debug: ^4.3.4
-    gettext-parser: ^6.0.0
-    html-webpack-plugin: ^5.0.0-beta.4
-    jest: ^27.2.4
-    lodash: ^4.17.21
-    mkdirp: ^1.0.4
-    node-fetch: ^2.6.6
-    page: ^1.11.5
-    path-browserify: ^1.0.1
-    postcss: ^8.3.11
-    prop-types: ^15.8.1
-    react: ^17.0.2
-    react-dom: ^17.0.2
-    react-query: ^3.32.1
-    react-redux: ^7.2.6
-    redux: ^4.1.2
-    redux-thunk: ^2.3.0
-    webpack: ^5.68.0
-    webpack-bundle-analyzer: ^4.5.0
-    wpcom: "workspace:^"
-    wpcom-proxy-request: "workspace:^"
-  languageName: unknown
-  linkType: soft
-
 "@automattic/calypso-storybook@workspace:^, @automattic/calypso-storybook@workspace:packages/calypso-storybook":
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-storybook@workspace:packages/calypso-storybook"
@@ -1207,6 +1163,50 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/odyssey-stats@workspace:apps/odyssey-stats":
+  version: 0.0.0-use.local
+  resolution: "@automattic/odyssey-stats@workspace:apps/odyssey-stats"
+  dependencies:
+    "@automattic/babel-plugin-transform-wpcalypso-async": "workspace:^"
+    "@automattic/calypso-apps-builder": "workspace:^"
+    "@automattic/calypso-babel-config": "workspace:^"
+    "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-config": "workspace:^"
+    "@automattic/calypso-eslint-overrides": "workspace:^"
+    "@automattic/calypso-polyfills": "workspace:^"
+    "@automattic/calypso-url": "workspace:^"
+    "@automattic/languages": "workspace:^"
+    "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
+    "@automattic/webpack-inline-constant-exports-plugin": "workspace:^"
+    "@automattic/wp-babel-makepot": "workspace:^"
+    "@wordpress/dependency-extraction-webpack-plugin": ^4.4.0
+    autoprefixer: ^10.2.5
+    calypso: "workspace:^"
+    classnames: ^2.3.1
+    debug: ^4.3.4
+    gettext-parser: ^6.0.0
+    html-webpack-plugin: ^5.0.0-beta.4
+    jest: ^27.2.4
+    lodash: ^4.17.21
+    mkdirp: ^1.0.4
+    node-fetch: ^2.6.6
+    page: ^1.11.5
+    path-browserify: ^1.0.1
+    postcss: ^8.3.11
+    prop-types: ^15.8.1
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    react-query: ^3.32.1
+    react-redux: ^7.2.6
+    redux: ^4.1.2
+    redux-thunk: ^2.3.0
+    webpack: ^5.68.0
+    webpack-bundle-analyzer: ^4.5.0
+    wpcom: "workspace:^"
+    wpcom-proxy-request: "workspace:^"
+  languageName: unknown
+  linkType: soft
+
 "@automattic/onboarding@workspace:^, @automattic/onboarding@workspace:packages/onboarding":
   version: 0.0.0-use.local
   resolution: "@automattic/onboarding@workspace:packages/onboarding"
@@ -1548,6 +1548,22 @@ __metadata:
     classnames: ^2.3.1
     debug: ^4.3.4
     react-popper: ^2.2.5
+    typescript: ^4.5.5
+  peerDependencies:
+    "@wordpress/data": ^6.1.5
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    reakit-utils: ^0.15.1
+    redux: ^4.1.2
+  languageName: unknown
+  linkType: soft
+
+"@automattic/subscription-manager@workspace:^, @automattic/subscription-manager@workspace:packages/subscription-manager":
+  version: 0.0.0-use.local
+  resolution: "@automattic/subscription-manager@workspace:packages/subscription-manager"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/typography": "workspace:^"
     typescript: ^4.5.5
   peerDependencies:
     "@wordpress/data": ^6.1.5
@@ -11775,6 +11791,7 @@ __metadata:
     "@automattic/social-previews": "workspace:^"
     "@automattic/state-utils": "workspace:^"
     "@automattic/subscriber": "workspace:^"
+    "@automattic/subscription-manager": "workspace:^"
     "@automattic/tree-select": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@automattic/viewport-react": "workspace:^"
@@ -11904,6 +11921,7 @@ __metadata:
     react-day-picker: ^7.4.10
     react-dom: ^17.0.2
     react-element-to-jsx-string: ^14.3.2
+    react-intersection-observer: ^9.4.3
     react-live: ^2.3.0
     react-modal: ^3.14.3
     react-query: ^3.32.1
@@ -18512,6 +18530,7 @@ fsevents@^1.2.7:
     classnames: ^2.3.2
     copy-webpack-plugin: ^10.1.0
     glob: ^7.1.6
+    i18n-calypso: "workspace:^"
     jest: ^27.3.1
     postcss: ^8.4.5
     react: ^17.0.2
@@ -27179,6 +27198,15 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"react-intersection-observer@npm:^9.4.3":
+  version: 9.4.3
+  resolution: "react-intersection-observer@npm:9.4.3"
+  peerDependencies:
+    react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+  checksum: ac0bf29c1105abbe3edff875469f2c6cc55431de02269dbd2e4529babced1a77a7d4e61a325a3a9cc03a844d97b9329ba6e546f79db818c9e53cbad0b43c143d
+  languageName: node
+  linkType: hard
+
 "react-is@npm:^16.12.0 || ^17.0.0, react-is@npm:^17.0.0, react-is@npm:^17.0.1, react-is@npm:^17.0.2":
   version: 17.0.2
   resolution: "react-is@npm:17.0.2"
@@ -34017,6 +34045,7 @@ fsevents@^1.2.7:
     prettier: "npm:wp-prettier@2.6.2"
     react: ^17.0.2
     react-dom: ^17.0.2
+    react-intersection-observer: ^9.4.3
     react-modal: ^3.14.3
     readline-sync: ^1.4.10
     reakit-utils: ^0.15.1

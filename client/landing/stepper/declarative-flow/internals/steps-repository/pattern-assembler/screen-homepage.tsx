@@ -10,7 +10,6 @@ import type { Pattern } from './types';
 
 interface Props {
 	patterns: Pattern[];
-	onDoneClick: () => void;
 	onAddSection: () => void;
 	onReplaceSection: ( position: number ) => void;
 	onDeleteSection: ( position: number ) => void;
@@ -20,7 +19,6 @@ interface Props {
 
 const ScreenHomepage = ( {
 	patterns,
-	onDoneClick,
 	onAddSection,
 	onReplaceSection,
 	onDeleteSection,
@@ -56,12 +54,7 @@ const ScreenHomepage = ( {
 				/>
 			</div>
 			<div className="screen-container__footer">
-				<NavigatorBackButton
-					as={ Button }
-					className="pattern-assembler__button"
-					onClick={ onDoneClick }
-					primary
-				>
+				<NavigatorBackButton as={ Button } className="pattern-assembler__button" primary>
 					{ translate( 'Done' ) }
 				</NavigatorBackButton>
 			</div>

@@ -47,8 +47,8 @@ class Help_Center {
 
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script' ), 100 );
 		add_action( 'rest_api_init', array( $this, 'register_rest_api' ) );
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_wp_admin_scripts' ), 100 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_wp_admin_scripts' ), 100 );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_wp_admin_scripts' ), 100 );
 	}
 
 	/**
@@ -79,13 +79,7 @@ class Help_Center {
 	 * Enqueue Help Center assets.
 	 */
 	public function enqueue_script() {
-		// Remove wp-preferences from the dependencies array because it is not available on the support page.
-		$script_dependencies = array_filter(
-			$this->asset_file['dependencies'],
-			function ( $dep ) {
-				return 'wp-preferences' !== $dep;
-			}
-		);
+		$script_dependencies = $this->asset_file['dependencies'];
 
 		wp_enqueue_script(
 			'help-center-script',
@@ -134,7 +128,7 @@ class Help_Center {
 	 * Get current site details.
 	 */
 	public function get_current_site() {
-		$is_support_site = defined( 'WPCOM_SUPPORT_BLOG_IDS' ) && in_array( get_current_blog_id(), WPCOM_SUPPORT_BLOG_IDS, true );
+		$is_support_site = $this->is_support_site();
 
 		if ( $is_support_site ) {
 			$user_id = get_current_user_id();
@@ -213,16 +207,45 @@ class Help_Center {
 		$controller = new WP_REST_Help_Center_Forum();
 		$controller->register_rest_route();
 	}
+	/**
+	 * Returns true if the current site is a support site.
+	 */
+	public function is_support_site() {
+		return defined( 'WPCOM_SUPPORT_BLOG_IDS' ) && in_array( get_current_blog_id(), WPCOM_SUPPORT_BLOG_IDS, true );
+	}
+
+	/**
+	 * Returns true if the admin bar is set.
+	 */
+	public function is_admin_bar() {
+		global $wp_admin_bar;
+		return is_object( $wp_admin_bar );
+	}
+
+	/**
+	 * Returns true if the current screen is the site editor.
+	 */
+	public function is_site_editor() {
+		global $current_screen;
+		return ( function_exists( 'gutenberg_is_edit_site_page' ) && gutenberg_is_edit_site_page( $current_screen->id ) );
+	}
+
+	/**
+	 * Returns true if the current screen if the block editor.
+	 */
+	public function is_block_editor() {
+		global $current_screen;
+		return $current_screen->is_block_editor;
+	}
 
 	/**
 	 * Add icon to WP-ADMIN admin bar.
 	 */
 	public function enqueue_wp_admin_scripts() {
-		require_once ABSPATH . 'wp-admin/includes/screen.php';
-		global $wp_admin_bar, $current_screen;
 
-		$is_site_editor = ( function_exists( 'gutenberg_is_edit_site_page' ) && gutenberg_is_edit_site_page( $current_screen->id ) );
-		if ( ! is_user_logged_in() || ! is_object( $wp_admin_bar ) || $is_site_editor || $current_screen->is_block_editor ) {
+		require_once ABSPATH . 'wp-admin/includes/screen.php';
+
+		if ( ( ! $this->is_support_site() ) && ( ! is_admin() || ! $this->is_admin_bar() || $this->is_site_editor() || $this->is_block_editor() ) ) {
 			return;
 		}
 

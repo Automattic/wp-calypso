@@ -27,16 +27,18 @@ This ensures that [jest-runner-groups](https://github.com/eugene-manuilov/jest-r
 
 The following groups are available as of this time:
 
-| Group             | Remarks                                                                                  |
-| ----------------- | ---------------------------------------------------------------------------------------- |
-| `calypso-pr`      | Run for every commit to any feature branch in this repository.                           |
-| `calypso-release` | Run for every PR merged into `trunk` in this repository.                                 |
-| `gutenberg`       | Editor-focused specs run on regular cadence.                                             |
-| `coblocks`        | Block-focused specs for our fork of [CoBlocks](https://wordpress.org/plugins/coblocks/). |
-| `i18n`            | Specs verifying internationalized strings.                                               |
-| `p2`              | Specs for the internal P2 system.                                                        |
-| `quarantined`     | Specs that need additional work.                                                         |
-| `legal`           | Specs for the marketing and legal team.                                                  |
+| Group                       | Remarks                                                                                                                           |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `calypso-pr`                | Run for every commit to any feature branch in this repository.                                                                    |
+| `calypso-release`           | Run for every PR merged into `trunk` in this repository.                                                                          |
+| `gutenberg`                 | Editor-focused specs run on regular cadence.                                                                                      |
+| `coblocks`                  | Block-focused specs for our fork of [CoBlocks](https://wordpress.org/plugins/coblocks/).                                          |
+| `i18n`                      | Specs verifying internationalized strings.                                                                                        |
+| `p2`                        | Specs for the internal P2 system.                                                                                                 |
+| `quarantined`               | Specs that need additional work.                                                                                                  |
+| `legal`                     | Specs for the marketing and legal team.                                                                                           |
+| `jetpack-wpcom-integration` | Specs for testing Jetpack's deployment on WPCOM.                                                                                  |
+| `jetpack-remote-site`       | Specs for testing a remote, connected site through Calyspo. ENV var `JETPACK_TARGET` should be set to `remote-site` for this run. |
 
 ## Feature branch
 

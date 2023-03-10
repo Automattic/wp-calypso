@@ -5,6 +5,7 @@ import { useSelect } from '@wordpress/data';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { ONBOARD_STORE } from '../../../../stores';
+import StepperLoader from '../../components/stepper-loader';
 
 const withGlobalStylesProvider = createHigherOrderComponent(
 	< OuterProps, >( InnerComponent: React.ComponentType< OuterProps > ) => {
@@ -16,7 +17,7 @@ const withGlobalStylesProvider = createHigherOrderComponent(
 			const stylesheet = selectedDesign?.recipe?.stylesheet;
 
 			if ( ! siteSlugOrId || ! stylesheet ) {
-				return null;
+				return <StepperLoader />;
 			}
 
 			if ( ! isEnabled( 'pattern-assembler/color-and-fonts' ) ) {
@@ -25,7 +26,11 @@ const withGlobalStylesProvider = createHigherOrderComponent(
 
 			// TODO: We might need to lazy load the GlobalStylesProvider
 			return (
-				<GlobalStylesProvider siteId={ siteSlugOrId } stylesheet={ stylesheet }>
+				<GlobalStylesProvider
+					siteId={ siteSlugOrId }
+					stylesheet={ stylesheet }
+					placeholder={ <StepperLoader /> }
+				>
 					<InnerComponent { ...props } />
 				</GlobalStylesProvider>
 			);

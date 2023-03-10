@@ -6,6 +6,7 @@ export type TestAccountName = typeof TEST_ACCOUNT_NAMES[ number ];
 interface TestAccountSites {
 	id: number;
 	url: string;
+	remotePassword?: string;
 }
 
 export interface TestAccountCredentials {

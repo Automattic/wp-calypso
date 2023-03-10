@@ -157,7 +157,10 @@ export class FullSiteEditorPage {
 			leaveWithoutSaving?: boolean;
 		} = { leaveWithoutSaving: true }
 	): Promise< void > {
-		await this.waitUntilLoaded();
+		// On mobile, we don't load the canvas right away, just the sidebar. So we don't need to wait for the canvas at this point.
+		if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
+			await this.waitUntilLoaded();
+		}
 
 		await this.editorWelcomeTourComponent.forceDismissWelcomeTour();
 		await this.cookieBannerComponent.acceptCookie();
@@ -169,6 +172,13 @@ export class FullSiteEditorPage {
 				}
 			} );
 		}
+	}
+
+	/**
+	 * Clicks on a button with the exact name.
+	 */
+	async clickFullSiteNavigatorButton( text: string ): Promise< void > {
+		await this.editor.getByRole( 'button', { name: text, exact: true } ).click();
 	}
 
 	//#endregion
