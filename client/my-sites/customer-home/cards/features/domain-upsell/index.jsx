@@ -89,6 +89,10 @@ export default function DomainUpsell( { context } ) {
 	);
 }
 
+const domainSuggestionOptions = {
+	vendor: 'domain-upsell',
+};
+
 export function RenderDomainUpsell( {
 	isFreePlan,
 	isMonthlyPlan,
@@ -103,10 +107,11 @@ export function RenderDomainUpsell( {
 
 	const dispatch = useDispatch();
 	const locale = useLocale();
+
+	// Note: domainSuggestionOptions must be equal by reference upon each render
+	// to avoid a render loop, since it's used to memoize a selector.
 	const { allDomainSuggestions } =
-		useDomainSuggestions( searchTerm, 3, undefined, locale, {
-			vendor: 'domain-upsell',
-		} ) || {};
+		useDomainSuggestions( searchTerm, 3, undefined, locale, domainSuggestionOptions ) || {};
 
 	const cartKey = useCartKey();
 	const shoppingCartManager = useShoppingCart( cartKey );

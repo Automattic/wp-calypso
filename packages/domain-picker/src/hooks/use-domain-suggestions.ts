@@ -63,6 +63,6 @@ export function useDomainSuggestions(
 
 			return { allDomainSuggestions, state, errorMessage, retryRequest };
 		},
-		[ domainSearch, domainCategory, quantity, extraOptions, locale ]
+		[ domainSearch, domainCategory, quantity, locale, extraOptions ]
 	);
 }
