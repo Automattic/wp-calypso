@@ -37,20 +37,21 @@ const ScreenCategoryList = ( {
 }: Props ) => {
 	const translate = useTranslate();
 	const [ selectedCategory, setSelectedCategory ] = useState< string | null >( null );
-	const [ openPatternList, setOpenPatternList ] = useState< boolean | null >( null );
 	const sectionPatterns = useSectionPatterns();
 	const categoriesInOrder = useCategoriesOrder( categories );
 
 	const handleFocusOutside = ( event: Event ) => {
 		// Click on large preview to close Pattern List
 		if ( ( event.target as HTMLElement ).closest( '.pattern-large-preview' ) ) {
-			setOpenPatternList( false );
 			setSelectedCategory( null );
 		}
 	};
+
 	useEffect( () => {
 		wrapperRef?.current?.addEventListener( 'click', handleFocusOutside );
-		return () => wrapperRef?.current?.removeEventListener( 'click', handleFocusOutside );
+		return () => {
+			wrapperRef?.current?.removeEventListener( 'click', handleFocusOutside );
+		};
 	}, [] );
 
 	return (
@@ -85,12 +86,7 @@ const ScreenCategoryList = ( {
 							title={ description }
 							onClick={ () => {
 								if ( isOpen ) {
-									setOpenPatternList( false );
 									setSelectedCategory( null );
-								} else if ( ! openPatternList ) {
-									setOpenPatternList( true );
-									// Delay to prioritize the start of the panel animation
-									setTimeout( () => setSelectedCategory( name ), 200 );
 								} else {
 									setSelectedCategory( name );
 								}
@@ -116,12 +112,11 @@ const ScreenCategoryList = ( {
 			</div>
 			{ createPortal(
 				<PatternListPanel
-					onSelect={ ( selectedPattern ) =>
+					onSelect={ ( selectedPattern: Pattern | null ) =>
 						onSelect( 'section', selectedPattern, selectedCategory )
 					}
 					selectedPattern={ selectedPattern }
 					patterns={ sectionPatterns }
-					openPatternList={ openPatternList }
 					selectedCategory={ selectedCategory }
 					categories={ categories }
 				/>,
