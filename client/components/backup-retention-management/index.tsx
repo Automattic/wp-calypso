@@ -319,7 +319,7 @@ const BackupRetentionManagement: FunctionComponent< OwnProps > = ( {
 						/>
 						<div className="retention-form__disclaimer">
 							{ translate(
-								'*We estimate the space you need based on your current site size. If your site size increases, we may need to reduce the number of days of backups that are saved.'
+								'*We estimate the space you need based on your current site size. If your site size increases, you may need to purchase a storage add-on.'
 							) }
 						</div>
 						{ storageUpgradeRequired && (
