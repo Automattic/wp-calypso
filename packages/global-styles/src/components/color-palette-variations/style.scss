@@ -1,14 +1,18 @@
 .color-palette-variations {
 	display: grid;
 	gap: 12px;
-	grid-template-columns: repeat(2, 1fr);
+	grid-template-columns: repeat(3, 1fr);
 	width: 100%;
 	box-sizing: border-box;
+
+	.global-styles-variation-container__iframe {
+		max-height: 50px;
+	}
 }
 
 .global-styles-variation__item {
 	position: relative;
-	margin: 3px;
+	margin: 2px;
 	cursor: pointer;
 
 	&:hover,
@@ -16,14 +20,14 @@
 	&.is-active {
 		&::after {
 			border-radius: 3px; /* stylelint-disable-line scales/radii */
-			bottom: -3px;
+			bottom: -2px;
 			content: "";
 			display: block;
-			left: -3px;
+			left: -2px;
 			pointer-events: none;
 			position: absolute;
-			right: -3px;
-			top: -3px;
+			right: -2px;
+			top: -2px;
 		}
 	}
 

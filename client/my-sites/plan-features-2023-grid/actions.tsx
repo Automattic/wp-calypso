@@ -14,7 +14,7 @@ import classNames from 'classnames';
 import { localize, TranslateResult, useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import { WPCOM_PLANS_UI_STORE } from './store';
@@ -278,7 +278,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 
 		if ( ! freePlan ) {
 			recordTracksEvent( 'calypso_plan_features_upgrade_click', {
-				current_plan: null,
+				current_plan: currentSitePlanSlug,
 				upgrading_to: planType,
 			} );
 		}
