@@ -4,6 +4,10 @@
 	grid-template-columns: repeat(2, 1fr);
 	width: 100%;
 	box-sizing: border-box;
+
+	.global-styles-variation-container__iframe {
+		max-height: 79px;
+	}
 }
 
 .global-styles-variation__item {

@@ -1,5 +1,6 @@
 import { getUrlParts } from '@automattic/calypso-url';
 import { Dialog } from '@automattic/components';
+import { useLocale } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { TranslateOptionsText, useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -21,6 +22,7 @@ export type BlazePressPromotionProps = {
 	siteId: string | number;
 	postId: string | number;
 	keyValue: string;
+	source?: string;
 };
 
 type BlazePressTranslatable = ( original: string, extra?: TranslateOptionsText ) => string;
@@ -45,6 +47,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, selectedSiteId ) );
 	const { closeModal } = useRouteModal( 'blazepress-widget', keyValue );
 	const queryClient = useQueryClient();
+	const localeSlug = useLocale();
 
 	// Scroll to top on initial load regardless of previous page position
 	useEffect( () => {
@@ -75,12 +78,14 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 				if ( props.siteId === null || props.postId === null ) {
 					return;
 				}
+				const source = props.source || 'blazepress';
 
 				await showDSP(
 					selectedSiteSlug,
 					props.siteId,
 					props.postId,
 					onClose,
+					source,
 					( original: string, options?: TranslateOptionsText ): string => {
 						if ( options ) {
 							// This is a special case where we re-use the translate in another application
@@ -93,7 +98,8 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 					},
 					widgetContainer.current,
 					handleShowCancel,
-					handleGetStartedMessageClose
+					handleGetStartedMessageClose,
+					localeSlug
 				);
 				setIsLoading( false );
 			} )();
