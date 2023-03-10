@@ -187,6 +187,9 @@ export class AppPromoSidebar extends Component {
 	};
 
 	render() {
+		if ( ! this.state.showPromo ) {
+			return null;
+		}
 		const { promoItem } = this.state;
 		return (
 			<div className="app-promo">
