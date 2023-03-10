@@ -1,6 +1,16 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/onboarding/styles/mixins";
 
+// Domain upsell flow
+
+.domain-upsell.plans {
+	.signup-header h1 {
+		display: none;
+	}
+}
+
+//
+
 .step-container.plans {
 	padding: 0;
 
@@ -13,6 +23,7 @@
 
 		.formatted-header {
 			h1.formatted-header__title {
+				font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
 				font-size: 2.25rem;
 				font-weight: 500;
 				/* stylelint-disable-next-line declaration-property-unit-allowed-list */

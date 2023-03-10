@@ -1,6 +1,16 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/onboarding/styles/mixins";
 
+// Domain upsell flow
+
+.domain-upsell.domains {
+	.signup-header h1 {
+		display: none;
+	}
+}
+
+//
+
 .step-container.domains {
 	max-width: 1280px;
 	padding: 0 20px;

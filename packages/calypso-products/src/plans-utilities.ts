@@ -77,5 +77,10 @@ export const is2023PricingGridActivePage = (
 		return isPricingGridEnabled;
 	}
 
+	// Is this the stepper domain upsell flow?
+	if ( currentRoutePath.startsWith( '/setup/domain-upsell' ) ) {
+		return isPricingGridEnabled;
+	}
+
 	return false;
 };

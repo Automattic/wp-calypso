@@ -5,6 +5,7 @@ import {
 	LINK_IN_BIO_TLD_FLOW,
 	COPY_SITE_FLOW,
 	isCopySiteFlow,
+	DOMAIN_UPSELL_FLOW,
 } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -92,6 +93,10 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			} );
 			dispatch( submitDomainStepSelection( suggestion, getAnalyticsSection() ) );
 
+			if ( flow === DOMAIN_UPSELL_FLOW ) {
+				shouldHideFreePlan = true;
+			}
+
 			setHideFreePlan( Boolean( suggestion.product_slug ) || shouldHideFreePlan );
 			setDomainCartItem( domainCartItem );
 		}
@@ -144,6 +149,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 				);
 			case COPY_SITE_FLOW:
 				return __( 'Make your copied site unique with a custom domain all of its own.' );
+			case DOMAIN_UPSELL_FLOW:
+				return __( 'Enter some descriptive keywords to get started' );
 			default:
 				return createInterpolateElement(
 					__(

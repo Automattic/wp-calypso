@@ -1,4 +1,4 @@
-import { LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
+import { DOMAIN_UPSELL_FLOW, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { isEmpty } from 'lodash';
 import { useState } from 'react';
@@ -84,6 +84,11 @@ export function DomainFormControl( {
 
 	if ( flow === LINK_IN_BIO_TLD_FLOW ) {
 		includeWordPressDotCom = false;
+	}
+
+	if ( flow === DOMAIN_UPSELL_FLOW ) {
+		includeWordPressDotCom = true;
+		showSkipButton = true;
 	}
 
 	const domainsWithPlansOnly = true;
