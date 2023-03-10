@@ -71,6 +71,10 @@ input.components-combobox-control__input[type="text"] {
 	outline: none;
 }
 
+.components-combobox-control__suggestions-container {
+	border: none;
+}
+
 .components-form-token-field__suggestion.is-selected {
 	background-color: var(--color-primary);
 }

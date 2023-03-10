@@ -143,7 +143,7 @@ export default function CompanyDetailsForm( {
 	];
 
 	const [ fontSize, setFontSize ] = useState();
-	const [ filteredOptions, setFilteredOptions ] = useState( options );
+	const [ filteredOptions, setFilteredOptions ] = useState( countryOptions );
 
 	return (
 		<div className="company-details-form">
@@ -222,26 +222,19 @@ export default function CompanyDetailsForm( {
 						/>
 					</FormFieldset>
 				) }
-				<FormLabel>{ translate( 'Country' ) }</FormLabel>
+				<FormLabel>{ translate( 'Country - WP Component' ) }</FormLabel>
 				<ComboboxControl
-					value={ fontSize }
-					onChange={ setFontSize }
-					options={ countryOptions }
-					onFilterValueChange={ ( inputValue ) =>
-						setFilteredOptions(
-							options.filter( ( option ) =>
-								option.label.toLowerCase().startsWith( inputValue.toLowerCase() )
-							)
-						)
-					}
+					value={ countryValue }
+					onChange={ setCountryValue }
+					options={ filteredOptions }
 				/>
 
-				{ showCountryFields && stateOptions && fontSize && (
+				{ showCountryFields && stateOptions && state && (
 					<FormFieldset>
 						<FormLabel>{ translate( 'State - New' ) }</FormLabel>
 						<ComboboxControl
-							value={ state }
-							onChange={ setFontSize }
+							value={ addressState }
+							onChange={ setAddressState }
 							options={ stateOptions }
 							onFilterValueChange={ ( inputValue ) =>
 								setFilteredOptions(
