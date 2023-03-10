@@ -32,6 +32,7 @@ const FontPairingVariationPreview = ( { title }: Props ) => {
 	);
 	const [ containerResizeListener, { width } ] = useResizeObserver();
 	const ratio = width ? width / STYLE_PREVIEW_WIDTH : 1;
+	const normalizedHeight = Math.ceil( STYLE_PREVIEW_HEIGHT * ratio );
 	const externalFontFamilies = fontFamilies.filter( ( { slug } ) => slug !== SYSTEM_FONT_SLUG );
 	const [ isLoaded, setIsLoaded ] = useState( ! externalFontFamilies.length );
 
@@ -55,13 +56,14 @@ const FontPairingVariationPreview = ( { title }: Props ) => {
 	return (
 		<GlobalStylesVariationContainer
 			width={ width }
-			ratio={ ratio }
+			height={ normalizedHeight }
 			containerResizeListener={ containerResizeListener }
 		>
 			<>
 				<div
 					style={ {
-						height: STYLE_PREVIEW_HEIGHT * ratio,
+						// Apply the normalized height only when the width is available
+						height: width ? normalizedHeight : 0,
 						width: '100%',
 						background: 'white',
 						opacity: isLoaded ? 1 : 0,

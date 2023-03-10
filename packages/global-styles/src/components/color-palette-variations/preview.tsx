@@ -32,6 +32,7 @@ const ColorPaletteVariationPreview = ( { title }: Props ) => {
 	const [ themeColors ] = useSetting( 'color.palette.theme' );
 	const [ containerResizeListener, { width } ] = useResizeObserver();
 	const ratio = width ? width / STYLE_PREVIEW_WIDTH : 1;
+	const normalizedHeight = Math.ceil( STYLE_PREVIEW_HEIGHT * ratio );
 	const normalizedSwatchSize = STYLE_PREVIEW_COLOR_SWATCH_SIZE * ratio * 2;
 
 	const uniqueColors = [ ...new Set< string >( themeColors.map( ( { color }: Color ) => color ) ) ];
@@ -45,12 +46,13 @@ const ColorPaletteVariationPreview = ( { title }: Props ) => {
 	return (
 		<GlobalStylesVariationContainer
 			width={ width }
-			ratio={ ratio }
+			height={ normalizedHeight }
 			containerResizeListener={ containerResizeListener }
 		>
 			<div
 				style={ {
-					height: STYLE_PREVIEW_HEIGHT * ratio,
+					// Apply the normalized height only when the width is available
+					height: width ? normalizedHeight : 0,
 					width: '100%',
 					background: gradientValue ?? backgroundColor,
 					cursor: 'pointer',
