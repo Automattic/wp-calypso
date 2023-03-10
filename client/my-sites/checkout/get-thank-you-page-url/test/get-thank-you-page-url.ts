@@ -1484,7 +1484,7 @@ describe( 'getThankYouPageUrl', () => {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
-			isJetpackCheckout: true,
+			sitelessCheckoutType: 'jetpack',
 		} );
 		expect( url ).toBe( '/checkout/jetpack/thank-you/foo.bar/jetpack_backup_daily' );
 	} );
@@ -1503,7 +1503,7 @@ describe( 'getThankYouPageUrl', () => {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
-			isAkismetSitelessCheckout: true,
+			sitelessCheckoutType: 'akismet',
 		} );
 		expect( url ).toBe( '/checkout/akismet/thank-you/ak_plus_yearly_2' );
 	} );
@@ -1512,7 +1512,7 @@ describe( 'getThankYouPageUrl', () => {
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
-			isJetpackCheckout: true,
+			sitelessCheckoutType: 'jetpack',
 		} );
 		expect( url ).toBe( '/checkout/jetpack/thank-you/foo.bar/no_product' );
 	} );
@@ -1652,7 +1652,7 @@ describe( 'getThankYouPageUrl', () => {
 				...defaultArgs,
 				siteSlug: undefined,
 				cart,
-				isJetpackCheckout: true,
+				sitelessCheckoutType: 'jetpack',
 			} );
 			expect( url ).toBe(
 				'/checkout/jetpack/thank-you/licensing-auto-activate/jetpack_backup_daily?receiptId=%3AreceiptId'
@@ -1673,7 +1673,7 @@ describe( 'getThankYouPageUrl', () => {
 				...defaultArgs,
 				siteSlug: undefined,
 				cart,
-				isJetpackCheckout: true,
+				sitelessCheckoutType: 'jetpack',
 				receiptId: 80023,
 			} );
 			expect( url ).toBe(
@@ -1695,7 +1695,7 @@ describe( 'getThankYouPageUrl', () => {
 				...defaultArgs,
 				siteSlug: undefined,
 				cart,
-				isJetpackCheckout: true,
+				sitelessCheckoutType: 'jetpack',
 				receiptId: '80023',
 			} );
 			expect( url ).toBe(
@@ -1717,7 +1717,7 @@ describe( 'getThankYouPageUrl', () => {
 				...defaultArgs,
 				siteSlug: undefined,
 				cart,
-				isJetpackCheckout: true,
+				sitelessCheckoutType: 'jetpack',
 				// We have to type cast this because we're specifying invalid data.
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				receiptId: 'invalid receipt ID' as any,
@@ -1741,7 +1741,7 @@ describe( 'getThankYouPageUrl', () => {
 				...defaultArgs,
 				siteSlug: undefined,
 				cart,
-				isJetpackCheckout: true,
+				sitelessCheckoutType: 'jetpack',
 				receiptId: 80023,
 				jetpackTemporarySiteId: '123456789',
 			} );

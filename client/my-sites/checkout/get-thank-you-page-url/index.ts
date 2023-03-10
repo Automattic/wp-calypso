@@ -57,7 +57,7 @@ import {
 	persistSignupDestination,
 	retrieveSignupDestination,
 } from 'calypso/signup/storageUtils';
-import type { CheckoutType } from '@automattic/composite-checkout';
+import type { SitelessCheckoutType } from '@automattic/composite-checkout';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 
@@ -93,7 +93,7 @@ export interface PostCheckoutUrlArguments {
 	saveUrlToCookie?: SaveUrlToCookie;
 	hideNudge?: boolean;
 	isInModal?: boolean;
-	checkoutType?: CheckoutType;
+	sitelessCheckoutType?: SitelessCheckoutType;
 	jetpackTemporarySiteId?: string;
 	adminPageRedirect?: string;
 	domains?: ResponseDomain[];
@@ -123,7 +123,7 @@ export default function getThankYouPageUrl( {
 	purchaseId,
 	feature,
 	cart,
-	checkoutType,
+	sitelessCheckoutType,
 	isJetpackNotAtomic,
 	productAliasFromUrl,
 	getUrlFromCookie = retrieveSignupDestination,
@@ -213,7 +213,7 @@ export default function getThankYouPageUrl( {
 	debug( 'receiptIdOrPlaceholder is', receiptIdOrPlaceholder );
 
 	// jetpack userless & siteless checkout uses a special thank you page
-	if ( checkoutType === 'jetpack' ) {
+	if ( sitelessCheckoutType === 'jetpack' ) {
 		// extract a product from the cart, in userless/siteless checkout there should only be one
 		const productSlug = cart?.products[ 0 ]?.product_slug ?? 'no_product';
 
@@ -236,7 +236,7 @@ export default function getThankYouPageUrl( {
 	}
 
 	// Asismet site-less checkout
-	if ( checkoutType === 'akismet' ) {
+	if ( sitelessCheckoutType === 'akismet' ) {
 		// extract a product from the cart, in siteless checkout there should only be one
 		const productSlug = cart?.products[ 0 ]?.product_slug ?? 'no_product';
 

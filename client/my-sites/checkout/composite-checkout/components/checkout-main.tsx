@@ -59,7 +59,10 @@ import { StoredCard } from '../types/stored-cards';
 import WPCheckout from './wp-checkout';
 import type { WpcomCheckoutStoreSelectors as _WpcomCheckoutStoreSelectors } from '../hooks/wpcom-store';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
-import type { CheckoutPageErrorCallback, CheckoutType } from '@automattic/composite-checkout';
+import type {
+	CheckoutPageErrorCallback,
+	SitelessCheckoutType,
+} from '@automattic/composite-checkout';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { CountryListItem, CheckoutPaymentMethodSlug } from '@automattic/wpcom-checkout';
 
@@ -89,7 +92,7 @@ export default function CheckoutMain( {
 	isInModal,
 	onAfterPaymentComplete,
 	disabledThankYouPage,
-	checkoutType,
+	sitelessCheckoutType,
 	jetpackSiteSlug,
 	akismetSiteSlug,
 	jetpackPurchaseToken,
@@ -118,7 +121,7 @@ export default function CheckoutMain( {
 	// `getThankYouUrl`.
 	onAfterPaymentComplete?: () => void;
 	disabledThankYouPage?: boolean;
-	checkoutType?: CheckoutType;
+	sitelessCheckoutType?: SitelessCheckoutType;
 	jetpackSiteSlug?: string;
 	akismetSiteSlug?: string;
 	jetpackPurchaseToken?: string;
@@ -131,25 +134,25 @@ export default function CheckoutMain( {
 	const isJetpackNotAtomic =
 		useSelector( ( state ) => {
 			return siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
-		} ) || checkoutType === 'jetpack';
+		} ) || sitelessCheckoutType === 'jetpack';
 	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
-	const isSiteless = checkoutType === 'jetpack' || checkoutType === 'akismet';
+	const isSiteless = sitelessCheckoutType === 'jetpack' || sitelessCheckoutType === 'akismet';
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
 	const createUserAndSiteBeforeTransaction =
 		Boolean( isLoggedOutCart || isNoSiteCart ) &&
-		checkoutType !== 'akismet' &&
-		checkoutType !== 'jetpack';
+		sitelessCheckoutType !== 'akismet' &&
+		sitelessCheckoutType !== 'jetpack';
 	const reduxDispatch = useDispatch();
 
 	const updatedSiteSlug = useCallback( () => {
-		if ( checkoutType === 'jetpack' ) {
+		if ( sitelessCheckoutType === 'jetpack' ) {
 			return jetpackSiteSlug;
 		}
-		if ( checkoutType === 'akismet' ) {
+		if ( sitelessCheckoutType === 'akismet' ) {
 			return akismetSiteSlug;
 		}
 		return siteSlug;
-	}, [ akismetSiteSlug, jetpackSiteSlug, checkoutType, siteSlug ] );
+	}, [ akismetSiteSlug, jetpackSiteSlug, sitelessCheckoutType, siteSlug ] );
 
 	const showErrorMessageBriefly = useCallback(
 		( error ) => {
@@ -166,7 +169,7 @@ export default function CheckoutMain( {
 
 	const checkoutFlow = useCheckoutFlowTrackKey( {
 		hasJetpackSiteSlug: !! jetpackSiteSlug,
-		checkoutType,
+		sitelessCheckoutType,
 		isJetpackNotAtomic,
 		isLoggedOutCart,
 		isUserComingFromLoginForm,
@@ -185,7 +188,7 @@ export default function CheckoutMain( {
 		usesJetpackProducts: isJetpackNotAtomic,
 		isPrivate,
 		siteSlug: updatedSiteSlug(),
-		checkoutType,
+		sitelessCheckoutType,
 		isLoggedOutCart,
 		isNoSiteCart,
 		jetpackSiteSlug,
@@ -245,7 +248,7 @@ export default function CheckoutMain( {
 		isJetpackNotAtomic,
 		productAliasFromUrl,
 		hideNudge: !! isComingFromUpsell,
-		checkoutType,
+		sitelessCheckoutType,
 		isInModal,
 		domains,
 	} );
@@ -378,7 +381,7 @@ export default function CheckoutMain( {
 		updatedSiteSlug(),
 		feature,
 		plan,
-		checkoutType,
+		sitelessCheckoutType,
 		checkoutFlow
 	);
 
@@ -572,7 +575,7 @@ export default function CheckoutMain( {
 		isComingFromUpsell,
 		disabledThankYouPage,
 		siteSlug: updatedSiteSlug(),
-		checkoutType,
+		sitelessCheckoutType,
 		checkoutFlow,
 	} );
 
@@ -696,8 +699,8 @@ export default function CheckoutMain( {
 				title="Checkout"
 				properties={ analyticsProps }
 				options={ {
-					useJetpackGoogleAnalytics: checkoutType === 'jetpack' || isJetpackNotAtomic,
-					useAkismetGoogleAnalytics: checkoutType === 'akismet',
+					useJetpackGoogleAnalytics: sitelessCheckoutType === 'jetpack' || isJetpackNotAtomic,
+					useAkismetGoogleAnalytics: sitelessCheckoutType === 'akismet',
 				} }
 			/>
 			<CheckoutProvider
@@ -744,7 +747,7 @@ function getAnalyticsPath(
 	selectedSiteSlug: string | undefined,
 	selectedFeature: string | undefined,
 	plan: string | undefined,
-	checkoutType: CheckoutType,
+	sitelessCheckoutType: SitelessCheckoutType,
 	checkoutFlow: string
 ): { analyticsPath: string; analyticsProps: Record< string, string > } {
 	debug( 'getAnalyticsPath', {
@@ -753,7 +756,7 @@ function getAnalyticsPath(
 		selectedSiteSlug,
 		selectedFeature,
 		plan,
-		checkoutType,
+		sitelessCheckoutType,
 		checkoutFlow,
 	} );
 	let analyticsPath = '';
@@ -781,11 +784,11 @@ function getAnalyticsPath(
 		analyticsPath = '/checkout/no-site';
 	}
 
-	if ( checkoutType === 'jetpack' ) {
+	if ( sitelessCheckoutType === 'jetpack' ) {
 		analyticsPath = analyticsPath.replace( 'checkout', 'checkout/jetpack' );
 	}
 
-	if ( checkoutType === 'akismet' ) {
+	if ( sitelessCheckoutType === 'akismet' ) {
 		analyticsPath = analyticsPath.replace( 'checkout', 'checkout/akismet' );
 	}
 

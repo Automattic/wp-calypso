@@ -14,7 +14,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import CheckoutMain from './composite-checkout/components/checkout-main';
 import PrePurchaseNotices from './composite-checkout/components/prepurchase-notices';
-import type { CheckoutType } from '@automattic/composite-checkout';
+import type { SitelessCheckoutType } from '@automattic/composite-checkout';
 
 const logCheckoutError = ( error: Error ) => {
 	logToLogstash( {
@@ -40,7 +40,7 @@ export default function CheckoutMainWrapper( {
 	plan,
 	selectedSite,
 	redirectTo,
-	checkoutType,
+	sitelessCheckoutType,
 	isLoggedOutCart,
 	isNoSiteCart,
 	isGiftPurchase,
@@ -57,7 +57,7 @@ export default function CheckoutMainWrapper( {
 	plan?: string;
 	selectedSite?: { slug?: string };
 	redirectTo?: string;
-	checkoutType: CheckoutType;
+	sitelessCheckoutType: SitelessCheckoutType;
 	isLoggedOutCart?: boolean;
 	isNoSiteCart?: boolean;
 	isGiftPurchase?: boolean;
@@ -118,7 +118,7 @@ export default function CheckoutMainWrapper( {
 							plan={ plan }
 							isComingFromUpsell={ isComingFromUpsell }
 							infoMessage={ prepurchaseNotices }
-							checkoutType={ checkoutType }
+							sitelessCheckoutType={ sitelessCheckoutType }
 							isLoggedOutCart={ isLoggedOutCart }
 							isNoSiteCart={ isNoSiteCart }
 							isGiftPurchase={ isGiftPurchase }

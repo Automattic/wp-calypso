@@ -7,7 +7,7 @@ import { useEffect, useMemo, useReducer } from 'react';
 import getCartFromLocalStorage from '../lib/get-cart-from-local-storage';
 import useFetchProductsIfNotLoaded from './use-fetch-products-if-not-loaded';
 import useStripProductsFromUrl from './use-strip-products-from-url';
-import type { CheckoutType } from '@automattic/composite-checkout';
+import type { SitelessCheckoutType } from '@automattic/composite-checkout';
 import type { RequestCartProduct, RequestCartProductExtra } from '@automattic/shopping-cart';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-prepare-products-for-cart' );
@@ -42,7 +42,7 @@ export default function usePrepareProductsForCart( {
 	usesJetpackProducts,
 	isPrivate,
 	siteSlug,
-	checkoutType,
+	sitelessCheckoutType,
 	isLoggedOutCart,
 	isNoSiteCart,
 	jetpackSiteSlug,
@@ -56,7 +56,7 @@ export default function usePrepareProductsForCart( {
 	usesJetpackProducts: boolean;
 	isPrivate: boolean;
 	siteSlug: string | undefined;
-	checkoutType: CheckoutType;
+	sitelessCheckoutType: SitelessCheckoutType;
 	isLoggedOutCart?: boolean;
 	isNoSiteCart?: boolean;
 	jetpackSiteSlug?: string;
@@ -74,11 +74,11 @@ export default function usePrepareProductsForCart( {
 		'and isLoggedOutCart',
 		isLoggedOutCart,
 		'and isAkismetSitelessCheckout',
-		checkoutType === 'akismet',
+		sitelessCheckoutType === 'akismet',
 		'and isNoSiteCart',
 		isNoSiteCart,
 		'and isJetpackCheckout',
-		checkoutType === 'jetpack',
+		sitelessCheckoutType === 'jetpack',
 		'and jetpackSiteSlug',
 		jetpackSiteSlug,
 		'and jetpackPurchaseToken',
@@ -91,7 +91,7 @@ export default function usePrepareProductsForCart( {
 		isLoading: state.isLoading,
 		originalPurchaseId,
 		productAliasFromUrl,
-		checkoutType,
+		sitelessCheckoutType,
 		isLoggedOutCart,
 		isNoSiteCart,
 		isGiftPurchase,
@@ -111,7 +111,7 @@ export default function usePrepareProductsForCart( {
 		usesJetpackProducts,
 		isPrivate,
 		addHandler,
-		checkoutType,
+		sitelessCheckoutType,
 		jetpackSiteSlug,
 		jetpackPurchaseToken,
 		source,
@@ -129,8 +129,8 @@ export default function usePrepareProductsForCart( {
 	const areProductsRetrievedFromUrl = ! state.isLoading && ! isInModal;
 	const doNotStripProducts = Boolean(
 		! areProductsRetrievedFromUrl ||
-			checkoutType === 'jetpack' ||
-			checkoutType === 'akismet' ||
+			sitelessCheckoutType === 'jetpack' ||
+			sitelessCheckoutType === 'akismet' ||
 			isGiftPurchase
 	);
 	useStripProductsFromUrl( siteSlug, doNotStripProducts );
@@ -171,7 +171,7 @@ function chooseAddHandler( {
 	isLoading,
 	originalPurchaseId,
 	productAliasFromUrl,
-	checkoutType,
+	sitelessCheckoutType,
 	isLoggedOutCart,
 	isNoSiteCart,
 	isGiftPurchase,
@@ -179,12 +179,12 @@ function chooseAddHandler( {
 	isLoading: boolean;
 	originalPurchaseId: string | number | null | undefined;
 	productAliasFromUrl: string | null | undefined;
-	checkoutType: CheckoutType;
+	sitelessCheckoutType: SitelessCheckoutType;
 	isLoggedOutCart?: boolean;
 	isNoSiteCart?: boolean;
 	isGiftPurchase?: boolean;
 } ): AddHandler {
-	if ( checkoutType === 'jetpack' || checkoutType === 'akismet' ) {
+	if ( sitelessCheckoutType === 'jetpack' || sitelessCheckoutType === 'akismet' ) {
 		return 'addProductFromSlug';
 	}
 
@@ -322,7 +322,7 @@ function useAddProductFromSlug( {
 	usesJetpackProducts,
 	isPrivate,
 	addHandler,
-	checkoutType,
+	sitelessCheckoutType,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 	source,
@@ -332,7 +332,7 @@ function useAddProductFromSlug( {
 	usesJetpackProducts: boolean;
 	isPrivate: boolean;
 	addHandler: AddHandler;
-	checkoutType: CheckoutType;
+	sitelessCheckoutType: SitelessCheckoutType;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	source?: string;
@@ -366,7 +366,7 @@ function useAddProductFromSlug( {
 			createItemToAddToCart( {
 				productSlug: product.productSlug,
 				productAlias: product.productAlias,
-				checkoutType,
+				sitelessCheckoutType,
 				jetpackSiteSlug,
 				jetpackPurchaseToken,
 				source,
@@ -404,7 +404,7 @@ function useAddProductFromSlug( {
 		usesJetpackProducts,
 		productAliasFromUrl,
 		validProducts,
-		checkoutType,
+		sitelessCheckoutType,
 		dispatch,
 		jetpackSiteSlug,
 		jetpackPurchaseToken,
@@ -515,14 +515,14 @@ function createRenewalItemToAddToCart( {
 function createItemToAddToCart( {
 	productSlug,
 	productAlias,
-	checkoutType,
+	sitelessCheckoutType,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 	source,
 }: {
 	productSlug: string;
 	productAlias: string;
-	checkoutType: CheckoutType;
+	sitelessCheckoutType: SitelessCheckoutType;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	source?: string;
@@ -549,8 +549,8 @@ function createItemToAddToCart( {
 		product_slug: productSlug,
 		quantity,
 		extra: {
-			isAkismetSitelessCheckout: checkoutType === 'akismet',
-			isJetpackCheckout: checkoutType === 'jetpack',
+			isAkismetSitelessCheckout: sitelessCheckoutType === 'akismet',
+			isJetpackCheckout: sitelessCheckoutType === 'jetpack',
 			jetpackSiteSlug,
 			jetpackPurchaseToken,
 			context: 'calypstore',

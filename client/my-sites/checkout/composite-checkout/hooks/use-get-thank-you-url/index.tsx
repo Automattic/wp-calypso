@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import type { CheckoutType } from '@automattic/composite-checkout';
+import type { SitelessCheckoutType } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { PostCheckoutUrlArguments } from 'calypso/my-sites/checkout/get-thank-you-page-url';
@@ -31,7 +31,7 @@ export default function useGetThankYouUrl( {
 	purchaseId,
 	feature,
 	cart,
-	checkoutType,
+	sitelessCheckoutType,
 	isJetpackNotAtomic,
 	productAliasFromUrl,
 	hideNudge,
@@ -50,7 +50,7 @@ export default function useGetThankYouUrl( {
 			purchaseId,
 			feature,
 			cart,
-			checkoutType,
+			sitelessCheckoutType,
 			isJetpackNotAtomic,
 			productAliasFromUrl,
 			hideNudge,
@@ -74,7 +74,7 @@ export default function useGetThankYouUrl( {
 		purchaseId,
 		cart,
 		hideNudge,
-		checkoutType,
+		sitelessCheckoutType,
 		domains,
 	] );
 	return getThankYouUrl;
@@ -86,7 +86,7 @@ export interface GetThankYouUrlProps {
 	purchaseId?: number | undefined;
 	feature?: string | undefined;
 	cart: ResponseCart;
-	checkoutType: CheckoutType;
+	sitelessCheckoutType: SitelessCheckoutType;
 	productAliasFromUrl?: string | undefined;
 	hideNudge?: boolean;
 	isInModal?: boolean;

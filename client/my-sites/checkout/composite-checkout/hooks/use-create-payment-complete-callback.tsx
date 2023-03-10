@@ -31,7 +31,7 @@ import normalizeTransactionResponse from '../lib/normalize-transaction-response'
 import { absoluteRedirectThroughPending, redirectThroughPending } from '../lib/pending-page';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '../lib/translate-payment-method-names';
 import type {
-	CheckoutType,
+	SitelessCheckoutType,
 	PaymentEventCallback,
 	PaymentEventCallbackArguments,
 } from '@automattic/composite-checkout';
@@ -59,7 +59,7 @@ export default function useCreatePaymentCompleteCallback( {
 	isComingFromUpsell,
 	disabledThankYouPage,
 	siteSlug,
-	checkoutType,
+	sitelessCheckoutType,
 	checkoutFlow,
 }: {
 	createUserAndSiteBeforeTransaction?: boolean;
@@ -71,7 +71,7 @@ export default function useCreatePaymentCompleteCallback( {
 	isComingFromUpsell?: boolean;
 	disabledThankYouPage?: boolean;
 	siteSlug: string | undefined;
-	checkoutType?: CheckoutType;
+	sitelessCheckoutType?: SitelessCheckoutType;
 	checkoutFlow?: string;
 } ): PaymentEventCallback {
 	const cartKey = useCartKey();
@@ -104,7 +104,7 @@ export default function useCreatePaymentCompleteCallback( {
 			// created site in the Thank You page URL.
 			// TODO: It does not seem like this would be needed for Akismet, but marking to follow up
 			let jetpackTemporarySiteId;
-			if ( checkoutType === 'jetpack' && ! siteSlug && responseCart.create_new_blog ) {
+			if ( sitelessCheckoutType === 'jetpack' && ! siteSlug && responseCart.create_new_blog ) {
 				jetpackTemporarySiteId =
 					transactionResult.purchases && Object.keys( transactionResult.purchases ).pop();
 			}
@@ -117,7 +117,7 @@ export default function useCreatePaymentCompleteCallback( {
 				purchaseId,
 				feature,
 				cart: responseCart,
-				checkoutType,
+				sitelessCheckoutType,
 				isJetpackNotAtomic,
 				productAliasFromUrl,
 				hideNudge: isComingFromUpsell,
@@ -236,7 +236,7 @@ export default function useCreatePaymentCompleteCallback( {
 			responseCart,
 			createUserAndSiteBeforeTransaction,
 			disabledThankYouPage,
-			checkoutType,
+			sitelessCheckoutType,
 			checkoutFlow,
 			adminPageRedirect,
 			domains,
