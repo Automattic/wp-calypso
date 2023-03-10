@@ -11,10 +11,25 @@ export * from './types';
 const formatterCache = new Map< string, Intl.NumberFormat >();
 const fallbackLocale = 'en';
 const fallbackCurrency = 'USD';
+const geolocationEndpointUrl = 'https://public-api.wordpress.com/geo/';
 
 export function createFormatter(): CurrencyFormatter {
 	const currencyOverrides: Record< string, { symbol?: string | undefined } > = {};
 	let defaultLocale: string | undefined = undefined;
+
+	async function setUsdCurrencySymbolBasedOnGeolocation(): Promise< void > {
+		const geoData = await globalThis
+			.fetch?.( geolocationEndpointUrl )
+			.then( ( response ) => response.json() );
+		if ( ! isGeolocationResponse( geoData ) ) {
+			return;
+		}
+		if ( geoData.country_short === 'US' ) {
+			setCurrencySymbol( 'USD', '$' );
+		} else {
+			setCurrencySymbol( 'USD', 'US$' );
+		}
+	}
 
 	function getFormatter(
 		number: number,
@@ -243,11 +258,17 @@ export function createFormatter(): CurrencyFormatter {
 		defaultLocale = locale;
 	}
 
+	// If the user is inside the US using USD, they should only see `$` and not `US$`.
+	async function detectGeolocation() {
+		return setUsdCurrencySymbolBasedOnGeolocation();
+	}
+
 	return {
 		formatCurrency,
 		getCurrencyObject,
 		setCurrencySymbol,
 		setDefaultLocale,
+		detectGeolocation,
 	};
 }
 
@@ -393,7 +414,19 @@ function getSmallestUnitDivisor( precision: number ): number {
 	return 10 ** precision;
 }
 
+interface GeoLocationResponse {
+	country_short: string;
+}
+
+function isGeolocationResponse( response: unknown ): response is GeoLocationResponse {
+	return typeof ( response as GeoLocationResponse )?.country_short === 'string';
+}
+
 const defaultFormatter = createFormatter();
+
+export async function detectGeolocation() {
+	return defaultFormatter.detectGeolocation();
+}
 
 export function formatCurrency( ...args: Parameters< typeof defaultFormatter.formatCurrency > ) {
 	return defaultFormatter.formatCurrency( ...args );
