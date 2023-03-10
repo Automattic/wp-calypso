@@ -40,7 +40,7 @@ export interface SiteStats {
 	visitors: StatsObject;
 }
 
-export interface BoostData {
+export interface BoostObject {
 	desktop: number;
 	mobile: number;
 	overall: number;
