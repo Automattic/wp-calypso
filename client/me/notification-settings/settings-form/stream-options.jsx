@@ -27,7 +27,8 @@ export default class extends PureComponent {
 					const isException =
 						( this.props.stream in NOTIFICATIONS_EXCEPTIONS &&
 							NOTIFICATIONS_EXCEPTIONS[ this.props.stream ].indexOf( setting ) >= 0 ) ||
-						( setting === 'blogging_prompt' && this.isDeviceStream() );
+						( [ 'blogging_prompt', 'draft_post_prompt' ].includes( setting ) &&
+							this.isDeviceStream() );
 					return (
 						<li className="notification-settings-form-stream-options__item" key={ index }>
 							{ isException ? null : (
