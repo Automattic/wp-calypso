@@ -3,10 +3,10 @@ import {
 	isJetpackSecuritySlug,
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
+	JETPACK_BACKUP_ADDON_PRODUCTS,
 } from '@automattic/calypso-products';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { TIER_1_SLUGS, TIER_2_SLUGS } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { getSlugInTerm } from 'calypso/my-sites/plans/jetpack-plans/convert-slug-terms';
 import getPurchasedStorageSubscriptions from 'calypso/my-sites/plans/jetpack-plans/get-purchased-storage-subscriptions';
 import { Duration, SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
@@ -34,7 +34,9 @@ const useAvailableStorageUpgradeProducts = (
 
 		// If the selected site has Backup, or doesn't have Backup _or_ Security,
 		// default to showing only Backup products.
-		return ( { productSlug }: SelectorProduct ) => isJetpackBackupSlug( productSlug );
+		return ( { productSlug }: SelectorProduct ) =>
+			isJetpackBackupSlug( productSlug ) ||
+			JETPACK_BACKUP_ADDON_PRODUCTS.includes( productSlug as any );
 	}, [ purchasedStorageSlugs ] );
 
 	// This function specifically targets products that haven't been purchased
@@ -50,7 +52,7 @@ const useAvailableStorageUpgradeProducts = (
 			! allDurationsSubscriptions.includes( productSlug );
 	}, [ purchasedStorageSlugs ] );
 
-	const allUpgradeProducts: SelectorProduct[] = [ ...TIER_1_SLUGS, ...TIER_2_SLUGS ].reduce(
+	const allUpgradeProducts: SelectorProduct[] = [ ...purchasedStorageSlugs ].reduce(
 		( acc: SelectorProduct[], slug: string ) => {
 			return [ ...acc, ...( getStorageUpgradeProducts( slug ) as SelectorProduct[] ) ];
 		},

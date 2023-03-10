@@ -12,16 +12,7 @@ export const StoragePricingHeader = () => {
 			<div className="storage-pricing-header">
 				<FormattedHeader
 					className="storage-pricing-header__title"
-					headerText={ preventWidows(
-						translate(
-							'Upgrade your VaultPress Backup storage to %(storageAmount)dTB',
-							'Upgrade your VaultPress Backup storage to %(storageAmount)dTB',
-							{
-								count: 1,
-								args: { storageAmount: 1 },
-							}
-						)
-					) }
+					headerText={ preventWidows( translate( 'Upgrade your VaultPress Backup storage' ) ) }
 				/>
 				<p className="storage-pricing-header__subtitle">
 					{ translate(

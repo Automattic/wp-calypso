@@ -20,7 +20,6 @@ const useStorageUpgradesToDisplay = ( siteId: number, duration: Duration ): Sele
 		);
 
 		const upgradesToDisplay = [
-			...purchasedUpgrades,
 			// Don't show tier 1 if tier 2 has already been purchased
 			...( hasTier2Purchase
 				? availableUpgrades.filter( ( { productSlug } ) => isTier2( productSlug ) )
