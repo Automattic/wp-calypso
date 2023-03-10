@@ -18,6 +18,7 @@ import { SiteItemThumbnail } from './sites-site-item-thumbnail';
 import { SiteLaunchNag } from './sites-site-launch-nag';
 import { SiteName } from './sites-site-name';
 import { SiteUrl, Truncated } from './sites-site-url';
+import SitesStagingBadge from './sites-staging-badge';
 import { ThumbnailLink } from './thumbnail-link';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
@@ -102,6 +103,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 
 	const isP2Site = site.options?.is_wpforteams_site;
+	const isStagingSite = site.is_wpcom_staging_site;
 
 	let siteUrl = site.URL;
 	if ( site.options?.is_redirect && site.options?.unmapped_url ) {
@@ -129,6 +131,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 								{ site.title }
 							</SiteName>
 							{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
+							{ isStagingSite && <SitesStagingBadge>{ __( 'Staging' ) }</SitesStagingBadge> }
 						</ListTileTitle>
 					}
 					subtitle={

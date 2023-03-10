@@ -34,7 +34,11 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestSite } from 'calypso/state/sites/actions';
 import { isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSiteId,
+	getSelectedSite,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 import CacheCard from './cache-card';
 import { HostingUpsellNudge } from './hosting-upsell-nudge';
 import PhpMyAdminCard from './phpmyadmin-card';
@@ -81,6 +85,7 @@ class Hosting extends Component {
 			hasSftpFeature,
 			isDisabled,
 			isECommerceTrial,
+			isStagingSite,
 			isTransferring,
 			requestSiteById,
 			siteId,
@@ -189,7 +194,9 @@ class Hosting extends Component {
 							<Column type="main" className="hosting__main-layout-col">
 								<SFTPCard disabled={ isDisabled } />
 								<PhpMyAdminCard disabled={ isDisabled } />
-								{ isStagingSiteEnabled && <StagingSiteCard disabled={ isDisabled } /> }
+								{ isStagingSiteEnabled && ! isStagingSite && (
+									<StagingSiteCard disabled={ isDisabled } />
+								) }
 								{ isGithubIntegrationEnabled && <GitHubCard /> }
 								<WebServerSettingsCard disabled={ isDisabled } />
 								<RestorePlanSoftwareCard disabled={ isDisabled } />
@@ -233,6 +240,7 @@ export const clickActivate = () =>
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
+		const site = getSelectedSite( state );
 		const hasSftpFeature = siteHasFeature( state, siteId, FEATURE_SFTP );
 
 		return {
@@ -245,6 +253,7 @@ export default connect(
 			hasSftpFeature,
 			siteSlug: getSelectedSiteSlug( state ),
 			siteId,
+			isStagingSite: site.is_wpcom_staging_site,
 		};
 	},
 	{
