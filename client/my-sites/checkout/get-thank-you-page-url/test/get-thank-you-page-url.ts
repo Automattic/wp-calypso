@@ -30,7 +30,7 @@ jest.mock( '@automattic/calypso-products', () => ( {
 const samplePurchaseId = 12342424241;
 
 const defaultArgs = {
-	getUrlFromCookie: jest.fn( () => null ),
+	getUrlFromCookie: jest.fn( () => undefined ),
 	saveUrlToCookie: jest.fn(),
 };
 
@@ -1743,7 +1743,7 @@ describe( 'getThankYouPageUrl', () => {
 						},
 					],
 					is_gift_purchase: true,
-					gift_details: { receiver_blog_slug: 'foo.bar' },
+					gift_details: { receiver_blog_slug: 'foo.bar', receiver_blog_id: 123 },
 				},
 			} );
 			expect( url ).toBe( '/checkout/gift/thank-you/foo.bar' );
@@ -1796,7 +1796,7 @@ describe( 'getThankYouPageUrl', () => {
 							},
 						],
 						is_gift_purchase: true,
-						gift_details: {},
+						gift_details: { receiver_blog_id: 123 },
 					},
 				} )
 			).toThrow();

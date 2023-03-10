@@ -86,7 +86,7 @@ export interface PostCheckoutUrlArguments {
 	purchaseId?: number | string;
 	feature?: string;
 	cart?: ResponseCart;
-	isAkismetSitelessCheckout: boolean;
+	isAkismetSitelessCheckout?: boolean;
 	isJetpackNotAtomic?: boolean;
 	productAliasFromUrl?: string;
 	getUrlFromCookie?: GetUrlFromCookie;
