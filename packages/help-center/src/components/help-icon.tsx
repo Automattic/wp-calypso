@@ -25,7 +25,7 @@ const HelpIcon = forwardRef< SVGSVGElement >( ( _, ref ) => {
 					ref={ ref }
 					width="24"
 					height="24"
-					viewBox="0 -2 26 24"
+					viewBox="-2 -2 26 24"
 					fill="none"
 					xmlns="http://www.w3.org/2000/svg"
 				>
