@@ -284,17 +284,6 @@ class ThemeSheet extends Component {
 		this.trackButtonClick( 'next_theme' );
 	};
 
-	renderBackButton = () => {
-		const { translate } = this.props;
-
-		return (
-			<Button className="theme__sheet-back-button" borderless onClick={ this.goBack }>
-				<Gridicon icon="chevron-left" size={ 18 } />
-				{ translate( 'Back to themes' ) }
-			</Button>
-		);
-	};
-
 	renderBar = () => {
 		const { author, name, translate, softLaunched } = this.props;
 
@@ -1313,22 +1302,25 @@ class ThemeSheet extends Component {
 				<ThanksModal source="details" themeId={ this.props.themeId } />
 				<AutoLoadingHomepageModal source="details" />
 				{ ! isNewDetailsAndPreview && pageUpsellBanner }
-				{ ! isNewDetailsAndPreview && (
+				<div className="theme__sheet-action-bar-container">
 					<HeaderCake
 						className="theme__sheet-action-bar"
-						backText={ translate( 'All Themes' ) }
+						backText={
+							isNewDetailsAndPreview ? translate( 'Back to themes' ) : translate( 'All Themes' )
+						}
 						onClick={ this.goBack }
+						alwaysShowBackText={ isNewDetailsAndPreview }
 					>
-						{ ! retired &&
+						{ ! isNewDetailsAndPreview &&
+							! retired &&
 							! hasWpOrgThemeUpsellBanner &&
 							! isWPForTeamsSite &&
 							this.renderButton() }
 					</HeaderCake>
-				) }
+				</div>
 				<div className={ columnsClassName }>
 					{ isNewDetailsAndPreview && (
 						<div className="theme__sheet-column-header">
-							{ this.renderBackButton() }
 							{ pageUpsellBanner }
 							{ this.renderHeader() }
 						</div>
