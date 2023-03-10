@@ -40,15 +40,18 @@ function WebsiteContentSubmissionPending( { primaryDomain, siteId, siteSlug }: P
 	);
 
 	const moment = useLocalizedMoment();
-	let contentSubmissionDueDate: string | null = null;
+	let contentSubmissionDueDate: number | null = null;
 	if ( difmPurchase?.subscribedDate ) {
 		const subscribedDate = new Date( difmPurchase.subscribedDate );
-		subscribedDate.setDate( subscribedDate.getDate() + difmPurchase.refundPeriodInDays );
+		contentSubmissionDueDate = subscribedDate.setDate(
+			subscribedDate.getDate() + difmPurchase.refundPeriodInDays
+		);
 		// Due dates in the past are invalid.
-		if ( subscribedDate.getTime() > Date.now() ) {
-			contentSubmissionDueDate = moment( subscribedDate ).format( 'MMMM Do, YYYY' );
+		if ( contentSubmissionDueDate < Date.now() ) {
+			contentSubmissionDueDate = null;
 		}
 	}
+
 	const lineTextTranslateOptions = {
 		components: {
 			br: <br />,
@@ -61,7 +64,9 @@ function WebsiteContentSubmissionPending( { primaryDomain, siteId, siteSlug }: P
 			),
 		},
 		args: {
-			contentSubmissionDueDate,
+			contentSubmissionDueDate: contentSubmissionDueDate
+				? moment( contentSubmissionDueDate ).format( 'MMMM Do, YYYY' )
+				: null,
 		},
 	};
 
