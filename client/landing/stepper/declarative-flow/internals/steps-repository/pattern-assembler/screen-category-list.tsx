@@ -1,10 +1,9 @@
 import { Button } from '@automattic/components';
 import { __experimentalNavigatorBackButton as NavigatorBackButton } from '@wordpress/components';
-import { __experimentalUseFocusOutside as useFocusOutside } from '@wordpress/compose';
 import { Icon, chevronRight } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import useCategoriesOrder from './hooks/use-categories-order';
 import NavigatorHeader from './navigator-header';
@@ -47,8 +46,17 @@ const ScreenCategoryList = ( {
 		setSelectedCategory( null );
 	};
 
+	useEffect( () => {
+		wrapperRef?.current?.addEventListener( 'click', ( event ) => {
+			// Click on large preview to close Pattern List
+			if ( ( event.target as HTMLElement ).closest( '.pattern-large-preview' ) ) {
+				handleFocusOutside();
+			}
+		} );
+	}, [] );
+
 	return (
-		<div className="screen-container" { ...useFocusOutside( handleFocusOutside ) }>
+		<div className="screen-container">
 			<NavigatorHeader
 				title={ replacePatternMode ? translate( 'Replace pattern' ) : translate( 'Add patterns' ) }
 				description={
