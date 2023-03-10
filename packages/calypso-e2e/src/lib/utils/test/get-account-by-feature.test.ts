@@ -202,4 +202,19 @@ describe( 'envToFeatureKey', () => {
 			siteType: 'atomic',
 		} );
 	} );
+
+	it( 'will include the value for "jetpackTarget" if it is not "wpcom-production"', () => {
+		expect( envToFeatureKey( { ...envVariables, JETPACK_TARGET: 'wpcom-staging' } ) ).toMatchObject(
+			{
+				jetpackTarget: 'wpcom-staging',
+			}
+		);
+	} );
+
+	it( 'will set atomic to true if "jetpackTarget" is "remote-site"', () => {
+		expect( envToFeatureKey( { ...envVariables, JETPACK_TARGET: 'remote-site' } ) ).toMatchObject( {
+			jetpackTarget: 'remote-site',
+			siteType: 'atomic',
+		} );
+	} );
 } );
