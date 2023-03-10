@@ -21,7 +21,7 @@ export const GoMobile = () => {
 	const showBadge = showIosBadge || showAndroidBadge;
 
 	return (
-		<Card className="go-mobile go-mobile--jetpack customer-home__card">
+		<Card className="go-mobile customer-home__card">
 			<div className="go-mobile__row">
 				<img
 					className="go-mobile__icon"
@@ -45,7 +45,7 @@ export const GoMobile = () => {
 					</div>
 				) : (
 					<Button
-						className="go-mobile__email-link-button is-link"
+						className="go-mobile__link-button is-link"
 						href={ localizeUrl( 'https://apps.wordpress.com/get/?campaign=calypso-customer-home' ) }
 					>
 						{ translate( 'Get the Jetpack app' ) }
