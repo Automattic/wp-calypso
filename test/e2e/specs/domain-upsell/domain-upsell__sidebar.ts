@@ -68,8 +68,8 @@ describe( DataHelper.createSuiteTitle( 'Sidebar: Domain upsell' ), function () {
 		await domainSearchComponent.search( blogName + '.com' );
 	} );
 
-	it( 'Choose the .com TLD', async function () {
-		selectedDomain = await domainSearchComponent.selectDomain( '.com' );
+	it( 'Choose the the first suggestion', async function () {
+		selectedDomain = await domainSearchComponent.selectFirstSuggestion();
 	} );
 
 	it( 'View available plans', async function () {

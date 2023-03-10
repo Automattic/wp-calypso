@@ -52,6 +52,14 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 	const wccomFrom = get( currentQuery, 'wccom-from' );
 	const isFromMigrationPlugin = includes( redirectTo, 'wpcom-migration' );
 
+	/**
+	 *  Include redirects to public.api/connect/?action=verify&service={some service}
+	 *  If the signup is from the Highlander Comments flow, the signup page will be in a popup modal
+	 *  We need to redirect back to public.api/connect/ to do an external login and close modal
+	 *  Ref: PCYsg-Hfw-p2
+	 */
+	const isFromPublicAPIConnectFlow = includes( redirectTo, 'public.api/connect/?action=verify' );
+
 	if (
 		// Match locales like `/log-in/jetpack/es`
 		startsWith( currentRoute, '/log-in/jetpack' )
@@ -119,6 +127,7 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 
 	if (
 		isFromMigrationPlugin ||
+		isFromPublicAPIConnectFlow ||
 		( includes( redirectTo, 'action=jetpack-sso' ) && includes( redirectTo, 'sso_nonce=' ) )
 	) {
 		const params = new URLSearchParams( {
