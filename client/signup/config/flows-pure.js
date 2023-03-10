@@ -126,6 +126,7 @@ export function generateFlows( {
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
 			lastModified: '2020-12-10',
 			showRecaptcha: true,
+			hideProgressIndicator: true,
 		},
 		{
 			name: 'onboarding-2023-pricing-grid',
@@ -214,6 +215,7 @@ export function generateFlows( {
 			description: 'Allow new Pressable users to grant permission to server credentials',
 			lastModified: '2017-11-20',
 			disallowResume: true,
+			hideProgressIndicator: true,
 		},
 		{
 			name: 'rewind-switch',
@@ -332,6 +334,7 @@ export function generateFlows( {
 			disallowResume: true,
 			lastModified: '2022-02-15',
 			showRecaptcha: true,
+			hideProgressIndicator: true,
 		},
 		{
 			name: 'add-domain',
@@ -454,6 +457,7 @@ export function generateFlows( {
 				return translate( 'Set up your site' );
 			},
 			enableBranchSteps: true,
+			hideProgressIndicator: true,
 		},
 		{
 			name: 'do-it-for-me',
