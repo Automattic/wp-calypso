@@ -17,7 +17,8 @@ import { getSitePurchases, isFetchingSitePurchases } from 'calypso/state/purchas
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import isDIFMLiteWebsiteContentSubmitted from 'calypso/state/selectors/is-difm-lite-website-content-submitted';
 import { getSiteSlug, isRequestingSite, isRequestingSites } from 'calypso/state/sites/selectors';
-import type { AppState } from 'calypso/types';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
+import type { AppState, SiteId, SiteSlug } from 'calypso/types';
 
 import './difm-lite-in-progress.scss';
 
@@ -25,24 +26,14 @@ type DIFMLiteInProgressProps = {
 	siteId: number;
 };
 
-function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ) {
-	const slug = useSelector( ( state: AppState ) => getSiteSlug( state, siteId ) );
-	useQuerySitePurchases( siteId );
-	const isLoadingSite = useSelector(
-		( state: AppState ) =>
-			isRequestingSite( state, siteId ) ||
-			isRequestingSites( state ) ||
-			isFetchingSitePurchases( state )
-	);
-	const isWebsiteContentSubmitted = useSelector( ( state ) =>
-		isDIFMLiteWebsiteContentSubmitted( state, siteId )
-	);
-	const primaryDomain = useSelector( ( state: AppState ) =>
-		getPrimaryDomainBySiteId( state, siteId )
-	);
-	const translate = useTranslate();
-	const dispatch = useDispatch();
+type Props = {
+	primaryDomain: ResponseDomain;
+	siteSlug: SiteSlug;
+	siteId?: SiteId;
+};
 
+function WebsiteContentSubmissionPending( { primaryDomain, siteId, siteSlug }: Props ) {
+	const translate = useTranslate();
 	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
 	const difmPurchase = sitePurchases.find(
 		( purchase ) => WPCOM_DIFM_LITE === purchase.productSlug
@@ -58,67 +49,6 @@ function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ) {
 			contentSubmissionDueDate = moment( subscribedDate ).format( 'MMMM Do, YYYY' );
 		}
 	}
-
-	if ( ! primaryDomain || isLoadingSite ) {
-		return (
-			<>
-				<QuerySiteDomains siteId={ siteId } />
-				<EmptyContent
-					className="difm-lite-in-progress__site-placeholder"
-					illustration={ SiteBuildInProgressIllustration }
-					illustrationWidth={ 144 }
-				/>
-			</>
-		);
-	}
-
-	const hasEmailWithUs = hasGSuiteWithUs( primaryDomain ) || hasTitanMailWithUs( primaryDomain );
-	const domainName = primaryDomain.name;
-
-	const recordEmailClick = () => {
-		const tracksName = hasEmailWithUs
-			? 'calypso_difm_lite_in_progress_email_manage'
-			: 'calypso_difm_lite_in_progress_email_cta';
-		dispatch(
-			recordTracksEvent( tracksName, {
-				domain: domainName,
-			} )
-		);
-	};
-
-	if ( isWebsiteContentSubmitted ) {
-		return (
-			<EmptyContent
-				title={ translate( 'Your content submission was successful!' ) }
-				line={ translate(
-					"We are currently building your site and will send you an email when it's ready, within %d business days.{{br}}{{/br}}" +
-						'{{SupportLink}}Contact support{{/SupportLink}} if you have any questions.',
-					{
-						components: {
-							br: <br />,
-							SupportLink: (
-								<a
-									href={ `mailto:builtby+express@wordpress.com?subject=${ encodeURIComponent(
-										`I need help with my site: ${ primaryDomain.domain }`
-									) }` }
-								/>
-							),
-						},
-						args: [ 4 ],
-					}
-				) }
-				action={ translate( 'Manage domain' ) }
-				actionURL={ domainManagementList( slug ) }
-				secondaryAction={ hasEmailWithUs ? translate( 'Manage email' ) : translate( 'Add email' ) }
-				secondaryActionURL={ emailManagement( slug, null ) }
-				secondaryActionCallback={ recordEmailClick }
-				illustration={ SiteBuildInProgressIllustration }
-				illustrationWidth={ 144 }
-				className="difm-lite-in-progress__content"
-			/>
-		);
-	}
-
 	const lineTextTranslateOptions = {
 		components: {
 			br: <br />,
@@ -152,10 +82,102 @@ function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ) {
 			title={ translate( 'Website content not submitted' ) }
 			line={ lineText }
 			action={ translate( 'Provide website content' ) }
-			actionURL={ `/start/site-content-collection/website-content?siteSlug=${ slug }` }
+			actionURL={ `/start/site-content-collection/website-content?siteSlug=${ siteSlug }` }
 			illustration={ WebsiteContentRequiredIllustration }
 			illustrationWidth={ 144 }
 			className="difm-lite-in-progress__content"
+		/>
+	);
+}
+
+function WebsiteContentSubmitted( { primaryDomain, siteSlug }: Props ) {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+
+	const domainName = primaryDomain.name;
+	const hasEmailWithUs = hasGSuiteWithUs( primaryDomain ) || hasTitanMailWithUs( primaryDomain );
+
+	const recordEmailClick = () => {
+		const tracksName = hasEmailWithUs
+			? 'calypso_difm_lite_in_progress_email_manage'
+			: 'calypso_difm_lite_in_progress_email_cta';
+		dispatch(
+			recordTracksEvent( tracksName, {
+				domain: domainName,
+			} )
+		);
+	};
+
+	return (
+		<EmptyContent
+			title={ translate( 'Your content submission was successful!' ) }
+			line={ translate(
+				"We are currently building your site and will send you an email when it's ready, within %d business days.{{br}}{{/br}}" +
+					'{{SupportLink}}Contact support{{/SupportLink}} if you have any questions.',
+				{
+					components: {
+						br: <br />,
+						SupportLink: (
+							<a
+								href={ `mailto:builtby+express@wordpress.com?subject=${ encodeURIComponent(
+									`I need help with my site: ${ primaryDomain.domain }`
+								) }` }
+							/>
+						),
+					},
+					args: [ 4 ],
+				}
+			) }
+			action={ translate( 'Manage domain' ) }
+			actionURL={ domainManagementList( siteSlug ) }
+			secondaryAction={ hasEmailWithUs ? translate( 'Manage email' ) : translate( 'Add email' ) }
+			secondaryActionURL={ emailManagement( siteSlug, null ) }
+			secondaryActionCallback={ recordEmailClick }
+			illustration={ SiteBuildInProgressIllustration }
+			illustrationWidth={ 144 }
+			className="difm-lite-in-progress__content"
+		/>
+	);
+}
+
+function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ) {
+	const siteSlug = useSelector( ( state: AppState ) => getSiteSlug( state, siteId ) );
+	useQuerySitePurchases( siteId );
+	const isLoadingSite = useSelector(
+		( state: AppState ) =>
+			isRequestingSite( state, siteId ) ||
+			isRequestingSites( state ) ||
+			isFetchingSitePurchases( state )
+	);
+	const isWebsiteContentSubmitted = useSelector( ( state ) =>
+		isDIFMLiteWebsiteContentSubmitted( state, siteId )
+	);
+	const primaryDomain = useSelector( ( state: AppState ) =>
+		getPrimaryDomainBySiteId( state, siteId )
+	);
+
+	if ( ! primaryDomain || ! siteSlug || isLoadingSite ) {
+		return (
+			<>
+				<QuerySiteDomains siteId={ siteId } />
+				<EmptyContent
+					className="difm-lite-in-progress__site-placeholder"
+					illustration={ SiteBuildInProgressIllustration }
+					illustrationWidth={ 144 }
+				/>
+			</>
+		);
+	}
+
+	if ( isWebsiteContentSubmitted ) {
+		return <WebsiteContentSubmitted primaryDomain={ primaryDomain } siteSlug={ siteSlug } />;
+	}
+
+	return (
+		<WebsiteContentSubmissionPending
+			primaryDomain={ primaryDomain }
+			siteSlug={ siteSlug }
+			siteId={ siteId }
 		/>
 	);
 }
