@@ -27,7 +27,6 @@ import NavigatorListener from './navigator-listener';
 import PatternAssemblerContainer from './pattern-assembler-container';
 import PatternLargePreview from './pattern-large-preview';
 import { useAllPatterns, useSectionPatterns } from './patterns-data';
-import ScreenCategoryList from './screen-category-list';
 import ScreenFooter from './screen-footer';
 import ScreenHeader from './screen-header';
 import ScreenHomepage from './screen-homepage';
@@ -264,12 +263,12 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 	const onSelect = (
 		type: string,
 		selectedPattern: Pattern | null,
-		categorySelected: string | null
+		selectedCategory: string | null
 	) => {
 		if ( selectedPattern ) {
 			// Inject the selected pattern category or the first category
 			// because it's used in tracks and as pattern name in the list
-			selectedPattern.category = categories.find( ( { name } ) => name === categorySelected );
+			selectedPattern.category = categories.find( ( { name } ) => name === selectedCategory );
 
 			trackEventPatternSelect( {
 				patternType: selectedPattern.category?.name || type,
@@ -435,7 +434,8 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 				</NavigatorScreen>
 				<NavigatorScreen path="/homepage/patterns">
 					{ isEnabled( 'pattern-assembler/categories' ) ? (
-						<ScreenCategoryList
+						<AsyncLoad
+							require="./screen-category-list"
 							categories={ categories }
 							sectionsMapByCategory={ sectionsMapByCategory }
 							onDoneClick={ () => onDoneClick( 'section' ) }

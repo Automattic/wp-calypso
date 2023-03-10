@@ -9,7 +9,7 @@ type PatternListPanelProps = {
 	patterns: Pattern[];
 	selectedPattern: Pattern | null;
 	categories: Category[];
-	categorySelected: string | null;
+	selectedCategory: string | null;
 	openPatternList: boolean | null;
 	onDoneClick?: () => void;
 };
@@ -19,11 +19,11 @@ const PatternListPanel = ( {
 	patterns,
 	selectedPattern,
 	categories,
-	categorySelected,
+	selectedCategory,
 	openPatternList,
 }: PatternListPanelProps ) => {
 	const sectionPatternsMapByCategory = useSectionPatternsMapByCategory( patterns, categories );
-	const categoryPatterns = categorySelected ? sectionPatternsMapByCategory[ categorySelected ] : [];
+	const categoryPatterns = selectedCategory ? sectionPatternsMapByCategory[ selectedCategory ] : [];
 
 	return (
 		<AnimateMotion featureName="domAnimation">

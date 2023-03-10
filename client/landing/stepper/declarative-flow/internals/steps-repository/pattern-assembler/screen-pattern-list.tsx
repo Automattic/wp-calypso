@@ -33,7 +33,7 @@ const ScreenPatternList = ( { selectedPattern, onSelect, onDoneClick }: Props ) 
 	return (
 		<>
 			<NavigatorHeader
-				title={ selectedPattern ? translate( 'Replace a pattern' ) : translate( 'Add patterns' ) }
+				title={ selectedPattern ? translate( 'Replace pattern' ) : translate( 'Add patterns' ) }
 			/>
 			<div className="screen-container__body">
 				<PatternSelector

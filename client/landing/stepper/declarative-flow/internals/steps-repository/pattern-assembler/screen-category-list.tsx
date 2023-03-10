@@ -20,7 +20,7 @@ interface Props {
 	onSelect: (
 		type: string,
 		selectedPattern: Pattern | null,
-		categorySelected: string | null
+		selectedCategory: string | null
 	) => void;
 	replacePatternMode: boolean;
 	selectedPattern: Pattern | null;
@@ -37,19 +37,14 @@ const ScreenCategoryList = ( {
 	wrapperRef,
 }: Props ) => {
 	const translate = useTranslate();
-	const [ categorySelected, setCategory ] = useState< string | null >( null );
+	const [ selectedCategory, setSelectedCategory ] = useState< string | null >( null );
 	const [ openPatternList, setOpenPatternList ] = useState< boolean | null >( null );
 	const sectionPatterns = useSectionPatterns();
 	const categoriesInOrder = useCategoriesOrder( categories );
 
-	const categoriesWithPatterns = useMemo( () => {
-		// Render only categories with patterns
-		return categoriesInOrder.filter( ( { name } ) => sectionsMapByCategory[ name ]?.length );
-	}, [ categoriesInOrder, sectionsMapByCategory ] );
-
 	const handleFocusOutside = () => {
 		setOpenPatternList( false );
-		setCategory( null );
+		setSelectedCategory( null );
 	};
 
 	return (
@@ -67,8 +62,14 @@ const ScreenCategoryList = ( {
 				}
 			/>
 			<div className="screen-container__body screen-category-list__body">
-				{ categoriesWithPatterns.map( ( { name, label, description } ) => {
-					const isOpen = categorySelected === name;
+				{ categoriesInOrder.map( ( { name, label, description } ) => {
+					const isOpen = selectedCategory === name;
+					const hasPatterns = sectionsMapByCategory[ name ]?.length;
+
+					if ( ! hasPatterns ) {
+						return null;
+					}
+
 					return (
 						<Button
 							key={ name }
@@ -79,13 +80,13 @@ const ScreenCategoryList = ( {
 							onClick={ () => {
 								if ( isOpen ) {
 									setOpenPatternList( false );
-									setCategory( null );
+									setSelectedCategory( null );
 								} else if ( ! openPatternList ) {
 									setOpenPatternList( true );
 									// Delay to prioritize the start of the panel animation
-									setTimeout( () => setCategory( name ), 200 );
+									setTimeout( () => setSelectedCategory( name ), 200 );
 								} else {
-									setCategory( name );
+									setSelectedCategory( name );
 								}
 							} }
 						>
@@ -110,12 +111,12 @@ const ScreenCategoryList = ( {
 			{ createPortal(
 				<PatternListPanel
 					onSelect={ ( selectedPattern ) =>
-						onSelect( 'section', selectedPattern, categorySelected )
+						onSelect( 'section', selectedPattern, selectedCategory )
 					}
 					selectedPattern={ selectedPattern }
 					patterns={ sectionPatterns }
 					openPatternList={ openPatternList }
-					categorySelected={ categorySelected }
+					selectedCategory={ selectedCategory }
 					categories={ categories }
 				/>,
 				// Using the pattern-assembler__wrapper as parent

@@ -13,7 +13,7 @@ interface Props {
 	onDoneClick: () => void;
 }
 
-const ScreenFooter = ( { selectedPattern, onSelect, onBack, onDoneClick }: Props ) => {
+const ScreenFooter = ( { selectedPattern, onSelect, onDoneClick }: Props ) => {
 	const translate = useTranslate();
 	const patterns = useFooterPatterns();
 
@@ -30,7 +30,6 @@ const ScreenFooter = ( { selectedPattern, onSelect, onBack, onDoneClick }: Props
 				<PatternSelector
 					patterns={ patterns }
 					onSelect={ ( selectedPattern ) => onSelect( 'footer', selectedPattern, 'footer' ) }
-					onBack={ onBack }
 					selectedPattern={ selectedPattern }
 					emptyPatternText={ translate( 'No Footer' ) }
 				/>
@@ -39,9 +38,7 @@ const ScreenFooter = ( { selectedPattern, onSelect, onBack, onDoneClick }: Props
 				<NavigatorBackButton
 					as={ Button }
 					className="pattern-assembler__button"
-					onClick={ () => {
-						onDoneClick();
-					} }
+					onClick={ onDoneClick }
 					primary
 				>
 					{ translate( 'Save' ) }

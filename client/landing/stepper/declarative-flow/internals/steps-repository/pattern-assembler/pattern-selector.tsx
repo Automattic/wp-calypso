@@ -22,14 +22,12 @@ const PatternSelector = ( {
 			<div className="pattern-selector__body">
 				<div className="pattern-selector__block-list" role="listbox">
 					<PatternListRenderer
-						{ ...{
-							patterns,
-							shownPatterns,
-							selectedPattern,
-							emptyPatternText,
-							activeClassName: 'pattern-selector__block-list--selected-pattern',
-							onSelect,
-						} }
+						patterns={ patterns }
+						shownPatterns={ shownPatterns }
+						selectedPattern={ selectedPattern }
+						emptyPatternText={ emptyPatternText }
+						activeClassName="pattern-selector__block-list--selected-pattern"
+						onSelect={ onSelect }
 					/>
 				</div>
 			</div>
