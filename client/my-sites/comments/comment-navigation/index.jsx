@@ -65,6 +65,21 @@ export class CommentNavigation extends Component {
 		}
 	};
 
+	emptyPermanently = () => {
+		const { status, translate } = this.props;
+		if (
+			typeof window === 'undefined' ||
+			window.confirm(
+				status === 'spam'
+					? translate( 'Empty all spam permanently?' )
+					: translate( 'Empty all trash permanently?' )
+			)
+		) {
+			window.alert( 'empty!' );
+			// Tell the API to empty things
+		}
+	};
+
 	changeFilter = ( status ) => () => this.props.recordChangeFilter( status );
 
 	getNavItems = () => {
@@ -309,8 +324,14 @@ export class CommentNavigation extends Component {
 								{ translate( 'Bulk edit' ) }
 							</Button>
 
-							{ [ 'spam', 'trash' ].includes( this.props.status ) && (
-								<Button compact scary className="comment-navigation__button-empty">
+							{ this.statusHasAction( 'delete' ) && (
+								<Button
+									compact
+									scary
+									data-status={ this.props.status }
+									onClick={ this.emptyPermanently }
+									className="comment-navigation__button-empty"
+								>
 									{ this.props.status === 'spam'
 										? translate( 'Empty spam' )
 										: translate( 'Empty trash' ) }
