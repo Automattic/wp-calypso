@@ -115,11 +115,17 @@ body.app-banner-is-visible {
 }
 
 .button.app-banner__open-button {
-	background-color: var(--color-jetpack);
+	background-color: var(--studio-jetpack-green-40);
 	border: 0;
 	border-radius: 4px;
 	margin-right: 10px;
 	margin-bottom: 12px;
+
+	&:hover,
+	&:focus {
+		background-color: var(--studio-jetpack-green-60);
+		border-color: var(--studio-jetpack-green-60);
+	}
 }
 
 .button.app-banner__no-thanks-button {
