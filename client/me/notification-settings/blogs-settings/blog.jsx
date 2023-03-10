@@ -67,6 +67,7 @@ class BlogSettings extends Component {
 			'mentions',
 			'scheduled_publicize',
 			'blogging_prompt',
+			'draft_post_prompt',
 		];
 
 		if ( site.options.woocommerce_is_active ) {
