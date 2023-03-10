@@ -12,5 +12,6 @@ done
 
 # Add the index.php file
 cp ./index.php ./README.md ./dist/* ./release-files/
+cp ./translations-manifest.json ./release-files/
 
 printf "Finished configuration of the @automattic/happy-blocks plugin artifacts directory.\n"

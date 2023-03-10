@@ -15,6 +15,7 @@ export async function saveCreditCard( {
 	state,
 	city,
 	organization,
+	address,
 }: {
 	token: string;
 	stripeConfiguration: StripeConfiguration;
@@ -25,6 +26,7 @@ export async function saveCreditCard( {
 	state?: string;
 	city?: string;
 	organization?: string;
+	address?: string;
 } ): Promise< StoredCardEndpointResponse > {
 	const additionalData = getParamsForApi( {
 		cardToken: token,
@@ -36,6 +38,7 @@ export async function saveCreditCard( {
 		state,
 		city,
 		organization,
+		address,
 	} );
 	const response = await wp.req.post(
 		{
@@ -66,6 +69,7 @@ export async function updateCreditCard( {
 	state,
 	city,
 	organization,
+	address,
 	countryCode,
 }: {
 	purchase: Purchase;
@@ -77,6 +81,7 @@ export async function updateCreditCard( {
 	state?: string;
 	city?: string;
 	organization?: string;
+	address?: string;
 	countryCode: string;
 } ): Promise< StoredCardEndpointResponse > {
 	const {
@@ -90,6 +95,7 @@ export async function updateCreditCard( {
 		tax_subdivision_code,
 		tax_city,
 		tax_organization,
+		tax_address,
 	} = getParamsForApi( {
 		cardToken: token,
 		stripeConfiguration,
@@ -101,6 +107,7 @@ export async function updateCreditCard( {
 		state,
 		city,
 		organization,
+		address,
 	} );
 	const response = await wp.req.post(
 		{
@@ -117,6 +124,7 @@ export async function updateCreditCard( {
 			tax_subdivision_code,
 			tax_city,
 			tax_organization,
+			tax_address,
 		}
 	);
 	if ( response.error ) {
@@ -138,6 +146,7 @@ function getParamsForApi( {
 	state,
 	city,
 	organization,
+	address,
 }: {
 	cardToken: string;
 	stripeConfiguration: StripeConfiguration;
@@ -149,6 +158,7 @@ function getParamsForApi( {
 	state?: string;
 	city?: string;
 	organization?: string;
+	address?: string;
 } ) {
 	return {
 		payment_partner: stripeConfiguration ? stripeConfiguration.processor_id : '',
@@ -162,5 +172,6 @@ function getParamsForApi( {
 		tax_subdivision_code: state,
 		tax_city: city,
 		tax_organization: organization,
+		tax_address: address,
 	};
 }

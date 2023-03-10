@@ -23,8 +23,9 @@ const ScreenMain = ( { shouldUnlockGlobalStyles, onSelect, onContinueClick }: Pr
 			<NavigatorHeader
 				title={ translate( 'Let’s get creative' ) }
 				description={ translate(
-					'Use our library of styles and patterns to design your own theme.'
+					'Use our library of styles and patterns to design your own homepage.'
 				) }
+				hideBack
 			/>
 			<div className="screen-container__body">
 				<ItemGroup>
@@ -89,6 +90,11 @@ const ScreenMain = ( { shouldUnlockGlobalStyles, onSelect, onContinueClick }: Pr
 				</ItemGroup>
 			</div>
 			<div className="screen-container__footer">
+				<span className="screen-container__description">
+					{ shouldUnlockGlobalStyles
+						? translate( 'You’ve selected Premium fonts or colors for your site.' )
+						: '' }
+				</span>
 				<Button className="pattern-assembler__button" onClick={ onContinueClick } primary>
 					{ shouldUnlockGlobalStyles ? translate( 'Unlock this style' ) : translate( 'Continue' ) }
 				</Button>

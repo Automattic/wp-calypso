@@ -1,5 +1,9 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { PLAN_ECOMMERCE_MONTHLY } from '@automattic/calypso-products';
+import { isEnabled } from '@automattic/calypso-config';
+import {
+	PLAN_ECOMMERCE_MONTHLY,
+	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
+} from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
@@ -8,8 +12,8 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import bestInClassHosting from 'calypso/assets/images/plans/wpcom/ecommerce-trial/best-in-class-hosting.svg';
 import connect from 'calypso/assets/images/plans/wpcom/ecommerce-trial/connect.png';
-import googleAnalytics from 'calypso/assets/images/plans/wpcom/ecommerce-trial/google-analytics.svg';
 import launch from 'calypso/assets/images/plans/wpcom/ecommerce-trial/launch.png';
+import paymentCardChecked from 'calypso/assets/images/plans/wpcom/ecommerce-trial/payment-card-checked.svg';
 import premiumThemes from 'calypso/assets/images/plans/wpcom/ecommerce-trial/premium-themes.svg';
 import prioritySupport from 'calypso/assets/images/plans/wpcom/ecommerce-trial/priority-support.svg';
 import promote from 'calypso/assets/images/plans/wpcom/ecommerce-trial/promote.png';
@@ -19,6 +23,7 @@ import shipping from 'calypso/assets/images/plans/wpcom/ecommerce-trial/shipping
 import simpleCustomization from 'calypso/assets/images/plans/wpcom/ecommerce-trial/simple-customization.svg';
 import unlimitedProducts from 'calypso/assets/images/plans/wpcom/ecommerce-trial/unlimited-products.svg';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
+import { getECommerceTrialCheckoutUrl } from 'calypso/lib/ecommerce-trial/get-ecommerce-trial-checkout-url';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ECommerceTrialBanner from '../../ecommerce-trial/ecommerce-trial-banner';
 import FeatureIncludedCard from '../feature-included-card';
@@ -41,16 +46,26 @@ const ECommerceTrialCurrentPlan = () => {
 	const isMobile = useMediaQuery( '(max-width: 480px)' );
 	const displayAllIncluded = ! isMobile || showAllTrialFeaturesInMobileView;
 
+	const targetPlan = isEnabled( 'plans/wooexpress-medium' )
+		? PLAN_WOOEXPRESS_MEDIUM_MONTHLY
+		: PLAN_ECOMMERCE_MONTHLY;
+
 	/**
-	 * Redirects to the checkout page with the ecommerce plan.
+	 * Redirects to the checkout page with Plan on cart.
 	 *
 	 * @param ctaPosition - The position of the CTA that triggered the redirect.
 	 */
-	const goToCheckoutWithEcommercePlan = ( ctaPosition: string ) => {
+	const goToCheckoutWithPlan = ( ctaPosition: string ) => {
 		recordTracksEvent( `calypso_wooexpress_my_plan_cta`, {
 			cta_position: ctaPosition,
 		} );
-		page.redirect( `/checkout/${ selectedSite?.slug }/${ PLAN_ECOMMERCE_MONTHLY }` );
+
+		const checkoutUrl = getECommerceTrialCheckoutUrl( {
+			productSlug: targetPlan,
+			siteSlug: selectedSite?.slug ?? '',
+		} );
+
+		page.redirect( checkoutUrl );
 	};
 
 	// TODO: translate when final copy is available
@@ -104,11 +119,11 @@ const ECommerceTrialCurrentPlan = () => {
 			buttonText: translate( 'Increase visibility' ),
 		},
 		{
-			title: translate( 'Google Analytics' ),
-			text: translate( "See where your visitors come from and what they're doing on your store." ),
-			illustration: googleAnalytics,
+			title: translate( 'Get ready to be paid' ),
+			text: translate( 'Set up one (or more!) payment methods and test your checkout process.' ),
+			illustration: paymentCardChecked,
 			showButton: true,
-			buttonText: translate( 'Connect Google Analytics' ),
+			buttonText: translate( 'Get ready to take payments' ),
 		},
 		{
 			title: translate( 'Best-in-class hosting' ),
@@ -156,7 +171,7 @@ const ECommerceTrialCurrentPlan = () => {
 		<Button
 			className="e-commerce-trial-current-plan__trial-card-cta"
 			primary
-			onClick={ () => goToCheckoutWithEcommercePlan( 'card' ) }
+			onClick={ () => goToCheckoutWithPlan( 'card' ) }
 		>
 			{ translate( 'Upgrade now' ) }
 		</Button>
@@ -180,7 +195,7 @@ const ECommerceTrialCurrentPlan = () => {
 						illustration={ feature.illustration }
 						title={ feature.title }
 						text={ feature.text }
-						showButton={ feature.showButton }
+						showButton={ false }
 						buttonText={ feature.buttonText }
 					></FeatureIncludedCard>
 				) ) }
@@ -218,7 +233,7 @@ const ECommerceTrialCurrentPlan = () => {
 			<div className="e-commerce-trial-current-plan__cta-wrapper">
 				<Button
 					className="e-commerce-trial-current-plan__cta is-primary"
-					onClick={ () => goToCheckoutWithEcommercePlan( 'footer' ) }
+					onClick={ () => goToCheckoutWithPlan( 'footer' ) }
 				>
 					{ translate( 'Upgrade now' ) }
 				</Button>

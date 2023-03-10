@@ -4,7 +4,7 @@ import {
 	getIntervalTypeForTerm,
 	PLAN_FREE,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
-	isFreePlan,
+	isFreePlanProduct,
 } from '@automattic/calypso-products';
 import { is2023PricingGridActivePage } from '@automattic/calypso-products/src/plans-utilities';
 import { withShoppingCart } from '@automattic/shopping-cart';
@@ -67,22 +67,72 @@ function DomainAndPlanUpsellNotice() {
 		/>
 	);
 }
-function DomainUpsellDescription() {
+function DescriptionMessage( { isDomainUpsell, isFreePlan, yourDomainName, siteSlug } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	if ( ! isDomainUpsell ) {
+		return (
+			<>
+				<p>
+					{ translate(
+						'With your annual plan, you’ll get %(domainName)s {{strong}}free for the first year{{/strong}}.',
+						{
+							args: {
+								domainName: yourDomainName,
+							},
+							components: {
+								strong: <strong />,
+							},
+						}
+					) }
+				</p>
+				<p>
+					{ translate(
+						'You’ll also unlock advanced features that make it easy to build and grow your site.'
+					) }
+				</p>
+			</>
+		);
+	}
+
 	const skipPlan = () => {
 		recordTracksEvent( 'calypso_plans_page_domain_upsell_skip_click' );
-		dispatch( WPCOM_PLANS_UI_STORE ).setShowDomainUpsellDialog( true );
+		// show Warning only on free plans.
+		isFreePlan
+			? dispatch( WPCOM_PLANS_UI_STORE ).setShowDomainUpsellDialog( true )
+			: page( `/checkout/${ siteSlug }` );
 	};
+
+	const subtitle = isFreePlan
+		? translate( 'See and compare the features available on each WordPress.com plan' )
+		: translate( 'All of our annual plans include a free domain name for one year.' );
+
+	const subtitle2 = isFreePlan
+		? ''
+		: translate(
+				'Upgrade to a yearly plan and claim {{strong}}%(domainName)s for free{{/strong}}.',
+				{
+					args: {
+						domainName: yourDomainName,
+					},
+					components: {
+						strong: <strong />,
+						br: <br />,
+					},
+				}
+		  );
+
+	const skipText = isFreePlan
+		? translate( 'Or continue with the free plan.' )
+		: translate( 'Or continue with your monthly plan.' );
+
 	return (
 		<>
-			<p className="plans__copy-domain-upsell">
-				{ translate( 'See and compare the features available on each WordPress.com plan' ) }
-			</p>
+			<p>{ subtitle }</p>
+			{ subtitle2 && <p>{ subtitle2 }</p> }
 			<p>
-				<button className="plans__copy-button" onClick={ skipPlan }>
-					{ translate( 'Or continue with the free plan.' ) }
-				</button>
+				<button onClick={ skipPlan }>{ skipText }</button>
 			</p>
 		</>
 	);
@@ -175,7 +225,13 @@ class Plans extends Component {
 	};
 
 	renderPlansMain() {
-		const { currentPlan, selectedSite, isWPForTeamsSite } = this.props;
+		const {
+			currentPlan,
+			selectedSite,
+			isWPForTeamsSite,
+			currentPlanIntervalType,
+			is2023PricingGridVisible,
+		} = this.props;
 
 		if ( ! this.props.plansLoaded || ! currentPlan ) {
 			// Maybe we should show a loading indicator here?
@@ -194,13 +250,16 @@ class Plans extends Component {
 			);
 		}
 
-		const hideFreePlan =
-			! is2023PricingGridActivePage( window ) || this.props.isDomainAndPlanPackageFlow;
+		const hideFreePlan = ! is2023PricingGridVisible || this.props.isDomainAndPlanPackageFlow;
 
+		const hidePlanTypeSelector =
+			this.props.domainAndPlanPackage &&
+			( ! this.props.isDomainUpsell ||
+				( this.props.isDomainUpsell && currentPlanIntervalType === 'monthly' ) );
 		return (
 			<PlansFeaturesMain
 				redirectToAddDomainFlow={ this.props.redirectToAddDomainFlow }
-				hidePlanTypeSelector={ this.props.domainAndPlanPackage && ! this.props.isDomainUpsell }
+				hidePlanTypeSelector={ hidePlanTypeSelector }
 				hideFreePlan={ hideFreePlan }
 				customerType={ this.props.customerType }
 				intervalType={ this.props.intervalType }
@@ -213,6 +272,7 @@ class Plans extends Component {
 				plansWithScroll={ false }
 				showTreatmentPlansReorderTest={ this.props.showTreatmentPlansReorderTest }
 				hidePlansFeatureComparison={ this.props.isDomainAndPlanPackageFlow }
+				is2023PricingGridVisible={ is2023PricingGridVisible }
 			/>
 		);
 	}
@@ -242,6 +302,8 @@ class Plans extends Component {
 			isJetpackNotAtomic,
 			isDomainUpsell,
 			isDomainUpsellSuggested,
+			isFreePlan,
+			currentPlanIntervalType,
 		} = this.props;
 
 		if ( ! selectedSite || this.isInvalidPlanInterval() || ! currentPlan ) {
@@ -260,11 +322,15 @@ class Plans extends Component {
 				: addQueryArgs( `/domains/add/${ selectedSite.slug }`, {
 						domainAndPlanPackage: true,
 				  } );
+		// eslint-disable-next-line no-nested-ternary
+
+		const headline =
+			currentPlanIntervalType === 'monthly'
+				? translate( 'Get your domain’s first year for free' )
+				: translate( 'Choose the perfect plan' );
 		return (
 			<div>
-				{ ! isJetpackNotAtomic && (
-					<ModernizedLayout dropShadowOnHeader={ isFreePlan( currentPlanSlug ) } />
-				) }
+				{ ! isJetpackNotAtomic && <ModernizedLayout dropShadowOnHeader={ isFreePlan } /> }
 				{ selectedSite.ID && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
 				<PageViewTracker path="/plans/:site" title="Plans" />
@@ -280,28 +346,14 @@ class Plans extends Component {
 								<div className="plans__header">
 									<DomainAndPlanPackageNavigation goBackLink={ goBackLink } step={ 2 } />
 
-									<FormattedHeader
-										brandFont
-										headerText={ translate( 'Choose the perfect plan' ) }
-										align="center"
-									/>
+									<FormattedHeader brandFont headerText={ headline } align="center" />
 
-									{ isDomainUpsell && <DomainUpsellDescription /> }
-									{ ! isDomainUpsell && (
-										<p>
-											{ translate(
-												'With your annual plan, you’ll get %(domainName)s {{strong}}free for the first year{{/strong}}. You’ll also unlock advanced features that make it easy to build and grow your site.',
-												{
-													args: {
-														domainName: yourDomainName,
-													},
-													components: {
-														strong: <strong />,
-													},
-												}
-											) }
-										</p>
-									) }
+									<DescriptionMessage
+										isFreePlan={ isFreePlan }
+										yourDomainName={ yourDomainName }
+										siteSlug={ selectedSite.slug }
+										isDomainUpsell={ isDomainUpsell }
+									/>
 								</div>
 							</>
 						) }
@@ -331,14 +383,13 @@ class Plans extends Component {
 	}
 }
 
-const ConnectedPlans = connect( ( state ) => {
+const ConnectedPlans = connect( ( state, props ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 
 	const currentPlan = getCurrentPlan( state, selectedSiteId );
 	const currentPlanIntervalType = getIntervalTypeForTerm(
 		getPlan( currentPlan?.productSlug )?.term
 	);
-	const is2023PricingGridVisible = is2023PricingGridActivePage( window );
 
 	return {
 		currentPlan,
@@ -350,13 +401,15 @@ const ConnectedPlans = connect( ( state ) => {
 		isSiteEligibleForMonthlyPlan: isEligibleForWpComMonthlyPlan( state, selectedSiteId ),
 		showTreatmentPlansReorderTest: isTreatmentPlansReorderTest( state ),
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
-		is2023PricingGridVisible,
+		is2023PricingGridVisible:
+			props.is2023PricingGridVisible ?? is2023PricingGridActivePage( window ),
 		isDomainAndPlanPackageFlow: !! getCurrentQueryArguments( state )?.domainAndPlanPackage,
 		isJetpackNotAtomic: isJetpackSite( state, selectedSiteId, { treatAtomicAsJetpackSite: false } ),
 		isDomainUpsell:
 			!! getCurrentQueryArguments( state )?.domainAndPlanPackage &&
 			!! getCurrentQueryArguments( state )?.domain,
 		isDomainUpsellSuggested: getCurrentQueryArguments( state )?.domain === 'true',
+		isFreePlan: isFreePlanProduct( currentPlan ),
 	};
 } )( withCartKey( withShoppingCart( localize( withTrackingTool( 'HotJar' )( Plans ) ) ) ) );
 

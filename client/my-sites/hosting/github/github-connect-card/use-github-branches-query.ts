@@ -32,7 +32,6 @@ export const useGithubBranchesQuery = (
 			meta: {
 				persist: false,
 			},
-			refetchOnWindowFocus: false,
 			...options,
 			cacheTime: CACHE_TIME,
 		}

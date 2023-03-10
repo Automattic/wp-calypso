@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_SFTP,
 	WPCOM_FEATURES_MANAGE_PLUGINS,
@@ -243,6 +244,8 @@ const SiteDropdownMenu = styled( DropdownMenu )( {
 function useSubmenuItems( site: SiteExcerptData ) {
 	const { __ } = useI18n();
 	const siteSlug = site.slug;
+	const isStagingSite = site.is_wpcom_staging_site;
+	const isStagingSiteEnabled = isEnabled( 'yolo/staging-sites-i1' );
 
 	return useMemo< { label: string; href: string; sectionName: string }[] >( () => {
 		return [
@@ -255,6 +258,12 @@ function useSubmenuItems( site: SiteExcerptData ) {
 				label: __( 'Database access' ),
 				href: `/hosting-config/${ siteSlug }#database-access`,
 				sectionName: 'database_access',
+			},
+			{
+				condition: ! isStagingSite && isStagingSiteEnabled,
+				label: __( 'Staging site' ),
+				href: `/hosting-config/${ siteSlug }#staging-site`,
+				sectionName: 'staging_site',
 			},
 			{
 				label: __( 'Deploy from GitHub' ),
@@ -276,8 +285,8 @@ function useSubmenuItems( site: SiteExcerptData ) {
 				href: `/hosting-config/${ siteSlug }#web-server-logs`,
 				sectionName: 'logs',
 			},
-		];
-	}, [ __, siteSlug ] );
+		].filter( ( { condition } ) => condition ?? true );
+	}, [ __, isStagingSiteEnabled, siteSlug, isStagingSite ] );
 }
 
 function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps ) {
@@ -302,11 +311,7 @@ function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps
 					product_slug: site.plan?.product_slug,
 				} }
 			/>
-			<MenuItemLink
-				href={ getHostingConfigUrl( site.slug ) }
-				onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_hosting_config_click' ) }
-				info={ displayUpsell && __( 'Requires a Business Plan' ) }
-			>
+			<MenuItemLink info={ displayUpsell && __( 'Requires a Business Plan' ) }>
 				{ __( 'Hosting configuration' ) } <MenuItemGridIcon icon="chevron-right" size={ 18 } />
 			</MenuItemLink>
 			<SubmenuPopover

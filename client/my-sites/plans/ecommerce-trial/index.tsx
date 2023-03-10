@@ -1,8 +1,12 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	getPlans,
 	plansLink,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_MONTHLY,
+	PLAN_WOOEXPRESS_MEDIUM,
+	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 } from '@automattic/calypso-products';
 import { Button, Card } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
@@ -12,10 +16,11 @@ import { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import SegmentedControl from 'calypso/components/segmented-control';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
+import { getECommerceTrialCheckoutUrl } from 'calypso/lib/ecommerce-trial/get-ecommerce-trial-checkout-url';
 import { getPlanRawPrice, getPlan } from 'calypso/state/plans/selectors';
-import { getECommerceFeatureSets } from './ecommerce-features';
 import ECommerceTrialBanner from './ecommerce-trial-banner';
 import TrialFeatureCard from './trial-feature-card';
+import { getWooExpressMediumFeatureSets } from './wx-medium-features';
 
 import './style.scss';
 
@@ -30,31 +35,46 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 
 	const translate = useTranslate();
 
-	const eCommercePlanAnnual = getPlans()[ PLAN_ECOMMERCE ];
-	const eCommercePlanMonthly = getPlans()[ PLAN_ECOMMERCE_MONTHLY ];
+	const targetPlanAnnual = isEnabled( 'plans/wooexpress-medium' )
+		? getPlans()[ PLAN_WOOEXPRESS_MEDIUM ]
+		: getPlans()[ PLAN_ECOMMERCE ];
+	const targetPlanMonthly = isEnabled( 'plans/wooexpress-medium' )
+		? getPlans()[ PLAN_WOOEXPRESS_MEDIUM_MONTHLY ]
+		: getPlans()[ PLAN_ECOMMERCE_MONTHLY ];
 
-	const eCommercePlanPrices = useSelector( ( state ) => ( {
-		annualPlanPrice: getPlanRawPrice( state, eCommercePlanAnnual.getProductId(), false ) || 0,
-		annualPlanMonthlyPrice: getPlanRawPrice( state, eCommercePlanAnnual.getProductId(), true ) || 0,
-		monthlyPlanPrice: getPlanRawPrice( state, eCommercePlanMonthly.getProductId() ) || 0,
-		currencyCode: getPlan( state, eCommercePlanAnnual.getProductId() )?.currency_code || '',
+	const targetPlanPrices = useSelector( ( state ) => ( {
+		annualPlanPrice: getPlanRawPrice( state, targetPlanAnnual.getProductId(), false ) || 0,
+		annualPlanMonthlyPrice: getPlanRawPrice( state, targetPlanAnnual.getProductId(), true ) || 0,
+		monthlyPlanPrice: getPlanRawPrice( state, targetPlanMonthly.getProductId() ) || 0,
+		currencyCode: getPlan( state, targetPlanAnnual.getProductId() )?.currency_code || '',
 	} ) );
 
 	const isAnnualSubscription = interval === 'yearly';
-	const targetECommercePlan = isAnnualSubscription ? eCommercePlanAnnual : eCommercePlanMonthly;
+	const targetPlan = isAnnualSubscription ? targetPlanAnnual : targetPlanMonthly;
 
 	const percentageSavings = Math.floor(
-		( 1 - eCommercePlanPrices.annualPlanMonthlyPrice / eCommercePlanPrices.monthlyPlanPrice ) * 100
+		( 1 - targetPlanPrices.annualPlanMonthlyPrice / targetPlanPrices.monthlyPlanPrice ) * 100
 	);
 
-	const redirectToCheckoutForPlan = useCallback( () => {
-		const checkoutUrl = `/checkout/${ siteSlug }/${ targetECommercePlan.getStoreSlug() }`;
+	const redirectToCheckoutForPlan = useCallback(
+		( tracksLocation: string ) => {
+			recordTracksEvent( 'calypso_wooexpress_plans_page_upgrade_cta_clicked', {
+				location: tracksLocation,
+			} );
 
-		page.redirect( checkoutUrl );
-	}, [ siteSlug, targetECommercePlan ] );
+			const checkoutUrl = getECommerceTrialCheckoutUrl( {
+				productSlug: targetPlan.getStoreSlug(),
+				siteSlug,
+			} );
 
-	const eCommercePlanFeatureSets = useMemo( () => {
-		return getECommerceFeatureSets( { translate } );
+			page.redirect( checkoutUrl );
+		},
+		[ siteSlug, targetPlan ]
+	);
+
+	// WX Medium and Commerce have the same features
+	const wooExpressMediumPlanFeatureSets = useMemo( () => {
+		return getWooExpressMediumFeatureSets( { translate } );
 	}, [ translate ] );
 
 	const monthlyPriceWrapper = <span className="e-commerce-trial-plans__price-card-value" />;
@@ -66,13 +86,13 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 				{
 					args: {
 						monthlyPrice: formatCurrency(
-							eCommercePlanPrices.annualPlanMonthlyPrice,
-							eCommercePlanPrices.currencyCode,
+							targetPlanPrices.annualPlanMonthlyPrice,
+							targetPlanPrices.currencyCode,
 							{ stripZeros: true }
 						),
 						annualPrice: formatCurrency(
-							eCommercePlanPrices.annualPlanPrice,
-							eCommercePlanPrices.currencyCode,
+							targetPlanPrices.annualPlanPrice,
+							targetPlanPrices.currencyCode,
 							{ stripZeros: true }
 						),
 					},
@@ -87,8 +107,8 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 				{
 					args: {
 						monthlyPrice: formatCurrency(
-							eCommercePlanPrices.monthlyPlanPrice,
-							eCommercePlanPrices.currencyCode,
+							targetPlanPrices.monthlyPlanPrice,
+							targetPlanPrices.currencyCode,
 							{ stripZeros: true }
 						),
 					},
@@ -136,7 +156,7 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 			<Card className="e-commerce-trial-plans__price-card">
 				<div className="e-commerce-trial-plans__price-card-text">
 					<span className="e-commerce-trial-plans__price-card-title">
-						{ targetECommercePlan.getTitle() }
+						{ targetPlan.getTitle() }
 					</span>
 					<span className="e-commerce-trial-plans__price-card-subtitle">
 						{ translate( 'Accelerate your growth with advanced features.' ) }
@@ -156,7 +176,7 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 					<Button
 						className="e-commerce-trial-plans__price-card-cta"
 						primary
-						onClick={ redirectToCheckoutForPlan }
+						onClick={ () => redirectToCheckoutForPlan( 'main-price-card' ) }
 					>
 						{ translate( 'Upgrade now' ) }
 					</Button>
@@ -164,14 +184,14 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 			</Card>
 
 			<div className="e-commerce-trial-plans__features-wrapper">
-				{ eCommercePlanFeatureSets.map( ( featureSet ) => (
+				{ wooExpressMediumPlanFeatureSets.map( ( featureSet ) => (
 					<TrialFeatureCard key={ featureSet.title } { ...featureSet } />
 				) ) }
 			</div>
 			<div className="e-commerce-trial-plans__cta-wrapper">
 				<Button
 					className="e-commerce-trial-plans__cta is-primary"
-					onClick={ redirectToCheckoutForPlan }
+					onClick={ () => redirectToCheckoutForPlan( 'footer' ) }
 				>
 					{ translate( 'Upgrade now' ) }
 				</Button>

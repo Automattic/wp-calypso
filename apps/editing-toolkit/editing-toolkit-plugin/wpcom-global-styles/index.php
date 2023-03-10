@@ -343,7 +343,9 @@ function wpcom_premium_global_styles_is_site_exempt( $blog_id = 0 ) {
 
 	switch_to_blog( $blog_id );
 
-	add_blog_sticker( 'wpcom-premium-global-styles-exemption-checked', null, null, $blog_id );
+	$note = 'See https://wp.me/p7DVsv-fY6#comment-44778';
+
+	add_blog_sticker( 'wpcom-premium-global-styles-exemption-checked', $note, null, $blog_id );
 
 	$global_styles_used = false;
 
@@ -361,7 +363,7 @@ function wpcom_premium_global_styles_is_site_exempt( $blog_id = 0 ) {
 	}
 
 	if ( $global_styles_used ) {
-		add_blog_sticker( 'wpcom-premium-global-styles-exempt', null, null, $blog_id );
+		add_blog_sticker( 'wpcom-premium-global-styles-exempt', $note, null, $blog_id );
 	}
 
 	restore_current_blog();

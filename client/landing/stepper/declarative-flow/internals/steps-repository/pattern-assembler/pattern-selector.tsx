@@ -10,7 +10,6 @@ type PatternSelectorProps = {
 	patterns: Pattern[];
 	onSelect: ( selectedPattern: Pattern | null ) => void;
 	onBack: () => void;
-	onDoneClick: () => void;
 	selectedPattern: Pattern | null;
 	emptyPatternText?: string;
 };
@@ -20,7 +19,6 @@ const PatternSelector = ( {
 	patterns,
 	onSelect,
 	onBack,
-	onDoneClick,
 	selectedPattern,
 	emptyPatternText,
 }: PatternSelectorProps ) => {
@@ -53,16 +51,6 @@ const PatternSelector = ( {
 						onSelect={ onSelect }
 					/>
 				</div>
-			</div>
-			<div className="pattern-selector__footer">
-				<NavigatorBackButton
-					as={ Button }
-					className="pattern-assembler__button"
-					onClick={ onDoneClick }
-					primary
-				>
-					{ translate( 'Done' ) }
-				</NavigatorBackButton>
 			</div>
 		</div>
 	);
