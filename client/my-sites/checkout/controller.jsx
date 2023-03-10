@@ -51,7 +51,7 @@ export function checkoutAkismetSiteless( context, next ) {
 	sitelessCheckout( context, next, { isAkismetSitelessCheckout: true } );
 }
 
-function sitelessCheckout( context, next, props ) {
+function sitelessCheckout( context, next, extraProps ) {
 	const state = context.store.getState();
 	const isLoggedOut = ! isUserLoggedIn( state );
 	const { productSlug: product } = context.params;
@@ -80,7 +80,7 @@ function sitelessCheckout( context, next, props ) {
 				isLoggedOutCart={ isLoggedOut }
 				isNoSiteCart={ true }
 				isUserComingFromLoginForm={ isUserComingFromLoginForm }
-				{ ...props }
+				{ ...extraProps }
 			/>
 		</>
 	);
