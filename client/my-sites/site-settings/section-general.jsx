@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 import GeneralForm from 'calypso/my-sites/site-settings/form-general';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
+import isSiteStaging from 'calypso/state/selectors/is-site-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import P2PreapprovedDomainsForm from './settings-p2/preapproved-domains';
@@ -21,6 +22,6 @@ export default connect( ( state ) => {
 		site: site,
 		isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 		isP2Hub: isSiteP2Hub( state, siteId ),
-		isStagingSite: site.is_wpcom_staging_site,
+		isStagingSite: isSiteStaging( state, siteId ),
 	};
 } )( SiteSettingsGeneral );
