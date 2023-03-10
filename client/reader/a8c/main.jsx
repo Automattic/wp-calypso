@@ -28,6 +28,9 @@ export default function A8CFollowing( props ) {
 				<Button compact onClick={ markAllAsSeen } disabled={ ! feedsInfo.unseenCount }>
 					{ translate( 'Mark all as seen' ) }
 				</Button>
+				<Button primary compact className="following__manage" href="/following/manage">
+					{ translate( 'Manage' ) }
+				</Button>
 			</SectionHeader>
 		</Stream>
 	);
