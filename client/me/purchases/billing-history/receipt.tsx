@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { Button, Card } from '@automattic/components';
+import { Button, Card, CompactCard } from '@automattic/components';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -121,6 +121,8 @@ export function ReceiptBody( {
 	const moment = useLocalizedMoment();
 	const title = translate( 'Visit %(url)s', { args: { url: transaction.url }, textOnly: true } );
 	const serviceLink = <a href={ transaction.url } title={ title } />;
+	const link = 'https://google.com';
+	const labelContent = translate( 'View tax invoice' );
 
 	return (
 		<div>
@@ -170,6 +172,14 @@ export function ReceiptBody( {
 					</Button>
 				</div>
 			</Card>
+			<CompactCard
+				href={ link }
+				rel="noopener noreferrer"
+				target="_blank"
+				className="billing-history__tax-receipt-link"
+			>
+				{ labelContent }
+			</CompactCard>
 		</div>
 	);
 }

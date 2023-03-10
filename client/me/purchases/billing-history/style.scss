@@ -476,3 +476,9 @@ textarea.billing-history__billing-details-editable {
 		left: 170px;
 	}
 }
+
+@media ( min-width: 480px ) {
+	.billing-history__tax-receipt-link {
+		margin-top: 16px;
+	}
+}
