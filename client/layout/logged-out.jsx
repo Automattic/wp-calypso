@@ -159,7 +159,7 @@ const LayoutLoggedOut = ( {
 						currentRoute={ currentRoute }
 						isLoggedIn={ isLoggedIn }
 						onLanguageChange={ ( e ) => {
-							navigate( `${ e.target.value }${ pathNameWithoutLocale }` );
+							navigate( `/${ e.target.value }/${ pathNameWithoutLocale }` );
 							window.location.reload();
 						} }
 					/>
@@ -172,7 +172,7 @@ const LayoutLoggedOut = ( {
 			{ [ 'themes', 'theme' ].includes( sectionName ) && (
 				<UniversalNavbarFooter
 					onLanguageChange={ ( e ) => {
-						navigate( `${ e.target.value }${ pathNameWithoutLocale }` );
+						navigate( `/${ e.target.value }/${ pathNameWithoutLocale }` );
 						window.location.reload();
 					} }
 					currentRoute={ currentRoute }
