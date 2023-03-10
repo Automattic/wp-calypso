@@ -54,7 +54,7 @@ export async function showDSP(
 	siteId: number | string,
 	postId: number | string,
 	onClose: () => void,
-	source?: string,
+	source: string,
 	translateFn: ( value: string, options?: any ) => string,
 	domNodeOrId?: HTMLElement | string | null,
 	setShowCancelButton?: ( show: boolean ) => void,

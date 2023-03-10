@@ -16,7 +16,8 @@ interface Props {
 export default function PostsList( { content, isLoading }: Props ) {
 	const { isModalOpen, selectedSiteId, selectedPostId, keyValue } = usePromoteParams();
 	const currentQuery = useSelector( getCurrentQueryArguments );
-	const source = currentQuery?.[ 'source' ];
+	const sourceQuery = currentQuery?.[ 'source' ];
+	const source = sourceQuery ? sourceQuery.toString() : undefined;
 
 	const isEmpty = ! content || ! content.length;
 	return (
