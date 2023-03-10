@@ -556,10 +556,7 @@ export function siteSelection( context, next ) {
 				} else {
 					// If the site has loaded but siteId is still invalid then redirect to allSitesPath.
 					const siteFragmentOffset = context.path.indexOf( `/${ siteFragment }` );
-					const allSitesPath = addQueryArgs(
-						{ site: siteFragment },
-						context.path.substring( 0, siteFragmentOffset )
-					);
+					const allSitesPath = context.path.substring( 0, siteFragmentOffset );
 					page.redirect( allSitesPath );
 				}
 			} );

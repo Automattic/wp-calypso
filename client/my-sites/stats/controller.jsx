@@ -209,7 +209,7 @@ export function redirectToDefaultWordAdsPeriod( context ) {
 	if ( siteFragment ) {
 		page.redirect( `/stats/ads/day/${ siteFragment }` );
 	} else {
-		page.redirect( getStatsDefaultSitePage( siteFragment ) );
+		page.redirect( getStatsDefaultSitePage() );
 	}
 }
 

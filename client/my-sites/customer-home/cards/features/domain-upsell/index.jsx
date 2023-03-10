@@ -209,7 +209,7 @@ export function RenderDomainUpsell( {
 					<div className="card">
 						<span>{ domainSuggestionName }</span>
 						{ domainSuggestion?.domain_name ? (
-							<div className="badge badge--success">{ translate( 'Available' ) }</div>
+							<div className="badge badge--success">{ translate( 'Recommended' ) }</div>
 						) : (
 							<div className="badge">
 								<Spinner />
@@ -220,7 +220,7 @@ export function RenderDomainUpsell( {
 
 				<div className="domain-upsell-actions">
 					<Button href={ searchLink } onClick={ getSearchClickHandler }>
-						{ translate( 'Search for a domain' ) }
+						{ translate( 'Search for another domain' ) }
 					</Button>
 					<Button primary onClick={ getCtaClickHandler } busy={ ctaIsBusy }>
 						{ translate( 'Buy this domain' ) }
