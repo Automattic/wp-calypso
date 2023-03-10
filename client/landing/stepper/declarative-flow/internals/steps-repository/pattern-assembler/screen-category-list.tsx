@@ -41,18 +41,16 @@ const ScreenCategoryList = ( {
 	const sectionPatterns = useSectionPatterns();
 	const categoriesInOrder = useCategoriesOrder( categories );
 
-	const handleFocusOutside = () => {
-		setOpenPatternList( false );
-		setSelectedCategory( null );
+	const handleFocusOutside = ( event: Event ) => {
+		// Click on large preview to close Pattern List
+		if ( ( event.target as HTMLElement ).closest( '.pattern-large-preview' ) ) {
+			setOpenPatternList( false );
+			setSelectedCategory( null );
+		}
 	};
-
 	useEffect( () => {
-		wrapperRef?.current?.addEventListener( 'click', ( event ) => {
-			// Click on large preview to close Pattern List
-			if ( ( event.target as HTMLElement ).closest( '.pattern-large-preview' ) ) {
-				handleFocusOutside();
-			}
-		} );
+		wrapperRef?.current?.addEventListener( 'click', handleFocusOutside );
+		return () => wrapperRef?.current?.removeEventListener( 'click', handleFocusOutside );
 	}, [] );
 
 	return (
