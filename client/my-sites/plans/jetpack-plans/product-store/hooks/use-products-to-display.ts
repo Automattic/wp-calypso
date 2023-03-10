@@ -12,22 +12,15 @@ export const useProductsToDisplay = ( { siteId, duration }: ItemToDisplayProps )
 	const { availableProducts, purchasedProducts, includedInPlanProducts } =
 		useGetPlansGridProducts( siteId );
 
+	const allAvailableProducts = useMemo( () => {
+		const moreAvailableProducts = [ ...JETPACK_CRM_PRODUCTS ].map(
+			slugToSelectorProduct
+		) as SelectorProduct[];
+
+		return [ ...availableProducts, ...moreAvailableProducts ] as SelectorProduct[];
+	}, [ availableProducts ] );
+
 	return useMemo( () => {
-		const crmIncludedOrPurchased = [ ...purchasedProducts, ...includedInPlanProducts ].some(
-			( p ) => ( JETPACK_CRM_PRODUCTS as ReadonlyArray< string > ).includes( p.productSlug )
-		);
-
-		const allAvailableProducts: SelectorProduct[] = [ ...availableProducts ];
-
-		// Guard against double-including CRM in the list of products
-		if ( ! crmIncludedOrPurchased ) {
-			const externalCrmProducts = JETPACK_CRM_PRODUCTS.map(
-				slugToSelectorProduct
-			) as SelectorProduct[];
-
-			allAvailableProducts.push( ...externalCrmProducts );
-		}
-
 		const allItems = getProductsToDisplay( {
 			duration,
 			availableProducts: allAvailableProducts,
@@ -36,5 +29,5 @@ export const useProductsToDisplay = ( { siteId, duration }: ItemToDisplayProps )
 		} );
 
 		return isolatePopularItems( allItems, MOST_POPULAR_PRODUCTS );
-	}, [ duration, availableProducts, purchasedProducts, includedInPlanProducts ] );
+	}, [ duration, allAvailableProducts, purchasedProducts, includedInPlanProducts ] );
 };
