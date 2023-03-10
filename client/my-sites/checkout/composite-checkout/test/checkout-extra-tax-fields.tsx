@@ -38,8 +38,8 @@ jest.mock( 'calypso/lib/navigate' );
 // it.each; it's not clear but the timeout might apply to the whole loop
 // rather that each iteration?), so we need to increase the timeout for their
 // operation. The standard timeout (at the time of writing) is 5 seconds so
-// we are increasing this to 8 seconds.
-jest.setTimeout( 8000 );
+// we are increasing this to 12 seconds.
+jest.setTimeout( 12000 );
 
 describe( 'Checkout contact step extra tax fields', () => {
 	const mainCartKey: CartKey = 'foo.com' as CartKey;
