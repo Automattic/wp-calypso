@@ -93,7 +93,7 @@ const ScreenCategoryList = ( {
 							} }
 						>
 							<span>{ label }</span>
-							<Icon icon={ chevronRight } size={ 22 } />
+							<Icon icon={ chevronRight } size={ 24 } />
 						</Button>
 					);
 				} ) }
