@@ -21,6 +21,7 @@ export type BlazePressPromotionProps = {
 	siteId: string | number;
 	postId: string | number;
 	keyValue: string;
+	source?: string;
 };
 
 type BlazePressTranslatable = ( original: string, extra?: TranslateOptionsText ) => string;
@@ -75,12 +76,14 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 				if ( props.siteId === null || props.postId === null ) {
 					return;
 				}
+				const source = props.source || 'blazepress';
 
 				await showDSP(
 					selectedSiteSlug,
 					props.siteId,
 					props.postId,
 					onClose,
+					source,
 					( original: string, options?: TranslateOptionsText ): string => {
 						if ( options ) {
 							// This is a special case where we re-use the translate in another application
