@@ -62,7 +62,7 @@ const ColorPaletteVariation = ( {
 		>
 			<div className="global-styles-variation__item-preview">
 				<GlobalStylesContext.Provider value={ context }>
-					<ColorPaletteVariationPreview />
+					<ColorPaletteVariationPreview title={ colorPaletteVariation.title } />
 				</GlobalStylesContext.Provider>
 			</div>
 		</div>

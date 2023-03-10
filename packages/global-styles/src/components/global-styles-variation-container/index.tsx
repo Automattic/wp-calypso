@@ -4,19 +4,18 @@ import {
 } from '@wordpress/block-editor';
 import { useGlobalStylesOutput } from '@wordpress/edit-site/build-module/components/global-styles/use-global-styles-output';
 import { useMemo } from 'react';
-import { STYLE_PREVIEW_HEIGHT } from '../../constants';
 import './style.scss';
 
 interface Props {
 	width: number | null;
-	ratio: number;
+	height: number;
 	containerResizeListener: JSX.Element;
 	children: JSX.Element;
 }
 
 const GlobalStylesVariationContainer = ( {
 	width,
-	ratio,
+	height,
 	containerResizeListener,
 	children,
 	...props
@@ -29,7 +28,7 @@ const GlobalStylesVariationContainer = ( {
 			return [
 				...styles,
 				{
-					css: 'html{overflow:hidden}body{min-width: 0;padding: 0;border: none;}',
+					css: 'html{overflow:hidden}body{min-width: 0;padding: 0;border: none;transform:scale(1);}',
 					isGlobalStyles: true,
 				},
 			];
@@ -43,8 +42,8 @@ const GlobalStylesVariationContainer = ( {
 			className="global-styles-variation-container__iframe"
 			head={ <EditorStyles styles={ editorStyles } /> }
 			style={ {
-				height: Math.ceil( STYLE_PREVIEW_HEIGHT * ratio ),
-				visibility: ! width ? 'hidden' : 'visible',
+				height,
+				visibility: width ? 'visible' : 'hidden',
 			} }
 			tabIndex={ -1 }
 			{ ...props }
