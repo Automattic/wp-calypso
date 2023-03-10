@@ -45,7 +45,6 @@
 		"i18n/translation-scanner": true,
 		"inline-help": true,
 		"jetpack/api-cache": true,
-		"jetpack/app-branding": true,
 		"jetpack/backup-messaging-i3": true,
 		"jetpack/backup-retention-settings": true,
 		"jetpack/cancel-through-main-flow": true,
