@@ -1,5 +1,6 @@
 export interface CurrencyFormatter {
 	setDefaultLocale: ( locale: string ) => void;
+	setCurrencySymbol: ( currencyCode: string, currencySymbol: string | undefined ) => void;
 	formatCurrency: (
 		amount: number,
 		currencyCode: string,

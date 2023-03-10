@@ -205,6 +205,26 @@ export function createFormatter(): CurrencyFormatter {
 		return code;
 	}
 
+	/**
+	 * Change the currency symbol override used by formatting.
+	 *
+	 * By default, `formatCurrency` and `getCurrencyObject` use a currency symbol
+	 * from a list of hard-coded overrides in this package keyed by the currency
+	 * code. For example, `CAD` is always rendered as `C$` even if the locale is
+	 * `en-CA` which would normally render the symbol `$`.
+	 *
+	 * With this function, you can change the override used by any given currency.
+	 *
+	 * Note that this is global and will take effect no matter the locale! Use it
+	 * with care.
+	 */
+	function setCurrencySymbol( currencyCode: string, currencySymbol: string | undefined ): void {
+		if ( ! currencyOverrides[ currencyCode ] ) {
+			currencyOverrides[ currencyCode ] = {};
+		}
+		currencyOverrides[ currencyCode ].symbol = currencySymbol;
+	}
+
 	function getCurrencyOverride( code: string ): CurrencyOverride | undefined {
 		return currencyOverrides[ code ] ?? defaultCurrencyOverrides[ code ];
 	}
@@ -226,6 +246,7 @@ export function createFormatter(): CurrencyFormatter {
 	return {
 		formatCurrency,
 		getCurrencyObject,
+		setCurrencySymbol,
 		setDefaultLocale,
 	};
 }
@@ -388,6 +409,12 @@ export function setDefaultLocale(
 	...args: Parameters< typeof defaultFormatter.setDefaultLocale >
 ) {
 	return defaultFormatter.setDefaultLocale( ...args );
+}
+
+export function setCurrencySymbol(
+	...args: Parameters< typeof defaultFormatter.setCurrencySymbol >
+) {
+	return defaultFormatter.setCurrencySymbol( ...args );
 }
 
 export default defaultFormatter.formatCurrency;
