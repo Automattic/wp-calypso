@@ -1,4 +1,3 @@
-import { EmptyObject } from 'redux';
 import type { ReactChild } from 'react';
 
 // All types based on which the data is populated on the agency dashboard table rows
