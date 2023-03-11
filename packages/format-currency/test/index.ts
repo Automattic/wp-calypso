@@ -24,7 +24,10 @@ describe( 'getCurrencyObject default export', () => {
 
 describe( 'formatCurrency', () => {
 	let formatter: CurrencyFormatter;
+	const originalFetch = globalThis.fetch;
+
 	beforeEach( () => {
+		globalThis.fetch = originalFetch;
 		formatter = createFormatter();
 	} );
 
@@ -117,6 +120,38 @@ describe( 'formatCurrency', () => {
 	test( 'returns a number in latin numbers even for locales which default to other character sets', () => {
 		const money = formatter.formatCurrency( 9800900, 'INR', { locale: 'mr-IN' } );
 		expect( money ).toBe( '₹9,800,900.00' );
+	} );
+
+	test( 'sets USD currency symbol to $ if geolocation is US', async () => {
+		globalThis.fetch = jest.fn(
+			( url: string ) =>
+				Promise.resolve( {
+					json: () =>
+						url.includes( '/geo' )
+							? Promise.resolve( { country_short: 'US' } )
+							: Promise.resolve( 'invalid' ),
+				} ) as any
+		);
+		formatter = createFormatter();
+		await formatter.detectGeolocation();
+		const money = formatter.formatCurrency( 9800900.32, 'USD' );
+		expect( money ).toBe( '$9,800,900.32' );
+	} );
+
+	test( 'sets USD currency symbol to US$ if geolocation is not US', async () => {
+		globalThis.fetch = jest.fn(
+			( url: string ) =>
+				Promise.resolve( {
+					json: () =>
+						url.includes( '/geo' )
+							? Promise.resolve( { country_short: 'CA' } )
+							: Promise.resolve( 'invalid' ),
+				} ) as any
+		);
+		formatter = createFormatter();
+		await formatter.detectGeolocation();
+		const money = formatter.formatCurrency( 9800900.32, 'USD' );
+		expect( money ).toBe( 'US$9,800,900.32' );
 	} );
 
 	describe( 'specific currencies', () => {
