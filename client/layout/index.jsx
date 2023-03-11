@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { HelpCenter } from '@automattic/data-stores';
+import { detectGeolocation } from '@automattic/format-currency';
 import { shouldShowHelpCenterToUser, shouldLoadInlineHelp } from '@automattic/help-center';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
@@ -152,6 +153,8 @@ class Layout extends Component {
 	};
 
 	componentDidMount() {
+		detectGeolocation();
+
 		if ( ! config.isEnabled( 'me/account/color-scheme-picker' ) ) {
 			return;
 		}
