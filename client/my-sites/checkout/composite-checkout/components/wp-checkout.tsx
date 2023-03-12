@@ -397,12 +397,7 @@ export default function WPCheckout( {
 								reduxDispatch( removeNotice( 'vat_info_notice' ) );
 								if ( shouldShowContactDetailsValidationErrors ) {
 									reduxDispatch(
-										errorNotice(
-											translate(
-												'Your Business Tax ID details are not valid. Please check each field and try again.'
-											),
-											{ id: 'vat_info_notice' }
-										)
+										errorNotice( ( error as Error ).message, { id: 'vat_info_notice' } )
 									);
 								}
 								return false;
