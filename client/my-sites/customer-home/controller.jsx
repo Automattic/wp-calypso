@@ -1,11 +1,12 @@
 import { isEcommerce } from '@automattic/calypso-products/src';
 import page from 'page';
-import { fetchLaunchpad } from 'calypso/data/sites/use-launchpad';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
+import { requestSite } from 'calypso/state/sites/actions';
 import {
 	canCurrentUserUseCustomerHome,
+	getSiteOptions,
 	getSiteUrl,
 	getSitePlan,
 } from 'calypso/state/sites/selectors';
@@ -37,10 +38,24 @@ export async function maybeRedirect( context, next ) {
 	}
 
 	const siteId = getSelectedSiteId( state );
-	const { launchpad_screen, site_intent } = await fetchLaunchpad( slug );
+	const maybeStalelaunchpadScreenOption = getSiteOptions( state, siteId )?.launchpad_screen;
 
+	// We need the latest site info to determine if a user should be redirected to Launchpad.
+	// As a result, we can't use locally cached data, which might think that Launchpad is
+	// still enabled when, in reality, the final tasks have been completed and everything is
+	// disabled. Because of this, we refetch site information and limit traffic by scoping down
+	// requests to launchpad enabled sites.
+	// See https://cylonp2.wordpress.com/2022/09/19/question-about-infinite-redirect/#comment-1731
+	if (
+		( maybeStalelaunchpadScreenOption && maybeStalelaunchpadScreenOption === 'full' ) ||
+		getQueryArgs()?.showLaunchpad === 'true'
+	) {
+		await context.store.dispatch( requestSite( siteId ) );
+	}
+
+	const refetchedOptions = getSiteOptions( context.store.getState(), siteId );
 	const shouldRedirectToLaunchpad =
-		launchpad_screen === 'full' &&
+		refetchedOptions?.launchpad_screen === 'full' &&
 		// Temporary hack/band-aid to resolve a stale issue with atomic that the requestSite
 		// dispatch above doesnt always seem to resolve.
 		getQueryArgs()?.launchpadComplete !== 'true';
@@ -50,7 +65,7 @@ export async function maybeRedirect( context, next ) {
 		// client-side router, so page.redirect won't work. We need to use the
 		// traditional window.location Web API.
 		const verifiedParam = getQueryArgs()?.verified;
-		redirectToLaunchpad( slug, site_intent, verifiedParam );
+		redirectToLaunchpad( slug, refetchedOptions?.site_intent, verifiedParam );
 		return;
 	}
 
