@@ -1,13 +1,13 @@
 import { Icon, info } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import domainRegisteredSuccess from 'calypso/assets/images/domains/domain.svg';
+import { useLaunchpad } from 'calypso/data/sites/use-launchpad';
 import {
 	buildDomainStepForLaunchpadNextSteps,
 	buildDomainStepForProfessionalEmail,
 } from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/index';
 import { domainManagementList, createSiteFromDomainOnly } from 'calypso/my-sites/domains/paths';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
-import { useSiteOption } from 'calypso/state/sites/hooks';
 import type {
 	DomainThankYouParams,
 	DomainThankYouProps,
@@ -32,12 +32,11 @@ const DomainRegistrationThankYouProps = ( {
 		true
 	);
 
-	const siteIntent = useSiteOption( 'site_intent' );
-	const launchpadScreen = useSiteOption( 'launchpad_screen' );
+	const { data: launchpadData } = useLaunchpad( selectedSiteSlug );
 
 	const launchpadNextSteps = buildDomainStepForLaunchpadNextSteps(
-		siteIntent as string,
-		launchpadScreen as string,
+		launchpadData?.site_intent as string,
+		launchpadData?.launchpad_screen as string,
 		selectedSiteSlug,
 		'REGISTRATION',
 		true

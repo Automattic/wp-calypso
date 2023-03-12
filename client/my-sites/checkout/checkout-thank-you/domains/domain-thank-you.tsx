@@ -6,13 +6,13 @@ import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import { ThankYou } from 'calypso/components/thank-you';
 import WordPressLogo from 'calypso/components/wordpress-logo';
+import { useLaunchpad } from 'calypso/data/sites/use-launchpad';
 import domainThankYouContent from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content';
 import {
 	DomainThankYouProps,
 	DomainThankYouType,
 } from 'calypso/my-sites/checkout/checkout-thank-you/domains/types';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
-import { useSiteOption } from 'calypso/state/sites/hooks';
 import { hideMasterbar, showMasterbar } from 'calypso/state/ui/masterbar-visibility/actions';
 
 import './style.scss';
@@ -45,9 +45,8 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 		} );
 	}, [ type, domain, selectedSiteSlug, email, hasProfessionalEmail, hideProfessionalEmailStep ] );
 	const dispatch = useDispatch();
-	const launchpadScreen = useSiteOption( 'launchpad_screen' );
-	const isLaunchpadEnabled = launchpadScreen === 'full';
-	const siteIntent = useSiteOption( 'site_intent' );
+	const { data: launchpadData } = useLaunchpad( selectedSiteSlug );
+	const isLaunchpadEnabled = launchpadData?.launchpad_screen === 'full';
 
 	useEffect( () => {
 		dispatch( hideMasterbar() );
@@ -80,7 +79,7 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 
 	return (
 		<>
-			{ renderHeader( isLaunchpadEnabled, siteIntent as string ) }
+			{ renderHeader( isLaunchpadEnabled, launchpadData?.site_intent as string ) }
 			<ThankYou
 				headerBackgroundColor="var( --studio-white )"
 				containerClassName="checkout-thank-you__domains"
