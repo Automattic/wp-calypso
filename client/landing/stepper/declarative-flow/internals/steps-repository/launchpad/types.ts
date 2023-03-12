@@ -31,3 +31,9 @@ export interface LaunchpadStatuses {
 	publish_first_course?: boolean;
 	plan_completed?: boolean;
 }
+
+export interface LaunchpadResponse {
+	site_intent: string;
+	launchpad_screen: boolean | string;
+	checklist_statuses: LaunchpadStatuses[];
+}

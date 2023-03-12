@@ -31,8 +31,9 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 	const siteSlug = useSiteSlugParam();
 	const verifiedParam = useQuery().get( 'verified' );
 	const site = useSite();
-	const { data } = useLaunchpad( siteSlug || '', false );
-	const { launchpad_screen } = data || {};
+	const {
+		data: { launchpad_screen },
+	} = useLaunchpad( siteSlug || '', false );
 	const recordSignupComplete = useRecordSignupComplete( flow );
 	const dispatch = useDispatch();
 	const isLoggedIn = useSelector( isUserLoggedIn );

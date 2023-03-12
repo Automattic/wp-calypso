@@ -16,5 +16,10 @@ export const useLaunchpad = ( siteSlug: string, cache = true ) => {
 			persist: cache,
 		},
 		enabled: true,
+		initialData: {
+			checklist_statuses: {},
+			launchpad_screen: undefined,
+			site_intent: '',
+		},
 	} );
 };

@@ -3,10 +3,12 @@
  */
 import config from '@automattic/calypso-config';
 import { Site } from '@automattic/data-stores';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { useDispatch } from '@wordpress/data';
+import nock from 'nock';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import Sidebar from '../sidebar';
 import { defaultSiteDetails, buildSiteDetails, buildDomainResponse } from './lib/fixtures';
 
@@ -58,12 +60,26 @@ function renderSidebar( props, siteDetails = defaultSiteDetails ) {
 		);
 	}
 
-	render( <TestSidebar { ...props } /> );
+	renderWithProvider( <TestSidebar { ...props } /> );
 }
 
 describe( 'Sidebar', () => {
+	beforeEach( () => {
+		//https://public-api.wordpress.com/wpcom/v2/sites/freesiteflow155.blog/launchpad?_envelope=1
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.get( `/wpcom/v2/sites/${ siteSlug }/launchpad` )
+			.reply( 200, {
+				// The endpoint doesn't return `found` for Jetpack sites
+				checklist_statuses: {},
+				launchpad_screen: 'full',
+				site_intent: 'z',
+			} );
+	} );
+
 	afterEach( () => {
 		props.sidebarDomain = sidebarDomain;
+		nock.cleanAll();
 	} );
 
 	it( 'displays an escape hatch from Launchpad that will take the user to Calypso my Home', () => {

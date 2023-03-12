@@ -3,17 +3,40 @@
  */
 import config from '@automattic/calypso-config';
 import { Site } from '@automattic/data-stores';
-import { render } from '@testing-library/react';
 import { useDispatch } from '@wordpress/data';
+import nock from 'nock';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
+import * as useSiteHook from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { createReduxStore } from 'calypso/state';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import Launchpad from '../index';
 import { buildSiteDetails, defaultSiteDetails } from './lib/fixtures';
+
+// JSDOM doesn't support browser navigation, so we temporarily mock the
+// window.location object
+const replaceMock = jest.fn();
+declare global {
+	interface Window {
+		initialReduxState: object;
+	}
+}
+const savedWindow = window;
+global.window = Object.create( window );
+Object.defineProperty( window, 'location', {
+	value: { replace: replaceMock },
+} );
+
+const siteSlug = `testlinkinbio.wordpress.com`;
+const user = {
+	ID: 1234,
+	username: 'testUser',
+	email: 'testEmail@gmail.com',
+};
 
 jest.mock( '../launchpad-site-preview', () => () => {
 	return <div></div>;
@@ -38,26 +61,9 @@ jest.mock( 'calypso/state/sites/hooks/use-premium-global-styles', () => ( {
 	} ),
 } ) );
 
-// JSDOM doesn't support browser navigation, so we temporarily mock the
-// window.location object
-const replaceMock = jest.fn();
-declare global {
-	interface Window {
-		initialReduxState: object;
-	}
-}
-const savedWindow = window;
-global.window = Object.create( window );
-Object.defineProperty( window, 'location', {
-	value: { replace: replaceMock },
-} );
-
-const siteSlug = `testlinkinbio.wordpress.com`;
-const user = {
-	ID: 1234,
-	username: 'testUser',
-	email: 'testEmail@gmail.com',
-};
+// jest.mock( 'calypso/landing/stepper/hooks/use-site-slug-param', () => ( {
+// 	useSiteSlugParam: () => siteSlug,
+// } ) );
 
 function renderLaunchpad(
 	props = {},
@@ -89,7 +95,7 @@ function renderLaunchpad(
 		);
 	}
 
-	render( <TestLaunchpad { ...props } /> );
+	renderWithProvider( <TestLaunchpad { ...props } /> );
 }
 
 describe( 'Launchpad', () => {
@@ -108,6 +114,10 @@ describe( 'Launchpad', () => {
 		jest.clearAllMocks();
 	} );
 
+	afterEach( () => {
+		nock.cleanAll();
+	} );
+
 	afterAll( () => {
 		global.window = savedWindow;
 	} );
@@ -115,6 +125,14 @@ describe( 'Launchpad', () => {
 	describe( 'when loading the Launchpad view', () => {
 		describe( 'and the site is launchpad enabled', () => {
 			it( 'does not redirect', () => {
+				nock( 'https://public-api.wordpress.com' )
+					.persist()
+					.get( `/wpcom/v2/sites/${ siteSlug }/launchpad` )
+					.reply( 200, {
+						checklist_statuses: {},
+						launchpad_screen: 'full',
+						site_intent: '',
+					} );
 				const initialReduxState = { currentUser: { id: user.ID } };
 				renderLaunchpad( props, defaultSiteDetails, initialReduxState, siteSlug );
 				expect( replaceMock ).not.toBeCalled();
@@ -124,8 +142,15 @@ describe( 'Launchpad', () => {
 		describe( 'and the site is not launchpad enabled', () => {
 			it( 'redirects to Calypso My Home', () => {
 				const initialReduxState = { currentUser: { id: user.ID } };
+				nock( 'https://public-api.wordpress.com' )
+					.get( `/wpcom/v2/sites/${ siteSlug }/launchpad` )
+					.reply( 200, {
+						checklist_statuses: {},
+						launchpad_screen: 'off',
+						site_intent: '',
+					} );
 				renderLaunchpad(
-					props,
+					{ ...props, flow: 'link-in-bio' },
 					buildSiteDetails( {
 						options: {
 							...defaultSiteDetails.options,
@@ -142,6 +167,13 @@ describe( 'Launchpad', () => {
 
 		describe( 'user is logged out', () => {
 			it( 'should redirect user to Calypso My Home', () => {
+				nock( 'https://public-api.wordpress.com' )
+					.get( `/wpcom/v2/sites/${ siteSlug }/launchpad` )
+					.reply( 200, {
+						checklist_statuses: {},
+						launchpad_screen: 'off',
+						site_intent: '',
+					} );
 				renderLaunchpad(
 					props,
 					buildSiteDetails( {
@@ -159,7 +191,16 @@ describe( 'Launchpad', () => {
 
 		describe( 'site slug does not exist', () => {
 			it( 'should redirect user to Calypso My Home', () => {
+				jest.spyOn( useSiteHook, 'useSiteSlugParam' ).mockImplementation( () => null );
+
 				const initialReduxState = { currentUser: { id: user.ID } };
+				nock( 'https://public-api.wordpress.com' )
+					.get( `/wpcom/v2/sites/${ siteSlug }/launchpad` )
+					.reply( 200, {
+						checklist_statuses: {},
+						launchpad_screen: 'off',
+						site_intent: '',
+					} );
 				renderLaunchpad(
 					props,
 					buildSiteDetails( {

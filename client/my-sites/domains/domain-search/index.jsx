@@ -16,6 +16,7 @@ import EmailVerificationGate from 'calypso/components/email-verification/email-v
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
+import { fetchLaunchpad } from 'calypso/data/sites/use-launchpad';
 import {
 	hasPlan,
 	hasDomainInCart,
@@ -73,6 +74,8 @@ class DomainSearch extends Component {
 	state = {
 		domainRegistrationAvailable: true,
 		domainRegistrationMaintenanceEndTime: null,
+		launchpadScreen: undefined,
+		site_intent: '',
 	};
 
 	handleDomainsAvailabilityChange = ( isAvailable, maintenanceEndTime = null ) => {
@@ -110,6 +113,12 @@ class DomainSearch extends Component {
 			document.body.classList.add( 'is-domain-plan-package-flow' );
 		}
 		this.checkSiteIsUpgradeable();
+		fetchLaunchpad( this.props.selectedSiteSlug ).then( ( res ) => {
+			this.setState( {
+				launchpadScreen: res.launchpad_screen,
+				siteIntent: res.site_intent,
+			} );
+		} );
 
 		this.isMounted = true;
 	}
@@ -257,9 +266,6 @@ class DomainSearch extends Component {
 
 		let content;
 
-		const launchpadScreen = this.props.selectedSite?.options?.launchpad_screen;
-		const siteIntent = this.props.selectedSite?.options?.site_intent;
-
 		if ( ! this.state.domainRegistrationAvailable ) {
 			let maintenanceEndTime = translate( 'shortly', {
 				comment: 'If a specific maintenance end time is unavailable, we will show this instead.',
@@ -283,10 +289,10 @@ class DomainSearch extends Component {
 			);
 		} else {
 			const goBackButtonProps =
-				launchpadScreen === 'full'
+				this.state.launchpadScreen === 'full'
 					? {
 							goBackText: translate( 'Next Steps' ),
-							goBackLink: `/setup/${ siteIntent }/launchpad?siteSlug=${ selectedSiteSlug }`,
+							goBackLink: `/setup/${ this.state.siteIntent }/launchpad?siteSlug=${ selectedSiteSlug }`,
 					  }
 					: {
 							goBackLink: `/home/${ selectedSiteSlug }`,

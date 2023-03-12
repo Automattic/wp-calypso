@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
+import { useLaunchpad } from 'calypso/data/sites/use-launchpad';
 import { useInView } from 'calypso/lib/use-in-view';
 import { getDashboardUrl, getLaunchpadUrl } from '../utils';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
@@ -87,6 +88,10 @@ export const SiteLaunchNag = ( { site }: SiteLaunchNagProps ) => {
 	const { __ } = useI18n();
 	const ref = useInView< HTMLAnchorElement >( recordNagView );
 
+	const {
+		data: { launchpad_screen, site_intent },
+	} = useLaunchpad( site?.ID.toString() || '', false );
+
 	// Don't show nag to all Coming Soon sites, only those that are "unlaunched"
 	// That's because sites that have been previously launched before going back to
 	// Coming Soon mode don't have a launch checklist.
@@ -95,10 +100,8 @@ export const SiteLaunchNag = ( { site }: SiteLaunchNagProps ) => {
 	}
 
 	const validSiteIntent =
-		site.options.launchpad_screen === 'full' &&
-		site.options.site_intent &&
-		[ 'link-in-bio' ].includes( site.options.site_intent )
-			? site.options.site_intent
+		launchpad_screen === 'full' && site_intent && [ 'link-in-bio' ].includes( site_intent )
+			? site_intent
 			: false;
 
 	const link = validSiteIntent
