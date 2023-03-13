@@ -14,7 +14,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import CheckoutMain from './composite-checkout/components/checkout-main';
 import PrePurchaseNotices from './composite-checkout/components/prepurchase-notices';
-import type { SitelessCheckoutType } from '@automattic/composite-checkout';
+import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 
 const logCheckoutError = ( error: Error ) => {
 	logToLogstash( {

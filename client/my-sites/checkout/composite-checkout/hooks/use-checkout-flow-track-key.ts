@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { SitelessCheckoutType } from '@automattic/composite-checkout';
+import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 
 interface Props {
 	hasJetpackSiteSlug: boolean;

@@ -3,8 +3,8 @@ import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import type { SitelessCheckoutType } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
+import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { PostCheckoutUrlArguments } from 'calypso/my-sites/checkout/get-thank-you-page-url';
 

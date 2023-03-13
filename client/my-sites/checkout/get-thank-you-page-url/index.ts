@@ -57,8 +57,8 @@ import {
 	persistSignupDestination,
 	retrieveSignupDestination,
 } from 'calypso/signup/storageUtils';
-import type { SitelessCheckoutType } from '@automattic/composite-checkout';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
+import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 
 const debug = debugFactory( 'calypso:composite-checkout:get-thank-you-page-url' );

@@ -31,12 +31,14 @@ import normalizeTransactionResponse from '../lib/normalize-transaction-response'
 import { absoluteRedirectThroughPending, redirectThroughPending } from '../lib/pending-page';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '../lib/translate-payment-method-names';
 import type {
-	SitelessCheckoutType,
 	PaymentEventCallback,
 	PaymentEventCallbackArguments,
 } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
-import type { WPCOMTransactionEndpointResponse } from '@automattic/wpcom-checkout';
+import type {
+	WPCOMTransactionEndpointResponse,
+	SitelessCheckoutType,
+} from '@automattic/wpcom-checkout';
 import type { PostCheckoutUrlArguments } from 'calypso/my-sites/checkout/get-thank-you-page-url';
 import type { CalypsoDispatch } from 'calypso/state/types';
 

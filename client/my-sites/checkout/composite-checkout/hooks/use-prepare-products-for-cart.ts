@@ -7,8 +7,8 @@ import { useEffect, useMemo, useReducer } from 'react';
 import getCartFromLocalStorage from '../lib/get-cart-from-local-storage';
 import useFetchProductsIfNotLoaded from './use-fetch-products-if-not-loaded';
 import useStripProductsFromUrl from './use-strip-products-from-url';
-import type { SitelessCheckoutType } from '@automattic/composite-checkout';
 import type { RequestCartProduct, RequestCartProductExtra } from '@automattic/shopping-cart';
+import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-prepare-products-for-cart' );
 
