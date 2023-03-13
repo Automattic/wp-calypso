@@ -500,7 +500,7 @@ export class PlanFeatures2023Grid extends Component<
 		);
 
 		return planPropertiesObj.map( ( properties ) => {
-			const { currencyCode, discountPrice, planName, rawPrice } = properties;
+			const { planName, rawPrice } = properties;
 			const classes = classNames( 'plan-features-2023-grid__table-item', 'is-bottom-aligned', {
 				'has-border-top': ! isReskinned,
 			} );
@@ -515,10 +515,7 @@ export class PlanFeatures2023Grid extends Component<
 				>
 					{ ! hasNoPrice && (
 						<PlanFeatures2023GridHeaderPrice
-							currencyCode={ currencyCode }
-							discountPrice={ discountPrice }
-							rawPrice={ rawPrice }
-							planName={ planName }
+							planProperties={ properties }
 							is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 							isLargeCurrency={ isLargeCurrency }
 						/>
@@ -1110,6 +1107,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 				tagline,
 				storageOptions,
 				billingPeriod,
+				showMonthlyPrice,
 			};
 		} );
 
