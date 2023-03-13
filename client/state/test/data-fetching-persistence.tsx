@@ -1,8 +1,8 @@
 /**
  * @jest-environment jsdom
  */
+import { QueryClient, QueryClientProvider, useQuery, setLogger } from '@tanstack/react-query';
 import { render, waitFor } from '@testing-library/react';
-import { QueryClient, QueryClientProvider, useQuery, setLogger } from 'react-query';
 import { createWebStoragePersistor } from 'react-query/createWebStoragePersistor-experimental';
 import { persistQueryClient } from 'react-query/persistQueryClient-experimental';
 import { shouldDehydrateQuery } from '../should-dehydrate-query';
