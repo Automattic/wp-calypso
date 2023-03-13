@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon, ShortenedNumber } from '@automattic/components';
-import { Icon, arrowUp, arrowDown, arrowLeft } from '@wordpress/icons';
+import { Icon, arrowUp, arrowDown } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
@@ -95,13 +95,13 @@ export default function SiteStatusContent( {
 		dispatch( unselectLicense( siteId, type ) );
 	};
 
-	function getTrendIcon( viewsTrend: string ) {
+	function getTrendIcon( viewsTrend: 'up' | 'down' | 'same' ) {
 		if ( viewsTrend === 'up' ) {
 			return arrowUp;
 		} else if ( viewsTrend === 'down' ) {
 			return arrowDown;
 		}
-		return arrowLeft;
+		return 'same';
 	}
 
 	if ( type === 'site' ) {
@@ -187,18 +187,28 @@ export default function SiteStatusContent( {
 	if ( type === 'stats' ) {
 		const { total: totalViews, trend: viewsTrend } = rows.stats.data.views;
 		const trendIcon = getTrendIcon( viewsTrend );
+		if ( trendIcon !== 'same' ) {
+			return (
+				<span
+					className={ classNames( 'sites-overview__stats-trend', {
+						'is-up': viewsTrend === 'up',
+						'is-down': viewsTrend === 'down',
+					} ) }
+				>
+					<Icon icon={ trendIcon } size={ 16 } />
+					<div className="sites-overview__stats">
+						<ShortenedNumber value={ totalViews } />
+					</div>
+				</span>
+			);
+		}
 		return (
-			<span
-				className={ classNames( 'sites-overview__stats-trend', {
-					'is-up': viewsTrend === 'up',
-					'is-down': viewsTrend === 'down',
-				} ) }
-			>
-				<Icon icon={ trendIcon } size={ 16 } />
+			<>
+				<span className="sites-overview__stats-trend same"></span>
 				<div className="sites-overview__stats">
 					<ShortenedNumber value={ totalViews } />
 				</div>
-			</span>
+			</>
 		);
 	}
 

@@ -144,11 +144,19 @@
 	display: inline-flex;
 	fill: var(--studio-jetpack-green-40);
 }
-
 .sites-overview__stats-trend.is-down {
 	vertical-align: middle;
 	display: inline-flex;
 	fill: var(--studio-red-50);
+}
+.sites-overview__stats-trend.same {
+	vertical-align: middle;
+	height: 8px;
+	width: 8px;
+	border-radius: 50%;
+	background: var(--studio-gray-5);
+	display: inline-flex;
+	margin-inline-start: 8px;
 }
 .sites-overview__stats span.shortened-number {
 	vertical-align: middle;
@@ -164,6 +172,9 @@
 	position: relative;
 	inset-block-start: 0.25rem;
 	inset-inline-start: 0.25rem;
+}
+.site-card__expanded-content-status .sites-overview__stats-trend.same {
+	margin-top: 8px;
 }
 .sites-overview__disabled {
 	color: var(--studio-gray-5);
