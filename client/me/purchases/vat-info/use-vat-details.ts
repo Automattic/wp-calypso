@@ -40,9 +40,14 @@ async function setVatDetails( vatDetails: VatDetails ): Promise< VatDetails > {
 // part of the ID as we need it formatted, so here we strip the country
 // code out if it is there.
 function stripCountryCodeFromVatId( id: string, country: string | undefined | null ): string {
-	const first2UppercasedChars = id.slice( 0, 2 ).toUpperCase();
+	// Switzerland often uses the prefix 'CHE-' instead of just `CH`.
+	const swissCodeRegexp = /^CHE-?/i;
+	if ( country === 'CH' && swissCodeRegexp.test( id ) ) {
+		return id.replace( swissCodeRegexp, '' );
+	}
 
-	if ( isNaN( Number( first2UppercasedChars ) ) && first2UppercasedChars === country ) {
+	const first2UppercasedChars = id.slice( 0, 2 ).toUpperCase();
+	if ( first2UppercasedChars === country ) {
 		return id.slice( 2 );
 	}
 
