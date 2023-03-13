@@ -28,7 +28,6 @@ interface Props {
 	type: AllowedTypes;
 	isLargeScreen?: boolean;
 	isFavorite?: boolean;
-	hasBoost: boolean;
 }
 
 export default function SiteStatusContent( {

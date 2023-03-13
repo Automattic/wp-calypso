@@ -95,7 +95,6 @@ export default function SiteTableRow( { columns, item, setExpanded, isExpanded }
 									type={ row.type }
 									isLargeScreen
 									isFavorite={ isFavorite }
-									hasBoost={ false }
 								/>
 							</td>
 						);

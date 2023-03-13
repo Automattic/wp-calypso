@@ -99,12 +99,7 @@ export default function SiteCard( { rows, columns }: Props ) {
 					tabIndex={ 0 }
 				>
 					{ toggleContent }
-					<SiteStatusContent
-						rows={ rows }
-						type={ headerItem.type }
-						isFavorite={ isFavorite }
-						hasBoost={ false }
-					/>
+					<SiteStatusContent rows={ rows } type={ headerItem.type } isFavorite={ isFavorite } />
 				</span>
 				<SiteActions site={ site } siteError={ siteError } />
 			</div>
@@ -131,11 +126,7 @@ export default function SiteCard( { rows, columns }: Props ) {
 													<span className="site-card__expanded-content-key">{ column.title }</span>
 													<span className="site-card__expanded-content-value">
 														<span className="site-card__expanded-content-status">
-															<SiteStatusContent
-																rows={ rows }
-																type={ row.type }
-																hasBoost={ false }
-															/>
+															<SiteStatusContent rows={ rows } type={ row.type } />
 														</span>
 														<span className="site-card__expanded-column">
 															{ column.isExpandable && (
@@ -163,7 +154,7 @@ export default function SiteCard( { rows, columns }: Props ) {
 											<>
 												<span className="site-card__expanded-content-key">{ column.title }</span>
 												<span className="site-card__expanded-content-value">
-													<SiteStatusContent rows={ rows } type={ row.type } hasBoost={ false } />
+													<SiteStatusContent rows={ rows } type={ row.type } />
 												</span>
 											</>
 										) }
