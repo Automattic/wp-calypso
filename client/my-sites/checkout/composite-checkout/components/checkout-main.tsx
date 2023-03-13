@@ -95,7 +95,6 @@ export default function CheckoutMain( {
 	disabledThankYouPage,
 	sitelessCheckoutType,
 	jetpackSiteSlug,
-	akismetSiteSlug,
 	jetpackPurchaseToken,
 	isUserComingFromLoginForm,
 	customizedPreviousPath,
@@ -124,7 +123,6 @@ export default function CheckoutMain( {
 	disabledThankYouPage?: boolean;
 	sitelessCheckoutType?: SitelessCheckoutType;
 	jetpackSiteSlug?: string;
-	akismetSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
 	customizedPreviousPath?: string;
@@ -140,20 +138,16 @@ export default function CheckoutMain( {
 	const isSiteless = sitelessCheckoutType === 'jetpack' || sitelessCheckoutType === 'akismet';
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
 	const createUserAndSiteBeforeTransaction =
-		Boolean( isLoggedOutCart || isNoSiteCart ) &&
-		sitelessCheckoutType !== 'akismet' &&
-		sitelessCheckoutType !== 'jetpack';
+		Boolean( isLoggedOutCart || isNoSiteCart ) && ! isSiteless;
 	const reduxDispatch = useDispatch();
 
-	const updatedSiteSlug = useCallback( () => {
+	const updatedSiteSlug = useMemo( () => {
 		if ( sitelessCheckoutType === 'jetpack' ) {
 			return jetpackSiteSlug;
 		}
-		if ( sitelessCheckoutType === 'akismet' ) {
-			return akismetSiteSlug;
-		}
+
 		return siteSlug;
-	}, [ akismetSiteSlug, jetpackSiteSlug, sitelessCheckoutType, siteSlug ] );
+	}, [ jetpackSiteSlug, sitelessCheckoutType, siteSlug ] );
 
 	const showErrorMessageBriefly = useCallback(
 		( error ) => {
@@ -188,7 +182,7 @@ export default function CheckoutMain( {
 		isInModal,
 		usesJetpackProducts: isJetpackNotAtomic,
 		isPrivate,
-		siteSlug: updatedSiteSlug(),
+		siteSlug: updatedSiteSlug,
 		sitelessCheckoutType,
 		isLoggedOutCart,
 		isNoSiteCart,
@@ -241,7 +235,7 @@ export default function CheckoutMain( {
 	// post-checkout page decided by `getThankYouUrl` and therefore must be
 	// passed the post-checkout URL before the transaction begins.
 	const getThankYouUrlBase = useGetThankYouUrl( {
-		siteSlug: updatedSiteSlug(),
+		siteSlug: updatedSiteSlug,
 		redirectTo,
 		purchaseId,
 		feature,
@@ -318,7 +312,7 @@ export default function CheckoutMain( {
 
 	const { isRemovingProductFromCart, removeProductFromCartAndMaybeRedirect } =
 		useRemoveFromCartAndRedirect(
-			updatedSiteSlug(),
+			updatedSiteSlug,
 			createUserAndSiteBeforeTransaction,
 			customizedPreviousPath
 		);
@@ -345,7 +339,7 @@ export default function CheckoutMain( {
 		stripeConfiguration,
 		stripe,
 		storedCards,
-		siteSlug: updatedSiteSlug(),
+		siteSlug: updatedSiteSlug,
 	} );
 	debug( 'created payment method objects', paymentMethodObjects );
 
@@ -379,7 +373,7 @@ export default function CheckoutMain( {
 	const { analyticsPath, analyticsProps } = getAnalyticsPath(
 		purchaseId,
 		productAliasFromUrl,
-		updatedSiteSlug(),
+		updatedSiteSlug,
 		feature,
 		plan,
 		sitelessCheckoutType,
@@ -431,7 +425,7 @@ export default function CheckoutMain( {
 			reduxDispatch,
 			responseCart,
 			siteId: updatedSiteId,
-			siteSlug: updatedSiteSlug(),
+			siteSlug: updatedSiteSlug,
 			stripeConfiguration,
 			stripe,
 			recaptchaClientId,
@@ -575,7 +569,7 @@ export default function CheckoutMain( {
 		isInModal,
 		isComingFromUpsell,
 		disabledThankYouPage,
-		siteSlug: updatedSiteSlug(),
+		siteSlug: updatedSiteSlug,
 		sitelessCheckoutType,
 		checkoutFlow,
 	} );
@@ -735,7 +729,7 @@ export default function CheckoutMain( {
 					removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
 					showErrorMessageBriefly={ showErrorMessageBriefly }
 					siteId={ updatedSiteId }
-					siteUrl={ updatedSiteSlug() }
+					siteUrl={ updatedSiteSlug }
 				/>
 			</CheckoutProvider>
 		</Fragment>

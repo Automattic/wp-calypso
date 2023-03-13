@@ -192,7 +192,7 @@ export function checkout( context, next ) {
 				isNoSiteCart={ isNoSiteCart }
 				// TODO: in theory, isJetpackCheckout should always be false here if it is indicating whether this is a siteless Jetpack purchase
 				// However, in this case, it's indicating that this checkout is a logged-out site purchase for Jetpack.
-				// This is creating some mixed use cases for the isJetpackCheckout prop
+				// This is creating some mixed use cases for the sitelessCheckoutType prop
 				sitelessCheckoutType={ isJetpackCheckout ? 'jetpack' : undefined }
 				isGiftPurchase={ isGiftPurchase }
 				jetpackSiteSlug={ jetpackSiteSlug }
