@@ -1,5 +1,5 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
 import wpcom from 'calypso/lib/wp';
 
 export function useSharingButtonsQuery( siteId ) {

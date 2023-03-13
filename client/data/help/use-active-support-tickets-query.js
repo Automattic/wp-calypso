@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
 const ACTIVE_STATUSES = [ 'New', 'Open', 'Hold' ];

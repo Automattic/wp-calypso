@@ -1,5 +1,5 @@
+import { useQuery } from '@tanstack/react-query';
 import { localize } from 'i18n-calypso';
-import { useQuery } from 'react-query';
 import { connect } from 'react-redux';
 import wpcom from 'calypso/lib/wp';
 import { updateFilter } from 'calypso/state/activity-log/actions';

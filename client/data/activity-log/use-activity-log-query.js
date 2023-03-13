@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { filterStateToApiQuery } from 'calypso/state/activity-log/utils';
 import fromActivityLogApi from 'calypso/state/data-layer/wpcom/sites/activity/from-api';
