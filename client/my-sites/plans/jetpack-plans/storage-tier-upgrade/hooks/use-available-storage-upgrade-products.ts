@@ -9,19 +9,14 @@ import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { getSlugInTerm } from 'calypso/my-sites/plans/jetpack-plans/convert-slug-terms';
 import getPurchasedStorageSubscriptions from 'calypso/my-sites/plans/jetpack-plans/get-purchased-storage-subscriptions';
-import { Duration, SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
+import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 import useGetStorageUpgradeProducts from './use-get-storage-upgrade-products';
 
-const useAvailableStorageUpgradeProducts = (
-	siteId: number,
-	duration: Duration
-): SelectorProduct[] => {
+const useAvailableStorageUpgradeProducts = ( siteId: number ): SelectorProduct[] => {
 	const purchasedStorageSlugs = useSelector( ( state ) =>
 		getPurchasedStorageSubscriptions( state, siteId )
 	).map( ( { productSlug } ) => productSlug );
 	const getStorageUpgradeProducts = useGetStorageUpgradeProducts();
-
-	const sameDurationFilter = ( p: SelectorProduct ) => p.term === duration;
 
 	// Only ever include upgrades for one type of product
 	// (Security having the most precedence, in case a
@@ -61,7 +56,6 @@ const useAvailableStorageUpgradeProducts = (
 
 	return allUpgradeProducts
 		.filter( ( product ): product is SelectorProduct => !! product )
-		.filter( sameDurationFilter )
 		.filter( sameProductType )
 		.filter( isNotPurchased ) as SelectorProduct[];
 };

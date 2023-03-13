@@ -1,35 +1,28 @@
 import { useMemo } from 'react';
-import {
-	isTier2,
-	TIER_1_SLUGS,
-	TIER_2_SLUGS,
-} from 'calypso/my-sites/plans/jetpack-plans/constants';
+import { TIER_1_SLUGS, TIER_2_SLUGS } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import useAvailableStorageUpgradeProducts from './use-available-storage-upgrade-products';
 import usePurchasedStorageUpgradeProducts from './use-purchased-storage-upgrade-products';
-import type { Duration, SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
+import type { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 
 const UPGRADES_ORDER = [ ...TIER_1_SLUGS, ...TIER_2_SLUGS ];
 
-const useStorageUpgradesToDisplay = ( siteId: number, duration: Duration ): SelectorProduct[] => {
+const useStorageUpgradesToDisplay = ( siteId: number ): SelectorProduct[] => {
 	const purchasedUpgrades = usePurchasedStorageUpgradeProducts( siteId );
-	const availableUpgrades = useAvailableStorageUpgradeProducts( siteId, duration );
+	const availableUpgrades = useAvailableStorageUpgradeProducts( siteId );
 
 	return useMemo( () => {
-		const hasTier2Purchase = purchasedUpgrades.some( ( { productSlug } ) =>
-			TIER_2_SLUGS.includes( productSlug )
+		// Always show from the lowest to the highest tier
+		availableUpgrades.sort(
+			( a, b ) => UPGRADES_ORDER.indexOf( a.productSlug ) - UPGRADES_ORDER.indexOf( b.productSlug )
 		);
 
 		const upgradesToDisplay = [
+			...purchasedUpgrades,
 			// Don't show tier 1 if tier 2 has already been purchased
-			...( hasTier2Purchase
-				? availableUpgrades.filter( ( { productSlug } ) => isTier2( productSlug ) )
-				: availableUpgrades ),
+			...availableUpgrades,
 		];
 
-		// Always show from the lowest to the highest tier
-		return upgradesToDisplay.sort(
-			( a, b ) => UPGRADES_ORDER.indexOf( a.productSlug ) - UPGRADES_ORDER.indexOf( b.productSlug )
-		);
+		return upgradesToDisplay;
 	}, [ purchasedUpgrades, availableUpgrades ] );
 };
 

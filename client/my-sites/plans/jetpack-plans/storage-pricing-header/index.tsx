@@ -15,11 +15,7 @@ export const StoragePricingHeader = () => {
 					headerText={ preventWidows( translate( 'Upgrade your VaultPress Backup storage' ) ) }
 				/>
 				<p className="storage-pricing-header__subtitle">
-					{ translate(
-						'Upgrade at any time, if you reach your backup storage limit, or want access to restores older than %(restoreDays)d day',
-						'Upgrade at any time, if you reach your backup storage limit, or want access to restores older than %(restoreDays)d days',
-						{ count: 30, args: { restoreDays: 30 } }
-					) }
+					{ translate( 'Upgrade at any time, if you reach your backup storage limit.' ) }
 				</p>
 			</div>
 		</>

@@ -10,6 +10,10 @@ import {
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_5TB_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
+	PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
+	PLAN_JETPACK_SECURITY_T1_MONTHLY,
+	PLAN_JETPACK_SECURITY_T1_YEARLY,
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
 } from '@automattic/calypso-products';
@@ -18,16 +22,20 @@ import { useCallback, useMemo } from 'react';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
 import type { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 
-type StorageUpgradeGetter = ( slug: string ) => SelectorProduct;
+type StorageUpgradeGetter = ( slug: string, isPurchased: boolean ) => SelectorProduct;
 
 const MONTHLY_BACKUPS_PRODUCTS = [
 	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
+	PLAN_JETPACK_SECURITY_T1_MONTHLY,
+	PLAN_JETPACK_SECURITY_T1_YEARLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_MONTHLY,
 ];
 
 const YEARLY_BACKUPS_PRODUCTS = [
+	PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_MONTHLY,
@@ -93,7 +101,7 @@ export const useGetMonthlyBackupsCardData = (): StorageUpgradeGetter => {
 	const getAmountBySlug = useJetpackStorageAmountTextByProductSlug();
 
 	return useCallback(
-		( slug ): SelectorProduct => {
+		( slug, isPurchased ): SelectorProduct => {
 			const product = slugToSelectorProduct( slug );
 			const storageAmount = getAmountBySlug( slug );
 			const features = {
@@ -116,8 +124,8 @@ export const useGetMonthlyBackupsCardData = (): StorageUpgradeGetter => {
 
 			return {
 				...product,
-				displayName: storageAmount,
-				subheader,
+				displayName: isPurchased ? product?.displayName : storageAmount,
+				subheader: isPurchased ? '' : subheader,
 				buttonLabel,
 				features: features,
 				disclaimer: getDisclaimer( product?.productSlug as string, features.items ),
@@ -133,7 +141,7 @@ export const useGetYearlyBackupsCardData = (): StorageUpgradeGetter => {
 	const getAmountBySlug = useJetpackStorageAmountTextByProductSlug();
 
 	return useCallback(
-		( slug: string ): SelectorProduct => {
+		( slug: string, isPurchased ): SelectorProduct => {
 			const product = slugToSelectorProduct( slug );
 			const storageAmount = getAmountBySlug( slug );
 			const features = {
@@ -159,8 +167,8 @@ export const useGetYearlyBackupsCardData = (): StorageUpgradeGetter => {
 
 			return {
 				...product,
-				displayName: storageAmount,
-				subheader,
+				displayName: isPurchased ? product?.displayName : storageAmount,
+				subheader: isPurchased ? '' : subheader,
 				buttonLabel,
 				description: translate(
 					'Go back in time and recover all your information for up to a year, with %(storageAmount)s storage space.',
@@ -179,13 +187,13 @@ const useGetProductCardData = () => {
 	const getYearlyBackupsCardData = useGetYearlyBackupsCardData();
 
 	return useCallback(
-		( slug: string ): SelectorProduct | null => {
+		( slug: string, isPurchased ): SelectorProduct | null => {
 			if ( MONTHLY_BACKUPS_PRODUCTS.includes( slug ) ) {
-				return getMonthlyBackupsCardData( slug );
+				return getMonthlyBackupsCardData( slug, isPurchased );
 			}
 
 			if ( YEARLY_BACKUPS_PRODUCTS.includes( slug ) ) {
-				return getYearlyBackupsCardData( slug );
+				return getYearlyBackupsCardData( slug, isPurchased );
 			}
 
 			return null;

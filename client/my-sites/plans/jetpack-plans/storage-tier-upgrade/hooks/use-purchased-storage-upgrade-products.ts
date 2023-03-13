@@ -23,7 +23,9 @@ const usePurchasedStorageUpgradeProducts = ( siteId: number ): SelectorProduct[]
 			return [];
 		}
 
-		return [ getProductCardData( mostImportantSlug ) as SelectorProduct ];
+		const data = getProductCardData( mostImportantSlug, true ) as SelectorProduct;
+
+		return data ? [ data ] : [];
 	}, [ mostImportantSlug, getProductCardData ] );
 };
 
