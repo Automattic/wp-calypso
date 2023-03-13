@@ -148,6 +148,10 @@ button.site-expanded-content__card-button {
 			inset-inline-start: 0.2rem !important;
 		}
 	}
+
+	.site-expanded-content__device-score {
+		margin-inline-start: 0 !important;
+	}
 }
 
 .site-expanded-content__help-icon {
@@ -218,4 +222,8 @@ button.site-expanded-content__card-button {
 			margin-block-start: 0;
 		}
 	}
+}
+
+.expanded-card__not-enabled {
+	background: none;
 }
