@@ -7,6 +7,7 @@ import { useNewSiteVisibility } from 'calypso/landing/gutenboarding/hooks/use-se
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from 'calypso/landing/stepper/stores';
 import wpcom from 'calypso/lib/wp';
 import { Progress } from '../components/sensei-step-progress';
+import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 import type { StyleVariation } from 'calypso/../packages/design-picker';
 
 const getStyleVariations = ( siteId: number, stylesheet: string ): Promise< StyleVariation[] > =>
@@ -40,11 +41,17 @@ const updateGlobalStyles = (
 const COURSE_THEME = 'pub/course';
 
 export const useCreateSenseiSite = () => {
-	const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) );
+	const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
 	const { setIntentOnSite, saveSiteSettings } = useDispatch( SITE_STORE );
-	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
+	const currentUser = useSelect(
+		( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
+		[]
+	);
 	const { createSenseiSite, setSelectedSite } = useDispatch( ONBOARD_STORE );
-	const { getSelectedStyleVariation } = useSelect( ( select ) => select( ONBOARD_STORE ) );
+	const { getSelectedStyleVariation } = useSelect(
+		( select ) => select( ONBOARD_STORE ) as OnboardSelect,
+		[]
+	);
 
 	const [ progress, setProgress ] = useState< Progress >( {
 		percentage: 0,

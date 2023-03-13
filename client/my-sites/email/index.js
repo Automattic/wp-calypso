@@ -2,7 +2,12 @@ import { translate } from 'i18n-calypso';
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { GOOGLE_WORKSPACE_PRODUCT_TYPE, GSUITE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
-import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
+import {
+	navigation,
+	siteSelection,
+	stagingSiteNotSupportedRedirect,
+	sites,
+} from 'calypso/my-sites/controller';
 import controller from './controller';
 import * as paths from './paths';
 
@@ -10,7 +15,7 @@ function registerMultiPage( { paths: givenPaths, handlers } ) {
 	givenPaths.forEach( ( path ) => page( path, ...handlers ) );
 }
 
-const commonHandlers = [ siteSelection, navigation ];
+const commonHandlers = [ siteSelection, navigation, stagingSiteNotSupportedRedirect ];
 
 const emailInboxSiteSelectionHeader = ( context, next ) => {
 	context.getSiteSelectionHeaderText = () => {

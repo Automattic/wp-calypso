@@ -10,11 +10,15 @@ import FontSelect from './font-select';
 import Preview from './preview';
 import ViewportSelect from './viewport-select';
 import type { Viewport } from './types';
+import type { OnboardSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
 const StylePreview: React.FunctionComponent = () => {
-	const { getSelectedFonts } = useSelect( ( select ) => select( ONBOARD_STORE ) );
+	const { getSelectedFonts } = useSelect(
+		( select ) => select( ONBOARD_STORE ) as OnboardSelect,
+		[]
+	);
 
 	const { __ } = useI18n();
 	const { goBack, goNext } = useStepNavigation();

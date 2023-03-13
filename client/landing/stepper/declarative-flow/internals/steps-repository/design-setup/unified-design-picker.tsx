@@ -52,15 +52,11 @@ import UpgradeModal from './upgrade-modal';
 import getThemeIdFromDesign from './utils/get-theme-id-from-design';
 import type { Step, ProvidedDependencies } from '../../types';
 import './style.scss';
-import type { StarterDesigns } from '@automattic/data-stores';
+import type { OnboardSelect, SiteSelect, StarterDesigns } from '@automattic/data-stores';
 import type { Design, StyleVariation } from '@automattic/design-picker';
 
 const SiteIntent = Onboard.SiteIntent;
-const SITE_ASSEMBLER_AVAILABLE_INTENTS: string[] = [ SiteIntent.Build ];
-
-if ( isEnabled( 'pattern-assembler/write-flow' ) ) {
-	SITE_ASSEMBLER_AVAILABLE_INTENTS.push( SiteIntent.Write );
-}
+const SITE_ASSEMBLER_AVAILABLE_INTENTS: string[] = [ SiteIntent.Build, SiteIntent.Write ];
 
 const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const { goBack, submit, exitFlow } = navigation;
@@ -73,7 +69,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const isMobile = ! useViewportMatch( 'small' );
 	const isXLargeScreen = useMediaQuery( '(min-width: 1080px)' );
 
-	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
+	const intent = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
+		[]
+	);
 
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
@@ -82,11 +81,16 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const siteTitle = site?.name;
 	const siteDescription = site?.description;
 	const siteVerticalId = useSelect(
-		( select ) => ( site && select( SITE_STORE ).getSiteVerticalId( site.ID ) ) || ''
+		( select ) =>
+			( site && ( select( SITE_STORE ) as SiteSelect ).getSiteVerticalId( site.ID ) ) || '',
+		[ site ]
 	);
 	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles();
 
-	const isAtomic = useSelect( ( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID ) );
+	const isAtomic = useSelect(
+		( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( site.ID ),
+		[ site ]
+	);
 	useEffect( () => {
 		if ( isAtomic ) {
 			exitFlow?.( `/site-editor/${ siteSlugOrId }` );
@@ -96,7 +100,12 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const isPremiumThemeAvailable = Boolean(
 		useSelect(
 			( select ) =>
-				site && select( SITE_STORE ).siteHasFeature( site.ID, WPCOM_FEATURES_PREMIUM_THEMES )
+				site &&
+				( select( SITE_STORE ) as SiteSelect ).siteHasFeature(
+					site.ID,
+					WPCOM_FEATURES_PREMIUM_THEMES
+				),
+			[ site ]
 		)
 	);
 
@@ -179,7 +188,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		window.scrollTo( { top: 0 } );
 	}, [ isPreviewingDesign ] );
 
-	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
+	const selectedDesign = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
+		[]
+	);
 	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 
 	const selectedDesignHasStyleVariations = ( selectedDesign?.style_variations || [] ).length > 0;
@@ -187,8 +199,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		enabled: isPreviewingDesign && selectedDesignHasStyleVariations,
 	} );
 
-	const selectedStyleVariation = useSelect( ( select ) =>
-		select( ONBOARD_STORE ).getSelectedStyleVariation()
+	const selectedStyleVariation = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedStyleVariation(),
+		[]
 	);
 	const { setSelectedStyleVariation } = useDispatch( ONBOARD_STORE );
 
@@ -320,7 +333,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const [ showUpgradeModal, setShowUpgradeModal ] = useState( false );
 
 	const isEligibleForProPlan = useSelect(
-		( select ) => site && select( SITE_STORE ).isEligibleForProPlan( site.ID )
+		( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isEligibleForProPlan( site.ID ),
+		[ site ]
 	);
 
 	function upgradePlan() {

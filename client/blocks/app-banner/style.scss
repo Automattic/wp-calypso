@@ -72,7 +72,6 @@ body.app-banner-is-visible {
 }
 
 .app-banner__text-content {
-	width: 100%;
 	letter-spacing: -0.4px;
 	margin: 36px auto 0;
 }
@@ -100,7 +99,6 @@ body.app-banner-is-visible {
 }
 
 .app-banner__buttons {
-	width: 100%;
 	margin-top: 36px;
 
 	.button {
@@ -115,11 +113,16 @@ body.app-banner-is-visible {
 }
 
 .button.app-banner__open-button {
-	background-color: var(--color-jetpack);
+	background-color: var(--studio-jetpack-green-40);
 	border: 0;
 	border-radius: 4px;
-	margin-right: 10px;
 	margin-bottom: 12px;
+
+	&:hover,
+	&:focus {
+		background-color: var(--studio-jetpack-green-60);
+		border-color: var(--studio-jetpack-green-60);
+	}
 }
 
 .button.app-banner__no-thanks-button {

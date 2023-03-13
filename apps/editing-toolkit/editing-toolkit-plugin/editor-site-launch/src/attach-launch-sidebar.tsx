@@ -9,6 +9,7 @@ import { FLOW_ID } from './constants';
 import LaunchModal from './launch-modal';
 import { LAUNCH_STORE } from './stores';
 import { openCheckout, redirectToWpcomPath, getCurrentLaunchFlowUrl } from './utils';
+import type { LaunchSelect } from '@automattic/data-stores';
 
 const registerPlugin = ( name: string, settings: Omit< PluginSettings, 'icon' > ) =>
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -16,7 +17,10 @@ const registerPlugin = ( name: string, settings: Omit< PluginSettings, 'icon' > 
 
 registerPlugin( 'a8c-editor-site-launch', {
 	render: function LaunchSidebar() {
-		const { isSidebarOpen } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
+		const { isSidebarOpen } = useSelect(
+			( select ) => ( select( LAUNCH_STORE ) as LaunchSelect ).getState(),
+			[]
+		);
 		const { closeSidebar, setSidebarFullscreen, unsetSidebarFullscreen } =
 			useDispatch( LAUNCH_STORE );
 

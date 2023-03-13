@@ -6,6 +6,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { ONBOARD_STORE } from '../../../../stores';
 import type { Step, PluginsResponse, FailureInfo } from '../../types';
+import type { OnboardSelect } from '@automattic/data-stores';
 
 export const installedStates = {
 	PENDING: 'pending',
@@ -18,7 +19,10 @@ const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
 const WaitForPluginInstall: Step = function WaitForAtomic( { navigation, data } ) {
 	const { submit } = navigation;
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
-	const pluginsToVerify = useSelect( ( select ) => select( ONBOARD_STORE ).getPluginsToVerify() );
+	const pluginsToVerify = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPluginsToVerify(),
+		[]
+	);
 
 	const siteId = data?.siteId;
 	const siteSlug = data?.siteSlug;

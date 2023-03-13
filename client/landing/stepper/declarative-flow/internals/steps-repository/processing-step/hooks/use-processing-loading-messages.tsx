@@ -5,6 +5,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import WooPurpleHeart from 'calypso/assets/images/onboarding/woo-purple-heart.png';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import type { LoadingMessage } from './types';
+import type { StepperInternalSelect } from '@automattic/data-stores';
 
 const SiteIntent = Onboard.SiteIntent;
 
@@ -12,7 +13,10 @@ export function useProcessingLoadingMessages( flow?: string | null ): LoadingMes
 	const { __ } = useI18n();
 	let loadingMessages = [];
 
-	const stepData = useSelect( ( select ) => select( STEPPER_INTERNAL_STORE ).getStepData() );
+	const stepData = useSelect(
+		( select ) => ( select( STEPPER_INTERNAL_STORE ) as StepperInternalSelect ).getStepData(),
+		[]
+	);
 
 	if ( flow === 'copy-site' ) {
 		return [

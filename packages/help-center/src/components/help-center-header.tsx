@@ -7,6 +7,7 @@ import { useCallback } from 'react';
 import { Route, Switch, useLocation } from 'react-router-dom';
 import { HELP_CENTER_STORE } from '../stores';
 import type { Header } from '../types';
+import type { HelpCenterSelect } from '@automattic/data-stores';
 
 export function ArticleTitle() {
 	const location = useLocation();
@@ -49,7 +50,10 @@ const SupportModeTitle = () => {
 };
 
 const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize, onDismiss }: Header ) => {
-	const unreadCount = useSelect( ( select ) => select( HELP_CENTER_STORE ).getUnreadCount() );
+	const unreadCount = useSelect(
+		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getUnreadCount(),
+		[]
+	);
 	const classNames = classnames( 'help-center__container-header' );
 	const { __ } = useI18n();
 	const formattedUnreadCount = unreadCount > 9 ? '9+' : unreadCount;

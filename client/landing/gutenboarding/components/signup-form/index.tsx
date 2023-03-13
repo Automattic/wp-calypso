@@ -25,6 +25,7 @@ import { USER_STORE } from '../../stores/user';
 import './style.scss';
 import SignupAnchorLayout from './signup-anchor-layout';
 import SignupDefaultLayout from './signup-default-layout';
+import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
 import type { FormEvent } from 'react';
 
 interface Props {
@@ -37,9 +38,18 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	const [ passwordVal, setPasswordVal ] = useState( '' );
 	const [ recaptchaClientId, setRecaptchaClientId ] = useState< number >();
 	const { createAccount, clearErrors } = useDispatch( USER_STORE );
-	const isFetchingNewUser = useSelect( ( select ) => select( USER_STORE ).isFetchingNewUser() );
-	const newUserError = useSelect( ( select ) => select( USER_STORE ).getNewUserError() );
-	const { siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ) ).getState();
+	const isFetchingNewUser = useSelect(
+		( select ) => ( select( USER_STORE ) as UserSelect ).isFetchingNewUser(),
+		[]
+	);
+	const newUserError = useSelect(
+		( select ) => ( select( USER_STORE ) as UserSelect ).getNewUserError(),
+		[]
+	);
+	const { siteTitle } = useSelect(
+		( select ) => select( ONBOARD_STORE ) as OnboardSelect,
+		[]
+	).getState();
 	const langParam = useLangRouteParam();
 	const makePath = usePath();
 	const currentStep = useCurrentStep();

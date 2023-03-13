@@ -5,6 +5,10 @@ import { registerPlugin as originalRegisterPlugin, PluginSettings } from '@wordp
 import WpcomBlockEditorNavSidebar from './components/nav-sidebar';
 import ToggleSidebarButton from './components/toggle-sidebar-button';
 
+type CoreEditPostPlaceholder = {
+	isFeatureActive: ( ...args: unknown[] ) => boolean;
+};
+
 const registerPlugin = ( name: string, settings: Omit< PluginSettings, 'icon' > ) =>
 	originalRegisterPlugin( name, settings as PluginSettings );
 
@@ -38,11 +42,15 @@ if ( typeof MainDashboardButton !== 'undefined' ) {
 			} );
 
 			// Uses presence of data store to detect whether this is the experimental site editor.
-			const isSiteEditor = useSelect( ( select ) => !! select( 'core/edit-site' ) );
+			const isSiteEditor = useSelect( ( select ) => !! select( 'core/edit-site' ), [] );
 
 			// Disable sidebar nav if the editor is not in fullscreen mode
-			const isFullscreenActive = useSelect( ( select ) =>
-				select( 'core/edit-post' ).isFeatureActive( 'fullscreenMode' )
+			const isFullscreenActive = useSelect(
+				( select ) =>
+					( select( 'core/edit-post' ) as CoreEditPostPlaceholder ).isFeatureActive(
+						'fullscreenMode'
+					),
+				[]
 			);
 
 			if ( isSiteEditor || ! isFullscreenActive ) {

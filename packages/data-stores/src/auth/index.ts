@@ -7,7 +7,6 @@ import { STORE_KEY } from './constants';
 import { controls } from './controls';
 import reducer, { State } from './reducer';
 import * as selectors from './selectors';
-import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
 
 export * from './types';
 export type { State };
@@ -21,21 +20,16 @@ export function register( config: ActionsConfig ): typeof STORE_KEY {
 			throw new Error( 'Could not get all blog access.' );
 		} );
 
-		registerStore< State >( STORE_KEY, {
+		registerStore( STORE_KEY, {
 			actions: createActions( config ),
 			controls: {
 				...controls,
 				...dataControls,
 				...wpcomRequestControls,
-			} as any,
+			},
 			reducer,
 			selectors,
 		} );
 	}
 	return STORE_KEY;
-}
-
-declare module '@wordpress/data' {
-	function dispatch( key: typeof STORE_KEY ): DispatchFromMap< ReturnType< typeof createActions > >;
-	function select( key: typeof STORE_KEY ): SelectFromMap< typeof selectors >;
 }

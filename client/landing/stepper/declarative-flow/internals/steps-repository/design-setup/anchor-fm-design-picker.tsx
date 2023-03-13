@@ -14,6 +14,7 @@ import { ANCHOR_FM_THEMES } from './anchor-fm-themes';
 import { STEP_NAME } from './constants';
 import type { Step } from '../../types';
 import './style.scss';
+import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 import type { Design } from '@automattic/design-picker';
 
 const AnchorFmDesignPicker: Step = ( { navigation, flow } ) => {
@@ -23,16 +24,26 @@ const AnchorFmDesignPicker: Step = ( { navigation, flow } ) => {
 	const reduxDispatch = useReduxDispatch();
 	const { setPendingAction, createSite } = useDispatch( ONBOARD_STORE );
 	const { setDesignOnSite } = useDispatch( SITE_STORE );
-	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
-	const { anchorPodcastId, anchorEpisodeId, anchorSpotifyUrl } = useSelect( ( select ) =>
-		select( ONBOARD_STORE ).getState()
+	const selectedDesign = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
+		[]
+	);
+	const { anchorPodcastId, anchorEpisodeId, anchorSpotifyUrl } = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getState(),
+		[]
 	);
 
 	const visibility = useNewSiteVisibility();
 
-	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
-	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
-	const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) );
+	const currentUser = useSelect(
+		( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
+		[]
+	);
+	const newUser = useSelect(
+		( select ) => ( select( USER_STORE ) as UserSelect ).getNewUser(),
+		[]
+	);
+	const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
 
 	const pickDesign = ( _selectedDesign: Design | undefined = selectedDesign ) => {
 		if ( ! _selectedDesign ) {
