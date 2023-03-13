@@ -29,17 +29,19 @@ function getVatVendorInfo(
 	date: string,
 	translate: ReturnType< typeof useTranslate >
 ): VatVendorInfo | undefined {
+	const automatticVatAddress = [
+		'Aut O’Mattic Ltd.',
+		'c/o Noone Casey',
+		'Grand Canal Dock, 25 Herbert Pl',
+		'Dublin, D02 AY86',
+		'Ireland',
+	];
+
 	if ( isCountryInEu( country, date ) ) {
 		return {
 			country,
 			taxName: translate( 'VAT', { textOnly: true } ),
-			address: [
-				'Aut O’Mattic Ltd.',
-				'c/o Noone Casey',
-				'Grand Canal Dock, 25 Herbert Pl',
-				'Dublin, D02 AY86',
-				'Ireland',
-			],
+			address: automatticVatAddress,
 			vatId: 'IE3255131SH',
 		};
 	}
@@ -48,13 +50,7 @@ function getVatVendorInfo(
 		return {
 			country,
 			taxName: translate( 'GST', { textOnly: true } ),
-			address: [
-				'Aut O’Mattic Ltd.',
-				'c/o Noone Casey',
-				'Grand Canal Dock, 25 Herbert Pl',
-				'Dublin, D02 AY86',
-				'Ireland',
-			],
+			address: automatticVatAddress,
 			vatId: 'ARN: 3000 1650 1438',
 		};
 	}
@@ -63,13 +59,7 @@ function getVatVendorInfo(
 		return {
 			country,
 			taxName: translate( 'GST', { textOnly: true } ),
-			address: [
-				'Aut O’Mattic Ltd.',
-				'c/o Noone Casey',
-				'Grand Canal Dock, 25 Herbert Pl',
-				'Dublin, D02 AY86',
-				'Ireland',
-			],
+			address: automatticVatAddress,
 			vatId: '790004303',
 		};
 	}
@@ -78,13 +68,7 @@ function getVatVendorInfo(
 		return {
 			country,
 			taxName: translate( 'GST', { textOnly: true } ),
-			address: [
-				'Aut O’Mattic Ltd.',
-				'c/o Noone Casey',
-				'Grand Canal Dock, 25 Herbert Pl',
-				'Dublin, D02 AY86',
-				'Ireland',
-			],
+			address: automatticVatAddress,
 			vatId: 'CHE-259.584.214 MWST',
 		};
 	}
@@ -93,13 +77,7 @@ function getVatVendorInfo(
 		return {
 			country,
 			taxName: translate( 'VAT', { textOnly: true } ),
-			address: [
-				'Aut O’Mattic Ltd.',
-				'c/o Noone Casey',
-				'Grand Canal Dock, 25 Herbert Pl',
-				'Dublin, D02 AY86',
-				'Ireland',
-			],
+			address: automatticVatAddress,
 			vatId: 'UK 376 1703 88',
 		};
 	}
@@ -108,13 +86,7 @@ function getVatVendorInfo(
 		return {
 			country,
 			taxName: translate( 'VAT', { textOnly: true } ),
-			address: [
-				'Aut O’Mattic Ltd.',
-				'c/o Noone Casey',
-				'Grand Canal Dock, 25 Herbert Pl',
-				'Dublin, D02 AY86',
-				'Ireland',
-			],
+			address: automatticVatAddress,
 			vatId: '4700150101102',
 		};
 	}
