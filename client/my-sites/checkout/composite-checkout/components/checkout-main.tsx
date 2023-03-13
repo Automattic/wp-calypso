@@ -94,6 +94,7 @@ export default function CheckoutMain( {
 	onAfterPaymentComplete,
 	disabledThankYouPage,
 	sitelessCheckoutType,
+	akismetSiteSlug,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 	isUserComingFromLoginForm,
@@ -122,6 +123,7 @@ export default function CheckoutMain( {
 	onAfterPaymentComplete?: () => void;
 	disabledThankYouPage?: boolean;
 	sitelessCheckoutType?: SitelessCheckoutType;
+	akismetSiteSlug?: string;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
@@ -146,8 +148,12 @@ export default function CheckoutMain( {
 			return jetpackSiteSlug;
 		}
 
+		if ( sitelessCheckoutType === 'akismet' ) {
+			return akismetSiteSlug;
+		}
+
 		return siteSlug;
-	}, [ jetpackSiteSlug, sitelessCheckoutType, siteSlug ] );
+	}, [ akismetSiteSlug, jetpackSiteSlug, sitelessCheckoutType, siteSlug ] );
 
 	const showErrorMessageBriefly = useCallback(
 		( error ) => {
