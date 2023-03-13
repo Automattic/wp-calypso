@@ -29,9 +29,8 @@ const AssignTrialPlanStep: Step = function AssignTrialPlanStep( { navigation, da
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
 		[]
 	);
-	const profilerData = useSelect(
-		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect).getProfilerData()
-	) || {};
+	const profilerData =
+		useSelect( ( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getProfilerData() ) || {};
 
 	useEffect( () => {
 		if ( submit ) {
