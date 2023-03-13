@@ -41,3 +41,43 @@ declare module 'calypso/components/main' {
 	} >;
 	export default Main;
 }
+// write me a function to print hello world
+declare module 'calypso/components/section-nav' {
+	const SectionNav: React.FC< {
+		selectedText?: string;
+		selectedCount?: number;
+		hasPinnedItems?: boolean;
+		onMobileNavPanelOpen?: () => void;
+		className?: string;
+		allowDropdown?: boolean;
+	} >;
+	export default SectionNav;
+}
+
+declare module 'calypso/components/section-nav/tabs' {
+	const NavTabs: React.FC< {
+		selectedText?: TranslatableString;
+		selectedCount?: number;
+		label?: string;
+		hasSiblingControls?: boolean;
+	} >;
+	export default NavTabs;
+}
+
+declare module 'calypso/components/section-nav/item' {
+	const SectionNavItem: React.FC< {
+		itemType?: 'button' | 'link';
+		path?: string;
+		selected?: boolean;
+		tabIndex?: number;
+		onClick?: ( event: React.MouseEvent< HTMLAnchorElement > ) => void;
+		onKeyPress?: ( event: React.KeyboardEvent< HTMLAnchorElement > ) => void;
+		isExternalLink?: boolean;
+		disabled?: boolean;
+		count?: number | boolean;
+		compactCount?: boolean;
+		className?: string;
+		preloadSectionName?: string;
+	} >;
+	export default SectionNavItem;
+}
