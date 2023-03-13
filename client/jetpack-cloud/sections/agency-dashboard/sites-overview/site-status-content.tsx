@@ -266,7 +266,9 @@ export default function SiteStatusContent( {
 	}
 
 	if ( disabledStatus ) {
-		updatedContent = <span className="sites-overview__disabled">{ content } </span>;
+		updatedContent = (
+			<span className="sites-overview__disabled sites-overview__row-status">{ content } </span>
+		);
 	}
 
 	return (
@@ -295,7 +297,7 @@ export default function SiteStatusContent( {
 					</Tooltip>
 				</>
 			) : (
-				updatedContent
+				<span className="sites-overview__row-status">{ updatedContent }</span>
 			) }
 		</>
 	);
