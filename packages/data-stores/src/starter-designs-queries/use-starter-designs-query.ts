@@ -55,25 +55,29 @@ export function useStarterDesignsQuery(
 	queryParams: StarterDesignsQueryParams,
 	{ select, shouldLimitGlobalStyles, ...queryOptions }: Options = {}
 ): UseQueryResult< StarterDesigns > {
-	return useQuery( [ 'starter-designs', queryParams ], () => fetchStarterDesigns( queryParams ), {
-		select: ( response: StarterDesignsResponse ) => {
-			const allDesigns = {
-				generated: {
-					designs: response.generated?.designs?.map( apiStarterDesignsGeneratedToDesign ),
-				},
-				static: {
-					designs: response.static?.designs?.map( ( design ) =>
-						apiStarterDesignsStaticToDesign( design, shouldLimitGlobalStyles )
-					),
-				},
-			};
+	return useQuery(
+		[ 'starter-designs-__', queryParams ],
+		() => fetchStarterDesigns( queryParams ),
+		{
+			select: ( response: StarterDesignsResponse ) => {
+				const allDesigns = {
+					generated: {
+						designs: response.generated?.designs?.map( apiStarterDesignsGeneratedToDesign ),
+					},
+					static: {
+						designs: response.static?.designs?.map( ( design ) =>
+							apiStarterDesignsStaticToDesign( design, shouldLimitGlobalStyles )
+						),
+					},
+				};
 
-			return select ? select( allDesigns ) : allDesigns;
-		},
-		refetchOnMount: 'always',
-		staleTime: Infinity,
-		...queryOptions,
-	} );
+				return select ? select( allDesigns ) : allDesigns;
+			},
+			refetchOnMount: 'always',
+			staleTime: Infinity,
+			...queryOptions,
+		}
+	);
 }
 
 function fetchStarterDesigns(
