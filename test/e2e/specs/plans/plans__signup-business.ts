@@ -73,14 +73,18 @@ describe(
 			} );
 
 			it( 'Skip Onboarding', async function () {
+				await page.waitForURL( /setup\/site-setup\/goals/, { waitUntil: 'networkidle' } );
 				const startSiteFlow = new StartSiteFlow( page );
-				await startSiteFlow.clickButton( 'Skip to dashboard' );
+				await Promise.all( [
+					page.waitForURL( /build\/launchpad/, { waitUntil: 'networkidle' } ),
+					startSiteFlow.clickButton( 'Skip to dashboard' ),
+				] );
 			} );
 
 			it( 'Skip Launchpad', async function () {
 				await Promise.all( [
-					page.waitForNavigation( { url: /.*\/view\/.*/, timeout: 30 * 1000 } ),
-					await page.click( 'button:text("Skip to dashboard")' ),
+					page.waitForURL( /view/ ),
+					page.getByRole( 'button', { name: 'Skip to dashboard' } ).click( { timeout: 20 * 1000 } ),
 				] );
 			} );
 		} );
