@@ -61,7 +61,8 @@
 	}
 	& .highlight-cards.has-background-color,
 	& .inner-notice-container.has-background-color {
-		background-color: var(--jetpack-white-off);
+		color: var(--jp-black) !important;
+		background-color: var(--jetpack-white-off) !important;
 	}
 	#wpcontent {
 		padding-left: 1px;
