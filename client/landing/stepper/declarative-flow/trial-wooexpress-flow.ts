@@ -44,11 +44,14 @@ const wooexpress: Flow = {
 		const profilerData = queryParams.get( 'profilerdata' );
 
 		if ( profilerData ) {
-			const decodedProfilerData = JSON.parse(
-				decodeURIComponent( escape( window.atob( profilerData ) ) )
-			);
+			try {
+				const decodedProfilerData = JSON.parse(
+					decodeURIComponent( escape( window.atob( profilerData ) ) )
+				);
 
-			setProfilerData( decodedProfilerData );
+				setProfilerData( decodedProfilerData );
+				// Ignore any bad/invalid data and prevent it from causing downstream issues.
+			} catch {}
 		}
 
 		const getStartUrl = () => {
