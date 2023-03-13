@@ -11,7 +11,7 @@ const CHUNKS_MAP_PATHS = glob.sync(
 	path.resolve( PROJECT_DIR, 'block-library/*/build/', 'chunks-map.json' )
 );
 const CALYPSO_STRINGS_PATH = path.resolve( PROJECT_DIR, 'dist', 'calypso-strings.pot' );
-const OUTPUT_PATH = path.resolve( PROJECT_DIR, 'dist', 'translations-manifest.json' );
+const OUTPUT_PATH = path.resolve( PROJECT_DIR, 'translations-manifest.json' );
 
 const calypsoStrings = fs.readFileSync( CALYPSO_STRINGS_PATH, {
 	encoding: 'utf8',

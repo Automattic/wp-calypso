@@ -225,7 +225,13 @@ class Plans extends Component {
 	};
 
 	renderPlansMain() {
-		const { currentPlan, selectedSite, isWPForTeamsSite, currentPlanIntervalType } = this.props;
+		const {
+			currentPlan,
+			selectedSite,
+			isWPForTeamsSite,
+			currentPlanIntervalType,
+			is2023PricingGridVisible,
+		} = this.props;
 
 		if ( ! this.props.plansLoaded || ! currentPlan ) {
 			// Maybe we should show a loading indicator here?
@@ -244,8 +250,7 @@ class Plans extends Component {
 			);
 		}
 
-		const hideFreePlan =
-			! is2023PricingGridActivePage( window ) || this.props.isDomainAndPlanPackageFlow;
+		const hideFreePlan = ! is2023PricingGridVisible || this.props.isDomainAndPlanPackageFlow;
 
 		const hidePlanTypeSelector =
 			this.props.domainAndPlanPackage &&
@@ -267,6 +272,7 @@ class Plans extends Component {
 				plansWithScroll={ false }
 				showTreatmentPlansReorderTest={ this.props.showTreatmentPlansReorderTest }
 				hidePlansFeatureComparison={ this.props.isDomainAndPlanPackageFlow }
+				is2023PricingGridVisible={ is2023PricingGridVisible }
 			/>
 		);
 	}
@@ -377,14 +383,13 @@ class Plans extends Component {
 	}
 }
 
-const ConnectedPlans = connect( ( state ) => {
+const ConnectedPlans = connect( ( state, props ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 
 	const currentPlan = getCurrentPlan( state, selectedSiteId );
 	const currentPlanIntervalType = getIntervalTypeForTerm(
 		getPlan( currentPlan?.productSlug )?.term
 	);
-	const is2023PricingGridVisible = is2023PricingGridActivePage( window );
 
 	return {
 		currentPlan,
@@ -396,7 +401,8 @@ const ConnectedPlans = connect( ( state ) => {
 		isSiteEligibleForMonthlyPlan: isEligibleForWpComMonthlyPlan( state, selectedSiteId ),
 		showTreatmentPlansReorderTest: isTreatmentPlansReorderTest( state ),
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
-		is2023PricingGridVisible,
+		is2023PricingGridVisible:
+			props.is2023PricingGridVisible ?? is2023PricingGridActivePage( window ),
 		isDomainAndPlanPackageFlow: !! getCurrentQueryArguments( state )?.domainAndPlanPackage,
 		isJetpackNotAtomic: isJetpackSite( state, selectedSiteId, { treatAtomicAsJetpackSite: false } ),
 		isDomainUpsell:
