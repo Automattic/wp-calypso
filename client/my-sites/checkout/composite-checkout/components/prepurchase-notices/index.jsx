@@ -1,18 +1,16 @@
 import {
 	getProductFromSlug,
-	isJetpackAntiSpam,
 	isJetpackAntiSpamSlug,
-	isJetpackBackup,
 	isJetpackBackupSlug,
 	isJetpackPlanSlug,
-	isJetpackScan,
 	isJetpackScanSlug,
-	planHasFeature,
+	getAllFeaturesForPlan,
+	// eslint-disable-next-line import/named
+	getAllProductsForPlan,
 	JETPACK_SOCIAL_PRODUCTS,
 	WPCOM_FEATURES_ANTISPAM,
 	WPCOM_FEATURES_BACKUPS,
 	WPCOM_FEATURES_SCAN,
-	JETPACK_SOCIAL_ADVANCED_PRODUCTS,
 } from '@automattic/calypso-products';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useEffect } from 'react';
@@ -45,7 +43,6 @@ const PrePurchaseNotices = () => {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const cartItemSlugs = responseCart.products.map( ( item ) => item.product_slug );
-	const isMonthly = cartItemSlugs.some( ( slug ) => slug.includes( 'monthly' ) );
 
 	/**
 	 * Ensure site rewind capabilities are loaded, for use by isPlanIncludingSiteBackup().
@@ -74,45 +71,46 @@ const PrePurchaseNotices = () => {
 		return products.filter( ( p ) => ! p.expired );
 	} );
 
-	const siteProductThatOverlapsCartPlan = useSelector( ( state ) => {
+	const siteProductThatOverlapsCartPlan = useSelector( () => {
 		const planSlugInCart = cartItemSlugs.find( isJetpackPlanSlug );
 
 		if ( ! planSlugInCart ) {
 			return null;
 		}
 
-		//extract correct version of social advanced based on monthly or yearly plan
-		const socialProductSlug = JETPACK_SOCIAL_ADVANCED_PRODUCTS.filter( ( slug ) =>
-			isMonthly ? slug.includes( 'monthly' ) : ! slug.includes( 'monthly' )
-		)[ 0 ];
+		//function that compares getSiteProducts with getAllProductsForPlan and returns the product that is in both
+		const getMatchingProducts = ( siteProducts, planSlug ) => {
+			// Get all features and products for the plan in the cart
+			const planFeatures = getAllFeaturesForPlan( planSlug );
+			const planProducts = getAllProductsForPlan( planSlug );
 
-		const siteHasSocial = currentSiteProducts.find( ( product ) =>
-			JETPACK_SOCIAL_PRODUCTS.includes( product.productSlug )
-		);
+			// Combine the plan features and products into a single array
+			const planItems = [ ...planFeatures, ...planProducts ];
 
-		if ( siteHasSocial && planHasFeature( planSlugInCart, socialProductSlug ) ) {
-			return siteHasSocial;
-		}
+			//get all possible social slugs
+			const socialProductInSite = currentSiteProducts.find( ( product ) => {
+				return JETPACK_SOCIAL_PRODUCTS.includes( product.productSlug );
+			} );
 
-		if (
-			planHasFeature( planSlugInCart, WPCOM_FEATURES_BACKUPS ) &&
-			siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS )
-		) {
-			return currentSiteProducts.find( isJetpackBackup );
-		}
+			// Filter the site products to only include those in the plan items
+			const matchingProducts = siteProducts.filter( ( product ) =>
+				planItems.includes( product.productSlug )
+			);
 
-		if (
-			planHasFeature( planSlugInCart, WPCOM_FEATURES_ANTISPAM ) &&
-			siteHasFeature( state, siteId, WPCOM_FEATURES_ANTISPAM )
-		) {
-			return currentSiteProducts.find( isJetpackAntiSpam );
-		}
+			//special handling for sites with any social product
+			if ( socialProductInSite ) {
+				matchingProducts.push( socialProductInSite );
+			}
+			return matchingProducts;
+		};
 
-		if (
-			planHasFeature( planSlugInCart, WPCOM_FEATURES_SCAN ) &&
-			siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN )
-		) {
-			return currentSiteProducts.find( isJetpackScan );
+		if ( getMatchingProducts( currentSiteProducts, planSlugInCart ).length >= 0 ) {
+			// console.log(
+			// 	'matching products',
+			// 	getMatchingProducts( currentSiteProducts, planSlugInCart )
+			// );
+			//in case of multiple hits, return the first one
+			return getMatchingProducts( currentSiteProducts, planSlugInCart )[ 0 ];
 		}
 
 		return null;

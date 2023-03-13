@@ -200,6 +200,17 @@ export function getAllFeaturesForPlan( plan: Plan | string ): TranslateResult[] 
 		...( 'getIncludedFeatures' in planObj && planObj.getIncludedFeatures
 			? planObj.getIncludedFeatures()
 			: [] ),
+	];
+}
+
+// some Jetpack plans include products, so we need to get those too
+export function getAllProductsForPlan( plan: Plan | string ): TranslateResult[] {
+	const planObj = getPlan( plan );
+	// console.log( 'planObj: Products Included', planObj.getProductsIncluded() );
+	if ( ! planObj ) {
+		return [];
+	}
+	return [
 		...( 'getProductsIncluded' in planObj && planObj.getProductsIncluded
 			? planObj.getProductsIncluded()
 			: [] ),
