@@ -10,7 +10,7 @@ import MomentProvider from 'calypso/components/localized-moment/provider';
 import { RouteProvider } from 'calypso/components/route';
 import Layout from 'calypso/layout';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
-import { login } from 'calypso/lib/paths';
+import { login, createAccountUrl } from 'calypso/lib/paths';
 import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
 import { getSiteFragment } from 'calypso/lib/route';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -128,9 +128,36 @@ export function redirectLoggedOut( context, next ) {
 		loginParameters.locale = login_locale;
 	}
 
+	if (
+		'1' === context.query?.unlinked &&
+		loginParameters.redirectTo &&
+		loginParameters.redirectTo.startsWith( '/checkout/' )
+	) {
+		loginParameters.isJetpack = true;
+		loginParameters.redirectTo = 'https://wordpress.com' + loginParameters.redirectTo;
+	}
+
 	// force full page reload to avoid SSR hydration issues.
 	window.location = login( loginParameters );
 	return;
+}
+
+/**
+ * Middleware to redirect logged out users to create an account.
+ * Designed for use in situations where no site is selected, such as the reader.
+ *
+ * @param   {Object}   context Context object
+ * @param   {Function} next    Calls next middleware
+ * @returns {void}
+ */
+export function redirectLoggedOutToSignup( context, next ) {
+	const state = context.store.getState();
+	if ( isUserLoggedIn( state ) ) {
+		next();
+		return;
+	}
+
+	return page.redirect( createAccountUrl( { redirectTo: context.path, ref: 'reader-lp' } ) );
 }
 
 /**

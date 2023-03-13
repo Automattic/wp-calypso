@@ -10,6 +10,7 @@ import { useThemeDetails } from 'calypso/landing/stepper/hooks/use-theme-details
 import { PRODUCTS_LIST_STORE } from 'calypso/landing/stepper/stores';
 import ThemeFeatures from './theme-features';
 import './upgrade-modal.scss';
+import type { ProductsListSelect } from '@automattic/data-stores';
 
 interface UpgradeModalProps {
 	/* Theme slug */
@@ -36,11 +37,15 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 	const theme_software_set = theme?.data?.taxonomies?.theme_software_set?.length;
 	const showBundleVersion = theme_software_set;
 
-	const premiumPlanProduct = useSelect( ( select ) =>
-		select( PRODUCTS_LIST_STORE ).getProductBySlug( 'value_bundle' )
+	const premiumPlanProduct = useSelect(
+		( select ) =>
+			( select( PRODUCTS_LIST_STORE ) as ProductsListSelect ).getProductBySlug( 'value_bundle' ),
+		[]
 	);
-	const businessPlanProduct = useSelect( ( select ) =>
-		select( PRODUCTS_LIST_STORE ).getProductBySlug( 'business-bundle' )
+	const businessPlanProduct = useSelect(
+		( select ) =>
+			( select( PRODUCTS_LIST_STORE ) as ProductsListSelect ).getProductBySlug( 'business-bundle' ),
+		[]
 	);
 
 	//Wait until we have theme and product data to show content

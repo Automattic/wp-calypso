@@ -1,8 +1,6 @@
-import config from '@automattic/calypso-config';
-import { Card, Button } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { compose } from '@wordpress/compose';
-import classnames from 'classnames';
 import i18n, { localize, translate, withRtl } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import QRCode from 'qrcode.react';
@@ -19,8 +17,7 @@ import {
 	getAccountRecoveryPhone,
 	isAccountRecoverySettingsReady,
 } from 'calypso/state/account-recovery/settings/selectors';
-import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
-import { sendEmailLogin } from 'calypso/state/auth/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import getCountries from 'calypso/state/selectors/get-countries';
@@ -28,8 +25,6 @@ import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import hasUserSettings from 'calypso/state/selectors/has-user-settings';
 import { fetchUserSettings } from 'calypso/state/user-settings/actions';
 import AppsBadge from './apps-badge';
-
-const displayJetpackAppBranding = config.isEnabled( 'jetpack/app-branding' );
 
 function sendSMS( phone ) {
 	function onSuccess( dispatch ) {
@@ -174,8 +169,8 @@ class MobileDownloadCard extends Component {
 		const isIos = isiPad || isiPod || isiPhone;
 
 		return (
-			<div className="get-apps__badges jetpack">
-				<p className="get-apps__card-text jetpack">
+			<div className="get-apps__badges">
+				<p className="get-apps__card-text">
 					{ translate(
 						'Everything you need to publish, manage, and grow your site anywhere, any time.'
 					) }
@@ -190,12 +185,12 @@ class MobileDownloadCard extends Component {
 
 	getQrCode() {
 		return (
-			<div className="get-apps__qr-code-subpanel jetpack">
+			<div className="get-apps__qr-code-subpanel">
 				<QRCode
 					value={ localizeUrl( 'https://apps.wordpress.com/get?campaign=calypso-qrcode-apps' ) }
 					size={ 150 }
 				/>
-				<p className="get-apps__card-text jetpack">
+				<p className="get-apps__card-text">
 					{ translate(
 						'Visit {{a}}wp.com/app{{/a}} from your mobile device, or scan the code to download the Jetpack mobile app.',
 						{
@@ -221,14 +216,14 @@ class MobileDownloadCard extends Component {
 		return (
 			<>
 				<div className="get-apps__store-subpanel">
-					<div className="get-apps__card-text jetpack">
+					<div className="get-apps__card-text">
 						<AnimatedIcon
 							icon={ `/calypso/animations/app-promo/wp-to-jp${
 								this.props.isRtl ? '-rtl' : ''
 							}.json` }
 							className="get-apps__mobile-icon"
 						/>
-						<h1 className="get-apps__card-title jetpack">
+						<h1 className="get-apps__card-title">
 							{ translate(
 								'Take WordPress on the go with the {{span}}Jetpack{{/span}} mobile app',
 								{
@@ -248,71 +243,11 @@ class MobileDownloadCard extends Component {
 		);
 	}
 
-	getWordPressBrandedPanel() {
-		const { isMobile } = userAgent;
-		const featureIsEnabled = ! isMobile;
-
-		return (
-			<>
-				<div className="get-apps__store-subpanel">
-					<div className="get-apps__card-text">
-						<h3 className="get-apps__card-title">{ translate( 'Mobile Apps' ) }</h3>
-						<p className="get-apps__description">
-							{ translate( 'WordPress at your fingertips.' ) }
-						</p>
-					</div>
-					<div className="get-apps__badges">
-						<AppsBadge storeName="android" utm_source="calypso-get-apps" />
-						<AppsBadge storeName="ios" utm_source="calypso-get-apps-button" />
-					</div>
-				</div>
-
-				{ featureIsEnabled && (
-					<div className="get-apps__qr-code-subpanel">
-						<p>
-							<strong>{ translate( 'Ready to WordPress on the go?' ) }</strong>
-							<br />
-							{ translate( 'Scan the code using your mobile phone to download the app.' ) }
-						</p>
-
-						<QRCode
-							value={ localizeUrl( 'https://apps.wordpress.com/get?campaign=calypso-qrcode-apps' ) }
-							size={ 180 }
-						/>
-					</div>
-				) }
-
-				<div className="get-apps__magic-link-subpanel">
-					<div className="get-apps__card-text">
-						<p>
-							<strong>{ translate( 'Instantly log in to the mobile app' ) }</strong>
-							<br />
-							{ translate(
-								'Send yourself links to download the app and instantly log in on your mobile device.'
-							) }
-						</p>
-					</div>
-					<div>
-						<Button className="get-apps__magic-link-button" onClick={ this.onSubmitLink }>
-							{ translate( 'Email me a log in link' ) }
-						</Button>
-					</div>
-				</div>
-			</>
-		);
-	}
-
 	render() {
 		return (
-			<Card
-				className={ classnames( 'get-apps__mobile', {
-					jetpack: displayJetpackAppBranding,
-				} ) }
-			>
+			<Card className="get-apps__mobile">
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
-				{ displayJetpackAppBranding
-					? this.getJetpackBrandedPanel()
-					: this.getWordPressBrandedPanel() }
+				{ this.getJetpackBrandedPanel() }
 			</Card>
 		);
 	}
@@ -339,18 +274,7 @@ class MobileDownloadCard extends Component {
 		const phoneNumber = this.getPreferredNumber().numberFull;
 		this.props.sendSMS( phoneNumber );
 	};
-
-	onSubmitLink = () => {
-		const email = this.props.userSettings.user_email;
-		this.props.sendMagicLink( email );
-	};
 }
-
-const sendMagicLink = ( email ) =>
-	withAnalytics(
-		recordTracksEvent( 'calypso_get_apps_magic_link_button_click' ),
-		sendEmailLogin( email, { showGlobalNotices: true, isMobileAppLogin: true } )
-	);
 
 export default compose(
 	connect(
@@ -361,7 +285,7 @@ export default compose(
 			userSettings: getUserSettings( state ),
 			hasUserSettings: hasUserSettings( state ),
 		} ),
-		{ sendSMS, sendMagicLink, fetchUserSettings, accountRecoverySettingsFetch, recordTracksEvent }
+		{ sendSMS, fetchUserSettings, accountRecoverySettingsFetch, recordTracksEvent }
 	),
 	withRtl,
 	localize

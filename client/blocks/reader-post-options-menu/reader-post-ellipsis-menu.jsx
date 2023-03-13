@@ -16,6 +16,7 @@ import { READER_POST_OPTIONS_MENU } from 'calypso/reader/follow-sources';
 import { canBeMarkedAsSeen, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import * as stats from 'calypso/reader/stats';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import * as PostUtils from 'calypso/state/posts/utils';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
@@ -251,6 +252,7 @@ class ReaderPostEllipsisMenu extends Component {
 			isWPForTeamsItem,
 			currentRoute,
 			hasOrganization,
+			isLoggedIn,
 		} = this.props;
 
 		const { ID: postId, site_ID: siteId } = post;
@@ -259,6 +261,10 @@ class ReaderPostEllipsisMenu extends Component {
 		const isDiscoverPost = DiscoverHelper.isDiscoverPost( post );
 
 		let isBlockPossible = false;
+
+		if ( ! isLoggedIn ) {
+			return null;
+		}
 
 		// Should we show the 'block' option?
 		if (
@@ -360,6 +366,7 @@ export default connect(
 		return Object.assign(
 			{ currentRoute: getCurrentRoute( state ) },
 			{ isWPForTeamsItem: isSiteWPForTeams( state, siteId ) || isFeedWPForTeams( state, feedId ) },
+			{ isLoggedIn: isUserLoggedIn( state ) },
 			{
 				hasOrganization: hasReaderFollowOrganization( state, feedId, siteId ),
 			}

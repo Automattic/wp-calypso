@@ -6,22 +6,47 @@ import { useDispatch, useSelect, dispatch } from '@wordpress/data';
 import { useEffect, useMemo } from '@wordpress/element';
 import useSiteIntent from '../../../dotcom-fse/lib/site-intent/use-site-intent';
 import useSitePlan from '../../../dotcom-fse/lib/site-plan/use-site-plan';
+import { selectors as starterPageTemplatesSelectors } from '../../../starter-page-templates/store';
+import { selectors as wpcomBlockEditorNavSidebarSelectors } from '../../../wpcom-block-editor-nav-sidebar/src/store';
+import { selectors as wpcomWelcomeGuideSelectors } from '../store';
+import { getEditorType } from './get-editor-type';
 import getTourSteps from './tour-steps';
 import './style-tour.scss';
+import type { SelectFromMap } from '@automattic/data-stores';
 import type { WpcomConfig } from '@automattic/tour-kit';
 import type { Rect, Placement } from '@popperjs/core';
 
+type StarterPageTemplatesSelectors = SelectFromMap< typeof starterPageTemplatesSelectors >;
+type WpcomBlockEditorNavSidebarSelectors = SelectFromMap<
+	typeof wpcomBlockEditorNavSidebarSelectors
+>;
+type WpcomWelcomeGuideSelectors = SelectFromMap< typeof wpcomWelcomeGuideSelectors >;
+type CoreEditPostPlaceholder = {
+	isInserterOpened: ( ...args: unknown[] ) => boolean;
+};
+type CoreInterfacePlaceholder = {
+	getActiveComplementaryArea: ( name: string ) => string;
+};
+
 function LaunchWpcomWelcomeTour() {
-	const { show, isNewPageLayoutModalOpen, isManuallyOpened } = useSelect( ( select ) => ( {
-		show: select( 'automattic/wpcom-welcome-guide' ).isWelcomeGuideShown(),
-		// Handle the case where the new page pattern modal is initialized and open
-		isNewPageLayoutModalOpen:
-			select( 'automattic/starter-page-layouts' ) &&
-			select( 'automattic/starter-page-layouts' ).isOpen(),
-		isManuallyOpened: select( 'automattic/wpcom-welcome-guide' ).isWelcomeGuideManuallyOpened(),
-	} ) );
+	const { show, isNewPageLayoutModalOpen, isManuallyOpened } = useSelect(
+		( select ) => ( {
+			show: (
+				select( 'automattic/wpcom-welcome-guide' ) as WpcomWelcomeGuideSelectors
+			 ).isWelcomeGuideShown(),
+			// Handle the case where the new page pattern modal is initialized and open
+			isNewPageLayoutModalOpen:
+				select( 'automattic/starter-page-layouts' ) &&
+				( select( 'automattic/starter-page-layouts' ) as StarterPageTemplatesSelectors ).isOpen(),
+			isManuallyOpened: (
+				select( 'automattic/wpcom-welcome-guide' ) as WpcomWelcomeGuideSelectors
+			 ).isWelcomeGuideManuallyOpened(),
+		} ),
+		[]
+	);
 	const { siteIntent, siteIntentFetched } = useSiteIntent();
 	const localeSlug = useLocale();
+	const editorType = getEditorType();
 
 	// Preload first card image (others preloaded after open state confirmed)
 	usePrefetchTourAssets( [ getTourSteps( localeSlug, false, false, null, siteIntent )[ 0 ] ] );
@@ -40,8 +65,16 @@ function LaunchWpcomWelcomeTour() {
 			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
 			is_manually_opened: isManuallyOpened,
 			intent: siteIntent,
+			editor_type: editorType,
 		} );
-	}, [ isNewPageLayoutModalOpen, isManuallyOpened, show, siteIntent, siteIntentFetched ] );
+	}, [
+		isNewPageLayoutModalOpen,
+		isManuallyOpened,
+		show,
+		siteIntent,
+		siteIntentFetched,
+		editorType,
+	] );
 
 	if ( ! show || isNewPageLayoutModalOpen ) {
 		return null;
@@ -58,7 +91,7 @@ function WelcomeTour( { siteIntent }: { siteIntent?: string } ) {
 	const isWelcomeTourNext = () => {
 		return new URLSearchParams( document.location.search ).has( 'welcome-tour-next' );
 	};
-	const isSiteEditor = useSelect( ( select ) => !! select( 'core/edit-site' ) );
+	const isSiteEditor = useSelect( ( select ) => !! select( 'core/edit-site' ), [] );
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-ignore Until `@types/wordpress__editor` (which has `@types/wordpress__core-data` as a dependency) can be upgraded to a version that includes `getCurrentTheme`
 	// the function has existed for many years, and works as expected on wpcom and atomic
@@ -78,17 +111,30 @@ function WelcomeTour( { siteIntent }: { siteIntent?: string } ) {
 		const paymentBlockIndex = tourSteps.findIndex( ( step ) => step.slug === 'payment-block' );
 		tourSteps.splice( paymentBlockIndex, 1 );
 	}
-	const { isInserterOpened, isSidebarOpened, isSettingsOpened } = useSelect( ( select ) => ( {
-		isInserterOpened: select( 'core/edit-post' ).isInserterOpened(),
-		isSidebarOpened: select( 'automattic/block-editor-nav-sidebar' )?.isSidebarOpened() ?? false, // The sidebar store may not always be loaded.
-		isSettingsOpened:
-			select( 'core/interface' ).getActiveComplementaryArea( 'core/edit-post' ) ===
-			'edit-post/document',
-	} ) );
+	const { isInserterOpened, isSidebarOpened, isSettingsOpened } = useSelect(
+		( select ) => ( {
+			isInserterOpened: (
+				select( 'core/edit-post' ) as CoreEditPostPlaceholder
+			 ).isInserterOpened(),
+			isSidebarOpened:
+				(
+					select( 'automattic/block-editor-nav-sidebar' ) as
+						| WpcomBlockEditorNavSidebarSelectors
+						| undefined
+				 )?.isSidebarOpened() ?? false, // The sidebar store may not always be loaded.
+			isSettingsOpened:
+				( select( 'core/interface' ) as CoreInterfacePlaceholder ).getActiveComplementaryArea(
+					'core/edit-post'
+				) === 'edit-post/document',
+		} ),
+		[]
+	);
 
 	const isTourMinimized =
 		isSidebarOpened ||
 		( isWithinBreakpoint( '<782px' ) && ( isInserterOpened || isSettingsOpened ) );
+
+	const editorType = getEditorType();
 
 	const tourConfig: WpcomConfig = {
 		steps: tourSteps,
@@ -98,6 +144,7 @@ function WelcomeTour( { siteIntent }: { siteIntent?: string } ) {
 				slide_number: currentStepIndex + 1,
 				action: source,
 				intent: siteIntent,
+				editor_type: editorType,
 			} );
 			setShowWelcomeGuide( false, { openedManually: false } );
 		},
@@ -106,8 +153,12 @@ function WelcomeTour( { siteIntent }: { siteIntent?: string } ) {
 			tourRating: {
 				enabled: true,
 				useTourRating: () => {
-					return useSelect( ( select ) =>
-						select( 'automattic/wpcom-welcome-guide' ).getTourRating()
+					return useSelect(
+						( select ) =>
+							(
+								select( 'automattic/wpcom-welcome-guide' ) as WpcomWelcomeGuideSelectors
+							 ).getTourRating(),
+						[]
 					);
 				},
 				onTourRate: ( rating ) => {
@@ -116,6 +167,7 @@ function WelcomeTour( { siteIntent }: { siteIntent?: string } ) {
 						thumbs_up: rating === 'thumbs-up',
 						is_gutenboarding: false,
 						intent: siteIntent,
+						editor_type: editorType,
 					} );
 				},
 			},
@@ -125,6 +177,7 @@ function WelcomeTour( { siteIntent }: { siteIntent?: string } ) {
 						is_gutenboarding: isGutenboarding,
 						slide_number: currentStepIndex + 1,
 						intent: siteIntent,
+						editor_type: editorType,
 					} );
 				},
 				onMaximize: ( currentStepIndex ) => {
@@ -132,6 +185,7 @@ function WelcomeTour( { siteIntent }: { siteIntent?: string } ) {
 						is_gutenboarding: isGutenboarding,
 						slide_number: currentStepIndex + 1,
 						intent: siteIntent,
+						editor_type: editorType,
 					} );
 				},
 				onStepViewOnce: ( currentStepIndex ) => {
@@ -144,6 +198,7 @@ function WelcomeTour( { siteIntent }: { siteIntent?: string } ) {
 						slide_heading: heading,
 						is_gutenboarding: isGutenboarding,
 						intent: siteIntent,
+						editor_type: editorType,
 					} );
 				},
 			},

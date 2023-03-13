@@ -14,7 +14,7 @@ const actions = {
 	} ),
 };
 
-const selectors = {
+export const selectors = {
 	isOpen: ( state: OpenState ): boolean => 'CLOSED' !== state,
 	isPatternPicker: ( state: OpenState ): boolean => 'OPEN_FOR_BLANK_CANVAS' === state,
 };
@@ -30,11 +30,3 @@ registerStore( STORE_KEY, {
 	actions,
 	selectors,
 } );
-
-declare module '@wordpress/data' {
-	function dispatch( key: 'automattic/starter-page-layouts' ): typeof actions;
-	function select( key: 'automattic/starter-page-layouts' ): {
-		isOpen: () => ReturnType< typeof selectors.isOpen >;
-		isPatternPicker: () => ReturnType< typeof selectors.isPatternPicker >;
-	};
-}

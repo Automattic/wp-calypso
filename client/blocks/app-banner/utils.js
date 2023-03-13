@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { get, includes, reduce } from 'lodash';
 
 export const APP_BANNER_DISMISS_TIMES_PREFERENCE = 'appBannerDismissTimes';
@@ -22,8 +21,6 @@ const emptyBanner = {
 };
 
 export function getAppBannerData( translate, sectionName, isRTL ) {
-	const displayJetpackAppBranding = config.isEnabled( 'jetpack/app-branding' );
-
 	switch ( sectionName ) {
 		case GUTENBERG:
 			return {
@@ -54,17 +51,11 @@ export function getAppBannerData( translate, sectionName, isRTL ) {
 				icon: `/calypso/animations/app-promo/jp-stats${ isRTL ? '-rtl' : '' }.json`,
 			};
 		case HOME:
-			if ( displayJetpackAppBranding ) {
-				return {
-					title: translate( 'The Jetpack app makes WordPress better.' ),
-					copy: translate(
-						'Everything you need to write, publish, and manage a world-class site.'
-					),
-					icon: `/calypso/animations/app-promo/wp-to-jp${ isRTL ? '-rtl' : '' }.json`,
-				};
-			}
-
-			return emptyBanner;
+			return {
+				title: translate( 'The Jetpack app makes WordPress better.' ),
+				copy: translate( 'Everything you need to write, publish, and manage a world-class site.' ),
+				icon: `/calypso/animations/app-promo/wp-to-jp${ isRTL ? '-rtl' : '' }.json`,
+			};
 		default:
 			return emptyBanner;
 	}

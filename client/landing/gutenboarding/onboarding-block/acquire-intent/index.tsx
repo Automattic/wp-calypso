@@ -10,12 +10,16 @@ import { recordSiteTitleSkip } from '../../lib/analytics';
 import { useIsAnchorFm } from '../../path';
 import { ONBOARD_STORE } from '../../stores/onboard';
 import SiteTitle from './site-title';
+import type { OnboardSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
 const AcquireIntent: React.FunctionComponent = () => {
 	const { __ } = useI18n();
-	const { getSelectedSiteTitle, hasSiteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ) );
+	const { getSelectedSiteTitle, hasSiteTitle } = useSelect(
+		( select ) => select( ONBOARD_STORE ) as OnboardSelect,
+		[]
+	);
 
 	const siteTitleRef = React.useRef< HTMLInputElement >();
 

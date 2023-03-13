@@ -12,6 +12,7 @@ import PeopleList from './main';
 import PeopleAddSubscribers from './people-add-subscribers';
 import PeopleInviteDetails from './people-invite-details';
 import PeopleInvites from './people-invites';
+import PeopleInvitesPending from './people-invites-pending';
 import SubscriberDetails from './subscriber-details';
 import SubscribersTeam from './subscribers-team';
 import TeamInvite from './team-invite';
@@ -48,6 +49,10 @@ export default {
 
 	peopleInviteDetails( context, next ) {
 		renderPeopleInviteDetails( context, next );
+	},
+
+	peoplePendingInvites( context, next ) {
+		renderPendingInvites( context, next );
 	},
 
 	teamMembers( context, next ) {
@@ -132,6 +137,25 @@ function renderPeopleInvites( context, next ) {
 		<>
 			<PeopleInvitesTitle />
 			<PeopleInvites />
+		</>
+	);
+	next();
+}
+
+function renderPendingInvites( context, next ) {
+	const state = context.store.getState();
+	const site = getSelectedSite( state );
+
+	const PeopleInvitesTitle = () => {
+		const translate = useTranslate();
+
+		return <DocumentHead title={ translate( 'Pending Invites', { textOnly: true } ) } />;
+	};
+
+	context.primary = (
+		<>
+			<PeopleInvitesTitle />
+			<PeopleInvitesPending site={ site } />
 		</>
 	);
 	next();

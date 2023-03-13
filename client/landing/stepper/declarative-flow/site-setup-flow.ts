@@ -40,7 +40,7 @@ import ImporterSquarespace from './internals/steps-repository/importer-squarespa
 import ImporterWix from './internals/steps-repository/importer-wix';
 import ImporterWordpress from './internals/steps-repository/importer-wordpress';
 import IntentStep from './internals/steps-repository/intent-step';
-import PatternAssembler from './internals/steps-repository/pattern-assembler';
+import PatternAssembler from './internals/steps-repository/pattern-assembler/lazy';
 import ProcessingStep, { ProcessingResult } from './internals/steps-repository/processing-step';
 import SiteOptions from './internals/steps-repository/site-options';
 import SiteVertical from './internals/steps-repository/site-vertical';
@@ -55,6 +55,7 @@ import {
 	Flow,
 	ProvidedDependencies,
 } from './internals/types';
+import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 
 const WRITE_INTENT_DEFAULT_THEME = 'livro';
 const WRITE_INTENT_DEFAULT_THEME_STYLE_VARIATION = 'white';
@@ -69,7 +70,10 @@ const siteSetupFlow: Flow = {
 	name: 'site-setup',
 
 	useSideEffect( currentStep, navigate ) {
-		const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
+		const selectedDesign = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
+			[]
+		);
 
 		useEffect( () => {
 			// Require to start the flow from the first step
@@ -122,10 +126,23 @@ const siteSetupFlow: Flow = {
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
-		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
-		const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
-		const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
-		const startingPoint = useSelect( ( select ) => select( ONBOARD_STORE ).getStartingPoint() );
+		const intent = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
+			[]
+		);
+		const { getIntent } = useSelect( ( select ) => select( ONBOARD_STORE ) as OnboardSelect, [] );
+		const goals = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
+			[]
+		);
+		const selectedDesign = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
+			[]
+		);
+		const startingPoint = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStartingPoint(),
+			[]
+		);
 		const siteSlugParam = useSiteSlugParam();
 		const site = useSite();
 		const currentUser = useSelector( getCurrentUser );
@@ -145,13 +162,19 @@ const siteSetupFlow: Flow = {
 		}
 
 		const adminUrl = useSelect(
-			( select ) => site && select( SITE_STORE ).getSiteOption( site.ID, 'admin_url' )
+			( select ) =>
+				site && ( select( SITE_STORE ) as SiteSelect ).getSiteOption( site.ID, 'admin_url' ),
+			[ site ]
 		);
 		const isAtomic = useSelect(
-			( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID )
+			( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( site.ID ),
+			[ site ]
 		);
-		const storeType = useSelect( ( select ) => select( ONBOARD_STORE ).getStoreType() );
-		const { setPendingAction, setStepProgress, resetOnboardStoreWithSkipFlags } =
+		const storeType = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStoreType(),
+			[]
+		);
+		const { setPendingAction, setStepProgress, resetOnboardStoreWithSkipFlags, setIntent } =
 			useDispatch( ONBOARD_STORE );
 		const { setIntentOnSite, setGoalsOnSite, setThemeOnSite, saveSiteSettings } =
 			useDispatch( SITE_STORE );
@@ -177,12 +200,14 @@ const siteSetupFlow: Flow = {
 					if ( ! siteSlug ) {
 						return;
 					}
+
+					const siteIntent = getIntent();
 					const siteId = site?.ID;
 					const pendingActions = [
-						setIntentOnSite( siteSlug, intent ),
+						setIntentOnSite( siteSlug, siteIntent ),
 						setGoalsOnSite( siteSlug, goals ),
 					];
-					if ( intent === SiteIntent.Write && ! selectedDesign && ! isAtomic ) {
+					if ( siteIntent === SiteIntent.Write && ! selectedDesign && ! isAtomic ) {
 						pendingActions.push(
 							setThemeOnSite(
 								siteSlug,
@@ -196,7 +221,7 @@ const siteSetupFlow: Flow = {
 					if ( typeof siteId === 'number' ) {
 						pendingActions.push(
 							saveSiteSettings( siteId, {
-								launchpad_screen: isLaunchpadIntent( intent ) ? 'full' : 'off',
+								launchpad_screen: isLaunchpadIntent( siteIntent ) ? 'full' : 'off',
 							} )
 						);
 					}
@@ -204,7 +229,7 @@ const siteSetupFlow: Flow = {
 					let redirectionUrl = to;
 
 					// Forcing cache invalidation to retrieve latest launchpad_screen option value
-					if ( isLaunchpadIntent( intent ) ) {
+					if ( isLaunchpadIntent( siteIntent ) ) {
 						redirectionUrl = addQueryArgs( { showLaunchpad: true }, to );
 					}
 
@@ -215,7 +240,7 @@ const siteSetupFlow: Flow = {
 			navigate( 'processing' );
 
 			// Clean-up the store so that if onboard for new site will be launched it will be launched with no preselected values
-			resetOnboardStoreWithSkipFlags( [ 'skipPendingAction' ] );
+			resetOnboardStoreWithSkipFlags( [ 'skipPendingAction', 'skipIntent' ] );
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
@@ -544,6 +569,7 @@ const siteSetupFlow: Flow = {
 
 				case 'goals':
 					// Skip to dashboard must have been pressed
+					setIntent( SiteIntent.Build );
 					return exitFlow( `/home/${ siteSlug }` );
 
 				case 'vertical':
@@ -571,9 +597,13 @@ const siteSetupFlow: Flow = {
 	useAssertConditions(): AssertConditionResult {
 		const siteSlug = useSiteSlugParam();
 		const siteId = useSiteIdParam();
-		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
-		const fetchingSiteError = useSelect( ( select ) =>
-			select( SITE_STORE ).getFetchingSiteError()
+		const userIsLoggedIn = useSelect(
+			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+			[]
+		);
+		const fetchingSiteError = useSelect(
+			( select ) => ( select( SITE_STORE ) as SiteSelect ).getFetchingSiteError(),
+			[]
 		);
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 

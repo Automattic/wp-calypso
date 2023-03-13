@@ -1,3 +1,4 @@
+import { isFreePlanProduct } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { BackButton } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
@@ -176,9 +177,17 @@ class DomainSearch extends Component {
 			}
 			// Monthly plans don't have free domains
 			const intervalTypePath = this.props.isSiteOnMonthlyPlan ? 'yearly/' : '';
-			page(
-				`/plans/${ intervalTypePath }${ this.props.selectedSiteSlug }?domainAndPlanPackage=true`
-			);
+			const nextStepLink =
+				! this.props.isSiteOnFreePlan && ! this.props.isSiteOnMonthlyPlan
+					? `/checkout/${ this.props.selectedSiteSlug }`
+					: addQueryArgs(
+							{
+								domainAndPlanPackage: true,
+								domain: this.props.isDomainUpsell ? domain : undefined,
+							},
+							`/plans/${ intervalTypePath }${ this.props.selectedSiteSlug }`
+					  );
+			page( nextStepLink );
 			return;
 		}
 
@@ -226,6 +235,7 @@ class DomainSearch extends Component {
 			isManagingAllDomains,
 			cart,
 			isDomainAndPlanPackageFlow,
+			isDomainUpsell,
 		} = this.props;
 
 		if ( ! selectedSite ) {
@@ -246,6 +256,9 @@ class DomainSearch extends Component {
 		);
 
 		let content;
+
+		const launchpadScreen = this.props.selectedSite?.options?.launchpad_screen;
+		const siteIntent = this.props.selectedSite?.options?.site_intent;
 
 		if ( ! this.state.domainRegistrationAvailable ) {
 			let maintenanceEndTime = translate( 'shortly', {
@@ -269,6 +282,16 @@ class DomainSearch extends Component {
 				/>
 			);
 		} else {
+			const goBackButtonProps =
+				launchpadScreen === 'full'
+					? {
+							goBackText: translate( 'Next Steps' ),
+							goBackLink: `/setup/${ siteIntent }/launchpad?siteSlug=${ selectedSiteSlug }`,
+					  }
+					: {
+							goBackLink: `/home/${ selectedSiteSlug }`,
+					  };
+
 			content = (
 				<span>
 					<div className="domain-search__content">
@@ -287,7 +310,10 @@ class DomainSearch extends Component {
 							{ isDomainAndPlanPackageFlow && (
 								<>
 									<DomainAndPlanPackageNavigation
-										goBackLink={ `/home/${ selectedSiteSlug }` }
+										{ ...goBackButtonProps }
+										hidePlansPage={
+											! this.props.isSiteOnFreePlan && ! this.props.isSiteOnMonthlyPlan
+										}
 										step={ 1 }
 									/>
 									<FormattedHeader
@@ -298,11 +324,17 @@ class DomainSearch extends Component {
 
 									<p>
 										{ translate(
-											'Stake your claim on your corner of the web with a custom domain name that’s easy to find, share, and follow. Not sure yet?'
+											'Stake your claim on your corner of the web with a custom domain name that’s easy to find, share, and follow.'
 										) }
-										<a className="domains__header-decide-later" href={ hrefForDecideLater }>
-											{ translate( 'Decide later.' ) }
-										</a>
+										{ ! isDomainUpsell && (
+											<>
+												{ ' ' }
+												{ translate( 'Not sure yet?' ) }
+												<a className="domains__header-decide-later" href={ hrefForDecideLater }>
+													{ translate( 'Decide later.' ) }
+												</a>
+											</>
+										) }
 									</p>
 								</>
 							) }
@@ -360,6 +392,7 @@ class DomainSearch extends Component {
 
 export default connect(
 	( state ) => {
+		const site = getSelectedSite( state );
 		const siteId = getSelectedSiteId( state );
 
 		return {
@@ -373,6 +406,10 @@ export default connect(
 			productsList: getProductsList( state ),
 			userCanPurchaseGSuite: canUserPurchaseGSuite( state ),
 			isDomainAndPlanPackageFlow: !! getCurrentQueryArguments( state )?.domainAndPlanPackage,
+			isDomainUpsell:
+				!! getCurrentQueryArguments( state )?.domainAndPlanPackage &&
+				!! getCurrentQueryArguments( state )?.domain,
+			isSiteOnFreePlan: isFreePlanProduct( site.plan ),
 		};
 	},
 	{

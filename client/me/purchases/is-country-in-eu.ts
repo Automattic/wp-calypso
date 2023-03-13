@@ -14,6 +14,7 @@ export function isCountryInEu( country: string, date?: string ): boolean {
 		'ES',
 		'FI',
 		'FR',
+		'GR',
 		'HR',
 		'HU',
 		'IE',

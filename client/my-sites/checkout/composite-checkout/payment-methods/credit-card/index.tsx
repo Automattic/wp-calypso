@@ -14,7 +14,8 @@ import {
 } from 'calypso/my-sites/checkout/composite-checkout/components/summary-details';
 import CreditCardFields from './credit-card-fields';
 import CreditCardPayButton from './credit-card-pay-button';
-import type { CardStoreType } from './types';
+import type { WpcomCreditCardSelectors } from './store';
+import type { CardFieldState, CardStoreType } from './types';
 
 export { createCreditCardPaymentMethodStore } from './store';
 
@@ -55,9 +56,15 @@ export function createCreditCardMethod( {
 }
 
 function CreditCardSummary() {
-	const fields = useSelect( ( select ) => select( 'wpcom-credit-card' ).getFields() );
+	const fields: CardFieldState = useSelect(
+		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getFields(),
+		[]
+	);
 	const cardholderName = fields.cardholderName;
-	const brand = useSelect( ( select ) => select( 'wpcom-credit-card' ).getBrand() );
+	const brand: string = useSelect(
+		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getBrand(),
+		[]
+	);
 
 	return (
 		<SummaryDetails>

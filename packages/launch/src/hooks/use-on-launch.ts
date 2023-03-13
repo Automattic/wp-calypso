@@ -4,14 +4,19 @@ import LaunchContext from '../context';
 import { useCart, useSiteDomains } from '../hooks';
 import { LAUNCH_STORE, PLANS_STORE } from '../stores';
 import { useSite } from './';
+import type { LaunchSelect, PlansSelect } from '@automattic/data-stores';
 
 // Hook used exclusively in Step-by-step launch flow until it will be using Editor Checkout Modal
 export const useOnLaunch = () => {
 	const { siteId, redirectTo } = useContext( LaunchContext );
 
-	const { planProductId } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
-	const isPlanFree = useSelect( ( select ) =>
-		select( PLANS_STORE ).isPlanProductFree( planProductId )
+	const { planProductId } = useSelect(
+		( select ) => ( select( LAUNCH_STORE ) as LaunchSelect ).getState(),
+		[]
+	);
+	const isPlanFree = useSelect(
+		( select ) => ( select( PLANS_STORE ) as PlansSelect ).isPlanProductFree( planProductId ),
+		[ planProductId ]
 	);
 
 	const { isSiteLaunched } = useSite();

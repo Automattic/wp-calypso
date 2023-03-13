@@ -6,6 +6,7 @@ import { useAnchorFmParams } from '../../../gutenboarding/path';
 import { useFontPairings } from '../../fonts';
 import { ONBOARD_STORE } from '../../stores/onboard';
 import type { Viewport } from './types';
+import type { OnboardSelect } from '@automattic/data-stores';
 import type { FontPair } from '@automattic/design-picker';
 
 function getFontsLoadingHTML( effectiveFontPairings: readonly FontPair[] ) {
@@ -52,8 +53,9 @@ interface Props {
 const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 	const language = useLocale();
 	const [ previewHtml, setPreviewHtml ] = React.useState< string >();
-	const { selectedDesign, selectedFonts, siteTitle } = useSelect( ( select ) =>
-		select( ONBOARD_STORE ).getState()
+	const { selectedDesign, selectedFonts, siteTitle } = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getState(),
+		[]
 	);
 	const { anchorFmPodcastId } = useAnchorFmParams();
 

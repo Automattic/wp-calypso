@@ -23,7 +23,9 @@ export const TEST_ACCOUNT_NAMES = [
 	'p2User',
 	'totpUser',
 	'smsUser',
-	'jetpackUser',
+	'jetpackRemoteSiteUser',
+	'jetpackStagingUser',
+	'jetpackStagingFseUser',
 	'jetpackUserPREMIUM',
 	'jetpackUserJN',
 	'desktopAppUser',
@@ -184,7 +186,21 @@ export class SecretsManager {
 				totpUser: { ...fakeAccount, totpKey: 'FAKE_VALUE' },
 				// The following user needs smsNumber
 				smsUser: { ...fakeAccount, smsNumber: { code: 'FAKE_VALUE', number: 'FAKE_VALUE' } },
-				jetpackUser: { ...fakeAccount },
+				jetpackRemoteSiteUser: {
+					...fakeAccount,
+					userID: 0,
+					testSites: { primary: { id: 0, url: 'FAKE_VALUE', remotePassword: 'FAKE_VALUE' } },
+				},
+				jetpackStagingUser: {
+					...fakeAccount,
+					userID: 0,
+					testSites: { primary: { id: 0, url: 'FAKE_VALUE' } },
+				},
+				jetpackStagingFseUser: {
+					...fakeAccount,
+					userID: 0,
+					testSites: { primary: { id: 0, url: 'FAKE_VALUE' } },
+				},
 				jetpackUserPREMIUM: { ...fakeAccount },
 				jetpackUserJN: { ...fakeAccount },
 				desktopAppUser: { ...fakeAccount },

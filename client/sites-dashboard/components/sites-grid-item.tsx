@@ -2,9 +2,9 @@ import { useSiteLaunchStatusLabel, getSiteLaunchStatus } from '@automattic/sites
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import { AnchorHTMLAttributes, memo, useState } from 'react';
+import { AnchorHTMLAttributes, memo } from 'react';
+import { useInView } from 'react-intersection-observer';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
-import { useInView } from 'calypso/lib/use-in-view';
 import { displaySiteUrl, getDashboardUrl } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import { SitesGridActionRenew } from './sites-grid-action-renew';
@@ -15,6 +15,7 @@ import { SiteItemThumbnail } from './sites-site-item-thumbnail';
 import { SiteLaunchNag } from './sites-site-launch-nag';
 import { SiteName } from './sites-site-name';
 import { SiteUrl, Truncated } from './sites-site-url';
+import SitesStagingBadge from './sites-staging-badge';
 import { ThumbnailLink } from './thumbnail-link';
 
 const SIZES_ATTR = [
@@ -76,10 +77,10 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 	const { __ } = useI18n();
 
 	const isP2Site = site.options?.is_wpforteams_site;
+	const isStagingSite = site.is_wpcom_staging_site;
 	const translatedStatus = useSiteLaunchStatusLabel( site );
 
-	const [ inViewOnce, setInViewOnce ] = useState( false );
-	const ref = useInView< HTMLDivElement >( () => setInViewOnce( true ) );
+	const { ref, inView } = useInView( { triggerOnce: true } );
 
 	const siteDashboardUrlProps: AnchorHTMLAttributes< HTMLAnchorElement > = {
 		href: getDashboardUrl( site.slug ),
@@ -100,7 +101,7 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 						<SiteItemThumbnail
 							displayMode="tile"
 							className={ siteThumbnail }
-							showPlaceholder={ ! inViewOnce }
+							showPlaceholder={ ! inView }
 							site={ site }
 							width={ THUMBNAIL_DIMENSION.width }
 							height={ THUMBNAIL_DIMENSION.height }
@@ -118,11 +119,12 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 
 					<div className={ badges }>
 						{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
+						{ isStagingSite && <SitesStagingBadge>{ __( 'Staging' ) }</SitesStagingBadge> }
 						{ getSiteLaunchStatus( site ) !== 'public' && (
 							<SitesLaunchStatusBadge>{ translatedStatus }</SitesLaunchStatusBadge>
 						) }
 						<EllipsisMenuContainer>
-							{ inViewOnce && <SitesEllipsisMenu className={ ellipsis } site={ site } /> }
+							{ inView && <SitesEllipsisMenu className={ ellipsis } site={ site } /> }
 						</EllipsisMenuContainer>
 					</div>
 				</>

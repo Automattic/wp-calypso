@@ -8,6 +8,7 @@ import { ONBOARD_STORE } from '../../stores/onboard';
 import DomainPickerButton from '../domain-picker-button';
 import Link from '../link';
 import PlansButton from '../plans-button';
+import type { OnboardSelect } from '@automattic/data-stores';
 import type { FunctionComponent } from 'react';
 
 import './style.scss';
@@ -19,7 +20,10 @@ const Header: FunctionComponent = () => {
 	const isAnchorFmSignup = useIsAnchorFm();
 	const makePath = usePath();
 
-	const { siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
+	const { siteTitle } = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getState(),
+		[]
+	);
 
 	// steps (including modals) where we show Domains button
 	const showDomainsButton =

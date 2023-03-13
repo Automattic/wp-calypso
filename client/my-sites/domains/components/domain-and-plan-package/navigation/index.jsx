@@ -1,6 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 
 import './style.scss';
 
@@ -9,7 +8,7 @@ export default function DomainAndPlanPackageNavigation( props ) {
 
 	const goBack = () => {
 		if ( props.goBackLink ) {
-			page( props.goBackLink );
+			window.location.assign( props.goBackLink );
 		} else {
 			window.history.go( -1 );
 		}
@@ -21,16 +20,15 @@ export default function DomainAndPlanPackageNavigation( props ) {
 		args: { currentStep: step, stepCount: 3 },
 	} );
 
+	const buttonText =
+		props.goBackText || ( props.step !== 1 ? translate( 'Back' ) : translate( 'Home' ) );
+
 	return (
 		<div className="domain-and-plan-package-navigation">
 			<div className="domain-and-plan-package-navigation__back">
 				<Button borderless="true" onClick={ goBack }>
 					<Gridicon icon="chevron-left" />
-					{ props.step !== 1 ? (
-						<span>{ translate( 'Back' ) }</span>
-					) : (
-						<span>{ translate( 'Home' ) }</span>
-					) }
+					<span>{ buttonText }</span>
 				</Button>
 			</div>
 			<ol className="domain-and-plan-package-navigation__steps">
@@ -39,10 +37,12 @@ export default function DomainAndPlanPackageNavigation( props ) {
 					{ translate( 'Select a domain' ) }
 					<Gridicon icon="chevron-right" />
 				</li>
-				<li className={ step === 2 ? 'domain-and-plan-package-navigation__active' : '' }>
-					{ translate( 'Select a plan' ) }
-					<Gridicon icon="chevron-right" />
-				</li>
+				{ ! props.hidePlansPage && (
+					<li className={ step === 2 ? 'domain-and-plan-package-navigation__active' : '' }>
+						{ translate( 'Select a plan' ) }
+						<Gridicon icon="chevron-right" />
+					</li>
+				) }
 				<li>{ translate( 'Complete your purchase' ) }</li>
 			</ol>
 			<div className="domain-and-plan-package-navigation__step-indication">{ stepIndication }</div>

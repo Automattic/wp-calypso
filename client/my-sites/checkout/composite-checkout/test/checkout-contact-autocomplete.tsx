@@ -32,6 +32,13 @@ jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
 jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
 jest.mock( 'calypso/lib/navigate' );
 
+// These tests seem to be particularly slow (it might be because of using
+// it.each; it's not clear but the timeout might apply to the whole loop
+// rather that each iteration?), so we need to increase the timeout for their
+// operation. The standard timeout (at the time of writing) is 5 seconds so
+// we are increasing this to 12 seconds.
+jest.setTimeout( 12000 );
+
 describe( 'Checkout contact step', () => {
 	const mainCartKey = 'foo.com' as CartKey;
 	const initialCart = getBasicCart();

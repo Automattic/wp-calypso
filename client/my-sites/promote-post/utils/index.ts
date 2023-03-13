@@ -1,10 +1,6 @@
 import { __, sprintf } from '@wordpress/i18n';
 import moment from 'moment';
-import {
-	AudienceList,
-	AudienceListKeys,
-	Campaign,
-} from 'calypso/data/promote-post/use-promote-post-campaigns-query';
+import { Campaign } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 
 export const campaignStatus = {
 	SCHEDULED: 'scheduled',
@@ -122,7 +118,7 @@ export const getCampaignOverallSpending = (
 			? budget_cents * campaignDays
 			: spent_budget_cents;
 
-	const totalBudgetUsed = spentBudgetCents / 100;
+	const totalBudgetUsed = ( spentBudgetCents / 100 ).toFixed( 2 );
 	let daysRun = moment().diff( moment( start_date ), 'days' );
 	daysRun = daysRun > campaignDays ? campaignDays : daysRun;
 
@@ -149,11 +145,16 @@ export const getCampaignClickthroughRate = ( clicks_total: number, impressions_t
 export const getCampaignDurationFormatted = ( start_date: string, end_date: string ) => {
 	const campaignDays = getCampaignDurationDays( start_date, end_date );
 
-	const dateStartFormatted = moment.utc( start_date ).format( 'MMM D' );
-	const dateEndFormatted = moment.utc( end_date ).format( 'MMM D' );
-	const durationFormatted = `${ dateStartFormatted } - ${ dateEndFormatted } (${ campaignDays } ${ __(
-		'days'
-	) })`;
+	let durationFormatted;
+	if ( campaignDays === 0 ) {
+		durationFormatted = '-';
+	} else {
+		const dateStartFormatted = moment.utc( start_date ).format( 'MMM D' );
+		const dateEndFormatted = moment.utc( end_date ).format( 'MMM D' );
+		durationFormatted = `${ dateStartFormatted } - ${ dateEndFormatted } (${ campaignDays } ${ __(
+			'days'
+		) })`;
+	}
 
 	return durationFormatted;
 };
@@ -165,6 +166,7 @@ export const getCampaignBudgetData = (
 	spent_budget_cents: number
 ) => {
 	const campaignDays = getCampaignDurationDays( start_date, end_date );
+
 	const spentBudgetCents =
 		spent_budget_cents > budget_cents * campaignDays
 			? budget_cents * campaignDays
@@ -177,6 +179,7 @@ export const getCampaignBudgetData = (
 		totalBudget,
 		totalBudgetUsed,
 		totalBudgetLeft,
+		campaignDays,
 	};
 };
 
@@ -194,19 +197,6 @@ export const getCampaignEstimatedImpressions = ( displayDeliveryEstimate: string
 	}
 	const [ minEstimate, maxEstimate ] = displayDeliveryEstimate.split( ':' );
 	return `${ ( +minEstimate ).toLocaleString() } - ${ ( +maxEstimate ).toLocaleString() }`;
-};
-
-export const getCampaignAudienceString = ( audience_list: AudienceList ) => {
-	if ( ! audience_list ) {
-		return '';
-	}
-	const audience = Object.keys( audience_list )
-		.reduce( ( acc, key ) => {
-			return `${ acc }, ${ audience_list[ key as keyof typeof AudienceListKeys ] }`;
-		}, '' )
-		.substring( 2 );
-
-	return audience;
 };
 
 export const canCancelCampaign = ( status: string ) => {

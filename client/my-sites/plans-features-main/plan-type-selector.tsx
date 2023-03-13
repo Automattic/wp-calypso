@@ -35,6 +35,7 @@ export type PlanTypeSelectorProps = {
 	siteSlug?: string | null;
 	selectedPlan?: string;
 	selectedFeature?: string;
+	showBiannualToggle?: boolean;
 	isInSignup: boolean;
 	plans: string[];
 	eligibleForWpcomMonthlyPlans?: boolean;
@@ -123,11 +124,18 @@ export type IntervalTypeProps = Pick<
 	| 'isPlansInsideStepper'
 	| 'hideDiscountLabel'
 	| 'redirectTo'
+	| 'showBiannualToggle'
 >;
 
 export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
 	const translate = useTranslate();
-	const { intervalType, isInSignup, eligibleForWpcomMonthlyPlans, hideDiscountLabel } = props;
+	const {
+		intervalType,
+		isInSignup,
+		eligibleForWpcomMonthlyPlans,
+		hideDiscountLabel,
+		showBiannualToggle,
+	} = props;
 	const [ spanRef, setSpanRef ] = useState< HTMLSpanElement >();
 	const segmentClasses = classNames( 'plan-features__interval-type', 'price-toggle', {
 		'is-signup': isInSignup,
@@ -141,9 +149,13 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 
 	const additionalPathProps = props.redirectTo ? { redirect_to: props.redirectTo } : {};
 
-	const domainFromHomeUpsellFlow = new URLSearchParams( window.location.search ).get(
-		'get_domain'
+	const isDomainUpsellFlow = new URLSearchParams( window.location.search ).get( 'domain' );
+
+	const isDomainAndPlanPackageFlow = new URLSearchParams( window.location.search ).get(
+		'domainAndPlanPackage'
 	);
+
+	const intervalTabs = showBiannualToggle ? [ 'yearly', '2yearly' ] : [ 'monthly', 'yearly' ];
 
 	return (
 		<IntervalTypeToggleWrapper
@@ -151,40 +163,37 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 			isInSignup={ isInSignup }
 		>
 			<SegmentedControl compact className={ segmentClasses } primary={ true }>
-				<SegmentedControl.Item
-					selected={ intervalType === 'monthly' }
-					path={ generatePath( props, {
-						intervalType: 'monthly',
-						get_domain: domainFromHomeUpsellFlow,
-						...additionalPathProps,
-					} ) }
-					isPlansInsideStepper={ props.isPlansInsideStepper }
-				>
-					<span>{ translate( 'Pay monthly' ) }</span>
-				</SegmentedControl.Item>
-
-				<SegmentedControl.Item
-					selected={ intervalType === 'yearly' }
-					path={ generatePath( props, {
-						intervalType: 'yearly',
-						get_domain: domainFromHomeUpsellFlow,
-						...additionalPathProps,
-					} ) }
-					isPlansInsideStepper={ props.isPlansInsideStepper }
-				>
-					<span ref={ ( ref ) => ref && setSpanRef( ref ) }>{ translate( 'Pay annually' ) }</span>
-					{ hideDiscountLabel ? null : (
-						<PopupMessages context={ spanRef } isVisible={ popupIsVisible }>
-							{ translate(
-								'Save up to %(maxDiscount)d%% by paying annually and get a free domain for one year',
-								{
-									args: { maxDiscount },
-									comment: 'Will be like "Save up to 30% by paying annually..."',
-								}
-							) }
-						</PopupMessages>
-					) }
-				</SegmentedControl.Item>
+				{ intervalTabs.map( ( interval ) => (
+					<SegmentedControl.Item
+						key={ interval }
+						selected={ intervalType === interval }
+						path={ generatePath( props, {
+							intervalType: interval,
+							domain: isDomainUpsellFlow,
+							domainAndPlanPackage: isDomainAndPlanPackageFlow,
+							...additionalPathProps,
+						} ) }
+						isPlansInsideStepper={ props.isPlansInsideStepper }
+					>
+						<span ref={ intervalType === 'monthly' ? ( ref ) => ref && setSpanRef( ref ) : null }>
+							{ interval === 'monthly' ? translate( 'Pay monthly' ) : null }
+							{ interval === 'yearly' && ! showBiannualToggle ? translate( 'Pay annually' ) : null }
+							{ interval === 'yearly' && showBiannualToggle ? translate( 'Pay 1 year' ) : null }
+							{ interval === '2yearly' ? translate( 'Pay 2 years' ) : null }
+						</span>
+						{ ! showBiannualToggle && hideDiscountLabel ? null : (
+							<PopupMessages context={ spanRef } isVisible={ popupIsVisible }>
+								{ translate(
+									'Save up to %(maxDiscount)d%% by paying annually and get a free domain for one year',
+									{
+										args: { maxDiscount },
+										comment: 'Will be like "Save up to 30% by paying annually..."',
+									}
+								) }
+							</PopupMessages>
+						) }
+					</SegmentedControl.Item>
+				) ) }
 			</SegmentedControl>
 		</IntervalTypeToggleWrapper>
 	);
