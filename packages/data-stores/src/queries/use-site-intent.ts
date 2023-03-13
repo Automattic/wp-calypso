@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 
 export function useSiteIntent( siteId: string | number | undefined ) {
