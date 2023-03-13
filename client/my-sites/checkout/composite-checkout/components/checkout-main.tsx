@@ -59,12 +59,13 @@ import { StoredCard } from '../types/stored-cards';
 import WPCheckout from './wp-checkout';
 import type { WpcomCheckoutStoreSelectors as _WpcomCheckoutStoreSelectors } from '../hooks/wpcom-store';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
-import type {
-	CheckoutPageErrorCallback,
-	SitelessCheckoutType,
-} from '@automattic/composite-checkout';
+import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import type { CountryListItem, CheckoutPaymentMethodSlug } from '@automattic/wpcom-checkout';
+import type {
+	CountryListItem,
+	CheckoutPaymentMethodSlug,
+	SitelessCheckoutType,
+} from '@automattic/wpcom-checkout';
 
 type WpcomCheckoutStoreSelectors = _WpcomCheckoutStoreSelectors | undefined;
 
