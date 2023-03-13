@@ -7,7 +7,7 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import Tab from './Tab';
 
 type TabsProps = {
-	children?: typeof Tab | typeof Tab[];
+	children?: React.ReactElement< typeof Tab >[];
 };
 
 const Tabs = ( { children }: TabsProps ) => {

@@ -4,22 +4,28 @@ import page, { Callback } from 'page';
 import { createElement } from 'react';
 import { makeLayout, render } from 'calypso/controller';
 
+const SitesView: React.FunctionComponent = () => <span>Sites View</span>;
+const SettingsView: React.FunctionComponent = () => <span>Settings View</span>;
+
 const SubscriptionManagementPage = () => {
 	return (
 		<SubscriptionManager>
-			<SubscriptionManager.Tabs>
-				<SubscriptionManager.Tab path="/subscriptions/sites">Sites</SubscriptionManager.Tab>
-				<SubscriptionManager.Tab path="/subscriptions/settings">Settings</SubscriptionManager.Tab>
-			</SubscriptionManager.Tabs>
-
-			{ /* <SubscriptionManager.Router>
-				<SubscriptionManager.Route path="/subscriptions/sites">
-					Sites content here
-				</SubscriptionManager.Route>
-				<SubscriptionManager.Route path="/subscriptions/settings">
-					Settings content here
-				</SubscriptionManager.Route>
-			</SubscriptionManager.Router> */ }
+			<SubscriptionManager.TabsSwitcher
+				baseRoute="subscriptions"
+				defaultTab="sites"
+				tabs={ [
+					{
+						label: 'Sites',
+						path: 'sites',
+						view: SitesView,
+					},
+					{
+						label: 'Settings',
+						path: 'settings',
+						view: SettingsView,
+					},
+				] }
+			/>
 		</SubscriptionManager>
 	);
 };
@@ -38,5 +44,11 @@ const checkFeatureFlag: Callback = ( context, next ) => {
 };
 
 export default function () {
-	page( '/subscriptions', checkFeatureFlag, createSubscriptions, makeLayout, render );
+	page(
+		/\/subscriptions(\/(sites|settings))?/,
+		checkFeatureFlag,
+		createSubscriptions,
+		makeLayout,
+		render
+	);
 }

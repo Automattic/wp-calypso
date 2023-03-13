@@ -7,13 +7,14 @@ import NavTabItem from 'calypso/components/section-nav/item';
 
 type TabProps = {
 	path: string;
+	count?: number;
 	children?: React.ReactNode;
 };
 
-const Tab = ( { path, children }: TabProps ) => {
+const Tab = ( { count, path, children }: TabProps ) => {
 	const { currentRoute } = useCurrentRoute();
 	return (
-		<NavTabItem path={ path } selected={ currentRoute === path }>
+		<NavTabItem path={ path } count={ count } selected={ currentRoute === path }>
 			{ children }
 		</NavTabItem>
 	);
