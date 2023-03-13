@@ -44,10 +44,10 @@ function getVatVendorInfo(
 		};
 	}
 
-	if ( country === 'GB' ) {
+	if ( country === 'AU' ) {
 		return {
 			country,
-			taxName: translate( 'VAT', { textOnly: true } ),
+			taxName: translate( 'GST', { textOnly: true } ),
 			address: [
 				'Aut O’Mattic Ltd.',
 				'c/o Noone Casey',
@@ -55,7 +55,7 @@ function getVatVendorInfo(
 				'Dublin, D02 AY86',
 				'Ireland',
 			],
-			vatId: 'UK 376 1703 88',
+			vatId: 'ARN: 3000 1650 1438',
 		};
 	}
 
@@ -71,6 +71,51 @@ function getVatVendorInfo(
 				'Ireland',
 			],
 			vatId: '790004303',
+		};
+	}
+
+	if ( country === 'CH' ) {
+		return {
+			country,
+			taxName: translate( 'GST', { textOnly: true } ),
+			address: [
+				'Aut O’Mattic Ltd.',
+				'c/o Noone Casey',
+				'Grand Canal Dock, 25 Herbert Pl',
+				'Dublin, D02 AY86',
+				'Ireland',
+			],
+			vatId: 'CHE-259.584.214 MWST',
+		};
+	}
+
+	if ( country === 'GB' ) {
+		return {
+			country,
+			taxName: translate( 'VAT', { textOnly: true } ),
+			address: [
+				'Aut O’Mattic Ltd.',
+				'c/o Noone Casey',
+				'Grand Canal Dock, 25 Herbert Pl',
+				'Dublin, D02 AY86',
+				'Ireland',
+			],
+			vatId: 'UK 376 1703 88',
+		};
+	}
+
+	if ( country === 'JP' ) {
+		return {
+			country,
+			taxName: translate( 'VAT', { textOnly: true } ),
+			address: [
+				'Aut O’Mattic Ltd.',
+				'c/o Noone Casey',
+				'Grand Canal Dock, 25 Herbert Pl',
+				'Dublin, D02 AY86',
+				'Ireland',
+			],
+			vatId: '4700150101102',
 		};
 	}
 
