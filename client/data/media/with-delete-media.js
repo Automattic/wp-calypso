@@ -1,7 +1,7 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import { useQueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
 import { useDeleteMediaMutation } from 'calypso/data/media/use-delete-media-mutation';
 import { deleteMedia as deleteMediaAction } from 'calypso/state/media/actions';
