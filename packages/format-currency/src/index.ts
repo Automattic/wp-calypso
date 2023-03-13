@@ -24,6 +24,9 @@ export function createFormatter(): CurrencyFormatter {
 		if ( ! isGeolocationResponse( geoData ) ) {
 			return;
 		}
+		if ( ! geoData.country_short ) {
+			return;
+		}
 		if ( geoData.country_short === 'US' ) {
 			setCurrencySymbol( 'USD', '$' );
 		} else {
