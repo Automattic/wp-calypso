@@ -678,7 +678,8 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 	};
 
 	render() {
-		const { iframeUrl, shouldLoadIframe, isNew7DUser, currentUserCountryCode } = this.props;
+		const { iframeUrl, shouldLoadIframe, isNew7DUser, currentUserCountryCode, shouldBypassIframe } =
+			this.props;
 		const {
 			classicBlockEditorId,
 			isMediaModalVisible,
@@ -700,6 +701,10 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 			if ( window && window.hj ) {
 				window.hj( 'trigger', 'in_survey_1' );
 			}
+		}
+
+		if ( shouldBypassIframe ) {
+			window.location.assign( iframeUrl );
 		}
 
 		return (
@@ -862,6 +867,8 @@ const mapStateToProps = (
 	// Prevents the iframe from loading using a cached frame nonce.
 	const shouldLoadIframe = ! isRequestingSite( state, siteId ?? 0 );
 
+	const shouldBypassIframe = config.isEnabled( 'block-editor/non-iframed' );
+
 	const { url: closeUrl, label: closeLabel } = getEditorCloseConfig( state, siteId, postType );
 
 	// 'shouldDisplayAppBanner' does not check if we're in Blogger Flow, because it is a selector reading from the Redux state, and
@@ -893,6 +900,7 @@ const mapStateToProps = (
 		shouldDisplayAppBanner: displayAppBanner,
 		appBannerDismissed: isAppBannerDismissed( state ),
 		isNew7DUser: isUserRegistrationDaysWithinRange( state, null, 0, 7 ),
+		shouldBypassIframe,
 	};
 };
 
