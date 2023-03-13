@@ -95,7 +95,7 @@ export const getESPluginQueryParams = (
 				mapIndexResultsToPluginData( data.results )
 			)
 			.then( ( plugins: Plugin[] ) => plugins?.[ 0 ] || null );
-	return [ cacheKey, fetchFn ];
+	return [ [ cacheKey ], fetchFn ];
 };
 
 const ONE_DAY_IN_MS = 1000 * 60 * 60 * 24;

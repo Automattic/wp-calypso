@@ -18,5 +18,5 @@ export const getPluginsListKey = (
 		options.tag && ! options.searchTerm ? options.tag : '',
 	];
 
-	return [ PLUGINS_CACHE_VERSION.toString(), key, ...keyParams ];
+	return [ PLUGINS_CACHE_VERSION.toString(), ...key, ...keyParams ];
 };

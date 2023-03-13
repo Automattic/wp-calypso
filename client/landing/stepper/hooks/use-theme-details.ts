@@ -15,7 +15,7 @@ type Theme = {
 
 export function useThemeDetails( slug = '' ): UseQueryResult< Theme > {
 	return useQuery< Theme >(
-		`theme-details-${ slug }`,
+		[ `theme-details-${ slug }` ],
 		() => wpcom.req.get( `/themes/${ slug }`, { apiVersion: '1.2' } ),
 		{
 			staleTime: 60 * 5 * 1000, // 5 minutes

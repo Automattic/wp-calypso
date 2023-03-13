@@ -58,7 +58,7 @@ export function useHappychatAvailable( enabled = true, staleTime = 10 * 60 * 100
 	const { data: dataAuth, isLoading: isLoadingAuth } = useHappychatAuth();
 
 	return useQuery(
-		'happychat-available' + key,
+		[ 'happychat-available' + key ],
 		() => getHCAvailabilityAndStatus( dataAuth as HappychatAuth ),
 		{
 			enabled: ! isLoadingAuth && !! dataAuth && enabled,
