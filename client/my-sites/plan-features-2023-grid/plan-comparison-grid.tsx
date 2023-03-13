@@ -19,13 +19,11 @@ import { useMemo } from '@wordpress/element';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback, useEffect, ChangeEvent } from 'react';
-import { useSelector } from 'react-redux';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { FeatureObject, getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import PlanTypeSelector, {
 	PlanTypeSelectorProps,
 } from 'calypso/my-sites/plans-features-main/plan-type-selector';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import PlanFeatures2023GridActions from './actions';
 import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
 import PopularBadge from './components/popular-badge';
@@ -311,7 +309,6 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 	const { planName, planConstantObj, availableForPurchase, current, ...planPropertiesObj } =
 		planProperties;
 	const highlightLabel = useHighlightLabel( planName );
-	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( visiblePlansProperties );
 	const headerClasses = classNames( 'plan-comparison-grid__header-cell', getPlanClass( planName ), {
 		'popular-plan-parent-class': highlightLabel,
@@ -366,10 +363,7 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 				</h4>
 			</PlanSelector>
 			<PlanFeatures2023GridHeaderPrice
-				currencyCode={ currencyCode }
-				discountPrice={ planPropertiesObj.discountPrice }
-				rawPrice={ rawPrice || 0 }
-				planName={ planName }
+				planProperties={ planProperties }
 				is2023OnboardingPricingGrid={ true }
 				isLargeCurrency={ isLargeCurrency }
 			/>

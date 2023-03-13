@@ -249,6 +249,57 @@ const PlanLogo: React.FunctionComponent< {
 	);
 };
 
+// const PlanPrice: React.FunctionComponent< {
+// 	planPropertiesObj: PlanProperties[];
+// 	options?: PlanRowOptions;
+// 	isReskinned: boolean;
+// 	is2023OnboardingPricingGrid: boolean;
+// 	planProperties: PlanProperties[];
+// } > = ( {
+// 	planPropertiesObj,
+// 	options,
+// 	isReskinned,
+// 	is2023OnboardingPricingGrid,
+// 	planProperties,
+// } ) => {
+// 	const isLargeCurrency = planPropertiesObj.some(
+// 		( properties ) => properties?.rawPrice && properties?.rawPrice > 99000
+// 	);
+
+// 	return planPropertiesObj.map( ( properties ) => {
+// 		const { currencyCode, discountPrice, planName, rawPrice } = properties;
+// 		const classes = classNames( 'plan-features-2023-grid__table-item', 'is-bottom-aligned', {
+// 			'has-border-top': ! isReskinned,
+// 		} );
+// 		const hasNoPrice = rawPrice === undefined || rawPrice === null;
+
+// 		// TODO CLK
+
+// 		// const discountPrice = siteId
+// 		// 	? getPlanDiscountedRawPrice( state, siteId, plan, isMonthlyObj )
+// 		// 	: getDiscountedRawPrice( state, planProductId, showMonthlyPrice );
+
+// 		const foo = getPlanSlugForTermVariant( planName as PlanSlug, TERM_ANNUALLY );
+
+// 		console.log( planProperties.length, properties, planName, foo );
+
+// 		return (
+// 			<Container scope="col" key={ planName } className={ classes } isMobile={ options?.isMobile }>
+// 				{ ! hasNoPrice && (
+// 					<PlanFeatures2023GridHeaderPrice
+// 						currencyCode={ currencyCode }
+// 						discountPrice={ discountPrice }
+// 						rawPrice={ rawPrice }
+// 						planName={ planName }
+// 						is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+// 						isLargeCurrency={ isLargeCurrency }
+// 					/>
+// 				) }
+// 			</Container>
+// 		);
+// 	} );
+// };
+
 export class PlanFeatures2023Grid extends Component<
 	PlanFeatures2023GridType,
 	PlanFeatures2023GridState
@@ -374,6 +425,14 @@ export class PlanFeatures2023Grid extends Component<
 					<tr>{ this.renderPlanLogos( planPropertiesObj ) }</tr>
 					<tr>{ this.renderPlanHeaders( planPropertiesObj ) }</tr>
 					<tr>{ this.renderPlanTagline( planPropertiesObj ) }</tr>
+					{ /* <tr>
+						<PlanPrice
+							planPropertiesObj={ planPropertiesObj }
+							is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+							isReskinned={ isReskinned }
+							planProperties={ this.props.planProperties }
+						/>
+					</tr> */ }
 					<tr>{ this.renderPlanPrice( planPropertiesObj ) }</tr>
 					<tr>{ this.renderBillingTimeframe( planPropertiesObj ) }</tr>
 					<tr>{ this.renderTopButtons( planPropertiesObj ) }</tr>
@@ -444,6 +503,13 @@ export class PlanFeatures2023Grid extends Component<
 					{ this.renderPlanLogos( [ properties ], { isMobile: true } ) }
 					{ this.renderPlanHeaders( [ properties ], { isMobile: true } ) }
 					{ this.renderPlanTagline( [ properties ], { isMobile: true } ) }
+					{ /* <PlanPrice
+						planPropertiesObj={ [ properties ] }
+						is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+						isReskinned={ isReskinned }
+						planProperties={ this.props.planProperties }
+						options={ { isMobile: true } }
+					/> */ }
 					{ this.renderPlanPrice( [ properties ], { isMobile: true } ) }
 					{ this.renderBillingTimeframe( [ properties ], { isMobile: true } ) }
 					{ this.renderMobileFreeDomain( properties.planName, properties.isMonthlyPlan ) }
@@ -500,7 +566,7 @@ export class PlanFeatures2023Grid extends Component<
 		);
 
 		return planPropertiesObj.map( ( properties ) => {
-			const { currencyCode, discountPrice, planName, rawPrice } = properties;
+			const { planName, rawPrice } = properties;
 			const classes = classNames( 'plan-features-2023-grid__table-item', 'is-bottom-aligned', {
 				'has-border-top': ! isReskinned,
 			} );
@@ -515,10 +581,7 @@ export class PlanFeatures2023Grid extends Component<
 				>
 					{ ! hasNoPrice && (
 						<PlanFeatures2023GridHeaderPrice
-							currencyCode={ currencyCode }
-							discountPrice={ discountPrice }
-							rawPrice={ rawPrice }
-							planName={ planName }
+							planProperties={ properties }
 							is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 							isLargeCurrency={ isLargeCurrency }
 						/>
@@ -1110,6 +1173,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 				tagline,
 				storageOptions,
 				billingPeriod,
+				showMonthlyPrice,
 			};
 		} );
 
