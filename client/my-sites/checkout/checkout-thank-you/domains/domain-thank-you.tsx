@@ -45,8 +45,10 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 		} );
 	}, [ type, domain, selectedSiteSlug, email, hasProfessionalEmail, hideProfessionalEmailStep ] );
 	const dispatch = useDispatch();
-	const { data: launchpadData } = useLaunchpad( selectedSiteSlug );
-	const isLaunchpadEnabled = launchpadData?.launchpad_screen === 'full';
+	const {
+		data: { launchpad_screen, site_intent },
+	} = useLaunchpad( selectedSiteSlug );
+	const isLaunchpadEnabled = launchpad_screen === 'full';
 
 	useEffect( () => {
 		dispatch( hideMasterbar() );
@@ -79,7 +81,7 @@ const DomainThankYou: React.FC< DomainThankYouContainerProps > = ( {
 
 	return (
 		<>
-			{ renderHeader( isLaunchpadEnabled, launchpadData?.site_intent as string ) }
+			{ renderHeader( isLaunchpadEnabled, site_intent as string ) }
 			<ThankYou
 				headerBackgroundColor="var( --studio-white )"
 				containerClassName="checkout-thank-you__domains"

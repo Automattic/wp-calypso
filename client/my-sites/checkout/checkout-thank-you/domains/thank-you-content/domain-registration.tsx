@@ -32,11 +32,13 @@ const DomainRegistrationThankYouProps = ( {
 		true
 	);
 
-	const { data: launchpadData } = useLaunchpad( selectedSiteSlug );
+	const {
+		data: { launchpad_screen, site_intent },
+	} = useLaunchpad( selectedSiteSlug );
 
 	const launchpadNextSteps = buildDomainStepForLaunchpadNextSteps(
-		launchpadData?.site_intent as string,
-		launchpadData?.launchpad_screen as string,
+		site_intent as string,
+		launchpad_screen as string,
 		selectedSiteSlug,
 		'REGISTRATION',
 		true
