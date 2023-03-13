@@ -27,6 +27,7 @@ const countriesSupportingVat = [
 	'FI',
 	'FR',
 	'GB',
+	'GR',
 	'HR',
 	'HU',
 	'IE',
