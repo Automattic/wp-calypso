@@ -9,19 +9,21 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { SenseiStepContainer } from '../components/sensei-step-container';
 import type { Step } from '../../types';
+import type { OnboardSelect, ProductsListSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
 const SenseiDomain: Step = ( { navigation } ) => {
 	const { submit } = navigation;
 	const { __ } = useI18n();
-	const [ siteTitle, domain, productsList ] = useSelect( ( select ) => {
-		return [
-			select( ONBOARD_STORE ).getSelectedSiteTitle(),
-			select( ONBOARD_STORE ).getSelectedDomain(),
-			select( PRODUCTS_LIST_STORE ).getProductsList(),
-		];
-	} );
+	const { siteTitle, domain, productsList } = useSelect(
+		( select ) => ( {
+			siteTitle: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
+			domain: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
+			productsList: ( select( PRODUCTS_LIST_STORE ) as ProductsListSelect ).getProductsList(),
+		} ),
+		[]
+	);
 	const { setDomain } = useDispatch( ONBOARD_STORE );
 
 	const onSkip = () => {

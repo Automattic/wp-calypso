@@ -8,6 +8,7 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import type { WpcomCheckoutStoreSelectors } from '../../hooks/wpcom-store';
 
 import './style.css';
 
@@ -64,7 +65,10 @@ export function VatForm( {
 } ) {
 	const translate = useTranslate();
 	const vatDetailsInForm = useSelect(
-		( select ) => select( 'wpcom-checkout' )?.getVatDetails() ?? {}
+		( select ) =>
+			( select( 'wpcom-checkout' ) as WpcomCheckoutStoreSelectors | undefined )?.getVatDetails() ??
+			{},
+		[]
 	);
 	const wpcomStoreActions = useDispatch( 'wpcom-checkout' );
 	const setVatDetailsInForm = wpcomStoreActions?.setVatDetails;

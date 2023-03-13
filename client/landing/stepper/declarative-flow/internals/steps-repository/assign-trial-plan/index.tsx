@@ -9,6 +9,7 @@ import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
 import type { Step } from '../../types';
+import type { OnboardSelect } from '@automattic/data-stores';
 
 import './styles.scss';
 
@@ -20,8 +21,14 @@ export enum AssignTrialResult {
 const AssignTrialPlanStep: Step = function AssignTrialPlanStep( { navigation, data, flow } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
-	const progress = useSelect( ( select ) => select( ONBOARD_STORE ).getProgress() );
-	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
+	const progress = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getProgress(),
+		[]
+	);
+	const stepProgress = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
+		[]
+	);
 
 	useEffect( () => {
 		if ( submit ) {

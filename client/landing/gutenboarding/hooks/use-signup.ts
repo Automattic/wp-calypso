@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { useIsAnchorFm } from '../path';
 import { ONBOARD_STORE } from '../stores/onboard';
 import { USER_STORE } from '../stores/user';
+import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
 
 /**
  * When a new user completes Gutenboarding, before creating a site we show signup dialog.
@@ -17,11 +18,20 @@ import { USER_STORE } from '../stores/user';
  */
 
 export default function useSignup() {
-	const { showSignupDialog } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
+	const { showSignupDialog } = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getState(),
+		[]
+	);
 	const { setShowSignupDialog } = useDispatch( ONBOARD_STORE );
 	const isAnchorFmSignup = useIsAnchorFm();
-	const hasNewUser = useSelect( ( select ) => !! select( USER_STORE ).getNewUser() );
-	const hasCurrentUser = useSelect( ( select ) => !! select( USER_STORE ).getCurrentUser() );
+	const hasNewUser = useSelect(
+		( select ) => !! ( select( USER_STORE ) as UserSelect ).getNewUser(),
+		[]
+	);
+	const hasCurrentUser = useSelect(
+		( select ) => !! ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
+		[]
+	);
 
 	const {
 		location: { pathname, search },

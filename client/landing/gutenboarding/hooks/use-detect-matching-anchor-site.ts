@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import wpcom from 'calypso/lib/wp';
 import { useIsAnchorFm, useAnchorFmParams } from '../path';
 import { USER_STORE } from '../stores/user';
+import type { UserSelect } from '@automattic/data-stores';
 
 interface AnchorEndpointResult {
 	location: string | false;
@@ -22,7 +23,10 @@ export default function useDetectMatchingAnchorSite(): boolean {
 		anchorFmIsNewSite,
 	} = useAnchorFmParams();
 	const isAnchorFm = useIsAnchorFm();
-	const currentUserExists = useSelect( ( select ) => !! select( USER_STORE ).getCurrentUser() );
+	const currentUserExists = useSelect(
+		( select ) => !! ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
+		[]
+	);
 	const [ isLoading, setIsLoading ] = useState( !! ( isAnchorFm && currentUserExists ) );
 
 	useEffect( () => {

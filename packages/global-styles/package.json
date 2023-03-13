@@ -29,11 +29,11 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@wordpress/block-editor": "^9.1.0",
-		"@wordpress/components": "^19.15.0",
-		"@wordpress/compose": "^5.7.0",
-		"@wordpress/edit-site": "^4.6.0",
-		"@wordpress/keycodes": "^3.9.0",
+		"@wordpress/block-editor": "^10.5.0",
+		"@wordpress/components": "^22.1.0",
+		"@wordpress/compose": "^5.20.0",
+		"@wordpress/edit-site": "^4.19.0",
+		"@wordpress/keycodes": "^3.22.0",
 		"classnames": "^2.3.1",
 		"i18n-calypso": "workspace:^",
 		"react": "^17.0.2",

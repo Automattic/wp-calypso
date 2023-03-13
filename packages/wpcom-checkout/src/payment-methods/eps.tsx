@@ -16,20 +16,15 @@ import type {
 	StoreState,
 } from '../payment-method-store';
 import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
+import type { AnyAction } from 'redux';
 
 const debug = debugFactory( 'wpcom-checkout:eps-payment-method' );
 
 // Disabling this to make migration easier
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-type StoreKey = 'eps';
 type NounsInStore = 'customerName';
 type EpsStore = PaymentMethodStore< NounsInStore >;
-
-declare module '@wordpress/data' {
-	function select( key: StoreKey ): StoreSelectors< NounsInStore >;
-	function dispatch( key: StoreKey ): StoreActions< NounsInStore >;
-}
 
 const actions: StoreActions< NounsInStore > = {
 	changeCustomerName( payload ) {
@@ -50,7 +45,7 @@ export function createEpsPaymentMethodStore(): EpsStore {
 			state: StoreState< NounsInStore > = {
 				customerName: { value: '', isTouched: false },
 			},
-			action
+			action: AnyAction
 		): StoreState< NounsInStore > {
 			switch ( action.type ) {
 				case 'CUSTOMER_NAME_SET':
@@ -76,10 +71,21 @@ export function createEpsMethod( { store }: { store: EpsStore } ): PaymentMethod
 	};
 }
 
+function useCustomerName() {
+	const { customerName } = useSelect( ( select ) => {
+		const store = select( 'eps' ) as StoreSelectors< NounsInStore >;
+		return {
+			customerName: store.getCustomerName(),
+		};
+	}, [] );
+
+	return customerName;
+}
+
 function EpsFields() {
 	const { __ } = useI18n();
 
-	const customerName = useSelect( ( select ) => select( 'eps' ).getCustomerName() );
+	const customerName = useCustomerName();
 	const { changeCustomerName } = useDispatch( 'eps' );
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
@@ -141,7 +147,7 @@ function EpsPayButton( {
 } ) {
 	const total = useTotal();
 	const { formStatus } = useFormStatus();
-	const customerName = useSelect( ( select ) => select( 'eps' ).getCustomerName() );
+	const customerName = useCustomerName();
 
 	// This must be typed as optional because it's injected by cloning the
 	// element in CheckoutSubmitButton, but the uncloned element does not have
@@ -185,7 +191,7 @@ function ButtonContents( { formStatus, total }: { formStatus: FormStatus; total:
 }
 
 function EpsSummary() {
-	const customerName = useSelect( ( select ) => select( 'eps' ).getCustomerName() );
+	const customerName = useCustomerName();
 
 	return (
 		<SummaryDetails>

@@ -4,12 +4,13 @@ import { Step, StepType, useIsAnchorFm } from '../path';
 import { ONBOARD_STORE } from '../stores/onboard';
 import { PLANS_STORE } from '../stores/plans';
 import { usePlanFromPath } from './use-selected-plan';
+import type { PlansSelect, OnboardSelect } from '@automattic/data-stores';
 
 export default function useSteps(): Array< StepType > {
 	const locale = useLocale();
 	const { hasSiteTitle, hasSelectedDesignWithoutFonts } = useSelect(
 		( select ) => {
-			const onboardSelect = select( ONBOARD_STORE );
+			const onboardSelect: OnboardSelect = select( ONBOARD_STORE );
 			return {
 				hasSiteTitle: onboardSelect.hasSiteTitle(),
 				hasSelectedDesignWithoutFonts: onboardSelect.hasSelectedDesignWithoutFonts(),
@@ -52,12 +53,18 @@ export default function useSteps(): Array< StepType > {
 
 	// Logic necessary to skip Domains or Plans steps
 	// General rule: if a step has been used already, don't remove it.
-	const { domain, hasUsedDomainsStep, hasUsedPlansStep } = useSelect( ( select ) =>
-		select( ONBOARD_STORE ).getState()
+	const { domain, hasUsedDomainsStep, hasUsedPlansStep } = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getState(),
+		[]
 	);
-	const planProductId = useSelect( ( select ) => select( ONBOARD_STORE ).getPlanProductId() );
-	const plan = useSelect( ( select ) =>
-		select( PLANS_STORE ).getPlanByProductId( planProductId, locale )
+	const planProductId = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanProductId(),
+		[]
+	);
+	const plan = useSelect(
+		( select ) =>
+			( select( PLANS_STORE ) as PlansSelect ).getPlanByProductId( planProductId, locale ),
+		[ planProductId, locale ]
 	);
 	const hasPlanFromPath = !! usePlanFromPath();
 

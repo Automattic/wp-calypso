@@ -1,5 +1,17 @@
 import type { StoreState } from '@automattic/wpcom-checkout';
-import type { Store } from '@wordpress/data';
+import type { StoreDescriptor } from '@wordpress/data';
+import type { AnyAction as Action } from 'redux';
+
+export type CardSubscriber = (
+	callback: () => void,
+	storeNameOrDescriptor?: string | StoreDescriptor
+) => () => void;
+
+export interface CardStore< S, A extends Action = Action > {
+	getState(): S;
+	subscribe: CardSubscriber;
+	dispatch( action: A ): A;
+}
 
 export type CardFieldState = StoreState< string >;
 
@@ -13,7 +25,7 @@ export interface CardStoreState {
 	useForAllSubscriptions: boolean;
 }
 
-export type CardStoreType = Store< CardStoreState, CardStoreAction >;
+export type CardStoreType = CardStore< CardStoreState, CardStoreAction >;
 
 export type CardNumberElementType = 'cardNumber';
 export type CardExpiryElementType = 'cardExpiry';

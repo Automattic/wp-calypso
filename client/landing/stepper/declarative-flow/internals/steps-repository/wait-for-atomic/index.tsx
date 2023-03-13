@@ -7,6 +7,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import type { Step } from '../../types';
+import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
 
 export interface FailureInfo {
 	type: string;
@@ -44,10 +45,11 @@ const WaitForAtomic: Step = function WaitForAtomic( { navigation, data } ) {
 		siteId = data?.siteId as number;
 	}
 
-	const { getSiteLatestAtomicTransfer, getSiteLatestAtomicTransferError } = useSelect( ( select ) =>
-		select( SITE_STORE )
+	const { getSiteLatestAtomicTransfer, getSiteLatestAtomicTransferError } = useSelect(
+		( select ) => select( SITE_STORE ) as SiteSelect,
+		[]
 	);
-	const { getIntent } = useSelect( ( select ) => select( ONBOARD_STORE ) );
+	const { getIntent } = useSelect( ( select ) => select( ONBOARD_STORE ) as OnboardSelect, [] );
 
 	const handleTransferFailure = ( failureInfo: FailureInfo ) => {
 		recordTracksEvent( 'calypso_woocommerce_dashboard_snag_error', {
