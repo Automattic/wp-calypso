@@ -45,10 +45,10 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 		enabled: ! disabled,
 	} );
 
-	const stagingSite = stagingSites && stagingSites.length ? stagingSites[ 0 ] : [];
+	const stagingSite = stagingSites?.length ? stagingSites[ 0 ] : {};
 
-	const showAddStagingSite = ! isLoadingStagingSites && stagingSites && stagingSites.length === 0;
-	const showManageStagingSite = ! isLoadingStagingSites && stagingSites && stagingSites.length > 0;
+	const showAddStagingSite = ! isLoadingStagingSites && stagingSites?.length === 0;
+	const showManageStagingSite = ! isLoadingStagingSites && stagingSites?.length > 0;
 
 	const [ wasCreating, setWasCreating ] = useState( false );
 	const [ progress, setProgress ] = useState( 0.3 );
@@ -151,7 +151,10 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 			{ showAddStagingSite && ! addingStagingSite && getNewStagingSiteContent() }
 			{ showManageStagingSite && isStagingSiteTransferComplete && getManageStagingSiteContent() }
 			{ isLoadingStagingSites && getLoadingStagingSitesPlaceholder() }
-			{ ( addingStagingSite || ( showManageStagingSite && ! isStagingSiteTransferComplete ) ) && (
+			{ ( addingStagingSite ||
+				( showManageStagingSite &&
+					! isStagingSiteTransferComplete &&
+					transferStatus !== null ) ) && (
 				<>
 					<StyledLoadingBar progress={ progress } />
 					<p>{ __( 'We are setting up your staging site. We’ll email you once it is ready.' ) }</p>
