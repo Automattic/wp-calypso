@@ -1,5 +1,5 @@
+import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
-import { useMutation, UseMutationOptions, useQueryClient } from 'react-query';
 import wp from 'calypso/lib/wp';
 import { GITHUB_INTEGRATION_QUERY_KEY } from '../constants';
 import { GITHUB_CONNECTION_QUERY_KEY } from '../use-github-connection-query';

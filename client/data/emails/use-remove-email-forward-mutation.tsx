@@ -1,5 +1,5 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useMutation, useQueryClient } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCacheKey as getEmailDomainsQueryKey } from 'calypso/data/domains/use-get-domains-query';
 import { getEmailAddress } from 'calypso/lib/emails';
@@ -9,7 +9,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getCacheKey as getEmailAccountsQueryKey } from './use-get-email-accounts-query';
 import type { EmailAccountEmail } from './types';
-import type { UseMutationOptions } from 'react-query';
+import type { UseMutationOptions } from '@tanstack/react-query';
 
 type Context = {
 	[ key: string ]: any;

@@ -7,7 +7,7 @@ import {
 	UseInfiniteQueryResult,
 	QueryKey,
 	QueryFunction,
-} from 'react-query';
+} from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import {
 	extractSearchInformation,

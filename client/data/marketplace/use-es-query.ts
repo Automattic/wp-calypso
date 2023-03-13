@@ -8,7 +8,7 @@ import {
 	QueryKey,
 	QueryFunction,
 	useQuery,
-} from 'react-query';
+} from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import { decodeEntities } from 'calypso/lib/formatting';
 import {

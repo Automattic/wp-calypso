@@ -5,7 +5,7 @@ import {
 	QueryKey,
 	QueryFunction,
 	useQueries,
-} from 'react-query';
+} from '@tanstack/react-query';
 import {
 	extractSearchInformation,
 	normalizePluginsList,

@@ -1,6 +1,6 @@
+import { useIsMutating, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { orderBy } from 'lodash';
-import { useIsMutating, useMutation, useQueryClient } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCacheKey as getEmailDomainsQueryKey } from 'calypso/data/domains/use-get-domains-query';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
@@ -8,7 +8,7 @@ import wp from 'calypso/lib/wp';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getCacheKey as getEmailAccountsQueryKey } from './use-get-email-accounts-query';
-import type { UseMutationOptions } from 'react-query';
+import type { UseMutationOptions } from '@tanstack/react-query';
 
 type AddMailboxFormData = {
 	destination: string;

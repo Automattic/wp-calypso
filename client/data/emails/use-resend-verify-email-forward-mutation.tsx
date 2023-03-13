@@ -1,12 +1,12 @@
+import { useMutation } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useMutation } from 'react-query';
 import { useDispatch } from 'react-redux';
 import { getEmailForwardAddress } from 'calypso/lib/emails';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import wp from 'calypso/lib/wp';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import type { EmailAccountEmail } from './types';
-import type { UseMutationOptions } from 'react-query';
+import type { UseMutationOptions } from '@tanstack/react-query';
 
 const MUTATION_KEY = 'reverifyEmailForward';
 
