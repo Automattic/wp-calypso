@@ -148,6 +148,9 @@ export default function CheckoutMain( {
 			return jetpackSiteSlug;
 		}
 
+		// Currently, the `akismetSiteSlug` prop is not being passed to this component anywhere
+		// We are not doing any site specific things with akismet checkout, so this should always be undefined for now
+		// If this was not here to return `undefined`, the akismet routes would get messed with due to `siteSlug` returning "no-user" in akismet siteless checkout
 		if ( sitelessCheckoutType === 'akismet' ) {
 			return akismetSiteSlug;
 		}
