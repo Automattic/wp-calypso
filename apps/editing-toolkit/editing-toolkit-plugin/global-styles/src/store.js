@@ -1,5 +1,5 @@
 import apiFetch from '@wordpress/api-fetch';
-import { registerStore } from '@wordpress/data';
+import { register, createReduxStore } from '@wordpress/data';
 
 let cache = {};
 let alreadyFetchedOptions = false;
@@ -52,7 +52,7 @@ const actions = {
  * @param {string} optionsPath REST path used to interact with the options API.
  */
 export default ( storeName, optionsPath ) => {
-	registerStore( storeName, {
+	const store = createReduxStore( storeName, {
 		reducer( state, action ) {
 			switch ( action.type ) {
 				case 'UPDATE_OPTIONS':
@@ -116,4 +116,6 @@ export default ( storeName, optionsPath ) => {
 			},
 		},
 	} );
+	register( store );
+	return store;
 };
