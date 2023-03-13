@@ -1,3 +1,21 @@
+export interface CurrencyFormatter {
+	setDefaultLocale: ( locale: string ) => void;
+	formatCurrency: (
+		amount: number,
+		currencyCode: string,
+		options?: CurrencyObjectOptions
+	) => string;
+	getCurrencyObject: (
+		amount: number,
+		currencyCode: string,
+		options?: CurrencyObjectOptions
+	) => CurrencyObject;
+}
+
+export interface CurrencyOverride {
+	symbol?: string;
+}
+
 export interface CurrencyObjectOptions {
 	/**
 	 * The symbol separating the thousands part of an amount from its hundreds.
