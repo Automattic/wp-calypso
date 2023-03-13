@@ -131,6 +131,15 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 		);
 	};
 
+	const getTransferringStagingSiteContent = () => {
+		return (
+			<>
+				<StyledLoadingBar progress={ progress } />
+				<p>{ __( 'We are setting up your staging site. We’ll email you once it is ready.' ) }</p>
+			</>
+		);
+	};
+
 	const getLoadingStagingSitesPlaceholder = () => {
 		return (
 			<>
@@ -141,6 +150,18 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 		);
 	};
 
+	let StagingSiteCardContent = getLoadingStagingSitesPlaceholder;
+	if (
+		addingStagingSite ||
+		( showManageStagingSite && ! isStagingSiteTransferComplete && transferStatus !== null )
+	) {
+		StagingSiteCardContent = getTransferringStagingSiteContent;
+	} else if ( showManageStagingSite && isStagingSiteTransferComplete ) {
+		StagingSiteCardContent = getManageStagingSiteContent;
+	} else if ( showAddStagingSite && ! addingStagingSite ) {
+		StagingSiteCardContent = getNewStagingSiteContent;
+	}
+
 	return (
 		<Card className="staging-site-card">
 			{
@@ -148,18 +169,7 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 				<Gridicon icon="share-computer" size={ 32 } />
 			}
 			<CardHeading id="staging-site">{ translate( 'Staging site' ) }</CardHeading>
-			{ showAddStagingSite && ! addingStagingSite && getNewStagingSiteContent() }
-			{ showManageStagingSite && isStagingSiteTransferComplete && getManageStagingSiteContent() }
-			{ isLoadingStagingSites && getLoadingStagingSitesPlaceholder() }
-			{ ( addingStagingSite ||
-				( showManageStagingSite &&
-					! isStagingSiteTransferComplete &&
-					transferStatus !== null ) ) && (
-				<>
-					<StyledLoadingBar progress={ progress } />
-					<p>{ __( 'We are setting up your staging site. We’ll email you once it is ready.' ) }</p>
-				</>
-			) }
+			<StagingSiteCardContent />
 		</Card>
 	);
 };
