@@ -3,6 +3,8 @@
  */
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import nock from 'nock';
+import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import * as redux from 'react-redux';
 import { createReduxStore } from 'calypso/state';
@@ -71,6 +73,20 @@ function renderStepContent( emailVerified = false, flow: string ) {
 }
 
 describe( 'EmailValidationBanner', () => {
+	beforeEach( () => {
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.get( `/wpcom/v2/sites/${ props.siteSlug }/launchpad` )
+			.reply( 200, {
+				checklist_statuses: {},
+				launchpad_screen: 'full',
+				site_intent: '',
+			} );
+	} );
+
+	afterEach( () => {
+		nock.cleanAll();
+	} );
 	describe( 'when the flow is newsletter', () => {
 		it( "shows the banner when the user's email is not verified", () => {
 			renderStepContent( false, NEWSLETTER_FLOW );
