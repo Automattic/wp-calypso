@@ -18,6 +18,10 @@ jest.mock( 'calypso/signup/config/flows-pure', () =>
 jest.mock( 'calypso/signup/config/steps', () => require( './mocks/signup/config/steps' ) );
 jest.mock( 'calypso/signup/config/steps-pure', () => require( './mocks/signup/config/steps' ) );
 
+function getInitialStateForFlowName( flowName ) {
+	return { signup: { flow: { currentFlowName: flowName } } };
+}
+
 function createSignupStore( initialState ) {
 	return createStore(
 		combineReducers( { signup: signupReducer } ),
@@ -82,9 +86,9 @@ describe( 'flow-controller', () => {
 	} );
 
 	describe( 'controlling a simple flow', () => {
-		test( 'should run the onComplete callback with the flow destination when the flow is completed', () => {
+		test( 'should run the onComplete callback with the flow destination when the flow is completed', () => {
 			return new Promise( ( done ) => {
-				const store = createSignupStore();
+				const store = createSignupStore( getInitialStateForFlowName( 'simple_flow' ) );
 
 				signupFlowController = new SignupFlowController( {
 					flowName: 'simple_flow',
@@ -104,7 +108,7 @@ describe( 'flow-controller', () => {
 	describe( 'controlling a flow w/ an asynchronous step', () => {
 		let store;
 		beforeEach( () => {
-			store = createSignupStore();
+			store = createSignupStore( getInitialStateForFlowName( 'flow_with_async' ) );
 			signupFlowController = new SignupFlowController( {
 				flowName: 'flow_with_async',
 				reduxStore: store,
@@ -141,7 +145,7 @@ describe( 'flow-controller', () => {
 	describe( 'controlling a flow w/ dependencies', () => {
 		test( 'should call the apiRequestFunction callback with its dependencies', () => {
 			return new Promise( ( done ) => {
-				const store = createSignupStore();
+				const store = createSignupStore( getInitialStateForFlowName( 'flow_with_dependencies' ) );
 				signupFlowController = new SignupFlowController( {
 					flowName: 'flow_with_dependencies',
 					onComplete: function ( dependencies, destination ) {
@@ -168,7 +172,7 @@ describe( 'flow-controller', () => {
 	describe( 'controlling a flow w/ a delayed step', () => {
 		test( 'should submit steps with the delayApiRequestUntilComplete once the flow is complete', () => {
 			return new Promise( ( done ) => {
-				const store = createSignupStore();
+				const store = createSignupStore( getInitialStateForFlowName( 'flowWithDelay' ) );
 				signupFlowController = new SignupFlowController( {
 					flowName: 'flowWithDelay',
 					onComplete: () => done(),
@@ -191,7 +195,7 @@ describe( 'flow-controller', () => {
 
 		test( 'should not submit delayed steps if some steps are in-progress', () => {
 			return new Promise( ( done ) => {
-				const store = createSignupStore();
+				const store = createSignupStore( getInitialStateForFlowName( 'flowWithDelay' ) );
 				signupFlowController = new SignupFlowController( {
 					flowName: 'flowWithDelay',
 					onComplete: () => done(),
@@ -220,7 +224,9 @@ describe( 'flow-controller', () => {
 	describe( 'controlling a flow w/ dependencies provided in query', () => {
 		test( 'should throw an error if the given flow requires dependencies from query but none are given', () => {
 			expect( () => {
-				const store = createSignupStore();
+				const store = createSignupStore(
+					getInitialStateForFlowName( 'flowWithProvidedDependencies' )
+				);
 				signupFlowController = new SignupFlowController( {
 					flowName: 'flowWithProvidedDependencies',
 					reduxStore: store,
@@ -231,7 +237,9 @@ describe( 'flow-controller', () => {
 		// eslint-disable-next-line jest/expect-expect
 		test( 'should run `onComplete` once all steps are submitted without an error', () => {
 			return new Promise( ( done ) => {
-				const store = createSignupStore();
+				const store = createSignupStore(
+					getInitialStateForFlowName( 'flowWithProvidedDependencies' )
+				);
 				signupFlowController = new SignupFlowController( {
 					flowName: 'flowWithProvidedDependencies',
 					providedDependencies: { siteSlug: 'foo' },
@@ -248,7 +256,9 @@ describe( 'flow-controller', () => {
 		// eslint-disable-next-line jest/expect-expect
 		test( 'should run `onComplete` once all steps are submitted, including optional dependency', () => {
 			return new Promise( ( done ) => {
-				const store = createSignupStore();
+				const store = createSignupStore(
+					getInitialStateForFlowName( 'flowWithSiteTopicWithOptionalTheme' )
+				);
 				signupFlowController = new SignupFlowController( {
 					flowName: 'flowWithSiteTopicWithOptionalTheme',
 					onComplete: () => done(),
@@ -274,7 +284,9 @@ describe( 'flow-controller', () => {
 		// eslint-disable-next-line jest/expect-expect
 		test( 'should run `onComplete` once all steps are submitted, excluding optional dependency', () => {
 			return new Promise( ( done ) => {
-				const store = createSignupStore();
+				const store = createSignupStore(
+					getInitialStateForFlowName( 'flowWithSiteTopicWithOptionalTheme' )
+				);
 				signupFlowController = new SignupFlowController( {
 					flowName: 'flowWithSiteTopicWithOptionalTheme',
 					onComplete: () => done(),
@@ -297,7 +309,9 @@ describe( 'flow-controller', () => {
 		} );
 
 		test( "should throw if step doesn't provide required dependency", () => {
-			const store = createSignupStore();
+			const store = createSignupStore(
+				getInitialStateForFlowName( 'flowWithSiteTopicWithOptionalTheme' )
+			);
 			signupFlowController = new SignupFlowController( {
 				flowName: 'flowWithSiteTopicWithOptionalTheme',
 				onComplete: () => {},
