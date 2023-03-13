@@ -17,6 +17,7 @@ import { getECommerceTrialCheckoutUrl } from 'calypso/lib/ecommerce-trial/get-ec
 import { getPlanRawPrice, getPlan } from 'calypso/state/plans/selectors';
 import TrialFeatureCard from './trial-feature-card';
 import type { WooExpressMediumPlanFeatureSet } from './trial-feature-card';
+import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
 
@@ -29,7 +30,8 @@ interface ECommercePlanFeaturesProps {
 	interval: 'monthly' | 'yearly';
 	monthlyControlProps: SegmentedOptionProps;
 	planFeatureSets: WooExpressMediumPlanFeatureSet[];
-	siteSlug: string;
+	priceCardSubtitle?: TranslateResult;
+	siteSlug?: string | null;
 	triggerTracksEvent: ( tracksLocation: string ) => void;
 	yearlyControlProps: SegmentedOptionProps;
 }
@@ -38,6 +40,7 @@ const ECommercePlanFeatures = ( {
 	interval,
 	monthlyControlProps,
 	planFeatureSets,
+	priceCardSubtitle,
 	siteSlug,
 	triggerTracksEvent,
 	yearlyControlProps,
@@ -111,6 +114,10 @@ const ECommercePlanFeatures = ( {
 		( tracksLocation: string ) => {
 			triggerTracksEvent( tracksLocation );
 
+			if ( ! siteSlug ) {
+				return;
+			}
+
 			const checkoutUrl = getECommerceTrialCheckoutUrl( {
 				productSlug: targetPlan.getStoreSlug(),
 				siteSlug,
@@ -149,7 +156,9 @@ const ECommercePlanFeatures = ( {
 						{ targetPlan.getTitle() }
 					</span>
 					<span className="ecommerce-plan-features__price-card-subtitle">
-						{ translate( 'Accelerate your growth with advanced features.' ) }
+						{ priceCardSubtitle
+							? priceCardSubtitle
+							: translate( 'Accelerate your growth with advanced features.' ) }
 					</span>
 				</div>
 				<div className="ecommerce-plan-features__price-card-conditions">
@@ -166,6 +175,7 @@ const ECommercePlanFeatures = ( {
 					<Button
 						className="ecommerce-plan-features__price-card-cta"
 						primary
+						disabled={ ! siteSlug }
 						onClick={ () => redirectToCheckoutForPlan( 'main-price-card' ) }
 					>
 						{ translate( 'Upgrade now' ) }
@@ -181,6 +191,7 @@ const ECommercePlanFeatures = ( {
 			<div className="ecommerce-plan-features__cta-wrapper">
 				<Button
 					className="ecommerce-plan-features__cta is-primary"
+					disabled={ ! siteSlug }
 					onClick={ () => redirectToCheckoutForPlan( 'footer' ) }
 				>
 					{ translate( 'Upgrade now' ) }
