@@ -46,7 +46,9 @@ const AssignTrialPlanStep: Step = function AssignTrialPlanStep( { navigation, da
 						{
 							apiVersion: '1.1',
 						},
-						profilerData
+						{
+							wpcom_woocommerce_onboarding: profilerData,
+						}
 					);
 
 					submit?.( { siteSlug: data?.siteSlug }, AssignTrialResult.SUCCESS );
