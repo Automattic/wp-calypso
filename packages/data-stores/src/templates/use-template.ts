@@ -1,4 +1,4 @@
-import { useQuery, UseQueryResult, QueryOptions } from 'react-query';
+import { useQuery, UseQueryResult, QueryOptions } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { Template } from './types';
 
