@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { detectGeolocation } from '@automattic/format-currency';
+import { geolocateCurrencySymbol } from '@automattic/format-currency';
 import { useLocalizeUrl, removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
 import { UniversalNavbarHeader, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import classNames from 'classnames';
@@ -86,7 +86,7 @@ const LayoutLoggedOut = ( {
 	};
 
 	useEffect( () => {
-		detectGeolocation();
+		geolocateCurrencySymbol();
 	}, [] );
 
 	let masterbar = null;
