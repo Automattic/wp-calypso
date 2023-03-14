@@ -114,9 +114,9 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		return pluginsOnSite.reduce(
 			( productsList: Array< any >, pluginOnSite: Plugin, index: number ) => {
 				productsList.push( {
+					...pluginOnSite,
 					...wpComPluginsData[ index ],
 					...wporgPlugins[ index ],
-					...pluginOnSite,
 					...dotComThemes[ index ],
 					...dotOrgThemes[ index ],
 					product_type: getProductType(
