@@ -10,10 +10,10 @@ import { Button, Card } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import SegmentedControl from 'calypso/components/segmented-control';
 import { getECommerceTrialCheckoutUrl } from 'calypso/lib/ecommerce-trial/get-ecommerce-trial-checkout-url';
+import PlanIntervalSelector from 'calypso/my-sites/plans-features-main/plan-interval-selector';
 import { getPlanRawPrice, getPlan } from 'calypso/state/plans/selectors';
 import TrialFeatureCard from './trial-feature-card';
 import type { WooExpressMediumPlanFeatureSet } from './trial-feature-card';
@@ -128,26 +128,38 @@ const ECommercePlanFeatures = ( {
 		[ siteSlug, targetPlan, triggerTracksEvent ]
 	);
 
+	const planIntervals = useMemo( () => {
+		return [
+			{
+				interval: 'monthly',
+				...monthlyControlProps,
+				content: <span>{ translate( 'Pay Monthly' ) }</span>,
+				selected: interval === 'monthly',
+			},
+			{
+				interval: 'yearly',
+				...yearlyControlProps,
+				content: (
+					<span>
+						{ translate( 'Pay Annually (Save %(percentageSavings)s%%)', {
+							args: { percentageSavings },
+						} ) }
+					</span>
+				),
+				selected: interval === 'yearly',
+			},
+		];
+	}, [ interval, monthlyControlProps, percentageSavings, translate, yearlyControlProps ] );
+
 	return (
 		<div className="ecommerce-plan-features">
 			<div className="ecommerce-plan-features__interval-toggle-wrapper">
-				<SegmentedControl
-					compact
-					primary={ true }
+				<PlanIntervalSelector
 					className="ecommerce-plan-features__interval-toggle price-toggle"
-				>
-					<SegmentedControl.Item selected={ interval === 'monthly' } { ...monthlyControlProps }>
-						<span>{ translate( 'Pay Monthly' ) }</span>
-					</SegmentedControl.Item>
-
-					<SegmentedControl.Item selected={ interval === 'yearly' } { ...yearlyControlProps }>
-						<span>
-							{ translate( 'Pay Annually (Save %(percentageSavings)s%%)', {
-								args: { percentageSavings },
-							} ) }
-						</span>
-					</SegmentedControl.Item>
-				</SegmentedControl>
+					intervals={ planIntervals }
+					isPlansInsideStepper={ false }
+					use2023PricingGridStyles={ true }
+				/>
 			</div>
 
 			<Card className="ecommerce-plan-features__price-card">
