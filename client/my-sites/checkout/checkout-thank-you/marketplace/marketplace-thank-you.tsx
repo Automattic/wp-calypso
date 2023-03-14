@@ -338,8 +338,8 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 			/>
 			{ productSlugs.map( ( productSlug, index ) => (
 				<>
-					<QueryTheme key={ 'query-theme-' + index } siteId="wpcom" themeId={ productSlug } />
-					<QueryTheme key={ 'query-theme-' + index } siteId="wporg" themeId={ productSlug } />
+					<QueryTheme key={ 'query-wpcom-theme-' + index } siteId="wpcom" themeId={ productSlug } />
+					<QueryTheme key={ 'query-wporg-theme-' + index } siteId="wporg" themeId={ productSlug } />
 				</>
 			) ) }
 			{ showProgressBar && (
