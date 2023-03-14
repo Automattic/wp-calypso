@@ -69,8 +69,6 @@ $font-family: "SF Pro Text", $sans;
 			opacity: 0;
 			align-items: center;
 			position: absolute;
-			z-index: 1;
-			background: #fff;
 			height: 27px;
 			right: 0;
 
@@ -118,6 +116,14 @@ $font-family: "SF Pro Text", $sans;
 			letter-spacing: -0.24px;
 			user-select: none;
 			overflow-y: auto;
+			overflow-x: hidden;
+			scrollbar-width: none;
+			// Fix for tooltip position issue
+			padding-bottom: 25px;
+
+			&::-webkit-scrollbar {
+				display: none;
+			}
 		}
 
 		.pattern-layout__list-item {
@@ -303,6 +309,14 @@ $font-family: "SF Pro Text", $sans;
 		margin-top: auto;
 	}
 
+	.screen-container__description {
+		display: inline-block;
+		padding-bottom: 8px;
+		font-size: $font-body-small;
+		letter-spacing: -0.15px;
+		color: var(--color-neutral-60);
+	}
+
 	/**
 	 * Gutenberg Components
 	 */
@@ -346,7 +360,8 @@ $font-family: "SF Pro Text", $sans;
 .pattern-assembler.pattern-assembler__sidebar-revamp {
 	.pattern-layout {
 		.pattern-layout__list {
-			margin: 0 0 16px;
+			// Fix for tooltip position issue
+			margin: 0 0 -9px;
 		}
 
 		.pattern-action-bar {

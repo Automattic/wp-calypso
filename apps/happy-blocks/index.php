@@ -103,3 +103,55 @@ function happyblocks_normalize_translations_filepath( $file, $handle, $domain ) 
 	return $file;
 }
 add_filter( 'load_script_translation_file', 'happyblocks_normalize_translations_filepath', 10, 3 );
+
+/**
+ * Allow SVG, select and input tags in the footer.
+ *
+ * @param array $tags Allowed tags, attributes, and/or entities.
+ * @return array
+ */
+function happyblocks_allow_footer_tags( $tags ) {
+	$tags['svg']    = array(
+		'xmlns'       => array(),
+		'fill'        => array(),
+		'viewbox'     => array(),
+		'role'        => array(),
+		'aria-hidden' => array(),
+		'focusable'   => array(),
+		'class'       => array(),
+	);
+	$tags['path']   = array(
+		'd'    => array(),
+		'fill' => array(),
+	);
+	$tags['select'] = array(
+		'class' => array(),
+		'title' => array(),
+	);
+	$tags['option'] = array(
+		'value'    => array(),
+		'disabled' => array(),
+		'lang'     => array(),
+	);
+	$tags['stop']   = array(
+		'stopColor' => array(),
+		'offset'    => array(),
+	);
+	$tags['defs']   = array();
+
+	$tags['footer'] = array_merge(
+		$tags['footer'],
+		array(
+			'data-locale' => array(),
+		)
+	);
+
+	return $tags;
+}
+
+add_filter(
+	'wp_kses_allowed_html',
+	'happyblocks_allow_footer_tags',
+	10,
+	2
+);

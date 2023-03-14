@@ -1,5 +1,7 @@
 @import "@automattic/onboarding/styles/mixins";
 
+$theme-sheet-content-max-width: 1462px;
+
 body.is-section-theme-i4 {
 	&.theme-default.color-scheme {
 		--color-surface-backdrop: var(--studio-white);
@@ -20,6 +22,28 @@ body.is-section-theme-i4 {
 		}
 	}
 
+	.theme__sheet-action-bar-container {
+		box-shadow: 0 1px var(--color-border-subtle);
+	}
+
+	.theme__sheet-action-bar {
+		box-shadow: none;
+		box-sizing: content-box;
+		margin: 0 auto;
+		max-width: $theme-sheet-content-max-width;
+		min-height: 70px;
+		padding: 0 20px;
+		position: relative;
+
+		@include breakpoint-deprecated( "<960px" ) {
+			margin: 0 0 32px 0;
+		}
+
+		@include breakpoint-deprecated( "<960px" ) {
+			min-height: 60px;
+		}
+	}
+
 	.theme__sheet-columns {
 		display: grid;
 		gap: 0 32px;
@@ -28,7 +52,7 @@ body.is-section-theme-i4 {
 			"content preview";
 		grid-template-columns: 1fr 1fr;
 		grid-template-rows: auto 1fr;
-		max-width: 1462px;
+		max-width: $theme-sheet-content-max-width;
 		padding: 48px 20px;
 
 		h2,

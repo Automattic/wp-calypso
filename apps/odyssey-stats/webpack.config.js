@@ -29,6 +29,25 @@ const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
 const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
 const cachePath = path.resolve( '.cache', extraPath );
 
+const excludedPackages = [
+	/^calypso\/components\/inline-support-link$/,
+	/^calypso\/components\/web-preview.*$/,
+	/^calypso\/blocks\/upsell-nudge.*$/,
+	/^calypso\/my-sites\/stats\/mini-carousel.*$/,
+	/^calypso\/blocks\/jetpack-backup-creds-banner.*$/,
+	/^calypso\/components\/data\/query-keyring-connections$/,
+	/^calypso\/components\/data\/query-jetpack-modules$/,
+	/^calypso\/components\/data\/query-site-keyrings$/,
+];
+
+const excludedPackagePlugins = excludedPackages.map(
+	( package ) =>
+		new webpack.NormalModuleReplacementPlugin(
+			package,
+			path.resolve( __dirname, 'src/components/nothing' )
+		)
+);
+
 module.exports = {
 	bail: ! isDevelopment,
 	entry: path.join( __dirname, 'src', 'app' ),
@@ -37,6 +56,7 @@ module.exports = {
 	output: {
 		path: outputPath,
 		filename: 'build.min.js',
+		chunkFilename: '[contenthash].js',
 	},
 	optimization: {
 		minimize: ! isDevelopment,
@@ -104,6 +124,7 @@ module.exports = {
 		} ),
 		...SassConfig.plugins( {
 			filename: 'build.min.css',
+			chunkFilename: '[contenthash].css',
 			minify: ! isDevelopment,
 		} ),
 		new DependencyExtractionWebpackPlugin( {
@@ -128,9 +149,15 @@ module.exports = {
 						'@wordpress/primitives',
 						'@wordpress/url',
 						'@wordpress/warning',
+						'moment',
+						'../moment',
 					].includes( request )
 				) {
 					return;
+				}
+				// moment locales requires moment.js main file, so we need to handle it as an external as well.
+				if ( request === '../moment' ) {
+					request = 'moment';
 				}
 				return defaultRequestToExternal( request );
 			},
@@ -163,6 +190,7 @@ module.exports = {
 			/^calypso\/components\/formatted-header$/,
 			'calypso/components/jetpack/jetpack-header'
 		),
+		...excludedPackagePlugins,
 		shouldEmitStats &&
 			new BundleAnalyzerPlugin( {
 				analyzerMode: 'server',

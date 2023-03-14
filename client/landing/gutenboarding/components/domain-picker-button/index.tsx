@@ -8,6 +8,7 @@ import { usePath, Step } from '../../path';
 import { DOMAIN_SUGGESTIONS_STORE } from '../../stores/domain-suggestions';
 import { ONBOARD_STORE } from '../../stores/onboard';
 import Link from '../link';
+import type { DomainSuggestionsSelect, OnboardSelect } from '@automattic/data-stores';
 import type { FunctionComponent } from 'react';
 
 import './style.scss';
@@ -16,8 +17,9 @@ const DomainPickerButton: FunctionComponent = () => {
 	const { __ } = useI18n();
 	const locale = useLocale();
 	const makePath = usePath();
-	const { domain, selectedDesign, siteTitle } = useSelect( ( select ) =>
-		select( ONBOARD_STORE ).getState()
+	const { domain, selectedDesign, siteTitle } = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getState(),
+		[]
 	);
 
 	// Use site title as search query for a domain suggestion
@@ -30,13 +32,16 @@ const DomainPickerButton: FunctionComponent = () => {
 			if ( domain || ! isValidQuery ) {
 				return;
 			}
-			return select( DOMAIN_SUGGESTIONS_STORE ).getDomainSuggestions( suggestionQuery, {
-				// Avoid `only_wordpressdotcom` — it seems to fail to find results sometimes
-				include_wordpressdotcom: false,
-				include_dotblogsubdomain: false,
-				quantity: 1, // this will give the recommended domain only
-				locale,
-			} );
+			return ( select( DOMAIN_SUGGESTIONS_STORE ) as DomainSuggestionsSelect ).getDomainSuggestions(
+				suggestionQuery,
+				{
+					// Avoid `only_wordpressdotcom` — it seems to fail to find results sometimes
+					include_wordpressdotcom: false,
+					include_dotblogsubdomain: false,
+					quantity: 1, // this will give the recommended domain only
+					locale,
+				}
+			);
 		},
 		[ suggestionQuery ]
 	)?.[ 0 ];

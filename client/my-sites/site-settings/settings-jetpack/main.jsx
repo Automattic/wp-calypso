@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { WPCOM_FEATURES_SCAN } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import AdvancedCredentials from 'calypso/components/advanced-credentials';
 import BackupRetentionManagement from 'calypso/components/backup-retention-management';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -18,6 +18,7 @@ import SiteSettingsNavigation from 'calypso/my-sites/site-settings/navigation';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import isRewindActive from 'calypso/state/selectors/is-rewind-active';
 import isSiteFailedMigrationSource from 'calypso/state/selectors/is-site-failed-migration-source';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -33,8 +34,10 @@ const SiteSettingsJetpack = ( {
 	retention,
 	storagePurchased,
 } ) => {
-	//todo: this check makes sense in Jetpack section?
-	if ( ! siteIsJetpack ) {
+	// Sites hosted on WordPress.com cannot modify Jetpack credentials
+	const isAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId ) );
+	const managedJetpackCreds = ! siteIsJetpack || isAtomic;
+	if ( managedJetpackCreds ) {
 		return (
 			<EmptyContent
 				action={ translate( 'Manage general settings for %(site)s', {

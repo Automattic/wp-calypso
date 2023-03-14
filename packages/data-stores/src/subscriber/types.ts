@@ -1,5 +1,6 @@
 import * as actions from './actions';
-import type { DispatchFromMap } from '../mapped-types';
+import * as selectors from './selectors';
+import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
 
 export interface SubscriberState {
 	add?: {
@@ -48,6 +49,8 @@ export type ImportSubscribersResponse = {
 export type GetSubscribersImportResponse = ImportJob;
 export type GetSubscribersImportsResponse = ImportJob[];
 
-export interface Dispatch {
+export interface SubscriberDispatch {
 	dispatch: DispatchFromMap< typeof actions >;
 }
+
+export type SubscriberSelect = SelectFromMap< typeof selectors >;

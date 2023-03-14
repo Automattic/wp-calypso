@@ -9,6 +9,7 @@ import useStepNavigation from '../../hooks/use-step-navigation';
 import { useTrackStep } from '../../hooks/use-track-step';
 import { useIsAnchorFm } from '../../path';
 import { ONBOARD_STORE } from '../../stores/onboard';
+import type { OnboardSelect } from '@automattic/data-stores';
 import type { Design } from '@automattic/design-picker';
 
 import './style.scss';
@@ -45,14 +46,14 @@ const Designs: React.FunctionComponent = () => {
 	const { setSelectedDesign, setFonts, resetFonts, setRandomizedDesigns } =
 		useDispatch( ONBOARD_STORE );
 	const { selectedDesign, hasPaidDesign, randomizedDesigns } = useSelect( ( select ) => {
-		const onboardSelect = select( ONBOARD_STORE );
+		const onboardSelect: OnboardSelect = select( ONBOARD_STORE );
 
 		return {
 			selectedDesign: onboardSelect.getSelectedDesign(),
 			hasPaidDesign: onboardSelect.hasPaidDesign(),
 			randomizedDesigns: onboardSelect.getRandomizedDesigns(),
 		};
-	} );
+	}, [] );
 	const isAnchorFmSignup = useIsAnchorFm();
 
 	useTrackStep( 'DesignSelection', () => ( {

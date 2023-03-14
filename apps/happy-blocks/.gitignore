@@ -1,4 +1,4 @@
 /dist
 /block-library/*/build
 /release-files
-/translations-manifest.json
+translations-manifest.json

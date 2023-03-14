@@ -55,11 +55,11 @@ export default function CampaignItem( { campaign }: Props ) {
 		display_name,
 	} = campaign;
 
-	const campaignStatus = useMemo( () => normalizeCampaignStatus( campaign ), [ campaign.status ] );
+	const campaignStatus = useMemo( () => normalizeCampaignStatus( campaign ), [ campaign ] );
 
 	const overallSpending = useMemo(
 		() => getCampaignOverallSpending( spent_budget_cents, budget_cents, start_date, end_date ),
-		[ spent_budget_cents, start_date, end_date ]
+		[ spent_budget_cents, budget_cents, start_date, end_date ]
 	);
 
 	const clickthroughRate = useMemo(
@@ -72,9 +72,9 @@ export default function CampaignItem( { campaign }: Props ) {
 		[ start_date, end_date ]
 	);
 
-	const { totalBudget, totalBudgetLeft } = useMemo(
+	const { totalBudget, totalBudgetLeft, campaignDays } = useMemo(
 		() => getCampaignBudgetData( budget_cents, start_date, end_date, spent_budget_cents ),
-		[ budget_cents, spent_budget_cents ]
+		[ budget_cents, end_date, spent_budget_cents, start_date ]
 	);
 	const totalBudgetLeftString = `($${ formatCents( totalBudgetLeft || 0 ) } ${ __( 'left' ) })`;
 
@@ -150,6 +150,8 @@ export default function CampaignItem( { campaign }: Props ) {
 		},
 	];
 
+	const budgetString = campaignDays ? `$${ totalBudget } ${ totalBudgetLeftString }` : '-';
+
 	return (
 		<>
 			<Dialog
@@ -176,33 +178,12 @@ export default function CampaignItem( { campaign }: Props ) {
 				hideSummary={ true }
 				className="campaign-item__foldable-card"
 			>
-				{ campaignStatus === 'rejected' && moderation_reason && (
-					<Notice isDismissible={ false } className="campaign-item__notice" status="warning">
+				<div className="campaign-item__row">
+					<Notice isDismissible={ false } className="campaign-item__notice" status="info">
 						<Gridicon className="campaign-item__notice-icon" icon="info-outline" />
-						{ translate(
-							'Your ad was not approved, please review our {{wpcomTos}}WordPress.com Terms{{/wpcomTos}} and {{advertisingTos}}Advertising Policy{{/advertisingTos}}.',
-							{
-								components: {
-									wpcomTos: (
-										<a
-											href="https://wordpress.com/tos/"
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
-									advertisingTos: (
-										<a
-											href="https://automattic.com/advertising-policy/"
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
-								},
-							}
-						) }
+						{ translate( 'Campaign statistics may be delayed by up to 3 hours.' ) }
 					</Notice>
-				) }
-
+				</div>
 				<div className="campaign-item__section campaign-item__stats">
 					<div className="campaign-item__row campaign-item__stats-row1">
 						<div className="campaign-item__column campaign-item__reach">
@@ -257,7 +238,9 @@ export default function CampaignItem( { campaign }: Props ) {
 							<div className="campaign-item__block_label campaign-item__budget-label">
 								{ __( 'Budget' ) }
 							</div>
-							<div className="campaign-item__block_value campaign-item__budget-value">{ `$${ totalBudget } ${ totalBudgetLeftString }` }</div>
+							<div className="campaign-item__block_value campaign-item__budget-value">
+								{ budgetString }
+							</div>
 						</div>
 					</div>
 
@@ -305,6 +288,33 @@ export default function CampaignItem( { campaign }: Props ) {
 						</Button>
 					) }
 				</div>
+
+				{ campaignStatus === 'rejected' && moderation_reason && (
+					<Notice isDismissible={ false } className="campaign-item__notice" status="warning">
+						<Gridicon className="campaign-item__notice-icon" icon="info-outline" />
+						{ translate(
+							'Your ad was not approved, please review our {{wpcomTos}}WordPress.com Terms{{/wpcomTos}} and {{advertisingTos}}Advertising Policy{{/advertisingTos}}.',
+							{
+								components: {
+									wpcomTos: (
+										<a
+											href="https://wordpress.com/tos/"
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+									advertisingTos: (
+										<a
+											href="https://automattic.com/advertising-policy/"
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
+						) }
+					</Notice>
+				) }
 			</FoldableCard>
 		</>
 	);

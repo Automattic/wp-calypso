@@ -17,6 +17,12 @@ import type {
 
 const debug = debugFactory( 'calypso:composite-checkout:use-cached-domain-contact-details' );
 
+type CheckoutStoreMappedActions = {
+	loadDomainContactDetailsFromCache?: (
+		payload: PossiblyCompleteDomainContactDetails
+	) => Promise< PossiblyCompleteDomainContactDetails >;
+};
+
 function useCachedContactDetails(): PossiblyCompleteDomainContactDetails | null {
 	const reduxDispatch = useReduxDispatch();
 	const haveRequestedCachedDetails = useRef< 'not-started' | 'pending' | 'done' >( 'not-started' );
@@ -51,7 +57,8 @@ function useCachedContactDetailsForCheckoutForm(
 			? getCountryPostalCodeSupport( countriesList, cachedContactDetails.countryCode )
 			: false;
 
-	const checkoutStoreActions = useDispatch( 'wpcom-checkout' );
+	const checkoutStoreActions: CheckoutStoreMappedActions | undefined =
+		useDispatch( 'wpcom-checkout' );
 	if ( ! checkoutStoreActions?.loadDomainContactDetailsFromCache ) {
 		throw new Error(
 			'useCachedContactDetailsForCheckoutForm must be run after the checkout data store has been initialized'
@@ -110,7 +117,7 @@ function useCachedContactDetailsForCheckoutForm(
 				setShouldShowContactDetailsValidationErrors( true );
 				setComplete( true );
 			} )
-			.catch( ( error ) => {
+			.catch( ( error: Error ) => {
 				setShouldShowContactDetailsValidationErrors( true );
 				isMounted.current && setComplete( true );
 				// eslint-disable-next-line no-console

@@ -91,7 +91,6 @@
 		"rum-tracking/logstash": false,
 		"security/security-checkup": true,
 		"seller-experience": true,
-		"sensei/onboarding": false,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
 		"signup/inline-help": false,

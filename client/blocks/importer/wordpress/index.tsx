@@ -21,6 +21,7 @@ import ImportContentOnly from './import-content-only';
 import ImportEverything from './import-everything';
 import { WPImportOption } from './types';
 import { storeMigrateSource, retrieveMigrateSource } from './utils';
+import type { OnboardSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -55,7 +56,10 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	const hasAllSitesFetched = useSelector( ( state ) => hasAllSitesList( state ) );
 	const fromSiteAnalyzedData = useSelector( getUrlData );
 	const { setIsMigrateFromWp } = useDispatch( ONBOARD_STORE );
-	const isMigrateFromWp = useSelect( ( select ) => select( ONBOARD_STORE ).getIsMigrateFromWp() );
+	const isMigrateFromWp = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIsMigrateFromWp(),
+		[]
+	);
 
 	/**
 	 ↓ Effects

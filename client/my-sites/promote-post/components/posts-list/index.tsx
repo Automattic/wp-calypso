@@ -1,9 +1,11 @@
 import { translate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import BlazePressWidget from 'calypso/components/blazepress-widget';
 import EmptyContent from 'calypso/components/empty-content';
 import usePromoteParams from 'calypso/data/promote-post/use-promote-params';
 import PostItem, { Post } from 'calypso/my-sites/promote-post/components/post-item';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import './style.scss';
 
 interface Props {
@@ -13,6 +15,9 @@ interface Props {
 
 export default function PostsList( { content, isLoading }: Props ) {
 	const { isModalOpen, selectedSiteId, selectedPostId, keyValue } = usePromoteParams();
+	const currentQuery = useSelector( getCurrentQueryArguments );
+	const sourceQuery = currentQuery?.[ 'source' ];
+	const source = sourceQuery ? sourceQuery.toString() : undefined;
 
 	const isEmpty = ! content || ! content.length;
 	return (
@@ -46,6 +51,7 @@ export default function PostsList( { content, isLoading }: Props ) {
 					siteId={ selectedSiteId }
 					postId={ selectedPostId }
 					keyValue={ keyValue }
+					source={ source }
 				/>
 			) }
 		</>

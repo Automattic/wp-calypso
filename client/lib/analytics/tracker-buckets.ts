@@ -79,7 +79,6 @@ export const AdTrackersInitGuards: Partial< { [ key in AdTracker ]: () => boolea
 	floodlight: checkGtagInit,
 	googleAds: checkGtagInit,
 	fullstory: () => 'FS' in window,
-	hotjar: () => 'hj' in window,
 	bing: () => 'uetq' in window,
 	outbrain: () => 'obApi' in window,
 	pinterest: () => 'pintrk' in window,

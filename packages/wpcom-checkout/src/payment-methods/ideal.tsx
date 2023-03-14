@@ -16,20 +16,15 @@ import type {
 	StoreState,
 } from '../payment-method-store';
 import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
+import type { AnyAction } from 'redux';
 
 const debug = debugFactory( 'wpcom-checkout:ideal-payment-method' );
 
 // Disabling this to make migration easier
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-type StoreKey = 'ideal';
 type NounsInStore = 'customerName' | 'customerBank';
 type IdealStore = PaymentMethodStore< NounsInStore >;
-
-declare module '@wordpress/data' {
-	function select( key: StoreKey ): StoreSelectors< NounsInStore >;
-	function dispatch( key: StoreKey ): StoreActions< NounsInStore >;
-}
 
 const actions: StoreActions< NounsInStore > = {
 	changeCustomerName( payload ) {
@@ -57,7 +52,7 @@ export function createIdealPaymentMethodStore(): IdealStore {
 				customerName: { value: '', isTouched: false },
 				customerBank: { value: '', isTouched: false },
 			},
-			action
+			action: AnyAction
 		): StoreState< NounsInStore > {
 			switch ( action.type ) {
 				case 'CUSTOMER_NAME_SET':
@@ -86,11 +81,25 @@ export function createIdealMethod( { store }: { store: IdealStore } ): PaymentMe
 	};
 }
 
+function useCustomerData() {
+	const { customerName, customerBank } = useSelect( ( select ) => {
+		const store = select( 'ideal' ) as StoreSelectors< NounsInStore >;
+		return {
+			customerName: store.getCustomerName(),
+			customerBank: store.getCustomerBank(),
+		};
+	}, [] );
+
+	return {
+		customerName,
+		customerBank,
+	};
+}
+
 function IdealFields() {
 	const { __ } = useI18n();
 
-	const customerName = useSelect( ( select ) => select( 'ideal' ).getCustomerName() );
-	const customerBank = useSelect( ( select ) => select( 'ideal' ).getCustomerBank() );
+	const { customerName, customerBank } = useCustomerData();
 	const { changeCustomerName, changeCustomerBank } = useDispatch( 'ideal' );
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
@@ -271,8 +280,7 @@ function IdealPayButton( {
 } ) {
 	const total = useTotal();
 	const { formStatus } = useFormStatus();
-	const customerName = useSelect( ( select ) => select( 'ideal' ).getCustomerName() );
-	const customerBank = useSelect( ( select ) => select( 'ideal' ).getCustomerBank() );
+	const { customerName, customerBank } = useCustomerData();
 
 	// This must be typed as optional because it's injected by cloning the
 	// element in CheckoutSubmitButton, but the uncloned element does not have
@@ -317,8 +325,7 @@ function ButtonContents( { formStatus, total }: { formStatus: FormStatus; total:
 }
 
 function IdealSummary() {
-	const customerName = useSelect( ( select ) => select( 'ideal' ).getCustomerName() );
-	const customerBank = useSelect( ( select ) => select( 'ideal' ).getCustomerBank() );
+	const { customerName, customerBank } = useCustomerData();
 
 	return (
 		<SummaryDetails>

@@ -309,7 +309,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 				short_description: __( 'Create donation pages and collect more' ),
 			},
 			{
-				slug: 'woothemes-sensei',
+				slug: 'sensei-pro',
 				name: __( 'Sensei Pro' ),
 				icon: 'https://wordpress.com/wp-content/lib/marketplace-images/sensei-pro.svg',
 				short_description: __( 'Manage and sell digital courses' ),

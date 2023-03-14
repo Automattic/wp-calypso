@@ -3,6 +3,7 @@ import type { FontFamily } from '../../types';
 
 interface Props {
 	fontFamilies: FontFamily[];
+	onLoad?: () => void;
 }
 
 // See https://developers.google.com/fonts/docs/css2
@@ -10,15 +11,11 @@ const FONT_API_BASE = 'https://fonts-api.wp.com/css2';
 
 const FONT_AXIS = 'ital,wght@0,400;0,700;1,400;1,700';
 
-const SYSTEM_FONT_SLUG = 'system-font';
-
-const FontFamiliesLoader = ( { fontFamilies }: Props ) => {
+const FontFamiliesLoader = ( { fontFamilies, onLoad }: Props ) => {
 	const params = useMemo(
 		() =>
 			new URLSearchParams( [
-				...fontFamilies
-					.filter( ( { slug } ) => slug !== SYSTEM_FONT_SLUG )
-					.map( ( { fontFamily } ) => [ 'family', `${ fontFamily }:${ FONT_AXIS }` ] ),
+				...fontFamilies.map( ( { fontFamily } ) => [ 'family', `${ fontFamily }:${ FONT_AXIS }` ] ),
 				[ 'display', 'swap' ],
 			] ),
 		fontFamilies
@@ -28,7 +25,14 @@ const FontFamiliesLoader = ( { fontFamilies }: Props ) => {
 		return null;
 	}
 
-	return <link rel="stylesheet" type="text/css" href={ `${ FONT_API_BASE }?${ params }` } />;
+	return (
+		<link
+			rel="stylesheet"
+			type="text/css"
+			href={ `${ FONT_API_BASE }?${ params }` }
+			onLoad={ onLoad }
+		/>
+	);
 };
 
 export default FontFamiliesLoader;

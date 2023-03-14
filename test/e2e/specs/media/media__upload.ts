@@ -1,6 +1,7 @@
 /**
  * @group calypso-pr
- * @group jetpack
+ * @group jetpack-remote-site
+ * @group jetpack-wpcom-integration
  */
 
 import assert from 'assert';
@@ -11,6 +12,9 @@ import {
 	MediaHelper,
 	TestFile,
 	TestAccount,
+	getTestAccountByFeature,
+	envToFeatureKey,
+	envVariables,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { TEST_IMAGE_PATH, TEST_AUDIO_PATH, TEST_UNSUPPORTED_FILE_PATH } from '../constants';
@@ -20,6 +24,14 @@ declare const browser: Browser;
 describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 	let testFiles: { image: TestFile; audio: TestFile; unsupported: TestFile };
 	let page: Page;
+
+	const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ), [
+		{
+			gutenberg: 'stable',
+			siteType: 'simple',
+			accountName: 'simpleSitePersonalPlanUser',
+		},
+	] );
 
 	beforeAll( async () => {
 		testFiles = {
@@ -32,12 +44,7 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 	// If any of the tests start failing unexpectedly and permanently, check the following:
 	// - ensure that plans, where appropriate, are enabled for the users;
 	// - ensure with MarTech that nothing with plans have changed;
-	describe.each`
-		siteType       | accountName
-		${ 'Simple' }  | ${ 'defaultUser' }
-		${ 'Atomic' }  | ${ 'atomicUser' }
-		${ 'Jetpack' } | ${ 'jetpackUser' }
-	`( 'Upload media files ($siteType)', ( { accountName } ) => {
+	describe( 'Upload media files ($siteType)', () => {
 		let mediaPage: MediaPage;
 		let testAccount: TestAccount;
 
@@ -57,11 +64,11 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 			mediaPage = new MediaPage( page );
 		} );
 
-		it( 'Upload image and confirm addition to gallery', async () => {
+		it( 'Upload image and confirm addition to gallery', async function () {
 			await mediaPage.upload( testFiles.image.fullpath );
 		} );
 
-		it( 'Upload audio and confirm addition to gallery', async () => {
+		it( 'Upload audio and confirm addition to gallery', async function () {
 			await mediaPage.upload( testFiles.audio.fullpath );
 		} );
 
@@ -73,6 +80,12 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 					assert.match( error.message, /could not be uploaded/i );
 				}
 			}
+		} );
+
+		// If we get to here, let's clean up after ourselves.
+		// This will minimize test data over time.
+		it( 'Delete uploaded media', async function () {
+			await mediaPage.deleteSelectedMediaFromLibrary();
 		} );
 	} );
 } );

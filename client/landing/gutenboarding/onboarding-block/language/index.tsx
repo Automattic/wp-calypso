@@ -11,6 +11,7 @@ import { Step, usePath } from '../../path';
 import { I18N_STORE } from '../../stores/i18n';
 import { USER_STORE } from '../../stores/user';
 import type { StepNameType } from '../../path';
+import type { I18nSelect, UserSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -23,12 +24,17 @@ interface Props {
 const LanguageStep: React.FunctionComponent< Props > = ( { previousStep } ) => {
 	const { __ } = useI18n();
 
-	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
+	const currentUser = useSelect(
+		( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
+		[]
+	);
 
-	const localizedLanguageNames = useSelect( ( select ) =>
-		select( I18N_STORE ).getLocalizedLanguageNames(
-			currentUser?.language ?? LOCALIZED_LANGUAGE_NAMES_FALLBACK_LOCALE
-		)
+	const localizedLanguageNames = useSelect(
+		( select ) =>
+			( select( I18N_STORE ) as I18nSelect ).getLocalizedLanguageNames(
+				currentUser?.language ?? LOCALIZED_LANGUAGE_NAMES_FALLBACK_LOCALE
+			),
+		[ currentUser?.language ]
 	);
 
 	// keep a static reference to the previous step

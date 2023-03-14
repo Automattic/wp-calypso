@@ -5,15 +5,15 @@ import growth from 'calypso/assets/images/plans/wpcom/ecommerce-trial/growth.png
 import payments from 'calypso/assets/images/plans/wpcom/ecommerce-trial/payments.png';
 import productManagement from 'calypso/assets/images/plans/wpcom/ecommerce-trial/product-management.png';
 import shipping from 'calypso/assets/images/plans/wpcom/ecommerce-trial/shipping.png';
-import type { ECommercePlanFeatureSet } from './trial-feature-card';
+import type { WooExpressMediumPlanFeatureSet } from 'calypso/my-sites/plans/components/ecommerce-plan-features/trial-feature-card';
 
-type ECommerceFeatureSetProps = {
+type WooExpressMediumFeatureSetProps = {
 	translate: typeof i18nTranslate;
 };
 
-export const getECommerceFeatureSets = ( {
+export const getWooExpressMediumFeatureSets = ( {
 	translate,
-}: ECommerceFeatureSetProps ): ECommercePlanFeatureSet[] => {
+}: WooExpressMediumFeatureSetProps ): WooExpressMediumPlanFeatureSet[] => {
 	return [
 		{
 			expanded: true,
