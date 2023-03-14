@@ -22,7 +22,6 @@ import { useInProgressState } from '../../hooks/use-in-progress-state';
 import { RecordTrackEvents, useRecordAddFormEvents } from '../../hooks/use-record-add-form-events';
 import { SUBSCRIBER_STORE } from '../../store';
 import { tip } from './icon';
-import type { SubscriberSelect } from '@automattic/data-stores';
 import './style.scss';
 
 interface Props {
@@ -92,7 +91,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	const [ submitAttemptCount, setSubmitAttemptCount ] = useState( 0 );
 	const [ submitBtnReady, setIsSubmitBtnReady ] = useState( isSubmitButtonReady() );
 	const importSelector = useSelect(
-		( s ) => ( s( SUBSCRIBER_STORE ) as SubscriberSelect ).getImportSubscribersSelector(),
+		( select ) => select( SUBSCRIBER_STORE ).getImportSubscribersSelector(),
 		[]
 	);
 	const [ formFileUploadElement ] = useState(

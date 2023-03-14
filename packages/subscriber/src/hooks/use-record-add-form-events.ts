@@ -2,7 +2,6 @@ import { useSelect } from '@wordpress/data';
 import { useEffect, useRef } from 'react';
 import { SUBSCRIBER_STORE } from '../store';
 import { useInProgressState } from './use-in-progress-state';
-import type { SubscriberSelect } from '@automattic/data-stores';
 
 export type RecordTrackEvents = (
 	eventName: string,
@@ -14,11 +13,11 @@ export function useRecordAddFormEvents( recordTracksEvent?: RecordTrackEvents, f
 	const inProgress = useInProgressState();
 	const prevInProgress = useRef( inProgress );
 	const addSelector = useSelect(
-		( s ) => ( s( SUBSCRIBER_STORE ) as SubscriberSelect ).getAddSubscribersSelector(),
+		( select ) => select( SUBSCRIBER_STORE ).getAddSubscribersSelector(),
 		[]
 	);
 	const importSelector = useSelect(
-		( s ) => ( s( SUBSCRIBER_STORE ) as SubscriberSelect ).getImportSubscribersSelector(),
+		( select ) => select( SUBSCRIBER_STORE ).getImportSubscribersSelector(),
 		[]
 	);
 
