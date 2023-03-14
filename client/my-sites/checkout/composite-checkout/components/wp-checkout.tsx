@@ -47,7 +47,7 @@ import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
-import { CHECKOUT_STORE_KEY } from '../hooks/wpcom-store';
+import { CHECKOUT_STORE } from '../hooks/wpcom-store';
 import { validateContactDetails } from '../lib/contact-validation';
 import getContactDetailsType from '../lib/get-contact-details-type';
 import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
@@ -187,17 +187,17 @@ export default function WPCheckout( {
 	const contactDetailsType = getContactDetailsType( responseCart );
 
 	const contactInfo = useSelect(
-		( select ) => select( CHECKOUT_STORE_KEY )?.getContactInfo() ?? {},
+		( select ) => select( CHECKOUT_STORE )?.getContactInfo() ?? {},
 		[]
 	);
 
 	const vatDetailsInForm = useSelect(
-		( select ) => select( CHECKOUT_STORE_KEY )?.getVatDetails() ?? {},
+		( select ) => select( CHECKOUT_STORE )?.getVatDetails() ?? {},
 		[]
 	);
 	const { setVatDetails, vatDetails: vatDetailsFromServer } = useVatDetails();
 
-	const checkoutActions = useDispatch( CHECKOUT_STORE_KEY );
+	const checkoutActions = useDispatch( CHECKOUT_STORE );
 
 	const [ shouldShowContactDetailsValidationErrors, setShouldShowContactDetailsValidationErrors ] =
 		useState( true );

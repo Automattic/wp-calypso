@@ -43,7 +43,7 @@ import useRecordCartLoaded from '../hooks/use-record-cart-loaded';
 import useRecordCheckoutLoaded from '../hooks/use-record-checkout-loaded';
 import useRemoveFromCartAndRedirect from '../hooks/use-remove-from-cart-and-redirect';
 import useStoredCards from '../hooks/use-stored-cards';
-import { CHECKOUT_STORE_KEY, useWpcomStore } from '../hooks/wpcom-store';
+import { CHECKOUT_STORE } from '../hooks/wpcom-store';
 import { logStashLoadErrorEvent, logStashEvent } from '../lib/analytics';
 import existingCardProcessor from '../lib/existing-card-processor';
 import filterAppropriatePaymentMethods from '../lib/filter-appropriate-payment-methods';
@@ -264,8 +264,6 @@ export default function CheckoutMain( {
 
 	const contactDetailsType = getContactDetailsType( responseCart );
 
-	useWpcomStore();
-
 	useDetectedCountryCode();
 
 	// Record errors adding products to the cart
@@ -358,12 +356,9 @@ export default function CheckoutMain( {
 		// Only wait for stored cards to load if we are using cards
 		( allowedPaymentMethods.includes( 'card' ) && isLoadingStoredCards );
 
-	const contactDetails = useSelect(
-		( select ) => select( CHECKOUT_STORE_KEY )?.getContactInfo(),
-		[]
-	);
+	const contactDetails = useSelect( ( select ) => select( CHECKOUT_STORE )?.getContactInfo(), [] );
 	const recaptchaClientId = useSelect(
-		( select ) => select( CHECKOUT_STORE_KEY )?.getRecaptchaClientId(),
+		( select ) => select( CHECKOUT_STORE )?.getRecaptchaClientId(),
 		[]
 	);
 

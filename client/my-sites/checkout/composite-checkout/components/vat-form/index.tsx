@@ -8,7 +8,7 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { CHECKOUT_STORE_KEY } from '../../hooks/wpcom-store';
+import { CHECKOUT_STORE } from '../../hooks/wpcom-store';
 
 import './style.css';
 
@@ -66,10 +66,10 @@ export function VatForm( {
 } ) {
 	const translate = useTranslate();
 	const vatDetailsInForm = useSelect(
-		( select ) => select( CHECKOUT_STORE_KEY )?.getVatDetails() ?? {},
+		( select ) => select( CHECKOUT_STORE )?.getVatDetails() ?? {},
 		[]
 	);
-	const wpcomStoreActions = useDispatch( CHECKOUT_STORE_KEY );
+	const wpcomStoreActions = useDispatch( CHECKOUT_STORE );
 	const setVatDetailsInForm = wpcomStoreActions?.setVatDetails;
 	const { vatDetails: vatDetailsFromServer, isLoading: isLoadingVatDetails } = useVatDetails();
 	const [ isFormActive, setIsFormActive ] = useState< boolean >( false );
