@@ -51,11 +51,10 @@
 
 	.thank-you__footer {
 		max-width: 1072px;
-		padding: 40px;
-		padding-top: 5px;
+		padding: 10px 0 0 40px;
 		display: flex;
 		flex-wrap: wrap;
-		gap: 75px;
+		gap: 25px;
 		justify-content: center;
 
 		.thank-you__step {
@@ -66,8 +65,7 @@
 			min-width: 280px;
 
 			@media ( max-width: 740px ) {
-				min-width: auto;
-				max-width: 420px;
+				width: 420px;
 			}
 
 			@media ( max-width: 520px ) {

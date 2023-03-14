@@ -279,7 +279,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 			},
 			{
 				stepKey: 'thank_you_footer_support_guides',
-				stepTitle: translate( 'Plugin Support' ),
+				stepTitle: translate( 'Plugins Support' ),
 				stepDescription: translate( 'Discover everything you need to know about Plugins.' ),
 				stepCta: (
 					<Button
