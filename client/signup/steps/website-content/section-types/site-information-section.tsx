@@ -61,7 +61,7 @@ export function SiteInformation( {
 			target: { value },
 		} = e;
 		dispatch( updateSearchTerms( value ) );
-		onChangeField && onChangeField( e );
+		onChangeField?.( e );
 	};
 
 	return (

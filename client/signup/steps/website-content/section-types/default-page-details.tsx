@@ -99,7 +99,7 @@ export function DefaultPageDetails( {
 				fieldValue: value,
 			} )
 		);
-		onChangeField && onChangeField( e );
+		onChangeField?.( e );
 	};
 
 	const imageCaption = translate(
@@ -122,7 +122,6 @@ export function DefaultPageDetails( {
 			case 'IMAGE':
 			default:
 				return imageCaption;
-				break;
 		}
 	};
 	const fieldName = page.id + CONTENT_SUFFIX;
