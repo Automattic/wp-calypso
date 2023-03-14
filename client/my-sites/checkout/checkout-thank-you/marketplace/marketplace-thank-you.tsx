@@ -366,35 +366,6 @@ const MarketplaceThankYou = () => {
 	);
 };
 
-/**
- * Returns the type of the product
- *
- * @param dotComThemes list of WordPress.com themes
- * @param dotOrgThemes list of WordPress.org themes
- * @param dotComPlugins list of WordPress.com plugins
- * @param dotOrgPlugins list of WordPress.org plugins
- * @param index current index to search on the list
- * @returns 'theme'| 'plugin' | undefined the type of the product
- */
-// eslint-disable-next-line
-function getProductType(
-	dotComThemes: [],
-	dotOrgThemes: [],
-	dotComPlugins: Array< Plugin >,
-	dotOrgPlugins: Array< Plugin >,
-	index: number
-): 'theme' | 'plugin' | undefined {
-	if ( dotComThemes[ index ] || dotOrgThemes[ index ] ) {
-		return 'theme';
-	}
-
-	if ( dotComPlugins[ index ] || dotOrgPlugins[ index ]?.fetched ) {
-		return 'plugin';
-	}
-
-	return undefined;
-}
-
 function FooterIcon( { icon }: { icon: string } ) {
 	return (
 		<Gridicon
