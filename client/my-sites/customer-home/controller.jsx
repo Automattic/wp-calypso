@@ -39,13 +39,7 @@ export async function maybeRedirect( context, next ) {
 	const siteId = getSelectedSiteId( state );
 	const { launchpad_screen, site_intent } = await fetchLaunchpad( slug );
 
-	const shouldRedirectToLaunchpad =
-		launchpad_screen === 'full' &&
-		// Temporary hack/band-aid to resolve a stale issue with atomic that the requestSite
-		// dispatch above doesnt always seem to resolve.
-		getQueryArgs()?.launchpadComplete !== 'true';
-
-	if ( shouldRedirectToLaunchpad ) {
+	if ( launchpad_screen ) {
 		// The new stepper launchpad onboarding flow isn't registered within the "page"
 		// client-side router, so page.redirect won't work. We need to use the
 		// traditional window.location Web API.
