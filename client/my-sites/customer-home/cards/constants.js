@@ -45,3 +45,4 @@ export const TASK_VERIFY_EMAIL = 'home-task-verify-email';
 export const TASK_USE_BUILT_BY = 'home-task-use-built-by';
 export const TASK_STAGING = 'home-task-staging';
 export const TASK_FIVERR = 'home-task-fiverr';
+export const TASK_DOMAIN_UPSELL = 'home-task-domain-upsell';

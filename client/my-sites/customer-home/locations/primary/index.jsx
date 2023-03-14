@@ -31,6 +31,7 @@ import {
 	TASK_REACTIVATE_ATOMIC_TRANSFER,
 	TASK_REACTIVATE_RESTORE_BACKUP,
 	TASK_FIVERR,
+	TASK_DOMAIN_UPSELL,
 } from 'calypso/my-sites/customer-home/cards/constants';
 import CelebrateSiteCopy from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-copy';
 import CelebrateSiteCreation from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-creation';
@@ -40,6 +41,7 @@ import CelebrateSiteSetupComplete from 'calypso/my-sites/customer-home/cards/not
 import SiteLaunchSellerUpsell from 'calypso/my-sites/customer-home/cards/notices/site-launch-seller-upsell';
 import StagingSiteNotice from 'calypso/my-sites/customer-home/cards/notices/staging-site';
 import ConnectAccounts from 'calypso/my-sites/customer-home/cards/tasks/connect-accounts';
+import DomainUpsell from 'calypso/my-sites/customer-home/cards/tasks/domain-upsell';
 import EarnFeatures from 'calypso/my-sites/customer-home/cards/tasks/earn-features';
 import FindDomain from 'calypso/my-sites/customer-home/cards/tasks/find-domain';
 import Fiverr from 'calypso/my-sites/customer-home/cards/tasks/fiverr';
@@ -84,6 +86,7 @@ const cardComponents = {
 	[ TASK_WP_COURSES ]: WPCourses,
 	[ TASK_VERIFY_EMAIL ]: VerifyEmail,
 	[ TASK_USE_BUILT_BY ]: UseBuiltBy,
+	[ TASK_DOMAIN_UPSELL ]: DomainUpsell,
 	[ TASK_FIVERR ]: Fiverr,
 };
 
