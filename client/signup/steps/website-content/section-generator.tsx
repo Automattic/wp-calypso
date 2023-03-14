@@ -51,7 +51,7 @@ const generateSiteInformationSection = (
 						logoUrl={ formValues.siteInformationSection?.siteLogoUrl }
 					/>
 				),
-				showSkip: true,
+				showSkip: false,
 				validate: () => {
 					const isValid = Boolean( formValues.siteInformationSection?.searchTerms?.length );
 					return {
