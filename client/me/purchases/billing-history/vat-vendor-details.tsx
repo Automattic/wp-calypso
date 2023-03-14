@@ -106,10 +106,7 @@ export function VatVendorDetails( { transaction }: { transaction: BillingTransac
 			<strong>{ translate( 'Vendor VAT Details' ) }</strong>
 			<span>
 				{ vendorInfo.address.map( ( addressLine ) => (
-					<>
-						{ addressLine }
-						<br />
-					</>
+					<div key={ addressLine }>{ addressLine }</div>
 				) ) }
 			</span>
 			<span className="receipt__vat-vendor-details-number">
