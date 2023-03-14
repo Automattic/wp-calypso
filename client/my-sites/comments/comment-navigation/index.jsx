@@ -21,6 +21,7 @@ import {
 import {
 	changeCommentStatus,
 	deleteComment,
+	emptyComments,
 	requestCommentsList,
 	unlikeComment,
 } from 'calypso/state/comments/actions';
@@ -75,8 +76,7 @@ export class CommentNavigation extends Component {
 					: translate( 'Empty all trash permanently?' )
 			)
 		) {
-			window.alert( 'empty!' );
-			// Tell the API to empty things
+			this.props.emptyPermanently( status );
 		}
 	};
 
@@ -393,6 +393,17 @@ const mapDispatchToProps = ( dispatch, { siteId, commentsListQuery } ) => ( {
 					bumpStat( 'calypso_comment_management', 'comment_deleted' )
 				),
 				deleteComment( siteId, postId, commentId, { showSuccessNotice: true }, commentsListQuery )
+			)
+		),
+	// Empty all comments (from spam or trash only)
+	emptyPermanently: ( status ) =>
+		dispatch(
+			withAnalytics(
+				composeAnalytics(
+					recordTracksEvent( 'calypso_comment_management_empty' ),
+					bumpStat( 'calypso_comment_management', 'comments_emptied' )
+				),
+				emptyComments( siteId, status, { showSuccessNotice: true }, commentsListQuery )
 			)
 		),
 	recordBulkAction: ( action, count, fromList, view = 'site' ) =>

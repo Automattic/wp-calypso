@@ -5,6 +5,7 @@ import {
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_DELETE,
 	COMMENTS_EDIT,
+	COMMENTS_EMPTY,
 	COMMENTS_LIKE,
 	COMMENTS_LIST_REQUEST,
 	COMMENTS_RECEIVE,
@@ -180,6 +181,35 @@ export const deleteComment =
 			},
 		} );
 	};
+
+/**
+ * Creates an action that permanently empties all comments
+ * of a specified status
+ *
+ * @param {number} siteId site identifier
+ * @param {string} status Status of comments to delete (spam or trash)
+ * @param {Object} options Action options
+ * @param {boolean} options.showSuccessNotice Announce the delete success with a notice (default: true)
+ * @param {Object} refreshCommentListQuery Forces requesting a fresh copy of a comments page with these query parameters.
+ * @returns {Object} action that empties comments
+ */
+export const emptyComments = (
+	siteId,
+	status,
+	options = { showSuccessNotice: true },
+	refreshCommentListQuery = null
+) => ( {
+	type: COMMENTS_EMPTY,
+	siteId,
+	status,
+	options,
+	refreshCommentListQuery,
+	meta: {
+		dataLayer: {
+			trackRequest: true,
+		},
+	},
+} );
 
 /**
  * Creates a write comment action for a siteId and postId
