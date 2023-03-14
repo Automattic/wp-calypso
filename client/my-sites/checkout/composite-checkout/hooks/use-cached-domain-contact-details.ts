@@ -10,6 +10,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestContactDetailsCache } from 'calypso/state/domains/management/actions';
 import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
 import useCountryList from './use-country-list';
+import { CHECKOUT_STORE_KEY } from './wpcom-store';
 import type {
 	PossiblyCompleteDomainContactDetails,
 	CountryListItem,
@@ -58,7 +59,7 @@ function useCachedContactDetailsForCheckoutForm(
 			: false;
 
 	const checkoutStoreActions: CheckoutStoreMappedActions | undefined =
-		useDispatch( 'wpcom-checkout' );
+		useDispatch( CHECKOUT_STORE_KEY );
 	if ( ! checkoutStoreActions?.loadDomainContactDetailsFromCache ) {
 		throw new Error(
 			'useCachedContactDetailsForCheckoutForm must be run after the checkout data store has been initialized'

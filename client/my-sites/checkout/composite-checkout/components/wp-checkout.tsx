@@ -47,6 +47,10 @@ import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
+import {
+	CHECKOUT_STORE_KEY,
+	WpcomCheckoutStoreSelectors as _WpcomCheckoutStoreSelectors,
+} from '../hooks/wpcom-store';
 import { validateContactDetails } from '../lib/contact-validation';
 import getContactDetailsType from '../lib/get-contact-details-type';
 import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
@@ -66,7 +70,6 @@ import WPCheckoutOrderSummary from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import WPContactFormSummary from './wp-contact-form-summary';
 import type { OnChangeItemVariant } from './item-variation-picker';
-import type { WpcomCheckoutStoreSelectors as _WpcomCheckoutStoreSelectors } from '../hooks/wpcom-store';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
 import type { RemoveProductFromCart, MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { CountryListItem } from '@automattic/wpcom-checkout';
@@ -189,17 +192,17 @@ export default function WPCheckout( {
 	const contactDetailsType = getContactDetailsType( responseCart );
 
 	const contactInfo = useSelect(
-		( sel ) => ( sel( 'wpcom-checkout' ) as WpcomCheckoutStoreSelectors )?.getContactInfo() ?? {},
+		( sel ) => ( sel( CHECKOUT_STORE_KEY ) as WpcomCheckoutStoreSelectors )?.getContactInfo() ?? {},
 		[]
 	);
 
 	const vatDetailsInForm = useSelect(
-		( sel ) => ( sel( 'wpcom-checkout' ) as WpcomCheckoutStoreSelectors )?.getVatDetails() ?? {},
+		( sel ) => ( sel( CHECKOUT_STORE_KEY ) as WpcomCheckoutStoreSelectors )?.getVatDetails() ?? {},
 		[]
 	);
 	const { setVatDetails, vatDetails: vatDetailsFromServer } = useVatDetails();
 
-	const checkoutActions = useDispatch( 'wpcom-checkout' );
+	const checkoutActions = useDispatch( CHECKOUT_STORE_KEY );
 
 	const [ shouldShowContactDetailsValidationErrors, setShouldShowContactDetailsValidationErrors ] =
 		useState( true );

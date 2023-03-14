@@ -10,6 +10,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { CHECKOUT_STORE_KEY, WpcomCheckoutStoreSelectors } from '../hooks/wpcom-store';
 import {
 	prepareDomainContactDetails,
 	prepareDomainContactDetailsErrors,
@@ -17,7 +18,6 @@ import {
 } from '../types/wpcom-store-state';
 import DomainContactDetails from './domain-contact-details';
 import TaxFields from './tax-fields';
-import type { WpcomCheckoutStoreSelectors } from '../hooks/wpcom-store';
 import type { DomainContactDetails as DomainContactDetailsData } from '@automattic/shopping-cart';
 import type {
 	CountryListItem,
@@ -53,11 +53,12 @@ export default function ContactDetailsContainer( {
 		.filter( ( product ) => isDomainProduct( product ) || isDomainTransfer( product ) )
 		.filter( ( product ) => ! isDomainMapping( product ) )
 		.map( getDomain );
-	const checkoutActions = useDispatch( 'wpcom-checkout' );
+	const checkoutActions = useDispatch( CHECKOUT_STORE_KEY );
 	const { email } = useSelect(
 		( select ) =>
-			( select( 'wpcom-checkout' ) as WpcomCheckoutStoreSelectors | undefined )?.getContactInfo() ??
-			{},
+			(
+				select( CHECKOUT_STORE_KEY ) as WpcomCheckoutStoreSelectors | undefined
+			 )?.getContactInfo() ?? {},
 		[]
 	);
 

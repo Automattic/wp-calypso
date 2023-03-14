@@ -4,9 +4,10 @@ import PropTypes from 'prop-types';
 import { memo, useEffect } from 'react';
 import { initGoogleRecaptcha } from 'calypso/lib/analytics/recaptcha';
 import './style.scss';
+import { CHECKOUT_STORE_KEY } from 'calypso/my-sites/checkout/composite-checkout/hooks/wpcom-store';
 
 function Recaptcha( { badgePosition } ) {
-	const { setRecaptchaClientId } = useDispatch( 'wpcom-checkout' ) ?? {};
+	const { setRecaptchaClientId } = useDispatch( CHECKOUT_STORE_KEY ) ?? {};
 	useEffect( () => {
 		initGoogleRecaptcha( 'g-recaptcha', config( 'google_recaptcha_site_key' ) ).then(
 			( clientId ) => {

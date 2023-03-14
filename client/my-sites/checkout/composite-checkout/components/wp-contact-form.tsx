@@ -2,8 +2,8 @@ import { FormStatus, useFormStatus, useIsStepActive } from '@automattic/composit
 import styled from '@emotion/styled';
 import { useSelect } from '@wordpress/data';
 import useCachedDomainContactDetails from '../hooks/use-cached-domain-contact-details';
+import { CHECKOUT_STORE_KEY, WpcomCheckoutStoreSelectors } from '../hooks/wpcom-store';
 import ContactDetailsContainer from './contact-details-container';
-import type { WpcomCheckoutStoreSelectors } from '../hooks/wpcom-store';
 import type { CountryListItem, ContactDetailsType } from '@automattic/wpcom-checkout';
 
 const BillingFormFields = styled.div`
@@ -37,8 +37,9 @@ export default function WPContactForm( {
 } ) {
 	const contactInfo = useSelect(
 		( select ) =>
-			( select( 'wpcom-checkout' ) as WpcomCheckoutStoreSelectors | undefined )?.getContactInfo() ??
-			{},
+			(
+				select( CHECKOUT_STORE_KEY ) as WpcomCheckoutStoreSelectors | undefined
+			 )?.getContactInfo() ?? {},
 		[]
 	);
 	const { formStatus } = useFormStatus();

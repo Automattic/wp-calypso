@@ -43,7 +43,7 @@ import useRecordCartLoaded from '../hooks/use-record-cart-loaded';
 import useRecordCheckoutLoaded from '../hooks/use-record-checkout-loaded';
 import useRemoveFromCartAndRedirect from '../hooks/use-remove-from-cart-and-redirect';
 import useStoredCards from '../hooks/use-stored-cards';
-import { useWpcomStore } from '../hooks/wpcom-store';
+import { CHECKOUT_STORE_KEY, useWpcomStore } from '../hooks/wpcom-store';
 import { logStashLoadErrorEvent, logStashEvent } from '../lib/analytics';
 import existingCardProcessor from '../lib/existing-card-processor';
 import filterAppropriatePaymentMethods from '../lib/filter-appropriate-payment-methods';
@@ -362,12 +362,12 @@ export default function CheckoutMain( {
 		( allowedPaymentMethods.includes( 'card' ) && isLoadingStoredCards );
 
 	const contactDetails = useSelect(
-		( select ) => ( select( 'wpcom-checkout' ) as WpcomCheckoutStoreSelectors )?.getContactInfo(),
+		( select ) => ( select( CHECKOUT_STORE_KEY ) as WpcomCheckoutStoreSelectors )?.getContactInfo(),
 		[]
 	);
 	const recaptchaClientId = useSelect(
 		( select ) =>
-			( select( 'wpcom-checkout' ) as WpcomCheckoutStoreSelectors )?.getRecaptchaClientId(),
+			( select( CHECKOUT_STORE_KEY ) as WpcomCheckoutStoreSelectors )?.getRecaptchaClientId(),
 		[]
 	);
 

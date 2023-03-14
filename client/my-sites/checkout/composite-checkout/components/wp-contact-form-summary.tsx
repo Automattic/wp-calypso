@@ -3,8 +3,8 @@ import styled from '@emotion/styled';
 import { useSelect } from '@wordpress/data';
 import { hasOnlyRenewalItems } from 'calypso/lib/cart-values/cart-items';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { CHECKOUT_STORE_KEY, WpcomCheckoutStoreSelectors } from '../hooks/wpcom-store';
 import { SummaryLine, SummaryDetails } from './summary-details';
-import type { WpcomCheckoutStoreSelectors } from '../hooks/wpcom-store';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 
@@ -29,8 +29,9 @@ export default function WPContactFormSummary( {
 } ) {
 	const contactInfo = useSelect(
 		( select ) =>
-			( select( 'wpcom-checkout' ) as WpcomCheckoutStoreSelectors | undefined )?.getContactInfo() ??
-			{},
+			(
+				select( CHECKOUT_STORE_KEY ) as WpcomCheckoutStoreSelectors | undefined
+			 )?.getContactInfo() ?? {},
 		[]
 	);
 	const cartKey = useCartKey();
