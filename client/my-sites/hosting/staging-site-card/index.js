@@ -4,16 +4,16 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { localize } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
-import { connect, useDispatch, useSelector } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import { LoadingBar } from 'calypso/components/loading-bar';
+import { urlToSlug } from 'calypso/lib/url';
 import { useAddStagingSiteMutation } from 'calypso/my-sites/hosting/staging-site-card/use-add-staging-site';
 import { useCheckStagingSiteStatus } from 'calypso/my-sites/hosting/staging-site-card/use-check-staging-site-status';
 import { useStagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const stagingSiteAddFailureNoticeId = 'staging-site-add-failure';
@@ -46,7 +46,6 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 	} );
 
 	const stagingSite = stagingSites && stagingSites.length ? stagingSites[ 0 ] : [];
-	const stagingSiteSlug = useSelector( ( state ) => getSiteSlug( state, stagingSite.id ) );
 
 	const showAddStagingSite = ! isLoadingStagingSites && stagingSites && stagingSites.length === 0;
 	const showManageStagingSite = ! isLoadingStagingSites && stagingSites && stagingSites.length > 0;
@@ -125,7 +124,7 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 						},
 					} ) }
 				</p>
-				<Button primary href={ `/home/${ stagingSiteSlug }` } disabled={ disabled }>
+				<Button primary href={ `/home/${ urlToSlug( stagingSite.url ) }` } disabled={ disabled }>
 					<span>{ translate( 'Manage staging site' ) }</span>
 				</Button>
 			</>
@@ -155,11 +154,7 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 			{ ( addingStagingSite || ( showManageStagingSite && ! isStagingSiteTransferComplete ) ) && (
 				<>
 					<StyledLoadingBar progress={ progress } />
-					<p>
-						{ __(
-							'Feel free to continue working while we create your staging site. We’ll email you once it is ready.'
-						) }
-					</p>
+					<p>{ __( 'We are setting up your staging site. We’ll email you once it is ready.' ) }</p>
 				</>
 			) }
 		</Card>

@@ -11,6 +11,7 @@ import { ONBOARD_STORE } from '../../stores/onboard';
 import AcquireIntentTextInput from './acquire-intent-text-input';
 import getTextWidth from './get-text-width';
 import tip from './tip';
+import type { OnboardSelect } from '@automattic/data-stores';
 
 interface Props {
 	onSubmit: () => void;
@@ -19,7 +20,10 @@ interface Props {
 
 const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, inputRef } ) => {
 	const { __, _x } = useI18n();
-	const { siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
+	const { siteTitle } = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getState(),
+		[]
+	);
 	const isAnchorFmSignup = useIsAnchorFm();
 	const { setSiteTitle } = useDispatch( ONBOARD_STORE );
 	const [ isTouched, setIsTouched ] = React.useState( false );

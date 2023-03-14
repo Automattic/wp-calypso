@@ -35,6 +35,7 @@ import {
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import { areVatDetailsSame } from 'calypso/me/purchases/vat-info/are-vat-details-same';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-valid-checkout-back-url';
 import { leaveCheckout } from 'calypso/my-sites/checkout/composite-checkout/lib/leave-checkout';
@@ -65,9 +66,12 @@ import WPCheckoutOrderSummary from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import WPContactFormSummary from './wp-contact-form-summary';
 import type { OnChangeItemVariant } from './item-variation-picker';
+import type { WpcomCheckoutStoreSelectors as _WpcomCheckoutStoreSelectors } from '../hooks/wpcom-store';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
 import type { RemoveProductFromCart, MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { CountryListItem } from '@automattic/wpcom-checkout';
+
+type WpcomCheckoutStoreSelectors = _WpcomCheckoutStoreSelectors | undefined;
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
@@ -184,10 +188,16 @@ export default function WPCheckout( {
 
 	const contactDetailsType = getContactDetailsType( responseCart );
 
-	const contactInfo = useSelect( ( sel ) => sel( 'wpcom-checkout' )?.getContactInfo() ?? {} );
+	const contactInfo = useSelect(
+		( sel ) => ( sel( 'wpcom-checkout' ) as WpcomCheckoutStoreSelectors )?.getContactInfo() ?? {},
+		[]
+	);
 
-	const vatDetails = useSelect( ( sel ) => sel( 'wpcom-checkout' )?.getVatDetails() ?? {} );
-	const { setVatDetails } = useVatDetails();
+	const vatDetailsInForm = useSelect(
+		( sel ) => ( sel( 'wpcom-checkout' ) as WpcomCheckoutStoreSelectors )?.getVatDetails() ?? {},
+		[]
+	);
+	const { setVatDetails, vatDetails: vatDetailsFromServer } = useVatDetails();
 
 	const checkoutActions = useDispatch( 'wpcom-checkout' );
 
@@ -386,8 +396,11 @@ export default function WPCheckout( {
 						if ( validationResponse ) {
 							// When the contact details change, update the VAT details on the server.
 							try {
-								if ( vatDetails.id ) {
-									await setVatDetails( vatDetails );
+								if (
+									vatDetailsInForm.id &&
+									! areVatDetailsSame( vatDetailsInForm, vatDetailsFromServer )
+								) {
+									await setVatDetails( vatDetailsInForm );
 								}
 							} catch ( error ) {
 								reduxDispatch( removeNotice( 'vat_info_notice' ) );
@@ -412,7 +425,7 @@ export default function WPCheckout( {
 									responseCart,
 									updateLocation,
 									contactInfo,
-									vatDetails
+									vatDetailsInForm
 								);
 							} catch {
 								// If updating the cart fails, we should not continue. No need

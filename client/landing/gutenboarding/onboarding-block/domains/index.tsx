@@ -20,7 +20,7 @@ import { DOMAIN_SUGGESTIONS_STORE } from '../../stores/domain-suggestions';
 import { ONBOARD_STORE } from '../../stores/onboard';
 import { USER_STORE } from '../../stores/user';
 import waitForDomainAvailability from './wait-for-domain-availability';
-import type { DomainSuggestions } from '@automattic/data-stores';
+import type { DomainSuggestions, OnboardSelect, UserSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -37,17 +37,30 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 	const { goBack, goNext } = useStepNavigation();
 	const { goLastLocation } = useLastLocation();
 
-	const domain = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDomain() );
+	const domain = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
+		[]
+	);
 
 	// using the selector will get the explicit domain search query with site title as fallback
-	const domainSearch = useSelect( ( select ) => select( ONBOARD_STORE ).getDomainSearch() );
+	const domainSearch = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainSearch(),
+		[]
+	);
 
-	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
+	const currentUser = useSelect(
+		( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
+		[]
+	);
 
-	const isCheckingDomainAvailability = useSelect( ( select ): boolean =>
-		select( 'core/data' ).isResolving( DOMAIN_SUGGESTIONS_STORE, 'isAvailable', [
-			domain?.domain_name,
-		] )
+	const isCheckingDomainAvailability = useSelect(
+		( select ): boolean =>
+			(
+				select( 'core/data' ) as {
+					isResolving: ( store: string, resolver: string, args: Array< unknown > ) => boolean;
+				}
+			 ).isResolving( DOMAIN_SUGGESTIONS_STORE, 'isAvailable', [ domain?.domain_name ] ),
+		[ domain?.domain_name ]
 	);
 
 	const { setDomain, setDomainSearch, setHasUsedDomainsStep } = useDispatch( ONBOARD_STORE );

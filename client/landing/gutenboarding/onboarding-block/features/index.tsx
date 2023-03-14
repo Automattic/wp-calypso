@@ -16,7 +16,7 @@ import useStepNavigation from '../../hooks/use-step-navigation';
 import { useTrackStep } from '../../hooks/use-track-step';
 import { ONBOARD_STORE } from '../../stores/onboard';
 import { WPCOM_FEATURES_STORE } from '../../stores/wpcom-features';
-import type { WPCOMFeatures } from '@automattic/data-stores';
+import type { OnboardSelect, WPCOMFeatures, WpcomFeaturesSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -28,9 +28,15 @@ const FeaturesStep: React.FunctionComponent = () => {
 	const { __ } = useI18n();
 	const { goBack, goNext } = useStepNavigation();
 
-	const allFeatures = useSelect( ( select ) => select( WPCOM_FEATURES_STORE ).getAllFeatures() );
+	const allFeatures = useSelect(
+		( select ) => ( select( WPCOM_FEATURES_STORE ) as WpcomFeaturesSelect ).getAllFeatures(),
+		[]
+	);
 
-	const selectedFeatures = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedFeatures() );
+	const selectedFeatures = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedFeatures(),
+		[]
+	);
 	const { addFeature, removeFeature } = useDispatch( ONBOARD_STORE );
 
 	const hasSelectedFeatures = selectedFeatures.length > 0;

@@ -1,6 +1,7 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
 import {
@@ -20,6 +21,7 @@ import PlansStep from './internals/steps-repository/plans';
 import Processing from './internals/steps-repository/processing-step';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import type { Flow, ProvidedDependencies } from './internals/types';
+import type { UserSelect } from '@automattic/data-stores';
 
 const linkInBio: Flow = {
 	name: LINK_IN_BIO_TLD_FLOW,
@@ -43,7 +45,10 @@ const linkInBio: Flow = {
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStepSlug, flowName } );
 		const siteSlug = useSiteSlug();
-		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
+		const userIsLoggedIn = useSelect(
+			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+			[]
+		);
 		const locale = useLocale();
 
 		setStepProgress( flowProgress );
@@ -93,7 +98,10 @@ const linkInBio: Flow = {
 				case 'processing':
 					if ( providedDependencies?.goToHome && providedDependencies?.siteSlug ) {
 						return window.location.replace(
-							`/home/${ providedDependencies?.siteSlug }?celebrateLaunch=true&launchpadComplete=true`
+							addQueryArgs( `/home/${ providedDependencies?.siteSlug }`, {
+								celebrateLaunch: true,
+								launchpadComplete: true,
+							} )
 						);
 					}
 					if ( providedDependencies?.goToCheckout ) {

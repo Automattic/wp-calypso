@@ -17,6 +17,7 @@ export default class HeaderCake extends Component {
 			actionHref,
 			actionOnClick,
 			alwaysShowActionText,
+			alwaysShowBackText,
 		} = this.props;
 		const classes = classNames( 'header-cake', this.props.className, {
 			'is-compact': this.props.isCompact,
@@ -24,7 +25,12 @@ export default class HeaderCake extends Component {
 
 		return (
 			<Card className={ classes }>
-				<HeaderCakeBack text={ backText } href={ backHref } onClick={ this.props.onClick } />
+				<HeaderCakeBack
+					text={ backText }
+					href={ backHref }
+					onClick={ this.props.onClick }
+					alwaysShowActionText={ alwaysShowBackText }
+				/>
 
 				<div className="header-cake__title" role="presentation" onClick={ this.props.onTitleClick }>
 					{ this.props.children }
@@ -58,9 +64,11 @@ HeaderCake.propTypes = {
 	actionIcon: PropTypes.string,
 	actionOnClick: PropTypes.func,
 	alwaysShowActionText: PropTypes.bool,
+	alwaysShowBackText: PropTypes.bool,
 };
 
 HeaderCake.defaultProps = {
 	isCompact: false,
 	alwaysShowActionText: false,
+	alwaysShowBackText: false,
 };

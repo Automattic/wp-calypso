@@ -21,7 +21,7 @@ import { getAvailableProductsList } from 'calypso/state/products-list/selectors'
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useQuery } from '../../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../../stores';
-import type { DomainSuggestion, DomainForm } from '@automattic/data-stores';
+import type { DomainSuggestion, DomainForm, OnboardSelect } from '@automattic/data-stores';
 
 interface DomainFormControlProps {
 	analyticsSection: string;
@@ -51,10 +51,13 @@ export function DomainFormControl( {
 		};
 	} );
 
-	const { domainForm, siteTitle } = useSelect( ( select ) => ( {
-		domainForm: select( ONBOARD_STORE ).getDomainForm(),
-		siteTitle: select( ONBOARD_STORE ).getSelectedSiteTitle(),
-	} ) );
+	const { domainForm, siteTitle } = useSelect(
+		( select ) => ( {
+			domainForm: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainForm(),
+			siteTitle: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
+		} ),
+		[]
+	);
 
 	const { setDomainForm } = useDispatch( ONBOARD_STORE );
 
