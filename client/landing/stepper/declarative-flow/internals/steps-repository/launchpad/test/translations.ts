@@ -19,8 +19,8 @@ describe( 'Translations', () => {
 
 				const freeFlowTranslations = getLaunchpadTranslations( 'free' );
 				expect( freeFlowTranslations.flowName ).toEqual( 'Free Website' );
-				expect( freeFlowTranslations.title ).toEqual( "Your new site's ready!" );
-				expect( freeFlowTranslations.launchTitle ).toEqual( "Your new site's ready!" );
+				expect( freeFlowTranslations.title ).toEqual( "Let's get ready to launch!" );
+				expect( freeFlowTranslations.launchTitle ).toEqual( "Let's get ready to launch!" );
 			} );
 		} );
 
