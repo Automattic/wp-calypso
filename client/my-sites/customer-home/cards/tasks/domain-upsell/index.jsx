@@ -7,7 +7,6 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import fiverrIllustration from 'calypso/assets/images/customer-home/illustration--task-find-domain.svg';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { preventWidows } from 'calypso/lib/formatting';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -20,6 +19,8 @@ import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors
 import { getDomainsBySite } from 'calypso/state/sites/domains/selectors';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+
+import './style.scss';
 
 export default function DomainUpsell() {
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
@@ -140,6 +141,7 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 
 	return (
 		<Task
+			customClass="task__domain-upsell"
 			title={ cardTitle }
 			description={ preventWidows( cardSubtitle ) }
 			actionText={ translate( 'Get the custom domain' ) }
@@ -148,7 +150,7 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 			hasSecondaryAction={ true }
 			secondaryActionText={ translate( 'Search for another domain' ) }
 			secondaryActionUrl={ searchLink }
-			illustration={ fiverrIllustration }
+			badgeText="asldkajsdlkajsdlwqlewkjl-0eqwkjhkwjh.com"
 			timing={ 2 }
 			taskId={ TASK_DOMAIN_UPSELL }
 		/>
