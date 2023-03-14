@@ -196,7 +196,7 @@ export default function SiteStatusContent( {
 						getBoostRatingClass( overallScore )
 					) }
 				>
-					{ getBoostRating( overallScore ) } Score
+					{ getBoostRating( overallScore ) } { translate( 'Score' ) }
 				</div>
 			);
 		}

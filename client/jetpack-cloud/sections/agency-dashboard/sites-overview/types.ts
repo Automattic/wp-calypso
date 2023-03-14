@@ -83,7 +83,7 @@ export interface StatsNode {
 export interface BoostNode {
 	type: AllowedTypes;
 	data: BoostData;
-	status: AllowedStatusTypes | string;
+	status: AllowedStatusTypes;
 }
 export interface BackupNode {
 	type: AllowedTypes;
