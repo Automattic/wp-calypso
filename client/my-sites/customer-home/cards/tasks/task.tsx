@@ -46,6 +46,7 @@ const Task = ( {
 	taskId,
 	timing,
 	title,
+	customClass,
 }: {
 	actionOnClick?: () => void;
 	actionBusy?: boolean;
@@ -65,6 +66,7 @@ const Task = ( {
 	taskId: string;
 	timing?: number;
 	title: ReactNode;
+	customClass?: string;
 } & (
 	| {
 			hasAction?: false;
@@ -220,7 +222,16 @@ const Task = ( {
 	};
 
 	return (
-		<div className={ classnames( 'task', { 'is-loading': isLoading, 'is-urgent': isUrgent } ) }>
+		<div
+			className={ classnames(
+				'task',
+				{
+					'is-loading': isLoading,
+					'is-urgent': isUrgent,
+				},
+				customClass
+			) }
+		>
 			{ isLoading && <Spinner /> }
 			<div className="task__text">
 				{ timing && (

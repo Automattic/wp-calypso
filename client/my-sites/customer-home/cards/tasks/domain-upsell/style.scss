@@ -1,0 +1,37 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.task {
+	&.task__domain-upsell {
+		margin: 0 !important;
+		background: url(calypso/assets/images/customer-home/illustration--task-domain-upsell.svg) no-repeat right top;
+		@media (max-width: $break-wide) {
+			background-position-x: 110%;
+		}
+		@media (max-width: $break-xlarge) {
+			background-position-x: 130%;
+		}
+
+		.task__text {
+			max-width: 50%;
+			margin: 32px !important;
+		}
+
+		.task__badge {
+			background: none;
+			color: #000;
+			position: absolute;
+			right: 0;
+			top: 120px;
+			width: 260px;
+			word-break: break-all;
+			line-height: 20px;
+			@media (max-width: $break-wide) {
+				right: -5%;
+			}
+			@media (max-width: $break-xlarge) {
+				right: -10%;
+			}
+		}
+	}
+}
