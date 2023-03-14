@@ -26,4 +26,4 @@ export const USER_STORE = User.register( {
 
 export const AUTOMATED_ELIGIBILITY_STORE = AutomatedTransferEligibility.register();
 
-export const ANALYZER_STORE = Analyzer.register();
+export const ANALYZER_STORE = Analyzer.store;

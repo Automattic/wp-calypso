@@ -15,7 +15,6 @@ import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-pa
 import { ANALYZER_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { ProgressState } from './types';
-import type { AnalyzerSelect } from '@automattic/data-stores';
 import type { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import './style.scss';
 
@@ -29,11 +28,11 @@ const ImportLight: Step = function ImportStep( props ) {
 	const [ percentage, setPercentage ] = useState( 2 );
 	const { analyzeColors } = useDispatch( ANALYZER_STORE );
 	const colorsData = useSelect(
-		( select ) => ( select( ANALYZER_STORE ) as AnalyzerSelect ).getSiteColors( url ),
+		( select ) => select( ANALYZER_STORE ).getSiteColors( url ),
 		[ url ]
 	);
 	const fetchingColorsInProgress = useSelect(
-		( select ) => ( select( ANALYZER_STORE ) as AnalyzerSelect ).isSiteColorsInAnalysis(),
+		( select ) => select( ANALYZER_STORE ).isSiteColorsInAnalysis(),
 		[]
 	);
 
