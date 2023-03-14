@@ -25,7 +25,6 @@ export const SECTION_BLOGGING_PROMPT = 'home-section-blogging-prompt';
 export const SECTION_MANAGE_SITE = 'home-section-manage-site';
 export const TASK_CONNECT_ACCOUNTS = 'home-task-connect-accounts';
 export const TASK_EARN_FEATURES = 'home-task-earn-features';
-export const TASK_FIND_DOMAIN = 'home-task-find-domain';
 export const TASK_GO_MOBILE_ANDROID = 'home-task-go-mobile-android';
 export const TASK_GO_MOBILE_IOS = 'home-task-go-mobile-ios';
 export const TASK_MARKETPLACE = 'home-task-marketplace';

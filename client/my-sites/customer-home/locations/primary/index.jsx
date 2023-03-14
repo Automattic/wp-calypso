@@ -12,7 +12,6 @@ import {
 	NOTICE_CELEBRATE_SITE_SETUP_COMPLETE,
 	TASK_CONNECT_ACCOUNTS,
 	TASK_EARN_FEATURES,
-	TASK_FIND_DOMAIN,
 	TASK_GO_MOBILE_ANDROID,
 	TASK_GO_MOBILE_IOS,
 	TASK_MARKETPLACE,
@@ -41,7 +40,6 @@ import SiteLaunchSellerUpsell from 'calypso/my-sites/customer-home/cards/notices
 import ConnectAccounts from 'calypso/my-sites/customer-home/cards/tasks/connect-accounts';
 import DomainUpsell from 'calypso/my-sites/customer-home/cards/tasks/domain-upsell';
 import EarnFeatures from 'calypso/my-sites/customer-home/cards/tasks/earn-features';
-import FindDomain from 'calypso/my-sites/customer-home/cards/tasks/find-domain';
 import Fiverr from 'calypso/my-sites/customer-home/cards/tasks/fiverr';
 import GoMobile from 'calypso/my-sites/customer-home/cards/tasks/go-mobile';
 import Marketplace from 'calypso/my-sites/customer-home/cards/tasks/marketplace';
@@ -66,7 +64,6 @@ const cardComponents = {
 	[ NOTICE_CELEBRATE_SITE_SETUP_COMPLETE ]: CelebrateSiteSetupComplete,
 	[ TASK_CONNECT_ACCOUNTS ]: ConnectAccounts,
 	[ TASK_EARN_FEATURES ]: EarnFeatures,
-	[ TASK_FIND_DOMAIN ]: FindDomain,
 	[ TASK_GO_MOBILE_ANDROID ]: GoMobile,
 	[ TASK_GO_MOBILE_IOS ]: GoMobile,
 	[ TASK_MARKETPLACE ]: Marketplace,
