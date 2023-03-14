@@ -24,16 +24,19 @@ registerDOMUpdater( [ FONT_BASE, FONT_HEADINGS ], storeSelect( globalStylesStore
 
 registerPlugin( PLUGIN_NAME, {
 	render: compose(
-		withSelect( ( select ) => ( {
-			siteName: select( globalStylesStore ).getOption( SITE_NAME ),
-			fontHeadings: select( globalStylesStore ).getOption( FONT_HEADINGS ),
-			fontHeadingsDefault: select( globalStylesStore ).getOption( FONT_HEADINGS_DEFAULT ),
-			fontBase: select( globalStylesStore ).getOption( FONT_BASE ),
-			fontBaseDefault: select( globalStylesStore ).getOption( FONT_BASE_DEFAULT ),
-			fontPairings: select( globalStylesStore ).getOption( FONT_PAIRINGS ),
-			fontOptions: select( globalStylesStore ).getOption( FONT_OPTIONS ),
-			hasLocalChanges: select( globalStylesStore ).hasLocalChanges(),
-		} ) ),
+		withSelect( ( select ) => {
+			const { getOption, hasLocalChanges } = select( globalStylesStore );
+			return {
+				siteName: getOption( SITE_NAME ),
+				fontHeadings: getOption( FONT_HEADINGS ),
+				fontHeadingsDefault: getOption( FONT_HEADINGS_DEFAULT ),
+				fontBase: getOption( FONT_BASE ),
+				fontBaseDefault: getOption( FONT_BASE_DEFAULT ),
+				fontPairings: getOption( FONT_PAIRINGS ),
+				fontOptions: getOption( FONT_OPTIONS ),
+				hasLocalChanges: hasLocalChanges(),
+			};
+		} ),
 		withDispatch( ( dispatch ) => ( {
 			updateOptions: dispatch( globalStylesStore ).updateOptions,
 			publishOptions: dispatch( globalStylesStore ).publishOptions,
