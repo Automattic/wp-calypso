@@ -73,7 +73,6 @@ const PrePurchaseNotices = () => {
 
 	const siteProductThatOverlapsCartPlan = useSelector( () => {
 		const planSlugInCart = cartItemSlugs.find( isJetpackPlanSlug );
-
 		if ( ! planSlugInCart ) {
 			return null;
 		}
@@ -104,13 +103,9 @@ const PrePurchaseNotices = () => {
 			return matchingProducts;
 		};
 
-		if ( getMatchingProducts( currentSiteProducts, planSlugInCart ).length >= 0 ) {
-			// console.log(
-			// 	'matching products',
-			// 	getMatchingProducts( currentSiteProducts, planSlugInCart )
-			// );
-			//in case of multiple hits, return the first one
-			return getMatchingProducts( currentSiteProducts, planSlugInCart )[ 0 ];
+		const matchingProducts = getMatchingProducts( currentSiteProducts, planSlugInCart );
+		if ( matchingProducts.length ) {
+			return matchingProducts[ 0 ];
 		}
 
 		return null;

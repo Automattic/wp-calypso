@@ -174,7 +174,6 @@ export function planHasAtLeastOneFeature( plan: string | Plan, features: string[
  */
 export function getAllFeaturesForPlan( plan: Plan | string ): TranslateResult[] {
 	const planObj = getPlan( plan );
-	// console.log( 'planObj: Products Included', planObj.getProductsIncluded() );
 	if ( ! planObj ) {
 		return [];
 	}
@@ -206,7 +205,6 @@ export function getAllFeaturesForPlan( plan: Plan | string ): TranslateResult[] 
 // some Jetpack plans include products, so we need to get those too
 export function getAllProductsForPlan( plan: Plan | string ): TranslateResult[] {
 	const planObj = getPlan( plan );
-	// console.log( 'planObj: Products Included', planObj.getProductsIncluded() );
 	if ( ! planObj ) {
 		return [];
 	}
