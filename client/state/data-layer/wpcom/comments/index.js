@@ -20,6 +20,7 @@ import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { DEFAULT_NOTICE_DURATION } from 'calypso/state/notices/constants';
 import { getSitePost } from 'calypso/state/posts/selectors';
 
 const isDate = ( date ) => date instanceof Date && ! isNaN( date );
@@ -209,22 +210,25 @@ export const emptyComments = ( action ) => ( dispatch ) => {
 	);
 };
 
-export const handleEmptySuccess = ( { status, options, refreshCommentListQuery } ) => {
-	const showSuccessNotice = options?.showSuccessNotice;
+export const handleEmptySuccess = ( { status, /*siteId,*/ options, refreshCommentListQuery } ) =>
+	/*apiResponse*/
+	{
+		const showSuccessNotice = options?.showSuccessNotice;
 
-	return compact( [
-		showSuccessNotice &&
-			successNotice(
-				status === 'spam' ? translate( 'Spam emptied.' ) : translate( 'Trash emptied.' ),
-				{
-					duration: 5000,
-					id: 'comment-notice',
-					isPersistent: true,
-				}
-			),
-		!! refreshCommentListQuery && requestCommentsList( refreshCommentListQuery ),
-	] );
-};
+		return [
+			// @todo delete comments from apiResponse.results (potentially using DELETE_COMMENT)
+			showSuccessNotice &&
+				successNotice(
+					status === 'spam' ? translate( 'Spam emptied.' ) : translate( 'Trash emptied.' ),
+					{
+						duration: DEFAULT_NOTICE_DURATION,
+						id: 'comment-notice',
+						isPersistent: true,
+					}
+				),
+			!! refreshCommentListQuery && requestCommentsList( refreshCommentListQuery ),
+		];
+	};
 
 export const announceEmptyFailure = ( action ) => {
 	const { status } = action;
@@ -234,7 +238,7 @@ export const announceEmptyFailure = ( action ) => {
 			? translate( 'Could not empty spam.' )
 			: translate( 'Could not empty trash.' ),
 		{
-			duration: 5000,
+			duration: DEFAULT_NOTICE_DURATION,
 			isPersistent: true,
 		}
 	);
