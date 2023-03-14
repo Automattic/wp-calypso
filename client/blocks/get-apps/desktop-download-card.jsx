@@ -119,39 +119,6 @@ class DesktopDownloadCard extends Component {
 		}
 	}
 
-	getAlsoAvailableText( platform ) {
-		switch ( platform ) {
-			case 'MacIntel':
-			case PLATFORM_MAC_SILICON:
-				return translate(
-					'Also available for: ' +
-						'{{firstAvailableLink}}Windows{{/firstAvailableLink}}, ' +
-						'{{secondAvailableLink}}Linux (.tar.gz){{/secondAvailableLink}}, ' +
-						'{{thirdAvailableLink}}Linux (.deb){{/thirdAvailableLink}}.',
-					{ components: this.getTranslateComponents( platform ) }
-				);
-			case 'Linux i686':
-			case 'Linux i686 on x86_64':
-				return translate(
-					'Also available for: ' +
-						'{{firstAvailableLink}}Linux (.deb){{/firstAvailableLink}}, ' +
-						'{{secondAvailableLink}}Windows{{/secondAvailableLink}}, ' +
-						'{{thirdAvailableLink}}Mac (Intel){{/thirdAvailableLink}}.' +
-						'{{fourthAvailableLink}}Mac (Apple Silicon){{/fourthAvailableLink}}.',
-					{ components: this.getTranslateComponents( platform ) }
-				);
-			default:
-				return translate(
-					'Also available for: ' +
-						'{{firstAvailableLink}}MacOS (Intel){{/firstAvailableLink}}, ' +
-						'{{secondAvailableLink}}MacOS (Apple Silicon){{/secondAvailableLink}}, ' +
-						'{{thirdAvailableLink}}Linux (.tar.gz){{/thirdAvailableLink}}, ' +
-						'{{fourthAvailableLink}}Linux (.deb){{/fourthAvailableLink}}.',
-					{ components: this.getTranslateComponents( platform ) }
-				);
-		}
-	}
-
 	getAlsoAvailableTextJetpack( platform ) {
 		switch ( platform ) {
 			case 'MacIntel':
