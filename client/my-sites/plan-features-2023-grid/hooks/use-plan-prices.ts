@@ -1,4 +1,5 @@
 import {
+	PlanSlug,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 	TERM_MONTHLY,
@@ -6,15 +7,24 @@ import {
 } from '@automattic/calypso-products';
 import { useSelector } from 'react-redux';
 import { getPlanRawPrice, getDiscountedRawPrice } from 'calypso/state/plans/selectors';
+import { getPlanDiscountedRawPrice } from 'calypso/state/sites/plans/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { Plan } from '@automattic/calypso-products';
 
 export interface PlanPrices {
-	price: number;
-	originalPrice?: number;
+	rawPrice: number;
+	discountedRawPrice: number;
+	planDiscountedRawPrice: number;
+}
+
+interface Props {
+	plans: Plan[];
+	currentPlanSlug?: PlanSlug;
+	monthly?: boolean;
 }
 
 function toMonthlyPrice( plan: Plan ) {
-	return ( yearlyPrice: number ) => {
+	return ( yearlyPrice?: number | null ) => {
 		if ( ! yearlyPrice ) {
 			return 0;
 		}
@@ -32,23 +42,27 @@ function toMonthlyPrice( plan: Plan ) {
 	};
 }
 
-export default function usePlanPrices( plans: Plan[] ): PlanPrices[] {
+const usePlanPrices = ( { plans, currentPlanSlug, monthly = true }: Props ): PlanPrices[] => {
 	return useSelector( ( state ) => {
+		const siteId = getSelectedSiteId( state ) ?? undefined;
+
 		return plans.map( ( plan ) => {
 			const productId = plan.getProductId();
-			const [ price, discountPrice ] = [
-				getPlanRawPrice( state, productId ) ?? 0,
-				getDiscountedRawPrice( state, productId ) ?? 0,
-			].map( toMonthlyPrice( plan ) );
-
-			if ( ! discountPrice ) {
-				return { price };
-			}
+			const [ rawPrice, discountedRawPrice, planDiscountedRawPrice ] = [
+				getPlanRawPrice( state, productId ),
+				getDiscountedRawPrice( state, productId ),
+				...( currentPlanSlug
+					? [ getPlanDiscountedRawPrice( state, siteId, currentPlanSlug, { isMonthly: monthly } ) ]
+					: [] ),
+			].map( monthly ? toMonthlyPrice( plan ) : ( price ) => price );
 
 			return {
-				price: discountPrice,
-				originalPrice: price,
+				rawPrice: rawPrice ?? 0,
+				discountedRawPrice: discountedRawPrice ?? 0,
+				planDiscountedRawPrice: planDiscountedRawPrice ?? 0,
 			};
 		} );
 	} );
-}
+};
+
+export default usePlanPrices;

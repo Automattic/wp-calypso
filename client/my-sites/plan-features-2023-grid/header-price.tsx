@@ -38,7 +38,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 	const planYearlyVariant = getPlan( planYearlyVariantSlug );
 	const planYearlyVariantProductId = planYearlyVariant?.getProductId();
 
-	const planPrices = usePlanPrices( [ planYearlyVariant as Plan ] );
+	// const planPrices = usePlanPrices( [ planYearlyVariant as Plan ] );
 
 	const planYearlyVariantRawPrice = useSelector( ( state ) =>
 		planYearlyVariantProductId == null
@@ -66,11 +66,13 @@ const PlanFeatures2023GridHeaderPrice = ( {
 	const isBiannualPlan = 730 === billingPeriod;
 	const showDiscountedPricing = isBiannualPlan || discountPrice;
 
-	const crossoutPriceToDisplay = isBiannualPlan ? discountPrice || rawPrice : rawPrice;
+	let crossoutPriceToDisplay = rawPrice;
+	let priceToDisplay = discountPrice || rawPrice;
 
-	const priceToDislay = isBiannualPlan
-		? planYearlyVariantDiscountPrice || planYearlyVariantRawPrice
-		: discountPrice || rawPrice;
+	if ( isBiannualPlan ) {
+		priceToDisplay = discountPrice || rawPrice;
+		crossoutPriceToDisplay = planYearlyVariantDiscountPrice || planYearlyVariantRawPrice;
+	}
 
 	console.log(
 		planName,
@@ -88,7 +90,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 					<div className="plan-features-2023-grid__header-price-group-prices">
 						<PlanPrice
 							currencyCode={ currencyCode }
-							rawPrice={ priceToDislay ?? 0 }
+							rawPrice={ crossoutPriceToDisplay ?? 0 }
 							displayPerMonthNotation={ false }
 							is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 							isLargeCurrency={ isLargeCurrency }
@@ -96,7 +98,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 						/>
 						<PlanPrice
 							currencyCode={ currencyCode }
-							rawPrice={ crossoutPriceToDisplay ?? 0 }
+							rawPrice={ priceToDisplay ?? 0 }
 							displayPerMonthNotation={ false }
 							is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 							isLargeCurrency={ isLargeCurrency }
@@ -108,7 +110,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 			{ ! showDiscountedPricing && (
 				<PlanPrice
 					currencyCode={ currencyCode }
-					rawPrice={ priceToDislay ?? 0 }
+					rawPrice={ priceToDisplay ?? 0 }
 					displayPerMonthNotation={ false }
 					is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 					isLargeCurrency={ isLargeCurrency }
