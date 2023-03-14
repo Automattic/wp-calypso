@@ -1,6 +1,7 @@
 import './style.scss';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
+import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPosts from 'calypso/components/data/query-posts';
@@ -9,6 +10,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import useCampaignsQuery from 'calypso/data/promote-post/use-promote-post-campaigns-query';
+import useCampaignsStatsQuery from 'calypso/data/promote-post/use-promote-post-campaigns-stats-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
@@ -18,6 +20,7 @@ import PostsListBanner from 'calypso/my-sites/promote-post/components/posts-list
 import PromotePostTabBar from 'calypso/my-sites/promote-post/components/promoted-post-filter';
 import { getPostsForQuery, isRequestingPostsForQuery } from 'calypso/state/posts/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { unifyCampaigns } from './utils';
 
 export type TabType = 'posts' | 'campaigns';
 export type TabOption = {
@@ -83,8 +86,16 @@ export default function PromotedPosts( { tab }: Props ) {
 	);
 
 	const campaigns = useCampaignsQuery( selectedSiteId ?? 0 );
+	const campaignsStats = useCampaignsStatsQuery( selectedSiteId ?? 0 );
+
 	const { isLoading: campaignsIsLoading, isError, error: campaignError } = campaigns;
 	const { data: campaignsData } = campaigns;
+	const { data: campaignsStatsData } = campaignsStats;
+
+	const campaignsFull = useMemo(
+		() => unifyCampaigns( campaignsData || [], campaignsStatsData || [] ),
+		[ campaignsData, campaignsStatsData ]
+	);
 
 	const hasLocalUser = ( campaignError as DSPMessage )?.errorCode !== ERROR_NO_LOCAL_USER;
 
@@ -172,7 +183,7 @@ export default function PromotedPosts( { tab }: Props ) {
 						hasLocalUser={ hasLocalUser }
 						isError={ isError }
 						isLoading={ campaignsIsLoading }
-						campaigns={ campaignsData || [] }
+						campaigns={ campaignsFull || [] }
 					/>
 				</>
 			) : (
