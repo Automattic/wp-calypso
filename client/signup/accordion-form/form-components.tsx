@@ -104,6 +104,14 @@ const FormSettingExplanationContainer = styled.div`
 	}
 `;
 
+const StyledFormInputValidation = styled( FormInputValidation )`
+	span {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+	}
+`;
+
 interface TextInputFieldProps {
 	name: string;
 	label?: TranslateResult;
@@ -136,7 +144,7 @@ export function TextInputField( props: TextInputFieldProps ) {
 			{ props.label && <LabelBlock inputName={ props.name }>{ props.label } </LabelBlock> }
 			{ props.sublabel && <SubLabel htmlFor={ props.name }>{ props.sublabel }</SubLabel> }
 			<TextInput { ...props } isError={ !! props.error } />
-			{ props.error && <FormInputValidation isError text={ props.error } /> }
+			{ props.error && <StyledFormInputValidation isError text={ props.error } /> }
 			{ props.explanation && (
 				<FormSettingExplanationContainer>
 					<FormSettingExplanation>
@@ -166,7 +174,7 @@ export function TextAreaField( props: TextAreaFieldProps ) {
 				autoCorrect="off"
 				spellCheck="false"
 			/>
-			{ props.error && <FormInputValidation isError text={ props.error } /> }
+			{ props.error && <StyledFormInputValidation isError text={ props.error } /> }
 		</FormFieldset>
 	);
 }

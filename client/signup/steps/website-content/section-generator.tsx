@@ -125,7 +125,7 @@ const generateWebsiteContentSections = (
 					errors: {
 						[ page.id + CONTENT_SUFFIX ]: isValid
 							? null
-							: translate( `Please enter '%(pageTitle)s' content`, {
+							: translate( `Please enter '%(pageTitle)s' content.`, {
 									args: {
 										pageTitle,
 									},
