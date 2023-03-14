@@ -20,7 +20,13 @@ export function createFormatter(): CurrencyFormatter {
 	async function setUsdCurrencySymbolBasedOnGeolocation(): Promise< void > {
 		const geoData = await globalThis
 			.fetch?.( geolocationEndpointUrl )
-			.then( ( response ) => response.json() );
+			.then( ( response ) => response.json() )
+			.catch( ( error ) => {
+				// Do nothing if the fetch fails.
+				// eslint-disable-next-line no-console
+				console.warn( 'Fetching geolocation for format-currency failed.', error );
+			} );
+
 		if ( ! isGeolocationResponse( geoData ) ) {
 			return;
 		}
