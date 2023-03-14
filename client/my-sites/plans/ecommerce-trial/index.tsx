@@ -18,9 +18,9 @@ import SegmentedControl from 'calypso/components/segmented-control';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getECommerceTrialCheckoutUrl } from 'calypso/lib/ecommerce-trial/get-ecommerce-trial-checkout-url';
 import { getPlanRawPrice, getPlan } from 'calypso/state/plans/selectors';
+import WooExpressMediumFeatureCard from '../wx-medium/feature-card';
+import { getWooExpressMediumFeatureSets } from '../wx-medium/wx-medium-features';
 import ECommerceTrialBanner from './ecommerce-trial-banner';
-import TrialFeatureCard from './trial-feature-card';
-import { getWooExpressMediumFeatureSets } from './wx-medium-features';
 
 import './style.scss';
 
@@ -185,7 +185,7 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 
 			<div className="e-commerce-trial-plans__features-wrapper">
 				{ wooExpressMediumPlanFeatureSets.map( ( featureSet ) => (
-					<TrialFeatureCard key={ featureSet.title } { ...featureSet } />
+					<WooExpressMediumFeatureCard key={ featureSet.title } { ...featureSet } />
 				) ) }
 			</div>
 			<div className="e-commerce-trial-plans__cta-wrapper">

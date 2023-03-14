@@ -1,6 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 
-.trial-feature-card {
+.woo-express-medium-feature-card {
 	display: flex;
 	flex-direction: column;
 	padding: 0;
@@ -10,11 +10,11 @@
 		padding: 24px 16px;
 	}
 
-	.trial-feature-card:last-child {
+	.woo-express-medium-feature-card:last-child {
 		border-radius: 0 0 2px 2px;
 	}
 
-	.trial-feature-card__header {
+	.woo-express-medium-feature-card__header {
 		display: flex;
 		padding: 24px;
 		cursor: pointer;
@@ -25,7 +25,7 @@
 			padding: 0;
 		}
 
-		.trial-feature-card__illustration {
+		.woo-express-medium-feature-card__illustration {
 			width: 115px;
 			height: 65px;
 
@@ -34,7 +34,7 @@
 			}
 		}
 
-		.trial-feature-card__header-text {
+		.woo-express-medium-feature-card__header-text {
 			flex: 1;
 			padding: 0 24px;
 
@@ -42,12 +42,12 @@
 				padding: 0;
 			}
 
-			.trial-feature-card__title {
+			.woo-express-medium-feature-card__title {
 				font-size: $font-title-small;
 				font-weight: 500;
 			}
 
-			.trial-feature-card__subtitle {
+			.woo-express-medium-feature-card__subtitle {
 				font-size: $font-body;
 				color: var(--color-neutral-40);
 				font-weight: 400;
@@ -58,7 +58,7 @@
 			}
 		}
 
-		.trial-feature-card__accordion-toggle {
+		.woo-express-medium-feature-card__accordion-toggle {
 			cursor: pointer;
 			margin-top: 25px;
 
@@ -73,7 +73,7 @@
 		}
 	}
 
-	.trial-feature-card__items {
+	.woo-express-medium-feature-card__items {
 		flex: 1;
 		display: flex;
 		flex-direction: column;
@@ -89,11 +89,11 @@
 			margin-left: 0;
 		}
 
-		.trial-feature-card__item {
+		.woo-express-medium-feature-card__item {
 			display: flex;
 			padding: 7px 0;
 
-			.trial-feature-card__item-icon {
+			.woo-express-medium-feature-card__item-icon {
 				padding: 3px 0;
 
 				.gridicons-checkmark {
@@ -101,17 +101,17 @@
 				}
 			}
 
-			.trial-feature-card__item-content {
+			.woo-express-medium-feature-card__item-content {
 				flex: 1;
 				display: flex;
 				flex-direction: column;
 				margin-left: 16px;
 
-				.trial-feature-card__item-title {
+				.woo-express-medium-feature-card__item-title {
 					font-size: $font-body;
 				}
 
-				.trial-feature-card__item-subtitle {
+				.woo-express-medium-feature-card__item-subtitle {
 					font-size: $font-body-extra-small;
 					color: var(--color-neutral-40);
 				}
