@@ -28,7 +28,7 @@ export function createFormatter(): CurrencyFormatter {
 				console.warn( 'Fetching geolocation for format-currency failed.', error );
 			} );
 
-		if ( ! isGeolocationResponse( geoData ) ) {
+		if ( ! containsGeolocationCountry( geoData ) ) {
 			return;
 		}
 		if ( ! geoData.country_short ) {
@@ -419,12 +419,12 @@ function getSmallestUnitDivisor( precision: number ): number {
 	return 10 ** precision;
 }
 
-interface GeoLocationResponse {
+interface WithGeoCountry {
 	country_short: string;
 }
 
-function isGeolocationResponse( response: unknown ): response is GeoLocationResponse {
-	return typeof ( response as GeoLocationResponse )?.country_short === 'string';
+function containsGeolocationCountry( response: unknown ): response is WithGeoCountry {
+	return typeof ( response as WithGeoCountry )?.country_short === 'string';
 }
 
 const defaultFormatter = createFormatter();
