@@ -1,8 +1,6 @@
 import { SubscriptionManagerContainer as SubscriptionManager } from './components/SubscriptionManagerContainer';
-import { Tab, Tabs, TabsSwitcher } from './components/Tabs';
+import { TabsSwitcher } from './components/TabsSwitcher';
 
 export default Object.assign( SubscriptionManager, {
-	Tab,
-	Tabs,
 	TabsSwitcher,
 } );

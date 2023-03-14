@@ -1,0 +1,32 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@wordpress/base-styles/breakpoints";
+
+.section-nav {
+	box-shadow: none !important;
+
+	.section-nav__panel {
+		.section-nav-group {
+			.section-nav-tabs {
+				.section-nav-tabs__list {
+					.section-nav-tab {
+						margin: 0 18px 0 0;
+
+						.section-nav-tab__link {
+							padding: 8px 0;
+							color: $studio-gray-60;
+						}
+
+						&.is-selected {
+							border-color: $studio-gray-100;
+
+							.section-nav-tab__link {
+								color: $studio-gray-100;
+							}
+						}
+					}
+
+				}
+			}
+		}
+	}
+}

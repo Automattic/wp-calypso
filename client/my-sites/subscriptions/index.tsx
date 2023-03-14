@@ -5,6 +5,7 @@ import { createElement } from 'react';
 import { makeLayout, render } from 'calypso/controller';
 
 const SitesView: React.FunctionComponent = () => <span>Sites View</span>;
+const CommentsView: React.FunctionComponent = () => <span>Comments View</span>;
 const SettingsView: React.FunctionComponent = () => <span>Settings View</span>;
 
 const SubscriptionManagementPage = () => {
@@ -18,6 +19,13 @@ const SubscriptionManagementPage = () => {
 						label: 'Sites',
 						path: 'sites',
 						view: SitesView,
+						count: 2,
+					},
+					{
+						label: 'Comments',
+						path: 'comments',
+						view: CommentsView,
+						count: 5,
 					},
 					{
 						label: 'Settings',
@@ -45,7 +53,7 @@ const checkFeatureFlag: Callback = ( context, next ) => {
 
 export default function () {
 	page(
-		/\/subscriptions(\/(sites|settings))?/,
+		/\/subscriptions(\/(comments|settings|sites))?/,
 		checkFeatureFlag,
 		createSubscriptions,
 		makeLayout,

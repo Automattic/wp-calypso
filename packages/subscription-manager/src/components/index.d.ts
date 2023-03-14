@@ -74,7 +74,7 @@ declare module 'calypso/components/section-nav/item' {
 		onKeyPress?: ( event: React.KeyboardEvent< HTMLAnchorElement > ) => void;
 		isExternalLink?: boolean;
 		disabled?: boolean;
-		count?: number | boolean;
+		count?: number;
 		compactCount?: boolean;
 		className?: string;
 		preloadSectionName?: string;
@@ -84,8 +84,8 @@ declare module 'calypso/components/section-nav/item' {
 
 declare module 'calypso/components/route' {
 	export const useCurrentRoute: () => {
-		currentSection: boolean;
+		currentSection: unkown;
 		currentRoute: string;
-		currentQuery: boolean;
+		currentQuery: unkown;
 	};
 }
