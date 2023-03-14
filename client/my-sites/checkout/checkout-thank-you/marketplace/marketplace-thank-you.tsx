@@ -23,7 +23,6 @@ import {
 	getAutomatedTransferStatus,
 	isFetchingAutomatedTransferStatus,
 } from 'calypso/state/automated-transfer/selectors';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { pluginInstallationStateChange } from 'calypso/state/marketplace/purchase-flow/actions';
 import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
@@ -50,7 +49,6 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
-	const currentUser = useSelector( getCurrentUser );
 	const isRequestingPlugins = useSelector( ( state ) => isRequesting( state, siteId ) );
 
 	// retrieve WPCom plugin data
@@ -352,6 +350,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 					/>
 				</div>
 			) }
+
 			{ ! showProgressBar && (
 				<div className="marketplace-thank-you__container">
 					<ConfettiAnimation delay={ 1000 } />
@@ -359,13 +358,9 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 						containerClassName="marketplace-thank-you"
 						sections={ [ pluginsSection, footerSection ] }
 						showSupportSection={ false }
-						thankYouTitle={ translate( "You're all set %(username)s!", {
-							args: {
-								username: currentUser?.display_name || currentUser?.username,
-							},
-						} ) }
+						thankYouTitle={ translate( "Congrats on your site's new superpowers!" ) }
 						thankYouSubtitle={ translate(
-							'Congratulations on your installation. You can now extend the possibilities of your site.'
+							"You're scratching the surface of the WordPress community. Dig in and explore more of our favorite plugins."
 						) }
 						headerBackgroundColor="#fff"
 						headerTextColor="#000"
