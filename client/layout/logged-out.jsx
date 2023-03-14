@@ -1,11 +1,9 @@
 import config from '@automattic/calypso-config';
-import { geolocateCurrencySymbol } from '@automattic/format-currency';
 import { useLocalizeUrl, removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
 import { UniversalNavbarHeader, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
 import { connect, useSelector } from 'react-redux';
 import { CookieBannerContainerSSR } from 'calypso/blocks/cookie-banner';
 import AsyncLoad from 'calypso/components/async-load';
@@ -84,10 +82,6 @@ const LayoutLoggedOut = ( {
 		'is-wccom-oauth-flow': isWooOAuth2Client( oauth2Client ) && wccomFrom,
 		'is-p2-login': isP2Login,
 	};
-
-	useEffect( () => {
-		geolocateCurrencySymbol();
-	}, [] );
 
 	let masterbar = null;
 
