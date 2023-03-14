@@ -44,8 +44,9 @@ type Plugin = {
 	icon: string;
 };
 
-const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
-	const [ productSlugs ] = useState< Array< string > >( productSlug.split( ',' ) );
+const MarketplaceThankYou = () => {
+	const [ pluginSlugs ] = useState< Array< string > >( [ 'woocommerce-bookings', 'woocommerce' ] );
+	const [ themesSlugs ] = useState< Array< string > >( [ 'yuna' ] );
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
@@ -54,19 +55,19 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	const isRequestingPlugins = useSelector( ( state ) => isRequesting( state, siteId ) );
 
 	// retrieve WPCom plugin data
-	const wpComPluginsDataResults = useWPCOMPlugins( productSlugs );
+	const wpComPluginsDataResults = useWPCOMPlugins( pluginSlugs );
 	const wpComPluginsData: Array< any > = wpComPluginsDataResults.map(
 		( wpComPluginData ) => wpComPluginData.data
 	);
 	const softwareSlugs = wpComPluginsData.map( ( wpComPluginData, i ) =>
-		wpComPluginData ? wpComPluginData.software_slug || wpComPluginData.org_slug : productSlugs[ i ]
+		wpComPluginData ? wpComPluginData.software_slug || wpComPluginData.org_slug : pluginSlugs[ i ]
 	);
 
 	const pluginsOnSite: [] = useSelector( ( state ) =>
 		getPluginsOnSite( state, siteId, softwareSlugs )
 	);
 	const wporgPlugins = useSelector(
-		( state ) => getPlugins( state, productSlugs ),
+		( state ) => getPlugins( state, pluginSlugs ),
 		( newPluginsValue: Array< Plugin >, oldPluginsValue: Array< Plugin > ) =>
 			oldPluginsValue.length === newPluginsValue.length &&
 			oldPluginsValue.every( ( oldPluginValue, i ) => {
@@ -77,12 +78,12 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 			} )
 	);
 	const areWporgPluginsFetched: Array< boolean > = useSelector(
-		( state ) => areFetched( state, productSlugs ),
+		( state ) => areFetched( state, pluginSlugs ),
 		( newValues: Array< boolean >, oldValues: Array< boolean > ) =>
 			newValues.every( ( newValue, i ) => newValue === oldValues[ i ] )
 	);
 	const areWporgPluginsFetching: Array< boolean > = useSelector( ( state ) =>
-		areFetching( state, productSlugs )
+		areFetching( state, pluginSlugs )
 	);
 	const areAllWporgPluginsFetched = areWporgPluginsFetched.every( Boolean );
 	const isFetchingTransferStatus = useSelector( ( state ) =>
@@ -99,8 +100,8 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	);
 
 	// Retrieve theme information
-	const dotComThemes = useSelector( ( state ) => getThemes( state, 'wpcom', productSlugs ) );
-	const dotOrgThemes = useSelector( ( state ) => getThemes( state, 'wporg', productSlugs ) );
+	const dotComThemes = useSelector( ( state ) => getThemes( state, 'wpcom', themesSlugs ) );
+	const dotOrgThemes = useSelector( ( state ) => getThemes( state, 'wporg', themesSlugs ) );
 
 	const areAllProductsFetched =
 		!! pluginsOnSite.length &&
@@ -110,29 +111,20 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		);
 
 	// Consolidate the plugin information from the .org and .com sources in a single list
-	const productInformationList = useMemo( () => {
+	const pluginsInformationList = useMemo( () => {
 		return pluginsOnSite.reduce(
-			( productsList: Array< any >, pluginOnSite: Plugin, index: number ) => {
-				productsList.push( {
+			( pluginsList: Array< any >, pluginOnSite: Plugin, index: number ) => {
+				pluginsList.push( {
 					...pluginOnSite,
 					...wpComPluginsData[ index ],
 					...wporgPlugins[ index ],
-					...dotComThemes[ index ],
-					...dotOrgThemes[ index ],
-					product_type: getProductType(
-						dotComThemes,
-						dotOrgThemes,
-						wpComPluginsData,
-						wporgPlugins,
-						index
-					),
 				} );
 
-				return productsList;
+				return pluginsList;
 			},
 			[]
 		);
-	}, [ pluginsOnSite, wpComPluginsData, wporgPlugins, dotComThemes, dotOrgThemes ] );
+	}, [ pluginsOnSite, wpComPluginsData, wporgPlugins ] );
 
 	// Site is transferring to Atomic.
 	// Poll the transfer status.
@@ -160,7 +152,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 			areWporgPluginsFetched.forEach( ( isPluginFetched, index ) => {
 				const isPluginFeching = areWporgPluginsFetching[ index ];
 				if ( ! isPluginFetched && ! isPluginFeching ) {
-					dispatch( wporgFetchPluginData( productSlugs[ index ] ) );
+					dispatch( wporgFetchPluginData( pluginSlugs[ index ] ) );
 				}
 			} );
 		}
@@ -168,7 +160,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		// We don't want it to run at every change of areWporgPluginsFetching,
 		// we only rerun when areWporgPluginsFetched changes
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ areAllWporgPluginsFetched, areWporgPluginsFetched, productSlugs, dispatch, wporgPlugins ] );
+	}, [ areAllWporgPluginsFetched, areWporgPluginsFetched, pluginSlugs, dispatch, wporgPlugins ] );
 
 	// Site is already Atomic (or just transferred).
 	// Poll the plugin installation status.
@@ -238,22 +230,20 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 
 	const pluginsSection: ThankYouSectionProps = {
 		sectionKey: 'plugin_information',
-		nextSteps: productInformationList
-			.filter( ( product ) => product.product_type === 'plugin' )
-			.map( ( plugin: any ) => ( {
-				stepKey: `plugin_information_${ plugin.slug }`,
-				stepSection: <ThankYouPluginSection plugin={ plugin } />,
-			} ) ),
+		nextSteps: pluginsInformationList.map( ( plugin: any ) => ( {
+			stepKey: `plugin_information_${ plugin.slug }`,
+			stepSection: <ThankYouPluginSection plugin={ plugin } />,
+		} ) ),
 	};
 
 	const sendTrackEvent = useCallback(
 		( name: string ) => {
 			recordTracksEvent( name, {
 				site_id: siteId,
-				plugins: productSlugs.join( '/' ),
+				plugins: pluginSlugs.join( '/' ),
 			} );
 		},
-		[ siteId, productSlugs ]
+		[ siteId, pluginSlugs ]
 	);
 
 	const footerSection: ThankYouSectionProps = {
@@ -336,7 +326,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 				backText={ translate( 'Back to plugins' ) }
 				canGoBack={ areAllProductsFetched }
 			/>
-			{ productSlugs.map( ( productSlug, index ) => (
+			{ themesSlugs.map( ( productSlug, index ) => (
 				<>
 					<QueryTheme key={ 'query-wpcom-theme-' + index } siteId="wpcom" themeId={ productSlug } />
 					<QueryTheme key={ 'query-wporg-theme-' + index } siteId="wporg" themeId={ productSlug } />
@@ -386,6 +376,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
  * @param index current index to search on the list
  * @returns 'theme'| 'plugin' | undefined the type of the product
  */
+// eslint-disable-next-line
 function getProductType(
 	dotComThemes: [],
 	dotOrgThemes: [],
