@@ -106,32 +106,34 @@ class StatsPostDetail extends Component {
 	getPost() {
 		const { isPostHomepage, post, postFallback } = this.props;
 
+		const postBase = {
+			title: this.getTitle(),
+			type: isPostHomepage ? 'page' : 'post',
+		};
+
+		// Check if post is valid.
 		if ( typeof post === 'object' && post?.title.length ) {
-			return {
-				title: this.getTitle(),
+			return Object.assign( postBase, {
 				date: post?.date,
 				post_thumbnail: post?.post_thumbnail,
 				like_count: post?.like_count,
 				comment_count: post?.discussion?.comment_count,
 				type: post?.type,
-			};
+			} );
 		}
 
+		// Check if postFallback is valid.
 		if ( typeof postFallback === 'object' && postFallback?.post_title.length ) {
-			return {
-				title: this.getTitle(),
+			return Object.assign( postBase, {
 				date: postFallback?.post_date_gmt,
 				post_thumbnail: null,
 				like_count: null,
 				comment_count: parseInt( postFallback?.comment_count, 10 ),
 				type: postFallback?.post_type,
-			};
+			} );
 		}
 
-		return {
-			title: this.getTitle(),
-			type: isPostHomepage ? 'page' : 'post',
-		};
+		return postBase;
 	}
 
 	render() {
