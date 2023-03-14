@@ -425,7 +425,7 @@ function setUpLoggedInRoute( req, res, next ) {
 						errorMessage = error.message;
 					}
 
-					req.logger.error( 'API Error: ' + errorMessage );
+					console.error( 'API Error: ' + errorMessage );
 				}
 
 				throw error;
