@@ -35,7 +35,6 @@ const BackupStorageContent = ( { siteId, siteUrl }: { siteId: number; siteUrl: s
 	const realtimeBackup = data?.[ 0 ] ?? null;
 
 	const lastBackupDate = useDateWithOffset( realtimeBackup?.activityTs );
-
 	const getDisplayDate = useGetDisplayDate();
 	const displayDate = getDisplayDate( lastBackupDate, false );
 
