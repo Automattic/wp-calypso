@@ -12,15 +12,14 @@ import {
 } from './src/constants';
 import registerDOMUpdater from './src/dom-updater';
 import GlobalStylesSidebar from './src/global-styles-sidebar';
-import registerStore from './src/store';
+import { store as globalStylesStore } from './src/store';
 
 // Tell Webpack to compile this into CSS
 import './editor.scss';
 
-// Global variable.
-const { PLUGIN_NAME, STORE_NAME, REST_PATH } = JETPACK_GLOBAL_STYLES_EDITOR_CONSTANTS; // eslint-disable-line no-undef
+// Global data passed from PHP.
+const { PLUGIN_NAME } = JETPACK_GLOBAL_STYLES_EDITOR_CONSTANTS; // eslint-disable-line no-undef
 
-const globalStylesStore = registerStore( STORE_NAME, REST_PATH );
 registerDOMUpdater( [ FONT_BASE, FONT_HEADINGS ], select( globalStylesStore ).getOption );
 
 registerPlugin( PLUGIN_NAME, {
