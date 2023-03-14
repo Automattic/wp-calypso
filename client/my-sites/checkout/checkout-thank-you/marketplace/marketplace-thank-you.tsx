@@ -6,6 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import QueryTheme from 'calypso/components/data/query-theme';
 import { ThankYou } from 'calypso/components/thank-you';
 import { ThankYouSectionProps } from 'calypso/components/thank-you/types';
 import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
@@ -31,6 +32,7 @@ import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/w
 import { areFetched, areFetching, getPlugins } from 'calypso/state/plugins/wporg/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getThemes } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { ThankYouPluginSection } from './marketplace-thank-you-plugin-section';
 import './style.scss';
@@ -53,7 +55,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 
 	// retrieve WPCom plugin data
 	const wpComPluginsDataResults = useWPCOMPlugins( productSlugs );
-	const wpComPluginsData = wpComPluginsDataResults.map(
+	const wpComPluginsData: Array< any > = wpComPluginsDataResults.map(
 		( wpComPluginData ) => wpComPluginData.data
 	);
 	const softwareSlugs = wpComPluginsData.map( ( wpComPluginData, i ) =>
@@ -96,24 +98,41 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		! new URLSearchParams( document.location.search ).has( 'hide-progress-bar' )
 	);
 
-	const areAllPluginsOnSite =
-		!! pluginsOnSite.length && pluginsOnSite.every( ( pluginOnSite ) => !! pluginOnSite );
+	// Retrieve theme information
+	const dotComThemes = useSelector( ( state ) => getThemes( state, 'wpcom', productSlugs ) );
+	const dotOrgThemes = useSelector( ( state ) => getThemes( state, 'wporg', productSlugs ) );
+
+	const areAllProductsFetched =
+		!! pluginsOnSite.length &&
+		pluginsOnSite.every(
+			( pluginOnSite, index ) =>
+				!! pluginOnSite || !! dotComThemes[ index ] || !! dotOrgThemes[ index ]
+		);
 
 	// Consolidate the plugin information from the .org and .com sources in a single list
-	const pluginInformationList = useMemo( () => {
+	const productInformationList = useMemo( () => {
 		return pluginsOnSite.reduce(
-			( pluginsList: Array< any >, pluginOnSite: Plugin, index: number ) => {
-				pluginsList.push( {
-					...pluginOnSite,
+			( productsList: Array< any >, pluginOnSite: Plugin, index: number ) => {
+				productsList.push( {
 					...wpComPluginsData[ index ],
 					...wporgPlugins[ index ],
+					...pluginOnSite,
+					...dotComThemes[ index ],
+					...dotOrgThemes[ index ],
+					product_type: getProductType(
+						dotComThemes,
+						dotOrgThemes,
+						wpComPluginsData,
+						wporgPlugins,
+						index
+					),
 				} );
 
-				return pluginsList;
+				return productsList;
 			},
 			[]
 		);
-	}, [ pluginsOnSite, wpComPluginsData, wporgPlugins ] );
+	}, [ pluginsOnSite, wpComPluginsData, wporgPlugins, dotComThemes, dotOrgThemes ] );
 
 	// Site is transferring to Atomic.
 	// Poll the transfer status.
@@ -159,7 +178,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		}
 
 		// Update the menu after the plugin has been installed, since that might change some menu items.
-		if ( areAllPluginsOnSite ) {
+		if ( areAllProductsFetched ) {
 			dispatch( requestAdminMenu( siteId ) );
 			return;
 		}
@@ -169,7 +188,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		}
 	}, [
 		isRequestingPlugins,
-		areAllPluginsOnSite,
+		areAllProductsFetched,
 		dispatch,
 		siteId,
 		transferStatus,
@@ -183,7 +202,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 			return;
 		}
 
-		setShowProgressBar( ! areAllPluginsOnSite );
+		setShowProgressBar( ! areAllProductsFetched );
 
 		// Sites already transferred to Atomic or self-hosted Jetpack sites no longer need to change the current step.
 		if ( isJetpack ) {
@@ -199,7 +218,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		} else if ( transferStatus === transferStates.COMPLETE ) {
 			setCurrentStep( 3 );
 		}
-	}, [ transferStatus, areAllPluginsOnSite, showProgressBar, isJetpack ] );
+	}, [ transferStatus, areAllProductsFetched, showProgressBar, isJetpack ] );
 
 	const steps = useMemo(
 		() =>
@@ -219,10 +238,12 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 
 	const pluginsSection: ThankYouSectionProps = {
 		sectionKey: 'plugin_information',
-		nextSteps: pluginInformationList.map( ( plugin: any ) => ( {
-			stepKey: `plugin_information_${ plugin.slug }`,
-			stepSection: <ThankYouPluginSection plugin={ plugin } />,
-		} ) ),
+		nextSteps: productInformationList
+			.filter( ( product ) => product.product_type === 'plugin' )
+			.map( ( plugin: any ) => ( {
+				stepKey: `plugin_information_${ plugin.slug }`,
+				stepSection: <ThankYouPluginSection plugin={ plugin } />,
+			} ) ),
 	};
 
 	const sendTrackEvent = useCallback(
@@ -313,8 +334,14 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 			<MasterbarStyled
 				onClick={ () => page( `/plugins/${ siteSlug }` ) }
 				backText={ translate( 'Back to plugins' ) }
-				canGoBack={ areAllPluginsOnSite }
+				canGoBack={ areAllProductsFetched }
 			/>
+			{ productSlugs.map( ( productSlug, index ) => (
+				<>
+					<QueryTheme key={ 'query-theme-' + index } siteId="wpcom" themeId={ productSlug } />
+					<QueryTheme key={ 'query-theme-' + index } siteId="wporg" themeId={ productSlug } />
+				</>
+			) ) }
 			{ showProgressBar && (
 				// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 				<div className="marketplace-plugin-install__root">
@@ -348,6 +375,34 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		</ThemeProvider>
 	);
 };
+
+/**
+ * Returns the type of the product
+ *
+ * @param dotComThemes list of WordPress.com themes
+ * @param dotOrgThemes list of WordPress.org themes
+ * @param dotComPlugins list of WordPress.com plugins
+ * @param dotOrgPlugins list of WordPress.org plugins
+ * @param index current index to search on the list
+ * @returns 'theme'| 'plugin' | undefined the type of the product
+ */
+function getProductType(
+	dotComThemes: [],
+	dotOrgThemes: [],
+	dotComPlugins: Array< Plugin >,
+	dotOrgPlugins: Array< Plugin >,
+	index: number
+): 'theme' | 'plugin' | undefined {
+	if ( dotComThemes[ index ] || dotOrgThemes[ index ] ) {
+		return 'theme';
+	}
+
+	if ( dotComPlugins[ index ] || dotOrgPlugins[ index ]?.fetched ) {
+		return 'plugin';
+	}
+
+	return undefined;
+}
 
 function FooterIcon( { icon }: { icon: string } ) {
 	return (
