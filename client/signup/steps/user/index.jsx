@@ -176,7 +176,7 @@ export class UserStep extends Component {
 						  );
 			} else if ( isWooOAuth2Client( oauth2Client ) && ! wccomFrom ) {
 				subHeaderText = translate(
-					"First, let's create your account. Already registered? {{a}}Log in{{/a}}",
+					"All Woo stores are powered by WordPress.com. Please create an account to continue. Already registered? {{a}}Log in{{/a}}",
 					{
 						components: {
 							a: <a href={ loginUrl } />,
@@ -387,7 +387,7 @@ export class UserStep extends Component {
 
 			return (
 				<div className={ classNames( 'signup-form__woo-wrapper' ) }>
-					<h3>{ translate( 'Get started in minutes' ) }</h3>
+					<h3>{ translate( "Let's get started" ) }</h3>
 				</div>
 			);
 		}
