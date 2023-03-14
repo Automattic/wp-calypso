@@ -1,5 +1,5 @@
 import { compose } from '@wordpress/compose';
-import { withDispatch, withSelect, select } from '@wordpress/data';
+import { withDispatch, withSelect, select as storeSelect } from '@wordpress/data';
 import { registerPlugin } from '@wordpress/plugins';
 import {
 	FONT_BASE,
@@ -20,19 +20,19 @@ import './editor.scss';
 // Global data passed from PHP.
 const { PLUGIN_NAME } = JETPACK_GLOBAL_STYLES_EDITOR_CONSTANTS; // eslint-disable-line no-undef
 
-registerDOMUpdater( [ FONT_BASE, FONT_HEADINGS ], select( globalStylesStore ).getOption );
+registerDOMUpdater( [ FONT_BASE, FONT_HEADINGS ], storeSelect( globalStylesStore ).getOption );
 
 registerPlugin( PLUGIN_NAME, {
 	render: compose(
-		withSelect( ( getSelectors ) => ( {
-			siteName: getSelectors( globalStylesStore ).getOption( SITE_NAME ),
-			fontHeadings: getSelectors( globalStylesStore ).getOption( FONT_HEADINGS ),
-			fontHeadingsDefault: getSelectors( globalStylesStore ).getOption( FONT_HEADINGS_DEFAULT ),
-			fontBase: getSelectors( globalStylesStore ).getOption( FONT_BASE ),
-			fontBaseDefault: getSelectors( globalStylesStore ).getOption( FONT_BASE_DEFAULT ),
-			fontPairings: getSelectors( globalStylesStore ).getOption( FONT_PAIRINGS ),
-			fontOptions: getSelectors( globalStylesStore ).getOption( FONT_OPTIONS ),
-			hasLocalChanges: getSelectors( globalStylesStore ).hasLocalChanges(),
+		withSelect( ( select ) => ( {
+			siteName: select( globalStylesStore ).getOption( SITE_NAME ),
+			fontHeadings: select( globalStylesStore ).getOption( FONT_HEADINGS ),
+			fontHeadingsDefault: select( globalStylesStore ).getOption( FONT_HEADINGS_DEFAULT ),
+			fontBase: select( globalStylesStore ).getOption( FONT_BASE ),
+			fontBaseDefault: select( globalStylesStore ).getOption( FONT_BASE_DEFAULT ),
+			fontPairings: select( globalStylesStore ).getOption( FONT_PAIRINGS ),
+			fontOptions: select( globalStylesStore ).getOption( FONT_OPTIONS ),
+			hasLocalChanges: select( globalStylesStore ).hasLocalChanges(),
 		} ) ),
 		withDispatch( ( dispatch ) => ( {
 			updateOptions: dispatch( globalStylesStore ).updateOptions,
