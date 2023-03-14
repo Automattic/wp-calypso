@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { Button, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useQueryUserPurchases } from 'calypso/components/data/query-user-purchases';
 import {
@@ -91,27 +91,36 @@ export const ThankYouPluginSection = ( { plugin }: { plugin: any } ) => {
 		( state ) => isFetchingUserPurchases( state ) || ! hasLoadedUserPurchasesFromServer( state )
 	);
 	useQueryUserPurchases();
+	const [ expirationDate, setExpirationDate ] = useState( '' );
 
-	const productPurchase = purchases?.find( ( item ) => {
-		if ( item.siteId === siteId ) {
-			if (
-				plugin.variations?.monthly?.product_id === item.productId ||
-				plugin.variations?.yearly?.product_id === item.productId
-			) {
-				return item;
+	const productPurchase = useMemo(
+		() =>
+			purchases?.find( ( item ) => {
+				if ( item.siteId === siteId ) {
+					if (
+						plugin.variations?.monthly?.product_id === item.productId ||
+						plugin.variations?.yearly?.product_id === item.productId
+					) {
+						return item;
+					}
+				}
+			} ),
+		[ purchases, siteId, plugin ]
+	);
+
+	useEffect( () => {
+		if ( ! isLoadingPurchases ) {
+			if ( productPurchase ) {
+				setExpirationDate(
+					translate( 'Expires on %s', {
+						args: moment( productPurchase.expiryDate ).format( 'LL' ),
+					} ).toString()
+				);
+			} else {
+				setExpirationDate( "This plugin doesn't expire" );
 			}
 		}
-	} );
-
-	if ( ! isLoadingPurchases ) {
-		if ( productPurchase ) {
-			plugin.expirationDate = translate( 'Expires on %s', {
-				args: moment( productPurchase.expiryDate ).format( 'LL' ),
-			} );
-		} else {
-			plugin.expirationDate = translate( "This plugin doesn't expire" );
-		}
-	}
+	}, [ plugin, isLoadingPurchases, translate, productPurchase ] );
 
 	const sendTrackEvent = useCallback(
 		( name: string, link: string ) => {
@@ -141,8 +150,8 @@ export const ThankYouPluginSection = ( { plugin }: { plugin: any } ) => {
 			<PluginSectionContent>
 				<PluginSectionName>{ plugin.name }</PluginSectionName>
 				{ isLoadingPurchases && <Spinner /> }
-				{ plugin.expirationDate && (
-					<PluginSectionExpirationDate>{ plugin.expirationDate }</PluginSectionExpirationDate>
+				{ expirationDate && (
+					<PluginSectionExpirationDate>{ expirationDate }</PluginSectionExpirationDate>
 				) }
 			</PluginSectionContent>
 			<PluginSectionButtons>
