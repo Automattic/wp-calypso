@@ -1,10 +1,17 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
-import { Button } from '@wordpress/components';
+import { Button, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import moment from 'moment';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
+import { useQueryUserPurchases } from 'calypso/components/data/query-user-purchases';
+import {
+	getUserPurchases,
+	hasLoadedUserPurchasesFromServer,
+	isFetchingUserPurchases,
+} from 'calypso/state/purchases/selectors';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -79,6 +86,32 @@ export const ThankYouPluginSection = ( { plugin }: { plugin: any } ) => {
 		plugin?.setup_url && siteAdminUrl ? siteAdminUrl + plugin.setup_url : null;
 	const setupURL = plugin?.action_links?.Settings || fallbackSetupUrl || managePluginsUrl;
 	const documentationURL = plugin?.documentation_url;
+	const purchases = useSelector( ( state ) => getUserPurchases( state ) );
+	const isLoadingPurchases = useSelector(
+		( state ) => isFetchingUserPurchases( state ) || ! hasLoadedUserPurchasesFromServer( state )
+	);
+	useQueryUserPurchases();
+
+	const productPurchase = purchases?.find( ( item ) => {
+		if ( item.siteId === siteId ) {
+			if (
+				plugin.variations?.monthly?.product_id === item.productId ||
+				plugin.variations?.yearly?.product_id === item.productId
+			) {
+				return item;
+			}
+		}
+	} );
+
+	if ( ! isLoadingPurchases ) {
+		if ( productPurchase ) {
+			plugin.expirationDate = translate( 'Expires on %s', {
+				args: moment( productPurchase.expiryDate ).format( 'LL' ),
+			} );
+		} else {
+			plugin.expirationDate = translate( "This plugin doesn't expire" );
+		}
+	}
 
 	const sendTrackEvent = useCallback(
 		( name: string, link: string ) => {
@@ -107,7 +140,7 @@ export const ThankYouPluginSection = ( { plugin }: { plugin: any } ) => {
 			/>
 			<PluginSectionContent>
 				<PluginSectionName>{ plugin.name }</PluginSectionName>
-				{ /* TODO: Implement expiration date logic, the prop expiration date doesn't exists */ }
+				{ isLoadingPurchases && <Spinner /> }
 				{ plugin.expirationDate && (
 					<PluginSectionExpirationDate>{ plugin.expirationDate }</PluginSectionExpirationDate>
 				) }
