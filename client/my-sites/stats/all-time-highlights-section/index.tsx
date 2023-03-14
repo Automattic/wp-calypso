@@ -15,6 +15,7 @@ import { useSelector } from 'react-redux';
 import QueryPosts from 'calypso/components/data/query-posts';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import DotPager from 'calypso/components/dot-pager';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
@@ -67,6 +68,8 @@ export default function AllTimeHighlightsSection( {
 		( state ) => getSiteStatsNormalizedData( state, siteId, 'statsInsights', insightsQuery ) || {}
 	) as MostPopularData;
 
+	const userLocale = useSelector( getCurrentUserLocale );
+
 	const isStatsLoading = isStatsRequesting && ! views;
 	const isInsightsLoading = isInsightsRequesting && ! percent;
 
@@ -113,19 +116,13 @@ export default function AllTimeHighlightsSection( {
 		let bestViewsEverYear = '';
 
 		if ( viewsBestDay && ! isStatsLoading ) {
-			const theMoment = moment( viewsBestDay ).local();
+			const theDay = new Date( viewsBestDay );
 
-			const year = theMoment.year();
-			const month = theMoment.month();
-			const day = theMoment.date();
-
-			const theDay = new Date( year, month, day );
-
-			bestViewsEverMonthDay = theDay.toLocaleDateString( undefined, {
+			bestViewsEverMonthDay = theDay.toLocaleDateString( userLocale, {
 				month: 'long',
 				day: 'numeric',
 			} );
-			bestViewsEverYear = theDay.toLocaleDateString( undefined, {
+			bestViewsEverYear = theDay.toLocaleDateString( userLocale, {
 				year: 'numeric',
 			} );
 		}
