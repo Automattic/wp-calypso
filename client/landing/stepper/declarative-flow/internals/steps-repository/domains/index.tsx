@@ -5,6 +5,7 @@ import {
 	LINK_IN_BIO_TLD_FLOW,
 	COPY_SITE_FLOW,
 	isCopySiteFlow,
+	NEWSLETTER_FLOW,
 } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -127,7 +128,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		};
 
 		switch ( flow ) {
-			case 'newsletter':
+			case NEWSLETTER_FLOW:
 				return createInterpolateElement(
 					__(
 						'Help your Newsletter stand out with a custom domain. Not sure yet? <span>Decide later</span>.'

@@ -15,7 +15,7 @@ import type {
 	DisabledPlansMap,
 	PopularBadgeVariation,
 } from '../plans-table/types';
-import type { DomainSuggestions, WPCOMFeatures, Plans } from '@automattic/data-stores';
+import type { DomainSuggestions, WPCOMFeatures, Plans, PlansSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -63,7 +63,10 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 	const { __ } = useI18n();
 
 	const selectedPlanBillingPeriod = useSelect(
-		( select ) => select( PLANS_STORE ).getPlanProductById( currentPlanProductId )?.billingPeriod
+		( select ) =>
+			( select( PLANS_STORE ) as PlansSelect ).getPlanProductById( currentPlanProductId )
+				?.billingPeriod,
+		[ currentPlanProductId ]
 	);
 
 	const [ billingPeriod, setBillingPeriod ] = React.useState< Plans.PlanBillingPeriod >(

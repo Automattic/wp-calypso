@@ -77,7 +77,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 		isEmailVerified
 	);
 
-	const enhancedTasks =
+	const enhancedTasks: Task[] | null =
 		site &&
 		getEnhancedTasks(
 			arrayOfFilteredTasks,

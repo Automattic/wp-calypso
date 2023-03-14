@@ -2,9 +2,9 @@ import { BLOG_PAGE, CONTACT_PAGE, SHOP_PAGE } from 'calypso/signup/difm/constant
 import {
 	ContactPageDetails,
 	FeedbackSection,
-	LogoUploadSection,
+	SiteInformation,
 } from 'calypso/signup/steps/website-content/section-types';
-import { LOGO_SECTION_ID } from 'calypso/state/signup/steps/website-content/constants';
+import { SITE_INFORMATION_SECTION_ID } from 'calypso/state/signup/steps/website-content/constants';
 import { WebsiteContent } from 'calypso/state/signup/steps/website-content/types';
 import { CONTENT_SUFFIX, DefaultPageDetails } from './section-types/default-page-details';
 import type {
@@ -24,32 +24,43 @@ interface SectionProcessedResult {
 	elapsedSections: number;
 }
 
-const generateLogoSection = (
+const generateSiteInformationSection = (
 	params: SectionGeneratorReturnType< WebsiteContent >,
 	elapsedSections = 0
 ): SectionProcessedResult => {
-	const { translate, formValues } = params;
+	const { translate, formValues, formErrors } = params;
 
 	const fieldNumber = elapsedSections + 1;
 	return {
 		sectionsDetails: [
 			{
-				title: translate( '%(fieldNumber)d. Site Logo', {
+				title: translate( '%(fieldNumber)d. Site Information', {
 					args: {
 						fieldNumber,
 					},
 					comment: 'This is the serial number: 1',
 				} ),
 				component: (
-					<LogoUploadSection
-						sectionID={ LOGO_SECTION_ID }
+					<SiteInformation
+						sectionID={ SITE_INFORMATION_SECTION_ID }
+						formErrors={ formErrors }
+						searchTerms={ formValues.siteInformationSection?.searchTerms }
 						// The structure of the state tree changed and can generate errors for stale data where siteLogoUrl lived in the root of this state tree
 						// So the optional parameter was added to safegaurd for any errors.
 						// This should eventually be removed with a fix that prevents this type of bug
-						logoUrl={ formValues.siteLogoSection?.siteLogoUrl }
+						logoUrl={ formValues.siteInformationSection?.siteLogoUrl }
 					/>
 				),
 				showSkip: true,
+				validate: () => {
+					const isValid = Boolean( formValues.siteInformationSection?.searchTerms?.length );
+					return {
+						result: isValid,
+						errors: {
+							searchTerms: isValid ? null : translate( `Please enter search terms.` ),
+						},
+					};
+				},
 			},
 		],
 		elapsedSections: elapsedSections + 1,
@@ -114,7 +125,7 @@ const generateWebsiteContentSections = (
 					errors: {
 						[ page.id + CONTENT_SUFFIX ]: isValid
 							? null
-							: translate( `Please enter '%(pageTitle)s' content`, {
+							: translate( `Please enter '%(pageTitle)s' content.`, {
 									args: {
 										pageTitle,
 									},
@@ -157,8 +168,8 @@ const generateFeedbackSection = (
 export const sectionGenerator = (
 	params: SectionGeneratorReturnType< WebsiteContent >
 ): AccordionSectionProps< any >[] => {
-	const { elapsedSections: elapsedSectionsAfterLogo, sectionsDetails: logoSection } =
-		generateLogoSection( params );
+	const { elapsedSections: elapsedSectionsAfterLogo, sectionsDetails: siteInformationSection } =
+		generateSiteInformationSection( params );
 
 	const {
 		sectionsDetails: websiteContentSections,
@@ -170,5 +181,5 @@ export const sectionGenerator = (
 		elapsedSectionAfterWebsiteContent
 	);
 
-	return [ ...logoSection, ...websiteContentSections, ...feedbackSection ];
+	return [ ...siteInformationSection, ...websiteContentSections, ...feedbackSection ];
 };

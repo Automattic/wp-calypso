@@ -18,6 +18,7 @@ import { leaveCheckout } from 'calypso/my-sites/checkout/composite-checkout/lib/
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import Item from './item';
 import Masterbar from './masterbar';
+import type { HelpCenterSelect } from '@automattic/data-stores';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
@@ -48,8 +49,9 @@ const CheckoutMasterbar = ( {
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
 
-	const isShowingHelpCenter = useDataStoreSelect( ( select ) =>
-		select( HELP_CENTER_STORE ).isHelpCenterShown()
+	const isShowingHelpCenter = useDataStoreSelect(
+		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
+		[]
 	);
 
 	const closeAndLeave = () =>

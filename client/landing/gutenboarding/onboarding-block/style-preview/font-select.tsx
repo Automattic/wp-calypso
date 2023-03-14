@@ -8,13 +8,18 @@ import classnames from 'classnames';
 import * as React from 'react';
 import { useFontPairings } from '../../fonts';
 import { ONBOARD_STORE } from '../../stores/onboard';
+import type { OnboardSelect } from '@automattic/data-stores';
 
 const FontSelect: React.FunctionComponent = () => {
 	const { __ } = useI18n();
-	const { selectedDesign, selectedFonts } = useSelect( ( select ) =>
-		select( ONBOARD_STORE ).getState()
+	const { selectedDesign, selectedFonts } = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getState(),
+		[]
 	);
-	const { getRandomizedDesigns } = useSelect( ( select ) => select( ONBOARD_STORE ) );
+	const { getRandomizedDesigns } = useSelect(
+		( select ) => select( ONBOARD_STORE ) as OnboardSelect,
+		[]
+	);
 	const { setFonts } = useDispatch( ONBOARD_STORE );
 	const [ isOpen, setIsOpen ] = React.useState( false );
 

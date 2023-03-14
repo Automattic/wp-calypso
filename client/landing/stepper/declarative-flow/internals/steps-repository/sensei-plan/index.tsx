@@ -20,6 +20,7 @@ import { features, Status } from './constants';
 import { useCreateSenseiSite } from './create-sensei-site';
 import { useBusinessPlanPricing, useSenseiProPricing } from './sensei-plan-products';
 import type { Step } from '../../types';
+import type { OnboardSelect } from '@automattic/data-stores';
 import type { PlanBillingPeriod } from 'calypso/../packages/data-stores';
 
 import 'calypso/../packages/plans-grid/src/plans-table/style.scss';
@@ -31,7 +32,10 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 	const locale = useLocale();
 	const { hasTranslation } = useI18n();
 
-	const domain = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDomain() );
+	const domain = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
+		[]
+	);
 
 	const senseiProPlan = useSenseiProPricing( billingPeriod );
 	const businessPlan = useBusinessPlanPricing( billingPeriod );

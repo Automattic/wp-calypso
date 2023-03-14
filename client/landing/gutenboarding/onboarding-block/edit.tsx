@@ -27,6 +27,7 @@ import Language from './language';
 import Plans from './plans';
 import StylePreview from './style-preview';
 import type { Attributes } from './types';
+import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
 import type { BlockEditProps } from '@wordpress/blocks';
 
 import './colors.scss';
@@ -38,7 +39,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 	const { hasSiteTitle, hasSelectedDesign, hasSelectedDesignWithoutFonts, isRedirecting } =
 		useSelect(
 			( select ) => {
-				const onboardSelect = select( ONBOARD_STORE );
+				const onboardSelect: OnboardSelect = select( ONBOARD_STORE );
 
 				return {
 					hasSiteTitle: onboardSelect.hasSiteTitle(),
@@ -51,7 +52,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 		);
 	const { isCreatingSite, newSiteError } = useSelect(
 		( select ) => {
-			const { isFetchingSite, getNewSiteError } = select( SITE_STORE );
+			const { isFetchingSite, getNewSiteError }: SiteSelect = select( SITE_STORE );
 
 			return {
 				isCreatingSite: isFetchingSite(),

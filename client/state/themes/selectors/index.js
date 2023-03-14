@@ -15,6 +15,7 @@ export { getPurchasedThemes } from 'calypso/state/themes/selectors/get-purchased
 export { getRecommendedThemes } from 'calypso/state/themes/selectors/get-recommended-themes';
 export { getTrendingThemes } from 'calypso/state/themes/selectors/get-trending-themes';
 export { getTheme } from 'calypso/state/themes/selectors/get-theme';
+export { getThemes } from 'calypso/state/themes/selectors/get-themes';
 export { getThemeCustomizeUrl } from 'calypso/state/themes/selectors/get-theme-customize-url';
 export { getThemeDemoUrl } from 'calypso/state/themes/selectors/get-theme-demo-url';
 export { getThemeDetailsUrl } from 'calypso/state/themes/selectors/get-theme-details-url';

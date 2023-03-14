@@ -2,7 +2,11 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { HorizontalGrid, LabelBlock } from 'calypso/signup/accordion-form/form-components';
+import {
+	HorizontalGrid,
+	LabelBlock,
+	TextInputField,
+} from 'calypso/signup/accordion-form/form-components';
 import {
 	MediaUploadData,
 	WordpressMediaUpload,
@@ -12,22 +16,28 @@ import {
 	logoUploadFailed,
 	logoUploadStarted,
 	logoRemoved,
+	updateSearchTerms,
 } from 'calypso/state/signup/steps/website-content/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import type { ValidationErrors } from 'calypso/signup/accordion-form/types';
 
-export const LogoUploadSectionContainer = styled.div`
+export const SiteInformationContainer = styled.div`
 	@media ( min-width: 700px ) {
 		min-width: 661px;
 	}
 `;
 
-export function LogoUploadSection( {
+export function SiteInformation( {
 	sectionID,
 	logoUrl,
+	searchTerms,
+	formErrors,
 	onChangeField,
 }: {
 	sectionID: string;
 	logoUrl: string;
+	searchTerms?: string;
+	formErrors: ValidationErrors;
 	onChangeField?: ( { target: { name, value } }: ChangeEvent< HTMLInputElement > ) => void;
 } ) {
 	const translate = useTranslate();
@@ -46,8 +56,16 @@ export function LogoUploadSection( {
 		dispatch( logoRemoved() );
 	};
 
+	const onFieldChanged = ( e: ChangeEvent< HTMLInputElement > ) => {
+		const {
+			target: { value },
+		} = e;
+		dispatch( updateSearchTerms( value ) );
+		onChangeField?.( e );
+	};
+
 	return (
-		<LogoUploadSectionContainer>
+		<SiteInformationContainer>
 			<LabelBlock>
 				{ translate( 'Upload a logo for your website, transparent backgrounds work best.' ) }
 			</LabelBlock>
@@ -62,6 +80,14 @@ export function LogoUploadSection( {
 					onRemoveImage={ onMediaRemoved }
 				/>
 			</HorizontalGrid>
-		</LogoUploadSectionContainer>
+			<TextInputField
+				name="searchTerms"
+				onChange={ onFieldChanged }
+				value={ searchTerms || '' }
+				error={ formErrors[ 'searchTerms' ] }
+				label={ translate( 'Search terms' ) }
+				explanation={ translate( 'What phrases would someone search on Google to find you?' ) }
+			/>
+		</SiteInformationContainer>
 	);
 }

@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import getPurchasedStorageSubscriptions from 'calypso/my-sites/plans/jetpack-plans/get-purchased-storage-subscriptions';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
-import useGetStorageUpgradeProduct from './use-get-storage-upgrade-product';
+import useGetStorageUpgradeProducts from './use-get-storage-upgrade-products';
 
 const usePurchasedStorageUpgradeProducts = ( siteId: number ): SelectorProduct[] => {
 	const purchasedStorageSlugs = useSelector( ( state ) =>
@@ -16,15 +16,15 @@ const usePurchasedStorageUpgradeProducts = ( siteId: number ): SelectorProduct[]
 	const mostImportantSlug =
 		purchasedStorageSlugs.find( isJetpackSecuritySlug ) ?? purchasedStorageSlugs?.[ 0 ];
 
-	const getStorageUpgradeProduct = useGetStorageUpgradeProduct();
+	const getStorageUpgradeProducts = useGetStorageUpgradeProducts();
 
 	return useMemo( () => {
 		if ( ! mostImportantSlug ) {
 			return [];
 		}
 
-		return [ getStorageUpgradeProduct( mostImportantSlug ) ] as SelectorProduct[];
-	}, [ mostImportantSlug, getStorageUpgradeProduct ] );
+		return [ ...( getStorageUpgradeProducts( mostImportantSlug ) as SelectorProduct[] ) ];
+	}, [ mostImportantSlug, getStorageUpgradeProducts ] );
 };
 
 export default usePurchasedStorageUpgradeProducts;

@@ -1,5 +1,6 @@
+import * as selectors from './selectors';
 import type { ActionCreators } from './actions';
-import type { DispatchFromMap } from '../mapped-types';
+import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
 import type { FeatureId } from '../wpcom-features';
 
 export interface Dispatch {
@@ -488,6 +489,8 @@ export interface ActiveTheme {
 export interface CurrentTheme {
 	id: string;
 }
+
+export type SiteSelect = SelectFromMap< typeof selectors >;
 
 export interface SourceSiteMigrationDetails {
 	status: string;
