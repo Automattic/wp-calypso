@@ -117,7 +117,7 @@ export const ThankYouPluginSection = ( { plugin }: { plugin: any } ) => {
 					} ).toString()
 				);
 			} else {
-				setExpirationDate( "This plugin doesn't expire" );
+				setExpirationDate( translate( "This plugin doesn't expire" ) );
 			}
 		}
 	}, [ plugin, isLoadingPurchases, translate, productPurchase ] );
