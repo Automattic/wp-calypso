@@ -12,6 +12,7 @@
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
 	"features": {
 		"ad-tracking": false,
+		"block-editor/non-iframed": true,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
