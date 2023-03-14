@@ -252,6 +252,7 @@ export interface Cart {
 	coupon_discounts: unknown[];
 	coupon_discounts_integer: unknown[];
 	is_coupon_applied: boolean;
+	has_bundle_credit: boolean;
 	next_domain_is_free: boolean;
 	next_domain_condition: string;
 	products: unknown[];
