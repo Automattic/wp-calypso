@@ -9,7 +9,6 @@ import {
 import { eye } from '@automattic/components/src/icons';
 import { Icon, people, postContent, starEmpty, commentContent } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import moment from 'moment';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import QueryPosts from 'calypso/components/data/query-posts';
