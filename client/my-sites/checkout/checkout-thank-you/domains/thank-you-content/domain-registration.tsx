@@ -1,7 +1,6 @@
 import { Icon, info } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import domainRegisteredSuccess from 'calypso/assets/images/domains/domain.svg';
-import { useLaunchpad } from 'calypso/data/sites/use-launchpad';
 import {
 	buildDomainStepForLaunchpadNextSteps,
 	buildDomainStepForProfessionalEmail,
@@ -19,6 +18,8 @@ const DomainRegistrationThankYouProps = ( {
 	hasProfessionalEmail,
 	hideProfessionalEmailStep,
 	selectedSiteSlug,
+	siteIntent,
+	launchpadScreen,
 }: DomainThankYouParams ): DomainThankYouProps => {
 	const professionalEmail = buildDomainStepForProfessionalEmail(
 		{
@@ -32,13 +33,9 @@ const DomainRegistrationThankYouProps = ( {
 		true
 	);
 
-	const {
-		data: { launchpad_screen, site_intent },
-	} = useLaunchpad( selectedSiteSlug );
-
 	const launchpadNextSteps = buildDomainStepForLaunchpadNextSteps(
-		site_intent as string,
-		launchpad_screen as string,
+		siteIntent as string,
+		launchpadScreen as string,
 		selectedSiteSlug,
 		'REGISTRATION',
 		true

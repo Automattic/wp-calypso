@@ -13,6 +13,8 @@ export type DomainThankYouParams = {
 	hasProfessionalEmail: boolean;
 	hideProfessionalEmailStep: boolean;
 	selectedSiteSlug: string;
+	siteIntent?: string | undefined;
+	launchpadScreen?: boolean | string;
 };
 
 export type DomainThankYouPropsGetter = ( params: DomainThankYouParams ) => DomainThankYouProps;
