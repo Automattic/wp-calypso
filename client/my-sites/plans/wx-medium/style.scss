@@ -1,0 +1,190 @@
+@import "@automattic/typography/styles/woo-commerce";
+@import "@wordpress/base-styles/breakpoints";
+
+body.is-section-plans.is-woo-express-medium-plan {
+	&.color-scheme {
+		--color-surface-backdrop: var(--color-surface);
+	}
+
+	.section-nav {
+		box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+	}
+
+	.wx-medium-plans__section-title {
+		font-size: $font-title-medium;
+		text-align: center;
+		font-weight: 400;
+		color: var(--color-neutral-80);
+		margin: 60px 0 40px 0;
+
+		@media (max-width: $break-mobile) {
+			text-align: left;
+			font-size: $font-title-small;
+			padding: 0 20px;
+			margin: 40px 0 24px 0;
+		}
+	}
+
+	.wx-medium-plans__price-card {
+		display: flex;
+		flex-wrap: wrap;
+		border-radius: 2px 2px 0 0;
+		padding: 24px 32px;
+		margin: 40px 0 0 0;
+
+		@media (max-width: $break-mobile) {
+			flex-direction: column;
+			margin: 0 20px;
+			padding: 32px 20px;
+		}
+
+		.wx-medium-plans__price-card-text {
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+
+			.wx-medium-plans__price-card-label {
+				font-size: $woo-font-body-extra-small;
+				font-weight: 500;
+				background-color: var(--color-neutral-0);
+				border-radius: 4px;
+				margin-bottom: 8px;
+				padding: 0 10px;
+				width: fit-content;
+			}
+
+			.wx-medium-plans__price-card-title {
+				font-size: $woo-font-title-medium;
+			}
+
+			.wx-medium-plans__price-card-subtitle {
+				flex: 1;
+				font-size: $woo-font-body-small;
+				color: var(--color-neutral-80);
+			}
+		}
+
+		.wx-medium-plans__price-card-cta-wrapper {
+			width: 100%;
+			margin-top: 20px;
+
+			@media (max-width: $break-mobile) {
+				margin-top: 0;
+			}
+
+			.wx-medium-plans__price-card-cta {
+
+				border-color: var(--color-accent);
+				color: var(--color-accent);
+
+				@media (max-width: $break-mobile) {
+					width: 100%;
+					margin-top: 25px;
+					line-height: 30px;
+				}
+			}
+		}
+
+		.wx-medium-plans__price-card-conditions {
+			display: flex;
+			flex-direction: column;
+			text-align: right;
+
+			@media (max-width: $break-mobile) {
+				text-align: left;
+			}
+
+			.wx-medium-plans__price-card-value {
+				font-size: $woo-font-title-large;
+				font-weight: 500;
+
+				@media (max-width: $break-mobile) {
+					font-size: $woo-font-headline-small;
+					margin-top: 30px;
+					font-weight: 400;
+				}
+			}
+
+			.wx-medium-plans__price-card-interval {
+				color: var(--color-neutral-50);
+				font-size: $woo-font-body-extra-small;
+			}
+
+		}
+	}
+
+	.wx-medium-plans__features-wrapper {
+		@media (max-width: $break-mobile) {
+			padding: 0 20px;
+		}
+	}
+
+	.wx-medium-plans__bottom-banner {
+		display: flex;
+		padding: 40px;
+		background-color: rgba(var(--color-neutral-0-rgb), 0.8);
+		box-shadow: none;
+		margin: 60px 0;
+
+		@media (max-width: $break-mobile) {
+			padding: 24px;
+			margin: 40px 20px 0 20px;
+		}
+
+		.wx-medium-plans__bottom-banner-content {
+			flex: 1;
+			padding-right: 25%;
+
+			@media (max-width: $break-mobile) {
+				padding: 0;
+				margin: 0;
+			}
+
+			.wx-medium-plans__bottom-banner-title {
+				font-size: $font-title-medium;
+				font-weight: 400;
+				color: var(--studio-black);
+				margin: 0;
+
+				@media (max-width: $break-mobile) {
+					font-size: $font-body-small;
+					font-weight: 600;
+				}
+			}
+
+			.wx-medium-plans__bottom-banner-subtitle {
+				font-size: $font-body;
+				font-weight: 400;
+				margin: 15px 0;
+				color: var(--color-neutral-40);
+
+				@media (max-width: $break-mobile) {
+					font-size: $font-body-extra-small;
+					color: var(--color-neutral-80);
+				}
+			}
+		}
+
+		.wx-medium-plans__bottom-banner-cta {
+			@media (max-width: $break-mobile) {
+				width: 100%;
+				margin-top: 10px;
+				line-height: 30px;
+			}
+		}
+
+		.wx-medium-plans__bottom-banner-img-wrapper {
+			@media (max-width: $break-mobile) {
+				display: none;
+			}
+
+			margin-left: 50px;
+			padding: 0 20px;
+			text-align: center;
+
+			.wx-medium-plans__bottom-banner-img {
+				width: 166px;
+			}
+		}
+	}
+}
