@@ -7,6 +7,7 @@ import {
 	COMMENTS_UPDATES_RECEIVE,
 	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_DELETE,
+	COMMENTS_EMPTY,
 } from 'calypso/state/action-types';
 import { requestCommentsList } from 'calypso/state/comments/actions';
 import {
@@ -188,6 +189,59 @@ export const announceDeleteFailure = ( action ) => {
 	];
 };
 
+export const emptyComments = ( action ) => ( dispatch ) => {
+	const { siteId, status } = action;
+
+	dispatch(
+		http(
+			{
+				apiVersion: '1',
+				body: {
+					empty_status: status,
+				},
+				method: 'POST',
+				path: `/sites/${ siteId }/comments/delete`,
+			},
+			{
+				...action,
+			}
+		)
+	);
+};
+
+export const handleEmptySuccess = ( { status, options, refreshCommentListQuery } ) => {
+	const showSuccessNotice = options?.showSuccessNotice;
+
+	return compact( [
+		showSuccessNotice &&
+			successNotice(
+				status === 'spam' ? translate( 'Spam emptied.' ) : translate( 'Trash emptied.' ),
+				{
+					duration: 5000,
+					id: 'comment-notice',
+					isPersistent: true,
+				}
+			),
+		!! refreshCommentListQuery && requestCommentsList( refreshCommentListQuery ),
+	] );
+};
+
+export const announceEmptyFailure = ( action ) => {
+	const { status } = action;
+
+	const error = errorNotice(
+		status === 'spam'
+			? translate( 'Could not empty spam.' )
+			: translate( 'Could not empty trash.' ),
+		{
+			duration: 5000,
+			isPersistent: true,
+		}
+	);
+
+	return error;
+};
+
 registerHandlers( 'state/data-layer/wpcom/comments/index.js', {
 	[ COMMENTS_REQUEST ]: [
 		dispatchRequest( {
@@ -202,6 +256,14 @@ registerHandlers( 'state/data-layer/wpcom/comments/index.js', {
 			fetch: deleteComment,
 			onSuccess: handleDeleteSuccess,
 			onError: announceDeleteFailure,
+		} ),
+	],
+
+	[ COMMENTS_EMPTY ]: [
+		dispatchRequest( {
+			fetch: emptyComments,
+			onSuccess: handleEmptySuccess,
+			onError: announceEmptyFailure,
 		} ),
 	],
 } );
