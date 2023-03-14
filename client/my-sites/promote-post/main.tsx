@@ -1,7 +1,8 @@
 import './style.scss';
 import { useTranslate } from 'i18n-calypso';
+import { debounce } from 'lodash';
 import page from 'page';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPosts from 'calypso/components/data/query-posts';
@@ -57,7 +58,8 @@ const ERROR_NO_LOCAL_USER = 'no_local_user';
 export default function PromotedPosts( { tab }: Props ) {
 	const selectedTab = tab === 'campaigns' ? 'campaigns' : 'posts';
 	const selectedSite = useSelector( getSelectedSite );
-
+	const [ expandedCampaigns, setExpandedCampaigns ] = useState< number[] >( [] );
+	const [ alreadyScrolled, setAlreadyScrolled ] = useState< boolean >( false );
 	const selectedSiteId = selectedSite?.ID || 0;
 
 	const posts = useSelector( ( state ) => {
@@ -118,6 +120,31 @@ export default function PromotedPosts( { tab }: Props ) {
 			},
 		}
 	);
+
+	const debouncedScrollToCampaign = debounce( ( campaignId ) => {
+		const element = document.querySelector( `.promote-post__campaigns_id_${ campaignId }` );
+		if ( element instanceof Element ) {
+			const margin = 50; // Some margin so it keeps below the header in mobile/desktop
+			const dims = element.getBoundingClientRect();
+			window.scrollTo( {
+				top: dims.top - margin,
+				behavior: 'smooth',
+			} );
+		}
+	}, 100 );
+
+	useEffect( () => {
+		if ( ! alreadyScrolled && campaignsFull.length ) {
+			const windowUrl = window.location.search;
+			const params = new URLSearchParams( windowUrl );
+			const campaignId = Number( params?.get( 'campaign_id' ) || 0 );
+			if ( campaignId ) {
+				setExpandedCampaigns( [ ...expandedCampaigns, campaignId ] );
+				debouncedScrollToCampaign( campaignId );
+				setAlreadyScrolled( true );
+			}
+		}
+	}, [ campaignsFull, alreadyScrolled ] );
 
 	if ( selectedSite?.is_coming_soon ) {
 		return (
@@ -184,6 +211,8 @@ export default function PromotedPosts( { tab }: Props ) {
 						isError={ isError }
 						isLoading={ campaignsIsLoading }
 						campaigns={ campaignsFull || [] }
+						expandedCampaigns={ expandedCampaigns }
+						setExpandedCampaigns={ setExpandedCampaigns }
 					/>
 				</>
 			) : (

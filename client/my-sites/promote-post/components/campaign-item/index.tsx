@@ -30,9 +30,11 @@ import AudienceBlock from '../audience-block';
 
 type Props = {
 	campaign: Campaign;
+	expanded: boolean;
+	onClickCampaign: ( isExpanded: boolean ) => void;
 };
 
-export default function CampaignItem( { campaign }: Props ) {
+export default function CampaignItem( { campaign, expanded, onClickCampaign }: Props ) {
 	const [ showDeleteDialog, setShowDeleteDialog ] = useState( false );
 	const [ showErrorDialog, setShowErrorDialog ] = useState( false );
 	const siteId = useSelector( getSelectedSiteId );
@@ -176,10 +178,14 @@ export default function CampaignItem( { campaign }: Props ) {
 			</Dialog>
 
 			<FoldableCard
+				expanded={ expanded }
+				onClick={ () => {
+					onClickCampaign( ! expanded );
+				} }
 				clickableHeader
 				header={ header }
 				hideSummary={ true }
-				className="campaign-item__foldable-card"
+				className={ `campaign-item__foldable-card promote-post__campaigns_id_${ campaign.campaign_id }` }
 			>
 				<div className="campaign-item__row">
 					<Notice isDismissible={ false } className="campaign-item__notice" status="info">
