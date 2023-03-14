@@ -11,7 +11,7 @@ body.is-section-plans.is-woo-express-medium-plan {
 	}
 
 	.wx-medium-plans__section-title {
-		font-size: $font-title-medium;
+		font-size: $woo-font-title-medium;
 		text-align: center;
 		font-weight: 400;
 		color: var(--color-neutral-80);
@@ -19,7 +19,7 @@ body.is-section-plans.is-woo-express-medium-plan {
 
 		@media (max-width: $break-mobile) {
 			text-align: left;
-			font-size: $font-title-small;
+			font-size: $woo-font-title-small;
 			padding: 0 20px;
 			margin: 40px 0 24px 0;
 		}
@@ -44,7 +44,7 @@ body.is-section-plans.is-woo-express-medium-plan {
 			flex-direction: column;
 
 			.wx-medium-plans__price-card-label {
-				font-size: $woo-font-body-extra-small;
+				font-size: $woo-font-body-xx-small;
 				font-weight: 500;
 				background-color: var(--color-neutral-0);
 				border-radius: 4px;
@@ -107,7 +107,7 @@ body.is-section-plans.is-woo-express-medium-plan {
 
 			.wx-medium-plans__price-card-interval {
 				color: var(--color-neutral-50);
-				font-size: $woo-font-body-extra-small;
+				font-size: $woo-font-body-xx-small;
 			}
 
 		}
@@ -141,25 +141,25 @@ body.is-section-plans.is-woo-express-medium-plan {
 			}
 
 			.wx-medium-plans__bottom-banner-title {
-				font-size: $font-title-medium;
+				font-size: $woo-font-title-medium;
 				font-weight: 400;
 				color: var(--studio-black);
 				margin: 0;
 
 				@media (max-width: $break-mobile) {
-					font-size: $font-body-small;
+					font-size: $woo-font-body-small;
 					font-weight: 600;
 				}
 			}
 
 			.wx-medium-plans__bottom-banner-subtitle {
-				font-size: $font-body;
+				font-size: $woo-font-body;
 				font-weight: 400;
 				margin: 15px 0;
 				color: var(--color-neutral-40);
 
 				@media (max-width: $break-mobile) {
-					font-size: $font-body-extra-small;
+					font-size: $woo-font-body-extra-small;
 					color: var(--color-neutral-80);
 				}
 			}
