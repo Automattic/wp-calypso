@@ -30,11 +30,11 @@ Returns a formatter object that exposes the following methods:
 - `getCurrencyObject` (see below)
 - `setDefaultLocale` (see below)
 - `setCurrencySymbol` (see below)
-- `detectGeolocation` (see below)
+- `geolocateCurrencySymbol` (see below)
 
-## detectGeolocation()
+## geolocateCurrencySymbol()
 
-`detectGeolocation(): Promise<void>`
+`geolocateCurrencySymbol(): Promise<void>`
 
 This will attempt to make an unauthenticated network request to `https://public-api.wordpress.com/geo/`. This is to determine the country code to provide better USD formatting. By default, the currency symbol for USD will be based on the locale (unlike other currency codes which use a hard-coded list of overrides; see `setCurrencySymbol`); for `en-US`/`en` it will be `$` and for all other locales it will be `US$`. However, if the geolocation determines that the country is not inside the US, the USD symbol will be `US$` regardless of locale. This is to prevent confusion for users in non-US countries using an English locale.
 
@@ -78,7 +78,7 @@ By default, `formatCurrency` and `getCurrencyObject` use a currency symbol from 
 
 With this function, you can change the override used by any given currency.
 
-Note that USD is the only currency that does not have a default override so it will use the locale's preference unless the geolocation network call succeeds (see `detectGeolocation`).
+Note that USD is the only currency that does not have a default override so it will use the locale's preference unless the geolocation network call succeeds (see `geolocateCurrencySymbol`).
 
 ## FormatCurrencyOptions
 

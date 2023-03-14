@@ -17,7 +17,8 @@ export function createFormatter(): CurrencyFormatter {
 	const currencyOverrides: Record< string, { symbol?: string | undefined } > = {};
 	let defaultLocale: string | undefined = undefined;
 
-	async function setUsdCurrencySymbolBasedOnGeolocation(): Promise< void > {
+	// If the user is inside the US using USD, they should only see `$` and not `US$`.
+	async function geolocateCurrencySymbol(): Promise< void > {
 		const geoData = await globalThis
 			.fetch?.( geolocationEndpointUrl )
 			.then( ( response ) => response.json() )
@@ -267,17 +268,12 @@ export function createFormatter(): CurrencyFormatter {
 		defaultLocale = locale;
 	}
 
-	// If the user is inside the US using USD, they should only see `$` and not `US$`.
-	async function detectGeolocation() {
-		return setUsdCurrencySymbolBasedOnGeolocation();
-	}
-
 	return {
 		formatCurrency,
 		getCurrencyObject,
 		setCurrencySymbol,
 		setDefaultLocale,
-		detectGeolocation,
+		geolocateCurrencySymbol,
 	};
 }
 
@@ -433,8 +429,8 @@ function isGeolocationResponse( response: unknown ): response is GeoLocationResp
 
 const defaultFormatter = createFormatter();
 
-export async function detectGeolocation() {
-	return defaultFormatter.detectGeolocation();
+export async function geolocateCurrencySymbol() {
+	return defaultFormatter.geolocateCurrencySymbol();
 }
 
 export function formatCurrency( ...args: Parameters< typeof defaultFormatter.formatCurrency > ) {
