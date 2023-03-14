@@ -119,9 +119,11 @@ const FlexFormFieldset = styled( FormFieldset )`
 	display: flex;
 `;
 
-const StyledFormFieldset = styled( FormFieldset )`
-	margin-bottom: ${ ( props ) => ( props.hasFillerContentCheckbox ? '12px' : '20px' ) };
-`;
+const StyledFormFieldset = styled( FormFieldset, {
+	shouldForwardProp: ( prop ) => prop !== 'hasFillerContentCheckbox',
+} )( ( props ) => ( {
+	marginBottom: props.hasFillerContentCheckbox ? '12px' : '20px',
+} ) );
 
 const StyledFormCheckbox = styled( FormCheckbox )`
 	margin-right: 6px;
@@ -183,12 +185,13 @@ interface TextAreaFieldProps extends TextInputFieldProps {
 }
 
 export function TextAreaField( props: TextAreaFieldProps ) {
+	const { hasFillerContentCheckbox, ...otherProps } = props;
 	return (
-		<StyledFormFieldset hasFillerContentCheckbox={ props.hasFillerContentCheckbox }>
+		<StyledFormFieldset hasFillerContentCheckbox={ hasFillerContentCheckbox }>
 			{ props.label && <LabelBlock inputName={ props.name }>{ props.label } </LabelBlock> }
 			{ props.sublabel && <SubLabel htmlFor={ props.name }>{ props.sublabel }</SubLabel> }
 			<TextArea
-				{ ...props }
+				{ ...otherProps }
 				rows={ props.rows ? props.rows : 10 }
 				isError={ !! props.error }
 				autoCapitalize="off"
