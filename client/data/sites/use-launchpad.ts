@@ -17,7 +17,7 @@ export const useLaunchpad = ( siteSlug: string | null, cache = true ) => {
 		},
 		enabled: true,
 		placeholderData: {
-			checklist_statuses: {},
+			checklist_statuses: [],
 			launchpad_screen: undefined,
 			site_intent: '',
 		},
