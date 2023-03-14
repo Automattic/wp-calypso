@@ -12,6 +12,7 @@ import SVGIcon from 'calypso/components/svg-icon';
 import userAgent from 'calypso/lib/user-agent';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
+const PLATFORM_MAC_SILICON = 'MacSilicon';
 const WINDOWS_LINK = 'https://apps.wordpress.com/d/windows?ref=getapps';
 const MAC_INTEL_LINK = 'https://apps.wordpress.com/d/osx?ref=getapps';
 const MAC_SILICON_LINK = 'https://apps.wordpress.com/d/osx-silicon?ref=getapps';
@@ -40,6 +41,7 @@ class DesktopDownloadCard extends Component {
 	getDescription( platform ) {
 		switch ( platform ) {
 			case 'MacIntel':
+			case PLATFORM_MAC_SILICON:
 			case 'Linux i686':
 			case 'Linux i686 on x86_64':
 				return translate( 'A desktop app that gives WordPress a permanent home in your dock.' );
@@ -51,6 +53,7 @@ class DesktopDownloadCard extends Component {
 	getRequirementsText( platform ) {
 		switch ( platform ) {
 			case 'MacIntel':
+			case PLATFORM_MAC_SILICON:
 				return translate( 'Requires Mac OS X 10.11+. ' );
 			case 'Linux i686':
 			case 'Linux i686 on x86_64':
@@ -63,6 +66,7 @@ class DesktopDownloadCard extends Component {
 	getPlatformImage( platform ) {
 		switch ( platform ) {
 			case 'MacIntel':
+			case PLATFORM_MAC_SILICON:
 			case MAC_SILICON_LINK:
 			case MAC_INTEL_LINK:
 				return <SVGIcon aria-hidden="true" name="apple-logo" size="24" icon={ Apple } />;
@@ -80,6 +84,7 @@ class DesktopDownloadCard extends Component {
 	getTranslateComponents( platform ) {
 		switch ( platform ) {
 			case 'MacIntel':
+			case PLATFORM_MAC_SILICON:
 				return {
 					firstAvailableLink: this.getLinkAnchorTag( WINDOWS_LINK ),
 					secondAvailableLink: this.getLinkAnchorTag( LINUX_TAR_LINK ),
@@ -117,6 +122,7 @@ class DesktopDownloadCard extends Component {
 	getAlsoAvailableText( platform ) {
 		switch ( platform ) {
 			case 'MacIntel':
+			case PLATFORM_MAC_SILICON:
 				return translate(
 					'Also available for: ' +
 						'{{firstAvailableLink}}Windows{{/firstAvailableLink}}, ' +
@@ -149,6 +155,7 @@ class DesktopDownloadCard extends Component {
 	getAlsoAvailableTextJetpack( platform ) {
 		switch ( platform ) {
 			case 'MacIntel':
+			case PLATFORM_MAC_SILICON:
 				return translate(
 					'{{firstAvailableLink}}{{firstAvailableIcon /}}Windows{{/firstAvailableLink}}' +
 						'{{secondAvailableLink}} {{secondAvailableIcon /}} Linux (.tar.gz){{/secondAvailableLink}}' +
@@ -186,7 +193,9 @@ class DesktopDownloadCard extends Component {
 
 		switch ( platform ) {
 			case 'MacIntel':
-				return trackMacIntelClick && trackMacSiliconClick;
+				return trackMacIntelClick;
+			case PLATFORM_MAC_SILICON:
+				return trackMacSiliconClick;
 			case 'Linux i686':
 				return trackLinuxTarClick;
 			case 'Linux i686 on x86_64':
@@ -199,7 +208,9 @@ class DesktopDownloadCard extends Component {
 	getButtonLink( platform ) {
 		switch ( platform ) {
 			case 'MacIntel':
-				return [ MAC_INTEL_LINK, MAC_SILICON_LINK ];
+				return MAC_INTEL_LINK;
+			case PLATFORM_MAC_SILICON:
+				return MAC_SILICON_LINK;
 			case 'Linux i686':
 			case 'Linux i686 on x86_64':
 				return LINUX_TAR_LINK;
@@ -211,10 +222,9 @@ class DesktopDownloadCard extends Component {
 	getButtonText( platform ) {
 		switch ( platform ) {
 			case 'MacIntel':
-				return [
-					translate( 'Download for Mac (Intel)' ),
-					translate( 'Download for Mac (Apple Silicon)' ),
-				];
+				return translate( 'Download for Mac (Intel)' );
+			case PLATFORM_MAC_SILICON:
+				return translate( 'Download for Mac (Apple Silicon)' );
 			case 'Linux i686':
 			case 'Linux i686 on x86_64':
 				return translate( 'Download for Linux' );
@@ -226,6 +236,7 @@ class DesktopDownloadCard extends Component {
 	getCardTitle( platform ) {
 		switch ( platform ) {
 			case 'MacIntel':
+			case PLATFORM_MAC_SILICON:
 				return translate( 'Desktop App for Mac' );
 			case 'Linux i686':
 			case 'Linux i686 on x86_64':
@@ -303,17 +314,17 @@ class DesktopDownloadCard extends Component {
 					<>
 						<Button
 							className="get-apps__desktop-button"
-							href={ localizeUrl( this.getButtonLink( platform )[ 0 ] ) }
+							href={ localizeUrl( this.getButtonLink( platform ) ) }
 							onClick={ this.getButtonClickHandler( platform ) }
 						>
-							{ this.getButtonText( platform )[ 0 ] }
+							{ this.getButtonText( platform ) }
 						</Button>
 						<Button
 							className="get-apps__desktop-button"
-							href={ localizeUrl( this.getButtonLink( platform )[ 1 ] ) }
-							onClick={ this.getButtonClickHandler( platform ) }
+							href={ localizeUrl( this.getButtonLink( PLATFORM_MAC_SILICON ) ) }
+							onClick={ this.getButtonClickHandler( PLATFORM_MAC_SILICON ) }
 						>
-							{ this.getButtonText( platform )[ 1 ] }
+							{ this.getButtonText( PLATFORM_MAC_SILICON ) }
 						</Button>
 					</>
 				) : (
