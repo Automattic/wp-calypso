@@ -121,8 +121,6 @@ export function ReceiptBody( {
 	const moment = useLocalizedMoment();
 	const title = translate( 'Visit %(url)s', { args: { url: transaction.url }, textOnly: true } );
 	const serviceLink = <a href={ transaction.url } title={ title } />;
-	const link = 'https://google.com';
-	const labelContent = translate( 'View tax invoice' );
 
 	return (
 		<div>
@@ -172,15 +170,28 @@ export function ReceiptBody( {
 					</Button>
 				</div>
 			</Card>
-			<CompactCard
-				href={ link }
-				rel="noopener noreferrer"
-				target="_blank"
-				className="billing-history__tax-receipt-link"
-			>
-				{ labelContent }
-			</CompactCard>
+			{ transaction.tax_external_id && transaction.tax_external_id.length > 0 && (
+				<ReceiptExternalLink transaction={ transaction } />
+			) }
 		</div>
+	);
+}
+
+function ReceiptExternalLink( { transaction }: { transaction: BillingTransaction } ) {
+	const translate = useTranslate();
+	const externalTaxlink =
+		'https://invoicestaxamo.s3.amazonaws.com/' + transaction.tax_external_id + '/invoice.html';
+	const labelContent = translate( 'View tax invoice' );
+
+	return (
+		<CompactCard
+			href={ externalTaxlink }
+			rel="noopener noreferrer"
+			target="_blank"
+			className="billing-history__tax-receipt-link"
+		>
+			{ labelContent }
+		</CompactCard>
 	);
 }
 
