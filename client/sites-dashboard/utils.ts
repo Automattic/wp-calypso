@@ -40,6 +40,10 @@ export const isP2Site = ( site: SiteExcerptNetworkData ) => {
 	return site.options?.is_wpforteams_site;
 };
 
+export const isStagingSite = ( site: SiteExcerptNetworkData ) => {
+	return site.is_wpcom_staging_site;
+};
+
 export const SMALL_MEDIA_QUERY = 'screen and ( max-width: 600px )';
 
 export const MEDIA_QUERIES = {

@@ -20,11 +20,11 @@ export class EditorWelcomeTourComponent {
 	}
 
 	/**
-	 * Force dismisses the welcome tour using Redux state/actions.
+	 * Force shows or dismisses the welcome tour using Redux state/actions.
 	 *
 	 * @see {@link https://github.com/Automattic/wp-calypso/issues/57660}
 	 */
-	async forceDismissWelcomeTour(): Promise< void > {
+	async forceToggleWelcomeTour( show = true ): Promise< void > {
 		// Locator API doesn't have waitForFunction yet. We need a Frame for now.
 		const editorElement = await this.editor.elementHandle( {
 			timeout: EXTENDED_EDITOR_WAIT_TIMEOUT,
@@ -45,7 +45,7 @@ export class EditorWelcomeTourComponent {
 			return await welcomeGuide.isWelcomeGuideStatusLoaded();
 		} );
 
-		await editorFrame.waitForFunction( async () => {
+		await editorFrame.waitForFunction( async ( show ) => {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const welcomeGuide = ( window as any )?.wp?.data?.dispatch(
 				'automattic/wpcom-welcome-guide'
@@ -55,8 +55,23 @@ export class EditorWelcomeTourComponent {
 				return false;
 			}
 
-			const actionPayload = await welcomeGuide.setShowWelcomeGuide( false );
-			return actionPayload.show === false;
-		} );
+			const actionPayload = await welcomeGuide.setShowWelcomeGuide( show );
+
+			return actionPayload.show === show;
+		}, show );
+	}
+
+	/**
+	 * Force shows the welcome tour using Redux state/actions.
+	 */
+	async forceShowWelcomeTour(): Promise< void > {
+		await this.forceToggleWelcomeTour( true );
+	}
+
+	/**
+	 * Force dismisses the welcome tour using Redux state/actions.
+	 */
+	async forceDismissWelcomeTour(): Promise< void > {
+		await this.forceToggleWelcomeTour( false );
 	}
 }

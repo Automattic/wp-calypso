@@ -2,7 +2,7 @@ import { Button, FormStatus, useTotal, useFormStatus } from '@automattic/composi
 import { snakeToCamelCase } from '@automattic/js-utils';
 import { Field } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
-import { useSelect, useDispatch, registerStore } from '@wordpress/data';
+import { useSelect, useDispatch, register, registerStore } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
@@ -25,31 +25,25 @@ import type {
 	StoreStateValue,
 } from '@automattic/wpcom-checkout';
 import type { CalypsoDispatch } from 'calypso/state/types';
+import type { AnyAction } from 'redux';
 
 const debug = debugFactory( 'composite-checkout:netbanking-payment-method' );
 
 // Disabling this to make migration easier
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-type StoreKey = 'netbanking';
 type NounsInStore = 'customerName';
 type FieldsType = Record< string, StoreStateValue >;
 type NetBankingStoreState< N extends string > = Record< N, StoreStateValue > & {
 	fields: FieldsType;
 };
 
-interface NetBankingPaymentMethodStore< N extends string >
-	extends ReturnType< typeof registerStore > {
+interface NetBankingPaymentMethodStore< N extends string > extends ReturnType< typeof register > {
 	getState: () => NetBankingStoreState< N >;
 }
 type NetBankingStore = NetBankingPaymentMethodStore< NounsInStore >;
 
-declare module '@wordpress/data' {
-	function select(
-		key: StoreKey
-	): StoreSelectors< NounsInStore > & { getFields: () => FieldsType };
-	function dispatch( key: StoreKey ): typeof actions;
-}
+type NetBankingSelectors = StoreSelectors< NounsInStore > & { getFields: () => FieldsType };
 
 const actions = {
 	changeCustomerName( payload: string ) {
@@ -81,11 +75,11 @@ export function createNetBankingPaymentMethodStore(): NetBankingStore {
 	debug( 'creating a new netbanking payment method store' );
 	const store = registerStore( 'netbanking', {
 		reducer(
-			state = {
+			state: NetBankingStoreState< NounsInStore > = {
 				customerName: { value: '', isTouched: false },
 				fields: {},
 			},
-			action
+			action: AnyAction
 		) {
 			switch ( action.type ) {
 				case 'CUSTOMER_NAME_SET':
@@ -155,7 +149,10 @@ export function createNetBankingMethod( { store }: { store: NetBankingStore } ):
 function NetBankingFields() {
 	const { __ } = useI18n();
 
-	const fields = useSelect( ( select ) => select( 'netbanking' ).getFields() );
+	const fields = useSelect(
+		( select ) => ( select( 'netbanking' ) as NetBankingSelectors ).getFields(),
+		[]
+	);
 	const getField = ( key: string ) => fields[ key ] || {};
 	const getFieldValue = ( key: string ) => getField( key ).value ?? '';
 	const getErrorMessagesForField = ( key: string ) => {
@@ -164,7 +161,10 @@ function NetBankingFields() {
 	};
 	const { setFieldValue } = useDispatch( 'netbanking' );
 
-	const customerName = useSelect( ( select ) => select( 'netbanking' ).getCustomerName() );
+	const customerName = useSelect(
+		( select ) => ( select( 'netbanking' ) as NetBankingSelectors ).getCustomerName(),
+		[]
+	);
 	const { changeCustomerName } = useDispatch( 'netbanking' );
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
@@ -238,8 +238,14 @@ function NetBankingPayButton( {
 	const { __ } = useI18n();
 	const total = useTotal();
 	const { formStatus } = useFormStatus();
-	const customerName = useSelect( ( select ) => select( 'netbanking' ).getCustomerName() );
-	const fields = useSelect( ( select ) => select( 'netbanking' ).getFields() );
+	const customerName = useSelect(
+		( select ) => ( select( 'netbanking' ) as NetBankingSelectors ).getCustomerName(),
+		[]
+	);
+	const fields = useSelect(
+		( select ) => ( select( 'netbanking' ) as NetBankingSelectors ).getFields(),
+		[]
+	);
 	const massagedFields: typeof fields = Object.entries( fields ).reduce(
 		( accum, [ key, managedValue ] ) => ( {
 			...accum,
@@ -294,7 +300,10 @@ function ButtonContents( { formStatus, total }: { formStatus: FormStatus; total:
 }
 
 function NetBankingSummary() {
-	const customerName = useSelect( ( select ) => select( 'netbanking' ).getCustomerName() );
+	const customerName = useSelect(
+		( select ) => ( select( 'netbanking' ) as NetBankingSelectors ).getCustomerName(),
+		[]
+	);
 
 	return (
 		<SummaryDetails>

@@ -10,6 +10,7 @@ import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import PatternAssembler from './internals/steps-repository/pattern-assembler/lazy';
 import Processing from './internals/steps-repository/processing-step';
 import { Flow, ProvidedDependencies } from './internals/types';
+import type { OnboardSelect } from '@automattic/data-stores';
 import type { Design } from '@automattic/design-picker/src/types';
 
 const SiteIntent = Onboard.SiteIntent;
@@ -39,7 +40,10 @@ const withThemeAssemblerFlow: Flow = {
 
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
-		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
+		const intent = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
+			[]
+		);
 		const { setStepProgress, setPendingAction } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
 		setStepProgress( flowProgress );

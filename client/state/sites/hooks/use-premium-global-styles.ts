@@ -9,13 +9,14 @@ import {
 	getGlobalStylesInfoForSite,
 } from './use-site-global-styles-status';
 import type { GlobalStylesStatus } from './use-site-global-styles-status';
+import type { OnboardSelect } from '@automattic/data-stores';
 
 export function usePremiumGlobalStyles(): GlobalStylesStatus {
 	const params = new URLSearchParams( window.location.search );
 	const siteSlugParam = params.get( 'siteSlug' );
 	const siteIdParam = params.get( 'siteId' );
 	const selectedSiteId = useSelector( getSelectedSiteId );
-	const onboard = select( ONBOARD_STORE ).getState();
+	const onboard = ( select( ONBOARD_STORE ) as OnboardSelect ).getState();
 
 	// When site id is null it means that the site hasn't been created yet.
 	const siteId = useSelector( ( state ) => {

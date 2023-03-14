@@ -5,6 +5,10 @@ import {
 	PLAN_FREE,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	isFreePlanProduct,
+	PLAN_WOOEXPRESS_SMALL,
+	PLAN_WOOEXPRESS_SMALL_MONTHLY,
+	PLAN_WOOEXPRESS_MEDIUM,
+	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 } from '@automattic/calypso-products';
 import { is2023PricingGridActivePage } from '@automattic/calypso-products/src/plans-utilities';
 import { withShoppingCart } from '@automattic/shopping-cart';
@@ -290,6 +294,20 @@ class Plans extends Component {
 		return <ECommerceTrialPlansPage interval={ interval } siteSlug={ selectedSite.slug } />;
 	}
 
+	renderWooExpressMediumPage() {
+		return <p>Woo Express Performance</p>;
+	}
+
+	renderMainContent( { isEcommerceTrial, isWooExpressPlan } ) {
+		if ( isEcommerceTrial ) {
+			return this.renderEcommerceTrialPage();
+		}
+		if ( isWooExpressPlan && isEnabled( 'plans/wooexpress-medium' ) ) {
+			return this.renderWooExpressMediumPage();
+		}
+		return this.renderPlansMain();
+	}
+
 	render() {
 		const {
 			selectedSite,
@@ -312,6 +330,13 @@ class Plans extends Component {
 
 		const currentPlanSlug = selectedSite?.plan?.product_slug;
 		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+		const isWooExpressPlan = [
+			PLAN_WOOEXPRESS_MEDIUM,
+			PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
+			PLAN_WOOEXPRESS_SMALL,
+			PLAN_WOOEXPRESS_SMALL_MONTHLY,
+		].includes( currentPlanSlug );
+
 		const allDomains = isDomainAndPlanPackageFlow ? getDomainRegistrations( this.props.cart ) : [];
 		const yourDomainName = allDomains.length
 			? allDomains.slice( -1 )[ 0 ]?.meta
@@ -328,6 +353,10 @@ class Plans extends Component {
 			currentPlanIntervalType === 'monthly'
 				? translate( 'Get your domain’s first year for free' )
 				: translate( 'Choose the perfect plan' );
+
+		// Hide for WooExpress plans
+		const showPlansNavigation = isEnabled( 'plans/wooexpress-medium' ) ? ! isWooExpressPlan : true;
+
 		return (
 			<div>
 				{ ! isJetpackNotAtomic && <ModernizedLayout dropShadowOnHeader={ isFreePlan } /> }
@@ -358,7 +387,7 @@ class Plans extends Component {
 							</>
 						) }
 						<div id="plans" className="plans plans__has-sidebar">
-							<PlansNavigation path={ this.props.context.path } />
+							{ showPlansNavigation && <PlansNavigation path={ this.props.context.path } /> }
 							<Main
 								fullWidthLayout={ is2023PricingGridVisible && ! isEcommerceTrial }
 								wideLayout={ ! is2023PricingGridVisible || isEcommerceTrial }
@@ -366,7 +395,7 @@ class Plans extends Component {
 								{ ! isDomainAndPlanPackageFlow && domainAndPlanPackage && (
 									<DomainAndPlanUpsellNotice />
 								) }
-								{ isEcommerceTrial ? this.renderEcommerceTrialPage() : this.renderPlansMain() }
+								{ this.renderMainContent( { isEcommerceTrial, isWooExpressPlan } ) }
 								<PerformanceTrackerStop />
 							</Main>
 						</div>

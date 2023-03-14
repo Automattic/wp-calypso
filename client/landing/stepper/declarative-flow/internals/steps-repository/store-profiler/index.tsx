@@ -15,6 +15,7 @@ import { useCountriesAndStates } from 'calypso/jetpack-cloud/sections/partner-po
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ONBOARD_STORE, USER_STORE } from '../../../../stores';
 import type { Step } from '../../types';
+import type { UserSelect } from '@automattic/data-stores';
 import './style.scss';
 
 const StoreProfiler: Step = function StoreProfiler( { navigation, flow } ) {
@@ -23,8 +24,14 @@ const StoreProfiler: Step = function StoreProfiler( { navigation, flow } ) {
 	const [ verticalId, setVerticalId ] = React.useState( '' );
 	const [ storeCountryCode, setStoreCountryCode ] = React.useState( '' );
 	const translate = useTranslate();
-	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
-	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
+	const currentUser = useSelect(
+		( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
+		[]
+	);
+	const newUser = useSelect(
+		( select ) => ( select( USER_STORE ) as UserSelect ).getNewUser(),
+		[]
+	);
 	const {
 		setSiteTitle: saveSiteTitleToStore,
 		setVerticalId: saveVerticalIdToStore,

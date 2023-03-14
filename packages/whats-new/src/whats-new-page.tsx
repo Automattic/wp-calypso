@@ -43,6 +43,8 @@ const WhatsNewPage: React.FC< Props > = ( {
 							isLink
 							target="_blank"
 						>
+							{ /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */ }
+							{ /* @ts-ignore This is declared as a global variable and provided by webpack. */ }
 							{ __( 'Learn more', __i18n_text_domain__ ) }
 						</Button>
 					) }

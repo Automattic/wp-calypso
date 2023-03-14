@@ -4,12 +4,13 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isRequestingSites from 'calypso/state/sites/selectors/is-requesting-sites';
 import { SITE_STORE } from '../stores';
 import { useSiteSlugParam } from './use-site-slug-param';
+import type { SiteSelect } from '@automattic/data-stores';
 
 export function useCanUserManageOptions() {
 	const siteSlug = useSiteSlugParam();
 	const siteId = useSelect(
-		( select ) => siteSlug && select( SITE_STORE ).getSiteIdBySlug( siteSlug ),
-		undefined
+		( select ) => siteSlug && ( select( SITE_STORE ) as SiteSelect ).getSiteIdBySlug( siteSlug ),
+		[ siteSlug ]
 	);
 	const isRequesting = useSelector( ( state ) => isRequestingSites( state ) );
 	const hasManageOptionsCap = useSelector( ( state ) =>

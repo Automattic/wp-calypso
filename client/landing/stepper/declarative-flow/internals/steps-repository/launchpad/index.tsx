@@ -16,6 +16,7 @@ import { successNotice } from 'calypso/state/notices/actions';
 import { useQuery } from '../../../../hooks/use-query';
 import StepContent from './step-content';
 import type { Step } from '../../types';
+import type { SiteSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -35,7 +36,10 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 	const dispatch = useDispatch();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
-	const fetchingSiteError = useSelect( ( select ) => select( SITE_STORE ).getFetchingSiteError() );
+	const fetchingSiteError = useSelect(
+		( select ) => ( select( SITE_STORE ) as SiteSelect ).getFetchingSiteError(),
+		[]
+	);
 
 	if ( ! isLoggedIn ) {
 		window.location.replace( `/home/${ siteSlug }` );

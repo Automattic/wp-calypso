@@ -32,6 +32,9 @@ export * from './templates';
 export * from './onboard/types';
 export * from './domain-suggestions/types';
 export * from './plans/types';
+export * from './subscriber/types';
+export * from './launch/types';
+export * from './user/types';
 
 export {
 	Analyzer,
@@ -62,4 +65,11 @@ export { getContextResults } from './contextual-help/contextual-help';
 export { generateAdminSections } from './contextual-help/admin-sections';
 export type { LinksForSection } from './contextual-help/contextual-help';
 export * from './contextual-help/constants';
-export type { HelpCenterSite } from './help-center/types';
+export type { AnalyzerSelect } from './analyzer/types';
+export type { I18nSelect } from './i18n/types';
+export type { HelpCenterSite, HelpCenterSelect } from './help-center/types';
+export type { ProductsListSelect } from './products-list/types';
+export type { OnboardSelect } from './onboard';
+export type { StepperInternalSelect } from './stepper-internal';
+export type { WpcomFeaturesSelect } from './wpcom-features/types';
+export type { WpcomPlansUISelect } from './wpcom-plans-ui/types';

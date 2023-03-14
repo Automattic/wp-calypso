@@ -6,18 +6,19 @@ import { __, sprintf } from '@wordpress/i18n';
 import * as React from 'react';
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
 import { LAUNCH_STORE } from '../../stores';
+import type { LaunchSelect } from '@automattic/data-stores';
 
 import './styles.scss';
 
 const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onNextStep } ) => {
 	const { domain, LaunchStep, selectedPlanProductId } = useSelect( ( select ) => {
-		const launchStore = select( LAUNCH_STORE );
+		const launchStore: LaunchSelect = select( LAUNCH_STORE );
 		return {
 			domain: launchStore.getSelectedDomain(),
 			LaunchStep: launchStore.getLaunchStep(),
 			selectedPlanProductId: launchStore.getSelectedPlanProductId(),
 		};
-	} );
+	}, [] );
 
 	const { setPlanProductId, setStep } = useDispatch( LAUNCH_STORE );
 

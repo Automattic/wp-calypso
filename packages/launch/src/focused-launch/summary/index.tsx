@@ -32,6 +32,7 @@ import FocusedLaunchSummaryItem, {
 	TrailingContentSide,
 } from './focused-launch-summary-item';
 import type { Plan, PlanProduct } from '../../stores';
+import type { LaunchSelect, PlansSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -279,19 +280,24 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 
 	const { setPlanProductId } = useDispatch( LAUNCH_STORE );
 
-	const [ selectedPlanProductId, billingPeriod ] = useSelect( ( select ) => [
-		select( LAUNCH_STORE ).getSelectedPlanProductId(),
-		select( LAUNCH_STORE ).getLastPlanBillingPeriod(),
-	] );
-
-	const { selectedPlan, selectedPlanProduct } = useSelect( ( select ) => {
-		const plansStore = select( PLANS_STORE );
-
+	const { selectedPlanProductId, billingPeriod } = useSelect( ( select ) => {
 		return {
-			selectedPlan: plansStore.getPlanByProductId( selectedPlanProductId, locale ),
-			selectedPlanProduct: plansStore.getPlanProductById( selectedPlanProductId ),
+			selectedPlanProductId: ( select( LAUNCH_STORE ) as LaunchSelect ).getSelectedPlanProductId(),
+			billingPeriod: ( select( LAUNCH_STORE ) as LaunchSelect ).getLastPlanBillingPeriod(),
 		};
-	} );
+	}, [] );
+
+	const { selectedPlan, selectedPlanProduct } = useSelect(
+		( select ) => {
+			const plansStore: PlansSelect = select( PLANS_STORE );
+
+			return {
+				selectedPlan: plansStore.getPlanByProductId( selectedPlanProductId, locale ),
+				selectedPlanProduct: plansStore.getPlanProductById( selectedPlanProductId ),
+			};
+		},
+		[ selectedPlanProductId, locale ]
+	);
 
 	// persist non-default selected paid plan if it's paid in order to keep displaying it in the plan picker
 	const [ nonDefaultPaidPlan, setNonDefaultPaidPlan ] = React.useState< Plan | undefined >();
@@ -510,21 +516,22 @@ type StepIndexRenderFunction = ( renderOptions: {
 const Summary: React.FunctionComponent = () => {
 	const { siteId } = React.useContext( LaunchContext );
 
-	const [ hasSelectedDomain, isSiteTitleStepVisible, selectedDomain, selectedPlanProductId ] =
+	const { hasSelectedDomain, isSiteTitleStepVisible, selectedDomain, selectedPlanProductId } =
 		useSelect( ( select ) => {
-			const launchStore = select( LAUNCH_STORE );
-			const { isSiteTitleStepVisible, domain, planProductId } = launchStore.getState();
+			const launchStore: LaunchSelect = select( LAUNCH_STORE );
+			const launchStoreState = launchStore.getState();
+			const { domain, planProductId } = launchStoreState;
 
-			return [
-				launchStore.hasSelectedDomainOrSubdomain(),
-				isSiteTitleStepVisible,
-				domain,
-				planProductId,
-			];
+			return {
+				hasSelectedDomain: launchStore.hasSelectedDomainOrSubdomain(),
+				isSiteTitleStepVisible: launchStoreState.isSiteTitleStepVisible,
+				selectedDomain: domain,
+				selectedPlanProductId: planProductId,
+			};
 		}, [] );
 
 	const isSelectedPlanPaid = useSelect(
-		( select ) => select( LAUNCH_STORE ).isSelectedPlanPaid(),
+		( select ) => ( select( LAUNCH_STORE ) as LaunchSelect ).isSelectedPlanPaid(),
 		[]
 	);
 
