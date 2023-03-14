@@ -2,9 +2,10 @@ import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import useGetDisplayDate from 'calypso/components/jetpack/daily-backup-status/use-get-display-date';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import useRewindableActivityLogQuery from 'calypso/data/activity-log/use-rewindable-activity-log-query';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
+import { isSuccessfulRealtimeBackup } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
-import { useRealtimeBackupStatus } from 'calypso/my-sites/backup/status/hooks';
 import ExpandedCard from './expanded-card';
 import type { Site } from '../types';
 
@@ -14,24 +15,33 @@ interface Props {
 
 const BackupStorageContent = ( { siteId, siteUrl }: { siteId: number; siteUrl: string } ) => {
 	const translate = useTranslate();
+
 	const moment = useLocalizedMoment();
-	const selectedDate = useDateWithOffset( moment() );
+	const endDate = useDateWithOffset( moment().endOf( 'day' ) );
+	const startDate = useDateWithOffset( moment().subtract( 1, 'day' ).startOf( 'day' ) );
 
-	const { lastSuccessfulBackupOnDate, lastBackupAttemptOnDate, isLoading } =
-		useRealtimeBackupStatus( siteId, selectedDate );
+	const { isLoading, data } = useRewindableActivityLogQuery(
+		siteId,
+		{
+			after: startDate?.toISOString() ?? undefined,
+			before: endDate?.toISOString() ?? undefined,
+			sortOrder: 'desc',
+		},
+		{
+			select: ( data: any[] ) => data.filter( ( a ) => isSuccessfulRealtimeBackup( a ) ),
+		}
+	);
 
-	const realtimeBackup = lastSuccessfulBackupOnDate || lastBackupAttemptOnDate;
+	const realtimeBackup = data?.[ 0 ] ?? null;
 
 	const lastBackupDate = useDateWithOffset( realtimeBackup?.activityTs );
 
 	const getDisplayDate = useGetDisplayDate();
 	const displayDate = getDisplayDate( lastBackupDate, false );
 
-	const pluginName = [ 'plugin__activated', 'plugin__installed' ].includes(
-		realtimeBackup?.activityName
-	)
-		? realtimeBackup?.activityDescription[ 0 ]?.children[ 0 ]
-		: null;
+	const pluginName =
+		realtimeBackup?.activityName.startsWith( 'plugin__' ) &&
+		realtimeBackup.activityDescription[ 0 ]?.children[ 0 ];
 
 	const backupTitle =
 		realtimeBackup?.activityDescription[ 0 ]?.children[ 0 ]?.text ?? realtimeBackup?.activityTitle;
@@ -50,9 +60,8 @@ const BackupStorageContent = ( { siteId, siteUrl }: { siteId: number; siteUrl: s
 							<TextPlaceholder />
 						) : (
 							<>
-								{ backupTitle
-									? `${ backupTitle } ${ pluginName ? ` - ${ pluginName }` : '' }`
-									: '' }
+								{ backupTitle }
+								{ pluginName ? ` - ${ pluginName }` : '' }
 							</>
 						) }
 					</div>
