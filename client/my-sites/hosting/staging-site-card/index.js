@@ -3,10 +3,12 @@ import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { localize } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { useQueryClient } from 'react-query';
 import { connect, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import { LoadingBar } from 'calypso/components/loading-bar';
+import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
 import { urlToSlug } from 'calypso/lib/url';
 import { useAddStagingSiteMutation } from 'calypso/my-sites/hosting/staging-site-card/use-add-staging-site';
 import { useCheckStagingSiteStatus } from 'calypso/my-sites/hosting/staging-site-card/use-check-staging-site-status';
@@ -40,12 +42,15 @@ const StyledLoadingBar = styled( LoadingBar )( {
 const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
 
 	const { data: stagingSites, isLoading: isLoadingStagingSites } = useStagingSite( siteId, {
 		enabled: ! disabled,
 	} );
 
-	const stagingSite = stagingSites && stagingSites.length ? stagingSites[ 0 ] : [];
+	const stagingSite = useMemo( () => {
+		return stagingSites && stagingSites.length ? stagingSites[ 0 ] : [];
+	}, [ stagingSites ] );
 
 	const showAddStagingSite = ! isLoadingStagingSites && stagingSites && stagingSites.length === 0;
 	const showManageStagingSite = ! isLoadingStagingSites && stagingSites && stagingSites.length > 0;
@@ -57,9 +62,10 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 
 	useEffect( () => {
 		if ( wasCreating && isStagingSiteTransferComplete ) {
+			queryClient.invalidateQueries( [ USE_SITE_EXCERPTS_QUERY_KEY ] );
 			dispatch( successNotice( __( 'Staging site added.' ) ) );
 		}
-	}, [ dispatch, __, isStagingSiteTransferComplete, wasCreating ] );
+	}, [ dispatch, queryClient, __, isStagingSiteTransferComplete, wasCreating ] );
 
 	useEffect( () => {
 		setProgress( ( prevProgress ) => prevProgress + 0.1 );
