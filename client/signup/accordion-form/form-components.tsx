@@ -10,7 +10,6 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextArea from 'calypso/components/forms/form-textarea';
 import InfoPopover from 'calypso/components/info-popover';
 import SocialLogo from 'calypso/components/social-logo';
-import Tooltip from 'calypso/components/tooltip';
 import { tip } from 'calypso/signup/icons';
 
 // TODO: This probably should be moved out to a more suitable folder name like difm-components
