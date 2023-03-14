@@ -19,7 +19,7 @@ export function FeedbackSection( {
 			target: { value },
 		} = e;
 		dispatch( updateFeedback( value ) );
-		onChangeField && onChangeField( e );
+		onChangeField?.( e );
 	};
 	return (
 		<>
