@@ -147,7 +147,6 @@ function WebsiteContentSubmitted( { primaryDomain, siteSlug }: Props ) {
 
 function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ) {
 	const siteSlug = useSelector( ( state: AppState ) => getSiteSlug( state, siteId ) );
-	useQuerySitePurchases( siteId );
 	const isLoadingSite = useSelector(
 		( state: AppState ) =>
 			isRequestingSite( state, siteId ) ||
@@ -160,6 +159,8 @@ function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ) {
 	const primaryDomain = useSelector( ( state: AppState ) =>
 		getPrimaryDomainBySiteId( state, siteId )
 	);
+
+	useQuerySitePurchases( siteId );
 
 	if ( ! primaryDomain || ! siteSlug || isLoadingSite ) {
 		return (
