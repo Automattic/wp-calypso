@@ -253,7 +253,7 @@ const setupDefaultContext = ( entrypoint, sectionName ) => ( req, res, next ) =>
 };
 
 function setUpLocalLanguageRevisions( req ) {
-	performanceMark( req.context, 'setUpLocalLanguageRevisions', true );
+	performanceMark( req.context, 'setup_local_lang_revs', true );
 	const rootPath = path.join( __dirname, '..', '..', '..' );
 	const langRevisionsPath = path.join( rootPath, 'public', 'languages', 'lang-revisions.json' );
 
@@ -261,12 +261,14 @@ function setUpLocalLanguageRevisions( req ) {
 	const langPromise = fs.promises
 		.readFile( langRevisionsPath, 'utf8' )
 		.then( ( languageRevisions ) => {
-			performanceMark( req.context, 'parse language file', true );
+			performanceMark( req.context, 'parse_lang_file', true );
 			req.context.languageRevisions = JSON.parse( languageRevisions );
+			performanceMark( req.context, 'done_parse_lang_file', true );
 
 			return languageRevisions;
 		} )
 		.catch( ( error ) => {
+			performanceMark( req.context, 'err_parse_lang_file', true );
 			console.error( 'Failed to read the language revision files.', error );
 
 			throw error;
@@ -276,7 +278,7 @@ function setUpLocalLanguageRevisions( req ) {
 }
 
 function setUpLoggedOutRoute( req, res, next ) {
-	performanceMark( req.context, 'setUpLoggedOutRoute', true );
+	performanceMark( req.context, 'setup_logged_out_route', true );
 	res.set( {
 		'X-Frame-Options': 'SAMEORIGIN',
 	} );
@@ -289,13 +291,17 @@ function setUpLoggedOutRoute( req, res, next ) {
 
 	Promise.all( setupRequests )
 		.then( () => {
-			performanceMark( req.context, 'done with loggedOut setup requests', true );
+			performanceMark( req.context, 'finish_logged_out_setup', true );
 			next();
 		} )
-		.catch( ( error ) => next( error ) );
+		.catch( ( error ) => {
+			performanceMark( req.context, 'err_logged_out_setup' );
+			next( error );
+		} );
 }
 
 function setUpLoggedInRoute( req, res, next ) {
+	performanceMark( req.context, 'setup_logged_in_route' );
 	let redirectUrl;
 	let start;
 
@@ -308,6 +314,7 @@ function setUpLoggedInRoute( req, res, next ) {
 	if ( req.context.useTranslationChunks ) {
 		setupRequests.push( setUpLocalLanguageRevisions( req ) );
 	} else {
+		performanceMark( req.context, 'download_lang_revs', true );
 		const LANG_REVISION_FILE_URL = 'https://widgets.wp.com/languages/calypso/lang-revisions.json';
 		const langPromise = superagent
 			.get( LANG_REVISION_FILE_URL )
@@ -315,10 +322,12 @@ function setUpLoggedInRoute( req, res, next ) {
 				const languageRevisions = filterLanguageRevisions( response.body );
 
 				req.context.languageRevisions = languageRevisions;
+				performanceMark( req.context, 'finish_download_lang_revs', true );
 
 				return languageRevisions;
 			} )
 			.catch( ( error ) => {
+				performanceMark( req.context, 'err_download_lang_revs', true );
 				console.error( 'Failed to fetch the language revision files.', error );
 
 				throw error;
@@ -328,6 +337,7 @@ function setUpLoggedInRoute( req, res, next ) {
 	}
 
 	if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
+		performanceMark( req.context, 'user_bootstrap', true );
 		const protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
 
 		redirectUrl = login( {
@@ -346,6 +356,7 @@ function setUpLoggedInRoute( req, res, next ) {
 
 		const userPromise = getBootstrappedUser( req )
 			.then( ( data ) => {
+				performanceMark( req.context, 'finish_fetch_user_bootstrap', true );
 				const end = new Date().getTime() - start;
 
 				debug( 'Rendering with bootstrapped user object. Fetched in %d ms', end );
@@ -393,6 +404,7 @@ function setUpLoggedInRoute( req, res, next ) {
 						return;
 					}
 				}
+				performanceMark( req.context, 'finish_user_bootstrap', true );
 			} )
 			.catch( ( error ) => {
 				if ( error.error === 'authorization_required' ) {
@@ -404,6 +416,7 @@ function setUpLoggedInRoute( req, res, next ) {
 					} );
 					res.redirect( redirectUrl );
 				} else {
+					performanceMark( req.context, 'err_user_bootstrap', true );
 					let errorMessage;
 
 					if ( error.error ) {
@@ -412,7 +425,7 @@ function setUpLoggedInRoute( req, res, next ) {
 						errorMessage = error.message;
 					}
 
-					console.error( 'API Error: ' + errorMessage );
+					req.logger.error( 'API Error: ' + errorMessage );
 				}
 
 				throw error;
@@ -422,8 +435,14 @@ function setUpLoggedInRoute( req, res, next ) {
 	}
 
 	Promise.all( setupRequests )
-		.then( () => next() )
-		.catch( ( error ) => next( error ) );
+		.then( () => {
+			performanceMark( req.context, 'finish_logged_in_setup' );
+			next();
+		} )
+		.catch( ( error ) => {
+			performanceMark( req.context, 'err_logged_in_setup' );
+			next( error );
+		} );
 }
 
 /**
