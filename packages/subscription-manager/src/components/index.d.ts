@@ -84,8 +84,8 @@ declare module 'calypso/components/section-nav/item' {
 
 declare module 'calypso/components/route' {
 	export const useCurrentRoute: () => {
-		currentSection: unkown;
+		currentSection: unknown;
 		currentRoute: string;
-		currentQuery: unkown;
+		currentQuery: unknown;
 	};
 }
