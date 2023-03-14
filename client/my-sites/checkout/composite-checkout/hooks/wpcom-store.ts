@@ -1,4 +1,4 @@
-import { register, registerStore } from '@wordpress/data';
+import { register, createReduxStore } from '@wordpress/data';
 import { useRef } from 'react';
 import {
 	emptyManagedContactDetails,
@@ -38,11 +38,7 @@ type WpcomStoreAction =
 	  }
 	| { type: 'SET_VAT_DETAILS'; payload: VatDetails };
 
-export const STORE_KEY = 'wpcom-checkout';
-
-export interface WpcomCheckoutStore extends ReturnType< typeof register > {
-	getState: () => WpcomStoreState;
-}
+export const CHECKOUT_STORE_KEY = 'wpcom-checkout';
 
 export type WpcomCheckoutStoreSelectors = SelectFromMap< typeof selectors >;
 export type WpcomCheckoutStoreActions = DispatchFromMap< typeof actions >;
@@ -125,14 +121,7 @@ const selectors = {
 	},
 };
 
-export function useWpcomStore(): WpcomCheckoutStore | undefined {
-	// Only register once
-	const registerIsComplete = useRef< boolean >( false );
-	if ( registerIsComplete.current ) {
-		return undefined;
-	}
-	registerIsComplete.current = true;
-
+function createStore() {
 	function contactReducer(
 		state: ManagedContactDetails,
 		action: WpcomStoreAction
@@ -188,7 +177,7 @@ export function useWpcomStore(): WpcomCheckoutStore | undefined {
 		}
 	}
 
-	return registerStore( STORE_KEY, {
+	return createReduxStore( CHECKOUT_STORE_KEY, {
 		reducer( state: WpcomStoreState | undefined, action: WpcomStoreAction ): WpcomStoreState {
 			const checkedState =
 				state === undefined ? getInitialWpcomStoreState( emptyManagedContactDetails ) : state;
@@ -201,4 +190,20 @@ export function useWpcomStore(): WpcomCheckoutStore | undefined {
 		actions,
 		selectors,
 	} );
+}
+
+export function useWpcomStore() {
+	// Only register once
+	const memoizedStore = useRef< ReturnType< typeof createStore > >();
+	if ( memoizedStore.current ) {
+		return memoizedStore.current;
+	}
+
+	const store = createStore();
+
+	register( store );
+
+	memoizedStore.current = store;
+
+	return store;
 }
