@@ -150,7 +150,7 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 			hasSecondaryAction={ true }
 			secondaryActionText={ translate( 'Search for another domain' ) }
 			secondaryActionUrl={ searchLink }
-			badgeText="asldkajsdlkajsdlwqlewkjl-0eqwkjhkwjh.com"
+			badgeText={ domainSuggestionName }
 			timing={ 2 }
 			taskId={ TASK_DOMAIN_UPSELL }
 		/>
