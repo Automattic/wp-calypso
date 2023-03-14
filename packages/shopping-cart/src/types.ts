@@ -576,6 +576,7 @@ export interface ResponseCartGiftDetails {
 
 export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	purchaseId?: string;
+	isAkismetSitelessCheckout?: boolean;
 	isJetpackCheckout?: boolean;
 	isGiftPurchase?: boolean;
 	jetpackSiteSlug?: string;
