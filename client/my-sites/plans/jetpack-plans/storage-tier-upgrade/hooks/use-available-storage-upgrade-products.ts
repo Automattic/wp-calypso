@@ -10,7 +10,7 @@ import { TIER_1_SLUGS, TIER_2_SLUGS } from 'calypso/my-sites/plans/jetpack-plans
 import { getSlugInTerm } from 'calypso/my-sites/plans/jetpack-plans/convert-slug-terms';
 import getPurchasedStorageSubscriptions from 'calypso/my-sites/plans/jetpack-plans/get-purchased-storage-subscriptions';
 import { Duration, SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
-import useGetStorageUpgradeProduct from './use-get-storage-upgrade-product';
+import useGetStorageUpgradeProducts from './use-get-storage-upgrade-products';
 
 const useAvailableStorageUpgradeProducts = (
 	siteId: number,
@@ -19,7 +19,7 @@ const useAvailableStorageUpgradeProducts = (
 	const purchasedStorageSlugs = useSelector( ( state ) =>
 		getPurchasedStorageSubscriptions( state, siteId )
 	).map( ( { productSlug } ) => productSlug );
-	const getStorageUpgradeProduct = useGetStorageUpgradeProduct();
+	const getStorageUpgradeProducts = useGetStorageUpgradeProducts();
 
 	const sameDurationFilter = ( p: SelectorProduct ) => p.term === duration;
 
@@ -50,10 +50,14 @@ const useAvailableStorageUpgradeProducts = (
 			! allDurationsSubscriptions.includes( productSlug );
 	}, [ purchasedStorageSlugs ] );
 
-	return [
-		...TIER_1_SLUGS.map( getStorageUpgradeProduct ),
-		...TIER_2_SLUGS.map( getStorageUpgradeProduct ),
-	]
+	const allUpgradeProducts: SelectorProduct[] = [ ...TIER_1_SLUGS, ...TIER_2_SLUGS ].reduce(
+		( acc: SelectorProduct[], slug: string ) => {
+			return [ ...acc, ...( getStorageUpgradeProducts( slug ) as SelectorProduct[] ) ];
+		},
+		[]
+	);
+
+	return allUpgradeProducts
 		.filter( ( product ): product is SelectorProduct => !! product )
 		.filter( sameDurationFilter )
 		.filter( sameProductType )
