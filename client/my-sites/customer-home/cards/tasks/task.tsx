@@ -24,10 +24,17 @@ const Task = ( {
 	actionTarget,
 	actionText,
 	actionUrl,
+	secondaryActionButton,
+	secondaryActionBusy = false,
+	secondaryActionOnClick,
+	secondaryActionTarget,
+	secondaryActionText,
+	secondaryActionUrl,
 	badgeText,
 	completeOnStart = false,
 	description,
 	hasAction = true,
+	hasSecondaryAction = false,
 	illustration,
 	isLoading: forceIsLoading = false,
 	isUrgent = false,
@@ -42,6 +49,8 @@ const Task = ( {
 }: {
 	actionOnClick?: () => void;
 	actionBusy?: boolean;
+	secondaryActionOnClick?: () => void;
+	secondaryActionBusy?: boolean;
 	badgeText?: ReactNode;
 	completeOnStart?: boolean;
 	description: ReactNode;
@@ -71,7 +80,23 @@ const Task = ( {
 			actionUrl: string;
 			actionButton?: ReactNode;
 	  }
- ) ) => {
+ ) &
+	(
+		| {
+				hasSecondaryAction?: false;
+				secondaryActionTarget?: string;
+				secondaryActionText?: ReactNode;
+				secondaryActionUrl?: string;
+				secondaryActionButton?: ReactNode;
+		  }
+		| {
+				hasSecondaryAction: true;
+				secondaryActionTarget: string;
+				secondaryActionText: ReactNode;
+				secondaryActionUrl: string;
+				secondaryActionButton?: ReactNode;
+		  }
+	 ) ) => {
 	const [ isLoading, setIsLoading ] = useState( forceIsLoading );
 	const [ areSkipOptionsVisible, setSkipOptionsVisible ] = useState( false );
 	const dispatch = useDispatch();
@@ -98,6 +123,26 @@ const Task = ( {
 					task: taskId,
 				} ),
 				bumpStat( 'calypso_customer_home', 'task_start' )
+			)
+		);
+	};
+
+	const startSecondaryTask = () => {
+		if ( secondaryActionOnClick instanceof Function ) {
+			secondaryActionOnClick();
+		}
+
+		if ( completeOnStart ) {
+			setIsLoading( true );
+			skipCard( taskId );
+		}
+
+		dispatch(
+			composeAnalytics(
+				recordTracksEvent( 'calypso_customer_home_task_start_secondary', {
+					task: taskId,
+				} ),
+				bumpStat( 'calypso_customer_home', 'task_start_secondary' )
 			)
 		);
 	};
@@ -151,6 +196,29 @@ const Task = ( {
 		);
 	};
 
+	const renderSecondaryAction = () => {
+		if ( ! hasSecondaryAction ) {
+			return null;
+		}
+
+		if ( secondaryActionButton ) {
+			return <ActionButtonWithStats>{ secondaryActionButton }</ActionButtonWithStats>;
+		}
+
+		return (
+			<Button
+				className="task__action2"
+				scary={ scary }
+				onClick={ startSecondaryTask }
+				href={ secondaryActionUrl }
+				target={ secondaryActionTarget }
+				busy={ secondaryActionBusy }
+			>
+				{ secondaryActionText }
+			</Button>
+		);
+	};
+
 	return (
 		<div className={ classnames( 'task', { 'is-loading': isLoading, 'is-urgent': isUrgent } ) }>
 			{ isLoading && <Spinner /> }
@@ -170,6 +238,7 @@ const Task = ( {
 				<p className="task__description">{ description }</p>
 				<div className="task__actions">
 					{ renderAction() }
+					{ renderSecondaryAction() }
 					{ showSkip && (
 						<Button
 							className="task__skip is-link"
