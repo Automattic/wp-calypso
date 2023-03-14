@@ -6,7 +6,6 @@ import {
 	HorizontalGrid,
 	LabelBlock,
 } from 'calypso/signup/accordion-form/form-components';
-import { ValidationErrors } from 'calypso/signup/accordion-form/types';
 import { useTranslatedPageDescriptions } from 'calypso/signup/difm/translation-hooks';
 import {
 	mediaRemoved,
@@ -17,6 +16,7 @@ import {
 } from 'calypso/state/signup/steps/website-content/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { MediaUploadData, WordpressMediaUpload } from '../wordpress-media-upload';
+import type { ValidationErrors } from 'calypso/signup/accordion-form/types';
 import type { BBETranslationContext } from 'calypso/signup/difm/translation-hooks';
 import type { PageData } from 'calypso/state/signup/steps/website-content/types';
 
@@ -99,7 +99,7 @@ export function DefaultPageDetails( {
 				fieldValue: value,
 			} )
 		);
-		onChangeField && onChangeField( e );
+		onChangeField?.( e );
 	};
 
 	const imageCaption = translate(
@@ -122,7 +122,6 @@ export function DefaultPageDetails( {
 			case 'IMAGE':
 			default:
 				return imageCaption;
-				break;
 		}
 	};
 	const fieldName = page.id + CONTENT_SUFFIX;

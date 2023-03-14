@@ -173,7 +173,7 @@ export function WordpressMediaUpload( {
 		const fileParts = fileName.split( '.' );
 		const extension = fileParts[ fileParts.length - 1 ];
 
-		if ( allowedFileTypes.includes( extension ) ) {
+		if ( allowedFileTypes.includes( extension?.toLowerCase() ) ) {
 			return true;
 		}
 		return false;

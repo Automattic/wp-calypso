@@ -1,15 +1,9 @@
-/* eslint-disable no-restricted-imports */
-/**
- * External Dependencies
- */
 import { useHappychatAuth, happychatAuthQueryKey } from '@automattic/happychat-connection';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
 import { useQueryClient } from 'react-query';
-/**
- * Internal Dependencies
- */
 import { HELP_CENTER_STORE } from './stores';
+import type { HelpCenterSelect } from '@automattic/data-stores';
 
 /**
  * This hook is the bridge between HappyChat and Help Center.
@@ -22,14 +16,15 @@ import { HELP_CENTER_STORE } from './stores';
 
 export function useHCWindowCommunicator( isMinimized: boolean ) {
 	const { supportSite, subject, message, chatTag, iframe } = useSelect( ( select ) => {
+		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return {
-			supportSite: select( HELP_CENTER_STORE ).getSite(),
-			subject: select( HELP_CENTER_STORE ).getSubject(),
-			message: select( HELP_CENTER_STORE ).getMessage(),
-			chatTag: select( HELP_CENTER_STORE ).getChatTag(),
-			iframe: select( HELP_CENTER_STORE ).getIframe(),
+			supportSite: helpCenterSelect.getSite(),
+			subject: helpCenterSelect.getSubject(),
+			message: helpCenterSelect.getMessage(),
+			chatTag: helpCenterSelect.getChatTag(),
+			iframe: helpCenterSelect.getIframe(),
 		};
-	} );
+	}, [] );
 	const queryClient = useQueryClient();
 	const [ unreadCount, setUnreadCount ] = useState( 0 );
 	const [ chatStatus, setChatStatus ] = useState( '' );

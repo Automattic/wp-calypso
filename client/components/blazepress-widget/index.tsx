@@ -60,6 +60,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	const handleGetStartedMessageClose = () => setHiddenHeader( false );
 
 	const onClose = ( goToCampaigns?: boolean ) => {
+		queryClient.invalidateQueries( [ 'promote-post-campaigns', siteId ] );
 		if ( goToCampaigns ) {
 			page( `/advertising/${ siteSlug }/campaigns` );
 		} else {

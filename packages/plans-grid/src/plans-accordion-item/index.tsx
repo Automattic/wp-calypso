@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import * as React from 'react';
 import PlansFeatureList from '../plans-feature-list';
 import { PLANS_STORE } from '../stores';
-import type { DomainSuggestions, Plans } from '@automattic/data-stores';
+import type { DomainSuggestions, Plans, PlansSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -56,8 +56,9 @@ const PlanAccordionItem: React.FunctionComponent< Props > = ( {
 	const { __, hasTranslation } = useI18n();
 	const locale = useLocale();
 
-	const planProduct = useSelect( ( select ) =>
-		select( PLANS_STORE ).getPlanProduct( slug, billingPeriod )
+	const planProduct = useSelect(
+		( select ) => ( select( PLANS_STORE ) as PlansSelect ).getPlanProduct( slug, billingPeriod ),
+		[ slug, billingPeriod ]
 	);
 
 	// show a nbsp in price while loading to prevent a jump in the UI

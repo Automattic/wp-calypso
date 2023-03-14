@@ -66,6 +66,10 @@
 	& .ellipsis-menu {
 		transform: translateY(-6px);
 		height: 20px;
+
+		.button.is-borderless {
+			padding: 0 15px 10px 15px;
+		}
 	}
 
 	& .ellipsis-menu__toggle {

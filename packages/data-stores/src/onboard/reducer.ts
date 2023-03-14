@@ -1,7 +1,7 @@
 import { combineReducers } from '@wordpress/data';
 import { SiteGoal } from './constants';
 import type { OnboardAction } from './actions';
-import type { DomainForm } from './types';
+import type { DomainForm, ProfilerData } from './types';
 import type { DomainSuggestion } from '../domain-suggestions';
 import type { FeatureId } from '../wpcom-features/types';
 // somewhat hacky, but resolves the circular dependency issue
@@ -496,6 +496,19 @@ const pluginsToVerify: Reducer< string[] | undefined, OnboardAction > = ( state,
 	return state;
 };
 
+export const profilerData: Reducer< ProfilerData | undefined, OnboardAction > = (
+	state,
+	action
+) => {
+	if ( action.type === 'SET_PROFILER_DATA' ) {
+		return action.profilerData;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	anchorPodcastId,
 	anchorEpisodeId,
@@ -540,6 +553,7 @@ const reducer = combineReducers( {
 	productCartItems,
 	isMigrateFromWp,
 	pluginsToVerify,
+	profilerData,
 } );
 
 export type State = ReturnType< typeof reducer >;

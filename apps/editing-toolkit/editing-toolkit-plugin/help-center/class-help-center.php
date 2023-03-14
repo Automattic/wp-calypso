@@ -211,7 +211,9 @@ class Help_Center {
 	 * Returns true if the current site is a support site.
 	 */
 	public function is_support_site() {
-		return defined( 'WPCOM_SUPPORT_BLOG_IDS' ) && in_array( get_current_blog_id(), WPCOM_SUPPORT_BLOG_IDS, true );
+		// Disable the Help Center in support sites for now. It may be causing issues with notifications.
+		return false;
+		// Disable for now: `return defined( 'WPCOM_SUPPORT_BLOG_IDS' ) && in_array( get_current_blog_id(), WPCOM_SUPPORT_BLOG_IDS, true )`.
 	}
 
 	/**

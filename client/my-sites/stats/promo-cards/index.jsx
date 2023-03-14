@@ -4,7 +4,7 @@ import { translate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-import blazeDropDownIllustration from 'calypso/assets/images/illustrations/blaze-drop-down.svg';
+import blazeIllustration from 'calypso/assets/images/customer-home/illustration--blaze.svg';
 import wordpressSeoIllustration from 'calypso/assets/images/illustrations/wordpress-seo-premium.svg';
 import PromoCardBlock from 'calypso/blocks/promo-card-block';
 import DotPager from 'calypso/components/dot-pager';
@@ -121,7 +121,7 @@ export default function PromoCards( { isOdysseyStats, slug, pageSlug } ) {
 								'Use WordPress Blaze to increase your reach by promoting your work to the larger WordPress.com community of blogs and sites. '
 							) }
 							ctaText={ translate( 'Get started' ) }
-							image={ blazeDropDownIllustration }
+							image={ blazeIllustration }
 							href={ `/advertising/${ slug || '' }` }
 						/>
 					) }

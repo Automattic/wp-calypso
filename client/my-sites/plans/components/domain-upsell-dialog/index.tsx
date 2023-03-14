@@ -9,6 +9,7 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { WPCOM_PLANS_UI_STORE } from '../../store';
 import './style.scss';
+import type { WpcomPlansUISelect } from '@automattic/data-stores';
 
 const DomainUpsellDialog: React.FunctionComponent< {
 	domain: string;
@@ -18,8 +19,8 @@ const DomainUpsellDialog: React.FunctionComponent< {
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, selectedSiteId ) );
 	const { setShowDomainUpsellDialog } = useDispatch( WPCOM_PLANS_UI_STORE );
 	const isVisible = useSelect( ( select ) => {
-		return select( WPCOM_PLANS_UI_STORE ).isDomainUpsellDialogShown();
-	} );
+		return ( select( WPCOM_PLANS_UI_STORE ) as WpcomPlansUISelect ).isDomainUpsellDialogShown();
+	}, [] );
 
 	const onCloseDialog = useCallback( () => {
 		setShowDomainUpsellDialog( false );

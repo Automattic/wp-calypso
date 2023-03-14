@@ -27,6 +27,7 @@
 	"zendesk_presales_chat_key": "216bf91d-f10f-4f66-bf65-a0cba220cd38",
 	"features": {
 		"ad-tracking": false,
+		"akismet/siteless-checkout": true,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
@@ -158,7 +159,6 @@
 		"safari-idb-mitigation": true,
 		"security/security-checkup": true,
 		"seller-experience": true,
-		"sensei/onboarding": true,
 		"server-side-rendering": true,
 		"settings/modernize-reading-settings": true,
 		"settings/security/monitor": true,

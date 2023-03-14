@@ -5,23 +5,42 @@ import { useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import React from 'react';
 import NuxModal from '../nux-modal';
+import { selectors as wpcomWelcomeGuideSelectors } from '../store';
 import postPublishedImage from './images/post-published.svg';
-
+import type { SelectFromMap } from '@automattic/data-stores';
 import './style.scss';
+
+type WpcomWelcomeGuideSelectors = SelectFromMap< typeof wpcomWelcomeGuideSelectors >;
+type CoreEditorPlaceholder = {
+	getCurrentPost: ( ...args: unknown[] ) => { link: string };
+	getCurrentPostType: ( ...args: unknown[] ) => string;
+	isCurrentPostPublished: ( ...args: unknown[] ) => boolean;
+};
 
 /**
  * Show the first post publish modal
  */
 const PostPublishedModal: React.FC = () => {
-	const { link } = useSelect( ( select ) => select( 'core/editor' ).getCurrentPost() );
-	const postType = useSelect( ( select ) => select( 'core/editor' ).getCurrentPostType() );
+	const { link } = useSelect(
+		( select ) => ( select( 'core/editor' ) as CoreEditorPlaceholder ).getCurrentPost(),
+		[]
+	);
+	const postType = useSelect(
+		( select ) => ( select( 'core/editor' ) as CoreEditorPlaceholder ).getCurrentPostType(),
+		[]
+	);
 
-	const isCurrentPostPublished = useSelect( ( select ) =>
-		select( 'core/editor' ).isCurrentPostPublished()
+	const isCurrentPostPublished = useSelect(
+		( select ) => ( select( 'core/editor' ) as CoreEditorPlaceholder ).isCurrentPostPublished(),
+		[]
 	);
 	const previousIsCurrentPostPublished = useRef( isCurrentPostPublished );
-	const shouldShowFirstPostPublishedModal = useSelect( ( select ) =>
-		select( 'automattic/wpcom-welcome-guide' ).getShouldShowFirstPostPublishedModal()
+	const shouldShowFirstPostPublishedModal = useSelect(
+		( select ) =>
+			(
+				select( 'automattic/wpcom-welcome-guide' ) as WpcomWelcomeGuideSelectors
+			 ).getShouldShowFirstPostPublishedModal(),
+		[]
 	);
 	const [ isOpen, setIsOpen ] = useState( false );
 	const closeModal = () => setIsOpen( false );
