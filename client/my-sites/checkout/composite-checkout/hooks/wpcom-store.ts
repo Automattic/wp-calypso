@@ -1,5 +1,4 @@
 import { register, createReduxStore } from '@wordpress/data';
-import { useRef } from 'react';
 import {
 	emptyManagedContactDetails,
 	getInitialWpcomStoreState,
@@ -37,7 +36,7 @@ type WpcomStoreAction =
 	  }
 	| { type: 'SET_VAT_DETAILS'; payload: VatDetails };
 
-export const CHECKOUT_STORE_KEY = 'wpcom-checkout';
+const CHECKOUT_STORE_KEY = 'wpcom-checkout';
 
 const actions = {
 	applyDomainContactValidationResults( payload: ManagedContactDetailsErrors ): WpcomStoreAction {
@@ -188,18 +187,8 @@ function createStore() {
 	} );
 }
 
-export function useWpcomStore() {
-	// Only register once
-	const memoizedStore = useRef< ReturnType< typeof createStore > >();
-	if ( memoizedStore.current ) {
-		return memoizedStore.current;
-	}
+const store = createStore();
 
-	const store = createStore();
+register( store );
 
-	register( store );
-
-	memoizedStore.current = store;
-
-	return store;
-}
+export const CHECKOUT_STORE = store;
