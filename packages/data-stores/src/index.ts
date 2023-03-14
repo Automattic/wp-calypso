@@ -8,7 +8,6 @@ import * as Onboard from './onboard';
 import oneWeekPersistenceConfig from './one-week-persistence-config';
 import * as Plans from './plans';
 import * as ProductsList from './products-list';
-import * as Reader from './reader';
 import * as Site from './site';
 import * as StepperInternal from './stepper-internal';
 import * as Subscriber from './subscriber';
@@ -46,7 +45,6 @@ export {
 	WpcomPlansUI,
 	Launch,
 	WPCOMFeatures,
-	Reader,
 	Onboard,
 	oneWeekPersistenceConfig,
 	ProductsList,
