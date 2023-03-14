@@ -47,10 +47,7 @@ import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
-import {
-	CHECKOUT_STORE_KEY,
-	WpcomCheckoutStoreSelectors as _WpcomCheckoutStoreSelectors,
-} from '../hooks/wpcom-store';
+import { CHECKOUT_STORE_KEY } from '../hooks/wpcom-store';
 import { validateContactDetails } from '../lib/contact-validation';
 import getContactDetailsType from '../lib/get-contact-details-type';
 import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
@@ -73,8 +70,6 @@ import type { OnChangeItemVariant } from './item-variation-picker';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
 import type { RemoveProductFromCart, MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { CountryListItem } from '@automattic/wpcom-checkout';
-
-type WpcomCheckoutStoreSelectors = _WpcomCheckoutStoreSelectors | undefined;
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
@@ -192,12 +187,12 @@ export default function WPCheckout( {
 	const contactDetailsType = getContactDetailsType( responseCart );
 
 	const contactInfo = useSelect(
-		( sel ) => ( sel( CHECKOUT_STORE_KEY ) as WpcomCheckoutStoreSelectors )?.getContactInfo() ?? {},
+		( select ) => select( CHECKOUT_STORE_KEY )?.getContactInfo() ?? {},
 		[]
 	);
 
 	const vatDetailsInForm = useSelect(
-		( sel ) => ( sel( CHECKOUT_STORE_KEY ) as WpcomCheckoutStoreSelectors )?.getVatDetails() ?? {},
+		( select ) => select( CHECKOUT_STORE_KEY )?.getVatDetails() ?? {},
 		[]
 	);
 	const { setVatDetails, vatDetails: vatDetailsFromServer } = useVatDetails();

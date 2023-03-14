@@ -57,7 +57,6 @@ import weChatProcessor from '../lib/we-chat-processor';
 import webPayProcessor from '../lib/web-pay-processor';
 import { StoredCard } from '../types/stored-cards';
 import WPCheckout from './wp-checkout';
-import type { WpcomCheckoutStoreSelectors as _WpcomCheckoutStoreSelectors } from '../hooks/wpcom-store';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -66,8 +65,6 @@ import type {
 	CheckoutPaymentMethodSlug,
 	SitelessCheckoutType,
 } from '@automattic/wpcom-checkout';
-
-type WpcomCheckoutStoreSelectors = _WpcomCheckoutStoreSelectors | undefined;
 
 const { colors } = colorStudio;
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
@@ -362,12 +359,11 @@ export default function CheckoutMain( {
 		( allowedPaymentMethods.includes( 'card' ) && isLoadingStoredCards );
 
 	const contactDetails = useSelect(
-		( select ) => ( select( CHECKOUT_STORE_KEY ) as WpcomCheckoutStoreSelectors )?.getContactInfo(),
+		( select ) => select( CHECKOUT_STORE_KEY )?.getContactInfo(),
 		[]
 	);
 	const recaptchaClientId = useSelect(
-		( select ) =>
-			( select( CHECKOUT_STORE_KEY ) as WpcomCheckoutStoreSelectors )?.getRecaptchaClientId(),
+		( select ) => select( CHECKOUT_STORE_KEY )?.getRecaptchaClientId(),
 		[]
 	);
 

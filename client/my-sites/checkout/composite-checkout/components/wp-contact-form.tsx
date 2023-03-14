@@ -2,7 +2,7 @@ import { FormStatus, useFormStatus, useIsStepActive } from '@automattic/composit
 import styled from '@emotion/styled';
 import { useSelect } from '@wordpress/data';
 import useCachedDomainContactDetails from '../hooks/use-cached-domain-contact-details';
-import { CHECKOUT_STORE_KEY, WpcomCheckoutStoreSelectors } from '../hooks/wpcom-store';
+import { CHECKOUT_STORE_KEY } from '../hooks/wpcom-store';
 import ContactDetailsContainer from './contact-details-container';
 import type { CountryListItem, ContactDetailsType } from '@automattic/wpcom-checkout';
 
@@ -36,10 +36,7 @@ export default function WPContactForm( {
 	setShouldShowContactDetailsValidationErrors: ( allowed: boolean ) => void;
 } ) {
 	const contactInfo = useSelect(
-		( select ) =>
-			(
-				select( CHECKOUT_STORE_KEY ) as WpcomCheckoutStoreSelectors | undefined
-			 )?.getContactInfo() ?? {},
+		( select ) => select( CHECKOUT_STORE_KEY )?.getContactInfo() ?? {},
 		[]
 	);
 	const { formStatus } = useFormStatus();

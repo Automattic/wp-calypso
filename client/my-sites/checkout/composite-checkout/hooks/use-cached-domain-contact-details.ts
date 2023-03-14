@@ -18,12 +18,6 @@ import type {
 
 const debug = debugFactory( 'calypso:composite-checkout:use-cached-domain-contact-details' );
 
-type CheckoutStoreMappedActions = {
-	loadDomainContactDetailsFromCache?: (
-		payload: PossiblyCompleteDomainContactDetails
-	) => Promise< PossiblyCompleteDomainContactDetails >;
-};
-
 function useCachedContactDetails(): PossiblyCompleteDomainContactDetails | null {
 	const reduxDispatch = useReduxDispatch();
 	const haveRequestedCachedDetails = useRef< 'not-started' | 'pending' | 'done' >( 'not-started' );
@@ -58,8 +52,7 @@ function useCachedContactDetailsForCheckoutForm(
 			? getCountryPostalCodeSupport( countriesList, cachedContactDetails.countryCode )
 			: false;
 
-	const checkoutStoreActions: CheckoutStoreMappedActions | undefined =
-		useDispatch( CHECKOUT_STORE_KEY );
+	const checkoutStoreActions = useDispatch( CHECKOUT_STORE_KEY );
 	if ( ! checkoutStoreActions?.loadDomainContactDetailsFromCache ) {
 		throw new Error(
 			'useCachedContactDetailsForCheckoutForm must be run after the checkout data store has been initialized'

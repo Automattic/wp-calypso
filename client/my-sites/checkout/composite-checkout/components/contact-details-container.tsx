@@ -10,7 +10,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { CHECKOUT_STORE_KEY, WpcomCheckoutStoreSelectors } from '../hooks/wpcom-store';
+import { CHECKOUT_STORE_KEY } from '../hooks/wpcom-store';
 import {
 	prepareDomainContactDetails,
 	prepareDomainContactDetailsErrors,
@@ -55,10 +55,7 @@ export default function ContactDetailsContainer( {
 		.map( getDomain );
 	const checkoutActions = useDispatch( CHECKOUT_STORE_KEY );
 	const { email } = useSelect(
-		( select ) =>
-			(
-				select( CHECKOUT_STORE_KEY ) as WpcomCheckoutStoreSelectors | undefined
-			 )?.getContactInfo() ?? {},
+		( select ) => select( CHECKOUT_STORE_KEY )?.getContactInfo() ?? {},
 		[]
 	);
 

@@ -5,7 +5,6 @@ import {
 	getInitialWpcomStoreState,
 	managedContactDetailsUpdaters as updaters,
 } from '../types/wpcom-store-state';
-import type { DispatchFromMap, SelectFromMap } from '@automattic/data-stores';
 import type { DomainContactDetails } from '@automattic/shopping-cart';
 import type {
 	PossiblyCompleteDomainContactDetails,
@@ -39,9 +38,6 @@ type WpcomStoreAction =
 	| { type: 'SET_VAT_DETAILS'; payload: VatDetails };
 
 export const CHECKOUT_STORE_KEY = 'wpcom-checkout';
-
-export type WpcomCheckoutStoreSelectors = SelectFromMap< typeof selectors >;
-export type WpcomCheckoutStoreActions = DispatchFromMap< typeof actions >;
 
 const actions = {
 	applyDomainContactValidationResults( payload: ManagedContactDetailsErrors ): WpcomStoreAction {
