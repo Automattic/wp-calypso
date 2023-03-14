@@ -30,6 +30,7 @@ const wooexpress: Flow = {
 		];
 	},
 	useAssertConditions(): AssertConditionResult {
+		const { setProfilerData } = useDispatch( ONBOARD_STORE );
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
@@ -38,6 +39,20 @@ const wooexpress: Flow = {
 
 		const flowName = this.name;
 		const locale = useLocale();
+
+		const queryParams = new URLSearchParams( window.location.search );
+		const profilerData = queryParams.get( 'profilerdata' );
+
+		if ( profilerData ) {
+			try {
+				const decodedProfilerData = JSON.parse(
+					decodeURIComponent( escape( window.atob( profilerData ) ) )
+				);
+
+				setProfilerData( decodedProfilerData );
+				// Ignore any bad/invalid data and prevent it from causing downstream issues.
+			} catch {}
+		}
 
 		const getStartUrl = () => {
 			let hasFlowParams = false;

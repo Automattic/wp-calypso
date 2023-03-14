@@ -2,14 +2,33 @@
 
 A library for formatting currency.
 
-Exports two functions, `formatCurrency` and `getCurrencyObject`.
-
-`formatCurrency` is also the default export so either of these imports will work:
+The `formatCurrency` function is the main use of this package and is also the default export so any of these imports will work:
 
 ```
 import { formatCurrency } from '@automattic/format-currency';`
+formatCurrency( /* ... */ );
+
+// Or
 import formatCurrency from '@automattic/format-currency';`
+formatCurrency( /* ... */ );
+
+// Or
+import { createFormatter } from '@automattic/format-currency';`
+const formatter = createFormatter();
+formatter.formatCurrency( /* ... */ );
 ```
+
+The formatting functions exposed by this package are actually methods on a `CurrencyFormatter` object. A default global formatter is created by the package but you can create your own formatter by using the `createFormatter` function if you want more control.
+
+## createFormatter()
+
+`createFormatter(): CurrencyFormatter`
+
+Returns a formatter object that exposes the following methods:
+
+- `formatCurrency` (see below)
+- `getCurrencyObject` (see below)
+- `setDefaultLocale` (see below)
 
 ## formatCurrency()
 

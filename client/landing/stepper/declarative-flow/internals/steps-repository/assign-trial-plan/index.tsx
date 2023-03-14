@@ -29,6 +29,9 @@ const AssignTrialPlanStep: Step = function AssignTrialPlanStep( { navigation, da
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
 		[]
 	);
+	const profilerData =
+		useSelect( ( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getProfilerData(), [] ) ||
+		{};
 
 	useEffect( () => {
 		if ( submit ) {
@@ -42,6 +45,9 @@ const AssignTrialPlanStep: Step = function AssignTrialPlanStep( { navigation, da
 						`/sites/${ data?.siteSlug }/ecommerce-trial/add/ecommerce-trial-bundle-monthly`,
 						{
 							apiVersion: '1.1',
+						},
+						{
+							wpcom_woocommerce_onboarding: profilerData,
 						}
 					);
 

@@ -20,6 +20,7 @@ import { getPreference } from 'calypso/state/preferences/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import isWpcomStagingSite from 'calypso/state/selectors/is-staging-site';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import {
 	getSiteFrontPage,
@@ -41,6 +42,7 @@ export const QuickLinks = ( {
 	canModerateComments,
 	customizeUrl,
 	isAtomic,
+	isStagingSite,
 	isStaticHomePage,
 	canAddEmail,
 	menusUrl,
@@ -158,7 +160,7 @@ export const QuickLinks = ( {
 					materialIcon="view_quilt"
 				/>
 			) }
-			{ canManageSite && (
+			{ canManageSite && ! isStagingSite && (
 				<>
 					{ canAddEmail ? (
 						<ActionBox
@@ -414,6 +416,7 @@ const mapStateToProps = ( state ) => {
 		isStaticHomePage,
 		editHomePageUrl,
 		isAtomic: isSiteAtomic( state, siteId ),
+		isStagingSite: isWpcomStagingSite( state, siteId ),
 		isExpanded: getPreference( state, 'homeQuickLinksToggleStatus' ) !== 'collapsed',
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 	};
