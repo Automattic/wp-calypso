@@ -133,7 +133,7 @@ describe( 'formatCurrency', () => {
 				} ) as any
 		);
 		formatter = createFormatter();
-		await formatter.detectGeolocation();
+		await formatter.geolocateCurrencySymbol();
 		const money = formatter.formatCurrency( 9800900.32, 'USD' );
 		expect( money ).toBe( '$9,800,900.32' );
 	} );
@@ -149,7 +149,7 @@ describe( 'formatCurrency', () => {
 				} ) as any
 		);
 		formatter = createFormatter();
-		await formatter.detectGeolocation();
+		await formatter.geolocateCurrencySymbol();
 		const money = formatter.formatCurrency( 9800900.32, 'USD' );
 		expect( money ).toBe( '$9,800,900.32' );
 	} );
@@ -165,7 +165,7 @@ describe( 'formatCurrency', () => {
 				} ) as any
 		);
 		formatter = createFormatter();
-		await formatter.detectGeolocation();
+		await formatter.geolocateCurrencySymbol();
 		const money = formatter.formatCurrency( 9800900.32, 'USD' );
 		expect( money ).toBe( 'US$9,800,900.32' );
 	} );
