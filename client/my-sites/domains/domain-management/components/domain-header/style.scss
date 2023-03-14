@@ -54,6 +54,9 @@
 
 	@include break-mobile {
 		display: flex;
+		.ellipsis-menu__toggle.button.is-borderless {
+			padding: 0 15px 10px 15px;
+		}
 	}
 }
 

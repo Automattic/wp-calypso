@@ -1,5 +1,5 @@
 import { Button, Spinner } from '@automattic/components';
-import { Icon, home, info, moreVertical, redo, plus } from '@wordpress/icons';
+import { Icon, home, info, redo, plus } from '@wordpress/icons';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
@@ -29,6 +29,8 @@ import TransferConnectedDomainNudge from 'calypso/my-sites/domains/domain-manage
 import {
 	domainManagementList,
 	createSiteFromDomainOnly,
+	domainManagementEditContactInfo,
+	domainManagementDns,
 	domainUseMyDomain,
 } from 'calypso/my-sites/domains/paths';
 import {
@@ -335,6 +337,16 @@ class DomainRow extends PureComponent {
 		page( emailPath );
 	};
 
+	goToEditContactInfo = () => {
+		const { currentRoute, domain, site } = this.props;
+		page( domainManagementEditContactInfo( site.slug, domain.domain, currentRoute ) );
+	};
+
+	goToDNSManagement = () => {
+		const { currentRoute, domain, site } = this.props;
+		page( domainManagementDns( site.slug, domain.domain, currentRoute ) );
+	};
+
 	renderEllipsisMenu() {
 		const {
 			disabled,
@@ -367,7 +379,6 @@ class DomainRow extends PureComponent {
 					disabled={ disabled || isBusy }
 					onClick={ this.stopPropagation }
 					toggleTitle={ translate( 'Options' ) }
-					icon={ <Icon icon={ moreVertical } size={ 28 } className="gridicon" /> }
 					popoverClassName="domain-row__popover"
 					position="bottom"
 				>
@@ -375,6 +386,12 @@ class DomainRow extends PureComponent {
 						{ domain.type === domainTypes.TRANSFER
 							? translate( 'View transfer' )
 							: translate( 'View settings' ) }
+					</PopoverMenuItem>
+					<PopoverMenuItem icon="info-outline" onClick={ this.goToDNSManagement }>
+						{ translate( 'Manage DNS' ) }
+					</PopoverMenuItem>
+					<PopoverMenuItem icon="book" onClick={ this.goToEditContactInfo }>
+						{ translate( 'Manage Contact Info' ) }
 					</PopoverMenuItem>
 					{ canSetAsPrimary( domain, isManagingAllSites, shouldUpgradeToMakePrimary ) &&
 						! isRecentlyRegisteredAndDoesNotPointToWpcom( domain ) && (
