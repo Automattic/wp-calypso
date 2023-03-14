@@ -5,9 +5,7 @@ import { ReactChild, useCallback, useState, useMemo, ChangeEvent } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { PartnerDetailsPayload } from 'calypso/state/partner-portal/types';
-import SearchableDropdown from './components/searchable-dropdown';
 import { Option as CountryOption, useCountriesAndStates } from './hooks/use-countries-and-states';
 
 import './style.scss';
@@ -15,7 +13,7 @@ import './style.scss';
 const defaultCountry: CountryOption = {
 	value: 'US',
 	label: 'United States (US)',
-	isLabel: false,
+	// isLabel: false,
 };
 
 interface StateOption {
@@ -127,24 +125,6 @@ export default function CompanyDetailsForm( {
 		[ showCountryFields, isLoading, onSubmit, payload ]
 	);
 
-	const options = [
-		{
-			value: 'small',
-			label: 'Small',
-		},
-		{
-			value: 'normal',
-			label: 'Normal',
-		},
-		{
-			value: 'large',
-			label: 'Large',
-		},
-	];
-
-	const [ fontSize, setFontSize ] = useState();
-	const [ filteredOptions, setFilteredOptions ] = useState( countryOptions );
-
 	return (
 		<div className="company-details-form">
 			<form onSubmit={ handleSubmit }>
@@ -187,62 +167,20 @@ export default function CompanyDetailsForm( {
 					/>
 				</FormFieldset>
 
-				<FormFieldset>
-					<FormLabel>{ translate( 'Country' ) }</FormLabel>
-					{ showCountryFields && (
-						<SearchableDropdown
-							className="company-details-form__dropdown"
-							value={ country }
-							placeholder={ translate( 'Type to find country' ) }
-							options={ countryOptions }
-							isDisabled={ isLoading }
-							onChange={ ( option ) => {
-								setCountryValue( option.value );
-								// Reset the value of state since it no longer matches with the selected country.
-								setAddressState( '' );
-							} }
-						/>
-					) }
-
-					{ ! showCountryFields && <TextPlaceholder /> }
-				</FormFieldset>
-
-				{ showCountryFields && stateOptions && state && (
-					<FormFieldset>
-						<FormLabel>{ translate( 'State' ) }</FormLabel>
-						<SearchableDropdown
-							className="company-details-form__dropdown"
-							value={ state }
-							options={ stateOptions }
-							onChange={ ( option ) => {
-								setAddressState( option.value );
-							} }
-							isDisabled={ isLoading }
-							placeholder={ translate( 'Type to find state' ) }
-						/>
-					</FormFieldset>
-				) }
-				<FormLabel>{ translate( 'Country - WP Component' ) }</FormLabel>
+				<FormLabel>{ translate( 'Country' ) }</FormLabel>
 				<ComboboxControl
 					value={ countryValue }
 					onChange={ setCountryValue }
-					options={ filteredOptions }
+					options={ countryOptions }
 				/>
 
 				{ showCountryFields && stateOptions && state && (
 					<FormFieldset>
-						<FormLabel>{ translate( 'State - New' ) }</FormLabel>
+						<FormLabel>{ translate( 'State' ) }</FormLabel>
 						<ComboboxControl
 							value={ addressState }
 							onChange={ setAddressState }
 							options={ stateOptions }
-							onFilterValueChange={ ( inputValue ) =>
-								setFilteredOptions(
-									options.filter( ( option ) =>
-										option.label.toLowerCase().startsWith( inputValue.toLowerCase() )
-									)
-								)
-							}
 						/>
 					</FormFieldset>
 				) }

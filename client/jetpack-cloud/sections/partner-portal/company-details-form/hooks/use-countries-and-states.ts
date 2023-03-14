@@ -43,7 +43,7 @@ const stripeSupportedStateCountries = [
 export interface Option {
 	value: string;
 	label: ReactChild;
-	isLabel: boolean;
+	// isLabel: boolean;
 }
 
 export function useCountriesAndStates() {
@@ -60,7 +60,7 @@ export function useCountriesAndStates() {
 				countryOptions[ key ] = {
 					value: key,
 					label: value,
-					isLabel: false,
+					// isLabel: false,
 				};
 
 				return;
@@ -77,7 +77,7 @@ export function useCountriesAndStates() {
 				countryOptions[ countryCode ] = {
 					value: countryCode,
 					label: countryLabel,
-					isLabel: false,
+					// isLabel: false,
 				};
 			}
 
@@ -90,7 +90,7 @@ export function useCountriesAndStates() {
 				stateOptions[ countryCode ].push( {
 					value: stateCode,
 					label: stateLabel,
-					isLabel: false,
+					// isLabel: false,
 				} );
 			}
 		} );
