@@ -44,9 +44,13 @@ type Plugin = {
 	icon: string;
 };
 
-const MarketplaceThankYou = () => {
-	const [ pluginSlugs ] = useState< Array< string > >( [ 'woocommerce-bookings', 'woocommerce' ] );
-	const [ themesSlugs ] = useState< Array< string > >( [ 'yuna' ] );
+const MarketplaceThankYou = ( {
+	pluginSlugs,
+	themeSlugs,
+}: {
+	pluginSlugs: Array< string >;
+	themeSlugs: Array< string >;
+} ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
@@ -100,8 +104,8 @@ const MarketplaceThankYou = () => {
 	);
 
 	// Retrieve theme information
-	const dotComThemes = useSelector( ( state ) => getThemes( state, 'wpcom', themesSlugs ) );
-	const dotOrgThemes = useSelector( ( state ) => getThemes( state, 'wporg', themesSlugs ) );
+	const dotComThemes = useSelector( ( state ) => getThemes( state, 'wpcom', themeSlugs ) );
+	const dotOrgThemes = useSelector( ( state ) => getThemes( state, 'wporg', themeSlugs ) );
 
 	const areAllProductsFetched =
 		!! pluginsOnSite.length &&
@@ -326,7 +330,7 @@ const MarketplaceThankYou = () => {
 				backText={ translate( 'Back to plugins' ) }
 				canGoBack={ areAllProductsFetched }
 			/>
-			{ themesSlugs.map( ( productSlug, index ) => (
+			{ themeSlugs.map( ( productSlug, index ) => (
 				<>
 					<QueryTheme key={ 'query-wpcom-theme-' + index } siteId="wpcom" themeId={ productSlug } />
 					<QueryTheme key={ 'query-wporg-theme-' + index } siteId="wporg" themeId={ productSlug } />
