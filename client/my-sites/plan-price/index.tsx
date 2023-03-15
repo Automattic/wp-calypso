@@ -237,8 +237,6 @@ function FlatPriceDisplay( {
 	);
 	const translate = useTranslate();
 
-	// TODO: render currencySymbol on the localized side (before or after) of
-	// the price. We can use `symbolPosition` from `getCurrencyObject`.
 	if ( ! higherPrice ) {
 		return (
 			<span className={ className }>
@@ -255,7 +253,7 @@ function FlatPriceDisplay( {
 
 	return (
 		<span className={ className }>
-			{ currencySymbol }
+			{ symbolPosition === 'before' ? currencySymbol : null }
 			{ translate( '%(smallerPrice)s-%(higherPrice)s', {
 				args: {
 					smallerPrice: (
@@ -275,6 +273,7 @@ function FlatPriceDisplay( {
 				},
 				comment: 'The price range for a particular product',
 			} ) }
+			{ symbolPosition === 'after' ? currencySymbol : null }
 		</span>
 	);
 }
@@ -307,8 +306,7 @@ function MultiPriceDisplay( {
 		currencyCode
 	);
 	const translate = useTranslate();
-	// TODO: render currencySymbol on the localized side (before or after) of
-	// the price. We can use `symbolPosition` from `getCurrencyObject`.
+
 	return createElement(
 		tagName,
 		{ className },
