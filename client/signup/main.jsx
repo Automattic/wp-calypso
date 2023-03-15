@@ -6,7 +6,6 @@ import {
 	is2023PricingGridActivePage,
 } from '@automattic/calypso-products';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
-// import { isNewsletterOrLinkInBioFlow, isNewsletterFlow } from '@automattic/onboarding';
 import debugModule from 'debug';
 import {
 	clone,
@@ -248,9 +247,7 @@ class Signup extends Component {
 		this.props.flowName === 'onboarding' && ! this.props.isLoggedIn && addHotJarScript();
 		this.startTrackingForBusinessSite();
 
-		// if ( ! isNewsletterFlow( this.props.flowName ) ) {
 		recordSignupStart( this.props.flowName, this.props.refParameter, this.getRecordProps() );
-		// }
 
 		if ( ! this.state.shouldShowLoadingScreen ) {
 			recordSignupStep( this.props.flowName, this.props.stepName, this.getRecordProps() );
