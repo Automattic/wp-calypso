@@ -12,6 +12,7 @@ import {
 	COMMENTS_DELETE,
 	COMMENTS_EDIT,
 	COMMENTS_CHANGE_STATUS,
+	COMMENTS_EMPTY_RECEIVE,
 } from '../../action-types';
 import { expandComments, setActiveReply } from '../actions';
 import { PLACEHOLDER_STATE } from '../constants';
@@ -904,6 +905,61 @@ describe( 'reducer', () => {
 						postTrashed: 0,
 						spam: 1,
 						totalComments: 7,
+						trash: 4,
+					},
+				},
+			} );
+		} );
+
+		test( 'updates site counts when spam comments are emptied', () => {
+			const action = {
+				type: COMMENTS_EMPTY_RECEIVE,
+				siteId: 2916284,
+				status: 'spam',
+				commentIds: [ 2, 3 ],
+			};
+			const state = deepFreeze( {
+				2916284: {
+					site: {
+						all: 11,
+						approved: 5,
+						pending: 6,
+						postTrashed: 0,
+						spam: 2,
+						totalComments: 12,
+						trash: 10,
+					},
+					234: {
+						all: 5,
+						approved: 2,
+						pending: 3,
+						postTrashed: 0,
+						spam: 2,
+						totalComments: 6,
+						trash: 4,
+					},
+				},
+			} );
+			const nextState = counts( state, action );
+			expect( nextState ).toEqual( {
+				2916284: {
+					site: {
+						all: 11,
+						approved: 5,
+						pending: 6,
+						postTrashed: 0,
+						spam: 0,
+						totalComments: 11, // this does not include spam or trash
+						trash: 10,
+					},
+					// Post counts not updated because we don't have post ID
+					234: {
+						all: 5,
+						approved: 2,
+						pending: 3,
+						postTrashed: 0,
+						spam: 2,
+						totalComments: 6,
 						trash: 4,
 					},
 				},

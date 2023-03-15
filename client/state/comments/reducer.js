@@ -541,7 +541,8 @@ export const counts = ( state = {}, action ) => {
 			const emptiedCommentsCount = commentIds?.length || 0;
 			const newSiteCounts = updateCount( siteCounts, status, -emptiedCommentsCount );
 
-			// @todo Can't update post counts because we don't know the post ID.
+			// Post counts can't be updated here because we don't know the post ID.
+			// Comment Management only uses the site counts.
 
 			const newTotalSiteCounts = Object.assign(
 				{},
