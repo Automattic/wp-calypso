@@ -36,8 +36,9 @@ const PlanFeatures2023GridHeaderPrice = ( {
 	} );
 
 	// biannual plans always show discounted pricing, irrespective of whether the plan has a discount
-	const showDiscountedPricing =
-		isBiannualPlan || planPrices.planDiscountedRawPrice || planPrices.discountedRawPrice;
+	const showDiscountedPricing = Boolean(
+		isBiannualPlan || planPrices.planDiscountedRawPrice || planPrices.discountedRawPrice
+	);
 
 	// order matters here, we want to show the discounted price if it exists, otherwise the regular price
 	const priceToDisplay =
@@ -59,14 +60,16 @@ const PlanFeatures2023GridHeaderPrice = ( {
 			{ showDiscountedPricing && (
 				<span className="plan-features-2023-grid__header-price-group">
 					<div className="plan-features-2023-grid__header-price-group-prices">
-						<PlanPrice
-							currencyCode={ currencyCode }
-							rawPrice={ crossoutPriceToDisplay }
-							displayPerMonthNotation={ false }
-							is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
-							isLargeCurrency={ isLargeCurrency }
-							original
-						/>
+						{ 0 < crossoutPriceToDisplay && (
+							<PlanPrice
+								currencyCode={ currencyCode }
+								rawPrice={ crossoutPriceToDisplay }
+								displayPerMonthNotation={ false }
+								is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+								isLargeCurrency={ isLargeCurrency }
+								original
+							/>
+						) }
 						<PlanPrice
 							currencyCode={ currencyCode }
 							rawPrice={ priceToDisplay }
