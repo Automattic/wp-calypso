@@ -86,6 +86,7 @@ describe( 'StepContent', () => {
 				screen.getByText( 'Why not welcome your readers with your first post?' )
 			).toBeInTheDocument();
 		} );
+
 		it( 'renders correct sidebar tasks', () => {
 			renderStepContent( false, NEWSLETTER_FLOW );
 
@@ -95,6 +96,7 @@ describe( 'StepContent', () => {
 			expect( screen.getByText( 'Confirm Email (Check Your Inbox)' ) ).toBeInTheDocument();
 			expect( screen.getByRole( 'button', { name: 'Write your first post' } ) ).toBeInTheDocument();
 		} );
+
 		it( 'renders correct status for each task', () => {
 			renderStepContent( false, NEWSLETTER_FLOW );
 
@@ -114,11 +116,13 @@ describe( 'StepContent', () => {
 			expect( confirmEmailListItem ).toHaveClass( 'pending' );
 			expect( firstPostListItem ).toHaveClass( 'pending' );
 		} );
+
 		it( 'renders skip to dashboard link', () => {
 			renderStepContent( false, NEWSLETTER_FLOW );
 
 			expect( screen.getByRole( 'button', { name: 'Skip to dashboard' } ) ).toBeInTheDocument();
 		} );
+
 		it( 'renders web preview section', () => {
 			renderStepContent( false, NEWSLETTER_FLOW );
 
