@@ -60,7 +60,7 @@ export class CommentNavigation extends Component {
 		const { translate } = this.props;
 		if (
 			typeof window === 'undefined' ||
-			window?.confirm( translate( 'Delete these comments permanently?' ) )
+			window.confirm( translate( 'Delete these comments permanently?' ) )
 		) {
 			this.setBulkStatus( 'delete' )();
 		}
