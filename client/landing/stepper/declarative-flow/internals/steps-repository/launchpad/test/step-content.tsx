@@ -74,6 +74,8 @@ function renderStepContent( emailVerified = false, flow: string ) {
 }
 
 describe( 'StepContent', () => {
+	// To get things started, test basic rendering for Newsletter flow
+	// In future, we can add additional flows and test interactivity of items
 	describe( 'when flow is Newsletter', () => {
 		it( 'renders correct sidebar header content', () => {
 			renderStepContent( false, NEWSLETTER_FLOW );
