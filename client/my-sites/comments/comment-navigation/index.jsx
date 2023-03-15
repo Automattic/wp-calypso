@@ -196,6 +196,7 @@ export class CommentNavigation extends Component {
 			hasSearch,
 			hasComments,
 			isBulkMode,
+			isPostView,
 			isSelectedAll,
 			query,
 			selectedComments,
@@ -324,7 +325,7 @@ export class CommentNavigation extends Component {
 								{ translate( 'Bulk edit' ) }
 							</Button>
 
-							{ this.statusHasAction( 'delete' ) && (
+							{ this.statusHasAction( 'delete' ) && ! isPostView && (
 								<Button
 									compact
 									scary
