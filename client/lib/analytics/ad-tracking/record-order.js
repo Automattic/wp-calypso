@@ -30,10 +30,10 @@ import './setup';
  *
  * @param {Object} cart - cart as `ResponseCart` object
  * @param {number} orderId - the order id
- * @param {import('@automattic/data-stores/src').SiteDetails} selectedSiteData - site details
+ * @param {string?} sitePlanSlug - product plan slug
  * @returns {void}
  */
-export async function recordOrder( cart, orderId, selectedSiteData ) {
+export async function recordOrder( cart, orderId, sitePlanSlug ) {
 	await refreshCountryCodeCookieGdpr();
 
 	await loadTrackingScripts();
@@ -60,7 +60,7 @@ export async function recordOrder( cart, orderId, selectedSiteData ) {
 	recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInWPcomGA4( cart, orderId, wpcomJetpackCartInfo );
-	recordOrderInWooGTM( cart, orderId, selectedSiteData );
+	recordOrderInWooGTM( cart, orderId, sitePlanSlug );
 
 	// Fire a single tracking event without any details about what was purchased
 
@@ -548,13 +548,13 @@ function recordOrderInWPcomGA4( cart, orderId, wpcomJetpackCartInfo ) {
  *
  * @param {import('@automattic/shopping-cart').ResponseCart} cart
  * @param {string} orderId
- * @param {import('@automattic/data-stores/src').SiteDetails} selectedSiteData
+ * @param {string?} sitePlanSlug
  * @returns {void}
  */
-function recordOrderInWooGTM( cart, orderId, selectedSiteData ) {
+function recordOrderInWooGTM( cart, orderId, sitePlanSlug ) {
 	if (
 		! mayWeTrackByTracker( 'googleTagManager' ) ||
-		! isWooExpressUpgrade( cart, selectedSiteData )
+		! isWooExpressUpgrade( cart, sitePlanSlug )
 	) {
 		return;
 	}

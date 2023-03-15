@@ -1,4 +1,3 @@
-import { SiteDetails } from '@automattic/data-stores/src';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { isURL } from '@wordpress/url';
@@ -80,6 +79,7 @@ export default function useCreatePaymentCompleteCallback( {
 	const siteId = useSelector( getSelectedSiteId );
 	const selectedSiteData = useSelector( getSelectedSite );
 	const adminUrl = selectedSiteData?.options?.admin_url;
+	const sitePlanSlug = selectedSiteData?.plan?.product_slug;
 	const isJetpackNotAtomic =
 		useSelector(
 			( state ) =>
@@ -138,7 +138,7 @@ export default function useCreatePaymentCompleteCallback( {
 					responseCart,
 					checkoutFlow,
 					reduxDispatch,
-					selectedSiteData,
+					sitePlanSlug,
 				} );
 			} catch ( err ) {
 				// eslint-disable-next-line no-console
@@ -240,7 +240,7 @@ export default function useCreatePaymentCompleteCallback( {
 			checkoutFlow,
 			adminPageRedirect,
 			domains,
-			selectedSiteData,
+			sitePlanSlug,
 		]
 	);
 }
@@ -252,7 +252,7 @@ function recordPaymentCompleteAnalytics( {
 	responseCart,
 	checkoutFlow,
 	reduxDispatch,
-	selectedSiteData,
+	sitePlanSlug,
 }: {
 	paymentMethodId: string | null;
 	transactionResult: WPCOMTransactionEndpointResponse | undefined;
@@ -260,7 +260,7 @@ function recordPaymentCompleteAnalytics( {
 	responseCart: ResponseCart;
 	checkoutFlow?: string;
 	reduxDispatch: CalypsoDispatch;
-	selectedSiteData?: SiteDetails | null;
+	sitePlanSlug?: string | null;
 } ) {
 	const wpcomPaymentMethod = paymentMethodId
 		? translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId )
@@ -281,7 +281,7 @@ function recordPaymentCompleteAnalytics( {
 		recordPurchase( {
 			cart: responseCart,
 			orderId: transactionResult?.receipt_id,
-			selectedSiteData: selectedSiteData,
+			sitePlanSlug,
 		} );
 	} catch ( err ) {
 		// eslint-disable-next-line no-console

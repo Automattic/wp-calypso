@@ -1,5 +1,4 @@
 import { PLAN_ECOMMERCE_TRIAL_MONTHLY, isEcommerce } from '@automattic/calypso-products';
-import { SiteDetails } from '@automattic/data-stores/src';
 import { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 
 /**
@@ -21,21 +20,15 @@ const isValidWooExpressUpsell = ( product: ResponseCartProduct ): boolean => {
  * value of `isEcommerce`.
  *
  * @param cart ResponseCart
- * @param siteDetails SiteDetails
+ * @param sitePlanSlug SiteDetails
  * @returns { boolean }
  */
-export const isWooExpressUpgrade = ( cart: ResponseCart, siteDetails: SiteDetails ): boolean => {
-	const sitePlanSlug = siteDetails?.plan?.product_slug;
-
-	if ( ! sitePlanSlug ) {
+export const isWooExpressUpgrade = ( cart: ResponseCart, sitePlanSlug?: string ): boolean => {
+	// Does the current site have a plan and is it Woo Express trial pre-upgrade?
+	if ( ! sitePlanSlug || sitePlanSlug !== PLAN_ECOMMERCE_TRIAL_MONTHLY ) {
 		return false;
 	}
 
 	// Does the cart contain an upsell we care about? I.e. is it an ecommerce plan?
-	const cartContainsValidUpsell = cart.products.some( ( product ) =>
-		isValidWooExpressUpsell( product )
-	);
-
-	// And does the current site have a Woo Express trial pre-upgrade?
-	return sitePlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY && cartContainsValidUpsell;
+	return cart.products.some( ( product ) => isValidWooExpressUpsell( product ) );
 };

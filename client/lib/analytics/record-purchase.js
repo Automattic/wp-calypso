@@ -3,7 +3,7 @@ import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { costToUSD } from 'calypso/lib/analytics/utils';
 import { gaRecordEvent } from './ga';
 
-export function recordPurchase( { cart, orderId, selectedSiteData } ) {
+export function recordPurchase( { cart, orderId, sitePlanSlug } ) {
 	if ( cart.total_cost >= 0.01 ) {
 		const usdValue = costToUSD( cart.total_cost, cart.currency );
 
@@ -16,7 +16,7 @@ export function recordPurchase( { cart, orderId, selectedSiteData } ) {
 		);
 
 		// Marketing
-		recordOrder( cart, orderId, selectedSiteData );
+		recordOrder( cart, orderId, sitePlanSlug );
 
 		// FullStory
 		if ( ! cart.is_signup ) {
