@@ -178,20 +178,31 @@ export class BusinessPlanUpgradeUpsellTreatment extends PureComponent {
 						) }
 					</p>
 					<p>
-						{ translate(
-							"Upgrade now and we'll give you {{b}}%(discount)d% off your first %(term)s{{/b}}.",
-							{
-								components: {
-									b: <b />,
-								},
-								args: {
-									discount: 15,
-									term: hasSevenDayRefundPeriod ? 'month' : 'year',
-									comment:
-										'%(discount)d is a percentage like 15% and %(term)s will be either "month" or "year"',
-								},
-							}
-						) }
+						{ hasSevenDayRefundPeriod
+							? translate(
+									"Upgrade now and we'll give you {{b}}%(discount)d%% off your first month{{/b}}.",
+									{
+										components: {
+											b: <b />,
+										},
+										args: {
+											discount: 15,
+											comment: '%(discount)d is a percentage like 15%"',
+										},
+									}
+							  )
+							: translate(
+									"Upgrade now and we'll give you {{b}}%(discount)d%% off your first year{{/b}}.",
+									{
+										components: {
+											b: <b />,
+										},
+										args: {
+											discount: 15,
+											comment: '%(discount)d is a percentage like 15%"',
+										},
+									}
+							  ) }
 					</p>
 					<div className="business-plan-upgrade-upsell-new-design__countdown-counter">
 						<span>

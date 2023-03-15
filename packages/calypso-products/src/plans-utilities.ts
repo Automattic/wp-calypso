@@ -57,9 +57,10 @@ export const is2023PricingGridEnabled = (): boolean => {
  * @returns true if the pricing grid maybe shown in a given page
  */
 export const is2023PricingGridActivePage = (
-	browserWindow: Window & typeof globalThis
+	browserWindow?: Window & typeof globalThis,
+	pathname?: string
 ): boolean => {
-	const currentRoutePath = browserWindow.location.pathname ?? '';
+	const currentRoutePath = pathname ?? browserWindow?.location.pathname ?? '';
 	const isPricingGridEnabled = is2023PricingGridEnabled();
 
 	// Is this the internal plans page /plans/<site-slug> ?

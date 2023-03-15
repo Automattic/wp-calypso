@@ -59,8 +59,8 @@
 	& .is-section-stats .has-fixed-nav {
 		padding-top: 64px;
 	}
-	& .highlight-cards.has-background-color,
-	& .inner-notice-container.has-background-color {
+	& .highlight-cards.has-odyssey-stats-bg-color,
+	& .inner-notice-container.has-odyssey-stats-bg-color {
 		background-color: var(--jetpack-white-off);
 	}
 	#wpcontent {
@@ -79,7 +79,7 @@
 		max-width: initial;
 		min-width: initial;
 	}
-	.followers-count {
+	.subscribers-count {
 		display: none;
 	}
 	.form-checkbox:checked::before {

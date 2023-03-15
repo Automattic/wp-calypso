@@ -4,6 +4,7 @@ import * as React from 'react';
 import { LAUNCH_STORE } from '../stores';
 import LaunchMenuItem from './item';
 import type { LaunchStepType } from '../../../common/data-stores/launch';
+import type { LaunchSelect } from '@automattic/data-stores';
 
 import './styles.scss';
 
@@ -16,7 +17,7 @@ const LaunchMenu: React.FunctionComponent< Props > = ( { onMenuItemClick } ) => 
 
 	const { currentStep, LaunchStep, LaunchSequence, isStepCompleted, isFlowCompleted } = useSelect(
 		( select ) => {
-			const launchStore = select( LAUNCH_STORE );
+			const launchStore: LaunchSelect = select( LAUNCH_STORE );
 			return {
 				currentStep: launchStore.getCurrentStep(),
 				LaunchStep: launchStore.getLaunchStep(),
@@ -24,7 +25,8 @@ const LaunchMenu: React.FunctionComponent< Props > = ( { onMenuItemClick } ) => 
 				isStepCompleted: launchStore.isStepCompleted,
 				isFlowCompleted: launchStore.isFlowCompleted(),
 			};
-		}
+		},
+		[]
 	);
 
 	const LaunchStepMenuItemTitles = {

@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import type { Flow } from '../declarative-flow/internals/types';
 
 const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
@@ -64,14 +63,11 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	build: () => import( /* webpackChunkName: "build-flow" */ '../declarative-flow/build' ),
 	write: () => import( /* webpackChunkName: "write-flow" */ '../declarative-flow/write' ),
+
+	sensei: () => import( /* webpackChunkName: "sensei-flow" */ '../declarative-flow/sensei' ),
 };
 
 availableFlows[ 'plugin-bundle' ] = () =>
 	import( /* webpackChunkName: "plugin-bundle-flow" */ '../declarative-flow/plugin-bundle-flow' );
-
-if ( config.isEnabled( 'sensei/onboarding' ) ) {
-	availableFlows[ 'sensei' ] = () =>
-		import( /* webpackChunkName: "sensei-flow" */ '../declarative-flow/sensei' );
-}
 
 export default availableFlows;

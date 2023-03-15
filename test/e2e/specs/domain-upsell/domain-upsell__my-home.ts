@@ -23,27 +23,17 @@ describe( DataHelper.createSuiteTitle( 'My Home: Domain upsell' ), function () {
 	let selectedDomain: string;
 	let page: Page;
 	const credentials = SecretsManager.secrets.testAccounts.simpleSiteFreePlanUser;
-	const siteId = credentials.testSites?.primary?.id as number;
 
 	beforeAll( async function () {
-		// Launch browser.
+		const restAPIClient = new RestAPIClient( credentials );
+		await restAPIClient.clearShoppingCart( credentials.testSites?.primary?.id as number );
+
 		page = await browser.newPage();
 
-		// Authenticate as simpleSiteFreePlanUser.
-		const testAccount = new TestAccount( 'simpleSiteFreePlanUser' );
-		await testAccount.authenticate( page );
 		await BrowserManager.setStoreCookie( page );
 
-		const restApiClient = new RestAPIClient( credentials );
-		try {
-			// Make sure the shopping cart is empty before we start!
-			const response = await restApiClient.clearShoppingCart( siteId );
-			if ( ! response.success ) {
-				console.error( 'Failed to clear the shopping cart, the test may not run as expected.' );
-			}
-		} catch {
-			console.error( 'Failed to clear the shopping cart, the test may not run as expected.' );
-		}
+		const testAccount = new TestAccount( 'simpleSiteFreePlanUser' );
+		await testAccount.authenticate( page, { url: /home/ } );
 	} );
 
 	it( 'Navigate to my home page', async function () {

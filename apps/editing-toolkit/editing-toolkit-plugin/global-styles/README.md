@@ -1,5 +1,7 @@
 # Global Styles plugin <!-- omit in toc -->
 
+Note: as of March 2023, this is still available for older themes which declare support for "jetpack-global-styles". If you activate one of those themes (like "Leven") on a site, you can access and test this feature in both the page and post editor. Look for the typography icon in the top toolbar, or "Global Styles" under the plugins section of the editor more menu.
+
 This plugin creates a new sidebar for the block editor through which the users can update the styles site-wide, if the active theme has declared support. At the moment, users can set the base and headings fonts.
 
 - [How to develop and build the plugin](#how-to-develop-and-build-the-plugin)

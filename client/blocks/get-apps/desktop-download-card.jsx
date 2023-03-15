@@ -1,7 +1,5 @@
-import config from '@automattic/calypso-config';
 import { Card, Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import classnames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -13,8 +11,6 @@ import Windows from 'calypso/assets/images/icons/windows-logo.svg';
 import SVGIcon from 'calypso/components/svg-icon';
 import userAgent from 'calypso/lib/user-agent';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-
-const displayJetpackAppBranding = config.isEnabled( 'jetpack/app-branding' );
 
 const WINDOWS_LINK = 'https://apps.wordpress.com/d/windows?ref=getapps';
 const MAC_LINK = 'https://apps.wordpress.com/d/osx?ref=getapps';
@@ -84,11 +80,9 @@ class DesktopDownloadCard extends Component {
 					firstAvailableLink: this.getLinkAnchorTag( WINDOWS_LINK ),
 					secondAvailableLink: this.getLinkAnchorTag( LINUX_TAR_LINK ),
 					thirdAvailableLink: this.getLinkAnchorTag( LINUX_DEB_LINK ),
-					...( displayJetpackAppBranding && {
-						firstAvailableIcon: this.getPlatformImage( WINDOWS_LINK ),
-						secondAvailableIcon: this.getPlatformImage( LINUX_TAR_LINK ),
-						thirdAvailableIcon: this.getPlatformImage( LINUX_DEB_LINK ),
-					} ),
+					firstAvailableIcon: this.getPlatformImage( WINDOWS_LINK ),
+					secondAvailableIcon: this.getPlatformImage( LINUX_TAR_LINK ),
+					thirdAvailableIcon: this.getPlatformImage( LINUX_DEB_LINK ),
 				};
 			case 'Linux i686':
 			case 'Linux i686 on x86_64':
@@ -96,22 +90,18 @@ class DesktopDownloadCard extends Component {
 					firstAvailableLink: this.getLinkAnchorTag( LINUX_DEB_LINK ),
 					secondAvailableLink: this.getLinkAnchorTag( WINDOWS_LINK ),
 					thirdAvailableLink: this.getLinkAnchorTag( MAC_LINK ),
-					...( displayJetpackAppBranding && {
-						firstAvailableIcon: this.getPlatformImage( LINUX_DEB_LINK ),
-						secondAvailableIcon: this.getPlatformImage( WINDOWS_LINK ),
-						thirdAvailableIcon: this.getPlatformImage( MAC_LINK ),
-					} ),
+					firstAvailableIcon: this.getPlatformImage( LINUX_DEB_LINK ),
+					secondAvailableIcon: this.getPlatformImage( WINDOWS_LINK ),
+					thirdAvailableIcon: this.getPlatformImage( MAC_LINK ),
 				};
 			default:
 				return {
 					firstAvailableLink: this.getLinkAnchorTag( MAC_LINK ),
 					secondAvailableLink: this.getLinkAnchorTag( LINUX_TAR_LINK ),
 					thirdAvailableLink: this.getLinkAnchorTag( LINUX_DEB_LINK ),
-					...( displayJetpackAppBranding && {
-						firstAvailableIcon: this.getPlatformImage( MAC_LINK ),
-						secondAvailableIcon: this.getPlatformImage( LINUX_TAR_LINK ),
-						thirdAvailableIcon: this.getPlatformImage( LINUX_DEB_LINK ),
-					} ),
+					firstAvailableIcon: this.getPlatformImage( MAC_LINK ),
+					secondAvailableIcon: this.getPlatformImage( LINUX_TAR_LINK ),
+					thirdAvailableIcon: this.getPlatformImage( LINUX_DEB_LINK ),
 				};
 		}
 	}
@@ -233,9 +223,7 @@ class DesktopDownloadCard extends Component {
 					<a
 						href={ localizeUrl( platformLink ) }
 						onClick={ trackMacClick }
-						className={ classnames( {
-							'get-apps__desktop-link': displayJetpackAppBranding,
-						} ) }
+						className="get-apps__desktop-link"
 					/>
 				);
 			case LINUX_TAR_LINK:
@@ -243,9 +231,7 @@ class DesktopDownloadCard extends Component {
 					<a
 						href={ localizeUrl( platformLink ) }
 						onClick={ trackLinuxTarClick }
-						className={ classnames( {
-							'get-apps__desktop-link': displayJetpackAppBranding,
-						} ) }
+						className="get-apps__desktop-link"
 					/>
 				);
 			case LINUX_DEB_LINK:
@@ -253,9 +239,7 @@ class DesktopDownloadCard extends Component {
 					<a
 						href={ localizeUrl( platformLink ) }
 						onClick={ trackLinuxDebClick }
-						className={ classnames( {
-							'get-apps__desktop-link': displayJetpackAppBranding,
-						} ) }
+						className="get-apps__desktop-link"
 					/>
 				);
 			default:
@@ -263,9 +247,7 @@ class DesktopDownloadCard extends Component {
 					<a
 						href={ localizeUrl( platformLink ) }
 						onClick={ trackWindowsClick }
-						className={ classnames( {
-							'get-apps__desktop-link': displayJetpackAppBranding,
-						} ) }
+						className="get-apps__desktop-link"
 					/>
 				);
 		}
@@ -286,7 +268,7 @@ class DesktopDownloadCard extends Component {
 		return (
 			<>
 				<Button
-					className="get-apps__desktop-button jetpack"
+					className="get-apps__desktop-button"
 					href={ localizeUrl( this.getButtonLink( platform ) ) }
 					onClick={ this.getButtonClickHandler( platform ) }
 				>
@@ -298,7 +280,7 @@ class DesktopDownloadCard extends Component {
 						{ this.getRequirementsText( platform ) }
 					</p>
 				</div>
-				<div className="get-apps__also-available jetpack">
+				<div className="get-apps__also-available">
 					<p>{ translate( 'Also available for:' ) }</p>
 					<div className="get-apps__also-available-link-group">
 						{ this.getAlsoAvailableTextJetpack( platform ) }
@@ -312,7 +294,7 @@ class DesktopDownloadCard extends Component {
 		const { isMobile } = userAgent;
 
 		return (
-			<div className="get-apps__card-text jetpack">
+			<div className="get-apps__card-text">
 				<SVGIcon
 					name="desktop-app-logo"
 					aria-hidden="true"
@@ -321,9 +303,7 @@ class DesktopDownloadCard extends Component {
 					icon={ DesktopAppLogo }
 					classes="get-apps__desktop-icon"
 				/>
-				<h1 className="get-apps__card-title jetpack">
-					{ translate( 'WordPress.com desktop app' ) }
-				</h1>
+				<h1 className="get-apps__card-title">{ translate( 'WordPress.com desktop app' ) }</h1>
 				<p>
 					{ translate(
 						'The full WordPress.com experience packaged as an app for your laptop or desktop.'
@@ -338,43 +318,8 @@ class DesktopDownloadCard extends Component {
 		);
 	}
 
-	getWordPressBrandedPanel() {
-		const platform =
-			navigator.platform && navigator.platform.length > 0 ? navigator.platform : false;
-
-		return (
-			<>
-				<div className="get-apps__card-text">
-					<h3 className="get-apps__card-title">{ this.getCardTitle( platform ) }</h3>
-					<p className="get-apps__description">{ this.getDescription( platform ) }</p>
-					<p className="get-apps__also-available">
-						{ this.getRequirementsText( platform ) }
-						{ this.getAlsoAvailableText( platform ) }
-					</p>
-				</div>
-				<Button
-					className="get-apps__desktop-button"
-					href={ localizeUrl( this.getButtonLink( platform ) ) }
-					onClick={ this.getButtonClickHandler( platform ) }
-				>
-					{ translate( 'Download' ) }
-				</Button>
-			</>
-		);
-	}
-
 	render() {
-		return (
-			<Card
-				className={ classnames( 'get-apps__desktop', {
-					jetpack: displayJetpackAppBranding,
-				} ) }
-			>
-				{ displayJetpackAppBranding
-					? this.getJetpackBrandedPanel()
-					: this.getWordPressBrandedPanel() }
-			</Card>
-		);
+		return <Card className="get-apps__desktop">{ this.getJetpackBrandedPanel() }</Card>;
 	}
 }
 

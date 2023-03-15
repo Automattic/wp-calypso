@@ -13,6 +13,7 @@ import ProcessingStep from './internals/steps-repository/processing-step';
 import SiteOptions from './internals/steps-repository/site-options';
 import VideomakerSetup from './internals/steps-repository/videomaker-setup';
 import type { Flow, ProvidedDependencies } from './internals/types';
+import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
 
 const videopress: Flow = {
 	name: VIDEOPRESS_FLOW,
@@ -56,8 +57,14 @@ const videopress: Flow = {
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName: name } );
 		setStepProgress( flowProgress );
 		const _siteSlug = useSiteSlug();
-		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
-		const _siteTitle = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedSiteTitle() );
+		const userIsLoggedIn = useSelect(
+			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+			[]
+		);
+		const _siteTitle = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
+			[]
+		);
 		const locale = useLocale();
 
 		const clearOnboardingSiteOptions = () => {

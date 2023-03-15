@@ -9,12 +9,16 @@ import { useSiteQuery } from 'calypso/data/sites/use-site-query';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
+import type { OnboardSelect } from '@automattic/data-stores';
 import './styles.scss';
 
 const MigrationHandler: Step = function MigrationHandler( { navigation } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
-	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
+	const stepProgress = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
+		[]
+	);
 	const { setIsMigrateFromWp } = useDispatch( ONBOARD_STORE );
 	const search = window.location.search;
 	const sourceSiteSlug = new URLSearchParams( search ).get( 'from' ) || '';

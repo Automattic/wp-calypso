@@ -17,7 +17,7 @@
 			margin-left: 16px;
 		}
 	}
-	.followers-count .button {
+	.subscribers-count .button {
 		margin-left: 16px;
 
 		@media ( max-width: $break-mobile ) {
@@ -46,7 +46,7 @@
 			box-shadow: inset 0 -1px 0 #0000000d;
 
 			&.is-open {
-				.followers-count .button {
+				.subscribers-count .button {
 					@media ( max-width: $break-mobile ) {
 						display: inline-block;
 						padding: 8px;
@@ -113,7 +113,7 @@
 			}
 		}
 
-		.followers-count {
+		.subscribers-count {
 			.button {
 				font-weight: 400;
 				font-size: $font-body-small;

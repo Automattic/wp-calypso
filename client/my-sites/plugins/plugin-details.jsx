@@ -237,7 +237,8 @@ function PluginDetails( props ) {
 		if ( fullPlugin.name && props.pluginSlug ) {
 			dispatch(
 				appendBreadcrumb( {
-					label: fullPlugin.name,
+					label:
+						fullPlugin.name.length > 50 ? `${ fullPlugin.name.slice( 0, 50 ) }…` : fullPlugin.name,
 					href: localizePath( `/plugins/${ props.pluginSlug }/${ selectedSite?.slug || '' }` ),
 					id: `plugin-${ props.pluginSlug }`,
 				} )

@@ -1,5 +1,8 @@
 import * as actions from './actions';
-import type { DispatchFromMap } from '../mapped-types';
+import * as selectors from './selectors';
+import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
+
+export type ProductsListSelect = SelectFromMap< typeof selectors >;
 
 export interface Dispatch {
 	dispatch: DispatchFromMap< typeof actions >;

@@ -18,6 +18,7 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
+import type { OnboardSelect } from '@automattic/data-stores';
 import './style.scss';
 
 type IntervalType = 'yearly' | 'monthly';
@@ -30,10 +31,10 @@ interface Props {
 const PlansWrapper: React.FC< Props > = ( props ) => {
 	const { hideFreePlan, domainCartItem } = useSelect( ( select ) => {
 		return {
-			hideFreePlan: select( ONBOARD_STORE ).getHideFreePlan(),
-			domainCartItem: select( ONBOARD_STORE ).getDomainCartItem(),
+			hideFreePlan: ( select( ONBOARD_STORE ) as OnboardSelect ).getHideFreePlan(),
+			domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
 		};
-	} );
+	}, [] );
 
 	const { setPlanCartItem } = useDispatch( ONBOARD_STORE );
 

@@ -4,6 +4,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { LAUNCH_STORE } from '../stores';
 import { useSiteDomains } from './use-site-domains';
 import { useSite, useTitle } from './';
+import type { LaunchSelect } from '@automattic/data-stores';
 
 export function useDomainSearch(): {
 	domainSearch: string;
@@ -11,7 +12,7 @@ export function useDomainSearch(): {
 	setDomainSearch: ( search: string ) => void;
 } {
 	const existingDomainSearch = useSelect(
-		( select ) => select( LAUNCH_STORE ).getDomainSearch(),
+		( select ) => ( select( LAUNCH_STORE ) as LaunchSelect ).getDomainSearch(),
 		[]
 	);
 	const { isDefaultTitle, title } = useTitle();

@@ -22,6 +22,7 @@ import classnames from 'classnames';
 import * as React from 'react';
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
 import { LAUNCH_STORE, PLANS_STORE } from '../../stores';
+import type { LaunchSelect, PlansSelect } from '@automattic/data-stores';
 
 import './styles.scss';
 
@@ -30,7 +31,7 @@ const TickIcon = <Icon icon={ check } size={ 17 } />;
 const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, onPrevStep } ) => {
 	const { domain, LaunchStep, isStepCompleted, isFlowCompleted, planProductId } = useSelect(
 		( select ) => {
-			const launchStore = select( LAUNCH_STORE );
+			const launchStore: LaunchSelect = select( LAUNCH_STORE );
 			return {
 				domain: launchStore.getSelectedDomain(),
 				LaunchStep: launchStore.getLaunchStep(),
@@ -38,16 +39,20 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 				isFlowCompleted: launchStore.isFlowCompleted(),
 				planProductId: launchStore.getSelectedPlanProductId(),
 			};
-		}
+		},
+		[]
 	);
 
 	const { __, hasTranslation } = useI18n();
 	const locale = useLocale();
 
-	const [ plan, planProduct ] = useSelect( ( select ) => [
-		select( PLANS_STORE ).getPlanByProductId( planProductId, locale ),
-		select( PLANS_STORE ).getPlanProductById( planProductId ),
-	] );
+	const { plan, planProduct } = useSelect(
+		( select ) => ( {
+			plan: ( select( PLANS_STORE ) as PlansSelect ).getPlanByProductId( planProductId, locale ),
+			planProduct: ( select( PLANS_STORE ) as PlansSelect ).getPlanProductById( planProductId ),
+		} ),
+		[ planProductId, locale ]
+	);
 
 	const { title } = useTitle();
 	const { siteSubdomain } = useSiteDomains();
