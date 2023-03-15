@@ -647,10 +647,14 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			selectedDesign.is_virtual && selectedDesign.recipe?.pattern_ids?.length;
 		const patternAssemblerCTA = showPatternAssemblerCTA && (
 			<PatternAssemblerCta
+				compact={ true }
 				hasPrimaryButton={ false }
 				onButtonClick={ () => pickBlankCanvasDesign( selectedDesign, true ) }
 				showEditorFallback={ false }
-				compact={ true }
+				showHeading={ false }
+				text={ translate(
+					'You can also start from scratch and build your own homepage with our library of patterns.'
+				) }
 			/>
 		);
 
