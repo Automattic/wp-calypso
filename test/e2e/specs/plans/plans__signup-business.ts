@@ -73,10 +73,10 @@ describe(
 			} );
 
 			it( 'Skip Onboarding', async function () {
-				await page.waitForURL( /setup\/site-setup\/goals/, { waitUntil: 'networkidle' } );
+				await page.waitForURL( /setup\/site-setup\/goals/ );
 				const startSiteFlow = new StartSiteFlow( page );
 				await Promise.all( [
-					page.waitForURL( /build\/launchpad/, { waitUntil: 'networkidle' } ),
+					page.waitForURL( /build\/launchpad/ ),
 					startSiteFlow.clickButton( 'Skip to dashboard' ),
 				] );
 			} );
