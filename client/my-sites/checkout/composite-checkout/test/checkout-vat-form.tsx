@@ -187,6 +187,30 @@ describe( 'Checkout contact step VAT form', () => {
 		expect( await screen.findByLabelText( 'Address for tax ID' ) ).toHaveValue( '123 Main Street' );
 	} );
 
+	it( 'renders the Northern Ireland checkbox pre-filled if the VAT endpoint returns XI', async () => {
+		nock.cleanAll();
+		mockCachedContactDetailsEndpoint( {
+			country_code: 'GB',
+			postal_code: '',
+		} );
+		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
+		mockGetVatInfoEndpoint( {
+			id: '12345',
+			name: 'Test company',
+			address: '123 Main Street',
+			country: 'XI',
+		} );
+		const cartChanges = { products: [ planWithoutDomain ] };
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
+
+		// Wait for checkout to load.
+		await screen.findByLabelText( 'Continue with the entered contact details' );
+		const countryField = await screen.findByLabelText( 'Country' );
+
+		expect( countryField.selectedOptions[ 0 ].value ).toBe( 'GB' );
+		expect( await screen.findByLabelText( 'Is the tax ID for Northern Ireland?' ) ).toBeChecked();
+	} );
+
 	it( 'does not allow unchecking the VAT details checkbox if the VAT fields are pre-filled', async () => {
 		nock.cleanAll();
 		mockCachedContactDetailsEndpoint( {
