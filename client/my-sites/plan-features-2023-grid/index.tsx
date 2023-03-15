@@ -530,7 +530,7 @@ export class PlanFeatures2023Grid extends Component<
 				planConstantObj,
 				planName,
 				rawPrice,
-				rawPriceAnnual,
+				maybeDiscountedPriceFullTerm,
 				currencyCode,
 				annualPricePerMonth,
 				isMonthlyPlan,
@@ -546,7 +546,7 @@ export class PlanFeatures2023Grid extends Component<
 				<Container className={ classes } isMobile={ options?.isMobile } key={ planName }>
 					<PlanFeatures2023GridBillingTimeframe
 						rawPrice={ rawPrice }
-						rawPriceAnnual={ rawPriceAnnual }
+						maybeDiscountedPriceFullTerm={ maybeDiscountedPriceFullTerm }
 						currencyCode={ currencyCode }
 						annualPricePerMonth={ annualPricePerMonth }
 						isMonthlyPlan={ isMonthlyPlan }
@@ -1063,9 +1063,9 @@ const ConnectedPlanFeatures2023Grid = connect(
 				);
 			}
 
-			const rawPriceAnnual =
+			const maybeDiscountedPriceFullTerm =
 				null !== discountPrice
-					? discountPrice * 12
+					? discountPrice * ( billingPeriod === 730 ? 24 : 12 )
 					: getPlanRawPrice( state, planProductId, false );
 
 			const tagline = planConstantObj.getPlanTagline?.() ?? '';
@@ -1096,7 +1096,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 				product_name_short,
 				hideMonthly: false,
 				rawPrice,
-				rawPriceAnnual,
+				maybeDiscountedPriceFullTerm,
 				rawPriceForMonthlyPlan,
 				relatedMonthlyPlan,
 				annualPricePerMonth,
