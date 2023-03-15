@@ -170,11 +170,11 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 			customClass="task__domain-upsell"
 			title={ cardTitle }
 			description={ preventWidows( cardSubtitle ) }
-			actionText={ translate( 'Get the custom domain' ) }
+			actionText={ translate( 'Get this domain' ) }
 			actionOnClick={ getCtaClickHandler }
 			actionBusy={ ctaIsBusy }
 			hasSecondaryAction={ true }
-			secondaryActionText={ translate( 'Search for another domain' ) }
+			secondaryActionText={ translate( 'Find other domains' ) }
 			secondaryActionUrl={ searchLink }
 			illustration={ domainUpsellMobileIllustration }
 			illustrationAlwaysShow={ true }

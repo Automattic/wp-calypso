@@ -76,8 +76,8 @@ jest.mock( 'page', () => ( link ) => ( pageLink = link ) );
 
 const domainUpsellHeadingPaidPlan = 'That perfect domain is waiting';
 const domainUpsellHeadingFreePlan = 'Own a domain. Build a site.';
-const buyThisDomainCta = 'Get the custom domain';
-const searchForDomainCta = 'Search for another domain';
+const buyThisDomainCta = 'Get this domain';
+const searchForDomainCta = 'Find other domains';
 
 describe( 'index', () => {
 	test( 'Should show H3 content for the Home domain upsell and test search domain button link', async () => {
