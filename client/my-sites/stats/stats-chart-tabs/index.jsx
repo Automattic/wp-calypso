@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import Chart from 'calypso/components/chart';
 import Legend from 'calypso/components/chart/legend';
 import { DEFAULT_HEARTBEAT } from 'calypso/components/data/query-site-stats/constants';
+import LineChart from 'calypso/components/line-chart';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
@@ -115,6 +116,16 @@ class StatModuleChartTabs extends Component {
 				<Chart barClick={ this.props.barClick } data={ this.props.chartData } minBarWidth={ 35 }>
 					<StatsEmptyState />
 				</Chart>
+				<LineChart
+					data={ [
+						this.props.chartData.map( ( point ) => ( {
+							...point,
+							date: new Date( point.data?.period ).getTime(),
+						} ) ),
+					] }
+				>
+					<StatsEmptyState />
+				</LineChart>
 				<StatTabs
 					data={ this.props.counts }
 					tabs={ this.props.charts }
