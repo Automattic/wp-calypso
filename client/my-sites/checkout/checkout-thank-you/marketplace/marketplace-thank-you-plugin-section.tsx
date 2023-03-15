@@ -8,7 +8,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { getPluginPurchased } from 'calypso/lib/plugins/utils';
-import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
 import {
 	getSitePurchases,
 	hasLoadedSitePurchasesFromServer,
