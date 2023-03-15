@@ -51,7 +51,7 @@ const generateSiteInformationSection = (
 						logoUrl={ formValues.siteInformationSection?.siteLogoUrl }
 					/>
 				),
-				showSkip: true,
+				showSkip: false,
 				validate: () => {
 					const isValid = Boolean( formValues.siteInformationSection?.searchTerms?.length );
 					return {
@@ -108,7 +108,7 @@ const generateWebsiteContentSections = (
 				},
 				comment: 'This is the serial number: 1',
 			} ),
-			summary: page.content,
+			summary: page.useFillerContent ? translate( 'AI Content 🌟' ) : page.content,
 			component: (
 				<DisplayedPageComponent
 					page={ page }
@@ -119,7 +119,8 @@ const generateWebsiteContentSections = (
 			),
 			showSkip: !! OPTIONAL_PAGES[ page.id ],
 			validate: () => {
-				const isValid = OPTIONAL_PAGES[ page.id ] || Boolean( page.content?.length );
+				const isValid =
+					OPTIONAL_PAGES[ page.id ] || Boolean( page.content?.length ) || page.useFillerContent;
 				return {
 					result: isValid,
 					errors: {
