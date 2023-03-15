@@ -7,6 +7,8 @@ import moment from 'moment';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useQueryUserPurchases } from 'calypso/components/data/query-user-purchases';
+import { getPluginPurchased } from 'calypso/lib/plugins/utils';
+import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
 import {
 	getUserPurchases,
 	hasLoadedUserPurchasesFromServer,
@@ -94,18 +96,8 @@ export const ThankYouPluginSection = ( { plugin }: { plugin: any } ) => {
 	const [ expirationDate, setExpirationDate ] = useState( '' );
 
 	const productPurchase = useMemo(
-		() =>
-			purchases?.find( ( item ) => {
-				if ( item.siteId === siteId ) {
-					if (
-						plugin.variations?.monthly?.product_id === item.productId ||
-						plugin.variations?.yearly?.product_id === item.productId
-					) {
-						return item;
-					}
-				}
-			} ),
-		[ purchases, siteId, plugin ]
+		() => getPluginPurchased( plugin, purchases || [] ),
+		[ plugin, purchases ]
 	);
 
 	useEffect( () => {
