@@ -16,7 +16,7 @@ export const StoragePricingHeader = () => {
 				/>
 				<p className="storage-pricing-header__subtitle">
 					{ translate(
-						'Extend your backup storage at any time, if you reach your subscription storage limit.'
+						'Extend your backup storage at any time, if you reach your storage limit.'
 					) }
 				</p>
 			</div>
