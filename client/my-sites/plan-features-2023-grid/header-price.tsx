@@ -1,17 +1,13 @@
 import {
-	getPlan,
 	getPlanSlugForTermVariant,
 	isWpcomEnterpriseGridPlan,
-	Plan,
 	PlanSlug,
 	TERM_ANNUALLY,
+	PLAN_BIENNIAL_PERIOD,
 } from '@automattic/calypso-products';
 import { useSelector } from 'react-redux';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getDiscountedRawPrice, getPlanRawPrice } from 'calypso/state/plans/selectors';
-import { getPlanDiscountedRawPrice } from 'calypso/state/sites/plans/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import usePlanPrices from './hooks/use-plan-prices';
 import { PlanProperties } from './types';
 
@@ -26,62 +22,37 @@ const PlanFeatures2023GridHeaderPrice = ( {
 	is2023OnboardingPricingGrid,
 	isLargeCurrency,
 }: PlanFeatures2023GridHeaderPriceProps ) => {
-	const { planName, rawPrice, discountPrice, showMonthlyPrice, billingPeriod } = planProperties;
+	const { planName, showMonthlyPrice, billingPeriod } = planProperties;
+	const isBiannualPlan = PLAN_BIENNIAL_PERIOD === billingPeriod;
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
+	const planPrices = usePlanPrices( {
+		planSlug: planName as PlanSlug,
+		monthly: showMonthlyPrice,
+	} );
+	const planYearlyVariantPrices = usePlanPrices( {
+		planSlug:
+			getPlanSlugForTermVariant( planName as PlanSlug, TERM_ANNUALLY ) ?? ( '' as PlanSlug ),
+		monthly: showMonthlyPrice,
+	} );
 
-	// TODO CLK Clean up this mess
+	// biannual plans always show discounted pricing, irrespective of whether the plan has a discount
+	const showDiscountedPricing =
+		isBiannualPlan || planPrices.planDiscountedRawPrice || planPrices.discountedRawPrice;
 
-	const siteId = useSelector( getSelectedSiteId ) ?? undefined;
+	// order matters here, we want to show the discounted price if it exists, otherwise the regular price
+	const priceToDisplay =
+		planPrices.planDiscountedRawPrice || planPrices.discountedRawPrice || planPrices.rawPrice;
 
-	const planYearlyVariantSlug =
-		getPlanSlugForTermVariant( planName as PlanSlug, TERM_ANNUALLY ) ?? '';
-	const planYearlyVariant = getPlan( planYearlyVariantSlug );
-	const planYearlyVariantProductId = planYearlyVariant?.getProductId();
-
-	// const planPrices = usePlanPrices( [ planYearlyVariant as Plan ] );
-
-	const planYearlyVariantRawPrice = useSelector( ( state ) =>
-		planYearlyVariantProductId == null
-			? null
-			: getPlanRawPrice( state, planYearlyVariantProductId, showMonthlyPrice )
-	);
-	const planYearlyVariantDiscountedRawPrice = useSelector( ( state ) =>
-		planYearlyVariantProductId == null
-			? null
-			: getDiscountedRawPrice( state, planYearlyVariantProductId, showMonthlyPrice )
-	);
-	const planYearlyVariantPlanDiscountedRawPrice = useSelector( ( state ) =>
-		getPlanDiscountedRawPrice( state, siteId, planYearlyVariantSlug, {
-			isMonthly: showMonthlyPrice,
-		} )
-	);
-	const planYearlyVariantDiscountPrice = siteId
-		? planYearlyVariantPlanDiscountedRawPrice
-		: planYearlyVariantDiscountedRawPrice;
+	// order matters here, we want to show the yearly variant's discounted price if it exists, otherwise [planName]'s raw price
+	const crossoutPriceToDisplay = isBiannualPlan
+		? planYearlyVariantPrices.planDiscountedRawPrice ||
+		  planYearlyVariantPrices.discountedRawPrice ||
+		  planYearlyVariantPrices.rawPrice
+		: planPrices.rawPrice;
 
 	if ( isWpcomEnterpriseGridPlan( planName ) ) {
 		return null;
 	}
-
-	const isBiannualPlan = 730 === billingPeriod;
-	const showDiscountedPricing = isBiannualPlan || discountPrice;
-
-	let crossoutPriceToDisplay = rawPrice;
-	let priceToDisplay = discountPrice || rawPrice;
-
-	if ( isBiannualPlan ) {
-		priceToDisplay = discountPrice || rawPrice;
-		crossoutPriceToDisplay = planYearlyVariantDiscountPrice || planYearlyVariantRawPrice;
-	}
-
-	console.log(
-		planName,
-		rawPrice,
-		discountPrice,
-		planYearlyVariantSlug,
-		planYearlyVariantRawPrice,
-		planYearlyVariantDiscountPrice
-	);
 
 	return (
 		<div className="plan-features-2023-grid__pricing">
@@ -90,7 +61,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 					<div className="plan-features-2023-grid__header-price-group-prices">
 						<PlanPrice
 							currencyCode={ currencyCode }
-							rawPrice={ crossoutPriceToDisplay ?? 0 }
+							rawPrice={ crossoutPriceToDisplay }
 							displayPerMonthNotation={ false }
 							is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 							isLargeCurrency={ isLargeCurrency }
@@ -98,7 +69,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 						/>
 						<PlanPrice
 							currencyCode={ currencyCode }
-							rawPrice={ priceToDisplay ?? 0 }
+							rawPrice={ priceToDisplay }
 							displayPerMonthNotation={ false }
 							is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 							isLargeCurrency={ isLargeCurrency }
@@ -110,7 +81,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 			{ ! showDiscountedPricing && (
 				<PlanPrice
 					currencyCode={ currencyCode }
-					rawPrice={ priceToDisplay ?? 0 }
+					rawPrice={ priceToDisplay }
 					displayPerMonthNotation={ false }
 					is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 					isLargeCurrency={ isLargeCurrency }

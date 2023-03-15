@@ -1,67 +1,35 @@
-import {
-	PlanSlug,
-	TERM_ANNUALLY,
-	TERM_BIENNIALLY,
-	TERM_MONTHLY,
-	TERM_TRIENNIALLY,
-} from '@automattic/calypso-products';
+import { getPlan, PlanSlug } from '@automattic/calypso-products';
 import { useSelector } from 'react-redux';
 import { getPlanRawPrice, getDiscountedRawPrice } from 'calypso/state/plans/selectors';
 import { getPlanDiscountedRawPrice } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import type { Plan } from '@automattic/calypso-products';
 
 export interface PlanPrices {
 	rawPrice: number;
-	discountedRawPrice: number;
-	planDiscountedRawPrice: number;
+	discountedRawPrice: number; // discounted on yearly-monthly conversion
+	planDiscountedRawPrice: number; // discounted on site plan upgrade
 }
 
 interface Props {
-	plans: Plan[];
-	currentPlanSlug?: PlanSlug;
-	monthly?: boolean;
+	planSlug: PlanSlug;
+	monthly?: boolean; // defaults to true
 }
 
-function toMonthlyPrice( plan: Plan ) {
-	return ( yearlyPrice?: number | null ) => {
-		if ( ! yearlyPrice ) {
-			return 0;
-		}
-
-		switch ( plan.term ) {
-			case TERM_ANNUALLY:
-				return yearlyPrice / 12;
-			case TERM_BIENNIALLY:
-				return yearlyPrice / 24;
-			case TERM_TRIENNIALLY:
-				return yearlyPrice / 36;
-			case TERM_MONTHLY:
-				return yearlyPrice;
-		}
-	};
-}
-
-const usePlanPrices = ( { plans, currentPlanSlug, monthly = true }: Props ): PlanPrices[] => {
+const usePlanPrices = ( { planSlug, monthly = true }: Props ): PlanPrices => {
 	return useSelector( ( state ) => {
 		const siteId = getSelectedSiteId( state ) ?? undefined;
+		const plan = getPlan( planSlug );
+		const productId = plan?.getProductId();
 
-		return plans.map( ( plan ) => {
-			const productId = plan.getProductId();
-			const [ rawPrice, discountedRawPrice, planDiscountedRawPrice ] = [
-				getPlanRawPrice( state, productId ),
-				getDiscountedRawPrice( state, productId ),
-				...( currentPlanSlug
-					? [ getPlanDiscountedRawPrice( state, siteId, currentPlanSlug, { isMonthly: monthly } ) ]
-					: [] ),
-			].map( monthly ? toMonthlyPrice( plan ) : ( price ) => price );
-
-			return {
-				rawPrice: rawPrice ?? 0,
-				discountedRawPrice: discountedRawPrice ?? 0,
-				planDiscountedRawPrice: planDiscountedRawPrice ?? 0,
-			};
-		} );
+		return {
+			rawPrice: ( productId && getPlanRawPrice( state, productId, monthly ) ) || 0,
+			discountedRawPrice: ( productId && getDiscountedRawPrice( state, productId, monthly ) ) || 0,
+			planDiscountedRawPrice:
+				( siteId &&
+					planSlug &&
+					getPlanDiscountedRawPrice( state, siteId, planSlug, { isMonthly: monthly } ) ) ||
+				0,
+		};
 	} );
 };
 
