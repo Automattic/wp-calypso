@@ -129,9 +129,9 @@ export const useGetMonthlyBackupsCardData = (): StorageUpgradeGetter => {
 			};
 
 			// Upgrade from Backup T1 to Backup add-on instead of the yearly term is enforced in
-			// the checkout page. This is a temporary solution to show the `Manage subscription`
-			// button instead of the `Upgrade yo yearly` button in the storage upgrade page.
-			if ( isPurchased && product && [ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ].includes( slug ) ) {
+			// the checkout page. This is a temporary solution to disable yearly upgrades
+			// altogether, as add-ons do eithern't have yearly terms.
+			if ( isPurchased && product ) {
 				product.forceNoYearlyUpgrade = true;
 			}
 
@@ -183,10 +183,10 @@ export const useGetYearlyBackupsCardData = (): StorageUpgradeGetter => {
 				],
 			};
 
-			// Upgrade from Backup T2 to Backup add-on instead of the yearly term is enforced in
-			// the checkout page. This is a temporary solution to show the `Manage subscription`
-			// button instead of the `Upgrade yo yearly` button in the storage upgrade page.
-			if ( isPurchased && product && [ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ].includes( slug ) ) {
+			// Upgrade from Backup T1 to Backup add-on instead of the yearly term is enforced in
+			// the checkout page. This is a temporary solution to disable yearly upgrades
+			// altogether, as add-ons do eithern't have yearly terms.
+			if ( isPurchased && product ) {
 				product.forceNoYearlyUpgrade = true;
 			}
 
