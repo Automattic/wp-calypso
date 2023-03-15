@@ -1,4 +1,5 @@
 import { select, dispatch, subscribe } from '@wordpress/data';
+import { store as welcomeGuideStore } from './store';
 
 import '@wordpress/nux'; //ensure nux store loads
 
@@ -20,22 +21,22 @@ const unsubscribe = subscribe( () => {
 subscribe( () => {
 	if ( select( 'core/nux' ).areTipsEnabled() ) {
 		dispatch( 'core/nux' ).disableTips();
-		dispatch( 'automattic/wpcom-welcome-guide' ).setShowWelcomeGuide( true );
+		dispatch( welcomeGuideStore ).setShowWelcomeGuide( true );
 	}
 	if ( select( 'core/edit-post' )?.isFeatureActive( 'welcomeGuide' ) ) {
 		dispatch( 'core/edit-post' ).toggleFeature( 'welcomeGuide' );
 		// On mounting, the welcomeGuide feature is turned on by default. This opens the welcome guide despite `welcomeGuideStatus` value.
 		// This check ensures that we only listen to `welcomeGuide` changes if the welcomeGuideStatus value is loaded and respected
-		if ( select( 'automattic/wpcom-welcome-guide' ).isWelcomeGuideStatusLoaded() ) {
-			dispatch( 'automattic/wpcom-welcome-guide' ).setShowWelcomeGuide( true, {
+		if ( select( welcomeGuideStore ).isWelcomeGuideStatusLoaded() ) {
+			dispatch( welcomeGuideStore ).setShowWelcomeGuide( true, {
 				openedManually: true,
 			} );
 		}
 	}
 	if ( select( 'core/edit-site' )?.isFeatureActive( 'welcomeGuide' ) ) {
 		dispatch( 'core/edit-site' ).toggleFeature( 'welcomeGuide' );
-		if ( select( 'automattic/wpcom-welcome-guide' ).isWelcomeGuideStatusLoaded() ) {
-			dispatch( 'automattic/wpcom-welcome-guide' ).setShowWelcomeGuide( true, {
+		if ( select( welcomeGuideStore ).isWelcomeGuideStatusLoaded() ) {
+			dispatch( welcomeGuideStore ).setShowWelcomeGuide( true, {
 				openedManually: true,
 			} );
 		}

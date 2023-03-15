@@ -5,23 +5,23 @@ import { Guide, GuidePage } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { store as welcomeGuideStore } from '../store';
 import blockPickerImage from './images/block-picker.svg';
 import editorImage from './images/editor.svg';
 import previewImage from './images/preview.svg';
 import privateImage from './images/private.svg';
-
 import './style.scss';
 
 function WpcomNux() {
 	const { show, isNewPageLayoutModalOpen, isManuallyOpened } = useSelect( ( select ) => ( {
-		show: select( 'automattic/wpcom-welcome-guide' ).isWelcomeGuideShown(),
+		show: select( welcomeGuideStore ).isWelcomeGuideShown(),
 		isNewPageLayoutModalOpen:
 			select( 'automattic/starter-page-layouts' ) && // Handle the case where SPT is not initalized.
 			select( 'automattic/starter-page-layouts' ).isOpen(),
-		isManuallyOpened: select( 'automattic/wpcom-welcome-guide' ).isWelcomeGuideManuallyOpened(),
+		isManuallyOpened: select( welcomeGuideStore ).isWelcomeGuideManuallyOpened(),
 	} ) );
 
-	const { setShowWelcomeGuide } = useDispatch( 'automattic/wpcom-welcome-guide' );
+	const { setShowWelcomeGuide } = useDispatch( welcomeGuideStore );
 
 	// Track opening of the welcome guide
 	useEffect( () => {
