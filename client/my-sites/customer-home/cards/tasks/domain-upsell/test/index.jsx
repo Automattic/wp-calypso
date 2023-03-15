@@ -1,0 +1,274 @@
+/**
+ * @jest-environment jsdom
+ */
+
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import nock from 'nock';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { Provider } from 'react-redux';
+import configureStore from 'redux-mock-store';
+import DomainUpsell from '../';
+
+const initialState = {
+	sites: {
+		items: {
+			1: {
+				ID: 1,
+				URL: 'example.wordpress.com',
+				plan: {
+					product_slug: 'free_plan',
+				},
+			},
+		},
+		domains: {
+			items: {
+				1: [
+					{
+						domain: 'example.wordpress.com',
+						isWPCOMDomain: true,
+					},
+				],
+			},
+		},
+		plans: {
+			1: {
+				product_slug: 'free_plan',
+			},
+		},
+	},
+	route: {
+		query: {
+			current: {},
+			initial: {},
+		},
+	},
+	ui: {
+		selectedSiteId: 1,
+	},
+	currentUser: {
+		id: 12,
+		user: {
+			email_verified: true,
+			site_count: 1,
+			primary_blog: 1,
+		},
+	},
+};
+
+jest.mock( '@automattic/domain-picker/src', () => {
+	return {
+		useDomainSuggestions: () => {
+			return {
+				allDomainSuggestions: [
+					{
+						is_free: false,
+						product_slug: 'mydomain.com',
+					},
+				],
+			};
+		},
+	};
+} );
+
+let pageLink = '';
+jest.mock( 'page', () => ( link ) => ( pageLink = link ) );
+
+const domainUpsellHeadingPaidPlan = 'That perfect domain is waiting';
+const domainUpsellHeadingFreePlan = 'Own a domain. Build a site.';
+const buyThisDomainCta = 'Get the custom domain';
+const searchForDomainCta = 'Search for another domain';
+
+describe( 'index', () => {
+	test( 'Should show H3 content for the Home domain upsell and test search domain button link', async () => {
+		const queryClient = new QueryClient();
+		const mockStore = configureStore();
+		const store = mockStore( initialState );
+
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<Provider store={ store }>
+					<DomainUpsell />
+				</Provider>
+			</QueryClientProvider>
+		);
+
+		expect(
+			screen.getByRole( 'heading', { name: domainUpsellHeadingFreePlan } )
+		).toBeInTheDocument();
+
+		const searchLink = screen.getByRole( 'link', { name: searchForDomainCta } );
+		expect( searchLink ).toBeInTheDocument();
+		expect(
+			searchLink.href.endsWith(
+				'/domains/add/example.wordpress.com?domainAndPlanPackage=true&domain=true'
+			)
+		).toBeTruthy();
+	} );
+
+	test( 'Should test the purchase button link on Free and Monthly plans', async () => {
+		nock.cleanAll();
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.post( '/rest/v1.1/me/shopping-cart/1' )
+			.reply( 200 );
+
+		const queryClient = new QueryClient();
+		const mockStore = configureStore();
+		const store = mockStore( initialState );
+
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<Provider store={ store }>
+					<DomainUpsell />
+				</Provider>
+			</QueryClientProvider>
+		);
+
+		const user = userEvent.setup();
+		await user.click( screen.getByRole( 'button', { name: buyThisDomainCta } ) );
+		expect( pageLink ).toBe(
+			'/plans/yearly/example.wordpress.com?domain=true&domainAndPlanPackage=true'
+		);
+	} );
+
+	test( 'Should test the purchase button link on Yearly plans', async () => {
+		nock.cleanAll();
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.post( '/rest/v1.1/me/shopping-cart/1' )
+			.reply( 200 );
+
+		const newInitialState = {
+			...initialState,
+			sites: {
+				...initialState.sites,
+				items: {
+					1: {
+						...initialState.sites.items[ 1 ],
+						plan: {
+							product_slug: 'business-bundle',
+						},
+					},
+				},
+				plans: {
+					1: {
+						product_slug: 'business-bundle',
+					},
+				},
+			},
+		};
+
+		const queryClient = new QueryClient();
+		const mockStore = configureStore();
+		const store = mockStore( newInitialState );
+
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<Provider store={ store }>
+					<DomainUpsell />
+				</Provider>
+			</QueryClientProvider>
+		);
+
+		const user = userEvent.setup();
+		await user.click( screen.getByRole( 'button', { name: buyThisDomainCta } ) );
+		expect( pageLink ).toBe( '/checkout/example.wordpress.com' );
+	} );
+
+	test( 'Should show H3 content for the Home domain upsell if paid plan with no domains', async () => {
+		const newInitialState = {
+			...initialState,
+			sites: {
+				...initialState.sites,
+				items: {
+					1: {
+						...initialState.sites.items[ 1 ],
+						plan: {
+							product_slug: 'business-bundle',
+						},
+					},
+				},
+				plans: {
+					1: {
+						product_slug: 'business-bundle',
+					},
+				},
+			},
+		};
+
+		const queryClient = new QueryClient();
+		const mockStore = configureStore();
+		const store = mockStore( newInitialState );
+
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<Provider store={ store }>
+					<DomainUpsell />
+				</Provider>
+			</QueryClientProvider>
+		);
+
+		expect(
+			screen.getByRole( 'heading', { name: domainUpsellHeadingPaidPlan } )
+		).toBeInTheDocument();
+
+		const searchLink = screen.getByRole( 'link', { name: searchForDomainCta } );
+		expect( searchLink ).toBeInTheDocument();
+		expect(
+			searchLink.href.endsWith(
+				'/domains/add/example.wordpress.com?domainAndPlanPackage=true&domain=true'
+			)
+		).toBeTruthy();
+	} );
+
+	test( 'Should NOT show Home domain upsell if paid plan with > 0 custom domains', async () => {
+		const newInitialState = {
+			...initialState,
+			sites: {
+				...initialState.sites,
+				items: {
+					1: {
+						...initialState.sites.items[ 1 ],
+						plan: {
+							product_slug: 'business-bundle',
+						},
+					},
+				},
+				domains: {
+					items: {
+						...initialState.sites.domains.items,
+						1: [
+							...initialState.sites.domains.items[ 1 ],
+							{
+								domain: 'example.com',
+								isWPCOMDomain: false,
+							},
+						],
+					},
+				},
+				plans: {
+					1: {
+						product_slug: 'business-bundle',
+					},
+				},
+			},
+		};
+
+		const queryClient = new QueryClient();
+		const mockStore = configureStore();
+		const store = mockStore( newInitialState );
+
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<Provider store={ store }>
+					<DomainUpsell />
+				</Provider>
+			</QueryClientProvider>
+		);
+
+		expect(
+			screen.queryByRole( 'heading', { name: domainUpsellHeadingPaidPlan } )
+		).not.toBeInTheDocument();
+	} );
+} );
