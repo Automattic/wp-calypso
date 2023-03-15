@@ -11,6 +11,16 @@
 	gap: 16px;
 }
 
+.ssh-keys__cards-container {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 12px;
+	> .card {
+		margin: 0;
+	}
+}
+
 .ssh-keys__select {
 	max-width: 100%;
 	width: 350px;
