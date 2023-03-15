@@ -577,7 +577,7 @@ function recordOrderInWooGTM( cart, orderId, sitePlanSlug ) {
 						price: costToUSD( cost, cart.currency ) ?? 0,
 						billing_term: cart.billing?.interval_unit,
 					} ) ),
-					value: cart.total_cost_integer / 100,
+					value: costToUSD( cart.total_cost_integer / 100, cart.currency ),
 				},
 			};
 
