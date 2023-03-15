@@ -4,6 +4,7 @@
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
 import { render, screen, waitFor } from '@testing-library/react';
+import { dispatch } from '@wordpress/data';
 import nock from 'nock';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
@@ -13,6 +14,7 @@ import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/do
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import CheckoutMain from '../components/checkout-main';
+import { CHECKOUT_STORE } from '../hooks/wpcom-store';
 import {
 	siteId,
 	fetchStripeConfiguration,
@@ -41,6 +43,7 @@ describe( 'Checkout payment methods list', () => {
 	let MyCheckout;
 
 	beforeEach( () => {
+		dispatch( CHECKOUT_STORE ).reset();
 		jest.clearAllMocks();
 		getPlansBySiteId.mockImplementation( () => ( {
 			data: getActivePersonalPlanDataForType( 'yearly' ),
