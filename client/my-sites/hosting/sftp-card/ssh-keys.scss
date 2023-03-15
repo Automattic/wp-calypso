@@ -2,7 +2,9 @@
 	max-width: calc(100vw - 32px);
 }
 
-.ssh-keys__form {
+.ssh-keys__form.form-fieldset {
+	margin-top: 16px;
+	margin-bottom: 0;
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
