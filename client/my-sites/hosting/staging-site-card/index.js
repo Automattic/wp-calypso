@@ -8,6 +8,7 @@ import { useQueryClient } from 'react-query';
 import { connect, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import { LoadingBar } from 'calypso/components/loading-bar';
+import Notice from 'calypso/components/notice';
 import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
 import { urlToSlug } from 'calypso/lib/url';
 import { useAddStagingSiteMutation } from 'calypso/my-sites/hosting/staging-site-card/use-add-staging-site';
@@ -43,9 +44,18 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
+	const [ loadingError, setLoadingError ] = useState( false );
 
 	const { data: stagingSites, isLoading: isLoadingStagingSites } = useStagingSite( siteId, {
 		enabled: ! disabled,
+		onError: ( error ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_hosting_configuration_staging_site_load_failure', {
+					code: error.code,
+				} )
+			);
+			setLoadingError( error );
+		},
 	} );
 
 	const stagingSite = useMemo( () => {
@@ -147,6 +157,16 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 		);
 	};
 
+	const getLoadingErrorContent = () => {
+		return (
+			<Notice status="is-error" showDismiss={ false }>
+				{ __(
+					'Unable to load staging sites. Please contact support if you believe you are seeing this message in error.'
+				) }
+			</Notice>
+		);
+	};
+
 	return (
 		<Card className="staging-site-card">
 			{
@@ -157,6 +177,7 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 			{ showAddStagingSite && ! addingStagingSite && getNewStagingSiteContent() }
 			{ showManageStagingSite && isStagingSiteTransferComplete && getManageStagingSiteContent() }
 			{ isLoadingStagingSites && getLoadingStagingSitesPlaceholder() }
+			{ ! isLoadingStagingSites && loadingError && getLoadingErrorContent() }
 			{ ( addingStagingSite || ( showManageStagingSite && ! isStagingSiteTransferComplete ) ) && (
 				<>
 					<StyledLoadingBar progress={ progress } />
