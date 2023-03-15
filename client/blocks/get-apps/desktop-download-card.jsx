@@ -63,8 +63,8 @@ class DesktopDownloadCard extends Component {
 		}
 	}
 
-	getPlatformImage( platform ) {
-		switch ( platform ) {
+	getPlatformImage( platformOrLink ) {
+		switch ( platformOrLink ) {
 			case 'MacIntel':
 			case PLATFORM_MAC_SILICON:
 			case MAC_SILICON_LINK:
@@ -81,70 +81,68 @@ class DesktopDownloadCard extends Component {
 		}
 	}
 
-	getTranslateComponents( platform ) {
-		switch ( platform ) {
-			case 'MacIntel':
-			case PLATFORM_MAC_SILICON:
-				return {
-					firstAvailableLink: this.getLinkAnchorTag( WINDOWS_LINK ),
-					secondAvailableLink: this.getLinkAnchorTag( LINUX_TAR_LINK ),
-					thirdAvailableLink: this.getLinkAnchorTag( LINUX_DEB_LINK ),
-					firstAvailableIcon: this.getPlatformImage( WINDOWS_LINK ),
-					secondAvailableIcon: this.getPlatformImage( LINUX_TAR_LINK ),
-					thirdAvailableIcon: this.getPlatformImage( LINUX_DEB_LINK ),
-				};
-			case 'Linux i686':
-			case 'Linux i686 on x86_64':
-				return {
-					firstAvailableLink: this.getLinkAnchorTag( LINUX_DEB_LINK ),
-					secondAvailableLink: this.getLinkAnchorTag( WINDOWS_LINK ),
-					thirdAvailableLink: this.getLinkAnchorTag( MAC_INTEL_LINK ),
-					fourthAvailableLink: this.getLinkAnchorTag( MAC_SILICON_LINK ),
-					firstAvailableIcon: this.getPlatformImage( LINUX_DEB_LINK ),
-					secondAvailableIcon: this.getPlatformImage( WINDOWS_LINK ),
-					thirdAvailableIcon: this.getPlatformImage( MAC_INTEL_LINK ),
-					fourthAvailableIcon: this.getPlatformImage( MAC_SILICON_LINK ),
-				};
-			default:
-				return {
-					firstAvailableLink: this.getLinkAnchorTag( MAC_INTEL_LINK ),
-					secondAvailableLink: this.getLinkAnchorTag( MAC_SILICON_LINK ),
-					thirdAvailableLink: this.getLinkAnchorTag( LINUX_TAR_LINK ),
-					fourthAvailableLink: this.getLinkAnchorTag( LINUX_DEB_LINK ),
-					firstAvailableIcon: this.getPlatformImage( MAC_INTEL_LINK ),
-					secondAvailableIcon: this.getPlatformImage( MAC_SILICON_LINK ),
-					thirdAvailableIcon: this.getPlatformImage( LINUX_TAR_LINK ),
-					fourthAvailableIcon: this.getPlatformImage( LINUX_DEB_LINK ),
-				};
-		}
+	getAlsoAvailableComponent( { link, platformName } ) {
+		const Link = ( props ) => this.getLinkAnchorTag( { ...props, platformLink: link } );
+		const Icon = () => this.getPlatformImage( link );
+		return (
+			<Link>
+				<Icon />
+				{ platformName }
+			</Link>
+		);
 	}
 
 	getAlsoAvailableTextJetpack( platform ) {
+		const macIntelLink = this.getAlsoAvailableComponent( {
+			link: MAC_INTEL_LINK,
+			platformName: 'Mac (Intel)',
+		} );
+		const macSiliconLink = this.getAlsoAvailableComponent( {
+			link: MAC_SILICON_LINK,
+			platformName: 'Mac (Silicon)',
+		} );
+		const windowsLink = this.getAlsoAvailableComponent( {
+			link: WINDOWS_LINK,
+			platformName: 'Windows',
+		} );
+		const linuxTarLink = this.getAlsoAvailableComponent( {
+			link: LINUX_TAR_LINK,
+			platformName: 'Linux (.tar.gz)',
+		} );
+		const linuxDebLink = this.getAlsoAvailableComponent( {
+			link: LINUX_DEB_LINK,
+			platformName: 'Linux (.deb)',
+		} );
+
 		switch ( platform ) {
 			case 'MacIntel':
 			case PLATFORM_MAC_SILICON:
-				return translate(
-					'{{firstAvailableLink}}{{firstAvailableIcon /}}Windows{{/firstAvailableLink}}' +
-						'{{secondAvailableLink}} {{secondAvailableIcon /}} Linux (.tar.gz){{/secondAvailableLink}}' +
-						'{{thirdAvailableLink}} {{thirdAvailableIcon /}} Linux (.deb){{/thirdAvailableLink}}',
-					{ components: this.getTranslateComponents( platform ) }
+				return (
+					<>
+						{ windowsLink }
+						{ linuxTarLink }
+						{ linuxDebLink }
+					</>
 				);
 			case 'Linux i686':
 			case 'Linux i686 on x86_64':
-				return translate(
-					'{{firstAvailableLink}}{{firstAvailableIcon /}}Linux (.deb){{/firstAvailableLink}}' +
-						'{{secondAvailableLink}}{{secondAvailableIcon /}}Windows{{/secondAvailableLink}}' +
-						'{{thirdAvailableLink}}{{thirdAvailableIcon /}}Mac (Intel){{/thirdAvailableLink}}' +
-						'{{fourthAvailableLink}}{{fourthAvailableIcon /}}Mac (Apple Silicon){{/fourthAvailableLink}}',
-					{ components: this.getTranslateComponents( platform ) }
+				return (
+					<>
+						{ linuxDebLink }
+						{ windowsLink }
+						{ macIntelLink }
+						{ macSiliconLink }
+					</>
 				);
 			default:
-				return translate(
-					'{{firstAvailableLink}}{{firstAvailableIcon /}}MacOS (Intel){{/firstAvailableLink}}' +
-						'{{secondAvailableLink}}{{secondAvailableIcon /}}MacOS (Apple Silicon){{/secondAvailableLink}}' +
-						'{{thirdAvailableLink}}{{thirdAvailableIcon /}}Linux (.tar.gz){{/thirdAvailableLink}}' +
-						'{{fourthAvailableLink}}{{fourthAvailableIcon /}}Linux (.deb){{/fourthAvailableLink}}',
-					{ components: this.getTranslateComponents( platform ) }
+				// Windows
+				return (
+					<>
+						{ macIntelLink }
+						{ macSiliconLink }
+						{ linuxTarLink }
+						{ linuxDebLink }
+					</>
 				);
 		}
 	}
@@ -213,7 +211,7 @@ class DesktopDownloadCard extends Component {
 		}
 	}
 
-	getLinkAnchorTag( platformLink ) {
+	getLinkAnchorTag( { platformLink, children } ) {
 		const {
 			trackWindowsClick,
 			trackMacIntelClick,
@@ -222,45 +220,27 @@ class DesktopDownloadCard extends Component {
 			trackLinuxDebClick,
 		} = this.props;
 
+		let onClick = trackWindowsClick;
+
 		switch ( platformLink ) {
 			case MAC_INTEL_LINK:
-				<a
-					href={ localizeUrl( platformLink ) }
-					onClick={ trackMacIntelClick }
-					className="get-apps__desktop-link"
-				/>;
-
+				onClick = trackMacIntelClick;
 			case MAC_SILICON_LINK:
-				<a
-					href={ localizeUrl( platformLink ) }
-					onClick={ trackMacSiliconClick }
-					className="get-apps__desktop-link"
-				/>;
+				onClick = trackMacSiliconClick;
 			case LINUX_TAR_LINK:
-				return (
-					<a
-						href={ localizeUrl( platformLink ) }
-						onClick={ trackLinuxTarClick }
-						className="get-apps__desktop-link"
-					/>
-				);
+				onClick = trackLinuxTarClick;
 			case LINUX_DEB_LINK:
-				return (
-					<a
-						href={ localizeUrl( platformLink ) }
-						onClick={ trackLinuxDebClick }
-						className="get-apps__desktop-link"
-					/>
-				);
-			default:
-				return (
-					<a
-						href={ localizeUrl( platformLink ) }
-						onClick={ trackWindowsClick }
-						className="get-apps__desktop-link"
-					/>
-				);
+				onClick = trackLinuxDebClick;
 		}
+		return (
+			<a
+				href={ localizeUrl( platformLink ) }
+				onClick={ onClick }
+				className="get-apps__desktop-link"
+			>
+				{ children }
+			</a>
+		);
 	}
 
 	getMobileDeviceDownloadOptions() {
