@@ -34,7 +34,7 @@ const domainUpsell: Flow = {
 	},
 
 	useStepNavigation( currentStep, navigate ) {
-		const flowName = useQuery().get( 'flowName' );
+		const flowName = useQuery().get( 'flowToReturnTo' );
 		const siteSlug = useSiteSlug();
 		const { getDomainCartItem, getPlanCartItem } = useSelect( ( select ) => ( {
 			getDomainCartItem: select( ONBOARD_STORE ).getDomainCartItem,

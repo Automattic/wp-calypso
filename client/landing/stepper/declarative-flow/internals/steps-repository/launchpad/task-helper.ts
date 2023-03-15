@@ -325,8 +325,8 @@ export function getEnhancedTasks(
 							window.location.assign(
 								addQueryArgs( '/setup/domain-upsell/domains', {
 									siteSlug,
-									flowName: flow,
-									new: siteSlug,
+									flowToReturnTo: flow,
+									new: site?.name,
 								} )
 							);
 						},

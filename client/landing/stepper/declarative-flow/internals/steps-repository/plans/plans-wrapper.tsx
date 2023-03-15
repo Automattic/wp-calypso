@@ -47,7 +47,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const isInVerticalScrollingPlansExperiment = true;
 	const planTypes = undefined;
 	const headerText = __( 'Choose a plan' );
-	const isInSignup = props?.flowName === 'domain-upsell' ? false : true;
+	const isInSignup = props?.flowName === DOMAIN_UPSELL_FLOW ? false : true;
 
 	const translate = useTranslate();
 
@@ -131,6 +131,10 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	};
 
 	const getHeaderText = () => {
+		const { flowName } = props;
+		if ( flowName === DOMAIN_UPSELL_FLOW ) {
+			return __( 'Choose your flavor of WordPress' );
+		}
 		if ( isDesktop ) {
 			return headerText;
 		}

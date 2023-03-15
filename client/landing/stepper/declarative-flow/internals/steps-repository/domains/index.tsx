@@ -93,11 +93,15 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			} );
 			dispatch( submitDomainStepSelection( suggestion, getAnalyticsSection() ) );
 
+			let hideFreePlan;
+
 			if ( flow === DOMAIN_UPSELL_FLOW ) {
-				shouldHideFreePlan = true;
+				hideFreePlan = false;
+			} else {
+				hideFreePlan = Boolean( suggestion.product_slug ) || shouldHideFreePlan;
 			}
 
-			setHideFreePlan( Boolean( suggestion.product_slug ) || shouldHideFreePlan );
+			setHideFreePlan( hideFreePlan );
 			setDomainCartItem( domainCartItem );
 		}
 
@@ -232,7 +236,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			hideBack={ ! isCopySiteFlow( flow ) }
 			backLabelText={ __( 'Back to sites' ) }
 			hideSkip={ true }
-			flowName={ isCopySiteFlow( flow ) ? ( flow as string ) : 'linkInBio' }
+			flowName={ flow as string }
 			stepContent={ <div className="domains__content">{ renderContent() }</div> }
 			recordTracksEvent={ recordTracksEvent }
 			goBack={ () => exitFlow?.( '/sites' ) }

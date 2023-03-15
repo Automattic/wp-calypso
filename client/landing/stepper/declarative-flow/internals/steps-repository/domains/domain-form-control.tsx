@@ -104,6 +104,15 @@ export function DomainFormControl( {
 		onSkip( undefined, hideFreePlan );
 	};
 
+	const shouldDisplayUseYourDomainContent = () => {
+		if ( ! flow ) {
+			return false;
+		}
+
+		const displayUseYourDomainContent = ! [ DOMAIN_UPSELL_FLOW ].includes( flow );
+		return displayUseYourDomainContent;
+	};
+
 	const getSideContent = () => {
 		const useYourDomain = (
 			<div className="domains__domain-side-content">
@@ -120,7 +129,7 @@ export function DomainFormControl( {
 						flowName={ flow }
 					/>
 				</div>
-				{ useYourDomain }
+				{ shouldDisplayUseYourDomainContent() && useYourDomain }
 			</div>
 		);
 	};
@@ -186,6 +195,14 @@ export function DomainFormControl( {
 				</CalypsoShoppingCartProvider>
 			</div>
 		);
+	};
+
+	const isReskinnedSupportedFlow = () => {
+		if ( ! flow ) {
+			return false;
+		}
+
+		return [ 'domain-upsell' ].includes( flow );
 	};
 
 	const renderDomainForm = () => {
@@ -261,10 +278,15 @@ export function DomainFormControl( {
 	};
 
 	let content;
+	let sideContent;
 	if ( showUseYourDomain ) {
 		content = renderYourDomainForm();
 	} else {
 		content = renderDomainForm();
+	}
+
+	if ( isReskinnedSupportedFlow() ) {
+		sideContent = getSideContent();
 	}
 
 	// if ( 'invalid' === this.props.step.status ) {
@@ -281,7 +303,9 @@ export function DomainFormControl( {
 	return (
 		<>
 			{ isEmpty( productsList ) && <QueryProductsList /> }
-			<div className="domains__step-content domains__step-content-domain-step">{ content }</div>
+			<div className="domains__step-content domains__step-content-domain-step">
+				{ content } { sideContent }
+			</div>
 		</>
 	);
 }
