@@ -6,13 +6,13 @@ import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useQueryUserPurchases } from 'calypso/components/data/query-user-purchases';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { getPluginPurchased } from 'calypso/lib/plugins/utils';
 import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
 import {
-	getUserPurchases,
-	hasLoadedUserPurchasesFromServer,
-	isFetchingUserPurchases,
+	getSitePurchases,
+	hasLoadedSitePurchasesFromServer,
+	isFetchingSitePurchases,
 } from 'calypso/state/purchases/selectors';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
@@ -88,11 +88,10 @@ export const ThankYouPluginSection = ( { plugin }: { plugin: any } ) => {
 		plugin?.setup_url && siteAdminUrl ? siteAdminUrl + plugin.setup_url : null;
 	const setupURL = plugin?.action_links?.Settings || fallbackSetupUrl || managePluginsUrl;
 	const documentationURL = plugin?.documentation_url;
-	const purchases = useSelector( ( state ) => getUserPurchases( state ) );
+	const purchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
 	const isLoadingPurchases = useSelector(
-		( state ) => isFetchingUserPurchases( state ) || ! hasLoadedUserPurchasesFromServer( state )
+		( state ) => isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state )
 	);
-	useQueryUserPurchases();
 	const [ expirationDate, setExpirationDate ] = useState( '' );
 
 	const productPurchase = useMemo(
@@ -127,6 +126,7 @@ export const ThankYouPluginSection = ( { plugin }: { plugin: any } ) => {
 
 	return (
 		<PluginSectionContainer>
+			<QuerySitePurchases siteId={ siteId } />
 			<img
 				width={ 50 }
 				height={ 50 }

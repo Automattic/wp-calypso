@@ -7,6 +7,14 @@ import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { ThankYouPluginSection } from '../marketplace-thank-you-plugin-section';
 
+jest.mock( 'react-redux', () => {
+	const originalModule = jest.requireActual( 'react-redux' );
+	return {
+		...originalModule,
+		useDispatch: () => jest.fn(),
+	};
+} );
+
 const sites = [];
 sites[ 1 ] = {
 	ID: 1,
@@ -15,7 +23,7 @@ sites[ 1 ] = {
 
 const initialState = {
 	purchases: {
-		hasLoadedUserPurchasesFromServer: true,
+		hasLoadedSitePurchasesFromServer: true,
 	},
 	sites: {
 		items: sites,
