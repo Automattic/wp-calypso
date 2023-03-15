@@ -11,10 +11,35 @@ export * from './types';
 const formatterCache = new Map< string, Intl.NumberFormat >();
 const fallbackLocale = 'en';
 const fallbackCurrency = 'USD';
+const geolocationEndpointUrl = 'https://public-api.wordpress.com/geo/';
 
 export function createFormatter(): CurrencyFormatter {
 	const currencyOverrides: Record< string, { symbol?: string | undefined } > = {};
 	let defaultLocale: string | undefined = undefined;
+
+	// If the user is inside the US using USD, they should only see `$` and not `US$`.
+	async function geolocateCurrencySymbol(): Promise< void > {
+		const geoData = await globalThis
+			.fetch?.( geolocationEndpointUrl )
+			.then( ( response ) => response.json() )
+			.catch( ( error ) => {
+				// Do nothing if the fetch fails.
+				// eslint-disable-next-line no-console
+				console.warn( 'Fetching geolocation for format-currency failed.', error );
+			} );
+
+		if ( ! containsGeolocationCountry( geoData ) ) {
+			return;
+		}
+		if ( ! geoData.country_short ) {
+			return;
+		}
+		if ( geoData.country_short === 'US' ) {
+			setCurrencySymbol( 'USD', '$' );
+		} else {
+			setCurrencySymbol( 'USD', 'US$' );
+		}
+	}
 
 	function getFormatter(
 		number: number,
@@ -205,6 +230,26 @@ export function createFormatter(): CurrencyFormatter {
 		return code;
 	}
 
+	/**
+	 * Change the currency symbol override used by formatting.
+	 *
+	 * By default, `formatCurrency` and `getCurrencyObject` use a currency symbol
+	 * from a list of hard-coded overrides in this package keyed by the currency
+	 * code. For example, `CAD` is always rendered as `C$` even if the locale is
+	 * `en-CA` which would normally render the symbol `$`.
+	 *
+	 * With this function, you can change the override used by any given currency.
+	 *
+	 * Note that this is global and will take effect no matter the locale! Use it
+	 * with care.
+	 */
+	function setCurrencySymbol( currencyCode: string, currencySymbol: string | undefined ): void {
+		if ( ! currencyOverrides[ currencyCode ] ) {
+			currencyOverrides[ currencyCode ] = {};
+		}
+		currencyOverrides[ currencyCode ].symbol = currencySymbol;
+	}
+
 	function getCurrencyOverride( code: string ): CurrencyOverride | undefined {
 		return currencyOverrides[ code ] ?? defaultCurrencyOverrides[ code ];
 	}
@@ -226,7 +271,9 @@ export function createFormatter(): CurrencyFormatter {
 	return {
 		formatCurrency,
 		getCurrencyObject,
+		setCurrencySymbol,
 		setDefaultLocale,
+		geolocateCurrencySymbol,
 	};
 }
 
@@ -372,7 +419,19 @@ function getSmallestUnitDivisor( precision: number ): number {
 	return 10 ** precision;
 }
 
+interface WithGeoCountry {
+	country_short: string;
+}
+
+function containsGeolocationCountry( response: unknown ): response is WithGeoCountry {
+	return typeof ( response as WithGeoCountry )?.country_short === 'string';
+}
+
 const defaultFormatter = createFormatter();
+
+export async function geolocateCurrencySymbol() {
+	return defaultFormatter.geolocateCurrencySymbol();
+}
 
 export function formatCurrency( ...args: Parameters< typeof defaultFormatter.formatCurrency > ) {
 	return defaultFormatter.formatCurrency( ...args );
@@ -388,6 +447,12 @@ export function setDefaultLocale(
 	...args: Parameters< typeof defaultFormatter.setDefaultLocale >
 ) {
 	return defaultFormatter.setDefaultLocale( ...args );
+}
+
+export function setCurrencySymbol(
+	...args: Parameters< typeof defaultFormatter.setCurrencySymbol >
+) {
+	return defaultFormatter.setCurrencySymbol( ...args );
 }
 
 export default defaultFormatter.formatCurrency;
