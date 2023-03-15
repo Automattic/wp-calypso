@@ -6,7 +6,7 @@ import {
 	is2023PricingGridActivePage,
 } from '@automattic/calypso-products';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
-import { isNewsletterOrLinkInBioFlow, isNewsletterFlow } from '@automattic/onboarding';
+// import { isNewsletterOrLinkInBioFlow, isNewsletterFlow } from '@automattic/onboarding';
 import debugModule from 'debug';
 import {
 	clone,
@@ -45,7 +45,7 @@ import P2SignupProcessingScreen from 'calypso/signup/p2-processing-screen';
 import SignupProcessingScreen from 'calypso/signup/processing-screen';
 import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-screen';
 import SignupHeader from 'calypso/signup/signup-header';
-import TailoredFlowProcessingScreen from 'calypso/signup/tailored-flow-processing-screen';
+// import TailoredFlowProcessingScreen from 'calypso/signup/tailored-flow-processing-screen';
 import { loadTrackingTool } from 'calypso/state/analytics/actions';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import {
@@ -249,9 +249,9 @@ class Signup extends Component {
 		this.props.flowName === 'onboarding' && ! this.props.isLoggedIn && addHotJarScript();
 		this.startTrackingForBusinessSite();
 
-		if ( ! isNewsletterFlow( this.props.flowName ) ) {
-			recordSignupStart( this.props.flowName, this.props.refParameter, this.getRecordProps() );
-		}
+		// if ( ! isNewsletterFlow( this.props.flowName ) ) {
+		recordSignupStart( this.props.flowName, this.props.refParameter, this.getRecordProps() );
+		// }
 
 		if ( ! this.state.shouldShowLoadingScreen ) {
 			recordSignupStep( this.props.flowName, this.props.stepName, this.getRecordProps() );
@@ -727,9 +727,10 @@ class Signup extends Component {
 			return <P2SignupProcessingScreen signupSiteName={ this.state.signupSiteName } />;
 		}
 
-		if ( isNewsletterOrLinkInBioFlow( this.props.flowName ) ) {
-			return <TailoredFlowProcessingScreen flowName={ this.props.flowName } />;
-		}
+		// if ( isNewsletterOrLinkInBioFlow( this.props.flowName ) ) {
+		// 	debugger;
+		// 	return <TailoredFlowProcessingScreen flowName={ this.props.flowName } />;
+		// }
 
 		if ( isReskinned ) {
 			const domainItem = get( this.props, 'signupDependencies.domainItem', {} );
@@ -845,12 +846,6 @@ class Signup extends Component {
 			return <QuerySiteDomains siteId={ this.props.siteId } />;
 		}
 	}
-
-	getPageTitle() {
-		if ( isNewsletterOrLinkInBioFlow( this.props.flowName ) ) {
-			return this.props.pageTitle;
-		}
-	}
 	render() {
 		// Prevent rendering a step if in the middle of performing a redirect or resuming progress.
 		if (
@@ -879,7 +874,6 @@ class Signup extends Component {
 								flowName: this.props.flowName,
 								stepName: this.props.stepName,
 							} }
-							pageTitle={ this.getPageTitle() }
 							shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
 							isReskinned={ isReskinned }
 							rightComponent={

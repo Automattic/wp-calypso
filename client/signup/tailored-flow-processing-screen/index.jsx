@@ -1,8 +1,8 @@
-import { NEWSLETTER_FLOW, LINK_IN_BIO_FLOW, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
+// import { NEWSLETTER_FLOW, LINK_IN_BIO_FLOW, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
 import { useRef, useState, useEffect } from 'react';
-import JetpackLogo from 'calypso/components/jetpack-logo';
+// import JetpackLogo from 'calypso/components/jetpack-logo';
 import { useInterval } from 'calypso/lib/interval/use-interval';
 import './style.scss';
 
@@ -14,21 +14,7 @@ const useSteps = ( flowName ) => {
 	let steps = [];
 
 	switch ( flowName ) {
-		case LINK_IN_BIO_FLOW:
-		case LINK_IN_BIO_TLD_FLOW:
-			steps = [
-				{ title: __( 'Great choices. Nearly there!' ) },
-				{ title: __( 'Shining and polishing your Bio' ) },
-				{ title: __( 'Mounting it on a marble pedestal' ) },
-			];
-			break;
-		case NEWSLETTER_FLOW:
-			steps = [
-				{ title: __( 'Excellent choices. Nearly there!' ) },
-				{ title: __( 'Smoothing down the stationery' ) },
-				{ title: __( 'Embossing all the envelopes' ) },
-			];
-			break;
+		// perhaps this can be removed in the future.
 		default:
 			steps = [
 				{ title: __( 'Turning on the lights' ) },
@@ -90,11 +76,11 @@ export default function TailoredFlowProcessingScreen( { flowName } ) {
 				/>
 			</div>
 
-			{ flowName === NEWSLETTER_FLOW && (
+			{ /* { flowName === NEWSLETTER_FLOW && (
 				<div className="reskinned-processing-screen__jetpack-powered">
 					<JetpackLogo monochrome size={ 18 } /> <span>Jetpack powered</span>
 				</div>
-			) }
+			) } */ }
 		</div>
 	);
 }

@@ -1,12 +1,12 @@
 import { is2023PricingGridActivePage, getPlan, PLAN_FREE } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import {
-	isLinkInBioFlow,
+	// isLinkInBioFlow,
 	isHostingLPFlow,
-	isNewsletterOrLinkInBioFlow,
+	// isNewsletterOrLinkInBioFlow,
 	isSiteAssemblerFlow,
 	isTailoredSignupFlow,
-	NEWSLETTER_FLOW,
+	// NEWSLETTER_FLOW,
 } from '@automattic/onboarding';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
@@ -205,7 +205,6 @@ export class PlansStep extends Component {
 	getSubHeaderText() {
 		const {
 			eligibleForProPlan,
-			flowName,
 			hideFreePlan,
 			locale,
 			translate,
@@ -217,22 +216,22 @@ export class PlansStep extends Component {
 			<Button onClick={ () => buildUpgradeFunction( this.props, null ) } borderless />
 		);
 
-		if ( flowName === NEWSLETTER_FLOW ) {
-			return hideFreePlan
-				? translate( 'Unlock a powerful bundle of features for your Newsletter.' )
-				: translate(
-						`Unlock a powerful bundle of features for your Newsletter. Or {{link}}start with a free plan{{/link}}.`,
-						{ components: { link: freePlanButton } }
-				  );
-		}
-		if ( isLinkInBioFlow( flowName ) ) {
-			return hideFreePlan
-				? translate( 'Unlock a powerful bundle of features for your Link in Bio.' )
-				: translate(
-						`Unlock a powerful bundle of features for your Link in Bio. Or {{link}}start with a free plan{{/link}}.`,
-						{ components: { link: freePlanButton } }
-				  );
-		}
+		// if ( flowName === NEWSLETTER_FLOW ) {
+		// 	return hideFreePlan
+		// 		? translate( 'Unlock a powerful bundle of features for your Newsletter.' )
+		// 		: translate(
+		// 				`Unlock a powerful bundle of features for your Newsletter. Or {{link}}start with a free plan{{/link}}.`,
+		// 				{ components: { link: freePlanButton } }
+		// 		  );
+		// }
+		// if ( isLinkInBioFlow( flowName ) ) {
+		// 	return hideFreePlan
+		// 		? translate( 'Unlock a powerful bundle of features for your Link in Bio.' )
+		// 		: translate(
+		// 				`Unlock a powerful bundle of features for your Link in Bio. Or {{link}}start with a free plan{{/link}}.`,
+		// 				{ components: { link: freePlanButton } }
+		// 		  );
+		// }
 
 		if ( eligibleForProPlan ) {
 			if ( isStarterPlanEnabled() ) {
@@ -273,9 +272,9 @@ export class PlansStep extends Component {
 		} );
 	}
 
-	isTailoredFlow() {
-		return isNewsletterOrLinkInBioFlow( this.props.flowName );
-	}
+	// isTailoredFlow() {
+	// 	return isNewsletterOrLinkInBioFlow( this.props.flowName );
+	// }
 
 	shouldHideEcommercePlan() {
 		// The flow with the Site Assembler step doesn't support atomic site, so we have to hide the plan
@@ -329,7 +328,7 @@ export class PlansStep extends Component {
 					stepName={ stepName }
 					positionInFlow={ positionInFlow }
 					headerText={ headerText }
-					shouldHideNavButtons={ this.isTailoredFlow() || isHostingLPFlow( this.props.flowName ) }
+					shouldHideNavButtons={ isHostingLPFlow( this.props.flowName ) }
 					fallbackHeaderText={ fallbackHeaderText }
 					subHeaderText={ subHeaderText }
 					fallbackSubHeaderText={ fallbackSubHeaderText }
