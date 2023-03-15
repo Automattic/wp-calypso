@@ -12,10 +12,12 @@ export const StoragePricingHeader = () => {
 			<div className="storage-pricing-header">
 				<FormattedHeader
 					className="storage-pricing-header__title"
-					headerText={ preventWidows( translate( 'Upgrade your VaultPress Backup storage' ) ) }
+					headerText={ preventWidows( translate( 'Increase Your VaultPress Backup Storage' ) ) }
 				/>
 				<p className="storage-pricing-header__subtitle">
-					{ translate( 'Upgrade at any time, if you reach your backup storage limit.' ) }
+					{ translate(
+						'Extend your backup storage at any time, if you reach your subscription storage limit.'
+					) }
 				</p>
 			</div>
 		</>

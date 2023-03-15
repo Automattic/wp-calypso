@@ -8,6 +8,7 @@ import {
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_3TB_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_5TB_MONTHLY,
+	JETPACK_BACKUP_ADDON_PRODUCTS,
 	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
@@ -18,7 +19,7 @@ import {
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
 } from '@automattic/calypso-products';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
 import type { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 
@@ -75,10 +76,12 @@ const getDisclaimer = (
 const useGetSharedCardData = () => {
 	const translate = useTranslate();
 
-	return useMemo(
-		() => ( {
+	return useCallback(
+		( slug ) => ( {
 			subheader: translate( 'of backup storage' ),
-			buttonLabel: translate( 'Upgrade storage' ),
+			buttonLabel: JETPACK_BACKUP_ADDON_PRODUCTS.includes( slug )
+				? translate( 'Get add-on' )
+				: translate( 'Upgrade storage' ),
 			// description: <the default description of the product being upgraded>,
 			features: [
 				{
@@ -97,13 +100,14 @@ const useGetSharedCardData = () => {
 
 export const useGetMonthlyBackupsCardData = (): StorageUpgradeGetter => {
 	const translate = useTranslate();
-	const { subheader, buttonLabel, features: sharedFeatures } = useGetSharedCardData();
+	const getSharedCardData = useGetSharedCardData();
 	const getAmountBySlug = useJetpackStorageAmountTextByProductSlug();
 
 	return useCallback(
 		( slug, isPurchased ): SelectorProduct => {
 			const product = slugToSelectorProduct( slug );
 			const storageAmount = getAmountBySlug( slug );
+			const { subheader, buttonLabel, features: sharedFeatures } = getSharedCardData( slug );
 			const features = {
 				items: [
 					{
@@ -131,19 +135,20 @@ export const useGetMonthlyBackupsCardData = (): StorageUpgradeGetter => {
 				disclaimer: getDisclaimer( product?.productSlug as string, features.items ),
 			} as SelectorProduct;
 		},
-		[ getAmountBySlug, translate, subheader, buttonLabel, sharedFeatures ]
+		[ getAmountBySlug, getSharedCardData, translate ]
 	);
 };
 
 export const useGetYearlyBackupsCardData = (): StorageUpgradeGetter => {
 	const translate = useTranslate();
-	const { subheader, buttonLabel, features: sharedFeatures } = useGetSharedCardData();
+	const getSharedCardData = useGetSharedCardData();
 	const getAmountBySlug = useJetpackStorageAmountTextByProductSlug();
 
 	return useCallback(
 		( slug: string, isPurchased ): SelectorProduct => {
 			const product = slugToSelectorProduct( slug );
 			const storageAmount = getAmountBySlug( slug );
+			const { subheader, buttonLabel, features: sharedFeatures } = getSharedCardData( slug );
 			const features = {
 				items: [
 					{
@@ -178,7 +183,7 @@ export const useGetYearlyBackupsCardData = (): StorageUpgradeGetter => {
 				disclaimer: getDisclaimer( product?.productSlug as string, features.items ),
 			} as SelectorProduct;
 		},
-		[ getAmountBySlug, translate, subheader, buttonLabel, sharedFeatures ]
+		[ getAmountBySlug, getSharedCardData, translate ]
 	);
 };
 
