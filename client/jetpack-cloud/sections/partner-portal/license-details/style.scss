@@ -75,4 +75,16 @@
 			display: none;
 		}
 	}
+
+	&__legacy-notice-text {
+		margin-bottom: 2rem;
+		color: var(--studio-gray-50);
+		font-style: italic;
+	}
+
+	&__legacy-notice-text .gridicon {
+		position: relative;
+		top: 6px;
+		margin-right: 10px;
+	}
 }

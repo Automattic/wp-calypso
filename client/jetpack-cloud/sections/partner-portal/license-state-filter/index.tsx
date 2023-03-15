@@ -23,7 +23,12 @@ function LicenseStateFilter( { doSearch }: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const { filter, search } = useContext( LicenseListContext );
-	const counts = useSelector( getLicenseCounts );
+	
+	const counts = Object.assign(
+		useSelector( getLicenseCounts ),
+		{ legacy: 2 }
+	);
+	
 	const basePath = '/partner-portal/licenses/';
 
 	const navItems = [
@@ -43,6 +48,10 @@ function LicenseStateFilter( { doSearch }: Props ) {
 			key: LicenseFilter.Revoked,
 			label: translate( 'Revoked' ),
 		},
+		{
+			key: LicenseFilter.Legacy,
+			label: translate( 'Legacy' ),
+		}
 	].map( ( navItem ) => ( {
 		...navItem,
 		count: counts[ navItem.key ] || 0,

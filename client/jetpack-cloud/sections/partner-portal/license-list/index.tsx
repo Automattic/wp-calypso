@@ -49,6 +49,8 @@ export default function LicenseList() {
 	const showPagination = showLicenses && licenses.totalPages > 1;
 	const showNoResults = hasFetched && ! isFetching && licenses && licenses.items.length === 0;
 
+	console.log( licenses );
+
 	const onPageClick = useCallback(
 		( pageNumber: number ) => {
 			setPage( pageNumber );

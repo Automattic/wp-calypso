@@ -22,6 +22,7 @@
 
 	&__card {
 		// Increased specificity to override card styles.
+		&--is-legacy.card.is-compact,
 		&--is-detached.card.is-compact,
 		&--is-revoked.card.is-compact {
 			// Reduce padding to fit the extra border width on the left so columns are still aligned perfectly.
@@ -34,6 +35,10 @@
 
 		&--is-detached.card.is-compact {
 			border-left: 3px solid var(--studio-orange-40);
+		}
+
+		&--is-legacy.card.is-compact {
+			border-left: 3px solid var(--studio-purple-50);
 		}
 
 		&--is-revoked.card.is-compact {
@@ -87,6 +92,10 @@
 
 		&--is-detached {
 			color: var(--studio-orange-40);
+		}
+
+		&--is-legacy {
+			color: var(--studio-purple-50);
 		}
 
 		&--is-revoked {

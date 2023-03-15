@@ -46,10 +46,14 @@ export default function LicensePreview( {
 	const isHighlighted = getQueryArg( window.location.href, 'highlight' ) === licenseKey;
 	const [ isOpen, setOpen ] = useState( isHighlighted );
 	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
-	const licenseState = getLicenseState( attachedAt, revokedAt );
 	const domain = siteUrl ? getUrlParts( siteUrl ).hostname || siteUrl : '';
+	
+	const licenseState = 'winflagfootball.com' === domain 
+		? LicenseState.Legacy
+		: getLicenseState( attachedAt, revokedAt );
+	
 	const showDomain =
-		domain && [ LicenseState.Attached, LicenseState.Revoked ].indexOf( licenseState ) !== -1;
+		domain && [ LicenseState.Attached, LicenseState.Revoked, LicenseState.Legacy ].indexOf( licenseState ) !== -1;
 
 	const oneMinuteAgo = moment.utc().subtract( 1, 'minute' );
 
@@ -114,10 +118,18 @@ export default function LicensePreview( {
 					'license-preview__card': true,
 					'license-preview__card--is-detached': licenseState === LicenseState.Detached,
 					'license-preview__card--is-revoked': licenseState === LicenseState.Revoked,
+					'license-preview__card--is-legacy': licenseState === LicenseState.Legacy,
 				} ) }
 			>
 				<div>
 					<h3 className="license-preview__domain">
+						{ LicenseState.Legacy === licenseState && (
+							<span className="license-preview__tag license-preview__tag--is-legacy">
+								<Gridicon icon="info-outline" size={ 18 } />
+								{ translate( 'Legacy license' ) }
+							</span>
+						) }
+
 						{ showDomain && <span>{ domain }</span> }
 
 						{ licenseState === LicenseState.Detached && (
@@ -193,6 +205,11 @@ export default function LicensePreview( {
 							{ translate( 'Assign License' ) }
 						</Button>
 					) }
+					{ licenseState === LicenseState.Legacy && (
+						<Button compact onClick={ () => console.log( 'convert' ) }>
+							{ translate( 'Convert' ) }
+						</Button>
+					) }
 				</div>
 
 				<div>
@@ -213,6 +230,7 @@ export default function LicensePreview( {
 					attachedAt={ attachedAt }
 					revokedAt={ revokedAt }
 					onCopyLicense={ onCopyLicense }
+					isLegacy={ LicenseState.Legacy === licenseState }
 				/>
 			) }
 		</div>

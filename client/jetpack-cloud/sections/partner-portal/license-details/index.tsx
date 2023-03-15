@@ -16,6 +16,7 @@ interface Props {
 	issuedAt: string;
 	attachedAt: string | null;
 	revokedAt: string | null;
+	isLegacy: boolean | null;
 	onCopyLicense?: () => void;
 }
 
@@ -30,6 +31,7 @@ export default function LicenseDetails( {
 	issuedAt,
 	attachedAt,
 	revokedAt,
+	isLegacy,
 	onCopyLicense = noop,
 }: Props ) {
 	const translate = useTranslate();
@@ -40,6 +42,13 @@ export default function LicenseDetails( {
 		<Card className="license-details">
 			<ul className="license-details__list">
 				<li className="license-details__list-item license-details__list-item--wide">
+					{ isLegacy && (
+						<div className="license-details__legacy-notice-text">
+							<Gridicon icon="info" />
+							{ translate( 'This is a legacy Jetpack license, but can be converted to an agency license by clicking the convert button above.' ) }
+						</div>
+					) }
+
 					<h4 className="license-details__label">{ translate( 'License code' ) }</h4>
 
 					<div className="license-details__license-key-row">
@@ -116,13 +125,15 @@ export default function LicenseDetails( {
 				</li>
 			</ul>
 
-			<LicenseDetailsActions
-				licenseKey={ licenseKey }
-				product={ product }
-				siteUrl={ siteUrl }
-				attachedAt={ attachedAt }
-				revokedAt={ revokedAt }
-			/>
+			{ ! isLegacy && (
+				<LicenseDetailsActions
+					licenseKey={ licenseKey }
+					product={ product }
+					siteUrl={ siteUrl }
+					attachedAt={ attachedAt }
+					revokedAt={ revokedAt }
+				/>
+			) }
 		</Card>
 	);
 }
