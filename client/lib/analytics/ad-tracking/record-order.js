@@ -552,18 +552,22 @@ function recordOrderInWPcomGA4( cart, orderId, wpcomJetpackCartInfo ) {
  * @returns {void}
  */
 function recordOrderInWooGTM( cart, orderId, sitePlanSlug ) {
-	if (
-		! mayWeTrackByTracker( 'googleTagManager' ) ||
-		! isWooExpressUpgrade( cart, sitePlanSlug )
-	) {
+	if ( ! isWooExpressUpgrade( cart, sitePlanSlug ) ) {
 		return;
 	}
+
 	loadWooGTMContainer()
 		.then( () => initWooGTMContainer() )
 		.then( () => {
 			debug(
 				`recordOrderInWooGTM: Initialized GTM container ${ TRACKING_IDS.wooGoogleTagManagerId }`
 			);
+
+			// We ensure that we can track with GTM
+			if ( ! mayWeTrackByTracker( 'googleTagManager' ) ) {
+				return;
+			}
+
 			const purchaseEventMeta = {
 				event: 'purchase',
 				ecommerce: {
@@ -582,6 +586,8 @@ function recordOrderInWooGTM( cart, orderId, sitePlanSlug ) {
 			};
 
 			window.dataLayer.push( purchaseEventMeta );
+
+			debug( `recordOrderInWooGTM: Record Woo GTM purchase`, purchaseEventMeta );
 		} )
 		.catch( ( error ) => {
 			debug( 'recordOrderInWooGTM: Error loading GTM container', error );

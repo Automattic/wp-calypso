@@ -1,5 +1,5 @@
 import { loadScript } from '@automattic/load-script';
-import { mayWeTrackByTracker } from '../../tracker-buckets';
+import { mayWeInitTracker } from '../../tracker-buckets';
 import { GOOGLE_GTM_SCRIPT_URL, TRACKING_IDS } from '../constants';
 
 /**
@@ -21,14 +21,9 @@ declare global {
  * @returns Promise<void>
  */
 export const loadWooGTMContainer = async (): Promise< void > => {
-	// Is Google Tag Manager already initialized?
-	if ( window.dataLayer && window.google_tag_manager ) {
-		return;
-	}
-
 	// Are we allowed to track (user consent, e2e, etc.)?
-	if ( ! mayWeTrackByTracker( 'googleTagManager' ) ) {
-		return;
+	if ( ! mayWeInitTracker( 'googleTagManager' ) ) {
+		throw new Error( 'Tracking is not allowed' );
 	}
 
 	// Load the Google Tag Manager script
