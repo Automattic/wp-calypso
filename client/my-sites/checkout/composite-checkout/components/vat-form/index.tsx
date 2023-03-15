@@ -106,8 +106,8 @@ export function VatForm( {
 				...vatDetailsFromServer,
 				// Initialize the VAT country in this form data to match the country in
 				// the parent form, which may differ from the country in the saved VAT
-				// details.
-				country: countryCode,
+				// details unless Northern Ireland is saved.
+				country: vatDetailsFromServer.country === 'XI' ? vatDetailsFromServer.country : countryCode,
 			} );
 			// Pre-check the checkbox to show the form when the country is supported
 			// if there are saved VAT details.
