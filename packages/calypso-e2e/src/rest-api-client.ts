@@ -34,6 +34,7 @@ import type {
 	AllPluginsResponse,
 	PluginResponse,
 	PluginRemovalResponse,
+	AllWidgetsResponse,
 } from './types';
 import type { BodyInit, HeadersInit, RequestInit } from 'node-fetch';
 
@@ -918,5 +919,90 @@ export class RestAPIClient {
 
 		// If nothing matches, return that no action was performed.
 		return null;
+	}
+
+	/* Widgets */
+
+	/**
+	 * This method either deactivates or deletes the widget from the site.
+	 *
+	 * As noted in the comments, this method is quite overloaded as its outcome
+	 * differs depending on the current state of the widget (activate/deactivated).
+	 *
+	 * @param {number} siteID ID of the target site.
+	 * @param {string} widgetID ID of the target widget.
+	 */
+	async deleteWidget( siteID: number, widgetID: string ): Promise< void > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/widgets/widget:${ widgetID }/delete` ),
+			params
+		);
+
+		// This API call is quite overloaded in what it can do.
+		// If the `widgetId` does not exist for any reason, then an 'error' is returned.
+		// We can safely ignore this 'error'.
+		// If the widget is active, the call will first deactivate the widget.
+		// If the widget is deactivated, the call will remoe the widget.
+		// For all other unexpected errors, throw an error.
+		if ( response.hasOwnProperty( 'error' ) && response.error === 'not_found' ) {
+			console.info( `Widget ${ widgetID } not found.` );
+			return;
+		} else if ( response === [] ) {
+			console.info( `Deleted widget ${ widgetID }.` );
+		} else if ( response.id === widgetID ) {
+			console.info( `Deactivated widget ${ widgetID }` );
+		} else {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+	}
+
+	/**
+	 * Returns the list of widgets for a siteID.
+	 *
+	 * @param {number} siteID ID of the target site.
+	 * @returns {AllWidgetsResponse} Array of Widgets object describing the list of widgets on the site.
+	 */
+	async getAllWidgets( siteID: number ): Promise< AllWidgetsResponse > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/widgets` ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response.widgets;
+	}
+
+	/**
+	 *
+	 * @param siteID
+	 */
+	async deleteAllWidgets( siteID: number ): Promise< void > {
+		const widgets = await this.getAllWidgets( siteID );
+		console.log( widgets );
+
+		widgets.map( async ( widget ) => await this.deleteWidget( siteID, widget.id ) );
 	}
 }
