@@ -313,10 +313,7 @@ const MarketplaceThankYou = ( {
 
 	return (
 		<ThemeProvider theme={ theme }>
-			<PageViewTracker
-				path="/marketplace/thank-you/:productSlug/:site"
-				title="Marketplace > Thank you"
-			/>
+			<PageViewTracker path="/marketplace/thank-you/:site" title="Marketplace > Thank you" />
 			{ /* Using Global to override Global masterbar height */ }
 			<Global
 				styles={ css`
