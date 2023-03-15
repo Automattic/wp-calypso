@@ -149,7 +149,7 @@
 	display: inline-flex;
 	fill: var(--studio-red-50);
 }
-.sites-overview__stats-trend.same {
+.sites-overview__stats-trend__same {
 	vertical-align: middle;
 	height: 8px;
 	width: 8px;
@@ -157,6 +157,9 @@
 	background: var(--studio-gray-5);
 	display: inline-flex;
 	margin-inline-start: 8px;
+	@include break-mobile {
+		margin-block-start: 8px;
+	}
 }
 .sites-overview__stats span.shortened-number {
 	vertical-align: middle;
@@ -167,14 +170,9 @@
 	position: relative;
 	inset-block-start: 0.3rem;
 	inset-inline-start: 0.25rem;
-}
-.site-card__expanded-content-status .sites-overview__stats-trend svg {
-	position: relative;
-	inset-block-start: 0.25rem;
-	inset-inline-start: 0.25rem;
-}
-.site-card__expanded-content-status .sites-overview__stats-trend.same {
-	margin-top: 8px;
+	@include break-mobile {
+		inset-block-start: 0.25rem;
+	}
 }
 .sites-overview__disabled {
 	color: var(--studio-gray-5);

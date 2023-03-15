@@ -186,29 +186,29 @@ export default function SiteStatusContent( {
 
 	if ( type === 'stats' ) {
 		const { total: totalViews, trend: viewsTrend } = rows.stats.data.views;
-		const trendIcon = getTrendIcon( viewsTrend );
-		if ( trendIcon !== 'same' ) {
+		if ( viewsTrend === 'same' ) {
 			return (
-				<span
-					className={ classNames( 'sites-overview__stats-trend', {
-						'is-up': viewsTrend === 'up',
-						'is-down': viewsTrend === 'down',
-					} ) }
-				>
-					<Icon icon={ trendIcon } size={ 16 } />
+				<>
+					<span className="sites-overview__stats-trend sites-overview__stats-trend__same" />
 					<div className="sites-overview__stats">
 						<ShortenedNumber value={ totalViews } />
 					</div>
-				</span>
+				</>
 			);
 		}
+		const trendIcon = getTrendIcon( viewsTrend );
 		return (
-			<>
-				<span className="sites-overview__stats-trend same"></span>
+			<span
+				className={ classNames( 'sites-overview__stats-trend', {
+					'is-up': viewsTrend === 'up',
+					'is-down': viewsTrend === 'down',
+				} ) }
+			>
+				<Icon icon={ trendIcon } size={ 16 } />
 				<div className="sites-overview__stats">
 					<ShortenedNumber value={ totalViews } />
 				</div>
-			</>
+			</span>
 		);
 	}
 
