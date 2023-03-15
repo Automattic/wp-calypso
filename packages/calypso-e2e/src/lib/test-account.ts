@@ -32,7 +32,7 @@ export class TestAccount {
 	 * page UI if cookies are unavailable.
 	 */
 	async authenticate( page: Page ): Promise< void > {
-		const browserContext = await page.context();
+		const browserContext = page.context();
 		await browserContext.clearCookies();
 
 		if ( await this.hasFreshAuthCookies() ) {
@@ -43,6 +43,8 @@ export class TestAccount {
 			this.log( 'Logging in via Login Page' );
 			await this.logInViaLoginPage( page );
 		}
+
+		await page.waitForURL( /home/, { timeout: 20 * 1000 } );
 	}
 
 	/**
