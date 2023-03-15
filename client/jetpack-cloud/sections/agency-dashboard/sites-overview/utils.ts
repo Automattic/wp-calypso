@@ -315,8 +315,9 @@ export const getRowMetaData = (
 
 const formatStatsData = ( site: Site ) => {
 	const statsData: StatsNode = {
+		status: 'active',
 		type: 'stats',
-		data: site.site_stats,
+		value: site.site_stats,
 	};
 	return statsData;
 };

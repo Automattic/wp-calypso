@@ -57,7 +57,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	);
 	const softwareSlug = getSoftwareSlug( plugin, isMarketplaceProduct );
 	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
-	const currentPurchase = getPluginPurchased( plugin, purchases, isMarketplaceProduct );
+	const currentPurchase = getPluginPurchased( plugin, purchases );
 
 	// Site type
 	const sites = useSelector( getSelectedOrAllSitesWithPlugins );

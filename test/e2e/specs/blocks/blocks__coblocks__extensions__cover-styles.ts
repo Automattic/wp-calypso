@@ -66,6 +66,11 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Cover Styles' ), (
 		await editorPage.openSettings();
 	} );
 
+	it( 'Click on the Styles button', async () => {
+		const stylesButton = await editorWindowLocator.locator( `button[aria-label="Styles"]` );
+		await stylesButton?.click();
+	} );
+
 	it.each( CoverBlock.coverStyles )( 'Verify "%s" style is available', async ( style ) => {
 		await editorWindowLocator.locator( `button[aria-label="${ style }"]` ).waitFor();
 	} );
