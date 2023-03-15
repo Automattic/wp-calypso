@@ -60,7 +60,7 @@ export class CommentNavigation extends Component {
 		const { translate } = this.props;
 		if (
 			typeof window === 'undefined' ||
-			window.confirm( translate( 'Delete these comments permanently?' ) )
+			window?.confirm( translate( 'Delete these comments permanently?' ) )
 		) {
 			this.setBulkStatus( 'delete' )();
 		}
@@ -69,8 +69,7 @@ export class CommentNavigation extends Component {
 	emptyPermanently = () => {
 		const { status, translate } = this.props;
 		if (
-			typeof window === 'undefined' ||
-			window.confirm(
+			window?.confirm(
 				status === 'spam'
 					? translate( 'Empty all spam permanently?' )
 					: translate( 'Empty all trash permanently?' )
@@ -329,7 +328,6 @@ export class CommentNavigation extends Component {
 								<Button
 									compact
 									scary
-									data-status={ this.props.status }
 									onClick={ this.emptyPermanently }
 									className="comment-navigation__button-empty"
 								>
