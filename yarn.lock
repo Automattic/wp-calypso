@@ -4389,6 +4389,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@kurkle/color@npm:^0.3.0":
+  version: 0.3.2
+  resolution: "@kurkle/color@npm:0.3.2"
+  checksum: a9e8e3e35dcd59dec4dd4f0105919c05e24823a96347bcf152965c29e48d6290b66d5fb96c071875db752e10930724c48ce6d338fefbd65e0ce5082d5c78970e
+  languageName: node
+  linkType: hard
+
 "@kwsites/file-exists@npm:^1.1.1":
   version: 1.1.1
   resolution: "@kwsites/file-exists@npm:1.1.1"
@@ -12215,6 +12222,15 @@ __metadata:
   version: 0.7.0
   resolution: "chardet@npm:0.7.0"
   checksum: 96e4731b9ec8050cbb56ab684e8c48d6c33f7826b755802d14e3ebfdc51c57afeece3ea39bc6b09acc359e4363525388b915e16640c1378053820f5e70d0f27d
+  languageName: node
+  linkType: hard
+
+"chart.js@npm:^4.2.1":
+  version: 4.2.1
+  resolution: "chart.js@npm:4.2.1"
+  dependencies:
+    "@kurkle/color": ^0.3.0
+  checksum: 8d6aeece5fe1537b04065d1695d2aee70f0347c91c53644acb702fd3b17465eeaf0723ee1b1ff2aec1ae86b69167d390e167bfc865fdbcbd47b7f2ea1062c1b3
   languageName: node
   linkType: hard
 
@@ -26782,6 +26798,16 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"react-chartjs-2@npm:^5.2.0":
+  version: 5.2.0
+  resolution: "react-chartjs-2@npm:5.2.0"
+  peerDependencies:
+    chart.js: ^4.1.1
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+  checksum: 437e443a268b7eebab3f1a6f0f5d936e58caf650fca55f568a612a46c563d22af683a64185eac8005aa644e4960a5a72cc1075a2574b89ec46c7653aaf4025e2
+  languageName: node
+  linkType: hard
+
 "react-click-outside@npm:^3.0.1":
   version: 3.0.1
   resolution: "react-click-outside@npm:3.0.1"
@@ -33779,6 +33805,7 @@ fsevents@^1.2.7:
     calypso-codemods: "workspace:^"
     capture-website: ^1.0.0
     chalk: ^4.1.2
+    chart.js: ^4.2.1
     check-node-version: ^4.0.2
     chroma-js: ^2.1.2
     config: ^3.3.6
@@ -33830,6 +33857,7 @@ fsevents@^1.2.7:
     postcss-custom-properties: ^11.0.0
     prettier: "npm:wp-prettier@2.6.2"
     react: ^17.0.2
+    react-chartjs-2: ^5.2.0
     react-dom: ^17.0.2
     react-intersection-observer: ^9.4.3
     react-modal: ^3.14.3

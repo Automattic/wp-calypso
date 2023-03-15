@@ -1,8 +1,19 @@
+import {
+	Chart as ChartJS,
+	CategoryScale,
+	LinearScale,
+	PointElement,
+	LineElement,
+	Title,
+	Tooltip,
+	Legend as LegendChartJS,
+} from 'chart.js';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
+import { Line } from 'react-chartjs-2';
 import { connect } from 'react-redux';
 import Chart from 'calypso/components/chart';
 import Legend from 'calypso/components/chart/legend';
@@ -21,6 +32,16 @@ import StatTabs from '../stats-tabs';
 import { buildChartData, getQueryDate } from './utility';
 
 import './style.scss';
+
+ChartJS.register(
+	CategoryScale,
+	LinearScale,
+	PointElement,
+	LineElement,
+	Title,
+	Tooltip,
+	LegendChartJS
+);
 
 const ChartTabShape = PropTypes.shape( {
 	attr: PropTypes.string,
@@ -115,6 +136,19 @@ class StatModuleChartTabs extends Component {
 				<Chart barClick={ this.props.barClick } data={ this.props.chartData } minBarWidth={ 35 }>
 					<StatsEmptyState />
 				</Chart>
+				<Line
+					data={ {
+						labels: this.props.chartData?.map( ( point ) => point?.label ) || [],
+						datasets: [
+							{
+								label: 'Dataset 1',
+								data: this.props.chartData?.map( ( point ) => point?.value ) || [],
+								borderColor: 'rgb(255, 99, 132)',
+								backgroundColor: 'rgba(255, 99, 132, 0.5)',
+							},
+						],
+					} }
+				/>
 				<StatTabs
 					data={ this.props.counts }
 					tabs={ this.props.charts }
