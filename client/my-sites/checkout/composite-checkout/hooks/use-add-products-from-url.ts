@@ -97,7 +97,7 @@ export default function useAddProductsFromUrl( {
 			// and that calculation requires tax details, here we clear the tax
 			// details in the cart to prevent calculating taxes until the user or
 			// autocomplete confirms those details.
-			cartPromises.push( updateLocation( {} ) );
+			cartPromises.push( updateLocation( { countryCode: '' } ) );
 
 			cartPromises.push( addProductsToCart( productsForCart ) );
 		}
