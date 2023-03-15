@@ -40,15 +40,6 @@ const initialState = {
 			email_verified: true,
 		},
 	},
-	// productsList: {
-	// 	items: {
-	// 		mock_plugin: {
-	// 			product_id: 123,
-	// 			product_slug: 'mock_plugin',
-	// 			product_type: 'marketplace_plugin',
-	// 		},
-	// 	},
-	// },
 };
 
 describe( 'index', () => {
