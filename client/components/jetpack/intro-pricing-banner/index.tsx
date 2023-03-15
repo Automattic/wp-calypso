@@ -4,7 +4,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import CloudCart from 'calypso/jetpack-cloud/sections/pricing/jpcom-masterbar/cloud-cart';
-import { usePrevious } from 'calypso/landing/gutenboarding/hooks/use-previous';
 import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
 import { preventWidows } from 'calypso/lib/formatting';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -14,6 +13,7 @@ import './style.scss';
 import { isJetpackCloudCartEnabled } from 'calypso/state/sites/selectors';
 import guaranteeBadge from './14-day-badge.svg';
 import useBoundingClientRect from './hooks/use-bounding-client-rect';
+import { usePrevious } from './hooks/use-previous';
 import people from './people.svg';
 
 const CALYPSO_MASTERBAR_HEIGHT = 47;
