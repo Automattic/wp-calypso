@@ -30,6 +30,10 @@ export class TestAccount {
 	/**
 	 * Authenticates the account using previously saved cookies or via the login
 	 * page UI if cookies are unavailable.
+	 *
+	 * For future developers: do not add expectation to land at a certain endpoint
+	 * in this method. Depending on the account type, a user may land at endpoints
+	 * other than `/home`.
 	 */
 	async authenticate( page: Page ): Promise< void > {
 		const browserContext = page.context();
@@ -43,8 +47,6 @@ export class TestAccount {
 			this.log( 'Logging in via Login Page' );
 			await this.logInViaLoginPage( page );
 		}
-
-		await page.waitForURL( /home/, { timeout: 20 * 1000 } );
 	}
 
 	/**
