@@ -30,9 +30,12 @@ export class TestAccount {
 	/**
 	 * Authenticates the account using previously saved cookies or via the login
 	 * page UI if cookies are unavailable.
+	 *
+	 * @param {Page} page Page object.
+	 * @param {string} [url] URL to expect once authenticated and redirections are finished.
 	 */
-	async authenticate( page: Page ): Promise< void > {
-		const browserContext = await page.context();
+	async authenticate( page: Page, { url }: { url?: string | RegExp } = {} ): Promise< void > {
+		const browserContext = page.context();
 		await browserContext.clearCookies();
 
 		if ( await this.hasFreshAuthCookies() ) {
@@ -42,6 +45,10 @@ export class TestAccount {
 		} else {
 			this.log( 'Logging in via Login Page' );
 			await this.logInViaLoginPage( page );
+		}
+
+		if ( url ) {
+			await page.waitForURL( url, { timeout: 20 * 1000 } );
 		}
 	}
 
