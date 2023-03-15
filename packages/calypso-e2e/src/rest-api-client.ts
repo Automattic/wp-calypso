@@ -996,12 +996,12 @@ export class RestAPIClient {
 	}
 
 	/**
+	 * Deletes or deactivates all widgets for a given site.
 	 *
-	 * @param siteID
+	 * @param {number} siteID ID of the target site.
 	 */
 	async deleteAllWidgets( siteID: number ): Promise< void > {
 		const widgets = await this.getAllWidgets( siteID );
-		console.log( widgets );
 
 		widgets.map( async ( widget ) => await this.deleteWidget( siteID, widget.id ) );
 	}
