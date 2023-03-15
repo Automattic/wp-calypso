@@ -196,7 +196,10 @@ export default function SiteStatusContent( {
 						getBoostRatingClass( overallScore )
 					) }
 				>
-					{ getBoostRating( overallScore ) } { translate( 'Score' ) }
+					{ translate( '%(rating)s Score', {
+						args: { rating: getBoostRating( overallScore ) },
+						comment: '%rating will be replaced by boost rating, e.g. "A", "B", "C", "D", or "F"',
+					} ) }
 				</div>
 			);
 		}
