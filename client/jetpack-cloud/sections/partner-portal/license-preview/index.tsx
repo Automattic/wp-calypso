@@ -47,13 +47,17 @@ export default function LicensePreview( {
 	const [ isOpen, setOpen ] = useState( isHighlighted );
 	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
 	const domain = siteUrl ? getUrlParts( siteUrl ).hostname || siteUrl : '';
-	
-	const licenseState = 'winflagfootball.com' === domain 
-		? LicenseState.Legacy
-		: getLicenseState( attachedAt, revokedAt );
-	
+
+	// For testing only, we'd need to change this back once the API knows what legacy means
+	const licenseState =
+		'lovely-opossum.jurassic.ninja' === domain
+			? LicenseState.Legacy
+			: getLicenseState( attachedAt, revokedAt );
+
 	const showDomain =
-		domain && [ LicenseState.Attached, LicenseState.Revoked, LicenseState.Legacy ].indexOf( licenseState ) !== -1;
+		domain &&
+		[ LicenseState.Attached, LicenseState.Revoked, LicenseState.Legacy ].indexOf( licenseState ) !==
+			-1;
 
 	const oneMinuteAgo = moment.utc().subtract( 1, 'minute' );
 
@@ -206,7 +210,7 @@ export default function LicensePreview( {
 						</Button>
 					) }
 					{ licenseState === LicenseState.Legacy && (
-						<Button compact onClick={ () => console.log( 'convert' ) }>
+						<Button compact onClick={ () => {} }>
 							{ translate( 'Convert' ) }
 						</Button>
 					) }
