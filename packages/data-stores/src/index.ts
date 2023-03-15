@@ -67,4 +67,3 @@ export type { ProductsListSelect } from './products-list/types';
 export type { OnboardSelect } from './onboard';
 export type { StepperInternalSelect } from './stepper-internal';
 export type { WpcomFeaturesSelect } from './wpcom-features/types';
-export type { WpcomPlansUISelect } from './wpcom-plans-ui/types';
