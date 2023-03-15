@@ -1,4 +1,3 @@
-import { format as formatUrl, getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -10,8 +9,7 @@ import SidebarMenu from 'calypso/layout/sidebar/menu';
 import SidebarRegion from 'calypso/layout/sidebar/region';
 import CurrentSite from 'calypso/my-sites/current-site';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getSiteAdminPage from 'calypso/state/sites/selectors/get-site-admin-page';
-import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
+import getJetpackAdminUrl from 'calypso/state/sites/selectors/get-jetpack-admin-url';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import JetpackCloudSidebarMenuItems from './menu-items/jetpack-cloud';
 import JetpackIcons from './menu-items/jetpack-icons';
@@ -68,18 +66,6 @@ class JetpackCloudSidebar extends Component {
 		);
 	}
 }
-
-const getJetpackAdminUrl = ( state, siteId ) => {
-	const siteAdminUrl = getSiteAdminUrl( state, siteId );
-	if ( null === siteAdminUrl ) {
-		return undefined;
-	}
-
-	const parts = getUrlParts( siteAdminUrl + 'admin.php' );
-	parts.searchParams.set( 'page', getSiteAdminPage( state, siteId ) );
-
-	return formatUrl( getUrlFromParts( parts ) );
-};
 
 export default connect(
 	( state ) => {
