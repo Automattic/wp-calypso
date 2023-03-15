@@ -28,7 +28,6 @@ import { createQueryClient, hydrateBrowserState } from 'calypso/state/query-clie
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import { requestSites } from 'calypso/state/sites/actions';
-import { WindowLocaleEffectManager } from '../gutenboarding/components/window-locale-effect-manager';
 import { setupWpDataDebug } from '../gutenboarding/devtools';
 import { isAnchorFmFlow } from './declarative-flow/anchor-fm-flow';
 import { FlowRenderer } from './declarative-flow/internals';
@@ -36,6 +35,7 @@ import 'calypso/components/environment-badge/style.scss';
 import availableFlows from './declarative-flow/registered-flows';
 import { useQuery } from './hooks/use-query';
 import { ONBOARD_STORE, USER_STORE } from './stores';
+import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager';
 import type { Flow } from './declarative-flow/internals/types';
 
 declare const window: AppWindow;
