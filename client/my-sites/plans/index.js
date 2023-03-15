@@ -70,10 +70,7 @@ export default function () {
 		p2RedirectToHubPlans,
 		currentPlan
 	);
-	trackedPage( '/plans/my-plan/trial-expired/:domain',
-		...commonHandlers,
-		trialExpired 
-	);
+	trackedPage( '/plans/my-plan/trial-expired/:domain', ...commonHandlers, trialExpired );
 	trackedPage(
 		'/plans/my-plan/trial-upgraded/:domain',
 		...commonHandlers,
