@@ -137,16 +137,32 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 
 	const cardTitle =
 		! isFreePlan && ! isMonthlyPlan
-			? translate( 'You still have a free domain to claim!' )
-			: translate( 'Own your online identity with a custom domain' );
+			? translate( 'That perfect domain is waiting' )
+			: translate( 'Own a domain. Build a site.' );
 
 	const cardSubtitle =
 		! isFreePlan && ! isMonthlyPlan
 			? translate(
-					'Own your online identity giving your site a memorable domain name. Your plan includes one for free for one year, so you can still claim it.'
+					"{{strong}}%(domainSuggestion)s{{/strong}} is included free for one year with any paid plan. Claim it and start building a site that's easy to find, share and follow.",
+					{
+						components: {
+							strong: <strong />,
+						},
+						args: {
+							domainSuggestion: domainSuggestionName,
+						},
+					}
 			  )
 			: translate(
-					"Stake your claim on your corner of the web with a site address that's easy to find, share, and follow."
+					"{{strong}}%(domainSuggestion)s{{/strong}} is a perfect site address. It's available, easy to find, and follow. Get it now and claim a corner of the web.",
+					{
+						components: {
+							strong: <strong />,
+						},
+						args: {
+							domainSuggestion: domainSuggestionName,
+						},
+					}
 			  );
 
 	return (

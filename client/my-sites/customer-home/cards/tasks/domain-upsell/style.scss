@@ -95,7 +95,8 @@
 			@media (max-width: $break-large) {
 				position: relative;
 				top: calc(( ( 100vw - 64px ) / 1.6 )  / 6.66);
-				width: 60%;
+				width: auto;
+				max-width: 60%;
 				text-align: center;
 				margin: 0 auto;
 			}
