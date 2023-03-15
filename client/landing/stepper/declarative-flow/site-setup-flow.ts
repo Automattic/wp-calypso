@@ -150,6 +150,7 @@ const siteSetupFlow: Flow = {
 		const currentTheme = useSelector( ( state ) =>
 			getCanonicalTheme( state, site?.ID || -1, currentThemeId )
 		);
+		const isLaunched = site?.launch_status === 'launched' ? true : false;
 
 		const urlQueryParams = useQuery();
 		const isPluginBundleEligible = useIsPluginBundleEligible();
@@ -219,9 +220,12 @@ const siteSetupFlow: Flow = {
 
 					// Update Launchpad option based on site intent
 					if ( typeof siteId === 'number' ) {
+						const launchpadScreen =
+							isLaunchpadIntent( siteIntent ) && ! isLaunched ? 'full' : 'off';
+
 						pendingActions.push(
 							saveSiteSettings( siteId, {
-								launchpad_screen: isLaunchpadIntent( siteIntent ) ? 'full' : 'off',
+								launchpad_screen: launchpadScreen,
 							} )
 						);
 					}

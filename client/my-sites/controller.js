@@ -417,9 +417,16 @@ export function noSite( context, next ) {
 	const hasSite = currentUser && currentUser.visible_site_count >= 1;
 	const isDomainOnlyFlow = context.query?.isDomainOnly === '1';
 	const isJetpackCheckoutFlow = context.pathname.includes( '/checkout/jetpack' );
+	const isAkismetCheckoutFlow = context.pathname.includes( '/checkout/akismet' );
 	const isGiftCheckoutFlow = context.pathname.includes( '/gift/' );
 
-	if ( ! isDomainOnlyFlow && ! isJetpackCheckoutFlow && ! isGiftCheckoutFlow && hasSite ) {
+	if (
+		! isDomainOnlyFlow &&
+		! isJetpackCheckoutFlow &&
+		! isAkismetCheckoutFlow &&
+		! isGiftCheckoutFlow &&
+		hasSite
+	) {
 		siteSelection( context, next );
 		return;
 	}

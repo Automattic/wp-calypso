@@ -3,15 +3,9 @@ import { Button as OriginalButton } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
-import { selectors as wpcomBlockEditorNavSidebarSelectors } from '../../../../wpcom-block-editor-nav-sidebar/src/store';
-import { STORE_KEY } from '../../constants';
+import { store } from '../../store';
 import SiteIcon from '../site-icon';
-import type { SelectFromMap } from '@automattic/data-stores';
 import './style.scss';
-
-type WpcomBlockEditorNavSidebarSelectors = SelectFromMap<
-	typeof wpcomBlockEditorNavSidebarSelectors
->;
 
 const Button = ( {
 	children,
@@ -21,11 +15,8 @@ const Button = ( {
 );
 
 export default function ToggleSidebarButton() {
-	const { toggleSidebar } = useDispatch( STORE_KEY );
-	const isSidebarOpen = useSelect(
-		( select ) => ( select( STORE_KEY ) as WpcomBlockEditorNavSidebarSelectors ).isSidebarOpened(),
-		[]
-	);
+	const { toggleSidebar } = useDispatch( store );
+	const isSidebarOpen = useSelect( ( select ) => select( store ).isSidebarOpened(), [] );
 
 	const handleClick = () => {
 		recordTracksEvent( `calypso_editor_sidebar_open` );

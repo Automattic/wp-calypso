@@ -15,6 +15,7 @@ export type PageData = {
 	id: PageId;
 	title: string;
 	content: string;
+	useFillerContent: boolean;
 	media: Array< Media >;
 };
 
@@ -26,7 +27,7 @@ export interface ContactPageData extends PageData {
 
 export type WebsiteContent = {
 	pages: Array< PageData >;
-	siteLogoSection: { siteLogoUrl: string };
+	siteInformationSection: { siteLogoUrl: string; searchTerms: string };
 	feedbackSection: { genericFeedback: string };
 };
 
@@ -64,6 +65,7 @@ export type WebsiteContentRequestDTO = {
 	pages: Record< string, any >;
 	site_logo_url: string;
 	generic_feedback: string;
+	search_terms: string;
 };
 
 export type WebsiteContentResponseDTO = WebsiteContentRequestDTO & {
@@ -83,4 +85,5 @@ export type WebsiteContentServerState = {
 	pages: Array< PageData & ContactPageData >;
 	siteLogoUrl: string;
 	genericFeedback: string;
+	searchTerms: string;
 };

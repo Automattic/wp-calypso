@@ -12,6 +12,7 @@
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
 	"features": {
 		"ad-tracking": false,
+		"akismet/siteless-checkout": false,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,

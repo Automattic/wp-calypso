@@ -1,4 +1,4 @@
-import { combineReducers, registerStore } from '@wordpress/data';
+import { combineReducers, register, createReduxStore } from '@wordpress/data';
 import { actions, Action } from './actions';
 import { STORE_KEY } from './constants';
 import type { Reducer } from 'redux';
@@ -32,8 +32,10 @@ export const selectors = {
 	isSidebarClosing: ( state: State ) => state.closing,
 };
 
-registerStore( STORE_KEY, {
+export const store = createReduxStore( STORE_KEY, {
 	actions,
 	reducer,
 	selectors,
 } );
+
+register( store );
