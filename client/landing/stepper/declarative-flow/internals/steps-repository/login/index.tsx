@@ -10,15 +10,15 @@ import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import {
-	recordOnboardingError,
-	initGoogleRecaptcha,
-	recordGoogleRecaptchaAction,
-} from 'calypso/landing/gutenboarding/lib/analytics';
 import { useAnchorFmParams } from 'calypso/landing/stepper/hooks/use-anchor-fm-params';
 import useDetectMatchingAnchorSite from 'calypso/landing/stepper/hooks/use-detect-matching-anchor-site';
 import { useIsAnchorFm } from 'calypso/landing/stepper/hooks/use-is-anchor-fm';
 import { ONBOARD_STORE, USER_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
+import {
+	recordOnboardingError,
+	initGoogleRecaptcha,
+	recordGoogleRecaptchaAction,
+} from 'calypso/landing/stepper/utils/analytics';
 import { useLangRouteParam } from 'calypso/landing/stepper/utils/path';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
