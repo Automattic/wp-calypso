@@ -231,6 +231,7 @@ export const handleEmptySuccess = (
 		{
 			type: COMMENTS_EMPTY_RECEIVE,
 			siteId,
+			status,
 			commentIds: apiResponse?.results?.map( ( x ) => +x ), // convert to number
 		},
 	];

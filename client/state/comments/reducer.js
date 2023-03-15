@@ -531,9 +531,9 @@ export const counts = ( state = {}, action ) => {
 			return Object.assign( {}, state, { [ siteId ]: newTotalSiteCounts } );
 		}
 		case COMMENTS_EMPTY_RECEIVE: {
-			const { siteId, commentIds } = action;
+			const { siteId, status, commentIds } = action;
 
-			if ( ! siteId || ! state[ siteId ] ) {
+			if ( ! siteId || ! state[ siteId ] || ! status ) {
 				return state;
 			}
 			const { site: siteCounts } = state[ siteId ];
@@ -542,7 +542,6 @@ export const counts = ( state = {}, action ) => {
 			const newSiteCounts = updateCount( siteCounts, status, -emptiedCommentsCount );
 
 			// @todo Can't update post counts because we don't know the post ID.
-			// Any reasonable way around this?
 
 			const newTotalSiteCounts = Object.assign(
 				{},
