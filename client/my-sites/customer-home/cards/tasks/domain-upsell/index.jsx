@@ -149,6 +149,14 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 					"Stake your claim on your corner of the web with a site address that's easy to find, share, and follow."
 			  );
 
+	const domainNameSVG = (
+		<svg viewBox="0 0 56 18">
+			<text x="0" y="15">
+				example.com
+			</text>
+		</svg>
+	);
+
 	return (
 		<Task
 			customClass="task__domain-upsell"
@@ -165,6 +173,7 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 			badgeText={ domainSuggestionForImage }
 			timing={ 2 }
 			taskId={ TASK_DOMAIN_UPSELL }
+			illustrationHeader={ domainNameSVG }
 		/>
 	);
 }

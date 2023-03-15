@@ -66,6 +66,7 @@
 		}
 
 		.task__illustration {
+			position: relative;
 			width: 100%;
 			padding: 0;
 
@@ -74,6 +75,14 @@
 			}
 
 			img {
+				width: 100%;
+			}
+
+			svg {
+				position: absolute;
+				top: 5%;
+				left: -5%;
+				height: 7%;
 				width: 100%;
 			}
 		}
