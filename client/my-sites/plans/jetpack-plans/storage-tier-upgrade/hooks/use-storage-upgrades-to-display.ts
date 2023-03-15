@@ -22,7 +22,14 @@ const useStorageUpgradesToDisplay = ( siteId: number ): SelectorProduct[] => {
 			...availableUpgrades,
 		];
 
-		return upgradesToDisplay;
+		// Don't show the same product twice
+		return upgradesToDisplay.reduce( ( acc: SelectorProduct[], p: SelectorProduct ) => {
+			if ( acc.find( ( { productSlug } ) => productSlug === p.productSlug ) ) {
+				return acc;
+			}
+
+			return [ ...acc, p ];
+		}, [] );
 	}, [ purchasedUpgrades, availableUpgrades ] );
 };
 
