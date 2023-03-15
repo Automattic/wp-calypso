@@ -25,8 +25,7 @@ describe( DataHelper.createSuiteTitle( 'Support: My Home' ), function () {
 			page = await browser.newPage();
 
 			const testAccount = new TestAccount( accountName );
-			await testAccount.authenticate( page );
-			await page.waitForURL( /home/, { timeout: 20 * 1000 } );
+			await testAccount.authenticate( page, { url: /home/ } );
 		} );
 
 		it( 'Displays default entries', async function () {
