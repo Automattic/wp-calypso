@@ -8,6 +8,13 @@
 	width: 335px;
 	padding: 0 20px;
 
+	.setup-form-input-name {
+		// override uppercase style from BaseControl
+		.components-base-control__label {
+			text-transform: capitalize;
+		}
+	}
+
 	@include break-medium {
 		padding: 0 20px;
 		width: 368px;

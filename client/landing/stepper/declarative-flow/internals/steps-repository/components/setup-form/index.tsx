@@ -86,6 +86,7 @@ const SetupForm = ( {
 					label={ __( 'Site name' ) }
 					name="setup-form-input-name"
 					id="setup-form-input-name"
+					className="setup-form-input-name"
 					value={ siteTitle }
 					onChange={ ( value ) => setComponentSiteTitle( value ) }
 					placeholder={ translatedText?.titlePlaceholder || __( 'My Site Name' ) }
