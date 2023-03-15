@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { localize } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import { LoadingBar } from 'calypso/components/loading-bar';
@@ -54,6 +54,10 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 	const [ progress, setProgress ] = useState( 0.3 );
 	const transferStatus = useCheckStagingSiteStatus( stagingSite.id );
 	const isStagingSiteTransferComplete = transferStatus === transferStates.COMPLETE;
+	const isTrasferInProgress =
+		showManageStagingSite &&
+		! isStagingSiteTransferComplete &&
+		( transferStatus !== null || wasCreating );
 
 	useEffect( () => {
 		if ( wasCreating && isStagingSiteTransferComplete ) {
@@ -62,7 +66,7 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 	}, [ dispatch, __, isStagingSiteTransferComplete, wasCreating ] );
 
 	useEffect( () => {
-		setProgress( ( prevProgress ) => prevProgress + 0.1 );
+		setProgress( ( prevProgress ) => prevProgress + 0.25 );
 	}, [ transferStatus ] );
 
 	const { addStagingSite, isLoading: addingStagingSite } = useAddStagingSiteMutation( siteId, {
@@ -131,14 +135,14 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 		);
 	};
 
-	const getTransferringStagingSiteContent = () => {
+	const getTransferringStagingSiteContent = useCallback( () => {
 		return (
 			<>
 				<StyledLoadingBar progress={ progress } />
 				<p>{ __( 'We are setting up your staging site. We’ll email you once it is ready.' ) }</p>
 			</>
 		);
-	};
+	}, [ progress, __ ] );
 
 	const getLoadingStagingSitesPlaceholder = () => {
 		return (
@@ -151,10 +155,7 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 	};
 
 	let StagingSiteCardContent = getLoadingStagingSitesPlaceholder;
-	if (
-		addingStagingSite ||
-		( showManageStagingSite && ! isStagingSiteTransferComplete && transferStatus !== null )
-	) {
+	if ( addingStagingSite || isTrasferInProgress ) {
 		StagingSiteCardContent = getTransferringStagingSiteContent;
 	} else if ( showManageStagingSite && isStagingSiteTransferComplete ) {
 		StagingSiteCardContent = getManageStagingSiteContent;
