@@ -25,7 +25,6 @@ const BackupStorageContent = ( { siteId, siteUrl }: { siteId: number; siteUrl: s
 		{
 			after: startDate?.toISOString() ?? undefined,
 			before: endDate?.toISOString() ?? undefined,
-			sortOrder: 'desc',
 		},
 		{
 			select: ( data: any[] ) => data.filter( ( a ) => isSuccessfulRealtimeBackup( a ) ),
