@@ -76,8 +76,7 @@ export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 const checkGtagInit = (): boolean => 'dataLayer' in window && 'gtag' in window;
 
 const checkWooGTMInit = (): boolean => {
-	return true;
-	// TODO: need to guard this, e.g. return 'dataLayer' in window && 'google_tag_manager' in window;
+	return 'dataLayer' in window && 'google_tag_manager' in window;
 };
 
 export const AdTrackersInitGuards: Partial< { [ key in AdTracker ]: () => boolean } > = {

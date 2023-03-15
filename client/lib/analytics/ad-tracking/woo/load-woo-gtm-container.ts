@@ -41,6 +41,7 @@ export const loadWooGTMContainer = async (): Promise< void > => {
  * @returns Promise<void>
  */
 export const initWooGTMContainer = async (): Promise< void > => {
+	// Note: window.dataLayer is prop required by Google. Not to be confused with Calypso Data Layer (see: /client/state/data-layer/README.md)
 	window.dataLayer = window.dataLayer || [];
 	window.dataLayer.push( { 'gtm.start': new Date().getTime(), event: 'gtm.js' } );
 };
