@@ -15,11 +15,11 @@ import {
 	initGoogleRecaptcha,
 	recordGoogleRecaptchaAction,
 } from 'calypso/landing/gutenboarding/lib/analytics';
-import { useLangRouteParam } from 'calypso/landing/gutenboarding/path';
 import { useAnchorFmParams } from 'calypso/landing/stepper/hooks/use-anchor-fm-params';
 import useDetectMatchingAnchorSite from 'calypso/landing/stepper/hooks/use-detect-matching-anchor-site';
 import { useIsAnchorFm } from 'calypso/landing/stepper/hooks/use-is-anchor-fm';
 import { ONBOARD_STORE, USER_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
+import { useLangRouteParam } from 'calypso/landing/stepper/utils/path';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
 import type { UserSelect } from '@automattic/data-stores';
