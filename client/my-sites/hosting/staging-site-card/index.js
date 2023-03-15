@@ -49,6 +49,11 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 	const { data: stagingSites, isLoading: isLoadingStagingSites } = useStagingSite( siteId, {
 		enabled: ! disabled,
 		onError: ( error ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_hosting_configuration_staging_site_load_failure', {
+					code: error.code,
+				} )
+			);
 			setLoadingError( error );
 		},
 	} );
