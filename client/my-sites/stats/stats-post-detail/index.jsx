@@ -92,11 +92,11 @@ class StatsPostDetail extends Component {
 			return translate( 'Home page / Archives' );
 		}
 
-		if ( typeof post?.title === 'string' && post?.title.length ) {
+		if ( typeof post?.title === 'string' && post.title.length ) {
 			return decodeEntities( stripHTML( post.title ) );
 		}
 
-		if ( typeof postFallback?.post_title === 'string' && postFallback?.post_title.length ) {
+		if ( typeof postFallback?.post_title === 'string' && postFallback.post_title.length ) {
 			return decodeEntities( stripHTML( postFallback.post_title ) );
 		}
 
@@ -113,24 +113,26 @@ class StatsPostDetail extends Component {
 
 		// Check if post is valid.
 		if ( typeof post === 'object' && post?.title.length ) {
-			return Object.assign( postBase, {
+			return {
+				...postBase,
 				date: post?.date,
 				post_thumbnail: post?.post_thumbnail,
 				like_count: post?.like_count,
 				comment_count: post?.discussion?.comment_count,
 				type: post?.type,
-			} );
+			};
 		}
 
 		// Check if postFallback is valid.
 		if ( typeof postFallback === 'object' && postFallback?.post_title.length ) {
-			return Object.assign( postBase, {
+			return {
+				...postBase,
 				date: postFallback?.post_date_gmt,
 				post_thumbnail: null,
 				like_count: null,
 				comment_count: parseInt( postFallback?.comment_count, 10 ),
 				type: postFallback?.post_type,
-			} );
+			};
 		}
 
 		return postBase;
