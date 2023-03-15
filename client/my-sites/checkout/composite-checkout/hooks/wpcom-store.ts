@@ -14,6 +14,7 @@ import type {
 } from '@automattic/wpcom-checkout';
 
 type WpcomStoreAction =
+	| { type: 'RESET' }
 	| {
 			type: 'APPLY_DOMAIN_CONTACT_VALIDATION_RESULTS';
 			payload: ManagedContactDetailsErrors;
@@ -39,6 +40,10 @@ type WpcomStoreAction =
 const CHECKOUT_STORE_KEY = 'wpcom-checkout';
 
 const actions = {
+	reset(): WpcomStoreAction {
+		return { type: 'RESET' };
+	},
+
 	applyDomainContactValidationResults( payload: ManagedContactDetailsErrors ): WpcomStoreAction {
 		return { type: 'APPLY_DOMAIN_CONTACT_VALIDATION_RESULTS', payload };
 	},
@@ -174,12 +179,13 @@ function createStore() {
 
 	return createReduxStore( CHECKOUT_STORE_KEY, {
 		reducer( state: WpcomStoreState | undefined, action: WpcomStoreAction ): WpcomStoreState {
-			const checkedState =
-				state === undefined ? getInitialWpcomStoreState( emptyManagedContactDetails ) : state;
+			if ( action.type === 'RESET' || state === undefined ) {
+				state = getInitialWpcomStoreState( emptyManagedContactDetails );
+			}
 			return {
-				contactDetails: contactReducer( checkedState.contactDetails, action ),
-				recaptchaClientId: recaptchaClientIdReducer( checkedState.recaptchaClientId, action ),
-				vatDetails: vatDetailsReducer( checkedState.vatDetails, action ),
+				contactDetails: contactReducer( state.contactDetails, action ),
+				recaptchaClientId: recaptchaClientIdReducer( state.recaptchaClientId, action ),
+				vatDetails: vatDetailsReducer( state.vatDetails, action ),
 			};
 		},
 		actions,
