@@ -8,6 +8,7 @@ import { useEffect, useMemo } from '@wordpress/element';
 import useSiteIntent from '../../../dotcom-fse/lib/site-intent/use-site-intent';
 import useSitePlan from '../../../dotcom-fse/lib/site-plan/use-site-plan';
 import { selectors as starterPageTemplatesSelectors } from '../../../starter-page-templates/store';
+import { selectors as wpcomBlockEditorNavSidebarSelectors } from '../../../wpcom-block-editor-nav-sidebar/src/store';
 import { store as welcomeGuideStore } from '../store';
 import { getEditorType } from './get-editor-type';
 import getTourSteps from './tour-steps';
