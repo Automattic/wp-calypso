@@ -5,9 +5,9 @@ import page, { Callback } from 'page';
 import { createElement } from 'react';
 import { makeLayout, render } from 'calypso/controller';
 
-const SitesView: React.FunctionComponent = () => <span>Sites View</span>;
-const CommentsView: React.FunctionComponent = () => <span>Comments View</span>;
-const SettingsView: React.FunctionComponent = () => <span>Settings View</span>;
+const SitesView = () => <span>Sites View</span>;
+const CommentsView = () => <span>Comments View</span>;
+const SettingsView = () => <span>Settings View</span>;
 
 const SubscriptionManagementPage = () => {
 	const translate = useTranslate();
