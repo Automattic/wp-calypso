@@ -8,6 +8,7 @@ import {
 	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_DELETE,
 	COMMENTS_EMPTY,
+	COMMENTS_EMPTY_RECEIVE,
 } from 'calypso/state/action-types';
 import { requestCommentsList } from 'calypso/state/comments/actions';
 import {
@@ -210,25 +211,30 @@ export const emptyComments = ( action ) => ( dispatch ) => {
 	);
 };
 
-export const handleEmptySuccess = ( { status, /*siteId,*/ options, refreshCommentListQuery } ) =>
-	/*apiResponse*/
-	{
-		const showSuccessNotice = options?.showSuccessNotice;
+export const handleEmptySuccess = (
+	{ status, siteId, options, refreshCommentListQuery },
+	apiResponse
+) => {
+	const showSuccessNotice = options?.showSuccessNotice;
 
-		return [
-			// @todo delete comments from apiResponse.results (potentially using DELETE_COMMENT)
-			showSuccessNotice &&
-				successNotice(
-					status === 'spam' ? translate( 'Spam emptied.' ) : translate( 'Trash emptied.' ),
-					{
-						duration: DEFAULT_NOTICE_DURATION,
-						id: 'comment-notice',
-						isPersistent: true,
-					}
-				),
-			!! refreshCommentListQuery && requestCommentsList( refreshCommentListQuery ),
-		];
-	};
+	return [
+		showSuccessNotice &&
+			successNotice(
+				status === 'spam' ? translate( 'Spam emptied.' ) : translate( 'Trash emptied.' ),
+				{
+					duration: DEFAULT_NOTICE_DURATION,
+					id: 'comment-notice',
+					isPersistent: true,
+				}
+			),
+		!! refreshCommentListQuery && requestCommentsList( refreshCommentListQuery ),
+		{
+			type: COMMENTS_EMPTY_RECEIVE,
+			siteId,
+			commentIds: apiResponse?.results?.map( ( x ) => +x ), // convert to number
+		},
+	];
+};
 
 export const announceEmptyFailure = ( action ) => {
 	const { status } = action;

@@ -15,6 +15,7 @@ import {
 	COMMENT_COUNTS_UPDATE,
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_EDIT,
+	COMMENTS_EMPTY_RECEIVE,
 	COMMENTS_RECEIVE,
 	COMMENTS_DELETE,
 	COMMENTS_RECEIVE_ERROR,
@@ -88,11 +89,15 @@ export function items( state = {}, action ) {
 	const { type, siteId, postId, commentId, like_count } = action;
 
 	// cannot construct stateKey without both
-	if ( ! siteId || ! postId ) {
-		return state;
+	let stateKey = null;
+	if ( siteId && postId ) {
+		stateKey = getStateKey( siteId, postId );
 	}
 
-	const stateKey = getStateKey( siteId, postId );
+	// We need a stateKey unless we're emptying comments
+	if ( ! stateKey && type !== 'COMMENTS_EMPTY_RECEIVE' ) {
+		return state;
+	}
 
 	switch ( type ) {
 		case COMMENTS_CHANGE_STATUS: {
@@ -157,6 +162,22 @@ export function items( state = {}, action ) {
 					} )
 				),
 			};
+		}
+		// When we've emptied spam or trash, we don't know the post ID
+		// - just the site ID and comment ID
+		case COMMENTS_EMPTY_RECEIVE: {
+			const { commentIds } = action;
+
+			const commentKeys = Object.keys( state );
+			let newState = { ...state };
+			commentKeys.forEach( ( key ) => {
+				newState = {
+					...newState,
+					[ key ]: state[ key ].filter( ( comment ) => ! commentIds.includes( comment.ID ) ),
+				};
+			} );
+
+			return newState;
 		}
 	}
 
