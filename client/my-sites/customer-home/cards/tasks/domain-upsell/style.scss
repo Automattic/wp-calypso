@@ -2,19 +2,80 @@
 @import "@wordpress/base-styles/mixins";
 
 .task {
+	@media (max-width: $break-large) {
+		flex-direction: column;
+	}
 	&.task__domain-upsell {
-		margin: 0 !important;
-		background: url(calypso/assets/images/customer-home/illustration--task-domain-upsell.svg) no-repeat right top;
-		@media (max-width: $break-wide) {
-			background-position-x: 110%;
+		margin-bottom: 0 !important;
+
+		@media (min-width: $break-large) {
+			margin-right: 0 !important;
+			background: url(calypso/assets/images/customer-home/illustration--task-domain-upsell.png) no-repeat right top;
 		}
-		@media (max-width: $break-xlarge) {
-			background-position-x: 130%;
+
+		@media (max-width: $break-wide) {
+			background-position-x: 120%;
 		}
 
 		.task__text {
-			max-width: 50%;
-			margin: 32px !important;
+
+			@media (min-width: $break-wide) {
+				max-width: calc(100% - 450px);
+				margin-bottom: 32px;
+			}
+
+			@media (max-width: $break-wide) {
+				max-width: calc(110% - 450px);
+			}
+
+			@media (max-width: $break-large) {
+				padding: 0;
+				max-width: none;
+				display: grid;
+				grid-template-areas:
+					"a a a"
+					"c c c"
+					"d d d"
+					"e e e"
+					"b b b";
+				grid-template-columns: 1fr 1fr 1fr;
+				grid-template-rows: auto auto auto;
+				gap: 5px !important;
+				.task__timing {
+					grid-area: a;
+				}
+				.task__badge {
+					grid-area: b;
+				}
+				.task__title {
+					grid-area: c;
+				}
+				.task__description {
+					grid-area: d;
+				}
+				.task__actions {
+					grid-area: e;
+					flex-direction: column;
+					width: 100%;
+
+					& > * {
+						margin: 5px 0;
+					}
+				}
+			}
+		}
+
+		.task__illustration {
+			width: 100%;
+			padding: 0;
+
+			@media (min-width: $break-large) {
+				display: none;
+			}
+
+			img {
+				width: 100%;
+			}
 		}
 
 		.task__badge {
@@ -22,15 +83,20 @@
 			color: #000;
 			position: absolute;
 			right: 0;
-			top: 120px;
-			width: 260px;
+			top: 13px;
+			width: 295px;
 			word-break: break-all;
-			line-height: 20px;
+			overflow: hidden;
+			padding: 0;
 			@media (max-width: $break-wide) {
-				right: -5%;
+				width: calc(295px - 10%);
 			}
-			@media (max-width: $break-xlarge) {
-				right: -10%;
+			@media (max-width: $break-large) {
+				position: relative;
+				top: calc(( ( 100vw - 64px ) / 1.6 )  / 6.66);
+				width: 60%;
+				text-align: center;
+				margin: 0 auto;
 			}
 		}
 	}
