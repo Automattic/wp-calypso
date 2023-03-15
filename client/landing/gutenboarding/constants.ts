@@ -3,5 +3,3 @@
  *
  */
 export const FLOW_ID = 'gutenboarding';
-
-export const domainIsAvailableStatus = [ 'available', 'available_premium' ];
