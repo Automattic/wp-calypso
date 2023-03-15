@@ -1,8 +1,6 @@
-// import { NEWSLETTER_FLOW, LINK_IN_BIO_FLOW, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
 import { useRef, useState, useEffect } from 'react';
-// import JetpackLogo from 'calypso/components/jetpack-logo';
 import { useInterval } from 'calypso/lib/interval/use-interval';
 import './style.scss';
 
@@ -75,12 +73,6 @@ export default function TailoredFlowProcessingScreen( { flowName } ) {
 					} }
 				/>
 			</div>
-
-			{ /* { flowName === NEWSLETTER_FLOW && (
-				<div className="reskinned-processing-screen__jetpack-powered">
-					<JetpackLogo monochrome size={ 18 } /> <span>Jetpack powered</span>
-				</div>
-			) } */ }
 		</div>
 	);
 }

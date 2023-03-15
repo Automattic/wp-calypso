@@ -289,9 +289,6 @@ class DomainsStep extends Component {
 			submitSignupStep: this.props.submitSignupStep,
 		} );
 
-		// const siteAccentColor =
-		// 	this.props.flowName === 'newsletter' && this.props.queryObject?.siteAccentColor;
-
 		this.props.submitSignupStep(
 			Object.assign(
 				{
@@ -301,7 +298,6 @@ class DomainsStep extends Component {
 					isPurchasingItem,
 					siteUrl,
 					stepSectionName: this.props.stepSectionName,
-					// ...( siteAccentColor && { siteAccentColor } ),
 				},
 				this.getThemeArgs()
 			),
@@ -408,11 +404,6 @@ class DomainsStep extends Component {
 		if ( flowName === 'subdomain' ) {
 			return true;
 		}
-
-		// // newsletter users should get free .blog domain
-		// if ( flowName === 'newsletter' ) {
-		// 	return true;
-		// }
 
 		// 'blog' flow, starting with blog themes
 		if ( flowName === 'blog' ) {

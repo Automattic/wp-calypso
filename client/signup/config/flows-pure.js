@@ -147,19 +147,6 @@ export function generateFlows( {
 			lastModified: '2023-01-10',
 			showRecaptcha: true,
 		},
-		// {
-		// 	name: 'newsletter',
-		// 	steps: [ 'domains', 'plans-newsletter' ],
-		// 	destination: ( dependencies ) =>
-		// 		`/setup/newsletter/subscribers?siteSlug=${ dependencies.siteSlug }`,
-		// 	description: 'Beginning of the flow to create a newsletter',
-		// 	lastModified: '2022-11-01',
-		// 	showRecaptcha: true,
-		// 	get pageTitle() {
-		// 		return translate( 'Newsletter' );
-		// 	},
-		// 	postCompleteCallback: setupSiteAfterCreation,
-		// },
 		{
 			name: 'import',
 			steps: [ 'user', 'domains', 'plans-import' ],
