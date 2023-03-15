@@ -215,7 +215,7 @@ describe( 'utils', () => {
 					},
 					boost: {
 						type: 'boost',
-						data: sites[ 0 ].jetpack_boost_scores,
+						value: sites[ 0 ].jetpack_boost_scores,
 					},
 					backup: {
 						status: 'success',
