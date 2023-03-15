@@ -25,7 +25,8 @@ import type { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types
 
 type StorageUpgradeGetter = ( slug: string, isPurchased: boolean ) => SelectorProduct;
 
-const MONTHLY_BACKUPS_PRODUCTS = [
+// E.g. 30-day activity log
+const MONTHLY_FEATURES_PRODUCTS = [
 	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	PLAN_JETPACK_SECURITY_T1_MONTHLY,
@@ -34,7 +35,8 @@ const MONTHLY_BACKUPS_PRODUCTS = [
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_MONTHLY,
 ];
 
-const YEARLY_BACKUPS_PRODUCTS = [
+// E.g.	one year activity log
+const YEARLY_FEATURES_PRODUCTS = [
 	PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
@@ -193,11 +195,11 @@ const useGetProductCardData = () => {
 
 	return useCallback(
 		( slug: string, isPurchased ): SelectorProduct | null => {
-			if ( MONTHLY_BACKUPS_PRODUCTS.includes( slug ) ) {
+			if ( MONTHLY_FEATURES_PRODUCTS.includes( slug ) ) {
 				return getMonthlyBackupsCardData( slug, isPurchased );
 			}
 
-			if ( YEARLY_BACKUPS_PRODUCTS.includes( slug ) ) {
+			if ( YEARLY_FEATURES_PRODUCTS.includes( slug ) ) {
 				return getYearlyBackupsCardData( slug, isPurchased );
 			}
 
