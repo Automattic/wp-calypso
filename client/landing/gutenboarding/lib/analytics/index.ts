@@ -1,8 +1,9 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { FLOW_ID } from '../../constants';
 import type { ErrorParameters } from './types';
 
 export * from './recaptcha';
+
+const FLOW_ID = 'gutenboarding';
 
 /**
  * Make tracks call with embedded flow.
