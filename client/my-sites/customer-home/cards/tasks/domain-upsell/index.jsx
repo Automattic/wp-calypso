@@ -2,7 +2,9 @@ import { getPlan, isFreePlanProduct, getIntervalTypeForTerm } from '@automattic/
 import { useDomainSuggestions } from '@automattic/domain-picker/src';
 import { useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import { isDesktop } from '@automattic/viewport';
 import { useMemo } from '@wordpress/element';
+import { lockSmall, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useState } from 'react';
@@ -87,6 +89,13 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 	// It takes awhile to suggest a domain name. Set a default to an empty string.
 	const domainSuggestionName = domainSuggestion?.domain_name ?? '';
 
+	const domainSuggestionForImage = isDesktop() ? (
+		domainSuggestionName
+	) : (
+		<>
+			<Icon icon={ lockSmall } size={ 16 } /> { domainSuggestionName }
+		</>
+	);
 	const domainSuggestionProductSlug = domainSuggestion?.product_slug;
 
 	const searchLink = addQueryArgs(
@@ -153,7 +162,7 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 			secondaryActionUrl={ searchLink }
 			illustration={ domainUpsellMobileIllustration }
 			illustrationAlwaysShow={ true }
-			badgeText={ domainSuggestionName }
+			badgeText={ domainSuggestionForImage }
 			timing={ 2 }
 			taskId={ TASK_DOMAIN_UPSELL }
 		/>

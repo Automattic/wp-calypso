@@ -88,6 +88,7 @@
 			word-break: break-all;
 			overflow: hidden;
 			padding: 0;
+			display: inline-flex;
 			@media (max-width: $break-wide) {
 				width: calc(295px - 10%);
 			}
