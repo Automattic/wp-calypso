@@ -34,7 +34,7 @@ const stepNameToModuleName = {
 	'plans-starter': 'plans',
 	'plans-import': 'plans',
 	'plans-launch': 'plans',
-	'plans-newsletter': 'plans',
+	// 'plans-newsletter': 'plans',
 	'plans-personal': 'plans',
 	'plans-premium': 'plans',
 	'plans-site-selected': 'plans',
