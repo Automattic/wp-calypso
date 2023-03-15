@@ -192,6 +192,21 @@ describe( 'reducer', () => {
 			} );
 			expect( result[ '1-1' ] ).toHaveLength( 1 );
 		} );
+
+		test( 'should empty comments', () => {
+			const state = deepFreeze( {
+				'1-1': commentsNestedTree,
+				'1-2': [ { ID: 12 }, { ID: 13 }, { ID: 14 } ],
+			} );
+			const result = items( state, {
+				type: COMMENTS_EMPTY_RECEIVE,
+				siteId: 1,
+				commentIds: [ 12, 13 ],
+			} );
+
+			expect( result[ '1-1' ] ).toHaveLength( commentsNestedTree.length );
+			expect( result[ '1-2' ] ).toHaveLength( 1 );
+		} );
 	} );
 
 	describe( '#pendingItems', () => {
