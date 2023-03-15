@@ -1,0 +1,26 @@
+.turn-off-emails {
+	display: flex;
+	flex-direction: column;
+
+	&.form-fieldset {
+		margin-left: 2px;
+	}
+
+	.title {
+		margin-bottom: 7px;
+		color: #50575e;
+	}
+
+	.form-checkbox {
+		box-sizing: border-box;
+		width: 20px;
+		height: 20px;
+		background: #fff;
+		border: 1px solid #a7aaad;
+		border-radius: 2px;
+		flex: none;
+		order: 0;
+		flex-grow: 0;
+		margin-right: 12px;
+	}
+}
