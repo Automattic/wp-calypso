@@ -82,6 +82,7 @@ export interface StatsNode {
 
 export interface BoostNode {
 	type: AllowedTypes;
+	status: AllowedStatusTypes;
 	value: BoostData;
 }
 export interface BackupNode {
@@ -113,6 +114,7 @@ export interface MonitorNode {
 export interface SiteData {
 	site: SiteNode;
 	stats: StatsNode;
+	boost: BoostNode;
 	backup: BackupNode;
 	scan: ScanNode;
 	plugin: PluginNode;
@@ -123,7 +125,7 @@ export interface SiteData {
 
 export interface RowMetaData {
 	row: {
-		value: Site | SiteStats | ReactChild;
+		value: Site | SiteStats | BoostData | ReactChild;
 		status: AllowedStatusTypes | string;
 		error?: boolean;
 	};
