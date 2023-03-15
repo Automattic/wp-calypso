@@ -137,7 +137,11 @@ export const useGetMonthlyBackupsCardData = (): StorageUpgradeGetter => {
 
 			return {
 				...product,
-				displayName: isPurchased ? product?.displayName : storageAmount,
+				displayName: JETPACK_BACKUP_ADDON_PRODUCTS.includes(
+					slug as typeof JETPACK_BACKUP_ADDON_PRODUCTS[ number ]
+				)
+					? storageAmount
+					: product?.displayName,
 				subheader: isPurchased ? '' : subheader,
 				buttonLabel,
 				features: features,
@@ -188,7 +192,11 @@ export const useGetYearlyBackupsCardData = (): StorageUpgradeGetter => {
 
 			return {
 				...product,
-				displayName: isPurchased ? product?.displayName : storageAmount,
+				displayName: JETPACK_BACKUP_ADDON_PRODUCTS.includes(
+					slug as typeof JETPACK_BACKUP_ADDON_PRODUCTS[ number ]
+				)
+					? storageAmount
+					: product?.displayName,
 				subheader: isPurchased ? '' : subheader,
 				buttonLabel,
 				description: translate(
