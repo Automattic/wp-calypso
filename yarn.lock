@@ -12623,7 +12623,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"color-convert@npm:^1.9.0, color-convert@npm:^1.9.1, color-convert@npm:^1.9.3":
+"color-convert@npm:^1.9.0, color-convert@npm:^1.9.1":
   version: 1.9.3
   resolution: "color-convert@npm:1.9.3"
   dependencies:
@@ -12655,7 +12655,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"color-string@npm:^1.5.2, color-string@npm:^1.6.0":
+"color-string@npm:^1.5.2":
   version: 1.6.0
   resolution: "color-string@npm:1.6.0"
   dependencies:
@@ -12681,16 +12681,6 @@ __metadata:
     color-convert: ^1.9.1
     color-string: ^1.5.2
   checksum: 5fa639248910515512716e371b4716a35c0239b8bdf4050e5c432a4286ed129d801ccfbbf03e0c10fe46aec5739191793c902ddadcc7a92dae1234051243ceff
-  languageName: node
-  linkType: hard
-
-"color@npm:^3.1.3":
-  version: 3.2.1
-  resolution: "color@npm:3.2.1"
-  dependencies:
-    color-convert: ^1.9.3
-    color-string: ^1.6.0
-  checksum: 39345d55825884c32a88b95127d417a2c24681d8b57069413596d9fcbb721459ef9d9ec24ce3e65527b5373ce171b73e38dbcd9c830a52a6487e7f37bf00e83c
   languageName: node
   linkType: hard
 
@@ -23765,7 +23755,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"node-addon-api@npm:^3.1.0, node-addon-api@npm:^3.2.0":
+"node-addon-api@npm:^3.1.0":
   version: 3.2.1
   resolution: "node-addon-api@npm:3.2.1"
   dependencies:
@@ -26063,7 +26053,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"prebuild-install@npm:^6.0.0, prebuild-install@npm:^6.1.2":
+"prebuild-install@npm:^6.0.0":
   version: 6.1.3
   resolution: "prebuild-install@npm:6.1.3"
   dependencies:
@@ -29587,23 +29577,6 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"sharp@npm:^0.28":
-  version: 0.28.3
-  resolution: "sharp@npm:0.28.3"
-  dependencies:
-    color: ^3.1.3
-    detect-libc: ^1.0.3
-    node-addon-api: ^3.2.0
-    node-gyp: latest
-    prebuild-install: ^6.1.2
-    semver: ^7.3.5
-    simple-get: ^3.1.0
-    tar-fs: ^2.1.1
-    tunnel-agent: ^0.6.0
-  checksum: 7016319b0a6ecc4392ea345dfd470badddae2b106a4b1caed66d9766c4a7819d395c627eeb93cb7bcf761d9071def6593415f8ebec365efc2b582d6b366abbc0
-  languageName: node
-  linkType: hard
-
 "shebang-command@npm:^1.2.0":
   version: 1.2.0
   resolution: "shebang-command@npm:1.2.0"
@@ -29679,7 +29652,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"simple-get@npm:^3.0.3, simple-get@npm:^3.1.0":
+"simple-get@npm:^3.0.3":
   version: 3.1.0
   resolution: "simple-get@npm:3.1.0"
   dependencies:
@@ -31068,7 +31041,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"tar-fs@npm:2.1.1, tar-fs@npm:^2.0.0, tar-fs@npm:^2.1.1":
+"tar-fs@npm:2.1.1, tar-fs@npm:^2.0.0":
   version: 2.1.1
   resolution: "tar-fs@npm:2.1.1"
   dependencies:
@@ -33811,7 +33784,6 @@ fsevents@^1.2.7:
     request: ^2.88.2
     sass: ^1.37.5
     sass-loader: ^12.1.0
-    sharp: ^0.28
     source-map: ^0.7.3
     stackframe: ^1.1.1
     stacktrace-gps: ^3.0.3
