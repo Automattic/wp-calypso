@@ -37,7 +37,7 @@ const Task = ( {
 	hasSecondaryAction = false,
 	illustration,
 	illustrationAlwaysShow,
-	illustrationHeader,
+	illustrationComponent,
 	isLoading: forceIsLoading = false,
 	isUrgent = false,
 	showSkip = true,
@@ -59,7 +59,7 @@ const Task = ( {
 	description: ReactNode;
 	illustration?: string;
 	illustrationAlwaysShow?: boolean;
-	illustrationHeader?: ReactNode;
+	illustrationComponent?: ReactNode;
 	isLoading?: boolean;
 	isUrgent?: boolean;
 	showSkip?: boolean;
@@ -294,8 +294,11 @@ const Task = ( {
 			</div>
 			{ ( illustrationAlwaysShow || isDesktop() ) && illustration && (
 				<div className="task__illustration">
-					{ illustrationHeader && <> { illustrationHeader } </> }
-					<img src={ illustration } alt="" />
+					{ illustrationComponent ? (
+						<> { illustrationComponent } </>
+					) : (
+						<img src={ illustration } alt="" />
+					) }
 				</div>
 			) }
 		</div>
