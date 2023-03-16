@@ -6,9 +6,9 @@ type SubscriptionUserSettings = Partial< {
 } >;
 
 type UserSettingsProps = {
-	value: SubscriptionUserSettings;
+	value?: SubscriptionUserSettings;
 	onChange?: ( value: SubscriptionUserSettings ) => void;
-	loading: boolean;
+	loading?: boolean;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- until we start using any of these props
