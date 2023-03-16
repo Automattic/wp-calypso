@@ -6,8 +6,10 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import './styles.scss';
 
+export type EmailFormatType = 'html' | 'text';
+
 type EmailFormatInputProps = {
-	value: string;
+	value: EmailFormatType;
 	onChange: FormEventHandler< HTMLSelectElement >;
 };
 
