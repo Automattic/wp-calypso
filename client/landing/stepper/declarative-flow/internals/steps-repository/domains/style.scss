@@ -12,19 +12,122 @@
 		display: none;
 	}
 
-	.step-container.domains .step-container__header .formatted-header__title {
-		@media ( max-width: $break-large ) {
-			font-size: 2.25rem;
-		}
-	}
-
 	.step-container.domains {
+
 		max-width: $domain-stepper-component-width;
 		padding: 0;
 		margin: 0 auto;
 		@media ( max-width: break-large ) {
 			margin: 0 40px;
 		}
+
+		.step-container__header .formatted-header__title {
+			@media ( max-width: $break-large ) {
+				font-size: 2.25rem;
+			}
+		}
+
+		.domains__domain-side-content-container {
+			flex-direction: column;
+			margin-top: 40px;
+			margin-bottom: 0;
+
+			@include break-large {
+				width: 30vw;
+				margin-top: 0;
+				flex-direction: column;
+				display: flex;
+			}
+
+			@include break-wide {
+				width: 350px;
+			}
+		}
+
+		// Content only visible below the search results on mobile view port
+		.register-domain-step .domains__domain-side-content-container {
+			display: flex;
+
+			@include break-small {
+				flex-direction: row;
+
+				.domains__domain-side-content {
+					padding-top: 0;
+					border-bottom: none;
+					padding-bottom: 20px;
+					margin: 0 20px;
+				}
+			}
+
+			@include break-large {
+				display: none;
+			}
+		}
+
+		// Side content only visible on desktop viewport
+		.domains__domain-side-content-container .domains__domain-side-content {
+			padding: 40px 0;
+			margin: 0 0 0 80px;
+
+			@media (max-width: $domain-stepper-component-width) {
+				margin: 0 20px 0 40px;
+			}
+		}
+
+		.featured-domain-suggestions .featured-domain-suggestion:hover {
+			border: 1px solid #646970;
+		}
+
+		.featured-domain-suggestions .featured-domain-suggestion {
+			border-radius: 4px;
+			margin-bottom: 12px;
+			box-sizing: border-box;
+			border: 1px solid #e2e4e7;
+			background: var(--color-surface);
+			padding: 16px 24px;
+			box-shadow: none;
+		}
+
+		.domains__domain-side-content-container .domains__domain-side-content:first-of-type {
+			padding-top: 0;
+		}
+
+		.featured-domain-suggestions .domain-registration-suggestion__title-wrapper {
+			flex-wrap: nowrap;
+			flex-direction: column-reverse;
+			margin-bottom: initial;
+
+			@media (min-width: $break-wide ) {
+				flex-direction: row;
+			}
+		}
+
+		.step-container__header {
+			@media (max-width: $break-large) {
+				margin: 34px 20px 40px;
+			}
+		}
+
+		.featured-domain-suggestions .domain-registration-suggestion__title-wrapper .domain-registration-suggestion__badges {
+			align-self: baseline;
+			margin-left: 0;
+			margin-bottom: 10px;
+			flex: 1;
+
+			@media (min-width: $break-wide) {
+				margin-left: 12px;
+				margin-bottom: 0;
+			}
+		}
+
+		.featured-domain-suggestion .domain-registration-suggestion__title {
+			font-size: 1.5rem;
+			padding-right: 0;
+			margin-bottom: 0;
+			flex: 0 1 auto;
+			align-self: baseline;
+		}
+
 	}
 
 	.domains__step-content.domains__step-content-domain-step {
@@ -35,113 +138,11 @@
 		flex: 1;
 	}
 
-	.step-container.domains .domains__domain-side-content-container {
-		flex-direction: column;
-		margin-top: 40px;
-		margin-bottom: 0;
-
-		@include break-large {
-			width: 30vw;
-			margin-top: 0;
-			flex-direction: column;
-			display: flex;
-		}
-
-		@include break-wide {
-			width: 350px;
-		}
-	}
-
-	// Content only visible below the search results on mobile view port
-	.step-container.domains .register-domain-step .domains__domain-side-content-container {
-		display: flex;
-
-		@include break-small {
-			flex-direction: row;
-
-			.domains__domain-side-content {
-				padding-top: 0;
-				border-bottom: none;
-				padding-bottom: 20px;
-				margin: 0 20px;
-			}
-		}
-
-		@include break-large {
-			display: none;
-		}
-	}
-
-	// Side content only visible on desktop viewport
-	.step-container.domains .domains__domain-side-content-container .domains__domain-side-content {
-		padding: 40px 0;
-		margin: 0 0 0 80px;
-
-		@media (max-width: $domain-stepper-component-width) {
-			margin: 0 20px 0 40px;
-		}
-	}
-
-
-	.step-container.domains .featured-domain-suggestions .featured-domain-suggestion:hover {
-		border: 1px solid #646970;
-	}
-
-	.step-container.domains .featured-domain-suggestions .featured-domain-suggestion {
-		border-radius: 4px;
-		margin-bottom: 12px;
-		box-sizing: border-box;
-		border: 1px solid #e2e4e7;
-		background: var(--color-surface);
-		padding: 16px 24px;
-		box-shadow: none;
-	}
-
-	.step-container.domains .domains__domain-side-content-container .domains__domain-side-content:first-of-type {
-		padding-top: 0;
-	}
-
-	.step-container.domains .featured-domain-suggestions .domain-registration-suggestion__title-wrapper {
-		flex-wrap: nowrap;
-		flex-direction: column-reverse;
-		margin-bottom: initial;
-
-		@media (min-width: $break-wide ) {
-			flex-direction: row;
-		}
-	}
-
-	.featured-domain-suggestion .domain-registration-suggestion__title {
-		font-size: 1.5rem;
-		padding-right: 0;
-		margin-bottom: 0;
-		flex: 0 1 auto;
-		align-self: baseline;
-	}
-
-	.step-container.domains .step-container__header {
-		@media (max-width: $break-large) {
-			margin: 34px 20px 40px;
-		}
-	}
-
 	.register-domain-step__search.register-domain-step__search-domain-step,
 	.domain-search-results,
 	.domain-search-results__domain-suggestions {
 		@media (max-width: $break-large) {
 			margin: 0 20px;
-		}
-	}
-
-	.step-container.domains .featured-domain-suggestions .domain-registration-suggestion__title-wrapper .domain-registration-suggestion__badges {
-		align-self: baseline;
-		margin-left: 0;
-		margin-bottom: 10px;
-		flex: 1;
-
-		@media (min-width: $break-wide) {
-			margin-left: 12px;
-			margin-bottom: 0;
 		}
 	}
 
