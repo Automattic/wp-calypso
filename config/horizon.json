@@ -119,8 +119,6 @@
 		"ssr/prefetch-timebox": true,
 		"stats/horizontal-bars-everywhere": true,
 		"stats/insights-page-grid": true,
-		"stats/latest-post-stats": true,
-		"stats/most-popular-post": true,
 		"stats/new-video-summary": false,
 		"stepper-woocommerce-poc": true,
 		"subscriber-csv-upload": true,

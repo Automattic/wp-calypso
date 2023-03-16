@@ -1,11 +1,12 @@
 import config from '@automattic/calypso-config';
-import { PostStatsCard } from '@automattic/components';
+import { PostStatsCard, ComponentSwapper } from '@automattic/components';
 import { createSelector } from '@automattic/state-utils';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
 import QueryPosts from 'calypso/components/data/query-posts';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import DotPager from 'calypso/components/dot-pager';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { getSitePost } from 'calypso/state/posts/selectors';
 import { getSiteOption } from 'calypso/state/sites/selectors';
@@ -13,6 +14,7 @@ import {
 	getTopPostAndPage,
 	isRequestingSiteStatsForQuery,
 } from 'calypso/state/stats/lists/selectors';
+import LatestPostCard from './latest-post-card';
 
 const POST_STATS_CARD_TITLE_LIMIT = 60;
 
@@ -66,7 +68,7 @@ const getStatsData = createSelector(
 	]
 );
 
-export default function MostPopularPostCard( {
+export default function PostCardsGroup( {
 	siteId,
 	siteSlug,
 }: {
@@ -103,6 +105,44 @@ export default function MostPopularPostCard( {
 		commentCount: mostPopularPost?.discussion?.comment_count,
 	};
 
+	const mobileCardsGroup = (
+		<DotPager>
+			<LatestPostCard siteId={ siteId } siteSlug={ siteSlug } />
+			{ ! isTopViewedPostRequesting && mostPopularPost && (
+				<PostStatsCard
+					heading={ translate( 'Most popular post in the past year' ) }
+					likeCount={ mostPopularPostData?.likeCount }
+					post={ mostPopularPostData }
+					viewCount={ mostPopularPostData?.viewCount }
+					commentCount={ mostPopularPostData?.commentCount }
+					titleLink={ `/stats/post/${ mostPopularPost.ID }/${ siteSlug }` }
+					uploadHref={
+						! isOdysseyStats ? `/post/${ siteSlug }/${ mostPopularPost.ID }` : undefined
+					}
+				/>
+			) }
+		</DotPager>
+	);
+
+	const cardsGroup = (
+		<div className="highlight-cards-list">
+			<LatestPostCard siteId={ siteId } siteSlug={ siteSlug } />
+			{ ! isTopViewedPostRequesting && mostPopularPost && (
+				<PostStatsCard
+					heading={ translate( 'Most popular post in the past year' ) }
+					likeCount={ mostPopularPostData?.likeCount }
+					post={ mostPopularPostData }
+					viewCount={ mostPopularPostData?.viewCount }
+					commentCount={ mostPopularPostData?.commentCount }
+					titleLink={ `/stats/post/${ mostPopularPost.ID }/${ siteSlug }` }
+					uploadHref={
+						! isOdysseyStats ? `/post/${ siteSlug }/${ mostPopularPost.ID }` : undefined
+					}
+				/>
+			) }
+		</div>
+	);
+
 	return (
 		<>
 			{ siteId && (
@@ -117,19 +157,12 @@ export default function MostPopularPostCard( {
 				</>
 			) }
 
-			{ ! isTopViewedPostRequesting && mostPopularPost && (
-				<PostStatsCard
-					heading={ translate( 'Most popular post in the past year' ) }
-					likeCount={ mostPopularPostData?.likeCount }
-					post={ mostPopularPostData }
-					viewCount={ mostPopularPostData?.viewCount }
-					commentCount={ mostPopularPostData?.commentCount }
-					titleLink={ `/stats/post/${ mostPopularPost.ID }/${ siteSlug }` }
-					uploadHref={
-						! isOdysseyStats ? `/post/${ siteSlug }/${ mostPopularPost.ID }` : undefined
-					}
-				/>
-			) }
+			<ComponentSwapper
+				className="all-time-highlights-section__highlight-cards-swapper"
+				breakpoint="<660px"
+				breakpointActiveComponent={ mobileCardsGroup }
+				breakpointInactiveComponent={ cardsGroup }
+			/>
 		</>
 	);
 }
