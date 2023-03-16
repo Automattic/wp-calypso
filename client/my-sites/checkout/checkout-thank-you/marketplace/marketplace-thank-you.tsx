@@ -279,7 +279,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 			},
 			{
 				stepKey: 'thank_you_footer_support_guides',
-				stepTitle: translate( 'Plugins Support' ),
+				stepTitle: translate( 'Learn More' ),
 				stepDescription: translate( 'Discover everything you need to know about Plugins.' ),
 				stepCta: (
 					<Button
@@ -295,9 +295,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 			{
 				stepKey: 'thank_you_footer_support',
 				stepTitle: translate( '24/7 support at your fingertips' ),
-				stepDescription: translate(
-					'Our happiness engineers are eager to help answer your questions.'
-				),
+				stepDescription: translate( 'Our happiness engineers are eager to lend a hand.' ),
 				stepCta: (
 					<Button
 						isLink
