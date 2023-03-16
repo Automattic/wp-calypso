@@ -110,6 +110,17 @@ class SearchStream extends React.Component {
 			searchPlaceholderText = getSearchPlaceholderText();
 		}
 
+		let isRssFeed = false;
+		if ( showFollowByUrl ) {
+			const parsedUrl = new URL( query );
+			if ( parsedUrl ) {
+				const tld = parsedUrl.pathname?.split( '.' ).pop();
+				if ( tld === 'xml' ) {
+					isRssFeed = true;
+				}
+			}
+		}
+
 		const documentTitle = translate( '%s ‹ Reader', {
 			args: this.getTitle(),
 			comment: '%s is the section name. For example: "My Likes"',
@@ -164,6 +175,16 @@ class SearchStream extends React.Component {
 					</CompactCard>
 					{ showFollowByUrl && (
 						<div className="search-stream__url-follow">
+							{ isRssFeed && (
+								<div>
+									<label>{ translate( 'Rss Feed detected' ) }</label>
+								</div>
+							) }
+							{ ! isRssFeed && (
+								<div>
+									<label>{ translate( 'Feed detected' ) }</label>
+								</div>
+							) }
 							<FollowButton
 								followLabel={ translate( 'Follow %s', {
 									args: queryWithoutProtocol,
