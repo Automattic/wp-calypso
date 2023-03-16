@@ -24,7 +24,7 @@ const UserSettings = ( { value = {}, loading = false, onChange }: UserSettingsPr
 				onChange?.( { mail_option: evt.currentTarget.value as EmailFormatType } )
 			}
 		/>
-		<BlockEmailsSetting onChange={ () => null } value={ false } />
+		<BlockEmailsSetting onChange={ ( value ) => ( { blocked: value } ) } value={ value.blocked } />
 	</div>
 );
 

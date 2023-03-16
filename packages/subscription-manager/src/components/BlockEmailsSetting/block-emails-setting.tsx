@@ -10,7 +10,7 @@ import FormLabel from 'calypso/components/forms/form-label';
 import './style.scss';
 
 export type BlockEmailsSettingProps = {
-	value: boolean;
+	value: boolean | undefined;
 	onChange: ChangeEventHandler< HTMLInputElement >;
 };
 
@@ -21,7 +21,7 @@ const BlockEmailsSetting = ( { value, onChange }: BlockEmailsSettingProps ) => {
 		<FormFieldset className="block-emails-setting">
 			<span className="title">Block emails</span>
 			<FormLabel>
-				<FormInputCheckbox name="block_emails_setting" checked={ value } onChange={ onChange } />
+				<FormInputCheckbox name="blocked" checked={ value } onChange={ onChange } />
 				<span>
 					{ translate( 'Block all email updates from sites you’re following on WordPress.com' ) }
 				</span>

@@ -3,7 +3,6 @@ import SubscriptionManager from '@automattic/subscription-manager';
 import { useTranslate } from 'i18n-calypso';
 import page, { Callback } from 'page';
 import { createElement } from 'react';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
 import { makeLayout, render } from 'calypso/controller';
 
 const SitesView = () => <span>Sites View</span>;

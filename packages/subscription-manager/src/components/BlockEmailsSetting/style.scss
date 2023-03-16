@@ -1,3 +1,5 @@
+@import "@automattic/color-studio/dist/color-variables";
+
 .block-emails-setting {
 	display: flex;
 	flex-direction: column;
@@ -8,15 +10,15 @@
 
 	.title {
 		margin-bottom: 7px;
-		color: #50575e;
+		color: $studio-gray-60;
 	}
 
 	.form-checkbox {
 		box-sizing: border-box;
 		width: 20px;
 		height: 20px;
-		background: #fff;
-		border: 1px solid #a7aaad;
+		background: $studio-white;
+		border: 1px solid $studio-gray-20;
 		border-radius: 2px;
 		flex: none;
 		order: 0;
