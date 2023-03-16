@@ -52,7 +52,7 @@ export default function BoostSitePerformance( { boostData, hasBoost }: Props ) {
 						<div className="site-expanded-content__device-score-container">
 							<div className="site-expanded-content__card-content-column">
 								<Icon
-									size={ 26 }
+									size={ 24 }
 									className="site-expanded-content__device-icon"
 									icon={ jetpackBoostDesktopIcon }
 								/>
@@ -61,7 +61,7 @@ export default function BoostSitePerformance( { boostData, hasBoost }: Props ) {
 							<div className="site-expanded-content__card-content-column site-expanded-content__card-content-column-mobile">
 								<Icon
 									className="site-expanded-content__device-icon"
-									size={ 26 }
+									size={ 24 }
 									icon={ jetpackBoostMobileIcon }
 								/>
 								<span className="site-expanded-content__device-score">{ mobileScore }</span>
