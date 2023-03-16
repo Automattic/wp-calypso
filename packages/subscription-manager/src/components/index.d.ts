@@ -89,3 +89,12 @@ declare module 'calypso/components/route' {
 		currentQuery: unknown;
 	};
 }
+
+declare module 'calypso/components/forms/form-fieldset' {
+	const FormFieldset: React.FC< {
+		className?: string;
+		children?: React.ReactNode;
+	} >;
+
+	export default FormFieldset;
+}
