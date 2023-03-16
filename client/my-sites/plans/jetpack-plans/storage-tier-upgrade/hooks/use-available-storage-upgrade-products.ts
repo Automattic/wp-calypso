@@ -1,10 +1,4 @@
-import {
-	isJetpackBackupSlug,
-	isJetpackSecuritySlug,
-	TERM_ANNUALLY,
-	TERM_MONTHLY,
-	JETPACK_BACKUP_ADDON_PRODUCTS,
-} from '@automattic/calypso-products';
+import { TERM_ANNUALLY, TERM_MONTHLY } from '@automattic/calypso-products';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { getSlugInTerm } from 'calypso/my-sites/plans/jetpack-plans/convert-slug-terms';
@@ -17,22 +11,6 @@ const useAvailableStorageUpgradeProducts = ( siteId: number ): SelectorProduct[]
 		getPurchasedStorageSubscriptions( state, siteId )
 	).map( ( { productSlug } ) => productSlug );
 	const getStorageUpgradeProducts = useGetStorageUpgradeProducts();
-
-	// Only ever include upgrades for one type of product
-	// (Security having the most precedence, in case a
-	// site has both Backup and Security for some strange reason)
-	const sameProductType = useMemo( () => {
-		const hasJetpackSecurity = purchasedStorageSlugs.some( isJetpackSecuritySlug );
-		if ( hasJetpackSecurity ) {
-			return ( { productSlug }: SelectorProduct ) => isJetpackSecuritySlug( productSlug );
-		}
-
-		// If the selected site has Backup, or doesn't have Backup _or_ Security,
-		// default to showing only Backup products.
-		return ( { productSlug }: SelectorProduct ) =>
-			isJetpackBackupSlug( productSlug ) ||
-			JETPACK_BACKUP_ADDON_PRODUCTS.includes( productSlug as any );
-	}, [ purchasedStorageSlugs ] );
 
 	// This function specifically targets products that haven't been purchased
 	const isNotPurchased = useMemo( () => {
@@ -56,7 +34,6 @@ const useAvailableStorageUpgradeProducts = ( siteId: number ): SelectorProduct[]
 
 	return allUpgradeProducts
 		.filter( ( product ): product is SelectorProduct => !! product )
-		.filter( sameProductType )
 		.filter( isNotPurchased ) as SelectorProduct[];
 };
 
