@@ -3,6 +3,7 @@ import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
+import { LineChart } from 'react-light-chart';
 import { connect } from 'react-redux';
 import Chart from 'calypso/components/chart';
 import Legend from 'calypso/components/chart/legend';
@@ -115,6 +116,11 @@ class StatModuleChartTabs extends Component {
 				<Chart barClick={ this.props.barClick } data={ this.props.chartData } minBarWidth={ 35 }>
 					<StatsEmptyState />
 				</Chart>
+				<LineChart
+					data={ this.props.chartData }
+					valueSelector={ ( e ) => [ e.value ] }
+					style={ { width: '100%', height: 400 } }
+				/>
 				<StatTabs
 					data={ this.props.counts }
 					tabs={ this.props.charts }
