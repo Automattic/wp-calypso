@@ -3,7 +3,6 @@ import { createSelector } from '@automattic/state-utils';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
-import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
@@ -13,7 +12,6 @@ import {
 	getTopPostAndPage,
 	isRequestingSiteStatsForQuery,
 } from 'calypso/state/stats/lists/selectors';
-import { getPostStat } from 'calypso/state/stats/posts/selectors';
 
 const POST_STATS_CARD_TITLE_LIMIT = 40;
 
@@ -88,11 +86,6 @@ export default function MostPopularPostCard( {
 		getStatsData( state, siteId, topPostsQuery, isTopViewedPostRequesting )
 	);
 
-	// The returned data period to sum the view count from API `stats/post` would differ by post.
-	const mostPopularPostViewCount = useSelector( ( state ) =>
-		getPostStat( state, siteId, topViewedPost?.id, 'views' )
-	);
-
 	const mostPopularPost = useSelector( ( state ) =>
 		getSitePost( state, siteId, topViewedPost?.id )
 	);
@@ -104,7 +97,7 @@ export default function MostPopularPostCard( {
 			stripHTML( textTruncator( mostPopularPost?.title, POST_STATS_CARD_TITLE_LIMIT ) )
 		),
 		likeCount: mostPopularPost?.like_count,
-		viewCount: mostPopularPostViewCount, // or topViewedPost?.views
+		viewCount: topViewedPost?.views,
 		commentCount: mostPopularPost?.discussion?.comment_count,
 	};
 
@@ -119,7 +112,6 @@ export default function MostPopularPostCard( {
 			{ siteId && topViewedPost && (
 				<>
 					<QueryPosts siteId={ siteId } postId={ topViewedPost.id } query={ {} } />
-					<QueryPostStats siteId={ siteId } postId={ topViewedPost.id } fields={ [ 'views' ] } />
 				</>
 			) }
 
