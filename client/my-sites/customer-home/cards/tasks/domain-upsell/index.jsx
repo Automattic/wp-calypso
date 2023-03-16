@@ -165,6 +165,14 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 					}
 			  );
 
+	const domainNameSVG = (
+		<svg viewBox="0 0 56 18">
+			<text x="28" y="15" text-anchor="middle">
+				example.com
+			</text>
+		</svg>
+	);
+
 	return (
 		<Task
 			customClass="task__domain-upsell"
@@ -178,6 +186,7 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 			secondaryActionUrl={ searchLink }
 			illustration={ domainUpsellMobileIllustration }
 			illustrationAlwaysShow={ true }
+			illustrationHeader={ domainNameSVG }
 			badgeText={ domainSuggestionForImage }
 			timing={ 2 }
 			taskId={ TASK_DOMAIN_UPSELL }
