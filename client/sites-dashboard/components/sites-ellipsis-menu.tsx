@@ -18,13 +18,16 @@ import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { ComponentType, useEffect, useMemo, useState } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
+import { useQueryReaderTeams } from 'calypso/components/data/query-reader-teams';
 import SitePreviewLink from 'calypso/components/site-preview-link';
 import { useSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
 import {
 	getHostingConfigUrl,
 	getManagePluginsUrl,
@@ -247,6 +250,9 @@ function useSubmenuItems( site: SiteExcerptData ) {
 	const isStagingSite = site.is_wpcom_staging_site;
 	const isStagingSiteEnabled = isEnabled( 'yolo/staging-sites-i1' );
 
+	useQueryReaderTeams();
+	const isA12n = useSelector( ( state ) => isAutomatticTeamMember( getReaderTeams( state ) ) );
+
 	return useMemo< { label: string; href: string; sectionName: string }[] >( () => {
 		return [
 			{
@@ -266,6 +272,7 @@ function useSubmenuItems( site: SiteExcerptData ) {
 				sectionName: 'staging_site',
 			},
 			{
+				condition: isA12n,
 				label: __( 'Deploy from GitHub' ),
 				href: `/hosting-config/${ siteSlug }#connect-github`,
 				sectionName: 'connect_github',
@@ -286,7 +293,7 @@ function useSubmenuItems( site: SiteExcerptData ) {
 				sectionName: 'logs',
 			},
 		].filter( ( { condition } ) => condition ?? true );
-	}, [ __, isStagingSiteEnabled, siteSlug, isStagingSite ] );
+	}, [ __, isStagingSiteEnabled, siteSlug, isStagingSite, isA12n ] );
 }
 
 function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps ) {

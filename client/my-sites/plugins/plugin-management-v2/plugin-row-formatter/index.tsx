@@ -10,6 +10,7 @@ import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-t
 import PluginInstallButton from 'calypso/my-sites/plugins/plugin-install-button';
 import UpdatePlugin from 'calypso/my-sites/plugins/plugin-management-v2/update-plugin';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import {
 	isPluginActionInProgress,
 	getPluginOnSite,
@@ -44,6 +45,8 @@ export default function PluginRowFormatter( {
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const billingPeriod = useSelector( getBillingInterval );
 
 	const PluginDetailsButton = (
 		props: PropsWithChildren< { className: string; onClick?: MouseEventHandler } >
@@ -255,6 +258,7 @@ export default function PluginRowFormatter( {
 						selectedSite={ selectedSite }
 						plugin={ item }
 						isInstalling={ installInProgress }
+						billingPeriod={ billingPeriod }
 					/>
 				</div>
 			);

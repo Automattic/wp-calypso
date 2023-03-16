@@ -18,9 +18,11 @@ export function renderPluginsInstallPage( context, next ) {
 }
 
 export function renderMarketplaceThankYou( context, next ) {
-	const { productSlug } = context.params;
+	const { plugins, themes } = context.query;
+	const pluginSlugs = plugins ? plugins.split( ',' ) : [];
+	const themeSlugs = themes ? themes.split( ',' ) : [];
 
-	context.primary = <MarketplaceThankYou productSlug={ productSlug } />;
+	context.primary = <MarketplaceThankYou pluginSlugs={ pluginSlugs } themeSlugs={ themeSlugs } />;
 	next();
 }
 
