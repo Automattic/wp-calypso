@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { PostStatsCard } from '@automattic/components';
 import { createSelector } from '@automattic/state-utils';
 import { useTranslate } from 'i18n-calypso';
@@ -73,6 +74,7 @@ export default function MostPopularPostCard( {
 	siteSlug: string;
 } ) {
 	const translate = useTranslate();
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
 	const { topPostsQuery } = useSelector( ( state ) => getStatsQueries( state, siteId ) );
 
@@ -123,6 +125,9 @@ export default function MostPopularPostCard( {
 					viewCount={ mostPopularPostData?.viewCount }
 					commentCount={ mostPopularPostData?.commentCount }
 					titleLink={ `/stats/post/${ mostPopularPost.ID }/${ siteSlug }` }
+					uploadHref={
+						! isOdysseyStats ? `/post/${ siteSlug }/${ mostPopularPost.ID }` : undefined
+					}
 				/>
 			) }
 		</>
