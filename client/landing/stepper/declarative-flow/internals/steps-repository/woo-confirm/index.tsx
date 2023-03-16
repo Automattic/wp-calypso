@@ -1,4 +1,4 @@
-import { ProductsList } from '@automattic/data-stores';
+import { AutomatedTransferEligibility, ProductsList } from '@automattic/data-stores';
 import { StepContainer } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -11,11 +11,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WarningCard from 'calypso/components/warning-card';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import {
-	AUTOMATED_ELIGIBILITY_STORE,
-	SITE_STORE,
-	ONBOARD_STORE,
-} from 'calypso/landing/stepper/stores';
+import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { addQueryArgs } from 'calypso/lib/url';
 import { ActionSection, StyledNextButton } from 'calypso/signup/steps/woocommerce-install';
@@ -46,16 +42,8 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 	const { __ } = useI18n();
 	const site = useSite();
 	const siteId = site && site?.ID;
-	const isAtomicSite = useSelect(
-		( select ) => siteId && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( siteId ),
-		[ siteId ]
-	);
-	const { requestLatestAtomicTransfer } = useDispatch( SITE_STORE );
-	const stepProgress = useSelect(
-		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
-		[]
-	);
 
+	const { requestLatestAtomicTransfer } = useDispatch( SITE_STORE );
 	useEffect( () => {
 		if ( ! siteId ) {
 			return;
@@ -64,49 +52,44 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 		requestLatestAtomicTransfer( siteId );
 	}, [ requestLatestAtomicTransfer, siteId ] );
 
-	const eligibilityHolds = useSelect(
-		( select ) =>
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore Until createRegistrySelector is typed correctly
-			select( AUTOMATED_ELIGIBILITY_STORE ).getEligibilityHolds( siteId ),
-		[ siteId ]
-	);
-	const eligibilityWarnings = useSelect(
-		( select ) =>
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore Until createRegistrySelector is typed correctly
-			select( AUTOMATED_ELIGIBILITY_STORE ).getEligibilityWarnings( siteId ),
-		[ siteId ]
-	);
-	const wpcomSubdomainWarning = useSelect(
-		( select ) =>
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore Until createRegistrySelector is typed correctly
-			select( AUTOMATED_ELIGIBILITY_STORE ).getWpcomSubdomainWarning( siteId ),
-		[ siteId ]
-	);
-	const warnings = useSelect(
-		( select ) =>
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore Until createRegistrySelector is typed correctly
-			select( AUTOMATED_ELIGIBILITY_STORE ).getNonSubdomainWarnings( siteId ),
-		[ siteId ]
-	);
-	const latestAtomicTransfer = useSelect(
-		( select ) => ( select( SITE_STORE ) as SiteSelect ).getSiteLatestAtomicTransfer( siteId || 0 ),
-		[ siteId ]
-	);
-	const latestAtomicTransferError = useSelect(
-		( select ) =>
-			( select( SITE_STORE ) as SiteSelect ).getSiteLatestAtomicTransferError( siteId || 0 ),
-		[ siteId ]
-	);
-	const productsList = useSelect(
-		( select ) => select( ProductsList.store ).getProductsList(),
-		[]
-	);
-	const requiresUpgrade = useSelect(
-		( select ) => ( select( SITE_STORE ) as SiteSelect ).requiresUpgrade( siteId ),
+	const {
+		eligibilityHolds,
+		eligibilityWarnings,
+		wpcomSubdomainWarning,
+		warnings,
+		latestAtomicTransfer,
+		latestAtomicTransferError,
+		productsList,
+		requiresUpgrade,
+		isAtomicSite,
+		stepProgress,
+	} = useSelect(
+		( select ) => {
+			const {
+				getEligibilityHolds,
+				getEligibilityWarnings,
+				getWpcomSubdomainWarning,
+				getNonSubdomainWarnings,
+			} = select( AutomatedTransferEligibility.store );
+			const {
+				getSiteLatestAtomicTransfer,
+				getSiteLatestAtomicTransferError,
+				requiresUpgrade,
+				isSiteAtomic,
+			} = select( SITE_STORE ) as SiteSelect;
+			return {
+				eligibilityHolds: getEligibilityHolds( siteId ),
+				eligibilityWarnings: getEligibilityWarnings( siteId ),
+				wpcomSubdomainWarning: getWpcomSubdomainWarning( siteId ),
+				warnings: getNonSubdomainWarnings( siteId ),
+				latestAtomicTransfer: getSiteLatestAtomicTransfer( siteId || 0 ),
+				latestAtomicTransferError: getSiteLatestAtomicTransferError( siteId || 0 ),
+				requiresUpgrade: requiresUpgrade( siteId ),
+				isAtomicSite: siteId && isSiteAtomic( siteId ),
+				productsList: select( ProductsList.store ).getProductsList(),
+				stepProgress: ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
+			};
+		},
 		[ siteId ]
 	);
 
