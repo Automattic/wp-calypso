@@ -57,9 +57,12 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	}, [ isVisible ] );
 
 	const handleShowCancel = ( show: boolean ) => setShowCancelButton( show );
-	const handleGetStartedMessageClose = () => setHiddenHeader( false );
+	const handleShowTopBar = ( show: boolean ) => {
+		setHiddenHeader( ! show );
+	};
 
 	const onClose = ( goToCampaigns?: boolean ) => {
+		queryClient.invalidateQueries( [ 'promote-post-campaigns', siteId ] );
 		if ( goToCampaigns ) {
 			page( `/advertising/${ siteSlug }/campaigns` );
 		} else {
@@ -98,7 +101,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 					},
 					widgetContainer.current,
 					handleShowCancel,
-					handleGetStartedMessageClose,
+					handleShowTopBar,
 					localeSlug
 				);
 				setIsLoading( false );

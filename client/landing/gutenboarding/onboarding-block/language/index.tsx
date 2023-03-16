@@ -1,3 +1,4 @@
+import { I18n } from '@automattic/data-stores';
 import LanguagePicker, { createLanguageGroups } from '@automattic/language-picker';
 import languages from '@automattic/languages';
 import { ActionButtons, BackButton } from '@automattic/onboarding';
@@ -8,9 +9,9 @@ import { useHistory } from 'react-router-dom';
 import { ChangeLocaleContextConsumer } from '../../components/locale-context';
 import useLastLocation from '../../hooks/use-last-location';
 import { Step, usePath } from '../../path';
-import { I18N_STORE } from '../../stores/i18n';
 import { USER_STORE } from '../../stores/user';
 import type { StepNameType } from '../../path';
+import type { UserSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -23,12 +24,17 @@ interface Props {
 const LanguageStep: React.FunctionComponent< Props > = ( { previousStep } ) => {
 	const { __ } = useI18n();
 
-	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
+	const currentUser = useSelect(
+		( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
+		[]
+	);
 
-	const localizedLanguageNames = useSelect( ( select ) =>
-		select( I18N_STORE ).getLocalizedLanguageNames(
-			currentUser?.language ?? LOCALIZED_LANGUAGE_NAMES_FALLBACK_LOCALE
-		)
+	const localizedLanguageNames = useSelect(
+		( select ) =>
+			select( I18n.store ).getLocalizedLanguageNames(
+				currentUser?.language ?? LOCALIZED_LANGUAGE_NAMES_FALLBACK_LOCALE
+			),
+		[ currentUser?.language ]
 	);
 
 	// keep a static reference to the previous step

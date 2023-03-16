@@ -1,5 +1,4 @@
 import * as Analyzer from './analyzer';
-import * as Auth from './auth';
 import * as AutomatedTransferEligibility from './automated-transfer-eligibility';
 import * as DomainSuggestions from './domain-suggestions';
 import * as HelpCenter from './help-center';
@@ -9,7 +8,6 @@ import * as Onboard from './onboard';
 import oneWeekPersistenceConfig from './one-week-persistence-config';
 import * as Plans from './plans';
 import * as ProductsList from './products-list';
-import * as Reader from './reader';
 import * as Site from './site';
 import * as StepperInternal from './stepper-internal';
 import * as Subscriber from './subscriber';
@@ -32,10 +30,11 @@ export * from './templates';
 export * from './onboard/types';
 export * from './domain-suggestions/types';
 export * from './plans/types';
+export * from './launch/types';
+export * from './user/types';
 
 export {
 	Analyzer,
-	Auth,
 	User,
 	DomainSuggestions,
 	HelpCenter,
@@ -45,7 +44,6 @@ export {
 	WpcomPlansUI,
 	Launch,
 	WPCOMFeatures,
-	Reader,
 	Onboard,
 	oneWeekPersistenceConfig,
 	ProductsList,
@@ -62,4 +60,8 @@ export { getContextResults } from './contextual-help/contextual-help';
 export { generateAdminSections } from './contextual-help/admin-sections';
 export type { LinksForSection } from './contextual-help/contextual-help';
 export * from './contextual-help/constants';
-export type { HelpCenterSite } from './help-center/types';
+export type { HelpCenterSite, HelpCenterSelect } from './help-center/types';
+export type { ProductsListSelect } from './products-list/types';
+export type { OnboardSelect } from './onboard';
+export type { StepperInternalSelect } from './stepper-internal';
+export type { WpcomFeaturesSelect } from './wpcom-features/types';

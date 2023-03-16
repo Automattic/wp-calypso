@@ -6,6 +6,7 @@ import { useInterval } from '../../../../lib/interval/use-interval';
 import { useSelectedPlan } from '../../hooks/use-selected-plan';
 import { useTrackStep } from '../../hooks/use-track-step';
 import { ONBOARD_STORE } from '../../stores/onboard';
+import type { OnboardSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -15,7 +16,10 @@ const DURATION_IN_MS = 6000;
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 const CreateSite: React.FunctionComponent = () => {
 	const { __ } = useI18n();
-	const hasPaidDomain = useSelect( ( select ) => select( ONBOARD_STORE ).hasPaidDomain() );
+	const hasPaidDomain = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).hasPaidDomain(),
+		[]
+	);
 	const plan = useSelectedPlan();
 
 	const steps = React.useRef< string[] >(

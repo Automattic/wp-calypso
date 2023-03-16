@@ -1,5 +1,6 @@
+import * as selectors from './selectors';
 import type { ActionCreators } from './actions';
-import type { DispatchFromMap } from '../mapped-types';
+import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
 import type { FeatureId } from '../wpcom-features';
 
 export interface Dispatch {
@@ -251,7 +252,6 @@ export interface Cart {
 	coupon_discounts: unknown[];
 	coupon_discounts_integer: unknown[];
 	is_coupon_applied: boolean;
-	has_bundle_credit: boolean;
 	next_domain_is_free: boolean;
 	next_domain_condition: string;
 	products: unknown[];
@@ -488,6 +488,8 @@ export interface ActiveTheme {
 export interface CurrentTheme {
 	id: string;
 }
+
+export type SiteSelect = SelectFromMap< typeof selectors >;
 
 export interface SourceSiteMigrationDetails {
 	status: string;

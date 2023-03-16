@@ -6,6 +6,7 @@ import { ONBOARD_STORE } from '../stores/onboard';
 import { SITE_STORE } from '../stores/site';
 import { USER_STORE } from '../stores/user';
 import { useNewSiteVisibility } from './use-selected-plan';
+import type { SiteSelect, UserSelect } from '@automattic/data-stores';
 
 /**
  * After signup a site is automatically created using the username and bearerToken
@@ -14,9 +15,18 @@ import { useNewSiteVisibility } from './use-selected-plan';
 export default function useOnLogin(): void {
 	const locale = useLocale();
 	const { createSite } = useDispatch( ONBOARD_STORE );
-	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
-	const isCreatingSite = useSelect( ( select ) => select( SITE_STORE ).isFetchingSite() );
-	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
+	const currentUser = useSelect(
+		( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
+		[]
+	);
+	const isCreatingSite = useSelect(
+		( select ) => ( select( SITE_STORE ) as SiteSelect ).isFetchingSite(),
+		[]
+	);
+	const newSite = useSelect(
+		( select ) => ( select( SITE_STORE ) as SiteSelect ).getNewSite(),
+		[]
+	);
 
 	const shouldTriggerCreate = useNewQueryParam();
 	const visibility = useNewSiteVisibility();

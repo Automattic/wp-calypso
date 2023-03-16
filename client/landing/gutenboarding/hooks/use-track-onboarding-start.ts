@@ -4,14 +4,21 @@ import { recordOnboardingStart } from '../lib/analytics';
 import { useOnboardingFlow } from '../path';
 import { ONBOARD_STORE } from '../stores/onboard';
 import { USER_STORE } from '../stores/user';
+import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
 
 /**
  * Records an event in tracks on starting the onboarding flow, after trying to get the current user
  */
 
 export default function useTrackOnboardingStart() {
-	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
-	const { hasOnboardingStarted } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
+	const currentUser = useSelect(
+		( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
+		[]
+	);
+	const { hasOnboardingStarted } = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getState(),
+		[]
+	);
 	const { startOnboarding } = useDispatch( ONBOARD_STORE );
 	const flow = useOnboardingFlow();
 

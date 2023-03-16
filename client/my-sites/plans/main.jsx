@@ -5,8 +5,13 @@ import {
 	PLAN_FREE,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	isFreePlanProduct,
+	PLAN_WOOEXPRESS_SMALL,
+	PLAN_WOOEXPRESS_SMALL_MONTHLY,
+	PLAN_WOOEXPRESS_MEDIUM,
+	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 } from '@automattic/calypso-products';
 import { is2023PricingGridActivePage } from '@automattic/calypso-products/src/plans-utilities';
+import { WpcomPlansUI } from '@automattic/data-stores';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
@@ -29,7 +34,6 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import { getDomainRegistrations } from 'calypso/lib/cart-values/cart-items';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
-import { WPCOM_PLANS_UI_STORE } from 'calypso/my-sites/plan-features-2023-grid/store';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
@@ -100,7 +104,7 @@ function DescriptionMessage( { isDomainUpsell, isFreePlan, yourDomainName, siteS
 		recordTracksEvent( 'calypso_plans_page_domain_upsell_skip_click' );
 		// show Warning only on free plans.
 		isFreePlan
-			? dispatch( WPCOM_PLANS_UI_STORE ).setShowDomainUpsellDialog( true )
+			? dispatch( WpcomPlansUI.store ).setShowDomainUpsellDialog( true )
 			: page( `/checkout/${ siteSlug }` );
 	};
 
@@ -290,6 +294,20 @@ class Plans extends Component {
 		return <ECommerceTrialPlansPage interval={ interval } siteSlug={ selectedSite.slug } />;
 	}
 
+	renderWooExpressMediumPage() {
+		return <p>Woo Express Performance</p>;
+	}
+
+	renderMainContent( { isEcommerceTrial, isWooExpressPlan } ) {
+		if ( isEcommerceTrial ) {
+			return this.renderEcommerceTrialPage();
+		}
+		if ( isWooExpressPlan && isEnabled( 'plans/wooexpress-medium' ) ) {
+			return this.renderWooExpressMediumPage();
+		}
+		return this.renderPlansMain();
+	}
+
 	render() {
 		const {
 			selectedSite,
@@ -312,6 +330,13 @@ class Plans extends Component {
 
 		const currentPlanSlug = selectedSite?.plan?.product_slug;
 		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+		const isWooExpressPlan = [
+			PLAN_WOOEXPRESS_MEDIUM,
+			PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
+			PLAN_WOOEXPRESS_SMALL,
+			PLAN_WOOEXPRESS_SMALL_MONTHLY,
+		].includes( currentPlanSlug );
+
 		const allDomains = isDomainAndPlanPackageFlow ? getDomainRegistrations( this.props.cart ) : [];
 		const yourDomainName = allDomains.length
 			? allDomains.slice( -1 )[ 0 ]?.meta
@@ -328,6 +353,10 @@ class Plans extends Component {
 			currentPlanIntervalType === 'monthly'
 				? translate( 'Get your domain’s first year for free' )
 				: translate( 'Choose the perfect plan' );
+
+		// Hide for WooExpress plans
+		const showPlansNavigation = isEnabled( 'plans/wooexpress-medium' ) ? ! isWooExpressPlan : true;
+
 		return (
 			<div>
 				{ ! isJetpackNotAtomic && <ModernizedLayout dropShadowOnHeader={ isFreePlan } /> }
@@ -358,7 +387,7 @@ class Plans extends Component {
 							</>
 						) }
 						<div id="plans" className="plans plans__has-sidebar">
-							<PlansNavigation path={ this.props.context.path } />
+							{ showPlansNavigation && <PlansNavigation path={ this.props.context.path } /> }
 							<Main
 								fullWidthLayout={ is2023PricingGridVisible && ! isEcommerceTrial }
 								wideLayout={ ! is2023PricingGridVisible || isEcommerceTrial }
@@ -366,7 +395,7 @@ class Plans extends Component {
 								{ ! isDomainAndPlanPackageFlow && domainAndPlanPackage && (
 									<DomainAndPlanUpsellNotice />
 								) }
-								{ isEcommerceTrial ? this.renderEcommerceTrialPage() : this.renderPlansMain() }
+								{ this.renderMainContent( { isEcommerceTrial, isWooExpressPlan } ) }
 								<PerformanceTrackerStop />
 							</Main>
 						</div>

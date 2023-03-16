@@ -6,6 +6,7 @@ import {
 	sites,
 	wpForTeamsP2PlusNotSupportedRedirect,
 	p2RedirectToHubPlans,
+	stagingSiteNotSupportedRedirect,
 } from 'calypso/my-sites/controller';
 import jetpackPlans from 'calypso/my-sites/plans/jetpack-plans';
 import { jetpackStoragePlans } from 'calypso/my-sites/plans/jetpack-plans/jetpack-storage-plans';
@@ -18,75 +19,74 @@ import {
 	redirectToPlansIfNotJetpack,
 } from './controller';
 import { currentPlan } from './current-plan/controller';
-import { trialUpgradeConfirmation } from './ecommerce-trial/controller';
+import { trialExpired, trialUpgradeConfirmation } from './ecommerce-trial/controller';
 
 const trackedPage = ( url, ...rest ) => {
 	page( url, ...rest, makeLayout, clientRender );
 };
 
+const commonHandlers = [
+	siteSelection,
+	wpForTeamsP2PlusNotSupportedRedirect,
+	stagingSiteNotSupportedRedirect,
+];
+
 export default function () {
-	trackedPage(
-		'/plans',
-		siteSelection,
-		wpForTeamsP2PlusNotSupportedRedirect,
-		p2RedirectToHubPlans,
-		sites
-	);
+	trackedPage( '/plans', ...commonHandlers, p2RedirectToHubPlans, sites );
 	trackedPage(
 		'/plans/compare',
-		siteSelection,
-		wpForTeamsP2PlusNotSupportedRedirect,
+		...commonHandlers,
 		navigation,
 		p2RedirectToHubPlans,
 		redirectToPlans
 	);
 	trackedPage(
 		'/plans/compare/:domain',
-		siteSelection,
-		wpForTeamsP2PlusNotSupportedRedirect,
+		...commonHandlers,
 		navigation,
 		p2RedirectToHubPlans,
 		redirectToPlans
 	);
 	trackedPage(
 		'/plans/features',
-		siteSelection,
-		wpForTeamsP2PlusNotSupportedRedirect,
+		...commonHandlers,
 		navigation,
 		p2RedirectToHubPlans,
 		redirectToPlans
 	);
 	trackedPage(
 		'/plans/features/:domain',
-		siteSelection,
-		wpForTeamsP2PlusNotSupportedRedirect,
+		...commonHandlers,
 		navigation,
 		p2RedirectToHubPlans,
 		redirectToPlans
 	);
-	trackedPage( '/plans/features/:feature/:domain', features );
+	trackedPage( '/plans/features/:feature/:domain', stagingSiteNotSupportedRedirect, features );
 	trackedPage(
 		'/plans/my-plan',
-		siteSelection,
-		wpForTeamsP2PlusNotSupportedRedirect,
+		...commonHandlers,
 		sites,
 		navigation,
 		p2RedirectToHubPlans,
 		currentPlan
 	);
-	trackedPage( '/plans/my-plan/trial-upgraded/:domain', siteSelection, trialUpgradeConfirmation );
+	trackedPage( '/plans/my-plan/trial-expired/:domain', siteSelection, trialExpired );
+	trackedPage(
+		'/plans/my-plan/trial-upgraded/:domain',
+		stagingSiteNotSupportedRedirect,
+		siteSelection,
+		trialUpgradeConfirmation
+	);
 	trackedPage(
 		'/plans/my-plan/:site',
-		siteSelection,
-		wpForTeamsP2PlusNotSupportedRedirect,
+		...commonHandlers,
 		navigation,
 		p2RedirectToHubPlans,
 		currentPlan
 	);
 	trackedPage(
 		'/plans/select/:plan/:domain',
-		siteSelection,
-		wpForTeamsP2PlusNotSupportedRedirect,
+		...commonHandlers,
 		p2RedirectToHubPlans,
 		redirectToCheckout
 	);
@@ -94,37 +94,18 @@ export default function () {
 	// This is a special plans page just for Jetpack Backup storage plans.
 	// It needs to be defined before the other plans pages so that /plans/storage/:site
 	// will take precedence over /plans/:intervalType?/:site.
-	jetpackStoragePlans(
-		'/plans',
-		siteSelection,
-		wpForTeamsP2PlusNotSupportedRedirect,
-		redirectToPlansIfNotJetpack,
-		navigation
-	);
+	jetpackStoragePlans( '/plans', ...commonHandlers, redirectToPlansIfNotJetpack, navigation );
 
 	// Upsell page between pricing and checkout pages when purchasing some Jetpack products.
-	jetpackUpsell(
-		'/plans',
-		siteSelection,
-		wpForTeamsP2PlusNotSupportedRedirect,
-		redirectToPlansIfNotJetpack,
-		navigation
-	);
+	jetpackUpsell( '/plans', ...commonHandlers, redirectToPlansIfNotJetpack, navigation );
 
 	// This route renders the plans page for both WPcom and Jetpack sites.
 	trackedPage(
 		'/plans/:intervalType?/:site',
-		siteSelection,
-		wpForTeamsP2PlusNotSupportedRedirect,
+		...commonHandlers,
 		p2RedirectToHubPlans,
 		navigation,
 		plans
 	);
-	jetpackPlans(
-		'/plans',
-		siteSelection,
-		wpForTeamsP2PlusNotSupportedRedirect,
-		redirectToPlansIfNotJetpack,
-		navigation
-	);
+	jetpackPlans( '/plans', ...commonHandlers, redirectToPlansIfNotJetpack, navigation );
 }

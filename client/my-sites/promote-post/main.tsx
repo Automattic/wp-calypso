@@ -1,6 +1,8 @@
 import './style.scss';
 import { useTranslate } from 'i18n-calypso';
+import { debounce } from 'lodash';
 import page from 'page';
+import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPosts from 'calypso/components/data/query-posts';
@@ -9,6 +11,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import useCampaignsQuery from 'calypso/data/promote-post/use-promote-post-campaigns-query';
+import useCampaignsStatsQuery from 'calypso/data/promote-post/use-promote-post-campaigns-stats-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
@@ -18,6 +21,7 @@ import PostsListBanner from 'calypso/my-sites/promote-post/components/posts-list
 import PromotePostTabBar from 'calypso/my-sites/promote-post/components/promoted-post-filter';
 import { getPostsForQuery, isRequestingPostsForQuery } from 'calypso/state/posts/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { unifyCampaigns } from './utils';
 
 export type TabType = 'posts' | 'campaigns';
 export type TabOption = {
@@ -54,7 +58,8 @@ const ERROR_NO_LOCAL_USER = 'no_local_user';
 export default function PromotedPosts( { tab }: Props ) {
 	const selectedTab = tab === 'campaigns' ? 'campaigns' : 'posts';
 	const selectedSite = useSelector( getSelectedSite );
-
+	const [ expandedCampaigns, setExpandedCampaigns ] = useState< number[] >( [] );
+	const [ alreadyScrolled, setAlreadyScrolled ] = useState< boolean >( false );
 	const selectedSiteId = selectedSite?.ID || 0;
 
 	const posts = useSelector( ( state ) => {
@@ -83,8 +88,16 @@ export default function PromotedPosts( { tab }: Props ) {
 	);
 
 	const campaigns = useCampaignsQuery( selectedSiteId ?? 0 );
+	const campaignsStats = useCampaignsStatsQuery( selectedSiteId ?? 0 );
+
 	const { isLoading: campaignsIsLoading, isError, error: campaignError } = campaigns;
 	const { data: campaignsData } = campaigns;
+	const { data: campaignsStatsData } = campaignsStats;
+
+	const campaignsFull = useMemo(
+		() => unifyCampaigns( campaignsData || [], campaignsStatsData || [] ),
+		[ campaignsData, campaignsStatsData ]
+	);
 
 	const hasLocalUser = ( campaignError as DSPMessage )?.errorCode !== ERROR_NO_LOCAL_USER;
 
@@ -107,6 +120,31 @@ export default function PromotedPosts( { tab }: Props ) {
 			},
 		}
 	);
+
+	const debouncedScrollToCampaign = debounce( ( campaignId ) => {
+		const element = document.querySelector( `.promote-post__campaigns_id_${ campaignId }` );
+		if ( element instanceof Element ) {
+			const margin = 50; // Some margin so it keeps below the header in mobile/desktop
+			const dims = element.getBoundingClientRect();
+			window.scrollTo( {
+				top: dims.top - margin,
+				behavior: 'smooth',
+			} );
+		}
+	}, 100 );
+
+	useEffect( () => {
+		if ( ! alreadyScrolled && campaignsFull.length ) {
+			const windowUrl = window.location.search;
+			const params = new URLSearchParams( windowUrl );
+			const campaignId = Number( params?.get( 'campaign_id' ) || 0 );
+			if ( campaignId ) {
+				setExpandedCampaigns( [ ...expandedCampaigns, campaignId ] );
+				debouncedScrollToCampaign( campaignId );
+				setAlreadyScrolled( true );
+			}
+		}
+	}, [ campaignsFull, alreadyScrolled ] );
 
 	if ( selectedSite?.is_coming_soon ) {
 		return (
@@ -172,7 +210,9 @@ export default function PromotedPosts( { tab }: Props ) {
 						hasLocalUser={ hasLocalUser }
 						isError={ isError }
 						isLoading={ campaignsIsLoading }
-						campaigns={ campaignsData || [] }
+						campaigns={ campaignsFull || [] }
+						expandedCampaigns={ expandedCampaigns }
+						setExpandedCampaigns={ setExpandedCampaigns }
 					/>
 				</>
 			) : (

@@ -23,13 +23,14 @@ import StoreProfiler from './internals/steps-repository/store-profiler';
 import WaitForAtomic from './internals/steps-repository/wait-for-atomic';
 import { AssertConditionState } from './internals/types';
 import type { Flow, ProvidedDependencies, AssertConditionResult } from './internals/types';
-import type { SiteDetailsPlan } from '@automattic/data-stores';
+import type { OnboardSelect, SiteDetailsPlan, UserSelect } from '@automattic/data-stores';
 
 const ecommerceFlow: Flow = {
 	name: ECOMMERCE_FLOW,
 	useSteps() {
-		const recurType = useSelect( ( select ) =>
-			select( ONBOARD_STORE ).getEcommerceFlowRecurType()
+		const recurType = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getEcommerceFlowRecurType(),
+			[]
 		);
 
 		useEffect( () => {
@@ -49,16 +50,22 @@ const ecommerceFlow: Flow = {
 	},
 
 	useAssertConditions(): AssertConditionResult {
-		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
+		const userIsLoggedIn = useSelect(
+			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+			[]
+		);
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 
 		const flags = new URLSearchParams( window.location.search ).get( 'flags' );
 		const flowName = this.name;
 		const locale = useLocale();
 
-		const { recurType } = useSelect( ( select ) => ( {
-			recurType: select( ONBOARD_STORE ).getEcommerceFlowRecurType(),
-		} ) );
+		const { recurType } = useSelect(
+			( select ) => ( {
+				recurType: ( select( ONBOARD_STORE ) as OnboardSelect ).getEcommerceFlowRecurType(),
+			} ),
+			[]
+		);
 
 		const getStartUrl = () => {
 			let hasFlowParams = false;
@@ -101,10 +108,13 @@ const ecommerceFlow: Flow = {
 		const { setStepProgress, setPlanCartItem } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStepName, flowName } );
 		setStepProgress( flowProgress );
-		const { selectedDesign, recurType } = useSelect( ( select ) => ( {
-			selectedDesign: select( ONBOARD_STORE ).getSelectedDesign(),
-			recurType: select( ONBOARD_STORE ).getEcommerceFlowRecurType(),
-		} ) );
+		const { selectedDesign, recurType } = useSelect(
+			( select ) => ( {
+				selectedDesign: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
+				recurType: ( select( ONBOARD_STORE ) as OnboardSelect ).getEcommerceFlowRecurType(),
+			} ),
+			[]
+		);
 		const selectedPlan =
 			recurType === ecommerceFlowRecurTypes.YEARLY ? PLAN_ECOMMERCE : PLAN_ECOMMERCE_MONTHLY;
 

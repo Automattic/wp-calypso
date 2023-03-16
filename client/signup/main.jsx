@@ -6,11 +6,7 @@ import {
 	is2023PricingGridActivePage,
 } from '@automattic/calypso-products';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
-import {
-	isNewsletterOrLinkInBioFlow,
-	isNewsletterFlow,
-	LINK_IN_BIO_TLD_FLOW,
-} from '@automattic/onboarding';
+import { isNewsletterOrLinkInBioFlow, isNewsletterFlow } from '@automattic/onboarding';
 import debugModule from 'debug';
 import {
 	clone,
@@ -124,15 +120,8 @@ function removeLoadingScreenClassNamesFromBody() {
 }
 
 function showProgressIndicator( flowName ) {
-	const DISABLED_PROGRESS_INDICATOR_FLOWS = [
-		'pressable-nux',
-		'setup-site',
-		'importer',
-		'domain',
-		LINK_IN_BIO_TLD_FLOW,
-	];
-
-	return ! DISABLED_PROGRESS_INDICATOR_FLOWS.includes( flowName );
+	const flow = flows.getFlow( flowName );
+	return ! flow.hideProgressIndicator;
 }
 
 class Signup extends Component {
