@@ -123,7 +123,7 @@ export function RenderDomainUpsell( {
 	const shoppingCartManager = useShoppingCart( cartKey );
 
 	// Get first non-free suggested domain.
-	const domainSuggestion = allDomainSuggestions[ 0 ];
+	const domainSuggestion = allDomainSuggestions?.[ 0 ];
 
 	// It takes awhile to suggest a domain name. Set a default to an empty string.
 	const domainSuggestionName = domainSuggestion?.domain_name ?? '';
