@@ -31,8 +31,8 @@ const textTruncator = ( text: string, limit = 48 ) => {
 
 const getStatsQueries = createSelector(
 	( state, siteId ) => {
-		const period = 'day';
-		const quantity = 365;
+		const period = 'year';
+		const quantity = 1;
 
 		const gmtOffset = getSiteOption( state, siteId, 'gmt_offset' ) as string | number;
 		const date = moment()
