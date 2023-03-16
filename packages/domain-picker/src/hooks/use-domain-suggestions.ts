@@ -3,10 +3,9 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useDebounce } from 'use-debounce';
 import { DOMAIN_SEARCH_DEBOUNCE_INTERVAL, DOMAIN_QUERY_MINIMUM_LENGTH } from '../constants';
 import type { DataStatus } from '@automattic/data-stores/src/domain-suggestions/constants';
-import type { DomainSuggestion } from '@automattic/data-stores/src/domain-suggestions/types';
 
 type DomainSuggestionsResult = {
-	allDomainSuggestions: DomainSuggestion[] | undefined;
+	allDomainSuggestions: DomainSuggestions.DomainSuggestion[] | undefined;
 	errorMessage: string | null;
 	state: DataStatus;
 	retryRequest: () => void;
