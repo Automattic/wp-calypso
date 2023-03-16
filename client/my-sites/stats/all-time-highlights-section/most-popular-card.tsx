@@ -117,7 +117,7 @@ export default function MostPopularPostCard( {
 
 			{ ! isTopViewedPostRequesting && mostPopularPost && (
 				<PostStatsCard
-					heading={ translate( 'Most popular post' ) }
+					heading={ translate( 'Most popular post in the past year' ) }
 					likeCount={ mostPopularPostData?.likeCount }
 					post={ mostPopularPostData }
 					viewCount={ mostPopularPostData?.viewCount }
