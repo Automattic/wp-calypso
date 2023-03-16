@@ -529,14 +529,12 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderBillingTimeframe( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { translate } = this.props;
 		return planPropertiesObj.map( ( properties ) => {
 			const {
 				planConstantObj,
 				planName,
 				rawPrice,
 				maybeDiscountedFullTermPrice,
-				currencyCode,
 				annualPricePerMonth,
 				isMonthlyPlan,
 				billingPeriod,
@@ -552,11 +550,9 @@ export class PlanFeatures2023Grid extends Component<
 					<PlanFeatures2023GridBillingTimeframe
 						rawPrice={ rawPrice }
 						maybeDiscountedFullTermPrice={ maybeDiscountedFullTermPrice }
-						currencyCode={ currencyCode }
 						annualPricePerMonth={ annualPricePerMonth }
 						isMonthlyPlan={ isMonthlyPlan }
 						planName={ planName }
-						translate={ translate }
 						billingTimeframe={ planConstantObj.getBillingTimeFrame() }
 						billingPeriod={ billingPeriod }
 					/>

@@ -311,7 +311,6 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 	const { planName, planConstantObj, availableForPurchase, current, ...planPropertiesObj } =
 		planProperties;
 	const highlightLabel = useHighlightLabel( planName );
-	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( visiblePlansProperties );
 	const headerClasses = classNames( 'plan-comparison-grid__header-cell', getPlanClass( planName ), {
@@ -376,12 +375,11 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 			/>
 			<div className="plan-comparison-grid__billing-info">
 				<PlanFeatures2023GridBillingTimeframe
+					planName={ planName }
 					rawPrice={ rawPrice }
 					maybeDiscountedFullTermPrice={ planPropertiesObj.maybeDiscountedFullTermPrice }
-					currencyCode={ planPropertiesObj.currencyCode }
 					annualPricePerMonth={ planPropertiesObj.annualPricePerMonth }
 					isMonthlyPlan={ planPropertiesObj.isMonthlyPlan }
-					translate={ translate }
 					billingTimeframe={ planConstantObj.getBillingTimeFrame() }
 					billingPeriod={ planPropertiesObj.billingPeriod }
 				/>
