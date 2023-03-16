@@ -23,18 +23,18 @@ function getPerMonthDescription( {
 	}
 
 	if ( ! isMonthlyPlan ) {
-		const annualPriceObj = getCurrencyObject( maybeDiscountedPriceFullTerm, currencyCode );
-		const annualPriceText = `${ annualPriceObj?.symbol }${ annualPriceObj?.integer }`;
+		const fullTermPriceObj = getCurrencyObject( maybeDiscountedPriceFullTerm, currencyCode );
+		const fullTermPriceText = `${ fullTermPriceObj?.symbol }${ fullTermPriceObj?.integer }`;
 
 		if ( billingPeriod === 365 ) {
-			return translate( 'per month, %(annualPriceText)s billed annually', {
-				args: { annualPriceText },
+			return translate( 'per month, %(fullTermPriceText)s billed annually', {
+				args: { fullTermPriceText },
 			} );
 		}
 
 		if ( billingPeriod === 730 ) {
-			return translate( 'per month, %(annualPriceText)s billed every two years', {
-				args: { annualPriceText },
+			return translate( 'per month, %(fullTermPriceText)s billed every two years', {
+				args: { fullTermPriceText },
 			} );
 		}
 	}
