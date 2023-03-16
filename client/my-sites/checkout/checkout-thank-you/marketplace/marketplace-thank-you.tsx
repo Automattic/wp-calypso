@@ -1,48 +1,28 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { ConfettiAnimation } from '@automattic/components';
 import { ThemeProvider, Global, css } from '@emotion/react';
-import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryTheme from 'calypso/components/data/query-theme';
 import { ThankYou } from 'calypso/components/thank-you';
-import { ThankYouSectionProps } from 'calypso/components/thank-you/types';
-import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MasterbarStyled from 'calypso/my-sites/marketplace/components/masterbar-styled';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
 import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-plugin-install/use-marketplace-additional-steps';
 import theme from 'calypso/my-sites/marketplace/theme';
-import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
-import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
-import {
-	getAutomatedTransferStatus,
-	isFetchingAutomatedTransferStatus,
-} from 'calypso/state/automated-transfer/selectors';
+import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { pluginInstallationStateChange } from 'calypso/state/marketplace/purchase-flow/actions';
-import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
-import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
-import { getPluginsOnSite, isRequesting } from 'calypso/state/plugins/installed/selectors';
-import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
-import { areFetched, areFetching, getPlugins } from 'calypso/state/plugins/wporg/selectors';
+import { isRequesting } from 'calypso/state/plugins/installed/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getThemes } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { ThankYouPluginSection } from './marketplace-thank-you-plugin-section';
 import './style.scss';
-
-type Plugin = {
-	slug: string;
-	fetched: boolean;
-	wporg: boolean;
-	icon: string;
-};
+import { useDefaultThankYouFoooter } from './use-default-thank-you-footer';
+import { usePluginsThankYouData } from './use-plugins-thank-you-data';
+import { useThemesThankYouData } from './use-themes-thank-you-data';
 
 const MarketplaceThankYou = ( {
 	pluginSlugs,
@@ -58,41 +38,14 @@ const MarketplaceThankYou = ( {
 	const currentUser = useSelector( getCurrentUser );
 	const isRequestingPlugins = useSelector( ( state ) => isRequesting( state, siteId ) );
 
-	// retrieve WPCom plugin data
-	const wpComPluginsDataResults = useWPCOMPlugins( pluginSlugs );
-	const wpComPluginsData: Array< any > = wpComPluginsDataResults.map(
-		( wpComPluginData ) => wpComPluginData.data
-	);
-	const softwareSlugs = wpComPluginsData.map( ( wpComPluginData, i ) =>
-		wpComPluginData ? wpComPluginData.software_slug || wpComPluginData.org_slug : pluginSlugs[ i ]
-	);
+	const allSlugs = useMemo( () => [ ...pluginSlugs, ...themeSlugs ], [ pluginSlugs, themeSlugs ] );
+	const defaultThankYouFooter = useDefaultThankYouFoooter( allSlugs );
 
-	const pluginsOnSite: [] = useSelector( ( state ) =>
-		getPluginsOnSite( state, siteId, softwareSlugs )
-	);
-	const wporgPlugins = useSelector(
-		( state ) => getPlugins( state, pluginSlugs ),
-		( newPluginsValue: Array< Plugin >, oldPluginsValue: Array< Plugin > ) =>
-			oldPluginsValue.length === newPluginsValue.length &&
-			oldPluginsValue.every( ( oldPluginValue, i ) => {
-				return (
-					oldPluginValue?.slug === newPluginsValue[ i ]?.slug &&
-					Boolean( oldPluginValue ) === Boolean( newPluginsValue[ i ] )
-				);
-			} )
-	);
-	const areWporgPluginsFetched: Array< boolean > = useSelector(
-		( state ) => areFetched( state, pluginSlugs ),
-		( newValues: Array< boolean >, oldValues: Array< boolean > ) =>
-			newValues.every( ( newValue, i ) => newValue === oldValues[ i ] )
-	);
-	const areWporgPluginsFetching: Array< boolean > = useSelector( ( state ) =>
-		areFetching( state, pluginSlugs )
-	);
-	const areAllWporgPluginsFetched = areWporgPluginsFetched.every( Boolean );
-	const isFetchingTransferStatus = useSelector( ( state ) =>
-		isFetchingAutomatedTransferStatus( state, siteId )
-	);
+	const [ pluginsSection, allPluginsFetched ] = usePluginsThankYouData( pluginSlugs );
+	const [ themesSection, allThemesFetched ] = useThemesThankYouData( themeSlugs );
+
+	const areAllProductsFetched = allPluginsFetched && allThemesFetched;
+
 	const transferStatus = useSelector( ( state ) => getAutomatedTransferStatus( state, siteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
@@ -102,69 +55,6 @@ const MarketplaceThankYou = ( {
 	const [ showProgressBar, setShowProgressBar ] = useState(
 		! new URLSearchParams( document.location.search ).has( 'hide-progress-bar' )
 	);
-
-	// Retrieve theme information
-	const dotComThemes = useSelector( ( state ) => getThemes( state, 'wpcom', themeSlugs ) );
-	const dotOrgThemes = useSelector( ( state ) => getThemes( state, 'wporg', themeSlugs ) );
-
-	const areAllProductsFetched =
-		!! pluginsOnSite.length &&
-		pluginsOnSite.every(
-			( pluginOnSite, index ) =>
-				!! pluginOnSite || !! dotComThemes[ index ] || !! dotOrgThemes[ index ]
-		);
-
-	// Consolidate the plugin information from the .org and .com sources in a single list
-	const pluginsInformationList = useMemo( () => {
-		return pluginsOnSite.reduce(
-			( pluginsList: Array< any >, pluginOnSite: Plugin, index: number ) => {
-				pluginsList.push( {
-					...pluginOnSite,
-					...wpComPluginsData[ index ],
-					...wporgPlugins[ index ],
-				} );
-
-				return pluginsList;
-			},
-			[]
-		);
-	}, [ pluginsOnSite, wpComPluginsData, wporgPlugins ] );
-
-	// Site is transferring to Atomic.
-	// Poll the transfer status.
-	useEffect( () => {
-		if ( ! siteId || transferStatus === transferStates.COMPLETE || isJetpackSelfHosted ) {
-			return;
-		}
-		if ( ! isFetchingTransferStatus ) {
-			waitFor( 2 ).then( () => dispatch( fetchAutomatedTransferStatus( siteId ) ) );
-		}
-	}, [ siteId, dispatch, transferStatus, isFetchingTransferStatus, isJetpackSelfHosted ] );
-
-	useEffect( () => {
-		dispatch(
-			pluginInstallationStateChange(
-				MARKETPLACE_ASYNC_PROCESS_STATUS.COMPLETED,
-				'deauthorize plugin installation URL'
-			)
-		);
-	}, [ dispatch ] );
-
-	// retrieve wporg plugin data if not available
-	useEffect( () => {
-		if ( ! areAllWporgPluginsFetched ) {
-			areWporgPluginsFetched.forEach( ( isPluginFetched, index ) => {
-				const isPluginFeching = areWporgPluginsFetching[ index ];
-				if ( ! isPluginFetched && ! isPluginFeching ) {
-					dispatch( wporgFetchPluginData( pluginSlugs[ index ] ) );
-				}
-			} );
-		}
-
-		// We don't want it to run at every change of areWporgPluginsFetching,
-		// we only rerun when areWporgPluginsFetched changes
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ areAllWporgPluginsFetched, areWporgPluginsFetched, pluginSlugs, dispatch, wporgPlugins ] );
 
 	// Site is already Atomic (or just transferred).
 	// Poll the plugin installation status.
@@ -177,10 +67,6 @@ const MarketplaceThankYou = ( {
 		if ( areAllProductsFetched ) {
 			dispatch( requestAdminMenu( siteId ) );
 			return;
-		}
-
-		if ( ! isRequestingPlugins ) {
-			waitFor( 1 ).then( () => dispatch( fetchSitePlugins( siteId ) ) );
 		}
 	}, [
 		isRequestingPlugins,
@@ -216,6 +102,7 @@ const MarketplaceThankYou = ( {
 		}
 	}, [ transferStatus, areAllProductsFetched, showProgressBar, isJetpack ] );
 
+	// TODO: Use more general steps (not specific to plugins)
 	const steps = useMemo(
 		() =>
 			isJetpack
@@ -232,82 +119,6 @@ const MarketplaceThankYou = ( {
 	);
 	const additionalSteps = useMarketplaceAdditionalSteps();
 
-	const pluginsSection: ThankYouSectionProps = {
-		sectionKey: 'plugin_information',
-		nextSteps: pluginsInformationList.map( ( plugin: any ) => ( {
-			stepKey: `plugin_information_${ plugin.slug }`,
-			stepSection: <ThankYouPluginSection plugin={ plugin } />,
-		} ) ),
-	};
-
-	const sendTrackEvent = useCallback(
-		( name: string ) => {
-			recordTracksEvent( name, {
-				site_id: siteId,
-				plugins: pluginSlugs.join( '/' ),
-			} );
-		},
-		[ siteId, pluginSlugs ]
-	);
-
-	const footerSection: ThankYouSectionProps = {
-		sectionKey: 'thank_you_footer',
-		nextStepsClassName: 'thank-you__footer',
-		nextSteps: [
-			{
-				stepKey: 'thank_you_footer_support_guides',
-				stepTitle: translate( 'Support guides' ),
-				stepDescription: translate(
-					'Our guides will show you everything you need to know about plugins.'
-				),
-				stepCta: (
-					<Button
-						isLink
-						href="https://wordpress.com/support/plugins/"
-						target="_blank"
-						onClick={ () => sendTrackEvent( 'calypso_plugin_thank_you_plugin_support_click' ) }
-					>
-						{ translate( 'Plugin Support' ) }
-					</Button>
-				),
-			},
-			{
-				stepKey: 'thank_you_footer_explore',
-				stepTitle: translate( 'Keep growing' ),
-				stepDescription: translate(
-					'Take your site to the next level. We have all the solutions to help you.'
-				),
-				stepCta: (
-					<Button
-						isLink
-						href={ `/plugins/${ siteSlug }` }
-						target="_blank"
-						onClick={ () => sendTrackEvent( 'calypso_plugin_thank_you_explore_plugins_click' ) }
-					>
-						{ translate( 'Explore plugins' ) }
-					</Button>
-				),
-			},
-			{
-				stepKey: 'thank_you_footer_support',
-				stepTitle: translate( 'How can we support you?' ),
-				stepDescription: translate(
-					'Our team is here if you need help, or if you have any questions.'
-				),
-				stepCta: (
-					<Button
-						isLink
-						href="https://wordpress.com/help/contact"
-						target="_blank"
-						onClick={ () => sendTrackEvent( 'calypso_plugin_thank_you_ask_question_click' ) }
-					>
-						{ translate( 'Ask a question' ) }
-					</Button>
-				),
-			},
-		],
-	};
-
 	return (
 		<ThemeProvider theme={ theme }>
 			<PageViewTracker path="/marketplace/thank-you/:site" title="Marketplace > Thank you" />
@@ -319,11 +130,13 @@ const MarketplaceThankYou = ( {
 					}
 				` }
 			/>
+			{ /* TODO: Update the masterbar according the product type */ }
 			<MasterbarStyled
 				onClick={ () => page( `/plugins/${ siteSlug }` ) }
 				backText={ translate( 'Back to plugins' ) }
 				canGoBack={ areAllProductsFetched }
 			/>
+			{ /* TODO: Remove after https://github.com/Automattic/wp-calypso/issues/74532 and move it to useThemesThankYouData */ }
 			{ themeSlugs.map( ( themeSlug, index ) => (
 				<>
 					<QueryTheme key={ 'query-wpcom-theme-' + index } siteId="wpcom" themeId={ themeSlug } />
@@ -345,7 +158,7 @@ const MarketplaceThankYou = ( {
 					<ConfettiAnimation delay={ 1000 } />
 					<ThankYou
 						containerClassName="marketplace-thank-you"
-						sections={ [ pluginsSection, footerSection ] }
+						sections={ [ themesSection, pluginsSection, defaultThankYouFooter ] }
 						showSupportSection={ false }
 						thankYouTitle={ translate( "You're all set %(username)s!", {
 							args: {
