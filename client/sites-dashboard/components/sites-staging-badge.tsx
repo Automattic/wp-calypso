@@ -7,6 +7,7 @@ interface SitesStagingBadgeProps {
 const SitesStagingBadge = styled( SitesLaunchStatusBadge )( ( props: SitesStagingBadgeProps ) => ( {
 	color: '#4f3500',
 	backgroundColor: '#f0c930',
+	marginRight: props.secondary ? 3 : 0,
 	borderRadius: props.secondary ? 12 : 4,
 	'.current-site .site:hover &, .notouch .layout__secondary .site-selector.is-hover-enabled .site:hover  &':
 		{
