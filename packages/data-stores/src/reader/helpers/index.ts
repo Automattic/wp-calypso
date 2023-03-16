@@ -18,14 +18,18 @@ async function fetchFromApi< ReturnType >(
 
 	// get cookie named subkey
 	const subkey = document.cookie
-		.split( ';' )
-		.map( ( c ) => c.trim() )
-		.find( ( c ) => c.startsWith( 'subkey=' ) );
+		?.split( ';' )
+		?.map( ( c ) => c.trim() )
+		?.find( ( c ) => c.startsWith( 'subkey=' ) )
+		?.split( '=' )[ 1 ];
 
 	return apiFetch( {
-		path: '/rest/v1.1' + path,
+		global: true,
+		path: `https://public-api.wordpress.com/rest/v1.1${ path }`,
+		apiVersion: '1.1',
 		method,
 		body: method === 'POST' ? JSON.stringify( body ) : undefined,
+		credentials: 'same-origin',
 		headers: {
 			Authorization: `Cookie ${ subkey }`,
 			'Content-Type': 'application/json',
