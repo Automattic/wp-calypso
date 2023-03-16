@@ -154,13 +154,15 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 		);
 	};
 
-	let StagingSiteCardContent = getLoadingStagingSitesPlaceholder;
+	let stagingSiteCardContent;
 	if ( addingStagingSite || isTrasferInProgress ) {
-		StagingSiteCardContent = getTransferringStagingSiteContent;
+		stagingSiteCardContent = getTransferringStagingSiteContent();
 	} else if ( showManageStagingSite && isStagingSiteTransferComplete ) {
-		StagingSiteCardContent = getManageStagingSiteContent;
+		stagingSiteCardContent = getManageStagingSiteContent();
 	} else if ( showAddStagingSite && ! addingStagingSite ) {
-		StagingSiteCardContent = getNewStagingSiteContent;
+		stagingSiteCardContent = getNewStagingSiteContent();
+	} else {
+		stagingSiteCardContent = getLoadingStagingSitesPlaceholder();
 	}
 
 	return (
@@ -170,7 +172,7 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 				<Gridicon icon="share-computer" size={ 32 } />
 			}
 			<CardHeading id="staging-site">{ translate( 'Staging site' ) }</CardHeading>
-			<StagingSiteCardContent />
+			{ stagingSiteCardContent }
 		</Card>
 	);
 };
