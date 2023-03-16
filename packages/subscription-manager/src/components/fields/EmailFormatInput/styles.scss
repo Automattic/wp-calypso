@@ -3,6 +3,10 @@
 @import "../components";
 
 .email-format-input {
+	&.form-fieldset {
+		@extend %form-fieldset;
+	}
+
 	.form-label {
 		@extend %form-label;
 	}

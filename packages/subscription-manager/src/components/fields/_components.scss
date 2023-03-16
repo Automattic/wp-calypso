@@ -3,6 +3,10 @@
 
 $arrow_down_base64: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTEiIGhlaWdodD0iNyIgdmlld0JveD0iMCAwIDExIDciIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0wLjkxNjYwNSAxLjMzMzVMNS40OTk5NCA1LjUwMDE2TDEwLjA4MzMgMS4zMzM1IiBzdHJva2U9IiM4QzhGOTQiIHN0cm9rZS13aWR0aD0iMS41Ii8+Cjwvc3ZnPgo=);
 
+%form-fieldset {
+	margin-bottom: 32px;
+}
+
 %form-label {
 	color: $studio-black;
 	font-size: 1rem;
@@ -15,5 +19,4 @@ $arrow_down_base64: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTEiIGhlaWdodD
 	border-radius: 4px;
 	border-color: $studio-gray-10;
 	color: $studio-gray-100;
-	margin-bottom: 32px;
 }
