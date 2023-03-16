@@ -1,6 +1,6 @@
 import { select, subscribe } from '@wordpress/data';
 import wpcomRequest from 'wpcom-proxy-request';
-import { register } from '..';
+import { store } from '..';
 import { DataStatus } from '../constants';
 
 jest.mock( 'wpcom-proxy-request', () => ( {
@@ -8,8 +8,6 @@ jest.mock( 'wpcom-proxy-request', () => ( {
 	default: jest.fn(),
 	requestAllBlogsAccess: jest.fn( () => Promise.resolve() ),
 } ) );
-
-let store: ReturnType< typeof register >;
 
 const options = {
 	category_slug: undefined,
@@ -41,10 +39,6 @@ const apiResponse = [
 	},
 ];
 
-beforeAll( () => {
-	store = register();
-} );
-
 beforeEach( () => {
 	( wpcomRequest as jest.Mock ).mockReset();
 } );
@@ -55,7 +49,7 @@ describe( 'getDomainSuggestions', () => {
 
 		const query = 'test query one';
 		const listenForStateUpdate = () => {
-			return new Promise( ( resolve ) => {
+			return new Promise< void >( ( resolve ) => {
 				const unsubscribe = subscribe( () => {
 					unsubscribe();
 					resolve();
@@ -102,7 +96,7 @@ describe( 'getDomainErrorMessage', () => {
 
 		const query = 'test query two';
 		const listenForStateUpdate = () => {
-			return new Promise( ( resolve ) => {
+			return new Promise< void >( ( resolve ) => {
 				const unsubscribe = subscribe( () => {
 					unsubscribe();
 					resolve();
