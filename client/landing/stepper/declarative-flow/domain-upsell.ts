@@ -59,12 +59,12 @@ const domainUpsell: Flow = {
 						}
 
 						const returnUrl = encodeURIComponent(
-							`/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies?.siteSlug }`
+							`/setup/${ flowName }/launchpad?siteSlug=${ siteSlug }`
 						);
 
 						return window.location.assign(
 							`/checkout/${ encodeURIComponent(
-								( providedDependencies?.siteSlug as string ) ?? ''
+								( siteSlug as string ) ?? ''
 							) }?redirect_to=${ returnUrl }`
 						);
 					}

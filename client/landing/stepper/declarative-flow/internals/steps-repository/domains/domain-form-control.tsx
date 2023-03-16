@@ -90,7 +90,7 @@ export function DomainFormControl( {
 	}
 
 	if ( flow === DOMAIN_UPSELL_FLOW ) {
-		includeWordPressDotCom = true;
+		includeWordPressDotCom = false;
 	}
 
 	const domainsWithPlansOnly = true;
@@ -205,7 +205,7 @@ export function DomainFormControl( {
 			return false;
 		}
 
-		return [ 'domain-upsell' ].includes( flow );
+		return [ DOMAIN_UPSELL_FLOW ].includes( flow );
 	};
 
 	const renderDomainForm = () => {
