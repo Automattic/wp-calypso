@@ -3,7 +3,7 @@
 
 $color-green: var(--studio-jetpack-green-40);
 $color-red: var(--studio-red-50);
-$color-orange: var(--studio-orange-20);
+$color-yellow: var(--studio-yellow-50);
 
 .site-expanded-content {
 	display: flex;
@@ -169,7 +169,7 @@ button.site-expanded-content__card-button {
 }
 
 .boost-score-okay {
-	color: $color-orange;
+	color: $color-yellow;
 }
 
 .boost-score-bad {
