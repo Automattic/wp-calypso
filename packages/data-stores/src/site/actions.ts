@@ -226,8 +226,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 	) {
 		// only update if there settings or styles to update
 		if (
-			Object.keys( globalStyles.settings ).length ||
-			Object.keys( globalStyles.styles ).length
+			Object.keys( globalStyles.settings ?? {} ).length ||
+			Object.keys( globalStyles.styles ?? {} ).length
 		) {
 			const globalStylesId: number =
 				activatedTheme?.global_styles_id || ( yield getGlobalStylesId( siteIdOrSlug, stylesheet ) );
@@ -238,8 +238,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 				method: 'POST',
 				body: {
 					id: globalStylesId,
-					settings: globalStyles.settings ?? {},
-					styles: globalStyles.styles ?? {},
+					settings: globalStyles.settings,
+					styles: globalStyles.styles,
 				},
 			} );
 
@@ -549,7 +549,6 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		const hasFooter = !! design?.recipe?.footer_pattern_ids?.length;
 		const hasSections = !! design?.recipe?.pattern_ids?.length;
 
-		debugger;
 		yield createCustomTemplate(
 			siteSlug,
 			stylesheet,
