@@ -171,7 +171,7 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 		<Card className="staging-site-card">
 			{
 				// eslint-disable-next-line wpcalypso/jsx-gridicon-size
-				<Gridicon icon="share-computer" size={ 32 } />
+				<Gridicon icon="science" size={ 32 } />
 			}
 			<CardHeading id="staging-site">{ translate( 'Staging site' ) }</CardHeading>
 			{ showAddStagingSite && ! addingStagingSite && getNewStagingSiteContent() }
