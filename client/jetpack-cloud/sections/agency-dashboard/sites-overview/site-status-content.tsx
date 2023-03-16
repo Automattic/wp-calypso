@@ -101,7 +101,6 @@ export default function SiteStatusContent( {
 		} else if ( viewsTrend === 'down' ) {
 			return arrowDown;
 		}
-		return 'same';
 	}
 
 	if ( type === 'site' ) {
@@ -185,7 +184,7 @@ export default function SiteStatusContent( {
 	}
 
 	if ( type === 'stats' ) {
-		const { total: totalViews, trend: viewsTrend } = rows.stats.data.views;
+		const { total: totalViews, trend: viewsTrend } = rows.stats.value.views;
 		if ( viewsTrend === 'same' ) {
 			return (
 				<>
@@ -200,11 +199,11 @@ export default function SiteStatusContent( {
 		return (
 			<span
 				className={ classNames( 'sites-overview__stats-trend', {
-					'is-up': viewsTrend === 'up',
-					'is-down': viewsTrend === 'down',
+					'sites-overview__stats-trend__up': viewsTrend === 'up',
+					'sites-overview__stats-trend__down': viewsTrend === 'down',
 				} ) }
 			>
-				<Icon icon={ trendIcon } size={ 16 } />
+				{ trendIcon && <Icon icon={ trendIcon } size={ 16 } /> }
 				<div className="sites-overview__stats">
 					<ShortenedNumber value={ totalViews } />
 				</div>
