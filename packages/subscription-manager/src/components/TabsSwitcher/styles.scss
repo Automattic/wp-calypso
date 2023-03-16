@@ -1,8 +1,9 @@
 @import "@automattic/color-studio/dist/color-variables";
+@import "@wordpress/base-styles/breakpoints";
 
 .section-nav {
 	box-shadow: none !important;
-	border-bottom: 32px;
+	margin-bottom: 32px !important;
 
 	.section-nav-tabs {
 		display: flex;
@@ -58,5 +59,11 @@
 				}
 			}
 		}
+	}
+}
+
+@media screen and ( max-width: $break-medium ) {
+	.section-nav {
+		margin-bottom: 22px !important;
 	}
 }

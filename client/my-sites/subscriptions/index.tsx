@@ -7,7 +7,7 @@ import { makeLayout, render } from 'calypso/controller';
 
 const SitesView = () => <span>Sites View</span>;
 const CommentsView = () => <span>Comments View</span>;
-const SettingsView = () => <span>Settings View</span>;
+const SettingsView = () => <SubscriptionManager.UserSettings />;
 
 const SubscriptionManagementPage = () => {
 	const translate = useTranslate();
