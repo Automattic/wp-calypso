@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 
 function getPerMonthDescription( {
 	rawPrice,
-	maybeDiscountedPriceFullTerm,
+	maybeDiscountedFullTermPrice,
 	currencyCode,
 	annualPricePerMonth,
 	isMonthlyPlan,
@@ -28,7 +28,7 @@ function getPerMonthDescription( {
 	}
 
 	if ( ! isMonthlyPlan ) {
-		const fullTermPriceObj = getCurrencyObject( maybeDiscountedPriceFullTerm, currencyCode );
+		const fullTermPriceObj = getCurrencyObject( maybeDiscountedFullTermPrice, currencyCode );
 		const fullTermPriceText = `${ fullTermPriceObj?.symbol }${ fullTermPriceObj?.integer }`;
 
 		if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
@@ -72,7 +72,7 @@ PlanFeatures2023GridBillingTimeframe.propTypes = {
 	billingPeriod: PropTypes.number,
 	translate: PropTypes.func,
 	rawPrice: PropTypes.number,
-	maybeDiscountedPriceFullTerm: PropTypes.number,
+	maybeDiscountedFullTermPrice: PropTypes.number,
 	currencyCode: PropTypes.string,
 	annualPricePerMonth: PropTypes.number,
 	isMonthlyPlan: PropTypes.bool,
