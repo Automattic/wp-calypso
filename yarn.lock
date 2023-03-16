@@ -12218,6 +12218,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"charts.css@npm:^0.9.0":
+  version: 0.9.0
+  resolution: "charts.css@npm:0.9.0"
+  checksum: 738ef65e8f5bc5f465715179ca3081cc5be1f2e651700d96472754b72f17d43a4c81228a7bab4e7decf842eb88e3eeecc466e717564c1b2707c3f4662f800aeb
+  languageName: node
+  linkType: hard
+
 "check-node-version@npm:^4.0.2, check-node-version@npm:^4.1.0":
   version: 4.1.0
   resolution: "check-node-version@npm:4.1.0"
@@ -33779,6 +33786,7 @@ fsevents@^1.2.7:
     calypso-codemods: "workspace:^"
     capture-website: ^1.0.0
     chalk: ^4.1.2
+    charts.css: ^0.9.0
     check-node-version: ^4.0.2
     chroma-js: ^2.1.2
     config: ^3.3.6

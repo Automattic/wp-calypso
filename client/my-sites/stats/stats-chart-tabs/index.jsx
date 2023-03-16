@@ -21,6 +21,7 @@ import StatTabs from '../stats-tabs';
 import { buildChartData, getQueryDate } from './utility';
 
 import './style.scss';
+import 'charts.css';
 
 const ChartTabShape = PropTypes.shape( {
 	attr: PropTypes.string,
@@ -100,6 +101,8 @@ class StatModuleChartTabs extends Component {
 			},
 		];
 
+		let previousPoint;
+
 		/* pass bars count as `key` to disable transitions between tabs with different column count */
 		return (
 			<div className={ classNames( ...classes ) }>
@@ -115,6 +118,26 @@ class StatModuleChartTabs extends Component {
 				<Chart barClick={ this.props.barClick } data={ this.props.chartData } minBarWidth={ 35 }>
 					<StatsEmptyState />
 				</Chart>
+				<div style={ { width: '100%', height: '300px' } }>
+					<table className="charts-css line" id="my-chart">
+						<tbody>
+							{ this.props.chartData.map( ( point ) => {
+								const start = previousPoint?.value / 30000 || 0;
+								const end = point.value / 30000;
+								previousPoint = point;
+
+								return (
+									<tr>
+										<td style={ { '--start': start, '--size': end } }>
+											{ ' ' }
+											<span className="data"> { point.label } </span>{ ' ' }
+										</td>
+									</tr>
+								);
+							} ) }
+						</tbody>
+					</table>
+				</div>
 				<StatTabs
 					data={ this.props.counts }
 					tabs={ this.props.charts }
