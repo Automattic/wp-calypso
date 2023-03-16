@@ -1,12 +1,20 @@
 import apiFetch, { APIFetchOptions } from '@wordpress/api-fetch';
-import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
+import wpcomRequest from 'wpcom-proxy-request';
 
-async function fetchFromApi< ReturnType >(
-	path: string,
-	method: 'GET' | 'POST' = 'GET',
-	body: object = {}
-): Promise< ReturnType > {
-	if ( canAccessWpcomApis() ) {
+type FetchFromApiParams = {
+	path: string;
+	method?: 'GET' | 'POST';
+	body?: object;
+	isLoggedIn?: boolean;
+};
+
+async function fetchFromApi< ReturnType >( {
+	path,
+	method = 'GET',
+	body = {},
+	isLoggedIn = false,
+}: FetchFromApiParams ): Promise< ReturnType > {
+	if ( isLoggedIn ) {
 		const res = await wpcomRequest( {
 			path,
 			apiVersion: '1.1',
