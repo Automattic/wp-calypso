@@ -186,15 +186,9 @@ export default function WPCheckout( {
 
 	const contactDetailsType = getContactDetailsType( responseCart );
 
-	const contactInfo = useSelect(
-		( select ) => select( CHECKOUT_STORE )?.getContactInfo() ?? {},
-		[]
-	);
+	const contactInfo = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
 
-	const vatDetailsInForm = useSelect(
-		( select ) => select( CHECKOUT_STORE )?.getVatDetails() ?? {},
-		[]
-	);
+	const vatDetailsInForm = useSelect( ( select ) => select( CHECKOUT_STORE ).getVatDetails(), [] );
 	const { setVatDetails, vatDetails: vatDetailsFromServer } = useVatDetails();
 
 	const checkoutActions = useDispatch( CHECKOUT_STORE );

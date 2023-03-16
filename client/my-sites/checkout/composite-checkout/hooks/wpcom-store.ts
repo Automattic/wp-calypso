@@ -116,7 +116,7 @@ const selectors = {
 		return state.recaptchaClientId;
 	},
 
-	getVatDetails( state: WpcomStoreState ): VatDetails | undefined {
+	getVatDetails( state: WpcomStoreState ): VatDetails {
 		return state.vatDetails;
 	},
 };

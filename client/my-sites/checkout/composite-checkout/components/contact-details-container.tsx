@@ -54,7 +54,7 @@ export default function ContactDetailsContainer( {
 		.filter( ( product ) => ! isDomainMapping( product ) )
 		.map( getDomain );
 	const checkoutActions = useDispatch( CHECKOUT_STORE );
-	const { email } = useSelect( ( select ) => select( CHECKOUT_STORE )?.getContactInfo() ?? {}, [] );
+	const { email } = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
 
 	if ( ! checkoutActions ) {
 		return null;

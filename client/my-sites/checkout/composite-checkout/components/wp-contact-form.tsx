@@ -35,10 +35,7 @@ export default function WPContactForm( {
 	isLoggedOutCart: boolean;
 	setShouldShowContactDetailsValidationErrors: ( allowed: boolean ) => void;
 } ) {
-	const contactInfo = useSelect(
-		( select ) => select( CHECKOUT_STORE )?.getContactInfo() ?? {},
-		[]
-	);
+	const contactInfo = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
 	const { formStatus } = useFormStatus();
 	const isStepActive = useIsStepActive();
 	const isDisabled = ! isStepActive || formStatus !== FormStatus.READY;

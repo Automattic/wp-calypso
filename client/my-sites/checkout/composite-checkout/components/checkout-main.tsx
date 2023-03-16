@@ -356,9 +356,9 @@ export default function CheckoutMain( {
 		// Only wait for stored cards to load if we are using cards
 		( allowedPaymentMethods.includes( 'card' ) && isLoadingStoredCards );
 
-	const contactDetails = useSelect( ( select ) => select( CHECKOUT_STORE )?.getContactInfo(), [] );
+	const contactDetails = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
 	const recaptchaClientId = useSelect(
-		( select ) => select( CHECKOUT_STORE )?.getRecaptchaClientId(),
+		( select ) => select( CHECKOUT_STORE ).getRecaptchaClientId(),
 		[]
 	);
 

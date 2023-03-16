@@ -65,10 +65,7 @@ export function VatForm( {
 	countryCode: string | undefined;
 } ) {
 	const translate = useTranslate();
-	const vatDetailsInForm = useSelect(
-		( select ) => select( CHECKOUT_STORE )?.getVatDetails() ?? {},
-		[]
-	);
+	const vatDetailsInForm = useSelect( ( select ) => select( CHECKOUT_STORE ).getVatDetails(), [] );
 	const wpcomStoreActions = useDispatch( CHECKOUT_STORE );
 	const setVatDetailsInForm = wpcomStoreActions?.setVatDetails;
 	const { vatDetails: vatDetailsFromServer, isLoading: isLoadingVatDetails } = useVatDetails();
