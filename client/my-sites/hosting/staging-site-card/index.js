@@ -66,7 +66,7 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 	const showManageStagingSite = ! isLoadingStagingSites && stagingSites?.length > 0;
 
 	const [ wasCreating, setWasCreating ] = useState( false );
-	const [ progress, setProgress ] = useState( 0.3 );
+	const [ progress, setProgress ] = useState( 0.1 );
 	const transferStatus = useCheckStagingSiteStatus( stagingSite.id );
 	const isStagingSiteTransferComplete = transferStatus === transferStates.COMPLETE;
 	const isTrasferInProgress =
@@ -82,7 +82,24 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 	}, [ dispatch, queryClient, __, isStagingSiteTransferComplete, wasCreating ] );
 
 	useEffect( () => {
-		setProgress( ( prevProgress ) => prevProgress + 0.25 );
+		setProgress( ( prevProgress ) => {
+			switch ( transferStatus ) {
+				case null:
+					return 0.1;
+				case 'relocating_revert':
+				case 'active':
+					return 0.2;
+				case 'provisioned':
+					return 0.6;
+				case 'reverted':
+				case 'relocating_switcheroo':
+					return 0.85;
+				case 'complete':
+					return 0.98;
+				default:
+					return prevProgress + 0.05;
+			}
+		} );
 	}, [ transferStatus ] );
 
 	const { addStagingSite, isLoading: addingStagingSite } = useAddStagingSiteMutation( siteId, {
