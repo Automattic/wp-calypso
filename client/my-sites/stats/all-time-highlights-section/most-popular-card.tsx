@@ -14,7 +14,7 @@ import {
 	isRequestingSiteStatsForQuery,
 } from 'calypso/state/stats/lists/selectors';
 
-const POST_STATS_CARD_TITLE_LIMIT = 40;
+const POST_STATS_CARD_TITLE_LIMIT = 60;
 
 // Use ellipsis when characters count over the limit.
 // TODO: Extract to shared utilities
