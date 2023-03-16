@@ -54,7 +54,8 @@ const getStatsQueries = createSelector(
 );
 
 const getStatsData = createSelector(
-	( state, siteId, topPostsQuery ) => {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	( state, siteId, topPostsQuery, isTopViewedPostRequesting ) => {
 		const { post: topPost, page: topPage } = getTopPostAndPage( state, siteId, topPostsQuery );
 
 		return {
