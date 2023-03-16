@@ -10,7 +10,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { CHECKOUT_STORE } from '../hooks/wpcom-store';
+import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import {
 	prepareDomainContactDetails,
 	prepareDomainContactDetailsErrors,

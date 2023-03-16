@@ -13,7 +13,7 @@ import { useSelect } from '@wordpress/data';
 import { useState } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import useCachedDomainContactDetails from 'calypso/my-sites/checkout/composite-checkout/hooks/use-cached-domain-contact-details';
-import { CHECKOUT_STORE } from 'calypso/my-sites/checkout/composite-checkout/hooks/wpcom-store';
+import { CHECKOUT_STORE } from 'calypso/my-sites/checkout/composite-checkout/lib/wpcom-store';
 import {
 	countryList,
 	createTestReduxStore,

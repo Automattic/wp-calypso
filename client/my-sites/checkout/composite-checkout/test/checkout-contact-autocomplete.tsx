@@ -10,7 +10,7 @@ import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { CHECKOUT_STORE } from '../hooks/wpcom-store';
+import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import {
 	planWithoutDomain,
 	getActivePersonalPlanDataForType,

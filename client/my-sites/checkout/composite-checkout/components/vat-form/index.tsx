@@ -8,7 +8,7 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { CHECKOUT_STORE } from '../../hooks/wpcom-store';
+import { CHECKOUT_STORE } from '../../lib/wpcom-store';
 
 import './style.css';
 

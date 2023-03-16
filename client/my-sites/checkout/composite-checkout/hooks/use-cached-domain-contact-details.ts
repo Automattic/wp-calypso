@@ -9,8 +9,8 @@ import { logToLogstash } from 'calypso/lib/logstash';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestContactDetailsCache } from 'calypso/state/domains/management/actions';
 import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
+import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import useCountryList from './use-country-list';
-import { CHECKOUT_STORE } from './wpcom-store';
 import type {
 	PossiblyCompleteDomainContactDetails,
 	CountryListItem,

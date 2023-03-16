@@ -3,7 +3,7 @@ import debugFactory from 'debug';
 import { useRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
-import { CHECKOUT_STORE } from './wpcom-store';
+import { CHECKOUT_STORE } from '../lib/wpcom-store';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-detected-country-code' );
 
