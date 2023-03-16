@@ -327,10 +327,10 @@ const MarketplaceThankYou = ( {
 				backText={ translate( 'Back to plugins' ) }
 				canGoBack={ areAllProductsFetched }
 			/>
-			{ themeSlugs.map( ( productSlug, index ) => (
+			{ themeSlugs.map( ( themeSlug, index ) => (
 				<>
-					<QueryTheme key={ 'query-wpcom-theme-' + index } siteId="wpcom" themeId={ productSlug } />
-					<QueryTheme key={ 'query-wporg-theme-' + index } siteId="wporg" themeId={ productSlug } />
+					<QueryTheme key={ 'query-wpcom-theme-' + index } siteId="wpcom" themeId={ themeSlug } />
+					<QueryTheme key={ 'query-wporg-theme-' + index } siteId="wporg" themeId={ themeSlug } />
 				</>
 			) ) }
 			{ showProgressBar && (
