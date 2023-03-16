@@ -252,9 +252,9 @@ describe( 'Checkout contact step extra tax fields', () => {
 			// Fill in the details
 			await user.type( await screen.findByLabelText( 'VAT ID' ), vatId );
 			if ( vatOrganization === 'with' ) {
-				await user.type( await screen.findByLabelText( 'Organization for tax ID' ), vatName );
+				await user.type( await screen.findByLabelText( 'Organization for VAT' ), vatName );
 			}
-			await user.type( await screen.findByLabelText( 'Address for tax ID' ), vatAddress );
+			await user.type( await screen.findByLabelText( 'Address for VAT' ), vatAddress );
 
 			await user.click( screen.getByText( 'Continue' ) );
 			expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
@@ -322,7 +322,7 @@ describe( 'Checkout contact step extra tax fields', () => {
 			// Fill in the details
 			await user.type( await screen.findByLabelText( 'VAT ID' ), vatId );
 			if ( withVatAddress === 'with' ) {
-				await user.type( await screen.findByLabelText( 'Address for tax ID' ), vatAddress );
+				await user.type( await screen.findByLabelText( 'Address for VAT' ), vatAddress );
 			}
 
 			await user.click( screen.getByText( 'Continue' ) );
