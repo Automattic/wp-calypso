@@ -42,7 +42,7 @@ export default function BoostSitePerformance( { boostData, hasBoost }: Props ) {
 							) }
 						>
 							{ getBoostRating( overallScore ) }
-							<Icon size={ 24 } className="site-expanded-content__help-icon" icon={ help } />
+							<Icon size={ 20 } className="site-expanded-content__help-icon" icon={ help } />
 						</div>
 						<div className="site-expanded-content__card-content-score-title">
 							{ translate( 'Overall' ) }
