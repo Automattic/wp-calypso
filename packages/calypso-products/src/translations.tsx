@@ -970,47 +970,47 @@ export const getJetpackProductsRecommendedFor = (): Record< string, TranslateRes
 };
 
 export const useJetpack10GbStorageAmountText = (): TranslateResult => {
-	const _translate = useTranslate();
+	const translate = useTranslate();
 
 	return useMemo(
 		() =>
-			_translate( '%(numberOfGigabytes)dGB', '%(numberOfGigabytes)dGB', {
+			translate( '%(numberOfGigabytes)dGB', '%(numberOfGigabytes)dGB', {
 				comment:
 					'Displays an amount of gigabytes. Plural string used in case GB needs to be pluralized.',
 				count: 10,
 				args: { numberOfGigabytes: 10 },
 			} ),
-		[ _translate ]
+		[ translate ]
 	);
 };
 
 export const useJetpack100GbStorageAmountText = (): TranslateResult => {
-	const _translate = useTranslate();
+	const translate = useTranslate();
 
 	return useMemo(
 		() =>
-			_translate( '%(numberOfGigabytes)dGB', '%(numberOfGigabytes)dGB', {
+			translate( '%(numberOfGigabytes)dGB', '%(numberOfGigabytes)dGB', {
 				comment:
 					'Displays an amount of gigabytes. Plural string used in case GB needs to be pluralized.',
 				count: 100,
 				args: { numberOfGigabytes: 100 },
 			} ),
-		[ _translate ]
+		[ translate ]
 	);
 };
 
 export const useJetpack1TbStorageAmountText = (): TranslateResult => {
-	const _translate = useTranslate();
+	const translate = useTranslate();
 
 	return useMemo(
 		() =>
-			_translate( '%(numberOfTerabytes)dTB', '%(numberOfTerabytes)dTB', {
+			translate( '%(numberOfTerabytes)dTB', '%(numberOfTerabytes)dTB', {
 				comment:
 					'Displays an amount of terabytes. Plural string used in case TB needs to be pluralized.',
 				count: 1,
 				args: { numberOfTerabytes: 1 },
 			} ),
-		[ _translate ]
+		[ translate ]
 	);
 };
 
