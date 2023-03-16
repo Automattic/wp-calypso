@@ -8,53 +8,33 @@
 	&.task__domain-upsell {
 		margin-bottom: 0 !important;
 
-		@media (min-width: $break-large) {
+		@media (min-width: $break-wide) {
 			margin-right: 0 !important;
 			background: url(calypso/assets/images/customer-home/illustration--task-domain-upsell.png) no-repeat right top;
 		}
 
-		@media (max-width: $break-wide) {
-			background-position-x: 120%;
+		@media ( min-width: $break-large ) and ( max-width: $break-wide ) {
+			margin-right: 0 !important;
+			background: url(calypso/assets/images/customer-home/illustration--task-domain-upsell-tablet.png) no-repeat right top;
 		}
 
 		.task__text {
+			margin-bottom: 32px;
+			min-width: 360px;
 
 			@media (min-width: $break-wide) {
 				max-width: calc(100% - 450px);
-				margin-bottom: 32px;
 			}
 
 			@media (max-width: $break-wide) {
-				max-width: calc(110% - 450px);
+				max-width: calc(115% - 450px);
 			}
 
 			@media (max-width: $break-large) {
 				padding: 0;
 				max-width: none;
-				display: grid;
-				grid-template-areas:
-					"a a a"
-					"c c c"
-					"d d d"
-					"e e e"
-					"b b b";
-				grid-template-columns: 1fr 1fr 1fr;
-				grid-template-rows: auto auto auto;
-				gap: 5px !important;
-				.task__timing {
-					grid-area: a;
-				}
-				.task__badge {
-					grid-area: b;
-				}
-				.task__title {
-					grid-area: c;
-				}
-				.task__description {
-					grid-area: d;
-				}
+				gap: 16px !important;
 				.task__actions {
-					grid-area: e;
 					flex-direction: column;
 					width: 100%;
 
@@ -63,6 +43,7 @@
 					}
 				}
 			}
+
 		}
 
 		.task__illustration {
@@ -94,13 +75,14 @@
 			position: absolute;
 			right: 0;
 			top: 13px;
-			width: 295px;
+			width: 305px;
 			word-break: break-all;
 			overflow: hidden;
 			padding: 0;
 			display: inline-flex;
 			@media (max-width: $break-wide) {
-				width: calc(295px - 10%);
+				width: 205px;
+				top: 9px;
 			}
 			@media (max-width: $break-large) {
 				display: none;
