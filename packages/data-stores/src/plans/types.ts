@@ -1,9 +1,4 @@
-import {
-	PLAN_ANNUAL_PERIOD,
-	PLAN_BIENNIAL_PERIOD,
-	PLAN_MONTHLY_PERIOD,
-	PLAN_TRIENNIAL_PERIOD,
-} from './constants';
+import { PERIOD_LIST } from './constants';
 import * as selectors from './selectors';
 import type { plansProductSlugs, plansSlugs } from './constants';
 import type { SelectFromMap } from '../mapped-types';
@@ -65,12 +60,7 @@ export interface PricedAPIPlan {
 	path_slug?: PlanPath;
 	product_slug: StorePlanSlug;
 	product_name_short: string;
-	bill_period:
-		| -1
-		| typeof PLAN_MONTHLY_PERIOD
-		| typeof PLAN_ANNUAL_PERIOD
-		| typeof PLAN_BIENNIAL_PERIOD
-		| typeof PLAN_TRIENNIAL_PERIOD;
+	bill_period: -1 | typeof PERIOD_LIST[ number ];
 	raw_price: number;
 	orig_cost?: number | null;
 	currency_code: string;
