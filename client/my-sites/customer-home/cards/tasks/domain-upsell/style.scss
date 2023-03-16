@@ -66,6 +66,7 @@
 		}
 
 		.task__illustration {
+			position: relative;
 			width: 100%;
 			padding: 0;
 
@@ -75,6 +76,15 @@
 
 			img {
 				width: 100%;
+			}
+
+			svg {
+				position: absolute;
+				top: 5%;
+				left: 18%;
+				height: 7%;
+				width: 64%;
+				right: 18%;
 			}
 		}
 
@@ -93,12 +103,7 @@
 				width: calc(295px - 10%);
 			}
 			@media (max-width: $break-large) {
-				position: relative;
-				top: calc(( ( 100vw - 64px ) / 1.6 )  / 6.66);
-				width: auto;
-				max-width: 60%;
-				text-align: center;
-				margin: 0 auto;
+				display: none;
 			}
 		}
 	}
