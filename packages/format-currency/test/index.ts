@@ -24,7 +24,10 @@ describe( 'getCurrencyObject default export', () => {
 
 describe( 'formatCurrency', () => {
 	let formatter: CurrencyFormatter;
+	const originalFetch = globalThis.fetch;
+
 	beforeEach( () => {
+		globalThis.fetch = originalFetch;
 		formatter = createFormatter();
 	} );
 
@@ -119,10 +122,63 @@ describe( 'formatCurrency', () => {
 		expect( money ).toBe( '₹9,800,900.00' );
 	} );
 
+	test( 'sets USD currency symbol to $ if geolocation is US', async () => {
+		globalThis.fetch = jest.fn(
+			( url: string ) =>
+				Promise.resolve( {
+					json: () =>
+						url.includes( '/geo' )
+							? Promise.resolve( { country_short: 'US' } )
+							: Promise.resolve( 'invalid' ),
+				} ) as any
+		);
+		formatter = createFormatter();
+		await formatter.geolocateCurrencySymbol();
+		const money = formatter.formatCurrency( 9800900.32, 'USD' );
+		expect( money ).toBe( '$9,800,900.32' );
+	} );
+
+	test( 'does not change USD currency symbol from $ if geolocation is unknown', async () => {
+		globalThis.fetch = jest.fn(
+			( url: string ) =>
+				Promise.resolve( {
+					json: () =>
+						url.includes( '/geo' )
+							? Promise.resolve( { country_short: '' } )
+							: Promise.resolve( 'invalid' ),
+				} ) as any
+		);
+		formatter = createFormatter();
+		await formatter.geolocateCurrencySymbol();
+		const money = formatter.formatCurrency( 9800900.32, 'USD' );
+		expect( money ).toBe( '$9,800,900.32' );
+	} );
+
+	test( 'sets USD currency symbol to US$ if geolocation is not US', async () => {
+		globalThis.fetch = jest.fn(
+			( url: string ) =>
+				Promise.resolve( {
+					json: () =>
+						url.includes( '/geo' )
+							? Promise.resolve( { country_short: 'CA' } )
+							: Promise.resolve( 'invalid' ),
+				} ) as any
+		);
+		formatter = createFormatter();
+		await formatter.geolocateCurrencySymbol();
+		const money = formatter.formatCurrency( 9800900.32, 'USD' );
+		expect( money ).toBe( 'US$9,800,900.32' );
+	} );
+
 	describe( 'specific currencies', () => {
 		test( 'USD', () => {
 			const money = formatter.formatCurrency( 9800900.32, 'USD' );
 			expect( money ).toBe( '$9,800,900.32' );
+		} );
+		test( 'USD with the currency symbol overridden', () => {
+			formatter.setCurrencySymbol( 'USD', 'US$' );
+			const money = formatter.formatCurrency( 9800900.32, 'USD' );
+			expect( money ).toBe( 'US$9,800,900.32' );
 		} );
 		test( 'USD in Canadian English', () => {
 			const money = formatter.formatCurrency( 9800900.32, 'USD', { locale: 'en-CA' } );
@@ -282,6 +338,19 @@ describe( 'getCurrencyObject()', () => {
 			const money = formatter.getCurrencyObject( 9800900.32, 'USD' );
 			expect( money ).toEqual( {
 				symbol: '$',
+				symbolPosition: 'before',
+				integer: '9,800,900',
+				fraction: '.32',
+				sign: '',
+				hasNonZeroFraction: true,
+			} );
+		} );
+
+		test( 'USD with the currency symbol overridden', () => {
+			formatter.setCurrencySymbol( 'USD', 'US$' );
+			const money = formatter.getCurrencyObject( 9800900.32, 'USD' );
+			expect( money ).toEqual( {
+				symbol: 'US$',
 				symbolPosition: 'before',
 				integer: '9,800,900',
 				fraction: '.32',

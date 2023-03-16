@@ -1,0 +1,69 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@wordpress/base-styles/breakpoints";
+
+.section-nav.subscription-manager-tab-switcher {
+	box-shadow: none;
+	margin-bottom: 32px;
+
+	.section-nav-tabs {
+		display: flex;
+
+		.section-nav-tabs__list {
+			box-shadow: inset 0 -1px 0 rgba($studio-black, 0.05);
+			gap: 16px;
+			flex-basis: fit-content;
+
+			.section-nav-tab {
+				border: none;
+
+				&.is-selected {
+					.section-nav-tab__link {
+						border-bottom-color: $studio-gray-100;
+					}
+
+					.section-nav-tab__text {
+						color: $studio-gray-100;
+					}
+				}
+
+				&:hover:not(.is-selected) .section-nav-tab__link {
+					border-bottom-color: $studio-gray-40;
+				}
+
+				.section-nav-tab__link {
+					border-bottom: solid 2px transparent;
+					color: $studio-gray-60;
+					padding: 8px 0;
+					transition: border-bottom-color ease-in-out 0.1s, color ease-in-out 0.1s;
+
+					&:hover {
+						background-color: transparent;
+					}
+				}
+
+				.section-nav-tab__text {
+					color: $studio-gray-60;
+					font-size: 1rem;
+					line-height: 24px;
+				}
+
+				.count {
+					background: $studio-gray-5;
+					border: none;
+					border-radius: 2px;
+					color: $studio-gray-80;
+					font-size: 0.75rem;
+					line-height: 20px;
+					margin-left: 10px;
+					padding: 0 8px;
+				}
+			}
+		}
+	}
+}
+
+@media screen and ( max-width: $break-medium ) {
+	.section-nav.subscription-manager-tab-switcher {
+		margin-bottom: 22px;
+	}
+}

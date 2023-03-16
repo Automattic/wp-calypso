@@ -2,11 +2,13 @@ import { FormInputValidation } from '@automattic/components';
 import styled from '@emotion/styled';
 import { Icon } from '@wordpress/icons';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import { ChangeEvent, ReactChild } from 'react';
+import { ChangeEvent, ChangeEventHandler, ReactChild } from 'react';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextArea from 'calypso/components/forms/form-textarea';
+import InfoPopover from 'calypso/components/info-popover';
 import SocialLogo from 'calypso/components/social-logo';
 import { tip } from 'calypso/signup/icons';
 
@@ -112,6 +114,24 @@ const StyledFormInputValidation = styled( FormInputValidation )`
 	}
 `;
 
+const FlexFormFieldset = styled( FormFieldset )`
+	display: flex;
+`;
+
+const StyledFormFieldset = styled( FormFieldset, {
+	shouldForwardProp: ( prop ) => prop !== 'hasFillerContentCheckbox',
+} )( ( props ) => ( {
+	marginBottom: props.hasFillerContentCheckbox ? '12px' : '20px',
+} ) );
+
+const StyledFormCheckbox = styled( FormCheckbox )`
+	margin-right: 6px;
+`;
+
+const ClickableLabel = styled( Label )`
+	cursor: pointer;
+`;
+
 interface TextInputFieldProps {
 	name: string;
 	label?: TranslateResult;
@@ -121,6 +141,7 @@ interface TextInputFieldProps {
 	sublabel?: TranslateResult;
 	rows?: number;
 	explanation?: TranslateResult;
+	disabled?: boolean;
 	onChange?: ( event: ChangeEvent< HTMLInputElement > ) => void;
 }
 
@@ -159,15 +180,17 @@ export function TextInputField( props: TextInputFieldProps ) {
 
 interface TextAreaFieldProps extends TextInputFieldProps {
 	rows?: number;
+	hasFillerContentCheckbox?: boolean;
 }
 
 export function TextAreaField( props: TextAreaFieldProps ) {
+	const { hasFillerContentCheckbox, ...otherProps } = props;
 	return (
-		<FormFieldset>
+		<StyledFormFieldset hasFillerContentCheckbox={ hasFillerContentCheckbox }>
 			{ props.label && <LabelBlock inputName={ props.name }>{ props.label } </LabelBlock> }
 			{ props.sublabel && <SubLabel htmlFor={ props.name }>{ props.sublabel }</SubLabel> }
 			<TextArea
-				{ ...props }
+				{ ...otherProps }
 				rows={ props.rows ? props.rows : 10 }
 				isError={ !! props.error }
 				autoCapitalize="off"
@@ -175,7 +198,35 @@ export function TextAreaField( props: TextAreaFieldProps ) {
 				spellCheck="false"
 			/>
 			{ props.error && <StyledFormInputValidation isError text={ props.error } /> }
-		</FormFieldset>
+		</StyledFormFieldset>
+	);
+}
+
+export function CheckboxField( props: {
+	checked: boolean;
+	name: string;
+	value: string;
+	onChange: ChangeEventHandler< HTMLInputElement >;
+	label: TranslateResult;
+	helpText: TranslateResult;
+} ) {
+	return (
+		<FlexFormFieldset>
+			<ClickableLabel>
+				<>
+					<StyledFormCheckbox
+						name={ props.name }
+						value={ props.value }
+						checked={ props.checked }
+						onChange={ props.onChange }
+					/>
+					{ props.label }
+				</>
+			</ClickableLabel>
+			<InfoPopover showOnHover={ true } position="top">
+				{ props.helpText }
+			</InfoPopover>
+		</FlexFormFieldset>
 	);
 }
 

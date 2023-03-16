@@ -15,19 +15,15 @@ import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { get, isEmpty, partition } from 'lodash';
 import * as React from 'react';
-import { selectors as wpcomBlockEditorNavSidebarSelectors } from '../../../../wpcom-block-editor-nav-sidebar/src/store';
-import { STORE_KEY, POST_IDS_TO_EXCLUDE } from '../../constants';
+import { POST_IDS_TO_EXCLUDE } from '../../constants';
+import { store } from '../../store';
 import { Post } from '../../types';
 import CreatePage from '../create-page';
 import NavItem from '../nav-item';
 import SiteIcon from '../site-icon';
-import type { SelectFromMap } from '@automattic/data-stores';
 
 import './style.scss';
 
-type WpcomBlockEditorNavSidebarSelectors = SelectFromMap<
-	typeof wpcomBlockEditorNavSidebarSelectors
->;
 type CoreEditorPlaceholder = {
 	isEditedPostNew: ( ...args: unknown[] ) => boolean;
 	getCurrentPostId: ( ...args: unknown[] ) => number;
@@ -56,18 +52,18 @@ const Button = forwardRef(
 );
 
 function WpcomBlockEditorNavSidebar() {
-	const { toggleSidebar, setSidebarClosing } = useDispatch( STORE_KEY );
+	const { toggleSidebar, setSidebarClosing } = useDispatch( store );
 	const { isOpen, isClosing, postType, selectedItemId, siteTitle } = useSelect( ( select ) => {
 		const { getPostType, getSite } = select( 'core' ) as unknown as {
 			getPostType: ( postType: string ) => null | { slug: string };
 			getSite: () => null | { title: string };
 		};
 
-		const blockEditorNavSidebarSelect: WpcomBlockEditorNavSidebarSelectors = select( STORE_KEY );
+		const { isSidebarOpened, isSidebarClosing } = select( store );
 
 		return {
-			isOpen: blockEditorNavSidebarSelect.isSidebarOpened(),
-			isClosing: blockEditorNavSidebarSelect.isSidebarClosing(),
+			isOpen: isSidebarOpened(),
+			isClosing: isSidebarClosing(),
 			postType: getPostType(
 				( select( 'core/editor' ) as CoreEditorPlaceholder ).getCurrentPostType()
 			),

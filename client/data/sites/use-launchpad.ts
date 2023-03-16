@@ -9,9 +9,9 @@ export const fetchLaunchpad = ( siteSlug: string ) => {
 	} );
 };
 
-export const useLaunchpad = ( siteSlug: string, cache = true ) => {
+export const useLaunchpad = ( siteSlug: string | null, cache = true ) => {
 	const key = [ 'launchpad', siteSlug ];
-	return useQuery( key, () => fetchLaunchpad( siteSlug ), {
+	return useQuery( key, () => siteSlug && fetchLaunchpad( siteSlug ), {
 		meta: {
 			persist: cache,
 		},

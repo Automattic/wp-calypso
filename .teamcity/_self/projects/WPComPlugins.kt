@@ -92,9 +92,6 @@ object CalypsoApps: BuildType({
 
 				# Install dependencies
 				yarn
-
-				# Set execution permission for additional scripts.
-				chmod +x .teamcity/scripts/WPComPlugins/
 			"""
 		}
 
@@ -104,6 +101,24 @@ object CalypsoApps: BuildType({
 				# Run `yarn build-ci` script for the plugins specified in the glob.
 				# `build-ci` is a specialized build for CI environment.
 				yarn workspaces foreach --verbose --parallel --include '{happy-blocks,@automattic/notifications}' run build-ci
+			"""
+		}
+
+		bashNodeScript {
+			name = "Process artifact"
+			scriptContent = """
+				export tc_auth="%system.teamcity.auth.userId%:%system.teamcity.auth.password%"
+				export git_branch="%teamcity.build.branch%"
+				export build_id="%teamcity.build.id%"
+				export GH_TOKEN="%matticbot_oauth_token%"
+				export is_default_branch="%teamcity.build.branch.is_default%"
+				export skip_build_diff="%skip_release_diff%"
+				export mc_auth_secret="%mc_auth_secret%"
+				export commit_sha="%build.vcs.number%"
+				export mc_post_root="%mc_post_root%"
+				export tc_sever_url="%teamcity.serverUrl%"
+
+				node ./bin/process-calypso-app-artifacts.mjs
 			"""
 		}
 	}

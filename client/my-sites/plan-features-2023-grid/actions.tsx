@@ -7,6 +7,7 @@ import {
 	is2023PricingGridActivePage,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import { WpcomPlansUI } from '@automattic/data-stores';
 import styled from '@emotion/styled';
 import { useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
@@ -17,7 +18,6 @@ import ExternalLinkWithTracking from 'calypso/components/external-link/with-trac
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
-import { WPCOM_PLANS_UI_STORE } from './store';
 
 type PlanFeaturesActionsButtonProps = {
 	availableForPurchase: boolean;
@@ -155,7 +155,7 @@ const LoggedInPlansFeatureActionButton = ( {
 	forceDisplayButton: boolean;
 	selectedSiteSlug: string | null;
 } ) => {
-	const { setShowDomainUpsellDialog } = useDispatch( WPCOM_PLANS_UI_STORE );
+	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
 	const translate = useTranslate();
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 

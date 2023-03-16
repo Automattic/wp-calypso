@@ -4,12 +4,12 @@
 
 import {
 	envVariables,
-	DataHelper,
 	SidebarComponent,
 	TestAccount,
 	BlockWidgetEditorComponent,
 	getTestAccountByFeature,
 	envToFeatureKey,
+	RestAPIClient,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 import { skipDescribeIf } from '../../jest-helpers';
@@ -20,8 +20,9 @@ declare const browser: Browser;
 
 // We're skipping for Atomic sites for now because the currently used theme
 // doesn't support widgets.
-skipDescribeIf( envVariables.TEST_ON_ATOMIC )(
-	DataHelper.createSuiteTitle( 'Widgets' ),
+// Mobile viewport is skipped due to https://github.com/Automattic/wp-calypso/issues/64536.
+skipDescribeIf( envVariables.TEST_ON_ATOMIC || envVariables.VIEWPORT_NAME === 'mobile' )(
+	'Widget (Legacy): Visibility option is present',
 	function () {
 		let sidebarComponent: SidebarComponent;
 		let page: Page;
@@ -31,6 +32,12 @@ skipDescribeIf( envVariables.TEST_ON_ATOMIC )(
 
 			const testAccount = new TestAccount( accountName );
 			await testAccount.authenticate( page );
+
+			// Clear out existing widgets.
+			const restAPIClient = new RestAPIClient( testAccount.credentials );
+			await restAPIClient.deleteAllWidgets(
+				testAccount.credentials.testSites?.primary.id as number
+			);
 		} );
 
 		it( 'Navigate to Appearance > Widgets', async function () {
@@ -45,20 +52,15 @@ skipDescribeIf( envVariables.TEST_ON_ATOMIC )(
 
 		// @todo: Refactor/Abstract these steps into a WidgetsEditor component
 		// Skipped for mobile due to https://github.com/Automattic/wp-calypso/issues/59960
-		skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
-			'Regression: Verify that the visibility option is present',
-			function () {
-				it( 'Insert a Legacy Widget', async function () {
-					await page.click( 'button[aria-label="Add block"]' );
-					await page.fill( 'input[placeholder="Search"]', 'Top Posts and Pages' );
-					await page.click( 'button.editor-block-list-item-legacy-widget\\/top-posts' );
-				} );
+		it( 'Insert a Legacy Widget', async function () {
+			await page.getByRole( 'button', { name: 'Add block' } ).click();
+			await page.fill( 'input[placeholder="Search"]', 'Top Posts and Pages' );
+			await page.click( 'button.editor-block-list-item-legacy-widget\\/top-posts' );
+		} );
 
-				it( 'Visibility options are shown for the Legacy Widget', async function () {
-					await page.click( 'a.button:text("Visibility")' );
-					await page.waitForSelector( 'div.widget-conditional' );
-				} );
-			}
-		);
+		it( 'Visibility options are shown for the Legacy Widget', async function () {
+			await page.click( 'a.button:text("Visibility")' );
+			await page.waitForSelector( 'div.widget-conditional' );
+		} );
 	}
 );
