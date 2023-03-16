@@ -1,15 +1,9 @@
+import { DomainSuggestions } from '@automattic/data-stores';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useDebounce } from 'use-debounce';
-import {
-	DOMAIN_SUGGESTIONS_STORE,
-	DOMAIN_SEARCH_DEBOUNCE_INTERVAL,
-	DOMAIN_QUERY_MINIMUM_LENGTH,
-} from '../constants';
+import { DOMAIN_SEARCH_DEBOUNCE_INTERVAL, DOMAIN_QUERY_MINIMUM_LENGTH } from '../constants';
 import type { DataStatus } from '@automattic/data-stores/src/domain-suggestions/constants';
-import type {
-	DomainSuggestion,
-	DomainSuggestionsSelect,
-} from '@automattic/data-stores/src/domain-suggestions/types';
+import type { DomainSuggestion } from '@automattic/data-stores/src/domain-suggestions/types';
 
 type DomainSuggestionsResult = {
 	allDomainSuggestions: DomainSuggestion[] | undefined;
@@ -26,9 +20,7 @@ export function useDomainSuggestions(
 	extraOptions = {}
 ): DomainSuggestionsResult | undefined {
 	const [ domainSearch ] = useDebounce( searchTerm, DOMAIN_SEARCH_DEBOUNCE_INTERVAL );
-	const { invalidateResolutionForStoreSelector } = useDispatch(
-		DOMAIN_SUGGESTIONS_STORE
-	) as unknown as {
+	const { invalidateResolutionForStoreSelector } = useDispatch( DomainSuggestions.store ) as {
 		invalidateResolutionForStoreSelector: ( selectorName: string ) => void;
 	};
 
@@ -37,11 +29,9 @@ export function useDomainSuggestions(
 			if ( ! domainSearch || domainSearch.length < DOMAIN_QUERY_MINIMUM_LENGTH ) {
 				return;
 			}
-			const {
-				getDomainSuggestions,
-				getDomainState,
-				getDomainErrorMessage,
-			}: DomainSuggestionsSelect = select( DOMAIN_SUGGESTIONS_STORE );
+			const { getDomainSuggestions, getDomainState, getDomainErrorMessage } = select(
+				DomainSuggestions.store
+			);
 
 			const retryRequest = (): void => {
 				invalidateResolutionForStoreSelector( '__internalGetDomainSuggestions' );

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import type { DomainSuggestions } from '@automattic/data-stores';
 
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
@@ -14,10 +14,13 @@ export function usePersistentSelectedDomain(
 	>();
 
 	// Make a complete list of suggestions with the subdomain
-	const domainSuggestionsWithSubdomain =
-		existingSubdomain && Array.isArray( domainSuggestions )
-			? [ existingSubdomain, ...domainSuggestions ]
-			: domainSuggestions;
+	const domainSuggestionsWithSubdomain = useMemo(
+		() =>
+			existingSubdomain && Array.isArray( domainSuggestions )
+				? [ existingSubdomain, ...domainSuggestions ]
+				: domainSuggestions,
+		[ domainSuggestions, existingSubdomain ]
+	);
 
 	useEffect( () => {
 		const currentDomainIsInSuggestions = domainSuggestionsWithSubdomain?.some(
