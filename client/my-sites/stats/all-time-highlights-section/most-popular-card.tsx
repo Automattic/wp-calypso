@@ -79,7 +79,7 @@ export default function MostPopularPostCard( {
 		isRequestingSiteStatsForQuery( state, siteId, 'statsTopPosts', topPostsQuery )
 	);
 
-	// Get the most `viewed` post from the past `seven` days defined in the `topPostsQuery`.
+	// Get the most `viewed` post from the past period defined in the `topPostsQuery`.
 	const { topPost: topViewedPost } = useSelector( ( state ) =>
 		getStatsData( state, siteId, topPostsQuery )
 	);
