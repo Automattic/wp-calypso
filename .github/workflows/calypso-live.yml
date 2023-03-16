@@ -2,7 +2,7 @@ name: Calypso Live
 
 on:
   pull_request:
-    types: ['opened']
+    types: ['synchronize']
 
 jobs:
   calypso-live:
@@ -12,18 +12,38 @@ jobs:
     if: github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name
     timeout-minutes: 10
     steps:
-      - name: Build calypso.live link.
-        run: |
-          echo '::set-output name=LINK::https://calypso.live?image=registry.a8c.com/calypso/app:commit-${{ github.event.pull_request.head.sha }}'
-          echo '::set-output name=QR_CALYPSO::https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=https%3A%2F%2Fcalypso.live%3Fimage%3Dregistry.a8c.com%2Fcalypso%2Fapp%3Acommit-${{ github.event.pull_request.head.sha }}%26flags%3Doauth&choe=UTF-8'
-          echo '::set-output name=QR_JETPACK::https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=https%3A%2F%2Fcalypso.live%3Fimage%3Dregistry.a8c.com%2Fcalypso%2Fapp%3Acommit-${{ github.event.pull_request.head.sha }}%26env%3Djetpack%26flags%3Doauth&choe=UTF-8'
-        id: build_link
-      - name: Post comment on PR
-        uses: actions/github-script@v3
+      - name: Check if comment exists
+        id: has_comment
+        uses: actions/github-script@v6
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
+          result-encoding: string
           script: |
-            github.issues.createComment({
+            const comments = await github.rest.issues.listComments( {
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            } );
+            // For debugging, if needed!
+            console.log( comments );
+            const existingComment = comments.data.find( comment => comment.body.includes( "calypso-live-watermark:apr@v1" ) );
+            const hasComment = existingComment ? "true" : "false";
+            console.log( `Has existing comment: ${ hasComment }` );
+            return hasComment;
+      - name: Build calypso.live link.
+        run: |
+          echo "LINK=https://calypso.live?image=registry.a8c.com/calypso/app:commit-${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
+          echo "QR_CALYPSO=https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=https%3A%2F%2Fcalypso.live%3Fimage%3Dregistry.a8c.com%2Fcalypso%2Fapp%3Acommit-${{ github.event.pull_request.head.sha }}%26flags%3Doauth&choe=UTF-8" >> $GITHUB_OUTPUT
+          echo "QR_JETPACK=https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=https%3A%2F%2Fcalypso.live%3Fimage%3Dregistry.a8c.com%2Fcalypso%2Fapp%3Acommit-${{ github.event.pull_request.head.sha }}%26env%3Djetpack%26flags%3Doauth&choe=UTF-}" >> $GITHUB_OUTPUT
+        id: build_link
+      - name: Post comment on PR
+        uses: actions/github-script@v6
+        if: steps.has_comment.outputs.result == 'false'
+        with:
+          # Skip adding a comment if we already have one.
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
