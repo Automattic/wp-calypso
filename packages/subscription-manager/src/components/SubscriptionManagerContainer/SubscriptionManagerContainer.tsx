@@ -2,7 +2,6 @@
 /**
  * External dependencies
  */
-import { useSubscriptionManagerSettingsQuery } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -15,7 +14,6 @@ export type SubscriptionManagerContainerProps = {
 
 const SubscriptionManagerContainer = ( { children }: SubscriptionManagerContainerProps ) => {
 	const translate = useTranslate();
-	useSubscriptionManagerSettingsQuery();
 
 	return (
 		<Main className="subscription-manager-container">

@@ -23,7 +23,7 @@ export { useSiteIntent } from './queries/use-site-intent';
 export { useSupportAvailability } from './support-queries/use-support-availability';
 export { useSubmitTicketMutation } from './support-queries/use-submit-support-ticket';
 export { useSubmitForumsMutation } from './support-queries/use-submit-forums-topic';
-export { useSubscriptionManagerSettingsQuery } from './reader/queries/use-subscription-manager-settings-query';
+export { useSubscriptionManagerUserSettingsQuery } from './reader/queries/use-subscription-manager-user-settings-query';
 export * from './starter-designs-queries';
 export { useSibylQuery } from './support-queries/use-sibyl-query';
 export * from './site/types';
@@ -32,6 +32,7 @@ export * from './onboard/types';
 export * from './domain-suggestions/types';
 export * from './plans/types';
 export * from './launch/types';
+export * from './reader/types';
 export * from './user/types';
 
 export {
