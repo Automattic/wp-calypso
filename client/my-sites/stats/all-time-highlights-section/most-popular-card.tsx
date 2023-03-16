@@ -61,7 +61,10 @@ const getStatsData = createSelector(
 			topPage,
 		};
 	},
-	( state, siteId, topPostsQuery ) => [ topPostsQuery ]
+	( state, siteId, topPostsQuery, isTopViewedPostRequesting ) => [
+		topPostsQuery,
+		isTopViewedPostRequesting,
+	]
 );
 
 export default function MostPopularPostCard( {
@@ -80,8 +83,9 @@ export default function MostPopularPostCard( {
 	);
 
 	// Get the most `viewed` post from the past period defined in the `topPostsQuery`.
+	// Refresh memoized data from `createSelector` with the loading flag
 	const { topPost: topViewedPost } = useSelector( ( state ) =>
-		getStatsData( state, siteId, topPostsQuery )
+		getStatsData( state, siteId, topPostsQuery, isTopViewedPostRequesting )
 	);
 
 	// The returned data period to sum the view count from API `stats/post` would differ by post.
