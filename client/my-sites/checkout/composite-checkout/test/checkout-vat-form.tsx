@@ -308,10 +308,10 @@ describe( 'Checkout contact step VAT form', () => {
 		await screen.findByLabelText( 'Continue with the entered contact details' );
 
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), countryCode );
-		await user.click( await screen.findByLabelText( 'Add VAT details' ) );
-		await user.type( await screen.findByLabelText( 'VAT ID' ), 'CHE-' + vatId );
-		await user.type( await screen.findByLabelText( 'Organization for VAT' ), vatName );
-		await user.type( await screen.findByLabelText( 'Address for VAT' ), vatAddress );
+		await user.click( await screen.findByLabelText( 'Add GST details' ) );
+		await user.type( await screen.findByLabelText( 'GST ID' ), 'CHE-' + vatId );
+		await user.type( await screen.findByLabelText( 'Organization for GST' ), vatName );
+		await user.type( await screen.findByLabelText( 'Address for GST' ), vatAddress );
 		await user.click( screen.getByText( 'Continue' ) );
 		expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
 		expect( mockVatEndpoint ).toHaveBeenCalledWith( {
@@ -337,10 +337,10 @@ describe( 'Checkout contact step VAT form', () => {
 		await screen.findByLabelText( 'Continue with the entered contact details' );
 
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), countryCode );
-		await user.click( await screen.findByLabelText( 'Add VAT details' ) );
-		await user.type( await screen.findByLabelText( 'VAT ID' ), 'CHE' + vatId );
-		await user.type( await screen.findByLabelText( 'Organization for VAT' ), vatName );
-		await user.type( await screen.findByLabelText( 'Address for VAT' ), vatAddress );
+		await user.click( await screen.findByLabelText( 'Add GST details' ) );
+		await user.type( await screen.findByLabelText( 'GST ID' ), 'CHE' + vatId );
+		await user.type( await screen.findByLabelText( 'Organization for GST' ), vatName );
+		await user.type( await screen.findByLabelText( 'Address for GST' ), vatAddress );
 		await user.click( screen.getByText( 'Continue' ) );
 		expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
 		expect( mockVatEndpoint ).toHaveBeenCalledWith( {
@@ -366,10 +366,10 @@ describe( 'Checkout contact step VAT form', () => {
 		await screen.findByLabelText( 'Continue with the entered contact details' );
 
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), countryCode );
-		await user.click( await screen.findByLabelText( 'Add VAT details' ) );
-		await user.type( await screen.findByLabelText( 'VAT ID' ), 'che' + vatId );
-		await user.type( await screen.findByLabelText( 'Organization for VAT' ), vatName );
-		await user.type( await screen.findByLabelText( 'Address for VAT' ), vatAddress );
+		await user.click( await screen.findByLabelText( 'Add GST details' ) );
+		await user.type( await screen.findByLabelText( 'GST ID' ), 'che' + vatId );
+		await user.type( await screen.findByLabelText( 'Organization for GST' ), vatName );
+		await user.type( await screen.findByLabelText( 'Address for GST' ), vatAddress );
 		await user.click( screen.getByText( 'Continue' ) );
 		expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
 		expect( mockVatEndpoint ).toHaveBeenCalledWith( {

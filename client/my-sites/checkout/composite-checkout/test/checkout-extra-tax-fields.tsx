@@ -317,12 +317,12 @@ describe( 'Checkout contact step extra tax fields', () => {
 			await user.type( await screen.findByLabelText( 'Address' ), 'Contact Address' );
 
 			// Check the box
-			await user.click( await screen.findByLabelText( 'Add VAT details' ) );
+			await user.click( await screen.findByLabelText( 'Add GST details' ) );
 
 			// Fill in the details
-			await user.type( await screen.findByLabelText( 'VAT ID' ), vatId );
+			await user.type( await screen.findByLabelText( 'GST ID' ), vatId );
 			if ( withVatAddress === 'with' ) {
-				await user.type( await screen.findByLabelText( 'Address for VAT' ), vatAddress );
+				await user.type( await screen.findByLabelText( 'Address for GST' ), vatAddress );
 			}
 
 			await user.click( screen.getByText( 'Continue' ) );
