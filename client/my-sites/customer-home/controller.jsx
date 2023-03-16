@@ -9,7 +9,11 @@ import {
 	getSiteUrl,
 	getSitePlan,
 } from 'calypso/state/sites/selectors';
-import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSiteSlug,
+	getSelectedSiteId,
+	getSelectedSite,
+} from 'calypso/state/ui/selectors';
 import { redirectToLaunchpad } from 'calypso/utils';
 import CustomerHome from './main';
 
@@ -37,9 +41,19 @@ export async function maybeRedirect( context, next ) {
 	}
 
 	const siteId = getSelectedSiteId( state );
+	const site = getSelectedSite( state );
+	const isSiteLaunched = site?.launch_status === 'launched' || false;
+
+	function areLaunchpadTasksCompleted( site_intent, checklist_statuses, isSiteLaunched ) {
+		if ( 'newsletter' === site_intent ) {
+			return Boolean( checklist_statuses?.first_post_published );
+		}
+		return isSiteLaunched || Boolean( checklist_statuses?.site_launched );
+	}
+
 	try {
-		const { launchpad_screen, site_intent } = await fetchLaunchpad( slug );
-		if ( launchpad_screen === 'full' ) {
+		const { launchpad_screen, checklist_statuses, site_intent } = await fetchLaunchpad( slug );
+		if ( launchpad_screen === 'full' && ! areLaunchpadTasksCompleted( site_intent, checklist_statuses, isSiteLaunched ) ) {
 			// The new stepper launchpad onboarding flow isn't registered within the "page"
 			// client-side router, so page.redirect won't work. We need to use the
 			// traditional window.location Web API.
