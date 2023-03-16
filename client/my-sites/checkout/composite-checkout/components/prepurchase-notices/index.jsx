@@ -70,13 +70,13 @@ const PrePurchaseNotices = () => {
 		return products.filter( ( p ) => ! p.expired );
 	} );
 
-	const siteProductThatOverlapsCartPlan = () => {
+	//function that compares getSiteProducts with getAllProductsForPlan and returns the product that is in both
+	const siteProductThatOverlapsCartPlan = useSelector( () => {
 		const planSlugInCart = cartItemSlugs.find( isJetpackPlanSlug );
 		if ( ! planSlugInCart ) {
 			return null;
 		}
 
-		//function that compares getSiteProducts with getAllProductsForPlan and returns the product that is in both
 		const getMatchingProducts = ( siteProducts, planSlug ) => {
 			// Get all features and products for the plan in the cart
 			const planFeatures = getAllFeaturesForPlan( planSlug );
@@ -85,18 +85,23 @@ const PrePurchaseNotices = () => {
 			// Combine the plan features and products into a single array
 			const planItems = [ ...planFeatures, ...planProducts ];
 
-			//get all possible social slugs
-			const socialProductInSite = currentSiteProducts.find( ( product ) => {
-				return JETPACK_SOCIAL_PRODUCTS.includes( product.productSlug );
-			} );
-
 			// Filter the site products to only include those in the plan items
 			const matchingProducts = siteProducts.filter( ( product ) =>
 				planItems.includes( product.productSlug )
 			);
 
+			//get all possible social slugs from the site
+			const socialProductInSite = currentSiteProducts.find( ( product ) => {
+				return JETPACK_SOCIAL_PRODUCTS.includes( product.productSlug );
+			} );
+
+			//get all possible social slugs from the cart plan
+			const socialProductInPlan = planItems.find( ( product ) => {
+				return JETPACK_SOCIAL_PRODUCTS.includes( product );
+			} );
+
 			//special handling for sites with any social product
-			if ( socialProductInSite ) {
+			if ( socialProductInSite && socialProductInPlan ) {
 				matchingProducts.push( socialProductInSite );
 			}
 			return matchingProducts;
@@ -108,7 +113,7 @@ const PrePurchaseNotices = () => {
 		}
 
 		return null;
-	};
+	} );
 
 	/**
 	 * The product currently in the cart that overlaps/conflicts with the current active site plan.
