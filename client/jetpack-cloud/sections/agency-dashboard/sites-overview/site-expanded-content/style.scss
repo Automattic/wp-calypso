@@ -142,7 +142,7 @@ button.site-expanded-content__card-button {
 
 		.site-expanded-content__device-icon {
 			position: relative;
-			inset-block-start: 0.5rem;
+			inset-block-start: 0.4rem;
 			inset-inline-start: -0.1rem;
 		}
 
@@ -156,10 +156,6 @@ button.site-expanded-content__card-button {
 	.site-expanded-content__card-content-column-mobile {
 		.site-expanded-content__device-score {
 			margin-inline-start: 8px;
-		}
-
-		.site-expanded-content__device-icon {
-			inset-inline-start: 0.4rem;
 		}
 	}
 }
