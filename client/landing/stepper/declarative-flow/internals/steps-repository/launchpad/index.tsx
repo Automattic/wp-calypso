@@ -2,6 +2,7 @@ import { isNewsletterFlow, StepContainer } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
+import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -46,24 +47,27 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 		[]
 	);
 
+	const redirectToSiteHome = useCallback( ( siteSlug: string | null, flow: string | null ) => {
+		recordTracksEvent( 'calypso_launchpad_redirect_to_home', { flow: flow } );
+		window.location.replace( `/home/${ siteSlug }` );
+	}, [] );
+
+	const areLaunchpadTasksCompleted = useCallback(
+		( flow: string | null ) => {
+			if ( isNewsletterFlow( flow ) ) {
+				return checklist_statuses?.first_post_published;
+			}
+			return isSiteLaunched || checklist_statuses?.site_launched;
+		},
+		[ checklist_statuses?.first_post_published, checklist_statuses?.site_launched, isSiteLaunched ]
+	);
+
 	if ( ! isLoggedIn ) {
-		redirectToSiteHome( siteSlug );
+		redirectToSiteHome( siteSlug, flow );
 	}
 
 	if ( ! siteSlug || fetchingSiteError?.error ) {
 		window.location.replace( '/home' );
-	}
-
-	function redirectToSiteHome( siteSlug: string | null ): void {
-		recordTracksEvent( 'calypso_launchpad_redirect_to_home', { flow: flow } );
-		window.location.replace( `/home/${ siteSlug }` );
-	}
-
-	function areLaunchpadTasksCompleted( flow: string | null ): boolean {
-		if ( isNewsletterFlow( flow ) ) {
-			return checklist_statuses?.first_post_published;
-		}
-		return isSiteLaunched || checklist_statuses?.site_launched;
 	}
 
 	useEffect( () => {
@@ -85,12 +89,12 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 				launchpadScreenOption === 'off' ||
 				( launchpadScreenOption === false && 'videopress' !== flow )
 			) {
-				redirectToSiteHome( siteSlug );
+				redirectToSiteHome( siteSlug, flow );
 			}
 
 			if ( areLaunchpadTasksCompleted( flow ) ) {
 				saveSiteSettings( site.ID, { launchpad_screen: 'off' } );
-				redirectToSiteHome( siteSlug );
+				redirectToSiteHome( siteSlug, flow );
 			}
 		}
 		recordTracksEvent( 'calypso_launchpad_loaded', { flow: flow } );
