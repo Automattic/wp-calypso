@@ -73,7 +73,7 @@ const PrePurchaseNotices = () => {
 	//function that compares getSiteProducts with getAllProductsForPlan and returns the product that is in both
 	const siteProductThatOverlapsCartPlan = useSelector( () => {
 		const planSlugInCart = cartItemSlugs.find( isJetpackPlanSlug );
-		if ( ! planSlugInCart ) {
+		if ( ! planSlugInCart || ! currentSiteProducts ) {
 			return null;
 		}
 
