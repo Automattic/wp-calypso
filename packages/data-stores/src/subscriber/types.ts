@@ -1,6 +1,3 @@
-import * as actions from './actions';
-import type { DispatchFromMap } from '../mapped-types';
-
 export interface SubscriberState {
 	add?: {
 		inProgress: boolean;
@@ -47,7 +44,3 @@ export type ImportSubscribersResponse = {
 
 export type GetSubscribersImportResponse = ImportJob;
 export type GetSubscribersImportsResponse = ImportJob[];
-
-export interface SubscriberDispatch {
-	dispatch: DispatchFromMap< typeof actions >;
-}
