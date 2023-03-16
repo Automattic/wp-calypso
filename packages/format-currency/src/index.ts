@@ -1,21 +1,280 @@
-import { doesCurrencyExist, getCurrencyOverride } from './currencies';
-import type { CurrencyObject, CurrencyObjectOptions } from './types';
+import { defaultCurrencyOverrides } from './currencies';
+import type {
+	CurrencyObject,
+	CurrencyObjectOptions,
+	CurrencyFormatter,
+	CurrencyOverride,
+} from './types';
 
 export * from './types';
 
-let defaultLocale: string | undefined = undefined;
 const formatterCache = new Map< string, Intl.NumberFormat >();
 const fallbackLocale = 'en';
 const fallbackCurrency = 'USD';
+const geolocationEndpointUrl = 'https://public-api.wordpress.com/geo/';
 
-/**
- * Set a default locale for use by `formatCurrency` and `getCurrencyObject`.
- *
- * Note that this is global and will override any browser locale that is set!
- * Use it with care.
- */
-export function setDefaultLocale( locale: string | undefined ): void {
-	defaultLocale = locale;
+export function createFormatter(): CurrencyFormatter {
+	const currencyOverrides: Record< string, { symbol?: string | undefined } > = {};
+	let defaultLocale: string | undefined = undefined;
+
+	// If the user is inside the US using USD, they should only see `$` and not `US$`.
+	async function geolocateCurrencySymbol(): Promise< void > {
+		const geoData = await globalThis
+			.fetch?.( geolocationEndpointUrl )
+			.then( ( response ) => response.json() )
+			.catch( ( error ) => {
+				// Do nothing if the fetch fails.
+				// eslint-disable-next-line no-console
+				console.warn( 'Fetching geolocation for format-currency failed.', error );
+			} );
+
+		if ( ! containsGeolocationCountry( geoData ) ) {
+			return;
+		}
+		if ( ! geoData.country_short ) {
+			return;
+		}
+		if ( geoData.country_short === 'US' ) {
+			setCurrencySymbol( 'USD', '$' );
+		} else {
+			setCurrencySymbol( 'USD', 'US$' );
+		}
+	}
+
+	function getFormatter(
+		number: number,
+		code: string,
+		options: CurrencyObjectOptions
+	): Intl.NumberFormat {
+		const locale = options.locale ?? defaultLocale ?? getLocaleFromBrowser();
+
+		return getCachedFormatter( {
+			locale,
+			currency: code,
+			noDecimals: isNoDecimals( number, options ),
+		} );
+	}
+
+	/**
+	 * Formats money with a given currency code.
+	 *
+	 * The currency will define the properties to use for this formatting, but
+	 * those properties can be overridden using the options. Be careful when doing
+	 * this.
+	 *
+	 * For currencies that include decimals, this will always return the amount
+	 * with decimals included, even if those decimals are zeros. To exclude the
+	 * zeros, use the `stripZeros` option. For example, the function will normally
+	 * format `10.00` in `USD` as `$10.00` but when this option is true, it will
+	 * return `$10` instead.
+	 *
+	 * Since rounding errors are common in floating point math, sometimes a price
+	 * is provided as an integer in the smallest unit of a currency (eg: cents in
+	 * USD or yen in JPY). Set the `isSmallestUnit` to change the function to
+	 * operate on integer numbers instead. If this option is not set or false, the
+	 * function will format the amount `1025` in `USD` as `$1,025.00`, but when the
+	 * option is true, it will return `$10.25` instead.
+	 *
+	 * If the number is NaN, it will be treated as 0.
+	 *
+	 * If the currency code is not known, this will assume a default currency
+	 * similar to USD.
+	 *
+	 * If `isSmallestUnit` is set and the number is not an integer, it will be
+	 * rounded to an integer.
+	 *
+	 * @param      {number}                   number     number to format; assumed to be a float unless isSmallestUnit is set.
+	 * @param      {string}                   code       currency code e.g. 'USD'
+	 * @param      {CurrencyObjectOptions}    options    options object
+	 * @returns    {string}                  A formatted string.
+	 */
+	function formatCurrency(
+		number: number,
+		code: string,
+		options: CurrencyObjectOptions = {}
+	): string {
+		const locale = options.locale ?? defaultLocale ?? getLocaleFromBrowser();
+		code = getValidCurrency( code );
+		const currencyOverride = getCurrencyOverride( code );
+		const currencyPrecision = getPrecisionForLocaleAndCurrency( locale, code );
+
+		const numberAsFloat = prepareNumberForFormatting( number, currencyPrecision, options );
+		const formatter = getFormatter( numberAsFloat, code, options );
+		const parts = formatter.formatToParts( numberAsFloat );
+
+		return parts.reduce( ( formatted, part ) => {
+			switch ( part.type ) {
+				case 'currency':
+					if ( currencyOverride?.symbol ) {
+						return formatted + currencyOverride.symbol;
+					}
+					return formatted + part.value;
+				default:
+					return formatted + part.value;
+			}
+		}, '' );
+	}
+
+	/**
+	 * Returns a formatted price object.
+	 *
+	 * The currency will define the properties to use for this formatting, but
+	 * those properties can be overridden using the options. Be careful when doing
+	 * this.
+	 *
+	 * For currencies that include decimals, this will always return the amount
+	 * with decimals included, even if those decimals are zeros. To exclude the
+	 * zeros, use the `stripZeros` option. For example, the function will normally
+	 * format `10.00` in `USD` as `$10.00` but when this option is true, it will
+	 * return `$10` instead.
+	 *
+	 * Since rounding errors are common in floating point math, sometimes a price
+	 * is provided as an integer in the smallest unit of a currency (eg: cents in
+	 * USD or yen in JPY). Set the `isSmallestUnit` to change the function to
+	 * operate on integer numbers instead. If this option is not set or false, the
+	 * function will format the amount `1025` in `USD` as `$1,025.00`, but when the
+	 * option is true, it will return `$10.25` instead.
+	 *
+	 * Note that the `integer` return value of this function is not a number, but a
+	 * locale-formatted string which may include symbols like spaces, commas, or
+	 * periods as group separators. Similarly, the `fraction` property is a string
+	 * that contains the decimal separator.
+	 *
+	 * If the number is NaN, it will be treated as 0.
+	 *
+	 * If the currency code is not known, this will assume a default currency
+	 * similar to USD.
+	 *
+	 * If `isSmallestUnit` is set and the number is not an integer, it will be
+	 * rounded to an integer.
+	 *
+	 * @param      {number}                   number     number to format; assumed to be a float unless isSmallestUnit is set.
+	 * @param      {string}                   code       currency code e.g. 'USD'
+	 * @param      {CurrencyObjectOptions}    options    options object
+	 * @returns    {CurrencyObject}          A formatted string e.g. { symbol:'$', integer: '$99', fraction: '.99', sign: '-' }
+	 */
+	function getCurrencyObject(
+		number: number,
+		code: string,
+		options: CurrencyObjectOptions = {}
+	): CurrencyObject {
+		const locale = options.locale ?? defaultLocale ?? getLocaleFromBrowser();
+		code = getValidCurrency( code );
+		const currencyOverride = getCurrencyOverride( code );
+		const currencyPrecision = getPrecisionForLocaleAndCurrency( locale, code );
+
+		const numberAsFloat = prepareNumberForFormatting( number, currencyPrecision, options );
+		const formatter = getFormatter( numberAsFloat, code, options );
+		const parts = formatter.formatToParts( numberAsFloat );
+
+		let sign = '' as CurrencyObject[ 'sign' ];
+		let symbol = '$';
+		let symbolPosition = 'before' as CurrencyObject[ 'symbolPosition' ];
+		let hasAmountBeenSet = false;
+		let hasDecimalBeenSet = false;
+		let integer = '';
+		let fraction = '';
+
+		parts.forEach( ( part ) => {
+			switch ( part.type ) {
+				case 'currency':
+					symbol = currencyOverride?.symbol ?? part.value;
+					if ( hasAmountBeenSet ) {
+						symbolPosition = 'after';
+					}
+					return;
+				case 'group':
+					integer += part.value;
+					hasAmountBeenSet = true;
+					return;
+				case 'decimal':
+					fraction += part.value;
+					hasAmountBeenSet = true;
+					hasDecimalBeenSet = true;
+					return;
+				case 'integer':
+					integer += part.value;
+					hasAmountBeenSet = true;
+					return;
+				case 'fraction':
+					fraction += part.value;
+					hasAmountBeenSet = true;
+					hasDecimalBeenSet = true;
+					return;
+				case 'minusSign':
+					sign = '-' as CurrencyObject[ 'sign' ];
+					return;
+			}
+		} );
+
+		const hasNonZeroFraction = ! Number.isInteger( numberAsFloat ) && hasDecimalBeenSet;
+
+		return {
+			sign,
+			symbol,
+			symbolPosition,
+			integer,
+			fraction,
+			hasNonZeroFraction,
+		};
+	}
+
+	function getValidCurrency( code: string ): string {
+		if ( ! doesCurrencyExist( code ) ) {
+			// eslint-disable-next-line no-console
+			console.warn(
+				`getCurrencyObject was called with a non-existent currency "${ code }"; falling back to ${ fallbackCurrency }`
+			);
+			return fallbackCurrency;
+		}
+		return code;
+	}
+
+	/**
+	 * Change the currency symbol override used by formatting.
+	 *
+	 * By default, `formatCurrency` and `getCurrencyObject` use a currency symbol
+	 * from a list of hard-coded overrides in this package keyed by the currency
+	 * code. For example, `CAD` is always rendered as `C$` even if the locale is
+	 * `en-CA` which would normally render the symbol `$`.
+	 *
+	 * With this function, you can change the override used by any given currency.
+	 *
+	 * Note that this is global and will take effect no matter the locale! Use it
+	 * with care.
+	 */
+	function setCurrencySymbol( currencyCode: string, currencySymbol: string | undefined ): void {
+		if ( ! currencyOverrides[ currencyCode ] ) {
+			currencyOverrides[ currencyCode ] = {};
+		}
+		currencyOverrides[ currencyCode ].symbol = currencySymbol;
+	}
+
+	function getCurrencyOverride( code: string ): CurrencyOverride | undefined {
+		return currencyOverrides[ code ] ?? defaultCurrencyOverrides[ code ];
+	}
+
+	function doesCurrencyExist( code: string ): boolean {
+		return Boolean( getCurrencyOverride( code ) );
+	}
+
+	/**
+	 * Set a default locale for use by `formatCurrency` and `getCurrencyObject`.
+	 *
+	 * Note that this is global and will override any browser locale that is set!
+	 * Use it with care.
+	 */
+	function setDefaultLocale( locale: string | undefined ): void {
+		defaultLocale = locale;
+	}
+
+	return {
+		formatCurrency,
+		getCurrencyObject,
+		setCurrencySymbol,
+		setDefaultLocale,
+		geolocateCurrencySymbol,
+	};
 }
 
 function getLocaleFromBrowser() {
@@ -26,17 +285,6 @@ function getLocaleFromBrowser() {
 		return window.navigator.languages[ 0 ];
 	}
 	return window.navigator?.language ?? fallbackLocale;
-}
-
-function getValidCurrency( code: string ): string {
-	if ( ! doesCurrencyExist( code ) ) {
-		// eslint-disable-next-line no-console
-		console.warn(
-			`getCurrencyObject was called with a non-existent currency "${ code }"; falling back to ${ fallbackCurrency }`
-		);
-		return fallbackCurrency;
-	}
-	return code;
 }
 
 function getFormatterCacheKey( {
@@ -163,184 +411,6 @@ function prepareNumberForFormatting(
 	return Math.round( number * scale ) / scale;
 }
 
-function getFormatter(
-	number: number,
-	code: string,
-	options: CurrencyObjectOptions
-): Intl.NumberFormat {
-	const locale = options.locale ?? defaultLocale ?? getLocaleFromBrowser();
-
-	return getCachedFormatter( {
-		locale,
-		currency: code,
-		noDecimals: isNoDecimals( number, options ),
-	} );
-}
-
-/**
- * Formats money with a given currency code.
- *
- * The currency will define the properties to use for this formatting, but
- * those properties can be overridden using the options. Be careful when doing
- * this.
- *
- * For currencies that include decimals, this will always return the amount
- * with decimals included, even if those decimals are zeros. To exclude the
- * zeros, use the `stripZeros` option. For example, the function will normally
- * format `10.00` in `USD` as `$10.00` but when this option is true, it will
- * return `$10` instead.
- *
- * Since rounding errors are common in floating point math, sometimes a price
- * is provided as an integer in the smallest unit of a currency (eg: cents in
- * USD or yen in JPY). Set the `isSmallestUnit` to change the function to
- * operate on integer numbers instead. If this option is not set or false, the
- * function will format the amount `1025` in `USD` as `$1,025.00`, but when the
- * option is true, it will return `$10.25` instead.
- *
- * If the number is NaN, it will be treated as 0.
- *
- * If the currency code is not known, this will assume a default currency
- * similar to USD.
- *
- * If `isSmallestUnit` is set and the number is not an integer, it will be
- * rounded to an integer.
- *
- * @param      {number}                   number     number to format; assumed to be a float unless isSmallestUnit is set.
- * @param      {string}                   code       currency code e.g. 'USD'
- * @param      {CurrencyObjectOptions}    options    options object
- * @returns    {string}                  A formatted string.
- */
-export function formatCurrency(
-	number: number,
-	code: string,
-	options: CurrencyObjectOptions = {}
-): string {
-	const locale = options.locale ?? defaultLocale ?? getLocaleFromBrowser();
-	code = getValidCurrency( code );
-	const currencyOverride = getCurrencyOverride( code );
-	const currencyPrecision = getPrecisionForLocaleAndCurrency( locale, code );
-
-	const numberAsFloat = prepareNumberForFormatting( number, currencyPrecision, options );
-	const formatter = getFormatter( numberAsFloat, code, options );
-	const parts = formatter.formatToParts( numberAsFloat );
-
-	return parts.reduce( ( formatted, part ) => {
-		switch ( part.type ) {
-			case 'currency':
-				if ( currencyOverride?.symbol ) {
-					return formatted + currencyOverride.symbol;
-				}
-				return formatted + part.value;
-			default:
-				return formatted + part.value;
-		}
-	}, '' );
-}
-
-/**
- * Returns a formatted price object.
- *
- * The currency will define the properties to use for this formatting, but
- * those properties can be overridden using the options. Be careful when doing
- * this.
- *
- * For currencies that include decimals, this will always return the amount
- * with decimals included, even if those decimals are zeros. To exclude the
- * zeros, use the `stripZeros` option. For example, the function will normally
- * format `10.00` in `USD` as `$10.00` but when this option is true, it will
- * return `$10` instead.
- *
- * Since rounding errors are common in floating point math, sometimes a price
- * is provided as an integer in the smallest unit of a currency (eg: cents in
- * USD or yen in JPY). Set the `isSmallestUnit` to change the function to
- * operate on integer numbers instead. If this option is not set or false, the
- * function will format the amount `1025` in `USD` as `$1,025.00`, but when the
- * option is true, it will return `$10.25` instead.
- *
- * Note that the `integer` return value of this function is not a number, but a
- * locale-formatted string which may include symbols like spaces, commas, or
- * periods as group separators. Similarly, the `fraction` property is a string
- * that contains the decimal separator.
- *
- * If the number is NaN, it will be treated as 0.
- *
- * If the currency code is not known, this will assume a default currency
- * similar to USD.
- *
- * If `isSmallestUnit` is set and the number is not an integer, it will be
- * rounded to an integer.
- *
- * @param      {number}                   number     number to format; assumed to be a float unless isSmallestUnit is set.
- * @param      {string}                   code       currency code e.g. 'USD'
- * @param      {CurrencyObjectOptions}    options    options object
- * @returns    {CurrencyObject}          A formatted string e.g. { symbol:'$', integer: '$99', fraction: '.99', sign: '-' }
- */
-export function getCurrencyObject(
-	number: number,
-	code: string,
-	options: CurrencyObjectOptions = {}
-): CurrencyObject {
-	const locale = options.locale ?? defaultLocale ?? getLocaleFromBrowser();
-	code = getValidCurrency( code );
-	const currencyOverride = getCurrencyOverride( code );
-	const currencyPrecision = getPrecisionForLocaleAndCurrency( locale, code );
-
-	const numberAsFloat = prepareNumberForFormatting( number, currencyPrecision, options );
-	const formatter = getFormatter( numberAsFloat, code, options );
-	const parts = formatter.formatToParts( numberAsFloat );
-
-	let sign = '' as CurrencyObject[ 'sign' ];
-	let symbol = '$';
-	let symbolPosition = 'before' as CurrencyObject[ 'symbolPosition' ];
-	let hasAmountBeenSet = false;
-	let hasDecimalBeenSet = false;
-	let integer = '';
-	let fraction = '';
-
-	parts.forEach( ( part ) => {
-		switch ( part.type ) {
-			case 'currency':
-				symbol = currencyOverride?.symbol ?? part.value;
-				if ( hasAmountBeenSet ) {
-					symbolPosition = 'after';
-				}
-				return;
-			case 'group':
-				integer += part.value;
-				hasAmountBeenSet = true;
-				return;
-			case 'decimal':
-				fraction += part.value;
-				hasAmountBeenSet = true;
-				hasDecimalBeenSet = true;
-				return;
-			case 'integer':
-				integer += part.value;
-				hasAmountBeenSet = true;
-				return;
-			case 'fraction':
-				fraction += part.value;
-				hasAmountBeenSet = true;
-				hasDecimalBeenSet = true;
-				return;
-			case 'minusSign':
-				sign = '-' as CurrencyObject[ 'sign' ];
-				return;
-		}
-	} );
-
-	const hasNonZeroFraction = ! Number.isInteger( numberAsFloat ) && hasDecimalBeenSet;
-
-	return {
-		sign,
-		symbol,
-		symbolPosition,
-		integer,
-		fraction,
-		hasNonZeroFraction,
-	};
-}
-
 function convertPriceForSmallestUnit( price: number, precision: number ): number {
 	return price / getSmallestUnitDivisor( precision );
 }
@@ -349,4 +419,40 @@ function getSmallestUnitDivisor( precision: number ): number {
 	return 10 ** precision;
 }
 
-export default formatCurrency;
+interface WithGeoCountry {
+	country_short: string;
+}
+
+function containsGeolocationCountry( response: unknown ): response is WithGeoCountry {
+	return typeof ( response as WithGeoCountry )?.country_short === 'string';
+}
+
+const defaultFormatter = createFormatter();
+
+export async function geolocateCurrencySymbol() {
+	return defaultFormatter.geolocateCurrencySymbol();
+}
+
+export function formatCurrency( ...args: Parameters< typeof defaultFormatter.formatCurrency > ) {
+	return defaultFormatter.formatCurrency( ...args );
+}
+
+export function getCurrencyObject(
+	...args: Parameters< typeof defaultFormatter.getCurrencyObject >
+) {
+	return defaultFormatter.getCurrencyObject( ...args );
+}
+
+export function setDefaultLocale(
+	...args: Parameters< typeof defaultFormatter.setDefaultLocale >
+) {
+	return defaultFormatter.setDefaultLocale( ...args );
+}
+
+export function setCurrencySymbol(
+	...args: Parameters< typeof defaultFormatter.setCurrencySymbol >
+) {
+	return defaultFormatter.setCurrencySymbol( ...args );
+}
+
+export default defaultFormatter.formatCurrency;

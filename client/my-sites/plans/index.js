@@ -19,7 +19,7 @@ import {
 	redirectToPlansIfNotJetpack,
 } from './controller';
 import { currentPlan } from './current-plan/controller';
-import { trialUpgradeConfirmation } from './ecommerce-trial/controller';
+import { trialExpired, trialUpgradeConfirmation } from './ecommerce-trial/controller';
 
 const trackedPage = ( url, ...rest ) => {
 	page( url, ...rest, makeLayout, clientRender );
@@ -70,6 +70,7 @@ export default function () {
 		p2RedirectToHubPlans,
 		currentPlan
 	);
+	trackedPage( '/plans/my-plan/trial-expired/:domain', siteSelection, trialExpired );
 	trackedPage(
 		'/plans/my-plan/trial-upgraded/:domain',
 		stagingSiteNotSupportedRedirect,

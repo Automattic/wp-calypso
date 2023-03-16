@@ -1,6 +1,5 @@
 import * as actions from './actions';
-import * as selectors from './selectors';
-import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
+import type { DispatchFromMap } from '../mapped-types';
 
 interface Color {
 	name: string;
@@ -36,5 +35,3 @@ export type ColorsState = {
 export interface Dispatch {
 	dispatch: DispatchFromMap< typeof actions >;
 }
-
-export type AnalyzerSelect = SelectFromMap< typeof selectors >;

@@ -269,9 +269,7 @@ function InstalledInOrPricing( {
 	const { isPreinstalledPremiumPlugin } = usePreinstalledPremiumPlugin( plugin.slug );
 	const active = isWpcomPreinstalled || isPluginActive;
 	const isPluginActiveOnsiteWithSubscription =
-		active && ! isMarketplaceProduct
-			? true
-			: getPluginPurchased( plugin, purchases, isMarketplaceProduct )?.active;
+		active && ! isMarketplaceProduct ? true : getPluginPurchased( plugin, purchases )?.active;
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	if ( isPreinstalledPremiumPlugin ) {

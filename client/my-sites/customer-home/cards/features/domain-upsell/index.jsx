@@ -14,7 +14,7 @@ import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { addQueryArgs } from 'calypso/lib/url';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { isNotAtomicJetpack, isP2Site } from 'calypso/sites-dashboard/utils';
+import { isNotAtomicJetpack, isP2Site, isStagingSite } from 'calypso/sites-dashboard/utils';
 import { getCurrentUser, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
@@ -69,7 +69,12 @@ export default function DomainUpsell( { context } ) {
 
 	const shouldNotShowMyHomeUpsell = ! isProfileUpsell && ( siteDomainsLength || ! isEmailVerified );
 
-	if ( shouldNotShowUpselDismissed || shouldNotShowProfileUpsell || shouldNotShowMyHomeUpsell ) {
+	if (
+		shouldNotShowUpselDismissed ||
+		shouldNotShowProfileUpsell ||
+		shouldNotShowMyHomeUpsell ||
+		isStagingSite( selectedSite )
+	) {
 		return null;
 	}
 

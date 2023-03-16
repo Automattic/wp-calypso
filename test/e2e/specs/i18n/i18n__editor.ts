@@ -9,6 +9,7 @@ import {
 	getTestAccountByFeature,
 	envToFeatureKey,
 	RestAPIClient,
+	EditorWelcomeTourComponent,
 } from '@automattic/calypso-e2e';
 import { Page, Browser, Locator } from 'playwright';
 import type { LanguageSlug } from '@automattic/languages';
@@ -275,7 +276,7 @@ describe( 'I18N: Editor', function () {
 	describe.each( locales )( `Locale: %s`, function ( locale ) {
 		beforeAll( async function () {
 			await restAPIClient.setMySettings( { language: locale } );
-			await page.reload( { waitUntil: 'networkidle', timeout: 20 * 1000 } );
+			await page.reload();
 		} );
 
 		describe( 'Editing Toolkit Plugin', function () {
@@ -284,14 +285,25 @@ describe( 'I18N: Editor', function () {
 			} );
 
 			it( 'Translations for Welcome Guide', async function () {
+				// Abort API request to fetch the Welcome Tour status in order to avoid
+				// overwriting the current state when the request finishes.
+				await page.route( '**/block-editor/nux*', ( route ) => {
+					route.abort();
+				} );
+
 				const editorWindowLocator = editorPage.getEditorWindowLocator();
+				const editorWelcomeTourComponent = new EditorWelcomeTourComponent(
+					page,
+					editorWindowLocator
+				);
 
 				// We know these are all defined because of the filtering above. Non-null asserting is safe here.
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 				const etkTranslations = translations[ locale ]!.etkPlugin!;
 
-				await editorPage.openEditorOptionsMenu();
-				await editorWindowLocator.locator( etkTranslations.welcomeGuide.openGuideSelector ).click();
+				// Ensure the Welcome Guide component is shown.
+				await editorWelcomeTourComponent.forceShowWelcomeTour();
+
 				await editorWindowLocator
 					.locator( etkTranslations.welcomeGuide.welcomeTitleSelector )
 					.waitFor();

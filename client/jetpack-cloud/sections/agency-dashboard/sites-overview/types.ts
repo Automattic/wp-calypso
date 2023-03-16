@@ -12,6 +12,7 @@ export type SiteColumns = Array< {
 } >;
 
 export type AllowedStatusTypes =
+	| 'active'
 	| 'inactive'
 	| 'progress'
 	| 'failed'
@@ -67,7 +68,8 @@ export interface SiteNode {
 
 export interface StatsNode {
 	type: AllowedTypes;
-	data: SiteStats;
+	status: AllowedStatusTypes;
+	value: SiteStats;
 }
 export interface BackupNode {
 	type: AllowedTypes;
@@ -97,6 +99,7 @@ export interface MonitorNode {
 }
 export interface SiteData {
 	site: SiteNode;
+	stats: StatsNode;
 	backup: BackupNode;
 	scan: ScanNode;
 	plugin: PluginNode;
@@ -107,7 +110,7 @@ export interface SiteData {
 
 export interface RowMetaData {
 	row: {
-		value: Site | any;
+		value: Site | SiteStats | ReactChild;
 		status: AllowedStatusTypes | string;
 		error?: boolean;
 	};
