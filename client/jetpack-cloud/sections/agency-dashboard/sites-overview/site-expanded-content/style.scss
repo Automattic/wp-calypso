@@ -108,46 +108,16 @@ button.site-expanded-content__card-button {
 }
 
 .is-small-screen {
-	padding-block: 8px 0;
+	padding-block: 1em 0;
 
 	.expanded-card {
 		width: 100%;
 		margin: 0;
-		box-shadow: none;
-		padding: 0 !important;
 		min-height: auto;
-		background: none;
-	}
-
-	.expanded-card__header {
-		display: none;
-	}
-
-	.site-expanded-content__card-content {
-		margin-block: 0;
-		width: auto;
 	}
 
 	.site-expanded-content__card-content-column {
-		padding-inline-end: 24px;
-	}
-
-	.site-expanded-content__card-footer {
-		padding: 16px 0 0;
-
-		.site-expanded-content__card-button {
-			white-space: nowrap;
-		}
-	}
-
-	.site-expanded-content__card-content-column-mobile {
-		.site-expanded-content__device-icon {
-			inset-inline-start: 0.2rem !important;
-		}
-	}
-
-	.site-expanded-content__device-score {
-		margin-inline-start: 0 !important;
+		max-width: 200px;
 	}
 }
 
