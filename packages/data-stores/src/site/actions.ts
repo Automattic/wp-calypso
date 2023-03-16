@@ -238,8 +238,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 				method: 'POST',
 				body: {
 					id: globalStylesId,
-					settings: globalStyles.settings,
-					styles: globalStyles.styles,
+					settings: globalStyles.settings ?? {},
+					styles: globalStyles.styles ?? {},
 				},
 			} );
 
