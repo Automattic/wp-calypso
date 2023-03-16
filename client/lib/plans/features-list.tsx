@@ -1835,7 +1835,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_MULTI_SITE ]: {
 		getSlug: () => FEATURE_MULTI_SITE,
-		getTitle: () => i18n.translate( 'Multi-site management' ),
+		getTitle: () => i18n.translate( 'Centralized Site Management' ),
 		getDescription: () =>
 			i18n.translate( 'Seamlessly switch between 2, 20, or 200 sites. All from one place.' ),
 	},
