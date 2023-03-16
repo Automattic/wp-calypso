@@ -1,13 +1,12 @@
+@import "@wordpress/base-styles/breakpoints";
 @import "@automattic/typography/styles/variables";
 
 .stats__all-time-highlights-section {
 	.highlight-cards {
 		background-color: inherit;
 		box-shadow: none;
-	}
 
-	.highlight-cards-list {
-		&:not(:first-child) {
+		& > div:not(:first-of-type) {
 			margin-top: 24px;
 		}
 	}
@@ -21,6 +20,12 @@
 		flex: 1;
 		max-height: unset;
 		grid-template-columns: minmax(200px, 550px) minmax(0, auto);
+		// Enough space for .post-stats-card__upload
+		min-width: 480px;
+
+		@media ( max-width: $break-large ) {
+			min-width: 320px;
+		}
 
 		&:not(:first-child) {
 			margin-left: 24px;
@@ -106,6 +111,10 @@
 	// Mobile layout
 	.highlight-cards-mobile {
 		margin: 16px 0;
+
+		& > div:not(:first-of-type) {
+			margin-top: 24px;
+		}
 
 		.highlight-cards-heading {
 			margin: 16px 16px 24px;
