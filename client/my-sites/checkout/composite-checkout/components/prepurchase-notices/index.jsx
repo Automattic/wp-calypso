@@ -5,7 +5,6 @@ import {
 	isJetpackPlanSlug,
 	isJetpackScanSlug,
 	getAllFeaturesForPlan,
-	// eslint-disable-next-line import/named
 	getAllProductsForPlan,
 	JETPACK_SOCIAL_PRODUCTS,
 	WPCOM_FEATURES_ANTISPAM,
@@ -71,7 +70,7 @@ const PrePurchaseNotices = () => {
 		return products.filter( ( p ) => ! p.expired );
 	} );
 
-	const siteProductThatOverlapsCartPlan = useSelector( () => {
+	const siteProductThatOverlapsCartPlan = () => {
 		const planSlugInCart = cartItemSlugs.find( isJetpackPlanSlug );
 		if ( ! planSlugInCart ) {
 			return null;
@@ -109,7 +108,7 @@ const PrePurchaseNotices = () => {
 		}
 
 		return null;
-	} );
+	};
 
 	/**
 	 * The product currently in the cart that overlaps/conflicts with the current active site plan.
