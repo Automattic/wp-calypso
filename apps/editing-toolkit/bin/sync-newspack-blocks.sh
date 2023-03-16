@@ -135,7 +135,7 @@ sed "${sedi[@]}" -e "s| function| Function|g" "$TARGET/types/index.d.ts"
 
 echo "Fixing the text domains…"
 echo -n "eslint --fix: "
-npx eslint . --fix > /dev/null 2>&1
+npx eslint . --debug --fix
 echo "done"
 echo -n "phpcbf: "
 ../../vendor/bin/phpcbf -q $TARGET | grep "A TOTAL OF" || PHPCBF_ERRORED=1
