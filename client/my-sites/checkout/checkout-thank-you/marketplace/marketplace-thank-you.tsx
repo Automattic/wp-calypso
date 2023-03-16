@@ -360,7 +360,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 						showSupportSection={ false }
 						thankYouTitle={ translate( "Congrats on your site's new superpowers!" ) }
 						thankYouSubtitle={ translate(
-							"You're scratching the surface of the WordPress community. Dig in and explore more of our favorite plugins."
+							"Now you're really getting the most out of WordPress. Dig in and explore more of our favorite plugins."
 						) }
 						headerBackgroundColor="#fff"
 						headerTextColor="#000"
