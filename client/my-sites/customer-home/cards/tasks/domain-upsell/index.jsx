@@ -154,7 +154,7 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 					}
 			  )
 			: translate(
-					"{{strong}}%(domainSuggestion)s{{/strong}} is a perfect site address. It's available, easy to find, and follow. Get it now and claim a corner of the web.",
+					"{{strong}}%(domainSuggestion)s{{/strong}} is a perfect site address. It's available and easy to find and follow. Get it now and claim a corner of the web.",
 					{
 						components: {
 							strong: <strong />,
