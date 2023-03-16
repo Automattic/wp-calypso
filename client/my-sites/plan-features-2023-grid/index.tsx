@@ -26,6 +26,7 @@ import {
 	isPremiumPlan,
 	getPlanSlugForTermVariant,
 	PlanSlug,
+	PLAN_BIENNIAL_PERIOD,
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -1069,7 +1070,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 
 			const maybeDiscountedPriceFullTerm =
 				null !== discountPrice
-					? discountPrice * ( billingPeriod === 730 ? 24 : 12 )
+					? discountPrice * ( PLAN_BIENNIAL_PERIOD === billingPeriod ? 24 : 12 )
 					: getPlanRawPrice( state, planProductId, false );
 
 			const tagline = planConstantObj.getPlanTagline?.() ?? '';

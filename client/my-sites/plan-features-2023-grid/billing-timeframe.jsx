@@ -1,4 +1,9 @@
-import { isWpComFreePlan, isWpcomEnterpriseGridPlan } from '@automattic/calypso-products';
+import {
+	isWpComFreePlan,
+	isWpcomEnterpriseGridPlan,
+	PLAN_BIENNIAL_PERIOD,
+	PLAN_ANNUAL_PERIOD,
+} from '@automattic/calypso-products';
 import { getCurrencyObject } from '@automattic/format-currency';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -26,13 +31,13 @@ function getPerMonthDescription( {
 		const fullTermPriceObj = getCurrencyObject( maybeDiscountedPriceFullTerm, currencyCode );
 		const fullTermPriceText = `${ fullTermPriceObj?.symbol }${ fullTermPriceObj?.integer }`;
 
-		if ( billingPeriod === 365 ) {
+		if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
 			return translate( 'per month, %(fullTermPriceText)s billed annually', {
 				args: { fullTermPriceText },
 			} );
 		}
 
-		if ( billingPeriod === 730 ) {
+		if ( PLAN_BIENNIAL_PERIOD === billingPeriod ) {
 			return translate( 'per month, %(fullTermPriceText)s billed every two years', {
 				args: { fullTermPriceText },
 			} );
