@@ -136,6 +136,7 @@
 		"@wordpress/jest-preset-default": "^10.3.0",
 		"@wordpress/readable-js-assets-webpack-plugin": "^2.5.0",
 		"babel-jest": "^27.5.1",
+		"eslint-plugin-md": "^1.0.19",
 		"jest-teamcity": "^1.9.0",
 		"wait-for-expect": "^3.0.2",
 		"webpack": "^5.68.0"
