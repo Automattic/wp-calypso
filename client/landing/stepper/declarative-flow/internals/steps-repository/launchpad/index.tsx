@@ -15,7 +15,6 @@ import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
-import { saveSiteSettings } from 'calypso/state/site-settings/actions';
 import { useQuery } from '../../../../hooks/use-query';
 import StepContent from './step-content';
 import type { Step } from '../../types';
@@ -47,22 +46,27 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 		[]
 	);
 
+	const areLaunchpadTasksCompleted = useCallback(
+		( flow: string | null ) => {
+			if ( isNewsletterFlow( flow ) ) {
+				return Boolean( checklist_statuses?.first_post_published );
+			}
+			return isSiteLaunched || Boolean( checklist_statuses?.site_launched );
+		},
+		[ checklist_statuses?.first_post_published, checklist_statuses?.site_launched, isSiteLaunched ]
+	);
+
 	const redirectToSiteHome = useCallback( ( siteSlug: string | null, flow: string | null ) => {
 		recordTracksEvent( 'calypso_launchpad_redirect_to_home', { flow: flow } );
 		window.location.replace( `/home/${ siteSlug }` );
 	}, [] );
 
-	const areLaunchpadTasksCompleted = useCallback(
-		( flow: string | null ) => {
-			if ( isNewsletterFlow( flow ) ) {
-				return checklist_statuses?.first_post_published;
-			}
-			return isSiteLaunched || checklist_statuses?.site_launched;
-		},
-		[ checklist_statuses?.first_post_published, checklist_statuses?.site_launched, isSiteLaunched ]
-	);
-
-	if ( ! isLoggedIn ) {
+	if (
+		! isLoggedIn ||
+		launchpadScreenOption === 'off' ||
+		areLaunchpadTasksCompleted( flow ) ||
+		( launchpadScreenOption === false && 'videopress' !== flow )
+	) {
 		redirectToSiteHome( siteSlug, flow );
 	}
 
@@ -80,32 +84,6 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 			);
 		}
 	}, [ verifiedParam, translate, dispatch ] );
-
-	useEffect( () => {
-		// Site is null for new users/sites during onboarding and for existing sites before data loads.
-		// In either case, we do not want to redirect from Launchpad until we can check site data.
-		if ( site ) {
-			if (
-				launchpadScreenOption === 'off' ||
-				( launchpadScreenOption === false && 'videopress' !== flow )
-			) {
-				redirectToSiteHome( siteSlug, flow );
-			}
-
-			if ( areLaunchpadTasksCompleted( flow ) ) {
-				saveSiteSettings( site.ID, { launchpad_screen: 'off' } );
-				redirectToSiteHome( siteSlug, flow );
-			}
-		}
-		recordTracksEvent( 'calypso_launchpad_loaded', { flow: flow } );
-	}, [
-		site,
-		launchpadScreenOption,
-		siteSlug,
-		flow,
-		areLaunchpadTasksCompleted,
-		redirectToSiteHome,
-	] );
 
 	useEffect( () => {
 		if ( siteSlug && site && localStorage.getItem( 'launchpad_siteSlug' ) !== siteSlug ) {
