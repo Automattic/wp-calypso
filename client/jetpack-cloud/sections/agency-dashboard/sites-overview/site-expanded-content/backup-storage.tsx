@@ -13,6 +13,8 @@ interface Props {
 	site: Site;
 }
 
+const BACKUP_ERROR_STATUSES = [ 'rewind_backup_error', 'backup_only_error' ];
+
 const BackupStorageContent = ( { siteId, siteUrl }: { siteId: number; siteUrl: string } ) => {
 	const translate = useTranslate();
 
@@ -27,24 +29,25 @@ const BackupStorageContent = ( { siteId, siteUrl }: { siteId: number; siteUrl: s
 			before: endDate?.toISOString() ?? undefined,
 		},
 		{
-			select: ( data: any[] ) => data.filter( ( a ) => isSuccessfulRealtimeBackup( a ) ),
+			select: ( backups: any[] ) =>
+				backups.filter( ( backup ) => isSuccessfulRealtimeBackup( backup ) ),
 		}
 	);
 
-	const realtimeBackup = data?.[ 0 ] ?? null;
+	const backup = data?.[ 0 ] ?? null;
 
-	const lastBackupDate = useDateWithOffset( realtimeBackup?.activityTs );
+	const lastBackupDate = useDateWithOffset( backup?.activityTs );
 	const getDisplayDate = useGetDisplayDate();
 	const displayDate = getDisplayDate( lastBackupDate, false );
 
+	// Show plugin name only if it is a activity from a plugin
 	const pluginName =
-		realtimeBackup?.activityName.startsWith( 'plugin__' ) &&
-		realtimeBackup.activityDescription[ 0 ]?.children[ 0 ];
+		backup?.activityName.startsWith( 'plugin__' ) && backup.activityDescription[ 0 ]?.children[ 0 ];
 
 	const backupTitle =
-		realtimeBackup?.activityDescription[ 0 ]?.children[ 0 ]?.text ?? realtimeBackup?.activityTitle;
+		backup?.activityDescription[ 0 ]?.children[ 0 ]?.text ?? backup?.activityTitle;
 
-	const showLoader = isLoading || ! realtimeBackup;
+	const showLoader = isLoading || ! backup;
 
 	return (
 		<div className="site-expanded-content__card-content-container">
@@ -81,9 +84,7 @@ const BackupStorageContent = ( { siteId, siteUrl }: { siteId: number; siteUrl: s
 export default function BackupStorage( { site }: Props ) {
 	const translate = useTranslate();
 
-	const hasBackupError = [ 'rewind_backup_error', 'backup_only_error' ].includes(
-		site.latest_backup_status
-	);
+	const hasBackupError = BACKUP_ERROR_STATUSES.includes( site.latest_backup_status );
 
 	const components = {
 		strong: <strong></strong>,
