@@ -10,6 +10,7 @@ import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
+import wpcom from 'calypso/lib/wp';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getDomainName, getIntervalType } from 'calypso/signup/steps/plans/util';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -25,6 +26,7 @@ export class PlansStepPM extends Component {
 			isDesktop: isDesktop(),
 			experiment: null,
 			experimentIsLoading: true,
+			coupon: null,
 		};
 	}
 	componentDidMount() {
@@ -39,10 +41,19 @@ export class PlansStepPM extends Component {
 				this.setState( { experimentIsLoading: false } );
 			}
 		);
+		this.getCoupon();
 	}
 
 	componentWillUnmount() {
 		this.unsubscribe();
+	}
+
+	async getCoupon() {
+		const coupon = await wpcom.req.get( {
+			path: '/marketing/personalized-coupon?coupon_code=Intro.',
+			apiNamespace: 'wpcom/v2',
+		} );
+		this.state.coupon = coupon;
 	}
 
 	plansFeaturesList() {
@@ -179,15 +190,23 @@ export class PlansStepPM extends Component {
 			<>
 				<QueryPlans />
 				<MarketingMessage path="signup/plans" />
+				{ `RETURN: ${ JSON.stringify( this.state.coupon ) }` }
 				<div className={ classes }>{ this.plansFeaturesSelection() }</div>
 			</>
 		);
 	}
 }
 
-export default connect( null, {
-	recordTracksEvent,
-	saveSignupStep,
-	submitSignupStep,
-	errorNotice,
-} )( localize( PlansStepPM ) );
+// export default connect( null, {
+// 	recordTracksEvent,
+// 	saveSignupStep,
+// 	submitSignupStep,
+// 	errorNotice,
+// } )( localize( PlansStepPM ) );
+
+export default connect(
+	( state, { store } ) => ( {
+		mySelectedSiteId: store.getState(),
+	} ),
+	{ recordTracksEvent, saveSignupStep, submitSignupStep, errorNotice }
+)( localize( PlansStepPM ) );

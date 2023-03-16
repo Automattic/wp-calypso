@@ -166,6 +166,7 @@ export class PlansFeaturesMainPM extends Component {
 			intervalType: this.props.intervalType,
 			showBiannualToggle: this.props.showBiannualToggle,
 		};
+
 		const plans = this.getPlans();
 
 		return <PlanTypeSelector { ...planTypeSelector } kind="interval" plans={ plans } />;
