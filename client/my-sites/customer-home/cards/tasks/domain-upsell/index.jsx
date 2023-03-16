@@ -167,8 +167,8 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 
 	const domainNameSVG = (
 		<svg viewBox="0 0 56 18">
-			<text x="28" y="15" text-anchor="middle">
-				example.com
+			<text x="28" y="15" textAnchor="middle">
+				{ domainSuggestionName }
 			</text>
 		</svg>
 	);
