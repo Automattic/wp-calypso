@@ -27,7 +27,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useExperiment } from 'calypso/lib/explat';
 import { urlToSlug } from 'calypso/lib/url';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
-import { requestActiveTheme, setActiveTheme } from 'calypso/state/themes/actions';
+import { setActiveTheme } from 'calypso/state/themes/actions';
 import { getPurchasedThemes } from 'calypso/state/themes/selectors/get-purchased-themes';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 import { useIsPluginBundleEligible } from '../../../../hooks/use-is-plugin-bundle-eligible';
@@ -497,7 +497,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 				return setDesignOnSite( siteSlugOrId, _selectedDesign, {
 					styleVariation: selectedStyleVariation,
 					verticalId: siteVerticalId,
-				} ).then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) );
+				} ).then( ( theme: ActiveTheme ) => {
+					return reduxDispatch( setActiveTheme( site?.ID || -1, theme ) );
+				} );
 			} );
 
 			handleSubmit(

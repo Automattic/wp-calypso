@@ -483,13 +483,14 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 	}
 
 	function* setDesignOnSite( siteSlug: string, selectedDesign: Design, options?: DesignOptions ) {
-		yield* setThemeOnSite(
+		const theme = yield* setThemeOnSite(
 			siteSlug,
 			selectedDesign.recipe?.stylesheet?.split( '/' )[ 1 ] || selectedDesign.theme,
 			options?.styleVariation?.slug
 		);
 
-		return yield* runThemeSetupOnSite( siteSlug, selectedDesign, options );
+		yield* runThemeSetupOnSite( siteSlug, selectedDesign, options );
+		return theme;
 	}
 
 	function* createCustomTemplate(
