@@ -4,7 +4,6 @@ import {
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 } from '@automattic/calypso-products';
 import { Button, Card } from '@automattic/components';
-import { SiteDetails } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -16,6 +15,7 @@ import { SitePlanData } from 'calypso/my-sites/checkout/composite-checkout/hooks
 import { getPlanRawPrice, getPlan } from 'calypso/state/plans/selectors';
 import TrialFeatureCard from '../components/ecommerce-plan-features/trial-feature-card';
 import { getWooExpressMediumFeatureSets } from '../ecommerce-trial/wx-medium-features';
+import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
 
