@@ -1,0 +1,53 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "../components";
+
+$tip_icon_base64: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTMiIGhlaWdodD0iMTciIHZpZXdCb3g9IjAgMCAxMyAxNyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGVsbGlwc2UgY3g9IjYuNSIgY3k9IjYiIHJ4PSI1IiByeT0iNSIgc3Ryb2tlPSIjQTdBQUFEIiBzdHJva2Utd2lkdGg9IjEuMyIvPgo8bGluZSB4MT0iMy41IiB5MT0iMTMuOTgxMyIgeDI9IjkuNSIgeTI9IjEzLjk4MTMiIHN0cm9rZT0iI0E3QUFBRCIgc3Ryb2tlLXdpZHRoPSIxLjMiLz4KPGxpbmUgeDE9IjQuNSIgeTE9IjE2LjM1IiB4Mj0iOC41IiB5Mj0iMTYuMzUiIHN0cm9rZT0iI0E3QUFBRCIgc3Ryb2tlLXdpZHRoPSIxLjMiLz4KPC9zdmc+Cg==);
+
+.delivery-window-input {
+	&.form-fieldset {
+		@extend %form-fieldset;
+	}
+
+	.form-label {
+		@extend %form-label;
+	}
+
+	.select-row {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+
+		@media ( min-width: calc( $break-small + 1px ) ) {
+			width: 457px;
+		}
+	}
+
+	.form-select {
+		@extend %form-select;
+		flex-basis: calc(50% - 4px);
+		margin-bottom: 12px;
+
+		@media screen and ( max-width: $break-small ) {
+			flex-basis: 100%;
+		}
+	}
+
+	.field-tip {
+		display: flex;
+		gap: 8px;
+
+		.tip-icon {
+			background: $studio-white $tip_icon_base64 no-repeat center;
+			height: 20px;
+			width: 20px;
+		}
+
+		.tip-text {
+			color: $studio-gray-40;
+			font-size: 0.875rem;
+			font-weight: 400;
+			line-height: 20px;
+		}
+	}
+}
