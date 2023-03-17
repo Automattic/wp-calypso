@@ -95,7 +95,7 @@ export default function PostStatsCard( {
 			{ uploadHref && ! post?.post_thumbnail && (
 				<div className="post-stats-card__upload">
 					<Button
-						className="post-stats-card__upload-btn"
+						className="post-stats-card__upload-btn is-compact"
 						onClick={ recordClickOnUploadImageButton }
 					>
 						{ translate( 'Add featured image' ) }

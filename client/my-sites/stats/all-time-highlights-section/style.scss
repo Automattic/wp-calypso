@@ -20,7 +20,7 @@
 	.post-stats-card {
 		flex: 1;
 		max-height: unset;
-		grid-template-columns: minmax(200px, 550px) minmax(0, auto);
+		grid-template-columns: minmax(150px, 550px) minmax(0, auto);
 		// Enough space for .post-stats-card__upload
 		min-width: 480px;
 
