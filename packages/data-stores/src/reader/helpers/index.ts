@@ -7,7 +7,7 @@ type FetchFromApiParams = {
 	body?: object;
 	isLoggedIn?: boolean;
 };
-
+// Helper function for fetching from subkey authenticated API. Subkey authentication process is only applied in case of logged-out users.
 async function fetchFromApi< ReturnType >( {
 	path,
 	method = 'GET',
