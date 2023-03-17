@@ -5,7 +5,7 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import domainUpsellMobileIllustration from 'calypso/assets/images/customer-home/illustration--task-domain-upsell-mobile.png';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
@@ -70,24 +70,6 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 	const translate = useTranslate();
 
 	const locale = useLocale();
-
-	useEffect( () => {
-		const centerDomainSuggestion = () => {
-			const svgGroup = document.querySelector( '.task__domain-upsell svg g' );
-			if ( svgGroup ) {
-				const svgGroupProps = svgGroup.getBBox();
-				const svgGroupWidth = ( svgGroupProps.width - 20 ) / 2;
-				svgGroup.setAttribute( 'transform', 'translate(-' + svgGroupWidth + ', 0)' );
-			}
-		};
-
-		centerDomainSuggestion();
-
-		window.addEventListener( 'resize', centerDomainSuggestion );
-		return () => {
-			window.removeEventListener( 'resize', centerDomainSuggestion );
-		};
-	} );
 
 	// Note: domainSuggestionOptions must be equal by reference upon each render
 	// to avoid a render loop, since it's used to memoize a selector.
@@ -176,19 +158,11 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 
 	const domainNameSVG = (
 		<svg viewBox="0 0 40 18" id="map">
-			<g>
-				<path
-					fillRule="evenodd"
-					clipRule="evenodd"
-					d="M15 11h-.2V9c0-1.5-1.2-2.8-2.8-2.8S9.2 7.5 9.2 9v2H9c-.6 0-1 .4-1 1v4c0 .6.4 1 1 1h6c.6 0 1-.4 1-1v-4c0-.6-.4-1-1-1zm-1.8 0h-2.5V9c0-.7.6-1.2 1.2-1.2s1.2.6 1.2 1.2v2z"
-				/>
-				<text x="20" y="15">
-					{ /* max 24 chars in the domain name */ }
-					{ domainSuggestionName.length > 24
-						? `${ domainSuggestionName.slice( 0, 21 ) }...`
-						: domainSuggestionName }
-				</text>
-			</g>
+			<text x="-115" y="15">
+				{ domainSuggestionName.length > 34
+					? `${ domainSuggestionName.slice( 0, 32 ) }...`
+					: domainSuggestionName }
+			</text>
 		</svg>
 	);
 
