@@ -5,6 +5,7 @@ import {
 	ProductsList,
 	User,
 	AutomatedTransferEligibility,
+	Plans,
 	StepperInternal,
 } from '@automattic/data-stores';
 
@@ -24,3 +25,5 @@ export const USER_STORE = User.register( {
 } );
 
 export const AUTOMATED_ELIGIBILITY_STORE = AutomatedTransferEligibility.register();
+
+export const PLANS_STORE = Plans.register();

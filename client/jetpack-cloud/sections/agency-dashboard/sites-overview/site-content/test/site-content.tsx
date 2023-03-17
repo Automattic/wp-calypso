@@ -13,6 +13,7 @@ import SiteContent from '../index';
 jest.mock( '@automattic/viewport-react', () => ( {
 	useDesktopBreakpoint: () => true,
 	useMobileBreakpoint: () => false,
+	useBreakpoint: () => true,
 } ) );
 
 describe( '<SiteContent>', () => {
