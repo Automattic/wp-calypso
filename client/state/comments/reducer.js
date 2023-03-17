@@ -548,7 +548,7 @@ export const counts = ( state = {}, action ) => {
 				state[ siteId ],
 				newSiteCounts && { site: newSiteCounts }
 			);
-			return Object.assign( {}, state, { [ siteId ]: newTotalSiteCounts } );
+			return { ...state, ...{ [ siteId ]: newTotalSiteCounts } };
 		}
 	}
 
