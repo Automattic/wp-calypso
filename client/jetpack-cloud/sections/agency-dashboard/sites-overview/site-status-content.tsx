@@ -16,7 +16,12 @@ import ToggleActivateMonitoring from '../downtime-monitoring/toggle-activate-mon
 import SitesOverviewContext from './context';
 import SiteSelectCheckbox from './site-select-checkbox';
 import SiteSetFavorite from './site-set-favorite';
-import { getRowMetaData, getProductSlugFromProductType } from './utils';
+import {
+	getRowMetaData,
+	getProductSlugFromProductType,
+	getBoostRating,
+	getBoostRatingClass,
+} from './utils';
 import type { AllowedTypes, SiteData } from './types';
 
 interface Props {
@@ -94,6 +99,8 @@ export default function SiteStatusContent( {
 	const handleDeselectLicenseAction = () => {
 		dispatch( unselectLicense( siteId, type ) );
 	};
+
+	const hasBoost = rows.site.value.has_boost;
 
 	function getTrendIcon( viewsTrend: 'up' | 'down' ) {
 		if ( viewsTrend === 'up' ) {
@@ -212,8 +219,23 @@ export default function SiteStatusContent( {
 	}
 
 	if ( type === 'boost' ) {
-		// Content will be added later
-		return null;
+		const overallScore = rows.site.value.jetpack_boost_scores.overall;
+		if ( hasBoost ) {
+			return (
+				<div
+					className={ classNames(
+						'site-expanded-content__card-content-score',
+						getBoostRatingClass( overallScore )
+					) }
+				>
+					{ translate( '%(rating)s Score', {
+						args: { rating: getBoostRating( overallScore ) },
+						comment: '%rating will be replaced by boost rating, e.g. "A", "B", "C", "D", or "F"',
+					} ) }
+				</div>
+			);
+		}
+		return <div></div>;
 	}
 
 	let content;

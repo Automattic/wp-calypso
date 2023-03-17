@@ -417,3 +417,18 @@
 	padding: 15px;
 	color: var(--studio-red-50);
 }
+
+.boost-score-good {
+	@extend .sites-overview__column-content;
+	color: var(--studio-green-50);
+}
+
+.boost-score-okay {
+	@extend .sites-overview__column-content;
+	color: var(--studio-yellow-50);
+}
+
+.boost-score-bad {
+	@extend .sites-overview__column-content;
+	color: var(--studio-red-50);
+}

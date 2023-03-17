@@ -135,7 +135,7 @@ const scanEventNames: StatusEventNames = {
 	},
 };
 
-// Montitor feature status event names for large screen(>960px) and small screen(<960px)
+// Monitor feature status event names for large screen(>960px) and small screen(<960px)
 const monitorEventNames: StatusEventNames = {
 	disabled: {
 		small_screen: 'calypso_jetpack_agency_dashboard_monitor_inactive_click_small_screen',
