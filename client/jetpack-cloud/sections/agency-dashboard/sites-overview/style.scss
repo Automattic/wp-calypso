@@ -139,14 +139,16 @@
 	vertical-align: middle;
 	color: var(--studio-gray-5);
 }
-.sites-overview__stats-trend__up {
-	vertical-align: middle;
-	display: inline-flex;
-	fill: var(--studio-jetpack-green-40);
-}
+.sites-overview__stats-trend__up,
 .sites-overview__stats-trend__down {
 	vertical-align: middle;
 	display: inline-flex;
+	margin-inline-start: -5px;
+}
+.sites-overview__stats-trend__up {
+	fill: var(--studio-jetpack-green-40);
+}
+.sites-overview__stats-trend__down {
 	fill: var(--studio-red-50);
 }
 .sites-overview__stats-trend__same {
@@ -156,7 +158,7 @@
 	border-radius: 50%;
 	background: var(--studio-gray-5);
 	display: inline-flex;
-	margin-inline-start: 8px;
+	margin-inline-end: 5px;
 	@media screen and (max-width: $break-xlarge) {
 		margin-block-start: 8px;
 	}
@@ -170,7 +172,6 @@
 .sites-overview__stats-trend svg {
 	position: relative;
 	inset-block-start: 0.3rem;
-	inset-inline-start: 0.25rem;
 	@media screen and (max-width: $break-xlarge) {
 		inset-block-start: 0.27rem;
 	}
@@ -289,7 +290,7 @@
 	display: inline-block;
 	line-height: 17px;
 	height: 18px;
-	padding: 2px 5px;
+	padding: 2px 1px;
 }
 .sites-overview__tooltip {
 	.popover__arrow {

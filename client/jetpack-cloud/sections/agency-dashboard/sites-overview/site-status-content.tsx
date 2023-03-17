@@ -95,7 +95,7 @@ export default function SiteStatusContent( {
 		dispatch( unselectLicense( siteId, type ) );
 	};
 
-	function getTrendIcon( viewsTrend: 'up' | 'down' | 'same' ) {
+	function getTrendIcon( viewsTrend: 'up' | 'down' ) {
 		if ( viewsTrend === 'up' ) {
 			return arrowUp;
 		} else if ( viewsTrend === 'down' ) {
