@@ -561,6 +561,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			trimContent: false,
 			posts_source_site_id: sourceSiteId,
 		} );
+
+		return activatedTheme;
 	}
 
 	const setSiteSetupError = ( error: string, message: string ) => ( {
