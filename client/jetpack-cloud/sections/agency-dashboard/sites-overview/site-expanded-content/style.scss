@@ -102,7 +102,7 @@ $color-yellow: var(--studio-yellow-50);
 	@include svg-color($color-red, $color-red, $color-red);
 }
 
-.site-expanded-content__card-content-count-title {
+.site-expanded-content__card-content-score-title {
 	font-size: 0.75rem;
 	color: var(--studio-gray-40);
 	overflow: hidden;
@@ -120,7 +120,7 @@ $color-yellow: var(--studio-yellow-50);
 	.expanded-card {
 		width: 100%;
 		margin: 0;
-		min-height: auto;
+		min-height: 180px;
 	}
 
 	.site-expanded-content__card-content-column {

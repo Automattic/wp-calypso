@@ -53,10 +53,10 @@ const BackupStorageContent = ( { siteId, siteUrl }: { siteId: number; siteUrl: s
 		<div className="site-expanded-content__card-content-container">
 			<div className="site-expanded-content__card-content">
 				<div className="site-expanded-content__card-content-column">
-					<div className="site-expanded-content__card-content-count">
+					<div className="site-expanded-content__card-content-score">
 						{ showLoader ? <TextPlaceholder /> : displayDate }
 					</div>
-					<div className="site-expanded-content__card-content-count-title">
+					<div className="site-expanded-content__card-content-score-title">
 						{ showLoader ? (
 							<TextPlaceholder />
 						) : (
