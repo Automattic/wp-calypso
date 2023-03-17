@@ -55,7 +55,7 @@ const checkFeatureFlag: Callback = ( context, next ) => {
 };
 
 export default function () {
-	page.redirect( '/subscriptions', '/subscriptions/sites' );
+	page.redirect( '/subscriptions', '/subscriptions/settings' );
 
 	page(
 		/\/subscriptions(\/(comments|settings|sites))?/,
