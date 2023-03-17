@@ -8,7 +8,6 @@ import {
 } from '@automattic/calypso-products';
 import { CompactCard, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
-import { ExternalLink } from '@wordpress/components';
 import { Icon, warning as warningIcon } from '@wordpress/icons';
 import classNames from 'classnames';
 import i18n, { localize, useTranslate } from 'i18n-calypso';
@@ -41,6 +40,11 @@ import {
 } from 'calypso/lib/purchases';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
+import {
+	isTemporarySitePurchase,
+	isJetpackTemporarySitePurchase,
+	isAkismetTemporarySitePurchase,
+} from '../utils';
 import OwnerInfo from './owner-info';
 import 'calypso/me/purchases/style.scss';
 
@@ -57,16 +61,7 @@ class PurchaseItem extends Component {
 	}
 
 	getStatus() {
-		const {
-			purchase,
-			translate,
-			locale,
-			moment,
-			name,
-			isJetpack,
-			isJetpackTemporarySite,
-			isDisconnectedSite,
-		} = this.props;
+		const { purchase, translate, locale, moment, name, isJetpack, isDisconnectedSite } = this.props;
 		const expiry = moment( purchase.expiryDate );
 
 		if ( purchase && isPartnerPurchase( purchase ) ) {
@@ -77,23 +72,47 @@ class PurchaseItem extends Component {
 			} );
 		}
 
-		if ( isDisconnectedSite ) {
-			if ( isJetpackTemporarySite ) {
+		if ( isDisconnectedSite && ! isAkismetTemporarySitePurchase( purchase ) ) {
+			if ( isJetpackTemporarySitePurchase( purchase ) ) {
 				return (
 					<>
 						<span className="purchase-item__is-error">
-							{ translate( 'Activate your product license key' ) }
+							{ translate( 'Activate your Jetpack product license key', {
+								components: {
+									br: <br />,
+									// TODO: These anchor links are causing React console warnings,
+									// "Warning: validateDOMNesting(...): <a> cannot appear as a descendant of <a>."
+									// Because the <CompactCard> component that renders this also us surrounded by an anchor link.
+									// See: <Card> General Guidelines: https://github.com/Automattic/wp-calypso/tree/trunk/packages/components/src/card#general-guidelines
+									// TLDR: Don't display more than one primary button or action in a single card. (in which the card itself if a primary action/link in this case)
+									a: (
+										<a href="https://jetpack.com/support/install-jetpack-and-connect-your-new-plan/#how-can-i-activate-my-license-key-in-my-jetpack-installation" />
+									),
+									icon: <Gridicon icon="external" size={ 12 } />,
+								},
+							} ) }
 						</span>
-						<br />
-						<ExternalLink
-							className="purchase-item__link"
-							href="https://jetpack.com/support/install-jetpack-and-connect-your-new-plan/#how-can-i-activate-my-license-key-in-my-jetpack-installation"
-						>
-							Learn more
-						</ExternalLink>
 					</>
 				);
 			}
+			// if ( isAkismetTemporarySitePurchase( purchase ) ) {
+			// 	return (
+			// 		<>
+			// 			<span className="purchase-item__is-error">
+			// 				{ translate(
+			// 					'Activate your Akismet license key {{br/}}{{a}}Learn more {{icon/}}{{/a}}',
+			// 					{
+			// 						components: {
+			// 							br: <br />,
+			// 							a: <a href="https://docs.akismet.com/getting-started/activate/" />,
+			// 							icon: <Gridicon icon="external" size={ 12 } />,
+			// 						},
+			// 					}
+			// 				) }
+			// 			</span>
+			// 		</>
+			// 	);
+			// }
 
 			if ( isJetpack ) {
 				return (
@@ -364,16 +383,8 @@ class PurchaseItem extends Component {
 	}
 
 	getPurchaseType() {
-		const {
-			purchase,
-			site,
-			translate,
-			slug,
-			showSite,
-			isDisconnectedSite,
-			isJetpackTemporarySite,
-		} = this.props;
-		if ( isJetpackTemporarySite ) {
+		const { purchase, site, translate, slug, showSite, isDisconnectedSite } = this.props;
+		if ( isTemporarySitePurchase( purchase ) ) {
 			return null;
 		}
 
@@ -575,8 +586,9 @@ class PurchaseItem extends Component {
 
 		if ( ! isPlaceholder && getManagePurchaseUrlFor ) {
 			// A "disconnected" Jetpack site's purchases may be managed.
-			// A "disconnected" WordPress.com site may not (the user has been removed).
-			if ( ! isDisconnectedSite || isJetpack ) {
+			// A "disconnected" WordPress.com site may *NOT* be managed (the user has been removed), unless it is a
+			// WPCOM generated temporary site, which is created during the siteless checkout flow. (currently Jetpack & Akismet can have siteless purchases).
+			if ( ! isDisconnectedSite || isJetpack || isTemporarySitePurchase( purchase ) ) {
 				onClick = () => {
 					window.scrollTo( 0, 0 );
 				};
@@ -618,7 +630,6 @@ PurchaseItem.propTypes = {
 	getManagePurchaseUrlFor: PropTypes.func,
 	isDisconnectedSite: PropTypes.bool,
 	isJetpack: PropTypes.bool,
-	isJetpackTemporarySite: PropTypes.bool,
 	isPlaceholder: PropTypes.bool,
 	purchase: PropTypes.object,
 	showSite: PropTypes.bool,

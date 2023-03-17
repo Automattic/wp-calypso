@@ -120,7 +120,8 @@ import {
 	canEditPaymentDetails,
 	getAddNewPaymentMethodPath,
 	getChangePaymentMethodPath,
-	isJetpackTemporarySitePurchase,
+	isTemporarySitePurchase,
+	isAkismetTemporarySitePurchase,
 } from '../utils';
 import PurchaseNotice from './notices';
 import PurchasePlanDetails from './plan-details';
@@ -140,7 +141,6 @@ class ManagePurchase extends Component {
 		hasLoadedPurchasesFromServer: PropTypes.bool.isRequired,
 		hasNonPrimaryDomainsFlag: PropTypes.bool,
 		isAtomicSite: PropTypes.bool,
-		isJetpackTemporarySite: PropTypes.bool,
 		renewableSitePurchases: PropTypes.arrayOf( PropTypes.object ),
 		productsList: PropTypes.object,
 		purchase: PropTypes.object,
@@ -247,7 +247,11 @@ class ManagePurchase extends Component {
 	renderRenewButton() {
 		const { purchase, translate } = this.props;
 
-		if ( isPartnerPurchase( purchase ) || ! isRenewable( purchase ) || ! this.props.site ) {
+		if (
+			isPartnerPurchase( purchase ) ||
+			! isRenewable( purchase ) ||
+			( ! this.props.site && ! isAkismetTemporarySitePurchase( purchase ) )
+		) {
 			return null;
 		}
 
@@ -1000,7 +1004,6 @@ class ManagePurchase extends Component {
 		const {
 			purchase,
 			translate,
-			isJetpackTemporarySite,
 			isProductOwner,
 			getManagePurchaseUrlFor,
 			siteSlug,
@@ -1024,7 +1027,7 @@ class ManagePurchase extends Component {
 		return (
 			<Fragment>
 				{ this.props.showHeader && (
-					<PurchaseSiteHeader siteId={ siteId } name={ siteName } domain={ siteDomain } />
+					<PurchaseSiteHeader siteId={ siteId } name={ siteName } purchase={ purchase } />
 				) }
 				<Card className={ classes }>
 					<header className="manage-purchase__header">
@@ -1081,12 +1084,12 @@ class ManagePurchase extends Component {
 						{ ! preventRenewal && ! renderMonthlyRenewalOption && this.renderRenewNowNavItem() }
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewAnnuallyNavItem() }
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewMonthlyNavItem() }
-						{ ! isJetpackTemporarySite && this.renderUpgradeNavItem() }
+						{ ! isTemporarySitePurchase( purchase ) && this.renderUpgradeNavItem() }
 						{ this.renderEditPaymentMethodNavItem() }
 						{ this.renderReinstall() }
 						{ this.renderCancelPurchaseNavItem() }
 						{ this.renderCancelSurvey() }
-						{ ! isJetpackTemporarySite && this.renderRemovePurchaseNavItem() }
+						{ ! isTemporarySitePurchase( purchase ) && this.renderRemovePurchaseNavItem() }
 					</>
 				) }
 			</Fragment>
@@ -1285,7 +1288,6 @@ export default connect(
 			isAtomicSite: isSiteAtomic( state, siteId ),
 			relatedMonthlyPlanSlug,
 			relatedMonthlyPlanPrice,
-			isJetpackTemporarySite: purchase && isJetpackTemporarySitePurchase( purchase.domain ),
 			primaryDomain: primaryDomain,
 			isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
 		};

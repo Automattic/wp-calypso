@@ -6,23 +6,23 @@ import Site from 'calypso/blocks/site';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import QuerySites from 'calypso/components/data/query-sites';
 import { getSite } from 'calypso/state/sites/selectors';
-import { isJetpackTemporarySitePurchase } from '../utils';
+import { isTemporarySitePurchase } from '../utils';
 
 import './header.scss';
 
 class PurchaseSiteHeader extends Component {
 	static propTypes = {
-		isJetpackTemporarySite: PropTypes.bool,
+		isTemporarySitePurchase: PropTypes.bool,
 		isPlaceholder: PropTypes.bool,
 		siteId: PropTypes.number,
 		name: PropTypes.string,
-		domain: PropTypes.string,
+		purchase: PropTypes.object,
 	};
 
 	// Disconnected sites can't render the `Site` component, but there can be
 	// purchases from disconnected sites. Here we spoof the Site header.
 	renderFauxSite() {
-		const { name, domain } = this.props;
+		const { name, purchase } = this.props;
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
@@ -33,7 +33,7 @@ class PurchaseSiteHeader extends Component {
 					</div>
 					<div className="site__info">
 						<div className="site__title">{ name }</div>
-						<div className="site__domain">{ domain }</div>
+						<div className="site__domain">{ purchase?.domain }</div>
 					</div>
 				</div>
 			</div>
@@ -42,12 +42,12 @@ class PurchaseSiteHeader extends Component {
 	}
 
 	render() {
-		const { isJetpackTemporarySite, isPlaceholder, siteId, site } = this.props;
+		const { purchase, isPlaceholder, siteId, site } = this.props;
 		let header;
 
 		// Both the domain and name of a Jetpack temporary site don't provide any
 		// meaningful information to the user.
-		if ( isJetpackTemporarySite ) {
+		if ( purchase && isTemporarySitePurchase( purchase ) ) {
 			return null;
 		}
 
@@ -68,7 +68,6 @@ class PurchaseSiteHeader extends Component {
 	}
 }
 
-export default connect( ( state, { domain, siteId } ) => ( {
+export default connect( ( state, { siteId } ) => ( {
 	site: getSite( state, siteId ),
-	isJetpackTemporarySite: isJetpackTemporarySitePurchase( domain ),
 } ) )( PurchaseSiteHeader );
