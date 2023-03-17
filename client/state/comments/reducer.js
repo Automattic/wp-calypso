@@ -168,12 +168,11 @@ export function items( state = {}, action ) {
 		case COMMENTS_EMPTY_SUCCESS: {
 			const { commentIds } = action;
 
-			const commentKeys = Object.keys( state );
 			let newState = { ...state };
-			commentKeys.forEach( ( key ) => {
+			Object.entries( state ).map( ( [ key, comments ] ) => {
 				newState = {
 					...newState,
-					[ key ]: state[ key ].filter( ( comment ) => ! commentIds.includes( comment.ID ) ),
+					[ key ]: comments.filter( ( comment ) => ! commentIds.includes( comment.ID ) ),
 				};
 			} );
 
