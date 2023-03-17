@@ -74,20 +74,8 @@ class HandleEmailedLinkForm extends Component {
 		}
 	}
 
-	componentDidMount() {
-		if (
-			this.props.clientId === config( 'wpcom_signup_id' ) &&
-			! this.props.isImmediateLoginAttempt &&
-			! wooDnaConfig( this.props.initialQuery ).isWooDnaFlow()
-		) {
-			this.handleSubmit();
-		}
-	}
-
 	handleSubmit = ( event ) => {
-		if ( event ) {
-			event.preventDefault();
-		}
+		event.preventDefault();
 
 		this.setState( {
 			hasSubmitted: true,
