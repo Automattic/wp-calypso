@@ -6,7 +6,28 @@ import './style.scss';
 // We don't have any data yet so we are just plotting visitor data.
 // Currently using the LineChart component from the Calypso library.
 
-export default function SubscribersSection() {
+const DATA_TYPE = 'single';
+// const DATA_TYPE = 'multi';
+
+function getDataSingleLine() {
+	const data = [
+		[
+			{ date: 1528462681168, value: 21 },
+			{ date: 1528549081168, value: 26 },
+			{ date: 1528635481168, value: 32 },
+			{ date: 1528721881168, value: 38 },
+			{ date: 1528808281168, value: 43 },
+			{ date: 1528894681168, value: 44 },
+			{ date: 1528981081168, value: 57 },
+			{ date: 1529067481168, value: 54 },
+			{ date: 1529153881168, value: 49 },
+			{ date: 1529240281168, value: 61 },
+		],
+	];
+	return data;
+}
+
+function getDataMultiLine() {
 	const data = [
 		[
 			{ date: 1528462681168, value: 21 },
@@ -45,8 +66,38 @@ export default function SubscribersSection() {
 			{ date: 1529240281168, value: 46 },
 		],
 	];
+	return data;
+}
 
-	const legendInfo = [ { name: 'Line #1' }, { name: 'Line #2' }, { name: 'Line #3' } ];
+function getData() {
+	if ( DATA_TYPE === 'single' ) {
+		return getDataSingleLine();
+	}
+	if ( DATA_TYPE === 'multi' ) {
+		return getDataMultiLine();
+	}
+	return [];
+}
+
+function getLegendSingleLine() {
+	return [];
+}
+function getLegendMultiLine() {
+	return [ { name: 'Line #1' }, { name: 'Line #2' }, { name: 'Line #3' } ];
+}
+function getLegend() {
+	if ( DATA_TYPE === 'single' ) {
+		return getLegendSingleLine();
+	}
+	if ( DATA_TYPE === 'multi' ) {
+		return getLegendMultiLine();
+	}
+	return [];
+}
+
+export default function SubscribersSection() {
+	const data = getData();
+	const legendInfo = getLegend();
 
 	return (
 		<div className="subscribers-section">
