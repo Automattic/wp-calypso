@@ -1,10 +1,16 @@
 /**
  * @jest-environment jsdom
  */
+import { setDefaultLocale } from '@automattic/format-currency';
 import { render, screen } from '@testing-library/react';
+import React from 'react';
 import PlanPrice from '../index';
 
 describe( 'PlanPrice', () => {
+	beforeEach( () => {
+		setDefaultLocale( 'en-US' );
+	} );
+
 	it( 'renders a zero when rawPrice is passed a "0"', () => {
 		render( <PlanPrice rawPrice={ 0 } /> );
 		expect( document.body ).toHaveTextContent( '$0' );
@@ -314,5 +320,17 @@ describe( 'PlanPrice', () => {
 		render( <PlanPrice rawPrice={ 44700.5 } currencyCode="IDR" isLargeCurrency={ true } /> );
 		expect( document.body ).toHaveTextContent( 'Rp44,700.50' );
 		expect( document.querySelector( '.is-large-currency' ) ).toBeTruthy();
+	} );
+
+	it( 'renders the symbol to the left of the integer when symbolPosition is "before"', () => {
+		setDefaultLocale( 'en-US' );
+		render( <PlanPrice rawPrice={ 48 } currencyCode="CAD" /> );
+		expect( document.body ).toHaveTextContent( 'C$48' );
+	} );
+
+	it( 'renders the symbol to the right of the integer when symbolPosition is "after"', () => {
+		setDefaultLocale( 'fr-CA' );
+		render( <PlanPrice rawPrice={ 48 } currencyCode="CAD" /> );
+		expect( document.body ).toHaveTextContent( '48C$' );
 	} );
 } );
