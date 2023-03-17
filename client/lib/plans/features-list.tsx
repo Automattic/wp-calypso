@@ -236,10 +236,12 @@ export type FeatureObject = {
 	getSlug: () => string;
 	getTitle: ( domainName?: string ) => TranslateResult;
 	getAlternativeTitle?: () => TranslateResult;
+	getConditionalTitle?: () => TranslateResult;
 	getHeader?: () => TranslateResult;
 	getDescription?: ( domainName?: string ) => TranslateResult;
 	getStoreSlug?: () => string;
 	getCompareTitle?: () => TranslateResult;
+	getCompareSubtitle?: () => TranslateResult;
 	getIcon?: () => string | { icon: string; component: MemoExoticComponent< any > } | JSX.Element;
 	isPlan?: boolean;
 };
@@ -1047,6 +1049,8 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Ship physical products in a snap and show live rates from shipping carriers like UPS and other shipping options.'
 			),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 
 	[ FEATURE_UNLIMITED_PRODUCTS_SERVICES ]: {
@@ -1843,6 +1847,8 @@ export const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_SELL_SHIP,
 		getTitle: () => i18n.translate( 'Sell and ship products' ),
 		getDescription: () => i18n.translate( 'Sell and ship out physical goods from your site.' ),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_CUSTOM_STORE ]: {
 		getSlug: () => FEATURE_CUSTOM_STORE,
@@ -1851,12 +1857,16 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Offer customers a personalized shopping experience that they cannot find anywhere else.'
 			),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins and themes' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_INVENTORY ]: {
 		getSlug: () => FEATURE_INVENTORY,
 		getTitle: () => i18n.translate( 'Inventory management' ),
 		getDescription: () =>
 			i18n.translate( 'Stay on top of your stock with inventory management tools.' ),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_CHECKOUT ]: {
 		getSlug: () => FEATURE_CHECKOUT,
@@ -1865,12 +1875,16 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Reduce cart abandonment and increase sales with a fast, low-friction checkout.'
 			),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_ACCEPT_PAYMENTS_V2 ]: {
 		getSlug: () => FEATURE_ACCEPT_PAYMENTS_V2,
 		getTitle: () => i18n.translate( 'Payments in 60+ countries' ),
 		getDescription: () =>
 			i18n.translate( 'Accept payments for goods and services, just about anywhere.' ),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_SALES_REPORTS ]: {
 		getSlug: () => FEATURE_SALES_REPORTS,
@@ -1879,12 +1893,16 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Stay up to date on sales and identify trends with intuitive sales reports.'
 			),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_EXTENSIONS ]: {
 		getSlug: () => FEATURE_EXTENSIONS,
 		getTitle: () => i18n.translate( 'Extensions marketplace' ),
 		getDescription: () =>
 			i18n.translate( 'Find and install powerful add-ons for your site, all in one place.' ),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	// FOLLOWING ARE JETPACK FEATURES BUNDLED IN WPCOM
 	[ FEATURE_STATS_JP ]: {

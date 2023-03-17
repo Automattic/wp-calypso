@@ -151,7 +151,7 @@ const Cell = styled.div< { textAlign?: 'start' | 'center' | 'end' } >`
 	text-align: ${ ( props ) => props.textAlign ?? 'start' };
 	display: flex;
 	flex: 1;
-	justify-content: space-between;
+	justify-content: center;
 	flex-direction: column;
 	align-items: center;
 	padding: 33px 20px 0;
@@ -283,6 +283,12 @@ type PlanComparisonGridHeaderProps = {
 	canUserPurchasePlan: boolean;
 	selectedSiteSlug: string | null;
 	onUpgradeClick: ( properties: PlanProperties ) => void;
+};
+
+type RestructuredFeatures = {
+	featureMap: Record< string, Set< string > >;
+	conditionalFeatureMap: Record< string, Set< string > >;
+	planStorageOptionsMap: Record< string, string >;
 };
 
 const PlanComparisonGridHeaderCell: React.FunctionComponent<
@@ -456,10 +462,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	feature?: FeatureObject;
 	allJetpackFeatures: Set< string >;
 	visiblePlansProperties: PlanProperties[];
-	restructuredFeatures: {
-		featureMap: Record< string, Set< string > >;
-		planStorageOptionsMap: Record< string, string >;
-	};
+	restructuredFeatures: RestructuredFeatures;
 	planName: string;
 	isStorageFeature: boolean;
 } > = ( { feature, visiblePlansProperties, restructuredFeatures, planName, isStorageFeature } ) => {
@@ -470,6 +473,9 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	const hasFeature =
 		isStorageFeature ||
 		( featureSlug ? restructuredFeatures.featureMap[ planName ].has( featureSlug ) : false );
+	const hasConditionalFeature = featureSlug
+		? restructuredFeatures.conditionalFeatureMap[ planName ].has( featureSlug )
+		: false;
 	const [ storageFeature ] = getPlanFeaturesObject( [
 		restructuredFeatures.planStorageOptionsMap[ planName ],
 	] );
@@ -480,6 +486,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 		{
 			'popular-plan-parent-class': highlightLabel,
 			'has-feature': hasFeature,
+			'has-conditional-feature': hasConditionalFeature,
 			'title-is-subtitle': 'live-chat-support' === featureSlug,
 			'is-left-of-highlight': highlightAdjacencyMatrix[ planName ]?.leftOfHighlight,
 			'is-right-of-highlight': highlightAdjacencyMatrix[ planName ]?.rightOfHighlight,
@@ -509,9 +516,18 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 							{ feature.getCompareTitle() }
 						</span>
 					) }
-					{ hasFeature ? (
-						<Gridicon icon="checkmark" color="#0675C4" />
-					) : (
+					{ hasConditionalFeature && feature?.getConditionalTitle && (
+						<span className="plan-comparison-grid__plan-conditional-title">
+							{ feature?.getConditionalTitle() }
+						</span>
+					) }
+					{ hasFeature && feature?.getCompareSubtitle && (
+						<span className="plan-comparison-grid__plan-subtitle">
+							{ feature.getCompareSubtitle() }
+						</span>
+					) }
+					{ hasFeature && <Gridicon icon="checkmark" color="#0675C4" /> }
+					{ ! hasFeature && ! hasConditionalFeature && (
 						<Gridicon icon="minus-small" color="#C3C4C7" />
 					) }
 				</>
@@ -525,10 +541,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	isHiddenInMobile: boolean;
 	allJetpackFeatures: Set< string >;
 	visiblePlansProperties: PlanProperties[];
-	restructuredFeatures: {
-		featureMap: Record< string, Set< string > >;
-		planStorageOptionsMap: Record< string, string >;
-	};
+	restructuredFeatures: RestructuredFeatures;
 	isStorageFeature: boolean;
 } > = ( {
 	feature,
@@ -653,6 +666,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 	const restructuredFeatures = useMemo( () => {
 		let previousPlan = null;
 		const planFeatureMap: Record< string, Set< string > > = {};
+		const conditionalFeatureMap: Record< string, Set< string > > = {};
 		const planStorageOptionsMap: Record< string, string > = {};
 
 		for ( const plan of planProperties ?? [] ) {
@@ -688,8 +702,12 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 			previousPlan = planName;
 			const [ storageOption ] = planObject.get2023PricingGridSignupStorageOptions?.() ?? [];
 			planStorageOptionsMap[ planName ] = storageOption;
+
+			conditionalFeatureMap[ planName ] = new Set(
+				planObject.get2023PlanComparisonConditionalFeatures?.() ?? []
+			);
 		}
-		return { featureMap: planFeatureMap, planStorageOptionsMap };
+		return { featureMap: planFeatureMap, planStorageOptionsMap, conditionalFeatureMap };
 	}, [ planProperties, isMonthly ] );
 
 	const allJetpackFeatures = useMemo( () => {

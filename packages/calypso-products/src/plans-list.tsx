@@ -1203,6 +1203,17 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_PLUGIN_AUTOUPDATE_JP,
 		FEATURE_SEO_JP,
 	],
+	get2023PlanComparisonConditionalFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_SELL_SHIP,
+		FEATURE_CUSTOM_STORE,
+		FEATURE_INVENTORY,
+		FEATURE_CHECKOUT,
+		FEATURE_ACCEPT_PAYMENTS_V2,
+		FEATURE_SALES_REPORTS,
+		FEATURE_SHIPPING_CARRIERS,
+		FEATURE_EXTENSIONS,
+	],
 	get2023PricingGridSignupStorageOptions: () => [ FEATURE_200GB_STORAGE ],
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
