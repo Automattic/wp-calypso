@@ -39,7 +39,7 @@ export function DeleteStagingSite( { disabled = false, children }: DeleteStaging
 					</p>
 					<ActionButtons>
 						<Button primary onClick={ deleteStagingSite }>
-							{ __( 'Dete satging site' ) }
+							{ __( 'Delete satging site' ) }
 						</Button>
 						<Button onClick={ closeModal }>{ __( 'Cancel' ) }</Button>
 					</ActionButtons>
