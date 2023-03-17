@@ -120,7 +120,10 @@ body.is-section-plans.is-woo-express-medium-plan {
 	}
 
 	.wx-medium-plans__bottom-banner {
-		display: flex;
+		// Hiding this card until we have the CTA defined
+		// display: flex;
+		display: none;
+
 		padding: 40px;
 		background-color: rgba(var(--color-neutral-0-rgb), 0.8);
 		box-shadow: none;
