@@ -269,6 +269,7 @@
 		"postcss-cli": "^9.0.1",
 		"postcss-custom-properties": "^11.0.0",
 		"prettier": "npm:wp-prettier@2.6.2",
+		"react-native": "^0.71.4",
 		"readline-sync": "^1.4.10",
 		"recursive-copy": "^2.0.14",
 		"replace": "^1.1.5",
