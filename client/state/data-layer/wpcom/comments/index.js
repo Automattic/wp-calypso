@@ -211,6 +211,12 @@ export const emptyComments = ( action ) => ( dispatch ) => {
 	);
 };
 
+const emptyNoticeOptions = {
+	duration: DEFAULT_NOTICE_DURATION,
+	id: 'comment-notice',
+	isPersistent: true,
+};
+
 export const handleEmptySuccess = (
 	{ status, siteId, options, refreshCommentListQuery },
 	apiResponse
@@ -221,11 +227,7 @@ export const handleEmptySuccess = (
 		showSuccessNotice &&
 			successNotice(
 				status === 'spam' ? translate( 'Spam emptied.' ) : translate( 'Trash emptied.' ),
-				{
-					duration: DEFAULT_NOTICE_DURATION,
-					id: 'comment-notice',
-					isPersistent: true,
-				}
+				emptyNoticeOptions
 			),
 		!! refreshCommentListQuery && requestCommentsList( refreshCommentListQuery ),
 		{
@@ -244,10 +246,7 @@ export const announceEmptyFailure = ( action ) => {
 		status === 'spam'
 			? translate( 'Could not empty spam.' )
 			: translate( 'Could not empty trash.' ),
-		{
-			duration: DEFAULT_NOTICE_DURATION,
-			isPersistent: true,
-		}
+		emptyNoticeOptions
 	);
 
 	return error;
