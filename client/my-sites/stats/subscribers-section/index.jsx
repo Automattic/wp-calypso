@@ -153,10 +153,18 @@ export default function SubscribersSection() {
 	const data = getData();
 	const legendInfo = getLegend();
 
+	const tooltipHelper =
+		DATA_TYPE !== 'api' ? ( datum ) => datum.value : ( datum ) => `Changed: ${ datum.diff }`;
+
 	return (
 		<div className="subscribers-section">
 			<h1 className="highlight-cards-heading">Subscribers</h1>
-			<LineChart data={ data } fillArea={ false } legendInfo={ legendInfo }>
+			<LineChart
+				data={ data }
+				fillArea={ false }
+				legendInfo={ legendInfo }
+				renderTooltipForDatanum={ tooltipHelper }
+			>
 				<StatsEmptyState />
 			</LineChart>
 		</div>
