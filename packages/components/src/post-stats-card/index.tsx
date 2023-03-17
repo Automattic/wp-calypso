@@ -30,7 +30,10 @@ export default function PostStatsCard( {
 	uploadHref,
 }: PostStatsCardProps ) {
 	const translate = useTranslate();
-	const parsedDate = useMemo( () => new Date( post?.date ).toLocaleDateString(), [ post?.date ] );
+	const parsedDate = useMemo(
+		() => new Date( post?.date ).toLocaleDateString( undefined, { dateStyle: 'medium' } ),
+		[ post?.date ]
+	);
 	const TitleTag = titleLink ? 'a' : 'div';
 
 	const recordClickOnUploadImageButton = () => {
