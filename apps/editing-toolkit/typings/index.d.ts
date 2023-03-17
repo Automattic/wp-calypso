@@ -26,5 +26,10 @@ declare global {
 			closeButtonLabel?: string;
 			manageReusableBlocksUrl?: string;
 		};
+		launchpadOptions: {
+			siteUrlOption: string;
+			launchpadScreenOption: 'full' | 'off' | 'minimized';
+			siteIntentOption: string;
+		};
 	}
 }
