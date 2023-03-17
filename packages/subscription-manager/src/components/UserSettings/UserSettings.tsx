@@ -1,4 +1,5 @@
 import { FormEvent } from 'react';
+import { BlockEmailsSetting } from '../fields/BlockEmailsSetting';
 import { EmailFormatInput, EmailFormatType } from '../fields/EmailFormatInput';
 
 type SubscriptionUserSettings = Partial< {
@@ -22,6 +23,10 @@ const UserSettings = ( { value = {}, loading = false, onChange }: UserSettingsPr
 			onChange={ ( evt: FormEvent< HTMLSelectElement > ) =>
 				onChange?.( { mail_option: evt.currentTarget.value as EmailFormatType } )
 			}
+		/>
+		<BlockEmailsSetting
+			value={ value.blocked }
+			onChange={ ( value ) => onChange?.( { blocked: !! value.target.value } ) }
 		/>
 	</div>
 );

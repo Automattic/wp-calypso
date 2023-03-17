@@ -20,3 +20,13 @@ $arrow_down_base64: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTEiIGhlaWdodD
 	border-color: $studio-gray-10;
 	color: $studio-gray-100;
 }
+
+%form-checkbox {
+	box-sizing: border-box;
+	width: 20px;
+	height: 20px;
+	background: $studio-white;
+	border: 1px solid $studio-gray-20;
+	border-radius: 2px;
+	margin-right: 12px;
+}
