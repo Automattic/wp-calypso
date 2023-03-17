@@ -41,9 +41,9 @@ export interface SiteStats {
 }
 
 export interface BoostData {
-	desktop: number;
-	mobile: number;
 	overall: number;
+	mobile: number;
+	desktop: number;
 }
 
 export interface Site {
@@ -64,6 +64,7 @@ export interface Site {
 	monitor_last_status_change: string;
 	isSelected?: boolean;
 	site_stats: SiteStats;
+	jetpack_boost_scores: BoostData;
 	onSelect?: ( value: boolean ) => void;
 	jetpack_boost_scores: BoostData;
 }

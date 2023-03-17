@@ -1,4 +1,5 @@
 import { Dialog, Gridicon } from '@automattic/components';
+import { WpcomPlansUI } from '@automattic/data-stores';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
@@ -7,9 +8,7 @@ import { useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { WPCOM_PLANS_UI_STORE } from '../../store';
 import './style.scss';
-import type { WpcomPlansUISelect } from '@automattic/data-stores';
 
 const DomainUpsellDialog: React.FunctionComponent< {
 	domain: string;
@@ -17,9 +16,9 @@ const DomainUpsellDialog: React.FunctionComponent< {
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, selectedSiteId ) );
-	const { setShowDomainUpsellDialog } = useDispatch( WPCOM_PLANS_UI_STORE );
+	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
 	const isVisible = useSelect( ( select ) => {
-		return ( select( WPCOM_PLANS_UI_STORE ) as WpcomPlansUISelect ).isDomainUpsellDialogShown();
+		return select( WpcomPlansUI.store ).isDomainUpsellDialogShown();
 	}, [] );
 
 	const onCloseDialog = useCallback( () => {

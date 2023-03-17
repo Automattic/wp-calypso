@@ -17,7 +17,7 @@
 		"build:universal-header": "calypso-build --env block='universal-header'",
 		"build:universal-footer": "calypso-build --env block='universal-footer'",
 		"build-translations-manifest": "yarn run build-calypso-strings && node bin/build-translations-manifest.js",
-		"clean": "rm -rf dist block-library/*/build || true",
+		"clean": "rm -r release-files block-library/*/build || true",
 		"dev": "yarn run calypso-apps-builder --localPath / --remotePath /home/wpcom/public_html/wp-content/a8c-plugins/happy-blocks"
 	},
 	"dependencies": {

@@ -62,9 +62,9 @@ describe( 'utils', () => {
 				},
 			},
 			jetpack_boost_scores: {
-				desktop: 100,
-				mobile: 100,
 				overall: 100,
+				mobile: 50,
+				desktop: 50,
 			},
 		};
 		const rows: SiteData = {
@@ -98,22 +98,28 @@ describe( 'utils', () => {
 				threats: 4,
 				type: 'scan',
 				status: 'failed',
-				value: translate(
-					'%(threats)d Threat',
-					'%(threats)d Threats', // plural version of the string
-					{
-						count: scanThreats,
-						args: {
-							threats: scanThreats,
-						},
-					}
-				),
+				value: translate( '%(threats)d Threat', '%(threats)d Threats', {
+					count: scanThreats,
+					args: {
+						threats: scanThreats,
+					},
+				} ),
 			},
 			plugin: {
 				updates: pluginUpdates.length,
 				type: 'plugin',
 				value: `${ pluginUpdates.length } ${ translate( 'Available' ) }`,
 				status: 'warning',
+			},
+			stats: {
+				status: 'active',
+				type: 'stats',
+				value: siteObj.site_stats,
+			},
+			boost: {
+				status: 'active',
+				type: 'boost',
+				value: siteObj.jetpack_boost_scores,
 			},
 		};
 		test( 'should return the meta data for the feature type', () => {
@@ -208,9 +214,9 @@ describe( 'utils', () => {
 						},
 					},
 					jetpack_boost_scores: {
-						desktop: 100,
-						mobile: 100,
 						overall: 100,
+						mobile: 50,
+						desktop: 50,
 					},
 				},
 			];
@@ -228,8 +234,8 @@ describe( 'utils', () => {
 						value: sites[ 0 ].site_stats,
 					},
 					boost: {
-						type: 'boost',
 						status: 'active',
+						type: 'boost',
 						value: sites[ 0 ].jetpack_boost_scores,
 					},
 					backup: {

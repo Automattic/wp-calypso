@@ -41,9 +41,10 @@ const excludedPackages = [
 ];
 
 const excludedPackagePlugins = excludedPackages.map(
-	( package ) =>
+	// Note: apparently the word "package" is a reserved keyword here for some reason
+	( pkg ) =>
 		new webpack.NormalModuleReplacementPlugin(
-			package,
+			pkg,
 			path.resolve( __dirname, 'src/components/nothing' )
 		)
 );
