@@ -42,6 +42,7 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 
 .post-stats-card__post-title {
 	@include stats-section-header;
+	display: block;
 	margin-bottom: 4px;
 
 	&:visited {
