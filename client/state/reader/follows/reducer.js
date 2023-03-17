@@ -111,9 +111,7 @@ const itemsReducer = ( state = {}, action ) => {
 		case READER_FOLLOW: {
 			let urlKey = prepareComparableUrl( action.payload.feedUrl );
 			const newValues = { is_following: true };
-
 			const actualFeedUrl = get( action.payload, [ 'follow', 'feed_URL' ], action.payload.feedUrl );
-
 			const newState = { ...state };
 			// for the case where a user entered an exact url to follow something, sometimes the
 			// correct feed_URL is slightly different from what they typed in.
@@ -147,14 +145,19 @@ const itemsReducer = ( state = {}, action ) => {
 				};
 			}
 
-			return Object.assign( newState, {
-				[ urlKey ]: merge(
-					{ feed_URL: actualFeedUrl },
-					state[ urlKey ],
-					action.payload.follow,
-					newValues
-				),
-			} );
+			return Object.assign(
+				{
+					[ urlKey ]: merge(
+						{
+							feed_URL: actualFeedUrl,
+						},
+						state[ urlKey ],
+						action.payload.follow,
+						newValues
+					),
+				},
+				newState
+			);
 		}
 		case READER_UNFOLLOW: {
 			const urlKey = prepareComparableUrl( action.payload.feedUrl );
@@ -170,9 +173,12 @@ const itemsReducer = ( state = {}, action ) => {
 				return state;
 			}
 
+			// We need to delete alternative patterns to avoid duplication of feeds
+			delete state[ urlKey + '/feed' ];
+
 			return {
 				...state,
-				[ urlKey ]: merge( {}, currentFollow, {
+				[ urlKey ]: merge( currentFollow, {
 					is_following: false,
 					delivery_methods: {
 						notification: { send_posts: false },
