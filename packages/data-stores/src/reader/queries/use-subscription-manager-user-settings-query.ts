@@ -1,6 +1,6 @@
 import { useQuery } from 'react-query';
 import { fetchFromApi } from '../helpers';
-import { useIsLoggedIn } from '../hooks';
+import { useIsLoggedIn, useIsQueryEnabled } from '../hooks';
 import type { SubscriptionManagerUserSettings } from '../types';
 
 type EmailSettingsAPIResponse = {
@@ -9,18 +9,21 @@ type EmailSettingsAPIResponse = {
 
 const useSubscriptionManagerUserSettingsQuery = () => {
 	const isLoggedIn = useIsLoggedIn();
-
-	return useQuery( {
-		initialData: {},
-		queryKey: [ 'read', 'email-settings', isLoggedIn ],
-		queryFn: async () => {
+	const enabled = useIsQueryEnabled();
+	return useQuery(
+		[ 'read', 'email-settings', isLoggedIn ],
+		async () => {
 			const { settings } = await fetchFromApi< EmailSettingsAPIResponse >( {
 				path: '/read/email-settings',
 				isLoggedIn,
 			} );
 			return settings;
 		},
-	} );
+		{
+			enabled,
+			initialData: {},
+		}
+	);
 };
 
 export { useSubscriptionManagerUserSettingsQuery };

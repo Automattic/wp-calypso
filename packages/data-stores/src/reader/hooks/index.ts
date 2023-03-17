@@ -1,14 +1,17 @@
-import { useSelector } from 'react-redux';
+import { useSelect } from '@wordpress/data';
+import { register as registerUserStore } from '../../user';
 
-// Mocking RootState because otherwise we'd have to import from the Calypso package, which is not allowed
-type RootState = {
-	currentUser: {
-		id: string;
-	};
-};
+const USER_STORE = registerUserStore( { client_id: '', client_secret: '' } );
 
 export const useIsLoggedIn = () => {
-	const userId = useSelector( ( state: RootState ) => state.currentUser?.id );
+	return useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() ) as boolean;
+};
 
-	return userId !== null;
+export const useIsQueryEnabled = () => {
+	const loggedIn = useIsLoggedIn();
+	if ( loggedIn || ( document.cookie && document.cookie.indexOf( 'subkey=' ) !== -1 ) ) {
+		return true;
+	}
+
+	return false;
 };
