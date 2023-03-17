@@ -19,7 +19,6 @@ import { eligibilityHolds as eligibilityHoldsConstants } from 'calypso/state/aut
 import SupportCard from '../store-address/support-card';
 import type { Step } from '../../types';
 import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
-import type { TransferEligibilityError } from '@automattic/data-stores/src/automated-transfer-eligibility/types';
 import './style.scss';
 
 const Divider = styled.hr`
@@ -101,31 +100,23 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 	const upgradingPlan = productName ? productsList?.[ productName ] : null;
 
 	// Filter the Woop transferring blockers.
-	const transferringBlockers = eligibilityHolds?.filter(
-		( hold: TransferEligibilityError ) => ! TRANSFERRING_NOT_BLOCKERS.includes( hold.code )
-	);
+	const transferringBlockers =
+		eligibilityHolds?.filter( ( hold: string ) => ! TRANSFERRING_NOT_BLOCKERS.includes( hold ) ) ??
+		[];
 
 	const isTransferStuck = latestAtomicTransfer?.is_stuck || false;
 	const isBlockByTransferStatus = latestAtomicTransferError || false;
 
 	// Add blocked-transfer-hold when something is wrong in the transfer status.
 	if (
-		! transferringBlockers?.includes( {
-			code: eligibilityHoldsConstants.BLOCKED_ATOMIC_TRANSFER,
-			message: '',
-		} ) &&
+		! transferringBlockers.includes( eligibilityHoldsConstants.BLOCKED_ATOMIC_TRANSFER ) &&
 		( isBlockByTransferStatus || isTransferStuck )
 	) {
-		transferringBlockers?.push( {
-			code: eligibilityHoldsConstants.BLOCKED_ATOMIC_TRANSFER,
-			message: '',
-		} );
+		transferringBlockers.push( eligibilityHoldsConstants.BLOCKED_ATOMIC_TRANSFER );
 	}
 
 	const transferringDataIsAvailable =
-		typeof transferringBlockers !== 'undefined' &&
-		( typeof latestAtomicTransfer !== 'undefined' ||
-			typeof latestAtomicTransferError !== 'undefined' );
+		typeof latestAtomicTransfer !== 'undefined' || typeof latestAtomicTransferError !== 'undefined';
 
 	const isDataReady = transferringDataIsAvailable;
 
@@ -142,7 +133,7 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 	 * True as default, meaning it's True when requesting data.
 	 */
 	const isTransferringBlocked =
-		latestAtomicTransfer && ( ! transferringDataIsAvailable || transferringBlockers?.length > 0 );
+		latestAtomicTransfer && ( ! transferringDataIsAvailable || transferringBlockers.length > 0 );
 
 	// when the site is not Atomic, ...
 	if ( ! isAtomicSite ) {

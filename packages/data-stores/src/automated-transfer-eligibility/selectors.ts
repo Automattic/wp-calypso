@@ -1,10 +1,5 @@
 import { statusMapping } from './constants';
-import {
-	State,
-	TransferEligibilityWarning,
-	TransferEligibilityError,
-	TransferEligibility,
-} from './types';
+import { State, TransferEligibilityWarning, TransferEligibility } from './types';
 
 export const getAutomatedTransferEligibility = (
 	state: State,
@@ -16,25 +11,19 @@ export const getAutomatedTransferEligibility = (
 	return state[ siteId ];
 };
 
-export const getEligibilityHolds = (
-	state: State,
-	siteId: number | null
-): TransferEligibilityError[] | null => {
+export const getEligibilityHolds = ( state: State, siteId: number | null ): string[] | null => {
 	const transferEligibility = getAutomatedTransferEligibility( state, siteId );
 
-	if ( ! transferEligibility ) {
+	if ( ! transferEligibility?.errors ) {
 		return null;
 	}
 
-	const { errors } = transferEligibility;
-
-	if ( ! errors ) {
-		return null;
-	}
-
-	return errors.map( ( { code } ) => {
-		return statusMapping[ code ] ?? '';
-	} );
+	return transferEligibility.errors.reduce< string[] >( ( errs, { code } ) => {
+		if ( statusMapping[ code ] ) {
+			errs.push( statusMapping[ code ] );
+		}
+		return errs;
+	}, [] );
 };
 
 export const getEligibilityWarnings = (
