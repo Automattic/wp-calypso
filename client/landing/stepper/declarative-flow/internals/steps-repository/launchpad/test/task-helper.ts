@@ -66,20 +66,20 @@ describe( 'Task Helpers', () => {
 	describe( 'getArrayOfFilteredTasks', () => {
 		describe( 'when no flow is provided', () => {
 			it( 'then no tasks are found', () => {
-				expect( getArrayOfFilteredTasks( tasks, null ) ).toBe( null );
+				expect( getArrayOfFilteredTasks( tasks, null, false ) ).toBe( null );
 			} );
 		} );
 
 		describe( 'when a non-existing flow is provided', () => {
 			it( 'then no tasks are found', () => {
-				expect( getArrayOfFilteredTasks( tasks, 'custom-flow' ) ).toBe( undefined );
+				expect( getArrayOfFilteredTasks( tasks, 'custom-flow', false ) ).toBe( undefined );
 			} );
 		} );
 
 		describe( 'when an existing flow is provided', () => {
 			it( 'then it returns found tasks', () => {
 				expect(
-					getArrayOfFilteredTasks( tasks, 'newsletter' )?.sort( ( a, b ) =>
+					getArrayOfFilteredTasks( tasks, 'newsletter', false )?.sort( ( a, b ) =>
 						a.id < b.id ? -1 : 1
 					)
 				).toEqual(
