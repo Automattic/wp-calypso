@@ -9,6 +9,7 @@ import { connect, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import Notice from 'calypso/components/notice';
+import withMediaStorage, { GB_IN_BYTES } from 'calypso/data/media-storage/with-media-storage';
 import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
 import { urlToSlug } from 'calypso/lib/url';
 import { useAddStagingSiteMutation } from 'calypso/my-sites/hosting/staging-site-card/use-add-staging-site';
@@ -18,6 +19,8 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+
+const STAGING_CREATION_QUOTA_THRESHOLD = 100;
 
 const stagingSiteAddFailureNoticeId = 'staging-site-add-failure';
 
@@ -40,7 +43,16 @@ const StyledLoadingBar = styled( LoadingBar )( {
 	marginBottom: '1em',
 } );
 
-const StagingSiteCard = ( { disabled, siteId, translate } ) => {
+const ExceedQuotaErrorWrapper = styled.div( {
+	marginTop: '1em',
+} );
+
+export const StagingSiteCard = ( {
+	disabled,
+	spaceQuotaExceededForStaging,
+	siteId,
+	translate,
+} ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
@@ -124,6 +136,23 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 		},
 	} );
 
+	const getExceedQuotaErrorContent = () => {
+		return (
+			<ExceedQuotaErrorWrapper data-testid="quota-message">
+				<Notice status="is-warning" showDismiss={ false }>
+					<p>
+						{ __(
+							'It appears that your available size quota is currently insufficient for creating a staging site.'
+						) }
+					</p>
+					<p>
+						{ __( 'Please contact support if you believe you are seeing this message in error.' ) }
+					</p>
+				</Notice>
+			</ExceedQuotaErrorWrapper>
+		);
+	};
+
 	const getNewStagingSiteContent = () => {
 		return (
 			<>
@@ -134,7 +163,7 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 				</p>
 				<Button
 					primary
-					disabled={ disabled || addingStagingSite }
+					disabled={ disabled || addingStagingSite || spaceQuotaExceededForStaging }
 					onClick={ () => {
 						dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_click' ) );
 						setWasCreating( true );
@@ -144,6 +173,7 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 				>
 					<span>{ translate( 'Add staging site' ) }</span>
 				</Button>
+				{ spaceQuotaExceededForStaging && getExceedQuotaErrorContent() }
 			</>
 		);
 	};
@@ -170,20 +200,20 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 
 	const getTransferringStagingSiteContent = useCallback( () => {
 		return (
-			<>
+			<div data-testid="transferring-staging-content">
 				<StyledLoadingBar progress={ progress } />
 				<p>{ __( 'We are setting up your staging site. We’ll email you once it is ready.' ) }</p>
-			</>
+			</div>
 		);
 	}, [ progress, __ ] );
 
 	const getLoadingStagingSitesPlaceholder = () => {
 		return (
-			<>
+			<div data-testid="loading-placeholder">
 				<FirstPlaceholder />
 				<SecondPlaceholder />
 				<ButtonPlaceholder />
-			</>
+			</div>
 		);
 	};
 
@@ -222,10 +252,18 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 	);
 };
 
-export default connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
+export default withMediaStorage(
+	connect( ( state, { mediaStorage } ) => {
+		const siteId = getSelectedSiteId( state );
 
-	return {
-		siteId,
-	};
-} )( localize( StagingSiteCard ) );
+		let spaceQuotaExceededForStaging = false;
+		if ( mediaStorage?.storage_used_bytes ) {
+			spaceQuotaExceededForStaging =
+				mediaStorage.storage_used_bytes / GB_IN_BYTES > STAGING_CREATION_QUOTA_THRESHOLD;
+		}
+		return {
+			siteId,
+			spaceQuotaExceededForStaging,
+		};
+	} )( localize( StagingSiteCard ) )
+);
