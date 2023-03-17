@@ -4,8 +4,10 @@ import {
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 } from '@automattic/calypso-products';
 import { Button, Card } from '@automattic/components';
+import { SiteDetails } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import getInTouch from 'calypso/assets/images/plans/wpcom/get-in-touch.png';
@@ -19,9 +21,10 @@ import './style.scss';
 
 interface WXMediumPlansPageProps {
 	currentPlan: SitePlanData;
+	selectedSite: SiteDetails;
 }
 
-const WXMediumPlansPage = ( { currentPlan }: WXMediumPlansPageProps ) => {
+const WooExpressMediumPlansPage = ( { currentPlan, selectedSite }: WXMediumPlansPageProps ) => {
 	const translate = useTranslate();
 
 	const annualPlan = getPlans()[ PLAN_WOOEXPRESS_MEDIUM ];
@@ -40,6 +43,12 @@ const WXMediumPlansPage = ( { currentPlan }: WXMediumPlansPageProps ) => {
 	const wooExpressMediumPlanFeatureSets = useMemo( () => {
 		return getWooExpressMediumFeatureSets( { translate } );
 	}, [ translate ] );
+
+	const goToSubscriptionPage = () => {
+		if ( selectedSite?.slug && currentPlan?.id ) {
+			page( `/purchases/subscriptions/${ selectedSite.slug }/${ currentPlan.id }` );
+		}
+	};
 
 	const monthlyPriceWrapper = <span className="wx-medium-plans__price-card-value" />;
 	const priceDescription = <span className="wx-medium-plans__price-card-interval" />;
@@ -93,7 +102,7 @@ const WXMediumPlansPage = ( { currentPlan }: WXMediumPlansPageProps ) => {
 				</div>
 				<div className="wx-medium-plans__price-card-conditions">{ priceContent }</div>
 				<div className="wx-medium-plans__price-card-cta-wrapper">
-					<Button className="wx-medium-plans__price-card-cta">
+					<Button className="wx-medium-plans__price-card-cta" onClick={ goToSubscriptionPage }>
 						{ translate( 'Manage my plan' ) }
 					</Button>
 				</div>
@@ -130,7 +139,7 @@ const WXMediumPlansPage = ( { currentPlan }: WXMediumPlansPageProps ) => {
 				<div className="wx-medium-plans__bottom-banner-img-wrapper">
 					<img
 						src={ getInTouch }
-						alt="Get in touch"
+						alt={ translate( 'Get in touch', { textOnly: true } ) }
 						className="wx-medium-plans__bottom-banner-img"
 					/>
 				</div>
@@ -139,4 +148,4 @@ const WXMediumPlansPage = ( { currentPlan }: WXMediumPlansPageProps ) => {
 	);
 };
 
-export default WXMediumPlansPage;
+export default WooExpressMediumPlansPage;
