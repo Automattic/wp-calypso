@@ -436,7 +436,7 @@ __metadata:
     canvas-confetti: ^1.6.0
     classnames: ^2.3.1
     framer-motion: 6.2.8
-    gridicons: ^3.4.0
+    gridicons: ^3.4.2
     i18n-calypso: "workspace:^"
     lodash: ^4.17.21
     prop-types: ^15.7.2
@@ -18340,14 +18340,14 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"gridicons@npm:^3.4.0":
-  version: 3.4.0
-  resolution: "gridicons@npm:3.4.0"
+"gridicons@npm:^3.4.2":
+  version: 3.4.2
+  resolution: "gridicons@npm:3.4.2"
   dependencies:
     prop-types: ^15.5.7
   peerDependencies:
-    react: 15 - 17
-  checksum: aa595099ffdd6a2cdbbb95271270dbdaa52877c99a5f4f034fe297c3aed60cfbd85bb6d463d0bf62268b34a3aa1feccdc2dc48dddf0c3e4b01b771114839b3ff
+    react: 15 - 18
+  checksum: b2e508243bf1fa0e0daacc5e1fb52d0d74b000ca0b8862ece672cf8fea9f561c9e1a96979ee9ea9ca9e595c55c970c82bb6b7b29a42d06c139e2c657f3ecdb49
   languageName: node
   linkType: hard
 
