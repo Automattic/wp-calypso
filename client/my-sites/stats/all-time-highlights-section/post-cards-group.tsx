@@ -63,6 +63,7 @@ const getStatsData = createSelector(
 			topPage,
 		};
 	},
+	// Refresh memoized data from createSelector with the loading flag
 	( state, siteId, topPostsQuery, isTopViewedPostRequesting ) => [
 		topPostsQuery,
 		isTopViewedPostRequesting,
@@ -86,7 +87,6 @@ export default function PostCardsGroup( {
 	);
 
 	// Get the most `viewed` post from the past period defined in the `topPostsQuery`.
-	// Refresh memoized data from `createSelector` with the loading flag
 	const { topPost: topViewedPost } = useSelector( ( state ) =>
 		getStatsData( state, siteId, topPostsQuery, isTopViewedPostRequesting )
 	);
