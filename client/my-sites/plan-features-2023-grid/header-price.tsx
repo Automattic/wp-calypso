@@ -8,7 +8,7 @@ import {
 import { useSelector } from 'react-redux';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import usePlanPrices from './hooks/use-plan-prices';
+import usePlanPrices from '../plans/hooks/use-plan-prices';
 import { PlanProperties } from './types';
 
 interface PlanFeatures2023GridHeaderPriceProps {
