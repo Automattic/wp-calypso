@@ -14,8 +14,12 @@
 	@extend .inline-flex-align-centre;
 	width: max-content;
 
-	.components-toggle-control .components-base-control__field {
+	.components-toggle-control {
 		margin-bottom: 0;
+
+		.components-base-control__field {
+			margin-bottom: 0;
+		}
 
 		.components-form-toggle {
 			margin-right: 4px;
