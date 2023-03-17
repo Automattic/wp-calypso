@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { ConfettiAnimation, Gridicon } from '@automattic/components';
+import { ConfettiAnimation } from '@automattic/components';
 import { ThemeProvider, Global, css } from '@emotion/react';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -255,7 +255,6 @@ const MarketplaceThankYou = ( {
 		nextStepsClassName: 'thank-you__footer',
 		nextSteps: [
 			{
-				stepIcon: <FooterIcon icon="next-page" />,
 				stepKey: 'thank_you_footer_support_guides',
 				stepTitle: translate( 'Support guides' ),
 				stepDescription: translate(
@@ -263,7 +262,7 @@ const MarketplaceThankYou = ( {
 				),
 				stepCta: (
 					<Button
-						isSecondary
+						isLink
 						href="https://wordpress.com/support/plugins/"
 						target="_blank"
 						onClick={ () => sendTrackEvent( 'calypso_plugin_thank_you_plugin_support_click' ) }
@@ -273,7 +272,6 @@ const MarketplaceThankYou = ( {
 				),
 			},
 			{
-				stepIcon: <FooterIcon icon="create" />,
 				stepKey: 'thank_you_footer_explore',
 				stepTitle: translate( 'Keep growing' ),
 				stepDescription: translate(
@@ -281,7 +279,7 @@ const MarketplaceThankYou = ( {
 				),
 				stepCta: (
 					<Button
-						isPrimary
+						isLink
 						href={ `/plugins/${ siteSlug }` }
 						target="_blank"
 						onClick={ () => sendTrackEvent( 'calypso_plugin_thank_you_explore_plugins_click' ) }
@@ -291,7 +289,6 @@ const MarketplaceThankYou = ( {
 				),
 			},
 			{
-				stepIcon: <FooterIcon icon="help-outline" />,
 				stepKey: 'thank_you_footer_support',
 				stepTitle: translate( 'How can we support you?' ),
 				stepDescription: translate(
@@ -299,7 +296,7 @@ const MarketplaceThankYou = ( {
 				),
 				stepCta: (
 					<Button
-						isSecondary
+						isLink
 						href="https://wordpress.com/help/contact"
 						target="_blank"
 						onClick={ () => sendTrackEvent( 'calypso_plugin_thank_you_ask_question_click' ) }
@@ -366,16 +363,5 @@ const MarketplaceThankYou = ( {
 		</ThemeProvider>
 	);
 };
-
-function FooterIcon( { icon }: { icon: string } ) {
-	return (
-		<Gridicon
-			className="marketplace-thank-you__footer-icon"
-			size={ 18 }
-			color="var(--studio-gray-30)"
-			icon={ icon }
-		/>
-	);
-}
 
 export default MarketplaceThankYou;

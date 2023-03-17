@@ -61,9 +61,7 @@
 		.thank-you__step {
 			display: flex;
 			flex-direction: column;
-			justify-content: space-between;
 			flex-wrap: wrap;
-			height: 134px;
 			min-width: 280px;
 
 			@media ( max-width: 740px ) {
@@ -76,7 +74,7 @@
 			}
 
 			h3 {
-				line-height: 16px;
+				line-height: 24px;
 				font-weight: 500;
 				font-size: $font-body;
 				color: var(--studio-gray-100);
@@ -87,16 +85,21 @@
 				line-height: 20px;
 				font-size: $font-body-small;
 				color: var(--studio-gray-60);
+				margin-bottom: 16px;
 			}
 		}
 
 		.thank-you__step-cta {
 			margin: 0;
-		}
 
-		.thank-you__step-icon {
-			width: calc(18px + 23px); // icon size + padding
-			flex-basis: 100%;
+			a {
+				font-weight: 500;
+				font-size: $font-body;
+				line-height: 20px;
+				color: var(--studio-gray-100);
+				text-decoration: none;
+				border-bottom: 1px solid var(--studio-gray-100);
+			}
 		}
 
 		div {
