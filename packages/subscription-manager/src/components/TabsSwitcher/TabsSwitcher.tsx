@@ -21,8 +21,8 @@ type TabsSwitcherProps = {
 };
 
 const getRoute = ( baseRoute: string, path: string ): string => {
-	// This is a temporary redirect to the re-skinned Subscription Management portal
-	// Once the new Commnets and Sites views are ready, this will be removed
+	// This is a temporary redirect to the re-skinned Subscription Management portal.
+	// Once the new "Commnets" and "Sites" views are ready, this will be removed.
 	const temporaryRedirect = [ 'comments', 'sites' ];
 	if ( temporaryRedirect.includes( path ) ) {
 		return `https://wordpress.com/email-subscriptions/?option=${ path }`;
