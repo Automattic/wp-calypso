@@ -18,6 +18,7 @@ type PostStatsCardProps = {
 	};
 	titleLink?: string | undefined;
 	uploadHref?: string | undefined;
+	locale?: string | undefined;
 };
 
 export default function PostStatsCard( {
@@ -28,11 +29,15 @@ export default function PostStatsCard( {
 	viewCount,
 	titleLink,
 	uploadHref,
+	locale,
 }: PostStatsCardProps ) {
 	const translate = useTranslate();
 	const parsedDate = useMemo(
-		() => ( post?.date ? new Date( post?.date ).toLocaleDateString( undefined, { dateStyle: 'medium' } ) : '' ),
-		[ post?.date ]
+		() =>
+			post?.date
+				? new Date( post?.date ).toLocaleDateString( locale, { dateStyle: 'medium' } )
+				: '',
+		[ post?.date, locale ]
 	);
 	const TitleTag = titleLink ? 'a' : 'div';
 

@@ -8,6 +8,7 @@ import QueryPosts from 'calypso/components/data/query-posts';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import DotPager from 'calypso/components/dot-pager';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getSitePost } from 'calypso/state/posts/selectors';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import {
@@ -78,6 +79,7 @@ export default function PostCardsGroup( {
 	siteSlug: string;
 } ) {
 	const translate = useTranslate();
+	const userLocale = useSelector( getCurrentUserLocale );
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
 	const { topPostsQuery } = useSelector( ( state ) => getStatsQueries( state, siteId ) );
@@ -117,6 +119,7 @@ export default function PostCardsGroup( {
 				commentCount={ mostPopularPostData?.commentCount }
 				titleLink={ `/stats/post/${ mostPopularPost.ID }/${ siteSlug }` }
 				uploadHref={ ! isOdysseyStats ? `/post/${ siteSlug }/${ mostPopularPost.ID }` : undefined }
+				locale={ userLocale }
 			/>
 		);
 	}
