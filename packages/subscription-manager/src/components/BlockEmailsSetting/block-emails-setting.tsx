@@ -10,7 +10,7 @@ import FormLabel from 'calypso/components/forms/form-label';
 import './style.scss';
 
 export type BlockEmailsSettingProps = {
-	value: boolean | undefined;
+	value?: boolean;
 	onChange: ChangeEventHandler< HTMLInputElement >;
 };
 
