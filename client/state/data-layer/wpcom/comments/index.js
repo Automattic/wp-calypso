@@ -8,7 +8,7 @@ import {
 	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_DELETE,
 	COMMENTS_EMPTY,
-	COMMENTS_EMPTY_RECEIVE,
+	COMMENTS_EMPTY_SUCCESS,
 } from 'calypso/state/action-types';
 import { requestCommentsList } from 'calypso/state/comments/actions';
 import {
@@ -229,7 +229,7 @@ export const handleEmptySuccess = (
 			),
 		!! refreshCommentListQuery && requestCommentsList( refreshCommentListQuery ),
 		{
-			type: COMMENTS_EMPTY_RECEIVE,
+			type: COMMENTS_EMPTY_SUCCESS,
 			siteId,
 			status,
 			commentIds: apiResponse?.results?.map( ( x ) => +x ), // convert to number

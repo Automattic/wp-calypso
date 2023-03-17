@@ -12,7 +12,7 @@ import {
 	COMMENTS_DELETE,
 	COMMENTS_EDIT,
 	COMMENTS_CHANGE_STATUS,
-	COMMENTS_EMPTY_RECEIVE,
+	COMMENTS_EMPTY_SUCCESS,
 } from '../../action-types';
 import { expandComments, setActiveReply } from '../actions';
 import { PLACEHOLDER_STATE } from '../constants';
@@ -199,7 +199,7 @@ describe( 'reducer', () => {
 				'1-2': [ { ID: 12 }, { ID: 13 }, { ID: 14 } ],
 			} );
 			const result = items( state, {
-				type: COMMENTS_EMPTY_RECEIVE,
+				type: COMMENTS_EMPTY_SUCCESS,
 				siteId: 1,
 				commentIds: [ 12, 13 ],
 			} );
@@ -928,7 +928,7 @@ describe( 'reducer', () => {
 
 		test( 'updates site counts when spam comments are emptied', () => {
 			const action = {
-				type: COMMENTS_EMPTY_RECEIVE,
+				type: COMMENTS_EMPTY_SUCCESS,
 				siteId: 2916284,
 				status: 'spam',
 				commentIds: [ 2, 3 ],
