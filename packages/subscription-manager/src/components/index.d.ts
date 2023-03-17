@@ -41,7 +41,6 @@ declare module 'calypso/components/main' {
 	} >;
 	export default Main;
 }
-
 declare module 'calypso/components/section-nav' {
 	const SectionNav: React.FC< {
 		selectedText?: string;
