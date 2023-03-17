@@ -8,6 +8,7 @@ import * as Onboard from './onboard';
 import oneWeekPersistenceConfig from './one-week-persistence-config';
 import * as Plans from './plans';
 import * as ProductsList from './products-list';
+import * as Reader from './reader';
 import * as Site from './site';
 import * as StepperInternal from './stepper-internal';
 import * as Subscriber from './subscriber';
@@ -23,7 +24,6 @@ export { useSiteIntent } from './queries/use-site-intent';
 export { useSupportAvailability } from './support-queries/use-support-availability';
 export { useSubmitTicketMutation } from './support-queries/use-submit-support-ticket';
 export { useSubmitForumsMutation } from './support-queries/use-submit-forums-topic';
-export { useSubscriptionManagerUserSettingsQuery } from './reader/queries/use-subscription-manager-user-settings-query';
 export * from './starter-designs-queries';
 export { useSibylQuery } from './support-queries/use-sibyl-query';
 export * from './site/types';
@@ -32,7 +32,6 @@ export * from './onboard/types';
 export * from './domain-suggestions/types';
 export * from './plans/types';
 export * from './launch/types';
-export * from './reader/types';
 export * from './user/types';
 
 export {
@@ -50,6 +49,7 @@ export {
 	oneWeekPersistenceConfig,
 	ProductsList,
 	AutomatedTransferEligibility,
+	Reader,
 	StepperInternal,
 	Subscriber,
 };

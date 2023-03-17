@@ -13,20 +13,18 @@ const useP2GuestsQuery = ( siteId, queryOptions = {} ) => {
 	return useQuery(
 		[ 'p2-guest-users', siteId ],
 		() =>
-			requestUnnecessary
-				? () => {}
-				: wpcom.req.get(
-						{
-							path: `/p2/users/guests/`,
-							apiNamespace: 'wpcom/v2',
-						},
-						{
-							blog_id: siteId,
-						}
-				  ),
+			wpcom.req.get(
+				{
+					path: `/p2/users/guests/`,
+					apiNamespace: 'wpcom/v2',
+				},
+				{
+					blog_id: siteId,
+				}
+			),
 		{
 			...queryOptions,
-			enabled: !! siteId,
+			enabled: !! siteId && ! requestUnnecessary,
 			retryDelay: 3000,
 		}
 	);

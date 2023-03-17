@@ -35,7 +35,7 @@ export default function InsightsStats( { stats }: Props ) {
 		const trendIcon = getTrendIcon( trend );
 		return (
 			<span
-				className={ classNames( 'site-expanded-content__card-content-count', {
+				className={ classNames( 'site-expanded-content__card-content-score', {
 					'is-up': trend === 'up',
 					'is-down': trend === 'down',
 				} ) }
@@ -57,20 +57,20 @@ export default function InsightsStats( { stats }: Props ) {
 			<div className="site-expanded-content__card-content-container">
 				<div className="site-expanded-content__card-content">
 					<div className="site-expanded-content__card-content-column">
-						<div className="site-expanded-content__card-content-count">
+						<div className="site-expanded-content__card-content-score">
 							<ShortenedNumber value={ data.visitors } />
 							{ getTrendContent( data.visitorsTrend, data.visitorsChange ) }
 						</div>
-						<div className="site-expanded-content__card-content-count-title">
+						<div className="site-expanded-content__card-content-score-title">
 							{ translate( 'Visitors' ) }
 						</div>
 					</div>
 					<div className="site-expanded-content__card-content-column">
-						<div className="site-expanded-content__card-content-count">
+						<div className="site-expanded-content__card-content-score">
 							<ShortenedNumber value={ data.views } />
 							{ getTrendContent( data.viewsTrend, data.viewsChange ) }
 						</div>
-						<div className="site-expanded-content__card-content-count-title">
+						<div className="site-expanded-content__card-content-score-title">
 							{ translate( 'Views' ) }
 						</div>
 					</div>

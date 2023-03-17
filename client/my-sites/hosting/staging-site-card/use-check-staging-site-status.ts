@@ -33,5 +33,13 @@ export const useCheckStagingSiteStatus = ( siteId: number ) => {
 		};
 	}, [ siteId, dispatch, transferStatus, isFetchingTransferStatus ] );
 
+	// Fetch the status once on mount to avoid waiting the interval delay
+	useEffect( () => {
+		if ( ! siteId ) {
+			return;
+		}
+		dispatch( fetchAutomatedTransferStatus( siteId ) );
+	}, [ siteId, dispatch ] );
+
 	return transferStatus;
 };

@@ -3,8 +3,9 @@
  */
 import config from '@automattic/calypso-config';
 import { Site } from '@automattic/data-stores';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { useDispatch } from '@wordpress/data';
+import nock from 'nock';
 import React from 'react';
 import * as redux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
@@ -12,6 +13,7 @@ import { createReduxStore } from 'calypso/state';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import Sidebar from '../sidebar';
 import { defaultSiteDetails, buildSiteDetails, buildDomainResponse } from './lib/fixtures';
 
@@ -87,11 +89,23 @@ function renderSidebar( props, siteDetails = defaultSiteDetails, emailVerified =
 		);
 	}
 
-	render( <TestSidebar { ...props } /> );
+	renderWithProvider( <TestSidebar { ...props } /> );
 }
 
 describe( 'Sidebar', () => {
+	beforeEach( () => {
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.get( `/wpcom/v2/sites/${ props.siteSlug }/launchpad` )
+			.reply( 200, {
+				checklist_statuses: {},
+				launchpad_screen: 'full',
+				site_intent: '',
+			} );
+	} );
+
 	afterEach( () => {
+		nock.cleanAll();
 		props.sidebarDomain = sidebarDomain;
 	} );
 
