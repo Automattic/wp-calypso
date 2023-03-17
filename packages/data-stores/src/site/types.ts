@@ -483,7 +483,7 @@ export interface ActiveTheme {
 	_links: {
 		'wp:user-global-styles': { href: string }[];
 	};
-	global_styles_id?: number;
+	global_styles_id: number | null;
 }
 
 export interface CurrentTheme {
