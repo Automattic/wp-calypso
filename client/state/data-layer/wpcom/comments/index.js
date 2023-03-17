@@ -20,7 +20,7 @@ import {
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import { DEFAULT_NOTICE_DURATION } from 'calypso/state/notices/constants';
 import { getSitePost } from 'calypso/state/posts/selectors';
 
@@ -191,8 +191,23 @@ export const announceDeleteFailure = ( action ) => {
 	];
 };
 
+const emptyNoticeOptions = {
+	duration: DEFAULT_NOTICE_DURATION,
+	id: 'comment-notice',
+	isPersistent: true,
+};
+
 export const emptyComments = ( action ) => ( dispatch ) => {
 	const { siteId, status } = action;
+
+	dispatch(
+		infoNotice(
+			status === 'spam'
+				? translate( 'Spam emptying in progress.' )
+				: translate( 'Trash emptying in progress.' ),
+			emptyNoticeOptions
+		)
+	);
 
 	dispatch(
 		http(
@@ -207,12 +222,6 @@ export const emptyComments = ( action ) => ( dispatch ) => {
 			action
 		)
 	);
-};
-
-const emptyNoticeOptions = {
-	duration: DEFAULT_NOTICE_DURATION,
-	id: 'comment-notice',
-	isPersistent: true,
 };
 
 export const handleEmptySuccess = (
