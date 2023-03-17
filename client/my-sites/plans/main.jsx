@@ -54,6 +54,7 @@ import DomainUpsellDialog from './components/domain-upsell-dialog';
 import PlansHeader from './components/plans-header';
 import ECommerceTrialPlansPage from './ecommerce-trial';
 import ModernizedLayout from './modernized-layout';
+import WooExpressMediumPlansPage from './wx-medium';
 
 import './style.scss';
 
@@ -295,7 +296,8 @@ class Plans extends Component {
 	}
 
 	renderWooExpressMediumPage() {
-		return <p>Woo Express Performance</p>;
+		const { currentPlan, selectedSite } = this.props;
+		return <WooExpressMediumPlansPage currentPlan={ currentPlan } selectedSite={ selectedSite } />;
 	}
 
 	renderMainContent( { isEcommerceTrial, isWooExpressPlan } ) {
