@@ -39,7 +39,7 @@ async function fetchFromApi< ReturnType >( {
 		body: method === 'POST' ? JSON.stringify( body ) : undefined,
 		credentials: 'same-origin',
 		headers: {
-			Authorization: `Cookie ${ subkey }`,
+			Authorization: `X-WPSUBKEY ${ subkey }`,
 			'Content-Type': 'application/json',
 		},
 	} as APIFetchOptions );
