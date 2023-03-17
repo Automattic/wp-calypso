@@ -12,11 +12,11 @@ import type {
 	StatusTooltip,
 	RowMetaData,
 	StatsNode,
+	BoostNode,
 	BackupNode,
 	ScanNode,
 	MonitorNode,
 	SiteColumns,
-	BoostNode,
 } from './types';
 
 const INITIAL_UNIX_EPOCH = '1970-01-01 00:00:00';
@@ -330,6 +330,7 @@ const formatStatsData = ( site: Site ) => {
 
 const formatBoostData = ( site: Site ) => {
 	const boostData: BoostNode = {
+		status: 'active',
 		type: 'boost',
 		value: site.jetpack_boost_scores,
 	};

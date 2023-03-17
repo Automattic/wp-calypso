@@ -6,7 +6,7 @@ import { getQueryArg, removeQueryArgs, addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useContext, useEffect, useState, useMemo } from 'react';
+import { useContext, useEffect, useState, useMemo, createRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Count from 'calypso/components/count';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -43,6 +43,8 @@ export default function SitesOverview() {
 	const isMobile = useMobileBreakpoint();
 	const jetpackSiteDisconnected = useSelector( checkIfJetpackSiteGotDisconnected );
 	const isPartnerOAuthTokenLoaded = useSelector( getIsPartnerOAuthTokenLoaded );
+
+	const containerRef = createRef< any >();
 
 	const selectedLicenses = useSelector( getSelectedLicenses );
 	const selectedLicensesSiteId = useSelector( getSelectedLicensesSiteId );
@@ -268,7 +270,7 @@ export default function SitesOverview() {
 					</div>
 				</div>
 				<div className="sites-overview__content">
-					<div className="sites-overview__content-wrapper">
+					<div ref={ containerRef } className="sites-overview__content-wrapper">
 						{ ( ! showEmptyState || hasAppliedFilter ) && (
 							<SiteSearchFilterContainer
 								searchQuery={ search }
@@ -286,6 +288,7 @@ export default function SitesOverview() {
 								isLoading={ isLoading }
 								currentPage={ currentPage }
 								isFavoritesTab={ isFavoritesTab }
+								ref={ containerRef }
 							/>
 						) }
 					</div>
