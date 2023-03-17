@@ -11,7 +11,7 @@ const SitesStagingBadge = styled( SitesLaunchStatusBadge )( ( props: SitesStagin
 	color: COLOR,
 	backgroundColor: BACKGROUND_COLOR,
 	borderRadius: props.secondary ? 12 : 4,
-	'.layout__secondary .site-selector &.site__badge': {
+	'.layout__secondary .site-selector &.site__badge, .layout__secondary &.site__badge': {
 		color: COLOR,
 		backgroundColor: BACKGROUND_COLOR,
 	},
