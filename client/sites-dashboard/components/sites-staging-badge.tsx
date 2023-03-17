@@ -4,11 +4,17 @@ interface SitesStagingBadgeProps {
 	secondary?: boolean;
 }
 
+const COLOR = '#4f3500';
+const BACKGROUND_COLOR = '#f0c930';
+
 const SitesStagingBadge = styled( SitesLaunchStatusBadge )( ( props: SitesStagingBadgeProps ) => ( {
-	color: '#4f3500',
-	backgroundColor: '#f0c930',
-	marginRight: props.secondary ? 3 : 0,
+	color: COLOR,
+	backgroundColor: BACKGROUND_COLOR,
 	borderRadius: props.secondary ? 12 : 4,
+	'.layout__secondary .site-selector &.site__badge': {
+		color: COLOR,
+		backgroundColor: BACKGROUND_COLOR,
+	},
 	'.current-site .site:hover &, .notouch .layout__secondary .site-selector.is-hover-enabled .site:hover  &':
 		{
 			color: '#1C1300',
