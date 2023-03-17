@@ -1,11 +1,9 @@
-import { createRegistrySelector } from '@wordpress/data';
-import { STORE_KEY, statusMapping } from './constants';
+import { statusMapping } from './constants';
 import {
 	State,
 	TransferEligibilityWarning,
 	TransferEligibilityError,
 	TransferEligibility,
-	TransferSelectFn,
 } from './types';
 
 export const getAutomatedTransferEligibility = (
@@ -18,77 +16,73 @@ export const getAutomatedTransferEligibility = (
 	return state[ siteId ];
 };
 
-export const getEligibilityHolds = createRegistrySelector(
-	( select: TransferSelectFn ) =>
-		( state: State, siteId: number | null ): TransferEligibilityError[] | null => {
-			const transferEligibility = select( STORE_KEY ).getAutomatedTransferEligibility( siteId );
+export const getEligibilityHolds = (
+	state: State,
+	siteId: number | null
+): TransferEligibilityError[] | null => {
+	const transferEligibility = getAutomatedTransferEligibility( state, siteId );
 
-			if ( ! transferEligibility ) {
-				return null;
-			}
+	if ( ! transferEligibility ) {
+		return null;
+	}
 
-			const { errors } = transferEligibility;
+	const { errors } = transferEligibility;
 
-			if ( ! errors ) {
-				return null;
-			}
+	if ( ! errors ) {
+		return null;
+	}
 
-			return errors.map( ( { code } ) => {
-				return statusMapping[ code ] ?? '';
-			} );
-		}
-);
+	return errors.map( ( { code } ) => {
+		return statusMapping[ code ] ?? '';
+	} );
+};
 
-export const getEligibilityWarnings = createRegistrySelector(
-	( select: TransferSelectFn ) =>
-		( state: State, siteId: number | null ): TransferEligibilityWarning[] | null => {
-			const transferEligibility = select( STORE_KEY ).getAutomatedTransferEligibility( siteId );
+export const getEligibilityWarnings = (
+	state: State,
+	siteId: number | null
+): TransferEligibilityWarning[] | null => {
+	const transferEligibility = getAutomatedTransferEligibility( state, siteId );
 
-			if ( ! transferEligibility ) {
-				return null;
-			}
+	if ( ! transferEligibility ) {
+		return null;
+	}
 
-			const { warnings } = transferEligibility;
+	const { warnings } = transferEligibility;
 
-			if ( ! warnings ) {
-				return null;
-			}
+	if ( ! warnings ) {
+		return null;
+	}
 
-			// combine plugin and theme warnings into one list
-			const combined = Object.values( warnings ).flat();
+	// combine plugin and theme warnings into one list
+	const combined = Object.values( warnings ).flat();
 
-			return combined.map( ( { description, name, supportUrl, id } ) => ( {
-				id,
-				name,
-				description,
-				supportUrl,
-			} ) );
-		}
-);
+	return combined.map( ( { description, name, supportUrl, id } ) => ( {
+		id,
+		name,
+		description,
+		supportUrl,
+	} ) );
+};
 
-export const getNonSubdomainWarnings = createRegistrySelector(
-	( select: TransferSelectFn ) =>
-		( state: State, siteId: number | null ): TransferEligibilityWarning[] | null => {
-			const eligibilityWarnings = select( STORE_KEY ).getEligibilityWarnings( siteId );
+export const getNonSubdomainWarnings = (
+	state: State,
+	siteId: number | null
+): TransferEligibilityWarning[] | null => {
+	const eligibilityWarnings = getEligibilityWarnings( state, siteId );
 
-			if ( ! eligibilityWarnings ) {
-				return null;
-			}
+	if ( ! eligibilityWarnings ) {
+		return null;
+	}
 
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore Until createRegistrySelector is typed correctly
-			return eligibilityWarnings?.filter( ( { id } ) => id !== 'wordpress_subdomain' ) ?? null;
-		}
-);
+	return eligibilityWarnings?.filter( ( { id } ) => id !== 'wordpress_subdomain' ) ?? null;
+};
 
-export const getWpcomSubdomainWarning = createRegistrySelector(
-	( select: TransferSelectFn ) =>
-		( state: State, siteId: number | null ): TransferEligibilityWarning | null => {
-			const eligibilityWarnings = select( STORE_KEY ).getEligibilityWarnings( siteId );
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore Until createRegistrySelector is typed correctly
-			const warning = eligibilityWarnings?.find( ( { id } ) => id === 'wordpress_subdomain' );
+export const getWpcomSubdomainWarning = (
+	state: State,
+	siteId: number | null
+): TransferEligibilityWarning | null => {
+	const eligibilityWarnings = getEligibilityWarnings( state, siteId );
 
-			return warning || null;
-		}
-);
+	const warning = eligibilityWarnings?.find( ( { id } ) => id === 'wordpress_subdomain' );
+	return warning || null;
+};
