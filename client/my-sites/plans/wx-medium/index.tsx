@@ -102,9 +102,11 @@ const WooExpressMediumPlansPage = ( { currentPlan, selectedSite }: WXMediumPlans
 				</div>
 				<div className="wx-medium-plans__price-card-conditions">{ priceContent }</div>
 				<div className="wx-medium-plans__price-card-cta-wrapper">
-					<Button className="wx-medium-plans__price-card-cta" onClick={ goToSubscriptionPage }>
-						{ translate( 'Manage my plan' ) }
-					</Button>
+					{ currentPlan && selectedSite && (
+						<Button className="wx-medium-plans__price-card-cta" onClick={ goToSubscriptionPage }>
+							{ translate( 'Manage my plan' ) }
+						</Button>
+					) }
 				</div>
 			</Card>
 
