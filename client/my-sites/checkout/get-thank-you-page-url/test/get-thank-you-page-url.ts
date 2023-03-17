@@ -1799,7 +1799,7 @@ describe( 'getThankYouPageUrl', () => {
 				},
 				siteSlug: 'site.slug',
 			} );
-			expect( url ).toBe( '/marketplace/thank-you/slug1,slug2/site.slug' );
+			expect( url ).toBe( '/marketplace/thank-you/site.slug?plugins=slug1%2Cslug2' ); // %2C is a comma
 		} );
 
 		it( 'Error when gift purchase missing blog_slug', () => {

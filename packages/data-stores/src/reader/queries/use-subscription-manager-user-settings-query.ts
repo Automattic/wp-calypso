@@ -1,6 +1,6 @@
 import { useSelect } from '@wordpress/data';
 import { useQuery } from 'react-query';
-import { register as registerUserStore } from '../../user';
+import { register as registerUserStore, UserSelect } from '../../user';
 import { fetchFromApi } from '../helpers';
 import type { SubscriptionManagerUserSettings } from '../types';
 
@@ -12,9 +12,10 @@ type EmailSettingsAPIResponse = {
 };
 
 const useSubscriptionManagerUserSettingsQuery = () => {
-	const isLoggedIn = useSelect( ( select ) =>
-		select( USER_STORE ).isCurrentUserLoggedIn()
-	) as boolean;
+	const isLoggedIn = useSelect(
+		( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+		[]
+	);
 	return useQuery(
 		'siteSettings',
 		async () => {

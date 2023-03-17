@@ -1,8 +1,7 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useSelect } from '@wordpress/data';
 import { useSupportedPlans } from 'calypso/../packages/plans-grid/src/hooks';
-import { PLANS_STORE } from 'calypso/landing/gutenboarding/stores/plans';
-import { PRODUCTS_LIST_STORE } from 'calypso/landing/stepper/stores';
+import { PLANS_STORE, PRODUCTS_LIST_STORE } from 'calypso/landing/stepper/stores';
 import type {
 	PlanBillingPeriod,
 	PlansSelect,

@@ -1,0 +1,22 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "../components";
+
+.email-format-input {
+	&.form-fieldset {
+		@extend %form-fieldset;
+	}
+
+	.form-label {
+		@extend %form-label;
+	}
+
+	.form-select {
+		@extend %form-select;
+		width: 457px;
+
+		@media screen and ( max-width: $break-small ) {
+			width: 100%;
+		}
+	}
+}
