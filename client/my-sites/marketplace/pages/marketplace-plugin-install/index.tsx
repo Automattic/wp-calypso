@@ -249,9 +249,9 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 		) {
 			waitFor( 1 ).then( () =>
 				page.redirect(
-					`/marketplace/thank-you/${
+					`/marketplace/thank-you/${ selectedSiteSlug }?hide-progress-bar&plugins=${
 						installedPlugin?.slug || productSlug || uploadedPluginSlug
-					}/${ selectedSiteSlug }?hide-progress-bar`
+					}`
 				)
 			);
 		}
@@ -334,11 +334,7 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 										primary
 										onClick={ () =>
 											page(
-												`/checkout/${
-													selectedSite?.slug || ''
-												}/${ marketplaceProductSlug }?redirect_to=/marketplace/thank-you/${ marketplaceProductSlug }/${
-													selectedSite?.slug || ''
-												}#step2`
+												`/checkout/${ selectedSite?.slug || '' }/${ marketplaceProductSlug }?#step2`
 											)
 										}
 									>

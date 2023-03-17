@@ -10,6 +10,7 @@ import LaunchContext, { LaunchContextProps } from '../context';
 import FocusedLaunch from '../focused-launch';
 import Success from '../focused-launch/success';
 import { LAUNCH_STORE, SITE_STORE } from '../stores';
+import type { LaunchSelect } from '@automattic/data-stores';
 import './styles.scss';
 
 interface FocusedLaunchModalProps extends Omit< LaunchContextProps, 'flow' > {
@@ -27,8 +28,9 @@ const FocusedLaunchModal: React.FunctionComponent< FocusedLaunchModalProps > = (
 	isInIframe,
 	isLaunchImmediately,
 } ) => {
-	const { isModalDismissible, isModalTitleVisible } = useSelect( ( select ) =>
-		select( LAUNCH_STORE ).getState()
+	const { isModalDismissible, isModalTitleVisible } = useSelect(
+		( select ) => ( select( LAUNCH_STORE ) as LaunchSelect ).getState(),
+		[]
 	);
 	const { launchSite } = useDispatch( SITE_STORE );
 

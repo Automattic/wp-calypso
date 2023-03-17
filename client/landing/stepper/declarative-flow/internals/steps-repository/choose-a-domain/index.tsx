@@ -9,6 +9,7 @@ import { ONBOARD_STORE, PRODUCTS_LIST_STORE } from 'calypso/landing/stepper/stor
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import type { Step } from '../../types';
+import type { ProductsListSelect, OnboardSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -16,13 +17,14 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 	const { goNext, goBack, submit } = navigation;
 	const { __ } = useI18n();
 	const isVideoPressFlow = 'videopress' === flow;
-	const [ siteTitle, domain, productsList ] = useSelect( ( select ) => {
-		return [
-			select( ONBOARD_STORE ).getSelectedSiteTitle(),
-			select( ONBOARD_STORE ).getSelectedDomain(),
-			select( PRODUCTS_LIST_STORE ).getProductsList(),
-		];
-	} );
+	const { siteTitle, domain, productsList } = useSelect(
+		( select ) => ( {
+			siteTitle: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
+			domain: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
+			productsList: ( select( PRODUCTS_LIST_STORE ) as ProductsListSelect ).getProductsList(),
+		} ),
+		[]
+	);
 	const { setDomain } = useDispatch( ONBOARD_STORE );
 
 	const onSkip = () => {

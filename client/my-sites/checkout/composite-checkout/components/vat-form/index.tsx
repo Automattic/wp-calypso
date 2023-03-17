@@ -8,6 +8,7 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { CHECKOUT_STORE } from '../../lib/wpcom-store';
 
 import './style.css';
 
@@ -26,6 +27,7 @@ const countriesSupportingVat = [
 	'FI',
 	'FR',
 	'GB',
+	'GR',
 	'HR',
 	'HU',
 	'IE',
@@ -63,10 +65,8 @@ export function VatForm( {
 	countryCode: string | undefined;
 } ) {
 	const translate = useTranslate();
-	const vatDetailsInForm = useSelect(
-		( select ) => select( 'wpcom-checkout' )?.getVatDetails() ?? {}
-	);
-	const wpcomStoreActions = useDispatch( 'wpcom-checkout' );
+	const vatDetailsInForm = useSelect( ( select ) => select( CHECKOUT_STORE ).getVatDetails(), [] );
+	const wpcomStoreActions = useDispatch( CHECKOUT_STORE );
 	const setVatDetailsInForm = wpcomStoreActions?.setVatDetails;
 	const { vatDetails: vatDetailsFromServer, isLoading: isLoadingVatDetails } = useVatDetails();
 	const [ isFormActive, setIsFormActive ] = useState< boolean >( false );
@@ -101,8 +101,8 @@ export function VatForm( {
 				...vatDetailsFromServer,
 				// Initialize the VAT country in this form data to match the country in
 				// the parent form, which may differ from the country in the saved VAT
-				// details.
-				country: countryCode,
+				// details unless Northern Ireland is saved.
+				country: vatDetailsFromServer.country === 'XI' ? vatDetailsFromServer.country : countryCode,
 			} );
 			// Pre-check the checkbox to show the form when the country is supported
 			// if there are saved VAT details.

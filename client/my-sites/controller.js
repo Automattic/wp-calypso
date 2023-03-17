@@ -61,6 +61,7 @@ import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isStagingSite from 'calypso/state/selectors/is-staging-site';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSite, getSiteId, getSiteOption, getSiteSlug } from 'calypso/state/sites/selectors';
@@ -416,9 +417,16 @@ export function noSite( context, next ) {
 	const hasSite = currentUser && currentUser.visible_site_count >= 1;
 	const isDomainOnlyFlow = context.query?.isDomainOnly === '1';
 	const isJetpackCheckoutFlow = context.pathname.includes( '/checkout/jetpack' );
+	const isAkismetCheckoutFlow = context.pathname.includes( '/checkout/akismet' );
 	const isGiftCheckoutFlow = context.pathname.includes( '/gift/' );
 
-	if ( ! isDomainOnlyFlow && ! isJetpackCheckoutFlow && ! isGiftCheckoutFlow && hasSite ) {
+	if (
+		! isDomainOnlyFlow &&
+		! isJetpackCheckoutFlow &&
+		! isAkismetCheckoutFlow &&
+		! isGiftCheckoutFlow &&
+		hasSite
+	) {
 		siteSelection( context, next );
 		return;
 	}
@@ -444,9 +452,7 @@ export function siteSelection( context, next ) {
 	// Making sure non-connected users get redirected to user connection flow.
 	// Details: p9dueE-6Hf-p2
 	const isUnlinkedCheckout =
-		'1' === context.query?.unlinked &&
-		context.pathname.match( /^\/checkout\/[^/]+\/jetpack_/i ) &&
-		! context.pathname.includes( 'jetpack_boost' );
+		'1' === context.query?.unlinked && context.pathname.match( /^\/checkout\/[^/]+\/jetpack_/i );
 
 	// The user doesn't have any sites: render `NoSitesMessage`
 	if ( currentUser && currentUser.site_count === 0 && ! isUnlinkedCheckout ) {
@@ -508,7 +514,10 @@ export function siteSelection( context, next ) {
 
 	const siteId = getSiteId( getState(), siteFragment );
 
-	if ( siteId && ! isUnlinkedCheckout ) {
+	const isUnlinkedCheckoutNotBoost =
+		isUnlinkedCheckout && ! context.pathname.includes( 'jetpack_boost' );
+
+	if ( siteId && ! isUnlinkedCheckoutNotBoost ) {
 		// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
 		// to wp-admin. In that case, don't continue handling the route.
 		dispatch( setSelectedSiteId( siteId ) );
@@ -543,7 +552,7 @@ export function siteSelection( context, next ) {
 
 				// If the user is presumably not connected to WPCOM, we ignore the site ID we found.
 				// Details: p9dueE-6Hf-p2
-				if ( freshSiteId && ! isUnlinkedCheckout ) {
+				if ( freshSiteId && ! isUnlinkedCheckoutNotBoost ) {
 					// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
 					// to wp-admin. In that case, don't continue handling the route.
 					dispatch( setSelectedSiteId( freshSiteId ) );
@@ -555,10 +564,7 @@ export function siteSelection( context, next ) {
 				} else {
 					// If the site has loaded but siteId is still invalid then redirect to allSitesPath.
 					const siteFragmentOffset = context.path.indexOf( `/${ siteFragment }` );
-					const allSitesPath = addQueryArgs(
-						{ site: siteFragment },
-						context.path.substring( 0, siteFragmentOffset )
-					);
+					const allSitesPath = context.path.substring( 0, siteFragmentOffset );
 					page.redirect( allSitesPath );
 				}
 			} );
@@ -633,6 +639,25 @@ export function redirectWithoutSite( redirectPath ) {
 
 		return next();
 	};
+}
+
+/**
+ * Use this middleware to prevent navigation to pages which are not supported by staging sites.
+ *
+ * @param {Object} context -- Middleware context
+ * @param {Function} next -- Call next middleware in chain
+ */
+export function stagingSiteNotSupportedRedirect( context, next ) {
+	const store = context.store;
+	const selectedSite = getSelectedSite( store.getState() );
+
+	if ( selectedSite && isStagingSite( store.getState(), selectedSite.ID ) ) {
+		const siteSlug = getSiteSlug( store.getState(), selectedSite.ID );
+
+		return page.redirect( `/home/${ siteSlug }` );
+	}
+
+	next();
 }
 
 /**

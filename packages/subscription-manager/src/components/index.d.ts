@@ -41,7 +41,6 @@ declare module 'calypso/components/main' {
 	} >;
 	export default Main;
 }
-// write me a function to print hello world
 declare module 'calypso/components/section-nav' {
 	const SectionNav: React.FC< {
 		selectedText?: string;
@@ -74,10 +73,27 @@ declare module 'calypso/components/section-nav/item' {
 		onKeyPress?: ( event: React.KeyboardEvent< HTMLAnchorElement > ) => void;
 		isExternalLink?: boolean;
 		disabled?: boolean;
-		count?: number | boolean;
+		count?: number;
 		compactCount?: boolean;
 		className?: string;
 		preloadSectionName?: string;
 	} >;
 	export default SectionNavItem;
+}
+
+declare module 'calypso/components/route' {
+	export const useCurrentRoute: () => {
+		currentSection: unknown;
+		currentRoute: string;
+		currentQuery: unknown;
+	};
+}
+
+declare module 'calypso/components/forms/form-fieldset' {
+	const FormFieldset: React.FC< {
+		className?: string;
+		children?: React.ReactNode;
+	} >;
+
+	export default FormFieldset;
 }

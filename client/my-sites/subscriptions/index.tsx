@@ -1,27 +1,42 @@
 import config from '@automattic/calypso-config';
 import SubscriptionManager from '@automattic/subscription-manager';
+import { useTranslate } from 'i18n-calypso';
 import page, { Callback } from 'page';
 import { createElement } from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { makeLayout, render } from 'calypso/controller';
 
-const SiteSubscriptions = () => 'Site Subscriptions';
-const SubscriptionSettings = () => 'Subscription Settings';
+const SitesView = () => <span>Sites View</span>;
+const CommentsView = () => <span>Comments View</span>;
+const SettingsView = () => <SubscriptionManager.UserSettings />;
 
 const SubscriptionManagementPage = () => {
+	const translate = useTranslate();
+
 	return (
 		<SubscriptionManager>
-			{ /* <SubscriptionManager.Tabs>
-				<SubscriptionManager.Tab name="sites" />
-				<SubscriptionManager.Tab name="settings" />
-			</SubscriptionManager.Tabs> */ }
-
-			<BrowserRouter>
-				<Switch>
-					<Route path="/subscriptions/sites" render={ SiteSubscriptions } />
-					<Route path="/subscriptions/settings" render={ SubscriptionSettings } />
-				</Switch>
-			</BrowserRouter>
+			<SubscriptionManager.TabsSwitcher
+				baseRoute="subscriptions"
+				defaultTab="sites"
+				tabs={ [
+					{
+						label: translate( 'Sites' ),
+						path: 'sites',
+						view: SitesView,
+						count: 2,
+					},
+					{
+						label: translate( 'Comments' ),
+						path: 'comments',
+						view: CommentsView,
+						count: 5,
+					},
+					{
+						label: translate( 'Settings' ),
+						path: 'settings',
+						view: SettingsView,
+					},
+				] }
+			/>
 		</SubscriptionManager>
 	);
 };
@@ -40,6 +55,13 @@ const checkFeatureFlag: Callback = ( context, next ) => {
 };
 
 export default function () {
-	page( '/subscriptions/settings', checkFeatureFlag, createSubscriptions, makeLayout, render );
-	page( '/subscriptions/sites', checkFeatureFlag, createSubscriptions, makeLayout, render );
+	page.redirect( '/subscriptions', '/subscriptions/sites' );
+
+	page(
+		/\/subscriptions(\/(comments|settings|sites))?/,
+		checkFeatureFlag,
+		createSubscriptions,
+		makeLayout,
+		render
+	);
 }

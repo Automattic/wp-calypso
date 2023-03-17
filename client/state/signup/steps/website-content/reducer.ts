@@ -13,23 +13,24 @@ import {
 	SIGNUP_STEPS_WEBSITE_CONTENT_REMOVE_LOGO_URL,
 	SIGNUP_STEPS_WEBSITE_CONTENT_FEEDBACK_CHANGE,
 	SIGNUP_STEPS_WEBSITE_CONTENT_CHANGES_SAVED,
+	SIGNUP_STEPS_WEBSITE_CONTENT_SEARCH_TERMS_CHANGED,
 } from 'calypso/state/action-types';
 import { getSingleMediaPlaceholder, MediaUploadedData } from './actions';
-import { initialState, LOGO_SECTION_ID, MEDIA_UPLOAD_STATES } from './constants';
+import { initialState, SITE_INFORMATION_SECTION_ID, MEDIA_UPLOAD_STATES } from './constants';
 import { WebsiteContentCollectionState } from './types';
 import type { AnyAction } from 'redux';
 
 export default ( state = initialState, action: AnyAction ): WebsiteContentCollectionState => {
 	switch ( action.type ) {
 		case SIGNUP_STEPS_WEBSITE_CONTENT_INITIALIZE_PAGES: {
-			const { pages, siteLogoSection, feedbackSection } = action.payload;
+			const { pages, siteInformationSection, feedbackSection } = action.payload;
 
 			return {
 				...initialState,
 				websiteContent: {
 					...initialState.websiteContent,
 					pages,
-					siteLogoSection,
+					siteInformationSection,
 					feedbackSection,
 				},
 			};
@@ -45,8 +46,8 @@ export default ( state = initialState, action: AnyAction ): WebsiteContentCollec
 				...state,
 				mediaUploadStates: {
 					...state.mediaUploadStates,
-					[ LOGO_SECTION_ID ]: {
-						...state.mediaUploadStates[ LOGO_SECTION_ID ],
+					[ SITE_INFORMATION_SECTION_ID ]: {
+						...state.mediaUploadStates[ SITE_INFORMATION_SECTION_ID ],
 						[ 0 ]:
 							action.type === SIGNUP_STEPS_WEBSITE_CONTENT_LOGO_UPLOAD_STARTED
 								? MEDIA_UPLOAD_STATES.UPLOAD_STARTED
@@ -63,12 +64,15 @@ export default ( state = initialState, action: AnyAction ): WebsiteContentCollec
 				...state,
 				websiteContent: {
 					...state.websiteContent,
-					siteLogoSection: { siteLogoUrl: url },
+					siteInformationSection: {
+						...state.websiteContent.siteInformationSection,
+						siteLogoUrl: url,
+					},
 				},
 				mediaUploadStates: {
 					...state.mediaUploadStates,
-					[ LOGO_SECTION_ID ]: {
-						...state.mediaUploadStates[ LOGO_SECTION_ID ],
+					[ SITE_INFORMATION_SECTION_ID ]: {
+						...state.mediaUploadStates[ SITE_INFORMATION_SECTION_ID ],
 						[ 0 ]: MEDIA_UPLOAD_STATES.UPLOAD_COMPLETED,
 					},
 				},
@@ -90,17 +94,34 @@ export default ( state = initialState, action: AnyAction ): WebsiteContentCollec
 			};
 		}
 
+		case SIGNUP_STEPS_WEBSITE_CONTENT_SEARCH_TERMS_CHANGED: {
+			const {
+				payload: { searchTerms },
+			} = action;
+			return {
+				...state,
+				websiteContent: {
+					...state.websiteContent,
+					siteInformationSection: { ...state.websiteContent.siteInformationSection, searchTerms },
+				},
+				hasUnsavedChanges: true,
+			};
+		}
+
 		case SIGNUP_STEPS_WEBSITE_CONTENT_REMOVE_LOGO_URL: {
 			return {
 				...state,
 				websiteContent: {
 					...state.websiteContent,
-					siteLogoSection: { siteLogoUrl: '' },
+					siteInformationSection: {
+						...state.websiteContent.siteInformationSection,
+						siteLogoUrl: '',
+					},
 				},
 				mediaUploadStates: {
 					...state.mediaUploadStates,
-					[ LOGO_SECTION_ID ]: {
-						...state.mediaUploadStates[ LOGO_SECTION_ID ],
+					[ SITE_INFORMATION_SECTION_ID ]: {
+						...state.mediaUploadStates[ SITE_INFORMATION_SECTION_ID ],
 						[ 0 ]: MEDIA_UPLOAD_STATES.UPLOAD_REMOVED,
 					},
 				},

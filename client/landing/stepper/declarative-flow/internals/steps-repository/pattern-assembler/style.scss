@@ -118,6 +118,8 @@ $font-family: "SF Pro Text", $sans;
 			overflow-y: auto;
 			overflow-x: hidden;
 			scrollbar-width: none;
+			// Fix for tooltip position issue
+			padding-bottom: 25px;
 
 			&::-webkit-scrollbar {
 				display: none;
@@ -307,6 +309,14 @@ $font-family: "SF Pro Text", $sans;
 		margin-top: auto;
 	}
 
+	.screen-container__description {
+		display: inline-block;
+		padding-bottom: 8px;
+		font-size: $font-body-small;
+		letter-spacing: -0.15px;
+		color: var(--color-neutral-60);
+	}
+
 	/**
 	 * Gutenberg Components
 	 */
@@ -350,7 +360,8 @@ $font-family: "SF Pro Text", $sans;
 .pattern-assembler.pattern-assembler__sidebar-revamp {
 	.pattern-layout {
 		.pattern-layout__list {
-			margin: 0 0 16px;
+			// Fix for tooltip position issue
+			margin: 0 0 -9px;
 		}
 
 		.pattern-action-bar {

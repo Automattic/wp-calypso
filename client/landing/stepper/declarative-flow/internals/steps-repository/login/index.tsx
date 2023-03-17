@@ -10,26 +10,33 @@ import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import {
-	recordOnboardingError,
-	initGoogleRecaptcha,
-	recordGoogleRecaptchaAction,
-} from 'calypso/landing/gutenboarding/lib/analytics';
-import { useLangRouteParam } from 'calypso/landing/gutenboarding/path';
 import { useAnchorFmParams } from 'calypso/landing/stepper/hooks/use-anchor-fm-params';
 import useDetectMatchingAnchorSite from 'calypso/landing/stepper/hooks/use-detect-matching-anchor-site';
 import { useIsAnchorFm } from 'calypso/landing/stepper/hooks/use-is-anchor-fm';
 import { ONBOARD_STORE, USER_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
+import {
+	recordOnboardingError,
+	initGoogleRecaptcha,
+	recordGoogleRecaptchaAction,
+} from 'calypso/landing/stepper/utils/analytics';
+import { useLangRouteParam } from 'calypso/landing/stepper/utils/path';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
+import type { UserSelect } from '@automattic/data-stores';
 import type { FormEvent } from 'react';
 import './style.scss';
 
 const LoginStep: Step = function LoginStep( { navigation } ) {
 	const { submit, goToStep } = navigation;
 	const { __ } = useI18n();
-	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
-	const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
+	const currentUser = useSelect(
+		( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
+		[]
+	);
+	const userIsLoggedIn = useSelect(
+		( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+		[]
+	);
 	//Check to see if there is a site with a matching anchor podcast ID
 	const isLookingUpMatchingAnchorSites = useDetectMatchingAnchorSite();
 	const { setSiteSetupError } = useDispatch( SITE_STORE );
@@ -38,8 +45,14 @@ const LoginStep: Step = function LoginStep( { navigation } ) {
 	const { isAnchorFmPodcastIdError } = useAnchorFmParams();
 	const [ recaptchaClientId, setRecaptchaClientId ] = useState< number >();
 	const { createAccount } = useDispatch( USER_STORE );
-	const isFetchingNewUser = useSelect( ( select ) => select( USER_STORE ).isFetchingNewUser() );
-	const newUserError = useSelect( ( select ) => select( USER_STORE ).getNewUserError() );
+	const isFetchingNewUser = useSelect(
+		( select ) => ( select( USER_STORE ) as UserSelect ).isFetchingNewUser(),
+		[]
+	);
+	const newUserError = useSelect(
+		( select ) => ( select( USER_STORE ) as UserSelect ).getNewUserError(),
+		[]
+	);
 	const lang = useLangRouteParam();
 	const isMobile = useViewportMatch( 'small', '<' );
 	const { anchorFmPodcastId, anchorFmEpisodeId, anchorFmSpotifyUrl } = useAnchorFmParams();

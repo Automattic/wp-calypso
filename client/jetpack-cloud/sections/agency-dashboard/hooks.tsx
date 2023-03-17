@@ -1,5 +1,6 @@
+import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState, useContext } from 'react';
+import { useCallback, useState, useContext, useEffect, RefObject } from 'react';
 import { useQueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -11,6 +12,7 @@ import SitesOverviewContext from './sites-overview/context';
 import type { Site, UpdateMonitorSettingsParams } from './sites-overview/types';
 
 const NOTIFICATION_DURATION = 3000;
+const DESKTOP_BREAKPOINT = '>1280px';
 
 function getRejectedAndFulfilledRequests(
 	promises: any[],
@@ -367,3 +369,39 @@ export function useJetpackAgencyDashboardRecordTrackEvent(
 
 	return dispatchTrackingEvent;
 }
+
+export const useDashboardShowLargeScreen = (
+	siteTableRef: RefObject< HTMLTableElement >,
+	containerRef: { current: { clientWidth: number } }
+) => {
+	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
+
+	const [ isOverflowing, setIsOverflowing ] = useState( false );
+
+	const checkIfOverflowing = useCallback( () => {
+		const siteTableEle = siteTableRef ? siteTableRef.current : null;
+
+		if ( siteTableEle ) {
+			if ( siteTableEle.clientWidth > containerRef?.current?.clientWidth ) {
+				setTimeout( () => {
+					setIsOverflowing( true );
+				}, 1 );
+			}
+		}
+	}, [ siteTableRef, containerRef ] );
+
+	useEffect( () => {
+		window.addEventListener( 'resize', checkIfOverflowing );
+		return () => {
+			window.removeEventListener( 'resize', checkIfOverflowing );
+		};
+	}, [ checkIfOverflowing ] );
+
+	useEffect( () => {
+		checkIfOverflowing();
+		// Do not add checkIfOverflowing to the dependency array as it will cause an infinite loop
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
+
+	return isDesktop && ! isOverflowing;
+};

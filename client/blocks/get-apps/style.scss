@@ -20,7 +20,7 @@ body.get-apps__body {
 	width: 100%;
 }
 
-.get-apps__wrapper.jetpack .card {
+.get-apps__wrapper .card {
 	box-shadow: none;
 
 	@include breakpoint-deprecated("<480px") {
@@ -30,22 +30,14 @@ body.get-apps__body {
 }
 
 .get-apps__card-title {
-	font-size: $font-body;
 	margin-bottom: 4px;
-
-	&.jetpack {
-		font-size: $font-headline-small;
-		line-height: 41px;
-		@extend .wp-brand-font;
-	}
+	font-size: $font-headline-small;
+	line-height: 41px;
+	@extend .wp-brand-font;
 
 	@include breakpoint-deprecated(">480px") {
-		font-size: $font-title-small;
-
-		&.jetpack {
-			font-size: $font-headline-medium;
-			line-height: 52px;
-		}
+		font-size: $font-headline-medium;
+		line-height: 52px;
 	}
 }
 
@@ -73,27 +65,24 @@ body.get-apps__body {
 }
 
 .get-apps__desktop {
+	background: #e9eff5;
+	margin-bottom: 0;
 
-	&.jetpack {
-		background: #e9eff5;
-		margin-bottom: 0;
+	&::before {
+		content: "";
+		background-color: #e9eff5;
+		position: absolute;
+		height: 100vh;
+		width: 200vw;
+		top: 0;
+		left: -100vw;
+		z-index: -1;
+		overflow: hidden;
+	}
 
-		&::before {
-			content: "";
-			background-color: #e9eff5;
-			position: absolute;
-			height: 100vh;
-			width: 200vw;
-			top: 0;
-			left: -100vw;
-			z-index: -1;
-			overflow: hidden;
-		}
-
-		.get-apps__card-title {
-			margin-bottom: 20px;
-			font-size: $font-title-large;
-		}
+	.get-apps__card-title {
+		margin-bottom: 20px;
+		font-size: $font-title-large;
 	}
 
 	@include breakpoint-deprecated(">480px") {
@@ -101,13 +90,10 @@ body.get-apps__body {
 		flex-direction: row;
 		align-items: center;
 
-		&.jetpack {
-			.get-apps__card-title {
-				margin-bottom: 10px;
-				font-size: $font-headline-small;
-			}
+		.get-apps__card-title {
+			margin-bottom: 10px;
+			font-size: $font-headline-small;
 		}
-
 	}
 }
 
@@ -156,33 +142,7 @@ body.get-apps__body {
 	}
 }
 
-.get-apps__description {
-	font-size: $font-body-small;
-	margin-bottom: 4px;
-
-	@include breakpoint-deprecated(">480px") {
-		font-size: $font-body;
-	}
-}
-
-.get-apps__also-available,
-.get-apps__description:last-child {
-	margin-bottom: 12px;
-
-	@include breakpoint-deprecated(">480px") {
-		margin-bottom: 0;
-	}
-}
-
 .get-apps__mobile {
-
-	@include breakpoint-deprecated(">480px") {
-		order: 2;
-
-		&.jetpack {
-			order: inherit;
-		}
-	}
 
 	.get-apps__store-subpanel {
 
@@ -196,13 +156,10 @@ body.get-apps__body {
 			display: flex;
 			flex-direction: row;
 			align-items: center;
+			margin-top: 30px;
 
-			&.jetpack {
-				margin-top: 30px;
-
-				.get-apps__app-badge {
-					margin-left: 0;
-				}
+			.get-apps__app-badge {
+				margin-left: 0;
 			}
 		}
 
@@ -219,34 +176,24 @@ body.get-apps__body {
 	}
 
 	.get-apps__badges {
-		&.jetpack {
-			margin-top: 30px;
+		margin-top: 30px;
 
-			.get-apps__app-badge {
-				margin-left: 0;
-			}
+		.get-apps__app-badge {
+			margin-left: 0;
 		}
-	}
-
-	.get-apps__magic-link-subpanel {
-		margin-top: 64px;
 	}
 
 	.get-apps__qr-code-subpanel {
 		// This is a hack to allow us to use a feature flag to hide this subpanel
 		// without the parent card having a big ugly blank space at the bottom.
-		margin-top: 64px;
+		margin-top: 50px;
+		margin-bottom: 40px;
+		display: flex;
+		align-items: center;
 
-		&.jetpack {
-			margin-top: 50px;
-			margin-bottom: 40px;
-			display: flex;
-			align-items: center;
-
-			.get-apps__card-text {
-				padding: 0 50px;
-				margin-bottom: 0;
-			}
+		.get-apps__card-text {
+			padding: 0 50px;
+			margin-bottom: 0;
 		}
 	}
 }
@@ -289,11 +236,8 @@ body.get-apps__body {
 }
 
 .get-apps__card-text {
-
-	&.jetpack {
-		color: var(--studio-blue-80);
-		font-size: $font-body-large;
-	}
+	color: var(--studio-blue-80);
+	font-size: $font-body-large;
 
 	@include breakpoint-deprecated(">480px") {
 		flex: 1;
@@ -301,53 +245,44 @@ body.get-apps__body {
 }
 
 .get-apps__also-available {
-	color: var(--color-text-subtle);
-	font-size: $font-body-small;
-	font-style: italic;
+	color: var(--studio-blue-80);
+	margin-top: 50px;
+	margin-bottom: 80px;
+	font-size: $font-body-large;
 
-	&.jetpack {
-		color: var(--studio-blue-80);
-		margin-top: 50px;
-		margin-bottom: 80px;
-		font-style: inherit;
-		font-size: $font-body-large;
+	p {
+		margin-bottom: 15px;
+	}
 
-		p {
-			margin-bottom: 15px;
-		}
+	a {
+		padding-right: 35px;
+		color: var(--studio-blue-50);
+		display: flex;
+		align-items: center;
+		font-weight: 400;
+	}
 
-		a {
-			padding-right: 35px;
-			color: var(--studio-blue-50);
-			display: flex;
-			align-items: center;
-			font-weight: 400;
-		}
+	.svg-icon {
+		padding-right: 5px;
+	}
 
-		.svg-icon {
-			padding-right: 5px;
-		}
-
-		.get-apps__also-available-link-group {
-			display: flex;
-		}
+	.get-apps__also-available-link-group {
+		display: flex;
 	}
 }
 
 .get-apps__desktop-button.button {
-	@include breakpoint-deprecated(">480px") {
-		margin-left: 24px;
-	}
+	margin: 25px 10px 25px 0;
+	font-weight: 500;
+	padding: 10px 24px;
+	width: fit-content;
+	max-width: 366px;
+	min-width: 110px;
+	display: inline-block;
+	font-size: rem(18px); //typography-exception;
 
-	&.jetpack {
-		margin: 46px 0 15px;
-		font-weight: 500;
-		padding: 10px 24px;
-		width: fit-content;
-
-		&:visited {
-			color: var(--studio-blue-80);
-		}
+	&:visited {
+		color: var(--studio-blue-80);
 	}
 }
 

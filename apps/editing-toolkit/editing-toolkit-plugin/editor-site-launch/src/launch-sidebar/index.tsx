@@ -4,13 +4,16 @@ import { __ } from '@wordpress/i18n';
 import * as React from 'react';
 import LaunchMenu from '../launch-menu';
 import { LAUNCH_STORE } from '../stores';
-
+import type { LaunchSelect } from '@automattic/data-stores';
 import './styles.scss';
 
 const LaunchSidebar: React.FunctionComponent = () => {
 	const { setStep, unsetSidebarFullscreen } = useDispatch( LAUNCH_STORE );
 
-	const LaunchSequence = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchSequence() );
+	const LaunchSequence = useSelect(
+		( select ) => ( select( LAUNCH_STORE ) as LaunchSelect ).getLaunchSequence(),
+		[]
+	);
 
 	const handleStart = () => {
 		setStep( LaunchSequence[ 0 ] );

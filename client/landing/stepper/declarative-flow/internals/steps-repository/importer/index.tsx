@@ -33,6 +33,7 @@ import { useAtomicTransferQueryParamUpdate } from './hooks/use-atomic-transfer-q
 import { useInitialQueryRun } from './hooks/use-initial-query-run';
 import { useStepNavigator } from './hooks/use-step-navigator';
 import type { ImporterCompType } from './types';
+import type { OnboardSelect } from '@automattic/data-stores';
 
 interface Props {
 	importer: Importer;
@@ -58,7 +59,10 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		const siteImports = useSelector( ( state ) => getImporterStatusForSiteId( state, siteId ) );
 		const hasAllSitesFetched = useSelector( ( state ) => hasAllSitesList( state ) );
 		const isImporterStatusHydrated = useSelector( isImporterStatusHydratedSelector );
-		const isMigrateFromWp = useSelect( ( select ) => select( ONBOARD_STORE ).getIsMigrateFromWp() );
+		const isMigrateFromWp = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIsMigrateFromWp(),
+			[]
+		);
 
 		const fromSite = currentSearchParams.get( 'from' ) || '';
 		const fromSiteData = useSelector( getUrlData );

@@ -35,7 +35,7 @@ export default function () {
 		clientRender
 	);
 	page(
-		'/marketplace/thank-you/:productSlug/:site?',
+		'/marketplace/thank-you/:site?',
 		siteSelection,
 		renderMarketplaceThankYou,
 		makeLayout,

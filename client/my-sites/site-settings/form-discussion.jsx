@@ -618,7 +618,7 @@ const connectComponent = connect( ( state ) => {
 	};
 } );
 
-const getFormSettings = ( settings ) => {
+export const getFormSettings = ( settings ) => {
 	return pick( settings, [
 		'default_pingback_flag',
 		'default_ping_status',
