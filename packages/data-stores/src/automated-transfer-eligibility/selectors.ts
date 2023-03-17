@@ -2,7 +2,7 @@ import { statusMapping } from './constants';
 import {
 	State,
 	TransferEligibilityWarning,
-	TransferEligibilityError,
+	TransferEligibilityHold,
 	TransferEligibility,
 } from './types';
 
@@ -19,16 +19,20 @@ export const getAutomatedTransferEligibility = (
 export const getEligibilityHolds = (
 	state: State,
 	siteId: number | null
-): TransferEligibilityError[] | null => {
+): TransferEligibilityHold[] | null => {
 	const transferEligibility = getAutomatedTransferEligibility( state, siteId );
 
 	if ( ! transferEligibility?.errors ) {
 		return null;
 	}
 
-	return transferEligibility.errors.map( ( { code } ) => {
-		return { code: statusMapping[ code ] ?? '', message: '' };
-	} );
+	return transferEligibility.errors.reduce< TransferEligibilityHold[] >( ( errs, { code } ) => {
+		if ( code in statusMapping ) {
+			// At this point, we know code is a key of statusMapping, so we help TS understand that.
+			errs.push( statusMapping[ code as keyof typeof statusMapping ] );
+		}
+		return errs;
+	}, [] );
 };
 
 export const getEligibilityWarnings = (

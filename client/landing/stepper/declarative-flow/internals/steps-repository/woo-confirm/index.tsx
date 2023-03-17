@@ -19,6 +19,7 @@ import { eligibilityHolds as eligibilityHoldsConstants } from 'calypso/state/aut
 import SupportCard from '../store-address/support-card';
 import type { Step } from '../../types';
 import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
+import type { TransferEligibilityHold } from '@automattic/data-stores/src/automated-transfer-eligibility/types';
 import './style.scss';
 
 const Divider = styled.hr`
@@ -101,7 +102,7 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 
 	// Filter the Woop transferring blockers.
 	const transferringBlockers = eligibilityHolds?.filter(
-		( hold: TransferEligibilityError ) => ! TRANSFERRING_NOT_BLOCKERS.includes( hold.code )
+		( hold: TransferEligibilityHold ) => ! TRANSFERRING_NOT_BLOCKERS.includes( hold )
 	);
 
 	const isTransferStuck = latestAtomicTransfer?.is_stuck || false;
@@ -109,16 +110,10 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 
 	// Add blocked-transfer-hold when something is wrong in the transfer status.
 	if (
-		! transferringBlockers?.includes( {
-			code: eligibilityHoldsConstants.BLOCKED_ATOMIC_TRANSFER,
-			message: '',
-		} ) &&
+		! transferringBlockers?.includes( 'BLOCKED_ATOMIC_TRANSFER' ) &&
 		( isBlockByTransferStatus || isTransferStuck )
 	) {
-		transferringBlockers?.push( {
-			code: eligibilityHoldsConstants.BLOCKED_ATOMIC_TRANSFER,
-			message: '',
-		} );
+		transferringBlockers?.push( 'BLOCKED_ATOMIC_TRANSFER' );
 	}
 
 	const transferringDataIsAvailable =
