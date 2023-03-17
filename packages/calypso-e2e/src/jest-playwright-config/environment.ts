@@ -59,7 +59,7 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 	 * @param {Config.ProjectConfig} config Jest configuration.
 	 * @param {EnvironmentContext} context Jest execution context.
 	 */
-	constructor( config: Config.ProjectConfig, context: EnvironmentContext ) {
+	constructor( config: any, context: EnvironmentContext ) {
 		super( config );
 
 		this.testFilePath = context.testPath;
