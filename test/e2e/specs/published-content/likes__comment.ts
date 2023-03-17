@@ -41,7 +41,6 @@ describe( 'Likes: Comment', function () {
 		page = await browser.newPage();
 
 		testAccount = new TestAccount( accountName );
-		await testAccount.authenticate( page );
 
 		restAPIClient = new RestAPIClient( testAccount.credentials );
 
@@ -58,6 +57,8 @@ describe( 'Likes: Comment', function () {
 			newPost.ID,
 			comment
 		);
+
+		await testAccount.authenticate( page );
 	} );
 
 	it( 'View the post', async function () {
