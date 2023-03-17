@@ -37,7 +37,7 @@ const MarketplaceThankYou = ( {
 	const currentUser = useSelector( getCurrentUser );
 	const isRequestingPlugins = useSelector( ( state ) => isRequesting( state, siteId ) );
 
-	const allSlugs = useMemo( () => [ ...pluginSlugs, ...themeSlugs ], [ pluginSlugs, themeSlugs ] );
+	const allSlugs = [ ...pluginSlugs, ...themeSlugs ];
 	const defaultThankYouFooter = useDefaultThankYouFoooter( allSlugs );
 
 	const [ pluginsSection, allPluginsFetched ] = usePluginsThankYouData( pluginSlugs );
