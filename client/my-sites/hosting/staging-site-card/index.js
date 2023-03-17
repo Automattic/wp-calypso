@@ -18,6 +18,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { DeleteStagingSite } from './delete-staging-site';
 
 const stagingSiteAddFailureNoticeId = 'staging-site-add-failure';
 
@@ -38,6 +39,11 @@ const ButtonPlaceholder = styled( LoadingPlaceholder )( {
 
 const StyledLoadingBar = styled( LoadingBar )( {
 	marginBottom: '1em',
+} );
+
+const ActionButtons = styled.div( {
+	display: 'flex',
+	gap: '1em',
 } );
 
 const StagingSiteCard = ( { disabled, siteId, translate } ) => {
@@ -161,9 +167,15 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 						},
 					} ) }
 				</p>
-				<Button primary href={ `/home/${ urlToSlug( stagingSite.url ) }` } disabled={ disabled }>
-					<span>{ translate( 'Manage staging site' ) }</span>
-				</Button>
+				<ActionButtons>
+					<Button primary href={ `/home/${ urlToSlug( stagingSite.url ) }` } disabled={ disabled }>
+						<span>{ translate( 'Manage staging site' ) }</span>
+					</Button>
+					<DeleteStagingSite disabled={ disabled } siteId={ siteId }>
+						<Gridicon icon="trash" />
+						<span>{ __( 'Delete staging site' ) }</span>
+					</DeleteStagingSite>
+				</ActionButtons>
 			</>
 		);
 	};
