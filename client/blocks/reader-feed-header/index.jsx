@@ -157,12 +157,11 @@ class FeedHeader extends Component {
 							</span>
 						) }
 						<div className="reader-feed-header__follow-and-settings">
-							{ feed && ! feed.is_error && (
+							{ siteUrl && (
 								<div className="reader-feed-header__follow-button">
-									<ReaderFollowButton siteUrl={ feed.feed_URL } iconSize={ 24 } />
+									<ReaderFollowButton siteUrl={ siteUrl } iconSize={ 24 } />
 								</div>
 							) }
-
 							{ site && following && ! isEmailBlocked && (
 								<div className="reader-feed-header__email-settings">
 									<ReaderSiteNotificationSettings siteId={ siteId } />
@@ -202,7 +201,9 @@ export default connect(
 			ownProps.feed && ownProps.feed.feed_ID,
 			ownProps.site && ownProps.site.ID
 		),
-		following: ownProps.feed && isFollowing( state, { feedUrl: ownProps.feed.feed_URL } ),
+		following:
+			( ownProps.feed && isFollowing( state, { feedUrl: ownProps.feed.feed_URL } ) ) ||
+			( ownProps.site && isFollowing( state, { feedUrl: ownProps.site.URL } ) ),
 		isEmailBlocked: getUserSetting( state, 'subscription_delivery_email_blocked' ),
 	} ),
 	{ requestMarkAllAsSeen, recordReaderTracksEvent }
