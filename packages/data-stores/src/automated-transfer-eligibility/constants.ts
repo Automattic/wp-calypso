@@ -26,7 +26,7 @@ const eligibilityHolds = {
  * in the code directly dealing with the API.
  */
 
-export const statusMapping: Record< string, string > = {
+export const statusMapping = {
 	blocked_atomic_transfer: eligibilityHolds.BLOCKED_ATOMIC_TRANSFER,
 	transfer_already_exists: eligibilityHolds.TRANSFER_ALREADY_EXISTS,
 	no_business_plan: eligibilityHolds.NO_BUSINESS_PLAN,

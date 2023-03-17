@@ -1,11 +1,14 @@
 import * as actions from './actions';
-import { eligibilityHolds } from './constants';
 import type { DispatchFromMap } from '../mapped-types';
+
 export interface Dispatch {
 	dispatch: DispatchFromMap< typeof actions >;
 }
 
-export type TransferEligibilityError = eligibilityHolds;
+export interface TransferEligibilityError {
+	code: string;
+	message: string;
+}
 
 export interface TransferEligibilityWarning {
 	description: string;
