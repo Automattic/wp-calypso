@@ -1,6 +1,6 @@
 import { FormEvent } from 'react';
+import { BlockEmailsSetting } from '../fields/BlockEmailsSetting';
 import { EmailFormatInput, EmailFormatType } from '../fields/EmailFormatInput';
-import { BlockEmailsSetting } from '../BlockEmailsSetting';
 
 type SubscriptionUserSettings = Partial< {
 	mail_option: EmailFormatType;
