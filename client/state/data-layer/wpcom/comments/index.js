@@ -204,9 +204,7 @@ export const emptyComments = ( action ) => ( dispatch ) => {
 				method: 'POST',
 				path: `/sites/${ siteId }/comments/delete`,
 			},
-			{
-				...action,
-			}
+			action
 		)
 	);
 };
