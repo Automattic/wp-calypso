@@ -64,6 +64,7 @@ $border-radius: 5px; // stylelint-disable-line scales/radii
 	flex-flow: row;
 	grid-area: counts;
 	gap: 64px;
+	align-self: flex-end;
 }
 
 .post-stats-card__count {
