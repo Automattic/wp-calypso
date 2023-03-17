@@ -31,9 +31,11 @@
 			}
 
 			@media ( min-width: $break-large ) and ( max-width: $break-wide ) {
-				gap: 24px;
+				gap: 16px !important;
+				margin-bottom: 16px;
 
 				.task__actions {
+					margin-top: 0;
 					display: grid;
 					grid-template-columns: 50% 50%;
 					width: 100%;
@@ -41,6 +43,10 @@
 
 					& > * {
 						margin: 5px 0;
+					}
+
+					.task__skip {
+						display: inline-flex;
 					}
 				}
 			}
