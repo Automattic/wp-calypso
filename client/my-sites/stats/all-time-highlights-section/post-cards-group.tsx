@@ -106,43 +106,23 @@ export default function PostCardsGroup( {
 		commentCount: mostPopularPost?.discussion?.comment_count,
 	};
 
-	const mobileCardsGroup = (
-		<DotPager>
-			<LatestPostCard siteId={ siteId } siteSlug={ siteSlug } />
-			{ ! isTopViewedPostRequesting && mostPopularPost && (
-				<PostStatsCard
-					heading={ translate( 'Most popular post in the past year' ) }
-					likeCount={ mostPopularPostData?.likeCount }
-					post={ mostPopularPostData }
-					viewCount={ mostPopularPostData?.viewCount }
-					commentCount={ mostPopularPostData?.commentCount }
-					titleLink={ `/stats/post/${ mostPopularPost.ID }/${ siteSlug }` }
-					uploadHref={
-						! isOdysseyStats ? `/post/${ siteSlug }/${ mostPopularPost.ID }` : undefined
-					}
-				/>
-			) }
-		</DotPager>
-	);
+	const cards = [ <LatestPostCard siteId={ siteId } siteSlug={ siteSlug } /> ];
+	if ( ! isTopViewedPostRequesting && mostPopularPost ) {
+		cards.push(
+			<PostStatsCard
+				heading={ translate( 'Most popular post in the past year' ) }
+				likeCount={ mostPopularPostData?.likeCount }
+				post={ mostPopularPostData }
+				viewCount={ mostPopularPostData?.viewCount }
+				commentCount={ mostPopularPostData?.commentCount }
+				titleLink={ `/stats/post/${ mostPopularPost.ID }/${ siteSlug }` }
+				uploadHref={ ! isOdysseyStats ? `/post/${ siteSlug }/${ mostPopularPost.ID }` : undefined }
+			/>
+		);
+	}
 
-	const cardsGroup = (
-		<div className="highlight-cards-list">
-			<LatestPostCard siteId={ siteId } siteSlug={ siteSlug } />
-			{ ! isTopViewedPostRequesting && mostPopularPost && (
-				<PostStatsCard
-					heading={ translate( 'Most popular post in the past year' ) }
-					likeCount={ mostPopularPostData?.likeCount }
-					post={ mostPopularPostData }
-					viewCount={ mostPopularPostData?.viewCount }
-					commentCount={ mostPopularPostData?.commentCount }
-					titleLink={ `/stats/post/${ mostPopularPost.ID }/${ siteSlug }` }
-					uploadHref={
-						! isOdysseyStats ? `/post/${ siteSlug }/${ mostPopularPost.ID }` : undefined
-					}
-				/>
-			) }
-		</div>
-	);
+	const cardsGroup = <div className="highlight-cards-list">{ cards }</div>;
+	const mobileCardsGroup = <DotPager>{ cards }</DotPager>;
 
 	return (
 		<>
