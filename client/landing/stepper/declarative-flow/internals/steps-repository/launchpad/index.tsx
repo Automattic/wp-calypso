@@ -2,7 +2,6 @@ import { isNewsletterFlow, StepContainer } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -46,21 +45,6 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 		[]
 	);
 
-	const areLaunchpadTasksCompleted = useCallback(
-		( flow: string | null ) => {
-			if ( isNewsletterFlow( flow ) ) {
-				return Boolean( checklist_statuses?.first_post_published );
-			}
-			return isSiteLaunched || Boolean( checklist_statuses?.site_launched );
-		},
-		[ checklist_statuses?.first_post_published, checklist_statuses?.site_launched, isSiteLaunched ]
-	);
-
-	const redirectToSiteHome = useCallback( ( siteSlug: string | null, flow: string | null ) => {
-		recordTracksEvent( 'calypso_launchpad_redirect_to_home', { flow: flow } );
-		window.location.replace( `/home/${ siteSlug }` );
-	}, [] );
-
 	if (
 		! isLoggedIn ||
 		launchpadScreenOption === 'off' ||
@@ -72,6 +56,18 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 
 	if ( ! siteSlug || fetchingSiteError?.error ) {
 		window.location.replace( '/home' );
+	}
+
+	function areLaunchpadTasksCompleted( flow: string | null ) {
+		if ( isNewsletterFlow( flow ) ) {
+			return Boolean( checklist_statuses?.first_post_published );
+		}
+		return isSiteLaunched || Boolean( checklist_statuses?.site_launched );
+	}
+
+	function redirectToSiteHome( siteSlug: string | null, flow: string | null ) {
+		recordTracksEvent( 'calypso_launchpad_redirect_to_home', { flow: flow } );
+		window.location.replace( `/home/${ siteSlug }` );
 	}
 
 	useEffect( () => {
