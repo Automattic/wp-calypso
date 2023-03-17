@@ -22,17 +22,11 @@ export const getEligibilityHolds = (
 ): TransferEligibilityError[] | null => {
 	const transferEligibility = getAutomatedTransferEligibility( state, siteId );
 
-	if ( ! transferEligibility ) {
+	if ( ! transferEligibility?.errors ) {
 		return null;
 	}
 
-	const { errors } = transferEligibility;
-
-	if ( ! errors ) {
-		return null;
-	}
-
-	return errors.map( ( { code } ) => {
+	return transferEligibility.errors.map( ( { code } ) => {
 		return { code: statusMapping[ code ] ?? '', message: '' };
 	} );
 };
@@ -43,18 +37,12 @@ export const getEligibilityWarnings = (
 ): TransferEligibilityWarning[] | null => {
 	const transferEligibility = getAutomatedTransferEligibility( state, siteId );
 
-	if ( ! transferEligibility ) {
-		return null;
-	}
-
-	const { warnings } = transferEligibility;
-
-	if ( ! warnings ) {
+	if ( ! transferEligibility?.warnings ) {
 		return null;
 	}
 
 	// combine plugin and theme warnings into one list
-	const combined = Object.values( warnings ).flat();
+	const combined = Object.values( transferEligibility.warnings ).flat();
 
 	return combined.map( ( { description, name, supportUrl, id } ) => ( {
 		id,
@@ -69,11 +57,6 @@ export const getNonSubdomainWarnings = (
 	siteId: number | null
 ): TransferEligibilityWarning[] | null => {
 	const eligibilityWarnings = getEligibilityWarnings( state, siteId );
-
-	if ( ! eligibilityWarnings ) {
-		return null;
-	}
-
 	return eligibilityWarnings?.filter( ( { id } ) => id !== 'wordpress_subdomain' ) ?? null;
 };
 
@@ -82,7 +65,5 @@ export const getWpcomSubdomainWarning = (
 	siteId: number | null
 ): TransferEligibilityWarning | null => {
 	const eligibilityWarnings = getEligibilityWarnings( state, siteId );
-
-	const warning = eligibilityWarnings?.find( ( { id } ) => id === 'wordpress_subdomain' );
-	return warning || null;
+	return eligibilityWarnings?.find( ( { id } ) => id === 'wordpress_subdomain' ) ?? null;
 };
