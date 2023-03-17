@@ -33,7 +33,7 @@ export const getEligibilityHolds = (
 	}
 
 	return errors.map( ( { code } ) => {
-		return statusMapping[ code ] ?? '';
+		return { code: statusMapping[ code ] ?? '', message: '' };
 	} );
 };
 
