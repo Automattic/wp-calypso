@@ -16,6 +16,7 @@ import type {
 	ScanNode,
 	MonitorNode,
 	SiteColumns,
+	BoostNode,
 } from './types';
 
 const INITIAL_UNIX_EPOCH = '1970-01-01 00:00:00';
@@ -27,6 +28,11 @@ const extraColumns: SiteColumns = isExpandedBlockEnabled
 			{
 				key: 'stats',
 				title: translate( 'Stats' ),
+				isExpandable: true,
+			},
+			{
+				key: 'boost',
+				title: translate( 'Boost' ),
 				isExpandable: true,
 			},
 	  ]
@@ -322,6 +328,14 @@ const formatStatsData = ( site: Site ) => {
 	return statsData;
 };
 
+const formatBoostData = ( site: Site ) => {
+	const boostData: BoostNode = {
+		type: 'boost',
+		value: site.jetpack_boost_scores,
+	};
+	return boostData;
+};
+
 const formatBackupData = ( site: Site ) => {
 	const backup: BackupNode = {
 		value: '',
@@ -425,6 +439,7 @@ export const formatSites = ( sites: Array< Site > = [] ): Array< SiteData > | []
 				type: 'site',
 			},
 			stats: formatStatsData( site ),
+			boost: formatBoostData( site ),
 			backup: formatBackupData( site ),
 			scan: formatScanData( site ),
 			monitor: formatMonitorData( site ),
@@ -489,4 +504,43 @@ export const getSiteCountText = ( sites: Array< Site > ) => {
 		args: { siteCount: sites.length },
 		comment: '%(siteCount) is no of sites selected, e.g. "2 sites"',
 	} );
+};
+
+type BoostRating = 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
+
+interface BoostThreshold {
+	threshold: number;
+	rating: BoostRating;
+}
+
+const BOOST_THRESHOLDS: BoostThreshold[] = [
+	{ threshold: 90, rating: 'A' },
+	{ threshold: 75, rating: 'B' },
+	{ threshold: 50, rating: 'C' },
+	{ threshold: 35, rating: 'D' },
+	{ threshold: 25, rating: 'E' },
+	{ threshold: 0, rating: 'F' },
+];
+
+export const getBoostRating = ( boostScore: number ): BoostRating => {
+	for ( const { threshold, rating } of BOOST_THRESHOLDS ) {
+		if ( boostScore > threshold ) {
+			return rating;
+		}
+	}
+	return 'F';
+};
+
+const GOOD_BOOST_SCORE_THRESHOLD = 75;
+const OKAY_BOOST_SCORE_THRESHOLD = 35;
+
+export const getBoostRatingClass = ( boostScore: number ): string => {
+	switch ( true ) {
+		case boostScore > GOOD_BOOST_SCORE_THRESHOLD:
+			return 'boost-score-good';
+		case boostScore > OKAY_BOOST_SCORE_THRESHOLD:
+			return 'boost-score-okay';
+		default:
+			return 'boost-score-bad';
+	}
 };
