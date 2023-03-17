@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon, Dialog, ScreenReaderText } from '@automattic/components';
+import { ProductsList } from '@automattic/data-stores';
 import { ExternalLink } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import classNames from 'classnames';
@@ -7,10 +8,8 @@ import i18n, { useTranslate } from 'i18n-calypso';
 import wooCommerceImage from 'calypso/assets/images/onboarding/woo-commerce.svg';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useThemeDetails } from 'calypso/landing/stepper/hooks/use-theme-details';
-import { PRODUCTS_LIST_STORE } from 'calypso/landing/stepper/stores';
 import ThemeFeatures from './theme-features';
 import './upgrade-modal.scss';
-import type { ProductsListSelect } from '@automattic/data-stores';
 
 interface UpgradeModalProps {
 	/* Theme slug */
@@ -38,13 +37,11 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 	const showBundleVersion = theme_software_set;
 
 	const premiumPlanProduct = useSelect(
-		( select ) =>
-			( select( PRODUCTS_LIST_STORE ) as ProductsListSelect ).getProductBySlug( 'value_bundle' ),
+		( select ) => select( ProductsList.store ).getProductBySlug( 'value_bundle' ),
 		[]
 	);
 	const businessPlanProduct = useSelect(
-		( select ) =>
-			( select( PRODUCTS_LIST_STORE ) as ProductsListSelect ).getProductBySlug( 'business-bundle' ),
+		( select ) => select( ProductsList.store ).getProductBySlug( 'business-bundle' ),
 		[]
 	);
 
