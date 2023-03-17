@@ -4,7 +4,6 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import QueryTheme from 'calypso/components/data/query-theme';
 import { ThankYou } from 'calypso/components/thank-you';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MasterbarStyled from 'calypso/my-sites/marketplace/components/masterbar-styled';
@@ -136,13 +135,6 @@ const MarketplaceThankYou = ( {
 				backText={ translate( 'Back to plugins' ) }
 				canGoBack={ areAllProductsFetched }
 			/>
-			{ /* TODO: Remove after https://github.com/Automattic/wp-calypso/issues/74532 and move it to useThemesThankYouData */ }
-			{ themeSlugs.map( ( themeSlug, index ) => (
-				<>
-					<QueryTheme key={ 'query-wpcom-theme-' + index } siteId="wpcom" themeId={ themeSlug } />
-					<QueryTheme key={ 'query-wporg-theme-' + index } siteId="wporg" themeId={ themeSlug } />
-				</>
-			) ) }
 			{ showProgressBar && (
 				// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 				<div className="marketplace-plugin-install__root">
