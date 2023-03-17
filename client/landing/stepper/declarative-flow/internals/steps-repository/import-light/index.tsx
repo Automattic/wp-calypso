@@ -1,4 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+import { Analyzer } from '@automattic/data-stores';
 import { StepContainer, SubTitle, Title } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createElement, createInterpolateElement } from '@wordpress/element';
@@ -12,10 +13,8 @@ import Colors from 'calypso/blocks/import-light/colors';
 import Summary from 'calypso/blocks/import-light/summary';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
-import { ANALYZER_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { ProgressState } from './types';
-import type { AnalyzerSelect } from '@automattic/data-stores';
 import type { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import './style.scss';
 
@@ -27,13 +26,13 @@ const ImportLight: Step = function ImportStep( props ) {
 	const [ url, setUrl ] = useState( '' );
 	const [ progressState, setProgressState ] = useState< ProgressState >( 'capture' );
 	const [ percentage, setPercentage ] = useState( 2 );
-	const { analyzeColors } = useDispatch( ANALYZER_STORE );
+	const { analyzeColors } = useDispatch( Analyzer.store );
 	const colorsData = useSelect(
-		( select ) => ( select( ANALYZER_STORE ) as AnalyzerSelect ).getSiteColors( url ),
+		( select ) => select( Analyzer.store ).getSiteColors( url ),
 		[ url ]
 	);
 	const fetchingColorsInProgress = useSelect(
-		( select ) => ( select( ANALYZER_STORE ) as AnalyzerSelect ).isSiteColorsInAnalysis(),
+		( select ) => select( Analyzer.store ).isSiteColorsInAnalysis(),
 		[]
 	);
 
