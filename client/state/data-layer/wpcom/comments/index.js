@@ -232,7 +232,7 @@ export const handleEmptySuccess = (
 			type: COMMENTS_EMPTY_SUCCESS,
 			siteId,
 			status,
-			commentIds: apiResponse?.results?.map( ( x ) => +x ), // convert to number
+			commentIds: apiResponse.results.map( ( x ) => +x ), // convert to number
 		},
 	];
 };
