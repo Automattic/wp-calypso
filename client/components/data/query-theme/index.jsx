@@ -11,6 +11,11 @@ const request = ( siteId, themeId ) => ( dispatch, getState ) => {
 };
 
 function QueryTheme( { siteId, themeId } ) {
+	useQueryTheme( siteId, themeId );
+	return null;
+}
+
+export function useQueryTheme( siteId, themeId ) {
 	const dispatch = useDispatch();
 
 	useEffect( () => {
@@ -18,8 +23,6 @@ function QueryTheme( { siteId, themeId } ) {
 			dispatch( request( siteId, themeId ) );
 		}
 	}, [ dispatch, siteId, themeId ] );
-
-	return null;
 }
 
 QueryTheme.propTypes = {

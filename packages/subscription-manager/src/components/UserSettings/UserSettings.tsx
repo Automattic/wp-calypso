@@ -1,9 +1,18 @@
-import { Reader } from '@automattic/data-stores';
-import { EmailFormatInput } from '../fields/EmailFormatInput';
+import { FormEvent } from 'react';
+import { BlockEmailsSetting } from '../fields/BlockEmailsSetting';
+import { EmailFormatInput, EmailFormatType } from '../fields/EmailFormatInput';
+
+type SubscriptionUserSettings = Partial< {
+	mail_option: EmailFormatType;
+	delivery_day: number; // 0-6, 0 is Sunday
+	delivery_hour: number; // 0-23, 0 is midnight
+	blocked: boolean;
+	email: string;
+} >;
 
 type UserSettingsProps = {
-	value?: Reader.SubscriptionManagerUserSettings;
-	onChange?: ( value: Reader.SubscriptionManagerUserSettings ) => void;
+	value?: SubscriptionUserSettings;
+	onChange?: ( value: SubscriptionUserSettings ) => void;
 	loading?: boolean;
 };
 
@@ -12,7 +21,13 @@ const UserSettings = ( { value = {}, loading = false, onChange }: UserSettingsPr
 	<div className="user-settings">
 		<EmailFormatInput
 			value={ value.mail_option ?? 'html' }
-			onChange={ ( value ) => onChange?.( { mail_option: value } ) }
+			onChange={ ( evt: FormEvent< HTMLSelectElement > ) =>
+				onChange?.( { mail_option: evt.currentTarget.value as EmailFormatType } )
+			}
+		/>
+		<BlockEmailsSetting
+			value={ value.blocked }
+			onChange={ ( value ) => onChange?.( { blocked: !! value.target.value } ) }
 		/>
 	</div>
 );

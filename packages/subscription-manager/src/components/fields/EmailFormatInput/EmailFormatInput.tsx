@@ -1,14 +1,16 @@
 /* eslint-disable no-restricted-imports */
-import { Reader } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
+import { FormEventHandler } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import './styles.scss';
 
+export type EmailFormatType = 'html' | 'text';
+
 type EmailFormatInputProps = {
-	value: Reader.EmailFormatType;
-	onChange?: ( value: Reader.EmailFormatType ) => void;
+	value: EmailFormatType;
+	onChange: FormEventHandler< HTMLSelectElement >;
 };
 
 const EmailFormatInput = ( { value, onChange }: EmailFormatInputProps ) => {
@@ -16,12 +18,11 @@ const EmailFormatInput = ( { value, onChange }: EmailFormatInputProps ) => {
 
 	return (
 		<FormFieldset className="email-format-input">
-			<FormLabel htmlFor="subscription_delivery_mail_option">
-				{ translate( 'Email format' ) }
-			</FormLabel>
+			<FormLabel htmlFor="email_format_setting">{ translate( 'Email format' ) }</FormLabel>
 			<FormSelect
+				id="email_format_setting"
 				name="email_format_setting"
-				onChange={ ( { currentTarget: { value } } ) => onChange?.( value ) }
+				onChange={ onChange }
 				value={ value }
 			>
 				<option value="html">{ translate( 'HTML' ) }</option>
