@@ -95,24 +95,6 @@ class PurchaseItem extends Component {
 					</>
 				);
 			}
-			// if ( isAkismetTemporarySitePurchase( purchase ) ) {
-			// 	return (
-			// 		<>
-			// 			<span className="purchase-item__is-error">
-			// 				{ translate(
-			// 					'Activate your Akismet license key {{br/}}{{a}}Learn more {{icon/}}{{/a}}',
-			// 					{
-			// 						components: {
-			// 							br: <br />,
-			// 							a: <a href="https://docs.akismet.com/getting-started/activate/" />,
-			// 							icon: <Gridicon icon="external" size={ 12 } />,
-			// 						},
-			// 					}
-			// 				) }
-			// 			</span>
-			// 		</>
-			// 	);
-			// }
 
 			if ( isJetpack ) {
 				return (
