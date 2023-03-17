@@ -25,8 +25,8 @@ const UserSettings = ( { value = {}, loading = false, onChange }: UserSettingsPr
 			}
 		/>
 		<BlockEmailsSetting
-			onChange={ ( value ) => onChange?.( { blocked: !! value.target.value } ) }
 			value={ value.blocked }
+			onChange={ ( value ) => onChange?.( { blocked: !! value.target.value } ) }
 		/>
 	</div>
 );

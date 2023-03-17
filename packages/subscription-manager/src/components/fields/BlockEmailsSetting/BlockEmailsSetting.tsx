@@ -19,9 +19,11 @@ const BlockEmailsSetting = ( { value, onChange }: BlockEmailsSettingProps ) => {
 
 	return (
 		<FormFieldset className="block-emails-setting">
-			<span className="title">Block emails</span>
-			<FormLabel>
-				<FormInputCheckbox name="blocked" checked={ value } onChange={ onChange } />
+			<FormLabel htmlFor="blocked" className="title">
+				{ translate( 'Block emails' ) }
+			</FormLabel>
+			<FormLabel htmlFor="blocked">
+				<FormInputCheckbox id="blocked" name="blocked" checked={ value } onChange={ onChange } />
 				<span>
 					{ translate( 'Block all email updates from sites you’re following on WordPress.com' ) }
 				</span>

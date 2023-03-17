@@ -1,1 +1,1 @@
-export { default as BlockEmailsSetting } from './block-emails-setting';
+export { default as BlockEmailsSetting } from './BlockEmailsSetting';

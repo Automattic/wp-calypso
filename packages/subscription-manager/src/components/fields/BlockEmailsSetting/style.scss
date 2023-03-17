@@ -1,28 +1,19 @@
-@import "@automattic/color-studio/dist/color-variables";
+@import "../components";
 
 .block-emails-setting {
 	display: flex;
 	flex-direction: column;
 
 	&.form-fieldset {
+		@extend %form-fieldset;
 		margin-left: 2px;
 	}
 
 	.title {
-		margin-bottom: 7px;
-		color: $studio-black;
+		@extend %form-label;
 	}
 
 	.form-checkbox {
-		box-sizing: border-box;
-		width: 20px;
-		height: 20px;
-		background: $studio-white;
-		border: 1px solid $studio-gray-20;
-		border-radius: 2px;
-		flex: none;
-		order: 0;
-		flex-grow: 0;
-		margin-right: 12px;
+		@extend %form-checkbox;
 	}
 }
