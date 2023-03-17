@@ -8,9 +8,7 @@ import 'calypso/state/themes/init';
 const debug = debugFactory( 'calypso:themes:actions' );
 
 /**
- * This action queries wpcom endpoint for active theme for site.
- * If request success information about active theme is stored in Redux themes subtree.
- * In case of error, error is stored in Redux themes subtree.
+ * Sets the active theme for a given site.
  *
  * @param  {number}   siteId Site for which to check active theme
  * @param  {Object}   theme The theme to set as active
