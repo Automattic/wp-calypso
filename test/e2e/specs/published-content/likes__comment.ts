@@ -75,6 +75,8 @@ describe( 'Likes: Comment', function () {
 				testAccount.credentials.testSites?.primary.id as number,
 				newComment.ID
 			);
+
+			await page.reload();
 		} );
 
 		it( 'Like the comment', async function () {
@@ -93,6 +95,8 @@ describe( 'Likes: Comment', function () {
 				testAccount.credentials.testSites?.primary.id as number,
 				newComment.ID
 			);
+
+			await page.reload();
 		} );
 
 		it( 'Unlike the comment', async function () {
