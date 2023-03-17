@@ -9,6 +9,7 @@ import { logToLogstash } from 'calypso/lib/logstash';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestContactDetailsCache } from 'calypso/state/domains/management/actions';
 import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
+import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import useCountryList from './use-country-list';
 import type {
 	PossiblyCompleteDomainContactDetails,
@@ -16,12 +17,6 @@ import type {
 } from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-cached-domain-contact-details' );
-
-type CheckoutStoreMappedActions = {
-	loadDomainContactDetailsFromCache?: (
-		payload: PossiblyCompleteDomainContactDetails
-	) => Promise< PossiblyCompleteDomainContactDetails >;
-};
 
 function useCachedContactDetails(): PossiblyCompleteDomainContactDetails | null {
 	const reduxDispatch = useReduxDispatch();
@@ -57,8 +52,7 @@ function useCachedContactDetailsForCheckoutForm(
 			? getCountryPostalCodeSupport( countriesList, cachedContactDetails.countryCode )
 			: false;
 
-	const checkoutStoreActions: CheckoutStoreMappedActions | undefined =
-		useDispatch( 'wpcom-checkout' );
+	const checkoutStoreActions = useDispatch( CHECKOUT_STORE );
 	if ( ! checkoutStoreActions?.loadDomainContactDetailsFromCache ) {
 		throw new Error(
 			'useCachedContactDetailsForCheckoutForm must be run after the checkout data store has been initialized'

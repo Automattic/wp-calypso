@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Button, Gridicon } from '@automattic/components';
+import { Button, Gridicon, ShortenedNumber } from '@automattic/components';
+import { Icon, arrowUp, arrowDown } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
@@ -94,6 +95,14 @@ export default function SiteStatusContent( {
 		dispatch( unselectLicense( siteId, type ) );
 	};
 
+	function getTrendIcon( viewsTrend: 'up' | 'down' ) {
+		if ( viewsTrend === 'up' ) {
+			return arrowUp;
+		} else if ( viewsTrend === 'down' ) {
+			return arrowDown;
+		}
+	}
+
 	if ( type === 'site' ) {
 		// Site issues is the sum of scan threats and plugin updates
 		let siteIssuesCount = rows.scan.threats + rows.plugin.updates;
@@ -175,6 +184,34 @@ export default function SiteStatusContent( {
 	}
 
 	if ( type === 'stats' ) {
+		const { total: totalViews, trend: viewsTrend } = rows.stats.value.views;
+		if ( viewsTrend === 'same' ) {
+			return (
+				<>
+					<span className="sites-overview__stats-trend sites-overview__stats-trend__same" />
+					<div className="sites-overview__stats">
+						<ShortenedNumber value={ totalViews } />
+					</div>
+				</>
+			);
+		}
+		const trendIcon = getTrendIcon( viewsTrend );
+		return (
+			<span
+				className={ classNames( 'sites-overview__stats-trend', {
+					'sites-overview__stats-trend__up': viewsTrend === 'up',
+					'sites-overview__stats-trend__down': viewsTrend === 'down',
+				} ) }
+			>
+				{ trendIcon && <Icon icon={ trendIcon } size={ 16 } /> }
+				<div className="sites-overview__stats">
+					<ShortenedNumber value={ totalViews } />
+				</div>
+			</span>
+		);
+	}
+
+	if ( type === 'boost' ) {
 		// Content will be added later
 		return null;
 	}
@@ -261,7 +298,9 @@ export default function SiteStatusContent( {
 	}
 
 	if ( disabledStatus ) {
-		updatedContent = <span className="sites-overview__disabled">{ content } </span>;
+		updatedContent = (
+			<span className="sites-overview__disabled sites-overview__row-status">{ content } </span>
+		);
 	}
 
 	return (
@@ -290,7 +329,7 @@ export default function SiteStatusContent( {
 					</Tooltip>
 				</>
 			) : (
-				updatedContent
+				<span className="sites-overview__row-status">{ updatedContent }</span>
 			) }
 		</>
 	);

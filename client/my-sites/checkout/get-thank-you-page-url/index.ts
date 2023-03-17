@@ -533,14 +533,14 @@ function getFallbackDestination( {
 		}
 	}
 
-	const marketplaceProductSlugs =
+	const pluginSlugs =
 		cart?.products
 			?.filter( ( product ) => product?.extra?.is_marketplace_product )
 			?.map( ( product ) => product?.extra?.plugin_slug ) || [];
 
-	if ( marketplaceProductSlugs.length > 0 ) {
+	if ( pluginSlugs.length > 0 ) {
 		debug( 'site with marketplace products' );
-		return `/marketplace/thank-you/${ marketplaceProductSlugs.join( ',' ) }/${ siteSlug }`;
+		return `/marketplace/thank-you/${ siteSlug }?plugins=${ pluginSlugs.join( ',' ) }`;
 	}
 
 	debug( 'simple thank-you page' );

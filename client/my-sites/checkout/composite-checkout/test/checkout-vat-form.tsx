@@ -4,12 +4,14 @@
 import { convertResponseCartToRequestCart } from '@automattic/shopping-cart';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { dispatch } from '@wordpress/data';
 import nock from 'nock';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import {
 	planWithoutDomain,
 	mockSetCartEndpointWith,
@@ -57,6 +59,7 @@ describe( 'Checkout contact step VAT form', () => {
 	} );
 
 	beforeEach( () => {
+		dispatch( CHECKOUT_STORE ).reset();
 		nock.cleanAll();
 		nock( 'https://public-api.wordpress.com' ).persist().post( '/rest/v1.1/logstash' ).reply( 200 );
 		mockGetVatInfoEndpoint( {} );
@@ -185,6 +188,30 @@ describe( 'Checkout contact step VAT form', () => {
 			'Test company'
 		);
 		expect( await screen.findByLabelText( 'Address for tax ID' ) ).toHaveValue( '123 Main Street' );
+	} );
+
+	it( 'renders the Northern Ireland checkbox pre-filled if the VAT endpoint returns XI', async () => {
+		nock.cleanAll();
+		mockCachedContactDetailsEndpoint( {
+			country_code: 'GB',
+			postal_code: '',
+		} );
+		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
+		mockGetVatInfoEndpoint( {
+			id: '12345',
+			name: 'Test company',
+			address: '123 Main Street',
+			country: 'XI',
+		} );
+		const cartChanges = { products: [ planWithoutDomain ] };
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
+
+		// Wait for checkout to load.
+		await screen.findByLabelText( 'Continue with the entered contact details' );
+		const countryField = await screen.findByLabelText( 'Country' );
+
+		expect( countryField.selectedOptions[ 0 ].value ).toBe( 'GB' );
+		expect( await screen.findByLabelText( 'Is the tax ID for Northern Ireland?' ) ).toBeChecked();
 	} );
 
 	it( 'does not allow unchecking the VAT details checkbox if the VAT fields are pre-filled', async () => {

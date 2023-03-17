@@ -18,21 +18,13 @@ type PostThumbnail = {
 	URL: string;
 };
 
-type PostDiscussion = {
-	comment_count: number;
-	comment_status: string;
-	comments_open: boolean;
-	ping_status: string;
-	pings_open: boolean;
-};
-
 type Post = {
-	date: string;
+	date: string | null;
 	title: string;
-	type: string;
-	like_count: number;
+	type: string | null;
+	like_count: number | null;
 	post_thumbnail: PostThumbnail | null;
-	discussion: PostDiscussion;
+	comment_count: number | null;
 };
 
 const POST_STATS_CARD_TITLE_LIMIT = 48;
@@ -97,7 +89,7 @@ export default function PostDetailHighlightsSection( {
 						likeCount={ post?.like_count || 0 }
 						post={ postData }
 						viewCount={ viewCount }
-						commentCount={ post?.discussion?.comment_count || 0 }
+						commentCount={ post?.comment_count || 0 }
 					/>
 
 					<Card className="highlight-card">

@@ -7,13 +7,15 @@ import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import React from 'react';
 import image from './image.svg';
-import { store as globalStylesStore } from './store';
 
 import './modal.scss';
 
 const GlobalStylesModal = () => {
-	const isVisible = useSelect( ( select ) => select( globalStylesStore ).isModalVisible(), [] );
-	const { dismissModal } = useDispatch( globalStylesStore );
+	const isVisible = useSelect(
+		( select ) => select( 'automattic/wpcom-global-styles' ).isModalVisible(),
+		[]
+	);
+	const { dismissModal } = useDispatch( 'automattic/wpcom-global-styles' );
 	const { set: setPreference } = useDispatch( 'core/preferences' );
 
 	// Hide the welcome guide modal, so it doesn't conflict with our modal.

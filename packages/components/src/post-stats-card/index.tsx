@@ -12,7 +12,7 @@ type PostStatsCardProps = {
 	likeCount: number | null;
 	viewCount: number | null;
 	post: {
-		date: string;
+		date: string | null;
 		post_thumbnail: string | null;
 		title: string;
 	};
@@ -31,7 +31,7 @@ export default function PostStatsCard( {
 }: PostStatsCardProps ) {
 	const translate = useTranslate();
 	const parsedDate = useMemo(
-		() => new Date( post?.date ).toLocaleDateString( undefined, { dateStyle: 'medium' } ),
+		() => ( post?.date ? new Date( post?.date ).toLocaleDateString( undefined, { dateStyle: 'medium' } ) : '' ),
 		[ post?.date ]
 	);
 	const TitleTag = titleLink ? 'a' : 'div';
