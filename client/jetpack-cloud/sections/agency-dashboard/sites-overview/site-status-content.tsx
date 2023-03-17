@@ -101,7 +101,7 @@ export default function SiteStatusContent( {
 	};
 
 	const hasBoost = rows.site.value.has_boost;
-  
+
 	function getTrendIcon( viewsTrend: 'up' | 'down' ) {
 		if ( viewsTrend === 'up' ) {
 			return arrowUp;
@@ -216,11 +216,6 @@ export default function SiteStatusContent( {
 				</div>
 			</span>
 		);
-	}
-
-	if ( type === 'boost' ) {
-		// Content will be added later
-		return null;
 	}
 
 	if ( type === 'boost' ) {

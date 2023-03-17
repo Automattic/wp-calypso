@@ -64,7 +64,6 @@ export interface Site {
 	monitor_last_status_change: string;
 	isSelected?: boolean;
 	site_stats: SiteStats;
-	jetpack_boost_scores: BoostData;
 	onSelect?: ( value: boolean ) => void;
 	jetpack_boost_scores: BoostData;
 }
