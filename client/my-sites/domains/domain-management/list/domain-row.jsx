@@ -16,6 +16,8 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import {
 	canCurrentUserAddEmail,
 	getDomainTypeText,
+	isDomainInGracePeriod,
+	isDomainUpdateable,
 	resolveDomainStatus,
 } from 'calypso/lib/domains';
 import { type as domainTypes, domainInfoContext } from 'calypso/lib/domains/constants';
@@ -390,9 +392,13 @@ class DomainRow extends PureComponent {
 					<PopoverMenuItem icon="info-outline" onClick={ this.goToDNSManagement }>
 						{ translate( 'Manage DNS' ) }
 					</PopoverMenuItem>
-					<PopoverMenuItem icon="book" onClick={ this.goToEditContactInfo }>
-						{ translate( 'Manage Contact Info' ) }
-					</PopoverMenuItem>
+
+					{ domain.type === domainTypes.REGISTERED &&
+						( isDomainUpdateable( domain ) || isDomainInGracePeriod( domain ) ) && (
+							<PopoverMenuItem icon="book" onClick={ this.goToEditContactInfo }>
+								{ translate( 'Manage Contact Info' ) }
+							</PopoverMenuItem>
+						) }
 					{ canSetAsPrimary( domain, isManagingAllSites, shouldUpgradeToMakePrimary ) &&
 						! isRecentlyRegisteredAndDoesNotPointToWpcom( domain ) && (
 							<PopoverMenuItem onClick={ this.makePrimary }>

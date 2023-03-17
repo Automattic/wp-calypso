@@ -1,4 +1,4 @@
-import { registerStore } from '@wordpress/data';
+import { createReduxStore, register } from '@wordpress/data';
 import { controls } from '@wordpress/data-controls';
 import * as actions from './actions';
 import { STORE_KEY } from './constants';
@@ -9,18 +9,12 @@ import * as selectors from './selectors';
 export type { State };
 export type { LocalizedLanguageNames } from './types';
 
-let isRegistered = false;
+export const store = createReduxStore( STORE_KEY, {
+	resolvers,
+	actions,
+	controls,
+	reducer,
+	selectors,
+} );
 
-export function register(): typeof STORE_KEY {
-	if ( ! isRegistered ) {
-		isRegistered = true;
-		registerStore( STORE_KEY, {
-			resolvers,
-			actions,
-			controls,
-			reducer,
-			selectors,
-		} );
-	}
-	return STORE_KEY;
-}
+register( store );

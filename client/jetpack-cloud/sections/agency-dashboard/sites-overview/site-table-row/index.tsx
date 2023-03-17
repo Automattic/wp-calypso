@@ -54,8 +54,6 @@ export default function SiteTableRow( { columns, item, setExpanded, isExpanded }
 
 	const isExpandedContentEnabled = isEnabled( 'jetpack/pro-dashboard-expandable-block' );
 
-	const isExpandedBlockEnabled = isEnabled( 'jetpack/pro-dashboard-expandable-block' );
-
 	return (
 		<Fragment>
 			<tr
@@ -116,7 +114,7 @@ export default function SiteTableRow( { columns, item, setExpanded, isExpanded }
 				<td
 					className={ classNames( 'site-table__actions', {
 						'site-table__td-without-border-bottom': isExpanded,
-						'site-table__actions-button': isExpandedBlockEnabled,
+						'site-table__actions-button': isExpandedContentEnabled,
 					} ) }
 					// If there is an error, we need to span the whole row because we don't show the expand buttons.
 					colSpan={ hasSiteError && isExpandedContentEnabled ? 2 : 1 }

@@ -2,11 +2,23 @@
 	max-width: calc(100vw - 32px);
 }
 
-.ssh-keys__form {
+.ssh-keys__form.form-fieldset {
+	margin-top: 16px;
+	margin-bottom: 0;
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
 	gap: 16px;
+}
+
+.ssh-keys__cards-container {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 12px;
+	> .card {
+		margin: 0;
+	}
 }
 
 .ssh-keys__select {

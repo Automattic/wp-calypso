@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Icon, starFilled } from '@wordpress/icons';
 import classNames from 'classnames';
-import { useContext, useState } from 'react';
+import { useContext, useState, forwardRef, Ref } from 'react';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import './style.scss';
 import EditButton from '../../dashboard-bulk-actions/edit-button';
@@ -16,7 +16,7 @@ interface Props {
 	items: Array< SiteData >;
 }
 
-export default function SiteTable( { isLoading, columns, items }: Props ) {
+const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableElement > ) => {
 	const { isBulkManagementActive } = useContext( SitesOverviewContext );
 
 	const [ expandedRow, setExpandedRow ] = useState< number | null >( null );
@@ -29,6 +29,7 @@ export default function SiteTable( { isLoading, columns, items }: Props ) {
 
 	return (
 		<table
+			ref={ ref }
 			className={ classNames( 'site-table__table', {
 				'site-table__table-v2': isExpandedBlockEnabled,
 			} ) }
@@ -91,4 +92,6 @@ export default function SiteTable( { isLoading, columns, items }: Props ) {
 			</tbody>
 		</table>
 	);
-}
+};
+
+export default forwardRef( SiteTable );

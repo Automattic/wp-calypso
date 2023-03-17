@@ -22,11 +22,7 @@ export default function PluginManageSubcription( { site, plugin }: Props ): Reac
 	const translate = useTranslate();
 
 	const purchases = useSelector( ( state ) => getSitePurchases( state, site.ID ) );
-	const currentPurchase: Purchase = getPluginPurchased(
-		plugin,
-		purchases,
-		plugin.isMarketplaceProduct
-	);
+	const currentPurchase: Purchase = getPluginPurchased( plugin, purchases );
 
 	return currentPurchase?.id ? (
 		<>

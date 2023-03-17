@@ -3,7 +3,7 @@ import { SENSEI_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useNewSiteVisibility } from 'calypso/landing/gutenboarding/hooks/use-selected-plan';
+import { useNewSiteVisibility } from 'calypso/landing/stepper/hooks/use-selected-plan';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from 'calypso/landing/stepper/stores';
 import wpcom from 'calypso/lib/wp';
 import { Progress } from '../components/sensei-step-progress';
