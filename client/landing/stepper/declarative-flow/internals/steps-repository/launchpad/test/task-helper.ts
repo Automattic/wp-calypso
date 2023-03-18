@@ -61,6 +61,27 @@ describe( 'Task Helpers', () => {
 				expect( enhancedTasks[ 0 ].completed ).toEqual( true );
 			} );
 		} );
+		describe( 'when creating the email verification task', () => {
+			describe( 'and the user email has been verified', () => {
+				it( 'marks the task as complete', () => {
+					const fakeTasks = [ buildTask( { id: 'verify_email', completed: false } ) ];
+					const isEmailVerified = true;
+					const enhancedTasks = getEnhancedTasks(
+						fakeTasks,
+						'fake.wordpress.com',
+						null,
+						// eslint-disable-next-line @typescript-eslint/no-empty-function
+						() => {},
+						false,
+						// eslint-disable-next-line @typescript-eslint/no-empty-function
+						() => {},
+						'newsletter',
+						isEmailVerified
+					);
+					expect( enhancedTasks[ 0 ].completed ).toEqual( true );
+				} );
+			} );
+		} );
 	} );
 
 	describe( 'getArrayOfFilteredTasks', () => {
