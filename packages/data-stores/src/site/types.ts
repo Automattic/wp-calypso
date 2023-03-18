@@ -129,6 +129,7 @@ export interface SiteDetails {
 	site_owner?: number;
 	slug: string;
 	visible?: boolean;
+	was_ecommerce_trial?: boolean;
 	wpcom_url?: string;
 	user_interactions?: string[];
 }
