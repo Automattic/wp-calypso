@@ -304,7 +304,7 @@ class Plans extends Component {
 		if ( isEcommerceTrial ) {
 			return this.renderEcommerceTrialPage();
 		}
-		if ( isWooExpressPlan && isEnabled( 'plans/wooexpress-medium' ) ) {
+		if ( isWooExpressPlan ) {
 			return this.renderWooExpressMediumPage();
 		}
 		return this.renderPlansMain();
