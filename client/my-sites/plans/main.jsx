@@ -357,7 +357,7 @@ class Plans extends Component {
 				: translate( 'Choose the perfect plan' );
 
 		// Hide for WooExpress plans
-		const showPlansNavigation = isEnabled( 'plans/wooexpress-medium' ) ? ! isWooExpressPlan : true;
+		const showPlansNavigation = ! isWooExpressPlan;
 
 		return (
 			<div>
