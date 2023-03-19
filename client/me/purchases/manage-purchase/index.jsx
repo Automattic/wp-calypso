@@ -311,11 +311,11 @@ class ManagePurchase extends Component {
 	renderRenewalNavItem( content, onClick ) {
 		const { purchase } = this.props;
 
-		if ( ! isRenewable( purchase ) || ! this.props.site ) {
-			return null;
-		}
-
-		if ( isPartnerPurchase( purchase ) ) {
+		if (
+			isPartnerPurchase( purchase ) ||
+			! isRenewable( purchase ) ||
+			( ! this.props.site && ! isAkismetTemporarySitePurchase( purchase ) )
+		) {
 			return null;
 		}
 
