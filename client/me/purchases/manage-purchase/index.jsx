@@ -1019,7 +1019,6 @@ class ManagePurchase extends Component {
 			'is-jetpack-product': purchase && isJetpackProduct( purchase ),
 		} );
 		const siteName = purchase.siteName;
-		const siteDomain = purchase.domain;
 		const siteId = purchase.siteId;
 
 		const renderMonthlyRenewalOption = shouldRenderMonthlyRenewalOption( purchase );
