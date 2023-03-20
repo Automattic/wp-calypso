@@ -19,7 +19,7 @@ import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import { TITAN_MAIL_MONTHLY_SLUG, TITAN_MAIL_YEARLY_SLUG } from 'calypso/lib/titan/constants';
 import {
 	isContactValidationResponseValid,
-	getTaxValidationResult,
+	wpcomValidateTaxContactInformation,
 } from 'calypso/my-sites/checkout/composite-checkout/lib/contact-validation';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
 import ProfessionalEmailUpsell from 'calypso/my-sites/checkout/upsell-nudge/professional-email-upsell';
@@ -148,23 +148,11 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 		debug( 'validating contact info' );
 
 		const storedCard = this.props.cards[ 0 ];
-		const countryCode = extractStoredCardMetaValue( storedCard, 'country_code' ) ?? '';
-		const postalCode = extractStoredCardMetaValue( storedCard, 'card_zip' ) ?? '';
 
 		const validateContactDetails = async () => {
-			const contactInfo = {
-				postalCode: {
-					value: postalCode,
-					isTouched: true,
-					errors: [],
-				},
-				countryCode: {
-					value: countryCode,
-					isTouched: true,
-					errors: [],
-				},
-			};
-			const validationResult = await getTaxValidationResult( contactInfo );
+			const validationResult = await wpcomValidateTaxContactInformation(
+				storedCard.tax_location ?? {}
+			);
 			return isContactValidationResponseValid( validationResult );
 		};
 
