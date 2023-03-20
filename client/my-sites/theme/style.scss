@@ -140,17 +140,15 @@ body.is-section-theme-i4 {
 		min-height: auto;
 		padding: 0;
 
-		@include breakpoint-deprecated( "<960px" ) {
-			max-width: 100%;
+		h2 {
+			font-size: 1.25rem;
+		}
 
-			video {
+		video {
+			@include breakpoint-deprecated( "<960px" ) {
 				height: auto;
 				max-width: 100%;
 			}
-		}
-
-		h2 {
-			font-size: 1.25rem;
 		}
 
 		.notes {
