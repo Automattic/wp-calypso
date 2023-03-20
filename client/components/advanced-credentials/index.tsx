@@ -46,6 +46,7 @@ interface Props {
 const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const isAlternate = role === 'alternate';
 
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -259,20 +260,22 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 
 	const renderUnconnectedButtons = () => (
 		<>
-			<Button
-				compact
-				borderless
-				disabled={ disableForm }
-				href={ settingsPath( siteSlug ) }
-				onClick={ () => {
-					dispatch(
-						recordTracksEvent( 'calypso_jetpack_advanced_credentials_flow_switch_host', { host } )
-					);
-				} }
-			>
-				<Gridicon icon="arrow-left" size={ 18 } />
-				{ translate( 'Change host' ) }
-			</Button>
+			{ ! isAlternate ?? (
+				<Button
+					compact
+					borderless
+					disabled={ disableForm }
+					href={ settingsPath( siteSlug ) }
+					onClick={ () => {
+						dispatch(
+							recordTracksEvent( 'calypso_jetpack_advanced_credentials_flow_switch_host', { host } )
+						);
+					} }
+				>
+					<Gridicon icon="arrow-left" size={ 18 } />
+					{ translate( 'Change host' ) }
+				</Button>
+			) }
 			<Button primary onClick={ handleUpdateCredentials } disabled={ disableForm || formHasErrors }>
 				{ translate( 'Test and save credentials' ) }
 			</Button>
