@@ -1,4 +1,9 @@
-import { PLAN_ECOMMERCE, PLAN_ECOMMERCE_MONTHLY } from '@automattic/calypso-products';
+import {
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_MONTHLY,
+	PLAN_ECOMMERCE_2_YEARS,
+	PLAN_ECOMMERCE_3_YEARS,
+} from '@automattic/calypso-products';
 import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, ECOMMERCE_FLOW, ecommerceFlowRecurTypes } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -24,6 +29,21 @@ import WaitForAtomic from './internals/steps-repository/wait-for-atomic';
 import { AssertConditionState } from './internals/types';
 import type { Flow, ProvidedDependencies, AssertConditionResult } from './internals/types';
 import type { OnboardSelect, SiteDetailsPlan, UserSelect } from '@automattic/data-stores';
+
+function getPlanFromRecurType( recurType: string ) {
+	switch ( recurType ) {
+		case ecommerceFlowRecurTypes.YEARLY:
+			return PLAN_ECOMMERCE;
+		case ecommerceFlowRecurTypes.MONTHLY:
+			return PLAN_ECOMMERCE_MONTHLY;
+		case ecommerceFlowRecurTypes[ '2Y' ]:
+			return PLAN_ECOMMERCE_2_YEARS;
+		case ecommerceFlowRecurTypes[ '3Y' ]:
+			return PLAN_ECOMMERCE_3_YEARS;
+		default:
+			return PLAN_ECOMMERCE_MONTHLY;
+	}
+}
 
 const ecommerceFlow: Flow = {
 	name: ECOMMERCE_FLOW,
@@ -115,8 +135,7 @@ const ecommerceFlow: Flow = {
 			} ),
 			[]
 		);
-		const selectedPlan =
-			recurType === ecommerceFlowRecurTypes.YEARLY ? PLAN_ECOMMERCE : PLAN_ECOMMERCE_MONTHLY;
+		const selectedPlan = getPlanFromRecurType( recurType );
 
 		const siteSlugParam = useSiteSlugParam();
 		const site = useSite();
@@ -181,9 +200,12 @@ const ecommerceFlow: Flow = {
 				case 'checkPlan':
 					// eCommerce Plan
 					if (
-						[ PLAN_ECOMMERCE, PLAN_ECOMMERCE_MONTHLY ].includes(
-							( providedDependencies?.currentPlan as SiteDetailsPlan )?.product_slug
-						)
+						[
+							PLAN_ECOMMERCE,
+							PLAN_ECOMMERCE_MONTHLY,
+							PLAN_ECOMMERCE_2_YEARS,
+							PLAN_ECOMMERCE_3_YEARS,
+						].includes( ( providedDependencies?.currentPlan as SiteDetailsPlan )?.product_slug )
 					) {
 						return navigate( 'waitForAtomic' );
 					}
