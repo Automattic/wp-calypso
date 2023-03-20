@@ -46,7 +46,7 @@ const ScreenColorPalettes = ( {
 					onClick={ onDoneClick }
 					primary
 				>
-					{ translate( 'Done' ) }
+					{ translate( 'Save' ) }
 				</NavigatorBackButton>
 			</div>
 		</>

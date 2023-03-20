@@ -38,7 +38,7 @@ const ScreenPatternList = ( { selectedPattern, onSelect, onBack, onDoneClick }: 
 					primary
 					onClick={ onDoneClick }
 				>
-					{ translate( 'Done' ) }
+					{ translate( 'Save' ) }
 				</NavigatorBackButton>
 			</div>
 		</>

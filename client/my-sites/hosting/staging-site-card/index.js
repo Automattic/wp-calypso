@@ -16,8 +16,9 @@ import { useCheckStagingSiteStatus } from 'calypso/my-sites/hosting/staging-site
 import { useStagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 
 const stagingSiteAddFailureNoticeId = 'staging-site-add-failure';
 
@@ -40,7 +41,7 @@ const StyledLoadingBar = styled( LoadingBar )( {
 	marginBottom: '1em',
 } );
 
-const StagingSiteCard = ( { disabled, siteId, translate } ) => {
+const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, translate } ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
@@ -169,13 +170,17 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 	};
 
 	const getTransferringStagingSiteContent = useCallback( () => {
+		const message =
+			siteOwnerId === currentUserId
+				? __( 'We are setting up your staging site. We’ll email you once it is ready.' )
+				: __( 'We are setting up the staging site. We’ll email the site owner once it is ready.' );
 		return (
 			<>
 				<StyledLoadingBar progress={ progress } />
-				<p>{ __( 'We are setting up your staging site. We’ll email you once it is ready.' ) }</p>
+				<p>{ message }</p>
 			</>
 		);
-	}, [ progress, __ ] );
+	}, [ progress, __, siteOwnerId, currentUserId ] );
 
 	const getLoadingStagingSitesPlaceholder = () => {
 		return (
@@ -223,9 +228,13 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 };
 
 export default connect( ( state ) => {
+	const currentUserId = getCurrentUserId( state );
 	const siteId = getSelectedSiteId( state );
+	const siteOwnerId = getSelectedSite( state )?.site_owner;
 
 	return {
+		currentUserId,
 		siteId,
+		siteOwnerId,
 	};
 } )( localize( StagingSiteCard ) );

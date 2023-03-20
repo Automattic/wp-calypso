@@ -37,16 +37,17 @@ export async function maybeRedirect( context, next ) {
 	}
 
 	const siteId = getSelectedSiteId( state );
-	const { launchpad_screen, site_intent } = await fetchLaunchpad( slug );
-
-	if ( launchpad_screen === 'full' ) {
-		// The new stepper launchpad onboarding flow isn't registered within the "page"
-		// client-side router, so page.redirect won't work. We need to use the
-		// traditional window.location Web API.
-		const verifiedParam = getQueryArgs()?.verified;
-		redirectToLaunchpad( slug, site_intent, verifiedParam );
-		return;
-	}
+	try {
+		const { launchpad_screen, site_intent } = await fetchLaunchpad( slug );
+		if ( launchpad_screen === 'full' ) {
+			// The new stepper launchpad onboarding flow isn't registered within the "page"
+			// client-side router, so page.redirect won't work. We need to use the
+			// traditional window.location Web API.
+			const verifiedParam = getQueryArgs()?.verified;
+			redirectToLaunchpad( slug, site_intent, verifiedParam );
+			return;
+		}
+	} catch ( error ) {}
 
 	// Ecommerce Plan's Home redirects to WooCommerce Home.
 	// Temporary redirection until we create a dedicated Home for Ecommerce.
