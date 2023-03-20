@@ -25,6 +25,7 @@ export function filterFollowsByQuery(
 		const siteUrl = getSiteUrl( { feed, site } );
 		const siteDescription = getSiteDescription( { feed, site } );
 		const siteAuthor = getSiteAuthorName( site );
+		z;
 
 		return (
 			// NOTE: String pieces are separated by non-breaking space.
@@ -33,5 +34,11 @@ export function filterFollowsByQuery(
 				phraseRe
 			) !== -1
 		);
+	} );
+}
+
+export function filterFollowsByIsFollowed( follows: Array< Follow > ): Array< Follow > {
+	return follows.filter( ( follow ) => {
+		return follow.is_following;
 	} );
 }
