@@ -1,6 +1,5 @@
 import { getCountryPostalCodeSupport, getCountryTaxRequirements } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
-import contactDetailsFormFields from 'calypso/components/domains/contact-details-form-fields';
 import getContactDetailsType from '../lib/get-contact-details-type';
 import type { ResponseCart, UpdateTaxLocationInCart } from '@automattic/shopping-cart';
 import type {
@@ -38,12 +37,11 @@ export async function updateCartContactDetailsForCheckout(
 		debug( 'not updating cart contact details; countries are not loaded' );
 		return;
 	}
-	if ( ! arePostalCodesSupported ) {
-		debug( 'postal codes are not supported by', countryCode );
-	} else {
-		debug( 'postal codes are supported by', countryCode );
-	}
-	debug( 'contact details type is', contactDetailsFormFields );
+	debug(
+		`postal codes ${ arePostalCodesSupported ? 'are' : 'are not' } supported by`,
+		countryCode
+	);
+	debug( 'contact details type is', contactDetailsType );
 	debug( 'tax requirements for country are', taxRequirements );
 
 	// The tax form does not include a subdivisionCode field but the server

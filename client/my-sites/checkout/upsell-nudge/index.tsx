@@ -385,6 +385,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 
 	handleClickAccept = async ( buttonAction: string ) => {
 		const { product, siteSlug, trackUpsellButtonClick, upgradeItem, upsellType } = this.props;
+		debug( 'accept upsell clicked' );
 
 		trackUpsellButtonClick(
 			`calypso_${ upsellType.replace( /-/g, '_' ) }_${ buttonAction }_button_click`
@@ -395,12 +396,16 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 			productToAdd = this.state.cartItem;
 		}
 
-		if ( this.isEligibleForOneClickUpsell( buttonAction ) && productToAdd ) {
+		const storedCard = this.props.cards.length > 0 ? this.props.cards[ 0 ] : undefined;
+		if ( this.isEligibleForOneClickUpsell( buttonAction ) && productToAdd && storedCard ) {
+			if ( ! storedCard ) {
+				return;
+			}
+
 			this.setState( {
 				showPurchaseModal: true,
 			} );
 
-			const storedCard = this.props.cards[ 0 ];
 			const vatDetails: VatDetails = {
 				country: storedCard.tax_location?.country_code,
 				id: storedCard.tax_location?.vat_id,
@@ -420,7 +425,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 					vatDetails,
 					productToAdd
 				);
-				await Promise.all( [
+				Promise.all( [
 					updateCartContactDetailsForCheckout(
 						this.props.countries ?? [],
 						this.props.cart,
@@ -430,12 +435,13 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 					),
 					this.props.shoppingCartManager.replaceProductsInCart( [ productToAdd ] ),
 				] );
-			} catch {
+			} catch ( error ) {
 				// If updating the cart fails, we should not continue. No need
 				// to do anything else, though, because CartMessages will
 				// display the error.
-				return false;
+				debug( 'an error occurred when updating the cart', error );
 			}
+			return;
 		}
 
 		// Professional Email needs to add the locally built cartItem to the cart,
@@ -450,11 +456,10 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 
 			this.props.shoppingCartManager
 				.replaceProductsInCart( [ productToAdd ] )
-				.then( () => {
-					if ( this.props?.cart?.messages ) {
-						const { errors } = this.props.cart.messages;
-						if ( errors && errors.length ) {
-							// Stay on the page to show the relevant error(s)
+				.then( ( newCart ) => {
+					if ( newCart.messages ) {
+						if ( newCart.messages.errors ) {
+							// Stay on the page to let CartMessages show the relevant error.
 							return;
 						}
 					}
@@ -463,6 +468,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 						persistSignupDestination( destinationToPersist );
 					}
 
+					debug( 'redirecting because we have professional email' );
 					page( '/checkout/' + siteSlug );
 				} )
 				.catch( () => {
@@ -471,6 +477,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 			return;
 		}
 
+		debug( 'redirecting because we are not eligible for one-click upsell' );
 		return siteSlug
 			? page( `/checkout/${ upgradeItem }/${ siteSlug }` )
 			: page( `/checkout/${ upgradeItem }` );
