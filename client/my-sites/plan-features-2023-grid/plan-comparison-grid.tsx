@@ -151,7 +151,7 @@ const Cell = styled.div< { textAlign?: 'start' | 'center' | 'end' } >`
 	text-align: ${ ( props ) => props.textAlign ?? 'start' };
 	display: flex;
 	flex: 1;
-	justify-content: center;
+	justify-content: flex-start;
 	flex-direction: column;
 	align-items: center;
 	padding: 33px 20px 0;
@@ -184,6 +184,7 @@ const Cell = styled.div< { textAlign?: 'start' | 'center' | 'end' } >`
 	${ plansBreakSmall( css`
 		padding: 0 14px;
 		border-right: none;
+		justify-content: center;
 
 		&:first-of-type {
 			padding-inline-start: 0;
