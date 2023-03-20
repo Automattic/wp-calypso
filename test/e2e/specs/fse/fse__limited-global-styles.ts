@@ -31,7 +31,6 @@ describe( DataHelper.createSuiteTitle( 'Site Editor: Limited Global Styles' ), f
 		await fullSiteEditorPage.visit( siteSlug );
 		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Edit' );
 		await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
-		await fullSiteEditorPage.closeNavSidebar();
 	} );
 
 	it( 'Open site styles', async function () {
