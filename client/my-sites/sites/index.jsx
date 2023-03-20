@@ -44,7 +44,7 @@ class Sites extends Component {
 	filterSites = ( site ) => {
 		// Filter out the sites on WPCOM that don't have full Jetpack plugin installed
 		// Such sites should work fine on Jetpack Cloud
-		if ( getJetpackActivePlugins( site ) && ! isJetpackSiteOrJetpackCloud( site ) ) {
+		if ( getJetpackActivePlugins( site )?.length && ! isJetpackSiteOrJetpackCloud( site ) ) {
 			return false;
 		}
 		const path = this.props.siteBasePath;

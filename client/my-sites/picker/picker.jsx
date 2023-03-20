@@ -92,7 +92,7 @@ class SitePicker extends Component {
 	filterSites = ( site ) => {
 		// Filter out the sites on WPCOM that don't have full Jetpack plugin installed
 		// Such sites should work fine on Jetpack Cloud
-		return getJetpackActivePlugins( site ) ? isJetpackSiteOrJetpackCloud( site ) : true;
+		return getJetpackActivePlugins( site )?.length ? isJetpackSiteOrJetpackCloud( site ) : true;
 	};
 
 	render() {
