@@ -2,6 +2,7 @@ import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import ActivityCardList from 'calypso/components/activity-card-list';
 import AdvancedCredentials from 'calypso/components/advanced-credentials';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
@@ -11,6 +12,7 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import StepProgress from 'calypso/components/step-progress';
+import useActivityLogQuery from 'calypso/data/activity-log/use-activity-log-query';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
@@ -18,6 +20,7 @@ import { rewindClone } from 'calypso/state/activity-log/actions';
 import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
 import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
+import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 import getInProgressRewindStatus from 'calypso/state/selectors/get-in-progress-rewind-status';
 import getRestoreProgress from 'calypso/state/selectors/get-restore-progress';
 import getRewindBackups from 'calypso/state/selectors/get-rewind-backups';
@@ -154,6 +157,10 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 
 	const disableClone = false;
 
+	const filter = useSelector( ( state ) => getActivityLogFilter( state, siteId ) );
+	filter.group = [ 'rewind' ];
+	const { data: logs } = useActivityLogQuery( siteId, filter );
+
 	// Screen that allows user to add credentials for an alternate restore / clone
 	const renderSetDestination = () => (
 		<>
@@ -190,6 +197,9 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 			<p className="clone-flow__info">
 				{ translate( "Which point in your site's history would you like to clone from?" ) }
 			</p>
+			<div className="activity-log-v2__content">
+				<ActivityCardList logs={ logs } pageSize={ 10 } showFilter={ false } />
+			</div>
 			<Button
 				className="clone-flow__primary-button"
 				primary
