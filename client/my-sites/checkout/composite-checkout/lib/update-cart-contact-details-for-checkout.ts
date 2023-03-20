@@ -1,5 +1,6 @@
 import { getCountryPostalCodeSupport, getCountryTaxRequirements } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
+import contactDetailsFormFields from 'calypso/components/domains/contact-details-form-fields';
 import getContactDetailsType from '../lib/get-contact-details-type';
 import type { ResponseCart, UpdateTaxLocationInCart } from '@automattic/shopping-cart';
 import type {
@@ -21,15 +22,13 @@ export async function updateCartContactDetailsForCheckout(
 	vatDetails: VatDetails
 ): Promise< void | ResponseCart > {
 	const areCountriesLoaded = !! countriesList.length;
+	const countryCode = vatDetails.country ?? contactInfo?.countryCode?.value ?? '';
 	const arePostalCodesSupported =
-		areCountriesLoaded && contactInfo?.countryCode?.value
-			? getCountryPostalCodeSupport( countriesList, contactInfo.countryCode.value )
+		areCountriesLoaded && countryCode
+			? getCountryPostalCodeSupport( countriesList, countryCode )
 			: false;
 	const contactDetailsType = getContactDetailsType( responseCart );
-	const taxRequirements = getCountryTaxRequirements(
-		countriesList,
-		contactInfo?.countryCode?.value ?? ''
-	);
+	const taxRequirements = getCountryTaxRequirements( countriesList, countryCode ?? '' );
 
 	if ( ! contactInfo ) {
 		debug( 'not updating cart contact details; there is no contact info' );
@@ -39,6 +38,13 @@ export async function updateCartContactDetailsForCheckout(
 		debug( 'not updating cart contact details; countries are not loaded' );
 		return;
 	}
+	if ( ! arePostalCodesSupported ) {
+		debug( 'postal codes are not supported by', countryCode );
+	} else {
+		debug( 'postal codes are supported by', countryCode );
+	}
+	debug( 'contact details type is', contactDetailsFormFields );
+	debug( 'tax requirements for country are', taxRequirements );
 
 	// The tax form does not include a subdivisionCode field but the server
 	// will sometimes fill in the value on the cart itself so we should not
@@ -65,7 +71,7 @@ export async function updateCartContactDetailsForCheckout(
 		// same, but the VAT form has special country codes it sometimes uses like
 		// `XI` for Northern Ireland so we keep track of them separately and will
 		// use whichever one for taxes that is more appropriate.
-		countryCode: vatDetails.country || contactInfo.countryCode?.value || '',
+		countryCode,
 		postalCode: arePostalCodesSupported ? contactInfo.postalCode?.value : '',
 		subdivisionCode,
 		vatId: vatDetails.id ?? '',
