@@ -2,17 +2,30 @@
 
 .pattern-assembler {
 	.navigator-button {
-		height: 56px;
-		line-height: 56px;
+		height: 44px;
+		line-height: 44px;
 		padding: 0;
 		font-size: $font-body-small;
-		font-weight: 500;
+		font-weight: 400;
 		letter-spacing: -0.15px;
 		color: var(--studio-gray-100);
 
 		svg {
 			flex-shrink: 0;
 			fill: currentColor;
+		}
+
+		&:hover,
+		&:focus {
+			color: var(--studio-blue-50);
+		}
+
+		&:focus {
+			border-color: transparent;
+		}
+
+		&:active {
+			background-color: var(--studio-blue-0);
 		}
 	}
 }
