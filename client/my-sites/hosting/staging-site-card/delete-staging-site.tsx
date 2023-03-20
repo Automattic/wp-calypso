@@ -6,8 +6,8 @@ import { useState } from 'react';
 import { useDeleteStagingSite } from './use-delete-staging-site';
 
 interface DeleteStagingSiteProps {
-	disabled: boolean;
 	stagingSiteId: number;
+	disabled: boolean;
 	children: React.ReactNode;
 }
 
@@ -32,7 +32,7 @@ export function DeleteStagingSite( {
 
 	return (
 		<>
-			<Button borderless scary onClick={ openModal } disabled={ disabled }>
+			<Button borderless scary onClick={ openModal } disabled={ disabled } busy={ isLoading }>
 				{ children }
 			</Button>
 			{ isOpen && (
