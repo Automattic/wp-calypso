@@ -7,13 +7,26 @@
 	&.form-fieldset {
 		@extend %form-fieldset;
 		margin-left: 2px;
-	}
 
-	.title {
-		@extend %form-label;
-	}
+		.title {
+			@extend %form-label;
+		}
 
-	.form-checkbox {
-		@extend %form-checkbox;
+		.form-label {
+			display: flex;
+			align-items: center;
+
+			.input-container {
+				display: flex;
+			}
+
+			.form-checkbox {
+				@extend %form-checkbox;
+			}
+
+			span {
+				font-weight: 400;
+			}
+		}
 	}
 }

@@ -129,6 +129,7 @@ export interface SiteDetails {
 	site_owner?: number;
 	slug: string;
 	visible?: boolean;
+	was_ecommerce_trial?: boolean;
 	wpcom_url?: string;
 	user_interactions?: string[];
 }
@@ -483,6 +484,7 @@ export interface ActiveTheme {
 	_links: {
 		'wp:user-global-styles': { href: string }[];
 	};
+	global_styles_id: number | null;
 }
 
 export interface CurrentTheme {

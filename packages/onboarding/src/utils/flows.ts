@@ -103,4 +103,6 @@ export const isWithThemeFlow = ( flowName: string | null ) => {
 export const ecommerceFlowRecurTypes = {
 	YEARLY: 'yearly',
 	MONTHLY: 'monthly',
+	'2Y': '2Y',
+	'3Y': '3Y',
 };
