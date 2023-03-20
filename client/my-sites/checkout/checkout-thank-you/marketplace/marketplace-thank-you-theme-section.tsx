@@ -5,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
+import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
 import { activate } from 'calypso/state/themes/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -82,6 +83,7 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 	return (
 		<ThemeSectionContainer>
 			<AutoLoadingHomepageModal source="details" />
+			<ThanksModal source="details" themeId={ theme.id } />
 			<ThemeSectionImage
 				src={ theme.screenshot }
 				alt={
