@@ -69,7 +69,7 @@ export class CommentNavigation extends Component {
 	emptyPermanently = () => {
 		const { status, translate } = this.props;
 		if (
-			window?.confirm(
+			window.confirm(
 				status === 'spam'
 					? translate( 'Empty all spam permanently?' )
 					: translate( 'Empty all trash permanently?' )
