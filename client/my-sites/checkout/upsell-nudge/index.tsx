@@ -10,6 +10,7 @@ import { pick } from 'lodash';
 import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import QueryPaymentCountries from 'calypso/components/data/query-countries/payments';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
@@ -201,6 +202,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 				: upsellType;
 		return (
 			<Main className={ styleClass }>
+				<QueryPaymentCountries />
 				<QuerySites siteId={ selectedSiteId } />
 				<QueryStoredCards />
 				{ ! hasProductsList && <QueryProductsList /> }
