@@ -414,25 +414,28 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 			};
 
 			try {
-				debug( 'updating cart with contact info', contactInfo, vatDetails );
-				await updateCartContactDetailsForCheckout(
-					this.props.countries ?? [],
-					this.props.cart,
-					this.props.shoppingCartManager.updateLocation,
+				debug(
+					'updating cart with contact info and product',
 					contactInfo,
-					vatDetails
+					vatDetails,
+					productToAdd
 				);
+				await Promise.all( [
+					updateCartContactDetailsForCheckout(
+						this.props.countries ?? [],
+						this.props.cart,
+						this.props.shoppingCartManager.updateLocation,
+						contactInfo,
+						vatDetails
+					),
+					this.props.shoppingCartManager.replaceProductsInCart( [ productToAdd ] ),
+				] );
 			} catch {
 				// If updating the cart fails, we should not continue. No need
 				// to do anything else, though, because CartMessages will
 				// display the error.
 				return false;
 			}
-
-			this.props.shoppingCartManager.replaceProductsInCart( [ productToAdd ] ).catch( () => {
-				// Nothing needs to be done here. CartMessages will display the error to the user.
-			} );
-			return;
 		}
 
 		// Professional Email needs to add the locally built cartItem to the cart,
