@@ -25,6 +25,11 @@ const Badge: React.FC< BadgeProps > = ( { variation, onClick, isSelected } ) => 
 		return null;
 	}
 
+	const title = variation.title
+		? // translators: %(title)s - the style variation title.
+		  sprintf( __( 'Style: %(title)s' ), { title: variation.title } )
+		: __( 'Preview with this style' );
+
 	return (
 		<div
 			className={ classnames( 'style-variation__badge-wrapper', {
@@ -32,12 +37,8 @@ const Badge: React.FC< BadgeProps > = ( { variation, onClick, isSelected } ) => 
 			} ) }
 			tabIndex={ 0 }
 			role="button"
-			aria-label={
-				variation.title
-					? // translators: %(title)s - the style variation title.
-					  sprintf( __( 'Style: %(title)s' ), { title: variation.title } )
-					: __( 'Preview with this style' )
-			}
+			title={ title }
+			aria-label={ title }
 			onClick={ ( e ) => {
 				if ( isSelected ) {
 					return;
@@ -53,7 +54,8 @@ const Badge: React.FC< BadgeProps > = ( { variation, onClick, isSelected } ) => 
 				if ( e.keyCode === SPACE_BAR_KEYCODE ) {
 					// Prevent the event from bubbling to the parent button.
 					e.stopPropagation();
-					onClick?.( variation );
+					e.preventDefault();
+					onClick?.( variation, e );
 				}
 			} }
 		>
