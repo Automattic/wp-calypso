@@ -136,6 +136,10 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			),
 		};
 
+		if ( showUseYourDomain ) {
+			return '';
+		}
+
 		switch ( flow ) {
 			case NEWSLETTER_FLOW:
 				return createInterpolateElement(

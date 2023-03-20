@@ -107,15 +107,6 @@ export function DomainFormControl( {
 		onSkip( undefined, hideFreePlan );
 	};
 
-	const shouldDisplayUseYourDomainContent = () => {
-		if ( ! flow ) {
-			return false;
-		}
-
-		const displayUseYourDomainContent = ! [ DOMAIN_UPSELL_FLOW ].includes( flow );
-		return displayUseYourDomainContent;
-	};
-
 	const getSideContent = () => {
 		const useYourDomain = (
 			<div className="domains__domain-side-content">
@@ -132,7 +123,7 @@ export function DomainFormControl( {
 						flowName={ flow }
 					/>
 				</div>
-				{ shouldDisplayUseYourDomainContent() && useYourDomain }
+				{ useYourDomain }
 			</div>
 		);
 	};
@@ -288,7 +279,7 @@ export function DomainFormControl( {
 		content = renderDomainForm();
 	}
 
-	if ( isReskinnedSupportedFlow() ) {
+	if ( isReskinnedSupportedFlow() && ! showUseYourDomain ) {
 		sideContent = getSideContent();
 	}
 
