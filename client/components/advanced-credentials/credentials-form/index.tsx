@@ -25,6 +25,7 @@ interface Props {
 	onFormStateChange: ( newFormState: FormState ) => void;
 	onModeChange: ( fromMode: FormMode ) => void;
 	host: string;
+	role: string;
 }
 
 const ServerCredentialsForm: FunctionComponent< Props > = ( {
@@ -36,11 +37,14 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 	onFormStateChange,
 	onModeChange,
 	host,
+	role = 'main',
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const [ interactions, setFormInteractions ] = useState( INITIAL_FORM_INTERACTION );
 	const hostInfo = getHostInfoFromId( host );
+	const isAlternate = role === 'alternate';
+	formState.role = role;
 
 	const handleFormChange: FormEventHandler< HTMLInputElement | HTMLSelectElement > = ( {
 		currentTarget,
@@ -67,6 +71,10 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 			case 'host':
 				setFormInteractions( { ...interactions, host: true } );
 				onFormStateChange( { ...formState, host: currentTarget.value } );
+				break;
+			case 'site_url':
+				setFormInteractions( { ...interactions, site_url: true } );
+				onFormStateChange( { ...formState, site_url: currentTarget.value } );
 				break;
 			case 'port':
 				setFormInteractions( { ...interactions, port: true } );
@@ -321,6 +329,29 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 
 	return (
 		<div className="credentials-form">
+			{ isAlternate && (
+				<FormFieldset className="credentials-form__site-url">
+					<div className="credentials-form__support-info">
+						<FormLabel htmlFor="destination-url">{ translate( 'Destination URL' ) }</FormLabel>
+					</div>
+					<FormTextInput
+						name="site_url"
+						id="site-url"
+						placeholder="https://example.com/"
+						value={ formState.site_url }
+						onChange={ handleFormChange }
+						disabled={ disabled }
+						isError={
+							formErrors.baseurl &&
+							( interactions.site_url || ! formErrors.site_url.waitForInteraction )
+						}
+					/>
+					{ formErrors.site_url &&
+						( interactions.site_url || ! formErrors.site_url.waitForInteraction ) && (
+							<FormInputValidation isError={ true } text={ formErrors.site_url.message } />
+						) }
+				</FormFieldset>
+			) }
 			<h3>{ translate( 'Provide your SSH, SFTP or FTP server credentials' ) }</h3>
 			<p className="credentials-form__intro-text">{ getSubHeaderText() }</p>
 			{ renderCredentialLinks() }

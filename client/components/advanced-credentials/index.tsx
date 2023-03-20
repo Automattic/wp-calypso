@@ -246,7 +246,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 			return;
 		}
 
-		const credentials = { role, ...formState };
+		const credentials = { ...formState };
 
 		if ( formMode === FormMode.Password ) {
 			credentials.kpri = '';
@@ -256,7 +256,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 
 		dispatch( recordTracksEvent( 'calypso_jetpack_advanced_credentials_flow_credentials_update' ) );
 		dispatch( updateCredentials( siteId, credentials, true, false ) );
-	}, [ formHasErrors, dispatch, siteId, role, formState, formMode ] );
+	}, [ formHasErrors, dispatch, siteId, formState, formMode ] );
 
 	const renderUnconnectedButtons = () => (
 		<>
@@ -300,6 +300,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 			formMode={ formMode }
 			formState={ formState }
 			host={ host ?? 'generic' }
+			role={ role }
 			onFormStateChange={ setFormState }
 			onModeChange={ setFormMode }
 		>
