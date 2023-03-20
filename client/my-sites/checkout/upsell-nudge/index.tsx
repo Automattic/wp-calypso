@@ -2,7 +2,7 @@ import { isMonthly, getPlanByPathSlug, TERM_MONTHLY } from '@automattic/calypso-
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CompactCard, Gridicon } from '@automattic/components';
 import { withShoppingCart, createRequestCartProduct } from '@automattic/shopping-cart';
-import { ManagedContactDetails, VatDetails } from '@automattic/wpcom-checkout';
+import { CountryListItem, ManagedContactDetails, VatDetails } from '@automattic/wpcom-checkout';
 import { isURL } from '@wordpress/url';
 import debugFactory from 'debug';
 import { localize, useTranslate } from 'i18n-calypso';
@@ -106,6 +106,7 @@ export interface UpsellNudgeAutomaticProps extends WithShoppingCartProps {
 	cards: PaymentMethod[];
 	currentPlanTerm: string;
 	currentPlan?: object;
+	countries: CountryListItem[] | null;
 }
 
 export type UpsellNudgeProps = UpsellNudgeManualProps & UpsellNudgeAutomaticProps;
