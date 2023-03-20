@@ -7,3 +7,9 @@ export type SubscriptionManagerUserSettings = Partial< {
 	blocked: boolean;
 	email: string;
 } >;
+
+export type SubscriptionManagerSubscriptionsCount = {
+	blogs: number | null;
+	comments: number | null;
+	pending: number | null;
+};
