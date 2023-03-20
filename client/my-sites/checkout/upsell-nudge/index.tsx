@@ -19,8 +19,8 @@ import { Experiment } from 'calypso/lib/explat';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import { TITAN_MAIL_MONTHLY_SLUG, TITAN_MAIL_YEARLY_SLUG } from 'calypso/lib/titan/constants';
 import {
+	getTaxValidationResult,
 	isContactValidationResponseValid,
-	wpcomValidateTaxContactInformation,
 } from 'calypso/my-sites/checkout/composite-checkout/lib/contact-validation';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
 import ProfessionalEmailUpsell from 'calypso/my-sites/checkout/upsell-nudge/professional-email-upsell';
@@ -153,9 +153,15 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 		const storedCard = this.props.cards[ 0 ];
 
 		const validateContactDetails = async () => {
-			const validationResult = await wpcomValidateTaxContactInformation(
-				storedCard.tax_location ?? {}
-			);
+			const validationResult = await getTaxValidationResult( {
+				state: wrapValueInManagedValue( storedCard.tax_location?.subdivision_code ),
+				city: wrapValueInManagedValue( storedCard.tax_location?.city ),
+				postalCode: wrapValueInManagedValue( storedCard.tax_location?.postal_code ),
+				countryCode: wrapValueInManagedValue( storedCard.tax_location?.country_code ),
+				organization: wrapValueInManagedValue( storedCard.tax_location?.organization ),
+				address1: wrapValueInManagedValue( storedCard.tax_location?.address ),
+				vatId: wrapValueInManagedValue( storedCard.tax_location?.vat_id ),
+			} );
 			return isContactValidationResponseValid( validationResult );
 		};
 

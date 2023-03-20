@@ -294,7 +294,7 @@ function convertValidationResponse( rawResponse: unknown ): DomainContactValidat
 	};
 }
 
-export async function wpcomValidateTaxContactInformation(
+async function wpcomValidateTaxContactInformation(
 	contactInformation: ContactValidationRequestContactInformation
 ): Promise< DomainContactValidationResponse > {
 	return wp.req
