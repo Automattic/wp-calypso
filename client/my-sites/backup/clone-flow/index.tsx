@@ -1,12 +1,16 @@
-import { Button, Card, Gridicon } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import AdvancedCredentials from 'calypso/components/advanced-credentials';
+import DocumentHead from 'calypso/components/data/document-head';
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import StepProgress from 'calypso/components/step-progress';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { rewindRestore } from 'calypso/state/activity-log/actions';
 import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
@@ -329,9 +333,15 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteUrl } ) => {
 
 	return (
 		<>
-			<QueryRewindBackups siteId={ siteId } />
-			<QueryRewindState siteId={ siteId } />
-			<Card>{ render() }</Card>
+			<Main className="clone-flow">
+				<DocumentHead title={ translate( 'Clone site' ) } />
+				{ isJetpackCloud() && <SidebarNavigation /> }
+				<div className="clone-flow__content">
+					<QueryRewindBackups siteId={ siteId } />
+					<QueryRewindState siteId={ siteId } />
+					{ render() }
+				</div>
+			</Main>
 		</>
 	);
 };
