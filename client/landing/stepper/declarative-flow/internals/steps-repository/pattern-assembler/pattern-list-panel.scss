@@ -1,7 +1,7 @@
 .pattern-list-panel__wrapper {
 	position: absolute;
-	z-index: 1;
-	top: -60px;
+	top: 0;
+	left: 0;
 	margin-inline-start: 348px;
 	width: 348px;
 	background: var(--studio-gray-0);
@@ -13,5 +13,4 @@
 	overflow-y: auto;
 	box-sizing: border-box;
 	transform: translateX(0);
-	will-change: transform;
 }

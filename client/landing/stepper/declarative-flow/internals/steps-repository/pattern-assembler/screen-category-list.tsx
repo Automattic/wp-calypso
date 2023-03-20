@@ -4,7 +4,6 @@ import { Icon, chevronRight } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
-import { createPortal } from 'react-dom';
 import useCategoriesOrder from './hooks/use-categories-order';
 import NavigatorHeader from './navigator-header';
 import PatternListPanel from './pattern-list-panel';
@@ -110,20 +109,16 @@ const ScreenCategoryList = ( {
 					{ translate( 'Done' ) }
 				</NavigatorBackButton>
 			</div>
-			{ createPortal(
-				<PatternListPanel
-					onSelect={ ( selectedPattern: Pattern | null ) =>
-						onSelect( 'section', selectedPattern, selectedCategory )
-					}
-					selectedPattern={ selectedPattern }
-					patterns={ sectionPatterns }
-					selectedCategory={ selectedCategory }
-					categories={ categories }
-				/>,
-				// Using the pattern-assembler__wrapper as parent
-				// because the panel must slide from behind the sidebar
-				wrapperRef?.current as HTMLDivElement
-			) }
+			<PatternListPanel
+				onSelect={ ( selectedPattern: Pattern | null ) =>
+					onSelect( 'section', selectedPattern, selectedCategory )
+				}
+				selectedPattern={ selectedPattern }
+				patterns={ sectionPatterns }
+				selectedCategory={ selectedCategory }
+				categories={ categories }
+				sectionsMapByCategory={ sectionsMapByCategory }
+			/>
 		</div>
 	);
 };

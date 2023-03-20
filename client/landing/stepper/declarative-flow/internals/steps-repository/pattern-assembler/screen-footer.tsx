@@ -38,8 +38,8 @@ const ScreenFooter = ( { selectedPattern, onSelect, onDoneClick }: Props ) => {
 				<NavigatorBackButton
 					as={ Button }
 					className="pattern-assembler__button"
-					onClick={ onDoneClick }
 					primary
+					onClick={ onDoneClick }
 				>
 					{ translate( 'Save' ) }
 				</NavigatorBackButton>

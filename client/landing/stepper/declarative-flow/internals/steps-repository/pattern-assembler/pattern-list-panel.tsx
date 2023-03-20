@@ -1,4 +1,3 @@
-import useSectionPatternsMapByCategory from './hooks/use-patterns-map-by-category';
 import PatternSelector from './pattern-selector';
 import type { Pattern, Category } from './types';
 import './pattern-list-panel.scss';
@@ -9,18 +8,16 @@ type PatternListPanelProps = {
 	selectedPattern: Pattern | null;
 	categories: Category[];
 	selectedCategory: string | null;
-	onDoneClick?: () => void;
+	sectionsMapByCategory: { [ key: string ]: Pattern[] };
 };
 
 const PatternListPanel = ( {
 	onSelect,
-	patterns,
 	selectedPattern,
-	categories,
 	selectedCategory,
+	sectionsMapByCategory,
 }: PatternListPanelProps ) => {
-	const sectionPatternsMapByCategory = useSectionPatternsMapByCategory( patterns, categories );
-	const categoryPatterns = selectedCategory ? sectionPatternsMapByCategory[ selectedCategory ] : [];
+	const categoryPatterns = selectedCategory ? sectionsMapByCategory[ selectedCategory ] : [];
 
 	if ( ! selectedCategory ) {
 		return null;
