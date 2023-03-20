@@ -171,7 +171,7 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 					<Button primary href={ `/home/${ urlToSlug( stagingSite.url ) }` } disabled={ disabled }>
 						<span>{ translate( 'Manage staging site' ) }</span>
 					</Button>
-					<DeleteStagingSite disabled={ disabled } siteId={ siteId }>
+					<DeleteStagingSite disabled={ disabled } stagingSiteId={ stagingSite.id }>
 						<Gridicon icon="trash" />
 						<span>{ __( 'Delete staging site' ) }</span>
 					</DeleteStagingSite>

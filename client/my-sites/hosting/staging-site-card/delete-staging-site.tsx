@@ -3,10 +3,11 @@ import styled from '@emotion/styled';
 import { Modal } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
+import { useDeleteStagingSite } from './use-delete-staging-site-mutation';
 
 interface DeleteStagingSiteProps {
 	disabled: boolean;
-	siteId: number;
+	stagingSiteId: number;
 	children: React.ReactNode;
 }
 
@@ -15,15 +16,19 @@ const ActionButtons = styled.div( {
 	gap: '1em',
 } );
 
-export function DeleteStagingSite( { disabled = false, children }: DeleteStagingSiteProps ) {
+export function DeleteStagingSite( {
+	stagingSiteId,
+	disabled = false,
+	children,
+}: DeleteStagingSiteProps ) {
 	const { __ } = useI18n();
 	const [ isOpen, setOpen ] = useState( false );
 	const openModal = () => setOpen( true );
 	const closeModal = () => setOpen( false );
-	const deleteStagingSite = () => {
-		alert( 'TODO: call mutation' );
-		closeModal();
-	};
+	const { deleteStagingSite, isLoading } = useDeleteStagingSite( {
+		stagingSiteId,
+		onSuccess: closeModal,
+	} );
 
 	return (
 		<>
@@ -38,7 +43,7 @@ export function DeleteStagingSite( { disabled = false, children }: DeleteStaging
 						) }
 					</p>
 					<ActionButtons>
-						<Button primary onClick={ deleteStagingSite }>
+						<Button primary onClick={ () => deleteStagingSite() } busy={ isLoading }>
 							{ __( 'Delete satging site' ) }
 						</Button>
 						<Button onClick={ closeModal }>{ __( 'Cancel' ) }</Button>
