@@ -69,7 +69,7 @@
 		"jetpack/pricing-page-annual-only": true,
 		"jetpack/simplify-pricing-structure": false,
 		"jetpack-social/advanced-plan": false,
-		"jetpack/offer-complete-after-activation": true,
+		"jetpack/offer-complete-after-activation": false,
 		"jitms": true,
 		"lasagna": true,
 		"layout/app-banner": true,
