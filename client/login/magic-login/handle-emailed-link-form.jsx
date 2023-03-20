@@ -178,9 +178,9 @@ class HandleEmailedLinkForm extends Component {
 			);
 		}
 
-		const illustration =
-			'/calypso/images/illustrations/' +
-			( isWooDna ? 'illustration-woo-magic-link.svg' : 'illustration-nosites.svg' );
+		const illustration = isWooDna
+			? '/calypso/images/illustrations/illustration-woo-magic-link.svg'
+			: '';
 
 		this.props.recordTracksEvent( 'calypso_login_email_link_handle_click_view' );
 
