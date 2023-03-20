@@ -1,4 +1,5 @@
 import { getCountryPostalCodeSupport, getCountryTaxRequirements } from '@automattic/wpcom-checkout';
+import debugFactory from 'debug';
 import getContactDetailsType from '../lib/get-contact-details-type';
 import type { ResponseCart, UpdateTaxLocationInCart } from '@automattic/shopping-cart';
 import type {
@@ -6,6 +7,8 @@ import type {
 	CountryListItem,
 	VatDetails,
 } from '@automattic/wpcom-checkout';
+
+const debug = debugFactory( 'calypso:update-cart-contact-details-for-checkout' );
 
 /**
  * Update the shopping cart's tax location to adjust its prices.
@@ -28,7 +31,12 @@ export async function updateCartContactDetailsForCheckout(
 		contactInfo?.countryCode?.value ?? ''
 	);
 
-	if ( ! contactInfo || ! areCountriesLoaded ) {
+	if ( ! contactInfo ) {
+		debug( 'not updating cart contact details; there is no contact info' );
+		return;
+	}
+	if ( ! areCountriesLoaded ) {
+		debug( 'not updating cart contact details; countries are not loaded' );
 		return;
 	}
 
@@ -52,7 +60,7 @@ export async function updateCartContactDetailsForCheckout(
 		( taxRequirements.address ? contactInfo.address1?.value : undefined ) ??
 		'';
 
-	return updateLocation( {
+	const cartLocationData = {
 		// Typically the contact country code and the VAT country code will be the
 		// same, but the VAT form has special country codes it sometimes uses like
 		// `XI` for Northern Ireland so we keep track of them separately and will
@@ -64,5 +72,7 @@ export async function updateCartContactDetailsForCheckout(
 		organization,
 		address,
 		city: ( taxRequirements.city ? contactInfo.city?.value : undefined ) ?? '',
-	} );
+	};
+	debug( 'updating cart with', cartLocationData );
+	return updateLocation( cartLocationData );
 }

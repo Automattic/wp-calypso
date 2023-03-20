@@ -412,6 +412,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 			};
 
 			try {
+				debug( 'updating cart with contact info', contactInfo, vatDetails );
 				await updateCartContactDetailsForCheckout(
 					this.props.countries ?? [],
 					this.props.cart,
