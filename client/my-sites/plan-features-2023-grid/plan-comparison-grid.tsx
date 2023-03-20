@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	applyTestFiltersToPlansList,
 	FeatureGroup,
@@ -7,6 +8,9 @@ import {
 	FEATURE_GROUP_ESSENTIAL_FEATURES,
 	getPlanFeaturesGrouped,
 	PLAN_ENTERPRISE_GRID_WPCOM,
+	getPlanSlugForTermVariant,
+	PlanSlug,
+	TERM_BIENNIALLY,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { css } from '@emotion/react';
@@ -307,10 +311,8 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 	const { planName, planConstantObj, availableForPurchase, current, ...planPropertiesObj } =
 		planProperties;
 	const highlightLabel = useHighlightLabel( planName );
-	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( visiblePlansProperties );
-
 	const headerClasses = classNames( 'plan-comparison-grid__header-cell', getPlanClass( planName ), {
 		'popular-plan-parent-class': highlightLabel,
 		'is-last-in-row': isLastInRow,
@@ -320,14 +322,11 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 		'is-only-highlight': highlightAdjacencyMatrix[ planName ]?.isOnlyHighlight,
 		'is-current-plan': current,
 	} );
-
 	const popularBadgeClasses = classNames( {
 		'is-current-plan': current,
 	} );
-
 	const rawPrice = planPropertiesObj.rawPrice;
 	const isLargeCurrency = rawPrice ? rawPrice > 99000 : false;
-
 	const showPlanSelect = ! allVisible && ! current;
 
 	return (
@@ -376,13 +375,13 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 			/>
 			<div className="plan-comparison-grid__billing-info">
 				<PlanFeatures2023GridBillingTimeframe
+					planName={ planName }
 					rawPrice={ rawPrice }
-					rawPriceAnnual={ planPropertiesObj.rawPriceAnnual }
-					currencyCode={ planPropertiesObj.currencyCode }
+					maybeDiscountedFullTermPrice={ planPropertiesObj.maybeDiscountedFullTermPrice }
 					annualPricePerMonth={ planPropertiesObj.annualPricePerMonth }
 					isMonthlyPlan={ planPropertiesObj.isMonthlyPlan }
-					translate={ translate }
 					billingTimeframe={ planConstantObj.getBillingTimeFrame() }
+					billingPeriod={ planPropertiesObj.billingPeriod }
 				/>
 			</div>
 			<PlanFeatures2023GridActions
@@ -629,7 +628,14 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 
 		if ( newVisiblePlans.length !== visibleLength ) {
 			// ensures current plan is first in the list
-			newVisiblePlans.sort( ( visiblePlan ) => ( visiblePlan === currentSitePlanSlug ? -1 : 1 ) );
+			newVisiblePlans.sort( ( visiblePlan ) =>
+				[
+					currentSitePlanSlug,
+					getPlanSlugForTermVariant( currentSitePlanSlug as PlanSlug, TERM_BIENNIALLY ),
+				].includes( visiblePlan )
+					? -1
+					: 1
+			);
 			newVisiblePlans = newVisiblePlans.slice( 0, visibleLength );
 		}
 
@@ -750,6 +756,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 				basePlansPath={ planTypeSelectorProps.basePlansPath }
 				siteSlug={ planTypeSelectorProps.siteSlug }
 				hideDiscountLabel={ true }
+				showBiannualToggle={ config.isEnabled( 'plans/biannual-toggle' ) }
 			/>
 			<Grid isInSignup={ isInSignup }>
 				<PlanComparisonGridHeader
