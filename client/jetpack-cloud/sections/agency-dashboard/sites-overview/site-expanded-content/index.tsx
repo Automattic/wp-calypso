@@ -4,6 +4,7 @@ import { siteColumns } from '../utils';
 import BackupStorage from './backup-storage';
 import BoostSitePerformance from './boost-site-performance';
 import InsightsStats from './insights-stats';
+import MonitorActivity from './monitor-activity';
 import type { Site } from '../types';
 
 import './style.scss';
@@ -30,6 +31,7 @@ export default function SiteExpandedContent( {
 	const trackEvent = ( eventName: string ) => {
 		recordEvent( eventName );
 	};
+	const hasMonitor = site.monitor_settings.monitor_active;
 
 	return (
 		<div
@@ -55,6 +57,9 @@ export default function SiteExpandedContent( {
 			) }
 			{ columns.includes( 'backup' ) && stats && (
 				<BackupStorage site={ site } trackEvent={ trackEvent } />
+			) }
+			{ columns.includes( 'monitor' ) && (
+				<MonitorActivity hasMonitor={ hasMonitor } siteId={ site.blog_id } />
 			) }
 		</div>
 	);
