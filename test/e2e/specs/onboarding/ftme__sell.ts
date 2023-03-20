@@ -178,7 +178,10 @@ describe( DataHelper.createSuiteTitle( 'FTME: Sell' ), function () {
 
 		it( 'Select theme', async function () {
 			await startSiteFlow.selectTheme( themeName );
-			await startSiteFlow.clickButton( `Start with ${ themeName }` );
+		} );
+
+		it( 'Confirm theme selection', async function () {
+			await startSiteFlow.confirmThemeSelection();
 		} );
 
 		it( 'Land in Home dashboard', async function () {

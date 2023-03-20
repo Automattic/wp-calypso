@@ -21,6 +21,8 @@ const selectors = {
 
 	// Themes
 	individualThemeContainer: ( name: string ) => `.design-button-container:has-text("${ name }")`,
+	themeContinueButton: '.design-preview__sidebar-action-buttons:has-text("Continue")',
+	themeContinueButtonSmall: '.step-container__navigation:has-text("Continue")',
 
 	// Goals
 	goalButton: ( goal: string ) => `.select-card__container:has-text("${ goal.toLowerCase() }")`,
@@ -166,5 +168,17 @@ export class StartSiteFlow {
 	 */
 	async selectTheme( themeName: string ): Promise< void > {
 		await this.page.getByRole( 'button', { name: themeName } ).click();
+	}
+
+	/**
+	 * Confirms Theme selection by clicking the correct Continue button depending on viewport size.
+	 * themeContinueButton will be visible at viewports above 1080px.
+	 * themeContinueButtonSmall will be visible at viewports below 1080px.
+	 */
+	async confirmThemeSelection(): Promise< void > {
+		await Promise.race( [
+			this.page.click( selectors.themeContinueButton ),
+			this.page.click( selectors.themeContinueButtonSmall ),
+		] );
 	}
 }
