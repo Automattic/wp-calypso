@@ -3,7 +3,8 @@ declare const wpcomGlobalStyles: { upgradeUrl: string };
 import { ExternalLink, Fill, Notice } from '@wordpress/components';
 import { createInterpolateElement, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { recordUpgradeNoticeClick, recordUpgradeNoticeShow, useGlobalStylesConfig } from './utils';
+import { useGlobalStylesConfig } from './use-global-styles-config';
+import { recordUpgradeNoticeClick, recordUpgradeNoticeShow } from './utils';
 
 const GLOBAL_STYLES_SCREEN_ROOT_CONTEXT = 'global-styles-screen-root';
 

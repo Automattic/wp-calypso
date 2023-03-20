@@ -4,7 +4,8 @@ import { useSelect } from '@wordpress/data';
 import { createInterpolateElement, render, useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import './notice.scss';
-import { recordUpgradeNoticeClick, recordUpgradeNoticeShow, useGlobalStylesConfig } from './utils';
+import { useGlobalStylesConfig } from './use-global-styles-config';
+import { recordUpgradeNoticeClick, recordUpgradeNoticeShow } from './utils';
 
 function GlobalStylesNoticeComponent() {
 	const { siteChanges, isVisible } = useGlobalStylesConfig();
