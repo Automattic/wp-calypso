@@ -24,6 +24,7 @@ import {
 	redirectToSupportSession,
 	upsellNudge,
 	upsellRedirect,
+	akismetCheckoutThankYou,
 } from './controller';
 
 export default function () {
@@ -102,6 +103,17 @@ export default function () {
 			setLocaleMiddleware(),
 			noSite,
 			checkoutAkismetSiteless,
+			makeLayout,
+			clientRender
+		);
+	}
+
+	if ( isEnabled( 'akismet/siteless-checkout' ) ) {
+		page(
+			'/checkout/akismet/thank-you/:productSlug',
+			setLocaleMiddleware(),
+			noSite,
+			akismetCheckoutThankYou,
 			makeLayout,
 			clientRender
 		);
