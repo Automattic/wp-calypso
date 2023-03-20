@@ -19,7 +19,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import './style.scss';
-import { useDefaultThankYouFoooter } from './use-default-thank-you-footer';
+import { useThankYouFoooter } from './use-default-thank-you-footer';
 import { usePluginsThankYouData } from './use-plugins-thank-you-data';
 import { useThemesThankYouData } from './use-themes-thank-you-data';
 
@@ -37,8 +37,7 @@ const MarketplaceThankYou = ( {
 	const currentUser = useSelector( getCurrentUser );
 	const isRequestingPlugins = useSelector( ( state ) => isRequesting( state, siteId ) );
 
-	const allSlugs = useMemo( () => [ ...pluginSlugs, ...themeSlugs ], [ pluginSlugs, themeSlugs ] );
-	const defaultThankYouFooter = useDefaultThankYouFoooter( allSlugs );
+	const defaultThankYouFooter = useThankYouFoooter( pluginSlugs, themeSlugs );
 
 	const [ pluginsSection, allPluginsFetched ] = usePluginsThankYouData( pluginSlugs );
 	const [ themesSection, allThemesFetched ] = useThemesThankYouData( themeSlugs );

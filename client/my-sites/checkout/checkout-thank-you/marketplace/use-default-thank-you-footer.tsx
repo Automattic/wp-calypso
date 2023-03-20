@@ -6,31 +6,59 @@ import { useSelector } from 'react-redux';
 import { ThankYouSectionProps, ThankYouNextStepProps } from 'calypso/components/thank-you/types';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-export function useDefaultThankYouFoooter( slugs: string[] ): ThankYouSectionProps {
+export function useThankYouFoooter(
+	pluginSlugs: Array< string >,
+	themeSlugs: Array< string >
+): ThankYouSectionProps {
 	const translate = useTranslate();
 	const siteSlug = useSelector( getSelectedSiteSlug );
+	const [ hasPlugins, hasThemes ] = [ pluginSlugs, themeSlugs ].map(
+		( slugs ) => slugs.length !== 0
+	);
 
 	const footerSteps: FooterStep[] = [
-		{
-			key: 'thank_you_footer_support_guides',
-			title: translate( 'Support guides' ),
-			description: translate(
-				'Our guides will show you everything you need to know about plugins.'
-			),
-			link: 'https://wordpress.com/support/plugins/',
-			linkText: translate( 'Plugin Support' ),
-			eventKey: 'calypso_plugin_thank_you_plugin_support_click',
-		},
-		{
-			key: 'thank_you_footer_explore',
-			title: translate( 'Keep growing' ),
-			description: translate(
-				'Take your site to the next level. We have all the solutions to help you.'
-			),
-			link: `/plugins/${ siteSlug }`,
-			linkText: translate( 'Explore plugins' ),
-			eventKey: 'calypso_plugin_thank_you_explore_plugins_click',
-		},
+		...( hasPlugins
+			? [
+					{
+						key: 'thank_you_footer_support_guides',
+						title: translate( 'Support guides' ),
+						description: translate(
+							'Our guides will show you everything you need to know about plugins.'
+						),
+						link: 'https://wordpress.com/support/plugins/',
+						linkText: translate( 'Plugin Support' ),
+						eventKey: 'calypso_plugin_thank_you_plugin_support_click',
+					},
+			  ]
+			: [] ),
+		...( hasPlugins
+			? [
+					{
+						key: 'thank_you_footer_explore',
+						title: translate( 'Keep growing' ),
+						description: translate(
+							'Take your site to the next level. We have all the solutions to help you.'
+						),
+						link: `/plugins/${ siteSlug }`,
+						linkText: translate( 'Explore plugins' ),
+						eventKey: 'calypso_plugin_thank_you_explore_plugins_click',
+					},
+			  ]
+			: [] ),
+		...( hasThemes
+			? [
+					{
+						key: 'thank_you_footer_about_theme',
+						title: translate( 'About this theme' ),
+						description: translate(
+							'This theme uses the Site Editor, which lets you create what you want.'
+						),
+						link: '#',
+						linkText: translate( 'Learn more' ),
+						eventKey: 'calypso_plugin_thank_you_about_theme_click',
+					},
+			  ]
+			: [] ),
 		{
 			key: 'thank_you_footer_support',
 			title: translate( 'How can we support you?' ),
@@ -40,7 +68,7 @@ export function useDefaultThankYouFoooter( slugs: string[] ): ThankYouSectionPro
 			eventKey: 'calypso_plugin_thank_you_ask_question_click',
 		},
 	];
-	const steps = useNextSteps( slugs, footerSteps );
+	const steps = useNextSteps( footerSteps, pluginSlugs, themeSlugs );
 
 	return {
 		sectionKey: 'thank_you_footer',
@@ -49,17 +77,22 @@ export function useDefaultThankYouFoooter( slugs: string[] ): ThankYouSectionPro
 	};
 }
 
-function useNextSteps( slugs: string[], footerSteps: FooterStep[] ): ThankYouNextStepProps[] {
+function useNextSteps(
+	footerSteps: FooterStep[],
+	pluginSlugs: Array< string >,
+	themeSlugs: Array< string >
+): ThankYouNextStepProps[] {
 	const siteId = useSelector( getSelectedSiteId );
 
 	const sendTrackEvent = useCallback(
 		( name: string ) => {
 			recordTracksEvent( name, {
 				site_id: siteId,
-				plugins: slugs.join( '/' ),
+				plugins: pluginSlugs.join( '/' ),
+				themes: themeSlugs.join( '/' ),
 			} );
 		},
-		[ siteId, slugs ]
+		[ siteId, pluginSlugs, themeSlugs ]
 	);
 
 	return footerSteps.map( ( step ) => {
