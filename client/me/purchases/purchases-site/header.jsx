@@ -12,7 +12,6 @@ import './header.scss';
 
 class PurchaseSiteHeader extends Component {
 	static propTypes = {
-		isTemporarySitePurchase: PropTypes.bool,
 		isPlaceholder: PropTypes.bool,
 		siteId: PropTypes.number,
 		name: PropTypes.string,
