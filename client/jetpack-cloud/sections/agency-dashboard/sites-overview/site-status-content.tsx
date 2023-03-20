@@ -224,7 +224,7 @@ export default function SiteStatusContent( {
 			return (
 				<div
 					className={ classNames(
-						'site-expanded-content__card-content-score',
+						'sites-overview__boost-score',
 						getBoostRatingClass( overallScore )
 					) }
 				>
