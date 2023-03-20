@@ -57,6 +57,8 @@ function Chart( {
 	sliceFromBeginning,
 	onChangeMaxBars,
 	minBarsToBeShown,
+	hideYAxis,
+	hideXAxis,
 } ) {
 	const [ tooltip, setTooltip ] = useState( { isTooltipVisible: false } );
 	const [ sizing, setSizing ] = useState( { clientWidth: 0, hasResized: false } );
@@ -192,7 +194,7 @@ function Chart( {
 					</div>
 				) }
 			</div>
-			{ ! isPlaceholder && <ChartYAxis /> }
+			{ ! isPlaceholder && ! hideYAxis && <ChartYAxis /> }
 			<BarContainer
 				barClick={ barClick }
 				chartWidth={ width }
@@ -202,6 +204,7 @@ function Chart( {
 				isTouch={ hasTouch() }
 				setTooltip={ handleTooltipChange }
 				yAxisMax={ yMax }
+				hideXAxis={ hideXAxis }
 			/>
 			{ isTooltipVisible && (
 				<Tooltip
@@ -230,6 +233,8 @@ Chart.propTypes = {
 	chartXPadding: PropTypes.number,
 	sliceFromBeginning: PropTypes.bool,
 	minBarsToBeShown: PropTypes.number,
+	hideYAxis: PropTypes.bool,
+	hideXAxis: PropTypes.bool,
 };
 
 Chart.defaultProps = {
@@ -239,6 +244,8 @@ Chart.defaultProps = {
 	minTouchBarWidth: 42,
 	chartXPadding: 20,
 	sliceFromBeginning: true,
+	hideYAxis: false,
+	hideXAxis: false,
 };
 
 export default withRtl( localize( Chart ) );
