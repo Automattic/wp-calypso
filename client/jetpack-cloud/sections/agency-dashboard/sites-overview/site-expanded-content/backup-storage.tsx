@@ -6,8 +6,9 @@ import useRewindableActivityLogQuery from 'calypso/data/activity-log/use-rewinda
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { isSuccessfulRealtimeBackup } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
+import { getExtractedBackupTitle } from '../utils';
 import ExpandedCard from './expanded-card';
-import type { Site } from '../types';
+import type { Site, Backup } from '../types';
 
 interface Props {
 	site: Site;
@@ -29,7 +30,7 @@ const BackupStorageContent = ( { siteId, siteUrl }: { siteId: number; siteUrl: s
 			before: endDate?.toISOString() ?? undefined,
 		},
 		{
-			select: ( backups: any[] ) =>
+			select: ( backups: Backup[] ) =>
 				backups.filter( ( backup ) => isSuccessfulRealtimeBackup( backup ) ),
 		}
 	);
@@ -43,9 +44,6 @@ const BackupStorageContent = ( { siteId, siteUrl }: { siteId: number; siteUrl: s
 	// Show plugin name only if it is a activity from a plugin
 	const pluginName =
 		backup?.activityName.startsWith( 'plugin__' ) && backup.activityDescription[ 0 ]?.children[ 0 ];
-
-	const backupTitle =
-		backup?.activityDescription[ 0 ]?.children[ 0 ]?.text ?? backup?.activityTitle;
 
 	const showLoader = isLoading || ! backup;
 
@@ -61,7 +59,7 @@ const BackupStorageContent = ( { siteId, siteUrl }: { siteId: number; siteUrl: s
 							<TextPlaceholder />
 						) : (
 							<>
-								{ backupTitle }
+								{ getExtractedBackupTitle( backup ) }
 								{ pluginName ? ` - ${ pluginName }` : '' }
 							</>
 						) }
