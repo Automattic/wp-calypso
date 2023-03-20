@@ -15,6 +15,7 @@ export function SiteLogs() {
 		logType: 'web',
 		start: startTime,
 		end: endTime,
+		sort_order: 'desc',
 		page_size: 10,
 	} );
 

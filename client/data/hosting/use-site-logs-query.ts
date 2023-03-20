@@ -16,6 +16,7 @@ export interface SiteLogsParams {
 	logType: 'php' | 'web';
 	start: number;
 	end: number;
+	sort_order?: 'asc' | 'desc';
 	page_size?: number;
 	scroll_id?: string;
 }
