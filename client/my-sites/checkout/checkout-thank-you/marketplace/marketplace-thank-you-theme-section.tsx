@@ -105,7 +105,7 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 				</ThemeSectionName>
 				<ThemeSectionButtons>
 					<Button isPrimary onClick={ handleActivateTheme }>
-						{ translate( 'Theme details' ) }
+						{ translate( 'Activate this design' ) }
 					</Button>
 				</ThemeSectionButtons>
 			</ThemeSectionContent>
