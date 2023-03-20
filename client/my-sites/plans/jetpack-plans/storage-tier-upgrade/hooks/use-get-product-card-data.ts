@@ -20,6 +20,7 @@ import {
 } from '@automattic/calypso-products';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
 import type { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 
@@ -49,8 +50,6 @@ const YEARLY_FEATURES_PRODUCTS = [
 const getDisclaimerLink = (): string => {
 	const backupStorageFaqId = 'backup-storage-limits-faq';
 
-	const urlParams = new URLSearchParams( window.location.search );
-	const calypsoEnv = urlParams.get( 'calypso_env' );
 	// Check to see if FAQ is on the current page
 	// This is so we can anchor link to it instead of opening a new window if it is on the page already
 	const backupStorageFaq = document.getElementById( backupStorageFaqId );
@@ -59,9 +58,11 @@ const getDisclaimerLink = (): string => {
 		return `#${ backupStorageFaqId }`;
 	}
 
-	return calypsoEnv === 'development'
-		? `http://jetpack.cloud.localhost:3000/pricing#${ backupStorageFaqId }`
-		: `https://cloud.jetpack.com/pricing#${ backupStorageFaqId }`;
+	if ( isJetpackCloud() ) {
+		return `/pricing#${ backupStorageFaqId }`;
+	}
+
+	return `https://cloud.jetpack.com/pricing#${ backupStorageFaqId }`;
 };
 
 const getDisclaimer = (
