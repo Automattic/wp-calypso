@@ -108,10 +108,11 @@ export default function PostCardsGroup( {
 		commentCount: mostPopularPost?.discussion?.comment_count,
 	};
 
-	const cards = [ <LatestPostCard siteId={ siteId } siteSlug={ siteSlug } /> ];
+	const cards = [ <LatestPostCard key="latestPostCard" siteId={ siteId } siteSlug={ siteSlug } /> ];
 	if ( ! isTopViewedPostRequesting && mostPopularPost ) {
 		cards.push(
 			<PostStatsCard
+				key="mostPopularPostCard"
 				heading={ translate( 'Most popular post in the past year' ) }
 				likeCount={ mostPopularPostData?.likeCount }
 				post={ mostPopularPostData }
