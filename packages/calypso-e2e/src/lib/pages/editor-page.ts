@@ -74,20 +74,7 @@ export class EditorPage {
 		page: Page,
 		{ target = 'simple', blockTheme = false }: { target?: SiteType; blockTheme?: boolean } = {}
 	) {
-		// The first step is to determine whether the test site is running a
-		// Gutenframe, otherwise known as a Calypsofy iframe.
-		// Typically, a Gutenframe is found on Simple sites and encapsulates the
-		// entire editor window.
-		// Atomic sites typically do not feature a Gutenframe and thus the editor
-		// window is exposed in the DOM.
-		// For both Simple and Atomic, the relevant `body` root element is used when resolving
-		// the Locator. This is to present a unified behavior when other methods reference the
-		// `editorWindow`.
-		if ( target === 'atomic' ) {
-			this.editorWindow = page.locator( selectors.editor );
-		} else {
-			this.editorWindow = page.frameLocator( selectors.editorFrame ).locator( selectors.editor );
-		}
+		this.editorWindow = page.locator( selectors.editor );
 
 		// The second step is to locate the iframe that exists within the
 		// editor canvas as of Gutenberg 14.9.1 when using newer block-based themes.
