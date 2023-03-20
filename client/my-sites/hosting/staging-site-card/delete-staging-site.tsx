@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { Modal } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
-import { useDeleteStagingSite } from './use-delete-staging-site-mutation';
+import { useDeleteStagingSite } from './use-delete-staging-site';
 
 interface DeleteStagingSiteProps {
 	disabled: boolean;
