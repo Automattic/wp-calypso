@@ -3,8 +3,10 @@ import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import { useSelector } from 'react-redux';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { useSelector, useDispatch } from 'react-redux';
+import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
+import { activate } from 'calypso/state/themes/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const ThemeSectionContainer = styled.div`
 	display: flex;
@@ -59,8 +61,8 @@ const ThemeSectionButtons = styled.div`
 
 export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId );
-	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	const sendTrackEvent = useCallback(
 		( name: string ) => {
@@ -72,12 +74,14 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 		[ siteId, theme ]
 	);
 
-	const getThemeDetailsUrl = () => {
-		return `/theme/${ theme.id }/${ siteSlug }`;
+	const handleActivateTheme = () => {
+		sendTrackEvent( 'calypso_theme_thank_you_activate_theme_click' );
+		dispatch( activate( theme.id, Number( siteId ), 'marketplace-thank-you' ) );
 	};
 
 	return (
 		<ThemeSectionContainer>
+			<AutoLoadingHomepageModal source="details" />
 			<ThemeSectionImage
 				src={ theme.screenshot }
 				alt={
@@ -98,11 +102,7 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 					</small>
 				</ThemeSectionName>
 				<ThemeSectionButtons>
-					<Button
-						isPrimary
-						href={ getThemeDetailsUrl() }
-						onClick={ () => sendTrackEvent( 'calypso_theme_thank_you_activate_theme_click' ) }
-					>
+					<Button isPrimary onClick={ handleActivateTheme }>
 						{ translate( 'Theme details' ) }
 					</Button>
 				</ThemeSectionButtons>
