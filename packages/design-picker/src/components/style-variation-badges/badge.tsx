@@ -55,7 +55,7 @@ const Badge: React.FC< BadgeProps > = ( { variation, onClick, isSelected } ) => 
 					// Prevent the event from bubbling to the parent button.
 					e.stopPropagation();
 					e.preventDefault();
-					onClick?.( variation, e );
+					onClick?.( variation );
 				}
 			} }
 		>
