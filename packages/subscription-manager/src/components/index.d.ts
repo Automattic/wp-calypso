@@ -109,3 +109,7 @@ declare module 'calypso/components/forms/form-label' {
 	const FormLabel: React.FC< Props & LabelProps >;
 	export default FormLabel;
 }
+
+declare module 'calypso/components/localized-moment' {
+	export const useLocalizedMoment: () => import('moment');
+}
