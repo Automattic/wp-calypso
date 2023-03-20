@@ -3,7 +3,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useSelect } from '@wordpress/data';
 import { useSupportedPlans } from 'calypso/../packages/plans-grid/src/hooks';
 import { PLANS_STORE } from 'calypso/landing/stepper/stores';
-import type { PlanBillingPeriod, PlansSelect } from 'calypso/../packages/data-stores';
+import type { PlanBillingPeriod, PlansSelect } from '@automattic/data-stores';
 
 const SENSEI_PRO_PRODUCT_YEARLY = 'sensei_pro_yearly';
 const SENSEI_PRO_PRODUCT_MONTHLY = 'sensei_pro_monthly';
