@@ -41,9 +41,17 @@ interface Props {
 	action?: string;
 	host?: string;
 	role: string;
+	onFinishCallback?: () => void;
+	redirectOnFinish?: boolean;
 }
 
-const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role } ) => {
+const AdvancedCredentials: FunctionComponent< Props > = ( {
+	action,
+	host,
+	role,
+	onFinishCallback = null,
+	redirectOnFinish = true,
+} ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const isAlternate = role === 'alternate';
@@ -87,7 +95,8 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 	const [ testCredentialsLoading, setTestCredentialsLoading ] = useState( true );
 	const [ testCredentialsResult, setTestCredentialsResult ] = useState( false );
 
-	const hasCredentials = credentials && Object.keys( credentials ).length > 0;
+	// Don't test credentials or pre-load the formState if we're editing alternate credentials
+	const hasCredentials = ! isAlternate && credentials && Object.keys( credentials ).length > 0;
 
 	const { protocol } = credentials;
 	const isAtomic = hasCredentials && 'dynamic-ssh' === protocol;
@@ -106,7 +115,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 		} else {
 			dispatch( markCredentialsAsInvalid( siteId, role ) );
 		}
-	}, [ hasCredentials ] );
+	}, [ dispatch, hasCredentials, isAlternate, role, siteId ] );
 
 	useEffect(
 		function () {
@@ -322,18 +331,23 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 			case Step.Verification:
 				return (
 					<Verification
-						onFinishUp={ () => {
-							dispatch( {
-								type: JETPACK_CREDENTIALS_UPDATE_RESET,
-								siteId,
-							} );
-						} }
+						onFinishUp={
+							onFinishCallback
+								? onFinishCallback
+								: () => {
+										dispatch( {
+											type: JETPACK_CREDENTIALS_UPDATE_RESET,
+											siteId,
+										} );
+								  }
+						}
 						onReview={ () => {
 							dispatch( {
 								type: JETPACK_CREDENTIALS_UPDATE_RESET,
 								siteId,
 							} );
 						} }
+						redirectOnFinish={ redirectOnFinish }
 					/>
 				);
 			case Step.Connected:

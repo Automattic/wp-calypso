@@ -16,6 +16,7 @@ import './style.scss';
 interface Props {
 	onFinishUp: () => void;
 	onReview: () => void;
+	redirectOnFinish?: boolean;
 }
 
 const ERROR_CODES_FOR_BLOCKED_REQUEST = [ 'service_unavailable', 'invalid_credentials' ];
@@ -66,7 +67,11 @@ const UpdateErrorView: FunctionComponent< UpdateError > = ( {
 	);
 };
 
-const Verification: FunctionComponent< Props > = ( { onFinishUp, onReview } ) => {
+const Verification: FunctionComponent< Props > = ( {
+	onFinishUp,
+	onReview,
+	redirectOnFinish = true,
+} ) => {
 	const translate = useTranslate();
 
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -127,7 +132,11 @@ const Verification: FunctionComponent< Props > = ( { onFinishUp, onReview } ) =>
 			{ updateError && <UpdateErrorView { ...updateError } /> }
 			<div className="verification__buttons">
 				{ showFinishUp && (
-					<Button primary onClick={ onFinishUp } href={ settingsPath( siteSlug ) }>
+					<Button
+						primary
+						onClick={ onFinishUp }
+						href={ redirectOnFinish ? settingsPath( siteSlug ) : null }
+					>
 						{ translate( 'Finish up' ) }
 					</Button>
 				) }

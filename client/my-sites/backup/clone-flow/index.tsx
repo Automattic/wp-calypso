@@ -11,7 +11,7 @@ import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import StepProgress from 'calypso/components/step-progress';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { rewindRestore } from 'calypso/state/activity-log/actions';
+import { rewindClone } from 'calypso/state/activity-log/actions';
 import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
 import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
@@ -51,9 +51,9 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteUrl } ) => {
 	const [ rewindConfig, setRewindConfig ] = useState< RewindConfig >( defaultRewindConfig );
 	const [ userHasRequestedRestore, setUserHasRequestedRestore ] = useState< boolean >( false );
 	const [ userHasSetDestination, setUserHasSetDestination ] = useState< boolean >( false );
+	const [ cloneDestination, setCloneDestination ] = useState< string >( '' );
 	const [ userHasSetBackupPeriod, setUserHasSetBackupPeriod ] = useState< boolean >( false );
 	const [ backupPeriod, setBackupPeriod ] = useState< string >( '' );
-	//const [ destinationUrl, setDestinationUrl ] = useState< string >( '' );
 
 	const steps = [
 		{
@@ -81,20 +81,33 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteUrl } ) => {
 		( state ) => getRestoreProgress( state, siteId ) || ( {} as RestoreProgress )
 	);
 
-	const requestRestore = useCallback(
-		() => dispatch( rewindRestore( siteId, backupPeriod, rewindConfig ) ),
-		[ dispatch, rewindConfig, backupPeriod, siteId ]
+	const CredSettings = {
+		action: 'edit',
+		host: 'generic',
+		role: 'alternate',
+	};
+
+	const requestClone = useCallback(
+		() =>
+			dispatch(
+				rewindClone( siteId, backupPeriod, { types: rewindConfig, roleName: CredSettings.role } )
+			),
+		[ dispatch, siteId, backupPeriod, rewindConfig, CredSettings.role ]
 	);
 	const onConfirm = useCallback( () => {
 		dispatch( setValidFrom( 'restore', Date.now() ) );
 		setUserHasRequestedRestore( true );
-		requestRestore();
-	}, [ dispatch, setUserHasRequestedRestore, requestRestore ] );
+		requestClone();
+	}, [ dispatch, setUserHasRequestedRestore, requestClone ] );
 
-	const onSetDestination = useCallback( () => {
-		// TODO: Validate credentials and if they work...
-		setUserHasSetDestination( true );
-	}, [ setUserHasSetDestination ] );
+	// Takes a destination as a vault role or blog id
+	const onSetDestination = useCallback(
+		( destination: string ) => {
+			setCloneDestination( destination );
+			setUserHasSetDestination( true );
+		},
+		[ setUserHasSetDestination, setCloneDestination ]
+	);
 
 	const onSetBackupPeriod = useCallback(
 		( period ) => {
@@ -104,12 +117,6 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteUrl } ) => {
 		},
 		[ setUserHasSetBackupPeriod, setBackupPeriod ]
 	);
-
-	const CredSettings = {
-		action: 'unsubmitted',
-		host: 'generic',
-		role: 'alternate',
-	};
 
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
@@ -132,9 +139,15 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteUrl } ) => {
 					action={ CredSettings.action }
 					host={ CredSettings.host }
 					role={ CredSettings.role }
+					onFinishCallback={ () => onSetDestination( CredSettings.role ) }
+					redirectOnFinish={ false }
 				/>
 			</div>
-			<Button className="clone-flow__primary-button" primary onClick={ onSetDestination }>
+			<Button
+				className="clone-flow__primary-button"
+				primary
+				onClick={ () => onSetDestination( CredSettings.role ) }
+			>
 				{ translate( 'Go to Backup Select' ) }
 			</Button>
 			-- Temporary button for skipping this step to get to the next screen
@@ -156,11 +169,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteUrl } ) => {
 			>
 				{ translate( 'Clone from this point' ) }
 			</Button>
-			<Button
-				className="clone-flow__primary-button"
-				secondary
-				onClick={ () => onSetBackupPeriod( 67890 ) }
-			>
+			<Button className="clone-flow__primary-button" onClick={ () => onSetBackupPeriod( 67890 ) }>
 				{ translate( 'Clone from here' ) }
 			</Button>
 		</>
@@ -173,7 +182,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteUrl } ) => {
 			<h3 className="clone-flow__title">{ translate( 'Clone site' ) }</h3>
 			<p className="clone-flow__info">
 				{ translate(
-					'{{strong}}%(backupDisplayDate)s{{/strong}} is the selected point for your restore. ',
+					'{{strong}}%(backupDisplayDate)s{{/strong}} is the selected point for your restore.',
 					{
 						args: {
 							backupDisplayDate,
@@ -183,6 +192,16 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteUrl } ) => {
 						},
 					}
 				) }
+			</p>
+			<p className="clone-flow__info">
+				{ translate( '{{strong}}%(destinationUrl)s{{/strong}} is URL you are cloning to.', {
+					args: {
+						destinationUrl: cloneDestination,
+					},
+					components: {
+						strong: <strong />,
+					},
+				} ) }
 			</p>
 			<h4 className="clone-flow__cta">{ translate( 'Choose the items you wish to restore:' ) }</h4>
 			<RewindConfigEditor currentConfig={ rewindConfig } onConfigChange={ setRewindConfig } />
