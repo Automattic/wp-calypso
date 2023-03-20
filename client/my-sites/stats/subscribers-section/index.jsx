@@ -6,8 +6,9 @@ import './style.scss';
 // We don't have any data yet so we are just plotting visitor data.
 // Currently using the LineChart component from the Calypso library.
 
-const DATA_TYPE = 'api';
-// DATA_TYPE can be: 'api', 'single, or 'multi'.
+const DATA_TYPE_API = 'api';
+const DATA_TYPE_SINGLE = 'single';
+const DATA_TYPE_MULTI = 'multi';
 
 function getDataSingleLine() {
 	const data = [
@@ -120,14 +121,14 @@ function getDataAPISample() {
 	return [ processedData.slice( 0, maxDataSize ).reverse() ];
 }
 
-function getData() {
-	if ( DATA_TYPE === 'api' ) {
+function getData( type ) {
+	if ( type === DATA_TYPE_API ) {
 		return getDataAPISample();
 	}
-	if ( DATA_TYPE === 'single' ) {
+	if ( type === DATA_TYPE_SINGLE ) {
 		return getDataSingleLine();
 	}
-	if ( DATA_TYPE === 'multi' ) {
+	if ( type === DATA_TYPE_MULTI ) {
 		return getDataMultiLine();
 	}
 	return [];
@@ -139,22 +140,22 @@ function getLegendSingleLine() {
 function getLegendMultiLine() {
 	return [ { name: 'Line #1' }, { name: 'Line #2' }, { name: 'Line #3' } ];
 }
-function getLegend() {
-	if ( DATA_TYPE === 'single' ) {
+function getLegend( type ) {
+	if ( type === DATA_TYPE_SINGLE ) {
 		return getLegendSingleLine();
 	}
-	if ( DATA_TYPE === 'multi' ) {
+	if ( type === DATA_TYPE_MULTI ) {
 		return getLegendMultiLine();
 	}
 	return [];
 }
 
-export default function SubscribersSection() {
-	const data = getData();
-	const legendInfo = getLegend();
+export default function SubscribersSection( { dataType = DATA_TYPE_API } ) {
+	const data = getData( dataType );
+	const legendInfo = getLegend( dataType );
 
 	const tooltipHelper =
-		DATA_TYPE !== 'api' ? ( datum ) => datum.value : ( datum ) => `Changed: ${ datum.diff }`;
+		dataType !== DATA_TYPE_API ? ( datum ) => datum.value : ( datum ) => `Changed: ${ datum.diff }`;
 
 	return (
 		<div className="subscribers-section">
