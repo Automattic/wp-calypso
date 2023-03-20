@@ -525,6 +525,44 @@ export function generateFlows( {
 			lastModified: '2021-12-21',
 			disallowResume: false,
 		},
+
+		{
+			name: 'ecommerce-2y',
+			steps: [ 'user', 'domains', 'plans-ecommerce-2y' ],
+			destination: getSignupDestination,
+			description: 'Signup flow for creating an online store with an Atomic site',
+			lastModified: '2023-03-15',
+			showRecaptcha: true,
+		},
+
+		{
+			name: 'business-2y',
+			steps: [ 'user', 'domains', 'plans-business-2y' ],
+			destination: getSignupDestination,
+			description:
+				'Create an account and a blog and then add the business 2y plan to the users cart.',
+			lastModified: '2023-03-15',
+			showRecaptcha: true,
+		},
+
+		{
+			name: 'premium-2y',
+			steps: [ 'user', 'domains', 'plans-premium-2y' ],
+			destination: getSignupDestination,
+			description:
+				'Create an account and a blog and then add the premium 2y plan to the users cart.',
+			lastModified: '2023-03-15',
+			showRecaptcha: true,
+		},
+		{
+			name: 'personal-2y',
+			steps: [ 'user', 'domains', 'plans-personal-2y' ],
+			destination: getSignupDestination,
+			description:
+				'Create an account and a blog and then add the personal 2y plan to the users cart.',
+			lastModified: '2023-03-15',
+			showRecaptcha: true,
+		},
 	];
 
 	// convert the array to an object keyed by `name`

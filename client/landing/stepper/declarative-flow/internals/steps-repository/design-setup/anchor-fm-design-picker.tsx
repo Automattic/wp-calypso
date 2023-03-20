@@ -6,9 +6,10 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
 import { useNewSiteVisibility } from 'calypso/landing/stepper/hooks/use-selected-plan';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { requestActiveTheme } from 'calypso/state/themes/actions';
+import { setActiveTheme } from 'calypso/state/themes/actions';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../../../../stores';
 import { ANCHOR_FM_THEMES } from './anchor-fm-themes';
 import { STEP_NAME } from './constants';
@@ -78,8 +79,8 @@ const AnchorFmDesignPicker: Step = ( { navigation, flow } ) => {
 				return;
 			}
 
-			return setDesignOnSite( newSite.site_slug, _selectedDesign ).then( () =>
-				reduxDispatch( requestActiveTheme( newSite.blogid ) )
+			return setDesignOnSite( newSite.site_slug, _selectedDesign ).then( ( theme: ActiveTheme ) =>
+				reduxDispatch( setActiveTheme( newSite.blogid, theme ) )
 			);
 		} );
 

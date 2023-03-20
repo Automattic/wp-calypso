@@ -74,6 +74,15 @@ describe( 'utils', () => {
 				type: 'site',
 				status: '',
 			},
+			boost: {
+				type: 'boost',
+				status: 'active',
+				data: {
+					desktop: 100,
+					mobile: 100,
+					overall: 100,
+				},
+			},
 			backup: {
 				type: 'backup',
 				value: translate( 'Failed' ),

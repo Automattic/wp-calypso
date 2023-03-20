@@ -54,6 +54,7 @@ import DomainUpsellDialog from './components/domain-upsell-dialog';
 import PlansHeader from './components/plans-header';
 import ECommerceTrialPlansPage from './ecommerce-trial';
 import ModernizedLayout from './modernized-layout';
+import WooExpressMediumPlansPage from './wx-medium';
 
 import './style.scss';
 
@@ -295,14 +296,15 @@ class Plans extends Component {
 	}
 
 	renderWooExpressMediumPage() {
-		return <p>Woo Express Performance</p>;
+		const { currentPlan, selectedSite } = this.props;
+		return <WooExpressMediumPlansPage currentPlan={ currentPlan } selectedSite={ selectedSite } />;
 	}
 
 	renderMainContent( { isEcommerceTrial, isWooExpressPlan } ) {
 		if ( isEcommerceTrial ) {
 			return this.renderEcommerceTrialPage();
 		}
-		if ( isWooExpressPlan && isEnabled( 'plans/wooexpress-medium' ) ) {
+		if ( isWooExpressPlan ) {
 			return this.renderWooExpressMediumPage();
 		}
 		return this.renderPlansMain();
@@ -355,7 +357,7 @@ class Plans extends Component {
 				: translate( 'Choose the perfect plan' );
 
 		// Hide for WooExpress plans
-		const showPlansNavigation = isEnabled( 'plans/wooexpress-medium' ) ? ! isWooExpressPlan : true;
+		const showPlansNavigation = ! isWooExpressPlan;
 
 		return (
 			<div>

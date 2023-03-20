@@ -18,10 +18,13 @@ const EmailFormatInput = ( { value, onChange }: EmailFormatInputProps ) => {
 
 	return (
 		<FormFieldset className="email-format-input">
-			<FormLabel htmlFor="subscription_delivery_mail_option">
-				{ translate( 'Email format' ) }
-			</FormLabel>
-			<FormSelect name="email_format_setting" onChange={ onChange } value={ value }>
+			<FormLabel htmlFor="email_format_setting">{ translate( 'Email format' ) }</FormLabel>
+			<FormSelect
+				id="email_format_setting"
+				name="email_format_setting"
+				onChange={ onChange }
+				value={ value }
+			>
 				<option value="html">{ translate( 'HTML' ) }</option>
 				<option value="text">{ translate( 'Plain Text' ) }</option>
 			</FormSelect>

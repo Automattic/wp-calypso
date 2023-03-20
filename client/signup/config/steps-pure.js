@@ -8,6 +8,10 @@ import {
 	PLAN_PREMIUM_MONTHLY,
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_ECOMMERCE_MONTHLY,
+	PLAN_PERSONAL_2_YEARS,
+	PLAN_PREMIUM_2_YEARS,
+	PLAN_BUSINESS_2_YEARS,
+	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_WPCOM_PRO,
 	PLAN_WPCOM_STARTER,
 	TYPE_FREE,
@@ -690,6 +694,51 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
 			defaultDependencies: {
 				cartItem: PLAN_ECOMMERCE_MONTHLY,
+				themeSlugWithRepo: 'pub/twentytwentytwo',
+			},
+		},
+
+		'plans-personal-2y': {
+			stepName: 'plans-personal-2y',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_PERSONAL_2_YEARS,
+			},
+		},
+
+		'plans-premium-2y': {
+			stepName: 'plans-premium-2y',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_PREMIUM_2_YEARS,
+			},
+		},
+
+		'plans-business-2y': {
+			stepName: 'plans-business-2y',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_BUSINESS_2_YEARS,
+			},
+		},
+
+		'plans-ecommerce-2y': {
+			stepName: 'plans-ecommerce-2y',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			defaultDependencies: {
+				cartItem: PLAN_ECOMMERCE_2_YEARS,
 				themeSlugWithRepo: 'pub/twentytwentytwo',
 			},
 		},

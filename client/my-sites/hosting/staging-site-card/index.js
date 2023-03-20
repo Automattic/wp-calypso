@@ -17,8 +17,9 @@ import { useCheckStagingSiteStatus } from 'calypso/my-sites/hosting/staging-site
 import { useStagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 
 const STAGING_CREATION_QUOTA_THRESHOLD = 100;
 
@@ -48,9 +49,11 @@ const ExceedQuotaErrorWrapper = styled.div( {
 } );
 
 export const StagingSiteCard = ( {
+	currentUserId,
 	disabled,
 	spaceQuotaExceededForStaging,
 	siteId,
+	siteOwnerId,
 	translate,
 } ) => {
 	const { __ } = useI18n();
@@ -199,13 +202,17 @@ export const StagingSiteCard = ( {
 	};
 
 	const getTransferringStagingSiteContent = useCallback( () => {
+		const message =
+			siteOwnerId === currentUserId
+				? __( 'We are setting up your staging site. We’ll email you once it is ready.' )
+				: __( 'We are setting up the staging site. We’ll email the site owner once it is ready.' );
 		return (
 			<div data-testid="transferring-staging-content">
 				<StyledLoadingBar progress={ progress } />
-				<p>{ __( 'We are setting up your staging site. We’ll email you once it is ready.' ) }</p>
+				<p>{ message }</p>
 			</div>
 		);
-	}, [ progress, __ ] );
+	}, [ progress, __, siteOwnerId, currentUserId ] );
 
 	const getLoadingStagingSitesPlaceholder = () => {
 		return (
@@ -254,7 +261,9 @@ export const StagingSiteCard = ( {
 
 export default withMediaStorage(
 	connect( ( state, { mediaStorage } ) => {
+		const currentUserId = getCurrentUserId( state );
 		const siteId = getSelectedSiteId( state );
+		const siteOwnerId = getSelectedSite( state )?.site_owner;
 
 		let spaceQuotaExceededForStaging = false;
 		if ( mediaStorage?.storage_used_bytes ) {
@@ -262,8 +271,10 @@ export default withMediaStorage(
 				mediaStorage.storage_used_bytes / GB_IN_BYTES > STAGING_CREATION_QUOTA_THRESHOLD;
 		}
 		return {
+			currentUserId,
 			siteId,
 			spaceQuotaExceededForStaging,
+			siteOwnerId,
 		};
 	} )( localize( StagingSiteCard ) )
 );
