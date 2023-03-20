@@ -8,6 +8,7 @@ import {
 } from '@automattic/calypso-products';
 import { CompactCard, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
+import { ExternalLink } from '@wordpress/components';
 import { Icon, warning as warningIcon } from '@wordpress/icons';
 import classNames from 'classnames';
 import i18n, { localize, useTranslate } from 'i18n-calypso';
@@ -77,21 +78,20 @@ class PurchaseItem extends Component {
 				return (
 					<>
 						<span className="purchase-item__is-error">
-							{ translate( 'Activate your Jetpack product license key', {
-								components: {
-									br: <br />,
-									// TODO: These anchor links are causing React console warnings,
-									// "Warning: validateDOMNesting(...): <a> cannot appear as a descendant of <a>."
-									// Because the <CompactCard> component that renders this also us surrounded by an anchor link.
-									// See: <Card> General Guidelines: https://github.com/Automattic/wp-calypso/tree/trunk/packages/components/src/card#general-guidelines
-									// TLDR: Don't display more than one primary button or action in a single card. (in which the card itself if a primary action/link in this case)
-									a: (
-										<a href="https://jetpack.com/support/install-jetpack-and-connect-your-new-plan/#how-can-i-activate-my-license-key-in-my-jetpack-installation" />
-									),
-									icon: <Gridicon icon="external" size={ 12 } />,
-								},
-							} ) }
+							{ translate( 'Activate your product license key' ) }
 						</span>
+						<br />
+						{ /* TODO: These anchor links are causing React console warnings,
+						"Warning: validateDOMNesting(...): <a> cannot appear as a descendant of <a>."
+						Because the <CompactCard> component that renders this also us surrounded by an anchor link.
+						See: <Card> General Guidelines: https://github.com/Automattic/wp-calypso/tree/trunk/packages/components/src/card#general-guidelines
+						TLDR: Don't display more than one primary button or action in a single card. (in which the card itself if a primary action/link in this case) */ }
+						<ExternalLink
+							className="purchase-item__link"
+							href="https://jetpack.com/support/install-jetpack-and-connect-your-new-plan/#how-can-i-activate-my-license-key-in-my-jetpack-installation"
+						>
+							{ translate( 'Learn more' ) }
+						</ExternalLink>
 					</>
 				);
 			}
