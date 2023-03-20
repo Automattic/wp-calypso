@@ -43,9 +43,9 @@ $tip_icon_base64: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTMiIGhlaWdodD0i
 
 		.tip-text {
 			color: $studio-gray-40;
-			font-size: 0.875rem;
+			font-size: $font-body-small;
 			font-weight: 400;
-			line-height: 20px;
+			line-height: $font-title-small;
 		}
 	}
 }
