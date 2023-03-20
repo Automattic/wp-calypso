@@ -61,8 +61,7 @@ export function usePluginsThankYouData( pluginSlugs: string[] ): [ ThankYouSecti
 		isFetchingAutomatedTransferStatus( state, siteId )
 	);
 
-	const allPluginsFetched =
-		!! pluginsOnSite.length && pluginsOnSite.every( ( pluginOnSite ) => !! pluginOnSite );
+	const allPluginsFetched = pluginsOnSite.every( ( pluginOnSite ) => !! pluginOnSite );
 
 	const transferStatus = useSelector( ( state ) => getAutomatedTransferStatus( state, siteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
