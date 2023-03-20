@@ -23,7 +23,7 @@ const ScreenHeader = ( { selectedPattern, onSelect, onBack, onDoneClick }: Props
 		<>
 			{ isSidebarRevampEnabled && (
 				<NavigatorHeader
-					title={ translate( 'Choose a header' ) }
+					title={ translate( 'Header' ) }
 					description={ translate(
 						'Your header will be added to all pages and is usually where your site navigation lives.'
 					) }
@@ -47,7 +47,7 @@ const ScreenHeader = ( { selectedPattern, onSelect, onBack, onDoneClick }: Props
 					primary
 					onClick={ onDoneClick }
 				>
-					{ translate( 'Done' ) }
+					{ translate( 'Save' ) }
 				</NavigatorBackButton>
 			</div>
 		</>
