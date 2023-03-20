@@ -24,12 +24,7 @@ async function fetchFromApi< ReturnType >( {
 		return res as ReturnType;
 	}
 
-	// get cookie named subkey
-	const subkey = document.cookie
-		?.split( ';' )
-		?.map( ( c ) => c.trim() )
-		?.find( ( c ) => c.startsWith( 'subkey=' ) )
-		?.split( '=' )[ 1 ];
+	const subkey = decodeURIComponent( window?._subscriptionManagementSubkey ?? '' );
 
 	return apiFetch( {
 		global: true,

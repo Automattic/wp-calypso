@@ -109,3 +109,9 @@ declare module 'calypso/components/forms/form-label' {
 	const FormLabel: React.FC< Props & LabelProps >;
 	export default FormLabel;
 }
+
+declare global {
+	interface Window {
+		_subscriptionManagementSubkey: string | undefined;
+	}
+}

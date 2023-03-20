@@ -7,6 +7,7 @@ import api from 'calypso/server/api';
 import config from 'calypso/server/config';
 import analytics from 'calypso/server/lib/analytics';
 import loggerMiddleware from 'calypso/server/middleware/logger';
+import subkeyMiddleware from 'calypso/server/middleware/subscriptionmanagement-subkey';
 import pages from 'calypso/server/pages';
 import pwa from 'calypso/server/pwa';
 
@@ -24,6 +25,7 @@ export default function setup() {
 	app.use( cookieParser() );
 	app.use( userAgent.express() );
 	app.use( loggerMiddleware() );
+	app.use( subkeyMiddleware );
 
 	if ( process.env.USE_SERVER_PROFILER === 'true' ) {
 		app.use( require( 'calypso/server/middleware/profiler' )() );
