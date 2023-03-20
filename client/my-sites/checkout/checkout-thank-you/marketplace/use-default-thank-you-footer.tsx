@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -27,7 +26,6 @@ export function useDefaultThankYouFoooter( slugs: string[] ): ThankYouSectionPro
 		nextStepsClassName: 'thank-you__footer',
 		nextSteps: [
 			{
-				stepIcon: <FooterIcon icon="next-page" />,
 				stepKey: 'thank_you_footer_support_guides',
 				stepTitle: translate( 'Support guides' ),
 				stepDescription: translate(
@@ -35,7 +33,7 @@ export function useDefaultThankYouFoooter( slugs: string[] ): ThankYouSectionPro
 				),
 				stepCta: (
 					<Button
-						isSecondary
+						isLink
 						href="https://wordpress.com/support/plugins/"
 						target="_blank"
 						onClick={ () => sendTrackEvent( 'calypso_plugin_thank_you_plugin_support_click' ) }
@@ -45,7 +43,6 @@ export function useDefaultThankYouFoooter( slugs: string[] ): ThankYouSectionPro
 				),
 			},
 			{
-				stepIcon: <FooterIcon icon="create" />,
 				stepKey: 'thank_you_footer_explore',
 				stepTitle: translate( 'Keep growing' ),
 				stepDescription: translate(
@@ -53,7 +50,7 @@ export function useDefaultThankYouFoooter( slugs: string[] ): ThankYouSectionPro
 				),
 				stepCta: (
 					<Button
-						isPrimary
+						isLink
 						href={ `/plugins/${ siteSlug }` }
 						target="_blank"
 						onClick={ () => sendTrackEvent( 'calypso_plugin_thank_you_explore_plugins_click' ) }
@@ -63,7 +60,6 @@ export function useDefaultThankYouFoooter( slugs: string[] ): ThankYouSectionPro
 				),
 			},
 			{
-				stepIcon: <FooterIcon icon="help-outline" />,
 				stepKey: 'thank_you_footer_support',
 				stepTitle: translate( 'How can we support you?' ),
 				stepDescription: translate(
@@ -71,7 +67,7 @@ export function useDefaultThankYouFoooter( slugs: string[] ): ThankYouSectionPro
 				),
 				stepCta: (
 					<Button
-						isSecondary
+						isLink
 						href="https://wordpress.com/help/contact"
 						target="_blank"
 						onClick={ () => sendTrackEvent( 'calypso_plugin_thank_you_ask_question_click' ) }
@@ -82,15 +78,4 @@ export function useDefaultThankYouFoooter( slugs: string[] ): ThankYouSectionPro
 			},
 		],
 	};
-}
-
-function FooterIcon( { icon }: { icon: string } ) {
-	return (
-		<Gridicon
-			className="marketplace-thank-you__footer-icon"
-			size={ 18 }
-			color="var(--studio-gray-30)"
-			icon={ icon }
-		/>
-	);
 }
