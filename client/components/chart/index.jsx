@@ -56,6 +56,7 @@ function Chart( {
 	chartXPadding,
 	sliceFromBeginning,
 	onChangeMaxBars,
+	minBarsToBeShown,
 } ) {
 	const [ tooltip, setTooltip ] = useState( { isTooltipVisible: false } );
 	const [ sizing, setSizing ] = useState( { clientWidth: 0, hasResized: false } );
@@ -112,7 +113,7 @@ function Chart( {
 	const minWidth = isTouch ? minTouchBarWidth : minBarWidth;
 
 	const width = isTouch && sizing.clientWidth <= 0 ? 350 : sizing.clientWidth - chartXPadding; // mobile safari bug with zero width
-	const maxBars = Math.floor( width / minWidth );
+	const maxBars = minBarsToBeShown ?? Math.floor( width / minWidth );
 
 	useEffect( () => {
 		if ( onChangeMaxBars ) {
@@ -228,6 +229,7 @@ Chart.propTypes = {
 	translate: PropTypes.func,
 	chartXPadding: PropTypes.number,
 	sliceFromBeginning: PropTypes.bool,
+	minBarsToBeShown: PropTypes.number,
 };
 
 Chart.defaultProps = {
