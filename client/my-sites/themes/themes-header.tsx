@@ -1,17 +1,16 @@
-import { translate } from 'i18n-calypso';
-
 import './themes-header.scss';
 
 interface Props {
+	title: string;
 	description: string;
 	children: any;
 }
 
-const ThemesHeader = ( { description, children }: Props ) => {
+const ThemesHeader = ( { title, description, children }: Props ) => {
 	return (
 		<div className="themes__header">
 			<div className="themes__page-heading">
-				<h1>{ translate( 'Themes' ) }</h1>
+				<h1>{ title }</h1>
 				<p className="page-sub-header">{ description }</p>
 			</div>
 			{ children }
