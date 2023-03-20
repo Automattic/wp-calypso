@@ -519,8 +519,13 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 
 	renderPurchaseModal = () => {
 		const isCartUpdating = this.props.shoppingCartManager.isPendingUpdate;
-		const onCloseModal = () => {
-			this.props.shoppingCartManager.replaceProductsInCart( [] );
+		const onCloseModal = async () => {
+			try {
+				this.props.shoppingCartManager.updateLocation( { countryCode: '' } );
+				this.props.shoppingCartManager.replaceProductsInCart( [] );
+			} catch {
+				// No need to do anything if this fails.
+			}
 			this.setState( { showPurchaseModal: false } );
 		};
 
