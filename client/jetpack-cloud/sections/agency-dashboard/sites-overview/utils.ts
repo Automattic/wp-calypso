@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
+import moment from 'moment';
 import { urlToSlug } from 'calypso/lib/url';
 import type {
 	AllowedTypes,
@@ -617,4 +618,19 @@ export const getExtractedBackupTitle = ( backup: Backup ) => {
 
 export const DASHBOARD_LICENSE_TYPES: { [ key: string ]: AllowedTypes } = {
 	BACKUP: 'backup',
+};
+
+export const getMonitorDowntimeText = ( downtime: number ) => {
+	const duration = moment.duration( downtime, 'minutes' );
+	const hours = duration.hours();
+	const minutesRemaining = duration.minutes();
+
+	return translate( 'Downtime for %(time)s', {
+		args: {
+			time: `${ hours > 0 ? `${ hours }h` : '' }${
+				minutesRemaining > 0 ? ` ${ minutesRemaining }m` : ''
+			}`,
+		},
+		comment: '%(time) is the downtime, e.g. "5h", "5h 30m", "55m"',
+	} );
 };
