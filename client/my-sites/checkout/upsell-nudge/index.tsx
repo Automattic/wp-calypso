@@ -2,6 +2,7 @@ import { isMonthly, getPlanByPathSlug, TERM_MONTHLY } from '@automattic/calypso-
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CompactCard, Gridicon } from '@automattic/components';
 import { withShoppingCart, createRequestCartProduct } from '@automattic/shopping-cart';
+import { ManagedContactDetails, VatDetails } from '@automattic/wpcom-checkout';
 import { isURL } from '@wordpress/url';
 import debugFactory from 'debug';
 import { localize, useTranslate } from 'i18n-calypso';
@@ -39,6 +40,7 @@ import {
 	getProductBySlug,
 	isProductsListFetching,
 } from 'calypso/state/products-list/selectors';
+import getCountries from 'calypso/state/selectors/get-countries';
 import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
 import getUpgradePlanSlugFromPath from 'calypso/state/selectors/get-upgrade-plan-slug-from-path';
 import {
@@ -55,10 +57,10 @@ import {
 	hasLoadedStoredCardsFromServer,
 } from 'calypso/state/stored-cards/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { updateCartContactDetailsForCheckout } from '../composite-checkout/lib/update-cart-contact-details-for-checkout';
 import { BusinessPlanUpgradeUpsell } from './business-plan-upgrade-upsell';
 import { BusinessPlanUpgradeUpsellTreatment } from './business-plan-upgrade-upsell/treatment';
-import PurchaseModal from './purchase-modal';
-import { extractStoredCardMetaValue } from './purchase-modal/util';
+import PurchaseModal, { wrapValueInManagedValue } from './purchase-modal';
 import { QuickstartSessionsRetirement } from './quickstart-sessions-retirement';
 import type { WithShoppingCartProps, MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { PaymentMethod } from 'calypso/lib/checkout/payment-methods';
@@ -372,7 +374,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 		}
 	};
 
-	handleClickAccept = ( buttonAction: string ) => {
+	handleClickAccept = async ( buttonAction: string ) => {
 		const { product, siteSlug, trackUpsellButtonClick, upgradeItem, upsellType } = this.props;
 
 		trackUpsellButtonClick(
@@ -388,13 +390,35 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 			this.setState( {
 				showPurchaseModal: true,
 			} );
+
 			const storedCard = this.props.cards[ 0 ];
-			const countryCode = extractStoredCardMetaValue( storedCard, 'country_code' );
-			const postalCode = extractStoredCardMetaValue( storedCard, 'card_zip' );
-			this.props.shoppingCartManager.updateLocation( {
-				countryCode,
-				postalCode,
-			} );
+			const vatDetails: VatDetails = {
+				country: storedCard.tax_location?.country_code,
+				id: storedCard.tax_location?.vat_id,
+				name: storedCard.tax_location?.organization,
+				address: storedCard.tax_location?.address,
+			};
+			const contactInfo: ManagedContactDetails = {
+				state: wrapValueInManagedValue( storedCard.tax_location?.subdivision_code ),
+				city: wrapValueInManagedValue( storedCard.tax_location?.city ),
+				postalCode: wrapValueInManagedValue( storedCard.tax_location?.postal_code ),
+			};
+
+			try {
+				await updateCartContactDetailsForCheckout(
+					this.props.countries ?? [],
+					this.props.cart,
+					this.props.shoppingCartManager.updateLocation,
+					contactInfo,
+					vatDetails
+				);
+			} catch {
+				// If updating the cart fails, we should not continue. No need
+				// to do anything else, though, because CartMessages will
+				// display the error.
+				return false;
+			}
+
 			this.props.shoppingCartManager.replaceProductsInCart( [ productToAdd ] ).catch( () => {
 				// Nothing needs to be done here. CartMessages will display the error to the user.
 			} );
@@ -575,6 +599,7 @@ export default connect(
 
 		return {
 			cards,
+			countries: getCountries( state, 'payments' ),
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			currentPlan,
 			currentPlanTerm,
