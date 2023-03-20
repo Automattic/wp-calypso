@@ -149,8 +149,11 @@ const itemsReducer = ( state = {}, action ) => {
 
 			return Object.assign( newState, {
 				[ urlKey ]: merge(
-					{ feed_URL: actualFeedUrl },
+					{},
 					state[ urlKey ],
+					{
+						feed_URL: actualFeedUrl,
+					},
 					action.payload.follow,
 					newValues
 				),
@@ -169,6 +172,9 @@ const itemsReducer = ( state = {}, action ) => {
 			if ( ! ( currentFollow && currentFollow.is_following ) ) {
 				return state;
 			}
+
+			// We need to delete alternative patterns to avoid duplication of feeds
+			delete state[ urlKey + '/feed' ];
 
 			return {
 				...state,
