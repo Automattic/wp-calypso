@@ -12,7 +12,7 @@ type OwnProps = {
 	isContentExpanded?: boolean;
 	onToggleContent?: () => void;
 	availableActions: Array< string >;
-	onClickClone: any;
+	onClickClone: ( period: string ) => void;
 };
 
 const Toolbar: React.FC< OwnProps > = ( {

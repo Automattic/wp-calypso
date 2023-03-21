@@ -140,7 +140,7 @@ const MultisiteActionsButton: React.FC< MultisiteOwnProps > = ( { siteSlug, rewi
 
 type CloneSiteOwnProps = {
 	rewindId: string;
-	onClickClone: any;
+	onClickClone: ( period: string ) => void;
 };
 
 const CloneSiteActionsButton: React.FC< CloneSiteOwnProps > = ( { rewindId, onClickClone } ) => {
@@ -157,7 +157,7 @@ type OwnProps = {
 	siteId: number;
 	activity: Activity;
 	availableActions: Array< string >;
-	onClickClone: any;
+	onClickClone: ( period: string ) => void;
 };
 
 const ActionsButton: React.FC< OwnProps > = ( {
