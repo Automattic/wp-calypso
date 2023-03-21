@@ -74,7 +74,7 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 		buildUuid = buildUuid,
 		buildName = "Gutenberg $siteType E2E tests $edgeType ($targetDevice)",
 		buildDescription = "Runs Gutenberg $siteType E2E tests on $targetDevice size",
-		testGroup = "gutenberg",
+		testGroup = "testgutenberg",
 		buildParams = {
 			text(
 				name = "env.CALYPSO_BASE_URL",
