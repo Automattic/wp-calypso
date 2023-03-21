@@ -102,6 +102,8 @@ class MainComponent extends Component {
 			return this.props.translate( 'Newsletter' );
 		} else if ( 'promotion' === category ) {
 			return this.props.translate( 'Promotions' );
+		} else if ( 'reports' === category ) {
+			return this.props.translate( 'Reports' );
 		} else if ( 'jetpack_marketing' === category ) {
 			return this.props.translate( 'Jetpack Suggestions' );
 		} else if ( 'jetpack_research' === category ) {
@@ -134,14 +136,16 @@ class MainComponent extends Component {
 				'Information on WordPress.com courses and events (online and in-person).'
 			);
 		} else if ( 'digest' === category ) {
-			return this.props.translate(
-				'Popular content from the blogs you follow, and reports on your own site and its performance.'
-			);
+			return this.props.translate( 'Popular content from the blogs you follow.' );
 		} else if ( 'news' === category ) {
 			return this.props.translate( 'WordPress.com news, announcements, and product spotlights.' );
 		} else if ( 'promotion' === category ) {
 			return this.props.translate(
 				'Sales and promotions for WordPress.com products and services.'
+			);
+		} else if ( 'reports' === category ) {
+			return this.props.translate(
+				'Complimentary reports and updates regarding site performance and traffic.'
 			);
 		} else if ( 'jetpack_marketing' === category ) {
 			return this.props.translate( 'Tips for getting the most out of Jetpack.' );

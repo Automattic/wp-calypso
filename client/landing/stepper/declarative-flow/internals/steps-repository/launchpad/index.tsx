@@ -5,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useLaunchpad } from 'calypso/data/sites/use-launchpad';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useRecordSignupComplete } from 'calypso/landing/stepper/hooks/use-record-signup-complete';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
@@ -16,6 +17,7 @@ import { successNotice } from 'calypso/state/notices/actions';
 import { useQuery } from '../../../../hooks/use-query';
 import StepContent from './step-content';
 import type { Step } from '../../types';
+import type { SiteSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -30,12 +32,17 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 	const siteSlug = useSiteSlugParam();
 	const verifiedParam = useQuery().get( 'verified' );
 	const site = useSite();
-	const launchpadScreenOption = site?.options?.launchpad_screen;
+	const {
+		data: { launchpad_screen: launchpadScreenOption },
+	} = useLaunchpad( siteSlug );
 	const recordSignupComplete = useRecordSignupComplete( flow );
 	const dispatch = useDispatch();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
-	const fetchingSiteError = useSelect( ( select ) => select( SITE_STORE ).getFetchingSiteError() );
+	const fetchingSiteError = useSelect(
+		( select ) => ( select( SITE_STORE ) as SiteSelect ).getFetchingSiteError(),
+		[]
+	);
 
 	if ( ! isLoggedIn ) {
 		window.location.replace( `/home/${ siteSlug }` );

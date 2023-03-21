@@ -1,22 +1,21 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { NEWSLETTER_FLOW } from '@automattic/onboarding';
+import { render, screen } from '@testing-library/react';
+import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import * as redux from 'react-redux';
+import { Provider } from 'react-redux';
 import { createReduxStore } from 'calypso/state';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
-import * as sendEmail from '../../../../../../../landing/stepper/hooks/use-send-email-verification';
-import EmailValidationBanner from '../email-validation-banner';
 import StepContent from '../step-content';
+import { defaultSiteDetails } from './lib/fixtures';
 
-const NEWSLETTER_FLOW = 'newsletter';
-const LINK_IN_BIO_FLOW = 'link-in-bio';
+const mockSite = defaultSiteDetails;
 
-const props = {
+const stepContentProps = {
 	siteSlug: 'testsite.wordpress.com',
 	/* eslint-disable @typescript-eslint/no-empty-function */
 	submit: () => {},
@@ -25,11 +24,17 @@ const props = {
 	/* eslint-enable @typescript-eslint/no-empty-function */
 };
 
+jest.mock( 'calypso/landing/stepper/hooks/use-site', () => ( {
+	useSite: () => ( {
+		site: mockSite,
+	} ),
+} ) );
+
 jest.mock( 'react-router-dom', () => ( {
 	...jest.requireActual( 'react-router-dom' ),
 	useLocation: jest.fn().mockImplementation( () => ( {
 		pathname: '/setup/launchpad',
-		search: `?flow=newsletter&siteSlug=${ props.siteSlug }`,
+		search: `?flow=newsletter&siteSlug=testlinkinbio.wordpress.com`,
 		hash: '',
 		state: undefined,
 	} ) ),
@@ -60,132 +65,69 @@ function renderStepContent( emailVerified = false, flow: string ) {
 	const queryClient = new QueryClient();
 
 	render(
-		<redux.Provider store={ reduxStore }>
+		<Provider store={ reduxStore }>
 			<QueryClientProvider client={ queryClient }>
-				<StepContent { ...props } flow={ flow }>
-					<EmailValidationBanner />
-				</StepContent>
+				<StepContent { ...stepContentProps } flow={ flow } />
 			</QueryClientProvider>
-		</redux.Provider>
+		</Provider>
 	);
 }
 
-describe( 'EmailValidationBanner', () => {
-	describe( 'when the flow is newsletter', () => {
-		it( "shows the banner when the user's email is not verified", () => {
+describe( 'StepContent', () => {
+	// To get things started, test basic rendering for Newsletter flow
+	// In future, we can add additional flows and test interactivity of items
+	describe( 'when flow is Newsletter', () => {
+		it( 'renders correct sidebar header content', () => {
 			renderStepContent( false, NEWSLETTER_FLOW );
 
-			const emailValidationBanner = screen.queryByText(
-				/Make sure to validate the email we sent to testemail@wordpress.com in order to publish and share your posts./i
-			);
-
-			expect( emailValidationBanner ).toBeInTheDocument();
+			expect( screen.getByText( 'Newsletter' ) ).toBeInTheDocument();
+			expect( screen.getByText( "You're all set to start publishing" ) ).toBeInTheDocument();
+			expect(
+				screen.getByText( 'Why not welcome your readers with your first post?' )
+			).toBeInTheDocument();
 		} );
 
-		it( "hides the banner when the user's email is verified", () => {
-			renderStepContent( true, NEWSLETTER_FLOW );
-
-			const emailValidationBanner = screen.queryByText(
-				/Make sure to validate the email we sent to testemail@wordpress.com in order to publish and share your posts./i
-			);
-
-			expect( emailValidationBanner ).not.toBeInTheDocument();
-		} );
-
-		it( 'change email link redirects to /me/account', () => {
+		it( 'renders correct sidebar tasks', () => {
 			renderStepContent( false, NEWSLETTER_FLOW );
 
-			expect( screen.getByRole( 'link', { name: 'change email address' } ) ).toHaveAttribute(
-				'href',
-				'/me/account'
-			);
+			expect( screen.getByText( 'Personalize Newsletter' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Choose a Plan' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Add Subscribers' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Confirm Email (Check Your Inbox)' ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: 'Write your first post' } ) ).toBeInTheDocument();
 		} );
 
-		it( 'hides the banner when clicking the close button', () => {
+		it( 'renders correct status for each task', () => {
 			renderStepContent( false, NEWSLETTER_FLOW );
 
-			const closeButton = screen.getByLabelText( 'close' );
-			const emailValidationBanner = screen.queryByText(
-				/Make sure to validate the email we sent to testemail@wordpress.com in order to publish and share your posts./i
-			);
+			const personalizeListItem = screen.getByText( 'Personalize Newsletter' ).closest( 'li' );
+			const choosePlanListItem = screen.getByText( 'Choose a Plan' ).closest( 'li' );
+			const addSubscribersListItem = screen.getByText( 'Add Subscribers' ).closest( 'li' );
+			const confirmEmailListItem = screen
+				.getByText( 'Confirm Email (Check Your Inbox)' )
+				.closest( 'li' );
+			const firstPostListItem = screen
+				.getByRole( 'button', { name: 'Write your first post' } )
+				.closest( 'li' );
 
-			expect( emailValidationBanner ).toBeInTheDocument();
-
-			fireEvent.click( closeButton );
-
-			expect( emailValidationBanner ).not.toBeInTheDocument();
+			expect( personalizeListItem ).toHaveClass( 'completed' );
+			expect( choosePlanListItem ).toHaveClass( 'completed' );
+			expect( addSubscribersListItem ).toHaveClass( 'completed' );
+			expect( confirmEmailListItem ).toHaveClass( 'pending' );
+			expect( firstPostListItem ).toHaveClass( 'pending' );
 		} );
 
-		it( 'fires success notice action when resend is successful', async () => {
-			const dispatch = jest.fn();
-
-			jest.spyOn( redux, 'useDispatch' ).mockReturnValue( dispatch );
-
-			const useSendEmailVerification = jest.spyOn( sendEmail, 'useSendEmailVerification' );
-			useSendEmailVerification.mockImplementation( () => () => {
-				return Promise.resolve( {
-					success: true,
-				} );
-			} );
-
+		it( 'renders skip to dashboard link', () => {
 			renderStepContent( false, NEWSLETTER_FLOW );
 
-			const resendEmailButton = screen.queryByText( /Resend email/i );
-
-			expect( resendEmailButton ).toBeInTheDocument();
-
-			await userEvent.click( resendEmailButton as HTMLElement );
-
-			expect( useSendEmailVerification ).toHaveBeenCalled();
-
-			await waitFor( () => {
-				expect(
-					dispatch.mock.calls[ 0 ][ 0 ].notice.text.includes(
-						'Verification email resent. Please check your inbox.'
-					)
-				).toBeTruthy();
-			} );
+			expect( screen.getByRole( 'button', { name: 'Skip to dashboard' } ) ).toBeInTheDocument();
 		} );
 
-		it( 'fires error notice action when resend is unsuccessful', async () => {
-			const dispatch = jest.fn();
-
-			jest.spyOn( redux, 'useDispatch' ).mockReturnValue( dispatch );
-
-			const useSendEmailVerification = jest.spyOn( sendEmail, 'useSendEmailVerification' );
-			useSendEmailVerification.mockImplementation( () => () => {
-				return Promise.reject();
-			} );
-
+		it( 'renders web preview section', () => {
 			renderStepContent( false, NEWSLETTER_FLOW );
 
-			const resendEmailButton = screen.queryByText( /Resend email/i );
-
-			expect( resendEmailButton ).toBeInTheDocument();
-
-			await userEvent.click( resendEmailButton as HTMLElement );
-
-			expect( useSendEmailVerification ).toHaveBeenCalled();
-
-			await waitFor( () => {
-				expect(
-					dispatch.mock.calls[ 0 ][ 0 ].notice.text.includes(
-						"Couldn't resend verification email. Please try again."
-					)
-				).toBeTruthy();
-			} );
-		} );
-	} );
-
-	describe( 'when the flow is NOT newsletter', () => {
-		it( "DOES NOT show the banner when the user's email is not verified", () => {
-			renderStepContent( false, LINK_IN_BIO_FLOW );
-
-			const emailValidationBanner = screen.queryByText(
-				/Make sure to validate the email we sent to testemail@wordpress.com in order to publish and share your posts./i
-			);
-
-			expect( emailValidationBanner ).not.toBeInTheDocument();
+			expect( screen.getByTitle( 'Preview' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Edit design' ) ).toBeInTheDocument();
 		} );
 	} );
 } );

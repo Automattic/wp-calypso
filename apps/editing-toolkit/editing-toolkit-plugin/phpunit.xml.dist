@@ -16,8 +16,8 @@
 		<testsuite name="block-patterns">
 			<directory suffix="-test.php">./block-patterns/test/</directory>
 		</testsuite>
-		<testsuite name="block-patterns">
-			<directory suffix="-test.php">./block-patterns/test/</directory>
+		<testsuite name="help-center">
+			<directory suffix="-test.php">./help-center/test/</directory>
 		</testsuite>
 		<testsuite name="tutorials">
 			<directory suffix="-test.php">./tutorials/test/</directory>

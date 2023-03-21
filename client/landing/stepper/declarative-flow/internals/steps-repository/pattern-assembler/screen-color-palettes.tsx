@@ -26,7 +26,10 @@ const ScreenColorPalettes = ( {
 		<>
 			<NavigatorHeader
 				title={ translate( 'Colors' ) }
-				description={ translate( 'Foreground and background colors used throughout your site.' ) }
+				description={ translate(
+					'Select from our curated color palettes or tweak to your heart’s content when you upgrade to the Premium plan or higher.'
+				) }
+				isPremium
 			/>
 			<div className="screen-container__body">
 				<ColorPaletteVariations
@@ -43,7 +46,7 @@ const ScreenColorPalettes = ( {
 					onClick={ onDoneClick }
 					primary
 				>
-					{ translate( 'Done' ) }
+					{ translate( 'Save' ) }
 				</NavigatorBackButton>
 			</div>
 		</>

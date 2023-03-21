@@ -30,6 +30,7 @@ import {
 	getFixedDomainSearch,
 } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
 import wpcom from 'calypso/lib/wp';
@@ -145,6 +146,13 @@ class DomainsStep extends Component {
 				}
 			);
 		}
+
+		loadExperimentAssignment( 'paid_media_signup_2023_03_legacy_free_presentation' ).then(
+			( experimentName ) => {
+				this.setState( { experiment: experimentName } );
+				this.setState( { experimentIsLoading: false } );
+			}
+		);
 	}
 
 	getLocale() {

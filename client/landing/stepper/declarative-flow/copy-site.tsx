@@ -23,6 +23,7 @@ import {
 	Flow,
 	ProvidedDependencies,
 } from './internals/types';
+import type { SiteSelect } from '@automattic/data-stores';
 
 function useIsValidSite() {
 	const urlQueryParams = useQuery();
@@ -35,16 +36,19 @@ function useIsValidSite() {
 		isFetchingSiteDetails,
 		isFetchingError,
 		site: sourceSite,
-	} = useSelect( ( select ) => {
-		if ( ! sourceSlug ) {
-			return {};
-		}
-		return {
-			isFetchingError: select( SITE_STORE ).getFetchingSiteError(),
-			isFetchingSiteDetails: select( SITE_STORE ).isFetchingSiteDetails(),
-			site: select( SITE_STORE ).getSite( sourceSlug ),
-		};
-	} );
+	} = useSelect(
+		( select ) => {
+			if ( ! sourceSlug ) {
+				return {};
+			}
+			return {
+				isFetchingError: ( select( SITE_STORE ) as SiteSelect ).getFetchingSiteError(),
+				isFetchingSiteDetails: ( select( SITE_STORE ) as SiteSelect ).isFetchingSiteDetails(),
+				site: ( select( SITE_STORE ) as SiteSelect ).getSite( sourceSlug ),
+			};
+		},
+		[ sourceSlug ]
+	);
 
 	useEffect( () => {
 		if ( isFetchingSiteDetails && siteRequestStatus === 'init' ) {

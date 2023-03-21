@@ -1,27 +1,30 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+import { ProductsList } from '@automattic/data-stores';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import ReskinSideExplainer from 'calypso/components/domains/reskin-side-explainer';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { ONBOARD_STORE, PRODUCTS_LIST_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { SenseiStepContainer } from '../components/sensei-step-container';
 import type { Step } from '../../types';
+import type { OnboardSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
 const SenseiDomain: Step = ( { navigation } ) => {
 	const { submit } = navigation;
 	const { __ } = useI18n();
-	const [ siteTitle, domain, productsList ] = useSelect( ( select ) => {
-		return [
-			select( ONBOARD_STORE ).getSelectedSiteTitle(),
-			select( ONBOARD_STORE ).getSelectedDomain(),
-			select( PRODUCTS_LIST_STORE ).getProductsList(),
-		];
-	} );
+	const { siteTitle, domain, productsList } = useSelect(
+		( select ) => ( {
+			siteTitle: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
+			domain: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
+			productsList: select( ProductsList.store ).getProductsList(),
+		} ),
+		[]
+	);
 	const { setDomain } = useDispatch( ONBOARD_STORE );
 
 	const onSkip = () => {

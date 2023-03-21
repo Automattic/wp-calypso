@@ -5,6 +5,7 @@ import { STORE_KEY as SITE_STORE } from '../site';
 import { CreateSiteParams, Visibility, NewSiteBlogDetails } from '../site/types';
 import { FeatureId } from '../wpcom-features/types';
 import { SiteGoal, STORE_KEY } from './constants';
+import { ProfilerData } from './types';
 import type { State } from '.';
 import type { DomainSuggestion } from '../domain-suggestions';
 // somewhat hacky, but resolves the circular dependency issue
@@ -464,6 +465,11 @@ export const setPluginsToVerify = ( pluginSlugs: string[] ) => ( {
 	pluginSlugs,
 } );
 
+export const setProfilerData = ( profilerData: ProfilerData ) => ( {
+	type: 'SET_PROFILER_DATA' as const,
+	profilerData,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -481,6 +487,7 @@ export type OnboardAction = ReturnType<
 	| typeof setLastLocation
 	| typeof setPlanProductId
 	| typeof setPluginsToVerify
+	| typeof setProfilerData
 	| typeof setRandomizedDesigns
 	| typeof setSelectedDesign
 	| typeof setSelectedStyleVariation

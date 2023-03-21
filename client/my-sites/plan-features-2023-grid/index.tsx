@@ -12,6 +12,7 @@ import {
 	isWpcomEnterpriseGridPlan,
 	isMonthly,
 	TERM_MONTHLY,
+	TERM_BIENNIALLY,
 	isBusinessPlan,
 	TYPE_FREE,
 	TYPE_PERSONAL,
@@ -23,6 +24,9 @@ import {
 	PLAN_FREE,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	isPremiumPlan,
+	getPlanSlugForTermVariant,
+	PlanSlug,
+	PLAN_BIENNIAL_PERIOD,
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -72,6 +76,7 @@ import {
 	getCurrentPlan,
 	isCurrentUserCurrentPlanOwner,
 	getPlanDiscountedRawPrice,
+	getSitePlanSlug,
 } from 'calypso/state/sites/plans/selectors';
 import isPlanAvailableForPurchase from 'calypso/state/sites/plans/selectors/is-plan-available-for-purchase';
 import {
@@ -524,16 +529,15 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderBillingTimeframe( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { translate } = this.props;
 		return planPropertiesObj.map( ( properties ) => {
 			const {
 				planConstantObj,
 				planName,
 				rawPrice,
-				rawPriceAnnual,
-				currencyCode,
+				maybeDiscountedFullTermPrice,
 				annualPricePerMonth,
 				isMonthlyPlan,
+				billingPeriod,
 			} = properties;
 
 			const classes = classNames(
@@ -545,13 +549,12 @@ export class PlanFeatures2023Grid extends Component<
 				<Container className={ classes } isMobile={ options?.isMobile } key={ planName }>
 					<PlanFeatures2023GridBillingTimeframe
 						rawPrice={ rawPrice }
-						rawPriceAnnual={ rawPriceAnnual }
-						currencyCode={ currencyCode }
+						maybeDiscountedFullTermPrice={ maybeDiscountedFullTermPrice }
 						annualPricePerMonth={ annualPricePerMonth }
 						isMonthlyPlan={ isMonthlyPlan }
 						planName={ planName }
-						translate={ translate }
 						billingTimeframe={ planConstantObj.getBillingTimeFrame() }
+						billingPeriod={ billingPeriod }
 					/>
 				</Container>
 			);
@@ -979,6 +982,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 			const planConstantObj = applyTestFiltersToPlansList( plan, undefined );
 			const planProductId = planConstantObj.getProductId();
 			const planObject = getPlan( state, planProductId );
+			const billingPeriod = planObject?.bill_period;
 			const isMonthlyPlan = isMonthly( plan );
 			const showMonthly = ! isMonthlyPlan;
 			const relatedMonthlyPlan = showMonthly
@@ -1060,9 +1064,9 @@ const ConnectedPlanFeatures2023Grid = connect(
 				);
 			}
 
-			const rawPriceAnnual =
+			const maybeDiscountedFullTermPrice =
 				null !== discountPrice
-					? discountPrice * 12
+					? discountPrice * ( PLAN_BIENNIAL_PERIOD === billingPeriod ? 24 : 12 )
 					: getPlanRawPrice( state, planProductId, false );
 
 			const tagline = planConstantObj.getPlanTagline?.() ?? '';
@@ -1077,11 +1081,16 @@ const ConnectedPlanFeatures2023Grid = connect(
 
 			const availableForPurchase = isInSignup || isPlanAvailableForPurchase( state, siteId, plan );
 
+			const sitePlanSlug = getSitePlanSlug( state, siteId ) ?? '';
+			const isCurrentPlan =
+				isCurrentSitePlan( state, siteId, planProductId ) ||
+				plan === getPlanSlugForTermVariant( sitePlanSlug as PlanSlug, TERM_BIENNIALLY );
+
 			return {
 				availableForPurchase,
 				cartItemForPlan: getCartItemForPlan( getPlanSlug( state, planProductId ) ?? '' ),
 				currencyCode: getCurrentUserCurrencyCode( state ),
-				current: isCurrentSitePlan( state, siteId, planProductId ) ?? false,
+				current: isCurrentPlan,
 				discountPrice,
 				features: planFeaturesTransformed,
 				jpFeatures: jetpackFeaturesTransformed,
@@ -1093,13 +1102,14 @@ const ConnectedPlanFeatures2023Grid = connect(
 				product_name_short,
 				hideMonthly: false,
 				rawPrice,
-				rawPriceAnnual,
+				maybeDiscountedFullTermPrice,
 				rawPriceForMonthlyPlan,
 				relatedMonthlyPlan,
 				annualPricePerMonth,
 				isMonthlyPlan,
 				tagline,
 				storageOptions,
+				billingPeriod,
 			};
 		} );
 

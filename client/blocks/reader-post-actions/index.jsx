@@ -68,7 +68,7 @@ const ReaderPostActions = ( props ) => {
 			) }
 			{ shouldShowLikes( post ) && (
 				<li className="reader-post-actions__item">
-					<ReaderFollowButton siteUrl={ post.feed_URL } iconSize={ iconSize } />
+					<ReaderFollowButton siteUrl={ post.feed_URL || post.site_URL } iconSize={ iconSize } />
 				</li>
 			) }
 			{ shouldShowShare( post ) && (

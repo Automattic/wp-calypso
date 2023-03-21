@@ -478,7 +478,6 @@ class ThemeShowcase extends Component {
 		const tabFilters = this.getTabFilters();
 		const tiers = this.getTiers();
 
-		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<div className="theme-showcase">
 				<DocumentHead title={ title } meta={ metas } />
@@ -487,53 +486,72 @@ class ThemeShowcase extends Component {
 					title={ this.props.analyticsPageTitle }
 					properties={ { is_logged_in: isLoggedIn } }
 				/>
-				{ isLoggedIn && (
-					<ThemesHeader
-						description={ translate(
-							'Select or update the visual design for your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-							{
-								components: {
-									learnMoreLink: <InlineSupportLink supportContext="themes" showIcon={ false } />,
-								},
-							}
-						) }
-					>
-						<div className="themes__install-theme-button-container">
-							<InstallThemeButton />
-						</div>
-						<ScreenOptionsTab wpAdminPath="themes.php" />
-					</ThemesHeader>
-				) }
+				<ThemesHeader
+					title={
+						isLoggedIn
+							? translate( 'Themes' )
+							: translate( 'Find the perfect theme for your website' )
+					}
+					description={
+						isLoggedIn
+							? translate(
+									'Select or update the visual design for your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+									{
+										components: {
+											learnMoreLink: (
+												<InlineSupportLink supportContext="themes" showIcon={ false } />
+											),
+										},
+									}
+							  )
+							: translate(
+									'Beautiful and responsive WordPress.com themes. Choose from free and premium options for all types of websites. Then, install the one that is right for you.'
+							  )
+					}
+				>
+					{ isLoggedIn && (
+						<>
+							<div className="themes__install-theme-button-container">
+								<InstallThemeButton />
+							</div>
+							<ScreenOptionsTab wpAdminPath="themes.php" />
+						</>
+					) }
+				</ThemesHeader>
 				<div className="themes__content" ref={ this.scrollRef }>
 					<QueryThemeFilters />
-					<SearchThemes
-						query={ filterString + search }
-						onSearch={ this.doSearch }
-						recordTracksEvent={ this.recordSearchThemesTracksEvent }
-					/>
-					{ tabFilters && (
-						<div className="theme__filters">
-							<ThemesToolbarGroup
-								items={ Object.values( tabFilters ) }
-								selectedKey={ this.state.tabFilter.key }
-								onSelect={ ( key ) =>
-									this.onFilterClick(
-										Object.values( tabFilters ).find( ( tabFilter ) => tabFilter.key === key )
-									)
-								}
-							/>
-							{ premiumThemesEnabled && ! isMultisite && (
-								<SimplifiedSegmentedControl
-									key={ tier }
-									initialSelected={ tier || 'all' }
-									options={ tiers }
-									onSelect={ this.onTierSelect }
+					<div className="themes__controls">
+						<SearchThemes
+							query={ filterString + search }
+							onSearch={ this.doSearch }
+							recordTracksEvent={ this.recordSearchThemesTracksEvent }
+						/>
+						{ tabFilters && (
+							<div className="theme__filters">
+								<ThemesToolbarGroup
+									items={ Object.values( tabFilters ) }
+									selectedKey={ this.state.tabFilter.key }
+									onSelect={ ( key ) =>
+										this.onFilterClick(
+											Object.values( tabFilters ).find( ( tabFilter ) => tabFilter.key === key )
+										)
+									}
 								/>
-							) }
-						</div>
-					) }
-					{ this.renderBanner() }
-					{ this.renderThemes( themeProps ) }
+								{ premiumThemesEnabled && ! isMultisite && (
+									<SimplifiedSegmentedControl
+										key={ tier }
+										initialSelected={ tier || 'all' }
+										options={ tiers }
+										onSelect={ this.onTierSelect }
+									/>
+								) }
+							</div>
+						) }
+					</div>
+					<div className="themes__showcase">
+						{ this.renderBanner() }
+						{ this.renderThemes( themeProps ) }
+					</div>
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
 					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 					<QueryProductsList />

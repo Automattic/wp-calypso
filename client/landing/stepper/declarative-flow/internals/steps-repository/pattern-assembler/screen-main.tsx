@@ -23,7 +23,7 @@ const ScreenMain = ( { shouldUnlockGlobalStyles, onSelect, onContinueClick }: Pr
 			<NavigatorHeader
 				title={ translate( 'Let’s get creative' ) }
 				description={ translate(
-					'Use our library of styles and patterns to design your own theme.'
+					'Use our library of styles and patterns to design your own homepage.'
 				) }
 				hideBack
 			/>
@@ -32,34 +32,28 @@ const ScreenMain = ( { shouldUnlockGlobalStyles, onSelect, onContinueClick }: Pr
 					<NavigationButtonAsItem
 						path="/header"
 						icon={ header }
-						aria-label={ translate( 'Choose a header' ) }
+						aria-label={ translate( 'Header' ) }
 						onClick={ () => onSelect( 'header' ) }
 					>
-						<span className="pattern-layout__list-item-text">
-							{ translate( 'Choose a header' ) }
-						</span>
+						<span className="pattern-layout__list-item-text">{ translate( 'Header' ) }</span>
 					</NavigationButtonAsItem>
 					<Divider />
 					<NavigationButtonAsItem
 						path="/footer"
 						icon={ footer }
-						aria-label={ translate( 'Choose a footer' ) }
+						aria-label={ translate( 'Footer' ) }
 						onClick={ () => onSelect( 'footer' ) }
 					>
-						<span className="pattern-layout__list-item-text">
-							{ translate( 'Choose a footer' ) }
-						</span>
+						<span className="pattern-layout__list-item-text">{ translate( 'Footer' ) }</span>
 					</NavigationButtonAsItem>
 					<Divider />
 					<NavigationButtonAsItem
 						path="/homepage"
 						icon={ layout }
-						aria-label={ translate( 'Create your homepage' ) }
+						aria-label={ translate( 'Homepage' ) }
 						onClick={ () => onSelect( 'homepage' ) }
 					>
-						<span className="pattern-layout__list-item-text">
-							{ translate( 'Create your homepage' ) }
-						</span>
+						<span className="pattern-layout__list-item-text">{ translate( 'Homepage' ) }</span>
 					</NavigationButtonAsItem>
 					{ isEnabled( 'pattern-assembler/color-and-fonts' ) && (
 						<>
@@ -67,29 +61,30 @@ const ScreenMain = ( { shouldUnlockGlobalStyles, onSelect, onContinueClick }: Pr
 							<NavigationButtonAsItem
 								path="/color-palettes"
 								icon={ styles }
-								aria-label={ translate( 'Change colors' ) }
+								aria-label={ translate( 'Colors' ) }
 								onClick={ () => onSelect( 'color-palettes' ) }
 							>
-								<span className="pattern-layout__list-item-text">
-									{ translate( 'Change colors' ) }
-								</span>
+								<span className="pattern-layout__list-item-text">{ translate( 'Colors' ) }</span>
 							</NavigationButtonAsItem>
 							<Divider />
 							<NavigationButtonAsItem
 								path="/font-pairings"
 								icon={ typography }
-								aria-label={ translate( 'Change fonts' ) }
+								aria-label={ translate( 'Fonts' ) }
 								onClick={ () => onSelect( 'font-pairings' ) }
 							>
-								<span className="pattern-layout__list-item-text">
-									{ translate( 'Change fonts' ) }
-								</span>
+								<span className="pattern-layout__list-item-text">{ translate( 'Fonts' ) }</span>
 							</NavigationButtonAsItem>
 						</>
 					) }
 				</ItemGroup>
 			</div>
 			<div className="screen-container__footer">
+				<span className="screen-container__description">
+					{ shouldUnlockGlobalStyles
+						? translate( 'You’ve selected Premium fonts or colors for your site.' )
+						: translate( 'Ready? Go to the Site Editor to edit your content.' ) }
+				</span>
 				<Button className="pattern-assembler__button" onClick={ onContinueClick } primary>
 					{ shouldUnlockGlobalStyles ? translate( 'Unlock this style' ) : translate( 'Continue' ) }
 				</Button>

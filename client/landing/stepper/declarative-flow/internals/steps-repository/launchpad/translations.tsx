@@ -4,6 +4,8 @@ import {
 	NEWSLETTER_FLOW,
 	VIDEOPRESS_FLOW,
 	FREE_FLOW,
+	WRITE_FLOW,
+	BUILD_FLOW,
 } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 import { TranslatedLaunchpadStrings } from './types';
@@ -34,17 +36,20 @@ export function getLaunchpadTranslations( flow: string | null ): TranslatedLaunc
 			break;
 		case FREE_FLOW:
 			translatedStrings.flowName = translate( 'Free Website' );
-			translatedStrings.title = translate( "Your new site's ready!" );
-			translatedStrings.launchTitle = translate( "Your new site's ready!" );
-			translatedStrings.subtitle = translate(
-				'Launch it to the world. Or add some finishing touches. (You can come back to make changes any time.)'
-			);
+			translatedStrings.title = translate( "Let's get ready to launch!" );
+			translatedStrings.launchTitle = translate( "Let's get ready to launch!" );
+			translatedStrings.subtitle = translate( "Here's what to do next." );
 			break;
 		case VIDEOPRESS_FLOW:
 			translatedStrings.flowName = translate( 'Video' );
 			translatedStrings.title = translate( 'Your site is almost ready!' );
 			translatedStrings.launchTitle = translate( 'Your site is almost ready!' );
 			break;
+		case WRITE_FLOW:
+		case BUILD_FLOW:
+			translatedStrings.title = translate( "Let's get ready to launch!" );
+			translatedStrings.launchTitle = translate( "Let's get ready to launch!" );
+			translatedStrings.subtitle = translate( "Here's what to do next." );
 	}
 
 	return translatedStrings;

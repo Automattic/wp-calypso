@@ -28,8 +28,10 @@ import {
 	logoRemoved,
 	getSingleMediaPlaceholder,
 	changesSaved,
+	updateSearchTerms,
+	updateFeedback,
 } from '../actions';
-import { initialState, LOGO_SECTION_ID, MEDIA_UPLOAD_STATES } from '../constants';
+import { initialState, SITE_INFORMATION_SECTION_ID, MEDIA_UPLOAD_STATES } from '../constants';
 import websiteContentCollectionReducer from '../reducer';
 import type { WebsiteContentCollectionState } from '../types';
 
@@ -37,7 +39,7 @@ const initialTestState: WebsiteContentCollectionState = {
 	currentIndex: 0,
 	mediaUploadStates: {},
 	websiteContent: {
-		siteLogoSection: { siteLogoUrl: '' },
+		siteInformationSection: { siteLogoUrl: '', searchTerms: '' },
 		feedbackSection: { genericFeedback: '' },
 		pages: [
 			{
@@ -119,6 +121,7 @@ describe( 'reducer', () => {
 						pages: [],
 						siteLogoUrl: '',
 						genericFeedback: '',
+						searchTerms: '',
 					},
 					translatedPageTitles
 				)
@@ -132,6 +135,7 @@ describe( 'reducer', () => {
 						id: CONTACT_PAGE,
 						title: 'Contact',
 						content: '',
+						useFillerContent: false,
 						media: [
 							getSingleMediaPlaceholder( 'IMAGE' ),
 							getSingleMediaPlaceholder( 'IMAGE' ),
@@ -143,6 +147,7 @@ describe( 'reducer', () => {
 						id: VIDEO_GALLERY_PAGE,
 						title: 'Video Gallery',
 						content: '',
+						useFillerContent: false,
 						media: [
 							getSingleMediaPlaceholder( 'VIDEO' ),
 							getSingleMediaPlaceholder( 'VIDEO' ),
@@ -154,6 +159,7 @@ describe( 'reducer', () => {
 						id: PORTFOLIO_PAGE,
 						title: 'Portfolio',
 						content: '',
+						useFillerContent: false,
 						media: [
 							getSingleMediaPlaceholder( 'IMAGE' ),
 							getSingleMediaPlaceholder( 'IMAGE' ),
@@ -185,22 +191,26 @@ describe( 'reducer', () => {
 								title: 'Contact',
 								content: 'test contact page content',
 								media: [ { url: 'test media url 1', mediaType: 'IMAGE' } ],
+								useFillerContent: false,
 							},
 							{
 								id: VIDEO_GALLERY_PAGE,
 								title: 'Video Gallery',
 								content: 'test video gallery page content',
 								media: [ { url: 'test media url 2', mediaType: 'VIDEO' } ],
+								useFillerContent: true,
 							},
 							{
 								id: PORTFOLIO_PAGE,
 								title: 'Portfolio',
 								content: 'test portfolio page content',
 								media: [ { url: 'test media url 3', mediaType: 'IMAGE' } ],
+								useFillerContent: false,
 							},
 						],
 						siteLogoUrl: '',
 						genericFeedback: '',
+						searchTerms: '',
 					},
 					translatedPageTitles
 				)
@@ -220,6 +230,7 @@ describe( 'reducer', () => {
 							getSingleMediaPlaceholder( 'IMAGE' ),
 							getSingleMediaPlaceholder( 'IMAGE' ),
 						],
+						useFillerContent: false,
 					},
 					{
 						id: VIDEO_GALLERY_PAGE,
@@ -231,6 +242,7 @@ describe( 'reducer', () => {
 							getSingleMediaPlaceholder( 'VIDEO' ),
 							getSingleMediaPlaceholder( 'VIDEO' ),
 						],
+						useFillerContent: true,
 					},
 					{
 						id: PORTFOLIO_PAGE,
@@ -246,6 +258,7 @@ describe( 'reducer', () => {
 							getSingleMediaPlaceholder( 'IMAGE' ),
 							getSingleMediaPlaceholder( 'IMAGE' ),
 						],
+						useFillerContent: false,
 					},
 				],
 			},
@@ -445,19 +458,19 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	test( 'should update relevent state when the logo uploading is completed', () => {
+	test( 'should update relevant state when the logo uploading is completed', () => {
 		const action = logoUploadCompleted( 'wp.me/some-random-image.png' );
 		const nextState = websiteContentCollectionReducer( { ...initialTestState }, action );
 		expect( nextState ).toEqual( {
 			...initialTestState,
 			mediaUploadStates: {
-				[ LOGO_SECTION_ID ]: {
+				[ SITE_INFORMATION_SECTION_ID ]: {
 					0: MEDIA_UPLOAD_STATES.UPLOAD_COMPLETED,
 				},
 			},
 			websiteContent: {
 				...initialTestState.websiteContent,
-				siteLogoSection: { siteLogoUrl: 'wp.me/some-random-image.png' },
+				siteInformationSection: { siteLogoUrl: 'wp.me/some-random-image.png', searchTerms: '' },
 			},
 			hasUnsavedChanges: true,
 		} );
@@ -469,7 +482,7 @@ describe( 'reducer', () => {
 		expect( nextState ).toEqual( {
 			...initialTestState,
 			mediaUploadStates: {
-				[ LOGO_SECTION_ID ]: {
+				[ SITE_INFORMATION_SECTION_ID ]: {
 					0: MEDIA_UPLOAD_STATES.UPLOAD_STARTED,
 				},
 			},
@@ -483,26 +496,26 @@ describe( 'reducer', () => {
 		expect( nextAfterFailedState ).toEqual( {
 			...initialTestState,
 			mediaUploadStates: {
-				[ LOGO_SECTION_ID ]: {
+				[ SITE_INFORMATION_SECTION_ID ]: {
 					0: MEDIA_UPLOAD_STATES.UPLOAD_FAILED,
 				},
 			},
 		} );
 	} );
 
-	test( 'should update relevent state when in memory logo information is removed', () => {
+	test( 'should update relevant state when in memory logo information is removed', () => {
 		const action = logoRemoved();
 		const nextState = websiteContentCollectionReducer( { ...initialTestState }, action );
 		expect( nextState ).toEqual( {
 			...initialTestState,
 			mediaUploadStates: {
-				[ LOGO_SECTION_ID ]: {
+				[ SITE_INFORMATION_SECTION_ID ]: {
 					0: MEDIA_UPLOAD_STATES.UPLOAD_REMOVED,
 				},
 			},
 			websiteContent: {
 				...initialTestState.websiteContent,
-				siteLogoSection: { siteLogoUrl: '' },
+				siteInformationSection: { siteLogoUrl: '', searchTerms: '' },
 			},
 			hasUnsavedChanges: true,
 		} );
@@ -563,6 +576,22 @@ describe( 'reducer', () => {
 		expect(
 			websiteContentCollectionReducer( { ...initialTestState }, action ).hasUnsavedChanges
 		).toEqual( false );
+	} );
+
+	test( 'should update the feedback section correctly', () => {
+		const action = updateFeedback( 'test feedback' );
+		expect(
+			websiteContentCollectionReducer( { ...initialTestState }, action ).websiteContent
+				.feedbackSection.genericFeedback
+		).toEqual( 'test feedback' );
+	} );
+
+	test( 'should update the search terms correctly', () => {
+		const action = updateSearchTerms( 'test search terms' );
+		expect(
+			websiteContentCollectionReducer( { ...initialTestState }, action ).websiteContent
+				.siteInformationSection.searchTerms
+		).toEqual( 'test search terms' );
 	} );
 
 	test( 'should reset the state on signup complete', () => {

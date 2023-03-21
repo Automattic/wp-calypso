@@ -305,7 +305,6 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	next_domain_is_free: boolean;
 	next_domain_condition: '' | 'blog';
 	bundled_domain?: string;
-	has_bundle_credit?: boolean;
 	terms_of_service?: TermsOfServiceRecord[];
 	has_pending_payment?: boolean;
 }
@@ -576,6 +575,7 @@ export interface ResponseCartGiftDetails {
 
 export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	purchaseId?: string;
+	isAkismetSitelessCheckout?: boolean;
 	isJetpackCheckout?: boolean;
 	isGiftPurchase?: boolean;
 	jetpackSiteSlug?: string;

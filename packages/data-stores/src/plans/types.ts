@@ -1,4 +1,7 @@
+import { PERIOD_LIST } from './constants';
+import * as selectors from './selectors';
 import type { plansProductSlugs, plansSlugs } from './constants';
+import type { SelectFromMap } from '../mapped-types';
 
 export type StorePlanSlug = typeof plansProductSlugs[ number ];
 export type PlanSlug = typeof plansSlugs[ number ];
@@ -57,7 +60,7 @@ export interface PricedAPIPlan {
 	path_slug?: PlanPath;
 	product_slug: StorePlanSlug;
 	product_name_short: string;
-	bill_period: -1 | 31 | 365;
+	bill_period: -1 | typeof PERIOD_LIST[ number ];
 	raw_price: number;
 	orig_cost?: number | null;
 	currency_code: string;
@@ -121,3 +124,5 @@ export interface DetailsAPIResponse {
 	features_by_type: FeaturesByType[];
 	features: DetailsAPIFeature[];
 }
+
+export type PlansSelect = SelectFromMap< typeof selectors >;

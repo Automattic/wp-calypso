@@ -3,12 +3,14 @@
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { dispatch } from '@wordpress/data';
 import nock from 'nock';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import {
 	planWithoutDomain,
 	getActivePersonalPlanDataForType,
@@ -32,6 +34,13 @@ jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
 jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
 jest.mock( 'calypso/lib/navigate' );
 
+// These tests seem to be particularly slow (it might be because of using
+// it.each; it's not clear but the timeout might apply to the whole loop
+// rather that each iteration?), so we need to increase the timeout for their
+// operation. The standard timeout (at the time of writing) is 5 seconds so
+// we are increasing this to 12 seconds.
+jest.setTimeout( 12000 );
+
 describe( 'Checkout contact step', () => {
 	const mainCartKey = 'foo.com' as CartKey;
 	const initialCart = getBasicCart();
@@ -51,6 +60,7 @@ describe( 'Checkout contact step', () => {
 	mockMatchMediaOnWindow();
 
 	beforeEach( () => {
+		dispatch( CHECKOUT_STORE ).reset();
 		nock.cleanAll();
 		nock( 'https://public-api.wordpress.com' ).persist().post( '/rest/v1.1/logstash' ).reply( 200 );
 		mockGetVatInfoEndpoint( {} );

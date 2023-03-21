@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { PLAN_FREE, PLAN_JETPACK_FREE } from '@automattic/calypso-products';
 import { removeQueryArgs } from '@wordpress/url';
 import i18n from 'i18n-calypso';
 import { some, startsWith } from 'lodash';
@@ -61,9 +62,17 @@ import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isStagingSite from 'calypso/state/selectors/is-staging-site';
+import wasEcommerceTrialSite from 'calypso/state/selectors/was-ecommerce-trial-site';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import { getSite, getSiteId, getSiteOption, getSiteSlug } from 'calypso/state/sites/selectors';
+import {
+	getSite,
+	getSiteId,
+	getSiteOption,
+	getSitePlanSlug,
+	getSiteSlug,
+} from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
@@ -283,6 +292,30 @@ function onSelectedSiteAvailable( context ) {
 		return false;
 	}
 
+	// If we had an eCommerce trial, and the user doesn't have an active paid plan,
+	// redirect to
+	if ( wasEcommerceTrialSite( state, selectedSite.ID ) ) {
+		// Use getSitePlanSlug() as it ignores expired plans.
+		const currentPlanSlug = getSitePlanSlug( state, selectedSite.ID );
+
+		if ( [ PLAN_FREE, PLAN_JETPACK_FREE ].includes( currentPlanSlug ) ) {
+			const permittedPathPrefixes = [
+				'/checkout/',
+				'/domains/',
+				'/email/',
+				'/plans/my-plan/trial-expired/',
+				'/purchases/',
+			];
+
+			if ( ! permittedPathPrefixes.some( ( prefix ) => context.pathname.startsWith( prefix ) ) ) {
+				page.redirect( `/plans/my-plan/trial-expired/${ selectedSite.slug }` );
+				return false;
+			}
+
+			context.hideLeftNavigation = true;
+		}
+	}
+
 	const primaryDomain = getPrimaryDomainBySiteId( state, selectedSite.ID );
 	if (
 		isDomainOnlySite( state, selectedSite.ID ) &&
@@ -416,9 +449,16 @@ export function noSite( context, next ) {
 	const hasSite = currentUser && currentUser.visible_site_count >= 1;
 	const isDomainOnlyFlow = context.query?.isDomainOnly === '1';
 	const isJetpackCheckoutFlow = context.pathname.includes( '/checkout/jetpack' );
+	const isAkismetCheckoutFlow = context.pathname.includes( '/checkout/akismet' );
 	const isGiftCheckoutFlow = context.pathname.includes( '/gift/' );
 
-	if ( ! isDomainOnlyFlow && ! isJetpackCheckoutFlow && ! isGiftCheckoutFlow && hasSite ) {
+	if (
+		! isDomainOnlyFlow &&
+		! isJetpackCheckoutFlow &&
+		! isAkismetCheckoutFlow &&
+		! isGiftCheckoutFlow &&
+		hasSite
+	) {
 		siteSelection( context, next );
 		return;
 	}
@@ -556,10 +596,7 @@ export function siteSelection( context, next ) {
 				} else {
 					// If the site has loaded but siteId is still invalid then redirect to allSitesPath.
 					const siteFragmentOffset = context.path.indexOf( `/${ siteFragment }` );
-					const allSitesPath = addQueryArgs(
-						{ site: siteFragment },
-						context.path.substring( 0, siteFragmentOffset )
-					);
+					const allSitesPath = context.path.substring( 0, siteFragmentOffset );
 					page.redirect( allSitesPath );
 				}
 			} );
@@ -596,7 +633,9 @@ export function redirectToPrimary( context, primarySiteSlug ) {
 
 export function navigation( context, next ) {
 	// Render the My Sites navigation in #secondary
-	context.secondary = createNavigation( context );
+	if ( ! context.hideLeftNavigation ) {
+		context.secondary = createNavigation( context );
+	}
 	next();
 }
 
@@ -634,6 +673,25 @@ export function redirectWithoutSite( redirectPath ) {
 
 		return next();
 	};
+}
+
+/**
+ * Use this middleware to prevent navigation to pages which are not supported by staging sites.
+ *
+ * @param {Object} context -- Middleware context
+ * @param {Function} next -- Call next middleware in chain
+ */
+export function stagingSiteNotSupportedRedirect( context, next ) {
+	const store = context.store;
+	const selectedSite = getSelectedSite( store.getState() );
+
+	if ( selectedSite && isStagingSite( store.getState(), selectedSite.ID ) ) {
+		const siteSlug = getSiteSlug( store.getState(), selectedSite.ID );
+
+		return page.redirect( `/home/${ siteSlug }` );
+	}
+
+	next();
 }
 
 /**

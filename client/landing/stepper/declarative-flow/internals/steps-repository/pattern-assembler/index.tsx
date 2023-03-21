@@ -7,14 +7,14 @@ import {
 } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import classnames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useMemo } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
+import { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
 import { createRecordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
-import { requestActiveTheme } from 'calypso/state/themes/actions';
+import { setActiveTheme } from 'calypso/state/themes/actions';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
@@ -32,16 +32,16 @@ import ScreenHomepage from './screen-homepage';
 import ScreenMain from './screen-main';
 import ScreenMainDeprecated from './screen-main-deprecated';
 import ScreenPatternList from './screen-pattern-list';
-import { encodePatternId, createCustomHomeTemplateContent } from './utils';
+import { encodePatternId } from './utils';
 import withGlobalStylesProvider from './with-global-styles-provider';
 import type { Pattern } from './types';
 import type { Step } from '../../types';
+import type { OnboardSelect } from '@automattic/data-stores';
 import type { DesignRecipe, Design } from '@automattic/design-picker/src/types';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 import './style.scss';
 
 const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
-	const translate = useTranslate();
 	const [ navigatorPath, setNavigatorPath ] = useState( '/' );
 	const [ header, setHeader ] = useState< Pattern | null >( null );
 	const [ footer, setFooter ] = useState< Pattern | null >( null );
@@ -51,12 +51,17 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 	const incrementIndexRef = useRef( 0 );
 	const [ activePosition, setActivePosition ] = useState( -1 );
 	const { goBack, goNext, submit } = navigation;
-	const { setThemeOnSite, runThemeSetupOnSite, createCustomTemplate, setGlobalStyles } =
-		useDispatch( SITE_STORE );
+	const { applyThemeWithPatterns } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
-	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
-	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
+	const selectedDesign = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
+		[]
+	);
+	const intent = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
+		[]
+	);
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
 	const siteId = useSiteIdParam();
@@ -285,38 +290,18 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 
 	const onSubmit = () => {
 		const design = getDesign();
-		const theme = stylesheet?.split( '/' )[ 1 ] || design.theme;
 
 		if ( ! siteSlugOrId ) {
 			return;
 		}
 
 		setPendingAction( () =>
-			// We have to switch theme first. Otherwise, the unique suffix might append to
-			// the slug of newly created Home template if the current activated theme has
-			// modified Home template.
-			setThemeOnSite( siteSlugOrId, theme, undefined, false )
-				.then( () => {
-					if ( isEnabledColorAndFonts ) {
-						return setGlobalStyles( siteSlugOrId, stylesheet, syncedGlobalStylesUserConfig );
-					}
-				} )
-				.then( () =>
-					createCustomTemplate(
-						siteSlugOrId,
-						stylesheet,
-						'home',
-						translate( 'Home' ),
-						createCustomHomeTemplateContent( stylesheet, !! header, !! footer, !! sections.length )
-					)
-				)
-				.then( () =>
-					runThemeSetupOnSite( siteSlugOrId, design, {
-						trimContent: false,
-						posts_source_site_id: PLACEHOLDER_SITE_ID,
-					} )
-				)
-				.then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) )
+			applyThemeWithPatterns(
+				siteSlugOrId,
+				design,
+				syncedGlobalStylesUserConfig,
+				PLACEHOLDER_SITE_ID
+			).then( ( theme: ActiveTheme ) => reduxDispatch( setActiveTheme( site?.ID || -1, theme ) ) )
 		);
 
 		recordSelectedDesign( { flow, intent, design } );

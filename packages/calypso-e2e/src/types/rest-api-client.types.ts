@@ -119,6 +119,14 @@ export interface Invite {
 // Export as Array to expose function calls of arrays.
 export type AllInvitesResponse = Array< Invite >;
 
+interface Widget {
+	id: string;
+	sidebar: string;
+	position: number;
+}
+
+export type AllWidgetsResponse = Array< Widget >;
+
 export interface DeleteInvitesResponse {
 	deleted: string[];
 	invalid: string[];
