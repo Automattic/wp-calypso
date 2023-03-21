@@ -16,7 +16,7 @@ import { BEFORE_SUBMIT } from './constants';
 import { formatDate } from './util';
 import type { LineItem } from '@automattic/composite-checkout';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
-import type { StoredCard } from 'calypso/my-sites/checkout/composite-checkout/types/stored-cards';
+import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 import type { MouseEventHandler, ReactNode } from 'react';
 
 function PurchaseModalStep( { children, id }: { children: ReactNode; id: string } ) {
@@ -94,14 +94,14 @@ function OrderStep( { siteSlug, product }: { siteSlug: string; product: Response
 	);
 }
 
-function PaymentMethodStep( { card, siteSlug }: { card: StoredCard; siteSlug: string } ) {
+function PaymentMethodStep( { card, siteSlug }: { card: StoredPaymentMethod; siteSlug: string } ) {
 	const translate = useTranslate();
 	const clickHandler = useCallback( ( event ) => {
 		event.preventDefault();
 		page( event.target.href );
 	}, [] );
 	// translators: %s will be replaced with the last 4 digits of a credit card.
-	const maskedCard = sprintf( translate( '**** %s' ), card.card || '' );
+	const maskedCard = sprintf( translate( '**** %s' ), card?.card_last_4 || '' );
 
 	return (
 		<PurchaseModalStep id="payment-method">
@@ -194,7 +194,7 @@ export default function PurchaseModalContent( {
 	step,
 	submitTransaction,
 }: {
-	cards: StoredCard[];
+	cards: StoredPaymentMethod[];
 	cart: ResponseCart;
 	onClose(): void;
 	siteSlug: string;
