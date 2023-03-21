@@ -49,7 +49,8 @@ function transformData( data ) {
 	// 2. We need to reverse the array or the LineChart component emits errors.
 	// 3. Labeling of the x-axis doesn't work too well if the data series is too big.
 	const maxDataSize = 10;
-	const processedData = data.map( ( point ) => {
+	const trimmedData = data.length > 10 ? data.slice( 0, maxDataSize ) : data;
+	const processedData = trimmedData.map( ( point ) => {
 		const [ period, count, diff ] = point;
 		return {
 			date: new Date( period ).getTime(),
@@ -57,7 +58,7 @@ function transformData( data ) {
 			diff: diff,
 		};
 	} );
-	return [ processedData.slice( 0, maxDataSize ).reverse() ];
+	return [ processedData.reverse() ];
 }
 
 export default function SubscribersSection() {
