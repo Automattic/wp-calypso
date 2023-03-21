@@ -12,23 +12,36 @@ import payPalImage from 'calypso/assets/images/upgrades/paypal.svg';
 export const PARTNER_PAYPAL_EXPRESS = 'paypal_express';
 export const PAYMENT_AGREEMENTS_PARTNERS = [ PARTNER_PAYPAL_EXPRESS ];
 
-export interface PaymentMethod {
-	added: string;
-	card: string;
+/**
+ * A saved payment method (card or PayPal agreement).
+ *
+ * Used by the `/me/payment-methods` endpoint after version 1.1.
+ */
+export interface StoredPaymentMethod {
+	card_expiry_month: string;
+	card_expiry_year: string;
+	card_iin: string;
+	card_last_4: string;
 	card_type: string;
+	card_zip: string;
+	country_code: string;
 	email: string;
 	expiry: string;
+	is_backup: null | boolean;
 	is_expired: boolean;
-	last_service: string;
-	last_used: string;
-	meta: PaymentMethodMeta[];
+	is_rechargable: boolean;
 	mp_ref: string;
 	name: string;
+	original_stored_details_id: null | string;
 	payment_partner: string;
-	remember: '1' | '0';
+	payment_partner_reference: string;
+	payment_partner_source_id: string;
+	payment_type: null | string;
+	remember: boolean;
+	source: null | string;
 	stored_details_id: string;
-	user_id: string;
 	tax_location: StoredPaymentMethodTaxLocation | null;
+	user_id: string;
 }
 
 export interface StoredPaymentMethodTaxLocation {
@@ -42,16 +55,11 @@ export interface StoredPaymentMethodTaxLocation {
 	city?: string;
 }
 
-export interface PaymentMethodMeta {
-	meta_key: string;
-	meta_value: string;
-	stored_details_id: string;
-}
-
-export const isPaymentAgreement = ( method: PaymentMethod ): boolean =>
+export const isPaymentAgreement = ( method: StoredPaymentMethod ): boolean =>
 	PAYMENT_AGREEMENTS_PARTNERS.includes( method.payment_partner );
 
-export const isCreditCard = ( method: PaymentMethod ): boolean => ! isPaymentAgreement( method );
+export const isCreditCard = ( method: StoredPaymentMethod ): boolean =>
+	! isPaymentAgreement( method );
 
 interface ImagePathsMap {
 	[ key: string ]: string;
