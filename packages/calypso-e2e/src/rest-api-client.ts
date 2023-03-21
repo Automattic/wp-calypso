@@ -1035,7 +1035,7 @@ export class RestAPIClient {
 		if ( response.hasOwnProperty( 'error' ) && response.error === 'not_found' ) {
 			console.info( `Widget ${ widgetID } not found.` );
 			return;
-		} else if ( response === [] ) {
+		} else if ( response.length === 0 ) {
 			console.info( `Deleted widget ${ widgetID }.` );
 		} else if ( response.id === widgetID ) {
 			console.info( `Deactivated widget ${ widgetID }` );
