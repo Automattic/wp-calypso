@@ -98,7 +98,7 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 				// Overrides the inherited max workers settings and sets it to not run any tests in parallel.
 				// The reason for this is an inconsistent issue breaking the login in AT test sites when
 				// more than one test runs in parallel. Remove or set it to 16 after the issue is solved.
-				param("JEST_E2E_WORKERS", "2")
+				// param("JEST_E2E_WORKERS", "2")
 			}
 			if (edge) {
 				param("env.GUTENBERG_EDGE", "true")
