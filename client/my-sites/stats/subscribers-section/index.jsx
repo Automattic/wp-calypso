@@ -8,7 +8,7 @@ import './style.scss';
 
 function getData() {
 	// From https://code.a8c.com/D105106 -- Work in progress on new endpoint.
-	const data = [
+	return [
 		[ '2023-03-01', 51131, 547 ],
 		[ '2023-02-01', 51881, 750 ],
 		[ '2023-01-01', 52662, 781 ],
@@ -41,7 +41,10 @@ function getData() {
 		[ '2020-10-01', 62957, 30 ],
 		[ '2020-09-01', 63385, 428 ],
 	];
-	// Map the data.
+}
+
+function transformData( data ) {
+	// Transform the data into the format required by the chart component.
 	// 1. Note that the data is ordered from newest to oldest.
 	// 2. We need to reverse the array or the LineChart component emits errors.
 	// 3. Labeling of the x-axis doesn't work too well if the data series is too big.
@@ -58,7 +61,7 @@ function getData() {
 }
 
 export default function SubscribersSection() {
-	const data = getData();
+	const data = transformData( getData() );
 
 	// Determines what is shown in the tooltip on hover.
 	const tooltipHelper = ( datum ) => `Changed: ${ datum.diff }`;
