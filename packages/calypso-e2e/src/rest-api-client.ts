@@ -360,7 +360,7 @@ export class RestAPIClient {
 			);
 		}
 
-		if ( response.errors === [] ) {
+		if ( response.errors.length === 0 ) {
 			console.log( response );
 			throw new Error( `Failed to create invite: ${ response.errors }` );
 		}
