@@ -106,9 +106,7 @@ export default function () {
 			makeLayout,
 			clientRender
 		);
-	}
 
-	if ( isEnabled( 'akismet/siteless-checkout' ) ) {
 		page(
 			'/checkout/akismet/thank-you/:productSlug',
 			setLocaleMiddleware(),
