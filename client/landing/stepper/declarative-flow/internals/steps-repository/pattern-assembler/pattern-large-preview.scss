@@ -1,9 +1,12 @@
+@import "./keyframes";
+
 .pattern-large-preview {
 	flex: 1;
 	position: relative;
 	height: 100vh;
 	padding: 32px 0;
-	margin-inline-start: 32px;
+	margin-inline-end: 32px;
+	margin-inline-start: 10px;
 	margin-top: -60px;
 	box-sizing: border-box;
 	z-index: 1;
@@ -20,8 +23,76 @@
 	.pattern-large-preview__pattern-header {
 		margin-block-end: var(--pattern-large-preview-block-gap);
 	}
+
 	.pattern-large-preview__pattern-footer {
 		margin-block-start: var(--pattern-large-preview-block-gap);
+	}
+}
+
+.pattern-large-preview__pattern {
+	$pattern-large-preview-outer-border-radius: calc(var(--device-switcher-border-radius) - var(--device-switcher-border-width));
+	position: relative;
+
+	.pattern-action-bar {
+		position: absolute;
+		top: 16px;
+		left: 16px;
+		right: unset;
+		padding: 6px;
+		border: 1px solid #1e1e1e;
+		border-radius: 2px;
+		gap: 6px;
+		background-color: #fff;
+		opacity: 0;
+		z-index: 1;
+
+		> .pattern-action-bar__action {
+			position: relative;
+			min-width: 28px;
+			height: 28px;
+			padding: 2px;
+
+			&::before {
+				content: "";
+				position: absolute;
+				left: -6px;
+				right: -6px;
+				top: -6px;
+				bottom: -6px;
+			}
+		}
+	}
+
+	&::after {
+		content: "";
+		position: absolute;
+		left: 2px;
+		right: 2px;
+		top: 2px;
+		bottom: 2px;
+		border-radius: 2px;
+	}
+
+	&:first-child::after {
+		border-top-left-radius: $pattern-large-preview-outer-border-radius;
+		border-top-right-radius: $pattern-large-preview-outer-border-radius;
+	}
+
+	&:last-child::after {
+		border-bottom-left-radius: $pattern-large-preview-outer-border-radius;
+		border-bottom-right-radius: $pattern-large-preview-outer-border-radius;
+	}
+
+	&:hover,
+	&:focus,
+	&:focus-within {
+		.pattern-action-bar {
+			opacity: 1;
+		}
+
+		&::after {
+			box-shadow: 0 0 0 2px var(--studio-blue-50);
+		}
 	}
 }
 

@@ -50,6 +50,7 @@ import useCouponFieldState from '../hooks/use-coupon-field-state';
 import { validateContactDetails } from '../lib/contact-validation';
 import getContactDetailsType from '../lib/get-contact-details-type';
 import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
+import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import badge14Src from './assets/icons/badge-14.svg';
 import badge7Src from './assets/icons/badge-7.svg';
 import badgeGenericSrc from './assets/icons/badge-generic.svg';
@@ -66,12 +67,9 @@ import WPCheckoutOrderSummary from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import WPContactFormSummary from './wp-contact-form-summary';
 import type { OnChangeItemVariant } from './item-variation-picker';
-import type { WpcomCheckoutStoreSelectors as _WpcomCheckoutStoreSelectors } from '../hooks/wpcom-store';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
 import type { RemoveProductFromCart, MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { CountryListItem } from '@automattic/wpcom-checkout';
-
-type WpcomCheckoutStoreSelectors = _WpcomCheckoutStoreSelectors | undefined;
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
@@ -188,18 +186,12 @@ export default function WPCheckout( {
 
 	const contactDetailsType = getContactDetailsType( responseCart );
 
-	const contactInfo = useSelect(
-		( sel ) => ( sel( 'wpcom-checkout' ) as WpcomCheckoutStoreSelectors )?.getContactInfo() ?? {},
-		[]
-	);
+	const contactInfo = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
 
-	const vatDetailsInForm = useSelect(
-		( sel ) => ( sel( 'wpcom-checkout' ) as WpcomCheckoutStoreSelectors )?.getVatDetails() ?? {},
-		[]
-	);
+	const vatDetailsInForm = useSelect( ( select ) => select( CHECKOUT_STORE ).getVatDetails(), [] );
 	const { setVatDetails, vatDetails: vatDetailsFromServer } = useVatDetails();
 
-	const checkoutActions = useDispatch( 'wpcom-checkout' );
+	const checkoutActions = useDispatch( CHECKOUT_STORE );
 
 	const [ shouldShowContactDetailsValidationErrors, setShouldShowContactDetailsValidationErrors ] =
 		useState( true );
@@ -406,12 +398,7 @@ export default function WPCheckout( {
 								reduxDispatch( removeNotice( 'vat_info_notice' ) );
 								if ( shouldShowContactDetailsValidationErrors ) {
 									reduxDispatch(
-										errorNotice(
-											translate(
-												'Your Business Tax ID details are not valid. Please check each field and try again.'
-											),
-											{ id: 'vat_info_notice' }
-										)
+										errorNotice( ( error as Error ).message, { id: 'vat_info_notice' } )
 									);
 								}
 								return false;

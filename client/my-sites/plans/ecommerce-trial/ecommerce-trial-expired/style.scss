@@ -1,0 +1,44 @@
+@import "@automattic/typography/styles/woo-commerce";
+@import "@wordpress/base-styles/breakpoints";
+
+body.is-section-plans.is-expired-ecommerce-trial-plan {
+	&.color-scheme {
+		--color-surface-backdrop: var(--color-surface);
+	}
+
+	.main.is-wide-layout {
+		@media ( max-width: $break-medium ) {
+			padding-left: 20px;
+			padding-right: 20px;
+		}
+	}
+
+	.ecommerce-trial-expired__content {
+		text-align: center;
+
+		@media ( max-width: $break-medium ) {
+			padding-top: 40px;
+		}
+
+		.ecommerce-trial-expired__title {
+			font-size: $woo-font-title-medium;
+
+			@media ( min-width: $break-medium ) {
+				font-size: $woo-font-title-large;
+			}
+		}
+
+		.ecommerce-trial-expired__subtitle {
+			margin: 16px auto 0;
+
+			@media ( min-width: $break-medium ) {
+				max-width: 580px;
+			}
+		}
+
+		.ecommerce-trial-expired__manage-purchases {
+			font-size: $woo-font-body-extra-small;
+			margin-top: 16px;
+		}
+	}
+}

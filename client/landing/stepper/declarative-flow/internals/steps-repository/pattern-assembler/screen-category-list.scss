@@ -1,0 +1,35 @@
+@import "@automattic/components/src/styles/typography";
+
+.screen-category-list__category-button {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 3px;
+	padding: 10px 8px;
+	height: 44px;
+	font-family: $font-sf-pro-text;
+	color: var(--studio-gray-80);
+	font-weight: 400;
+	line-height: 20px;
+	letter-spacing: -0.15px;
+	border: none;
+	margin-bottom: 2px;
+	background: transparent;
+
+	svg {
+		fill: var(--studio-gray-30);
+	}
+
+	&.screen-category-list__category-button--is-open,
+	&:hover,
+	&:focus {
+		background-color: #f6f6f6;
+		color: var(--wp-admin-theme-color);
+
+		svg {
+			fill: var(--wp-admin-theme-color);
+		}
+	}
+
+}

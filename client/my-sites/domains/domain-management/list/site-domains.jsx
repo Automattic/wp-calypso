@@ -168,7 +168,7 @@ export class SiteDomains extends Component {
 			},
 			{ name: 'auto-renew', label: translate( 'Auto-renew' ) },
 			{ name: 'email', label: translate( 'Email' ) },
-			{ name: 'action', label: null },
+			{ name: 'action', label: translate( 'Actions' ) },
 		];
 
 		return (

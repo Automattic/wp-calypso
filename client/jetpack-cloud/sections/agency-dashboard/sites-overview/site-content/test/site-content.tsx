@@ -13,6 +13,7 @@ import SiteContent from '../index';
 jest.mock( '@automattic/viewport-react', () => ( {
 	useDesktopBreakpoint: () => true,
 	useMobileBreakpoint: () => false,
+	useBreakpoint: () => true,
 } ) );
 
 describe( '<SiteContent>', () => {
@@ -28,6 +29,7 @@ describe( '<SiteContent>', () => {
 			url: 'test.jurassic.ninja',
 			monitor_settings: {
 				monitor_active: true,
+				monitor_site_status: true,
 			},
 		},
 	];

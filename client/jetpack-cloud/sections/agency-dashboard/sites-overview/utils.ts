@@ -12,6 +12,7 @@ import type {
 	StatusTooltip,
 	RowMetaData,
 	StatsNode,
+	BoostNode,
 	BackupNode,
 	ScanNode,
 	MonitorNode,
@@ -27,6 +28,11 @@ const extraColumns: SiteColumns = isExpandedBlockEnabled
 			{
 				key: 'stats',
 				title: translate( 'Stats' ),
+				isExpandable: true,
+			},
+			{
+				key: 'boost',
+				title: translate( 'Boost' ),
 				isExpandable: true,
 			},
 	  ]
@@ -129,7 +135,7 @@ const scanEventNames: StatusEventNames = {
 	},
 };
 
-// Montitor feature status event names for large screen(>960px) and small screen(<960px)
+// Monitor feature status event names for large screen(>960px) and small screen(<960px)
 const monitorEventNames: StatusEventNames = {
 	disabled: {
 		small_screen: 'calypso_jetpack_agency_dashboard_monitor_inactive_click_small_screen',
@@ -315,10 +321,20 @@ export const getRowMetaData = (
 
 const formatStatsData = ( site: Site ) => {
 	const statsData: StatsNode = {
+		status: 'active',
 		type: 'stats',
-		data: site.site_stats,
+		value: site.site_stats,
 	};
 	return statsData;
+};
+
+const formatBoostData = ( site: Site ) => {
+	const boostData: BoostNode = {
+		status: 'active',
+		type: 'boost',
+		value: site.jetpack_boost_scores,
+	};
+	return boostData;
 };
 
 const formatBackupData = ( site: Site ) => {
@@ -392,11 +408,12 @@ const formatMonitorData = ( site: Site ) => {
 		error: false,
 		settings: site.monitor_settings,
 	};
-	const monitorStatus = site.monitor_settings.monitor_active;
-	if ( ! monitorStatus ) {
+	const { monitor_active: monitorActive, monitor_site_status: monitorStatus } =
+		site.monitor_settings;
+	if ( ! monitorActive ) {
 		monitor.status = 'disabled';
 	} else if (
-		! site.monitor_site_status &&
+		! monitorStatus &&
 		// This check is needed because monitor_site_status is false by default
 		// and we don't want to show the site down status when the site is first connected and the monitor is enabled
 		INITIAL_UNIX_EPOCH !== site.monitor_last_status_change
@@ -424,6 +441,7 @@ export const formatSites = ( sites: Array< Site > = [] ): Array< SiteData > | []
 				type: 'site',
 			},
 			stats: formatStatsData( site ),
+			boost: formatBoostData( site ),
 			backup: formatBackupData( site ),
 			scan: formatScanData( site ),
 			monitor: formatMonitorData( site ),
@@ -488,4 +506,43 @@ export const getSiteCountText = ( sites: Array< Site > ) => {
 		args: { siteCount: sites.length },
 		comment: '%(siteCount) is no of sites selected, e.g. "2 sites"',
 	} );
+};
+
+type BoostRating = 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
+
+interface BoostThreshold {
+	threshold: number;
+	rating: BoostRating;
+}
+
+const BOOST_THRESHOLDS: BoostThreshold[] = [
+	{ threshold: 90, rating: 'A' },
+	{ threshold: 75, rating: 'B' },
+	{ threshold: 50, rating: 'C' },
+	{ threshold: 35, rating: 'D' },
+	{ threshold: 25, rating: 'E' },
+	{ threshold: 0, rating: 'F' },
+];
+
+export const getBoostRating = ( boostScore: number ): BoostRating => {
+	for ( const { threshold, rating } of BOOST_THRESHOLDS ) {
+		if ( boostScore > threshold ) {
+			return rating;
+		}
+	}
+	return 'F';
+};
+
+const GOOD_BOOST_SCORE_THRESHOLD = 75;
+const OKAY_BOOST_SCORE_THRESHOLD = 35;
+
+export const getBoostRatingClass = ( boostScore: number ): string => {
+	switch ( true ) {
+		case boostScore > GOOD_BOOST_SCORE_THRESHOLD:
+			return 'boost-score-good';
+		case boostScore > OKAY_BOOST_SCORE_THRESHOLD:
+			return 'boost-score-okay';
+		default:
+			return 'boost-score-bad';
+	}
 };

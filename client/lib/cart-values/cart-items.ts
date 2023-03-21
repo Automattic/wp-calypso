@@ -124,10 +124,6 @@ export function hasStarterPlan( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isStarter );
 }
 
-export function hasDomainCredit( cart: ResponseCart ): boolean {
-	return cart.has_bundle_credit || hasPlan( cart );
-}
-
 export function hasMonthlyCartItem( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isMonthlyProduct );
 }

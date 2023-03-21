@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import Badge from 'calypso/components/badge';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
@@ -123,6 +124,11 @@ class MembershipsProductsSection extends Component {
 								{ formatCurrency( product.price, product.currency ) }
 							</div>
 							<div className="memberships__products-product-title">{ product.title }</div>
+							{ product?.subscribe_as_site_subscriber && (
+								<div className="memberships__products-product-badge">
+									<Badge type="info-blue">{ this.props.translate( 'Newsletter' ) }</Badge>
+								</div>
+							) }
 						</div>
 
 						{ this.renderEllipsisMenu( product.ID ) }
