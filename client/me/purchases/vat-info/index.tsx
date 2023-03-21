@@ -166,6 +166,7 @@ function CountryCodeInput( {
 } ) {
 	const countries = [
 		'AT',
+		'AU',
 		'BE',
 		'BG',
 		'CH',

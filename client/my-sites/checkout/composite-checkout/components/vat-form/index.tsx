@@ -14,6 +14,7 @@ import './style.css';
 
 const countriesSupportingVat = [
 	'AT',
+	'AU',
 	'BE',
 	'BG',
 	'CH',
