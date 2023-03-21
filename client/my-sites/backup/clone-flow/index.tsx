@@ -6,18 +6,23 @@ import AdvancedCredentials from 'calypso/components/advanced-credentials';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import StepProgress from 'calypso/components/step-progress';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { applySiteOffset } from 'calypso/lib/site/timezone';
 import { rewindClone } from 'calypso/state/activity-log/actions';
 import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
 import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
 import getInProgressRewindStatus from 'calypso/state/selectors/get-in-progress-rewind-status';
 import getRestoreProgress from 'calypso/state/selectors/get-restore-progress';
+import getRewindBackups from 'calypso/state/selectors/get-rewind-backups';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
+import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { backupMainPath } from '../paths';
@@ -48,12 +53,24 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteUrl } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 
+	const moment = useLocalizedMoment();
+	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ?? 0 ) );
+	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ?? 0 ) );
+
 	const [ rewindConfig, setRewindConfig ] = useState< RewindConfig >( defaultRewindConfig );
 	const [ userHasRequestedRestore, setUserHasRequestedRestore ] = useState< boolean >( false );
 	const [ userHasSetDestination, setUserHasSetDestination ] = useState< boolean >( false );
 	const [ cloneDestination, setCloneDestination ] = useState< string >( '' );
 	const [ userHasSetBackupPeriod, setUserHasSetBackupPeriod ] = useState< boolean >( false );
 	const [ backupPeriod, setBackupPeriod ] = useState< string >( '' );
+	const [ backupDisplayDate, setBackupDisplayDate ] = useState< string >( '' );
+
+	// Temporary for testing until we have a backup selection UI
+	const latestBackupPeriod = useSelector( ( state ) => {
+		const backups = getRewindBackups( state, siteId ) || [];
+		const completedBackups = backups.filter( ( backup ) => backup.status === 'finished' );
+		return completedBackups.length ? completedBackups[ 0 ].period : null;
+	} );
 
 	const steps = [
 		{
@@ -103,6 +120,9 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteUrl } ) => {
 	// Takes a destination as a vault role or blog id
 	const onSetDestination = useCallback(
 		( destination: string ) => {
+			// TODO: At the moment this is just 'alternate'
+			// but we should also save the URL for alternate creds as we'll use it in the confirm
+			// screen and also the View Website link after Clone
 			setCloneDestination( destination );
 			setUserHasSetDestination( true );
 		},
@@ -114,8 +134,13 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteUrl } ) => {
 			// Grab the selected backup period / rewindId and set it
 			setBackupPeriod( period );
 			setUserHasSetBackupPeriod( true );
+			const displayDate = applySiteOffset( moment( parseFloat( period ) * 1000 ), {
+				gmtOffset,
+				timezone,
+			} ).format( 'LLL' );
+			setBackupDisplayDate( displayDate );
 		},
-		[ setUserHasSetBackupPeriod, setBackupPeriod ]
+		[ moment, gmtOffset, timezone ]
 	);
 
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
@@ -165,11 +190,14 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteUrl } ) => {
 			<Button
 				className="clone-flow__primary-button"
 				primary
-				onClick={ () => onSetBackupPeriod( 12345 ) }
+				onClick={ () => onSetBackupPeriod( latestBackupPeriod ) }
 			>
 				{ translate( 'Clone from this point' ) }
 			</Button>
-			<Button className="clone-flow__primary-button" onClick={ () => onSetBackupPeriod( 67890 ) }>
+			<Button
+				className="clone-flow__primary-button"
+				onClick={ () => onSetBackupPeriod( latestBackupPeriod ) }
+			>
 				{ translate( 'Clone from here' ) }
 			</Button>
 		</>
@@ -298,7 +326,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteUrl } ) => {
 					}
 				) }
 			</p>
-			<Button primary href={ destinationUrl } className="clone-flow__primary-button">
+			<Button primary href={ cloneDestination } className="clone-flow__primary-button">
 				{ translate( 'View your website' ) }
 			</Button>
 		</>
