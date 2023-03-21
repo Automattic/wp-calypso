@@ -64,6 +64,7 @@ const Badges: React.FC< BadgesProps > = ( {
 						if ( onMoreClick && e.keyCode === SPACE_BAR_KEYCODE ) {
 							// Prevent the event from bubbling to the the parent button.
 							e.stopPropagation();
+							e.preventDefault();
 							onMoreClick();
 						}
 					} }
