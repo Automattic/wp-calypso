@@ -191,7 +191,7 @@ class StatsSite extends Component {
 					slug={ slug }
 				/>
 				{ isOdysseyStats && <StatsNotices siteId={ siteId } /> }
-				<SubscribersSection />;
+				{ config.isEnabled( 'stats/subscribers-section' ) && <SubscribersSection /> }
 				<HighlightsSection siteId={ siteId } />
 				<div id="my-stats-content" className={ wrapperClass }>
 					<>
