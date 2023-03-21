@@ -4,6 +4,7 @@
 
 import { render, screen } from '@testing-library/react';
 import nock from 'nock';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createReduxStore } from 'calypso/state';
 import ManagePurchase from '../index.jsx';
@@ -118,6 +119,8 @@ function createMockReduxStoreForPurchase( purchaseForRedux ) {
 }
 
 describe( 'Purchase Management Buttons', () => {
+	const queryClient = new QueryClient();
+
 	it( 'renders a cancel button when auto-renew is ON', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.1/me/payment-methods?expired=include' )
@@ -126,13 +129,15 @@ describe( 'Purchase Management Buttons', () => {
 		const store = createMockReduxStoreForPurchase( { ...purchase, auto_renew: 1 } );
 
 		render(
-			<ReduxProvider store={ store }>
-				<ManagePurchase
-					purchaseId={ Number( purchase.ID ) }
-					isSiteLevel
-					siteSlug="onecooltestsite.com"
-				/>
-			</ReduxProvider>
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<ManagePurchase
+						purchaseId={ Number( purchase.ID ) }
+						isSiteLevel
+						siteSlug="onecooltestsite.com"
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
 		);
 		expect( await screen.findByText( /Cancel/ ) ).toBeInTheDocument();
 		expect( screen.queryByText( /Remove/ ) ).not.toBeInTheDocument();
@@ -146,13 +151,15 @@ describe( 'Purchase Management Buttons', () => {
 		const store = createMockReduxStoreForPurchase( { ...purchase, auto_renew: 0 } );
 
 		render(
-			<ReduxProvider store={ store }>
-				<ManagePurchase
-					purchaseId={ Number( purchase.ID ) }
-					isSiteLevel
-					siteSlug="onecooltestsite.com"
-				/>
-			</ReduxProvider>
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<ManagePurchase
+						purchaseId={ Number( purchase.ID ) }
+						isSiteLevel
+						siteSlug="onecooltestsite.com"
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
 		);
 		expect( await screen.findByText( /Remove/ ) ).toBeInTheDocument();
 		expect( screen.queryByText( /Cancel/ ) ).not.toBeInTheDocument();
