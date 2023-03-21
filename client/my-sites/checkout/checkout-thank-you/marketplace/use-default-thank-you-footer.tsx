@@ -26,23 +26,6 @@ export function useDefaultThankYouFoooter( slugs: string[] ): ThankYouSectionPro
 		nextStepsClassName: 'thank-you__footer',
 		nextSteps: [
 			{
-				stepKey: 'thank_you_footer_support_guides',
-				stepTitle: translate( 'Support guides' ),
-				stepDescription: translate(
-					'Our guides will show you everything you need to know about plugins.'
-				),
-				stepCta: (
-					<Button
-						isLink
-						href="https://wordpress.com/support/plugins/"
-						target="_blank"
-						onClick={ () => sendTrackEvent( 'calypso_plugin_thank_you_plugin_support_click' ) }
-					>
-						{ translate( 'Plugin Support' ) }
-					</Button>
-				),
-			},
-			{
 				stepKey: 'thank_you_footer_explore',
 				stepTitle: translate( 'Keep growing' ),
 				stepDescription: translate(
@@ -60,11 +43,24 @@ export function useDefaultThankYouFoooter( slugs: string[] ): ThankYouSectionPro
 				),
 			},
 			{
-				stepKey: 'thank_you_footer_support',
-				stepTitle: translate( 'How can we support you?' ),
-				stepDescription: translate(
-					'Our team is here if you need help, or if you have any questions.'
+				stepKey: 'thank_you_footer_support_guides',
+				stepTitle: translate( 'Learn More' ),
+				stepDescription: translate( 'Discover everything you need to know about Plugins.' ),
+				stepCta: (
+					<Button
+						isLink
+						href="https://wordpress.com/support/plugins/"
+						target="_blank"
+						onClick={ () => sendTrackEvent( 'calypso_plugin_thank_you_plugin_support_click' ) }
+					>
+						{ translate( 'Plugin Support' ) }
+					</Button>
 				),
+			},
+			{
+				stepKey: 'thank_you_footer_support',
+				stepTitle: translate( '24/7 support at your fingertips' ),
+				stepDescription: translate( 'Our happiness engineers are eager to lend a hand.' ),
 				stepCta: (
 					<Button
 						isLink
