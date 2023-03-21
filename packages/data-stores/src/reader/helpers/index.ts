@@ -1,19 +1,20 @@
 import apiFetch, { APIFetchOptions } from '@wordpress/api-fetch';
 import wpcomRequest from 'wpcom-proxy-request';
 
-type FetchFromApiParams = {
+type callApiParams = {
 	path: string;
 	method?: 'GET' | 'POST';
 	body?: object;
 	isLoggedIn?: boolean;
 };
+
 // Helper function for fetching from subkey authenticated API. Subkey authentication process is only applied in case of logged-out users.
-async function fetchFromApi< ReturnType >( {
+async function callApi< ReturnType >( {
 	path,
 	method = 'GET',
-	body = {},
+	body,
 	isLoggedIn = false,
-}: FetchFromApiParams ): Promise< ReturnType > {
+}: callApiParams ): Promise< ReturnType > {
 	if ( isLoggedIn ) {
 		const res = await wpcomRequest( {
 			path,
@@ -45,4 +46,4 @@ async function fetchFromApi< ReturnType >( {
 	} as APIFetchOptions );
 }
 
-export { fetchFromApi };
+export { callApi };

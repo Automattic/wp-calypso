@@ -1,5 +1,5 @@
 import { useQuery } from 'react-query';
-import { fetchFromApi } from '../helpers';
+import { callApi } from '../helpers';
 import { useIsLoggedIn, useIsQueryEnabled } from '../hooks';
 import type { SubscriptionManagerSubscriptionsCount } from '../types';
 
@@ -10,7 +10,7 @@ const useSubscriptionManagerSubscriptionsCountQuery = () => {
 	return useQuery(
 		[ 'read', 'subscriptions-count', isLoggedIn ],
 		async () => {
-			return await fetchFromApi< SubscriptionManagerSubscriptionsCount >( {
+			return await callApi< SubscriptionManagerSubscriptionsCount >( {
 				path: '/read/subscriptions-count',
 				isLoggedIn,
 			} );

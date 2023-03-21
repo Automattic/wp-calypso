@@ -1,5 +1,5 @@
 import { useQuery } from 'react-query';
-import { fetchFromApi } from '../helpers';
+import { callApi } from '../helpers';
 import { useIsLoggedIn, useIsQueryEnabled } from '../hooks';
 import type { SubscriptionManagerUserSettings } from '../types';
 
@@ -13,7 +13,7 @@ const useSubscriptionManagerUserSettingsQuery = () => {
 	return useQuery(
 		[ 'read', 'email-settings', isLoggedIn ],
 		async () => {
-			const { settings } = await fetchFromApi< EmailSettingsAPIResponse >( {
+			const { settings } = await callApi< EmailSettingsAPIResponse >( {
 				path: '/read/email-settings',
 				isLoggedIn,
 			} );
