@@ -62,6 +62,10 @@ const ThemeSectionButtons = styled.div`
 	display: flex;
 	gap: 16px;
 	min-width: auto;
+
+	.gridicon.gridicons-external {
+		margin-right: 4px;
+	}
 `;
 
 export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
