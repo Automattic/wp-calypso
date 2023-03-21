@@ -24,8 +24,8 @@ function getPerMonthDescription( {
 	if ( ! isMonthlyPlan ) {
 		const annualPrice = formatCurrency( rawPriceAnnual, currencyCode );
 
-		return translate( 'per month, %(annualPrice)s billed annually', {
-			args: { annualPrice },
+		return translate( 'per month, %(annualPriceText)s billed annually', {
+			args: { annualPriceText: annualPrice },
 		} );
 	}
 
