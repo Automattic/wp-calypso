@@ -134,25 +134,9 @@ function getData( type ) {
 	return [];
 }
 
-function getLegendSingleLine() {
-	return [];
-}
-function getLegendMultiLine() {
-	return [ { name: 'Line #1' }, { name: 'Line #2' }, { name: 'Line #3' } ];
-}
-function getLegend( type ) {
-	if ( type === DATA_TYPE_SINGLE ) {
-		return getLegendSingleLine();
-	}
-	if ( type === DATA_TYPE_MULTI ) {
-		return getLegendMultiLine();
-	}
-	return [];
-}
-
-export default function SubscribersSection( { dataType = DATA_TYPE_API } ) {
+export default function SubscribersSection() {
+	const dataType = DATA_TYPE_API;
 	const data = getData( dataType );
-	const legendInfo = getLegend( dataType );
 
 	const tooltipHelper =
 		dataType !== DATA_TYPE_API ? ( datum ) => datum.value : ( datum ) => `Changed: ${ datum.diff }`;
@@ -160,12 +144,7 @@ export default function SubscribersSection( { dataType = DATA_TYPE_API } ) {
 	return (
 		<div className="subscribers-section">
 			<h1 className="highlight-cards-heading">Subscribers</h1>
-			<LineChart
-				data={ data }
-				fillArea={ false }
-				legendInfo={ legendInfo }
-				renderTooltipForDatanum={ tooltipHelper }
-			>
+			<LineChart data={ data } renderTooltipForDatanum={ tooltipHelper }>
 				<StatsEmptyState />
 			</LineChart>
 		</div>
