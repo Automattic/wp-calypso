@@ -73,7 +73,7 @@ export function useThankYouFoooter(
 	return {
 		sectionKey: 'thank_you_footer',
 		nextStepsClassName: 'thank-you__footer',
-		nextSteps: steps,
+		nextSteps: steps.slice( 0, 3 ),
 	};
 }
 
