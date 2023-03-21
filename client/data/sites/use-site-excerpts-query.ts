@@ -26,30 +26,12 @@ const fetchSites = (): Promise< { sites: SiteExcerptNetworkData[] } > => {
 	} );
 };
 
-export function handlePlansForStagingSites( sites: SiteExcerptNetworkData[] ) {
-	// Create a map once, and use that,instead of use find every time, in the map below.
-	const sitesById = sites.reduce( ( allSites, site: SiteExcerptNetworkData ) => {
-		allSites[ site.ID ] = site;
-		return allSites;
-	}, {} as { [ id: number ]: SiteExcerptNetworkData } );
-	return sites.map( ( site: SiteExcerptNetworkData ) => {
-		if ( site?.options?.wpcom_production_blog_id ) {
-			const productionSitePlan = sitesById[ site?.options?.wpcom_production_blog_id ]?.plan;
-			if ( productionSitePlan ) {
-				site.plan = productionSitePlan;
-			}
-		}
-		return site;
-	} );
-}
-
 export const useSiteExcerptsQuery = () => {
 	const store = useStore();
 
 	return useQuery( [ USE_SITE_EXCERPTS_QUERY_KEY ], fetchSites, {
 		select: ( data ) => {
-			const allSites = handlePlansForStagingSites( data?.sites );
-			return allSites.map( computeFields( data?.sites ) );
+			return data?.sites.map( computeFields( data?.sites ) );
 		},
 		initialData: () => {
 			// Not using `useSelector` (i.e. calling `getSites` directly) because we
