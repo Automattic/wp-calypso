@@ -12,7 +12,7 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import StepProgress from 'calypso/components/step-progress';
-import useActivityLogQuery from 'calypso/data/activity-log/use-activity-log-query';
+import useRewindableActivityLogQuery from 'calypso/data/activity-log/use-rewindable-activity-log-query';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
@@ -20,7 +20,6 @@ import { rewindClone } from 'calypso/state/activity-log/actions';
 import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
 import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
-import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 import getInProgressRewindStatus from 'calypso/state/selectors/get-in-progress-rewind-status';
 import getRestoreProgress from 'calypso/state/selectors/get-restore-progress';
 import getRewindBackups from 'calypso/state/selectors/get-rewind-backups';
@@ -157,9 +156,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 
 	const disableClone = false;
 
-	const filter = useSelector( ( state ) => getActivityLogFilter( state, siteId ) );
-	filter.group = [ 'rewind' ];
-	const { data: logs } = useActivityLogQuery( siteId, filter );
+	const { data: logs } = useRewindableActivityLogQuery( siteId, {}, { enabled: !! siteId } );
 
 	// Screen that allows user to add credentials for an alternate restore / clone
 	const renderSetDestination = () => (
