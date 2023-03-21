@@ -273,7 +273,7 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 			// Inject the selected pattern category or the first category
 			// because it's used in tracks and as pattern name in the list
 			selectedPattern.category = categories.find(
-				( { name } ) => name === selectedCategory || selectedPattern.categories[ 0 ]
+				( { name } ) => name === ( selectedCategory || selectedPattern.categories[ 0 ] )
 			);
 
 			trackEventPatternSelect( {
