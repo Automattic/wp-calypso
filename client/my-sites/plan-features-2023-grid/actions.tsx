@@ -1,10 +1,13 @@
 import {
 	getPlanClass,
-	isMonthly,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_P2_FREE,
 	isFreePlan,
 	is2023PricingGridActivePage,
+	TERM_BIENNIALLY,
+	TERM_TRIENNIALLY,
+	planMatches,
+	TERM_ANNUALLY,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
@@ -203,15 +206,45 @@ const LoggedInPlansFeatureActionButton = ( {
 	if (
 		( availableForPurchase || isPlaceholder ) &&
 		currentSitePlanSlug &&
-		isMonthly( currentSitePlanSlug ) &&
+		! current &&
 		getPlanClass( planType ) === getPlanClass( currentSitePlanSlug ) &&
 		currentSitePlanSlug !== PLAN_ECOMMERCE_TRIAL_MONTHLY
 	) {
-		return (
-			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
-				{ buttonText || translate( 'Upgrade to Yearly' ) }
-			</Button>
-		);
+		if ( planMatches( planType, { term: TERM_TRIENNIALLY } ) ) {
+			return (
+				<Button
+					className={ classes }
+					onClick={ handleUpgradeButtonClick }
+					disabled={ isPlaceholder }
+				>
+					{ buttonText || translate( 'Upgrade to Triannual' ) }
+				</Button>
+			);
+		}
+
+		if ( planMatches( planType, { term: TERM_BIENNIALLY } ) ) {
+			return (
+				<Button
+					className={ classes }
+					onClick={ handleUpgradeButtonClick }
+					disabled={ isPlaceholder }
+				>
+					{ buttonText || translate( 'Upgrade to Biannual' ) }
+				</Button>
+			);
+		}
+
+		if ( planMatches( planType, { term: TERM_ANNUALLY } ) ) {
+			return (
+				<Button
+					className={ classes }
+					onClick={ handleUpgradeButtonClick }
+					disabled={ isPlaceholder }
+				>
+					{ buttonText || translate( 'Upgrade to Yearly' ) }
+				</Button>
+			);
+		}
 	}
 
 	const buttonTextFallback = buttonText ?? translate( 'Upgrade', { context: 'verb' } );

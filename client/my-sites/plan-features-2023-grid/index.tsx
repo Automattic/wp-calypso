@@ -12,7 +12,6 @@ import {
 	isWpcomEnterpriseGridPlan,
 	isMonthly,
 	TERM_MONTHLY,
-	TERM_BIENNIALLY,
 	isBusinessPlan,
 	TYPE_FREE,
 	TYPE_PERSONAL,
@@ -24,8 +23,6 @@ import {
 	PLAN_FREE,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	isPremiumPlan,
-	getPlanSlugForTermVariant,
-	PlanSlug,
 	PLAN_BIENNIAL_PERIOD,
 	isWooExpressMediumPlan,
 	isWooExpressSmallPlan,
@@ -79,7 +76,6 @@ import {
 	getCurrentPlan,
 	isCurrentUserCurrentPlanOwner,
 	getPlanDiscountedRawPrice,
-	getSitePlanSlug,
 } from 'calypso/state/sites/plans/selectors';
 import isPlanAvailableForPurchase from 'calypso/state/sites/plans/selectors/is-plan-available-for-purchase';
 import {
@@ -1096,11 +1092,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 				[];
 
 			const availableForPurchase = isInSignup || isPlanAvailableForPurchase( state, siteId, plan );
-
-			const sitePlanSlug = getSitePlanSlug( state, siteId ) ?? '';
-			const isCurrentPlan =
-				isCurrentSitePlan( state, siteId, planProductId ) ||
-				plan === getPlanSlugForTermVariant( sitePlanSlug as PlanSlug, TERM_BIENNIALLY );
+			const isCurrentPlan = isCurrentSitePlan( state, siteId, planProductId ) ?? false;
 
 			return {
 				availableForPurchase,
