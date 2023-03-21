@@ -143,7 +143,7 @@ type CloneSiteOwnProps = {
 	onClickClone: ( period: string ) => void;
 };
 
-const CloneSiteActionsButton: React.FC< CloneSiteOwnProps > = ( { rewindId, onClickClone } ) => {
+const CloneSiteActionButton: React.FC< CloneSiteOwnProps > = ( { rewindId, onClickClone } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -180,12 +180,14 @@ const ActionsButton: React.FC< OwnProps > = ( {
 		);
 	}
 
-	if ( availableActions && availableActions.includes( 'clone' ) ) {
+	// Show the clone action button only if is the only action available.
+	if ( availableActions && availableActions.length === 1 && availableActions[ 0 ] === 'clone' ) {
 		return (
-			<CloneSiteActionsButton rewindId={ actionableRewindId ?? '' } onClickClone={ onClickClone } />
+			<CloneSiteActionButton rewindId={ actionableRewindId ?? '' } onClickClone={ onClickClone } />
 		);
 	}
 
+	// Show the defaults actions for simple sites.
 	return (
 		<SingleSiteActionsButton
 			siteId={ siteId }
