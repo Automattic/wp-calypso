@@ -1,11 +1,14 @@
 import './style.scss';
 import { useTranslate } from 'i18n-calypso';
 import { debounce } from 'lodash';
+import moment from 'moment';
 import page from 'page';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPosts from 'calypso/components/data/query-posts';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import QueryStatsRecentPostViews from 'calypso/components/data/query-stats-recent-post-views';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -13,14 +16,24 @@ import Main from 'calypso/components/main';
 import useCampaignsQuery from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import useCampaignsStatsQuery from 'calypso/data/promote-post/use-promote-post-campaigns-stats-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import memoizeLast from 'calypso/lib/memoize-last';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
 import CampaignsList from 'calypso/my-sites/promote-post/components/campaigns-list';
 import PostsList from 'calypso/my-sites/promote-post/components/posts-list';
 import PostsListBanner from 'calypso/my-sites/promote-post/components/posts-list-banner';
 import PromotePostTabBar from 'calypso/my-sites/promote-post/components/promoted-post-filter';
-import { getPostsForQuery, isRequestingPostsForQuery } from 'calypso/state/posts/selectors';
+import {
+	getSitePost,
+	getPostsForQuery,
+	isRequestingPostsForQuery,
+} from 'calypso/state/posts/selectors';
+import {
+	getTopPostAndPages,
+	hasSiteStatsForQueryFinished,
+} from 'calypso/state/stats/lists/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { PostType } from 'calypso/types';
 import { unifyCampaigns } from './utils';
 
 export type TabType = 'posts' | 'campaigns';
@@ -33,20 +46,23 @@ interface Props {
 	tab?: TabType;
 }
 
-const queryPost = {
+const queryProducts = {
 	number: 20, // max supported by /me/posts endpoint for all-sites mode
 	status: 'publish', // do not allow private or unpublished posts
-	type: 'post',
-	order_by: 'id',
-};
-const queryPage = {
-	...queryPost,
-	type: 'page',
+	type: 'product',
 };
 
-const queryProducts = {
-	...queryPost,
-	type: 'product',
+const queryPageAndPostsByComments = {
+	...queryProducts,
+	type: 'any',
+	order_by: 'comment_count',
+};
+
+const queryPageAndPostsByIDs = {
+	...queryProducts,
+	type: 'any',
+	order_by: 'id',
+	number: 5,
 };
 
 export type DSPMessage = {
@@ -55,6 +71,18 @@ export type DSPMessage = {
 
 const ERROR_NO_LOCAL_USER = 'no_local_user';
 
+const memoizedQuery = memoizeLast( ( period, unit, quantity, endOf, num ) => ( {
+	period,
+	unit: unit,
+	quantity: quantity,
+	date: endOf,
+	num: num,
+	max: 20,
+} ) );
+const today = moment().locale( 'en' );
+const period = 'year';
+const topPostsQuery = memoizedQuery( period, 'month', 20, today.format( 'YYYY-MM-DD' ), -1 );
+
 export default function PromotedPosts( { tab }: Props ) {
 	const selectedTab = tab === 'campaigns' ? 'campaigns' : 'posts';
 	const selectedSite = useSelector( getSelectedSite );
@@ -62,30 +90,39 @@ export default function PromotedPosts( { tab }: Props ) {
 	const [ alreadyScrolled, setAlreadyScrolled ] = useState< boolean >( false );
 	const selectedSiteId = selectedSite?.ID || 0;
 
-	const posts = useSelector( ( state ) => {
-		const posts = getPostsForQuery( state, selectedSiteId, queryPost );
-		return posts?.filter( ( post: any ) => ! post.password );
-	} );
-
-	const pages = useSelector( ( state ) => {
-		const pages = getPostsForQuery( state, selectedSiteId, queryPage );
-		return pages?.filter( ( page: any ) => ! page.password );
-	} );
-
 	const products = useSelector( ( state ) => {
 		const products = getPostsForQuery( state, selectedSiteId, queryProducts );
 		return products?.filter( ( product: any ) => ! product.password );
 	} );
 
-	const isLoadingPost = useSelector( ( state ) =>
-		isRequestingPostsForQuery( state, selectedSiteId, queryPost )
-	);
-	const isLoadingPage = useSelector( ( state ) =>
-		isRequestingPostsForQuery( state, selectedSiteId, queryPage )
-	);
+	const postAndPagesByComments = useSelector( ( state ) => {
+		const postsAndPages = getPostsForQuery( state, selectedSiteId, queryPageAndPostsByComments );
+		return postsAndPages?.filter( ( product: any ) => ! product.password );
+	} );
+
+	const postAndPagesByIDs = useSelector( ( state ) => {
+		const postsAndPages = getPostsForQuery( state, selectedSiteId, queryPageAndPostsByIDs );
+		return postsAndPages?.filter( ( product: any ) => ! product.password );
+	} );
+
 	const isLoadingProducts = useSelector( ( state ) =>
 		isRequestingPostsForQuery( state, selectedSiteId, queryProducts )
 	);
+
+	const topViewedPostAndPages = useSelector( ( state ) =>
+		getTopPostAndPages( state, selectedSiteId, topPostsQuery )
+	);
+
+	const mostPopularPostAndPages = useSelector( ( state ) => {
+		const topPostsAndPages: any[ PostType ] = [];
+
+		topViewedPostAndPages?.forEach( ( post: any ) => {
+			const item = getSitePost( state, selectedSiteId, post.id );
+			item && topPostsAndPages.push( { ...item, views: post.views } );
+		} );
+
+		return topPostsAndPages;
+	} );
 
 	const campaigns = useCampaignsQuery( selectedSiteId ?? 0 );
 	const campaignsStats = useCampaignsStatsQuery( selectedSiteId ?? 0 );
@@ -107,6 +144,28 @@ export default function PromotedPosts( { tab }: Props ) {
 		{ id: 'posts', name: translate( 'Ready to Blaze' ) },
 		{ id: 'campaigns', name: translate( 'Campaigns' ) },
 	];
+
+	const topViewedPostAndPagesIds = topViewedPostAndPages?.map( ( post: any ) => post.id );
+	const topViewedMemoizedQuery = useMemo(
+		() => ( { include: topViewedPostAndPagesIds } ),
+		[ JSON.stringify( topViewedPostAndPagesIds ) ]
+	);
+
+	const hasTopPostsFinished = useSelector( ( state ) =>
+		hasSiteStatsForQueryFinished( state, selectedSiteId, 'statsTopPosts', topPostsQuery )
+	);
+
+	const isLoadingMemoizedQuery = useSelector( ( state ) =>
+		isRequestingPostsForQuery( state, selectedSiteId, topViewedMemoizedQuery )
+	);
+
+	const isLoadingByIDsQuery = useSelector( ( state ) =>
+		isRequestingPostsForQuery( state, selectedSiteId, queryPageAndPostsByIDs )
+	);
+
+	const isLoadingByCommentsQuery = useSelector( ( state ) =>
+		isRequestingPostsForQuery( state, selectedSiteId, queryPageAndPostsByComments )
+	);
 
 	if ( usePromoteWidget() === PromoteWidgetStatus.DISABLED ) {
 		page( '/' );
@@ -180,13 +239,26 @@ export default function PromotedPosts( { tab }: Props ) {
 		);
 	}
 
-	const content = [ ...( posts || [] ), ...( pages || [] ), ...( products || [] ) ].sort(
-		( a, b ) => b.ID - a.ID
+	const content = [
+		...( postAndPagesByIDs || [] ),
+		...( mostPopularPostAndPages || [] ),
+		...( postAndPagesByComments || [] ),
+		...( products || [] ),
+	];
+
+	/**
+	 * Some of the posts/pages may be duplicated as we load them by popularity and sometimes by comments.
+	 */
+	const contentWithoutDuplicatedIds = content.filter(
+		( obj, index ) => content.findIndex( ( item ) => item.ID === obj.ID ) === index
 	);
 
-	const isLoading = isWpMobileApp()
-		? isLoadingPage && isLoadingPost
-		: isLoadingPage && isLoadingPost && isLoadingProducts;
+	const isLoading =
+		isLoadingByCommentsQuery ||
+		isLoadingByIDsQuery ||
+		isLoadingMemoizedQuery ||
+		! hasTopPostsFinished ||
+		( ! isWpMobileApp() && isLoadingProducts );
 
 	return (
 		<Main wideLayout className="promote-post">
@@ -219,13 +291,32 @@ export default function PromotedPosts( { tab }: Props ) {
 				<PageViewTracker path="/advertising/:site/posts" title="Advertising > Ready to Blaze" />
 			) }
 
-			<QueryPosts siteId={ selectedSiteId } query={ queryPost } postId={ null } />
-			<QueryPosts siteId={ selectedSiteId } query={ queryPage } postId={ null } />
+			<QuerySiteStats siteId={ selectedSiteId } statType="statsTopPosts" query={ topPostsQuery } />
+
+			{ ! isLoading && content?.length > 0 && (
+				<QueryStatsRecentPostViews
+					siteId={ selectedSiteId }
+					postIds={ content?.map( ( post: any ) => post.ID ) }
+					num={ 30 }
+				/>
+			) }
+			{ topViewedPostAndPages && (
+				<QueryPosts siteId={ selectedSiteId } query={ topViewedMemoizedQuery } postId={ null } />
+			) }
+			<QueryPosts siteId={ selectedSiteId } query={ queryPageAndPostsByIDs } postId={ null } />
+			{ hasTopPostsFinished && ( ! topViewedPostAndPages || topViewedPostAndPages.length < 10 ) && (
+				<QueryPosts
+					siteId={ selectedSiteId }
+					query={ queryPageAndPostsByComments }
+					postId={ null }
+				/>
+			) }
+			{ selectedTab === 'posts' && (
+				<PostsList content={ contentWithoutDuplicatedIds } isLoading={ isLoading } />
+			) }
 			{ ! isWpMobileApp() && (
 				<QueryPosts siteId={ selectedSiteId } query={ queryProducts } postId={ null } />
 			) }
-
-			{ selectedTab === 'posts' && <PostsList content={ content } isLoading={ isLoading } /> }
 		</Main>
 	);
 }
