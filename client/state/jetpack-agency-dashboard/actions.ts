@@ -35,6 +35,20 @@ export const updateFilter = ( filterOptions: AgencyDashboardFilterOption[] ) => 
 	navigateToFilter( filterOptions );
 };
 
+export const updateSort = ( sort: { field: string; direction: string } | null ) => () => {
+	const params = new URLSearchParams( window.location.search );
+	const search = params.get( 's' ) ? `?s=${ params.get( 's' ) }` : '';
+	page(
+		addQueryArgs(
+			{
+				...( sort && { sort_field: sort.field, sort_direction: sort.direction } ),
+				...filterStateToQuery( params.getAll( 'issue_types' ) as AgencyDashboardFilterOption[] ),
+			},
+			window.location.pathname + search
+		)
+	);
+};
+
 export function setPurchasedLicense( productsInfo?: PurchasedProductsInfo ): AnyAction {
 	return { type: JETPACK_AGENCY_DASHBOARD_PURCHASED_LICENSE_CHANGE, payload: productsInfo };
 }
