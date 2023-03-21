@@ -363,7 +363,7 @@ export class RestAPIClient {
 
 		// This handles "errors" relating to the invite itself and can be an array.
 		// For instance, if a user tries to invite itself, or invite an already added user.
-		if ( response.errors.length !== 0 ) {
+		if ( response.errors.length ) {
 			for ( const err of response.errors ) {
 				console.error( `${ err.code }: ${ err.message }` );
 			}
