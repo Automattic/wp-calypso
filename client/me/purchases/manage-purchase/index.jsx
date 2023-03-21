@@ -120,7 +120,7 @@ import {
 	canEditPaymentDetails,
 	getAddNewPaymentMethodPath,
 	getChangePaymentMethodPath,
-	isTemporarySitePurchase,
+	isJetpackTemporarySitePurchase,
 	isAkismetTemporarySitePurchase,
 } from '../utils';
 import PurchaseNotice from './notices';
@@ -1083,12 +1083,18 @@ class ManagePurchase extends Component {
 						{ ! preventRenewal && ! renderMonthlyRenewalOption && this.renderRenewNowNavItem() }
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewAnnuallyNavItem() }
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewMonthlyNavItem() }
-						{ ! isTemporarySitePurchase( purchase ) && this.renderUpgradeNavItem() }
+						{ /* We don't want to show the Renew/Upgrade nav item for "Jetpack" temporary sites, but we DO
+						show it for "Akismet" temporary sites. (And all other types of purchases) */ }
+						{ /* TODO: Add ability to Renew Akismet subscription */ }
+						{ ! isJetpackTemporarySitePurchase( purchase ) && this.renderUpgradeNavItem() }
 						{ this.renderEditPaymentMethodNavItem() }
 						{ this.renderReinstall() }
 						{ this.renderCancelPurchaseNavItem() }
 						{ this.renderCancelSurvey() }
-						{ ! isTemporarySitePurchase( purchase ) && this.renderRemovePurchaseNavItem() }
+						{ /* We don't want to show the Cancel/Remove nav item for "Jetpack" temporary sites, but we DO
+						show it for "Akismet" temporary sites. (And all other types of purchases) */ }
+						{ /* TODO: Add ability to Cancel Akismet subscription */ }
+						{ ! isJetpackTemporarySitePurchase( purchase ) && this.renderRemovePurchaseNavItem() }
 					</>
 				) }
 			</Fragment>
