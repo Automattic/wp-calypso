@@ -198,7 +198,12 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 				{ translate( "Which point in your site's history would you like to clone from?" ) }
 			</p>
 			<div className="activity-log-v2__content">
-				<ActivityCardList logs={ logs } pageSize={ 10 } showFilter={ false } />
+				<ActivityCardList
+					logs={ logs }
+					pageSize={ 10 }
+					showFilter={ false }
+					availableActions={ [ 'clone' ] }
+				/>
 			</div>
 			<Button
 				className="clone-flow__primary-button"

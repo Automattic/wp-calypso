@@ -45,9 +45,16 @@ type OwnProps = {
 	summarize?: boolean;
 	shareable?: boolean;
 	activity: Activity;
+	availableActions: Array< string >;
 };
 
-const ActivityCard: React.FC< OwnProps > = ( { className, summarize, shareable, activity } ) => {
+const ActivityCard: React.FC< OwnProps > = ( {
+	className,
+	summarize,
+	shareable,
+	activity,
+	availableActions,
+} ) => {
 	const [ showContent, toggleShowContent ] = useToggleContent();
 
 	const siteId = useSelector( getSelectedSiteId ) as number;
@@ -96,6 +103,7 @@ const ActivityCard: React.FC< OwnProps > = ( { className, summarize, shareable, 
 						activity={ activity }
 						isContentExpanded={ showContent }
 						onToggleContent={ toggleShowContent }
+						availableActions={ availableActions }
 					/>
 				) }
 
@@ -107,6 +115,7 @@ const ActivityCard: React.FC< OwnProps > = ( { className, summarize, shareable, 
 							activity={ activity }
 							isContentExpanded={ showContent }
 							onToggleContent={ toggleShowContent }
+							availableActions={ availableActions }
 						/>
 					</div>
 				) }

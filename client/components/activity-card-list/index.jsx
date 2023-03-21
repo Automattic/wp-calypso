@@ -32,12 +32,14 @@ class ActivityCardList extends Component {
 		showDateSeparators: PropTypes.bool,
 		showFilter: PropTypes.bool,
 		showPagination: PropTypes.bool,
+		availableActions: PropTypes.array,
 	};
 
 	static defaultProps = {
 		showDateSeparators: true,
 		showFilter: true,
 		showPagination: true,
+		availableActions: [ 'rewind', 'download' ],
 	};
 
 	state = {
@@ -137,7 +139,8 @@ class ActivityCardList extends Component {
 	}
 
 	renderLogs( pageLogs ) {
-		const { applySiteOffset, moment, showDateSeparators, translate, userLocale } = this.props;
+		const { applySiteOffset, moment, showDateSeparators, translate, userLocale, availableActions } =
+			this.props;
 
 		const today = ( applySiteOffset ?? moment )();
 
@@ -171,6 +174,7 @@ class ActivityCardList extends Component {
 									: getSecondaryCardClassName( hasMore )
 							}
 							key={ activity.activityId }
+							availableActions={ availableActions }
 						/>
 					) ) }
 				</div>

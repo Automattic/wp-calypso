@@ -11,6 +11,7 @@ type OwnProps = {
 	activity: Activity;
 	isContentExpanded?: boolean;
 	onToggleContent?: () => void;
+	availableActions: Array< string >;
 };
 
 const Toolbar: React.FC< OwnProps > = ( {
@@ -18,6 +19,7 @@ const Toolbar: React.FC< OwnProps > = ( {
 	activity,
 	isContentExpanded,
 	onToggleContent,
+	availableActions,
 } ) => {
 	const isRewindable = isSuccessfulRealtimeBackup( activity );
 	const { streams } = activity;
@@ -32,7 +34,13 @@ const Toolbar: React.FC< OwnProps > = ( {
 			className={ streams ? 'activity-card__toolbar' : 'activity-card__toolbar--reverse' }
 		>
 			{ streams && <ExpandContent isExpanded={ isContentExpanded } onToggle={ onToggleContent } /> }
-			{ isRewindable && <ActionsButton siteId={ siteId } activity={ activity } /> }
+			{ isRewindable && (
+				<ActionsButton
+					siteId={ siteId }
+					activity={ activity }
+					availableActions={ availableActions }
+				/>
+			) }
 		</div>
 	);
 };
