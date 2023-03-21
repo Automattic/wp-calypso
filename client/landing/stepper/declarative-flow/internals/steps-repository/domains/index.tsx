@@ -238,17 +238,38 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		/>
 	);
 
+	const handleGoBack = () => {
+		if ( showUseYourDomain ) {
+			return setShowUseYourDomain( false );
+		}
+		return exitFlow?.( '/sites' );
+	};
+
+	const getBackLabelText = () => {
+		if ( showUseYourDomain ) {
+			return __( 'Back' );
+		}
+		return __( 'Back to sites' );
+	};
+
+	const getHideBack = () => {
+		if ( showUseYourDomain ) {
+			return false;
+		}
+		return ! isCopySiteFlow( flow );
+	};
+
 	return (
 		<StepContainer
 			stepName="domains"
 			isWideLayout={ true }
-			hideBack={ ! isCopySiteFlow( flow ) }
-			backLabelText={ __( 'Back to sites' ) }
+			hideBack={ getHideBack() }
+			backLabelText={ getBackLabelText() }
 			hideSkip={ true }
 			flowName={ flow as string }
 			stepContent={ <div className="domains__content">{ renderContent() }</div> }
 			recordTracksEvent={ recordTracksEvent }
-			goBack={ () => exitFlow?.( '/sites' ) }
+			goBack={ handleGoBack }
 			goNext={ () => submit?.() }
 			formattedHeader={
 				<FormattedHeader
