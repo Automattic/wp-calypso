@@ -203,6 +203,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 					pageSize={ 10 }
 					showFilter={ false }
 					availableActions={ [ 'clone' ] }
+					onClickClone={ onSetBackupPeriod }
 				/>
 			</div>
 			<Button

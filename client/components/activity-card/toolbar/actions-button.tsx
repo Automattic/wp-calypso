@@ -139,16 +139,15 @@ const MultisiteActionsButton: React.FC< MultisiteOwnProps > = ( { siteSlug, rewi
 };
 
 type CloneSiteOwnProps = {
-	siteId: number;
-	siteSlug: string;
 	rewindId: string;
+	onClickClone: any;
 };
 
-const CloneSiteActionsButton: React.FC< CloneSiteOwnProps > = () => {
+const CloneSiteActionsButton: React.FC< CloneSiteOwnProps > = ( { rewindId, onClickClone } ) => {
 	const translate = useTranslate();
 
 	return (
-		<Button compact className="toolbar__button">
+		<Button compact className="toolbar__button" onClick={ () => onClickClone( rewindId ) }>
 			{ translate( 'Clone from here' ) }
 		</Button>
 	);
@@ -158,9 +157,15 @@ type OwnProps = {
 	siteId: number;
 	activity: Activity;
 	availableActions: Array< string >;
+	onClickClone: any;
 };
 
-const ActionsButton: React.FC< OwnProps > = ( { siteId, activity, availableActions } ) => {
+const ActionsButton: React.FC< OwnProps > = ( {
+	siteId,
+	activity,
+	availableActions,
+	onClickClone,
+} ) => {
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
 	// The activity itself may not be rewindable, but at least one of the
@@ -177,11 +182,7 @@ const ActionsButton: React.FC< OwnProps > = ( { siteId, activity, availableActio
 
 	if ( availableActions && availableActions.includes( 'clone' ) ) {
 		return (
-			<CloneSiteActionsButton
-				siteId={ siteId }
-				siteSlug={ siteSlug ?? '' }
-				rewindId={ actionableRewindId ?? '' }
-			/>
+			<CloneSiteActionsButton rewindId={ actionableRewindId ?? '' } onClickClone={ onClickClone } />
 		);
 	}
 

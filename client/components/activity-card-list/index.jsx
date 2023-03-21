@@ -33,6 +33,7 @@ class ActivityCardList extends Component {
 		showFilter: PropTypes.bool,
 		showPagination: PropTypes.bool,
 		availableActions: PropTypes.array,
+		onClickClone: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -139,8 +140,15 @@ class ActivityCardList extends Component {
 	}
 
 	renderLogs( pageLogs ) {
-		const { applySiteOffset, moment, showDateSeparators, translate, userLocale, availableActions } =
-			this.props;
+		const {
+			applySiteOffset,
+			moment,
+			showDateSeparators,
+			translate,
+			userLocale,
+			availableActions,
+			onClickClone,
+		} = this.props;
 
 		const today = ( applySiteOffset ?? moment )();
 
@@ -175,6 +183,7 @@ class ActivityCardList extends Component {
 							}
 							key={ activity.activityId }
 							availableActions={ availableActions }
+							onClickClone={ onClickClone }
 						/>
 					) ) }
 				</div>

@@ -46,6 +46,7 @@ type OwnProps = {
 	shareable?: boolean;
 	activity: Activity;
 	availableActions: Array< string >;
+	onClickClone: any;
 };
 
 const ActivityCard: React.FC< OwnProps > = ( {
@@ -54,6 +55,7 @@ const ActivityCard: React.FC< OwnProps > = ( {
 	shareable,
 	activity,
 	availableActions,
+	onClickClone,
 } ) => {
 	const [ showContent, toggleShowContent ] = useToggleContent();
 
@@ -104,6 +106,7 @@ const ActivityCard: React.FC< OwnProps > = ( {
 						isContentExpanded={ showContent }
 						onToggleContent={ toggleShowContent }
 						availableActions={ availableActions }
+						onClickClone={ onClickClone }
 					/>
 				) }
 
@@ -116,6 +119,7 @@ const ActivityCard: React.FC< OwnProps > = ( {
 							isContentExpanded={ showContent }
 							onToggleContent={ toggleShowContent }
 							availableActions={ availableActions }
+							onClickClone={ onClickClone }
 						/>
 					</div>
 				) }

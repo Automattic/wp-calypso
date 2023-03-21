@@ -12,6 +12,7 @@ type OwnProps = {
 	isContentExpanded?: boolean;
 	onToggleContent?: () => void;
 	availableActions: Array< string >;
+	onClickClone: any;
 };
 
 const Toolbar: React.FC< OwnProps > = ( {
@@ -20,6 +21,7 @@ const Toolbar: React.FC< OwnProps > = ( {
 	isContentExpanded,
 	onToggleContent,
 	availableActions,
+	onClickClone,
 } ) => {
 	const isRewindable = isSuccessfulRealtimeBackup( activity );
 	const { streams } = activity;
@@ -39,6 +41,7 @@ const Toolbar: React.FC< OwnProps > = ( {
 					siteId={ siteId }
 					activity={ activity }
 					availableActions={ availableActions }
+					onClickClone={ onClickClone }
 				/>
 			) }
 		</div>
