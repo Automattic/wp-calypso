@@ -226,7 +226,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			hideBack={ ! isCopySiteFlow( flow ) }
 			backLabelText={ __( 'Back to sites' ) }
 			hideSkip={ true }
-			flowName={ isCopySiteFlow( flow ) ? ( flow as string ) : 'linkInBio' }
+			flowName={ isCopySiteFlow( flow ) ? ( flow as string ) : flow }
 			stepContent={ <div className="domains__content">{ renderContent() }</div> }
 			recordTracksEvent={ recordTracksEvent }
 			goBack={ () => exitFlow?.( '/sites' ) }
