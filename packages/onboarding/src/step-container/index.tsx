@@ -160,7 +160,7 @@ const StepContainer: React.FC< Props > = ( {
 		);
 	}
 
-	const classes = classNames( 'step-container', className, flowName, stepName, {
+	const classes = classNames( 'step-container', className, flowName, {
 		'is-horizontal-layout': isHorizontalLayout,
 		'is-wide-layout': isWideLayout,
 		'is-full-layout': isFullLayout,
