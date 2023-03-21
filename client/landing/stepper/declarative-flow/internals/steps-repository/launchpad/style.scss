@@ -665,3 +665,11 @@
 		display: none;
 	}
 }
+
+// Write and Free flow {
+.write.launchpad,
+.build.launchpad {
+	.launchpad__sidebar-header-flow-name {
+		display: none;
+	}
+}
