@@ -37,10 +37,15 @@ const domainUpsell: Flow = {
 			} ),
 			[]
 		);
+		const returnUrl = `/setup/${ flowName }/launchpad?siteSlug=${ siteSlug }`;
+		const encodedReturnUrl = encodeURIComponent( returnUrl );
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( currentStep ) {
 				case 'domains':
+					if ( providedDependencies?.deferDomainSelection ) {
+						return window.location.assign( returnUrl );
+					}
 					navigate( 'plans' );
 
 				case 'plans':
@@ -55,14 +60,10 @@ const domainUpsell: Flow = {
 							await addProductsToCart( siteSlug as string, flowName as string, [ domainCartItem ] );
 						}
 
-						const returnUrl = encodeURIComponent(
-							`/setup/${ flowName }/launchpad?siteSlug=${ siteSlug }`
-						);
-
 						return window.location.assign(
 							`/checkout/${ encodeURIComponent(
 								( siteSlug as string ) ?? ''
-							) }?redirect_to=${ returnUrl }`
+							) }?redirect_to=${ encodedReturnUrl }`
 						);
 					}
 			}

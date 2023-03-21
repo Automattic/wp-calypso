@@ -121,6 +121,10 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 
 		dispatch( recordTracksEvent( 'calypso_signup_skip_step', tracksProperties ) );
 
+		if ( flow === DOMAIN_UPSELL_FLOW ) {
+			return submit?.( { deferDomainSelection: true } );
+		}
+
 		submitWithDomain( undefined, shouldHideFreePlan );
 	};
 
