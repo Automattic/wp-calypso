@@ -67,3 +67,43 @@
 		margin-bottom: 22px;
 	}
 }
+
+@media screen and ( max-width: $break-medium ) {
+	.section-nav.subscription-manager-tab-switcher {
+		.section-nav__mobile-header {
+			display: none;
+		}
+
+		.section-nav-group {
+			display: flex;
+		}
+
+		.section-nav__panel {
+			display: flex;
+			align-items: center;
+		}
+
+		.section-nav-tab__text {
+			display: inline;
+			width: auto;
+			text-align: center;
+			flex-grow: 0;
+			font-weight: 400;
+		}
+
+		.section-nav-tab__link {
+			display: block;
+			font-weight: 400;
+			background-color: transparent;
+		}
+
+		.section-nav-tabs {
+			flex-grow: 1;
+			flex-shrink: 0;
+		}
+
+		.section-nav-tabs__list {
+			display: flex;
+		}
+	}
+}
