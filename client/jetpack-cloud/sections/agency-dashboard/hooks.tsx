@@ -67,6 +67,9 @@ export function useToggleActivateMonitor(
 						if ( site.blog_id === siteId ) {
 							return {
 								...site,
+								// As we rely primarily on the monitor_site_status field to determine the status of the monitor,
+								// we need to update it when the monitor_active field is updated.
+								monitor_site_status: params.monitor_active,
 								monitor_settings: {
 									...site.monitor_settings,
 									monitor_active: params.monitor_active,
