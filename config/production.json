@@ -96,6 +96,7 @@
 		"onboarding/import-redirect-to-themes": true,
 		"onboarding/2023-pricing-grid": true,
 		"p2/p2-plus": true,
+		"pattern-assembler/categories": false,
 		"pattern-assembler/color-and-fonts": false,
 		"pattern-assembler/logged-out-showcase": true,
 		"pattern-assembler/inline-styles": false,

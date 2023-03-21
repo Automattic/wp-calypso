@@ -18,7 +18,7 @@ interface Props {
 	onDoneClick: () => void;
 }
 
-const ScreenPatternList = ( { selectedPattern, onSelect, onBack, onDoneClick }: Props ) => {
+const ScreenPatternList = ( { selectedPattern, onSelect, onDoneClick }: Props ) => {
 	const translate = useTranslate();
 	const patterns = useSectionPatterns();
 	const navigator = useNavigator();
@@ -33,13 +33,12 @@ const ScreenPatternList = ( { selectedPattern, onSelect, onBack, onDoneClick }: 
 	return (
 		<>
 			<NavigatorHeader
-				title={ selectedPattern ? translate( 'Replace a pattern' ) : translate( 'Add patterns' ) }
+				title={ selectedPattern ? translate( 'Replace pattern' ) : translate( 'Add patterns' ) }
 			/>
 			<div className="screen-container__body">
 				<PatternSelector
 					patterns={ patterns }
 					onSelect={ onSelect }
-					onBack={ onBack }
 					selectedPattern={ selectedPattern }
 				/>
 			</div>

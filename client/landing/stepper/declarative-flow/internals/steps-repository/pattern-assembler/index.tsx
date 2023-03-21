@@ -21,10 +21,13 @@ import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign } from '../../analytics/record-design';
 import { SITE_TAGLINE, PLACEHOLDER_SITE_ID } from './constants';
 import useGlobalStylesUpgradeModal from './hooks/use-global-styles-upgrade-modal';
+import usePatternCategories from './hooks/use-pattern-categories';
+import usePatternsMapByCategory from './hooks/use-patterns-map-by-category';
 import NavigatorListener from './navigator-listener';
 import PatternAssemblerContainer from './pattern-assembler-container';
 import PatternLargePreview from './pattern-large-preview';
-import { useAllPatterns } from './patterns-data';
+import { useAllPatterns, useSectionPatterns } from './patterns-data';
+import ScreenCategoryList from './screen-category-list';
 import ScreenFooter from './screen-footer';
 import ScreenHeader from './screen-header';
 import ScreenHomepage from './screen-homepage';
@@ -32,7 +35,7 @@ import ScreenMain from './screen-main';
 import ScreenPatternList from './screen-pattern-list';
 import { encodePatternId } from './utils';
 import withGlobalStylesProvider from './with-global-styles-provider';
-import type { Pattern } from './types';
+import type { Pattern, Category } from './types';
 import type { Step } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { DesignRecipe, Design } from '@automattic/design-picker/src/types';
@@ -65,6 +68,13 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const allPatterns = useAllPatterns();
+	const sectionPatterns = useSectionPatterns();
+
+	// Fetching the categories so they are ready when ScreenCategoryList loads
+	const categoriesQuery = usePatternCategories( site?.ID );
+	const categories = ( categoriesQuery?.data || [] ) as Category[];
+	const sectionsMapByCategory = usePatternsMapByCategory( sectionPatterns, categories );
+
 	const stylesheet = selectedDesign?.recipe?.stylesheet || '';
 
 	const isEnabledColorAndFonts = isEnabled( 'pattern-assembler/color-and-fonts' );
@@ -141,15 +151,18 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 		patternType,
 		patternId,
 		patternName,
+		patternCategory,
 	}: {
 		patternType: string;
 		patternId: number;
 		patternName: string;
+		patternCategory: string | undefined;
 	} ) => {
 		recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_select_click', {
 			pattern_type: patternType,
 			pattern_id: patternId,
 			pattern_name: patternName,
+			pattern_category: patternCategory,
 		} );
 	};
 
@@ -163,11 +176,11 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 			pattern_names: patterns.map( ( { name } ) => name ).join( ',' ),
 			pattern_count: patterns.length,
 		} );
-		patterns.forEach( ( { id, name, category_slug } ) => {
+		patterns.forEach( ( { id, name, category } ) => {
 			recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_final_select', {
 				pattern_id: id,
 				pattern_name: name,
-				pattern_category: category_slug,
+				pattern_category: category?.name,
 			} );
 		} );
 	};
@@ -251,13 +264,32 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 		updateActivePatternPosition( position - 1 );
 	};
 
-	const onSelect = ( type: string, selectedPattern: Pattern | null ) => {
-		if ( type ) {
+	const onSelect = (
+		type: string,
+		selectedPattern: Pattern | null,
+		selectedCategory?: string | null
+	) => {
+		if ( selectedPattern ) {
+			// Inject the selected pattern category or the first category
+			// because it's used in tracks and as pattern name in the list
+			selectedPattern.category = categories.find(
+				( { name } ) => name === ( selectedCategory || selectedPattern.categories[ 0 ] )
+			);
+
 			trackEventPatternSelect( {
 				patternType: type,
-				patternId: selectedPattern?.id || 0,
-				patternName: selectedPattern?.name || '',
+				patternId: selectedPattern.id,
+				patternName: selectedPattern.name,
+				patternCategory: selectedPattern.category?.name,
 			} );
+
+			if ( 'section' === type ) {
+				if ( sectionPosition !== null ) {
+					replaceSection( selectedPattern );
+				} else {
+					addSection( selectedPattern );
+				}
+			}
 		}
 
 		if ( 'header' === type ) {
@@ -265,13 +297,6 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 		}
 		if ( 'footer' === type ) {
 			updateFooter( selectedPattern );
-		}
-		if ( 'section' === type && selectedPattern ) {
-			if ( sectionPosition !== null ) {
-				replaceSection( selectedPattern );
-			} else {
-				addSection( selectedPattern );
-			}
 		}
 	};
 
@@ -323,6 +348,7 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 			pattern_type: type,
 			pattern_ids: patterns.map( ( { id } ) => id ).join( ',' ),
 			pattern_names: patterns.map( ( { name } ) => name ).join( ',' ),
+			pattern_categories: patterns.map( ( { category } ) => category?.name ).join( ',' ),
 		} );
 	};
 
@@ -389,7 +415,7 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 				<NavigatorScreen path="/header">
 					<ScreenHeader
 						selectedPattern={ header }
-						onSelect={ ( selectedPattern ) => onSelect( 'header', selectedPattern ) }
+						onSelect={ onSelect }
 						onBack={ () => onPatternSelectorBack( 'header' ) }
 						onDoneClick={ () => onDoneClick( 'header' ) }
 					/>
@@ -398,7 +424,7 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 				<NavigatorScreen path="/footer">
 					<ScreenFooter
 						selectedPattern={ footer }
-						onSelect={ ( selectedPattern ) => onSelect( 'footer', selectedPattern ) }
+						onSelect={ onSelect }
 						onBack={ () => onPatternSelectorBack( 'footer' ) }
 						onDoneClick={ () => onDoneClick( 'footer' ) }
 					/>
@@ -415,12 +441,24 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 					/>
 				</NavigatorScreen>
 				<NavigatorScreen path="/homepage/patterns">
-					<ScreenPatternList
-						selectedPattern={ sectionPosition ? sections[ sectionPosition ] : null }
-						onSelect={ ( selectedPattern ) => onSelect( 'section', selectedPattern ) }
-						onBack={ () => onPatternSelectorBack( 'section' ) }
-						onDoneClick={ () => onDoneClick( 'section' ) }
-					/>
+					{ isEnabled( 'pattern-assembler/categories' ) ? (
+						<ScreenCategoryList
+							categories={ categories }
+							sectionsMapByCategory={ sectionsMapByCategory }
+							onDoneClick={ () => onDoneClick( 'section' ) }
+							replacePatternMode={ sectionPosition !== null }
+							selectedPattern={ sectionPosition !== null ? sections[ sectionPosition ] : null }
+							onSelect={ onSelect }
+							wrapperRef={ wrapperRef }
+						/>
+					) : (
+						<ScreenPatternList
+							selectedPattern={ sectionPosition !== null ? sections[ sectionPosition ] : null }
+							onSelect={ ( selectedPattern ) => onSelect( 'section', selectedPattern, null ) }
+							onBack={ () => onPatternSelectorBack( 'section' ) }
+							onDoneClick={ () => onDoneClick( 'section' ) }
+						/>
+					) }
 				</NavigatorScreen>
 
 				{ isEnabledColorAndFonts && (
