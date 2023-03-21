@@ -41,10 +41,7 @@ function CelebrateLaunchModal( { setModalIsOpen, site } ) {
 					</div>
 				</div>
 			</div>
-			<div
-				className="launched__modal-upsell"
-				style={ { display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' } }
-			>
+			<div className="launched__modal-upsell">
 				<div className="launched__modal-upsell-content">
 					<h2 className="launched__modal-upsell-heading">
 						{ translate( 'Claim your free domain' ) }
