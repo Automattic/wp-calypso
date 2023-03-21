@@ -64,6 +64,7 @@ export class PlanFeaturesComparisonHeader extends Component {
 			translate,
 			annualPricePerMonth,
 			isMonthlyPlan,
+			planType,
 		} = this.props;
 
 		if ( isMonthlyPlan && annualPricePerMonth < rawPrice ) {
@@ -75,9 +76,18 @@ export class PlanFeaturesComparisonHeader extends Component {
 			const annualPriceObj = getCurrencyObject( rawPriceAnnual, currencyCode );
 			const annualPriceText = `${ annualPriceObj.symbol }${ annualPriceObj.integer }`;
 
-			return translate( 'billed as %(price)s annually', {
-				args: { price: annualPriceText },
-			} );
+			return [
+				'personal-bundle-2y',
+				'value_bundle-2y',
+				'business-bundle-2y',
+				'ecommerce-bundle-2y',
+			].includes( planType )
+				? translate( 'billed as %(price)s biannually', {
+						args: { price: annualPriceText },
+				  } )
+				: translate( 'billed as %(price)s annually', {
+						args: { price: annualPriceText },
+				  } );
 		}
 
 		return null;
@@ -100,7 +110,7 @@ export class PlanFeaturesComparisonHeader extends Component {
 				'business-bundle-2y',
 				'ecommerce-bundle-2y',
 			].includes( planType )
-				? translate( `You're saving %(discountRate)s%% by paying bi-annually`, {
+				? translate( `You're saving %(discountRate)s%% by paying biannually`, {
 						args: { discountRate },
 				  } )
 				: translate( `You're saving %(discountRate)s%% by paying annually`, {
