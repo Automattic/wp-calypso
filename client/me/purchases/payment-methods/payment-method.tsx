@@ -6,11 +6,11 @@ import PaymentMethodBackupToggle from 'calypso/me/purchases/payment-methods/paym
 import PaymentMethodDelete from 'calypso/me/purchases/payment-methods/payment-method-delete';
 import { TaxInfoArea } from 'calypso/my-sites/checkout/composite-checkout/components/payment-method-tax-info';
 import PaymentMethodDetails from './payment-method-details';
-import type { PaymentMethod as PaymentMethodType } from 'calypso/lib/checkout/payment-methods';
+import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 
 import 'calypso/me/purchases/payment-methods/style.scss';
 
-export default function PaymentMethod( { paymentMethod }: { paymentMethod: PaymentMethodType } ) {
+export default function PaymentMethod( { paymentMethod }: { paymentMethod: StoredPaymentMethod } ) {
 	return (
 		<CompactCard
 			className={ classNames( 'payment-method__wrapper', {
@@ -19,7 +19,7 @@ export default function PaymentMethod( { paymentMethod }: { paymentMethod: Payme
 		>
 			<div className="payment-method">
 				<PaymentMethodDetails
-					lastDigits={ paymentMethod.card }
+					lastDigits={ paymentMethod.card_last_4 }
 					email={ paymentMethod.email }
 					cardType={ paymentMethod.card_type || '' }
 					paymentPartner={ paymentMethod.payment_partner }
@@ -29,7 +29,7 @@ export default function PaymentMethod( { paymentMethod }: { paymentMethod: Payme
 				/>
 				{ isCreditCard( paymentMethod ) && <PaymentMethodBackupToggle card={ paymentMethod } /> }
 				<TaxInfoArea
-					last4={ paymentMethod.card }
+					last4={ paymentMethod.card_last_4 }
 					brand={ paymentMethod.card_type }
 					storedDetailsId={ paymentMethod.stored_details_id }
 					paymentPartnerProcessorId={ paymentMethod.payment_partner }
