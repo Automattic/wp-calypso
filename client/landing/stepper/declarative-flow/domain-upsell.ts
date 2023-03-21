@@ -1,6 +1,6 @@
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { OnboardSelect } from 'calypso/../packages/data-stores/src';
 import {
 	addPlanToCart,
 	addProductsToCart,
@@ -21,12 +21,6 @@ const domainUpsell: Flow = {
 	},
 
 	useSteps() {
-		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
-
-		useEffect( () => {
-			resetOnboardStore();
-		}, [] );
-
 		return [
 			{ slug: 'domains', component: DomainsStep },
 			{ slug: 'plans', component: PlansStep },
@@ -36,10 +30,13 @@ const domainUpsell: Flow = {
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = useQuery().get( 'flowToReturnTo' );
 		const siteSlug = useSiteSlug();
-		const { getDomainCartItem, getPlanCartItem } = useSelect( ( select ) => ( {
-			getDomainCartItem: select( ONBOARD_STORE ).getDomainCartItem,
-			getPlanCartItem: select( ONBOARD_STORE ).getPlanCartItem,
-		} ) );
+		const { getDomainCartItem, getPlanCartItem } = useSelect(
+			( select ) => ( {
+				getDomainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem,
+				getPlanCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem,
+			} ),
+			[]
+		);
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( currentStep ) {

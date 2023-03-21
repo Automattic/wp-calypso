@@ -97,7 +97,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			let hideFreePlan;
 
 			if ( flow === DOMAIN_UPSELL_FLOW ) {
-				hideFreePlan = false;
+				hideFreePlan = true;
 			} else {
 				hideFreePlan = Boolean( suggestion.product_slug ) || shouldHideFreePlan;
 			}
