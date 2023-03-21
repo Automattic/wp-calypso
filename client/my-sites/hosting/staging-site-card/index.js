@@ -261,7 +261,7 @@ export default withMediaStorage(
 		let spaceQuotaExceededForStaging = false;
 		// We check against -1 as this is the default value for sites with
 		// upload_space_check_disabled option.
-		if ( mediaStorage.storage_used_bytes > -1 && mediaStorage?.max_storage_bytes > -1 ) {
+		if ( mediaStorage?.storage_used_bytes > -1 && mediaStorage?.max_storage_bytes > -1 ) {
 			spaceQuotaExceededForStaging =
 				mediaStorage.storage_used_bytes > mediaStorage.max_storage_bytes / 2;
 		}
