@@ -252,7 +252,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		return __( 'Back to sites' );
 	};
 
-	const getHideBack = () => {
+	const shouldHideBackButton = () => {
 		if ( showUseYourDomain ) {
 			return false;
 		}
@@ -263,7 +263,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		<StepContainer
 			stepName="domains"
 			isWideLayout={ true }
-			hideBack={ getHideBack() }
+			hideBack={ shouldHideBackButton() }
 			backLabelText={ getBackLabelText() }
 			hideSkip={ true }
 			flowName={ flow as string }
