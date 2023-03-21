@@ -13,7 +13,7 @@ interface Props {
 	onDoneClick: () => void;
 }
 
-const ScreenFooter = ( { selectedPattern, onSelect, onDoneClick }: Props ) => {
+const ScreenFooter = ( { selectedPattern, onSelect, onBack, onDoneClick }: Props ) => {
 	const translate = useTranslate();
 	const patterns = useFooterPatterns();
 

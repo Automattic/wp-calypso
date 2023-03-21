@@ -267,7 +267,7 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 	const onSelect = (
 		type: string,
 		selectedPattern: Pattern | null,
-		selectedCategory: string | null
+		selectedCategory?: string | null
 	) => {
 		if ( selectedPattern ) {
 			// Inject the selected pattern category or the first category

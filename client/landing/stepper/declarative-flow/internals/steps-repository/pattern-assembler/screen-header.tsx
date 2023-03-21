@@ -13,7 +13,7 @@ interface Props {
 	onDoneClick: () => void;
 }
 
-const ScreenHeader = ( { selectedPattern, onSelect, onDoneClick }: Props ) => {
+const ScreenHeader = ( { selectedPattern, onSelect, onBack, onDoneClick }: Props ) => {
 	const translate = useTranslate();
 	const patterns = useHeaderPatterns();
 
