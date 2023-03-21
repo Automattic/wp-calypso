@@ -256,6 +256,7 @@ $font-family: "SF Pro Text", $sans;
 		padding: 2px;
 		margin-bottom: 32px;
 		overflow-y: auto;
+		flex-grow: 1;
 	}
 
 	.screen-container__body--no-padding {
