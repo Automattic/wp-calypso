@@ -1,5 +1,5 @@
 /**
- * @group testgutenberg
+ * @group gutenberg
  */
 import {
 	envVariables,
