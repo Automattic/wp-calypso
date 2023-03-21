@@ -3,74 +3,10 @@ import StatsEmptyState from '../stats-empty-state';
 import './style.scss';
 
 // New Subscriber Stats
-// We don't have any data yet so we are just plotting visitor data.
+// We don't have any data yet so we are just using some test data.
 // Currently using the LineChart component from the Calypso library.
 
-const DATA_TYPE_API = 'api';
-const DATA_TYPE_SINGLE = 'single';
-const DATA_TYPE_MULTI = 'multi';
-
-function getDataSingleLine() {
-	const data = [
-		[
-			{ date: 1528462681168, value: 21 },
-			{ date: 1528549081168, value: 26 },
-			{ date: 1528635481168, value: 32 },
-			{ date: 1528721881168, value: 38 },
-			{ date: 1528808281168, value: 43 },
-			{ date: 1528894681168, value: 44 },
-			{ date: 1528981081168, value: 57 },
-			{ date: 1529067481168, value: 54 },
-			{ date: 1529153881168, value: 49 },
-			{ date: 1529240281168, value: 61 },
-		],
-	];
-	return data;
-}
-
-function getDataMultiLine() {
-	const data = [
-		[
-			{ date: 1528462681168, value: 21 },
-			{ date: 1528549081168, value: 18 },
-			{ date: 1528635481168, value: 37 },
-			{ date: 1528721881168, value: 38 },
-			{ date: 1528808281168, value: 43 },
-			{ date: 1528894681168, value: 44 },
-			{ date: 1528981081168, value: 17 },
-			{ date: 1529067481168, value: 27 },
-			{ date: 1529153881168, value: 26 },
-			{ date: 1529240281168, value: 24 },
-		],
-		[
-			{ date: 1528462681168, value: 25 },
-			{ date: 1528549081168, value: 37 },
-			{ date: 1528635481168, value: 23 },
-			{ date: 1528721881168, value: 34 },
-			{ date: 1528808281168, value: 3 },
-			{ date: 1528894681168, value: 4 },
-			{ date: 1528981081168, value: 1 },
-			{ date: 1529067481168, value: 9 },
-			{ date: 1529153881168, value: 20 },
-			{ date: 1529240281168, value: 16 },
-		],
-		[
-			{ date: 1528462681168, value: 7 },
-			{ date: 1528549081168, value: 1 },
-			{ date: 1528635481168, value: 32 },
-			{ date: 1528721881168, value: 40 },
-			{ date: 1528808281168, value: 38 },
-			{ date: 1528894681168, value: 31 },
-			{ date: 1528981081168, value: 17 },
-			{ date: 1529067481168, value: 48 },
-			{ date: 1529153881168, value: 21 },
-			{ date: 1529240281168, value: 46 },
-		],
-	];
-	return data;
-}
-
-function getDataAPISample() {
+function getData() {
 	// From https://code.a8c.com/D105106 -- Work in progress on new endpoint.
 	const data = [
 		[ '2023-03-01', 51131, 547 ],
@@ -121,25 +57,11 @@ function getDataAPISample() {
 	return [ processedData.slice( 0, maxDataSize ).reverse() ];
 }
 
-function getData( type ) {
-	if ( type === DATA_TYPE_API ) {
-		return getDataAPISample();
-	}
-	if ( type === DATA_TYPE_SINGLE ) {
-		return getDataSingleLine();
-	}
-	if ( type === DATA_TYPE_MULTI ) {
-		return getDataMultiLine();
-	}
-	return [];
-}
-
 export default function SubscribersSection() {
-	const dataType = DATA_TYPE_API;
-	const data = getData( dataType );
+	const data = getData();
 
-	const tooltipHelper =
-		dataType !== DATA_TYPE_API ? ( datum ) => datum.value : ( datum ) => `Changed: ${ datum.diff }`;
+	// Determines what is shown in the tooltip on hover.
+	const tooltipHelper = ( datum ) => `Changed: ${ datum.diff }`;
 
 	return (
 		<div className="subscribers-section">
