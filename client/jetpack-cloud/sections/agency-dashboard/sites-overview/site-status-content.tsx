@@ -182,7 +182,7 @@ export default function SiteStatusContent( {
 	let updatedTooltip = tooltip;
 
 	// Show "Not supported on multisite" when the the site is multisite and the product is Scan or
-	// Backup and the site does not have Backup subscription https://href.li/?https://wp.me/pbuNQi-1jg
+	// Backup and the site does not have a backup subscription https://href.li/?https://wp.me/pbuNQi-1jg
 	const showMultisiteNotSupported =
 		isMultiSite && ( type === 'scan' || ( type === 'backup' && ! rows.site.value.has_backup ) );
 
