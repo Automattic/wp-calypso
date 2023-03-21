@@ -135,7 +135,7 @@ const Verification: FunctionComponent< Props > = ( {
 					<Button
 						primary
 						onClick={ onFinishUp }
-						href={ redirectOnFinish ? settingsPath( siteSlug ) : null }
+						href={ redirectOnFinish ? settingsPath( siteSlug ) : '#' }
 					>
 						{ translate( 'Finish up' ) }
 					</Button>

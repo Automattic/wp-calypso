@@ -67,6 +67,9 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteUrl } ) => {
 
 	// Temporary for testing until we have a backup selection UI
 	const latestBackupPeriod = useSelector( ( state ) => {
+		if ( ! siteId ) {
+			return null;
+		}
 		const backups = getRewindBackups( state, siteId ) || [];
 		const completedBackups = backups.filter( ( backup ) => backup.status === 'finished' );
 		return completedBackups.length ? completedBackups[ 0 ].period : null;
@@ -86,17 +89,23 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteUrl } ) => {
 		() => dispatch( requestRewindBackups( siteId ) ),
 		[ dispatch, siteId ]
 	);
-	const backupCurrentlyInProgress = useSelector( ( state ) =>
-		getInProgressBackupForSite( state, siteId )
-	);
+	const backupCurrentlyInProgress = useSelector( ( state ) => {
+		if ( ! siteId ) {
+			return null;
+		}
+		return getInProgressBackupForSite( state, siteId );
+	} );
 
 	const rewindState = useSelector( ( state ) => getRewindState( state, siteId ) ) as RewindState;
-	const inProgressRewindStatus = useSelector( ( state ) =>
-		getInProgressRewindStatus( state, siteId, backupPeriod )
-	);
-	const { message, percent, currentEntry, status } = useSelector(
-		( state ) => getRestoreProgress( state, siteId ) || ( {} as RestoreProgress )
-	);
+	const inProgressRewindStatus = useSelector( ( state ) => {
+		if ( ! siteId ) {
+			return null;
+		}
+		return getInProgressRewindStatus( state, siteId, backupPeriod );
+	} );
+	const { message, percent, currentEntry, status } = useSelector( ( state ) => {
+		return getRestoreProgress( state, siteId ?? 0 ) || ( {} as RestoreProgress );
+	} );
 
 	const CredSettings = {
 		action: 'edit',

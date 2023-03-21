@@ -342,7 +342,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 						onChange={ handleFormChange }
 						disabled={ disabled }
 						isError={
-							formErrors.baseurl &&
+							formErrors.site_url &&
 							( interactions.site_url || ! formErrors.site_url.waitForInteraction )
 						}
 					/>
