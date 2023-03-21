@@ -12,6 +12,7 @@ import Tooltip from 'calypso/components/tooltip';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { selectLicense, unselectLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { hasSelectedLicensesOfType } from 'calypso/state/jetpack-agency-dashboard/selectors';
+import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import ToggleActivateMonitoring from '../downtime-monitoring/toggle-activate-monitoring';
 import SitesOverviewContext from './context';
 import SiteSelectCheckbox from './site-select-checkbox';
@@ -59,6 +60,8 @@ export default function SiteStatusContent( {
 	const isLicenseSelected = useSelector( ( state ) =>
 		hasSelectedLicensesOfType( state, siteId, type )
 	);
+
+	const isMultiSite = useSelector( ( state ) => isJetpackSiteMultiSite( state, siteId ) );
 
 	// Disable clicks/hover when there is a site error &
 	// when the row is not monitor and monitor status is down
@@ -175,159 +178,174 @@ export default function SiteStatusContent( {
 		);
 	}
 
-	// We will show "Site Down" when the site is down which is handled differently.
-	if ( type === 'monitor' && ! siteDown ) {
-		return (
-			<ToggleActivateMonitoring
-				site={ rows.site.value }
-				settings={ rows.monitor.settings }
-				status={ status }
-				tooltip={ tooltip }
-				tooltipId={ tooltipId }
-				siteError={ siteError }
-				isLargeScreen={ isLargeScreen }
-			/>
-		);
-	}
+	let content;
+	let updatedTooltip = tooltip;
 
-	if ( type === 'stats' ) {
-		const { total: totalViews, trend: viewsTrend } = rows.stats.value.views;
-		if ( viewsTrend === 'same' ) {
+	// Show "Not supported on multisite" when the the site is multisite and the product is Scan or
+	// Backup and the site does not have Backup subscription https://href.li/?https://wp.me/pbuNQi-1jg
+	const showMultisiteNotSupported =
+		isMultiSite && ( type === 'scan' || ( type === 'backup' && ! rows.site.value.has_backup ) );
+
+	if ( showMultisiteNotSupported ) {
+		content = <Gridicon icon="minus-small" size={ 18 } className="sites-overview__icon-active" />;
+		updatedTooltip = translate( 'Not supported on multisite' );
+	} else {
+		// We will show "Site Down" when the site is down which is handled differently.
+		if ( type === 'monitor' && ! siteDown ) {
 			return (
-				<>
-					<span className="sites-overview__stats-trend sites-overview__stats-trend__same" />
+				<ToggleActivateMonitoring
+					site={ rows.site.value }
+					settings={ rows.monitor.settings }
+					status={ status }
+					tooltip={ updatedTooltip }
+					tooltipId={ tooltipId }
+					siteError={ siteError }
+					isLargeScreen={ isLargeScreen }
+				/>
+			);
+		}
+
+		if ( type === 'stats' ) {
+			const { total: totalViews, trend: viewsTrend } = rows.stats.value.views;
+			if ( viewsTrend === 'same' ) {
+				return (
+					<>
+						<span className="sites-overview__stats-trend sites-overview__stats-trend__same" />
+						<div className="sites-overview__stats">
+							<ShortenedNumber value={ totalViews } />
+						</div>
+					</>
+				);
+			}
+			const trendIcon = getTrendIcon( viewsTrend );
+			return (
+				<span
+					className={ classNames( 'sites-overview__stats-trend', {
+						'sites-overview__stats-trend__up': viewsTrend === 'up',
+						'sites-overview__stats-trend__down': viewsTrend === 'down',
+					} ) }
+				>
+					{ trendIcon && <Icon icon={ trendIcon } size={ 16 } /> }
 					<div className="sites-overview__stats">
 						<ShortenedNumber value={ totalViews } />
 					</div>
-				</>
+				</span>
 			);
 		}
-		const trendIcon = getTrendIcon( viewsTrend );
-		return (
-			<span
-				className={ classNames( 'sites-overview__stats-trend', {
-					'sites-overview__stats-trend__up': viewsTrend === 'up',
-					'sites-overview__stats-trend__down': viewsTrend === 'down',
-				} ) }
-			>
-				{ trendIcon && <Icon icon={ trendIcon } size={ 16 } /> }
-				<div className="sites-overview__stats">
-					<ShortenedNumber value={ totalViews } />
-				</div>
-			</span>
-		);
-	}
 
-	if ( type === 'boost' ) {
-		const overallScore = rows.site.value.jetpack_boost_scores.overall;
-		if ( hasBoost ) {
-			return (
-				<div
-					className={ classNames(
-						'sites-overview__boost-score',
-						getBoostRatingClass( overallScore )
-					) }
-				>
-					{ translate( '%(rating)s Score', {
-						args: { rating: getBoostRating( overallScore ) },
-						comment: '%rating will be replaced by boost rating, e.g. "A", "B", "C", "D", or "F"',
-					} ) }
-				</div>
-			);
+		if ( type === 'boost' ) {
+			const overallScore = rows.site.value.jetpack_boost_scores.overall;
+			if ( hasBoost ) {
+				return (
+					<div
+						className={ classNames(
+							'sites-overview__boost-score',
+							getBoostRatingClass( overallScore )
+						) }
+					>
+						{ translate( '%(rating)s Score', {
+							args: { rating: getBoostRating( overallScore ) },
+							comment: '%rating will be replaced by boost rating, e.g. "A", "B", "C", "D", or "F"',
+						} ) }
+					</div>
+				);
+			}
+			return <div></div>;
 		}
-		return <div></div>;
-	}
 
-	let content;
-
-	switch ( status ) {
-		case 'critical': {
-			content = <div className="sites-overview__critical">{ value }</div>;
-			break;
-		}
-		case 'failed': {
-			content = isExpandedBlockEnabled ? (
-				<div className="sites-overview__failed">{ value }</div>
-			) : (
-				<Badge className="sites-overview__badge" type="error">
-					{ value }
-				</Badge>
-			);
-			break;
-		}
-		case 'warning': {
-			content = isExpandedBlockEnabled ? (
-				<div className="sites-overview__warning">{ value }</div>
-			) : (
-				<Badge className="sites-overview__badge" type="warning">
-					{ value }
-				</Badge>
-			);
-			break;
-		}
-		case 'success': {
-			content = <Gridicon icon="checkmark" size={ 18 } className="sites-overview__grey-icon" />;
-			break;
-		}
-		case 'disabled': {
-			content = <Gridicon icon="minus-small" size={ 18 } className="sites-overview__icon-active" />;
-			break;
-		}
-		case 'progress': {
-			content = <Gridicon icon="time" size={ 18 } className="sites-overview__grey-icon" />;
-			break;
-		}
-		case 'inactive': {
-			content = ! isLicenseSelected ? (
-				<button onClick={ handleSelectLicenseAction }>
-					<span className="sites-overview__status-select-license">
-						<Gridicon icon="plus-small" size={ 16 } />
-						<span>{ translate( 'Add' ) }</span>
-					</span>
-				</button>
-			) : (
-				<button onClick={ handleDeselectLicenseAction }>
-					<span className="sites-overview__status-unselect-license">
-						<Gridicon icon="checkmark" size={ 16 } />
-						<span>{ translate( 'Selected' ) }</span>
-					</span>
-				</button>
-			);
-			break;
+		switch ( status ) {
+			case 'critical': {
+				content = <div className="sites-overview__critical">{ value }</div>;
+				break;
+			}
+			case 'failed': {
+				content = isExpandedBlockEnabled ? (
+					<div className="sites-overview__failed">{ value }</div>
+				) : (
+					<Badge className="sites-overview__badge" type="error">
+						{ value }
+					</Badge>
+				);
+				break;
+			}
+			case 'warning': {
+				content = isExpandedBlockEnabled ? (
+					<div className="sites-overview__warning">{ value }</div>
+				) : (
+					<Badge className="sites-overview__badge" type="warning">
+						{ value }
+					</Badge>
+				);
+				break;
+			}
+			case 'success': {
+				content = <Gridicon icon="checkmark" size={ 18 } className="sites-overview__grey-icon" />;
+				break;
+			}
+			case 'disabled': {
+				content = (
+					<Gridicon icon="minus-small" size={ 18 } className="sites-overview__icon-active" />
+				);
+				break;
+			}
+			case 'progress': {
+				content = <Gridicon icon="time" size={ 18 } className="sites-overview__grey-icon" />;
+				break;
+			}
+			case 'inactive': {
+				content = ! isLicenseSelected ? (
+					<button onClick={ handleSelectLicenseAction }>
+						<span className="sites-overview__status-select-license">
+							<Gridicon icon="plus-small" size={ 16 } />
+							<span>{ translate( 'Add' ) }</span>
+						</span>
+					</button>
+				) : (
+					<button onClick={ handleDeselectLicenseAction }>
+						<span className="sites-overview__status-unselect-license">
+							<Gridicon icon="checkmark" size={ 16 } />
+							<span>{ translate( 'Selected' ) }</span>
+						</span>
+					</button>
+				);
+				break;
+			}
 		}
 	}
 
 	let updatedContent = content;
 
-	if ( link ) {
-		let target = '_self';
-		let rel;
-		if ( isExternalLink ) {
-			target = '_blank';
-			rel = 'noreferrer';
+	if ( ! isMultiSite ) {
+		if ( link ) {
+			let target = '_self';
+			let rel;
+			if ( isExternalLink ) {
+				target = '_blank';
+				rel = 'noreferrer';
+			}
+			updatedContent = (
+				<a
+					data-testid={ `row-${ tooltipId }` }
+					target={ target }
+					rel={ rel }
+					onClick={ handleClickRowAction }
+					href={ link }
+				>
+					{ content }
+				</a>
+			);
 		}
-		updatedContent = (
-			<a
-				data-testid={ `row-${ tooltipId }` }
-				target={ target }
-				rel={ rel }
-				onClick={ handleClickRowAction }
-				href={ link }
-			>
-				{ content }
-			</a>
-		);
-	}
 
-	if ( disabledStatus ) {
-		updatedContent = (
-			<span className="sites-overview__disabled sites-overview__row-status">{ content } </span>
-		);
+		if ( disabledStatus ) {
+			updatedContent = (
+				<span className="sites-overview__disabled sites-overview__row-status">{ content } </span>
+			);
+		}
 	}
 
 	return (
 		<>
-			{ tooltip && ! disabledStatus ? (
+			{ updatedTooltip && ! disabledStatus ? (
 				<>
 					<span
 						ref={ statusContentRef }
@@ -347,7 +365,7 @@ export default function SiteStatusContent( {
 						position="bottom"
 						className="sites-overview__tooltip"
 					>
-						{ tooltip }
+						{ updatedTooltip }
 					</Tooltip>
 				</>
 			) : (
