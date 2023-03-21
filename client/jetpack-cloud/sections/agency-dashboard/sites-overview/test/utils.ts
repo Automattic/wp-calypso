@@ -42,7 +42,8 @@ describe( 'utils', () => {
 			is_favorite: false,
 			monitor_last_status_change: '2020-12-01T00:00:00+00:00',
 			monitor_settings: {
-				monitor_active: true,
+				monitor_active: false,
+				monitor_site_status: false,
 				last_down_time: '',
 				monitor_deferment_time: 5,
 				monitor_user_emails: [],
@@ -200,6 +201,7 @@ describe( 'utils', () => {
 					monitor_site_status: true,
 					monitor_settings: {
 						monitor_active: true,
+						monitor_site_status: true,
 					},
 					site_stats: {
 						views: {
@@ -256,6 +258,7 @@ describe( 'utils', () => {
 						value: '',
 						settings: {
 							monitor_active: true,
+							monitor_site_status: true,
 						},
 					},
 					plugin: {
