@@ -1,7 +1,7 @@
 import { CompactCard } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { trim, flatMap } from 'lodash';
+import { trim, flatMap, some } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import * as React from 'react';
@@ -25,6 +25,7 @@ import {
 	SORT_BY_LAST_UPDATED,
 } from 'calypso/state/reader/feed-searches/actions';
 import { getReaderAliasedFollowFeedUrl } from 'calypso/state/reader/follows/selectors';
+import { commonExtensions } from 'calypso/state/reader/follows/selectors/get-reader-aliased-follow-feed-url';
 import PostResults from './post-results';
 import SearchStreamHeader, { SEARCH_TYPES } from './search-stream-header';
 import SiteResults from './site-results';
@@ -110,14 +111,11 @@ class SearchStream extends React.Component {
 			searchPlaceholderText = getSearchPlaceholderText();
 		}
 
-		let isRssFeed = false;
+		let isPotentialFeed = false;
 		if ( showFollowByUrl ) {
 			const parsedUrl = new URL( query );
 			if ( parsedUrl ) {
-				const tld = parsedUrl.pathname?.split( '.' ).pop();
-				if ( tld === 'xml' ) {
-					isRssFeed = true;
-				}
+				isPotentialFeed = some( commonExtensions, ( ext ) => parsedUrl.toString().includes( ext ) );
 			}
 		}
 
@@ -175,12 +173,7 @@ class SearchStream extends React.Component {
 					</CompactCard>
 					{ showFollowByUrl && (
 						<div className="search-stream__url-follow">
-							{ isRssFeed && (
-								<div>
-									<label>{ translate( 'Rss Feed detected' ) }</label>
-								</div>
-							) }
-							{ ! isRssFeed && (
+							{ isPotentialFeed && (
 								<div>
 									<label>{ translate( 'Feed detected' ) }</label>
 								</div>
