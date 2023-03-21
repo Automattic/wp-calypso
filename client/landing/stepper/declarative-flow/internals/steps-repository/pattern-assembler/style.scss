@@ -262,6 +262,10 @@ $font-family: "SF Pro Text", $sans;
 		overflow-y: auto;
 	}
 
+	.screen-container__body--no-padding {
+		padding: 0;
+	}
+
 	.screen-container__footer {
 		padding: 0 2px;
 		margin-top: auto;
