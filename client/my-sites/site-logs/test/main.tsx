@@ -4,12 +4,14 @@
 
 import { screen, waitFor } from '@testing-library/react';
 import React from 'react';
+import documentHead from 'calypso/state/document-head/reducer';
 import { reducer as ui } from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { useNock, nock } from 'calypso/test-helpers/use-nock';
 import { SiteLogs } from '../main';
 
-const render = ( el, options ) => renderWithProvider( el, { ...options, reducers: { ui } } );
+const render = ( el, options ) =>
+	renderWithProvider( el, { ...options, reducers: { ui, documentHead } } );
 
 describe( 'SiteLogs', () => {
 	useNock();
