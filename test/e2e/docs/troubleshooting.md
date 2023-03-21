@@ -8,8 +8,8 @@
 <!-- TOC -->
 
 - [Troubleshooting](#troubleshooting)
-    - [git pre-commit hook/husky](#git-pre-commit-hookhusky)
-    - [Package 'lcms2', required by 'vips', not found](#package-lcms2-required-by-vips-not-found)
+  - [git pre-commit hook/husky](#git-pre-commit-hookhusky)
+  - [Package 'lcms2', required by 'vips', not found](#package-lcms2-required-by-vips-not-found)
 
 <!-- /TOC -->
 
@@ -40,24 +40,3 @@ yarn install
 ```
 
 Once complete, running `git commit` should no longer trigger the git pre-commit hook error.
-
-## Package 'lcms2', required by 'vips', not found
-
-This issue is observed by Apple Silicon users when attempting to set up Calypso locally.
-
-```
-Package 'lcms2', required by 'vips', not found
-gyp: Call to 'PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:/usr/lib/pkgconfig" pkg-config --cflags-only-I vips-cpp vips glib-2.0 | sed s\/-I//g' returned exit status 0 while in binding.gyp. while trying to load binding.gyp
-gyp ERR! configure error
-gyp ERR! stack Error: `gyp` failed with exit code: 1
-gyp ERR! stack     at ChildProcess.onCpExit (/Users/keoshi/Documents/repos/wp-calypso/node_modules/node-gyp/lib/configure.js:353:16)
-gyp ERR! stack     at ChildProcess.emit (node:events:390:28)
-gyp ERR! stack     at Process.ChildProcess._handle.onexit (node:internal/child_process:290:12)
-gyp ERR! System Darwin 21.1.0
-gyp ERR! command "/Users/keoshi/.nvm/versions/node/v16.11.1/bin/node" "/Users/keoshi/Documents/repos/wp-calypso/node_modules/node-gyp/bin/node-gyp.js" "rebuild"
-gyp ERR! cwd /Users/keoshi/Documents/repos/wp-calypso/node_modules/sharp
-```
-
-Solution:
-
-Comment out the dependency for `sharp` in the [top-level `package.json`](https://github.com/Automattic/wp-calypso/blob/trunk/package.json#L276).

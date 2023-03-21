@@ -12,6 +12,8 @@ import {
 	PLAN_TRIENNIAL_PERIOD,
 } from './constants';
 
+export { getPlanSlugForTermVariant } from './get-plan-term-variant';
+
 export function isBestValue( plan: string ): boolean {
 	return ( BEST_VALUE_PLANS as ReadonlyArray< string > ).includes( plan );
 }

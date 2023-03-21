@@ -157,9 +157,9 @@ class FeedHeader extends Component {
 							</span>
 						) }
 						<div className="reader-feed-header__follow-and-settings">
-							{ feed && ! feed.is_error && (
+							{ siteUrl && (
 								<div className="reader-feed-header__follow-button">
-									<ReaderFollowButton siteUrl={ feed.feed_URL } iconSize={ 24 } />
+									<ReaderFollowButton siteUrl={ siteUrl } iconSize={ 24 } />
 								</div>
 							) }
 

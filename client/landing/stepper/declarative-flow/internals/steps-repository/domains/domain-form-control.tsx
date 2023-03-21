@@ -283,17 +283,6 @@ export function DomainFormControl( {
 		sideContent = getSideContent();
 	}
 
-	// if ( 'invalid' === this.props.step.status ) {
-	// 	content = (
-	// 		<div className="domains__step-section-wrapper">
-	// 			<Notice status="is-error" showDismiss={ false }>
-	// 				{ this.props.step.errors.message }
-	// 			</Notice>
-	// 			{ content }
-	// 		</div>
-	// 	);
-	// }
-
 	return (
 		<>
 			{ isEmpty( productsList ) && <QueryProductsList /> }

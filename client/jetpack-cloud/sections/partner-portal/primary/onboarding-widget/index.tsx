@@ -57,15 +57,18 @@ export default function OnboardingWidget( { isLicensesPage }: { isLicensesPage?:
 			video:
 				'https://video.wordpress.com/embed/T6pTlPK8?hd=1&amp;autoPlay=0&amp;permalink=1&amp;loop=0&amp;preloadContent=metadata&amp;muted=0&amp;playsinline=0&amp;controls=1&amp;cover=1',
 			extraContent: (
-				<Button
-					target="_blank"
-					borderless
-					href="https://jetpack.com/support/jetpack-agency-licensing-portal-instructions/add-sites-agency-portal-dashboard/"
-					onClick={ onHowToAddNewSiteClick }
-				>
-					{ translate( 'How to add sites to the dashboard' ) } &nbsp;
+				<div className="onboarding-widget__how-to-add-sites-btn">
+					<Button
+						target="_blank"
+						borderless
+						href="https://jetpack.com/support/jetpack-agency-licensing-portal-instructions/add-sites-agency-portal-dashboard/"
+						onClick={ onHowToAddNewSiteClick }
+					>
+						{ translate( 'How to add sites to the dashboard' ) }
+					</Button>
+					&nbsp;
 					<Gridicon icon="external" size={ 24 } />
-				</Button>
+				</div>
 			),
 			isCompleted: hasSites,
 		},

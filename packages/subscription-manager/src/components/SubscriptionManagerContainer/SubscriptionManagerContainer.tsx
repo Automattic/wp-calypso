@@ -14,6 +14,7 @@ export type SubscriptionManagerContainerProps = {
 
 const SubscriptionManagerContainer = ( { children }: SubscriptionManagerContainerProps ) => {
 	const translate = useTranslate();
+
 	return (
 		<Main className="subscription-manager-container">
 			<DocumentHead title="Subscriptions" />

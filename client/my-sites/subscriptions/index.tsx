@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { Reader } from '@automattic/data-stores';
 import SubscriptionManager from '@automattic/subscription-manager';
 import { useTranslate } from 'i18n-calypso';
 import page, { Callback } from 'page';
@@ -7,10 +8,11 @@ import { makeLayout, render } from 'calypso/controller';
 
 const SitesView = () => <span>Sites View</span>;
 const CommentsView = () => <span>Comments View</span>;
-const SettingsView = () => <span>Settings View</span>;
+const SettingsView = () => <SubscriptionManager.UserSettings />;
 
 const SubscriptionManagementPage = () => {
 	const translate = useTranslate();
+	const { data: counts } = Reader.useSubscriptionManagerSubscriptionsCountQuery();
 
 	return (
 		<SubscriptionManager>
@@ -22,13 +24,13 @@ const SubscriptionManagementPage = () => {
 						label: translate( 'Sites' ),
 						path: 'sites',
 						view: SitesView,
-						count: 2,
+						count: counts?.blogs || undefined,
 					},
 					{
 						label: translate( 'Comments' ),
 						path: 'comments',
 						view: CommentsView,
-						count: 5,
+						count: counts?.comments || undefined,
 					},
 					{
 						label: translate( 'Settings' ),
@@ -55,7 +57,7 @@ const checkFeatureFlag: Callback = ( context, next ) => {
 };
 
 export default function () {
-	page.redirect( '/subscriptions', '/subscriptions/sites' );
+	page.redirect( '/subscriptions', '/subscriptions/settings' );
 
 	page(
 		/\/subscriptions(\/(comments|settings|sites))?/,

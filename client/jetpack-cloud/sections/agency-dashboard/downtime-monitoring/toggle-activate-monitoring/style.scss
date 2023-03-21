@@ -12,18 +12,17 @@
 
 .toggle-activate-monitoring__toggle-button {
 	@extend .inline-flex-align-centre;
+	width: max-content;
 
-	.components-toggle-control .components-base-control__field {
+	.components-toggle-control {
 		margin-bottom: 0;
 
-		.components-form-toggle {
-			@include break-xlarge {
-				margin-right: 4px;
-			}
+		.components-base-control__field {
+			margin-bottom: 0;
+		}
 
-			@include break-xlarge {
-				margin-right: 12px;
-			}
+		.components-form-toggle {
+			margin-right: 4px;
 		}
 	}
 
@@ -38,6 +37,10 @@
 .toggle-activate-monitoring__duration {
 	button {
 		@extend .inline-flex-align-centre;
+	}
+
+	img {
+		width: 24px;
 	}
 
 	span {

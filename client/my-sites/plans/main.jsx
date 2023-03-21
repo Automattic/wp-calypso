@@ -11,6 +11,7 @@ import {
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 } from '@automattic/calypso-products';
 import { is2023PricingGridActivePage } from '@automattic/calypso-products/src/plans-utilities';
+import { WpcomPlansUI } from '@automattic/data-stores';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
@@ -33,7 +34,6 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import { getDomainRegistrations } from 'calypso/lib/cart-values/cart-items';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
-import { WPCOM_PLANS_UI_STORE } from 'calypso/my-sites/plan-features-2023-grid/store';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
@@ -54,6 +54,7 @@ import DomainUpsellDialog from './components/domain-upsell-dialog';
 import PlansHeader from './components/plans-header';
 import ECommerceTrialPlansPage from './ecommerce-trial';
 import ModernizedLayout from './modernized-layout';
+import WooExpressMediumPlansPage from './wx-medium';
 
 import './style.scss';
 
@@ -104,7 +105,7 @@ function DescriptionMessage( { isDomainUpsell, isFreePlan, yourDomainName, siteS
 		recordTracksEvent( 'calypso_plans_page_domain_upsell_skip_click' );
 		// show Warning only on free plans.
 		isFreePlan
-			? dispatch( WPCOM_PLANS_UI_STORE ).setShowDomainUpsellDialog( true )
+			? dispatch( WpcomPlansUI.store ).setShowDomainUpsellDialog( true )
 			: page( `/checkout/${ siteSlug }` );
 	};
 
@@ -295,14 +296,15 @@ class Plans extends Component {
 	}
 
 	renderWooExpressMediumPage() {
-		return <p>Woo Express Performance</p>;
+		const { currentPlan, selectedSite } = this.props;
+		return <WooExpressMediumPlansPage currentPlan={ currentPlan } selectedSite={ selectedSite } />;
 	}
 
 	renderMainContent( { isEcommerceTrial, isWooExpressPlan } ) {
 		if ( isEcommerceTrial ) {
 			return this.renderEcommerceTrialPage();
 		}
-		if ( isWooExpressPlan && isEnabled( 'plans/wooexpress-medium' ) ) {
+		if ( isWooExpressPlan ) {
 			return this.renderWooExpressMediumPage();
 		}
 		return this.renderPlansMain();
@@ -355,7 +357,7 @@ class Plans extends Component {
 				: translate( 'Choose the perfect plan' );
 
 		// Hide for WooExpress plans
-		const showPlansNavigation = isEnabled( 'plans/wooexpress-medium' ) ? ! isWooExpressPlan : true;
+		const showPlansNavigation = ! isWooExpressPlan;
 
 		return (
 			<div>

@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Button, Gridicon } from '@automattic/components';
+import { Button, Gridicon, ShortenedNumber } from '@automattic/components';
+import { Icon, arrowUp, arrowDown } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
@@ -15,7 +16,12 @@ import ToggleActivateMonitoring from '../downtime-monitoring/toggle-activate-mon
 import SitesOverviewContext from './context';
 import SiteSelectCheckbox from './site-select-checkbox';
 import SiteSetFavorite from './site-set-favorite';
-import { getRowMetaData, getProductSlugFromProductType } from './utils';
+import {
+	getRowMetaData,
+	getProductSlugFromProductType,
+	getBoostRating,
+	getBoostRatingClass,
+} from './utils';
 import type { AllowedTypes, SiteData } from './types';
 
 interface Props {
@@ -93,6 +99,16 @@ export default function SiteStatusContent( {
 	const handleDeselectLicenseAction = () => {
 		dispatch( unselectLicense( siteId, type ) );
 	};
+
+	const hasBoost = rows.site.value.has_boost;
+
+	function getTrendIcon( viewsTrend: 'up' | 'down' ) {
+		if ( viewsTrend === 'up' ) {
+			return arrowUp;
+		} else if ( viewsTrend === 'down' ) {
+			return arrowDown;
+		}
+	}
 
 	if ( type === 'site' ) {
 		// Site issues is the sum of scan threats and plugin updates
@@ -175,8 +191,51 @@ export default function SiteStatusContent( {
 	}
 
 	if ( type === 'stats' ) {
-		// Content will be added later
-		return null;
+		const { total: totalViews, trend: viewsTrend } = rows.stats.value.views;
+		if ( viewsTrend === 'same' ) {
+			return (
+				<>
+					<span className="sites-overview__stats-trend sites-overview__stats-trend__same" />
+					<div className="sites-overview__stats">
+						<ShortenedNumber value={ totalViews } />
+					</div>
+				</>
+			);
+		}
+		const trendIcon = getTrendIcon( viewsTrend );
+		return (
+			<span
+				className={ classNames( 'sites-overview__stats-trend', {
+					'sites-overview__stats-trend__up': viewsTrend === 'up',
+					'sites-overview__stats-trend__down': viewsTrend === 'down',
+				} ) }
+			>
+				{ trendIcon && <Icon icon={ trendIcon } size={ 16 } /> }
+				<div className="sites-overview__stats">
+					<ShortenedNumber value={ totalViews } />
+				</div>
+			</span>
+		);
+	}
+
+	if ( type === 'boost' ) {
+		const overallScore = rows.site.value.jetpack_boost_scores.overall;
+		if ( hasBoost ) {
+			return (
+				<div
+					className={ classNames(
+						'site-expanded-content__card-content-score',
+						getBoostRatingClass( overallScore )
+					) }
+				>
+					{ translate( '%(rating)s Score', {
+						args: { rating: getBoostRating( overallScore ) },
+						comment: '%rating will be replaced by boost rating, e.g. "A", "B", "C", "D", or "F"',
+					} ) }
+				</div>
+			);
+		}
+		return <div></div>;
 	}
 
 	let content;
@@ -261,7 +320,9 @@ export default function SiteStatusContent( {
 	}
 
 	if ( disabledStatus ) {
-		updatedContent = <span className="sites-overview__disabled">{ content } </span>;
+		updatedContent = (
+			<span className="sites-overview__disabled sites-overview__row-status">{ content } </span>
+		);
 	}
 
 	return (
@@ -290,7 +351,7 @@ export default function SiteStatusContent( {
 					</Tooltip>
 				</>
 			) : (
-				updatedContent
+				<span className="sites-overview__row-status">{ updatedContent }</span>
 			) }
 		</>
 	);

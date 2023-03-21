@@ -1,3 +1,4 @@
+import { PLAN_FREE, PLAN_JETPACK_FREE } from '@automattic/calypso-products';
 import getRawSite from 'calypso/state/selectors/get-raw-site';
 import type { AppState } from 'calypso/types';
 
@@ -39,7 +40,7 @@ export default function getSitePlan(
 		if ( site.jetpack && ! site.is_wpcom_atomic ) {
 			return {
 				product_id: 2002,
-				product_slug: 'jetpack_free',
+				product_slug: PLAN_JETPACK_FREE,
 				product_name_short: 'Free',
 				free_trial: false,
 				expired: false,
@@ -48,7 +49,7 @@ export default function getSitePlan(
 
 		return {
 			product_id: 1,
-			product_slug: 'free_plan',
+			product_slug: PLAN_FREE,
 			product_name_short: 'Free',
 			free_trial: false,
 			expired: false,
