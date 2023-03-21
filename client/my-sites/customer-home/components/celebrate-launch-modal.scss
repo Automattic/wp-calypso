@@ -4,12 +4,14 @@
 	.components-modal__content {
 		margin: 0;
 		padding: 48px;
+		width: 550px;
 	}
 
 	&-content {
 		display: flex;
 		flex-direction: column;
 		gap: 32px;
+		margin-bottom: 40px;
 	}
 
 	&-heading {
@@ -66,5 +68,32 @@
 		padding: 0;
 		margin: 0;
 		margin-top: 16px;
+	}
+
+	&-upsell {
+		align-items: flex-end;
+		background: var(--studio-gray-0);
+		border-top: 1px solid var(--studio-gray-5);
+		display: flex;
+		justify-content: space-between;
+		margin: 0 -48px -48px -48px;
+		padding: 32px 48px 32px 48px;
+	}
+
+	&-upsell-content {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+	}
+
+	&-upsell-heading {
+		margin: 0 0 4px 0;
+		font-size: 1rem;
+		font-weight: 600;
+	}
+
+	&-upsell-body {
+		margin: 0;
+		font-size: 0.875rem;
 	}
 }
