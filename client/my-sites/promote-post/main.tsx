@@ -58,6 +58,13 @@ const queryPageAndPostsByComments = {
 	order_by: 'comment_count',
 };
 
+const queryPageAndPostsByIDs = {
+	...queryProducts,
+	type: 'any',
+	order_by: 'id',
+	number: 5,
+};
+
 export type DSPMessage = {
 	errorCode?: string;
 };
@@ -89,8 +96,13 @@ export default function PromotedPosts( { tab }: Props ) {
 	} );
 
 	const postAndPagesByComments = useSelector( ( state ) => {
-		const products = getPostsForQuery( state, selectedSiteId, queryPageAndPostsByComments );
-		return products?.filter( ( product: any ) => ! product.password );
+		const postsAndPages = getPostsForQuery( state, selectedSiteId, queryPageAndPostsByComments );
+		return postsAndPages?.filter( ( product: any ) => ! product.password );
+	} );
+
+	const postAndPagesByIDs = useSelector( ( state ) => {
+		const postsAndPages = getPostsForQuery( state, selectedSiteId, queryPageAndPostsByIDs );
+		return postsAndPages?.filter( ( product: any ) => ! product.password );
 	} );
 
 	const isLoadingProducts = useSelector( ( state ) =>
@@ -134,7 +146,7 @@ export default function PromotedPosts( { tab }: Props ) {
 	];
 
 	const topViewedPostAndPagesIds = topViewedPostAndPages?.map( ( post: any ) => post.id );
-	const memoizedQuery = useMemo(
+	const topViewedMemoizedQuery = useMemo(
 		() => ( { include: topViewedPostAndPagesIds } ),
 		[ JSON.stringify( topViewedPostAndPagesIds ) ]
 	);
@@ -144,7 +156,11 @@ export default function PromotedPosts( { tab }: Props ) {
 	);
 
 	const isLoadingMemoizedQuery = useSelector( ( state ) =>
-		isRequestingPostsForQuery( state, selectedSiteId, memoizedQuery )
+		isRequestingPostsForQuery( state, selectedSiteId, topViewedMemoizedQuery )
+	);
+
+	const isLoadingByIDsQuery = useSelector( ( state ) =>
+		isRequestingPostsForQuery( state, selectedSiteId, queryPageAndPostsByIDs )
 	);
 
 	const isLoadingByCommentsQuery = useSelector( ( state ) =>
@@ -224,6 +240,7 @@ export default function PromotedPosts( { tab }: Props ) {
 	}
 
 	const content = [
+		...( postAndPagesByIDs || [] ),
 		...( mostPopularPostAndPages || [] ),
 		...( postAndPagesByComments || [] ),
 		...( products || [] ),
@@ -236,12 +253,12 @@ export default function PromotedPosts( { tab }: Props ) {
 		( obj, index ) => content.findIndex( ( item ) => item.ID === obj.ID ) === index
 	);
 
-	const isLoading = isWpMobileApp()
-		? isLoadingByCommentsQuery || isLoadingMemoizedQuery || ! hasTopPostsFinished
-		: isLoadingByCommentsQuery ||
-		  isLoadingMemoizedQuery ||
-		  isLoadingProducts ||
-		  ! hasTopPostsFinished;
+	const isLoading =
+		isLoadingByCommentsQuery ||
+		isLoadingByIDsQuery ||
+		isLoadingMemoizedQuery ||
+		! hasTopPostsFinished ||
+		( ! isWpMobileApp() && isLoadingProducts );
 
 	return (
 		<Main wideLayout className="promote-post">
@@ -275,16 +292,18 @@ export default function PromotedPosts( { tab }: Props ) {
 			) }
 
 			<QuerySiteStats siteId={ selectedSiteId } statType="statsTopPosts" query={ topPostsQuery } />
-			{ topViewedPostAndPages && (
+
+			{ ! isLoading && content?.length > 0 && (
 				<QueryStatsRecentPostViews
 					siteId={ selectedSiteId }
-					postIds={ topViewedPostAndPagesIds }
+					postIds={ content?.map( ( post: any ) => post.ID ) }
 					num={ 30 }
 				/>
 			) }
 			{ topViewedPostAndPages && (
-				<QueryPosts siteId={ selectedSiteId } query={ memoizedQuery } postId={ null } />
+				<QueryPosts siteId={ selectedSiteId } query={ topViewedMemoizedQuery } postId={ null } />
 			) }
+			<QueryPosts siteId={ selectedSiteId } query={ queryPageAndPostsByIDs } postId={ null } />
 			{ hasTopPostsFinished && ( ! topViewedPostAndPages || topViewedPostAndPages.length < 10 ) && (
 				<QueryPosts
 					siteId={ selectedSiteId }
