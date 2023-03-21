@@ -315,7 +315,7 @@ export default function SiteStatusContent( {
 
 	let updatedContent = content;
 
-	if ( ! isMultiSite ) {
+	if ( ! showMultisiteNotSupported ) {
 		if ( link ) {
 			let target = '_self';
 			let rel;
