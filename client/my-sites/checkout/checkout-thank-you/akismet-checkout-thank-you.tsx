@@ -31,7 +31,7 @@ const AkismetCheckoutThankYou: FunctionComponent< AkismetCheckoutThankYouProps >
 			/>
 
 			<Card className="akismet-checkout-thank-you__card">
-				{ /* An improvment here would be to add a type filter on wpcom like jetpack has. See: 2f832-pb/ */ }
+				{ /* This product query takes a while to load, an improvment here would be to add a type filter on wpcom like jetpack has. See: 2f832-pb/ */ }
 				{ hasProduct && <QueryProducts /> }
 
 				<h2 className="akismet-checkout-thank-you__main-message">
