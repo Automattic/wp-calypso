@@ -1,12 +1,16 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
-import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
+import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
+import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
 import { activate } from 'calypso/state/themes/actions';
+import { isThemeActive, hasActivatedTheme } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const ThemeSectionContainer = styled.div`
@@ -61,9 +65,18 @@ const ThemeSectionButtons = styled.div`
 `;
 
 export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
+	const [ isActivating, setIsActivating ] = useState( false );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const siteId = useSelector( getSelectedSiteId );
+	const siteId = useSelector( getSelectedSiteId ) as number;
+	const isActive = useSelector( ( state ) => isThemeActive( state, theme.id, siteId ) );
+	const { data, isLoading } = useActiveThemeQuery( siteId, true );
+	const hasActivated = useSelector( ( state ) => hasActivatedTheme( state, siteId ) );
+	const isFSEActive = data?.[ 0 ]?.theme_supports[ 'block-templates' ] ?? false;
+	const customizeUrl = useSelector( ( state ) =>
+		getCustomizeUrl( state, theme.id, siteId, isFSEActive )
+	);
+	const siteUrl = useSelector( ( state ) => getSiteUrl( state, siteId ) ) ?? undefined;
 
 	const sendTrackEvent = useCallback(
 		( name: string ) => {
@@ -76,14 +89,17 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 	);
 
 	const handleActivateTheme = () => {
+		if ( isActive ) {
+			return;
+		}
 		sendTrackEvent( 'calypso_theme_thank_you_activate_theme_click' );
-		dispatch( activate( theme.id, Number( siteId ), 'marketplace-thank-you' ) );
+		dispatch( activate( theme.id, siteId, 'marketplace-thank-you' ) );
+		setIsActivating( true );
 	};
 
 	return (
 		<ThemeSectionContainer>
 			<AutoLoadingHomepageModal source="details" />
-			<ThanksModal source="details" themeId={ theme.id } />
 			<ThemeSectionImage
 				src={ theme.screenshot }
 				alt={
@@ -104,9 +120,23 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 					</small>
 				</ThemeSectionName>
 				<ThemeSectionButtons>
-					<Button isPrimary onClick={ handleActivateTheme }>
-						{ translate( 'Activate this design' ) }
+					<Button
+						isPrimary
+						isBusy={ ( isActivating && ! hasActivated ) || isLoading }
+						onClick={ handleActivateTheme }
+						href={ isActive ? customizeUrl : undefined }
+					>
+						{ isActive
+							? translate( 'Customize this design' )
+							: translate( 'Activate this design' ) }
 					</Button>
+
+					{ isActive ? (
+						<Button isSecondary href={ siteUrl }>
+							<Gridicon size={ 18 } icon="external" />
+							{ translate( 'View site' ) }
+						</Button>
+					) : null }
 				</ThemeSectionButtons>
 			</ThemeSectionContent>
 		</ThemeSectionContainer>
