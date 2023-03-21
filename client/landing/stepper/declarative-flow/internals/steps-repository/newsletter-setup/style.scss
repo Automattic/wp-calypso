@@ -1,16 +1,14 @@
 @import "../style";
 
 .newsletter-setup {
-	.step-container {
-		padding-top: 44px;
-	}
 
 	.step-container__content {
 		display: flex;
 		justify-content: center;
 	}
 
-	.newsletter-setup .step-container__header {
+	.step-container__header {
 		margin-bottom: 32px;
+		margin-top: 36px;
 	}
 }
