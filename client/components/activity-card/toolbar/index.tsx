@@ -11,8 +11,8 @@ type OwnProps = {
 	activity: Activity;
 	isContentExpanded?: boolean;
 	onToggleContent?: () => void;
-	availableActions: Array< string >;
-	onClickClone: ( period: string ) => void;
+	availableActions?: Array< string >;
+	onClickClone?: ( period: string ) => void;
 };
 
 const Toolbar: React.FC< OwnProps > = ( {

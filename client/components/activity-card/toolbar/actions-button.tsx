@@ -156,8 +156,8 @@ const CloneSiteActionButton: React.FC< CloneSiteOwnProps > = ( { rewindId, onCli
 type OwnProps = {
 	siteId: number;
 	activity: Activity;
-	availableActions: Array< string >;
-	onClickClone: ( period: string ) => void;
+	availableActions?: Array< string >;
+	onClickClone?: ( period: string ) => void;
 };
 
 const ActionsButton: React.FC< OwnProps > = ( {
@@ -183,7 +183,9 @@ const ActionsButton: React.FC< OwnProps > = ( {
 	// Show the clone action button only if is the only action available.
 	if ( availableActions && availableActions.length === 1 && availableActions[ 0 ] === 'clone' ) {
 		return (
-			<CloneSiteActionButton rewindId={ actionableRewindId ?? '' } onClickClone={ onClickClone } />
+			// We know onClickClone is never null if the action is clone. Non-null asserting is safe here.
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			<CloneSiteActionButton rewindId={ actionableRewindId ?? '' } onClickClone={ onClickClone! } />
 		);
 	}
 

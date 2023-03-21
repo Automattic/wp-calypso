@@ -45,8 +45,8 @@ type OwnProps = {
 	summarize?: boolean;
 	shareable?: boolean;
 	activity: Activity;
-	availableActions: Array< string >;
-	onClickClone: ( period: string ) => void;
+	availableActions?: Array< string >;
+	onClickClone?: ( period: string ) => void;
 };
 
 const ActivityCard: React.FC< OwnProps > = ( {

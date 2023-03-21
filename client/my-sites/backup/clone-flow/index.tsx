@@ -22,7 +22,6 @@ import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
 import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
 import getInProgressRewindStatus from 'calypso/state/selectors/get-in-progress-rewind-status';
 import getRestoreProgress from 'calypso/state/selectors/get-restore-progress';
-import getRewindBackups from 'calypso/state/selectors/get-rewind-backups';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
@@ -67,13 +66,6 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	const [ userHasSetBackupPeriod, setUserHasSetBackupPeriod ] = useState< boolean >( false );
 	const [ backupPeriod, setBackupPeriod ] = useState< string >( '' );
 	const [ backupDisplayDate, setBackupDisplayDate ] = useState< string >( '' );
-
-	// Temporary for testing until we have a backup selection UI
-	const latestBackupPeriod = useSelector( ( state ) => {
-		const backups = getRewindBackups( state, siteId ) || [];
-		const completedBackups = backups.filter( ( backup ) => backup.status === 'finished' );
-		return completedBackups.length ? completedBackups[ 0 ].period : null;
-	} );
 
 	const steps = [
 		{
@@ -203,19 +195,6 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 					onClickClone={ onSetBackupPeriod }
 				/>
 			</div>
-			<Button
-				className="clone-flow__primary-button"
-				primary
-				onClick={ () => onSetBackupPeriod( latestBackupPeriod ) }
-			>
-				{ translate( 'Clone from this point' ) }
-			</Button>
-			<Button
-				className="clone-flow__primary-button"
-				onClick={ () => onSetBackupPeriod( latestBackupPeriod ) }
-			>
-				{ translate( 'Clone from here' ) }
-			</Button>
 		</>
 	);
 
