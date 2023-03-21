@@ -32,16 +32,36 @@ class WP_REST_Help_Center_Authenticate extends \WP_REST_Controller {
 				'methods'             => \WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'get_chat_authentication' ),
 				'permission_callback' => array( $this, 'permission_callback' ),
+				'args'                => array(
+					'type' => array(
+						'type'     => 'string',
+						'required' => 'false',
+					),
+				),
 			)
 		);
 	}
 
 	/**
 	 * Callback to authorize user for chat.
+	 *
+	 * @param \WP_REST_Request $request    The request sent to the API.
+	 *
+	 * @return WP_REST_Response
 	 */
-	public function get_chat_authentication() {
+	public function get_chat_authentication( \WP_REST_Request $request ) {
+		if ( $request['type'] ) {
+			$type = $request['type'];
+		} else {
+			$type = 'happychat';
+		}
+
+		$query_parameters = array(
+			'type' => $type,
+		);
+
 		$body = Client::wpcom_json_api_request_as_user(
-			'help/authenticate/chat',
+			'help/authenticate/chat' . http_build_query( $query_parameters ),
 			'2',
 			array(
 				'method' => 'POST',
