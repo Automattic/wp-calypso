@@ -217,20 +217,6 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
 			fulfilledStepCallback: isPlanFulfilled,
 		},
-
-		'plans-newsletter': {
-			stepName: 'plans',
-			apiRequestFunction: addPlanToCart,
-			dependencies: [ 'siteSlug' ],
-			optionalDependencies: [ 'emailItem' ],
-			providesDependencies: [ 'cartItem', 'themeSlugWithRepo', 'comingSoon' ],
-			fulfilledStepCallback: isPlanFulfilled,
-			props: {
-				themeSlugWithRepo: 'pub/lettre',
-				launchSite: true,
-			},
-		},
-
 		'plans-new': {
 			stepName: 'plans',
 			providesDependencies: [ 'cartItem' ],

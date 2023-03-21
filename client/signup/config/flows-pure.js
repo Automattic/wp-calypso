@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { HOSTING_LP_FLOW, setupSiteAfterCreation } from '@automattic/onboarding';
+import { HOSTING_LP_FLOW } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 
 const noop = () => {};
@@ -146,19 +146,6 @@ export function generateFlows( {
 				'Paid media version of the onboarding flow. Read more in https://wp.me/pau2Xa-4Kk.',
 			lastModified: '2023-01-10',
 			showRecaptcha: true,
-		},
-		{
-			name: 'newsletter',
-			steps: [ 'domains', 'plans-newsletter' ],
-			destination: ( dependencies ) =>
-				`/setup/newsletter/subscribers?siteSlug=${ dependencies.siteSlug }`,
-			description: 'Beginning of the flow to create a newsletter',
-			lastModified: '2022-11-01',
-			showRecaptcha: true,
-			get pageTitle() {
-				return translate( 'Newsletter' );
-			},
-			postCompleteCallback: setupSiteAfterCreation,
 		},
 		{
 			name: 'import',
