@@ -43,6 +43,7 @@ const ThemeSectionContent = styled.div`
 	justify-content: space-between;
 	align-items: center;
 	flex-wrap: wrap;
+	gap: 16px;
 `;
 
 const ThemeSectionName = styled.div`
@@ -61,7 +62,12 @@ const ThemeSectionName = styled.div`
 const ThemeSectionButtons = styled.div`
 	display: flex;
 	gap: 16px;
-	min-width: auto;
+	flex-wrap: wrap;
+
+	& a {
+		flex-grow: 1;
+		justify-content: center;
+	}
 
 	.gridicon.gridicons-external {
 		margin-right: 4px;
