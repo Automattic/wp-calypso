@@ -183,6 +183,7 @@ function CountryCodeInput( {
 		'HU',
 		'IE',
 		'IT',
+		'JP',
 		'LT',
 		'LU',
 		'LV',
