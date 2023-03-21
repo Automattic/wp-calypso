@@ -9,7 +9,7 @@ import { connect, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import Notice from 'calypso/components/notice';
-import withMediaStorage, { GB_IN_BYTES } from 'calypso/data/media-storage/with-media-storage';
+import withMediaStorage from 'calypso/data/media-storage/with-media-storage';
 import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
 import { urlToSlug } from 'calypso/lib/url';
 import { useAddStagingSiteMutation } from 'calypso/my-sites/hosting/staging-site-card/use-add-staging-site';
@@ -20,8 +20,6 @@ import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
-
-const STAGING_CREATION_QUOTA_THRESHOLD = 100;
 
 const stagingSiteAddFailureNoticeId = 'staging-site-add-failure';
 
@@ -143,14 +141,9 @@ export const StagingSiteCard = ( {
 		return (
 			<ExceedQuotaErrorWrapper data-testid="quota-message">
 				<Notice status="is-warning" showDismiss={ false }>
-					<p>
-						{ __(
-							'It appears that your available size quota is currently insufficient for creating a staging site.'
-						) }
-					</p>
-					<p>
-						{ __( 'Please contact support if you believe you are seeing this message in error.' ) }
-					</p>
+					{ __(
+						'Your available storage space is lower than 50%, which is insufficient for creating a staging site.'
+					) }
 				</Notice>
 			</ExceedQuotaErrorWrapper>
 		);
@@ -266,9 +259,11 @@ export default withMediaStorage(
 		const siteOwnerId = getSelectedSite( state )?.site_owner;
 
 		let spaceQuotaExceededForStaging = false;
-		if ( mediaStorage?.storage_used_bytes ) {
+		// We check against -1 as this is the default value for sites with
+		// upload_space_check_disabled option.
+		if ( mediaStorage.storage_used_bytes > -1 && mediaStorage?.max_storage_bytes > -1 ) {
 			spaceQuotaExceededForStaging =
-				mediaStorage.storage_used_bytes / GB_IN_BYTES > STAGING_CREATION_QUOTA_THRESHOLD;
+				mediaStorage.storage_used_bytes > mediaStorage.max_storage_bytes / 2;
 		}
 		return {
 			currentUserId,
