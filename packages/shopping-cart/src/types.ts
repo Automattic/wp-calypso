@@ -564,7 +564,8 @@ export interface ResponseCartProductExtra {
 
 	// Marketplace properties
 	is_marketplace_product?: boolean;
-	plugin_slug?: boolean;
+	product_slug?: boolean;
+	product_type?: string;
 }
 
 export interface ResponseCartGiftDetails {

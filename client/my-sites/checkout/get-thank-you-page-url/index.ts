@@ -533,14 +533,23 @@ function getFallbackDestination( {
 		}
 	}
 
-	const pluginSlugs =
-		cart?.products
-			?.filter( ( product ) => product?.extra?.is_marketplace_product )
-			?.map( ( product ) => product?.extra?.plugin_slug ) || [];
+	const marketplaceProducts =
+		cart?.products?.filter( ( product ) => product?.extra?.is_marketplace_product ) || [];
 
-	if ( pluginSlugs.length > 0 ) {
+	const marketplacePluginSlugs = marketplaceProducts
+		?.filter( ( { extra } ) => extra.product_type === 'marketplace_plugin' )
+		.map( ( { extra } ) => extra.product_slug );
+
+	const marketplaceThemeSlugs = marketplaceProducts
+		?.filter( ( { extra } ) => extra.product_type === 'marketplace_theme' )
+		.map( ( { extra } ) => extra.product_slug );
+
+	if ( marketplaceProducts.length > 0 ) {
 		debug( 'site with marketplace products' );
-		return `/marketplace/thank-you/${ siteSlug }?plugins=${ pluginSlugs.join( ',' ) }`;
+		return addQueryArgs(
+			{ plugins: marketplacePluginSlugs.join( ',' ), themes: marketplaceThemeSlugs.join( ',' ) },
+			`/marketplace/thank-you/${ siteSlug }`
+		);
 	}
 
 	debug( 'simple thank-you page' );
