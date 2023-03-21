@@ -144,6 +144,13 @@ body.is-section-theme-i4 {
 			font-size: 1.25rem;
 		}
 
+		video {
+			@include breakpoint-deprecated( "<960px" ) {
+				height: auto;
+				max-width: 100%;
+			}
+		}
+
 		.notes {
 			background: transparent;
 			border: 0;
