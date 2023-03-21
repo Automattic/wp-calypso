@@ -35,7 +35,6 @@ export function useDefaultThankYouFoooter( slugs: string[] ): ThankYouSectionPro
 					<Button
 						isLink
 						href={ `/plugins/${ siteSlug }` }
-						target="_blank"
 						onClick={ () => sendTrackEvent( 'calypso_plugin_thank_you_explore_plugins_click' ) }
 					>
 						{ translate( 'Explore plugins' ) }
