@@ -151,7 +151,19 @@ export default function PromotedPosts( { tab }: Props ) {
 			<EmptyContent
 				className="campaigns-empty"
 				title={ translate( 'Site is not published' ) }
-				line={ translate( 'To start using Blaze, you must first publish your site.' ) }
+				line={ translate(
+					'To start using Blaze, you must make your site public. You can do that from {{sitePrivacySettingsLink}}here{{/sitePrivacySettingsLink}}.',
+					{
+						components: {
+							sitePrivacySettingsLink: (
+								<a
+									href={ `https://wordpress.com/settings/general/${ selectedSite.domain }#site-privacy-settings` }
+									rel="noreferrer"
+								/>
+							),
+						},
+					}
+				) }
 				illustration={ null }
 			/>
 		);
