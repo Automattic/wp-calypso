@@ -15,6 +15,7 @@ import i18n, { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
+import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';
 import payPalImage from 'calypso/assets/images/upgrades/paypal-full.svg';
 import SiteIcon from 'calypso/blocks/site-icon';
 import InfoPopover from 'calypso/components/info-popover';
@@ -496,7 +497,15 @@ class PurchaseItem extends Component {
 	}
 
 	getSiteIcon = () => {
-		const { site, isDisconnectedSite } = this.props;
+		const { site, isDisconnectedSite, purchase } = this.props;
+
+		if ( isAkismetTemporarySitePurchase( purchase ) ) {
+			return (
+				<div className="purchase-item__static-icon">
+					<img src={ akismetIcon } alt="Akismet icon" />
+				</div>
+			);
+		}
 
 		if ( isDisconnectedSite ) {
 			return (
