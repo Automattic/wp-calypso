@@ -117,8 +117,6 @@ export default function () {
 		);
 	}
 
-	// TODO: need thank you page for akismet
-
 	// The no-site post-checkout route is for purchases not tied to a site so do
 	// not include the `siteSelection` middleware.
 	page( '/checkout/gift/thank-you/:site', giftThankYou, makeLayout, clientRender );
