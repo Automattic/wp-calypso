@@ -16,7 +16,8 @@ describe( 'SiteLogs', () => {
 
 	test( 'displays the last 7 days worth of logs in descending order on mount', async () => {
 		nock( 'https://public-api.wordpress.com' )
-			.post( '/wpcom/v2/sites/113/hosting/logs', ( { start, end, sort_order } ) => {
+			// This particular test doesn't care whether we're requesting PHP or web logs
+			.post( /\/wpcom\/v2\/sites\/113\/hosting\/(error-)?logs/, ( { start, end, sort_order } ) => {
 				const sevenDays = 7 * 24 * 60 * 60;
 				const fudgeFactor = 5; // Allow for a few seconds of drift
 				const timeRange = end - start;
