@@ -1,5 +1,5 @@
 import { translate, useTranslate } from 'i18n-calypso';
-import { createElement, useMemo } from 'react';
+import { createElement, useCallback, useMemo } from 'react';
 import {
 	PRODUCT_JETPACK_ANTI_SPAM,
 	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
@@ -1014,25 +1014,63 @@ export const useJetpack1TbStorageAmountText = (): TranslateResult => {
 	);
 };
 
-export const useJetpackStorageAmountTextByProductSlug = (
-	productSlug: string
-): TranslateResult | undefined => {
-	const TEN_GIGABYTES = useJetpack10GbStorageAmountText();
-	const ONE_TERABYTE = useJetpack1TbStorageAmountText();
+export const useJetpackGbStorageAmountText = ( amount: number ): TranslateResult => {
+	const translate = useTranslate();
 
 	return useMemo(
 		() =>
+			translate( '%(numberOfGigabytes)dGB', '%(numberOfGigabytes)dGB', {
+				comment:
+					'Displays an amount of gigabytes. Plural string used in case GB needs to be pluralized.',
+				count: amount,
+				args: { numberOfGigabytes: amount },
+			} ),
+		[ translate, amount ]
+	);
+};
+
+export const useJetpackTbStorageAmountText = ( amount: number ): TranslateResult => {
+	const translate = useTranslate();
+
+	return useMemo(
+		() =>
+			translate( '%(numberOfTerabytes)dTB', '%(numberOfTerabytes)dTB', {
+				comment:
+					'Displays an amount of terabytes. Plural string used in case TB needs to be pluralized.',
+				count: amount,
+				args: { numberOfTerabytes: amount },
+			} ),
+		[ translate, amount ]
+	);
+};
+
+export const useJetpackStorageAmountTextByProductSlug = (): ( (
+	slug: string
+) => TranslateResult | undefined ) => {
+	const TEN_GIGABYTES = useJetpackGbStorageAmountText( 10 );
+	const HUNDRED_GIGABYTES = useJetpackGbStorageAmountText( 100 );
+	const ONE_TERABYTE = useJetpackTbStorageAmountText( 1 );
+	const THREE_TERABYTE = useJetpackTbStorageAmountText( 3 );
+	const FIVE_TERABYTE = useJetpackTbStorageAmountText( 5 );
+
+	return useCallback(
+		( productSlug ) =>
 			( {
 				[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: TEN_GIGABYTES,
 				[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: TEN_GIGABYTES,
 				[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: ONE_TERABYTE,
 				[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: ONE_TERABYTE,
+				[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY ]: TEN_GIGABYTES,
+				[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_MONTHLY ]: HUNDRED_GIGABYTES,
+				[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_MONTHLY ]: ONE_TERABYTE,
+				[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_3TB_MONTHLY ]: THREE_TERABYTE,
+				[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_5TB_MONTHLY ]: FIVE_TERABYTE,
 
 				[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: TEN_GIGABYTES,
 				[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: TEN_GIGABYTES,
 				[ PLAN_JETPACK_SECURITY_T2_MONTHLY ]: ONE_TERABYTE,
 				[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: ONE_TERABYTE,
 			}[ productSlug ] ),
-		[ TEN_GIGABYTES, ONE_TERABYTE, productSlug ]
+		[ TEN_GIGABYTES, HUNDRED_GIGABYTES, ONE_TERABYTE, THREE_TERABYTE, FIVE_TERABYTE ]
 	);
 };
