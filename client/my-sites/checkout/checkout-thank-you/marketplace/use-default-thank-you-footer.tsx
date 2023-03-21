@@ -48,14 +48,14 @@ export function useThankYouFoooter(
 		...( hasThemes
 			? [
 					{
-						key: 'thank_you_footer_about_theme',
-						title: translate( 'About this theme' ),
+						key: 'thank_you_footer_forum',
+						title: translate( 'WordPress community' ),
 						description: translate(
-							'This theme uses the Site Editor, which lets you create what you want.'
+							'Have a question about this theme? Get help from the community.'
 						),
-						link: '#',
-						linkText: translate( 'Learn more' ),
-						eventKey: 'calypso_plugin_thank_you_about_theme_click',
+						link: 'https://wordpress.com/forums/',
+						linkText: translate( 'Visit Forum' ),
+						eventKey: 'calypso_plugin_thank_you_forum_click',
 					},
 			  ]
 			: [] ),
