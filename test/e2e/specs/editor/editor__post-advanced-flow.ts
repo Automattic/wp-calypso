@@ -1,5 +1,5 @@
 /**
- * @group gutenberg
+ * @group testgutenberg
  * @group calypso-pr
  */
 
