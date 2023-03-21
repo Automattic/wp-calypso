@@ -26,11 +26,25 @@ export function useDefaultThankYouFoooter( slugs: string[] ): ThankYouSectionPro
 		nextStepsClassName: 'thank-you__footer',
 		nextSteps: [
 			{
-				stepKey: 'thank_you_footer_support_guides',
-				stepTitle: translate( 'Support guides' ),
+				stepKey: 'thank_you_footer_explore',
+				stepTitle: translate( 'Keep growing' ),
 				stepDescription: translate(
-					'Our guides will show you everything you need to know about plugins.'
+					'Take your site to the next level. We have all the solutions to help you.'
 				),
+				stepCta: (
+					<Button
+						isLink
+						href={ `/plugins/${ siteSlug }` }
+						onClick={ () => sendTrackEvent( 'calypso_plugin_thank_you_explore_plugins_click' ) }
+					>
+						{ translate( 'Explore plugins' ) }
+					</Button>
+				),
+			},
+			{
+				stepKey: 'thank_you_footer_support_guides',
+				stepTitle: translate( 'Learn More' ),
+				stepDescription: translate( 'Discover everything you need to know about Plugins.' ),
 				stepCta: (
 					<Button
 						isLink
@@ -43,28 +57,9 @@ export function useDefaultThankYouFoooter( slugs: string[] ): ThankYouSectionPro
 				),
 			},
 			{
-				stepKey: 'thank_you_footer_explore',
-				stepTitle: translate( 'Keep growing' ),
-				stepDescription: translate(
-					'Take your site to the next level. We have all the solutions to help you.'
-				),
-				stepCta: (
-					<Button
-						isLink
-						href={ `/plugins/${ siteSlug }` }
-						target="_blank"
-						onClick={ () => sendTrackEvent( 'calypso_plugin_thank_you_explore_plugins_click' ) }
-					>
-						{ translate( 'Explore plugins' ) }
-					</Button>
-				),
-			},
-			{
 				stepKey: 'thank_you_footer_support',
-				stepTitle: translate( 'How can we support you?' ),
-				stepDescription: translate(
-					'Our team is here if you need help, or if you have any questions.'
-				),
+				stepTitle: translate( '24/7 support at your fingertips' ),
+				stepDescription: translate( 'Our happiness engineers are eager to lend a hand.' ),
 				stepCta: (
 					<Button
 						isLink
