@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { Reader } from '@automattic/data-stores';
 import SubscriptionManager from '@automattic/subscription-manager';
 import { useTranslate } from 'i18n-calypso';
 import page, { Callback } from 'page';
@@ -11,6 +12,7 @@ const SettingsView = () => <SubscriptionManager.UserSettings />;
 
 const SubscriptionManagementPage = () => {
 	const translate = useTranslate();
+	const { data: counts } = Reader.useSubscriptionManagerSubscriptionsCountQuery();
 
 	return (
 		<SubscriptionManager>
@@ -22,13 +24,13 @@ const SubscriptionManagementPage = () => {
 						label: translate( 'Sites' ),
 						path: 'sites',
 						view: SitesView,
-						count: 2,
+						count: counts?.blogs || undefined,
 					},
 					{
 						label: translate( 'Comments' ),
 						path: 'comments',
 						view: CommentsView,
-						count: 5,
+						count: counts?.comments || undefined,
 					},
 					{
 						label: translate( 'Settings' ),
