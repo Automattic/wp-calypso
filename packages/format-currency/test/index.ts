@@ -122,7 +122,7 @@ describe( 'formatCurrency', () => {
 		expect( money ).toBe( '₹9,800,900.00' );
 	} );
 
-	test( 'sets USD currency symbol to $ if geolocation is US', async () => {
+	test( 'sets USD currency symbol to $ if geolocation is US and locale is en', async () => {
 		globalThis.fetch = jest.fn(
 			( url: string ) =>
 				Promise.resolve( {
@@ -134,7 +134,7 @@ describe( 'formatCurrency', () => {
 		);
 		formatter = createFormatter();
 		await formatter.geolocateCurrencySymbol();
-		const money = formatter.formatCurrency( 9800900.32, 'USD' );
+		const money = formatter.formatCurrency( 9800900.32, 'USD', { locale: 'en-US' } );
 		expect( money ).toBe( '$9,800,900.32' );
 	} );
 
