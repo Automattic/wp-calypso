@@ -101,12 +101,12 @@ const ScreenCategoryList = ( {
 				<NavigatorBackButton
 					as={ Button }
 					className="pattern-assembler__button"
+					primary
 					onClick={ () => {
 						onDoneClick();
 					} }
-					primary
 				>
-					{ translate( 'Done' ) }
+					{ translate( 'Save' ) }
 				</NavigatorBackButton>
 			</div>
 			<PatternListPanel
