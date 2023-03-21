@@ -6,7 +6,7 @@ import CloseOnEscape from 'calypso/components/close-on-escape';
 import SiteSelector from 'calypso/components/site-selector';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { hasTouch } from 'calypso/lib/touch-detect';
-import { getJetpackActivePlugins, isJetpackSitePred } from 'calypso/state/sites/selectors';
+import { hasJetpackActivePlugins, isJetpackSitePred } from 'calypso/state/sites/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 
@@ -92,7 +92,7 @@ class SitePicker extends Component {
 	filterSites = ( site ) => {
 		// Filter out the sites on WPCOM that don't have full Jetpack plugin installed
 		// Such sites should work fine on Jetpack Cloud
-		return getJetpackActivePlugins( site )?.length ? isJetpackSiteOrJetpackCloud( site ) : true;
+		return hasJetpackActivePlugins( site ) ? isJetpackSiteOrJetpackCloud( site ) : true;
 	};
 
 	render() {
