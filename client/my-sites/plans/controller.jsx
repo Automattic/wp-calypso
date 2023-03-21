@@ -4,7 +4,7 @@ import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import { productSelect } from 'calypso/my-sites/plans/jetpack-plans/controller';
 import setJetpackPlansHeader from 'calypso/my-sites/plans/jetpack-plans/plans-header';
 import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Plans from './plans';
 
 function showJetpackPlans( context ) {
@@ -78,3 +78,17 @@ export function redirectToPlansIfNotJetpack( context, next ) {
 	}
 	next();
 }
+
+export const redirectIfInvalidInterval = ( context, next ) => {
+	const { intervalType } = context.params;
+	const state = context.store.getState();
+	const selectedSite = getSelectedSite( state );
+
+	// Passlist the intervals here, so we don't accept random "foo" values
+	if ( ! [ 'monthly', 'yearly', '2yearly', '3yearly' ].includes( intervalType ) ) {
+		page.redirect( selectedSite ? `/plans/yearly/${ selectedSite.slug }` : '/plans' );
+		return null;
+	}
+
+	next();
+};
