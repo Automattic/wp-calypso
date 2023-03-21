@@ -131,9 +131,12 @@ export function addExternalManagedThemeToCart( themeId: string, siteId: number )
 			...( ! isSiteEligibleForManagedExternalThemes ? { 'sync-active-theme': 'true' } : {} ),
 		} );
 
-		const redirectUrl = addQueryArgs( `/checkout/${ siteSlug }`, {
-			redirect_to: redirectTo,
-		} );
+		const redirectUrl = addQueryArgs(
+			`/checkout/${ siteSlug }`,
+			! isSiteEligibleForManagedExternalThemes && {
+				redirect_to: redirectTo,
+			}
+		);
 
 		dispatch( isLoadingCart( true ) );
 		const cartKey = await cartManagerClient.getCartKeyForSiteSlug( siteSlug );
