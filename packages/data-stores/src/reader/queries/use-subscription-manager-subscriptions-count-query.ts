@@ -7,7 +7,7 @@ const useSubscriptionManagerSubscriptionsCountQuery = () => {
 	const isLoggedIn = useIsLoggedIn();
 	const enabled = useIsQueryEnabled();
 
-	return useQuery(
+	return useQuery< SubscriptionManagerSubscriptionsCount >(
 		[ 'read', 'subscriptions-count', isLoggedIn ],
 		async () => {
 			return await callApi< SubscriptionManagerSubscriptionsCount >( {
