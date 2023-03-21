@@ -354,15 +354,20 @@ export class RestAPIClient {
 			params
 		);
 
+		// This handles API errors such as `unauthorized`.
 		if ( response.hasOwnProperty( 'error' ) ) {
 			throw new Error(
 				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
 			);
 		}
 
-		if ( response.errors.length === 0 ) {
-			console.log( response );
-			throw new Error( `Failed to create invite: ${ response.errors }` );
+		// This handles "errors" relating to the invite itself and can be an array.
+		// For instance, if a user tries to invite itself, or invite an already added user.
+		if ( response.errors.length !== 0 ) {
+			for ( const err of response.errors ) {
+				console.error( `${ err.code }: ${ err.message }` );
+			}
+			throw new Error( `Failed to create invite due to ${ response.errors.length } errors.` );
 		}
 
 		return response;
