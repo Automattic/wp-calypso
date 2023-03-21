@@ -95,13 +95,6 @@ Object.defineProperty( CHART_COMMENTS, 'label', {
 
 const getActiveTab = ( chartTab ) => find( CHARTS, { attr: chartTab } ) || CHARTS[ 0 ];
 
-function SubscribersSectionWrapper( { isVisible = false, dataType = 'api' } ) {
-	if ( isVisible === false ) {
-		return null;
-	}
-	return <SubscribersSection dataType={ dataType } />;
-}
-
 class StatsSite extends Component {
 	static defaultProps = {
 		chartTab: 'views',
@@ -198,7 +191,7 @@ class StatsSite extends Component {
 					slug={ slug }
 				/>
 				{ isOdysseyStats && <StatsNotices siteId={ siteId } /> }
-				<SubscribersSectionWrapper isVisible={ true } dataType="api" />
+				<SubscribersSection />;
 				<HighlightsSection siteId={ siteId } />
 				<div id="my-stats-content" className={ wrapperClass }>
 					<>
@@ -340,7 +333,7 @@ class StatsSite extends Component {
 						}
 					</div>
 				</div>
-				<SubscribersSectionWrapper isVisible={ false } dataType="api" />
+				{ /* TODO: Move SubscribersSection comp here */ }
 				{ /* Only load Jetpack Upsell Section for Odyssey Stats */ }
 				{ ! isOdysseyStats ? null : (
 					<AsyncLoad require="calypso/my-sites/stats/jetpack-upsell-section" />
