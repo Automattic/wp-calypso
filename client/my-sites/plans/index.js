@@ -87,6 +87,7 @@ export default function () {
 	trackedPage(
 		'/plans/select/:plan/:domain',
 		...commonHandlers,
+		redirectIfInvalidInterval,
 		p2RedirectToHubPlans,
 		redirectToCheckout
 	);
