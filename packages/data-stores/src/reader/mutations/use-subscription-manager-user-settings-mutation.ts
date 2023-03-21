@@ -1,29 +1,22 @@
 import { useMutation } from 'react-query';
 import { callApi } from '../helpers';
-import type { SubscriptionManagerUserSettings } from '../types';
-
-type APIError = {
-	error: string;
-	message: string;
-};
-
-type ApiSubscriptionManagerUserSettings = {
-	settings: SubscriptionManagerUserSettings;
-};
+import { useIsLoggedIn } from '../hooks';
+import type { SubscriptionManagerUserSettings, EmailSettingsAPIResponse } from '../types';
 
 const useSubscriptionManagerUserSettingsMutation = () => {
-	return useMutation<
-		ApiSubscriptionManagerUserSettings,
-		APIError,
-		SubscriptionManagerUserSettings
-	>( ( data: SubscriptionManagerUserSettings ) => {
-		return callApi< ApiSubscriptionManagerUserSettings >( {
-			path: '/read/email-settings',
-			method: 'POST',
-			body: data,
-			isLoggedIn: true,
-		} );
-	} );
+	const isLoggedIn = useIsLoggedIn();
+
+	return useMutation< SubscriptionManagerUserSettings, Error, SubscriptionManagerUserSettings >(
+		async ( data: SubscriptionManagerUserSettings ) => {
+			const { settings } = await callApi< EmailSettingsAPIResponse >( {
+				path: '/read/email-settings',
+				method: 'POST',
+				body: data,
+				isLoggedIn,
+			} );
+			return settings;
+		}
+	);
 };
 
 export { useSubscriptionManagerUserSettingsMutation };

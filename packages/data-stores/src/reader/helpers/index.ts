@@ -32,6 +32,10 @@ async function callApi< ReturnType >( {
 		?.find( ( c ) => c.startsWith( 'subkey=' ) )
 		?.split( '=' )[ 1 ];
 
+	if ( ! subkey ) {
+		throw new Error( 'Subkey not found' );
+	}
+
 	return apiFetch( {
 		global: true,
 		path: `https://public-api.wordpress.com/rest/v1.1${ path }`,
