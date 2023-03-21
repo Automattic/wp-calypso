@@ -1,9 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
-import {
-	__experimentalItemGroup as ItemGroup,
-	__experimentalDivider as Divider,
-} from '@wordpress/components';
+import { __experimentalItemGroup as ItemGroup } from '@wordpress/components';
 import { header, footer, layout, styles, typography } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { NavigationButtonAsItem } from './navigator-buttons';
@@ -27,7 +24,7 @@ const ScreenMain = ( { shouldUnlockGlobalStyles, onSelect, onContinueClick }: Pr
 				) }
 				hideBack
 			/>
-			<div className="screen-container__body">
+			<div className="screen-container__body screen-container__body--no-padding">
 				<ItemGroup>
 					<NavigationButtonAsItem
 						path="/header"
@@ -37,7 +34,6 @@ const ScreenMain = ( { shouldUnlockGlobalStyles, onSelect, onContinueClick }: Pr
 					>
 						<span className="pattern-layout__list-item-text">{ translate( 'Header' ) }</span>
 					</NavigationButtonAsItem>
-					<Divider />
 					<NavigationButtonAsItem
 						path="/footer"
 						icon={ footer }
@@ -46,7 +42,6 @@ const ScreenMain = ( { shouldUnlockGlobalStyles, onSelect, onContinueClick }: Pr
 					>
 						<span className="pattern-layout__list-item-text">{ translate( 'Footer' ) }</span>
 					</NavigationButtonAsItem>
-					<Divider />
 					<NavigationButtonAsItem
 						path="/homepage"
 						icon={ layout }
@@ -57,7 +52,6 @@ const ScreenMain = ( { shouldUnlockGlobalStyles, onSelect, onContinueClick }: Pr
 					</NavigationButtonAsItem>
 					{ isEnabled( 'pattern-assembler/color-and-fonts' ) && (
 						<>
-							<Divider />
 							<NavigationButtonAsItem
 								path="/color-palettes"
 								icon={ styles }
@@ -66,7 +60,6 @@ const ScreenMain = ( { shouldUnlockGlobalStyles, onSelect, onContinueClick }: Pr
 							>
 								<span className="pattern-layout__list-item-text">{ translate( 'Colors' ) }</span>
 							</NavigationButtonAsItem>
-							<Divider />
 							<NavigationButtonAsItem
 								path="/font-pairings"
 								icon={ typography }

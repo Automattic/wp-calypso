@@ -1,7 +1,12 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
-import { __experimentalNavigatorBackButton as NavigatorBackButton } from '@wordpress/components';
+import {
+	__experimentalNavigatorBackButton as NavigatorBackButton,
+	__experimentalUseNavigator as useNavigator,
+} from '@wordpress/components';
+import { usePrevious } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import NavigatorHeader from './navigator-header';
 import PatternSelector from './pattern-selector';
 import { useSectionPatterns } from './patterns-data';
@@ -17,11 +22,23 @@ interface Props {
 const ScreenPatternList = ( { selectedPattern, onSelect, onBack, onDoneClick }: Props ) => {
 	const translate = useTranslate();
 	const patterns = useSectionPatterns();
+	const navigator = useNavigator();
+	const prevSelectedPattern = usePrevious( selectedPattern );
 	const isSidebarRevampEnabled = isEnabled( 'pattern-assembler/sidebar-revamp' );
+
+	useEffect( () => {
+		if ( prevSelectedPattern && ! selectedPattern ) {
+			navigator.goBack();
+		}
+	}, [ prevSelectedPattern, selectedPattern ] );
 
 	return (
 		<>
-			{ isSidebarRevampEnabled && <NavigatorHeader title={ translate( 'Add patterns' ) } /> }
+			{ isSidebarRevampEnabled && (
+				<NavigatorHeader
+					title={ selectedPattern ? translate( 'Replace a pattern' ) : translate( 'Add patterns' ) }
+				/>
+			) }
 			<div className="screen-container__body">
 				<PatternSelector
 					title={ ! isSidebarRevampEnabled ? translate( 'Add sections' ) : undefined }
