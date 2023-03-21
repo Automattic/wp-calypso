@@ -7,6 +7,8 @@ import SitesOverviewContext from '../context';
 import { AllowedTypes } from '../types';
 import { siteColumnKeyMap } from '../utils';
 
+import './style.scss';
+
 export default function SiteSort( { columnKey }: { columnKey: AllowedTypes } ) {
 	const { sort } = useContext( SitesOverviewContext );
 	const dispatch = useDispatch();
