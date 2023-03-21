@@ -23,6 +23,8 @@ export type AllowedStatusTypes =
 
 export interface MonitorSettings {
 	monitor_active: boolean;
+	monitor_site_status: boolean;
+	monitor_site_status_raw: number;
 	last_down_time: string;
 	monitor_deferment_time: number;
 	monitor_user_emails: Array< string >;
