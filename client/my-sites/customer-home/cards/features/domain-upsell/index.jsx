@@ -5,6 +5,7 @@ import { useDomainSuggestions } from '@automattic/domain-picker/src';
 import { useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useMemo } from '@wordpress/element';
+import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useState } from 'react';
@@ -107,7 +108,7 @@ export function RenderDomainUpsell( {
 	dismissPreference,
 } ) {
 	const translate = useTranslate();
-
+	const { hasTranslation } = useI18n();
 	const tracksContext = isProfileUpsell ? 'profile' : 'my_home';
 
 	const dispatch = useDispatch();
@@ -185,15 +186,25 @@ export function RenderDomainUpsell( {
 	};
 
 	const cardTitle =
+		// eslint-disable-next-line no-nested-ternary
 		! isFreePlan && ! isMonthlyPlan
-			? translate( 'Make your mark online with a memorable domain name' )
+			? hasTranslation( 'Make your mark online with a memorable domain name' ) || locale === 'en'
+				? translate( 'Make your mark online with a memorable domain name' )
+				: translate( 'You still have a free domain to claim!' )
 			: translate( 'Own your online identity with a custom domain' );
 
 	const cardSubtitle =
+		// eslint-disable-next-line no-nested-ternary
 		! isFreePlan && ! isMonthlyPlan
-			? translate(
+			? hasTranslation(
 					'Your plan includes a free domain for the first year. Stake your claim on the web with a domain name that boosts your brand.'
-			  )
+			  ) || locale === 'en'
+				? translate(
+						'Your plan includes a free domain for the first year. Stake your claim on the web with a domain name that boosts your brand.'
+				  )
+				: translate(
+						'Own your online identity giving your site a memorable domain name. Your plan includes one for free for one year, so you can still claim it.'
+				  )
 			: translate(
 					"Stake your claim on your corner of the web with a site address that's easy to find, share, and follow."
 			  );
