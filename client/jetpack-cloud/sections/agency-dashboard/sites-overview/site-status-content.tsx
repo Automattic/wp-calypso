@@ -45,11 +45,13 @@ export default function SiteStatusContent( {
 		isExternalLink,
 		row: { value, status, error },
 		siteError,
-		tooltip,
 		tooltipId,
 		siteDown,
 		eventName,
+		...metadataRest
 	} = getRowMetaData( rows, type, isLargeScreen );
+
+	let { tooltip } = metadataRest;
 
 	const { isBulkManagementActive } = useContext( SitesOverviewContext );
 	const isExpandedBlockEnabled = isEnabled( 'jetpack/pro-dashboard-expandable-block' );
@@ -179,7 +181,6 @@ export default function SiteStatusContent( {
 	}
 
 	let content;
-	let updatedTooltip = tooltip;
 
 	// Show "Not supported on multisite" when the the site is multisite and the product is Scan or
 	// Backup and the site does not have a backup subscription https://href.li/?https://wp.me/pbuNQi-1jg
@@ -188,7 +189,7 @@ export default function SiteStatusContent( {
 
 	if ( showMultisiteNotSupported ) {
 		content = <Gridicon icon="minus-small" size={ 18 } className="sites-overview__icon-active" />;
-		updatedTooltip = translate( 'Not supported on multisite' );
+		tooltip = translate( 'Not supported on multisite' );
 	} else {
 		// We will show "Site Down" when the site is down which is handled differently.
 		if ( type === 'monitor' && ! siteDown ) {
@@ -197,7 +198,7 @@ export default function SiteStatusContent( {
 					site={ rows.site.value }
 					settings={ rows.monitor.settings }
 					status={ status }
-					tooltip={ updatedTooltip }
+					tooltip={ tooltip }
 					tooltipId={ tooltipId }
 					siteError={ siteError }
 					isLargeScreen={ isLargeScreen }
@@ -345,7 +346,7 @@ export default function SiteStatusContent( {
 
 	return (
 		<>
-			{ updatedTooltip && ! disabledStatus ? (
+			{ tooltip && ! disabledStatus ? (
 				<>
 					<span
 						ref={ statusContentRef }
@@ -365,7 +366,7 @@ export default function SiteStatusContent( {
 						position="bottom"
 						className="sites-overview__tooltip"
 					>
-						{ updatedTooltip }
+						{ tooltip }
 					</Tooltip>
 				</>
 			) : (
