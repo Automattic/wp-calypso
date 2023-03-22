@@ -135,6 +135,11 @@ function WpcomBlockEditorNavSidebar() {
 			? `https://wordpress.com/${ postType.slug }s/${ siteSlug }`
 			: addQueryArgs( 'edit.php', { post_type: postType.slug } );
 
+		// Jetpack Testimonials still want to link to Calypso, but use a slightly different URL structure
+		if ( [ 'jetpack-testimonials' ].includes( postType.slug ) ) {
+			defaultCloseUrl = `https://wordpress.com/types/${ postType.slug }s/${ siteSlug }`;
+		}
+
 		defaultCloseLabel = get(
 			postType,
 			[ 'labels', 'all_items' ],
