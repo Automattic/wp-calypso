@@ -16,11 +16,12 @@ export function notifications( context, next ) {
 
 	context.primary = (
 		<AsyncLoad
-			require="calypso/apps/notifications/src/panel/Notifications"
+			require="calypso/../apps/notifications/src/panel/Notifications.jsx"
 			key="notifications"
 			title="Notifications"
 			streamKey={ streamKey }
 			trackScrollPage={ scrollTracker }
+			wpcom={ window.wpcom }
 		/>
 	);
 	next();
