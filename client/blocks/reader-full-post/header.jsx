@@ -18,7 +18,7 @@ const ReaderFullPostHeader = ( { post, referralPost } ) => {
 	};
 
 	const classes = { 'reader-full-post__header': true };
-	if ( ! post.title || post.title?.trim().length < 1 ) {
+	if ( ! post.title || post.title.trim().length < 1 ) {
 		classes[ 'is-missing-title' ] = true;
 	}
 
