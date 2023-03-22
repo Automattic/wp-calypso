@@ -19,6 +19,7 @@ export const transferStates = {
 	 * Similar to 'none' there is no existing transfer, but this is when the site has been already reverted from atomic
 	 */
 	REVERTED: 'reverted',
+	RELOCATING_REVERT: 'relocating_revert',
 	ERROR: 'error',
 	/**
 	 * This is when the request to fetch the transfer status failed with an unknown error

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useQueryClient } from 'react-query';
+import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { USE_STAGING_SITE_QUERY_KEY } from './use-staging-site';
 
 export function useIsReverting( transferStatus: string | null ): {
@@ -11,14 +12,14 @@ export function useIsReverting( transferStatus: string | null ): {
 
 	useEffect( () => {
 		switch ( transferStatus ) {
-			case 'reverted':
-			case 'request_failure':
+			case transferStates.REVERTED:
+			case transferStates.REQUEST_FAILURE:
 				queryClient.invalidateQueries( [ USE_STAGING_SITE_QUERY_KEY ] );
 				break;
 			case null:
 				setIsReverting( false );
 				break;
-			case 'relocating_revert':
+			case transferStates.RELOCATING_REVERT:
 				setIsReverting( true );
 				break;
 		}
