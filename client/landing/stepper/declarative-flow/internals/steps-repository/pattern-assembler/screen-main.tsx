@@ -24,7 +24,7 @@ const ScreenMain = ( { shouldUnlockGlobalStyles, onSelect, onContinueClick }: Pr
 				) }
 				hideBack
 			/>
-			<div className="screen-container__body screen-container__body--no-padding">
+			<div className="screen-container__body">
 				<ItemGroup>
 					<NavigationButtonAsItem
 						path="/header"
