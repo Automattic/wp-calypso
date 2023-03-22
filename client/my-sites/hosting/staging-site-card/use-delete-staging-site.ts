@@ -6,20 +6,21 @@ import { SiteId } from 'calypso/types';
 import { USE_STAGING_SITE_QUERY_KEY } from './use-staging-site';
 
 interface UseDeleteStagingSiteOptions {
+	siteId: SiteId;
 	stagingSiteId: SiteId;
 	onSuccess?: () => void;
 	onError?: () => void;
 }
 
 export const useDeleteStagingSite = ( options: UseDeleteStagingSiteOptions ) => {
-	const { stagingSiteId, onSuccess, onError } = options;
+	const { siteId, stagingSiteId, onSuccess, onError } = options;
 	const queryClient = useQueryClient();
 	const dispatch = useDispatch();
 	const mutation = useMutation(
 		() => {
 			return wpcom.req.post( {
 				method: 'DELETE',
-				path: `/sites/${ stagingSiteId }/staging-site`,
+				path: `/sites/${ siteId }/staging-site/${ stagingSiteId }`,
 				apiNamespace: 'wpcom/v2',
 			} );
 		},

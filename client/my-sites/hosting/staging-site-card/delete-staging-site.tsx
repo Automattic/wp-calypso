@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { useDeleteStagingSite } from './use-delete-staging-site';
 
 interface DeleteStagingSiteProps {
+	siteId: number;
 	stagingSiteId: number;
 	disabled: boolean;
 	children: React.ReactNode;
@@ -17,6 +18,7 @@ const ActionButtons = styled.div( {
 } );
 
 export function DeleteStagingSite( {
+	siteId,
 	stagingSiteId,
 	disabled = false,
 	children,
@@ -26,13 +28,14 @@ export function DeleteStagingSite( {
 	const openModal = () => setOpen( true );
 	const closeModal = () => setOpen( false );
 	const { deleteStagingSite, isLoading } = useDeleteStagingSite( {
+		siteId,
 		stagingSiteId,
 		onSuccess: closeModal,
 	} );
 
 	return (
 		<>
-			<Button borderless scary onClick={ openModal } disabled={ disabled } busy={ isLoading }>
+			<Button scary onClick={ openModal } disabled={ disabled } busy={ isLoading }>
 				{ children }
 			</Button>
 			{ isOpen && (
