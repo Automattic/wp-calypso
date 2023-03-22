@@ -13,3 +13,7 @@ export type SubscriptionManagerSubscriptionsCount = {
 	comments: number | null;
 	pending: number | null;
 };
+
+export type EmailSettingsAPIResponse = {
+	settings: SubscriptionManagerUserSettings;
+};

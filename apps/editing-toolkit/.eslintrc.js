@@ -15,7 +15,7 @@ module.exports = {
 		// conform to those naming conventions instead of Calypso's.
 		'wpcalypso/jsx-classname-namespace': 'off',
 	},
-	ignorePatterns: [ '**/dist/*', '**/synced-newspack-blocks/*' ],
+	ignorePatterns: [ '**/dist/*' ],
 	overrides: [
 		{
 			files: [ './bin/**/*', './webpack.config.js' ],
