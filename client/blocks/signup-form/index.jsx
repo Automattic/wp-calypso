@@ -1193,11 +1193,13 @@ class SignupForm extends Component {
 					{ this.props.formFooter || this.formFooter() }
 				</LoggedOutForm>
 
-				{ ! config.isEnabled( 'desktop' ) && this.isHorizontal() && ! this.userCreationComplete() && (
-					<div className="signup-form__separator">
-						<div className="signup-form__separator-text">{ this.props.translate( 'or' ) }</div>
-					</div>
-				) }
+				{ ! config.isEnabled( 'desktop' ) &&
+					this.isHorizontal() &&
+					! this.userCreationComplete() && (
+						<div className="signup-form__separator">
+							<div className="signup-form__separator-text">{ this.props.translate( 'or' ) }</div>
+						</div>
+					) }
 
 				{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
 					<Fragment>

@@ -11,7 +11,7 @@ import type { PlanSlug } from './types';
  */
 export function getPlanSlugForTermVariant(
 	slug: PlanSlug,
-	planTerm: typeof TERMS_LIST[ number ]
+	planTerm: ( typeof TERMS_LIST )[ number ]
 ): PlanSlug | undefined {
 	const plan = PLANS_LIST[ slug ];
 
