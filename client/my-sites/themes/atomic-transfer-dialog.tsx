@@ -14,6 +14,7 @@ import {
 	requestActiveTheme,
 } from 'calypso/state/themes/actions';
 import {
+	getActiveTheme,
 	getCanonicalTheme,
 	getThemeForAtomicTransferDialog,
 	isExternallyManagedTheme,
@@ -35,6 +36,7 @@ interface AtomicTransferDialogProps {
 	theme: Theme;
 	siteSlug?: string | null;
 	isMarketplaceProduct?: boolean;
+	activeTheme?: string | null;
 	dispatchAcceptAtomicTransferDialog: typeof acceptAtomicTransferDialog;
 	dispatchDismissAtomicTransferDialog: typeof dismissAtomicTransferDialog;
 	dispatchActivateTheme: typeof activateTheme;
@@ -60,14 +62,19 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 	};
 
 	updateActiveThemeStateAndRedirect = async ( siteId: number ) => {
-		const { dispatchRequestActiveTheme } = this.props;
+		const { dispatchRequestActiveTheme, activeTheme, theme } = this.props;
+		if ( activeTheme === theme?.id ) {
+			return window.location.replace( this.getAtomicSitePath() );
+		}
 		try {
 			await dispatchRequestActiveTheme( siteId );
 		} catch ( e ) {
 			/* do nothing */
 		}
-		// Redirect to the Atomic site even if the active theme request fails
-		window.location.replace( this.getAtomicSitePath() );
+
+		setTimeout( () => {
+			this.updateActiveThemeStateAndRedirect( siteId );
+		}, 2000 );
 	};
 
 	componentDidUpdate( prevProps: Readonly< AtomicTransferDialogProps > ): void {
@@ -82,11 +89,12 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 	}
 
 	renderActivationInProgress() {
-		const { inProgress } = this.props;
+		const { inProgress, activeTheme, theme, isTransferred } = this.props;
+		const isThemeActive = activeTheme === theme?.id;
 		const activationText = translate( 'Please wait while we transfer your site.' );
 
 		return (
-			inProgress && (
+			( inProgress || ( isTransferred && ! isThemeActive ) ) && (
 				<Notice
 					className="themes__atomic-transfer-dialog-notice"
 					status="is-info"
@@ -99,11 +107,13 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 	}
 
 	renderSuccessfulTransfer() {
-		const { isTransferred } = this.props;
+		const { isTransferred, theme, activeTheme } = this.props;
+		const isThemeActive = activeTheme === theme?.id;
 		const successfulTransferText = translate( 'Your site has been transferred successfully.' );
 
 		return (
-			isTransferred && (
+			isTransferred &&
+			isThemeActive && (
 				<Notice
 					className="themes__atomic-transfer-dialog-notice"
 					status="is-success"
@@ -159,6 +169,7 @@ export default connect(
 			inProgress: isUploadInProgress( state, siteId ),
 			isTransferred: isTransferComplete( state, siteId ),
 			siteSlug: getSiteSlug( state, siteId ),
+			activeTheme: getActiveTheme( state, siteId ),
 		};
 	},
 	{
