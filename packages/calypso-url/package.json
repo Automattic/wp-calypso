@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/calypso-url",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"description": "This library provides both generic and Calypso-specific utilities for handling URLs.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
