@@ -17,7 +17,11 @@ const fetchPaymentMethods = ( {
 	expired?: boolean;
 } ): StoredPaymentMethod[] =>
 	wp.req.get(
-		{ path: `/me/payment-methods?type=${ type }&expired=${ expired ? 'include' : 'exclude' }` },
+		{
+			path: `/me/payment-methods?type=${ type ?? 'all' }&expired=${
+				expired ? 'include' : 'exclude'
+			}`,
+		},
 		{ apiVersion: '1.2' }
 	);
 
@@ -100,7 +104,7 @@ export function useStoredPaymentMethods( {
 		StoredPaymentMethod[ 'stored_details_id' ]
 	>( ( id ) => requestPaymentMethodDeletion( id ), {
 		onSuccess: () => {
-			queryClient.invalidateQueries( queryKey );
+			queryClient.invalidateQueries( storedPaymentMethodsQueryKey );
 		},
 	} );
 
