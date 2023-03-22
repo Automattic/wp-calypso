@@ -117,6 +117,10 @@
 
 	.components-base-control.is-error input {
 		border-color: var(--color-error);
+
+		&:focus {
+			box-shadow: 0 0 0 2px var(--color-error-10);
+		}
 	}
 
 	.components-base-control__field {
