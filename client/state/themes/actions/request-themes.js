@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { map, property } from 'lodash';
 import wpcom from 'calypso/lib/wp';
 import { fetchThemesList as fetchWporgThemesList } from 'calypso/lib/wporg';
