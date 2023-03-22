@@ -14,8 +14,6 @@ import 'calypso/me/purchases/payment-methods/style.scss';
 
 interface PaymentMethodListProps {
 	addPaymentMethodUrl: string;
-	hasLoadedFromServer?: boolean;
-	isFetching?: boolean;
 	translate: typeof translate;
 }
 
@@ -23,7 +21,7 @@ class PaymentMethodList extends Component<
 	PaymentMethodListProps & WithStoredPaymentMethodsProps
 > {
 	renderPaymentMethods( paymentMethods: StoredPaymentMethod[] ) {
-		if ( this.props.isFetching && ! this.props.hasLoadedFromServer ) {
+		if ( this.props.paymentMethodsState.isLoading ) {
 			return (
 				<CompactCard className="payment-method-list__loader">
 					<div className="payment-method-list__loading-placeholder-card loading-placeholder__content" />

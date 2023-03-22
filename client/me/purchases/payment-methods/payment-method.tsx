@@ -19,9 +19,9 @@ export default function PaymentMethod( { paymentMethod }: { paymentMethod: Store
 		>
 			<div className="payment-method">
 				<PaymentMethodDetails
-					lastDigits={ paymentMethod.card_last_4 }
+					lastDigits={ 'card_last_4' in paymentMethod ? paymentMethod.card_last_4 : undefined }
 					email={ paymentMethod.email }
-					cardType={ paymentMethod.card_type || '' }
+					cardType={ 'card_type' in paymentMethod ? paymentMethod.card_type : undefined }
 					paymentPartner={ paymentMethod.payment_partner }
 					name={ paymentMethod.name }
 					expiry={ paymentMethod.expiry }
@@ -29,8 +29,8 @@ export default function PaymentMethod( { paymentMethod }: { paymentMethod: Store
 				/>
 				{ isCreditCard( paymentMethod ) && <PaymentMethodBackupToggle card={ paymentMethod } /> }
 				<TaxInfoArea
-					last4={ paymentMethod.card_last_4 }
-					brand={ paymentMethod.card_type }
+					last4={ 'card_last_4' in paymentMethod ? paymentMethod.card_last_4 : undefined }
+					brand={ 'card_type' in paymentMethod ? paymentMethod.card_type : undefined }
 					storedDetailsId={ paymentMethod.stored_details_id }
 					paymentPartnerProcessorId={ paymentMethod.payment_partner }
 				/>

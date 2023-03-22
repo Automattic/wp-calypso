@@ -59,8 +59,8 @@ const PaymentMethodDelete: FunctionComponent< Props > = ( { card } ) => {
 			<PaymentMethodDeleteDialog
 				paymentMethodSummary={
 					<PaymentMethodSummary
-						type={ card.card_type || card.payment_partner }
-						digits={ card.card_last_4 }
+						type={ 'card_type' in card ? card.card_type : card.payment_partner }
+						digits={ 'card_last_4' in card ? card.card_last_4 : undefined }
 						email={ card.email }
 					/>
 				}
