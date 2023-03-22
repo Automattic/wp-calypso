@@ -1,7 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
+import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
-import { Button, Spinner } from '@wordpress/components';
+import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -22,11 +23,10 @@ const PluginSectionContainer = styled.div`
 	flex-direction: row;
 	flex-wrap: wrap;
 	width: 720px;
-	padding: 24px;
 	box-sizing: border-box;
-	border: 1px solid var( --studio-gray-5 );
-	border-radius: 4px;
+	border-top: 1px solid var( --studio-gray-5 );
 	align-items: center;
+	padding: 24px 0 24px 0;
 
 	div {
 		min-width: auto;
@@ -70,6 +70,16 @@ const PluginSectionButtons = styled.div`
 	display: flex;
 	gap: 16px;
 	min-width: auto;
+`;
+
+const PluginButton = styled( Button )`
+	border-radius: 4px;
+`;
+
+const PluginIcon = styled.img`
+	border-radius: 10px;
+	box-shadow: 0px 15px 20px rgba( 0, 0, 0, 0.04 ), 0px 13px 10px rgba( 0, 0, 0, 0.03 ),
+		0px 6px 6px rgba( 0, 0, 0, 0.02 );
 `;
 
 export const ThankYouPluginSection = ( { plugin }: { plugin: any } ) => {
@@ -126,7 +136,7 @@ export const ThankYouPluginSection = ( { plugin }: { plugin: any } ) => {
 	return (
 		<PluginSectionContainer>
 			<QuerySitePurchases siteId={ siteId } />
-			<img
+			<PluginIcon
 				width={ 50 }
 				height={ 50 }
 				src={ plugin.icon }
@@ -146,25 +156,23 @@ export const ThankYouPluginSection = ( { plugin }: { plugin: any } ) => {
 				) }
 			</PluginSectionContent>
 			<PluginSectionButtons>
-				<Button
-					isPrimary
+				<PluginButton
 					href={ setupURL }
 					onClick={ () =>
 						sendTrackEvent( 'calypso_plugin_thank_you_manage_plugin_click', setupURL )
 					}
 				>
 					{ translate( 'Manage plugin' ) }
-				</Button>
+				</PluginButton>
 				{ documentationURL && (
-					<Button
-						isSecondary
+					<PluginButton
 						href={ documentationURL }
 						onClick={ () =>
 							sendTrackEvent( 'calypso_plugin_thank_you_plugin_guide_click', documentationURL )
 						}
 					>
 						{ translate( 'Plugin guide' ) }
-					</Button>
+					</PluginButton>
 				) }
 			</PluginSectionButtons>
 		</PluginSectionContainer>
