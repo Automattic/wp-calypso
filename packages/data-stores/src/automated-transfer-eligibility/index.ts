@@ -16,7 +16,7 @@ export const store = createReduxStore( STORE_KEY, {
 	resolvers,
 	selectors: {
 		getAutomatedTransferEligibility: ( state: State, siteId: number | null ) =>
-			siteId ? state[ siteId ] : null,
+			siteId && state[ siteId ] ? state[ siteId ] : null,
 	},
 } );
 register( store );
