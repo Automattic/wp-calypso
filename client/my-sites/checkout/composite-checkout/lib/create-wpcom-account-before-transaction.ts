@@ -17,17 +17,19 @@ export async function createWpcomAccountBeforeTransaction(
 		( product ) => product.extra.isGiftPurchase
 	);
 
-	let signupFlowName;
+	const signupFlowName = ( () => {
+		if ( isJetpackUserLessCheckout ) {
+			return 'jetpack-userless-checkout';
+		}
+		if ( isAkismetUserLessCheckout ) {
+			return 'akismet-userless-checkout';
+		}
+		if ( isGiftingCheckout ) {
+			return 'gifting-userless-checkout';
+		}
 
-	if ( isJetpackUserLessCheckout ) {
-		signupFlowName = 'jetpack-userless-checkout';
-	} else if ( isAkismetUserLessCheckout ) {
-		signupFlowName = 'akismet-userless-checkout';
-	} else if ( isGiftingCheckout ) {
-		signupFlowName = 'gifting-userless-checkout';
-	} else {
-		signupFlowName = 'onboarding-registrationless';
-	}
+		return 'onboarding-registrationless';
+	} )();
 
 	/*
 	 * We treat Gifting as jetpack-userless-checkout to create and verify the user
