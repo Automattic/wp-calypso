@@ -25,6 +25,18 @@ export function useQueryTheme( siteId, themeId ) {
 	}, [ dispatch, siteId, themeId ] );
 }
 
+export function useQueryThemes( siteId, themeIds ) {
+	const dispatch = useDispatch();
+
+	useEffect( () => {
+		themeIds.forEach( ( themeId ) => {
+			if ( siteId && themeId ) {
+				dispatch( request( siteId, themeId ) );
+			}
+		} );
+	}, [ dispatch, siteId, themeIds ] );
+}
+
 QueryTheme.propTypes = {
 	siteId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.oneOf( [ 'wpcom', 'wporg' ] ) ] )
 		.isRequired,

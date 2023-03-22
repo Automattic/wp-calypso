@@ -132,9 +132,11 @@ export interface DeleteInvitesResponse {
 	invalid: string[];
 }
 
-export interface NewPostResponse {
+export interface PostResponse {
+	ID: number;
 	URL: string;
 	title: string;
+	status: 'trash' | 'publish' | 'private' | 'draft' | 'future' | 'deleted';
 }
 
 export interface NewMediaResponse {
@@ -158,6 +160,12 @@ export interface ReaderResponse {
 
 export interface NewCommentResponse {
 	ID: number;
+}
+
+export interface CommentLikeResponse {
+	success: boolean;
+	i_like: boolean;
+	like_count: number;
 }
 
 export interface PluginResponse {

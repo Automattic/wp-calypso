@@ -28,6 +28,18 @@ export interface PaymentMethod {
 	remember: '1' | '0';
 	stored_details_id: string;
 	user_id: string;
+	tax_location: StoredPaymentMethodTaxLocation | null;
+}
+
+export interface StoredPaymentMethodTaxLocation {
+	country_code?: string;
+	postal_code?: string;
+	subdivision_code?: string;
+	ip_address?: string;
+	vat_id?: string;
+	organization?: string;
+	address?: string;
+	city?: string;
 }
 
 export interface PaymentMethodMeta {

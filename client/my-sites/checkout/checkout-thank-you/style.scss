@@ -833,6 +833,71 @@
 	}
 }
 
+main.akismet-checkout-thank-you {
+	max-width: 1000px;
+
+	.akismet-checkout-thank-you__main-message,
+	.akismet-checkout-thank-you__email-message,
+	.akismet-checkout-thank-you__email-message-loading {
+		margin: 1em 0;
+		letter-spacing: -0.02em;
+
+		@include break-mobile {
+			max-width: 450px;
+		}
+	}
+
+	.akismet-checkout-thank-you__email-message {
+		font-size: $font-title-small;
+	}
+
+	.akismet-checkout-thank-you__main-message {
+		font-weight: 400;
+		font-size: $font-headline-medium;
+		line-height: 1.2;
+		margin-top: 0;
+
+		@include break-mobile {
+			margin-top: 1.5em;
+		}
+	}
+
+	.akismet-checkout-thank-you__emoji {
+		font-size: 40px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+	}
+
+	.akismet-checkout-thank-you__card {
+		box-shadow: 0 0 40px 0 #00000014;
+
+		padding: 2rem;
+		margin-bottom: 0;
+
+		@include break-mobile {
+			background-image: url(calypso/assets/images/akismet/akismet-thank-you-background.jpg);
+			background-size: cover;
+			background-position: bottom;
+
+			padding: 5rem;
+		}
+	}
+
+	.akismet-checkout-thank-you__footer-img {
+		background-image: url(calypso/assets/images/akismet/akismet-thank-you-background-mobile.png);
+		background-size: cover;
+
+		width: 100%;
+		height: 100vw;
+
+		@include break-mobile {
+			display: none;
+		}
+	}
+
+	.akismet-checkout-thank-you__email-message-loading {
+		@include placeholder( --color-neutral-20 );
+	}
+}
+
 .jetpack-instruction-list {
 	margin: 0;
 
