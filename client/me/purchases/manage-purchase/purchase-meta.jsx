@@ -96,7 +96,7 @@ export default function PurchaseMeta( {
 				/>
 			</ul>
 			{ showJetpackUserLicense && <PurchaseJetpackUserLicense purchaseId={ purchaseId } /> }
-			{ showAkismetApiKey && <PurchaseAkismetApiKey purchaseId={ purchaseId } /> }
+			{ showAkismetApiKey && <PurchaseAkismetApiKey /> }
 			<RenewErrorMessage purchase={ purchase } translate={ translate } site={ site } />
 		</>
 	);
