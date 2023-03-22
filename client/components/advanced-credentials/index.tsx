@@ -43,6 +43,7 @@ interface Props {
 	role: string;
 	onFinishCallback?: () => void;
 	redirectOnFinish?: boolean;
+	goBackPath?: string;
 }
 
 const AdvancedCredentials: FunctionComponent< Props > = ( {
@@ -51,6 +52,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( {
 	role,
 	onFinishCallback = null,
 	redirectOnFinish = true,
+	goBackPath = '',
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -283,6 +285,12 @@ const AdvancedCredentials: FunctionComponent< Props > = ( {
 				>
 					<Gridicon icon="arrow-left" size={ 18 } />
 					{ translate( 'Change host' ) }
+				</Button>
+			) }
+			{ ( isAlternate && goBackPath !== '' ) ?? (
+				<Button compact borderless disabled={ disableForm } href={ goBackPath }>
+					<Gridicon icon="arrow-left" size={ 18 } />
+					{ translate( 'Go back' ) }
 				</Button>
 			) }
 			<Button primary onClick={ handleUpdateCredentials } disabled={ disableForm || formHasErrors }>

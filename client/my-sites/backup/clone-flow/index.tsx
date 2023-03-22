@@ -21,6 +21,7 @@ import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
 import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
 import getInProgressRewindStatus from 'calypso/state/selectors/get-in-progress-rewind-status';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import getRestoreProgress from 'calypso/state/selectors/get-restore-progress';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
@@ -58,6 +59,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ) );
 	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
 	const siteUrl = useSelector( ( state ) => ( siteId && getSiteUrl( state, siteId ) ) || '' );
+	const previousPath = useSelector( getPreviousRoute );
 
 	const [ rewindConfig, setRewindConfig ] = useState< RewindConfig >( defaultRewindConfig );
 	const [ userHasRequestedRestore, setUserHasRequestedRestore ] = useState< boolean >( false );
@@ -165,6 +167,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 					role={ CredSettings.role }
 					onFinishCallback={ () => onSetDestination( CredSettings.role ) }
 					redirectOnFinish={ false }
+					goBackPath={ previousPath }
 				/>
 			</div>
 			<Button
