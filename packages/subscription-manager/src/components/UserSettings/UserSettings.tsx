@@ -43,7 +43,7 @@ const UserSettings = ( { value = {}, loading = false, onChange }: UserSettingsPr
 			}
 		/>
 		<BlockEmailsSetting
-			value={ value.blocked }
+			value={ value.blocked ?? false }
 			onChange={ ( value ) => onChange?.( { blocked: !! value.target.value } ) }
 		/>
 	</div>
