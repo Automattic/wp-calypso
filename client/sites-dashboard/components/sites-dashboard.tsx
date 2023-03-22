@@ -11,7 +11,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import Pagination from 'calypso/components/pagination';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SplitButton from 'calypso/components/split-button';
-import { SiteExcerptNetworkData } from 'calypso/data/sites/site-excerpt-types';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { MEDIA_QUERIES } from '../utils';
@@ -138,35 +137,15 @@ const ScrollButton = styled( Button, { shouldForwardProp: ( prop ) => prop !== '
 
 const SitesDashboardSitesList = createSitesListComponent();
 
-export function handlePlanLabelsForStagingSites( sites: SiteExcerptNetworkData[] ) {
-	// Create a map once, and use that,instead of use find every time, in the map below.
-	const sitesById = sites.reduce( ( allSites, site: SiteExcerptNetworkData ) => {
-		allSites[ site.ID ] = site;
-		return allSites;
-	}, {} as { [ id: number ]: SiteExcerptNetworkData } );
-
-	return sites.map( ( site: SiteExcerptNetworkData ) => {
-		if ( site?.options?.wpcom_production_blog_id && site.plan ) {
-			const productionSitePlanLabel =
-				sitesById[ site?.options?.wpcom_production_blog_id ]?.plan?.product_name_short;
-			if ( productionSitePlanLabel ) {
-				site.plan.product_name_short = productionSitePlanLabel;
-			}
-		}
-		return site;
-	} );
-}
-
 export function SitesDashboard( {
 	queryParams: { page = 1, perPage = 96, search, status = 'all' },
 }: SitesDashboardProps ) {
 	const { __, _n } = useI18n();
-	const { data: sites = [], isLoading } = useSiteExcerptsQuery();
+	const { data: allSites = [], isLoading } = useSiteExcerptsQuery();
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
 	const [ displayMode, setDisplayMode ] = useSitesDisplayMode();
 	const userPreferencesLoaded = hasSitesSortingPreferenceLoaded && 'none' !== displayMode;
 	const elementRef = useRef( window );
-	const allSites = handlePlanLabelsForStagingSites( sites );
 
 	const isBelowThreshold = useCallback( ( containerNode: Window ) => {
 		const SCROLL_THRESHOLD = containerNode.innerHeight;
