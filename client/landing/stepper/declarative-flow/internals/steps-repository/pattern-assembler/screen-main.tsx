@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { __experimentalItemGroup as ItemGroup } from '@wordpress/components';
-import { header, footer, layout, styles, typography } from '@wordpress/icons';
+import { header, footer, layout, color, typography } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { NavigationButtonAsItem } from './navigator-buttons';
 import NavigatorHeader from './navigator-header';
@@ -54,7 +54,7 @@ const ScreenMain = ( { shouldUnlockGlobalStyles, onSelect, onContinueClick }: Pr
 						<>
 							<NavigationButtonAsItem
 								path="/color-palettes"
-								icon={ styles }
+								icon={ color }
 								aria-label={ translate( 'Colors' ) }
 								onClick={ () => onSelect( 'color-palettes' ) }
 							>
