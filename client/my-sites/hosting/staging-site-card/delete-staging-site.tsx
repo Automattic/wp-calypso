@@ -39,7 +39,7 @@ export function DeleteStagingSite( {
 				{ children }
 			</Button>
 			{ isOpen && (
-				<Modal title={ __( 'Confirm Staging Site Deletion' ) } onRequestClose={ closeModal }>
+				<Modal title={ __( 'Confirm staging site deletion' ) } onRequestClose={ closeModal }>
 					<p>
 						{ __(
 							'Are you sure you want to delete the staging site? This action cannot be undone.'
