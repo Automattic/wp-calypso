@@ -1,5 +1,6 @@
 import AsyncLoad from 'calypso/components/async-load';
 import { sectionify } from 'calypso/lib/route';
+import wpcom from 'calypso/lib/wp';
 import { trackPageLoad, trackScrollPage } from 'calypso/reader/controller-helper';
 import { recordTrack } from 'calypso/reader/stats';
 
@@ -21,7 +22,7 @@ export function notifications( context, next ) {
 			title="Notifications"
 			streamKey={ streamKey }
 			trackScrollPage={ scrollTracker }
-			wpcom={ window.wpcom }
+			wpcom={ wpcom }
 		/>
 	);
 	next();
