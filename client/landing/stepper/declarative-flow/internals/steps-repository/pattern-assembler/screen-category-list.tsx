@@ -40,8 +40,9 @@ const ScreenCategoryList = ( {
 	const categoriesInOrder = useCategoriesOrder( categories );
 
 	const handleFocusOutside = ( event: Event ) => {
-		// Click on large preview to close Pattern List
-		if ( ( event.target as HTMLElement ).closest( '.pattern-large-preview' ) ) {
+		// Click on large preview but not action bar to close Pattern List
+		const target = event.target as HTMLElement;
+		if ( ! target.closest( '.pattern-action-bar' ) && target.closest( '.pattern-large-preview' ) ) {
 			setSelectedCategory( null );
 		}
 	};
