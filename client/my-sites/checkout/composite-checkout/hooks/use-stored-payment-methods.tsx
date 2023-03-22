@@ -18,7 +18,7 @@ const fetchPaymentMethods = ( {
 } ): StoredPaymentMethod[] =>
 	wp.req.get(
 		{ path: `/me/payment-methods?type=${ type }&expired=${ expired ? 'include' : 'exclude' }` },
-		{ apiVersion: '1.1' }
+		{ apiVersion: '1.2' }
 	);
 
 const requestPaymentMethodDeletion = ( id: StoredPaymentMethod[ 'stored_details_id' ] ) =>
