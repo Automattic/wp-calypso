@@ -525,6 +525,8 @@ export class SharingService extends Component {
 			'is-open': this.state.isOpen,
 		} );
 		const accounts = this.state.isSelectingAccount ? this.props.availableExternalAccounts : [];
+		const showLinkedInNotice =
+			'linkedin' === this.props.service.ID && some( connections, { status: 'must_reauth' } );
 
 		const header = (
 			<div>
@@ -540,15 +542,14 @@ export class SharingService extends Component {
 						numberOfConnections={ this.getConnections().length }
 					/>
 				</div>
-				{ 'linkedin' === this.props.service.ID &&
-					some( connections, { status: 'must_reauth' } ) && (
-						<Notice isCompact status="is-error" className="sharing-service__notice">
-							{ this.props.translate(
-								'Time to reauthenticate! Some changes to LinkedIn mean that you need to re-enable Jetpack Social ' +
-									'by disconnecting and reconnecting your account.'
-							) }
-						</Notice>
-					) }
+				{ showLinkedInNotice && (
+					<Notice isCompact status="is-error" className="sharing-service__notice">
+						{ this.props.translate(
+							'Time to reauthenticate! Some changes to LinkedIn mean that you need to re-enable Jetpack Social ' +
+								'by disconnecting and reconnecting your account.'
+						) }
+					</Notice>
+				) }
 			</div>
 		);
 

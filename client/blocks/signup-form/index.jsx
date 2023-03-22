@@ -1135,6 +1135,8 @@ class SignupForm extends Component {
 
 		if ( this.props.isPasswordless && 'wpcc' !== this.props.flowName ) {
 			const logInUrl = this.getLoginLink();
+			const showSeparator =
+				! config.isEnabled( 'desktop' ) && this.isHorizontal() && ! this.userCreationComplete();
 
 			return (
 				<div
@@ -1155,13 +1157,11 @@ class SignupForm extends Component {
 						queryArgs={ this.props.queryArgs }
 					/>
 
-					{ ! config.isEnabled( 'desktop' ) &&
-						this.isHorizontal() &&
-						! this.userCreationComplete() && (
-							<div className="signup-form__separator">
-								<div className="signup-form__separator-text">{ this.props.translate( 'or' ) }</div>
-							</div>
-						) }
+					{ showSeparator && (
+						<div className="signup-form__separator">
+							<div className="signup-form__separator-text">{ this.props.translate( 'or' ) }</div>
+						</div>
+					) }
 
 					{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
 						<SocialSignupForm
