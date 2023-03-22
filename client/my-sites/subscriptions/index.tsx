@@ -10,12 +10,16 @@ import { makeLayout, render } from 'calypso/controller';
 
 const SitesView = () => <span>Sites View</span>;
 const CommentsView = () => <span>Comments View</span>;
-const SettingsView = () => <SubscriptionManager.UserSettings />;
 
 const SubscriptionManagementPage = () => {
 	const translate = useTranslate();
 	const { data: counts } = Reader.useSubscriptionManagerSubscriptionsCountQuery();
 	const locale = useLocale();
+
+	const SettingsView = () => {
+		const { data: settings } = Reader.useSubscriptionManagerUserSettingsQuery();
+		return <SubscriptionManager.UserSettings value={ settings } />;
+	};
 
 	return (
 		<MomentProvider currentLocale={ locale }>

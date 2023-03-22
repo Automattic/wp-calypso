@@ -1,11 +1,11 @@
 import { FormEvent } from 'react';
 import { BlockEmailsSetting } from '../fields/BlockEmailsSetting';
-import {
-	DeliveryWindowInput,
+import { DeliveryWindowInput } from '../fields/DeliveryWindowInput';
+import { EmailFormatInput, EmailFormatType } from '../fields/EmailFormatInput';
+import type {
 	DeliveryWindowDayType,
 	DeliveryWindowHourType,
-} from '../fields/DeliveryWindowInput';
-import { EmailFormatInput, EmailFormatType } from '../fields/EmailFormatInput';
+} from '@automattic/data-stores/src/reader/types';
 
 type SubscriptionUserSettings = Partial< {
 	mail_option: EmailFormatType;
@@ -43,7 +43,7 @@ const UserSettings = ( { value = {}, loading = false, onChange }: UserSettingsPr
 			}
 		/>
 		<BlockEmailsSetting
-			value={ value.blocked }
+			value={ value.blocked ?? false }
 			onChange={ ( value ) => onChange?.( { blocked: !! value.target.value } ) }
 		/>
 	</div>
