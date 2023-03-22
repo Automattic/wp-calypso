@@ -19,7 +19,6 @@ import { eligibilityHolds as eligibilityHoldsConstants } from 'calypso/state/aut
 import SupportCard from '../store-address/support-card';
 import type { Step } from '../../types';
 import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
-import type { TransferEligibilityHold } from '@automattic/data-stores/src/automated-transfer-eligibility/types';
 import './style.scss';
 
 const {
@@ -106,7 +105,7 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 
 	// Filter the Woop transferring blockers.
 	const transferringBlockers = eligibilityHolds?.filter(
-		( hold: TransferEligibilityHold ) => ! TRANSFERRING_NOT_BLOCKERS.includes( hold )
+		( hold ) => ! TRANSFERRING_NOT_BLOCKERS.includes( hold )
 	);
 
 	const isTransferStuck = latestAtomicTransfer?.is_stuck || false;
