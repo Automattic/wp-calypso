@@ -28,8 +28,8 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 
 	// WX Medium and Commerce have the same features
 	const wooExpressMediumPlanFeatureSets = useMemo( () => {
-		return getWooExpressMediumFeatureSets( { translate } );
-	}, [ translate ] );
+		return getWooExpressMediumFeatureSets( { translate, interval } );
+	}, [ translate, interval ] );
 
 	return (
 		<>
