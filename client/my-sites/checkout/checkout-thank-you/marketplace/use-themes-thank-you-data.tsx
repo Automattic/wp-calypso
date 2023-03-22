@@ -7,6 +7,7 @@ import { ThankYouSectionProps } from 'calypso/components/thank-you/types';
 import MasterbarStyled from 'calypso/my-sites/marketplace/components/masterbar-styled';
 import { getThemes } from 'calypso/state/themes/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { ThankYouThemeSection } from './marketplace-thank-you-theme-section';
 
 export function useThemesThankYouData(
 	themeSlugs: string[]
@@ -29,7 +30,7 @@ export function useThemesThankYouData(
 		sectionKey: 'theme_information',
 		nextSteps: themesList.map( ( theme ) => ( {
 			stepKey: `theme_information_${ theme?.id }`,
-			stepSection: <></>, // TODO: Add theme card
+			stepSection: <ThankYouThemeSection theme={ theme } />,
 		} ) ),
 	};
 

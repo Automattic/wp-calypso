@@ -17,7 +17,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './style.scss';
 import { MarketplaceGoBackSection } from './marketplace-go-back-section';
-import { useDefaultThankYouFoooter } from './use-default-thank-you-footer';
+import { useThankYouFoooter } from './use-default-thank-you-footer';
 import { usePluginsThankYouData } from './use-plugins-thank-you-data';
 import { useThemesThankYouData } from './use-themes-thank-you-data';
 
@@ -33,8 +33,7 @@ const MarketplaceThankYou = ( {
 	const siteId = useSelector( getSelectedSiteId );
 	const isRequestingPlugins = useSelector( ( state ) => isRequesting( state, siteId ) );
 
-	const allSlugs = useMemo( () => [ ...pluginSlugs, ...themeSlugs ], [ pluginSlugs, themeSlugs ] );
-	const defaultThankYouFooter = useDefaultThankYouFoooter( allSlugs );
+	const defaultThankYouFooter = useThankYouFoooter( pluginSlugs, themeSlugs );
 
 	const [ pluginsSection, allPluginsFetched, pluginsGoBackSection ] =
 		usePluginsThankYouData( pluginSlugs );
