@@ -1,8 +1,11 @@
 import config from '@automattic/calypso-config';
+import { Reader } from '@automattic/data-stores';
+import { useLocale } from '@automattic/i18n-utils';
 import SubscriptionManager from '@automattic/subscription-manager';
 import { useTranslate } from 'i18n-calypso';
 import page, { Callback } from 'page';
 import { createElement } from 'react';
+import MomentProvider from 'calypso/components/localized-moment/provider';
 import { makeLayout, render } from 'calypso/controller';
 
 const SitesView = () => <span>Sites View</span>;
@@ -11,33 +14,37 @@ const SettingsView = () => <SubscriptionManager.UserSettings />;
 
 const SubscriptionManagementPage = () => {
 	const translate = useTranslate();
+	const { data: counts } = Reader.useSubscriptionManagerSubscriptionsCountQuery();
+	const locale = useLocale();
 
 	return (
-		<SubscriptionManager>
-			<SubscriptionManager.TabsSwitcher
-				baseRoute="subscriptions"
-				defaultTab="sites"
-				tabs={ [
-					{
-						label: translate( 'Sites' ),
-						path: 'sites',
-						view: SitesView,
-						count: 2,
-					},
-					{
-						label: translate( 'Comments' ),
-						path: 'comments',
-						view: CommentsView,
-						count: 5,
-					},
-					{
-						label: translate( 'Settings' ),
-						path: 'settings',
-						view: SettingsView,
-					},
-				] }
-			/>
-		</SubscriptionManager>
+		<MomentProvider currentLocale={ locale }>
+			<SubscriptionManager>
+				<SubscriptionManager.TabsSwitcher
+					baseRoute="subscriptions"
+					defaultTab="sites"
+					tabs={ [
+						{
+							label: translate( 'Sites' ),
+							path: 'sites',
+							view: SitesView,
+							count: counts?.blogs || undefined,
+						},
+						{
+							label: translate( 'Comments' ),
+							path: 'comments',
+							view: CommentsView,
+							count: counts?.comments || undefined,
+						},
+						{
+							label: translate( 'Settings' ),
+							path: 'settings',
+							view: SettingsView,
+						},
+					] }
+				/>
+			</SubscriptionManager>
+		</MomentProvider>
 	);
 };
 

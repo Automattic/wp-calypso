@@ -47,6 +47,10 @@
 				padding: 7px 12px;
 				box-shadow: none;
 
+				&.is-primary:hover {
+					color: var(--color-text-inverted);
+				}
+
 				&:hover {
 					color: var(--color-text-subtle);
 				}

@@ -962,11 +962,17 @@ class SignupForm extends Component {
 			);
 		}
 
+		const params = new URLSearchParams( window.location.search );
+		const variationName = params.get( 'variationName' );
+
 		return (
 			<LoggedOutFormFooter isBlended={ this.props.isSocialSignupEnabled }>
 				{ this.termsOfServiceLink() }
 				<FormButton
-					className="signup-form__submit"
+					className={ classNames(
+						'signup-form__submit',
+						variationName && `${ variationName }-signup-form`
+					) }
 					disabled={
 						this.state.submitting ||
 						this.props.disabled ||

@@ -12,7 +12,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { BEFORE_SUBMIT } from './constants';
 import Content from './content';
 import Placeholder from './placeholder';
-import { useSubmitTransaction, extractStoredCardMetaValue } from './util';
+import { useSubmitTransaction } from './util';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { ManagedValue } from '@automattic/wpcom-checkout';
 import type { PaymentProcessorOptions } from 'calypso/my-sites/checkout/composite-checkout/types/payment-processors';
@@ -57,7 +57,7 @@ export function PurchaseModal( {
 	);
 }
 
-function wrapValueInManagedValue( value: string | undefined ): ManagedValue {
+export function wrapValueInManagedValue( value: string | undefined ): ManagedValue {
 	return {
 		value: value ?? '',
 		isTouched: true,
@@ -80,8 +80,6 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ) {
 	const includeDomainDetails = contactDetailsType === 'domain';
 	const includeGSuiteDetails = contactDetailsType === 'gsuite';
 	const storedCard = props.cards[ 0 ];
-	const countryCode = extractStoredCardMetaValue( storedCard, 'country_code' );
-	const postalCode = extractStoredCardMetaValue( storedCard, 'card_zip' );
 	const dataForProcessor: PaymentProcessorOptions = useMemo(
 		() => ( {
 			createUserAndSiteBeforeTransaction: false,
@@ -95,13 +93,12 @@ export default function PurchaseModalWrapper( props: PurchaseModalProps ) {
 			stripe,
 			stripeConfiguration,
 			contactDetails: {
-				countryCode: wrapValueInManagedValue( countryCode ),
-				postalCode: wrapValueInManagedValue( postalCode ),
+				countryCode: wrapValueInManagedValue( storedCard.tax_location?.country_code ),
+				postalCode: wrapValueInManagedValue( storedCard.tax_location?.postal_code ),
 			},
 		} ),
 		[
-			countryCode,
-			postalCode,
+			storedCard,
 			includeDomainDetails,
 			includeGSuiteDetails,
 			stripe,

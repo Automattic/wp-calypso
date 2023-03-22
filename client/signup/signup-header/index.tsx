@@ -1,10 +1,5 @@
 import { ProgressBar, WooCommerceWooLogo } from '@automattic/components';
-import {
-	useFlowProgress,
-	FREE_FLOW,
-	LINK_IN_BIO_FLOW,
-	LINK_IN_BIO_TLD_FLOW,
-} from '@automattic/onboarding';
+import { useFlowProgress, FREE_FLOW } from '@automattic/onboarding';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import WordPressLogo from 'calypso/components/wordpress-logo';
@@ -37,9 +32,6 @@ const SignupHeader = ( {
 	} );
 	const translate = useTranslate();
 	const VARIATION_TITLES: Record< string, string > = {
-		newsletter: translate( 'Newsletter' ),
-		[ LINK_IN_BIO_FLOW ]: translate( 'Link in Bio' ),
-		[ LINK_IN_BIO_TLD_FLOW ]: translate( 'Link in Bio' ),
 		videopress: translate( 'Video' ),
 	};
 	const params = new URLSearchParams( window.location.search );

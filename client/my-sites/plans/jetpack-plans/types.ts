@@ -134,6 +134,7 @@ export interface SelectorProduct extends SelectorProductCost {
 	whatIsIncluded?: Array< TranslateResult >;
 	benefits?: Array< TranslateResult >;
 	recommendedFor?: Array< JetpackTag >;
+	forceNoYearlyUpgrade?: boolean;
 }
 
 export type SiteProduct = {
