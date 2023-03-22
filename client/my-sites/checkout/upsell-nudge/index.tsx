@@ -14,6 +14,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
 import Main from 'calypso/components/main';
+import { isCreditCard } from 'calypso/lib/checkout/payment-methods';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import { TITAN_MAIL_MONTHLY_SLUG, TITAN_MAIL_YEARLY_SLUG } from 'calypso/lib/titan/constants';
 import { withStoredPaymentMethods } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-stored-payment-methods';
@@ -496,7 +497,8 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 		}
 
 		// stored cards should exist
-		if ( this.props.paymentMethodsState.paymentMethods.length === 0 ) {
+		const storedCards = this.props.paymentMethodsState.paymentMethods.filter( isCreditCard );
+		if ( storedCards.length === 0 ) {
 			debug( 'not eligible for one-click upsell because there are no cards' );
 			return false;
 		}
@@ -526,11 +528,13 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 			return null;
 		}
 
+		const storedCards = this.props.paymentMethodsState.paymentMethods.filter( isCreditCard );
+
 		return (
 			<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration }>
 				<PurchaseModal
 					cart={ this.props.cart }
-					cards={ this.props.paymentMethodsState.paymentMethods }
+					cards={ storedCards }
 					onClose={ onCloseModal }
 					siteSlug={ this.props.siteSlug }
 					isCartUpdating={ isCartUpdating }

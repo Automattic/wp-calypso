@@ -15,14 +15,14 @@ import Placeholder from './placeholder';
 import { useSubmitTransaction } from './util';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { ManagedValue } from '@automattic/wpcom-checkout';
-import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
+import type { StoredPaymentMethodCard } from 'calypso/lib/checkout/payment-methods';
 import type { PaymentProcessorOptions } from 'calypso/my-sites/checkout/composite-checkout/types/payment-processors';
 
 import './style.scss';
 
 type PurchaseModalProps = {
 	cart: ResponseCart;
-	cards: StoredPaymentMethod[];
+	cards: StoredPaymentMethodCard[];
 	isCartUpdating: boolean;
 	onClose: () => void;
 	siteSlug: string;

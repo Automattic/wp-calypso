@@ -16,7 +16,7 @@ import { BEFORE_SUBMIT } from './constants';
 import { formatDate } from './util';
 import type { LineItem } from '@automattic/composite-checkout';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
-import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
+import type { StoredPaymentMethodCard } from 'calypso/lib/checkout/payment-methods';
 import type { MouseEventHandler, ReactNode } from 'react';
 
 function PurchaseModalStep( { children, id }: { children: ReactNode; id: string } ) {
@@ -94,7 +94,13 @@ function OrderStep( { siteSlug, product }: { siteSlug: string; product: Response
 	);
 }
 
-function PaymentMethodStep( { card, siteSlug }: { card: StoredPaymentMethod; siteSlug: string } ) {
+function PaymentMethodStep( {
+	card,
+	siteSlug,
+}: {
+	card: StoredPaymentMethodCard;
+	siteSlug: string;
+} ) {
 	const translate = useTranslate();
 	const clickHandler = useCallback( ( event ) => {
 		event.preventDefault();
@@ -194,7 +200,7 @@ export default function PurchaseModalContent( {
 	step,
 	submitTransaction,
 }: {
-	cards: StoredPaymentMethod[];
+	cards: StoredPaymentMethodCard[];
 	cart: ResponseCart;
 	onClose(): void;
 	siteSlug: string;
