@@ -110,7 +110,7 @@ export function SibylArticles( {
 			sibylArticles?.length
 				? sibylArticles
 				: getFilteredContextResults( sectionName, intent?.site_intent ?? '' )
-		 ).map( ( article ) => {
+		).map( ( article ) => {
 			const hasPostId = 'post_id' in article && article.post_id;
 			return {
 				...article,

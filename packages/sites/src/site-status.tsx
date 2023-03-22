@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 
 export const siteLaunchStatuses = [ 'public', 'private', 'coming-soon', 'redirect' ] as const;
 
-export type SiteLaunchStatus = typeof siteLaunchStatuses[ number ];
+export type SiteLaunchStatus = ( typeof siteLaunchStatuses )[ number ];
 
 export interface SiteObjectWithStatus {
 	is_coming_soon?: boolean;
