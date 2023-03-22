@@ -1,9 +1,9 @@
-import { useMutation, useQueryClient } from 'react-query';
+import { useEffect, useState } from 'react';
+import { useMutation } from 'react-query';
 import { useDispatch } from 'react-redux';
 import wpcom from 'calypso/lib/wp';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { SiteId } from 'calypso/types';
-import { USE_STAGING_SITE_QUERY_KEY } from './use-staging-site';
 
 interface UseDeleteStagingSiteOptions {
 	siteId: SiteId;
@@ -14,8 +14,9 @@ interface UseDeleteStagingSiteOptions {
 
 export const useDeleteStagingSite = ( options: UseDeleteStagingSiteOptions ) => {
 	const { siteId, stagingSiteId, onSuccess, onError } = options;
-	const queryClient = useQueryClient();
 	const dispatch = useDispatch();
+	const [ isDelayedLoading, setIsDelayedLoading ] = useState( false );
+
 	const mutation = useMutation(
 		() => {
 			return wpcom.req.post( {
@@ -26,16 +27,26 @@ export const useDeleteStagingSite = ( options: UseDeleteStagingSiteOptions ) => 
 		},
 		{
 			onSuccess: async () => {
-				dispatch( fetchAutomatedTransferStatus( stagingSiteId ) );
-				await queryClient.invalidateQueries( [ USE_STAGING_SITE_QUERY_KEY ] );
-				onSuccess?.();
+				// Wait for the staging site async job to start
+				setTimeout( () => {
+					dispatch( fetchAutomatedTransferStatus( stagingSiteId ) );
+					setIsDelayedLoading( false );
+					onSuccess?.();
+				}, 5000 );
 			},
 			onError: () => {
+				setIsDelayedLoading( false );
 				onError?.();
 			},
 		}
 	);
 	const { mutate, isLoading } = mutation;
 
-	return { deleteStagingSite: mutate, isLoading };
+	useEffect( () => {
+		if ( isLoading ) {
+			setIsDelayedLoading( true );
+		}
+	}, [ isLoading ] );
+
+	return { deleteStagingSite: mutate, isLoading: isDelayedLoading };
 };
