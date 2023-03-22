@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import AdvancedCredentials from 'calypso/components/advanced-credentials';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
+import QueryRewindRestoreStatus from 'calypso/components/data/query-rewind-restore-status';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
@@ -155,8 +156,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteUrl } ) => {
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
 	const loading = rewindState.state === 'uninitialized';
-	// TODO: Use when we're currently restoring
-	// const { restoreId } = rewindState.rewind || {};
+	const { restoreId } = rewindState.rewind || {};
 
 	const disableClone = false;
 
@@ -395,6 +395,9 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteUrl } ) => {
 				<div className="clone-flow__content">
 					<QueryRewindBackups siteId={ siteId } />
 					<QueryRewindState siteId={ siteId } />
+					{ restoreId && 'running' === inProgressRewindStatus && (
+						<QueryRewindRestoreStatus siteId={ siteId } restoreId={ restoreId } />
+					) }
 					{ render() }
 				</div>
 			</Main>
