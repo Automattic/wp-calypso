@@ -210,7 +210,30 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 	);
 
 	const getSubHeaderText = () => {
-		if ( hostInfo !== null && hostInfo.inline !== undefined ) {
+		if ( isAlternate ) {
+			return translate(
+				'Enter the server credentials from your hosting provider. {{a}}Learn how to find and enter your credentials{{/a}}',
+				{
+					components: {
+						a: (
+							<a
+								target="_blank"
+								rel="noopener noreferrer"
+								href={ hostInfo.supportLink }
+								onClick={ () =>
+									dispatch(
+										recordTracksEvent(
+											'calypso_jetpack_advanced_credentials_flow_support_link_click',
+											{ host }
+										)
+									)
+								}
+							/>
+						),
+					},
+				}
+			);
+		} else if ( hostInfo !== null && hostInfo.inline !== undefined ) {
 			return translate( 'Check the information icons for details on %(hostName)s', {
 				args: {
 					hostName: hostInfo?.name,
