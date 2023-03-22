@@ -2,16 +2,19 @@ import { useEffect, useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { USE_STAGING_SITE_QUERY_KEY } from './use-staging-site';
 
-export function useIsReverting( transferStatus: string | null ): boolean {
+export function useIsReverting( transferStatus: string | null ): {
+	isReverting: boolean;
+	setIsReverting: ( value: boolean ) => void;
+} {
 	const [ isReverting, setIsReverting ] = useState( false );
 	const queryClient = useQueryClient();
 
 	useEffect( () => {
 		switch ( transferStatus ) {
+			case 'reverted':
 			case 'request_failure':
 				queryClient.invalidateQueries( [ USE_STAGING_SITE_QUERY_KEY ] );
 				break;
-			case 'reverted':
 			case null:
 				setIsReverting( false );
 				break;
@@ -21,5 +24,5 @@ export function useIsReverting( transferStatus: string | null ): boolean {
 		}
 	}, [ queryClient, transferStatus ] );
 
-	return isReverting;
+	return { isReverting, setIsReverting };
 }

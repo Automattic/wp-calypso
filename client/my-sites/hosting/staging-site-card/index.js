@@ -20,6 +20,7 @@ import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 import { DeleteStagingSite } from './delete-staging-site';
+import { useIsReverting } from './use-is-reverting';
 
 const stagingSiteAddFailureNoticeId = 'staging-site-add-failure';
 
@@ -75,6 +76,7 @@ const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, transl
 	const [ wasCreating, setWasCreating ] = useState( false );
 	const [ progress, setProgress ] = useState( 0.1 );
 	const transferStatus = useCheckStagingSiteStatus( stagingSite.id );
+	const { isReverting } = useIsReverting( transferStatus );
 	const isStagingSiteTransferComplete = transferStatus === transferStates.COMPLETE;
 	const isTrasferInProgress =
 		showManageStagingSite &&
@@ -186,6 +188,15 @@ const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, transl
 	};
 
 	const getTransferringStagingSiteContent = useCallback( () => {
+		if ( isReverting ) {
+			return (
+				<>
+					<StyledLoadingBar progress={ progress } />
+					<p>{ __( 'We are deleting your staging site.' ) }</p>
+				</>
+			);
+		}
+
 		const message =
 			siteOwnerId === currentUserId
 				? __( 'We are setting up your staging site. We’ll email you once it is ready.' )
@@ -196,7 +207,7 @@ const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, transl
 				<p>{ message }</p>
 			</>
 		);
-	}, [ progress, __, siteOwnerId, currentUserId ] );
+	}, [ progress, __, siteOwnerId, currentUserId, isReverting ] );
 
 	const getLoadingStagingSitesPlaceholder = () => {
 		return (

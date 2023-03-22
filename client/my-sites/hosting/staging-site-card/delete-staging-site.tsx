@@ -47,7 +47,7 @@ export function DeleteStagingSite( {
 					</p>
 					<ActionButtons>
 						<Button primary onClick={ () => deleteStagingSite() } busy={ isLoading }>
-							{ __( 'Delete satging site' ) }
+							{ __( 'Delete staging site' ) }
 						</Button>
 						<Button onClick={ closeModal }>{ __( 'Cancel' ) }</Button>
 					</ActionButtons>
