@@ -144,8 +144,10 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 	const popupIsVisible = Boolean( intervalType === 'monthly' && isInSignup && props.plans.length );
 	const maxDiscount = useMaxDiscount( props.plans );
 
-	if ( ! eligibleForWpcomMonthlyPlans ) {
-		return null;
+	if ( ! showBiannualToggle ) {
+		if ( ! eligibleForWpcomMonthlyPlans ) {
+			return null;
+		}
 	}
 
 	const additionalPathProps = props.redirectTo ? { redirect_to: props.redirectTo } : {};
