@@ -2,6 +2,7 @@ import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import ActivityCardList from 'calypso/components/activity-card-list';
 import AdvancedCredentials from 'calypso/components/advanced-credentials';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
@@ -11,6 +12,7 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import StepProgress from 'calypso/components/step-progress';
+import useRewindableActivityLogQuery from 'calypso/data/activity-log/use-rewindable-activity-log-query';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
@@ -20,7 +22,6 @@ import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
 import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
 import getInProgressRewindStatus from 'calypso/state/selectors/get-in-progress-rewind-status';
 import getRestoreProgress from 'calypso/state/selectors/get-restore-progress';
-import getRewindBackups from 'calypso/state/selectors/get-rewind-backups';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
@@ -65,13 +66,6 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	const [ userHasSetBackupPeriod, setUserHasSetBackupPeriod ] = useState< boolean >( false );
 	const [ backupPeriod, setBackupPeriod ] = useState< string >( '' );
 	const [ backupDisplayDate, setBackupDisplayDate ] = useState< string >( '' );
-
-	// Temporary for testing until we have a backup selection UI
-	const latestBackupPeriod = useSelector( ( state ) => {
-		const backups = getRewindBackups( state, siteId ) || [];
-		const completedBackups = backups.filter( ( backup ) => backup.status === 'finished' );
-		return completedBackups.length ? completedBackups[ 0 ].period : null;
-	} );
 
 	const steps = [
 		{
@@ -154,6 +148,8 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 
 	const disableClone = false;
 
+	const { data: logs } = useRewindableActivityLogQuery( siteId, {}, { enabled: !! siteId } );
+
 	// Screen that allows user to add credentials for an alternate restore / clone
 	const renderSetDestination = () => (
 		<>
@@ -190,19 +186,15 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 			<p className="clone-flow__info">
 				{ translate( "Which point in your site's history would you like to clone from?" ) }
 			</p>
-			<Button
-				className="clone-flow__primary-button"
-				primary
-				onClick={ () => onSetBackupPeriod( latestBackupPeriod ) }
-			>
-				{ translate( 'Clone from this point' ) }
-			</Button>
-			<Button
-				className="clone-flow__primary-button"
-				onClick={ () => onSetBackupPeriod( latestBackupPeriod ) }
-			>
-				{ translate( 'Clone from here' ) }
-			</Button>
+			<div className="activity-log-v2__content">
+				<ActivityCardList
+					logs={ logs }
+					pageSize={ 10 }
+					showFilter={ false }
+					availableActions={ [ 'clone' ] }
+					onClickClone={ onSetBackupPeriod }
+				/>
+			</div>
 		</>
 	);
 

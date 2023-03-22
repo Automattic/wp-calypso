@@ -138,12 +138,34 @@ const MultisiteActionsButton: React.FC< MultisiteOwnProps > = ( { siteSlug, rewi
 	);
 };
 
+type CloneSiteOwnProps = {
+	rewindId: string;
+	onClickClone: ( period: string ) => void;
+};
+
+const CloneSiteActionButton: React.FC< CloneSiteOwnProps > = ( { rewindId, onClickClone } ) => {
+	const translate = useTranslate();
+
+	return (
+		<Button compact className="toolbar__button" onClick={ () => onClickClone( rewindId ) }>
+			{ translate( 'Clone from here' ) }
+		</Button>
+	);
+};
+
 type OwnProps = {
 	siteId: number;
 	activity: Activity;
+	availableActions?: Array< string >;
+	onClickClone?: ( period: string ) => void;
 };
 
-const ActionsButton: React.FC< OwnProps > = ( { siteId, activity } ) => {
+const ActionsButton: React.FC< OwnProps > = ( {
+	siteId,
+	activity,
+	availableActions,
+	onClickClone,
+} ) => {
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
 	// The activity itself may not be rewindable, but at least one of the
@@ -158,6 +180,16 @@ const ActionsButton: React.FC< OwnProps > = ( { siteId, activity } ) => {
 		);
 	}
 
+	// Show the clone action button only if is the only action available.
+	if ( availableActions && availableActions.length === 1 && availableActions[ 0 ] === 'clone' ) {
+		return (
+			// We know onClickClone is never null if the action is clone. Non-null asserting is safe here.
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			<CloneSiteActionButton rewindId={ actionableRewindId ?? '' } onClickClone={ onClickClone! } />
+		);
+	}
+
+	// Show the defaults actions for simple sites.
 	return (
 		<SingleSiteActionsButton
 			siteId={ siteId }
