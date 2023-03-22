@@ -432,3 +432,7 @@
 	@extend .sites-overview__column-content;
 	color: var(--studio-red-50);
 }
+
+.width-fit-content {
+	width: fit-content !important;
+}

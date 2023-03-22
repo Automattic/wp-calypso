@@ -66,7 +66,7 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 				{ isLoading ? (
 					<tr>
 						{ columns.map( ( column ) => (
-							<td key={ column.key }>
+							<td className="site-table__tr-loading" key={ column.key }>
 								<TextPlaceholder />
 							</td>
 						) ) }
