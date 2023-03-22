@@ -56,7 +56,8 @@ export default function SiteSort( {
 	return (
 		<Icon
 			className={ classNames( 'site-sort__icon', {
-				'site-sort__icon-large_screen': isLargeScreen && isDefault,
+				'site-sort__icon-large_screen': isLargeScreen,
+				'site-sort__icon-hidden': isLargeScreen && isDefault,
 			} ) }
 			size={ 14 }
 			onClick={ setSort }

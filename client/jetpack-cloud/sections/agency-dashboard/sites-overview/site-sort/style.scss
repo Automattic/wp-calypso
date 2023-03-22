@@ -1,12 +1,16 @@
 .site-sort__icon {
 	cursor: pointer;
-	float: right;
 	position: relative;
-	top: 5px;
+	top: 3px;
+	left: 8px;
 }
-
 
 .site-sort__icon-large_screen {
-	visibility: hidden;
+	float: right;
+	top: 5px;
+	left: unset;
 }
 
+.site-sort__icon-hidden {
+	visibility: hidden;
+}
