@@ -48,10 +48,12 @@ const MasterbarStyled = ( {
 	onClick,
 	backText,
 	canGoBack = true,
+	contact = null, // adicionaria um component padrao aqui, ao inves de null
 }: {
 	onClick: () => void;
 	backText: ReactChild;
 	canGoBack: boolean;
+	contact?: JSX.Element | null;
 } ) => (
 	<MasterbarStyledBlock>
 		<WordPressLogoStyled />
@@ -60,6 +62,7 @@ const MasterbarStyled = ( {
 				{ backText }
 			</ItemStyled>
 		) }
+		{ contact }
 	</MasterbarStyledBlock>
 );
 

@@ -4,10 +4,10 @@ import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useQueryThemes } from 'calypso/components/data/query-theme';
 import { ThankYouSectionProps } from 'calypso/components/thank-you/types';
-import MasterbarStyled from 'calypso/my-sites/marketplace/components/masterbar-styled';
 import { getThemes } from 'calypso/state/themes/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { ThankYouThemeSection } from './marketplace-thank-you-theme-section';
+import MasterbarStyled from './masterbar-styled';
 
 export function useThemesThankYouData(
 	themeSlugs: string[]

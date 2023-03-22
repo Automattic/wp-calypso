@@ -1,8 +1,8 @@
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useSelector } from 'react-redux';
-import MasterbarStyled from 'calypso/my-sites/marketplace/components/masterbar-styled';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import MasterbarStyled from './masterbar-styled';
 
 export function MarketplaceGoBackSection( {
 	pluginSlugs,
