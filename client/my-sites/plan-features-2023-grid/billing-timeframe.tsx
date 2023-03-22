@@ -53,17 +53,21 @@ function usePerMonthDescription( {
 				? formatCurrency( maybeDiscountedFullTermPrice, currencyCode )
 				: null;
 
-		if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
-			return translate( 'per month, %(fullTermPriceText)s billed annually', {
-				args: { fullTermPriceText },
-			} );
+		if ( fullTermPriceText ) {
+			if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
+				return translate( 'per month, %(fullTermPriceText)s billed annually', {
+					args: { fullTermPriceText },
+				} );
+			}
+
+			if ( PLAN_BIENNIAL_PERIOD === billingPeriod ) {
+				return translate( 'per month, %(fullTermPriceText)s billed every two years', {
+					args: { fullTermPriceText },
+				} );
+			}
 		}
 
-		if ( PLAN_BIENNIAL_PERIOD === billingPeriod ) {
-			return translate( 'per month, %(fullTermPriceText)s billed every two years', {
-				args: { fullTermPriceText },
-			} );
-		}
+		return null;
 	}
 
 	return null;
