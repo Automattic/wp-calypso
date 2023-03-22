@@ -17,6 +17,8 @@ const SubscriptionManagementPage = () => {
 	const { data: settings } = Reader.useSubscriptionManagerUserSettingsQuery();
 	const locale = useLocale();
 
+	const SettingsView = () => <SubscriptionManager.UserSettings value={ settings } />;
+
 	return (
 		<MomentProvider currentLocale={ locale }>
 			<SubscriptionManager>
@@ -39,7 +41,7 @@ const SubscriptionManagementPage = () => {
 						{
 							label: translate( 'Settings' ),
 							path: 'settings',
-							view: () => <SubscriptionManager.UserSettings value={ settings } />,
+							view: SettingsView,
 						},
 					] }
 				/>
