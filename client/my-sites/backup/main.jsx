@@ -1,4 +1,5 @@
 import { WPCOM_FEATURES_REAL_TIME_BACKUPS } from '@automattic/calypso-products';
+import { Button } from '@automattic/components';
 import { ExternalLink } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -38,7 +39,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import BackupDatePicker from './backup-date-picker';
 import BackupsMadeRealtimeBanner from './backups-made-realtime-banner';
 import EnableRestoresBanner from './enable-restores-banner';
-import { backupMainPath } from './paths';
+import { backupMainPath, backupClonePath } from './paths';
 import SearchResults from './search-results';
 import { DailyStatus, RealtimeStatus } from './status';
 
@@ -183,6 +184,7 @@ function BackupStatus( {
 } ) {
 	const isFetchingSiteFeatures = useSelectedSiteSelector( isRequestingSiteFeatures );
 	const isPoliciesInitialized = useSelectedSiteSelector( isRewindPoliciesInitialized );
+	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	const hasRealtimeBackups = useSelectedSiteSelector(
 		siteHasFeature,
@@ -196,6 +198,14 @@ function BackupStatus( {
 	return (
 		<div className="backup__main-wrap">
 			<div className="backup__last-backup-status">
+				<div className="backup__header">
+					<div className="backup__header-title">Latest Backups</div>
+					<div className="backup__header-text">This is a list of your latest generated backups</div>
+					<Button className="backup__clone-button" primary href={ backupClonePath( siteSlug ) }>
+						Clone
+					</Button>
+				</div>
+
 				{ ! isAtomic && ( needCredentials || areCredentialsInvalid ) && <EnableRestoresBanner /> }
 				{ ! needCredentials && ( ! areCredentialsInvalid || isAtomic ) && hasRealtimeBackups && (
 					<BackupsMadeRealtimeBanner />

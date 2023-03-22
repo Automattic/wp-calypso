@@ -271,7 +271,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( {
 
 	const renderUnconnectedButtons = () => (
 		<>
-			{ ! isAlternate ?? (
+			{ ! isAlternate && (
 				<Button
 					compact
 					borderless
@@ -287,14 +287,16 @@ const AdvancedCredentials: FunctionComponent< Props > = ( {
 					{ translate( 'Change host' ) }
 				</Button>
 			) }
-			{ ( isAlternate && goBackPath !== '' ) ?? (
+			{ isAlternate && goBackPath !== '' && (
 				<Button compact borderless disabled={ disableForm } href={ goBackPath }>
 					<Gridicon icon="arrow-left" size={ 18 } />
 					{ translate( 'Go back' ) }
 				</Button>
 			) }
 			<Button primary onClick={ handleUpdateCredentials } disabled={ disableForm || formHasErrors }>
-				{ translate( 'Test and save credentials' ) }
+				{ isAlternate
+					? translate( 'Test and save credentials' )
+					: translate( 'Confirm credentials' ) }
 			</Button>
 		</>
 	);
