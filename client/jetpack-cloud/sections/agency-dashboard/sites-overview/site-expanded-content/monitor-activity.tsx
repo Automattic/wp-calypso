@@ -20,7 +20,7 @@ const MonitorDataContent = ( { siteId }: { siteId: number } ) => {
 
 	const incidents = data?.incidents ?? [];
 
-	const monitorData = incidents.reverse().map( ( { date, status, total_downtime } ) => {
+	const monitorData = incidents.reverse().map( ( { date, status, downtime_in_minutes } ) => {
 		let className = 'site-expanded-content__chart-bar-no-data';
 		let tooltipLabel: ReactChild = 'No data';
 
@@ -29,7 +29,7 @@ const MonitorDataContent = ( { siteId }: { siteId: number } ) => {
 			tooltipLabel = translate( '100% uptime' );
 		} else if ( status === 'down' ) {
 			className = 'site-expanded-content__chart-bar-is-downtime';
-			tooltipLabel = getMonitorDowntimeText( total_downtime );
+			tooltipLabel = getMonitorDowntimeText( downtime_in_minutes );
 		}
 
 		return {

@@ -622,15 +622,21 @@ export const DASHBOARD_LICENSE_TYPES: { [ key: string ]: AllowedTypes } = {
 
 export const getMonitorDowntimeText = ( downtime: number ) => {
 	const duration = moment.duration( downtime, 'minutes' );
+
+	const days = duration.days();
 	const hours = duration.hours();
-	const minutesRemaining = duration.minutes();
+	const minutes = duration.minutes();
+
+	const formattedDays = days > 0 ? `${ days }d ` : '';
+	const formattedHours = hours > 0 ? `${ hours }h ` : '';
+	const formattedMinutes = minutes > 0 ? `${ minutes }m` : '';
+
+	const time = `${ formattedDays }${ formattedHours }${ formattedMinutes }`;
 
 	return translate( 'Downtime for %(time)s', {
 		args: {
-			time: `${ hours > 0 ? `${ hours }h` : '' }${
-				minutesRemaining > 0 ? ` ${ minutesRemaining }m` : ''
-			}`,
+			time,
 		},
-		comment: '%(time) is the downtime, e.g. "5h", "5h 30m", "55m"',
+		comment: '%(time) is the downtime, e.g. "2d 5h 30m", "5h 30m", "55m"',
 	} );
 };

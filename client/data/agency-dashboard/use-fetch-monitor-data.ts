@@ -20,8 +20,8 @@ const useFetchMonitorData = ( siteId: number ) => {
 					incidents: dates.map( ( date, index ) => ( {
 						date,
 						// eslint-disable-next-line no-nested-ternary
-						status: index < 10 ? 'down' : index < 15 ? 'up' : 'no-data',
-						total_downtime: 305,
+						status: index < 10 ? 'down' : index < 15 ? 'up' : 'monitor_inactive',
+						downtime_in_minutes: 10,
 					} ) ),
 				};
 			},
