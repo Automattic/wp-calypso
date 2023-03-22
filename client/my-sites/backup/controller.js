@@ -154,10 +154,12 @@ export function backupRestore( context, next ) {
 	next();
 }
 
-/* handles /backup/:site/restore, see `backupClonePath` */
+/* handles /backup/:site/clone, see `backupClonePath` */
 export function backupClone( context, next ) {
 	debug( 'controller: backupClone', context.params );
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
 
-	context.primary = <BackupCloneFlow />;
+	context.primary = <BackupCloneFlow siteId={ siteId } />;
 	next();
 }

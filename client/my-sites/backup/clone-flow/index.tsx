@@ -25,7 +25,7 @@ import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
 import { backupMainPath } from '../paths';
 import Error from '../rewind-flow/error';
 import Loading from '../rewind-flow/loading';
@@ -46,17 +46,17 @@ enum Step {
 }
 
 interface Props {
-	siteUrl: string;
+	siteId: number;
 }
 
-const BackupCloneFlow: FunctionComponent< Props > = ( { siteUrl } ) => {
+const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const siteId = useSelector( getSelectedSiteId );
 
 	const moment = useLocalizedMoment();
-	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ?? 0 ) );
-	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ?? 0 ) );
+	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ) );
+	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
+	const siteUrl = useSelector( ( state ) => ( siteId && getSiteUrl( state, siteId ) ) || '' );
 
 	const [ rewindConfig, setRewindConfig ] = useState< RewindConfig >( defaultRewindConfig );
 	const [ userHasRequestedRestore, setUserHasRequestedRestore ] = useState< boolean >( false );
@@ -68,9 +68,6 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteUrl } ) => {
 
 	// Temporary for testing until we have a backup selection UI
 	const latestBackupPeriod = useSelector( ( state ) => {
-		if ( ! siteId ) {
-			return null;
-		}
 		const backups = getRewindBackups( state, siteId ) || [];
 		const completedBackups = backups.filter( ( backup ) => backup.status === 'finished' );
 		return completedBackups.length ? completedBackups[ 0 ].period : null;
@@ -99,13 +96,10 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteUrl } ) => {
 
 	const rewindState = useSelector( ( state ) => getRewindState( state, siteId ) ) as RewindState;
 	const inProgressRewindStatus = useSelector( ( state ) => {
-		if ( ! siteId ) {
-			return null;
-		}
 		return getInProgressRewindStatus( state, siteId, backupPeriod );
 	} );
 	const { message, percent, currentEntry, status } = useSelector( ( state ) => {
-		return getRestoreProgress( state, siteId ?? 0 ) || ( {} as RestoreProgress );
+		return getRestoreProgress( state, siteId ) || ( {} as RestoreProgress );
 	} );
 
 	const CredSettings = {
