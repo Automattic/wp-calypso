@@ -1,0 +1,13 @@
+h1 {
+	font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+	font-size: 60px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+}
+
+.trending-tags__title {
+	font-size: 36px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+}
+
+.trending-tags__count {
+	font-size: 16px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+	color: var(--studio-gray-50);
+}

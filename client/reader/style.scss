@@ -359,3 +359,31 @@
 .is-reader-page .search-stream__single-column-results .empty-content {
 	margin-top: 0;
 }
+
+.is-section-reader.has-no-sidebar .masterbar-menu .masterbar {
+	border-bottom: none;
+	background: var(--studio-black);
+	color: var(--studio-white);
+	padding-top: 10px;
+	height: 78px;
+
+	.x-nav {
+		padding-top: 10px;
+		padding-left: 16px;
+		padding-right: 16px;
+		.x-nav-item {
+			color: var(--studio-white);
+			&:hover {
+				color: var(--studio-white);
+			}
+			.cta-btn-nav {
+				margin-top: 9px;
+			}
+		}
+
+		.x-nav-link__primary {
+			border: 2px solid var(--studio-white);
+			background: transparent !important;
+		}
+	}
+}

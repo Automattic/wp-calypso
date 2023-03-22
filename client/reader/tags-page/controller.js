@@ -1,4 +1,7 @@
+import { createElement } from 'react';
+import TagsPage from './main';
+
 export const tagsListing = ( context, next ) => {
-	context.primary = <h1>Tags page coming soon</h1>;
+	context.primary = createElement( TagsPage );
 	next();
 };
