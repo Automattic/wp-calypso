@@ -34,10 +34,16 @@ const selectors = {
 
 	// Plugin view
 	installButton: 'button:text("Install and activate")',
+	purchaseButton: 'button:text("Purchase and activate")',
 	deactivateButton: 'button:text("Deactivate")',
 	activateButton: 'button:text("Activate")',
 	openRemoveMenuButton: '.plugin-details-cta__manage-plugin-menu button[title="Toggle menu"]',
 	removeButton: '.popover__menu button:has-text("Remove")',
+
+	// Elegibility warnings
+	eligibilityWarning:
+		'.eligibility-warnings__title:has-text("Upgrade your plan to install plugins")',
+	eligibilityWarningContinueButton: 'button:text("Upgrade and activate plugin")',
 
 	// Category selector
 	selectedCategory: ( categoryTitle: string ) => `.categories__header:text("${ categoryTitle }")`,
@@ -289,6 +295,23 @@ export class PluginsPage {
 	async clickInstallPlugin(): Promise< void > {
 		const locator = this.page.locator( selectors.installButton );
 		await Promise.all( [ this.page.waitForResponse( /.*install\?.*/ ), locator.click() ] );
+	}
+
+	/**
+	 * Clicks on the `Purchase and Activate` button and get Elegibility warning.
+	 */
+	async clickPurchasePlugin(): Promise< void > {
+		const locator = this.page.locator( selectors.purchaseButton );
+		await locator.click();
+		await Promise.all( [ this.page.locator( selectors.eligibilityWarning ) ] );
+	}
+
+	/**
+	 * Clicks continue button on the Elegibility warning.
+	 */
+	async clickContinueElebigilityWarning(): Promise< void > {
+		const locator = this.page.locator( selectors.eligibilityWarningContinueButton );
+		await Promise.all( [ locator.click() ] );
 	}
 
 	/**

@@ -66,7 +66,12 @@ const selectors = {
 			? '.wp-checkout__total-price'
 			: '.wp-checkout-order-summary__total-price',
 	purchaseButton: `button.checkout-button:has-text("Pay")`,
-	closeCheckout: 'button[data-tip-target="close"]',
+	thirdPartyDeveloperCheckboxLabel:
+		'You agree that an account may be created on a third party developer’s site related to the products you have purchased.',
+
+	// Cancel purchase
+	closeLeaveButton: 'button:text("Leave items")',
+	closeEmptyCartButton: 'button:text("Empty cart")',
 };
 
 /**
@@ -302,6 +307,29 @@ export class CartCheckoutPage {
 		await Promise.all( [
 			this.page.waitForResponse( /.*me\/transactions.*/, { timeout: timeout } ),
 			this.page.click( selectors.purchaseButton ),
+		] );
+	}
+
+	/**
+	 * Complete the purchase accepting third party developer check and clicking on the 'Pay' button.
+	 */
+	async purchaseWithPlugin( { timeout }: { timeout?: number } = {} ): Promise< void > {
+		await this.page.getByLabel( selectors.thirdPartyDeveloperCheckboxLabel ).check();
+		await Promise.all( [
+			this.page.waitForResponse( /.*marketplace\/thank-you.*/, { timeout: timeout } ),
+			this.page.click( selectors.purchaseButton ),
+		] );
+	}
+
+	/**
+	 * Close checkout and leave/empty items from cart.
+	 *
+	 * @param {boolean} leaveItems Leave items in cart or not.
+	 */
+	async closeCheckout( leaveItems: boolean ): Promise< void > {
+		await this.page.getByRole( 'button', { name: 'Close Checkout' } ).click();
+		await Promise.all( [
+			this.page.click( leaveItems ? selectors.closeLeaveButton : selectors.closeEmptyCartButton ),
 		] );
 	}
 }
