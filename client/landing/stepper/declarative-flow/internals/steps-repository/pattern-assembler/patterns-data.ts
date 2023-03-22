@@ -382,18 +382,8 @@ const useSectionPatterns = () => {
 				categories: [ portfolio ],
 			},
 			{
-				id: 6317,
-				name: 'Horizontal Media & Text',
-				categories: [ portfolio ],
-			},
-			{
 				id: 6318,
 				name: 'Offset Projects',
-				categories: [ portfolio ],
-			},
-			{
-				id: 6319,
-				name: 'Case Study',
 				categories: [ portfolio ],
 			},
 			{
@@ -404,11 +394,6 @@ const useSectionPatterns = () => {
 			{
 				id: 6321,
 				name: 'CV Text Grid',
-				categories: [ portfolio ],
-			},
-			{
-				id: 6322,
-				name: 'Tall Item One Column',
 				categories: [ portfolio ],
 			},
 			{
