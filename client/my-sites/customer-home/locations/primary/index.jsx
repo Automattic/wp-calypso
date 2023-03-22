@@ -10,6 +10,7 @@ import {
 	NOTICE_CELEBRATE_SITE_MIGRATION,
 	NOTICE_CELEBRATE_SITE_COPY,
 	NOTICE_CELEBRATE_SITE_SETUP_COMPLETE,
+	NOTICE_STAGING_SITE,
 	TASK_CONNECT_ACCOUNTS,
 	TASK_EARN_FEATURES,
 	TASK_FIND_DOMAIN,
@@ -37,6 +38,7 @@ import CelebrateSiteLaunch from 'calypso/my-sites/customer-home/cards/notices/ce
 import CelebrateSiteMigration from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-migration';
 import CelebrateSiteSetupComplete from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-setup-complete';
 import SiteLaunchSellerUpsell from 'calypso/my-sites/customer-home/cards/notices/site-launch-seller-upsell';
+import StagingSiteNotice from 'calypso/my-sites/customer-home/cards/notices/staging-site';
 import ConnectAccounts from 'calypso/my-sites/customer-home/cards/tasks/connect-accounts';
 import EarnFeatures from 'calypso/my-sites/customer-home/cards/tasks/earn-features';
 import FindDomain from 'calypso/my-sites/customer-home/cards/tasks/find-domain';
@@ -59,6 +61,7 @@ const cardComponents = {
 	[ NOTICE_SITE_LAUNCH_SELLER_UPSELL ]: SiteLaunchSellerUpsell,
 	[ NOTICE_CELEBRATE_SITE_CREATION ]: CelebrateSiteCreation,
 	[ NOTICE_CELEBRATE_SITE_LAUNCH ]: CelebrateSiteLaunch,
+	[ NOTICE_STAGING_SITE ]: StagingSiteNotice,
 	[ NOTICE_CELEBRATE_SITE_MIGRATION ]: CelebrateSiteMigration,
 	[ NOTICE_CELEBRATE_SITE_COPY ]: CelebrateSiteCopy,
 	[ NOTICE_CELEBRATE_SITE_SETUP_COMPLETE ]: CelebrateSiteSetupComplete,
@@ -115,13 +118,14 @@ const Primary = ( { cards, trackCard } ) => {
 	if ( cards.length === 1 ) {
 		isUrgent = urgentTasks.includes( cards[ 0 ] );
 	}
+	const showControlLabels = cards.length !== 1 || isUrgent;
 
 	return (
 		<DotPager
 			className={ classnames( 'primary__customer-home-location-content', {
 				'primary__is-urgent': isUrgent,
 			} ) }
-			showControlLabels="true"
+			showControlLabels={ showControlLabels }
 			hasDynamicHeight
 			onPageSelected={ handlePageSelected }
 		>

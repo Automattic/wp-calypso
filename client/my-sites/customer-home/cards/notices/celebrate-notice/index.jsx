@@ -1,5 +1,6 @@
-import { Button, Spinner } from '@automattic/components';
+import { Button, Spinner, LoadingPlaceholder } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
+import styled from '@emotion/styled';
 import classnames from 'classnames';
 import { useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
@@ -8,12 +9,55 @@ import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-
 import { composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
+const TitlePlaceholder = styled( LoadingPlaceholder )( {
+	height: 48,
+	width: '50%',
+	marginBottom: '1.5em',
+} );
+const DescriptionPlaceholder = styled( LoadingPlaceholder )( {
+	height: 24,
+	width: '90%',
+	marginBottom: '0.5em',
+} );
+const IllustationPlaceholder = styled( LoadingPlaceholder )( {
+	height: 244,
+	width: '100%',
+} );
+
+const CelebrateNoticePlaceholderTextContainer = styled.div( {
+	className: 'task__text',
+	flex: 1,
+} );
+
+export const CelebrateNoticePlaceholder = () => {
+	return (
+		<div className="task">
+			<CelebrateNoticePlaceholderTextContainer>
+				<div className="task__title">
+					<TitlePlaceholder />
+				</div>
+				<div className="task__description">
+					<DescriptionPlaceholder />
+					<DescriptionPlaceholder />
+					<DescriptionPlaceholder />
+				</div>
+			</CelebrateNoticePlaceholderTextContainer>
+			{ isDesktop() && (
+				<div className="task__illustration">
+					<IllustationPlaceholder />
+				</div>
+			) }
+		</div>
+	);
+};
+
 const CelebrateNotice = ( {
 	actionText,
 	description,
 	noticeId,
 	illustration = fireworksIllustration,
 	onSkip,
+	showAction = true,
 	showSkip = false,
 	skipText,
 	siteId,
@@ -60,13 +104,15 @@ const CelebrateNotice = ( {
 				<h2 className="celebrate-notice__title task__title">{ title }</h2>
 				<p className="celebrate-notice__description task__description">{ description }</p>
 				<div className="celebrate-notice__actions task__actions">
-					<Button
-						className="celebrate-notice__action task__action"
-						primary
-						onClick={ showNextTask }
-					>
-						{ actionText }
-					</Button>
+					{ showAction && (
+						<Button
+							className="celebrate-notice__action task__action"
+							primary
+							onClick={ showNextTask }
+						>
+							{ actionText }
+						</Button>
+					) }
 
 					{ showSkip && (
 						<Button className="celebrate-notice__skip task__skip is-link" onClick={ skip }>
