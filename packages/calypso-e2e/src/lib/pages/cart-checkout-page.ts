@@ -134,7 +134,6 @@ export class CartCheckoutPage {
 		await this.page.waitForSelector( selectors.cartItems );
 		const cartItemsLocator = this.page.locator( selectors.cartItems );
 		const itemsCount = await cartItemsLocator.count();
-		console.log( itemsCount, totalItems );
 		if ( itemsCount !== totalItems ) {
 			throw new Error( `Expected ${ totalItems } items in cart, but found ${ itemsCount }` );
 		}
