@@ -10,11 +10,11 @@ import { makeLayout, render } from 'calypso/controller';
 
 const SitesView = () => <span>Sites View</span>;
 const CommentsView = () => <span>Comments View</span>;
-const SettingsView = () => <SubscriptionManager.UserSettings />;
 
 const SubscriptionManagementPage = () => {
 	const translate = useTranslate();
 	const { data: counts } = Reader.useSubscriptionManagerSubscriptionsCountQuery();
+	const { data: settings } = Reader.useSubscriptionManagerUserSettingsQuery();
 	const locale = useLocale();
 
 	return (
@@ -39,7 +39,7 @@ const SubscriptionManagementPage = () => {
 						{
 							label: translate( 'Settings' ),
 							path: 'settings',
-							view: SettingsView,
+							view: () => <SubscriptionManager.UserSettings value={ settings } />,
 						},
 					] }
 				/>
