@@ -1,7 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Gridicon } from '@automattic/components';
+import { Gridicon, Button } from '@automattic/components';
 import styled from '@emotion/styled';
-import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -87,8 +86,8 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const isActive = useSelector( ( state ) => isThemeActive( state, theme.id, siteId ) );
 	const { data, isLoading } = useActiveThemeQuery( siteId, true );
-	const hasActivated = useSelector( ( state ) => hasActivatedTheme( state, siteId ) );
 	const isFSEActive = data?.[ 0 ]?.theme_supports[ 'block-templates' ] ?? false;
+	const hasActivated = useSelector( ( state ) => hasActivatedTheme( state, siteId ) );
 	const customizeUrl = useSelector( ( state ) =>
 		getCustomizeUrl( state, theme.id, siteId, isFSEActive )
 	);
@@ -139,8 +138,8 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 				</ThemeSectionName>
 				<ThemeSectionButtons>
 					<ThemeButton
-						isPrimary
-						isBusy={ ( isActivating && ! hasActivated ) || isLoading }
+						primary
+						busy={ ( isActivating && ! hasActivated ) || isLoading }
 						onClick={ handleActivateTheme }
 						href={ isActive ? customizeUrl : undefined }
 					>
@@ -150,7 +149,7 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 					</ThemeButton>
 
 					{ isActive ? (
-						<ThemeButton isSecondary href={ siteUrl }>
+						<ThemeButton href={ siteUrl }>
 							<Gridicon size={ 18 } icon="external" />
 							{ translate( 'View site' ) }
 						</ThemeButton>
