@@ -133,7 +133,10 @@ export function useStoredPaymentMethods( {
 
 			if ( isPaymentAgreement( matchingPaymentMethod ) ) {
 				const similarPaymentAgreements =
-					data?.filter( ( method ) => method.email === matchingPaymentMethod.email ) ?? [];
+					data?.filter(
+						( method ) =>
+							method.email === matchingPaymentMethod.email && isPaymentAgreement( method )
+					) ?? [];
 				return Promise.all(
 					similarPaymentAgreements.map( ( method ) =>
 						deletePaymentMethod( method.stored_details_id )
