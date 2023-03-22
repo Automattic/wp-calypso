@@ -16,34 +16,81 @@ const { readFileSync } = require( 'fs' );
 const path = require( 'path' );
 const PALETTE = require( '@automattic/color-studio' );
 const chroma = require( 'chroma-js' );
-const _ = require( 'lodash' );
 
 /**
  * Palette color subsets
  */
 
+/**
+ * pickBy function is a replacement for the Lodash ._pickby
+ *
+ * @param {*} obj a palette of colors
+ * @param {*} fn This function returns truthy or falsy value to filter the colors
+ * @returns objext with filtered color values
+ * Used Object.keys() and Array.prototype.filter()to remove the keys for which fn returns a falsy value.
+ * Used Array.prototype.reduce() to convert the filtered keys back to an object with the corresponding key-value pairs.
+ */
+const pickBy = ( obj, fn ) =>
+	Object.keys( obj )
+		.filter( ( key ) => fn( obj[ key ], key ) )
+		.reduce( ( acc, key ) => ( ( acc[ key ] = obj[ key ] ), acc ), {} );
+
+/**
+ * Native Sort - replacement of ._sortBy Lodash function
+ *
+ * @param {*} key
+ * @returns Sorted array. The native sort modifies the array in place. So we use `.concat()` to
+ *  copy the array, then sort.
+ */
+const sortBy = ( key ) => {
+	return ( a, b ) => {
+		if ( a[ key ] > b[ key ] ) {
+			return 1;
+		} else if ( b[ key ] > a[ key ] ) {
+			return -1;
+		}
+		return 0;
+	};
+};
+
 // The subset of palette colors allowed in illustrations
-const PALETTE_ILLUSTRATION_COLORS = _.pickBy( PALETTE.colors, ( colorValue, colorName ) => {
+const PALETTE_ILLUSTRATION_COLORS = () => {
+	if ( typeof PALETTE.colors === 'object' && PALETTE.colors != null ) {
+		pickBy( PALETTE.colors, ( colorValue, colorName ) => {
+			// Avoid using pure black
+			if ( colorValue === '#000' ) {
+				return;
+			}
+			// Avoid specific colors for illustration use
+			return ! colorName.startsWith( 'Simplenote Blue' );
+		} );
+	} else {
+		return {};
+	}
+};
+
+//
+/*const PALETTE_ILLUSTRATION_COLORS = pickBy( PALETTE.colors, ( colorValue, colorName ) => {
 	// Avoid using pure black
 	if ( colorValue === '#000' ) {
 		return;
 	}
 	// Avoid specific colors for illustration use
-	return ! _.startsWith( colorName, 'Simplenote Blue' );
-} );
+	return ! colorName.startsWith( 'Simplenote Blue' );
+} );*/
 
 // The subset of palette colors used in app-related images is slightly wider
 // than what we allow for in illustration use (the above)
-const PALETTE_APP_COLORS = _.pickBy( PALETTE.colors, ( colorValue, colorName ) => {
+const PALETTE_APP_COLORS = pickBy( PALETTE.colors, ( colorValue, colorName ) => {
 	// Avoid using pure black
 	if ( colorValue === '#000' ) {
 		return;
 	}
 	// Don’t use brand colors for any WordPress.com app images
 	return ! (
-		_.startsWith( colorName, 'Simplenote Blue' ) ||
-		_.startsWith( colorName, 'WooCommerce Purple' ) ||
-		_.startsWith( colorName, 'WordPress Blue' )
+		colorName.startsWith( 'Simplenote Blue' ) ||
+		colorName.startsWith( 'WooCommerce Purple' ) ||
+		colorName.startsWith( 'WordPress Blue' )
 	);
 } );
 
@@ -256,12 +303,16 @@ function findPaletteColorName( value ) {
 	let name;
 
 	// Iterating from right to make sure color name aliases aren’t caught
-	_.forInRight( PALETTE.colors, ( paletteValue, paletteColorName ) => {
-		if ( paletteValue === value ) {
-			name = paletteColorName;
-			return false;
-		}
-	} );
+	if ( PALETTE.colors ) {
+		Object.keys( PALETTE.colors )
+			.reverse()
+			.forEach( ( paletteColorName ) => {
+				if ( PALETTE.colors[ paletteColorName ] === value ) {
+					name = paletteColorName;
+					return false;
+				}
+			} );
+	}
 
 	return name;
 }
@@ -289,12 +340,17 @@ function printReplacementRules( replacementObjects ) {
 }
 
 function formatReplacementRules( rules ) {
-	return _.sortBy( rules, 'to.name' ).map( ( rule ) => {
-		const valueFrom = rule.from.value.padEnd( 7 );
-		const valueTo = rule.to.value.padEnd( 7 );
+	/*The native sort modifies the array in place, so we use `.concat()`
+    to copy the array, then sort.*/
+	return rules
+		.concat()
+		.sort( sortBy( 'to.name' ) )
+		.map( ( rule ) => {
+			const valueFrom = rule.from.value.padEnd( 7 );
+			const valueTo = rule.to.value.padEnd( 7 );
 
-		return `${ valueFrom } → ${ valueTo } (${ rule.to.name })`;
-	} );
+			return `${ valueFrom } → ${ valueTo } (${ rule.to.name })`;
+		} );
 }
 
 function getReplacementPrefixSuffix( replacementObject ) {
