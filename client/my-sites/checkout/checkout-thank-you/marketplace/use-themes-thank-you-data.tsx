@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { useQueryThemes } from 'calypso/components/data/query-theme';
 import { ThankYouSectionProps } from 'calypso/components/thank-you/types';
 import { getThemes } from 'calypso/state/themes/selectors';
+import { ThankYouThemeSection } from './marketplace-thank-you-theme-section';
 
 export function useThemesThankYouData( themeSlugs: string[] ): [ ThankYouSectionProps, boolean ] {
 	const dotComThemes = useSelector( ( state ) => getThemes( state, 'wpcom', themeSlugs ) );
@@ -20,7 +21,7 @@ export function useThemesThankYouData( themeSlugs: string[] ): [ ThankYouSection
 		sectionKey: 'theme_information',
 		nextSteps: themesList.map( ( theme ) => ( {
 			stepKey: `theme_information_${ theme?.id }`,
-			stepSection: <></>, // TODO: Add theme card
+			stepSection: <ThankYouThemeSection theme={ theme } />,
 		} ) ),
 	};
 
