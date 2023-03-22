@@ -25,6 +25,12 @@ const useValidCheckoutBackUrl = ( siteSlug: string | undefined ): string | undef
 
 	return useMemo( () => {
 		if ( ! checkoutBackUrl ) {
+			// For akismet specific checkout, if navigated with direct link
+			// We shouldn't be navigated to `start\domain` but to `akismet\plans`
+			const isAkismetCheckout = window.location.pathname.startsWith( '/checkout/akismet' );
+			if ( ! siteSlug && isAkismetCheckout ) {
+				return 'https://akismet.com/plans';
+			}
 			return undefined;
 		}
 
