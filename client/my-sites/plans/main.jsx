@@ -192,10 +192,6 @@ class Plans extends Component {
 			// This is the reason isInvalidPlanInterval even exists and the redirection isn't handled at controller level
 			return ! isSiteEligibleForMonthlyPlan;
 		}
-
-		if ( isEnabled( 'plans/biannual-toggle' ) ) {
-			return false;
-		}
 	}
 
 	redirectIfInvalidPlanInterval() {
