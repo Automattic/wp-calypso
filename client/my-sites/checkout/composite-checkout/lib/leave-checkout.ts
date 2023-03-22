@@ -13,12 +13,14 @@ const debug = debugFactory( 'calypso:leave-checkout' );
 export const leaveCheckout = ( {
 	siteSlug,
 	jetpackCheckoutBackUrl,
+	forceCheckoutBackUrl,
 	previousPath,
 	tracksEvent,
 	createUserAndSiteBeforeTransaction,
 }: {
 	siteSlug?: string;
 	jetpackCheckoutBackUrl?: string;
+	forceCheckoutBackUrl?: string;
 	previousPath?: string;
 	tracksEvent: string;
 	createUserAndSiteBeforeTransaction?: boolean;
@@ -27,6 +29,7 @@ export const leaveCheckout = ( {
 	debug( 'leaving checkout with args', {
 		siteSlug,
 		jetpackCheckoutBackUrl,
+		forceCheckoutBackUrl,
 		previousPath,
 		createUserAndSiteBeforeTransaction,
 	} );
@@ -42,6 +45,11 @@ export const leaveCheckout = ( {
 
 	if ( jetpackCheckoutBackUrl ) {
 		window.location.href = jetpackCheckoutBackUrl;
+		return;
+	}
+
+	if ( forceCheckoutBackUrl ) {
+		window.location.href = forceCheckoutBackUrl;
 		return;
 	}
 

@@ -224,11 +224,17 @@ export default function WPCheckout( {
 		: String( translate( 'Please wait…' ) );
 
 	const jetpackCheckoutBackUrl = useValidCheckoutBackUrl( siteUrl );
+	const isAkismetCheckout = window.location.pathname.startsWith( '/checkout/akismet' );
+	let forceCheckoutBackUrl: string;
+	if ( siteUrl === undefined && isAkismetCheckout ) {
+		forceCheckoutBackUrl = 'https://akismet.com/plans';
+	}
 	const previousPath = useSelector( getPreviousRoute );
 	const goToPreviousPage = () =>
 		leaveCheckout( {
 			siteSlug: siteUrl,
 			jetpackCheckoutBackUrl,
+			forceCheckoutBackUrl,
 			previousPath: customizedPreviousPath || previousPath,
 			tracksEvent: 'calypso_checkout_composite_empty_cart_clicked',
 		} );
