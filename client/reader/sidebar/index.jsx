@@ -107,6 +107,12 @@ export class ReaderSidebar extends Component {
 		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_conversations_clicked' );
 	};
 
+	handleReaderSidebarNotificationsClicked = () => {
+		recordAction( 'clicked_reader_sidebar_notifications' );
+		recordGaEvent( 'Clicked Reader Sidebar Notifications' );
+		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_notifications_clicked' );
+	};
+
 	handleReaderSidebarA8cConversationsClicked = () => {
 		recordAction( 'clicked_reader_sidebar_a8c_conversations' );
 		recordGaEvent( 'Clicked Reader Sidebar A8C Conversations' );
@@ -181,6 +187,16 @@ export class ReaderSidebar extends Component {
 					className={ ReaderSidebarHelper.itemLinkClass( '/activities/likes', path, {
 						'sidebar-activity__likes': true,
 					} ) }
+				/>
+
+				<SidebarItem
+					className={ ReaderSidebarHelper.itemLinkClass( '/read/notifications', path, {
+						'sidebar-streams__notifications': true,
+					} ) }
+					label={ translate( 'Notifications' ) }
+					onNavigate={ this.handleReaderSidebarNotificationsClicked }
+					customIcon={ <ReaderConversationsIcon /> }
+					link="/read/notifications"
 				/>
 
 				<SidebarItem

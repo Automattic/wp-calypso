@@ -109,6 +109,10 @@ const streamApis = {
 		dateProperty: 'last_comment_date_gmt',
 		pollQuery: () => getQueryStringForPoll( [ 'last_comment_date_gmt', 'comments' ] ),
 	},
+	notifications: {
+		path: () => '/read/notifications',
+		dateProperty: 'date',
+	},
 	featured: {
 		path: ( { streamKey } ) => `/read/sites/${ streamKeySuffix( streamKey ) }/featured`,
 		dateProperty: 'date',
@@ -208,6 +212,7 @@ export function requestPage( action ) {
 }
 
 export function handlePage( action, data ) {
+	console.log( action, data );
 	const { posts, date_range, meta, next_page } = data;
 	const { streamKey, query, isPoll, gap, streamType } = action.payload;
 	const { dateProperty } = streamApis[ streamType ];
