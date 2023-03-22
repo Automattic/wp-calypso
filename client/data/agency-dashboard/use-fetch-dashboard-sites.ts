@@ -23,7 +23,7 @@ const agencyDashboardFilterToQueryObject = ( filter: AgencyDashboardFilter ) => 
 
 const agencyDashboardSortToQueryObject = ( sort: DashboardSortInterface ) => {
 	return {
-		...( sort.field && { sort_field: sort.column } ),
+		...( sort.field && { sort_field: sort.field } ),
 		...( sort.direction && { sort_direction: sort.direction } ),
 	};
 };

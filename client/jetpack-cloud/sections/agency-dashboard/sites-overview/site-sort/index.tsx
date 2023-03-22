@@ -14,7 +14,7 @@ export default function SiteSort( { columnKey }: { columnKey: AllowedTypes } ) {
 	const dispatch = useDispatch();
 
 	const setSort = () => {
-		let updatedSort = { ...sort };
+		const updatedSort = { ...sort };
 		if ( sort.field !== siteColumnKeyMap?.[ columnKey ] || ! sort.field || ! sort.direction ) {
 			updatedSort.field = siteColumnKeyMap?.[ columnKey ];
 			updatedSort.direction = 'asc';
@@ -23,7 +23,8 @@ export default function SiteSort( { columnKey }: { columnKey: AllowedTypes } ) {
 			updatedSort.direction = 'desc';
 		}
 		if ( sort.direction === 'desc' ) {
-			updatedSort = null;
+			updatedSort.field = '';
+			updatedSort.direction = '';
 		}
 
 		dispatch( updateSort( updatedSort ) );
