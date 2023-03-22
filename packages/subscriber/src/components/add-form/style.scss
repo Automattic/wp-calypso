@@ -13,7 +13,7 @@
 
 		.onboarding-subtitle {
 			margin-bottom: 1.5rem;
-			font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
+			font-size: 1.25rem;
 		}
 	}
 
@@ -33,7 +33,7 @@
 	.add-subscriber .add-subscriber__title-container {
 		.onboarding-title {
 			font-size: 2rem;
-			line-height: 2.25rem; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			line-height: 2.25;
 			margin-bottom: 1.5rem;
 		}
 	}
@@ -85,7 +85,7 @@
 	.components-button {
 		height: auto;
 		padding: 0;
-		font-size: 1em; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		font-size: 1rem;
 		color: var(--color-text);
 		text-decoration: underline;
 		border: none;
@@ -101,7 +101,7 @@
 		display: block;
 		width: 100%;
 		font-size: 0.875rem;
-		line-height: 1.25rem; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		line-height: 1.25;
 		margin: 1rem 0;
 
 		&.add-subscriber__form-label-links {
@@ -138,6 +138,12 @@
 
 		&[disabled] {
 			background: var(--studio-gray-5);
+		}
+
+		&:focus {
+			border-color: var(--studio-gray-10);
+			box-shadow: 0 0 0 2px var(--color-primary-10);
+			outline: none;
 		}
 	}
 
@@ -191,7 +197,7 @@
 
 	.add-subscriber__form--disclaimer {
 		font-size: 0.875rem;
-		line-height: 1.25rem; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		line-height: 1.25;
 		color: var(--studio-gray-50);
 		margin-bottom: 1.5rem;
 
@@ -206,4 +212,3 @@
 		}
 	}
 }
-
