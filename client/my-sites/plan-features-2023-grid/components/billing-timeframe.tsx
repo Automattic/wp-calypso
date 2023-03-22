@@ -1,31 +1,28 @@
 import {
 	isWpComFreePlan,
 	isWpcomEnterpriseGridPlan,
-	PLAN_BIENNIAL_PERIOD,
-	PLAN_ANNUAL_PERIOD,
 	PlanSlug,
 	getPlanSlugForTermVariant,
-	TERM_ANNUALLY,
 } from '@automattic/calypso-products';
+import { Plans } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
+import { useLocale } from '@automattic/i18n-utils';
+import { useSelect } from '@wordpress/data';
 import { localize, TranslateResult, useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
 import usePlanPrices from 'calypso/my-sites/plans/hooks/use-plan-prices';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { PLANS_STORE } from './store';
+import type { PlansSelect } from '@automattic/data-stores';
 
 interface Props {
 	planName: string;
 	billingTimeframe: TranslateResult;
-	billingPeriod: number | null | undefined;
 	isMonthlyPlan: boolean;
 }
 
-function usePerMonthDescription( {
-	isMonthlyPlan,
-	planName,
-	billingPeriod,
-}: Omit< Props, 'billingTimeframe' > ) {
+function usePerMonthDescription( { isMonthlyPlan, planName }: Omit< Props, 'billingTimeframe' > ) {
 	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const planPrices = usePlanPrices( {
@@ -34,11 +31,17 @@ function usePerMonthDescription( {
 	} );
 	const planYearlyVariantPricesPerMonth = usePlanPrices( {
 		planSlug:
-			getPlanSlugForTermVariant( planName as PlanSlug, TERM_ANNUALLY ) ?? ( '' as PlanSlug ),
+			getPlanSlugForTermVariant( planName as PlanSlug, Plans.TERM_ANNUALLY ) ?? ( '' as PlanSlug ),
 		returnMonthly: true,
 	} );
+	const locale = useLocale();
+	const plan = useSelect(
+		( select ) =>
+			( select( PLANS_STORE ) as PlansSelect ).getPlanProductByStoreSlug( planName, locale ),
+		[ planName ]
+	);
 
-	if ( isWpComFreePlan( planName ) || isWpcomEnterpriseGridPlan( planName ) ) {
+	if ( ! plan || isWpComFreePlan( planName ) || isWpcomEnterpriseGridPlan( planName ) ) {
 		return null;
 	}
 
@@ -70,18 +73,22 @@ function usePerMonthDescription( {
 				? formatCurrency( maybeDiscountedPrice, currencyCode, { stripZeros: true } )
 				: null;
 
-		if ( fullTermPriceText ) {
-			if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
-				return translate( 'per month, %(fullTermPriceText)s billed annually', {
-					args: { fullTermPriceText },
-				} );
-			}
+		if ( Plans.TERM_ANNUALLY === plan?.term ) {
+			return translate( 'per month, %(fullTermPriceText)s billed annually', {
+				args: { fullTermPriceText },
+			} );
+		}
 
-			if ( PLAN_BIENNIAL_PERIOD === billingPeriod ) {
-				return translate( 'per month, %(fullTermPriceText)s billed every two years', {
-					args: { fullTermPriceText },
-				} );
-			}
+		if ( Plans.TERM_BIENNIALLY === plan?.term ) {
+			return translate( 'per month, %(fullTermPriceText)s billed every two years', {
+				args: { fullTermPriceText },
+			} );
+		}
+
+		if ( Plans.TERM_TRIENNIALLY === plan?.term ) {
+			return translate( 'per month, %(fullTermPriceText)s billed every three years', {
+				args: { fullTermPriceText },
+			} );
 		}
 	}
 

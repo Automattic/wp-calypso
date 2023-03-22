@@ -22,7 +22,7 @@ import React from 'react';
 import usePlanPrices from 'calypso/my-sites/plans/hooks/use-plan-prices';
 import PlanFeatures2023GridHeaderPrice from '../header-price';
 import type { PlanProperties } from '../../types';
-import type { PlanPrices } from 'calypso/state/plans/selectors/get-plan-prices';
+import type { PlanPrices } from 'calypso/state/plans/types';
 
 describe( 'PlanFeatures2023GridHeaderPrice', () => {
 	const planProperties = {

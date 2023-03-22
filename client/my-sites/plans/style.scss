@@ -20,6 +20,14 @@
 			}
 		}
 	}
+
+	.plans__loading-ellipsis {
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		position: relative;
+	}
 }
 
 body.is-section-plans.is-domain-plan-package-flow {

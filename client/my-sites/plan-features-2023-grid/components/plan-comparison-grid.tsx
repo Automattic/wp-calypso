@@ -410,7 +410,6 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 					planName={ planName }
 					isMonthlyPlan={ planPropertiesObj.isMonthlyPlan }
 					billingTimeframe={ planConstantObj.getBillingTimeFrame() }
-					billingPeriod={ planPropertiesObj.billingPeriod }
 				/>
 			</div>
 			<PlanFeatures2023GridActions
