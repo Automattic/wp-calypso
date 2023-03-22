@@ -272,6 +272,15 @@ $font-family: "SF Pro Text", $sans;
 		padding: 0;
 	}
 
+	.screen-container__body--align-sides {
+		// Align the content of .navigator-button with the container sides
+		margin-left: -10px;
+		margin-right: -10px;
+
+		// Reduce the padding bottom of .navigator-header__description
+		margin-top: -8px;
+	}
+
 	.screen-container__footer {
 		padding: 2px;
 		margin-top: auto;
@@ -296,6 +305,7 @@ $font-family: "SF Pro Text", $sans;
 		display: flex;
 		flex-direction: column;
 		flex-grow: 1;
+		overflow-x: visible;
 	}
 }
 

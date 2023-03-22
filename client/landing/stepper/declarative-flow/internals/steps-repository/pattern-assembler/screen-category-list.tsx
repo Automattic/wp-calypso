@@ -67,7 +67,7 @@ const ScreenCategoryList = ( {
 						  )
 				}
 			/>
-			<div className="screen-container__body screen-category-list__body">
+			<div className="screen-container__body screen-container__body--align-sides screen-category-list__body">
 				{ categoriesInOrder.map( ( { name, label, description } ) => {
 					const isOpen = selectedCategory === name;
 					const hasPatterns = sectionsMapByCategory[ name ]?.length;
