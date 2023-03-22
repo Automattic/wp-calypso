@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { sprintf } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
@@ -40,9 +41,17 @@ const PaymentMethodDelete: FunctionComponent< Props > = ( { card } ) => {
 
 	const renderDeleteButton = () => {
 		const text = isDeleting ? translate( 'Deleting…' ) : translate( 'Delete this payment method' );
+		const ariaText = isDeleting
+			? translate( 'Deleting…' )
+			: /* translators: %s is the name of the payment method (usually the last 4 digits of the card but could be a proper name for PayPal). */
+			  sprintf(
+					translate( 'Delete the "%s" payment method' ),
+					'card_last_4' in card ? card.card_last_4 : card.name
+			  );
 
 		return (
 			<Button
+				aria-label={ ariaText }
 				className="payment-method-delete__button"
 				disabled={ isDeleting }
 				onClick={ () => setIsDialogVisible( true ) }
