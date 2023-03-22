@@ -123,7 +123,7 @@ describe( 'Purchase Management Buttons', () => {
 
 	it( 'renders a cancel button when auto-renew is ON', async () => {
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/rest/v1.1/me/payment-methods?expired=include' )
+			.get( '/rest/v1.2/me/payment-methods?expired=include' )
 			.reply( 200 );
 
 		const store = createMockReduxStoreForPurchase( { ...purchase, auto_renew: 1 } );
@@ -145,7 +145,7 @@ describe( 'Purchase Management Buttons', () => {
 
 	it( 'renders a remove button when auto-renew is OFF', async () => {
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/rest/v1.1/me/payment-methods?expired=include' )
+			.get( '/rest/v1.2/me/payment-methods?expired=include' )
 			.reply( 200 );
 
 		const store = createMockReduxStoreForPurchase( { ...purchase, auto_renew: 0 } );

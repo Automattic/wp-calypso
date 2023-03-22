@@ -182,7 +182,7 @@ describe( 'ChangePaymentMethod', () => {
 
 		const paymentMethods: Partial< StoredPaymentMethod >[] = [ storedCard1 ];
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/rest/v1.1/me/payment-methods?type=card&expired=exclude' )
+			.get( '/rest/v1.2/me/payment-methods?type=card&expired=exclude' )
 			.reply( 200, paymentMethods );
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.1/me/stripe-configuration' )
@@ -211,7 +211,7 @@ describe( 'ChangePaymentMethod', () => {
 
 		const paymentMethods: Partial< StoredPaymentMethod >[] = [ storedCard1 ];
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/rest/v1.1/me/payment-methods?type=card&expired=exclude' )
+			.get( '/rest/v1.2/me/payment-methods?type=card&expired=exclude' )
 			.reply( 200, paymentMethods );
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.1/me/stripe-configuration' )
@@ -240,7 +240,7 @@ describe( 'ChangePaymentMethod', () => {
 
 		const paymentMethods: Partial< StoredPaymentMethod >[] = [ storedCard1 ];
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/rest/v1.1/me/payment-methods?type=card&expired=exclude' )
+			.get( '/rest/v1.2/me/payment-methods?type=card&expired=exclude' )
 			.reply( 200, paymentMethods );
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.1/me/stripe-configuration' )
