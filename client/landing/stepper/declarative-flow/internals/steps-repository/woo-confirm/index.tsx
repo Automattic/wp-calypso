@@ -48,49 +48,43 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 		if ( ! siteId ) {
 			return;
 		}
-
 		requestLatestAtomicTransfer( siteId );
 	}, [ requestLatestAtomicTransfer, siteId ] );
 
-	const {
-		eligibilityHolds,
-		eligibilityWarnings,
-		wpcomSubdomainWarning,
-		warnings,
-		latestAtomicTransfer,
-		latestAtomicTransferError,
-		productsList,
-		requiresUpgrade,
-		isAtomicSite,
-		stepProgress,
-	} = useSelect(
+	const { eligibilityHolds, eligibilityWarnings, wpcomSubdomainWarning, warnings } = useSelect(
 		( select ) => {
-			const {
-				getEligibilityHolds,
-				getEligibilityWarnings,
-				getWpcomSubdomainWarning,
-				getNonSubdomainWarnings,
-			} = select( AutomatedTransferEligibility.store );
-			const {
-				getSiteLatestAtomicTransfer,
-				getSiteLatestAtomicTransferError,
-				requiresUpgrade,
-				isSiteAtomic,
-			} = select( SITE_STORE ) as SiteSelect;
+			const selectors = select( AutomatedTransferEligibility.store );
 			return {
-				eligibilityHolds: getEligibilityHolds( siteId ),
-				eligibilityWarnings: getEligibilityWarnings( siteId ),
-				wpcomSubdomainWarning: getWpcomSubdomainWarning( siteId ),
-				warnings: getNonSubdomainWarnings( siteId ),
-				latestAtomicTransfer: getSiteLatestAtomicTransfer( siteId || 0 ),
-				latestAtomicTransferError: getSiteLatestAtomicTransferError( siteId || 0 ),
-				requiresUpgrade: requiresUpgrade( siteId ),
-				isAtomicSite: siteId && isSiteAtomic( siteId ),
-				productsList: select( ProductsList.store ).getProductsList(),
-				stepProgress: ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
+				eligibilityHolds: selectors.getEligibilityHolds( siteId ),
+				eligibilityWarnings: selectors.getEligibilityWarnings( siteId ),
+				wpcomSubdomainWarning: selectors.getWpcomSubdomainWarning( siteId ),
+				warnings: selectors.getNonSubdomainWarnings( siteId ),
 			};
 		},
 		[ siteId ]
+	);
+
+	const { latestAtomicTransfer, latestAtomicTransferError, requiresUpgrade, isAtomicSite } =
+		useSelect(
+			( select ) => {
+				const selectors = select( SITE_STORE ) as SiteSelect;
+				return {
+					latestAtomicTransfer: selectors.getSiteLatestAtomicTransfer( siteId || 0 ),
+					latestAtomicTransferError: selectors.getSiteLatestAtomicTransferError( siteId || 0 ),
+					requiresUpgrade: selectors.requiresUpgrade( siteId ),
+					isAtomicSite: siteId && selectors.isSiteAtomic( siteId ),
+				};
+			},
+			[ siteId ]
+		);
+
+	const productsList = useSelect(
+		( select ) => select( ProductsList.store ).getProductsList(),
+		[]
+	);
+	const stepProgress = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
+		[]
 	);
 
 	const wpcomDomain = site?.URL?.replace( /http[s]*:\/\//, '' );
