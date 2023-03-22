@@ -32,13 +32,13 @@ export const updateDashboardURLQueryArgs = ( {
 } ) => {
 	const params = new URLSearchParams( window.location.search );
 
-	const searchQuery = search ? search : params.get( 's' );
+	const searchQuery = search !== undefined ? search : params.get( 's' );
 	const filterOptions = filter
 		? filter
 		: ( params.getAll( 'issue_types' ) as AgencyDashboardFilterOption[] );
-
 	const sortField = sort ? sort.field : params.get( 'sort_field' );
 	const sortDirection = sort ? sort.direction : params.get( 'sort_direction' );
+
 	page(
 		addQueryArgs(
 			{
