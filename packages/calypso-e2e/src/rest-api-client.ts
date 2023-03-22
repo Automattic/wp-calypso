@@ -354,15 +354,20 @@ export class RestAPIClient {
 			params
 		);
 
+		// This handles API errors such as `unauthorized`.
 		if ( response.hasOwnProperty( 'error' ) ) {
 			throw new Error(
 				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
 			);
 		}
 
-		if ( response.errors === [] ) {
-			console.log( response );
-			throw new Error( `Failed to create invite: ${ response.errors }` );
+		// This handles "errors" relating to the invite itself and can be an array.
+		// For instance, if a user tries to invite itself, or invite an already added user.
+		if ( response.errors.length ) {
+			for ( const err of response.errors ) {
+				console.error( `${ err.code }: ${ err.message }` );
+			}
+			throw new Error( `Failed to create invite due to ${ response.errors.length } errors.` );
 		}
 
 		return response;
@@ -1035,7 +1040,7 @@ export class RestAPIClient {
 		if ( response.hasOwnProperty( 'error' ) && response.error === 'not_found' ) {
 			console.info( `Widget ${ widgetID } not found.` );
 			return;
-		} else if ( response === [] ) {
+		} else if ( response.length === 0 ) {
 			console.info( `Deleted widget ${ widgetID }.` );
 		} else if ( response.id === widgetID ) {
 			console.info( `Deactivated widget ${ widgetID }` );
