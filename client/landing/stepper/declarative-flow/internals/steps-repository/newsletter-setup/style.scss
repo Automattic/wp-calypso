@@ -3,7 +3,10 @@
 .newsletter-setup {
 
 	.step-container {
-		padding-top: 0;
+		padding-top: 24px;
+		@include break-medium {
+			padding-top: 0;
+		}
 	}
 	.step-container__content {
 		display: flex;
@@ -12,6 +15,9 @@
 
 	.step-container__header {
 		margin-bottom: 32px;
-		margin-top: 36px;
+
+		@include break-medium {
+			margin-top: 36px;
+		}
 	}
 }
