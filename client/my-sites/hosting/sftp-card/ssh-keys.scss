@@ -12,12 +12,9 @@
 }
 
 .ssh-keys__cards-container {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	gap: 12px;
-	> .card {
-		margin: 0;
+	display: block;
+	> .card:not(:last-child) {
+		margin-bottom: 12px;
 	}
 }
 
