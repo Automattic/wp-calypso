@@ -537,11 +537,11 @@ function getFallbackDestination( {
 		cart?.products?.filter( ( product ) => product?.extra?.is_marketplace_product ) || [];
 
 	const marketplacePluginSlugs = marketplaceProducts
-		?.filter( ( { extra } ) => extra.product_type === 'marketplace_plugin' )
+		.filter( ( { extra } ) => extra.product_type === 'marketplace_plugin' )
 		.map( ( { extra } ) => extra.product_slug );
 
 	const marketplaceThemeSlugs = marketplaceProducts
-		?.filter( ( { extra } ) => extra.product_type === 'marketplace_theme' )
+		.filter( ( { extra } ) => extra.product_type === 'marketplace_theme' )
 		.map( ( { extra } ) => extra.product_slug );
 
 	if ( marketplaceProducts.length > 0 ) {
