@@ -177,6 +177,7 @@ export function usePluginsThankYouData(
 			onClick={ () => page( `/plugins/${ siteSlug }` ) }
 			backText={ translate( 'Back to plugins' ) }
 			canGoBack={ allPluginsFetched }
+			showContact={ allPluginsFetched }
 		/>
 	);
 

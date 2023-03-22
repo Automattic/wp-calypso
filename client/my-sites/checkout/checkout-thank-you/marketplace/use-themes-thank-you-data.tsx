@@ -39,6 +39,7 @@ export function useThemesThankYouData(
 			onClick={ () => page( `/themes/${ siteSlug }` ) }
 			backText={ translate( 'Back to themes' ) }
 			canGoBack={ allThemesFetched }
+			showContact={ allThemesFetched }
 		/>
 	);
 

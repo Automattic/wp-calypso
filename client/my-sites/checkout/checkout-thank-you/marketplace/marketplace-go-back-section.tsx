@@ -43,6 +43,7 @@ function DefaultGoBackSection( { areAllProductsFetched }: { areAllProductsFetche
 			onClick={ () => page( `/home/${ siteSlug }` ) }
 			backText={ translate( 'Back to home' ) }
 			canGoBack={ areAllProductsFetched }
+			showContact={ areAllProductsFetched }
 		/>
 	);
 }

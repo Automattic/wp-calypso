@@ -3,6 +3,7 @@ import { ReactChild } from 'react';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import Item from 'calypso/layout/masterbar/item';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
+import { DefaultMasterbarContact } from './default-contact';
 
 const MasterbarStyledBlock = styled( Masterbar )`
 	--color-masterbar-background: var( --studio-white );
@@ -48,12 +49,14 @@ const MasterbarStyled = ( {
 	onClick,
 	backText,
 	canGoBack = true,
-	contact = null, // adicionaria um component padrao aqui, ao inves de null
+	contact = <DefaultMasterbarContact />,
+	showContact = true,
 }: {
 	onClick: () => void;
 	backText: ReactChild;
 	canGoBack: boolean;
 	contact?: JSX.Element | null;
+	showContact?: boolean;
 } ) => (
 	<MasterbarStyledBlock>
 		<WordPressLogoStyled />
@@ -62,7 +65,7 @@ const MasterbarStyled = ( {
 				{ backText }
 			</ItemStyled>
 		) }
-		{ contact }
+		{ showContact && contact }
 	</MasterbarStyledBlock>
 );
 
