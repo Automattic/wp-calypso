@@ -18,10 +18,6 @@ const ThemeSectionContainer = styled.div`
 	flex-direction: column;
 	width: 720px;
 	box-sizing: border-box;
-	border-radius: 16px;
-
-	box-shadow: 0px 15px 20px rgba( 0, 0, 0, 0.04 ), 0px 13px 10px rgba( 0, 0, 0, 0.03 ),
-		0px 6px 6px rgba( 0, 0, 0, 0.02 );
 
 	@media ( max-width: 740px ) {
 		width: 500px;
@@ -32,18 +28,24 @@ const ThemeSectionContainer = styled.div`
 	}
 `;
 
-const ThemeSectionImage = styled.img`
+const ThemeSectionImageContainer = styled.div`
 	padding: 8px 8px 0 8px;
+	border-radius: 16px;
+	box-shadow: 0px 15px 20px rgba( 0, 0, 0, 0.04 ), 0px 13px 10px rgba( 0, 0, 0, 0.03 ),
+		0px 6px 6px rgba( 0, 0, 0, 0.02 );
+`;
+
+const ThemeSectionImage = styled.img`
 	border-radius: 13px;
 `;
 
 const ThemeSectionContent = styled.div`
-	padding: 24px;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	flex-wrap: wrap;
 	gap: 16px;
+	padding-top: 26px;
 `;
 
 const ThemeSectionName = styled.div`
@@ -72,6 +74,10 @@ const ThemeSectionButtons = styled.div`
 	.gridicon.gridicons-external {
 		margin-right: 4px;
 	}
+`;
+
+const ThemeButton = styled( Button )`
+	border-radius: 4px;
 `;
 
 export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
@@ -110,16 +116,18 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 	return (
 		<ThemeSectionContainer>
 			<AutoLoadingHomepageModal source="details" />
-			<ThemeSectionImage
-				src={ theme.screenshot }
-				alt={
-					translate( "%(theme)s's icon", {
-						args: {
-							theme: theme.name,
-						},
-					} ) as string
-				}
-			/>
+			<ThemeSectionImageContainer>
+				<ThemeSectionImage
+					src={ theme.screenshot }
+					alt={
+						translate( "%(theme)s's icon", {
+							args: {
+								theme: theme.name,
+							},
+						} ) as string
+					}
+				/>
+			</ThemeSectionImageContainer>
 			<ThemeSectionContent>
 				<ThemeSectionName>
 					<h5>{ theme.name }</h5>
@@ -130,7 +138,7 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 					</small>
 				</ThemeSectionName>
 				<ThemeSectionButtons>
-					<Button
+					<ThemeButton
 						isPrimary
 						isBusy={ ( isActivating && ! hasActivated ) || isLoading }
 						onClick={ handleActivateTheme }
@@ -139,13 +147,13 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 						{ isActive
 							? translate( 'Customize this design' )
 							: translate( 'Activate this design' ) }
-					</Button>
+					</ThemeButton>
 
 					{ isActive ? (
-						<Button isSecondary href={ siteUrl }>
+						<ThemeButton isSecondary href={ siteUrl }>
 							<Gridicon size={ 18 } icon="external" />
 							{ translate( 'View site' ) }
-						</Button>
+						</ThemeButton>
 					) : null }
 				</ThemeSectionButtons>
 			</ThemeSectionContent>
