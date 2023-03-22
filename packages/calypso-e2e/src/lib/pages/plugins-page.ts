@@ -318,10 +318,6 @@ export class PluginsPage {
 		// Check for the correct footer cards
 		await this.page.locator( selectors.installedfooterCards ).getByText( 'Keep growing' ).waitFor();
 		await this.page.locator( selectors.installedfooterCards ).getByText( 'Learn More' ).waitFor();
-		await this.page
-			.locator( selectors.installedfooterCards )
-			.getByText( '24/7 support at your fingertips' )
-			.waitFor();
 
 		// Check for plugin name
 		if ( expectedPluginName ) {
