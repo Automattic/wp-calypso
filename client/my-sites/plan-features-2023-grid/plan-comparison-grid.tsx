@@ -11,6 +11,7 @@ import {
 	getPlanSlugForTermVariant,
 	PlanSlug,
 	TERM_BIENNIALLY,
+	TERM_TRIENNIALLY,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { css } from '@emotion/react';
@@ -647,6 +648,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 				[
 					currentSitePlanSlug,
 					getPlanSlugForTermVariant( currentSitePlanSlug as PlanSlug, TERM_BIENNIALLY ),
+					getPlanSlugForTermVariant( currentSitePlanSlug as PlanSlug, TERM_TRIENNIALLY ),
 				].includes( visiblePlan )
 					? -1
 					: 1

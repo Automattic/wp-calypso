@@ -84,8 +84,8 @@ export const redirectIfInvalidInterval = ( context, next ) => {
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
 
-	// Passlist the intervals here, so we don't accept random "foo" values
-	if ( ! [ 'monthly', 'yearly', '2yearly', '3yearly' ].includes( intervalType ) ) {
+	// Passlist the intervals here to avoid "foo" values passing through
+	if ( intervalType && ! [ 'monthly', 'yearly', '2yearly', '3yearly' ].includes( intervalType ) ) {
 		page.redirect( selectedSite ? `/plans/yearly/${ selectedSite.slug }` : '/plans' );
 		return null;
 	}
