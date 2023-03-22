@@ -23,7 +23,6 @@ function getPerMonthDescription( {
 
 	if ( ! isMonthlyPlan ) {
 		const annualPrice = formatCurrency( rawPriceAnnual, currencyCode );
-
 		return translate( 'per month, %(annualPriceText)s billed annually', {
 			args: { annualPriceText: annualPrice },
 		} );
@@ -36,15 +35,13 @@ const PlanFeatures2023GridBillingTimeframe = ( props ) => {
 	const { planName, billingTimeframe, translate } = props;
 
 	const perMonthDescription = getPerMonthDescription( props ) || billingTimeframe;
-	const priceObj = formatCurrency( 25000, 'USD' );
+	const price = formatCurrency( 25000, 'USD' );
 
 	if ( isWpcomEnterpriseGridPlan( planName ) ) {
 		return (
 			<div className="plan-features-2023-grid__vip-price">
 				{ translate( 'Starts at {{b}}%(price)s{{/b}} yearly.', {
-					args: {
-						price: priceObj,
-					},
+					args: { price },
 					components: { b: <b /> },
 					comment: 'Translators: the price is in US dollars for all users (US$25,000)',
 				} ) }
