@@ -130,7 +130,11 @@ function WpcomBlockEditorNavSidebar() {
 		defaultCloseUrl = `http://wordpress.com/setup/${ siteIntent }/launchpad?siteSlug=${ siteSlug }`;
 		defaultCloseLabel = __( 'Next steps', 'full-site-editing' );
 	} else {
-		defaultCloseUrl = addQueryArgs( 'edit.php', { post_type: postType.slug } );
+		// use Calypso for posts and pages, otherwise use edit.php
+		defaultCloseUrl = [ 'post', 'page' ].includes( postType.slug )
+			? `https://wordpress.com/${ postType.slug }s/${ siteSlug }`
+			: addQueryArgs( 'edit.php', { post_type: postType.slug } );
+
 		defaultCloseLabel = get(
 			postType,
 			[ 'labels', 'all_items' ],
