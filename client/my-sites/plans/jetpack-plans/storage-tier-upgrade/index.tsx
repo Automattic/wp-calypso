@@ -26,7 +26,7 @@ export const StorageTierUpgrade: React.FC< Props > = ( {
 	const siteSlug = siteSlugProp || siteSlugState || '';
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 
-	const storageUpgrades = useStorageUpgradesToDisplay( siteId as number, duration );
+	const storageUpgrades = useStorageUpgradesToDisplay( siteId as number );
 
 	const noop = () => {
 		// Do nothing

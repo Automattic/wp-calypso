@@ -16,6 +16,7 @@ const geolocationEndpointUrl = 'https://public-api.wordpress.com/geo/';
 export function createFormatter(): CurrencyFormatter {
 	const currencyOverrides: Record< string, { symbol?: string | undefined } > = {};
 	let defaultLocale: string | undefined = undefined;
+	let geoLocation = '';
 
 	// If the user is inside the US using USD, they should only see `$` and not `US$`.
 	async function geolocateCurrencySymbol(): Promise< void > {
@@ -34,11 +35,7 @@ export function createFormatter(): CurrencyFormatter {
 		if ( ! geoData.country_short ) {
 			return;
 		}
-		if ( geoData.country_short === 'US' ) {
-			setCurrencySymbol( 'USD', '$' );
-		} else {
-			setCurrencySymbol( 'USD', 'US$' );
-		}
+		geoLocation = geoData.country_short;
 	}
 
 	function getFormatter(
@@ -251,6 +248,9 @@ export function createFormatter(): CurrencyFormatter {
 	}
 
 	function getCurrencyOverride( code: string ): CurrencyOverride | undefined {
+		if ( code === 'USD' && geoLocation !== '' && geoLocation !== 'US' ) {
+			return { symbol: 'US$' };
+		}
 		return currencyOverrides[ code ] ?? defaultCurrencyOverrides[ code ];
 	}
 

@@ -408,11 +408,12 @@ const formatMonitorData = ( site: Site ) => {
 		error: false,
 		settings: site.monitor_settings,
 	};
-	const monitorStatus = site.monitor_settings.monitor_active;
-	if ( ! monitorStatus ) {
+	const { monitor_active: monitorActive, monitor_site_status: monitorStatus } =
+		site.monitor_settings;
+	if ( ! monitorActive ) {
 		monitor.status = 'disabled';
 	} else if (
-		! site.monitor_site_status &&
+		! monitorStatus &&
 		// This check is needed because monitor_site_status is false by default
 		// and we don't want to show the site down status when the site is first connected and the monitor is enabled
 		INITIAL_UNIX_EPOCH !== site.monitor_last_status_change

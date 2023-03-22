@@ -26,10 +26,19 @@ interface Props {
 
 const FontPairingVariationPreview = ( { title }: Props ) => {
 	const [ fontFamilies ] = useSetting( 'typography.fontFamilies' ) as [ FontFamily[] ];
+
 	const [ textFontFamily = 'serif' ] = useStyle( 'typography.fontFamily' );
+	const [ textFontStyle = 'normal' ] = useStyle( 'typography.fontStyle' );
+	const [ textFontWeight = 400 ] = useStyle( 'typography.fontWeight' );
+
 	const [ headingFontFamily = textFontFamily ] = useStyle(
 		'elements.heading.typography.fontFamily'
 	);
+	const [ headingFontStyle = textFontStyle ] = useStyle( 'elements.heading.typography.fontStyle' );
+	const [ headingFontWeight = textFontWeight ] = useStyle(
+		'elements.heading.typography.fontWeight'
+	);
+
 	const [ containerResizeListener, { width } ] = useResizeObserver();
 	const ratio = width ? width / STYLE_PREVIEW_WIDTH : 1;
 	const normalizedHeight = Math.ceil( STYLE_PREVIEW_HEIGHT * ratio );
@@ -93,8 +102,9 @@ const FontPairingVariationPreview = ( { title }: Props ) => {
 											...DEFAULT_FONT_STYLES,
 											color: '#000000',
 											fontSize: '16px',
-											fontWeight: 400,
+											fontWeight: headingFontWeight,
 											fontFamily: headingFontFamily,
+											fontStyle: headingFontStyle,
 										} }
 									>
 										{ headingFontFamilyName }
@@ -106,8 +116,9 @@ const FontPairingVariationPreview = ( { title }: Props ) => {
 											...DEFAULT_FONT_STYLES,
 											color: '#444444',
 											fontSize: '12px',
-											fontWeight: 400,
+											fontWeight: textFontWeight,
 											fontFamily: textFontFamily,
+											fontStyle: textFontStyle,
 										} }
 									>
 										{ textFontFamilyName }
@@ -127,10 +138,11 @@ const FontPairingVariationPreview = ( { title }: Props ) => {
 							>
 								<div
 									style={ {
-										fontFamily: headingFontFamily,
+										fontFamily: textFontFamily,
+										fontStyle: textFontStyle,
 										color: '#000000',
 										fontSize: '16px',
-										fontWeight: 400,
+										fontWeight: textFontWeight,
 										lineHeight: '1em',
 										textAlign: 'center',
 									} }

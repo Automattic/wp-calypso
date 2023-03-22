@@ -121,6 +121,7 @@ import {
 	getAddNewPaymentMethodPath,
 	getChangePaymentMethodPath,
 	isJetpackTemporarySitePurchase,
+	isAkismetTemporarySitePurchase,
 } from '../utils';
 import PurchaseNotice from './notices';
 import PurchasePlanDetails from './plan-details';
@@ -140,7 +141,6 @@ class ManagePurchase extends Component {
 		hasLoadedPurchasesFromServer: PropTypes.bool.isRequired,
 		hasNonPrimaryDomainsFlag: PropTypes.bool,
 		isAtomicSite: PropTypes.bool,
-		isJetpackTemporarySite: PropTypes.bool,
 		renewableSitePurchases: PropTypes.arrayOf( PropTypes.object ),
 		productsList: PropTypes.object,
 		purchase: PropTypes.object,
@@ -247,7 +247,11 @@ class ManagePurchase extends Component {
 	renderRenewButton() {
 		const { purchase, translate } = this.props;
 
-		if ( isPartnerPurchase( purchase ) || ! isRenewable( purchase ) || ! this.props.site ) {
+		if (
+			isPartnerPurchase( purchase ) ||
+			! isRenewable( purchase ) ||
+			( ! this.props.site && ! isAkismetTemporarySitePurchase( purchase ) )
+		) {
 			return null;
 		}
 
@@ -307,11 +311,11 @@ class ManagePurchase extends Component {
 	renderRenewalNavItem( content, onClick ) {
 		const { purchase } = this.props;
 
-		if ( ! isRenewable( purchase ) || ! this.props.site ) {
-			return null;
-		}
-
-		if ( isPartnerPurchase( purchase ) ) {
+		if (
+			isPartnerPurchase( purchase ) ||
+			! isRenewable( purchase ) ||
+			( ! this.props.site && ! isAkismetTemporarySitePurchase( purchase ) )
+		) {
 			return null;
 		}
 
@@ -1000,7 +1004,6 @@ class ManagePurchase extends Component {
 		const {
 			purchase,
 			translate,
-			isJetpackTemporarySite,
 			isProductOwner,
 			getManagePurchaseUrlFor,
 			siteSlug,
@@ -1016,7 +1019,6 @@ class ManagePurchase extends Component {
 			'is-jetpack-product': purchase && isJetpackProduct( purchase ),
 		} );
 		const siteName = purchase.siteName;
-		const siteDomain = purchase.domain;
 		const siteId = purchase.siteId;
 
 		const renderMonthlyRenewalOption = shouldRenderMonthlyRenewalOption( purchase );
@@ -1024,7 +1026,7 @@ class ManagePurchase extends Component {
 		return (
 			<Fragment>
 				{ this.props.showHeader && (
-					<PurchaseSiteHeader siteId={ siteId } name={ siteName } domain={ siteDomain } />
+					<PurchaseSiteHeader siteId={ siteId } name={ siteName } purchase={ purchase } />
 				) }
 				<Card className={ classes }>
 					<header className="manage-purchase__header">
@@ -1081,12 +1083,18 @@ class ManagePurchase extends Component {
 						{ ! preventRenewal && ! renderMonthlyRenewalOption && this.renderRenewNowNavItem() }
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewAnnuallyNavItem() }
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewMonthlyNavItem() }
-						{ ! isJetpackTemporarySite && this.renderUpgradeNavItem() }
+						{ /* We don't want to show the Renew/Upgrade nav item for "Jetpack" temporary sites, but we DO
+						show it for "Akismet" temporary sites. (And all other types of purchases) */ }
+						{ /* TODO: Add ability to Renew Akismet subscription */ }
+						{ ! isJetpackTemporarySitePurchase( purchase ) && this.renderUpgradeNavItem() }
 						{ this.renderEditPaymentMethodNavItem() }
 						{ this.renderReinstall() }
 						{ this.renderCancelPurchaseNavItem() }
 						{ this.renderCancelSurvey() }
-						{ ! isJetpackTemporarySite && this.renderRemovePurchaseNavItem() }
+						{ /* We don't want to show the Cancel/Remove nav item for "Jetpack" temporary sites, but we DO
+						show it for "Akismet" temporary sites. (And all other types of purchases) */ }
+						{ /* TODO: Add ability to Cancel Akismet subscription */ }
+						{ ! isJetpackTemporarySitePurchase( purchase ) && this.renderRemovePurchaseNavItem() }
 					</>
 				) }
 			</Fragment>
@@ -1285,7 +1293,6 @@ export default connect(
 			isAtomicSite: isSiteAtomic( state, siteId ),
 			relatedMonthlyPlanSlug,
 			relatedMonthlyPlanPrice,
-			isJetpackTemporarySite: purchase && isJetpackTemporarySitePurchase( purchase.domain ),
 			primaryDomain: primaryDomain,
 			isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
 		};

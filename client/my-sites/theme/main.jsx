@@ -1331,7 +1331,9 @@ class ThemeSheet extends Component {
 					</div>
 					{ ! isRemoved && (
 						<div className="theme__sheet-column-right">
-							{ styleVariations.length ? this.renderWebPreview() : this.renderScreenshot() }
+							{ isNewDetailsAndPreview && styleVariations.length
+								? this.renderWebPreview()
+								: this.renderScreenshot() }
 						</div>
 					) }
 				</div>

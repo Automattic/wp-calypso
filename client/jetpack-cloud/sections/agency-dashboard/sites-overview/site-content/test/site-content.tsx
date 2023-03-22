@@ -29,6 +29,7 @@ describe( '<SiteContent>', () => {
 			url: 'test.jurassic.ninja',
 			monitor_settings: {
 				monitor_active: true,
+				monitor_site_status: true,
 			},
 		},
 	];
