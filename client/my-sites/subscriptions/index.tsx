@@ -14,10 +14,12 @@ const CommentsView = () => <span>Comments View</span>;
 const SubscriptionManagementPage = () => {
 	const translate = useTranslate();
 	const { data: counts } = Reader.useSubscriptionManagerSubscriptionsCountQuery();
-	const { data: settings } = Reader.useSubscriptionManagerUserSettingsQuery();
 	const locale = useLocale();
 
-	const SettingsView = () => <SubscriptionManager.UserSettings value={ settings } />;
+	const SettingsView = () => {
+		const { data: settings } = Reader.useSubscriptionManagerUserSettingsQuery();
+		return <SubscriptionManager.UserSettings value={ settings } />;
+	};
 
 	return (
 		<MomentProvider currentLocale={ locale }>
