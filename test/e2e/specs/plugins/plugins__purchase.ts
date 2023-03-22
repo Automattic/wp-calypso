@@ -108,17 +108,17 @@ describe(
 				await cartCheckoutPage.validateCartItem( `${ plugin2Name }` );
 			} );
 
-			// it( 'Make purchase', async function () {
-			// 	await cartCheckoutPage.purchaseWithPlugin( { timeout: 300 * 1000 } );
-			// } );
+			it( 'Make purchase', async function () {
+				await cartCheckoutPage.purchaseWithPlugin( { timeout: 300 * 1000 } );
+			} );
 
-			// it( 'See confirmation page', async function () {
-			// 	await pluginsPage.validateConfirmationPagePostInstall( pluginName );
-			// } );
+			it( 'See confirmation page', async function () {
+				await pluginsPage.validateConfirmationPagePostInstall( pluginName );
+			} );
 
-			// it( `Click manage plugin`, async function () {
-			// 	await pluginsPage.clickManageInstalledPluginButton();
-			// } );
+			it( `Click manage plugin`, async function () {
+				await pluginsPage.clickManageInstalledPluginButton();
+			} );
 		} );
 
 		afterAll( async function () {
