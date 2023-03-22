@@ -3,7 +3,7 @@ import { StepContainer } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import DomainEligibilityWarning from 'calypso/components/eligibility-warnings/domain-warning';
 import PlanWarning from 'calypso/components/eligibility-warnings/plan-warning';
 import EligibilityWarningsList from 'calypso/components/eligibility-warnings/warnings-list';
@@ -21,6 +21,14 @@ import type { Step } from '../../types';
 import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
 import type { TransferEligibilityHold } from '@automattic/data-stores/src/automated-transfer-eligibility/types';
 import './style.scss';
+
+const {
+	store: transferStore,
+	getEligibilityHolds,
+	getEligibilityWarnings,
+	getNonSubdomainWarnings,
+	getWpcomSubdomainWarning,
+} = AutomatedTransferEligibility;
 
 const Divider = styled.hr`
 	border-top: 1px solid #eee;
@@ -51,18 +59,20 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 		requestLatestAtomicTransfer( siteId );
 	}, [ requestLatestAtomicTransfer, siteId ] );
 
-	const { eligibilityHolds, eligibilityWarnings, wpcomSubdomainWarning, warnings } = useSelect(
-		( select ) => {
-			const selectors = select( AutomatedTransferEligibility.store );
-			return {
-				eligibilityHolds: selectors.getEligibilityHolds( siteId ),
-				eligibilityWarnings: selectors.getEligibilityWarnings( siteId ),
-				wpcomSubdomainWarning: selectors.getWpcomSubdomainWarning( siteId ),
-				warnings: selectors.getNonSubdomainWarnings( siteId ),
-			};
-		},
+	const transferEligibility = useSelect(
+		( select ) => select( transferStore ).getAutomatedTransferEligibility( siteId ),
 		[ siteId ]
 	);
+
+	const { eligibilityHolds, eligibilityWarnings, wpcomSubdomainWarning, warnings } =
+		useMemo( () => {
+			return {
+				eligibilityHolds: getEligibilityHolds( transferEligibility ),
+				eligibilityWarnings: getEligibilityWarnings( transferEligibility ),
+				wpcomSubdomainWarning: getWpcomSubdomainWarning( transferEligibility ),
+				warnings: getNonSubdomainWarnings( transferEligibility ),
+			};
+		}, [ transferEligibility ] );
 
 	const { latestAtomicTransfer, latestAtomicTransferError, requiresUpgrade, isAtomicSite } =
 		useSelect(
