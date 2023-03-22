@@ -52,7 +52,7 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 									<span className={ classNames( index === 0 && 'site-table-site-title' ) }>
 										{ column.title }
 									</span>
-									{ column.isSortable && <SiteSort columnKey={ column.key } /> }
+									{ column.isSortable && <SiteSort isLargeScreen columnKey={ column.key } /> }
 								</th>
 							) ) }
 							<th colSpan={ isExpandedBlockEnabled ? 2 : 1 }>
