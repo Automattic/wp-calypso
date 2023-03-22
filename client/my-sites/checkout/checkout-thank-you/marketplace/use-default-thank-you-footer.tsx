@@ -28,6 +28,7 @@ export function useThankYouFoooter(
 						link: `/plugins/${ siteSlug }`,
 						linkText: translate( 'Explore plugins' ),
 						eventKey: 'calypso_plugin_thank_you_explore_plugins_click',
+						blankTarget: false,
 					},
 			  ]
 			: [] ),
@@ -102,7 +103,7 @@ function useNextSteps(
 				<Button
 					isLink
 					href={ step.link }
-					target="_blank"
+					target={ step.blankTarget !== false ? '_blank' : undefined } // the default is to open in a new tab
 					onClick={ () => sendTrackEvent( step.eventKey ) }
 				>
 					{ step.linkText }
@@ -119,4 +120,5 @@ type FooterStep = {
 	link: string;
 	linkText: string;
 	eventKey: string;
+	blankTarget?: boolean;
 };
