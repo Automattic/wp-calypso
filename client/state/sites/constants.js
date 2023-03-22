@@ -80,4 +80,5 @@ export const SITE_REQUEST_OPTIONS = [
 	'launchpad_checklist_tasks_statuses',
 	'wpcom_production_blog_id',
 	'wpcom_staging_blog_ids',
+	'has_promote_widget',
 ].join();

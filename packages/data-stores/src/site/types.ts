@@ -235,6 +235,7 @@ export interface SiteDetailsOptions {
 	launchpad_checklist_tasks_statuses?: LaunchPadCheckListTasksStatuses;
 	wpcom_production_blog_id?: number;
 	wpcom_staging_blog_ids?: number[];
+	has_promote_widget?: boolean;
 }
 
 export type SiteOption = keyof SiteDetails[ 'options' ];

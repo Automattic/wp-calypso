@@ -5,7 +5,8 @@ import { useSelector } from 'react-redux';
 import request, { requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getSiteOption } from 'calypso/state/sites/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 declare global {
 	interface Window {
@@ -138,17 +139,18 @@ export enum PromoteWidgetStatus {
  * @returns bool
  */
 export const usePromoteWidget = (): PromoteWidgetStatus => {
-	const value = useSelector( ( state ) => {
-		const userData = getCurrentUser( state );
-		if ( userData ) {
-			const originalSetting = userData[ 'has_promote_widget' ];
-			if ( originalSetting !== undefined ) {
-				return originalSetting === true
-					? PromoteWidgetStatus.ENABLED
-					: PromoteWidgetStatus.DISABLED;
-			}
-		}
-		return PromoteWidgetStatus.FETCHING;
-	} );
-	return value;
+	const selectedSite = useSelector( getSelectedSite );
+
+	const value = useSelector( ( state ) =>
+		getSiteOption( state, selectedSite?.ID, 'has_promote_widget' )
+	);
+
+	switch ( value ) {
+		case false:
+			return PromoteWidgetStatus.DISABLED;
+		case true:
+			return PromoteWidgetStatus.ENABLED;
+		default:
+			return PromoteWidgetStatus.FETCHING;
+	}
 };
