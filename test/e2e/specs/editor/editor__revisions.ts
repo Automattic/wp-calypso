@@ -4,7 +4,6 @@
  */
 
 import {
-	DataHelper,
 	TestAccount,
 	envVariables,
 	EditorPage,
@@ -17,7 +16,11 @@ import { Browser, Page } from 'playwright';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( `Editor: Revisions` ), function () {
+/**
+ * This spec requires the following:
+ * 	- theme: a non-block-based theme (eg. Twenty-Twenty One)
+ */
+describe( `Editor: Revisions`, function () {
 	const features = envToFeatureKey( envVariables );
 	const accountName = getTestAccountByFeature( features, [
 		{ gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' },
