@@ -191,7 +191,7 @@ const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, transl
 		if ( isReverting ) {
 			return (
 				<>
-					<StyledLoadingBar progress={ progress } />
+					<StyledLoadingBar key="delete-loading-bar" progress={ progress } />
 					<p>{ __( 'We are deleting your staging site.' ) }</p>
 				</>
 			);
