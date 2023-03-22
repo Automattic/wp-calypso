@@ -96,6 +96,7 @@ export default function DomainUpsell( { context } ) {
 
 const domainSuggestionOptions = {
 	vendor: 'domain-upsell',
+	include_wordpressdotcom: false,
 };
 
 export function RenderDomainUpsell( {
@@ -122,9 +123,7 @@ export function RenderDomainUpsell( {
 	const shoppingCartManager = useShoppingCart( cartKey );
 
 	// Get first non-free suggested domain.
-	const domainSuggestion = allDomainSuggestions?.filter(
-		( suggestion ) => ! suggestion.is_free
-	)[ 0 ];
+	const domainSuggestion = allDomainSuggestions?.[ 0 ];
 
 	// It takes awhile to suggest a domain name. Set a default to an empty string.
 	const domainSuggestionName = domainSuggestion?.domain_name ?? '';

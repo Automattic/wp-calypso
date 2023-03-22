@@ -20,20 +20,6 @@ export function useThankYouFoooter(
 		...( hasPlugins
 			? [
 					{
-						key: 'thank_you_footer_support_guides',
-						title: translate( 'Support guides' ),
-						description: translate(
-							'Our guides will show you everything you need to know about plugins.'
-						),
-						link: 'https://wordpress.com/support/plugins/',
-						linkText: translate( 'Plugin Support' ),
-						eventKey: 'calypso_plugin_thank_you_plugin_support_click',
-					},
-			  ]
-			: [] ),
-		...( hasPlugins
-			? [
-					{
 						key: 'thank_you_footer_explore',
 						title: translate( 'Keep growing' ),
 						description: translate(
@@ -42,6 +28,18 @@ export function useThankYouFoooter(
 						link: `/plugins/${ siteSlug }`,
 						linkText: translate( 'Explore plugins' ),
 						eventKey: 'calypso_plugin_thank_you_explore_plugins_click',
+					},
+			  ]
+			: [] ),
+		...( hasPlugins
+			? [
+					{
+						key: 'thank_you_footer_support_guides',
+						title: translate( 'Learn More' ),
+						description: translate( 'Discover everything you need to know about Plugins.' ),
+						link: 'https://wordpress.com/support/plugins/',
+						linkText: translate( 'Plugin Support' ),
+						eventKey: 'calypso_plugin_thank_you_plugin_support_click',
 					},
 			  ]
 			: [] ),
@@ -61,8 +59,8 @@ export function useThankYouFoooter(
 			: [] ),
 		{
 			key: 'thank_you_footer_support',
-			title: translate( 'How can we support you?' ),
-			description: translate( 'Our team is here if you need help, or if you have any questions.' ),
+			title: translate( '24/7 support at your fingertips' ),
+			description: translate( 'Our happiness engineers are eager to lend a hand.' ),
 			link: 'https://wordpress.com/help/contact',
 			linkText: translate( 'Ask a question' ),
 			eventKey: 'calypso_plugin_thank_you_ask_question_click',

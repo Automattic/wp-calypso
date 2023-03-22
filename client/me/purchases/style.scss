@@ -129,6 +129,13 @@
 	}
 }
 
+.purchase-item__static-icon {
+	width: 36px;
+	height: 36px;
+	border-radius: 2px;
+	overflow: hidden;
+}
+
 .purchase-item__title {
 	color: var(--color-neutral-80);
 	overflow: hidden;

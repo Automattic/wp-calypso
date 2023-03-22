@@ -13,7 +13,6 @@ import theme from 'calypso/my-sites/marketplace/theme';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { isRequesting } from 'calypso/state/plugins/installed/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -34,7 +33,6 @@ const MarketplaceThankYou = ( {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
-	const currentUser = useSelector( getCurrentUser );
 	const isRequestingPlugins = useSelector( ( state ) => isRequesting( state, siteId ) );
 
 	const defaultThankYouFooter = useThankYouFoooter( pluginSlugs, themeSlugs );
@@ -151,13 +149,9 @@ const MarketplaceThankYou = ( {
 						containerClassName="marketplace-thank-you"
 						sections={ [ themesSection, pluginsSection, defaultThankYouFooter ] }
 						showSupportSection={ false }
-						thankYouTitle={ translate( "You're all set %(username)s!", {
-							args: {
-								username: currentUser?.display_name || currentUser?.username,
-							},
-						} ) }
+						thankYouTitle={ translate( "Congrats on your site's new superpowers!" ) }
 						thankYouSubtitle={ translate(
-							'Congratulations on your installation. You can now extend the possibilities of your site.'
+							"Now you're really getting the most out of WordPress. Dig in and explore more of our favorite plugins."
 						) }
 						headerBackgroundColor="#fff"
 						headerTextColor="#000"

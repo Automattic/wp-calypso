@@ -212,6 +212,31 @@ const useSectionPatterns = () => {
 				categories: [ callToAction ],
 			},
 			{
+				id: 9768,
+				name: 'Centered call to action',
+				categories: [ callToAction ],
+			},
+			{
+				id: 9754,
+				name: 'Full-width media and text with background',
+				categories: [ callToAction ],
+			},
+			{
+				id: 9751,
+				name: 'Full-width media and text with background',
+				categories: [ callToAction ],
+			},
+			{
+				id: 9748,
+				name: 'Call to action with image on the left',
+				categories: [ callToAction ],
+			},
+			{
+				id: 9745,
+				name: 'Call to action with image on the right',
+				categories: [ callToAction ],
+			},
+			{
 				id: 6303,
 				name: 'Two Buttons Centered CTA',
 				categories: [ callToAction ],
@@ -264,6 +289,26 @@ const useSectionPatterns = () => {
 			{
 				id: 7143,
 				name: 'Full-width image',
+				categories: [ images ],
+			},
+			{
+				id: 9766,
+				name: 'Heading and three images with rounded borders',
+				categories: [ images ],
+			},
+			{
+				id: 9763,
+				name: 'Three columns with images',
+				categories: [ images ],
+			},
+			{
+				id: 9760,
+				name: 'Three columns with heading, text, and image',
+				categories: [ images ],
+			},
+			{
+				id: 9757,
+				name: 'A heading, paragraph and two images',
 				categories: [ images ],
 			},
 			{
@@ -382,18 +427,8 @@ const useSectionPatterns = () => {
 				categories: [ portfolio ],
 			},
 			{
-				id: 6317,
-				name: 'Horizontal Media & Text',
-				categories: [ portfolio ],
-			},
-			{
 				id: 6318,
 				name: 'Offset Projects',
-				categories: [ portfolio ],
-			},
-			{
-				id: 6319,
-				name: 'Case Study',
 				categories: [ portfolio ],
 			},
 			{
@@ -404,11 +439,6 @@ const useSectionPatterns = () => {
 			{
 				id: 6321,
 				name: 'CV Text Grid',
-				categories: [ portfolio ],
-			},
-			{
-				id: 6322,
-				name: 'Tall Item One Column',
 				categories: [ portfolio ],
 			},
 			{
