@@ -18,9 +18,11 @@
 
 .clone-flow__title {
 	text-align: left;
-	font-size: $font-title-medium;
-	font-weight: 600;
-	padding-bottom: 32px;
+	font-size: $font-title-large;
+	font-weight: 400;
+	padding-bottom: 8px;
+	margin-top: 41px;
+	line-height: 48px;
 
 	&.error {
 		color: var(--color-error);
@@ -28,7 +30,8 @@
 }
 
 .clone-flow__info {
-	font-size: $font-body;
+	font-size: $font-body-small;
+	font-weight: 400;
 }
 
 .clone-flow__cta {
