@@ -2,14 +2,18 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon, Button } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
 import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
 import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
 import { activate } from 'calypso/state/themes/actions';
-import { isThemeActive, hasActivatedTheme } from 'calypso/state/themes/selectors';
+import {
+	isThemeActive,
+	isActivatingTheme,
+	hasActivatedTheme,
+} from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const ThemeSectionContainer = styled.div`
@@ -80,7 +84,6 @@ const ThemeButton = styled( Button )`
 `;
 
 export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
-	const [ isActivating, setIsActivating ] = useState( false );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId ) as number;
@@ -88,6 +91,7 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 	const { data, isLoading } = useActiveThemeQuery( siteId, true );
 	const isFSEActive = data?.[ 0 ]?.theme_supports[ 'block-templates' ] ?? false;
 	const hasActivated = useSelector( ( state ) => hasActivatedTheme( state, siteId ) );
+	const isActivating = useSelector( ( state ) => isActivatingTheme( state, siteId ) );
 	const customizeUrl = useSelector( ( state ) =>
 		getCustomizeUrl( state, theme.id, siteId, isFSEActive )
 	);
@@ -109,7 +113,6 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 		}
 		sendTrackEvent( 'calypso_theme_thank_you_activate_theme_click' );
 		dispatch( activate( theme.id, siteId, 'marketplace-thank-you' ) );
-		setIsActivating( true );
 	};
 
 	return (
