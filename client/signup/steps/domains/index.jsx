@@ -494,10 +494,7 @@ class DomainsStep extends Component {
 	};
 
 	domainForm = () => {
-		let initialState = {};
-		if ( this.props.step ) {
-			initialState = this.props.step.domainForm;
-		}
+		const initialState = get( this.props, 'step.domainForm', {} );
 
 		// If it's the first load, rerun the search with whatever we get from the query param or signup dependencies.
 		const initialQuery =
