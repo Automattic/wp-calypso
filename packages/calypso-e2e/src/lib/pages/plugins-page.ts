@@ -42,7 +42,6 @@ const selectors = {
 
 	// Elegibility warnings
 	eligibilityWarning: '.eligibility-warnings__title',
-	eligibilityWarningContinueButton: 'button:text("Upgrade and activate plugin")',
 
 	// Category selector
 	selectedCategory: ( categoryTitle: string ) => `.categories__header:text("${ categoryTitle }")`,
@@ -312,7 +311,7 @@ export class PluginsPage {
 	 * Clicks continue button on the Elegibility warning.
 	 */
 	async clickContinueElebigilityWarning(): Promise< void > {
-		const locator = this.page.locator( selectors.eligibilityWarningContinueButton );
+		const locator = this.page.getByText( 'Upgrade and activate plugin' );
 		await Promise.all( [ locator.click() ] );
 	}
 
