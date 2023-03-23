@@ -29,8 +29,8 @@ const TrackResurrections = ( { login_time, yearInterval, isFetchingUserSettings 
 			return;
 		}
 
-		// Only fire event if the difference between resurrection login time and current time is less than a day.
-		const differenceInDays = ( Date.now() - loginTime ) / ( 1000 * 60 * 60 * 24 );
+		// Only fire event if the difference between resurrection login time and current time is less 5 minutes.
+		const differenceInDays = ( Date.now() - loginTime ) / ( 1000 * 60 * 5 );
 
 		if ( differenceInDays <= 1 ) {
 			recordTracksEvent( 'calypso_user_resurrected', {
