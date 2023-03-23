@@ -110,8 +110,6 @@ const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, transl
 				case transferStates.REVERTED:
 				case transferStates.RELOCATING:
 					return 0.85;
-				case transferStates.COMPLETE:
-					return 0.98;
 				default:
 					return prevProgress + 0.05;
 			}

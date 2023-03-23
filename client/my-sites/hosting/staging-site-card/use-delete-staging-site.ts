@@ -27,7 +27,23 @@ export const useDeleteStagingSite = ( options: UseDeleteStagingSiteOptions ) => 
 		onSuccess?.();
 	}, [ onSuccess, queryClient ] );
 
-	const isStatusReverting = useIsStatusReverting( transferStatus, onReverted );
+	const isStatusReverting = useIsStatusReverting( transferStatus );
+
+	useEffect( () => {
+		let timeoutId: NodeJS.Timeout;
+		if ( isDeletingInitiated ) {
+			if ( stagingSiteId ) {
+				timeoutId = setInterval( () => {
+					queryClient.invalidateQueries( [ USE_STAGING_SITE_QUERY_KEY ] );
+				}, 3000 );
+			} else {
+				onReverted();
+			}
+		}
+		return () => {
+			clearInterval( timeoutId );
+		};
+	}, [ isDeletingInitiated, onReverted, queryClient, stagingSiteId ] );
 
 	const mutation = useMutation(
 		() => {

@@ -1,26 +1,23 @@
 import { useEffect, useState } from 'react';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 
-export function useIsStatusReverting(
-	transferStatus: string | null,
-	onReverted?: () => void
-): boolean {
+export function useIsStatusReverting( transferStatus: string | null ): boolean {
 	const [ isStatusReverting, setIsStatusReverting ] = useState( false );
 	useEffect( () => {
 		switch ( transferStatus ) {
 			case transferStates.REQUEST_FAILURE:
+			case transferStates.REVERTED:
+			case transferStates.COMPLETE:
 			case null:
 				if ( isStatusReverting ) {
-					onReverted?.();
 					setIsStatusReverting( false );
 				}
 				break;
-			case transferStates.REVERTED:
 			case transferStates.RELOCATING_REVERT:
 				setIsStatusReverting( true );
 				break;
 		}
-	}, [ isStatusReverting, onReverted, transferStatus ] );
+	}, [ isStatusReverting, transferStatus ] );
 
 	return isStatusReverting;
 }
