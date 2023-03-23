@@ -1,21 +1,33 @@
-import { useEffect, useState } from 'react';
-import { useMutation } from 'react-query';
+import { useCallback, useEffect, useState } from 'react';
+import { useMutation, useQueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
 import wpcom from 'calypso/lib/wp';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
+import { TransferStates } from 'calypso/state/automated-transfer/constants';
 import { SiteId } from 'calypso/types';
+import { useIsStatusReverting } from './use-is-status-reverting';
+import { USE_STAGING_SITE_QUERY_KEY } from './use-staging-site';
 
 interface UseDeleteStagingSiteOptions {
 	siteId: SiteId;
 	stagingSiteId: SiteId;
+	transferStatus: TransferStates | null;
 	onSuccess?: () => void;
 	onError?: () => void;
 }
 
 export const useDeleteStagingSite = ( options: UseDeleteStagingSiteOptions ) => {
-	const { siteId, stagingSiteId, onSuccess, onError } = options;
+	const { siteId, stagingSiteId, transferStatus, onSuccess, onError } = options;
+	const queryClient = useQueryClient();
 	const dispatch = useDispatch();
-	const [ isDelayedLoading, setIsDelayedLoading ] = useState( false );
+	const [ isDeletingInitiated, setIsDeletingInitiated ] = useState( false );
+	const onReverted = useCallback( () => {
+		queryClient.invalidateQueries( [ USE_STAGING_SITE_QUERY_KEY ] );
+		setIsDeletingInitiated( false );
+		onSuccess?.();
+	}, [ onSuccess, queryClient ] );
+
+	const isStatusReverting = useIsStatusReverting( transferStatus, onReverted );
 
 	const mutation = useMutation(
 		() => {
@@ -30,12 +42,10 @@ export const useDeleteStagingSite = ( options: UseDeleteStagingSiteOptions ) => 
 				// Wait for the staging site async job to start
 				setTimeout( () => {
 					dispatch( fetchAutomatedTransferStatus( stagingSiteId ) );
-					setIsDelayedLoading( false );
-					onSuccess?.();
-				}, 5000 );
+				}, 3000 );
 			},
 			onError: () => {
-				setIsDelayedLoading( false );
+				setIsDeletingInitiated( false );
 				onError?.();
 			},
 		}
@@ -44,9 +54,9 @@ export const useDeleteStagingSite = ( options: UseDeleteStagingSiteOptions ) => 
 
 	useEffect( () => {
 		if ( isLoading ) {
-			setIsDelayedLoading( true );
+			setIsDeletingInitiated( true );
 		}
 	}, [ isLoading ] );
 
-	return { deleteStagingSite: mutate, isLoading: isDelayedLoading };
+	return { deleteStagingSite: mutate, isReverting: isStatusReverting || isDeletingInitiated };
 };

@@ -20,7 +20,7 @@ import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 import { DeleteStagingSite } from './delete-staging-site';
-import { useIsReverting } from './use-is-reverting';
+import { useDeleteStagingSite } from './use-delete-staging-site';
 
 const stagingSiteAddFailureNoticeId = 'staging-site-add-failure';
 
@@ -76,7 +76,14 @@ const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, transl
 	const [ wasCreating, setWasCreating ] = useState( false );
 	const [ progress, setProgress ] = useState( 0.1 );
 	const transferStatus = useCheckStagingSiteStatus( stagingSite.id );
-	const { isReverting } = useIsReverting( transferStatus );
+	const { deleteStagingSite, isReverting } = useDeleteStagingSite( {
+		siteId,
+		stagingSiteId: stagingSite.id,
+		transferStatus,
+		onSuccess: () => {
+			dispatch( successNotice( __( 'Staging site deleted.' ) ) );
+		},
+	} );
 	const isStagingSiteTransferComplete = transferStatus === transferStates.COMPLETE;
 	const isTrasferInProgress =
 		showManageStagingSite &&
@@ -176,8 +183,8 @@ const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, transl
 					</Button>
 					<DeleteStagingSite
 						disabled={ disabled }
-						siteId={ siteId }
-						stagingSiteId={ stagingSite.id }
+						onClickDelete={ deleteStagingSite }
+						isBusy={ isReverting }
 					>
 						<Gridicon icon="trash" />
 						<span>{ __( 'Delete staging site' ) }</span>
@@ -232,7 +239,7 @@ const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, transl
 	let stagingSiteCardContent;
 	if ( ! isLoadingStagingSites && loadingError ) {
 		stagingSiteCardContent = getLoadingErrorContent();
-	} else if ( addingStagingSite || isTrasferInProgress ) {
+	} else if ( addingStagingSite || isTrasferInProgress || isReverting ) {
 		stagingSiteCardContent = getTransferringStagingSiteContent();
 	} else if ( showManageStagingSite && isStagingSiteTransferComplete ) {
 		stagingSiteCardContent = getManageStagingSiteContent();

@@ -3,13 +3,14 @@ import styled from '@emotion/styled';
 import { Modal } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
-import { useDeleteStagingSite } from './use-delete-staging-site';
 
 interface DeleteStagingSiteProps {
 	siteId: number;
 	stagingSiteId: number;
 	disabled: boolean;
 	children: React.ReactNode;
+	onClickDelete: () => void;
+	isBusy?: boolean;
 }
 
 const ActionButtons = styled.div( {
@@ -18,8 +19,8 @@ const ActionButtons = styled.div( {
 } );
 
 export function DeleteStagingSite( {
-	siteId,
-	stagingSiteId,
+	onClickDelete,
+	isBusy,
 	disabled = false,
 	children,
 }: DeleteStagingSiteProps ) {
@@ -27,15 +28,10 @@ export function DeleteStagingSite( {
 	const [ isOpen, setOpen ] = useState( false );
 	const openModal = () => setOpen( true );
 	const closeModal = () => setOpen( false );
-	const { deleteStagingSite, isLoading } = useDeleteStagingSite( {
-		siteId,
-		stagingSiteId,
-		onSuccess: closeModal,
-	} );
 
 	return (
 		<>
-			<Button scary onClick={ openModal } disabled={ disabled } busy={ isLoading }>
+			<Button scary onClick={ openModal } disabled={ disabled } busy={ isBusy }>
 				{ children }
 			</Button>
 			{ isOpen && (
@@ -46,7 +42,14 @@ export function DeleteStagingSite( {
 						) }
 					</p>
 					<ActionButtons>
-						<Button primary onClick={ () => deleteStagingSite() } busy={ isLoading }>
+						<Button
+							primary
+							onClick={ () => {
+								onClickDelete();
+								closeModal();
+							} }
+							busy={ isBusy }
+						>
 							{ __( 'Delete staging site' ) }
 						</Button>
 						<Button onClick={ closeModal }>{ __( 'Cancel' ) }</Button>
