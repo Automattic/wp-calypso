@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useSelector } from 'react-redux';
 import JetpackLogo from 'calypso/components/jetpack-logo';
-import { getSitePlan } from 'calypso/state/sites/selectors';
+import isSiteStaging from 'calypso/state/selectors/is-site-staging';
 import { isNotAtomicJetpack } from '../utils';
 import { PlanRenewNag } from './sites-plan-renew-nag';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
@@ -28,34 +28,34 @@ interface SitePlanProps {
 	userId: number | null;
 }
 
+const STAGING_PLAN_LABEL = 'Staging';
+
 export const SitePlan = ( { site, userId }: SitePlanProps ) => {
-	const planLabel = useSelector( ( state ) => {
-		if ( site?.options?.wpcom_production_blog_id ) {
-			return (
-				getSitePlan( state, site?.options?.wpcom_production_blog_id )?.product_name_short ?? ''
-			);
-		}
-		return site.plan?.product_name_short ?? '';
-	} );
+	const isStaging = useSelector( ( state ) => isSiteStaging( state, site.ID ) );
+	const hasProductionBlog = isStaging && site?.options?.wpcom_production_blog_id;
+	const planLabel = hasProductionBlog ? STAGING_PLAN_LABEL : site.plan?.product_name_short;
 
 	return (
 		<SitePlanContainer>
-			{ isNotAtomicJetpack( site ) && ! site.plan?.expired && (
-				<SitePlanIcon>
-					<JetpackLogo size={ 16 } />
-				</SitePlanIcon>
+			{ ! hasProductionBlog && (
+				<>
+					{ isNotAtomicJetpack( site ) && ! site.plan?.expired && (
+						<SitePlanIcon>
+							<JetpackLogo size={ 16 } />
+						</SitePlanIcon>
+					) }
+					{ site.plan?.expired && (
+						<PlanRenewNagContainer>
+							<PlanRenewNag
+								plan={ site.plan }
+								isSiteOwner={ site?.site_owner === userId }
+								checkoutUrl={ `/checkout/${ site.slug }/${ site.plan?.product_slug }` }
+							/>
+						</PlanRenewNagContainer>
+					) }
+				</>
 			) }
-			{ site.plan?.expired && ! site?.options?.wpcom_production_blog_id ? (
-				<PlanRenewNagContainer>
-					<PlanRenewNag
-						plan={ site.plan }
-						isSiteOwner={ site?.site_owner === userId }
-						checkoutUrl={ `/checkout/${ site.slug }/${ site.plan?.product_slug }` }
-					/>
-				</PlanRenewNagContainer>
-			) : (
-				planLabel
-			) }
+			{ planLabel }
 		</SitePlanContainer>
 	);
 };
