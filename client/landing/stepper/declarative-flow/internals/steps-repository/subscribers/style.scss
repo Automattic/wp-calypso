@@ -1,8 +1,11 @@
-
+@import "../style";
 .subscribers {
 	.add-subscriber__title-container {
 		// Intentional override for the title margin-top.
-		margin-top: 36px !important;
+		margin-top: 24px !important;
+		@include break-medium {
+			margin-top: 36px !important;
+		}
 	}
 	.step-container {
 		.subscribers {
