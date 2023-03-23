@@ -36,7 +36,8 @@
 	.pattern-action-bar {
 		position: absolute;
 		top: 16px;
-		right: 16px;
+		left: 16px;
+		right: unset;
 		padding: 6px;
 		border: 1px solid #1e1e1e;
 		border-radius: 2px;
@@ -59,6 +60,11 @@
 				top: -6px;
 				bottom: -6px;
 			}
+		}
+
+		.pattern-assembler__pattern-panel-list--is-open & {
+			left: unset;
+			right: 16px;
 		}
 	}
 

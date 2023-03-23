@@ -6,6 +6,7 @@ import {
 	__experimentalNavigatorScreen as NavigatorScreen,
 } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
+import classnames from 'classnames';
 import { useState, useRef, useMemo } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
@@ -51,6 +52,7 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const incrementIndexRef = useRef( 0 );
 	const [ activePosition, setActivePosition ] = useState( -1 );
+	const [ isPatternPanelListOpen, setIsPatternPanelListOpen ] = useState( false );
 	const { goBack, goNext, submit } = navigation;
 	const { applyThemeWithPatterns } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
@@ -402,7 +404,13 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 	const onDeleteFooter = () => onSelect( 'footer', null );
 
 	const stepContent = (
-		<div className="pattern-assembler__wrapper" ref={ wrapperRef } tabIndex={ -1 }>
+		<div
+			className={ classnames( 'pattern-assembler__wrapper', {
+				'pattern-assembler__pattern-panel-list--is-open': isPatternPanelListOpen,
+			} ) }
+			ref={ wrapperRef }
+			tabIndex={ -1 }
+		>
 			<NavigatorProvider className="pattern-assembler__sidebar" initialPath="/">
 				<NavigatorScreen path="/">
 					<ScreenMain
@@ -450,6 +458,7 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 							selectedPattern={ sectionPosition !== null ? sections[ sectionPosition ] : null }
 							onSelect={ onSelect }
 							wrapperRef={ wrapperRef }
+							onTogglePatternPanelList={ setIsPatternPanelListOpen }
 						/>
 					) : (
 						<ScreenPatternList
