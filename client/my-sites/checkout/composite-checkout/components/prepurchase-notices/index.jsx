@@ -11,7 +11,7 @@ import {
 	WPCOM_FEATURES_SCAN,
 } from '@automattic/calypso-products';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { useEffect, useState } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -69,13 +69,10 @@ const PrePurchaseNotices = () => {
 		return products.filter( ( p ) => ! p.expired );
 	} );
 
-	const [ siteProductThatOverlapsCartPlan, setSiteProductThatOverlapsCartPlan ] = useState( null );
-
-	useEffect( () => {
+	const siteProductThatOverlapsCartPlan = useCallback( () => {
 		const planSlugInCart = cartItemSlugs.find( isJetpackPlanSlug );
 		if ( ! planSlugInCart || ! currentSiteProducts ) {
-			setSiteProductThatOverlapsCartPlan( null );
-			return;
+			return null;
 		}
 
 		const getMatchingProducts = ( siteProducts, planSlug ) => {
@@ -94,10 +91,10 @@ const PrePurchaseNotices = () => {
 
 		const matchingProducts = getMatchingProducts( currentSiteProducts, planSlugInCart );
 		if ( matchingProducts.length ) {
-			setSiteProductThatOverlapsCartPlan( matchingProducts[ 0 ] );
-		} else {
-			setSiteProductThatOverlapsCartPlan( null );
+			return matchingProducts[ 0 ];
 		}
+
+		return null;
 	}, [ currentSiteProducts, cartItemSlugs ] );
 
 	/**
@@ -154,7 +151,7 @@ const PrePurchaseNotices = () => {
 	if ( siteProductThatOverlapsCartPlan ) {
 		return (
 			<CartPlanOverlapsOwnedProductNotice
-				product={ siteProductThatOverlapsCartPlan }
+				product={ siteProductThatOverlapsCartPlan() }
 				selectedSite={ selectedSite }
 			/>
 		);
