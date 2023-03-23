@@ -1,8 +1,9 @@
+import { Spinner } from '@automattic/components';
 import { Reader } from '@automattic/data-stores';
-import { Button } from '@wordpress/components';
 import { useState, useCallback, useEffect } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
 import { FormEvent } from 'react';
+import { Button } from '../Button';
 import { BlockEmailsSetting } from '../fields/BlockEmailsSetting';
 import { DeliveryWindowInput } from '../fields/DeliveryWindowInput';
 import { EmailFormatInput, EmailFormatType } from '../fields/EmailFormatInput';
@@ -21,10 +22,11 @@ type SubscriptionUserSettings = Partial< {
 
 type UserSettingsProps = {
 	value?: SubscriptionUserSettings;
+	loading: boolean;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- until we start using any of these props
-const UserSettings = ( { value = {} }: UserSettingsProps ) => {
+const UserSettings = ( { value = {}, loading }: UserSettingsProps ) => {
 	const [ formState, setFormState ] = useState< SubscriptionUserSettings >( value );
 	const { mutate, isLoading } = Reader.useSubscriptionManagerUserSettingsMutation();
 
@@ -41,7 +43,15 @@ const UserSettings = ( { value = {} }: UserSettingsProps ) => {
 
 	const onSubmit = useCallback( () => {
 		mutate( formState );
-	}, [ formState ] );
+	}, [ formState, mutate ] );
+
+	if ( loading ) {
+		return (
+			<div className="user-settings">
+				<Spinner />
+			</div>
+		);
+	}
 
 	return (
 		<div className="user-settings">
@@ -69,7 +79,7 @@ const UserSettings = ( { value = {} }: UserSettingsProps ) => {
 				value={ formState.blocked ?? false }
 				onChange={ ( value ) => onChange?.( { blocked: !! value.target.value } ) }
 			/>
-			<Button disabled={ isLoading } onClick={ onSubmit } isPrimary>
+			<Button disabled={ isLoading } onClick={ onSubmit }>
 				{ translate( 'Save changes', {
 					context: 'Save the subscription management user changes',
 				} ) }
