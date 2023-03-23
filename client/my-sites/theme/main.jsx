@@ -208,6 +208,11 @@ class ThemeSheet extends Component {
 	};
 
 	onUnlockStyleButtonClick = () => {
+		this.props.recordTracksEvent(
+			'calypso_theme_sheet_global_styles_gating_modal_show',
+			this.getPremiumGlobalStylesEventProps()
+		);
+
 		this.setState( { showUnlockStyleUpgradeModal: true } );
 	};
 
