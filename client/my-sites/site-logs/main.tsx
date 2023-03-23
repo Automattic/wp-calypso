@@ -8,6 +8,7 @@ import Main from 'calypso/components/main';
 import { useSiteLogsQuery } from 'calypso/data/hosting/use-site-logs-query';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SiteLogsTab, SiteLogsTabPanel } from './components/site-logs-tab-panel';
+import { SiteLogsTable } from './components/site-logs-table';
 
 export function SiteLogs() {
 	const { __ } = useI18n();
@@ -36,23 +37,6 @@ export function SiteLogs() {
 		setLogType( tabName );
 	};
 
-	const formattedLogs = data?.logs
-		.map( ( log ) =>
-			Object.entries( log )
-				.sort( ( [ keyA ], [ keyB ] ) => {
-					if ( keyA === 'date' ) {
-						return -1;
-					}
-					if ( keyB === 'date' ) {
-						return 1;
-					}
-					return keyA.localeCompare( keyB );
-				} )
-				.map( ( [ key, value ] ) => `"${ key }" = ${ value }` )
-				.join( '\t' )
-		)
-		.join( '\n' );
-
 	const titleHeader = __( 'Site Logs' );
 
 	return (
@@ -69,7 +53,7 @@ export function SiteLogs() {
 				{ ( tab ) => (
 					<>
 						<h2 style={ { marginTop: '24px' } }>{ tab.title }</h2>
-						<pre>{ formattedLogs }</pre>
+						<SiteLogsTable logs={ data?.logs } />
 					</>
 				) }
 			</SiteLogsTabPanel>
