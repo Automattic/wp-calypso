@@ -22,11 +22,13 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { tip } from 'calypso/signup/icons';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import './style.scss';
+import { TranslatedFlowText } from '../../../types';
 import ColorSwatch from './color-swatch';
 
 interface AccentColorControlProps {
 	accentColor: AccentColor;
 	setAccentColor: Dispatch< SetStateAction< AccentColor > >;
+	translatedFlowText: TranslatedFlowText;
 }
 
 interface ColorOption {
@@ -49,7 +51,11 @@ enum COLORS {
 	VividPurple = '#9B51E0',
 }
 
-const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControlProps ) => {
+const AccentColorControl = ( {
+	accentColor,
+	setAccentColor,
+	translatedFlowText,
+}: AccentColorControlProps ) => {
 	const { __, hasTranslation } = useI18n();
 	const locale = useLocale();
 	const [ customColor, setCustomColor ] = useState< AccentColor | null >( null );
@@ -210,6 +216,14 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 
 		return dropdownOptions;
 	};
+	const getColorText = () => {
+		if ( translatedFlowText?.translatedSiteColorText ) {
+			return translatedFlowText.translatedSiteColorText;
+		}
+		return hasTranslation( 'Favorite color' ) || locale === 'en'
+			? __( 'Favorite color' )
+			: __( 'Accent color' );
+	};
 
 	useEffect( () => {
 		// In later stages of some flows, color for site is already set when this control loads.
@@ -247,11 +261,7 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 				</form>
 			</Popover>
 			<FormFieldset>
-				<FormLabel htmlFor="accentColor">
-					{ hasTranslation( 'Favorite color' ) || locale === 'en'
-						? __( 'Favorite color' )
-						: __( 'Accent color' ) }
-				</FormLabel>
+				<FormLabel htmlFor="accentColor">{ getColorText() }</FormLabel>
 				<SelectDropdown
 					// @ts-expect-error SelectDropdown is defined in .jsx file and has no type definitions generated
 					ref={ accentColorRef }

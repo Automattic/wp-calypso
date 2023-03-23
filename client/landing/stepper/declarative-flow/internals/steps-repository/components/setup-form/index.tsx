@@ -8,6 +8,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import { SiteIconWithPicker } from 'calypso/components/site-icon-with-picker';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
+import { TranslatedFlowText } from '../../../types';
 import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
@@ -32,6 +33,7 @@ interface SetupFormProps {
 	handleSubmit: ( event: FormEvent< Element > ) => void;
 	translatedText?: TranslatedStrings;
 	isLoading?: boolean;
+	translatedTailoredFlowText?: TranslatedFlowText;
 	isSubmitError?: boolean;
 	children?: ReactChild | ReactChild[];
 }
@@ -49,6 +51,7 @@ const SetupForm = ( {
 	setBase64Image,
 	handleSubmit,
 	translatedText,
+	translatedTailoredFlowText,
 	isLoading = false,
 	isSubmitError = false,
 	children,
@@ -83,7 +86,7 @@ const SetupForm = ( {
 			/>
 			<FormFieldset>
 				<TextControl
-					label={ __( 'Site name' ) }
+					label={ translatedTailoredFlowText?.translatedSiteName || __( 'Site name' ) }
 					name="setup-form-input-name"
 					id="setup-form-input-name"
 					value={ siteTitle }
@@ -101,7 +104,9 @@ const SetupForm = ( {
 				) }
 			</FormFieldset>
 			<FormFieldset>
-				<FormLabel htmlFor="setup-form-input-description">{ __( 'Brief description' ) }</FormLabel>
+				<FormLabel htmlFor="setup-form-input-description">
+					{ translatedTailoredFlowText?.translatedSiteDescription || __( 'Brief description' ) }
+				</FormLabel>
 				<ForwardedAutoresizingFormTextarea
 					name="setup-form-input-description"
 					id="setup-form-input-description"

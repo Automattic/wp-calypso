@@ -9,6 +9,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
+import { TranslatedFlowText } from '../../types';
 import AccentColorControl, { AccentColor } from '../components/accent-color-control';
 import SetupForm from '../components/setup-form';
 import type { Step } from '../../types';
@@ -27,6 +28,11 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	const { hasTranslation } = useI18n();
 	const locale = useLocale();
 	const site = useSite();
+
+	const translatedFlowText: TranslatedFlowText = {
+		translatedSiteName: translate( 'Publication name' ),
+		translatedSiteColorText: translate( 'Brand color' ),
+	};
 
 	const newsletterFormText = {
 		titlePlaceholder: translate( 'My newsletter' ),
@@ -129,8 +135,13 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 					setBase64Image={ setBase64Image }
 					handleSubmit={ handleSubmit }
 					translatedText={ newsletterFormText }
+					translatedTailoredFlowText={ translatedFlowText }
 				>
-					<AccentColorControl accentColor={ accentColor } setAccentColor={ setAccentColor } />
+					<AccentColorControl
+						accentColor={ accentColor }
+						setAccentColor={ setAccentColor }
+						translatedFlowText={ translatedFlowText }
+					/>
 				</SetupForm>
 			}
 			recordTracksEvent={ recordTracksEvent }
