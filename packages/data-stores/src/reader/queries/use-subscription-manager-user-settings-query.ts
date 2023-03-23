@@ -17,7 +17,6 @@ const useSubscriptionManagerUserSettingsQuery = () => {
 		},
 		{
 			enabled,
-			initialData: {},
 		}
 	);
 };

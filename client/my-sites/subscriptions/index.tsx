@@ -17,8 +17,10 @@ const SubscriptionManagementPage = () => {
 	const locale = useLocale();
 
 	const SettingsView = () => {
-		const { data: settings } = Reader.useSubscriptionManagerUserSettingsQuery();
-		return <SubscriptionManager.UserSettings value={ settings } />;
+		const query = Reader.useSubscriptionManagerUserSettingsQuery();
+		const { data: settings, isIdle, isLoading } = query;
+
+		return <SubscriptionManager.UserSettings loading={ isLoading || isIdle } value={ settings } />;
 	};
 
 	return (
