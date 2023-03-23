@@ -1,4 +1,4 @@
-import { LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
+import { DOMAIN_UPSELL_FLOW, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { isEmpty } from 'lodash';
 import { useState } from 'react';
@@ -86,6 +86,10 @@ export function DomainFormControl( {
 	}
 
 	if ( flow === LINK_IN_BIO_TLD_FLOW ) {
+		includeWordPressDotCom = false;
+	}
+
+	if ( flow === DOMAIN_UPSELL_FLOW ) {
 		includeWordPressDotCom = false;
 	}
 
@@ -187,6 +191,14 @@ export function DomainFormControl( {
 		);
 	};
 
+	const isReskinnedSupportedFlow = () => {
+		if ( ! flow ) {
+			return false;
+		}
+
+		return [ DOMAIN_UPSELL_FLOW ].includes( flow );
+	};
+
 	const renderDomainForm = () => {
 		let initialState: DomainForm = {};
 		if ( domainForm ) {
@@ -260,16 +272,23 @@ export function DomainFormControl( {
 	};
 
 	let content;
+	let sideContent;
 	if ( showUseYourDomain ) {
 		content = renderYourDomainForm();
 	} else {
 		content = renderDomainForm();
 	}
 
+	if ( isReskinnedSupportedFlow() && ! showUseYourDomain ) {
+		sideContent = getSideContent();
+	}
+
 	return (
 		<>
 			{ isEmpty( productsList ) && <QueryProductsList /> }
-			<div className="domains__step-content domains__step-content-domain-step">{ content }</div>
+			<div className="domains__step-content domains__step-content-domain-step">
+				{ content } { sideContent }
+			</div>
 		</>
 	);
 }
