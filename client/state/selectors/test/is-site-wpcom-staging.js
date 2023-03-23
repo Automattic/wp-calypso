@@ -1,11 +1,11 @@
-import isSiteStaging from 'calypso/state/selectors/is-site-staging';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 
-describe( 'isSiteStaging()', () => {
+describe( 'isSiteWpcomStaging ()', () => {
 	test( 'should return false if siteID is null', () => {
 		const state = {};
 		const siteId = null;
 
-		expect( isSiteStaging( state, siteId ) ).toBe( false );
+		expect( isSiteWpcomStaging( state, siteId ) ).toBe( false );
 	} );
 
 	test( 'should return false if site is not a staging site', () => {
@@ -20,7 +20,7 @@ describe( 'isSiteStaging()', () => {
 		};
 		const siteId = 12345;
 
-		expect( isSiteStaging( state, siteId ) ).toBe( false );
+		expect( isSiteWpcomStaging( state, siteId ) ).toBe( false );
 	} );
 
 	test( 'should return true if site is a staging site', () => {
@@ -35,6 +35,6 @@ describe( 'isSiteStaging()', () => {
 		};
 		const siteId = 12345;
 
-		expect( isSiteStaging( state, siteId ) ).toBe( true );
+		expect( isSiteWpcomStaging( state, siteId ) ).toBe( true );
 	} );
 } );
