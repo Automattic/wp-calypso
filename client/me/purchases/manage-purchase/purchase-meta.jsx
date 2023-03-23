@@ -11,9 +11,9 @@ import { times } from 'lodash';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import QueryAkismetKey from 'calypso/components/data/query-akismet-key';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import useAkismetKeyQuery from 'calypso/data/akismet/use-akismet-key-query';
 import useUserLicenseBySubscriptionQuery from 'calypso/data/jetpack-licensing/use-user-license-by-subscription-query';
 import {
 	getName,
@@ -25,8 +25,6 @@ import {
 	isSubscription,
 } from 'calypso/lib/purchases';
 import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
-import getAkismetKey from 'calypso/state/akismet-key/selectors/get-akismet-key';
-import isFetchingAkismetKey from 'calypso/state/akismet-key/selectors/is-fetching-akismet-key';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
@@ -298,22 +296,22 @@ function PurchaseJetpackUserLicense( { purchaseId } ) {
 
 function PurchaseAkismetApiKey() {
 	const translate = useTranslate();
-	const isLoadingKey = useSelector( ( state ) => {
-		return isFetchingAkismetKey( state );
-	} );
-	const akismetApiKey = useSelector( ( state ) => {
-		return getAkismetKey( state );
-	} );
+	const { data, isError, isLoading } = useAkismetKeyQuery();
+
+	if ( isError ) {
+		return null;
+	}
+
+	const akismetApiKey = data ?? '';
 	const keyInputSize = akismetApiKey ? akismetApiKey.length + 5 : 0;
 
 	return (
 		<>
-			<QueryAkismetKey />
 			<PurchaseClipboardCard
 				label={ translate( 'Akismet API Key' ) }
 				size={ keyInputSize }
 				value={ akismetApiKey }
-				loading={ isLoadingKey }
+				loading={ isLoading }
 			/>
 		</>
 	);
