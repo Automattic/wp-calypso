@@ -48,13 +48,15 @@ const ActivityLogV2: FunctionComponent = () => {
 				</div>
 			</div>
 			<div className="activity-log-v2__header-right">
-				<Button
-					className="activity-log-v2__clone-button"
-					primary
-					href={ backupClonePath( selectedSiteSlug ) }
-				>
-					{ translate( 'Clone this site' ) }
-				</Button>
+				{ selectedSiteSlug && (
+					<Button
+						className="activity-log-v2__clone-button"
+						primary
+						href={ backupClonePath( selectedSiteSlug ) }
+					>
+						{ translate( 'Clone this site' ) }
+					</Button>
+				) }
 			</div>
 		</div>
 	) : (

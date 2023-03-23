@@ -210,7 +210,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 	);
 
 	const getSubHeaderText = () => {
-		if ( isAlternate ) {
+		if ( isAlternate && hostInfo !== null && hostInfo.supportLink !== undefined ) {
 			return translate(
 				'Enter the server credentials from your hosting provider. {{a}}Learn how to find and enter your credentials{{/a}}',
 				{
