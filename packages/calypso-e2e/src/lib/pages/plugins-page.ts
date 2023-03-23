@@ -41,8 +41,7 @@ const selectors = {
 	removeButton: '.popover__menu button:has-text("Remove")',
 
 	// Elegibility warnings
-	eligibilityWarning:
-		'.eligibility-warnings__title:has-text("Upgrade your plan to install plugins")',
+	eligibilityWarning: '.eligibility-warnings__title',
 	eligibilityWarningContinueButton: 'button:text("Upgrade and activate plugin")',
 
 	// Category selector
@@ -303,7 +302,10 @@ export class PluginsPage {
 	async clickPurchasePlugin(): Promise< void > {
 		const locator = this.page.locator( selectors.purchaseButton );
 		await locator.click();
-		await Promise.all( [ this.page.locator( selectors.eligibilityWarning ) ] );
+		await this.page
+			.locator( selectors.eligibilityWarning )
+			.getByText( 'Upgrade your plan to install plugins' )
+			.waitFor();
 	}
 
 	/**
