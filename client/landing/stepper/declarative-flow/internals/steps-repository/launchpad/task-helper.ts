@@ -400,9 +400,21 @@ export function areLaunchpadTasksCompleted(
 	checklist_statuses: LaunchpadStatuses,
 	isSiteLaunched: boolean
 ) {
+	// If we don't have needed data, return false
+	if (
+		! site_intent ||
+		! checklist_statuses ||
+		! isSiteLaunched ||
+		! launchpadFlowTasks[ site_intent ]
+	) {
+		return false;
+	}
+
 	const lastTask =
 		launchpadFlowTasks[ site_intent ][ launchpadFlowTasks[ site_intent ].length - 1 ];
 
+	// If last task is site_launched, return true if site is launched OR site_launch task is completed
+	// Else return the status of the last task (will be false if task is not in checklist_statuses)
 	return lastTask === 'site_launched'
 		? isSiteLaunched || Boolean( checklist_statuses[ lastTask ] )
 		: Boolean( checklist_statuses[ lastTask as keyof LaunchpadStatuses ] );

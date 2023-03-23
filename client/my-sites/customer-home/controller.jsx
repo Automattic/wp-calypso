@@ -2,6 +2,7 @@ import { isEcommerce } from '@automattic/calypso-products/src';
 import page from 'page';
 import { fetchLaunchpad } from 'calypso/data/sites/use-launchpad';
 import { areLaunchpadTasksCompleted } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/task-helper';
+import { launchpadFlowTasks } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/tasks';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
@@ -49,7 +50,12 @@ export async function maybeRedirect( context, next ) {
 		const { launchpad_screen, checklist_statuses, site_intent } = await fetchLaunchpad( slug );
 		if (
 			launchpad_screen === 'full' &&
-			! areLaunchpadTasksCompleted( site_intent, checklist_statuses, isSiteLaunched )
+			! areLaunchpadTasksCompleted(
+				site_intent,
+				launchpadFlowTasks,
+				checklist_statuses,
+				isSiteLaunched
+			)
 		) {
 			// The new stepper launchpad onboarding flow isn't registered within the "page"
 			// client-side router, so page.redirect won't work. We need to use the

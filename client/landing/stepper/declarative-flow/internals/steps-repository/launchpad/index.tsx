@@ -17,6 +17,7 @@ import { successNotice } from 'calypso/state/notices/actions';
 import { useQuery } from '../../../../hooks/use-query';
 import StepContent from './step-content';
 import { areLaunchpadTasksCompleted } from './task-helper';
+import { launchpadFlowTasks } from './tasks';
 import type { Step } from '../../types';
 import type { SiteSelect } from '@automattic/data-stores';
 
@@ -49,7 +50,12 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 	if (
 		! isLoggedIn ||
 		launchpadScreenOption === 'off' ||
-		areLaunchpadTasksCompleted( site_intent, checklist_statuses, isSiteLaunched ) ||
+		areLaunchpadTasksCompleted(
+			site_intent,
+			launchpadFlowTasks,
+			checklist_statuses,
+			isSiteLaunched
+		) ||
 		( launchpadScreenOption === false && 'videopress' !== flow )
 	) {
 		redirectToSiteHome( siteSlug, flow );
