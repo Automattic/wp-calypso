@@ -14,7 +14,7 @@ interface SiteLogsTabPanelProps {
 	children( tab: TabPanel.Tab ): JSX.Element;
 	selectedTab?: SiteLogsTab;
 	className?: string;
-	onSelected?: ( tabName: string ) => void;
+	onSelected?: ( tabName: SiteLogsTab ) => void;
 }
 
 const LogsTabPanel = styled( TabPanel )`
@@ -51,7 +51,7 @@ export const SiteLogsTabPanel = ( {
 			tabs={ tabs }
 			onSelect={ ( tabName ) => {
 				onTabSelected( tabName );
-				onSelected?.( tabName );
+				onSelected?.( tabName as SiteLogsTab );
 			} }
 		>
 			{ ( tab ) => renderContents( tab ) }

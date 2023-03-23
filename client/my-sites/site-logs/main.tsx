@@ -1,5 +1,5 @@
 import { useI18n } from '@wordpress/react-i18n';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -24,7 +24,7 @@ export function SiteLogs() {
 		 ) as SiteLogsTab;
 	} );
 
-	const { data, refetch } = useSiteLogsQuery( siteId, {
+	const { data } = useSiteLogsQuery( siteId, {
 		logType,
 		start: startTime,
 		end: endTime,
@@ -32,13 +32,9 @@ export function SiteLogs() {
 		page_size: 10,
 	} );
 
-	const handleTabSelected = useCallback(
-		( tabName ) => {
-			setLogType( tabName );
-			refetch();
-		},
-		[ refetch ]
-	);
+	const handleTabSelected = ( tabName: SiteLogsTab ) => {
+		setLogType( tabName );
+	};
 
 	const formattedLogs = data?.logs
 		.map( ( log ) =>
@@ -69,12 +65,7 @@ export function SiteLogs() {
 				align="left"
 			/>
 
-			<SiteLogsTabPanel
-				selectedTab={ logType }
-				onSelected={ ( tabName ) => {
-					handleTabSelected( tabName );
-				} }
-			>
+			<SiteLogsTabPanel selectedTab={ logType } onSelected={ handleTabSelected }>
 				{ ( tab ) => (
 					<>
 						<h2 style={ { marginTop: '24px' } }>{ tab.title }</h2>
