@@ -1,4 +1,4 @@
-import { useSelect } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import { OnboardSelect } from 'calypso/../packages/data-stores/src';
 import {
@@ -37,6 +37,8 @@ const domainUpsell: Flow = {
 			} ),
 			[]
 		);
+		const { setHideFreePlan } = useDispatch( ONBOARD_STORE );
+
 		const returnUrl = `/setup/${ flowName }/launchpad?siteSlug=${ siteSlug }`;
 		const encodedReturnUrl = encodeURIComponent( returnUrl );
 
@@ -46,6 +48,7 @@ const domainUpsell: Flow = {
 					if ( providedDependencies?.deferDomainSelection ) {
 						return window.location.assign( returnUrl );
 					}
+					setHideFreePlan( true );
 					navigate( 'plans' );
 
 				case 'plans':

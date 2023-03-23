@@ -94,15 +94,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			} );
 			dispatch( submitDomainStepSelection( suggestion, getAnalyticsSection() ) );
 
-			let hideFreePlan;
-
-			if ( flow === DOMAIN_UPSELL_FLOW ) {
-				hideFreePlan = true;
-			} else {
-				hideFreePlan = Boolean( suggestion.product_slug ) || shouldHideFreePlan;
-			}
-
-			setHideFreePlan( hideFreePlan );
+			setHideFreePlan( Boolean( suggestion.product_slug ) || shouldHideFreePlan );
 			setDomainCartItem( domainCartItem );
 		}
 
