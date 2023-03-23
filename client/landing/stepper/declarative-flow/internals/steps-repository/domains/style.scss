@@ -20,7 +20,7 @@
 			margin: 20px 24px 30px 20px;
 
 			@include break-small {
-				margin: 36px 0px 40px 0px;/* stylelint-disable-line length-zero-no-unit */
+				margin: 36px 0 40px 0;
 			}
 
 			.formatted-header__title {
