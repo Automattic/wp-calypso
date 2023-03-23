@@ -2,6 +2,7 @@
 /**
  * External dependencies
  */
+import { getSubkey } from '@automattic/data-stores/src/reader/helpers';
 import { useTranslate, LocalizeProps } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -13,11 +14,7 @@ export type SubscriptionManagerContainerProps = {
 };
 
 const getEmailAddress = () => {
-	const subkey = document.cookie
-		?.split( ';' )
-		?.map( ( c ) => c.trim() )
-		?.find( ( c ) => c.startsWith( 'subkey=' ) )
-		?.split( '=' )[ 1 ];
+	const subkey = getSubkey();
 
 	if ( ! subkey ) {
 		return null;
