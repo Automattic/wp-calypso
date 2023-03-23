@@ -5,14 +5,13 @@ import {
 	isJetpackPlanSlug,
 	isJetpackScanSlug,
 	getAllFeaturesForPlan,
-	getAllProductsForPlan,
-	JETPACK_SOCIAL_PRODUCTS,
+	planHasSuperiorFeature,
 	WPCOM_FEATURES_ANTISPAM,
 	WPCOM_FEATURES_BACKUPS,
 	WPCOM_FEATURES_SCAN,
 } from '@automattic/calypso-products';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -70,50 +69,36 @@ const PrePurchaseNotices = () => {
 		return products.filter( ( p ) => ! p.expired );
 	} );
 
-	//function that compares getSiteProducts with getAllProductsForPlan and returns the product that is in both
-	const siteProductThatOverlapsCartPlan = useSelector( () => {
+	const [ siteProductThatOverlapsCartPlan, setSiteProductThatOverlapsCartPlan ] = useState( null );
+
+	useEffect( () => {
 		const planSlugInCart = cartItemSlugs.find( isJetpackPlanSlug );
 		if ( ! planSlugInCart || ! currentSiteProducts ) {
-			return null;
+			setSiteProductThatOverlapsCartPlan( null );
+			return;
 		}
 
 		const getMatchingProducts = ( siteProducts, planSlug ) => {
 			// Get all features and products for the plan in the cart
 			const planFeatures = getAllFeaturesForPlan( planSlug );
-			const planProducts = getAllProductsForPlan( planSlug );
 
-			// Combine the plan features and products into a single array
-			const planItems = [ ...planFeatures, ...planProducts ];
-
-			// Filter the site products to only include those in the plan items
-			const matchingProducts = siteProducts.filter( ( product ) =>
-				planItems.includes( product.productSlug )
+			// Filter the site products to only include those in the plan items or are inferior features to the plan feature
+			const matchingProducts = siteProducts.filter(
+				( product ) =>
+					planFeatures.includes( product.productSlug ) ||
+					planHasSuperiorFeature( planSlug, product.productSlug )
 			);
 
-			//get all possible social slugs from the site
-			const socialProductInSite = currentSiteProducts.find( ( product ) => {
-				return JETPACK_SOCIAL_PRODUCTS.includes( product.productSlug );
-			} );
-
-			//get all possible social slugs from the cart plan
-			const socialProductInPlan = planItems.find( ( product ) => {
-				return JETPACK_SOCIAL_PRODUCTS.includes( product );
-			} );
-
-			//special handling for sites with any social product
-			if ( socialProductInSite && socialProductInPlan ) {
-				matchingProducts.push( socialProductInSite );
-			}
 			return matchingProducts;
 		};
 
 		const matchingProducts = getMatchingProducts( currentSiteProducts, planSlugInCart );
 		if ( matchingProducts.length ) {
-			return matchingProducts[ 0 ];
+			setSiteProductThatOverlapsCartPlan( matchingProducts[ 0 ] );
+		} else {
+			setSiteProductThatOverlapsCartPlan( null );
 		}
-
-		return null;
-	} );
+	}, [ currentSiteProducts, cartItemSlugs ] );
 
 	/**
 	 * The product currently in the cart that overlaps/conflicts with the current active site plan.
