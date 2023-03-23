@@ -58,14 +58,6 @@ export function useThankYouFoooter(
 					},
 			  ]
 			: [] ),
-		{
-			key: 'thank_you_footer_support',
-			title: translate( '24/7 support at your fingertips' ),
-			description: translate( 'Our happiness engineers are eager to lend a hand.' ),
-			link: 'https://wordpress.com/help/contact',
-			linkText: translate( 'Ask a question' ),
-			eventKey: 'calypso_plugin_thank_you_ask_question_click',
-		},
 	];
 	const steps = useNextSteps( footerSteps, pluginSlugs, themeSlugs );
 
