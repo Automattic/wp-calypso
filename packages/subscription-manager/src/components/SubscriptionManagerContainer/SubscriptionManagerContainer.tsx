@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, LocalizeProps } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
@@ -34,27 +34,27 @@ const getEmailAddress = () => {
 	return emailAddress;
 };
 
+const getSubHeaderText = ( translate: LocalizeProps[ 'translate' ] ) => {
+	const emailAddress = getEmailAddress();
+	if ( emailAddress ) {
+		return translate(
+			"Manage the WordPress.com newsletter and blogs you've subscribed to with {{span}}%(emailAddress)s{{/span}}.",
+			{
+				args: {
+					emailAddress: emailAddress,
+				},
+				components: {
+					span: <span className="email-address" />,
+				},
+			}
+		);
+	}
+
+	return translate( 'Manage your WordPress.com newsletter and blog subscriptions.' );
+};
+
 const SubscriptionManagerContainer = ( { children }: SubscriptionManagerContainerProps ) => {
 	const translate = useTranslate();
-
-	const getSubHeaderText = () => {
-		const emailAddress = getEmailAddress();
-		if ( emailAddress ) {
-			return translate(
-				"Manage the WordPress.com newsletter and blogs you've subscribed to with {{span}}%(emailAddress)s{{/span}}.",
-				{
-					args: {
-						emailAddress: emailAddress,
-					},
-					components: {
-						span: <span className="email-address" />,
-					},
-				}
-			);
-		}
-
-		return translate( 'Manage your WordPress.com newsletter and blog subscriptions.' );
-	};
 
 	return (
 		<Main className="subscription-manager-container">
@@ -62,7 +62,7 @@ const SubscriptionManagerContainer = ( { children }: SubscriptionManagerContaine
 			<FormattedHeader
 				brandFont
 				headerText={ translate( 'Subscription management' ) }
-				subHeaderText={ getSubHeaderText() }
+				subHeaderText={ getSubHeaderText( translate ) }
 				align="left"
 			/>
 			{ children }
