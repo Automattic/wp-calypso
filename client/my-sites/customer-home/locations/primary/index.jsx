@@ -118,14 +118,13 @@ const Primary = ( { cards, trackCard } ) => {
 	if ( cards.length === 1 ) {
 		isUrgent = urgentTasks.includes( cards[ 0 ] );
 	}
-	const showControlLabels = cards.length !== 1 || isUrgent;
 
 	return (
 		<DotPager
 			className={ classnames( 'primary__customer-home-location-content', {
 				'primary__is-urgent': isUrgent,
 			} ) }
-			showControlLabels={ showControlLabels }
+			showControlLabels="true"
 			hasDynamicHeight
 			onPageSelected={ handlePageSelected }
 		>
