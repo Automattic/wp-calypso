@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useQueryClient } from 'react-query';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 
 export function useIsStatusReverting(
@@ -7,8 +6,6 @@ export function useIsStatusReverting(
 	onReverted?: () => void
 ): boolean {
 	const [ isStatusReverting, setIsStatusReverting ] = useState( false );
-	const queryClient = useQueryClient();
-
 	useEffect( () => {
 		switch ( transferStatus ) {
 			case transferStates.REQUEST_FAILURE:
@@ -23,7 +20,7 @@ export function useIsStatusReverting(
 				setIsStatusReverting( true );
 				break;
 		}
-	}, [ isStatusReverting, onReverted, queryClient, transferStatus ] );
+	}, [ isStatusReverting, onReverted, transferStatus ] );
 
 	return isStatusReverting;
 }
