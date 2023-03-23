@@ -180,15 +180,22 @@ export function usePluginsThankYouData( pluginSlugs: string[] ): ThankYouData {
 	);
 
 	const thankyouSteps = useMemo(
-		() =>
-			isJetpack
-				? [ translate( 'Installing plugin' ) ]
-				: [
-						translate( 'Activating the plugin feature' ), // Transferring to Atomic
-						translate( 'Setting up plugin installation' ), // Transferring to Atomic
-						translate( 'Installing plugin' ), // Transferring to Atomic
-						translate( 'Activating plugin' ),
-				  ],
+		() => {
+			if ( pluginSlugs.length === 0 ) {
+				return [];
+			}
+
+			if ( isJetpack ) {
+				return [ translate( 'Installing plugin' ) ];
+			}
+
+			return [
+				translate( 'Activating the plugin feature' ), // Transferring to Atomic
+				translate( 'Setting up plugin installation' ), // Transferring to Atomic
+				translate( 'Installing plugin' ), // Transferring to Atomic
+				translate( 'Activating plugin' ),
+			];
+		},
 		// We intentionally don't set `isJetpack` as dependency to keep the same steps after the Atomic transfer.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[ translate ]

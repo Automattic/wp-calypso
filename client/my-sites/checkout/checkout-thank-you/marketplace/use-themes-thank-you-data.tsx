@@ -46,15 +46,22 @@ export function useThemesThankYouData( themeSlugs: string[] ): ThankYouData {
 	);
 
 	const thankyouSteps = useMemo(
-		() =>
-			isJetpack
-				? [ translate( 'Installing theme' ) ]
-				: [
-						translate( 'Activating the theme feature' ), // Transferring to Atomic
-						translate( 'Setting up theme installation' ), // Transferring to Atomic
-						translate( 'Installing theme' ), // Transferring to Atomic
-						translate( 'Activating theme' ),
-				  ],
+		() => {
+			if ( themeSlugs.length === 0 ) {
+				return [];
+			}
+
+			if ( isJetpack ) {
+				return [ translate( 'Installing theme' ) ];
+			}
+
+			return [
+				translate( 'Activating the theme feature' ), // Transferring to Atomic
+				translate( 'Setting up theme installation' ), // Transferring to Atomic
+				translate( 'Installing theme' ), // Transferring to Atomic
+				translate( 'Activating theme' ),
+			];
+		},
 		// We intentionally don't set `isJetpack` as dependency to keep the same steps after the Atomic transfer.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[ translate ]
