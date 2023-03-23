@@ -1,9 +1,9 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import { Gridicon, Popover } from '@automattic/components';
+import { Popover } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import { hasMinContrast, hexToRgb, RGB } from '@automattic/onboarding';
 import { ColorPicker } from '@wordpress/components';
-import { Icon, color } from '@wordpress/icons';
+import { Icon, color, lock } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import {
@@ -162,8 +162,8 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 
 		if ( matchingOption?.isPremium || ( customColor && ! matchingOption ) ) {
 			return (
-				<Gridicon
-					icon="lock"
+				<Icon
+					icon={ lock }
 					size={ 18 }
 					className={ classNames( 'extra-gridicon', 'right-positioned' ) }
 				/>
@@ -183,7 +183,7 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 				selected={ option.value === accentColor.hex }
 				secondaryIcon={
 					shouldLimitGlobalStyles && option.isPremium ? (
-						<Gridicon icon="lock" size={ 18 } className="extra-gridicon" />
+						<Icon icon={ lock } size={ 18 } className="extra-gridicon" />
 					) : null
 				}
 			>
