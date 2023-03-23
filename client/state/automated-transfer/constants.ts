@@ -27,6 +27,8 @@ export const transferStates = {
 	REQUEST_FAILURE: 'request_failure',
 } as const;
 
+export type TransferStates = typeof transferStates[ keyof typeof transferStates ];
+
 export const eligibilityHolds = {
 	BLOCKED_ATOMIC_TRANSFER: 'BLOCKED_ATOMIC_TRANSFER',
 	TRANSFER_ALREADY_EXISTS: 'TRANSFER_ALREADY_EXISTS',
