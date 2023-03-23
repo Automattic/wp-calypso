@@ -1,21 +1,23 @@
-import { PostStatsCard } from '@automattic/components';
+import config from '@automattic/calypso-config';
+import { PostStatsCard, ComponentSwapper } from '@automattic/components';
 import { createSelector } from '@automattic/state-utils';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
-import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import DotPager from 'calypso/components/dot-pager';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getSitePost } from 'calypso/state/posts/selectors';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import {
 	getTopPostAndPage,
 	isRequestingSiteStatsForQuery,
 } from 'calypso/state/stats/lists/selectors';
-import { getPostStat } from 'calypso/state/stats/posts/selectors';
+import LatestPostCard from './latest-post-card';
 
-const POST_STATS_CARD_TITLE_LIMIT = 40;
+const POST_STATS_CARD_TITLE_LIMIT = 60;
 
 // Use ellipsis when characters count over the limit.
 // TODO: Extract to shared utilities
@@ -32,7 +34,7 @@ const textTruncator = ( text: string, limit = 48 ) => {
 const getStatsQueries = createSelector(
 	( state, siteId ) => {
 		const period = 'day';
-		const quantity = 7;
+		const quantity = 365;
 
 		const gmtOffset = getSiteOption( state, siteId, 'gmt_offset' ) as string | number;
 		const date = moment()
@@ -53,7 +55,8 @@ const getStatsQueries = createSelector(
 );
 
 const getStatsData = createSelector(
-	( state, siteId, topPostsQuery ) => {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	( state, siteId, topPostsQuery, isTopViewedPostRequesting ) => {
 		const { post: topPost, page: topPage } = getTopPostAndPage( state, siteId, topPostsQuery );
 
 		return {
@@ -61,10 +64,14 @@ const getStatsData = createSelector(
 			topPage,
 		};
 	},
-	( state, siteId, topPostsQuery ) => [ topPostsQuery ]
+	// Refresh memoized data from createSelector with the loading flag
+	( state, siteId, topPostsQuery, isTopViewedPostRequesting ) => [
+		topPostsQuery,
+		isTopViewedPostRequesting,
+	]
 );
 
-export default function MostPopularPostCard( {
+export default function PostCardsGroup( {
 	siteId,
 	siteSlug,
 }: {
@@ -72,6 +79,8 @@ export default function MostPopularPostCard( {
 	siteSlug: string;
 } ) {
 	const translate = useTranslate();
+	const userLocale = useSelector( getCurrentUserLocale );
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
 	const { topPostsQuery } = useSelector( ( state ) => getStatsQueries( state, siteId ) );
 
@@ -79,14 +88,9 @@ export default function MostPopularPostCard( {
 		isRequestingSiteStatsForQuery( state, siteId, 'statsTopPosts', topPostsQuery )
 	);
 
-	// Get the most `viewed` post from the past `seven` days defined in the `topPostsQuery`.
+	// Get the most `viewed` post from the past period defined in the `topPostsQuery`.
 	const { topPost: topViewedPost } = useSelector( ( state ) =>
-		getStatsData( state, siteId, topPostsQuery )
-	);
-
-	// The returned data period to sum the view count from API `stats/post` would differ by post.
-	const mostPopularPostViewCount = useSelector( ( state ) =>
-		getPostStat( state, siteId, topViewedPost?.id, 'views' )
+		getStatsData( state, siteId, topPostsQuery, isTopViewedPostRequesting )
 	);
 
 	const mostPopularPost = useSelector( ( state ) =>
@@ -100,9 +104,29 @@ export default function MostPopularPostCard( {
 			stripHTML( textTruncator( mostPopularPost?.title, POST_STATS_CARD_TITLE_LIMIT ) )
 		),
 		likeCount: mostPopularPost?.like_count,
-		viewCount: mostPopularPostViewCount, // or topViewedPost?.views
+		viewCount: topViewedPost?.views,
 		commentCount: mostPopularPost?.discussion?.comment_count,
 	};
+
+	const cards = [ <LatestPostCard key="latestPostCard" siteId={ siteId } siteSlug={ siteSlug } /> ];
+	if ( ! isTopViewedPostRequesting && mostPopularPost ) {
+		cards.push(
+			<PostStatsCard
+				key="mostPopularPostCard"
+				heading={ translate( 'Most popular post in the past year' ) }
+				likeCount={ mostPopularPostData?.likeCount }
+				post={ mostPopularPostData }
+				viewCount={ mostPopularPostData?.viewCount }
+				commentCount={ mostPopularPostData?.commentCount }
+				titleLink={ `/stats/post/${ mostPopularPost.ID }/${ siteSlug }` }
+				uploadHref={ ! isOdysseyStats ? `/post/${ siteSlug }/${ mostPopularPost.ID }` : undefined }
+				locale={ userLocale }
+			/>
+		);
+	}
+
+	const cardsGroup = <div className="highlight-cards-list">{ cards }</div>;
+	const mobileCardsGroup = <DotPager>{ cards }</DotPager>;
 
 	return (
 		<>
@@ -115,20 +139,15 @@ export default function MostPopularPostCard( {
 			{ siteId && topViewedPost && (
 				<>
 					<QueryPosts siteId={ siteId } postId={ topViewedPost.id } query={ {} } />
-					<QueryPostStats siteId={ siteId } postId={ topViewedPost.id } fields={ [ 'views' ] } />
 				</>
 			) }
 
-			{ ! isTopViewedPostRequesting && mostPopularPost && (
-				<PostStatsCard
-					heading={ translate( 'Most popular post' ) }
-					likeCount={ mostPopularPostData?.likeCount }
-					post={ mostPopularPostData }
-					viewCount={ mostPopularPostData?.viewCount }
-					commentCount={ mostPopularPostData?.commentCount }
-					titleLink={ `/stats/post/${ mostPopularPost.ID }/${ siteSlug }` }
-				/>
-			) }
+			<ComponentSwapper
+				className="all-time-highlights-section__highlight-cards-swapper"
+				breakpoint="<660px"
+				breakpointActiveComponent={ mobileCardsGroup }
+				breakpointInactiveComponent={ cardsGroup }
+			/>
 		</>
 	);
 }

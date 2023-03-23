@@ -1,7 +1,10 @@
+import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { ThankYouSectionProps } from 'calypso/components/thank-you/types';
 import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
+import MasterbarStyled from 'calypso/my-sites/marketplace/components/masterbar-styled';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
@@ -17,12 +20,16 @@ import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/w
 import { areFetched, areFetching, getPlugins } from 'calypso/state/plugins/wporg/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { ThankYouPluginSection } from './marketplace-thank-you-plugin-section';
 
-export function usePluginsThankYouData( pluginSlugs: string[] ): [ ThankYouSectionProps, boolean ] {
+export function usePluginsThankYouData(
+	pluginSlugs: string[]
+): [ ThankYouSectionProps, boolean, JSX.Element ] {
 	const dispatch = useDispatch();
+	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
+	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	// retrieve WPCom plugin data
 	const wpComPluginsDataResults = useWPCOMPlugins( pluginSlugs );
@@ -165,7 +172,15 @@ export function usePluginsThankYouData( pluginSlugs: string[] ): [ ThankYouSecti
 		} ) ),
 	};
 
-	return [ pluginsSection, allPluginsFetched ];
+	const goBackSection = (
+		<MasterbarStyled
+			onClick={ () => page( `/plugins/${ siteSlug }` ) }
+			backText={ translate( 'Back to plugins' ) }
+			canGoBack={ allPluginsFetched }
+		/>
+	);
+
+	return [ pluginsSection, allPluginsFetched, goBackSection ];
 }
 
 type Plugin = {
