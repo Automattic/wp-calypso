@@ -185,6 +185,7 @@ function BackupStatus( {
 	const isFetchingSiteFeatures = useSelectedSiteSelector( isRequestingSiteFeatures );
 	const isPoliciesInitialized = useSelectedSiteSelector( isRewindPoliciesInitialized );
 	const siteSlug = useSelector( getSelectedSiteSlug );
+	const translate = useTranslate();
 
 	const hasRealtimeBackups = useSelectedSiteSelector(
 		siteHasFeature,
@@ -199,11 +200,17 @@ function BackupStatus( {
 		<div className="backup__main-wrap">
 			<div className="backup__last-backup-status">
 				<div className="backup__header">
-					<div className="backup__header-title">Latest Backups</div>
-					<div className="backup__header-text">This is a list of your latest generated backups</div>
-					<Button className="backup__clone-button" primary href={ backupClonePath( siteSlug ) }>
-						Clone
-					</Button>
+					<div className="backup__header-left">
+						<div className="backup__header-title">{ translate( 'Latest Backups' ) }</div>
+						<div className="backup__header-text">
+							{ translate( 'This is a list of your latest generated backups' ) }
+						</div>
+					</div>
+					<div className="backup__header-right">
+						<Button className="backup__clone-button" primary href={ backupClonePath( siteSlug ) }>
+							{ translate( 'Clone this site' ) }
+						</Button>
+					</div>
 				</div>
 
 				{ ! isAtomic && ( needCredentials || areCredentialsInvalid ) && <EnableRestoresBanner /> }
