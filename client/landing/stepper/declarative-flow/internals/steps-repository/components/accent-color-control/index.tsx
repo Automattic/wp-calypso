@@ -161,7 +161,13 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 		const matchingOption = getMatchingOption();
 
 		if ( matchingOption?.isPremium || ( customColor && ! matchingOption ) ) {
-			return <Gridicon icon="lock" size={ 18 } className="extra-gridicon" />;
+			return (
+				<Gridicon
+					icon="lock"
+					size={ 18 }
+					className={ classNames( 'extra-gridicon', 'right-positioned' ) }
+				/>
+			);
 		}
 		return null;
 	};
@@ -257,6 +263,7 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 					selectedText={ getSelectedText() }
 					selectedIcon={ getSelectedIcon() }
 					selectedSecondaryIcon={ getSelectedSecondaryIcon() }
+					positionSelectedSecondaryIconOnRight={ true }
 				>
 					{ getDropdownOptions() }
 				</SelectDropdown>

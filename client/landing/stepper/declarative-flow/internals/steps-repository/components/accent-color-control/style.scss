@@ -78,6 +78,11 @@ $side-margin: 16;
 			margin-bottom: 3px;
 		}
 
+		.select-dropdown__header svg.right-positioned {
+			margin-left: auto;
+			margin-right: 8px;
+		}
+
 		.select-dropdown__item.is-selected {
 			background-color: unset;
 			color: var(--color-neutral-70);

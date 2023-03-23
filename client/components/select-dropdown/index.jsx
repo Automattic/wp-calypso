@@ -22,6 +22,7 @@ class SelectDropdown extends Component {
 		selectedIcon: PropTypes.element,
 		selectedCount: PropTypes.number,
 		selectedSecondaryIcon: PropTypes.element,
+		positionSelectedSecondaryIconOnRight: PropTypes.bool,
 		initialSelected: PropTypes.string,
 		className: PropTypes.string,
 		style: PropTypes.object,
@@ -145,6 +146,16 @@ class SelectDropdown extends Component {
 		return get( find( options, { value: selected } ), 'secondaryIcon' );
 	}
 
+	getPositionSelectedSecondaryIcon() {
+		const { positionSelectedSecondaryIconOnRight } = this.props;
+
+		if ( positionSelectedSecondaryIconOnRight ) {
+			return positionSelectedSecondaryIconOnRight;
+		}
+
+		return false;
+	}
+
 	dropdownOptions() {
 		let refIndex = 0;
 
@@ -214,6 +225,7 @@ class SelectDropdown extends Component {
 		const selectedText = this.getSelectedText();
 		const selectedIcon = this.getSelectedIcon();
 		const selectedSecondaryIcon = this.getSelectedSecondaryIcon();
+		const positionSelectedSecondaryIconOnRight = this.getPositionSelectedSecondaryIcon();
 
 		return (
 			<div id={ this.props.id } style={ this.props.style } className={ dropdownClassName }>
@@ -233,13 +245,14 @@ class SelectDropdown extends Component {
 				>
 					<div id={ 'select-dropdown-' + this.instanceId } className="select-dropdown__header">
 						<span className="select-dropdown__header-text" aria-label={ this.props.ariaLabel }>
-							{ selectedSecondaryIcon }
+							{ ! positionSelectedSecondaryIconOnRight && selectedSecondaryIcon }
 							{ selectedIcon }
 							{ selectedText }
 						</span>
 						{ 'number' === typeof this.props.selectedCount && (
 							<Count count={ this.props.selectedCount } />
 						) }
+						{ positionSelectedSecondaryIconOnRight && selectedSecondaryIcon }
 						<Gridicon icon="chevron-down" size={ 18 } />
 					</div>
 
