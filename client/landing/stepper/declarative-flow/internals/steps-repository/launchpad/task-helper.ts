@@ -391,7 +391,9 @@ export function getArrayOfFilteredTasks(
  * screen launchpad should be shown or not.
  *
  * @param {string} siteIntent - The value of a site's site_intent option
- * @param {Task[]} checklist_statuses - The value of a site's checklist_statuses option
+ * @param {LaunchpadStatuses} checklist_statuses - The value of a site's checklist_statuses option
+ * @param {boolean} isSiteLaunched - The value of a site's is_launched option
+ * @param {LaunchpadFlowTaskList} launchpadFlowTasks - The list of tasks for each site_intent
  * @returns {boolean} - True if the final task for the given site_intent is completed
  */
 export function areLaunchpadTasksCompleted(
