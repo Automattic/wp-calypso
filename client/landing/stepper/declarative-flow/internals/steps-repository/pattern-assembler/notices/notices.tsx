@@ -1,16 +1,12 @@
 import { SnackbarList, withNotices } from '@wordpress/components';
 import i18n from 'i18n-calypso';
-import { ReactNode } from 'react';
 import type { Pattern } from '../types';
 import './notices.scss';
 
-type NoticesProps = {
-	noticeList: withNotices.Props[ 'noticeList' ];
-	noticeOperations: withNotices.Props[ 'noticeOperations' ];
-	noticeUI?: ReactNode;
-};
-
-const Notices = ( { noticeList, noticeOperations }: NoticesProps ) => {
+const Notices = ( {
+	noticeList,
+	noticeOperations,
+}: Pick< withNotices.Props, 'noticeList' | 'noticeOperations' > ) => {
 	const onRemoveNotice = ( id: string ) => {
 		noticeOperations.removeNotice( id );
 	};
