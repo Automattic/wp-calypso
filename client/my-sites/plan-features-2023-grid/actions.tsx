@@ -292,7 +292,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	if ( isWpcomEnterpriseGridPlan ) {
 		return (
 			<Button className={ classes }>
-				{ translate( '{{ExternalLink}}Get in touch{{/ExternalLink}}', {
+				{ translate( '{{ExternalLink}}Learn more{{/ExternalLink}}', {
 					components: {
 						ExternalLink: (
 							<ExternalLinkWithTracking
