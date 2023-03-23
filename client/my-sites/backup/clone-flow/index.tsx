@@ -170,14 +170,6 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 					goBackPath={ previousPath }
 				/>
 			</div>
-			<Button
-				className="clone-flow__primary-button"
-				primary
-				onClick={ () => onSetDestination( CredSettings.role ) }
-			>
-				{ translate( 'Go to Backup Select' ) }
-			</Button>
-			-- Temporary button for skipping this step to get to the next screen
 		</>
 	);
 
