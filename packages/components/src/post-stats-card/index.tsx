@@ -18,6 +18,7 @@ type PostStatsCardProps = {
 	};
 	titleLink?: string | undefined;
 	uploadHref?: string | undefined;
+	locale?: string | undefined;
 };
 
 export default function PostStatsCard( {
@@ -28,11 +29,15 @@ export default function PostStatsCard( {
 	viewCount,
 	titleLink,
 	uploadHref,
+	locale,
 }: PostStatsCardProps ) {
 	const translate = useTranslate();
 	const parsedDate = useMemo(
-		() => ( post?.date ? new Date( post?.date ).toLocaleDateString() : '' ),
-		[ post?.date ]
+		() =>
+			post?.date
+				? new Date( post?.date ).toLocaleDateString( locale, { dateStyle: 'medium' } )
+				: '',
+		[ post?.date, locale ]
 	);
 	const TitleTag = titleLink ? 'a' : 'div';
 
@@ -98,7 +103,7 @@ export default function PostStatsCard( {
 			{ uploadHref && ! post?.post_thumbnail && (
 				<div className="post-stats-card__upload">
 					<Button
-						className="post-stats-card__upload-btn"
+						className="post-stats-card__upload-btn is-compact"
 						onClick={ recordClickOnUploadImageButton }
 					>
 						{ translate( 'Add featured image' ) }

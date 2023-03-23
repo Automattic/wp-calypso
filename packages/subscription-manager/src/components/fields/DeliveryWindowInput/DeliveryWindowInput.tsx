@@ -6,9 +6,10 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import './styles.scss';
-
-export type DeliveryWindowDayType = 0 | 1 | 2 | 3 | 4 | 5 | 6;
-export type DeliveryWindowHourType = 0 | 2 | 4 | 6 | 8 | 10 | 12 | 14 | 16 | 18 | 20 | 22;
+import type {
+	DeliveryWindowDayType,
+	DeliveryWindowHourType,
+} from '@automattic/data-stores/src/reader/types';
 
 type DeliveryWindowInputProps = {
 	dayValue: DeliveryWindowDayType;

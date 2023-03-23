@@ -472,7 +472,6 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 					{ ! includesHandledError() && renderImportCsvSelectedFileLabel() }
 					{ showCsvUpload && ! includesHandledError() && renderImportCsvLabel() }
-					{ showCsvUpload && ! includesHandledError() && renderImportCsvDisclaimerMsg() }
 					{ ! includesHandledError() && renderFollowerNoticeLabel() }
 
 					{ renderEmptyFormValidationMsg() }
@@ -485,6 +484,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 					>
 						{ submitBtnName }
 					</NextButton>
+					{ showCsvUpload && ! includesHandledError() && renderImportCsvDisclaimerMsg() }
 				</form>
 			</div>
 		</div>

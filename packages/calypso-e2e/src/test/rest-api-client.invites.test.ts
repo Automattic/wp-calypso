@@ -115,7 +115,7 @@ describe( 'RestAPIClient: createInvite', function () {
 		expect( response.errors.length ).toBe( 0 );
 	} );
 
-	test( 'Invite cannot be created', async function () {
+	test( 'Invite is rejected due to existing user email', async function () {
 		const testSuccessfulEmails = [ 'test1@test.com' ];
 		const testFailedEmails = [ 'test1@test.com' ];
 		const role = 'Editor' as Roles;
@@ -126,14 +126,11 @@ describe( 'RestAPIClient: createInvite', function () {
 
 		nock( requestURL.origin ).post( requestURL.pathname ).reply( 200, testResponse );
 
-		const response: NewInviteResponse = await restAPIClient.createInvite( siteID, {
-			email: testSuccessfulEmails.concat( testFailedEmails ),
-			role: role,
-		} );
-		expect( response.sent ).toBeInstanceOf( Array );
-		expect( response.sent.length ).toBe( 1 );
-		expect( response.sent ).toEqual( testSuccessfulEmails );
-		expect( response.errors.length ).toBe( 1 );
-		expect( response.errors ).toEqual( testFailedEmails );
+		await expect( () =>
+			restAPIClient.createInvite( siteID, {
+				email: testSuccessfulEmails.concat( testFailedEmails ),
+				role: role,
+			} )
+		).rejects.toThrowError();
 	} );
 } );

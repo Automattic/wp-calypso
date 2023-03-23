@@ -185,13 +185,13 @@ export function RenderDomainUpsell( {
 
 	const cardTitle =
 		! isFreePlan && ! isMonthlyPlan
-			? translate( 'You still have a free domain to claim!' )
+			? translate( 'Make your mark online with a memorable domain name' )
 			: translate( 'Own your online identity with a custom domain' );
 
 	const cardSubtitle =
 		! isFreePlan && ! isMonthlyPlan
 			? translate(
-					'Own your online identity giving your site a memorable domain name. Your plan includes one for free for one year, so you can still claim it.'
+					'Your plan includes a free domain for the first year. Stake your claim on the web with a domain name that boosts your brand.'
 			  )
 			: translate(
 					"Stake your claim on your corner of the web with a site address that's easy to find, share, and follow."

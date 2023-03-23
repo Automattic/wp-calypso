@@ -15,6 +15,7 @@ import {
 	hasActivatedTheme,
 } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import useIsValidThankYouTheme from './use-is-valid-thank-you-theme';
 
 const ThemeSectionContainer = styled.div`
 	display: flex;
@@ -39,6 +40,7 @@ const ThemeSectionImageContainer = styled.div`
 `;
 
 const ThemeSectionImage = styled.img`
+	width: 100%;
 	border-radius: 13px;
 `;
 
@@ -97,6 +99,8 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 	);
 	const siteUrl = useSelector( ( state ) => getSiteUrl( state, siteId ) ) ?? undefined;
 
+	const isValidThankyouSectionTheme = useIsValidThankYouTheme( theme, siteId );
+
 	const sendTrackEvent = useCallback(
 		( name: string ) => {
 			recordTracksEvent( name, {
@@ -114,6 +118,10 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 		sendTrackEvent( 'calypso_theme_thank_you_activate_theme_click' );
 		dispatch( activate( theme.id, siteId, 'marketplace-thank-you' ) );
 	};
+
+	if ( ! isValidThankyouSectionTheme ) {
+		return null;
+	}
 
 	return (
 		<ThemeSectionContainer>

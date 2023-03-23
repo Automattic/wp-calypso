@@ -69,7 +69,7 @@ class ThemeShowcase extends Component {
 
 	static propTypes = {
 		emptyContent: PropTypes.element,
-		tier: PropTypes.oneOf( [ '', 'free', 'premium' ] ),
+		tier: PropTypes.oneOf( [ '', 'free', 'premium', 'marketplace' ] ),
 		search: PropTypes.string,
 		pathName: PropTypes.string,
 		// Connected props
@@ -177,6 +177,7 @@ class ThemeShowcase extends Component {
 			{ value: 'all', label: this.props.translate( 'All' ) },
 			{ value: 'free', label: this.props.translate( 'Free' ) },
 			{ value: 'premium', label: this.props.translate( 'Premium' ) },
+			{ value: 'marketplace', label: this.props.translate( 'Paid' ) },
 		];
 	};
 
