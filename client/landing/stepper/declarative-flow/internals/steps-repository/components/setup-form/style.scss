@@ -38,9 +38,9 @@
 		background-repeat: no-repeat;
 		background-position: 95%;
 		&:focus {
-			border-color: var(--wp-admin-theme-color);
-			box-shadow: 0 0 0 1px var(--wp-admin-theme-color);
-			outline: 2px solid transparent;
+			border-color: var(--studio-gray-10);
+			box-shadow: 0 0 0 2px var(--color-primary-10);
+			outline: none;
 		}
 	}
 
@@ -73,6 +73,12 @@
 		font-size: 0.875rem;
 		padding: 0.875rem 1rem;
 		height: 44px;
+
+		&:focus {
+			border-color: var(--studio-gray-10);
+			box-shadow: 0 0 0 2px var(--color-primary-10);
+			outline: none;
+		}
 	}
 
 	.setup-form__submit {

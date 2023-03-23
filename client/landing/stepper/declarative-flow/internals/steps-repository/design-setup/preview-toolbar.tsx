@@ -9,7 +9,7 @@ import './preview-toolbar.scss';
 
 const possibleDevices = [ 'computer', 'tablet', 'phone' ] as const;
 
-type Device = typeof possibleDevices[ number ];
+type Device = ( typeof possibleDevices )[ number ];
 
 type PreviewToolbarProps = {
 	// The device to display, used for setting preview dimensions

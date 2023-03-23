@@ -26093,6 +26093,15 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"prettier@npm:wp-prettier@2.8.5":
+  version: 2.8.5
+  resolution: "wp-prettier@npm:2.8.5"
+  bin:
+    prettier: bin-prettier.js
+  checksum: 2b00bb73cb56daabc45fc165c8b02471052d3b01eebbdbb6954a891a3e9498c76f5c6776c083c3c34cc9304f015c2fde68b5e979aeb4cdebc25037308b113cf7
+  languageName: node
+  linkType: hard
+
 "pretty-error@npm:^2.1.1":
   version: 2.1.1
   resolution: "pretty-error@npm:2.1.1"
@@ -33721,7 +33730,7 @@ fsevents@^1.2.7:
     postcss: ^8.4.5
     postcss-cli: ^9.0.1
     postcss-custom-properties: ^11.0.0
-    prettier: "npm:wp-prettier@2.6.2"
+    prettier: "npm:wp-prettier@2.8.5"
     react: ^17.0.2
     react-dom: ^17.0.2
     react-intersection-observer: ^9.4.3

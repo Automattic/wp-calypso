@@ -48,8 +48,8 @@ export function useToggleActivateMonitor(
 	const translate = useTranslate();
 
 	const queryClient = useQueryClient();
-	const { filter, search, currentPage } = useContext( SitesOverviewContext );
-	const queryKey = [ 'jetpack-agency-dashboard-sites', search, currentPage, filter ];
+	const { filter, search, currentPage, sort } = useContext( SitesOverviewContext );
+	const queryKey = [ 'jetpack-agency-dashboard-sites', search, currentPage, filter, sort ];
 
 	const toggleActivateMonitoring = useToggleActivateMonitorMutation( {
 		onMutate: async ( { siteId } ) => {
@@ -198,8 +198,8 @@ export function useUpdateMonitorSettings( sites: Array< { blog_id: number; url: 
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const queryClient = useQueryClient();
-	const { filter, search, currentPage } = useContext( SitesOverviewContext );
-	const queryKey = [ 'jetpack-agency-dashboard-sites', search, currentPage, filter ];
+	const { filter, search, currentPage, sort } = useContext( SitesOverviewContext );
+	const queryKey = [ 'jetpack-agency-dashboard-sites', search, currentPage, filter, sort ];
 
 	const [ status, setStatus ] = useState( 'idle' );
 

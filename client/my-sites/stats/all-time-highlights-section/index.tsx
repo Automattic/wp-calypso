@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	Card,
 	ComponentSwapper,
@@ -19,8 +18,7 @@ import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 } from 'calypso/state/stats/lists/selectors';
-import LatestPostCard from './latest-post-card';
-import MostPopularPostCard from './most-popular-card';
+import PostCardsGroup from './post-cards-group';
 
 import './style.scss';
 
@@ -153,9 +151,6 @@ export default function AllTimeHighlightsSection( {
 		};
 	}, [ isStatsLoading, translate, views, viewsBestDay, viewsBestDayTotal ] );
 
-	const isLatestPostReplaced = config.isEnabled( 'stats/latest-post-stats' );
-	const isMostPopularPostShow = config.isEnabled( 'stats/most-popular-post' );
-
 	const mobileCards = (
 		<div className="highlight-cards-mobile">
 			<h1 className="highlight-cards-heading">{ translate( 'Highlights' ) }</h1>
@@ -206,9 +201,7 @@ export default function AllTimeHighlightsSection( {
 				} ) }
 			</DotPager>
 
-			<div className="highlight-cards-list">
-				<LatestPostCard siteId={ siteId } siteSlug={ siteSlug } />
-			</div>
+			<PostCardsGroup siteId={ siteId } siteSlug={ siteSlug } />
 		</div>
 	);
 
@@ -263,14 +256,7 @@ export default function AllTimeHighlightsSection( {
 				} ) }
 			</div>
 
-			{ isLatestPostReplaced && (
-				<div className="highlight-cards-list">
-					<LatestPostCard siteId={ siteId } siteSlug={ siteSlug } />
-					{ isMostPopularPostShow && (
-						<MostPopularPostCard siteId={ siteId } siteSlug={ siteSlug } />
-					) }
-				</div>
-			) }
+			<PostCardsGroup siteId={ siteId } siteSlug={ siteSlug } />
 		</div>
 	);
 
