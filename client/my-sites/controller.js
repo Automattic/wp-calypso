@@ -61,8 +61,8 @@ import isDIFMLiteInProgress from 'calypso/state/selectors/is-difm-lite-in-progre
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
+import isSiteStaging from 'calypso/state/selectors/is-site-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import isStagingSite from 'calypso/state/selectors/is-staging-site';
 import wasEcommerceTrialSite from 'calypso/state/selectors/was-ecommerce-trial-site';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
@@ -685,7 +685,7 @@ export function stagingSiteNotSupportedRedirect( context, next ) {
 	const store = context.store;
 	const selectedSite = getSelectedSite( store.getState() );
 
-	if ( selectedSite && isStagingSite( store.getState(), selectedSite.ID ) ) {
+	if ( selectedSite && isSiteStaging( store.getState(), selectedSite.ID ) ) {
 		const siteSlug = getSiteSlug( store.getState(), selectedSite.ID );
 
 		return page.redirect( `/home/${ siteSlug }` );

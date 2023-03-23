@@ -20,7 +20,6 @@ import { getPreference } from 'calypso/state/preferences/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
-import isWpcomStagingSite from 'calypso/state/selectors/is-staging-site';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import {
 	getSiteFrontPage,
@@ -30,6 +29,7 @@ import {
 } from 'calypso/state/sites/selectors';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import isSiteStaging from '../../../../../state/selectors/is-site-staging';
 import ActionBox from './action-box';
 
 import './style.scss';
@@ -416,7 +416,7 @@ const mapStateToProps = ( state ) => {
 		isStaticHomePage,
 		editHomePageUrl,
 		isAtomic: isSiteAtomic( state, siteId ),
-		isStagingSite: isWpcomStagingSite( state, siteId ),
+		isStagingSite: isSiteStaging( state, siteId ),
 		isExpanded: getPreference( state, 'homeQuickLinksToggleStatus' ) !== 'collapsed',
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 	};
