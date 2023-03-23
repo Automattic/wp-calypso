@@ -53,7 +53,7 @@ describe( 'index', () => {
 		);
 	} );
 
-	test( 'Should dissalow Blaze usage', async () => {
+	test( 'Should disallow Blaze usage', async () => {
 		function Blaze() {
 			const canUseBlaze = usePromoteWidget();
 			expect( canUseBlaze ).toBe( PromoteWidgetStatus.DISABLED );
