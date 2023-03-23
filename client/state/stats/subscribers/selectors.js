@@ -1,14 +1,13 @@
+import { get } from 'lodash';
 import 'calypso/state/stats/init';
 
 /**
- * Returns the date of the last site stats query
+ * Returns sunscribers for site id
  *
  * @param  {Object}  state    Global state tree
  * @param  {number}  siteId   Site ID
- * @param  {string}  statType Type of stat
- * @param  {Object}  query    Stats query object
- * @returns {Date}             Date of the last site stats query
+ * @returns {Object}          Data containing subscribers
  */
-export function getSiteStatsSubscribers( state, siteId, statType, query ) {
-	// todo
+export function getSiteStatsSubscribers( state, siteId ) {
+	return get( state, [ 'stats', 'subscribers', siteId ], null );
 }

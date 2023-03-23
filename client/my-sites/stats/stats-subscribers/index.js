@@ -1,8 +1,12 @@
+import { useSelector } from 'react-redux';
 import useSubscribersQuery from 'calypso/state/stats/subscribers/hooks/use-subscribers-query';
+import { getSiteStatsSubscribers } from 'calypso/state/stats/subscribers/selectors';
 
 const StatsSubscribers = ( { siteId } ) => {
 	const name = 'subscribers';
-	const { isLoading, data } = useSubscribersQuery( siteId );
+	const { isLoading } = useSubscribersQuery( siteId );
+	const data = useSelector( ( state ) => getSiteStatsSubscribers( state, siteId ) );
+	const chartData = data?.data || [];
 
 	return (
 		<div>
@@ -10,11 +14,9 @@ const StatsSubscribers = ( { siteId } ) => {
 			{ isLoading && <div>Loading...</div> }
 			<ul>
 				{ ! isLoading &&
-					data?.map( ( item ) =>
-						item.data.map( ( dataSet ) => (
-							<li> { `${ dataSet.period } - ${ dataSet.subscribers }` }</li>
-						) )
-					) }
+					chartData?.map( ( dataSet ) => (
+						<li> { `${ dataSet.period } - ${ dataSet.subscribers }` }</li>
+					) ) }
 			</ul>
 		</div>
 	);

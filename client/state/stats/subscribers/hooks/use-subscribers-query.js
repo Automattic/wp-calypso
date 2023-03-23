@@ -2,6 +2,12 @@ import { useTranslate } from 'i18n-calypso';
 import { useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
 import { errorNotice } from '../../../notices/actions';
+import {
+	receiveStatSubscribers,
+	// requestStatSubscribers,
+	// requestStatSubscribersFailure,
+	// requestStatSubscribersSuccess,
+} from '../actions';
 
 const mockData = {
 	items: [
@@ -49,7 +55,7 @@ const mockData = {
 function querySubscribers() {
 	// TODO: remove when the endpoint is ready
 	return new Promise( ( resolve ) => {
-		setTimeout( () => resolve( mockData ), 1000 );
+		setTimeout( () => resolve( mockData ), 3000 );
 	} );
 
 	// return <wpcom endpoint>.req
@@ -84,6 +90,10 @@ export default function useSubscribersQuery( siteId ) {
 
 	return useQuery( [ 'stats', 'subscribers', siteId ], querySubscribers, {
 		select: selectSubscribers,
+		// TODO: cover isLoading
+		onSuccess: ( data ) => {
+			dispatch( receiveStatSubscribers( siteId, data ) );
+		},
 		onError: () => {
 			dispatch(
 				errorNotice(

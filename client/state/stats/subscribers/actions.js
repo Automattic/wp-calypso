@@ -6,10 +6,18 @@ import {
 } from 'calypso/state/action-types';
 import 'calypso/state/stats/init';
 
-export function selectStatSubscribersRequest( siteId ) {
+export function requestStatSubscribers( siteId ) {
 	return { type: STATS_SUBSCRIBERS_REQUEST, siteId };
 }
 
-export function selectStatSubscribersRequestSuccess( siteId ) {
+export function receiveStatSubscribers( siteId, data ) {
+	return { type: STATS_SUBSCRIBERS_RECEIVE, siteId, data };
+}
+
+export function requestStatSubscribersSuccess( siteId ) {
 	return { type: STATS_SUBSCRIBERS_REQUEST_SUCCESS, siteId };
+}
+
+export function requestStatSubscribersFailure( siteId ) {
+	return { type: STATS_SUBSCRIBERS_REQUEST_FAILURE, siteId };
 }
