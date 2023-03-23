@@ -11,18 +11,20 @@ export function useIsStatusReverting(
 
 	useEffect( () => {
 		switch ( transferStatus ) {
+			case transferStates.COMPLETE:
+			case null:
+				if ( isStatusReverting ) {
+					onReverted?.();
+					setIsStatusReverting( false );
+				}
+				break;
 			case transferStates.REVERTED:
 			case transferStates.REQUEST_FAILURE:
-				onReverted?.();
-				break;
-			case null:
-				setIsStatusReverting( false );
-				break;
 			case transferStates.RELOCATING_REVERT:
 				setIsStatusReverting( true );
 				break;
 		}
-	}, [ onReverted, queryClient, transferStatus ] );
+	}, [ isStatusReverting, onReverted, queryClient, transferStatus ] );
 
 	return isStatusReverting;
 }

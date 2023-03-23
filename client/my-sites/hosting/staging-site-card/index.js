@@ -80,9 +80,9 @@ const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, transl
 		siteId,
 		stagingSiteId: stagingSite.id,
 		transferStatus,
-		onSuccess: () => {
+		onSuccess: useCallback( () => {
 			dispatch( successNotice( __( 'Staging site deleted.' ) ) );
-		},
+		}, [ dispatch, __ ] ),
 	} );
 	const isStagingSiteTransferComplete = transferStatus === transferStates.COMPLETE;
 	const isTrasferInProgress =
