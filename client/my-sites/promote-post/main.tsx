@@ -167,9 +167,13 @@ export default function PromotedPosts( { tab }: Props ) {
 		isRequestingPostsForQuery( state, selectedSiteId, queryPageAndPostsByComments )
 	);
 
-	if ( usePromoteWidget() === PromoteWidgetStatus.DISABLED ) {
-		page( '/' );
-	}
+	const canBlaze = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
+
+	useEffect( () => {
+		if ( false === canBlaze ) {
+			page( '/' );
+		}
+	}, [ canBlaze ] );
 
 	const subtitle = translate(
 		'Reach new readers and customers with WordPress Blaze. Promote a post or a page on our network of millions blogs and web sites. {{learnMoreLink}}Learn more.{{/learnMoreLink}}',
