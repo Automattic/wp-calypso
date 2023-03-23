@@ -4,6 +4,12 @@ $font-family: "SF Pro Text", $sans;
 
 .link-in-bio-setup,
 .link-in-bio-tld-setup {
+	.step-container {
+		padding-top: 24px;
+		@include break-medium {
+			padding-top: 0;
+		}
+	}
 	.step-container__content {
 		display: flex;
 		justify-content: center;
@@ -11,7 +17,11 @@ $font-family: "SF Pro Text", $sans;
 		min-height: unset;
 	}
 
-	.link-in-bio-setup .step-container__header {
+	.step-container__header {
 		margin-bottom: 32px;
+
+		@include break-medium {
+			margin-top: 36px;
+		}
 	}
 }
