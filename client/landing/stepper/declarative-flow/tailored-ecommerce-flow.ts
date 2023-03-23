@@ -1,4 +1,9 @@
-import { PLAN_ECOMMERCE, PLAN_ECOMMERCE_MONTHLY } from '@automattic/calypso-products';
+import {
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_MONTHLY,
+	PLAN_ECOMMERCE_2_YEARS,
+	PLAN_ECOMMERCE_3_YEARS,
+} from '@automattic/calypso-products';
 import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, ECOMMERCE_FLOW, ecommerceFlowRecurTypes } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -23,13 +28,29 @@ import StoreProfiler from './internals/steps-repository/store-profiler';
 import WaitForAtomic from './internals/steps-repository/wait-for-atomic';
 import { AssertConditionState } from './internals/types';
 import type { Flow, ProvidedDependencies, AssertConditionResult } from './internals/types';
-import type { SiteDetailsPlan } from '@automattic/data-stores';
+import type { OnboardSelect, SiteDetailsPlan, UserSelect } from '@automattic/data-stores';
+
+function getPlanFromRecurType( recurType: string ) {
+	switch ( recurType ) {
+		case ecommerceFlowRecurTypes.YEARLY:
+			return PLAN_ECOMMERCE;
+		case ecommerceFlowRecurTypes.MONTHLY:
+			return PLAN_ECOMMERCE_MONTHLY;
+		case ecommerceFlowRecurTypes[ '2Y' ]:
+			return PLAN_ECOMMERCE_2_YEARS;
+		case ecommerceFlowRecurTypes[ '3Y' ]:
+			return PLAN_ECOMMERCE_3_YEARS;
+		default:
+			return PLAN_ECOMMERCE_MONTHLY;
+	}
+}
 
 const ecommerceFlow: Flow = {
 	name: ECOMMERCE_FLOW,
 	useSteps() {
-		const recurType = useSelect( ( select ) =>
-			select( ONBOARD_STORE ).getEcommerceFlowRecurType()
+		const recurType = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getEcommerceFlowRecurType(),
+			[]
 		);
 
 		useEffect( () => {
@@ -49,16 +70,22 @@ const ecommerceFlow: Flow = {
 	},
 
 	useAssertConditions(): AssertConditionResult {
-		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
+		const userIsLoggedIn = useSelect(
+			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+			[]
+		);
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 
 		const flags = new URLSearchParams( window.location.search ).get( 'flags' );
 		const flowName = this.name;
 		const locale = useLocale();
 
-		const { recurType } = useSelect( ( select ) => ( {
-			recurType: select( ONBOARD_STORE ).getEcommerceFlowRecurType(),
-		} ) );
+		const { recurType } = useSelect(
+			( select ) => ( {
+				recurType: ( select( ONBOARD_STORE ) as OnboardSelect ).getEcommerceFlowRecurType(),
+			} ),
+			[]
+		);
 
 		const getStartUrl = () => {
 			let hasFlowParams = false;
@@ -101,12 +128,14 @@ const ecommerceFlow: Flow = {
 		const { setStepProgress, setPlanCartItem } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStepName, flowName } );
 		setStepProgress( flowProgress );
-		const { selectedDesign, recurType } = useSelect( ( select ) => ( {
-			selectedDesign: select( ONBOARD_STORE ).getSelectedDesign(),
-			recurType: select( ONBOARD_STORE ).getEcommerceFlowRecurType(),
-		} ) );
-		const selectedPlan =
-			recurType === ecommerceFlowRecurTypes.YEARLY ? PLAN_ECOMMERCE : PLAN_ECOMMERCE_MONTHLY;
+		const { selectedDesign, recurType } = useSelect(
+			( select ) => ( {
+				selectedDesign: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
+				recurType: ( select( ONBOARD_STORE ) as OnboardSelect ).getEcommerceFlowRecurType(),
+			} ),
+			[]
+		);
+		const selectedPlan = getPlanFromRecurType( recurType );
 
 		const siteSlugParam = useSiteSlugParam();
 		const site = useSite();
@@ -171,9 +200,12 @@ const ecommerceFlow: Flow = {
 				case 'checkPlan':
 					// eCommerce Plan
 					if (
-						[ PLAN_ECOMMERCE, PLAN_ECOMMERCE_MONTHLY ].includes(
-							( providedDependencies?.currentPlan as SiteDetailsPlan )?.product_slug
-						)
+						[
+							PLAN_ECOMMERCE,
+							PLAN_ECOMMERCE_MONTHLY,
+							PLAN_ECOMMERCE_2_YEARS,
+							PLAN_ECOMMERCE_3_YEARS,
+						].includes( ( providedDependencies?.currentPlan as SiteDetailsPlan )?.product_slug )
 					) {
 						return navigate( 'waitForAtomic' );
 					}

@@ -11,6 +11,7 @@ import {
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import AkismetLogo from 'calypso/components/akismet-logo';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-valid-checkout-back-url';
@@ -18,6 +19,7 @@ import { leaveCheckout } from 'calypso/my-sites/checkout/composite-checkout/lib/
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import Item from './item';
 import Masterbar from './masterbar';
+import type { HelpCenterSelect } from '@automattic/data-stores';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
@@ -41,15 +43,27 @@ const CheckoutMasterbar = ( {
 	const translate = useTranslate();
 	const jetpackCheckoutBackUrl = useValidCheckoutBackUrl( siteSlug );
 
-	const isJetpackCheckout = window.location.pathname.startsWith( '/checkout/jetpack' );
-	const isJetpack = isJetpackCheckout || isJetpackNotAtomic;
+	const getCheckoutType = () => {
+		if ( window.location.pathname.startsWith( '/checkout/jetpack' ) || isJetpackNotAtomic ) {
+			return 'jetpack';
+		}
+
+		if ( window.location.pathname.startsWith( '/checkout/akismet' ) ) {
+			return 'akismet';
+		}
+
+		return 'wpcom';
+	};
+	const checkoutType = getCheckoutType();
+
 	const cartKey = useCartKey();
 	const { responseCart, replaceProductsInCart } = useShoppingCart( cartKey );
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
 
-	const isShowingHelpCenter = useDataStoreSelect( ( select ) =>
-		select( HELP_CENTER_STORE ).isHelpCenterShown()
+	const isShowingHelpCenter = useDataStoreSelect(
+		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
+		[]
 	);
 
 	const closeAndLeave = () =>
@@ -79,11 +93,14 @@ const CheckoutMasterbar = ( {
 		closeAndLeave();
 	};
 
-	const showCloseButton = isLeavingAllowed && ! isJetpack;
+	const showCloseButton = isLeavingAllowed && checkoutType === 'wpcom';
 
 	return (
 		<Masterbar
-			className={ classnames( 'masterbar--is-checkout', { 'masterbar--is-jetpack': isJetpack } ) }
+			className={ classnames( 'masterbar--is-checkout', {
+				'masterbar--is-jetpack': checkoutType === 'jetpack',
+				'masterbar--is-akismet': checkoutType === 'akismet',
+			} ) }
 		>
 			<div className="masterbar__secure-checkout">
 				{ showCloseButton && (
@@ -95,8 +112,11 @@ const CheckoutMasterbar = ( {
 						tipTarget="close"
 					/>
 				) }
-				{ ! isJetpack && <WordPressWordmark className="masterbar__wpcom-wordmark" /> }
-				{ isJetpack && <JetpackLogo className="masterbar__jetpack-wordmark" full /> }
+				{ checkoutType === 'wpcom' && <WordPressWordmark className="masterbar__wpcom-wordmark" /> }
+				{ checkoutType === 'jetpack' && (
+					<JetpackLogo className="masterbar__jetpack-wordmark" full />
+				) }
+				{ checkoutType === 'akismet' && <AkismetLogo className="masterbar__akismet-wordmark" /> }
 				<span className="masterbar__secure-checkout-text">{ translate( 'Secure checkout' ) }</span>
 			</div>
 			{ title && <Item className="masterbar__item-title">{ title }</Item> }

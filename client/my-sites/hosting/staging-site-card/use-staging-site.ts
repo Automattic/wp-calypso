@@ -26,6 +26,7 @@ export const useStagingSite = ( siteId: number, options: UseQueryOptions ) => {
 				persist: false,
 			},
 			staleTime: 10 * 1000,
+			onError: options.onError,
 		}
 	);
 };

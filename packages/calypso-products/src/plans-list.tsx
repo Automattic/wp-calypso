@@ -317,6 +317,14 @@ import {
 	FEATURE_SITE_ACTIVITY_LOG_JP,
 	FEATURE_CLOUD_CRITICAL_CSS,
 	FEATURE_GLOBAL_EDGE_CACHING,
+	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
+	PLAN_WOOEXPRESS_MEDIUM,
+	FEATURE_JETPACK_SOCIAL_ADVANCED,
+	FEATURE_JETPACK_SOCIAL_ADVANCED_MONTHLY,
+	FEATURE_JETPACK_BOOST,
+	FEATURE_JETPACK_BOOST_MONTHLY,
+	FEATURE_JETPACK_SOCIAL_BASIC,
+	FEATURE_JETPACK_SOCIAL_BASIC_MONTHLY,
 } from './constants';
 import { is2023PricingGridEnabled } from './plans-utilities';
 import type {
@@ -880,6 +888,14 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			andMore: true,
 		},
 	} ),
+} );
+const getPlanWooExpressMediumDetails = (): IncompleteWPcomPlan => ( {
+	...getPlanEcommerceDetails(),
+	getTitle: () => i18n.translate( 'Woo Express Performance' ),
+	getTagline: () =>
+		i18n.translate(
+			'Learn more about everything included with Woo Express Performance and take advantage of its powerful marketplace features.'
+		),
 } );
 
 const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
@@ -1606,7 +1622,7 @@ const getPlanJetpackSecurityT1Details = (): IncompleteJetpackPlan => ( {
 	...getJetpackCommonPlanDetails(),
 	group: GROUP_JETPACK,
 	type: TYPE_SECURITY_T1,
-	getTitle: () => translate( 'Security' ),
+	getTitle: () => translate( 'Security', { context: 'Jetpack product name' } ),
 	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
 	getDescription: () =>
 		translate(
@@ -1751,6 +1767,10 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 			FEATURE_JETPACK_CRM_MONTHLY,
 			FEATURE_BACKUP_ARCHIVE_UNLIMITED,
 			FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+			FEATURE_JETPACK_BOOST,
+			FEATURE_JETPACK_BOOST_MONTHLY,
+			FEATURE_JETPACK_SOCIAL_ADVANCED,
+			FEATURE_JETPACK_SOCIAL_ADVANCED_MONTHLY,
 			FEATURE_JETPACK_VIDEOPRESS,
 			FEATURE_JETPACK_VIDEOPRESS_MONTHLY,
 			FEATURE_CLOUD_CRITICAL_CSS,
@@ -1770,6 +1790,8 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 		FEATURE_JETPACK_BACKUP_DAILY,
 		FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
 		FEATURE_BACKUP_ARCHIVE_30,
+		FEATURE_JETPACK_SOCIAL_BASIC,
+		FEATURE_JETPACK_SOCIAL_BASIC_MONTHLY,
 	],
 	getBenefits: () => [
 		translate( 'Protect your revenue stream and content' ),
@@ -2132,6 +2154,26 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductId: () => 1031,
 		getStoreSlug: () => PLAN_ECOMMERCE_2_YEARS,
 		getPathSlug: () => 'ecommerce-2-years',
+	},
+
+	[ PLAN_WOOEXPRESS_MEDIUM_MONTHLY ]: {
+		...getPlanWooExpressMediumDetails(),
+		...getMonthlyTimeframe(),
+		availableFor: ( plan ) => [ PLAN_FREE, PLAN_ECOMMERCE_TRIAL_MONTHLY ].includes( plan ),
+		getProductId: () => 1053,
+		getStoreSlug: () => PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
+		getPathSlug: () => 'wooexpress-medium-monthly',
+	},
+
+	[ PLAN_WOOEXPRESS_MEDIUM ]: {
+		...getPlanWooExpressMediumDetails(),
+		term: TERM_ANNUALLY,
+		getBillingTimeFrame: WPComGetBillingTimeframe,
+		availableFor: ( plan ) =>
+			[ PLAN_FREE, PLAN_WOOEXPRESS_MEDIUM_MONTHLY, PLAN_ECOMMERCE_TRIAL_MONTHLY ].includes( plan ),
+		getProductId: () => 1055,
+		getStoreSlug: () => PLAN_WOOEXPRESS_MEDIUM,
+		getPathSlug: () => 'wooexpress-medium-yearly',
 	},
 
 	// Not a real plan. This is used to show the Enterprise (VIP) offering in

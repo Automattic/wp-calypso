@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getPostsForQuery } from 'calypso/state/posts/selectors';
 import { getPostStat } from 'calypso/state/stats/posts/selectors';
 
@@ -29,6 +30,7 @@ export default function LatestPostCard( {
 	siteSlug: string;
 } ) {
 	const translate = useTranslate();
+	const userLocale = useSelector( getCurrentUserLocale );
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
 	const posts = useSelector( ( state ) =>
@@ -67,6 +69,7 @@ export default function LatestPostCard( {
 					commentCount={ latestPostData?.commentCount }
 					titleLink={ `/stats/post/${ latestPost.ID }/${ siteSlug }` }
 					uploadHref={ ! isOdysseyStats ? `/post/${ siteSlug }/${ latestPost.ID }` : undefined }
+					locale={ userLocale }
 				/>
 			) }
 		</>

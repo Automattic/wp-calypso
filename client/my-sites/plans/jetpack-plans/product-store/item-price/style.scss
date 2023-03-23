@@ -72,7 +72,9 @@
 	}
 
 	.display-price__billing-time-frame {
-		margin-top: 3px;
+		display: flex;
+		align-items: center;
+		margin: 0;
 	}
 }
 

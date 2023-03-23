@@ -1,9 +1,14 @@
+import { Subscriber } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
-import { SUBSCRIBER_STORE } from '../store';
 
 export function useInProgressState() {
-	const addSelector = useSelect( ( s ) => s( SUBSCRIBER_STORE ).getAddSubscribersSelector() );
-	const importSelector = useSelect( ( s ) => s( SUBSCRIBER_STORE ).getImportSubscribersSelector() );
+	const { addSelector, importSelector } = useSelect( ( select ) => {
+		const subscriber = select( Subscriber.store );
+		return {
+			addSelector: subscriber.getAddSubscribersSelector(),
+			importSelector: subscriber.getImportSubscribersSelector(),
+		};
+	}, [] );
 
 	return addSelector?.inProgress || importSelector?.inProgress;
 }

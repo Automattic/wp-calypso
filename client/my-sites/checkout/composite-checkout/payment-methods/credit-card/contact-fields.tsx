@@ -3,6 +3,9 @@ import { useSelect } from '@wordpress/data';
 import TaxFields from 'calypso/my-sites/checkout/composite-checkout/components/tax-fields';
 import useCountryList from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
 import { CountrySpecificPaymentFields } from '../../components/country-specific-payment-fields';
+import { CardFieldState } from './types';
+import type { WpcomCreditCardSelectors } from './store';
+import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 export default function ContactFields( {
 	getFieldValue,
@@ -20,19 +23,17 @@ export default function ContactFields( {
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 	const countriesList = useCountryList();
-	const fields = useSelect( ( select ) => select( 'wpcom-credit-card' ).getFields() );
-	const onChangeContactInfo = ( newInfo: {
-		countryCode?: { value?: string };
-		postalCode?: { value?: string };
-		state?: { value?: string };
-		city?: { value?: string };
-		organization?: { value?: string };
-	} ) => {
+	const fields: CardFieldState = useSelect(
+		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getFields(),
+		[]
+	);
+	const onChangeContactInfo = ( newInfo: ManagedContactDetails ) => {
 		setFieldValue( 'countryCode', newInfo.countryCode?.value ?? '' );
 		setFieldValue( 'postalCode', newInfo.postalCode?.value ?? '' );
 		setFieldValue( 'state', newInfo.state?.value ?? '' );
 		setFieldValue( 'city', newInfo.city?.value ?? '' );
 		setFieldValue( 'organization', newInfo.organization?.value ?? '' );
+		setFieldValue( 'address1', newInfo.address1?.value ?? '' );
 	};
 
 	return (

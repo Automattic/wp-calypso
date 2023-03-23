@@ -1,3 +1,5 @@
 export interface FooterAttributes {
-	prop?: string;
+	attributes: {
+		locale?: string;
+	};
 }

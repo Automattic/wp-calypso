@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import SiteIndicator from 'calypso/my-sites/site-indicator';
+import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-badge';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
@@ -189,6 +190,11 @@ class Site extends Component {
 						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 						{ this.props.isSiteP2 && ! this.props.isP2Hub && (
 							<span className="site__badge is-p2">P2</span>
+						) }
+						{ site.is_wpcom_staging_site && (
+							<SitesStagingBadge className="site__badge" secondary>
+								{ translate( 'Staging' ) }
+							</SitesStagingBadge>
 						) }
 						{ this.props.isP2Hub && (
 							<span className="site__badge is-p2-workspace">P2 Workspace</span>

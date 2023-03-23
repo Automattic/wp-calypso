@@ -4,15 +4,15 @@
 import { convertResponseCartToRequestCart } from '@automattic/shopping-cart';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { dispatch } from '@wordpress/data';
 import nock from 'nock';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import {
-	domainProduct,
-	planWithBundledDomain,
 	planWithoutDomain,
 	mockSetCartEndpointWith,
 	getActivePersonalPlanDataForType,
@@ -35,7 +35,7 @@ jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
 jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
 jest.mock( 'calypso/lib/navigate' );
 
-describe( 'Checkout contact step', () => {
+describe( 'Checkout contact step VAT form', () => {
 	const mainCartKey: CartKey = 'foo.com' as CartKey;
 	const initialCart = getBasicCart();
 	const defaultPropsForMockCheckout = {
@@ -59,6 +59,7 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	beforeEach( () => {
+		dispatch( CHECKOUT_STORE ).reset();
 		nock.cleanAll();
 		nock( 'https://public-api.wordpress.com' ).persist().post( '/rest/v1.1/logstash' ).reply( 200 );
 		mockGetVatInfoEndpoint( {} );
@@ -189,6 +190,30 @@ describe( 'Checkout contact step', () => {
 		expect( await screen.findByLabelText( 'Address for tax ID' ) ).toHaveValue( '123 Main Street' );
 	} );
 
+	it( 'renders the Northern Ireland checkbox pre-filled if the VAT endpoint returns XI', async () => {
+		nock.cleanAll();
+		mockCachedContactDetailsEndpoint( {
+			country_code: 'GB',
+			postal_code: '',
+		} );
+		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
+		mockGetVatInfoEndpoint( {
+			id: '12345',
+			name: 'Test company',
+			address: '123 Main Street',
+			country: 'XI',
+		} );
+		const cartChanges = { products: [ planWithoutDomain ] };
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
+
+		// Wait for checkout to load.
+		await screen.findByLabelText( 'Continue with the entered contact details' );
+		const countryField = await screen.findByLabelText( 'Country' );
+
+		expect( countryField.selectedOptions[ 0 ].value ).toBe( 'GB' );
+		expect( await screen.findByLabelText( 'Is the tax ID for Northern Ireland?' ) ).toBeChecked();
+	} );
+
 	it( 'does not allow unchecking the VAT details checkbox if the VAT fields are pre-filled', async () => {
 		nock.cleanAll();
 		mockCachedContactDetailsEndpoint( {
@@ -237,6 +262,125 @@ describe( 'Checkout contact step', () => {
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), countryCode );
 		await user.click( await screen.findByLabelText( 'Add Business Tax ID details' ) );
 		await user.type( await screen.findByLabelText( 'Business Tax ID Number' ), vatId );
+		await user.type( await screen.findByLabelText( 'Organization for tax ID' ), vatName );
+		await user.type( await screen.findByLabelText( 'Address for tax ID' ), vatAddress );
+		await user.click( screen.getByText( 'Continue' ) );
+		expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
+		expect( mockVatEndpoint ).toHaveBeenCalledWith( {
+			id: vatId,
+			name: vatName,
+			country: countryCode,
+			address: vatAddress,
+		} );
+	} );
+
+	it( 'sends ID to the VAT endpoint without prefixed country code when completing the step', async () => {
+		const vatId = '12345';
+		const vatName = 'Test company';
+		const vatAddress = '123 Main Street';
+		const countryCode = 'GB';
+		const mockVatEndpoint = mockSetVatInfoEndpoint();
+		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
+		const user = userEvent.setup();
+		const cartChanges = { products: [ planWithoutDomain ] };
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
+
+		// Wait for the cart to load
+		await screen.findByLabelText( 'Continue with the entered contact details' );
+
+		await user.selectOptions( await screen.findByLabelText( 'Country' ), countryCode );
+		await user.click( await screen.findByLabelText( 'Add Business Tax ID details' ) );
+		await user.type(
+			await screen.findByLabelText( 'Business Tax ID Number' ),
+			countryCode + vatId
+		);
+		await user.type( await screen.findByLabelText( 'Organization for tax ID' ), vatName );
+		await user.type( await screen.findByLabelText( 'Address for tax ID' ), vatAddress );
+		await user.click( screen.getByText( 'Continue' ) );
+		expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
+		expect( mockVatEndpoint ).toHaveBeenCalledWith( {
+			id: vatId,
+			name: vatName,
+			country: countryCode,
+			address: vatAddress,
+		} );
+	} );
+
+	it( 'sends ID to the VAT endpoint without prefixed Swiss country code and hyphen when completing the step', async () => {
+		const vatId = '12345';
+		const vatName = 'Test company';
+		const vatAddress = '123 Main Street';
+		const countryCode = 'CH';
+		const mockVatEndpoint = mockSetVatInfoEndpoint();
+		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
+		const user = userEvent.setup();
+		const cartChanges = { products: [ planWithoutDomain ] };
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
+
+		// Wait for the cart to load
+		await screen.findByLabelText( 'Continue with the entered contact details' );
+
+		await user.selectOptions( await screen.findByLabelText( 'Country' ), countryCode );
+		await user.click( await screen.findByLabelText( 'Add Business Tax ID details' ) );
+		await user.type( await screen.findByLabelText( 'Business Tax ID Number' ), 'CHE-' + vatId );
+		await user.type( await screen.findByLabelText( 'Organization for tax ID' ), vatName );
+		await user.type( await screen.findByLabelText( 'Address for tax ID' ), vatAddress );
+		await user.click( screen.getByText( 'Continue' ) );
+		expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
+		expect( mockVatEndpoint ).toHaveBeenCalledWith( {
+			id: vatId,
+			name: vatName,
+			country: countryCode,
+			address: vatAddress,
+		} );
+	} );
+
+	it( 'sends ID to the VAT endpoint without prefixed Swiss country code when completing the step', async () => {
+		const vatId = '12345';
+		const vatName = 'Test company';
+		const vatAddress = '123 Main Street';
+		const countryCode = 'CH';
+		const mockVatEndpoint = mockSetVatInfoEndpoint();
+		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
+		const user = userEvent.setup();
+		const cartChanges = { products: [ planWithoutDomain ] };
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
+
+		// Wait for the cart to load
+		await screen.findByLabelText( 'Continue with the entered contact details' );
+
+		await user.selectOptions( await screen.findByLabelText( 'Country' ), countryCode );
+		await user.click( await screen.findByLabelText( 'Add Business Tax ID details' ) );
+		await user.type( await screen.findByLabelText( 'Business Tax ID Number' ), 'CHE' + vatId );
+		await user.type( await screen.findByLabelText( 'Organization for tax ID' ), vatName );
+		await user.type( await screen.findByLabelText( 'Address for tax ID' ), vatAddress );
+		await user.click( screen.getByText( 'Continue' ) );
+		expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
+		expect( mockVatEndpoint ).toHaveBeenCalledWith( {
+			id: vatId,
+			name: vatName,
+			country: countryCode,
+			address: vatAddress,
+		} );
+	} );
+
+	it( 'sends ID to the VAT endpoint without prefixed lowercase Swiss country code when completing the step', async () => {
+		const vatId = '12345';
+		const vatName = 'Test company';
+		const vatAddress = '123 Main Street';
+		const countryCode = 'CH';
+		const mockVatEndpoint = mockSetVatInfoEndpoint();
+		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
+		const user = userEvent.setup();
+		const cartChanges = { products: [ planWithoutDomain ] };
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
+
+		// Wait for the cart to load
+		await screen.findByLabelText( 'Continue with the entered contact details' );
+
+		await user.selectOptions( await screen.findByLabelText( 'Country' ), countryCode );
+		await user.click( await screen.findByLabelText( 'Add Business Tax ID details' ) );
+		await user.type( await screen.findByLabelText( 'Business Tax ID Number' ), 'che' + vatId );
 		await user.type( await screen.findByLabelText( 'Organization for tax ID' ), vatName );
 		await user.type( await screen.findByLabelText( 'Address for tax ID' ), vatAddress );
 		await user.click( screen.getByText( 'Continue' ) );
@@ -517,277 +661,4 @@ describe( 'Checkout contact step', () => {
 		await user.click( screen.getByText( 'Continue' ) );
 		await expect( screen.findByTestId( 'payment-method-step--visible' ) ).toNeverAppear();
 	} );
-
-	it.each( [
-		{
-			tax: {
-				country_code: 'CA',
-				city: 'Montreal',
-				subdivision_code: 'QC',
-				postal_code: 'A1A 1A1',
-			},
-			labels: { subdivision_code: 'Province' },
-			product: 'plan',
-			expect: 'city and province',
-		},
-		{
-			tax: { country_code: 'CA', city: 'Montreal', subdivision_code: 'QC', postal_code: 'A1A 1A1' },
-			labels: { subdivision_code: 'Province' },
-			product: 'plan with domain',
-			expect: 'city and province',
-		},
-		{
-			tax: { country_code: 'IN', subdivision_code: 'KA', postal_code: '123 456' },
-			product: 'plan',
-			expect: 'state',
-		},
-		{
-			tax: { country_code: 'IN', subdivision_code: 'KA', postal_code: '123 456' },
-			product: 'plan with domain',
-			expect: 'state',
-		},
-		{
-			tax: { country_code: 'CH', address: 'CH Address', postal_code: '123-4567' },
-			product: 'plan',
-			expect: 'address',
-		},
-		{
-			tax: { country_code: 'CH', address: 'CH Address', postal_code: '123-4567' },
-			product: 'plan with domain',
-			expect: 'address',
-		},
-		{
-			tax: { country_code: 'JP', organization: 'JP Organization', postal_code: '123-4567' },
-			product: 'plan',
-			expect: 'organization',
-		},
-		{
-			tax: { country_code: 'JP', organization: 'JP Organization', postal_code: '123-4567' },
-			product: 'plan with domain',
-			expect: 'organization',
-		},
-		{
-			tax: {
-				country_code: 'NO',
-				organization: 'NO Organization',
-				city: 'Oslo',
-				postal_code: '1234',
-			},
-			product: 'plan',
-			expect: 'city and organization',
-		},
-		{
-			tax: {
-				country_code: 'NO',
-				organization: 'NO Organization',
-				city: 'Oslo',
-				postal_code: '1234',
-			},
-			product: 'plan with domain',
-			expect: 'city and organization',
-		},
-	] )(
-		'sends additional tax data with $expect to the shopping-cart endpoint when a country with those requirements has been chosen and a $product is in the cart',
-		async ( {
-			tax,
-			labels,
-			product,
-		}: {
-			tax: Record< string, string >;
-			labels?: Record< string, string >;
-			product: string;
-		} ) => {
-			const selects = { country_code: true, subdivision_code: true };
-			labels = {
-				city: 'City',
-				subdivision_code: 'State',
-				organization: 'Organization',
-				postal_code: product === 'plan' ? 'Postal code' : 'Postal Code',
-				country_code: 'Country',
-				address: 'Address',
-				...labels,
-			};
-			mockContactDetailsValidationEndpoint( product === 'plan' ? 'tax' : 'domain', {
-				success: true,
-			} );
-			const user = userEvent.setup();
-			const cartChanges =
-				product === 'plan'
-					? { products: [ planWithoutDomain ] }
-					: { products: [ planWithBundledDomain, domainProduct ] };
-
-			const setCart = jest.fn().mockImplementation( mockSetCartEndpoint );
-
-			render(
-				<MockCheckout
-					{ ...defaultPropsForMockCheckout }
-					cartChanges={ cartChanges }
-					setCart={ setCart }
-				/>
-			);
-			for ( const key of Object.keys( tax ) ) {
-				if ( selects[ key ] ) {
-					await user.selectOptions( await screen.findByLabelText( labels[ key ] ), tax[ key ] );
-				} else {
-					if ( ! labels[ key ] ) {
-						throw new Error( `There is a missing label for the key "${ key }".` );
-					}
-					await user.type( await screen.findByLabelText( labels[ key ] ), tax[ key ] );
-				}
-			}
-
-			await user.click( screen.getByText( 'Continue' ) );
-			expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
-			expect( setCart ).toHaveBeenCalledWith(
-				mainCartKey,
-				convertResponseCartToRequestCart( {
-					...initialCart,
-					...cartChanges,
-					tax: {
-						display_taxes: true,
-						location: tax,
-					},
-				} )
-			);
-		}
-	);
-
-	it.each( [
-		{ vatOrganization: 'with', product: 'plan' },
-		{ vatOrganization: 'without', product: 'plan' },
-		{ vatOrganization: 'with', product: 'plan with domain' },
-		{ vatOrganization: 'without', product: 'plan with domain' },
-	] )(
-		'sends both contact details and tax data to the shopping cart endpoint when a plan with domain is in the cart and VAT details have been added $vatOrganization VAT organization',
-		async ( { vatOrganization, product } ) => {
-			const vatId = '12345';
-			const vatName = vatOrganization === 'with' ? 'VAT Organization' : 'Contact Organization';
-			const vatAddress = '123 Main Street';
-			const countryCode = 'GB';
-			const postalCode = 'NW1 4NP';
-			mockSetVatInfoEndpoint();
-			mockContactDetailsValidationEndpoint( product === 'plan' ? 'tax' : 'domain', {
-				success: true,
-			} );
-			const user = userEvent.setup();
-			const cartChanges =
-				product === 'plan'
-					? { products: [ planWithoutDomain ] }
-					: { products: [ planWithBundledDomain, domainProduct ] };
-
-			const setCart = jest.fn().mockImplementation( mockSetCartEndpoint );
-
-			render(
-				<MockCheckout
-					{ ...defaultPropsForMockCheckout }
-					cartChanges={ cartChanges }
-					setCart={ setCart }
-				/>
-			);
-			await user.selectOptions( await screen.findByLabelText( 'Country' ), countryCode );
-			await user.type(
-				await screen.findByLabelText( product === 'plan' ? 'Postal code' : 'Postal Code' ),
-				postalCode
-			);
-			await user.type( await screen.findByLabelText( 'Organization' ), 'Contact Organization' );
-
-			// Check the box
-			await user.click( await screen.findByLabelText( 'Add Business Tax ID details' ) );
-
-			// Fill in the details
-			await user.type( await screen.findByLabelText( 'Business Tax ID Number' ), vatId );
-			if ( vatOrganization === 'with' ) {
-				await user.type( await screen.findByLabelText( 'Organization for tax ID' ), vatName );
-			}
-			await user.type( await screen.findByLabelText( 'Address for tax ID' ), vatAddress );
-
-			await user.click( screen.getByText( 'Continue' ) );
-			expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
-			expect( setCart ).toHaveBeenCalledWith(
-				mainCartKey,
-				convertResponseCartToRequestCart( {
-					...initialCart,
-					...cartChanges,
-					tax: {
-						display_taxes: true,
-						location: {
-							country_code: countryCode,
-							postal_code: postalCode,
-							vat_id: vatId,
-							organization: vatName,
-							address: vatAddress,
-						},
-					},
-				} )
-			);
-		}
-	);
-
-	it.each( [
-		{ withVatAddress: 'with', product: 'plan' },
-		{ withVatAddress: 'without', product: 'plan' },
-		{ withVatAddress: 'with', product: 'plan with domain' },
-		{ withVatAddress: 'without', product: 'plan with domain' },
-	] )(
-		'sends both contact details and tax data to the shopping cart endpoint when a plan with domain is in the cart and VAT details have been added $withVatAddress VAT address',
-		async ( { withVatAddress, product } ) => {
-			const vatId = '12345';
-			const vatAddress = withVatAddress === 'with' ? 'VAT Address' : 'Contact Address';
-			const countryCode = 'CH';
-			const postalCode = 'NW1 4NP';
-			mockSetVatInfoEndpoint();
-			mockContactDetailsValidationEndpoint( product === 'plan' ? 'tax' : 'domain', {
-				success: true,
-			} );
-			const user = userEvent.setup();
-			const cartChanges =
-				product === 'plan'
-					? { products: [ planWithoutDomain ] }
-					: { products: [ planWithBundledDomain, domainProduct ] };
-
-			const setCart = jest.fn().mockImplementation( mockSetCartEndpoint );
-
-			render(
-				<MockCheckout
-					{ ...defaultPropsForMockCheckout }
-					cartChanges={ cartChanges }
-					setCart={ setCart }
-				/>
-			);
-			await user.selectOptions( await screen.findByLabelText( 'Country' ), countryCode );
-			await user.type(
-				await screen.findByLabelText( product === 'plan' ? 'Postal code' : 'Postal Code' ),
-				postalCode
-			);
-			await user.type( await screen.findByLabelText( 'Address' ), 'Contact Address' );
-
-			// Check the box
-			await user.click( await screen.findByLabelText( 'Add Business Tax ID details' ) );
-
-			// Fill in the details
-			await user.type( await screen.findByLabelText( 'Business Tax ID Number' ), vatId );
-			if ( withVatAddress === 'with' ) {
-				await user.type( await screen.findByLabelText( 'Address for tax ID' ), vatAddress );
-			}
-
-			await user.click( screen.getByText( 'Continue' ) );
-			expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
-			expect( setCart ).toHaveBeenCalledWith(
-				mainCartKey,
-				convertResponseCartToRequestCart( {
-					...initialCart,
-					...cartChanges,
-					tax: {
-						display_taxes: true,
-						location: {
-							country_code: countryCode,
-							postal_code: postalCode,
-							vat_id: vatId,
-							address: vatAddress,
-						},
-					},
-				} )
-			);
-		}
-	);
 } );

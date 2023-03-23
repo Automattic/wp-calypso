@@ -136,7 +136,10 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 	const showExpiryNotice = item.legacy && isExpiring;
 
 	const isUpgradeableToYearly =
-		isOwned && selectedTerm === TERM_ANNUALLY && item.term === TERM_MONTHLY;
+		isOwned &&
+		selectedTerm === TERM_ANNUALLY &&
+		item.term === TERM_MONTHLY &&
+		! item.forceNoYearlyUpgrade;
 
 	// Sets the currency. This is needed for the tooltip below.
 	item.displayCurrency = item.displayCurrency ?? currencyCode ?? undefined;

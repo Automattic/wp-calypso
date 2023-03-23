@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -31,13 +32,15 @@ class MeSidebar extends Component {
 	onSignOut = async () => {
 		const { currentUser } = this.props;
 
-		// If user is using en locale, redirect to app promo page on sign out
-		const isEnLocale = config( 'english_locales' ).includes( currentUser?.localeSlug );
+		// If user is using a supported locale, redirect to app promo page on sign out
+		const isSupportedLocale =
+			config( 'english_locales' ).includes( currentUser?.localeSlug ) ||
+			config( 'magnificent_non_en_locales' ).includes( currentUser?.localeSlug );
 
 		let redirectTo = null;
 
-		if ( isEnLocale && ! config.isEnabled( 'desktop' ) ) {
-			redirectTo = '/?apppromo';
+		if ( isSupportedLocale && ! config.isEnabled( 'desktop' ) ) {
+			redirectTo = localizeUrl( 'https://wordpress.com/?apppromo' );
 		}
 
 		try {
@@ -57,8 +60,6 @@ class MeSidebar extends Component {
 	render() {
 		const { context, translate } = this.props;
 		const path = context.path.replace( '/me', '' ); // Remove base path.
-
-		const displayJetpackAppBranding = config.isEnabled( 'jetpack/app-branding' );
 
 		return (
 			<Sidebar>
@@ -149,8 +150,8 @@ class MeSidebar extends Component {
 						<SidebarItem
 							selected={ itemLinkMatches( '/get-apps', path ) }
 							link="/me/get-apps"
-							label={ displayJetpackAppBranding ? translate( 'Apps' ) : translate( 'Get Apps' ) }
-							icon={ displayJetpackAppBranding ? 'plans' : 'my-sites' }
+							label={ translate( 'Apps' ) }
+							icon="plans"
 							onNavigate={ this.onNavigate }
 						/>
 					</SidebarMenu>

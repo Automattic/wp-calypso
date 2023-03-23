@@ -21,7 +21,7 @@ import { getAvailableProductsList } from 'calypso/state/products-list/selectors'
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useQuery } from '../../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../../stores';
-import type { DomainSuggestion, DomainForm } from '@automattic/data-stores';
+import type { DomainSuggestion, DomainForm, OnboardSelect } from '@automattic/data-stores';
 
 interface DomainFormControlProps {
 	analyticsSection: string;
@@ -51,10 +51,13 @@ export function DomainFormControl( {
 		};
 	} );
 
-	const { domainForm, siteTitle } = useSelect( ( select ) => ( {
-		domainForm: select( ONBOARD_STORE ).getDomainForm(),
-		siteTitle: select( ONBOARD_STORE ).getSelectedSiteTitle(),
-	} ) );
+	const { domainForm, siteTitle } = useSelect(
+		( select ) => ( {
+			domainForm: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainForm(),
+			siteTitle: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
+		} ),
+		[]
+	);
 
 	const { setDomainForm } = useDispatch( ONBOARD_STORE );
 
@@ -135,7 +138,7 @@ export function DomainFormControl( {
 
 	const getOtherManagedSubdomainsCountOverride = () => {
 		if ( flow === LINK_IN_BIO_TLD_FLOW ) {
-			return 2;
+			return 1;
 		}
 	};
 
@@ -262,17 +265,6 @@ export function DomainFormControl( {
 	} else {
 		content = renderDomainForm();
 	}
-
-	// if ( 'invalid' === this.props.step.status ) {
-	// 	content = (
-	// 		<div className="domains__step-section-wrapper">
-	// 			<Notice status="is-error" showDismiss={ false }>
-	// 				{ this.props.step.errors.message }
-	// 			</Notice>
-	// 			{ content }
-	// 		</div>
-	// 	);
-	// }
 
 	return (
 		<>

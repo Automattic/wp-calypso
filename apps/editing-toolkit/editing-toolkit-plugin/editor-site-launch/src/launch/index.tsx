@@ -5,18 +5,28 @@ import FinalStep from '../launch-steps/final-step';
 import NameStep from '../launch-steps/name-step';
 import PlanStep from '../launch-steps/plan-step';
 import { LAUNCH_STORE } from '../stores';
+import type { LaunchSelect } from '@automattic/data-stores';
 
 interface Props {
 	onSubmit?: () => void;
 }
 
 const Launch: React.FunctionComponent< Props > = ( { onSubmit } ) => {
-	const { step: currentStep } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
-
-	const LaunchStep = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchStep() );
-	const LaunchSequence = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchSequence() );
-	const firstIncompleteStep = useSelect( ( select ) =>
-		select( LAUNCH_STORE ).getFirstIncompleteStep()
+	const { step: currentStep } = useSelect(
+		( select ) => ( select( LAUNCH_STORE ) as LaunchSelect ).getState(),
+		[]
+	);
+	const LaunchStep = useSelect(
+		( select ) => ( select( LAUNCH_STORE ) as LaunchSelect ).getLaunchStep(),
+		[]
+	);
+	const LaunchSequence = useSelect(
+		( select ) => ( select( LAUNCH_STORE ) as LaunchSelect ).getLaunchSequence(),
+		[]
+	);
+	const firstIncompleteStep = useSelect(
+		( select ) => ( select( LAUNCH_STORE ) as LaunchSelect ).getFirstIncompleteStep(),
+		[]
 	);
 
 	const { setStep, setSidebarFullscreen, unsetSidebarFullscreen } = useDispatch( LAUNCH_STORE );

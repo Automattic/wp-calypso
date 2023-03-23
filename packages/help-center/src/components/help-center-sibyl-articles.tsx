@@ -13,7 +13,7 @@ import {
 import { useLocale } from '@automattic/i18n-utils';
 import { external, Icon, page } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, LinkProps } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
@@ -110,7 +110,7 @@ export function SibylArticles( {
 			sibylArticles?.length
 				? sibylArticles
 				: getFilteredContextResults( sectionName, intent?.site_intent ?? '' )
-		 ).map( ( article ) => {
+		).map( ( article ) => {
 			const hasPostId = 'post_id' in article && article.post_id;
 			return {
 				...article,
@@ -121,6 +121,15 @@ export function SibylArticles( {
 			};
 		} );
 	}, [ sibylArticles, sectionName, intent?.site_intent, locale, message, articleCanNavigateBack ] );
+
+	useEffect( () => {
+		if ( sibylArticles?.length ) {
+			recordTracksEvent( 'calypso_helpcenter_sibyl_display_results', {
+				location: 'help-center',
+				results_count: sibylArticles.length,
+			} );
+		}
+	}, [ sibylArticles ] );
 
 	return (
 		<div className="help-center-sibyl-articles__container">

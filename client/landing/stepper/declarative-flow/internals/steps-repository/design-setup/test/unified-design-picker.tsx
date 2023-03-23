@@ -21,6 +21,7 @@ import UnifiedDesignPickerStep from '../unified-design-picker';
 jest.mock( '@wordpress/compose', () => ( {
 	...jest.requireActual( '@wordpress/compose' ),
 	useViewportMatch: jest.fn( () => false ),
+	useMediaQuery: jest.fn( () => true ),
 } ) );
 
 jest.mock( 'react-router-dom', () => ( {
@@ -41,6 +42,10 @@ jest.mock( '../../../../../hooks/use-site', () => ( {
 
 jest.mock( 'calypso/state/sites/hooks/use-premium-global-styles', () => ( {
 	usePremiumGlobalStyles: () => ( { shouldLimitGlobalStyles: false } ),
+} ) );
+
+jest.mock( 'calypso/lib/explat', () => ( {
+	useExperiment: () => [ false, null ],
 } ) );
 
 /**

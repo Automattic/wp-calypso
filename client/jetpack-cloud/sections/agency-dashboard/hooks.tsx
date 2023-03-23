@@ -1,15 +1,18 @@
+import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState, useContext } from 'react';
+import { useCallback, useState, useContext, useEffect, RefObject } from 'react';
 import { useQueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setSiteMonitorStatus } from 'calypso/state/jetpack-agency-dashboard/actions';
+import useToggleActivateMonitorMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-toggle-activate-monitor-mutation';
 import useUpdateMonitorSettingsMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-update-monitor-settings-mutation';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import SitesOverviewContext from './sites-overview/context';
 import type { Site, UpdateMonitorSettingsParams } from './sites-overview/types';
 
 const NOTIFICATION_DURATION = 3000;
+const DESKTOP_BREAKPOINT = '>1280px';
 
 function getRejectedAndFulfilledRequests(
 	promises: any[],
@@ -45,14 +48,14 @@ export function useToggleActivateMonitor(
 	const translate = useTranslate();
 
 	const queryClient = useQueryClient();
-	const { filter, search, currentPage } = useContext( SitesOverviewContext );
-	const queryKey = [ 'jetpack-agency-dashboard-sites', search, currentPage, filter ];
+	const { filter, search, currentPage, sort } = useContext( SitesOverviewContext );
+	const queryKey = [ 'jetpack-agency-dashboard-sites', search, currentPage, filter, sort ];
 
-	const toggleActivateMonitoring = useUpdateMonitorSettingsMutation( {
+	const toggleActivateMonitoring = useToggleActivateMonitorMutation( {
 		onMutate: async ( { siteId } ) => {
 			dispatch( setSiteMonitorStatus( siteId, 'loading' ) );
 		},
-		onSuccess: async ( data, { siteId } ) => {
+		onSuccess: async ( _data, { siteId, params } ) => {
 			// Cancel any current refetches, so they don't overwrite our update
 			await queryClient.cancelQueries( queryKey );
 
@@ -66,7 +69,10 @@ export function useToggleActivateMonitor(
 								...site,
 								monitor_settings: {
 									...site.monitor_settings,
-									monitor_active: data.settings.monitor_active,
+									monitor_active: params.monitor_active,
+									// As we rely primarily on the monitor_site_status field to determine the status of the monitor,
+									// we need to update it when the monitor_active field is updated.
+									monitor_site_status: params.monitor_active,
 								},
 							};
 						}
@@ -192,8 +198,8 @@ export function useUpdateMonitorSettings( sites: Array< { blog_id: number; url: 
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const queryClient = useQueryClient();
-	const { filter, search, currentPage } = useContext( SitesOverviewContext );
-	const queryKey = [ 'jetpack-agency-dashboard-sites', search, currentPage, filter ];
+	const { filter, search, currentPage, sort } = useContext( SitesOverviewContext );
+	const queryKey = [ 'jetpack-agency-dashboard-sites', search, currentPage, filter, sort ];
 
 	const [ status, setStatus ] = useState( 'idle' );
 
@@ -366,3 +372,39 @@ export function useJetpackAgencyDashboardRecordTrackEvent(
 
 	return dispatchTrackingEvent;
 }
+
+export const useDashboardShowLargeScreen = (
+	siteTableRef: RefObject< HTMLTableElement >,
+	containerRef: { current: { clientWidth: number } }
+) => {
+	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
+
+	const [ isOverflowing, setIsOverflowing ] = useState( false );
+
+	const checkIfOverflowing = useCallback( () => {
+		const siteTableEle = siteTableRef ? siteTableRef.current : null;
+
+		if ( siteTableEle ) {
+			if ( siteTableEle.clientWidth > containerRef?.current?.clientWidth ) {
+				setTimeout( () => {
+					setIsOverflowing( true );
+				}, 1 );
+			}
+		}
+	}, [ siteTableRef, containerRef ] );
+
+	useEffect( () => {
+		window.addEventListener( 'resize', checkIfOverflowing );
+		return () => {
+			window.removeEventListener( 'resize', checkIfOverflowing );
+		};
+	}, [ checkIfOverflowing ] );
+
+	useEffect( () => {
+		checkIfOverflowing();
+		// Do not add checkIfOverflowing to the dependency array as it will cause an infinite loop
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
+
+	return isDesktop && ! isOverflowing;
+};

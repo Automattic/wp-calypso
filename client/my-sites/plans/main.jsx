@@ -4,10 +4,16 @@ import {
 	getIntervalTypeForTerm,
 	PLAN_FREE,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
-	isFreePlan,
+	isFreePlanProduct,
+	PLAN_WOOEXPRESS_SMALL,
+	PLAN_WOOEXPRESS_SMALL_MONTHLY,
+	PLAN_WOOEXPRESS_MEDIUM,
+	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 } from '@automattic/calypso-products';
 import { is2023PricingGridActivePage } from '@automattic/calypso-products/src/plans-utilities';
+import { WpcomPlansUI } from '@automattic/data-stores';
 import { withShoppingCart } from '@automattic/shopping-cart';
+import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -24,6 +30,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import { getDomainRegistrations } from 'calypso/lib/cart-values/cart-items';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
@@ -35,7 +42,6 @@ import { getPlanSlug } from 'calypso/state/plans/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
-import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
@@ -48,6 +54,7 @@ import DomainUpsellDialog from './components/domain-upsell-dialog';
 import PlansHeader from './components/plans-header';
 import ECommerceTrialPlansPage from './ecommerce-trial';
 import ModernizedLayout from './modernized-layout';
+import WooExpressMediumPlansPage from './wx-medium';
 
 import './style.scss';
 
@@ -65,6 +72,76 @@ function DomainAndPlanUpsellNotice() {
 		/>
 	);
 }
+function DescriptionMessage( { isDomainUpsell, isFreePlan, yourDomainName, siteSlug } ) {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+
+	if ( ! isDomainUpsell ) {
+		return (
+			<>
+				<p>
+					{ translate(
+						'With your annual plan, you’ll get %(domainName)s {{strong}}free for the first year{{/strong}}.',
+						{
+							args: {
+								domainName: yourDomainName,
+							},
+							components: {
+								strong: <strong />,
+							},
+						}
+					) }
+				</p>
+				<p>
+					{ translate(
+						'You’ll also unlock advanced features that make it easy to build and grow your site.'
+					) }
+				</p>
+			</>
+		);
+	}
+
+	const skipPlan = () => {
+		recordTracksEvent( 'calypso_plans_page_domain_upsell_skip_click' );
+		// show Warning only on free plans.
+		isFreePlan
+			? dispatch( WpcomPlansUI.store ).setShowDomainUpsellDialog( true )
+			: page( `/checkout/${ siteSlug }` );
+	};
+
+	const subtitle = isFreePlan
+		? translate( 'See and compare the features available on each WordPress.com plan' )
+		: translate( 'All of our annual plans include a free domain name for one year.' );
+
+	const subtitle2 = isFreePlan
+		? ''
+		: translate(
+				'Upgrade to a yearly plan and claim {{strong}}%(domainName)s for free{{/strong}}.',
+				{
+					args: {
+						domainName: yourDomainName,
+					},
+					components: {
+						strong: <strong />,
+						br: <br />,
+					},
+				}
+		  );
+
+	const skipText = isFreePlan
+		? translate( 'Or continue with the free plan.' )
+		: translate( 'Or continue with your monthly plan.' );
+
+	return (
+		<>
+			<p>{ subtitle }</p>
+			{ subtitle2 && <p>{ subtitle2 }</p> }
+			<p>
+				<button onClick={ skipPlan }>{ skipText }</button>
+			</p>
+		</>
+	);
+}
 
 class Plans extends Component {
 	static propTypes = {
@@ -77,7 +154,8 @@ class Plans extends Component {
 		redirectTo: PropTypes.string,
 		selectedSite: PropTypes.object,
 		isDomainAndPlanPackageFlow: PropTypes.bool,
-		domainFromHomeUpsellFlow: PropTypes.string,
+		isDomainUpsell: PropTypes.bool,
+		isDomainUpsellSuggested: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -152,7 +230,13 @@ class Plans extends Component {
 	};
 
 	renderPlansMain() {
-		const { currentPlan, selectedSite, isWPForTeamsSite } = this.props;
+		const {
+			currentPlan,
+			selectedSite,
+			isWPForTeamsSite,
+			currentPlanIntervalType,
+			is2023PricingGridVisible,
+		} = this.props;
 
 		if ( ! this.props.plansLoaded || ! currentPlan ) {
 			// Maybe we should show a loading indicator here?
@@ -171,13 +255,16 @@ class Plans extends Component {
 			);
 		}
 
-		const hideFreePlan =
-			! is2023PricingGridActivePage( window ) || this.props.isDomainAndPlanPackageFlow;
+		const hideFreePlan = ! is2023PricingGridVisible || this.props.isDomainAndPlanPackageFlow;
 
+		const hidePlanTypeSelector =
+			this.props.domainAndPlanPackage &&
+			( ! this.props.isDomainUpsell ||
+				( this.props.isDomainUpsell && currentPlanIntervalType === 'monthly' ) );
 		return (
 			<PlansFeaturesMain
 				redirectToAddDomainFlow={ this.props.redirectToAddDomainFlow }
-				domainAndPlanPackage={ this.props.domainAndPlanPackage }
+				hidePlanTypeSelector={ hidePlanTypeSelector }
 				hideFreePlan={ hideFreePlan }
 				customerType={ this.props.customerType }
 				intervalType={ this.props.intervalType }
@@ -190,6 +277,7 @@ class Plans extends Component {
 				plansWithScroll={ false }
 				showTreatmentPlansReorderTest={ this.props.showTreatmentPlansReorderTest }
 				hidePlansFeatureComparison={ this.props.isDomainAndPlanPackageFlow }
+				is2023PricingGridVisible={ is2023PricingGridVisible }
 			/>
 		);
 	}
@@ -207,6 +295,21 @@ class Plans extends Component {
 		return <ECommerceTrialPlansPage interval={ interval } siteSlug={ selectedSite.slug } />;
 	}
 
+	renderWooExpressMediumPage() {
+		const { currentPlan, selectedSite } = this.props;
+		return <WooExpressMediumPlansPage currentPlan={ currentPlan } selectedSite={ selectedSite } />;
+	}
+
+	renderMainContent( { isEcommerceTrial, isWooExpressPlan } ) {
+		if ( isEcommerceTrial ) {
+			return this.renderEcommerceTrialPage();
+		}
+		if ( isWooExpressPlan ) {
+			return this.renderWooExpressMediumPage();
+		}
+		return this.renderPlansMain();
+	}
+
 	render() {
 		const {
 			selectedSite,
@@ -217,7 +320,10 @@ class Plans extends Component {
 			is2023PricingGridVisible,
 			isDomainAndPlanPackageFlow,
 			isJetpackNotAtomic,
-			domainFromHomeUpsellFlow,
+			isDomainUpsell,
+			isDomainUpsellSuggested,
+			isFreePlan,
+			currentPlanIntervalType,
 		} = this.props;
 
 		if ( ! selectedSite || this.isInvalidPlanInterval() || ! currentPlan ) {
@@ -226,88 +332,72 @@ class Plans extends Component {
 
 		const currentPlanSlug = selectedSite?.plan?.product_slug;
 		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+		const isWooExpressPlan = [
+			PLAN_WOOEXPRESS_MEDIUM,
+			PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
+			PLAN_WOOEXPRESS_SMALL,
+			PLAN_WOOEXPRESS_SMALL_MONTHLY,
+		].includes( currentPlanSlug );
+
 		const allDomains = isDomainAndPlanPackageFlow ? getDomainRegistrations( this.props.cart ) : [];
 		const yourDomainName = allDomains.length
 			? allDomains.slice( -1 )[ 0 ]?.meta
 			: translate( 'your domain name' );
-		const goBackLink = addQueryArgs( `/domains/add/${ selectedSite.slug }`, {
-			domainAndPlanPackage: true,
-		} );
-		const domainUpsellDescription = translate(
-			'With an annual plan, you can get {{strong}}%(domainName)s for free{{/strong}} for the first year, Jetpack essential features, live chat support, and all the features that will take your site to the next level.',
-			{
-				args: {
-					domainName: domainFromHomeUpsellFlow,
-				},
-				components: {
-					strong: <strong />,
-				},
-			}
-		);
+		const goBackLink =
+			isDomainUpsell && isDomainUpsellSuggested
+				? addQueryArgs( `/home/${ selectedSite.slug }` )
+				: addQueryArgs( `/domains/add/${ selectedSite.slug }`, {
+						domainAndPlanPackage: true,
+				  } );
+		// eslint-disable-next-line no-nested-ternary
+
+		const headline =
+			currentPlanIntervalType === 'monthly'
+				? translate( 'Get your domain’s first year for free' )
+				: translate( 'Choose the perfect plan' );
+
+		// Hide for WooExpress plans
+		const showPlansNavigation = ! isWooExpressPlan;
 
 		return (
 			<div>
-				{ ! isJetpackNotAtomic && (
-					<ModernizedLayout dropShadowOnHeader={ isFreePlan( currentPlanSlug ) } />
-				) }
+				{ ! isJetpackNotAtomic && <ModernizedLayout dropShadowOnHeader={ isFreePlan } /> }
 				{ selectedSite.ID && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
 				<PageViewTracker path="/plans/:site" title="Plans" />
 				<QueryContactDetailsCache />
 				<QueryPlans />
 				<TrackComponentView eventName="calypso_plans_view" />
-				<DomainUpsellDialog domain={ domainFromHomeUpsellFlow } />
+				{ isDomainUpsell && <DomainUpsellDialog domain={ selectedSite.slug } /> }
 				{ canAccessPlans && (
 					<div>
-						{ ! isDomainAndPlanPackageFlow && (
-							<PlansHeader domainFromHomeUpsellFlow={ domainFromHomeUpsellFlow } />
-						) }
+						{ ! isDomainAndPlanPackageFlow && <PlansHeader /> }
 						{ isDomainAndPlanPackageFlow && (
 							<>
 								<div className="plans__header">
 									<DomainAndPlanPackageNavigation goBackLink={ goBackLink } step={ 2 } />
 
-									<FormattedHeader
-										brandFont
-										headerText={ translate( 'Choose the perfect plan' ) }
-										align="center"
-									/>
+									<FormattedHeader brandFont headerText={ headline } align="center" />
 
-									<p>
-										{ translate(
-											'With your annual plan, you’ll get %(domainName)s {{strong}}free for the first year{{/strong}}. You’ll also unlock advanced features that make it easy to build and grow your site.',
-											{
-												args: {
-													domainName: yourDomainName,
-												},
-												components: {
-													strong: <strong />,
-												},
-											}
-										) }
-									</p>
+									<DescriptionMessage
+										isFreePlan={ isFreePlan }
+										yourDomainName={ yourDomainName }
+										siteSlug={ selectedSite.slug }
+										isDomainUpsell={ isDomainUpsell }
+									/>
 								</div>
 							</>
 						) }
 						<div id="plans" className="plans plans__has-sidebar">
-							<PlansNavigation path={ this.props.context.path } />
+							{ showPlansNavigation && <PlansNavigation path={ this.props.context.path } /> }
 							<Main
 								fullWidthLayout={ is2023PricingGridVisible && ! isEcommerceTrial }
 								wideLayout={ ! is2023PricingGridVisible || isEcommerceTrial }
 							>
-								{ ! isDomainAndPlanPackageFlow && domainFromHomeUpsellFlow && (
-									<FormattedHeader
-										className="header-text plans__formatted-header is-domain-upsell"
-										brandFont
-										headerText={ translate( 'Free for the first year!' ) }
-										subHeaderText={ domainUpsellDescription }
-										align="center"
-									/>
-								) }
 								{ ! isDomainAndPlanPackageFlow && domainAndPlanPackage && (
 									<DomainAndPlanUpsellNotice />
 								) }
-								{ isEcommerceTrial ? this.renderEcommerceTrialPage() : this.renderPlansMain() }
+								{ this.renderMainContent( { isEcommerceTrial, isWooExpressPlan } ) }
 								<PerformanceTrackerStop />
 							</Main>
 						</div>
@@ -324,14 +414,13 @@ class Plans extends Component {
 	}
 }
 
-const ConnectedPlans = connect( ( state ) => {
+const ConnectedPlans = connect( ( state, props ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 
 	const currentPlan = getCurrentPlan( state, selectedSiteId );
 	const currentPlanIntervalType = getIntervalTypeForTerm(
 		getPlan( currentPlan?.productSlug )?.term
 	);
-	const is2023PricingGridVisible = is2023PricingGridActivePage( window );
 
 	return {
 		currentPlan,
@@ -343,10 +432,15 @@ const ConnectedPlans = connect( ( state ) => {
 		isSiteEligibleForMonthlyPlan: isEligibleForWpComMonthlyPlan( state, selectedSiteId ),
 		showTreatmentPlansReorderTest: isTreatmentPlansReorderTest( state ),
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
-		is2023PricingGridVisible,
+		is2023PricingGridVisible:
+			props.is2023PricingGridVisible ?? is2023PricingGridActivePage( window ),
 		isDomainAndPlanPackageFlow: !! getCurrentQueryArguments( state )?.domainAndPlanPackage,
 		isJetpackNotAtomic: isJetpackSite( state, selectedSiteId, { treatAtomicAsJetpackSite: false } ),
-		domainFromHomeUpsellFlow: getDomainFromHomeUpsellInQuery( state ),
+		isDomainUpsell:
+			!! getCurrentQueryArguments( state )?.domainAndPlanPackage &&
+			!! getCurrentQueryArguments( state )?.domain,
+		isDomainUpsellSuggested: getCurrentQueryArguments( state )?.domain === 'true',
+		isFreePlan: isFreePlanProduct( currentPlan ),
 	};
 } )( withCartKey( withShoppingCart( localize( withTrackingTool( 'HotJar' )( Plans ) ) ) ) );
 

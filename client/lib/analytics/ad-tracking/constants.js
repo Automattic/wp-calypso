@@ -44,6 +44,7 @@ export const TRACKING_IDS = {
 	dcmFloodlightAdvertiserId: '6355556',
 	facebookInit: '823166884443641',
 	facebookJetpackInit: '919484458159593',
+	facebookAkismetInit: '485349158311379',
 	fullStory: '120RG4',
 	fullStoryJetpack: '181XXV',
 	outbrainAdvId: '00f0f5287433c2851cc0cb917c7ff0465e',
@@ -63,6 +64,8 @@ export const TRACKING_IDS = {
 	jetpackGoogleAnalyticsGtag: 'UA-52447-43', // Jetpack Gtag (Analytics) for use in Jetpack x WordPress.com Flows
 	jetpackGoogleGA4Gtag: 'G-YELRMVV4YG',
 	jetpackGoogleAdsGtagPurchase: 'AW-946162814/kIF1CL3ApfsBEP6YlcMD',
+	akismetGoogleGA4Gtag: 'G-V8X5PZE9F8',
+	akismetGoogleAdsGtagPurchase: 'AW-10778599042/U-01CImL14MDEIK90ZMo', // "Akismet.com Purchase Gtag"
 	jetpackLinkedinId: '4537722',
 	jetpackTwitterPixelId: 'odlje',
 	wooGoogleTagManagerId: 'GTM-W64W8Q',

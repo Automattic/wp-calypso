@@ -38,6 +38,7 @@ import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/p
 import { fetchStoredCards } from 'calypso/state/partner-portal/stored-cards/actions';
 import getSites from 'calypso/state/selectors/get-sites';
 import type { SiteDetails } from '@automattic/data-stores';
+import type { CreditCardSelectors } from 'calypso/state/partner-portal/types';
 
 import './style.scss';
 
@@ -61,8 +62,9 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 		() => [ stripeMethod ].filter( isValueTruthy ),
 		[ stripeMethod ]
 	);
-	const useAsPrimaryPaymentMethod = useSelect( ( select ) =>
-		select( 'credit-card' ).useAsPrimaryPaymentMethod()
+	const useAsPrimaryPaymentMethod: boolean = useSelect(
+		( select ) => ( select( 'credit-card' ) as CreditCardSelectors ).useAsPrimaryPaymentMethod(),
+		[]
 	);
 
 	const sites = useSelector( getSites );

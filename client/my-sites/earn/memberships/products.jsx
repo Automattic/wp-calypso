@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import Badge from 'calypso/components/badge';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
@@ -25,15 +26,17 @@ import {
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 import RecurringPaymentsPlanAddEditModal from './add-edit-plan-modal';
+import { ADD_NEW_PAYMENT_PLAN_HASH, ADD_NEWSLETTER_PAYMENT_PLAN_HASH } from './constants';
 import RecurringPaymentsPlanDeleteModal from './delete-plan-modal';
 import MembershipsSection from './';
 import './style.scss';
 
+const showAddEditDialog =
+	window.location.hash === ADD_NEW_PAYMENT_PLAN_HASH ||
+	window.location.hash === ADD_NEWSLETTER_PAYMENT_PLAN_HASH;
 class MembershipsProductsSection extends Component {
 	state = {
-		showAddEditDialog:
-			window.location.hash === '#add-new-payment-plan' ||
-			window.location.hash === '#add-newsletter-payment-plan',
+		showAddEditDialog,
 		showDeleteDialog: false,
 		product: null,
 	};
@@ -77,7 +80,7 @@ class MembershipsProductsSection extends Component {
 		// This will take the hash into account only when ading a new product
 		const subscribe_as_site_subscriber = this.state.product
 			? this.state.product?.subscribe_as_site_subscriber
-			: window.location.hash === '#add-newsletter-payment-plan';
+			: window.location.hash === ADD_NEWSLETTER_PAYMENT_PLAN_HASH;
 
 		return (
 			<div>
@@ -121,6 +124,11 @@ class MembershipsProductsSection extends Component {
 								{ formatCurrency( product.price, product.currency ) }
 							</div>
 							<div className="memberships__products-product-title">{ product.title }</div>
+							{ product?.subscribe_as_site_subscriber && (
+								<div className="memberships__products-product-badge">
+									<Badge type="info-blue">{ this.props.translate( 'Newsletter' ) }</Badge>
+								</div>
+							) }
 						</div>
 
 						{ this.renderEllipsisMenu( product.ID ) }

@@ -339,6 +339,7 @@ const sections = [
 		paths: [ '/tags', '/tag' ],
 		module: 'calypso/reader/tag-stream',
 		group: 'reader',
+		enableLoggedOut: true,
 		trackLoadPerformance: true,
 	},
 	{
@@ -566,6 +567,13 @@ const sections = [
 		name: 'subscriptions',
 		paths: [ '/subscriptions' ],
 		module: 'calypso/my-sites/subscriptions',
+		group: 'sites',
+		enableLoggedOut: true,
+	},
+	{
+		name: 'site-logs',
+		paths: [ '/site-logs' ],
+		module: 'calypso/my-sites/site-logs',
 		group: 'sites',
 	},
 ];

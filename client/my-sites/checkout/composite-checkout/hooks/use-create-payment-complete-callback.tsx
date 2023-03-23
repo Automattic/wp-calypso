@@ -35,7 +35,10 @@ import type {
 	PaymentEventCallbackArguments,
 } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
-import type { WPCOMTransactionEndpointResponse } from '@automattic/wpcom-checkout';
+import type {
+	WPCOMTransactionEndpointResponse,
+	SitelessCheckoutType,
+} from '@automattic/wpcom-checkout';
 import type { PostCheckoutUrlArguments } from 'calypso/my-sites/checkout/get-thank-you-page-url';
 import type { CalypsoDispatch } from 'calypso/state/types';
 
@@ -58,7 +61,7 @@ export default function useCreatePaymentCompleteCallback( {
 	isComingFromUpsell,
 	disabledThankYouPage,
 	siteSlug,
-	isJetpackCheckout = false,
+	sitelessCheckoutType,
 	checkoutFlow,
 }: {
 	createUserAndSiteBeforeTransaction?: boolean;
@@ -70,7 +73,7 @@ export default function useCreatePaymentCompleteCallback( {
 	isComingFromUpsell?: boolean;
 	disabledThankYouPage?: boolean;
 	siteSlug: string | undefined;
-	isJetpackCheckout?: boolean;
+	sitelessCheckoutType?: SitelessCheckoutType;
 	checkoutFlow?: string;
 } ): PaymentEventCallback {
 	const cartKey = useCartKey();
@@ -102,8 +105,9 @@ export default function useCreatePaymentCompleteCallback( {
 
 			// In the case of a Jetpack product site-less purchase, we need to include the blog ID of the
 			// created site in the Thank You page URL.
+			// TODO: It does not seem like this would be needed for Akismet, but marking to follow up
 			let jetpackTemporarySiteId;
-			if ( isJetpackCheckout && ! siteSlug && responseCart.create_new_blog ) {
+			if ( sitelessCheckoutType === 'jetpack' && ! siteSlug && responseCart.create_new_blog ) {
 				jetpackTemporarySiteId =
 					transactionResult.purchases && Object.keys( transactionResult.purchases ).pop();
 			}
@@ -116,11 +120,11 @@ export default function useCreatePaymentCompleteCallback( {
 				purchaseId,
 				feature,
 				cart: responseCart,
+				sitelessCheckoutType,
 				isJetpackNotAtomic,
 				productAliasFromUrl,
 				hideNudge: isComingFromUpsell,
 				isInModal,
-				isJetpackCheckout,
 				jetpackTemporarySiteId,
 				adminPageRedirect,
 				domains,
@@ -236,7 +240,7 @@ export default function useCreatePaymentCompleteCallback( {
 			responseCart,
 			createUserAndSiteBeforeTransaction,
 			disabledThankYouPage,
-			isJetpackCheckout,
+			sitelessCheckoutType,
 			checkoutFlow,
 			adminPageRedirect,
 			domains,

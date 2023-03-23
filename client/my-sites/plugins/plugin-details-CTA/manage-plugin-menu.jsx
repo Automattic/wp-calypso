@@ -1,6 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { getPluginPurchased, getSoftwareSlug } from 'calypso/lib/plugins/utils';
@@ -21,12 +20,11 @@ export const ManagePluginMenu = ( { plugin } ) => {
 	const pluginOnSite = useSelector( ( state ) => getPluginOnSite( state, site.ID, softwareSlug ) );
 
 	const purchases = useSelector( ( state ) => getSitePurchases( state, site.ID ) );
-	const currentPurchase = getPluginPurchased( plugin, purchases, isMarketplaceProduct );
+	const currentPurchase = getPluginPurchased( plugin, purchases );
 	const settingsLink = pluginOnSite?.action_links?.Settings ?? null;
 
 	return (
 		<>
-			{ plugin.isMarketplaceProduct && <QueryUserPurchases /> }
 			<EllipsisMenu position="bottom">
 				{ currentPurchase?.id && (
 					<PopoverMenuItem

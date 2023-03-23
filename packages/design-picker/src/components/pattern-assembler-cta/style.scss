@@ -45,4 +45,25 @@
 	.pattern-assembler-cta__image {
 		width: 200px;
 	}
+
+	&.is-compact {
+		margin-top: 32px;
+		padding: 32px;
+
+		.pattern-assembler-cta__title {
+			margin-top: 16px;
+		}
+
+		.pattern-assembler-cta__image {
+			width: 100px;
+		}
+
+		.pattern-assembler-cta__subtitle {
+			font-size: 0.875rem;
+		}
+
+		.pattern-assembler-cta__button {
+			margin-top: 16px;
+		}
+	}
 }

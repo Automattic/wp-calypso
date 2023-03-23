@@ -1,12 +1,10 @@
 import config from '@automattic/calypso-config';
-import { getUrlParts } from '@automattic/calypso-url';
 import { eye } from '@automattic/components/src/icons';
 import { Icon, people, starEmpty, commentContent } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
 import { find } from 'lodash';
 import page from 'page';
-import { parse as parseQs, stringify as stringifyQs } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
@@ -14,6 +12,7 @@ import illustration404 from 'calypso/assets/images/illustrations/illustration-40
 import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
+import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
@@ -47,22 +46,7 @@ import StatsNotices from './stats-notices';
 import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
 import statsStrings from './stats-strings';
-
-function getPageUrl() {
-	return getUrlParts( page.current );
-}
-
-function updateQueryString( url = null, query = {} ) {
-	let search = window.location.search;
-	if ( url ) {
-		search = url.search;
-	}
-
-	return {
-		...parseQs( search.substring( 1 ) ),
-		...query,
-	};
-}
+import { getPathWithUpdatedQueryString } from './utils';
 
 const memoizedQuery = memoizeLast( ( period, endOf ) => ( {
 	period,
@@ -142,9 +126,7 @@ class StatsSite extends Component {
 
 	barClick = ( bar ) => {
 		this.props.recordGoogleEvent( 'Stats', 'Clicked Chart Bar' );
-		const parsed = getPageUrl();
-		const updatedQs = stringifyQs( updateQueryString( parsed, { startDate: bar.data.period } ) );
-		page.redirect( `${ parsed.pathname }?${ updatedQs }` );
+		page.redirect( getPathWithUpdatedQueryString( { startDate: bar.data.period } ) );
 	};
 
 	onChangeLegend = ( activeLegend ) => this.setState( { activeLegend } );
@@ -153,8 +135,7 @@ class StatsSite extends Component {
 		if ( ! tab.loading && tab.attr !== this.props.chartTab ) {
 			this.props.recordGoogleEvent( 'Stats', 'Clicked ' + titlecase( tab.attr ) + ' Tab' );
 			// switch the tab by navigating to route with updated query string
-			const updatedQs = stringifyQs( updateQueryString( getPageUrl(), { tab: tab.attr } ) );
-			page.show( `${ getPageUrl().pathname }?${ updatedQs }` );
+			page.show( getPathWithUpdatedQueryString( { tab: tab.attr } ) );
 		}
 	};
 
@@ -188,7 +169,6 @@ class StatsSite extends Component {
 						<JetpackBackupCredsBanner event="stats-backup-credentials" />
 					</div>
 				) }
-
 				<FormattedHeader
 					brandFont
 					className="stats__section-header modernized-header"
@@ -198,29 +178,19 @@ class StatsSite extends Component {
 						"Learn more about the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}",
 						{
 							components: {
-								learnMoreLink: (
-									<InlineSupportLink
-										supportContext="stats"
-										showIcon={ false }
-										showSupportModal={ ! isOdysseyStats }
-									/>
-								),
+								learnMoreLink: <InlineSupportLink supportContext="stats" showIcon={ false } />,
 							},
 						}
 					) }
 				/>
-
 				<StatsNavigation
 					selectedItem="traffic"
 					interval={ period }
 					siteId={ siteId }
 					slug={ slug }
 				/>
-
 				{ isOdysseyStats && <StatsNotices siteId={ siteId } /> }
-
 				<HighlightsSection siteId={ siteId } />
-
 				<div id="my-stats-content" className={ wrapperClass }>
 					<>
 						<StatsPeriodHeader>
@@ -256,11 +226,7 @@ class StatsSite extends Component {
 						/>
 					</>
 
-					<MiniCarousel
-						isOdysseyStats={ isOdysseyStats }
-						slug={ slug }
-						isSitePrivate={ isSitePrivate }
-					/>
+					{ ! isOdysseyStats && <MiniCarousel slug={ slug } isSitePrivate={ isSitePrivate } /> }
 
 					<div className="stats__module-list stats__module-list--traffic is-events stats__module--unified">
 						<StatsModule
@@ -365,6 +331,10 @@ class StatsSite extends Component {
 						}
 					</div>
 				</div>
+				{ /* Only load Jetpack Upsell Section for Odyssey Stats */ }
+				{ ! isOdysseyStats ? null : (
+					<AsyncLoad require="calypso/my-sites/stats/jetpack-upsell-section" />
+				) }
 				<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
 				<JetpackColophon />
 			</div>

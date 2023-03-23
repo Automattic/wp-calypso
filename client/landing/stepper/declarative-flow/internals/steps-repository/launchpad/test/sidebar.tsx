@@ -3,10 +3,17 @@
  */
 import config from '@automattic/calypso-config';
 import { Site } from '@automattic/data-stores';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { useDispatch } from '@wordpress/data';
+import nock from 'nock';
 import React from 'react';
+import * as redux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
+import { createReduxStore } from 'calypso/state';
+import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
+import initialReducer from 'calypso/state/reducer';
+import { setStore } from 'calypso/state/redux-store';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import Sidebar from '../sidebar';
 import { defaultSiteDetails, buildSiteDetails, buildDomainResponse } from './lib/fixtures';
 
@@ -40,7 +47,29 @@ const props = {
 	/* eslint-enable @typescript-eslint/no-empty-function */
 };
 
-function renderSidebar( props, siteDetails = defaultSiteDetails ) {
+const user = {
+	ID: 1234,
+	username: 'testUser',
+	email: 'testemail@wordpress.com',
+	email_verified: false,
+};
+
+function renderSidebar( props, siteDetails = defaultSiteDetails, emailVerified = false ) {
+	const initialState = getInitialState( initialReducer, user.ID );
+	const reduxStore = createReduxStore(
+		{
+			...initialState,
+			currentUser: {
+				user: {
+					...user,
+					email_verified: emailVerified,
+				},
+			},
+		},
+		initialReducer
+	);
+	setStore( reduxStore, getStateFromCache( user.ID ) );
+
 	function TestSidebar( props ) {
 		const SITE_STORE = Site.register( {
 			client_id: config( 'wpcom_signup_id' ),
@@ -52,17 +81,31 @@ function renderSidebar( props, siteDetails = defaultSiteDetails ) {
 		receiveSite( siteDetails.ID, siteDetails );
 
 		return (
-			<MemoryRouter initialEntries={ [ `/setup/link-in-bio/launchpad?siteSlug=${ siteSlug }` ] }>
-				<Sidebar { ...props } />
-			</MemoryRouter>
+			<redux.Provider store={ reduxStore }>
+				<MemoryRouter initialEntries={ [ `/setup/link-in-bio/launchpad?siteSlug=${ siteSlug }` ] }>
+					<Sidebar { ...props } />
+				</MemoryRouter>
+			</redux.Provider>
 		);
 	}
 
-	render( <TestSidebar { ...props } /> );
+	renderWithProvider( <TestSidebar { ...props } /> );
 }
 
 describe( 'Sidebar', () => {
+	beforeEach( () => {
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.get( `/wpcom/v2/sites/${ props.siteSlug }/launchpad` )
+			.reply( 200, {
+				checklist_statuses: {},
+				launchpad_screen: 'full',
+				site_intent: '',
+			} );
+	} );
+
 	afterEach( () => {
+		nock.cleanAll();
 		props.sidebarDomain = sidebarDomain;
 	} );
 
@@ -97,6 +140,22 @@ describe( 'Sidebar', () => {
 		props.sidebarDomain = buildDomainResponse( {
 			domain: 'paidtestlinkinbio.blog',
 			isWPCOMDomain: false,
+		} );
+
+		renderSidebar( props );
+
+		const upgradeDomainBadgeElement = screen.queryByRole( 'link', {
+			name: 'upgradeDomainBadgeText',
+		} );
+
+		expect( upgradeDomainBadgeElement ).not.toBeInTheDocument;
+	} );
+
+	it( 'does not display customize badge for a flow with a redundant domain upsell task', () => {
+		props.sidebarDomain = buildDomainResponse( {
+			domain: 'paidtestlinkinbio.blog',
+			flow: 'free',
+			isWPCOMDomain: true,
 		} );
 
 		renderSidebar( props );

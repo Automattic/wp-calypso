@@ -30,7 +30,7 @@ jest.mock( '@automattic/calypso-products', () => ( {
 const samplePurchaseId = 12342424241;
 
 const defaultArgs = {
-	getUrlFromCookie: jest.fn( () => null ),
+	getUrlFromCookie: jest.fn( () => undefined ),
 	saveUrlToCookie: jest.fn(),
 };
 
@@ -1484,16 +1484,35 @@ describe( 'getThankYouPageUrl', () => {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
-			isJetpackCheckout: true,
+			sitelessCheckoutType: 'jetpack',
 		} );
 		expect( url ).toBe( '/checkout/jetpack/thank-you/foo.bar/jetpack_backup_daily' );
+	} );
+
+	it( 'redirects to the akismet checkout thank you when akismet siteless arg is set', () => {
+		const cart = {
+			...getEmptyResponseCart(),
+			products: [
+				{
+					...getEmptyResponseCartProduct(),
+					product_slug: 'ak_plus_yearly_2',
+				},
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+			sitelessCheckoutType: 'akismet',
+		} );
+		expect( url ).toBe( '/checkout/akismet/thank-you/ak_plus_yearly_2' );
 	} );
 
 	it( 'redirects to the jetpack checkout thank you with `no_product` when jetpack checkout arg is set and the cart is empty', () => {
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
-			isJetpackCheckout: true,
+			sitelessCheckoutType: 'jetpack',
 		} );
 		expect( url ).toBe( '/checkout/jetpack/thank-you/foo.bar/no_product' );
 	} );
@@ -1633,7 +1652,7 @@ describe( 'getThankYouPageUrl', () => {
 				...defaultArgs,
 				siteSlug: undefined,
 				cart,
-				isJetpackCheckout: true,
+				sitelessCheckoutType: 'jetpack',
 			} );
 			expect( url ).toBe(
 				'/checkout/jetpack/thank-you/licensing-auto-activate/jetpack_backup_daily?receiptId=%3AreceiptId'
@@ -1654,7 +1673,7 @@ describe( 'getThankYouPageUrl', () => {
 				...defaultArgs,
 				siteSlug: undefined,
 				cart,
-				isJetpackCheckout: true,
+				sitelessCheckoutType: 'jetpack',
 				receiptId: 80023,
 			} );
 			expect( url ).toBe(
@@ -1676,7 +1695,7 @@ describe( 'getThankYouPageUrl', () => {
 				...defaultArgs,
 				siteSlug: undefined,
 				cart,
-				isJetpackCheckout: true,
+				sitelessCheckoutType: 'jetpack',
 				receiptId: '80023',
 			} );
 			expect( url ).toBe(
@@ -1698,7 +1717,7 @@ describe( 'getThankYouPageUrl', () => {
 				...defaultArgs,
 				siteSlug: undefined,
 				cart,
-				isJetpackCheckout: true,
+				sitelessCheckoutType: 'jetpack',
 				// We have to type cast this because we're specifying invalid data.
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				receiptId: 'invalid receipt ID' as any,
@@ -1722,7 +1741,7 @@ describe( 'getThankYouPageUrl', () => {
 				...defaultArgs,
 				siteSlug: undefined,
 				cart,
-				isJetpackCheckout: true,
+				sitelessCheckoutType: 'jetpack',
 				receiptId: 80023,
 				jetpackTemporarySiteId: '123456789',
 			} );
@@ -1743,7 +1762,7 @@ describe( 'getThankYouPageUrl', () => {
 						},
 					],
 					is_gift_purchase: true,
-					gift_details: { receiver_blog_slug: 'foo.bar' },
+					gift_details: { receiver_blog_slug: 'foo.bar', receiver_blog_id: 123 },
 				},
 			} );
 			expect( url ).toBe( '/checkout/gift/thank-you/foo.bar' );
@@ -1780,7 +1799,7 @@ describe( 'getThankYouPageUrl', () => {
 				},
 				siteSlug: 'site.slug',
 			} );
-			expect( url ).toBe( '/marketplace/thank-you/slug1,slug2/site.slug' );
+			expect( url ).toBe( '/marketplace/thank-you/site.slug?plugins=slug1%2Cslug2' ); // %2C is a comma
 		} );
 
 		it( 'Error when gift purchase missing blog_slug', () => {
@@ -1796,7 +1815,7 @@ describe( 'getThankYouPageUrl', () => {
 							},
 						],
 						is_gift_purchase: true,
-						gift_details: {},
+						gift_details: { receiver_blog_id: 123 },
 					},
 				} )
 			).toThrow();

@@ -1,11 +1,12 @@
-import debugFactory from 'debug';
-import { useEffect, useRef, useState } from 'react';
-import type {
+import {
 	RequestCartProduct,
 	ApplyCouponToCart,
 	AddProductsToCart,
-	ReplaceProductsInCart,
+	useShoppingCart,
 } from '@automattic/shopping-cart';
+import debugFactory from 'debug';
+import { useEffect, useRef, useState } from 'react';
+import useCartKey from '../../use-cart-key';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-add-products-from-url' );
 
@@ -28,7 +29,6 @@ export default function useAddProductsFromUrl( {
 	couponCodeFromUrl,
 	applyCoupon,
 	addProductsToCart,
-	replaceProductsInCart,
 }: {
 	isLoadingCart: boolean;
 	isCartPendingUpdate: boolean;
@@ -37,8 +37,9 @@ export default function useAddProductsFromUrl( {
 	couponCodeFromUrl: string | null | undefined;
 	applyCoupon: ApplyCouponToCart;
 	addProductsToCart: AddProductsToCart;
-	replaceProductsInCart: ReplaceProductsInCart;
 } ): isPendingAddingProductsFromUrl {
+	const cartKey = useCartKey();
+	const { updateLocation } = useShoppingCart( cartKey );
 	const isMounted = useRef( true );
 	useEffect( () => {
 		isMounted.current = true;
@@ -88,6 +89,16 @@ export default function useAddProductsFromUrl( {
 		debug( 'adding initial products to cart', productsForCart );
 		const cartPromises = [];
 		if ( productsForCart.length > 0 ) {
+			// When this hook adds products to the cart, we have just loaded checkout
+			// and we haven't yet confirmed the user's tax details. The cart may
+			// already have those details but there's at least a moderate chance that
+			// they could change when we get to the next step of the checkout
+			// process. Since calculating taxes is a very slow process for the cart,
+			// and that calculation requires tax details, here we clear the tax
+			// details in the cart to prevent calculating taxes until the user or
+			// autocomplete confirms those details.
+			cartPromises.push( updateLocation( { countryCode: '' } ) );
+
 			cartPromises.push( addProductsToCart( productsForCart ) );
 		}
 		debug( 'adding initial coupon to cart', couponCodeFromUrl );
@@ -105,6 +116,7 @@ export default function useAddProductsFromUrl( {
 			} );
 		hasRequestedInitialProducts.current = true;
 	}, [
+		updateLocation,
 		isLoading,
 		areCartProductsPreparing,
 		isLoadingCart,
@@ -112,7 +124,6 @@ export default function useAddProductsFromUrl( {
 		applyCoupon,
 		productsForCart,
 		addProductsToCart,
-		replaceProductsInCart,
 	] );
 
 	debug( 'useAddProductsFromUrl isLoading', isLoading );

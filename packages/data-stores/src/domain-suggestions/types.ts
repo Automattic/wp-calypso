@@ -1,4 +1,6 @@
+import * as selectors from './selectors';
 import type { DataStatus } from './constants';
+import type { SelectFromMap } from '../mapped-types';
 
 export interface DomainSuggestionQuery {
 	/**
@@ -139,6 +141,11 @@ export interface DomainSuggestion {
 	hsts_required?: boolean;
 
 	/**
+	 * Whether the domain requires to show the notice for .gay tld
+	 */
+	is_dot_gay_notice_required?: boolean;
+
+	/**
 	 * Whether the domain is unavailable
 	 */
 	unavailable: boolean;
@@ -211,6 +218,11 @@ export interface DomainAvailability {
 	 * Whether the domain requires HSTS
 	 */
 	hsts_required?: boolean;
+
+	/**
+	 * Whether the domain requires to show the notice for .gay tld
+	 */
+	is_dot_gay_notice_required?: boolean;
 }
 
 export type TimestampMS = ReturnType< typeof Date.now >;
@@ -247,3 +259,5 @@ export interface DomainSuggestionState {
 export type DomainAvailabilities = Record< string, DomainAvailability | undefined >;
 
 export type DomainSuggestionSelectorOptions = Partial< Exclude< DomainSuggestionQuery, 'query' > >;
+
+export type DomainSuggestionsSelect = SelectFromMap< typeof selectors >;

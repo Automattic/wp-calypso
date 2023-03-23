@@ -16,21 +16,16 @@ import type {
 	StoreState,
 } from '../payment-method-store';
 import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
+import type { AnyAction } from 'redux';
 
 // Disabling this to make migration easier
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
 const debug = debugFactory( 'wpcom-checkout:p24-payment-method' );
 
-type StoreKey = 'p24';
 type NounsInStore = 'customerName' | 'customerEmail';
 
 type P24Store = PaymentMethodStore< NounsInStore >;
-
-declare module '@wordpress/data' {
-	function select( key: StoreKey ): StoreSelectors< NounsInStore >;
-	function dispatch( key: StoreKey ): StoreActions< NounsInStore >;
-}
 
 const actions: StoreActions< NounsInStore > = {
 	changeCustomerName( payload ) {
@@ -58,7 +53,7 @@ export function createP24PaymentMethodStore(): P24Store {
 				customerName: { value: '', isTouched: false },
 				customerEmail: { value: '', isTouched: false },
 			},
-			action
+			action: AnyAction
 		): StoreState< NounsInStore > {
 			switch ( action.type ) {
 				case 'CUSTOMER_NAME_SET':
@@ -73,6 +68,21 @@ export function createP24PaymentMethodStore(): P24Store {
 	} );
 
 	return store;
+}
+
+function useCustomerData() {
+	const { customerName, customerEmail } = useSelect( ( select ) => {
+		const store = select( 'p24' ) as StoreSelectors< NounsInStore >;
+		return {
+			customerName: store.getCustomerName(),
+			customerEmail: store.getCustomerEmail(),
+		};
+	}, [] );
+
+	return {
+		customerName,
+		customerEmail,
+	};
 }
 
 export function createP24Method( { store }: { store: P24Store } ): PaymentMethod {
@@ -90,8 +100,7 @@ export function createP24Method( { store }: { store: P24Store } ): PaymentMethod
 function P24Fields() {
 	const { __ } = useI18n();
 
-	const customerName = useSelect( ( select ) => select( 'p24' ).getCustomerName() );
-	const customerEmail = useSelect( ( select ) => select( 'p24' ).getCustomerEmail() );
+	const { customerName, customerEmail } = useCustomerData();
 	const { changeCustomerName, changeCustomerEmail } = useDispatch( 'p24' );
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
@@ -164,8 +173,7 @@ function P24PayButton( {
 } ) {
 	const total = useTotal();
 	const { formStatus } = useFormStatus();
-	const customerName = useSelect( ( select ) => select( 'p24' ).getCustomerName() );
-	const customerEmail = useSelect( ( select ) => select( 'p24' ).getCustomerEmail() );
+	const { customerName, customerEmail } = useCustomerData();
 
 	// This must be typed as optional because it's injected by cloning the
 	// element in CheckoutSubmitButton, but the uncloned element does not have
@@ -337,8 +345,7 @@ function P24Logo() {
 }
 
 function P24Summary() {
-	const customerName = useSelect( ( select ) => select( 'p24' ).getCustomerName() );
-	const customerEmail = useSelect( ( select ) => select( 'p24' ).getCustomerEmail() );
+	const { customerName, customerEmail } = useCustomerData();
 
 	return (
 		<SummaryDetails>

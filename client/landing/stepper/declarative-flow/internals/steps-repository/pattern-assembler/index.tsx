@@ -6,37 +6,43 @@ import {
 	__experimentalNavigatorScreen as NavigatorScreen,
 } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import classnames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useMemo } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { requestActiveTheme } from 'calypso/state/themes/actions';
+import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
+import { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
+import { createRecordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
+import { setActiveTheme } from 'calypso/state/themes/actions';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign } from '../../analytics/record-design';
 import { SITE_TAGLINE, PLACEHOLDER_SITE_ID } from './constants';
+import useGlobalStylesUpgradeModal from './hooks/use-global-styles-upgrade-modal';
+import usePatternCategories from './hooks/use-pattern-categories';
+import usePatternsMapByCategory from './hooks/use-patterns-map-by-category';
 import NavigatorListener from './navigator-listener';
-import { useAllPatterns } from './patterns-data';
+import PatternAssemblerContainer from './pattern-assembler-container';
+import PatternLargePreview from './pattern-large-preview';
+import { useAllPatterns, useSectionPatterns } from './patterns-data';
+import ScreenCategoryList from './screen-category-list';
 import ScreenFooter from './screen-footer';
 import ScreenHeader from './screen-header';
 import ScreenHomepage from './screen-homepage';
 import ScreenMain from './screen-main';
-import ScreenMainDeprecated from './screen-main-deprecated';
 import ScreenPatternList from './screen-pattern-list';
-import { encodePatternId, createCustomHomeTemplateContent } from './utils';
+import { encodePatternId } from './utils';
 import withGlobalStylesProvider from './with-global-styles-provider';
-import type { Pattern } from './types';
+import type { Pattern, Category } from './types';
 import type { Step } from '../../types';
+import type { OnboardSelect } from '@automattic/data-stores';
 import type { DesignRecipe, Design } from '@automattic/design-picker/src/types';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 import './style.scss';
 
 const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
-	const translate = useTranslate();
 	const [ navigatorPath, setNavigatorPath ] = useState( '/' );
 	const [ header, setHeader ] = useState< Pattern | null >( null );
 	const [ footer, setFooter ] = useState< Pattern | null >( null );
@@ -46,48 +52,73 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 	const incrementIndexRef = useRef( 0 );
 	const [ activePosition, setActivePosition ] = useState( -1 );
 	const { goBack, goNext, submit } = navigation;
-	const { setThemeOnSite, runThemeSetupOnSite, createCustomTemplate, setGlobalStyles } =
-		useDispatch( SITE_STORE );
+	const { applyThemeWithPatterns } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
-	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
-	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
+	const selectedDesign = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
+		[]
+	);
+	const intent = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
+		[]
+	);
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const allPatterns = useAllPatterns();
+	const sectionPatterns = useSectionPatterns();
 
-	const isSidebarRevampEnabled = isEnabled( 'pattern-assembler/sidebar-revamp' );
+	// Fetching the categories so they are ready when ScreenCategoryList loads
+	const categoriesQuery = usePatternCategories( site?.ID );
+	const categories = ( categoriesQuery?.data || [] ) as Category[];
+	const sectionsMapByCategory = usePatternsMapByCategory( sectionPatterns, categories );
 
-	const commonEventProps = {
-		flow,
-		step: stepName,
-		intent,
-	};
+	const stylesheet = selectedDesign?.recipe?.stylesheet || '';
 
 	const isEnabledColorAndFonts = isEnabled( 'pattern-assembler/color-and-fonts' );
 
 	const [ selectedColorPaletteVariation, setSelectedColorPaletteVariation ] =
 		useState< GlobalStylesObject | null >( null );
+	const [ selectedFontPairingVariation, setSelectedFontPairingVariation ] =
+		useState< GlobalStylesObject | null >( null );
+
+	const recordTracksEvent = useMemo(
+		() =>
+			createRecordTracksEvent( {
+				flow,
+				step: stepName,
+				intent,
+				stylesheet,
+				color_style_title: selectedColorPaletteVariation?.title,
+				font_style_title: selectedFontPairingVariation?.title,
+			} ),
+		[
+			flow,
+			stepName,
+			intent,
+			stylesheet,
+			selectedColorPaletteVariation,
+			selectedFontPairingVariation,
+		]
+	);
 
 	const selectedVariations = useMemo(
-		() => [ selectedColorPaletteVariation ].filter( Boolean ) as GlobalStylesObject[],
-		[ selectedColorPaletteVariation ]
+		() =>
+			[ selectedColorPaletteVariation, selectedFontPairingVariation ].filter(
+				Boolean
+			) as GlobalStylesObject[],
+		[ selectedColorPaletteVariation, selectedFontPairingVariation ]
 	);
+
+	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles();
+	const shouldUnlockGlobalStyles = shouldLimitGlobalStyles && selectedVariations.length > 0;
 
 	const syncedGlobalStylesUserConfig = useSyncGlobalStylesUserConfig(
 		selectedVariations,
 		isEnabledColorAndFonts
 	);
-
-	const largePreviewProps = {
-		placeholder: null,
-		header,
-		sections,
-		footer,
-		activePosition,
-	};
 
 	const siteInfo = {
 		title: site?.name,
@@ -112,7 +143,6 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 
 	const trackEventPatternAdd = ( patternType: string ) => {
 		recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_add_click', {
-			...commonEventProps,
 			pattern_type: patternType,
 		} );
 	};
@@ -121,23 +151,24 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 		patternType,
 		patternId,
 		patternName,
+		patternCategory,
 	}: {
 		patternType: string;
 		patternId: number;
 		patternName: string;
+		patternCategory: string | undefined;
 	} ) => {
 		recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_select_click', {
-			...commonEventProps,
 			pattern_type: patternType,
 			pattern_id: patternId,
 			pattern_name: patternName,
+			pattern_category: patternCategory,
 		} );
 	};
 
 	const trackEventContinue = () => {
 		const patterns = getPatterns();
 		recordTracksEvent( 'calypso_signup_pattern_assembler_continue_click', {
-			...commonEventProps,
 			pattern_types: [ header && 'header', sections.length && 'section', footer && 'footer' ]
 				.filter( Boolean )
 				.join( ',' ),
@@ -145,12 +176,11 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 			pattern_names: patterns.map( ( { name } ) => name ).join( ',' ),
 			pattern_count: patterns.length,
 		} );
-		patterns.forEach( ( { id, name, category_slug } ) => {
+		patterns.forEach( ( { id, name, category } ) => {
 			recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_final_select', {
-				...commonEventProps,
 				pattern_id: id,
 				pattern_name: name,
-				pattern_category: category_slug,
+				pattern_category: category?.name,
 			} );
 		} );
 	};
@@ -234,13 +264,32 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 		updateActivePatternPosition( position - 1 );
 	};
 
-	const onSelect = ( type: string, selectedPattern: Pattern ) => {
-		if ( type ) {
+	const onSelect = (
+		type: string,
+		selectedPattern: Pattern | null,
+		selectedCategory?: string | null
+	) => {
+		if ( selectedPattern ) {
+			// Inject the selected pattern category or the first category
+			// because it's used in tracks and as pattern name in the list
+			selectedPattern.category = categories.find(
+				( { name } ) => name === ( selectedCategory || selectedPattern.categories[ 0 ] )
+			);
+
 			trackEventPatternSelect( {
 				patternType: type,
-				patternId: selectedPattern?.id,
-				patternName: selectedPattern?.name,
+				patternId: selectedPattern.id,
+				patternName: selectedPattern.name,
+				patternCategory: selectedPattern.category?.name,
 			} );
+
+			if ( 'section' === type ) {
+				if ( sectionPosition !== null ) {
+					replaceSection( selectedPattern );
+				} else {
+					addSection( selectedPattern );
+				}
+			}
 		}
 
 		if ( 'header' === type ) {
@@ -249,19 +298,11 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 		if ( 'footer' === type ) {
 			updateFooter( selectedPattern );
 		}
-		if ( 'section' === type ) {
-			if ( sectionPosition !== null ) {
-				replaceSection( selectedPattern );
-			} else {
-				addSection( selectedPattern );
-			}
-		}
 	};
 
 	const onBack = () => {
 		const patterns = getPatterns();
 		recordTracksEvent( 'calypso_signup_pattern_assembler_back_click', {
-			...commonEventProps,
 			has_selected_patterns: patterns.length > 0,
 			pattern_count: patterns.length,
 		} );
@@ -270,49 +311,33 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 	};
 
 	const onSubmit = () => {
+		const design = getDesign();
+
 		if ( ! siteSlugOrId ) {
 			return;
 		}
 
-		const design = getDesign();
-		const stylesheet = design.recipe!.stylesheet!;
-		const theme = stylesheet?.split( '/' )[ 1 ] || design.theme;
-
 		setPendingAction( () =>
-			// We have to switch theme first. Otherwise, the unique suffix might append to
-			// the slug of newly created Home template if the current activated theme has
-			// modified Home template.
-			setThemeOnSite( siteSlugOrId, theme, undefined, false )
-				.then( () => {
-					if ( isEnabledColorAndFonts ) {
-						return setGlobalStyles( siteSlugOrId, stylesheet, syncedGlobalStylesUserConfig );
-					}
-				} )
-				.then( () =>
-					createCustomTemplate(
-						siteSlugOrId,
-						stylesheet,
-						'home',
-						translate( 'Home' ),
-						createCustomHomeTemplateContent( stylesheet, !! header, !! footer, !! sections.length )
-					)
-				)
-				.then( () =>
-					runThemeSetupOnSite( siteSlugOrId, design, {
-						trimContent: false,
-						posts_source_site_id: PLACEHOLDER_SITE_ID,
-					} )
-				)
-				.then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) )
+			applyThemeWithPatterns(
+				siteSlugOrId,
+				design,
+				syncedGlobalStylesUserConfig,
+				PLACEHOLDER_SITE_ID
+			).then( ( theme: ActiveTheme ) => reduxDispatch( setActiveTheme( site?.ID || -1, theme ) ) )
 		);
 
 		recordSelectedDesign( { flow, intent, design } );
 		submit?.();
 	};
 
+	const { openModal: openGlobalStylesUpgradeModal, ...globalStylesUpgradeModalProps } =
+		useGlobalStylesUpgradeModal( {
+			onSubmit,
+			recordTracksEvent,
+		} );
+
 	const onPatternSelectorBack = ( type: string ) => {
 		recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_select_back_click', {
-			...commonEventProps,
 			pattern_type: type,
 		} );
 	};
@@ -320,15 +345,21 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 	const onDoneClick = ( type: string ) => {
 		const patterns = getPatterns( type );
 		recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_select_done_click', {
-			...commonEventProps,
 			pattern_type: type,
 			pattern_ids: patterns.map( ( { id } ) => id ).join( ',' ),
 			pattern_names: patterns.map( ( { name } ) => name ).join( ',' ),
+			pattern_categories: patterns.map( ( { category } ) => category?.name ).join( ',' ),
 		} );
 	};
 
 	const onContinueClick = () => {
 		trackEventContinue();
+
+		if ( shouldLimitGlobalStyles && selectedVariations.length > 0 ) {
+			openGlobalStylesUpgradeModal();
+			return;
+		}
+
 		onSubmit();
 	};
 
@@ -341,10 +372,7 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 			trackEventPatternAdd( 'section' );
 		}
 
-		recordTracksEvent( 'calypso_signup_pattern_assembler_main_item_select', {
-			...commonEventProps,
-			name,
-		} );
+		recordTracksEvent( 'calypso_signup_pattern_assembler_main_item_select', { name } );
 	};
 
 	const onAddSection = () => {
@@ -358,6 +386,7 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 
 	const onDeleteSection = ( position: number ) => {
 		deleteSection( position );
+		setSectionPosition( null );
 	};
 
 	const onMoveUpSection = ( position: number ) => {
@@ -368,35 +397,25 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 		moveDownSection( position );
 	};
 
+	const onDeleteHeader = () => onSelect( 'header', null );
+
+	const onDeleteFooter = () => onSelect( 'footer', null );
+
 	const stepContent = (
 		<div className="pattern-assembler__wrapper" ref={ wrapperRef } tabIndex={ -1 }>
 			<NavigatorProvider className="pattern-assembler__sidebar" initialPath="/">
 				<NavigatorScreen path="/">
-					{ isEnabled( 'pattern-assembler/sidebar-revamp' ) ? (
-						<ScreenMain onSelect={ onMainItemSelect } onContinueClick={ onContinueClick } />
-					) : (
-						<ScreenMainDeprecated
-							sections={ sections }
-							header={ header }
-							footer={ footer }
-							onAddSection={ onAddSection }
-							onReplaceSection={ onReplaceSection }
-							onDeleteSection={ onDeleteSection }
-							onMoveUpSection={ onMoveUpSection }
-							onMoveDownSection={ onMoveDownSection }
-							onAddHeader={ () => trackEventPatternAdd( 'header' ) }
-							onDeleteHeader={ () => updateHeader( null ) }
-							onAddFooter={ () => trackEventPatternAdd( 'footer' ) }
-							onDeleteFooter={ () => updateFooter( null ) }
-							onContinueClick={ onContinueClick }
-						/>
-					) }
+					<ScreenMain
+						shouldUnlockGlobalStyles={ shouldUnlockGlobalStyles }
+						onSelect={ onMainItemSelect }
+						onContinueClick={ onContinueClick }
+					/>
 				</NavigatorScreen>
 
 				<NavigatorScreen path="/header">
 					<ScreenHeader
 						selectedPattern={ header }
-						onSelect={ ( selectedPattern ) => onSelect( 'header', selectedPattern ) }
+						onSelect={ onSelect }
 						onBack={ () => onPatternSelectorBack( 'header' ) }
 						onDoneClick={ () => onDoneClick( 'header' ) }
 					/>
@@ -405,7 +424,7 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 				<NavigatorScreen path="/footer">
 					<ScreenFooter
 						selectedPattern={ footer }
-						onSelect={ ( selectedPattern ) => onSelect( 'footer', selectedPattern ) }
+						onSelect={ onSelect }
 						onBack={ () => onPatternSelectorBack( 'footer' ) }
 						onDoneClick={ () => onDoneClick( 'footer' ) }
 					/>
@@ -414,7 +433,6 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 				<NavigatorScreen path="/homepage">
 					<ScreenHomepage
 						patterns={ sections }
-						onDoneClick={ () => onDoneClick( 'section' ) }
 						onAddSection={ onAddSection }
 						onReplaceSection={ onReplaceSection }
 						onDeleteSection={ onDeleteSection }
@@ -423,12 +441,24 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 					/>
 				</NavigatorScreen>
 				<NavigatorScreen path="/homepage/patterns">
-					<ScreenPatternList
-						selectedPattern={ sectionPosition ? sections[ sectionPosition ] : null }
-						onSelect={ ( selectedPattern ) => onSelect( 'section', selectedPattern ) }
-						onBack={ () => onPatternSelectorBack( 'section' ) }
-						onDoneClick={ () => onDoneClick( 'section' ) }
-					/>
+					{ isEnabled( 'pattern-assembler/categories' ) ? (
+						<ScreenCategoryList
+							categories={ categories }
+							sectionsMapByCategory={ sectionsMapByCategory }
+							onDoneClick={ () => onDoneClick( 'section' ) }
+							replacePatternMode={ sectionPosition !== null }
+							selectedPattern={ sectionPosition !== null ? sections[ sectionPosition ] : null }
+							onSelect={ onSelect }
+							wrapperRef={ wrapperRef }
+						/>
+					) : (
+						<ScreenPatternList
+							selectedPattern={ sectionPosition !== null ? sections[ sectionPosition ] : null }
+							onSelect={ ( selectedPattern ) => onSelect( 'section', selectedPattern, null ) }
+							onBack={ () => onPatternSelectorBack( 'section' ) }
+							onDoneClick={ () => onDoneClick( 'section' ) }
+						/>
+					) }
 				</NavigatorScreen>
 
 				{ isEnabledColorAndFonts && (
@@ -437,9 +467,22 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 							require="./screen-color-palettes"
 							placeholder={ null }
 							siteId={ site?.ID }
-							stylesheet={ selectedDesign?.recipe?.stylesheet }
+							stylesheet={ stylesheet }
 							selectedColorPaletteVariation={ selectedColorPaletteVariation }
 							onSelect={ setSelectedColorPaletteVariation }
+						/>
+					</NavigatorScreen>
+				) }
+
+				{ isEnabledColorAndFonts && (
+					<NavigatorScreen path="/font-pairings">
+						<AsyncLoad
+							require="./screen-font-pairings"
+							placeholder={ null }
+							siteId={ site?.ID }
+							stylesheet={ stylesheet }
+							selectedFontPairingVariation={ selectedFontPairingVariation }
+							onSelect={ setSelectedFontPairingVariation }
 						/>
 					</NavigatorScreen>
 				) }
@@ -452,11 +495,18 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 					} }
 				/>
 			</NavigatorProvider>
-			{ isEnabled( 'pattern-assembler/client-side-render' ) ? (
-				<AsyncLoad require="./pattern-large-preview" { ...largePreviewProps } />
-			) : (
-				<AsyncLoad require="./pattern-assembler-preview" { ...largePreviewProps } />
-			) }
+			<PatternLargePreview
+				header={ header }
+				sections={ sections }
+				footer={ footer }
+				activePosition={ activePosition }
+				onDeleteSection={ onDeleteSection }
+				onMoveUpSection={ onMoveUpSection }
+				onMoveDownSection={ onMoveDownSection }
+				onDeleteHeader={ onDeleteHeader }
+				onDeleteFooter={ onDeleteFooter }
+			/>
+			<PremiumGlobalStylesUpgradeModal { ...globalStylesUpgradeModalProps } />
 		</div>
 	);
 
@@ -466,7 +516,7 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 
 	return (
 		<StepContainer
-			className={ classnames( { 'pattern-assembler__sidebar-revamp': isSidebarRevampEnabled } ) }
+			className="pattern-assembler__sidebar-revamp"
 			stepName="pattern-assembler"
 			hideBack={ navigatorPath !== '/' || flow === WITH_THEME_ASSEMBLER_FLOW }
 			goBack={ onBack }
@@ -475,20 +525,14 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 			isFullLayout={ true }
 			hideSkip={ true }
 			stepContent={
-				isEnabled( 'pattern-assembler/client-side-render' ) ? (
-					<AsyncLoad
-						require="./pattern-assembler-container"
-						placeholder={ null }
-						siteId={ site?.ID }
-						stylesheet={ selectedDesign?.recipe?.stylesheet }
-						patternIds={ allPatterns.map( ( pattern ) => encodePatternId( pattern.id ) ) }
-						siteInfo={ siteInfo }
-					>
-						{ stepContent }
-					</AsyncLoad>
-				) : (
-					stepContent
-				)
+				<PatternAssemblerContainer
+					siteId={ site?.ID }
+					stylesheet={ stylesheet }
+					patternIds={ allPatterns.map( ( pattern ) => encodePatternId( pattern.id ) ) }
+					siteInfo={ siteInfo }
+				>
+					{ stepContent }
+				</PatternAssemblerContainer>
 			}
 			recordTracksEvent={ recordTracksEvent }
 			stepSectionName={ navigatorPath !== '/' ? 'pattern-selector' : undefined }

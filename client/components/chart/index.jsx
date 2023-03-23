@@ -58,7 +58,7 @@ function Chart( {
 	onChangeMaxBars,
 } ) {
 	const [ tooltip, setTooltip ] = useState( { isTooltipVisible: false } );
-	const [ sizing, setSizing ] = useState( { clientWidth: 650, hasResized: false } );
+	const [ sizing, setSizing ] = useState( { clientWidth: 0, hasResized: false } );
 	const [ yAxisSize, setYAxisSize ] = useState( { clientWidth: 0, hasResized: false } );
 
 	// Callback to handle tooltip changes.
@@ -72,6 +72,9 @@ function Chart( {
 	}, [] );
 
 	const handleYAxisSizeChange = ( contentRect ) => {
+		if ( ! contentRect ) {
+			return;
+		}
 		setYAxisSize( ( prevSizing ) => {
 			const clientWidth = contentRect.width;
 			if ( ! prevSizing.hasResized || clientWidth !== prevSizing.clientWidth ) {
@@ -87,6 +90,9 @@ function Chart( {
 	// Needs to be memoized to avoid causing the `useWindowResizeCallback` custom hook to re-subscribe.
 	const handleContentRectChange = useCallback(
 		( contentRect ) => {
+			if ( ! contentRect ) {
+				return;
+			}
 			setSizing( ( prevSizing ) => {
 				const effectiveYAxisSize =
 					yAxisRef && yAxisRef.current ? yAxisRef.current.clientWidth : yAxisSize.clientWidth;
@@ -137,6 +143,30 @@ function Chart( {
 
 	const { isTooltipVisible, tooltipContext, tooltipPosition, tooltipData } = tooltip;
 
+	const ChartYAxis = () => (
+		<div ref={ yAxisRef } className="chart__y-axis">
+			<div className="chart__y-axis-width-fix">{ numberFormat( 1e5 ) }</div>
+			<div className="chart__y-axis-label is-hundred">
+				{ yMax > 1 ? numberFormat( yMax ) : numberFormat( yMax, 2 ) }
+			</div>
+			<div className="chart__y-axis-label is-fifty">
+				{ yMax > 1 ? numberFormat( yMax / 2 ) : numberFormat( yMax / 2, 2 ) }
+			</div>
+			<div className="chart__y-axis-label is-zero">{ numberFormat( 0 ) }</div>
+		</div>
+	);
+
+	// This is a hack to avoid the flickering on page load.
+	// The component listens on the resize event of its own, which would resize on initialization.
+	// The hack renders an empty div, which triggers the resize event, and then the actual component would be rendered.
+	if ( sizing.clientWidth <= 0 || yAxisSize.clientWidth <= 0 ) {
+		return (
+			<div ref={ resizeRef } className="chart">
+				<ChartYAxis />
+			</div>
+		);
+	}
+
 	return (
 		<div ref={ resizeRef } className={ classNames( 'chart', { 'is-placeholder': isPlaceholder } ) }>
 			<div className="chart__y-axis-markers">
@@ -161,18 +191,7 @@ function Chart( {
 					</div>
 				) }
 			</div>
-			{ ! isPlaceholder && (
-				<div ref={ yAxisRef } className="chart__y-axis">
-					<div className="chart__y-axis-width-fix">{ numberFormat( 1e5 ) }</div>
-					<div className="chart__y-axis-label is-hundred">
-						{ yMax > 1 ? numberFormat( yMax ) : numberFormat( yMax, 2 ) }
-					</div>
-					<div className="chart__y-axis-label is-fifty">
-						{ yMax > 1 ? numberFormat( yMax / 2 ) : numberFormat( yMax / 2, 2 ) }
-					</div>
-					<div className="chart__y-axis-label is-zero">{ numberFormat( 0 ) }</div>
-				</div>
-			) }
+			{ ! isPlaceholder && <ChartYAxis /> }
 			<BarContainer
 				barClick={ barClick }
 				chartWidth={ width }

@@ -170,6 +170,7 @@ const DateRangeInputsWithValidation = ( {
 					/>
 					{ showValidation && (
 						<FormInputValidation
+							ariaLabel={ translate( 'Start date input validation' ) }
 							isError={ ! startValidationInfo.isValid }
 							text={ startValidationInfo.validationInfo }
 						/>
@@ -195,6 +196,7 @@ const DateRangeInputsWithValidation = ( {
 					/>
 					{ showValidation && (
 						<FormInputValidation
+							ariaLabel={ translate( 'End date input validation' ) }
 							isError={ ! endValidationInfo.isValid }
 							text={ endValidationInfo.validationInfo }
 						/>
@@ -205,7 +207,7 @@ const DateRangeInputsWithValidation = ( {
 	);
 };
 
-const WebServerLogsCard = ( props ) => {
+export const WebServerLogsCard = ( props ) => {
 	const {
 		successNotice: downloadSuccessNotice,
 		errorNotice: downloadErrorNotice,
@@ -478,6 +480,7 @@ const WebServerLogsCard = ( props ) => {
 				<div className="web-server-logs-card__dates">
 					<div className="web-server-logs-card__dates">
 						<DateRange
+							translate={ translate }
 							moment={ moment }
 							firstSelectableDate={ firstSelectableDate }
 							showTriggerClear={ false }
@@ -512,7 +515,7 @@ const WebServerLogsCard = ( props ) => {
 	return (
 		<Card className="web-server-logs-card">
 			<MaterialIcon icon="settings" size={ 32 } />
-			<CardHeading>{ translate( 'Web server logs' ) }</CardHeading>
+			<CardHeading id="web-server-logs">{ translate( 'Web server logs' ) }</CardHeading>
 			{ getContent() }
 		</Card>
 	);

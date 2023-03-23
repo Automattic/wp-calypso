@@ -35,6 +35,7 @@ import {
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import { areVatDetailsSame } from 'calypso/me/purchases/vat-info/are-vat-details-same';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-valid-checkout-back-url';
 import { leaveCheckout } from 'calypso/my-sites/checkout/composite-checkout/lib/leave-checkout';
@@ -49,6 +50,7 @@ import useCouponFieldState from '../hooks/use-coupon-field-state';
 import { validateContactDetails } from '../lib/contact-validation';
 import getContactDetailsType from '../lib/get-contact-details-type';
 import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
+import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import badge14Src from './assets/icons/badge-14.svg';
 import badge7Src from './assets/icons/badge-7.svg';
 import badgeGenericSrc from './assets/icons/badge-generic.svg';
@@ -184,12 +186,12 @@ export default function WPCheckout( {
 
 	const contactDetailsType = getContactDetailsType( responseCart );
 
-	const contactInfo = useSelect( ( sel ) => sel( 'wpcom-checkout' )?.getContactInfo() ?? {} );
+	const contactInfo = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
 
-	const vatDetails = useSelect( ( sel ) => sel( 'wpcom-checkout' )?.getVatDetails() ?? {} );
-	const { setVatDetails } = useVatDetails();
+	const vatDetailsInForm = useSelect( ( select ) => select( CHECKOUT_STORE ).getVatDetails(), [] );
+	const { setVatDetails, vatDetails: vatDetailsFromServer } = useVatDetails();
 
-	const checkoutActions = useDispatch( 'wpcom-checkout' );
+	const checkoutActions = useDispatch( CHECKOUT_STORE );
 
 	const [ shouldShowContactDetailsValidationErrors, setShouldShowContactDetailsValidationErrors ] =
 		useState( true );
@@ -386,19 +388,17 @@ export default function WPCheckout( {
 						if ( validationResponse ) {
 							// When the contact details change, update the VAT details on the server.
 							try {
-								if ( vatDetails.id ) {
-									await setVatDetails( vatDetails );
+								if (
+									vatDetailsInForm.id &&
+									! areVatDetailsSame( vatDetailsInForm, vatDetailsFromServer )
+								) {
+									await setVatDetails( vatDetailsInForm );
 								}
 							} catch ( error ) {
 								reduxDispatch( removeNotice( 'vat_info_notice' ) );
 								if ( shouldShowContactDetailsValidationErrors ) {
 									reduxDispatch(
-										errorNotice(
-											translate(
-												'Your Business Tax ID details are not valid. Please check each field and try again.'
-											),
-											{ id: 'vat_info_notice' }
-										)
+										errorNotice( ( error as Error ).message, { id: 'vat_info_notice' } )
 									);
 								}
 								return false;
@@ -412,7 +412,7 @@ export default function WPCheckout( {
 									responseCart,
 									updateLocation,
 									contactInfo,
-									vatDetails
+									vatDetailsInForm
 								);
 							} catch {
 								// If updating the cart fails, we should not continue. No need

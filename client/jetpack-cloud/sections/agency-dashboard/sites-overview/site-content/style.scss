@@ -2,15 +2,67 @@
 @import "@wordpress/base-styles/mixins";
 
 .site-content__large-screen-view {
-	display: none;
-	@include break-xlarge {
-		display: block;
+	.site-set-favorite__favorite-icon {
+		visibility: hidden;
+		color: var(--color-primary);
 	}
-}
 
-.site-content__small-screen-view {
-	@include break-xlarge {
+	.sites-overview__status-count {
 		display: none;
+	}
+
+	.sites-overview__row-text {
+		margin-inline-start: 55px;
+		width: calc(100% - 55px);
+		font-size: 0.875rem !important;
+	}
+
+	.sites-overview__overlay {
+		inset-inline-end: 0;
+	}
+
+	.sites-overview__error-container {
+		margin: 0;
+		height: inherit;
+	}
+
+	.sites-overview__error-icon {
+		width: auto;
+		padding: 16px;
+	}
+
+	.sites-overview__status-critical {
+		display: none;
+	}
+
+	.sites-overview__critical {
+		color: var(--studio-white);
+	}
+
+	.sites-overview__column-content {
+		max-width: fit-content;
+	}
+
+	.site-select-checkbox {
+		input[type="checkbox"] {
+			@include break-wide {
+				inset-inline-start: 10px;
+			}
+
+			@include break-huge {
+				inset-inline-start: 16px;
+			}
+		}
+	}
+
+	.toggle-activate-monitoring__toggle-button .components-toggle-control
+	.components-base-control__field .components-form-toggle {
+		margin-right: 12px;
+	}
+
+	.site-actions__all-actions {
+		display: inline-flex;
+		height: 100%;
 	}
 }
 

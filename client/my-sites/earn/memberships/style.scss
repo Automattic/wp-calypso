@@ -273,6 +273,10 @@
 	color: var(--color-text-subtle);
 	font-size: $font-body-small;
 }
+.memberships__products-product-badge {
+	margin-top: 10px;
+	margin-left: -5px;
+}
 .memberships__earnings-breakdown-notes {
 	clear: both;
 	color: var(--color-neutral-30);

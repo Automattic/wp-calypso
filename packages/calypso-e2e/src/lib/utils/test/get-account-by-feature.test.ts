@@ -158,6 +158,7 @@ describe( 'envToFeatureKey', () => {
 		COBLOCKS_EDGE: true,
 		GUTENBERG_EDGE: false,
 		TEST_ON_ATOMIC: false,
+		JETPACK_TARGET: 'wpcom-production',
 	};
 
 	it( 'will return a proper `FeatureKey` object', () => {
@@ -198,6 +199,21 @@ describe( 'envToFeatureKey', () => {
 
 	it( 'will return a `FeatureKey` object with `siteType: "atomic"` if env.TEST_ON_ATOMIC is `true`', () => {
 		expect( envToFeatureKey( { ...envVariables, TEST_ON_ATOMIC: true } ) ).toMatchObject( {
+			siteType: 'atomic',
+		} );
+	} );
+
+	it( 'will include the value for "jetpackTarget" if it is not "wpcom-production"', () => {
+		expect( envToFeatureKey( { ...envVariables, JETPACK_TARGET: 'wpcom-staging' } ) ).toMatchObject(
+			{
+				jetpackTarget: 'wpcom-staging',
+			}
+		);
+	} );
+
+	it( 'will set atomic to true if "jetpackTarget" is "remote-site"', () => {
+		expect( envToFeatureKey( { ...envVariables, JETPACK_TARGET: 'remote-site' } ) ).toMatchObject( {
+			jetpackTarget: 'remote-site',
 			siteType: 'atomic',
 		} );
 	} );

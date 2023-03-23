@@ -12,6 +12,7 @@ import {
 	isWpcomEnterpriseGridPlan,
 	isMonthly,
 	TERM_MONTHLY,
+	TERM_BIENNIALLY,
 	isBusinessPlan,
 	TYPE_FREE,
 	TYPE_PERSONAL,
@@ -23,12 +24,15 @@ import {
 	PLAN_FREE,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	isPremiumPlan,
+	getPlanSlugForTermVariant,
+	PlanSlug,
+	PLAN_BIENNIAL_PERIOD,
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
-import { localize, LocalizeProps, TranslateResult } from 'i18n-calypso';
+import { localize, LocalizeProps, TranslateResult, useTranslate } from 'i18n-calypso';
 import { last } from 'lodash';
 import page from 'page';
 import { Component, createRef } from 'react';
@@ -72,6 +76,7 @@ import {
 	getCurrentPlan,
 	isCurrentUserCurrentPlanOwner,
 	getPlanDiscountedRawPrice,
+	getSitePlanSlug,
 } from 'calypso/state/sites/plans/selectors';
 import isPlanAvailableForPurchase from 'calypso/state/sites/plans/selectors/is-plan-available-for-purchase';
 import {
@@ -88,12 +93,13 @@ import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
 import PopularBadge from './components/popular-badge';
 import PlanFeatures2023GridFeatures from './features';
 import PlanFeatures2023GridHeaderPrice from './header-price';
+import useHighlightAdjacencyMatrix from './hooks/use-highlight-adjacency-matrix';
+import useHighlightLabel from './hooks/use-highlight-label';
 import { PlanFeaturesItem } from './item';
 import { PlanComparisonGrid } from './plan-comparison-grid';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import { PlanProperties, TransformedFeatureObject } from './types';
 import { getStorageStringFromFeature } from './util';
-
 import './style.scss';
 
 type PlanRowOptions = {
@@ -134,6 +140,7 @@ type PlanFeatures2023GridProps = {
 	withDiscount: boolean;
 	discountEndDate: Date;
 	hidePlansFeatureComparison: boolean;
+	hideFreePlan: boolean;
 };
 
 type PlanFeatures2023GridConnectedProps = {
@@ -170,6 +177,77 @@ const ServiceLogo = ( props: ServiceLogoProps ) => (
 		</Plans2023Tooltip>
 	</div>
 );
+
+const PlanLogo: React.FunctionComponent< {
+	planPropertiesObj: PlanProperties[];
+	planIndex: number;
+	planProperties: PlanProperties;
+	isMobile?: boolean;
+	isInSignup: boolean;
+} > = ( { planPropertiesObj, planProperties, planIndex, isMobile, isInSignup } ) => {
+	const { planName, current } = planProperties;
+	const translate = useTranslate();
+	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( planPropertiesObj );
+	const highlightLabel = useHighlightLabel( planName );
+	const headerClasses = classNames(
+		'plan-features-2023-grid__header-logo',
+		getPlanClass( planName )
+	);
+	const tableItemClasses = classNames( 'plan-features-2023-grid__table-item', {
+		'popular-plan-parent-class': highlightLabel,
+		'is-left-of-highlight': highlightAdjacencyMatrix[ planName ]?.leftOfHighlight,
+		'is-right-of-highlight': highlightAdjacencyMatrix[ planName ]?.rightOfHighlight,
+		'is-only-highlight': highlightAdjacencyMatrix[ planName ]?.isOnlyHighlight,
+		'is-current-plan': current,
+		'is-first-in-row': planIndex === 0,
+		'is-last-in-row': planIndex === planPropertiesObj.length - 1,
+	} );
+	const popularBadgeClasses = classNames( {
+		'with-plan-logo': ! (
+			isFreePlan( planName ) ||
+			isPersonalPlan( planName ) ||
+			isPremiumPlan( planName )
+		),
+		'is-current-plan': current,
+	} );
+
+	return (
+		<Container key={ planName } className={ tableItemClasses } isMobile={ isMobile }>
+			<PopularBadge
+				isInSignup={ isInSignup }
+				planName={ planName }
+				additionalClassName={ popularBadgeClasses }
+			/>
+			<header className={ headerClasses }>
+				{ isBusinessPlan( planName ) && (
+					<ServiceLogo
+						hoverText={ translate(
+							'WP Cloud gives you the tools you need to add scalable, highly available, extremely fast WordPress hosting.'
+						) }
+						imgSrc={ cloudLogo }
+						imgAlt="WP Cloud logo"
+					/>
+				) }
+				{ isEcommercePlan( planName ) && (
+					<ServiceLogo
+						hoverText={ translate(
+							'Make your online store a reality with the power of WooCommerce.'
+						) }
+						imgSrc={ wooLogo }
+						imgAlt="WooCommerce logo"
+					/>
+				) }
+				{ isWpcomEnterpriseGridPlan( planName ) && (
+					<ServiceLogo
+						hoverText={ translate( 'The trusted choice for enterprise WordPress hosting.' ) }
+						imgSrc={ vipLogo }
+						imgAlt="WPVIP logo"
+					/>
+				) }
+			</header>
+		</Container>
+	);
+};
 
 export class PlanFeatures2023Grid extends Component<
 	PlanFeatures2023GridType,
@@ -308,9 +386,19 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderTabletView() {
-		const { planProperties } = this.props;
-		const topRowPlans = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM ];
-		const bottomRowPlans = [ TYPE_BUSINESS, TYPE_ECOMMERCE, TYPE_ENTERPRISE_GRID_WPCOM ];
+		const { planProperties, hideFreePlan } = this.props;
+		const plansToShow = hideFreePlan
+			? [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE, TYPE_ENTERPRISE_GRID_WPCOM ]
+			: [
+					TYPE_FREE,
+					TYPE_PERSONAL,
+					TYPE_PREMIUM,
+					TYPE_BUSINESS,
+					TYPE_ECOMMERCE,
+					TYPE_ENTERPRISE_GRID_WPCOM,
+			  ];
+		const topRowPlans = plansToShow.slice( 0, 3 );
+		const bottomRowPlans = plansToShow.slice( 3, 6 );
 		const planPropertiesForTopRow = planProperties.filter( ( properties: PlanProperties ) =>
 			topRowPlans.includes( properties.planConstantObj.type )
 		);
@@ -441,16 +529,15 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderBillingTimeframe( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { translate } = this.props;
 		return planPropertiesObj.map( ( properties ) => {
 			const {
 				planConstantObj,
 				planName,
 				rawPrice,
-				rawPriceAnnual,
-				currencyCode,
+				maybeDiscountedFullTermPrice,
 				annualPricePerMonth,
 				isMonthlyPlan,
+				billingPeriod,
 			} = properties;
 
 			const classes = classNames(
@@ -462,13 +549,12 @@ export class PlanFeatures2023Grid extends Component<
 				<Container className={ classes } isMobile={ options?.isMobile } key={ planName }>
 					<PlanFeatures2023GridBillingTimeframe
 						rawPrice={ rawPrice }
-						rawPriceAnnual={ rawPriceAnnual }
-						currencyCode={ currencyCode }
+						maybeDiscountedFullTermPrice={ maybeDiscountedFullTermPrice }
 						annualPricePerMonth={ annualPricePerMonth }
 						isMonthlyPlan={ isMonthlyPlan }
 						planName={ planName }
-						translate={ translate }
 						billingTimeframe={ planConstantObj.getBillingTimeFrame() }
+						billingPeriod={ billingPeriod }
 					/>
 				</Container>
 			);
@@ -476,61 +562,18 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanLogos( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { isInSignup, translate } = this.props;
+		const { isInSignup } = this.props;
 
-		return planPropertiesObj.map( ( properties ) => {
-			const { planName } = properties;
-			const headerClasses = classNames(
-				'plan-features-2023-grid__header-logo',
-				getPlanClass( planName )
-			);
-			const tableItemClasses = classNames( 'plan-features-2023-grid__table-item', {
-				'popular-plan-parent-class': isBusinessPlan( planName ) || isPremiumPlan( planName ),
-			} );
-
-			const popularBadgeClasses = classNames( {
-				'with-plan-logo': ! (
-					isFreePlan( planName ) ||
-					isPersonalPlan( planName ) ||
-					isPremiumPlan( planName )
-				),
-			} );
-
+		return planPropertiesObj.map( ( properties, index ) => {
 			return (
-				<Container key={ planName } className={ tableItemClasses } isMobile={ options?.isMobile }>
-					<PopularBadge
-						isInSignup={ isInSignup }
-						planName={ planName }
-						additionalClassName={ popularBadgeClasses }
-					/>
-					<header className={ headerClasses }>
-						{ isBusinessPlan( planName ) && (
-							<ServiceLogo
-								hoverText={ translate(
-									'WP Cloud gives you the tools you need to add scalable, highly available, extremely fast WordPress hosting.'
-								) }
-								imgSrc={ cloudLogo }
-								imgAlt="WP Cloud logo"
-							/>
-						) }
-						{ isEcommercePlan( planName ) && (
-							<ServiceLogo
-								hoverText={ translate(
-									'Make your online store a reality with the power of WooCommerce.'
-								) }
-								imgSrc={ wooLogo }
-								imgAlt="WooCommerce logo"
-							/>
-						) }
-						{ isWpcomEnterpriseGridPlan( planName ) && (
-							<ServiceLogo
-								hoverText={ translate( 'The trusted choice for enterprise WordPress hosting.' ) }
-								imgSrc={ vipLogo }
-								imgAlt="WPVIP logo"
-							/>
-						) }
-					</header>
-				</Container>
+				<PlanLogo
+					key={ properties.planName }
+					planIndex={ index }
+					planPropertiesObj={ planPropertiesObj }
+					planProperties={ properties }
+					isMobile={ options?.isMobile }
+					isInSignup={ isInSignup }
+				/>
 			);
 		} );
 	}
@@ -939,6 +982,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 			const planConstantObj = applyTestFiltersToPlansList( plan, undefined );
 			const planProductId = planConstantObj.getProductId();
 			const planObject = getPlan( state, planProductId );
+			const billingPeriod = planObject?.bill_period;
 			const isMonthlyPlan = isMonthly( plan );
 			const showMonthly = ! isMonthlyPlan;
 			const relatedMonthlyPlan = showMonthly
@@ -1020,9 +1064,9 @@ const ConnectedPlanFeatures2023Grid = connect(
 				);
 			}
 
-			const rawPriceAnnual =
+			const maybeDiscountedFullTermPrice =
 				null !== discountPrice
-					? discountPrice * 12
+					? discountPrice * ( PLAN_BIENNIAL_PERIOD === billingPeriod ? 24 : 12 )
 					: getPlanRawPrice( state, planProductId, false );
 
 			const tagline = planConstantObj.getPlanTagline?.() ?? '';
@@ -1037,11 +1081,16 @@ const ConnectedPlanFeatures2023Grid = connect(
 
 			const availableForPurchase = isInSignup || isPlanAvailableForPurchase( state, siteId, plan );
 
+			const sitePlanSlug = getSitePlanSlug( state, siteId ) ?? '';
+			const isCurrentPlan =
+				isCurrentSitePlan( state, siteId, planProductId ) ||
+				plan === getPlanSlugForTermVariant( sitePlanSlug as PlanSlug, TERM_BIENNIALLY );
+
 			return {
 				availableForPurchase,
 				cartItemForPlan: getCartItemForPlan( getPlanSlug( state, planProductId ) ?? '' ),
 				currencyCode: getCurrentUserCurrencyCode( state ),
-				current: isCurrentSitePlan( state, siteId, planProductId ) ?? false,
+				current: isCurrentPlan,
 				discountPrice,
 				features: planFeaturesTransformed,
 				jpFeatures: jetpackFeaturesTransformed,
@@ -1053,13 +1102,14 @@ const ConnectedPlanFeatures2023Grid = connect(
 				product_name_short,
 				hideMonthly: false,
 				rawPrice,
-				rawPriceAnnual,
+				maybeDiscountedFullTermPrice,
 				rawPriceForMonthlyPlan,
 				relatedMonthlyPlan,
 				annualPricePerMonth,
 				isMonthlyPlan,
 				tagline,
 				storageOptions,
+				billingPeriod,
 			};
 		} );
 

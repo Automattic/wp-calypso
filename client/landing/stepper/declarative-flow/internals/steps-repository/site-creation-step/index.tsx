@@ -31,6 +31,7 @@ import {
 } from 'calypso/signup/storageUtils';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import type { Step } from '../../types';
+import type { OnboardSelect } from '@automattic/data-stores';
 
 import './styles.scss';
 
@@ -42,16 +43,22 @@ const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
 const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, data } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
-	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
+	const stepProgress = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
+		[]
+	);
 
 	const { domainCartItem, planCartItem, siteAccentColor, getSelectedSiteTitle, productCartItems } =
-		useSelect( ( select ) => ( {
-			domainCartItem: select( ONBOARD_STORE ).getDomainCartItem(),
-			siteAccentColor: select( ONBOARD_STORE ).getSelectedSiteAccentColor(),
-			planCartItem: select( ONBOARD_STORE ).getPlanCartItem(),
-			productCartItems: select( ONBOARD_STORE ).getProductCartItems(),
-			getSelectedSiteTitle: select( ONBOARD_STORE ).getSelectedSiteTitle(),
-		} ) );
+		useSelect(
+			( select ) => ( {
+				domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
+				siteAccentColor: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteAccentColor(),
+				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
+				productCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getProductCartItems(),
+				getSelectedSiteTitle: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
+			} ),
+			[]
+		);
 
 	const username = useSelector( ( state ) => getCurrentUserName( state ) );
 
@@ -67,7 +74,10 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 	}
 	const isPaidDomainItem = Boolean( domainCartItem?.product_slug );
 
-	const progress = useSelect( ( select ) => select( ONBOARD_STORE ).getProgress() );
+	const progress = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getProgress(),
+		[]
+	);
 	const { setProgress } = useDispatch( ONBOARD_STORE );
 
 	// Default visibility is public
@@ -150,7 +160,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 
 	const getCurrentMessage = () => {
 		return isWooExpressFlow( flow )
-			? __( 'Woo! We’re creating your store' )
+			? __( "Woo! We're creating your store" )
 			: __( 'Creating your site' );
 	};
 

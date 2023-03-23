@@ -2,7 +2,7 @@ import { getCurrentUser } from '@automattic/calypso-analytics';
 import { costToUSD, refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
 import { mayWeTrackByTracker } from '../tracker-buckets';
 import { cartToGaPurchase } from '../utils/cart-to-ga-purchase';
-import { splitWpcomJetpackCartInfo } from '../utils/split-wpcom-jetpack-cart-info';
+import { splitCartProducts } from '../utils/split-wpcom-jetpack-cart-info';
 import {
 	debug,
 	TRACKING_IDS,
@@ -48,7 +48,7 @@ export async function recordOrder( cart, orderId, sitePlanSlug ) {
 
 	// Fire one tracking event that includes details about the entire order
 
-	const wpcomJetpackCartInfo = splitWpcomJetpackCartInfo( cart );
+	const wpcomJetpackCartInfo = splitCartProducts( cart );
 	debug( 'recordOrder: wpcomJetpackCartInfo:', wpcomJetpackCartInfo );
 
 	recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo );
@@ -318,6 +318,28 @@ function recordOrderInFacebook( cart, orderId, wpcomJetpackCartInfo ) {
 			window.fbq( ...params );
 		}
 	}
+
+	// Akismet
+	if ( wpcomJetpackCartInfo.containsAkismetProducts ) {
+		if ( null !== wpcomJetpackCartInfo.akismetCostUSD && wpcomJetpackCartInfo.akismetCostUSD > 0 ) {
+			const params = [
+				'trackSingle',
+				TRACKING_IDS.facebookAkismetInit,
+				'Purchase',
+				{
+					product_slug: wpcomJetpackCartInfo.akismetProducts
+						.map( ( product ) => product.product_slug )
+						.join( ', ' ),
+					value: wpcomJetpackCartInfo.akismetCostUSD,
+					currency: 'USD',
+					user_id: currentUser ? currentUser.hashedPii.ID : 0,
+					order_id: orderId,
+				},
+			];
+			debug( 'recordOrderInFacebook: Akismet', params );
+			window.fbq( ...params );
+		}
+	}
 }
 
 /**
@@ -381,7 +403,7 @@ function recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo ) {
 	}
 
 	// MCC-level event.
-	// @TODO Separate WPCOM from Jetpack events.
+	// WPCOM
 	if ( mayWeTrackByTracker( 'googleAds' ) ) {
 		const params = [
 			'event',
@@ -397,6 +419,7 @@ function recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo ) {
 		window.gtag( ...params );
 	}
 
+	// Jetpack
 	if ( mayWeTrackByTracker( 'googleAds' ) && wpcomJetpackCartInfo.containsJetpackProducts ) {
 		const params = [
 			'event',
@@ -409,6 +432,22 @@ function recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo ) {
 			},
 		];
 		debug( 'recordOrderInGoogleAds: Record Jetpack Purchase', params );
+		window.gtag( ...params );
+	}
+
+	// Akismet
+	if ( mayWeTrackByTracker( 'googleAds' ) && wpcomJetpackCartInfo.containsAkismetProducts ) {
+		const params = [
+			'event',
+			'purchase',
+			{
+				transactionId: orderId,
+				send_to: TRACKING_IDS.akismetGoogleAdsGtagPurchase,
+				transactionTotal: wpcomJetpackCartInfo.akismetCost,
+				currencyCode: cart.currency,
+			},
+		];
+		debug( 'recordOrderInGoogleAds: Record Akismet Purchase', params );
 		window.gtag( ...params );
 	}
 }

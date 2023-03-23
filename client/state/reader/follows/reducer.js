@@ -149,7 +149,9 @@ const itemsReducer = ( state = {}, action ) => {
 
 			return Object.assign( newState, {
 				[ urlKey ]: merge(
-					{ feed_URL: actualFeedUrl },
+					{
+						feed_URL: actualFeedUrl,
+					},
 					state[ urlKey ],
 					action.payload.follow,
 					newValues
@@ -158,7 +160,14 @@ const itemsReducer = ( state = {}, action ) => {
 		}
 		case READER_UNFOLLOW: {
 			const urlKey = prepareComparableUrl( action.payload.feedUrl );
-			const currentFollow = state[ urlKey ];
+			let currentFollow = state[ urlKey ];
+			// Some posts do not have feed_URL's available, in this case the `READER_FOLLOW` action will be called
+			// with the response from the `/following/mine/new` API call, which contains a full `feed_URL`.
+			// Since we don't get the correct feed_URL from the post object, we must make a guess that
+			// it will follow the `${site_URL}/feed` pattern
+			if ( currentFollow === undefined ) {
+				currentFollow = state[ urlKey + '/feed' ];
+			}
 			if ( ! ( currentFollow && currentFollow.is_following ) ) {
 				return state;
 			}

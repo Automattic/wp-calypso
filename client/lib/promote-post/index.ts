@@ -23,9 +23,14 @@ declare global {
 				onLoaded?: () => void;
 				onClose?: () => void;
 				translateFn?: ( value: string, options?: any ) => string;
+				locale?: string;
 				showDialog?: boolean;
 				setShowCancelButton?: ( show: boolean ) => void;
+				setShowTopBar?: ( show: boolean ) => void;
 				uploadImageLabel?: string;
+				showGetStartedMessage?: boolean;
+				onGetStartedMessageClose?: ( dontShowAgain: boolean ) => void;
+				source?: string;
 			} ) => void;
 			strings: any;
 		};
@@ -51,9 +56,12 @@ export async function showDSP(
 	siteId: number | string,
 	postId: number | string,
 	onClose: () => void,
+	source: string,
 	translateFn: ( value: string, options?: any ) => string,
 	domNodeOrId?: HTMLElement | string | null,
-	setShowCancelButton?: ( show: boolean ) => void
+	setShowCancelButton?: ( show: boolean ) => void,
+	setShowTopBar?: ( show: boolean ) => void,
+	locale?: string
 ) {
 	await loadDSPWidgetJS();
 	return new Promise( ( resolve, reject ) => {
@@ -71,9 +79,13 @@ export async function showDSP(
 				onLoaded: () => resolve( true ),
 				onClose: onClose,
 				translateFn: translateFn,
+				locale,
 				urn: `urn:wpcom:post:${ siteId }:${ postId || 0 }`,
 				setShowCancelButton: setShowCancelButton,
+				setShowTopBar: setShowTopBar,
 				uploadImageLabel: isWpMobileApp() ? __( 'Tap to add image' ) : undefined,
+				showGetStartedMessage: ! isWpMobileApp(), // Don't show the GetStartedMessage in the mobile app.
+				source: source,
 			} );
 		} else {
 			reject( false );

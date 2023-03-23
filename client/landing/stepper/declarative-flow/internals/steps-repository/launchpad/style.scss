@@ -351,6 +351,10 @@
 	pointer-events: none;
 }
 
+.launchpad__checklist-item[data-task="verify_email"] {
+	color: var(--color-text);
+}
+
 .launchpad__checklist-item-checkmark-container,
 .launchpad__checklist-item-warning-container {
 	margin-right: 8px;
@@ -657,6 +661,14 @@
 		display: none;
 	}
 
+	.launchpad__sidebar-header-flow-name {
+		display: none;
+	}
+}
+
+// Write and Build flow
+.write.launchpad,
+.build.launchpad {
 	.launchpad__sidebar-header-flow-name {
 		display: none;
 	}

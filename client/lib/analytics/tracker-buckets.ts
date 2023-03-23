@@ -34,7 +34,7 @@ const allAdTrackers = [
 	'adroll',
 ] as const;
 
-type AdTracker = typeof allAdTrackers[ number ];
+type AdTracker = ( typeof allAdTrackers )[ number ];
 
 export enum Bucket {
 	ESSENTIAL = 'essential',
@@ -86,7 +86,6 @@ export const AdTrackersInitGuards: Partial< { [ key in AdTracker ]: () => boolea
 	googleAds: checkGtagInit,
 	googleTagManager: checkWooGTMInit,
 	fullstory: () => 'FS' in window,
-	hotjar: () => 'hj' in window,
 	bing: () => 'uetq' in window,
 	outbrain: () => 'obApi' in window,
 	pinterest: () => 'pintrk' in window,
