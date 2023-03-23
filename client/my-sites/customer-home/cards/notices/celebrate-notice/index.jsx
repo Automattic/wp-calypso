@@ -1,6 +1,5 @@
-import { Button, Spinner, LoadingPlaceholder } from '@automattic/components';
+import { Button, Spinner } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
-import styled from '@emotion/styled';
 import classnames from 'classnames';
 import { useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
@@ -8,48 +7,6 @@ import fireworksIllustration from 'calypso/assets/images/customer-home/illustrat
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 import { composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-
-const TitlePlaceholder = styled( LoadingPlaceholder )( {
-	height: 48,
-	width: '50%',
-	marginBottom: '1.5em',
-} );
-const DescriptionPlaceholder = styled( LoadingPlaceholder )( {
-	height: 24,
-	width: '90%',
-	marginBottom: '0.5em',
-} );
-const IllustationPlaceholder = styled( LoadingPlaceholder )( {
-	height: 244,
-	width: '100%',
-} );
-
-const CelebrateNoticePlaceholderTextContainer = styled.div( {
-	className: 'task__text',
-	flex: 1,
-} );
-
-export const CelebrateNoticePlaceholder = () => {
-	return (
-		<div className="task">
-			<CelebrateNoticePlaceholderTextContainer>
-				<div className="task__title">
-					<TitlePlaceholder />
-				</div>
-				<div className="task__description">
-					<DescriptionPlaceholder />
-					<DescriptionPlaceholder />
-					<DescriptionPlaceholder />
-				</div>
-			</CelebrateNoticePlaceholderTextContainer>
-			{ isDesktop() && (
-				<div className="task__illustration">
-					<IllustationPlaceholder />
-				</div>
-			) }
-		</div>
-	);
-};
 
 const CelebrateNotice = ( {
 	actionText,
