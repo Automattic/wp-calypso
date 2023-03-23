@@ -29,11 +29,13 @@ const extraColumns: SiteColumns = isExpandedBlockEnabled
 			{
 				key: 'stats',
 				title: translate( 'Stats' ),
+				className: 'width-fit-content',
 				isExpandable: true,
 			},
 			{
 				key: 'boost',
 				title: translate( 'Boost' ),
+				className: 'width-fit-content',
 				isExpandable: true,
 			},
 	  ]
@@ -48,11 +50,13 @@ export const siteColumns: SiteColumns = [
 	{
 		key: 'backup',
 		title: translate( 'Backup' ),
+		className: 'width-fit-content',
 		isExpandable: isExpandedBlockEnabled,
 	},
 	{
 		key: 'scan',
 		title: translate( 'Scan' ),
+		className: 'width-fit-content',
 	},
 	{
 		key: 'monitor',
@@ -63,6 +67,7 @@ export const siteColumns: SiteColumns = [
 	{
 		key: 'plugin',
 		title: translate( 'Plugins' ),
+		className: 'width-fit-content',
 	},
 ];
 
