@@ -7,7 +7,7 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import { useSiteLogsQuery } from 'calypso/data/hosting/use-site-logs-query';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { SiteLogsTabPanel, tabs } from './components/site-logs-tab-panel';
+import { SiteLogsTab, SiteLogsTabPanel } from './components/site-logs-tab-panel';
 
 export function SiteLogs() {
 	const { __ } = useI18n();
@@ -17,7 +17,12 @@ export function SiteLogs() {
 	const [ startTime ] = useState( moment().subtract( 7, 'd' ).unix() );
 	const [ endTime ] = useState( moment().unix() );
 
-	const [ logType, setLogType ] = useState< 'php' | 'web' >( 'php' );
+	const [ logType, setLogType ] = useState< SiteLogsTab >( () => {
+		const queryParam = new URL( window.location.href ).searchParams.get( 'logType' );
+		return (
+			queryParam && [ 'php', 'web' ].includes( queryParam ) ? queryParam : 'php'
+		 ) as SiteLogsTab;
+	} );
 
 	const { data, refetch } = useSiteLogsQuery( siteId, {
 		logType,
@@ -53,8 +58,6 @@ export function SiteLogs() {
 		.join( '\n' );
 
 	const titleHeader = __( 'Site Logs' );
-	const tabName = new URL( window.location.href ).searchParams.get( 'logType' ) ?? 'php';
-	const tab = tabs.find( ( tab ) => tab.name === tabName );
 
 	return (
 		<Main wideLayout>
@@ -67,7 +70,7 @@ export function SiteLogs() {
 			/>
 
 			<SiteLogsTabPanel
-				initialTab={ tab }
+				selectedTab={ logType }
 				onSelected={ ( tabName ) => {
 					handleTabSelected( tabName );
 				} }

@@ -8,11 +8,13 @@ export const tabs = [
 	{ name: 'web', title: __( 'Webserver Logs' ) },
 ];
 
+export type SiteLogsTab = 'php' | 'web';
+
 interface SiteLogsTabPanelProps {
 	children( tab: TabPanel.Tab ): JSX.Element;
+	selectedTab?: SiteLogsTab;
 	className?: string;
-	onSelected?: ( tab: string ) => void;
-	initialTab?: TabPanel.Tab;
+	onSelected?: ( tabName: string ) => void;
 }
 
 const LogsTabPanel = styled( TabPanel )`
@@ -38,15 +40,15 @@ const LogsTabPanel = styled( TabPanel )`
 
 export const SiteLogsTabPanel = ( {
 	children: renderContents,
+	selectedTab = 'php',
 	className,
 	onSelected,
-	initialTab = tabs[ 0 ],
 }: SiteLogsTabPanelProps ) => {
 	return (
 		<LogsTabPanel
+			initialTabName={ selectedTab }
 			className={ className }
 			tabs={ tabs }
-			initialTabName={ initialTab.name }
 			onSelect={ ( tabName ) => {
 				onTabSelected( tabName );
 				onSelected?.( tabName );
