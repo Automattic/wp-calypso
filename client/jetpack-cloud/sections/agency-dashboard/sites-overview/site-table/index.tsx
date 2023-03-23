@@ -7,6 +7,7 @@ import './style.scss';
 import EditButton from '../../dashboard-bulk-actions/edit-button';
 import SitesOverviewContext from '../context';
 import SiteBulkSelect from '../site-bulk-select';
+import SiteSort from '../site-sort';
 import SiteTableRow from '../site-table-row';
 import type { SiteData, SiteColumns } from '../types';
 
@@ -45,12 +46,14 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 						<>
 							{ columns.map( ( column, index ) => (
 								<th key={ column.key }>
-									{ index === 0 && (
-										<Icon className="site-table__favorite-icon" size={ 24 } icon={ starFilled } />
-									) }
-									<span className={ classNames( index === 0 && 'site-table-site-title' ) }>
-										{ column.title }
-									</span>
+									<SiteSort isLargeScreen isSortable={ column.isSortable } columnKey={ column.key }>
+										{ index === 0 && (
+											<Icon className="site-table__favorite-icon" size={ 24 } icon={ starFilled } />
+										) }
+										<span className={ classNames( index === 0 && 'site-table-site-title' ) }>
+											{ column.title }
+										</span>
+									</SiteSort>
 								</th>
 							) ) }
 							<th colSpan={ isExpandedBlockEnabled ? 2 : 1 }>

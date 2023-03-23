@@ -55,14 +55,15 @@ export default function SitesOverview() {
 
 	const [ highlightTab, setHighlightTab ] = useState( false );
 
-	const { search, currentPage, filter, selectedSites, setSelectedSites } =
+	const { search, currentPage, filter, sort, selectedSites, setSelectedSites } =
 		useContext( SitesOverviewContext );
 
 	const { data, isError, isLoading, refetch } = useFetchDashboardSites(
 		isPartnerOAuthTokenLoaded,
 		search,
 		currentPage,
-		filter
+		filter,
+		sort
 	);
 
 	const selectedSiteIds = selectedSites.map( ( site ) => site.blog_id );

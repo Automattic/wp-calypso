@@ -17,6 +17,7 @@ export default function DashboardOverview( {
 	search,
 	currentPage,
 	filter,
+	sort,
 }: DashboardOverviewContextInterface ) {
 	const hasFetched = useSelector( hasFetchedPartner );
 	const isFetching = useSelector( isFetchingPartner );
@@ -40,6 +41,7 @@ export default function DashboardOverview( {
 			search,
 			currentPage,
 			filter,
+			sort,
 			isBulkManagementActive,
 			setIsBulkManagementActive: handleSetBulkManagementActive,
 			selectedSites,
