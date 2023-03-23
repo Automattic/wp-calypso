@@ -17,11 +17,7 @@ const useSubscriptionManagerSubscriptionsCountQuery = () => {
 		},
 		{
 			enabled,
-			initialData: {
-				blogs: null,
-				comments: null,
-				pending: null,
-			},
+			refetchOnWindowFocus: false,
 		}
 	);
 };
