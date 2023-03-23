@@ -283,8 +283,10 @@ export function serverRender( req, res ) {
 		}
 	}
 	performanceMark( req.context, 'final render', true );
-	context.clientData = config.clientData;
-	context.subscriptionManagementSubkey = res.locals?.subscriptionManagementSubkey;
+	context.clientData = {
+		...config.clientData,
+		subscriptionManagementSubkey: res.locals?.subscriptionManagementSubkey,
+	};
 
 	attachBuildTimestamp( context );
 

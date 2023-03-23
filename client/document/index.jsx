@@ -59,7 +59,6 @@ class Document extends Component {
 			useTranslationChunks,
 			target,
 			featuresHelper,
-			subscriptionManagementSubkey,
 		} = this.props;
 
 		const installedChunks = entrypoint.js
@@ -250,16 +249,6 @@ class Document extends Component {
 						 `,
 						} }
 					/>
-					{ subscriptionManagementSubkey ? (
-						<script
-							nonce={ inlineScriptNonce }
-							dangerouslySetInnerHTML={ {
-								__html: `
-							window._subscriptionManagementSubkey = '${ encodeURIComponent( subscriptionManagementSubkey ) }';
-						 `,
-							} }
-						/>
-					) : null }
 
 					<noscript className="wpcom-site__global-noscript">
 						Please enable JavaScript in your browser to enjoy WordPress.com.
