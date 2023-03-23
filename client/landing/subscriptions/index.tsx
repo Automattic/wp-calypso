@@ -3,7 +3,6 @@ import '@automattic/calypso-polyfills';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import { CurrentUser } from '@automattic/calypso-analytics/dist/types/utils/current-user';
 import config from '@automattic/calypso-config';
-import defaultCalypsoI18n from 'i18n-calypso';
 import ReactDom from 'react-dom';
 import { QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
@@ -23,7 +22,7 @@ import { createQueryClient, hydrateBrowserState } from 'calypso/state/query-clie
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import { requestSites } from 'calypso/state/sites/actions';
-import SubscriptionManagementPage from './subscription-manager/subscription-manager';
+import SubscriptionManagemer from './subscription-manager/subscription-manager';
 import './styles.scss';
 
 const tracksSuperProps = () => ( {
@@ -66,13 +65,13 @@ window.AppBoot = async () => {
 	initializeAnalytics( user, tracksSuperProps );
 
 	ReactDom.render(
-		<CalypsoI18nProvider i18n={ defaultCalypsoI18n }>
+		<CalypsoI18nProvider>
 			<Provider store={ reduxStore }>
 				<QueryClientProvider client={ queryClient }>
 					<MomentProvider>
 						<BrowserRouter basename="subscriptions">
 							<WindowLocaleEffectManager />
-							<SubscriptionManagementPage />
+							<SubscriptionManagemer />
 						</BrowserRouter>
 					</MomentProvider>
 				</QueryClientProvider>
