@@ -1,0 +1,27 @@
+@import "@automattic/typography/styles/variables";
+@import "@automattic/color-studio/dist/color-variables";
+
+.subscription-management {
+	&__notice {
+		position: relative;
+		display: flex;
+		flex-direction: row;
+		align-items: flex-start;
+		padding: 16px 20px;
+		gap: 16px;
+		margin-bottom: 20px;
+		background: var(--studio-gray-0);
+
+		&-content {
+			font-size: var(--font-body-small);
+			line-height: var(--font-title-small);
+			letter-spacing: -0.15px;
+		}
+
+		&-close {
+			position: absolute;
+			right: 23px;
+			top: 19px;
+		}
+	}
+}

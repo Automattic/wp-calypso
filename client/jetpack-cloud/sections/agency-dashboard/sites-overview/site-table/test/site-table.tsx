@@ -103,6 +103,11 @@ describe( '<SiteTable>', () => {
 				isPartnerOAuthTokenLoaded: true,
 			},
 		},
+		sites: {
+			items: {
+				[ blogId ]: siteObj,
+			},
+		},
 	};
 	const mockStore = configureStore();
 	const store = mockStore( initialState );

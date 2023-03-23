@@ -102,7 +102,7 @@ td.site-table__td-critical {
 }
 
 tr.site-table__table-row-expanded {
-	background: var(--studio-gray-0);
+	background: var(--studio-gray-0) !important;
 	td {
 		border-top: none;
 	}

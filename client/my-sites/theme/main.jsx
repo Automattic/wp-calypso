@@ -208,6 +208,11 @@ class ThemeSheet extends Component {
 	};
 
 	onUnlockStyleButtonClick = () => {
+		this.props.recordTracksEvent(
+			'calypso_theme_sheet_global_styles_gating_modal_show',
+			this.getPremiumGlobalStylesEventProps()
+		);
+
 		this.setState( { showUnlockStyleUpgradeModal: true } );
 	};
 
@@ -924,11 +929,7 @@ class ThemeSheet extends Component {
 			<Button
 				className="theme__sheet-primary-button"
 				href={
-					getUrl &&
-					( key === 'customize' ||
-						! isExternallyManagedTheme ||
-						! isLoggedIn ||
-						! config.isEnabled( 'themes/third-party-premium' ) )
+					getUrl && ( key === 'customize' || ! isExternallyManagedTheme || ! isLoggedIn )
 						? this.appendSelectedStyleVariationToUrl( getUrl( this.props.themeId ) )
 						: null
 				}

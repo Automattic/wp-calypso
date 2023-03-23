@@ -166,6 +166,7 @@ function CountryCodeInput( {
 } ) {
 	const countries = [
 		'AT',
+		'AU',
 		'BE',
 		'BG',
 		'CH',
@@ -183,6 +184,7 @@ function CountryCodeInput( {
 		'HU',
 		'IE',
 		'IT',
+		'JP',
 		'LT',
 		'LU',
 		'LV',
