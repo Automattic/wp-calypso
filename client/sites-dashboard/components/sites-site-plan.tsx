@@ -32,12 +32,9 @@ const STAGING_PLAN_LABEL = 'Staging';
 
 export const SitePlan = ( { site, userId }: SitePlanProps ) => {
 	const isStaging = useSelector( ( state ) => isSiteStaging( state, site.ID ) );
-	const hasProductionBlog = isStaging && site?.options?.wpcom_production_blog_id;
-	const planLabel = hasProductionBlog ? STAGING_PLAN_LABEL : site.plan?.product_name_short;
-
 	return (
 		<SitePlanContainer>
-			{ ! hasProductionBlog && (
+			{ ! isStaging ? (
 				<>
 					{ isNotAtomicJetpack( site ) && ! site.plan?.expired && (
 						<SitePlanIcon>
@@ -53,9 +50,11 @@ export const SitePlan = ( { site, userId }: SitePlanProps ) => {
 							/>
 						</PlanRenewNagContainer>
 					) }
+					{ site.plan?.product_name_short }
 				</>
+			) : (
+				STAGING_PLAN_LABEL
 			) }
-			{ planLabel }
 		</SitePlanContainer>
 	);
 };
