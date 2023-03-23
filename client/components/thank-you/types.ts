@@ -53,3 +53,5 @@ export type ThankYouProps = {
 	thankYouHeaderBody?: React.ReactElement | null;
 	thankYouNotice?: ThankYouNoticeProps;
 };
+
+export type ThankYouData = [ ThankYouSectionProps, boolean, JSX.Element, string[] ];

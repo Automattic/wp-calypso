@@ -1,7 +1,7 @@
 import { ConfettiAnimation } from '@automattic/components';
 import { ThemeProvider, Global, css } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { ThankYou } from 'calypso/components/thank-you';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -35,9 +35,9 @@ const MarketplaceThankYou = ( {
 
 	const defaultThankYouFooter = useThankYouFoooter( pluginSlugs, themeSlugs );
 
-	const [ pluginsSection, allPluginsFetched, pluginsGoBackSection ] =
+	const [ pluginsSection, allPluginsFetched, pluginsGoBackSection, pluginsProgressbarSteps ] =
 		usePluginsThankYouData( pluginSlugs );
-	const [ themesSection, allThemesFetched, themesGoBackSection ] =
+	const [ themesSection, allThemesFetched, themesGoBackSection, themesProgressbarSteps ] =
 		useThemesThankYouData( themeSlugs );
 
 	const areAllProductsFetched = allPluginsFetched && allThemesFetched;
@@ -98,21 +98,7 @@ const MarketplaceThankYou = ( {
 		}
 	}, [ transferStatus, areAllProductsFetched, showProgressBar, isJetpack ] );
 
-	// TODO: Use more general steps (not specific to plugins)
-	const steps = useMemo(
-		() =>
-			isJetpack
-				? [ translate( 'Installing plugin' ) ]
-				: [
-						translate( 'Activating the plugin feature' ), // Transferring to Atomic
-						translate( 'Setting up plugin installation' ), // Transferring to Atomic
-						translate( 'Installing plugin' ), // Transferring to Atomic
-						translate( 'Activating plugin' ),
-				  ],
-		// We intentionally don't set `isJetpack` as dependency to keep the same steps after the Atomic transfer.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[ translate ]
-	);
+	const steps = [ ...pluginsProgressbarSteps, ...themesProgressbarSteps ];
 	const additionalSteps = useMarketplaceAdditionalSteps();
 
 	return (
