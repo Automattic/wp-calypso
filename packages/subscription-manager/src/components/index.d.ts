@@ -103,6 +103,10 @@ declare module 'calypso/components/forms/form-label' {
 	export default FormLabel;
 }
 
+declare module 'calypso/components/localized-moment' {
+	export const useLocalizedMoment: () => import('moment');
+}
+
 declare module '*.svg' {
 	const url: string;
 	export default url;
