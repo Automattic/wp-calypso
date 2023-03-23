@@ -98,7 +98,7 @@ const UserSettings = ( { value = {}, loading }: UserSettingsProps ) => {
 			/>
 			<BlockEmailsSetting
 				value={ formState.blocked ?? false }
-				onChange={ ( value ) => onChange?.( { blocked: !! value.target.value } ) }
+				onChange={ ( value ) => onChange?.( { blocked: value.target.checked } ) }
 			/>
 			<Button disabled={ isLoading } onClick={ onSubmit }>
 				{ translate( 'Save changes', {
