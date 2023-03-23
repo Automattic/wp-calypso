@@ -29,21 +29,23 @@ interface SitePlanProps {
 }
 
 export const SitePlan = ( { site, userId }: SitePlanProps ) => {
-	const plan = useSelector( ( state ) => {
+	const planLabel = useSelector( ( state ) => {
 		if ( site?.options?.wpcom_production_blog_id ) {
-			return getSitePlan( state, site?.options?.wpcom_production_blog_id );
+			return (
+				getSitePlan( state, site?.options?.wpcom_production_blog_id )?.product_name_short ?? ''
+			);
 		}
-		return site.plan;
+		return site.plan?.product_name_short ?? '';
 	} );
 
 	return (
 		<SitePlanContainer>
-			{ isNotAtomicJetpack( site ) && ! plan?.expired && (
+			{ isNotAtomicJetpack( site ) && ! site.plan?.expired && (
 				<SitePlanIcon>
 					<JetpackLogo size={ 16 } />
 				</SitePlanIcon>
 			) }
-			{ site.plan?.expired ? (
+			{ site.plan?.expired && ! site?.options?.wpcom_production_blog_id ? (
 				<PlanRenewNagContainer>
 					<PlanRenewNag
 						plan={ site.plan }
@@ -52,7 +54,7 @@ export const SitePlan = ( { site, userId }: SitePlanProps ) => {
 					/>
 				</PlanRenewNagContainer>
 			) : (
-				site.plan?.product_name_short
+				planLabel
 			) }
 		</SitePlanContainer>
 	);
