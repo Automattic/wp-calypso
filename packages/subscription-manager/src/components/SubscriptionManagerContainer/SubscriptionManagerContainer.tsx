@@ -2,6 +2,7 @@
 /**
  * External dependencies
  */
+import { UniversalNavbarHeader } from '@automattic/wpcom-template-parts';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -16,18 +17,25 @@ const SubscriptionManagerContainer = ( { children }: SubscriptionManagerContaine
 	const translate = useTranslate();
 
 	return (
-		<Main className="subscription-manager-container">
-			<DocumentHead title="Subscriptions" />
-			<FormattedHeader
-				brandFont
-				headerText={ translate( 'Subscription management' ) }
-				subHeaderText={ translate(
-					'Manage your WordPress.com newsletter and blog subscriptions.'
-				) }
-				align="left"
+		<>
+			<UniversalNavbarHeader
+				className="subscription-manager-header"
+				variant="minimal"
+				isLoggedIn={ false }
 			/>
-			{ children }
-		</Main>
+			<Main className="subscription-manager-container">
+				<DocumentHead title="Subscriptions" />
+				<FormattedHeader
+					brandFont
+					headerText={ translate( 'Subscription management' ) }
+					subHeaderText={ translate(
+						'Manage your WordPress.com newsletter and blog subscriptions.'
+					) }
+					align="left"
+				/>
+				{ children }
+			</Main>
+		</>
 	);
 };
 
