@@ -19,6 +19,8 @@ import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
+import { DeleteStagingSite } from './delete-staging-site';
+import { useDeleteStagingSite } from './use-delete-staging-site';
 
 const stagingSiteAddFailureNoticeId = 'staging-site-add-failure';
 
@@ -39,6 +41,11 @@ const ButtonPlaceholder = styled( LoadingPlaceholder )( {
 
 const StyledLoadingBar = styled( LoadingBar )( {
 	marginBottom: '1em',
+} );
+
+const ActionButtons = styled.div( {
+	display: 'flex',
+	gap: '1em',
 } );
 
 const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, translate } ) => {
@@ -69,6 +76,14 @@ const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, transl
 	const [ wasCreating, setWasCreating ] = useState( false );
 	const [ progress, setProgress ] = useState( 0.1 );
 	const transferStatus = useCheckStagingSiteStatus( stagingSite.id );
+	const { deleteStagingSite, isReverting } = useDeleteStagingSite( {
+		siteId,
+		stagingSiteId: stagingSite.id,
+		transferStatus,
+		onSuccess: useCallback( () => {
+			dispatch( successNotice( __( 'Staging site deleted.' ) ) );
+		}, [ dispatch, __ ] ),
+	} );
 	const isStagingSiteTransferComplete = transferStatus === transferStates.COMPLETE;
 	const isTrasferInProgress =
 		showManageStagingSite &&
@@ -87,16 +102,14 @@ const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, transl
 			switch ( transferStatus ) {
 				case null:
 					return 0.1;
-				case 'relocating_revert':
-				case 'active':
+				case transferStates.RELOCATING_REVERT:
+				case transferStates.ACTIVE:
 					return 0.2;
-				case 'provisioned':
+				case transferStates.PROVISIONED:
 					return 0.6;
-				case 'reverted':
-				case 'relocating_switcheroo':
+				case transferStates.REVERTED:
+				case transferStates.RELOCATING:
 					return 0.85;
-				case 'complete':
-					return 0.98;
 				default:
 					return prevProgress + 0.05;
 			}
@@ -162,14 +175,33 @@ const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, transl
 						},
 					} ) }
 				</p>
-				<Button primary href={ `/home/${ urlToSlug( stagingSite.url ) }` } disabled={ disabled }>
-					<span>{ translate( 'Manage staging site' ) }</span>
-				</Button>
+				<ActionButtons>
+					<Button primary href={ `/home/${ urlToSlug( stagingSite.url ) }` } disabled={ disabled }>
+						<span>{ translate( 'Manage staging site' ) }</span>
+					</Button>
+					<DeleteStagingSite
+						disabled={ disabled }
+						onClickDelete={ deleteStagingSite }
+						isBusy={ isReverting }
+					>
+						<Gridicon icon="trash" />
+						<span>{ __( 'Delete staging site' ) }</span>
+					</DeleteStagingSite>
+				</ActionButtons>
 			</>
 		);
 	};
 
 	const getTransferringStagingSiteContent = useCallback( () => {
+		if ( isReverting ) {
+			return (
+				<>
+					<StyledLoadingBar key="delete-loading-bar" progress={ progress } />
+					<p>{ __( 'We are deleting your staging site.' ) }</p>
+				</>
+			);
+		}
+
 		const message =
 			siteOwnerId === currentUserId
 				? __( 'We are setting up your staging site. We’ll email you once it is ready.' )
@@ -180,7 +212,7 @@ const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, transl
 				<p>{ message }</p>
 			</>
 		);
-	}, [ progress, __, siteOwnerId, currentUserId ] );
+	}, [ progress, __, siteOwnerId, currentUserId, isReverting ] );
 
 	const getLoadingStagingSitesPlaceholder = () => {
 		return (
@@ -205,7 +237,7 @@ const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, transl
 	let stagingSiteCardContent;
 	if ( ! isLoadingStagingSites && loadingError ) {
 		stagingSiteCardContent = getLoadingErrorContent();
-	} else if ( addingStagingSite || isTrasferInProgress ) {
+	} else if ( addingStagingSite || isTrasferInProgress || isReverting ) {
 		stagingSiteCardContent = getTransferringStagingSiteContent();
 	} else if ( showManageStagingSite && isStagingSiteTransferComplete ) {
 		stagingSiteCardContent = getManageStagingSiteContent();
