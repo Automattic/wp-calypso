@@ -147,7 +147,7 @@
 		"subscription-management": false,
 		"themes/atomic-homepage-replace": true,
 		"themes/premium": true,
-		"themes/showcase-i4/details-and-preview": false,
+		"themes/showcase-i4/details-and-preview": true,
 		"themes/subscription-purchases": false,
 		"themes/theme-switch-persist-template": false,
 		"themes/third-party-premium": true,
