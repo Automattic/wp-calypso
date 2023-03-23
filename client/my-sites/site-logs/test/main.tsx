@@ -10,6 +10,10 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { useNock, nock } from 'calypso/test-helpers/use-nock';
 import { SiteLogs } from '../main';
 
+// PageJS breaks the tests due to failing to read the document title.
+// Mock it for now to avoid the error.
+jest.mock( 'page' );
+
 const render = ( el, options ) =>
 	renderWithProvider( el, { ...options, reducers: { ui, documentHead } } );
 
