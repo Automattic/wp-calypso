@@ -71,6 +71,7 @@ cached-requests.json
 /build-tools/dist/
 /apps/*/.cache/
 /desktop/.cache/
+/apps/*/release-files/
 
 # webpack assets
 /assets*.json

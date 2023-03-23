@@ -570,6 +570,12 @@ const sections = [
 		group: 'sites',
 		enableLoggedOut: true,
 	},
+	{
+		name: 'site-logs',
+		paths: [ '/site-logs' ],
+		module: 'calypso/my-sites/site-logs',
+		group: 'sites',
+	},
 ];
 
 module.exports = sections;

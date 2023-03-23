@@ -22,6 +22,12 @@
 		color: var(--studio-gray-50);
 		font-weight: 400;
 		height: 50px;
+
+		&:hover {
+			.site-sort__icon {
+				visibility: visible;
+			}
+		}
 	}
 
 	td {
@@ -82,4 +88,8 @@
 
 .site-table-site-title {
 	margin-inline-start: 32px;
+}
+
+.site-table__tr-loading {
+	width: 200px !important;
 }

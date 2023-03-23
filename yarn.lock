@@ -436,7 +436,7 @@ __metadata:
     canvas-confetti: ^1.6.0
     classnames: ^2.3.1
     framer-motion: 6.2.8
-    gridicons: ^3.4.0
+    gridicons: ^3.4.2
     i18n-calypso: "workspace:^"
     lodash: ^4.17.21
     prop-types: ^15.7.2
@@ -1897,6 +1897,10 @@ __metadata:
     calypso: "workspace:^"
     classnames: ^2.3.1
     eslint: ^8.34.0
+    eslint-plugin-inclusive-language: ^2.2.0
+    eslint-plugin-json-es: ^1.5.7
+    eslint-plugin-md: ^1.0.19
+    eslint-plugin-you-dont-need-lodash-underscore: ^6.12.0
     jest: ^27.3.1
     jest-teamcity: ^1.9.0
     lodash: ^4.17.21
@@ -8896,29 +8900,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/format-library@npm:^3.20.0":
-  version: 3.20.0
-  resolution: "@wordpress/format-library@npm:3.20.0"
-  dependencies:
-    "@babel/runtime": ^7.16.0
-    "@wordpress/a11y": ^3.22.0
-    "@wordpress/block-editor": ^10.5.0
-    "@wordpress/components": ^22.1.0
-    "@wordpress/compose": ^5.20.0
-    "@wordpress/data": ^7.6.0
-    "@wordpress/element": ^4.20.0
-    "@wordpress/html-entities": ^3.22.0
-    "@wordpress/i18n": ^4.22.0
-    "@wordpress/icons": ^9.13.0
-    "@wordpress/rich-text": ^5.20.0
-    "@wordpress/url": ^3.23.0
-  peerDependencies:
-    react: ^17.0.0
-    react-dom: ^17.0.0
-  checksum: 036bbfb1da1bea0f251f13d257ba273a429537f993d0a789889531be524a8253347ad5582ef65aa64b5a9cbe47c97389def9cf98522bffc8b76d0de77273df62
-  languageName: node
-  linkType: hard
-
 "@wordpress/hooks@npm:^3.13.0, @wordpress/hooks@npm:^3.22.0, @wordpress/hooks@npm:^3.27.0, @wordpress/hooks@npm:^3.28.0, @wordpress/hooks@npm:^3.9.0":
   version: 3.28.0
   resolution: "@wordpress/hooks@npm:3.28.0"
@@ -9659,13 +9640,6 @@ __metadata:
   version: 0.8.2
   resolution: "after@npm:0.8.2"
   checksum: b7ac8c7936eadfcb7cd6714150f04977745f3555db0d2183fd219d1f69a0d2dba95c1db16f372b45aef6670bda74c674a49a74100310080676b7ec308842a9c3
-  languageName: node
-  linkType: hard
-
-"agent-base@npm:5":
-  version: 5.1.1
-  resolution: "agent-base@npm:5.1.1"
-  checksum: 3baa3f01072c16e3955ce7802166e576cde9831af82b262aae1c780af49c0c84e82e64ba9ef9e7d1704fe29e9f0096a78a4f998ec137360fee3cb95186f97161
   languageName: node
   linkType: hard
 
@@ -11804,25 +11778,18 @@ __metadata:
     "@wordpress/a11y": ^3.22.0
     "@wordpress/api-fetch": ^6.19.0
     "@wordpress/base-styles": ^4.13.0
-    "@wordpress/block-editor": ^10.5.0
     "@wordpress/blocks": ^11.21.0
     "@wordpress/components": ^22.1.0
     "@wordpress/compose": ^5.20.0
     "@wordpress/data": ^7.6.0
-    "@wordpress/data-controls": ^2.22.0
     "@wordpress/edit-post": ^6.19.0
     "@wordpress/element": ^4.20.0
-    "@wordpress/format-library": ^3.20.0
-    "@wordpress/hooks": ^3.22.0
     "@wordpress/html-entities": ^3.22.0
     "@wordpress/i18n": ^4.22.0
     "@wordpress/icons": ^9.13.0
     "@wordpress/is-shallow-equal": ^4.22.0
-    "@wordpress/keyboard-shortcuts": ^3.20.0
-    "@wordpress/keycodes": ^3.22.0
     "@wordpress/react-i18n": ^3.20.0
     "@wordpress/url": ^3.23.0
-    "@wordpress/viewport": ^4.20.0
     "@wordpress/warning": ^2.22.0
     autoprefixer: ^10.2.5
     autosize: ^4.0.4
@@ -12049,9 +12016,9 @@ __metadata:
   linkType: hard
 
 "caniuse-lite@npm:^1.0.0, caniuse-lite@npm:^1.0.30001109, caniuse-lite@npm:^1.0.30001196, caniuse-lite@npm:^1.0.30001313":
-  version: 1.0.30001458
-  resolution: "caniuse-lite@npm:1.0.30001458"
-  checksum: 92ddb0819736d5d2e0efcbb0a729c172ddebc409c4fc39f2a8a8b5e0083fed795cf3efbaec299215298979d4f88da94e6be0ad2f1988cb25ec9be0772c29d0af
+  version: 1.0.30001464
+  resolution: "caniuse-lite@npm:1.0.30001464"
+  checksum: 82f711ecca1c22d66a0ffc166a818b75ea720c04a3d937c9ccf2bb3e3c10c9f347e95b66d4da4f5745e838e7f88ab6648441b0369a6298b747e6712f2ab5e006
   languageName: node
   linkType: hard
 
@@ -12070,17 +12037,6 @@ __metadata:
     tslib: ^2.0.3
     upper-case-first: ^2.0.2
   checksum: 6a034af73401f6e55d91ea35c190bbf8bda21714d4ea8bb8f1799311d123410a80f0875db4e3236dc3f97d74231ff4bf1c8783f2be13d7733c7d990c57387281
-  languageName: node
-  linkType: hard
-
-"capture-website@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "capture-website@npm:1.0.0"
-  dependencies:
-    file-url: ^3.0.0
-    puppeteer: ^3.0.4
-    tough-cookie: ^4.0.0
-  checksum: feb0df563b3ae5801b7c5bcf2d46bba630dfa8674a8d31cec8ecc78bd264367084f85e75c50469e0199cebc8cb0701b83ebe6d8b6a8e0f9bb48758153da58b50
   languageName: node
   linkType: hard
 
@@ -12653,7 +12609,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"color-convert@npm:^1.9.0, color-convert@npm:^1.9.1, color-convert@npm:^1.9.3":
+"color-convert@npm:^1.9.0, color-convert@npm:^1.9.1":
   version: 1.9.3
   resolution: "color-convert@npm:1.9.3"
   dependencies:
@@ -12685,7 +12641,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"color-string@npm:^1.5.2, color-string@npm:^1.6.0":
+"color-string@npm:^1.5.2":
   version: 1.6.0
   resolution: "color-string@npm:1.6.0"
   dependencies:
@@ -12711,16 +12667,6 @@ __metadata:
     color-convert: ^1.9.1
     color-string: ^1.5.2
   checksum: 5fa639248910515512716e371b4716a35c0239b8bdf4050e5c432a4286ed129d801ccfbbf03e0c10fe46aec5739191793c902ddadcc7a92dae1234051243ceff
-  languageName: node
-  linkType: hard
-
-"color@npm:^3.1.3":
-  version: 3.2.1
-  resolution: "color@npm:3.2.1"
-  dependencies:
-    color-convert: ^1.9.3
-    color-string: ^1.6.0
-  checksum: 39345d55825884c32a88b95127d417a2c24681d8b57069413596d9fcbb721459ef9d9ec24ce3e65527b5373ce171b73e38dbcd9c830a52a6487e7f37bf00e83c
   languageName: node
   linkType: hard
 
@@ -16667,7 +16613,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"extract-zip@npm:2.0.1, extract-zip@npm:^2.0.0":
+"extract-zip@npm:2.0.1":
   version: 2.0.1
   resolution: "extract-zip@npm:2.0.1"
   dependencies:
@@ -16969,13 +16915,6 @@ __metadata:
   version: 1.0.0
   resolution: "file-uri-to-path@npm:1.0.0"
   checksum: 3b545e3a341d322d368e880e1c204ef55f1d45cdea65f7efc6c6ce9e0c4d22d802d5629320eb779d006fe59624ac17b0e848d83cc5af7cd101f206cb704f5519
-  languageName: node
-  linkType: hard
-
-"file-url@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "file-url@npm:3.0.0"
-  checksum: 31c5f85711bda47a471fd8d4a7217330102b74fb3b4dbd3626dd9cbe8c9afc1bf4584da2877abd84db392e3b4c2ad6d61ba4830b45a273dfbfd1172b443d8bb9
   languageName: node
   linkType: hard
 
@@ -18370,14 +18309,14 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"gridicons@npm:^3.4.0":
-  version: 3.4.0
-  resolution: "gridicons@npm:3.4.0"
+"gridicons@npm:^3.4.2":
+  version: 3.4.2
+  resolution: "gridicons@npm:3.4.2"
   dependencies:
     prop-types: ^15.5.7
   peerDependencies:
-    react: 15 - 17
-  checksum: aa595099ffdd6a2cdbbb95271270dbdaa52877c99a5f4f034fe297c3aed60cfbd85bb6d463d0bf62268b34a3aa1feccdc2dc48dddf0c3e4b01b771114839b3ff
+    react: 15 - 18
+  checksum: b2e508243bf1fa0e0daacc5e1fb52d0d74b000ca0b8862ece672cf8fea9f561c9e1a96979ee9ea9ca9e595c55c970c82bb6b7b29a42d06c139e2c657f3ecdb49
   languageName: node
   linkType: hard
 
@@ -19190,16 +19129,6 @@ fsevents@^1.2.7:
     agent-base: 6
     debug: 4
   checksum: 670c04f7f0effb5a449c094ea037cbcfb28a5ab93ed22e8c343095202cc7288027869a5a21caf4ee3b8ea06f9624ef1e1fc9044669c0fd92617654ff39f30806
-  languageName: node
-  linkType: hard
-
-"https-proxy-agent@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "https-proxy-agent@npm:4.0.0"
-  dependencies:
-    agent-base: 5
-    debug: 4
-  checksum: fbba3e037ec04e1850e867064a763b86dd884baae9c5f4ad380504e321068c9e9b5de79cf2f3a28ede7c36036dce905b58d9f51703c5b3884d887114f4887f77
   languageName: node
   linkType: hard
 
@@ -23128,7 +23057,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"mime@npm:^2.0.3, mime@npm:^2.3.1, mime@npm:^2.4.4, mime@npm:^2.4.6, mime@npm:^2.5.2":
+"mime@npm:^2.3.1, mime@npm:^2.4.4, mime@npm:^2.4.6, mime@npm:^2.5.2":
   version: 2.6.0
   resolution: "mime@npm:2.6.0"
   bin:
@@ -23795,7 +23724,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"node-addon-api@npm:^3.1.0, node-addon-api@npm:^3.2.0":
+"node-addon-api@npm:^3.1.0":
   version: 3.2.1
   resolution: "node-addon-api@npm:3.2.1"
   dependencies:
@@ -26093,7 +26022,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"prebuild-install@npm:^6.0.0, prebuild-install@npm:^6.1.2":
+"prebuild-install@npm:^6.0.0":
   version: 6.1.3
   resolution: "prebuild-install@npm:6.1.3"
   dependencies:
@@ -26161,6 +26090,15 @@ fsevents@^1.2.7:
   bin:
     prettier: bin-prettier.js
   checksum: 49c3d980ec4311db4cba48b60a37e0fc3dbe0ca2d7e066cab37969b3d65bb28d0fad09d9ce0c07bc7eb7e0eab4d688cf83e47efe6ad6ba113d13a2e6cd9a5423
+  languageName: node
+  linkType: hard
+
+"prettier@npm:wp-prettier@2.8.5":
+  version: 2.8.5
+  resolution: "wp-prettier@npm:2.8.5"
+  bin:
+    prettier: bin-prettier.js
+  checksum: 2b00bb73cb56daabc45fc165c8b02471052d3b01eebbdbb6954a891a3e9498c76f5c6776c083c3c34cc9304f015c2fde68b5e979aeb4cdebc25037308b113cf7
   languageName: node
   linkType: hard
 
@@ -26267,7 +26205,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"progress@npm:2.0.3, progress@npm:^2.0.0, progress@npm:^2.0.1, progress@npm:^2.0.3":
+"progress@npm:2.0.3, progress@npm:^2.0.0, progress@npm:^2.0.3":
   version: 2.0.3
   resolution: "progress@npm:2.0.3"
   checksum: 1697e07cb1068055dbe9fe858d242368ff5d2073639e652b75a7eb1f2a1a8d4afd404d719de23c7b48481a6aa0040686310e2dac2f53d776daa2176d3f96369c
@@ -26420,7 +26358,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"proxy-from-env@npm:1.1.0, proxy-from-env@npm:^1.0.0, proxy-from-env@npm:^1.1.0":
+"proxy-from-env@npm:1.1.0, proxy-from-env@npm:^1.1.0":
   version: 1.1.0
   resolution: "proxy-from-env@npm:1.1.0"
   checksum: fe7dd8b1bdbbbea18d1459107729c3e4a2243ca870d26d34c2c1bcd3e4425b7bcc5112362df2d93cc7fb9746f6142b5e272fd1cc5c86ddf8580175186f6ad42b
@@ -26540,24 +26478,6 @@ fsevents@^1.2.7:
     unbzip2-stream: 1.4.3
     ws: 8.5.0
   checksum: 12b1903ecdf97a8cbce0d0dfb56d405c67cc8d99b9d05255a0fdf3c801a33eea6c78cd0337ea7458f0e98ba2c94a4894458fba7d1323a0ca1dab4f588c1897b0
-  languageName: node
-  linkType: hard
-
-"puppeteer@npm:^3.0.4":
-  version: 3.1.0
-  resolution: "puppeteer@npm:3.1.0"
-  dependencies:
-    debug: ^4.1.0
-    extract-zip: ^2.0.0
-    https-proxy-agent: ^4.0.0
-    mime: ^2.0.3
-    progress: ^2.0.1
-    proxy-from-env: ^1.0.0
-    rimraf: ^3.0.2
-    tar-fs: ^2.0.0
-    unbzip2-stream: ^1.3.3
-    ws: ^7.2.3
-  checksum: 906c7bdf5407e8635fe69d86f6d45c776d328454fb7dee5690c813bdf248502670437c657f8a8438656974afbcf921d62f307338f3ddfebbe20771295ae81ddd
   languageName: node
   linkType: hard
 
@@ -29617,23 +29537,6 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"sharp@npm:^0.28":
-  version: 0.28.3
-  resolution: "sharp@npm:0.28.3"
-  dependencies:
-    color: ^3.1.3
-    detect-libc: ^1.0.3
-    node-addon-api: ^3.2.0
-    node-gyp: latest
-    prebuild-install: ^6.1.2
-    semver: ^7.3.5
-    simple-get: ^3.1.0
-    tar-fs: ^2.1.1
-    tunnel-agent: ^0.6.0
-  checksum: 7016319b0a6ecc4392ea345dfd470badddae2b106a4b1caed66d9766c4a7819d395c627eeb93cb7bcf761d9071def6593415f8ebec365efc2b582d6b366abbc0
-  languageName: node
-  linkType: hard
-
 "shebang-command@npm:^1.2.0":
   version: 1.2.0
   resolution: "shebang-command@npm:1.2.0"
@@ -29709,7 +29612,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"simple-get@npm:^3.0.3, simple-get@npm:^3.1.0":
+"simple-get@npm:^3.0.3":
   version: 3.1.0
   resolution: "simple-get@npm:3.1.0"
   dependencies:
@@ -31098,7 +31001,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"tar-fs@npm:2.1.1, tar-fs@npm:^2.0.0, tar-fs@npm:^2.1.1":
+"tar-fs@npm:2.1.1, tar-fs@npm:^2.0.0":
   version: 2.1.1
   resolution: "tar-fs@npm:2.1.1"
   dependencies:
@@ -32140,7 +32043,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"unbzip2-stream@npm:1.4.3, unbzip2-stream@npm:^1.3.3":
+"unbzip2-stream@npm:1.4.3":
   version: 1.4.3
   resolution: "unbzip2-stream@npm:1.4.3"
   dependencies:
@@ -33777,7 +33680,6 @@ fsevents@^1.2.7:
     bunyan: ^1.8.15
     calypso: "workspace:^"
     calypso-codemods: "workspace:^"
-    capture-website: ^1.0.0
     chalk: ^4.1.2
     check-node-version: ^4.0.2
     chroma-js: ^2.1.2
@@ -33828,7 +33730,7 @@ fsevents@^1.2.7:
     postcss: ^8.4.5
     postcss-cli: ^9.0.1
     postcss-custom-properties: ^11.0.0
-    prettier: "npm:wp-prettier@2.6.2"
+    prettier: "npm:wp-prettier@2.8.5"
     react: ^17.0.2
     react-dom: ^17.0.2
     react-intersection-observer: ^9.4.3
@@ -33841,7 +33743,6 @@ fsevents@^1.2.7:
     request: ^2.88.2
     sass: ^1.37.5
     sass-loader: ^12.1.0
-    sharp: ^0.28
     source-map: ^0.7.3
     stackframe: ^1.1.1
     stacktrace-gps: ^3.0.3
@@ -34081,7 +33982,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"ws@npm:^7.2.3, ws@npm:^7.3.1, ws@npm:^7.4.5":
+"ws@npm:^7.3.1, ws@npm:^7.4.5":
   version: 7.5.9
   resolution: "ws@npm:7.5.9"
   peerDependencies:

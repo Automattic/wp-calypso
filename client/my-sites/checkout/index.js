@@ -10,6 +10,7 @@ import { recordSiftScienceUser } from 'calypso/lib/siftscience';
 import { loggedInSiteSelection, noSite, siteSelection } from 'calypso/my-sites/controller';
 import {
 	checkout,
+	checkoutAkismetSiteless,
 	checkoutPending,
 	checkoutJetpackSiteless,
 	checkoutThankYou,
@@ -23,6 +24,7 @@ import {
 	redirectToSupportSession,
 	upsellNudge,
 	upsellRedirect,
+	akismetCheckoutThankYou,
 } from './controller';
 
 export default function () {
@@ -93,6 +95,27 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
+	// Akismet siteless checkout works logged-out, so do not include redirectLoggedOut or siteSelection.
+	if ( isEnabled( 'akismet/siteless-checkout' ) ) {
+		page(
+			`/checkout/akismet/:productSlug`,
+			setLocaleMiddleware(),
+			noSite,
+			checkoutAkismetSiteless,
+			makeLayout,
+			clientRender
+		);
+
+		page(
+			'/checkout/akismet/thank-you/:productSlug',
+			setLocaleMiddleware(),
+			noSite,
+			akismetCheckoutThankYou,
+			makeLayout,
+			clientRender
+		);
+	}
 
 	// The no-site post-checkout route is for purchases not tied to a site so do
 	// not include the `siteSelection` middleware.

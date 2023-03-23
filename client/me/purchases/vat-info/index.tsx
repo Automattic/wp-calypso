@@ -166,6 +166,7 @@ function CountryCodeInput( {
 } ) {
 	const countries = [
 		'AT',
+		'AU',
 		'BE',
 		'BG',
 		'CH',
@@ -183,6 +184,7 @@ function CountryCodeInput( {
 		'HU',
 		'IE',
 		'IT',
+		'JP',
 		'LT',
 		'LU',
 		'LV',
@@ -234,31 +236,9 @@ function useDisplayVatNotices( {
 	const translate = useTranslate();
 
 	useEffect( () => {
-		if ( error?.error === 'validation_failed' ) {
-			reduxDispatch( removeNotice( 'vat_info_notice' ) );
-			reduxDispatch(
-				errorNotice(
-					translate(
-						'Your Business Tax ID details are not valid. Please check each field and try again.'
-					),
-					{ id: 'vat_info_notice' }
-				)
-			);
-			return;
-		}
-
 		if ( error ) {
 			reduxDispatch( removeNotice( 'vat_info_notice' ) );
-			reduxDispatch(
-				errorNotice(
-					translate(
-						'An error occurred while updating your Business Tax ID details. Please try again or contact support.'
-					),
-					{
-						id: 'vat_info_notice',
-					}
-				)
-			);
+			reduxDispatch( errorNotice( error.message, { id: 'vat_info_notice' } ) );
 			return;
 		}
 

@@ -4,6 +4,7 @@ import { Design, isBlankCanvasDesign } from '@automattic/design-picker';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
+import wpcomRequest from 'wpcom-proxy-request';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -150,6 +151,7 @@ const siteSetupFlow: Flow = {
 		const currentTheme = useSelector( ( state ) =>
 			getCanonicalTheme( state, site?.ID || -1, currentThemeId )
 		);
+		const isLaunched = site?.launch_status === 'launched' ? true : false;
 
 		const urlQueryParams = useQuery();
 		const isPluginBundleEligible = useIsPluginBundleEligible();
@@ -176,8 +178,7 @@ const siteSetupFlow: Flow = {
 		);
 		const { setPendingAction, setStepProgress, resetOnboardStoreWithSkipFlags, setIntent } =
 			useDispatch( ONBOARD_STORE );
-		const { setIntentOnSite, setGoalsOnSite, setThemeOnSite, saveSiteSettings } =
-			useDispatch( SITE_STORE );
+		const { setThemeOnSite } = useDispatch( SITE_STORE );
 		const dispatch = reduxDispatch();
 
 		const flowProgress = useSiteSetupFlowProgress( currentStep, intent );
@@ -200,13 +201,18 @@ const siteSetupFlow: Flow = {
 					if ( ! siteSlug ) {
 						return;
 					}
-
-					const siteIntent = getIntent();
 					const siteId = site?.ID;
-					const pendingActions = [
-						setIntentOnSite( siteSlug, siteIntent ),
-						setGoalsOnSite( siteSlug, goals ),
-					];
+					const siteIntent = getIntent();
+
+					const settings = {
+						site_intent: siteIntent,
+						site_goals: goals,
+						launchpad_screen: undefined as string | undefined,
+					};
+
+					const formData: string[][] = [];
+					const pendingActions = [];
+
 					if ( siteIntent === SiteIntent.Write && ! selectedDesign && ! isAtomic ) {
 						pendingActions.push(
 							setThemeOnSite(
@@ -219,11 +225,10 @@ const siteSetupFlow: Flow = {
 
 					// Update Launchpad option based on site intent
 					if ( typeof siteId === 'number' ) {
-						pendingActions.push(
-							saveSiteSettings( siteId, {
-								launchpad_screen: isLaunchpadIntent( siteIntent ) ? 'full' : 'off',
-							} )
-						);
+						const launchpadScreen =
+							isLaunchpadIntent( siteIntent ) && ! isLaunched ? 'full' : 'off';
+
+						settings.launchpad_screen = launchpadScreen;
 					}
 
 					let redirectionUrl = to;
@@ -232,6 +237,18 @@ const siteSetupFlow: Flow = {
 					if ( isLaunchpadIntent( siteIntent ) ) {
 						redirectionUrl = addQueryArgs( { showLaunchpad: true }, to );
 					}
+
+					formData.push( [ 'settings', JSON.stringify( settings ) ] );
+
+					pendingActions.push(
+						wpcomRequest( {
+							path: `/sites/${ siteId }/onboarding-customization`,
+							method: 'POST',
+							apiNamespace: 'wpcom/v2',
+							apiVersion: '2',
+							formData,
+						} )
+					);
 
 					Promise.all( pendingActions ).then( () => window.location.assign( redirectionUrl ) );
 				} );

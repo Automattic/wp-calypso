@@ -58,6 +58,7 @@ import {
 	retrieveSignupDestination,
 } from 'calypso/signup/storageUtils';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
+import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 
 const debug = debugFactory( 'calypso:composite-checkout:get-thank-you-page-url' );
@@ -92,7 +93,7 @@ export interface PostCheckoutUrlArguments {
 	saveUrlToCookie?: SaveUrlToCookie;
 	hideNudge?: boolean;
 	isInModal?: boolean;
-	isJetpackCheckout?: boolean;
+	sitelessCheckoutType?: SitelessCheckoutType;
 	jetpackTemporarySiteId?: string;
 	adminPageRedirect?: string;
 	domains?: ResponseDomain[];
@@ -122,13 +123,13 @@ export default function getThankYouPageUrl( {
 	purchaseId,
 	feature,
 	cart,
+	sitelessCheckoutType,
 	isJetpackNotAtomic,
 	productAliasFromUrl,
 	getUrlFromCookie = retrieveSignupDestination,
 	saveUrlToCookie = persistSignupDestination,
 	hideNudge,
 	isInModal,
-	isJetpackCheckout = false,
 	jetpackTemporarySiteId,
 	adminPageRedirect,
 	domains,
@@ -212,7 +213,7 @@ export default function getThankYouPageUrl( {
 	debug( 'receiptIdOrPlaceholder is', receiptIdOrPlaceholder );
 
 	// jetpack userless & siteless checkout uses a special thank you page
-	if ( isJetpackCheckout ) {
+	if ( sitelessCheckoutType === 'jetpack' ) {
 		// extract a product from the cart, in userless/siteless checkout there should only be one
 		const productSlug = cart?.products[ 0 ]?.product_slug ?? 'no_product';
 
@@ -232,6 +233,15 @@ export default function getThankYouPageUrl( {
 			},
 			thankYouUrl
 		);
+	}
+
+	// Asismet site-less checkout
+	if ( sitelessCheckoutType === 'akismet' ) {
+		// extract a product from the cart, in siteless checkout there should only be one
+		const productSlug = cart?.products[ 0 ]?.product_slug ?? 'no_product';
+
+		debug( 'redirecting to siteless Akismet thank you' );
+		return `/checkout/akismet/thank-you/${ productSlug }`;
 	}
 
 	// If there is no purchase, then send the user to a generic page (not
@@ -523,14 +533,14 @@ function getFallbackDestination( {
 		}
 	}
 
-	const marketplaceProductSlugs =
+	const pluginSlugs =
 		cart?.products
 			?.filter( ( product ) => product?.extra?.is_marketplace_product )
 			?.map( ( product ) => product?.extra?.plugin_slug ) || [];
 
-	if ( marketplaceProductSlugs.length > 0 ) {
+	if ( pluginSlugs.length > 0 ) {
 		debug( 'site with marketplace products' );
-		return `/marketplace/thank-you/${ marketplaceProductSlugs.join( ',' ) }/${ siteSlug }`;
+		return `/marketplace/thank-you/${ siteSlug }?plugins=${ pluginSlugs.join( ',' ) }`;
 	}
 
 	debug( 'simple thank-you page' );

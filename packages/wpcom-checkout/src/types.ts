@@ -505,3 +505,5 @@ export interface CountryListItem {
 	tax_needs_organization?: boolean;
 	tax_needs_address?: boolean;
 }
+
+export type SitelessCheckoutType = 'jetpack' | 'akismet' | undefined;

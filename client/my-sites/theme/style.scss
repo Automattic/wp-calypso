@@ -144,6 +144,11 @@ body.is-section-theme-i4 {
 			font-size: 1.25rem;
 		}
 
+		video {
+			height: auto;
+			max-width: 100%;
+		}
+
 		.notes {
 			background: transparent;
 			border: 0;
@@ -210,6 +215,12 @@ body.is-section-theme-i4 {
 				}
 			}
 		}
+	}
+}
+
+.is-section-theme {
+	.empty-content {
+		margin-bottom: 20px;
 	}
 }
 

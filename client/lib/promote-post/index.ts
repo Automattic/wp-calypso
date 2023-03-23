@@ -26,6 +26,7 @@ declare global {
 				locale?: string;
 				showDialog?: boolean;
 				setShowCancelButton?: ( show: boolean ) => void;
+				setShowTopBar?: ( show: boolean ) => void;
 				uploadImageLabel?: string;
 				showGetStartedMessage?: boolean;
 				onGetStartedMessageClose?: ( dontShowAgain: boolean ) => void;
@@ -59,7 +60,7 @@ export async function showDSP(
 	translateFn: ( value: string, options?: any ) => string,
 	domNodeOrId?: HTMLElement | string | null,
 	setShowCancelButton?: ( show: boolean ) => void,
-	onGetStartedMessageClose?: ( dontShowAgain: boolean ) => void,
+	setShowTopBar?: ( show: boolean ) => void,
 	locale?: string
 ) {
 	await loadDSPWidgetJS();
@@ -81,9 +82,9 @@ export async function showDSP(
 				locale,
 				urn: `urn:wpcom:post:${ siteId }:${ postId || 0 }`,
 				setShowCancelButton: setShowCancelButton,
+				setShowTopBar: setShowTopBar,
 				uploadImageLabel: isWpMobileApp() ? __( 'Tap to add image' ) : undefined,
 				showGetStartedMessage: ! isWpMobileApp(), // Don't show the GetStartedMessage in the mobile app.
-				onGetStartedMessageClose: onGetStartedMessageClose,
 				source: source,
 			} );
 		} else {

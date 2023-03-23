@@ -1,7 +1,6 @@
 import {
 	StepContainer,
 	isNewsletterOrLinkInBioFlow,
-	isLinkInBioFlow,
 	isFreeFlow,
 	isUpdateDesignFlow,
 	ECOMMERCE_FLOW,
@@ -118,8 +117,12 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 	const isJetpackPowered = isNewsletterOrLinkInBioFlow( flowName );
 	const isWooCommercePowered = flowName === ECOMMERCE_FLOW;
 
-	// Currently we have the Domains and Plans only for link in bio
-	if ( isLinkInBioFlow( flowName ) || isFreeFlow( flowName ) || isUpdateDesignFlow( flowName ) ) {
+	// Return tailored processing screens for flows that need them
+	if (
+		isNewsletterOrLinkInBioFlow( flowName ) ||
+		isFreeFlow( flowName ) ||
+		isUpdateDesignFlow( flowName )
+	) {
 		return <TailoredFlowPreCheckoutScreen flowName={ flowName } />;
 	}
 

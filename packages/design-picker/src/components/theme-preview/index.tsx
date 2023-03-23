@@ -40,6 +40,7 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 	const { __ } = useI18n();
 	const iframeRef = useRef< HTMLIFrameElement >( null );
 	const [ isLoaded, setIsLoaded ] = useState( ! isUrlWpcomApi( url ) );
+	const [ isFullyLoaded, setIsFullyLoaded ] = useState( ! isUrlWpcomApi( url ) );
 	const [ viewport, setViewport ] = useState< Viewport >();
 	const [ containerResizeListener, { width: containerWidth } ] = useResizeObserver();
 	const calypso_token = useMemo( () => uuid(), [] );
@@ -61,7 +62,9 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 			switch ( data.type ) {
 				case 'partially-loaded':
 					setIsLoaded( true );
+					return;
 				case 'page-dimensions-on-load':
+					setIsFullyLoaded( true );
 				case 'page-dimensions-on-resize':
 					if ( isFitHeight ) {
 						setViewport( data.payload );
@@ -79,8 +82,10 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 		};
 	}, [ setIsLoaded, setViewport ] );
 
+	// Ideally the iframe's document.body is already available on isLoaded = true.
+	// Unfortunately that's not always the case, so isFullyLoaded serves as another retry.
 	useEffect( () => {
-		if ( isLoaded ) {
+		if ( isLoaded || isFullyLoaded ) {
 			iframeRef.current?.contentWindow?.postMessage(
 				{
 					channel: `preview-${ calypso_token }`,
@@ -90,12 +95,12 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 				'*'
 			);
 		}
-	}, [ inlineCss, isLoaded ] );
+	}, [ inlineCss, isLoaded, isFullyLoaded ] );
 
 	return (
 		<DeviceSwitcher
 			className={ classnames( 'theme-preview__container', {
-				'theme-preview__container--loading': ! isLoaded,
+				'theme-preview__container--loading': ! isLoaded && ! isFullyLoaded,
 			} ) }
 			isShowDeviceSwitcherToolbar={ isShowDeviceSwitcher }
 			isShowFrameBorder={ isShowFrameBorder }

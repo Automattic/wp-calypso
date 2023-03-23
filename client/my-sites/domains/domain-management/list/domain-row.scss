@@ -350,7 +350,7 @@
 		margin: 0;
 
 		.button.is-borderless {
-			padding: 0 0 10px 30px;
+			padding: 0 15px 10px 15px;
 		}
 	}
 }
@@ -370,11 +370,5 @@
 		svg {
 			fill: var(--studio-white);
 		}
-	}
-}
-
-.domain-table-header {
-	.list__action-cell {
-		padding: 0 0 0 30px;
 	}
 }

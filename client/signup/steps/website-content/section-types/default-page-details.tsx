@@ -1,3 +1,4 @@
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -5,8 +6,8 @@ import {
 	TextAreaField,
 	HorizontalGrid,
 	LabelBlock,
+	CheckboxField,
 } from 'calypso/signup/accordion-form/form-components';
-import { ValidationErrors } from 'calypso/signup/accordion-form/types';
 import { useTranslatedPageDescriptions } from 'calypso/signup/difm/translation-hooks';
 import {
 	mediaRemoved,
@@ -17,6 +18,7 @@ import {
 } from 'calypso/state/signup/steps/website-content/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { MediaUploadData, WordpressMediaUpload } from '../wordpress-media-upload';
+import type { ValidationErrors } from 'calypso/signup/accordion-form/types';
 import type { BBETranslationContext } from 'calypso/signup/difm/translation-hooks';
 import type { PageData } from 'calypso/state/signup/steps/website-content/types';
 
@@ -40,6 +42,7 @@ export function DefaultPageDetails( {
 	const pageTitle = page.title;
 	const pageID = page.id;
 	const description = useTranslatedPageDescriptions( pageID, context );
+	const isEnglishLocale = useIsEnglishLocale();
 
 	const onMediaUploadFailed = ( { mediaIndex }: MediaUploadData ) => {
 		dispatch(
@@ -99,6 +102,20 @@ export function DefaultPageDetails( {
 				fieldValue: value,
 			} )
 		);
+		onChangeField?.( e );
+	};
+
+	const onCheckboxChanged = ( e: ChangeEvent< HTMLInputElement > ) => {
+		const {
+			target: { name, checked },
+		} = e;
+		dispatch(
+			websiteContentFieldChanged( {
+				pageId: page.id,
+				fieldName: name,
+				fieldValue: !! checked,
+			} )
+		);
 		onChangeField && onChangeField( e );
 	};
 
@@ -122,7 +139,6 @@ export function DefaultPageDetails( {
 			case 'IMAGE':
 			default:
 				return imageCaption;
-				break;
 		}
 	};
 	const fieldName = page.id + CONTENT_SUFFIX;
@@ -134,7 +150,21 @@ export function DefaultPageDetails( {
 				value={ page.content }
 				error={ formErrors[ fieldName ] }
 				label={ description }
+				disabled={ !! page.useFillerContent }
+				hasFillerContentCheckbox={ isEnglishLocale }
 			/>
+			{ isEnglishLocale && (
+				<CheckboxField
+					name="useFillerContent"
+					checked={ page.useFillerContent || false }
+					value="true"
+					onChange={ onCheckboxChanged }
+					label={ translate( 'Build this page with AI-generated text.' ) }
+					helpText={ translate(
+						'When building your site, we will use AI to generate copy based on the search phrases you have provided. The copy can be edited later with the WordPress editor.'
+					) }
+				/>
+			) }
 			<LabelBlock>{ getMediaCaption() }</LabelBlock>
 			<HorizontalGrid>
 				{ page.media.map( ( media, i ) => (

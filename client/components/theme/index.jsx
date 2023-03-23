@@ -446,7 +446,10 @@ export class Theme extends Component {
 				<PremiumBadge
 					{ ...commonProps }
 					className={ classNames( commonProps.className, 'theme__marketplace-theme' ) }
-					labelText={ translate( 'Paid', { textOnly: true } ) }
+					labelText={ translate( 'Paid', {
+						comment: 'Refers to paid service, such as paid theme',
+						textOnly: true,
+					} ) }
 				/>
 			);
 		}
