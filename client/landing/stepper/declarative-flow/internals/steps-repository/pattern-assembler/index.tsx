@@ -218,11 +218,29 @@ const PatternAssembler = ( {
 	const updateHeader = ( pattern: Pattern | null ) => {
 		setHeader( pattern );
 		updateActivePatternPosition( -1 );
+		if ( pattern ) {
+			if ( header ) {
+				showNotice( 'replace', pattern );
+			} else {
+				showNotice( 'add', pattern );
+			}
+		} else if ( header ) {
+			showNotice( 'remove', header );
+		}
 	};
 
 	const updateFooter = ( pattern: Pattern | null ) => {
 		setFooter( pattern );
 		updateActivePatternPosition( sections.length );
+		if ( pattern ) {
+			if ( footer ) {
+				showNotice( 'replace', pattern );
+			} else {
+				showNotice( 'add', pattern );
+			}
+		} else if ( footer ) {
+			showNotice( 'remove', footer );
+		}
 	};
 
 	const replaceSection = ( pattern: Pattern ) => {
