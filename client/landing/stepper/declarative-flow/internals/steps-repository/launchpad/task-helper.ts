@@ -15,7 +15,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isVideoPressFlow } from 'calypso/signup/utils';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { launchpadFlowTasks } from './tasks';
-import { LaunchpadStatuses, Task } from './types';
+import { LaunchpadFlowTaskList, LaunchpadStatuses, Task } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
 
 export function getEnhancedTasks(
@@ -396,11 +396,14 @@ export function getArrayOfFilteredTasks(
  */
 export function areLaunchpadTasksCompleted(
 	site_intent: string,
+	launchpadFlowTasks: LaunchpadFlowTaskList,
 	checklist_statuses: LaunchpadStatuses,
 	isSiteLaunched: boolean
 ) {
-	if ( 'newsletter' === site_intent ) {
-		return Boolean( checklist_statuses?.first_post_published );
-	}
-	return isSiteLaunched || Boolean( checklist_statuses?.site_launched );
+	const lastTask =
+		launchpadFlowTasks[ site_intent ][ launchpadFlowTasks[ site_intent ].length - 1 ];
+
+	return lastTask === 'site_launched'
+		? isSiteLaunched || Boolean( checklist_statuses[ lastTask ] )
+		: Boolean( checklist_statuses[ lastTask as keyof LaunchpadStatuses ] );
 }
