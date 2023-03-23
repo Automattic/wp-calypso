@@ -65,8 +65,10 @@ class PostByline extends Component {
 		const hasAuthorName = !! get( post, 'author.name', null );
 		const hasMatchingAuthorAndSiteNames =
 			hasAuthorName && areEqualIgnoringWhitespaceAndCase( siteName, post.author.name );
+		const isLongreads = siteId === 211646052;
 		const shouldDisplayAuthor =
 			! isDiscoverPost &&
+			! isLongreads &&
 			hasAuthorName &&
 			! isAuthorNameBlocked( post.author.name ) &&
 			( ! hasMatchingAuthorAndSiteNames || ! showSiteName );
@@ -84,6 +86,7 @@ class PostByline extends Component {
 						preferGravatar={ true }
 						siteUrl={ streamUrl }
 						isCompact={ true }
+						isLongreads={ isLongreads }
 					/>
 				) }
 				<div className="reader-post-card__byline-details">

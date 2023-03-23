@@ -53,6 +53,7 @@ class AuthorCompactProfile extends Component {
 			'has-author-icon': siteIcon || feedIcon || author.has_avatar,
 		} );
 		const streamUrl = getStreamUrl( feedId, siteId );
+		const isLongreads = siteId === 211646052;
 
 		// If we have a feed URL, use that for the follow button in preference to the site URL
 		const followUrl = feedUrl || siteUrl;
@@ -60,10 +61,20 @@ class AuthorCompactProfile extends Component {
 		return (
 			<div className={ classes }>
 				<a href={ streamUrl } className="author-compact-profile__avatar-link">
-					<ReaderAvatar siteIcon={ siteIcon } feedIcon={ feedIcon } author={ author } />
+					<ReaderAvatar
+						isLongreads={ isLongreads }
+						siteIcon={ siteIcon }
+						feedIcon={ feedIcon }
+						author={ author }
+					/>
 				</a>
 				{ hasAuthorName && ! hasMatchingAuthorAndSiteNames && (
-					<ReaderAuthorLink author={ author } siteUrl={ streamUrl } post={ post }>
+					<ReaderAuthorLink
+						isLongreads={ isLongreads }
+						author={ author }
+						siteUrl={ streamUrl }
+						post={ post }
+					>
 						{ author.name }
 					</ReaderAuthorLink>
 				) }

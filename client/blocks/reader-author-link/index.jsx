@@ -8,7 +8,15 @@ import './style.scss';
 
 const noop = () => {};
 
-const ReaderAuthorLink = ( { author, post, siteUrl, children, className, onClick } ) => {
+const ReaderAuthorLink = ( {
+	author,
+	post,
+	isLongreads,
+	siteUrl,
+	children,
+	className,
+	onClick,
+} ) => {
 	const recordAuthorClick = () => {
 		stats.recordAction( 'click_author' );
 		stats.recordGaEvent( 'Clicked Author Link' );
@@ -25,7 +33,7 @@ const ReaderAuthorLink = ( { author, post, siteUrl, children, className, onClick
 	const authorName = get( author, 'name', null );
 
 	// If the author name is blocked, don't return anything
-	if ( ! authorName || isAuthorNameBlocked( authorName ) ) {
+	if ( ! authorName || isAuthorNameBlocked( authorName ) || isLongreads ) {
 		return null;
 	}
 
@@ -45,6 +53,7 @@ const ReaderAuthorLink = ( { author, post, siteUrl, children, className, onClick
 
 ReaderAuthorLink.propTypes = {
 	author: PropTypes.object.isRequired,
+	isLongreads: PropTypes.bool,
 	post: PropTypes.object, // for stats only,
 	siteUrl: PropTypes.string, // used instead of author.URL if present
 };

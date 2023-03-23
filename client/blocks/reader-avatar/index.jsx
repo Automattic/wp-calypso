@@ -13,6 +13,7 @@ const noop = () => {};
 
 const ReaderAvatar = ( {
 	author,
+	isLongreads,
 	siteIcon,
 	feedIcon,
 	siteUrl,
@@ -58,7 +59,7 @@ const ReaderAvatar = ( {
 	}
 
 	// If we have an avatar and we prefer it, don't even consider the site icon
-	if ( hasAvatar && preferGravatar ) {
+	if ( hasAvatar && preferGravatar && ! isLongreads ) {
 		hasSiteIcon = false;
 	} else if ( preferBlavatar ) {
 		hasAvatar = false;
@@ -90,7 +91,7 @@ const ReaderAvatar = ( {
 	const siteIconElement = hasSiteIcon && (
 		<SiteIcon key="site-icon" size={ siteIconSize } site={ fakeSite } />
 	);
-	const avatarElement = ( hasAvatar || showPlaceholder ) && (
+	const avatarElement = ! isLongreads && ( hasAvatar || showPlaceholder ) && (
 		<Gravatar key="author-avatar" user={ author } size={ gravatarSize } />
 	);
 	const iconElements = [ defaultIconElement, siteIconElement, avatarElement ];
@@ -104,6 +105,7 @@ const ReaderAvatar = ( {
 
 ReaderAvatar.propTypes = {
 	author: PropTypes.object,
+	isLongreads: PropTypes.bool,
 	siteIcon: PropTypes.string,
 	feedIcon: PropTypes.string,
 	siteUrl: PropTypes.string,
