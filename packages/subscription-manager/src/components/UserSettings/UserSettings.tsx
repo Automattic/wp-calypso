@@ -1,8 +1,12 @@
+/* eslint-disable no-restricted-imports */
 import { Spinner } from '@automattic/components';
 import { Reader } from '@automattic/data-stores';
 import { useState, useCallback, useEffect } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
+import page from 'page';
 import { FormEvent } from 'react';
+import { connect } from 'react-redux';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { Button } from '../Button';
 import { Notice } from '../Notice';
 import { BlockEmailsSetting } from '../fields/BlockEmailsSetting';
@@ -24,6 +28,7 @@ type SubscriptionUserSettings = Partial< {
 type UserSettingsProps = {
 	value?: SubscriptionUserSettings;
 	loading: boolean;
+	userId: number;
 };
 
 type NoticeProps = {
@@ -32,11 +37,17 @@ type NoticeProps = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- until we start using any of these props
-const UserSettings = ( { value = {}, loading }: UserSettingsProps ) => {
+const UserSettings = ( { value = {}, loading, userId }: UserSettingsProps ) => {
 	const [ formState, setFormState ] = useState< SubscriptionUserSettings >( value );
 	const { mutate, isLoading, isSuccess, error } =
 		Reader.useSubscriptionManagerUserSettingsMutation();
 	const [ notice, setNotice ] = useState< NoticeProps | null >( null );
+
+	useEffect( () => {
+		if ( ! userId ) {
+			page.redirect( '/email-subscriptions' );
+		}
+	}, [ userId ] );
 
 	useEffect( () => {
 		// check if formState is empty object
@@ -109,4 +120,10 @@ const UserSettings = ( { value = {}, loading }: UserSettingsProps ) => {
 	);
 };
 
-export default UserSettings;
+const mapStateToProps = ( state ) => {
+	return {
+		userId: getCurrentUserId( state ),
+	};
+};
+
+export default connect( mapStateToProps )( UserSettings );

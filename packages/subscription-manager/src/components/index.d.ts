@@ -111,3 +111,5 @@ declare module '*.svg' {
 	const url: string;
 	export default url;
 }
+
+declare module 'calypso/state/current-user/selectors';
