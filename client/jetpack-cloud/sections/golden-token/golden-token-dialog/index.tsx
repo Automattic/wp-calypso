@@ -28,7 +28,7 @@ export const GoldenTokenDialog = () => {
 			<div className="golden-token-dialog__products">
 				<div>
 					{ /* TODO: switch for Backup icon */ }
-					{ /* <svg
+					<svg
 						width="24"
 						height="24"
 						viewBox="0 0 24 24"
@@ -37,7 +37,7 @@ export const GoldenTokenDialog = () => {
 					>
 						<mask
 							id="mask0_3274_17235"
-							style="mask-type: alpha;"
+							style={ { maskType: 'alpha' } }
 							maskUnits="userSpaceOnUse"
 							x="4"
 							y="5"
@@ -57,7 +57,7 @@ export const GoldenTokenDialog = () => {
 								fill="#008710"
 							/>
 						</g>
-					</svg> */ }
+					</svg>
 
 					<h3>VaultPress Backup</h3>
 					<p>Save every change and get back online quickly with one‑click restores.</p>
