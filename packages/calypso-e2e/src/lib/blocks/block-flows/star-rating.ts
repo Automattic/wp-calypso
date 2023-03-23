@@ -1,10 +1,10 @@
 import { BlockFlow, EditorContext, PublishedPostContext } from '.';
 
 const wholeRatings = [ 1, 2, 3, 4, 5 ] as const;
-type WholeRating = typeof wholeRatings[ number ];
+type WholeRating = ( typeof wholeRatings )[ number ];
 
 const halfRatings = [ 0.5, 1.5, 2.5, 3.5, 4.5 ] as const;
-type HalfRating = typeof halfRatings[ number ];
+type HalfRating = ( typeof halfRatings )[ number ];
 
 type StarRating = WholeRating | HalfRating;
 

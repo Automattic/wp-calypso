@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { localize } from 'i18n-calypso';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useQueryClient } from 'react-query';
 import { connect, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
@@ -16,8 +16,9 @@ import { useCheckStagingSiteStatus } from 'calypso/my-sites/hosting/staging-site
 import { useStagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 
 const stagingSiteAddFailureNoticeId = 'staging-site-add-failure';
 
@@ -40,7 +41,7 @@ const StyledLoadingBar = styled( LoadingBar )( {
 	marginBottom: '1em',
 } );
 
-const StagingSiteCard = ( { disabled, siteId, translate } ) => {
+const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, translate } ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
@@ -62,13 +63,17 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 		return stagingSites && stagingSites.length ? stagingSites[ 0 ] : [];
 	}, [ stagingSites ] );
 
-	const showAddStagingSite = ! isLoadingStagingSites && stagingSites && stagingSites.length === 0;
-	const showManageStagingSite = ! isLoadingStagingSites && stagingSites && stagingSites.length > 0;
+	const showAddStagingSite = ! isLoadingStagingSites && stagingSites?.length === 0;
+	const showManageStagingSite = ! isLoadingStagingSites && stagingSites?.length > 0;
 
 	const [ wasCreating, setWasCreating ] = useState( false );
-	const [ progress, setProgress ] = useState( 0.3 );
+	const [ progress, setProgress ] = useState( 0.1 );
 	const transferStatus = useCheckStagingSiteStatus( stagingSite.id );
 	const isStagingSiteTransferComplete = transferStatus === transferStates.COMPLETE;
+	const isTrasferInProgress =
+		showManageStagingSite &&
+		! isStagingSiteTransferComplete &&
+		( transferStatus !== null || wasCreating );
 
 	useEffect( () => {
 		if ( wasCreating && isStagingSiteTransferComplete ) {
@@ -78,7 +83,24 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 	}, [ dispatch, queryClient, __, isStagingSiteTransferComplete, wasCreating ] );
 
 	useEffect( () => {
-		setProgress( ( prevProgress ) => prevProgress + 0.1 );
+		setProgress( ( prevProgress ) => {
+			switch ( transferStatus ) {
+				case null:
+					return 0.1;
+				case 'relocating_revert':
+				case 'active':
+					return 0.2;
+				case 'provisioned':
+					return 0.6;
+				case 'reverted':
+				case 'relocating_switcheroo':
+					return 0.85;
+				case 'complete':
+					return 0.98;
+				default:
+					return prevProgress + 0.05;
+			}
+		} );
 	}, [ transferStatus ] );
 
 	const { addStagingSite, isLoading: addingStagingSite } = useAddStagingSiteMutation( siteId, {
@@ -147,6 +169,19 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 		);
 	};
 
+	const getTransferringStagingSiteContent = useCallback( () => {
+		const message =
+			siteOwnerId === currentUserId
+				? __( 'We are setting up your staging site. We’ll email you once it is ready.' )
+				: __( 'We are setting up the staging site. We’ll email the site owner once it is ready.' );
+		return (
+			<>
+				<StyledLoadingBar progress={ progress } />
+				<p>{ message }</p>
+			</>
+		);
+	}, [ progress, __, siteOwnerId, currentUserId ] );
+
 	const getLoadingStagingSitesPlaceholder = () => {
 		return (
 			<>
@@ -167,31 +202,39 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 		);
 	};
 
+	let stagingSiteCardContent;
+	if ( ! isLoadingStagingSites && loadingError ) {
+		stagingSiteCardContent = getLoadingErrorContent();
+	} else if ( addingStagingSite || isTrasferInProgress ) {
+		stagingSiteCardContent = getTransferringStagingSiteContent();
+	} else if ( showManageStagingSite && isStagingSiteTransferComplete ) {
+		stagingSiteCardContent = getManageStagingSiteContent();
+	} else if ( showAddStagingSite && ! addingStagingSite ) {
+		stagingSiteCardContent = getNewStagingSiteContent();
+	} else {
+		stagingSiteCardContent = getLoadingStagingSitesPlaceholder();
+	}
+
 	return (
 		<Card className="staging-site-card">
 			{
 				// eslint-disable-next-line wpcalypso/jsx-gridicon-size
-				<Gridicon icon="share-computer" size={ 32 } />
+				<Gridicon icon="science" size={ 32 } />
 			}
 			<CardHeading id="staging-site">{ translate( 'Staging site' ) }</CardHeading>
-			{ showAddStagingSite && ! addingStagingSite && getNewStagingSiteContent() }
-			{ showManageStagingSite && isStagingSiteTransferComplete && getManageStagingSiteContent() }
-			{ isLoadingStagingSites && getLoadingStagingSitesPlaceholder() }
-			{ ! isLoadingStagingSites && loadingError && getLoadingErrorContent() }
-			{ ( addingStagingSite || ( showManageStagingSite && ! isStagingSiteTransferComplete ) ) && (
-				<>
-					<StyledLoadingBar progress={ progress } />
-					<p>{ __( 'We are setting up your staging site. We’ll email you once it is ready.' ) }</p>
-				</>
-			) }
+			{ stagingSiteCardContent }
 		</Card>
 	);
 };
 
 export default connect( ( state ) => {
+	const currentUserId = getCurrentUserId( state );
 	const siteId = getSelectedSiteId( state );
+	const siteOwnerId = getSelectedSite( state )?.site_owner;
 
 	return {
+		currentUserId,
 		siteId,
+		siteOwnerId,
 	};
 } )( localize( StagingSiteCard ) );

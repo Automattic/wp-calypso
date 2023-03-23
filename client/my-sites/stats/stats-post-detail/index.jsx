@@ -103,13 +103,46 @@ class StatsPostDetail extends Component {
 		return null;
 	}
 
+	getPost() {
+		const { isPostHomepage, post, postFallback } = this.props;
+
+		const postBase = {
+			title: this.getTitle(),
+			type: isPostHomepage ? 'page' : 'post',
+		};
+
+		// Check if post is valid.
+		if ( typeof post === 'object' && post?.title.length ) {
+			return {
+				...postBase,
+				date: post?.date,
+				post_thumbnail: post?.post_thumbnail,
+				like_count: post?.like_count,
+				comment_count: post?.discussion?.comment_count,
+				type: post?.type,
+			};
+		}
+
+		// Check if postFallback is valid.
+		if ( typeof postFallback === 'object' && postFallback?.post_title.length ) {
+			return {
+				...postBase,
+				date: postFallback?.post_date_gmt,
+				post_thumbnail: null,
+				like_count: null,
+				comment_count: parseInt( postFallback?.comment_count, 10 ),
+				type: postFallback?.post_type,
+			};
+		}
+
+		return postBase;
+	}
+
 	render() {
 		const {
 			isPostHomepage,
 			isRequestingStats,
 			countViews,
-			post,
-			postFallback,
 			postId,
 			siteId,
 			translate,
@@ -117,9 +150,13 @@ class StatsPostDetail extends Component {
 			showViewLink,
 			previewUrl,
 		} = this.props;
+
 		const isLoading = isRequestingStats && ! countViews;
 
-		const postType = post && post.type !== null ? post.type : 'post';
+		// Prepare post details to PostStatsCard from post or postFallback.
+		const passedPost = this.getPost();
+
+		const postType = passedPost && passedPost.type !== null ? passedPost.type : 'post';
 		let actionLabel;
 		let noViewsLabel;
 
@@ -130,12 +167,6 @@ class StatsPostDetail extends Component {
 			actionLabel = translate( 'View Post' );
 			noViewsLabel = translate( 'Your post has not received any views yet!' );
 		}
-
-		// Make title to PostStatsCard for Homepage
-		const passedPost = post ||
-			postFallback || {
-				title: this.getTitle(),
-			};
 
 		return (
 			<Main fullWidthLayout>

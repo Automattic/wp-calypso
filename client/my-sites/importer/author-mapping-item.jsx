@@ -36,8 +36,18 @@ class ImporterAuthorMapping extends PureComponent {
 	};
 
 	componentDidMount() {
+		this.setAuthor();
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( ! prevProps.users.length && this.props.users.length ) {
+			this.setAuthor();
+		}
+	}
+
+	setAuthor = () => {
 		const { hasSingleAuthor, onSelect: selectAuthor, users } = this.props;
-		if ( hasSingleAuthor ) {
+		if ( hasSingleAuthor && users.length ) {
 			/**
 			 * Using `defer` here is a leftover from using Flux store in the past.
 			 *
@@ -52,7 +62,7 @@ class ImporterAuthorMapping extends PureComponent {
 			 */
 			defer( () => selectAuthor( users[ 0 ] ) );
 		}
-	}
+	};
 
 	render() {
 		const {

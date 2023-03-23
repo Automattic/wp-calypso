@@ -9,11 +9,13 @@ import './setup';
 export enum Ga4PropertyGtag {
 	JETPACK,
 	WPCOM,
+	AKISMET,
 }
 
 export const ga4Properties: { [ env in Ga4PropertyGtag ]: string } = {
 	[ Ga4PropertyGtag.WPCOM ]: TRACKING_IDS.wpcomGoogleGA4Gtag,
 	[ Ga4PropertyGtag.JETPACK ]: TRACKING_IDS.jetpackGoogleGA4Gtag,
+	[ Ga4PropertyGtag.AKISMET ]: TRACKING_IDS.akismetGoogleGA4Gtag,
 };
 
 export function setup( params: Gtag.ConfigParams ) {

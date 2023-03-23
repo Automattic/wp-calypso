@@ -33,7 +33,7 @@ const allAdTrackers = [
 	'adroll',
 ] as const;
 
-type AdTracker = typeof allAdTrackers[ number ];
+type AdTracker = ( typeof allAdTrackers )[ number ];
 
 export enum Bucket {
 	ESSENTIAL = 'essential',

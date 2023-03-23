@@ -1,7 +1,7 @@
 import type { ReactChild } from 'react';
 
 // All types based on which the data is populated on the agency dashboard table rows
-export type AllowedTypes = 'site' | 'stats' | 'backup' | 'scan' | 'monitor' | 'plugin';
+export type AllowedTypes = 'site' | 'stats' | 'boost' | 'backup' | 'scan' | 'monitor' | 'plugin';
 
 // Site column object which holds key and title of each column
 export type SiteColumns = Array< {
@@ -23,6 +23,7 @@ export type AllowedStatusTypes =
 
 export interface MonitorSettings {
 	monitor_active: boolean;
+	monitor_site_status: boolean;
 	last_down_time: string;
 	monitor_deferment_time: number;
 	monitor_user_emails: Array< string >;
@@ -40,6 +41,12 @@ export interface SiteStats {
 	visitors: StatsObject;
 }
 
+export interface BoostData {
+	overall: number;
+	mobile: number;
+	desktop: number;
+}
+
 export interface Site {
 	blog_id: number;
 	url: string;
@@ -48,6 +55,7 @@ export interface Site {
 	monitor_site_status: boolean;
 	has_scan: boolean;
 	has_backup: boolean;
+	has_boost: boolean;
 	latest_scan_threats_found: Array< any >;
 	latest_backup_status: string;
 	is_connection_healthy: boolean;
@@ -58,6 +66,7 @@ export interface Site {
 	isSelected?: boolean;
 	site_stats: SiteStats;
 	onSelect?: ( value: boolean ) => void;
+	jetpack_boost_scores: BoostData;
 }
 export interface SiteNode {
 	value: Site;
@@ -70,6 +79,12 @@ export interface StatsNode {
 	type: AllowedTypes;
 	status: AllowedStatusTypes;
 	value: SiteStats;
+}
+
+export interface BoostNode {
+	type: AllowedTypes;
+	status: AllowedStatusTypes;
+	value: BoostData;
 }
 export interface BackupNode {
 	type: AllowedTypes;
@@ -100,6 +115,7 @@ export interface MonitorNode {
 export interface SiteData {
 	site: SiteNode;
 	stats: StatsNode;
+	boost: BoostNode;
 	backup: BackupNode;
 	scan: ScanNode;
 	plugin: PluginNode;
@@ -110,7 +126,7 @@ export interface SiteData {
 
 export interface RowMetaData {
 	row: {
-		value: Site | SiteStats | ReactChild;
+		value: Site | SiteStats | BoostData | ReactChild;
 		status: AllowedStatusTypes | string;
 		error?: boolean;
 	};
