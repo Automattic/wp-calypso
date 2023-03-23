@@ -254,6 +254,7 @@ const PatternAssembler = ( {
 	};
 
 	const deleteSection = ( position: number ) => {
+		showNotice( 'remove', sections[ position ] );
 		setSections( [ ...sections.slice( 0, position ), ...sections.slice( position + 1 ) ] );
 		updateActivePatternPosition( position );
 	};
