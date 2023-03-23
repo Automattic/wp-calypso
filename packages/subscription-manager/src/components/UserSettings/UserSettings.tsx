@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
 import { FormEvent } from 'react';
 import { Button } from '../Button';
+import { Notice } from '../Notice';
 import { BlockEmailsSetting } from '../fields/BlockEmailsSetting';
 import { DeliveryWindowInput } from '../fields/DeliveryWindowInput';
 import { EmailFormatInput, EmailFormatType } from '../fields/EmailFormatInput';
@@ -25,10 +26,17 @@ type UserSettingsProps = {
 	loading: boolean;
 };
 
+type NoticeProps = {
+	type: 'success' | 'warning' | 'error';
+	message: string;
+};
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- until we start using any of these props
 const UserSettings = ( { value = {}, loading }: UserSettingsProps ) => {
 	const [ formState, setFormState ] = useState< SubscriptionUserSettings >( value );
-	const { mutate, isLoading } = Reader.useSubscriptionManagerUserSettingsMutation();
+	const { mutate, isLoading, isSuccess, error } =
+		Reader.useSubscriptionManagerUserSettingsMutation();
+	const [ notice, setNotice ] = useState< NoticeProps | null >( null );
 
 	useEffect( () => {
 		// check if formState is empty object
@@ -36,6 +44,15 @@ const UserSettings = ( { value = {}, loading }: UserSettingsProps ) => {
 			setFormState( value );
 		}
 	}, [ value ] );
+
+	useEffect( () => {
+		if ( isSuccess ) {
+			setNotice( { type: 'success', message: translate( 'Settings saved' ) as string } );
+		}
+		if ( error ) {
+			setNotice( { type: 'error', message: error.message } );
+		}
+	}, [ error, isSuccess ] );
 
 	const onChange = ( newState: Partial< SubscriptionUserSettings > ) => {
 		setFormState( ( prevState ) => ( { ...prevState, ...newState } ) );
@@ -55,6 +72,10 @@ const UserSettings = ( { value = {}, loading }: UserSettingsProps ) => {
 
 	return (
 		<div className="user-settings">
+			<Notice onClose={ () => setNotice( null ) } visible={ !! notice } type={ notice?.type }>
+				{ notice?.message }
+			</Notice>
+
 			<EmailFormatInput
 				value={ formState.mail_option ?? 'html' }
 				onChange={ ( evt: FormEvent< HTMLSelectElement > ) =>

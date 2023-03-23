@@ -14,6 +14,11 @@ const useSubscriptionManagerUserSettingsMutation = () => {
 				body: data,
 				isLoggedIn,
 			} );
+			if ( settings.errors ) {
+				if ( settings.errors.invalid_input ) {
+					throw new Error( settings.errors.invalid_input.join( ', ' ) );
+				}
+			}
 			return settings;
 		},
 		{
