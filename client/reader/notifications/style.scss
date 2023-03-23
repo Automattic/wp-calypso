@@ -1,0 +1,18 @@
+#wpnc-panel {
+
+	&.wpnt-open {
+		position: fixed;
+		top: var(--masterbar-height);
+		right: var(--sidebar-width-max);
+		left: var(--sidebar-width-max);
+		bottom: 0;
+		min-width: 400px;
+	}
+}
+
+.wpnc__main {
+	&.wpnc__note-list {
+		right: auto;
+		left: 0;
+	}
+}

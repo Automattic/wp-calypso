@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import QueryReaderLists from 'calypso/components/data/query-reader-lists';
 import QueryReaderOrganizations from 'calypso/components/data/query-reader-organizations';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
+import { BellIcon } from 'calypso/layout/masterbar/masterbar-notifications/notifications-bell-icon';
 import Sidebar from 'calypso/layout/sidebar';
 import SidebarFooter from 'calypso/layout/sidebar/footer';
 import SidebarItem from 'calypso/layout/sidebar/item';
@@ -190,16 +191,6 @@ export class ReaderSidebar extends Component {
 				/>
 
 				<SidebarItem
-					className={ ReaderSidebarHelper.itemLinkClass( '/read/notifications', path, {
-						'sidebar-streams__notifications': true,
-					} ) }
-					label={ translate( 'Notifications' ) }
-					onNavigate={ this.handleReaderSidebarNotificationsClicked }
-					customIcon={ <ReaderConversationsIcon /> }
-					link="/read/notifications"
-				/>
-
-				<SidebarItem
 					className={ ReaderSidebarHelper.itemLinkClass( '/read/conversations', path, {
 						'sidebar-streams__conversations': true,
 					} ) }
@@ -246,6 +237,16 @@ export class ReaderSidebar extends Component {
 						customIcon={ <ReaderA8cConversationsIcon /> }
 					/>
 				) }
+
+				<SidebarItem
+					className={ ReaderSidebarHelper.itemLinkClass( '/read/notifications', path, {
+						'sidebar-streams__notifications': true,
+					} ) }
+					label={ translate( 'Notifications' ) }
+					onNavigate={ this.handleReaderSidebarNotificationsClicked }
+					customIcon={ <BellIcon /> }
+					link="/read/notifications"
+				/>
 			</SidebarMenu>
 		);
 	}
