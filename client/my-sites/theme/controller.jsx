@@ -1,5 +1,6 @@
 import debugFactory from 'debug';
 import { Provider as ReduxProvider } from 'react-redux';
+import { RouteProvider } from 'calypso/components/route';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
 import { requestTheme, setBackPath } from 'calypso/state/themes/actions';
 import { getTheme, getThemeRequestErrors } from 'calypso/state/themes/selectors';
@@ -75,9 +76,11 @@ export function details( context, next ) {
 
 export function notFoundError( err, context, next ) {
 	context.layout = (
-		<ReduxProvider store={ context.store }>
-			<LayoutLoggedOut primary={ <ThemeNotFoundError /> } />
-		</ReduxProvider>
+		<RouteProvider currentSection={ context.section } currentQuery={ context.query }>
+			<ReduxProvider store={ context.store }>
+				<LayoutLoggedOut primary={ <ThemeNotFoundError /> } />
+			</ReduxProvider>
+		</RouteProvider>
 	);
 	next( err );
 }
