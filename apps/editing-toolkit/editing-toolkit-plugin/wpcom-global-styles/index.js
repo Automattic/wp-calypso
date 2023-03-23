@@ -3,10 +3,10 @@ import './public-path';
 
 import domReady from '@wordpress/dom-ready';
 import { registerPlugin } from '@wordpress/plugins';
+import { GlobalStylesSidebarNotice } from './global-style-sidebar-notice';
 import GlobalStylesModal from './modal';
 import GlobalStylesNotice from './notice';
 import './store';
-import { GlobalStylesScreenRootNotice } from './screen-root-notice';
 
 const showGlobalStylesComponents = () => {
 	registerPlugin( 'wpcom-global-styles', {
@@ -14,7 +14,7 @@ const showGlobalStylesComponents = () => {
 			<>
 				<GlobalStylesModal />
 				<GlobalStylesNotice />
-				<GlobalStylesScreenRootNotice />
+				<GlobalStylesSidebarNotice />
 			</>
 		),
 	} );
