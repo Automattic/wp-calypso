@@ -13,7 +13,7 @@ export type SubscriptionManagerContainerProps = {
 };
 
 const getEmailAddress = () => {
-	const subkey: string | undefined = document.cookie
+	const subkey = document.cookie
 		?.split( ';' )
 		?.map( ( c ) => c.trim() )
 		?.find( ( c ) => c.startsWith( 'subkey=' ) )
