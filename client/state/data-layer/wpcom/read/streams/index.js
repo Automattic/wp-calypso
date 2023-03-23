@@ -212,7 +212,6 @@ export function requestPage( action ) {
 }
 
 export function handlePage( action, data ) {
-	console.log( action, data );
 	const { posts, date_range, meta, next_page } = data;
 	const { streamKey, query, isPoll, gap, streamType } = action.payload;
 	const { dateProperty } = streamApis[ streamType ];
