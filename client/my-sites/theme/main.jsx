@@ -929,11 +929,7 @@ class ThemeSheet extends Component {
 			<Button
 				className="theme__sheet-primary-button"
 				href={
-					getUrl &&
-					( key === 'customize' ||
-						! isExternallyManagedTheme ||
-						! isLoggedIn ||
-						! config.isEnabled( 'themes/third-party-premium' ) )
+					getUrl && ( key === 'customize' || ! isExternallyManagedTheme || ! isLoggedIn )
 						? this.appendSelectedStyleVariationToUrl( getUrl( this.props.themeId ) )
 						: null
 				}
