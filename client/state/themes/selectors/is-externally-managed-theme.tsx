@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { getTheme } from 'calypso/state/themes/selectors/get-theme';
 
 import 'calypso/state/themes/init';
@@ -34,5 +33,5 @@ export function isExternallyManagedTheme( state = {}, themeId: string ): boolean
 	}
 
 	const themeType: ThemeTypes = theme.theme_type;
-	return isEnabled( 'themes/third-party-premium' ) && themeType === 'managed-external';
+	return themeType === 'managed-external';
 }

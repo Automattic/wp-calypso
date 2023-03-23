@@ -24,6 +24,11 @@ const INITIAL_UNIX_EPOCH = '1970-01-01 00:00:00';
 
 const isExpandedBlockEnabled = config.isEnabled( 'jetpack/pro-dashboard-expandable-block' );
 
+// Mapping the columns to the site data keys
+export const siteColumnKeyMap: { [ key: string ]: string } = {
+	site: 'url',
+};
+
 const extraColumns: SiteColumns = isExpandedBlockEnabled
 	? [
 			{
@@ -45,6 +50,7 @@ export const siteColumns: SiteColumns = [
 	{
 		key: 'site',
 		title: translate( 'Site' ),
+		isSortable: true,
 	},
 	...extraColumns,
 	{

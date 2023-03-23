@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import fiverrIllustration from 'calypso/assets/images/customer-home/illustration--task-fiverr.svg';
 import { preventWidows } from 'calypso/lib/formatting';
-import { TASK_FIND_DOMAIN } from 'calypso/my-sites/customer-home/cards/constants';
+import { TASK_FIVERR } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 
 const Fiverr = () => {
@@ -18,7 +18,7 @@ const Fiverr = () => {
 			actionUrl="https://wp.me/logo-maker/?utm_campaign=my_home_task"
 			illustration={ fiverrIllustration }
 			timing={ 10 }
-			taskId={ TASK_FIND_DOMAIN }
+			taskId={ TASK_FIVERR }
 		/>
 	);
 };

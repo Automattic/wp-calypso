@@ -9,6 +9,7 @@ export type SiteColumns = Array< {
 	title: ReactChild;
 	className?: string;
 	isExpandable?: boolean;
+	isSortable?: boolean;
 } >;
 
 export type AllowedStatusTypes =
@@ -160,10 +161,15 @@ export type ActionEventNames = {
 	[ key in AllowedActionTypes ]: { small_screen: string; large_screen: string };
 };
 
+export interface DashboardSortInterface {
+	field: string;
+	direction: 'asc' | 'desc' | '';
+}
 export interface DashboardOverviewContextInterface {
 	search: string;
 	currentPage: number;
 	filter: { issueTypes: Array< AgencyDashboardFilterOption >; showOnlyFavorites: boolean };
+	sort: DashboardSortInterface;
 }
 
 export interface SitesOverviewContextInterface extends DashboardOverviewContextInterface {

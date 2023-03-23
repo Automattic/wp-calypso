@@ -8,6 +8,7 @@ export const debug = debugFactory( 'calypso:analytics:ad-tracking' );
 
 export const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevents.js';
 export const GOOGLE_GTAG_SCRIPT_URL = 'https://www.googletagmanager.com/gtag/js?id=';
+export const GOOGLE_GTM_SCRIPT_URL = 'https://www.googletagmanager.com/gtm.js?id=';
 export const BING_TRACKING_SCRIPT_URL = 'https://bat.bing.com/bat.js';
 export const CRITEO_TRACKING_SCRIPT_URL = 'https://static.criteo.net/js/ld/ld.js';
 export const YAHOO_GEMINI_CONVERSION_PIXEL_URL =
@@ -67,6 +68,7 @@ export const TRACKING_IDS = {
 	akismetGoogleAdsGtagPurchase: 'AW-10778599042/U-01CImL14MDEIK90ZMo', // "Akismet.com Purchase Gtag"
 	jetpackLinkedinId: '4537722',
 	jetpackTwitterPixelId: 'odlje',
+	wooGoogleTagManagerId: 'GTM-W64W8Q',
 };
 // This name is something we created to store a session id for DCM Floodlight session tracking
 export const DCM_FLOODLIGHT_SESSION_COOKIE_NAME = 'dcmsid';
