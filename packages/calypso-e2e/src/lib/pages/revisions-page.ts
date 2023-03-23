@@ -1,4 +1,5 @@
 import { Page } from 'playwright';
+import { ElementHelper } from '../..';
 
 /**
  * Represents the Revisions page used on Atomic sites.
@@ -38,17 +39,20 @@ export class RevisionsPage {
 		// slider width.
 		const clickPositionX = ( sliderWidth * ( index - 1 ) ) / ( revisionCount - 1 );
 
-		await this.page.waitForLoadState( 'networkidle' );
-		await slider.click( { position: { x: clickPositionX, y: 1 } } );
+		await Promise.all( [
+			// We need to rely on waiting for mutations here because neither
+			// checking the ".loading" status nor the auto-waiting are enough to
+			// indicate that the diff has been loaded and is ready to be
+			// interacted with. This might be related to the fact that the diff
+			// is rendered entirely from a fetched HTML string.
+			ElementHelper.waitForMutations( this.page, '.revisions-diff-frame' ),
+			slider.click( { position: { x: clickPositionX, y: 1 } } ),
+		] );
 	}
 
 	/**
-	 * Clicks the "Restore This Revision" button, then checks
-	 * that the editor screen is loaded again.
-	 *
-	 * Throws if the current revision is already loaded.
-	 *
-	 * @throws {Error} if the current revision is already loaded.
+	 * Clicks the "Restore This Revision" button. Throws if the current revision
+	 * is already loaded.
 	 */
 	async loadSelectedRevision() {
 		const restoreButton = this.page.locator( 'input[value="Restore This Revision"]' );
@@ -56,10 +60,9 @@ export class RevisionsPage {
 			throw new Error( 'Revision already loaded.' );
 		}
 
-		await restoreButton.click();
-
-		// If the spec is using RevisionsPage, this implies the
-		// account is using WP-Admin.
-		await this.page.waitForURL( /wp-admin\/post.php/, { timeout: 20 * 1000 } );
+		await Promise.all( [
+			this.page.waitForNavigation( { waitUntil: 'networkidle' } ),
+			restoreButton.click(),
+		] );
 	}
 }

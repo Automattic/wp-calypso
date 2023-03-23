@@ -90,6 +90,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Revisions` ), function () {
 	it( 'Load selected revision', async function () {
 		if ( envVariables.TEST_ON_ATOMIC ) {
 			await revisionsPage.loadSelectedRevision();
+			await editorPage.waitUntilLoaded();
 		} else {
 			await revisionsComponent.loadSelectedRevision();
 		}
