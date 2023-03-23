@@ -14,6 +14,7 @@ import Main from 'calypso/components/main';
 import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import TrackResurrections from 'calypso/lib/analytics/track-resurrections';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import { preventWidows } from 'calypso/lib/formatting';
 import Primary from 'calypso/my-sites/customer-home/locations/primary';
@@ -96,6 +97,7 @@ const Home = ( {
 
 	const header = (
 		<div className="customer-home__heading">
+			<TrackResurrections />;
 			<FormattedHeader
 				brandFont
 				headerText={ translate( 'My Home' ) }
@@ -103,7 +105,6 @@ const Home = ( {
 				align="left"
 				hasScreenOptions
 			/>
-
 			<div className="customer-home__site-content">
 				<SiteIcon site={ site } size={ 58 } />
 				<div className="customer-home__site-info">
@@ -117,7 +118,6 @@ const Home = ( {
 					</ExternalLink>
 				</div>
 			</div>
-
 			<div className="customer-home__view-site-button">
 				<Button href={ site.URL } onClick={ trackViewSiteAction } target="_blank">
 					{ translate( 'Visit site' ) }
