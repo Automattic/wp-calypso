@@ -60,7 +60,7 @@ describe( 'index', () => {
 			return <div />;
 		}
 
-		initialState.sites.items[ 1 ].options.has_promote_widget = false;
+		initialState.sites.items[ 1 ].options.can_blaze = false;
 
 		const mockStore = configureStore();
 		const store = mockStore( initialState );
@@ -79,7 +79,7 @@ describe( 'index', () => {
 			return <div />;
 		}
 
-		initialState.sites.items[ 1 ].options.has_promote_widget = true;
+		initialState.sites.items[ 1 ].options.can_blaze = true;
 
 		const mockStore = configureStore();
 		const store = mockStore( initialState );

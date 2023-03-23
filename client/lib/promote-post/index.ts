@@ -141,9 +141,7 @@ export enum PromoteWidgetStatus {
 export const usePromoteWidget = (): PromoteWidgetStatus => {
 	const selectedSite = useSelector( getSelectedSite );
 
-	const value = useSelector( ( state ) =>
-		getSiteOption( state, selectedSite?.ID, 'has_promote_widget' )
-	);
+	const value = useSelector( ( state ) => getSiteOption( state, selectedSite?.ID, 'can_blaze' ) );
 
 	switch ( value ) {
 		case false:
