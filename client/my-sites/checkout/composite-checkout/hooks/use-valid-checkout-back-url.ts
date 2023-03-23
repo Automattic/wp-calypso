@@ -29,7 +29,7 @@ const useValidCheckoutBackUrl = ( siteSlug: string | undefined ): string | undef
 			// We shouldn't be navigated to `start\domain` but to `akismet\plans`
 			const isAkismetCheckout = window.location.pathname.startsWith( '/checkout/akismet' );
 			if ( ! siteSlug && isAkismetCheckout ) {
-				return 'https://akismet.com/plans';
+				return 'https://akismet.com/pricing';
 			}
 			return undefined;
 		}
