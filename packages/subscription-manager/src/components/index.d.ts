@@ -110,8 +110,6 @@ declare module 'calypso/components/forms/form-label' {
 	export default FormLabel;
 }
 
-declare global {
-	interface Window {
-		_subscriptionManagementSubkey: string | undefined;
-	}
+declare module 'calypso/components/localized-moment' {
+	export const useLocalizedMoment: () => import('moment');
 }

@@ -3,8 +3,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import { addFilter, removeFilter } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
-import { selectors as starterPageTemplatesSelectors } from '../starter-page-templates/store';
-import type { SelectFromMap } from '@automattic/data-stores';
+import { pageLayoutStore } from './store';
 import '@wordpress/nux';
 
 const INSERTING_HOOK_NAME = 'isInsertingPagePattern';
@@ -13,7 +12,6 @@ const INSERTING_HOOK_NAMESPACE = 'automattic/full-site-editing/inserting-pattern
 interface PagePatternsPluginProps {
 	patterns: PatternDefinition[];
 }
-type StarterPageTemplatesSelectors = SelectFromMap< typeof starterPageTemplatesSelectors >;
 type CoreEditorPlaceholder = {
 	getBlocks: ( ...args: unknown[] ) => Array< { name: string; clientId: string } >;
 	getEditedPostAttribute: ( ...args: unknown[] ) => unknown;
@@ -26,7 +24,7 @@ type CoreNuxPlaceholder = {
 };
 
 export function PagePatternsPlugin( props: PagePatternsPluginProps ) {
-	const { setOpenState } = useDispatch( 'automattic/starter-page-layouts' );
+	const { setOpenState } = useDispatch( pageLayoutStore );
 	const { setUsedPageOrPatternsModal } = useDispatch( 'automattic/wpcom-welcome-guide' );
 	const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );
 	const { editPost } = useDispatch( 'core/editor' );
@@ -34,9 +32,7 @@ export function PagePatternsPlugin( props: PagePatternsPluginProps ) {
 	const { disableTips } = useDispatch( 'core/nux' );
 
 	const selectProps = useSelect( ( select ) => {
-		const { isOpen, isPatternPicker }: StarterPageTemplatesSelectors = select(
-			'automattic/starter-page-layouts'
-		);
+		const { isOpen, isPatternPicker } = select( pageLayoutStore );
 		return {
 			isOpen: isOpen(),
 			isWelcomeGuideActive: (

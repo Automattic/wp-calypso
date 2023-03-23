@@ -38,15 +38,25 @@ export function getGoogleAnalyticsDefaultConfig() {
  * @param {string} urlPath The path of the current page
  * @param {string} pageTitle The title of the current page
  * @param {boolean} useJetpackGoogleAnalytics send the page view to Jetpack Google Analytics
+ * @param {boolean} useAkismetGoogleAnalytics send the page view to Akismet Google Analytics
  */
 export function fireGoogleAnalyticsPageView(
 	urlPath,
 	pageTitle,
-	useJetpackGoogleAnalytics = false
+	useJetpackGoogleAnalytics = false,
+	useAkismetGoogleAnalytics = false
 ) {
-	const ga4PropertyGtag = useJetpackGoogleAnalytics
-		? GA4.Ga4PropertyGtag.JETPACK
-		: GA4.Ga4PropertyGtag.WPCOM;
+	const getGa4PropertyGtag = () => {
+		if ( useJetpackGoogleAnalytics ) {
+			return GA4.Ga4PropertyGtag.JETPACK;
+		}
+		if ( useAkismetGoogleAnalytics ) {
+			return GA4.Ga4PropertyGtag.AKISMET;
+		}
+		return GA4.Ga4PropertyGtag.WPCOM;
+	};
+
+	const ga4PropertyGtag = getGa4PropertyGtag();
 	GA4.firePageView( pageTitle, urlPath, ga4PropertyGtag );
 
 	const params = {

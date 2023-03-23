@@ -22,10 +22,13 @@
 	}
 }
 
-.is-white-login .magic-login__handle-link {
+.is-white-login .magic-login__handle-link,
+.is-white-login .magic-login__link-expired {
 	.empty-content__title {
 		font-family: $brand-serif;
 		font-size: rem(42px);
+		line-height: 1.2;
+		margin-bottom: 15px;
 	}
 
 	.empty-content__line {
@@ -36,6 +39,10 @@
 	.button.is-primary:not([disabled]) {
 		background-color: #007cba;
 		border-color: #007cba;
+	}
+
+	.empty-content__action {
+		margin: 0 10px;
 	}
 }
 
@@ -150,6 +157,7 @@
 	}
 
 	.card {
+		background: transparent;
 		box-shadow: none;
 	}
 

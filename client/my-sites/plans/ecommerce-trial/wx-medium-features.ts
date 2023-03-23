@@ -9,6 +9,7 @@ import type { WooExpressMediumPlanFeatureSet } from 'calypso/my-sites/plans/comp
 
 type WooExpressMediumFeatureSetProps = {
 	translate: typeof i18nTranslate;
+	interval: 'monthly' | 'yearly';
 };
 
 /*
@@ -19,6 +20,7 @@ type WooExpressMediumFeatureSetProps = {
 
 export const getWooExpressMediumFeatureSets = ( {
 	translate,
+	interval,
 }: WooExpressMediumFeatureSetProps ): WooExpressMediumPlanFeatureSet[] => {
 	return [
 		{
@@ -41,7 +43,10 @@ export const getWooExpressMediumFeatureSets = ( {
 				},
 				{
 					title: translate( 'Get support 24/7', { textOnly: true } ),
-					subtitle: translate( 'Need help? Reach out anytime via email or chat.' ),
+					subtitle:
+						interval === 'yearly'
+							? translate( 'Need help? Reach out anytime via email or chat.' )
+							: translate( 'Need help? Reach out anytime via email.' ),
 				},
 				{
 					title: translate( 'Have unlimited admin accounts', { textOnly: true } ),

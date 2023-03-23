@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { map, property } from 'lodash';
 import wpcom from 'calypso/lib/wp';
 import { fetchThemesList as fetchWporgThemesList } from 'calypso/lib/wporg';
@@ -54,9 +53,6 @@ export function requestThemes( siteId, query = {}, locale ) {
 							// https://github.com/Automattic/wp-calypso/issues/71911#issuecomment-1381284172
 							// User can be redirected to PatternAssembler flow using the PatternAssemblerCTA on theme-list
 							include_blankcanvas_theme: null,
-							include_marketplace_themes: config.isEnabled( 'themes/third-party-premium' )
-								? 'true'
-								: null,
 						},
 						locale ? { locale } : null
 					)

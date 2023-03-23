@@ -28,13 +28,14 @@ import type {
 	DeleteInvitesResponse,
 	NewPostParams,
 	NewMediaResponse,
-	NewPostResponse,
+	PostResponse,
 	ReaderResponse,
 	Invite,
 	AllPluginsResponse,
 	PluginResponse,
 	PluginRemovalResponse,
 	AllWidgetsResponse,
+	CommentLikeResponse,
 } from './types';
 import type { BodyInit, HeadersInit, RequestInit } from 'node-fetch';
 
@@ -353,15 +354,20 @@ export class RestAPIClient {
 			params
 		);
 
+		// This handles API errors such as `unauthorized`.
 		if ( response.hasOwnProperty( 'error' ) ) {
 			throw new Error(
 				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
 			);
 		}
 
-		if ( response.errors === [] ) {
-			console.log( response );
-			throw new Error( `Failed to create invite: ${ response.errors }` );
+		// This handles "errors" relating to the invite itself and can be an array.
+		// For instance, if a user tries to invite itself, or invite an already added user.
+		if ( response.errors.length ) {
+			for ( const err of response.errors ) {
+				console.error( `${ err.code }: ${ err.message }` );
+			}
+			throw new Error( `Failed to create invite due to ${ response.errors.length } errors.` );
 		}
 
 		return response;
@@ -629,7 +635,7 @@ export class RestAPIClient {
 	 * @param {number} siteID Target site ID.
 	 * @param {NewPostParams} details Details of the new post.
 	 */
-	async createPost( siteID: number, details: NewPostParams ): Promise< NewPostResponse > {
+	async createPost( siteID: number, details: NewPostParams ): Promise< PostResponse > {
 		const params: RequestParams = {
 			method: 'post',
 			headers: {
@@ -641,6 +647,35 @@ export class RestAPIClient {
 
 		const response = await this.sendRequest(
 			this.getRequestURL( '1.1', `/sites/${ siteID }/posts/new` ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/**
+	 * Deletes a post denoted by postID from the site.
+	 *
+	 * @param {number} siteID Target site ID.
+	 * @param {number} postID Target post ID.
+	 */
+	async deletePost( siteID: number, postID: number ): Promise< PostResponse > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/posts/${ postID }/delete` ),
 			params
 		);
 
@@ -720,6 +755,56 @@ export class RestAPIClient {
 			);
 		}
 
+		return response;
+	}
+
+	/**
+	 * Method to perform two similar operations - like and unlike a comment.
+	 *
+	 * @param {'like'|'unlike'} action Action to perform on the comment.
+	 * @param {number} siteID Target site ID.
+	 * @param {number} commentID Target comment ID.
+	 */
+	async commentAction(
+		action: 'like' | 'unlike',
+		siteID: number,
+		commentID: number
+	): Promise< CommentLikeResponse > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		let endpoint: URL;
+		if ( action === 'like' ) {
+			endpoint = this.getRequestURL(
+				'1.1',
+				`/sites/${ siteID }/comments/${ commentID }/likes/new`
+			);
+		} else {
+			endpoint = this.getRequestURL(
+				'1.1',
+				`/sites/${ siteID }/comments/${ commentID }/likes/mine/delete`
+			);
+		}
+
+		const response = await this.sendRequest( endpoint, params );
+
+		// Tried to like the comment, but failed to do so
+		// and the user still has not liked the comment.
+		if ( action === 'like' && ! response.success && ! response.i_like ) {
+			throw new Error( `Failed to like ${ commentID } on site ${ siteID }` );
+		}
+		// Tried to unlike the comment, but failed to do so
+		// and the user still likes the comment.
+		if ( action === 'unlike' && ! response.success && response.i_like ) {
+			throw new Error( `Failed to unlike ${ commentID } on site ${ siteID }` );
+		}
+
+		// Otherwise, consider it a success.
 		return response;
 	}
 
@@ -955,7 +1040,7 @@ export class RestAPIClient {
 		if ( response.hasOwnProperty( 'error' ) && response.error === 'not_found' ) {
 			console.info( `Widget ${ widgetID } not found.` );
 			return;
-		} else if ( response === [] ) {
+		} else if ( response.length === 0 ) {
 			console.info( `Deleted widget ${ widgetID }.` );
 		} else if ( response.id === widgetID ) {
 			console.info( `Deactivated widget ${ widgetID }` );

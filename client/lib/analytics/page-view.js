@@ -19,7 +19,12 @@ export function recordPageView( urlPath, pageTitle, params = {}, options = {} ) 
 
 		// Tracks, Google Analytics, Refer platform.
 		recordTracksPageViewWithPageParams( urlPath, params );
-		safeGoogleAnalyticsPageView( urlPath, pageTitle, options?.useJetpackGoogleAnalytics );
+		safeGoogleAnalyticsPageView(
+			urlPath,
+			pageTitle,
+			options?.useJetpackGoogleAnalytics,
+			options?.useAkismetGoogleAnalytics
+		);
 		referRecordPageView();
 
 		// Retargeting.
@@ -38,8 +43,9 @@ export function recordPageView( urlPath, pageTitle, params = {}, options = {} ) 
 async function safeGoogleAnalyticsPageView(
 	urlPath,
 	pageTitle,
-	useJetpackGoogleAnalytics = false
+	useJetpackGoogleAnalytics = false,
+	useAkismetGoogleAnalytics = false
 ) {
 	await refreshCountryCodeCookieGdpr();
-	gaRecordPageView( urlPath, pageTitle, useJetpackGoogleAnalytics );
+	gaRecordPageView( urlPath, pageTitle, useJetpackGoogleAnalytics, useAkismetGoogleAnalytics );
 }

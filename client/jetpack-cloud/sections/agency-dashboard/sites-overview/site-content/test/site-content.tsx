@@ -23,12 +23,14 @@ describe( '<SiteContent>', () => {
 		.reply( 200, {
 			connected: true,
 		} );
+	const blogId = 1234;
 	const sites = [
 		{
-			blog_id: 1234,
+			blog_id: blogId,
 			url: 'test.jurassic.ninja',
 			monitor_settings: {
 				monitor_active: true,
+				monitor_site_status: true,
 			},
 		},
 	];
@@ -41,6 +43,11 @@ describe( '<SiteContent>', () => {
 		partnerPortal: {
 			partner: {
 				isPartnerOAuthTokenLoaded: true,
+			},
+		},
+		sites: {
+			items: {
+				[ blogId ]: sites[ 0 ],
 			},
 		},
 	};
