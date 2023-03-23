@@ -384,3 +384,23 @@ export function getArrayOfFilteredTasks(
 		}, [] as Task[] )
 	);
 }
+
+/*
+ * Confirms if final task for a given site_intent is completed.
+ * This is used to as a fallback check to determine if the full
+ * screen launchpad should be shown or not.
+ *
+ * @param {string} siteIntent - The value of a site's site_intent option
+ * @param {Task[]} checklist_statuses - The value of a site's checklist_statuses option
+ * @returns {boolean} - True if the final task for the given site_intent is completed
+ */
+export function areLaunchpadTasksCompleted(
+	site_intent: string,
+	checklist_statuses: LaunchpadStatuses,
+	isSiteLaunched: boolean
+) {
+	if ( 'newsletter' === site_intent ) {
+		return Boolean( checklist_statuses?.first_post_published );
+	}
+	return isSiteLaunched || Boolean( checklist_statuses?.site_launched );
+}

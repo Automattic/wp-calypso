@@ -1,4 +1,4 @@
-import { isNewsletterFlow, StepContainer } from '@automattic/onboarding';
+import { StepContainer } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
@@ -16,6 +16,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
 import { useQuery } from '../../../../hooks/use-query';
 import StepContent from './step-content';
+import { areLaunchpadTasksCompleted } from './task-helper';
 import type { Step } from '../../types';
 import type { SiteSelect } from '@automattic/data-stores';
 
@@ -33,7 +34,7 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 	const verifiedParam = useQuery().get( 'verified' );
 	const site = useSite();
 	const {
-		data: { launchpad_screen: launchpadScreenOption, checklist_statuses },
+		data: { launchpad_screen: launchpadScreenOption, checklist_statuses, site_intent },
 	} = useLaunchpad( siteSlug );
 	const isSiteLaunched = site?.launch_status === 'launched' || false;
 	const recordSignupComplete = useRecordSignupComplete( flow );
@@ -48,7 +49,7 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 	if (
 		! isLoggedIn ||
 		launchpadScreenOption === 'off' ||
-		areLaunchpadTasksCompleted( flow ) ||
+		areLaunchpadTasksCompleted( site_intent, checklist_statuses, isSiteLaunched ) ||
 		( launchpadScreenOption === false && 'videopress' !== flow )
 	) {
 		redirectToSiteHome( siteSlug, flow );
@@ -56,13 +57,6 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 
 	if ( ! siteSlug || fetchingSiteError?.error ) {
 		window.location.replace( '/home' );
-	}
-
-	function areLaunchpadTasksCompleted( flow: string | null ) {
-		if ( isNewsletterFlow( flow ) ) {
-			return Boolean( checklist_statuses?.first_post_published );
-		}
-		return isSiteLaunched || Boolean( checklist_statuses?.site_launched );
 	}
 
 	function redirectToSiteHome( siteSlug: string | null, flow: string | null ) {
