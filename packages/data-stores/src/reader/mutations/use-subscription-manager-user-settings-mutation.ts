@@ -1,3 +1,4 @@
+import { translate } from 'i18n-calypso';
 import { useMutation, useQueryClient } from 'react-query';
 import { callApi } from '../helpers';
 import { useIsLoggedIn } from '../hooks';
@@ -17,6 +18,12 @@ const useSubscriptionManagerUserSettingsMutation = () => {
 			if ( settings.errors ) {
 				if ( settings.errors.invalid_input ) {
 					throw new Error( settings.errors.invalid_input.join( ', ' ) );
+				} else {
+					throw new Error(
+						translate( 'Something went wrong.', {
+							context: 'Something went wrong will saving the user settings',
+						} ) as string
+					);
 				}
 			}
 			return settings;
