@@ -447,7 +447,7 @@ export class Theme extends Component {
 					{ ...commonProps }
 					className={ classNames( commonProps.className, 'theme__marketplace-theme' ) }
 					labelText={ translate( 'Paid', {
-						comment: 'Refers to paid service, such as paid theme',
+						context: 'Refers to paid service, such as paid theme',
 						textOnly: true,
 					} ) }
 				/>
