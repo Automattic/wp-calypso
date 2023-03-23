@@ -234,3 +234,8 @@ export interface ToggleActivateMonitorArgs {
 	siteId: number;
 	params: { monitor_active: boolean };
 }
+
+export interface Backup {
+	activityTitle: string;
+	activityDescription: { children: { text: string }[] }[];
+}
