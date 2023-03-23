@@ -89,7 +89,6 @@ export function useStoredPaymentMethods( {
 		queryKey,
 		() => fetchPaymentMethods( { type, expired } ),
 		{
-			initialData: [],
 			enabled: ! isLoggedOut,
 		}
 	);
