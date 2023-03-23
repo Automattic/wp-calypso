@@ -1,8 +1,9 @@
 import 'calypso/components/environment-badge/style.scss';
 import '@automattic/calypso-polyfills';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
-import { CurrentUser } from '@automattic/calypso-analytics/dist/types/utils/current-user';
 import config from '@automattic/calypso-config';
+import { CurrentUser, User } from '@automattic/data-stores';
+import { dispatch } from '@wordpress/data';
 import ReactDom from 'react-dom';
 import { QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
@@ -15,13 +16,11 @@ import { WindowLocaleEffectManager } from 'calypso/landing/stepper/utils/window-
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { createReduxStore } from 'calypso/state';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
-import { requestHappychatEligibility } from 'calypso/state/happychat/user/actions';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import { loadPersistedState } from 'calypso/state/persisted-state';
 import { createQueryClient, hydrateBrowserState } from 'calypso/state/query-client';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
-import { requestSites } from 'calypso/state/sites/actions';
 import SubscriptionManagemer from './subscription-manager/subscription-manager';
 import './styles.scss';
 
@@ -44,13 +43,15 @@ const setupReduxStore = ( user: CurrentUser ) => {
 	const reduxStore = createReduxStore( initialState, initialReducer );
 	setStore( reduxStore, getStateFromCache( user.ID ) );
 	setupLocale( user, reduxStore );
+
+	const userStoreKey = User.register( { client_id: '', client_secret: '' } );
 	if ( user ) {
-		// Initialize calypso user store
-		config.isEnabled( 'signup/inline-help' ) &&
-			reduxStore.dispatch( requestHappychatEligibility() as unknown as AnyAction );
 		reduxStore.dispatch( setCurrentUser( user ) as AnyAction );
-		reduxStore.dispatch( requestSites() as unknown as AnyAction );
+		dispatch( userStoreKey ).receiveCurrentUser( user );
+	} else {
+		dispatch( userStoreKey ).receiveCurrentUserFailed();
 	}
+
 	return reduxStore;
 };
 
