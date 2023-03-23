@@ -26,13 +26,15 @@
 
 @media screen and ( max-width: $break-medium ) {
 	.subscription-manager-container {
-		padding: 4px 24px;
+		padding: 30px 24px;
 
-		.formatted-header {
-			&__title {
-				font-size: $font-title-medium !important;
-				line-height: $font-title-large;
-				margin-bottom: 8px;
+		.subscription-manager-container {
+			.formatted-header {
+				&__title {
+					font-size: rem(28px) !important;
+					line-height: $font-headline-small;
+					margin-bottom: 8px;
+				}
 			}
 		}
 	}
