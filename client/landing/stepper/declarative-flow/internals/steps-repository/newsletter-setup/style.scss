@@ -1,16 +1,23 @@
 @import "../style";
 
 .newsletter-setup {
-	.step-container {
-		padding-top: 44px;
-	}
 
+	.step-container {
+		padding-top: 24px;
+		@include break-medium {
+			padding-top: 0;
+		}
+	}
 	.step-container__content {
 		display: flex;
 		justify-content: center;
 	}
 
-	.newsletter-setup .step-container__header {
+	.step-container__header {
 		margin-bottom: 32px;
+
+		@include break-medium {
+			margin-top: 36px;
+		}
 	}
 }

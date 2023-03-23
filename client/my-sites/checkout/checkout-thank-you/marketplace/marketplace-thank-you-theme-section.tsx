@@ -40,6 +40,7 @@ const ThemeSectionImageContainer = styled.div`
 `;
 
 const ThemeSectionImage = styled.img`
+	width: 100%;
 	border-radius: 13px;
 `;
 
