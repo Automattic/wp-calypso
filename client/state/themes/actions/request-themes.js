@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { map, property } from 'lodash';
 import wpcom from 'calypso/lib/wp';
 import { fetchThemesList as fetchWporgThemesList } from 'calypso/lib/wporg';
@@ -20,7 +19,7 @@ import 'calypso/state/themes/init';
  * @param  {number|string} siteId        Jetpack site ID or 'wpcom' for any WPCOM site
  * @param  {Object}        query         Theme query
  * @param  {string}        query.search  Search string
- * @param  {string}        query.tier    Theme tier: 'free', 'premium', or '' (either)
+ * @param  {string}        query.tier    Theme tier: 'free', 'premium', 'marketplace', or '' (either)
  * @param  {string}        query.filter  Filter
  * @param  {number}        query.number  How many themes to return per page
  * @param  {number}        query.offset  At which item to start the set of returned themes
@@ -54,9 +53,6 @@ export function requestThemes( siteId, query = {}, locale ) {
 							// https://github.com/Automattic/wp-calypso/issues/71911#issuecomment-1381284172
 							// User can be redirected to PatternAssembler flow using the PatternAssemblerCTA on theme-list
 							include_blankcanvas_theme: null,
-							include_marketplace_themes: config.isEnabled( 'themes/third-party-premium' )
-								? 'true'
-								: null,
 						},
 						locale ? { locale } : null
 					)

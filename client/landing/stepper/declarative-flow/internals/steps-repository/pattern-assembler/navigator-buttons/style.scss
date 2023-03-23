@@ -3,12 +3,13 @@
 .pattern-assembler {
 	.navigator-button {
 		height: 44px;
-		line-height: 44px;
-		padding: 0;
+		padding: 10px 8px;
 		font-size: $font-body-small;
 		font-weight: 400;
 		letter-spacing: -0.15px;
 		color: var(--studio-gray-100);
+		border: none;
+		background: transparent;
 
 		svg {
 			flex-shrink: 0;
@@ -16,12 +17,17 @@
 		}
 
 		&:hover,
-		&:focus {
+		&:focus-visible {
 			color: var(--studio-blue-50);
 		}
 
 		&:focus {
-			border-color: transparent;
+			box-shadow: none;
+		}
+
+		&:focus-visible {
+			border-color: var(--color-primary);
+			box-shadow: 0 0 0 2px var(--color-primary-light);
 		}
 
 		&:active {

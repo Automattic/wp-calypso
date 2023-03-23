@@ -101,7 +101,7 @@ function PaymentMethodStep( { card, siteSlug }: { card: StoredCard; siteSlug: st
 		page( event.target.href );
 	}, [] );
 	// translators: %s will be replaced with the last 4 digits of a credit card.
-	const maskedCard = sprintf( translate( '**** %s' ), card?.card || '' );
+	const maskedCard = sprintf( translate( '**** %s' ), card.card || '' );
 
 	return (
 		<PurchaseModalStep id="payment-method">
@@ -112,13 +112,13 @@ function PaymentMethodStep( { card, siteSlug }: { card: StoredCard; siteSlug: st
 				</a>
 			</div>
 			<div className="purchase-modal__step-content">
-				<div className="purchase-modal__card-holder">{ card?.name }</div>
+				<div className="purchase-modal__card-holder">{ card.name }</div>
 				<div>
-					<PaymentLogo brand={ card?.card_type } isSummary={ true } />
+					<PaymentLogo brand={ card.card_type } isSummary={ true } />
 					<span className="purchase-modal__card-number">{ maskedCard }</span>
 					<span className="purchase-modal__card-expiry">{ `${ translate(
 						'Expiry:'
-					) } ${ formatDate( card?.expiry ) }` }</span>
+					) } ${ formatDate( card.expiry ) }` }</span>
 				</div>
 			</div>
 		</PurchaseModalStep>
@@ -203,6 +203,8 @@ export default function PurchaseModalContent( {
 } ) {
 	const translate = useTranslate();
 	const creditsLineItem = getCreditsLineItemFromCart( cart );
+	const firstProduct = cart.products.length > 0 ? cart.products[ 0 ] : undefined;
+	const firstCard = cards.length > 0 ? cards[ 0 ] : undefined;
 
 	return (
 		<>
@@ -214,13 +216,13 @@ export default function PurchaseModalContent( {
 			>
 				<Gridicon icon="cross-small" />
 			</Button>
-			<OrderStep siteSlug={ siteSlug } product={ cart.products?.[ 0 ] } />
-			<PaymentMethodStep siteSlug={ siteSlug } card={ cards?.[ 0 ] } />
+			{ firstProduct && <OrderStep siteSlug={ siteSlug } product={ firstProduct } /> }
+			{ firstCard && <PaymentMethodStep siteSlug={ siteSlug } card={ firstCard } /> }
 			<CheckoutTerms cart={ cart } />
 			<hr />
 			<OrderReview
 				creditsLineItem={ cart.sub_total_integer > 0 ? creditsLineItem : null }
-				shouldDisplayTax={ cart.tax?.display_taxes }
+				shouldDisplayTax={ cart.tax.display_taxes }
 				total={ formatCurrency( cart.total_cost_integer, cart.currency, {
 					isSmallestUnit: true,
 					stripZeros: true,

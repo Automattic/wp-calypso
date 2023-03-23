@@ -105,7 +105,17 @@ declare module 'calypso/components/forms/form-label' {
 		optional?: boolean;
 		required?: boolean;
 	}
+
 	type LabelProps = LabelHTMLAttributes< HTMLLabelElement >;
 	const FormLabel: React.FC< Props & LabelProps >;
 	export default FormLabel;
+}
+
+declare module 'calypso/components/localized-moment' {
+	export const useLocalizedMoment: () => import('moment');
+}
+
+declare module '*.svg' {
+	const url: string;
+	export default url;
 }

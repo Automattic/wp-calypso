@@ -4,6 +4,7 @@
 
 import { render, fireEvent } from '@testing-library/react';
 import nock from 'nock';
+import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
@@ -31,6 +32,7 @@ describe( '<SiteCard>', () => {
 			connected: true,
 		} );
 	test( 'should render correctly and expand card on click', () => {
+		const blogId = 1234;
 		const siteObj = {
 			blog_id: 1234,
 			url: 'test.jurassic.ninja',
@@ -65,6 +67,11 @@ describe( '<SiteCard>', () => {
 			partnerPortal: {
 				partner: {
 					isPartnerOAuthTokenLoaded: true,
+				},
+			},
+			sites: {
+				items: {
+					[ blogId ]: siteObj,
 				},
 			},
 		};

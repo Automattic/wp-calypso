@@ -17,22 +17,30 @@ import type {
 	ScanNode,
 	MonitorNode,
 	SiteColumns,
+	Backup,
 } from './types';
 
 const INITIAL_UNIX_EPOCH = '1970-01-01 00:00:00';
 
 const isExpandedBlockEnabled = config.isEnabled( 'jetpack/pro-dashboard-expandable-block' );
 
+// Mapping the columns to the site data keys
+export const siteColumnKeyMap: { [ key: string ]: string } = {
+	site: 'url',
+};
+
 const extraColumns: SiteColumns = isExpandedBlockEnabled
 	? [
 			{
 				key: 'stats',
 				title: translate( 'Stats' ),
+				className: 'width-fit-content',
 				isExpandable: true,
 			},
 			{
 				key: 'boost',
 				title: translate( 'Boost' ),
+				className: 'width-fit-content',
 				isExpandable: true,
 			},
 	  ]
@@ -42,16 +50,19 @@ export const siteColumns: SiteColumns = [
 	{
 		key: 'site',
 		title: translate( 'Site' ),
+		isSortable: true,
 	},
 	...extraColumns,
 	{
 		key: 'backup',
 		title: translate( 'Backup' ),
+		className: 'width-fit-content',
 		isExpandable: isExpandedBlockEnabled,
 	},
 	{
 		key: 'scan',
 		title: translate( 'Scan' ),
+		className: 'width-fit-content',
 	},
 	{
 		key: 'monitor',
@@ -62,6 +73,7 @@ export const siteColumns: SiteColumns = [
 	{
 		key: 'plugin',
 		title: translate( 'Plugins' ),
+		className: 'width-fit-content',
 	},
 ];
 
@@ -102,6 +114,10 @@ const backupEventNames: StatusEventNames = {
 		large_screen: 'calypso_jetpack_agency_dashboard_backup_progress_click_large_screen',
 	},
 	failed: {
+		small_screen: 'calypso_jetpack_agency_dashboard_backup_failed_click_small_screen',
+		large_screen: 'calypso_jetpack_agency_dashboard_backup_failed_click_large_screen',
+	},
+	critical: {
 		small_screen: 'calypso_jetpack_agency_dashboard_backup_failed_click_small_screen',
 		large_screen: 'calypso_jetpack_agency_dashboard_backup_failed_click_large_screen',
 	},
@@ -408,11 +424,12 @@ const formatMonitorData = ( site: Site ) => {
 		error: false,
 		settings: site.monitor_settings,
 	};
-	const monitorStatus = site.monitor_settings.monitor_active;
-	if ( ! monitorStatus ) {
+	const { monitor_active: monitorActive, monitor_site_status: monitorStatus } =
+		site.monitor_settings;
+	if ( ! monitorActive ) {
 		monitor.status = 'disabled';
 	} else if (
-		! site.monitor_site_status &&
+		! monitorStatus &&
 		// This check is needed because monitor_site_status is false by default
 		// and we don't want to show the site down status when the site is first connected and the monitor is enabled
 		INITIAL_UNIX_EPOCH !== site.monitor_last_status_change
@@ -544,4 +561,49 @@ export const getBoostRatingClass = ( boostScore: number ): string => {
 		default:
 			return 'boost-score-bad';
 	}
+};
+
+function extractBackupTextValues( str: string ): { [ key: string ]: number } {
+	const regex = /(\d+)\s+(\w+)(s)?\b/g;
+
+	let match;
+	const result: { [ key: string ]: number } = {};
+
+	while ( ( match = regex.exec( str ) ) !== null ) {
+		const key = match[ 2 ].replace( /s$/, '' ); // remove "s" from the end of the key if present since we store plural(pages and posts) as singular(page and post)
+		result[ key ] = parseInt( match[ 1 ], 10 );
+	}
+
+	return result;
+}
+
+export const getExtractedBackupTitle = ( backup: Backup ) => {
+	const backupText = backup?.activityDescription[ 0 ]?.children[ 0 ]?.text;
+
+	if ( ! backupText ) {
+		return backup?.activityTitle;
+	}
+
+	const { post: postCount, page: pageCount } = extractBackupTextValues( backupText );
+
+	let backupTitle;
+
+	if ( postCount ) {
+		backupTitle = translate( '%(posts)d post', '%(posts)d posts', {
+			args: { posts: postCount },
+			comment: '%(posts) is the no of posts"',
+			count: postCount,
+		} );
+	}
+
+	if ( pageCount ) {
+		const pageCountText = translate( '%(pages)d page', '%(pages)d pages', {
+			args: { pages: pageCount },
+			comment: '%(pages) is the no of pages"',
+			count: pageCount,
+		} );
+		backupTitle = backupTitle ? `${ backupTitle }, ${ pageCountText }` : pageCountText;
+	}
+
+	return backupTitle;
 };

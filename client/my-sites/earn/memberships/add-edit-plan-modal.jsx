@@ -371,8 +371,14 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		);
 	};
 
-	const editPlan = translate( 'Edit a payment plan' );
-	const addPlan = translate( 'Add a new payment plan' );
+	const addPlan = editedPostsEmail
+		? translate( 'Add a newsletter payment plan' )
+		: translate( 'Add a payment plan' );
+
+	const editPlan = editedPostsEmail
+		? translate( 'Edit newsletter payment plan' )
+		: translate( 'Edit a payment plan' );
+
 	return (
 		<Dialog
 			isVisible={ true }

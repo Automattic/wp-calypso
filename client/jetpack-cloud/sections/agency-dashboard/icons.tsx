@@ -20,3 +20,46 @@ export const jetpackBoostMobileIcon = (
 		/>
 	</svg>
 );
+
+export const defaultSortIcon = (
+	<svg width="8" height="11" viewBox="0 0 8 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+		<path
+			opacity="0.2"
+			d="M0.333313 3.26659L3.99998 0.333252L7.66665 3.26659L7.06665 4.06659L3.99998 1.66659L0.99998 4.06659L0.333313 3.26659Z"
+			fill="black"
+		/>
+		<path
+			opacity="0.2"
+			d="M0.333313 7.13332L3.99998 10.0667L7.66665 7.13332L7.06665 6.33332L3.99998 8.73332L0.99998 6.33332L0.333313 7.13332Z"
+			fill="black"
+		/>
+	</svg>
+);
+
+export const descendingSortIcon = (
+	<svg width="8" height="11" viewBox="0 0 8 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+		<path
+			opacity="0.2"
+			d="M0.333313 3.26659L3.99998 0.333252L7.66665 3.26659L7.06665 4.06659L3.99998 1.66659L0.99998 4.06659L0.333313 3.26659Z"
+			fill="black"
+		/>
+		<path
+			d="M0.333313 7.13332L3.99998 10.0667L7.66665 7.13332L7.06665 6.33332L3.99998 8.73332L0.99998 6.33332L0.333313 7.13332Z"
+			fill="black"
+		/>
+	</svg>
+);
+
+export const ascendingSortIcon = (
+	<svg width="8" height="11" viewBox="0 0 8 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+		<path
+			d="M0.333313 3.26659L3.99998 0.333252L7.66665 3.26659L7.06665 4.06659L3.99998 1.66659L0.99998 4.06659L0.333313 3.26659Z"
+			fill="black"
+		/>
+		<path
+			opacity="0.2"
+			d="M0.333313 7.13332L3.99998 10.0667L7.66665 7.13332L7.06665 6.33332L3.99998 8.73332L0.99998 6.33332L0.333313 7.13332Z"
+			fill="black"
+		/>
+	</svg>
+);
