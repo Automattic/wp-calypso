@@ -61,6 +61,6 @@ export const SiteLogsTabPanel = ( {
 
 function onTabSelected( tabName: string ) {
 	const url = new URL( window.location.href );
-	url.searchParams.set( 'logType', tabName );
+	url.searchParams.set( 'log-type', tabName );
 	page.replace( url.pathname + url.search );
 }

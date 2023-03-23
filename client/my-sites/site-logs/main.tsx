@@ -18,7 +18,7 @@ export function SiteLogs() {
 	const [ endTime ] = useState( moment().unix() );
 
 	const [ logType, setLogType ] = useState< SiteLogsTab >( () => {
-		const queryParam = new URL( window.location.href ).searchParams.get( 'logType' );
+		const queryParam = new URL( window.location.href ).searchParams.get( 'log-type' );
 		return (
 			queryParam && [ 'php', 'web' ].includes( queryParam ) ? queryParam : 'php'
 		 ) as SiteLogsTab;
