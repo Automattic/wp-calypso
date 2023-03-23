@@ -358,9 +358,9 @@ class Login extends Component {
 					postHeader = (
 						<p className="login__header-subtitle">
 							{ this.showContinueAsUser()
-								? translate( "All Woo stores are powered by WordPress.com! Please, log in to continue. Don't have an account? {{a}}Sign up{{/a}}" )
+								? translate( "All Woo stores are powered by WordPress.com! First, select the account you'd like to use." )
 								: translate(
-										"All Woo stores are powered by WordPress.com! First, select the account you'd like to use",
+										"All Woo stores are powered by WordPress.com! Please, log in to continue. Don't have an account? {{a}}Sign up{{/a}}",
 										{
 											components: {
 												signupLink: <a href={ this.getSignupUrl() } />,
