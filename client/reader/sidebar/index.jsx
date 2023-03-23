@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import QueryReaderLists from 'calypso/components/data/query-reader-lists';
 import QueryReaderOrganizations from 'calypso/components/data/query-reader-organizations';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
-import { BellIcon } from 'calypso/layout/masterbar/masterbar-notifications/notifications-bell-icon';
 import Sidebar from 'calypso/layout/sidebar';
 import SidebarFooter from 'calypso/layout/sidebar/footer';
 import SidebarItem from 'calypso/layout/sidebar/item';
@@ -244,7 +243,7 @@ export class ReaderSidebar extends Component {
 					} ) }
 					label={ translate( 'Notifications' ) }
 					onNavigate={ this.handleReaderSidebarNotificationsClicked }
-					customIcon={ <BellIcon /> }
+					materialIcon="notifications"
 					link="/read/notifications"
 				/>
 			</SidebarMenu>

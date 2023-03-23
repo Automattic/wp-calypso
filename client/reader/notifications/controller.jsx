@@ -10,6 +10,6 @@ export function notifications( context, next ) {
 	trackPageLoad( basePath, 'Reader > Notifications', mcKey );
 	recordTrack( 'calypso_reader_notifications_viewed' );
 
-	context.primary = <AsyncLoad require="calypso/reader/notifications/note-list" />;
+	context.primary = <AsyncLoad require="calypso/reader/notifications/notification-panel" />;
 	next();
 }
