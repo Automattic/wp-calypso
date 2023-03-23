@@ -323,13 +323,14 @@ export function getEnhancedTasks(
 						completed: isPaidPlan,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, isPaidPlan, task.id );
-							window.location.assign(
-								addQueryArgs( '/setup/domain-upsell/domains', {
-									siteSlug,
-									flowToReturnTo: flow,
-									new: site?.name,
-								} )
-							);
+							const destinationUrl = isPaidPlan
+								? `/domains/manage/${ siteSlug }`
+								: addQueryArgs( '/setup/domain-upsell/domains', {
+										siteSlug,
+										flowToReturnTo: flow,
+										new: site?.name,
+								  } );
+							window.location.assign( destinationUrl );
 						},
 						badgeText: isPaidPlan ? '' : translate( 'Upgrade plan' ),
 					};
