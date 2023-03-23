@@ -11,7 +11,7 @@ export function useIsStatusReverting(
 
 	useEffect( () => {
 		switch ( transferStatus ) {
-			case transferStates.COMPLETE:
+			case transferStates.REQUEST_FAILURE:
 			case null:
 				if ( isStatusReverting ) {
 					onReverted?.();
@@ -19,7 +19,6 @@ export function useIsStatusReverting(
 				}
 				break;
 			case transferStates.REVERTED:
-			case transferStates.REQUEST_FAILURE:
 			case transferStates.RELOCATING_REVERT:
 				setIsStatusReverting( true );
 				break;
