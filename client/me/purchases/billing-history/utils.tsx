@@ -10,6 +10,7 @@ import {
 	BillingTransaction,
 	BillingTransactionItem,
 } from 'calypso/state/billing-transactions/types';
+import { getVatVendorInfo } from './vat-vendor-details';
 import type { LocalizeProps } from 'calypso/../packages/i18n-calypso/types';
 
 interface GroupedDomainProduct {
@@ -83,15 +84,25 @@ export function renderTransactionAmount(
 		return transaction.amount;
 	}
 
+	const countryTaxInfo =
+		translate instanceof Function &&
+		getVatVendorInfo( transaction.tax_country_code, transaction.date, translate )
+			? getVatVendorInfo( transaction.tax_country_code, transaction.date, translate )
+			: { taxName: 'tax' };
+
 	const taxAmount = addingTax
-		? translate( '(+%(taxAmount)s tax)', {
+		? translate( '(+%(taxAmount)s ', {
 				args: { taxAmount: transaction.tax },
 				comment: 'taxAmount is a localized price, like $12.34',
-		  } )
-		: translate( '(includes %(taxAmount)s tax)', {
+		  } ) +
+		  countryTaxInfo.taxName +
+		  ')'
+		: translate( '(includes %(taxAmount)s ', {
 				args: { taxAmount: transaction.tax },
 				comment: 'taxAmount is a localized price, like $12.34',
-		  } );
+		  } ) +
+		  countryTaxInfo.taxName +
+		  ')';
 
 	return (
 		<Fragment>
