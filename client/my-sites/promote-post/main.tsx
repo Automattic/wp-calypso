@@ -171,9 +171,9 @@ export default function PromotedPosts( { tab }: Props ) {
 
 	useEffect( () => {
 		if ( false === canBlaze ) {
-			page( '/' );
+			page( `/home/${ selectedSite?.domain }` );
 		}
-	}, [ canBlaze ] );
+	}, [ selectedSite, canBlaze ] );
 
 	const subtitle = translate(
 		'Reach new readers and customers with WordPress Blaze. Promote a post or a page on our network of millions blogs and web sites. {{learnMoreLink}}Learn more.{{/learnMoreLink}}',
