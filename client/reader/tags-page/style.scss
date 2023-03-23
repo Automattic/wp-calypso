@@ -1,13 +1,45 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 h1 {
 	font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
 	font-size: 60px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 }
 
-.trending-tags__title {
-	font-size: 36px; /* stylelint-disable-line declaration-property-unit-allowed-list */
-}
+.trending-tags__row {
+	@include break-small {
+		display: flex;
+		flex-direction: row;
+		// we need to set the border on the column for mobile and the row for desktop
+		border-top: 1px solid var(--studio-gray-10);
+		&:last-child {
+			border-bottom: 1px solid var(--studio-gray-10);
+		}
+	}
+	.trending-tags__column {
+		padding: 10px;
+		width: 100%;
+		// we need to set the border on the column for mobile and the row for desktop
+		border-top: 1px solid var(--studio-gray-10);
 
-.trending-tags__count {
-	font-size: 16px; /* stylelint-disable-line declaration-property-unit-allowed-list */
-	color: var(--studio-gray-50);
+		@include break-small {
+			width: 50%;
+			border-top: none;
+		}
+		.trending-tags__title {
+			font-size: 36px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			color: var(--studio-black);
+			padding-right: 5px;
+		}
+		.trending-tags__count {
+			font-size: 16px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			color: var(--studio-gray-50);
+		}
+	}
+	&:last-child .trending-tags__column:last-child {
+		border-bottom: 1px solid var(--studio-gray-10);
+		@include break-small {
+			border-bottom: none;
+		}
+	}
 }

@@ -1,6 +1,9 @@
 import { useQuery } from 'react-query';
 import wpcom from 'calypso/lib/wp';
 
+interface TagData {
+	tags: TagResult[];
+}
 interface TagResult {
 	count: number;
 	tag: Tag;
@@ -12,22 +15,43 @@ interface Tag {
 
 export default function TrendingTags() {
 	const query = {
-		apiVersion: '1.2',
 		staleTime: Infinity,
+		select: ( data: TagData ) => {
+			const tagRows: TagResult[][] = [];
+			if ( ! data || ! data.tags ) {
+				return tagRows;
+			}
+			// put the data into a format that can easily be rendered as a two column table.
+			for ( let i = 0; i < data.tags.length; i += 2 ) {
+				const tagOne = data.tags[ i ];
+				const tagTwo = data.tags[ i + 1 ];
+				tagRows.push( [ tagOne, tagTwo ] );
+			}
+			return tagRows;
+		},
 	};
-	const tagsResponse = useQuery( [ 'trending-tags' ], () =>
-		wpcom.req.get( `/read/trending/tags`, query )
+	const tagsResponse = useQuery(
+		[ 'trending-tags' ],
+		() => wpcom.req.get( `/read/trending/tags`, { apiVersion: '1.2' } ),
+		query
+	);
+
+	const renderTagRow = ( tag: TagResult ) => (
+		<div className="trending-tags__column" key={ tag.tag.slug }>
+			<a href={ `/tag/${ encodeURIComponent( tag.tag.slug ) }` }>
+				<span className="trending-tags__title">{ tag.tag.title }</span>
+				<span className="trending-tags__count">{ tag.count }</span>
+			</a>
+		</div>
 	);
 
 	return (
 		<div>
 			{ tagsResponse.status === 'success' &&
-				tagsResponse.data?.tags?.map( ( tag: TagResult ) => (
-					<div key={ tag.tag.slug }>
-						{ /* TODO add link to tag page */ }
-						<span className="trending-tags__title">{ tag.tag.title }</span>
-						{ /* TODO: abreviate count */ }
-						<span className="trending-tags__count">{ tag.count }</span>
+				tagsResponse.data?.map( ( tagRow: TagResult[], index ) => (
+					<div className="trending-tags__row" key={ 'tags-row-' + index }>
+						{ renderTagRow( tagRow[ 0 ] ) }
+						{ tagRow[ 1 ] && renderTagRow( tagRow[ 1 ] ) }
 					</div>
 				) ) }
 		</div>
