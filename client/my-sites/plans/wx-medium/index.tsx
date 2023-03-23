@@ -39,10 +39,11 @@ const WooExpressMediumPlansPage = ( { currentPlan, selectedSite }: WXMediumPlans
 
 	const isAnnualSubscription = currentPlan.productSlug === PLAN_WOOEXPRESS_MEDIUM;
 	const activePlan = isAnnualSubscription ? annualPlan : monthlyPlan;
+	const interval = isAnnualSubscription ? 'yearly' : 'monthly';
 
 	const wooExpressMediumPlanFeatureSets = useMemo( () => {
-		return getWooExpressMediumFeatureSets( { translate } );
-	}, [ translate ] );
+		return getWooExpressMediumFeatureSets( { translate, interval } );
+	}, [ translate, interval ] );
 
 	const goToSubscriptionPage = () => {
 		if ( selectedSite?.slug && currentPlan?.id ) {

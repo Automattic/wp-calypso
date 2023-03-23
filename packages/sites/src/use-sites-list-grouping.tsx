@@ -15,7 +15,7 @@ export const siteLaunchStatusGroupValues = [
 	...siteLaunchStatuses,
 ] as const;
 
-export type GroupableSiteLaunchStatuses = typeof siteLaunchStatusGroupValues[ number ];
+export type GroupableSiteLaunchStatuses = ( typeof siteLaunchStatusGroupValues )[ number ];
 
 export interface Status {
 	title: React.ReactChild;
