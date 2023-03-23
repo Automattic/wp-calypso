@@ -64,8 +64,9 @@ const SiteContent = ( { data, isLoading, currentPage, isFavoritesTab }: Props, r
 							<SiteBulkSelect sites={ sites } isLoading={ isLoading } />
 						) : (
 							<>
-								<span className="site-content__bulk-select-label">{ firstColumn.title }</span>
-								{ firstColumn.isSortable && <SiteSort columnKey={ firstColumn.key } /> }
+								<SiteSort isSortable={ firstColumn.isSortable } columnKey={ firstColumn.key }>
+									<span className="site-content__bulk-select-label">{ firstColumn.title }</span>
+								</SiteSort>
 								<EditButton sites={ sites } />
 							</>
 						) }

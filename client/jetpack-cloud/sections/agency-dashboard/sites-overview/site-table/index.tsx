@@ -46,13 +46,14 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 						<>
 							{ columns.map( ( column, index ) => (
 								<th key={ column.key }>
-									{ index === 0 && (
-										<Icon className="site-table__favorite-icon" size={ 24 } icon={ starFilled } />
-									) }
-									<span className={ classNames( index === 0 && 'site-table-site-title' ) }>
-										{ column.title }
-									</span>
-									{ column.isSortable && <SiteSort isLargeScreen columnKey={ column.key } /> }
+									<SiteSort isLargeScreen isSortable={ column.isSortable } columnKey={ column.key }>
+										{ index === 0 && (
+											<Icon className="site-table__favorite-icon" size={ 24 } icon={ starFilled } />
+										) }
+										<span className={ classNames( index === 0 && 'site-table-site-title' ) }>
+											{ column.title }
+										</span>
+									</SiteSort>
 								</th>
 							) ) }
 							<th colSpan={ isExpandedBlockEnabled ? 2 : 1 }>

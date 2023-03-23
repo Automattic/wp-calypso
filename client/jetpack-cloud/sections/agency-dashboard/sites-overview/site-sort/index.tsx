@@ -16,9 +16,13 @@ const SORT_DIRECTION_DESC = 'desc';
 export default function SiteSort( {
 	columnKey,
 	isLargeScreen,
+	children,
+	isSortable,
 }: {
 	columnKey: AllowedTypes;
 	isLargeScreen?: boolean;
+	children?: React.ReactNode;
+	isSortable?: boolean;
 } ) {
 	const { sort } = useContext( SitesOverviewContext );
 	const dispatch = useDispatch();
@@ -53,15 +57,30 @@ export default function SiteSort( {
 		return defaultSortIcon;
 	};
 
+	if ( ! isSortable ) {
+		return <span className="site-sort">{ children }</span>;
+	}
+
 	return (
-		<Icon
-			className={ classNames( 'site-sort__icon', {
+		<span
+			role="button"
+			tabIndex={ 0 }
+			className={ classNames( 'site-sort site-sort__clickable', {
 				'site-sort__icon-large_screen': isLargeScreen,
-				'site-sort__icon-hidden': isLargeScreen && isDefault,
 			} ) }
-			size={ 14 }
+			onKeyDown={ setSort }
 			onClick={ setSort }
-			icon={ getSortIcon() }
-		/>
+		>
+			{ children }
+			{ isSortable && (
+				<Icon
+					className={ classNames( 'site-sort__icon', {
+						'site-sort__icon-hidden': isLargeScreen && isDefault,
+					} ) }
+					size={ 14 }
+					icon={ getSortIcon() }
+				/>
+			) }
+		</span>
 	);
 }
