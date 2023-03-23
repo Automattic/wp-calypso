@@ -57,6 +57,13 @@ const ScreenCategoryList = ( {
 		};
 	}, [] );
 
+	useEffect( () => {
+		// Notify the pattern panel list is going to close when umount
+		return () => {
+			onTogglePatternPanelList?.( false );
+		};
+	}, [] );
+
 	return (
 		<div className="screen-container">
 			<NavigatorHeader
