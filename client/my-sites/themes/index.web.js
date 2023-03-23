@@ -24,16 +24,16 @@ export default function ( router ) {
 
 	const langParam = getLanguageRouteParam();
 	const routesWithoutSites = [
-		`/${ langParam }/themes/:tier(free|premium)?`,
-		`/${ langParam }/themes/:tier(free|premium)?/filter/:filter`,
-		`/${ langParam }/themes/:vertical?/:tier(free|premium)?`,
-		`/${ langParam }/themes/:vertical?/:tier(free|premium)?/filter/:filter`,
+		`/${ langParam }/themes/:tier(free|premium|marketplace)?`,
+		`/${ langParam }/themes/:tier(free|premium|marketplace)?/filter/:filter`,
+		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?`,
+		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/filter/:filter`,
 	];
 	const routesWithSites = [
-		`/${ langParam }/themes/:tier(free|premium)?/:site_id(${ siteId })`,
-		`/${ langParam }/themes/:tier(free|premium)?/filter/:filter/:site_id(${ siteId })`,
-		`/${ langParam }/themes/:vertical?/:tier(free|premium)?/:site_id(${ siteId })`,
-		`/${ langParam }/themes/:vertical?/:tier(free|premium)?/filter/:filter/:site_id(${ siteId })`,
+		`/${ langParam }/themes/:tier(free|premium|marketplace)?/:site_id(${ siteId })`,
+		`/${ langParam }/themes/:tier(free|premium|marketplace)?/filter/:filter/:site_id(${ siteId })`,
+		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/:site_id(${ siteId })`,
+		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/filter/:filter/:site_id(${ siteId })`,
 	];
 
 	// Upload routes are valid only when logged in. In logged-out sessions they redirect to login page.

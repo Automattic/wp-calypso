@@ -91,7 +91,7 @@
 		"jetpack/pricing-page-annual-only": true,
 		"jetpack/simplify-pricing-structure": false,
 		"jetpack/standalone-plugin-onboarding-update-v1": true,
-		"jetpack/offer-complete-after-activation": true,
+		"jetpack/offer-complete-after-activation": false,
 		"jitms": true,
 		"lasagna": true,
 		"layout/app-banner": true,
@@ -111,6 +111,7 @@
 		"marketplace-jetpack-plugin-search": true,
 		"marketplace-personal-premium": false,
 		"marketplace-test": true,
+		"mastodon": true,
 		"me/account-close": true,
 		"me/account/color-scheme-picker": true,
 		"me/vat-details": true,
@@ -129,9 +130,9 @@
 		"onboarding/2023-pricing-grid": true,
 		"p2/p2-plus": true,
 		"page/export": true,
+		"pattern-assembler/categories": true,
 		"pattern-assembler/color-and-fonts": true,
 		"pattern-assembler/logged-out-showcase": true,
-		"pattern-assembler/sidebar-revamp": true,
 		"pattern-assembler/inline-styles": true,
 		"plans/personal-plan": true,
 		"plans/pro-plan": false,
@@ -173,8 +174,6 @@
 		"ssr/prefetch-timebox": false,
 		"stats/horizontal-bars-everywhere": true,
 		"stats/insights-page-grid": true,
-		"stats/latest-post-stats": true,
-		"stats/most-popular-post": false,
 		"stats/new-video-summary": true,
 		"stepper-woocommerce-poc": true,
 		"subscriber-csv-upload": true,
@@ -186,7 +185,6 @@
 		"themes/showcase-i4/details-and-preview": true,
 		"themes/subscription-purchases": true,
 		"themes/theme-switch-persist-template": false,
-		"themes/third-party-premium": true,
 		"titan/iframe-control-panel": false,
 		"unified-pages/virtual-home-page": true,
 		"upgrades/redirect-payments": true,
@@ -199,6 +197,7 @@
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
 		"yolo/staging-sites-i1": true,
-		"newsletter/stats": true
+		"newsletter/stats": true,
+		"woa-logging": true
 	}
 }

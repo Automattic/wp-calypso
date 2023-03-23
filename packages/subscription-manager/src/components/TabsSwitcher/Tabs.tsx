@@ -11,7 +11,7 @@ type TabsProps = {
 };
 
 const Tabs = ( { children }: TabsProps ) => (
-	<SectionNav>
+	<SectionNav className="subscription-manager-tab-switcher">
 		<NavTabs>{ children }</NavTabs>
 	</SectionNav>
 );

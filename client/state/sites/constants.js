@@ -22,6 +22,7 @@ export const SITE_REQUEST_FIELDS = [
 	'is_core_site_editor_enabled',
 	'is_wpcom_atomic',
 	'is_wpcom_staging_site',
+	'was_ecommerce_trial',
 	'description',
 	'user_interactions',
 ].join();

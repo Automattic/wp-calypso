@@ -1,7 +1,7 @@
 import { SiteGoal, SiteIntent } from './constants';
 
 const INTENT_DECIDING_GOALS = [ SiteGoal.Write, SiteGoal.Sell, SiteGoal.Promote ] as const;
-type IntentDecidingGoal = typeof INTENT_DECIDING_GOALS[ number ];
+type IntentDecidingGoal = ( typeof INTENT_DECIDING_GOALS )[ number ];
 
 const GOAL_TO_INTENT_MAP: { [ key in IntentDecidingGoal ]: SiteIntent } = {
 	[ SiteGoal.Write ]: SiteIntent.Write,

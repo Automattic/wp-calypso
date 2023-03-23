@@ -1,3 +1,4 @@
+import { ProductsList } from '@automattic/data-stores';
 import { StepContainer } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -14,7 +15,6 @@ import {
 	AUTOMATED_ELIGIBILITY_STORE,
 	SITE_STORE,
 	ONBOARD_STORE,
-	PRODUCTS_LIST_STORE,
 } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -22,7 +22,7 @@ import { ActionSection, StyledNextButton } from 'calypso/signup/steps/woocommerc
 import { eligibilityHolds as eligibilityHoldsConstants } from 'calypso/state/automated-transfer/constants';
 import SupportCard from '../store-address/support-card';
 import type { Step } from '../../types';
-import type { ProductsListSelect, OnboardSelect, SiteSelect } from '@automattic/data-stores';
+import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
 import type { TransferEligibilityError } from '@automattic/data-stores/src/automated-transfer-eligibility/types';
 import './style.scss';
 
@@ -102,7 +102,7 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 		[ siteId ]
 	);
 	const productsList = useSelect(
-		( select ) => ( select( PRODUCTS_LIST_STORE ) as ProductsListSelect ).getProductsList(),
+		( select ) => select( ProductsList.store ).getProductsList(),
 		[]
 	);
 	const requiresUpgrade = useSelect(

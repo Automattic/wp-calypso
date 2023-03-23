@@ -1,5 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { FormInputValidation } from '@automattic/components';
+import { Subscriber } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
 import { TextControl, FormFileUpload, Button } from '@wordpress/components';
@@ -20,9 +21,7 @@ import React, {
 import { useActiveJobRecognition } from '../../hooks/use-active-job-recognition';
 import { useInProgressState } from '../../hooks/use-in-progress-state';
 import { RecordTrackEvents, useRecordAddFormEvents } from '../../hooks/use-record-add-form-events';
-import { SUBSCRIBER_STORE } from '../../store';
 import { tip } from './icon';
-import type { SubscriberSelect } from '@automattic/data-stores';
 import './style.scss';
 
 interface Props {
@@ -69,7 +68,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		importCsvSubscribers,
 		importCsvSubscribersUpdate,
 		getSubscribersImports,
-	} = useDispatch( SUBSCRIBER_STORE );
+	} = useDispatch( Subscriber.store );
 
 	/**
 	 * ↓ Fields
@@ -92,7 +91,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	const [ submitAttemptCount, setSubmitAttemptCount ] = useState( 0 );
 	const [ submitBtnReady, setIsSubmitBtnReady ] = useState( isSubmitButtonReady() );
 	const importSelector = useSelect(
-		( s ) => ( s( SUBSCRIBER_STORE ) as SubscriberSelect ).getImportSubscribersSelector(),
+		( select ) => select( Subscriber.store ).getImportSubscribersSelector(),
 		[]
 	);
 	const [ formFileUploadElement ] = useState(
@@ -473,7 +472,6 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 					{ ! includesHandledError() && renderImportCsvSelectedFileLabel() }
 					{ showCsvUpload && ! includesHandledError() && renderImportCsvLabel() }
-					{ showCsvUpload && ! includesHandledError() && renderImportCsvDisclaimerMsg() }
 					{ ! includesHandledError() && renderFollowerNoticeLabel() }
 
 					{ renderEmptyFormValidationMsg() }
@@ -486,6 +484,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 					>
 						{ submitBtnName }
 					</NextButton>
+					{ showCsvUpload && ! includesHandledError() && renderImportCsvDisclaimerMsg() }
 				</form>
 			</div>
 		</div>

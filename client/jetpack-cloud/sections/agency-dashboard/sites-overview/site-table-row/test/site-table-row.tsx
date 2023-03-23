@@ -5,6 +5,7 @@
 import { render, waitFor } from '@testing-library/react';
 import { translate } from 'i18n-calypso';
 import nock from 'nock';
+import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
@@ -91,11 +92,20 @@ describe( '<SiteTableRow>', () => {
 	const props = {
 		item,
 		columns: siteColumns,
+		setExpanded: function (): void {
+			throw new Error( 'Function not implemented.' );
+		},
+		isExpanded: false,
 	};
 	const initialState = {
 		partnerPortal: {
 			partner: {
 				isPartnerOAuthTokenLoaded: true,
+			},
+		},
+		sites: {
+			items: {
+				[ blogId ]: siteObj,
 			},
 		},
 	};

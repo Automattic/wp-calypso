@@ -12,6 +12,7 @@ bin/build-docker.sh
 /cached-requests.json
 **/node_modules
 /public
+/packages/calypso-e2e/src/secrets/*.json
 /client/server/bundler/*.json
 /client/server/devdocs/components-usage-stats.json
 /client/server/devdocs/proptypes-index.json
