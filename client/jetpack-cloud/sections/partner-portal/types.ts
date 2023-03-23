@@ -30,3 +30,5 @@ export interface AssignLicenceProps {
 	selectedSite?: SiteDetails | null;
 	suggestedProduct?: string;
 }
+
+export type LicenseOwnerType = 'jetpack_partner_key' | 'user';

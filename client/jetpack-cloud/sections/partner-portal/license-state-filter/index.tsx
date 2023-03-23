@@ -23,9 +23,7 @@ function LicenseStateFilter( { doSearch }: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const { filter, search } = useContext( LicenseListContext );
-
-	// This is for testing only, we'd need to change this back once the API understands what Legacy means
-	const counts = Object.assign( useSelector( getLicenseCounts ), { legacy: 2 } );
+	const counts = useSelector( getLicenseCounts );
 
 	const basePath = '/partner-portal/licenses/';
 

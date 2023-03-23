@@ -83,6 +83,7 @@ export default function LicenseList() {
 						<LicenseTransition key={ license.licenseKey }>
 							<LicensePreview
 								licenseKey={ license.licenseKey }
+								ownerType={ license.ownerType }
 								product={ license.product }
 								username={ license.username }
 								blogId={ license.blogId }

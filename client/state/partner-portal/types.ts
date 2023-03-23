@@ -2,6 +2,7 @@ import { Action, AnyAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 import {
 	LicenseFilter,
+	LicenseOwnerType,
 	LicenseSortDirection,
 	LicenseSortField,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
@@ -209,6 +210,8 @@ export interface PartnerStore {
 export interface License {
 	licenseId: number;
 	licenseKey: string;
+	ownerType: LicenseOwnerType;
+	ownerId: number;
 	productId: number;
 	product: string;
 	userId: number | null;

@@ -10,7 +10,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import FormattedDate from 'calypso/components/formatted-date';
 import LicenseDetails from 'calypso/jetpack-cloud/sections/partner-portal/license-details';
 import LicenseListItem from 'calypso/jetpack-cloud/sections/partner-portal/license-list-item';
-import { LicenseState, LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import {
+	LicenseState,
+	LicenseFilter,
+	LicenseOwnerType,
+} from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { getLicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -20,6 +24,7 @@ import './style.scss';
 
 interface Props {
 	licenseKey: string;
+	ownerType: LicenseOwnerType;
 	product: string;
 	username: string | null;
 	blogId: number | null;
@@ -32,6 +37,7 @@ interface Props {
 
 export default function LicensePreview( {
 	licenseKey,
+	ownerType,
 	product,
 	username,
 	blogId,
@@ -48,11 +54,7 @@ export default function LicensePreview( {
 	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
 	const domain = siteUrl ? getUrlParts( siteUrl ).hostname || siteUrl : '';
 
-	// For testing only, we'd need to change this back once the API knows what legacy means
-	const licenseState =
-		'lovely-opossum.jurassic.ninja' === domain
-			? LicenseState.Legacy
-			: getLicenseState( attachedAt, revokedAt );
+	const licenseState = getLicenseState( ownerType, attachedAt, revokedAt );
 
 	const showDomain =
 		domain &&
@@ -210,7 +212,8 @@ export default function LicensePreview( {
 						</Button>
 					) }
 					{ licenseState === LicenseState.Legacy && (
-						<Button compact onClick={ () => {} }>
+						// @todo implement
+						<Button compact onClick={ () => alert( 'TBD' ) }>
 							{ translate( 'Convert' ) }
 						</Button>
 					) }
@@ -226,6 +229,7 @@ export default function LicensePreview( {
 			{ isOpen && (
 				<LicenseDetails
 					licenseKey={ licenseKey }
+					ownerType={ ownerType }
 					product={ product }
 					siteUrl={ siteUrl }
 					username={ username }
@@ -234,7 +238,6 @@ export default function LicensePreview( {
 					attachedAt={ attachedAt }
 					revokedAt={ revokedAt }
 					onCopyLicense={ onCopyLicense }
-					isLegacy={ LicenseState.Legacy === licenseState }
 				/>
 			) }
 		</div>

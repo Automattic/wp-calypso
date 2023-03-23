@@ -26,8 +26,10 @@ import 'calypso/state/partner-portal/init';
 interface APILicense {
 	license_id: number;
 	license_key: string;
-	product_id: number;
+	owner_type: 'jetpack_partner_key' | 'user';
+	owner_id: number;
 	product: string;
+	product_id: number;
 	user_id: number | null;
 	username: string | null;
 	blog_id: number | null;
@@ -98,6 +100,8 @@ function formatLicenses( items: APILicense[] ): License[] {
 	return items.map( ( item ) => ( {
 		licenseId: item.license_id,
 		licenseKey: item.license_key,
+		ownerType: item.owner_type,
+		ownerId: item.owner_id,
 		product: item.product,
 		productId: item.product_id,
 		userId: item.user_id,

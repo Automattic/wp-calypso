@@ -3,12 +3,16 @@ import { useTranslate } from 'i18n-calypso';
 import FormattedDate from 'calypso/components/formatted-date';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import LicenseDetailsActions from 'calypso/jetpack-cloud/sections/partner-portal/license-details/actions';
-import { LicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import {
+	LicenseOwnerType,
+	LicenseState,
+} from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { getLicenseState, noop } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import './style.scss';
 
 interface Props {
 	licenseKey: string;
+	ownerType: LicenseOwnerType;
 	product: string;
 	siteUrl: string | null;
 	username: string | null;
@@ -16,7 +20,6 @@ interface Props {
 	issuedAt: string;
 	attachedAt: string | null;
 	revokedAt: string | null;
-	isLegacy: boolean | null;
 	onCopyLicense?: () => void;
 }
 
@@ -24,6 +27,7 @@ const DETAILS_DATE_FORMAT = 'YYYY-MM-DD h:mm:ss A';
 
 export default function LicenseDetails( {
 	licenseKey,
+	ownerType,
 	product,
 	siteUrl,
 	username,
@@ -31,21 +35,22 @@ export default function LicenseDetails( {
 	issuedAt,
 	attachedAt,
 	revokedAt,
-	isLegacy,
 	onCopyLicense = noop,
 }: Props ) {
 	const translate = useTranslate();
-	const licenseState = getLicenseState( attachedAt, revokedAt );
+	const licenseState = getLicenseState( ownerType, attachedAt, revokedAt );
 	const debugUrl = siteUrl ? `https://jptools.wordpress.com/debug/?url=${ siteUrl }` : null;
 
 	return (
 		<Card className="license-details">
 			<ul className="license-details__list">
 				<li className="license-details__list-item license-details__list-item--wide">
-					{ isLegacy && (
+					{ licenseState === LicenseState.Legacy && (
 						<div className="license-details__legacy-notice-text">
 							<Gridicon icon="info" />
-							{ translate( 'This is a legacy Jetpack license, but can be converted to an agency license by clicking the convert button above.' ) }
+							{ translate(
+								'This is a legacy Jetpack license, but can be converted to an agency license by clicking the convert button above.'
+							) }
 						</div>
 					) }
 
@@ -125,9 +130,10 @@ export default function LicenseDetails( {
 				</li>
 			</ul>
 
-			{ ! isLegacy && (
+			{ licenseState !== LicenseState.Legacy && (
 				<LicenseDetailsActions
 					licenseKey={ licenseKey }
+					ownerType={ ownerType }
 					product={ product }
 					siteUrl={ siteUrl }
 					attachedAt={ attachedAt }
