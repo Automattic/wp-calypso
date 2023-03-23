@@ -95,7 +95,7 @@ export function getVatVendorInfo(
 	if ( country === 'JP' ) {
 		return {
 			country,
-			taxName: translate( 'VAT', { textOnly: true } ),
+			taxName: translate( 'CT', { textOnly: true } ),
 			address: automatticVatAddress,
 			vatId: '4700150101102',
 		};
