@@ -81,7 +81,7 @@ export default function () {
 	} );
 
 	return (
-		<div id="wpnc-panel" class="wide wpnc__main wpnt-open">
+		<div id="wpnc-panel" class="wide wpnc__main wpnc_dedicated wpnt-open">
 			{ noteList }
 		</div>
 	);
