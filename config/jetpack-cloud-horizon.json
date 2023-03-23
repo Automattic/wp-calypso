@@ -74,7 +74,7 @@
 		"jetpack-cloud-plugin-management": true,
 		"jetpack-cloud-pricing": true,
 		"jetpack-cloud-settings": true,
-		"jetpack-cloud-golden-ticket": false,
+		"jetpack-cloud-golden-token": false,
 		"jetpack-search": true,
 		"jetpack-social": true,
 		"scan": true,

@@ -541,9 +541,9 @@ const sections = [
 		group: 'jetpack-cloud',
 	},
 	{
-		name: 'jetpack-cloud-golden-ticket',
-		paths: [ '/golden-ticket' ],
-		module: 'calypso/jetpack-cloud/sections/golden-ticket',
+		name: 'jetpack-cloud-golden-token',
+		paths: [ '/golden-token' ],
+		module: 'calypso/jetpack-cloud/sections/golden-token',
 		group: 'jetpack-cloud',
 	},
 	{

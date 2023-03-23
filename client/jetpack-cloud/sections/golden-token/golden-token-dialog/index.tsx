@@ -1,6 +1,6 @@
 import JetpackLogo from 'calypso/components/jetpack-logo';
 
-export const GoldenTicketDialog = () => {
+export const GoldenTokenDialog = () => {
 	return (
 		<div>
 			<JetpackLogo />
@@ -14,7 +14,7 @@ export const GoldenTicketDialog = () => {
 			</video>
 
 			<div>
-				<div className="golden-ticket-dialog__redeem">
+				<div className="golden-token-dialog__redeem">
 					<p>Hey, [user name]</p>
 					<h2>Your exclusive Jetpack Experience&nbsp;awaits</h2>
 					<p>
@@ -25,10 +25,10 @@ export const GoldenTicketDialog = () => {
 				<button>Redeem your token</button>
 			</div>
 
-			<div className="golden-ticket-dialog__products">
+			<div className="golden-token-dialog__products">
 				<div>
 					{ /* TODO: switch for Backup icon */ }
-					<svg
+					{ /* <svg
 						width="24"
 						height="24"
 						viewBox="0 0 24 24"
@@ -57,7 +57,7 @@ export const GoldenTicketDialog = () => {
 								fill="#008710"
 							/>
 						</g>
-					</svg>
+					</svg> */ }
 
 					<h3>VaultPress Backup</h3>
 					<p>Save every change and get back online quickly with one‑click restores.</p>

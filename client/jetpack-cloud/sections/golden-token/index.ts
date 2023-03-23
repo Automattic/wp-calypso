@@ -1,7 +1,7 @@
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller/index.web';
-import { goldenTicketContext } from './controller';
+import { goldenTokenContext } from './controller';
 
 export default function (): void {
-	page( '/golden-ticket', goldenTicketContext, makeLayout, clientRender );
+	page( '/golden-token', goldenTokenContext, makeLayout, clientRender );
 }
