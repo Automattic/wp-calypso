@@ -1,4 +1,5 @@
 import { WPCOM_FEATURES_FULL_ACTIVITY_LOG } from '@automattic/calypso-products';
+import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
@@ -14,6 +15,7 @@ import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import useActivityLogQuery from 'calypso/data/activity-log/use-activity-log-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { backupClonePath } from 'calypso/my-sites/backup/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
@@ -39,12 +41,21 @@ const ActivityLogV2: FunctionComponent = () => {
 
 	const jetpackCloudHeader = siteHasFullActivityLog ? (
 		<div className="activity-log-v2__header">
-			<h2>{ translate( 'Find a backup or restore point' ) }</h2>
-			<p>
-				{ translate(
-					'This is the complete event history for your site. Filter by date range and/or activity type.'
-				) }
-			</p>
+			<div className="activity-log-v2__header-left">
+				<div className="activity-log-v2__header-title">{ translate( 'Activity log' ) }</div>
+				<div className="activity-log-v2__header-text">
+					{ translate( 'This is the complete event history for your site' ) }
+				</div>
+			</div>
+			<div className="activity-log-v2__header-right">
+				<Button
+					className="activity-log-v2__clone-button"
+					primary
+					href={ backupClonePath( selectedSiteSlug ) }
+				>
+					{ translate( 'Clone this site' ) }
+				</Button>
+			</div>
 		</div>
 	) : (
 		<Upsell
