@@ -1,4 +1,5 @@
 import { Page } from 'playwright';
+import { ElementHelper } from '../..';
 
 /**
  * Represents the Revisions page used on Atomic sites.
@@ -38,8 +39,15 @@ export class RevisionsPage {
 		// slider width.
 		const clickPositionX = ( sliderWidth * ( index - 1 ) ) / ( revisionCount - 1 );
 
-		await this.page.waitForLoadState( 'networkidle' );
-		await slider.click( { position: { x: clickPositionX, y: 1 } } );
+		await Promise.all( [
+			// We need to rely on waiting for mutations here because neither
+			// checking the ".loading" status nor the auto-waiting are enough to
+			// indicate that the diff has been loaded and is ready to be
+			// interacted with. This might be related to the fact that the diff
+			// is rendered entirely from a fetched HTML string.
+			ElementHelper.waitForMutations( this.page, '.revisions-diff-frame' ),
+			slider.click( { position: { x: clickPositionX, y: 1 } } ),
+		] );
 	}
 
 	/**
