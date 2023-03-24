@@ -48,9 +48,16 @@ function useSiteColumns( logs: SiteLogs | undefined ) {
 			}
 		}
 
+		// The webserver logs have both `date` and `timestamp` columns and we want date to take
+		// precedence, so check for presence of `date` column first.
 		if ( columns.has( 'date' ) ) {
 			columns.delete( 'date' );
 			return [ 'date', ...columns ];
+		}
+
+		if ( columns.has( 'timestamp' ) ) {
+			columns.delete( 'timestamp' );
+			return [ 'timestamp', ...columns ];
 		}
 
 		return Array.from( columns );
