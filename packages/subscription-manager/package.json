@@ -40,7 +40,6 @@
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@automattic/typography": "workspace:^",
-		"@automattic/wpcom-template-parts": "workspace:^",
 		"typescript": "^4.5.5"
 	},
 	"peerDependencies": {
