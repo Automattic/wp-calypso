@@ -397,7 +397,7 @@ class ManagePurchase extends Component {
 
 		const monthlyIndex = AKISTMET_PLUS_MONTHLY_PRODUCTS.indexOf( purchase.productSlug );
 		if ( monthlyIndex === AKISTMET_PLUS_MONTHLY_PRODUCTS.length - 1 ) {
-			return 'htpps://akismet.com/enterprise';
+			return 'https://akismet.com/enterprise';
 		} else if ( monthlyIndex !== -1 ) {
 			const nextPlan = AKISTMET_PLUS_MONTHLY_PRODUCTS[ monthlyIndex + 1 ];
 			return `/checkout/akismet/${ nextPlan }`;
@@ -405,13 +405,13 @@ class ManagePurchase extends Component {
 
 		const yearlyIndex = AKISMET_PLUS_YEARLY_PRODUCTS.indexOf( purchase.productSlug );
 		if ( yearlyIndex === AKISMET_PLUS_YEARLY_PRODUCTS.length - 1 ) {
-			return 'htpps://akismet.com/enterprise';
+			return 'https://akismet.com/enterprise';
 		} else if ( yearlyIndex !== -1 ) {
 			const nextPlan = AKISMET_PLUS_YEARLY_PRODUCTS[ yearlyIndex + 1 ];
 			return `/checkout/akismet/${ nextPlan }`;
 		}
 
-		return 'htpps://akismet.com/enterprise';
+		return 'https://akismet.com/enterprise';
 	}
 
 	renderUpgradeNavItem() {
