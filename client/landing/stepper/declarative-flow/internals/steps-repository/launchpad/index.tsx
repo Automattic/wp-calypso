@@ -14,6 +14,7 @@ import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
+import { saveSiteSettings } from 'calypso/state/site-settings/actions';
 import { useQuery } from '../../../../hooks/use-query';
 import StepContent from './step-content';
 import { areLaunchpadTasksCompleted } from './task-helper';
@@ -50,14 +51,20 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 	if (
 		! isLoggedIn ||
 		launchpadScreenOption === 'off' ||
+		( launchpadScreenOption === false && 'videopress' !== flow )
+	) {
+		redirectToSiteHome( siteSlug, flow );
+	}
+
+	if (
 		areLaunchpadTasksCompleted(
 			site_intent,
 			launchpadFlowTasks,
 			checklist_statuses,
 			isSiteLaunched
-		) ||
-		( launchpadScreenOption === false && 'videopress' !== flow )
+		)
 	) {
+		saveSiteSettings( site?.ID, { launchpad_screen: 'off' } );
 		redirectToSiteHome( siteSlug, flow );
 	}
 
