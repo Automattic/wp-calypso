@@ -68,6 +68,7 @@ export interface Site {
 	site_stats: SiteStats;
 	onSelect?: ( value: boolean ) => void;
 	jetpack_boost_scores: BoostData;
+	php_version_num: number;
 }
 export interface SiteNode {
 	value: Site;
