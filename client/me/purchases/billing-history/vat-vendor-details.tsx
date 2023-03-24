@@ -113,7 +113,12 @@ export function VatVendorDetails( { transaction }: { transaction: BillingTransac
 
 	return (
 		<li>
-			<strong>{ translate( 'Vendor ' ) + vendorInfo.taxName + translate( ' Details' ) }</strong>
+			<strong>
+				{ translate( 'Vendor %(taxName)s Details', {
+					args: { taxName: vendorInfo.taxName },
+					comment: 'taxName is a localized tax, like VAT or GST',
+				} ) }
+			</strong>
 			<span>
 				{ vendorInfo.address.map( ( addressLine ) => (
 					<div key={ addressLine }>{ addressLine }</div>
