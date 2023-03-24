@@ -3,7 +3,6 @@
  */
 import {
 	envVariables,
-	DataHelper,
 	MediaHelper,
 	EditorPage,
 	TestFile,
@@ -23,7 +22,11 @@ const features = envToFeatureKey( {
 	COBLOCKS_EDGE: envVariables.TEST_ON_ATOMIC || envVariables.COBLOCKS_EDGE,
 } );
 
-describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Cover Styles' ), () => {
+/**
+ * This spec requires the following:
+ * 	- theme: a non-block-based theme (eg. Twenty-Twenty One)
+ */
+describe( 'CoBlocks: Extensions: Cover Styles', function () {
 	const accountName = getTestAccountByFeature( features );
 
 	let page: Page;
