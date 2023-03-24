@@ -15,7 +15,7 @@ interface Tag {
 
 export default function TrendingTags() {
 	const query = {
-		staleTime: Infinity,
+		staleTime: 86400000, // 1 day
 		select: ( data: TagData ) => {
 			const tagRows: TagResult[][] = [];
 			if ( ! data || ! data.tags ) {
