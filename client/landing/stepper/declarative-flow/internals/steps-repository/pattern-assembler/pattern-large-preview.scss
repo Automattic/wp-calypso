@@ -52,7 +52,7 @@
 			height: 28px;
 			padding: 2px;
 
-			&:last-child:not(.has-icon) {
+			&:last-child:not(:only-child):not(.has-icon) {
 				padding-right: 6px;
 			}
 
