@@ -12,10 +12,8 @@ interface SiteLogsAPIResponse {
 
 export type SiteLogs = SiteLogsAPIResponse[ 'data' ];
 
-export type SiteLogsTab = 'php' | 'web';
-
 export interface SiteLogsParams {
-	logType: SiteLogsTab;
+	logType: 'php' | 'web';
 	start: number;
 	end: number;
 	sort_order?: 'asc' | 'desc';

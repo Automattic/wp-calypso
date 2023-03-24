@@ -2,13 +2,14 @@ import { TabPanel } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
 import page from 'page';
-import type { SiteLogsTab } from 'calypso/data/hosting/use-site-logs-query';
 import './style.scss';
 
 export const tabs = [
 	{ name: 'php', title: __( 'PHP Logs' ) },
 	{ name: 'web', title: __( 'Webserver Logs' ) },
 ];
+
+export type SiteLogsTab = 'php' | 'web';
 
 interface SiteLogsTabPanelProps {
 	children( tab: TabPanel.Tab ): JSX.Element;
