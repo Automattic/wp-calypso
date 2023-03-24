@@ -1,12 +1,12 @@
 .font-pairing-variations {
 	display: grid;
 	gap: 12px;
-	grid-template-columns: repeat(2, 1fr);
+	grid-template-columns: repeat(1, 1fr);
 	width: 100%;
 	box-sizing: border-box;
 
 	.global-styles-variation-container__iframe {
-		max-height: 79px;
+		max-height: 80px;
 	}
 }
 
