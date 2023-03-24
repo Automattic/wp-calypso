@@ -39,10 +39,6 @@ export const isFreeFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ FREE_FLOW, FREE_POST_SETUP_FLOW ].includes( flowName ) );
 };
 
-export const isHostingLPFlow = ( flowName: string | null ) => {
-	return Boolean( flowName && HOSTING_LP_FLOW === flowName );
-};
-
 export const isNewsletterOrLinkInBioFlow = ( flowName: string | null ) => {
 	return Boolean(
 		flowName &&

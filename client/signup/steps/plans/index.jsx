@@ -1,6 +1,6 @@
 import { is2023PricingGridActivePage, getPlan, PLAN_FREE } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { isHostingLPFlow, isSiteAssemblerFlow, isTailoredSignupFlow } from '@automattic/onboarding';
+import { isSiteAssemblerFlow, isTailoredSignupFlow } from '@automattic/onboarding';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
 import i18n, { localize } from 'i18n-calypso';
@@ -155,8 +155,8 @@ export class PlansStep extends Component {
 					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 					shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
 					isReskinned={ isReskinned }
-					hidePremiumPlan={ isHostingLPFlow( this.props.flowName ) }
-					hidePersonalPlan={ isHostingLPFlow( this.props.flowName ) }
+					hidePremiumPlan={ this.props.hidePremiumPlan }
+					hidePersonalPlan={ this.props.hidePersonalPlan }
 				/>
 			</div>
 		);
@@ -312,7 +312,7 @@ export class PlansStep extends Component {
 					stepName={ stepName }
 					positionInFlow={ positionInFlow }
 					headerText={ headerText }
-					shouldHideNavButtons={ isHostingLPFlow( this.props.flowName ) }
+					shouldHideNavButtons={ this.props.shouldHideNavButtons }
 					fallbackHeaderText={ fallbackHeaderText }
 					subHeaderText={ subHeaderText }
 					fallbackSubHeaderText={ fallbackSubHeaderText }

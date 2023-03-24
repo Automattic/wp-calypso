@@ -218,6 +218,9 @@ export function generateSteps( {
 			fulfilledStepCallback: isPlanFulfilled,
 			props: {
 				hideFreePlan: true,
+				hidePremiumPlan: true,
+				hidePersonalPlan: true,
+				shouldHideNavButtons: true,
 			},
 		},
 
