@@ -416,16 +416,6 @@ export default function DIFMLanding( {
 								</li>
 								<li>
 									{ translate(
-										'Choose {{b}}New site{{/b}} to begin a new site or {{b}}Existing WordPress.com{{/b}} site if you’d like to use an existing site on your account. (Note that all existing website content will be deleted from the site so we can start fresh).',
-										{
-											components: {
-												b: <b />,
-											},
-										}
-									) }
-								</li>
-								<li>
-									{ translate(
 										'Submit your business information and optionally add your social media profiles.'
 									) }
 								</li>
