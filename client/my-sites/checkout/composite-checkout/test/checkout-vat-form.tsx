@@ -22,6 +22,7 @@ import {
 	mockMatchMediaOnWindow,
 	mockGetVatInfoEndpoint,
 	mockSetVatInfoEndpoint,
+	countryList,
 } from './util';
 import { MockCheckout } from './util/mock-checkout';
 import type { CartKey } from '@automattic/shopping-cart';
@@ -62,6 +63,9 @@ describe( 'Checkout contact step VAT form', () => {
 		dispatch( CHECKOUT_STORE ).reset();
 		nock.cleanAll();
 		nock( 'https://public-api.wordpress.com' ).persist().post( '/rest/v1.1/logstash' ).reply( 200 );
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me/transactions/supported-countries' )
+			.reply( 200, countryList );
 		mockGetVatInfoEndpoint( {} );
 	} );
 
