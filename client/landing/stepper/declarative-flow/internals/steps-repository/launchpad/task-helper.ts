@@ -402,13 +402,7 @@ export function areLaunchpadTasksCompleted(
 	checklist_statuses: LaunchpadStatuses,
 	isSiteLaunched: boolean
 ) {
-	// If we don't have needed data, return false
-	if (
-		! site_intent ||
-		! checklist_statuses ||
-		! isSiteLaunched ||
-		! launchpadFlowTasks[ site_intent ]
-	) {
+	if ( ! site_intent ) {
 		return false;
 	}
 
