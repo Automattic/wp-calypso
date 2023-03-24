@@ -162,3 +162,54 @@
 html.touch #wpnc-panel {
 	-webkit-overflow-scrolling: touch;
 }
+
+div.reader-notifications__panel {
+	#wpnc-panel {
+
+		&.wpnt-open {
+			position: fixed;
+			top: var(--masterbar-height);
+			right: var(--sidebar-width-max);
+			left: var(--sidebar-width-max);
+			bottom: 0;
+			min-width: 400px;
+		}
+	}
+
+	.wpnc__main {
+		&.wpnc__note-list {
+			right: auto;
+			left: 0;
+		}
+	}
+
+	#wpnc-panel.wpnc__main {
+		background-color: unset;
+		&.wpnt-open {
+			left: 272px;
+			right: unset;
+		}
+		.wpnc__note-list {
+			right: auto;
+			left: 0;
+		}
+		.wpnc__note-list:not(.is-note-open) {
+			box-shadow: 3px 1px 10px -2px rgba(var(--color-neutral-70-rgb), 0.075);
+		}
+		.wpnc__single-view {
+			animation-name: dedicated_wpnc__slideIn;
+			border-right: 1px solid var(--color-neutral-5);
+			left: 9px;
+			right: inherit;
+		}
+	}
+	@keyframes dedicated_wpnc__slideIn {
+		from {
+			transform: translateX(0%);
+		}
+		to {
+			transform: translateX(100%);
+		}
+	}
+}
+
