@@ -182,3 +182,14 @@ $color-yellow: var(--studio-yellow-50);
 .expanded-card__not-enabled {
 	background: none;
 }
+
+.site-expanded-content__php-version {
+	@extend .site-expanded-content__card-content-score-title;
+	padding: 0 16px 16px;
+}
+
+.site-content__small-screen-view {
+	.site-expanded-content__php-version {
+		padding: 1.5px 0;
+	}
+}

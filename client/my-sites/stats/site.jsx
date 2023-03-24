@@ -46,6 +46,7 @@ import StatsNotices from './stats-notices';
 import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
 import statsStrings from './stats-strings';
+import SubscribersSection from './subscribers-section';
 import { getPathWithUpdatedQueryString } from './utils';
 
 const memoizedQuery = memoizeLast( ( period, endOf ) => ( {
@@ -331,6 +332,7 @@ class StatsSite extends Component {
 						}
 					</div>
 				</div>
+				{ config.isEnabled( 'stats/subscribers-section' ) && <SubscribersSection /> }
 				{ /* Only load Jetpack Upsell Section for Odyssey Stats */ }
 				{ ! isOdysseyStats ? null : (
 					<AsyncLoad require="calypso/my-sites/stats/jetpack-upsell-section" />

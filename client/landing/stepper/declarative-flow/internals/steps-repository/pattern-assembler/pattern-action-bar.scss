@@ -11,12 +11,15 @@
 			flex-direction: column;
 			display: flex;
 			align-items: center;
+			justify-content: center;
 		}
 
 		.pattern-action-bar__action {
-			padding: 0;
-			min-width: 30px;
-			max-width: 30px;
+			&.has-icon {
+				min-width: 30px;
+				max-width: 30px;
+				padding: 0;
+			}
 
 			svg {
 				fill: var(--studio-gray-80);

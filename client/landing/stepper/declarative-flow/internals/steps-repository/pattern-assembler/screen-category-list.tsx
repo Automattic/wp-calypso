@@ -23,6 +23,7 @@ interface Props {
 	replacePatternMode: boolean;
 	selectedPattern: Pattern | null;
 	wrapperRef: React.RefObject< HTMLDivElement > | null;
+	onTogglePatternPanelList?: ( isOpen: boolean ) => void;
 }
 
 const ScreenCategoryList = ( {
@@ -33,6 +34,7 @@ const ScreenCategoryList = ( {
 	onSelect,
 	selectedPattern,
 	wrapperRef,
+	onTogglePatternPanelList,
 }: Props ) => {
 	const translate = useTranslate();
 	const [ selectedCategory, setSelectedCategory ] = useState< string | null >( null );
@@ -40,9 +42,11 @@ const ScreenCategoryList = ( {
 	const categoriesInOrder = useCategoriesOrder( categories );
 
 	const handleFocusOutside = ( event: Event ) => {
-		// Click on large preview to close Pattern List
-		if ( ( event.target as HTMLElement ).closest( '.pattern-large-preview' ) ) {
+		// Click on large preview but not action bar to close Pattern List
+		const target = event.target as HTMLElement;
+		if ( ! target.closest( '.pattern-action-bar' ) && target.closest( '.pattern-large-preview' ) ) {
 			setSelectedCategory( null );
+			onTogglePatternPanelList?.( false );
 		}
 	};
 
@@ -50,6 +54,13 @@ const ScreenCategoryList = ( {
 		wrapperRef?.current?.addEventListener( 'click', handleFocusOutside );
 		return () => {
 			wrapperRef?.current?.removeEventListener( 'click', handleFocusOutside );
+		};
+	}, [] );
+
+	useEffect( () => {
+		// Notify the pattern panel list is going to close when umount
+		return () => {
+			onTogglePatternPanelList?.( false );
 		};
 	}, [] );
 
@@ -86,8 +97,10 @@ const ScreenCategoryList = ( {
 							onClick={ () => {
 								if ( isOpen ) {
 									setSelectedCategory( null );
+									onTogglePatternPanelList?.( false );
 								} else {
 									setSelectedCategory( name );
+									onTogglePatternPanelList?.( true );
 								}
 							} }
 						>
