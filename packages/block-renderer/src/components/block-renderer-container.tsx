@@ -19,7 +19,7 @@ interface BlockRendererContainerProps {
 	inlineCss?: string;
 	viewportWidth?: number;
 	viewportHeight?: number;
-	maxHeight?: string | number;
+	maxHeight?: 'none' | number;
 	minHeight?: number;
 	isMinHeight100vh?: boolean;
 	maxHeightFor100vh?: number;
