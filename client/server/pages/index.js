@@ -289,6 +289,12 @@ function setUpLoggedOutRoute( req, res, next ) {
 		setupRequests.push( setUpLocalLanguageRevisions( req ) );
 	}
 
+	if ( req.cookies?.subkey && ! req.context.user ) {
+		req.context.user = {
+			subscriptionManagementSubkey: req.cookies.subkey,
+		};
+	}
+
 	Promise.all( setupRequests )
 		.then( () => {
 			performanceMark( req.context, 'finish_logged_out_setup', true );

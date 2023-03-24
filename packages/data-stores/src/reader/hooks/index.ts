@@ -13,7 +13,7 @@ export const useIsLoggedIn = () => {
 
 export const useIsQueryEnabled = () => {
 	const loggedIn = useIsLoggedIn();
-	if ( loggedIn || ( document.cookie && document.cookie.indexOf( 'subkey=' ) !== -1 ) ) {
+	if ( loggedIn || window.currentUser?.subscriptionManagementSubkey ) {
 		return true;
 	}
 

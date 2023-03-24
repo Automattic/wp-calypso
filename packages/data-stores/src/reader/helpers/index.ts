@@ -25,12 +25,7 @@ async function callApi< ReturnType >( {
 		return res as ReturnType;
 	}
 
-	// get cookie named subkey
-	const subkey = document.cookie
-		?.split( ';' )
-		?.map( ( c ) => c.trim() )
-		?.find( ( c ) => c.startsWith( 'subkey=' ) )
-		?.split( '=' )[ 1 ];
+	const subkey = window.currentUser?.subscriptionManagementSubkey;
 
 	if ( ! subkey ) {
 		throw new Error( 'Subkey not found' );
@@ -44,7 +39,7 @@ async function callApi< ReturnType >( {
 		body: method === 'POST' ? JSON.stringify( body ) : undefined,
 		credentials: 'same-origin',
 		headers: {
-			Authorization: `X-WPSUBKEY ${ subkey }`,
+			Authorization: `X-WPSUBKEY ${ encodeURIComponent( subkey ) }`,
 			'Content-Type': 'application/json',
 		},
 	} as APIFetchOptions );

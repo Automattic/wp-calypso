@@ -28,6 +28,10 @@
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
+	"dependencies": {
+		"@automattic/components": "workspace:^",
+		"@automattic/data-stores": "workspace:^"
+	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@automattic/typography": "workspace:^",

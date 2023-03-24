@@ -1563,6 +1563,8 @@ __metadata:
   resolution: "@automattic/subscription-manager@workspace:packages/subscription-manager"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/components": "workspace:^"
+    "@automattic/data-stores": "workspace:^"
     "@automattic/typography": "workspace:^"
     typescript: ^4.5.5
   peerDependencies:
