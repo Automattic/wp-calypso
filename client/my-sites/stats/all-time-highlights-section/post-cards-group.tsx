@@ -9,11 +9,12 @@ import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import DotPager from 'calypso/components/dot-pager';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import { getSitePost } from 'calypso/state/posts/selectors';
+import { getSitePost, isRequestingSitePost } from 'calypso/state/posts/selectors';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import {
 	getTopPostAndPage,
 	isRequestingSiteStatsForQuery,
+	hasSiteStatsForQueryFinished,
 } from 'calypso/state/stats/lists/selectors';
 import LatestPostCard from './latest-post-card';
 
@@ -88,6 +89,10 @@ export default function PostCardsGroup( {
 		isRequestingSiteStatsForQuery( state, siteId, 'statsTopPosts', topPostsQuery )
 	);
 
+	const hasTopViewedPostQueryFinished = useSelector( ( state ) =>
+		hasSiteStatsForQueryFinished( state, siteId, 'statsTopPosts', topPostsQuery )
+	);
+
 	// Get the most `viewed` post from the past period defined in the `topPostsQuery`.
 	const { topPost: topViewedPost } = useSelector( ( state ) =>
 		getStatsData( state, siteId, topPostsQuery, isTopViewedPostRequesting )
@@ -95,6 +100,10 @@ export default function PostCardsGroup( {
 
 	const mostPopularPost = useSelector( ( state ) =>
 		getSitePost( state, siteId, topViewedPost?.id )
+	);
+
+	const isRequestingMostPopularPost = useSelector( ( state ) =>
+		isRequestingSitePost( state, siteId, topViewedPost?.id )
 	);
 
 	const mostPopularPostData = {
@@ -109,7 +118,9 @@ export default function PostCardsGroup( {
 	};
 
 	const cards = [ <LatestPostCard key="latestPostCard" siteId={ siteId } siteSlug={ siteSlug } /> ];
-	if ( ! isTopViewedPostRequesting && mostPopularPost ) {
+	const isLoadingMostPopularPost = ! hasTopViewedPostQueryFinished || isRequestingMostPopularPost;
+
+	if ( isLoadingMostPopularPost || mostPopularPost ) {
 		cards.push(
 			<PostStatsCard
 				key="mostPopularPostCard"
@@ -118,9 +129,10 @@ export default function PostCardsGroup( {
 				post={ mostPopularPostData }
 				viewCount={ mostPopularPostData?.viewCount }
 				commentCount={ mostPopularPostData?.commentCount }
-				titleLink={ `/stats/post/${ mostPopularPost.ID }/${ siteSlug }` }
-				uploadHref={ ! isOdysseyStats ? `/post/${ siteSlug }/${ mostPopularPost.ID }` : undefined }
+				titleLink={ `/stats/post/${ mostPopularPost?.ID }/${ siteSlug }` }
+				uploadHref={ ! isOdysseyStats ? `/post/${ siteSlug }/${ mostPopularPost?.ID }` : undefined }
 				locale={ userLocale }
+				isLoading={ isLoadingMostPopularPost }
 			/>
 		);
 	}
