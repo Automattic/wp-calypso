@@ -282,7 +282,7 @@ export const StagingSiteCard = ( {
 	let stagingSiteCardContent;
 	if ( ! isLoadingStagingSites && loadingError ) {
 		stagingSiteCardContent = getLoadingErrorContent();
-	} else if ( ! wasCreating && ! hasSiteAccess && transferStatus === null ) {
+	} else if ( ! wasCreating && ! hasSiteAccess && transferStatus !== null ) {
 		stagingSiteCardContent = getAccessError();
 	} else if ( addingStagingSite || isTrasferInProgress || isReverting ) {
 		stagingSiteCardContent = getTransferringStagingSiteContent();
