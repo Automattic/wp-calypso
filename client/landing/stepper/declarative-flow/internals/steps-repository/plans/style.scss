@@ -188,5 +188,15 @@
 	.signup-header h1 {
 		display: none;
 	}
+
+	button.button.navigation-link.is-borderless {
+		background: none;
+		border: none;
+		color: #101517;
+		font-size: 0.875rem;
+		font-weight: 600;
+		padding: 0;
+		text-decoration: none;
+	}
 }
 
