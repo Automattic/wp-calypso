@@ -101,6 +101,20 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 			  } )
 			: null;
 
+	const handleDateRangeCommit = ( startDate: Date, endDate: Date ) => {
+		const formattedStartDate = startDate ? moment( startDate ).startOf( 'day' ) : null;
+		const formattedEndDate = endDate ? moment( endDate ).endOf( 'day' ) : null;
+
+		if ( ! formattedStartDate && ! formattedEndDate ) {
+			return;
+		}
+
+		setDateRange( {
+			startTime: formattedStartDate ?? dateRange.startTime,
+			endTime: formattedEndDate ?? dateRange.endTime,
+		} );
+	};
+
 	return (
 		<Main fullWidthLayout className={ classnames( 'site-logs', { 'is-loading': isLoading } ) }>
 			<DocumentHead title={ titleHeader } />
