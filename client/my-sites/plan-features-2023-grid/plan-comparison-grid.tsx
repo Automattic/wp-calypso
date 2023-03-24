@@ -106,7 +106,6 @@ const Row = styled.div< { isHiddenInMobile?: boolean; className?: string } >`
 
 	${ plansBreakSmall( css`
 		display: flex;
-		align-items: center;
 		margin: 0 20px;
 		padding: 12px 0;
 		border-bottom: 1px solid #eee;
@@ -114,7 +113,6 @@ const Row = styled.div< { isHiddenInMobile?: boolean; className?: string } >`
 `;
 
 const PlanRow = styled( Row )`
-	align-items: stretch;
 	&:last-of-type {
 		display: none;
 	}
@@ -131,7 +129,6 @@ const PlanRow = styled( Row )`
 `;
 
 const TitleRow = styled( Row )`
-	align-items: stretch;
 	cursor: pointer;
 	display: flex;
 
