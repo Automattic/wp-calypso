@@ -30,7 +30,7 @@ import {
 } from 'calypso/state/automated-transfer/selectors';
 import { getAtomicHostingIsLoadingSftpData } from 'calypso/state/selectors/get-atomic-hosting-is-loading-sftp-data';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import isSiteStaging from 'calypso/state/selectors/is-site-staging';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestSite } from 'calypso/state/sites/actions';
 import { isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
@@ -82,7 +82,7 @@ class Hosting extends Component {
 			hasSftpFeature,
 			isDisabled,
 			isECommerceTrial,
-			isStagingSite,
+			isWpcomStagingSite,
 			isTransferring,
 			requestSiteById,
 			siteId,
@@ -191,7 +191,7 @@ class Hosting extends Component {
 							<Column type="main" className="hosting__main-layout-col">
 								<SFTPCard disabled={ isDisabled } />
 								<PhpMyAdminCard disabled={ isDisabled } />
-								{ isStagingSiteEnabled && ! isStagingSite && (
+								{ isStagingSiteEnabled && ! isWpcomStagingSite && (
 									<StagingSiteCard disabled={ isDisabled } />
 								) }
 								{ isGithubIntegrationEnabled && <GitHubCard /> }
@@ -249,7 +249,7 @@ export default connect(
 			hasSftpFeature,
 			siteSlug: getSelectedSiteSlug( state ),
 			siteId,
-			isStagingSite: isSiteStaging( state, siteId ),
+			isWpcomStagingSite: isSiteWpcomStaging( state, siteId ),
 		};
 	},
 	{
