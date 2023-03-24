@@ -37,7 +37,7 @@ export const GoldenTokenDialog = () => {
 				{ /* eslint-disable-next-line jsx-a11y/media-has-caption */ }
 				<video
 					ref={ videoRef }
-					src="https://dev.keoshi.com/jetpack/golden-token/jetpack-golden-token-01.mp4"
+					src="https://videos.files.wordpress.com/oSlNIBQO/jetpack-golden-token.mp4"
 				></video>
 			</div>
 			<div className="golden-token-dialog__content-wrap">
