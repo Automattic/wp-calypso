@@ -31,10 +31,10 @@ interface SitePlanProps {
 const STAGING_PLAN_LABEL = 'Staging';
 
 export const SitePlan = ( { site, userId }: SitePlanProps ) => {
-	const isWpcomStaging = useSelector( ( state ) => isSiteWpcomStaging( state, site.ID ) );
+	const isWpcomStagingSite = useSelector( ( state ) => isSiteWpcomStaging( state, site.ID ) );
 	return (
 		<SitePlanContainer>
-			{ ! isWpcomStaging ? (
+			{ ! isWpcomStagingSite ? (
 				<>
 					{ isNotAtomicJetpack( site ) && ! site.plan?.expired && (
 						<SitePlanIcon>
