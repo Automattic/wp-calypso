@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { is2023PricingGridActivePage } from '@automattic/calypso-products/src/plans-utilities';
 import page from 'page';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
@@ -21,6 +22,16 @@ export function plans( context, next ) {
 		}
 		setJetpackPlansHeader( context );
 		return productSelect( '/plans' )( context, next );
+	}
+
+	if ( isEnabled( 'plans/biannual-toggle' ) ) {
+		if ( ! context.params.intervalType && context.params.site ) {
+			return page.redirect(
+				`/plans/yearly/${ context.params.site }${
+					context.querystring ? '?' + context.querystring : ''
+				}`
+			);
+		}
 	}
 
 	context.primary = (
