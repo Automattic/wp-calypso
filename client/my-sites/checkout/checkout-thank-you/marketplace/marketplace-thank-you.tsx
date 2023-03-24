@@ -1,7 +1,7 @@
 import { ConfettiAnimation } from '@automattic/components';
 import { ThemeProvider, Global, css } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { ThankYou } from 'calypso/components/thank-you';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -20,6 +20,7 @@ import { MarketplaceGoBackSection } from './marketplace-go-back-section';
 import { useThankYouFoooter } from './use-default-thank-you-footer';
 import { usePluginsThankYouData } from './use-plugins-thank-you-data';
 import { useThemesThankYouData } from './use-themes-thank-you-data';
+import { hasMultipleProductTypes } from './utils';
 
 const MarketplaceThankYou = ( {
 	pluginSlugs,
@@ -98,8 +99,31 @@ const MarketplaceThankYou = ( {
 		}
 	}, [ transferStatus, areAllProductsFetched, showProgressBar, isJetpack ] );
 
-	const steps = [ ...pluginsProgressbarSteps, ...themesProgressbarSteps ];
+	const multipleProductTypes = hasMultipleProductTypes( [ pluginSlugs, themeSlugs ] );
 	const additionalSteps = useMarketplaceAdditionalSteps();
+	const randomElement = ( arr: string[] ) => arr[ Math.floor( Math.random() * arr.length ) ];
+
+	const defaultSteps = useMemo(
+		() => {
+			if ( isJetpack ) {
+				return [ randomElement( additionalSteps ) ];
+			}
+
+			return [
+				randomElement( additionalSteps ), // Transferring to Atomic
+				randomElement( additionalSteps ), // Transferring to Atomic
+				randomElement( additionalSteps ), // Transferring to Atomic
+				randomElement( additionalSteps ),
+			];
+		},
+		// We intentionally don't set `isJetpack` as dependency to keep the same steps after the Atomic transfer.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[ translate ]
+	);
+
+	const steps = multipleProductTypes
+		? defaultSteps
+		: [ ...pluginsProgressbarSteps, ...themesProgressbarSteps ];
 
 	return (
 		<ThemeProvider theme={ theme }>
