@@ -29,6 +29,9 @@ export function GlobalStylesSidebarNotice() {
 
 	return (
 		<Fill name="ComplementaryArea/core/edit-site">
+			{ /*
+			We'll need to do the condition here because if we are doing an early return, the fill will be introduced at the bottom of the page, which means some additional CSS magic needs to be done.
+			*/ }
 			{ !! isVisible && isGlobalStylesSidebar && (
 				<div className="interface-complementary-area">
 					<Notice status="warning" isDismissible={ false } className="wpcom-global-styles-notice">
