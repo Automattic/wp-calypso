@@ -1,9 +1,18 @@
+import classnames from 'classnames';
+import { useState } from 'react';
+
 import './style.scss';
 
 export const GoldenTokenDialog = () => {
+	const [ isAnimating, setIsAnimating ] = useState( false );
+
+	const redeemToken = () => {
+		setIsAnimating( true );
+	};
+
 	return (
 		// TODO: dynamically add/remove animating class based on play state
-		<div className="golden-token-dialog animating1">
+		<div className={ classnames( 'golden-token-dialog', { animating: isAnimating } ) }>
 			{ /* TODO: replace with Jetpack logo */ }
 			<svg
 				className="jetpack-logo"
@@ -33,7 +42,7 @@ export const GoldenTokenDialog = () => {
 					</p>
 				</div>
 				{ /* TODO: create button logic */ }
-				<button>Redeem your token</button>
+				<button onClick={ redeemToken }>Redeem your token</button>
 			</div>
 			<div className="golden-token-dialog__powers-wrap golden-token-dialog__content-wrap">
 				<div className="golden-token-dialog__content-wrap-text">
