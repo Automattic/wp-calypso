@@ -81,7 +81,7 @@ const PatternLargePreview = ( {
 					// Disable default max-height
 					maxHeight="none"
 				/>
-				<PatternActionBar patternType={ type } { ...getActionBarProps() } />
+				<PatternActionBar patternType={ type } isRemoveButtonTextOnly { ...getActionBarProps() } />
 			</li>
 		);
 	};
