@@ -1,8 +1,8 @@
 import { StepContainer } from '@automattic/onboarding';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useLaunchpad } from 'calypso/data/sites/use-launchpad';
@@ -40,7 +40,7 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 	const isSiteLaunched = site?.launch_status === 'launched' || false;
 	const recordSignupComplete = useRecordSignupComplete( flow );
 	const dispatch = useDispatch();
-	const { saveSiteSettings } = useDispatch( SITE_STORE );
+	const { saveSiteSettings } = useWPDispatch( SITE_STORE );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const fetchingSiteError = useSelect(
