@@ -44,7 +44,6 @@ import { init as pushNotificationsInit } from 'calypso/state/push-notifications/
 import {
 	createQueryClient,
 	getInitialQueryState,
-	hydrateBrowserState,
 	hydrateServerState,
 } from 'calypso/state/query-client';
 import initialReducer from 'calypso/state/reducer';
@@ -422,8 +421,7 @@ const boot = async ( currentUser, registerRoutes ) => {
 	saveOauthFlags();
 	utils();
 
-	const queryClient = await createQueryClient();
-	await hydrateBrowserState( queryClient, currentUser?.ID );
+	const queryClient = await createQueryClient( currentUser?.ID );
 	const initialQueryState = getInitialQueryState();
 	hydrateServerState( queryClient, initialQueryState );
 

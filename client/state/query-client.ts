@@ -9,11 +9,12 @@ import {
 } from 'calypso/state/persisted-state';
 import { shouldDehydrateQuery } from './should-dehydrate-query';
 
-export async function createQueryClient(): Promise< QueryClient > {
+export async function createQueryClient( userId?: number ): Promise< QueryClient > {
 	await loadPersistedState();
 	const queryClient = new QueryClient( {
 		defaultOptions: { queries: { cacheTime: MAX_AGE } },
 	} );
+	await hydrateBrowserState( queryClient, userId );
 	return queryClient;
 }
 

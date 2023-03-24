@@ -17,17 +17,11 @@ import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { createReduxStore } from 'calypso/state';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
-import { createQueryClient, hydrateBrowserState } from 'calypso/state/query-client';
+import { createQueryClient } from 'calypso/state/query-client';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import SubscriptionManagemer from './subscription-manager/subscription-manager';
 import './styles.scss';
-
-const setupQueryClient = async ( userId: number ) => {
-	const queryClient = await createQueryClient();
-	await hydrateBrowserState( queryClient, userId );
-	return queryClient;
-};
 
 const setupReduxStore = ( user: CurrentUser ) => {
 	const initialState = getInitialState( initialReducer, user.ID );
@@ -52,7 +46,7 @@ declare const window: Window & {
 
 window.AppBoot = async () => {
 	const user = ( await initializeCurrentUser() ) as unknown as CurrentUser;
-	const queryClient = await setupQueryClient( user.ID );
+	const queryClient = await createQueryClient( user.ID );
 	const reduxStore = setupReduxStore( user );
 	initializeAnalytics( user, getGenericSuperPropsGetter( config ) );
 
