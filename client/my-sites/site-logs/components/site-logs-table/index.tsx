@@ -1,5 +1,6 @@
 import { memo, useMemo } from 'react';
 import { SiteLogsData } from 'calypso/data/hosting/use-site-logs-query';
+import './style.scss';
 
 type SiteLogs = SiteLogsData[ 'logs' ];
 
@@ -11,7 +12,7 @@ export const SiteLogsTable = memo( function SiteLogsTable( { logs }: SiteLogsTab
 	const columns = useSiteColumns( logs );
 
 	return (
-		<table>
+		<table className="site-logs-table">
 			<thead>
 				<tr>
 					{ columns.map( ( column ) => (
@@ -57,8 +58,8 @@ function useSiteColumns( logs: SiteLogs | undefined ) {
 }
 
 function renderCell( value: any ) {
-	if ( value === null || value === undefined ) {
-		return <span className="site-logs-table__empty-cell">-</span>;
+	if ( value === null || value === undefined || value === '' ) {
+		return <span className="site-logs-table__empty-cell" />;
 	}
 
 	switch ( typeof value ) {

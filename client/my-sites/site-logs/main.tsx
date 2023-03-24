@@ -40,7 +40,7 @@ export function SiteLogs() {
 	const titleHeader = __( 'Site Logs' );
 
 	return (
-		<Main wideLayout>
+		<Main fullWidthLayout>
 			<DocumentHead title={ titleHeader } />
 			<FormattedHeader
 				brandFont
@@ -50,12 +50,7 @@ export function SiteLogs() {
 			/>
 
 			<SiteLogsTabPanel selectedTab={ logType } onSelected={ handleTabSelected }>
-				{ ( tab ) => (
-					<>
-						<h2 style={ { marginTop: '24px' } }>{ tab.title }</h2>
-						<SiteLogsTable logs={ data?.logs } />
-					</>
-				) }
+				{ () => <SiteLogsTable logs={ data?.logs } /> }
 			</SiteLogsTabPanel>
 		</Main>
 	);
