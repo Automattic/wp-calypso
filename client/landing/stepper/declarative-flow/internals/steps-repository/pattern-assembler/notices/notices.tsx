@@ -1,10 +1,14 @@
-import { SnackbarList, withNotices } from '@wordpress/components';
+import { SnackbarList, withNotices, NoticeList } from '@wordpress/components';
 import i18n from 'i18n-calypso';
 import { useEffect } from 'react';
 import type { Pattern } from '../types';
 import './notices.scss';
 
 const NOTICE_TIMEOUT = 5000;
+
+type Notice = NoticeList.Notice & {
+	timer: ReturnType< typeof setTimeout >;
+};
 
 const Notices = ( {
 	noticeList,
@@ -15,13 +19,14 @@ const Notices = ( {
 	};
 
 	useEffect( () => {
-		setTimeout( () => {
-			const lastNotice = noticeList.at( -1 );
+		const lastNotice = noticeList.at( -1 ) as Notice;
 
-			if ( lastNotice?.id ) {
-				noticeOperations.removeNotice( lastNotice.id );
-			}
-		}, NOTICE_TIMEOUT );
+		if ( lastNotice?.id && ! lastNotice?.timer ) {
+			lastNotice.timer = setTimeout(
+				() => noticeOperations.removeNotice( lastNotice.id ),
+				NOTICE_TIMEOUT
+			);
+		}
 	}, [ noticeList, noticeOperations ] );
 
 	return <SnackbarList notices={ noticeList } onRemove={ onRemoveNotice } />;
