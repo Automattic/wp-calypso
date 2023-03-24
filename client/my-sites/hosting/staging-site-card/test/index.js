@@ -66,6 +66,11 @@ jest.mock( 'calypso/my-sites/hosting/staging-site-card/use-staging-site', () => 
 	useStagingSite: jest.fn(),
 } ) );
 
+jest.mock( 'calypso/my-sites/hosting/staging-site-card/use-has-site-access', () => ( {
+	__esModule: true,
+	useHasSiteAccess: jest.fn( () => true ),
+} ) );
+
 const defaultProps = {
 	disabled: false,
 	spaceQuotaExceededForStaging: false,
