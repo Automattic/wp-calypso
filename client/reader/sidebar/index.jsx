@@ -19,6 +19,7 @@ import ReaderConversationsIcon from 'calypso/reader/components/icons/conversatio
 import ReaderDiscoverIcon from 'calypso/reader/components/icons/discover-icon';
 import ReaderFollowingIcon from 'calypso/reader/components/icons/following-icon';
 import ReaderLikesIcon from 'calypso/reader/components/icons/likes-icon';
+import ReaderNotificationsIcon from 'calypso/reader/components/icons/notifications-icon';
 import ReaderSearchIcon from 'calypso/reader/components/icons/search-icon';
 import { isDiscoverEnabled } from 'calypso/reader/discover/helper';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
@@ -205,7 +206,7 @@ export class ReaderSidebar extends Component {
 					} ) }
 					label={ translate( 'Notifications' ) }
 					onNavigate={ this.handleReaderSidebarNotificationsClicked }
-					materialIcon="notifications"
+					customIcon={ <ReaderNotificationsIcon /> }
 					link="/read/notifications"
 				/>
 
