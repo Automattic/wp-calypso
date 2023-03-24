@@ -32,7 +32,9 @@ function EmptyDomainsListCard( {
 		selectedSite?.plan?.product_slug && ! isFreePlan( selectedSite.plan.product_slug );
 
 	let title = translate( 'Get your domain' );
-	let line = translate( 'Get a free one-year domain registration or transfer with any paid plan.' );
+	let line = translate(
+		'Get a free one-year domain registration or transfer with any annual plan.'
+	);
 	let action = translate( 'Upgrade to a plan' );
 	let actionURL = `/plans/${ selectedSite.slug }`;
 	let secondaryAction = translate( 'Just search for a domain' );
