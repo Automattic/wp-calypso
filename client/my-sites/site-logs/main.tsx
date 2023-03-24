@@ -21,7 +21,7 @@ export function SiteLogs() {
 		const queryParam = new URL( window.location.href ).searchParams.get( 'log-type' );
 		return (
 			queryParam && [ 'php', 'web' ].includes( queryParam ) ? queryParam : 'php'
-		 ) as SiteLogsTab;
+		) as SiteLogsTab;
 	} );
 
 	const { data } = useSiteLogsQuery( siteId, {
