@@ -7,7 +7,7 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import { SiteLogsTab, useSiteLogsQuery } from 'calypso/data/hosting/use-site-logs-query';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { SiteLogsTab, SiteLogsTabPanel } from './components/site-logs-tab-panel';
+import { SiteLogsTabPanel } from './components/site-logs-tab-panel';
 import { SiteLogsTable } from './components/site-logs-table';
 
 export function SiteLogs() {
