@@ -8,6 +8,7 @@ import { Guide, GuidePage } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
+import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { getQueryArg } from '@wordpress/url';
 import DraftPostModal from './draft-post-modal';
 import PostPublishedModal from './post-published-modal';
@@ -18,25 +19,37 @@ import VideoPressCelebrationModal from './video-celebration-modal';
 import WpcomNux from './welcome-modal/wpcom-nux';
 import LaunchWpcomWelcomeTour from './welcome-tour/tour-launch';
 
+const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
+	'I know using unstable features means my plugin or theme will inevitably break on the next WordPress release.',
+	'@wordpress/edit-site'
+);
+
 function WelcomeTour() {
 	const [ showDraftPostModal ] = useState(
 		getQueryArg( window.location.href, 'showDraftPostModal' )
 	);
 
-	const { show, isLoaded, variant, isManuallyOpened, isNewPageLayoutModalOpen } = useSelect(
-		( select ) => {
-			const welcomeGuideStoreSelect = select( 'automattic/wpcom-welcome-guide' );
-			const starterPageLayoutsStoreSelect = select( 'automattic/starter-page-layouts' );
-			return {
-				show: welcomeGuideStoreSelect.isWelcomeGuideShown(),
-				isLoaded: welcomeGuideStoreSelect.isWelcomeGuideStatusLoaded(),
-				variant: welcomeGuideStoreSelect.getWelcomeGuideVariant(),
-				isManuallyOpened: welcomeGuideStoreSelect.isWelcomeGuideManuallyOpened(),
-				isNewPageLayoutModalOpen: starterPageLayoutsStoreSelect?.isOpen(), // Handle the case where SPT is not initalized.
-			};
-		},
-		[]
-	);
+	const {
+		show,
+		isLoaded,
+		variant,
+		isManuallyOpened,
+		isNewPageLayoutModalOpen,
+		siteEditorCanvasMode,
+	} = useSelect( ( select ) => {
+		const welcomeGuideStoreSelect = select( 'automattic/wpcom-welcome-guide' );
+		const starterPageLayoutsStoreSelect = select( 'automattic/starter-page-layouts' );
+		const _canvasMode =
+			select( 'core/edit-site' ) && unlock( select( 'core/edit-site' ) ).getCanvasMode();
+		return {
+			show: welcomeGuideStoreSelect.isWelcomeGuideShown(),
+			isLoaded: welcomeGuideStoreSelect.isWelcomeGuideStatusLoaded(),
+			variant: welcomeGuideStoreSelect.getWelcomeGuideVariant(),
+			isManuallyOpened: welcomeGuideStoreSelect.isWelcomeGuideManuallyOpened(),
+			isNewPageLayoutModalOpen: starterPageLayoutsStoreSelect?.isOpen(), // Handle the case where SPT is not initalized.
+			siteEditorCanvasMode: _canvasMode,
+		};
+	}, [] );
 
 	const setOpenState = useDispatch( 'automattic/starter-page-layouts' )?.setOpenState;
 
@@ -50,6 +63,9 @@ function WelcomeTour() {
 	}, [ fetchWelcomeGuideStatus, isLoaded ] );
 
 	if ( ! show || isNewPageLayoutModalOpen ) {
+		return null;
+	}
+	if ( siteEditorCanvasMode !== 'edit' ) {
 		return null;
 	}
 

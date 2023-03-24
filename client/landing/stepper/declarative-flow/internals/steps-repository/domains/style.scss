@@ -3,7 +3,6 @@
 
 .domains {
 	.step-container {
-
 		max-width: 1280px;
 		padding: 0 20px;
 		margin: 0;
@@ -240,4 +239,183 @@
 			}
 		}
 	}
+}
+
+// Domain upsell flow
+
+.domain-upsell.domains {
+
+	$domain-stepper-component-width: 1040px;
+
+	padding: 60px 20px;
+	.signup-header h1 {
+		display: none;
+	}
+
+	.step-container.domains {
+
+		max-width: $domain-stepper-component-width;
+		padding: 0;
+		margin: 0 auto;
+		@media ( max-width: break-large ) {
+			margin: 0 40px;
+		}
+
+		.step-container__header .formatted-header__title {
+			@media ( max-width: $break-large ) {
+				font-size: 2.25rem;
+			}
+		}
+
+		.domains__domain-side-content-container {
+			flex-direction: column;
+			margin-top: 40px;
+			margin-bottom: 0;
+
+			@include break-large {
+				width: 30vw;
+				margin-top: 0;
+				flex-direction: column;
+				display: flex;
+			}
+
+			@include break-wide {
+				width: 350px;
+			}
+		}
+
+		// Content only visible below the search results on mobile view port
+		.register-domain-step .domains__domain-side-content-container {
+			display: flex;
+
+			@include break-small {
+				flex-direction: row;
+
+				.domains__domain-side-content {
+					padding-top: 0;
+					border-bottom: none;
+					padding-bottom: 20px;
+					margin: 0 20px;
+				}
+			}
+
+			@include break-large {
+				display: none;
+			}
+		}
+
+		// Side content only visible on desktop viewport
+		.domains__domain-side-content-container .domains__domain-side-content {
+			padding: 40px 0;
+			margin: 0 0 0 80px;
+
+			@media (max-width: $domain-stepper-component-width) {
+				margin: 0 20px 0 40px;
+			}
+		}
+
+		.featured-domain-suggestions .featured-domain-suggestion:hover {
+			border: 1px solid #646970;
+		}
+
+		.featured-domain-suggestions .featured-domain-suggestion {
+			border-radius: 4px;
+			margin-bottom: 12px;
+			box-sizing: border-box;
+			border: 1px solid #e2e4e7;
+			background: var(--color-surface);
+			padding: 16px 24px;
+			box-shadow: none;
+		}
+
+		.domains__domain-side-content-container .domains__domain-side-content:first-of-type {
+			padding-top: 0;
+		}
+
+		.featured-domain-suggestions .domain-registration-suggestion__title-wrapper {
+			flex-wrap: nowrap;
+			flex-direction: column-reverse;
+			margin-bottom: initial;
+
+			@media (min-width: $break-wide ) {
+				flex-direction: row;
+			}
+		}
+
+		.step-container__header {
+			@media (max-width: $break-large) {
+				margin: 34px 20px 40px;
+			}
+		}
+
+		.featured-domain-suggestions .domain-registration-suggestion__title-wrapper .domain-registration-suggestion__badges {
+			align-self: baseline;
+			margin-left: 0;
+			margin-bottom: 10px;
+			flex: 1;
+
+			@media (min-width: $break-wide) {
+				margin-left: 12px;
+				margin-bottom: 0;
+			}
+		}
+
+		.featured-domain-suggestion .domain-registration-suggestion__title {
+			font-size: 1.5rem;
+			padding-right: 0;
+			margin-bottom: 0;
+			flex: 0 1 auto;
+			align-self: baseline;
+		}
+
+	}
+
+	.domains__step-content.domains__step-content-domain-step {
+		display: flex;
+
+		.domains__step-section-wrapper {
+			margin: 0 auto;
+			width: 100%;
+
+			.use-my-domain__page-heading {
+				margin: 0;
+			}
+		}
+
+		h1.formatted-header__title.wp-brand-font {
+			font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+			font-weight: 400;
+			color: #101517;
+			letter-spacing: 0.2px;
+			font-size: 2.25rem;
+			margin-bottom: 0;
+			margin-top: 35px;
+
+			@media (min-width: $break-xlarge) {
+				font-size: 2.75rem;
+			}
+		}
+
+		.use-my-domain .use-my-domain__domain-input .form-text-input {
+			padding: 13px 14px 9px 68px;
+		}
+
+	}
+
+	.register-domain-step.register-domain-step__signup {
+		flex: 1;
+	}
+
+	.register-domain-step__search.register-domain-step__search-domain-step,
+	.domain-search-results,
+	.domain-search-results__domain-suggestions {
+		@media (max-width: $break-large) {
+			margin: 0 20px;
+		}
+	}
+
+	.reskin-side-explainer .reskin-side-explainer__cta .reskin-side-explainer__cta-text {
+		padding-left: 0;
+	}
+
 }

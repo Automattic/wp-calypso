@@ -106,7 +106,7 @@ export const QuickLinks = ( {
 				label={ translate( 'Write blog post' ) }
 				materialIcon="edit"
 			/>
-			{ isPromotePostActive && (
+			{ isPromotePostActive && ! isStagingSite && (
 				<ActionBox
 					href={ `/advertising/${ siteSlug }` }
 					hideLinkIndicator

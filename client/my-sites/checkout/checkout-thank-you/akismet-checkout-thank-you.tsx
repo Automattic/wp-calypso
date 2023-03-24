@@ -1,10 +1,11 @@
-import { Card } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isProductsListFetching, getProductName } from 'calypso/state/products-list/selectors';
 import type { FunctionComponent } from 'react';
 
@@ -15,11 +16,20 @@ interface AkismetCheckoutThankYouProps {
 const AkismetCheckoutThankYou: FunctionComponent< AkismetCheckoutThankYouProps > = ( {
 	productSlug,
 } ) => {
+	const dispatch = useDispatch();
 	const hasProduct = productSlug !== 'no_product';
 	const productName = useSelector( ( state ) =>
 		hasProduct ? getProductName( state, productSlug ) : null
 	);
 	const isLoading = useSelector( isProductsListFetching );
+
+	const onManagePurchaseClick = () => {
+		dispatch(
+			recordTracksEvent( 'calypso_akismet_checkout_thank_you_page_manage_purchase_click', {
+				product_slug: productSlug,
+			} )
+		);
+	};
 
 	return (
 		<Main className="akismet-checkout-thank-you">
@@ -61,6 +71,15 @@ const AkismetCheckoutThankYou: FunctionComponent< AkismetCheckoutThankYouProps >
 						{ strong: <strong /> }
 					) }
 				</p>
+
+				<Button
+					primary
+					busy={ isLoading }
+					href="https://akismet.com/account/"
+					onClick={ onManagePurchaseClick }
+				>
+					{ __( 'Manage Purchase' ) }
+				</Button>
 			</Card>
 
 			<div className="akismet-checkout-thank-you__footer-img"></div>
