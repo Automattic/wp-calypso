@@ -39,7 +39,7 @@ import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-secti
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
-import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
+import isSiteStaging from 'calypso/state/selectors/is-site-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -757,7 +757,7 @@ export class SiteSettingsFormGeneral extends Component {
 			siteIsAtomic,
 			translate,
 			isAtomicAndEditingToolkitDeactivated,
-			isWpcomStagingSite,
+			isStagingSite,
 		} = this.props;
 
 		const classes = classNames( 'site-settings__general-settings', {
@@ -790,7 +790,7 @@ export class SiteSettingsFormGeneral extends Component {
 					? this.renderLaunchSite()
 					: this.privacySettings() }
 
-				{ ! isWpcomStagingSite && this.giftOptions() }
+				{ ! isStagingSite && this.giftOptions() }
 				{ ! isWPForTeamsSite && ! ( siteIsJetpack && ! siteIsAtomic ) && (
 					<div className="site-settings__footer-credit-container">
 						<SettingsSectionHeader
@@ -889,7 +889,7 @@ const connectComponent = connect( ( state ) => {
 		isPaidPlan: isCurrentPlanPaid( state, siteId ),
 		isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
 		isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
-		isWpcomStagingSite: isSiteWpcomStaging( state, siteId ),
+		isStagingSite: isSiteStaging( state, siteId ),
 		selectedSite: getSelectedSite( state ),
 		siteDomains: getDomainsBySiteId( state, siteId ),
 		siteIsJetpack: isJetpackSite( state, siteId ),
