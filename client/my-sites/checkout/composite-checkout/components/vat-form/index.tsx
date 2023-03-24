@@ -1,7 +1,6 @@
 import { Field } from '@automattic/wpcom-checkout';
 import { CheckboxControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { sprintf } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
@@ -193,11 +192,13 @@ export function VatForm( {
 					className="vat-form__expand-button"
 					checked={ isFormActive }
 					onChange={ toggleVatForm }
-					label={ sprintf(
+					label={
 						/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-						translate( 'Add %s details', { textOnly: true } ),
-						vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } )
-					) }
+						translate( 'Add %s details', {
+							textOnly: true,
+							args: [ vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } ) ],
+						} )
+					}
 					disabled={ isDisabled }
 				/>
 			</div>
@@ -211,11 +212,13 @@ export function VatForm( {
 					className="vat-form__expand-button"
 					checked={ isFormActive }
 					onChange={ toggleVatForm }
-					label={ sprintf(
+					label={
 						/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-						translate( 'Add %s details', { textOnly: true } ),
-						vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } )
-					) }
+						translate( 'Add %s details', {
+							textOnly: true,
+							args: [ vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } ) ],
+						} )
+					}
 					disabled={ isDisabled || Boolean( vatDetailsFromServer.id ) }
 				/>
 				{ countryCode === 'GB' && (
@@ -223,11 +226,13 @@ export function VatForm( {
 						className="vat-form__expand-button"
 						checked={ vatDetailsInForm.country === 'XI' }
 						onChange={ toggleNorthernIreland }
-						label={ sprintf(
+						label={
 							/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-							translate( 'Is %s for Northern Ireland?', { textOnly: true } ),
-							vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } )
-						) }
+							translate( 'Is %s for Northern Ireland?', {
+								textOnly: true,
+								args: [ vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } ) ],
+							} )
+						}
 						disabled={ isDisabled }
 					/>
 				) }
@@ -236,11 +241,13 @@ export function VatForm( {
 				<Field
 					id={ section + '-vat-organization' }
 					type="text"
-					label={ sprintf(
+					label={
 						/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-						translate( 'Organization for %s', { textOnly: true } ),
-						vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } )
-					) }
+						translate( 'Organization for %s', {
+							textOnly: true,
+							args: [ vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } ) ],
+						} )
+					}
 					value={ vatDetailsInForm.name ?? '' }
 					disabled={ isDisabled }
 					onChange={ ( newValue: string ) => {
@@ -253,11 +260,13 @@ export function VatForm( {
 				<Field
 					id={ section + '-vat-id' }
 					type="text"
-					label={ sprintf(
+					label={
 						/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-						translate( '%s ID', { textOnly: true } ),
-						vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } )
-					) }
+						translate( '%s ID', {
+							textOnly: true,
+							args: [ vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } ) ],
+						} )
+					}
 					value={ vatDetailsInForm.id ?? '' }
 					disabled={ isDisabled || Boolean( vatDetailsFromServer.id ) }
 					onChange={ ( newValue: string ) => {
@@ -272,11 +281,13 @@ export function VatForm( {
 				<Field
 					id={ section + '-vat-address' }
 					type="text"
-					label={ sprintf(
+					label={
 						/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
-						translate( 'Address for %s', { textOnly: true } ),
-						vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } )
-					) }
+						translate( 'Address for %s', {
+							textOnly: true,
+							args: [ vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } ) ],
+						} )
+					}
 					value={ vatDetailsInForm.address ?? '' }
 					autoComplete="address"
 					disabled={ isDisabled }
