@@ -12,6 +12,7 @@ type PatternActionBarProps = {
 	disableMoveUp?: boolean;
 	disableMoveDown?: boolean;
 	patternType: string;
+	isRemoveButtonTextOnly?: boolean;
 };
 
 const PatternActionBar = ( {
@@ -22,6 +23,7 @@ const PatternActionBar = ( {
 	disableMoveUp,
 	disableMoveDown,
 	patternType,
+	isRemoveButtonTextOnly,
 }: PatternActionBarProps ) => {
 	const translate = useTranslate();
 	return (
@@ -76,16 +78,18 @@ const PatternActionBar = ( {
 			<Button
 				className="pattern-action-bar__block pattern-action-bar__action"
 				role="menuitem"
-				label={ translate( 'Delete' ) }
+				label={ translate( 'Remove' ) }
 				onClick={ () => {
 					recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_delete_click', {
 						pattern_type: patternType,
 					} );
 					onDelete();
 				} }
-				icon={ close }
+				icon={ ! isRemoveButtonTextOnly ? close : null }
 				iconSize={ 23 }
-			/>
+			>
+				{ isRemoveButtonTextOnly ? translate( 'Remove' ) : null }
+			</Button>
 		</div>
 	);
 };

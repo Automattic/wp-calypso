@@ -21,7 +21,7 @@ import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign } from '../../analytics/record-design';
-import { SITE_TAGLINE, PLACEHOLDER_SITE_ID } from './constants';
+import { SITE_TAGLINE, PLACEHOLDER_SITE_ID, PATTERN_TYPES } from './constants';
 import useGlobalStylesUpgradeModal from './hooks/use-global-styles-upgrade-modal';
 import usePatternCategories from './hooks/use-pattern-categories';
 import usePatternsMapByCategory from './hooks/use-patterns-map-by-category';
@@ -33,9 +33,9 @@ import { useAllPatterns, useSectionPatterns } from './patterns-data';
 import ScreenCategoryList from './screen-category-list';
 import ScreenFooter from './screen-footer';
 import ScreenHeader from './screen-header';
-import ScreenHomepage from './screen-homepage';
 import ScreenMain from './screen-main';
 import ScreenPatternList from './screen-pattern-list';
+import ScreenSection from './screen-section';
 import { encodePatternId } from './utils';
 import withGlobalStylesProvider from './with-global-styles-provider';
 import type { Pattern, Category } from './types';
@@ -399,12 +399,8 @@ const PatternAssembler = ( {
 	};
 
 	const onMainItemSelect = ( name: string ) => {
-		if ( name === 'header' ) {
-			trackEventPatternAdd( 'header' );
-		} else if ( name === 'footer' ) {
-			trackEventPatternAdd( 'footer' );
-		} else if ( name === 'homepage' ) {
-			trackEventPatternAdd( 'section' );
+		if ( PATTERN_TYPES.includes( name ) ) {
+			trackEventPatternAdd( name );
 		}
 
 		recordTracksEvent( 'calypso_signup_pattern_assembler_main_item_select', { name } );
@@ -474,8 +470,8 @@ const PatternAssembler = ( {
 					/>
 				</NavigatorScreen>
 
-				<NavigatorScreen path="/homepage">
-					<ScreenHomepage
+				<NavigatorScreen path="/section">
+					<ScreenSection
 						patterns={ sections }
 						onAddSection={ onAddSection }
 						onReplaceSection={ onReplaceSection }
@@ -484,7 +480,7 @@ const PatternAssembler = ( {
 						onMoveDownSection={ onMoveDownSection }
 					/>
 				</NavigatorScreen>
-				<NavigatorScreen path="/homepage/patterns">
+				<NavigatorScreen path="/section/patterns">
 					{ isEnabled( 'pattern-assembler/categories' ) ? (
 						<ScreenCategoryList
 							categories={ categories }
