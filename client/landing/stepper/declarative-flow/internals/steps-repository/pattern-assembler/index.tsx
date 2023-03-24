@@ -4,8 +4,10 @@ import { StepContainer, WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding
 import {
 	__experimentalNavigatorProvider as NavigatorProvider,
 	__experimentalNavigatorScreen as NavigatorScreen,
+	withNotices,
 } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
+import classnames from 'classnames';
 import { useState, useRef, useMemo } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
@@ -24,6 +26,7 @@ import useGlobalStylesUpgradeModal from './hooks/use-global-styles-upgrade-modal
 import usePatternCategories from './hooks/use-pattern-categories';
 import usePatternsMapByCategory from './hooks/use-patterns-map-by-category';
 import NavigatorListener from './navigator-listener';
+import Notices, { getNoticeContent } from './notices/notices';
 import PatternAssemblerContainer from './pattern-assembler-container';
 import PatternLargePreview from './pattern-large-preview';
 import { useAllPatterns, useSectionPatterns } from './patterns-data';
@@ -36,13 +39,19 @@ import ScreenPatternList from './screen-pattern-list';
 import { encodePatternId } from './utils';
 import withGlobalStylesProvider from './with-global-styles-provider';
 import type { Pattern, Category } from './types';
-import type { Step } from '../../types';
+import type { StepProps } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { DesignRecipe, Design } from '@automattic/design-picker/src/types';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 import './style.scss';
 
-const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
+const PatternAssembler = ( {
+	navigation,
+	flow,
+	stepName,
+	noticeList,
+	noticeOperations,
+}: StepProps & withNotices.Props ) => {
 	const [ navigatorPath, setNavigatorPath ] = useState( '/' );
 	const [ header, setHeader ] = useState< Pattern | null >( null );
 	const [ footer, setFooter ] = useState< Pattern | null >( null );
@@ -51,6 +60,7 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const incrementIndexRef = useRef( 0 );
 	const [ activePosition, setActivePosition ] = useState( -1 );
+	const [ isPatternPanelListOpen, setIsPatternPanelListOpen ] = useState( false );
 	const { goBack, goNext, submit } = navigation;
 	const { applyThemeWithPatterns } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
@@ -185,6 +195,10 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 		} );
 	};
 
+	const showNotice = ( action: string, pattern: Pattern ) => {
+		noticeOperations.createNotice( { content: getNoticeContent( action, pattern ) } );
+	};
+
 	const getDesign = () =>
 		( {
 			...selectedDesign,
@@ -204,11 +218,29 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 	const updateHeader = ( pattern: Pattern | null ) => {
 		setHeader( pattern );
 		updateActivePatternPosition( -1 );
+		if ( pattern ) {
+			if ( header ) {
+				showNotice( 'replace', pattern );
+			} else {
+				showNotice( 'add', pattern );
+			}
+		} else if ( header ) {
+			showNotice( 'remove', header );
+		}
 	};
 
 	const updateFooter = ( pattern: Pattern | null ) => {
 		setFooter( pattern );
 		updateActivePatternPosition( sections.length );
+		if ( pattern ) {
+			if ( footer ) {
+				showNotice( 'replace', pattern );
+			} else {
+				showNotice( 'add', pattern );
+			}
+		} else if ( footer ) {
+			showNotice( 'remove', footer );
+		}
 	};
 
 	const replaceSection = ( pattern: Pattern ) => {
@@ -222,6 +254,7 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 				...sections.slice( sectionPosition + 1 ),
 			] );
 			updateActivePatternPosition( sectionPosition );
+			showNotice( 'replace', pattern );
 		}
 	};
 
@@ -235,9 +268,11 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 			},
 		] );
 		updateActivePatternPosition( sections.length );
+		showNotice( 'add', pattern );
 	};
 
 	const deleteSection = ( position: number ) => {
+		showNotice( 'remove', sections[ position ] );
 		setSections( [ ...sections.slice( 0, position ), ...sections.slice( position + 1 ) ] );
 		updateActivePatternPosition( position );
 	};
@@ -402,7 +437,16 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 	const onDeleteFooter = () => onSelect( 'footer', null );
 
 	const stepContent = (
-		<div className="pattern-assembler__wrapper" ref={ wrapperRef } tabIndex={ -1 }>
+		<div
+			className={ classnames( 'pattern-assembler__wrapper', {
+				'pattern-assembler__pattern-panel-list--is-open': isPatternPanelListOpen,
+			} ) }
+			ref={ wrapperRef }
+			tabIndex={ -1 }
+		>
+			{ isEnabled( 'pattern-assembler/notices' ) && (
+				<Notices noticeList={ noticeList } noticeOperations={ noticeOperations } />
+			) }
 			<NavigatorProvider className="pattern-assembler__sidebar" initialPath="/">
 				<NavigatorScreen path="/">
 					<ScreenMain
@@ -450,6 +494,7 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 							selectedPattern={ sectionPosition !== null ? sections[ sectionPosition ] : null }
 							onSelect={ onSelect }
 							wrapperRef={ wrapperRef }
+							onTogglePatternPanelList={ setIsPatternPanelListOpen }
 						/>
 					) : (
 						<ScreenPatternList
@@ -540,4 +585,4 @@ const PatternAssembler: Step = ( { navigation, flow, stepName } ) => {
 	);
 };
 
-export default withGlobalStylesProvider( PatternAssembler );
+export default withGlobalStylesProvider( withNotices( PatternAssembler ) );

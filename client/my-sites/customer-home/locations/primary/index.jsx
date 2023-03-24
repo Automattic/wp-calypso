@@ -131,6 +131,7 @@ const Primary = ( { cards, trackCard } ) => {
 			{ cards.map(
 				( card, index ) =>
 					cardComponents[ card ] &&
+					! cardComponents[ card ].isDisabled &&
 					createElement( cardComponents[ card ], {
 						key: card + index,
 						isIos: card === 'home-task-go-mobile-ios' ? true : null,

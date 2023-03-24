@@ -469,13 +469,16 @@ body.is-section-themes {
 	margin-top: 24px;
 	padding: 0;
 
-	@include break-small {
+	@include breakpoint-deprecated( ">660px" ) {
 		flex-direction: row;
+		gap: 0;
 	}
 
 	.themes-toolbar-group {
 		height: 28px;
 		max-width: 100%;
+		// See https://stackoverflow.com/a/66689926
+		min-width: 0;
 		flex: 1;
 	}
 
@@ -485,6 +488,7 @@ body.is-section-themes {
 		box-sizing: border-box;
 		height: 28px;
 		padding: 4px;
+		z-index: 1;
 
 		.segmented-control__item {
 			&.is-selected {

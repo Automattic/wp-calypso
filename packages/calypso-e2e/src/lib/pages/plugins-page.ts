@@ -48,6 +48,7 @@ const selectors = {
 
 	// Post install
 	installedPluginCard: '.thank-you__step',
+	installedfooterCards: '.thank-you__footer',
 	manageInstalledPluginButton: 'a:has-text("Manage plugin")',
 };
 
@@ -307,8 +308,18 @@ export class PluginsPage {
 	 * @param {string} expectedPluginName Name of the plugin to validate.
 	 */
 	async validateConfirmationPagePostInstall( expectedPluginName?: string ): Promise< void > {
-		await this.page.getByRole( 'heading', { name: "You're all set", exact: false } ).waitFor();
+		await this.page
+			.getByRole( 'heading', { name: "Congrats on your site's new superpowers!" } )
+			.click();
 
+		// Check for expiration text
+		await this.page.locator( selectors.installedPluginCard ).getByText( 'expire' ).waitFor();
+
+		// Check for the correct footer cards
+		await this.page.locator( selectors.installedfooterCards ).getByText( 'Keep growing' ).waitFor();
+		await this.page.locator( selectors.installedfooterCards ).getByText( 'Learn More' ).waitFor();
+
+		// Check for plugin name
 		if ( expectedPluginName ) {
 			await this.page
 				.locator( selectors.installedPluginCard )

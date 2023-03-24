@@ -69,7 +69,7 @@ class ThemeShowcase extends Component {
 
 	static propTypes = {
 		emptyContent: PropTypes.element,
-		tier: PropTypes.oneOf( [ '', 'free', 'premium' ] ),
+		tier: PropTypes.oneOf( [ '', 'free', 'premium', 'marketplace' ] ),
 		search: PropTypes.string,
 		pathName: PropTypes.string,
 		// Connected props
