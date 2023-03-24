@@ -199,6 +199,16 @@ export class ReaderSidebar extends Component {
 					link="/read/conversations"
 				/>
 
+				<SidebarItem
+					className={ ReaderSidebarHelper.itemLinkClass( '/read/notifications', path, {
+						'sidebar-streams__notifications': true,
+					} ) }
+					label={ translate( 'Notifications' ) }
+					onNavigate={ this.handleReaderSidebarNotificationsClicked }
+					materialIcon="notifications"
+					link="/read/notifications"
+				/>
+
 				{ ( this.props.subscribedLists?.length > 0 || isEnabled( 'reader/list-management' ) ) && (
 					<ReaderSidebarLists
 						lists={ this.props.subscribedLists }
@@ -236,16 +246,6 @@ export class ReaderSidebar extends Component {
 						customIcon={ <ReaderA8cConversationsIcon /> }
 					/>
 				) }
-
-				<SidebarItem
-					className={ ReaderSidebarHelper.itemLinkClass( '/read/notifications', path, {
-						'sidebar-streams__notifications': true,
-					} ) }
-					label={ translate( 'Notifications' ) }
-					onNavigate={ this.handleReaderSidebarNotificationsClicked }
-					materialIcon="notifications"
-					link="/read/notifications"
-				/>
 			</SidebarMenu>
 		);
 	}
