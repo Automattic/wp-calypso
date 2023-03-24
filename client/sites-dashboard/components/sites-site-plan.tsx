@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useSelector } from 'react-redux';
 import JetpackLogo from 'calypso/components/jetpack-logo';
-import isSiteStaging from 'calypso/state/selectors/is-site-staging';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { isNotAtomicJetpack } from '../utils';
 import { PlanRenewNag } from './sites-plan-renew-nag';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
@@ -31,10 +31,10 @@ interface SitePlanProps {
 const STAGING_PLAN_LABEL = 'Staging';
 
 export const SitePlan = ( { site, userId }: SitePlanProps ) => {
-	const isStaging = useSelector( ( state ) => isSiteStaging( state, site.ID ) );
+	const isWpcomStaging = useSelector( ( state ) => isSiteWpcomStaging( state, site.ID ) );
 	return (
 		<SitePlanContainer>
-			{ ! isStaging ? (
+			{ ! isWpcomStaging ? (
 				<>
 					{ isNotAtomicJetpack( site ) && ! site.plan?.expired && (
 						<SitePlanIcon>
