@@ -40,6 +40,9 @@ const MarketplaceThankYou = ( {
 		usePluginsThankYouData( pluginSlugs );
 	const [ themesSection, allThemesFetched, themesGoBackSection ] =
 		useThemesThankYouData( themeSlugs );
+	const [ hasPlugins, hasThemes ] = [ pluginSlugs, themeSlugs ].map(
+		( slugs ) => slugs.length !== 0
+	);
 
 	const areAllProductsFetched = allPluginsFetched && allThemesFetched;
 
@@ -115,6 +118,11 @@ const MarketplaceThankYou = ( {
 		[ translate ]
 	);
 	const additionalSteps = useMarketplaceAdditionalSteps();
+	const sections = [
+		...( hasThemes ? [ themesSection ] : [] ),
+		...( hasPlugins ? [ pluginsSection ] : [] ),
+		defaultThankYouFooter,
+	];
 
 	return (
 		<ThemeProvider theme={ theme }>
@@ -149,7 +157,7 @@ const MarketplaceThankYou = ( {
 					<ConfettiAnimation delay={ 1000 } />
 					<ThankYou
 						containerClassName="marketplace-thank-you"
-						sections={ [ themesSection, pluginsSection, defaultThankYouFooter ] }
+						sections={ sections }
 						showSupportSection={ false }
 						thankYouTitle={ translate( "Congrats on your site's new superpowers!" ) }
 						thankYouSubtitle={ translate(
