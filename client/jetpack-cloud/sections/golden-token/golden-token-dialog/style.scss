@@ -33,6 +33,7 @@ $tablet-width: 760px;
 	transition: 0.25s height cubic-bezier(0.59, 0.37, 0.18, 1.19) 0;
 	width: 90%;
 	will-change: height;
+	background: $white;
 
 	* {
 		box-sizing: border-box;
