@@ -30,6 +30,9 @@ import {
 	getMonthlyPlanByYearly,
 	hasMarketplaceProduct,
 	isDIFMProduct,
+	isAkismetProduct,
+	AKISMET_PLUS_YEARLY_PRODUCTS,
+	AKISTMET_PLUS_MONTHLY_PRODUCTS,
 } from '@automattic/calypso-products';
 import { Spinner, Button, Card, CompactCard, ProductIcon, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
@@ -277,7 +280,9 @@ class ManagePurchase extends Component {
 			! isComplete( purchase ) &&
 			! isP2Plus( purchase );
 		const isUpgradeableProduct =
-			! isPlan( purchase ) && JETPACK_BACKUP_T1_PRODUCTS.includes( purchase.productSlug );
+			! isPlan( purchase ) &&
+			( JETPACK_BACKUP_T1_PRODUCTS.includes( purchase.productSlug ) ||
+				isAkismetProduct( { product_slug: purchase.productSlug } ) );
 
 		if ( ! isUpgradeablePlan && ! isUpgradeableProduct ) {
 			return null;
@@ -373,11 +378,40 @@ class ManagePurchase extends Component {
 		const isUpgradeableBackupProduct = JETPACK_BACKUP_T1_PRODUCTS.includes( purchase.productSlug );
 		const isUpgradeableSecurityPlan = JETPACK_SECURITY_T1_PLANS.includes( purchase.productSlug );
 
+		if ( isAkismetProduct( { product_slug: purchase.productSlug } ) ) {
+			return this.getAkismetUpgradeUrl();
+		}
+
 		if ( isUpgradeableBackupProduct || isUpgradeableSecurityPlan ) {
 			return `/plans/storage/${ siteSlug }`;
 		}
 
 		return `/plans/${ siteSlug }`;
+	}
+
+	// For the first Iteration of Calypso Akismet checkout we are only suggesting
+	// for immediate upgrades to the next plan. We will change this in the future
+	// with appropriate page.
+	getAkismetUpgradeUrl() {
+		const { purchase } = this.props;
+
+		const monthlyIndex = AKISTMET_PLUS_MONTHLY_PRODUCTS.indexOf( purchase.productSlug );
+		if ( monthlyIndex === AKISTMET_PLUS_MONTHLY_PRODUCTS.length - 1 ) {
+			return 'htpps://akismet.com/enterprise';
+		} else if ( monthlyIndex !== -1 ) {
+			const nextPlan = AKISTMET_PLUS_MONTHLY_PRODUCTS[ monthlyIndex + 1 ];
+			return `/checkout/akismet/${ nextPlan }`;
+		}
+
+		const yearlyIndex = AKISMET_PLUS_YEARLY_PRODUCTS.indexOf( purchase.productSlug );
+		if ( yearlyIndex === AKISMET_PLUS_YEARLY_PRODUCTS.length - 1 ) {
+			return 'htpps://akismet.com/enterprise';
+		} else if ( yearlyIndex !== -1 ) {
+			const nextPlan = AKISMET_PLUS_YEARLY_PRODUCTS[ yearlyIndex + 1 ];
+			return `/checkout/akismet/${ nextPlan }`;
+		}
+
+		return 'htpps://akismet.com/enterprise';
 	}
 
 	renderUpgradeNavItem() {
