@@ -496,7 +496,7 @@ export type RawDomainContactValidationResponse =
 			messages_simple: string[];
 	  };
 
-export interface CountryListItem {
+export interface CountryListItemBase {
 	code: string;
 	name: string;
 	has_postal_codes?: boolean;
@@ -504,8 +504,14 @@ export interface CountryListItem {
 	tax_needs_subdivision?: boolean;
 	tax_needs_organization?: boolean;
 	tax_needs_address?: boolean;
-	vat_supported: boolean;
+}
+export interface CountryListItemWithoutVat extends CountryListItemBase {
+	vat_supported: false;
+}
+export interface CountryListItemWithVat extends CountryListItemBase {
+	vat_supported: true;
 	tax_country_codes: string[];
 }
+export type CountryListItem = CountryListItemWithVat | CountryListItemWithoutVat;
 
 export type SitelessCheckoutType = 'jetpack' | 'akismet' | undefined;
