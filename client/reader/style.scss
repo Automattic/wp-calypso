@@ -366,7 +366,9 @@
 	color: var(--studio-white);
 	padding-top: 10px;
 	height: 78px;
-
+	.x-nav-link__logo svg path {
+		fill: var(--studio-white);
+	}
 	.x-nav {
 		padding-top: 10px;
 		padding-left: 16px;
