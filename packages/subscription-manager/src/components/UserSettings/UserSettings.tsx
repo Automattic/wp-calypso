@@ -17,6 +17,7 @@ import type {
 	DeliveryWindowDayType,
 	DeliveryWindowHourType,
 } from '@automattic/data-stores/src/reader/types';
+import type { AppState } from 'calypso/types';
 
 type SubscriptionUserSettings = Partial< {
 	mail_option: EmailFormatType;
@@ -124,7 +125,7 @@ const UserSettings = ( { value = {}, loading, userId }: UserSettingsProps ) => {
 	);
 };
 
-const mapStateToProps = ( state ) => {
+const mapStateToProps = ( state: AppState ) => {
 	return {
 		userId: getCurrentUserId( state ),
 	};
