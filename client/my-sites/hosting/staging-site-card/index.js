@@ -22,6 +22,7 @@ import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/
 import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 import { DeleteStagingSite } from './delete-staging-site';
 import { useDeleteStagingSite } from './use-delete-staging-site';
+import { useHasSiteAccess } from './use-has-site-access';
 
 const stagingSiteAddFailureNoticeId = 'staging-site-add-failure';
 
@@ -81,6 +82,7 @@ export const StagingSiteCard = ( {
 	const stagingSite = useMemo( () => {
 		return stagingSites && stagingSites.length ? stagingSites[ 0 ] : [];
 	}, [ stagingSites ] );
+	const hasSiteAccess = useHasSiteAccess( stagingSite.id );
 
 	const showAddStagingSite = ! isLoadingStagingSites && stagingSites?.length === 0;
 	const showManageStagingSite = ! isLoadingStagingSites && stagingSites?.length > 0;
@@ -259,9 +261,29 @@ export const StagingSiteCard = ( {
 		);
 	};
 
+	const getAccessError = () => {
+		return (
+			<Notice status="is-error" showDismiss={ false }>
+				{ translate(
+					'Unable to access the staging site {{a}}%(stagingSiteName)s{{/a}}. Please contact with the site owner.',
+					{
+						args: {
+							stagingSiteName: stagingSite.url,
+						},
+						components: {
+							a: <a href={ stagingSite.url } />,
+						},
+					}
+				) }
+			</Notice>
+		);
+	};
+
 	let stagingSiteCardContent;
 	if ( ! isLoadingStagingSites && loadingError ) {
 		stagingSiteCardContent = getLoadingErrorContent();
+	} else if ( ! wasCreating && ! hasSiteAccess ) {
+		stagingSiteCardContent = getAccessError();
 	} else if ( addingStagingSite || isTrasferInProgress || isReverting ) {
 		stagingSiteCardContent = getTransferringStagingSiteContent();
 	} else if ( showManageStagingSite && isStagingSiteTransferComplete ) {
