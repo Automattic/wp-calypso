@@ -166,6 +166,7 @@ function CountryCodeInput( {
 	onChange: ( event: React.ChangeEvent< HTMLSelectElement > ) => void;
 } ) {
 	const countries = useCountryList();
+	const translate = useTranslate();
 
 	// Some historical country codes were set to 'UK', but that is not a valid
 	// country code. It should read 'GB'.
@@ -185,9 +186,10 @@ function CountryCodeInput( {
 			{ countries
 				.filter( ( country ) => country.vat_supported )
 				.map( ( country ) => {
+					const name = country.code === 'XI' ? translate( 'Northern Ireland' ) : country.name;
 					return country.tax_country_codes.map( ( countryCode ) => (
 						<option key={ countryCode } value={ countryCode }>
-							{ countryCode }
+							{ name }
 						</option>
 					) );
 				} ) }
