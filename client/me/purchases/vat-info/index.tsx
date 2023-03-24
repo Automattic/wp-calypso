@@ -1,6 +1,6 @@
 import { CompactCard, Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -158,6 +158,20 @@ function VatForm() {
 	);
 }
 
+const isVatSupported = ( country: CountryListItem ): country is CountryListItemWithVat =>
+	country.vat_supported;
+
+function getUniqueCountries< C extends CountryListItem >( countries: C[] ): C[] {
+	const unique: C[] = [];
+	countries.forEach( ( country ) => {
+		if ( unique.map( ( x ) => x.code ).includes( country.code ) ) {
+			return;
+		}
+		unique.push( country );
+	} );
+	return unique;
+}
+
 function CountryCodeInput( {
 	name,
 	disabled,
@@ -178,9 +192,10 @@ function CountryCodeInput( {
 		value = 'GB';
 	}
 
-	const isVatSupported = ( country: CountryListItem ): country is CountryListItemWithVat =>
-		country.vat_supported;
-	const vatCountries = countries.filter( isVatSupported );
+	const vatCountries = useMemo(
+		() => getUniqueCountries( countries.filter( isVatSupported ) ),
+		[ countries ]
+	);
 	return (
 		<FormSelect
 			name={ name }
@@ -191,12 +206,14 @@ function CountryCodeInput( {
 		>
 			<option value="">--</option>
 			{ vatCountries.map( ( country ) => {
-				const name = country.code === 'XI' ? translate( 'Northern Ireland' ) : country.name;
-				return country.tax_country_codes.map( ( countryCode ) => (
-					<option key={ countryCode } value={ countryCode }>
-						{ countryCode } - { name }
-					</option>
-				) );
+				return country.tax_country_codes.map( ( countryCode ) => {
+					const name = countryCode === 'XI' ? translate( 'Northern Ireland' ) : country.name;
+					return (
+						<option key={ countryCode } value={ countryCode }>
+							{ countryCode } - { name }
+						</option>
+					);
+				} );
 			} ) }
 		</FormSelect>
 	);
