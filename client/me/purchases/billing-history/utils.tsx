@@ -93,18 +93,16 @@ export function renderTransactionAmount(
 		: { taxName: 'tax' };
 
 	const taxAmount = addingTax
-		? translate( '(+%(taxAmount)s ', {
-				args: { taxAmount: transaction.tax },
-				comment: 'taxAmount is a localized price, like $12.34',
-		  } ) +
-		  countryTaxInfo.taxName +
-		  ')'
-		: translate( '(includes %(taxAmount)s ', {
-				args: { taxAmount: transaction.tax },
-				comment: 'taxAmount is a localized price, like $12.34',
-		  } ) +
-		  countryTaxInfo.taxName +
-		  ')';
+		? translate( '(+%(taxAmount)s %(taxName)s)', {
+				args: { taxAmount: transaction.tax, taxName: countryTaxInfo.taxName },
+				comment:
+					'taxAmount is a localized price, like $12.34 | taxName is a localized tax, like VAT or GST',
+		  } )
+		: translate( '(includes %(taxAmount)s %(taxName)s)', {
+				args: { taxAmount: transaction.tax, taxName: countryTaxInfo.taxName },
+				comment:
+					'taxAmount is a localized price, like $12.34 | taxName is a localized tax, like VAT or GST',
+		  } );
 
 	return (
 		<Fragment>
