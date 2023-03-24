@@ -1,4 +1,5 @@
 import apiFetch, { APIFetchOptions } from '@wordpress/api-fetch';
+import cookie from 'cookie';
 import wpcomRequest from 'wpcom-proxy-request';
 
 type callApiParams = {
@@ -10,11 +11,7 @@ type callApiParams = {
 
 // Get cookie named subkey
 const getSubkey = () => {
-	const subkey = document.cookie
-		?.split( ';' )
-		?.map( ( c ) => c.trim() )
-		?.find( ( c ) => c.startsWith( 'subkey=' ) )
-		?.split( '=' )[ 1 ];
+	const subkey = cookie.parse( document.cookie )?.subkey;
 	return subkey;
 };
 
