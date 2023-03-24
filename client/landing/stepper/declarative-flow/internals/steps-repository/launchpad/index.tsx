@@ -1,8 +1,8 @@
 import { StepContainer } from '@automattic/onboarding';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useLaunchpad } from 'calypso/data/sites/use-launchpad';
@@ -14,7 +14,6 @@ import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
-import { saveSiteSettings } from 'calypso/state/site-settings/actions';
 import { useQuery } from '../../../../hooks/use-query';
 import StepContent from './step-content';
 import { areLaunchpadTasksCompleted } from './task-helper';
@@ -41,6 +40,7 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 	const isSiteLaunched = site?.launch_status === 'launched' || false;
 	const recordSignupComplete = useRecordSignupComplete( flow );
 	const dispatch = useDispatch();
+	const { saveSiteSettings } = useDispatch( SITE_STORE );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const fetchingSiteError = useSelect(
