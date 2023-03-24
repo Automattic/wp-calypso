@@ -7,7 +7,7 @@ interface Props {
 	viewportWidth?: number;
 	viewportHeight?: number;
 	minHeight?: number;
-	maxHeight?: string | number;
+	maxHeight?: 'none' | number;
 	maxHeightFor100vh?: number;
 	placeholder?: JSX.Element;
 }

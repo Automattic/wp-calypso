@@ -675,7 +675,9 @@ export default function CheckoutMain( {
 	const cartHasSearchProduct = useMemo(
 		() =>
 			responseCart.products.some( ( { product_slug } ) =>
-				JETPACK_SEARCH_PRODUCTS.includes( product_slug as typeof JETPACK_SEARCH_PRODUCTS[ number ] )
+				JETPACK_SEARCH_PRODUCTS.includes(
+					product_slug as ( typeof JETPACK_SEARCH_PRODUCTS )[ number ]
+				)
 			),
 		[ responseCart.products ]
 	);

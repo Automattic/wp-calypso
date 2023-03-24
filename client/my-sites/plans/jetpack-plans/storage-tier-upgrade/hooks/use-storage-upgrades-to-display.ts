@@ -14,7 +14,7 @@ const useStorageUpgradesToDisplay = ( siteId: number ): SelectorProduct[] => {
 	return useMemo( () => {
 		const purchasedAddOns = purchases.filter( ( { productSlug } ) =>
 			JETPACK_BACKUP_ADDON_MONTHLY.includes(
-				productSlug as typeof JETPACK_BACKUP_ADDON_MONTHLY[ number ]
+				productSlug as ( typeof JETPACK_BACKUP_ADDON_MONTHLY )[ number ]
 			)
 		);
 
@@ -24,13 +24,13 @@ const useStorageUpgradesToDisplay = ( siteId: number ): SelectorProduct[] => {
 		if ( purchasedAddOns.length > 0 ) {
 			const addOnsIndices = purchasedAddOns.map( ( { productSlug } ) =>
 				JETPACK_BACKUP_ADDON_MONTHLY.indexOf(
-					productSlug as typeof JETPACK_BACKUP_ADDON_MONTHLY[ number ]
+					productSlug as ( typeof JETPACK_BACKUP_ADDON_MONTHLY )[ number ]
 				)
 			);
 
 			upgrades = upgrades.filter( ( { productSlug } ) => {
 				const index = JETPACK_BACKUP_ADDON_MONTHLY.indexOf(
-					productSlug as typeof JETPACK_BACKUP_ADDON_MONTHLY[ number ]
+					productSlug as ( typeof JETPACK_BACKUP_ADDON_MONTHLY )[ number ]
 				);
 
 				return index === -1 || index > Math.max( ...addOnsIndices );

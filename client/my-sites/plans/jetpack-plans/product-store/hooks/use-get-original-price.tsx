@@ -15,7 +15,7 @@ export const useGetOriginalPrice = ( siteId: number | null ) => {
 			// Jetpack CRM price won't come from the API, so we need to hard-code it for now.
 			if (
 				JETPACK_CRM_PRODUCTS.includes(
-					product.productSlug as typeof JETPACK_CRM_PRODUCTS[ number ]
+					product.productSlug as ( typeof JETPACK_CRM_PRODUCTS )[ number ]
 				)
 			) {
 				return product.displayPrice || -1;

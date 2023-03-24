@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
 import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
@@ -15,6 +16,7 @@ import {
 	hasActivatedTheme,
 } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import useIsValidThankYouTheme from './use-is-valid-thank-you-theme';
 
 const ThemeSectionContainer = styled.div`
 	display: flex;
@@ -39,6 +41,7 @@ const ThemeSectionImageContainer = styled.div`
 `;
 
 const ThemeSectionImage = styled.img`
+	width: 100%;
 	border-radius: 13px;
 `;
 
@@ -97,6 +100,8 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 	);
 	const siteUrl = useSelector( ( state ) => getSiteUrl( state, siteId ) ) ?? undefined;
 
+	const isValidThankyouSectionTheme = useIsValidThankYouTheme( theme, siteId );
+
 	const sendTrackEvent = useCallback(
 		( name: string ) => {
 			recordTracksEvent( name, {
@@ -117,6 +122,7 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 
 	return (
 		<ThemeSectionContainer>
+			<QueryActiveTheme siteId={ siteId } />
 			<AutoLoadingHomepageModal source="details" />
 			<ThemeSectionImageContainer>
 				<ThemeSectionImage
@@ -145,6 +151,7 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 						busy={ ( isActivating && ! hasActivated ) || isLoading }
 						onClick={ handleActivateTheme }
 						href={ isActive ? customizeUrl : undefined }
+						disabled={ ! isValidThankyouSectionTheme }
 					>
 						{ isActive
 							? translate( 'Customize this design' )
@@ -152,7 +159,7 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 					</ThemeButton>
 
 					{ isActive ? (
-						<ThemeButton href={ siteUrl }>
+						<ThemeButton href={ siteUrl } disabled={ ! isValidThankyouSectionTheme }>
 							<Gridicon size={ 18 } icon="external" />
 							{ translate( 'View site' ) }
 						</ThemeButton>
