@@ -1447,7 +1447,7 @@ export default connect(
 		const isCurrentUserPaid = isUserPaid( state );
 		const theme = getCanonicalTheme( state, siteId, themeId );
 		const siteIdOrWpcom = siteId || 'wpcom';
-		const error = theme ? false : getThemeRequestErrors( state, themeId, siteIdOrWpcom );
+		const error = theme ? false : getThemeRequestErrors( state, themeId, siteIdOrWpcom ) ?? true;
 		const englishUrl = 'https://wordpress.com' + getThemeDetailsUrl( state, themeId );
 
 		const isAtomic = isSiteAutomatedTransfer( state, siteId );
@@ -1466,7 +1466,7 @@ export default connect(
 			...theme,
 			themeId,
 			price: getPremiumThemePrice( state, themeId, siteId ),
-			error: error || ! theme,
+			error,
 			siteId,
 			siteSlug,
 			backPath,
