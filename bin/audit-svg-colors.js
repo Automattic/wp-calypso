@@ -18,6 +18,23 @@ const PALETTE = require( '@automattic/color-studio' );
 const chroma = require( 'chroma-js' );
 
 /**
+ * Native Sort - replacement of ._sortBy Lodash function
+ *
+ * @returns Sorted array. The native sort modifies the array in place. So we use `.concat()` to
+ *  copy the array, then sort.
+ */
+const sortBy = () => {
+	return ( a, b ) => {
+		if ( a.to.name > b.to.name ) {
+			return 1;
+		} else if ( b.to.name > a.to.name ) {
+			return -1;
+		}
+		return 0;
+	};
+};
+
+/**
  * Palette color subsets
  */
 
@@ -35,64 +52,34 @@ const pickBy = ( obj, fn ) =>
 		.filter( ( key ) => fn( obj[ key ], key ) )
 		.reduce( ( acc, key ) => ( ( acc[ key ] = obj[ key ] ), acc ), {} );
 
-/**
- * Native Sort - replacement of ._sortBy Lodash function
- *
- * @param {*} key
- * @returns Sorted array. The native sort modifies the array in place. So we use `.concat()` to
- *  copy the array, then sort.
- */
-const sortBy = ( key ) => {
-	return ( a, b ) => {
-		if ( a[ key ] > b[ key ] ) {
-			return 1;
-		} else if ( b[ key ] > a[ key ] ) {
-			return -1;
-		}
-		return 0;
-	};
-};
-
 // The subset of palette colors allowed in illustrations
-const PALETTE_ILLUSTRATION_COLORS = () => {
-	if ( typeof PALETTE.colors === 'object' && PALETTE.colors != null ) {
-		pickBy( PALETTE.colors, ( colorValue, colorName ) => {
+const PALETTE_ILLUSTRATION_COLORS = PALETTE?.colors
+	? pickBy( PALETTE.colors, ( colorValue, colorName ) => {
 			// Avoid using pure black
 			if ( colorValue === '#000' ) {
 				return;
 			}
 			// Avoid specific colors for illustration use
 			return ! colorName.startsWith( 'Simplenote Blue' );
-		} );
-	} else {
-		return {};
-	}
-};
-
-//
-/*const PALETTE_ILLUSTRATION_COLORS = pickBy( PALETTE.colors, ( colorValue, colorName ) => {
-	// Avoid using pure black
-	if ( colorValue === '#000' ) {
-		return;
-	}
-	// Avoid specific colors for illustration use
-	return ! colorName.startsWith( 'Simplenote Blue' );
-} );*/
+	  } )
+	: {};
 
 // The subset of palette colors used in app-related images is slightly wider
 // than what we allow for in illustration use (the above)
-const PALETTE_APP_COLORS = pickBy( PALETTE.colors, ( colorValue, colorName ) => {
-	// Avoid using pure black
-	if ( colorValue === '#000' ) {
-		return;
-	}
-	// Don’t use brand colors for any WordPress.com app images
-	return ! (
-		colorName.startsWith( 'Simplenote Blue' ) ||
-		colorName.startsWith( 'WooCommerce Purple' ) ||
-		colorName.startsWith( 'WordPress Blue' )
-	);
-} );
+const PALETTE_APP_COLORS = PALETTE?.colors
+	? pickBy( PALETTE.colors, ( colorValue, colorName ) => {
+			// Avoid using pure black
+			if ( colorValue === '#000' ) {
+				return;
+			}
+			// Don’t use brand colors for any WordPress.com app images
+			return ! (
+				colorName.startsWith( 'Simplenote Blue' ) ||
+				colorName.startsWith( 'WooCommerce Purple' ) ||
+				colorName.startsWith( 'WordPress Blue' )
+			);
+	  } )
+	: {};
 
 // Making sure both sets contain only unique color values
 // (the palette defines aliases for some colors)
@@ -211,20 +198,22 @@ SVG_FILES_TO_PROCESS.forEach( ( imagePath ) => {
 	REPLACEMENT_RULES.push( {
 		file: imagePath,
 		preset: targetPreset,
-		rules: colorValuesToReplace.map( ( value ) => {
-			const replacementValue = findClosestColor( value, targetValues );
-			const replacementName = findPaletteColorName( replacementValue );
+		rules: colorValuesToReplace
+			.filter( ( val ) => val !== 'null' )
+			.map( ( value ) => {
+				const replacementValue = findClosestColor( value, targetValues );
+				const replacementName = findPaletteColorName( replacementValue );
 
-			return {
-				from: {
-					value,
-				},
-				to: {
-					value: replacementValue,
-					name: replacementName,
-				},
-			};
-		} ),
+				return {
+					from: {
+						value,
+					},
+					to: {
+						value: replacementValue,
+						name: replacementName,
+					},
+				};
+			} ),
 	} );
 } );
 
@@ -300,20 +289,14 @@ function findClosestColor( value, targetValues ) {
 }
 
 function findPaletteColorName( value ) {
-	let name;
-
 	// Iterating from right to make sure color name aliases aren’t caught
-	if ( PALETTE.colors ) {
-		Object.keys( PALETTE.colors )
-			.reverse()
-			.forEach( ( paletteColorName ) => {
-				if ( PALETTE.colors[ paletteColorName ] === value ) {
-					name = paletteColorName;
-					return false;
-				}
-			} );
-	}
-
+	const name = PALETTE?.colors
+		? Object.keys( PALETTE.colors )
+				.reverse()
+				.find( ( paletteColorName ) => {
+					return PALETTE.colors[ paletteColorName ] === value;
+				} )
+		: {};
 	return name;
 }
 
@@ -344,7 +327,7 @@ function formatReplacementRules( rules ) {
     to copy the array, then sort.*/
 	return rules
 		.concat()
-		.sort( sortBy( 'to.name' ) )
+		.sort( sortBy() )
 		.map( ( rule ) => {
 			const valueFrom = rule.from.value.padEnd( 7 );
 			const valueTo = rule.to.value.padEnd( 7 );
