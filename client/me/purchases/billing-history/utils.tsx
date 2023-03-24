@@ -84,11 +84,13 @@ export function renderTransactionAmount(
 		return transaction.amount;
 	}
 
-	const countryTaxInfo =
-		translate instanceof Function &&
-		getVatVendorInfo( transaction.tax_country_code, transaction.date, translate )
-			? getVatVendorInfo( transaction.tax_country_code, transaction.date, translate )
-			: { taxName: 'tax' };
+	const countryTaxInfo = getVatVendorInfo(
+		transaction.tax_country_code,
+		transaction.date,
+		translate
+	)
+		? getVatVendorInfo( transaction.tax_country_code, transaction.date, translate )
+		: { taxName: 'tax' };
 
 	const taxAmount = addingTax
 		? translate( '(+%(taxAmount)s ', {
