@@ -3,7 +3,8 @@
  * External dependencies
  */
 import { getSubkey } from '@automattic/data-stores/src/reader/helpers';
-import { useTranslate, LocalizeProps } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
@@ -13,41 +14,46 @@ export type SubscriptionManagerContainerProps = {
 	children?: React.ReactNode;
 };
 
-const getEmailAddress = () => {
-	const subkey = getSubkey();
+const useSubscriberEmailAddress = () => {
+	return useMemo( () => {
+		const subkey = getSubkey();
 
-	if ( ! subkey ) {
-		return null;
-	}
+		if ( ! subkey ) {
+			return null;
+		}
 
-	const decodedSubkeyValue = decodeURIComponent( subkey );
+		const decodedSubkeyValue = decodeURIComponent( subkey );
 
-	const firstPeriodIndex = decodedSubkeyValue.indexOf( '.' );
-	if ( firstPeriodIndex === -1 ) {
-		return null;
-	}
+		const firstPeriodIndex = decodedSubkeyValue.indexOf( '.' );
+		if ( firstPeriodIndex === -1 ) {
+			return null;
+		}
 
-	const emailAddress = decodedSubkeyValue.slice( firstPeriodIndex + 1 );
-	return emailAddress;
+		const emailAddress = decodedSubkeyValue.slice( firstPeriodIndex + 1 );
+		return emailAddress;
+	}, [] );
 };
 
-const getSubHeaderText = ( translate: LocalizeProps[ 'translate' ] ) => {
-	const emailAddress = getEmailAddress();
-	if ( emailAddress ) {
-		return translate(
-			"Manage the WordPress.com newsletter and blogs you've subscribed to with {{span}}%(emailAddress)s{{/span}}.",
-			{
-				args: {
-					emailAddress: emailAddress,
-				},
-				components: {
-					span: <span className="email-address" />,
-				},
-			}
-		);
-	}
+const useSubHeaderText = () => {
+	const emailAddress = useSubscriberEmailAddress();
+	const translate = useTranslate();
 
-	return translate( 'Manage your WordPress.com newsletter and blog subscriptions.' );
+	return useMemo( () => {
+		if ( emailAddress ) {
+			return translate(
+				"Manage the WordPress.com newsletter and blogs you've subscribed to with {{span}}%(emailAddress)s{{/span}}.",
+				{
+					args: {
+						emailAddress: emailAddress,
+					},
+					components: {
+						span: <span className="email-address" />,
+					},
+				}
+			);
+		}
+		return translate( 'Manage your WordPress.com newsletter and blog subscriptions.' );
+	}, [ emailAddress, translate ] );
 };
 
 const SubscriptionManagerContainer = ( { children }: SubscriptionManagerContainerProps ) => {
@@ -59,7 +65,7 @@ const SubscriptionManagerContainer = ( { children }: SubscriptionManagerContaine
 			<FormattedHeader
 				brandFont
 				headerText={ translate( 'Subscription management' ) }
-				subHeaderText={ getSubHeaderText( translate ) }
+				subHeaderText={ useSubHeaderText() }
 				align="left"
 			/>
 			{ children }
