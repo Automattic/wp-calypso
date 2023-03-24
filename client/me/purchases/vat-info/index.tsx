@@ -194,7 +194,7 @@ function CountryCodeInput( {
 				const name = country.code === 'XI' ? translate( 'Northern Ireland' ) : country.name;
 				return country.tax_country_codes.map( ( countryCode ) => (
 					<option key={ countryCode } value={ countryCode }>
-						{ name }
+						{ countryCode } - { name }
 					</option>
 				) );
 			} ) }
