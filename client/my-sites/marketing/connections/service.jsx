@@ -4,7 +4,7 @@ import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { isEqual, find, some, get } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, cloneElement } from 'react';
 import { connect } from 'react-redux';
 import FoldableCard from 'calypso/components/foldable-card';
 import Notice from 'calypso/components/notice';
@@ -502,6 +502,13 @@ export class SharingService extends Component {
 		return get( this, 'props.service.ID' ) === 'mailchimp';
 	};
 
+	isMastodonService = () => {
+		if ( ! config.isEnabled( 'mastodon' ) ) {
+			return false;
+		}
+		return get( this, 'props.service.ID' ) === 'mastodon';
+	};
+
 	isPicasaMigration( status ) {
 		if ( status === 'must-disconnect' && get( this, 'props.service.ID' ) === 'google_photos' ) {
 			return true;
@@ -518,6 +525,8 @@ export class SharingService extends Component {
 			'is-open': this.state.isOpen,
 		} );
 		const accounts = this.state.isSelectingAccount ? this.props.availableExternalAccounts : [];
+		const showLinkedInNotice =
+			'linkedin' === this.props.service.ID && some( connections, { status: 'must_reauth' } );
 
 		const header = (
 			<div>
@@ -533,7 +542,7 @@ export class SharingService extends Component {
 						numberOfConnections={ this.getConnections().length }
 					/>
 				</div>
-				{ 'linkedin' === this.props.service.ID && some( connections, { status: 'must_reauth' } ) && (
+				{ showLinkedInNotice && (
 					<Notice isCompact status="is-error" className="sharing-service__notice">
 						{ this.props.translate(
 							'Time to reauthenticate! Some changes to LinkedIn mean that you need to re-enable Jetpack Social ' +
@@ -572,14 +581,22 @@ export class SharingService extends Component {
 					expanded={ this.shouldBeExpanded( connectionStatus ) }
 					compact
 					summary={ action }
-					expandedSummary={ action }
+					expandedSummary={
+						this.isMastodonService() ? cloneElement( action, { isExpanded: true } ) : action
+					}
 				>
 					<div
 						className={ classnames( 'sharing-service__content', {
 							'is-placeholder': this.props.isFetching,
 						} ) }
 					>
-						<ServiceExamples service={ this.props.service } />
+						<ServiceExamples
+							service={ this.props.service }
+							action={ this.performAction }
+							connectAnother={ this.connectAnother }
+							isConnecting={ this.state.isConnecting }
+							connections={ connections }
+						/>
 
 						{ this.isPicasaMigration( connectionStatus ) && <PicasaMigration /> }
 

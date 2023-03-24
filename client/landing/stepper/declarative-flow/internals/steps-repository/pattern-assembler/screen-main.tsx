@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { __experimentalItemGroup as ItemGroup } from '@wordpress/components';
-import { header, footer, layout, styles, typography } from '@wordpress/icons';
+import { header, footer, layout, color, typography } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { NavigationButtonAsItem } from './navigator-buttons';
 import NavigatorHeader from './navigator-header';
@@ -24,7 +24,7 @@ const ScreenMain = ( { shouldUnlockGlobalStyles, onSelect, onContinueClick }: Pr
 				) }
 				hideBack
 			/>
-			<div className="screen-container__body screen-container__body--no-padding">
+			<div className="screen-container__body screen-container__body--align-sides">
 				<ItemGroup>
 					<NavigationButtonAsItem
 						path="/header"
@@ -35,6 +35,14 @@ const ScreenMain = ( { shouldUnlockGlobalStyles, onSelect, onContinueClick }: Pr
 						<span className="pattern-layout__list-item-text">{ translate( 'Header' ) }</span>
 					</NavigationButtonAsItem>
 					<NavigationButtonAsItem
+						path="/section"
+						icon={ layout }
+						aria-label={ translate( 'Sections' ) }
+						onClick={ () => onSelect( 'section' ) }
+					>
+						<span className="pattern-layout__list-item-text">{ translate( 'Sections' ) }</span>
+					</NavigationButtonAsItem>
+					<NavigationButtonAsItem
 						path="/footer"
 						icon={ footer }
 						aria-label={ translate( 'Footer' ) }
@@ -42,19 +50,11 @@ const ScreenMain = ( { shouldUnlockGlobalStyles, onSelect, onContinueClick }: Pr
 					>
 						<span className="pattern-layout__list-item-text">{ translate( 'Footer' ) }</span>
 					</NavigationButtonAsItem>
-					<NavigationButtonAsItem
-						path="/homepage"
-						icon={ layout }
-						aria-label={ translate( 'Homepage' ) }
-						onClick={ () => onSelect( 'homepage' ) }
-					>
-						<span className="pattern-layout__list-item-text">{ translate( 'Homepage' ) }</span>
-					</NavigationButtonAsItem>
 					{ isEnabled( 'pattern-assembler/color-and-fonts' ) && (
 						<>
 							<NavigationButtonAsItem
 								path="/color-palettes"
-								icon={ styles }
+								icon={ color }
 								aria-label={ translate( 'Colors' ) }
 								onClick={ () => onSelect( 'color-palettes' ) }
 							>

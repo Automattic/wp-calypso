@@ -149,7 +149,9 @@ const itemsReducer = ( state = {}, action ) => {
 
 			return Object.assign( newState, {
 				[ urlKey ]: merge(
-					{ feed_URL: actualFeedUrl },
+					{
+						feed_URL: actualFeedUrl,
+					},
 					state[ urlKey ],
 					action.payload.follow,
 					newValues

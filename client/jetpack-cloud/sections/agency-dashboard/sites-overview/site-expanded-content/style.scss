@@ -33,6 +33,8 @@ $color-yellow: var(--studio-yellow-50);
 .expanded-card__header {
 	font-size: 0.875rem;
 	color: var(--studio-gray-80);
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .expanded-card__empty-content {
@@ -56,11 +58,14 @@ $color-yellow: var(--studio-yellow-50);
 
 .site-expanded-content__card-content-column {
 	flex: auto;
+	max-width: 100%;
 }
 
 .site-expanded-content__card-content-score {
 	font-weight: 500;
 	font-size: 1.25rem;
+	overflow: hidden;
+	text-overflow: ellipsis;
 
 	span {
 		font-size: 1rem;
@@ -100,11 +105,13 @@ $color-yellow: var(--studio-yellow-50);
 .site-expanded-content__card-content-score-title {
 	font-size: 0.75rem;
 	color: var(--studio-gray-40);
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
-button.site-expanded-content__card-button {
+.site-expanded-content__card-button {
 	color: var(--studio-black) !important;
-	border-color: var(--studio-black);
+	width: fit-content;
 }
 
 .is-small-screen {
@@ -113,7 +120,7 @@ button.site-expanded-content__card-button {
 	.expanded-card {
 		width: 100%;
 		margin: 0;
-		min-height: auto;
+		min-height: 180px;
 	}
 
 	.site-expanded-content__card-content-column {
@@ -174,4 +181,15 @@ button.site-expanded-content__card-button {
 
 .expanded-card__not-enabled {
 	background: none;
+}
+
+.site-expanded-content__php-version {
+	@extend .site-expanded-content__card-content-score-title;
+	padding: 0 16px 16px;
+}
+
+.site-content__small-screen-view {
+	.site-expanded-content__php-version {
+		padding: 1.5px 0;
+	}
 }

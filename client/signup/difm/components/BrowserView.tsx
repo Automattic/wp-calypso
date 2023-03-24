@@ -62,7 +62,7 @@ const Container = styled.div< { isSelected?: boolean; isClickDisabled?: boolean 
 	height: 170px;
 	position: relative;
 	cursor: ${ ( { isClickDisabled } ) => ( isClickDisabled ? 'default' : 'pointer' ) };
-	pointer-events: ${ ( { isClickDisabled } ) => ( isClickDisabled ? 'none' : 'default' ) }; ;
+	pointer-events: ${ ( { isClickDisabled } ) => ( isClickDisabled ? 'none' : 'default' ) };
 `;
 
 const HeaderContainer = styled.div< { isSelected?: boolean; isClickDisabled?: boolean } >`

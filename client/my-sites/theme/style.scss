@@ -145,10 +145,8 @@ body.is-section-theme-i4 {
 		}
 
 		video {
-			@include breakpoint-deprecated( "<960px" ) {
-				height: auto;
-				max-width: 100%;
-			}
+			height: auto;
+			max-width: 100%;
 		}
 
 		.notes {
@@ -217,6 +215,12 @@ body.is-section-theme-i4 {
 				}
 			}
 		}
+	}
+}
+
+.is-section-theme {
+	.empty-content {
+		margin-bottom: 20px;
 	}
 }
 

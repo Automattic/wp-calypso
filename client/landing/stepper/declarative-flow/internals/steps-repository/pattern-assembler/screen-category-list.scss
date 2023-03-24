@@ -1,0 +1,16 @@
+@import "@automattic/components/src/styles/typography";
+
+.navigator-button {
+	&.screen-category-list__category-button {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 3px;
+
+		&.screen-category-list__category-button--is-open {
+			background-color: var(--studio-blue-0);
+			color: var(--studio-blue-50);
+		}
+	}
+}

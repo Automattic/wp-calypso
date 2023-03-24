@@ -3,8 +3,8 @@ import * as selectors from './selectors';
 import type { plansProductSlugs, plansSlugs } from './constants';
 import type { SelectFromMap } from '../mapped-types';
 
-export type StorePlanSlug = typeof plansProductSlugs[ number ];
-export type PlanSlug = typeof plansSlugs[ number ];
+export type StorePlanSlug = ( typeof plansProductSlugs )[ number ];
+export type PlanSlug = ( typeof plansSlugs )[ number ];
 
 // at the moment possible plan paths are identical with plan slugs
 export type PlanPath = PlanSlug;
@@ -60,7 +60,7 @@ export interface PricedAPIPlan {
 	path_slug?: PlanPath;
 	product_slug: StorePlanSlug;
 	product_name_short: string;
-	bill_period: -1 | typeof PERIOD_LIST[ number ];
+	bill_period: -1 | ( typeof PERIOD_LIST )[ number ];
 	raw_price: number;
 	orig_cost?: number | null;
 	currency_code: string;

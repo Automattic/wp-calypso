@@ -6,9 +6,10 @@ import { useIsEligibleSubscriberImporter } from 'calypso/landing/stepper/hooks/u
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
+import './style.scss';
 
 const Subscribers: Step = function ( { navigation } ) {
-	const __ = useTranslate();
+	const translate = useTranslate();
 	const { submit } = navigation;
 	const site = useSite();
 	const isUserEligibleForSubscriberImporter = useIsEligibleSubscriberImporter();
@@ -32,7 +33,7 @@ const Subscribers: Step = function ( { navigation } ) {
 							siteId={ site.ID }
 							isSiteOnFreePlan={ !! site?.plan?.is_free }
 							flowName="onboarding_subscribers"
-							submitBtnName={ __( 'Continue' ) }
+							submitBtnName={ translate( 'Continue' ) }
 							onImportFinished={ handleSubmit }
 							allowEmptyFormSubmit={ true }
 							manualListEmailInviting={ ! isUserEligibleForSubscriberImporter }

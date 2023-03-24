@@ -5,7 +5,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import ConnectDomainStepSupportInfoLink from 'calypso/components/domains/connect-domain-step/connect-domain-step-support-info-link';
 import DomainTransferRecommendation from 'calypso/components/domains/domain-transfer-recommendation';
@@ -21,6 +21,7 @@ import {
 	domainUseMyDomain,
 	domainMappingSetup,
 } from 'calypso/my-sites/domains/paths';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ConnectDomainStepSwitchSetupInfoLink from './connect-domain-step-switch-setup-info-link';
@@ -65,6 +66,21 @@ function ConnectDomainStep( {
 	const isTwoColumnLayout = ! stepsDefinition[ pageSlug ].singleColumnLayout;
 
 	const statusRef = useRef( {} );
+
+	const dispatch = useDispatch();
+	const recordMappingSetupTracksEvent = useCallback(
+		( resolvedPageSlug ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_domain_mapping_setup_page_view', {
+					domain,
+					page_slug: resolvedPageSlug,
+					query_error: queryError,
+					query_error_description: queryErrorDescription,
+				} )
+			);
+		},
+		[ dispatch, domain, queryError, queryErrorDescription ]
+	);
 
 	const resolveMappingSetupStep = useCallback(
 		( connectionMode, supportsDomainConnect, domainName ) => {
@@ -155,13 +171,13 @@ function ConnectDomainStep( {
 			} )
 			.then( ( data ) => {
 				setDomainSetupInfo( { data } );
-				setPageSlug(
-					resolveMappingSetupStep(
-						data?.connection_mode,
-						!! data?.domain_connect_apply_wpcom_hosting,
-						domain
-					)
+				const resolvedPageSlug = resolveMappingSetupStep(
+					data?.connection_mode,
+					!! data?.domain_connect_apply_wpcom_hosting,
+					domain
 				);
+				setPageSlug( resolvedPageSlug );
+				recordMappingSetupTracksEvent( resolvedPageSlug );
 				statusRef.current.hasLoadedStatusInfo = { [ domain ]: true };
 			} )
 			.catch( ( error ) => setDomainSetupInfoError( { error } ) )
@@ -173,6 +189,7 @@ function ConnectDomainStep( {
 		domainSetupInfo,
 		loadingDomainSetupInfo,
 		selectedSite.ID,
+		recordMappingSetupTracksEvent,
 	] );
 
 	useEffect( () => {

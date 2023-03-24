@@ -41,8 +41,8 @@ const ECommerceTrialExpired = (): JSX.Element => {
 	}, [ setInterval ] );
 
 	const expiredTrialWooExpressMediumPlanFeatureSets = useMemo( () => {
-		return getExpiredTrialWooExpressMediumFeatureSets( { translate } );
-	}, [ translate ] );
+		return getExpiredTrialWooExpressMediumFeatureSets( { translate, interval } );
+	}, [ translate, interval ] );
 
 	const triggerTracksEvent = useCallback( ( tracksLocation: string ) => {
 		recordTracksEvent( 'calypso_wooexpress_expired_trial_upgrade_cta_clicked', {

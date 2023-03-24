@@ -1,3 +1,5 @@
+import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { ThankYouSectionProps } from 'calypso/components/thank-you/types';
@@ -17,12 +19,17 @@ import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/w
 import { areFetched, areFetching, getPlugins } from 'calypso/state/plugins/wporg/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { ThankYouPluginSection } from './marketplace-thank-you-plugin-section';
+import MasterbarStyled from './masterbar-styled';
 
-export function usePluginsThankYouData( pluginSlugs: string[] ): [ ThankYouSectionProps, boolean ] {
+export function usePluginsThankYouData(
+	pluginSlugs: string[]
+): [ ThankYouSectionProps, boolean, JSX.Element ] {
 	const dispatch = useDispatch();
+	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
+	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	// retrieve WPCom plugin data
 	const wpComPluginsDataResults = useWPCOMPlugins( pluginSlugs );
@@ -61,8 +68,7 @@ export function usePluginsThankYouData( pluginSlugs: string[] ): [ ThankYouSecti
 		isFetchingAutomatedTransferStatus( state, siteId )
 	);
 
-	const allPluginsFetched =
-		!! pluginsOnSite.length && pluginsOnSite.every( ( pluginOnSite ) => !! pluginOnSite );
+	const allPluginsFetched = pluginsOnSite.every( ( pluginOnSite ) => !! pluginOnSite );
 
 	const transferStatus = useSelector( ( state ) => getAutomatedTransferStatus( state, siteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
@@ -166,7 +172,16 @@ export function usePluginsThankYouData( pluginSlugs: string[] ): [ ThankYouSecti
 		} ) ),
 	};
 
-	return [ pluginsSection, allPluginsFetched ];
+	const goBackSection = (
+		<MasterbarStyled
+			onClick={ () => page( `/plugins/${ siteSlug }` ) }
+			backText={ translate( 'Back to plugins' ) }
+			canGoBack={ allPluginsFetched }
+			showContact={ allPluginsFetched }
+		/>
+	);
+
+	return [ pluginsSection, allPluginsFetched, goBackSection ];
 }
 
 type Plugin = {

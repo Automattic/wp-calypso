@@ -21,18 +21,47 @@ const filterStateToQuery = ( filterOptions: AgencyDashboardFilterOption[] ) => {
 	return { issue_types: filterOptions.join( ',' ) };
 };
 
-function navigateToFilter( filterOptions: AgencyDashboardFilterOption[] ) {
+export const updateDashboardURLQueryArgs = ( {
+	filter,
+	sort,
+	search,
+}: {
+	filter?: AgencyDashboardFilterOption[];
+	sort?: { field: string; direction: string };
+	search?: string;
+} ) => {
 	const params = new URLSearchParams( window.location.search );
-	const search = params.get( 's' ) ? `?s=${ params.get( 's' ) }` : '';
-	page( addQueryArgs( filterStateToQuery( filterOptions ), window.location.pathname + search ) );
-}
 
-export const setFilter = ( filterOptions: AgencyDashboardFilterOption[] ) => () => {
-	navigateToFilter( filterOptions );
+	const searchQuery = search !== undefined ? search : params.get( 's' );
+	const filterOptions = filter
+		? filter
+		: ( params.getAll( 'issue_types' ) as AgencyDashboardFilterOption[] );
+	const sortField = sort ? sort.field : params.get( 'sort_field' );
+	const sortDirection = sort ? sort.direction : params.get( 'sort_direction' );
+
+	page(
+		addQueryArgs(
+			{
+				...( searchQuery && { s: searchQuery } ),
+				...filterStateToQuery( filterOptions ),
+				...( sortField && { sort_field: sortField } ),
+				...( sortDirection && { sort_direction: sortDirection } ),
+			},
+			window.location.pathname
+		)
+	);
 };
 
-export const updateFilter = ( filterOptions: AgencyDashboardFilterOption[] ) => () => {
-	navigateToFilter( filterOptions );
+export const setFilter = ( filter: AgencyDashboardFilterOption[] ) => () => {
+	updateDashboardURLQueryArgs( { filter } );
+};
+
+export const updateFilter = ( filter: AgencyDashboardFilterOption[] ) => () => {
+	updateDashboardURLQueryArgs( { filter } );
+};
+
+export const updateSort = ( sort: { field: string; direction: string } ) => () => {
+	updateDashboardURLQueryArgs( { sort } );
 };
 
 export function setPurchasedLicense( productsInfo?: PurchasedProductsInfo ): AnyAction {

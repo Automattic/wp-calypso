@@ -1,14 +1,15 @@
 /* eslint-disable no-restricted-imports */
 import { useTranslate } from 'i18n-calypso';
-import moment from 'moment';
 import { FormEventHandler, useCallback } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import './styles.scss';
-
-export type DeliveryWindowDayType = 0 | 1 | 2 | 3 | 4 | 5 | 6;
-export type DeliveryWindowHourType = 0 | 2 | 4 | 6 | 8 | 10 | 12 | 14 | 16 | 18 | 20 | 22;
+import type {
+	DeliveryWindowDayType,
+	DeliveryWindowHourType,
+} from '@automattic/data-stores/src/reader/types';
 
 type DeliveryWindowInputProps = {
 	dayValue: DeliveryWindowDayType;
@@ -24,6 +25,7 @@ const DeliveryWindowInput = ( {
 	onHourChange,
 }: DeliveryWindowInputProps ) => {
 	const translate = useTranslate();
+	const moment = useLocalizedMoment();
 
 	const getLabel = useCallback(
 		( hour ) =>
@@ -37,7 +39,14 @@ const DeliveryWindowInput = ( {
 						.format( 'LT' ),
 				},
 			} ),
-		[ translate ]
+		[ moment, translate ]
+	);
+
+	const orderedWeekDays = moment.weekdays( true );
+
+	const getDayValue = useCallback(
+		( day: string ) => moment().day( day ).locale( 'en' ).weekday(),
+		[ moment ]
 	);
 
 	return (
@@ -47,13 +56,11 @@ const DeliveryWindowInput = ( {
 			</FormLabel>
 			<div className="select-row">
 				<FormSelect name="delivery_window_day" onChange={ onDayChange } value={ dayValue }>
-					<option value="0">{ translate( 'Sunday' ) }</option>
-					<option value="1">{ translate( 'Monday' ) }</option>
-					<option value="2">{ translate( 'Tuesday' ) }</option>
-					<option value="3">{ translate( 'Wednesday' ) }</option>
-					<option value="4">{ translate( 'Thursday' ) }</option>
-					<option value="5">{ translate( 'Friday' ) }</option>
-					<option value="6">{ translate( 'Saturday' ) }</option>
+					{ orderedWeekDays.map( ( weekDay: string ) => (
+						<option key={ weekDay } value={ getDayValue( weekDay ) }>
+							{ weekDay }
+						</option>
+					) ) }
 				</FormSelect>
 				<FormSelect name="delivery_window_hour" onChange={ onHourChange } value={ hourValue }>
 					{ [ 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22 ].map( ( hour ) => (

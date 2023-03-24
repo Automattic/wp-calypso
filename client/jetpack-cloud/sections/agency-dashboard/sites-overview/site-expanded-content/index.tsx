@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import BackupStorage from './backup-storage';
 import BoostSitePerformance from './boost-site-performance';
 import InsightsStats from './insights-stats';
 import type { Site } from '../types';
@@ -11,7 +12,7 @@ interface Props {
 	isSmallScreen?: boolean;
 }
 
-const defaultColumns = [ 'stats', 'boost' ];
+const defaultColumns = [ 'stats', 'boost', 'backup' ];
 
 export default function SiteExpandedContent( {
 	site,
@@ -31,6 +32,7 @@ export default function SiteExpandedContent( {
 			{ columns.includes( 'boost' ) && (
 				<BoostSitePerformance boostData={ boostData } hasBoost={ site.has_boost } />
 			) }
+			{ columns.includes( 'backup' ) && stats && <BackupStorage site={ site } /> }
 		</div>
 	);
 }

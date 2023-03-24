@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import {
 	__experimentalNavigatorBackButton as NavigatorBackButton,
@@ -19,12 +18,11 @@ interface Props {
 	onDoneClick: () => void;
 }
 
-const ScreenPatternList = ( { selectedPattern, onSelect, onBack, onDoneClick }: Props ) => {
+const ScreenPatternList = ( { selectedPattern, onSelect, onDoneClick }: Props ) => {
 	const translate = useTranslate();
 	const patterns = useSectionPatterns();
 	const navigator = useNavigator();
 	const prevSelectedPattern = usePrevious( selectedPattern );
-	const isSidebarRevampEnabled = isEnabled( 'pattern-assembler/sidebar-revamp' );
 
 	useEffect( () => {
 		if ( prevSelectedPattern && ! selectedPattern ) {
@@ -34,17 +32,13 @@ const ScreenPatternList = ( { selectedPattern, onSelect, onBack, onDoneClick }: 
 
 	return (
 		<>
-			{ isSidebarRevampEnabled && (
-				<NavigatorHeader
-					title={ selectedPattern ? translate( 'Replace a pattern' ) : translate( 'Add patterns' ) }
-				/>
-			) }
+			<NavigatorHeader
+				title={ selectedPattern ? translate( 'Replace pattern' ) : translate( 'Add patterns' ) }
+			/>
 			<div className="screen-container__body">
 				<PatternSelector
-					title={ ! isSidebarRevampEnabled ? translate( 'Add sections' ) : undefined }
 					patterns={ patterns }
 					onSelect={ onSelect }
-					onBack={ onBack }
 					selectedPattern={ selectedPattern }
 				/>
 			</div>

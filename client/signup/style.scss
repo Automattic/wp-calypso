@@ -576,6 +576,11 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 			font-weight: 500;
 			letter-spacing: 0.32px;
 			line-height: 17px;
+
+			&.newsletter-signup-form,
+			&.link-in-bio-signup-form {
+				background-color: var(--color-primary);
+			}
 		}
 
 		.signup-form__social-buttons {

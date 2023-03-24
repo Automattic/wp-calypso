@@ -1,14 +1,20 @@
 import { is2023PricingGridActivePage } from '@automattic/calypso-products';
-import { StepContainer } from '@automattic/onboarding';
+import { DOMAIN_UPSELL_FLOW, StepContainer } from '@automattic/onboarding';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import PlansWrapper from './plans-wrapper';
-import type { Step } from '../../types';
+import type { ProvidedDependencies, Step } from '../../types';
 
-const plans: Step = function plans( { navigation, flow } ) {
+const plans: Step = function Plans( { navigation, flow } ) {
 	const { submit, goBack } = navigation;
 
 	const handleSubmit = () => {
-		submit?.();
+		const providedDependencies: ProvidedDependencies = {};
+
+		if ( flow === DOMAIN_UPSELL_FLOW ) {
+			providedDependencies.goToCheckout = true;
+		}
+
+		submit?.( providedDependencies );
 	};
 	const is2023PricingGridVisible = is2023PricingGridActivePage( window );
 	return (

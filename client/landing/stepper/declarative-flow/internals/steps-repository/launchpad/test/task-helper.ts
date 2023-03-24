@@ -61,32 +61,83 @@ describe( 'Task Helpers', () => {
 				expect( enhancedTasks[ 0 ].completed ).toEqual( true );
 			} );
 		} );
+		describe( 'when creating the email verification task', () => {
+			describe( 'and the user email has been verified', () => {
+				it( 'marks the task as complete', () => {
+					const fakeTasks = [ buildTask( { id: 'verify_email', completed: false } ) ];
+					const isEmailVerified = true;
+					const enhancedTasks = getEnhancedTasks(
+						fakeTasks,
+						'fake.wordpress.com',
+						null,
+						// eslint-disable-next-line @typescript-eslint/no-empty-function
+						() => {},
+						false,
+						// eslint-disable-next-line @typescript-eslint/no-empty-function
+						() => {},
+						'newsletter',
+						isEmailVerified
+					);
+					expect( enhancedTasks[ 0 ].completed ).toEqual( true );
+				} );
+			} );
+		} );
 	} );
 
 	describe( 'getArrayOfFilteredTasks', () => {
-		describe( 'when no flow is provided', () => {
-			it( 'then no tasks are found', () => {
-				expect( getArrayOfFilteredTasks( tasks, null, false ) ).toBe( null );
+		describe( 'when the user has not verified their email address', () => {
+			const isEmailVerified = false;
+
+			describe( 'and no flow is provided', () => {
+				it( 'then no tasks are found', () => {
+					expect( getArrayOfFilteredTasks( tasks, null, isEmailVerified ) ).toBe( null );
+				} );
+			} );
+
+			describe( 'and a non-existing flow is provided', () => {
+				it( 'then no tasks are found', () => {
+					expect( getArrayOfFilteredTasks( tasks, 'custom-flow', isEmailVerified ) ).toBe(
+						undefined
+					);
+				} );
+			} );
+
+			describe( 'and an existing flow is provided', () => {
+				it( 'then it returns found tasks', () => {
+					expect(
+						getArrayOfFilteredTasks( tasks, 'newsletter', isEmailVerified )?.sort( ( a, b ) =>
+							a.id < b.id ? -1 : 1
+						)
+					).toEqual(
+						tasks
+							.sort( ( a, b ) => ( a.id < b.id ? -1 : 1 ) )
+							.filter( ( task ) => launchpadFlowTasks[ 'newsletter' ].includes( task.id ) )
+					);
+				} );
 			} );
 		} );
 
-		describe( 'when a non-existing flow is provided', () => {
-			it( 'then no tasks are found', () => {
-				expect( getArrayOfFilteredTasks( tasks, 'custom-flow', false ) ).toBe( undefined );
-			} );
-		} );
+		describe( 'when the user has verified their email address', () => {
+			const isEmailVerified = true;
 
-		describe( 'when an existing flow is provided', () => {
-			it( 'then it returns found tasks', () => {
-				expect(
-					getArrayOfFilteredTasks( tasks, 'newsletter', false )?.sort( ( a, b ) =>
-						a.id < b.id ? -1 : 1
-					)
-				).toEqual(
-					tasks
-						.sort( ( a, b ) => ( a.id < b.id ? -1 : 1 ) )
-						.filter( ( task ) => launchpadFlowTasks[ 'newsletter' ].includes( task.id ) )
-				);
+			describe( 'and an existing flow is provided', () => {
+				it( 'then it returns tasks without an email verified task', () => {
+					expect(
+						getArrayOfFilteredTasks( tasks, 'newsletter', isEmailVerified )?.sort( ( a, b ) =>
+							a.id < b.id ? -1 : 1
+						)
+					).toEqual(
+						tasks
+							.sort( ( a, b ) => ( a.id < b.id ? -1 : 1 ) )
+							.filter( ( task ) => {
+								if ( task.id === 'verify_email' ) {
+									return false;
+								}
+
+								return launchpadFlowTasks[ 'newsletter' ].includes( task.id );
+							} )
+					);
+				} );
 			} );
 		} );
 	} );

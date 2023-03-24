@@ -59,7 +59,11 @@ export function createTransactionEndpointCartFromResponseCart( {
 	contactDetails: DomainContactDetails | null;
 	responseCart: ResponseCart;
 } ): RequestCart {
-	if ( responseCart.products.some( ( product ) => product.extra.isJetpackCheckout ) ) {
+	if (
+		responseCart.products.some( ( product ) => {
+			return product.extra.isJetpackCheckout || product.extra.isAkismetSitelessCheckout;
+		} )
+	) {
 		const isUserLess = responseCart.cart_key === 'no-user';
 		const isSiteLess = responseCart.blog_id === 0;
 
