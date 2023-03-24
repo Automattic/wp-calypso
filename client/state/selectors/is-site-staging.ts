@@ -8,7 +8,7 @@ import getRawSite from './get-raw-site';
  * @param  {number | null}   siteId Site ID
  * @returns {boolean}        Whether site is a staging site or not
  */
-export default function isSiteWpcomStaging( state: AppState, siteId: number | null ) {
+export default function isSiteStaging( state: AppState, siteId: number | null ) {
 	if ( ! siteId ) {
 		return false;
 	}

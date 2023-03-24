@@ -16,7 +16,7 @@ import getActiveDiscount from 'calypso/state/selectors/get-active-discount';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migration-active-route';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
-import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
+import isSiteStaging from 'calypso/state/selectors/is-site-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 
 export class SiteNotice extends Component {
@@ -105,7 +105,7 @@ export class SiteNotice extends Component {
 
 		const showJitms =
 			! this.props.isSiteWPForTeams &&
-			! this.props.isWpcomStagingSite &&
+			! this.props.isStagingSite &&
 			( discountOrFreeToPaid || config.isEnabled( 'jitms' ) );
 
 		return (
@@ -135,7 +135,7 @@ export default connect( ( state, ownProps ) => {
 		isDomainOnly: isDomainOnlySite( state, siteId ),
 		activeDiscount: getActiveDiscount( state ),
 		isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
-		isWpcomStagingSite: isSiteWpcomStaging( state, siteId ),
+		isStagingSite: isSiteStaging( state, siteId ),
 		isMigrationInProgress,
 	};
 } )( localize( SiteNotice ) );
