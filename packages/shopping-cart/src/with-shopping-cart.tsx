@@ -5,7 +5,7 @@ import type { WithShoppingCartProps, CartKey } from './types';
 
 export type AdditionalCartKeyProp = { cartKey?: CartKey };
 
-export default function withShoppingCart< P extends WithShoppingCartProps = WithShoppingCartProps >(
+export default function withShoppingCart< P >(
 	Component: React.ComponentType< P & AdditionalCartKeyProp >,
 	mapPropsToCartKey?: ( props: P ) => CartKey | undefined
 ) {
