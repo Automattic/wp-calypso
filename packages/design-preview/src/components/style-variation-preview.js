@@ -62,7 +62,7 @@ const normalizedHeight = 152;
 
 const normalizedColorSwatchSize = 32;
 
-const StylesPreview = ( { label, isFocused, withHoverView } ) => {
+const StylesPreview = ( { label, inlineCss, isFocused, withHoverView } ) => {
 	const [ fontWeight ] = useStyle( 'typography.fontWeight' );
 	const [ fontFamily = 'serif' ] = useStyle( 'typography.fontFamily' );
 	const [ headingFontFamily = fontFamily ] = useStyle( 'elements.h1.typography.fontFamily' );
@@ -97,6 +97,12 @@ const StylesPreview = ( { label, isFocused, withHoverView } ) => {
 				...styles,
 				{
 					// Custom WP.com code - START.
+					css: inlineCss?.match( /@font-face{([^}])+}/g )?.join( '' ),
+					isGlobalStyles: true,
+					// Custom WP.com code - END.
+				},
+				{
+					// Custom WP.com code - START.
 					css: 'html{overflow:hidden}body{min-width: 0;padding: 0;border: none;transform:scale(1);}',
 					// Custom WP.com code - END.
 					isGlobalStyles: true,
@@ -105,7 +111,7 @@ const StylesPreview = ( { label, isFocused, withHoverView } ) => {
 		}
 
 		return styles;
-	}, [ styles ] );
+	}, [ inlineCss, styles ] );
 	const isReady = !! width;
 
 	return (

@@ -76,6 +76,7 @@ const StyleVariationPreview: React.FC< StyleVariationPreviewProps > = ( {
 				<GlobalStylesContext.Provider value={ context }>
 					<Preview
 						label={ variation.title }
+						inlineCss={ variation.inline_css || '' }
 						isFocused={ isFocused || showOnlyHoverView }
 						withHoverView
 					/>
