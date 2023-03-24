@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { getSubkey } from '@automattic/data-stores/src/reader/helpers';
+import { useSubscriberEmailAddress } from '@automattic/data-stores/src/reader/hooks';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -12,26 +12,6 @@ import './styles.scss';
 
 export type SubscriptionManagerContainerProps = {
 	children?: React.ReactNode;
-};
-
-const useSubscriberEmailAddress = () => {
-	return useMemo( () => {
-		const subkey = getSubkey();
-
-		if ( ! subkey ) {
-			return null;
-		}
-
-		const decodedSubkeyValue = decodeURIComponent( subkey );
-
-		const firstPeriodIndex = decodedSubkeyValue.indexOf( '.' );
-		if ( firstPeriodIndex === -1 ) {
-			return null;
-		}
-
-		const emailAddress = decodedSubkeyValue.slice( firstPeriodIndex + 1 );
-		return emailAddress;
-	}, [] );
 };
 
 const useSubHeaderText = () => {
