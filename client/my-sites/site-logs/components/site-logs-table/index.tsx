@@ -1,5 +1,9 @@
 import { memo, useMemo } from 'react';
+import { useSelector } from 'react-redux';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { SiteLogsData } from 'calypso/data/hosting/use-site-logs-query';
+import getSiteSetting from 'calypso/state/selectors/get-site-setting';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './style.scss';
 
 type SiteLogs = SiteLogsData[ 'logs' ];
@@ -9,7 +13,12 @@ interface SiteLogsTableProps {
 }
 
 export const SiteLogsTable = memo( function SiteLogsTable( { logs }: SiteLogsTableProps ) {
+	const moment = useLocalizedMoment();
 	const columns = useSiteColumns( logs );
+	const siteGmtOffset = useSelector( ( state ) => {
+		const siteId = getSelectedSiteId( state );
+		return ( getSiteSetting( state, siteId ?? 0, 'gmt_offset' ) as number | null ) ?? 0;
+	} );
 
 	return (
 		<table className="site-logs-table">
@@ -26,7 +35,7 @@ export const SiteLogsTable = memo( function SiteLogsTable( { logs }: SiteLogsTab
 					// time stamp.
 					<tr key={ index }>
 						{ columns.map( ( column ) => (
-							<td key={ column }>{ renderCell( log[ column ] ) }</td>
+							<td key={ column }>{ renderCell( column, log[ column ], moment, siteGmtOffset ) }</td>
 						) ) }
 					</tr>
 				) ) }
@@ -64,9 +73,20 @@ function useSiteColumns( logs: SiteLogs | undefined ) {
 	}, [ logs ] );
 }
 
-function renderCell( value: any ) {
+function renderCell(
+	column: string,
+	value: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+	moment: ReturnType< typeof useLocalizedMoment >,
+	siteGmtOffset: number
+) {
 	if ( value === null || value === undefined || value === '' ) {
 		return <span className="site-logs-table__empty-cell" />;
+	}
+
+	if ( ( column === 'date' || column === 'timestamp' ) && typeof value === 'string' ) {
+		return moment( value )
+			.utcOffset( siteGmtOffset * 60 )
+			.format( 'll @ HH:mm:ss.SSS Z' );
 	}
 
 	switch ( typeof value ) {
