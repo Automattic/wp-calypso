@@ -41,6 +41,16 @@ jest.mock( 'calypso/my-sites/hosting/staging-site-card/use-add-staging-site', ()
 	} ),
 } ) );
 
+jest.mock( 'calypso/my-sites/hosting/staging-site-card/use-delete-staging-site', () => ( {
+	__esModule: true,
+	useDeleteStagingSite: jest.fn( () => {
+		return {
+			deleteStagingSite: jest.fn(),
+			isReverting: false,
+		};
+	} ),
+} ) );
+
 jest.mock( 'calypso/my-sites/hosting/staging-site-card/use-check-staging-site-status', () => ( {
 	__esModule: true,
 	useCheckStagingSiteStatus: jest.fn(),
