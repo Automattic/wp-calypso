@@ -11,6 +11,7 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import useCountryList from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
 import useVatDetails from './use-vat-details';
@@ -164,40 +165,7 @@ function CountryCodeInput( {
 	value: string;
 	onChange: ( event: React.ChangeEvent< HTMLSelectElement > ) => void;
 } ) {
-	const countries = [
-		'AT',
-		'AU',
-		'BE',
-		'BG',
-		'CH',
-		'CY',
-		'CZ',
-		'DE',
-		'DK',
-		'EE',
-		'EL',
-		'ES',
-		'FI',
-		'FR',
-		'GB',
-		'HR',
-		'HU',
-		'IE',
-		'IT',
-		'JP',
-		'LT',
-		'LU',
-		'LV',
-		'MT',
-		'NL',
-		'PL',
-		'PT',
-		'RO',
-		'SE',
-		'SI',
-		'SK',
-		'XI',
-	];
+	const countries = useCountryList();
 
 	// Some historical country codes were set to 'UK', but that is not a valid
 	// country code. It should read 'GB'.
@@ -214,13 +182,15 @@ function CountryCodeInput( {
 			className="vat-info__country-select"
 		>
 			<option value="">--</option>
-			{ countries.map( ( countryCode ) => {
-				return (
-					<option key={ countryCode } value={ countryCode }>
-						{ countryCode }
-					</option>
-				);
-			} ) }
+			{ countries
+				.filter( ( country ) => country.vat_supported )
+				.map( ( country ) => {
+					return country.tax_country_codes.map( ( countryCode ) => (
+						<option key={ countryCode } value={ countryCode }>
+							{ countryCode }
+						</option>
+					) );
+				} ) }
 		</FormSelect>
 	);
 }
