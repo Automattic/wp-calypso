@@ -1,6 +1,7 @@
 /* eslint-disable no-restricted-imports */
 import { Spinner } from '@automattic/components';
 import { Reader } from '@automattic/data-stores';
+import { useSubscriberEmailAddress } from '@automattic/data-stores/src/reader/hooks';
 import { useState, useCallback, useEffect } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
 import page from 'page';
@@ -42,12 +43,15 @@ const UserSettings = ( { value = {}, loading, userId }: UserSettingsProps ) => {
 	const { mutate, isLoading, isSuccess, error } =
 		Reader.useSubscriptionManagerUserSettingsMutation();
 	const [ notice, setNotice ] = useState< NoticeProps | null >( null );
+	const subscriberEmailAddress = useSubscriberEmailAddress();
 
 	useEffect( () => {
-		if ( ! userId ) {
+		if ( userId ) {
+			page.redirect( '/read' );
+		} else if ( ! subscriberEmailAddress ) {
 			page.redirect( '/email-subscriptions' );
 		}
-	}, [ userId ] );
+	}, [ userId, subscriberEmailAddress ] );
 
 	useEffect( () => {
 		// check if formState is empty object
