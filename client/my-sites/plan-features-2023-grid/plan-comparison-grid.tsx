@@ -515,7 +515,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 					) }
 					{ hasConditionalFeature && feature?.getConditionalTitle && (
 						<span className="plan-comparison-grid__plan-conditional-title">
-							{ feature?.getConditionalTitle() }
+							{ feature?.getConditionalTitle( planName ) }
 						</span>
 					) }
 					{ hasFeature && feature?.getCompareSubtitle && (

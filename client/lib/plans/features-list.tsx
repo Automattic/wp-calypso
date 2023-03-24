@@ -214,6 +214,7 @@ import {
 	FEATURE_STATS_JP,
 	FEATURE_SPAM_JP,
 	FEATURE_LTD_SOCIAL_MEDIA_JP,
+	FEATURE_SHARES_SOCIAL_MEDIA_JP,
 	FEATURE_CONTACT_FORM_JP,
 	FEATURE_PAID_SUBSCRIBERS_JP,
 	FEATURE_VIDEOPRESS_JP,
@@ -237,6 +238,11 @@ import {
 	FEATURE_RECOMMEND_ADD_ONS,
 	FEATURE_ASSEMBLED_PRODUCTS_AND_KITS,
 	FEATURE_MIN_MAX_ORDER_QUANTITY,
+	isPersonalPlan,
+	isPremiumPlan,
+	isEcommercePlan,
+	isBusinessPlan,
+	isFreePlan,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n, { TranslateResult } from 'i18n-calypso';
@@ -254,7 +260,7 @@ export type FeatureObject = {
 	getSlug: () => string;
 	getTitle: ( domainName?: string ) => TranslateResult;
 	getAlternativeTitle?: () => TranslateResult;
-	getConditionalTitle?: () => TranslateResult;
+	getConditionalTitle?: ( planSlug?: string ) => TranslateResult;
 	getHeader?: () => TranslateResult;
 	getDescription?: ( domainName?: string ) => TranslateResult;
 	getStoreSlug?: () => string;
@@ -2053,6 +2059,30 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Get 30 social shares per month to promote your posts on Facebook, Twitter, Tumblr, and more.'
 			),
+	},
+	[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: {
+		getSlug: () => FEATURE_SHARES_SOCIAL_MEDIA_JP,
+		getTitle: () => i18n.translate( 'Shares on social media' ),
+		getDescription: () =>
+			i18n.translate(
+				'Automatically share your latest post on Facebook, Twitter, Tumblr, and more.'
+			),
+		getConditionalTitle: ( planSlug ) => {
+			if ( ! planSlug ) {
+				return '';
+			}
+			if ( isPersonalPlan( planSlug ) || isFreePlan( planSlug ) ) {
+				return i18n.translate( '%d shares per month', { args: [ 30 ] } );
+			}
+			if (
+				isPremiumPlan( planSlug ) ||
+				isBusinessPlan( planSlug ) ||
+				isEcommercePlan( planSlug )
+			) {
+				return i18n.translate( 'Unlimited shares' );
+			}
+			return '';
+		},
 	},
 	[ FEATURE_CONTACT_FORM_JP ]: {
 		getSlug: () => FEATURE_CONTACT_FORM_JP,
