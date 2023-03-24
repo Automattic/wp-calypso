@@ -24,7 +24,6 @@ const PluginSectionContainer = styled.div`
 	flex-wrap: wrap;
 	width: 720px;
 	box-sizing: border-box;
-	border-top: 1px solid var( --studio-gray-5 );
 	align-items: center;
 	padding: 24px 0 24px 0;
 
