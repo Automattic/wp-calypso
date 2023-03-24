@@ -209,6 +209,18 @@ export function generateSteps( {
 			fulfilledStepCallback: isPlanFulfilled,
 		},
 
+		'plans-hosting': {
+			stepName: 'plans',
+			apiRequestFunction: addPlanToCart,
+			dependencies: [ 'siteSlug' ],
+			optionalDependencies: [ 'emailItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			fulfilledStepCallback: isPlanFulfilled,
+			props: {
+				hideFreePlan: true,
+			},
+		},
+
 		'plans-pm': {
 			stepName: 'plans-pm',
 			apiRequestFunction: addPlanToCart,

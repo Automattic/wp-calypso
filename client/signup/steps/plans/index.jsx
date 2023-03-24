@@ -226,6 +226,10 @@ export class PlansStep extends Component {
 		}
 
 		if ( useEmailOnboardingSubheader ) {
+			if ( hideFreePlan ) {
+				return translate( 'Add more features to your professional website with a plan. ' );
+			}
+
 			return translate(
 				'Add more features to your professional website with a plan. Or {{link}}start with email and a free site{{/link}}.',
 				{ components: { link: freePlanButton } }
@@ -237,10 +241,18 @@ export class PlansStep extends Component {
 		}
 
 		if ( this.state.isDesktop ) {
+			if ( hideFreePlan ) {
+				return translate( "Pick one that's right for you and unlock features that help you grow." );
+			}
+
 			return translate(
 				"Pick one that's right for you and unlock features that help you grow. Or {{link}}start with a free site{{/link}}.",
 				{ components: { link: freePlanButton } }
 			);
+		}
+
+		if ( hideFreePlan ) {
+			return translate( 'Choose a plan.' );
 		}
 
 		return translate( 'Choose a plan or {{link}}start with a free site{{/link}}.', {
