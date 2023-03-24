@@ -217,7 +217,7 @@ const LoggedInPlansFeatureActionButton = ( {
 					onClick={ handleUpgradeButtonClick }
 					disabled={ isPlaceholder }
 				>
-					{ buttonText || translate( 'Upgrade to Triannual' ) }
+					{ buttonText || translate( 'Upgrade to Triennial' ) }
 				</Button>
 			);
 		}
@@ -229,7 +229,7 @@ const LoggedInPlansFeatureActionButton = ( {
 					onClick={ handleUpgradeButtonClick }
 					disabled={ isPlaceholder }
 				>
-					{ buttonText || translate( 'Upgrade to Biannual' ) }
+					{ buttonText || translate( 'Upgrade to Biennial' ) }
 				</Button>
 			);
 		}
