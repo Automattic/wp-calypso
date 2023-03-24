@@ -20,9 +20,14 @@
 			line-height: $font-title-medium;
 			color: $studio-gray-60;
 			margin-bottom: 30px;
+
+			& .email-address {
+				font-weight: 500;
+			}
 		}
 	}
 }
+
 
 @media screen and ( max-width: $break-medium ) {
 	.subscription-manager-container {

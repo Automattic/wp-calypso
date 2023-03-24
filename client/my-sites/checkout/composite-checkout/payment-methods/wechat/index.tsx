@@ -21,7 +21,11 @@ import {
 } from 'calypso/my-sites/checkout/composite-checkout/components/summary-details';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import WeChatPaymentQRcodeUnstyled from './wechat-payment-qrcode';
-import type { LineItem, ProcessPayment } from '@automattic/composite-checkout';
+import type {
+	LineItem,
+	PaymentMethod,
+	PaymentMethodSubmitButtonProps,
+} from '@automattic/composite-checkout';
 import type {
 	PaymentMethodStore,
 	StoreSelectors,
@@ -79,7 +83,7 @@ export function createWeChatMethod( {
 }: {
 	store: WeChatStore;
 	siteSlug?: string;
-} ) {
+} ): PaymentMethod {
 	return {
 		id: 'wechat',
 		paymentProcessorId: 'wechat',
@@ -173,9 +177,7 @@ function WeChatPayButton( {
 	onClick,
 	store,
 	siteSlug,
-}: {
-	disabled?: boolean;
-	onClick?: ProcessPayment;
+}: PaymentMethodSubmitButtonProps & {
 	store: WeChatStore;
 	siteSlug?: string;
 } ) {

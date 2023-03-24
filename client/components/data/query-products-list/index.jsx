@@ -16,6 +16,17 @@ const request =
 		dispatch( requestProductsList( props ) );
 	};
 
+export function useQueryProductsList( { type = 'all', persist } = {} ) {
+	const dispatch = useDispatch();
+
+	// Only runs on mount.
+	useEffect( () => {
+		dispatch( request( { type, persist } ) );
+	}, [ dispatch, type, persist ] );
+
+	return null;
+}
+
 /**
  *
  * @param {Object} props 			The list of component props.
@@ -25,12 +36,5 @@ const request =
  * @returns {null} 					No visible output.
  */
 export default function QueryProductsList( { type = 'all', persist } ) {
-	const dispatch = useDispatch();
-
-	// Only runs on mount.
-	useEffect( () => {
-		dispatch( request( { type, persist } ) );
-	}, [ dispatch, type, persist ] );
-
-	return null;
+	return useQueryProductsList( { type, persist } );
 }

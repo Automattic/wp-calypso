@@ -748,6 +748,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 				kind="interval"
 				plans={ displayedPlansProperties.map( ( { planName } ) => planName ) }
 				isInSignup={ planTypeSelectorProps.isInSignup }
+				isStepperUpgradeFlow={ planTypeSelectorProps.isStepperUpgradeFlow }
 				eligibleForWpcomMonthlyPlans={ planTypeSelectorProps.eligibleForWpcomMonthlyPlans }
 				isPlansInsideStepper={ planTypeSelectorProps.isPlansInsideStepper }
 				intervalType={ planTypeSelectorProps.intervalType }

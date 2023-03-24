@@ -30,15 +30,12 @@ import {
 } from 'calypso/state/automated-transfer/selectors';
 import { getAtomicHostingIsLoadingSftpData } from 'calypso/state/selectors/get-atomic-hosting-is-loading-sftp-data';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestSite } from 'calypso/state/sites/actions';
 import { isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
-import {
-	getSelectedSiteId,
-	getSelectedSite,
-	getSelectedSiteSlug,
-} from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import CacheCard from './cache-card';
 import { HostingUpsellNudge } from './hosting-upsell-nudge';
 import PhpMyAdminCard from './phpmyadmin-card';
@@ -85,7 +82,7 @@ class Hosting extends Component {
 			hasSftpFeature,
 			isDisabled,
 			isECommerceTrial,
-			isStagingSite,
+			isWpcomStagingSite,
 			isTransferring,
 			requestSiteById,
 			siteId,
@@ -194,7 +191,7 @@ class Hosting extends Component {
 							<Column type="main" className="hosting__main-layout-col">
 								<SFTPCard disabled={ isDisabled } />
 								<PhpMyAdminCard disabled={ isDisabled } />
-								{ isStagingSiteEnabled && ! isStagingSite && (
+								{ isStagingSiteEnabled && ! isWpcomStagingSite && (
 									<StagingSiteCard disabled={ isDisabled } />
 								) }
 								{ isGithubIntegrationEnabled && <GitHubCard /> }
@@ -240,7 +237,6 @@ export const clickActivate = () =>
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
-		const site = getSelectedSite( state );
 		const hasSftpFeature = siteHasFeature( state, siteId, FEATURE_SFTP );
 
 		return {
@@ -253,7 +249,7 @@ export default connect(
 			hasSftpFeature,
 			siteSlug: getSelectedSiteSlug( state ),
 			siteId,
-			isStagingSite: site.is_wpcom_staging_site,
+			isWpcomStagingSite: isSiteWpcomStaging( state, siteId ),
 		};
 	},
 	{
