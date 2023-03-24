@@ -1362,6 +1362,7 @@ class ThemeSheet extends Component {
 		if ( this.props.error ) {
 			return <ThemeNotFoundError />;
 		}
+
 		return this.renderSheet();
 	}
 }
@@ -1465,7 +1466,7 @@ export default connect(
 			...theme,
 			themeId,
 			price: getPremiumThemePrice( state, themeId, siteId ),
-			error,
+			error: error || ! theme,
 			siteId,
 			siteSlug,
 			backPath,
