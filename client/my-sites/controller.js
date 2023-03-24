@@ -552,9 +552,15 @@ export function siteSelection( context, next ) {
 		// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
 		// to wp-admin. In that case, don't continue handling the route.
 		dispatch( setSelectedSiteId( siteId ) );
-		if ( onSelectedSiteAvailable( context ) ) {
-			next();
-		}
+
+		// This will fetch the site and update the state after the plan is upgraded
+		dispatch( requestSite( siteFragment ) )
+			.catch( () => null )
+			.then( () => {
+				if ( onSelectedSiteAvailable( context ) ) {
+					next();
+				}
+			} );
 	} else {
 		// Fetch the site by siteFragment and then try to select again
 		dispatch( requestSite( siteFragment ) )
