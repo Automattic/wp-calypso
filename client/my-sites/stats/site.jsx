@@ -191,7 +191,6 @@ class StatsSite extends Component {
 					slug={ slug }
 				/>
 				{ isOdysseyStats && <StatsNotices siteId={ siteId } /> }
-				{ config.isEnabled( 'stats/subscribers-section' ) && <SubscribersSection /> }
 				<HighlightsSection siteId={ siteId } />
 				<div id="my-stats-content" className={ wrapperClass }>
 					<>
@@ -333,7 +332,7 @@ class StatsSite extends Component {
 						}
 					</div>
 				</div>
-				{ /* TODO: Move SubscribersSection comp here */ }
+				{ config.isEnabled( 'stats/subscribers-section' ) && <SubscribersSection /> }
 				{ /* Only load Jetpack Upsell Section for Odyssey Stats */ }
 				{ ! isOdysseyStats ? null : (
 					<AsyncLoad require="calypso/my-sites/stats/jetpack-upsell-section" />
