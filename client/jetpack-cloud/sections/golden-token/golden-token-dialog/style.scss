@@ -336,7 +336,7 @@ $tablet-width: 760px;
 			transition-delay: 2s;
 			width: auto;
 
-			.content-wrap-text {
+			.golden-token-dialog__content-wrap-text {
 				padding-left: 32px;
 			}
 
@@ -348,9 +348,6 @@ $tablet-width: 760px;
 	}
 }
 
-/*
-    Powers-wrap product cards
-  */
 .golden-token-dialog__jetpack-products {
 	display: flex;
 	flex-direction: column;

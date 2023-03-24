@@ -1,12 +1,17 @@
 import classnames from 'classnames';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import './style.scss';
 
 export const GoldenTokenDialog = () => {
+	const videoRef = useRef< HTMLVideoElement >( null );
+
 	const [ isAnimating, setIsAnimating ] = useState( false );
 
 	const redeemToken = () => {
+		if ( videoRef.current ) {
+			videoRef.current.play();
+		}
 		setIsAnimating( true );
 	};
 
@@ -30,7 +35,10 @@ export const GoldenTokenDialog = () => {
 			</svg>
 			<div className="golden-token-dialog__video-wrap">
 				{ /* eslint-disable-next-line jsx-a11y/media-has-caption */ }
-				<video src="https://dev.keoshi.com/jetpack/golden-token/jetpack-golden-token-01.mp4"></video>
+				<video
+					ref={ videoRef }
+					src="https://dev.keoshi.com/jetpack/golden-token/jetpack-golden-token-01.mp4"
+				></video>
 			</div>
 			<div className="golden-token-dialog__content-wrap">
 				<div className="golden-token-dialog__content-wrap-text">
