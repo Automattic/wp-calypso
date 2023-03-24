@@ -523,7 +523,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 							{ feature.getCompareSubtitle() }
 						</span>
 					) }
-					{ hasFeature && <Gridicon icon="checkmark" color="#0675C4" /> }
+					{ hasFeature && ! hasConditionalFeature && <Gridicon icon="checkmark" color="#0675C4" /> }
 					{ ! hasFeature && ! hasConditionalFeature && (
 						<Gridicon icon="minus-small" color="#C3C4C7" />
 					) }
@@ -709,7 +709,9 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 					const { planName } = plan;
 					const planObject = applyTestFiltersToPlansList( planName, undefined );
 					const jetpackFeatures = planObject.get2023PricingGridSignupJetpackFeatures?.() ?? [];
-					return jetpackFeatures;
+					const additionalJetpackFeatures =
+						planObject.get2023PlanComparisonJetpackFeatureOverride?.() ?? [];
+					return jetpackFeatures.concat( ...additionalJetpackFeatures );
 				} )
 				.flat()
 		);

@@ -494,6 +494,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SPAM_JP,
 		FEATURE_CONTACT_FORM_JP,
 		FEATURE_SITE_ACTIVITY_LOG_JP,
+		FEATURE_SHARES_SOCIAL_MEDIA_JP,
 	],
 
 	get2023PricingGridSignupStorageOptions: () => [ FEATURE_1GB_STORAGE ],
