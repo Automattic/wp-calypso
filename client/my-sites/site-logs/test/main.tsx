@@ -5,6 +5,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import documentHead from 'calypso/state/document-head/reducer';
+import siteSettings from 'calypso/state/site-settings/reducer';
 import { reducer as ui } from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { useNock, nock } from 'calypso/test-helpers/use-nock';
@@ -15,7 +16,28 @@ import { SiteLogs } from '../main';
 jest.mock( 'page' );
 
 const render = ( el, options ) =>
-	renderWithProvider( el, { ...options, reducers: { ui, documentHead } } );
+	renderWithProvider( el, { ...options, reducers: { ui, documentHead, siteSettings } } );
+
+const makeTestState = ( { siteId = 1, gmtOffset = 0 } = {} ) => ( {
+	ui: { selectedSiteId: siteId },
+	siteSettings: {
+		items: {
+			[ siteId ]: { gmt_offset: gmtOffset },
+		},
+	},
+} );
+
+const mockSuccessfulLogApis = ( logs ) =>
+	nock( 'https://public-api.wordpress.com' )
+		.post( /\/wpcom\/v2\/sites\/\d+\/hosting\/(error-)?logs/ )
+		.reply( 200, {
+			message: 'OK',
+			data: {
+				scroll_id: null,
+				total_results: logs.length,
+				logs,
+			},
+		} );
 
 describe( 'SiteLogs', () => {
 	useNock();
@@ -38,10 +60,36 @@ describe( 'SiteLogs', () => {
 				},
 			} );
 
-		render( <SiteLogs />, { initialState: { ui: { selectedSiteId: 113 } } } );
+		render( <SiteLogs />, { initialState: makeTestState( { siteId: 113 } ) } );
+
+		await waitFor( () => expect( screen.getByText( /log entry/ ) ).toBeInTheDocument() );
+	} );
+
+	test( 'date is always rendered in the first column place', async () => {
+		mockSuccessfulLogApis( [
+			// API is returning date in the last column
+			{ message_first: 'log entry', date: '2023-03-24T04:36:04.238Z' },
+		] );
+
+		const { container } = render( <SiteLogs />, { initialState: makeTestState() } );
 
 		await waitFor( () =>
-			expect( screen.getByText( /"message" = log entry/ ) ).toBeInTheDocument()
+			expect( container.querySelector( 'th:first-child' ) ).toHaveTextContent( 'date' )
+		);
+	} );
+
+	test( `date is rendered in site's timestamp`, async () => {
+		mockSuccessfulLogApis( [
+			// API is returning date in the last column
+			{ date: '2023-03-24T04:36:04.238Z' },
+		] );
+
+		render( <SiteLogs />, {
+			initialState: makeTestState( { gmtOffset: 3 } ),
+		} );
+
+		await waitFor( () =>
+			expect( screen.getByText( 'Mar 24, 2023 @ 07:36:04.238 +03:00' ) ).toBeInTheDocument()
 		);
 	} );
 } );
