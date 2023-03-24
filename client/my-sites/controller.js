@@ -37,6 +37,7 @@ import {
 } from 'calypso/my-sites/domains/paths';
 import {
 	emailManagement,
+	emailManagementAddEmailForwards,
 	emailManagementAddGSuiteUsers,
 	emailManagementForwarding,
 	emailManagementInbox,
@@ -204,6 +205,7 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		domainManagementTransferOut,
 		domainManagementTransferToOtherSite,
 		emailManagement,
+		emailManagementAddEmailForwards,
 		emailManagementAddGSuiteUsers,
 		emailManagementForwarding,
 		emailManagementInbox,
