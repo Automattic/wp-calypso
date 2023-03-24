@@ -185,6 +185,10 @@ div.reader-notifications__panel {
 
 	#wpnc-panel.wpnc__main {
 		background-color: unset;
+
+		.wpnc__list-view .wpnc__selected-note {
+			box-shadow: inset -4px 0 0 var(--color-primary);
+		}
 		&.wpnt-open {
 			left: 272px;
 			right: unset;
