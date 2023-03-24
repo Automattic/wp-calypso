@@ -1,4 +1,4 @@
-import { Field } from '@automattic/wpcom-checkout';
+import { CountryListItem, CountryListItemWithVat, Field } from '@automattic/wpcom-checkout';
 import { CheckboxControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -12,6 +12,9 @@ import useCountryList from '../../hooks/use-country-list';
 import { CHECKOUT_STORE } from '../../lib/wpcom-store';
 
 import './style.css';
+
+const isVatSupported = ( country: CountryListItem ): country is CountryListItemWithVat =>
+	country.vat_supported;
 
 export function VatForm( {
 	section,
@@ -37,7 +40,9 @@ export function VatForm( {
 
 	const isVatSupportedFor = useCallback(
 		( code: string ) =>
-			countries.find( ( country ) => country.code === code && country.vat_supported ),
+			countries
+				.filter( isVatSupported )
+				.some( ( country ) => country.code === code || country.tax_country_codes.includes( code ) ),
 		[ countries ]
 	);
 
