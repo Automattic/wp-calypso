@@ -469,10 +469,9 @@ body.is-section-themes {
 	margin-top: 24px;
 	padding: 0;
 
-	@include break-large {
+	@include breakpoint-deprecated( ">660px" ) {
 		flex-direction: row;
-		flex-wrap: nowrap;
-		gap: 8px;
+		gap: 0;
 	}
 
 	.themes-toolbar-group {
@@ -489,6 +488,7 @@ body.is-section-themes {
 		box-sizing: border-box;
 		height: 28px;
 		padding: 4px;
+		z-index: 1;
 
 		.segmented-control__item {
 			&.is-selected {
