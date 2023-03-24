@@ -24,6 +24,7 @@ import { useSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import isSiteStaging from 'calypso/state/selectors/is-site-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
@@ -390,6 +391,7 @@ export const SitesEllipsisMenu = ( {
 	const { shouldShowSiteCopyItem, startSiteCopy } = useSiteCopy( site );
 	const hasCustomDomain = isCustomDomain( site.slug );
 	const isLaunched = site.launch_status !== 'unlaunched';
+	const isStagingSite = useSelector( ( state ) => isSiteStaging( state, site.ID ) );
 
 	return (
 		<SiteDropdownMenu
@@ -399,12 +401,14 @@ export const SitesEllipsisMenu = ( {
 		>
 			{ () => (
 				<SiteMenuGroup>
-					{ ! isLaunched && <LaunchItem { ...props } /> }
+					{ ! isStagingSite && ! isLaunched && <LaunchItem { ...props } /> }
 					<SettingsItem { ...props } />
 					{ hasHostingPage && <HostingConfigurationSubmenu { ...props } /> }
 					{ ! isP2Site( site ) && <ManagePluginsItem { ...props } /> }
 					{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
-					{ shouldShowSiteCopyItem && <CopySiteItem { ...props } onClick={ startSiteCopy } /> }
+					{ ! isStagingSite && shouldShowSiteCopyItem && (
+						<CopySiteItem { ...props } onClick={ startSiteCopy } />
+					) }
 					<MenuItemLink
 						href={ `/settings/performance/${ site.slug }` }
 						onClick={ () =>
