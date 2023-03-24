@@ -16,7 +16,11 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
 import useVatDetails from './use-vat-details';
 import type { UpdateError, FetchError } from './use-vat-details';
-import type { VatDetails } from '@automattic/wpcom-checkout';
+import type {
+	CountryListItem,
+	CountryListItemWithVat,
+	VatDetails,
+} from '@automattic/wpcom-checkout';
 
 import './style.scss';
 
@@ -174,6 +178,9 @@ function CountryCodeInput( {
 		value = 'GB';
 	}
 
+	const isVatSupported = ( country: CountryListItem ): country is CountryListItemWithVat =>
+		country.vat_supported;
+	const vatCountries = countries.filter( isVatSupported );
 	return (
 		<FormSelect
 			name={ name }
@@ -183,16 +190,14 @@ function CountryCodeInput( {
 			className="vat-info__country-select"
 		>
 			<option value="">--</option>
-			{ countries
-				.filter( ( country ) => country.vat_supported )
-				.map( ( country ) => {
-					const name = country.code === 'XI' ? translate( 'Northern Ireland' ) : country.name;
-					return country.tax_country_codes.map( ( countryCode ) => (
-						<option key={ countryCode } value={ countryCode }>
-							{ name }
-						</option>
-					) );
-				} ) }
+			{ vatCountries.map( ( country ) => {
+				const name = country.code === 'XI' ? translate( 'Northern Ireland' ) : country.name;
+				return country.tax_country_codes.map( ( countryCode ) => (
+					<option key={ countryCode } value={ countryCode }>
+						{ name }
+					</option>
+				) );
+			} ) }
 		</FormSelect>
 	);
 }
