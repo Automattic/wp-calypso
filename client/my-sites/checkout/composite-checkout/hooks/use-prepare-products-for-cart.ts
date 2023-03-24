@@ -118,6 +118,7 @@ export default function usePrepareProductsForCart( {
 	} );
 	useAddRenewalItems( {
 		originalPurchaseId,
+		sitelessCheckoutType, // Akismet products can renew independently of a site
 		productAlias: productAliasFromUrl,
 		dispatch,
 		addHandler,
@@ -184,6 +185,11 @@ function chooseAddHandler( {
 	isNoSiteCart?: boolean;
 	isGiftPurchase?: boolean;
 } ): AddHandler {
+	// Akismet products can be renewed in a "siteless" context
+	if ( sitelessCheckoutType === 'akismet' && originalPurchaseId ) {
+		return 'addRenewalItems';
+	}
+
 	if ( sitelessCheckoutType === 'jetpack' || sitelessCheckoutType === 'akismet' ) {
 		return 'addProductFromSlug';
 	}
@@ -262,12 +268,14 @@ function useAddProductsFromLocalStorage( {
 
 function useAddRenewalItems( {
 	originalPurchaseId,
+	sitelessCheckoutType,
 	productAlias,
 	dispatch,
 	addHandler,
 	isGiftPurchase,
 }: {
 	originalPurchaseId: string | number | null | undefined;
+	sitelessCheckoutType: string | null | undefined;
 	productAlias: string | null | undefined;
 	dispatch: ( action: PreparedProductsAction ) => void;
 	addHandler: AddHandler;
@@ -289,6 +297,7 @@ function useAddRenewalItems( {
 					return null;
 				}
 				return createRenewalItemToAddToCart( {
+					sitelessCheckoutType,
 					productAlias: productSlug,
 					purchaseId: subscriptionId,
 					isGiftPurchase,
@@ -481,10 +490,12 @@ function getProductSlugFromAlias( productAlias: string ): string {
 function createRenewalItemToAddToCart( {
 	productAlias,
 	purchaseId,
+	sitelessCheckoutType,
 	isGiftPurchase,
 }: {
 	productAlias: string;
 	purchaseId: string | number | undefined | null;
+	sitelessCheckoutType: string | null | undefined;
 	isGiftPurchase?: boolean;
 } ): RequestCartProduct | null {
 	const { slug, meta, quantity } = getProductPartsFromAlias( productAlias );
@@ -498,6 +509,7 @@ function createRenewalItemToAddToCart( {
 
 	const renewalItemExtra: RequestCartProductExtra = {
 		purchaseId: String( purchaseId ),
+		isAkismetSitelessCheckout: sitelessCheckoutType === 'akismet',
 		purchaseType: 'renewal',
 		isGiftPurchase,
 	};
