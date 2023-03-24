@@ -1,6 +1,6 @@
 import 'calypso/components/environment-badge/style.scss';
 import '@automattic/calypso-polyfills';
-import { initializeAnalytics } from '@automattic/calypso-analytics';
+import { getGenericSuperPropsGetter, initializeAnalytics } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { CurrentUser, User } from '@automattic/data-stores';
 import { dispatch } from '@wordpress/data';
@@ -17,23 +17,14 @@ import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { createReduxStore } from 'calypso/state';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
-import { loadPersistedState } from 'calypso/state/persisted-state';
 import { createQueryClient, hydrateBrowserState } from 'calypso/state/query-client';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import SubscriptionManagemer from './subscription-manager/subscription-manager';
 import './styles.scss';
 
-const tracksSuperProps = () => ( {
-	environment: process.env.NODE_ENV,
-	environment_id: config( 'env_id' ),
-	site_id_label: 'wpcom',
-	client: config( 'client_slug' ),
-} );
-
 const setupQueryClient = async ( userId: number ) => {
-	await loadPersistedState();
-	const queryClient = createQueryClient();
+	const queryClient = await createQueryClient();
 	await hydrateBrowserState( queryClient, userId );
 	return queryClient;
 };
@@ -63,7 +54,7 @@ window.AppBoot = async () => {
 	const user = ( await initializeCurrentUser() ) as unknown as CurrentUser;
 	const queryClient = await setupQueryClient( user.ID );
 	const reduxStore = setupReduxStore( user );
-	initializeAnalytics( user, tracksSuperProps );
+	initializeAnalytics( user, getGenericSuperPropsGetter( config ) );
 
 	ReactDom.render(
 		<CalypsoI18nProvider>
