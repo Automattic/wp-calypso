@@ -3,6 +3,7 @@ import page from 'page';
 import { useSelector } from 'react-redux';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import MasterbarStyled from './masterbar-styled';
+import { hasMultipleProductTypes } from './utils';
 
 export function MarketplaceGoBackSection( {
 	pluginSlugs,
@@ -46,16 +47,4 @@ function DefaultGoBackSection( { areAllProductsFetched }: { areAllProductsFetche
 			showContact={ areAllProductsFetched }
 		/>
 	);
-}
-
-/**
- * Check if there are more than 1 product type slugs
- *
- * @param productSlugs An array of product slugs for each product type
- * @returns boolean Whether there are more than multiple product type slugs
- */
-function hasMultipleProductTypes( productSlugs: Array< string[] > ): boolean {
-	const nonEmptyProductSlugs = productSlugs.filter( ( slugs ) => slugs.length !== 0 );
-
-	return nonEmptyProductSlugs.length > 1;
 }
