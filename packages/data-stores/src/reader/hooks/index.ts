@@ -15,7 +15,7 @@ export const useIsLoggedIn = () => {
 
 export const useIsQueryEnabled = () => {
 	const loggedIn = useIsLoggedIn();
-	if ( loggedIn || window.currentUser?.subscriptionManagementSubkey ) {
+	if ( loggedIn || getSubkey() ) {
 		return true;
 	}
 
@@ -38,7 +38,6 @@ export const useSubscriberEmailAddress = () => {
 			return null;
 		}
 
-		const emailAddress = decodedSubkeyValue.slice( firstPeriodIndex + 1 );
-		return emailAddress;
+		return decodedSubkeyValue.slice( firstPeriodIndex + 1 );
 	}, [] );
 };

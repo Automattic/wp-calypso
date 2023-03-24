@@ -44,7 +44,7 @@ async function callApi< ReturnType >( {
 		body: method === 'POST' ? JSON.stringify( body ) : undefined,
 		credentials: 'same-origin',
 		headers: {
-			Authorization: `X-WPSUBKEY ${ subkey }`,
+			Authorization: `X-WPSUBKEY ${ encodeURIComponent( subkey ) }`,
 			'Content-Type': 'application/json',
 		},
 	} as APIFetchOptions );
