@@ -5,15 +5,17 @@ interface SiteLogsAPIResponse {
 	message: string;
 	data: {
 		total_results: number;
-		logs: object[];
+		logs: Record< string, any >[];
 		scroll_id: string | null;
 	};
 }
 
-export type SiteLogs = SiteLogsAPIResponse[ 'data' ];
+export type SiteLogsData = SiteLogsAPIResponse[ 'data' ];
+
+export type SiteLogsTab = 'php' | 'web';
 
 export interface SiteLogsParams {
-	logType: 'php' | 'web';
+	logType: SiteLogsTab;
 	start: number;
 	end: number;
 	sort_order?: 'asc' | 'desc';
@@ -24,9 +26,9 @@ export interface SiteLogsParams {
 export function useSiteLogsQuery(
 	siteId: number | null | undefined,
 	params: SiteLogsParams,
-	queryOptions: UseQueryOptions< SiteLogsAPIResponse, unknown, SiteLogs > = {}
+	queryOptions: UseQueryOptions< SiteLogsAPIResponse, unknown, SiteLogsData > = {}
 ) {
-	return useQuery< SiteLogsAPIResponse, unknown, SiteLogs >(
+	return useQuery< SiteLogsAPIResponse, unknown, SiteLogsData >(
 		[
 			'site-logs',
 			siteId,
