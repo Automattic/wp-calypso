@@ -469,13 +469,17 @@ body.is-section-themes {
 	margin-top: 24px;
 	padding: 0;
 
-	@include break-small {
+	@include break-large {
 		flex-direction: row;
+		flex-wrap: nowrap;
+		gap: 8px;
 	}
 
 	.themes-toolbar-group {
 		height: 28px;
 		max-width: 100%;
+		// See https://stackoverflow.com/a/66689926
+		min-width: 0;
 		flex: 1;
 	}
 
