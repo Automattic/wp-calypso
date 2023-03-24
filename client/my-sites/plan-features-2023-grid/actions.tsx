@@ -13,7 +13,7 @@ import styled from '@emotion/styled';
 import { useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import classNames from 'classnames';
-import { localize, TranslateResult, useTranslate } from 'i18n-calypso';
+import i18n, { localize, TranslateResult, useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -303,9 +303,12 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 			),
 		};
 
+		const shouldShowNewCta =
+			isEnglishLocale || i18n.hasTranslation( '{{ExternalLink}}Learn more{{/ExternalLink}}' );
+
 		return (
 			<Button className={ classes }>
-				{ isEnglishLocale
+				{ shouldShowNewCta
 					? translate( '{{ExternalLink}}Learn more{{/ExternalLink}}', {
 							components: translateComponents,
 					  } )
