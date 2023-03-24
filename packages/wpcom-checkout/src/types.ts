@@ -504,6 +504,8 @@ export interface CountryListItem {
 	tax_needs_subdivision?: boolean;
 	tax_needs_organization?: boolean;
 	tax_needs_address?: boolean;
+	vat_supported: boolean;
+	tax_country_codes: string[];
 }
 
 export type SitelessCheckoutType = 'jetpack' | 'akismet' | undefined;
