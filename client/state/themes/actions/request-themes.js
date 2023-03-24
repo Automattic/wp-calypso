@@ -19,7 +19,7 @@ import 'calypso/state/themes/init';
  * @param  {number|string} siteId        Jetpack site ID or 'wpcom' for any WPCOM site
  * @param  {Object}        query         Theme query
  * @param  {string}        query.search  Search string
- * @param  {string}        query.tier    Theme tier: 'free', 'premium', or '' (either)
+ * @param  {string}        query.tier    Theme tier: 'free', 'premium', 'marketplace', or '' (either)
  * @param  {string}        query.filter  Filter
  * @param  {number}        query.number  How many themes to return per page
  * @param  {number}        query.offset  At which item to start the set of returned themes

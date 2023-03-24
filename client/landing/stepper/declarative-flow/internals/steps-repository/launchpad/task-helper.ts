@@ -325,8 +325,10 @@ export function getEnhancedTasks(
 							recordTaskClickTracksEvent( flow, isPaidPlan, task.id );
 							const destinationUrl = isPaidPlan
 								? `/domains/manage/${ siteSlug }`
-								: addQueryArgs( `/domains/add/${ siteSlug }`, {
-										domainAndPlanPackage: true,
+								: addQueryArgs( '/setup/domain-upsell/domains', {
+										siteSlug,
+										flowToReturnTo: flow,
+										new: site?.name,
 								  } );
 							window.location.assign( destinationUrl );
 						},

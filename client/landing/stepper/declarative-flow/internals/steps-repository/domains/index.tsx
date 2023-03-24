@@ -6,6 +6,7 @@ import {
 	COPY_SITE_FLOW,
 	isCopySiteFlow,
 	NEWSLETTER_FLOW,
+	DOMAIN_UPSELL_FLOW,
 } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -93,7 +94,15 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			} );
 			dispatch( submitDomainStepSelection( suggestion, getAnalyticsSection() ) );
 
-			setHideFreePlan( Boolean( suggestion.product_slug ) || shouldHideFreePlan );
+			let hideFreePlan;
+
+			if ( flow === DOMAIN_UPSELL_FLOW ) {
+				hideFreePlan = true;
+			} else {
+				hideFreePlan = Boolean( suggestion.product_slug ) || shouldHideFreePlan;
+			}
+
+			setHideFreePlan( hideFreePlan );
 			setDomainCartItem( domainCartItem );
 		}
 
@@ -112,6 +121,10 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 
 		dispatch( recordTracksEvent( 'calypso_signup_skip_step', tracksProperties ) );
 
+		if ( flow === DOMAIN_UPSELL_FLOW ) {
+			return submit?.( { deferDomainSelection: true } );
+		}
+
 		submitWithDomain( undefined, shouldHideFreePlan );
 	};
 
@@ -126,6 +139,10 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 				/>
 			),
 		};
+
+		if ( showUseYourDomain ) {
+			return '';
+		}
 
 		switch ( flow ) {
 			case NEWSLETTER_FLOW:
@@ -145,6 +162,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 				);
 			case COPY_SITE_FLOW:
 				return __( 'Make your copied site unique with a custom domain all of its own.' );
+			case DOMAIN_UPSELL_FLOW:
+				return __( 'Enter some descriptive keywords to get started' );
 			default:
 				return createInterpolateElement(
 					__(
@@ -219,17 +238,38 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		/>
 	);
 
+	const handleGoBack = () => {
+		if ( showUseYourDomain ) {
+			return setShowUseYourDomain( false );
+		}
+		return exitFlow?.( '/sites' );
+	};
+
+	const getBackLabelText = () => {
+		if ( showUseYourDomain ) {
+			return __( 'Back' );
+		}
+		return __( 'Back to sites' );
+	};
+
+	const shouldHideBackButton = () => {
+		if ( showUseYourDomain ) {
+			return false;
+		}
+		return ! isCopySiteFlow( flow );
+	};
+
 	return (
 		<StepContainer
 			stepName="domains"
 			isWideLayout={ true }
-			hideBack={ ! isCopySiteFlow( flow ) }
-			backLabelText={ __( 'Back to sites' ) }
+			hideBack={ shouldHideBackButton() }
+			backLabelText={ getBackLabelText() }
 			hideSkip={ true }
-			flowName={ isCopySiteFlow( flow ) ? ( flow as string ) : 'linkInBio' }
+			flowName={ flow as string }
 			stepContent={ <div className="domains__content">{ renderContent() }</div> }
 			recordTracksEvent={ recordTracksEvent }
-			goBack={ () => exitFlow?.( '/sites' ) }
+			goBack={ handleGoBack }
 			goNext={ () => submit?.() }
 			formattedHeader={
 				<FormattedHeader

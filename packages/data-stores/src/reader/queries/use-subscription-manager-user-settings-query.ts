@@ -17,7 +17,7 @@ const useSubscriptionManagerUserSettingsQuery = () => {
 		},
 		{
 			enabled,
-			initialData: {},
+			refetchOnWindowFocus: false,
 		}
 	);
 };

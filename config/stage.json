@@ -99,6 +99,7 @@
 		"pattern-assembler/color-and-fonts": false,
 		"pattern-assembler/logged-out-showcase": true,
 		"pattern-assembler/inline-styles": true,
+		"pattern-assembler/notices": false,
 		"plans/personal-plan": true,
 		"plans/pro-plan": false,
 		"plans/starter-plan": false,
