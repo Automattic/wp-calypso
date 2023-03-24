@@ -40,9 +40,7 @@ export interface WithStoredPaymentMethodsProps {
 	paymentMethodsState: StoredPaymentMethodsState;
 }
 
-export function withStoredPaymentMethods<
-	P extends WithStoredPaymentMethodsProps = WithStoredPaymentMethodsProps
->(
+export function withStoredPaymentMethods< P >(
 	Component: React.ComponentType< P >,
 	options: {
 		type?: PaymentMethodRequestType;
