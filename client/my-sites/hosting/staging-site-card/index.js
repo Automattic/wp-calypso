@@ -264,17 +264,19 @@ export const StagingSiteCard = ( {
 	const getAccessError = () => {
 		return (
 			<Notice status="is-error" showDismiss={ false }>
-				{ translate(
-					'Unable to access the staging site {{a}}%(stagingSiteName)s{{/a}}. Please contact with the site owner.',
-					{
-						args: {
-							stagingSiteName: stagingSite.url,
-						},
-						components: {
-							a: <a href={ stagingSite.url } />,
-						},
-					}
-				) }
+				<div data-testid="staging-sites-access-message">
+					{ translate(
+						'Unable to access the staging site {{a}}%(stagingSiteName)s{{/a}}. Please contact with the site owner.',
+						{
+							args: {
+								stagingSiteName: stagingSite.url,
+							},
+							components: {
+								a: <a href={ stagingSite.url } />,
+							},
+						}
+					) }
+				</div>
 			</Notice>
 		);
 	};
