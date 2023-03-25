@@ -67,14 +67,24 @@ class MembershipsSection extends Component {
 		disconnectedConnectedAccountId: null,
 	};
 	componentDidMount() {
+		this.navigateToLaunchpad();
 		this.fetchNextSubscriberPage( false, true );
 	}
 	componentDidUpdate( prevProps ) {
+		this.navigateToLaunchpad();
 		if ( prevProps.siteId !== this.props.siteId ) {
 			// Site Id changed
 			this.fetchNextSubscriberPage( false, true );
 		}
 	}
+
+	navigateToLaunchpad() {
+		const shouldGoToLaunchpad = this.props?.query?.stripe_connect_success === 'launchpad';
+		if ( shouldGoToLaunchpad ) {
+			window.location.assign( `/setup/newsletter/launchpad?siteSlug=${ this.props.siteSlug }` );
+		}
+	}
+
 	renderEarnings() {
 		const { commission, currency, forecast, lastMonth, siteId, total, translate } = this.props;
 		return (

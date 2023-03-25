@@ -102,7 +102,7 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 		const stripeConnected =
 			site?.options?.launchpad_checklist_tasks_statuses?.stripe_connected || false;
 		if ( stripeConnected === false && site?.ID && flow === NEWSLETTER_FLOW ) {
-			dispatch( membershipsRequestSettings( site?.ID ) );
+			dispatch( membershipsRequestSettings( site?.ID, 'launchpad' ) );
 		}
 	}, [ site, flow, dispatch ] );
 
