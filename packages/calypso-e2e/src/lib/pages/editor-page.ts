@@ -41,7 +41,8 @@ const selectors = {
 	// Welcome tour
 	welcomeTourCloseButton: 'button[aria-label="Close Tour"]',
 };
-export const EXTENDED_EDITOR_WAIT_TIMEOUT = 30 * 1000;
+export const EXTENDED_EDITOR_WAIT_TIMEOUT = 20 * 1000;
+export const EXTENDED_EDITOR_WAIT_ATOMIC_TIMEOUT = 60 * 1000;
 
 /**
  * Represents an instance of the WPCOM's Gutenberg editor page.
@@ -151,10 +152,16 @@ export class EditorPage {
 	 * @returns {Promise<Frame>} iframe holding the editor.
 	 */
 	async waitUntilLoaded(): Promise< void > {
+		const timeout =
+			this.target === 'atomic' ? EXTENDED_EDITOR_WAIT_ATOMIC_TIMEOUT : EXTENDED_EDITOR_WAIT_TIMEOUT;
+
 		// In a typical loading scenario, this request is one of the last to fire.
 		// Lacking a perfect cross-site type (Simple/Atomic) way to check the loading state,
 		// it is a fairly good stand-in.
-		await this.page.waitForResponse( /.*posts.*/, { timeout: EXTENDED_EDITOR_WAIT_TIMEOUT } );
+		await Promise.all( [
+			this.page.waitForURL( /(post|page|post-new.php)/ ),
+			this.page.waitForResponse( /.*posts.*/, { timeout: timeout } ),
+		] );
 
 		// Dismiss the Welcome Tour.
 		await this.editorWelcomeTourComponent.forceDismissWelcomeTour();
@@ -648,10 +655,11 @@ export class EditorPage {
 
 		const json = await response.json();
 
+		// AT and Simple sites have slightly differing response from the API.
 		let publishedURL: string;
-		if ( this.target === 'atomic' ) {
+		try {
 			publishedURL = json.link;
-		} else {
+		} catch {
 			publishedURL = json.body.link;
 		}
 
