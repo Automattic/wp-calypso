@@ -12,6 +12,11 @@ import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import Loading from '../../rewind-flow/loading';
 import BackupCloneFlow from '../index';
 
+jest.mock( 'react', () => ( {
+	...jest.requireActual( 'react' ),
+	useState: jest.fn(),
+} ) );
+
 jest.mock( 'i18n-calypso', () => ( {
 	...jest.requireActual( 'i18n-calypso' ),
 	localize: ( x ) => x,
@@ -19,10 +24,11 @@ jest.mock( 'i18n-calypso', () => ( {
 	useTranslate: jest.fn( () => ( text ) => text ),
 } ) );
 
-jest.mock( 'react', () => ( {
-	...jest.requireActual( 'react' ),
-	useState: jest.fn(),
-} ) );
+jest.mock( 'calypso/data/activity-log/use-rewindable-activity-log-query', () =>
+	jest.fn().mockImplementation( () => {
+		return { isLoading: true, data: null };
+	} )
+);
 
 jest.mock( 'calypso/state/selectors/get-rewind-state' );
 
@@ -70,14 +76,14 @@ function createState( siteId = 1 ) {
 	};
 }
 
-function setUseStateMockCloneFlow( {
+function initializeUseStateMockCloneFlow( {
 	userHasRequestedRestore = false,
 	userHasSetDestination = false,
 	cloneDestination = '',
 	userHasSetBackupPeriod = false,
 	backupPeriod = '',
 	backupDisplayDate = '',
-} ) {
+} = {} ) {
 	useState
 		.mockReturnValueOnce( [
 			'{"themes":true,"plugins":true,"uploads":true,"sqls":true,"roots":true,"contents":true}',
@@ -88,7 +94,10 @@ function setUseStateMockCloneFlow( {
 		.mockReturnValueOnce( [ cloneDestination, jest.fn() ] )
 		.mockReturnValueOnce( [ userHasSetBackupPeriod, jest.fn() ] )
 		.mockReturnValueOnce( [ backupPeriod, jest.fn() ] )
-		.mockReturnValueOnce( [ backupDisplayDate, jest.fn() ] );
+		.mockReturnValueOnce( [ backupDisplayDate, jest.fn() ] )
+		.mockReturnValueOnce( [ '', jest.fn() ] ) // no idea
+		.mockReturnValueOnce( [ '', jest.fn() ] ) // no idea
+		.mockReturnValueOnce( [ '', jest.fn() ] ); // no idea
 }
 
 describe( 'BackupCloneFlow render', () => {
@@ -105,6 +114,10 @@ describe( 'BackupCloneFlow render', () => {
 			const mockStore = configureStore();
 			const store = mockStore( createState() );
 			const queryClient = new QueryClient();
+
+			// Initialize mock UseState on BackupCloneFlow
+			initializeUseStateMockCloneFlow();
+			initializeUseStateMockCloneFlow();
 
 			// Render component
 			render(
@@ -123,12 +136,13 @@ describe( 'BackupCloneFlow render', () => {
 				state: 'active',
 			} ) );
 
-			// Mock UseState on BackupCloneFlow to set userHasSetDestination: false
-			setUseStateMockCloneFlow( { userHasSetDestination: false } );
-
 			const mockStore = configureStore();
 			const store = mockStore( createState() );
 			const queryClient = new QueryClient();
+
+			// Initialize mock UseState on BackupCloneFlow and set userHasSetDestination: false
+			initializeUseStateMockCloneFlow( { userHasSetDestination: false } );
+			initializeUseStateMockCloneFlow( { userHasSetDestination: false } );
 
 			// Render component
 			render(
