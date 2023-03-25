@@ -217,7 +217,9 @@ export default function useCreatePaymentCompleteCallback( {
 				return;
 			}
 
-			reloadCart();
+			reloadCart().catch( () => {
+				// No need to do anything here. CartMessages will report this error to the user.
+			} );
 			redirectThroughPending( url, {
 				siteSlug,
 				orderId: transactionResult.order_id,

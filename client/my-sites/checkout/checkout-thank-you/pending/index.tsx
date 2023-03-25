@@ -191,7 +191,9 @@ function useRedirectOnTransactionSuccess( {
 		// the order completes and the server empties the cart, the front-end will
 		// get an updated cached cart and future pages will show the cart correctly
 		// as empty.
-		reloadCart();
+		reloadCart().catch( () => {
+			// No need to do anything here. CartMessages will report this error to the user.
+		} );
 
 		// Wait for the receipt to load before redirecting so we can display the
 		// correct notification and possibly run analytics.
