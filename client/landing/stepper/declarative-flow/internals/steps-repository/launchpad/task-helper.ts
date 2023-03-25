@@ -373,8 +373,11 @@ export function getEnhancedTasks(
 						completed: newsletterPlanCreated,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							if ( newsletterPlanCreated ) {
+								return;
+							}
 							window.location.assign(
-								`/earn/payments-plans/${ siteSlug }#add-newsletter-payment-plan`
+								`/earn/payments-plans/${ siteSlug }?launchpad=add-product#add-newsletter-payment-plan`
 							);
 						},
 					};
