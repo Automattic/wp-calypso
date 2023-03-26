@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import ActivityCardList from 'calypso/components/activity-card-list';
 import AdvancedCredentials from 'calypso/components/advanced-credentials';
 import StepProgress from 'calypso/components/step-progress';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
@@ -37,6 +38,10 @@ jest.mock( 'calypso/state/selectors/get-site-gmt-offset', () =>
 );
 
 jest.mock( 'calypso/state/selectors/get-site-timezone-value', () =>
+	jest.fn().mockImplementation( () => null )
+);
+
+jest.mock( 'calypso/components/activity-card-list', () =>
 	jest.fn().mockImplementation( () => null )
 );
 
@@ -155,6 +160,34 @@ describe( 'BackupCloneFlow render', () => {
 
 			expect( StepProgress ).toHaveBeenCalledTimes( 1 );
 			expect( AdvancedCredentials ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		test( 'ActivityCardList is rendered if user has not set the period to clone', () => {
+			getRewindState.mockImplementation( () => ( {
+				state: 'active',
+			} ) );
+
+			const mockStore = configureStore();
+			const store = mockStore( createState() );
+			const queryClient = new QueryClient();
+
+			// Initialize mock UseState on BackupCloneFlow and set userHasSetDestination: false
+			initializeUseStateMockCloneFlow( {
+				userHasSetDestination: true,
+				userHasSetBackupPeriod: false,
+			} );
+
+			// Render component
+			render(
+				<Provider store={ store }>
+					<QueryClientProvider client={ queryClient }>
+						<BackupCloneFlow />
+					</QueryClientProvider>
+				</Provider>
+			);
+
+			expect( StepProgress ).toHaveBeenCalledTimes( 1 );
+			expect( ActivityCardList ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
 } );
