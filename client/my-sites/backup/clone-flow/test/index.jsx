@@ -9,8 +9,10 @@ import configureStore from 'redux-mock-store';
 import ActivityCardList from 'calypso/components/activity-card-list';
 import AdvancedCredentials from 'calypso/components/advanced-credentials';
 import StepProgress from 'calypso/components/step-progress';
+import getInProgressRewindStatus from 'calypso/state/selectors/get-in-progress-rewind-status';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import Loading from '../../rewind-flow/loading';
+import ProgressBar from '../../rewind-flow/progress-bar';
 import RewindConfigEditor from '../../rewind-flow/rewind-config-editor';
 import BackupCloneFlow from '../index';
 
@@ -32,6 +34,7 @@ jest.mock( 'calypso/data/activity-log/use-rewindable-activity-log-query', () =>
 	} )
 );
 
+jest.mock( 'calypso/state/selectors/get-in-progress-rewind-status' );
 jest.mock( 'calypso/state/selectors/get-rewind-state' );
 
 jest.mock( 'calypso/state/selectors/get-site-gmt-offset', () =>
@@ -51,6 +54,7 @@ jest.mock( 'calypso/components/advanced-credentials', () =>
 );
 jest.mock( 'calypso/components/step-progress', () => jest.fn().mockImplementation( () => null ) );
 jest.mock( '../../rewind-flow/loading', () => jest.fn().mockImplementation( () => null ) );
+jest.mock( '../../rewind-flow/progress-bar', () => jest.fn().mockImplementation( () => null ) );
 jest.mock( '../../rewind-flow/rewind-config-editor', () =>
 	jest.fn().mockImplementation( () => null )
 );
@@ -112,12 +116,14 @@ function initializeUseStateMockCloneFlow( {
 }
 
 describe( 'BackupCloneFlow render', () => {
-	describe( 'Render loading it state is uninitialized', () => {
+	describe( 'Render components in flow', () => {
 		beforeEach( () => {
 			jest.clearAllMocks();
+
+			getInProgressRewindStatus.mockImplementation( () => undefined );
 		} );
 
-		test( 'RewindFlowLoading is rendered if state is not initialized', () => {
+		test( 'Render RewindFlowLoading if state is not initialized', () => {
 			getRewindState.mockImplementation( () => ( {
 				state: 'uninitialized',
 			} ) );
@@ -141,7 +147,7 @@ describe( 'BackupCloneFlow render', () => {
 			expect( Loading ).toHaveBeenCalledTimes( 1 );
 		} );
 
-		test( 'AdvancedCredentials is rendered if user has not set the destination', () => {
+		test( 'Render AdvancedCredentials if user has not set the destination', () => {
 			getRewindState.mockImplementation( () => ( {
 				state: 'active',
 			} ) );
@@ -166,7 +172,7 @@ describe( 'BackupCloneFlow render', () => {
 			expect( AdvancedCredentials ).toHaveBeenCalledTimes( 1 );
 		} );
 
-		test( 'ActivityCardList is rendered if user has not set the period to clone', () => {
+		test( 'Render ActivityCardList if user has not set the period to clone', () => {
 			getRewindState.mockImplementation( () => ( {
 				state: 'active',
 			} ) );
@@ -194,7 +200,7 @@ describe( 'BackupCloneFlow render', () => {
 			expect( ActivityCardList ).toHaveBeenCalledTimes( 1 );
 		} );
 
-		test( 'RewindConfigEditor is rendered if user has not requested yet the restore', () => {
+		test( 'Render RewindConfigEditor if user has not requested the clone yet', () => {
 			getRewindState.mockImplementation( () => ( {
 				state: 'active',
 			} ) );
@@ -221,6 +227,93 @@ describe( 'BackupCloneFlow render', () => {
 
 			expect( StepProgress ).toHaveBeenCalledTimes( 1 );
 			expect( RewindConfigEditor ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		test( 'Render ProgressBar if uses requested the clone', () => {
+			getRewindState.mockImplementation( () => ( {
+				state: 'active',
+			} ) );
+
+			const mockStore = configureStore();
+			const store = mockStore( createState() );
+			const queryClient = new QueryClient();
+
+			// Initialize mock UseState on BackupCloneFlow and set userHasSetDestination: false
+			initializeUseStateMockCloneFlow( {
+				userHasSetDestination: true,
+				userHasSetBackupPeriod: true,
+				userHasRequestedRestore: true,
+			} );
+			getInProgressRewindStatus.mockImplementation( () => undefined );
+
+			// Render component
+			render(
+				<Provider store={ store }>
+					<QueryClientProvider client={ queryClient }>
+						<BackupCloneFlow />
+					</QueryClientProvider>
+				</Provider>
+			);
+
+			expect( ProgressBar ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		test( 'Render ProgressBar if inProgressRewindStatus is queued', () => {
+			getRewindState.mockImplementation( () => ( {
+				state: 'active',
+			} ) );
+
+			const mockStore = configureStore();
+			const store = mockStore( createState() );
+			const queryClient = new QueryClient();
+
+			// Initialize mock UseState on BackupCloneFlow and set userHasSetDestination: false
+			initializeUseStateMockCloneFlow( {
+				userHasSetDestination: true,
+				userHasSetBackupPeriod: true,
+				userHasRequestedRestore: true,
+			} );
+			getInProgressRewindStatus.mockImplementation( () => 'queued' );
+
+			// Render component
+			render(
+				<Provider store={ store }>
+					<QueryClientProvider client={ queryClient }>
+						<BackupCloneFlow />
+					</QueryClientProvider>
+				</Provider>
+			);
+
+			expect( ProgressBar ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		test( 'Render ProgressBar if inProgressRewindStatus is running', () => {
+			getRewindState.mockImplementation( () => ( {
+				state: 'active',
+			} ) );
+
+			const mockStore = configureStore();
+			const store = mockStore( createState() );
+			const queryClient = new QueryClient();
+
+			// Initialize mock UseState on BackupCloneFlow and set userHasSetDestination: false
+			initializeUseStateMockCloneFlow( {
+				userHasSetDestination: true,
+				userHasSetBackupPeriod: true,
+				userHasRequestedRestore: true,
+			} );
+			getInProgressRewindStatus.mockImplementation( () => 'running' );
+
+			// Render component
+			render(
+				<Provider store={ store }>
+					<QueryClientProvider client={ queryClient }>
+						<BackupCloneFlow />
+					</QueryClientProvider>
+				</Provider>
+			);
+
+			expect( ProgressBar ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
 } );
