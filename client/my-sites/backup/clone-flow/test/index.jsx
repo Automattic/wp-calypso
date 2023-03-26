@@ -11,6 +11,7 @@ import AdvancedCredentials from 'calypso/components/advanced-credentials';
 import StepProgress from 'calypso/components/step-progress';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import Loading from '../../rewind-flow/loading';
+import RewindConfigEditor from '../../rewind-flow/rewind-config-editor';
 import BackupCloneFlow from '../index';
 
 jest.mock( 'react', () => ( {
@@ -50,6 +51,9 @@ jest.mock( 'calypso/components/advanced-credentials', () =>
 );
 jest.mock( 'calypso/components/step-progress', () => jest.fn().mockImplementation( () => null ) );
 jest.mock( '../../rewind-flow/loading', () => jest.fn().mockImplementation( () => null ) );
+jest.mock( '../../rewind-flow/rewind-config-editor', () =>
+	jest.fn().mockImplementation( () => null )
+);
 
 function createState( siteId = 1 ) {
 	return {
@@ -188,6 +192,35 @@ describe( 'BackupCloneFlow render', () => {
 
 			expect( StepProgress ).toHaveBeenCalledTimes( 1 );
 			expect( ActivityCardList ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		test( 'RewindConfigEditor is rendered if user has not requested yet the restore', () => {
+			getRewindState.mockImplementation( () => ( {
+				state: 'active',
+			} ) );
+
+			const mockStore = configureStore();
+			const store = mockStore( createState() );
+			const queryClient = new QueryClient();
+
+			// Initialize mock UseState on BackupCloneFlow and set userHasSetDestination: false
+			initializeUseStateMockCloneFlow( {
+				userHasSetDestination: true,
+				userHasSetBackupPeriod: true,
+				userHasRequestedRestore: false,
+			} );
+
+			// Render component
+			render(
+				<Provider store={ store }>
+					<QueryClientProvider client={ queryClient }>
+						<BackupCloneFlow />
+					</QueryClientProvider>
+				</Provider>
+			);
+
+			expect( StepProgress ).toHaveBeenCalledTimes( 1 );
+			expect( RewindConfigEditor ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
 } );
