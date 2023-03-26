@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
@@ -314,6 +314,35 @@ describe( 'BackupCloneFlow render', () => {
 			);
 
 			expect( ProgressBar ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		test( 'Render finished text if the clone is finished', () => {
+			getRewindState.mockImplementation( () => ( {
+				state: 'active',
+			} ) );
+
+			const mockStore = configureStore();
+			const store = mockStore( createState() );
+			const queryClient = new QueryClient();
+
+			// Initialize mock UseState on BackupCloneFlow and set userHasSetDestination: false
+			initializeUseStateMockCloneFlow( {
+				userHasSetDestination: true,
+				userHasSetBackupPeriod: true,
+				userHasRequestedRestore: true,
+			} );
+			getInProgressRewindStatus.mockImplementation( () => 'finished' );
+
+			// Render component
+			render(
+				<Provider store={ store }>
+					<QueryClientProvider client={ queryClient }>
+						<BackupCloneFlow />
+					</QueryClientProvider>
+				</Provider>
+			);
+
+			expect( screen.queryByText( /Your site has been successfully cloned./i ) ).toBeVisible();
 		} );
 	} );
 } );
