@@ -77,6 +77,14 @@ function createState( siteId = 1 ) {
 }
 
 function initializeUseStateMockCloneFlow( {
+	rewindConfig = {
+		themes: true,
+		plugins: true,
+		uploads: true,
+		sqls: true,
+		roots: true,
+		contents: true,
+	},
 	userHasRequestedRestore = false,
 	userHasSetDestination = false,
 	cloneDestination = '',
@@ -85,19 +93,13 @@ function initializeUseStateMockCloneFlow( {
 	backupDisplayDate = '',
 } = {} ) {
 	useState
-		.mockReturnValueOnce( [
-			'{"themes":true,"plugins":true,"uploads":true,"sqls":true,"roots":true,"contents":true}',
-			jest.fn(),
-		] ) // rewindConfig
+		.mockReturnValueOnce( [ rewindConfig, jest.fn() ] )
 		.mockReturnValueOnce( [ userHasRequestedRestore, jest.fn() ] )
 		.mockReturnValueOnce( [ userHasSetDestination, jest.fn() ] )
 		.mockReturnValueOnce( [ cloneDestination, jest.fn() ] )
 		.mockReturnValueOnce( [ userHasSetBackupPeriod, jest.fn() ] )
 		.mockReturnValueOnce( [ backupPeriod, jest.fn() ] )
-		.mockReturnValueOnce( [ backupDisplayDate, jest.fn() ] )
-		.mockReturnValueOnce( [ '', jest.fn() ] ) // no idea
-		.mockReturnValueOnce( [ '', jest.fn() ] ) // no idea
-		.mockReturnValueOnce( [ '', jest.fn() ] ); // no idea
+		.mockReturnValueOnce( [ backupDisplayDate, jest.fn() ] );
 }
 
 describe( 'BackupCloneFlow render', () => {
@@ -116,7 +118,6 @@ describe( 'BackupCloneFlow render', () => {
 			const queryClient = new QueryClient();
 
 			// Initialize mock UseState on BackupCloneFlow
-			initializeUseStateMockCloneFlow();
 			initializeUseStateMockCloneFlow();
 
 			// Render component
@@ -141,7 +142,6 @@ describe( 'BackupCloneFlow render', () => {
 			const queryClient = new QueryClient();
 
 			// Initialize mock UseState on BackupCloneFlow and set userHasSetDestination: false
-			initializeUseStateMockCloneFlow( { userHasSetDestination: false } );
 			initializeUseStateMockCloneFlow( { userHasSetDestination: false } );
 
 			// Render component
