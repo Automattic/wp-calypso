@@ -102,6 +102,7 @@
 		"stats/horizontal-bars-everywhere": true,
 		"stats/insights-page-grid": true,
 		"stats/new-video-summary": false,
+		"stats/subscribers-section": false,
 		"stepper-woocommerce-poc": true,
 		"themes/premium": true,
 		"upgrades/redirect-payments": true,

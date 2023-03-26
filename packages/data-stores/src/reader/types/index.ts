@@ -18,5 +18,9 @@ export type SubscriptionManagerSubscriptionsCount = {
 };
 
 export type EmailSettingsAPIResponse = {
-	settings: SubscriptionManagerUserSettings;
+	settings: SubscriptionManagerUserSettings & {
+		errors: {
+			[ key: string ]: string[];
+		};
+	};
 };

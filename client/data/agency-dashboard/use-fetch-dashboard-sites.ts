@@ -3,7 +3,10 @@ import { useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import { errorNotice } from 'calypso/state/notices/actions';
-import type { AgencyDashboardFilter } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
+import type {
+	AgencyDashboardFilter,
+	DashboardSortInterface,
+} from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 
 const agencyDashboardFilterToQueryObject = ( filter: AgencyDashboardFilter ) => {
 	return {
@@ -18,16 +21,24 @@ const agencyDashboardFilterToQueryObject = ( filter: AgencyDashboardFilter ) => 
 	};
 };
 
+const agencyDashboardSortToQueryObject = ( sort: DashboardSortInterface ) => {
+	return {
+		...( sort.field && { sort_field: sort.field } ),
+		...( sort.direction && { sort_direction: sort.direction } ),
+	};
+};
+
 const useFetchDashboardSites = (
 	isPartnerOAuthTokenLoaded: boolean,
 	searchQuery: string,
 	currentPage: number,
-	filter: AgencyDashboardFilter
+	filter: AgencyDashboardFilter,
+	sort: DashboardSortInterface
 ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	return useQuery(
-		[ 'jetpack-agency-dashboard-sites', searchQuery, currentPage, filter ],
+		[ 'jetpack-agency-dashboard-sites', searchQuery, currentPage, filter, sort ],
 		() =>
 			wpcomJpl.req.get(
 				{
@@ -38,6 +49,7 @@ const useFetchDashboardSites = (
 					...( searchQuery && { query: searchQuery } ),
 					...( currentPage && { page: currentPage } ),
 					...agencyDashboardFilterToQueryObject( filter ),
+					...agencyDashboardSortToQueryObject( sort ),
 				}
 			),
 		{

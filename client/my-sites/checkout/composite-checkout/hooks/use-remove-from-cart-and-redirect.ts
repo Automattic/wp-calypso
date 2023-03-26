@@ -20,17 +20,23 @@ export default function useRemoveFromCartAndRedirect(
 	const { removeProductFromCart } = useShoppingCart( cartKey );
 
 	// In some cases, the cloud.jetpack.com/pricing page sends a `checkoutBackUrl` url query param to checkout.
-	const jetpackCheckoutBackUrl = useValidCheckoutBackUrl( siteSlug );
+	const forceCheckoutBackUrl = useValidCheckoutBackUrl( siteSlug );
 
 	const redirectDueToEmptyCart = useCallback( () => {
 		leaveCheckout( {
 			siteSlug,
-			jetpackCheckoutBackUrl,
+			forceCheckoutBackUrl,
 			createUserAndSiteBeforeTransaction,
 			previousPath: customizedPreviousPath || previousPath,
 			tracksEvent: 'calypso_empty_cart_redirect',
 		} );
-	}, [ createUserAndSiteBeforeTransaction, siteSlug, jetpackCheckoutBackUrl, previousPath ] );
+	}, [
+		createUserAndSiteBeforeTransaction,
+		siteSlug,
+		forceCheckoutBackUrl,
+		previousPath,
+		customizedPreviousPath,
+	] );
 
 	const isMounted = useRef( true );
 	useEffect( () => {

@@ -205,22 +205,15 @@ export default function PromotedPosts( { tab }: Props ) {
 		}
 	}, [ campaignsFull, alreadyScrolled ] );
 
-	if ( selectedSite?.is_coming_soon ) {
+	if ( selectedSite?.is_coming_soon || selectedSite?.is_private ) {
 		return (
 			<EmptyContent
 				className="campaigns-empty"
-				title={ translate( 'Site is not published' ) }
-				line={ translate( 'To start using Blaze, you must first publish your site.' ) }
-				illustration={ null }
-			/>
-		);
-	}
-
-	if ( selectedSite?.is_private ) {
-		return (
-			<EmptyContent
-				className="campaigns-empty"
-				title={ translate( 'Site is private' ) }
+				title={
+					selectedSite?.is_coming_soon
+						? translate( 'Site is not published' )
+						: translate( 'Site is private' )
+				}
 				line={ translate(
 					'To start using Blaze, you must make your site public. You can do that from {{sitePrivacySettingsLink}}here{{/sitePrivacySettingsLink}}.',
 					{

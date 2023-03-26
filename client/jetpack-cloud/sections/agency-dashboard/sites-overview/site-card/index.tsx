@@ -14,6 +14,7 @@ import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partn
 import SiteActions from '../site-actions';
 import SiteErrorContent from '../site-error-content';
 import SiteExpandedContent from '../site-expanded-content';
+import SitePhpVersion from '../site-expanded-content/site-php-version';
 import SiteStatusContent from '../site-status-content';
 import type { SiteData, SiteColumns, AllowedTypes } from '../types';
 
@@ -162,6 +163,11 @@ export default function SiteCard( { rows, columns }: Props ) {
 								);
 							}
 						} ) }
+					{ isExpandableBlockEnabled && (
+						<div className="site-card__expanded-content-list site-card__content-list-no-error">
+							<SitePhpVersion phpVersion={ rows.site.value.php_version_num } />
+						</div>
+					) }
 				</div>
 			) }
 		</Card>

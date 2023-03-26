@@ -35,20 +35,20 @@ const ScreenMain = ( { shouldUnlockGlobalStyles, onSelect, onContinueClick }: Pr
 						<span className="pattern-layout__list-item-text">{ translate( 'Header' ) }</span>
 					</NavigationButtonAsItem>
 					<NavigationButtonAsItem
+						path="/section"
+						icon={ layout }
+						aria-label={ translate( 'Sections' ) }
+						onClick={ () => onSelect( 'section' ) }
+					>
+						<span className="pattern-layout__list-item-text">{ translate( 'Sections' ) }</span>
+					</NavigationButtonAsItem>
+					<NavigationButtonAsItem
 						path="/footer"
 						icon={ footer }
 						aria-label={ translate( 'Footer' ) }
 						onClick={ () => onSelect( 'footer' ) }
 					>
 						<span className="pattern-layout__list-item-text">{ translate( 'Footer' ) }</span>
-					</NavigationButtonAsItem>
-					<NavigationButtonAsItem
-						path="/homepage"
-						icon={ layout }
-						aria-label={ translate( 'Homepage' ) }
-						onClick={ () => onSelect( 'homepage' ) }
-					>
-						<span className="pattern-layout__list-item-text">{ translate( 'Homepage' ) }</span>
 					</NavigationButtonAsItem>
 					{ isEnabled( 'pattern-assembler/color-and-fonts' ) && (
 						<>
