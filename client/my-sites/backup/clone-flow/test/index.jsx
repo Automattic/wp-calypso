@@ -11,6 +11,7 @@ import AdvancedCredentials from 'calypso/components/advanced-credentials';
 import StepProgress from 'calypso/components/step-progress';
 import getInProgressRewindStatus from 'calypso/state/selectors/get-in-progress-rewind-status';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import Error from '../../rewind-flow/error';
 import Loading from '../../rewind-flow/loading';
 import ProgressBar from '../../rewind-flow/progress-bar';
 import RewindConfigEditor from '../../rewind-flow/rewind-config-editor';
@@ -53,6 +54,7 @@ jest.mock( 'calypso/components/advanced-credentials', () =>
 	jest.fn().mockImplementation( () => null )
 );
 jest.mock( 'calypso/components/step-progress', () => jest.fn().mockImplementation( () => null ) );
+jest.mock( '../../rewind-flow/error', () => jest.fn().mockImplementation( () => null ) );
 jest.mock( '../../rewind-flow/loading', () => jest.fn().mockImplementation( () => null ) );
 jest.mock( '../../rewind-flow/progress-bar', () => jest.fn().mockImplementation( () => null ) );
 jest.mock( '../../rewind-flow/rewind-config-editor', () =>
@@ -343,6 +345,34 @@ describe( 'BackupCloneFlow render', () => {
 			);
 
 			expect( screen.queryByText( /Your site has been successfully cloned./i ) ).toBeVisible();
+		} );
+
+		test( 'Render error if it is in the wrong status', () => {
+			getRewindState.mockImplementation( () => ( {
+				state: 'active',
+			} ) );
+
+			const mockStore = configureStore();
+			const store = mockStore( createState() );
+			const queryClient = new QueryClient();
+
+			// Initialize mock UseState on BackupCloneFlow and set userHasSetDestination: false
+			initializeUseStateMockCloneFlow( {
+				userHasSetDestination: true,
+				userHasSetBackupPeriod: true,
+				userHasRequestedRestore: true,
+			} );
+			getInProgressRewindStatus.mockImplementation( () => 'wrong-status' );
+
+			// Render component
+			render(
+				<Provider store={ store }>
+					<QueryClientProvider client={ queryClient }>
+						<BackupCloneFlow />
+					</QueryClientProvider>
+				</Provider>
+			);
+			expect( Error ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
 } );
