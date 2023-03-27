@@ -4,13 +4,17 @@ import wpcom from 'calypso/lib/wp';
 interface SiteLogsAPIResponse {
 	message: string;
 	data: {
-		total_results: number;
+		total_results: number | { value: number; relation: string };
 		logs: Record< string, any >[];
 		scroll_id: string | null;
 	};
 }
 
-export type SiteLogsData = SiteLogsAPIResponse[ 'data' ];
+export type SiteLogsData = {
+	total_results: number;
+	logs: Record< string, any >[];
+	scroll_id: string | null;
+};
 
 export type SiteLogsTab = 'php' | 'web';
 
@@ -30,11 +34,11 @@ export function useSiteLogsQuery(
 ) {
 	return useQuery< SiteLogsAPIResponse, unknown, SiteLogsData >(
 		[
-			'site-logs',
+			params.logType === 'php' ? 'site-logs-php' : 'site-logs-web',
 			siteId,
-			params.logType,
 			params.start,
 			params.end,
+			params.sort_order,
 			params.page_size,
 			params.scroll_id,
 		],
@@ -46,8 +50,12 @@ export function useSiteLogsQuery(
 		{
 			enabled: !! siteId,
 			staleTime: Infinity, // The logs within a specified time range never change.
-			select( data ) {
-				return data.data;
+			select( { data } ) {
+				return {
+					...data,
+					total_results:
+						typeof data.total_results === 'number' ? data.total_results : data.total_results.value,
+				};
 			},
 			meta: {
 				persist: false,

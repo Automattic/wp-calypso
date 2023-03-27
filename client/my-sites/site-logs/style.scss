@@ -17,3 +17,16 @@
 		z-index: -1;
 	}
 }
+
+.site-logs__pagination-text {
+	text-align: center;
+	margin: 0 0 1.5rem;
+}
+
+.site-logs {
+	// The logging API doesn't allow us to jump directly to a page, so hide page buttons.
+	.pagination__page-number,
+	.pagination__ellipsis {
+		display: none;
+	}
+}
