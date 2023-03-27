@@ -581,15 +581,6 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				bill_period: 'yearly',
 				currency: 'USD',
 			};
-		case 'ak_plus_yearly_1':
-			return {
-				...getEmptyResponseCartProduct(),
-				product_id: 2311,
-				product_name: 'Akismet Plus (10K requests/month)',
-				product_slug: productSlug,
-				bill_period: 'yearly',
-				currency: 'USD',
-			};
 		default:
 			return getEmptyResponseCartProduct();
 	}
@@ -786,6 +777,24 @@ function convertRequestProductToResponseProduct(
 					is_domain_registration: false,
 					item_original_cost_integer: 10000,
 					item_subtotal_integer: 10000,
+					item_tax: 0,
+					meta: product.meta,
+					volume: 1,
+					extra: {
+						isAkismetSitelessCheckout: true,
+					},
+				};
+			case 'ak_plus_yearly_2':
+				return {
+					...getEmptyResponseCartProduct(),
+					product_id: 2313,
+					product_name: 'Akismet Plus (20K requests/month)',
+					product_slug: 'ak_plus_yearly_2',
+					bill_period: '365',
+					currency: currency,
+					is_domain_registration: false,
+					item_original_cost_integer: 20000,
+					item_subtotal_integer: 20000,
 					item_tax: 0,
 					meta: product.meta,
 					volume: 1,
@@ -1208,12 +1217,8 @@ export function mockTransactionsEndpoint( transactionsEndpointResponse ) {
 }
 
 export function setMockLocation( href: string ) {
-	Object.defineProperty( window, 'location', {
-		get() {
-			return { href: href };
-		},
-	} );
-	jest.spyOn( window, 'location', 'get' ).mockReturnValue( window.location );
+	const url = new URL( href );
+	jest.spyOn( window, 'location', 'get' ).mockReturnValue( url );
 }
 
 export const mockCreateAccountSiteNotCreatedResponse = () => [ 200, { success: true } ];
