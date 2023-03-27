@@ -2,7 +2,6 @@ export interface Task {
 	id: string;
 	completed: boolean;
 	disabled: boolean;
-	taskType: string;
 	title?: string;
 	subtitle?: string;
 	badgeText?: string;

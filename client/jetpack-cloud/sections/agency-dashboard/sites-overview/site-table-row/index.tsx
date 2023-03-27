@@ -14,6 +14,7 @@ import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partn
 import SiteActions from '../site-actions';
 import SiteErrorContent from '../site-error-content';
 import SiteExpandedContent from '../site-expanded-content';
+import SitePhpVersion from '../site-expanded-content/site-php-version';
 import SiteStatusContent from '../site-status-content';
 import type { SiteData, SiteColumns } from '../types';
 
@@ -139,6 +140,7 @@ export default function SiteTableRow( { columns, item, setExpanded, isExpanded }
 				<tr className="site-table__table-row-expanded">
 					<td colSpan={ Object.keys( item ).length + 1 }>
 						<SiteExpandedContent site={ site.value } />
+						<SitePhpVersion phpVersion={ site.value.php_version_num } />
 					</td>
 				</tr>
 			) }

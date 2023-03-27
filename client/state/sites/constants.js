@@ -78,4 +78,6 @@ export const SITE_REQUEST_OPTIONS = [
 	'site_intent',
 	'launchpad_screen',
 	'launchpad_checklist_tasks_statuses',
+	'wpcom_production_blog_id',
+	'wpcom_staging_blog_ids',
 ].join();

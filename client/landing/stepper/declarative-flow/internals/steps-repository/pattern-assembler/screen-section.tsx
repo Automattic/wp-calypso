@@ -17,7 +17,7 @@ interface Props {
 	onMoveDownSection: ( position: number ) => void;
 }
 
-const ScreenHomepage = ( {
+const ScreenSection = ( {
 	patterns,
 	onAddSection,
 	onReplaceSection,
@@ -27,12 +27,12 @@ const ScreenHomepage = ( {
 }: Props ) => {
 	const translate = useTranslate();
 	const navigator = useNavigator();
-	const goToPatternList = () => navigator.goTo( '/homepage/patterns' );
+	const goToPatternList = () => navigator.goTo( '/section/patterns' );
 
 	return (
 		<>
 			<NavigatorHeader
-				title={ translate( 'Homepage' ) }
+				title={ translate( 'Sections' ) }
 				description={ translate( 'Create your homepage by adding and rearranging patterns.' ) }
 			/>
 			<div className="screen-container__body">
@@ -60,4 +60,4 @@ const ScreenHomepage = ( {
 	);
 };
 
-export default ScreenHomepage;
+export default ScreenSection;

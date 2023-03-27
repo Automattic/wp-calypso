@@ -438,3 +438,10 @@
 .width-fit-content {
 	width: fit-content !important;
 }
+
+.site-content__small-screen-view {
+	.sites-overview__icon-active {
+		position: relative;
+		left: 4px;
+	}
+}

@@ -3,9 +3,10 @@ import { useI18n } from '@wordpress/react-i18n';
 import { cloneElement } from 'react';
 import joinClasses from '../lib/join-classes';
 import { useAllPaymentMethods, usePaymentMethodId } from '../lib/payment-methods';
+import { makeErrorResponse } from '../lib/payment-processors';
 import { useFormStatus, FormStatus, useProcessPayment } from '../public-api';
 import CheckoutErrorBoundary from './checkout-error-boundary';
-import type { PaymentMethod, PaymentProcessorSubmitData } from '../types';
+import type { PaymentMethod, PaymentProcessorSubmitData, ProcessPayment } from '../types';
 
 const CheckoutSubmitButtonWrapper = styled.div`
 	&.checkout-submit-button--inactive {
@@ -63,20 +64,29 @@ function CheckoutSubmitButtonForPaymentMethod( {
 	const { __ } = useI18n();
 	const isDisabled = disabled || formStatus !== FormStatus.READY || ! isActive;
 	const onClick = useProcessPayment( paymentMethod?.paymentProcessorId ?? '' );
-	const onClickWithValidation = ( processorData: PaymentProcessorSubmitData ) => {
+	const onClickWithValidation: ProcessPayment = async (
+		processorData: PaymentProcessorSubmitData
+	) => {
 		if ( ! isActive ) {
-			return;
+			return Promise.resolve(
+				makeErrorResponse( __( 'This payment method is not currently available.' ) )
+			);
 		}
+
 		if ( validateForm ) {
-			validateForm().then( ( validationResult: boolean ) => {
+			return validateForm().then( ( validationResult: boolean ) => {
 				if ( validationResult ) {
-					onClick( processorData );
+					return onClick( processorData );
 				}
-				// Take no action if the form is not valid. User notification must be
-				// handled elsewhere.
+				// Take no action if the form is not valid. User notification should be
+				// handled inside the validation callback itself but we will return a
+				// generic error message here in case something needs it.
+				return Promise.resolve(
+					makeErrorResponse( __( 'The information requried by this payment method is not valid.' ) )
+				);
 			} );
-			return;
 		}
+
 		// Always run if there is no validation callback.
 		return onClick( processorData );
 	};

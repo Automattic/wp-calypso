@@ -282,3 +282,12 @@ export function recordTracksPageViewWithPageParams( urlPath: string, params?: an
 	const pageViewParams = getPageViewParams( urlPath );
 	recordTracksPageView( urlPath, Object.assign( params || {}, pageViewParams ) );
 }
+
+export function getGenericSuperPropsGetter( config: ( key: string ) => string ) {
+	return () => ( {
+		environment: process.env.NODE_ENV,
+		environment_id: config( 'env_id' ),
+		site_id_label: 'wpcom',
+		client: config( 'client_slug' ),
+	} );
+}

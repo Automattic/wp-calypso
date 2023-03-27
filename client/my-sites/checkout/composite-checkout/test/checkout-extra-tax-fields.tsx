@@ -247,14 +247,14 @@ describe( 'Checkout contact step extra tax fields', () => {
 			await user.type( await screen.findByLabelText( 'Organization' ), 'Contact Organization' );
 
 			// Check the box
-			await user.click( await screen.findByLabelText( 'Add Business Tax ID details' ) );
+			await user.click( await screen.findByLabelText( 'Add VAT details' ) );
 
 			// Fill in the details
-			await user.type( await screen.findByLabelText( 'Business Tax ID Number' ), vatId );
+			await user.type( await screen.findByLabelText( 'VAT ID' ), vatId );
 			if ( vatOrganization === 'with' ) {
-				await user.type( await screen.findByLabelText( 'Organization for tax ID' ), vatName );
+				await user.type( await screen.findByLabelText( 'Organization for VAT' ), vatName );
 			}
-			await user.type( await screen.findByLabelText( 'Address for tax ID' ), vatAddress );
+			await user.type( await screen.findByLabelText( 'Address for VAT' ), vatAddress );
 
 			await user.click( screen.getByText( 'Continue' ) );
 			expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
@@ -317,12 +317,12 @@ describe( 'Checkout contact step extra tax fields', () => {
 			await user.type( await screen.findByLabelText( 'Address' ), 'Contact Address' );
 
 			// Check the box
-			await user.click( await screen.findByLabelText( 'Add Business Tax ID details' ) );
+			await user.click( await screen.findByLabelText( 'Add GST details' ) );
 
 			// Fill in the details
-			await user.type( await screen.findByLabelText( 'Business Tax ID Number' ), vatId );
+			await user.type( await screen.findByLabelText( 'GST ID' ), vatId );
 			if ( withVatAddress === 'with' ) {
-				await user.type( await screen.findByLabelText( 'Address for tax ID' ), vatAddress );
+				await user.type( await screen.findByLabelText( 'Address for GST' ), vatAddress );
 			}
 
 			await user.click( screen.getByText( 'Continue' ) );

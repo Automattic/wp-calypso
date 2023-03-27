@@ -82,14 +82,6 @@ declare module 'calypso/components/section-nav/item' {
 	export default SectionNavItem;
 }
 
-declare module 'calypso/components/route' {
-	export const useCurrentRoute: () => {
-		currentSection: unknown;
-		currentRoute: string;
-		currentQuery: unknown;
-	};
-}
-
 declare module 'calypso/components/forms/form-checkbox' {
 	const FormInputCheckbox: React.FC< InputHTMLAttributes< HTMLInputElement > >;
 	export default FormInputCheckbox;

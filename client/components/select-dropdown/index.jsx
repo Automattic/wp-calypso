@@ -146,16 +146,6 @@ class SelectDropdown extends Component {
 		return get( find( options, { value: selected } ), 'secondaryIcon' );
 	}
 
-	getPositionSelectedSecondaryIcon() {
-		const { positionSelectedSecondaryIconOnRight } = this.props;
-
-		if ( positionSelectedSecondaryIconOnRight ) {
-			return positionSelectedSecondaryIconOnRight;
-		}
-
-		return false;
-	}
-
 	dropdownOptions() {
 		let refIndex = 0;
 
@@ -225,7 +215,7 @@ class SelectDropdown extends Component {
 		const selectedText = this.getSelectedText();
 		const selectedIcon = this.getSelectedIcon();
 		const selectedSecondaryIcon = this.getSelectedSecondaryIcon();
-		const positionSelectedSecondaryIconOnRight = this.getPositionSelectedSecondaryIcon();
+		const { positionSelectedSecondaryIconOnRight } = this.props;
 
 		return (
 			<div id={ this.props.id } style={ this.props.style } className={ dropdownClassName }>

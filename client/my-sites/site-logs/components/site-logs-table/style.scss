@@ -1,0 +1,25 @@
+$border-color: #d3dae6;
+
+.site-logs-table {
+	display: block;
+	overflow-x: auto;
+	white-space: nowrap;
+	font-family: monospace;
+	border-collapse: collapse;
+	border: 1px solid $border-color;
+}
+
+.site-logs-table thead tr,
+.site-logs-table tbody tr:not(:last-child) {
+	border-bottom: 1px solid $border-color;
+}
+
+.site-logs-table th,
+.site-logs-table td {
+	padding: 0.6em 1em;
+}
+
+.site-logs-table__empty-cell::before {
+	content: "\2012";
+	opacity: 0.5;
+}
