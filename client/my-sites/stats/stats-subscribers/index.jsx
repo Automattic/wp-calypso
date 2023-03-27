@@ -1,47 +1,23 @@
-import { localize } from 'i18n-calypso';
-import { Component } from 'react';
-import { connect } from 'react-redux';
-import { mockData } from 'calypso/state/stats/mock-data/mockData';
+import useSubscribersQuery from 'calypso/state/stats/subscribers/hooks/use-subscribers-query';
 
-const mapStateToProps = () => ( {
-	mockData,
-} );
+const StatsSubscribers = ( { siteId } ) => {
+	const name = 'subscribers';
+	const { isLoading, data } = useSubscribersQuery( siteId );
 
-class StatsSubscribers extends Component {
-	static displayName = 'StatsSubscribers';
+	return (
+		<div>
+			<h1>{ name }</h1>
+			{ isLoading && <div>Loading...</div> }
+			<ul>
+				{ ! isLoading &&
+					data?.map( ( item ) =>
+						item.data.map( ( dataSet ) => (
+							<li> { `${ dataSet.period } - ${ dataSet.subscribers }` }</li>
+						) )
+					) }
+			</ul>
+		</div>
+	);
+};
 
-	render() {
-		if ( ! this.props.mockData ) {
-			return <p>there is a problem with the data</p>;
-		}
-
-		return (
-			<p>
-				{ this.props.mockData.items.map( ( item ) => (
-					<div key={ item.date }>
-						<table>
-							<thead>
-								<tr>
-									{ item.fields.map( ( field ) => (
-										<th key={ field }>{ field }</th>
-									) ) }
-								</tr>
-							</thead>
-							<tbody>
-								{ item.data.map( ( dataRow, i ) => (
-									<tr key={ i }>
-										{ dataRow.map( ( dataCell, j ) => (
-											<td key={ `${ i }-${ j }` }>{ dataCell }</td>
-										) ) }
-									</tr>
-								) ) }
-							</tbody>
-						</table>
-					</div>
-				) ) }
-			</p>
-		);
-	}
-}
-
-export default localize( connect( mapStateToProps )( StatsSubscribers ) );
+export default StatsSubscribers;
