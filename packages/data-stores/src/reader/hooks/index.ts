@@ -24,9 +24,9 @@ export const useIsQueryEnabled = () => {
 
 // Get subscriber's email address based on the subkey cookie
 export const useSubscriberEmailAddress = () => {
-	return useMemo( () => {
-		const subkey = getSubkey();
+	const subkey = getSubkey();
 
+	return useMemo( () => {
 		if ( ! subkey ) {
 			return null;
 		}
@@ -38,6 +38,7 @@ export const useSubscriberEmailAddress = () => {
 			return null;
 		}
 
-		return decodedSubkeyValue.slice( firstPeriodIndex + 1 );
-	}, [] );
+		const emailAddress = decodedSubkeyValue.slice( firstPeriodIndex + 1 );
+		return emailAddress;
+	}, [ subkey ] );
 };
