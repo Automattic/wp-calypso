@@ -432,6 +432,20 @@ const PatternAssembler = ( {
 
 	const onDeleteFooter = () => onSelect( 'footer', null );
 
+	const onSelectColorVariation = ( variation: GlobalStylesObject ) => {
+		setSelectedColorPaletteVariation( variation );
+		recordTracksEvent( 'calypso_signup_pattern_assembler_color_variation_preview_click', {
+			title: variation.title,
+		} );
+	};
+
+	const onSelectFontVariation = ( variation: GlobalStylesObject ) => {
+		setSelectedFontPairingVariation( variation );
+		recordTracksEvent( 'calypso_signup_pattern_assembler_font_variation_preview_click', {
+			title: variation.title,
+		} );
+	};
+
 	const stepContent = (
 		<div
 			className={ classnames( 'pattern-assembler__wrapper', {
@@ -510,7 +524,7 @@ const PatternAssembler = ( {
 							siteId={ site?.ID }
 							stylesheet={ stylesheet }
 							selectedColorPaletteVariation={ selectedColorPaletteVariation }
-							onSelect={ setSelectedColorPaletteVariation }
+							onSelect={ onSelectColorVariation }
 						/>
 					</NavigatorScreen>
 				) }
@@ -523,7 +537,7 @@ const PatternAssembler = ( {
 							siteId={ site?.ID }
 							stylesheet={ stylesheet }
 							selectedFontPairingVariation={ selectedFontPairingVariation }
-							onSelect={ setSelectedFontPairingVariation }
+							onSelect={ onSelectFontVariation }
 						/>
 					</NavigatorScreen>
 				) }
