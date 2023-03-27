@@ -88,21 +88,31 @@ export function renderTransactionAmount(
 		transaction.tax_country_code,
 		transaction.date,
 		translate
-	)
-		? getVatVendorInfo( transaction.tax_country_code, transaction.date, translate )
-		: { taxName: 'tax' };
+	);
 
-	const taxAmount = addingTax
+	const addingTaxString = countryTaxInfo
 		? translate( '(+%(taxAmount)s %(taxName)s)', {
 				args: { taxAmount: transaction.tax, taxName: countryTaxInfo.taxName },
 				comment:
 					'taxAmount is a localized price, like $12.34 | taxName is a localized tax, like VAT or GST',
 		  } )
-		: translate( '(includes %(taxAmount)s %(taxName)s)', {
+		: translate( '(+%(taxAmount)s tax)', {
+				args: { taxAmount: transaction.tax },
+				comment: 'taxAmount is a localized price, like $12.34',
+		  } );
+
+	const includesTaxString = countryTaxInfo
+		? translate( '(includes %(taxAmount)s %(taxName)s)', {
 				args: { taxAmount: transaction.tax, taxName: countryTaxInfo.taxName },
 				comment:
 					'taxAmount is a localized price, like $12.34 | taxName is a localized tax, like VAT or GST',
+		  } )
+		: translate( '(includes %(taxAmount)s tax)', {
+				args: { taxAmount: transaction.tax },
+				comment: 'taxAmount is a localized price, like $12.34',
 		  } );
+
+	const taxAmount = addingTax ? addingTaxString : includesTaxString;
 
 	return (
 		<Fragment>
