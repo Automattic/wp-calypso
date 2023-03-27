@@ -104,12 +104,16 @@ const GlobalStylesVariations = ( {
 				{ globalStylesVariations.map( ( globalStylesVariation, index ) => {
 					const isDefaultGlobalStyleVariation =
 						isDefaultGlobalStyleVariationSlug( globalStylesVariation );
+					const isActive = ! isDefaultGlobalStyleVariation
+						? globalStylesVariation.slug === selectedGlobalStylesVariation?.slug
+						: ! selectedGlobalStylesVariation;
+
 					return (
 						<GlobalStylesVariation
 							key={ index }
 							globalStylesVariation={ globalStylesVariation }
 							premiumBadge={ ! isDefaultGlobalStyleVariation && premiumBadge }
-							isActive={ globalStylesVariation.slug === selectedGlobalStylesVariation?.slug }
+							isActive={ isActive }
 							showOnlyHoverView={ isDefaultGlobalStyleVariation }
 							onSelect={ () => onSelect( globalStylesVariation ) }
 						/>

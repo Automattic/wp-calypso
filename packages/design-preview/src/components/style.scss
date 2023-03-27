@@ -265,6 +265,17 @@
 	}
 }
 
+.design-picker__premium-badge {
+	background-color: var(--color-neutral-80);
+	color: var(--color-neutral-0);
+	font-size: 0.75rem;
+	margin: 0;
+	padding: 2px 12px 2px 6px;
+	position: absolute;
+	top: 6px;
+	left: 6px;
+}
+
 .design-picker__premium-badge-tooltip.popover {
 	z-index: z-index("root", ".design-picker__premium-badge-tooltip");
 
