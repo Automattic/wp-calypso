@@ -43,7 +43,6 @@ import {
 	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
 import { render, screen } from '@testing-library/react';
-import { useDispatch } from '@wordpress/data';
 import React from 'react';
 import PlanFeatures2023GridActions from '../actions';
 
