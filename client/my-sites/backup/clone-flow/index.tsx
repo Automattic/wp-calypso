@@ -179,7 +179,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 			<StepProgress currentStep={ Step.ClonePoint } steps={ steps } />
 			<h3 className="clone-flow__title">{ translate( 'Select a Backup Point to Copy' ) }</h3>
 			<p className="clone-flow__info">
-				{ translate( "Which point in your site's history would you like to clone from?" ) }
+				{ translate( "Which point in your site's history would you like to copy from?" ) }
 			</p>
 			<div className="activity-log-v2__content">
 				<ActivityCardList
