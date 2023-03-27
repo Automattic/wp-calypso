@@ -127,7 +127,7 @@
 		"subscriber-csv-upload": true,
 		"subscriber-importer": true,
 		"subscription-gifting": true,
-		"subscription-management": false,
+		"subscription-management": true,
 		"themes/atomic-homepage-replace": true,
 		"themes/premium": true,
 		"themes/showcase-i4/details-and-preview": true,
