@@ -78,13 +78,16 @@ function renderStepContent( emailVerified = false, flow: string ) {
 describe( 'StepContent', () => {
 	beforeEach( () => {
 		nock( 'https://public-api.wordpress.com' )
-			.persist()
 			.get( `/wpcom/v2/sites/${ siteSlug }/launchpad` )
 			.reply( 200, {
 				checklist_statuses: {},
 				launchpad_screen: 'full',
 				site_intent: '',
 			} );
+	} );
+
+	afterEach( () => {
+		nock.cleanAll();
 	} );
 
 	// To get things started, test basic rendering for Newsletter flow
