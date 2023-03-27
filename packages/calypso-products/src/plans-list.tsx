@@ -1821,12 +1821,12 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 const getPlanJetpackGoldenTokenDetails = (): IncompleteJetpackPlan => ( {
 	group: GROUP_JETPACK,
 	type: TYPE_GOLDEN_TOKEN,
-	getTitle: () => translate( 'Golden Token' ),
+	getTitle: () =>
+		translate( 'Golden Token', {
+			context: 'The name of a Jetpack plan awarded to amazing WordPress sites',
+		} ),
 	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
-	getDescription: () =>
-		translate(
-			'Get next-level protection with real-time backups, real-time scan and all essential security tools.'
-		),
+	getDescription: () => translate( 'Get next-level protection with real-time backups and scan.' ),
 	getTagline: () => translate( 'Best for sites with frequent updates' ),
 	getPlanCardFeatures: () => [
 		FEATURE_PLAN_SECURITY_DAILY,
