@@ -279,6 +279,26 @@ describe( 'CheckoutMain', () => {
 		} );
 	} );
 
+	it( 'adds the product to the siteless cart when the url has an akismet product', async () => {
+		const cartChanges = { products: [] };
+		const additionalProps = {
+			productAliasFromUrl: 'ak_plus_yearly_1',
+			sitelessCheckoutType: 'akismet',
+			isNoSiteCart: true,
+		};
+
+		render(
+			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+			container
+		);
+
+		await waitFor( async () => {
+			screen
+				.getAllByLabelText( 'Akismet Plus (10K requests/month)' )
+				.map( ( element ) => expect( element ).toHaveTextContent( '$100' ) );
+		} );
+	} );
+
 	it( 'does not redirect if the cart is empty when it loads but the url has a concierge session', async () => {
 		const cartChanges = { products: [] };
 		const additionalProps = { productAliasFromUrl: 'concierge-session' };
