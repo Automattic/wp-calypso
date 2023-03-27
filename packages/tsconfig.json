@@ -20,6 +20,7 @@
 		{ "path": "./create-calypso-config" },
 		{ "path": "./data-stores" },
 		{ "path": "./design-picker" },
+		{ "path": "./design-preview" },
 		{ "path": "./domain-picker" },
 		{ "path": "./explat-client" },
 		{ "path": "./explat-client-react-helpers" },

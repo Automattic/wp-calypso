@@ -36,7 +36,9 @@ const StyleVariationPreviews: React.FC< StyleVariationPreviewsProps > = ( {
 					/>
 				)
 			}
-			onSelect={ ( globalStyleVariation ) => onClick( globalStyleVariation as StyleVariation ) }
+			onSelect={ ( globalStyleVariation: GlobalStylesObject ) =>
+				onClick( globalStyleVariation as StyleVariation )
+			}
 		/>
 	);
 };
