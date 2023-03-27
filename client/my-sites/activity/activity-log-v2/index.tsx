@@ -51,7 +51,6 @@ const ActivityLogV2: FunctionComponent = () => {
 			<div className="activity-log-v2__header-right">
 				{ selectedSiteSlug && (
 					<Tooltip
-						className="activity-log-v2__clone-tooltip"
 						text={ translate(
 							'To test your site changes, migrate or keep your data safe in another site'
 						) }

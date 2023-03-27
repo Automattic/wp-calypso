@@ -209,7 +209,6 @@ function BackupStatus( {
 					<div className="backup__header-right">
 						{ siteSlug && (
 							<Tooltip
-								className="activity-log-v2__clone-tooltip"
 								text={ translate(
 									'To test your site changes, migrate or keep your data safe in another site'
 								) }
