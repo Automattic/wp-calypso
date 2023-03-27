@@ -32,16 +32,6 @@ const PlanFeatures2023GridHeaderPrice = ( {
 			: planPrices.rawPrice,
 	};
 
-	// const showDiscountedPricing = Boolean(
-	// 	planPrices.planDiscountedRawPrice || planPrices.discountedRawPrice
-	// );
-
-	// // order matters here, we want to show the discounted price if it exists, otherwise the regular price
-	// const priceToDisplay =
-	// 	planPrices.planDiscountedRawPrice || planPrices.discountedRawPrice || planPrices.rawPrice;
-
-	// const crossoutPriceToDisplay = planPrices.rawPrice;
-
 	if ( isWpcomEnterpriseGridPlan( planName ) ) {
 		return null;
 	}
