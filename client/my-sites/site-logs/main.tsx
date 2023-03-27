@@ -1,13 +1,18 @@
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useState } from 'react';
+import classnames from 'classnames';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import Pagination from 'calypso/components/pagination';
-import { SiteLogsTab, useSiteLogsQuery } from 'calypso/data/hosting/use-site-logs-query';
+import {
+	SiteLogsData,
+	SiteLogsTab,
+	useSiteLogsQuery,
+} from 'calypso/data/hosting/use-site-logs-query';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SiteLogsTabPanel } from './components/site-logs-tab-panel';
 import { SiteLogsTable } from './components/site-logs-table';
@@ -38,7 +43,7 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 		) as SiteLogsTab;
 	} );
 
-	const { data } = useSiteLogsQuery( siteId, {
+	const { data: latestPageData, isLoading } = useSiteLogsQuery( siteId, {
 		logType,
 		start: dateRange.startTime,
 		end: dateRange.endTime,
@@ -46,6 +51,14 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 		pageSize,
 		pageIndex: currentPageIndex,
 	} );
+
+	// We keep a copy of the most recently shown page so that we can use it as part of the loading state while switching pages.
+	const [ data, setCachedPageData ] = useState< SiteLogsData | undefined >();
+	useEffect( () => {
+		if ( ! isLoading ) {
+			setCachedPageData( latestPageData );
+		}
+	}, [ latestPageData, isLoading ] );
 
 	const handleTabSelected = ( tabName: SiteLogsTab ) => {
 		setLogType( tabName );
@@ -56,6 +69,10 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 	};
 
 	const handlePageClick = ( nextPageNumber: number ) => {
+		if ( isLoading ) {
+			return;
+		}
+
 		const nextPageIndex = nextPageNumber - 1;
 		if ( nextPageIndex < currentPageIndex && currentPageIndex > 0 ) {
 			setCurrentPageIndex( currentPageIndex - 1 );
@@ -80,7 +97,7 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 			: null;
 
 	return (
-		<Main fullWidthLayout className="site-logs">
+		<Main fullWidthLayout className={ classnames( 'site-logs', { 'is-loading': isLoading } ) }>
 			<DocumentHead title={ titleHeader } />
 			<FormattedHeader
 				brandFont
@@ -94,17 +111,19 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 				{ () => (
 					<>
 						<SiteLogsToolbar onRefresh={ handleRefresh } />
-						<SiteLogsTable logs={ data?.logs } />
+						<SiteLogsTable logs={ data?.logs } isLoading={ isLoading } />
 						{ paginationText && (
 							<div className="site-logs__pagination-text">{ paginationText }</div>
 						) }
 						{ !! data?.total_results && (
-							<Pagination
-								page={ currentPageIndex + 1 }
-								perPage={ pageSize }
-								total={ data.total_results }
-								pageClick={ handlePageClick }
-							/>
+							<div className="site-logs__pagination-click-guard">
+								<Pagination
+									page={ currentPageIndex + 1 }
+									perPage={ pageSize }
+									total={ data.total_results }
+									pageClick={ handlePageClick }
+								/>
+							</div>
 						) }
 					</>
 				) }
