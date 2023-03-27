@@ -1,7 +1,7 @@
 import { cloneDeep } from 'lodash';
 import { BillingTransaction } from 'calypso/state/billing-transactions/types';
 import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
-import { filterTransactions } from 'calypso/state/selectors/get-filtered-billing-transactions';
+import { filterTransactions } from '../filter-transactions';
 
 const PAGE_SIZE = 5;
 

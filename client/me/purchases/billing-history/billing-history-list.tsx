@@ -15,10 +15,10 @@ import {
 } from 'calypso/state/billing-transactions/types';
 import { setPage } from 'calypso/state/billing-transactions/ui/actions';
 import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
-import { filterTransactions } from 'calypso/state/selectors/get-filtered-billing-transactions';
 import getPastBillingTransactions from 'calypso/state/selectors/get-past-billing-transactions';
 import isSendingBillingReceiptEmail from 'calypso/state/selectors/is-sending-billing-receipt-email';
 import { IAppState } from 'calypso/state/types';
+import { filterTransactions } from './filter-transactions';
 import {
 	getTransactionTermLabel,
 	groupDomainProducts,
