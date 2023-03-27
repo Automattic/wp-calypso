@@ -354,7 +354,6 @@ export function mockSetCartEndpointWith( { currency, locale } ): SetCart {
 			coupon: requestCoupon,
 			coupon_discounts_integer: [],
 			coupon_savings_total_integer: requestCoupon ? 1000 : 0,
-			create_new_blog: false,
 			credits_integer: 0,
 			currency,
 			is_coupon_applied: true,
