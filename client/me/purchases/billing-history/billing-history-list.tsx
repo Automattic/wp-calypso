@@ -271,12 +271,7 @@ export default connect(
 		const transactions = getPastBillingTransactions( state );
 		const filter = getBillingTransactionFilters( state, 'past' );
 		const pageSize = 5;
-		const filteredTransactions = filterTransactions(
-			transactions,
-			filter,
-			String( siteId ),
-			pageSize
-		);
+		const filteredTransactions = filterTransactions( transactions, filter, siteId, pageSize );
 
 		return {
 			app: filter.app,

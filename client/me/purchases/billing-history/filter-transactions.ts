@@ -49,7 +49,7 @@ function searchTransactions(
 export function filterTransactions(
 	transactions: BillingTransaction[] | null | undefined,
 	filter: BillingTransactionUiState,
-	siteId: string | null | undefined,
+	siteId: number | string | null | undefined,
 	pageSize: number
 ): BillingTransaction[] {
 	const { app, date, page, query } = filter;
