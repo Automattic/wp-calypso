@@ -1,5 +1,4 @@
 import apiFetch, { APIFetchOptions } from '@wordpress/api-fetch';
-import cookie from 'cookie';
 import wpcomRequest from 'wpcom-proxy-request';
 
 type callApiParams = {
@@ -11,8 +10,7 @@ type callApiParams = {
 
 // Get cookie named subkey
 const getSubkey = () => {
-	const subkey = cookie.parse( document.cookie )?.subkey;
-	return subkey;
+	return window.currentUser?.subscriptionManagementSubkey;
 };
 
 // Helper function for fetching from subkey authenticated API. Subkey authentication process is only applied in case of logged-out users.
