@@ -288,8 +288,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( {
 				</Button>
 			) }
 			{ isAlternate && goBackPath !== '' && (
-				<Button compact borderless disabled={ disableForm } href={ goBackPath }>
-					<Gridicon icon="arrow-left" size={ 18 } />
+				<Button disabled={ disableForm } href={ goBackPath }>
 					{ translate( 'Go back' ) }
 				</Button>
 			) }
@@ -397,7 +396,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( {
 	};
 
 	return (
-		<div className="advanced-credentials">
+		<div className={ `advanced-credentials ${ isAlternate ? 'alternate' : '' }` }>
 			<QuerySiteCredentials siteId={ siteId } />
 			<PageViewTracker
 				path={ settingsPath( ':site' ) }

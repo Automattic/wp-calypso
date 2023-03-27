@@ -251,7 +251,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 					onClick={ onConfirm }
 					disabled={ disableClone }
 				>
-					{ translate( 'Confirm copy' ) }
+					{ translate( 'Confirm configuration' ) }
 				</Button>
 			</div>
 			<Interval onTick={ refreshBackups } period={ EVERY_FIVE_SECONDS } />
