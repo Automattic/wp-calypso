@@ -40,13 +40,13 @@ const Notices = ( {
 export const getNoticeContent = ( action: string, pattern: Pattern ) => {
 	const actions: { [ key: string ]: any } = {
 		add: i18n.translate( 'Block pattern "%(patternName)s" inserted.', {
-			args: { patternName: pattern.name },
+			args: { patternName: pattern.title },
 		} ),
 		replace: i18n.translate( 'Block pattern "%(patternName)s" replaced.', {
-			args: { patternName: pattern.name },
+			args: { patternName: pattern.title },
 		} ),
 		remove: i18n.translate( 'Block pattern "%(patternName)s" removed.', {
-			args: { patternName: pattern.name },
+			args: { patternName: pattern.title },
 		} ),
 	};
 

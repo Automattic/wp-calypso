@@ -3,17 +3,20 @@ import type { Pattern, Category } from '../types';
 
 const usePatternsMapByCategory = ( patterns: Pattern[], categories: Category[] ) => {
 	return useMemo( () => {
-		const categoriesMap = categories.reduce(
-			( map, category ) => ( {
-				...map,
-				[ category.name ]: [],
-			} ),
-			{}
-		) as { [ key: string ]: Pattern[] };
+		const categoriesMap = categories.reduce( ( map, category ) => {
+			return category.name
+				? {
+						...map,
+						[ category.name ]: [],
+				  }
+				: map;
+		}, {} ) as { [ key: string ]: Pattern[] };
 
 		patterns.forEach( ( pattern ) => {
-			pattern.categories.forEach( ( category ) => {
-				categoriesMap[ category ]?.push( pattern );
+			Object.values( pattern.categories ).forEach( ( { slug } ) => {
+				if ( slug ) {
+					categoriesMap[ slug ]?.push( pattern );
+				}
 			} );
 		} );
 		return categoriesMap;

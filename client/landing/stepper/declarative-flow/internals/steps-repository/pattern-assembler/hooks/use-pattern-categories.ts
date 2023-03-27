@@ -1,17 +1,14 @@
-import { useQuery, UseQueryResult, UseQueryOptions } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
+import type { Category } from '../types';
 
 const usePatternCategories = (
-	siteId: number | undefined,
-	queryOptions: UseQueryOptions = {}
-): UseQueryResult => {
-	return useQuery< any, unknown, unknown >(
+	siteId = 0,
+	queryOptions: UseQueryOptions< any, unknown, Category[] > = {}
+): Category[] => {
+	const { data } = useQuery< any, unknown, Category[] >(
 		[ siteId, 'block-patterns', 'categories' ],
 		() => {
-			if ( ! siteId ) {
-				return [];
-			}
-
 			return wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteId ) }/block-patterns/categories`,
 				method: 'GET',
@@ -20,6 +17,7 @@ const usePatternCategories = (
 		},
 		{
 			...queryOptions,
+			enabled: !! siteId,
 			staleTime: Infinity,
 			meta: {
 				persist: false,
@@ -27,6 +25,8 @@ const usePatternCategories = (
 			},
 		}
 	);
+
+	return data ?? [];
 };
 
 export default usePatternCategories;

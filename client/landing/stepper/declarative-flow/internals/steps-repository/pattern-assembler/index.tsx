@@ -22,6 +22,7 @@ import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign } from '../../analytics/record-design';
 import { SITE_TAGLINE, PLACEHOLDER_SITE_ID, PATTERN_TYPES, NAVIGATOR_PATHS } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
+import useDotcomPatterns from './hooks/use-dotcom-patterns';
 import useGlobalStylesUpgradeModal from './hooks/use-global-styles-upgrade-modal';
 import usePatternCategories from './hooks/use-pattern-categories';
 import usePatternsMapByCategory from './hooks/use-patterns-map-by-category';
@@ -31,7 +32,6 @@ import NavigatorListener from './navigator-listener';
 import Notices, { getNoticeContent } from './notices/notices';
 import PatternAssemblerContainer from './pattern-assembler-container';
 import PatternLargePreview from './pattern-large-preview';
-import { useAllPatterns, useSectionPatterns } from './patterns-data';
 import ScreenCategoryList from './screen-category-list';
 import ScreenFooter from './screen-footer';
 import ScreenHeader from './screen-header';
@@ -40,7 +40,7 @@ import ScreenPatternList from './screen-pattern-list';
 import ScreenSection from './screen-section';
 import { encodePatternId } from './utils';
 import withGlobalStylesProvider from './with-global-styles-provider';
-import type { Pattern, Category } from './types';
+import type { Pattern } from './types';
 import type { StepProps } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { DesignRecipe, Design } from '@automattic/design-picker/src/types';
@@ -75,13 +75,13 @@ const PatternAssembler = ( {
 	const siteSlug = useSiteSlugParam();
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
-	const allPatterns = useAllPatterns();
-	const sectionPatterns = useSectionPatterns();
+
+	// Fetching Dotcom patterns
+	const dotcomPatterns = useDotcomPatterns( site?.lang );
 
 	// Fetching the categories so they are ready when ScreenCategoryList loads
-	const categoriesQuery = usePatternCategories( site?.ID );
-	const categories = ( categoriesQuery?.data || [] ) as Category[];
-	const sectionsMapByCategory = usePatternsMapByCategory( sectionPatterns, categories );
+	const categories = usePatternCategories( site?.ID );
+	const patternsMapByCategory = usePatternsMapByCategory( dotcomPatterns, categories );
 	const {
 		header,
 		footer,
@@ -95,7 +95,7 @@ const PatternAssembler = ( {
 		setFontVariation,
 		generateKey,
 		snapshotRecipe,
-	} = useRecipe( site?.ID, allPatterns, categories );
+	} = useRecipe( site?.ID, dotcomPatterns, categories );
 
 	const stylesheet = selectedDesign?.recipe?.stylesheet || '';
 
@@ -180,17 +180,17 @@ const PatternAssembler = ( {
 			pattern_types: [ header && 'header', sections.length && 'section', footer && 'footer' ]
 				.filter( Boolean )
 				.join( ',' ),
-			pattern_ids: patterns.map( ( { id } ) => id ).join( ',' ),
+			pattern_ids: patterns.map( ( { ID } ) => ID ).join( ',' ),
 			pattern_names: patterns.map( ( { name } ) => name ).join( ',' ),
 			pattern_categories: categories.join( ',' ),
 			category_count: categories.length,
 			pattern_count: patterns.length,
 		} );
-		patterns.forEach( ( { id, name, category } ) => {
+		patterns.forEach( ( { ID, name, category } ) => {
 			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_FINAL_SELECT, {
-				pattern_id: id,
+				pattern_id: ID,
 				pattern_name: name,
-				pattern_category: category?.name,
+				pattern_category: category?.slug,
 			} );
 		} );
 	};
@@ -204,9 +204,9 @@ const PatternAssembler = ( {
 			...selectedDesign,
 			recipe: {
 				...selectedDesign?.recipe,
-				header_pattern_ids: header ? [ encodePatternId( header.id ) ] : undefined,
-				pattern_ids: sections.filter( Boolean ).map( ( pattern ) => encodePatternId( pattern.id ) ),
-				footer_pattern_ids: footer ? [ encodePatternId( footer.id ) ] : undefined,
+				header_pattern_ids: header ? [ encodePatternId( header.ID ) ] : undefined,
+				pattern_ids: sections.filter( Boolean ).map( ( pattern ) => encodePatternId( pattern.ID ) ),
+				footer_pattern_ids: footer ? [ encodePatternId( footer.ID ) ] : undefined,
 			} as DesignRecipe,
 		} as Design );
 
@@ -311,15 +311,16 @@ const PatternAssembler = ( {
 		if ( selectedPattern ) {
 			// Inject the selected pattern category or the first category
 			// because it's used in tracks and as pattern name in the list
+			const [ firstCategory ] = Object.values( selectedPattern.categories );
 			selectedPattern.category = categories.find(
-				( { name } ) => name === ( selectedCategory || selectedPattern.categories[ 0 ] )
+				( { name } ) => name === ( selectedCategory || firstCategory?.slug )
 			);
 
 			trackEventPatternSelect( {
 				patternType: type,
-				patternId: selectedPattern.id,
+				patternId: selectedPattern.ID,
 				patternName: selectedPattern.name,
-				patternCategory: selectedPattern.category?.name,
+				patternCategory: selectedPattern.category?.slug,
 			} );
 
 			if ( 'section' === type ) {
@@ -391,9 +392,9 @@ const PatternAssembler = ( {
 		const patterns = getPatterns( type );
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_SELECT_DONE_CLICK, {
 			pattern_type: type,
-			pattern_ids: patterns.map( ( { id } ) => id ).join( ',' ),
+			pattern_ids: patterns.map( ( { ID } ) => ID ).join( ',' ),
 			pattern_names: patterns.map( ( { name } ) => name ).join( ',' ),
-			pattern_categories: patterns.map( ( { category } ) => category?.name ).join( ',' ),
+			pattern_categories: patterns.map( ( { category } ) => category?.slug ).join( ',' ),
 		} );
 	};
 
@@ -501,6 +502,7 @@ const PatternAssembler = ( {
 						onBack={ () => onPatternSelectorBack( 'header' ) }
 						onDoneClick={ () => onDoneClick( 'header' ) }
 						updateActivePatternPosition={ () => updateActivePatternPosition( -1 ) }
+						patterns={ patternsMapByCategory[ 'header' ] }
 					/>
 				</NavigatorScreen>
 
@@ -511,6 +513,7 @@ const PatternAssembler = ( {
 						onBack={ () => onPatternSelectorBack( 'footer' ) }
 						onDoneClick={ () => onDoneClick( 'footer' ) }
 						updateActivePatternPosition={ () => activateFooterPosition( !! footer ) }
+						patterns={ patternsMapByCategory[ 'footer' ] }
 					/>
 				</NavigatorScreen>
 
@@ -528,7 +531,7 @@ const PatternAssembler = ( {
 					{ isEnabled( 'pattern-assembler/categories' ) ? (
 						<ScreenCategoryList
 							categories={ categories }
-							sectionsMapByCategory={ sectionsMapByCategory }
+							patternsMapByCategory={ patternsMapByCategory }
 							onDoneClick={ () => onDoneClick( 'section' ) }
 							replacePatternMode={ sectionPosition !== null }
 							selectedPattern={ sectionPosition !== null ? sections[ sectionPosition ] : null }
@@ -543,6 +546,7 @@ const PatternAssembler = ( {
 							onSelect={ ( selectedPattern ) => onSelect( 'section', selectedPattern, null ) }
 							onBack={ () => onPatternSelectorBack( 'section' ) }
 							onDoneClick={ () => onDoneClick( 'section' ) }
+							patterns={ dotcomPatterns }
 						/>
 					) }
 				</NavigatorScreen>
@@ -618,7 +622,7 @@ const PatternAssembler = ( {
 				<PatternAssemblerContainer
 					siteId={ site?.ID }
 					stylesheet={ stylesheet }
-					patternIds={ allPatterns.map( ( pattern ) => encodePatternId( pattern.id ) ) }
+					patternIds={ dotcomPatterns.map( ( pattern ) => encodePatternId( pattern.ID ) ) }
 					siteInfo={ siteInfo }
 				>
 					{ stepContent }

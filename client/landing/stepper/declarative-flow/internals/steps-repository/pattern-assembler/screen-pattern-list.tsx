@@ -8,7 +8,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import NavigatorHeader from './navigator-header';
 import PatternSelector from './pattern-selector';
-import { useSectionPatterns } from './patterns-data';
 import type { Pattern } from './types';
 
 interface Props {
@@ -16,11 +15,11 @@ interface Props {
 	onSelect: ( selectedPattern: Pattern | null ) => void;
 	onBack: () => void;
 	onDoneClick: () => void;
+	patterns: Pattern[];
 }
 
-const ScreenPatternList = ( { selectedPattern, onSelect, onDoneClick }: Props ) => {
+const ScreenPatternList = ( { selectedPattern, onSelect, onDoneClick, patterns }: Props ) => {
 	const translate = useTranslate();
-	const patterns = useSectionPatterns();
 	const navigator = useNavigator();
 	const prevSelectedPattern = usePrevious( selectedPattern );
 

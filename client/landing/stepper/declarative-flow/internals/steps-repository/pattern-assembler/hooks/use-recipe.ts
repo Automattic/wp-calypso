@@ -42,9 +42,9 @@ const useRecipe = ( siteId = 0, patterns: Pattern[], categories: Category[] ) =>
 		...selectedDesign,
 		recipe: {
 			...selectedDesign?.recipe,
-			header_pattern_ids: header ? [ header.id ] : [],
-			footer_pattern_ids: footer ? [ footer.id ] : [],
-			pattern_ids: sections.map( ( section ) => section.id ),
+			header_pattern_ids: header ? [ header.ID ] : [],
+			footer_pattern_ids: footer ? [ footer.ID ] : [],
+			pattern_ids: sections.map( ( section ) => section.ID ),
 			color_variation_title: colorVariation?.title,
 			font_variation_title: fontVariation?.title,
 		},
@@ -52,7 +52,7 @@ const useRecipe = ( siteId = 0, patterns: Pattern[], categories: Category[] ) =>
 
 	const generateKey = ( pattern: Pattern ) => {
 		incrementIndexRef.current++;
-		return `${ incrementIndexRef.current }-${ pattern.id }`;
+		return `${ incrementIndexRef.current }-${ pattern.ID }`;
 	};
 
 	const snapshotRecipe = useCallback( () => setSelectedDesign( selectedDesignRef.current ), [] );
@@ -71,7 +71,7 @@ const useRecipe = ( siteId = 0, patterns: Pattern[], categories: Category[] ) =>
 			return;
 		}
 
-		const patternsById = keyBy( patterns, 'id' );
+		const patternsById = keyBy( patterns, 'ID' );
 		const categoriesByName = keyBy( categories, 'name' );
 		const selectedHeader = patternsById[ decodePatternId( header_pattern_ids[ 0 ] ) ];
 		const selectedFooter = patternsById[ decodePatternId( footer_pattern_ids[ 0 ] ) ];
@@ -89,7 +89,8 @@ const useRecipe = ( siteId = 0, patterns: Pattern[], categories: Category[] ) =>
 				.map( ( patternId: string | number ) => patternsById[ decodePatternId( patternId ) ] )
 				.filter( Boolean )
 				.map( ( pattern: Pattern ) => {
-					const category = categoriesByName[ pattern?.categories[ 0 ] ];
+					const [ firstCategory ] = Object.values( pattern.categories ) as Category[];
+					const category = firstCategory?.slug ? categoriesByName[ firstCategory.slug ] : undefined;
 					return {
 						...pattern,
 						key: generateKey( pattern ),

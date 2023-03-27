@@ -36,20 +36,20 @@ const PatternListItem = ( { pattern, className, isShown, onSelect }: PatternList
 	return (
 		<Button
 			className={ className }
-			title={ pattern.name }
+			title={ pattern.title }
 			ref={ ref }
 			onClick={ () => onSelect( pattern ) }
 		>
 			{ isShown && inViewOnce ? (
 				<PatternRenderer
-					key={ pattern.id }
-					patternId={ encodePatternId( pattern.id ) }
+					key={ pattern.ID }
+					patternId={ encodePatternId( pattern.ID ) }
 					viewportWidth={ 1060 }
 					minHeight={ PLACEHOLDER_HEIGHT }
 					maxHeightFor100vh={ MAX_HEIGHT_FOR_100VH }
 				/>
 			) : (
-				<div key={ pattern.id } style={ { height: PLACEHOLDER_HEIGHT } } />
+				<div key={ pattern.ID } style={ { height: PLACEHOLDER_HEIGHT } } />
 			) }
 		</Button>
 	);
@@ -76,10 +76,10 @@ const PatternListRenderer = ( {
 			) }
 			{ patterns.map( ( pattern, index ) => (
 				<PatternListItem
-					key={ `${ index }-${ pattern.id }` }
+					key={ `${ index }-${ pattern.ID }` }
 					pattern={ pattern }
 					className={ classnames( 'pattern-list-renderer__pattern-list-item', {
-						[ activeClassName ]: pattern.id === selectedPattern?.id,
+						[ activeClassName ]: pattern.ID === selectedPattern?.ID,
 					} ) }
 					isShown={ shownPatterns.includes( pattern ) }
 					onSelect={ onSelect }

@@ -4,7 +4,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import NavigatorHeader from './navigator-header';
 import PatternSelector from './pattern-selector';
-import { useFooterPatterns } from './patterns-data';
 import type { Pattern } from './types';
 
 interface Props {
@@ -13,6 +12,7 @@ interface Props {
 	onBack: () => void;
 	onDoneClick: () => void;
 	updateActivePatternPosition: () => void;
+	patterns: Pattern[];
 }
 
 const ScreenFooter = ( {
@@ -21,9 +21,10 @@ const ScreenFooter = ( {
 	onBack,
 	onDoneClick,
 	updateActivePatternPosition,
+	patterns,
 }: Props ) => {
 	const translate = useTranslate();
-	const patterns = useFooterPatterns();
+
 	useEffect( () => {
 		updateActivePatternPosition();
 	}, [ updateActivePatternPosition ] );
