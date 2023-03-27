@@ -127,8 +127,7 @@ test( 'only show pagination controls when there are multiple page', async () => 
 	expect( screen.queryByText( /Showing/ ) ).not.toBeInTheDocument();
 } );
 
-test( 'switching pages requests data using correct scroll_id', async () => {
-	// Mock first page (uses no scroll_id)
+test( `switching pages forwards and backwards only fetches pages which haven't been loaded yet`, async () => {
 	nock( 'https://public-api.wordpress.com' )
 		.post(
 			/\/wpcom\/v2\/sites\/\d+\/hosting\/(error-)?logs/,
@@ -138,11 +137,48 @@ test( 'switching pages requests data using correct scroll_id', async () => {
 			message: 'OK',
 			data: {
 				scroll_id: 'next_page',
-				total_results: 2,
+				total_results: 3,
 				logs: [ { message: 'log entry' } ],
 			},
 		} );
-	// Mock second page (uses scroll_id from first page)
+
+	render( <SiteLogs pageSize={ 1 } />, { initialState: makeTestState() } );
+
+	await waitFor( () => expect( screen.getByText( 'log entry' ) ).toBeInTheDocument() );
+
+	nock( 'https://public-api.wordpress.com' )
+		.post(
+			/\/wpcom\/v2\/sites\/\d+\/hosting\/(error-)?logs/,
+			( { scroll_id } ) => scroll_id === 'next_page'
+		)
+		.reply( 200, {
+			message: 'OK',
+			data: {
+				scroll_id: 'next_page',
+				total_results: 3,
+				logs: [ { message: 'second entry' } ],
+			},
+		} );
+
+	await userEvent.click( screen.getByRole( 'button', { name: 'Next' } ) );
+
+	await waitFor( () => expect( screen.getByText( 'second entry' ) ).toBeInTheDocument() );
+	expect( screen.queryByText( 'log entry' ) ).not.toBeInTheDocument();
+
+	// No network call should happen for the next "Previous" and "Next" click
+	nock.cleanAll();
+
+	await userEvent.click( screen.getByRole( 'button', { name: 'Previous' } ) );
+
+	await waitFor( () => expect( screen.getByText( 'log entry' ) ).toBeInTheDocument() );
+	expect( screen.queryByText( 'second entry' ) ).not.toBeInTheDocument();
+
+	await userEvent.click( screen.getByRole( 'button', { name: 'Next' } ) );
+
+	await waitFor( () => expect( screen.getByText( 'second entry' ) ).toBeInTheDocument() );
+	expect( screen.queryByText( 'log entry' ) ).not.toBeInTheDocument();
+
+	// One more network request to load the 3rd page
 	nock( 'https://public-api.wordpress.com' )
 		.post(
 			/\/wpcom\/v2\/sites\/\d+\/hosting\/(error-)?logs/,
@@ -152,28 +188,19 @@ test( 'switching pages requests data using correct scroll_id', async () => {
 			message: 'OK',
 			data: {
 				scroll_id: null,
-				total_results: 2,
-				logs: [ { message: 'second entry' } ],
+				total_results: 3,
+				logs: [ { message: 'third entry' } ],
 			},
 		} );
 
-	render( <SiteLogs pageSize={ 1 } />, { initialState: makeTestState() } );
-
-	await waitFor( () => expect( screen.getByText( 'log entry' ) ).toBeInTheDocument() );
-
 	await userEvent.click( screen.getByRole( 'button', { name: 'Next' } ) );
 
-	await waitFor( () => expect( screen.getByText( 'second entry' ) ).toBeInTheDocument() );
+	await waitFor( () => expect( screen.getByText( 'third entry' ) ).toBeInTheDocument() );
 	expect( screen.queryByText( 'log entry' ) ).not.toBeInTheDocument();
-
-	await userEvent.click( screen.getByRole( 'button', { name: 'Previous' } ) );
-
-	await waitFor( () => expect( screen.getByText( 'log entry' ) ).toBeInTheDocument() );
 	expect( screen.queryByText( 'second entry' ) ).not.toBeInTheDocument();
 } );
 
 test( 'advance three pages', async () => {
-	// Mock first page (uses no scroll_id)
 	nock( 'https://public-api.wordpress.com' )
 		.post(
 			/\/wpcom\/v2\/sites\/\d+\/hosting\/(error-)?logs/,
@@ -182,37 +209,9 @@ test( 'advance three pages', async () => {
 		.reply( 200, {
 			message: 'OK',
 			data: {
-				scroll_id: 'page2',
+				scroll_id: 'next_scroll',
 				total_results: 100,
 				logs: [ { message: 'page 1 entry' } ],
-			},
-		} );
-	// Mock second page (uses scroll_id from first page)
-	nock( 'https://public-api.wordpress.com' )
-		.post(
-			/\/wpcom\/v2\/sites\/\d+\/hosting\/(error-)?logs/,
-			( { scroll_id } ) => scroll_id === 'page2'
-		)
-		.reply( 200, {
-			message: 'OK',
-			data: {
-				scroll_id: 'page3',
-				total_results: 100,
-				logs: [ { message: 'page 2 entry' } ],
-			},
-		} );
-	// Mock third page (uses scroll_id from second page)
-	nock( 'https://public-api.wordpress.com' )
-		.post(
-			/\/wpcom\/v2\/sites\/\d+\/hosting\/(error-)?logs/,
-			( { scroll_id } ) => scroll_id === 'page3'
-		)
-		.reply( 200, {
-			message: 'OK',
-			data: {
-				scroll_id: 'page4',
-				total_results: 100,
-				logs: [ { message: 'page 3 entry' } ],
 			},
 		} );
 
@@ -220,9 +219,37 @@ test( 'advance three pages', async () => {
 
 	await waitFor( () => expect( screen.getByText( 'page 1 entry' ) ).toBeInTheDocument() );
 
+	nock( 'https://public-api.wordpress.com' )
+		.post(
+			/\/wpcom\/v2\/sites\/\d+\/hosting\/(error-)?logs/,
+			( { scroll_id } ) => scroll_id === 'next_scroll'
+		)
+		.reply( 200, {
+			message: 'OK',
+			data: {
+				scroll_id: 'next_scroll',
+				total_results: 100,
+				logs: [ { message: 'page 2 entry' } ],
+			},
+		} );
+
 	await userEvent.click( screen.getByRole( 'button', { name: 'Next' } ) );
 
 	await waitFor( () => expect( screen.getByText( 'page 2 entry' ) ).toBeInTheDocument() );
+
+	nock( 'https://public-api.wordpress.com' )
+		.post(
+			/\/wpcom\/v2\/sites\/\d+\/hosting\/(error-)?logs/,
+			( { scroll_id } ) => scroll_id === 'next_scroll'
+		)
+		.reply( 200, {
+			message: 'OK',
+			data: {
+				scroll_id: 'next_scroll',
+				total_results: 100,
+				logs: [ { message: 'page 3 entry' } ],
+			},
+		} );
 
 	await userEvent.click( screen.getByRole( 'button', { name: 'Next' } ) );
 

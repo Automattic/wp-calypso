@@ -75,7 +75,7 @@ function useSiteColumns( logs: SiteLogs | undefined ) {
 
 function renderCell(
 	column: string,
-	value: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+	value: unknown,
 	moment: ReturnType< typeof useLocalizedMoment >,
 	siteGmtOffset: number
 ) {

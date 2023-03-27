@@ -1,6 +1,6 @@
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -12,10 +12,9 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SiteLogsTabPanel } from './components/site-logs-tab-panel';
 import { SiteLogsTable } from './components/site-logs-table';
 import { SiteLogsToolbar } from './components/site-logs-toolbar';
-import { useLogPagination } from './hooks/use-log-pagination';
 import './style.scss';
 
-const DEFAULT_PAGE_SIZE = 10;
+const DEFAULT_PAGE_SIZE = 50;
 
 export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number } ) {
 	const { __ } = useI18n();
@@ -30,7 +29,7 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 
 	const [ dateRange, setDateRange ] = useState( getDateRange() );
 
-	const { currentPageIndex, currentScrollId, handlePageClick, handlePageLoad } = useLogPagination();
+	const [ currentPageIndex, setCurrentPageIndex ] = useState( 0 );
 
 	const [ logType, setLogType ] = useState< SiteLogsTab >( () => {
 		const queryParam = new URL( window.location.href ).searchParams.get( 'log-type' );
@@ -43,16 +42,10 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 		logType,
 		start: dateRange.startTime,
 		end: dateRange.endTime,
-		sort_order: 'desc',
-		page_size: pageSize,
-		scroll_id: currentScrollId,
+		sortOrder: 'desc',
+		pageSize,
+		pageIndex: currentPageIndex,
 	} );
-
-	useEffect( () => {
-		if ( data ) {
-			handlePageLoad( { nextScrollId: data.scroll_id } );
-		}
-	}, [ data, handlePageLoad ] );
 
 	const handleTabSelected = ( tabName: SiteLogsTab ) => {
 		setLogType( tabName );
@@ -60,6 +53,18 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 
 	const handleRefresh = () => {
 		setDateRange( getDateRange() );
+	};
+
+	const handlePageClick = ( nextPageNumber: number ) => {
+		const nextPageIndex = nextPageNumber - 1;
+		if ( nextPageIndex < currentPageIndex && currentPageIndex > 0 ) {
+			setCurrentPageIndex( currentPageIndex - 1 );
+		} else if (
+			nextPageIndex > currentPageIndex &&
+			( currentPageIndex + 1 ) * pageSize < ( data?.total_results ?? 0 )
+		) {
+			setCurrentPageIndex( currentPageIndex + 1 );
+		}
 	};
 
 	const titleHeader = __( 'Site Logs' );
@@ -98,7 +103,7 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 								page={ currentPageIndex + 1 }
 								perPage={ pageSize }
 								total={ data.total_results }
-								pageClick={ ( newPageNumber: number ) => handlePageClick( newPageNumber - 1 ) }
+								pageClick={ handlePageClick }
 							/>
 						) }
 					</>
