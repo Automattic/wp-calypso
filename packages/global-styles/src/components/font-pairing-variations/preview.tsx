@@ -94,7 +94,7 @@ const FontPairingVariationPreview = ( { title }: Props ) => {
 									overflow: 'hidden',
 								} }
 							>
-								<VStack spacing={ 2 * ratio } style={ { margin: '16px' } }>
+								<VStack spacing={ 1 } style={ { margin: '16px' } }>
 									<div
 										title={ headingFontFamilyName }
 										aria-label={ headingFontFamilyName }
@@ -115,7 +115,7 @@ const FontPairingVariationPreview = ( { title }: Props ) => {
 										style={ {
 											...DEFAULT_FONT_STYLES,
 											color: '#444444',
-											fontSize: '12px',
+											fontSize: '14px',
 											fontWeight: textFontWeight,
 											fontFamily: textFontFamily,
 											fontStyle: textFontStyle,
