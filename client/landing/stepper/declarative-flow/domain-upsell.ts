@@ -40,6 +40,10 @@ const domainUpsell: Flow = {
 		const returnUrl = `/setup/${ flowName }/launchpad?siteSlug=${ siteSlug }`;
 		const encodedReturnUrl = encodeURIComponent( returnUrl );
 
+		const exitFlow = ( location = '/sites' ) => {
+			window.location.assign( location );
+		};
+
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( currentStep ) {
 				case 'domains':
@@ -49,6 +53,9 @@ const domainUpsell: Flow = {
 					navigate( 'plans' );
 
 				case 'plans':
+					if ( providedDependencies?.returnToDomainSelection ) {
+						return navigate( 'domains' );
+					}
 					if ( providedDependencies?.goToCheckout ) {
 						const planCartItem = getPlanCartItem();
 						const domainCartItem = getDomainCartItem();
@@ -69,7 +76,7 @@ const domainUpsell: Flow = {
 			}
 		}
 
-		return { submit };
+		return { submit, exitFlow };
 	},
 };
 
