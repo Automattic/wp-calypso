@@ -7,6 +7,7 @@ import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { dispatch } from '@wordpress/data';
 import nock from 'nock';
+import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -17,6 +18,7 @@ import CheckoutMain from '../components/checkout-main';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import {
 	siteId,
+	akismetPersonalProduct,
 	domainProduct,
 	planWithoutDomain,
 	fetchStripeConfiguration,
@@ -292,6 +294,13 @@ describe( 'CheckoutMain with a variant picker', () => {
 	it( 'does not render the variant picker for a renewal of the current plan', async () => {
 		const currentPlanRenewal = { ...planWithoutDomain, extra: { purchaseType: 'renewal' } };
 		const cartChanges = { products: [ currentPlanRenewal ] };
+		render( <MyCheckout cartChanges={ cartChanges } /> );
+
+		await expect( screen.findByLabelText( 'Pick a product term' ) ).toNeverAppear();
+	} );
+
+	it( 'does not render the variant picker for akismet personal plans', async () => {
+		const cartChanges = { products: [ akismetPersonalProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
 
 		await expect( screen.findByLabelText( 'Pick a product term' ) ).toNeverAppear();

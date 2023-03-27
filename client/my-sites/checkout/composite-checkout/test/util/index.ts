@@ -127,6 +127,24 @@ export const stateList = {
 
 export const siteId = 13579;
 
+export const akismetPersonalProduct: ResponseCartProduct = {
+	...getEmptyResponseCartProduct(),
+	product_name: 'Akismet Personal (Paid)',
+	product_slug: 'ak_personal_yearly',
+	currency: 'USD',
+	extra: {
+		isAkismetSitelessCheckout: true,
+	},
+	meta: 'foo.com',
+	product_id: 2310,
+	volume: 30,
+	is_domain_registration: false,
+	item_original_cost_integer: 30000,
+	item_subtotal_integer: 30000,
+	bill_period: '365',
+	months_per_bill_period: 12,
+};
+
 export const domainProduct: ResponseCartProduct = {
 	...getEmptyResponseCartProduct(),
 	product_name: '.cash Domain',
