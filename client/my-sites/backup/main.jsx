@@ -1,6 +1,6 @@
 import { WPCOM_FEATURES_REAL_TIME_BACKUPS } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { ExternalLink } from '@wordpress/components';
+import { ExternalLink, Tooltip } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -208,9 +208,16 @@ function BackupStatus( {
 					</div>
 					<div className="backup__header-right">
 						{ siteSlug && (
-							<Button className="backup__clone-button" href={ backupClonePath( siteSlug ) }>
-								{ translate( 'Copy this site' ) }
-							</Button>
+							<Tooltip
+								className="activity-log-v2__clone-tooltip"
+								text={ translate(
+									'To test your site changes, migrate or keep your data safe in another site'
+								) }
+							>
+								<Button className="backup__clone-button" href={ backupClonePath( siteSlug ) }>
+									{ translate( 'Copy this site' ) }
+								</Button>
+							</Tooltip>
 						) }
 					</div>
 				</div>

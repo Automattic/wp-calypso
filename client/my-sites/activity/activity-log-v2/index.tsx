@@ -1,5 +1,6 @@
 import { WPCOM_FEATURES_FULL_ACTIVITY_LOG } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import { Tooltip } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
@@ -49,12 +50,19 @@ const ActivityLogV2: FunctionComponent = () => {
 			</div>
 			<div className="activity-log-v2__header-right">
 				{ selectedSiteSlug && (
-					<Button
-						className="activity-log-v2__clone-button"
-						href={ backupClonePath( selectedSiteSlug ) }
+					<Tooltip
+						className="activity-log-v2__clone-tooltip"
+						text={ translate(
+							'To test your site changes, migrate or keep your data safe in another site'
+						) }
 					>
-						{ translate( 'Copy this site' ) }
-					</Button>
+						<Button
+							className="activity-log-v2__clone-button"
+							href={ backupClonePath( selectedSiteSlug ) }
+						>
+							{ translate( 'Copy this site' ) }
+						</Button>
+					</Tooltip>
 				) }
 			</div>
 		</div>
