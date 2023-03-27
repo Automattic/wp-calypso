@@ -30,6 +30,10 @@ $color-yellow: var(--studio-yellow-50);
 	}
 }
 
+.expanded-card__clickable:focus-visible {
+	outline: thin dotted;
+}
+
 .expanded-card__header {
 	font-size: 0.875rem;
 	color: var(--studio-gray-80);
