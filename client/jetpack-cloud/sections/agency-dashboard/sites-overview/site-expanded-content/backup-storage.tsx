@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import useGetDisplayDate from 'calypso/components/jetpack/daily-backup-status/use-get-display-date';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -6,7 +6,8 @@ import useRewindableActivityLogQuery from 'calypso/data/activity-log/use-rewinda
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { isSuccessfulRealtimeBackup } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
-import { getExtractedBackupTitle } from '../utils';
+import { useDashboardAddRemoveLicense } from '../../hooks';
+import { DASHBOARD_LICENSE_TYPES, getExtractedBackupTitle } from '../utils';
 import ExpandedCard from './expanded-card';
 import type { Site, Backup } from '../types';
 
@@ -88,7 +89,23 @@ export default function BackupStorage( { site }: Props ) {
 		strong: <strong></strong>,
 	};
 
-	const isBackupEnabled = hasBackupError ? false : site.has_backup;
+	const isBackupEnabled = ! hasBackupError && site.has_backup;
+
+	const { isLicenseSelected, handleAddLicenseAction } = useDashboardAddRemoveLicense(
+		site.blog_id,
+		DASHBOARD_LICENSE_TYPES.BACKUP
+	);
+
+	const addBackupText = isLicenseSelected ? (
+		<span className="site-expanded-content__license-selected">
+			<Gridicon icon="checkmark" size={ 16 } />
+			{ translate( 'Backup Selected' ) }
+		</span>
+	) : (
+		translate( 'Add {{strong}}Backup{{/strong}} to see your backup', {
+			components,
+		} )
+	);
 
 	return (
 		<ExpandedCard
@@ -99,10 +116,9 @@ export default function BackupStorage( { site }: Props ) {
 					? translate( 'Fix {{strong}}Backup{{/strong}} connection to see your backup storage', {
 							components,
 					  } )
-					: translate( 'Add {{strong}}Backup{{/strong}} to see your backup', {
-							components,
-					  } )
+					: addBackupText
 			}
+			onClick={ handleAddLicenseAction }
 		>
 			{ isBackupEnabled && <BackupStorageContent siteId={ site.blog_id } siteUrl={ site.url } /> }
 		</ExpandedCard>

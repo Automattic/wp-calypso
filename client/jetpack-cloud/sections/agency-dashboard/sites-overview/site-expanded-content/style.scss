@@ -193,3 +193,9 @@ $color-yellow: var(--studio-yellow-50);
 		padding: 1.5px 0;
 	}
 }
+
+.site-expanded-content__license-selected .gridicon {
+	position: relative;
+	inset-block-start: 3px;
+	inset-inline-end: 5px;
+}
