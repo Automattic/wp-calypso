@@ -52,7 +52,7 @@ const ScreenCategoryList = ( {
 		}
 	};
 
-	const trackEventCategoryView = ( name: string ) => {
+	const trackEventCategoryClick = ( name: string ) => {
 		recordTracksEvent( 'calypso_signup_pattern_assembler_category_click', {
 			pattern_category: name,
 		} );
@@ -109,7 +109,7 @@ const ScreenCategoryList = ( {
 								} else {
 									setSelectedCategory( name );
 									onTogglePatternPanelList?.( true );
-									trackEventCategoryView( name );
+									trackEventCategoryClick( name );
 								}
 							} }
 						>
