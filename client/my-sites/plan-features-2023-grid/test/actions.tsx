@@ -1,6 +1,9 @@
 /**
  * @jest-environment jsdom
  */
+/**
+ * Default mock implementations
+ */
 jest.mock( 'calypso/state/selectors/get-domain-from-home-upsell-in-query', () => jest.fn() );
 jest.mock( 'calypso/components/external-link/with-tracking', () => jest.fn() );
 jest.mock( 'classnames', () => jest.fn() );
@@ -12,7 +15,7 @@ jest.mock( '@wordpress/data', () => ( {
 	combineReducers: jest.fn(),
 	createReduxStore: jest.fn(),
 	register: jest.fn(),
-	useDispatch: jest.fn( () => ( { setShowDomainUpsellDialog: jest.fn() } ) ),
+	useDispatch: jest.fn(),
 } ) );
 jest.mock( '@wordpress/element', () => ( {
 	...jest.requireActual( '@wordpress/element' ),
@@ -40,12 +43,14 @@ import {
 	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
 import { render, screen } from '@testing-library/react';
+import { useDispatch } from '@wordpress/data';
 import React from 'react';
 import PlanFeatures2023GridActions from '../actions';
 
 describe( 'PlanFeatures2023GridActions', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		useDispatch.mockImplementation( jest.fn( () => ( { setShowDomainUpsellDialog: jest.fn() } ) ) );
 	} );
 
 	describe( 'Upgrade button', () => {
