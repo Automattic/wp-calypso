@@ -1,6 +1,6 @@
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useReducer, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -12,64 +12,12 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SiteLogsTabPanel } from './components/site-logs-tab-panel';
 import { SiteLogsTable } from './components/site-logs-table';
 import { SiteLogsToolbar } from './components/site-logs-toolbar';
+import { useLogPagination } from './hooks/use-log-pagination';
 import './style.scss';
 
-const PAGE_SIZE = 10;
+const DEFAULT_PAGE_SIZE = 10;
 
-interface PaginationState {
-	currentPageIndex: number;
-	prevScrollIdStack: ( string | undefined )[];
-	currentScrollId: string | undefined;
-	nextScrollId: string | undefined | null;
-}
-
-const defaultPaginationState: PaginationState = {
-	currentPageIndex: 0,
-	prevScrollIdStack: [],
-	currentScrollId: undefined,
-	nextScrollId: undefined,
-};
-
-type PaginationAction =
-	| { type: 'click'; newPageIndex: number }
-	| { type: 'load'; nextScrollId: string | null };
-
-function paginationReducer(
-	state: PaginationState = defaultPaginationState,
-	action: PaginationAction
-) {
-	const { currentPageIndex, prevScrollIdStack, currentScrollId, nextScrollId } = state;
-
-	switch ( action.type ) {
-		case 'load':
-			return {
-				...state,
-				nextScrollId: action.nextScrollId,
-			};
-
-		case 'click':
-			if ( action.newPageIndex < currentPageIndex && prevScrollIdStack.length > 0 ) {
-				return {
-					currentPageIndex: currentPageIndex - 1,
-					prevScrollIdStack: prevScrollIdStack.slice( 0, -1 ),
-					currentScrollId: prevScrollIdStack[ prevScrollIdStack.length - 1 ],
-					nextScrollId: currentScrollId,
-				};
-			} else if ( action.newPageIndex > state.currentPageIndex && nextScrollId ) {
-				return {
-					currentPageIndex: currentPageIndex + 1,
-					prevScrollIdStack: [ ...prevScrollIdStack, currentScrollId ],
-					currentScrollId: nextScrollId,
-					nextScrollId: undefined, // We don't know the next scroll ID until we've finished loading the next page
-				};
-			}
-
-		default:
-			return state;
-	}
-}
-
-export function SiteLogs() {
+export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number } ) {
 	const { __ } = useI18n();
 	const siteId = useSelector( getSelectedSiteId );
 	const moment = useLocalizedMoment();
@@ -82,12 +30,7 @@ export function SiteLogs() {
 
 	const [ dateRange, setDateRange ] = useState( getDateRange() );
 
-	const [ paginationState, pageinationDispatch ] = useReducer( ( s, a ) => {
-		const newState = paginationReducer( s, a );
-		console.log( newState );
-		return newState;
-	}, defaultPaginationState );
-	const { currentPageIndex, currentScrollId } = paginationState;
+	const { currentPageIndex, currentScrollId, handlePageClick, handlePageLoad } = useLogPagination();
 
 	const [ logType, setLogType ] = useState< SiteLogsTab >( () => {
 		const queryParam = new URL( window.location.href ).searchParams.get( 'log-type' );
@@ -101,15 +44,15 @@ export function SiteLogs() {
 		start: dateRange.startTime,
 		end: dateRange.endTime,
 		sort_order: 'desc',
-		page_size: PAGE_SIZE,
+		page_size: pageSize,
 		scroll_id: currentScrollId,
 	} );
 
 	useEffect( () => {
 		if ( data ) {
-			pageinationDispatch( { type: 'load', nextScrollId: data.scroll_id } );
+			handlePageLoad( { nextScrollId: data.scroll_id } );
 		}
-	}, [ data ] );
+	}, [ data, handlePageLoad ] );
 
 	const handleTabSelected = ( tabName: SiteLogsTab ) => {
 		setLogType( tabName );
@@ -121,14 +64,15 @@ export function SiteLogs() {
 
 	const titleHeader = __( 'Site Logs' );
 
-	const paginationText = data?.total_results
-		? /* translators: Describes which log entries we're showing on the page: "start" and "end" represent the range of log entries currently displayed, "total" is the number of log entries there are overall; e.g. Showing 1–20 of 428 */
-		  sprintf( __( 'Showing %(start)d\u2013%(end)d of %(total)d' ), {
-				start: currentPageIndex * PAGE_SIZE + 1,
-				end: currentPageIndex * PAGE_SIZE + data.logs.length,
-				total: data.total_results,
-		  } )
-		: null;
+	const paginationText =
+		data?.total_results && data.total_results > pageSize
+			? /* translators: Describes which log entries we're showing on the page: "start" and "end" represent the range of log entries currently displayed, "total" is the number of log entries there are overall; e.g. Showing 1–20 of 428 */
+			  sprintf( __( 'Showing %(start)d\u2013%(end)d of %(total)d' ), {
+					start: currentPageIndex * pageSize + 1,
+					end: currentPageIndex * pageSize + data.logs.length,
+					total: data.total_results,
+			  } )
+			: null;
 
 	return (
 		<Main fullWidthLayout className="site-logs">
@@ -152,11 +96,9 @@ export function SiteLogs() {
 						{ !! data?.total_results && (
 							<Pagination
 								page={ currentPageIndex + 1 }
-								perPage={ PAGE_SIZE }
+								perPage={ pageSize }
 								total={ data.total_results }
-								pageClick={ ( newPageNumber: number ) =>
-									pageinationDispatch( { type: 'click', newPageIndex: newPageNumber - 1 } )
-								}
+								pageClick={ ( newPageNumber: number ) => handlePageClick( newPageNumber - 1 ) }
 							/>
 						) }
 					</>
