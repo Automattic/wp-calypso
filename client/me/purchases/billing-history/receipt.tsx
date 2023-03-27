@@ -170,13 +170,16 @@ export function ReceiptBody( {
 					</Button>
 				</div>
 			</Card>
-			{ transaction.tax_external_id && transaction.tax_external_id.length > 0 && (
+			{ /* Temporarily disable taxamo receipt link until we can get a go ahead
+
+            { transaction.tax_external_id && transaction.tax_external_id.length > 0 && (
 				<ReceiptExternalLink transaction={ transaction } />
-			) }
+			) } */ }
 		</div>
 	);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function ReceiptExternalLink( { transaction }: { transaction: BillingTransaction } ) {
 	const translate = useTranslate();
 	const externalTaxlink =

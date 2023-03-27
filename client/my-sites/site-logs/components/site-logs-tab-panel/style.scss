@@ -1,0 +1,23 @@
+.site-logs-tab-panel {
+	.components-tab-panel__tabs {
+		overflow-x: auto;
+		margin-bottom: 32px;
+	}
+
+	.components-tab-panel__tabs-item {
+		--wp-admin-theme-color: var(--studio-gray-100);
+		color: var(--studio-gray-60);
+		padding: 0;
+		margin-right: 24px;
+		font-size: $font-body-small;
+		flex-shrink: 0;
+	}
+
+	.components-tab-panel__tabs-item:hover,
+	.components-tab-panel__tabs-item.is-active,
+	.components-tab-panel__tabs-item.is-active:focus,
+	.components-tab-panel__tabs-item:focus:not(:disabled) {
+		box-shadow: inset 0 -2px 0 0 var(--wp-admin-theme-color);
+		color: var(--studio-gray-100);
+	}
+}

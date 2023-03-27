@@ -1,12 +1,10 @@
 import { ConfettiAnimation } from '@automattic/components';
 import { ThemeProvider, Global, css } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useEffect, useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { ThankYou } from 'calypso/components/thank-you';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import MasterbarStyled from 'calypso/my-sites/marketplace/components/masterbar-styled';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
 import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-plugin-install/use-marketplace-additional-steps';
 import theme from 'calypso/my-sites/marketplace/theme';
@@ -16,11 +14,13 @@ import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/sel
 import { isRequesting } from 'calypso/state/plugins/installed/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import './style.scss';
-import { useDefaultThankYouFoooter } from './use-default-thank-you-footer';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { MarketplaceGoBackSection } from './marketplace-go-back-section';
+import { useThankYouFoooter } from './use-default-thank-you-footer';
 import { usePluginsThankYouData } from './use-plugins-thank-you-data';
 import { useThemesThankYouData } from './use-themes-thank-you-data';
+
+import './style.scss';
 
 const MarketplaceThankYou = ( {
 	pluginSlugs,
@@ -32,14 +32,17 @@ const MarketplaceThankYou = ( {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
-	const siteSlug = useSelector( getSelectedSiteSlug );
 	const isRequestingPlugins = useSelector( ( state ) => isRequesting( state, siteId ) );
 
-	const allSlugs = useMemo( () => [ ...pluginSlugs, ...themeSlugs ], [ pluginSlugs, themeSlugs ] );
-	const defaultThankYouFooter = useDefaultThankYouFoooter( allSlugs );
+	const defaultThankYouFooter = useThankYouFoooter( pluginSlugs, themeSlugs );
 
-	const [ pluginsSection, allPluginsFetched ] = usePluginsThankYouData( pluginSlugs );
-	const [ themesSection, allThemesFetched ] = useThemesThankYouData( themeSlugs );
+	const [ pluginsSection, allPluginsFetched, pluginsGoBackSection ] =
+		usePluginsThankYouData( pluginSlugs );
+	const [ themesSection, allThemesFetched, themesGoBackSection ] =
+		useThemesThankYouData( themeSlugs );
+	const [ hasPlugins, hasThemes ] = [ pluginSlugs, themeSlugs ].map(
+		( slugs ) => slugs.length !== 0
+	);
 
 	const areAllProductsFetched = allPluginsFetched && allThemesFetched;
 
@@ -115,6 +118,11 @@ const MarketplaceThankYou = ( {
 		[ translate ]
 	);
 	const additionalSteps = useMarketplaceAdditionalSteps();
+	const sections = [
+		...( hasThemes ? [ themesSection ] : [] ),
+		...( hasPlugins ? [ pluginsSection ] : [] ),
+		defaultThankYouFooter,
+	];
 
 	return (
 		<ThemeProvider theme={ theme }>
@@ -127,11 +135,12 @@ const MarketplaceThankYou = ( {
 					}
 				` }
 			/>
-			{ /* TODO: Update the masterbar according the product type */ }
-			<MasterbarStyled
-				onClick={ () => page( `/plugins/${ siteSlug }` ) }
-				backText={ translate( 'Back to plugins' ) }
-				canGoBack={ areAllProductsFetched }
+			<MarketplaceGoBackSection
+				pluginSlugs={ pluginSlugs }
+				pluginsGoBackSection={ pluginsGoBackSection }
+				themeSlugs={ themeSlugs }
+				themesGoBackSection={ themesGoBackSection }
+				areAllProductsFetched={ areAllProductsFetched }
 			/>
 			{ showProgressBar && (
 				// eslint-disable-next-line wpcalypso/jsx-classname-namespace
@@ -148,7 +157,7 @@ const MarketplaceThankYou = ( {
 					<ConfettiAnimation delay={ 1000 } />
 					<ThankYou
 						containerClassName="marketplace-thank-you"
-						sections={ [ themesSection, pluginsSection, defaultThankYouFooter ] }
+						sections={ sections }
 						showSupportSection={ false }
 						thankYouTitle={ translate( "Congrats on your site's new superpowers!" ) }
 						thankYouSubtitle={ translate(

@@ -2,6 +2,7 @@ import type useAutomatticBrandingNoun from './hooks/use-automattic-branding-noun
 import type { useLocalizeUrl } from '@automattic/i18n-utils';
 
 export interface HeaderProps {
+	className?: string;
 	isLoggedIn: boolean;
 	sectionName?: string;
 	logoColor?: string;

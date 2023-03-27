@@ -53,7 +53,8 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 				it( `${ blockFlow.blockSidebarName }: Add the block from the sidebar`, async function () {
 					await editorPage.addBlockFromSidebar(
 						blockFlow.blockSidebarName,
-						blockFlow.blockEditorSelector
+						blockFlow.blockEditorSelector,
+						{ noSearch: true }
 					);
 					editorContext = {
 						page: page,

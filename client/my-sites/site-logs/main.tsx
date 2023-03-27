@@ -5,8 +5,10 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
-import { useSiteLogsQuery } from 'calypso/data/hosting/use-site-logs-query';
+import { SiteLogsTab, useSiteLogsQuery } from 'calypso/data/hosting/use-site-logs-query';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { SiteLogsTabPanel } from './components/site-logs-tab-panel';
+import { SiteLogsTable } from './components/site-logs-table';
 
 export function SiteLogs() {
 	const { __ } = useI18n();
@@ -16,35 +18,29 @@ export function SiteLogs() {
 	const [ startTime ] = useState( moment().subtract( 7, 'd' ).unix() );
 	const [ endTime ] = useState( moment().unix() );
 
+	const [ logType, setLogType ] = useState< SiteLogsTab >( () => {
+		const queryParam = new URL( window.location.href ).searchParams.get( 'log-type' );
+		return (
+			queryParam && [ 'php', 'web' ].includes( queryParam ) ? queryParam : 'php'
+		) as SiteLogsTab;
+	} );
+
 	const { data } = useSiteLogsQuery( siteId, {
-		logType: 'web',
+		logType,
 		start: startTime,
 		end: endTime,
 		sort_order: 'desc',
 		page_size: 10,
 	} );
 
-	const formattedLogs = data?.logs
-		.map( ( log ) =>
-			Object.entries( log )
-				.sort( ( [ keyA ], [ keyB ] ) => {
-					if ( keyA === 'date' ) {
-						return -1;
-					}
-					if ( keyB === 'date' ) {
-						return 1;
-					}
-					return keyA.localeCompare( keyB );
-				} )
-				.map( ( [ key, value ] ) => `"${ key }" = ${ value }` )
-				.join( '\t' )
-		)
-		.join( '\n' );
+	const handleTabSelected = ( tabName: SiteLogsTab ) => {
+		setLogType( tabName );
+	};
 
 	const titleHeader = __( 'Site Logs' );
 
 	return (
-		<Main wideLayout>
+		<Main fullWidthLayout>
 			<DocumentHead title={ titleHeader } />
 			<FormattedHeader
 				brandFont
@@ -52,8 +48,10 @@ export function SiteLogs() {
 				subHeaderText={ __( 'View server logs to troubleshoot or debug problems with your site.' ) }
 				align="left"
 			/>
-			<h2>Web logs</h2>
-			<pre>{ formattedLogs }</pre>
+
+			<SiteLogsTabPanel selectedTab={ logType } onSelected={ handleTabSelected }>
+				{ () => <SiteLogsTable logs={ data?.logs } /> }
+			</SiteLogsTabPanel>
 		</Main>
 	);
 }

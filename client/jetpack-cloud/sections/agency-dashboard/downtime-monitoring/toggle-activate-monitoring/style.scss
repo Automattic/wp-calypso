@@ -19,10 +19,10 @@
 
 		.components-base-control__field {
 			margin-bottom: 0;
-		}
 
-		.components-form-toggle {
-			margin-right: 4px;
+			.components-flex {
+				gap: unset;
+			}
 		}
 	}
 
@@ -31,12 +31,12 @@
 			cursor: not-allowed;
 		}
 	}
-
 }
 
 .toggle-activate-monitoring__duration {
 	button {
 		@extend .inline-flex-align-centre;
+		margin-inline-start: 4px;
 	}
 
 	img {

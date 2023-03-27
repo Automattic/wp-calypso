@@ -9,6 +9,7 @@ export type SiteColumns = Array< {
 	title: ReactChild;
 	className?: string;
 	isExpandable?: boolean;
+	isSortable?: boolean;
 } >;
 
 export type AllowedStatusTypes =
@@ -67,6 +68,7 @@ export interface Site {
 	site_stats: SiteStats;
 	onSelect?: ( value: boolean ) => void;
 	jetpack_boost_scores: BoostData;
+	php_version_num: number;
 }
 export interface SiteNode {
 	value: Site;
@@ -160,10 +162,15 @@ export type ActionEventNames = {
 	[ key in AllowedActionTypes ]: { small_screen: string; large_screen: string };
 };
 
+export interface DashboardSortInterface {
+	field: string;
+	direction: 'asc' | 'desc' | '';
+}
 export interface DashboardOverviewContextInterface {
 	search: string;
 	currentPage: number;
 	filter: { issueTypes: Array< AgencyDashboardFilterOption >; showOnlyFavorites: boolean };
+	sort: DashboardSortInterface;
 }
 
 export interface SitesOverviewContextInterface extends DashboardOverviewContextInterface {
@@ -233,4 +240,9 @@ export interface ToggleActivaateMonitorAPIResponse {
 export interface ToggleActivateMonitorArgs {
 	siteId: number;
 	params: { monitor_active: boolean };
+}
+
+export interface Backup {
+	activityTitle: string;
+	activityDescription: { children: { text: string }[] }[];
 }

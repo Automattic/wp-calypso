@@ -1,52 +1,47 @@
 @import "@automattic/color-studio/dist/color-variables";
 @import "@wordpress/base-styles/breakpoints";
 
-.wpcom-site {
-	background-color: $studio-white;
+.subscription-manager-container {
+	max-width: 1440px;
+	padding: 48px 62px;
 
-	.layout__content {
-		padding: 48px 62px;
+	.formatted-header {
+		margin: 0;
+
+		&__title {
+			font-size: $font-headline-medium !important;
+			line-height: $font-headline-large;
+			color: $studio-gray-100;
+			margin-bottom: 16px;
+		}
+
+		&__subtitle {
+			font-size: $font-body !important;
+			line-height: $font-title-medium;
+			color: $studio-gray-60;
+			margin-bottom: 30px;
+
+			& .email-address {
+				font-weight: 500;
+			}
+		}
+	}
+}
+
+
+@media screen and ( max-width: $break-medium ) {
+	.subscription-manager-container {
+		padding: 30px 24px;
 
 		.subscription-manager-container {
-			max-width: 1440px;
-
 			.formatted-header {
-				margin: 0;
-
 				&__title {
-					font-size: $font-headline-medium !important;
-					line-height: $font-headline-large;
-					color: $studio-gray-100;
-					margin-bottom: 16px;
-				}
-
-				&__subtitle {
-					font-size: $font-body !important;
-					line-height: $font-title-medium;
-					color: $studio-gray-60;
-					margin-bottom: 30px;
-				}
-			}
-		}
-
-	}
-
-
-	@media screen and ( max-width: $break-medium ) {
-		.layout__content {
-			padding: 4px 24px;
-
-			.subscription-manager-container {
-				.formatted-header {
-					&__title {
-						font-size: $font-title-medium !important;
-						line-height: $font-title-large;
-						margin-bottom: 8px;
-					}
+					font-size: rem(28px) !important;
+					line-height: $font-headline-small;
+					margin-bottom: 8px;
 				}
 			}
 		}
 	}
-
 }
 

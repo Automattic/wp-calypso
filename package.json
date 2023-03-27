@@ -266,7 +266,7 @@
 		"postcss": "^8.4.5",
 		"postcss-cli": "^9.0.1",
 		"postcss-custom-properties": "^11.0.0",
-		"prettier": "npm:wp-prettier@2.6.2",
+		"prettier": "npm:wp-prettier@2.8.5",
 		"readline-sync": "^1.4.10",
 		"recursive-copy": "^2.0.14",
 		"replace": "^1.1.5",

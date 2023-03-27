@@ -10,6 +10,7 @@ import { useDashboardShowLargeScreen } from '../../hooks';
 import SitesOverviewContext from '../context';
 import SiteBulkSelect from '../site-bulk-select';
 import SiteCard from '../site-card';
+import SiteSort from '../site-sort';
 import SiteTable from '../site-table';
 import { formatSites, siteColumns } from '../utils';
 
@@ -43,6 +44,8 @@ const SiteContent = ( { data, isLoading, currentPage, isFavoritesTab }: Props, r
 
 	const isLargeScreen = useDashboardShowLargeScreen( siteTableRef, ref );
 
+	const firstColumn = siteColumns[ 0 ];
+
 	return (
 		<>
 			{ isLargeScreen ? (
@@ -61,7 +64,9 @@ const SiteContent = ( { data, isLoading, currentPage, isFavoritesTab }: Props, r
 							<SiteBulkSelect sites={ sites } isLoading={ isLoading } />
 						) : (
 							<>
-								<span className="site-content__bulk-select-label">{ siteColumns[ 0 ].title }</span>
+								<SiteSort isSortable={ firstColumn.isSortable } columnKey={ firstColumn.key }>
+									<span className="site-content__bulk-select-label">{ firstColumn.title }</span>
+								</SiteSort>
 								<EditButton sites={ sites } />
 							</>
 						) }

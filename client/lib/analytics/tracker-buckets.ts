@@ -15,6 +15,7 @@ const allAdTrackers = [
 	'floodlight',
 	'fullstory',
 	'googleAds',
+	'googleTagManager',
 	'ga',
 	'gaEnhancedEcommerce',
 	'hotjar',
@@ -33,7 +34,7 @@ const allAdTrackers = [
 	'adroll',
 ] as const;
 
-type AdTracker = typeof allAdTrackers[ number ];
+type AdTracker = ( typeof allAdTrackers )[ number ];
 
 export enum Bucket {
 	ESSENTIAL = 'essential',
@@ -52,6 +53,7 @@ export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 	bing: Bucket.ADVERTISING,
 	floodlight: Bucket.ADVERTISING,
 	googleAds: Bucket.ADVERTISING,
+	googleTagManager: Bucket.ADVERTISING,
 	outbrain: Bucket.ADVERTISING,
 	pinterest: Bucket.ADVERTISING,
 	twitter: Bucket.ADVERTISING,
@@ -73,11 +75,16 @@ export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 
 const checkGtagInit = (): boolean => 'dataLayer' in window && 'gtag' in window;
 
+const checkWooGTMInit = (): boolean => {
+	return 'dataLayer' in window && 'google_tag_manager' in window;
+};
+
 export const AdTrackersInitGuards: Partial< { [ key in AdTracker ]: () => boolean } > = {
 	ga: checkGtagInit,
 	gaEnhancedEcommerce: checkGtagInit,
 	floodlight: checkGtagInit,
 	googleAds: checkGtagInit,
+	googleTagManager: checkWooGTMInit,
 	fullstory: () => 'FS' in window,
 	bing: () => 'uetq' in window,
 	outbrain: () => 'obApi' in window,
