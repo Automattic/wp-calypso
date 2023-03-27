@@ -6,6 +6,7 @@ import useRewindableActivityLogQuery from 'calypso/data/activity-log/use-rewinda
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { isSuccessfulRealtimeBackup } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
+import { urlToSlug } from 'calypso/lib/url';
 import { useDashboardAddRemoveLicense } from '../../hooks';
 import { DASHBOARD_LICENSE_TYPES, getExtractedBackupTitle } from '../utils';
 import ExpandedCard from './expanded-card';
@@ -89,7 +90,12 @@ export default function BackupStorage( { site }: Props ) {
 		strong: <strong></strong>,
 	};
 
-	const isBackupEnabled = ! hasBackupError && site.has_backup;
+	const hasBackup = site.has_backup;
+	const isBackupEnabled = ! hasBackupError && hasBackup;
+
+	const siteUrlWithMultiSiteSupport = urlToSlug( site.url );
+	// If the backup has an error, we want to redirect the user to the backup page
+	const link = hasBackupError ? `/backup/${ siteUrlWithMultiSiteSupport }` : '';
 
 	const { isLicenseSelected, handleAddLicenseAction } = useDashboardAddRemoveLicense(
 		site.blog_id,
@@ -107,6 +113,13 @@ export default function BackupStorage( { site }: Props ) {
 		} )
 	);
 
+	const handleOnClick = () => {
+		// If the backup is not enabled, we want to add the license
+		if ( ! hasBackup ) {
+			handleAddLicenseAction();
+		}
+	};
+
 	return (
 		<ExpandedCard
 			header={ translate( 'Latest backup' ) }
@@ -118,7 +131,9 @@ export default function BackupStorage( { site }: Props ) {
 					  } )
 					: addBackupText
 			}
-			onClick={ handleAddLicenseAction }
+			// If the backup is not enabled, we don't want to allow the user to click on the card
+			onClick={ ! isBackupEnabled ? handleOnClick : undefined }
+			href={ link }
 		>
 			{ isBackupEnabled && <BackupStorageContent siteId={ site.blog_id } siteUrl={ site.url } /> }
 		</ExpandedCard>
