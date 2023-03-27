@@ -10,9 +10,14 @@ import type { BoostData } from '../types';
 interface Props {
 	boostData: BoostData;
 	hasBoost: boolean;
+	siteUrlWithScheme: string;
 }
 
-export default function BoostSitePerformance( { boostData, hasBoost }: Props ) {
+export default function BoostSitePerformance( {
+	boostData,
+	hasBoost,
+	siteUrlWithScheme,
+}: Props ) {
 	const translate = useTranslate();
 
 	const { overall: overallScore, mobile: mobileScore, desktop: desktopScore } = boostData;
@@ -21,6 +26,7 @@ export default function BoostSitePerformance( { boostData, hasBoost }: Props ) {
 		strong: <strong></strong>,
 	};
 
+	const href = `${ siteUrlWithScheme }/wp-admin/admin.php?page=jetpack-boost`;
 	return (
 		<ExpandedCard
 			header={ translate( 'Boost site performance' ) }
@@ -73,7 +79,12 @@ export default function BoostSitePerformance( { boostData, hasBoost }: Props ) {
 					</div>
 				</div>
 				<div className="site-expanded-content__card-footer">
-					<Button className="site-expanded-content__card-button" compact>
+					<Button
+						href={ href }
+						target="_blank"
+						className="site-expanded-content__card-button"
+						compact
+					>
 						{ translate( 'Optimize CSS' ) }
 					</Button>
 				</div>

@@ -33,7 +33,11 @@ export default function SiteExpandedContent( {
 				<InsightsStats stats={ stats } siteUrlWithScheme={ siteUrlWithScheme } />
 			) }
 			{ columns.includes( 'boost' ) && (
-				<BoostSitePerformance boostData={ boostData } hasBoost={ site.has_boost } />
+				<BoostSitePerformance
+					boostData={ boostData }
+					siteUrlWithScheme={ siteUrlWithScheme }
+					hasBoost={ site.has_boost }
+				/>
 			) }
 			{ columns.includes( 'backup' ) && stats && <BackupStorage site={ site } /> }
 		</div>
