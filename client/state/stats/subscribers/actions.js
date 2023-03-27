@@ -1,46 +1,23 @@
-import { STATS_SUBSCRIBERS_REQUEST, STATS_SUBSCRIBERS_RECEIVE } from 'calypso/state/action-types';
-import 'calypso/state/data-layer/wpcom/sites/stats/visits';
-
+import {
+	STATS_SUBSCRIBERS_RECEIVE,
+	STATS_SUBSCRIBERS_REQUEST,
+	STATS_SUBSCRIBERS_REQUEST_SUCCESS,
+	STATS_SUBSCRIBERS_REQUEST_FAILURE,
+} from 'calypso/state/action-types';
 import 'calypso/state/stats/init';
 
-/**
- * Returns an action thunk which, when invoked, triggers a network request to
- * retrieve visitor counts for StatsSubscribers.
- *
- * @param  {string}  date  			   The most recent day to include in results (YYYY-MM-DD format)
- * @param  {string}  period   		 Type of duration to include in the query (such as daily)
- * @param  {number}  quantity      Number of periods to include in the query
- * @param  {number}  siteId        Site ID
- * @param  {Array}   statFields    Comma separated list of stat fields
- * @returns {Object}  Action object
- */
-
-export function requestChartCounts( { chartTab, date, period, quantity, siteId, statFields } ) {
-	return {
-		type: STATS_SUBSCRIBERS_REQUEST,
-		chartTab,
-		date,
-		period,
-		quantity,
-		siteId,
-		statFields,
-	};
+export function requestStatSubscribers( siteId ) {
+	return { type: STATS_SUBSCRIBERS_REQUEST, siteId };
 }
 
-/**
- * Returns an action object to be used in signalling that a visitor count object has
- * been received.
- *
- * @param  {number}  siteId   		 Site ID
- * @param  {string}  period   		 Type of duration to include in the query (such as daily)
- * @param  {Object}  data   			 Visitor counts API response
- * @returns {Object}  Action object
- */
-export function receiveChartCounts( siteId, period, data ) {
-	return {
-		type: STATS_SUBSCRIBERS_RECEIVE,
-		siteId,
-		period,
-		data,
-	};
+export function receiveStatSubscribers( siteId, data ) {
+	return { type: STATS_SUBSCRIBERS_RECEIVE, siteId, data };
+}
+
+export function requestStatSubscribersSuccess( siteId ) {
+	return { type: STATS_SUBSCRIBERS_REQUEST_SUCCESS, siteId };
+}
+
+export function requestStatSubscribersFailure( siteId ) {
+	return { type: STATS_SUBSCRIBERS_REQUEST_FAILURE, siteId };
 }
