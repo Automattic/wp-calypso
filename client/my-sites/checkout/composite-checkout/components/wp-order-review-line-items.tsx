@@ -1,4 +1,8 @@
-import { isAkismetProduct, isJetpackPurchasableItem } from '@automattic/calypso-products';
+import {
+	isAkismetPersonalProduct,
+	isAkismetProduct,
+	isJetpackPurchasableItem,
+} from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { isCopySiteFlow } from '@automattic/onboarding';
 import {
@@ -17,7 +21,7 @@ import { useState } from 'react';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
-import { ItemVariationPicker } from './item-variation-picker';
+import { ItemVariationPicker, WPCOMProductVariant } from './item-variation-picker';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { Theme } from '@automattic/composite-checkout';
 import type {
@@ -189,6 +193,10 @@ function LineItemWrapper( {
 		isJetpackPurchasableItem( product.product_slug )
 	);
 
+	const hasEligibleAkismetVariant = ( variant: WPCOMProductVariant ) => {
+		return isAkismetProduct( variant ) && ! isAkismetPersonalProduct( variant );
+	};
+
 	const variants = useGetProductVariants( product, ( variant ) => {
 		// Only show term variants which are equal to or longer than the variant that
 		// was in the cart when checkout finished loading (not necessarily the
@@ -197,10 +205,11 @@ function LineItemWrapper( {
 		if ( ! initialVariantTerm ) {
 			return true;
 		}
-		const isAkismet = isAkismetProduct( { product_slug: variant.productSlug } );
-		if ( isJetpack || isAkismet ) {
+
+		if ( isJetpack || hasEligibleAkismetVariant( variant ) ) {
 			return true;
 		}
+
 		return variant.termIntervalInMonths >= initialVariantTerm;
 	} );
 

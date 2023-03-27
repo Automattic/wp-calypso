@@ -20,6 +20,7 @@ export { getProductFromSlug } from './get-product-from-slug';
 export { getProductsSlugs } from './get-products-slugs';
 export { isAddOn } from './is-add-on';
 export { isAkismetProduct } from './is-akismet-product';
+export { isAkismetPersonalProduct } from './is-akismet-personal-product';
 export { isBiennially } from './is-biennially';
 export { isBlogger } from './is-blogger';
 export { isBundled } from './is-bundled';
