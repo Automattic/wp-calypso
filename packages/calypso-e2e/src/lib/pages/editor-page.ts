@@ -657,13 +657,11 @@ export class EditorPage {
 
 		// AT and Simple sites have slightly differing response from the API.
 		let publishedURL: string;
-		try {
+		if ( json.link ) {
 			publishedURL = json.link;
-		} catch {
+		} else if ( json.body.link ) {
 			publishedURL = json.body.link;
-		}
-
-		if ( ! publishedURL ) {
+		} else {
 			throw new Error( 'No published article URL found in response.' );
 		}
 
