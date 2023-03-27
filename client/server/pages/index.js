@@ -830,15 +830,18 @@ function wpcomPages( app ) {
 	} );
 
 	app.get( [ '/subscriptions', '/subscriptions/*' ], function ( req, res, next ) {
-		if ( ! req.context.isLoggedIn ) {
-			if ( req.context.user?.subscriptionManagementSubkey ) {
-				return next();
-			}
-
-			return res.redirect( 'https://wordpress.com/email-subscriptions' );
+		if ( req.context.isLoggedIn ) {
+			// We want to show the old subscriptions management portal to the logged-in users, until new one in reader is developped for them
+			return res.redirect( 'https://wordpress.com/email-subscriptions?option=settings' );
 		}
 
-		return res.redirect( 'https://wordpress.com/email-subscriptions?option=settings' );
+		if ( req.cookies.subkey ) {
+			// If the user is logged out, and has a subkey cookie, they are authorized to view the page
+			return next();
+		}
+
+		// Otherwise, show them email subscriptions external landing page
+		res.redirect( 'https://wordpress.com/email-subscriptions' );
 	} );
 }
 
