@@ -1827,7 +1827,7 @@ const getPlanJetpackGoldenTokenDetails = (): IncompleteJetpackPlan => ( {
 		} ),
 	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
 	getDescription: () => translate( 'Get next-level protection with real-time backups and scan.' ),
-	getTagline: () => translate( 'Best for sites with frequent updates' ),
+	getTagline: () => translate( 'A lifetime of Jetpack powers for your website' ),
 	getPlanCardFeatures: () => [
 		FEATURE_PLAN_SECURITY_DAILY,
 		FEATURE_PRODUCT_BACKUP_REALTIME_V2,
