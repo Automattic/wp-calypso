@@ -111,6 +111,40 @@ test( 'tax adding', () => {
 	expect( screen.getByText( '(+%(taxAmount)s tax)' ) ).toBeInTheDocument();
 } );
 
+test( 'tax includes with localized tax name', () => {
+	const transaction = {
+		subtotal: '$36.00',
+		tax: '$2.48',
+		amount: '$38.48',
+		tax_country_code: 'GB',
+		items: [
+			{
+				raw_tax: 2.48,
+			},
+		],
+	};
+
+	render( renderTransactionAmount( transaction, { translate, addingTax: false } ) );
+	expect( screen.getByText( '(includes %(taxAmount)s %(taxName)s)' ) ).toBeInTheDocument();
+} );
+
+test( 'tax adding with localized tax name', () => {
+	const transaction = {
+		subtotal: '$36.00',
+		tax: '$2.48',
+		amount: '$38.48',
+		tax_country_code: 'GB',
+		items: [
+			{
+				raw_tax: 2.48,
+			},
+		],
+	};
+
+	render( renderTransactionAmount( transaction, { translate, addingTax: true } ) );
+	expect( screen.getByText( '(+%(taxAmount)s %(taxName)s)' ) ).toBeInTheDocument();
+} );
+
 test( 'tax hidden if not available', () => {
 	const transaction = {
 		subtotal: '$36.00',
