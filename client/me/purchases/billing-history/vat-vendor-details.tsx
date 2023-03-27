@@ -24,9 +24,19 @@ interface VatVendorInfo {
 	vatId: string;
 }
 
-function getVatVendorInfo(
+export function getVatVendorInfo(
+	/**
+	 * Two-letter country code.
+	 */
 	country: string,
+
+	/**
+	 * A string version of date that can be read by Date.parse.
+	 *
+	 * Can be 'now'.
+	 */
 	date: string,
+
 	translate: ReturnType< typeof useTranslate >
 ): VatVendorInfo | undefined {
 	const automatticVatAddress = [

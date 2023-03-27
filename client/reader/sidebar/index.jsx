@@ -19,6 +19,7 @@ import ReaderConversationsIcon from 'calypso/reader/components/icons/conversatio
 import ReaderDiscoverIcon from 'calypso/reader/components/icons/discover-icon';
 import ReaderFollowingIcon from 'calypso/reader/components/icons/following-icon';
 import ReaderLikesIcon from 'calypso/reader/components/icons/likes-icon';
+import ReaderNotificationsIcon from 'calypso/reader/components/icons/notifications-icon';
 import ReaderSearchIcon from 'calypso/reader/components/icons/search-icon';
 import { isDiscoverEnabled } from 'calypso/reader/discover/helper';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
@@ -105,6 +106,12 @@ export class ReaderSidebar extends Component {
 		recordAction( 'clicked_reader_sidebar_conversations' );
 		recordGaEvent( 'Clicked Reader Sidebar Conversations' );
 		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_conversations_clicked' );
+	};
+
+	handleReaderSidebarNotificationsClicked = () => {
+		recordAction( 'clicked_reader_sidebar_notifications' );
+		recordGaEvent( 'Clicked Reader Sidebar Notifications' );
+		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_notifications_clicked' );
 	};
 
 	handleReaderSidebarA8cConversationsClicked = () => {
@@ -230,6 +237,16 @@ export class ReaderSidebar extends Component {
 						customIcon={ <ReaderA8cConversationsIcon /> }
 					/>
 				) }
+
+				<SidebarItem
+					className={ ReaderSidebarHelper.itemLinkClass( '/read/notifications', path, {
+						'sidebar-streams__notifications': true,
+					} ) }
+					label={ translate( 'Notifications' ) }
+					onNavigate={ this.handleReaderSidebarNotificationsClicked }
+					customIcon={ <ReaderNotificationsIcon /> }
+					link="/read/notifications"
+				/>
 			</SidebarMenu>
 		);
 	}

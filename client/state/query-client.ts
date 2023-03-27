@@ -2,14 +2,19 @@ import { throttle } from 'lodash';
 import { hydrate, QueryClient } from 'react-query';
 import { persistQueryClient } from 'react-query/persistQueryClient-experimental';
 import { shouldPersist, MAX_AGE, SERIALIZE_THROTTLE } from 'calypso/state/initial-state';
-import { getPersistedStateItem, storePersistedStateItem } from 'calypso/state/persisted-state';
+import {
+	getPersistedStateItem,
+	loadPersistedState,
+	storePersistedStateItem,
+} from 'calypso/state/persisted-state';
 import { shouldDehydrateQuery } from './should-dehydrate-query';
 
-export function createQueryClient(): QueryClient {
+export async function createQueryClient( userId?: number ): Promise< QueryClient > {
+	await loadPersistedState();
 	const queryClient = new QueryClient( {
 		defaultOptions: { queries: { cacheTime: MAX_AGE } },
 	} );
-
+	await hydrateBrowserState( queryClient, userId );
 	return queryClient;
 }
 

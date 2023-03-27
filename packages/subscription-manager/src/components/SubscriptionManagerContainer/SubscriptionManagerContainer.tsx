@@ -2,7 +2,8 @@
 /**
  * External dependencies
  */
-import { useSubscriberEmailAddress } from '@automattic/data-stores/src/reader/hooks';
+import { Reader } from '@automattic/data-stores';
+import { UniversalNavbarHeader } from '@automattic/wpcom-template-parts';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -15,7 +16,7 @@ export type SubscriptionManagerContainerProps = {
 };
 
 const useSubHeaderText = () => {
-	const emailAddress = useSubscriberEmailAddress();
+	const emailAddress = Reader.useSubscriberEmailAddress();
 	const translate = useTranslate();
 
 	return useMemo( () => {
@@ -40,16 +41,23 @@ const SubscriptionManagerContainer = ( { children }: SubscriptionManagerContaine
 	const translate = useTranslate();
 
 	return (
-		<Main className="subscription-manager-container">
-			<DocumentHead title="Subscriptions" />
-			<FormattedHeader
-				brandFont
-				headerText={ translate( 'Subscription management' ) }
-				subHeaderText={ useSubHeaderText() }
-				align="left"
+		<>
+			<UniversalNavbarHeader
+				className="subscription-manager-header"
+				variant="minimal"
+				isLoggedIn={ false }
 			/>
-			{ children }
-		</Main>
+			<Main className="subscription-manager-container">
+				<DocumentHead title="Subscriptions" />
+				<FormattedHeader
+					brandFont
+					headerText={ translate( 'Subscription management' ) }
+					subHeaderText={ useSubHeaderText() }
+					align="left"
+				/>
+				{ children }
+			</Main>
+		</>
 	);
 };
 

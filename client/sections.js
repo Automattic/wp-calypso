@@ -370,6 +370,13 @@ const sections = [
 		trackLoadPerformance: true,
 	},
 	{
+		name: 'reader',
+		paths: [ '/read/notifications' ],
+		module: 'calypso/reader/notifications',
+		group: 'reader',
+		trackLoadPerformance: true,
+	},
+	{
 		name: 'help',
 		paths: [ '/help' ],
 		module: 'calypso/me/help',
@@ -562,13 +569,6 @@ const sections = [
 		paths: [ '/advertising', '/advertising/[^\\/]+(/[^\\/])?' ],
 		module: 'calypso/my-sites/promote-post',
 		group: 'sites',
-	},
-	{
-		name: 'subscriptions',
-		paths: [ '/subscriptions' ],
-		module: 'calypso/my-sites/subscriptions',
-		group: 'sites',
-		enableLoggedOut: true,
 	},
 	{
 		name: 'site-logs',
