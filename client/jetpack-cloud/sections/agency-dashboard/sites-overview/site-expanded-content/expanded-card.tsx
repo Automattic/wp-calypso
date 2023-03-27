@@ -9,6 +9,7 @@ interface Props {
 	children: ReactNode;
 	emptyContent?: ReactNode;
 	isEnabled?: boolean;
+	onClick?: () => void;
 }
 
 export default function ExpandedCard( {
@@ -16,11 +17,13 @@ export default function ExpandedCard( {
 	children,
 	isEnabled = true,
 	emptyContent,
+	onClick,
 }: Props ) {
 	return (
 		<Card
 			className={ classNames( 'expanded-card', { 'expanded-card__not-enabled': ! isEnabled } ) }
 			compact
+			onClick={ onClick }
 		>
 			{ isEnabled ? (
 				<>
