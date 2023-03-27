@@ -41,6 +41,7 @@ import {
 	redirectToCheckout,
 	redirectToPlans,
 	redirectToPlansIfNotJetpack,
+	redirectIfInvalidInterval,
 } from '../controller';
 import { currentPlan } from '../current-plan/controller';
 import router from '../index';
@@ -135,6 +136,7 @@ const routes = {
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,
 		stagingSiteNotSupportedRedirect,
+		redirectIfInvalidInterval,
 		p2RedirectToHubPlans,
 		navigation,
 		plans,
