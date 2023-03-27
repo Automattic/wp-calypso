@@ -131,7 +131,7 @@ export default function BackupStorage( { site }: Props ) {
 					  } )
 					: addBackupText
 			}
-			// If the backup is not enabled, we don't want to allow the user to click on the card
+			// If the backup is not enabled, we want to allow the user to click on the card
 			onClick={ ! isBackupEnabled ? handleOnClick : undefined }
 			href={ link }
 		>
