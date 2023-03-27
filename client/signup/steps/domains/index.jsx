@@ -656,11 +656,9 @@ class DomainsStep extends Component {
 		if ( HOSTING_LP_FLOW === flowName ) {
 			const components = {
 				span: (
-					// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus
-					<span
-						role="button"
+					<button
 						className="tailored-flow-subtitle__cta-text"
-						style={ { fontWeight: 500 } }
+						style={ { fontWeight: 500, fontSize: '1em', display: 'inline' } }
 						onClick={ () => this.handleSkip( undefined, true ) }
 					/>
 				),
