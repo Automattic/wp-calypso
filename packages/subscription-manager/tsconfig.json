@@ -7,5 +7,9 @@
 	},
 	"include": [ "src" ],
 	"exclude": [ "**/test/*" ],
-	"references": [ { "path": "../data-stores" }, { "path": "../components" } ]
+	"references": [
+		{ "path": "../wpcom-template-parts" },
+		{ "path": "../data-stores" },
+		{ "path": "../components" }
+	]
 }

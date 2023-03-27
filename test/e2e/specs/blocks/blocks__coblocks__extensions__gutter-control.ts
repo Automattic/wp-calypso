@@ -3,7 +3,6 @@
  */
 import {
 	envVariables,
-	DataHelper,
 	EditorPage,
 	PricingTableBlock,
 	TestAccount,
@@ -23,7 +22,11 @@ const features = envToFeatureKey( {
 	COBLOCKS_EDGE: isAtomic || envVariables.COBLOCKS_EDGE,
 } );
 
-describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Gutter Control' ), () => {
+/**
+ * This spec requires the following:
+ * 	- theme: a non-block-based theme (eg. Twenty-Twenty One)
+ */
+describe( 'CoBlocks: Extensions: Gutter Control', function () {
 	const accountName = getTestAccountByFeature( features );
 
 	let page: Page;

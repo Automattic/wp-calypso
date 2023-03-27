@@ -21,6 +21,7 @@ import {
 import {
 	changeCommentStatus,
 	deleteComment,
+	emptyComments,
 	requestCommentsList,
 	unlikeComment,
 } from 'calypso/state/comments/actions';
@@ -62,6 +63,19 @@ export class CommentNavigation extends Component {
 			window.confirm( translate( 'Delete these comments permanently?' ) )
 		) {
 			this.setBulkStatus( 'delete' )();
+		}
+	};
+
+	emptyPermanently = () => {
+		const { status, translate } = this.props;
+		if (
+			window.confirm(
+				status === 'spam'
+					? translate( 'Empty all spam permanently?' )
+					: translate( 'Empty all trash permanently?' )
+			)
+		) {
+			this.props.emptyPermanently( status );
 		}
 	};
 
@@ -181,6 +195,7 @@ export class CommentNavigation extends Component {
 			hasSearch,
 			hasComments,
 			isBulkMode,
+			isPostView,
 			isSelectedAll,
 			query,
 			selectedComments,
@@ -304,9 +319,24 @@ export class CommentNavigation extends Component {
 					) }
 
 					{ hasComments && (
-						<Button compact onClick={ toggleBulkMode }>
-							{ translate( 'Bulk edit' ) }
-						</Button>
+						<>
+							<Button compact onClick={ toggleBulkMode }>
+								{ translate( 'Bulk edit' ) }
+							</Button>
+
+							{ this.statusHasAction( 'delete' ) && ! isPostView && (
+								<Button
+									compact
+									scary
+									onClick={ this.emptyPermanently }
+									className="comment-navigation__button-empty"
+								>
+									{ this.props.status === 'spam'
+										? translate( 'Empty spam' )
+										: translate( 'Empty trash' ) }
+								</Button>
+							) }
+						</>
 					) }
 				</CommentNavigationTab>
 
@@ -362,6 +392,17 @@ const mapDispatchToProps = ( dispatch, { siteId, commentsListQuery } ) => ( {
 					bumpStat( 'calypso_comment_management', 'comment_deleted' )
 				),
 				deleteComment( siteId, postId, commentId, { showSuccessNotice: true }, commentsListQuery )
+			)
+		),
+	// Empty all comments (from spam or trash only)
+	emptyPermanently: ( status ) =>
+		dispatch(
+			withAnalytics(
+				composeAnalytics(
+					recordTracksEvent( 'calypso_comment_management_empty' ),
+					bumpStat( 'calypso_comment_management', 'comments_emptied' )
+				),
+				emptyComments( siteId, status, { showSuccessNotice: true }, commentsListQuery )
 			)
 		),
 	recordBulkAction: ( action, count, fromList, view = 'site' ) =>

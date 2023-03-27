@@ -2,7 +2,7 @@
 /**
  * External dependencies
  */
-import { useCurrentRoute } from 'calypso/components/route';
+import { useLocation } from 'react-router-dom';
 import Tab from 'calypso/components/section-nav/item';
 import Tabs from './Tabs';
 import './styles.scss';
@@ -33,8 +33,8 @@ const getRoute = ( baseRoute: string, path: string ): string => {
 const getPath = ( route: string ) => route.substring( route.lastIndexOf( '/' ) + 1 );
 
 const TabsSwitcher = ( { baseRoute, tabs }: TabsSwitcherProps ) => {
-	const { currentRoute } = useCurrentRoute();
-	const currentPath = getPath( currentRoute );
+	const { pathname } = useLocation();
+	const currentPath = getPath( pathname );
 	const CurrentView = tabs.find( ( tab ) => tab.path === currentPath )?.view;
 
 	return (
