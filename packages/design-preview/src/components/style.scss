@@ -185,10 +185,6 @@
 	}
 }
 
-.design-preview__style-variation-wrapper {
-	padding: 3px;
-}
-
 .design-preview__sidebar-variations {
 	display: block;
 
@@ -199,13 +195,14 @@
 		line-height: 20px;
 	}
 
-	.design-preview__sidebar-variations-grid {
+	.global-styles-variations {
 		align-items: center;
 		display: flex;
 		gap: 8px;
 
 		.global-styles-variations__item {
 			flex-shrink: 0;
+			padding: 3px;
 			width: 100px;
 		}
 	}
@@ -217,7 +214,7 @@
 			display: block;
 		}
 
-		.design-preview__sidebar-variations-grid {
+		.global-styles-variations {
 			box-sizing: border-box;
 			display: grid;
 			gap: 12px;
@@ -272,8 +269,8 @@
 	margin: 0;
 	padding: 2px 12px 2px 6px;
 	position: absolute;
-	top: 6px;
-	left: 6px;
+	top: 9px;
+	left: 9px;
 }
 
 .design-picker__premium-badge-tooltip.popover {

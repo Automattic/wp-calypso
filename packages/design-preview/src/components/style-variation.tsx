@@ -10,6 +10,7 @@ interface StyleVariationPreviewsProps {
 	selectedVariation?: StyleVariation;
 	onClick: ( variation: StyleVariation ) => void;
 	showGlobalStylesPremiumBadge: boolean;
+	showOnlyHoverViewDefaultVariation?: boolean;
 }
 
 const StyleVariationPreviews: React.FC< StyleVariationPreviewsProps > = ( {
@@ -17,6 +18,7 @@ const StyleVariationPreviews: React.FC< StyleVariationPreviewsProps > = ( {
 	selectedVariation,
 	onClick,
 	showGlobalStylesPremiumBadge,
+	showOnlyHoverViewDefaultVariation,
 } ) => {
 	return (
 		<GlobalStylesVariations
@@ -36,6 +38,7 @@ const StyleVariationPreviews: React.FC< StyleVariationPreviewsProps > = ( {
 					/>
 				)
 			}
+			showOnlyHoverViewDefaultVariation={ showOnlyHoverViewDefaultVariation }
 			onSelect={ ( globalStyleVariation: GlobalStylesObject ) =>
 				onClick( globalStyleVariation as StyleVariation )
 			}

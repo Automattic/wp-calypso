@@ -14,7 +14,7 @@ interface GlobalStylesVariationProps {
 	globalStylesVariation: GlobalStylesObject;
 	isActive: boolean;
 	premiumBadge?: React.ReactNode;
-	showOnlyHoverView: boolean;
+	showOnlyHoverView?: boolean;
 	onSelect: () => void;
 }
 
@@ -22,6 +22,7 @@ interface GlobalStylesVariationsProps {
 	globalStylesVariations: GlobalStylesObject[];
 	selectedGlobalStylesVariation: GlobalStylesObject | null;
 	premiumBadge?: React.ReactNode;
+	showOnlyHoverViewDefaultVariation?: boolean;
 	onSelect: ( globalStylesVariation: GlobalStylesObject ) => void;
 }
 
@@ -88,37 +89,44 @@ const GlobalStylesVariations = ( {
 	globalStylesVariations,
 	selectedGlobalStylesVariation,
 	premiumBadge,
+	showOnlyHoverViewDefaultVariation,
 	onSelect,
 }: GlobalStylesVariationsProps ) => {
 	const baseGlobalStyles = useMemo(
 		() =>
 			globalStylesVariations.find( ( globalStylesVariation ) =>
 				isDefaultGlobalStyleVariationSlug( globalStylesVariation )
+			) ?? ( {} as GlobalStylesObject ),
+		[ globalStylesVariations ]
+	);
+
+	const globalStylesVariationsWithoutDefault = useMemo(
+		() =>
+			globalStylesVariations.filter(
+				( globalStylesVariation ) => ! isDefaultGlobalStyleVariationSlug( globalStylesVariation )
 			),
 		[ globalStylesVariations ]
 	);
 
 	return (
 		<GlobalStylesContext.Provider value={ { base: baseGlobalStyles } }>
-			<div className="global-style-variations">
-				{ globalStylesVariations.map( ( globalStylesVariation, index ) => {
-					const isDefaultGlobalStyleVariation =
-						isDefaultGlobalStyleVariationSlug( globalStylesVariation );
-					const isActive = ! isDefaultGlobalStyleVariation
-						? globalStylesVariation.slug === selectedGlobalStylesVariation?.slug
-						: ! selectedGlobalStylesVariation;
-
-					return (
-						<GlobalStylesVariation
-							key={ index }
-							globalStylesVariation={ globalStylesVariation }
-							premiumBadge={ ! isDefaultGlobalStyleVariation && premiumBadge }
-							isActive={ isActive }
-							showOnlyHoverView={ isDefaultGlobalStyleVariation }
-							onSelect={ () => onSelect( globalStylesVariation ) }
-						/>
-					);
-				} ) }
+			<div className="global-styles-variations">
+				<GlobalStylesVariation
+					key="base"
+					globalStylesVariation={ baseGlobalStyles }
+					isActive={ ! selectedGlobalStylesVariation }
+					showOnlyHoverView={ showOnlyHoverViewDefaultVariation }
+					onSelect={ () => onSelect( baseGlobalStyles ) }
+				/>
+				{ globalStylesVariationsWithoutDefault.map( ( globalStylesVariation, index ) => (
+					<GlobalStylesVariation
+						key={ index }
+						globalStylesVariation={ globalStylesVariation }
+						premiumBadge={ premiumBadge }
+						isActive={ globalStylesVariation.slug === selectedGlobalStylesVariation?.slug }
+						onSelect={ () => onSelect( globalStylesVariation ) }
+					/>
+				) ) }
 			</div>
 		</GlobalStylesContext.Provider>
 	);
