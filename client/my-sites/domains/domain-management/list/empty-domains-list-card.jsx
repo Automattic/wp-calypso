@@ -33,7 +33,7 @@ function EmptyDomainsListCard( {
 
 	let title = translate( 'Get your domain' );
 	let line = translate(
-		'Get a free one-year domain registration or transfer with any annual plan.'
+		'Get a free one-year domain registration or transfer with any annual paid plan.'
 	);
 	let action = translate( 'Upgrade to a plan' );
 	let actionURL = `/plans/${ selectedSite.slug }`;
