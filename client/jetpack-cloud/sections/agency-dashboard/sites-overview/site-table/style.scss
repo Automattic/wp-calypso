@@ -23,7 +23,8 @@
 		font-weight: 400;
 		height: 50px;
 
-		&:hover {
+		&:hover,
+		&:focus-within {
 			.site-sort__icon {
 				visibility: visible;
 			}
