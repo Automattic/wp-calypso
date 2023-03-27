@@ -15,7 +15,7 @@
 	}
 
 	.thank-you__body {
-		margin: 40px 0;
+		margin: 50px 0;
 
 		> div {
 			width: auto;
@@ -35,13 +35,14 @@
 	}
 
 	.thank-you__header-title {
-		font-size: $font-headline-medium;
-		line-height: 40px;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+		font-size: 44px; // typography-exception
+		line-height: 60px;
 		padding: 0 16px;
 	}
 
 	.thank-you__header-subtitle {
-		margin: 16px auto;
+		margin: 8px auto;
 		padding: 0 16px;
 		max-width: 500px;
 		line-height: 24px;
@@ -74,9 +75,9 @@
 			}
 
 			h3 {
-				line-height: 24px;
+				line-height: 20px;
 				font-weight: 500;
-				font-size: $font-body;
+				font-size: $font-body-small;
 				color: var(--studio-gray-100);
 				margin-bottom: 5px;
 			}
