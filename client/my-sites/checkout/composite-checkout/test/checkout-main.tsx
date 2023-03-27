@@ -299,6 +299,26 @@ describe( 'CheckoutMain', () => {
 		} );
 	} );
 
+	it( 'adds second product when the url has two akismet products', async () => {
+		const cartChanges = { products: [] };
+		const additionalProps = {
+			productAliasFromUrl: 'ak_plus_yearly_1,ak_plus_yearly_2',
+			sitelessCheckoutType: 'akismet',
+			isNoSiteCart: true,
+		};
+
+		render(
+			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+			container
+		);
+
+		await waitFor( async () => {
+			screen
+				.getAllByLabelText( 'Akismet Plus (20K requests/month)' )
+				.map( ( element ) => expect( element ).toHaveTextContent( '$200' ) );
+		} );
+	} );
+
 	it( 'does not redirect if the cart is empty when it loads but the url has a concierge session', async () => {
 		const cartChanges = { products: [] };
 		const additionalProps = { productAliasFromUrl: 'concierge-session' };
