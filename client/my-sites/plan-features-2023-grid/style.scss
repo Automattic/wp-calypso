@@ -323,6 +323,10 @@
 			font-weight: 600;
 		}
 
+		&.is-bottom-aligned {
+			vertical-align: bottom;
+		}
+
 
 		&.is-top-buttons {
 			padding: 0 20px;
@@ -336,27 +340,25 @@
 
 	.plan-features-2023-grid__pricing {
 		padding: 0 20px;
-		margin: 0;
+		margin: 0 0 4px 0;
 
 		.plan-price {
 			color: var(--studio-gray-100);
-			margin-right: 10px;
-			line-height: $font-title-large;
+			margin: 0;
+			line-height: 1;
 			display: flex;
 			@include onboarding-font-recoleta;
-			padding: 3px 0 6px;
 		}
 
 		.plan-price__currency-symbol,
 		.plan-price.is-discounted .plan-price__currency-symbol {
-			font-size: $font-title-medium;
+			font-size: rem(14px);
 			color: var(--studio-gray-100);
-			position: relative;
-			top: -7px;
+			margin-top: 2px;
 		}
 
 		.plan-price__integer {
-			font-size: 2.75rem;
+			font-size: rem(44px);
 		}
 
 		.plan-price__term {
@@ -365,18 +367,16 @@
 		}
 
 		.plan-price.is-original {
-			color: var(--color-neutral-light);
+			color: var(--studio-gray-20);
+
+			text-decoration: line-through;
+			text-decoration-thickness: 1px;
+			font-family: "SF Pro Text", $sans;
+			margin-bottom: 5px;
+			font-size: rem(18px);
 
 			&::before {
-				left: -1%;
-				top: 43%;
-				right: 80%;
-				transform: rotate(16deg);
-				border-color: #000;
-
-				@include plans-2023-break-small {
-					right: 68%;
-				}
+				display: none;
 			}
 
 			.plan-price__currency-symbol,
@@ -385,11 +385,10 @@
 			}
 
 			.plan-price__integer {
-				font-size: $font-title-medium;
+				font-size: rem(18px);
 			}
 			.plan-price__currency-symbol {
-				font-size: $font-body-extra-small;
-				top: -4px;
+				font-size: rem(8px);
 			}
 		}
 
@@ -407,7 +406,7 @@
 			}
 			&.is-original {
 				.plan-price__integer {
-					font-size: $font-body-small;
+					font-size: rem(16px);
 				}
 			}
 		}
@@ -1027,12 +1026,6 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 
 			.plan-price__integer-fraction {
 				color: inherit;
-			}
-		}
-
-		.plan-price.is-large-currency {
-			.plan-price__integer {
-				font-size: rem(30px);
 			}
 		}
 	}

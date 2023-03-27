@@ -1,4 +1,5 @@
 import { isWpcomEnterpriseGridPlan, PlanSlug } from '@automattic/calypso-products';
+import styled from '@emotion/styled';
 import { useSelector } from 'react-redux';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
@@ -10,6 +11,14 @@ interface PlanFeatures2023GridHeaderPriceProps {
 	is2023OnboardingPricingGrid: boolean;
 	isLargeCurrency: boolean;
 }
+
+const PricesGroup = styled.div< { isLargeCurrency: boolean } >`
+	justify-content: flex-end;
+	display: flex;
+	flex-direction: ${ ( props ) => ( props.isLargeCurrency ? 'column' : 'row-reverse' ) };
+	align-items: ${ ( props ) => ( props.isLargeCurrency ? 'flex-start' : 'flex-end' ) };
+	gap: 4px;
+`;
 
 const PlanFeatures2023GridHeaderPrice = ( {
 	planProperties,
@@ -33,26 +42,24 @@ const PlanFeatures2023GridHeaderPrice = ( {
 	return (
 		<div className="plan-features-2023-grid__pricing">
 			{ shouldShowDiscountedPrice && (
-				<span className="plan-features-2023-grid__header-price-group">
-					<div className="plan-features-2023-grid__header-price-group-prices">
-						<PlanPrice
-							currencyCode={ currencyCode }
-							rawPrice={ planPrices.rawPrice }
-							displayPerMonthNotation={ false }
-							is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
-							isLargeCurrency={ isLargeCurrency }
-							original
-						/>
-						<PlanPrice
-							currencyCode={ currencyCode }
-							rawPrice={ planPrices.planDiscountedRawPrice || planPrices.discountedRawPrice }
-							displayPerMonthNotation={ false }
-							is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
-							isLargeCurrency={ isLargeCurrency }
-							discounted
-						/>
-					</div>
-				</span>
+				<PricesGroup isLargeCurrency={ isLargeCurrency }>
+					<PlanPrice
+						currencyCode={ currencyCode }
+						rawPrice={ planPrices.rawPrice }
+						displayPerMonthNotation={ false }
+						is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+						isLargeCurrency={ isLargeCurrency }
+						original
+					/>
+					<PlanPrice
+						currencyCode={ currencyCode }
+						rawPrice={ planPrices.planDiscountedRawPrice || planPrices.discountedRawPrice }
+						displayPerMonthNotation={ false }
+						is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+						isLargeCurrency={ isLargeCurrency }
+						discounted
+					/>
+				</PricesGroup>
 			) }
 			{ ! shouldShowDiscountedPrice && (
 				<PlanPrice
