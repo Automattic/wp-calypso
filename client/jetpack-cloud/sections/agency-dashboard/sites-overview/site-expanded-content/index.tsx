@@ -35,6 +35,7 @@ export default function SiteExpandedContent( {
 			{ columns.includes( 'boost' ) && (
 				<BoostSitePerformance
 					boostData={ boostData }
+					siteId={ site.blog_id }
 					siteUrlWithScheme={ siteUrlWithScheme }
 					hasBoost={ site.has_boost }
 				/>
