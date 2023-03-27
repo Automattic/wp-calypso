@@ -40,7 +40,7 @@ export const groupDomainProducts = (
 			existingGroup.groupCount++;
 		} else {
 			const newGroup = {
-				product,
+				product: { ...product },
 				groupCount: 1,
 			};
 			groups.set( product.domain, newGroup );

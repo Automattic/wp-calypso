@@ -11,7 +11,7 @@ describe( 'utils', () => {
 			expect( result ).toEqual( items );
 		} );
 
-		test( 'should return a domain item with a groupCount', () => {
+		test( 'should return a single domain item unchanged', () => {
 			const items = deepFreeze( [
 				{ foo: 'bar', product_slug: 'foobar' },
 				{ product_slug: 'wp-domains', domain: 'foo.com', variation_slug: 'none' },
@@ -22,7 +22,6 @@ describe( 'utils', () => {
 					product_slug: 'wp-domains',
 					variation_slug: 'none',
 					domain: 'foo.com',
-					groupCount: 1,
 				},
 			];
 			const result = groupDomainProducts( items, ident );
@@ -52,14 +51,12 @@ describe( 'utils', () => {
 					product_slug: 'wp-domains',
 					variation_slug: 'wp-private-registration',
 					domain: 'foo.com',
-					groupCount: 1,
 				},
 				{
 					id: '3',
 					product_slug: 'wp-domains',
 					variation_slug: 'wp-private-registration',
 					domain: 'bar.com',
-					groupCount: 1,
 				},
 			];
 			const result = groupDomainProducts( items, ident );
@@ -85,26 +82,6 @@ describe( 'utils', () => {
 			] );
 			const result = groupDomainProducts( items, ident );
 			expect( result.length ).toEqual( 2 );
-		} );
-
-		test( 'should increment groupCount for multiple items with the same domain', () => {
-			const items = deepFreeze( [
-				{ foo: 'bar', product_slug: 'foobar' },
-				{
-					id: '2',
-					product_slug: 'wp-domains',
-					domain: 'foo.com',
-					variation_slug: 'wp-private-registration',
-				},
-				{
-					id: '3',
-					product_slug: 'wp-domains',
-					domain: 'foo.com',
-					variation_slug: 'wp-private-registration',
-				},
-			] );
-			const result = groupDomainProducts( items, ident );
-			expect( result[ 1 ].groupCount ).toEqual( 2 );
 		} );
 
 		test( 'should sum the raw_amount for multiple items with the same domain', () => {
