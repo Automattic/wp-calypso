@@ -24,6 +24,7 @@ interface Props {
 	selectedPattern: Pattern | null;
 	wrapperRef: React.RefObject< HTMLDivElement > | null;
 	onTogglePatternPanelList?: ( isOpen: boolean ) => void;
+	recordTracksEvent: ( name: string, eventProperties: any ) => void;
 }
 
 const ScreenCategoryList = ( {
@@ -35,6 +36,7 @@ const ScreenCategoryList = ( {
 	selectedPattern,
 	wrapperRef,
 	onTogglePatternPanelList,
+	recordTracksEvent,
 }: Props ) => {
 	const translate = useTranslate();
 	const [ selectedCategory, setSelectedCategory ] = useState< string | null >( null );
@@ -48,6 +50,12 @@ const ScreenCategoryList = ( {
 			setSelectedCategory( null );
 			onTogglePatternPanelList?.( false );
 		}
+	};
+
+	const trackEventCategoryView = ( name: string ) => {
+		recordTracksEvent( 'calypso_signup_pattern_assembler_category_click', {
+			pattern_category: name,
+		} );
 	};
 
 	useEffect( () => {
@@ -101,6 +109,7 @@ const ScreenCategoryList = ( {
 								} else {
 									setSelectedCategory( name );
 									onTogglePatternPanelList?.( true );
+									trackEventCategoryView( name );
 								}
 							} }
 						>
