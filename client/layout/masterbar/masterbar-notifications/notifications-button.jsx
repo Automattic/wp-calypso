@@ -30,6 +30,7 @@ class MasterbarItemNotifications extends Component {
 	state = {
 		animationState: 0,
 		newNote: this.props.hasUnseenNotifications,
+		forceIsActive: window.location.pathname === '/read/notifications',
 	};
 
 	componentDidUpdate( prevProps ) {
@@ -110,7 +111,7 @@ class MasterbarItemNotifications extends Component {
 
 	render() {
 		const classes = classNames( this.props.className, 'masterbar-notifications', {
-			'is-active': this.props.isNotificationsOpen,
+			'is-active': this.props.isNotificationsOpen || this.state.forceIsActive,
 			'has-unread': this.state.newNote,
 			'is-initial-load': this.state.animationState === -1,
 		} );
