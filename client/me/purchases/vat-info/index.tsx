@@ -11,16 +11,14 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
-import useCountryList from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
+import useCountryList, {
+	isVatSupported,
+} from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
 import useVatDetails from './use-vat-details';
 import type { UpdateError, FetchError } from './use-vat-details';
-import type {
-	CountryListItem,
-	CountryListItemWithVat,
-	VatDetails,
-} from '@automattic/wpcom-checkout';
+import type { CountryListItem, VatDetails } from '@automattic/wpcom-checkout';
 
 import './style.scss';
 
@@ -157,9 +155,6 @@ function VatForm() {
 		</>
 	);
 }
-
-const isVatSupported = ( country: CountryListItem ): country is CountryListItemWithVat =>
-	country.vat_supported;
 
 function getUniqueCountries< C extends CountryListItem >( countries: C[] ): C[] {
 	const unique: C[] = [];

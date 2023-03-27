@@ -1,4 +1,4 @@
-import { CountryListItem, CountryListItemWithVat, Field } from '@automattic/wpcom-checkout';
+import { Field } from '@automattic/wpcom-checkout';
 import { CheckboxControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -8,13 +8,10 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import useCountryList from '../../hooks/use-country-list';
+import useCountryList, { isVatSupported } from '../../hooks/use-country-list';
 import { CHECKOUT_STORE } from '../../lib/wpcom-store';
 
 import './style.css';
-
-const isVatSupported = ( country: CountryListItem ): country is CountryListItemWithVat =>
-	country.vat_supported;
 
 export function VatForm( {
 	section,
