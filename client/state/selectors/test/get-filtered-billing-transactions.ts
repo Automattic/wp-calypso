@@ -1,8 +1,8 @@
-import deepFreeze from 'deep-freeze';
 import { cloneDeep } from 'lodash';
-import getFilteredBillingTransactions from 'calypso/state/selectors/get-filtered-billing-transactions';
+import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
+import { filterTransactions } from 'calypso/state/selectors/get-filtered-billing-transactions';
 
-describe( 'getBillingTransactionAppFilterValues()', () => {
+describe( 'filterTransactions()', () => {
 	const PAGE_SIZE = 5;
 
 	const state = {
@@ -166,12 +166,14 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			testState.billingTransactions.ui.past = {
 				date: { month: null, operator: null },
 			};
-			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
-			expect( result ).toEqual( {
-				pageSize: PAGE_SIZE,
-				total: 10,
-				transactions: state.billingTransactions.items.past.slice( 0, PAGE_SIZE ),
-			} );
+			const filter = getBillingTransactionFilters( state, 'past' );
+			const result = filterTransactions(
+				testState.billingTransactions.past,
+				filter,
+				null,
+				PAGE_SIZE
+			);
+			expect( result ).toEqual( state.billingTransactions.items.past.slice( 0, PAGE_SIZE ) );
 		} );
 
 		test( 'returns transactions filtered by month', () => {
@@ -179,12 +181,16 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			testState.billingTransactions.ui.past = {
 				date: { month: '2018-03', operator: 'equal' },
 			};
-			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
-			expect( result.total ).toEqual( 3 );
-			expect( result.transactions ).toHaveLength( 3 );
-			expect( new Date( result.transactions[ 0 ].date ).getMonth() ).toBe( 2 );
-			expect( new Date( result.transactions[ 1 ].date ).getMonth() ).toBe( 2 );
-			expect( new Date( result.transactions[ 2 ].date ).getMonth() ).toBe( 2 );
+			const filter = getBillingTransactionFilters( state, 'past' );
+			const result = filterTransactions(
+				testState.billingTransactions.items.past,
+				filter,
+				null,
+				PAGE_SIZE
+			);
+			expect( new Date( result[ 0 ].date ).getMonth() ).toBe( 2 );
+			expect( new Date( result[ 1 ].date ).getMonth() ).toBe( 2 );
+			expect( new Date( result[ 2 ].date ).getMonth() ).toBe( 2 );
 		} );
 
 		test( 'returns transactions before the month set in the filter', () => {
@@ -192,22 +198,28 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			testState.billingTransactions.ui.past = {
 				date: { month: '2017-12', operator: 'before' },
 			};
-			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
-			expect( result.total ).toEqual( 2 );
-			expect( result.transactions ).toHaveLength( 2 );
-			expect( new Date( result.transactions[ 0 ].date ).getMonth() ).toBe( 10 );
-			expect( new Date( result.transactions[ 1 ].date ).getMonth() ).toBe( 0 );
+			const filter = getBillingTransactionFilters( state, 'past' );
+			const result = filterTransactions(
+				testState.billingTransactions.items.past,
+				filter,
+				null,
+				PAGE_SIZE
+			);
+			expect( new Date( result[ 0 ].date ).getMonth() ).toBe( 10 );
+			expect( new Date( result[ 1 ].date ).getMonth() ).toBe( 0 );
 		} );
 	} );
 
 	describe( 'app filter', () => {
 		test( 'returns the first page of all transactions when the filter is empty', () => {
-			const result = getFilteredBillingTransactions( deepFreeze( state ), 'past' );
-			expect( result ).toEqual( {
-				pageSize: PAGE_SIZE,
-				total: 10,
-				transactions: state.billingTransactions.items.past.slice( 0, PAGE_SIZE ),
-			} );
+			const filter = getBillingTransactionFilters( state, 'past' );
+			const result = filterTransactions(
+				state.billingTransactions.items.past,
+				filter,
+				null,
+				PAGE_SIZE
+			);
+			expect( result ).toEqual( state.billingTransactions.items.past.slice( 0, PAGE_SIZE ) );
 		} );
 
 		test( 'returns transactions filtered by app name', () => {
@@ -215,10 +227,14 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			testState.billingTransactions.ui.past = {
 				app: 'Store Services',
 			};
-			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
-			expect( result.total ).toEqual( 5 );
-			expect( result.transactions ).toHaveLength( 5 );
-			result.transactions.forEach( ( transaction ) => {
+			const filter = getBillingTransactionFilters( state, 'past' );
+			const result = filterTransactions(
+				testState.billingTransactions.items.past,
+				filter,
+				null,
+				PAGE_SIZE
+			);
+			result.forEach( ( transaction ) => {
 				expect( transaction.service ).toEqual( 'Store Services' );
 			} );
 		} );
@@ -226,12 +242,14 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 
 	describe( 'search query', () => {
 		test( 'returns all transactions when the filter is empty', () => {
-			const result = getFilteredBillingTransactions( deepFreeze( state ), 'past' );
-			expect( result ).toEqual( {
-				pageSize: PAGE_SIZE,
-				total: 10,
-				transactions: state.billingTransactions.items.past.slice( 0, PAGE_SIZE ),
-			} );
+			const filter = getBillingTransactionFilters( state, 'past' );
+			const result = filterTransactions(
+				state.billingTransactions.items.past,
+				filter,
+				null,
+				PAGE_SIZE
+			);
+			expect( result ).toEqual( state.billingTransactions.items.past.slice( 0, PAGE_SIZE ) );
 		} );
 
 		test( 'query matches a field in the root transaction object', () => {
@@ -239,10 +257,14 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			testState.billingTransactions.ui.past = {
 				query: 'mastercard',
 			};
-			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
-			expect( result.total ).toEqual( 4 );
-			expect( result.transactions ).toHaveLength( 4 );
-			result.transactions.forEach( ( transaction ) => {
+			const filter = getBillingTransactionFilters( state, 'past' );
+			const result = filterTransactions(
+				state.billingTransactions.items.past,
+				filter,
+				null,
+				PAGE_SIZE
+			);
+			result.forEach( ( transaction ) => {
 				expect( transaction.cc_type ).toEqual( 'mastercard' );
 			} );
 		} );
@@ -252,10 +274,14 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			testState.billingTransactions.ui.past = {
 				query: 'may 1',
 			};
-			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
-			expect( result.total ).toBe( 1 );
-			expect( result.transactions ).toHaveLength( 1 );
-			result.transactions.forEach( ( transaction ) => {
+			const filter = getBillingTransactionFilters( state, 'past' );
+			const result = filterTransactions(
+				testState.billingTransactions.items.past,
+				filter,
+				null,
+				PAGE_SIZE
+			);
+			result.forEach( ( transaction ) => {
 				expect( transaction.date ).toBe( '2018-05-01T12:00:00' );
 			} );
 		} );
@@ -265,15 +291,16 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			testState.billingTransactions.ui.past = {
 				query: '$3.50',
 			};
-			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
-			expect( result.total ).toEqual( 3 );
-			expect( result.transactions ).toHaveLength( 3 );
-			expect( result.transactions[ 0 ].items ).toMatchObject( [ { amount: '$3.50' } ] );
-			expect( result.transactions[ 1 ].items ).toMatchObject( [
-				{ amount: '$3.50' },
-				{ amount: '$5.00' },
-			] );
-			expect( result.transactions[ 2 ].items ).toMatchObject( [ { amount: '$3.50' } ] );
+			const filter = getBillingTransactionFilters( state, 'past' );
+			const result = filterTransactions(
+				testState.billingTransactions.items.past,
+				filter,
+				null,
+				PAGE_SIZE
+			);
+			expect( result[ 0 ].items ).toMatchObject( [ { amount: '$3.50' } ] );
+			expect( result[ 1 ].items ).toMatchObject( [ { amount: '$3.50' }, { amount: '$5.00' } ] );
+			expect( result[ 2 ].items ).toMatchObject( [ { amount: '$3.50' } ] );
 		} );
 	} );
 
@@ -284,13 +311,17 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 				date: { month: '2018-03', operator: 'equal' },
 				app: 'Store Services',
 			};
-			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
-			expect( result.total ).toEqual( 2 );
-			expect( result.transactions ).toHaveLength( 2 );
-			expect( new Date( result.transactions[ 0 ].date ).getMonth() ).toBe( 2 );
-			expect( result.transactions[ 0 ].service ).toEqual( 'Store Services' );
-			expect( new Date( result.transactions[ 1 ].date ).getMonth() ).toBe( 2 );
-			expect( result.transactions[ 1 ].service ).toEqual( 'Store Services' );
+			const filter = getBillingTransactionFilters( state, 'past' );
+			const result = filterTransactions(
+				testState.billingTransactions.items.past,
+				filter,
+				null,
+				PAGE_SIZE
+			);
+			expect( new Date( result[ 0 ].date ).getMonth() ).toBe( 2 );
+			expect( result[ 0 ].service ).toEqual( 'Store Services' );
+			expect( new Date( result[ 1 ].date ).getMonth() ).toBe( 2 );
+			expect( result[ 1 ].service ).toEqual( 'Store Services' );
 		} );
 
 		test( 'app and query filters', () => {
@@ -299,14 +330,15 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 				app: 'Store Services',
 				query: '$3.50',
 			};
-			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
-			expect( result.total ).toEqual( 1 );
-			expect( result.transactions ).toHaveLength( 1 );
-			expect( result.transactions[ 0 ].items ).toMatchObject( [
-				{ amount: '$3.50' },
-				{ amount: '$5.00' },
-			] );
-			expect( result.transactions[ 0 ].service ).toEqual( 'Store Services' );
+			const filter = getBillingTransactionFilters( state, 'past' );
+			const result = filterTransactions(
+				testState.billingTransactions.items.past,
+				filter,
+				null,
+				PAGE_SIZE
+			);
+			expect( result[ 0 ].items ).toMatchObject( [ { amount: '$3.50' }, { amount: '$5.00' } ] );
+			expect( result[ 0 ].service ).toEqual( 'Store Services' );
 		} );
 
 		test( 'date and query filters', () => {
@@ -315,11 +347,15 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 				date: { month: '2018-05', operator: 'equal' },
 				query: '$3.50',
 			};
-			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
-			expect( result.total ).toEqual( 1 );
-			expect( result.transactions ).toHaveLength( 1 );
-			expect( result.transactions[ 0 ].items ).toMatchObject( [ { amount: '$3.50' } ] );
-			expect( new Date( result.transactions[ 0 ].date ).getMonth() ).toBe( 4 );
+			const filter = getBillingTransactionFilters( state, 'past' );
+			const result = filterTransactions(
+				testState.billingTransactions.items.past,
+				filter,
+				null,
+				PAGE_SIZE
+			);
+			expect( result[ 0 ].items ).toMatchObject( [ { amount: '$3.50' } ] );
+			expect( new Date( result[ 0 ].date ).getMonth() ).toBe( 4 );
 		} );
 
 		test( 'app, date and query filters', () => {
@@ -329,12 +365,16 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 				query: 'visa',
 				app: 'WordPress.com',
 			};
-			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
-			expect( result.total ).toEqual( 1 );
-			expect( result.transactions ).toHaveLength( 1 );
-			expect( result.transactions[ 0 ].cc_type ).toEqual( 'visa' );
-			expect( new Date( result.transactions[ 0 ].date ).getMonth() ).toBe( 2 );
-			expect( result.transactions[ 0 ].service ).toEqual( 'WordPress.com' );
+			const filter = getBillingTransactionFilters( state, 'past' );
+			const result = filterTransactions(
+				testState.billingTransactions.items.past,
+				filter,
+				null,
+				PAGE_SIZE
+			);
+			expect( result[ 0 ].cc_type ).toEqual( 'visa' );
+			expect( new Date( result[ 0 ].date ).getMonth() ).toBe( 2 );
+			expect( result[ 0 ].service ).toEqual( 'WordPress.com' );
 		} );
 	} );
 
@@ -344,12 +384,14 @@ describe( 'getBillingTransactionAppFilterValues()', () => {
 			testState.billingTransactions.ui.past = {
 				date: { month: '2019-01', operator: 'equal' },
 			};
-			const result = getFilteredBillingTransactions( deepFreeze( testState ), 'past' );
-			expect( result ).toEqual( {
-				total: 0,
-				pageSize: PAGE_SIZE,
-				transactions: [],
-			} );
+			const filter = getBillingTransactionFilters( state, 'past' );
+			const result = filterTransactions(
+				testState.billingTransactions.items.past,
+				filter,
+				null,
+				PAGE_SIZE
+			);
+			expect( result ).toEqual( [] );
 		} );
 	} );
 } );
