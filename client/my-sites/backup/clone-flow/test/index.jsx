@@ -344,7 +344,7 @@ describe( 'BackupCloneFlow render', () => {
 				</Provider>
 			);
 
-			expect( screen.queryByText( /Your site has been successfully cloned./i ) ).toBeVisible();
+			expect( screen.queryByText( /Your site has been successfully copied./i ) ).toBeVisible();
 		} );
 
 		test( 'Render error if it is in the wrong status', () => {
