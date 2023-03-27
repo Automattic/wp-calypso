@@ -378,7 +378,7 @@ class ManagePurchase extends Component {
 		const isUpgradeableBackupProduct = JETPACK_BACKUP_T1_PRODUCTS.includes( purchase.productSlug );
 		const isUpgradeableSecurityPlan = JETPACK_SECURITY_T1_PLANS.includes( purchase.productSlug );
 
-		if ( isAkismetProduct( { product_slug: purchase.productSlug } ) ) {
+		if ( isAkismetProduct( purchase ) ) {
 			return this.getAkismetUpgradeUrl();
 		}
 
