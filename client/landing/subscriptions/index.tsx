@@ -30,7 +30,7 @@ const setupReduxStore = ( user: CurrentUser ) => {
 	setupLocale( user, reduxStore );
 
 	const userStoreKey = User.register( { client_id: '', client_secret: '' } );
-	if ( user ) {
+	if ( user?.ID ) {
 		reduxStore.dispatch( setCurrentUser( user ) as AnyAction );
 		dispatch( userStoreKey ).receiveCurrentUser( user );
 	} else {
