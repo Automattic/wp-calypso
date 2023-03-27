@@ -1,17 +1,21 @@
 .launched__modal {
 	max-width: 640px;
 
+	.components-modal__header {
+		padding: 48px;
+	}
+
 	.components-modal__content {
 		margin: 0;
-		padding: 48px;
-		width: 550px;
+		padding: 0;
 	}
 
 	&-content {
+		padding: 48px;
+		padding-bottom: 40px;
 		display: flex;
 		flex-direction: column;
 		gap: 32px;
-		margin-bottom: 40px;
 	}
 
 	&-heading {
@@ -25,15 +29,21 @@
 		padding-bottom: 8px;
 	}
 
-	&-body,
 	&-domain {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	&-body,
+	&-domain-text {
 		margin: 0;
 		color: var(--studio-gray-80);
 		font-size: 1rem;
 		line-height: 24px;
 	}
 
-	&-domain {
+	&-domain-text {
 		padding: 0 8px;
 
 		// prevent text overflow
@@ -71,29 +81,36 @@
 	}
 
 	&-upsell {
-		align-items: flex-end;
+		border-top: 1px solid var(--studio-gray-50);
 		background: var(--studio-gray-0);
-		border-top: 1px solid var(--studio-gray-5);
 		display: flex;
-		justify-content: space-between;
-		margin: 0 -48px -48px -48px;
-		padding: 32px 48px 32px 48px;
-	}
-
-	&-upsell-content {
-		display: flex;
-		flex-direction: column;
 		justify-content: center;
+		align-items: center;
+		padding: 32px 48px;
+		gap: 32px;
+
+		.components-button {
+			height: 42px;
+		}
 	}
 
-	&-upsell-heading {
-		margin: 0 0 2px 0;
-		font-size: 1rem;
-		font-weight: 600;
+	&-upsell-content-highlight {
+		font-weight: bold;
 	}
 
-	&-upsell-body {
-		margin: 0;
-		font-size: 0.875rem;
+	&-view-site {
+		display: flex;
+		gap: 4px;
+
+		font-weight: 500;
+		/* stylelint-disable-next-line */
+		font-size: 14px;
+		line-height: 20px;
+		letter-spacing: -0.154px;
+		color: #101517;
+	}
+
+	&-view-site:hover {
+		text-decoration: underline;
 	}
 }

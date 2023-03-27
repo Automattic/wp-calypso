@@ -1,7 +1,9 @@
-import { ConfettiAnimation, Spinner } from '@automattic/components';
+import { Gridicon, ConfettiAnimation } from '@automattic/components';
 import { Button, Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import ClipboardButton from 'calypso/components/forms/clipboard-button';
+import Tooltip from 'calypso/components/tooltip';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import { omitUrlParams } from 'calypso/lib/url';
 import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
@@ -11,11 +13,14 @@ import './celebrate-launch-modal.scss';
 function CelebrateLaunchModal( { setModalIsOpen, site } ) {
 	const translate = useTranslate();
 	const isPaidPlan = ! site?.plan?.is_free;
+	const isBilledYearly = site?.plan?.billing_period === 'Yearly';
 	const { data: allDomains = [], isFetching } = useGetDomainsQuery( site?.ID ?? null, {
 		retry: false,
 	} );
 
 	const domains = allDomains.map( createSiteDomainObject );
+	const [ clipboardCopied, setClipboardCopied ] = useState( false );
+	const clipboardButtonEl = useRef( null );
 	const hasCustomDomain = Boolean( domains.find( ( domain ) => ! domain.isWPCOMDomain ) );
 
 	useEffect( () => {
@@ -28,15 +33,73 @@ function CelebrateLaunchModal( { setModalIsOpen, site } ) {
 		);
 	}, [] );
 
-	let upsellHeading = translate( 'Free One-Year Domain' );
-	let upsellBody = translate( 'Get a custom domain by upgrading your plan.' );
+	function renderUpsellContent() {
+		let contentElement;
+		let buttonText;
+		let buttonHref;
 
-	if ( isPaidPlan && hasCustomDomain ) {
-		upsellHeading = 'Upsell something else';
-		upsellBody = 'Placeholder to upsell something else';
-	} else if ( isPaidPlan && ! hasCustomDomain ) {
-		upsellHeading = 'Claim your free domain';
-		upsellBody = 'Your plan includes a free domain for the first year';
+		if ( ! isPaidPlan && ! hasCustomDomain ) {
+			contentElement = (
+				<>
+					<span>
+						{ translate( 'Supercharge your website with a' ) }{ ' ' }
+						<span className="launched__modal-upsell-content-highlight">
+							{ translate( 'custom address' ) }
+						</span>{ ' ' }
+						{ translate( 'that matches your blog, brand, or business.' ) }
+					</span>
+				</>
+			);
+			buttonText = translate( 'Claim your domain' );
+			buttonHref = `/domains/add/${ site.slug }`;
+		} else if ( isPaidPlan && isBilledYearly && ! hasCustomDomain ) {
+			contentElement = (
+				<>
+					<span>
+						{ translate( 'Your paid plan includes a domain name' ) }{ ' ' }
+						<span className="launched__modal-upsell-content-highlight">
+							{ translate( 'free for one year' ) }
+						</span>{ ' ' }
+						{ translate( 'Choose one that’s easy to remember and even easier to share.' ) }
+					</span>
+				</>
+			);
+			buttonText = translate( 'Claim your free domain' );
+			buttonHref = `/domains/add/${ site.slug }`;
+		} else if ( isPaidPlan && ! hasCustomDomain ) {
+			contentElement = (
+				<>
+					<span>
+						{ translate(
+							'Interested in a custom domain? It’s free for the first year when you switch to annual billing.'
+						) }
+					</span>
+				</>
+			);
+			buttonText = translate( 'Claim your domain' );
+			buttonHref = `/domains/add/${ site.slug }`;
+		} else if ( isPaidPlan && hasCustomDomain ) {
+			contentElement = (
+				<>
+					<span>
+						{ translate(
+							'Ready to expand your reach? Promote your posts with Blaze, and send relevant traffic to your site.'
+						) }
+					</span>
+				</>
+			);
+			buttonText = translate( 'Try Blaze Today' );
+			buttonHref = `/domains/add/${ site.slug }`;
+		}
+
+		return (
+			<div className="launched__modal-upsell">
+				<p className="launched__modal-upsell-content">{ contentElement }</p>
+				<Button disabled={ isFetching } isLarge isPrimary href={ buttonHref }>
+					<span>{ buttonText }</span>
+				</Button>
+			</div>
+		);
 	}
 
 	return (
@@ -53,31 +116,37 @@ function CelebrateLaunchModal( { setModalIsOpen, site } ) {
 				</div>
 				<div className="launched__modal-actions">
 					<div className="launched__modal-site">
-						<p className="launched__modal-domain">{ site.slug }</p>
+						<div className="launched__modal-domain">
+							<p className="launched__modal-domain-text">{ site.slug }</p>
+							<ClipboardButton
+								aria-label={ translate( 'Copy URL' ) }
+								text={ site.slug }
+								className="launchpad__clipboard-button"
+								borderless
+								compact
+								onCopy={ () => setClipboardCopied( true ) }
+								onMouseLeave={ () => setClipboardCopied( false ) }
+								ref={ clipboardButtonEl }
+							>
+								<Gridicon icon="clipboard" />
+							</ClipboardButton>
+							<Tooltip
+								context={ clipboardButtonEl.current }
+								isVisible={ clipboardCopied }
+								position="top"
+							>
+								{ translate( 'Copied to clipboard!' ) }
+							</Tooltip>
+						</div>
 
-						<Button href={ site.URL } target="_blank">
-							{ translate( 'View site' ) }
+						<Button href={ site.URL } target="_blank" className="launched__modal-view-site">
+							<Gridicon icon="domains" size={ 18 } />
+							<span className="launched__modal-view-site-text">{ translate( 'View site' ) }</span>
 						</Button>
 					</div>
 				</div>
 			</div>
-			<div className="launched__modal-upsell">
-				{ isFetching ? (
-					<Spinner />
-				) : (
-					<>
-						<div className="launched__modal-upsell-content">
-							{ upsellHeading && (
-								<h2 className="launched__modal-upsell-heading">{ upsellHeading }</h2>
-							) }
-							<p className="launched__modal-upsell-body">{ upsellBody }</p>
-						</div>
-						<Button isPrimary href={ `/domains/add/${ site.slug }` }>
-							<span>{ translate( 'Choose a domain' ) }</span>
-						</Button>
-					</>
-				) }
-			</div>
+			{ renderUpsellContent() }
 		</Modal>
 	);
 }
