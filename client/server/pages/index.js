@@ -290,8 +290,9 @@ function setUpLoggedOutRoute( req, res, next ) {
 		setupRequests.push( setUpLocalLanguageRevisions( req ) );
 	}
 
-	if ( req.cookies?.subkey && ! req.context.user ) {
+	if ( req.cookies?.subkey ) {
 		req.context.user = {
+			...( req.context.user ?? {} ),
 			subscriptionManagementSubkey: req.cookies.subkey,
 		};
 	}
@@ -826,6 +827,18 @@ function wpcomPages( app ) {
 
 				res.send( renderJsx( 'support-user' ) );
 			} );
+	} );
+
+	app.get( [ '/subscriptions', '/subscriptions/*' ], function ( req, res, next ) {
+		if ( ! req.context.isLoggedIn ) {
+			if ( req.context.user?.subscriptionManagementSubkey ) {
+				return next();
+			}
+
+			return res.redirect( 'https://wordpress.com/email-subscriptions' );
+		}
+
+		return res.redirect( 'https://wordpress.com/email-subscriptions?option=settings' );
 	} );
 }
 
