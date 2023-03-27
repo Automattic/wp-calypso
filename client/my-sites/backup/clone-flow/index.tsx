@@ -177,7 +177,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	const renderSetBackupPeriod = () => (
 		<>
 			<StepProgress currentStep={ Step.ClonePoint } steps={ steps } />
-			<h3 className="clone-flow__title">{ translate( 'Select a Backup Point to Clone' ) }</h3>
+			<h3 className="clone-flow__title">{ translate( 'Select a Backup Point to Copy' ) }</h3>
 			<p className="clone-flow__info">
 				{ translate( "Which point in your site's history would you like to clone from?" ) }
 			</p>
@@ -197,10 +197,10 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	const renderConfirm = () => (
 		<>
 			<StepProgress currentStep={ Step.Configure } steps={ steps } />
-			<h3 className="clone-flow__title">{ translate( 'Clone site' ) }</h3>
+			<h3 className="clone-flow__title">{ translate( 'Copy site' ) }</h3>
 			<p className="clone-flow__info">
 				{ translate(
-					'{{strong}}%(backupDisplayDate)s{{/strong}} is the selected point for your restore.',
+					'{{strong}}%(backupDisplayDate)s{{/strong}} is the selected point for your copy.',
 					{
 						args: {
 							backupDisplayDate,
@@ -212,7 +212,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 				) }
 			</p>
 			<p className="clone-flow__info">
-				{ translate( '{{strong}}%(destinationUrl)s{{/strong}} is URL you are cloning to.', {
+				{ translate( '{{strong}}%(destinationUrl)s{{/strong}} is URL you are copying to.', {
 					args: {
 						destinationUrl: cloneDestination,
 					},
@@ -226,7 +226,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 			<RewindFlowNotice
 				gridicon="notice"
 				title={ translate(
-					'Cloning will override and remove all content on the destination site.'
+					'Copying will override and remove all content on the destination site.'
 				) }
 				type={ RewindFlowNoticeLevel.WARNING }
 			/>
@@ -235,7 +235,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 					<RewindFlowNotice
 						gridicon="notice"
 						title={ translate(
-							'A backup is currently in progress; cloning now will stop the backup.'
+							'A backup is currently in progress; copying now will stop the backup.'
 						) }
 						type={ RewindFlowNoticeLevel.WARNING }
 					/>
@@ -251,7 +251,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 					onClick={ onConfirm }
 					disabled={ disableClone }
 				>
-					{ translate( 'Confirm clone' ) }
+					{ translate( 'Confirm copy' ) }
 				</Button>
 			</div>
 			<Interval onTick={ refreshBackups } period={ EVERY_FIVE_SECONDS } />
@@ -263,17 +263,17 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 			<div className="clone-flow__header">
 				<Gridicon icon="history" size={ 48 } />
 			</div>
-			<h3 className="clone-flow__title">{ translate( 'Currently cloning your site' ) }</h3>
+			<h3 className="clone-flow__title">{ translate( 'Currently copying your site' ) }</h3>
 			<ProgressBar
 				isReady={ 'running' === status }
-				initializationMessage={ translate( 'Initializing the clone process' ) }
+				initializationMessage={ translate( 'Initializing the copy process' ) }
 				message={ message }
 				entry={ currentEntry }
 				percent={ percent }
 			/>
 			<p className="clone-flow__info">
 				{ translate(
-					'We are cloning your site back from the {{strong}}%(backupDisplayDate)s{{/strong}} backup.',
+					'We are copying your site back from the {{strong}}%(backupDisplayDate)s{{/strong}} backup.',
 					{
 						args: {
 							backupDisplayDate,
@@ -286,7 +286,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 			</p>
 			<CheckYourEmail
 				message={ translate(
-					"Don't want to wait? For your convenience, we'll email you when your site has been fully cloned."
+					"Don't want to wait? For your convenience, we'll email you when your site has been fully copied."
 				) }
 			/>
 		</>
@@ -301,11 +301,11 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 				/>
 			</div>
 			<h3 className="clone-flow__title">
-				{ translate( 'Your site has been successfully cloned.' ) }
+				{ translate( 'Your site has been successfully copied.' ) }
 			</h3>
 			<p className="clone-flow__info">
 				{ translate(
-					'All of your selected items are now cloned from the {{strong}}%(backupDisplayDate)s{{/strong}} backup.',
+					'All of your selected items are now copied from the {{strong}}%(backupDisplayDate)s{{/strong}} backup.',
 					{
 						args: {
 							backupDisplayDate,
@@ -324,7 +324,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 
 	const renderError = () => (
 		<Error
-			errorText={ translate( 'Clone failed: %s', {
+			errorText={ translate( 'Copy failed: %s', {
 				args: [ backupDisplayDate ],
 				comment: '%s is a time/date string',
 			} ) }
@@ -332,7 +332,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 		>
 			<p className="clone-flow__info">
 				{ translate(
-					'An error occurred while restoring your site. Please {{button}}try your clone again{{/button}} or contact our support team to resolve the issue.',
+					'An error occurred while restoring your site. Please {{button}}try your copy again{{/button}} or contact our support team to resolve the issue.',
 					{
 						components: {
 							button: <Button className="clone-flow__error-retry-button" onClick={ onConfirm } />,
@@ -371,7 +371,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	return (
 		<>
 			<Main className="clone-flow">
-				<DocumentHead title={ translate( 'Clone site' ) } />
+				<DocumentHead title={ translate( 'Copy site' ) } />
 				{ isJetpackCloud() && <SidebarNavigation /> }
 				<div className="clone-flow__content">
 					<QueryRewindBackups siteId={ siteId } />

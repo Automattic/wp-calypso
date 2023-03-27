@@ -54,7 +54,7 @@ const ActivityLogV2: FunctionComponent = () => {
 						primary
 						href={ backupClonePath( selectedSiteSlug ) }
 					>
-						{ translate( 'Clone this site' ) }
+						{ translate( 'Copy this site' ) }
 					</Button>
 				) }
 			</div>

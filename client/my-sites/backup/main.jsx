@@ -209,7 +209,7 @@ function BackupStatus( {
 					<div className="backup__header-right">
 						{ siteSlug && (
 							<Button className="backup__clone-button" primary href={ backupClonePath( siteSlug ) }>
-								{ translate( 'Clone this site' ) }
+								{ translate( 'Copy this site' ) }
 							</Button>
 						) }
 					</div>
