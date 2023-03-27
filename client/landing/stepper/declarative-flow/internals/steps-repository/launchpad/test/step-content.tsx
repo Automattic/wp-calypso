@@ -3,6 +3,7 @@
  */
 import { NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { render, screen } from '@testing-library/react';
+import nock from 'nock';
 import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
@@ -14,9 +15,10 @@ import StepContent from '../step-content';
 import { defaultSiteDetails } from './lib/fixtures';
 
 const mockSite = defaultSiteDetails;
+const siteSlug = 'testlinkinbio.wordpress.com';
 
 const stepContentProps = {
-	siteSlug: 'testsite.wordpress.com',
+	siteSlug,
 	/* eslint-disable @typescript-eslint/no-empty-function */
 	submit: () => {},
 	goNext: () => {},
@@ -74,6 +76,17 @@ function renderStepContent( emailVerified = false, flow: string ) {
 }
 
 describe( 'StepContent', () => {
+	beforeEach( () => {
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.get( `/wpcom/v2/sites/${ siteSlug }/launchpad` )
+			.reply( 200, {
+				checklist_statuses: {},
+				launchpad_screen: 'full',
+				site_intent: '',
+			} );
+	} );
+
 	// To get things started, test basic rendering for Newsletter flow
 	// In future, we can add additional flows and test interactivity of items
 	describe( 'when flow is Newsletter', () => {
