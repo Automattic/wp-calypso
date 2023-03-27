@@ -581,6 +581,15 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				bill_period: 'yearly',
 				currency: 'USD',
 			};
+		case 'ak_plus_yearly_1':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2311,
+				product_name: 'Akismet Plus (10K requests/month)',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
 		default:
 			return getEmptyResponseCartProduct();
 	}
@@ -1199,9 +1208,12 @@ export function mockTransactionsEndpoint( transactionsEndpointResponse ) {
 }
 
 export function setMockLocation( href: string ) {
-	const location = new Location();
-	location.href = href;
-	jest.spyOn( window, 'location', 'get' ).mockReturnValue( location );
+	Object.defineProperty( window, 'location', {
+		get() {
+			return { href: href };
+		},
+	} );
+	jest.spyOn( window, 'location', 'get' ).mockReturnValue( window.location );
 }
 
 export const mockCreateAccountSiteNotCreatedResponse = () => [ 200, { success: true } ];
