@@ -780,7 +780,9 @@ function convertRequestProductToResponseProduct(
 					item_tax: 0,
 					meta: product.meta,
 					volume: 1,
-					extra: {},
+					extra: {
+						isAkismetSitelessCheckout: true,
+					},
 				};
 			case planLevel2.product_slug:
 				return {
