@@ -5,59 +5,80 @@ import {
 	isTitanMail,
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
-import { find, map, partition, reduce, some } from 'lodash';
 import { Fragment } from 'react';
+import {
+	BillingTransaction,
+	BillingTransactionItem,
+} from 'calypso/state/billing-transactions/types';
+import type { LocalizeProps } from 'calypso/../packages/i18n-calypso/types';
 
-export const groupDomainProducts = ( originalItems, translate ) => {
-	const transactionItems = Object.keys( originalItems ).map( ( key ) => {
-		return Object.assign( {}, originalItems[ key ] );
+interface GroupedDomainProduct {
+	product: BillingTransactionItem;
+	groupCount: number;
+}
+
+export const groupDomainProducts = (
+	originalItems: BillingTransactionItem[],
+	translate: LocalizeProps[ 'translate' ]
+) => {
+	const domainProducts: BillingTransactionItem[] = [];
+	const otherProducts: BillingTransactionItem[] = [];
+	originalItems.forEach( ( item ) => {
+		if ( item.product_slug === 'wp-domains' ) {
+			domainProducts.push( item );
+		} else {
+			otherProducts.push( item );
+		}
 	} );
-	const [ domainProducts, otherProducts ] = partition( transactionItems, {
-		product_slug: 'wp-domains',
-	} );
 
-	const groupedDomainProducts = reduce(
-		domainProducts,
-		( groups, product ) => {
-			// eslint-disable-next-line no-extra-boolean-cast
-			if ( !! groups[ product.domain ] ) {
-				groups[ product.domain ].raw_amount += product.raw_amount;
-				groups[ product.domain ].groupCount++;
-			} else {
-				groups[ product.domain ] = product;
-				groups[ product.domain ].groupCount = 1;
-			}
-
-			return groups;
-		},
-		{}
-	);
-
-	return [
-		...otherProducts,
-		...map( groupedDomainProducts, ( product ) => {
-			if ( 1 === product.groupCount ) {
-				return find( domainProducts, { domain: product.domain } );
-			}
-			return {
-				...product,
-				amount: formatCurrency( product.raw_amount, product.currency ),
-				variation: translate( 'Domain Registration' ),
+	const groupedDomainProductsMap = domainProducts.reduce<
+		Map< BillingTransactionItem[ 'domain' ], GroupedDomainProduct >
+	>( ( groups, product ) => {
+		const existingGroup = groups.get( product.domain );
+		if ( existingGroup ) {
+			existingGroup.product.raw_amount += product.raw_amount;
+			existingGroup.groupCount++;
+		} else {
+			const newGroup = {
+				product,
+				groupCount: 1,
 			};
-		} ),
-	];
+			groups.set( product.domain, newGroup );
+		}
+
+		return groups;
+	}, new Map() );
+
+	const groupedDomainProducts: BillingTransactionItem[] = [];
+
+	groupedDomainProductsMap.forEach( ( value ) => {
+		if ( value.groupCount === 1 ) {
+			groupedDomainProducts.push( value.product );
+			return;
+		}
+		groupedDomainProducts.push( {
+			...value.product,
+			amount: formatCurrency( value.product.raw_amount, value.product.currency ),
+			variation: translate( 'Domain Registration' ),
+		} );
+	} );
+
+	return [ ...otherProducts, ...groupedDomainProducts ];
 };
 
-export function transactionIncludesTax( transaction ) {
+export function transactionIncludesTax( transaction: BillingTransaction ) {
 	if ( ! transaction || ! transaction.tax ) {
 		return false;
 	}
 
 	// Consider the whole transaction to include tax if any item does
-	return some( transaction.items, 'raw_tax' );
+	return transaction.items.some( ( item ) => item.raw_tax > 0 );
 }
 
-export function renderTransactionAmount( transaction, { translate, addingTax = false } ) {
+export function renderTransactionAmount(
+	transaction: BillingTransaction,
+	{ translate, addingTax = false }: { translate: LocalizeProps[ 'translate' ]; addingTax?: boolean }
+) {
 	if ( ! transactionIncludesTax( transaction ) ) {
 		return transaction.amount;
 	}
@@ -81,11 +102,11 @@ export function renderTransactionAmount( transaction, { translate, addingTax = f
 }
 
 function renderTransactionQuantitySummaryForMailboxes(
-	licensed_quantity,
-	new_quantity,
-	isRenewal,
-	isUpgrade,
-	translate
+	licensed_quantity: number,
+	new_quantity: number,
+	isRenewal: boolean,
+	isUpgrade: boolean,
+	translate: LocalizeProps[ 'translate' ]
 ) {
 	if ( isRenewal ) {
 		return translate( 'Renewal for %(quantity)d mailbox', 'Renewal for %(quantity)d mailboxes', {
@@ -114,7 +135,10 @@ function renderTransactionQuantitySummaryForMailboxes(
 	} );
 }
 
-function renderDIFMTransactionQuantitySummary( licensed_quantity, translate ) {
+function renderDIFMTransactionQuantitySummary(
+	licensed_quantity: number,
+	translate: LocalizeProps[ 'translate' ]
+) {
 	return translate(
 		'One-time fee includes %(quantity)d page',
 		'One-time fee includes %(quantity)d pages',
@@ -127,15 +151,15 @@ function renderDIFMTransactionQuantitySummary( licensed_quantity, translate ) {
 }
 
 export function renderTransactionQuantitySummary(
-	{ licensed_quantity, new_quantity, type, wpcom_product_slug },
-	translate
+	{ licensed_quantity, new_quantity, type, wpcom_product_slug }: BillingTransactionItem,
+	translate: LocalizeProps[ 'translate' ]
 ) {
 	if ( ! licensed_quantity ) {
 		return null;
 	}
 
-	licensed_quantity = parseInt( licensed_quantity );
-	new_quantity = parseInt( new_quantity );
+	licensed_quantity = parseInt( String( licensed_quantity ) );
+	new_quantity = parseInt( String( new_quantity ) );
 	const product = { product_slug: wpcom_product_slug };
 	const isRenewal = 'recurring' === type;
 	const isUpgrade = 'new purchase' === type && new_quantity > 0;
@@ -181,7 +205,10 @@ export function renderTransactionQuantitySummary(
 	} );
 }
 
-export function getTransactionTermLabel( transaction, translate ) {
+export function getTransactionTermLabel(
+	transaction: BillingTransactionItem,
+	translate: LocalizeProps[ 'translate' ]
+) {
 	switch ( transaction.months_per_renewal_interval ) {
 		case 1:
 			return translate( 'Monthly subscription' );
