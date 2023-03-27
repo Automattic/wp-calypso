@@ -1088,7 +1088,6 @@ const ConnectedPlanFeatures2023Grid = connect(
 				cartItemForPlan: getCartItemForPlan( getPlanSlug( state, planProductId ) ?? '' ),
 				currencyCode: getCurrentUserCurrencyCode( state ),
 				current: isCurrentPlan,
-				discountPrice,
 				features: planFeaturesTransformed,
 				jpFeatures: jetpackFeaturesTransformed,
 				isLandingPage,

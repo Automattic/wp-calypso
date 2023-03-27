@@ -13,7 +13,6 @@ export type PlanProperties = {
 		product_slug: string;
 	} | null;
 	currencyCode: string | null;
-	discountPrice: number | null;
 	features: TransformedFeatureObject[];
 	jpFeatures: TransformedFeatureObject[];
 	isLandingPage?: boolean;
