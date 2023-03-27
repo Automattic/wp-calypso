@@ -72,9 +72,9 @@ function PurchaseMetaExpiration( {
 
 		const autoRenewToggle = shouldRenderToggle ? (
 			<AutoRenewToggle
-				planName={ isCancellableSitelessPurchase ? '' : site.plan?.product_name_short }
-				siteDomain={ isCancellableSitelessPurchase ? '' : site.domain }
-				siteSlug={ isCancellableSitelessPurchase ? '' : site.slug }
+				planName={ site && ! isCancellableSitelessPurchase ? site.plan?.product_name_short : '' }
+				siteDomain={ site && ! isCancellableSitelessPurchase ? site.domain : '' }
+				siteSlug={ site && ! isCancellableSitelessPurchase ? site.slug : '' }
 				purchase={ purchase }
 				toggleSource="manage-purchase"
 				showLink={ true }
