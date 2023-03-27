@@ -90,11 +90,7 @@ const PrePurchaseNotices = () => {
 		};
 
 		const matchingProducts = getMatchingProducts( currentSiteProducts, planSlugInCart );
-		if ( matchingProducts.length ) {
-			return matchingProducts[ 0 ];
-		}
-
-		return null;
+		return matchingProducts?.[ 0 ];
 	}, [ currentSiteProducts, cartItemSlugs ] );
 
 	/**
