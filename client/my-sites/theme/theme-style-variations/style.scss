@@ -14,12 +14,12 @@
 			height: 100%;
 		}
 
-		.theme__sheet-style-variations-previews {
+		.theme__sheet-style-variations-previews .global-style-variations {
 			padding: 12px 24px 16px 2px;
 		}
 	}
 
-	&-previews {
+	&-previews .global-style-variations {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 8px;
@@ -65,7 +65,7 @@
 		}
 	}
 
-	.design-preview__style-variation-wrapper {
+	.global-styles-variations__item {
 		flex-basis: 100px;
 		flex-shrink: 0;
 
