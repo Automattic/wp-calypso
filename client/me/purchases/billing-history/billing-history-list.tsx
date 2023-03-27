@@ -1,7 +1,7 @@
 import { CompactCard } from '@automattic/components';
-import { localize } from 'i18n-calypso';
-import { isEmpty } from 'lodash';
-import PropTypes from 'prop-types';
+import { isValueTruthy } from '@automattic/wpcom-checkout';
+import { getLocaleSlug, localize, LocalizeProps } from 'i18n-calypso';
+import moment from 'moment';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -10,25 +10,54 @@ import { capitalPDangit } from 'calypso/lib/formatting';
 import BillingHistoryFilters from 'calypso/me/purchases/billing-history/billing-history-filters';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { sendBillingReceiptEmail as sendBillingReceiptEmailAction } from 'calypso/state/billing-transactions/actions';
+import {
+	BillingTransaction,
+	BillingTransactionItem,
+	BillingTransactionUiState,
+} from 'calypso/state/billing-transactions/types';
 import { setPage } from 'calypso/state/billing-transactions/ui/actions';
 import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
-import getFilteredBillingTransactions from 'calypso/state/selectors/get-filtered-billing-transactions';
+import getPastBillingTransactions from 'calypso/state/selectors/get-past-billing-transactions';
 import isSendingBillingReceiptEmail from 'calypso/state/selectors/is-sending-billing-receipt-email';
+import { IAppState } from 'calypso/state/types';
 import {
 	getTransactionTermLabel,
 	groupDomainProducts,
 	renderTransactionAmount,
 	renderTransactionQuantitySummary,
 } from './utils';
+import type { MouseEvent } from 'react';
 
-class BillingHistoryList extends Component {
+export interface BillingHistoryListProps {
+	header?: boolean;
+	siteId?: string | number | null;
+	getReceiptUrlFor: ( receiptId: string ) => string;
+}
+
+export interface BillingHistoryListConnectedProps {
+	app?: string;
+	date: { newest: boolean };
+	page?: number;
+	pageSize: number;
+	query: string;
+	total: number;
+	transactions: BillingTransaction[];
+	sendingBillingReceiptEmail: ( receiptId: string ) => boolean;
+	moment: typeof moment;
+	sendBillingReceiptEmail: ( receiptId: string ) => void;
+	setPage: ( transactionType: string, page: string ) => void;
+}
+
+class BillingHistoryList extends Component<
+	BillingHistoryListProps & BillingHistoryListConnectedProps & LocalizeProps
+> {
 	static displayName = 'BillingHistoryList';
 
 	static defaultProps = {
 		header: false,
 	};
 
-	onPageClick = ( page ) => {
+	onPageClick = ( page: string ) => {
 		this.props.setPage( 'past', page );
 	};
 
@@ -50,11 +79,7 @@ class BillingHistoryList extends Component {
 		);
 	}
 
-	serviceName = ( transaction ) => {
-		if ( ! transaction.items ) {
-			return this.serviceNameDescription( transaction );
-		}
-
+	serviceName = ( transaction: BillingTransaction ) => {
 		const [ transactionItem, ...moreTransactionItems ] = groupDomainProducts(
 			transaction.items,
 			this.props.translate
@@ -68,19 +93,16 @@ class BillingHistoryList extends Component {
 			return transactionItem.product;
 		}
 
-		return this.serviceNameDescription( {
-			...transactionItem,
-			plan: capitalPDangit( transactionItem.variation ),
-		} );
+		return this.serviceNameDescription( transactionItem );
 	};
 
-	serviceNameDescription = ( transaction ) => {
-		let description;
+	serviceNameDescription = ( transaction: BillingTransactionItem ) => {
+		const plan = capitalPDangit( transaction.variation );
 		if ( transaction.domain ) {
 			const termLabel = getTransactionTermLabel( transaction, this.props.translate );
-			description = (
+			return (
 				<div>
-					<strong>{ transaction.plan }</strong>
+					<strong>{ plan }</strong>
 					<small>{ transaction.domain }</small>
 					{ termLabel ? <small>{ termLabel }</small> : null }
 					{ transaction.licensed_quantity && (
@@ -88,18 +110,15 @@ class BillingHistoryList extends Component {
 					) }
 				</div>
 			);
-		} else {
-			description = (
-				<strong>
-					{ transaction.product } { transaction.plan }
-				</strong>
-			);
 		}
-
-		return description;
+		return (
+			<strong>
+				{ transaction.product } { plan }
+			</strong>
+		);
 	};
 
-	recordClickEvent = ( eventAction ) => {
+	recordClickEvent = ( eventAction: string ) => {
 		recordGoogleEvent( 'Me', eventAction );
 	};
 
@@ -107,17 +126,17 @@ class BillingHistoryList extends Component {
 		return this.recordClickEvent( 'View Receipt in Billing History' );
 	};
 
-	getEmailReceiptLinkClickHandler = ( receiptId ) => {
+	getEmailReceiptLinkClickHandler = ( receiptId: string ) => {
 		const { sendBillingReceiptEmail } = this.props;
 
-		return ( event ) => {
+		return ( event: MouseEvent< HTMLButtonElement > ) => {
 			event.preventDefault();
 			this.recordClickEvent( 'Email Receipt in Billing History' );
 			sendBillingReceiptEmail( receiptId );
 		};
 	};
 
-	renderEmailAction = ( receiptId ) => {
+	renderEmailAction = ( receiptId: string ) => {
 		const { translate, sendingBillingReceiptEmail } = this.props;
 
 		if ( sendingBillingReceiptEmail( receiptId ) ) {
@@ -134,7 +153,7 @@ class BillingHistoryList extends Component {
 		);
 	};
 
-	renderActions = ( transaction ) => {
+	renderActions = ( transaction: BillingTransaction ) => {
 		const { translate, getReceiptUrlFor } = this.props;
 
 		return (
@@ -190,7 +209,7 @@ class BillingHistoryList extends Component {
 			return this.renderPlaceholder();
 		}
 
-		if ( isEmpty( transactions ) ) {
+		if ( transactions.length === 0 ) {
 			let noResultsText;
 			if ( ! date.newest || '' !== app || '' !== query ) {
 				noResultsText = this.props.siteId
@@ -207,7 +226,7 @@ class BillingHistoryList extends Component {
 			}
 			return (
 				<tr className="billing-history__no-results">
-					<td className="billing-history__no-results-cell" colSpan="3">
+					<td className="billing-history__no-results-cell" colSpan={ 3 }>
 						{ noResultsText }
 					</td>
 				</tr>
@@ -242,44 +261,109 @@ class BillingHistoryList extends Component {
 	};
 }
 
-function getIsSendingReceiptEmail( state ) {
-	return function isSendingBillingReceiptEmailForReceiptId( receiptId ) {
+function getIsSendingReceiptEmail( state: IAppState ) {
+	return function isSendingBillingReceiptEmailForReceiptId( receiptId: number ) {
 		return isSendingBillingReceiptEmail( state, receiptId );
 	};
 }
 
-BillingHistoryList.propTypes = {
-	//connected props
-	app: PropTypes.string,
-	date: PropTypes.object,
-	page: PropTypes.number,
-	pageSize: PropTypes.number.isRequired,
-	query: PropTypes.string.isRequired,
-	total: PropTypes.number.isRequired,
-	transactions: PropTypes.array,
-	//own props
-	siteId: PropTypes.number,
-	header: PropTypes.bool,
-};
+const PAGE_SIZE = 5;
+
+/**
+ * Utility function for formatting date for text search
+ */
+function formatDate( date: string ): string {
+	const localeSlug = getLocaleSlug();
+	return moment( date )
+		.locale( localeSlug ?? '' )
+		.format( 'll' );
+}
+
+/**
+ * Utility function extracting searchable strings from a single transaction
+ */
+function getSearchableStrings( transaction: BillingTransaction ): string[] {
+	const rootStrings: string[] = Object.values( transaction ).filter(
+		( value ) => typeof value === 'string'
+	);
+	const dateString: string | null = transaction.date ? formatDate( transaction.date ) : null;
+	const itemStrings: string[] = transaction.items.flatMap( ( item ) => Object.values( item ) );
+
+	return [ ...rootStrings, dateString, ...itemStrings ].filter( isValueTruthy );
+}
+
+/**
+ * Utility function to search the transactions by the provided searchQuery
+ */
+function searchTransactions(
+	transactions: BillingTransaction[],
+	searchQuery: string
+): BillingTransaction[] {
+	const needle = searchQuery.toLowerCase();
+
+	return transactions.filter( ( transaction: BillingTransaction ) =>
+		getSearchableStrings( transaction ).some( ( val ) => {
+			const haystack = val.toString().toLowerCase();
+			return haystack.includes( needle );
+		} )
+	);
+}
+
+function filterTransactions(
+	transactions: BillingTransaction[] | null | undefined,
+	filter: BillingTransactionUiState,
+	siteId: string | null | undefined
+): BillingTransaction[] {
+	const { app, date, page, query } = filter;
+	let results = query ? searchTransactions( transactions ?? [], query ) : transactions ?? [];
+
+	if ( date && date.month && date.operator ) {
+		results = results.filter( ( transaction ) => {
+			const transactionDate = moment( transaction.date );
+
+			if ( 'equal' === date.operator ) {
+				return transactionDate.isSame( date.month, 'month' );
+			} else if ( 'before' === date.operator ) {
+				return transactionDate.isBefore( date.month, 'month' );
+			}
+		} );
+	}
+
+	if ( app && app !== 'all' ) {
+		results = results.filter( ( transaction ) => transaction.service === app );
+	}
+
+	if ( siteId ) {
+		results = results.filter( ( transaction ) => {
+			return transaction.items.some( ( receiptItem ) => {
+				return String( receiptItem.site_id ) === String( siteId );
+			} );
+		} );
+	}
+
+	const pageIndex = ( page ?? 1 ) - 1;
+	return results.slice( pageIndex * PAGE_SIZE, pageIndex * PAGE_SIZE + PAGE_SIZE );
+}
 
 export default connect(
-	( state, { siteId } ) => {
-		const filteredTransactions = getFilteredBillingTransactions( state, 'past', siteId );
+	( state: IAppState, { siteId }: BillingHistoryListProps ) => {
+		const transactions = getPastBillingTransactions( state );
 		const filter = getBillingTransactionFilters( state, 'past' );
+		const filteredTransactions = filterTransactions( transactions, filter, String( siteId ) );
+
 		return {
 			app: filter.app,
 			date: filter.date,
 			page: filter.page,
-			pageSize: filteredTransactions.pageSize,
+			pageSize: PAGE_SIZE,
 			query: filter.query,
-			total: filteredTransactions.total,
-			transactions: filteredTransactions.transactions,
+			total: filteredTransactions.length,
+			transactions: filteredTransactions,
 			sendingBillingReceiptEmail: getIsSendingReceiptEmail( state ),
 		};
 	},
 	{
 		setPage,
-		recordGoogleEvent,
 		sendBillingReceiptEmail: sendBillingReceiptEmailAction,
 	}
 )( localize( withLocalizedMoment( BillingHistoryList ) ) );
