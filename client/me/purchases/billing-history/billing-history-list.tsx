@@ -1,6 +1,5 @@
 import { CompactCard } from '@automattic/components';
-import { isValueTruthy } from '@automattic/wpcom-checkout';
-import { getLocaleSlug, localize, LocalizeProps } from 'i18n-calypso';
+import { localize, LocalizeProps } from 'i18n-calypso';
 import moment from 'moment';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -13,10 +12,10 @@ import { sendBillingReceiptEmail as sendBillingReceiptEmailAction } from 'calyps
 import {
 	BillingTransaction,
 	BillingTransactionItem,
-	BillingTransactionUiState,
 } from 'calypso/state/billing-transactions/types';
 import { setPage } from 'calypso/state/billing-transactions/ui/actions';
 import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
+import { filterTransactions } from 'calypso/state/selectors/get-filtered-billing-transactions';
 import getPastBillingTransactions from 'calypso/state/selectors/get-past-billing-transactions';
 import isSendingBillingReceiptEmail from 'calypso/state/selectors/is-sending-billing-receipt-email';
 import { IAppState } from 'calypso/state/types';
@@ -267,95 +266,23 @@ function getIsSendingReceiptEmail( state: IAppState ) {
 	};
 }
 
-const PAGE_SIZE = 5;
-
-/**
- * Utility function for formatting date for text search
- */
-function formatDate( date: string ): string {
-	const localeSlug = getLocaleSlug();
-	return moment( date )
-		.locale( localeSlug ?? '' )
-		.format( 'll' );
-}
-
-/**
- * Utility function extracting searchable strings from a single transaction
- */
-function getSearchableStrings( transaction: BillingTransaction ): string[] {
-	const rootStrings: string[] = Object.values( transaction ).filter(
-		( value ) => typeof value === 'string'
-	);
-	const dateString: string | null = transaction.date ? formatDate( transaction.date ) : null;
-	const itemStrings: string[] = transaction.items.flatMap( ( item ) => Object.values( item ) );
-
-	return [ ...rootStrings, dateString, ...itemStrings ].filter( isValueTruthy );
-}
-
-/**
- * Utility function to search the transactions by the provided searchQuery
- */
-function searchTransactions(
-	transactions: BillingTransaction[],
-	searchQuery: string
-): BillingTransaction[] {
-	const needle = searchQuery.toLowerCase();
-
-	return transactions.filter( ( transaction: BillingTransaction ) =>
-		getSearchableStrings( transaction ).some( ( val ) => {
-			const haystack = val.toString().toLowerCase();
-			return haystack.includes( needle );
-		} )
-	);
-}
-
-function filterTransactions(
-	transactions: BillingTransaction[] | null | undefined,
-	filter: BillingTransactionUiState,
-	siteId: string | null | undefined
-): BillingTransaction[] {
-	const { app, date, page, query } = filter;
-	let results = query ? searchTransactions( transactions ?? [], query ) : transactions ?? [];
-
-	if ( date && date.month && date.operator ) {
-		results = results.filter( ( transaction ) => {
-			const transactionDate = moment( transaction.date );
-
-			if ( 'equal' === date.operator ) {
-				return transactionDate.isSame( date.month, 'month' );
-			} else if ( 'before' === date.operator ) {
-				return transactionDate.isBefore( date.month, 'month' );
-			}
-		} );
-	}
-
-	if ( app && app !== 'all' ) {
-		results = results.filter( ( transaction ) => transaction.service === app );
-	}
-
-	if ( siteId ) {
-		results = results.filter( ( transaction ) => {
-			return transaction.items.some( ( receiptItem ) => {
-				return String( receiptItem.site_id ) === String( siteId );
-			} );
-		} );
-	}
-
-	const pageIndex = ( page ?? 1 ) - 1;
-	return results.slice( pageIndex * PAGE_SIZE, pageIndex * PAGE_SIZE + PAGE_SIZE );
-}
-
 export default connect(
 	( state: IAppState, { siteId }: BillingHistoryListProps ) => {
 		const transactions = getPastBillingTransactions( state );
 		const filter = getBillingTransactionFilters( state, 'past' );
-		const filteredTransactions = filterTransactions( transactions, filter, String( siteId ) );
+		const pageSize = 5;
+		const filteredTransactions = filterTransactions(
+			transactions,
+			filter,
+			String( siteId ),
+			pageSize
+		);
 
 		return {
 			app: filter.app,
 			date: filter.date,
 			page: filter.page,
-			pageSize: PAGE_SIZE,
+			pageSize,
 			query: filter.query,
 			total: filteredTransactions.length,
 			transactions: filteredTransactions,
