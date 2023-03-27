@@ -12,6 +12,7 @@ declare module '@wordpress/components' {
 		[ key: string ]: unknown;
 	}
 
+	export const __unstableMotion: React.ComponenType< Props >;
 	export const __experimentalHStack: React.ComponentType< Props >;
 	export const __experimentalVStack: React.ComponentType< Props >;
 }

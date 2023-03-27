@@ -10,6 +10,7 @@ import {
 } from '@wordpress/edit-site/build-module/components/global-styles/hooks';
 import { useState } from '@wordpress/element';
 import GlobalStylesVariationContainer from '../global-styles-variation-container';
+import type { Color } from '../../types';
 
 const firstFrame = {
 	start: {
@@ -47,7 +48,12 @@ const normalizedHeight = 152;
 
 const normalizedColorSwatchSize = 32;
 
-const GlobalStylesVariationPreview = ( { title, isFocused } ) => {
+interface Props {
+	title?: string;
+	isFocused?: boolean;
+}
+
+const GlobalStylesVariationPreview = ( { title, isFocused }: Props ) => {
 	const [ fontWeight ] = useStyle( 'typography.fontWeight' );
 	const [ fontFamily = 'serif' ] = useStyle( 'typography.fontFamily' );
 	const [ headingFontFamily = fontFamily ] = useStyle( 'elements.h1.typography.fontFamily' );
@@ -70,7 +76,7 @@ const GlobalStylesVariationPreview = ( { title, isFocused } ) => {
 	const highlightedColors = paletteColors
 		.filter(
 			// we exclude these two colors because they are already visible in the preview.
-			( { color } ) => color !== backgroundColor && color !== headingColor
+			( { color }: { color: Color } ) => color !== backgroundColor && color !== headingColor
 		)
 		.slice( 0, 2 );
 
@@ -79,8 +85,6 @@ const GlobalStylesVariationPreview = ( { title, isFocused } ) => {
 			width={ width }
 			height={ normalizedHeight * ratio }
 			containerResizeListener={ containerResizeListener }
-			onMouseEnter={ () => setIsHovered( true ) }
-			onMouseLeave={ () => setIsHovered( false ) }
 		>
 			<motion.div
 				style={ {
@@ -91,6 +95,8 @@ const GlobalStylesVariationPreview = ( { title, isFocused } ) => {
 				} }
 				initial="start"
 				animate={ ( isHovered || isFocused ) && ! disableMotion && title ? 'hover' : 'start' }
+				onMouseEnter={ () => setIsHovered( true ) }
+				onMouseLeave={ () => setIsHovered( false ) }
 			>
 				<motion.div
 					variants={ firstFrame }
@@ -121,22 +127,24 @@ const GlobalStylesVariationPreview = ( { title, isFocused } ) => {
 							Aa
 						</motion.div>
 						<VStack spacing={ 4 * ratio }>
-							{ highlightedColors.map( ( { slug, color }, index ) => (
-								<motion.div
-									key={ slug }
-									style={ {
-										height: normalizedColorSwatchSize * ratio,
-										width: normalizedColorSwatchSize * ratio,
-										background: color,
-										borderRadius: ( normalizedColorSwatchSize * ratio ) / 2,
-									} }
-									animate={ { scale: 1, opacity: 1 } }
-									initial={ { scale: 0.1, opacity: 0 } }
-									transition={ {
-										delay: index === 1 ? 0.2 : 0.1,
-									} }
-								/>
-							) ) }
+							{ highlightedColors.map(
+								( { slug, color }: { slug: string; color: Color }, index: number ) => (
+									<motion.div
+										key={ slug }
+										style={ {
+											height: normalizedColorSwatchSize * ratio,
+											width: normalizedColorSwatchSize * ratio,
+											background: color,
+											borderRadius: ( normalizedColorSwatchSize * ratio ) / 2,
+										} }
+										animate={ { scale: 1, opacity: 1 } }
+										initial={ { scale: 0.1, opacity: 0 } }
+										transition={ {
+											delay: index === 1 ? 0.2 : 0.1,
+										} }
+									/>
+								)
+							) }
 						</VStack>
 					</HStack>
 				</motion.div>
@@ -160,7 +168,7 @@ const GlobalStylesVariationPreview = ( { title, isFocused } ) => {
 							overflow: 'hidden',
 						} }
 					>
-						{ paletteColors.slice( 0, 4 ).map( ( { color }, index ) => (
+						{ paletteColors.slice( 0, 4 ).map( ( { color }: { color: string }, index: number ) => (
 							<div
 								key={ index }
 								style={ {
