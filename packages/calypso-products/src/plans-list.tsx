@@ -162,6 +162,7 @@ import {
 	PLAN_JETPACK_COMPLETE,
 	PLAN_JETPACK_COMPLETE_MONTHLY,
 	PLAN_JETPACK_FREE,
+	PLAN_JETPACK_GOLDEN_TOKEN,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_PREMIUM,
@@ -209,6 +210,7 @@ import {
 	TYPE_FLEXIBLE,
 	TYPE_PRO,
 	TYPE_STARTER,
+	TYPE_GOLDEN_TOKEN,
 	WPCOM_FEATURES_ATOMIC,
 	WPCOM_FEATURES_SCAN,
 	WPCOM_FEATURES_ANTISPAM,
@@ -1816,6 +1818,49 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 	],
 } );
 
+const getPlanJetpackGoldenTokenDetails = (): IncompleteJetpackPlan => ( {
+	group: GROUP_JETPACK,
+	type: TYPE_GOLDEN_TOKEN,
+	getTitle: () => translate( 'Golden Token' ),
+	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
+	getDescription: () =>
+		translate(
+			'Get next-level protection with real-time backups, real-time scan and all essential security tools.'
+		),
+	getTagline: () => translate( 'Best for sites with frequent updates' ),
+	getPlanCardFeatures: () => [
+		FEATURE_PLAN_SECURITY_DAILY,
+		FEATURE_PRODUCT_BACKUP_REALTIME_V2,
+		FEATURE_PRODUCT_SCAN_REALTIME_V2,
+		FEATURE_ACTIVITY_LOG_1_YEAR_V2,
+	],
+	getIncludedFeatures: () => [
+		FEATURE_JETPACK_BACKUP_REALTIME,
+		FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
+		FEATURE_JETPACK_SCAN_DAILY,
+		FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
+		FEATURE_JETPACK_ANTI_SPAM,
+		FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+		FEATURE_BACKUP_ARCHIVE_UNLIMITED,
+		FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+		FEATURE_REPUBLICIZE,
+		FEATURE_ADVANCED_SEO,
+		FEATURE_SEO_PREVIEW_TOOLS,
+		FEATURE_SIMPLE_PAYMENTS,
+		FEATURE_WORDADS_INSTANT,
+		FEATURE_GOOGLE_ANALYTICS,
+		FEATURE_PREMIUM_SUPPORT,
+		WPCOM_FEATURES_SCAN,
+		WPCOM_FEATURES_ANTISPAM,
+		WPCOM_FEATURES_BACKUPS,
+	],
+	getInferiorFeatures: () => [
+		FEATURE_JETPACK_BACKUP_DAILY,
+		FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
+		FEATURE_BACKUP_ARCHIVE_30,
+	],
+} );
+
 // DO NOT import. Use `getPlan` instead.
 export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 	[ PLAN_FREE ]: {
@@ -2549,6 +2594,15 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 			translate( 'Scan: Real-time malware scanning and one-click fixes' ),
 			translate( 'Akismet: Comment and form spam protection (10k API calls/mo)' ),
 		],
+	},
+
+	[ PLAN_JETPACK_GOLDEN_TOKEN ]: {
+		...getPlanJetpackGoldenTokenDetails(),
+		...getAnnualTimeframe(),
+		getMonthlySlug: () => PLAN_JETPACK_GOLDEN_TOKEN,
+		getStoreSlug: () => PLAN_JETPACK_GOLDEN_TOKEN,
+		getPathSlug: () => 'golden-token',
+		getProductId: () => 2900,
 	},
 
 	[ PLAN_P2_PLUS ]: {
