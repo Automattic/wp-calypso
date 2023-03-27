@@ -2,56 +2,17 @@ import { Field } from '@automattic/wpcom-checkout';
 import { CheckboxControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { getVatVendorInfo } from 'calypso/me/purchases/billing-history/vat-vendor-details';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import useCountryList, { isVatSupported } from '../../hooks/use-country-list';
 import { CHECKOUT_STORE } from '../../lib/wpcom-store';
 
 import './style.css';
-
-const countriesSupportingVat = [
-	'AT',
-	'AU',
-	'BE',
-	'BG',
-	'CH',
-	'CY',
-	'CZ',
-	'DE',
-	'DK',
-	'EE',
-	'EL',
-	'ES',
-	'FI',
-	'FR',
-	'GB',
-	'GR',
-	'HR',
-	'HU',
-	'IE',
-	'IT',
-	'JP',
-	'LT',
-	'LU',
-	'LV',
-	'MT',
-	'NL',
-	'PL',
-	'PT',
-	'RO',
-	'SE',
-	'SI',
-	'SK',
-	'XI',
-];
-
-export function isVatSupportedFor( countryCode: string ): boolean {
-	return Boolean( countriesSupportingVat.includes( countryCode ) );
-}
 
 export function VatForm( {
 	section,
@@ -67,6 +28,7 @@ export function VatForm( {
 	 */
 	countryCode: string | undefined;
 } ) {
+	const countries = useCountryList();
 	const translate = useTranslate();
 	const vatDetailsInForm = useSelect( ( select ) => select( CHECKOUT_STORE ).getVatDetails(), [] );
 	const wpcomStoreActions = useDispatch( CHECKOUT_STORE );
@@ -74,6 +36,14 @@ export function VatForm( {
 	const setVatDetailsInForm = wpcomStoreActions?.setVatDetails;
 	const { vatDetails: vatDetailsFromServer, isLoading: isLoadingVatDetails } = useVatDetails();
 	const [ isFormActive, setIsFormActive ] = useState< boolean >( false );
+
+	const isVatSupportedFor = useCallback(
+		( code: string ) =>
+			countries
+				.filter( isVatSupported )
+				.some( ( country ) => country.code === code || country.tax_country_codes.includes( code ) ),
+		[ countries ]
+	);
 
 	// When the form loads or the country code changes, take one of the following
 	// actions.
@@ -132,6 +102,7 @@ export function VatForm( {
 		setVatDetailsInForm( {} );
 		setIsFormActive( false );
 	}, [
+		isVatSupportedFor,
 		countryCode,
 		vatDetailsInForm,
 		setVatDetailsInForm,

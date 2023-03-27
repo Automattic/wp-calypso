@@ -64,21 +64,26 @@ export const countryList: CountryListItem[] = [
 		code: 'US',
 		name: 'United States',
 		has_postal_codes: true,
+		vat_supported: false,
 	},
 	{
 		code: 'CW',
 		name: 'Curacao',
 		has_postal_codes: false,
+		vat_supported: false,
 	},
 	{
 		code: 'AU',
 		name: 'Australia',
 		has_postal_codes: true,
+		vat_supported: false,
 	},
 	{
 		code: 'ES',
 		name: 'Spain',
 		has_postal_codes: true,
+		vat_supported: true,
+		tax_country_codes: [ 'ES' ],
 	},
 	{
 		code: 'CA',
@@ -86,30 +91,38 @@ export const countryList: CountryListItem[] = [
 		has_postal_codes: true,
 		tax_needs_city: true,
 		tax_needs_subdivision: true,
+		vat_supported: true,
+		tax_country_codes: [ 'CA' ],
 	},
 	{
 		code: 'CH',
 		name: 'Switzerland',
 		has_postal_codes: true,
 		tax_needs_address: true,
+		vat_supported: true,
+		tax_country_codes: [ 'CH' ],
 	},
 	{
 		code: 'GB',
 		name: 'United Kingdom',
 		has_postal_codes: true,
 		tax_needs_organization: true, // added for testing, not present in API data
+		vat_supported: true,
+		tax_country_codes: [ 'GB', 'XI' ],
 	},
 	{
 		code: 'IN',
 		name: 'India',
 		has_postal_codes: true,
 		tax_needs_subdivision: true,
+		vat_supported: false,
 	},
 	{
 		code: 'JP',
 		name: 'Japan',
 		has_postal_codes: true,
 		tax_needs_organization: true,
+		vat_supported: false,
 	},
 	{
 		code: 'NO',
@@ -117,6 +130,7 @@ export const countryList: CountryListItem[] = [
 		has_postal_codes: true,
 		tax_needs_city: true,
 		tax_needs_organization: true,
+		vat_supported: false,
 	},
 ];
 
