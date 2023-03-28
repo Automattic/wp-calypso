@@ -49,7 +49,7 @@ const useSubscriptionManagerSiteSubscriptionsQuery = ( {
 	const isLoggedIn = useIsLoggedIn();
 	const enabled = useIsQueryEnabled();
 
-	const { data, isLoading, error } = useQuery< SiteSubscription[] >(
+	const { data, ...rest } = useQuery< SiteSubscription[] >(
 		[ 'read', 'site-subscriptions', isLoggedIn ],
 		async () => {
 			return await callFollowingEndPoint( 1, 200, isLoggedIn );
@@ -62,8 +62,7 @@ const useSubscriptionManagerSiteSubscriptionsQuery = ( {
 
 	return {
 		data: data?.filter( filter || defaultFilter ).sort( sort || defaultSort ),
-		isLoading,
-		error,
+		...rest,
 	};
 };
 
