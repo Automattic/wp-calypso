@@ -3,10 +3,10 @@
  */
 const ALLOWED_ORIGINS = [
 	'https://wordpress.com',
-	'https://public-api.wordpress.com',
 	'https://horizon.wordpress.com',
 	'https://wpcalypso.wordpress.com',
 	'http://calypso.localhost:3000',
+	'https://calypso.localhost:3000',
 ];
 
 /**
@@ -26,7 +26,7 @@ function isAllowedOrigin( origin: string ) {
  * @returns true if the origin is a Calypso Live site
  */
 function isCalypsoLive( origin: string ) {
-	return origin.match( /^https:\/\/[a-z0-9]+\.calypso\.live$/ );
+	return origin.match( /^https:\/\/[a-z0-9-]+\.calypso\.live$/ );
 }
 
 /**
