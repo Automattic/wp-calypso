@@ -215,7 +215,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	const showConfirmationPopover = () =>
 		accept(
 			confirmationPopoverContent,
-			( accepted ) => ( accepted ? onConfirm() : undefined ),
+			( accepted: boolean ) => ( accepted ? onConfirm() : undefined ),
 			'Yes, continue',
 			'No, cancel',
 			{ additionalClassNames: 'clone-flow__confirmation-popover' }
