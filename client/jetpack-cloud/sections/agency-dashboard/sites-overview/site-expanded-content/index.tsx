@@ -37,7 +37,11 @@ export default function SiteExpandedContent( {
 			} ) }
 		>
 			{ columns.includes( 'stats' ) && stats && (
-				<InsightsStats stats={ stats } siteUrlWithScheme={ siteUrlWithScheme } />
+				<InsightsStats
+					stats={ stats }
+					siteUrlWithScheme={ siteUrlWithScheme }
+					trackEvent={ trackEvent }
+				/>
 			) }
 			{ columns.includes( 'boost' ) && (
 				<BoostSitePerformance
