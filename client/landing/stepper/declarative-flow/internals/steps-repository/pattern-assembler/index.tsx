@@ -184,6 +184,7 @@ const PatternAssembler = ( {
 				.join( ',' ),
 			pattern_ids: patterns.map( ( { id } ) => id ).join( ',' ),
 			pattern_names: patterns.map( ( { name } ) => name ).join( ',' ),
+			pattern_categories: patterns.map( ( { category } ) => category?.name ).join( ',' ),
 			pattern_count: patterns.length,
 		} );
 		patterns.forEach( ( { id, name, category } ) => {
@@ -491,6 +492,7 @@ const PatternAssembler = ( {
 							onSelect={ onSelect }
 							wrapperRef={ wrapperRef }
 							onTogglePatternPanelList={ setIsPatternPanelListOpen }
+							recordTracksEvent={ recordTracksEvent }
 						/>
 					) : (
 						<ScreenPatternList
