@@ -6,7 +6,10 @@ import { useSiteLogsDownloader } from '../../hooks/use-site-logs-downloader';
 
 import './style.scss';
 
-const SiteLogsDownloadDetail = ( { recordsDownloaded = 0, totalRecordsAvailable = 0 } ) => {
+const SiteLogsToolbarDownloadProgress = ( {
+	recordsDownloaded = 0,
+	totalRecordsAvailable = 0,
+} ) => {
 	const translate = useTranslate();
 
 	if ( totalRecordsAvailable === 0 ) {
@@ -14,7 +17,7 @@ const SiteLogsDownloadDetail = ( { recordsDownloaded = 0, totalRecordsAvailable 
 	}
 
 	return (
-		<span>
+		<span className="site-logs-toolbar__download-progress">
 			{ translate(
 				'Download progress: %(logRecordsDownloaded)d of %(totalLogRecordsAvailable)d records',
 				{
@@ -56,7 +59,7 @@ export const SiteLogsToolbar = ( { onRefresh, ...downloadProps }: Props ) => {
 				>
 					{ translate( 'Download' ) }
 				</Button>
-				{ isDownloading && <SiteLogsDownloadDetail { ...state } /> }
+				{ isDownloading && <SiteLogsToolbarDownloadProgress { ...state } /> }
 			</div>
 		</>
 	);
