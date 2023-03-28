@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { eye } from '@automattic/components/src/icons';
 import { Icon, commentContent, starEmpty } from '@wordpress/icons';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { Card, ShortenedNumber, Button } from '../';
@@ -19,6 +20,7 @@ type PostStatsCardProps = {
 	titleLink?: string | undefined;
 	uploadHref?: string | undefined;
 	locale?: string | undefined;
+	isLoading?: boolean | undefined;
 };
 
 export default function PostStatsCard( {
@@ -30,6 +32,7 @@ export default function PostStatsCard( {
 	titleLink,
 	uploadHref,
 	locale,
+	isLoading,
 }: PostStatsCardProps ) {
 	const translate = useTranslate();
 	const parsedDate = useMemo(
@@ -49,14 +52,18 @@ export default function PostStatsCard( {
 		}
 	};
 
+	const classes = classNames( 'post-stats-card', {
+		'is-loading': isLoading,
+	} );
+
 	return (
-		<Card className="post-stats-card">
+		<Card className={ classes }>
 			<div className="post-stats-card__heading">{ heading }</div>
 			<div className="post-stats-card__post-info">
 				<TitleTag className="post-stats-card__post-title" href={ titleLink }>
 					{ post?.title }
 				</TitleTag>
-				{ post?.date && (
+				{ ( isLoading || post?.date ) && (
 					<div className="post-stats-card__post-date">
 						{ translate( 'Published %(date)s', {
 							// TODO: Show relative duration instead of published date. Show actual date in a tooltip.
@@ -71,25 +78,35 @@ export default function PostStatsCard( {
 					<Icon className="gridicon" icon={ eye } />
 					<div className="post-stats-card__count-header">{ translate( 'Views' ) }</div>
 					<div className="post-stats-card__count-value">
-						<ShortenedNumber value={ viewCount } />
+						<ShortenedNumber value={ isLoading ? null : viewCount } />
 					</div>
 				</div>
 				<div className="post-stats-card__count post-stats-card__count--like">
 					<Icon className="gridicon" icon={ starEmpty } />
 					<div className="post-stats-card__count-header">{ translate( 'Likes' ) }</div>
 					<div className="post-stats-card__count-value">
-						<ShortenedNumber value={ likeCount } />
+						<ShortenedNumber value={ isLoading ? null : likeCount } />
 					</div>
 				</div>
 				<div className="post-stats-card__count post-stats-card__count--comment">
 					<Icon className="gridicon" icon={ commentContent } />
 					<div className="post-stats-card__count-header">{ translate( 'Comments' ) }</div>
 					<div className="post-stats-card__count-value">
-						<ShortenedNumber value={ commentCount } />
+						<ShortenedNumber value={ isLoading ? null : commentCount } />
 					</div>
 				</div>
 			</div>
-			{ post?.post_thumbnail && (
+			{ ( isLoading || ( ! post?.post_thumbnail && uploadHref ) ) && (
+				<div className="post-stats-card__upload">
+					<Button
+						className="post-stats-card__upload-btn is-compact"
+						onClick={ recordClickOnUploadImageButton }
+					>
+						{ translate( 'Add featured image' ) }
+					</Button>
+				</div>
+			) }
+			{ ! isLoading && post?.post_thumbnail && (
 				<img
 					className="post-stats-card__thumbnail"
 					src={ post?.post_thumbnail }
@@ -99,16 +116,6 @@ export default function PostStatsCard( {
 						textOnly: true,
 					} ) }
 				/>
-			) }
-			{ uploadHref && ! post?.post_thumbnail && (
-				<div className="post-stats-card__upload">
-					<Button
-						className="post-stats-card__upload-btn is-compact"
-						onClick={ recordClickOnUploadImageButton }
-					>
-						{ translate( 'Add featured image' ) }
-					</Button>
-				</div>
 			) }
 		</Card>
 	);

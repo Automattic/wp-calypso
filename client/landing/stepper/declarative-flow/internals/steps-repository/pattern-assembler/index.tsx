@@ -184,6 +184,7 @@ const PatternAssembler = ( {
 				.join( ',' ),
 			pattern_ids: patterns.map( ( { id } ) => id ).join( ',' ),
 			pattern_names: patterns.map( ( { name } ) => name ).join( ',' ),
+			pattern_categories: patterns.map( ( { category } ) => category?.name ).join( ',' ),
 			pattern_count: patterns.length,
 		} );
 		patterns.forEach( ( { id, name, category } ) => {
@@ -432,6 +433,36 @@ const PatternAssembler = ( {
 
 	const onDeleteFooter = () => onSelect( 'footer', null );
 
+	const onScreenColorsSelect = ( variation: GlobalStylesObject ) => {
+		setSelectedColorPaletteVariation( variation );
+		recordTracksEvent( 'calypso_signup_pattern_assembler_screen_colors_preview_click', {
+			title: variation.title,
+		} );
+	};
+
+	const onScreenColorsBack = () => {
+		recordTracksEvent( 'calypso_signup_pattern_assembler_screen_colors_back_click' );
+	};
+
+	const onScreenColorsDone = () => {
+		recordTracksEvent( 'calypso_signup_pattern_assembler_screen_colors_done_click' );
+	};
+
+	const onScreenFontsSelect = ( variation: GlobalStylesObject ) => {
+		setSelectedFontPairingVariation( variation );
+		recordTracksEvent( 'calypso_signup_pattern_assembler_screen_fonts_preview_click', {
+			title: variation.title,
+		} );
+	};
+
+	const onScreenFontsBack = () => {
+		recordTracksEvent( 'calypso_signup_pattern_assembler_screen_fonts_back_click' );
+	};
+
+	const onScreenFontsDone = () => {
+		recordTracksEvent( 'calypso_signup_pattern_assembler_screen_fonts_done_click' );
+	};
+
 	const stepContent = (
 		<div
 			className={ classnames( 'pattern-assembler__wrapper', {
@@ -491,6 +522,7 @@ const PatternAssembler = ( {
 							onSelect={ onSelect }
 							wrapperRef={ wrapperRef }
 							onTogglePatternPanelList={ setIsPatternPanelListOpen }
+							recordTracksEvent={ recordTracksEvent }
 						/>
 					) : (
 						<ScreenPatternList
@@ -510,7 +542,9 @@ const PatternAssembler = ( {
 							siteId={ site?.ID }
 							stylesheet={ stylesheet }
 							selectedColorPaletteVariation={ selectedColorPaletteVariation }
-							onSelect={ setSelectedColorPaletteVariation }
+							onSelect={ onScreenColorsSelect }
+							onBack={ onScreenColorsBack }
+							onDoneClick={ onScreenColorsDone }
 						/>
 					</NavigatorScreen>
 				) }
@@ -523,7 +557,9 @@ const PatternAssembler = ( {
 							siteId={ site?.ID }
 							stylesheet={ stylesheet }
 							selectedFontPairingVariation={ selectedFontPairingVariation }
-							onSelect={ setSelectedFontPairingVariation }
+							onSelect={ onScreenFontsSelect }
+							onBack={ onScreenFontsBack }
+							onDoneClick={ onScreenFontsDone }
 						/>
 					</NavigatorScreen>
 				) }

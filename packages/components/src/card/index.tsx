@@ -14,6 +14,7 @@ type OwnProps = {
 	target?: string;
 	compact?: boolean;
 	highlight?: 'error' | 'info' | 'success' | 'warning';
+	showLinkIcon?: boolean;
 };
 
 type ElementProps< P, T extends TagName > = P &
@@ -34,6 +35,7 @@ const Card = < T extends TagName = 'div' >(
 		tagName = 'div',
 		href,
 		target,
+		showLinkIcon = true,
 		...props
 	}: Props< T >,
 	forwardedRef: Ref< any > // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -52,7 +54,9 @@ const Card = < T extends TagName = 'div' >(
 
 	return href ? (
 		<a { ...props } href={ href } target={ target } className={ elementClass } ref={ forwardedRef }>
-			<Gridicon className="card__link-indicator" icon={ target ? 'external' : 'chevron-right' } />
+			{ showLinkIcon && (
+				<Gridicon className="card__link-indicator" icon={ target ? 'external' : 'chevron-right' } />
+			) }
 			{ children }
 		</a>
 	) : (

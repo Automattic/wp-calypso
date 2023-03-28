@@ -91,6 +91,9 @@ describe( 'CheckoutMain', () => {
 			useCartKey.mockImplementation( () => ( useUndefinedCartKey ? undefined : mainCartKey ) );
 			nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 			nock( 'https://public-api.wordpress.com' ).get( '/rest/v1.1/me/vat-info' ).reply( 200, {} );
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.1/me/transactions/supported-countries' )
+				.reply( 200, countryList );
 			mockMatchMediaOnWindow();
 			return (
 				<ReduxProvider store={ store }>

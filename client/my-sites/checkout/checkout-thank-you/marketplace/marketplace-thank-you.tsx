@@ -16,8 +16,8 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { MarketplaceGoBackSection } from './marketplace-go-back-section';
-import { useThankYouFoooter } from './use-default-thank-you-footer';
 import { usePluginsThankYouData } from './use-plugins-thank-you-data';
+import { useThankYouFoooter } from './use-thank-you-footer';
 import { useThemesThankYouData } from './use-themes-thank-you-data';
 
 import './style.scss';

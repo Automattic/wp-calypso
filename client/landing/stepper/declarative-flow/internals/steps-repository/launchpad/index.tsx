@@ -1,8 +1,8 @@
 import { StepContainer } from '@automattic/onboarding';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useLaunchpad } from 'calypso/data/sites/use-launchpad';
@@ -16,6 +16,8 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
 import { useQuery } from '../../../../hooks/use-query';
 import StepContent from './step-content';
+import { areLaunchpadTasksCompleted } from './task-helper';
+import { launchpadFlowTasks } from './tasks';
 import type { Step } from '../../types';
 import type { SiteSelect } from '@automattic/data-stores';
 
@@ -33,10 +35,12 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 	const verifiedParam = useQuery().get( 'verified' );
 	const site = useSite();
 	const {
-		data: { launchpad_screen: launchpadScreenOption },
+		data: { launchpad_screen: launchpadScreenOption, checklist_statuses, site_intent },
 	} = useLaunchpad( siteSlug );
+	const isSiteLaunched = site?.launch_status === 'launched' || false;
 	const recordSignupComplete = useRecordSignupComplete( flow );
 	const dispatch = useDispatch();
+	const { saveSiteSettings } = useWPDispatch( SITE_STORE );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const fetchingSiteError = useSelect(
@@ -44,12 +48,33 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 		[]
 	);
 
-	if ( ! isLoggedIn ) {
-		window.location.replace( `/home/${ siteSlug }` );
+	if (
+		! isLoggedIn ||
+		launchpadScreenOption === 'off' ||
+		( launchpadScreenOption === false && 'videopress' !== flow )
+	) {
+		redirectToSiteHome( siteSlug, flow );
+	}
+
+	if (
+		areLaunchpadTasksCompleted(
+			site_intent,
+			launchpadFlowTasks,
+			checklist_statuses,
+			isSiteLaunched
+		)
+	) {
+		saveSiteSettings( site?.ID, { launchpad_screen: 'off' } );
+		redirectToSiteHome( siteSlug, flow );
 	}
 
 	if ( ! siteSlug || fetchingSiteError?.error ) {
 		window.location.replace( '/home' );
+	}
+
+	function redirectToSiteHome( siteSlug: string | null, flow: string | null ) {
+		recordTracksEvent( 'calypso_launchpad_redirect_to_home', { flow: flow } );
+		window.location.replace( `/home/${ siteSlug }` );
 	}
 
 	useEffect( () => {
@@ -62,23 +87,6 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 			);
 		}
 	}, [ verifiedParam, translate, dispatch ] );
-
-	useEffect( () => {
-		// launchpadScreenOption changes from undefined to either 'off' or 'full'
-		// we need to check if it's defined to avoid recording the same action twice
-		if ( launchpadScreenOption !== undefined ) {
-			// The screen option returns false for sites that have never set the option
-			if (
-				( 'videopress' !== flow && launchpadScreenOption === false ) ||
-				launchpadScreenOption === 'off'
-			) {
-				window.location.replace( `/home/${ siteSlug }` );
-				recordTracksEvent( 'calypso_launchpad_redirect_to_home', { flow: flow } );
-			} else {
-				recordTracksEvent( 'calypso_launchpad_loaded', { flow: flow } );
-			}
-		}
-	}, [ launchpadScreenOption, siteSlug, flow ] );
 
 	useEffect( () => {
 		if ( siteSlug && site && localStorage.getItem( 'launchpad_siteSlug' ) !== siteSlug ) {

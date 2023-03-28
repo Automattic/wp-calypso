@@ -4,6 +4,10 @@
 	flex-direction: column;
 	justify-content: center;
 
+	.thank-you__step:not(:first-child) {
+		border-top: 1px solid var(--studio-gray-5);
+	}
+
 	.thank-you__container {
 		padding-top: var(--masterbar-height);
 	}
@@ -64,6 +68,7 @@
 			flex-direction: column;
 			flex-wrap: wrap;
 			min-width: 280px;
+			border-top: none;
 
 			@media ( max-width: 740px ) {
 				min-width: auto;

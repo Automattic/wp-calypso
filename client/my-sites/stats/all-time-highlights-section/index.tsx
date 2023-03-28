@@ -130,7 +130,7 @@ export default function AllTimeHighlightsSection( {
 
 		return {
 			id: 'bestViewsEver',
-			heading: translate( 'Best views ever' ),
+			heading: translate( 'Most popular day' ),
 			items: [
 				{
 					id: 'day',
