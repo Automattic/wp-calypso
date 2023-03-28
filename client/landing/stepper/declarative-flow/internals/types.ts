@@ -133,9 +133,3 @@ export interface FailureInfo {
 	code: number | string;
 	error: string;
 }
-
-export interface TranslatedFlowText {
-	translatedSiteName?: string;
-	translatedSiteDescription?: string;
-	translatedSiteColorText?: string;
-}

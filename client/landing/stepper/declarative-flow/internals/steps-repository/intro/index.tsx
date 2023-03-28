@@ -96,7 +96,7 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 			),
 			buttonText: __( 'Get started' ),
 		};
-	}, [ flowName, __ ] );
+	}, [ flowName, __, hasTranslation, locale ] );
 };
 
 const Intro: Step = function Intro( { navigation, flow } ) {

@@ -9,7 +9,6 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
-import { TranslatedFlowText } from '../../types';
 import AccentColorControl, { AccentColor } from '../components/accent-color-control';
 import SetupForm from '../components/setup-form';
 import type { Step } from '../../types';
@@ -29,19 +28,33 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	const locale = useLocale();
 	const site = useSite();
 
-	const translatedFlowText: TranslatedFlowText = {
-		translatedSiteName: translate( 'Publication name' ),
-		translatedSiteColorText: translate( 'Brand color' ),
-	};
-
 	const newsletterFormText = {
-		titlePlaceholder: translate( 'My newsletter' ),
+		titleLabel:
+			locale === 'en' || hasTranslation?.( 'Give your blog a name' )
+				? translate( 'Give your blog a name' )
+				: '',
+		titlePlaceholder:
+			locale === 'en' || hasTranslation?.( 'Open Me Carefully' )
+				? translate( 'Open Me Carefully' )
+				: translate( 'My newsletter' ),
 		titleMissing: translate( `Oops. Looks like your Newsletter doesn't have a name yet.` ),
-		taglinePlaceholder: translate( 'Describe your Newsletter in a line or two' ),
-		iconPlaceholder:
-			hasTranslation( 'Add a logo or profile picture' ) || locale === 'en'
-				? translate( 'Add a logo or profile picture' )
-				: translate( 'Add a site icon' ),
+		taglineLabel:
+			locale === 'en' || hasTranslation?.( 'Add a brief description' )
+				? translate( 'Add a brief description' )
+				: '',
+		taglinePlaceholder:
+			locale === 'en' || hasTranslation?.( `Letters from Emily Dickinson's garden` )
+				? translate( `Letters from Emily Dickinson's garden` )
+				: translate( 'Describe your Newsletter in a line or two' ),
+		iconPlaceholder: translate( 'Add a site icon' ),
+		colorLabel:
+			locale === 'en' || hasTranslation?.( 'Favorite color' )
+				? translate( 'Favorite color' )
+				: translate( 'Brand color' ),
+		buttonText:
+			locale === 'en' || hasTranslation?.( 'Save and continue' )
+				? translate( 'Save and continue' )
+				: translate( 'Continue' ),
 	};
 
 	const { setSiteTitle, setSiteAccentColor, setSiteDescription, setSiteLogo } =
@@ -110,14 +123,22 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 			formattedHeader={
 				<FormattedHeader
 					id="newsletter-setup-header"
-					headerText={ createInterpolateElement(
-						hasTranslation( 'Set up your<br />Newsletter' ) || locale === 'en'
-							? translate( 'Set up your<br />Newsletter' )
-							: translate( 'Personalize your<br />Newsletter' ),
-						{
-							br: <br />,
-						}
-					) }
+					headerText={
+						hasTranslation( 'Make it yours.' ) || locale === 'en'
+							? translate( 'Make it yours.' )
+							: createInterpolateElement( translate( 'Personalize your<br />Newsletter' ), {
+									br: <br />,
+							  } )
+					}
+					subHeaderText={
+						( hasTranslation(
+							'Personalize your newsletter with a name, description, and accent color that sets it apart.'
+						) ||
+							locale === 'en' ) &&
+						translate(
+							'Personalize your newsletter with a name, description, and accent color that sets it apart.'
+						)
+					}
 					align="center"
 				/>
 			}
@@ -135,12 +156,11 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 					setBase64Image={ setBase64Image }
 					handleSubmit={ handleSubmit }
 					translatedText={ newsletterFormText }
-					translatedTailoredFlowText={ translatedFlowText }
 				>
 					<AccentColorControl
 						accentColor={ accentColor }
 						setAccentColor={ setAccentColor }
-						translatedFlowText={ translatedFlowText }
+						labelText={ newsletterFormText?.colorLabel }
 					/>
 				</SetupForm>
 			}

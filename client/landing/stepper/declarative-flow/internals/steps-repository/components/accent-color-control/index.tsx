@@ -1,6 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { Popover } from '@automattic/components';
-import { useLocale } from '@automattic/i18n-utils';
 import { hasMinContrast, hexToRgb, RGB } from '@automattic/onboarding';
 import { ColorPicker } from '@wordpress/components';
 import { Icon, color, lock } from '@wordpress/icons';
@@ -22,13 +21,12 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { tip } from 'calypso/signup/icons';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import './style.scss';
-import { TranslatedFlowText } from '../../../types';
 import ColorSwatch from './color-swatch';
 
 interface AccentColorControlProps {
 	accentColor: AccentColor;
 	setAccentColor: Dispatch< SetStateAction< AccentColor > >;
-	translatedFlowText: TranslatedFlowText;
+	labelText: string;
 }
 
 interface ColorOption {
@@ -54,10 +52,9 @@ enum COLORS {
 const AccentColorControl = ( {
 	accentColor,
 	setAccentColor,
-	translatedFlowText,
+	labelText,
 }: AccentColorControlProps ) => {
-	const { __, hasTranslation } = useI18n();
-	const locale = useLocale();
+	const { __ } = useI18n();
 	const [ customColor, setCustomColor ] = useState< AccentColor | null >( null );
 	const [ colorPickerOpen, setColorPickerOpen ] = useState< boolean >( false );
 	const accentColorRef = useRef< HTMLInputElement >( null );
@@ -216,14 +213,6 @@ const AccentColorControl = ( {
 
 		return dropdownOptions;
 	};
-	const getColorText = () => {
-		if ( translatedFlowText?.translatedSiteColorText ) {
-			return translatedFlowText.translatedSiteColorText;
-		}
-		return hasTranslation( 'Favorite color' ) || locale === 'en'
-			? __( 'Favorite color' )
-			: __( 'Accent color' );
-	};
 
 	useEffect( () => {
 		// In later stages of some flows, color for site is already set when this control loads.
@@ -261,7 +250,7 @@ const AccentColorControl = ( {
 				</form>
 			</Popover>
 			<FormFieldset>
-				<FormLabel htmlFor="accentColor">{ getColorText() }</FormLabel>
+				<FormLabel htmlFor="accentColor">{ labelText }</FormLabel>
 				<SelectDropdown
 					// @ts-expect-error SelectDropdown is defined in .jsx file and has no type definitions generated
 					ref={ accentColorRef }
