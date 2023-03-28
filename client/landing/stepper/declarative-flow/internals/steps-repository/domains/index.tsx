@@ -1,4 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+import { useLocale } from '@automattic/i18n-utils';
 import {
 	StepContainer,
 	LINK_IN_BIO_FLOW,
@@ -39,7 +40,8 @@ import './style.scss';
 
 const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	const { setHideFreePlan, setDomainCartItem } = useDispatch( ONBOARD_STORE );
-
+	const locale = useLocale();
+	const { hasTranslation } = useI18n();
 	const { __ } = useI18n();
 
 	const [ showUseYourDomain, setShowUseYourDomain ] = useState( false );
@@ -144,12 +146,22 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 
 		switch ( flow ) {
 			case NEWSLETTER_FLOW:
-				return createInterpolateElement(
-					__(
-						'Help your Newsletter stand out with a custom domain. Not sure yet? <span>Decide later</span>.'
-					),
-					decideLaterComponent
-				);
+				return locale === 'en' ||
+					hasTranslation?.(
+						'Make your newsletter stand out with a custom domain. Not sure yet? <span>Decide later</span>.'
+					)
+					? createInterpolateElement(
+							__(
+								'Make your newsletter stand out with a custom domain. Not sure yet? <span>Decide later</span>.'
+							),
+							decideLaterComponent
+					  )
+					: createInterpolateElement(
+							__(
+								'Help your Newsletter stand out with a custom domain. Not sure yet? <span>Decide later</span>.'
+							),
+							decideLaterComponent
+					  );
 			case LINK_IN_BIO_FLOW:
 			case LINK_IN_BIO_TLD_FLOW:
 				return createInterpolateElement(
@@ -175,6 +187,12 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	const getHeaderText = () => {
 		if ( showUseYourDomain ) {
 			return '';
+		}
+
+		if ( flow === NEWSLETTER_FLOW ) {
+			return locale === 'en' || hasTranslation?.( 'Your domain. Your identity.' )
+				? __( 'Your domain. Your identity.' )
+				: __( 'Choose a domain' );
 		}
 
 		return __( 'Choose a domain' );
