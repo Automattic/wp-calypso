@@ -7,6 +7,7 @@ import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automatt
 import { render, fireEvent, screen, within, waitFor, act } from '@testing-library/react';
 import { dispatch } from '@wordpress/data';
 import nock from 'nock';
+import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import { navigate } from 'calypso/lib/navigate';
@@ -51,13 +52,13 @@ describe( 'CheckoutMain', () => {
 	beforeEach( () => {
 		dispatch( CHECKOUT_STORE ).reset();
 		jest.clearAllMocks();
-		getPlansBySiteId.mockImplementation( () => ( {
+		( getPlansBySiteId as jest.Mock ).mockImplementation( () => ( {
 			data: getActivePersonalPlanDataForType( 'yearly' ),
 		} ) );
-		hasLoadedSiteDomains.mockImplementation( () => true );
-		getDomainsBySiteId.mockImplementation( () => [] );
-		isMarketplaceProduct.mockImplementation( () => false );
-		isJetpackSite.mockImplementation( () => false );
+		( hasLoadedSiteDomains as jest.Mock ).mockImplementation( () => true );
+		( getDomainsBySiteId as jest.Mock ).mockImplementation( () => [] );
+		( isMarketplaceProduct as jest.Mock ).mockImplementation( () => false );
+		( isJetpackSite as jest.Mock ).mockImplementation( () => false );
 
 		container = document.createElement( 'div' );
 		document.body.appendChild( container );
@@ -88,7 +89,9 @@ describe( 'CheckoutMain', () => {
 				setCart: mockSetCartEndpoint,
 			} );
 			const mainCartKey = 123456;
-			useCartKey.mockImplementation( () => ( useUndefinedCartKey ? undefined : mainCartKey ) );
+			( useCartKey as jest.Mock ).mockImplementation( () =>
+				useUndefinedCartKey ? undefined : mainCartKey
+			);
 			nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 			nock( 'https://public-api.wordpress.com' ).get( '/rest/v1.1/me/vat-info' ).reply( 200, {} );
 			nock( 'https://public-api.wordpress.com' )
@@ -242,8 +245,8 @@ describe( 'CheckoutMain', () => {
 	} );
 
 	it( 'adds the product to the cart when the url has a jetpack product', async () => {
-		isJetpackSite.mockImplementation( () => true );
-		isAtomicSite.mockImplementation( () => false );
+		( isJetpackSite as jest.Mock ).mockImplementation( () => true );
+		( isAtomicSite as jest.Mock ).mockImplementation( () => false );
 
 		const cartChanges = { products: [] };
 		const additionalProps = { productAliasFromUrl: 'jetpack_scan' };
@@ -259,8 +262,8 @@ describe( 'CheckoutMain', () => {
 	} );
 
 	it( 'adds two products to the cart when the url has two jetpack products', async () => {
-		isJetpackSite.mockImplementation( () => true );
-		isAtomicSite.mockImplementation( () => false );
+		( isJetpackSite as jest.Mock ).mockImplementation( () => true );
+		( isAtomicSite as jest.Mock ).mockImplementation( () => false );
 
 		const cartChanges = { products: [] };
 		const additionalProps = { productAliasFromUrl: 'jetpack_scan,jetpack_backup_daily' };
@@ -275,6 +278,46 @@ describe( 'CheckoutMain', () => {
 			screen
 				.getAllByLabelText( 'Jetpack Backup (Daily)' )
 				.map( ( element ) => expect( element ).toHaveTextContent( 'R$42' ) );
+		} );
+	} );
+
+	it( 'adds the product to the siteless cart when the url has an akismet product', async () => {
+		const cartChanges = { products: [] };
+		const additionalProps = {
+			productAliasFromUrl: 'ak_plus_yearly_1',
+			sitelessCheckoutType: 'akismet',
+			isNoSiteCart: true,
+		};
+
+		render(
+			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+			container
+		);
+
+		await waitFor( async () => {
+			screen
+				.getAllByLabelText( 'Akismet Plus (10K requests/month)' )
+				.map( ( element ) => expect( element ).toHaveTextContent( '$100' ) );
+		} );
+	} );
+
+	it( 'adds second product when the url has two akismet products', async () => {
+		const cartChanges = { products: [] };
+		const additionalProps = {
+			productAliasFromUrl: 'ak_plus_yearly_1,ak_plus_yearly_2',
+			sitelessCheckoutType: 'akismet',
+			isNoSiteCart: true,
+		};
+
+		render(
+			<MyCheckout cartChanges={ cartChanges } additionalProps={ additionalProps } />,
+			container
+		);
+
+		await waitFor( async () => {
+			screen
+				.getAllByLabelText( 'Akismet Plus (20K requests/month)' )
+				.map( ( element ) => expect( element ).toHaveTextContent( '$200' ) );
 		} );
 	} );
 

@@ -27,7 +27,7 @@ export const stripeConfiguration = {
 	processor_id: 'IE',
 	js_url: 'https://stripe-js-url',
 	public_key: 'stripe-public-key',
-	setup_intent_id: null,
+	setup_intent_id: undefined,
 };
 
 export const processorOptions = {
@@ -333,7 +333,7 @@ export const planLevel2Biannual: ResponseCartProduct = {
 export const fetchStripeConfiguration = async () => stripeConfiguration;
 
 export function mockSetCartEndpointWith( { currency, locale } ): SetCart {
-	return async ( _: number, requestCart: RequestCart ): Promise< ResponseCart > => {
+	return async ( _: CartKey, requestCart: RequestCart ): Promise< ResponseCart > => {
 		const { products: requestProducts, coupon: requestCoupon } = requestCart;
 		const products = requestProducts.map( convertRequestProductToResponseProduct( currency ) );
 
@@ -710,6 +710,7 @@ function convertRequestProductToResponseProduct(
 								lastname: 'Person',
 								recoveryEmail: 'foo@example.com',
 								hash: '1234567',
+								password: '1234567',
 							},
 						],
 					},
@@ -777,6 +778,43 @@ function convertRequestProductToResponseProduct(
 					meta: product.meta,
 					volume: 1,
 					extra: {},
+				};
+
+			case 'ak_plus_yearly_1':
+				return {
+					...getEmptyResponseCartProduct(),
+					product_id: 2311,
+					product_name: 'Akismet Plus (10K requests/month)',
+					product_slug: 'ak_plus_yearly_1',
+					bill_period: '365',
+					currency: currency,
+					is_domain_registration: false,
+					item_original_cost_integer: 10000,
+					item_subtotal_integer: 10000,
+					item_tax: 0,
+					meta: product.meta,
+					volume: 1,
+					extra: {
+						isAkismetSitelessCheckout: true,
+					},
+				};
+			case 'ak_plus_yearly_2':
+				return {
+					...getEmptyResponseCartProduct(),
+					product_id: 2313,
+					product_name: 'Akismet Plus (20K requests/month)',
+					product_slug: 'ak_plus_yearly_2',
+					bill_period: '365',
+					currency: currency,
+					is_domain_registration: false,
+					item_original_cost_integer: 20000,
+					item_subtotal_integer: 20000,
+					item_tax: 0,
+					meta: product.meta,
+					volume: 1,
+					extra: {
+						isAkismetSitelessCheckout: true,
+					},
 				};
 			case planLevel2.product_slug:
 				return {
@@ -1362,7 +1400,7 @@ expect.extend( {
 	 */
 	async toNeverAppear( elementPromise: Promise< HTMLElement > ) {
 		let pass = false;
-		let element = null;
+		let element: HTMLElement | null = null;
 		try {
 			element = await elementPromise;
 		} catch {
@@ -1434,7 +1472,7 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 		case planLevel2Monthly.product_slug:
 			return {
 				product_id: planLevel2Monthly.product_id,
-				bill_period_in_months: planLevel2Monthly.months_per_bill_period,
+				bill_period_in_months: planLevel2Monthly.months_per_bill_period as number,
 				product_slug: data.product_slug,
 				currency: planLevel2Monthly.currency,
 				price_integer: getVariantPrice( planLevel2Monthly ),
@@ -1444,7 +1482,7 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 		case planLevel2.product_slug:
 			return {
 				product_id: planLevel2.product_id,
-				bill_period_in_months: planLevel2.months_per_bill_period,
+				bill_period_in_months: planLevel2.months_per_bill_period as number,
 				product_slug: data.product_slug,
 				currency: planLevel2.currency,
 				price_integer: getVariantPrice( planLevel2 ),
@@ -1454,7 +1492,7 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 		case planLevel2Biannual.product_slug:
 			return {
 				product_id: planLevel2Biannual.product_id,
-				bill_period_in_months: planLevel2Biannual.months_per_bill_period,
+				bill_period_in_months: planLevel2Biannual.months_per_bill_period as number,
 				product_slug: data.product_slug,
 				currency: planLevel2Biannual.currency,
 				price_integer: getVariantPrice( planLevel2Biannual ),
@@ -1464,7 +1502,7 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 		case planWithoutDomainMonthly.product_slug:
 			return {
 				product_id: planWithoutDomainMonthly.product_id,
-				bill_period_in_months: planWithoutDomainMonthly.months_per_bill_period,
+				bill_period_in_months: planWithoutDomainMonthly.months_per_bill_period as number,
 				product_slug: data.product_slug,
 				currency: planWithoutDomainMonthly.currency,
 				price_integer: getVariantPrice( planWithoutDomainMonthly ),
@@ -1474,7 +1512,7 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 		case planWithoutDomain.product_slug:
 			return {
 				product_id: planWithoutDomain.product_id,
-				bill_period_in_months: planWithoutDomain.months_per_bill_period,
+				bill_period_in_months: planWithoutDomain.months_per_bill_period as number,
 				product_slug: data.product_slug,
 				currency: planWithoutDomain.currency,
 				price_integer: getVariantPrice( planWithoutDomain ),
@@ -1484,7 +1522,7 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 		case planWithoutDomainBiannual.product_slug:
 			return {
 				product_id: planWithoutDomainBiannual.product_id,
-				bill_period_in_months: planWithoutDomainBiannual.months_per_bill_period,
+				bill_period_in_months: planWithoutDomainBiannual.months_per_bill_period as number,
 				product_slug: data.product_slug,
 				currency: planWithoutDomainBiannual.currency,
 				price_integer: getVariantPrice( planWithoutDomainBiannual ),
