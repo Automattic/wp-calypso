@@ -5,9 +5,8 @@ import {
 	SITE_SETUP_FLOW,
 } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { lazy } from 'React';
 import classnames from 'classnames';
-import { useEffect, useState, useCallback, Suspense } from 'react';
+import { lazy, useEffect, useState, useCallback, Suspense } from 'react';
 import Modal from 'react-modal';
 import { Switch, Route, Redirect, generatePath, useHistory, useLocation } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -150,6 +149,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				flow={ flow.name }
 				stepName={ step.slug }
 				data={ stepData }
+				{ ...step.additionalComponentProps }
 			/>
 		);
 	};

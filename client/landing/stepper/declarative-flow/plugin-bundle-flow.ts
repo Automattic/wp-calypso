@@ -42,7 +42,7 @@ const pluginBundleFlow: Flow = {
 		const steps = [
 			{
 				slug: 'getCurrentThemeSoftwareSets',
-				component: GetCurrentThemeSoftwareSets,
+				component: () => import( './internals/steps-repository/get-current-theme-software-sets' ),
 			},
 		];
 

@@ -84,15 +84,13 @@ const copySite: Flow = {
 			{ slug: 'automated-copy', component: AutomatedCopySite },
 			{
 				slug: 'processing-copy',
-				component: ( props ) => (
-					<ProcessingStep
-						{ ...props }
-						title={ translate( 'We’re copying your site' ) }
-						subtitle={ translate(
-							'Feel free to close this window. We’ll email you when your new site is ready.'
-						) }
-					/>
-				),
+				component: () => import( './internals/steps-repository/processing-step' ),
+				additionalComponentProps: {
+					title: translate( 'We’re copying your site' ),
+					subtitle: translate(
+						'Feel free to close this window. We’ll email you when your new site is ready.'
+					),
+				},
 			},
 			{ slug: 'resuming', component: ProcessingStep }, // Needs siteSlug param
 		];
