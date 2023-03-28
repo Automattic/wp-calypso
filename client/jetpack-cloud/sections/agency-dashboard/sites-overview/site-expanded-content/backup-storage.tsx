@@ -16,11 +16,20 @@ import type { Site, Backup } from '../types';
 
 interface Props {
 	site: Site;
+	trackEvent: ( eventName: string ) => void;
 }
 
 const BACKUP_ERROR_STATUSES = [ 'rewind_backup_error', 'backup_only_error' ];
 
-const BackupStorageContent = ( { siteId, siteUrl }: { siteId: number; siteUrl: string } ) => {
+const BackupStorageContent = ( {
+	siteId,
+	siteUrl,
+	trackEvent,
+}: {
+	siteId: number;
+	siteUrl: string;
+	trackEvent: ( eventName: string ) => void;
+} ) => {
 	const translate = useTranslate();
 
 	const moment = useLocalizedMoment();
@@ -72,6 +81,7 @@ const BackupStorageContent = ( { siteId, siteUrl }: { siteId: number; siteUrl: s
 			</div>
 			<div className="site-expanded-content__card-footer">
 				<Button
+					onClick={ () => trackEvent( 'expandable_block_activity_log_click' ) }
 					href={ `/activity-log/${ siteUrl }` }
 					className="site-expanded-content__card-button"
 					compact
@@ -83,7 +93,7 @@ const BackupStorageContent = ( { siteId, siteUrl }: { siteId: number; siteUrl: s
 	);
 };
 
-export default function BackupStorage( { site }: Props ) {
+export default function BackupStorage( { site, trackEvent }: Props ) {
 	const {
 		blog_id: siteId,
 		url: siteUrl,
@@ -154,7 +164,13 @@ export default function BackupStorage( { site }: Props ) {
 			onClick={ ! isBackupEnabled ? handleOnClick : undefined }
 			href={ link }
 		>
-			{ isBackupEnabled && <BackupStorageContent siteId={ siteId } siteUrl={ siteUrl } /> }
+			{ isBackupEnabled && (
+				<BackupStorageContent
+					siteId={ site.blog_id }
+					siteUrl={ site.url }
+					trackEvent={ trackEvent }
+				/>
+			) }
 		</ExpandedCard>
 	);
 }

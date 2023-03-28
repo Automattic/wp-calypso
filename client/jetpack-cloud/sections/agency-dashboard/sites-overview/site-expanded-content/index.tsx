@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import { useJetpackAgencyDashboardRecordTrackEvent } from '../../hooks';
 import BackupStorage from './backup-storage';
 import BoostSitePerformance from './boost-site-performance';
 import InsightsStats from './insights-stats';
@@ -19,9 +20,15 @@ export default function SiteExpandedContent( {
 	columns = defaultColumns,
 	isSmallScreen = false,
 }: Props ) {
+	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( [ site ], ! isSmallScreen );
+
 	const stats = site.site_stats;
 	const boostData = site.jetpack_boost_scores;
 	const siteUrlWithScheme = site.url_with_scheme;
+
+	const trackEvent = ( eventName: string ) => {
+		recordEvent( eventName );
+	};
 
 	return (
 		<div
@@ -40,7 +47,9 @@ export default function SiteExpandedContent( {
 					hasBoost={ site.has_boost }
 				/>
 			) }
-			{ columns.includes( 'backup' ) && stats && <BackupStorage site={ site } /> }
+			{ columns.includes( 'backup' ) && stats && (
+				<BackupStorage site={ site } trackEvent={ trackEvent } />
+			) }
 		</div>
 	);
 }
