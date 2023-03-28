@@ -1,52 +1,63 @@
-import { Dialog } from '@automattic/components';
 import { Button } from '@wordpress/components';
-import { useI18n } from '@wordpress/react-i18n';
-import { useState } from 'react';
-import SiteLogsDownloadPanel from '../site-logs-download-panel';
+import { useTranslate } from 'i18n-calypso';
+import { Moment } from 'moment';
+import { SiteLogsTab } from 'calypso/data/hosting/use-site-logs-query';
+import { useSiteLogsDownloader } from '../../hooks/use-site-logs-downloader';
 
 import './style.scss';
 
-type Props = {
-	onRefresh: () => void;
+const SiteLogsDownloadDetail = ( { recordsDownloaded = 0, totalRecordsAvailable = 0 } ) => {
+	const translate = useTranslate();
+
+	if ( totalRecordsAvailable === 0 ) {
+		return null;
+	}
+
+	return (
+		<span>
+			{ translate(
+				'Download progress: %(logRecordsDownloaded)d of %(totalLogRecordsAvailable)d records',
+				{
+					args: {
+						logRecordsDownloaded: recordsDownloaded,
+						totalLogRecordsAvailable: totalRecordsAvailable,
+					},
+				}
+			) }
+		</span>
+	);
 };
 
-export const SiteLogsToolbar = ( props: Props ) => {
-	const { onRefresh } = props;
-	const { __ } = useI18n();
+type Props = {
+	onRefresh: () => void;
+	logType: SiteLogsTab;
+	startDateTime: Moment;
+	endDateTime: Moment;
+};
 
-	const [ showDownload, setShowDownload ] = useState( false );
+export const SiteLogsToolbar = ( { onRefresh, ...downloadProps }: Props ) => {
+	const translate = useTranslate();
+	const { downloadLogs, state } = useSiteLogsDownloader();
 
-	const handleShowDownload = () => {
-		setShowDownload( true );
-	};
-
-	const handleHideDownload = () => {
-		setShowDownload( false );
-	};
-
-	const maybeRenderDialog = () => {
-		if ( ! showDownload ) {
-			return null;
-		}
-		return (
-			<Dialog isVisible onClose={ handleHideDownload }>
-				<SiteLogsDownloadPanel />
-			</Dialog>
-		);
-	};
+	const isDownloading = state.status === 'downloading';
 
 	return (
 		<>
 			<div className="site-logs-toolbar">
 				<Button isSecondary onClick={ onRefresh }>
-					{ __( 'Refresh' ) }
+					{ translate( 'Refresh' ) }
 				</Button>
 
-				<Button isSecondary onClick={ handleShowDownload }>
-					{ __( 'Download' ) }
+				<Button
+					disabled={ isDownloading }
+					isBusy={ isDownloading }
+					isPrimary
+					onClick={ () => downloadLogs( downloadProps ) }
+				>
+					{ translate( 'Download' ) }
 				</Button>
+				{ isDownloading && <SiteLogsDownloadDetail { ...state } /> }
 			</div>
-			{ maybeRenderDialog() }
 		</>
 	);
 };

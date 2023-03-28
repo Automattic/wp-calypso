@@ -19,8 +19,8 @@ export function SiteLogs() {
 	const moment = useLocalizedMoment();
 
 	const getDateRange = () => {
-		const startTime = moment().subtract( 7, 'd' ).unix();
-		const endTime = moment().unix();
+		const startTime = moment().subtract( 7, 'd' );
+		const endTime = moment();
 		return { startTime, endTime };
 	};
 
@@ -35,8 +35,8 @@ export function SiteLogs() {
 
 	const { data } = useSiteLogsQuery( siteId, {
 		logType,
-		start: dateRange.startTime,
-		end: dateRange.endTime,
+		start: dateRange.startTime.unix(),
+		end: dateRange.endTime.unix(),
 		sort_order: 'desc',
 		page_size: 10,
 	} );
@@ -65,7 +65,12 @@ export function SiteLogs() {
 			<SiteLogsTabPanel selectedTab={ logType } onSelected={ handleTabSelected }>
 				{ () => (
 					<>
-						<SiteLogsToolbar onRefresh={ handleRefresh } />
+						<SiteLogsToolbar
+							onRefresh={ handleRefresh }
+							logType={ logType }
+							startDateTime={ dateRange.startTime }
+							endDateTime={ dateRange.endTime }
+						/>
 						<SiteLogsTable logs={ data?.logs } />
 					</>
 				) }
