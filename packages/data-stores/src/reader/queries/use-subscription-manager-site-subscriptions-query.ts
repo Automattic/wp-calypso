@@ -41,7 +41,7 @@ const useSubscriptionManagerSiteSubscriptionsQuery = () => {
 	return useQuery< SiteSubscription[] >(
 		[ 'read', 'site-subscriptions', isLoggedIn ],
 		async () => {
-			return await callFollowingEndPoint( 1, 100, isLoggedIn );
+			return await callFollowingEndPoint( 1, 200, isLoggedIn );
 		},
 		{
 			enabled,
