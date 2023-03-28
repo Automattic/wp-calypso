@@ -1830,7 +1830,6 @@ const getPlanJetpackGoldenTokenDetails = (): IncompleteJetpackPlan => ( {
 		translate( 'The Golden Token provides a lifetime license for Backup and Scan.' ),
 	getTagline: () => translate( 'A lifetime of Jetpack powers for your website' ),
 	getPlanCardFeatures: () => [
-		FEATURE_PLAN_SECURITY_DAILY,
 		FEATURE_PRODUCT_BACKUP_REALTIME_V2,
 		FEATURE_PRODUCT_SCAN_REALTIME_V2,
 		FEATURE_ACTIVITY_LOG_1_YEAR_V2,
@@ -1840,8 +1839,6 @@ const getPlanJetpackGoldenTokenDetails = (): IncompleteJetpackPlan => ( {
 		FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
 		FEATURE_JETPACK_SCAN_DAILY,
 		FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
-		FEATURE_JETPACK_ANTI_SPAM,
-		FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
 		FEATURE_BACKUP_ARCHIVE_UNLIMITED,
 		FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 		FEATURE_REPUBLICIZE,
@@ -1852,7 +1849,6 @@ const getPlanJetpackGoldenTokenDetails = (): IncompleteJetpackPlan => ( {
 		FEATURE_GOOGLE_ANALYTICS,
 		FEATURE_PREMIUM_SUPPORT,
 		WPCOM_FEATURES_SCAN,
-		WPCOM_FEATURES_ANTISPAM,
 		WPCOM_FEATURES_BACKUPS,
 	],
 	getInferiorFeatures: () => [
