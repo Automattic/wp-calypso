@@ -77,10 +77,13 @@ export default function SubscribersSection() {
 	return (
 		<div className="subscribers-section">
 			<h1 className="highlight-cards-heading">Subscribers</h1>
-			<StatsModulePlaceholder className="is-chart" isLoading={ isLoading } />
-			<LineChart data={ data } renderTooltipForDatanum={ tooltipHelper }>
-				<StatsEmptyState />
-			</LineChart>
+			{ isLoading ? (
+				<StatsModulePlaceholder className="is-chart" isLoading />
+			) : (
+				<LineChart data={ data } renderTooltipForDatanum={ tooltipHelper }>
+					<StatsEmptyState />
+				</LineChart>
+			) }
 		</div>
 	);
 }
