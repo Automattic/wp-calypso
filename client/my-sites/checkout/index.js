@@ -108,6 +108,16 @@ export default function () {
 		);
 
 		page(
+			`/checkout/akismet/:productSlug/renew/:purchaseId`,
+			setLocaleMiddleware(),
+			redirectLoggedOut,
+			noSite,
+			checkoutAkismetSiteless,
+			makeLayout,
+			clientRender
+		);
+
+		page(
 			'/checkout/akismet/thank-you/:productSlug',
 			setLocaleMiddleware(),
 			noSite,
