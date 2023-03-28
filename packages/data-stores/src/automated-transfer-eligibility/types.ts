@@ -5,7 +5,7 @@ export interface Dispatch {
 	dispatch: DispatchFromMap< typeof actions >;
 }
 
-export type TransferEligibilityHold = typeof statusMapping[ keyof typeof statusMapping ];
+export type TransferEligibilityHold = ( typeof statusMapping )[ keyof typeof statusMapping ];
 
 // This type exists for when we haven't checked that code is part of statusMapping.
 export interface InternalTransferEligibilityError {
