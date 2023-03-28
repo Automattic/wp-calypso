@@ -1826,7 +1826,8 @@ const getPlanJetpackGoldenTokenDetails = (): IncompleteJetpackPlan => ( {
 			context: 'The name of a Jetpack plan awarded to amazing WordPress sites',
 		} ),
 	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
-	getDescription: () => translate( 'Get next-level protection with real-time backups and scan.' ),
+	getDescription: () =>
+		translate( 'The Golden Token provides a lifetime license for Backup and Scan.' ),
 	getTagline: () => translate( 'A lifetime of Jetpack powers for your website' ),
 	getPlanCardFeatures: () => [
 		FEATURE_PLAN_SECURITY_DAILY,
