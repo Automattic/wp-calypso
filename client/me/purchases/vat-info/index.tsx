@@ -10,6 +10,7 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
+import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import useCountryList, {
 	isVatSupported,
@@ -25,10 +26,11 @@ import './style.scss';
 
 export default function VatInfoPage() {
 	const translate = useTranslate();
+	const { data: geoData } = useGeoLocationQuery();
 	const { isLoading, fetchError, vatDetails } = useVatDetails();
 	const [ currentVatDetails, setCurrentVatDetails ] = useState< VatDetails >( {} );
 	const vendorInfo = getVatVendorInfo(
-		currentVatDetails.country ?? vatDetails.country ?? 'GB',
+		currentVatDetails.country ?? vatDetails.country ?? geoData?.country_short ?? 'GB',
 		'now',
 		translate
 	);
@@ -100,10 +102,11 @@ function VatForm( {
 } ) {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
+	const { data: geoData } = useGeoLocationQuery();
 	const { vatDetails, isUpdating, isUpdateSuccessful, setVatDetails, updateError } =
 		useVatDetails();
 	const vendorInfo = getVatVendorInfo(
-		currentVatDetails.country ?? vatDetails.country ?? 'GB',
+		currentVatDetails.country ?? vatDetails.country ?? geoData?.country_short ?? 'GB',
 		'now',
 		translate
 	);
@@ -272,8 +275,13 @@ function useDisplayVatNotices( {
 } ) {
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
+	const { data: geoData } = useGeoLocationQuery();
 	const { vatDetails } = useVatDetails();
-	const vendorInfo = getVatVendorInfo( vatDetails.country ?? 'GB', 'now', translate );
+	const vendorInfo = getVatVendorInfo(
+		vatDetails.country ?? geoData?.country_short ?? 'GB',
+		'now',
+		translate
+	);
 
 	useEffect( () => {
 		if ( error ) {
