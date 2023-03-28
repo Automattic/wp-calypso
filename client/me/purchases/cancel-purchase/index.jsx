@@ -5,6 +5,7 @@ import {
 	hasMarketplaceProduct,
 	isJetpackPlan,
 	isJetpackProduct,
+	getPlan,
 } from '@automattic/calypso-products';
 import { Card, CompactCard } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
@@ -197,6 +198,8 @@ class CancelPurchase extends Component {
 
 		const { purchase, isJetpackPurchase } = this.props;
 		const purchaseName = getName( purchase );
+		const plan = getPlan( purchase.productSlug );
+		const planDescription = plan.getPlanCancellationDescription?.();
 		const { siteName, siteId } = purchase;
 
 		let heading;
@@ -247,6 +250,9 @@ class CancelPurchase extends Component {
 				<CompactCard className="cancel-purchase__product-information">
 					<div className="cancel-purchase__purchase-name">{ purchaseName }</div>
 					<div className="cancel-purchase__description">{ purchaseType( purchase ) }</div>
+					{ planDescription && (
+						<div className="cancel-purchase__plan-description">{ planDescription }</div>
+					) }
 					<ProductLink purchase={ purchase } selectedSite={ this.props.site } />
 				</CompactCard>
 				<CompactCard className="cancel-purchase__footer">
