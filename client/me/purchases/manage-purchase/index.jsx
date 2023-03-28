@@ -293,6 +293,10 @@ class ManagePurchase extends Component {
 
 		const upgradeUrl = this.getUpgradeUrl();
 
+		if ( ! upgradeUrl ) {
+			return null;
+		}
+
 		// If the "renew now" button is showing, it will be using primary styles
 		// Show the upgrade button without the primary style if both buttons are present
 		return (
@@ -378,7 +382,10 @@ class ManagePurchase extends Component {
 		const isUpgradeableSecurityPlan = JETPACK_SECURITY_T1_PLANS.includes( purchase.productSlug );
 
 		if ( isAkismetProduct( purchase ) ) {
-			return this.getAkismetUpgradeUrl();
+			// For the first Iteration of Calypso Akismet checkout we are only suggesting
+			// for immediate upgrades to the next plan. We will change this in the future
+			// with appropriate page.
+			return AKISMET_UPGADES_PRODUCTS_MAP[ purchase.productSlug ];
 		}
 
 		if ( isUpgradeableBackupProduct || isUpgradeableSecurityPlan ) {
@@ -386,20 +393,6 @@ class ManagePurchase extends Component {
 		}
 
 		return `/plans/${ siteSlug }`;
-	}
-
-	// For the first Iteration of Calypso Akismet checkout we are only suggesting
-	// for immediate upgrades to the next plan. We will change this in the future
-	// with appropriate page.
-	getAkismetUpgradeUrl() {
-		const { purchase } = this.props;
-
-		const nextProductSlug = AKISMET_UPGADES_PRODUCTS_MAP[ purchase.productSlug ];
-		if ( nextProductSlug ) {
-			return `/checkout/akismet/${ nextProductSlug }`;
-		}
-
-		return 'https://akismet.com/enterprise';
 	}
 
 	renderUpgradeNavItem() {
