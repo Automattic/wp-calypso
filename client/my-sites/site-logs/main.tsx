@@ -28,7 +28,7 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 	const moment = useLocalizedMoment();
 
 	const getDateRange = () => {
-		const startTime = moment().subtract( 7, 'd' );
+		const startTime = moment().subtract( 7, 'd' ).startOf( 'day' );
 		const endTime = moment();
 		return { startTime, endTime };
 	};
@@ -102,8 +102,8 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 			: null;
 
 	const handleDateRangeCommit = ( startDate: Date, endDate: Date ) => {
-		const formattedStartDate = startDate ? moment( startDate ).startOf( 'day' ) : null;
-		const formattedEndDate = endDate ? moment( endDate ).endOf( 'day' ) : null;
+		const formattedStartDate = startDate ? moment( startDate ) : null;
+		const formattedEndDate = endDate ? moment( endDate ) : null;
 
 		if ( ! formattedStartDate && ! formattedEndDate ) {
 			return;
@@ -134,6 +134,7 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 							logType={ logType }
 							startDateTime={ dateRange.startTime }
 							endDateTime={ dateRange.endTime }
+							onDateTimeCommit={ handleDateRangeCommit }
 						/>
 						<SiteLogsTable logs={ data?.logs } isLoading={ isLoading } />
 						{ paginationText && (

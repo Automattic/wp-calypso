@@ -1,5 +1,7 @@
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import DateRange from 'calypso/components/date-range';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { SiteLogsTab } from 'calypso/data/hosting/use-site-logs-query';
 import { useSiteLogsDownloader } from '../../hooks/use-site-logs-downloader';
 import type { Moment } from 'moment';
@@ -33,19 +35,43 @@ const SiteLogsToolbarDownloadProgress = ( {
 
 type Props = {
 	onRefresh: () => void;
+	onDateTimeCommit?: ( startDate: Date, endDate: Date ) => void;
 	logType: SiteLogsTab;
 	startDateTime: Moment;
 	endDateTime: Moment;
 };
 
-export const SiteLogsToolbar = ( { onRefresh, ...downloadProps }: Props ) => {
+export const SiteLogsToolbar = ( {
+	onRefresh,
+	onDateTimeCommit,
+	logType,
+	startDateTime,
+	endDateTime,
+}: Props ) => {
+	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 	const { downloadLogs, state } = useSiteLogsDownloader();
 
 	const isDownloading = state.status === 'downloading';
 
+	const handleDateRangeCommit = ( startDate: Date, endDate: Date ) => {
+		if ( ! startDate || ! endDate ) {
+			return;
+		}
+		onDateTimeCommit?.( startDate, endDate );
+	};
+
 	return (
 		<div className="site-logs-toolbar">
+			<DateRange
+				showTriggerClear={ false }
+				selectedStartDate={ startDateTime.toDate() }
+				selectedEndDate={ endDateTime.toDate() }
+				lastSelectableDate={ moment().toDate() }
+				dateFormat="ll @ HH:mm:ss"
+				onDateCommit={ handleDateRangeCommit }
+			/>
+
 			<Button isSecondary onClick={ onRefresh }>
 				{ translate( 'Refresh' ) }
 			</Button>
@@ -54,7 +80,7 @@ export const SiteLogsToolbar = ( { onRefresh, ...downloadProps }: Props ) => {
 				disabled={ isDownloading }
 				isBusy={ isDownloading }
 				isPrimary
-				onClick={ () => downloadLogs( downloadProps ) }
+				onClick={ () => downloadLogs( { logType, startDateTime, endDateTime } ) }
 			>
 				{ translate( 'Download' ) }
 			</Button>

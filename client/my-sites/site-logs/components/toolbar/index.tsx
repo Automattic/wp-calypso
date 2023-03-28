@@ -3,27 +3,29 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import './style.scss';
 
 type toolbarProps = {
-	startDateRange: number;
-	endDateRange: number;
-	onDateRangeCommit?: ( startDate: Date, endDate: Date ) => void;
+	startDateTime: number;
+	endDateTime: number;
+	onDateTimeCommit?: ( startDate: Date, endDate: Date ) => void;
 };
 
-const Toolbar = ( { startDateRange, endDateRange, onDateRangeCommit }: toolbarProps ) => {
+const Toolbar = ( { startDateTime, endDateTime, onDateTimeCommit }: toolbarProps ) => {
 	const moment = useLocalizedMoment();
 
 	const handleDateRangeCommit = ( startDate: Date, endDate: Date ) => {
 		if ( ! startDate || ! endDate ) {
 			return;
 		}
-		onDateRangeCommit?.( startDate, endDate );
+		onDateTimeCommit?.( startDate, endDate );
 	};
 
 	return (
 		<div className="site-logs__toolbar">
 			<DateRange
 				showTriggerClear={ false }
-				selectedStartDate={ moment.unix( startDateRange ).toDate() }
-				selectedEndDate={ moment.unix( endDateRange ).toDate() }
+				selectedStartDate={ moment.unix( startDateTime ).toDate() }
+				selectedEndDate={ moment.unix( endDateTime ).toDate() }
+				lastSelectableDate={ moment().toDate() }
+				dateFormat="ll @ HH:mm:ss"
 				onDateCommit={ handleDateRangeCommit }
 			/>
 		</div>

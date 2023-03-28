@@ -39,6 +39,7 @@ export class DateRange extends Component {
 			PropTypes.instanceOf( Date ),
 			PropTypes.instanceOf( moment ),
 		] ),
+		dateFormat: PropTypes.string,
 		triggerText: PropTypes.func,
 		isCompact: PropTypes.bool,
 		showTriggerClear: PropTypes.bool,
@@ -176,7 +177,7 @@ export class DateRange extends Component {
 	isValidDate( date ) {
 		const { firstSelectableDate, lastSelectableDate } = this.props;
 
-		const epoch = this.props.moment( '01/01/1970', this.getLocaleDateFormat() );
+		const epoch = this.props.moment( '01/01/1970' );
 
 		// By default check
 		// 1. Looks like a valid date
@@ -220,13 +221,13 @@ export class DateRange extends Component {
 		const stateKey = `${ startOrEnd.toLowerCase() }Date`;
 
 		const isSameDate =
-			this.state[ stateKey ] !== null ? this.state[ stateKey ].isSame( date, 'day' ) : false;
+			this.state[ stateKey ] !== null ? this.state[ stateKey ].isSame( date ) : false;
 
 		if ( isSameDate ) {
 			return;
 		}
 
-		this.onSelectDate( date );
+		this.onSelectDate( date, startOrEnd );
 	};
 
 	/**
@@ -288,7 +289,7 @@ export class DateRange extends Component {
 	 *
 	 * @param  {import('moment').Moment} date the newly selected date object
 	 */
-	onSelectDate = ( date ) => {
+	onSelectDate = ( date, startOrEnd ) => {
 		if ( ! this.isValidDate( date ) ) {
 			return;
 		}
@@ -298,8 +299,13 @@ export class DateRange extends Component {
 
 		const rawDay = this.momentDateToJsDate( date );
 
-		// Calculate the new Date range
-		const newRange = DateUtils.addDayToRange( rawDay, range );
+		// Calculate the new Date range if date portion changed
+		const isSameDate =
+			date.isSame( this.state.startDate, 'day' ) || date.isSame( this.state.endDate, 'day' );
+		if ( isSameDate ) {
+			startOrEnd === 'Start' ? ( range.from = rawDay ) : ( range.to = rawDay );
+		}
+		const newRange = ! isSameDate ? DateUtils.addDayToRange( rawDay, range ) : range;
 
 		// Update state to reflect new date range for
 		// calendar and text inputs
@@ -462,7 +468,8 @@ export class DateRange extends Component {
 	 * @returns {string}      the date as a formatted locale string
 	 */
 	formatDateToLocale( date ) {
-		return this.props.moment( date ).format( 'L' );
+		const dateFormat = this.props.dateFormat || 'L';
+		return this.props.moment( date ).format( dateFormat );
 	}
 
 	/**
@@ -471,7 +478,7 @@ export class DateRange extends Component {
 	 * @returns {string} date format as a string
 	 */
 	getLocaleDateFormat() {
-		return this.props.moment.localeData().longDateFormat( 'L' );
+		return this.props.dateFormat || this.props.moment.localeData().longDateFormat( 'L' );
 	}
 
 	/**
