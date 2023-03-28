@@ -4,8 +4,8 @@ import './styles.scss';
 
 type ButtonProps = React.ComponentProps< typeof BaseButton >;
 
-const Button = ( props: ButtonProps ) => {
-	return <BaseButton className="subscription-management--button" { ...props } />;
-};
+const Button = ( props: ButtonProps ) => (
+	<BaseButton className="subscription-management--button" { ...props } />
+);
 
 export default Button;

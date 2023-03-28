@@ -3,15 +3,14 @@ import { Reader } from '@automattic/data-stores';
 import { useState, useCallback, useEffect } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
 import { FormEvent } from 'react';
-import { Button } from '../Button';
-import { Notice } from '../Notice';
-import { BlockEmailsSetting } from '../fields/BlockEmailsSetting';
-import { DeliveryWindowInput } from '../fields/DeliveryWindowInput';
-import { EmailFormatInput, EmailFormatType } from '../fields/EmailFormatInput';
-import type {
-	DeliveryWindowDayType,
-	DeliveryWindowHourType,
-} from '@automattic/data-stores/src/reader/types';
+import { Button } from '../button';
+import { EmailFormatInput, EmailFormatType } from '../fields';
+import { BlockEmailsSetting } from '../fields/block-emails-setting';
+import { DeliveryWindowInput } from '../fields/delivery-window-input';
+import { Notice } from '../notice';
+
+type DeliveryWindowDayType = Reader.DeliveryWindowDayType;
+type DeliveryWindowHourType = Reader.DeliveryWindowHourType;
 
 type SubscriptionUserSettings = Partial< {
 	mail_option: EmailFormatType;
