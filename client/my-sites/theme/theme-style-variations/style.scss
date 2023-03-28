@@ -13,13 +13,9 @@
 			@include long-content-fade( $direction: right, $size: 24px );
 			height: 100%;
 		}
-
-		.theme__sheet-style-variations-previews .global-styles-variations {
-			padding: 12px 24px 16px 2px;
-		}
 	}
 
-	&-previews .global-styles-variations {
+	.global-styles-variations {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 8px;
@@ -33,6 +29,7 @@
 
 		@include breakpoint-deprecated( "<960px" ) {
 			flex-wrap: nowrap;
+			padding: 12px 24px 16px 2px;
 		}
 	}
 
