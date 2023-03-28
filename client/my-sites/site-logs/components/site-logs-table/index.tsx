@@ -27,7 +27,7 @@ export const SiteLogsTable = memo( function SiteLogsTable( {
 		return ( getSiteSetting( state, siteId ?? 0, 'gmt_offset' ) as number | null ) ?? 0;
 	} );
 
-	if ( isLoading ) {
+	if ( isLoading && ! logs?.length ) {
 		return <Skeleton />;
 	}
 
