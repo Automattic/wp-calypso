@@ -12,6 +12,7 @@ import { vatDetails as vatDetailsPath, billingHistoryReceipt } from 'calypso/me/
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import titles from 'calypso/me/purchases/titles';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
+import { getVatVendorInfo } from './vat-vendor-details';
 
 import './style.scss';
 
@@ -32,8 +33,18 @@ export function BillingHistoryContent( {
 function BillingHistory() {
 	const translate = useTranslate();
 	const { vatDetails } = useVatDetails();
-	const editVatText = translate( 'Edit Business Tax ID details' );
-	const addVatText = translate( 'Add Business Tax ID details' );
+	const vendorInfo = getVatVendorInfo( vatDetails.country ?? 'GB', 'now', translate );
+
+	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+	const editVatText = translate( 'Edit %s details', {
+		textOnly: true,
+		args: [ vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } ) ],
+	} );
+	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+	const addVatText = translate( 'Add %s details', {
+		textOnly: true,
+		args: [ vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } ) ],
+	} );
 	const vatText = vatDetails.id ? editVatText : addVatText;
 
 	return (
