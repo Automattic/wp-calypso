@@ -1,22 +1,22 @@
-import {
-	// STATS_SUBSCRIBERS_RECEIVE,
-	// STATS_SUBSCRIBERS_REQUEST,
-	STATS_SUBSCRIBERS_REQUEST_SUCCESS,
-	// STATS_SUBSCRIBERS_REQUEST_FAILURE,
-} from 'calypso/state/action-types';
-// import { combineReducers } from 'calypso/state/utils';
+import { withStorageKey } from '@automattic/state-utils';
+import { combineReducers } from 'calypso/state/utils';
+import chartTabs from './chart-tabs/reducer';
+import emails from './emails/reducer';
+import highlights from './highlights/reducer';
+import lists from './lists/reducer';
+import posts from './posts/reducer';
+import recentPostViews from './recent-post-views/reducer';
+import subscribers from './subscribers/reducer';
 
-const initialState = {
-	subscribers: [],
-};
+const combinedReducer = combineReducers( {
+	chartTabs,
+	highlights,
+	lists,
+	posts,
+	emails,
+	recentPostViews,
+	subscribers,
+} );
+const statsReducer = withStorageKey( 'stats', combinedReducer );
 
-const SubscribersData = ( state = initialState.subscribers, action ) => {
-	switch ( action.type ) {
-		case STATS_SUBSCRIBERS_REQUEST_SUCCESS:
-			return [ ...state, ...action.subscribers ];
-	}
-
-	return state;
-};
-
-export default SubscribersData;
+export default statsReducer;
