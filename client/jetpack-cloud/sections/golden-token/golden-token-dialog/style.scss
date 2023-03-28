@@ -70,6 +70,7 @@ $tablet-width: 760px;
 	&.animating {
 		height: 600px;
 		transition-delay: 2.15s;
+		padding-top: 24px;
 	}
 }
 
@@ -282,9 +283,6 @@ $tablet-width: 760px;
 	}
 }
 
-/*
-    Powers wrap
-  */
 .golden-token-dialog__powers-wrap {
 	background: $white;
 	left: 0;
@@ -330,7 +328,7 @@ $tablet-width: 760px;
 			left: 45%;
 			opacity: 1;
 			right: 32px;
-			top: unset;
+			top: 32px;
 			transform: translateY(0%);
 			transition: 0.45s all cubic-bezier(0.59, 0.37, 0.18, 1) 2s, 0.45s opacity linear;
 			transition-delay: 2s;
@@ -394,13 +392,4 @@ $tablet-width: 760px;
 		}
 	}
 }
-
-// TODO: where does this unknown rule come from?
-// @container (max-width: 600px) {
-// 	.golden-token-dialog__jetpack-products {
-// 		div {
-// 			padding: $modal-padding-small;
-// 		}
-// 	}
-// }
 
