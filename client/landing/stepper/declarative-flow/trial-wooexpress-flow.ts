@@ -4,14 +4,7 @@ import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress'
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import AssignTrialPlanStep, {
-	AssignTrialResult,
-} from './internals/steps-repository/assign-trial-plan';
-import ErrorStep from './internals/steps-repository/error-step';
-import ProcessingStep, { ProcessingResult } from './internals/steps-repository/processing-step';
-import SiteCreationStep from './internals/steps-repository/site-creation-step';
-import WaitForAtomic from './internals/steps-repository/wait-for-atomic';
-import WaitForPluginInstall from './internals/steps-repository/wait-for-plugin-install';
+import { AssignTrialResult } from './internals/steps-repository/assign-trial-plan/constants';
 import { AssertConditionState } from './internals/types';
 import type { AssertConditionResult, Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
@@ -21,12 +14,27 @@ const wooexpress: Flow = {
 
 	useSteps() {
 		return [
-			{ slug: 'siteCreationStep', component: SiteCreationStep },
-			{ slug: 'processing', component: ProcessingStep },
-			{ slug: 'assignTrialPlan', component: AssignTrialPlanStep },
-			{ slug: 'waitForAtomic', component: WaitForAtomic },
-			{ slug: 'waitForPluginInstall', component: WaitForPluginInstall },
-			{ slug: 'error', component: ErrorStep },
+			{
+				slug: 'siteCreationStep',
+				component: () => import( './internals/steps-repository/site-creation-step' ),
+			},
+			{
+				slug: 'processing',
+				component: () => import( './internals/steps-repository/processing-step' ),
+			},
+			{
+				slug: 'assignTrialPlan',
+				component: () => import( './internals/steps-repository/assign-trial-plan' ),
+			},
+			{
+				slug: 'waitForAtomic',
+				component: () => import( './internals/steps-repository/wait-for-atomic' ),
+			},
+			{
+				slug: 'waitForPluginInstall',
+				component: () => import( './internals/steps-repository/wait-for-plugin-install' ),
+			},
+			{ slug: 'error', component: () => import( './internals/steps-repository/error-step' ) },
 		];
 	},
 	useAssertConditions(): AssertConditionResult {
@@ -72,11 +80,6 @@ const wooexpress: Flow = {
 			}
 
 			return `/start/account/user?variationName=${ flowName }&redirect_to=${ redirectTarget }`;
-
-			// Initial URL approach
-			const baseUrl = '/start/account/user' + ( locale && locale !== 'en' ? `/${ locale }` : '' );
-
-			return baseUrl + `?variationName=${ flowName }&redirect_to=${ redirectTarget }`;
 		};
 
 		if ( ! userIsLoggedIn ) {

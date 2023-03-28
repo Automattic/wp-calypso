@@ -19,13 +19,6 @@ import { useSite } from '../hooks/use-site';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import CheckPlan from './internals/steps-repository/check-plan';
-import DesignCarousel from './internals/steps-repository/design-carousel';
-import DomainsStep from './internals/steps-repository/domains';
-import ProcessingStep from './internals/steps-repository/processing-step';
-import SiteCreationStep from './internals/steps-repository/site-creation-step';
-import StoreProfiler from './internals/steps-repository/store-profiler';
-import WaitForAtomic from './internals/steps-repository/wait-for-atomic';
 import { AssertConditionState } from './internals/types';
 import type { Flow, ProvidedDependencies, AssertConditionResult } from './internals/types';
 import type { OnboardSelect, SiteDetailsPlan, UserSelect } from '@automattic/data-stores';
@@ -59,13 +52,28 @@ const ecommerceFlow: Flow = {
 		}, [] );
 
 		return [
-			{ slug: 'storeProfiler', component: StoreProfiler },
-			{ slug: 'domains', component: DomainsStep },
-			{ slug: 'designCarousel', component: DesignCarousel },
-			{ slug: 'siteCreationStep', component: SiteCreationStep },
-			{ slug: 'processing', component: ProcessingStep },
-			{ slug: 'waitForAtomic', component: WaitForAtomic },
-			{ slug: 'checkPlan', component: CheckPlan },
+			{
+				slug: 'storeProfiler',
+				component: () => import( './internals/steps-repository/store-profiler' ),
+			},
+			{ slug: 'domains', component: () => import( './internals/steps-repository/domains' ) },
+			{
+				slug: 'designCarousel',
+				component: () => import( './internals/steps-repository/design-carousel' ),
+			},
+			{
+				slug: 'siteCreationStep',
+				component: () => import( './internals/steps-repository/site-creation-step' ),
+			},
+			{
+				slug: 'processing',
+				component: () => import( './internals/steps-repository/processing-step' ),
+			},
+			{
+				slug: 'waitForAtomic',
+				component: () => import( './internals/steps-repository/wait-for-atomic' ),
+			},
+			{ slug: 'checkPlan', component: () => import( './internals/steps-repository/check-plan' ) },
 		];
 	},
 

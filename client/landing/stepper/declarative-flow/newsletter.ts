@@ -12,14 +12,6 @@ import {
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import DomainsStep from './internals/steps-repository/domains';
-import Intro from './internals/steps-repository/intro';
-import Launchpad from './internals/steps-repository/launchpad';
-import NewsletterSetup from './internals/steps-repository/newsletter-setup';
-import PlansStep from './internals/steps-repository/plans';
-import Processing from './internals/steps-repository/processing-step';
-import SiteCreationStep from './internals/steps-repository/site-creation-step';
-import Subscribers from './internals/steps-repository/subscribers';
 import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
 import type { UserSelect } from '@automattic/data-stores';
@@ -31,14 +23,26 @@ const newsletter: Flow = {
 	},
 	useSteps() {
 		return [
-			{ slug: 'intro', component: Intro },
-			{ slug: 'newsletterSetup', component: NewsletterSetup },
-			{ slug: 'domains', component: DomainsStep },
-			{ slug: 'plans', component: PlansStep },
-			{ slug: 'processing', component: Processing },
-			{ slug: 'subscribers', component: Subscribers },
-			{ slug: 'siteCreationStep', component: SiteCreationStep },
-			{ slug: 'launchpad', component: Launchpad },
+			{ slug: 'intro', component: () => import( './internals/steps-repository/intro' ) },
+			{
+				slug: 'newsletterSetup',
+				component: () => import( './internals/steps-repository/newsletter-setup' ),
+			},
+			{ slug: 'domains', component: () => import( './internals/steps-repository/domains' ) },
+			{ slug: 'plans', component: () => import( './internals/steps-repository/plans' ) },
+			{
+				slug: 'processing',
+				component: () => import( './internals/steps-repository/processing-step' ),
+			},
+			{
+				slug: 'subscribers',
+				component: () => import( './internals/steps-repository/subscribers' ),
+			},
+			{
+				slug: 'siteCreationStep',
+				component: () => import( './internals/steps-repository/site-creation-step' ),
+			},
+			{ slug: 'launchpad', component: () => import( './internals/steps-repository/launchpad' ) },
 		];
 	},
 

@@ -2,12 +2,7 @@ import { useSelect } from '@wordpress/data';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import DesignSetup from './internals/steps-repository/design-setup';
-import ErrorStep from './internals/steps-repository/error-step';
 import { redirect } from './internals/steps-repository/import/util';
-import LoginStep from './internals/steps-repository/login';
-import PodcastTitleStep from './internals/steps-repository/podcast-title';
-import ProcessingStep from './internals/steps-repository/processing-step';
 import type { Flow, ProvidedDependencies } from './internals/types';
 import type { SiteSelect } from '@automattic/data-stores';
 
@@ -23,11 +18,20 @@ const anchorFmFlow: Flow = {
 
 	useSteps() {
 		return [
-			{ slug: 'login', component: LoginStep },
-			{ slug: 'podcastTitle', component: PodcastTitleStep },
-			{ slug: 'designSetup', component: DesignSetup },
-			{ slug: 'processing', component: ProcessingStep },
-			{ slug: 'error', component: ErrorStep },
+			{ slug: 'login', component: () => import( './internals/steps-repository/login' ) },
+			{
+				slug: 'podcastTitle',
+				component: () => import( './internals/steps-repository/podcast-title' ),
+			},
+			{
+				slug: 'designSetup',
+				component: () => import( './internals/steps-repository/design-setup' ),
+			},
+			{
+				slug: 'processing',
+				component: () => import( './internals/steps-repository/processing-step' ),
+			},
+			{ slug: 'error', component: () => import( './internals/steps-repository/error-step' ) },
 		];
 	},
 

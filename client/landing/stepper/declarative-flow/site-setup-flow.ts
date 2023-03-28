@@ -19,37 +19,8 @@ import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import StartingPointStep from './internals/steps-repository/blogger-starting-point';
-import BusinessInfo from './internals/steps-repository/business-info';
-import CoursesStep from './internals/steps-repository/courses';
-import DesignSetup from './internals/steps-repository/design-setup';
-import DIFMStartingPoint from './internals/steps-repository/difm-starting-point';
-import EditEmail from './internals/steps-repository/edit-email';
-import ErrorStep from './internals/steps-repository/error-step';
-import GoalsStep from './internals/steps-repository/goals';
-import ImportStep from './internals/steps-repository/import';
 import { redirect } from './internals/steps-repository/import/util';
-import ImportLight from './internals/steps-repository/import-light';
-import ImportList from './internals/steps-repository/import-list';
-import ImportReady from './internals/steps-repository/import-ready';
-import ImportReadyNot from './internals/steps-repository/import-ready-not';
-import ImportReadyPreview from './internals/steps-repository/import-ready-preview';
-import ImportReadyWpcom from './internals/steps-repository/import-ready-wpcom';
-import ImporterBlogger from './internals/steps-repository/importer-blogger';
-import ImporterMedium from './internals/steps-repository/importer-medium';
-import ImporterSquarespace from './internals/steps-repository/importer-squarespace';
-import ImporterWix from './internals/steps-repository/importer-wix';
-import ImporterWordpress from './internals/steps-repository/importer-wordpress';
-import IntentStep from './internals/steps-repository/intent-step';
-import PatternAssembler from './internals/steps-repository/pattern-assembler/lazy';
-import ProcessingStep, { ProcessingResult } from './internals/steps-repository/processing-step';
-import SiteOptions from './internals/steps-repository/site-options';
-import SiteVertical from './internals/steps-repository/site-vertical';
-import StoreAddress from './internals/steps-repository/store-address';
-import WooConfirm from './internals/steps-repository/woo-confirm';
-import WooInstallPlugins from './internals/steps-repository/woo-install-plugins';
-import WooTransfer from './internals/steps-repository/woo-transfer';
-import WooVerifyEmail from './internals/steps-repository/woo-verify-email';
+import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import {
 	AssertConditionResult,
 	AssertConditionState,
@@ -86,43 +57,112 @@ const siteSetupFlow: Flow = {
 
 	useSteps() {
 		return [
-			{ slug: 'goals', component: GoalsStep },
-			{ slug: 'vertical', component: SiteVertical },
-			{ slug: 'intent', component: IntentStep },
-			{ slug: 'options', component: SiteOptions },
-			{ slug: 'designSetup', component: DesignSetup },
-			{ slug: 'patternAssembler', component: PatternAssembler },
-			{ slug: 'bloggerStartingPoint', component: StartingPointStep },
-			{ slug: 'courses', component: CoursesStep },
-			{ slug: 'import', component: ImportStep },
+			{ slug: 'goals', component: () => import( './internals/steps-repository/goals' ) },
+			{ slug: 'vertical', component: () => import( './internals/steps-repository/site-vertical' ) },
+			{ slug: 'intent', component: () => import( './internals/steps-repository/intent-step' ) },
+			{ slug: 'options', component: () => import( './internals/steps-repository/site-options' ) },
+			{
+				slug: 'designSetup',
+				component: () => import( './internals/steps-repository/design-setup' ),
+			},
+			{
+				slug: 'patternAssembler',
+				component: () => import( './internals/steps-repository/pattern-assembler/lazy' ),
+			},
+			{
+				slug: 'bloggerStartingPoint',
+				component: () => import( './internals/steps-repository/blogger-starting-point' ),
+			},
+			{ slug: 'courses', component: () => import( './internals/steps-repository/courses' ) },
+			{ slug: 'import', component: () => import( './internals/steps-repository/import' ) },
 			...( isEnabled( 'onboarding/import-light' )
-				? [ { slug: 'importLight', component: ImportLight } ]
+				? [
+						{
+							slug: 'importLight',
+							component: () => import( './internals/steps-repository/import-light' ),
+						},
+				  ]
 				: [] ),
-			{ slug: 'importList', component: ImportList },
-			{ slug: 'importReady', component: ImportReady },
-			{ slug: 'importReadyNot', component: ImportReadyNot },
-			{ slug: 'importReadyWpcom', component: ImportReadyWpcom },
-			{ slug: 'importReadyPreview', component: ImportReadyPreview },
-			{ slug: 'importerWix', component: ImporterWix },
-			{ slug: 'importerBlogger', component: ImporterBlogger },
-			{ slug: 'importerMedium', component: ImporterMedium },
-			{ slug: 'importerSquarespace', component: ImporterSquarespace },
-			{ slug: 'importerWordpress', component: ImporterWordpress },
-			{ slug: 'businessInfo', component: BusinessInfo },
-			{ slug: 'storeAddress', component: StoreAddress },
-			{ slug: 'processing', component: ProcessingStep },
-			{ slug: 'error', component: ErrorStep },
-			{ slug: 'wooTransfer', component: WooTransfer },
-			{ slug: 'wooInstallPlugins', component: WooInstallPlugins },
+			{ slug: 'importList', component: () => import( './internals/steps-repository/import-list' ) },
+			{
+				slug: 'importReady',
+				component: () => import( './internals/steps-repository/import-ready' ),
+			},
+			{
+				slug: 'importReadyNot',
+				component: () => import( './internals/steps-repository/import-ready-not' ),
+			},
+			{
+				slug: 'importReadyWpcom',
+				component: () => import( './internals/steps-repository/import-ready-wpcom' ),
+			},
+			{
+				slug: 'importReadyPreview',
+				component: () => import( './internals/steps-repository/import-ready-preview' ),
+			},
+			{
+				slug: 'importerWix',
+				component: () => import( './internals/steps-repository/importer-wix' ),
+			},
+			{
+				slug: 'importerBlogger',
+				component: () => import( './internals/steps-repository/importer-blogger' ),
+			},
+			{
+				slug: 'importerMedium',
+				component: () => import( './internals/steps-repository/importer-medium' ),
+			},
+			{
+				slug: 'importerSquarespace',
+				component: () => import( './internals/steps-repository/importer-squarespace' ),
+			},
+			{
+				slug: 'importerWordpress',
+				component: () => import( './internals/steps-repository/importer-wordpress' ),
+			},
+			{
+				slug: 'businessInfo',
+				component: () => import( './internals/steps-repository/business-info' ),
+			},
+			{
+				slug: 'storeAddress',
+				component: () => import( './internals/steps-repository/store-address' ),
+			},
+			{
+				slug: 'processing',
+				component: () => import( './internals/steps-repository/processing-step' ),
+			},
+			{ slug: 'error', component: () => import( './internals/steps-repository/error-step' ) },
+			{
+				slug: 'wooTransfer',
+				component: () => import( './internals/steps-repository/woo-transfer' ),
+			},
+			{
+				slug: 'wooInstallPlugins',
+				component: () => import( './internals/steps-repository/woo-install-plugins' ),
+			},
 			...( isEnabled( 'signup/woo-verify-email' )
-				? [ { slug: 'wooVerifyEmail', component: WooVerifyEmail } ]
+				? [
+						{
+							slug: 'wooVerifyEmail',
+							component: () => import( './internals/steps-repository/woo-verify-email' ),
+						},
+				  ]
 				: [] ),
-			{ slug: 'wooConfirm', component: WooConfirm },
-			{ slug: 'editEmail', component: EditEmail },
+			{ slug: 'wooConfirm', component: () => import( './internals/steps-repository/woo-confirm' ) },
+			{ slug: 'editEmail', component: () => import( './internals/steps-repository/edit-email' ) },
 			...( isEnabled( 'signup/woo-verify-email' )
-				? [ { slug: 'editEmail', component: EditEmail } ]
+				? [
+						{
+							slug: 'editEmail',
+							component: () => import( './internals/steps-repository/edit-email' ),
+						},
+				  ]
 				: [] ),
-			{ slug: 'difmStartingPoint', component: DIFMStartingPoint },
+			{
+				slug: 'difmStartingPoint',
+				component: () => import( './internals/steps-repository/difm-starting-point' ),
+			},
 		];
 	},
 	useStepNavigation( currentStep, navigate ) {

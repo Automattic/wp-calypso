@@ -51,7 +51,7 @@ export type StepperStep = {
 	/**
 	 * The component that will be rendered for this step
 	 */
-	component: React.FC< StepProps >;
+	component: () => Promise< { default: React.FC< StepProps > } >;
 };
 
 export type Navigate< FlowSteps extends StepperStep[] > = (

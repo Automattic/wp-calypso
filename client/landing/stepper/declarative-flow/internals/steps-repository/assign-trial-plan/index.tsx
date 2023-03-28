@@ -12,11 +12,7 @@ import type { Step } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 
 import './styles.scss';
-
-export enum AssignTrialResult {
-	SUCCESS = 'success',
-	FAILURE = 'failure',
-}
+import { AssignTrialResult } from './constants';
 
 const AssignTrialPlanStep: Step = function AssignTrialPlanStep( { navigation, data, flow } ) {
 	const { submit } = navigation;

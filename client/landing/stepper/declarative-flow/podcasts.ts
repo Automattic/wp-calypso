@@ -1,14 +1,18 @@
 import { useSiteSlug } from '../hooks/use-site-slug';
-import ChooseADomain from './internals/steps-repository/choose-a-domain';
-import LetsGetStarted from './internals/steps-repository/lets-get-started';
 import type { Flow, ProvidedDependencies } from './internals/types';
 
 const podcasts: Flow = {
 	name: 'podcasts',
 	useSteps() {
 		return [
-			{ slug: 'letsGetStarted', component: LetsGetStarted },
-			{ slug: 'chooseADomain', component: ChooseADomain },
+			{
+				slug: 'letsGetStarted',
+				component: () => import( './internals/steps-repository/lets-get-started' ),
+			},
+			{
+				slug: 'chooseADomain',
+				component: () => import( './internals/steps-repository/choose-a-domain' ),
+			},
 		];
 	},
 

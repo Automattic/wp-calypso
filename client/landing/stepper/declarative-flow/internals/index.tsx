@@ -5,6 +5,7 @@ import {
 	SITE_SETUP_FLOW,
 } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { lazy } from 'React';
 import classnames from 'classnames';
 import { useEffect, useState, useCallback, Suspense } from 'react';
 import Modal from 'react-modal';
@@ -141,8 +142,10 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				throw new Error( assertCondition.message ?? 'An error has occurred.' );
 		}
 
+		const Component = lazy( step.component );
+
 		return (
-			<step.component
+			<Component
 				navigation={ stepNavigation }
 				flow={ flow.name }
 				stepName={ step.slug }

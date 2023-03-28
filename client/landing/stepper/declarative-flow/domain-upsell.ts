@@ -9,8 +9,6 @@ import {
 import { useQuery } from '../hooks/use-query';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../stores';
-import DomainsStep from './internals/steps-repository/domains';
-import PlansStep from './internals/steps-repository/plans';
 import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
 
@@ -22,8 +20,8 @@ const domainUpsell: Flow = {
 
 	useSteps() {
 		return [
-			{ slug: 'domains', component: DomainsStep },
-			{ slug: 'plans', component: PlansStep },
+			{ slug: 'domains', component: () => import( './internals/steps-repository/domains' ) },
+			{ slug: 'plans', component: () => import( './internals/steps-repository/plans' ) },
 		];
 	},
 

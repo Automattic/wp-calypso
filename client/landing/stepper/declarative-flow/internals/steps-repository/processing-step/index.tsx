@@ -16,18 +16,13 @@ import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useInterval } from 'calypso/lib/interval';
 import useCaptureFlowException from '../../../../hooks/use-capture-flow-exception';
+import { ProcessingResult } from './constants';
 import { useProcessingLoadingMessages } from './hooks/use-processing-loading-messages';
 import { useVideoPressLoadingMessages } from './hooks/use-videopress-loading-messages';
 import TailoredFlowPreCheckoutScreen from './tailored-flow-precheckout-screen';
 import type { StepProps } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import './style.scss';
-
-export enum ProcessingResult {
-	NO_ACTION = 'no-action',
-	SUCCESS = 'success',
-	FAILURE = 'failure',
-}
 
 interface ProcessingStepProps extends StepProps {
 	title?: string;

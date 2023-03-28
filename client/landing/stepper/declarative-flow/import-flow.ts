@@ -6,22 +6,6 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
-import DesignSetup from './internals/steps-repository/design-setup';
-import ImportStep from './internals/steps-repository/import';
-import ImportList from './internals/steps-repository/import-list';
-import ImportReady from './internals/steps-repository/import-ready';
-import ImportReadyNot from './internals/steps-repository/import-ready-not';
-import ImportReadyPreview from './internals/steps-repository/import-ready-preview';
-import ImportReadyWpcom from './internals/steps-repository/import-ready-wpcom';
-import ImporterBlogger from './internals/steps-repository/importer-blogger';
-import ImporterMedium from './internals/steps-repository/importer-medium';
-import ImporterSquarespace from './internals/steps-repository/importer-squarespace';
-import ImporterWix from './internals/steps-repository/importer-wix';
-import ImporterWordpress from './internals/steps-repository/importer-wordpress';
-import MigrationHandler from './internals/steps-repository/migration-handler';
-import PatternAssembler from './internals/steps-repository/pattern-assembler';
-import ProcessingStep from './internals/steps-repository/processing-step';
-import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import { Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect } from '@automattic/data-stores';
 
@@ -30,22 +14,64 @@ const importFlow: Flow = {
 
 	useSteps() {
 		return [
-			{ slug: 'import', component: ImportStep },
-			{ slug: 'importList', component: ImportList },
-			{ slug: 'importReady', component: ImportReady },
-			{ slug: 'importReadyNot', component: ImportReadyNot },
-			{ slug: 'importReadyWpcom', component: ImportReadyWpcom },
-			{ slug: 'importReadyPreview', component: ImportReadyPreview },
-			{ slug: 'importerWix', component: ImporterWix },
-			{ slug: 'importerBlogger', component: ImporterBlogger },
-			{ slug: 'importerMedium', component: ImporterMedium },
-			{ slug: 'importerSquarespace', component: ImporterSquarespace },
-			{ slug: 'importerWordpress', component: ImporterWordpress },
-			{ slug: 'designSetup', component: DesignSetup },
-			{ slug: 'patternAssembler', component: PatternAssembler },
-			{ slug: 'processing', component: ProcessingStep },
-			{ slug: 'siteCreationStep', component: SiteCreationStep },
-			{ slug: 'migrationHandler', component: MigrationHandler },
+			{ slug: 'import', component: () => import( './internals/steps-repository/import' ) },
+			{ slug: 'importList', component: () => import( './internals/steps-repository/import-list' ) },
+			{
+				slug: 'importReady',
+				component: () => import( './internals/steps-repository/import-ready' ),
+			},
+			{
+				slug: 'importReadyNot',
+				component: () => import( './internals/steps-repository/import-ready-not' ),
+			},
+			{
+				slug: 'importReadyWpcom',
+				component: () => import( './internals/steps-repository/import-ready-wpcom' ),
+			},
+			{
+				slug: 'importReadyPreview',
+				component: () => import( './internals/steps-repository/import-ready-preview' ),
+			},
+			{
+				slug: 'importerWix',
+				component: () => import( './internals/steps-repository/importer-wix' ),
+			},
+			{
+				slug: 'importerBlogger',
+				component: () => import( './internals/steps-repository/importer-blogger' ),
+			},
+			{
+				slug: 'importerMedium',
+				component: () => import( './internals/steps-repository/importer-medium' ),
+			},
+			{
+				slug: 'importerSquarespace',
+				component: () => import( './internals/steps-repository/importer-squarespace' ),
+			},
+			{
+				slug: 'importerWordpress',
+				component: () => import( './internals/steps-repository/importer-wordpress' ),
+			},
+			{
+				slug: 'designSetup',
+				component: () => import( './internals/steps-repository/design-setup' ),
+			},
+			{
+				slug: 'patternAssembler',
+				component: () => import( './internals/steps-repository/pattern-assembler' ),
+			},
+			{
+				slug: 'processing',
+				component: () => import( './internals/steps-repository/processing-step' ),
+			},
+			{
+				slug: 'siteCreationStep',
+				component: () => import( './internals/steps-repository/site-creation-step' ),
+			},
+			{
+				slug: 'migrationHandler',
+				component: () => import( './internals/steps-repository/migration-handler' ),
+			},
 		];
 	},
 
