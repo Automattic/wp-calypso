@@ -81,7 +81,7 @@
 	}
 
 	&-upsell {
-		border-top: 1px solid var(--studio-gray-50);
+		border-top: 1px solid var(--studio-gray-5);
 		background: var(--studio-gray-0);
 		display: flex;
 		justify-content: center;
@@ -107,6 +107,10 @@
 		font-size: 14px;
 		line-height: 20px;
 		letter-spacing: -0.154px;
+		color: #101517;
+	}
+
+	&-view-site:visited {
 		color: #101517;
 	}
 
