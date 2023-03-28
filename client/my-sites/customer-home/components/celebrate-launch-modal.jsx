@@ -79,17 +79,7 @@ function CelebrateLaunchModal( { setModalIsOpen, site } ) {
 			buttonText = translate( 'Claim your domain' );
 			buttonHref = `/domains/add/${ site.slug }`;
 		} else if ( isPaidPlan && hasCustomDomain ) {
-			contentElement = (
-				<>
-					<span>
-						{ translate(
-							'Ready to expand your reach? Promote your posts with Blaze, and send relevant traffic to your site.'
-						) }
-					</span>
-				</>
-			);
-			buttonText = translate( 'Try Blaze Today' );
-			buttonHref = `/domains/add/${ site.slug }`;
+			return null;
 		}
 
 		return (
