@@ -2,14 +2,19 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useContext, useEffect, RefObject } from 'react';
 import { useQueryClient } from 'react-query';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { setSiteMonitorStatus } from 'calypso/state/jetpack-agency-dashboard/actions';
+import {
+	selectLicense,
+	setSiteMonitorStatus,
+	unselectLicense,
+} from 'calypso/state/jetpack-agency-dashboard/actions';
 import useToggleActivateMonitorMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-toggle-activate-monitor-mutation';
 import useUpdateMonitorSettingsMutation from 'calypso/state/jetpack-agency-dashboard/hooks/use-update-monitor-settings-mutation';
+import { hasSelectedLicensesOfType } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import SitesOverviewContext from './sites-overview/context';
-import type { Site, UpdateMonitorSettingsParams } from './sites-overview/types';
+import type { AllowedTypes, Site, UpdateMonitorSettingsParams } from './sites-overview/types';
 
 const NOTIFICATION_DURATION = 3000;
 const DESKTOP_BREAKPOINT = '>1280px';
@@ -407,4 +412,20 @@ export const useDashboardShowLargeScreen = (
 	}, [] );
 
 	return isDesktop && ! isOverflowing;
+};
+
+export const useDashboardAddRemoveLicense = ( siteId: number, type: AllowedTypes ) => {
+	const dispatch = useDispatch();
+
+	const isLicenseSelected = useSelector( ( state ) =>
+		hasSelectedLicensesOfType( state, siteId, type )
+	);
+
+	const handleAddLicenseAction = () => {
+		isLicenseSelected
+			? dispatch( unselectLicense( siteId, type ) )
+			: dispatch( selectLicense( siteId, type ) );
+	};
+
+	return { isLicenseSelected, handleAddLicenseAction };
 };

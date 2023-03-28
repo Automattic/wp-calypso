@@ -607,3 +607,7 @@ export const getExtractedBackupTitle = ( backup: Backup ) => {
 
 	return backupTitle;
 };
+
+export const DASHBOARD_LICENSE_TYPES: { [ key: string ]: AllowedTypes } = {
+	BACKUP: 'backup',
+};
