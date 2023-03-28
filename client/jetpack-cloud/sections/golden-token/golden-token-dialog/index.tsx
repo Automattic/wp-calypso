@@ -1,9 +1,13 @@
 import classnames from 'classnames';
 import { useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 
 import './style.scss';
 
 export const GoldenTokenDialog = () => {
+	const userName = useSelector( getCurrentUserName );
+
 	const videoRef = useRef< HTMLVideoElement >( null );
 
 	const [ isAnimating, setIsAnimating ] = useState( false );
@@ -16,7 +20,6 @@ export const GoldenTokenDialog = () => {
 	};
 
 	return (
-		// TODO: dynamically add/remove animating class based on play state
 		<div className={ classnames( 'golden-token-dialog', { animating: isAnimating } ) }>
 			{ /* TODO: replace with Jetpack logo */ }
 			<svg
@@ -42,7 +45,7 @@ export const GoldenTokenDialog = () => {
 			</div>
 			<div className="golden-token-dialog__content-wrap">
 				<div className="golden-token-dialog__content-wrap-text">
-					<p className="golden-token-dialog__hi-user">Hey, [user name]</p>
+					<p className="golden-token-dialog__hi-user">Hey, { userName }</p>
 					<h2>Your exclusive Jetpack Experience&nbsp;awaits</h2>
 					<p>
 						You have been gifted a Jetpack Gold Token. This unlocks a lifetime of Jetpack powers for
