@@ -1,0 +1,74 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/typography/styles/variables";
+
+$max-list-width: 1300px;
+
+.subscription-manager__site-list {
+	max-width: $max-list-width;
+
+	.row {
+		border-bottom: 1px solid var(--color-border-subtle);
+		display: flex;
+		align-items: center;
+		flex-direction: row;
+		padding-top: 20px;
+		padding-bottom: 20px;
+
+		* {
+			flex: 1;
+		}
+
+		&.header {
+			padding-bottom: $font-code;
+			padding-top: 0;
+		}
+
+		.title-box {
+			display: flex;
+			align-items: center;
+			flex: 1.83;
+
+			.icon {
+				fill: var(--color-text-subtle);
+				width: 40px;
+				height: 40px;
+				padding-right: 12px;
+				flex: none;
+			}
+
+			.title-column {
+				display: flex;
+				flex-direction: column;
+
+				.name {
+					font-weight: 600;
+					font-size: $font-code;
+					line-height: 22px;
+					color: $studio-gray-100;
+					letter-spacing: -0.24px;
+				}
+
+				.url {
+					font-weight: 400;
+					font-size: $font-body-extra-small;
+					line-height: 18px;
+					color: $studio-gray-40;
+				}
+			}
+		}
+
+		.title-box,
+		.email-frequency,
+		.date {
+			font-weight: 400;
+			font-size: $font-body-small;
+			line-height: 20px;
+			letter-spacing: -0.15px;
+			color: $studio-gray-60;
+		}
+
+		&:last-child {
+			border-bottom: none;
+		}
+	}
+}

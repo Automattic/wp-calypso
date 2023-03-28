@@ -42,4 +42,14 @@ body {
 	ul {
 		padding: 0;
 	}
+
+	.green {
+		fill: var(--color-success);
+		vertical-align: text-bottom;
+	}
+
+	.red {
+		fill: var(--color-error);
+		vertical-align: text-bottom;
+	}
 }
