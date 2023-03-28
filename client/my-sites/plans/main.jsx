@@ -371,7 +371,7 @@ class Plans extends Component {
 				{ isDomainUpsell && <DomainUpsellDialog domain={ selectedSite.slug } /> }
 				{ canAccessPlans && (
 					<div>
-						{ ! isDomainAndPlanPackageFlow && <PlansHeader /> }
+						{ ! isDomainAndPlanPackageFlow && <PlansHeader currentPlanSlug={ currentPlanSlug } /> }
 						{ isDomainAndPlanPackageFlow && (
 							<>
 								<div className="plans__header">
