@@ -131,7 +131,22 @@ export default function BackupStorage( { site, trackEvent }: Props ) {
 		} )
 	);
 
+	const handleTrackEvent = () => {
+		let trackName;
+		if ( hasBackupError ) {
+			trackName = 'expandable_block_backup_error_click';
+		} else if ( ! hasBackup ) {
+			trackName = isLicenseSelected
+				? 'expandable_block_backup_remove_click'
+				: 'expandable_block_backup_add_click';
+		}
+		if ( trackName ) {
+			return trackEvent( trackName );
+		}
+	};
+
 	const handleOnClick = () => {
+		handleTrackEvent();
 		// If the backup is not enabled, we want to add the license
 		if ( ! hasBackup ) {
 			handleAddLicenseAction();
