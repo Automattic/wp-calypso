@@ -58,6 +58,12 @@ export const SiteLogsToolbar = ( {
 		if ( ! startDate || ! endDate ) {
 			return;
 		}
+		if (
+			moment.unix( startDateTime ).isSame( startDate ) &&
+			moment.unix( endDateTime ).isSame( endDate )
+		) {
+			return;
+		}
 		onDateTimeCommit?.( startDate, endDate );
 	};
 

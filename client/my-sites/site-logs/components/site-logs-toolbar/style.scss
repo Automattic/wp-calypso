@@ -10,6 +10,21 @@
 	button {
 		height: initial;
 	}
+
+	.toggle-visible .date-range__trigger-btn {
+		background-color: var(--color-surface);
+	}
+
+	//prevent button from jumping when toggling date picker
+	.button-group {
+		.button:first-child,
+		:last-child {
+			&:active {
+				border-right-width: 1px;
+				border-left-width: 1px;
+			}
+		}
+	}
 }
 
 .site-logs-toolbar__download-progress {

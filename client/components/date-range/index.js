@@ -94,12 +94,12 @@ export class DateRange extends Component {
 		// Build initial state
 		this.state = {
 			popoverVisible: false,
-			staleStartDate: null,
-			staleEndDate: null,
+			staleStartDate: startDate,
+			staleEndDate: endDate,
 			startDate: startDate,
 			endDate: endDate,
-			startTime: startDate.valueOf(),
-			endTime: endDate.valueOf(),
+			startTime: startDate?.valueOf(),
+			endTime: endDate?.valueOf(),
 			staleDatesSaved: false,
 			// this needs to be independent from startDate because we must independently validate them
 			// before updating the central source of truth (ie: startDate)
@@ -311,8 +311,8 @@ export class DateRange extends Component {
 		const newRange = ! isSameDate ? DateUtils.addDayToRange( rawDay, range ) : range;
 		const startTime = this.props.moment( this.state.startTime );
 		const endTime = this.props.moment( this.state.endTime );
-		newRange.from.setHours( startTime.hour(), startTime.minute(), startTime.seconds(), 0 );
-		newRange.to.setHours( endTime.hour(), endTime.minute(), endTime.seconds(), 0 );
+		newRange.from?.setHours( startTime.hour(), startTime.minute(), startTime.seconds(), 0 );
+		newRange.to?.setHours( endTime.hour(), endTime.minute(), endTime.seconds(), 0 );
 
 		// Update state to reflect new date range for
 		// calendar and text inputs
