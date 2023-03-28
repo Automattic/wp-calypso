@@ -31,12 +31,13 @@ $border-color: #d3dae6;
 }
 
 .site-logs-table__skeleton {
-	display: flex;
-	flex-direction: column;
-	gap: 1px;
-	height: 100%;
+	display: grid;
+	grid-template-columns: 400px 3fr 1fr;
+	gap: 20px;
+	overflow: hidden;
+	margin-top: 10px;
 }
 
-.site-logs-table__skeleton-table-row {
-	height: 43px;
+.site-logs-table__skeleton-table-cell {
+	height: 24px;
 }
