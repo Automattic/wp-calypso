@@ -33,6 +33,7 @@ import {
 	isAkismetProduct,
 	AKISMET_PLUS_YEARLY_PRODUCTS,
 	AKISTMET_PLUS_MONTHLY_PRODUCTS,
+	isJetpackBackupT1Slug,
 } from '@automattic/calypso-products';
 import { Spinner, Button, Card, CompactCard, ProductIcon, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
@@ -281,8 +282,7 @@ class ManagePurchase extends Component {
 			! isP2Plus( purchase );
 		const isUpgradeableProduct =
 			! isPlan( purchase ) &&
-			( JETPACK_BACKUP_T1_PRODUCTS.includes( purchase.productSlug ) ||
-				isAkismetProduct( { product_slug: purchase.productSlug } ) );
+			( isJetpackBackupT1Slug( purchase.productSlug ) || isAkismetProduct( purchase ) );
 
 		if ( ! isUpgradeablePlan && ! isUpgradeableProduct ) {
 			return null;
