@@ -1,22 +1,19 @@
-import {
-	// STATS_SUBSCRIBERS_RECEIVE,
-	// STATS_SUBSCRIBERS_REQUEST,
-	STATS_SUBSCRIBERS_REQUEST_SUCCESS,
-	// STATS_SUBSCRIBERS_REQUEST_FAILURE,
-} from 'calypso/state/action-types';
-// import { combineReducers } from 'calypso/state/utils';
+import { get } from 'lodash';
+import { STATS_SUBSCRIBERS_RECEIVE } from 'calypso/state/action-types';
 
-const initialState = {
-	subscribers: [],
-};
-
-const SubscribersData = ( state = initialState.subscribers, action ) => {
+const SubscribrsData = ( state = {}, action ) => {
 	switch ( action.type ) {
-		case STATS_SUBSCRIBERS_REQUEST_SUCCESS:
-			return [ ...state, ...action.subscribers ];
+		case STATS_SUBSCRIBERS_RECEIVE:
+			return {
+				...state,
+				[ action.siteId ]: {
+					...get( state, [ action.siteId ], {} ),
+					...action.data[ 0 ], // TODO: check the structure once the endpoint returns data
+				},
+			};
 	}
 
 	return state;
 };
 
-export default SubscribersData;
+export default SubscribrsData;
