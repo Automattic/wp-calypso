@@ -41,7 +41,7 @@ const FontPairingVariationPreview = ( { title }: Props ) => {
 
 	const [ containerResizeListener, { width } ] = useResizeObserver();
 	const ratio = width ? width / STYLE_PREVIEW_WIDTH : 1;
-	const normalizedHeight = Math.ceil( STYLE_PREVIEW_HEIGHT * ratio );
+	const normalizedHeight = Math.ceil( STYLE_PREVIEW_HEIGHT * ratio * 0.5 );
 	const externalFontFamilies = fontFamilies.filter( ( { slug } ) => slug !== SYSTEM_FONT_SLUG );
 	const [ isLoaded, setIsLoaded ] = useState( ! externalFontFamilies.length );
 
@@ -94,7 +94,7 @@ const FontPairingVariationPreview = ( { title }: Props ) => {
 									overflow: 'hidden',
 								} }
 							>
-								<VStack spacing={ 4 * ratio } style={ { margin: '16px' } }>
+								<VStack spacing={ 1 } style={ { margin: '16px' } }>
 									<div
 										title={ headingFontFamilyName }
 										aria-label={ headingFontFamilyName }
@@ -115,7 +115,7 @@ const FontPairingVariationPreview = ( { title }: Props ) => {
 										style={ {
 											...DEFAULT_FONT_STYLES,
 											color: '#444444',
-											fontSize: '12px',
+											fontSize: '14px',
 											fontWeight: textFontWeight,
 											fontFamily: textFontFamily,
 											fontStyle: textFontStyle,

@@ -11,6 +11,8 @@ import { SiteLogsTabPanel } from './components/site-logs-tab-panel';
 import { SiteLogsTable } from './components/site-logs-table';
 import { SiteLogsToolbar } from './components/site-logs-toolbar';
 
+import './style.scss';
+
 export function SiteLogs() {
 	const { __ } = useI18n();
 	const siteId = useSelector( getSelectedSiteId );
@@ -57,6 +59,7 @@ export function SiteLogs() {
 				headerText={ titleHeader }
 				subHeaderText={ __( 'View server logs to troubleshoot or debug problems with your site.' ) }
 				align="left"
+				className="site-logs__formatted-header"
 			/>
 
 			<SiteLogsTabPanel selectedTab={ logType } onSelected={ handleTabSelected }>

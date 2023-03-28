@@ -6,6 +6,7 @@ import { useAddStagingSiteMutation } from 'calypso/my-sites/hosting/staging-site
 import { useCheckStagingSiteStatus } from 'calypso/my-sites/hosting/staging-site-card/use-check-staging-site-status';
 import { useStagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
 import { StagingSiteCard } from '..';
+import { useHasSiteAccess } from '../use-has-site-access';
 
 const addStagingSiteBtnName = 'Add staging site';
 const manageStagingBtnName = 'Manage staging site';
@@ -64,6 +65,11 @@ jest.mock( 'calypso/state/analytics/actions', () => ( {
 jest.mock( 'calypso/my-sites/hosting/staging-site-card/use-staging-site', () => ( {
 	__esModule: true,
 	useStagingSite: jest.fn(),
+} ) );
+
+jest.mock( 'calypso/my-sites/hosting/staging-site-card/use-has-site-access', () => ( {
+	__esModule: true,
+	useHasSiteAccess: jest.fn( () => true ),
 } ) );
 
 const defaultProps = {
@@ -169,5 +175,12 @@ describe( 'StagingSiteCard component', () => {
 		expect( useAddStagingSiteMutation().addStagingSite ).toHaveBeenCalled();
 
 		expect( mockUseDispatch ).toHaveBeenCalled();
+	} );
+
+	it( 'show access site error', () => {
+		useHasSiteAccess.mockReturnValue( false );
+		render( <StagingSiteCard { ...defaultProps } /> );
+		expect( screen.queryByTestId( 'staging-sites-access-message' ) ).toBeVisible();
+		expect( screen.queryByText( addStagingSiteBtnName ) ).not.toBeInTheDocument();
 	} );
 } );

@@ -626,6 +626,7 @@
 		margin: 0 auto;
 		display: flex;
 		justify-content: space-between;
+		box-sizing: border-box;
 		gap: 3rem;
 	}
 	@media ( max-width: 1300px ) {
@@ -783,6 +784,7 @@
 		width: 85%;
 		margin-left: auto;
 		margin-right: auto;
+		box-sizing: border-box;
 
 		@media ( max-width: 1300px ) {
 			width: 90%;
