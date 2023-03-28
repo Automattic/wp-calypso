@@ -13,6 +13,7 @@ type PatternActionBarProps = {
 	disableMoveDown?: boolean;
 	patternType: string;
 	isRemoveButtonTextOnly?: boolean;
+	source: 'list' | 'large_preview';
 };
 
 const PatternActionBar = ( {
@@ -24,6 +25,7 @@ const PatternActionBar = ( {
 	disableMoveDown,
 	patternType,
 	isRemoveButtonTextOnly,
+	source,
 }: PatternActionBarProps ) => {
 	const translate = useTranslate();
 	return (
@@ -40,7 +42,9 @@ const PatternActionBar = ( {
 						role="menuitem"
 						label={ translate( 'Move up' ) }
 						onClick={ () => {
-							recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_moveup_click' );
+							recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_moveup_click', {
+								source,
+							} );
 							onMoveUp?.();
 						} }
 						icon={ chevronUp }
@@ -52,7 +56,9 @@ const PatternActionBar = ( {
 						role="menuitem"
 						label={ translate( 'Move down' ) }
 						onClick={ () => {
-							recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_movedown_click' );
+							recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_movedown_click', {
+								source,
+							} );
 							onMoveDown?.();
 						} }
 						icon={ chevronDown }
@@ -68,6 +74,7 @@ const PatternActionBar = ( {
 					onClick={ () => {
 						recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_replace_click', {
 							pattern_type: patternType,
+							source,
 						} );
 						onReplace();
 					} }
@@ -82,6 +89,7 @@ const PatternActionBar = ( {
 				onClick={ () => {
 					recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_delete_click', {
 						pattern_type: patternType,
+						source,
 					} );
 					onDelete();
 				} }
