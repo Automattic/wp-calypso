@@ -83,6 +83,7 @@ export default function useSubscribersQuery( siteId ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
+	// TODO: Account for other query parameters before release.
 	return useQuery( [ 'stats', 'subscribers', siteId ], querySubscribers, {
 		select: selectSubscribers,
 		onSuccess: ( data ) => {
