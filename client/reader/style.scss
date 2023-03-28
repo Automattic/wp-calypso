@@ -360,32 +360,64 @@
 	margin-top: 0;
 }
 
-.is-section-reader.has-no-sidebar .masterbar-menu .masterbar {
-	border-bottom: none;
-	background: var(--studio-black);
-	color: var(--studio-white);
-	padding-top: 10px;
-	height: 78px;
-	.x-nav-link__logo svg path {
-		fill: var(--studio-white);
+// targets the logged in masterbar
+.layout.has-header-section.is-section-reader {
+	.layout__header-section {
+		background-color: #021827;
+		color: var(--studio-white);
 	}
-	.x-nav {
-		padding-top: 10px;
-		padding-left: 16px;
-		padding-right: 16px;
-		.x-nav-item {
-			color: var(--studio-white);
-			&:hover {
-				color: var(--studio-white);
-			}
-			.cta-btn-nav {
-				margin-top: 9px;
-			}
-		}
 
-		.x-nav-link__primary {
-			border: 2px solid var(--studio-white);
-			background: transparent !important;
+	.layout__header-section-content {
+		padding: 24px 42px 36px;
+
+		&.logged-in {
+			padding-top: calc(var(--masterbar-height) + 44px);
+		}
+	}
+
+	.masterbar {
+		border-bottom: none;
+		background: transparent;
+		color: var(--studio-white);
+	}
+
+	// logged in master bar
+	header.masterbar {
+		padding: 16px 16px;
+		height: 60px;
+	}
+
+	// logged out master bar
+	.masterbar-menu .masterbar {
+		height: 78px;
+		.x-nav-link__logo svg path {
+			fill: var(--studio-white);
+		}
+		.x-nav {
+			padding-top: 10px;
+			padding-left: 16px;
+			padding-right: 16px;
+			.x-nav-item {
+				color: var(--studio-white);
+				&:hover {
+					color: var(--studio-white);
+				}
+				.cta-btn-nav {
+					margin-top: 9px;
+				}
+				.x-nav-link-chevron {
+					opacity: 1;
+					&::after,
+					&::before {
+						color: var(--studio-white);
+					}
+				}
+			}
+
+			.x-nav-link__primary {
+				border: 2px solid var(--studio-white);
+				background: transparent !important;
+			}
 		}
 	}
 }

@@ -33,7 +33,7 @@ export default function TrendingTags() {
 
 	const tagsResponse = useQuery(
 		[ 'trending-tags' ],
-		() => wpcom.req.get( `/read/trending/tags`, { apiVersion: '1.2' } ),
+		() => wpcom.req.get( `/read/trending/tags`, { count: '6', apiVersion: '1.2' } ),
 		query
 	);
 
