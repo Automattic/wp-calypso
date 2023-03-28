@@ -6,6 +6,7 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useEffect, useState, CSSProperties } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import PatternActionBar from './pattern-action-bar';
 import { encodePatternId } from './utils';
 import type { Pattern } from './types';
@@ -148,7 +149,7 @@ const PatternLargePreview = ( {
 			isShowFrameBorder
 			frameRef={ frameRef }
 			onDeviceChange={ ( device ) => {
-				recordTracksEvent( 'calypso_signup_pattern_assembler_preview_device_click', { device } );
+				recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PREVIEW_DEVICE_CLICK, { device } );
 				// Wait for the animation to end in 200ms
 				window.setTimeout( updateViewportHeight, 205 );
 			} }
