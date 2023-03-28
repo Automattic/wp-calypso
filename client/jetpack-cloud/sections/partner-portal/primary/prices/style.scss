@@ -49,6 +49,11 @@ tr:nth-child(odd) {
 	vertical-align: middle;
 }
 
+.prices__table tr td:last-child,
+.prices__table tr th:last-child {
+	text-align: right;
+}
+
 .prices__table .license-bundle-card-description {
 	margin-top: 0;
 }
@@ -97,5 +102,10 @@ tr:nth-child(odd) {
 		display: block;
 		width: 100%;
 		padding: 0.5rem 0;
+	}
+
+	.prices__table tr td:last-child,
+	.prices__table tr th:last-child {
+		text-align: left;
 	}
 }
