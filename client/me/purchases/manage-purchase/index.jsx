@@ -31,9 +31,8 @@ import {
 	hasMarketplaceProduct,
 	isDIFMProduct,
 	isAkismetProduct,
-	AKISMET_PLUS_YEARLY_PRODUCTS,
-	AKISTMET_PLUS_MONTHLY_PRODUCTS,
 	isJetpackBackupT1Slug,
+	AKISMET_UPGADES_PRODUCTS_MAP,
 } from '@automattic/calypso-products';
 import { Spinner, Button, Card, CompactCard, ProductIcon, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
@@ -395,20 +394,9 @@ class ManagePurchase extends Component {
 	getAkismetUpgradeUrl() {
 		const { purchase } = this.props;
 
-		const monthlyIndex = AKISTMET_PLUS_MONTHLY_PRODUCTS.indexOf( purchase.productSlug );
-		if ( monthlyIndex === AKISTMET_PLUS_MONTHLY_PRODUCTS.length - 1 ) {
-			return 'https://akismet.com/enterprise';
-		} else if ( monthlyIndex !== -1 ) {
-			const nextPlan = AKISTMET_PLUS_MONTHLY_PRODUCTS[ monthlyIndex + 1 ];
-			return `/checkout/akismet/${ nextPlan }`;
-		}
-
-		const yearlyIndex = AKISMET_PLUS_YEARLY_PRODUCTS.indexOf( purchase.productSlug );
-		if ( yearlyIndex === AKISMET_PLUS_YEARLY_PRODUCTS.length - 1 ) {
-			return 'https://akismet.com/enterprise';
-		} else if ( yearlyIndex !== -1 ) {
-			const nextPlan = AKISMET_PLUS_YEARLY_PRODUCTS[ yearlyIndex + 1 ];
-			return `/checkout/akismet/${ nextPlan }`;
+		const nextProductSlug = AKISMET_UPGADES_PRODUCTS_MAP[ purchase.productSlug ];
+		if ( nextProductSlug ) {
+			return `/checkout/akismet/${ nextProductSlug }`;
 		}
 
 		return 'https://akismet.com/enterprise';
