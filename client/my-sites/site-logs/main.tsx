@@ -32,7 +32,7 @@ export function SiteLogs() {
 		) as SiteLogsTab;
 	} );
 
-	const { data } = useSiteLogsQuery( siteId, {
+	const { data, isLoading } = useSiteLogsQuery( siteId, {
 		logType,
 		start: dateRange.startTime,
 		end: dateRange.endTime,
@@ -65,7 +65,7 @@ export function SiteLogs() {
 				{ () => (
 					<>
 						<SiteLogsToolbar onRefresh={ handleRefresh } />
-						<SiteLogsTable logs={ data?.logs } />
+						<SiteLogsTable logs={ data?.logs } isLoading={ isLoading } />
 					</>
 				) }
 			</SiteLogsTabPanel>

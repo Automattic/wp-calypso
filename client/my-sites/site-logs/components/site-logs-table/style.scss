@@ -24,3 +24,14 @@ $border-color: #d3dae6;
 	content: "\2012";
 	opacity: 0.5;
 }
+
+.site-logs-table__skeleton {
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
+	height: 100%;
+}
+
+.site-logs-table__skeleton-table-row {
+	height: 43px;
+}
