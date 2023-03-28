@@ -1,4 +1,5 @@
 import { isTailoredSignupFlow } from '@automattic/onboarding';
+import { getQueryArg } from '@wordpress/url';
 import debugFactory from 'debug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { navigate } from 'calypso/lib/navigate';
@@ -32,12 +33,21 @@ export const leaveCheckout = ( {
 	} );
 
 	const signupFlowName = getSignupCompleteFlowName();
+	const redirectToParam = getQueryArg( window.location.href, 'redirect_to' );
+	const launchpadURLRegex = /setup\/(.*)\/launchpad\b/g;
+	const launchpadURLRegexMatch = redirectToParam?.toString().match( launchpadURLRegex );
 
 	if ( isTailoredSignupFlow( signupFlowName ) ) {
 		const urlFromCookie = retrieveSignupDestination();
 		if ( urlFromCookie ) {
 			window.location.assign( urlFromCookie );
 		}
+	}
+
+	if ( redirectToParam && launchpadURLRegexMatch ) {
+		const launchpadUrl = redirectToParam?.toString();
+		window.location.assign( launchpadUrl );
+		return;
 	}
 
 	if ( forceCheckoutBackUrl ) {

@@ -1,7 +1,3 @@
-/* eslint-disable no-restricted-imports */
-/**
- * External dependencies
- */
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEventHandler } from 'react';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';

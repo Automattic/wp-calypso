@@ -891,7 +891,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 } );
 const getPlanWooExpressMediumDetails = (): IncompleteWPcomPlan => ( {
 	...getPlanEcommerceDetails(),
-	getTitle: () => i18n.translate( 'Woo Express Performance' ),
+	getTitle: () => i18n.translate( 'Performance' ),
 	getTagline: () =>
 		i18n.translate(
 			'Learn more about everything included with Woo Express Performance and take advantage of its powerful marketplace features.'

@@ -20,7 +20,7 @@ import { getInitialState, getStateFromCache } from 'calypso/state/initial-state'
 import { createQueryClient } from 'calypso/state/query-client';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
-import SubscriptionManagemer from './subscription-manager/subscription-manager';
+import { SubscriptionManager } from './subscription-manager';
 import './styles.scss';
 
 const setupReduxStore = ( user: CurrentUser ) => {
@@ -57,7 +57,7 @@ window.AppBoot = async () => {
 					<MomentProvider>
 						<BrowserRouter basename="subscriptions">
 							<WindowLocaleEffectManager />
-							<SubscriptionManagemer />
+							<SubscriptionManager />
 						</BrowserRouter>
 					</MomentProvider>
 				</QueryClientProvider>
