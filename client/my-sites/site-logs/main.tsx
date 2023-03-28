@@ -28,7 +28,7 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 	const moment = useLocalizedMoment();
 
 	const getDateRange = () => {
-		const startTime = moment().subtract( 7, 'd' ).startOf( 'day' );
+		const startTime = moment().subtract( 7, 'd' );
 		const endTime = moment();
 		return { startTime, endTime };
 	};
