@@ -44,7 +44,6 @@ import Badge from 'calypso/components/badge';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
@@ -1137,7 +1136,6 @@ class ManagePurchase extends Component {
 
 		return (
 			<Fragment>
-				<QueryStoredCards />
 				<TrackPurchasePageView
 					eventName="calypso_manage_purchase_view"
 					purchaseId={ this.props.purchaseId }

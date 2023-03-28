@@ -2,12 +2,11 @@ import { CheckboxControl, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
-import { useDispatch } from 'react-redux';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import wpcom from 'calypso/lib/wp';
-import { updateStoredCardIsBackupComplete } from 'calypso/state/stored-cards/actions';
-import type { StoredCard } from 'calypso/my-sites/checkout/composite-checkout/types/stored-cards';
+import { storedPaymentMethodsQueryKey } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-stored-payment-methods';
+import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 
 async function fetchIsBackup( storedDetailsId: string ): Promise< { is_backup: boolean } > {
 	return await wpcom.req.get( `/me/payment-methods/${ storedDetailsId }/is-backup` );
@@ -23,12 +22,10 @@ async function setIsBackup(
 	} );
 }
 
-export default function PaymentMethodBackupToggle( { card }: { card: StoredCard } ) {
-	const reduxDispatch = useDispatch();
+export default function PaymentMethodBackupToggle( { card }: { card: StoredPaymentMethod } ) {
 	const translate = useTranslate();
 	const storedDetailsId = card.stored_details_id;
-	const initialIsBackup = !! card.meta?.find( ( meta ) => meta.meta_key === 'is_backup' )
-		?.meta_value;
+	const initialIsBackup = !! card.is_backup;
 	const queryClient = useQueryClient();
 	const { isLoading, isError, data } = useQuery< { is_backup: boolean }, Error >(
 		[ 'payment-method-backup-toggle', storedDetailsId ],
@@ -46,8 +43,9 @@ export default function PaymentMethodBackupToggle( { card }: { card: StoredCard 
 		},
 		onSuccess: ( data ) => {
 			queryClient.setQueryData( [ 'payment-method-backup-toggle', storedDetailsId ], data );
-			// Update the data in the stored cards Redux store to match the changes made here
-			reduxDispatch( updateStoredCardIsBackupComplete( storedDetailsId, data.is_backup ) );
+
+			// Invalidate queries made by `useStoredPaymentMethods`.
+			queryClient.invalidateQueries( storedPaymentMethodsQueryKey );
 		},
 	} );
 	const toggleIsBackup = useCallback(
