@@ -114,7 +114,10 @@ const GlobalStylesVariations = ( {
 				<GlobalStylesVariation
 					key="base"
 					globalStylesVariation={ baseGlobalStyles }
-					isActive={ ! selectedGlobalStylesVariation }
+					isActive={
+						! selectedGlobalStylesVariation ||
+						isDefaultGlobalStyleVariationSlug( selectedGlobalStylesVariation )
+					}
 					showOnlyHoverView={ showOnlyHoverViewDefaultVariation }
 					onSelect={ () => onSelect( baseGlobalStyles ) }
 				/>
