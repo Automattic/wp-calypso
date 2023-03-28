@@ -12,6 +12,7 @@ type SubscriptionManagerSiteSubscriptions = {
 type SubscriptionManagerSiteSubscriptionsQueryProps = {
 	filter?: ( item?: SiteSubscription ) => boolean;
 	sort?: ( a?: SiteSubscription, b?: SiteSubscription ) => number;
+	limit?: number;
 };
 
 const callFollowingEndPoint = async (
@@ -45,14 +46,15 @@ const defaultSort = () => 0;
 const useSubscriptionManagerSiteSubscriptionsQuery = ( {
 	filter,
 	sort,
-}: SubscriptionManagerSiteSubscriptionsQueryProps = {} ) => {
+	limit = 200,
+}: SubscriptionManagerSiteSubscriptionsQueryProps ) => {
 	const isLoggedIn = useIsLoggedIn();
 	const enabled = useIsQueryEnabled();
 
 	const { data, ...rest } = useQuery< SiteSubscription[] >(
 		[ 'read', 'site-subscriptions', isLoggedIn ],
 		async () => {
-			return await callFollowingEndPoint( 1, 200, isLoggedIn );
+			return await callFollowingEndPoint( 1, limit, isLoggedIn );
 		},
 		{
 			enabled,
