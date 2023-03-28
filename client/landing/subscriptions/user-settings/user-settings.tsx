@@ -1,17 +1,16 @@
-import { Spinner } from '@automattic/components';
+import { Spinner, Button } from '@automattic/components';
 import { Reader } from '@automattic/data-stores';
 import { useState, useCallback, useEffect } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
 import { FormEvent } from 'react';
-import { Button } from '../Button';
-import { Notice } from '../Notice';
-import { BlockEmailsSetting } from '../fields/BlockEmailsSetting';
-import { DeliveryWindowInput } from '../fields/DeliveryWindowInput';
-import { EmailFormatInput, EmailFormatType } from '../fields/EmailFormatInput';
-import type {
-	DeliveryWindowDayType,
-	DeliveryWindowHourType,
-} from '@automattic/data-stores/src/reader/types';
+import { EmailFormatInput, EmailFormatType } from '../fields';
+import { BlockEmailsSetting } from '../fields/block-emails-setting';
+import { DeliveryWindowInput } from '../fields/delivery-window-input';
+import { Notice } from '../notice';
+import './styles.scss';
+
+type DeliveryWindowDayType = Reader.DeliveryWindowDayType;
+type DeliveryWindowHourType = Reader.DeliveryWindowHourType;
 
 type SubscriptionUserSettings = Partial< {
 	mail_option: EmailFormatType;
@@ -100,7 +99,7 @@ const UserSettings = ( { value = {}, loading }: UserSettingsProps ) => {
 				value={ formState.blocked ?? false }
 				onChange={ ( value ) => onChange?.( { blocked: value.target.checked } ) }
 			/>
-			<Button disabled={ isLoading } onClick={ onSubmit }>
+			<Button className="user-settings__submit-button" disabled={ isLoading } onClick={ onSubmit }>
 				{ translate( 'Save changes', {
 					context: 'Save the subscription management user changes',
 				} ) }

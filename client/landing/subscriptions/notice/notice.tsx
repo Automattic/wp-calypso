@@ -1,6 +1,5 @@
 import './style.scss';
 import { translate } from 'i18n-calypso';
-import React from 'react';
 import closeIcon from './images/close.svg';
 import errorIcon from './images/error.svg';
 import successIcon from './images/success.svg';

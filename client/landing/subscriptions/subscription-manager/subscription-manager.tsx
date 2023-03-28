@@ -2,8 +2,8 @@ import { Reader } from '@automattic/data-stores';
 import SubscriptionManager from '@automattic/subscription-manager';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import Settings from '../tab-views/settings';
-import TabsSwitcher from '../tabs-switcher/tabs-switcher';
+import { Settings } from '../tab-views';
+import { TabsSwitcher } from '../tabs-switcher';
 
 const SitesView = () => <span>Sites View</span>;
 const CommentsView = () => <span>Comments View</span>;
