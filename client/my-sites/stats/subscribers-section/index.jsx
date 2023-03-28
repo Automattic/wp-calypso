@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import LineChart from 'calypso/components/line-chart';
 import StatsEmptyState from '../stats-empty-state';
 import './style.scss';
@@ -62,10 +63,15 @@ function transformData( data ) {
 }
 
 export default function SubscribersSection() {
-	const data = transformData( getData() );
+	const [ isLoading, setIsLoading ] = useState( true );
+	const data = transformData( isLoading ? [] : getData() );
 
 	// Determines what is shown in the tooltip on hover.
 	const tooltipHelper = ( datum ) => `Changed: ${ datum.diff }`;
+
+	useEffect( () => {
+		setTimeout( () => setIsLoading( false ), 5000 );
+	}, [ isLoading ] );
 
 	return (
 		<div className="subscribers-section">
