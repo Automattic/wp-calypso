@@ -1,8 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { plansLink } from '@automattic/calypso-products';
+import { isEnabled } from '@automattic/calypso-config';
+import { getPlans, plansLink, PLAN_WOOEXPRESS_MEDIUM } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
+import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import ECommercePlanFeatures from 'calypso/my-sites/plans/components/ecommerce-plan-features';
 import ECommerceTrialBanner from './ecommerce-trial-banner';
 import { getWooExpressMediumFeatureSets } from './wx-medium-features';
@@ -31,6 +33,48 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 		return getWooExpressMediumFeatureSets( { translate, interval } );
 	}, [ translate, interval ] );
 
+	const performanceOnlyOption = (
+		<ECommercePlanFeatures
+			interval={ interval }
+			monthlyControlProps={ { path: plansLink( '/plans', siteSlug, 'monthly', true ) } }
+			planFeatureSets={ wooExpressMediumPlanFeatureSets }
+			siteSlug={ siteSlug }
+			triggerTracksEvent={ triggerTracksEvent }
+			yearlyControlProps={ { path: plansLink( '/plans', siteSlug, 'yearly', true ) } }
+		/>
+	);
+
+	const mediumPlan = getPlans()[ PLAN_WOOEXPRESS_MEDIUM ];
+	// const smallPlan = getPlans()[ PLAN_WOOEXPRESS_SMALL ];
+	const mediumFeaturesRaw = [
+		...( mediumPlan?.getInferiorFeatures?.() || [] ),
+		...( mediumPlan?.getIncludedFeatures?.() || [] ),
+	];
+	const mediumFeatureList = getPlanFeaturesObject( mediumFeaturesRaw ).map( ( f, i ) => ( {
+		feature: mediumFeaturesRaw?.[ i ],
+		title: f?.getTitle?.(),
+		description: f?.getDescription?.(),
+	} ) );
+
+	const performanceAndEssentialOption = (
+		<table>
+			<tr>
+				<td>Performance</td>
+			</tr>
+			{ mediumFeatureList.map( ( item ) => {
+				return (
+					<tr>
+						<td>{ item?.title || item?.feature }</td>
+					</tr>
+				);
+			} ) }
+		</table>
+	);
+
+	const upgradeOptions = isEnabled( 'plans/wooexpress-small' )
+		? performanceAndEssentialOption
+		: performanceOnlyOption;
+
 	return (
 		<>
 			<BodySectionCssClass bodyClass={ [ 'is-ecommerce-trial-plan' ] } />
@@ -39,14 +83,7 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 				<ECommerceTrialBanner />
 			</div>
 
-			<ECommercePlanFeatures
-				interval={ interval }
-				monthlyControlProps={ { path: plansLink( '/plans', siteSlug, 'monthly', true ) } }
-				planFeatureSets={ wooExpressMediumPlanFeatureSets }
-				siteSlug={ siteSlug }
-				triggerTracksEvent={ triggerTracksEvent }
-				yearlyControlProps={ { path: plansLink( '/plans', siteSlug, 'yearly', true ) } }
-			/>
+			{ upgradeOptions }
 		</>
 	);
 };
