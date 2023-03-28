@@ -1382,6 +1382,10 @@ const getPlanProDetails = (): IncompleteWPcomPlan => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_PRO,
 	getTitle: () => i18n.translate( 'WordPress Pro' ),
+	getTagline: () =>
+		i18n.translate(
+			'This plan gives you access to our most powerful features at an affordable price for an unmatched value you won’t get anywhere else. No longer available to new users.'
+		),
 	getDescription: () =>
 		i18n.translate(
 			'Unlock the full power of WordPress with plugins, custom themes and much more.'
