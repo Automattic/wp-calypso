@@ -9,14 +9,20 @@ import { SiteLogsTab, useSiteLogsQuery } from 'calypso/data/hosting/use-site-log
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SiteLogsTabPanel } from './components/site-logs-tab-panel';
 import { SiteLogsTable } from './components/site-logs-table';
+import { SiteLogsToolbar } from './components/site-logs-toolbar';
 
 export function SiteLogs() {
 	const { __ } = useI18n();
 	const siteId = useSelector( getSelectedSiteId );
 	const moment = useLocalizedMoment();
 
-	const [ startTime ] = useState( moment().subtract( 7, 'd' ).unix() );
-	const [ endTime ] = useState( moment().unix() );
+	const getDateRange = () => {
+		const startTime = moment().subtract( 7, 'd' ).unix();
+		const endTime = moment().unix();
+		return { startTime, endTime };
+	};
+
+	const [ dateRange, setDateRange ] = useState( getDateRange() );
 
 	const [ logType, setLogType ] = useState< SiteLogsTab >( () => {
 		const queryParam = new URL( window.location.href ).searchParams.get( 'log-type' );
@@ -27,14 +33,18 @@ export function SiteLogs() {
 
 	const { data } = useSiteLogsQuery( siteId, {
 		logType,
-		start: startTime,
-		end: endTime,
+		start: dateRange.startTime,
+		end: dateRange.endTime,
 		sort_order: 'desc',
 		page_size: 10,
 	} );
 
 	const handleTabSelected = ( tabName: SiteLogsTab ) => {
 		setLogType( tabName );
+	};
+
+	const handleRefresh = () => {
+		setDateRange( getDateRange() );
 	};
 
 	const titleHeader = __( 'Site Logs' );
@@ -50,7 +60,12 @@ export function SiteLogs() {
 			/>
 
 			<SiteLogsTabPanel selectedTab={ logType } onSelected={ handleTabSelected }>
-				{ () => <SiteLogsTable logs={ data?.logs } /> }
+				{ () => (
+					<>
+						<SiteLogsToolbar onRefresh={ handleRefresh } />
+						<SiteLogsTable logs={ data?.logs } />
+					</>
+				) }
 			</SiteLogsTabPanel>
 		</Main>
 	);
