@@ -72,7 +72,7 @@ export const SiteLogsToolbar = ( {
 				onDateCommit={ handleDateRangeCommit }
 			/>
 
-			<Button isSecondary onClick={ onRefresh }>
+			<Button isSecondary onClick={ onRefresh } className="site-logs-toolbar__refresh">
 				{ translate( 'Refresh' ) }
 			</Button>
 

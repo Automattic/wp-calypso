@@ -1,7 +1,15 @@
 .site-logs-toolbar {
 	display: flex;
-	gap: 16px;
+	align-items: stretch;
 	padding-bottom: 16px;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+	gap: 8px;
+	margin-bottom: 1em;
+
+	button {
+		height: initial;
+	}
 }
 
 .site-logs-toolbar__download-progress {
