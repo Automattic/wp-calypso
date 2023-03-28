@@ -60,6 +60,8 @@ export interface DesignRecipe {
 	pattern_ids?: number[] | string[];
 	header_pattern_ids?: number[] | string[];
 	footer_pattern_ids?: number[] | string[];
+	color_variation_title?: string;
+	font_variation_title?: string;
 }
 
 export interface SoftwareSet {

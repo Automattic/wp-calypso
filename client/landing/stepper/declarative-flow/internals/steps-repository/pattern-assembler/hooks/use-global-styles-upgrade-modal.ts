@@ -6,10 +6,11 @@ import { PATTERN_ASSEMBLER_EVENTS } from '../events';
 
 interface Props {
 	recordTracksEvent: ( eventName: string, eventProps?: { [ key: string ]: unknown } ) => void;
+	onCheckout?: () => void;
 	onSubmit: () => void;
 }
 
-const useGlobalStylesUpgradeModal = ( { recordTracksEvent, onSubmit }: Props ) => {
+const useGlobalStylesUpgradeModal = ( { recordTracksEvent, onCheckout, onSubmit }: Props ) => {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
@@ -27,6 +28,7 @@ const useGlobalStylesUpgradeModal = ( { recordTracksEvent, onSubmit }: Props ) =
 
 	const checkout = () => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.GLOBAL_STYLES_GATING_MODAL_CHECKOUT_BUTTON_CLICK );
+		onCheckout?.();
 
 		// When the user is done with checkout, send them back to the current url
 		const destUrl = new URL( window.location.href );
