@@ -6,6 +6,7 @@ import QueryBillingTransactions from 'calypso/components/data/query-billing-tran
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
+import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import BillingHistoryList from 'calypso/me/purchases/billing-history/billing-history-list';
 import { vatDetails as vatDetailsPath, billingHistoryReceipt } from 'calypso/me/purchases/paths';
@@ -33,7 +34,12 @@ export function BillingHistoryContent( {
 function BillingHistory() {
 	const translate = useTranslate();
 	const { vatDetails } = useVatDetails();
-	const vendorInfo = getVatVendorInfo( vatDetails.country ?? 'GB', 'now', translate );
+	const { data: geoData } = useGeoLocationQuery();
+	const vendorInfo = getVatVendorInfo(
+		vatDetails.country ?? geoData?.country_short ?? 'GB',
+		'now',
+		translate
+	);
 
 	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
 	const editVatText = translate( 'Edit %s details', {
