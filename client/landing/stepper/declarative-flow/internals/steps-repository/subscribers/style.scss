@@ -37,5 +37,12 @@
 			width: 100%;
 			margin: 2rem 0;
 		}
+
+		.add-subscriber__form--container .form-input-validation.is-error.is-file-validation {
+			background-color: var(--studio-gray-0);
+			padding: 16px;
+			padding-inline-start: 3.5rem;
+			padding-inline-end: 3.25;
+		}
 	}
 }

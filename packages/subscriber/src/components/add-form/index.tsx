@@ -17,6 +17,7 @@ import React, {
 	useState,
 	useEffect,
 	useRef,
+	useCallback,
 } from 'react';
 import { useActiveJobRecognition } from '../../hooks/use-active-job-recognition';
 import { useInProgressState } from '../../hooks/use-in-progress-state';
@@ -39,6 +40,7 @@ interface Props {
 	recordTracksEvent?: RecordTrackEvents;
 	onSkipBtnClick?: () => void;
 	onImportFinished?: () => void;
+	onChangeIsImportValid?: ( isValid: boolean ) => void;
 	titleText?: string;
 	subtitleText?: string;
 	emailPlaceholders?: string[];
@@ -64,6 +66,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		manualListEmailInviting,
 		recordTracksEvent,
 		onImportFinished,
+		onChangeIsImportValid,
 		titleText,
 		subtitleText,
 		emailPlaceholders,
@@ -108,6 +111,10 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		} )
 	);
 
+	const getValidEmails = useCallback( () => {
+		return isValidEmails.map( ( x, i ) => x && emails[ i ] ).filter( ( x ) => !! x ) as string[];
+	}, [ isValidEmails, emails ] );
+
 	/**
 	 * ↓ Effects
 	 */
@@ -123,12 +130,22 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	useEffect( () => {
 		prevInProgress.current = inProgress;
 	}, [ inProgress ] );
+
 	useEffect( () => {
 		prevSubmitAttemptCount.current = submitAttemptCount;
 	}, [ submitAttemptCount ] );
+
 	useEffect( () => {
 		setIsSubmitBtnReady( isSubmitButtonReady() );
 	}, [ isValidEmails, selectedFile, allowEmptyFormSubmit, submitBtnAlwaysEnable ] );
+
+	useEffect( () => {
+		if ( !! getValidEmails().length || ( isSelectedFileValid && selectedFile ) ) {
+			onChangeIsImportValid && onChangeIsImportValid( true );
+		} else {
+			onChangeIsImportValid && onChangeIsImportValid( false );
+		}
+	}, [ getValidEmails, isSelectedFileValid, selectedFile, onChangeIsImportValid ] );
 
 	useRecordAddFormEvents( recordTracksEvent, flowName );
 
@@ -177,10 +194,6 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		const _isDirtyEmails = Array.from( isDirtyEmails );
 		_isDirtyEmails[ index ] = !! value;
 		setIsDirtyEmails( _isDirtyEmails );
-	}
-
-	function getValidEmails(): string[] {
-		return isValidEmails.map( ( x, i ) => x && emails[ i ] ).filter( ( x ) => !! x ) as string[];
 	}
 
 	function isValidExtension( fileName: string ) {
@@ -291,7 +304,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	function renderFileValidationMsg() {
 		return (
 			! isSelectedFileValid && (
-				<FormInputValidation isError={ true } text="">
+				<FormInputValidation className="is-file-validation" isError={ true } text="">
 					{ createInterpolateElement(
 						translate(
 							'Sorry, you can only upload CSV files right now. Most providers will let you export this from your settings. <uploadBtn>Select another file</uploadBtn>'
@@ -414,14 +427,11 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 	function renderFollowerNoticeLabel() {
 		return (
-			isSelectedFileValid &&
-			! selectedFile && (
-				<label>
-					{ translate(
-						"If you enter an email address that has a WordPress.com account, they'll become a follower."
-					) }
-				</label>
-			)
+			<label>
+				{ translate(
+					"If you enter an email address that has a WordPress.com account, they'll become a follower."
+				) }
+			</label>
 		);
 	}
 
