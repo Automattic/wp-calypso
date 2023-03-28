@@ -1,8 +1,3 @@
-.site-logs {
-	position: relative;
-
-}
-
 .site-logs__formatted-header {
 	position: relative;
 	& ::before {
@@ -24,6 +19,8 @@
 }
 
 .site-logs {
+	position: relative;
+
 	// The logging API doesn't allow us to jump directly to a page, so hide page buttons.
 	.pagination__page-number,
 	.pagination__ellipsis {
