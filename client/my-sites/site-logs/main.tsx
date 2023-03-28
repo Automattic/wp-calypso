@@ -9,6 +9,7 @@ import { SiteLogsTab, useSiteLogsQuery } from 'calypso/data/hosting/use-site-log
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SiteLogsTabPanel } from './components/site-logs-tab-panel';
 import { SiteLogsTable } from './components/site-logs-table';
+import './style.scss';
 
 export function SiteLogs() {
 	const { __ } = useI18n();
@@ -47,6 +48,7 @@ export function SiteLogs() {
 				headerText={ titleHeader }
 				subHeaderText={ __( 'View server logs to troubleshoot or debug problems with your site.' ) }
 				align="left"
+				className="site-logs__formatted-header"
 			/>
 
 			<SiteLogsTabPanel selectedTab={ logType } onSelected={ handleTabSelected }>
