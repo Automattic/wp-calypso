@@ -62,6 +62,7 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 
 	const handleTabSelected = ( tabName: SiteLogsTab ) => {
 		setLogType( tabName );
+		setCurrentPageIndex( 0 );
 	};
 
 	const handleRefresh = () => {
