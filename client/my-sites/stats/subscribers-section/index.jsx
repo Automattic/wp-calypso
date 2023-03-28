@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import LineChart from 'calypso/components/line-chart';
 import StatsEmptyState from '../stats-empty-state';
+import StatsModulePlaceholder from '../stats-module/placeholder';
 import './style.scss';
 
 // New Subscriber Stats
@@ -76,6 +77,7 @@ export default function SubscribersSection() {
 	return (
 		<div className="subscribers-section">
 			<h1 className="highlight-cards-heading">Subscribers</h1>
+			<StatsModulePlaceholder className="is-chart" isLoading={ isLoading } />
 			<LineChart data={ data } renderTooltipForDatanum={ tooltipHelper }>
 				<StatsEmptyState />
 			</LineChart>
