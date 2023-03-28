@@ -46,6 +46,7 @@ const GlobalStylesVariationContainer = ( {
 				visibility: width ? 'visible' : 'hidden',
 			} }
 			tabIndex={ -1 }
+			scrolling="no"
 			{ ...props }
 		>
 			{ containerResizeListener }
