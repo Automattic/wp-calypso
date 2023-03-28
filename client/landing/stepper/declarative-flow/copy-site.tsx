@@ -13,10 +13,6 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useSiteCopy } from '../hooks/use-site-copy';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import AutomatedCopySite from './internals/steps-repository/automated-copy-site';
-import DomainsStep from './internals/steps-repository/domains';
-import ProcessingStep from './internals/steps-repository/processing-step';
-import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import {
 	AssertConditionResult,
 	AssertConditionState,
@@ -78,10 +74,19 @@ const copySite: Flow = {
 
 	useSteps() {
 		return [
-			{ slug: 'domains', component: DomainsStep },
-			{ slug: 'site-creation-step', component: SiteCreationStep },
-			{ slug: 'processing', component: ProcessingStep },
-			{ slug: 'automated-copy', component: AutomatedCopySite },
+			{ slug: 'domains', component: () => import( './internals/steps-repository/domains' ) },
+			{
+				slug: 'site-creation-step',
+				component: () => import( './internals/steps-repository/site-creation-step' ),
+			},
+			{
+				slug: 'processing',
+				component: () => import( './internals/steps-repository/processing-step' ),
+			},
+			{
+				slug: 'automated-copy',
+				component: () => import( './internals/steps-repository/automated-copy-site' ),
+			},
 			{
 				slug: 'processing-copy',
 				component: () => import( './internals/steps-repository/processing-step' ),
@@ -92,7 +97,10 @@ const copySite: Flow = {
 					),
 				},
 			},
-			{ slug: 'resuming', component: ProcessingStep }, // Needs siteSlug param
+			{
+				slug: 'resuming',
+				component: () => import( './internals/steps-repository/processing-step' ),
+			}, // Needs siteSlug param
 		];
 	},
 
