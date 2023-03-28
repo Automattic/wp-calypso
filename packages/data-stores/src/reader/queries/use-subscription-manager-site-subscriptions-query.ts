@@ -9,6 +9,11 @@ type SubscriptionManagerSiteSubscriptions = {
 	total_subscriptions: number;
 };
 
+type SubscriptionManagerSiteSubscriptionsQueryProps = {
+	filter?: ( item?: SiteSubscription ) => boolean;
+	sort?: ( a?: SiteSubscription, b?: SiteSubscription ) => number;
+};
+
 const callFollowingEndPoint = async (
 	page: number,
 	limit: number,
@@ -34,11 +39,17 @@ const callFollowingEndPoint = async (
 	return data;
 };
 
-const useSubscriptionManagerSiteSubscriptionsQuery = () => {
+const defaultFilter = () => true;
+const defaultSort = () => 0;
+
+const useSubscriptionManagerSiteSubscriptionsQuery = ( {
+	filter,
+	sort,
+}: SubscriptionManagerSiteSubscriptionsQueryProps = {} ) => {
 	const isLoggedIn = useIsLoggedIn();
 	const enabled = useIsQueryEnabled();
 
-	return useQuery< SiteSubscription[] >(
+	const { data, isLoading, error } = useQuery< SiteSubscription[] >(
 		[ 'read', 'site-subscriptions', isLoggedIn ],
 		async () => {
 			return await callFollowingEndPoint( 1, 200, isLoggedIn );
@@ -48,6 +59,12 @@ const useSubscriptionManagerSiteSubscriptionsQuery = () => {
 			refetchOnWindowFocus: false,
 		}
 	);
+
+	return {
+		data: data?.filter( filter || defaultFilter ).sort( sort || defaultSort ),
+		isLoading,
+		error,
+	};
 };
 
 export { useSubscriptionManagerSiteSubscriptionsQuery };
