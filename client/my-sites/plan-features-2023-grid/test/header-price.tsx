@@ -19,7 +19,7 @@ jest.mock( '../../plans/hooks/use-plan-prices', () => jest.fn() );
 
 import { render } from '@testing-library/react';
 import React from 'react';
-import usePlanPrices from '../../plans/hooks/use-plan-prices';
+import usePlanPrices, { PlanPrices } from '../../plans/hooks/use-plan-prices';
 import PlanFeatures2023GridHeaderPrice from '../header-price';
 import { PlanProperties } from '../types';
 
@@ -39,11 +39,12 @@ describe( 'PlanFeatures2023GridHeaderPrice', () => {
 	} );
 
 	test( 'should render raw and discounted prices when discount exists', () => {
-		usePlanPrices.mockImplementation( () => ( {
+		const planPrices: PlanPrices = {
 			planDiscountedRawPrice: 0,
 			discountedRawPrice: 50,
 			rawPrice: 100,
-		} ) );
+		};
+		usePlanPrices.mockImplementation( () => planPrices );
 
 		const { container } = render( <PlanFeatures2023GridHeaderPrice { ...defaultProps } /> );
 		const rawPrice = container.querySelector( '.plan-price.is-original' );
@@ -54,11 +55,12 @@ describe( 'PlanFeatures2023GridHeaderPrice', () => {
 	} );
 
 	test( 'should render raw and plan-discounted prices when discount exists', () => {
-		usePlanPrices.mockImplementation( () => ( {
+		const planPrices: PlanPrices = {
 			planDiscountedRawPrice: 50,
-			discountedRawPrice: 0,
+			discountedRawPrice: 10,
 			rawPrice: 100,
-		} ) );
+		};
+		usePlanPrices.mockImplementation( () => planPrices );
 
 		const { container } = render( <PlanFeatures2023GridHeaderPrice { ...defaultProps } /> );
 		const rawPrice = container.querySelector( '.plan-price.is-original' );
@@ -69,11 +71,12 @@ describe( 'PlanFeatures2023GridHeaderPrice', () => {
 	} );
 
 	test( 'should render just the raw price when no discount exists', () => {
-		usePlanPrices.mockImplementation( () => ( {
+		const planPrices: PlanPrices = {
 			planDiscountedRawPrice: 0,
 			discountedRawPrice: 0,
 			rawPrice: 100,
-		} ) );
+		};
+		usePlanPrices.mockImplementation( () => planPrices );
 
 		const { container } = render( <PlanFeatures2023GridHeaderPrice { ...defaultProps } /> );
 		const rawPrice = container.querySelector( '.plan-price' );
