@@ -1,8 +1,6 @@
 import { Button, Card, FormInputValidation, ProgressBar } from '@automattic/components';
 import { localize, useTranslate } from 'i18n-calypso';
-import { get, isEmpty, map } from 'lodash';
 import { useState, useCallback, useRef } from 'react';
-import { connect } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import CardHeading from 'calypso/components/card-heading';
 import DateRange from 'calypso/components/date-range';
@@ -12,10 +10,7 @@ import FormRadiosBar from 'calypso/components/forms/form-radios-bar';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import MaterialIcon from 'calypso/components/material-icon';
-import wpcom from 'calypso/lib/wp';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { successNotice, errorNotice } from 'calypso/state/notices/actions';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { useSiteLogsDownloader } from 'calypso/my-sites/site-logs/hooks/use-site-logs-downloader';
 
 import './style.scss';
 
@@ -207,17 +202,8 @@ const DateRangeInputsWithValidation = ( {
 	);
 };
 
-export const WebServerLogsCard = ( props ) => {
-	const {
-		successNotice: downloadSuccessNotice,
-		errorNotice: downloadErrorNotice,
-		siteId,
-		siteSlug,
-		translate,
-		atomicLogsDownloadStarted: recordDownloadStarted,
-		atomicLogsDownloadCompleted: recordDownloadCompleted,
-		atomicLogsDownloadError: recordDownloadError,
-	} = props;
+export const WebServerLogsCard = () => {
+	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const now = moment();
 	const localeDateFormat = moment.localeData().longDateFormat( 'L' );
@@ -229,10 +215,6 @@ export const WebServerLogsCard = ( props ) => {
 	const [ startDateTime, setStartDateTime ] = useState( initialStartDate );
 	const [ endDateTime, setEndDateTime ] = useState( initialEndDate );
 	const [ logType, setLogType ] = useState( 'php' );
-	const [ downloading, setDownloading ] = useState( false );
-	const [ downloadErrorOccurred, setDownloadErrorOccurred ] = useState( false );
-	const [ progress, setProgress ] = useState( { recordsDownloaded: 0, totalRecordsAvailable: 0 } );
-	const [ showProgress, setShowProgress ] = useState( false );
 	const [ startDateValidation, setStartDateValidation ] = useState( {
 		isValid: true,
 		validationInfo: translate( 'Date is valid' ),
@@ -307,140 +289,24 @@ export const WebServerLogsCard = ( props ) => {
 		setEndDateTime( end );
 	};
 
-	const downloadLogs = async () => {
-		setShowProgress( true );
-		setDownloading( true );
-		setProgress( { recordsDownloaded: 0, totalRecordsAvailable: 0 } );
-		setDownloadErrorOccurred( false );
-
-		let path = null;
-		if ( logType === 'php' ) {
-			path = `/sites/${ siteId }/hosting/error-logs`;
-		} else if ( logType === 'web' ) {
-			path = `/sites/${ siteId }/hosting/logs`;
-		} else {
-			downloadErrorNotice( translate( 'Invalid log type specified' ) );
-			setDownloadErrorOccurred( true );
-			return;
-		}
-
-		const startMoment = moment.utc( startDateTime, localeDateFormat ).startOf( 'day' );
-		const endMoment = moment.utc( endDateTime, localeDateFormat ).endOf( 'day' );
-
-		const dateFormat = 'YYYYMMDDHHmmss';
-		const startString = startMoment.format( dateFormat );
-		const endString = endMoment.format( dateFormat );
-
-		const startTime = startMoment.unix();
-		const endTime = endMoment.unix();
-
-		const trackDateFormat = 'YYYY/MM/DD';
-		const tracksProps = {
-			site_slug: siteSlug,
-			site_id: siteId,
-			start_time: startMoment.format( trackDateFormat ),
-			end_time: endMoment.format( trackDateFormat ),
-			log_type: logType,
-		};
-
-		recordDownloadStarted( tracksProps );
-
-		let scrollId = null;
-		let logs = [];
-		let logFile = new Blob();
-		let totalLogs = 0;
-		let isError = false;
-
-		do {
-			await wpcom.req
-				.post(
-					{
-						path,
-						apiNamespace: 'wpcom/v2',
-					},
-					{
-						start: startTime,
-						end: endTime,
-						page_size: 10000,
-						scroll_id: scrollId,
-					}
-				)
-				.then( ( response ) => {
-					const newLogData = get( response, 'data.logs', [] );
-					scrollId = get( response, 'data.scroll_id', null );
-
-					if ( isEmpty( logs ) ) {
-						if ( isEmpty( newLogData ) ) {
-							downloadErrorNotice( translate( 'No logs available for this time range' ) );
-							isError = true;
-						} else {
-							logs = [ Object.keys( newLogData[ 0 ] ).join( ',' ) + '\n' ];
-							totalLogs = get( response, 'data.total_results', 1 );
-						}
-					}
-
-					logs = [
-						...logs,
-						...map( newLogData, ( entry ) => {
-							return Object.values( entry ).join( ',' ) + '\n';
-						} ),
-					];
-
-					setProgress( { recordsDownloaded: logs.length - 1, totalRecordsAvailable: totalLogs } );
-				} )
-				.catch( ( error ) => {
-					isError = true;
-					const message = get( error, 'message', 'Could not retrieve logs.' );
-					downloadErrorNotice( message );
-					recordDownloadError( {
-						error_message: message,
-						...tracksProps,
-					} );
-				} );
-		} while ( null !== scrollId );
-
-		setDownloading( false );
-
-		if ( isError ) {
-			setDownloadErrorOccurred( true );
-			return;
-		}
-
-		logFile = new Blob( logs );
-
-		const url = window.URL.createObjectURL( logFile );
-		const link = document.createElement( 'a' );
-		const downloadFilename =
-			siteSlug + '-' + logType + '-logs-' + startString + '-' + endString + '.csv';
-		link.href = url;
-		link.setAttribute( 'download', downloadFilename );
-		link.click();
-		window.URL.revokeObjectURL( url );
-
-		downloadSuccessNotice( translate( 'Logs downloaded.' ) );
-		recordDownloadCompleted( {
-			download_filename: downloadFilename,
-			total_log_records_downloaded: totalLogs,
-			...tracksProps,
-		} );
-	};
+	const { downloadLogs, state } = useSiteLogsDownloader();
 
 	const renderDownloadProgress = () => {
-		if ( ! showProgress ) {
+		if ( state.status === 'idle' ) {
 			return;
 		}
 
 		let progressMessage = translate( 'Download progress: starting download…' );
 
-		if ( downloadErrorOccurred ) {
+		if ( state.status === 'error' ) {
 			progressMessage = translate( 'Download progress: an error occurred' );
-		} else if ( 0 !== progress.totalRecordsAvailable ) {
+		} else if ( 0 !== state.totalRecordsAvailable ) {
 			progressMessage = translate(
 				'Download progress: %(logRecordsDownloaded)d of %(totalLogRecordsAvailable)d records',
 				{
 					args: {
-						logRecordsDownloaded: progress.recordsDownloaded,
-						totalLogRecordsAvailable: progress.totalRecordsAvailable,
+						logRecordsDownloaded: state.recordsDownloaded,
+						totalLogRecordsAvailable: state.totalRecordsAvailable,
 					},
 				}
 			);
@@ -450,9 +316,9 @@ export const WebServerLogsCard = ( props ) => {
 			<div>
 				<span>{ progressMessage }</span>
 				<ProgressBar
-					value={ progress.recordsDownloaded }
-					total={ progress.totalRecordsAvailable }
-					isPulsing={ downloading }
+					value={ state.recordsDownloaded }
+					total={ state.totalRecordsAvailable }
+					isPulsing={ state.status === 'downloading' }
 					canGoBackwards={ true }
 				/>
 			</div>
@@ -502,8 +368,12 @@ export const WebServerLogsCard = ( props ) => {
 					{ renderDownloadProgress() }
 					<Button
 						primary
-						disabled={ downloading || ! startDateValidation.isValid || ! endDateValidation.isValid }
-						onClick={ downloadLogs }
+						disabled={
+							state.status === 'downloading' ||
+							! startDateValidation.isValid ||
+							! endDateValidation.isValid
+						}
+						onClick={ () => downloadLogs( { logType, startDateTime, endDateTime } ) }
 					>
 						{ translate( 'Download logs' ) }
 					</Button>
@@ -521,27 +391,4 @@ export const WebServerLogsCard = ( props ) => {
 	);
 };
 
-export const atomicLogsDownloadStarted = ( props ) =>
-	recordTracksEvent( 'calypso_atomic_logs_download_started', props );
-
-export const atomicLogsDownloadCompleted = ( props ) =>
-	recordTracksEvent( 'calypso_atomic_logs_download_completed', props );
-
-export const atomicLogsDownloadError = ( props ) =>
-	recordTracksEvent( 'calypso_atomic_logs_download_error', props );
-
-export default connect(
-	( state ) => {
-		return {
-			siteId: getSelectedSiteId( state ),
-			siteSlug: getSelectedSiteSlug( state ),
-		};
-	},
-	{
-		atomicLogsDownloadStarted,
-		atomicLogsDownloadCompleted,
-		atomicLogsDownloadError,
-		successNotice,
-		errorNotice,
-	}
-)( localize( WebServerLogsCard ) );
+export default localize( WebServerLogsCard );

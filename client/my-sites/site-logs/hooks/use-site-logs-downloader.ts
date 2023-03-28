@@ -23,11 +23,10 @@ const initialState = {
 };
 
 type SiteLogsDownloaderReducerState =
-	| {
-			status: 'idle';
-	  }
+	| { status: 'idle' }
 	| { status: 'downloading'; recordsDownloaded: number; totalRecordsAvailable: number }
-	| { status: 'error' };
+	| { status: 'error' }
+	| { status: 'complete'; recordsDownloaded: number; totalRecordsAvailable: number };
 
 type SiteLogsDownloaderReducerAction =
 	| {
@@ -38,15 +37,18 @@ type SiteLogsDownloaderReducerAction =
 			payload: { recordsDownloaded: number; totalRecordsAvailable: number };
 	  }
 	| { type: 'DOWNLOAD_ERROR' }
-	| { type: 'DOWNLOAD_COMPLETE' };
+	| {
+			type: 'DOWNLOAD_COMPLETE';
+			payload: { recordsDownloaded: number; totalRecordsAvailable: number };
+	  };
 
 const siteLogsDownloaderReducer = (
-	state: SiteLogsDownloaderReducerState,
+	state: SiteLogsDownloaderReducerState = initialState,
 	action: SiteLogsDownloaderReducerAction
-) => {
+): SiteLogsDownloaderReducerState => {
 	if ( action.type === 'DOWNLOAD_START' ) {
 		return {
-			status: 'downloading' as const,
+			status: 'downloading',
 			recordsDownloaded: 0,
 			totalRecordsAvailable: 0,
 		};
@@ -54,19 +56,22 @@ const siteLogsDownloaderReducer = (
 
 	if ( action.type === 'DOWNLOAD_UPDATE' ) {
 		return {
-			status: 'downloading' as const,
+			status: 'downloading',
 			...action.payload,
 		};
 	}
 
 	if ( action.type === 'DOWNLOAD_ERROR' ) {
 		return {
-			status: 'error' as const,
+			status: 'error',
 		};
 	}
 
 	if ( action.type === 'DOWNLOAD_COMPLETE' ) {
-		return initialState;
+		return {
+			status: 'complete',
+			...action.payload,
+		};
 	}
 
 	return state;
@@ -230,7 +235,13 @@ export const useSiteLogsDownloader = () => {
 			total_log_records_downloaded: totalLogs,
 			...tracksProps,
 		} );
-		dispatch( { type: 'DOWNLOAD_COMPLETE' } );
+		dispatch( {
+			type: 'DOWNLOAD_COMPLETE',
+			payload: {
+				recordsDownloaded: logs.length - 1,
+				totalRecordsAvailable: totalLogs,
+			},
+		} );
 	};
 
 	return { downloadLogs, state };
