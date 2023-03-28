@@ -1,13 +1,10 @@
-/* eslint-disable no-restricted-imports */
-/**
- * External dependencies
- */
 import { useLocation } from 'react-router-dom';
-import Tab from 'calypso/components/section-nav/item';
-import Tabs from './Tabs';
+import Nav from 'calypso/components/section-nav';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
 import './styles.scss';
 
-type TabItem = {
+export type TabItem = {
 	count?: number;
 	label: string;
 	path: string;
@@ -16,7 +13,6 @@ type TabItem = {
 
 type TabsSwitcherProps = {
 	baseRoute: string;
-	defaultTab: string;
 	tabs: TabItem[];
 };
 
@@ -39,18 +35,20 @@ const TabsSwitcher = ( { baseRoute, tabs }: TabsSwitcherProps ) => {
 
 	return (
 		<>
-			<Tabs>
-				{ tabs.map( ( { count, label, path } ) => (
-					<Tab
-						key={ path }
-						path={ getRoute( baseRoute, path ) }
-						count={ count }
-						selected={ path === currentPath }
-					>
-						{ label }
-					</Tab>
-				) ) }
-			</Tabs>
+			<Nav className="subscription-manager-tab-switcher">
+				<NavTabs>
+					{ tabs.map( ( { count, label, path } ) => (
+						<NavItem
+							key={ path }
+							path={ getRoute( baseRoute, path ) }
+							count={ count }
+							selected={ path === currentPath }
+						>
+							{ label }
+						</NavItem>
+					) ) }
+				</NavTabs>
+			</Nav>
 
 			{ CurrentView && <CurrentView /> }
 		</>
