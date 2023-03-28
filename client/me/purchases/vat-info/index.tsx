@@ -16,6 +16,7 @@ import useCountryList, {
 } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
+import { getVatVendorInfo } from '../billing-history/vat-vendor-details';
 import useVatDetails from './use-vat-details';
 import type { UpdateError, FetchError } from './use-vat-details';
 import type { CountryListItem, VatDetails } from '@automattic/wpcom-checkout';
@@ -24,7 +25,13 @@ import './style.scss';
 
 export default function VatInfoPage() {
 	const translate = useTranslate();
-	const { isLoading, fetchError } = useVatDetails();
+	const { isLoading, fetchError, vatDetails } = useVatDetails();
+	const [ currentVatDetails, setCurrentVatDetails ] = useState< VatDetails >( {} );
+	const vendorInfo = getVatVendorInfo(
+		currentVatDetails.country ?? vatDetails.country ?? 'GB',
+		'now',
+		translate
+	);
 
 	useRecordVatEvents( { fetchError } );
 
@@ -32,7 +39,13 @@ export default function VatInfoPage() {
 		return (
 			<div className="vat-info">
 				<CompactCard>
-					{ translate( 'An error occurred while fetching Business Tax ID details.' ) }
+					{
+						/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+						translate( 'An error occurred while fetching %s details.', {
+							textOnly: true,
+							args: [ vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } ) ],
+						} )
+					}
 				</CompactCard>
 			</div>
 		);
@@ -43,17 +56,33 @@ export default function VatInfoPage() {
 			<Column type="main">
 				<CompactCard className="vat-info__form">
 					{ isLoading && <LoadingPlaceholder /> }
-					{ ! isLoading && <VatForm /> }
+					{ ! isLoading && (
+						<VatForm
+							currentVatDetails={ currentVatDetails }
+							setCurrentVatDetails={ setCurrentVatDetails }
+						/>
+					) }
 				</CompactCard>
 			</Column>
 			<Column type="sidebar">
 				<Card className="vat-info__sidebar-card">
 					<CardHeading tagName="h1" size={ 16 } isBold={ true } className="vat-info__sidebar-title">
-						{ translate( 'Business Tax ID details' ) }
+						{
+							/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+							translate( 'Add %s details', {
+								textOnly: true,
+								args: [ vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } ) ],
+							} )
+						}
 					</CardHeading>
 					<p className="vat-info__sidebar-paragraph">
 						{ translate(
-							"We currently only provide Business Tax ID invoices to users who are properly registered. Business Tax ID information saved on this page will be applied to all of your account's receipts."
+							/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+							"We currently only provide %(taxName)s invoices to users who are properly registered. %(taxName)s information saved on this page will be applied to all of your account's receipts.",
+							{
+								textOnly: true,
+								args: { taxName: vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } ) },
+							}
 						) }
 					</p>
 				</Card>
@@ -62,12 +91,22 @@ export default function VatInfoPage() {
 	);
 }
 
-function VatForm() {
+function VatForm( {
+	currentVatDetails,
+	setCurrentVatDetails,
+}: {
+	currentVatDetails: VatDetails;
+	setCurrentVatDetails: ( details: VatDetails ) => void;
+} ) {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
-	const [ currentVatDetails, setCurrentVatDetails ] = useState< VatDetails >( {} );
 	const { vatDetails, isUpdating, isUpdateSuccessful, setVatDetails, updateError } =
 		useVatDetails();
+	const vendorInfo = getVatVendorInfo(
+		currentVatDetails.country ?? vatDetails.country ?? 'GB',
+		'now',
+		translate
+	);
 
 	const saveDetails = () => {
 		reduxDispatch( recordTracksEvent( 'calypso_vat_details_update' ) );
@@ -97,7 +136,15 @@ function VatForm() {
 				/>
 			</FormFieldset>
 			<FormFieldset className="vat-info__vat-field">
-				<FormLabel htmlFor="vat">{ translate( 'Business Tax ID Number' ) }</FormLabel>
+				<FormLabel htmlFor="vat">
+					{
+						/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+						translate( '%s ID', {
+							textOnly: true,
+							args: [ vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } ) ],
+						} )
+					}
+				</FormLabel>
 				<FormTextInput
 					name="vat"
 					disabled={ isUpdating || isVatAlreadySet }
@@ -109,8 +156,10 @@ function VatForm() {
 				{ isVatAlreadySet && (
 					<FormSettingExplanation>
 						{ translate(
-							'To change your Business Tax ID number, {{contactSupportLink}}please contact support{{/contactSupportLink}}.',
+							/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+							'To change your %(taxName)s ID, {{contactSupportLink}}please contact support{{/contactSupportLink}}.',
 							{
+								args: { taxName: vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } ) },
 								components: {
 									contactSupportLink: (
 										<a
@@ -223,6 +272,8 @@ function useDisplayVatNotices( {
 } ) {
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
+	const { vatDetails } = useVatDetails();
+	const vendorInfo = getVatVendorInfo( vatDetails.country ?? 'GB', 'now', translate );
 
 	useEffect( () => {
 		if ( error ) {
@@ -234,13 +285,20 @@ function useDisplayVatNotices( {
 		if ( success ) {
 			reduxDispatch( removeNotice( 'vat_info_notice' ) );
 			reduxDispatch(
-				successNotice( translate( 'Your Business Tax ID details have been updated!' ), {
-					id: 'vat_info_notice',
-				} )
+				successNotice(
+					/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+					translate( 'Your %s details have been updated!', {
+						textOnly: true,
+						args: [ vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } ) ],
+					} ),
+					{
+						id: 'vat_info_notice',
+					}
+				)
 			);
 			return;
 		}
-	}, [ error, success, reduxDispatch, translate ] );
+	}, [ error, success, reduxDispatch, translate, vendorInfo?.taxName ] );
 }
 
 function useRecordVatEvents( {
