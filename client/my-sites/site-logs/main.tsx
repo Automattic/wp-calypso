@@ -43,7 +43,11 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 		) as SiteLogsTab;
 	} );
 
-	const { data: latestPageData, isLoading } = useSiteLogsQuery( siteId, {
+	const {
+		data: latestPageData,
+		isLoading,
+		invalidateQuery,
+	} = useSiteLogsQuery( siteId, {
 		logType,
 		start: dateRange.startTime,
 		end: dateRange.endTime,
@@ -61,6 +65,7 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 	}, [ latestPageData, isLoading ] );
 
 	const handleTabSelected = ( tabName: SiteLogsTab ) => {
+		invalidateQuery();
 		setLogType( tabName );
 		setCurrentPageIndex( 0 );
 	};

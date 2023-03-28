@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { UseQueryOptions, useQuery } from 'react-query';
+import { UseQueryOptions, useQuery, useQueryClient } from 'react-query';
 import wpcom from 'calypso/lib/wp';
 
 interface SiteLogsAPIResponse {
@@ -33,11 +33,13 @@ export function useSiteLogsQuery(
 	params: SiteLogsParams,
 	queryOptions: UseQueryOptions< SiteLogsAPIResponse, unknown, SiteLogsData > = {}
 ) {
+	const queryClient = useQueryClient();
 	const [ scrollId, setScrollId ] = useState< string | undefined >();
 	const [ isFinishedPaging, setIsFinishedPaging ] = useState< boolean >( false );
+	const queryKey = buildQueryKey( siteId, params );
 
 	const queryResult = useQuery< SiteLogsAPIResponse, unknown, SiteLogsData >(
-		buildQueryKey( siteId, params ),
+		queryKey,
 		() => {
 			const logTypeFragment = params.logType === 'php' ? 'error-logs' : 'logs';
 			const path = `/sites/${ siteId }/hosting/${ logTypeFragment }`;
@@ -85,8 +87,14 @@ export function useSiteLogsQuery(
 	// requests are not idempotent.
 	const { refetch, ...remainingQueryResults } = queryResult;
 
+	const invalidateQuery = () => {
+		setScrollId( undefined );
+		queryClient.invalidateQueries( { queryKey: queryKey } );
+	};
+
 	return {
 		isFinishedPaging,
+		invalidateQuery,
 		...remainingQueryResults,
 	};
 }
