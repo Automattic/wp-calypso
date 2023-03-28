@@ -1,10 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
-import { getPlans, plansLink, PLAN_WOOEXPRESS_MEDIUM } from '@automattic/calypso-products';
+import { plansLink, PLAN_FREE, PLAN_WOOEXPRESS_MEDIUM } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
+import AsyncLoad from 'calypso/components/async-load';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
-import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import ECommercePlanFeatures from 'calypso/my-sites/plans/components/ecommerce-plan-features';
 import ECommerceTrialBanner from './ecommerce-trial-banner';
 import { getWooExpressMediumFeatureSets } from './wx-medium-features';
@@ -44,31 +44,15 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 		/>
 	);
 
-	const mediumPlan = getPlans()[ PLAN_WOOEXPRESS_MEDIUM ];
-	// const smallPlan = getPlans()[ PLAN_WOOEXPRESS_SMALL ];
-	const mediumFeaturesRaw = [
-		...( mediumPlan?.getInferiorFeatures?.() || [] ),
-		...( mediumPlan?.getIncludedFeatures?.() || [] ),
-	];
-	const mediumFeatureList = getPlanFeaturesObject( mediumFeaturesRaw ).map( ( f, i ) => ( {
-		feature: mediumFeaturesRaw?.[ i ],
-		title: f?.getTitle?.(),
-		description: f?.getDescription?.(),
-	} ) );
+	const tableProps = {
+		plans: [ PLAN_FREE, PLAN_WOOEXPRESS_MEDIUM ],
+		hidePlansFeatureComparison: true,
+	};
 
 	const performanceAndEssentialOption = (
-		<table>
-			<tr>
-				<td>Performance</td>
-			</tr>
-			{ mediumFeatureList.map( ( item ) => {
-				return (
-					<tr>
-						<td>{ item?.title || item?.feature }</td>
-					</tr>
-				);
-			} ) }
-		</table>
+		<div className="is-2023-pricing-grid">
+			<AsyncLoad require="calypso/my-sites/plan-features-2023-grid" { ...tableProps } />
+		</div>
 	);
 
 	const upgradeOptions = isEnabled( 'plans/wooexpress-small' )
