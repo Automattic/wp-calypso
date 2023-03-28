@@ -1,12 +1,12 @@
-import * as React from 'react';
 import useManagerClient from './use-manager-client';
 import useShoppingCart from './use-shopping-cart';
 import type { WithShoppingCartProps, CartKey } from './types';
+import type { ComponentType } from 'react';
 
 export type AdditionalCartKeyProp = { cartKey?: CartKey };
 
 export default function withShoppingCart< P >(
-	Component: React.ComponentType< P & AdditionalCartKeyProp >,
+	Component: ComponentType< P & AdditionalCartKeyProp >,
 	mapPropsToCartKey?: ( props: P ) => CartKey | undefined
 ) {
 	return function ShoppingCartWrapper(

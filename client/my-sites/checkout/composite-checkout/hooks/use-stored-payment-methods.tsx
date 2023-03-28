@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { isPaymentAgreement } from 'calypso/lib/checkout/payment-methods';
 import wp from 'calypso/lib/wp';
 import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
+import type { ComponentType } from 'react';
 
 export const storedPaymentMethodsQueryKey = 'use-stored-payment-methods';
 
@@ -41,7 +42,7 @@ export interface WithStoredPaymentMethodsProps {
 }
 
 export function withStoredPaymentMethods< P >(
-	Component: React.ComponentType< P >,
+	Component: ComponentType< P >,
 	options: {
 		type?: PaymentMethodRequestType;
 		expired?: boolean;
