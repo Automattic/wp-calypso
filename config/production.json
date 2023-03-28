@@ -19,7 +19,6 @@
 		"ad-tracking": true,
 		"akismet/siteless-checkout": false,
 		"bilmur-script": true,
-		"block-editor/non-iframed": true,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
