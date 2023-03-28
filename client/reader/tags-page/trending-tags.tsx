@@ -30,17 +30,33 @@ export default function TrendingTags() {
 			return tagRows;
 		},
 	};
+
 	const tagsResponse = useQuery(
 		[ 'trending-tags' ],
 		() => wpcom.req.get( `/read/trending/tags`, { apiVersion: '1.2' } ),
 		query
 	);
 
+	const toTitleCase = ( text: string ) => {
+		return text.toLowerCase().replace( /(^|\s)\S/g, function ( firstLetter: string ) {
+			return firstLetter.toUpperCase();
+		} );
+	};
+
+	const abbreviateNumber = ( number: number ) => {
+		if ( number >= 1000000 ) {
+			return ( number / 1000000 ).toFixed( 0 ) + 'm';
+		} else if ( number >= 1000 ) {
+			return ( number / 1000 ).toFixed( 0 ) + 'k';
+		}
+		return number.toString();
+	};
+
 	const renderTagRow = ( tag: TagResult ) => (
 		<div className="trending-tags__column" key={ tag.tag.slug }>
 			<a href={ `/tag/${ encodeURIComponent( tag.tag.slug ) }` }>
-				<span className="trending-tags__title">{ tag.tag.title }</span>
-				<span className="trending-tags__count">{ tag.count }</span>
+				<span className="trending-tags__title">{ toTitleCase( tag.tag.title ) }</span>
+				<span className="trending-tags__count">{ abbreviateNumber( tag.count ) }</span>
 			</a>
 		</div>
 	);
