@@ -84,7 +84,6 @@ describe( 'CheckoutMain', () => {
 			additionalCartProps: Partial< Parameters< typeof ShoppingCartProvider > >;
 			useUndefinedCartKey?: boolean;
 		} ) => {
-			console.log( `additionalProps: ${ JSON.stringify( additionalProps ) }` );
 			const managerClient = createShoppingCartManagerClient( {
 				getCart: mockGetCartEndpointWith( { ...initialCart, ...( cartChanges ?? {} ) } ),
 				setCart: mockSetCartEndpoint,
