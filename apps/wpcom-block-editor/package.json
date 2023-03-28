@@ -21,6 +21,7 @@
 		"build": "NODE_ENV=production yarn dev"
 	},
 	"dependencies": {
+		"@automattic/calypso-url": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@babel/runtime": "^7.17.2",
 		"@wordpress/base-styles": "^4.13.0",

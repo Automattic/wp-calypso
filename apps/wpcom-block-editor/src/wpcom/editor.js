@@ -7,6 +7,7 @@ import './features/override-edit-site-back-button';
 import './features/tracking';
 import './features/use-classic-block-guide';
 import InserterMenuTrackingEvent from './features/tracking/wpcom-inserter-menu-search-term';
+import './features/site-editor-env-consistency';
 import './editor.scss';
 
 registerPlugin( 'track-inserter-menu-events', {
