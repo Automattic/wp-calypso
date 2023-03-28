@@ -330,7 +330,9 @@ class StatsSite extends Component {
 								/>
 							)
 						}
-						<StatsSubscribers siteId={ siteId } />
+						{ config.isEnabled( 'stats/subscribers-section' ) && (
+							<StatsSubscribers siteId={ siteId } />
+						) }
 					</div>
 				</div>
 				{ config.isEnabled( 'stats/subscribers-section' ) && (
