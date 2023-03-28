@@ -275,7 +275,7 @@ function useAddRenewalItems( {
 	isGiftPurchase,
 }: {
 	originalPurchaseId: string | number | null | undefined;
-	sitelessCheckoutType: string | null | undefined;
+	sitelessCheckoutType: SitelessCheckoutType;
 	productAlias: string | null | undefined;
 	dispatch: ( action: PreparedProductsAction ) => void;
 	addHandler: AddHandler;
@@ -495,7 +495,7 @@ function createRenewalItemToAddToCart( {
 }: {
 	productAlias: string;
 	purchaseId: string | number | undefined | null;
-	sitelessCheckoutType: string | null | undefined;
+	sitelessCheckoutType: SitelessCheckoutType;
 	isGiftPurchase?: boolean;
 } ): RequestCartProduct | null {
 	const { slug, meta, quantity } = getProductPartsFromAlias( productAlias );

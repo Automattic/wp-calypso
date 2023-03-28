@@ -495,7 +495,7 @@ export function jetpackProductItem( slug: string ): MinimalRequestCartProduct {
 }
 
 /**
- * Creates a new shopping cart item for a akismet product.
+ * Creates a new shopping cart item for an Akismet product.
  */
 export function akismetProductItem( slug: string ): MinimalRequestCartProduct {
 	return {
