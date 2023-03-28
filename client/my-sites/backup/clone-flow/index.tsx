@@ -13,6 +13,7 @@ import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import StepProgress from 'calypso/components/step-progress';
 import useRewindableActivityLogQuery from 'calypso/data/activity-log/use-rewindable-activity-log-query';
+import accept from 'calypso/lib/accept';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
@@ -26,9 +27,7 @@ import getRestoreProgress from 'calypso/state/selectors/get-restore-progress';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
 import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
-import { backupMainPath } from '../paths';
 import Error from '../rewind-flow/error';
 import Loading from '../rewind-flow/loading';
 import ProgressBar from '../rewind-flow/progress-bar';
@@ -143,8 +142,6 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 		[ moment, gmtOffset, timezone ]
 	);
 
-	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
-
 	const loading = rewindState.state === 'uninitialized';
 	const { restoreId } = rewindState.rewind || {};
 
@@ -192,6 +189,41 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 			</div>
 		</>
 	);
+
+	const confirmationPopoverContent = (
+		<>
+			<div className="clone-flow__confirmation-popover-heading">{ translate( 'Important!' ) }</div>
+			<div className="clone-flow__confirmation-popover-info">
+				{ translate(
+					'Before continue, be aware that any current content on {{strong}}%(destinationUrl)s{{/strong}} will be overriden based on what you configured to copy.',
+					{
+						args: {
+							destinationUrl: cloneDestination,
+						},
+						components: {
+							strong: <strong />,
+						},
+					}
+				) }
+			</div>
+			<div className="clone-flow__confirmation-popover-info">
+				{ translate( 'Do you want to continue?' ) }
+			</div>
+		</>
+	);
+
+	const showConfirmationPopover = () =>
+		accept(
+			confirmationPopoverContent,
+			( accepted ) => ( accepted ? onConfirm() : undefined ),
+			'Yes, continue',
+			'No, cancel',
+			{ additionalClassNames: 'clone-flow__confirmation-popover' }
+		);
+
+	const goBackFromConfirm = () => {
+		setUserHasSetBackupPeriod( false );
+	};
 
 	// Screen that allows the user to configure which items to clone
 	const renderConfirm = () => (
@@ -242,13 +274,13 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 				) }
 			</>
 			<div className="clone-flow__btn-group">
-				<Button className="clone-flow__back-button" href={ backupMainPath( siteSlug ) }>
+				<Button className="clone-flow__back-button" onClick={ goBackFromConfirm }>
 					{ translate( 'Go back' ) }
 				</Button>
 				<Button
 					className="clone-flow__primary-button"
 					primary
-					onClick={ onConfirm }
+					onClick={ showConfirmationPopover }
 					disabled={ disableClone }
 				>
 					{ translate( 'Confirm configuration' ) }

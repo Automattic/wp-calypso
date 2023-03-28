@@ -104,3 +104,23 @@
 		display: none;
 	}
 }
+
+.clone-flow__confirmation-popover-heading {
+	font-size: $font-title-medium;
+	font-weight: 600;
+}
+
+.clone-flow__confirmation-popover-info {
+	font-size: $font-body;
+	font-weight: 400;
+	margin-top: 16px;
+}
+
+.clone-flow__confirmation-popover .button:first-child {
+	margin-left: 0;
+}
+
+.clone-flow__confirmation-popover .dialog__action-buttons {
+	border-top: none;
+	text-align: left;
+}
