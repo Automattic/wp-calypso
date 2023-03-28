@@ -36,7 +36,7 @@ const SubscriptionManagementPage = () => {
 
 	return (
 		<SubscriptionManager>
-			<TabsSwitcher baseRoute="subscriptions" defaultTab="sites" tabs={ tabs } />
+			<TabsSwitcher baseRoute="subscriptions" tabs={ tabs } />
 		</SubscriptionManager>
 	);
 };
