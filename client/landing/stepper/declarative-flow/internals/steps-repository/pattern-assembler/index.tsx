@@ -432,18 +432,34 @@ const PatternAssembler = ( {
 
 	const onDeleteFooter = () => onSelect( 'footer', null );
 
-	const onSelectColorVariation = ( variation: GlobalStylesObject ) => {
+	const onScreenColorsSelect = ( variation: GlobalStylesObject ) => {
 		setSelectedColorPaletteVariation( variation );
-		recordTracksEvent( 'calypso_signup_pattern_assembler_color_variation_preview_click', {
+		recordTracksEvent( 'calypso_signup_pattern_assembler_screen_colors_preview_click', {
 			title: variation.title,
 		} );
 	};
 
-	const onSelectFontVariation = ( variation: GlobalStylesObject ) => {
+	const onScreenColorsBack = () => {
+		recordTracksEvent( 'calypso_signup_pattern_assembler_screen_colors_back_click' );
+	};
+
+	const onScreenColorsDone = () => {
+		recordTracksEvent( 'calypso_signup_pattern_assembler_screen_colors_done_click' );
+	};
+
+	const onScreenFontsSelect = ( variation: GlobalStylesObject ) => {
 		setSelectedFontPairingVariation( variation );
-		recordTracksEvent( 'calypso_signup_pattern_assembler_font_variation_preview_click', {
+		recordTracksEvent( 'calypso_signup_pattern_assembler_screen_fonts_preview_click', {
 			title: variation.title,
 		} );
+	};
+
+	const onScreenFontsBack = () => {
+		recordTracksEvent( 'calypso_signup_pattern_assembler_screen_fonts_back_click' );
+	};
+
+	const onScreenFontsDone = () => {
+		recordTracksEvent( 'calypso_signup_pattern_assembler_screen_fonts_done_click' );
 	};
 
 	const stepContent = (
@@ -524,7 +540,9 @@ const PatternAssembler = ( {
 							siteId={ site?.ID }
 							stylesheet={ stylesheet }
 							selectedColorPaletteVariation={ selectedColorPaletteVariation }
-							onSelect={ onSelectColorVariation }
+							onSelect={ onScreenColorsSelect }
+							onBack={ onScreenColorsBack }
+							onDoneClick={ onScreenColorsDone }
 						/>
 					</NavigatorScreen>
 				) }
@@ -537,7 +555,9 @@ const PatternAssembler = ( {
 							siteId={ site?.ID }
 							stylesheet={ stylesheet }
 							selectedFontPairingVariation={ selectedFontPairingVariation }
-							onSelect={ onSelectFontVariation }
+							onSelect={ onScreenFontsSelect }
+							onBack={ onScreenFontsBack }
+							onDoneClick={ onScreenFontsDone }
 						/>
 					</NavigatorScreen>
 				) }
