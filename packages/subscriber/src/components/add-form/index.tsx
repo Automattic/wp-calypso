@@ -39,6 +39,9 @@ interface Props {
 	recordTracksEvent?: RecordTrackEvents;
 	onSkipBtnClick?: () => void;
 	onImportFinished?: () => void;
+	titleText?: string;
+	subtitleText?: string;
+	emailPlaceholders?: string[];
 }
 
 export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
@@ -61,6 +64,9 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		manualListEmailInviting,
 		recordTracksEvent,
 		onImportFinished,
+		titleText,
+		subtitleText,
+		emailPlaceholders,
 	} = props;
 
 	const {
@@ -74,7 +80,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	 * ↓ Fields
 	 */
 	const emailControlMaxNum = 6;
-	const emailControlPlaceholder = [
+	const emailControlPlaceholder = emailPlaceholders ?? [
 		translate( 'sibling@example.com' ),
 		translate( 'parents@example.com' ),
 		translate( 'friend@example.com' ),
@@ -423,12 +429,15 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		<div className="add-subscriber">
 			{ ( showTitle || showSubtitle ) && (
 				<div className="add-subscriber__title-container">
-					{ showTitle && <Title>{ translate( 'Let’s add your first subscribers' ) }</Title> }
+					{ showTitle && (
+						<Title>{ titleText ?? translate( 'Let’s add your first subscribers' ) }</Title>
+					) }
 					{ showSubtitle && (
 						<SubTitle>
-							{ translate(
-								'Your subscribers will receive an email notification whenever you publish a new post.'
-							) }
+							{ subtitleText ??
+								translate(
+									'Your subscribers will receive an email notification whenever you publish a new post.'
+								) }
 						</SubTitle>
 					) }
 				</div>
