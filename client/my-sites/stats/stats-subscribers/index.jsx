@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux';
-import useSubscribersQuery from 'calypso/state/stats/subscribers/hooks/use-subscribers-query';
+import useSubscribersQuery from 'calypso/my-sites/stats/hooks/use-subscribers-query';
 import { getSiteStatsSubscribers } from 'calypso/state/stats/subscribers/selectors';
 
 const StatsSubscribers = ( { siteId } ) => {
