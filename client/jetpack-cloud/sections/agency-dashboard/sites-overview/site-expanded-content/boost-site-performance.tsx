@@ -14,6 +14,7 @@ interface Props {
 	hasBoost: boolean;
 	siteId: number;
 	siteUrlWithScheme: string;
+	trackEvent: ( eventName: string ) => void;
 }
 
 export default function BoostSitePerformance( {
@@ -21,6 +22,7 @@ export default function BoostSitePerformance( {
 	hasBoost,
 	siteId,
 	siteUrlWithScheme,
+	trackEvent,
 }: Props ) {
 	const translate = useTranslate();
 
@@ -110,6 +112,7 @@ export default function BoostSitePerformance( {
 					<Button
 						href={ href }
 						target="_blank"
+						onClick={ () => trackEvent( 'expandable_block_optimize_css_click' ) }
 						className="site-expanded-content__card-button"
 						compact
 					>

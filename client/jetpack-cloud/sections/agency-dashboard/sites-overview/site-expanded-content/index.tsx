@@ -45,6 +45,7 @@ export default function SiteExpandedContent( {
 					siteId={ site.blog_id }
 					siteUrlWithScheme={ siteUrlWithScheme }
 					hasBoost={ site.has_boost }
+					trackEvent={ trackEvent }
 				/>
 			) }
 			{ columns.includes( 'backup' ) && stats && (
