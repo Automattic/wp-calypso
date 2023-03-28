@@ -91,12 +91,7 @@ export default function useSubscribersQuery( siteId ) {
 		onError: () => {
 			dispatch(
 				errorNotice(
-					translate(
-						'We were unable to retrieve your latest product details. Please try again later.'
-					),
-					{
-						id: 'partner-portal-product-families-failure',
-					}
+					translate( 'We were unable to retrieve your latest subscriber. Please try again later.' )
 				)
 			);
 		},
