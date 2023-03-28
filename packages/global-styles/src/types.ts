@@ -20,6 +20,7 @@ export interface Typography {
 
 export interface GlobalStylesObject {
 	id?: number;
+	slug?: string;
 	title?: string;
 	settings: {
 		color?: {

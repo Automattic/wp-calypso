@@ -31,11 +31,9 @@
 	"dependencies": {
 		"@automattic/calypso-config": "workspace:^",
 		"@automattic/design-picker": "workspace:^",
+		"@automattic/global-styles": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
-		"@wordpress/block-editor": "^10.5.0",
 		"@wordpress/components": "^22.1.0",
-		"@wordpress/compose": "^5.20.0",
-		"@wordpress/edit-site": "^4.19.0",
 		"@wordpress/react-i18n": "^3.20.0",
 		"classnames": "^2.3.1",
 		"tslib": "^2.3.0"
