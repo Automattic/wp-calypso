@@ -1837,7 +1837,6 @@ __metadata:
     "@automattic/components": "workspace:^"
     "@automattic/composite-checkout": "workspace:^"
     "@automattic/data-stores": "workspace:^"
-    "@automattic/domain-picker": "workspace:^"
     "@automattic/format-currency": "workspace:^"
     "@automattic/happychat-connection": "workspace:^"
     "@automattic/help-center": "workspace:^"
