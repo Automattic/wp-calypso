@@ -2201,6 +2201,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 	[ PLAN_WOOEXPRESS_SMALL_MONTHLY ]: {
 		...getPlanWooExpressSmallDetails(),
 		...getMonthlyTimeframe(),
+		type: TYPE_ECOMMERCE,
 		availableFor: ( plan ) => [ PLAN_FREE, PLAN_ECOMMERCE_TRIAL_MONTHLY ].includes( plan ),
 		getProductId: () => 1054,
 		getStoreSlug: () => PLAN_WOOEXPRESS_SMALL_MONTHLY,
@@ -2209,6 +2210,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 
 	[ PLAN_WOOEXPRESS_SMALL ]: {
 		...getPlanWooExpressSmallDetails(),
+		type: TYPE_ECOMMERCE,
 		term: TERM_ANNUALLY,
 		getBillingTimeFrame: WPComGetBillingTimeframe,
 		availableFor: ( plan ) =>
