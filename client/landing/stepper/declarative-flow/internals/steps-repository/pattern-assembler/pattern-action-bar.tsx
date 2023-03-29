@@ -2,6 +2,7 @@ import { Button } from '@wordpress/components';
 import { chevronUp, chevronDown, close, edit } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import './pattern-action-bar.scss';
 
 type PatternActionBarProps = {
@@ -42,7 +43,7 @@ const PatternActionBar = ( {
 						role="menuitem"
 						label={ translate( 'Move up' ) }
 						onClick={ () => {
-							recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_moveup_click', {
+							recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_MOVEUP_CLICK, {
 								source,
 							} );
 							onMoveUp?.();
@@ -56,7 +57,7 @@ const PatternActionBar = ( {
 						role="menuitem"
 						label={ translate( 'Move down' ) }
 						onClick={ () => {
-							recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_movedown_click', {
+							recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_MOVEDOWN_CLICK, {
 								source,
 							} );
 							onMoveDown?.();
@@ -72,7 +73,7 @@ const PatternActionBar = ( {
 					role="menuitem"
 					label={ translate( 'Replace' ) }
 					onClick={ () => {
-						recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_replace_click', {
+						recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_REPLACE_CLICK, {
 							pattern_type: patternType,
 							source,
 						} );
@@ -87,7 +88,7 @@ const PatternActionBar = ( {
 				role="menuitem"
 				label={ translate( 'Remove' ) }
 				onClick={ () => {
-					recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_delete_click', {
+					recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_DELETE_CLICK, {
 						pattern_type: patternType,
 						source,
 					} );
