@@ -26,7 +26,7 @@ const ECommerceTrialBanner = ( props: ECommerceTrialBannerProps ) => {
 		useSelector( ( state ) => ( {
 			currentPlan: getCurrentPlan( state, selectedSiteId ),
 			isTrialExpired: isECommerceTrialExpired( state, selectedSiteId ),
-			eCommerceTrialDaysLeft: Math.round( getECommerceTrialDaysLeft( state, selectedSiteId ) || 0 ),
+			eCommerceTrialDaysLeft: getECommerceTrialDaysLeft( state, selectedSiteId ) || 0,
 			eCommerceTrialExpiration: getECommerceTrialExpiration( state, selectedSiteId ),
 		} ) );
 
