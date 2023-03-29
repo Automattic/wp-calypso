@@ -116,6 +116,14 @@
 	margin-top: 16px;
 }
 
+.clone-flow__confirmation-popover {
+	width: 690px;
+}
+
+.clone-flow__confirmation-popover .accept__dialog {
+	max-width: 642px;
+}
+
 .clone-flow__confirmation-popover .button:first-child {
 	margin-left: 0;
 }
@@ -145,4 +153,8 @@
 
 .clone-flow__content .rewind-flow__progress-bar-entry {
 	min-height: 48px;
+}
+
+.clone-flow__content .button .gridicon-external {
+	margin-left: 4px;
 }

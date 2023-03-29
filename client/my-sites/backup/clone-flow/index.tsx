@@ -248,13 +248,12 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	const renderConfirm = () => (
 		<>
 			<StepProgress currentStep={ Step.Configure } steps={ steps } />
-			<h3 className="clone-flow__title">{ translate( 'Copy site' ) }</h3>
+			<h3 className="clone-flow__title">{ translate( 'Configure your copy' ) }</h3>
 			<p className="clone-flow__info">
 				{ translate(
-					'{{strong}}%(backupDisplayDate)s{{/strong}} is the selected point you are copying to {{strong}}%(destinationUrl)s{{/strong}}.',
+					'Select the items you want to copy to {{strong}}%(destinationUrl)s{{/strong}}.',
 					{
 						args: {
-							backupDisplayDate,
 							destinationUrl: getUrlFromCreds(),
 						},
 						components: {
@@ -263,39 +262,56 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 					}
 				) }
 			</p>
-			<h4 className="clone-flow__cta">{ translate( 'Choose the items you wish to restore:' ) }</h4>
-			<RewindConfigEditor currentConfig={ rewindConfig } onConfigChange={ setRewindConfig } />
-			<RewindFlowNotice
-				gridicon="notice"
-				title={ translate(
-					'Copying will override and remove all content on the destination site.'
-				) }
-				type={ RewindFlowNoticeLevel.WARNING }
-			/>
-			<>
-				{ backupCurrentlyInProgress && (
-					<RewindFlowNotice
-						gridicon="notice"
-						title={ translate(
-							'A backup is currently in progress; copying now will stop the backup.'
-						) }
-						type={ RewindFlowNoticeLevel.WARNING }
-					/>
-				) }
-			</>
-			<div className="clone-flow__btn-group">
-				<Button className="clone-flow__back-button" onClick={ goBackFromConfirm }>
-					{ translate( 'Go back' ) }
-				</Button>
-				<Button
-					className="clone-flow__primary-button"
-					primary
-					onClick={ showConfirmationPopover }
-					disabled={ disableClone }
-				>
-					{ translate( 'Confirm configuration' ) }
-				</Button>
-			</div>
+			<Card>
+				<p className="clone-flow__info">
+					{ translate(
+						'{{strong}}%(backupDisplayDate)s{{/strong}} is the selected point to copy.',
+						{
+							args: {
+								backupDisplayDate,
+							},
+							components: {
+								strong: <strong />,
+							},
+						}
+					) }
+				</p>
+				<h4 className="clone-flow__cta">
+					{ translate( 'Choose the items you wish to restore:' ) }
+				</h4>
+				<RewindConfigEditor currentConfig={ rewindConfig } onConfigChange={ setRewindConfig } />
+				<RewindFlowNotice
+					gridicon="notice"
+					title={ translate(
+						'Copying will override and remove all content on the destination site.'
+					) }
+					type={ RewindFlowNoticeLevel.WARNING }
+				/>
+				<>
+					{ backupCurrentlyInProgress && (
+						<RewindFlowNotice
+							gridicon="notice"
+							title={ translate(
+								'A backup is currently in progress; copying now will stop the backup.'
+							) }
+							type={ RewindFlowNoticeLevel.WARNING }
+						/>
+					) }
+				</>
+				<div className="clone-flow__btn-group">
+					<Button className="clone-flow__back-button" onClick={ goBackFromConfirm }>
+						{ translate( 'Go back' ) }
+					</Button>
+					<Button
+						className="clone-flow__primary-button"
+						primary
+						onClick={ showConfirmationPopover }
+						disabled={ disableClone }
+					>
+						{ translate( 'Confirm configuration' ) }
+					</Button>
+				</div>
+			</Card>
 			<Interval onTick={ refreshBackups } period={ EVERY_FIVE_SECONDS } />
 		</>
 	);
