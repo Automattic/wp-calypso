@@ -1,7 +1,7 @@
 import { ConfettiAnimation } from '@automattic/components';
 import { ThemeProvider, Global, css } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { ThankYou } from 'calypso/components/thank-you';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -16,8 +16,8 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { MarketplaceGoBackSection } from './marketplace-go-back-section';
-import { usePageTexts } from './use-page-texts';
 import { useAtomicTransfer } from './use-atomic-transfer';
+import { usePageTexts } from './use-page-texts';
 import { usePluginsThankYouData } from './use-plugins-thank-you-data';
 import { useThankYouFoooter } from './use-thank-you-footer';
 import { useThemesThankYouData } from './use-themes-thank-you-data';
@@ -68,7 +68,8 @@ const MarketplaceThankYou = ( {
 	} );
 
 	const isAtomicNeeded = isAtomicNeededForPlugins || isAtomicNeededForThemes;
-	const isAtomicTransferCheckComplete = useAtomicTransfer( isAtomicNeeded );
+	const [ isAtomicTransferCheckComplete, currentStep, showProgressBar, setShowProgressBar ] =
+		useAtomicTransfer( isAtomicNeeded );
 
 	const isPageReady = allPluginsFetched && allThemesFetched && isAtomicTransferCheckComplete;
 
@@ -76,11 +77,6 @@ const MarketplaceThankYou = ( {
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 	const isJetpackSelfHosted = isJetpack && ! isAtomic;
-
-	const [ currentStep, setCurrentStep ] = useState( 0 );
-	const [ showProgressBar, setShowProgressBar ] = useState(
-		! new URLSearchParams( document.location.search ).has( 'hide-progress-bar' )
-	);
 
 	// Site is already Atomic (or just transferred).
 	// Poll the plugin installation status.
@@ -104,22 +100,7 @@ const MarketplaceThankYou = ( {
 		}
 
 		setShowProgressBar( ! isPageReady );
-
-		// Sites already transferred to Atomic or self-hosted Jetpack sites no longer need to change the current step.
-		if ( isJetpack ) {
-			return;
-		}
-
-		if ( transferStatus === transferStates.ACTIVE ) {
-			setCurrentStep( 0 );
-		} else if ( transferStatus === transferStates.PROVISIONED ) {
-			setCurrentStep( 1 );
-		} else if ( transferStatus === transferStates.RELOCATING ) {
-			setCurrentStep( 2 );
-		} else if ( transferStatus === transferStates.COMPLETE ) {
-			setCurrentStep( 3 );
-		}
-	}, [ transferStatus, isPageReady, showProgressBar, isJetpack ] );
+	}, [ setShowProgressBar, showProgressBar, isPageReady ] );
 
 	// TODO: Use more general steps (not specific to plugins)
 	const steps = useMemo(

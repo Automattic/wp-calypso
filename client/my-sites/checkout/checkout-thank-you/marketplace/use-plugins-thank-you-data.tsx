@@ -21,7 +21,7 @@ import MasterbarStyled from './masterbar-styled';
 
 export function usePluginsThankYouData(
 	pluginSlugs: string[]
-): [ ThankYouSectionProps, boolean, JSX.Element, string, string , boolean ] {
+): [ ThankYouSectionProps, boolean, JSX.Element, string, string, boolean ] {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
