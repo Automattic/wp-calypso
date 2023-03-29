@@ -47,7 +47,10 @@ export function useThankYouSteps( {
 
 	const steps = multipleProductTypes
 		? defaultSteps
-		: [ ...pluginsProgressbarSteps, ...themesProgressbarSteps ];
+		: [
+				...( pluginSlugs.length > 0 ? pluginsProgressbarSteps : [] ),
+				...( themeSlugs.length > 0 ? themesProgressbarSteps : [] ),
+		  ];
 
 	return { steps, additionalSteps };
 }
