@@ -48,7 +48,6 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import HappychatConnection from 'calypso/components/happychat/connection-connected';
 import Notice from 'calypso/components/notice';
 import { getTld } from 'calypso/lib/domains';
-import { ProvideExperimentData } from 'calypso/lib/explat';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import PlanFeatures from 'calypso/my-sites/plan-features';
 import PlanFeaturesComparison from 'calypso/my-sites/plan-features-comparison';
@@ -67,8 +66,8 @@ import {
 	isJetpackSite,
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
-import PlanTypeSelector from './plan-type-selector';
 import PlanFAQ from './plansStepFaq';
+import TermExperimentPlanTypeSelector from './term-experiment-plan-type-selector';
 import WpcomFAQ from './wpcom-faq';
 
 import './style.scss';
@@ -621,32 +620,12 @@ export class PlansFeaturesMain extends Component {
 				<HappychatConnection />
 				<div className="plans-features-main__notice" />
 				{ ! hidePlanSelector && (
-					<ProvideExperimentData
-						name="calypso_plans_2yr_toggle"
-						options={ { isEligible: is2023PricingGridVisible } }
-					>
-						{ ( isLoading, experimentData ) => {
-							if ( isLoading ) {
-								return <></>;
-							}
-
-							const { variationName } = experimentData;
-
-							const propsWithBiannualToggle = {
-								...planTypeSelectorProps,
-								showBiannualToggle:
-									variationName === 'toggle_and_checkout' || variationName === 'toggle_only',
-							};
-
-							return (
-								<PlanTypeSelector
-									{ ...propsWithBiannualToggle }
-									kind={ kindOfPlanTypeSelector }
-									plans={ visiblePlans }
-								/>
-							);
-						} }
-					</ProvideExperimentData>
+					<TermExperimentPlanTypeSelector
+						isEligible={ is2023PricingGridVisible }
+						selectorKind={ kindOfPlanTypeSelector }
+						plans={ visiblePlans }
+						planTypeSelectorProps={ planTypeSelectorProps }
+					/>
 				) }
 				{ this.renderPlansGrid() }
 				{ this.mayRenderFAQ() }
