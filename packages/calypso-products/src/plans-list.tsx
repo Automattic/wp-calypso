@@ -1803,6 +1803,8 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 		FEATURE_BACKUP_ARCHIVE_30,
 		FEATURE_JETPACK_SOCIAL_BASIC,
 		FEATURE_JETPACK_SOCIAL_BASIC_MONTHLY,
+		FEATURE_JETPACK_BACKUP_T1_MONTHLY,
+		FEATURE_JETPACK_BACKUP_T1_YEARLY,
 	],
 	getBenefits: () => [
 		translate( 'Protect your revenue stream and content' ),
