@@ -22,6 +22,7 @@ export default function SiteList( { sites }: SiteProps ) {
 				<span className="email-frequency" role="columnheader">
 					{ translate( 'Email frequency' ) }
 				</span>
+				<span className="actions" role="columnheader" />
 			</li>
 			{ sites.map( ( site ) => (
 				<SiteRow key={ site.id } { ...site } />

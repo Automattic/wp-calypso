@@ -1,3 +1,4 @@
+import { NotificationSettings } from '../notification-settings';
 import { SiteType } from './site-types';
 
 export default function SiteRow( { id, name, icon, url, date, emailFrequency }: SiteType ) {
@@ -15,6 +16,9 @@ export default function SiteRow( { id, name, icon, url, date, emailFrequency }: 
 			</span>
 			<span className="email-frequency" role="cell">
 				{ emailFrequency }
+			</span>
+			<span className="actions" role="cell">
+				<NotificationSettings />
 			</span>
 		</li>
 	);
