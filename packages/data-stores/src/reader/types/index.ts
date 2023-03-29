@@ -24,3 +24,5 @@ export type EmailSettingsAPIResponse = {
 		};
 	};
 };
+
+export type SiteSubscriptionDeliveryFrequency = 'instantly' | 'daily' | 'weekly';
