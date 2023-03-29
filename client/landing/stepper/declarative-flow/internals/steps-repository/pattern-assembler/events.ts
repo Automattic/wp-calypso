@@ -50,6 +50,6 @@ export const PATTERN_ASSEMBLER_EVENTS = {
 		'calypso_signup_pattern_assembler_global_styles_gating_modal_close_button_click',
 	GLOBAL_STYLES_GATING_MODAL_CHECKOUT_BUTTON_CLICK:
 		'calypso_signup_pattern_assembler_global_styles_gating_modal_checkout_button_click',
-	GLOBAL_STYLES_GATING_MODAL_TRY_BUTTON_CLICK:
-		'calypso_signup_pattern_assembler_global_styles_gating_modal_try_button_click',
+	GLOBAL_STYLES_GATING_MODAL_UPGRADE_LATER_BUTTON_CLICK:
+		'calypso_signup_pattern_assembler_global_styles_gating_modal_upgrade_later_button_click',
 } as const;
