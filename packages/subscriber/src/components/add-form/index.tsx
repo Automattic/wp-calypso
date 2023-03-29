@@ -1,13 +1,14 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { FormInputValidation } from '@automattic/components';
 import { Subscriber } from '@automattic/data-stores';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
 import { TextControl, FormFileUpload, Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
 import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
 import React, {
@@ -47,6 +48,8 @@ interface Props {
 }
 
 export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
+	const { hasTranslation } = useI18n();
+	const locale = useLocale();
 	const translate = useTranslate();
 	const HANDLED_ERROR = {
 		IMPORT_LIMIT: 'subscriber_import_limit_reached',
@@ -371,30 +374,77 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	}
 
 	function renderImportCsvLabel() {
-		const ariaLabelMsg = isSiteOnFreePlan
-			? translate(
-					'Or bring your mailing list up to 100 emails from other newsletter services by uploading a CSV file.'
-			  )
-			: translate(
-					'Or bring your mailing list from other newsletter services by uploading a CSV file.'
-			  );
+		let ariaLabelMsg = '';
+		let labelText;
+		const localizedUrl = localizeUrl(
+			'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/'
+		);
+		const interpolateElement = {
+			uploadBtn: formFileUploadElement,
+			a: <a target="_blank" href={ localizedUrl } rel="noreferrer" />,
+		};
+
+		if ( isSiteOnFreePlan ) {
+			ariaLabelMsg =
+				locale === 'en' ||
+				hasTranslation?.(
+					'Or upload a CSV file of up to 100 emails from your existing list. Learn more.'
+				)
+					? translate(
+							'Or upload a CSV file of up to 100 emails from your existing list. Learn more.'
+					  )
+					: translate(
+							'Or bring your mailing list up to 100 emails from other newsletter services by uploading a CSV file.'
+					  );
+
+			labelText =
+				locale === 'en' ||
+				hasTranslation?.(
+					'Or <uploadBtn>upload a CSV file</uploadBtn> of up to 100 emails from your existing list. <a>Learn more.</a>'
+				)
+					? createInterpolateElement(
+							translate(
+								'Or <uploadBtn>upload a CSV file</uploadBtn> of up to 100 emails from your existing list. <a>Learn more.</a>'
+							),
+							interpolateElement
+					  )
+					: createInterpolateElement(
+							translate(
+								'Or bring your mailing list up to 100 emails from other newsletter services by <uploadBtn>uploading a CSV file.</uploadBtn>'
+							),
+							{ uploadBtn: formFileUploadElement }
+					  );
+		} else {
+			ariaLabelMsg =
+				locale === 'en' ||
+				hasTranslation?.( 'Or upload a CSV file of emails from your existing list. Learn more.' )
+					? translate( 'Or upload a CSV file of emails from your existing list. Learn more.' )
+					: translate(
+							'Or bring your mailing list up to 100 emails from other newsletter services by uploading a CSV file.'
+					  );
+
+			labelText =
+				locale === 'en' ||
+				hasTranslation?.(
+					'Or <uploadBtn>upload a CSV file</uploadBtn> of emails from your existing list. Learn more.'
+				)
+					? createInterpolateElement(
+							translate(
+								'Or <uploadBtn>upload a CSV file</uploadBtn> of emails from your existing list. <a>Learn more.</a>'
+							),
+							interpolateElement
+					  )
+					: createInterpolateElement(
+							translate(
+								'Or bring your mailing list from other newsletter services by <uploadBtn>uploading a CSV file.</uploadBtn>'
+							),
+							{ uploadBtn: formFileUploadElement }
+					  );
+		}
 
 		return (
 			isSelectedFileValid &&
-			! selectedFile && (
-				<label aria-label={ ariaLabelMsg }>
-					{ createInterpolateElement(
-						isSiteOnFreePlan
-							? translate(
-									'Or bring your mailing list up to 100 emails from other newsletter services by <uploadBtn>uploading a CSV file.</uploadBtn>'
-							  )
-							: translate(
-									'Or bring your mailing list from other newsletter services by <uploadBtn>uploading a CSV file.</uploadBtn>'
-							  ),
-						{ uploadBtn: formFileUploadElement }
-					) }
-				</label>
-			)
+			! selectedFile && <label aria-label={ ariaLabelMsg }>{ labelText }</label>
 		);
 	}
 
