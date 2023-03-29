@@ -121,10 +121,15 @@ describe( 'ActionButtons', () => {
 				onClickClone={ onClickClone }
 			/>
 		);
-		const cloneButton = screen.getByRole( 'link', { name: /clone/i } );
+
+		const linkElements = screen.getAllByRole( 'button' );
+		const cloneButton = linkElements.find( ( link ) =>
+			link.classList.contains( 'daily-backup-status__clone-button' )
+		);
 
 		await user.click( cloneButton );
 
 		expect( onClickClone ).toHaveBeenCalledTimes( 1 );
+		expect( onClickClone ).toHaveBeenCalledWith( rewindId );
 	} );
 } );

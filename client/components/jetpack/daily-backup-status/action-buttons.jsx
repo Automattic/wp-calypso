@@ -71,7 +71,7 @@ const RestoreButton = ( { disabled, rewindId, primary } ) => {
 	);
 };
 
-const CloneButton = ( { disabled, primary, onClickClone } ) => {
+const CloneButton = ( { disabled, rewindId, primary, onClickClone } ) => {
 	const translate = useTranslate();
 
 	const siteId = useSelector( getSelectedSiteId );
@@ -83,9 +83,8 @@ const CloneButton = ( { disabled, primary, onClickClone } ) => {
 		<Button
 			isPrimary={ primary }
 			className="daily-backup-status__clone-button"
-			href="#clone"
 			disabled={ isCloneDisabled }
-			onClick={ onClickClone }
+			onClick={ onClickClone( rewindId ) }
 		>
 			{ translate( 'Clone from latest point' ) }
 		</Button>
@@ -116,7 +115,12 @@ const ActionButtons = ( {
 			/>
 		) }
 		{ availableActions && availableActions.includes( 'clone' ) && (
-			<CloneButton disabled={ disabled } primary={ true } onClickClone={ onClickClone } />
+			<CloneButton
+				disabled={ disabled }
+				rewindId={ rewindId }
+				primary={ true }
+				onClickClone={ onClickClone }
+			/>
 		) }
 	</>
 );
