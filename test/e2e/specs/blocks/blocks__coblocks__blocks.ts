@@ -68,10 +68,21 @@ describe( 'CoBlocks: Blocks', function () {
 	} );
 
 	it( `Insert ${ DynamicHRBlock.blockName } block`, async function () {
-		await editorPage.addBlockFromSidebar(
-			DynamicHRBlock.blockName,
-			DynamicHRBlock.blockEditorSelector
-		);
+		// Manual override of the Dyanmic HR/Separator block that comes with CoBlocks.
+		// On AT, the block is called Dynamic Separator.
+		// On Simple, the block is called Dynamic HR.
+		// See: https://github.com/Automattic/wp-calypso/issues/75092
+		if ( features.siteType === 'atomic' ) {
+			await editorPage.addBlockFromSidebar(
+				'Dynamic Separator',
+				'[aria-label="Block: Dynamic Separator"]'
+			);
+		} else {
+			await editorPage.addBlockFromSidebar(
+				DynamicHRBlock.blockName,
+				DynamicHRBlock.blockEditorSelector
+			);
+		}
 	} );
 
 	it( `Insert ${ HeroBlock.blockName } block and enter heading`, async function () {
