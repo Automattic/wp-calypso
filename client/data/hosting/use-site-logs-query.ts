@@ -36,10 +36,9 @@ export function useSiteLogsQuery(
 	const queryClient = useQueryClient();
 	const [ scrollId, setScrollId ] = useState< string | undefined >();
 	const [ isFinishedPaging, setIsFinishedPaging ] = useState< boolean >( false );
-	const queryKey = buildQueryKey( siteId, params );
 
 	const queryResult = useQuery< SiteLogsAPIResponse, unknown, SiteLogsData >(
-		queryKey,
+		buildQueryKey( siteId, params ),
 		() => {
 			const logTypeFragment = params.logType === 'php' ? 'error-logs' : 'logs';
 			const path = `/sites/${ siteId }/hosting/${ logTypeFragment }`;
@@ -87,26 +86,51 @@ export function useSiteLogsQuery(
 	// requests are not idempotent.
 	const { refetch, ...remainingQueryResults } = queryResult;
 
-	const invalidateQuery = () => {
+	// The scroll ID represents the state of a particular set of filtering arguments. If any of
+	// those filter arguments change we throw out the scroll ID so we can start over.
+	const [ previousSiteId, setPreviousSiteId ] = useState( siteId );
+	const [ previousParams, setPreviousParams ] = useState( params );
+	if ( previousSiteId !== siteId || ! areRequestParamsEqual( previousParams, params ) ) {
+		queryClient.removeQueries( {
+			queryKey: buildPartialQueryKey( previousSiteId, previousParams ),
+		} );
+
+		// We're updating state directly in the render flow. This is preferable to using an effect.
+		// https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes
+		setPreviousSiteId( siteId );
+		setPreviousParams( params );
 		setScrollId( undefined );
-		queryClient.invalidateQueries( { queryKey: queryKey } );
-	};
+	}
 
 	return {
 		isFinishedPaging,
-		invalidateQuery,
 		...remainingQueryResults,
 	};
 }
 
+function buildPartialQueryKey( siteId: number | null | undefined, params: SiteLogsParams ) {
+	return [ params.logType === 'php' ? 'site-logs-php' : 'site-logs-web', siteId ];
+}
+
 function buildQueryKey( siteId: number | null | undefined, params: SiteLogsParams ) {
 	return [
-		params.logType === 'php' ? 'site-logs-php' : 'site-logs-web',
-		siteId,
+		...buildPartialQueryKey( siteId, params ),
 		params.start,
 		params.end,
 		params.sortOrder,
 		params.pageSize,
 		params.pageIndex,
 	];
+}
+
+// Request params are equal if every field is the same _except_ for the page index.
+// The page index is not part of the request body, it is only part of the query key.
+function areRequestParamsEqual( a: SiteLogsParams, b: SiteLogsParams ) {
+	return (
+		a.logType === b.logType &&
+		a.start === b.start &&
+		a.end === b.end &&
+		a.sortOrder === b.sortOrder &&
+		a.pageSize === b.pageSize
+	);
 }
