@@ -3,6 +3,7 @@ import {
 	CURRENT_USER_SET_EMAIL_VERIFIED,
 	CURRENT_USER_SET_JETPACK_PARTNER_TYPE,
 	SITE_RECEIVE,
+	SITE_REMOVED,
 	SITES_RECEIVE,
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
@@ -109,6 +110,12 @@ export const capabilities = withSchemaValidation( capabilitiesSchema, ( state = 
 				memo[ site.ID ] = site.capabilities;
 				return memo;
 			}, state );
+		}
+		case SITE_REMOVED: {
+			const { siteId } = action;
+			if ( state[ siteId ] ) {
+				delete state[ siteId ];
+			}
 		}
 	}
 

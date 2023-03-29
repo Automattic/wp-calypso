@@ -16,6 +16,7 @@ import {
 	SITE_PLUGIN_UPDATED,
 	SITE_FRONT_PAGE_UPDATE,
 	SITE_MIGRATION_STATUS_UPDATE,
+	SITE_REMOVED,
 } from 'calypso/state/action-types';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -66,6 +67,19 @@ export function receiveSites( sites ) {
 	return {
 		type: SITES_RECEIVE,
 		sites,
+	};
+}
+
+/**
+ * Removes a site from the sites list.
+ *
+ * @param   {number} siteId Site ID
+ * @returns {Object} Action object
+ */
+export function removeSite( siteId ) {
+	return {
+		type: SITE_REMOVED,
+		siteId,
 	};
 }
 
