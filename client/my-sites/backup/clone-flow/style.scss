@@ -124,3 +124,25 @@
 	border-top: none;
 	text-align: left;
 }
+
+.clone-flow__progress-header {
+	display: flex;
+	justify-content: center;
+	padding-bottom: 16px;
+	padding-top: 0;
+}
+
+.clone-flow__progress-title {
+	font-size: $font-title-small;
+	font-weight: 600;
+	margin-bottom: 16px;
+	text-align: center;
+}
+
+.clone-flow__activity-log-button {
+	margin-right: 8px;
+}
+
+.clone-flow__content .rewind-flow__progress-bar-entry {
+	min-height: 48px;
+}

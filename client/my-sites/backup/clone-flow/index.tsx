@@ -1,4 +1,4 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button, Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -28,13 +28,13 @@ import getRestoreProgress from 'calypso/state/selectors/get-restore-progress';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
 import Error from '../rewind-flow/error';
 import Loading from '../rewind-flow/loading';
 import ProgressBar from '../rewind-flow/progress-bar';
 import RewindConfigEditor from '../rewind-flow/rewind-config-editor';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from '../rewind-flow/rewind-flow-notice';
-import CheckYourEmail from '../rewind-flow/rewind-flow-notice/check-your-email';
 import { defaultRewindConfig, RewindConfig } from '../rewind-flow/types';
 import type { ClickHandler } from 'calypso/components/step-progress';
 import type { RestoreProgress } from 'calypso/state/data-layer/wpcom/activity-log/rewind/restore-status/type';
@@ -60,6 +60,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
 	const siteUrl = useSelector( ( state ) => ( siteId && getSiteUrl( state, siteId ) ) || '' );
 	const previousPath = useSelector( ( state ) => getPreviousRoute( state ) );
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
 	const [ rewindConfig, setRewindConfig ] = useState< RewindConfig >( defaultRewindConfig );
 	const [ userHasRequestedRestore, setUserHasRequestedRestore ] = useState< boolean >( false );
@@ -79,6 +80,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 		translate( 'Configure' ),
 	];
 
+	const activityLogPath = '/activity-log/' + siteSlug;
 	const refreshBackups = useCallback(
 		() => dispatch( requestRewindBackups( siteId ) ),
 		[ dispatch, siteId ]
@@ -300,65 +302,75 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 
 	const renderInProgress = () => (
 		<>
-			<div className="clone-flow__header">
-				<Gridicon icon="history" size={ 48 } />
-			</div>
-			<h3 className="clone-flow__title">{ translate( 'Currently copying your site' ) }</h3>
-			<ProgressBar
-				isReady={ 'running' === status }
-				initializationMessage={ translate( 'Initializing the copy process' ) }
-				message={ message }
-				entry={ currentEntry }
-				percent={ percent }
-			/>
-			<p className="clone-flow__info">
-				{ translate(
-					'We are copying your site back from the {{strong}}%(backupDisplayDate)s{{/strong}} backup.',
-					{
+			<Card>
+				<div className="clone-flow__progress-header">
+					<img
+						src="/calypso/images/illustrations/jetpack-backup-copy.svg"
+						alt="jetpack cloud restore success"
+						height="48"
+					/>
+				</div>
+				<h3 className="clone-flow__progress-title">
+					{ translate( 'Copying site to %(destinationUrl)s', {
 						args: {
 							backupDisplayDate,
+							destinationUrl: getUrlFromCreds(),
 						},
-						components: {
-							strong: <strong />,
-						},
-					}
-				) }
-			</p>
-			<CheckYourEmail
-				message={ translate(
-					"Don't want to wait? For your convenience, we'll email you when your site has been fully copied."
-				) }
-			/>
+					} ) }
+				</h3>
+				<ProgressBar
+					isReady={ 'running' === status }
+					initializationMessage={ translate( 'Initializing the copy process' ) }
+					message={ message }
+					entry={ currentEntry }
+					percent={ percent }
+				/>
+				<p className="clone-flow__info">
+					{ translate(
+						'Jetpack is copying your site. You will be notified when the process is finished in the activity log.'
+					) }
+				</p>
+				<Button className="clone-flow__activity-log-button" href={ activityLogPath }>
+					{ translate( 'Go to Activity Log' ) }
+				</Button>
+			</Card>
 		</>
 	);
 
 	const renderFinished = () => (
 		<>
-			<div className="clone-flow__header">
-				<img
-					src="/calypso/images/illustrations/jetpack-restore-success.svg"
-					alt="jetpack cloud restore success"
-				/>
-			</div>
-			<h3 className="clone-flow__title">
-				{ translate( 'Your site has been successfully copied.' ) }
-			</h3>
-			<p className="clone-flow__info">
-				{ translate(
-					'All of your selected items are now copied from the {{strong}}%(backupDisplayDate)s{{/strong}} backup.',
-					{
-						args: {
-							backupDisplayDate,
-						},
-						components: {
-							strong: <strong />,
-						},
-					}
-				) }
-			</p>
-			<Button primary href={ getUrlFromCreds() } className="clone-flow__primary-button">
-				{ translate( 'View your website' ) }
-			</Button>
+			<Card>
+				<div className="clone-flow__progress-header">
+					<img
+						src="/calypso/images/illustrations/jetpack-backup-copy-success.svg"
+						alt="jetpack cloud restore success"
+						height="48"
+					/>
+				</div>
+				<h3 className="clone-flow__progress-title">
+					{ translate( 'Your site has been successfully copied.' ) }
+				</h3>
+				<p className="clone-flow__info">
+					{ translate(
+						'All of your selected items are now copied from the {{strong}}%(backupDisplayDate)s{{/strong}} backup.',
+						{
+							args: {
+								backupDisplayDate,
+							},
+							components: {
+								strong: <strong />,
+							},
+						}
+					) }
+				</p>
+				<Button className="clone-flow__activity-log-button" href={ activityLogPath }>
+					{ translate( 'Go to Activity Log' ) }
+				</Button>
+				<Button primary href={ getUrlFromCreds() }>
+					{ translate( 'View your website' ) }
+					<Gridicon icon="external" size={ 18 } />
+				</Button>
+			</Card>
 		</>
 	);
 
