@@ -25,11 +25,7 @@ type SiteSubscriptionDeliveryFrequencyResponse = {
 const useSubscriptionManagerSiteDeliveryFrequencyMutation = () => {
 	const isLoggedIn = useIsLoggedIn();
 	const queryClient = useQueryClient();
-	return useMutation<
-		SiteSubscriptionDeliveryFrequencyResponse,
-		Error,
-		SiteSubscriptionDeliveryFrequencyParams
-	>(
+	return useMutation(
 		async ( params: SiteSubscriptionDeliveryFrequencyParams ) => {
 			if ( ! params.blog_id || ! params.delivery_frequency ) {
 				throw new Error(
