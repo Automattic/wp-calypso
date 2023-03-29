@@ -84,12 +84,12 @@ const PatternAssembler = ( {
 		sections,
 		colorVariation,
 		fontVariation,
-		incrementIndexRef,
 		setHeader,
 		setFooter,
 		setSections,
 		setColorVariation,
 		setFontVariation,
+		generateKey,
 		snapshotRecipe,
 	} = useRecipe( site?.ID, allPatterns );
 
@@ -260,12 +260,11 @@ const PatternAssembler = ( {
 	};
 
 	const addSection = ( pattern: Pattern ) => {
-		incrementIndexRef.current++;
 		setSections( [
 			...( sections as Pattern[] ),
 			{
 				...pattern,
-				key: `${ incrementIndexRef.current }-${ pattern.id }`,
+				key: generateKey( pattern ),
 			},
 		] );
 		updateActivePatternPosition( sections.length );

@@ -48,6 +48,11 @@ const useRecipe = ( siteId = 0, patterns: Pattern[] ) => {
 		},
 	} as Design;
 
+	const generateKey = ( pattern: Pattern ) => {
+		incrementIndexRef.current++;
+		return `${ incrementIndexRef.current }-${ pattern.id }`;
+	};
+
 	const snapshotRecipe = useCallback( () => setSelectedDesign( selectedDesignRef.current ), [] );
 
 	/**
@@ -79,7 +84,7 @@ const useRecipe = ( siteId = 0, patterns: Pattern[] ) => {
 				const pattern = patternsById[ patternId ];
 				return {
 					...pattern,
-					key: `${ incrementIndexRef.current }-${ pattern.id }`,
+					key: generateKey( pattern ),
 				};
 			} )
 		);
@@ -117,12 +122,12 @@ const useRecipe = ( siteId = 0, patterns: Pattern[] ) => {
 		sections,
 		colorVariation,
 		fontVariation,
-		incrementIndexRef,
 		setHeader,
 		setFooter,
 		setSections,
 		setColorVariation,
 		setFontVariation,
+		generateKey,
 		snapshotRecipe,
 	};
 };
