@@ -165,10 +165,15 @@ describe( 'Purchase Management Buttons', () => {
 		expect( screen.queryByText( /Cancel/ ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'renders a remove button when auto-renew is OFF, and the purchase is an Akismet purchase and attached to an akismet siteless holding site', async () => {
+	it( 'renders a remove button when auto-renew is OFF and the purchase is an Akismet purchase attached to an akismet siteless holding site', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.1/me/payment-methods?expired=include' )
 			.reply( 200 );
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wpcom/v2/akismet/get-key?_envelope=1' )
+			.reply( 200, {
+				body: '123456789123',
+			} );
 
 		const store = createMockReduxStoreForPurchase( {
 			...purchase,
