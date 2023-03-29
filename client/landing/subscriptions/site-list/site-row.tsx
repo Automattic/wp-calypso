@@ -1,6 +1,13 @@
-import { SiteType } from './site-types';
+import { NotificationSettings } from '../notification-settings';
+import { SiteType } from '../types';
 
-export default function SiteRow( { id, name, icon, url, date, emailFrequency }: SiteType ) {
+type SiteRowProps = {
+	site: SiteType;
+};
+
+export default function SiteRow( { site }: SiteRowProps ) {
+	const { id, icon, name, url, date, emailFrequency } = site;
+
 	return (
 		<li className="row" role="row" key={ id }>
 			<span className="title-box" role="cell">
@@ -15,6 +22,18 @@ export default function SiteRow( { id, name, icon, url, date, emailFrequency }: 
 			</span>
 			<span className="email-frequency" role="cell">
 				{ emailFrequency }
+			</span>
+			<span className="actions" role="cell">
+				<NotificationSettings
+					emailFrequency="instantly"
+					sendCommentsByEmail={ true }
+					sendPostsByEmail={ true }
+					sendPostsByNotification={ true }
+					onChangeEmailFrequency={ () => null }
+					onChangeSendCommentsByEmail={ () => null }
+					onChangeSendPostsByEmail={ () => null }
+					onChangeSendPostsByNotification={ () => null }
+				/>
 			</span>
 		</li>
 	);

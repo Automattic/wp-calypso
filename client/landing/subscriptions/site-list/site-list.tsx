@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
+import { SiteType } from '../types';
 import SiteRow from './site-row';
-import { SiteType } from './site-types';
 import './styles.scss';
 
 type SiteProps = {
@@ -22,9 +22,10 @@ export default function SiteList( { sites }: SiteProps ) {
 				<span className="email-frequency" role="columnheader">
 					{ translate( 'Email frequency' ) }
 				</span>
+				<span className="actions" role="columnheader" />
 			</li>
 			{ sites.map( ( site ) => (
-				<SiteRow key={ site.id } { ...site } />
+				<SiteRow key={ site.id } site={ site } />
 			) ) }
 		</ul>
 	);
