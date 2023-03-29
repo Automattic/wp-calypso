@@ -12,7 +12,6 @@ import BackupSuccessful from 'calypso/components/jetpack/daily-backup-status/sta
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
-import StepProgress from 'calypso/components/step-progress';
 import useRewindableActivityLogQuery from 'calypso/data/activity-log/use-rewindable-activity-log-query';
 import accept from 'calypso/lib/accept';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
@@ -37,16 +36,10 @@ import ProgressBar from '../rewind-flow/progress-bar';
 import RewindConfigEditor from '../rewind-flow/rewind-config-editor';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from '../rewind-flow/rewind-flow-notice';
 import { defaultRewindConfig, RewindConfig } from '../rewind-flow/types';
-import type { ClickHandler } from 'calypso/components/step-progress';
+import CloneFlowStepProgress from './step-progress';
 import type { RestoreProgress } from 'calypso/state/data-layer/wpcom/activity-log/rewind/restore-status/type';
 import type { RewindState } from 'calypso/state/data-layer/wpcom/sites/rewind/type';
 import './style.scss';
-
-enum Step {
-	Destination = 0,
-	ClonePoint = 1,
-	Configure = 2,
-}
 
 interface Props {
 	siteId: number;
@@ -70,16 +63,6 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	const [ userHasSetBackupPeriod, setUserHasSetBackupPeriod ] = useState< boolean >( false );
 	const [ backupPeriod, setBackupPeriod ] = useState< string >( '' );
 	const [ backupDisplayDate, setBackupDisplayDate ] = useState< string >( '' );
-
-	const steps = [
-		{
-			message: translate( 'Set destination' ),
-			onClick: () => setUserHasSetDestination( false ),
-			show: 'onComplete',
-		} as ClickHandler,
-		translate( 'Select clone point' ),
-		translate( 'Configure' ),
-	];
 
 	const activityLogPath = '/activity-log/' + siteSlug;
 	const refreshBackups = useCallback(
@@ -173,7 +156,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	// Screen that allows user to add credentials for an alternate restore / clone
 	const renderSetDestination = () => (
 		<>
-			<StepProgress currentStep={ Step.Destination } steps={ steps } />
+			<CloneFlowStepProgress currentStep="destination" />
 			<h3 className="clone-flow__title">{ translate( 'Set a destination site' ) }</h3>
 			<p className="clone-flow__info">
 				{ translate( 'Input information about the site you want to clone to' ) }
@@ -194,7 +177,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	// Screen that allows user to select a backup point to clone
 	const renderSetBackupPeriod = () => (
 		<>
-			<StepProgress currentStep={ Step.ClonePoint } steps={ steps } />
+			<CloneFlowStepProgress currentStep="clonePoint" />
 			<h3 className="clone-flow__title">{ translate( 'Select a Backup Point to Copy' ) }</h3>
 			<p className="clone-flow__info">
 				{ translate( "Which point in your site's history would you like to copy from?" ) }
@@ -260,7 +243,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	// Screen that allows the user to configure which items to clone
 	const renderConfirm = () => (
 		<>
-			<StepProgress currentStep={ Step.Configure } steps={ steps } />
+			<CloneFlowStepProgress currentStep="configure" />
 			<h3 className="clone-flow__title">{ translate( 'Configure your copy' ) }</h3>
 			<p className="clone-flow__info">
 				{ translate(
