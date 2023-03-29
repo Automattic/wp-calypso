@@ -30,8 +30,8 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 	const getDateRange = () => {
 		const rangeParam = new URL( window.location.href ).searchParams.get( 'range' );
 		const range = rangeParam && JSON.parse( rangeParam );
-		const startTime = range?.from ?? moment().subtract( 7, 'd' );
-		const endTime = range?.to ?? moment();
+		const startTime = range?.from ? moment( range.from ) : moment().subtract( 7, 'd' );
+		const endTime = range?.to ? moment( range.to ) : moment();
 		return { startTime, endTime };
 	};
 
