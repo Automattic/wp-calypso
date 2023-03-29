@@ -18,7 +18,6 @@ import AsyncLoad from 'calypso/components/async-load';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import { retargetFullStory } from 'calypso/lib/analytics/fullstory';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
-import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { createReduxStore } from 'calypso/state';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { requestHappychatEligibility } from 'calypso/state/happychat/user/actions';
@@ -104,8 +103,81 @@ window.AppBoot = async () => {
 	// Add accessible-focus listener.
 	accessibleFocus();
 
-	const user = ( await initializeCurrentUser() ) as unknown;
-	const userId = ( user as CurrentUser ).ID;
+	const user = {
+		ID: 115118448,
+		display_name: 'alshakero',
+		username: 'alshakero',
+		avatar_URL: 'https://0.gravatar.com/avatar/6e9586f5263e2b6c5c87ac91c3f9f910?s=96&d=identicon',
+		site_count: 523,
+		jetpack_site_count: 3,
+		visible_site_count: 460,
+		jetpack_visible_site_count: 3,
+		date: '2017-01-03T17:53:27+00:00',
+		has_unseen_notes: false,
+		newest_note_type: 'like',
+		phone_account: false,
+		email: 'omar@omaralshaker.com',
+		email_verified: true,
+		is_valid_google_apps_country: true,
+		user_ip_country_code: 'NL',
+		logout_URL: '',
+		primary_blog: 181652058,
+		primary_blog_is_jetpack: false,
+		has_promote_widget: true,
+		has_jetpack_partner_access: false,
+		primary_blog_url: 'http://punsintended418746564.wordpress.com',
+		meta: {
+			links: {
+				self: 'https://public-api.wordpress.com/rest/v1.1/me',
+				help: 'https://public-api.wordpress.com/rest/v1.1/me/help',
+				site: 'https://public-api.wordpress.com/rest/v1.1/sites/5836086',
+				flags: 'https://public-api.wordpress.com/rest/v1.1/me/flags',
+			},
+			marketing_price_group: false,
+			plans_reorder_abtest_variation: 'control',
+			data: {
+				flags: {
+					active_flags: [
+						'publish_post_milestones',
+						'reader_blog_header_image',
+						'i7_limit_editor_loading',
+						'newdash_themes_logged_out',
+						'newdash_i14',
+						'instapost_safari_iframe_fix',
+						'calypso_sites',
+						'interim_editor',
+						'newdash_store_domain_management',
+						'newdash_store_google_apps',
+						'masterbar',
+						'me_section',
+						'calypso_me',
+						'notifications2',
+						'notifications2_wide',
+						'me_billing',
+						'calypso_stats',
+						'calypso_plans',
+						'calypso_checkout',
+						'calypso_domain_search',
+						'calypso_domain_management',
+						'calypso_reader',
+						'community_translator',
+						'calypso_reader_manage_following',
+						'calypso_support_user',
+						'calypso_allow_nonprimary_domains_without_plan',
+						'subscriber_import',
+					],
+				},
+			},
+		},
+		social_login_connections: null,
+		abtests: {},
+		i18n_empathy_mode: false,
+		use_fallback_for_incomplete_languages: false,
+		primarySiteSlug: 'punsintended418746564.wordpress.com',
+		localeSlug: 'en',
+		localeVariant: '',
+	};
+	const userId = user.ID;
 
 	const queryClient = await createQueryClient( userId );
 
