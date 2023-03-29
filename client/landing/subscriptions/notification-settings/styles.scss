@@ -1,0 +1,15 @@
+@import "@automattic/color-studio/dist/color-variables";
+
+.notification-settings__popover {
+	width: 305px;
+
+	.popover__arrow {
+		display: none;
+	}
+
+	.popover__inner {
+		border: none;
+		box-shadow: 0 3px 8px rgba($studio-black, 0.12), 0 3px 1px rgba($studio-black, 0.04);
+		padding: 21px;
+	}
+}
