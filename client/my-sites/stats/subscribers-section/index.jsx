@@ -63,17 +63,9 @@ function transformData( data ) {
 	return [ processedData.reverse() ];
 }
 
-export default function SubscribersSection() {
-	const [ isLoading, setIsLoading ] = useState( true );
-	const data = transformData( isLoading ? [] : getData() );
-
-	// Determines what is shown in the tooltip on hover.
-	const tooltipHelper = ( datum ) => `Changed: ${ datum.diff }`;
-
-	useEffect( () => {
-		setTimeout( () => setIsLoading( false ), 5000 );
-	}, [ isLoading ] );
-
+// This component is temporary so we can expose the state in the browser.
+// Once we have things working we can just inline the contained JSX in the caller.
+function SubscribersSectionX( { data, isLoading, tooltipHelper } ) {
 	return (
 		<div className="subscribers-section">
 			<h1 className="highlight-cards-heading">Subscribers</h1>
@@ -87,5 +79,21 @@ export default function SubscribersSection() {
 				</LineChart>
 			) }
 		</div>
+	);
+}
+
+export default function SubscribersSection() {
+	const [ isLoading, setIsLoading ] = useState( true );
+	const data = transformData( isLoading ? [] : getData() );
+
+	// Determines what is shown in the tooltip on hover.
+	const tooltipHelper = ( datum ) => `Changed: ${ datum.diff }`;
+
+	useEffect( () => {
+		setTimeout( () => setIsLoading( false ), 5000 );
+	}, [ isLoading ] );
+
+	return (
+		<SubscribersSectionX data={ data } isLoading={ isLoading } tooltipHelper={ tooltipHelper } />
 	);
 }
