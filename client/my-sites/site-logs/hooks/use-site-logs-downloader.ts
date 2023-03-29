@@ -202,7 +202,7 @@ export const useSiteLogsDownloader = () => {
 						},
 					} );
 				} )
-				.catch( ( error: Error ) => {
+				.catch( ( error: unknown ) => {
 					isError = true;
 					const message = get( error, 'message', 'Could not retrieve logs.' );
 					downloadErrorNotice( message );
