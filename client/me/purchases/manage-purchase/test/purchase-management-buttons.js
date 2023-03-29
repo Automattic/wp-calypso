@@ -169,11 +169,6 @@ describe( 'Purchase Management Buttons', () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.1/me/payment-methods?expired=include' )
 			.reply( 200 );
-		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/akismet/get-key?_envelope=1' )
-			.reply( 200, {
-				body: '123456789123',
-			} );
 
 		const store = createMockReduxStoreForPurchase( {
 			...purchase,
