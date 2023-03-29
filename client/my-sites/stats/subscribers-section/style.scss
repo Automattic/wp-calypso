@@ -1,3 +1,14 @@
 .subscribers-section {
 	margin-top: 32px;
+
+	.subscriber-section__chart-tooltip {
+		background: #fff;
+		border: 1px solid rgb(223, 227, 230);
+		padding: 5px;
+	}
+
+	polyline {
+		stroke-linejoin: round;
+		stroke-width: 1px;
+	}
 }
