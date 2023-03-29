@@ -122,9 +122,6 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	// Takes a destination as a vault role or blog id
 	const onSetDestination = useCallback(
 		( role: string ) => {
-			// TODO: At the moment this is just 'alternate'
-			// but we should also save the URL for alternate creds as we'll use it in the confirm
-			// screen and also the View Website link after Clone
 			setCloneDestination( role );
 			setUserHasSetDestination( true );
 		},
@@ -408,8 +405,6 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	);
 
 	// A clone is in progress if there's a restore currently happening and the target is something external
-	// TODO: Check if there's an alternate restore in progress
-	// We may also just need to check for a regular restore and display something
 	const isInProgress =
 		( ! inProgressRewindStatus && userHasRequestedRestore && userHasSetDestination ) ||
 		( inProgressRewindStatus && [ 'queued', 'running' ].includes( inProgressRewindStatus ) );
