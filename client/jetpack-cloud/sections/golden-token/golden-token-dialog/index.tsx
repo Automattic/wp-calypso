@@ -1,4 +1,5 @@
 import classnames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
@@ -6,6 +7,7 @@ import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import './style.scss';
 
 export const GoldenTokenDialog = () => {
+	const translate = useTranslate();
 	const userName = useSelector( getCurrentUserName );
 
 	const videoRef = useRef< HTMLVideoElement >( null );
@@ -21,7 +23,6 @@ export const GoldenTokenDialog = () => {
 
 	return (
 		<div className={ classnames( 'golden-token-dialog', { animating: isAnimating } ) }>
-			{ /* TODO: replace with Jetpack logo */ }
 			<svg
 				className="jetpack-logo"
 				xmlns="http://www.w3.org/2000/svg"
@@ -37,6 +38,7 @@ export const GoldenTokenDialog = () => {
 				/>
 			</svg>
 			<div className="golden-token-dialog__video-wrap">
+				{ /* The golden token video has no dialog, so no captions are needed. */ }
 				{ /* eslint-disable-next-line jsx-a11y/media-has-caption */ }
 				<video
 					ref={ videoRef }
@@ -45,28 +47,30 @@ export const GoldenTokenDialog = () => {
 			</div>
 			<div className="golden-token-dialog__content-wrap">
 				<div className="golden-token-dialog__content-wrap-text">
-					<p className="golden-token-dialog__hi-user">Hey, { userName }</p>
-					<h2>Your exclusive Jetpack Experience&nbsp;awaits</h2>
+					<p className="golden-token-dialog__hi-user">
+						{ translate( 'Hey, %(userName)s', { args: { userName } } ) }{ ' ' }
+					</p>
+					<h2>{ translate( 'Your exclusive Jetpack Experience awaits' ) }</h2>
 					<p>
-						You have been gifted a Jetpack Gold Token. This unlocks a lifetime of Jetpack powers for
-						your website.
+						{ translate(
+							'You have been gifted a Jetpack Gold Token. This unlocks a lifetime of Jetpack powers for your website.'
+						) }
 					</p>
 				</div>
-				{ /* TODO: create button logic */ }
-				<button onClick={ redeemToken }>Redeem your token</button>
+				<button onClick={ redeemToken }>{ translate( 'Redeem your token' ) }</button>
 			</div>
 			<div className="golden-token-dialog__powers-wrap golden-token-dialog__content-wrap">
 				<div className="golden-token-dialog__content-wrap-text">
-					<h2>Super powers are ready!</h2>
+					<h2>{ translate( 'Super powers are ready!' ) }</h2>
 					<p>
-						Your Jetpack Gold Token provides a lifetime license for this website and includes the
-						following products:
+						{ translate(
+							'Your Jetpack Gold Token provides a lifetime license for this website and includes the following products:'
+						) }
 					</p>
 				</div>
 
 				<div className="golden-token-dialog__jetpack-products">
 					<div>
-						{ /* TODO: repalce with VaultPress logo */ }
 						<svg
 							width="24"
 							height="24"
@@ -98,11 +102,14 @@ export const GoldenTokenDialog = () => {
 							</g>
 						</svg>
 
-						<h3>VaultPress Backup</h3>
-						<p>Save every change and get back online quickly with one‑click restores.</p>
+						<h3>{ translate( 'VaultPress Backup' ) }</h3>
+						<p>
+							{ translate(
+								'Save every change and get back online quickly with one‑click restores.'
+							) }
+						</p>
 					</div>
 					<div>
-						{ /* TODO: replace with Scan logo */ }
 						<svg
 							width="25"
 							height="24"
@@ -118,14 +125,16 @@ export const GoldenTokenDialog = () => {
 							/>
 						</svg>
 
-						<h3>Scan</h3>
+						<h3>{ translate( 'Scan' ) }</h3>
 						<p>
-							Automated scanning and one‑click fixes to keep your site ahead of security threats.
+							{ translate(
+								'Automated scanning and one‑click fixes to keep your site ahead of security threats.'
+							) }
 						</p>
 					</div>
 				</div>
 
-				<button>Explore your new powers</button>
+				<button>{ translate( 'Explore your new powers' ) }</button>
 			</div>
 		</div>
 	);
