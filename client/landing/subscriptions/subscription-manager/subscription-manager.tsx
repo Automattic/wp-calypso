@@ -15,7 +15,7 @@ const CommentsView = () => <span>Comments View</span>;
 
 const SubscriptionManagementPage = () => {
 	const translate = useTranslate();
-	const { data: counts } = Reader.useSubscriptionManagerSubscriptionsCountQuery();
+	const { data: counts } = Reader.SubscriptionManager.useSubscriptionsCountQuery();
 	const tabs = useMemo(
 		() => [
 			{

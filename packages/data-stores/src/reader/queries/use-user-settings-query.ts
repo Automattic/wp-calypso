@@ -22,4 +22,4 @@ const useSubscriptionManagerUserSettingsQuery = () => {
 	);
 };
 
-export { useSubscriptionManagerUserSettingsQuery };
+export default useSubscriptionManagerUserSettingsQuery;

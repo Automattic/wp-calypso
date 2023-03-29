@@ -34,7 +34,7 @@ type NoticeProps = {
 const UserSettings = ( { value = {}, loading }: UserSettingsProps ) => {
 	const [ formState, setFormState ] = useState< SubscriptionUserSettings >( value );
 	const { mutate, isLoading, isSuccess, error } =
-		Reader.useSubscriptionManagerUserSettingsMutation();
+		Reader.SubscriptionManager.useUserSettingsMutation();
 	const [ notice, setNotice ] = useState< NoticeProps | null >( null );
 
 	useEffect( () => {
