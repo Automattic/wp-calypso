@@ -1,4 +1,4 @@
-import { Button } from '@wordpress/components';
+import { Button, ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import DateRange from 'calypso/components/date-range';
@@ -35,7 +35,8 @@ const SiteLogsToolbarDownloadProgress = ( {
 };
 
 type Props = {
-	onRefresh: () => void;
+	autoRefresh: boolean;
+	onAutoRefreshChange: ( isChecked: boolean ) => void;
 	onDateTimeCommit?: ( startDate: Date, endDate: Date ) => void;
 	logType: SiteLogsTab;
 	startDateTime: Moment;
@@ -43,7 +44,8 @@ type Props = {
 };
 
 export const SiteLogsToolbar = ( {
-	onRefresh,
+	autoRefresh,
+	onAutoRefreshChange,
 	onDateTimeCommit,
 	logType,
 	startDateTime,
@@ -74,28 +76,33 @@ export const SiteLogsToolbar = ( {
 
 	return (
 		<div className="site-logs-toolbar">
-			<DateRange
-				showTriggerClear={ false }
-				selectedStartDate={ startDateTime.toDate() }
-				selectedEndDate={ endDateTime.toDate() }
-				lastSelectableDate={ moment().toDate() }
-				dateFormat="ll @ HH:mm:ss"
-				onDateCommit={ handleDateRangeCommit }
+			<div className="site-logs-toolbar__top-row">
+				<DateRange
+					showTriggerClear={ false }
+					selectedStartDate={ startDateTime.toDate() }
+					selectedEndDate={ endDateTime.toDate() }
+					lastSelectableDate={ moment().toDate() }
+					dateFormat="ll @ HH:mm:ss"
+					onDateCommit={ handleDateRangeCommit }
+				/>
+
+				<Button
+					disabled={ isDownloading }
+					isBusy={ isDownloading }
+					isPrimary
+					onClick={ () => downloadLogs( { logType, startDateTime, endDateTime } ) }
+				>
+					{ translate( 'Download' ) }
+				</Button>
+
+				{ isDownloading && <SiteLogsToolbarDownloadProgress { ...state } /> }
+			</div>
+			<ToggleControl
+				className="site-logs-toolbar__auto-refresh"
+				label={ translate( 'Auto-refresh' ) }
+				checked={ autoRefresh }
+				onChange={ onAutoRefreshChange }
 			/>
-
-			<Button isSecondary onClick={ onRefresh } className="site-logs-toolbar__refresh">
-				{ translate( 'Refresh' ) }
-			</Button>
-
-			<Button
-				disabled={ isDownloading }
-				isBusy={ isDownloading }
-				isPrimary
-				onClick={ () => downloadLogs( { logType, startDateTime, endDateTime } ) }
-			>
-				{ translate( 'Download' ) }
-			</Button>
-			{ isDownloading && <SiteLogsToolbarDownloadProgress { ...state } /> }
 		</div>
 	);
 };

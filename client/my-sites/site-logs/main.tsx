@@ -1,7 +1,7 @@
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -13,6 +13,7 @@ import {
 	SiteLogsTab,
 	useSiteLogsQuery,
 } from 'calypso/data/hosting/use-site-logs-query';
+import { useInterval } from 'calypso/lib/interval';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SiteLogsTabPanel } from './components/site-logs-tab-panel';
 import { SiteLogsTable } from './components/site-logs-table';
@@ -27,13 +28,13 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 	const siteId = useSelector( getSelectedSiteId );
 	const moment = useLocalizedMoment();
 
-	const getDateRange = () => {
+	const getDateRange = useCallback( () => {
 		const rangeParam = new URL( window.location.href ).searchParams.get( 'range' );
 		const range = rangeParam && JSON.parse( rangeParam );
 		const startTime = range?.from ? moment( range.from ) : moment().subtract( 7, 'd' );
 		const endTime = range?.to ? moment( range.to ) : moment();
 		return { startTime, endTime };
-	};
+	}, [ moment ] );
 
 	const [ dateRange, setDateRange ] = useState( getDateRange() );
 
@@ -55,6 +56,14 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 		pageIndex: currentPageIndex,
 	} );
 
+	const [ autoRefresh, setAutoRefresh ] = useState( true );
+
+	const autoRefreshCallback = useCallback( () => {
+		setDateRange( getDateRange() );
+		setCurrentPageIndex( 0 );
+	}, [ getDateRange ] );
+	useInterval( autoRefreshCallback, autoRefresh && 10 * 1000 );
+
 	// We keep a copy of the most recently shown page so that we can use it as part of the loading state while switching pages.
 	const [ data, setCachedPageData ] = useState< SiteLogsData | undefined >();
 	useEffect( () => {
@@ -69,10 +78,12 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 		setCachedPageData( undefined );
 	};
 
-	const handleRefresh = () => {
-		setDateRange( getDateRange() );
+	const handleAutoRefreshClick = ( isChecked: boolean ) => {
+		if ( isChecked ) {
+			setDateRange( getDateRange() );
+		}
+		setAutoRefresh( isChecked );
 		setCurrentPageIndex( 0 );
-		setCachedPageData( undefined );
 	};
 
 	const handlePageClick = ( nextPageNumber: number ) => {
@@ -132,7 +143,8 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 				{ () => (
 					<>
 						<SiteLogsToolbar
-							onRefresh={ handleRefresh }
+							autoRefresh={ autoRefresh }
+							onAutoRefreshChange={ handleAutoRefreshClick }
 							logType={ logType }
 							startDateTime={ dateRange.startTime }
 							endDateTime={ dateRange.endTime }
