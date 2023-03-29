@@ -30,7 +30,7 @@ function isCalypsoLive( origin: string ) {
 }
 
 /**
- * Gets the Calypso origin from the referrer or `origin` query arg
+ * Gets the Calypso origin from 1. the `origin` query arg and 2. the HTTP referrer
  * and compares it against a list of allowed wpcom origins.
  *
  * @param path Optional path to append to the origin
@@ -42,10 +42,10 @@ export function getWpComOrigin( path = '' ) {
 	const fromQueryArg = new URLSearchParams( window.location.search ).get( 'origin' ) || '';
 	let origin = defaultOrigin;
 
-	if ( isAllowedOrigin( fromReferrer ) ) {
-		origin = fromReferrer;
-	} else if ( isAllowedOrigin( fromQueryArg ) ) {
+	if ( isAllowedOrigin( fromQueryArg ) ) {
 		origin = fromQueryArg;
+	} else if ( isAllowedOrigin( fromReferrer ) ) {
+		origin = fromReferrer;
 	}
 
 	if ( path.length ) {
