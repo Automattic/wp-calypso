@@ -4,6 +4,7 @@ export { useSubscriptionManagerSubscriptionsCountQuery } from './queries/use-sub
 
 // Mutations
 export { useSubscriptionManagerUserSettingsMutation } from './mutations/use-subscription-manager-user-settings-mutation';
+export { useSubscriptionManagerSiteDeliveryFrequencyMutation } from './mutations/use-subscription-manager-site-delivery-frequency-mutation';
 
 // Hooks
 export { useSubscriberEmailAddress } from './hooks';
@@ -14,4 +15,5 @@ export type {
 	DeliveryWindowHourType,
 	EmailFormatType,
 	SubscriptionManagerUserSettings,
+	SiteSubscriptionDeliveryFrequency,
 } from './types';
