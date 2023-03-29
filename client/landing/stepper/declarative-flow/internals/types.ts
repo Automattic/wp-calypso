@@ -43,16 +43,33 @@ export type NavigationControls = {
 	exitFlow?: ( to: string ) => void;
 };
 
-export type StepperStep = {
+export type DeprecatedStepperStep = {
 	/**
 	 * The step slug is what appears as part of the pathname. Eg the intro in /setup/link-in-bio/intro
 	 */
 	slug: string;
 	/**
-	 * The component that will be rendered for this step
+	 * @deprecated Use asyncComponent instead. The component that will be rendered for this step. This variation is deprecated and will be removed in the future. Please use async loaded steps instead
+	 *
+	 * It should look like this: component: () => import( './internals/steps-repository/newsletter-setup' )
 	 */
 	component: React.FC< StepProps >;
 };
+
+export type AsyncStepperStep = {
+	/**
+	 * The step slug is what appears as part of the pathname. Eg the intro in /setup/link-in-bio/intro
+	 */
+	slug: string;
+	/**
+	 * The Async loaded component that will be rendered for this step
+	 *
+	 * It should look like this: component: () => import( './internals/steps-repository/newsletter-setup' )
+	 */
+	asyncComponent: () => Promise< { default: React.FC< StepProps > } >;
+};
+
+export type StepperStep = DeprecatedStepperStep | AsyncStepperStep;
 
 export type Navigate< FlowSteps extends StepperStep[] > = (
 	stepName: FlowSteps[ number ][ 'slug' ] | `${ FlowSteps[ number ][ 'slug' ] }?${ string }`,
