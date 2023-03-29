@@ -1,5 +1,6 @@
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import DateRange from 'calypso/components/date-range';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { SiteLogsTab } from 'calypso/data/hosting/use-site-logs-query';
@@ -58,12 +59,16 @@ export const SiteLogsToolbar = ( {
 		if ( ! startDate || ! endDate ) {
 			return;
 		}
-		if (
-			moment.unix( startDateTime ).isSame( startDate ) &&
-			moment.unix( endDateTime ).isSame( endDate )
-		) {
+		if ( startDateTime.isSame( startDate ) && endDateTime.isSame( endDate ) ) {
 			return;
 		}
+		const url = new URL( window.location.href );
+		const range = {
+			from: moment( startDate ).utc().unix(),
+			to: moment( endDate ).utc().unix(),
+		};
+		url.searchParams.set( 'range', JSON.stringify( range ) );
+		page.replace( url.pathname + url.search );
 		onDateTimeCommit?.( startDate, endDate );
 	};
 
