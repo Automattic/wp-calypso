@@ -11,7 +11,7 @@ import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
-import { useDomainParam } from '../hooks/use-domain-param';
+import { useDomainParams } from '../hooks/use-domain-params';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
@@ -50,7 +50,7 @@ const linkInBio: Flow = {
 		const { setStepProgress, setHideFreePlan, setDomainCartItem } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStepSlug, flowName } );
 		const siteSlug = useSiteSlug();
-		const domain = useDomainParam();
+		const { domain } = useDomainParams();
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
