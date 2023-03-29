@@ -21,7 +21,7 @@ import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign } from '../../analytics/record-design';
-import { SITE_TAGLINE, PLACEHOLDER_SITE_ID, PATTERN_TYPES } from './constants';
+import { SITE_TAGLINE, PLACEHOLDER_SITE_ID, PATTERN_TYPES, NAVIGATOR_PATHS } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import useGlobalStylesUpgradeModal from './hooks/use-global-styles-upgrade-modal';
 import usePatternCategories from './hooks/use-pattern-categories';
@@ -55,7 +55,7 @@ const PatternAssembler = ( {
 	noticeList,
 	noticeOperations,
 }: StepProps & withNotices.Props ) => {
-	const [ navigatorPath, setNavigatorPath ] = useState( '/' );
+	const [ navigatorPath, setNavigatorPath ] = useState( NAVIGATOR_PATHS.MAIN );
 	const [ sectionPosition, setSectionPosition ] = useState< number | null >( null );
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const [ activePosition, setActivePosition ] = useState( -1 );
@@ -464,7 +464,8 @@ const PatternAssembler = ( {
 	};
 
 	const stepContent = (
-		<div
+		<NavigatorProvider
+			initialPath={ NAVIGATOR_PATHS.MAIN }
 			className={ classnames( 'pattern-assembler__wrapper', {
 				'pattern-assembler__pattern-panel-list--is-open': isPatternPanelListOpen,
 			} ) }
@@ -474,8 +475,8 @@ const PatternAssembler = ( {
 			{ isEnabled( 'pattern-assembler/notices' ) && (
 				<Notices noticeList={ noticeList } noticeOperations={ noticeOperations } />
 			) }
-			<NavigatorProvider className="pattern-assembler__sidebar" initialPath="/">
-				<NavigatorScreen path="/">
+			<div className="pattern-assembler__sidebar">
+				<NavigatorScreen path={ NAVIGATOR_PATHS.MAIN }>
 					<ScreenMain
 						shouldUnlockGlobalStyles={ shouldUnlockGlobalStyles }
 						onSelect={ onMainItemSelect }
@@ -483,7 +484,7 @@ const PatternAssembler = ( {
 					/>
 				</NavigatorScreen>
 
-				<NavigatorScreen path="/header">
+				<NavigatorScreen path={ NAVIGATOR_PATHS.HEADER }>
 					<ScreenHeader
 						selectedPattern={ header }
 						onSelect={ onSelect }
@@ -492,7 +493,7 @@ const PatternAssembler = ( {
 					/>
 				</NavigatorScreen>
 
-				<NavigatorScreen path="/footer">
+				<NavigatorScreen path={ NAVIGATOR_PATHS.FOOTER }>
 					<ScreenFooter
 						selectedPattern={ footer }
 						onSelect={ onSelect }
@@ -501,7 +502,7 @@ const PatternAssembler = ( {
 					/>
 				</NavigatorScreen>
 
-				<NavigatorScreen path="/section">
+				<NavigatorScreen path={ NAVIGATOR_PATHS.SECTION }>
 					<ScreenSection
 						patterns={ sections }
 						onAddSection={ onAddSection }
@@ -511,7 +512,7 @@ const PatternAssembler = ( {
 						onMoveDownSection={ onMoveDownSection }
 					/>
 				</NavigatorScreen>
-				<NavigatorScreen path="/section/patterns">
+				<NavigatorScreen path={ NAVIGATOR_PATHS.SECTION_PATTERNS }>
 					{ isEnabled( 'pattern-assembler/categories' ) ? (
 						<ScreenCategoryList
 							categories={ categories }
@@ -535,7 +536,7 @@ const PatternAssembler = ( {
 				</NavigatorScreen>
 
 				{ isEnabledColorAndFonts && (
-					<NavigatorScreen path="/color-palettes">
+					<NavigatorScreen path={ NAVIGATOR_PATHS.COLOR_PALETTES }>
 						<AsyncLoad
 							require="./screen-color-palettes"
 							placeholder={ null }
@@ -550,7 +551,7 @@ const PatternAssembler = ( {
 				) }
 
 				{ isEnabledColorAndFonts && (
-					<NavigatorScreen path="/font-pairings">
+					<NavigatorScreen path={ NAVIGATOR_PATHS.FONT_PAIRINGS }>
 						<AsyncLoad
 							require="./screen-font-pairings"
 							placeholder={ null }
@@ -571,7 +572,7 @@ const PatternAssembler = ( {
 						wrapperRef.current?.focus();
 					} }
 				/>
-			</NavigatorProvider>
+			</div>
 			<PatternLargePreview
 				header={ header }
 				sections={ sections }
@@ -584,7 +585,7 @@ const PatternAssembler = ( {
 				onDeleteFooter={ onDeleteFooter }
 			/>
 			<PremiumGlobalStylesUpgradeModal { ...globalStylesUpgradeModalProps } />
-		</div>
+		</NavigatorProvider>
 	);
 
 	if ( ! site?.ID || ! selectedDesign ) {
@@ -595,7 +596,7 @@ const PatternAssembler = ( {
 		<StepContainer
 			className="pattern-assembler__sidebar-revamp"
 			stepName="pattern-assembler"
-			hideBack={ navigatorPath !== '/' || flow === WITH_THEME_ASSEMBLER_FLOW }
+			hideBack={ navigatorPath !== NAVIGATOR_PATHS.MAIN || flow === WITH_THEME_ASSEMBLER_FLOW }
 			goBack={ onBack }
 			goNext={ goNext }
 			isHorizontalLayout={ false }
@@ -612,7 +613,6 @@ const PatternAssembler = ( {
 				</PatternAssemblerContainer>
 			}
 			recordTracksEvent={ recordTracksEvent }
-			stepSectionName={ navigatorPath !== '/' ? 'pattern-selector' : undefined }
 		/>
 	);
 };

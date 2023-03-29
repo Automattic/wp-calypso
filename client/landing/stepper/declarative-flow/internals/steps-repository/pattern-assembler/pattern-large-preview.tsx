@@ -1,11 +1,13 @@
 import { PatternRenderer } from '@automattic/block-renderer';
 import { DeviceSwitcher } from '@automattic/components';
 import { useStyle } from '@automattic/global-styles';
+import { __experimentalUseNavigator as useNavigator } from '@wordpress/components';
 import { Icon, layout } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useEffect, useState, CSSProperties } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { NAVIGATOR_PATHS, STYLES_PATHS } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import PatternActionBar from './pattern-action-bar';
 import { encodePatternId } from './utils';
@@ -39,7 +41,10 @@ const PatternLargePreview = ( {
 	onDeleteFooter,
 }: Props ) => {
 	const translate = useTranslate();
+	const navigator = useNavigator();
 	const hasSelectedPattern = header || sections.length || footer;
+	const shouldShowSelectPatternHint =
+		! hasSelectedPattern && STYLES_PATHS.includes( navigator.location.path );
 	const frameRef = useRef< HTMLDivElement | null >( null );
 	const listRef = useRef< HTMLUListElement | null >( null );
 	const [ viewportHeight, setViewportHeight ] = useState< number | undefined >( 0 );
@@ -49,6 +54,10 @@ const PatternLargePreview = ( {
 		'--pattern-large-preview-block-gap': blockGap,
 		'--pattern-large-preview-background': backgroundColor,
 	} as CSSProperties );
+
+	const goToSelectPattern = () => {
+		navigator.goTo( NAVIGATOR_PATHS.HEADER );
+	};
 
 	const renderPattern = ( type: string, pattern: Pattern, position = -1 ) => {
 		const key = type === 'section' ? pattern.key : type;
@@ -171,6 +180,29 @@ const PatternLargePreview = ( {
 					<span>
 						{ translate( "It's time to get creative. Add your first pattern to get started." ) }
 					</span>
+					{ shouldShowSelectPatternHint && (
+						<span>
+							{ translate(
+								'{{link}}Select a pattern{{/link}} to apply colors and fonts to your website.',
+								{
+									components: {
+										link: (
+											// eslint-disable-next-line jsx-a11y/anchor-is-valid
+											<a
+												href="#"
+												target="_blank"
+												rel="noopener noreferrer"
+												onClick={ ( event ) => {
+													event.preventDefault();
+													goToSelectPattern();
+												} }
+											/>
+										),
+									},
+								}
+							) }
+						</span>
+					) }
 				</div>
 			) }
 		</DeviceSwitcher>
