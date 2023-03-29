@@ -45,22 +45,20 @@ export const SiteLogsToolbar = ( { onRefresh, ...downloadProps }: Props ) => {
 	const isDownloading = state.status === 'downloading';
 
 	return (
-		<>
-			<div className="site-logs-toolbar">
-				<Button isSecondary onClick={ onRefresh }>
-					{ translate( 'Refresh' ) }
-				</Button>
+		<div className="site-logs-toolbar">
+			<Button isSecondary onClick={ onRefresh }>
+				{ translate( 'Refresh' ) }
+			</Button>
 
-				<Button
-					disabled={ isDownloading }
-					isBusy={ isDownloading }
-					isPrimary
-					onClick={ () => downloadLogs( downloadProps ) }
-				>
-					{ translate( 'Download' ) }
-				</Button>
-				{ isDownloading && <SiteLogsToolbarDownloadProgress { ...state } /> }
-			</div>
-		</>
+			<Button
+				disabled={ isDownloading }
+				isBusy={ isDownloading }
+				isPrimary
+				onClick={ () => downloadLogs( downloadProps ) }
+			>
+				{ translate( 'Download' ) }
+			</Button>
+			{ isDownloading && <SiteLogsToolbarDownloadProgress { ...state } /> }
+		</div>
 	);
 };
