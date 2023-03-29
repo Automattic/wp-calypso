@@ -253,7 +253,10 @@ class ReaderStream extends Component {
 	};
 
 	handleOpenSelectionNewTab = () => {
-		window.open( this.props.selectedPostKey.url, '_blank', 'noreferrer,noopener' );
+		const { selectedPostKey } = this.props;
+		if ( selectedPostKey ) {
+			window.open( selectedPostKey.url, '_blank', 'noreferrer,noopener' );
+		}
 	};
 
 	handleOpenSelection = () => {
