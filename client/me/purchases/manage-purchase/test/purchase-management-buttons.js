@@ -170,14 +170,10 @@ describe( 'Purchase Management Buttons', () => {
 			.get( '/rest/v1.1/me/payment-methods?expired=include' )
 			.reply( 200 );
 
-		purchase.domain = 'siteless.akismet.com';
-		purchase.product_id = 2311; // Akismet Personal Plus plan
-		purchase.product_slug = 'ak_plus_yearly_1';
-
 		const store = createMockReduxStoreForPurchase( {
 			...purchase,
 			domain: 'siteless.akismet.com',
-			product_id: 2311,
+			product_id: 2311, // Akismet Plus Plan
 			product_slug: 'ak_plus_yearly_1',
 			auto_renew: 0,
 		} );
