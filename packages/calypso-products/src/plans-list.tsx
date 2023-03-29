@@ -1388,7 +1388,9 @@ const getPlanProDetails = (): IncompleteWPcomPlan => ( {
 		),
 	getDescription: () =>
 		i18n.translate(
-			'Unlock the full power of WordPress with plugins, custom themes and much more.'
+			'You’ve got our best deal on hosting! ' +
+				'Your Pro plan includes access to all the most popular features WordPress.com has to offer, including premium themes and access to over 50,000 plugins. ' +
+				'As an existing customer, you can keep your site on this plan as long as your subscription remains active.'
 		),
 	getSubTitle: () => i18n.translate( 'Unlimited features. Unbeatable value.' ),
 	getPlanCompareFeatures: () => [
