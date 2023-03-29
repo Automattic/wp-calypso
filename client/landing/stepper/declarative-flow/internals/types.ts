@@ -79,6 +79,10 @@ export type UseSideEffectHook< FlowSteps extends StepperStep[] > = (
 
 export type Flow = {
 	name: string;
+	/**
+	 * If this flow extends another flow, pass the slug of the other flow here. This will add the extended flow's class name.
+	 */
+	extends?: string;
 	title?: string;
 	classnames?: string | [ string ];
 	useSteps: UseStepsHook;
@@ -94,6 +98,10 @@ export type StepProps = {
 	navigation: NavigationControls;
 	stepName: string;
 	flow: string | null;
+	/**
+	 * If this step of a flow that extends another, pass the slug of the parent flow, it can come handy.
+	 */
+	flowExtends?: string;
 	data?: Record< string, unknown >;
 };
 

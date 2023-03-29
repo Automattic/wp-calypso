@@ -22,6 +22,11 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	'link-in-bio': () =>
 		import( /* webpackChunkName: "link-in-bio-flow" */ '../declarative-flow/link-in-bio' ),
 
+	'link-in-bio-domain': () =>
+		import(
+			/* webpackChunkName: "link-in-bio-flow-domain" */ '../declarative-flow/link-in-bio-domain'
+		),
+
 	'link-in-bio-tld': () =>
 		import( /* webpackChunkName: "link-in-bio-tld-flow" */ '../declarative-flow/link-in-bio-tld' ),
 

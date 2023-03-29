@@ -145,6 +145,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 			<step.component
 				navigation={ stepNavigation }
 				flow={ flow.name }
+				flowExtends={ flow.extends }
 				stepName={ step.slug }
 				data={ stepData }
 			/>
@@ -180,7 +181,14 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				{ flowSteps.map( ( step ) => {
 					return (
 						<Route key={ step.slug } path={ `/${ flow.name }/${ step.slug }` }>
-							<div className={ classnames( flow.name, flow.classnames, kebabCase( step.slug ) ) }>
+							<div
+								className={ classnames(
+									flow.name,
+									flow.extends,
+									flow.classnames,
+									kebabCase( step.slug )
+								) }
+							>
 								{ 'videopress' === flow.name && 'intro' === step.slug && (
 									<VideoPressIntroBackground />
 								) }
