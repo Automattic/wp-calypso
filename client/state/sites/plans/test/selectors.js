@@ -856,7 +856,7 @@ describe( 'selectors', () => {
 
 	describe( '#getECommerceTrialDaysLeft()', () => {
 		const siteId = 1337;
-		jest.useFakeTimers().setSystemTime( new Date( '2022-01-10T13:07:00+00:00' ) );
+		jest.useFakeTimers().setSystemTime( new Date( '2022-01-10T00:00:00+00:00' ) );
 
 		test( 'Should return the correct number of days left before the trial expires', () => {
 			const expiryDate = '2022-02-10T00:00:00+00:00';
@@ -888,7 +888,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( getECommerceTrialDaysLeft( state, siteId ) ).toBe( 30 );
+			expect( getECommerceTrialDaysLeft( state, siteId ) ).toBe( 31 );
 		} );
 	} );
 
