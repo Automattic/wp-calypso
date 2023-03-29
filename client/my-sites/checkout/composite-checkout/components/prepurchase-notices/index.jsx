@@ -13,7 +13,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { requestRewindCapabilities } from 'calypso/state/rewind/capabilities/actions';
-// import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	getSitePlan,
 	getSiteProducts,
@@ -71,11 +70,12 @@ const PrePurchaseNotices = () => {
 		}
 
 		const getMatchingProducts = ( siteProducts, planSlug ) => {
-			// Get all features and products for the plan in the cart
+			// Get all features for the plan in the cart
 			const planFeatures = getAllFeaturesForPlan( planSlug );
 
 			// Filter the site products to only include those in the plan items or are inferior features to the plan feature
 			const matchingProducts = siteProducts.filter( ( product ) => {
+				//check for generic backup and scan slugs
 				const isBackup = isJetpackBackupSlug( product.productSlug );
 				const isScan = isJetpackScanSlug( product.productSlug );
 
@@ -103,7 +103,7 @@ const PrePurchaseNotices = () => {
 		}
 
 		const getMatchingProducts = ( cartItems, planSlug ) => {
-			// Get all features and products for the site plan
+			// Get all features for the site plan
 			const planFeatures = getAllFeaturesForPlan( planSlug );
 
 			// Filter the cart items to only include those in the plan items or are inferior features to the plan feature
@@ -116,7 +116,7 @@ const PrePurchaseNotices = () => {
 				return (
 					planFeatures.includes( productSlug ) ||
 					planHasSuperiorFeature( planSlug, productSlug ) ||
-					// there are too many variations on the following, so checking against WPCOM_features
+					// there are too many variations on the following, so checking generic slugs
 					isBackup ||
 					isScan ||
 					isAntiSpam
