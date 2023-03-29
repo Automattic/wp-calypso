@@ -28,8 +28,10 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 	const moment = useLocalizedMoment();
 
 	const getDateRange = () => {
-		const startTime = moment().subtract( 7, 'd' );
-		const endTime = moment();
+		const rangeParam = new URL( window.location.href ).searchParams.get( 'range' );
+		const range = rangeParam && JSON.parse( rangeParam );
+		const startTime = range?.from ? moment( range.from ) : moment().subtract( 7, 'd' );
+		const endTime = range?.to ? moment( range.to ) : moment();
 		return { startTime, endTime };
 	};
 
@@ -101,6 +103,20 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 			  } )
 			: null;
 
+	const handleDateRangeCommit = ( startDate: Date, endDate: Date ) => {
+		const formattedStartDate = startDate ? moment( startDate ) : null;
+		const formattedEndDate = endDate ? moment( endDate ) : null;
+
+		if ( ! formattedStartDate && ! formattedEndDate ) {
+			return;
+		}
+
+		setDateRange( {
+			startTime: formattedStartDate ?? dateRange.startTime,
+			endTime: formattedEndDate ?? dateRange.endTime,
+		} );
+	};
+
 	return (
 		<Main fullWidthLayout className={ classnames( 'site-logs', { 'is-loading': isLoading } ) }>
 			<DocumentHead title={ titleHeader } />
@@ -120,6 +136,7 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 							logType={ logType }
 							startDateTime={ dateRange.startTime }
 							endDateTime={ dateRange.endTime }
+							onDateTimeCommit={ handleDateRangeCommit }
 						/>
 						<SiteLogsTable logs={ data?.logs } isLoading={ isLoading } />
 						{ paginationText && (
