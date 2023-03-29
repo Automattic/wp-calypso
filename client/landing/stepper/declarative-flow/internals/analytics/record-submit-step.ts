@@ -7,7 +7,8 @@ export function recordSubmitStep(
 	providedDependencies: ProvidedDependencies = {},
 	intent: string,
 	flow: string,
-	step: string
+	step: string,
+	variant?: string
 ) {
 	const device = resolveDeviceTypeByViewPort();
 	const inputs = reduce(
@@ -40,6 +41,7 @@ export function recordSubmitStep(
 	recordTracksEvent( 'calypso_signup_actions_submit_step', {
 		device,
 		flow,
+		variant,
 		step,
 		intent,
 		...inputs,
