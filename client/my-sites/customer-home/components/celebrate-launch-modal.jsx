@@ -74,7 +74,7 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 
 		return (
 			<div className="launched__modal-upsell">
-				<p className="launched__modal-upsell-content">{ contentElement }</p>
+				<div className="launched__modal-upsell-content">{ contentElement }</div>
 				<Button isLarge isPrimary href={ buttonHref }>
 					<span>{ buttonText }</span>
 				</Button>
