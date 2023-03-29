@@ -33,7 +33,7 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 		return getWooExpressMediumFeatureSets( { translate, interval } );
 	}, [ translate, interval ] );
 
-	const performanceOnlyOption = (
+	const performanceOnlyFeatures = (
 		<ECommercePlanFeatures
 			interval={ interval }
 			monthlyControlProps={ { path: plansLink( '/plans', siteSlug, 'monthly', true ) } }
@@ -44,20 +44,20 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 		/>
 	);
 
-	const tableProps = {
+	const plansTableProps = {
 		plans: [ PLAN_FREE, PLAN_WOOEXPRESS_MEDIUM ],
 		hidePlansFeatureComparison: true,
 	};
 
-	const performanceAndEssentialOption = (
+	const multiPlanFeatures = (
 		<div className="is-2023-pricing-grid">
-			<AsyncLoad require="calypso/my-sites/plan-features-2023-grid" { ...tableProps } />
+			<AsyncLoad require="calypso/my-sites/plan-features-2023-grid" { ...plansTableProps } />
 		</div>
 	);
 
-	const upgradeOptions = isEnabled( 'plans/wooexpress-small' )
-		? performanceAndEssentialOption
-		: performanceOnlyOption;
+	const availablePlanFeatures = isEnabled( 'plans/wooexpress-small' )
+		? multiPlanFeatures
+		: performanceOnlyFeatures;
 
 	return (
 		<>
@@ -67,7 +67,7 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 				<ECommerceTrialBanner />
 			</div>
 
-			{ upgradeOptions }
+			{ availablePlanFeatures }
 		</>
 	);
 };
