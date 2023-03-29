@@ -30,6 +30,9 @@ import {
 	getMonthlyPlanByYearly,
 	hasMarketplaceProduct,
 	isDIFMProduct,
+	isAkismetProduct,
+	isJetpackBackupT1Slug,
+	AKISMET_UPGADES_PRODUCTS_MAP,
 } from '@automattic/calypso-products';
 import { Spinner, Button, Card, CompactCard, ProductIcon, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
@@ -278,7 +281,8 @@ class ManagePurchase extends Component {
 			! isComplete( purchase ) &&
 			! isP2Plus( purchase );
 		const isUpgradeableProduct =
-			! isPlan( purchase ) && JETPACK_BACKUP_T1_PRODUCTS.includes( purchase.productSlug );
+			! isPlan( purchase ) &&
+			( isJetpackBackupT1Slug( purchase.productSlug ) || isAkismetProduct( purchase ) );
 
 		if ( ! isUpgradeablePlan && ! isUpgradeableProduct ) {
 			return null;
@@ -289,6 +293,10 @@ class ManagePurchase extends Component {
 		}
 
 		const upgradeUrl = this.getUpgradeUrl();
+
+		if ( ! upgradeUrl ) {
+			return null;
+		}
 
 		// If the "renew now" button is showing, it will be using primary styles
 		// Show the upgrade button without the primary style if both buttons are present
@@ -373,6 +381,13 @@ class ManagePurchase extends Component {
 
 		const isUpgradeableBackupProduct = JETPACK_BACKUP_T1_PRODUCTS.includes( purchase.productSlug );
 		const isUpgradeableSecurityPlan = JETPACK_SECURITY_T1_PLANS.includes( purchase.productSlug );
+
+		if ( isAkismetProduct( purchase ) ) {
+			// For the first Iteration of Calypso Akismet checkout we are only suggesting
+			// for immediate upgrades to the next plan. We will change this in the future
+			// with appropriate page.
+			return AKISMET_UPGADES_PRODUCTS_MAP[ purchase.productSlug ];
+		}
 
 		if ( isUpgradeableBackupProduct || isUpgradeableSecurityPlan ) {
 			return `/plans/storage/${ siteSlug }`;
