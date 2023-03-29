@@ -25,6 +25,7 @@ import { SITE_TAGLINE, PLACEHOLDER_SITE_ID, PATTERN_TYPES } from './constants';
 import useGlobalStylesUpgradeModal from './hooks/use-global-styles-upgrade-modal';
 import usePatternCategories from './hooks/use-pattern-categories';
 import usePatternsMapByCategory from './hooks/use-patterns-map-by-category';
+import { usePrefetchImage } from './hooks/use-prefetch-images';
 import NavigatorListener from './navigator-listener';
 import Notices, { getNoticeContent } from './notices/notices';
 import PatternAssemblerContainer from './pattern-assembler-container';
@@ -129,6 +130,8 @@ const PatternAssembler = ( {
 		selectedVariations,
 		isEnabledColorAndFonts
 	);
+
+	usePrefetchImage();
 
 	const siteInfo = {
 		title: site?.name,
