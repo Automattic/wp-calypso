@@ -1,6 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
 import { get, isEmpty, map } from 'lodash';
-import { Moment } from 'moment';
 import { useReducer } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -9,6 +8,7 @@ import wpcom from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import type { Moment } from 'moment';
 
 interface LogsAPIResponse {
 	data: {

@@ -1,8 +1,8 @@
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { Moment } from 'moment';
 import { SiteLogsTab } from 'calypso/data/hosting/use-site-logs-query';
 import { useSiteLogsDownloader } from '../../hooks/use-site-logs-downloader';
+import type { Moment } from 'moment';
 
 import './style.scss';
 
