@@ -20,13 +20,13 @@ const IMAGE_URLS = [
 export const usePrefetchImages = () => {
 	const [ links, setLinks ] = useState< HTMLLinkElement[] >( [] );
 
-	const prefetchImage = ( url: string, links: HTMLLinkElement[] ) => {
+	const prefetchImage = ( url: string ) => {
 		const link = document.createElement( 'link' );
 		link.rel = 'prefetch';
 		link.as = 'image';
 		link.href = url;
 		document.head.appendChild( link );
-		setLinks( [ ...links, link ] );
+		setLinks( ( links ) => [ ...links, link ] );
 	};
 
 	const removeLinks = ( link: HTMLLinkElement ) => {
@@ -35,7 +35,7 @@ export const usePrefetchImages = () => {
 
 	useEffect( () => {
 		IMAGE_URLS.forEach( ( url ) => {
-			prefetchImage( url, links );
+			prefetchImage( url );
 		} );
 	}, [] );
 
