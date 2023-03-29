@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import SiteRow from './site-row';
 import { SiteType } from './site-types';
+import './styles.scss';
 
 type SiteProps = {
 	sites: SiteType[];

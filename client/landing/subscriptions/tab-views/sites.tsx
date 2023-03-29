@@ -1,5 +1,4 @@
-import SiteList from './site-list';
-import './styles.scss';
+import SiteList from '../site-list/site-list';
 
 // Mock meanwhile we have the data endpoints ready
 const useSites = () => {
