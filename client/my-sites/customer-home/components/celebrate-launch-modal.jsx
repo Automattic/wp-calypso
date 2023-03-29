@@ -75,7 +75,6 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 		return (
 			<div className="launched__modal-upsell">
 				<p className="launched__modal-upsell-content">{ contentElement }</p>
-				{ /* <Button disabled={ isFetching } isLarge isPrimary href={ buttonHref }> */ }
 				<Button isLarge isPrimary href={ buttonHref }>
 					<span>{ buttonText }</span>
 				</Button>
