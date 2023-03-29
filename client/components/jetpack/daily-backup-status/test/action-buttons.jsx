@@ -109,4 +109,22 @@ describe( 'ActionButtons', () => {
 			rewind_id: rewindId,
 		} );
 	} );
+
+	test( 'enables clone button', async () => {
+		const user = userEvent.setup();
+		const rewindId = 'test';
+		const onClickClone = jest.fn();
+		render(
+			<ActionButtons
+				rewindId={ rewindId }
+				availableActions={ [ 'clone' ] }
+				onClickClone={ onClickClone }
+			/>
+		);
+		const cloneButton = screen.getByRole( 'link', { name: /clone/i } );
+
+		await user.click( cloneButton );
+
+		expect( onClickClone ).toHaveBeenCalledTimes( 1 );
+	} );
 } );

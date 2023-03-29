@@ -8,6 +8,7 @@ import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import ActivityCardList from 'calypso/components/activity-card-list';
 import AdvancedCredentials from 'calypso/components/advanced-credentials';
+import BackupSuccessful from 'calypso/components/jetpack/daily-backup-status/status-card/backup-successful';
 import StepProgress from 'calypso/components/step-progress';
 import getInProgressRewindStatus from 'calypso/state/selectors/get-in-progress-rewind-status';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
@@ -53,6 +54,10 @@ jest.mock( 'calypso/components/activity-card-list', () =>
 jest.mock( 'calypso/components/advanced-credentials', () =>
 	jest.fn().mockImplementation( () => null )
 );
+jest.mock( 'calypso/components/jetpack/daily-backup-status/status-card/backup-successful', () =>
+	jest.fn().mockImplementation( () => null )
+);
+
 jest.mock( 'calypso/components/step-progress', () => jest.fn().mockImplementation( () => null ) );
 jest.mock( '../../rewind-flow/error', () => jest.fn().mockImplementation( () => null ) );
 jest.mock( '../../rewind-flow/loading', () => jest.fn().mockImplementation( () => null ) );
@@ -199,6 +204,7 @@ describe( 'BackupCloneFlow render', () => {
 			);
 
 			expect( StepProgress ).toHaveBeenCalledTimes( 1 );
+			expect( BackupSuccessful ).toHaveBeenCalledTimes( 1 );
 			expect( ActivityCardList ).toHaveBeenCalledTimes( 1 );
 		} );
 

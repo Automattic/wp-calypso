@@ -147,7 +147,12 @@ const CloneSiteActionButton: React.FC< CloneSiteOwnProps > = ( { rewindId, onCli
 	const translate = useTranslate();
 
 	return (
-		<Button compact className="toolbar__button" onClick={ () => onClickClone( rewindId ) }>
+		<Button
+			compact
+			className="toolbar__button"
+			isPrimary={ false }
+			onClick={ () => onClickClone( rewindId ) }
+		>
 			{ translate( 'Clone from here' ) }
 		</Button>
 	);
