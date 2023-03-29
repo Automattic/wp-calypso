@@ -41,7 +41,11 @@ import { setAllSitesSelected } from 'calypso/state/ui/actions';
 import { MarketPlaceSubscriptionsDialog } from '../marketplace-subscriptions-dialog';
 import { purchasesRoot } from '../paths';
 import { PreCancellationDialog } from '../pre-cancellation-dialog';
-import { isDataLoading, isAkismetTemporarySitePurchase } from '../utils';
+import {
+	isDataLoading,
+	isAkismetTemporarySitePurchase,
+	isJetpackTemporarySitePurchase,
+} from '../utils';
 import RemoveDomainDialog from './remove-domain-dialog';
 import './style.scss';
 
@@ -199,7 +203,10 @@ class RemovePurchase extends Component {
 			components: { siteName: <em>{ purchase.domain }</em> },
 		} );
 
-		if ( isAkismetTemporarySitePurchase( purchase ) ) {
+		if (
+			isAkismetTemporarySitePurchase( purchase ) ||
+			isJetpackTemporarySitePurchase( purchase )
+		) {
 			successMessage = translate( '%(productName)s was removed from your account.', {
 				args: { productName },
 			} );
