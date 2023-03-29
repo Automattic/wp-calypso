@@ -52,7 +52,7 @@ const pluginBundleFlow: Flow = {
 		if ( pluginSlug && pluginBundleData.hasOwnProperty( pluginSlug ) ) {
 			bundlePluginSteps = pluginBundleData[ pluginSlug ];
 		}
-		return steps.concat( bundlePluginSteps );
+		return [ ...steps, ...bundlePluginSteps ];
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
