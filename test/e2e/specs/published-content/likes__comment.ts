@@ -12,6 +12,7 @@ import {
 	RestAPIClient,
 	NewCommentResponse,
 	PostResponse,
+	ElementHelper,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
@@ -76,7 +77,11 @@ describe( 'Likes: Comment', function () {
 				newComment.ID
 			);
 
-			await page.reload( { waitUntil: 'networkidle' } );
+			async function closure( page: Page ) {
+				await page.getByText( 'Loading...' ).last().waitFor( { state: 'hidden' } );
+			}
+			// await page.reload( { waitUntil: 'networkidle' } );
+			await ElementHelper.reloadAndRetry( page, closure );
 		} );
 
 		it( 'Like the comment', async function () {
@@ -96,7 +101,11 @@ describe( 'Likes: Comment', function () {
 				newComment.ID
 			);
 
-			await page.reload( { waitUntil: 'networkidle' } );
+			async function closure( page: Page ) {
+				await page.getByText( 'Loading...' ).last().waitFor( { state: 'hidden' } );
+			}
+			// await page.reload( { waitUntil: 'networkidle' } );
+			await ElementHelper.reloadAndRetry( page, closure );
 		} );
 
 		it( 'Unlike the comment', async function () {
