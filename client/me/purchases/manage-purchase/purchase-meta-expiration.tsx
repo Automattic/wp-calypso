@@ -16,6 +16,7 @@ import {
 	isRenewable,
 	isExpired,
 } from 'calypso/lib/purchases';
+import { isAkismetTemporarySitePurchase } from 'calypso/me/purchases/utils';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import AutoRenewToggle from './auto-renew-toggle';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -51,6 +52,7 @@ function PurchaseMetaExpiration( {
 
 	const isProductOwner = purchase?.userId === useSelector( getCurrentUserId );
 	const isJetpackPurchase = isJetpackPlan( purchase ) || isJetpackProduct( purchase );
+	const isCancellableSitelessPurchase = isAkismetTemporarySitePurchase( purchase );
 	const isAutorenewalEnabled = purchase?.isAutoRenewEnabled ?? false;
 	const isJetpackPurchaseUsingPrimaryCancellationFlow =
 		isJetpackPurchase && config.isEnabled( 'jetpack/cancel-through-main-flow' );
@@ -66,13 +68,13 @@ function PurchaseMetaExpiration( {
 	if ( isRenewable( purchase ) && ! isExpired( purchase ) ) {
 		const dateSpan = <span className="manage-purchase__detail-date-span" />;
 		// If a jetpack site has been disconnected, the "site" prop will be null here.
-		const shouldRenderToggle = site && isProductOwner;
+		const shouldRenderToggle = ( isCancellableSitelessPurchase || site ) && isProductOwner;
 
 		const autoRenewToggle = shouldRenderToggle ? (
 			<AutoRenewToggle
-				planName={ site.plan?.product_name_short }
-				siteDomain={ site.domain }
-				siteSlug={ site.slug }
+				planName={ site && ! isCancellableSitelessPurchase ? site.plan?.product_name_short : '' }
+				siteDomain={ site && ! isCancellableSitelessPurchase ? site.domain : '' }
+				siteSlug={ site && ! isCancellableSitelessPurchase ? site.slug : '' }
 				purchase={ purchase }
 				toggleSource="manage-purchase"
 				showLink={ true }

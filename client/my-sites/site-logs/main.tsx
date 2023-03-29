@@ -17,6 +17,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SiteLogsTabPanel } from './components/site-logs-tab-panel';
 import { SiteLogsTable } from './components/site-logs-table';
 import { SiteLogsToolbar } from './components/site-logs-toolbar';
+
 import './style.scss';
 
 const DEFAULT_PAGE_SIZE = 50;
@@ -27,8 +28,8 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 	const moment = useLocalizedMoment();
 
 	const getDateRange = () => {
-		const startTime = moment().subtract( 7, 'd' ).unix();
-		const endTime = moment().unix();
+		const startTime = moment().subtract( 7, 'd' );
+		const endTime = moment();
 		return { startTime, endTime };
 	};
 
@@ -45,8 +46,8 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 
 	const { data: latestPageData, isLoading } = useSiteLogsQuery( siteId, {
 		logType,
-		start: dateRange.startTime,
-		end: dateRange.endTime,
+		start: dateRange.startTime.unix(),
+		end: dateRange.endTime.unix(),
 		sortOrder: 'desc',
 		pageSize,
 		pageIndex: currentPageIndex,
@@ -63,10 +64,13 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 	const handleTabSelected = ( tabName: SiteLogsTab ) => {
 		setLogType( tabName );
 		setCurrentPageIndex( 0 );
+		setCachedPageData( undefined );
 	};
 
 	const handleRefresh = () => {
 		setDateRange( getDateRange() );
+		setCurrentPageIndex( 0 );
+		setCachedPageData( undefined );
 	};
 
 	const handlePageClick = ( nextPageNumber: number ) => {
@@ -111,7 +115,12 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 			<SiteLogsTabPanel selectedTab={ logType } onSelected={ handleTabSelected }>
 				{ () => (
 					<>
-						<SiteLogsToolbar onRefresh={ handleRefresh } />
+						<SiteLogsToolbar
+							onRefresh={ handleRefresh }
+							logType={ logType }
+							startDateTime={ dateRange.startTime }
+							endDateTime={ dateRange.endTime }
+						/>
 						<SiteLogsTable logs={ data?.logs } isLoading={ isLoading } />
 						{ paginationText && (
 							<div className="site-logs__pagination-text">{ paginationText }</div>
