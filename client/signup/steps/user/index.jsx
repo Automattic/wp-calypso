@@ -176,10 +176,11 @@ export class UserStep extends Component {
 						  );
 			} else if ( isWooOAuth2Client( oauth2Client ) && ! wccomFrom ) {
 				subHeaderText = translate(
-					"All Woo stores are powered by WordPress.com. Please create an account to continue. Already registered? {{a}}Log in{{/a}}",
+					'All Woo stores are powered by WordPress.com.{{br/}}Please create an account to continue. Already registered? {{a}}Log in{{/a}}',
 					{
 						components: {
 							a: <a href={ loginUrl } />,
+							br: <br />,
 						},
 						comment:
 							'Link displayed on the Signup page to users having account to log in WooCommerce via WordPress.com',
