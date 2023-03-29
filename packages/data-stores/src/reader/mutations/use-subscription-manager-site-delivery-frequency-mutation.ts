@@ -47,9 +47,7 @@ const useSubscriptionManagerSiteDeliveryFrequencyMutation = () => {
 			if ( ! response.success ) {
 				throw new Error(
 					// reminder: translate this string when we add it to the UI
-					translate( 'Something went wrong while saving the delivery frequency.', {
-						context: 'Updating the delivery frequency failed.',
-					} ) as string
+					'Something went wrong while saving the delivery frequency.'
 				);
 			}
 
