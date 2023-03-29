@@ -684,7 +684,7 @@ export default function CheckoutMain( {
 			<QueryJetpackSaleCoupon />
 			<QuerySitePlans siteId={ updatedSiteId } />
 			<QuerySitePurchases siteId={ updatedSiteId } />
-			<QueryUserPurchases />
+			{ isSiteless && <QueryUserPurchases /> }
 			<QueryPlans />
 			<QueryProducts />
 			<QueryContactDetailsCache />
