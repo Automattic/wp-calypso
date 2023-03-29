@@ -37,6 +37,22 @@ export function useSiteLogsQuery(
 	const [ scrollId, setScrollId ] = useState< string | undefined >();
 	const [ isFinishedPaging, setIsFinishedPaging ] = useState< boolean >( false );
 
+	// The scroll ID represents the state of a particular set of filtering arguments. If any of
+	// those filter arguments change we throw out the scroll ID so we can start over.
+	const [ previousSiteId, setPreviousSiteId ] = useState( siteId );
+	const [ previousParams, setPreviousParams ] = useState( params );
+	if ( previousSiteId !== siteId || ! areRequestParamsEqual( previousParams, params ) ) {
+		queryClient.removeQueries( {
+			queryKey: buildPartialQueryKey( previousSiteId, previousParams ),
+		} );
+
+		// We're updating state directly in the render flow. This is preferable to using an effect.
+		// https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes
+		setPreviousSiteId( siteId );
+		setPreviousParams( params );
+		setScrollId( undefined );
+	}
+
 	const queryResult = useQuery< SiteLogsAPIResponse, unknown, SiteLogsData >(
 		buildQueryKey( siteId, params ),
 		() => {
@@ -85,22 +101,6 @@ export function useSiteLogsQuery(
 	// can't allow `refetch` to be used. Remember, the logs are fetched with a POST and the
 	// requests are not idempotent.
 	const { refetch, ...remainingQueryResults } = queryResult;
-
-	// The scroll ID represents the state of a particular set of filtering arguments. If any of
-	// those filter arguments change we throw out the scroll ID so we can start over.
-	const [ previousSiteId, setPreviousSiteId ] = useState( siteId );
-	const [ previousParams, setPreviousParams ] = useState( params );
-	if ( previousSiteId !== siteId || ! areRequestParamsEqual( previousParams, params ) ) {
-		queryClient.removeQueries( {
-			queryKey: buildPartialQueryKey( previousSiteId, previousParams ),
-		} );
-
-		// We're updating state directly in the render flow. This is preferable to using an effect.
-		// https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes
-		setPreviousSiteId( siteId );
-		setPreviousParams( params );
-		setScrollId( undefined );
-	}
 
 	return {
 		isFinishedPaging,
