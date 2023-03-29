@@ -63,10 +63,13 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 	const handleTabSelected = ( tabName: SiteLogsTab ) => {
 		setLogType( tabName );
 		setCurrentPageIndex( 0 );
+		setCachedPageData( undefined );
 	};
 
 	const handleRefresh = () => {
 		setDateRange( getDateRange() );
+		setCurrentPageIndex( 0 );
+		setCachedPageData( undefined );
 	};
 
 	const handlePageClick = ( nextPageNumber: number ) => {
