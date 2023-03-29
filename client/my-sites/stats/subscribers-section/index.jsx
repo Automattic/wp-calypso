@@ -77,9 +77,11 @@ export default function SubscribersSection() {
 	return (
 		<div className="subscribers-section">
 			<h1 className="highlight-cards-heading">Subscribers</h1>
-			{ isLoading ? (
-				<StatsModulePlaceholder className="is-chart" isLoading />
-			) : (
+			{ isLoading && <StatsModulePlaceholder className="is-chart" isLoading /> }
+			{ ! isLoading && data.length === 0 && (
+				<p className="subscribers-section__no-data">No data availble for the specified period.</p>
+			) }
+			{ ! isLoading && data.length !== 0 && (
 				<LineChart data={ data } renderTooltipForDatanum={ tooltipHelper }>
 					<StatsEmptyState />
 				</LineChart>
