@@ -48,6 +48,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import HappychatConnection from 'calypso/components/happychat/connection-connected';
 import Notice from 'calypso/components/notice';
 import { getTld } from 'calypso/lib/domains';
+import { ProvideExperimentData } from 'calypso/lib/explat';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import PlanFeatures from 'calypso/my-sites/plan-features';
 import PlanFeaturesComparison from 'calypso/my-sites/plan-features-comparison';
@@ -620,11 +621,32 @@ export class PlansFeaturesMain extends Component {
 				<HappychatConnection />
 				<div className="plans-features-main__notice" />
 				{ ! hidePlanSelector && (
-					<PlanTypeSelector
-						{ ...planTypeSelectorProps }
-						kind={ kindOfPlanTypeSelector }
-						plans={ visiblePlans }
-					/>
+					<ProvideExperimentData
+						name="calypso_plans_2yr_toggle"
+						options={ { isEligible: is2023PricingGridVisible } }
+					>
+						{ ( isLoading, experimentData ) => {
+							if ( isLoading ) {
+								return <></>;
+							}
+
+							const { variationName } = experimentData;
+
+							const propsWithBiannualToggle = {
+								...planTypeSelectorProps,
+								showBiannualToggle:
+									variationName === 'toggle_and_checkout' || variationName === 'toggle_only',
+							};
+
+							return (
+								<PlanTypeSelector
+									{ ...propsWithBiannualToggle }
+									kind={ kindOfPlanTypeSelector }
+									plans={ visiblePlans }
+								/>
+							);
+						} }
+					</ProvideExperimentData>
 				) }
 				{ this.renderPlansGrid() }
 				{ this.mayRenderFAQ() }
