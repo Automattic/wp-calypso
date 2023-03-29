@@ -319,6 +319,8 @@ import {
 	FEATURE_GLOBAL_EDGE_CACHING,
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 	PLAN_WOOEXPRESS_MEDIUM,
+	PLAN_WOOEXPRESS_SMALL_MONTHLY,
+	PLAN_WOOEXPRESS_SMALL,
 	FEATURE_JETPACK_SOCIAL_ADVANCED,
 	FEATURE_JETPACK_SOCIAL_ADVANCED_MONTHLY,
 	FEATURE_JETPACK_BOOST,
@@ -1357,6 +1359,15 @@ const getPlanProDetails = (): IncompleteWPcomPlan => ( {
 	} ),
 } );
 
+const getPlanWooExpressSmallDetails = (): IncompleteWPcomPlan => ( {
+	...getPlanBusinessDetails(),
+	getTitle: () => i18n.translate( 'Essential' ),
+	getTagline: () =>
+		i18n.translate(
+			'Learn more about everything included with Woo Express Essential and take advantage of its powerful marketplace features.'
+		),
+} );
+
 // The following is not a real plan, we are adding it here so that
 // VIP (a.k.a Enterprise) gets its own column in the plans grid.
 // Check pdgrnI-1Qp-p2 for more details.
@@ -2185,6 +2196,28 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductId: () => 1055,
 		getStoreSlug: () => PLAN_WOOEXPRESS_MEDIUM,
 		getPathSlug: () => 'wooexpress-medium-yearly',
+	},
+
+	[ PLAN_WOOEXPRESS_SMALL_MONTHLY ]: {
+		...getPlanWooExpressSmallDetails(),
+		...getMonthlyTimeframe(),
+		type: TYPE_ECOMMERCE,
+		availableFor: ( plan ) => [ PLAN_FREE, PLAN_ECOMMERCE_TRIAL_MONTHLY ].includes( plan ),
+		getProductId: () => 1054,
+		getStoreSlug: () => PLAN_WOOEXPRESS_SMALL_MONTHLY,
+		getPathSlug: () => 'wooexpress-small-monthly',
+	},
+
+	[ PLAN_WOOEXPRESS_SMALL ]: {
+		...getPlanWooExpressSmallDetails(),
+		type: TYPE_ECOMMERCE,
+		term: TERM_ANNUALLY,
+		getBillingTimeFrame: WPComGetBillingTimeframe,
+		availableFor: ( plan ) =>
+			[ PLAN_FREE, PLAN_WOOEXPRESS_SMALL_MONTHLY, PLAN_ECOMMERCE_TRIAL_MONTHLY ].includes( plan ),
+		getProductId: () => 1056,
+		getStoreSlug: () => PLAN_WOOEXPRESS_SMALL,
+		getPathSlug: () => 'wooexpress-small-yearly',
 	},
 
 	// Not a real plan. This is used to show the Enterprise (VIP) offering in
