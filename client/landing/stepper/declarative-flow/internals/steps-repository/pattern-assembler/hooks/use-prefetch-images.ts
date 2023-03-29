@@ -17,7 +17,7 @@ const IMAGE_URLS = [
 /**
  * Prefetches the images that can be bottleneck for the pattern rendering.
  */
-export const usePrefetchImage = () => {
+export const usePrefetchImages = () => {
 	const [ links, setLinks ] = useState< HTMLLinkElement[] >( [] );
 
 	const prefetchImage = ( url: string, links: HTMLLinkElement[] ) => {
