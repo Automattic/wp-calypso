@@ -11,7 +11,6 @@ import AsyncLoad from 'calypso/components/async-load';
 import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
 import Notice from 'calypso/components/notice';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
-import { getIsAnchorFmSignup } from 'calypso/landing/gutenboarding/utils';
 import { getSignupUrl, isReactLostPasswordScreenEnabled } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
@@ -44,6 +43,27 @@ import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
 import './style.scss';
+
+/*
+ * Parses the `anchor_podcast` parameter from a given URL.
+ * Returns `true` if provided URL is an anchor FM signup URL.
+ */
+function getIsAnchorFmSignup( urlString ) {
+	if ( ! urlString ) {
+		return false;
+	}
+
+	// Assemble search params if there is actually a query in the string.
+	const queryParamIndex = urlString.indexOf( '?' );
+	if ( queryParamIndex === -1 ) {
+		return false;
+	}
+	const searchParams = new URLSearchParams(
+		decodeURIComponent( urlString.slice( queryParamIndex ) )
+	);
+	const anchorFmPodcastId = searchParams.get( 'anchor_podcast' );
+	return Boolean( anchorFmPodcastId && anchorFmPodcastId.match( /^[0-9a-f]{7,8}$/i ) );
+}
 
 class Login extends Component {
 	static propTypes = {
@@ -334,16 +354,24 @@ class Login extends Component {
 						</p>
 					);
 				} else {
-					headerText = <h3>{ translate( 'Get started in minutes' ) }</h3>;
+					headerText = <h3>{ translate( "Let's get started" ) }</h3>;
 					postHeader = (
 						<p className="login__header-subtitle">
 							{ this.showContinueAsUser()
-								? translate( "First, select the account you'd like to use." )
+								? translate(
+										"All Woo stores are powered by WordPress.com!{{br/}}First, select the account you'd like to use.",
+										{
+											components: {
+												br: <br />,
+											},
+										}
+								  )
 								: translate(
-										'First, log in with your WordPress.com account. Don’t have an account? {{signupLink}}Sign up{{/signupLink}}',
+										"All Woo stores are powered by WordPress.com!{{br/}}Please, log in to continue. Don't have an account? {{signupLink}}Sign up{{/signupLink}}",
 										{
 											components: {
 												signupLink: <a href={ this.getSignupUrl() } />,
+												br: <br />,
 											},
 										}
 								  ) }

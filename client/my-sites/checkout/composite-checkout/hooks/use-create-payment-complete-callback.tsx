@@ -82,6 +82,7 @@ export default function useCreatePaymentCompleteCallback( {
 	const siteId = useSelector( getSelectedSiteId );
 	const selectedSiteData = useSelector( getSelectedSite );
 	const adminUrl = selectedSiteData?.options?.admin_url;
+	const sitePlanSlug = selectedSiteData?.plan?.product_slug;
 	const isJetpackNotAtomic =
 		useSelector(
 			( state ) =>
@@ -141,6 +142,7 @@ export default function useCreatePaymentCompleteCallback( {
 					responseCart,
 					checkoutFlow,
 					reduxDispatch,
+					sitePlanSlug,
 				} );
 			} catch ( err ) {
 				// eslint-disable-next-line no-console
@@ -215,7 +217,9 @@ export default function useCreatePaymentCompleteCallback( {
 				return;
 			}
 
-			reloadCart();
+			reloadCart().catch( () => {
+				// No need to do anything here. CartMessages will report this error to the user.
+			} );
 			redirectThroughPending( url, {
 				siteSlug,
 				orderId: transactionResult.order_id,
@@ -242,6 +246,7 @@ export default function useCreatePaymentCompleteCallback( {
 			checkoutFlow,
 			adminPageRedirect,
 			domains,
+			sitePlanSlug,
 		]
 	);
 }
@@ -253,6 +258,7 @@ function recordPaymentCompleteAnalytics( {
 	responseCart,
 	checkoutFlow,
 	reduxDispatch,
+	sitePlanSlug,
 }: {
 	paymentMethodId: string | null;
 	transactionResult: WPCOMTransactionEndpointResponse | undefined;
@@ -260,6 +266,7 @@ function recordPaymentCompleteAnalytics( {
 	responseCart: ResponseCart;
 	checkoutFlow?: string;
 	reduxDispatch: CalypsoDispatch;
+	sitePlanSlug?: string | null;
 } ) {
 	const wpcomPaymentMethod = paymentMethodId
 		? translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId )
@@ -280,6 +287,7 @@ function recordPaymentCompleteAnalytics( {
 		recordPurchase( {
 			cart: responseCart,
 			orderId: transactionResult?.receipt_id,
+			sitePlanSlug,
 		} );
 	} catch ( err ) {
 		// eslint-disable-next-line no-console

@@ -146,6 +146,12 @@ button {
 	.step-container {
 		--color-accent: #117ac9;
 		--color-accent-60: #0e64a5;
+
+		.form-fieldset {
+			label {
+				text-transform: none;
+			}
+		}
 	}
 }
 
@@ -158,7 +164,7 @@ button {
 /**
  * Tailored flow stylings
  */
-.newsletter,
+.newsletter:not(.domains),
 .link-in-bio:not(.domains),
 .link-in-bio-tld:not(.domains) {
 	&:not(.launchpad):not(.subscribers) {
@@ -247,7 +253,7 @@ button {
 		label {
 			font-size: $font-body;
 			color: var(--studio-gray-60);
-			font-weight: 400;
+			font-weight: 500;
 		}
 	}
 

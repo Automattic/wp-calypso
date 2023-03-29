@@ -13,6 +13,7 @@ import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import useAkismetKeyQuery from 'calypso/data/akismet/use-akismet-key-query';
 import useUserLicenseBySubscriptionQuery from 'calypso/data/jetpack-licensing/use-user-license-by-subscription-query';
 import {
 	getName,
@@ -28,7 +29,7 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { managePurchase } from '../paths';
-import { isJetpackTemporarySitePurchase } from '../utils';
+import { isAkismetTemporarySitePurchase, isTemporarySitePurchase } from '../utils';
 import PurchaseMetaExpiration from './purchase-meta-expiration';
 import PurchaseMetaIntroductoryOfferDetail from './purchase-meta-introductory-offer-detail';
 import PurchaseMetaOwner from './purchase-meta-owner';
@@ -58,6 +59,7 @@ export default function PurchaseMeta( {
 	}
 
 	const showJetpackUserLicense = isJetpackProduct( purchase ) || isJetpackPlan( purchase );
+	const showAkismetApiKey = isAkismetTemporarySitePurchase( purchase );
 
 	const renewalPriceHeader =
 		getLocaleSlug().startsWith( 'en' ) || i18n.hasTranslation( 'Renewal Price' )
@@ -92,6 +94,7 @@ export default function PurchaseMeta( {
 				/>
 			</ul>
 			{ showJetpackUserLicense && <PurchaseJetpackUserLicense purchaseId={ purchaseId } /> }
+			{ showAkismetApiKey && <PurchaseAkismetApiKey /> }
 			<RenewErrorMessage purchase={ purchase } translate={ translate } site={ site } />
 		</>
 	);
@@ -203,7 +206,7 @@ function RenewErrorMessage( { purchase, translate, site } ) {
 
 	const isJetpack = purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) );
 
-	if ( isJetpackTemporarySitePurchase( purchase.domain ) ) {
+	if ( isTemporarySitePurchase( purchase ) ) {
 		return null;
 	}
 
@@ -273,6 +276,49 @@ function PurchaseJetpackUserLicense( { purchaseId } ) {
 	const translate = useTranslate();
 	const { data, isError, isLoading } = useUserLicenseBySubscriptionQuery( purchaseId );
 
+	if ( isError ) {
+		return null;
+	}
+
+	const { licenseKey } = data ? data : '';
+	// Make sure the size of the input element can hold the entire key
+	const licenseKeyInputSize = licenseKey ? licenseKey.length + 5 : 0;
+
+	return (
+		<PurchaseClipboardCard
+			label={ translate( 'License Key' ) }
+			size={ licenseKeyInputSize }
+			value={ licenseKey }
+			loading={ isLoading }
+		/>
+	);
+}
+
+function PurchaseAkismetApiKey() {
+	const translate = useTranslate();
+	const { data, isError, isLoading } = useAkismetKeyQuery();
+
+	if ( isError ) {
+		return null;
+	}
+
+	const akismetApiKey = data ?? '';
+	const keyInputSize = akismetApiKey ? akismetApiKey.length + 5 : 0;
+
+	return (
+		<>
+			<PurchaseClipboardCard
+				label={ translate( 'Akismet API Key' ) }
+				size={ keyInputSize }
+				value={ akismetApiKey }
+				loading={ isLoading }
+			/>
+		</>
+	);
+}
+
+function PurchaseClipboardCard( { label, value, size, loading = false } ) {
+	const translate = useTranslate();
 	const [ isCopied, setCopied ] = useState( false );
 
 	useEffect( () => {
@@ -286,27 +332,23 @@ function PurchaseJetpackUserLicense( { purchaseId } ) {
 		setCopied( true );
 	};
 
-	if ( isError || isLoading ) {
-		return null;
-	}
-
-	const { licenseKey } = data;
-	// Make sure the size of the input element can hold the entire key
-	const licenseKeyInputSize = licenseKey.length + 5;
-
 	return (
-		<Card className="manage-purchase__jetpack-user-license">
-			<strong>{ translate( 'License key' ) }</strong>
-			<div className="manage-purchase__jetpack-user-license-clipboard">
-				<FormTextInput
-					className="manage-purchase__jetpack-user-license-input"
-					value={ licenseKey }
-					size={ licenseKeyInputSize }
-					readOnly
-				/>
-				<ClipboardButton text={ licenseKey } onCopy={ showConfirmation } compact>
-					{ isCopied ? translate( 'Copied!' ) : translate( 'Copy', { context: 'verb' } ) }
-				</ClipboardButton>
+		<Card className="manage-purchase__license-clipboard-container">
+			<strong>{ label }</strong>
+			<div className={ 'manage-purchase__license-clipboard' + ( loading ? ' loading' : '' ) }>
+				{ ! loading && (
+					<>
+						<FormTextInput
+							className="manage-purchase__license-clipboard-input"
+							value={ value }
+							size={ size }
+							readOnly
+						/>
+						<ClipboardButton text={ value } onCopy={ showConfirmation } compact>
+							{ isCopied ? translate( 'Copied!' ) : translate( 'Copy', { context: 'verb' } ) }
+						</ClipboardButton>
+					</>
+				) }
 			</div>
 		</Card>
 	);

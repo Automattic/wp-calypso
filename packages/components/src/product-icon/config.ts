@@ -5,6 +5,7 @@ import jetpackBoost from './images/jetpack-boost.svg';
 import jetpackComplete from './images/jetpack-complete.svg';
 import jetpackCrm from './images/jetpack-crm.svg';
 import jetpackFree from './images/jetpack-free.svg';
+import jetpackGoldenToken from './images/jetpack-golden-token.svg';
 import jetpackPersonal from './images/jetpack-personal.svg';
 import jetpackPremium from './images/jetpack-premium.svg';
 import jetpackProfessional from './images/jetpack-professional.svg';
@@ -42,6 +43,7 @@ export const paths = {
 	'wpcom-personal': wpcomPersonal,
 	'wpcom-premium': wpcomPremium,
 	'jetpack-backup-addon': jetpackBackupAddon,
+	'jetpack-golden-token-lifetime': jetpackGoldenToken,
 };
 
 export type SupportedSlugs =
@@ -74,6 +76,7 @@ export type SupportedSlugs =
 	| 'jetpack_complete_monthly'
 	| 'jetpack_complete_v2'
 	| 'jetpack_complete_monthly_v2'
+	| 'jetpack_golden_token_lifetime'
 	| 'jetpack_crm'
 	| 'jetpack_crm_monthly'
 	| 'jetpack_backup_daily'
@@ -233,4 +236,5 @@ export const iconToProductSlugMap: Record< keyof typeof paths, readonly Supporte
 	],
 	'jetpack-social': [ 'jetpack_social', 'jetpack_social_monthly' ],
 	'jetpack-videopress': [ 'jetpack_videopress', 'jetpack_videopress_monthly' ],
+	'jetpack-golden-token-lifetime': [ 'jetpack_golden_token_lifetime' ],
 } as const;

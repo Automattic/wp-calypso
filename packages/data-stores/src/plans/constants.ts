@@ -52,3 +52,15 @@ export const FEATURE_IDS_THAT_REQUIRE_ANNUALLY_BILLED_PLAN = [
 	'support-live',
 	'priority-support',
 ];
+
+export const PLAN_MONTHLY_PERIOD = 31;
+export const PLAN_ANNUAL_PERIOD = 365;
+export const PLAN_BIENNIAL_PERIOD = 730;
+export const PLAN_TRIENNIAL_PERIOD = 1095;
+
+export const PERIOD_LIST = [
+	PLAN_MONTHLY_PERIOD,
+	PLAN_ANNUAL_PERIOD,
+	PLAN_BIENNIAL_PERIOD,
+	PLAN_TRIENNIAL_PERIOD,
+] as const;

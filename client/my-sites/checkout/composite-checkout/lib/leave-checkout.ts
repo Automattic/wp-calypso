@@ -1,4 +1,5 @@
 import { isTailoredSignupFlow } from '@automattic/onboarding';
+import { getQueryArg } from '@wordpress/url';
 import debugFactory from 'debug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { navigate } from 'calypso/lib/navigate';
@@ -12,13 +13,13 @@ const debug = debugFactory( 'calypso:leave-checkout' );
 
 export const leaveCheckout = ( {
 	siteSlug,
-	jetpackCheckoutBackUrl,
+	forceCheckoutBackUrl,
 	previousPath,
 	tracksEvent,
 	createUserAndSiteBeforeTransaction,
 }: {
 	siteSlug?: string;
-	jetpackCheckoutBackUrl?: string;
+	forceCheckoutBackUrl?: string;
 	previousPath?: string;
 	tracksEvent: string;
 	createUserAndSiteBeforeTransaction?: boolean;
@@ -26,12 +27,15 @@ export const leaveCheckout = ( {
 	recordTracksEvent( tracksEvent );
 	debug( 'leaving checkout with args', {
 		siteSlug,
-		jetpackCheckoutBackUrl,
+		forceCheckoutBackUrl,
 		previousPath,
 		createUserAndSiteBeforeTransaction,
 	} );
 
 	const signupFlowName = getSignupCompleteFlowName();
+	const redirectToParam = getQueryArg( window.location.href, 'redirect_to' );
+	const launchpadURLRegex = /setup\/(.*)\/launchpad\b/g;
+	const launchpadURLRegexMatch = redirectToParam?.toString().match( launchpadURLRegex );
 
 	if ( isTailoredSignupFlow( signupFlowName ) ) {
 		const urlFromCookie = retrieveSignupDestination();
@@ -40,8 +44,14 @@ export const leaveCheckout = ( {
 		}
 	}
 
-	if ( jetpackCheckoutBackUrl ) {
-		window.location.href = jetpackCheckoutBackUrl;
+	if ( redirectToParam && launchpadURLRegexMatch ) {
+		const launchpadUrl = redirectToParam?.toString();
+		window.location.assign( launchpadUrl );
+		return;
+	}
+
+	if ( forceCheckoutBackUrl ) {
+		window.location.href = forceCheckoutBackUrl;
 		return;
 	}
 

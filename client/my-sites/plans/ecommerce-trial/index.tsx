@@ -1,7 +1,9 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { plansLink } from '@automattic/calypso-products';
+import { isEnabled } from '@automattic/calypso-config';
+import { plansLink, PLAN_FREE, PLAN_WOOEXPRESS_MEDIUM } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
+import AsyncLoad from 'calypso/components/async-load';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import ECommercePlanFeatures from 'calypso/my-sites/plans/components/ecommerce-plan-features';
 import ECommerceTrialBanner from './ecommerce-trial-banner';
@@ -28,8 +30,34 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 
 	// WX Medium and Commerce have the same features
 	const wooExpressMediumPlanFeatureSets = useMemo( () => {
-		return getWooExpressMediumFeatureSets( { translate } );
-	}, [ translate ] );
+		return getWooExpressMediumFeatureSets( { translate, interval } );
+	}, [ translate, interval ] );
+
+	const performanceOnlyFeatures = (
+		<ECommercePlanFeatures
+			interval={ interval }
+			monthlyControlProps={ { path: plansLink( '/plans', siteSlug, 'monthly', true ) } }
+			planFeatureSets={ wooExpressMediumPlanFeatureSets }
+			siteSlug={ siteSlug }
+			triggerTracksEvent={ triggerTracksEvent }
+			yearlyControlProps={ { path: plansLink( '/plans', siteSlug, 'yearly', true ) } }
+		/>
+	);
+
+	const plansTableProps = {
+		plans: [ PLAN_FREE, PLAN_WOOEXPRESS_MEDIUM ],
+		hidePlansFeatureComparison: true,
+	};
+
+	const multiPlanFeatures = (
+		<div className="is-2023-pricing-grid">
+			<AsyncLoad require="calypso/my-sites/plan-features-2023-grid" { ...plansTableProps } />
+		</div>
+	);
+
+	const availablePlanFeatures = isEnabled( 'plans/wooexpress-small' )
+		? multiPlanFeatures
+		: performanceOnlyFeatures;
 
 	return (
 		<>
@@ -39,14 +67,7 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 				<ECommerceTrialBanner />
 			</div>
 
-			<ECommercePlanFeatures
-				interval={ interval }
-				monthlyControlProps={ { path: plansLink( '/plans', siteSlug, 'monthly', true ) } }
-				planFeatureSets={ wooExpressMediumPlanFeatureSets }
-				siteSlug={ siteSlug }
-				triggerTracksEvent={ triggerTracksEvent }
-				yearlyControlProps={ { path: plansLink( '/plans', siteSlug, 'yearly', true ) } }
-			/>
+			{ availablePlanFeatures }
 		</>
 	);
 };

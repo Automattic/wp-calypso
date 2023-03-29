@@ -24,6 +24,7 @@ import {
 	redirectToSupportSession,
 	upsellNudge,
 	upsellRedirect,
+	akismetCheckoutThankYou,
 } from './controller';
 
 export default function () {
@@ -105,9 +106,26 @@ export default function () {
 			makeLayout,
 			clientRender
 		);
-	}
 
-	// TODO: need thank you page for akismet
+		page(
+			`/checkout/akismet/:productSlug/renew/:purchaseId`,
+			setLocaleMiddleware(),
+			redirectLoggedOut,
+			noSite,
+			checkoutAkismetSiteless,
+			makeLayout,
+			clientRender
+		);
+
+		page(
+			'/checkout/akismet/thank-you/:productSlug',
+			setLocaleMiddleware(),
+			noSite,
+			akismetCheckoutThankYou,
+			makeLayout,
+			clientRender
+		);
+	}
 
 	// The no-site post-checkout route is for purchases not tied to a site so do
 	// not include the `siteSelection` middleware.

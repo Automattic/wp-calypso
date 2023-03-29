@@ -30,6 +30,7 @@ import {
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import CheckoutMainWrapper from './checkout-main-wrapper';
 import CheckoutThankYouComponent from './checkout-thank-you';
+import AkismetCheckoutThankYou from './checkout-thank-you/akismet-checkout-thank-you';
 import GiftThankYou from './checkout-thank-you/gift/gift-thank-you';
 import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
 import CheckoutPending from './checkout-thank-you/pending';
@@ -54,7 +55,7 @@ export function checkoutAkismetSiteless( context, next ) {
 function sitelessCheckout( context, next, extraProps ) {
 	const state = context.store.getState();
 	const isLoggedOut = ! isUserLoggedIn( state );
-	const { productSlug: product } = context.params;
+	const { productSlug: product, purchaseId } = context.params;
 	const isUserComingFromLoginForm = context.query?.flow === 'coming_from_login';
 
 	setSectionMiddleware( { name: 'checkout' } )( context );
@@ -72,6 +73,7 @@ function sitelessCheckout( context, next, extraProps ) {
 			<CheckoutSitelessDocumentTitle />
 
 			<CheckoutMainWrapper
+				purchaseId={ purchaseId }
 				productAliasFromUrl={ product }
 				productSourceFromUrl={ context.query.source }
 				couponCode={ couponCode }
@@ -478,6 +480,12 @@ export function jetpackCheckoutThankYou( context, next ) {
 			isUserlessCheckoutFlow={ isUserlessCheckoutFlow }
 		/>
 	);
+
+	next();
+}
+
+export function akismetCheckoutThankYou( context, next ) {
+	context.primary = <AkismetCheckoutThankYou productSlug={ context.params.productSlug } />;
 
 	next();
 }

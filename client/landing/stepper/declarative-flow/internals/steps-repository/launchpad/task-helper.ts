@@ -15,7 +15,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isVideoPressFlow } from 'calypso/signup/utils';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { launchpadFlowTasks } from './tasks';
-import { Task } from './types';
+import { LaunchpadFlowTaskList, LaunchpadStatuses, Task } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
 
 export function getEnhancedTasks(
@@ -26,25 +26,22 @@ export function getEnhancedTasks(
 	displayGlobalStylesWarning: boolean,
 	goToStep?: NavigationControls[ 'goToStep' ],
 	flow?: string | null,
-	isEmailVerified = false
+	isEmailVerified = false,
+	checklistStatuses: LaunchpadStatuses = {}
 ) {
 	const enhancedTaskList: Task[] = [];
 	const productSlug = site?.plan?.product_slug;
 	const translatedPlanName = productSlug ? PLANS_LIST[ productSlug ].getTitle() : '';
 
-	const linkInBioLinksEditCompleted =
-		site?.options?.launchpad_checklist_tasks_statuses?.links_edited || false;
+	const linkInBioLinksEditCompleted = checklistStatuses?.links_edited || false;
 
-	const siteEditCompleted = site?.options?.launchpad_checklist_tasks_statuses?.site_edited || false;
+	const siteEditCompleted = checklistStatuses?.site_edited || false;
 
-	const siteLaunchCompleted =
-		site?.options?.launchpad_checklist_tasks_statuses?.site_launched || false;
+	const siteLaunchCompleted = checklistStatuses?.site_launched || false;
 
-	const firstPostPublishedCompleted =
-		site?.options?.launchpad_checklist_tasks_statuses?.first_post_published || false;
+	const firstPostPublishedCompleted = checklistStatuses?.first_post_published || false;
 
-	const videoPressUploadCompleted =
-		site?.options?.launchpad_checklist_tasks_statuses?.video_uploaded || false;
+	const videoPressUploadCompleted = checklistStatuses?.video_uploaded || false;
 
 	const allowUpdateDesign =
 		flow && ( isFreeFlow( flow ) || isBuildFlow( flow ) || isWriteFlow( flow ) );
@@ -328,8 +325,10 @@ export function getEnhancedTasks(
 							recordTaskClickTracksEvent( flow, isPaidPlan, task.id );
 							const destinationUrl = isPaidPlan
 								? `/domains/manage/${ siteSlug }`
-								: addQueryArgs( `/domains/add/${ siteSlug }`, {
-										domainAndPlanPackage: true,
+								: addQueryArgs( '/setup/domain-upsell/domains', {
+										siteSlug,
+										flowToReturnTo: flow,
+										new: site?.name,
 								  } );
 							window.location.assign( destinationUrl );
 						},
@@ -384,4 +383,35 @@ export function getArrayOfFilteredTasks(
 			return accumulator;
 		}, [] as Task[] )
 	);
+}
+
+/*
+ * Confirms if final task for a given site_intent is completed.
+ * This is used to as a fallback check to determine if the full
+ * screen launchpad should be shown or not.
+ *
+ * @param {string} siteIntent - The value of a site's site_intent option
+ * @param {LaunchpadStatuses} checklist_statuses - The value of a site's checklist_statuses option
+ * @param {boolean} isSiteLaunched - The value of a site's is_launched option
+ * @param {LaunchpadFlowTaskList} launchpadFlowTasks - The list of tasks for each site_intent
+ * @returns {boolean} - True if the final task for the given site_intent is completed
+ */
+export function areLaunchpadTasksCompleted(
+	site_intent: string,
+	launchpadFlowTasks: LaunchpadFlowTaskList,
+	checklist_statuses: LaunchpadStatuses,
+	isSiteLaunched: boolean
+) {
+	if ( ! site_intent ) {
+		return false;
+	}
+
+	const lastTask =
+		launchpadFlowTasks[ site_intent ][ launchpadFlowTasks[ site_intent ].length - 1 ];
+
+	// If last task is site_launched, return true if site is launched OR site_launch task is completed
+	// Else return the status of the last task (will be false if task is not in checklist_statuses)
+	return lastTask === 'site_launched'
+		? isSiteLaunched || Boolean( checklist_statuses[ lastTask ] )
+		: Boolean( checklist_statuses[ lastTask as keyof LaunchpadStatuses ] );
 }

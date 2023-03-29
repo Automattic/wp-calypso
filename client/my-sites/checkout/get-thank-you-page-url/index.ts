@@ -212,6 +212,10 @@ export default function getThankYouPageUrl( {
 	const receiptIdOrPlaceholder = getReceiptIdOrPlaceholder( receiptId, purchaseId );
 	debug( 'receiptIdOrPlaceholder is', receiptIdOrPlaceholder );
 
+	// Check to see if the cart is a renewal and get the first renewal item
+	const firstRenewalInCart =
+		cart && hasRenewalItem( cart ) ? getRenewalItems( cart )[ 0 ] : undefined;
+
 	// jetpack userless & siteless checkout uses a special thank you page
 	if ( sitelessCheckoutType === 'jetpack' ) {
 		// extract a product from the cart, in userless/siteless checkout there should only be one
@@ -239,6 +243,10 @@ export default function getThankYouPageUrl( {
 	if ( sitelessCheckoutType === 'akismet' ) {
 		// extract a product from the cart, in siteless checkout there should only be one
 		const productSlug = cart?.products[ 0 ]?.product_slug ?? 'no_product';
+		// This is a renewal, return to the individual product management page for this subscription
+		if ( firstRenewalInCart ) {
+			return managePurchase( 'siteless.akismet.com', firstRenewalInCart.subscription_id );
+		}
 
 		debug( 'redirecting to siteless Akismet thank you' );
 		return `/checkout/akismet/thank-you/${ productSlug }`;
@@ -265,8 +273,6 @@ export default function getThankYouPageUrl( {
 
 	// Manual renewals usually have a `redirectTo` but if they do not, return to
 	// the manage purchases page.
-	const firstRenewalInCart =
-		cart && hasRenewalItem( cart ) ? getRenewalItems( cart )[ 0 ] : undefined;
 	if ( siteSlug && firstRenewalInCart?.subscription_id ) {
 		const managePurchaseUrl = managePurchase( siteSlug, firstRenewalInCart.subscription_id );
 		debug(
@@ -533,14 +539,14 @@ function getFallbackDestination( {
 		}
 	}
 
-	const marketplaceProductSlugs =
+	const pluginSlugs =
 		cart?.products
 			?.filter( ( product ) => product?.extra?.is_marketplace_product )
 			?.map( ( product ) => product?.extra?.plugin_slug ) || [];
 
-	if ( marketplaceProductSlugs.length > 0 ) {
+	if ( pluginSlugs.length > 0 ) {
 		debug( 'site with marketplace products' );
-		return `/marketplace/thank-you/${ marketplaceProductSlugs.join( ',' ) }/${ siteSlug }`;
+		return `/marketplace/thank-you/${ siteSlug }?plugins=${ pluginSlugs.join( ',' ) }`;
 	}
 
 	debug( 'simple thank-you page' );

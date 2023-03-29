@@ -18,7 +18,6 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import wp from 'calypso/lib/wp';
 import useSiteDomains from 'calypso/my-sites/checkout/composite-checkout/hooks/use-site-domains';
 import {
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
@@ -42,8 +41,7 @@ import usePrepareProductsForCart from '../hooks/use-prepare-products-for-cart';
 import useRecordCartLoaded from '../hooks/use-record-cart-loaded';
 import useRecordCheckoutLoaded from '../hooks/use-record-checkout-loaded';
 import useRemoveFromCartAndRedirect from '../hooks/use-remove-from-cart-and-redirect';
-import useStoredCards from '../hooks/use-stored-cards';
-import { useWpcomStore } from '../hooks/wpcom-store';
+import { useStoredPaymentMethods } from '../hooks/use-stored-payment-methods';
 import { logStashLoadErrorEvent, logStashEvent } from '../lib/analytics';
 import existingCardProcessor from '../lib/existing-card-processor';
 import filterAppropriatePaymentMethods from '../lib/filter-appropriate-payment-methods';
@@ -55,9 +53,8 @@ import payPalProcessor from '../lib/paypal-express-processor';
 import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
 import weChatProcessor from '../lib/we-chat-processor';
 import webPayProcessor from '../lib/web-pay-processor';
-import { StoredCard } from '../types/stored-cards';
+import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import WPCheckout from './wp-checkout';
-import type { WpcomCheckoutStoreSelectors as _WpcomCheckoutStoreSelectors } from '../hooks/wpcom-store';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -67,12 +64,8 @@ import type {
 	SitelessCheckoutType,
 } from '@automattic/wpcom-checkout';
 
-type WpcomCheckoutStoreSelectors = _WpcomCheckoutStoreSelectors | undefined;
-
 const { colors } = colorStudio;
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
-
-const wpcomGetStoredCards = (): StoredCard[] => wp.req.get( { path: '/me/stored-cards' } );
 
 export default function CheckoutMain( {
 	siteSlug,
@@ -267,8 +260,6 @@ export default function CheckoutMain( {
 
 	const contactDetailsType = getContactDetailsType( responseCart );
 
-	useWpcomStore();
-
 	useDetectedCountryCode();
 
 	// Record errors adding products to the cart
@@ -327,10 +318,10 @@ export default function CheckoutMain( {
 		);
 
 	const {
-		storedCards,
+		paymentMethods: storedCards,
 		isLoading: isLoadingStoredCards,
 		error: storedCardsError,
-	} = useStoredCards( wpcomGetStoredCards, Boolean( isLoggedOutCart ) );
+	} = useStoredPaymentMethods( { isLoggedOut: isLoggedOutCart, type: 'card' } );
 
 	useActOnceOnStrings( [ storedCardsError ].filter( isValueTruthy ), ( messages ) => {
 		messages.forEach( ( message ) => {
@@ -361,13 +352,9 @@ export default function CheckoutMain( {
 		// Only wait for stored cards to load if we are using cards
 		( allowedPaymentMethods.includes( 'card' ) && isLoadingStoredCards );
 
-	const contactDetails = useSelect(
-		( select ) => ( select( 'wpcom-checkout' ) as WpcomCheckoutStoreSelectors )?.getContactInfo(),
-		[]
-	);
+	const contactDetails = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
 	const recaptchaClientId = useSelect(
-		( select ) =>
-			( select( 'wpcom-checkout' ) as WpcomCheckoutStoreSelectors )?.getRecaptchaClientId(),
+		( select ) => select( CHECKOUT_STORE ).getRecaptchaClientId(),
 		[]
 	);
 
@@ -684,7 +671,9 @@ export default function CheckoutMain( {
 	const cartHasSearchProduct = useMemo(
 		() =>
 			responseCart.products.some( ( { product_slug } ) =>
-				JETPACK_SEARCH_PRODUCTS.includes( product_slug as typeof JETPACK_SEARCH_PRODUCTS[ number ] )
+				JETPACK_SEARCH_PRODUCTS.includes(
+					product_slug as ( typeof JETPACK_SEARCH_PRODUCTS )[ number ]
+				)
 			),
 		[ responseCart.products ]
 	);

@@ -19,6 +19,7 @@ export const SITE_SETUP_FLOW = 'site-setup';
 export const WITH_THEME_FLOW = 'with-theme';
 export const WITH_THEME_ASSEMBLER_FLOW = 'with-theme-assembler';
 export const UPDATE_DESIGN_FLOW = 'update-design';
+export const DOMAIN_UPSELL_FLOW = 'domain-upsell';
 
 export const isLinkInBioFlow = ( flowName: string | null ) => {
 	return Boolean(
@@ -103,4 +104,6 @@ export const isWithThemeFlow = ( flowName: string | null ) => {
 export const ecommerceFlowRecurTypes = {
 	YEARLY: 'yearly',
 	MONTHLY: 'monthly',
+	'2Y': '2Y',
+	'3Y': '3Y',
 };

@@ -1,5 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { __experimentalUseFocusOutside as useFocusOutside } from '@wordpress/compose';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
@@ -119,7 +120,9 @@ const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch, recordT
 	return (
 		<div ref={ wrapperRef } { ...useFocusOutside( closeSearch ) }>
 			<div
-				className="search-themes-card"
+				className={ classnames( 'search-themes-card', {
+					'is-suggestions-open': isSearchOpen,
+				} ) }
 				role="presentation"
 				data-tip-target="search-themes-card"
 				onClick={ focusOnInput }

@@ -53,6 +53,7 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
+import { ADD_NEWSLETTER_PAYMENT_PLAN_HASH } from './constants';
 
 import './style.scss';
 
@@ -497,25 +498,56 @@ class MembershipsSection extends Component {
 	renderStripeConnected() {
 		return (
 			<div>
-				{ this.props?.query?.stripe_connect_success === 'earn' && (
-					<Notice
-						status="is-success"
-						showDismiss={ false }
-						text={ this.props.translate(
-							'Congrats! Your site is now connected to Stripe. You can now add your first payment plan.'
-						) }
-					>
-						<NoticeAction href={ `/earn/payments-plans/${ this.props.siteSlug }` } icon="create">
-							{ this.props.translate( 'Add a payment plan' ) }
-						</NoticeAction>
-					</Notice>
-				) }
+				{ this.renderNotices() }
 				{ this.renderEarnings() }
 				{ this.renderSubscriberList() }
 				{ this.renderManagePlans() }
 				{ this.renderSettings() }
 			</div>
 		);
+	}
+
+	renderNotices() {
+		const { siteSlug, translate } = this.props;
+		const stripe_connect_success = this.props?.query?.stripe_connect_success;
+
+		if ( stripe_connect_success === 'earn' ) {
+			return (
+				<Notice
+					status="is-success"
+					showDismiss={ false }
+					text={ translate(
+						'Congrats! Your site is now connected to Stripe. You can now add your first payment plan.'
+					) }
+				>
+					<NoticeAction href={ `/earn/payments-plans/${ siteSlug }` } icon="create">
+						{ translate( 'Add a payment plan' ) }
+					</NoticeAction>
+				</Notice>
+			);
+		}
+
+		if ( stripe_connect_success === 'earn-newsletter' ) {
+			return (
+				<Notice
+					status="is-success"
+					showDismiss={ false }
+					text={ translate(
+						'Congrats! Your site is now connected to Stripe. You can now add payments to your newsletter.'
+					) }
+				>
+					<NoticeAction
+						external
+						icon="create"
+						href={ `/earn/payments-plans/${ siteSlug }${ ADD_NEWSLETTER_PAYMENT_PLAN_HASH }` }
+					>
+						{ translate( 'Add payments' ) }
+					</NoticeAction>
+				</Notice>
+			);
+		}
+
+		return null;
 	}
 
 	renderOnboarding( cta, intro ) {
@@ -665,7 +697,7 @@ class MembershipsSection extends Component {
 
 		return (
 			<div>
-				<QueryMembershipsSettings siteId={ this.props.siteId } />
+				<QueryMembershipsSettings siteId={ this.props.siteId } source={ this.props.source } />
 				{ this.props.connectedAccountId && this.renderStripeConnected() }
 				{ this.props.connectUrl && ! this.props.connectedAccountId && this.renderConnectStripe() }
 			</div>
@@ -697,6 +729,8 @@ const mapStateToProps = ( state ) => {
 			siteHasFeature( state, siteId, FEATURE_DONATIONS ) ||
 			siteHasFeature( state, siteId, FEATURE_RECURRING_PAYMENTS ),
 		isJetpack: isJetpackSite( state, siteId ),
+		source:
+			window.location.hash === ADD_NEWSLETTER_PAYMENT_PLAN_HASH ? 'earn-newsletter' : 'calypso',
 	};
 };
 

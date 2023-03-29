@@ -35,6 +35,7 @@ function render() {
 | `target`        | `string` | null    | If used with `href`, this specifies where the link opens. Changes the icon to `external`.                                                                                                                                                                                        |
 | `compact`       | `bool`   | false   | Decreases the size of the card.                                                                                                                                                                                                                                                  |
 | `highlight`     | `string` | null    | Displays a colored highlight. If specified (default is no highlight), can be one of `info`, `success`, `error`, or `warning`.                                                                                                                                                    |
+| `showLinkIcon`  | `bool`   | true    | Shows the link indicator(icon) when there is href specified                                                                                                                                                                                                                      |
 
 ### Additional usage information
 

@@ -30,7 +30,7 @@ const blockLinks: { [ key: string ]: string } = {
 
 	'core/rss': 'https://wordpress.com/support/wordpress-editor/blocks/rss-block/',
 
-	'core/group': 'https://wordpress.com/support/wordpress-editor/blocks/row-block/',
+	'core/navigation': 'https://wordpress.com/support/site-editing/theme-blocks/navigation-block/',
 
 	'core/tag-cloud': 'https://wordpress.com/support/wordpress-editor/blocks/tag-cloud-block/',
 
@@ -183,6 +183,16 @@ const blockLinks: { [ key: string ]: string } = {
 	'jetpack/layout-grid': 'https://wordpress.com/support/wordpress-editor/blocks/layout-grid-block/',
 
 	'jetpack/mailchimp': 'https://wordpress.com/support/wordpress-editor/blocks/mailchimp-block/',
+};
+
+export const blockLinksWithVariations: {
+	[ key: string ]: { [ key: string ]: string };
+} = {
+	'core/group': {
+		group: 'https://wordpress.com/support/wordpress-editor/blocks/group-block/',
+		'group-row': 'https://wordpress.com/support/wordpress-editor/blocks/row-block/',
+		'group-stack': 'https://wordpress.com/support/wordpress-editor/blocks/row-block/',
+	},
 };
 
 export default blockLinks;

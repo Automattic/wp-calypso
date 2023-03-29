@@ -1,19 +1,17 @@
 import {
 	getProductFromSlug,
-	isJetpackAntiSpam,
 	isJetpackAntiSpamSlug,
-	isJetpackBackup,
 	isJetpackBackupSlug,
 	isJetpackPlanSlug,
-	isJetpackScan,
 	isJetpackScanSlug,
-	planHasFeature,
+	getAllFeaturesForPlan,
+	planHasSuperiorFeature,
 	WPCOM_FEATURES_ANTISPAM,
 	WPCOM_FEATURES_BACKUPS,
 	WPCOM_FEATURES_SCAN,
 } from '@automattic/calypso-products';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -40,7 +38,6 @@ const PrePurchaseNotices = () => {
 
 	const selectedSite = useSelector( getSelectedSite );
 	const siteId = selectedSite?.ID;
-
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const cartItemSlugs = responseCart.products.map( ( item ) => item.product_slug );
@@ -72,39 +69,29 @@ const PrePurchaseNotices = () => {
 		return products.filter( ( p ) => ! p.expired );
 	} );
 
-	/**
-	 * The active product on the current site that overlaps/conflicts with the plan currently in the cart.
-	 */
-	const siteProductThatOverlapsCartPlan = useSelector( ( state ) => {
+	const siteProductThatOverlapsCartPlan = useMemo( () => {
 		const planSlugInCart = cartItemSlugs.find( isJetpackPlanSlug );
-
-		if ( ! planSlugInCart ) {
+		if ( ! planSlugInCart || ! currentSiteProducts ) {
 			return null;
 		}
 
-		if (
-			planHasFeature( planSlugInCart, WPCOM_FEATURES_BACKUPS ) &&
-			siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS )
-		) {
-			return currentSiteProducts.find( isJetpackBackup );
-		}
+		const getMatchingProducts = ( siteProducts, planSlug ) => {
+			// Get all features and products for the plan in the cart
+			const planFeatures = getAllFeaturesForPlan( planSlug );
 
-		if (
-			planHasFeature( planSlugInCart, WPCOM_FEATURES_ANTISPAM ) &&
-			siteHasFeature( state, siteId, WPCOM_FEATURES_ANTISPAM )
-		) {
-			return currentSiteProducts.find( isJetpackAntiSpam );
-		}
+			// Filter the site products to only include those in the plan items or are inferior features to the plan feature
+			const matchingProducts = siteProducts.filter(
+				( product ) =>
+					planFeatures.includes( product.productSlug ) ||
+					planHasSuperiorFeature( planSlug, product.productSlug )
+			);
 
-		if (
-			planHasFeature( planSlugInCart, WPCOM_FEATURES_SCAN ) &&
-			siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN )
-		) {
-			return currentSiteProducts.find( isJetpackScan );
-		}
+			return matchingProducts;
+		};
 
-		return null;
-	} );
+		const matchingProducts = getMatchingProducts( currentSiteProducts, planSlugInCart );
+		return matchingProducts?.[ 0 ];
+	}, [ currentSiteProducts, cartItemSlugs ] );
 
 	/**
 	 * The product currently in the cart that overlaps/conflicts with the current active site plan.

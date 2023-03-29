@@ -92,11 +92,12 @@ async function wpcomPayPalExpress(
 	payload: PayPalExpressEndpointRequestPayload,
 	transactionOptions: PaymentProcessorOptions
 ) {
-	const isJetpackUserLessCheckout =
-		payload.cart.products.some( ( product ) => product.extra.isJetpackCheckout ) &&
-		payload.cart.cart_key === 'no-user';
+	const isUserLessCheckout =
+		payload.cart.products.some(
+			( product ) => product.extra.isJetpackCheckout || product.extra.isAkismetSitelessCheckout
+		) && payload.cart.cart_key === 'no-user';
 
-	if ( transactionOptions.createUserAndSiteBeforeTransaction || isJetpackUserLessCheckout ) {
+	if ( transactionOptions.createUserAndSiteBeforeTransaction || isUserLessCheckout ) {
 		payload.cart = await createWpcomAccountBeforeTransaction( payload.cart, transactionOptions );
 	}
 

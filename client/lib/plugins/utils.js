@@ -449,9 +449,10 @@ export const getSoftwareSlug = ( plugin, isMarketplaceProduct ) =>
 	isMarketplaceProduct ? plugin.software_slug || plugin.org_slug : plugin.slug;
 
 /**
+ * @typedef {import('calypso/lib/purchases/types').Purchase} Purchase
  * @param  {Object} plugin The plugin object
  * @param  {Array} purchases An array of site purchases
- * @returns {Object} The purchase object, if found.
+ * @returns {Purchase} The purchase object, if found.
  */
 export const getPluginPurchased = ( plugin, purchases ) => {
 	return (

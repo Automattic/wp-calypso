@@ -59,9 +59,16 @@ export function createTransactionEndpointCartFromResponseCart( {
 	contactDetails: DomainContactDetails | null;
 	responseCart: ResponseCart;
 } ): RequestCart {
-	if ( responseCart.products.some( ( product ) => product.extra.isJetpackCheckout ) ) {
+	if (
+		responseCart.products.some( ( product ) => {
+			return product.extra.isJetpackCheckout || product.extra.isAkismetSitelessCheckout;
+		} )
+	) {
 		const isUserLess = responseCart.cart_key === 'no-user';
 		const isSiteLess = responseCart.blog_id === 0;
+		const isSiteLessRenewal = responseCart.products.some( ( product ) => {
+			return product.extra?.purchaseType === 'renewal' && product.extra.isAkismetSitelessCheckout;
+		} );
 
 		// At this point, cart_key will be 'no-user' | blog_id | 'no-site', in that order.
 		const cartKey = isUserLess ? responseCart.cart_key : responseCart.blog_id || 'no-site';
@@ -73,7 +80,8 @@ export function createTransactionEndpointCartFromResponseCart( {
 		return {
 			blog_id: responseCart.blog_id.toString(),
 			cart_key: cartKey as CartKey,
-			create_new_blog: isSiteLess,
+			// We do NOT need a new blog for a site-less renewal (Right now, this just Akismet renewals)
+			create_new_blog: isSiteLess && ! isSiteLessRenewal,
 			coupon: responseCart.coupon || '',
 			temporary: false,
 			products: responseCart.products.map( ( item ) =>

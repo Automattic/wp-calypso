@@ -12,6 +12,8 @@ import {
 	PLAN_TRIENNIAL_PERIOD,
 } from './constants';
 
+export { getPlanSlugForTermVariant } from './get-plan-term-variant';
+
 export function isBestValue( plan: string ): boolean {
 	return ( BEST_VALUE_PLANS as ReadonlyArray< string > ).includes( plan );
 }
@@ -75,6 +77,11 @@ export const is2023PricingGridActivePage = (
 
 	// Is this the launch site flow?
 	if ( currentRoutePath.startsWith( '/start/launch-site/plans-launch' ) ) {
+		return isPricingGridEnabled;
+	}
+
+	// Is this the stepper domain upsell flow?
+	if ( currentRoutePath.startsWith( '/setup/domain-upsell' ) ) {
 		return isPricingGridEnabled;
 	}
 

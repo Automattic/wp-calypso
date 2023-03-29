@@ -9,17 +9,18 @@ import { pick } from 'lodash';
 import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import QueryPaymentCountries from 'calypso/components/data/query-countries/payments';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
-import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import Main from 'calypso/components/main';
-import { Experiment } from 'calypso/lib/explat';
+import { isCreditCard } from 'calypso/lib/checkout/payment-methods';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import { TITAN_MAIL_MONTHLY_SLUG, TITAN_MAIL_YEARLY_SLUG } from 'calypso/lib/titan/constants';
+import { withStoredPaymentMethods } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-stored-payment-methods';
 import {
-	isContactValidationResponseValid,
 	getTaxValidationResult,
+	isContactValidationResponseValid,
 } from 'calypso/my-sites/checkout/composite-checkout/lib/contact-validation';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
 import ProfessionalEmailUpsell from 'calypso/my-sites/checkout/upsell-nudge/professional-email-upsell';
@@ -39,6 +40,7 @@ import {
 	getProductBySlug,
 	isProductsListFetching,
 } from 'calypso/state/products-list/selectors';
+import getCountries from 'calypso/state/selectors/get-countries';
 import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
 import getUpgradePlanSlugFromPath from 'calypso/state/selectors/get-upgrade-plan-slug-from-path';
 import {
@@ -46,22 +48,20 @@ import {
 	getPlansBySiteId,
 	getSitePlanRawPrice,
 	getPlanDiscountedRawPrice,
-	getCurrentPlan,
 } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import {
-	isFetchingStoredCards,
-	getStoredCards,
-	hasLoadedStoredCardsFromServer,
-} from 'calypso/state/stored-cards/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { updateCartContactDetailsForCheckout } from '../composite-checkout/lib/update-cart-contact-details-for-checkout';
 import { BusinessPlanUpgradeUpsell } from './business-plan-upgrade-upsell';
-import { BusinessPlanUpgradeUpsellTreatment } from './business-plan-upgrade-upsell/treatment';
-import PurchaseModal from './purchase-modal';
-import { extractStoredCardMetaValue } from './purchase-modal/util';
+import PurchaseModal, { wrapValueInManagedValue } from './purchase-modal';
 import { QuickstartSessionsRetirement } from './quickstart-sessions-retirement';
 import type { WithShoppingCartProps, MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import type { PaymentMethod } from 'calypso/lib/checkout/payment-methods';
+import type {
+	CountryListItem,
+	ManagedContactDetails,
+	VatDetails,
+} from '@automattic/wpcom-checkout';
+import type { WithStoredPaymentMethodsProps } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-stored-payment-methods';
 import type { IAppState } from 'calypso/state/types';
 
 import './style.scss';
@@ -101,12 +101,13 @@ export interface UpsellNudgeAutomaticProps extends WithShoppingCartProps {
 	hasSevenDayRefundPeriod?: boolean;
 	trackUpsellButtonClick: ( key: string ) => void;
 	translate: ReturnType< typeof useTranslate >;
-	cards: PaymentMethod[];
 	currentPlanTerm: string;
-	currentPlan?: object;
+	countries: CountryListItem[] | null;
 }
 
-export type UpsellNudgeProps = UpsellNudgeManualProps & UpsellNudgeAutomaticProps;
+export type UpsellNudgeProps = UpsellNudgeManualProps &
+	UpsellNudgeAutomaticProps &
+	WithStoredPaymentMethodsProps;
 
 interface UpsellNudgeState {
 	cartItem: MinimalRequestCartProduct | null;
@@ -136,35 +137,35 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 		if ( this.props.isLoading ) {
 			return;
 		}
+		if ( this.props.paymentMethodsState.isLoading ) {
+			return;
+		}
 		if ( ! this.haveCardsChanged() ) {
 			debug( 'cancelling validating contact info; cards have not changed' );
 			return;
 		}
-		if ( this.props.cards.length === 0 ) {
+		if ( this.props.paymentMethodsState.paymentMethods.length === 0 ) {
 			debug( 'not validating contact info because there are no cards' );
 			this.setState( { isContactInfoValid: false } );
 			return;
 		}
 		debug( 'validating contact info' );
 
-		const storedCard = this.props.cards[ 0 ];
-		const countryCode = extractStoredCardMetaValue( storedCard, 'country_code' ) ?? '';
-		const postalCode = extractStoredCardMetaValue( storedCard, 'card_zip' ) ?? '';
+		const storedCard =
+			this.props.paymentMethodsState.paymentMethods.length > 0
+				? this.props.paymentMethodsState.paymentMethods[ 0 ]
+				: undefined;
 
 		const validateContactDetails = async () => {
-			const contactInfo = {
-				postalCode: {
-					value: postalCode,
-					isTouched: true,
-					errors: [],
-				},
-				countryCode: {
-					value: countryCode,
-					isTouched: true,
-					errors: [],
-				},
-			};
-			const validationResult = await getTaxValidationResult( contactInfo );
+			const validationResult = await getTaxValidationResult( {
+				state: wrapValueInManagedValue( storedCard?.tax_location?.subdivision_code ),
+				city: wrapValueInManagedValue( storedCard?.tax_location?.city ),
+				postalCode: wrapValueInManagedValue( storedCard?.tax_location?.postal_code ),
+				countryCode: wrapValueInManagedValue( storedCard?.tax_location?.country_code ),
+				organization: wrapValueInManagedValue( storedCard?.tax_location?.organization ),
+				address1: wrapValueInManagedValue( storedCard?.tax_location?.address ),
+				vatId: wrapValueInManagedValue( storedCard?.tax_location?.vat_id ),
+			} );
 			return isContactValidationResponseValid( validationResult );
 		};
 
@@ -177,7 +178,9 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 	};
 
 	haveCardsChanged = () => {
-		const cardIds = this.props.cards.map( ( card ) => card.stored_details_id );
+		const cardIds = this.props.paymentMethodsState.paymentMethods.map(
+			( card ) => card.stored_details_id
+		);
 		if ( ! this.lastCardIds ) {
 			this.lastCardIds = cardIds;
 			return true;
@@ -204,8 +207,8 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 				: upsellType;
 		return (
 			<Main className={ styleClass }>
+				<QueryPaymentCountries />
 				<QuerySites siteId={ selectedSiteId } />
-				<QueryStoredCards />
 				{ ! hasProductsList && <QueryProductsList /> }
 				{ ! hasSitePlans && <QuerySitePlans siteId={ parseInt( String( selectedSiteId ), 10 ) } /> }
 				{ this.renderContent() }
@@ -265,7 +268,6 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 		const {
 			receiptId,
 			currencyCode,
-			currentPlan,
 			currentPlanTerm,
 			planRawPrice,
 			planDiscountedRawPrice,
@@ -297,34 +299,15 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 				return isLoading ? (
 					this.renderGenericPlaceholder()
 				) : (
-					<Experiment
-						name="calypso_postpurchase_upsell_countdown_timer"
-						defaultExperience={
-							<BusinessPlanUpgradeUpsell
-								currencyCode={ currencyCode }
-								planRawPrice={ planRawPrice }
-								planDiscountedRawPrice={ planDiscountedRawPrice }
-								receiptId={ receiptId }
-								translate={ translate }
-								handleClickAccept={ this.handleClickAccept }
-								handleClickDecline={ this.handleClickDecline }
-								hasSevenDayRefundPeriod={ hasSevenDayRefundPeriod }
-							/>
-						}
-						treatmentExperience={
-							<BusinessPlanUpgradeUpsellTreatment
-								currencyCode={ currencyCode }
-								planRawPrice={ planRawPrice }
-								planDiscountedRawPrice={ planDiscountedRawPrice }
-								receiptId={ receiptId }
-								translate={ translate }
-								handleClickAccept={ this.handleClickAccept }
-								handleClickDecline={ this.handleClickDecline }
-								hasSevenDayRefundPeriod={ hasSevenDayRefundPeriod }
-								currentPlan={ currentPlan }
-							/>
-						}
-						loadingExperience={ null }
+					<BusinessPlanUpgradeUpsell
+						currencyCode={ currencyCode }
+						planRawPrice={ planRawPrice }
+						planDiscountedRawPrice={ planDiscountedRawPrice }
+						receiptId={ receiptId }
+						translate={ translate }
+						handleClickAccept={ this.handleClickAccept }
+						handleClickDecline={ this.handleClickDecline }
+						hasSevenDayRefundPeriod={ hasSevenDayRefundPeriod }
 					/>
 				);
 
@@ -384,8 +367,9 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 		}
 	};
 
-	handleClickAccept = ( buttonAction: string ) => {
+	handleClickAccept = async ( buttonAction: string ) => {
 		const { product, siteSlug, trackUpsellButtonClick, upgradeItem, upsellType } = this.props;
+		debug( 'accept upsell clicked' );
 
 		trackUpsellButtonClick(
 			`calypso_${ upsellType.replace( /-/g, '_' ) }_${ buttonAction }_button_click`
@@ -396,20 +380,54 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 			productToAdd = this.state.cartItem;
 		}
 
-		if ( this.isEligibleForOneClickUpsell( buttonAction ) && productToAdd ) {
+		const storedCard =
+			this.props.paymentMethodsState.paymentMethods.length > 0
+				? this.props.paymentMethodsState.paymentMethods[ 0 ]
+				: undefined;
+		if ( this.isEligibleForOneClickUpsell( buttonAction ) && productToAdd && storedCard ) {
+			if ( ! storedCard ) {
+				return;
+			}
+
 			this.setState( {
 				showPurchaseModal: true,
 			} );
-			const storedCard = this.props.cards[ 0 ];
-			const countryCode = extractStoredCardMetaValue( storedCard, 'country_code' );
-			const postalCode = extractStoredCardMetaValue( storedCard, 'card_zip' );
-			this.props.shoppingCartManager.updateLocation( {
-				countryCode,
-				postalCode,
-			} );
-			this.props.shoppingCartManager.replaceProductsInCart( [ productToAdd ] ).catch( () => {
-				// Nothing needs to be done here. CartMessages will display the error to the user.
-			} );
+
+			const vatDetails: VatDetails = {
+				country: storedCard.tax_location?.country_code,
+				id: storedCard.tax_location?.vat_id,
+				name: storedCard.tax_location?.organization,
+				address: storedCard.tax_location?.address,
+			};
+			const contactInfo: ManagedContactDetails = {
+				state: wrapValueInManagedValue( storedCard.tax_location?.subdivision_code ),
+				city: wrapValueInManagedValue( storedCard.tax_location?.city ),
+				postalCode: wrapValueInManagedValue( storedCard.tax_location?.postal_code ),
+			};
+
+			try {
+				debug(
+					'updating cart with contact info and product',
+					contactInfo,
+					vatDetails,
+					productToAdd
+				);
+				Promise.all( [
+					updateCartContactDetailsForCheckout(
+						this.props.countries ?? [],
+						this.props.cart,
+						this.props.shoppingCartManager.updateLocation,
+						contactInfo,
+						vatDetails
+					),
+					this.props.shoppingCartManager.replaceProductsInCart( [ productToAdd ] ),
+				] );
+			} catch ( error ) {
+				// If updating the cart fails, we should not continue. No need
+				// to do anything else, though, because CartMessages will
+				// display the error.
+				debug( 'an error occurred when updating the cart', error );
+			}
 			return;
 		}
 
@@ -425,11 +443,10 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 
 			this.props.shoppingCartManager
 				.replaceProductsInCart( [ productToAdd ] )
-				.then( () => {
-					if ( this.props?.cart?.messages ) {
-						const { errors } = this.props.cart.messages;
-						if ( errors && errors.length ) {
-							// Stay on the page to show the relevant error(s)
+				.then( ( newCart ) => {
+					if ( newCart.messages ) {
+						if ( newCart.messages.errors ) {
+							// Stay on the page to let CartMessages show the relevant error.
 							return;
 						}
 					}
@@ -438,6 +455,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 						persistSignupDestination( destinationToPersist );
 					}
 
+					debug( 'redirecting because we have professional email' );
 					page( '/checkout/' + siteSlug );
 				} )
 				.catch( () => {
@@ -446,13 +464,14 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 			return;
 		}
 
+		debug( 'redirecting because we are not eligible for one-click upsell' );
 		return siteSlug
 			? page( `/checkout/${ upgradeItem }/${ siteSlug }` )
 			: page( `/checkout/${ upgradeItem }` );
 	};
 
 	isEligibleForOneClickUpsell = ( buttonAction: string ) => {
-		const { product, cards, siteSlug, upsellType } = this.props;
+		const { product, siteSlug, upsellType } = this.props;
 		const { cartItem } = this.state;
 
 		if ( ! product || ( upsellType === PROFESSIONAL_EMAIL_UPSELL && ! cartItem ) ) {
@@ -478,7 +497,8 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 		}
 
 		// stored cards should exist
-		if ( cards.length === 0 ) {
+		const storedCards = this.props.paymentMethodsState.paymentMethods.filter( isCreditCard );
+		if ( storedCards.length === 0 ) {
 			debug( 'not eligible for one-click upsell because there are no cards' );
 			return false;
 		}
@@ -494,8 +514,13 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 
 	renderPurchaseModal = () => {
 		const isCartUpdating = this.props.shoppingCartManager.isPendingUpdate;
-		const onCloseModal = () => {
-			this.props.shoppingCartManager.replaceProductsInCart( [] );
+		const onCloseModal = async () => {
+			try {
+				this.props.shoppingCartManager.updateLocation( { countryCode: '' } );
+				this.props.shoppingCartManager.replaceProductsInCart( [] );
+			} catch {
+				// No need to do anything if this fails.
+			}
 			this.setState( { showPurchaseModal: false } );
 		};
 
@@ -503,11 +528,13 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 			return null;
 		}
 
+		const storedCards = this.props.paymentMethodsState.paymentMethods.filter( isCreditCard );
+
 		return (
 			<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration }>
 				<PurchaseModal
 					cart={ this.props.cart }
-					cards={ this.props.cards }
+					cards={ storedCards }
 					onClose={ onCloseModal }
 					siteSlug={ this.props.siteSlug }
 					isCartUpdating={ isCartUpdating }
@@ -564,13 +591,6 @@ export default connect(
 			isMonthly: false,
 		} );
 
-		// If the cards have not started fetching yet, isFetchingStoredCards will be false
-		const isFetchingCards = isFetchingStoredCards( state );
-		const hasLoadedCardsFromServer = hasLoadedStoredCardsFromServer( state );
-		const areStoredCardsLoading = hasLoadedCardsFromServer ? isFetchingCards : true;
-		const cards = getStoredCards( state );
-
-		const currentPlan = getCurrentPlan( state, selectedSiteId ) ?? undefined;
 		const currentPlanTerm = getCurrentPlanTerm( state, selectedSiteId ?? 0 ) ?? TERM_MONTHLY;
 		const productSlug = getProductSlug( upsellType, upgradeItem ?? '', currentPlanTerm );
 		const productProperties = pick( getProductBySlug( state, productSlug ?? '' ), [
@@ -586,14 +606,10 @@ export default connect(
 				: undefined;
 
 		return {
-			cards,
+			countries: getCountries( state, 'payments' ),
 			currencyCode: getCurrentUserCurrencyCode( state ),
-			currentPlan,
 			currentPlanTerm,
-			isLoading:
-				areStoredCardsLoading ||
-				isProductsListFetching( state ) ||
-				isRequestingSitePlans( state, selectedSiteId ),
+			isLoading: isProductsListFetching( state ) || isRequestingSitePlans( state, selectedSiteId ),
 			hasProductsList: Object.keys( productsList ).length > 0,
 			hasSitePlans: sitePlans ? sitePlans.length > 0 : undefined,
 			product,
@@ -610,4 +626,8 @@ export default connect(
 	{
 		trackUpsellButtonClick,
 	}
-)( withCartKey( withShoppingCart( localize( UpsellNudge ) ) ) );
+)(
+	withStoredPaymentMethods( withCartKey( withShoppingCart( localize( UpsellNudge ) ) ), {
+		type: 'card',
+	} )
+);

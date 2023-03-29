@@ -18,13 +18,17 @@ import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { ComponentType, useEffect, useMemo, useState } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
+import { useQueryReaderTeams } from 'calypso/components/data/query-reader-teams';
 import SitePreviewLink from 'calypso/components/site-preview-link';
 import { useSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
 import {
 	getHostingConfigUrl,
 	getManagePluginsUrl,
@@ -247,6 +251,9 @@ function useSubmenuItems( site: SiteExcerptData ) {
 	const isStagingSite = site.is_wpcom_staging_site;
 	const isStagingSiteEnabled = isEnabled( 'yolo/staging-sites-i1' );
 
+	useQueryReaderTeams();
+	const isA12n = useSelector( ( state ) => isAutomatticTeamMember( getReaderTeams( state ) ) );
+
 	return useMemo< { label: string; href: string; sectionName: string }[] >( () => {
 		return [
 			{
@@ -266,6 +273,7 @@ function useSubmenuItems( site: SiteExcerptData ) {
 				sectionName: 'staging_site',
 			},
 			{
+				condition: isA12n,
 				label: __( 'Deploy from GitHub' ),
 				href: `/hosting-config/${ siteSlug }#connect-github`,
 				sectionName: 'connect_github',
@@ -286,7 +294,7 @@ function useSubmenuItems( site: SiteExcerptData ) {
 				sectionName: 'logs',
 			},
 		].filter( ( { condition } ) => condition ?? true );
-	}, [ __, isStagingSiteEnabled, siteSlug, isStagingSite ] );
+	}, [ __, isStagingSiteEnabled, siteSlug, isStagingSite, isA12n ] );
 }
 
 function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps ) {
@@ -383,6 +391,7 @@ export const SitesEllipsisMenu = ( {
 	const { shouldShowSiteCopyItem, startSiteCopy } = useSiteCopy( site );
 	const hasCustomDomain = isCustomDomain( site.slug );
 	const isLaunched = site.launch_status !== 'unlaunched';
+	const isWpcomStagingSite = useSelector( ( state ) => isSiteWpcomStaging( state, site.ID ) );
 
 	return (
 		<SiteDropdownMenu
@@ -392,12 +401,14 @@ export const SitesEllipsisMenu = ( {
 		>
 			{ () => (
 				<SiteMenuGroup>
-					{ ! isLaunched && <LaunchItem { ...props } /> }
+					{ ! isWpcomStagingSite && ! isLaunched && <LaunchItem { ...props } /> }
 					<SettingsItem { ...props } />
 					{ hasHostingPage && <HostingConfigurationSubmenu { ...props } /> }
 					{ ! isP2Site( site ) && <ManagePluginsItem { ...props } /> }
 					{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
-					{ shouldShowSiteCopyItem && <CopySiteItem { ...props } onClick={ startSiteCopy } /> }
+					{ ! isWpcomStagingSite && shouldShowSiteCopyItem && (
+						<CopySiteItem { ...props } onClick={ startSiteCopy } />
+					) }
 					<MenuItemLink
 						href={ `/settings/performance/${ site.slug }` }
 						onClick={ () =>

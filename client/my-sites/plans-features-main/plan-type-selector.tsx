@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-
 import {
 	getYearlyPlanByMonthly,
 	isWpComPlan,
@@ -42,6 +41,7 @@ export type PlanTypeSelectorProps = {
 	isPlansInsideStepper: boolean;
 	hideDiscountLabel: boolean;
 	redirectTo?: string | null;
+	isStepperUpgradeFlow: boolean;
 };
 
 interface PathArgs {
@@ -59,7 +59,7 @@ export const generatePath: GeneratePathFunction = ( props, additionalArgs = {} )
 		plan: props.selectedPlan,
 	};
 
-	if ( props.isInSignup || 'customerType' in additionalArgs ) {
+	if ( props.isInSignup || 'customerType' in additionalArgs || props.isStepperUpgradeFlow ) {
 		return addQueryArgs(
 			{
 				...defaultArgs,

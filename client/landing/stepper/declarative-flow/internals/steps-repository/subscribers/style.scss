@@ -1,0 +1,42 @@
+@import "../style";
+.subscribers {
+	.add-subscriber__title-container {
+		margin-top: 25px;
+
+		@include break-medium {
+			margin-top: 36px;
+		}
+	}
+	.step-container {
+		.subscribers {
+			padding-top: 0;
+		}
+		padding: 0 1.5rem;
+
+		.add-subscriber__title-container,
+		.add-subscriber__form--container {
+			margin-left: auto;
+			margin-right: auto;
+		}
+
+		.add-subscriber .add-subscriber__title-container {
+			max-width: 376px;
+			text-align: center;
+
+			.onboarding-subtitle {
+				margin-bottom: 1.5rem;
+				font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
+			}
+		}
+
+		.add-subscriber .add-subscriber__form--container {
+			max-width: 368px;
+		}
+
+		.add-subscriber__form-submit-btn {
+			display: block;
+			width: 100%;
+			margin: 2rem 0;
+		}
+	}
+}

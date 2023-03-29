@@ -6,7 +6,12 @@
 
 $card-padding: 24px;
 $border-radius: 5px; // stylelint-disable-line scales/radii
-$break-wpcom-smallest: 320px;
+
+@keyframes shine {
+	to {
+		background-position-x: -200%;
+	}
+}
 
 .post-stats-card {
 	border-color: var(--studio-gray-5);
@@ -15,6 +20,8 @@ $break-wpcom-smallest: 320px;
 	font-family: $font-sf-pro-text;
 	font-size: $font-body-small;
 	grid-template-columns: minmax(10px, 1.5fr) minmax(0, auto);
+	// 26px is the height of the heading, the remaining should be auto.
+	grid-template-rows: 26px auto auto;
 	grid-template-areas:
 		"heading thumbnail"
 		"post thumbnail"
@@ -29,6 +36,27 @@ $break-wpcom-smallest: 320px;
 	&.card::after {
 		display: none;
 	}
+
+	&.is-loading {
+		.post-stats-card__heading,
+		.post-stats-card__post-info,
+		.post-stats-card__upload {
+			position: relative;
+
+			&::after {
+				content: "";
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background: linear-gradient(94deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
+				border-radius: 4px;
+				background-size: 200% 100%;
+				animation: 1.5s shine linear infinite;
+			}
+		}
+	}
 }
 
 .post-stats-card__heading {
@@ -38,12 +66,14 @@ $break-wpcom-smallest: 320px;
 	font-weight: 500;
 	grid-area: heading;
 	line-height: 1.3;
-
 }
 
 .post-stats-card__post-title {
 	@include stats-section-header;
+	display: block;
 	margin-bottom: 4px;
+	// For loading placeholder
+	min-height: 80px;
 
 	&:visited {
 		color: var(--studio-gray-100);
@@ -65,6 +95,7 @@ $break-wpcom-smallest: 320px;
 	flex-flow: row;
 	grid-area: counts;
 	gap: 64px;
+	align-self: flex-end;
 }
 
 .post-stats-card__count {
@@ -98,7 +129,7 @@ $break-wpcom-smallest: 320px;
 
 .post-stats-card__upload {
 	max-width: 500px;
-	padding: 0 12px;
+	padding: 0 8px;
 	display: flex;
 	align-items: center;
 	justify-content: center;

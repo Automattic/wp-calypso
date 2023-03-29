@@ -2,9 +2,12 @@ import { PatternRenderer } from '@automattic/block-renderer';
 import { DeviceSwitcher } from '@automattic/components';
 import { useStyle } from '@automattic/global-styles';
 import { Icon, layout } from '@wordpress/icons';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useEffect, useState, CSSProperties } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { PATTERN_ASSEMBLER_EVENTS } from './events';
+import PatternActionBar from './pattern-action-bar';
 import { encodePatternId } from './utils';
 import type { Pattern } from './types';
 import './pattern-large-preview.scss';
@@ -14,12 +17,27 @@ interface Props {
 	sections: Pattern[];
 	footer: Pattern | null;
 	activePosition: number;
+	onDeleteSection: ( position: number ) => void;
+	onMoveUpSection: ( position: number ) => void;
+	onMoveDownSection: ( position: number ) => void;
+	onDeleteHeader: () => void;
+	onDeleteFooter: () => void;
 }
 
 // The pattern renderer element has 1px min height before the pattern is loaded
 const PATTERN_RENDERER_MIN_HEIGHT = 1;
 
-const PatternLargePreview = ( { header, sections, footer, activePosition }: Props ) => {
+const PatternLargePreview = ( {
+	header,
+	sections,
+	footer,
+	activePosition,
+	onDeleteSection,
+	onMoveUpSection,
+	onMoveDownSection,
+	onDeleteHeader,
+	onDeleteFooter,
+}: Props ) => {
 	const translate = useTranslate();
 	const hasSelectedPattern = header || sections.length || footer;
 	const frameRef = useRef< HTMLDivElement | null >( null );
@@ -32,16 +50,47 @@ const PatternLargePreview = ( { header, sections, footer, activePosition }: Prop
 		'--pattern-large-preview-background': backgroundColor,
 	} as CSSProperties );
 
-	const renderPattern = ( key: string, pattern: Pattern ) => (
-		<li key={ key } className={ `pattern-large-preview__pattern-${ key }` }>
-			<PatternRenderer
-				patternId={ encodePatternId( pattern.id ) }
-				viewportHeight={ viewportHeight || frameRef.current?.clientHeight }
-				// Disable default max-height
-				maxHeight="none"
-			/>
-		</li>
-	);
+	const renderPattern = ( type: string, pattern: Pattern, position = -1 ) => {
+		const key = type === 'section' ? pattern.key : type;
+		const getActionBarProps = () => {
+			if ( type === 'header' ) {
+				return { onDelete: onDeleteHeader };
+			} else if ( type === 'footer' ) {
+				return { onDelete: onDeleteFooter };
+			}
+
+			return {
+				disableMoveUp: position === 0,
+				disableMoveDown: sections?.length === position + 1,
+				onDelete: () => onDeleteSection( position ),
+				onMoveUp: () => onMoveUpSection( position ),
+				onMoveDown: () => onMoveDownSection( position ),
+			};
+		};
+
+		return (
+			<li
+				key={ key }
+				className={ classnames(
+					'pattern-large-preview__pattern',
+					`pattern-large-preview__pattern-${ type }`
+				) }
+			>
+				<PatternRenderer
+					patternId={ encodePatternId( pattern.id ) }
+					viewportHeight={ viewportHeight || frameRef.current?.clientHeight }
+					// Disable default max-height
+					maxHeight="none"
+				/>
+				<PatternActionBar
+					patternType={ type }
+					isRemoveButtonTextOnly
+					source="large_preview"
+					{ ...getActionBarProps() }
+				/>
+			</li>
+		);
+	};
 
 	const updateViewportHeight = () => {
 		setViewportHeight( frameRef.current?.clientHeight );
@@ -100,7 +149,7 @@ const PatternLargePreview = ( { header, sections, footer, activePosition }: Prop
 			isShowFrameBorder
 			frameRef={ frameRef }
 			onDeviceChange={ ( device ) => {
-				recordTracksEvent( 'calypso_signup_pattern_assembler_preview_device_click', { device } );
+				recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PREVIEW_DEVICE_CLICK, { device } );
 				// Wait for the animation to end in 200ms
 				window.setTimeout( updateViewportHeight, 205 );
 			} }
@@ -112,7 +161,7 @@ const PatternLargePreview = ( { header, sections, footer, activePosition }: Prop
 					ref={ listRef }
 				>
 					{ header && renderPattern( 'header', header ) }
-					{ sections.map( ( pattern ) => renderPattern( pattern.key!, pattern ) ) }
+					{ sections.map( ( pattern, i ) => renderPattern( 'section', pattern, i ) ) }
 					{ footer && renderPattern( 'footer', footer ) }
 				</ul>
 			) : (

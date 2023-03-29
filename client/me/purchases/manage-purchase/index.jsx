@@ -30,6 +30,9 @@ import {
 	getMonthlyPlanByYearly,
 	hasMarketplaceProduct,
 	isDIFMProduct,
+	isAkismetProduct,
+	isJetpackBackupT1Slug,
+	AKISMET_UPGADES_PRODUCTS_MAP,
 } from '@automattic/calypso-products';
 import { Spinner, Button, Card, CompactCard, ProductIcon, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
@@ -44,7 +47,6 @@ import Badge from 'calypso/components/badge';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
@@ -121,6 +123,7 @@ import {
 	getAddNewPaymentMethodPath,
 	getChangePaymentMethodPath,
 	isJetpackTemporarySitePurchase,
+	isAkismetTemporarySitePurchase,
 } from '../utils';
 import PurchaseNotice from './notices';
 import PurchasePlanDetails from './plan-details';
@@ -140,7 +143,6 @@ class ManagePurchase extends Component {
 		hasLoadedPurchasesFromServer: PropTypes.bool.isRequired,
 		hasNonPrimaryDomainsFlag: PropTypes.bool,
 		isAtomicSite: PropTypes.bool,
-		isJetpackTemporarySite: PropTypes.bool,
 		renewableSitePurchases: PropTypes.arrayOf( PropTypes.object ),
 		productsList: PropTypes.object,
 		purchase: PropTypes.object,
@@ -205,8 +207,10 @@ class ManagePurchase extends Component {
 	handleRenew = () => {
 		const { purchase, siteSlug, redirectTo } = this.props;
 		const options = redirectTo ? { redirectTo } : undefined;
+		const isSitelessRenewal = isAkismetTemporarySitePurchase( purchase );
 
-		this.props.handleRenewNowClick( purchase, siteSlug, options );
+		// If this renewal is for a siteless purchase, we'll drop the site slug
+		this.props.handleRenewNowClick( purchase, ! isSitelessRenewal ? siteSlug : '', options );
 	};
 
 	handleRenewMonthly = () => {
@@ -247,7 +251,11 @@ class ManagePurchase extends Component {
 	renderRenewButton() {
 		const { purchase, translate } = this.props;
 
-		if ( isPartnerPurchase( purchase ) || ! isRenewable( purchase ) || ! this.props.site ) {
+		if (
+			isPartnerPurchase( purchase ) ||
+			! isRenewable( purchase ) ||
+			( ! this.props.site && ! isAkismetTemporarySitePurchase( purchase ) )
+		) {
 			return null;
 		}
 
@@ -273,7 +281,8 @@ class ManagePurchase extends Component {
 			! isComplete( purchase ) &&
 			! isP2Plus( purchase );
 		const isUpgradeableProduct =
-			! isPlan( purchase ) && JETPACK_BACKUP_T1_PRODUCTS.includes( purchase.productSlug );
+			! isPlan( purchase ) &&
+			( isJetpackBackupT1Slug( purchase.productSlug ) || isAkismetProduct( purchase ) );
 
 		if ( ! isUpgradeablePlan && ! isUpgradeableProduct ) {
 			return null;
@@ -284,6 +293,10 @@ class ManagePurchase extends Component {
 		}
 
 		const upgradeUrl = this.getUpgradeUrl();
+
+		if ( ! upgradeUrl ) {
+			return null;
+		}
 
 		// If the "renew now" button is showing, it will be using primary styles
 		// Show the upgrade button without the primary style if both buttons are present
@@ -307,11 +320,11 @@ class ManagePurchase extends Component {
 	renderRenewalNavItem( content, onClick ) {
 		const { purchase } = this.props;
 
-		if ( ! isRenewable( purchase ) || ! this.props.site ) {
-			return null;
-		}
-
-		if ( isPartnerPurchase( purchase ) ) {
+		if (
+			isPartnerPurchase( purchase ) ||
+			! isRenewable( purchase ) ||
+			( ! this.props.site && ! isAkismetTemporarySitePurchase( purchase ) )
+		) {
 			return null;
 		}
 
@@ -368,6 +381,13 @@ class ManagePurchase extends Component {
 
 		const isUpgradeableBackupProduct = JETPACK_BACKUP_T1_PRODUCTS.includes( purchase.productSlug );
 		const isUpgradeableSecurityPlan = JETPACK_SECURITY_T1_PLANS.includes( purchase.productSlug );
+
+		if ( isAkismetProduct( purchase ) ) {
+			// For the first Iteration of Calypso Akismet checkout we are only suggesting
+			// for immediate upgrades to the next plan. We will change this in the future
+			// with appropriate page.
+			return AKISMET_UPGADES_PRODUCTS_MAP[ purchase.productSlug ];
+		}
 
 		if ( isUpgradeableBackupProduct || isUpgradeableSecurityPlan ) {
 			return `/plans/storage/${ siteSlug }`;
@@ -1000,7 +1020,6 @@ class ManagePurchase extends Component {
 		const {
 			purchase,
 			translate,
-			isJetpackTemporarySite,
 			isProductOwner,
 			getManagePurchaseUrlFor,
 			siteSlug,
@@ -1016,7 +1035,6 @@ class ManagePurchase extends Component {
 			'is-jetpack-product': purchase && isJetpackProduct( purchase ),
 		} );
 		const siteName = purchase.siteName;
-		const siteDomain = purchase.domain;
 		const siteId = purchase.siteId;
 
 		const renderMonthlyRenewalOption = shouldRenderMonthlyRenewalOption( purchase );
@@ -1024,7 +1042,7 @@ class ManagePurchase extends Component {
 		return (
 			<Fragment>
 				{ this.props.showHeader && (
-					<PurchaseSiteHeader siteId={ siteId } name={ siteName } domain={ siteDomain } />
+					<PurchaseSiteHeader siteId={ siteId } name={ siteName } purchase={ purchase } />
 				) }
 				<Card className={ classes }>
 					<header className="manage-purchase__header">
@@ -1081,12 +1099,18 @@ class ManagePurchase extends Component {
 						{ ! preventRenewal && ! renderMonthlyRenewalOption && this.renderRenewNowNavItem() }
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewAnnuallyNavItem() }
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewMonthlyNavItem() }
-						{ ! isJetpackTemporarySite && this.renderUpgradeNavItem() }
+						{ /* We don't want to show the Renew/Upgrade nav item for "Jetpack" temporary sites, but we DO
+						show it for "Akismet" temporary sites. (And all other types of purchases) */ }
+						{ /* TODO: Add ability to Renew Akismet subscription */ }
+						{ ! isJetpackTemporarySitePurchase( purchase ) && this.renderUpgradeNavItem() }
 						{ this.renderEditPaymentMethodNavItem() }
 						{ this.renderReinstall() }
 						{ this.renderCancelPurchaseNavItem() }
 						{ this.renderCancelSurvey() }
-						{ ! isJetpackTemporarySite && this.renderRemovePurchaseNavItem() }
+						{ /* We don't want to show the Cancel/Remove nav item for "Jetpack" temporary sites, but we DO
+						show it for "Akismet" temporary sites. (And all other types of purchases) */ }
+						{ /* TODO: Add ability to Cancel Akismet subscription */ }
+						{ ! isJetpackTemporarySitePurchase( purchase ) && this.renderRemovePurchaseNavItem() }
 					</>
 				) }
 			</Fragment>
@@ -1127,7 +1151,6 @@ class ManagePurchase extends Component {
 
 		return (
 			<Fragment>
-				<QueryStoredCards />
 				<TrackPurchasePageView
 					eventName="calypso_manage_purchase_view"
 					purchaseId={ this.props.purchaseId }
@@ -1285,7 +1308,6 @@ export default connect(
 			isAtomicSite: isSiteAtomic( state, siteId ),
 			relatedMonthlyPlanSlug,
 			relatedMonthlyPlanPrice,
-			isJetpackTemporarySite: purchase && isJetpackTemporarySitePurchase( purchase.domain ),
 			primaryDomain: primaryDomain,
 			isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
 		};

@@ -3,12 +3,13 @@ import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { localize } from 'i18n-calypso';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useQueryClient } from 'react-query';
 import { connect, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import Notice from 'calypso/components/notice';
+import withMediaStorage from 'calypso/data/media-storage/with-media-storage';
 import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
 import { urlToSlug } from 'calypso/lib/url';
 import { useAddStagingSiteMutation } from 'calypso/my-sites/hosting/staging-site-card/use-add-staging-site';
@@ -16,8 +17,12 @@ import { useCheckStagingSiteStatus } from 'calypso/my-sites/hosting/staging-site
 import { useStagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
+import { DeleteStagingSite } from './delete-staging-site';
+import { useDeleteStagingSite } from './use-delete-staging-site';
+import { useHasSiteAccess } from './use-has-site-access';
 
 const stagingSiteAddFailureNoticeId = 'staging-site-add-failure';
 
@@ -40,7 +45,23 @@ const StyledLoadingBar = styled( LoadingBar )( {
 	marginBottom: '1em',
 } );
 
-const StagingSiteCard = ( { disabled, siteId, translate } ) => {
+const ActionButtons = styled.div( {
+	display: 'flex',
+	gap: '1em',
+} );
+
+const ExceedQuotaErrorWrapper = styled.div( {
+	marginTop: '1em',
+} );
+
+export const StagingSiteCard = ( {
+	currentUserId,
+	disabled,
+	spaceQuotaExceededForStaging,
+	siteId,
+	siteOwnerId,
+	translate,
+} ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
@@ -61,14 +82,27 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 	const stagingSite = useMemo( () => {
 		return stagingSites && stagingSites.length ? stagingSites[ 0 ] : [];
 	}, [ stagingSites ] );
+	const hasSiteAccess = useHasSiteAccess( stagingSite.id );
 
-	const showAddStagingSite = ! isLoadingStagingSites && stagingSites && stagingSites.length === 0;
-	const showManageStagingSite = ! isLoadingStagingSites && stagingSites && stagingSites.length > 0;
+	const showAddStagingSite = ! isLoadingStagingSites && stagingSites?.length === 0;
+	const showManageStagingSite = ! isLoadingStagingSites && stagingSites?.length > 0;
 
 	const [ wasCreating, setWasCreating ] = useState( false );
-	const [ progress, setProgress ] = useState( 0.3 );
+	const [ progress, setProgress ] = useState( 0.1 );
 	const transferStatus = useCheckStagingSiteStatus( stagingSite.id );
+	const { deleteStagingSite, isReverting } = useDeleteStagingSite( {
+		siteId,
+		stagingSiteId: stagingSite.id,
+		transferStatus,
+		onSuccess: useCallback( () => {
+			dispatch( successNotice( __( 'Staging site deleted.' ) ) );
+		}, [ dispatch, __ ] ),
+	} );
 	const isStagingSiteTransferComplete = transferStatus === transferStates.COMPLETE;
+	const isTrasferInProgress =
+		showManageStagingSite &&
+		! isStagingSiteTransferComplete &&
+		( transferStatus !== null || wasCreating );
 
 	useEffect( () => {
 		if ( wasCreating && isStagingSiteTransferComplete ) {
@@ -78,7 +112,22 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 	}, [ dispatch, queryClient, __, isStagingSiteTransferComplete, wasCreating ] );
 
 	useEffect( () => {
-		setProgress( ( prevProgress ) => prevProgress + 0.1 );
+		setProgress( ( prevProgress ) => {
+			switch ( transferStatus ) {
+				case null:
+					return 0.1;
+				case transferStates.RELOCATING_REVERT:
+				case transferStates.ACTIVE:
+					return 0.2;
+				case transferStates.PROVISIONED:
+					return 0.6;
+				case transferStates.REVERTED:
+				case transferStates.RELOCATING:
+					return 0.85;
+				default:
+					return prevProgress + 0.05;
+			}
+		} );
 	}, [ transferStatus ] );
 
 	const { addStagingSite, isLoading: addingStagingSite } = useAddStagingSiteMutation( siteId, {
@@ -103,6 +152,18 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 		},
 	} );
 
+	const getExceedQuotaErrorContent = () => {
+		return (
+			<ExceedQuotaErrorWrapper data-testid="quota-message">
+				<Notice status="is-warning" showDismiss={ false }>
+					{ __(
+						'Your available storage space is lower than 50%, which is insufficient for creating a staging site.'
+					) }
+				</Notice>
+			</ExceedQuotaErrorWrapper>
+		);
+	};
+
 	const getNewStagingSiteContent = () => {
 		return (
 			<>
@@ -113,7 +174,7 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 				</p>
 				<Button
 					primary
-					disabled={ disabled || addingStagingSite }
+					disabled={ disabled || addingStagingSite || spaceQuotaExceededForStaging }
 					onClick={ () => {
 						dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_click' ) );
 						setWasCreating( true );
@@ -123,6 +184,7 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 				>
 					<span>{ translate( 'Add staging site' ) }</span>
 				</Button>
+				{ spaceQuotaExceededForStaging && getExceedQuotaErrorContent() }
 			</>
 		);
 	};
@@ -140,20 +202,52 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 						},
 					} ) }
 				</p>
-				<Button primary href={ `/home/${ urlToSlug( stagingSite.url ) }` } disabled={ disabled }>
-					<span>{ translate( 'Manage staging site' ) }</span>
-				</Button>
+				<ActionButtons>
+					<Button primary href={ `/home/${ urlToSlug( stagingSite.url ) }` } disabled={ disabled }>
+						<span>{ translate( 'Manage staging site' ) }</span>
+					</Button>
+					<DeleteStagingSite
+						disabled={ disabled }
+						onClickDelete={ deleteStagingSite }
+						isBusy={ isReverting }
+					>
+						<Gridicon icon="trash" />
+						<span>{ __( 'Delete staging site' ) }</span>
+					</DeleteStagingSite>
+				</ActionButtons>
 			</>
 		);
 	};
 
+	const getTransferringStagingSiteContent = useCallback( () => {
+		if ( isReverting ) {
+			return (
+				<>
+					<StyledLoadingBar key="delete-loading-bar" progress={ progress } />
+					<p>{ __( 'We are deleting your staging site.' ) }</p>
+				</>
+			);
+		}
+
+		const message =
+			siteOwnerId === currentUserId
+				? __( 'We are setting up your staging site. We’ll email you once it is ready.' )
+				: __( 'We are setting up the staging site. We’ll email the site owner once it is ready.' );
+		return (
+			<div data-testid="transferring-staging-content">
+				<StyledLoadingBar progress={ progress } />
+				<p>{ message }</p>
+			</div>
+		);
+	}, [ progress, __, siteOwnerId, currentUserId, isReverting ] );
+
 	const getLoadingStagingSitesPlaceholder = () => {
 		return (
-			<>
+			<div data-testid="loading-placeholder">
 				<FirstPlaceholder />
 				<SecondPlaceholder />
 				<ButtonPlaceholder />
-			</>
+			</div>
 		);
 	};
 
@@ -167,31 +261,71 @@ const StagingSiteCard = ( { disabled, siteId, translate } ) => {
 		);
 	};
 
+	const getAccessError = () => {
+		return (
+			<Notice status="is-error" showDismiss={ false }>
+				<div data-testid="staging-sites-access-message">
+					{ translate(
+						'Unable to access the staging site {{a}}%(stagingSiteName)s{{/a}}. Please contact with the site owner.',
+						{
+							args: {
+								stagingSiteName: stagingSite.url,
+							},
+							components: {
+								a: <a href={ stagingSite.url } />,
+							},
+						}
+					) }
+				</div>
+			</Notice>
+		);
+	};
+
+	let stagingSiteCardContent;
+	if ( ! isLoadingStagingSites && loadingError ) {
+		stagingSiteCardContent = getLoadingErrorContent();
+	} else if ( ! wasCreating && ! hasSiteAccess && transferStatus !== null ) {
+		stagingSiteCardContent = getAccessError();
+	} else if ( addingStagingSite || isTrasferInProgress || isReverting ) {
+		stagingSiteCardContent = getTransferringStagingSiteContent();
+	} else if ( showManageStagingSite && isStagingSiteTransferComplete ) {
+		stagingSiteCardContent = getManageStagingSiteContent();
+	} else if ( showAddStagingSite && ! addingStagingSite ) {
+		stagingSiteCardContent = getNewStagingSiteContent();
+	} else {
+		stagingSiteCardContent = getLoadingStagingSitesPlaceholder();
+	}
+
 	return (
 		<Card className="staging-site-card">
 			{
 				// eslint-disable-next-line wpcalypso/jsx-gridicon-size
-				<Gridicon icon="share-computer" size={ 32 } />
+				<Gridicon icon="science" size={ 32 } />
 			}
 			<CardHeading id="staging-site">{ translate( 'Staging site' ) }</CardHeading>
-			{ showAddStagingSite && ! addingStagingSite && getNewStagingSiteContent() }
-			{ showManageStagingSite && isStagingSiteTransferComplete && getManageStagingSiteContent() }
-			{ isLoadingStagingSites && getLoadingStagingSitesPlaceholder() }
-			{ ! isLoadingStagingSites && loadingError && getLoadingErrorContent() }
-			{ ( addingStagingSite || ( showManageStagingSite && ! isStagingSiteTransferComplete ) ) && (
-				<>
-					<StyledLoadingBar progress={ progress } />
-					<p>{ __( 'We are setting up your staging site. We’ll email you once it is ready.' ) }</p>
-				</>
-			) }
+			{ stagingSiteCardContent }
 		</Card>
 	);
 };
 
-export default connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
+export default withMediaStorage(
+	connect( ( state, { mediaStorage } ) => {
+		const currentUserId = getCurrentUserId( state );
+		const siteId = getSelectedSiteId( state );
+		const siteOwnerId = getSelectedSite( state )?.site_owner;
 
-	return {
-		siteId,
-	};
-} )( localize( StagingSiteCard ) );
+		let spaceQuotaExceededForStaging = false;
+		// We check against -1 as this is the default value for sites with
+		// upload_space_check_disabled option.
+		if ( mediaStorage?.storage_used_bytes > -1 && mediaStorage?.max_storage_bytes > -1 ) {
+			spaceQuotaExceededForStaging =
+				mediaStorage.storage_used_bytes > mediaStorage.max_storage_bytes / 2;
+		}
+		return {
+			currentUserId,
+			siteId,
+			spaceQuotaExceededForStaging,
+			siteOwnerId,
+		};
+	} )( localize( StagingSiteCard ) )
+);

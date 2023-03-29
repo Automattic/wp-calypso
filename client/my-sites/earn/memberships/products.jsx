@@ -26,15 +26,17 @@ import {
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 import RecurringPaymentsPlanAddEditModal from './add-edit-plan-modal';
+import { ADD_NEW_PAYMENT_PLAN_HASH, ADD_NEWSLETTER_PAYMENT_PLAN_HASH } from './constants';
 import RecurringPaymentsPlanDeleteModal from './delete-plan-modal';
 import MembershipsSection from './';
 import './style.scss';
 
+const showAddEditDialog =
+	window.location.hash === ADD_NEW_PAYMENT_PLAN_HASH ||
+	window.location.hash === ADD_NEWSLETTER_PAYMENT_PLAN_HASH;
 class MembershipsProductsSection extends Component {
 	state = {
-		showAddEditDialog:
-			window.location.hash === '#add-new-payment-plan' ||
-			window.location.hash === '#add-newsletter-payment-plan',
+		showAddEditDialog,
 		showDeleteDialog: false,
 		product: null,
 	};
@@ -78,7 +80,7 @@ class MembershipsProductsSection extends Component {
 		// This will take the hash into account only when ading a new product
 		const subscribe_as_site_subscriber = this.state.product
 			? this.state.product?.subscribe_as_site_subscriber
-			: window.location.hash === '#add-newsletter-payment-plan';
+			: window.location.hash === ADD_NEWSLETTER_PAYMENT_PLAN_HASH;
 
 		return (
 			<div>
