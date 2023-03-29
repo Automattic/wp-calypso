@@ -4,6 +4,8 @@ import {
 	PLAN_BIENNIAL_PERIOD,
 	PLAN_ANNUAL_PERIOD,
 	PlanSlug,
+	getPlanSlugForTermVariant,
+	TERM_ANNUALLY,
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
 import { localize, TranslateResult, useTranslate } from 'i18n-calypso';
@@ -16,12 +18,10 @@ interface Props {
 	planName: string;
 	billingTimeframe: TranslateResult;
 	billingPeriod: number | null | undefined;
-	annualPricePerMonth: number | null;
 	isMonthlyPlan: boolean;
 }
 
 function usePerMonthDescription( {
-	annualPricePerMonth,
 	isMonthlyPlan,
 	planName,
 	billingPeriod,
@@ -32,32 +32,38 @@ function usePerMonthDescription( {
 		planSlug: planName as PlanSlug,
 		returnMonthly: isMonthlyPlan,
 	} );
+	const planYearlyVariantPrices = usePlanPrices( {
+		planSlug:
+			getPlanSlugForTermVariant( planName as PlanSlug, TERM_ANNUALLY ) ?? ( '' as PlanSlug ),
+		monthly: true,
+	} );
+	const maybeDiscountedPrice =
+		planPrices.planDiscountedRawPrice || planPrices.discountedRawPrice || planPrices.rawPrice;
+	// we want the raw price (discounted or not) for the yearly variant, not the site-plan discounted one
+	const yearlyVariantMaybeDiscountedPrice =
+		planYearlyVariantPrices.discountedRawPrice || planYearlyVariantPrices.rawPrice;
 
 	if ( isWpComFreePlan( planName ) || isWpcomEnterpriseGridPlan( planName ) ) {
 		return null;
 	}
 
 	if ( isMonthlyPlan ) {
-		if ( null !== planPrices.rawPrice && null !== annualPricePerMonth ) {
-			if ( annualPricePerMonth < planPrices.rawPrice ) {
-				return translate( `Save %(discountRate)s%% by paying annually`, {
-					args: {
-						discountRate: Math.round(
-							( 100 * ( planPrices.rawPrice - annualPricePerMonth ) ) / planPrices.rawPrice
-						),
-					},
-				} );
-			}
+		if ( yearlyVariantMaybeDiscountedPrice < planPrices.rawPrice ) {
+			return translate( `Save %(discountRate)s%% by paying annually`, {
+				args: {
+					discountRate: Math.round(
+						( 100 * ( planPrices.rawPrice - yearlyVariantMaybeDiscountedPrice ) ) /
+							planPrices.rawPrice
+					),
+				},
+			} );
 		}
 	}
 
 	if ( ! isMonthlyPlan ) {
-		const maybeDiscountedFullTermPrice =
-			planPrices.planDiscountedRawPrice || planPrices.discountedRawPrice || planPrices.rawPrice;
-
 		const fullTermPriceText =
-			currencyCode && maybeDiscountedFullTermPrice
-				? formatCurrency( maybeDiscountedFullTermPrice, currencyCode )
+			currencyCode && maybeDiscountedPrice
+				? formatCurrency( maybeDiscountedPrice, currencyCode )
 				: null;
 
 		if ( fullTermPriceText ) {

@@ -1,7 +1,6 @@
 import {
 	applyTestFiltersToPlansList,
 	getMonthlyPlanByYearly,
-	getYearlyPlanByMonthly,
 	findPlansKeys,
 	getPlan as getPlanFromKey,
 	getPlanClass,
@@ -68,15 +67,10 @@ import {
 	getPlanBySlug,
 	getPlanRawPrice,
 	getPlanSlug,
-	getDiscountedRawPrice,
 } from 'calypso/state/plans/selectors';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import {
-	getCurrentPlan,
-	isCurrentUserCurrentPlanOwner,
-	getPlanDiscountedRawPrice,
-} from 'calypso/state/sites/plans/selectors';
+import { getCurrentPlan, isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import isPlanAvailableForPurchase from 'calypso/state/sites/plans/selectors/is-plan-available-for-purchase';
 import {
 	getSiteSlug,
@@ -532,8 +526,7 @@ export class PlanFeatures2023Grid extends Component<
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
 			.map( ( properties ) => {
-				const { planConstantObj, planName, annualPricePerMonth, isMonthlyPlan, billingPeriod } =
-					properties;
+				const { planConstantObj, planName, isMonthlyPlan, billingPeriod } = properties;
 
 				const classes = classNames(
 					'plan-features-2023-grid__table-item',
@@ -543,7 +536,6 @@ export class PlanFeatures2023Grid extends Component<
 				return (
 					<Container className={ classes } isMobile={ options?.isMobile } key={ planName }>
 						<PlanFeatures2023GridBillingTimeframe
-							annualPricePerMonth={ annualPricePerMonth }
 							isMonthlyPlan={ isMonthlyPlan }
 							planName={ planName }
 							billingTimeframe={ planConstantObj.getBillingTimeFrame() }
@@ -1053,26 +1045,6 @@ const ConnectedPlanFeatures2023Grid = connect(
 			);
 
 			const rawPrice = getPlanRawPrice( state, planProductId, showMonthlyPrice );
-			const isMonthlyObj = { returnMonthly: showMonthlyPrice };
-
-			const discountPrice = siteId
-				? getPlanDiscountedRawPrice( state, siteId, plan, isMonthlyObj )
-				: getDiscountedRawPrice( state, planProductId, showMonthlyPrice );
-
-			let annualPricePerMonth = discountPrice || rawPrice;
-			if ( isMonthlyPlan ) {
-				// Get annual price per month for comparison
-				const yearlyPlan = getPlanBySlug( state, getYearlyPlanByMonthly( plan ) );
-				if ( yearlyPlan ) {
-					const yearlyPlanDiscount = getDiscountedRawPrice(
-						state,
-						yearlyPlan.product_id,
-						showMonthlyPrice
-					);
-					annualPricePerMonth =
-						yearlyPlanDiscount || getPlanRawPrice( state, yearlyPlan.product_id, showMonthlyPrice );
-				}
-			}
 
 			const monthlyPlanKey = findPlansKeys( {
 				group: planConstantObj.group,
@@ -1146,7 +1118,6 @@ const ConnectedPlanFeatures2023Grid = connect(
 				rawPrice,
 				rawPriceForMonthlyPlan,
 				relatedMonthlyPlan,
-				annualPricePerMonth,
 				isMonthlyPlan,
 				tagline,
 				storageOptions,

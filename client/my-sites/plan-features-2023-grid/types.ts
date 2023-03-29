@@ -26,7 +26,6 @@ export type PlanProperties = {
 	rawPrice: number | null;
 	rawPriceForMonthlyPlan: number | null;
 	relatedMonthlyPlan: null | PricedAPIPlan | undefined;
-	annualPricePerMonth: number | null;
 	isMonthlyPlan: boolean;
 	tagline: string;
 	storageOptions: string[];
