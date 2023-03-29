@@ -183,6 +183,17 @@ export function getEnhancedTasks(
 						},
 					};
 					break;
+				case 'first_post_published_newsletter':
+					taskData = {
+						title: translate( 'Start writing' ),
+						completed: firstPostPublishedCompleted,
+						disabled: mustVerifyEmailBeforePosting || false,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.assign( `/post/${ siteSlug }` );
+						},
+					};
+					break;
 				case 'design_selected':
 					taskData = {
 						title: translate( 'Select a design' ),
