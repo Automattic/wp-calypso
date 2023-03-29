@@ -1,4 +1,3 @@
-import { translate } from 'i18n-calypso';
 import { useMutation, useQueryClient } from 'react-query';
 import { callApi } from '../helpers';
 import { useIsLoggedIn } from '../hooks';
@@ -29,9 +28,8 @@ const useSubscriptionManagerSiteDeliveryFrequencyMutation = () => {
 		async ( params: SiteSubscriptionDeliveryFrequencyParams ) => {
 			if ( ! params.blog_id || ! params.delivery_frequency ) {
 				throw new Error(
-					translate( 'Something went wrong while saving the delivery frequency.', {
-						context: 'Updating the delivery frequency failed.',
-					} ) as string
+					// reminder: translate this string when we add it to the UI
+					'Something went wrong while saving the delivery frequency.'
 				);
 			}
 
