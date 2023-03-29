@@ -8,7 +8,9 @@ import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import ActivityCardList from 'calypso/components/activity-card-list';
 import AdvancedCredentials from 'calypso/components/advanced-credentials';
+import BackupSuccessful from 'calypso/components/jetpack/daily-backup-status/status-card/backup-successful';
 import StepProgress from 'calypso/components/step-progress';
+import useRewindableActivityLogQuery from 'calypso/data/activity-log/use-rewindable-activity-log-query';
 import getInProgressRewindStatus from 'calypso/state/selectors/get-in-progress-rewind-status';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import Error from '../../rewind-flow/error';
@@ -35,6 +37,7 @@ jest.mock( 'calypso/data/activity-log/use-rewindable-activity-log-query', () =>
 	} )
 );
 
+jest.mock( 'calypso/data/activity-log/use-rewindable-activity-log-query' );
 jest.mock( 'calypso/state/selectors/get-in-progress-rewind-status' );
 jest.mock( 'calypso/state/selectors/get-rewind-state' );
 
@@ -53,6 +56,10 @@ jest.mock( 'calypso/components/activity-card-list', () =>
 jest.mock( 'calypso/components/advanced-credentials', () =>
 	jest.fn().mockImplementation( () => null )
 );
+jest.mock( 'calypso/components/jetpack/daily-backup-status/status-card/backup-successful', () =>
+	jest.fn().mockImplementation( () => null )
+);
+
 jest.mock( 'calypso/components/step-progress', () => jest.fn().mockImplementation( () => null ) );
 jest.mock( '../../rewind-flow/error', () => jest.fn().mockImplementation( () => null ) );
 jest.mock( '../../rewind-flow/loading', () => jest.fn().mockImplementation( () => null ) );
@@ -88,6 +95,87 @@ function createState( siteId = 1 ) {
 			remoteValues: {},
 		},
 		documentHead: { unreadCount: 1 },
+	};
+}
+
+function getLogs() {
+	return {
+		data: [
+			{
+				actorAvatarUrl: 'https://www.gravatar.com/avatar/0',
+				actorName: 'Jetpack',
+				actorRemoteId: 0,
+				actorRole: '',
+				actorType: 'Application',
+				actorWpcomId: 0,
+				activityDate: '2023-03-28T23:28:03.804+00:00',
+				activityGroup: 'rewind',
+				activityIcon: 'cloud',
+				activityId: '111111111111',
+				activityIsRewindable: true,
+				activityName: 'rewind__backup_only_complete_full',
+				activityTitle: 'Backup complete',
+				activityTs: 1680046083805,
+				activityDescription: [
+					{
+						children: [
+							{
+								text: '17 plugins, 7 themes, 1467 uploads, 32 posts, 5 pages, 11 products, 80 orders',
+							},
+						],
+					},
+				],
+				activityMeta: {},
+				rewindId: '1680046083.805',
+				activityStatus: 'success',
+				activityType: 'Backup',
+				activityWarnings: {
+					themes: [],
+					plugins: [],
+					uploads: [],
+					roots: [],
+					contents: [],
+					tables: [],
+				},
+				activityErrors: [],
+			},
+			{
+				actorAvatarUrl: 'https://www.gravatar.com/avatar/0',
+				actorName: 'actorTest',
+				actorRemoteId: 6,
+				actorRole: 'administrator',
+				actorType: 'Person',
+				actorWpcomId: 111222333,
+				activityDate: '2023-03-28T23:08:01.000+00:00',
+				activityGroup: 'attachment',
+				activityIcon: 'image',
+				activityId: '2222222222222',
+				activityIsRewindable: true,
+				activityName: 'attachment__uploaded',
+				activityTitle: 'Image uploaded',
+				activityTs: 1680044881009,
+				activityDescription: [
+					{
+						type: 'link',
+						url: 'https://wordpress.com/media/11111111/333',
+						intent: 'edit',
+						section: 'media',
+						children: [ 'wp-1111111111111.jpg' ],
+					},
+				],
+				activityMedia: {
+					available: true,
+					type: 'Image',
+					name: 'wp-2222222222.jpg',
+					url: 'https://i0.wp.com/1.jpg',
+					thumbnail_url: 'https://i0.wp.com/2.jpg?',
+					medium_url: 'https://i0.wp.com/3.jpg',
+				},
+				activityMeta: {},
+				rewindId: '1680044877.1830',
+				activityStatus: 'success',
+			},
+		],
 	};
 }
 
@@ -178,6 +266,7 @@ describe( 'BackupCloneFlow render', () => {
 			getRewindState.mockImplementation( () => ( {
 				state: 'active',
 			} ) );
+			useRewindableActivityLogQuery.mockImplementation( () => getLogs() );
 
 			const mockStore = configureStore();
 			const store = mockStore( createState() );
@@ -199,6 +288,7 @@ describe( 'BackupCloneFlow render', () => {
 			);
 
 			expect( StepProgress ).toHaveBeenCalledTimes( 1 );
+			expect( BackupSuccessful ).toHaveBeenCalledTimes( 1 );
 			expect( ActivityCardList ).toHaveBeenCalledTimes( 1 );
 		} );
 

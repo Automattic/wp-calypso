@@ -8,6 +8,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import QueryRewindRestoreStatus from 'calypso/components/data/query-rewind-restore-status';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import BackupSuccessful from 'calypso/components/jetpack/daily-backup-status/status-card/backup-successful';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
@@ -167,6 +168,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	const disableClone = false;
 
 	const { data: logs } = useRewindableActivityLogQuery( siteId, {}, { enabled: !! siteId } );
+	const lastBackup = logs && logs.length > 0 ? logs[ 0 ] : undefined;
 
 	// Screen that allows user to add credentials for an alternate restore / clone
 	const renderSetDestination = () => (
@@ -198,8 +200,19 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 				{ translate( "Which point in your site's history would you like to copy from?" ) }
 			</p>
 			<div className="activity-log-v2__content">
+				{ lastBackup && (
+					<Card>
+						<BackupSuccessful
+							backup={ lastBackup }
+							selectedDate={ moment( lastBackup.activityDate ) }
+							lastBackupAttemptOnDate={ undefined }
+							availableActions={ [ 'clone' ] }
+							onClickClone={ onSetBackupPeriod }
+						/>
+					</Card>
+				) }
 				<ActivityCardList
-					logs={ logs }
+					logs={ logs.slice( 1 ) }
 					pageSize={ 10 }
 					showFilter={ false }
 					availableActions={ [ 'clone' ] }
