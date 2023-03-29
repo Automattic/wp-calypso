@@ -38,41 +38,33 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 
 		if ( ! isPaidPlan && ! hasCustomDomain ) {
 			contentElement = (
-				<>
-					<span>
-						{ translate( 'Supercharge your website with a' ) }{ ' ' }
-						<span className="launched__modal-upsell-content-highlight">
-							{ translate( 'custom address' ) }
-						</span>{ ' ' }
-						{ translate( 'that matches your blog, brand, or business.' ) }
-					</span>
-				</>
+				<p>
+					{ translate(
+						'Supercharge your website with a {{strong}}custom address{{/strong}} that matches your blog, brand, or business.',
+						{ components: { strong: <strong /> } }
+					) }
+				</p>
 			);
 			buttonText = translate( 'Claim your domain' );
 			buttonHref = `/domains/add/${ site.slug }`;
 		} else if ( isPaidPlan && isBilledYearly && ! hasCustomDomain ) {
 			contentElement = (
-				<>
-					<span>
-						{ translate( 'Your paid plan includes a domain name' ) }{ ' ' }
-						<span className="launched__modal-upsell-content-highlight">
-							{ translate( 'free for one year' ) }
-						</span>{ ' ' }
-						{ translate( 'Choose one that’s easy to remember and even easier to share.' ) }
-					</span>
-				</>
+				<p>
+					{ translate(
+						'Your paid plan includes a domain name {{strong}}free for one year{{/strong}}. Choose one that’s easy to remember and even easier to share.',
+						{ components: { strong: <strong /> } }
+					) }
+				</p>
 			);
 			buttonText = translate( 'Claim your free domain' );
 			buttonHref = `/domains/add/${ site.slug }`;
 		} else if ( isPaidPlan && ! hasCustomDomain ) {
 			contentElement = (
-				<>
-					<span>
-						{ translate(
-							'Interested in a custom domain? It’s free for the first year when you switch to annual billing.'
-						) }
-					</span>
-				</>
+				<p>
+					{ translate(
+						'Interested in a custom domain? It’s free for the first year when you switch to annual billing.'
+					) }
+				</p>
 			);
 			buttonText = translate( 'Claim your domain' );
 			buttonHref = `/domains/add/${ site.slug }`;
