@@ -77,8 +77,6 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 		isEmailVerified
 	);
 
-	const state = useSelector( ( state ) => state );
-
 	const enhancedTasks: Task[] | null =
 		site &&
 		getEnhancedTasks(
@@ -90,8 +88,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 			goToStep,
 			flow,
 			isEmailVerified,
-			checklist_statuses,
-			state
+			checklist_statuses
 		);
 
 	const currentTask = getTasksProgress( enhancedTasks );

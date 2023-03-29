@@ -13,7 +13,6 @@ import { PLANS_LIST } from 'calypso/../packages/calypso-products/src/plans-list'
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isVideoPressFlow } from 'calypso/signup/utils';
-import { getConnectUrlForSiteId } from 'calypso/state/memberships/settings/selectors';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { launchpadFlowTasks } from './tasks';
 import { LaunchpadFlowTaskList, LaunchpadStatuses, Task } from './types';
@@ -28,8 +27,7 @@ export function getEnhancedTasks(
 	goToStep?: NavigationControls[ 'goToStep' ],
 	flow?: string | null,
 	isEmailVerified = false,
-	checklistStatuses: LaunchpadStatuses = {},
-	state?: object | null
+	checklistStatuses: LaunchpadStatuses = {}
 ) {
 	const enhancedTaskList: Task[] = [];
 	const productSlug = site?.plan?.product_slug;
@@ -355,15 +353,7 @@ export function getEnhancedTasks(
 						completed: stripeAccountConnected,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							const connectUrl = getConnectUrlForSiteId( state, site?.ID );
-							// The connectUrl might not be defined if it's
-							// already connected. In that case, we just redirect
-							// to the earn page to show correct status.
-							if ( ! connectUrl ) {
-								window.location.assign( `/earn/payments-plans/${ siteSlug }` );
-							} else {
-								window.location.assign( connectUrl );
-							}
+							window.location.assign( `/earn/payments/${ siteSlug }#launchpad` );
 						},
 					};
 					break;

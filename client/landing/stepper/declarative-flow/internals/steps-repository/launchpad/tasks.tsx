@@ -98,13 +98,11 @@ export const tasks: Task[] = [
 		id: 'stripe_account_connected',
 		completed: false,
 		disabled: false,
-		taskType: 'blog',
 	},
 	{
 		id: 'newsletter_plan_created',
 		completed: false,
 		disabled: false,
-		taskType: 'blog',
 	},
 ];
 
