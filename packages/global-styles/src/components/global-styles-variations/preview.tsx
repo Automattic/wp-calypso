@@ -50,10 +50,11 @@ const normalizedColorSwatchSize = 32;
 
 interface Props {
 	title?: string;
+	inlineCss?: string;
 	isFocused?: boolean;
 }
 
-const GlobalStylesVariationPreview = ( { title, isFocused }: Props ) => {
+const GlobalStylesVariationPreview = ( { title, inlineCss, isFocused }: Props ) => {
 	const [ fontWeight ] = useStyle( 'typography.fontWeight' );
 	const [ fontFamily = 'serif' ] = useStyle( 'typography.fontFamily' );
 	const [ headingFontFamily = fontFamily ] = useStyle( 'elements.h1.typography.fontFamily' );
@@ -84,6 +85,7 @@ const GlobalStylesVariationPreview = ( { title, isFocused }: Props ) => {
 		<GlobalStylesVariationContainer
 			width={ width }
 			height={ normalizedHeight * ratio }
+			inlineCss={ inlineCss }
 			containerResizeListener={ containerResizeListener }
 		>
 			<motion.div
