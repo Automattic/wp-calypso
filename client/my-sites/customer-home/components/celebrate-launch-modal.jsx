@@ -4,24 +4,22 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState, useRef } from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import Tooltip from 'calypso/components/tooltip';
-import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import { omitUrlParams } from 'calypso/lib/url';
 import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
 
 import './celebrate-launch-modal.scss';
 
-function CelebrateLaunchModal( { setModalIsOpen, site } ) {
+function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 	const translate = useTranslate();
 	const isPaidPlan = ! site?.plan?.is_free;
 	const isBilledYearly = site?.plan?.billing_period === 'Yearly';
-	const { data: allDomains = [], isFetching } = useGetDomainsQuery( site?.ID ?? null, {
-		retry: false,
-	} );
 
-	const domains = allDomains.map( createSiteDomainObject );
+	const transformedDomains = allDomains.map( createSiteDomainObject );
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 	const clipboardButtonEl = useRef( null );
-	const hasCustomDomain = Boolean( domains.find( ( domain ) => ! domain.isWPCOMDomain ) );
+	const hasCustomDomain = Boolean(
+		transformedDomains.find( ( domain ) => ! domain.isWPCOMDomain )
+	);
 
 	useEffect( () => {
 		// remove the celebrateLaunch URL param without reloading the page as soon as the modal loads
@@ -85,7 +83,8 @@ function CelebrateLaunchModal( { setModalIsOpen, site } ) {
 		return (
 			<div className="launched__modal-upsell">
 				<p className="launched__modal-upsell-content">{ contentElement }</p>
-				<Button disabled={ isFetching } isLarge isPrimary href={ buttonHref }>
+				{ /* <Button disabled={ isFetching } isLarge isPrimary href={ buttonHref }> */ }
+				<Button isLarge isPrimary href={ buttonHref }>
 					<span>{ buttonText }</span>
 				</Button>
 			</div>
