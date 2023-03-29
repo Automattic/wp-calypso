@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const IMAGE_URLS = [
 	'https://dotcompatterns.files.wordpress.com/2023/03/header-mountains.jpeg',
@@ -18,25 +18,30 @@ const IMAGE_URLS = [
  * Prefetches the images that can be bottleneck for the pattern rendering.
  */
 export const usePrefetchImage = () => {
-	const prefetchImage = ( url: string ) => {
+	const [ links, setLinks ] = useState< HTMLLinkElement[] >( [] );
+
+	const prefetchImage = ( url: string, links: HTMLLinkElement[] ) => {
 		const link = document.createElement( 'link' );
 		link.rel = 'prefetch';
 		link.as = 'image';
 		link.href = url;
 		document.head.appendChild( link );
+		setLinks( [ ...links, link ] );
 	};
 
-	const removeLinks = ( url: string ) => {
-		const link = document.querySelector( `link[href="${ url }"]` );
-		if ( link ) {
-			document.head.removeChild( link );
-		}
+	const removeLinks = ( link: HTMLLinkElement ) => {
+		document.head.removeChild( link );
 	};
 
 	useEffect( () => {
-		IMAGE_URLS.forEach( ( url ) => prefetchImage( url ) );
-		return () => {
-			IMAGE_URLS.forEach( ( url ) => removeLinks( url ) );
-		};
+		IMAGE_URLS.forEach( ( url ) => {
+			prefetchImage( url, links );
+		} );
 	}, [] );
+
+	useEffect( () => {
+		return () => {
+			links.forEach( ( link ) => removeLinks( link ) );
+		};
+	}, [ links ] );
 };
