@@ -3,11 +3,11 @@ import { mockDomainSuggestion } from '@automattic/domain-picker';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useContext, useState, useEffect } from 'react';
 import LaunchContext from '../context';
-import { LAUNCH_STORE, SITE_STORE, PLANS_STORE, DOMAIN_SUGGESTIONS_STORE } from '../stores';
+import { LAUNCH_STORE, SITE_STORE, PLANS_STORE } from '../stores';
 import { isDomainProduct } from '../utils';
 import { useSiteDomains } from './use-site-domains';
 import type { DomainProduct } from '../utils';
-import type { DomainSuggestionsSelect, LaunchSelect, PlansSelect } from '@automattic/data-stores';
+import type { LaunchSelect, PlansSelect } from '@automattic/data-stores';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 export function useDomainProductFromCart(): DomainProduct | undefined {
@@ -41,9 +41,7 @@ export function useDomainSuggestionFromCart(): DomainSuggestions.DomainSuggestio
 			if ( ! domainName ) {
 				return;
 			}
-			return ( select( DOMAIN_SUGGESTIONS_STORE ) as DomainSuggestionsSelect ).isAvailable(
-				domainName
-			);
+			return select( DomainSuggestions.store ).isAvailable( domainName );
 		},
 		[ domainName ]
 	);
