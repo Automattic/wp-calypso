@@ -63,7 +63,7 @@ const useSubscriptionManagerSiteSubscriptionsQuery = ( {
 	);
 
 	return {
-		data: data?.filter( filter || defaultFilter ).sort( sort || defaultSort ),
+		data: data?.filter( filter ).sort( sort ),
 		...rest,
 	};
 };
