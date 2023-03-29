@@ -376,8 +376,6 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 			<div className="plan-comparison-grid__billing-info">
 				<PlanFeatures2023GridBillingTimeframe
 					planName={ planName }
-					rawPrice={ rawPrice }
-					maybeDiscountedFullTermPrice={ planPropertiesObj.maybeDiscountedFullTermPrice }
 					annualPricePerMonth={ planPropertiesObj.annualPricePerMonth }
 					isMonthlyPlan={ planPropertiesObj.isMonthlyPlan }
 					billingTimeframe={ planConstantObj.getBillingTimeFrame() }

@@ -3,26 +3,24 @@ import {
 	isWpcomEnterpriseGridPlan,
 	PLAN_BIENNIAL_PERIOD,
 	PLAN_ANNUAL_PERIOD,
+	PlanSlug,
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
 import { localize, TranslateResult, useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import usePlanPrices from '../plans/hooks/use-plan-prices';
 
 interface Props {
 	planName: string;
 	billingTimeframe: TranslateResult;
 	billingPeriod: number | null | undefined;
-	rawPrice: number | null;
-	maybeDiscountedFullTermPrice: number | null;
 	annualPricePerMonth: number | null;
 	isMonthlyPlan: boolean;
 }
 
 function usePerMonthDescription( {
-	rawPrice,
-	maybeDiscountedFullTermPrice,
 	annualPricePerMonth,
 	isMonthlyPlan,
 	planName,
@@ -30,17 +28,23 @@ function usePerMonthDescription( {
 }: Omit< Props, 'billingTimeframe' > ) {
 	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
+	const planPrices = usePlanPrices( {
+		planSlug: planName as PlanSlug,
+		returnMonthly: isMonthlyPlan,
+	} );
 
 	if ( isWpComFreePlan( planName ) || isWpcomEnterpriseGridPlan( planName ) ) {
 		return null;
 	}
 
 	if ( isMonthlyPlan ) {
-		if ( null !== rawPrice && null !== annualPricePerMonth ) {
-			if ( annualPricePerMonth < rawPrice ) {
+		if ( null !== planPrices.rawPrice && null !== annualPricePerMonth ) {
+			if ( annualPricePerMonth < planPrices.rawPrice ) {
 				return translate( `Save %(discountRate)s%% by paying annually`, {
 					args: {
-						discountRate: Math.round( ( 100 * ( rawPrice - annualPricePerMonth ) ) / rawPrice ),
+						discountRate: Math.round(
+							( 100 * ( planPrices.rawPrice - annualPricePerMonth ) ) / planPrices.rawPrice
+						),
 					},
 				} );
 			}
@@ -48,9 +52,12 @@ function usePerMonthDescription( {
 	}
 
 	if ( ! isMonthlyPlan ) {
+		const maybeDiscountedFullTermPrice =
+			planPrices.planDiscountedRawPrice || planPrices.discountedRawPrice || planPrices.rawPrice;
+
 		const fullTermPriceText =
-			currencyCode && null !== maybeDiscountedFullTermPrice
-				? formatCurrency( maybeDiscountedFullTermPrice, currencyCode, { stripZeros: true } )
+			currencyCode && maybeDiscountedFullTermPrice
+				? formatCurrency( maybeDiscountedFullTermPrice, currencyCode )
 				: null;
 
 		if ( fullTermPriceText ) {

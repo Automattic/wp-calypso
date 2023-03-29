@@ -17,7 +17,6 @@ import {
 	PLAN_FREE,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	isPremiumPlan,
-	PLAN_BIENNIAL_PERIOD,
 	isWooExpressMediumPlan,
 	isWooExpressSmallPlan,
 	isWooExpressPlan,
@@ -533,15 +532,8 @@ export class PlanFeatures2023Grid extends Component<
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
 			.map( ( properties ) => {
-				const {
-					planConstantObj,
-					planName,
-					rawPrice,
-					maybeDiscountedFullTermPrice,
-					annualPricePerMonth,
-					isMonthlyPlan,
-					billingPeriod,
-				} = properties;
+				const { planConstantObj, planName, annualPricePerMonth, isMonthlyPlan, billingPeriod } =
+					properties;
 
 				const classes = classNames(
 					'plan-features-2023-grid__table-item',
@@ -551,8 +543,6 @@ export class PlanFeatures2023Grid extends Component<
 				return (
 					<Container className={ classes } isMobile={ options?.isMobile } key={ planName }>
 						<PlanFeatures2023GridBillingTimeframe
-							rawPrice={ rawPrice }
-							maybeDiscountedFullTermPrice={ maybeDiscountedFullTermPrice }
 							annualPricePerMonth={ annualPricePerMonth }
 							isMonthlyPlan={ isMonthlyPlan }
 							planName={ planName }
@@ -1124,11 +1114,6 @@ const ConnectedPlanFeatures2023Grid = connect(
 				);
 			}
 
-			const maybeDiscountedFullTermPrice =
-				null !== discountPrice
-					? discountPrice * ( PLAN_BIENNIAL_PERIOD === billingPeriod ? 24 : 12 )
-					: getPlanRawPrice( state, planProductId, false );
-
 			const tagline = planConstantObj.getPlanTagline?.() ?? '';
 			const product_name_short =
 				isWpcomEnterpriseGridPlan( plan ) && planConstantObj.getPathSlug
@@ -1159,7 +1144,6 @@ const ConnectedPlanFeatures2023Grid = connect(
 				product_name_short,
 				hideMonthly: false,
 				rawPrice,
-				maybeDiscountedFullTermPrice,
 				rawPriceForMonthlyPlan,
 				relatedMonthlyPlan,
 				annualPricePerMonth,
