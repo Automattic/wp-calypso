@@ -297,6 +297,13 @@ $font-family: "SF Pro Text", $sans;
 	}
 
 	/**
+	 * The header of the stepper framework
+	 */
+	.signup-header {
+		z-index: 10; // Increase the z-index to avoid the WordPress Logo being covered by the sidebar
+	}
+
+	/**
 	 * Gutenberg Components
 	 */
 	.components-divider {

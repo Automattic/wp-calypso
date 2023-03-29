@@ -9,4 +9,9 @@ export { useSubscriptionManagerUserSettingsMutation } from './mutations/use-subs
 export { useSubscriberEmailAddress } from './hooks';
 
 // Types
-export type { SubscriptionManagerUserSettings, EmailFormatType } from './types';
+export type {
+	DeliveryWindowDayType,
+	DeliveryWindowHourType,
+	EmailFormatType,
+	SubscriptionManagerUserSettings,
+} from './types';

@@ -2,7 +2,8 @@ import { Reader } from '@automattic/data-stores';
 import SubscriptionManager from '@automattic/subscription-manager';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import Settings from '../tab-views/settings';
+import { Settings } from '../tab-views';
+import { TabsSwitcher } from '../tabs-switcher';
 
 const SitesView = () => <span>Sites View</span>;
 const CommentsView = () => <span>Comments View</span>;
@@ -35,11 +36,7 @@ const SubscriptionManagementPage = () => {
 
 	return (
 		<SubscriptionManager>
-			<SubscriptionManager.TabsSwitcher
-				baseRoute="subscriptions"
-				defaultTab="sites"
-				tabs={ tabs }
-			/>
+			<TabsSwitcher baseRoute="subscriptions" tabs={ tabs } />
 		</SubscriptionManager>
 	);
 };

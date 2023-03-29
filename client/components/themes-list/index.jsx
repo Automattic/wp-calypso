@@ -91,19 +91,12 @@ export const ThemesList = ( props ) => {
 			) || [],
 		[ props.wpOrgThemes, props.searchTerm ]
 	);
+	const themes = useMemo(
+		() => [ ...props.themes, ...matchingWpOrgThemes ],
+		[ props.themes, matchingWpOrgThemes ]
+	);
 
-	if ( ! props.loading && props.themes.length === 0 ) {
-		if ( matchingWpOrgThemes.length ) {
-			return (
-				<>
-					<WPOrgMatchingThemes matchingThemes={ matchingWpOrgThemes } { ...props } />
-					{ isPatternAssemblerCTAEnabled && (
-						<PatternAssemblerCta onButtonClick={ goToSiteAssemblerFlow } />
-					) }
-				</>
-			);
-		}
-
+	if ( ! props.loading && themes.length === 0 ) {
 		return (
 			<Empty
 				isFSEActive={ props.isFSEActive }
@@ -125,14 +118,14 @@ export const ThemesList = ( props ) => {
 
 	return (
 		<div className="themes-list" ref={ themesListRef }>
-			{ props.themes.map( ( theme, index ) => (
+			{ themes.map( ( theme, index ) => (
 				<ThemeBlock key={ 'theme-block' + index } theme={ theme } index={ index } { ...props } />
 			) ) }
 			{ /* Don't show second upsell nudge when less than 6 rows are present.
 				 Second plan upsell at 7th row is implemented through CSS. */ }
 			{ showSecondUpsellNudge && SecondUpsellNudge }
 			{ /* The Pattern Assembler CTA will display on the 9th row and the behavior is controlled by CSS */ }
-			{ isPatternAssemblerCTAEnabled && props.themes.length > 0 && (
+			{ isPatternAssemblerCTAEnabled && themes.length > 0 && (
 				<PatternAssemblerCta onButtonClick={ goToSiteAssemblerFlow } />
 			) }
 			{ props.loading && <LoadingPlaceholders placeholderCount={ props.placeholderCount } /> }
@@ -378,36 +371,6 @@ function Empty( props ) {
 				upsellCardDisplayed={ props.upsellCardDisplayed }
 			/>
 		</>
-	);
-}
-
-function WPOrgMatchingThemes( props ) {
-	const { matchingThemes } = props;
-
-	const onWPOrgCardClick = useCallback(
-		( theme ) => {
-			props.recordTracksEvent( 'calypso_themeshowcase_search_empty_wp_org_card_click', {
-				site_plan: props.selectedSite?.plan?.product_slug,
-				theme_id: theme?.id,
-			} );
-		},
-		[ props.recordTracksEvent, props.selectedSite ]
-	);
-
-	return (
-		<div className="themes-list">
-			{ matchingThemes.map( ( theme, index ) => (
-				<div
-					onClick={ () => onWPOrgCardClick( theme ) }
-					key={ 'theme-block' + index }
-					role="button"
-					tabIndex={ 0 }
-					onKeyUp={ () => onWPOrgCardClick( theme ) }
-				>
-					<ThemeBlock theme={ theme } index={ index } { ...props } />
-				</div>
-			) ) }
-		</div>
 	);
 }
 

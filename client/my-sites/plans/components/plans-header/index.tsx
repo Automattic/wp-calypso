@@ -1,11 +1,4 @@
-import {
-	is2023PricingGridEnabled,
-	PLAN_ECOMMERCE_TRIAL_MONTHLY,
-	PLAN_WOOEXPRESS_SMALL,
-	PLAN_WOOEXPRESS_SMALL_MONTHLY,
-	PLAN_WOOEXPRESS_MEDIUM,
-	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
-} from '@automattic/calypso-products';
+import { is2023PricingGridEnabled } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { useDispatch } from '@wordpress/data';
@@ -65,21 +58,13 @@ const DomainUpsellHeader: React.FunctionComponent = () => {
 
 const PlansHeader: React.FunctionComponent< {
 	domainFromHomeUpsellFlow?: string;
-	currentPlanSlug?: string;
-} > = ( { domainFromHomeUpsellFlow, currentPlanSlug = '' } ) => {
-	const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
-	const isWooExpressPlan = [
-		PLAN_WOOEXPRESS_MEDIUM,
-		PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
-		PLAN_WOOEXPRESS_SMALL,
-		PLAN_WOOEXPRESS_SMALL_MONTHLY,
-	].includes( currentPlanSlug );
-
+	subHeaderText?: string;
+} > = ( { domainFromHomeUpsellFlow, subHeaderText } ) => {
 	const translate = useTranslate();
 	const plansDescription =
-		isEcommerceTrial || isWooExpressPlan
-			? translate( "Discover what's available in your Woo Express plan." )
-			: translate( 'See and compare the features available on each WordPress.com plan.' );
+		subHeaderText ??
+		translate( 'See and compare the features available on each WordPress.com plan.' );
+
 	if ( domainFromHomeUpsellFlow ) {
 		return <DomainUpsellHeader />;
 	}

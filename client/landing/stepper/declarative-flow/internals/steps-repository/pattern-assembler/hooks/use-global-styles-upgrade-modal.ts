@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { urlToSlug } from 'calypso/lib/url';
 import { useSite } from '../../../../../hooks/use-site';
 import { useSiteSlugParam } from '../../../../../hooks/use-site-slug-param';
+import { PATTERN_ASSEMBLER_EVENTS } from '../events';
 
 interface Props {
 	recordTracksEvent: ( eventName: string, eventProps?: { [ key: string ]: unknown } ) => void;
@@ -15,21 +16,17 @@ const useGlobalStylesUpgradeModal = ( { recordTracksEvent, onSubmit }: Props ) =
 	const siteUrl = siteSlug || urlToSlug( site?.URL || '' ) || '';
 
 	const openModal = () => {
-		recordTracksEvent( 'calypso_signup_pattern_assembler_global_styles_gating_modal_show' );
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.GLOBAL_STYLES_GATING_MODAL_SHOW );
 		setIsOpen( true );
 	};
 
 	const closeModal = () => {
-		recordTracksEvent(
-			'calypso_signup_pattern_assembler_global_styles_gating_modal_close_button_click'
-		);
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.GLOBAL_STYLES_GATING_MODAL_CLOSE_BUTTON_CLICK );
 		setIsOpen( false );
 	};
 
 	const checkout = () => {
-		recordTracksEvent(
-			'calypso_signup_pattern_assembler_global_styles_gating_modal_checkout_button_click'
-		);
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.GLOBAL_STYLES_GATING_MODAL_CHECKOUT_BUTTON_CLICK );
 
 		// When the user is done with checkout, send them back to the current url
 		const destUrl = new URL( window.location.href );
@@ -44,10 +41,7 @@ const useGlobalStylesUpgradeModal = ( { recordTracksEvent, onSubmit }: Props ) =
 	};
 
 	const tryStyle = () => {
-		recordTracksEvent(
-			'calypso_signup_pattern_assembler_global_styles_gating_modal_try_button_click'
-		);
-
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.GLOBAL_STYLES_GATING_MODAL_TRY_BUTTON_CLICK );
 		onSubmit();
 	};
 

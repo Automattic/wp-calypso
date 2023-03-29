@@ -1890,6 +1890,7 @@ __metadata:
     "@wordpress/nux": ^5.20.0
     "@wordpress/plugins": ^4.20.0
     "@wordpress/primitives": ^3.20.0
+    "@wordpress/private-apis": ^0.9.0
     "@wordpress/react-i18n": ^3.20.0
     "@wordpress/readable-js-assets-webpack-plugin": ^2.5.0
     "@wordpress/rich-text": ^5.20.0

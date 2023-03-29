@@ -1,3 +1,12 @@
 .site-logs-toolbar {
+	display: flex;
+	gap: 16px;
 	padding-bottom: 16px;
+}
+
+.site-logs-toolbar__download-progress {
+	display: flex;
+	align-items: center;
+	color: var(--color-neutral-50);
+	font-size: 0.875rem;
 }
