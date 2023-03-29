@@ -175,7 +175,6 @@ describe( 'Purchase Management Buttons', () => {
 			domain: 'siteless.akismet.com',
 			product_id: 2311, // Akismet Plus Plan
 			product_slug: 'ak_plus_yearly_1',
-			product_type: 'akismet',
 			auto_renew: 0,
 		} );
 
