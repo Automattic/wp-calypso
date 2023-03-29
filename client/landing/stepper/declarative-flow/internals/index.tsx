@@ -85,8 +85,8 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		} );
 
 		const _path = path.includes( '?' ) // does path contain search params
-			? generatePath( `/${ flow.name }/${ path }` )
-			: generatePath( `/${ flow.name }/${ path }${ search }` );
+			? generatePath( `/${ flow.variantSlug ?? flow.name }/${ path }` )
+			: generatePath( `/${ flow.variantSlug ?? flow.name }/${ path }${ search }` );
 
 		history.push( _path, stepPaths );
 		setPreviousProgress( stepProgress?.progress ?? 0 );
@@ -145,7 +145,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 			<step.component
 				navigation={ stepNavigation }
 				flow={ flow.name }
-				flowExtends={ flow.extends }
+				variantSlug={ flow.variantSlug }
 				stepName={ step.slug }
 				data={ stepData }
 			/>
@@ -180,11 +180,11 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 			<Switch>
 				{ flowSteps.map( ( step ) => {
 					return (
-						<Route key={ step.slug } path={ `/${ flow.name }/${ step.slug }` }>
+						<Route key={ step.slug } path={ `/${ flow.variantSlug ?? flow.name }/${ step.slug }` }>
 							<div
 								className={ classnames(
 									flow.name,
-									flow.extends,
+									flow.variantSlug,
 									flow.classnames,
 									kebabCase( step.slug )
 								) }
@@ -210,7 +210,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 					);
 				} ) }
 				<Route>
-					<Redirect to={ `/${ flow.name }/${ stepPaths[ 0 ] }${ search }` } />
+					<Redirect to={ `/${ flow.variantSlug ?? flow.name }/${ stepPaths[ 0 ] }${ search }` } />
 				</Route>
 			</Switch>
 		</Suspense>
