@@ -3,7 +3,7 @@ import { callApi } from '../helpers';
 import { useIsLoggedIn, useIsQueryEnabled } from '../hooks';
 import type { SubscriptionManagerUserSettings, EmailSettingsAPIResponse } from '../types';
 
-const useSubscriptionManagerUserSettingsQuery = () => {
+const useUserSettingsQuery = () => {
 	const isLoggedIn = useIsLoggedIn();
 	const enabled = useIsQueryEnabled();
 	return useQuery< SubscriptionManagerUserSettings >(
@@ -22,4 +22,4 @@ const useSubscriptionManagerUserSettingsQuery = () => {
 	);
 };
 
-export default useSubscriptionManagerUserSettingsQuery;
+export default useUserSettingsQuery;
