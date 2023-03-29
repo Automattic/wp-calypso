@@ -3,9 +3,9 @@ import SubscriptionManager from '@automattic/subscription-manager';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { Settings } from '../tab-views';
+import Sites from '../tab-views/sites';
 import { TabsSwitcher } from '../tabs-switcher';
 
-const SitesView = () => <span>Sites View</span>;
 const CommentsView = () => <span>Comments View</span>;
 
 const SubscriptionManagementPage = () => {
@@ -16,7 +16,7 @@ const SubscriptionManagementPage = () => {
 			{
 				label: translate( 'Sites' ),
 				path: 'sites',
-				view: SitesView,
+				view: Sites,
 				count: counts?.blogs || undefined,
 			},
 			{
