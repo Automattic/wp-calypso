@@ -1,5 +1,5 @@
 import { Button, Card, FormInputValidation, ProgressBar } from '@automattic/components';
-import { localize, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import CardHeading from 'calypso/components/card-heading';
@@ -391,4 +391,4 @@ export const WebServerLogsCard = () => {
 	);
 };
 
-export default localize( WebServerLogsCard );
+export default WebServerLogsCard;
