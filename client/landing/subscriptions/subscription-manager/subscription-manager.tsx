@@ -7,10 +7,10 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import { useSubheaderText } from '../hooks';
 import { Settings } from '../tab-views';
+import Sites from '../tab-views/sites';
 import { TabsSwitcher } from '../tabs-switcher';
 import './styles.scss';
 
-const SitesView = () => <span>Sites View</span>;
 const CommentsView = () => <span>Comments View</span>;
 
 const SubscriptionManagementPage = () => {
@@ -21,7 +21,7 @@ const SubscriptionManagementPage = () => {
 			{
 				label: translate( 'Sites' ),
 				path: 'sites',
-				view: SitesView,
+				view: Sites,
 				count: counts?.blogs || undefined,
 			},
 			{
