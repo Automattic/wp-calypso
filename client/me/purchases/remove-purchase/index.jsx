@@ -24,7 +24,7 @@ import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-pur
 import PrecancellationChatButton from 'calypso/components/marketing-survey/cancel-purchase-form/precancellation-chat-button';
 import GSuiteCancellationPurchaseDialog from 'calypso/components/marketing-survey/gsuite-cancel-purchase-dialog';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
-import { getName, isRemovable, isSiteless } from 'calypso/lib/purchases';
+import { getName, isRemovable } from 'calypso/lib/purchases';
 import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
 import WordAdsEligibilityWarningDialog from 'calypso/me/purchases/wordads-eligibility-warning-dialog';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -41,9 +41,8 @@ import { setAllSitesSelected } from 'calypso/state/ui/actions';
 import { MarketPlaceSubscriptionsDialog } from '../marketplace-subscriptions-dialog';
 import { purchasesRoot } from '../paths';
 import { PreCancellationDialog } from '../pre-cancellation-dialog';
-import { isDataLoading } from '../utils';
+import { isDataLoading, isAkismetTemporarySitePurchase } from '../utils';
 import RemoveDomainDialog from './remove-domain-dialog';
-
 import './style.scss';
 
 class RemovePurchase extends Component {
@@ -200,7 +199,7 @@ class RemovePurchase extends Component {
 			components: { siteName: <em>{ purchase.domain }</em> },
 		} );
 
-		if ( isSiteless( purchase ) ) {
+		if ( isAkismetTemporarySitePurchase( purchase ) ) {
 			successMessage = translate( '%(productName)s was removed from your account.', {
 				args: { productName },
 			} );
