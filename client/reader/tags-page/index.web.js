@@ -1,6 +1,6 @@
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { tagsListing } from './controller';
+import { tagsListing, fetchTrendingTags } from './controller';
 
 export default function ( router ) {
-	router( '/tags', tagsListing, makeLayout, clientRender );
+	router( '/tags', fetchTrendingTags, tagsListing, makeLayout, clientRender );
 }

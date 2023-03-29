@@ -1,41 +1,21 @@
-import { useQuery } from 'react-query';
-import wpcom from 'calypso/lib/wp';
+import { TagResult } from './controller';
 
-interface TagData {
-	tags: TagResult[];
-}
-interface TagResult {
-	count: number;
-	tag: Tag;
-}
-interface Tag {
-	slug: string;
-	title: string;
+interface Props {
+	trendingTags: TagResult[];
 }
 
-export default function TrendingTags() {
-	const query = {
-		staleTime: 86400000, // 1 day
-		select: ( data: TagData ) => {
-			const tagRows: TagResult[][] = [];
-			if ( ! data || ! data.tags ) {
-				return tagRows;
-			}
-			// put the data into a format that can easily be rendered as a two column table.
-			for ( let i = 0; i < data.tags.length; i += 2 ) {
-				const tagOne = data.tags[ i ];
-				const tagTwo = data.tags[ i + 1 ];
-				tagRows.push( [ tagOne, tagTwo ] );
-			}
-			return tagRows;
-		},
-	};
+export default function TrendingTags( { trendingTags }: Props ) {
+	if ( ! trendingTags ) {
+		return null;
+	}
 
-	const tagsResponse = useQuery(
-		[ 'trending-tags' ],
-		() => wpcom.req.get( `/read/trending/tags`, { count: '6', apiVersion: '1.2' } ),
-		query
-	);
+	// put the data into a format that can easily be rendered as a two column table.
+	const tagRows: TagResult[][] = [];
+	for ( let i = 0; i < trendingTags.length; i += 2 ) {
+		const tagOne = trendingTags[ i ];
+		const tagTwo = trendingTags[ i + 1 ];
+		tagRows.push( [ tagOne, tagTwo ] );
+	}
 
 	const toTitleCase = ( text: string ) => {
 		return text.toLowerCase().replace( /(^|\s)\S/g, function ( firstLetter: string ) {
@@ -63,13 +43,12 @@ export default function TrendingTags() {
 
 	return (
 		<div>
-			{ tagsResponse.status === 'success' &&
-				tagsResponse.data?.map( ( tagRow: TagResult[], index ) => (
-					<div className="trending-tags__row" key={ 'tags-row-' + index }>
-						{ renderTagRow( tagRow[ 0 ] ) }
-						{ tagRow[ 1 ] && renderTagRow( tagRow[ 1 ] ) }
-					</div>
-				) ) }
+			{ tagRows.map( ( tagRow: TagResult[], index ) => (
+				<div className="trending-tags__row" key={ 'tags-row-' + index }>
+					{ renderTagRow( tagRow[ 0 ] ) }
+					{ tagRow[ 1 ] && renderTagRow( tagRow[ 1 ] ) }
+				</div>
+			) ) }
 		</div>
 	);
 }
