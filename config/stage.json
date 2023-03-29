@@ -16,7 +16,6 @@
 	"features": {
 		"ad-tracking": false,
 		"akismet/siteless-checkout": false,
-		"block-editor/non-iframed": true,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
