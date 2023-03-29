@@ -1,5 +1,4 @@
 // import { subscribeIsDesktop } from '@automattic/viewport';
-import { useLocale } from '@automattic/i18n-utils';
 import { getPlan, PLAN_FREE, is2023PricingGridActivePage } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
@@ -40,8 +39,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const { setPlanCartItem } = useDispatch( ONBOARD_STORE );
 
 	const site = useSite();
-	const { __, hasTranslation } = useI18n();
-	const locale = useLocale();
+	const { __ } = useI18n();
 
 	const isDesktop = useDesktopBreakpoint();
 	const stepName = 'plans';
@@ -140,9 +138,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		}
 
 		if ( flowName === NEWSLETTER_FLOW ) {
-			return locale === 'en' || hasTranslation?.( `There's a plan for you.` )
-				? __( `There's a plan for you.` )
-				: __( 'Choose a plan' );
+			return __( `There's a plan for you.` );
 		}
 
 		if ( isDesktop ) {

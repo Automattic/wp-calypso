@@ -1,4 +1,3 @@
-import { useLocale } from '@automattic/i18n-utils';
 import {
 	NEWSLETTER_FLOW,
 	ECOMMERCE_FLOW,
@@ -17,8 +16,7 @@ import type { Step } from '../../types';
 import './styles.scss';
 
 const useIntroContent = ( flowName: string | null ): IntroContent => {
-	const { __, hasTranslation } = useI18n();
-	const locale = useLocale();
+	const { __ } = useI18n();
 
 	return useMemo( () => {
 		if ( isLinkInBioFlow( flowName ) ) {
@@ -42,25 +40,11 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 
 		if ( flowName === NEWSLETTER_FLOW ) {
 			return {
-				title:
-					locale === 'en' || hasTranslation?.( 'The Newsletter. Elevated.' )
-						? __( 'The Newsletter. Elevated.' )
-						: __( 'Sign in. Set up. Send out.' ),
-				text:
-					locale === 'en' ||
-					hasTranslation?.(
-						'Unlimited subscribers. Beautiful design. And everything you need to grow your audience. Powered by WordPress.com.'
-					)
-						? __(
-								'Unlimited subscribers. Beautiful design. And everything you need to grow your audience. Powered by WordPress.com.'
-						  )
-						: __(
-								`You’re a few steps away from launching a beautiful Newsletter with everything you’ll ever need to grow your audience.`
-						  ),
-				buttonText:
-					locale === 'en' || hasTranslation?.( 'Launch your Newsletter' )
-						? __( 'Launch your Newsletter' )
-						: __( 'Start building your Newsletter' ),
+				title: __( 'The Newsletter. Elevated.' ),
+				text: __(
+					'Unlimited subscribers. Beautiful design. And everything you need to grow your audience. Powered by WordPress.com.'
+				),
+				buttonText: __( 'Launch your Newsletter' ),
 			};
 		}
 
@@ -96,7 +80,7 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 			),
 			buttonText: __( 'Get started' ),
 		};
-	}, [ flowName, __, hasTranslation, locale ] );
+	}, [ flowName, __ ] );
 };
 
 const Intro: Step = function Intro( { navigation, flow } ) {

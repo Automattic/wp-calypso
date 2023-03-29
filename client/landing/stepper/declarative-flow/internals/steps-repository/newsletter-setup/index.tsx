@@ -1,8 +1,5 @@
-import { useLocale } from '@automattic/i18n-utils';
 import { hexToRgb, StepContainer, base64ImageToBlob } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { createInterpolateElement } from '@wordpress/element';
-import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import { FormEvent, useEffect, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -24,37 +21,17 @@ export const defaultAccentColor = {
 const NewsletterSetup: Step = ( { navigation } ) => {
 	const { submit } = navigation;
 	const translate = useTranslate();
-	const { hasTranslation } = useI18n();
-	const locale = useLocale();
 	const site = useSite();
 
 	const newsletterFormText = {
-		titleLabel:
-			locale === 'en' || hasTranslation?.( 'Give your blog a name' )
-				? translate( 'Give your blog a name' )
-				: '',
-		titlePlaceholder:
-			locale === 'en' || hasTranslation?.( 'Open Me Carefully' )
-				? translate( 'Open Me Carefully' )
-				: translate( 'My newsletter' ),
+		titleLabel: translate( 'Give your blog a name' ),
+		titlePlaceholder: translate( 'Open Me Carefully' ),
 		titleMissing: translate( `Oops. Looks like your Newsletter doesn't have a name yet.` ),
-		taglineLabel:
-			locale === 'en' || hasTranslation?.( 'Add a brief description' )
-				? translate( 'Add a brief description' )
-				: '',
-		taglinePlaceholder:
-			locale === 'en' || hasTranslation?.( `Letters from Emily Dickinson's garden` )
-				? translate( `Letters from Emily Dickinson's garden` )
-				: translate( 'Describe your Newsletter in a line or two' ),
+		taglineLabel: translate( 'Add a brief description' ),
+		taglinePlaceholder: translate( `Letters from Emily Dickinson's garden` ),
 		iconPlaceholder: translate( 'Add a site icon' ),
-		colorLabel:
-			locale === 'en' || hasTranslation?.( 'Favorite color' )
-				? translate( 'Favorite color' )
-				: translate( 'Brand color' ),
-		buttonText:
-			locale === 'en' || hasTranslation?.( 'Save and continue' )
-				? translate( 'Save and continue' )
-				: translate( 'Continue' ),
+		colorLabel: translate( 'Favorite color' ),
+		buttonText: translate( 'Save and continue' ),
 	};
 
 	const { setSiteTitle, setSiteAccentColor, setSiteDescription, setSiteLogo } =
@@ -123,22 +100,10 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 			formattedHeader={
 				<FormattedHeader
 					id="newsletter-setup-header"
-					headerText={
-						hasTranslation( 'Make it yours.' ) || locale === 'en'
-							? translate( 'Make it yours.' )
-							: createInterpolateElement( translate( 'Personalize your<br />Newsletter' ), {
-									br: <br />,
-							  } )
-					}
-					subHeaderText={
-						( hasTranslation(
-							'Personalize your newsletter with a name, description, and accent color that sets it apart.'
-						) ||
-							locale === 'en' ) &&
-						translate(
-							'Personalize your newsletter with a name, description, and accent color that sets it apart.'
-						)
-					}
+					headerText={ translate( 'Make it yours.' ) }
+					subHeaderText={ translate(
+						'Personalize your newsletter with a name, description, and accent color that sets it apart.'
+					) }
 					align="center"
 				/>
 			}

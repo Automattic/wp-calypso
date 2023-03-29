@@ -1,4 +1,3 @@
-import { useLocale } from '@automattic/i18n-utils';
 import {
 	NEWSLETTER_FLOW,
 	LINK_IN_BIO_FLOW,
@@ -18,8 +17,7 @@ import './style.scss';
 const DURATION_IN_MS = 6000;
 
 const useSteps = ( flowName: string ) => {
-	const { __, hasTranslation } = useI18n();
-	const locale = useLocale();
+	const { __ } = useI18n();
 	let steps = [];
 
 	switch ( flowName ) {
@@ -35,22 +33,16 @@ const useSteps = ( flowName: string ) => {
 			steps = [
 				{ title: __( 'Excellent choices. Nearly there!' ) },
 				{
-					title:
-						locale === 'en' || hasTranslation?.( 'Spreading the news' )
-							? __( 'Spreading the news' )
-							: __( 'Smoothing down the stationery' ),
+					title: __( 'Spreading the news' ),
 				},
 				{
-					title:
-						locale === 'en' || hasTranslation?.( 'Folding the letters' )
-							? __( 'Folding the letters' )
-							: __( 'Embossing all the envelopes' ),
+					title: __( 'Folding the letters' ),
+				},
+				{
+					title: __( 'Bringing the news to the letter' ),
 				},
 			];
 
-			if ( locale === 'en' || hasTranslation?.( 'Bringing the news to the letter' ) ) {
-				steps.push( { title: __( 'Bringing the news to the letter' ) } );
-			}
 			break;
 		default:
 			steps = [
