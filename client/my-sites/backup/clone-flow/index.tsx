@@ -22,6 +22,7 @@ import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
 import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
 import getInProgressRewindStatus from 'calypso/state/selectors/get-in-progress-rewind-status';
+import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import getRestoreProgress from 'calypso/state/selectors/get-restore-progress';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
@@ -90,6 +91,22 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	} );
 
 	const rewindState = useSelector( ( state ) => getRewindState( state, siteId ) ) as RewindState;
+	const cloneRoleCredentials = useSelector( ( state ) => {
+		return getJetpackCredentials( state, siteId, cloneDestination );
+	} );
+	const getUrlFromCreds = () => {
+		if ( ! cloneRoleCredentials ) {
+			return '';
+		}
+		if ( cloneRoleCredentials.baseUrl ) {
+			return cloneRoleCredentials.baseUrl;
+		}
+		if ( cloneRoleCredentials.site_url ) {
+			return cloneRoleCredentials.site_url;
+		}
+		return '';
+	};
+
 	const inProgressRewindStatus = useSelector( ( state ) => {
 		return getInProgressRewindStatus( state, siteId, backupPeriod );
 	} );
@@ -118,11 +135,11 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 
 	// Takes a destination as a vault role or blog id
 	const onSetDestination = useCallback(
-		( destination: string ) => {
+		( role: string ) => {
 			// TODO: At the moment this is just 'alternate'
 			// but we should also save the URL for alternate creds as we'll use it in the confirm
 			// screen and also the View Website link after Clone
-			setCloneDestination( destination );
+			setCloneDestination( role );
 			setUserHasSetDestination( true );
 		},
 		[ setUserHasSetDestination, setCloneDestination ]
@@ -198,7 +215,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 					'Before continue, be aware that any current content on {{strong}}%(destinationUrl)s{{/strong}} will be overriden based on what you configured to copy.',
 					{
 						args: {
-							destinationUrl: cloneDestination,
+							destinationUrl: getUrlFromCreds(),
 						},
 						components: {
 							strong: <strong />,
@@ -232,26 +249,17 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 			<h3 className="clone-flow__title">{ translate( 'Copy site' ) }</h3>
 			<p className="clone-flow__info">
 				{ translate(
-					'{{strong}}%(backupDisplayDate)s{{/strong}} is the selected point for your copy.',
+					'{{strong}}%(backupDisplayDate)s{{/strong}} is the selected point you are copying to {{strong}}%(destinationUrl)s{{/strong}}.',
 					{
 						args: {
 							backupDisplayDate,
+							destinationUrl: getUrlFromCreds(),
 						},
 						components: {
 							strong: <strong />,
 						},
 					}
 				) }
-			</p>
-			<p className="clone-flow__info">
-				{ translate( '{{strong}}%(destinationUrl)s{{/strong}} is URL you are copying to.', {
-					args: {
-						destinationUrl: cloneDestination,
-					},
-					components: {
-						strong: <strong />,
-					},
-				} ) }
 			</p>
 			<h4 className="clone-flow__cta">{ translate( 'Choose the items you wish to restore:' ) }</h4>
 			<RewindConfigEditor currentConfig={ rewindConfig } onConfigChange={ setRewindConfig } />
@@ -348,7 +356,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 					}
 				) }
 			</p>
-			<Button primary href={ cloneDestination } className="clone-flow__primary-button">
+			<Button primary href={ getUrlFromCreds() } className="clone-flow__primary-button">
 				{ translate( 'View your website' ) }
 			</Button>
 		</>

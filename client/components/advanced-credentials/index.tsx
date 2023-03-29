@@ -157,7 +157,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( {
 			return Step.HostSelection;
 		}
 		return Step.Credentials;
-	}, [ action, formSubmissionStatus, host, statusState ] );
+	}, [ action, formSubmissionStatus, host, isAtomic, statusState ] );
 
 	// suppress the step progress until we are disconnected
 	useEffect( () => {
@@ -357,6 +357,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( {
 							} );
 						} }
 						redirectOnFinish={ redirectOnFinish }
+						targetSite={ formState.site_url ?? null }
 					/>
 				);
 			case Step.Connected:

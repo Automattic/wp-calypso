@@ -17,6 +17,7 @@ interface Props {
 	onFinishUp: () => void;
 	onReview: () => void;
 	redirectOnFinish?: boolean;
+	targetSite: null | string;
 }
 
 const ERROR_CODES_FOR_BLOCKED_REQUEST = [ 'service_unavailable', 'invalid_credentials' ];
@@ -71,6 +72,7 @@ const Verification: FunctionComponent< Props > = ( {
 	onFinishUp,
 	onReview,
 	redirectOnFinish = true,
+	targetSite = null,
 } ) => {
 	const translate = useTranslate();
 
@@ -102,9 +104,9 @@ const Verification: FunctionComponent< Props > = ( {
 		<div>
 			<div className="verification__title">
 				<h3>
-					{ translate( 'Establishing a connection to {{strong}}%(siteSlug)s{{/strong}}.', {
+					{ translate( 'Establishing a connection to {{strong}}%(targetSite)s{{/strong}}.', {
 						args: {
-							siteSlug,
+							targetSite: targetSite ? targetSite : siteSlug,
 						},
 						components: {
 							strong: <strong />,
