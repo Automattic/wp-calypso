@@ -75,7 +75,6 @@ const CloneButton = ( { disabled, rewindId, primary, onClickClone } ) => {
 	const translate = useTranslate();
 
 	const siteId = useSelector( getSelectedSiteId );
-
 	const isRestoreInProgress = useSelector( ( state ) => getIsRestoreInProgress( state, siteId ) );
 	const isCloneDisabled = disabled || isRestoreInProgress; // TODO check if there is valid alternate credentials?
 
@@ -84,7 +83,7 @@ const CloneButton = ( { disabled, rewindId, primary, onClickClone } ) => {
 			isPrimary={ primary }
 			className="daily-backup-status__clone-button"
 			disabled={ isCloneDisabled }
-			onClick={ onClickClone( rewindId ) }
+			onClick={ () => onClickClone( rewindId ) }
 		>
 			{ translate( 'Clone from latest point' ) }
 		</Button>
