@@ -76,11 +76,13 @@ const PrePurchaseNotices = () => {
 		return products.filter( ( p ) => ! p.expired );
 	} );
 
-	const akismetProductSlugThatOverlapsCartProduct = useMemo( () => {
+	const akismetPurchaseThatOverlapsCartProduct = useMemo( () => {
 		const productSlugInCart = cartItemSlugs.find( ( productSlug ) =>
 			isAkismetProduct( { productSlug } )
 		);
-		const akismetPurchases = userActivePurchases.filter( isAkismetProduct );
+		const akismetPurchases = userActivePurchases.filter(
+			( purchase ) => isAkismetProduct( purchase ) && 'siteless.akismet.com' === purchase.domain
+		);
 
 		// Continue only if the cart includes Akismet product
 		if ( ! productSlugInCart ) {
@@ -89,16 +91,15 @@ const PrePurchaseNotices = () => {
 
 		const lowerTierProducts = akismetPurchases.filter(
 			( { productSlug } ) =>
-				AKISMET_PRODUCTS_LIST.indexOf( productSlug ) -
-					AKISMET_PRODUCTS_LIST.indexOf( productSlugInCart ) <
-				0
+				AKISMET_PRODUCTS_LIST.indexOf( productSlugInCart ) >
+				AKISMET_PRODUCTS_LIST.indexOf( productSlug )
 		);
 
 		if ( lowerTierProducts.length === 0 ) {
 			return null;
 		}
 
-		return lowerTierProducts[ 0 ].productSlug;
+		return lowerTierProducts[ 0 ];
 	}, [ cartItemSlugs, userActivePurchases ] );
 
 	const siteProductThatOverlapsCartPlan = useMemo( () => {
@@ -163,13 +164,10 @@ const PrePurchaseNotices = () => {
 		);
 	} );
 
-	if ( akismetProductSlugThatOverlapsCartProduct ) {
+	if ( akismetPurchaseThatOverlapsCartProduct ) {
 		return (
 			<AkismetProductOverlapsOwnedProductNotice
-				overlapingProductSlug={ akismetProductSlugThatOverlapsCartProduct }
-				cartProductSlug={ cartItemSlugs.find( ( productSlug ) =>
-					isAkismetProduct( { productSlug } )
-				) }
+				purchase={ akismetPurchaseThatOverlapsCartProduct }
 			/>
 		);
 	}
