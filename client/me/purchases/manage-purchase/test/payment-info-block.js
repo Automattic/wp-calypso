@@ -315,7 +315,7 @@ describe( 'PaymentInfoBlock', () => {
 				() => {
 					const mockBackupCard = {
 						added: '',
-						card: '1234',
+						card_last_4: '1234',
 						card_type: 'visa',
 						email: '',
 						expiry: '11/24',
@@ -327,7 +327,7 @@ describe( 'PaymentInfoBlock', () => {
 						remember: 'yes',
 						stored_details_id: 'mock-stored-id',
 						user_id: 'mock-user-id',
-						meta: [ { meta_key: 'is_backup', meta_value: 'backup' } ],
+						is_backup: true,
 					};
 					render( <PaymentInfoBlock purchase={ purchase } cards={ [ mockBackupCard ] } /> );
 					if ( autoRenewStatus === 'enabled' ) {
@@ -345,7 +345,7 @@ describe( 'PaymentInfoBlock', () => {
 			it( 'does not render the backup method warning if there is no backup available', () => {
 				const mockNonBackupCard = {
 					added: '',
-					card: '1234',
+					card_last_4: '1234',
 					card_type: 'visa',
 					email: '',
 					expiry: '11/24',

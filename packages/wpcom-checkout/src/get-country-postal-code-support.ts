@@ -22,7 +22,9 @@ export function getCountryPostalCodeSupport(
 		return false;
 	}
 	const countryListItem = countries.find(
-		( country ) => country.code === countryCode.toUpperCase()
+		( country ) =>
+			country.code === countryCode.toUpperCase() ||
+			( country.vat_supported && country.tax_country_codes.includes( countryCode.toUpperCase() ) )
 	);
 	if ( ! countryListItem ) {
 		// eslint-disable-next-line no-console

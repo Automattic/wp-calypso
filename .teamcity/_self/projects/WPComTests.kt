@@ -244,7 +244,7 @@ private object I18NTests : E2EBuildType(
 		notifications {
 			notifierSettings = slackNotifier {
 				connection = "PROJECT_EXT_11"
-				sendTo = "#i18n-bots"
+				sendTo = "#i18n-devs"
 				messageFormat = simpleMessageFormat()
 			}
 			branchFilter = "trunk"

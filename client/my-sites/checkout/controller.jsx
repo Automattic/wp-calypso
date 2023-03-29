@@ -55,7 +55,7 @@ export function checkoutAkismetSiteless( context, next ) {
 function sitelessCheckout( context, next, extraProps ) {
 	const state = context.store.getState();
 	const isLoggedOut = ! isUserLoggedIn( state );
-	const { productSlug: product } = context.params;
+	const { productSlug: product, purchaseId } = context.params;
 	const isUserComingFromLoginForm = context.query?.flow === 'coming_from_login';
 
 	setSectionMiddleware( { name: 'checkout' } )( context );
@@ -73,6 +73,7 @@ function sitelessCheckout( context, next, extraProps ) {
 			<CheckoutSitelessDocumentTitle />
 
 			<CheckoutMainWrapper
+				purchaseId={ purchaseId }
 				productAliasFromUrl={ product }
 				productSourceFromUrl={ context.query.source }
 				couponCode={ couponCode }

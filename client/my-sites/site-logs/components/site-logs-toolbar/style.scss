@@ -1,0 +1,35 @@
+.site-logs-toolbar {
+	display: flex;
+	align-items: stretch;
+	padding-bottom: 16px;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+	gap: 8px;
+	margin-bottom: 1em;
+
+	button {
+		height: initial;
+	}
+
+	.toggle-visible .date-range__trigger-btn {
+		background-color: var(--color-surface);
+	}
+
+	//prevent button from jumping when toggling date picker
+	.button-group {
+		.button:first-child,
+		:last-child {
+			&:active {
+				border-right-width: 1px;
+				border-left-width: 1px;
+			}
+		}
+	}
+}
+
+.site-logs-toolbar__download-progress {
+	display: flex;
+	align-items: center;
+	color: var(--color-neutral-50);
+	font-size: 0.875rem;
+}

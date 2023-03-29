@@ -20,6 +20,7 @@ import {
 	isValueTruthy,
 } from '@automattic/wpcom-checkout';
 import { useMemo } from 'react';
+import { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import {
@@ -34,7 +35,6 @@ import {
 import { createPayPalMethod, createPayPalStore } from '../../payment-methods/paypal';
 import { createWeChatMethod, createWeChatPaymentMethodStore } from '../../payment-methods/wechat';
 import useCreateExistingCards from './use-create-existing-cards';
-import type { StoredCard } from '../../types/stored-cards';
 import type { StripeConfiguration, StripeLoadingError } from '@automattic/calypso-stripe';
 import type { PaymentMethod } from '@automattic/composite-checkout';
 import type { CartKey } from '@automattic/shopping-cart';
@@ -348,7 +348,7 @@ export default function useCreatePaymentMethods( {
 	stripeLoadingError: StripeLoadingError;
 	stripeConfiguration: StripeConfiguration | null;
 	stripe: Stripe | null;
-	storedCards: StoredCard[];
+	storedCards: StoredPaymentMethod[];
 	siteSlug: string | undefined;
 } ): PaymentMethod[] {
 	const cartKey = useCartKey();

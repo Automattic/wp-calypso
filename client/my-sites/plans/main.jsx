@@ -338,6 +338,11 @@ class Plans extends Component {
 			PLAN_WOOEXPRESS_SMALL,
 			PLAN_WOOEXPRESS_SMALL_MONTHLY,
 		].includes( currentPlanSlug );
+		const wooExpressSubHeaderText = translate(
+			"Discover what's available in your Woo Express plan."
+		);
+		// Use the Woo Express subheader text if the current plan has the Performance or trial plans or fallback to the default subheader text.
+		const subHeaderText = isWooExpressPlan || isEcommerceTrial ? wooExpressSubHeaderText : null;
 
 		const allDomains = isDomainAndPlanPackageFlow ? getDomainRegistrations( this.props.cart ) : [];
 		const yourDomainName = allDomains.length
@@ -371,7 +376,7 @@ class Plans extends Component {
 				{ isDomainUpsell && <DomainUpsellDialog domain={ selectedSite.slug } /> }
 				{ canAccessPlans && (
 					<div>
-						{ ! isDomainAndPlanPackageFlow && <PlansHeader /> }
+						{ ! isDomainAndPlanPackageFlow && <PlansHeader subHeaderText={ subHeaderText } /> }
 						{ isDomainAndPlanPackageFlow && (
 							<>
 								<div className="plans__header">

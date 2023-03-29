@@ -22,6 +22,7 @@ import {
 	mockMatchMediaOnWindow,
 	mockGetVatInfoEndpoint,
 	mockSetVatInfoEndpoint,
+	countryList,
 } from './util';
 import { MockCheckout } from './util/mock-checkout';
 import type { CartKey } from '@automattic/shopping-cart';
@@ -34,6 +35,13 @@ jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
 jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
 jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
 jest.mock( 'calypso/lib/navigate' );
+
+// These tests seem to be particularly slow (it might be because of using
+// it.each; it's not clear but the timeout might apply to the whole loop
+// rather that each iteration?), so we need to increase the timeout for their
+// operation. The standard timeout (at the time of writing) is 5 seconds so
+// we are increasing this to 12 seconds.
+jest.setTimeout( 12000 );
 
 describe( 'Checkout contact step VAT form', () => {
 	const mainCartKey: CartKey = 'foo.com' as CartKey;
@@ -62,6 +70,9 @@ describe( 'Checkout contact step VAT form', () => {
 		dispatch( CHECKOUT_STORE ).reset();
 		nock.cleanAll();
 		nock( 'https://public-api.wordpress.com' ).persist().post( '/rest/v1.1/logstash' ).reply( 200 );
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me/transactions/supported-countries' )
+			.reply( 200, countryList );
 		mockGetVatInfoEndpoint( {} );
 	} );
 
