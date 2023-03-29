@@ -11,10 +11,7 @@ type Props = {
 
 const AkismetProductOverlapsOwnedProductNotice: FunctionComponent< Props > = ( { purchase } ) => {
 	const translate = useTranslate();
-	const purchaseId = purchase?.id;
-	const subscriptionUrl = purchaseId
-		? `/me/purchases/siteless.akismet.com/${ purchaseId }`
-		: '/me/purchases/';
+	const subscriptionUrl = `/me/purchases/siteless.akismet.com/${ purchase.id }`;
 
 	const message = translate(
 		'The plan you are about to purchase contains all the same features of your current plan. Consider {{link}}removing your %(product)s subscription{{/link}} to avoid paying for both plans.',
