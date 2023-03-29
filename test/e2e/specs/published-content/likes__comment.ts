@@ -76,7 +76,7 @@ describe( 'Likes: Comment', function () {
 				newComment.ID
 			);
 
-			await page.reload();
+			await page.reload( { waitUntil: 'networkidle' } );
 		} );
 
 		it( 'Like the comment', async function () {
@@ -96,7 +96,7 @@ describe( 'Likes: Comment', function () {
 				newComment.ID
 			);
 
-			await page.reload();
+			await page.reload( { waitUntil: 'networkidle' } );
 		} );
 
 		it( 'Unlike the comment', async function () {
