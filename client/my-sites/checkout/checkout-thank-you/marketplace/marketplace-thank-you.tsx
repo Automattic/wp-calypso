@@ -17,6 +17,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { MarketplaceGoBackSection } from './marketplace-go-back-section';
 import { usePageTexts } from './use-page-texts';
+import { useAtomicTransfer } from './use-atomic-transfer';
 import { usePluginsThankYouData } from './use-plugins-thank-you-data';
 import { useThankYouFoooter } from './use-thank-you-footer';
 import { useThemesThankYouData } from './use-themes-thank-you-data';
@@ -35,10 +36,23 @@ const MarketplaceThankYou = ( {
 	const siteId = useSelector( getSelectedSiteId );
 	const isRequestingPlugins = useSelector( ( state ) => isRequesting( state, siteId ) );
 
-	const [ pluginsSection, allPluginsFetched, pluginsGoBackSection, pluginTitle, pluginSubtitle ] =
-		usePluginsThankYouData( pluginSlugs );
-	const [ themesSection, allThemesFetched, themesGoBackSection, themeTitle, themeSubtitle ] =
-		useThemesThankYouData( themeSlugs );
+	const [
+		pluginsSection,
+		allPluginsFetched,
+		pluginsGoBackSection,
+		pluginTitle,
+		pluginSubtitle,
+		isAtomicNeededForPlugins,
+	] = usePluginsThankYouData( pluginSlugs );
+	const [
+		themesSection,
+		allThemesFetched,
+		themesGoBackSection,
+		themeTitle,
+		themeSubtitle,
+		isAtomicNeededForThemes,
+	] = useThemesThankYouData( themeSlugs );
+
 	const [ hasPlugins, hasThemes ] = [ pluginSlugs, themeSlugs ].map(
 		( slugs ) => slugs.length !== 0
 	);
@@ -53,7 +67,10 @@ const MarketplaceThankYou = ( {
 		themeSubtitle,
 	} );
 
-	const areAllProductsFetched = allPluginsFetched && allThemesFetched;
+	const isAtomicNeeded = isAtomicNeededForPlugins || isAtomicNeededForThemes;
+	const isAtomicTransferCheckComplete = useAtomicTransfer( isAtomicNeeded );
+
+	const isPageReady = allPluginsFetched && allThemesFetched && isAtomicTransferCheckComplete;
 
 	const transferStatus = useSelector( ( state ) => getAutomatedTransferStatus( state, siteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
@@ -73,18 +90,11 @@ const MarketplaceThankYou = ( {
 		}
 
 		// Update the menu after the plugin has been installed, since that might change some menu items.
-		if ( areAllProductsFetched ) {
+		if ( isPageReady ) {
 			dispatch( requestAdminMenu( siteId ) );
 			return;
 		}
-	}, [
-		isRequestingPlugins,
-		areAllProductsFetched,
-		dispatch,
-		siteId,
-		transferStatus,
-		isJetpackSelfHosted,
-	] );
+	}, [ isRequestingPlugins, isPageReady, dispatch, siteId, transferStatus, isJetpackSelfHosted ] );
 
 	// Set progressbar (currentStep) depending on transfer/plugin status.
 	useEffect( () => {
@@ -93,7 +103,7 @@ const MarketplaceThankYou = ( {
 			return;
 		}
 
-		setShowProgressBar( ! areAllProductsFetched );
+		setShowProgressBar( ! isPageReady );
 
 		// Sites already transferred to Atomic or self-hosted Jetpack sites no longer need to change the current step.
 		if ( isJetpack ) {
@@ -109,7 +119,7 @@ const MarketplaceThankYou = ( {
 		} else if ( transferStatus === transferStates.COMPLETE ) {
 			setCurrentStep( 3 );
 		}
-	}, [ transferStatus, areAllProductsFetched, showProgressBar, isJetpack ] );
+	}, [ transferStatus, isPageReady, showProgressBar, isJetpack ] );
 
 	// TODO: Use more general steps (not specific to plugins)
 	const steps = useMemo(
@@ -149,7 +159,7 @@ const MarketplaceThankYou = ( {
 				pluginsGoBackSection={ pluginsGoBackSection }
 				themeSlugs={ themeSlugs }
 				themesGoBackSection={ themesGoBackSection }
-				areAllProductsFetched={ areAllProductsFetched }
+				areAllProductsFetched={ isPageReady }
 			/>
 			{ showProgressBar && (
 				// eslint-disable-next-line wpcalypso/jsx-classname-namespace
