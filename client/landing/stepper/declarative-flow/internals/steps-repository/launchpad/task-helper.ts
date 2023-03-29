@@ -46,7 +46,7 @@ export function getEnhancedTasks(
 	const allowUpdateDesign =
 		flow && ( isFreeFlow( flow ) || isBuildFlow( flow ) || isWriteFlow( flow ) );
 
-	const isPaidPlan = ! site?.plan?.is_free;
+	const domainUpsellCompleted = isDomainUpsellCompleted( site, checklistStatuses );
 
 	const mustVerifyEmailBeforePosting = isNewsletterFlow( flow || null ) && ! isEmailVerified;
 
@@ -320,10 +320,10 @@ export function getEnhancedTasks(
 				case 'domain_upsell':
 					taskData = {
 						title: translate( 'Choose a domain' ),
-						completed: isPaidPlan,
+						completed: domainUpsellCompleted,
 						actionDispatch: () => {
-							recordTaskClickTracksEvent( flow, isPaidPlan, task.id );
-							const destinationUrl = isPaidPlan
+							recordTaskClickTracksEvent( flow, domainUpsellCompleted, task.id );
+							const destinationUrl = domainUpsellCompleted
 								? `/domains/manage/${ siteSlug }`
 								: addQueryArgs( '/setup/domain-upsell/domains', {
 										siteSlug,
@@ -332,7 +332,7 @@ export function getEnhancedTasks(
 								  } );
 							window.location.assign( destinationUrl );
 						},
-						badgeText: isPaidPlan ? '' : translate( 'Upgrade plan' ),
+						badgeText: domainUpsellCompleted ? '' : translate( 'Upgrade plan' ),
 					};
 					break;
 				case 'verify_email':
@@ -345,6 +345,13 @@ export function getEnhancedTasks(
 			enhancedTaskList.push( { ...task, ...taskData } );
 		} );
 	return enhancedTaskList;
+}
+
+function isDomainUpsellCompleted(
+	site: SiteDetails | null,
+	checklistStatuses: LaunchpadStatuses
+): boolean {
+	return ! site?.plan?.is_free && checklistStatuses?.domain_upsell_deferred === true;
 }
 
 // Records a generic task click Tracks event
