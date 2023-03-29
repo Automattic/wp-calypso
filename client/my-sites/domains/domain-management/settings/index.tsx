@@ -20,6 +20,7 @@ import DomainHeader from 'calypso/my-sites/domains/domain-management/components/
 import { WPCOM_DEFAULT_NAMESERVERS_REGEX } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
 import withDomainNameservers from 'calypso/my-sites/domains/domain-management/name-servers/with-domain-nameservers';
 import {
+	domainManagementEditContactInfo,
 	domainManagementList,
 	domainUseMyDomain,
 	isUnderDomainManagementAll,
@@ -37,6 +38,7 @@ import {
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import ConnectedDomainDetails from './cards/connected-domain-details';
 import ContactsPrivacyInfo from './cards/contact-information/contacts-privacy-info';
+import ContactVerificationCard from './cards/contact-verification-card';
 import DomainOnlyConnectCard from './cards/domain-only-connect';
 import DomainSecurityDetails from './cards/domain-security-details';
 import NameServersCard from './cards/name-servers-card';
@@ -390,6 +392,32 @@ const Settings = ( {
 		);
 	};
 
+	const renderContactVerificationSection = () => {
+		// TODO: Remove this when we implement the contact verification domain flag
+		// return null;
+
+		if ( ! domain || ! domain.currentUserCanManage ) {
+			return null;
+		}
+
+		const contactInformationUpdateLink =
+			selectedSite && domain && domainManagementEditContactInfo( selectedSite.slug, domain.name );
+
+		return (
+			<Accordion
+				title={ translate( 'Contact verification', { textOnly: true } ) }
+				subtitle={ translate( 'Additional contact verification required for your domain', {
+					textOnly: true,
+				} ) }
+			>
+				<ContactVerificationCard
+					contactInformation={ contactInformation }
+					contactInformationUpdateLink={ contactInformationUpdateLink }
+				/>
+			</Accordion>
+		);
+	};
+
 	const renderMainContent = () => {
 		// TODO: If it's a registered domain or transfer and the domain's registrar is in maintenance, show maintenance card
 		return (
@@ -401,6 +429,7 @@ const Settings = ( {
 				{ renderNameServersSection() }
 				{ renderDnsRecords() }
 				{ renderContactInformationSecion() }
+				{ renderContactVerificationSection() }
 				{ renderDomainSecuritySection() }
 			</>
 		);
