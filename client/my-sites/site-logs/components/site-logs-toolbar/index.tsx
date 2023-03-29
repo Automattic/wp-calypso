@@ -1,8 +1,8 @@
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { Moment } from 'moment';
 import { SiteLogsTab } from 'calypso/data/hosting/use-site-logs-query';
 import { useSiteLogsDownloader } from '../../hooks/use-site-logs-downloader';
+import type { Moment } from 'moment';
 
 import './style.scss';
 
@@ -45,22 +45,20 @@ export const SiteLogsToolbar = ( { onRefresh, ...downloadProps }: Props ) => {
 	const isDownloading = state.status === 'downloading';
 
 	return (
-		<>
-			<div className="site-logs-toolbar">
-				<Button isSecondary onClick={ onRefresh }>
-					{ translate( 'Refresh' ) }
-				</Button>
+		<div className="site-logs-toolbar">
+			<Button isSecondary onClick={ onRefresh }>
+				{ translate( 'Refresh' ) }
+			</Button>
 
-				<Button
-					disabled={ isDownloading }
-					isBusy={ isDownloading }
-					isPrimary
-					onClick={ () => downloadLogs( downloadProps ) }
-				>
-					{ translate( 'Download' ) }
-				</Button>
-				{ isDownloading && <SiteLogsToolbarDownloadProgress { ...state } /> }
-			</div>
-		</>
+			<Button
+				disabled={ isDownloading }
+				isBusy={ isDownloading }
+				isPrimary
+				onClick={ () => downloadLogs( downloadProps ) }
+			>
+				{ translate( 'Download' ) }
+			</Button>
+			{ isDownloading && <SiteLogsToolbarDownloadProgress { ...state } /> }
+		</div>
 	);
 };
