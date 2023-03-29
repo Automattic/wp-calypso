@@ -179,13 +179,15 @@ describe( 'Purchase Management Buttons', () => {
 		} );
 
 		render(
-			<ReduxProvider store={ store }>
-				<ManagePurchase
-					purchaseId={ Number( purchase.ID ) }
-					isSiteLevel
-					siteSlug="siteless.akismet.com"
-				/>
-			</ReduxProvider>
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<ManagePurchase
+						purchaseId={ Number( purchase.ID ) }
+						isSiteLevel
+						siteSlug="siteless.akismet.com"
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
 		);
 
 		expect( await screen.findByText( /Remove/ ) ).toBeInTheDocument();
