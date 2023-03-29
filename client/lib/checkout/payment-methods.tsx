@@ -12,23 +12,67 @@ import payPalImage from 'calypso/assets/images/upgrades/paypal.svg';
 export const PARTNER_PAYPAL_EXPRESS = 'paypal_express';
 export const PAYMENT_AGREEMENTS_PARTNERS = [ PARTNER_PAYPAL_EXPRESS ];
 
-export interface PaymentMethod {
-	added: string;
-	card: string;
-	card_type: string;
-	email: string;
-	expiry: string;
-	is_expired: boolean;
-	last_service: string;
-	last_used: string;
-	meta: PaymentMethodMeta[];
-	mp_ref: string;
-	name: string;
-	payment_partner: string;
-	remember: '1' | '0';
+/**
+ * A saved payment method (card or PayPal agreement).
+ *
+ * Used by the `/me/payment-methods` endpoint after version 1.1.
+ */
+export type StoredPaymentMethod =
+	| StoredPaymentMethodBase
+	| StoredPaymentMethodPayPal
+	| StoredPaymentMethodCard
+	| StoredPaymentMethodEbanx
+	| StoredPaymentMethodStripeSource;
+
+export interface StoredPaymentMethodBase {
 	stored_details_id: string;
 	user_id: string;
+	name: string;
+	country_code: string;
+	payment_partner: string;
+	payment_partner_reference: string;
+	payment_partner_source_id: string;
+	mp_ref: string;
+	email: string;
+	card_expiry_year: string | null;
+	card_expiry_month: string | null;
+	expiry: string;
+	remember: boolean;
+	source: string | null;
+	original_stored_details_id: string;
+	is_rechargable: boolean;
+	payment_type: string;
+	is_expired: boolean;
+	is_backup: boolean;
 	tax_location: StoredPaymentMethodTaxLocation | null;
+}
+
+export interface StoredPaymentMethodPayPal extends StoredPaymentMethodBase {
+	payment_partner: 'paypal_express';
+}
+
+export interface StoredPaymentMethodCard extends StoredPaymentMethodBase {
+	card_type: string;
+	card_iin: string;
+	card_last_4: string;
+	card_zip: string;
+}
+
+export interface StoredPaymentMethodEbanx extends StoredPaymentMethodBase {
+	address: string;
+	street_number: string;
+	city: string;
+	state: string;
+	document: string;
+	phone_number: string;
+	device_id: string;
+}
+
+export interface StoredPaymentMethodStripeSource extends StoredPaymentMethodBase {
+	verified_name: string;
+	iban_last4: string;
+	bank: string;
+	bic: string;
 }
 
 export interface StoredPaymentMethodTaxLocation {
@@ -42,16 +86,13 @@ export interface StoredPaymentMethodTaxLocation {
 	city?: string;
 }
 
-export interface PaymentMethodMeta {
-	meta_key: string;
-	meta_value: string;
-	stored_details_id: string;
-}
-
-export const isPaymentAgreement = ( method: PaymentMethod ): boolean =>
+export const isPaymentAgreement = (
+	method: StoredPaymentMethod
+): method is StoredPaymentMethodPayPal =>
 	PAYMENT_AGREEMENTS_PARTNERS.includes( method.payment_partner );
 
-export const isCreditCard = ( method: PaymentMethod ): boolean => ! isPaymentAgreement( method );
+export const isCreditCard = ( method: StoredPaymentMethod ): method is StoredPaymentMethodCard =>
+	! isPaymentAgreement( method );
 
 interface ImagePathsMap {
 	[ key: string ]: string;

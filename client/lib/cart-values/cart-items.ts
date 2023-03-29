@@ -41,6 +41,7 @@ import {
 	isWpComFreePlan,
 	TITAN_MAIL_MONTHLY_SLUG,
 	TITAN_MAIL_YEARLY_SLUG,
+	isAkismetProduct,
 } from '@automattic/calypso-products';
 import { isWpComProductRenewal as isRenewal } from '@automattic/wpcom-checkout';
 import { getTld } from 'calypso/lib/domains';
@@ -494,6 +495,15 @@ export function jetpackProductItem( slug: string ): MinimalRequestCartProduct {
 }
 
 /**
+ * Creates a new shopping cart item for an Akismet product.
+ */
+export function akismetProductItem( slug: string ): MinimalRequestCartProduct {
+	return {
+		product_slug: slug,
+	};
+}
+
+/**
  * Creates a new shopping cart item for a renewable product.
  */
 export function renewableProductItem( slug: string ): MinimalRequestCartProduct {
@@ -536,6 +546,10 @@ function createRenewalCartItemFromProduct(
 
 	if ( isJetpackProduct( product ) ) {
 		return jetpackProductItem( slug );
+	}
+
+	if ( isAkismetProduct( product ) ) {
+		return akismetProductItem( slug );
 	}
 
 	if ( isUnlimitedThemes( product ) ) {

@@ -29,3 +29,15 @@ $border-color: #d3dae6;
 	content: "\2012";
 	opacity: 0.5;
 }
+
+.site-logs-table__skeleton {
+	display: grid;
+	grid-template-columns: 400px 3fr 1fr;
+	gap: 20px;
+	overflow: hidden;
+	margin-top: 10px;
+}
+
+.site-logs-table__skeleton-table-cell {
+	height: 24px;
+}

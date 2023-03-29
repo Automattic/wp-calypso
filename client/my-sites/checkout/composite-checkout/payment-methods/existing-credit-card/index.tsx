@@ -187,8 +187,10 @@ function ExistingCardPayButton( {
 	const { formStatus } = useFormStatus();
 	const translate = useTranslate();
 
-	const { taxInfo: taxInfoFromServer, isLoading: isLoadingTaxInfo } =
-		usePaymentMethodTaxInfo( storedDetailsId );
+	const { taxInfo: taxInfoFromServer, isLoading: isLoadingTaxInfo } = usePaymentMethodTaxInfo(
+		storedDetailsId,
+		{ doNotFetch: ! isTaxInfoRequired }
+	);
 
 	const dispatch = useDispatch();
 
