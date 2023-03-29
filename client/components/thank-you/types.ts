@@ -55,3 +55,5 @@ export type ThankYouProps = {
 };
 
 export type ThankYouData = [ ThankYouSectionProps, boolean, JSX.Element, string[] ];
+
+export type ThankYouSteps = { steps: string[]; additionalSteps: string[] };

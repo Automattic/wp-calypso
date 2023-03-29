@@ -1,12 +1,11 @@
 import { ConfettiAnimation } from '@automattic/components';
 import { ThemeProvider, Global, css } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { ThankYou } from 'calypso/components/thank-you';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
-import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-plugin-install/use-marketplace-additional-steps';
 import theme from 'calypso/my-sites/marketplace/theme';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
@@ -19,8 +18,8 @@ import './style.scss';
 import { MarketplaceGoBackSection } from './marketplace-go-back-section';
 import { useThankYouFoooter } from './use-default-thank-you-footer';
 import { usePluginsThankYouData } from './use-plugins-thank-you-data';
+import { useThankYouSteps } from './use-thank-you-steps';
 import { useThemesThankYouData } from './use-themes-thank-you-data';
-import { hasMultipleProductTypes } from './utils';
 
 const MarketplaceThankYou = ( {
 	pluginSlugs,
@@ -36,9 +35,9 @@ const MarketplaceThankYou = ( {
 
 	const defaultThankYouFooter = useThankYouFoooter( pluginSlugs, themeSlugs );
 
-	const [ pluginsSection, allPluginsFetched, pluginsGoBackSection, pluginsProgressbarSteps ] =
+	const [ pluginsSection, allPluginsFetched, pluginsGoBackSection ] =
 		usePluginsThankYouData( pluginSlugs );
-	const [ themesSection, allThemesFetched, themesGoBackSection, themesProgressbarSteps ] =
+	const [ themesSection, allThemesFetched, themesGoBackSection ] =
 		useThemesThankYouData( themeSlugs );
 
 	const areAllProductsFetched = allPluginsFetched && allThemesFetched;
@@ -99,31 +98,7 @@ const MarketplaceThankYou = ( {
 		}
 	}, [ transferStatus, areAllProductsFetched, showProgressBar, isJetpack ] );
 
-	const multipleProductTypes = hasMultipleProductTypes( [ pluginSlugs, themeSlugs ] );
-	const additionalSteps = useMarketplaceAdditionalSteps();
-	const randomElement = ( arr: string[] ) => arr[ Math.floor( Math.random() * arr.length ) ];
-
-	const defaultSteps = useMemo(
-		() => {
-			if ( isJetpack ) {
-				return [ randomElement( additionalSteps ) ];
-			}
-
-			return [
-				randomElement( additionalSteps ), // Transferring to Atomic
-				randomElement( additionalSteps ), // Transferring to Atomic
-				randomElement( additionalSteps ), // Transferring to Atomic
-				randomElement( additionalSteps ),
-			];
-		},
-		// We intentionally don't set `isJetpack` as dependency to keep the same steps after the Atomic transfer.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[ translate ]
-	);
-
-	const steps = multipleProductTypes
-		? defaultSteps
-		: [ ...pluginsProgressbarSteps, ...themesProgressbarSteps ];
+	const { steps, additionalSteps } = useThankYouSteps( { pluginSlugs, themeSlugs } );
 
 	return (
 		<ThemeProvider theme={ theme }>
