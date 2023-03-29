@@ -2,10 +2,8 @@ import { Reader } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 
-const { useSubscriberEmailAddress } = Reader.SubscriptionManager;
-
 const useSubheaderText = () => {
-	const emailAddress = useSubscriberEmailAddress();
+	const emailAddress = Reader.SubscriptionManager.useSubscriberEmailAddress();
 	const translate = useTranslate();
 
 	return useMemo( () => {
