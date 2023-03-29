@@ -100,6 +100,8 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 		) {
 			setCurrentPageIndex( currentPageIndex + 1 );
 		}
+
+		setAutoRefresh( false );
 	};
 
 	const titleHeader = __( 'Site Logs' );
@@ -126,6 +128,7 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 			startTime: formattedStartDate ?? dateRange.startTime,
 			endTime: formattedEndDate ?? dateRange.endTime,
 		} );
+		setAutoRefresh( false );
 	};
 
 	return (
