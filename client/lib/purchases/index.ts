@@ -423,6 +423,16 @@ export function isCancelable( purchase: Purchase ) {
 }
 
 /**
+ * Checks if a purchase is attached to a siteless holding site
+ *
+ * @param purchase The purchase to check
+ *
+ * @returns {boolean} True if the purchase is attached to a siteless holding site
+ */
+export function isSiteless( purchase: Purchase ): boolean {
+	return purchase.domain.includes( 'siteless' );
+}
+/**
  * Similar to isCancelable, but doesn't rely on the purchase's cancelability
  * Checks if auto-renew is enabled for purchase, returns true if auto-renew is ON
  * Returns false if purchase is included in plan, purchases included with a plan can't be cancelled
