@@ -46,7 +46,7 @@ const defaultSort = () => 0;
 const useSubscriptionManagerSiteSubscriptionsQuery = ( {
 	filter,
 	sort,
-	limit = 200,
+	limit = 100,
 }: SubscriptionManagerSiteSubscriptionsQueryProps ) => {
 	const isLoggedIn = useIsLoggedIn();
 	const enabled = useIsQueryEnabled();
