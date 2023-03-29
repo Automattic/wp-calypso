@@ -1,8 +1,8 @@
 import { useTranslate } from 'i18n-calypso';
 import { useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
-import { errorNotice } from '../../../state/notices/actions';
-import { receiveStatSubscribers } from '../../../state/stats/subscribers/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { receiveStatSubscribers } from 'calypso/state/stats/subscribers/actions';
 
 const mockData = {
 	items: [
@@ -92,7 +92,9 @@ export default function useSubscribersQuery( siteId ) {
 		onError: () => {
 			dispatch(
 				errorNotice(
-					translate( 'We were unable to retrieve your latest subscriber. Please try again later.' )
+					translate(
+						'We were unable to retrieve your latest subscribers data. Please try again later.'
+					)
 				)
 			);
 		},
