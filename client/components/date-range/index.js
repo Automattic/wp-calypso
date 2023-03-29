@@ -180,7 +180,7 @@ export class DateRange extends Component {
 	isValidDate( date ) {
 		const { firstSelectableDate, lastSelectableDate } = this.props;
 
-		const epoch = this.props.moment( '01/01/1970' );
+		const epoch = this.props.moment( '01/01/1970', this.props.moment.localeData().longDateFormat( 'L' ) );
 
 		// By default check
 		// 1. Looks like a valid date
