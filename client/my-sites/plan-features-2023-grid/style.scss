@@ -338,80 +338,6 @@
 		}
 	}
 
-	.plan-features-2023-grid__pricing {
-		padding: 0 20px;
-		margin: 0 0 4px 0;
-
-		.plan-price {
-			color: var(--studio-gray-100);
-			margin: 0;
-			line-height: 1;
-			display: flex;
-			@include onboarding-font-recoleta;
-		}
-
-		.plan-price__currency-symbol,
-		.plan-price.is-discounted .plan-price__currency-symbol {
-			font-size: rem(14px);
-			color: var(--studio-gray-100);
-			margin-top: 2px;
-		}
-
-		.plan-price__integer {
-			font-size: rem(44px);
-		}
-
-		.plan-price__term {
-			font-size: $font-body-extra-small;
-			font-weight: 400;
-		}
-
-		.plan-price.is-original {
-			color: var(--studio-gray-20);
-
-			text-decoration: line-through;
-			text-decoration-thickness: 1px;
-			font-family: "SF Pro Text", $sans;
-			margin-bottom: 5px;
-			font-size: rem(18px);
-
-			&::before {
-				display: none;
-			}
-
-			.plan-price__currency-symbol,
-			.plan-price__tax-amount {
-				color: var(--color-text-subtle);
-			}
-
-			.plan-price__integer {
-				font-size: rem(18px);
-			}
-			.plan-price__currency-symbol {
-				font-size: rem(8px);
-			}
-		}
-
-		.plan-price.is-discounted {
-			color: var(--color-neutral-70);
-
-			.plan-price__integer-fraction {
-				color: var(--color-success);
-			}
-		}
-
-		.plan-price.is-large-currency {
-			.plan-price__integer {
-				font-size: rem(38px);
-			}
-			&.is-original {
-				.plan-price__integer {
-					font-size: rem(16px);
-				}
-			}
-		}
-	}
-
 	.plan-features-2023-grid__header-annual-discount {
 		color: var(--studio-green-60);
 		&-is-loading {
@@ -1012,22 +938,6 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 		line-height: 1.2;
 		color: var(--studio-gray-100);
 		font-weight: 400;
-	}
-
-	.plan-features-2023-grid__pricing {
-		padding: 0;
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-		justify-content: flex-end;
-
-		.plan-price.is-discounted {
-			color: var(--color-neutral-70);
-
-			.plan-price__integer-fraction {
-				color: inherit;
-			}
-		}
 	}
 
 	.plan-comparison-grid__billing-info {
