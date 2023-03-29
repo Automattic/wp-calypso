@@ -17,6 +17,8 @@ export const getEditorUrl = ( state, siteId, postId = '', postType = 'post' ) =>
 		if ( ! isVipSite( state, siteId ) && shouldCalypsoifyJetpack( state, siteId ) ) {
 			url = addQueryArgs( { calypsoify: '1' }, url );
 		}
+		// Helps to maintain origin across different environments
+		url = addQueryArgs( { origin: window.location.origin }, url );
 
 		return url;
 	}
