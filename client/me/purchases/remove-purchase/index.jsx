@@ -422,7 +422,7 @@ class RemovePurchase extends Component {
 			return null;
 		}
 
-		// If we have a disconnected site that is _not_ a Jetpack purchase, no removal allowed.
+		// If we have a disconnected site that is _not_ a Jetpack purchase _or_ an Akismet purchase, no removal allowed.
 		if ( ! this.props.site && ! this.props.isJetpack && ! this.props.isAkismet ) {
 			return null;
 		}

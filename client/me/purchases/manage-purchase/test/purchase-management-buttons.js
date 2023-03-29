@@ -164,4 +164,35 @@ describe( 'Purchase Management Buttons', () => {
 		expect( await screen.findByText( /Remove/ ) ).toBeInTheDocument();
 		expect( screen.queryByText( /Cancel/ ) ).not.toBeInTheDocument();
 	} );
+
+	it( 'renders a remove button when auto-renew is OFF, and the purchase is an Akismet purchase and attached to an akismet siteless holding site', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me/payment-methods?expired=include' )
+			.reply( 200 );
+
+		purchase.domain = 'siteless.akismet.com';
+		purchase.product_id = 2311; // Akismet Personal Plus plan
+		purchase.product_slug = 'ak_plus_yearly_1';
+
+		const store = createMockReduxStoreForPurchase( {
+			...purchase,
+			domain: 'siteless.akismet.com',
+			product_id: 2311,
+			product_slug: 'ak_plus_yearly_1',
+			auto_renew: 0,
+		} );
+
+		render(
+			<ReduxProvider store={ store }>
+				<ManagePurchase
+					purchaseId={ Number( purchase.ID ) }
+					isSiteLevel
+					siteSlug="siteless.akismet.com"
+				/>
+			</ReduxProvider>
+		);
+
+		expect( await screen.findByText( /Remove/ ) ).toBeInTheDocument();
+		expect( screen.queryByText( /Cancel/ ) ).not.toBeInTheDocument();
+	} );
 } );
