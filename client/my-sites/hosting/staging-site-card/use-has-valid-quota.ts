@@ -1,0 +1,26 @@
+import { useQuery, UseQueryOptions } from 'react-query';
+import wp from 'calypso/lib/wp';
+
+export const USE_VALID_QUOTA_QUERY_KEY = 'valid-quota';
+
+export const useHasValidQuotaQuery = ( siteId: number, options: UseQueryOptions ) => {
+	return useQuery< boolean, unknown, boolean >(
+		[ USE_VALID_QUOTA_QUERY_KEY, siteId ],
+		() =>
+			wp.req.get( {
+				path: `/sites/${ siteId }/staging-site/valid-quota`,
+				apiNamespace: 'wpcom/v2',
+			} ),
+		{
+			enabled: !! siteId && ( options?.enabled ?? true ),
+			select: ( data ) => {
+				return data;
+			},
+			meta: {
+				persist: false,
+			},
+			staleTime: 10 * 1000,
+			onError: options?.onError,
+		}
+	);
+};
