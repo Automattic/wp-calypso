@@ -367,10 +367,11 @@ class Login extends Component {
 										}
 								  )
 								: translate(
-										"All Woo stores are powered by WordPress.com! Please, log in to continue. Don't have an account? {{signupLink}}Sign up{{/signupLink}}",
+										"All Woo stores are powered by WordPress.com!{{br/}}Please, log in to continue. Don't have an account? {{signupLink}}Sign up{{/signupLink}}",
 										{
 											components: {
 												signupLink: <a href={ this.getSignupUrl() } />,
+												br: <br />,
 											},
 										}
 								  ) }
