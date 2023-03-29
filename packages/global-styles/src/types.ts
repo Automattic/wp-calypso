@@ -22,6 +22,7 @@ export interface GlobalStylesObject {
 	id?: number;
 	slug?: string;
 	title?: string;
+	inline_css?: string;
 	settings: {
 		color?: {
 			palette: {
