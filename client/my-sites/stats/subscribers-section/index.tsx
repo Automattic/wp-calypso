@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
-import LineChart from 'calypso/components/line-chart';
-import StatsEmptyState from '../stats-empty-state';
+import { useEffect, useMemo, useState, useRef } from 'react';
+import UplotReact from 'uplot-react';
 import StatsModulePlaceholder from '../stats-module/placeholder';
+
+import 'uplot/dist/uPlot.min.css';
 import './style.scss';
 
 // New Subscriber Stats
@@ -45,31 +46,53 @@ function getData() {
 	];
 }
 
-function transformData( data ) {
-	// Transform the data into the format required by the chart component.
-	// 1. Note that the data is ordered from newest to oldest.
-	// 2. We need to reverse the array or the LineChart component emits errors.
-	// 3. Labeling of the x-axis doesn't work too well if the data series is too big.
-	const maxDataSize = 10;
-	const trimmedData = data.length > 10 ? data.slice( 0, maxDataSize ) : data;
-	const processedData = trimmedData.map( ( point ) => {
-		const [ period, count, diff ] = point;
-		return {
-			date: new Date( period ).getTime(),
-			value: count,
-			diff: diff,
-		};
-	} );
-	return [ processedData.reverse() ];
+function UplotLineChart() {
+	const uplotRef = useRef< uPlot | null >( null );
+	const [ options ] = useState< uPlot.Options >(
+		useMemo(
+			() => ( {
+				title: 'Chart',
+				width: 1224 - 100,
+				height: 300,
+				padding: [ 16, 0, 16, 8 ],
+				series: [
+					{
+						label: '',
+					},
+					{
+						label: 'Subscribers',
+						points: { show: true },
+						stroke: 'blue',
+						fill: 'blue',
+					},
+				],
+				scales: {
+					x: { time: true },
+				},
+			} ),
+			[]
+		)
+	);
+	const initialState = useMemo< uPlot.AlignedData >( () => {
+		const x: number[] = getData().map( ( point ) => Number( new Date( point[ 0 ] ) ) / 1000 );
+		const y: number[] = getData().map( ( point ) => Number( point[ 1 ] ) );
+		return [ x, y ];
+	}, [] );
+	const [ data ] = useState< uPlot.AlignedData >( initialState );
+
+	return (
+		<UplotReact
+			options={ options }
+			data={ data }
+			onCreate={ ( chart ) => {
+				uplotRef.current = chart;
+			} }
+		/>
+	);
 }
 
 export default function SubscribersSection() {
-	const [ isLoading, setIsLoading ] = useState( true );
-	const data = transformData( isLoading ? [] : getData() );
-
-	// Determines what is shown in the tooltip on hover.
-	const tooltipHelper = ( datum ) => `Changed: ${ datum.diff }`;
-
+	const [ isLoading, setIsLoading ] = useState( false );
 	useEffect( () => {
 		setTimeout( () => setIsLoading( false ), 5000 );
 	}, [ isLoading ] );
@@ -77,13 +100,7 @@ export default function SubscribersSection() {
 	return (
 		<div className="subscribers-section">
 			<h1 className="highlight-cards-heading">Subscribers</h1>
-			{ isLoading ? (
-				<StatsModulePlaceholder className="is-chart" isLoading />
-			) : (
-				<LineChart data={ data } renderTooltipForDatanum={ tooltipHelper }>
-					<StatsEmptyState />
-				</LineChart>
-			) }
+			{ isLoading ? <StatsModulePlaceholder className="is-chart" isLoading /> : <UplotLineChart /> }
 		</div>
 	);
 }
