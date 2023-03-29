@@ -44,10 +44,10 @@ const defaultFilter = () => true;
 const defaultSort = () => 0;
 
 const useSubscriptionManagerSiteSubscriptionsQuery = ( {
-	filter,
-	sort,
+	filter = defaultFilter,
+	sort = defaultSort,
 	limit = 100,
-}: SubscriptionManagerSiteSubscriptionsQueryProps ) => {
+}: SubscriptionManagerSiteSubscriptionsQueryProps = {} ) => {
 	const isLoggedIn = useIsLoggedIn();
 	const enabled = useIsQueryEnabled();
 
