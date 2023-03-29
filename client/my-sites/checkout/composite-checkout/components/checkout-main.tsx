@@ -16,6 +16,7 @@ import QueryPostCounts from 'calypso/components/data/query-post-counts';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import useSiteDomains from 'calypso/my-sites/checkout/composite-checkout/hooks/use-site-domains';
@@ -683,6 +684,7 @@ export default function CheckoutMain( {
 			<QueryJetpackSaleCoupon />
 			<QuerySitePlans siteId={ updatedSiteId } />
 			<QuerySitePurchases siteId={ updatedSiteId } />
+			<QueryUserPurchases />
 			<QueryPlans />
 			<QueryProducts />
 			<QueryContactDetailsCache />
