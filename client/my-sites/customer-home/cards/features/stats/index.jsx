@@ -277,15 +277,7 @@ const mapStateToProps = ( state ) => {
 		siteId
 	);
 
-	const isLoading = isLoadingStats(
-		state,
-		siteId,
-		chartQuery.chartTab,
-		chartQuery.period,
-		insightsQuery,
-		topPostsQuery,
-		visitsQuery
-	);
+	const isLoading = isLoadingStats( state, siteId, chartQuery, insightsQuery, topPostsQuery );
 
 	const canShowStatsData = ! isSiteUnlaunched && ! isLoading;
 	const statsData =
