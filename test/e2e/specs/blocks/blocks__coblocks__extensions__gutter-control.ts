@@ -43,7 +43,7 @@ describe( 'CoBlocks: Extensions: Gutter Control', function () {
 	} );
 
 	it( 'Go to the new post page', async () => {
-		await editorPage.visit( 'post' );
+		await editorPage.visit( testAccount.getSiteURL( { protocol: true } ), 'post' );
 	} );
 
 	it( 'Insert Pricing Table block', async () => {

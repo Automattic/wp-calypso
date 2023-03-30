@@ -30,17 +30,18 @@ describe( `Editor: Revisions`, function () {
 	let revisionsComponent: RevisionsComponent;
 	let revisionsPage: RevisionsPage;
 	let page: Page;
+	let testAccount: TestAccount;
 
 	beforeAll( async function () {
 		page = await browser.newPage();
 
-		const testAccount = new TestAccount( accountName );
+		testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
 	} );
 
 	it( 'Go to the new post page', async function () {
 		editorPage = new EditorPage( page, { target: features.siteType } );
-		await editorPage.visit( 'post' );
+		await editorPage.visit( testAccount.getSiteURL( { protocol: true } ), 'post' );
 	} );
 
 	it( 'Create revisions', async function () {

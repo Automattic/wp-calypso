@@ -65,6 +65,7 @@ export class FullSiteEditorPage {
 	private templatePartModalComponent: TemplatePartModalComponent;
 	private templatePartListComponent: TemplatePartListComponent;
 	private cookieBannerComponent: CookieBannerComponent;
+	private target: SiteType;
 
 	private hasCustomStyles = false;
 
@@ -78,15 +79,9 @@ export class FullSiteEditorPage {
 	constructor( page: Page, { target = 'simple' }: { target?: SiteType } = {} ) {
 		this.page = page;
 
-		if ( target === 'atomic' ) {
-			// For Atomic editors, there is no iFrame - the editor is
-			// part of the page DOM and is thus accessible directly.
-			this.editor = page.locator( selectors.editorRoot );
-		} else {
-			// For Simple editors, the editor is located within an iFrame
-			// and thus it must first be extracted.
-			this.editor = page.frameLocator( selectors.editorIframe ).locator( selectors.editorRoot );
-		}
+		this.target = target;
+
+		this.editor = page.locator( selectors.editorRoot );
 
 		this.editorCanvas = this.editor
 			.frameLocator( selectors.editorCanvasIframe )

@@ -24,11 +24,12 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Pattern-related events'
 		let page: Page;
 		let editorPage: EditorPage;
 		let eventManager: EditorTracksEventManager;
+		let testAccount: TestAccount;
 
 		beforeAll( async () => {
 			page = await browser.newPage();
 
-			const testAccount = new TestAccount( accountName );
+			testAccount = new TestAccount( accountName );
 			await testAccount.authenticate( page );
 
 			eventManager = new EditorTracksEventManager( page );
@@ -36,7 +37,7 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Pattern-related events'
 		} );
 
 		it( 'Start a new page', async function () {
-			await editorPage.visit( 'page' );
+			await editorPage.visit( testAccount.getSiteURL( { protocol: true } ), 'page' );
 			await editorPage.waitUntilLoaded();
 		} );
 

@@ -50,7 +50,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 		} );
 
 		it( 'Go to the new post page', async function () {
-			await editorPage.visit( 'post' );
+			await editorPage.visit( postingUser.getSiteURL( { protocol: true } ), 'post' );
 		} );
 
 		it( 'Enter post title', async function () {

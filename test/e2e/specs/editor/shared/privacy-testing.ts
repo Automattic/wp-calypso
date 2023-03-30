@@ -36,6 +36,8 @@ export function createPrivacyTests( { visibility }: { visibility: ArticlePrivacy
 		let editorPage: EditorPage;
 
 		describe( `Create a ${ visibility } page`, function () {
+			let testAccount: TestAccount;
+
 			beforeAll( async function () {
 				page = await browser.newPage();
 
@@ -50,7 +52,7 @@ export function createPrivacyTests( { visibility }: { visibility: ArticlePrivacy
 			it( 'Start new page', async function () {
 				// @TODO Consider moving this to EditorPage.
 				editorPage = new EditorPage( page, { target: features.siteType } );
-				await editorPage.visit( 'page' );
+				await editorPage.visit( testAccount.getSiteURL( { protocol: true } ), 'page' );
 				await editorPage.waitUntilLoaded();
 
 				const editorWindowLocator = editorPage.getEditorWindowLocator();

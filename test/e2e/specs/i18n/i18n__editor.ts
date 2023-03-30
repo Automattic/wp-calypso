@@ -281,7 +281,7 @@ describe( 'I18N: Editor', function () {
 
 		describe( 'Editing Toolkit Plugin', function () {
 			it( 'Go to the new post page', async function () {
-				await editorPage.visit( 'post' );
+				await editorPage.visit( testAccount.getSiteURL( { protocol: true } ), 'post' );
 			} );
 
 			it( 'Translations for Welcome Guide', async function () {

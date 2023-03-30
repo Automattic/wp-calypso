@@ -26,11 +26,12 @@ describe(
 			let page: Page;
 			let editorPage: EditorPage;
 			let editorTracksEventManager: EditorTracksEventManager;
+			let testAccount: TestAccount;
 
 			beforeAll( async () => {
 				page = await browser.newPage();
 
-				const testAccount = new TestAccount( accountName );
+				testAccount = new TestAccount( accountName );
 				await testAccount.authenticate( page );
 
 				editorTracksEventManager = new EditorTracksEventManager( page );
@@ -38,7 +39,7 @@ describe(
 			} );
 
 			it( 'Start a new post', async function () {
-				await editorPage.visit( 'post' );
+				await editorPage.visit( testAccount.getSiteURL( { protocol: true } ), 'post' );
 				await editorPage.waitUntilLoaded();
 				// We'll be exiting without saving.
 				editorPage.allowLeavingWithoutSaving();

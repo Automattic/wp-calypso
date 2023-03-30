@@ -29,17 +29,18 @@ describe( DataHelper.createSuiteTitle( `Editor: Navbar` ), function () {
 
 	let page: Page;
 	let editorPage: EditorPage;
+	let testAccount: TestAccount;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
 		editorPage = new EditorPage( page, { target: features.siteType } );
 
-		const testAccount = new TestAccount( accountName );
+		testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
 	} );
 
 	it( 'Go to the new post page', async function () {
-		await editorPage.visit( 'post' );
+		await editorPage.visit( testAccount.getSiteURL( { protocol: true } ), 'post' );
 	} );
 
 	it( 'Return to Calypso dashboard', async function () {

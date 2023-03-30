@@ -28,12 +28,13 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 			let page: Page;
 			let editorPage: EditorPage;
 			let editorTracksEventManager: EditorTracksEventManager;
+			let testAccount: TestAccount;
 
 			beforeAll( async () => {
 				page = await browser.newPage();
 
 				const accountName = getTestAccountByFeature( features );
-				const testAccount = new TestAccount( accountName );
+				testAccount = new TestAccount( accountName );
 				await testAccount.authenticate( page );
 
 				editorTracksEventManager = new EditorTracksEventManager( page );
@@ -41,7 +42,7 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 			} );
 
 			it( 'Start a new post', async function () {
-				await editorPage.visit( 'post' );
+				await editorPage.visit( testAccount.getSiteURL( { protocol: true } ), 'post' );
 				await editorPage.waitUntilLoaded();
 			} );
 

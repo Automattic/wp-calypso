@@ -1,5 +1,4 @@
 import { Page, Frame, ElementHandle, Response, Locator } from 'playwright';
-import { getCalypsoURL } from '../../data-helper';
 import { reloadAndRetry } from '../../element-helper';
 import envVariables from '../../env-variables';
 import {
@@ -75,22 +74,9 @@ export class EditorPage {
 		page: Page,
 		{ target = 'simple', blockTheme = false }: { target?: SiteType; blockTheme?: boolean } = {}
 	) {
-		// The first step is to determine whether the test site is running a
-		// Gutenframe, otherwise known as a Calypsofy iframe.
-		// Typically, a Gutenframe is found on Simple sites and encapsulates the
-		// entire editor window.
-		// Atomic sites typically do not feature a Gutenframe and thus the editor
-		// window is exposed in the DOM.
-		// For both Simple and Atomic, the relevant `body` root element is used when resolving
-		// the Locator. This is to present a unified behavior when other methods reference the
-		// `editorWindow`.
-		if ( target === 'atomic' ) {
-			this.editorWindow = page.locator( selectors.editor );
-		} else {
-			this.editorWindow = page.frameLocator( selectors.editorFrame ).locator( selectors.editor );
-		}
+		this.editorWindow = page.locator( selectors.editor );
 
-		// The second step is to locate the iframe that exists within the
+		// We need to correctly locate theiframe that exists within the
 		// editor canvas as of Gutenberg 14.9.1 when using newer block-based themes.
 		// If the parameter `blockTheme` is true, the editor canvas is hidden inside a new
 		// iframe and must be pierced to be visible.
@@ -139,8 +125,24 @@ export class EditorPage {
 	 * Example "new post": {@link https://wordpress.com/post}
 	 * Example "new page": {@link https://wordpress.com/page}
 	 */
-	async visit( type: 'post' | 'page' = 'post' ): Promise< Response | null > {
-		const request = await this.page.goto( getCalypsoURL( type ), { timeout: 30 * 1000 } );
+	async visit(
+		siteUrlWithProtocol: string,
+		type: 'post' | 'page' = 'post'
+	): Promise< Response | null > {
+		let url: URL;
+		try {
+			url = new URL( '/wp-admin/post-new.php', siteUrlWithProtocol );
+		} catch ( error ) {
+			throw new Error(
+				`Invalid site URL provided: "${ siteUrlWithProtocol }". Did you remember to include the protocol?`
+			);
+		}
+
+		url.searchParams.set( 'post_type', type );
+		url.searchParams.set( 'calypsoify', '1' );
+		url.searchParams.set( 'calypso_origin', envVariables.CALYPSO_BASE_URL );
+
+		const request = await this.page.goto( url.href, { timeout: 30 * 1000 } );
 		await this.waitUntilLoaded();
 
 		return request;

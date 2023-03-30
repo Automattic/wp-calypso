@@ -36,16 +36,17 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 		let editorPage: EditorPage;
 		let editorContext: EditorContext;
 		let publishedPostContext: PublishedPostContext;
+		let testAccount: TestAccount;
 
 		beforeAll( async () => {
 			page = await browser.newPage();
 			editorPage = new EditorPage( page, { target: features.siteType } );
-			const testAccount = new TestAccount( accountName );
+			testAccount = new TestAccount( accountName );
 			await testAccount.authenticate( page );
 		} );
 
 		it( 'Go to the new post page', async () => {
-			await editorPage.visit( 'post' );
+			await editorPage.visit( testAccount.getSiteURL( { protocol: true } ), 'post' );
 		} );
 
 		describe( 'Add and configure blocks in the editor', function () {

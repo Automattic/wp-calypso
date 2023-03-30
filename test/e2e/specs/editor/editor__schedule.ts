@@ -31,18 +31,19 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 	let editorPage: EditorPage;
 	let context: BrowserContext;
 	let page: Page;
+	let testAccount: TestAccount;
 
 	beforeAll( async function () {
 		context = await browser.newContext();
 		page = await context.newPage();
 
-		const testAccount = new TestAccount( accountName );
+		testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
 	} );
 
 	it( 'Go to the new post page', async function () {
 		editorPage = new EditorPage( page, { target: features.siteType } );
-		await editorPage.visit( 'post' );
+		await editorPage.visit( testAccount.getSiteURL( { protocol: true } ), 'post' );
 	} );
 
 	it( 'Enter page title', async function () {
