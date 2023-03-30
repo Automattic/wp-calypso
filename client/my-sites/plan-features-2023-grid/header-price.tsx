@@ -25,12 +25,6 @@ const PlanFeatures2023GridHeaderPrice = ( {
 	const shouldShowDiscountedPrice = Boolean(
 		planPrices.planDiscountedRawPrice || planPrices.discountedRawPrice
 	);
-	const discountedPricing = {
-		crossoutPrice: shouldShowDiscountedPrice ? planPrices.rawPrice : null,
-		price: shouldShowDiscountedPrice
-			? planPrices.planDiscountedRawPrice || planPrices.discountedRawPrice
-			: planPrices.rawPrice,
-	};
 
 	if ( isWpcomEnterpriseGridPlan( planName ) ) {
 		return null;
@@ -43,7 +37,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 					<div className="plan-features-2023-grid__header-price-group-prices">
 						<PlanPrice
 							currencyCode={ currencyCode }
-							rawPrice={ discountedPricing.crossoutPrice ?? undefined }
+							rawPrice={ planPrices.rawPrice }
 							displayPerMonthNotation={ false }
 							is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 							isLargeCurrency={ isLargeCurrency }
@@ -51,7 +45,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 						/>
 						<PlanPrice
 							currencyCode={ currencyCode }
-							rawPrice={ discountedPricing.price }
+							rawPrice={ planPrices.planDiscountedRawPrice || planPrices.discountedRawPrice }
 							displayPerMonthNotation={ false }
 							is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 							isLargeCurrency={ isLargeCurrency }
@@ -63,7 +57,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 			{ ! shouldShowDiscountedPrice && (
 				<PlanPrice
 					currencyCode={ currencyCode }
-					rawPrice={ discountedPricing.price }
+					rawPrice={ planPrices.rawPrice }
 					displayPerMonthNotation={ false }
 					is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 					isLargeCurrency={ isLargeCurrency }
