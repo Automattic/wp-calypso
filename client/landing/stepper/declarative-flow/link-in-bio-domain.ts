@@ -1,6 +1,7 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, LINK_IN_BIO_FLOW, LINK_IN_BIO_DOMAIN_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { translate } from 'i18n-calypso';
 import { domainMapping } from 'calypso/lib/cart-values/cart-items';
 import wpcom from 'calypso/lib/wp';
 import {
@@ -25,11 +26,13 @@ import {
 	Flow,
 	ProvidedDependencies,
 } from './internals/types';
-import LinkInBio from './link-in-bio';
 import type { UserSelect } from '@automattic/data-stores';
 
 const linkInBioDomain: Flow = {
-	...LinkInBio,
+	name: LINK_IN_BIO_FLOW,
+	get title() {
+		return translate( 'Link in Bio' );
+	},
 	variantSlug: LINK_IN_BIO_DOMAIN_FLOW,
 	useAssertConditions: () => {
 		const { domain } = useDomainParams();
