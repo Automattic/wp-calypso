@@ -77,6 +77,7 @@ const GlobalStylesVariation = ( {
 				<GlobalStylesContext.Provider value={ context }>
 					<GlobalStylesVariationPreview
 						title={ globalStylesVariation.title }
+						inlineCss={ globalStylesVariation.inline_css }
 						isFocused={ isFocused || showOnlyHoverView }
 					/>
 				</GlobalStylesContext.Provider>
