@@ -78,11 +78,13 @@ const PlanFeatures2023GridBillingTimeframe: FunctionComponent< Props > = ( props
 	const translate = useTranslate();
 
 	const perMonthDescription = usePerMonthDescription( props ) || billingTimeframe;
+	const price = formatCurrency( 25000, 'USD' );
 
 	if ( isWpcomEnterpriseGridPlan( planName ) ) {
 		return (
 			<div className="plan-features-2023-grid__vip-price">
-				{ translate( 'Starts at {{b}}US$25,000{{/b}} yearly.', {
+				{ translate( 'Starts at {{b}}%(price)s{{/b}} yearly.', {
+					args: { price },
 					components: { b: <b /> },
 					comment: 'Translators: the price is in US dollars for all users (US$25,000)',
 				} ) }
