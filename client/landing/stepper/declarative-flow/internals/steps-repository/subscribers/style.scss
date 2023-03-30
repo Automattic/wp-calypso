@@ -32,6 +32,14 @@
 			max-width: 368px;
 		}
 
+		.add-subscriber__form--container {
+			input {
+				&::placeholder {
+					color: var(--studio-gray-50);
+				}
+			}
+		}
+
 		.add-subscriber__form-submit-btn {
 			display: block;
 			width: 100%;

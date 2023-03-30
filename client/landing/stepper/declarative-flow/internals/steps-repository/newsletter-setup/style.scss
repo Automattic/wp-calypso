@@ -8,9 +8,17 @@
 			padding-top: 0;
 		}
 	}
+
 	.step-container__content {
 		display: flex;
 		justify-content: center;
+
+		input,
+		form-textarea {
+			&::placeholder {
+				color: var(--studio-gray-50);
+			}
+		}
 	}
 
 	.step-container__header {
