@@ -351,7 +351,7 @@ function isDomainUpsellCompleted(
 	site: SiteDetails | null,
 	checklistStatuses: LaunchpadStatuses
 ): boolean {
-	return ! site?.plan?.is_free && checklistStatuses?.domain_upsell_deferred === true;
+	return ! site?.plan?.is_free || checklistStatuses?.domain_upsell_deferred === true;
 }
 
 // Records a generic task click Tracks event

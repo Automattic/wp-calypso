@@ -58,7 +58,7 @@ const domainUpsell: Flow = {
 								domain_upsell_deferred: true,
 							},
 						} );
-						return;
+						return window.location.assign( returnUrl );
 					}
 					setHideFreePlan( true );
 					navigate( 'plans' );
