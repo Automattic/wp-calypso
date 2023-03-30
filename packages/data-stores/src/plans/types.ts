@@ -61,6 +61,17 @@ export interface PricedAPIPlan {
 	product_slug: StorePlanSlug;
 	product_name_short: string;
 	bill_period: -1 | ( typeof PERIOD_LIST )[ number ];
+
+	/**
+	 * The product price in the currency's smallest unit.
+	 */
+	raw_price_integer: number;
+
+	/**
+	 * The product price as a float.
+	 *
+	 * @deprecated use raw_price_integer as using floats for currency is not safe.
+	 */
 	raw_price: number;
 	orig_cost?: number | null;
 	currency_code: string;
@@ -72,6 +83,7 @@ export interface PricedAPIPlanFree extends PricedAPIPlan {
 	product_slug: 'free_plan';
 	bill_period: -1;
 	raw_price: 0;
+	raw_price_integer: 0;
 }
 export interface PricedAPIPlanPaidAnnually extends PricedAPIPlan {
 	path_slug: PlanPath;
