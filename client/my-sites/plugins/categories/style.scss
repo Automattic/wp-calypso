@@ -1,0 +1,5 @@
+.categories__menu {
+	.components-popover {
+		z-index: z-index( 'root', '.categories__menu .components-popover' );
+	}
+}
