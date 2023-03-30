@@ -1,4 +1,4 @@
-import { Button, ToggleControl } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { SiteLogsTab } from 'calypso/data/hosting/use-site-logs-query';
@@ -35,8 +35,6 @@ const SiteLogsToolbarDownloadProgress = ( {
 };
 
 type Props = {
-	autoRefresh: boolean;
-	onAutoRefreshChange: ( isChecked: boolean ) => void;
 	onDateTimeChange: ( startDateTime: Moment, endDateTime: Moment ) => void;
 	logType: SiteLogsTab;
 	startDateTime: Moment;
@@ -44,8 +42,6 @@ type Props = {
 };
 
 export const SiteLogsToolbar = ( {
-	autoRefresh,
-	onAutoRefreshChange,
 	onDateTimeChange,
 	logType,
 	startDateTime,
@@ -102,12 +98,6 @@ export const SiteLogsToolbar = ( {
 
 				{ isDownloading && <SiteLogsToolbarDownloadProgress { ...state } /> }
 			</div>
-			<ToggleControl
-				className="site-logs-toolbar__auto-refresh"
-				label={ translate( 'Auto-refresh' ) }
-				checked={ autoRefresh }
-				onChange={ onAutoRefreshChange }
-			/>
 		</div>
 	);
 };

@@ -1,3 +1,4 @@
+import { ToggleControl } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
@@ -146,14 +147,19 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 				subHeaderText={ __( 'View server logs to troubleshoot or debug problems with your site.' ) }
 				align="left"
 				className="site-logs__formatted-header"
-			/>
+			>
+				<ToggleControl
+					className="site-logs__auto-refresh"
+					label={ __( 'Auto-refresh' ) }
+					checked={ autoRefresh }
+					onChange={ handleAutoRefreshClick }
+				/>
+			</FormattedHeader>
 
 			<SiteLogsTabPanel selectedTab={ logType } onSelected={ handleTabSelected }>
 				{ () => (
 					<>
 						<SiteLogsToolbar
-							autoRefresh={ autoRefresh }
-							onAutoRefreshChange={ handleAutoRefreshClick }
 							logType={ logType }
 							startDateTime={ dateRange.startTime }
 							endDateTime={ dateRange.endTime }
