@@ -170,13 +170,12 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	shouldLimitGlobalStyles,
 } ) => {
 	const { __ } = useI18n();
-	const [ _selectedStyleVariation, setSelectedStyleVariation ] = useState< StyleVariation >();
+	const [ selectedStyleVariation, setSelectedStyleVariation ] = useState< StyleVariation >();
 
 	const { style_variations = [] } = design;
 	const currentSiteCanInstallWoo = currentPlanFeatures?.includes( FEATURE_WOOP ) ?? false;
 	const designIsBundledWithWoo = design.is_bundled_with_woo_commerce;
 
-	const selectedStyleVariation = _selectedStyleVariation;
 	const isDefaultVariation = ! selectedStyleVariation || selectedStyleVariation.slug === 'default';
 
 	const title = isDefaultVariation
