@@ -55,7 +55,6 @@ const linkInBioDomain: Flow = {
 		];
 	},
 	useStepNavigation( _currentStepSlug, navigate ) {
-		const originalNav = LinkInBio.useStepNavigation;
 		const flowName = this.name;
 		const variantSlug = this.variantSlug;
 		const { setStepProgress, setHideFreePlan, setDomainCartItem } = useDispatch( ONBOARD_STORE );
@@ -137,7 +136,6 @@ const linkInBioDomain: Flow = {
 		};
 
 		return {
-			...originalNav,
 			submit,
 		};
 	},
