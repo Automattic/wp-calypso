@@ -1,3 +1,4 @@
+import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { memo, useMemo } from 'react';
 import { useSelector } from 'react-redux';
@@ -21,6 +22,7 @@ export const SiteLogsTable = memo( function SiteLogsTable( {
 	isLoading,
 }: SiteLogsTableProps ) {
 	const moment = useLocalizedMoment();
+	const { __ } = useI18n();
 	const columns = useSiteColumns( logs );
 	const siteGmtOffset = useSelector( ( state ) => {
 		const siteId = getSelectedSiteId( state );
@@ -29,6 +31,10 @@ export const SiteLogsTable = memo( function SiteLogsTable( {
 
 	if ( isLoading && ! logs?.length ) {
 		return <Skeleton />;
+	}
+
+	if ( ! isLoading && ! logs?.length ) {
+		return <>{ __( 'No log entries within this time range.' ) }</>;
 	}
 
 	return (
