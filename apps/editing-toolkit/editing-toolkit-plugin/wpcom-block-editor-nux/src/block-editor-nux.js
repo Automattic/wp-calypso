@@ -65,7 +65,9 @@ function WelcomeTour() {
 	if ( ! show || isNewPageLayoutModalOpen ) {
 		return null;
 	}
-	if ( siteEditorCanvasMode !== 'edit' ) {
+
+	// Hide the Welcome Tour when not in the edit mode. Note that canvas mode is available only in the site editor
+	if ( siteEditorCanvasMode && siteEditorCanvasMode !== 'edit' ) {
 		return null;
 	}
 
