@@ -1,8 +1,7 @@
-import { useEffect, useMemo, useState, useRef } from 'react';
-import UplotReact from 'uplot-react';
+import UplotLineChart from '@automattic/components/src/chart-uplot';
+import { useEffect, useMemo, useState } from 'react';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 
-import 'uplot/dist/uPlot.min.css';
 import './style.scss';
 
 // New Subscriber Stats
@@ -46,28 +45,12 @@ function getData() {
 	];
 }
 
-function UplotLineChart() {
-	const uplotRef = useRef< uPlot | null >( null );
-	const [ options ] = useState< uPlot.Options >(
-		useMemo(
-			() => ( {
-				// TODO: Use container width here.
-				width: 1224,
-				height: 300,
-				padding: [ 16, 8, 16, 8 ],
-				series: [
-					{},
-					{
-						label: 'Subscribers',
-						stroke: '#3057DC',
-						fill: 'rgba(48, 87, 220, 0.1)',
-					},
-				],
-				// TODO: Fix hover behavior.
-			} ),
-			[]
-		)
-	);
+export default function SubscribersSection() {
+	const [ isLoading, setIsLoading ] = useState( false );
+	useEffect( () => {
+		setTimeout( () => setIsLoading( false ), 5000 );
+	}, [ isLoading ] );
+
 	const initialState = useMemo< uPlot.AlignedData >( () => {
 		const x: number[] = getData().map( ( point ) => Number( new Date( point[ 0 ] ) ) / 1000 );
 		const y: number[] = getData().map( ( point ) => Number( point[ 1 ] ) );
@@ -75,29 +58,14 @@ function UplotLineChart() {
 	}, [] );
 	const [ data ] = useState< uPlot.AlignedData >( initialState );
 
-	// TODO: Add container resize listener to update chart width.
-
-	return (
-		<UplotReact
-			options={ options }
-			data={ data }
-			onCreate={ ( chart ) => {
-				uplotRef.current = chart;
-			} }
-		/>
-	);
-}
-
-export default function SubscribersSection() {
-	const [ isLoading, setIsLoading ] = useState( false );
-	useEffect( () => {
-		setTimeout( () => setIsLoading( false ), 5000 );
-	}, [ isLoading ] );
-
 	return (
 		<div className="subscribers-section">
 			<h1 className="highlight-cards-heading">Subscribers</h1>
-			{ isLoading ? <StatsModulePlaceholder className="is-chart" isLoading /> : <UplotLineChart /> }
+			{ isLoading ? (
+				<StatsModulePlaceholder className="is-chart" isLoading />
+			) : (
+				<UplotLineChart data={ data } options={ { legend: { show: false } } } />
+			) }
 		</div>
 	);
 }
