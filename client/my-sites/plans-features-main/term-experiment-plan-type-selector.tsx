@@ -10,7 +10,7 @@ const PlanSelectorLoadingEllipsis = styled( LoadingEllipsis )`
 
 const TermExperimentPlanTypeSelector: React.FunctionComponent< {
 	isEligible: boolean;
-	kind: string;
+	kind: 'interval' | 'customer';
 	plans: string[];
 	planTypeSelectorProps: PlanTypeSelectorProps;
 } > = ( { isEligible, kind, plans, planTypeSelectorProps } ) => (
