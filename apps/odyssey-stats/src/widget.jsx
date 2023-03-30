@@ -7,8 +7,6 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import MomentProvider from 'calypso/components/localized-moment/provider';
 import StatsWidget from 'calypso/my-sites/customer-home/cards/features/stats';
-import consoleDispatcher from 'calypso/state/console-dispatch';
-import currentUser from 'calypso/state/current-user/reducer';
 import wpcomApiMiddleware from 'calypso/state/data-layer/wpcom-api-middleware';
 import { setStore } from 'calypso/state/redux-store';
 import sites from 'calypso/state/sites/reducer';
@@ -23,24 +21,15 @@ import './widget.scss';
  * Loads and runs the main chunk for Stats Widget.
  */
 function init() {
-	// TODO: look whether any of these could be removed.
-	const rootReducer = combineReducers( {
-		currentUser,
-		sites,
-	} );
-
 	const store = createStore(
-		rootReducer,
+		combineReducers( {
+			// TODO: look at implementing a simple reducer to replace this.
+			sites,
+		} ),
 		config( 'intial_state' ) ?? {},
-		// TODO: look whether any of these could be removed.
-		compose(
-			consoleDispatcher,
-			addReducerEnhancer,
-			applyMiddleware( thunkMiddleware, wpcomApiMiddleware )
-		)
+		compose( addReducerEnhancer, applyMiddleware( thunkMiddleware, wpcomApiMiddleware ) )
 	);
 
-	// TODO: look whether any of these could be removed.
 	setStore( store );
 	setLocale( store.dispatch );
 	store.dispatch( setSelectedSiteId( config( 'blog_id' ) ) );
