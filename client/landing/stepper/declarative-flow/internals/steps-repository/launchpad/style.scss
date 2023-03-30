@@ -451,7 +451,7 @@
 	flex-grow: 1;
 
 	@include break-large {
-		margin: 53px 20px 12px 20px;
+		margin: 53px 20px 20px 20px;
 	}
 
 	.preview-toolbar__toolbar {
@@ -465,7 +465,7 @@
 	.web-preview__inner {
 		height: 680px;
 		@include break-large {
-			height: 867px;
+			height: 100%;
 		}
 	}
 
