@@ -147,7 +147,7 @@ PluginActivateToggle.defaultProps = {
 
 export default connect(
 	( state, { site, plugin } ) => ( {
-		inProgress: isPluginActionInProgress( state, site.ID, plugin.id, activationActions ),
+		inProgress: plugin && isPluginActionInProgress( state, site.ID, plugin.id, activationActions ),
 	} ),
 	{
 		recordGoogleEvent,

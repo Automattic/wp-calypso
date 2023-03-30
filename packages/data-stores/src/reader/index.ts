@@ -1,13 +1,13 @@
-// Queries
-export { useSubscriptionManagerUserSettingsQuery } from './queries/use-subscription-manager-user-settings-query';
-export { useSubscriptionManagerSubscriptionsCountQuery } from './queries/use-subscription-manager-subscriptions-count-query';
+import { useSubscriberEmailAddress } from './hooks';
+import { useUserSettingsMutation } from './mutations';
+import { useSubscriptionsCountQuery, useUserSettingsQuery } from './queries';
 
-// Mutations
-export { useSubscriptionManagerUserSettingsMutation } from './mutations/use-subscription-manager-user-settings-mutation';
-export { useSubscriptionManagerSiteDeliveryFrequencyMutation } from './mutations/use-subscription-manager-site-delivery-frequency-mutation';
-
-// Hooks
-export { useSubscriberEmailAddress } from './hooks';
+export const SubscriptionManager = {
+	useUserSettingsMutation,
+	useSubscriptionsCountQuery,
+	useUserSettingsQuery,
+	useSubscriberEmailAddress,
+};
 
 // Types
 export type {
@@ -15,5 +15,4 @@ export type {
 	DeliveryWindowHourType,
 	EmailFormatType,
 	SubscriptionManagerUserSettings,
-	SiteSubscriptionDeliveryFrequency,
 } from './types';
