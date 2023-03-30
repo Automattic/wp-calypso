@@ -5,6 +5,7 @@ import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunkMiddleware from 'redux-thunk';
+import MomentProvider from 'calypso/components/localized-moment/provider';
 import StatsWidget from 'calypso/my-sites/customer-home/cards/features/stats';
 import consoleDispatcher from 'calypso/state/console-dispatch';
 import currentUser from 'calypso/state/current-user/reducer';
@@ -46,7 +47,9 @@ function init() {
 
 	render(
 		<Provider store={ store }>
-			<StatsWidget />
+			<MomentProvider>
+				<StatsWidget />
+			</MomentProvider>
 		</Provider>,
 		document.getElementById( 'dashboard_stats' )
 	);
