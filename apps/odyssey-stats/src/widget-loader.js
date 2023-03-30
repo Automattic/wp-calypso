@@ -4,7 +4,7 @@
 
 // Initialize Stats widget when DOMContentLoaded is fired, or immediately if it already has been.
 function initStatsWidget() {
-	return import( /* webpackChunkName: "widget.main" */ './widget' ).then( ( { init } ) => init() );
+	return import( './widget' ).then( ( { init } ) => init() );
 }
 if ( document.readyState !== 'loading' ) {
 	initStatsWidget();
