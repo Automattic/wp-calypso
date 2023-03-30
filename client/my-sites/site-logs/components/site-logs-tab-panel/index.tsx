@@ -1,7 +1,7 @@
 import { TabPanel } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
-import page from 'page';
+import { updateLogTypeQueryParam } from '../../site-logs-filter-params';
 import type { SiteLogsTab } from 'calypso/data/hosting/use-site-logs-query';
 import './style.scss';
 
@@ -28,8 +28,8 @@ export const SiteLogsTabPanel = ( {
 			initialTabName={ selectedTab }
 			className={ classnames( 'site-logs-tab-panel', className ) }
 			tabs={ tabs }
-			onSelect={ ( tabName ) => {
-				onTabSelected( tabName );
+			onSelect={ ( tabName: SiteLogsTab ) => {
+				updateLogTypeQueryParam( tabName );
 				onSelected?.( tabName as SiteLogsTab );
 			} }
 		>
@@ -37,9 +37,3 @@ export const SiteLogsTabPanel = ( {
 		</TabPanel>
 	);
 };
-
-function onTabSelected( tabName: string ) {
-	const url = new URL( window.location.href );
-	url.searchParams.set( 'log-type', tabName );
-	page.replace( url.pathname + url.search );
-}
