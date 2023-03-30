@@ -1,8 +1,8 @@
 import { translate as i18nTranslate } from 'i18n-calypso';
 import customDomain from 'calypso/assets/images/plans/wpcom/custom-domain.png';
 import customize from 'calypso/assets/images/plans/wpcom/customize.png';
+import launch from 'calypso/assets/images/plans/wpcom/launch-store.png';
 import manageWooCommerce from 'calypso/assets/images/plans/wpcom/manage-woocommerce.png';
-import marketing from 'calypso/assets/images/plans/wpcom/marketing.png';
 import promote from 'calypso/assets/images/plans/wpcom/promote.png';
 import wayToPay from 'calypso/assets/images/plans/wpcom/way-to-pay.png';
 
@@ -20,15 +20,11 @@ export interface GetActionUrlProps {
 export const getConfirmationTasks = ( { translate }: ConfirmationTasksProps ) => {
 	return [
 		{
-			id: 'custom-domain',
-			illustration: customDomain,
-			title: translate( 'Select your custom domain' ),
-			subtitle: translate(
-				'Enhance your brand and make your store more professional with a custom domain.'
-			),
-			getActionUrl: ( { siteName, siteSlug }: GetActionUrlProps ) =>
-				`/domains/add/${ siteSlug }` +
-				( siteName ? `?suggestion=${ encodeURIComponent( siteName ) }` : '' ),
+			id: 'launch-store',
+			illustration: launch,
+			title: translate( 'Launch your store' ),
+			subtitle: translate( 'Share your store with the world and start accepting orders.' ),
+			getActionUrl: ( { wooAdminUrl }: GetActionUrlProps ) => `${ wooAdminUrl }&task=launch_site`,
 		},
 		{
 			id: 'promote-products',
@@ -47,12 +43,15 @@ export const getConfirmationTasks = ( { translate }: ConfirmationTasksProps ) =>
 			getActionUrl: ( { wooAdminUrl }: GetActionUrlProps ) => `${ wooAdminUrl }&task=payments`,
 		},
 		{
-			id: 'marketing-campaign',
-			illustration: marketing,
-			title: translate( 'Create a marketing campaign' ),
-			subtitle: translate( 'Drive sales and build loyalty through automated marketing messages.' ),
-			getActionUrl: ( { wpAdminUrl }: GetActionUrlProps ) =>
-				`${ wpAdminUrl }edit.php?post_type=aw_workflow#presets`,
+			id: 'custom-domain',
+			illustration: customDomain,
+			title: translate( 'Add your custom domain' ),
+			subtitle: translate(
+				'Enhance your brand and make your store more professional with a custom domain.'
+			),
+			getActionUrl: ( { siteName, siteSlug }: GetActionUrlProps ) =>
+				`/domains/add/${ siteSlug }` +
+				( siteName ? `?suggestion=${ encodeURIComponent( siteName ) }` : '' ),
 		},
 		{
 			id: 'customize-store',
