@@ -1,3 +1,4 @@
+import { isProPlan } from '@automattic/calypso-products';
 import { Button, Card, Gridicon, LoadingPlaceholder } from '@automattic/components';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
@@ -5,7 +6,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { localize } from 'i18n-calypso';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useQueryClient } from 'react-query';
-import { connect, useDispatch } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import Notice from 'calypso/components/notice';
@@ -19,6 +20,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
+import { getSitePlanSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 import { DeleteStagingSite } from './delete-staging-site';
 import { useDeleteStagingSite } from './use-delete-staging-site';
@@ -281,7 +283,10 @@ export const StagingSiteCard = ( {
 		);
 	};
 
+	const sitePlanSlug = useSelector( ( state ) => getSitePlanSlug( state, siteId ) );
+
 	let stagingSiteCardContent;
+
 	if ( ! isLoadingStagingSites && loadingError ) {
 		stagingSiteCardContent = getLoadingErrorContent();
 	} else if ( ! wasCreating && ! hasSiteAccess && transferStatus !== null ) {
@@ -297,14 +302,18 @@ export const StagingSiteCard = ( {
 	}
 
 	return (
-		<Card className="staging-site-card">
-			{
-				// eslint-disable-next-line wpcalypso/jsx-gridicon-size
-				<Gridicon icon="science" size={ 32 } />
-			}
-			<CardHeading id="staging-site">{ translate( 'Staging site' ) }</CardHeading>
-			{ stagingSiteCardContent }
-		</Card>
+		<>
+			{ ! isProPlan( sitePlanSlug ) ? (
+				<Card className="staging-site-card">
+					{
+						// eslint-disable-next-line wpcalypso/jsx-gridicon-size
+						<Gridicon icon="science" size={ 32 } />
+					}
+					<CardHeading id="staging-site">{ translate( 'Staging site' ) }</CardHeading>
+					{ stagingSiteCardContent }
+				</Card>
+			) : null }
+		</>
 	);
 };
 
