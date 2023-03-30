@@ -10,12 +10,14 @@ import { getSiteAdminUrl, getSiteSlug } from 'calypso/state/sites/selectors';
  * @returns {string} Url of site editor instance for calypso or wp-admin.
  */
 export const getSiteEditorUrl = ( state, siteId ) => {
-	const siteAdminUrl = getSiteAdminUrl( state, siteId );
-
 	if ( ! shouldLoadGutenframe( state, siteId ) ) {
-		const siteEditorUrl = `${ siteAdminUrl }site-editor.php`;
-		// Helps to maintain origin across different environments
-		return addQueryArgs( { origin: window.location.origin }, siteEditorUrl );
+		const siteAdminUrl = getSiteAdminUrl( state, siteId );
+		let siteEditorUrl = `${ siteAdminUrl }site-editor.php`;
+		if ( window.location.origin !== 'https://wordpress.com' ) {
+			// Helps to maintain origin across different environments
+			siteEditorUrl = addQueryArgs( { origin: window.location.origin }, siteEditorUrl );
+		}
+		return siteEditorUrl;
 	}
 
 	const siteSlug = getSiteSlug( state, siteId );

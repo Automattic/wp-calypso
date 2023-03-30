@@ -18,7 +18,9 @@ export const getEditorUrl = ( state, siteId, postId = '', postType = 'post' ) =>
 			url = addQueryArgs( { calypsoify: '1' }, url );
 		}
 		// Helps to maintain origin across different environments
-		url = addQueryArgs( { origin: window.location.origin }, url );
+		if ( window.location.origin !== 'https://wordpress.com' ) {
+			url = addQueryArgs( { calypso_origin: window.location.origin }, url );
+		}
 
 		return url;
 	}
