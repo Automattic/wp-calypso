@@ -39,7 +39,7 @@ function isCalypsoLive( origin: string ) {
 export function getWpComOrigin( path = '' ) {
 	const defaultOrigin = 'https://wordpress.com';
 	const fromReferrer = document.referrer;
-	const fromQueryArg = new URLSearchParams( window.location.search ).get( 'origin' ) || '';
+	const fromQueryArg = new URLSearchParams( window.location.search ).get( 'calypso_origin' ) || '';
 	let origin = defaultOrigin;
 
 	if ( isAllowedOrigin( fromQueryArg ) ) {
