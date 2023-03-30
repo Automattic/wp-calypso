@@ -24,3 +24,38 @@ export type EmailSettingsAPIResponse = {
 		};
 	};
 };
+
+type SiteSubscriptionMeta = {
+	links: {
+		site: string;
+		feed: string;
+	};
+};
+
+type SiteSubscriptionDeliveryMethods = {
+	email: {
+		send_posts: boolean;
+		send_comments: boolean;
+		post_delivery_frequency: string;
+		date_subscribed: Date;
+	};
+	notification: {
+		send_posts: boolean;
+	};
+};
+
+export type SiteSubscription = {
+	ID: string;
+	blog_ID: string;
+	feed_ID: string;
+	URL: string;
+	date_subscribed: Date;
+	delivery_methods: SiteSubscriptionDeliveryMethods;
+	name: string;
+	organization_id: number;
+	unseen_count: number;
+	last_updated: Date;
+	site_icon: string;
+	is_owner: boolean;
+	meta: SiteSubscriptionMeta;
+};
