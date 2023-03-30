@@ -22,6 +22,7 @@ export function DateTimePicker( { value, onChange, gmtOffset = 0, max, min, ...r
 
 	return (
 		<input
+			className="button"
 			type="datetime-local"
 			value={ value.utcOffset( gmtOffset * 60 ).format( INPUT_DATE_FORMAT ) }
 			{ ...( min && {

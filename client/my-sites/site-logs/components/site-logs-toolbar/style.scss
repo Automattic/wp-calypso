@@ -3,7 +3,7 @@
 
 	.site-logs-toolbar__top-row {
 		display: flex;
-		align-items: stretch;
+		align-items: center;
 		flex-wrap: wrap;
 		justify-content: flex-start;
 		gap: 16px;
@@ -11,22 +11,7 @@
 	}
 
 	button {
-		height: initial;
-	}
-
-	.toggle-visible .date-range__trigger-btn {
-		background-color: var(--color-surface);
-	}
-
-	//prevent button from jumping when toggling date picker
-	.button-group {
-		.button:first-child,
-		:last-child {
-			&:active {
-				border-right-width: 1px;
-				border-left-width: 1px;
-			}
-		}
+		height: 42px;
 	}
 }
 
