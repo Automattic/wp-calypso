@@ -1,9 +1,8 @@
 import { useLocale } from '@automattic/i18n-utils';
-import { useFlowProgress, LINK_IN_BIO_FLOW, LINK_IN_BIO_DOMAIN_FLOW } from '@automattic/onboarding';
+import { useFlowProgress, LINK_IN_BIO_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
-import { domainMapping } from 'calypso/lib/cart-values/cart-items';
 import wpcom from 'calypso/lib/wp';
 import {
 	clearSignupDestinationCookie,
@@ -11,7 +10,6 @@ import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
-import { useDomainParams } from '../hooks/use-domain-params';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
@@ -46,11 +44,9 @@ const linkInBio: Flow = {
 
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const flowName = this.name;
-		const variantSlug = this.variantSlug;
-		const { setStepProgress, setHideFreePlan, setDomainCartItem } = useDispatch( ONBOARD_STORE );
-		const flowProgress = useFlowProgress( { stepName: _currentStepSlug, flowName, variantSlug } );
+		const { setStepProgress } = useDispatch( ONBOARD_STORE );
+		const flowProgress = useFlowProgress( { stepName: _currentStepSlug, flowName } );
 		const siteSlug = useSiteSlug();
-		const { domain, provider } = useDomainParams();
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
@@ -71,22 +67,14 @@ const linkInBio: Flow = {
 			}
 		);
 
-		let redirectTo = '';
-		if ( variantSlug === LINK_IN_BIO_DOMAIN_FLOW ) {
-			redirectTo = `/setup/${ variantSlug }/patterns?domain=${ domain }`;
-		} else {
-			redirectTo = `/setup/${ flowName }/patterns`;
-		}
-
+		const redirectTo = `/setup/${ flowName }/patterns`;
 		const logInUrl =
 			locale && locale !== 'en'
 				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Link%20in%20Bio&redirect_to=${ redirectTo }`
 				: `/start/account/user?variationName=${ flowName }&pageTitle=Link%20in%20Bio&redirect_to=${ redirectTo }`;
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
-			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug, variantSlug, {
-				provider: provider,
-			} );
+			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug );
 
 			switch ( _currentStepSlug ) {
 				case 'intro':
@@ -101,12 +89,6 @@ const linkInBio: Flow = {
 					return navigate( 'linkInBioSetup' );
 
 				case 'linkInBioSetup':
-					if ( variantSlug === LINK_IN_BIO_DOMAIN_FLOW && domain ) {
-						setHideFreePlan( true );
-						const domainCartItem = domainMapping( { domain } );
-						setDomainCartItem( domainCartItem );
-						return navigate( 'plans' );
-					}
 					return navigate( 'domains' );
 
 				case 'domains':
@@ -129,12 +111,7 @@ const linkInBio: Flow = {
 					}
 
 					if ( providedDependencies?.goToCheckout ) {
-						let destination = '';
-						if ( variantSlug === LINK_IN_BIO_DOMAIN_FLOW ) {
-							destination = `/domains/mapping/${ providedDependencies.siteSlug }/setup/${ domain }?firstVisit=true`;
-						} else {
-							destination = `/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
-						}
+						const destination = `/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
 						persistSignupDestination( destination );
 						setSignupCompleteSlug( providedDependencies?.siteSlug );
 						setSignupCompleteFlowName( flowName );
