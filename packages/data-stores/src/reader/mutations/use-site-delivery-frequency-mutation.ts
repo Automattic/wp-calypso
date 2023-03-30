@@ -21,7 +21,7 @@ type SiteSubscriptionDeliveryFrequencyResponse = {
 	subscription: SubscriptionResponse | null;
 };
 
-const useSubscriptionManagerSiteDeliveryFrequencyMutation = () => {
+const useSiteDeliveryFrequencyMutation = () => {
 	const isLoggedIn = useIsLoggedIn();
 	const queryClient = useQueryClient();
 	return useMutation(
@@ -59,4 +59,4 @@ const useSubscriptionManagerSiteDeliveryFrequencyMutation = () => {
 	);
 };
 
-export { useSubscriptionManagerSiteDeliveryFrequencyMutation };
+export default useSiteDeliveryFrequencyMutation;

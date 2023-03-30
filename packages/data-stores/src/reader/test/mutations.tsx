@@ -5,7 +5,7 @@ import { render, waitFor } from '@testing-library/react';
 import { useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { callApi } from '../helpers';
-import { useSubscriptionManagerSiteDeliveryFrequencyMutation } from '../mutations/use-subscription-manager-site-delivery-frequency-mutation';
+import { useSiteDeliveryFrequencyMutation } from '../mutations/use-site-delivery-frequency-mutation';
 
 // Mock the useIsLoggedIn function
 jest.mock( '../hooks', () => ( {
@@ -25,7 +25,7 @@ const Parent = ( { children } ) => (
 describe( 'useSubscriptionManagerSiteDeliveryFrequencyMutation()', () => {
 	it( 'calls the right API', async () => {
 		const Skeleton = () => {
-			const { mutate } = useSubscriptionManagerSiteDeliveryFrequencyMutation();
+			const { mutate } = useSiteDeliveryFrequencyMutation();
 			useEffect( () => {
 				mutate( {
 					delivery_frequency: 'daily',
