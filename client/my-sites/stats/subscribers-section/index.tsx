@@ -51,24 +51,19 @@ function UplotLineChart() {
 	const [ options ] = useState< uPlot.Options >(
 		useMemo(
 			() => ( {
-				title: 'Chart',
-				width: 1224 - 100,
+				// TODO: Use container width here.
+				width: 1224,
 				height: 300,
-				padding: [ 16, 0, 16, 8 ],
+				padding: [ 16, 8, 16, 8 ],
 				series: [
-					{
-						label: '',
-					},
+					{},
 					{
 						label: 'Subscribers',
-						points: { show: true },
-						stroke: 'blue',
-						fill: 'blue',
+						stroke: '#3057DC',
+						fill: 'rgba(48, 87, 220, 0.1)',
 					},
 				],
-				scales: {
-					x: { time: true },
-				},
+				// TODO: Fix hover behavior.
 			} ),
 			[]
 		)
@@ -79,6 +74,8 @@ function UplotLineChart() {
 		return [ x, y ];
 	}, [] );
 	const [ data ] = useState< uPlot.AlignedData >( initialState );
+
+	// TODO: Add container resize listener to update chart width.
 
 	return (
 		<UplotReact
