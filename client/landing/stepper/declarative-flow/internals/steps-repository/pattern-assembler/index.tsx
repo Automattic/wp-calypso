@@ -367,8 +367,8 @@ const PatternAssembler = ( {
 		openModal: openGlobalStylesUpgradeModal,
 		globalStylesUpgradeModalProps,
 	} = useGlobalStylesUpgradeModal( {
-		hasSelectedColorVariation: !! selectedColorPaletteVariation,
-		hasSelectedFontVariation: !! selectedFontPairingVariation,
+		hasSelectedColorVariation: !! colorVariation,
+		hasSelectedFontVariation: !! fontVariation,
 		onCheckout: snapshotRecipe,
 		recordTracksEvent,
 	} );
