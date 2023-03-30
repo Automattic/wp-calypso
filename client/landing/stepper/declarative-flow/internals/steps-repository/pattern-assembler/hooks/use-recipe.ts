@@ -1,6 +1,6 @@
 import { useColorPaletteVariations, useFontPairingVariations } from '@automattic/global-styles';
+import { keyBy } from '@automattic/js-utils';
 import { useDispatch, useSelect } from '@wordpress/data';
-import keyBy from 'lodash/keyBy';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { ONBOARD_STORE } from '../../../../../stores';
 import type { Pattern, Category } from '../types';
