@@ -23,6 +23,7 @@ import {
 	getPlanRawPrice,
 	getDiscountedRawPrice,
 } from 'calypso/state/plans/selectors';
+import type { IAppState } from 'calypso/state/types';
 
 export type PlanTypeSelectorProps = {
 	kind: 'interval' | 'customer';
@@ -275,7 +276,7 @@ function useMaxDiscount( plans: string[] ): number {
 			const monthlyPlanAnnualCost =
 				( getPlanRawPrice( state, monthlyPlan?.product_id ?? 0 ) ?? 0 ) * 12;
 			const rawPrice = getPlanRawPrice( state, yearlyPlan.product_id );
-			const discountPrice = getDiscountedRawPrice( state, yearlyPlan.product_id );
+			const discountPrice = getDiscountedRawPrice( state as IAppState, yearlyPlan.product_id );
 			const yearlyPlanCost = discountPrice || rawPrice || 0;
 
 			return Math.round(

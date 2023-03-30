@@ -100,6 +100,7 @@ import { PlanComparisonGrid } from './plan-comparison-grid';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import { PlanProperties, TransformedFeatureObject } from './types';
 import { getStorageStringFromFeature } from './util';
+import type { IAppState } from 'calypso/state/types';
 import './style.scss';
 
 type PlanRowOptions = {
@@ -1004,7 +1005,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 
 			const discountPrice = siteId
 				? getPlanDiscountedRawPrice( state, siteId, plan, isMonthlyObj )
-				: getDiscountedRawPrice( state, planProductId, showMonthlyPrice );
+				: getDiscountedRawPrice( state as IAppState, planProductId, showMonthlyPrice );
 
 			let annualPricePerMonth = discountPrice || rawPrice;
 			if ( isMonthlyPlan ) {
@@ -1012,7 +1013,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 				const yearlyPlan = getPlanBySlug( state, getYearlyPlanByMonthly( plan ) );
 				if ( yearlyPlan ) {
 					const yearlyPlanDiscount = getDiscountedRawPrice(
-						state,
+						state as IAppState,
 						yearlyPlan.product_id,
 						showMonthlyPrice
 					);
