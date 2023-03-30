@@ -1,7 +1,5 @@
-import { useTranslate } from 'i18n-calypso';
 import { useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
-import { errorNotice } from 'calypso/state/notices/actions';
 import { receiveStatSubscribers } from 'calypso/state/stats/subscribers/actions';
 
 const mockData = {
@@ -80,7 +78,6 @@ function selectSubscribers( api ) {
 }
 
 export default function useSubscribersQuery( siteId ) {
-	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	// TODO: Account for other query parameters before release.
@@ -88,15 +85,6 @@ export default function useSubscribersQuery( siteId ) {
 		select: selectSubscribers,
 		onSuccess: ( data ) => {
 			dispatch( receiveStatSubscribers( siteId, data ) );
-		},
-		onError: () => {
-			dispatch(
-				errorNotice(
-					translate(
-						'We were unable to retrieve your latest subscribers data. Please try again later.'
-					)
-				)
-			);
 		},
 	} );
 }

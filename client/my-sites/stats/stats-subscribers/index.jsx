@@ -4,13 +4,14 @@ import { getSiteStatsSubscribers } from 'calypso/state/stats/subscribers/selecto
 
 const StatsSubscribers = ( { siteId } ) => {
 	const name = 'subscribers';
-	const { isLoading } = useSubscribersQuery( siteId );
+	const { isLoading, error } = useSubscribersQuery( siteId );
 	const data = useSelector( ( state ) => getSiteStatsSubscribers( state, siteId ) );
 	const chartData = data?.data || [];
 
 	return (
 		<div>
 			<h1>{ name }</h1>
+			{ error && <div>Error: { error.message }</div> }
 			{ isLoading && <div>Loading...</div> }
 			<ul>
 				{ ! isLoading &&
