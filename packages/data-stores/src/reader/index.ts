@@ -1,5 +1,5 @@
 import { useSubscriberEmailAddress } from './hooks';
-import { useUserSettingsMutation } from './mutations';
+import { useSiteDeliveryFrequencyMutation, useUserSettingsMutation } from './mutations';
 import {
 	useSiteSubscriptionsQuery,
 	useSubscriptionsCountQuery,
@@ -7,6 +7,7 @@ import {
 } from './queries';
 
 export const SubscriptionManager = {
+	useSiteDeliveryFrequencyMutation,
 	useSiteSubscriptionsQuery,
 	useSubscriptionsCountQuery,
 	useSubscriberEmailAddress,

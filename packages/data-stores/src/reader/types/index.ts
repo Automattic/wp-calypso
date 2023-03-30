@@ -59,3 +59,5 @@ export type SiteSubscription = {
 	is_owner: boolean;
 	meta: SiteSubscriptionMeta;
 };
+
+export type SiteSubscriptionDeliveryFrequency = 'instantly' | 'daily' | 'weekly';
