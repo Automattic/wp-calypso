@@ -118,16 +118,12 @@ const useTrackDesignView = ( {
 
 				const trackingCategory = category === SHOW_ALL_SLUG ? undefined : category;
 
-				const variationSlugSuffix = design.preselected_style_variation
-					? `-${ design.preselected_style_variation.slug }`
-					: '';
-
 				recordTracksEvent( 'calypso_design_picker_design_display', {
 					category: trackingCategory,
 					design_type: design.design_type,
 					is_premium: design.is_premium,
 					is_premium_available: isPremiumThemeAvailable,
-					slug: design.slug + variationSlugSuffix,
+					slug: design.slug,
 					is_virtual: design.is_virtual,
 				} );
 
@@ -176,21 +172,18 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	const { __ } = useI18n();
 	const [ _selectedStyleVariation, setSelectedStyleVariation ] = useState< StyleVariation >();
 
-	const { preselected_style_variation, style_variations = [] } = design;
+	const { style_variations = [] } = design;
 	const currentSiteCanInstallWoo = currentPlanFeatures?.includes( FEATURE_WOOP ) ?? false;
 	const designIsBundledWithWoo = design.is_bundled_with_woo_commerce;
 
-	const selectedStyleVariation = _selectedStyleVariation ?? preselected_style_variation;
+	const selectedStyleVariation = _selectedStyleVariation;
 	const isDefaultVariation = ! selectedStyleVariation || selectedStyleVariation.slug === 'default';
 
 	const title = isDefaultVariation
 		? design.title
 		: `${ design.title } – ${ selectedStyleVariation.title }`;
 
-	let isPremium = design.is_premium || ( shouldLimitGlobalStyles && ! isDefaultVariation );
-	if ( preselected_style_variation && isDefaultVariation ) {
-		isPremium = false;
-	}
+	const isPremium = design.is_premium || ( shouldLimitGlobalStyles && ! isDefaultVariation );
 	const shouldUpgrade = isPremium && ! isPremiumThemeAvailable && ! hasPurchasedTheme;
 
 	function getPricingDescription() {
@@ -215,9 +208,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 			badge = <WooCommerceBundledBadge />;
 		} else if ( isPremium ) {
 			const showStyleVariationTooltip =
-				! isDefaultVariation &&
-				shouldUpgrade &&
-				( preselected_style_variation || ! design.is_premium );
+				! isDefaultVariation && shouldUpgrade && ! design.is_premium;
 			const tooltipText = showStyleVariationTooltip
 				? __( 'Unlock this style, and tons of other features, by upgrading to a Premium plan.' )
 				: undefined;
@@ -274,7 +265,6 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 									setSelectedStyleVariation( variation );
 								} }
 								selectedVariation={ selectedStyleVariation }
-								firstVariation={ preselected_style_variation }
 								onMoreClick={ () => onPreview( design ) }
 							/>
 						</div>
