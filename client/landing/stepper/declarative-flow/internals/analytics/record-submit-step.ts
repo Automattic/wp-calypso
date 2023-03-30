@@ -8,7 +8,8 @@ export function recordSubmitStep(
 	intent: string,
 	flow: string,
 	step: string,
-	variant?: string
+	variant?: string,
+	additionalProps: ProvidedDependencies = {}
 ) {
 	const device = resolveDeviceTypeByViewPort();
 	const inputs = reduce(
@@ -38,6 +39,19 @@ export function recordSubmitStep(
 		{}
 	);
 
+	const additionalInputs = reduce(
+		additionalProps,
+		( props, propValue, propName: string ) => {
+			propName = snakeCase( propName );
+
+			return {
+				...props,
+				[ propName ]: propValue,
+			};
+		},
+		{}
+	);
+
 	recordTracksEvent( 'calypso_signup_actions_submit_step', {
 		device,
 		flow,
@@ -45,5 +59,6 @@ export function recordSubmitStep(
 		step,
 		intent,
 		...inputs,
+		...additionalInputs,
 	} );
 }

@@ -50,7 +50,7 @@ const linkInBio: Flow = {
 		const { setStepProgress, setHideFreePlan, setDomainCartItem } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStepSlug, flowName } );
 		const siteSlug = useSiteSlug();
-		const { domain } = useDomainParams();
+		const { domain, provider } = useDomainParams();
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
@@ -84,7 +84,9 @@ const linkInBio: Flow = {
 				: `/start/account/user?variationName=${ flowName }&pageTitle=Link%20in%20Bio&redirect_to=${ redirectTo }`;
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
-			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug, variantSlug );
+			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug, variantSlug, {
+				provider: provider,
+			} );
 
 			switch ( _currentStepSlug ) {
 				case 'intro':
