@@ -1013,7 +1013,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 				const yearlyPlan = getPlanBySlug( state, getYearlyPlanByMonthly( plan ) );
 				if ( yearlyPlan ) {
 					const yearlyPlanDiscount = getDiscountedRawPrice(
-						state as IAppState,
+						state,
 						yearlyPlan.product_id,
 						showMonthlyPrice
 					);

@@ -34,12 +34,12 @@ function toMonthlyPrice( plan: WPComPlan ) {
 }
 
 export default function usePlanPrices( plans: WPComPlan[] ): PlanPrices[] {
-	return useSelector( ( state ) => {
+	return useSelector( ( state: IAppState ) => {
 		return plans.map( ( plan ) => {
 			const productId = plan.getProductId();
 			const [ price, discountPrice ] = [
 				getPlanRawPrice( state, productId ) ?? 0,
-				getDiscountedRawPrice( state as IAppState, productId ) ?? 0,
+				getDiscountedRawPrice( state, productId ) ?? 0,
 			].map( toMonthlyPrice( plan ) );
 
 			if ( ! discountPrice ) {

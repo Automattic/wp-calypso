@@ -264,7 +264,7 @@ const PlanTypeSelector: React.FunctionComponent< PlanTypeSelectorProps > = ( {
 function useMaxDiscount( plans: string[] ): number {
 	const wpcomMonthlyPlans = ( plans || [] ).filter( isWpComPlan ).filter( isMonthly );
 	const [ maxDiscount, setMaxDiscount ] = useState( 0 );
-	const discounts = useSelector( ( state ) => {
+	const discounts = useSelector( ( state: IAppState ) => {
 		return wpcomMonthlyPlans.map( ( planSlug ) => {
 			const monthlyPlan = getPlanBySlug( state, planSlug );
 			const yearlyPlan = getPlanBySlug( state, getYearlyPlanByMonthly( planSlug ) );
@@ -276,7 +276,7 @@ function useMaxDiscount( plans: string[] ): number {
 			const monthlyPlanAnnualCost =
 				( getPlanRawPrice( state, monthlyPlan?.product_id ?? 0 ) ?? 0 ) * 12;
 			const rawPrice = getPlanRawPrice( state, yearlyPlan.product_id );
-			const discountPrice = getDiscountedRawPrice( state as IAppState, yearlyPlan.product_id );
+			const discountPrice = getDiscountedRawPrice( state, yearlyPlan.product_id );
 			const yearlyPlanCost = discountPrice || rawPrice || 0;
 
 			return Math.round(
