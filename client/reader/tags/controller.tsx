@@ -1,7 +1,7 @@
 import debugFactory from 'debug';
 import { translate } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
-import performanceMark from 'calypso/server/lib/performance-mark';
+import performanceMark, { PartialContext } from 'calypso/server/lib/performance-mark';
 import TagsPage from './main';
 import type { Context as PageJSContext } from 'page';
 
@@ -30,10 +30,12 @@ export const tagsListing = ( context: PageJSContext, next: () => void ) => {
 function renderHeaderSection() {
 	return (
 		<>
-			<h1>{ 
-				// translators: The title of the reader trending tags page
-				translate( 'Tags' ) 
-			}</h1>
+			<h1>
+				{
+					// translators: The title of the reader trending tags page
+					translate( 'Tags' )
+				}
+			</h1>
 			<p>{ translate( 'Discover unique topics, follow your interests, or start writing.' ) }</p>
 		</>
 	);
@@ -44,7 +46,7 @@ export const fetchTrendingTags = ( context: PageJSContext, next: ( e?: Error ) =
 		debug( 'Skipping trending tags data fetch' );
 		return next();
 	}
-	performanceMark( context as any, 'fetchTrendingTags' );
+	performanceMark( context as PartialContext, 'fetchTrendingTags' );
 
 	context.queryClient
 		.fetchQuery(

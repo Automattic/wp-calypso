@@ -5,7 +5,7 @@ type PerformanceMark = {
 	steps?: PerformanceMark[];
 };
 
-type PartialContext = {
+export type PartialContext = {
 	performanceMarks?: PerformanceMark[];
 };
 

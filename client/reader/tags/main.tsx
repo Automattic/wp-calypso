@@ -11,10 +11,12 @@ export default function TagsPage( { trendingTags }: Props ) {
 	const translate = useTranslate();
 	return (
 		<div className="tags">
-			<h4> { 
-				// translators: The heading of the reader trending tags section
-				translate('Trending')
-			} </h4>
+			<h4>
+				{
+					// translators: The heading of the reader trending tags section
+					translate( 'Trending' )
+				}
+			</h4>
 			<div>
 				<TrendingTags trendingTags={ trendingTags } />
 			</div>
