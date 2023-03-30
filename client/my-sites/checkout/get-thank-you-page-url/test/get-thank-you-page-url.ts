@@ -1508,6 +1508,27 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/akismet/thank-you/ak_plus_yearly_2' );
 	} );
 
+	it( 'redirects to the purchase management page when is akismet siteless and the purchaseType is a renewal', () => {
+		const cart = {
+			...getEmptyResponseCart(),
+			products: [
+				{
+					...getEmptyResponseCartProduct(),
+					product_slug: 'ak_plus_yearly_2',
+					subscription_id: '123abc',
+					extra: { purchaseType: 'renewal' },
+				},
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+			sitelessCheckoutType: 'akismet',
+		} );
+		expect( url ).toBe( '/me/purchases/siteless.akismet.com/123abc' );
+	} );
+
 	it( 'redirects to the jetpack checkout thank you with `no_product` when jetpack checkout arg is set and the cart is empty', () => {
 		const url = getThankYouPageUrl( {
 			...defaultArgs,

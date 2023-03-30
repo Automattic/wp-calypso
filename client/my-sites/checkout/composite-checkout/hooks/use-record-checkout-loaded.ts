@@ -3,8 +3,8 @@ import { useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { hasRenewalItem } from 'calypso/lib/cart-values/cart-items';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import type { StoredCard } from '../types/stored-cards';
 import type { ResponseCart } from '@automattic/shopping-cart';
+import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-record-checkout-loaded' );
 
@@ -18,7 +18,7 @@ export default function useRecordCheckoutLoaded( {
 }: {
 	isLoading: boolean;
 	responseCart: ResponseCart;
-	storedCards: StoredCard[];
+	storedCards: StoredPaymentMethod[];
 	productAliasFromUrl: string | undefined | null;
 	checkoutFlow: string;
 	isGiftPurchase?: boolean;

@@ -50,6 +50,7 @@ const PatternLayout = ( {
 										</span>
 										<PatternActionBar
 											patternType="section"
+											source="list"
 											onReplace={ () => onReplaceSection( index ) }
 											onDelete={ () => onDeleteSection( index ) }
 											onMoveUp={ () => onMoveUpSection( index ) }

@@ -10,6 +10,7 @@ interface Props {
 	stylesheet: string;
 	selectedColorPaletteVariation: GlobalStylesObject | null;
 	onSelect: ( colorPaletteVariation: GlobalStylesObject | null ) => void;
+	onBack: () => void;
 	onDoneClick: () => void;
 }
 
@@ -18,6 +19,7 @@ const ScreenColorPalettes = ( {
 	stylesheet,
 	selectedColorPaletteVariation,
 	onSelect,
+	onBack,
 	onDoneClick,
 }: Props ) => {
 	const translate = useTranslate();
@@ -30,6 +32,7 @@ const ScreenColorPalettes = ( {
 					'Select from our curated color palettes or tweak to your heart’s content when you upgrade to the Premium plan or higher.'
 				) }
 				isPremium
+				onBack={ onBack }
 			/>
 			<div className="screen-container__body">
 				<ColorPaletteVariations

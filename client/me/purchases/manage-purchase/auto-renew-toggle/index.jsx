@@ -264,7 +264,8 @@ export default connect(
 		fetchingUserPurchases: isFetchingUserPurchases( state ),
 		isEnabled: purchase.isAutoRenewEnabled,
 		currentUserId: getCurrentUserId( state ),
-		isAtomicSite: isSiteAtomic( state, purchase.siteId ),
+		// It's possible for this check to return null if this site is not connected (won't be in the sites array in state), but the prop types require a value
+		isAtomicSite: isSiteAtomic( state, purchase.siteId ) ?? false,
 		siteSlug: siteSlug || getSelectedSiteSlug( state ),
 	} ),
 	{

@@ -266,6 +266,8 @@ $font-family: "SF Pro Text", $sans;
 		margin-bottom: 32px;
 		overflow-y: auto;
 		flex-grow: 1;
+		// Reserve space for the scrollbar to prevent unwanted layout change
+		scrollbar-gutter: stable;
 	}
 
 	.screen-container__body--no-padding {
@@ -292,6 +294,13 @@ $font-family: "SF Pro Text", $sans;
 		font-size: $font-body-small;
 		letter-spacing: -0.15px;
 		color: var(--color-neutral-60);
+	}
+
+	/**
+	 * The header of the stepper framework
+	 */
+	.signup-header {
+		z-index: 10; // Increase the z-index to avoid the WordPress Logo being covered by the sidebar
 	}
 
 	/**

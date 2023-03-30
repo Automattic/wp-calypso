@@ -7,6 +7,12 @@ $border-color: #d3dae6;
 	font-family: monospace;
 	border-collapse: collapse;
 	border: 1px solid $border-color;
+	background-color: var(--studio-white);
+	margin: 0 0 1.5rem;
+
+	&.is-loading {
+		opacity: 0.5;
+	}
 }
 
 .site-logs-table thead tr,
@@ -22,4 +28,16 @@ $border-color: #d3dae6;
 .site-logs-table__empty-cell::before {
 	content: "\2012";
 	opacity: 0.5;
+}
+
+.site-logs-table__skeleton {
+	display: grid;
+	grid-template-columns: 400px 3fr 1fr;
+	gap: 20px;
+	overflow: hidden;
+	margin-top: 10px;
+}
+
+.site-logs-table__skeleton-table-cell {
+	height: 24px;
 }

@@ -1,6 +1,6 @@
-import { plugins, registerStore, use } from '@wordpress/data';
+import { registerStore } from '@wordpress/data';
 import { controls } from '@wordpress/data-controls';
-import persistOptions from '../one-week-persistence-config';
+import { registerPlugins } from '../plugins';
 import * as actions from './actions';
 import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';
@@ -10,7 +10,7 @@ export type { State };
 export type { LaunchStepType } from './types';
 export { STORE_KEY };
 
-use( plugins.persistence, persistOptions );
+registerPlugins();
 
 let isRegistered = false;
 

@@ -1,4 +1,4 @@
-import { useSelect } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import { OnboardSelect } from 'calypso/../packages/data-stores/src';
 import {
@@ -37,8 +37,14 @@ const domainUpsell: Flow = {
 			} ),
 			[]
 		);
+		const { setHideFreePlan } = useDispatch( ONBOARD_STORE );
+
 		const returnUrl = `/setup/${ flowName }/launchpad?siteSlug=${ siteSlug }`;
 		const encodedReturnUrl = encodeURIComponent( returnUrl );
+
+		const exitFlow = ( location = '/sites' ) => {
+			window.location.assign( location );
+		};
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( currentStep ) {
@@ -46,9 +52,13 @@ const domainUpsell: Flow = {
 					if ( providedDependencies?.deferDomainSelection ) {
 						return window.location.assign( returnUrl );
 					}
+					setHideFreePlan( true );
 					navigate( 'plans' );
 
 				case 'plans':
+					if ( providedDependencies?.returnToDomainSelection ) {
+						return navigate( 'domains' );
+					}
 					if ( providedDependencies?.goToCheckout ) {
 						const planCartItem = getPlanCartItem();
 						const domainCartItem = getDomainCartItem();
@@ -69,7 +79,7 @@ const domainUpsell: Flow = {
 			}
 		}
 
-		return { submit };
+		return { submit, exitFlow };
 	},
 };
 
