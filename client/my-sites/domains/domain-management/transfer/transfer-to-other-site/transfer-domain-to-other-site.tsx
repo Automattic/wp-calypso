@@ -50,10 +50,12 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 	isSiteEligible = ( site: TransferDomainToOtherSiteProps[ 'selectedSite' ] ): boolean => {
 		// check if it's an Atomic site from the site options
 		const isAtomic = site?.options?.is_automated_transfer ?? false;
+		const isWPCOMStaging = site?.is_wpcom_staging_site ?? false;
 
 		return (
 			site.capabilities.manage_options &&
 			! ( site.jetpack && ! isAtomic ) && // Simple and Atomic sites. Not Jetpack sites.
+			! isWPCOMStaging &&
 			! ( site?.options?.is_domain_only ?? false ) &&
 			site.ID !== this.props.selectedSite.ID
 		);
