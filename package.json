@@ -199,6 +199,7 @@
 		"react-intersection-observer": "^9.4.3",
 		"react-modal": "^3.14.3",
 		"reakit-utils": "^0.15.1",
+		"recharts": "^2.5.0",
 		"redux": "^4.1.2",
 		"request": "^2.88.2",
 		"wpcom": "workspace:^"
@@ -302,7 +303,8 @@
 		"@wordpress/base-styles": "4.13.0",
 		"@wordpress/interface@^4.8.0": "patch:@wordpress/interface@npm%3A4.8.0#./.yarn/patches/@wordpress-interface-npm-4.8.0-8a39ad37cf.patch",
 		"@wordpress/data-controls": "2.22.0",
-		"@wordpress/element": "4.20.0"
+		"@wordpress/element": "4.20.0",
+		"react-smooth/react-transition-group": "4.4.5"
 	},
 	"packageManager": "yarn@3.2.3",
 	"dependenciesMeta": {
