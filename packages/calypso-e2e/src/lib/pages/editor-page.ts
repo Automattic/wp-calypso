@@ -120,10 +120,11 @@ export class EditorPage {
 	//#region Generic and Shell Methods
 
 	/**
-	 * Opens the "new post/page" page. By default it will open the "new post" page.
+	 * Visits the editor page by URL directly. Defaults to the "post" editor.
 	 *
-	 * Example "new post": {@link https://wordpress.com/post}
-	 * Example "new page": {@link https://wordpress.com/page}
+	 * @param siteHostWithProtocol The site host URL with protocol (e.g. https://example.wordpress.com)
+	 * @param type Editor type - "post" or "page". Defaults to "post"
+	 * @returns the page.goto response
 	 */
 	async visit(
 		siteHostWithProtocol: string,
