@@ -1,11 +1,14 @@
 .site-logs-toolbar {
-	display: flex;
-	align-items: stretch;
-	padding-bottom: 16px;
-	flex-wrap: wrap;
-	justify-content: flex-start;
-	gap: 8px;
-	margin-bottom: 1em;
+	margin-bottom: 1.5em;
+
+	.site-logs-toolbar__top-row {
+		display: flex;
+		align-items: stretch;
+		flex-wrap: wrap;
+		justify-content: flex-start;
+		gap: 16px;
+		padding-bottom: 16px;
+	}
 
 	button {
 		height: initial;
