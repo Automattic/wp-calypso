@@ -67,11 +67,10 @@ const linkInBio: Flow = {
 			}
 		);
 
-		const redirectTo = `/setup/${ flowName }/patterns`;
 		const logInUrl =
 			locale && locale !== 'en'
-				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Link%20in%20Bio&redirect_to=${ redirectTo }`
-				: `/start/account/user?variationName=${ flowName }&pageTitle=Link%20in%20Bio&redirect_to=${ redirectTo }`;
+				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Link%20in%20Bio&redirect_to=/setup/${ flowName }/patterns`
+				: `/start/account/user?variationName=${ flowName }&pageTitle=Link%20in%20Bio&redirect_to=/setup/${ flowName }/patterns`;
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug );
@@ -115,7 +114,9 @@ const linkInBio: Flow = {
 						persistSignupDestination( destination );
 						setSignupCompleteSlug( providedDependencies?.siteSlug );
 						setSignupCompleteFlowName( flowName );
-						const returnUrl = encodeURIComponent( destination );
+						const returnUrl = encodeURIComponent(
+							`/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies?.siteSlug }`
+						);
 
 						return window.location.assign(
 							`/checkout/${ encodeURIComponent(
