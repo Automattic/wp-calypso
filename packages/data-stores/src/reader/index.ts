@@ -1,13 +1,18 @@
 import { useSubscriberEmailAddress } from './hooks';
 import { useSiteDeliveryFrequencyMutation, useUserSettingsMutation } from './mutations';
-import { useSubscriptionsCountQuery, useUserSettingsQuery } from './queries';
-
-export const SubscriptionManager = {
-	useUserSettingsMutation,
+import {
+	useSiteSubscriptionsQuery,
 	useSubscriptionsCountQuery,
 	useUserSettingsQuery,
+} from './queries';
+
+export const SubscriptionManager = {
 	useSiteDeliveryFrequencyMutation,
+	useSiteSubscriptionsQuery,
+	useSubscriptionsCountQuery,
 	useSubscriberEmailAddress,
+	useUserSettingsQuery,
+	useUserSettingsMutation,
 };
 
 // Types

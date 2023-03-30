@@ -1,4 +1,4 @@
-import { Reader } from '@automattic/data-stores';
+import { SubscriptionManager } from '@automattic/data-stores';
 import { UniversalNavbarHeader } from '@automattic/wpcom-template-parts';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -15,7 +15,7 @@ const CommentsView = () => <span>Comments View</span>;
 
 const SubscriptionManagementPage = () => {
 	const translate = useTranslate();
-	const { data: counts } = Reader.SubscriptionManager.useSubscriptionsCountQuery();
+	const { data: counts } = SubscriptionManager.useSubscriptionsCountQuery();
 	const tabs = useMemo(
 		() => [
 			{
