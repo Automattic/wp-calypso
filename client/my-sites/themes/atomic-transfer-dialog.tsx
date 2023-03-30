@@ -55,6 +55,8 @@ type AtomicTransferDialogState = {
 class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 	state: AtomicTransferDialogState;
 
+	maxRequestActiveThemeAttempts = 30;
+
 	constructor( props: AtomicTransferDialogProps ) {
 		super( props );
 		this.state = {
@@ -64,7 +66,12 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 	}
 
 	handleAccept() {
+		this.setState( { errorMessage: null } );
 		this.initiateTransfer();
+	}
+
+	exceededMaxAttempts() {
+		return this.state.requestActiveThemeCount > this.maxRequestActiveThemeAttempts;
 	}
 
 	initiateTransfer() {
@@ -74,10 +81,9 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 			return;
 		}
 
-		const maxRequestActiveThemeAttempts = 5;
-		this.setState( { errorMessage: null } );
-		if ( this.state.requestActiveThemeCount > maxRequestActiveThemeAttempts ) {
+		if ( this.exceededMaxAttempts() ) {
 			this.setState( {
+				requestActiveThemeCount: 0,
 				errorMessage: translate( 'There was an error transferring your site. Please try again.' ),
 			} );
 			return;
@@ -118,7 +124,9 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 		}
 
 		if ( siteId && uploadError && prevProps.uploadError !== uploadError ) {
-			this.initiateTransfer();
+			setTimeout( () => {
+				this.initiateTransfer();
+			}, 2000 );
 		}
 	}
 
@@ -126,13 +134,21 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 		return this.props.dispatchDismissAtomicTransferDialog();
 	}
 
-	renderActivationInProgress() {
+	isLoading() {
 		const { inProgress, activeTheme, theme, isTransferred } = this.props;
 		const isThemeActive = activeTheme === theme?.id;
+
+		const hasNotExceededMaxAttempts =
+			this.state.requestActiveThemeCount > 0 && ! this.exceededMaxAttempts() && ! isTransferred;
+
+		return inProgress || hasNotExceededMaxAttempts || ( isTransferred && ! isThemeActive );
+	}
+
+	renderActivationInProgress() {
 		const activationText = translate( 'Please wait while we transfer your site.' );
 
 		return (
-			( inProgress || ( isTransferred && ! isThemeActive ) ) && (
+			this.isLoading() && (
 				<Notice
 					className="themes__atomic-transfer-dialog-notice"
 					status="is-info"
@@ -195,7 +211,7 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 				{ this.renderError() }
 
 				<EligibilityWarnings
-					disableContinueButton={ inProgress }
+					disableContinueButton={ this.isLoading() }
 					currentContext="plugin-details"
 					isMarketplace={ isMarketplaceProduct }
 					standaloneProceed
