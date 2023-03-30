@@ -199,27 +199,29 @@ function BackupStatus( {
 	return (
 		<div className="backup__main-wrap">
 			<div className="backup__last-backup-status">
-				<div className="backup__header">
-					<div className="backup__header-left">
-						<div className="backup__header-title">{ translate( 'Latest Backups' ) }</div>
-						<div className="backup__header-text">
-							{ translate( 'This is a list of your latest generated backups' ) }
+				{ isJetpackCloud() && (
+					<div className="backup__header">
+						<div className="backup__header-left">
+							<div className="backup__header-title">{ translate( 'Latest Backups' ) }</div>
+							<div className="backup__header-text">
+								{ translate( 'This is a list of your latest generated backups' ) }
+							</div>
+						</div>
+						<div className="backup__header-right">
+							{ siteSlug && (
+								<Tooltip
+									text={ translate(
+										'To test your site changes, migrate or keep your data safe in another site'
+									) }
+								>
+									<Button className="backup__clone-button" href={ backupClonePath( siteSlug ) }>
+										{ translate( 'Copy this site' ) }
+									</Button>
+								</Tooltip>
+							) }
 						</div>
 					</div>
-					<div className="backup__header-right">
-						{ siteSlug && (
-							<Tooltip
-								text={ translate(
-									'To test your site changes, migrate or keep your data safe in another site'
-								) }
-							>
-								<Button className="backup__clone-button" href={ backupClonePath( siteSlug ) }>
-									{ translate( 'Copy this site' ) }
-								</Button>
-							</Tooltip>
-						) }
-					</div>
-				</div>
+				) }
 
 				{ ! isAtomic && ( needCredentials || areCredentialsInvalid ) && <EnableRestoresBanner /> }
 				{ ! needCredentials && ( ! areCredentialsInvalid || isAtomic ) && hasRealtimeBackups && (
