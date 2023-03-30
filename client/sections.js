@@ -337,7 +337,7 @@ const sections = [
 	{
 		name: 'reader',
 		paths: [ '/tags' ],
-		module: 'calypso/reader/tags-page',
+		module: 'calypso/reader/tags',
 		group: 'reader',
 		trackLoadPerformance: true,
 		enableLoggedOut: true,
