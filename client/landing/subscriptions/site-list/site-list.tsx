@@ -24,7 +24,8 @@ export default function SiteList( { sites }: SiteListProps ) {
 				</span>
 				<span className="actions" role="columnheader" />
 			</li>
-			{ sites && sites.map( ( site ) => <SiteRow key={ site.ID } { ...site } /> ) }
+			{ sites &&
+				sites.map( ( site ) => <SiteRow key={ `sites.siterow.${ site.ID }` } { ...site } /> ) }
 		</ul>
 	);
 }

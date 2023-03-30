@@ -2,7 +2,6 @@ import { NotificationSettings } from '../notification-settings';
 import type { SiteSubscription } from '@automattic/data-stores/src/reader/types';
 
 export default function SiteRow( {
-	ID,
 	name,
 	site_icon,
 	URL,
@@ -13,7 +12,7 @@ export default function SiteRow( {
 	const deliveryFrequency = delivery_methods?.email?.post_delivery_frequency;
 
 	return (
-		<li className="row" role="row" key={ ID }>
+		<li className="row" role="row">
 			<span className="title-box" role="cell">
 				<img className="icon" src={ site_icon } alt={ name } />
 				<span className="title-column">
