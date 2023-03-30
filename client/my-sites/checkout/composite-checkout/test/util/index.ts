@@ -10,6 +10,7 @@ import nock from 'nock';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import domainManagementReducer from 'calypso/state/domains/management/reducer';
+import type { PricedAPIPlan, StorePlanSlug } from '@automattic/data-stores';
 import type {
 	CartKey,
 	SetCart,
@@ -1002,71 +1003,77 @@ export function getPlanSubtitleTextForInterval( type: string ) {
 	}
 }
 
-export function getPlansItemsState() {
+export function getPlansItemsState(): PricedAPIPlan[] {
 	return [
 		{
 			product_id: planWithoutDomain.product_id,
-			product_slug: planWithoutDomain.product_slug,
-			bill_period: '365',
+			product_slug: planWithoutDomain.product_slug as StorePlanSlug,
+			product_name: planWithoutDomain.product_name,
+			product_name_short: planWithoutDomain.product_name,
+			currency_code: 'USD',
+			bill_period: 365,
 			product_type: 'bundle',
-			available: true,
-			price: '$48',
-			formatted_price: '$48',
+			available: 'yes',
 			raw_price: 48,
 			raw_price_integer: 4800,
 		},
 		{
 			product_id: planWithoutDomainMonthly.product_id,
-			product_slug: planWithoutDomainMonthly.product_slug,
-			bill_period: '31',
+			product_slug: planWithoutDomainMonthly.product_slug as StorePlanSlug,
+			product_name: planWithoutDomainMonthly.product_name,
+			product_name_short: planWithoutDomainMonthly.product_name,
+			currency_code: 'USD',
+			bill_period: 31,
 			product_type: 'bundle',
-			available: true,
-			price: '$7',
-			formatted_price: '$7',
+			available: 'yes',
 			raw_price: 7,
 			raw_price_integer: 700,
 		},
 		{
 			product_id: planWithoutDomainBiannual.product_id,
-			product_slug: planWithoutDomainBiannual.product_slug,
-			bill_period: '730',
+			product_slug: planWithoutDomainBiannual.product_slug as StorePlanSlug,
+			product_name: planWithoutDomainBiannual.product_name,
+			product_name_short: planWithoutDomainBiannual.product_name,
+			currency_code: 'USD',
+			bill_period: 730,
 			product_type: 'bundle',
-			available: true,
-			price: '$84',
-			formatted_price: '$84',
+			available: 'yes',
 			raw_price: 84,
 			raw_price_integer: 8400,
 		},
 		{
 			product_id: planLevel2.product_id,
-			product_slug: planLevel2.product_slug,
-			bill_period: '365',
+			product_slug: planLevel2.product_slug as StorePlanSlug,
+			product_name: planLevel2.product_name,
+			product_name_short: planLevel2.product_name,
+			currency_code: 'USD',
+			bill_period: 365,
 			product_type: 'bundle',
-			available: true,
-			price: '$300',
-			formatted_price: '$300',
+			available: 'yes',
 			raw_price: 300,
 			raw_price_integer: 30000,
 		},
 		{
 			product_id: planLevel2Monthly.product_id,
-			product_slug: planLevel2Monthly.product_slug,
-			bill_period: '30',
+			product_slug: planLevel2Monthly.product_slug as StorePlanSlug,
+			product_name: planLevel2Monthly.product_name,
+			product_name_short: planLevel2Monthly.product_name,
+			currency_code: 'USD',
+			bill_period: 31,
 			product_type: 'bundle',
-			available: true,
-			price: '$33',
-			formatted_price: '$33',
+			available: 'yes',
 			raw_price: 33,
 			raw_price_integer: 3300,
 		},
 		{
 			product_id: planLevel2Biannual.product_id,
-			product_slug: planLevel2Biannual.product_slug,
-			bill_period: '730',
+			product_slug: planLevel2Biannual.product_slug as StorePlanSlug,
+			product_name: planLevel2Biannual.product_name,
+			product_name_short: planLevel2Biannual.product_name,
+			currency_code: 'USD',
+			bill_period: 730,
 			product_type: 'bundle',
-			available: true,
-			price: '$499',
-			formatted_price: '$499',
+			available: 'yes',
 			raw_price: 499,
 			raw_price_integer: 49900,
 		},
@@ -1463,16 +1470,6 @@ function buildVariantsForCartItem( data: ResponseCartProduct ): ResponseCartProd
 	return [];
 }
 
-function getVariantPriceInteger( data: ResponseCartProduct ): number {
-	const variantData = getPlansItemsState().find(
-		( plan ) => plan.product_slug === data.product_slug
-	);
-	if ( ! variantData ) {
-		throw new Error( `Unknown price for variant ${ data.product_slug }` );
-	}
-	return variantData.raw_price_integer;
-}
-
 function getVariantPrice( data: ResponseCartProduct ): number {
 	const variantData = getPlansItemsState().find(
 		( plan ) => plan.product_slug === data.product_slug
@@ -1480,7 +1477,7 @@ function getVariantPrice( data: ResponseCartProduct ): number {
 	if ( ! variantData ) {
 		throw new Error( `Unknown price for variant ${ data.product_slug }` );
 	}
-	return variantData.raw_price;
+	return variantData.raw_price_integer;
 }
 
 function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
@@ -1491,7 +1488,7 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 				bill_period_in_months: planLevel2Monthly.months_per_bill_period as number,
 				product_slug: data.product_slug,
 				currency: planLevel2Monthly.currency,
-				price_integer: getVariantPriceInteger( planLevel2Monthly ),
+				price_integer: getVariantPrice( planLevel2Monthly ),
 				price_before_discounts_integer: getVariantPrice( planLevel2Monthly ),
 				introductory_offer_terms: {},
 			};
@@ -1501,7 +1498,7 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 				bill_period_in_months: planLevel2.months_per_bill_period as number,
 				product_slug: data.product_slug,
 				currency: planLevel2.currency,
-				price_integer: getVariantPriceInteger( planLevel2 ),
+				price_integer: getVariantPrice( planLevel2 ),
 				price_before_discounts_integer: getVariantPrice( planLevel2 ),
 				introductory_offer_terms: {},
 			};
@@ -1511,7 +1508,7 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 				bill_period_in_months: planLevel2Biannual.months_per_bill_period as number,
 				product_slug: data.product_slug,
 				currency: planLevel2Biannual.currency,
-				price_integer: getVariantPriceInteger( planLevel2Biannual ),
+				price_integer: getVariantPrice( planLevel2Biannual ),
 				price_before_discounts_integer: getVariantPrice( planLevel2Biannual ),
 				introductory_offer_terms: {},
 			};
@@ -1521,7 +1518,7 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 				bill_period_in_months: planWithoutDomainMonthly.months_per_bill_period as number,
 				product_slug: data.product_slug,
 				currency: planWithoutDomainMonthly.currency,
-				price_integer: getVariantPriceInteger( planWithoutDomainMonthly ),
+				price_integer: getVariantPrice( planWithoutDomainMonthly ),
 				price_before_discounts_integer: getVariantPrice( planWithoutDomainMonthly ),
 				introductory_offer_terms: {},
 			};
@@ -1531,7 +1528,7 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 				bill_period_in_months: planWithoutDomain.months_per_bill_period as number,
 				product_slug: data.product_slug,
 				currency: planWithoutDomain.currency,
-				price_integer: getVariantPriceInteger( planWithoutDomain ),
+				price_integer: getVariantPrice( planWithoutDomain ),
 				price_before_discounts_integer: getVariantPrice( planWithoutDomain ),
 				introductory_offer_terms: {},
 			};
@@ -1541,7 +1538,7 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 				bill_period_in_months: planWithoutDomainBiannual.months_per_bill_period as number,
 				product_slug: data.product_slug,
 				currency: planWithoutDomainBiannual.currency,
-				price_integer: getVariantPriceInteger( planWithoutDomainBiannual ),
+				price_integer: getVariantPrice( planWithoutDomainBiannual ),
 				price_before_discounts_integer: getVariantPrice( planWithoutDomainBiannual ),
 				introductory_offer_terms: {},
 			};
