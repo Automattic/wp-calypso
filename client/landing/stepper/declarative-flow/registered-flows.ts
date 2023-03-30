@@ -1,3 +1,4 @@
+import { LINK_IN_BIO_DOMAIN_FLOW } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
 const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
@@ -22,7 +23,7 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	'link-in-bio': () =>
 		import( /* webpackChunkName: "link-in-bio-flow" */ '../declarative-flow/link-in-bio' ),
 
-	'link-in-bio-domain': () =>
+	[ LINK_IN_BIO_DOMAIN_FLOW ]: () =>
 		import(
 			/* webpackChunkName: "link-in-bio-flow-domain" */ '../declarative-flow/link-in-bio-domain'
 		),
