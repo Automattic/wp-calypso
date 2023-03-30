@@ -23,6 +23,7 @@ import {
 import {
 	isTransferComplete,
 	isUploadInProgress,
+	getUploadError,
 } from 'calypso/state/themes/upload-theme/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { Theme } from 'calypso/types';
@@ -37,6 +38,7 @@ interface AtomicTransferDialogProps {
 	siteSlug?: string | null;
 	isMarketplaceProduct?: boolean;
 	activeTheme?: string | null;
+	uploadError?: boolean;
 	dispatchAcceptAtomicTransferDialog: typeof acceptAtomicTransferDialog;
 	dispatchDismissAtomicTransferDialog: typeof dismissAtomicTransferDialog;
 	dispatchActivateTheme: typeof activateTheme;
@@ -45,12 +47,44 @@ interface AtomicTransferDialogProps {
 	dispatchRequestActiveTheme: typeof requestActiveTheme;
 }
 
+type AtomicTransferDialogState = {
+	requestActiveThemeCount: number;
+	errorMessage: string | null;
+};
+
 class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
+	state: AtomicTransferDialogState;
+
+	constructor( props: AtomicTransferDialogProps ) {
+		super( props );
+		this.state = {
+			requestActiveThemeCount: 0,
+			errorMessage: null,
+		};
+	}
+
 	handleAccept() {
+		this.initiateTransfer();
+	}
+
+	initiateTransfer() {
 		const { siteId, dispatchInitiateThemeTransfer } = this.props;
+
 		if ( ! siteId ) {
 			return;
 		}
+
+		const maxRequestActiveThemeAttempts = 5;
+		this.setState( { errorMessage: null } );
+		if ( this.state.requestActiveThemeCount > maxRequestActiveThemeAttempts ) {
+			this.setState( {
+				errorMessage: translate( 'There was an error transferring your site. Please try again.' ),
+			} );
+			return;
+		}
+
+		const { requestActiveThemeCount } = this.state;
+		this.setState( { requestActiveThemeCount: requestActiveThemeCount + 1 } );
 
 		dispatchInitiateThemeTransfer( siteId, null, '' );
 	}
@@ -78,9 +112,13 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 	};
 
 	componentDidUpdate( prevProps: Readonly< AtomicTransferDialogProps > ): void {
-		const { siteId, siteSlug, isTransferred } = this.props;
+		const { siteId, siteSlug, isTransferred, uploadError } = this.props;
 		if ( siteId && siteSlug && prevProps.isTransferred !== isTransferred && isTransferred ) {
 			this.updateActiveThemeStateAndRedirect( siteId );
+		}
+
+		if ( siteId && uploadError && prevProps.uploadError !== uploadError ) {
+			this.initiateTransfer();
 		}
 	}
 
@@ -125,6 +163,22 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 		);
 	}
 
+	renderError() {
+		const { errorMessage } = this.state;
+
+		return (
+			errorMessage && (
+				<Notice
+					className="themes__atomic-transfer-dialog-notice"
+					status="is-error"
+					showDismiss={ false }
+					text={ errorMessage }
+					icon="notice"
+				/>
+			)
+		);
+	}
+
 	render() {
 		const { showEligibility, isMarketplaceProduct, inProgress } = this.props;
 
@@ -138,6 +192,7 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 			>
 				{ this.renderActivationInProgress() }
 				{ this.renderSuccessfulTransfer() }
+				{ this.renderError() }
 
 				<EligibilityWarnings
 					disableContinueButton={ inProgress }
@@ -170,6 +225,7 @@ export default connect(
 			isTransferred: isTransferComplete( state, siteId ),
 			siteSlug: getSiteSlug( state, siteId ),
 			activeTheme: getActiveTheme( state, siteId ),
+			uploadError: typeof getUploadError( state, siteId ) === 'object',
 		};
 	},
 	{
