@@ -53,8 +53,9 @@ describe( DataHelper.createSuiteTitle( 'Site Editor Smoke Test' ), function () {
 
 		await fullSiteEditorPage.prepareForInteraction();
 
-		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Back' );
-		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Back' );
+		// TODO: I think we might need a rebase -- this is out of date with how WordPress.com is currently
+		// await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Back' );
+		// await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Back' );
 		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Templates' );
 		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Page' );
 		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Edit' );
