@@ -3,7 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 
 const useSubheaderText = () => {
-	const emailAddress = Reader.useSubscriberEmailAddress();
+	const emailAddress = Reader.SubscriptionManager.useSubscriberEmailAddress();
 	const translate = useTranslate();
 
 	return useMemo( () => {
