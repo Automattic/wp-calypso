@@ -30,8 +30,9 @@ function isCalypsoLive( origin: string ) {
 }
 
 /**
- * Gets the Calypso origin from 1. the `origin` query arg and 2. the HTTP referrer
- * and compares it against a list of allowed wpcom origins.
+ * From wp-admin contexts: gets the Calypso origin from 1. the `origin` query arg and 2. the HTTP referrer and compares it against a list of allowed wpcom origins.
+ 
+ * This is designed for usage in the Editor or other wp-admin contexts.
  *
  * @param path Optional path to append to the origin
  * @returns The origin if it's allowed, otherwise the default origin (wordpress.com)
