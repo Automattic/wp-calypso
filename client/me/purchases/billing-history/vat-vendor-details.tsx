@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { isCountryInEu } from '../is-country-in-eu';
 import type { BillingTransaction } from 'calypso/state/billing-transactions/types';
+import type { LocalizeProps } from 'i18n-calypso';
 
 interface VatVendorInfo {
 	/**
@@ -37,7 +38,7 @@ export function getVatVendorInfo(
 	 */
 	date: string,
 
-	translate: ReturnType< typeof useTranslate >
+	translate: LocalizeProps[ 'translate' ]
 ): VatVendorInfo | undefined {
 	const automatticVatAddress = [
 		'Aut O’Mattic Ltd.',
