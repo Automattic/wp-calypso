@@ -22,9 +22,11 @@ import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign } from '../../analytics/record-design';
 import { SITE_TAGLINE, PLACEHOLDER_SITE_ID, PATTERN_TYPES } from './constants';
+import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import useGlobalStylesUpgradeModal from './hooks/use-global-styles-upgrade-modal';
 import usePatternCategories from './hooks/use-pattern-categories';
 import usePatternsMapByCategory from './hooks/use-patterns-map-by-category';
+import { usePrefetchImages } from './hooks/use-prefetch-images';
 import NavigatorListener from './navigator-listener';
 import Notices, { getNoticeContent } from './notices/notices';
 import PatternAssemblerContainer from './pattern-assembler-container';
@@ -130,6 +132,8 @@ const PatternAssembler = ( {
 		isEnabledColorAndFonts
 	);
 
+	usePrefetchImages();
+
 	const siteInfo = {
 		title: site?.name,
 		tagline: site?.description || SITE_TAGLINE,
@@ -152,7 +156,7 @@ const PatternAssembler = ( {
 	};
 
 	const trackEventPatternAdd = ( patternType: string ) => {
-		recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_add_click', {
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_ADD_CLICK, {
 			pattern_type: patternType,
 		} );
 	};
@@ -168,7 +172,7 @@ const PatternAssembler = ( {
 		patternName: string;
 		patternCategory: string | undefined;
 	} ) => {
-		recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_select_click', {
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_SELECT_CLICK, {
 			pattern_type: patternType,
 			pattern_id: patternId,
 			pattern_name: patternName,
@@ -178,16 +182,17 @@ const PatternAssembler = ( {
 
 	const trackEventContinue = () => {
 		const patterns = getPatterns();
-		recordTracksEvent( 'calypso_signup_pattern_assembler_continue_click', {
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.CONTINUE_CLICK, {
 			pattern_types: [ header && 'header', sections.length && 'section', footer && 'footer' ]
 				.filter( Boolean )
 				.join( ',' ),
 			pattern_ids: patterns.map( ( { id } ) => id ).join( ',' ),
 			pattern_names: patterns.map( ( { name } ) => name ).join( ',' ),
+			pattern_categories: patterns.map( ( { category } ) => category?.name ).join( ',' ),
 			pattern_count: patterns.length,
 		} );
 		patterns.forEach( ( { id, name, category } ) => {
-			recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_final_select', {
+			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_FINAL_SELECT, {
 				pattern_id: id,
 				pattern_name: name,
 				pattern_category: category?.name,
@@ -337,7 +342,7 @@ const PatternAssembler = ( {
 
 	const onBack = () => {
 		const patterns = getPatterns();
-		recordTracksEvent( 'calypso_signup_pattern_assembler_back_click', {
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.BACK_CLICK, {
 			has_selected_patterns: patterns.length > 0,
 			pattern_count: patterns.length,
 		} );
@@ -372,14 +377,14 @@ const PatternAssembler = ( {
 		} );
 
 	const onPatternSelectorBack = ( type: string ) => {
-		recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_select_back_click', {
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_SELECT_BACK_CLICK, {
 			pattern_type: type,
 		} );
 	};
 
 	const onDoneClick = ( type: string ) => {
 		const patterns = getPatterns( type );
-		recordTracksEvent( 'calypso_signup_pattern_assembler_pattern_select_done_click', {
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_SELECT_DONE_CLICK, {
 			pattern_type: type,
 			pattern_ids: patterns.map( ( { id } ) => id ).join( ',' ),
 			pattern_names: patterns.map( ( { name } ) => name ).join( ',' ),
@@ -403,7 +408,7 @@ const PatternAssembler = ( {
 			trackEventPatternAdd( name );
 		}
 
-		recordTracksEvent( 'calypso_signup_pattern_assembler_main_item_select', { name } );
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.MAIN_ITEM_SELECT, { name } );
 	};
 
 	const onAddSection = () => {
@@ -431,6 +436,36 @@ const PatternAssembler = ( {
 	const onDeleteHeader = () => onSelect( 'header', null );
 
 	const onDeleteFooter = () => onSelect( 'footer', null );
+
+	const onScreenColorsSelect = ( variation: GlobalStylesObject ) => {
+		setSelectedColorPaletteVariation( variation );
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_COLORS_PREVIEW_CLICK, {
+			title: variation.title,
+		} );
+	};
+
+	const onScreenColorsBack = () => {
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_COLORS_BACK_CLICK );
+	};
+
+	const onScreenColorsDone = () => {
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_COLORS_DONE_CLICK );
+	};
+
+	const onScreenFontsSelect = ( variation: GlobalStylesObject ) => {
+		setSelectedFontPairingVariation( variation );
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_FONTS_PREVIEW_CLICK, {
+			title: variation.title,
+		} );
+	};
+
+	const onScreenFontsBack = () => {
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_FONTS_BACK_CLICK );
+	};
+
+	const onScreenFontsDone = () => {
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_FONTS_DONE_CLICK );
+	};
 
 	const stepContent = (
 		<div
@@ -491,6 +526,7 @@ const PatternAssembler = ( {
 							onSelect={ onSelect }
 							wrapperRef={ wrapperRef }
 							onTogglePatternPanelList={ setIsPatternPanelListOpen }
+							recordTracksEvent={ recordTracksEvent }
 						/>
 					) : (
 						<ScreenPatternList
@@ -510,7 +546,9 @@ const PatternAssembler = ( {
 							siteId={ site?.ID }
 							stylesheet={ stylesheet }
 							selectedColorPaletteVariation={ selectedColorPaletteVariation }
-							onSelect={ setSelectedColorPaletteVariation }
+							onSelect={ onScreenColorsSelect }
+							onBack={ onScreenColorsBack }
+							onDoneClick={ onScreenColorsDone }
 						/>
 					</NavigatorScreen>
 				) }
@@ -523,7 +561,9 @@ const PatternAssembler = ( {
 							siteId={ site?.ID }
 							stylesheet={ stylesheet }
 							selectedFontPairingVariation={ selectedFontPairingVariation }
-							onSelect={ setSelectedFontPairingVariation }
+							onSelect={ onScreenFontsSelect }
+							onBack={ onScreenFontsBack }
+							onDoneClick={ onScreenFontsDone }
 						/>
 					</NavigatorScreen>
 				) }

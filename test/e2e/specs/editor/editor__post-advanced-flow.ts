@@ -69,6 +69,11 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 			postURL = await editorPage.publish();
 		} );
 
+		/**
+		 * Validates post in the same tab to work around an issue with AT caching.
+		 *
+		 * @see https://github.com/Automattic/wp-calypso/pull/67964
+		 */
 		it( 'Validate post', async function () {
 			await page.goto( postURL.href );
 
@@ -84,11 +89,8 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 
 	describe( 'Edit published post', function () {
 		beforeAll( async () => {
-			await postsPage.visit();
-		} );
-
-		it( 'Click on published post', async function () {
-			await postsPage.clickPost( postTitle );
+			// See: https://github.com/Automattic/wp-calypso/issues/74925
+			await page.goBack();
 		} );
 
 		it( 'Editor is shown', async function () {
@@ -109,6 +111,11 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 			postURL = await editorPage.publish();
 		} );
 
+		/**
+		 * Validates post in the same tab to work around an issue with AT caching.
+		 *
+		 * @see https://github.com/Automattic/wp-calypso/pull/67964
+		 */
 		it( 'Ensure published post contains additional content', async function () {
 			await page.goto( postURL.href );
 			await ParagraphBlock.validatePublishedContent( page, [ originalContent, additionalContent ] );

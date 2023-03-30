@@ -7,7 +7,11 @@ module.exports = {
 					'error',
 					{
 						'@wordpress/block-editor': [ '__unstableIframe', '__unstableEditorStyles' ],
-						'@wordpress/components': [ '__experimentalHStack', '__experimentalVStack' ],
+						'@wordpress/components': [
+							'__unstableMotion',
+							'__experimentalHStack',
+							'__experimentalVStack',
+						],
 					},
 				],
 			},

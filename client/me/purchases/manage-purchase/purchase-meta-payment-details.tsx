@@ -1,8 +1,7 @@
 import { isDomainTransfer } from '@automattic/calypso-products';
-import { useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isOneTimePurchase, isPaidWithCreditCard } from 'calypso/lib/purchases';
-import { getAllStoredCards } from 'calypso/state/stored-cards/selectors';
+import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-stored-payment-methods';
 import { canEditPaymentDetails } from '../utils';
 import PaymentInfoBlock from './payment-info-block';
 import type { Purchase, GetChangePaymentMethodUrlFor } from 'calypso/lib/purchases/types';
@@ -20,7 +19,7 @@ function PurchaseMetaPaymentDetails( {
 	siteSlug,
 	site,
 }: PaymentProps ) {
-	const cards = useSelector( getAllStoredCards );
+	const { paymentMethods: cards } = useStoredPaymentMethods( { type: 'card' } );
 	const handleEditPaymentMethodClick = () => {
 		recordTracksEvent( 'calypso_purchases_edit_payment_method' );
 	};

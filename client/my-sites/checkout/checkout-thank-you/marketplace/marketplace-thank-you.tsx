@@ -15,11 +15,12 @@ import { isRequesting } from 'calypso/state/plugins/installed/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import './style.scss';
 import { MarketplaceGoBackSection } from './marketplace-go-back-section';
-import { useThankYouFoooter } from './use-default-thank-you-footer';
 import { usePluginsThankYouData } from './use-plugins-thank-you-data';
+import { useThankYouFoooter } from './use-thank-you-footer';
 import { useThemesThankYouData } from './use-themes-thank-you-data';
+
+import './style.scss';
 
 const MarketplaceThankYou = ( {
 	pluginSlugs,
@@ -39,6 +40,9 @@ const MarketplaceThankYou = ( {
 		usePluginsThankYouData( pluginSlugs );
 	const [ themesSection, allThemesFetched, themesGoBackSection ] =
 		useThemesThankYouData( themeSlugs );
+	const [ hasPlugins, hasThemes ] = [ pluginSlugs, themeSlugs ].map(
+		( slugs ) => slugs.length !== 0
+	);
 
 	const areAllProductsFetched = allPluginsFetched && allThemesFetched;
 
@@ -114,6 +118,11 @@ const MarketplaceThankYou = ( {
 		[ translate ]
 	);
 	const additionalSteps = useMarketplaceAdditionalSteps();
+	const sections = [
+		...( hasThemes ? [ themesSection ] : [] ),
+		...( hasPlugins ? [ pluginsSection ] : [] ),
+		defaultThankYouFooter,
+	];
 
 	return (
 		<ThemeProvider theme={ theme }>
@@ -148,7 +157,7 @@ const MarketplaceThankYou = ( {
 					<ConfettiAnimation delay={ 1000 } />
 					<ThankYou
 						containerClassName="marketplace-thank-you"
-						sections={ [ themesSection, pluginsSection, defaultThankYouFooter ] }
+						sections={ sections }
 						showSupportSection={ false }
 						thankYouTitle={ translate( "Congrats on your site's new superpowers!" ) }
 						thankYouSubtitle={ translate(

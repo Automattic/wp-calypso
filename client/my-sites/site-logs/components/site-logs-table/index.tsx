@@ -1,18 +1,25 @@
+import classnames from 'classnames';
 import { memo, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { SiteLogsData } from 'calypso/data/hosting/use-site-logs-query';
 import getSiteSetting from 'calypso/state/selectors/get-site-setting';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { Skeleton } from './skeleton';
+
 import './style.scss';
 
 type SiteLogs = SiteLogsData[ 'logs' ];
 
 interface SiteLogsTableProps {
 	logs?: SiteLogs;
+	isLoading?: boolean;
 }
 
-export const SiteLogsTable = memo( function SiteLogsTable( { logs }: SiteLogsTableProps ) {
+export const SiteLogsTable = memo( function SiteLogsTable( {
+	logs,
+	isLoading,
+}: SiteLogsTableProps ) {
 	const moment = useLocalizedMoment();
 	const columns = useSiteColumns( logs );
 	const siteGmtOffset = useSelector( ( state ) => {
@@ -20,8 +27,12 @@ export const SiteLogsTable = memo( function SiteLogsTable( { logs }: SiteLogsTab
 		return ( getSiteSetting( state, siteId ?? 0, 'gmt_offset' ) as number | null ) ?? 0;
 	} );
 
+	if ( isLoading && ! logs?.length ) {
+		return <Skeleton />;
+	}
+
 	return (
-		<table className="site-logs-table">
+		<table className={ classnames( 'site-logs-table', { 'is-loading': isLoading } ) }>
 			<thead>
 				<tr>
 					{ columns.map( ( column ) => (
@@ -75,7 +86,7 @@ function useSiteColumns( logs: SiteLogs | undefined ) {
 
 function renderCell(
 	column: string,
-	value: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+	value: unknown,
 	moment: ReturnType< typeof useLocalizedMoment >,
 	siteGmtOffset: number
 ) {

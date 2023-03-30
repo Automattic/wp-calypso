@@ -3,7 +3,6 @@
  */
 import {
 	envVariables,
-	DataHelper,
 	MediaHelper,
 	ElementHelper,
 	EditorPage,
@@ -24,7 +23,11 @@ const features = envToFeatureKey( {
 	COBLOCKS_EDGE: envVariables.TEST_ON_ATOMIC || envVariables.COBLOCKS_EDGE,
 } );
 
-describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Replace Image' ), () => {
+/**
+ * This spec requires the following:
+ * 	- theme: a non-block-based theme (eg. Twenty-Twenty One)
+ */
+describe( 'CoBlocks: Extensions: Replace Image', function () {
 	const accountName = getTestAccountByFeature( features );
 
 	let page: Page;

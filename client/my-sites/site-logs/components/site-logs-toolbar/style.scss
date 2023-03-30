@@ -1,0 +1,38 @@
+.site-logs-toolbar {
+	margin-bottom: 1.5em;
+
+	.site-logs-toolbar__top-row {
+		display: flex;
+		align-items: stretch;
+		flex-wrap: wrap;
+		justify-content: flex-start;
+		gap: 16px;
+		padding-bottom: 16px;
+	}
+
+	button {
+		height: initial;
+	}
+
+	.toggle-visible .date-range__trigger-btn {
+		background-color: var(--color-surface);
+	}
+
+	//prevent button from jumping when toggling date picker
+	.button-group {
+		.button:first-child,
+		:last-child {
+			&:active {
+				border-right-width: 1px;
+				border-left-width: 1px;
+			}
+		}
+	}
+}
+
+.site-logs-toolbar__download-progress {
+	display: flex;
+	align-items: center;
+	color: var(--color-neutral-50);
+	font-size: 0.875rem;
+}

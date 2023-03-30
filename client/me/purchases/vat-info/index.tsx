@@ -1,6 +1,6 @@
 import { CompactCard, Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -11,11 +11,14 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import useCountryList, {
+	isVatSupported,
+} from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
 import useVatDetails from './use-vat-details';
 import type { UpdateError, FetchError } from './use-vat-details';
-import type { VatDetails } from '@automattic/wpcom-checkout';
+import type { CountryListItem, VatDetails } from '@automattic/wpcom-checkout';
 
 import './style.scss';
 
@@ -153,6 +156,17 @@ function VatForm() {
 	);
 }
 
+function getUniqueCountries< C extends CountryListItem >( countries: C[] ): C[] {
+	const unique: C[] = [];
+	countries.forEach( ( country ) => {
+		if ( unique.map( ( x ) => x.code ).includes( country.code ) ) {
+			return;
+		}
+		unique.push( country );
+	} );
+	return unique;
+}
+
 function CountryCodeInput( {
 	name,
 	disabled,
@@ -164,40 +178,8 @@ function CountryCodeInput( {
 	value: string;
 	onChange: ( event: React.ChangeEvent< HTMLSelectElement > ) => void;
 } ) {
-	const countries = [
-		'AT',
-		'AU',
-		'BE',
-		'BG',
-		'CH',
-		'CY',
-		'CZ',
-		'DE',
-		'DK',
-		'EE',
-		'EL',
-		'ES',
-		'FI',
-		'FR',
-		'GB',
-		'HR',
-		'HU',
-		'IE',
-		'IT',
-		'JP',
-		'LT',
-		'LU',
-		'LV',
-		'MT',
-		'NL',
-		'PL',
-		'PT',
-		'RO',
-		'SE',
-		'SI',
-		'SK',
-		'XI',
-	];
+	const countries = useCountryList();
+	const translate = useTranslate();
 
 	// Some historical country codes were set to 'UK', but that is not a valid
 	// country code. It should read 'GB'.
@@ -205,6 +187,10 @@ function CountryCodeInput( {
 		value = 'GB';
 	}
 
+	const vatCountries = useMemo(
+		() => getUniqueCountries( countries.filter( isVatSupported ) ),
+		[ countries ]
+	);
 	return (
 		<FormSelect
 			name={ name }
@@ -214,12 +200,15 @@ function CountryCodeInput( {
 			className="vat-info__country-select"
 		>
 			<option value="">--</option>
-			{ countries.map( ( countryCode ) => {
-				return (
-					<option key={ countryCode } value={ countryCode }>
-						{ countryCode }
-					</option>
-				);
+			{ vatCountries.map( ( country ) => {
+				return country.tax_country_codes.map( ( countryCode ) => {
+					const name = countryCode === 'XI' ? translate( 'Northern Ireland' ) : country.name;
+					return (
+						<option key={ countryCode } value={ countryCode }>
+							{ countryCode } - { name }
+						</option>
+					);
+				} );
 			} ) }
 		</FormSelect>
 	);
