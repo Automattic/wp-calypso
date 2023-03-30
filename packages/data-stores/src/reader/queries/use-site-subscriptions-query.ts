@@ -12,18 +12,18 @@ type SubscriptionManagerSiteSubscriptions = {
 type SubscriptionManagerSiteSubscriptionsQueryProps = {
 	filter?: ( item?: SiteSubscription ) => boolean;
 	sort?: ( a?: SiteSubscription, b?: SiteSubscription ) => number;
-	limit?: number;
+	number?: number;
 };
 
 const callFollowingEndPoint = async (
 	page: number,
-	limit: number,
+	number: number,
 	isLoggedIn: boolean
 ): Promise< SiteSubscription[] > => {
 	const data = [];
 
 	const incoming = await callApi< SubscriptionManagerSiteSubscriptions >( {
-		path: `/read/following/mine?limit=${ limit }&page=${ page }`,
+		path: `/read/following/mine?number=${ number }&page=${ page }`,
 		isLoggedIn,
 		apiVersion: '1.2',
 	} );
@@ -32,8 +32,8 @@ const callFollowingEndPoint = async (
 		data.push( ...incoming.subscriptions );
 	}
 
-	if ( incoming.page * limit < incoming.total_subscriptions ) {
-		const next = await callFollowingEndPoint( page + 1, limit, isLoggedIn );
+	if ( incoming.page * number < incoming.total_subscriptions ) {
+		const next = await callFollowingEndPoint( page + 1, number, isLoggedIn );
 		data.push( ...next );
 	}
 
@@ -46,7 +46,7 @@ const defaultSort = () => 0;
 const useSiteSubscriptionsQuery = ( {
 	filter = defaultFilter,
 	sort = defaultSort,
-	limit = 100,
+	number = 100,
 }: SubscriptionManagerSiteSubscriptionsQueryProps = {} ) => {
 	const isLoggedIn = useIsLoggedIn();
 	const enabled = useIsQueryEnabled();
@@ -54,7 +54,7 @@ const useSiteSubscriptionsQuery = ( {
 	const { data, ...rest } = useQuery< SiteSubscription[] >(
 		[ 'read', 'site-subscriptions', isLoggedIn ],
 		async () => {
-			return await callFollowingEndPoint( 1, limit, isLoggedIn );
+			return await callFollowingEndPoint( 1, number, isLoggedIn );
 		},
 		{
 			enabled,
