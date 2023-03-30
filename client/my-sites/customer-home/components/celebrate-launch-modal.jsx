@@ -2,14 +2,17 @@ import { Gridicon, ConfettiAnimation } from '@automattic/components';
 import { Button, Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState, useRef } from 'react';
+import { useDispatch } from 'react-redux';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import Tooltip from 'calypso/components/tooltip';
 import { omitUrlParams } from 'calypso/lib/url';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
 
 import './celebrate-launch-modal.scss';
 
 function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const isPaidPlan = ! site?.plan?.is_free;
 	const isBilledMonthly = site?.plan?.product_slug?.includes( 'monthly' );
@@ -75,7 +78,18 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 		return (
 			<div className="launched__modal-upsell">
 				<div className="launched__modal-upsell-content">{ contentElement }</div>
-				<Button isLarge isPrimary href={ buttonHref }>
+				<Button
+					isLarge
+					isPrimary
+					href={ buttonHref }
+					onClick={ () =>
+						dispatch(
+							recordTracksEvent( `calypso_launchpad_celebration_modal_upsell_clicked`, {
+								product_slug: site?.plan?.product_slug,
+							} )
+						)
+					}
+				>
 					<span>{ buttonText }</span>
 				</Button>
 			</div>
