@@ -26,6 +26,7 @@ import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import useGlobalStylesUpgradeModal from './hooks/use-global-styles-upgrade-modal';
 import usePatternCategories from './hooks/use-pattern-categories';
 import usePatternsMapByCategory from './hooks/use-patterns-map-by-category';
+import { usePrefetchImages } from './hooks/use-prefetch-images';
 import NavigatorListener from './navigator-listener';
 import Notices, { getNoticeContent } from './notices/notices';
 import PatternAssemblerContainer from './pattern-assembler-container';
@@ -130,6 +131,8 @@ const PatternAssembler = ( {
 		selectedVariations,
 		isEnabledColorAndFonts
 	);
+
+	usePrefetchImages();
 
 	const siteInfo = {
 		title: site?.name,
