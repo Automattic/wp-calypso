@@ -43,7 +43,7 @@ const callFollowingEndPoint = async (
 const defaultFilter = () => true;
 const defaultSort = () => 0;
 
-const useSubscriptionManagerSiteSubscriptionsQuery = ( {
+const useSiteSubscriptionsQuery = ( {
 	filter = defaultFilter,
 	sort = defaultSort,
 	limit = 100,
@@ -68,4 +68,4 @@ const useSubscriptionManagerSiteSubscriptionsQuery = ( {
 	};
 };
 
-export { useSubscriptionManagerSiteSubscriptionsQuery };
+export default useSiteSubscriptionsQuery;
