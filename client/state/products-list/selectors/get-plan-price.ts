@@ -11,21 +11,22 @@ type PlanObject = Optional< Pick< Plan, 'group' | 'getProductId' >, 'group' > & 
 
 /**
  * Computes a price based on plan slug/constant, including any discounts available.
- *
- * @param {Object} state Current redux state
- * @param {number|undefined} siteId Site ID to consider
- * @param {Object} planObject Plan object returned by getPlan() from @automattic/calypso-products
- * @param {boolean} isMonthly Flag - should return a monthly price?
- * @returns {number|null} Requested price
  */
 export const getPlanPrice = (
 	state: AppState,
 	siteId: number | undefined,
 	planObject: Pick< PlanObject, 'getStoreSlug' | 'getProductId' >,
-	isMonthly?: boolean
+
+	/**
+	 * If true, attempt to calculate and return the monthly price. Note that this
+	 * is not precise as it relies on float division and could have rounding
+	 * errors.
+	 */
+	returnMonthly?: boolean
 ): number | null => {
 	return (
-		getPlanDiscountedRawPrice( state, siteId, planObject.getStoreSlug(), { isMonthly } ) ||
-		getPlanRawPrice( state, planObject.getProductId(), isMonthly )
+		getPlanDiscountedRawPrice( state, siteId, planObject.getStoreSlug(), {
+			isMonthly: returnMonthly,
+		} ) || getPlanRawPrice( state, planObject.getProductId(), returnMonthly )
 	);
 };
