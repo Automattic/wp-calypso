@@ -10,8 +10,8 @@ export const SubscriptionManager = {
 	useSiteSubscriptionsQuery,
 	useSubscriptionsCountQuery,
 	useSubscriberEmailAddress,
-	useUserSettingsMutation,
 	useUserSettingsQuery,
+	useUserSettingsMutation,
 };
 
 // Types

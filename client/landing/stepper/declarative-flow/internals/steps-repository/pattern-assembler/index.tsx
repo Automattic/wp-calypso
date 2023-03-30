@@ -27,6 +27,7 @@ import useGlobalStylesUpgradeModal from './hooks/use-global-styles-upgrade-modal
 import usePatternCategories from './hooks/use-pattern-categories';
 import usePatternsMapByCategory from './hooks/use-patterns-map-by-category';
 import { usePrefetchImages } from './hooks/use-prefetch-images';
+import useRecipe from './hooks/use-recipe';
 import NavigatorListener from './navigator-listener';
 import Notices, { getNoticeContent } from './notices/notices';
 import PatternAssemblerContainer from './pattern-assembler-container';
@@ -55,12 +56,8 @@ const PatternAssembler = ( {
 	noticeOperations,
 }: StepProps & withNotices.Props ) => {
 	const [ navigatorPath, setNavigatorPath ] = useState( '/' );
-	const [ header, setHeader ] = useState< Pattern | null >( null );
-	const [ footer, setFooter ] = useState< Pattern | null >( null );
-	const [ sections, setSections ] = useState< Pattern[] >( [] );
 	const [ sectionPosition, setSectionPosition ] = useState< number | null >( null );
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
-	const incrementIndexRef = useRef( 0 );
 	const [ activePosition, setActivePosition ] = useState( -1 );
 	const [ isPatternPanelListOpen, setIsPatternPanelListOpen ] = useState( false );
 	const { goBack, goNext, submit } = navigation;
@@ -86,15 +83,24 @@ const PatternAssembler = ( {
 	const categoriesQuery = usePatternCategories( site?.ID );
 	const categories = ( categoriesQuery?.data || [] ) as Category[];
 	const sectionsMapByCategory = usePatternsMapByCategory( sectionPatterns, categories );
+	const {
+		header,
+		footer,
+		sections,
+		colorVariation,
+		fontVariation,
+		setHeader,
+		setFooter,
+		setSections,
+		setColorVariation,
+		setFontVariation,
+		generateKey,
+		snapshotRecipe,
+	} = useRecipe( site?.ID, allPatterns, categories );
 
 	const stylesheet = selectedDesign?.recipe?.stylesheet || '';
 
 	const isEnabledColorAndFonts = isEnabled( 'pattern-assembler/color-and-fonts' );
-
-	const [ selectedColorPaletteVariation, setSelectedColorPaletteVariation ] =
-		useState< GlobalStylesObject | null >( null );
-	const [ selectedFontPairingVariation, setSelectedFontPairingVariation ] =
-		useState< GlobalStylesObject | null >( null );
 
 	const recordTracksEvent = useMemo(
 		() =>
@@ -103,25 +109,15 @@ const PatternAssembler = ( {
 				step: stepName,
 				intent,
 				stylesheet,
-				color_style_title: selectedColorPaletteVariation?.title,
-				font_style_title: selectedFontPairingVariation?.title,
+				color_variation_title: colorVariation?.title,
+				font_variation_title: fontVariation?.title,
 			} ),
-		[
-			flow,
-			stepName,
-			intent,
-			stylesheet,
-			selectedColorPaletteVariation,
-			selectedFontPairingVariation,
-		]
+		[ flow, stepName, intent, stylesheet, colorVariation, fontVariation ]
 	);
 
 	const selectedVariations = useMemo(
-		() =>
-			[ selectedColorPaletteVariation, selectedFontPairingVariation ].filter(
-				Boolean
-			) as GlobalStylesObject[],
-		[ selectedColorPaletteVariation, selectedFontPairingVariation ]
+		() => [ colorVariation, fontVariation ].filter( Boolean ) as GlobalStylesObject[],
+		[ colorVariation, fontVariation ]
 	);
 
 	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles();
@@ -264,12 +260,11 @@ const PatternAssembler = ( {
 	};
 
 	const addSection = ( pattern: Pattern ) => {
-		incrementIndexRef.current++;
 		setSections( [
 			...( sections as Pattern[] ),
 			{
 				...pattern,
-				key: `${ incrementIndexRef.current }-${ pattern.id }`,
+				key: generateKey( pattern ),
 			},
 		] );
 		updateActivePatternPosition( sections.length );
@@ -372,6 +367,7 @@ const PatternAssembler = ( {
 
 	const { openModal: openGlobalStylesUpgradeModal, ...globalStylesUpgradeModalProps } =
 		useGlobalStylesUpgradeModal( {
+			onCheckout: snapshotRecipe,
 			onSubmit,
 			recordTracksEvent,
 		} );
@@ -437,10 +433,10 @@ const PatternAssembler = ( {
 
 	const onDeleteFooter = () => onSelect( 'footer', null );
 
-	const onScreenColorsSelect = ( variation: GlobalStylesObject ) => {
-		setSelectedColorPaletteVariation( variation );
+	const onScreenColorsSelect = ( variation: GlobalStylesObject | null ) => {
+		setColorVariation( variation );
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_COLORS_PREVIEW_CLICK, {
-			title: variation.title,
+			title: variation?.title,
 		} );
 	};
 
@@ -452,10 +448,10 @@ const PatternAssembler = ( {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_COLORS_DONE_CLICK );
 	};
 
-	const onScreenFontsSelect = ( variation: GlobalStylesObject ) => {
-		setSelectedFontPairingVariation( variation );
+	const onScreenFontsSelect = ( variation: GlobalStylesObject | null ) => {
+		setFontVariation( variation );
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_FONTS_PREVIEW_CLICK, {
-			title: variation.title,
+			title: variation?.title,
 		} );
 	};
 
@@ -545,7 +541,7 @@ const PatternAssembler = ( {
 							placeholder={ null }
 							siteId={ site?.ID }
 							stylesheet={ stylesheet }
-							selectedColorPaletteVariation={ selectedColorPaletteVariation }
+							selectedColorPaletteVariation={ colorVariation }
 							onSelect={ onScreenColorsSelect }
 							onBack={ onScreenColorsBack }
 							onDoneClick={ onScreenColorsDone }
@@ -560,7 +556,7 @@ const PatternAssembler = ( {
 							placeholder={ null }
 							siteId={ site?.ID }
 							stylesheet={ stylesheet }
-							selectedFontPairingVariation={ selectedFontPairingVariation }
+							selectedFontPairingVariation={ fontVariation }
 							onSelect={ onScreenFontsSelect }
 							onBack={ onScreenFontsBack }
 							onDoneClick={ onScreenFontsDone }
