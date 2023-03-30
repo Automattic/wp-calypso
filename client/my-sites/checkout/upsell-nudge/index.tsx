@@ -94,7 +94,7 @@ export interface UpsellNudgeAutomaticProps extends WithShoppingCartProps {
 	product: MinimalRequestCartProduct | undefined;
 	productDisplayCost?: string | null;
 	planRawPrice?: number;
-	planDiscountedRawPrice?: number;
+	planDiscountedRawPrice?: number | null;
 	isLoggedIn?: boolean;
 	siteSlug?: string | null;
 	selectedSiteId: string | number | undefined | null;
