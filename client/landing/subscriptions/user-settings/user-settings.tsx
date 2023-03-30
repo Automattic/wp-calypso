@@ -1,5 +1,5 @@
 import { Spinner, Button } from '@automattic/components';
-import { Reader } from '@automattic/data-stores';
+import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { useState, useCallback, useEffect } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
 import { FormEvent } from 'react';
@@ -33,8 +33,7 @@ type NoticeProps = {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- until we start using any of these props
 const UserSettings = ( { value = {}, loading }: UserSettingsProps ) => {
 	const [ formState, setFormState ] = useState< SubscriptionUserSettings >( value );
-	const { mutate, isLoading, isSuccess, error } =
-		Reader.SubscriptionManager.useUserSettingsMutation();
+	const { mutate, isLoading, isSuccess, error } = SubscriptionManager.useUserSettingsMutation();
 	const [ notice, setNotice ] = useState< NoticeProps | null >( null );
 
 	useEffect( () => {
