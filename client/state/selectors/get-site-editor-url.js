@@ -15,7 +15,7 @@ export const getSiteEditorUrl = ( state, siteId ) => {
 		let siteEditorUrl = `${ siteAdminUrl }site-editor.php`;
 		if ( window.location.origin !== 'https://wordpress.com' ) {
 			// Helps to maintain origin across different environments
-			siteEditorUrl = addQueryArgs( { origin: window.location.origin }, siteEditorUrl );
+			siteEditorUrl = addQueryArgs( { calypso_origin: window.location.origin }, siteEditorUrl );
 		}
 		return siteEditorUrl;
 	}
