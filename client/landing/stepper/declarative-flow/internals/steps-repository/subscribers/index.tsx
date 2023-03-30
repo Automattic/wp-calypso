@@ -48,7 +48,7 @@ const Subscribers: Step = function ( { navigation } ) {
 							recordTracksEvent={ recordTracksEvent }
 							titleText={ translate( 'Ready to add your first subscribers?' ) }
 							subtitleText={ translate(
-								'Add your first subscribers - or import 100 for free - to start spreading the news.'
+								'Add your first subscribers — or import 100 for free — to start spreading the news.'
 							) }
 							showSubtitle={ true }
 							emailPlaceholders={ [
