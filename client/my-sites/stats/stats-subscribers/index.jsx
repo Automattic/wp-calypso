@@ -5,24 +5,22 @@ import { getSiteStatsSubscribers } from 'calypso/state/stats/subscribers/selecto
 
 const StatsSubscribers = ( { siteId } ) => {
 	const name = 'subscribers';
-	const [ error, setError ] = useState( null );
-	const { isLoading } = useSubscribersQuery( siteId );
+	const { isLoading, error } = useSubscribersQuery( siteId );
 	const data = useSelector( ( state ) => getSiteStatsSubscribers( state, siteId ) );
 	const chartData = data?.data || [];
 
+	const [ errorMessage, setErrorMessage ] = useState( '' );
+
 	useEffect( () => {
 		if ( error ) {
-			const timer = setTimeout( () => {
-				setError( null );
-			}, 5000 );
-			return () => clearTimeout( timer );
+			setErrorMessage( error.message );
 		}
 	}, [ error ] );
 
 	return (
 		<div>
 			<h1>{ name }</h1>
-			{ error && <div>Error: { error.message }</div> }
+			{ errorMessage && <div>Error: { errorMessage }</div> }
 			{ isLoading && <div>Loading...</div> }
 			<ul>
 				{ ! isLoading &&
