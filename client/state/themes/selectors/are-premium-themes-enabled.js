@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 
 import 'calypso/state/themes/init';
@@ -16,7 +17,8 @@ export function arePremiumThemesEnabled( state, siteId ) {
 		return isEnabled( 'themes/premium' );
 	}
 	const isJetpack = isJetpackSite( state, siteId );
+	const isWPCOMStaging = isSiteWpcomStaging( state, siteId );
 	const isAtomic = isSiteAutomatedTransfer( state, siteId );
 	const isStandaloneJetpack = isJetpack && ! isAtomic;
-	return isEnabled( 'themes/premium' ) && ! isStandaloneJetpack;
+	return isEnabled( 'themes/premium' ) && ! isStandaloneJetpack && ! isWPCOMStaging;
 }
