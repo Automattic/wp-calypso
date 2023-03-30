@@ -1,7 +1,6 @@
 import {
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 	WPCOM_FEATURES_MANAGE_PLUGINS,
-	WPCOM_FEATURES_UPLOAD_PLUGINS,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
@@ -89,11 +88,6 @@ const PluginsNavigationHeader = ( { navigationHeaderRef, categoryName, category,
 	const jetpackNonAtomic = useSelector(
 		( state ) =>
 			isJetpackSite( state, selectedSite?.ID ) && ! isAtomicSite( state, selectedSite?.ID )
-	);
-
-	const hasUploadPlugins = useSelector(
-		( state ) =>
-			siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_UPLOAD_PLUGINS ) || jetpackNonAtomic
 	);
 
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, selectedSite?.ID ) );
@@ -192,7 +186,7 @@ const PluginsNavigationHeader = ( { navigationHeaderRef, categoryName, category,
 				<UploadPluginButton
 					isMobile={ isMobile }
 					siteSlug={ selectedSite?.slug }
-					hasUploadPlugins={ hasUploadPlugins }
+					hasUploadPlugins={ selectedSite }
 				/>
 			</div>
 		</FixedNavigationHeader>
