@@ -5,7 +5,7 @@ import { render, waitFor } from '@testing-library/react';
 import { useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { callApi } from '../helpers';
-import { useSiteDeliveryFrequencyMutation } from '../mutations/use-site-delivery-frequency-mutation';
+import useSiteDeliveryFrequencyMutation from '../mutations/use-site-delivery-frequency-mutation';
 
 // Mock the useIsLoggedIn function
 jest.mock( '../hooks', () => ( {
