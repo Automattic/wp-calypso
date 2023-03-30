@@ -22,6 +22,7 @@ import './widget.scss';
  * Loads and runs the main chunk for Stats Widget.
  */
 function init() {
+	// TODO: look whether any of these could be removed.
 	const rootReducer = combineReducers( {
 		currentUser,
 		sites,
@@ -30,6 +31,7 @@ function init() {
 	const store = createStore(
 		rootReducer,
 		config( 'intial_state' ) ?? {},
+		// TODO: look whether any of these could be removed.
 		compose(
 			consoleDispatcher,
 			addReducerEnhancer,
@@ -37,6 +39,7 @@ function init() {
 		)
 	);
 
+	// TODO: look whether any of these could be removed.
 	setStore( store );
 	setLocale( store.dispatch );
 	store.dispatch( setSelectedSiteId( config( 'blog_id' ) ) );
