@@ -112,7 +112,7 @@ const WooExpressMediumPlansPage = ( { currentPlan, selectedSite }: WXMediumPlans
 			</Card>
 
 			<h2 className="wx-medium-plans__section-title">
-				{ translate( 'What’s included in %(planName)s', {
+				{ translate( 'What’s included in %(planName)s plan', {
 					args: {
 						planName: activePlan.getTitle(),
 					},

@@ -5,7 +5,6 @@ import * as HelpCenter from './help-center';
 import * as I18n from './i18n';
 import * as Launch from './launch';
 import * as Onboard from './onboard';
-import oneWeekPersistenceConfig from './one-week-persistence-config';
 import * as Plans from './plans';
 import * as ProductsList from './products-list';
 import * as Reader from './reader';
@@ -46,7 +45,6 @@ export {
 	Launch,
 	WPCOMFeatures,
 	Onboard,
-	oneWeekPersistenceConfig,
 	ProductsList,
 	AutomatedTransferEligibility,
 	Reader,

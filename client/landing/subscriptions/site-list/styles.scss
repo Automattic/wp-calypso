@@ -1,5 +1,6 @@
 @import "@automattic/color-studio/dist/color-variables";
 @import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
 
 $max-list-width: 1300px;
 
@@ -69,6 +70,18 @@ $max-list-width: 1300px;
 
 		&:last-child {
 			border-bottom: none;
+		}
+	}
+
+	@media (max-width: $break-medium) {
+		.email-frequency {
+			display: none;
+		}
+	}
+
+	@media (max-width: $break-small) {
+		.date {
+			display: none;
 		}
 	}
 }

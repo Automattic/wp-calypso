@@ -735,6 +735,9 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 							// This styling hides the iframe until it loads or
 							// the redirect is executed.
 							style={ isIframeLoaded ? undefined : { opacity: 0 } }
+							// Allow clipboard access for the iframe origin.
+							// This will still require users' permissions.
+							allow="clipboard-read; clipboard-write"
 						/>
 					) }
 				</div>

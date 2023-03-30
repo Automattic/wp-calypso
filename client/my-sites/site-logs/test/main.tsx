@@ -16,6 +16,17 @@ import { SiteLogs } from '../main';
 // Mock it for now to avoid the error.
 jest.mock( 'page' );
 
+// Mock matchMedia in DateRange component
+Object.defineProperty( window, 'matchMedia', {
+	value: jest.fn( () => {
+		return {
+			matches: true,
+			addListener: jest.fn(),
+			removeListener: jest.fn(),
+		};
+	} ),
+} );
+
 const render = ( el, options ) =>
 	renderWithProvider( el, { ...options, reducers: { ui, documentHead, siteSettings } } );
 
