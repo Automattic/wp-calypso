@@ -1,6 +1,16 @@
 import { useEffect, useState } from 'react';
-import LineChart from 'calypso/components/line-chart';
-import StatsEmptyState from '../stats-empty-state';
+import {
+	LineChart,
+	Line,
+	XAxis,
+	YAxis,
+	CartesianGrid,
+	Tooltip,
+	Legend as LegendRecharts,
+	ResponsiveContainer,
+} from 'recharts';
+// import LineChart from 'calypso/components/line-chart';
+// import StatsEmptyState from '../stats-empty-state';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import './style.scss';
 
@@ -55,7 +65,7 @@ function transformData( data ) {
 	const processedData = trimmedData.map( ( point ) => {
 		const [ period, count, diff ] = point;
 		return {
-			date: new Date( period ).getTime(),
+			date: period, //new Date( period ).getTime(),
 			value: count,
 			diff: diff,
 		};
@@ -64,11 +74,11 @@ function transformData( data ) {
 }
 
 export default function SubscribersSection() {
-	const [ isLoading, setIsLoading ] = useState( true );
+	const [ isLoading, setIsLoading ] = useState( false );
 	const data = transformData( isLoading ? [] : getData() );
 
 	// Determines what is shown in the tooltip on hover.
-	const tooltipHelper = ( datum ) => `Changed: ${ datum.diff }`;
+	// const tooltipHelper = ( datum ) => `Changed: ${ datum.diff }`;
 
 	useEffect( () => {
 		setTimeout( () => setIsLoading( false ), 5000 );
@@ -80,9 +90,26 @@ export default function SubscribersSection() {
 			{ isLoading ? (
 				<StatsModulePlaceholder className="is-chart" isLoading />
 			) : (
-				<LineChart data={ data } renderTooltipForDatanum={ tooltipHelper }>
-					<StatsEmptyState />
-				</LineChart>
+				<div style={ { width: '100%', height: '300px' } }>
+					<ResponsiveContainer width="100%" height="100%">
+						<LineChart
+							data={ data[ 0 ] || [] }
+							margin={ {
+								top: 5,
+								right: 30,
+								left: 20,
+								bottom: 5,
+							} }
+						>
+							<CartesianGrid strokeDasharray="3 3" />
+							<XAxis dataKey="date" />
+							<YAxis />
+							<Tooltip />
+							<LegendRecharts />
+							<Line type="monotone" dataKey="value" stroke="#8884d8" activeDot={ { r: 8 } } />
+						</LineChart>
+					</ResponsiveContainer>
+				</div>
 			) }
 		</div>
 	);
