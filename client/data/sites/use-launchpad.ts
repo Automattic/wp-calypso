@@ -13,7 +13,8 @@ export const fetchLaunchpad = ( siteSlug: string | null ) => {
 export const useLaunchpad = ( siteSlug: string | null ) => {
 	const key = [ 'launchpad', siteSlug ];
 	return useQuery( key, () => fetchLaunchpad( siteSlug ), {
-		cacheTime: 0,
+		staleTime: 0,
+		refetchOnMount: true,
 		retry: 3,
 		initialData: {
 			checklist_statuses: [],
