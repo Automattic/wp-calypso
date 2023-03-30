@@ -433,10 +433,10 @@ const PatternAssembler = ( {
 
 	const onDeleteFooter = () => onSelect( 'footer', null );
 
-	const onScreenColorsSelect = ( variation: GlobalStylesObject ) => {
+	const onScreenColorsSelect = ( variation: GlobalStylesObject | null ) => {
 		setColorVariation( variation );
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_COLORS_PREVIEW_CLICK, {
-			title: variation.title,
+			title: variation?.title,
 		} );
 	};
 
@@ -448,10 +448,10 @@ const PatternAssembler = ( {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_COLORS_DONE_CLICK );
 	};
 
-	const onScreenFontsSelect = ( variation: GlobalStylesObject ) => {
+	const onScreenFontsSelect = ( variation: GlobalStylesObject | null ) => {
 		setFontVariation( variation );
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_FONTS_PREVIEW_CLICK, {
-			title: variation.title,
+			title: variation?.title,
 		} );
 	};
 
