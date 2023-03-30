@@ -4,6 +4,16 @@ import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import {
+	LineChart,
+	Line,
+	XAxis,
+	YAxis,
+	CartesianGrid,
+	Tooltip,
+	Legend as LegendRecharts,
+	ResponsiveContainer,
+} from 'recharts';
 import Chart from 'calypso/components/chart';
 import Legend from 'calypso/components/chart/legend';
 import { DEFAULT_HEARTBEAT } from 'calypso/components/data/query-site-stats/constants';
@@ -115,6 +125,28 @@ class StatModuleChartTabs extends Component {
 				<Chart barClick={ this.props.barClick } data={ this.props.chartData } minBarWidth={ 35 }>
 					<StatsEmptyState />
 				</Chart>
+				<div style={ { width: '100%', height: '300px' } }>
+					<ResponsiveContainer width="100%" height="100%">
+						<LineChart
+							// width={ 500 }
+							// height={ 300 }
+							data={ this.props.chartData || [] }
+							margin={ {
+								top: 5,
+								right: 30,
+								left: 20,
+								bottom: 5,
+							} }
+						>
+							<CartesianGrid strokeDasharray="3 3" />
+							<XAxis dataKey="label" />
+							<YAxis />
+							<Tooltip />
+							<LegendRecharts />
+							<Line type="monotone" dataKey="value" stroke="#8884d8" activeDot={ { r: 8 } } />
+						</LineChart>
+					</ResponsiveContainer>
+				</div>
 				<StatTabs
 					data={ this.props.counts }
 					tabs={ this.props.charts }
