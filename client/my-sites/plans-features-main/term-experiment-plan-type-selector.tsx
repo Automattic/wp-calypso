@@ -20,7 +20,7 @@ const TermExperimentPlanTypeSelector: React.FunctionComponent< {
 				return <PlanSelectorLoadingEllipsis />;
 			}
 
-			const { variationName } = experimentData;
+			const variationName = experimentData?.variationName;
 
 			const propsWithBiannualToggle = {
 				...planTypeSelectorProps,
