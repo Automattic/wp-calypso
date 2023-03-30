@@ -12,7 +12,7 @@ import './celebrate-launch-modal.scss';
 function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 	const translate = useTranslate();
 	const isPaidPlan = ! site?.plan?.is_free;
-	const isBilledYearly = site?.plan?.billing_period === 'Yearly';
+	const isBilledMonthly = site?.plan?.product_slug?.includes( 'monthly' );
 
 	const transformedDomains = allDomains.map( createSiteDomainObject );
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
@@ -47,7 +47,17 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 			);
 			buttonText = translate( 'Claim your domain' );
 			buttonHref = `/domains/add/${ site.slug }`;
-		} else if ( isPaidPlan && isBilledYearly && ! hasCustomDomain ) {
+		} else if ( isPaidPlan && isBilledMonthly && ! hasCustomDomain ) {
+			contentElement = (
+				<p>
+					{ translate(
+						'Interested in a custom domain? It’s free for the first year when you switch to annual billing.'
+					) }
+				</p>
+			);
+			buttonText = translate( 'Claim your domain' );
+			buttonHref = `/domains/add/${ site.slug }`;
+		} else if ( isPaidPlan && ! hasCustomDomain ) {
 			contentElement = (
 				<p>
 					{ translate(
@@ -57,16 +67,6 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 				</p>
 			);
 			buttonText = translate( 'Claim your free domain' );
-			buttonHref = `/domains/add/${ site.slug }`;
-		} else if ( isPaidPlan && ! hasCustomDomain ) {
-			contentElement = (
-				<p>
-					{ translate(
-						'Interested in a custom domain? It’s free for the first year when you switch to annual billing.'
-					) }
-				</p>
-			);
-			buttonText = translate( 'Claim your domain' );
 			buttonHref = `/domains/add/${ site.slug }`;
 		} else if ( isPaidPlan && hasCustomDomain ) {
 			return null;
