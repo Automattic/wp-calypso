@@ -1,6 +1,12 @@
+import styled from '@emotion/styled';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { ProvideExperimentData } from 'calypso/lib/explat';
 import PlanTypeSelector, { PlanTypeSelectorProps } from './plan-type-selector';
+
+const PlanSelectorLoadingEllipsis = styled( LoadingEllipsis )`
+	margin: auto;
+	display: block;
+`;
 
 const TermExperimentPlanTypeSelector: React.FunctionComponent< {
 	isEligible: boolean;
@@ -11,7 +17,7 @@ const TermExperimentPlanTypeSelector: React.FunctionComponent< {
 	<ProvideExperimentData name="calypso_plans_2yr_toggle" options={ { isEligible } }>
 		{ ( isLoading, experimentData ) => {
 			if ( isLoading ) {
-				return <LoadingEllipsis />;
+				return <PlanSelectorLoadingEllipsis />;
 			}
 
 			const { variationName } = experimentData;
