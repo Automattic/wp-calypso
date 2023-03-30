@@ -64,7 +64,7 @@ import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import wasEcommerceTrialSite from 'calypso/state/selectors/was-ecommerce-trial-site';
-import { removeSite, requestSite } from 'calypso/state/sites/actions';
+import { requestSite } from 'calypso/state/sites/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import {
 	getSite,
@@ -561,7 +561,6 @@ export function siteSelection( context, next ) {
 		// This will fetch the site and update the state after the plan is upgraded if the site is on the trial-upgraded flow.
 		const promise = shouldUpdateStateAfterUpgrade
 			? dispatch( requestSite( siteId ) ).catch( () => {
-					dispatch( removeSite( siteId ) );
 					return null;
 			  } )
 			: Promise.resolve();
