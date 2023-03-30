@@ -53,7 +53,7 @@ module.exports = {
 	bail: ! isDevelopment,
 	entry: {
 		build: path.join( __dirname, 'src', 'app' ),
-		widget: path.join( __dirname, 'src', 'widget' ),
+		'widget-loader': path.join( __dirname, 'src', 'widget-loader' ),
 	},
 	mode: isDevelopment ? 'development' : 'production',
 	devtool: false,

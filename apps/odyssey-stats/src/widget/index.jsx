@@ -1,4 +1,4 @@
-import './load-config';
+import '../load-config';
 import config from '@automattic/calypso-config';
 import '@automattic/calypso-polyfills';
 import { render } from 'react-dom';
@@ -12,21 +12,21 @@ import { setStore } from 'calypso/state/redux-store';
 import sites from 'calypso/state/sites/reducer';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { combineReducers, addReducerEnhancer } from 'calypso/state/utils';
-import setLocale from './lib/set-locale';
+import setLocale from '../lib/set-locale';
 
 import 'calypso/assets/stylesheets/style.scss';
-import './widget.scss';
+import './style.scss';
 
 /**
  * Loads and runs the main chunk for Stats Widget.
  */
-function init() {
+export function init() {
 	const store = createStore(
 		combineReducers( {
 			// TODO: look at implementing a simple reducer to replace this.
 			sites,
 		} ),
-		config( 'intial_state' ) ?? {},
+		config( 'intial_state' ),
 		compose( addReducerEnhancer, applyMiddleware( thunkMiddleware, wpcomApiMiddleware ) )
 	);
 
@@ -42,11 +42,4 @@ function init() {
 		</Provider>,
 		document.getElementById( 'dashboard_stats' )
 	);
-}
-
-// Initialize Stats widget when DOMContentLoaded is fired, or immediately if it already has been.
-if ( document.readyState !== 'loading' ) {
-	init();
-} else {
-	document.addEventListener( 'DOMContentLoaded', init );
 }
