@@ -11,8 +11,8 @@ import { formatCurrency } from '@automattic/format-currency';
 import { localize, TranslateResult, useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
+import usePlanPrices from 'calypso/my-sites/plans/hooks/use-plan-prices';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import usePlanPrices from '../plans/hooks/use-plan-prices';
 
 interface Props {
 	planName: string;
