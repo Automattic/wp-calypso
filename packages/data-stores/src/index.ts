@@ -33,6 +33,8 @@ export * from './plans/types';
 export * from './launch/types';
 export * from './user/types';
 
+const { SubscriptionManager } = Reader;
+
 export {
 	Analyzer,
 	User,
@@ -50,6 +52,7 @@ export {
 	Reader,
 	StepperInternal,
 	Subscriber,
+	SubscriptionManager,
 };
 
 /**
