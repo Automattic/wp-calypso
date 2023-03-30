@@ -18,6 +18,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SiteLogsTabPanel } from './components/site-logs-tab-panel';
 import { SiteLogsTable } from './components/site-logs-table';
 import { SiteLogsToolbar } from './components/site-logs-toolbar';
+import type { Moment } from 'moment';
 
 import './style.scss';
 
@@ -116,17 +117,10 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 			  } )
 			: null;
 
-	const handleDateRangeCommit = ( startDate: Date, endDate: Date ) => {
-		const formattedStartDate = startDate ? moment( startDate ) : null;
-		const formattedEndDate = endDate ? moment( endDate ) : null;
-
-		if ( ! formattedStartDate && ! formattedEndDate ) {
-			return;
-		}
-
+	const handleDateTimeChange = ( startDate: Moment, endDate: Moment ) => {
 		setDateRange( {
-			startTime: formattedStartDate ?? dateRange.startTime,
-			endTime: formattedEndDate ?? dateRange.endTime,
+			startTime: startDate,
+			endTime: endDate,
 		} );
 		setAutoRefresh( false );
 	};
@@ -151,7 +145,7 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 							logType={ logType }
 							startDateTime={ dateRange.startTime }
 							endDateTime={ dateRange.endTime }
-							onDateTimeCommit={ handleDateRangeCommit }
+							onDateTimeChange={ handleDateTimeChange }
 						/>
 						<SiteLogsTable logs={ data?.logs } isLoading={ isLoading } />
 						{ paginationText && (
