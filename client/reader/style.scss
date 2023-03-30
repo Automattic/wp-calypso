@@ -335,7 +335,6 @@
 
 .is-group-reader .main .empty-content:not(.conversations__empty-content),
 .is-reader-page .main .empty-content:not(.conversations__empty-content) {
-
 	padding-top: 0;
 
 	.empty-content__title {
@@ -364,9 +363,13 @@
 }
 
 .layout.has-header-section.is-section-reader {
+
 	.layout__header-section {
-		background-color: #021827;
 		color: var(--studio-white);
+		background-color: #021827;
+		background-image: url(calypso/assets/images/reader/tags-bg.png);
+		background-repeat: none;
+		background-size: cover;
 	}
 
 	.layout__header-section-content {
@@ -376,7 +379,7 @@
 		}
 
 		&.logged-in {
-			padding-top: calc(var(--masterbar-height) + 44px);
+			padding-top: calc(var(--masterbar-height) + 56px);
 		}
 	}
 
@@ -389,7 +392,7 @@
 	// logged in master bar
 	header.masterbar {
 		padding: 16px 16px;
-		height: 60px;
+		height: 78px;
 	}
 
 	// logged out master bar
