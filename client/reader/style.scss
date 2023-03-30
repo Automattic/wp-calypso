@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .is-group-reader .async-load {
 	margin: 30px auto;
 	width: 50%;
@@ -367,7 +370,10 @@
 	}
 
 	.layout__header-section-content {
-		padding: 24px 42px 36px;
+		padding: 24px 24px 36px;
+		@include break-medium {
+			padding: 24px 108px 36px;
+		}
 
 		&.logged-in {
 			padding-top: calc(var(--masterbar-height) + 44px);

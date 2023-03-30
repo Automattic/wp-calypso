@@ -9,7 +9,6 @@
 	background-image: url(calypso/assets/images/reader/tags-bg.png);
 	background-repeat: none;
 	background-size: cover;
-	padding: 24px 108px 36px;
 
 	h1 {
 		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
@@ -23,9 +22,14 @@
 }
 
 .has-no-sidebar .layout__content {
-	padding-left: 108px;
-	padding-right: 108px;
+	padding-left: 24px;
+	padding-right: 24px;
+	@include break-medium {
+		padding-left: 108px;
+		padding-right: 108px;
+	}
 }
+
 .tags h4 {
 	color: var(--studio-gray-50);
 	margin-bottom: 15px;
@@ -48,6 +52,7 @@
 		// we need to set the border on the column for mobile and the row for desktop
 		border-top: 1px solid var(--studio-gray-5);
 		padding: 10px;
+		box-sizing: border-box;
 		@include break-small {
 			width: 50%;
 			border-top: none;
