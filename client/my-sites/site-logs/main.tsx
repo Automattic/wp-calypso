@@ -92,9 +92,12 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 		if ( isChecked ) {
 			setDateRange( getLatestDateRange() );
 			updateDateRangeQueryParam( null );
+			setCurrentPageIndex( 0 );
+		} else {
+			updateDateRangeQueryParam( dateRange );
 		}
+
 		setAutoRefresh( isChecked );
-		setCurrentPageIndex( 0 );
 	};
 
 	const handlePageClick = ( nextPageNumber: number ) => {
