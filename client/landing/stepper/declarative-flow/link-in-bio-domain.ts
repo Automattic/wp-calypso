@@ -86,8 +86,8 @@ const linkInBioDomain: Flow = {
 		const redirectTo = `/setup/${ variantSlug }/patterns?domain=${ domain }`;
 		const logInUrl =
 			locale && locale !== 'en'
-				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Link%20in%20Bio&redirect_to=${ redirectTo }`
-				: `/start/account/user?variationName=${ flowName }&pageTitle=Link%20in%20Bio&redirect_to=${ redirectTo }`;
+				? `/start/account/user/${ locale }?variationName=${ variantSlug }&pageTitle=Link%20in%20Bio&redirect_to=${ redirectTo }`
+				: `/start/account/user?variationName=${ variantSlug }&pageTitle=Link%20in%20Bio&redirect_to=${ redirectTo }`;
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStepSlug, variantSlug, {
@@ -125,7 +125,7 @@ const linkInBioDomain: Flow = {
 					const destination = `/domains/mapping/${ providedDependencies.siteSlug }/setup/${ domain }?firstVisit=true`;
 					persistSignupDestination( destination );
 					setSignupCompleteSlug( providedDependencies?.siteSlug );
-					setSignupCompleteFlowName( flowName );
+					setSignupCompleteFlowName( variantSlug );
 					const returnUrl = encodeURIComponent( destination );
 
 					return window.location.assign(
