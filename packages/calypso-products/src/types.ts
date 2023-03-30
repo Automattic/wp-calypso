@@ -59,7 +59,10 @@ export interface WPComPlan extends Plan {
 }
 
 export type IncompleteWPcomPlan = Partial< WPComPlan > &
-	Pick< WPComPlan, 'group' | 'type' | 'getTitle' | 'getDescription' >;
+	Pick<
+		WPComPlan,
+		'group' | 'type' | 'getTitle' | 'getDescription' | 'getPlanCancellationDescription'
+	>;
 
 // Jetpack
 export type JetpackProductSlug = ( typeof JETPACK_PRODUCTS_LIST )[ number ];
@@ -196,6 +199,7 @@ export type Plan = BillingTerm & {
 	getShortDescription?: () => TranslateResult;
 	getFeaturedDescription?: () => TranslateResult;
 	getLightboxDescription?: () => TranslateResult;
+	getPlanCancellationDescription?: () => TranslateResult;
 	getProductsIncluded?: () => ReadonlyArray< string >;
 	getWhatIsIncluded?: () => Array< TranslateResult >;
 	getBenefits?: () => Array< TranslateResult >;
