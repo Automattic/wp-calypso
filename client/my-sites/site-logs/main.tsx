@@ -4,6 +4,7 @@ import classnames from 'classnames';
 import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
@@ -135,6 +136,7 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 	return (
 		<Main fullWidthLayout className={ classnames( 'site-logs', { 'is-loading': isLoading } ) }>
 			<DocumentHead title={ titleHeader } />
+			{ siteId && <QuerySiteSettings siteId={ siteId } /> }
 			<FormattedHeader
 				brandFont
 				headerText={ titleHeader }
