@@ -9,7 +9,6 @@ import configureStore from 'redux-mock-store';
 import ActivityCardList from 'calypso/components/activity-card-list';
 import AdvancedCredentials from 'calypso/components/advanced-credentials';
 import BackupSuccessful from 'calypso/components/jetpack/daily-backup-status/status-card/backup-successful';
-import StepProgress from 'calypso/components/step-progress';
 import useRewindableActivityLogQuery from 'calypso/data/activity-log/use-rewindable-activity-log-query';
 import getInProgressRewindStatus from 'calypso/state/selectors/get-in-progress-rewind-status';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
@@ -18,6 +17,7 @@ import Loading from '../../rewind-flow/loading';
 import ProgressBar from '../../rewind-flow/progress-bar';
 import RewindConfigEditor from '../../rewind-flow/rewind-config-editor';
 import BackupCloneFlow from '../index';
+import CloneFlowStepProgress from '../step-progress';
 
 jest.mock( 'react', () => ( {
 	...jest.requireActual( 'react' ),
@@ -60,7 +60,7 @@ jest.mock( 'calypso/components/jetpack/daily-backup-status/status-card/backup-su
 	jest.fn().mockImplementation( () => null )
 );
 
-jest.mock( 'calypso/components/step-progress', () => jest.fn().mockImplementation( () => null ) );
+jest.mock( '../step-progress', () => jest.fn().mockImplementation( () => null ) );
 jest.mock( '../../rewind-flow/error', () => jest.fn().mockImplementation( () => null ) );
 jest.mock( '../../rewind-flow/loading', () => jest.fn().mockImplementation( () => null ) );
 jest.mock( '../../rewind-flow/progress-bar', () => jest.fn().mockImplementation( () => null ) );
@@ -258,7 +258,7 @@ describe( 'BackupCloneFlow render', () => {
 				</Provider>
 			);
 
-			expect( StepProgress ).toHaveBeenCalledTimes( 1 );
+			expect( CloneFlowStepProgress ).toHaveBeenCalledTimes( 1 );
 			expect( AdvancedCredentials ).toHaveBeenCalledTimes( 1 );
 		} );
 
@@ -287,7 +287,7 @@ describe( 'BackupCloneFlow render', () => {
 				</Provider>
 			);
 
-			expect( StepProgress ).toHaveBeenCalledTimes( 1 );
+			expect( CloneFlowStepProgress ).toHaveBeenCalledTimes( 1 );
 			expect( BackupSuccessful ).toHaveBeenCalledTimes( 1 );
 			expect( ActivityCardList ).toHaveBeenCalledTimes( 1 );
 		} );
@@ -317,7 +317,7 @@ describe( 'BackupCloneFlow render', () => {
 				</Provider>
 			);
 
-			expect( StepProgress ).toHaveBeenCalledTimes( 1 );
+			expect( CloneFlowStepProgress ).toHaveBeenCalledTimes( 1 );
 			expect( RewindConfigEditor ).toHaveBeenCalledTimes( 1 );
 		} );
 
