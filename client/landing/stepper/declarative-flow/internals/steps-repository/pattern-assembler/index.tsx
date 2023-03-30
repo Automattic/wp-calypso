@@ -78,6 +78,11 @@ const PatternAssembler = ( {
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const allPatterns = useAllPatterns();
 	const sectionPatterns = useSectionPatterns();
+
+	// Fetching the categories so they are ready when ScreenCategoryList loads
+	const categoriesQuery = usePatternCategories( site?.ID );
+	const categories = ( categoriesQuery?.data || [] ) as Category[];
+	const sectionsMapByCategory = usePatternsMapByCategory( sectionPatterns, categories );
 	const {
 		header,
 		footer,
@@ -91,12 +96,7 @@ const PatternAssembler = ( {
 		setFontVariation,
 		generateKey,
 		snapshotRecipe,
-	} = useRecipe( site?.ID, allPatterns );
-
-	// Fetching the categories so they are ready when ScreenCategoryList loads
-	const categoriesQuery = usePatternCategories( site?.ID );
-	const categories = ( categoriesQuery?.data || [] ) as Category[];
-	const sectionsMapByCategory = usePatternsMapByCategory( sectionPatterns, categories );
+	} = useRecipe( site?.ID, allPatterns, categories );
 
 	const stylesheet = selectedDesign?.recipe?.stylesheet || '';
 
