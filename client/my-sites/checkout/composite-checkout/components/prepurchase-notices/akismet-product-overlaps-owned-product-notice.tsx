@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent } from 'react';
-import { Purchase } from 'calypso/lib/purchases/types';
+import type { FunctionComponent } from 'react';
+import type { Purchase } from 'calypso/lib/purchases/types';
 import PrePurchaseNotice from './prepurchase-notice';
 
 import './style.scss';
