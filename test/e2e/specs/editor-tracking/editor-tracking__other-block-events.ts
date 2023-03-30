@@ -96,7 +96,7 @@ describe(
 			} );
 
 			it( 'Go to the site editor', async function () {
-				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
+				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 			} );
 

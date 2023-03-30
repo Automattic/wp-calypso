@@ -38,7 +38,7 @@ describe(
 				await testAccount.authenticate( page );
 
 				const fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
-				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
+				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 
 				console.info( `Deleting created template parts: ${ createdTemplateParts.join( ', ' ) }` );
@@ -68,7 +68,7 @@ describe(
 			} );
 
 			it( 'Visit the site editor', async function () {
-				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
+				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 			} );
 
@@ -120,7 +120,7 @@ describe(
 			} );
 
 			it( 'Visit the site editor', async function () {
-				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
+				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 			} );
 
@@ -210,7 +210,7 @@ describe(
 			} );
 
 			it( 'Visit the site editor', async function () {
-				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
+				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 			} );
 

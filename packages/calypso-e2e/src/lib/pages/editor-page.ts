@@ -126,15 +126,15 @@ export class EditorPage {
 	 * Example "new page": {@link https://wordpress.com/page}
 	 */
 	async visit(
-		siteUrlWithProtocol: string,
+		siteHostWithProtocol: string,
 		type: 'post' | 'page' = 'post'
 	): Promise< Response | null > {
 		let url: URL;
 		try {
-			url = new URL( '/wp-admin/post-new.php', siteUrlWithProtocol );
+			url = new URL( '/wp-admin/post-new.php', siteHostWithProtocol );
 		} catch ( error ) {
 			throw new Error(
-				`Invalid site URL provided: "${ siteUrlWithProtocol }". Did you remember to include the protocol?`
+				`Invalid site host URL provided: "${ siteHostWithProtocol }". Did you remember to include the protocol?`
 			);
 		}
 

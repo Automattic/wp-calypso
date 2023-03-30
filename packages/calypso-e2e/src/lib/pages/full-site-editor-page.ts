@@ -22,7 +22,6 @@ import {
 	DimensionsSettings,
 	CookieBannerComponent,
 } from '..';
-import { getCalypsoURL } from '../../data-helper';
 import { getIdFromBlock } from '../../element-helper';
 import envVariables from '../../env-variables';
 
@@ -118,12 +117,21 @@ export class FullSiteEditorPage {
 	/**
 	 * Visit the site editor by URL directly.
 	 *
-	 * @param {string} siteHostName Host name of the site, without scheme. (e.g. testsite.wordpress.com)
+	 * @param {string} siteHostWithProtocol Host name of the site, with protocol. (e.g. https://testsite.wordpress.com)
 	 */
-	async visit( siteHostName: string ): Promise< void > {
-		await this.page.goto( getCalypsoURL( `site-editor/${ siteHostName }` ), {
-			timeout: 60 * 1000,
-		} );
+	async visit( siteHostWithProtocol: string ): Promise< void > {
+		let url: URL;
+		try {
+			url = new URL( '/wp-admin/post-new.php', siteHostWithProtocol );
+		} catch ( error ) {
+			throw new Error(
+				`Invalid site host URL provided: "${ siteHostWithProtocol }". Did you remember to include the protocol?`
+			);
+		}
+
+		url.searchParams.set( 'calypso_origin', envVariables.CALYPSO_BASE_URL );
+
+		await this.page.goto( url.href, { timeout: 60 * 1000 } );
 	}
 
 	/**

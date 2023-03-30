@@ -37,7 +37,7 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Global styles events' )
 		} );
 
 		it( 'Visit the site editor', async function () {
-			await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
+			await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
 			await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 		} );
 
@@ -99,7 +99,7 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Global styles events' )
 		} );
 
 		it( 'Visit the site editor', async function () {
-			await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
+			await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
 			await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 		} );
 
@@ -169,7 +169,7 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Global styles events' )
 		} );
 
 		it( 'Visit the site editor', async function () {
-			await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
+			await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
 			await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 		} );
 
@@ -298,7 +298,7 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Global styles events' )
 		} );
 
 		it( 'Visit the site editor', async function () {
-			await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
+			await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
 			await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 		} );
 

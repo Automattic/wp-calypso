@@ -121,7 +121,7 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 			} );
 
 			it( 'Go to site editor', async function () {
-				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
+				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 			} );
 
