@@ -19,7 +19,7 @@ import 'calypso/assets/stylesheets/style.scss';
 import './widget.scss';
 
 /**
- * Loads and runs the main chunk for Instant Search.
+ * Loads and runs the main chunk for Stats Widget.
  */
 function init() {
 	const rootReducer = combineReducers( {
@@ -49,7 +49,7 @@ function init() {
 	);
 }
 
-// Initialize Instant Search when DOMContentLoaded is fired, or immediately if it already has been.
+// Initialize Stats widget when DOMContentLoaded is fired, or immediately if it already has been.
 if ( document.readyState !== 'loading' ) {
 	init();
 } else {
