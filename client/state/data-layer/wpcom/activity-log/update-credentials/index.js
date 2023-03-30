@@ -85,11 +85,12 @@ export const success = ( action, { rewind_state } ) =>
 		{
 			type: JETPACK_CREDENTIALS_STORE,
 			credentials: {
-				main: action.credentials,
+				[ action.credentials.role ]: action.credentials,
 			},
 			siteId: action.siteId,
 		},
-		action.shouldUseNotices &&
+		action.credentials.role === 'main' &&
+			action.shouldUseNotices &&
 			successNotice( i18n.translate( 'Your site is now connected.' ), {
 				duration: 4000,
 				...getMaybeNoticeId( action ),
