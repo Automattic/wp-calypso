@@ -1,21 +1,31 @@
 import { NotificationSettings } from '../notification-settings';
-import { SiteType } from './site-types';
+import type { SiteSubscription } from '@automattic/data-stores/src/reader/types';
 
-export default function SiteRow( { id, name, icon, url, date, emailFrequency }: SiteType ) {
+export default function SiteRow( {
+	ID,
+	name,
+	site_icon,
+	URL,
+	date_subscribed,
+	delivery_methods,
+}: SiteSubscription ) {
+	const since = new Date( date_subscribed ).toDateString();
+	const deliveryFrequency = delivery_methods?.email?.post_delivery_frequency;
+
 	return (
-		<li className="row" role="row" key={ id }>
+		<li className="row" role="row" key={ ID }>
 			<span className="title-box" role="cell">
-				<img className="icon" src={ icon } alt={ name } />
+				<img className="icon" src={ site_icon } alt={ name } />
 				<span className="title-column">
 					<span className="name">{ name }</span>
-					<span className="url">{ url }</span>
+					<span className="url">{ URL }</span>
 				</span>
 			</span>
 			<span className="date" role="cell">
-				{ date.toDateString() }
+				{ since }
 			</span>
 			<span className="email-frequency" role="cell">
-				{ emailFrequency }
+				{ deliveryFrequency }
 			</span>
 			<span className="actions" role="cell">
 				<NotificationSettings />
