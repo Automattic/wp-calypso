@@ -38,3 +38,13 @@
 		letter-spacing: -0.15px;
 	}
 }
+
+.rtl {
+	.pattern-assembler {
+		.navigator-header__heading {
+			.gridicon {
+				transform: rotate(180deg);
+			}
+		}
+	}
+}
