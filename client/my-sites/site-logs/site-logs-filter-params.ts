@@ -24,8 +24,8 @@ export function getDateRangeQueryParam( moment: typeof import('moment') ): {
 	const to = parseInt( searchParams.get( 'to' ) || '', 10 );
 
 	return {
-		startTime: isNaN( from ) ? null : moment( from ),
-		endTime: isNaN( to ) ? null : moment( to ),
+		startTime: isNaN( from ) ? null : moment.unix( from ),
+		endTime: isNaN( to ) ? null : moment.unix( to ),
 	};
 }
 
@@ -35,8 +35,8 @@ export function updateDateRangeQueryParam(
 	const url = new URL( window.location.href );
 
 	if ( dateRange ) {
-		url.searchParams.set( 'from', dateRange.startTime.utc().unix().toString( 10 ) );
-		url.searchParams.set( 'to', dateRange.endTime.utc().unix().toString( 10 ) );
+		url.searchParams.set( 'from', dateRange.startTime.unix().toString( 10 ) );
+		url.searchParams.set( 'to', dateRange.endTime.unix().toString( 10 ) );
 	} else {
 		url.searchParams.delete( 'from' );
 		url.searchParams.delete( 'to' );

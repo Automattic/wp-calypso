@@ -1,6 +1,8 @@
 import { Button, ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { SiteLogsTab } from 'calypso/data/hosting/use-site-logs-query';
+import { useCurrentSiteGmtOffset } from '../../hooks/use-current-site-gmt-offset';
 import { useSiteLogsDownloader } from '../../hooks/use-site-logs-downloader';
 import { DateTimePicker } from './date-time-picker';
 import type { Moment } from 'moment';
@@ -50,7 +52,9 @@ export const SiteLogsToolbar = ( {
 	endDateTime,
 }: Props ) => {
 	const translate = useTranslate();
+	const moment = useLocalizedMoment();
 	const { downloadLogs, state } = useSiteLogsDownloader();
+	const siteGmtOffset = useCurrentSiteGmtOffset();
 
 	const isDownloading = state.status === 'downloading';
 
@@ -73,12 +77,18 @@ export const SiteLogsToolbar = ( {
 					id="from"
 					value={ startDateTime }
 					onChange={ ( value ) => handleTimeRangeChange( value, null ) }
+					gmtOffset={ siteGmtOffset }
+					min={ moment.unix( 0 ) } // The UI goes weird when the unix timestamps go negative, so don't allow it
+					max={ endDateTime }
 				/>
 				<label htmlFor="to">{ translate( 'To' ) }</label>
 				<DateTimePicker
 					id="to"
 					value={ endDateTime }
 					onChange={ ( value ) => handleTimeRangeChange( null, value ) }
+					gmtOffset={ siteGmtOffset }
+					max={ moment() }
+					min={ startDateTime }
 				/>
 
 				<Button

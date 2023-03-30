@@ -1,10 +1,8 @@
 import classnames from 'classnames';
 import { memo, useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { SiteLogsData } from 'calypso/data/hosting/use-site-logs-query';
-import getSiteSetting from 'calypso/state/selectors/get-site-setting';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { useCurrentSiteGmtOffset } from '../../hooks/use-current-site-gmt-offset';
 import { Skeleton } from './skeleton';
 
 import './style.scss';
@@ -22,10 +20,7 @@ export const SiteLogsTable = memo( function SiteLogsTable( {
 }: SiteLogsTableProps ) {
 	const moment = useLocalizedMoment();
 	const columns = useSiteColumns( logs );
-	const siteGmtOffset = useSelector( ( state ) => {
-		const siteId = getSelectedSiteId( state );
-		return ( getSiteSetting( state, siteId ?? 0, 'gmt_offset' ) as number | null ) ?? 0;
-	} );
+	const siteGmtOffset = useCurrentSiteGmtOffset();
 
 	if ( isLoading && ! logs?.length ) {
 		return <Skeleton />;
