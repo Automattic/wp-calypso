@@ -1,12 +1,23 @@
+import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import useSubscribersQuery from 'calypso/my-sites/stats/hooks/use-subscribers-query';
 import { getSiteStatsSubscribers } from 'calypso/state/stats/subscribers/selectors';
 
 const StatsSubscribers = ( { siteId } ) => {
 	const name = 'subscribers';
-	const { isLoading, error } = useSubscribersQuery( siteId );
+	const [ error, setError ] = useState( null );
+	const { isLoading } = useSubscribersQuery( siteId );
 	const data = useSelector( ( state ) => getSiteStatsSubscribers( state, siteId ) );
 	const chartData = data?.data || [];
+
+	useEffect( () => {
+		if ( error ) {
+			const timer = setTimeout( () => {
+				setError( null );
+			}, 5000 );
+			return () => clearTimeout( timer );
+		}
+	}, [ error ] );
 
 	return (
 		<div>
