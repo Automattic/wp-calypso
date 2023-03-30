@@ -9,7 +9,7 @@ describe( 'Translations', () => {
 			it( 'provides flow specific text', () => {
 				const newsletterTranslations = getLaunchpadTranslations( 'newsletter' );
 				expect( newsletterTranslations.flowName ).toEqual( 'Newsletter' );
-				expect( newsletterTranslations.title ).toEqual( "You're all set to start publishing" );
+				expect( newsletterTranslations.title ).toEqual( "Your newsletter's ready" );
 				expect( newsletterTranslations.launchTitle ).toBe( undefined );
 
 				const linkInBioTranslations = getLaunchpadTranslations( 'link-in-bio' );

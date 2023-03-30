@@ -377,34 +377,37 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 		const interpolateElement = {
 			uploadBtn: formFileUploadElement,
-			a: (
-				<a
-					target="_blank"
-					href={ localizeUrl(
-						'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/'
-					) }
-					rel="noreferrer"
-				/>
-			),
+			Button: createElement( Button, {
+				isLink: true,
+				target: '__blank',
+				rel: 'noreferrer',
+				href: localizeUrl(
+					'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/'
+				),
+			} ),
 		};
 
 		const labelText = isSiteOnFreePlan
 			? createInterpolateElement(
 					translate(
-						'Or <uploadBtn>upload a CSV file</uploadBtn> of up to 100 emails from your existing list. <a>Learn more.</a>'
+						'Or <uploadBtn>upload a CSV file</uploadBtn> of up to 100 emails from your existing list. <Button>Learn more</Button>'
 					),
 					interpolateElement
 			  )
 			: createInterpolateElement(
 					translate(
-						'Or <uploadBtn>upload a CSV file</uploadBtn> of emails from your existing list. <a>Learn more.</a>'
+						'Or <uploadBtn>upload a CSV file</uploadBtn> of emails from your existing list. <Button>Learn more</Button>'
 					),
 					interpolateElement
 			  );
 
 		return (
 			isSelectedFileValid &&
-			! selectedFile && <label aria-label={ ariaLabelMsg }>{ labelText }</label>
+			! selectedFile && (
+				<p aria-label={ ariaLabelMsg } className="add-subscriber__form--disclaimer">
+					{ labelText }
+				</p>
+			)
 		);
 	}
 
@@ -437,11 +440,11 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 	function renderFollowerNoticeLabel() {
 		return (
-			<label>
+			<p className="add-subscriber__form--disclaimer">
 				{ translate(
 					"If you enter an email address that has a WordPress.com account, they'll become a follower."
 				) }
-			</label>
+			</p>
 		);
 	}
 
