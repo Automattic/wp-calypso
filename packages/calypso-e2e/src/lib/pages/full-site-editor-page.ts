@@ -74,7 +74,15 @@ export class FullSiteEditorPage {
 	constructor( page: Page ) {
 		this.page = page;
 
-		this.editor = page.locator( selectors.editorRoot );
+		if (
+			! envVariables.TEST_ON_ATOMIC &&
+			envVariables.CALYPSO_BASE_URL === 'https://wordpress.com'
+		) {
+			// The only place we are preserving the Site Editor iFrame is Simple sites on staging/production.
+			this.editor = page.frameLocator( selectors.editorIframe ).locator( selectors.editorRoot );
+		} else {
+			this.editor = page.locator( selectors.editorRoot );
+		}
 
 		this.editorCanvas = this.editor
 			.frameLocator( selectors.editorCanvasIframe )
