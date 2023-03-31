@@ -30,11 +30,21 @@ async function AppBoot() {
 		sites,
 	} );
 
+	let initialState = config( 'intial_state' );
+	// Fix missing user.localeSlug in `intial_state`.
+	initialState = {
+		...initialState,
+		currentUser: {
+			...initialState.currentUser,
+			user: { localeSlug: config( 'i18n_locale_slug' ) },
+		},
+	};
+
 	const queryClient = new QueryClient();
 
 	const store = createStore(
 		rootReducer,
-		config( 'intial_state' ) ?? {},
+		initialState,
 		compose(
 			consoleDispatcher,
 			addReducerEnhancer,
