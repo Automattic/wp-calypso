@@ -23,7 +23,6 @@ describe( DataHelper.createSuiteTitle( 'Site Editor: Limited Global Styles' ), f
 
 	it( 'Visit the site editor', async function () {
 		await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
-		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Edit' );
 		await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 		await fullSiteEditorPage.closeNavSidebar();
 	} );
