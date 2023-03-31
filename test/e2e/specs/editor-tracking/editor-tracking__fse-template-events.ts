@@ -37,8 +37,8 @@ describe(
 				const testAccount = new TestAccount( accountName );
 				await testAccount.authenticate( page );
 
-				const fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
-				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
+				const fullSiteEditorPage = new FullSiteEditorPage( page );
+				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 
 				console.info( `Deleting created template parts: ${ createdTemplateParts.join( ', ' ) }` );
@@ -62,13 +62,13 @@ describe(
 				await testAccount.authenticate( page );
 
 				editorTracksEventManager = new EditorTracksEventManager( page );
-				fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
+				fullSiteEditorPage = new FullSiteEditorPage( page );
 
 				templatePartName = createTemplatePartName();
 			} );
 
 			it( 'Visit the site editor', async function () {
-				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
+				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 			} );
 
@@ -116,11 +116,11 @@ describe(
 				await testAccount.authenticate( page );
 
 				editorTracksEventManager = new EditorTracksEventManager( page );
-				fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
+				fullSiteEditorPage = new FullSiteEditorPage( page );
 			} );
 
 			it( 'Visit the site editor', async function () {
-				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
+				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 			} );
 
@@ -204,13 +204,13 @@ describe(
 				await testAccount.authenticate( page );
 
 				editorTracksEventManager = new EditorTracksEventManager( page );
-				fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
+				fullSiteEditorPage = new FullSiteEditorPage( page );
 
 				templatePartName = createTemplatePartName();
 			} );
 
 			it( 'Visit the site editor', async function () {
-				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
+				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 			} );
 

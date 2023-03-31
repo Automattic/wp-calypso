@@ -2,12 +2,7 @@
  * @group gutenberg
  */
 
-import {
-	DataHelper,
-	TestAccount,
-	FullSiteEditorPage,
-	SecretsManager,
-} from '@automattic/calypso-e2e';
+import { DataHelper, TestAccount, FullSiteEditorPage } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
 declare const browser: Browser;
@@ -15,8 +10,7 @@ declare const browser: Browser;
 describe( DataHelper.createSuiteTitle( 'Site Editor: Limited Global Styles' ), function () {
 	let page: Page;
 	let fullSiteEditorPage: FullSiteEditorPage;
-	const credentials = SecretsManager.secrets.testAccounts.simpleSiteFreePlanUser;
-	const siteSlug = credentials.testSites?.primary?.url as string;
+	let testAccount: TestAccount;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
@@ -28,7 +22,7 @@ describe( DataHelper.createSuiteTitle( 'Site Editor: Limited Global Styles' ), f
 	} );
 
 	it( 'Visit the site editor', async function () {
-		await fullSiteEditorPage.visit( siteSlug );
+		await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
 		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Edit' );
 		await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 		await fullSiteEditorPage.closeNavSidebar();

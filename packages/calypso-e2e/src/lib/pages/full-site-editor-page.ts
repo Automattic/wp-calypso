@@ -5,7 +5,6 @@ import {
 	EditorSidebarBlockInserterComponent,
 	EditorToolbarComponent,
 	EditorWelcomeTourComponent,
-	SiteType,
 	EditorPopoverMenuComponent,
 	EditorSiteStylesComponent,
 	ColorSettings,
@@ -22,7 +21,6 @@ import {
 	DimensionsSettings,
 	CookieBannerComponent,
 } from '..';
-import { getCalypsoURL } from '../../data-helper';
 import { getIdFromBlock } from '../../element-helper';
 import envVariables from '../../env-variables';
 
@@ -32,7 +30,7 @@ const selectors = {
 	editorIframe: `iframe.is-loaded[src*="${ wpAdminPath }"]`,
 	editorRoot: 'body.block-editor-page',
 	editorCanvasIframe: 'iframe[name="editor-canvas"]',
-	editorCanvasRoot: '.wp-site-blocks',
+	editorCanvasRoot: 'body.block-editor-iframe__body',
 	templateLoadingSpinner: '[aria-label="Block: Template Part"] .components-spinner',
 	closeStylesWelcomeGuideButton:
 		'[aria-label="Welcome to styles"] button[aria-label="Close dialog"]',
@@ -72,21 +70,11 @@ export class FullSiteEditorPage {
 	 * Constructs an instance of the page POM class.
 	 *
 	 * @param {Page} page The underlying page.
-	 * @param {Object} param0 Keyed object parameter.
-	 * @param {SiteType} param0.target Target editor type. Defaults to 'simple'.
 	 */
-	constructor( page: Page, { target = 'simple' }: { target?: SiteType } = {} ) {
+	constructor( page: Page ) {
 		this.page = page;
 
-		if ( target === 'atomic' ) {
-			// For Atomic editors, there is no iFrame - the editor is
-			// part of the page DOM and is thus accessible directly.
-			this.editor = page.locator( selectors.editorRoot );
-		} else {
-			// For Simple editors, the editor is located within an iFrame
-			// and thus it must first be extracted.
-			this.editor = page.frameLocator( selectors.editorIframe ).locator( selectors.editorRoot );
-		}
+		this.editor = page.locator( selectors.editorRoot );
 
 		this.editorCanvas = this.editor
 			.frameLocator( selectors.editorCanvasIframe )
@@ -123,12 +111,21 @@ export class FullSiteEditorPage {
 	/**
 	 * Visit the site editor by URL directly.
 	 *
-	 * @param {string} siteHostName Host name of the site, without scheme. (e.g. testsite.wordpress.com)
+	 * @param {string} siteHostWithProtocol Host name of the site, with protocol. (e.g. https://testsite.wordpress.com)
 	 */
-	async visit( siteHostName: string ): Promise< void > {
-		await this.page.goto( getCalypsoURL( `site-editor/${ siteHostName }` ), {
-			timeout: 60 * 1000,
-		} );
+	async visit( siteHostWithProtocol: string ): Promise< void > {
+		let url: URL;
+		try {
+			url = new URL( '/wp-admin/site-editor.php', siteHostWithProtocol );
+		} catch ( error ) {
+			throw new Error(
+				`Invalid site host URL provided: "${ siteHostWithProtocol }". Did you remember to include the protocol?`
+			);
+		}
+
+		url.searchParams.set( 'calypso_origin', envVariables.CALYPSO_BASE_URL );
+
+		await this.page.goto( url.href, { timeout: 60 * 1000 } );
 	}
 
 	/**
@@ -404,19 +401,17 @@ export class FullSiteEditorPage {
 	 */
 	async openNavSidebar(): Promise< void > {
 		const openButton = this.editor.locator( 'button[aria-label="Open Navigation Sidebar"]' );
-		const closeButton = this.editor.locator( '.edit-site-site-hub button.is-primary' );
 
-		await Promise.race( [ closeButton.waitFor(), openButton.click() ] );
+		await openButton.click();
 	}
 
 	/**
-	 * Close the navigation sidebar.
+	 * Close the navigation sidebar. To do this, you actually just click on the editor canvas!
 	 */
 	async closeNavSidebar(): Promise< void > {
 		const openButton = this.editor.locator( 'button[aria-label="Open Navigation Sidebar"]' );
-		const closeButton = this.editor.locator( '.edit-site-site-hub button.is-primary' );
 
-		await Promise.race( [ openButton.waitFor(), closeButton.click() ] );
+		await Promise.race( [ openButton.waitFor(), this.editorCanvas.click() ] );
 	}
 
 	/**

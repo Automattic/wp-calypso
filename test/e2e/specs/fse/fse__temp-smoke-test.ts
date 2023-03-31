@@ -49,7 +49,7 @@ describe( DataHelper.createSuiteTitle( 'Site Editor Smoke Test' ), function () {
 	} );
 
 	it( 'Open the Page template', async function () {
-		fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
+		fullSiteEditorPage = new FullSiteEditorPage( page );
 
 		await fullSiteEditorPage.prepareForInteraction();
 
@@ -61,8 +61,6 @@ describe( DataHelper.createSuiteTitle( 'Site Editor Smoke Test' ), function () {
 	} );
 
 	it( 'Editor canvas loads', async function () {
-		fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
-
 		await fullSiteEditorPage.waitUntilLoaded();
 	} );
 } );
