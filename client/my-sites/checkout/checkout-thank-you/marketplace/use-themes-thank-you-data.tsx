@@ -11,9 +11,15 @@ import MasterbarStyled from './masterbar-styled';
 
 export function useThemesThankYouData(
 	themeSlugs: string[]
-): [ ThankYouSectionProps, boolean, JSX.Element ] {
+): [ ThankYouSectionProps, boolean, JSX.Element, string, string ] {
 	const translate = useTranslate();
 	const siteSlug = useSelector( getSelectedSiteSlug );
+
+	// texts
+	const title = translate( 'Congrats on your new theme!' );
+	const subtitle = translate(
+		"Your new theme is a reflection of your unique style and personality, and we're thrilled to see it come to life."
+	);
 
 	const dotComThemes = useSelector( ( state ) => getThemes( state, 'wpcom', themeSlugs ) );
 	const dotOrgThemes = useSelector( ( state ) => getThemes( state, 'wporg', themeSlugs ) );
@@ -43,5 +49,5 @@ export function useThemesThankYouData(
 		/>
 	);
 
-	return [ themesSection, allThemesFetched, goBackSection ];
+	return [ themesSection, allThemesFetched, goBackSection, title, subtitle ];
 }

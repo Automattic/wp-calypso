@@ -19,7 +19,13 @@ import cloudWarningIcon from './icons/cloud-warning.svg';
 
 import './style.scss';
 
-const BackupSuccessful = ( { backup, selectedDate, lastBackupAttemptOnDate } ) => {
+const BackupSuccessful = ( {
+	backup,
+	selectedDate,
+	lastBackupAttemptOnDate,
+	availableActions,
+	onClickClone,
+} ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const isMultiSite = useSelector( ( state ) => isJetpackSiteMultiSite( state, siteId ) );
@@ -99,6 +105,8 @@ const BackupSuccessful = ( { backup, selectedDate, lastBackupAttemptOnDate } ) =
 				rewindId={ actionableRewindId }
 				isMultiSite={ isMultiSite }
 				hasWarnings={ hasWarnings }
+				availableActions={ availableActions }
+				onClickClone={ onClickClone }
 			/>
 			{ showBackupDetails && (
 				<div className="status-card__realtime-details">

@@ -15,6 +15,7 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import BackupUpsell from './backup-upsell';
+import BackupCloneFlow from './clone-flow';
 import BackupsPage from './main';
 import BackupRewindFlow, { RewindFlowPurpose } from './rewind-flow';
 import WPCOMBackupUpsell from './wpcom-backup-upsell';
@@ -150,5 +151,15 @@ export function backupRestore( context, next ) {
 	context.primary = (
 		<BackupRewindFlow rewindId={ context.params.rewindId } purpose={ RewindFlowPurpose.RESTORE } />
 	);
+	next();
+}
+
+/* handles /backup/:site/clone, see `backupClonePath` */
+export function backupClone( context, next ) {
+	debug( 'controller: backupClone', context.params );
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
+
+	context.primary = <BackupCloneFlow siteId={ siteId } />;
 	next();
 }

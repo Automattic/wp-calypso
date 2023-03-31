@@ -1,0 +1,160 @@
+.clone-flow__header {
+	display: flex;
+	justify-content: center;
+	padding-bottom: 16px;
+	padding-top: 32px;
+	.gridicon {
+		fill: var(--color-primary);
+	}
+	img {
+		height: 48px;
+		width: 48px;
+	}
+}
+
+.clone-flow__content {
+	margin-top: 16px;
+}
+
+.clone-flow__title {
+	text-align: left;
+	font-size: $font-title-large;
+	font-weight: 400;
+	padding-bottom: 8px;
+	margin-top: 41px;
+	line-height: 48px;
+
+	&.error {
+		color: var(--color-error);
+	}
+}
+
+.clone-flow__info {
+	font-size: $font-body-small;
+	font-weight: 400;
+}
+
+.clone-flow__cta {
+	font-size: $font-body;
+	font-weight: 600;
+}
+
+.clone-flow__btn-group {
+	margin-top: 2.5em;
+}
+
+.clone-flow__primary-button {
+	margin-bottom: 22.5px;
+	text-align: center;
+	width: 100%;
+
+	@include breakpoint-deprecated( ">660px" ) {
+		text-align: auto;
+		width: auto;
+	}
+}
+
+.clone-flow__back-button {
+	margin-bottom: 10px;
+	text-align: center;
+	width: 100%;
+
+	@include breakpoint-deprecated( ">660px" ) {
+		width: auto;
+		text-align: auto;
+		margin-right: 8px;
+	}
+}
+
+/* This is a button that's meant to be styled as a link */
+.clone-flow__info .clone-flow__error-retry-button {
+	padding: initial;
+	border: initial;
+	font-weight: normal;
+	vertical-align: initial;
+	font-size: initial;
+	color: var(--color-link);
+
+	&:hover,
+	&:active,
+	&:focus {
+		background: initial;
+		color: var(--color-link-dark);
+	}
+
+	&:hover,
+	&:active {
+		outline: initial;
+	}
+
+	&:focus {
+		outline: thin dotted;
+		box-shadow: initial;
+		border: initial;
+	}
+}
+
+/* Hide the progress bar and the server connection status */
+.clone-flow__advanced-credentials {
+	.advanced-credentials__server-connection-status {
+		display: none;
+	}
+
+	.step-progress {
+		display: none;
+	}
+}
+
+.clone-flow__confirmation-popover-heading {
+	font-size: $font-title-medium;
+	font-weight: 600;
+}
+
+.clone-flow__confirmation-popover-info {
+	font-size: $font-body;
+	font-weight: 400;
+	margin-top: 16px;
+}
+
+.clone-flow__confirmation-popover {
+	width: 690px;
+}
+
+.clone-flow__confirmation-popover .accept__dialog {
+	max-width: 642px;
+}
+
+.clone-flow__confirmation-popover .button:first-child {
+	margin-left: 0;
+}
+
+.clone-flow__confirmation-popover .dialog__action-buttons {
+	border-top: none;
+	text-align: left;
+}
+
+.clone-flow__progress-header {
+	display: flex;
+	justify-content: center;
+	padding-bottom: 16px;
+	padding-top: 0;
+}
+
+.clone-flow__progress-title {
+	font-size: $font-title-small;
+	font-weight: 600;
+	margin-bottom: 16px;
+	text-align: center;
+}
+
+.clone-flow__activity-log-button {
+	margin-right: 8px;
+}
+
+.clone-flow__content .rewind-flow__progress-bar-entry {
+	min-height: 48px;
+}
+
+.clone-flow__content .button .gridicons-external {
+	margin-left: 4px;
+}
