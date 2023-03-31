@@ -93,7 +93,7 @@ export const SiteLogsToolbar = ( {
 					isPrimary
 					onClick={ () => downloadLogs( { logType, startDateTime, endDateTime } ) }
 				>
-					{ translate( 'Download' ) }
+					{ translate( 'Download logs' ) }
 				</Button>
 
 				{ isDownloading && <SiteLogsToolbarDownloadProgress { ...state } /> }
