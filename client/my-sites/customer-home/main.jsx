@@ -57,11 +57,7 @@ const Home = ( {
 
 	const { data: layout, isLoading } = useHomeLayoutQuery( siteId );
 
-	const {
-		data: allDomains = [],
-		isSuccess,
-		isFetching,
-	} = useGetDomainsQuery( site?.ID ?? null, {
+	const { data: allDomains = [], isSuccess } = useGetDomainsQuery( site?.ID ?? null, {
 		retry: false,
 	} );
 
@@ -87,10 +83,10 @@ const Home = ( {
 	}, [ detectedCountryCode, sitePlan, isNew7DUser ] );
 
 	useEffect( () => {
-		if ( getQueryArgs().celebrateLaunch === 'true' && ! isFetching && isSuccess ) {
+		if ( getQueryArgs().celebrateLaunch === 'true' && isSuccess ) {
 			setCelebrateLaunchModalIsOpen( true );
 		}
-	}, [ isFetching, isSuccess ] );
+	}, [ isSuccess ] );
 
 	if ( ! canUserUseCustomerHome ) {
 		const title = translate( 'This page is not available on this site.' );
