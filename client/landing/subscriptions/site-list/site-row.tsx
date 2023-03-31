@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
+import { SubscriptionManager } from '@automattic/data-stores';
 import { useMemo } from '@wordpress/element';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { SubscriptionManager } from '@automattic/data-stores';
 import { SiteSettings } from '../settings-popover';
 import type { SiteSubscription } from '@automattic/data-stores/src/reader/types';
 
