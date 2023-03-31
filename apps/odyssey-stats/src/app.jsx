@@ -36,7 +36,7 @@ async function AppBoot() {
 		...initialState,
 		currentUser: {
 			...initialState.currentUser,
-			user: { localeSlug: config( 'i18n_locale_slug' ) },
+			user: { ...initialState.currentUser.user, localeSlug: config( 'i18n_locale_slug' ) },
 		},
 	};
 
