@@ -84,15 +84,13 @@ export const ThemesList = ( props ) => {
 
 	const matchingWpOrgThemes = useMemo( () => {
 		const themeSlugs = props.themes.map( ( theme ) => theme.id );
-		// Avoid duplicate themes. Some free themes are available in both wpcom and wporg.
-		if ( themeSlugs.includes( props.searchTerm.toLowerCase() ) ) {
-			return [];
-		}
+
 		return (
 			props.wpOrgThemes?.filter(
 				( wpOrgTheme ) =>
-					wpOrgTheme?.name?.toLowerCase() === props.searchTerm.toLowerCase() ||
-					wpOrgTheme?.id?.toLowerCase() === props.searchTerm.toLowerCase()
+					! themeSlugs.includes( wpOrgTheme?.id?.toLowerCase() ) && // Avoid duplicate themes. Some free themes are available in both wpcom and wporg.
+					( wpOrgTheme?.name?.toLowerCase() === props.searchTerm.toLowerCase() ||
+						wpOrgTheme?.id?.toLowerCase() === props.searchTerm.toLowerCase() )
 			) || []
 		);
 	}, [ props.wpOrgThemes, props.searchTerm, props.themes ] );
