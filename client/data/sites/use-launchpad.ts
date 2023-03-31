@@ -25,7 +25,7 @@ export const fetchLaunchpad = ( siteSlug: string | null ) => {
 };
 
 type LaunchpadUpdateSettings = {
-	launchpad_checklist_tasks_statuses?: Record< string, boolean >;
+	checklist_statuses?: Record< string, boolean >;
 };
 
 export const updateLaunchpadSettings = (

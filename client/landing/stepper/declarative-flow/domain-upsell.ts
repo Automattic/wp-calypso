@@ -53,7 +53,7 @@ const domainUpsell: Flow = {
 					if ( providedDependencies?.deferDomainSelection ) {
 						try {
 							await updateLaunchpadSettings( siteSlug, {
-								launchpad_checklist_tasks_statuses: { domain_upsell_deferred: true },
+								checklist_statuses: { domain_upsell_deferred: true },
 							} );
 						} catch ( error ) {}
 
