@@ -5,8 +5,10 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useState, useMemo, useRef } from 'react';
 import { useSelector, useDispatch, DefaultRootState } from 'react-redux';
+import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
+import { useQueryTheme } from 'calypso/components/data/query-theme';
 import EmptyContent from 'calypso/components/empty-content';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import Item from 'calypso/layout/masterbar/item';
@@ -38,6 +40,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { initiateThemeTransfer as initiateTransfer } from 'calypso/state/themes/actions';
+import { getTheme, isThemeActive as getThemeActive } from 'calypso/state/themes/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -52,8 +55,11 @@ interface InstalledPlugin {
 	id?: number;
 }
 
-const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProps ) => {
-	const isUploadFlow = ! productSlug;
+const MarketplacePluginInstall = ( {
+	productSlug = '',
+	themeSlug = '',
+}: MarketplacePluginInstallProps ) => {
+	const isUploadFlow = ! productSlug && ! themeSlug;
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 	const [ initializeInstallFlow, setInitializeInstallFlow ] = useState( false );
 	const [ atomicFlow, setAtomicFlow ] = useState( false );
@@ -95,6 +101,10 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 	const isMarketplaceProduct = useSelector( ( state ) =>
 		isMarketplaceProductSelector( state, productSlug )
 	);
+
+	const wpOrgTheme = useSelector( ( state ) => getTheme( state, 'wporg', themeSlug ) );
+	const isThemeActive = useSelector( ( state ) => getThemeActive( state, themeSlug, siteId ) );
+	useQueryTheme( 'wporg', themeSlug );
 
 	const { data: wpComPluginData } = useWPCOMPlugin( productSlug, {
 		enabled: isProductListFetched && isMarketplaceProduct,
@@ -258,6 +268,17 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ pluginActive, automatedTransferStatus, atomicFlow, isUploadFlow, isAtomic ] ); // We need to trigger this hook also when `automatedTransferStatus` changes cause the plugin install is done on the background in that case.
 
+	// Validate theme is already active
+	useEffect( () => {
+		if ( themeSlug && wpOrgTheme && isThemeActive ) {
+			waitFor( 1 ).then( () =>
+				page.redirect(
+					`/marketplace/thank-you/${ selectedSiteSlug }?themes=${ themeSlug }&hide-progress-bar`
+				)
+			);
+		}
+	}, [ themeSlug, wpOrgTheme, isThemeActive, selectedSiteSlug ] );
+
 	const steps = useMemo(
 		() => [
 			isUploadFlow
@@ -411,6 +432,7 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 				path="/marketplace/:productSlug?/install/:site?"
 				title="Plugins > Installing"
 			/>
+			<QueryActiveTheme siteId={ siteId } />
 			{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 			<Masterbar className="marketplace-plugin-install__masterbar">
 				<WordPressWordmark className="marketplace-plugin-install__wpcom-wordmark" />
