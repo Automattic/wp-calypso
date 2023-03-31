@@ -17,6 +17,7 @@ import QuerySites from 'calypso/components/data/query-sites';
 import JetpackCloudMasterbar from 'calypso/components/jetpack/masterbar';
 import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
+import { GoldenTokenModal } from 'calypso/jetpack-cloud/sections/golden-token/golden-token-modal';
 import { retrieveMobileRedirect } from 'calypso/jetpack-connect/persistence-utils';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import HtmlIsIframeClassname from 'calypso/layout/html-is-iframe-classname';
@@ -337,6 +338,7 @@ class Layout extends Component {
 						placeholder={ null }
 						id="notices"
 					/>
+					{ isJetpackCloud() && <GoldenTokenModal /> }
 					<div id="secondary" className="layout__secondary" role="navigation">
 						{ this.props.secondary }
 					</div>
