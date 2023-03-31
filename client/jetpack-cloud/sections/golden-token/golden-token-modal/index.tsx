@@ -1,4 +1,6 @@
 import { Dialog } from '@automattic/components';
+import { useSelector } from 'react-redux';
+import { isJetpackGoldenTokenPendingActivation as isJetpackGoldenTokenPendingActivationSelector } from 'calypso/state/selectors/is-jetpack-golden-token-pending-activation';
 import { GoldenTokenDialog } from '../golden-token-dialog';
 
 import './style.scss';
@@ -9,6 +11,14 @@ import './style.scss';
 const noop = () => {};
 
 export const GoldenTokenModal = () => {
+	const isJetpackGoldenTokenPendingActivation = useSelector(
+		isJetpackGoldenTokenPendingActivationSelector
+	);
+
+	if ( ! isJetpackGoldenTokenPendingActivation ) {
+		return null;
+	}
+
 	return (
 		<Dialog
 			additionalClassNames="golden-token-modal"
