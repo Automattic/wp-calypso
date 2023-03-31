@@ -21,6 +21,7 @@ import {
 	DimensionsSettings,
 	CookieBannerComponent,
 } from '..';
+import { getCalypsoURL } from '../../data-helper';
 import { getIdFromBlock } from '../../element-helper';
 import envVariables from '../../env-variables';
 
@@ -74,11 +75,7 @@ export class FullSiteEditorPage {
 	constructor( page: Page ) {
 		this.page = page;
 
-		if (
-			! envVariables.TEST_ON_ATOMIC &&
-			envVariables.CALYPSO_BASE_URL === 'https://wordpress.com'
-		) {
-			// The only place we are preserving the Site Editor iFrame is Simple sites on staging/production.
+		if ( this.shouldUseIframe() ) {
 			this.editor = page.frameLocator( selectors.editorIframe ).locator( selectors.editorRoot );
 		} else {
 			this.editor = page.locator( selectors.editorRoot );
@@ -122,18 +119,24 @@ export class FullSiteEditorPage {
 	 * @param {string} siteHostWithProtocol Host name of the site, with protocol. (e.g. https://testsite.wordpress.com)
 	 */
 	async visit( siteHostWithProtocol: string ): Promise< void > {
-		let url: URL;
-		try {
-			url = new URL( '/wp-admin/site-editor.php', siteHostWithProtocol );
-		} catch ( error ) {
-			throw new Error(
-				`Invalid site host URL provided: "${ siteHostWithProtocol }". Did you remember to include the protocol?`
-			);
+		let targetUrl: string;
+		if ( this.shouldUseIframe() ) {
+			targetUrl = getCalypsoURL( '/site-editor' );
+		} else {
+			let wpAdminUrl: URL;
+			try {
+				wpAdminUrl = new URL( '/wp-admin/site-editor.php', siteHostWithProtocol );
+			} catch ( error ) {
+				throw new Error(
+					`Invalid site host URL provided: "${ siteHostWithProtocol }". Did you remember to include the protocol?`
+				);
+			}
+
+			wpAdminUrl.searchParams.set( 'calypso_origin', envVariables.CALYPSO_BASE_URL );
+			targetUrl = wpAdminUrl.href;
 		}
 
-		url.searchParams.set( 'calypso_origin', envVariables.CALYPSO_BASE_URL );
-
-		await this.page.goto( url.href, { timeout: 60 * 1000 } );
+		await this.page.goto( targetUrl, { timeout: 60 * 1000 } );
 	}
 
 	/**
@@ -653,6 +656,16 @@ export class FullSiteEditorPage {
 		if ( ( await toastLocator.count() ) > 0 ) {
 			await toastLocator.click();
 		}
+	}
+
+	/**
+	 * Temp check -- we will delete when we un-iframe everywhere
+	 */
+	private shouldUseIframe(): boolean {
+		// The only place we are preserving the Site Editor iFrame is Simple sites on staging/production.
+		return (
+			! envVariables.TEST_ON_ATOMIC && envVariables.CALYPSO_BASE_URL === 'https://wordpress.com'
+		);
 	}
 
 	//#endregion
