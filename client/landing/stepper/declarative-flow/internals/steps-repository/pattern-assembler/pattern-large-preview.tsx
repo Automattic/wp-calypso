@@ -55,7 +55,7 @@ const PatternLargePreview = ( {
 		'--pattern-large-preview-background': backgroundColor,
 	} as CSSProperties );
 
-	const goToSelectPattern = () => {
+	const goToSelectHeaderPattern = () => {
 		navigator.goTo( NAVIGATOR_PATHS.HEADER );
 	};
 
@@ -178,31 +178,28 @@ const PatternLargePreview = ( {
 					<Icon className="pattern-large-preview__placeholder-icon" icon={ layout } size={ 72 } />
 					<h2>{ translate( 'Welcome to your blank canvas' ) }</h2>
 					<span>
-						{ translate( "It's time to get creative. Add your first pattern to get started." ) }
+						{ shouldShowSelectPatternHint
+							? translate(
+									'You can view your color and font selections after you select a pattern, get started by {{link}}adding a header pattern{{/link}}',
+									{
+										components: {
+											link: (
+												// eslint-disable-next-line jsx-a11y/anchor-is-valid
+												<a
+													href="#"
+													target="_blank"
+													rel="noopener noreferrer"
+													onClick={ ( event ) => {
+														event.preventDefault();
+														goToSelectHeaderPattern();
+													} }
+												/>
+											),
+										},
+									}
+							  )
+							: translate( "It's time to get creative. Add your first pattern to get started." ) }
 					</span>
-					{ shouldShowSelectPatternHint && (
-						<span>
-							{ translate(
-								'{{link}}Select a pattern{{/link}} to apply colors and fonts to your website.',
-								{
-									components: {
-										link: (
-											// eslint-disable-next-line jsx-a11y/anchor-is-valid
-											<a
-												href="#"
-												target="_blank"
-												rel="noopener noreferrer"
-												onClick={ ( event ) => {
-													event.preventDefault();
-													goToSelectPattern();
-												} }
-											/>
-										),
-									},
-								}
-							) }
-						</span>
-					) }
 				</div>
 			) }
 		</DeviceSwitcher>
