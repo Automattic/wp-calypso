@@ -19,6 +19,7 @@ function usePresalesAvailabilityQuery() {
 				group: 'jp_presales',
 			};
 
+			//we are making an unauthenticated call to the API, so we need to set a couple things.
 			const response = await apiFetch( {
 				credentials: 'same-origin',
 				mode: 'cors',
@@ -26,6 +27,7 @@ function usePresalesAvailabilityQuery() {
 				parse: false, // Disable automatic JSON parsing
 			} );
 
+			//the API returns a simple string of "true" so we need to adjust it for not being JSON
 			const textResponse = await response.text(); // Extract plain text from the response
 
 			// Convert the plain text response to a boolean
