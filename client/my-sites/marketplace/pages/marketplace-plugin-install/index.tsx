@@ -39,7 +39,10 @@ import isPluginUploadComplete from 'calypso/state/selectors/is-plugin-upload-com
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { initiateThemeTransfer as initiateTransfer } from 'calypso/state/themes/actions';
+import {
+	activateTheme,
+	initiateThemeTransfer as initiateTransfer,
+} from 'calypso/state/themes/actions';
 import { getTheme, isThemeActive as getThemeActive } from 'calypso/state/themes/selectors';
 import {
 	getSelectedSite,
@@ -185,7 +188,7 @@ const MarketplacePluginInstall = ( {
 			( marketplacePluginInstallationInProgress || directInstallationAllowed ) &&
 			! isUploadFlow &&
 			! initializeInstallFlow &&
-			wporgPlugin &&
+			( wporgPlugin || wpOrgTheme ) &&
 			selectedSite
 		) {
 			const triggerInstallFlow = () => {
@@ -194,8 +197,13 @@ const MarketplacePluginInstall = ( {
 			};
 
 			if ( selectedSite.jetpack ) {
-				// initialize plugin installing
-				dispatch( installPlugin( siteId, wporgPlugin, false ) );
+				if ( wpOrgTheme ) {
+					// initilize theme activating
+					dispatch( activateTheme( wpOrgTheme.id, siteId ) );
+				} else {
+					// initialize plugin installing
+					dispatch( installPlugin( siteId, wporgPlugin, false ) );
+				}
 
 				triggerInstallFlow();
 			} else if ( hasAtomicFeature ) {
@@ -214,6 +222,7 @@ const MarketplacePluginInstall = ( {
 		selectedSite,
 		siteId,
 		wporgPlugin,
+		wpOrgTheme,
 		productSlug,
 		dispatch,
 		hasAtomicFeature,
@@ -294,6 +303,36 @@ const MarketplacePluginInstall = ( {
 	}, [ themeSlug, isUploadFlow, translate ] );
 	const additionalSteps = useMarketplaceAdditionalSteps();
 
+	const installPluginQuestionText = translate( 'Do you want to install the plugin %(plugin)s?', {
+		args: { plugin: wporgPlugin?.name || wpComPluginData?.name },
+	} );
+	const activateThemeQuestionText = translate( 'Do you want to activate the theme %(theme)s?', {
+		args: { theme: wpOrgTheme?.name },
+	} );
+	const questionText = themeSlug ? activateThemeQuestionText : installPluginQuestionText;
+
+	const illustration = themeSlug
+		? wpOrgTheme?.screenshot
+		: wporgPlugin?.icon || wpComPluginData?.icon;
+	const pluginIllustrationWidth = 128;
+	const themeIllustrationWidth = 720;
+	const illustrationWidth = themeSlug ? themeIllustrationWidth : pluginIllustrationWidth;
+
+	const productName = themeSlug
+		? wpOrgTheme?.name || themeSlug
+		: wporgPlugin?.name || wpComPluginData?.name || productSlug;
+
+	const productPage = themeSlug
+		? `/themes/${ themeSlug }/${ selectedSite?.slug }`
+		: `/plugins/${ productSlug }/${ selectedSite?.slug }`;
+	const goToPluginPageText = translate( 'Go to the plugin page' );
+	const goToThemePageText = translate( 'Go to the theme page' );
+	const goToText = themeSlug ? goToThemePageText : goToPluginPageText;
+
+	const installPluginText = translate( 'Install and activate plugin' );
+	const activateThemeText = translate( 'Activate theme' );
+	const CTAText = themeSlug ? activateThemeText : installPluginText;
+
 	const renderError = () => {
 		// Evaluate error causes in priority order
 		if ( nonInstallablePlanError ) {
@@ -332,26 +371,21 @@ const MarketplacePluginInstall = ( {
 					<QueryProductsList />
 					<EmptyContent
 						className="marketplace-plugin-install__direct-install-container"
-						illustration={
-							wporgPlugin?.icon ||
-							wpComPluginData?.icon ||
-							'/calypso/images/illustrations/error.svg'
+						illustration={ illustration || '/calypso/images/illustrations/error.svg' }
+						illustrationWidth={
+							( wporgPlugin?.icon || wpComPluginData?.icon || wpOrgTheme?.screenshot ) &&
+							illustrationWidth
 						}
-						illustrationWidth={ ( wporgPlugin?.icon || wpComPluginData?.icon ) && 128 }
-						title={ wporgPlugin?.name || wpComPluginData?.name || productSlug }
-						line={ translate( 'Do you want to install the plugin %(plugin)s?', {
-							args: { plugin: wporgPlugin?.name || wpComPluginData?.name || productSlug },
-						} ) }
+						title={ productName }
+						line={ questionText }
 					>
 						{ isProductListFetched && (
 							<div className="marketplace-plugin-install__direct-install-actions">
-								<Button href={ `/plugins/${ productSlug }/${ selectedSite?.slug }` }>
-									{ translate( 'Go to the plugin page' ) }
-								</Button>
+								<Button href={ productPage }>{ goToText }</Button>
 
 								{ ! isMarketplaceProduct ? (
 									<Button primary onClick={ () => setDirectInstallationAllowed( true ) }>
-										{ translate( 'Install and activate plugin' ) }
+										{ CTAText }
 									</Button>
 								) : (
 									<Button
