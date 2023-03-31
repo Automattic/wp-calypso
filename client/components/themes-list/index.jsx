@@ -82,15 +82,21 @@ export const ThemesList = ( props ) => {
 		window.location.assign( `/start/${ WITH_THEME_ASSEMBLER_FLOW }?${ params }` );
 	};
 
-	const matchingWpOrgThemes = useMemo(
-		() =>
+	const matchingWpOrgThemes = useMemo( () => {
+		const themeSlugs = props.themes.map( ( theme ) => theme.id );
+		// Avoid duplicate themes. Some free themes are available in both wpcom and wporg.
+		if ( themeSlugs.includes( props.searchTerm.toLowerCase() ) ) {
+			return [];
+		}
+		return (
 			props.wpOrgThemes?.filter(
 				( wpOrgTheme ) =>
 					wpOrgTheme?.name?.toLowerCase() === props.searchTerm.toLowerCase() ||
 					wpOrgTheme?.id?.toLowerCase() === props.searchTerm.toLowerCase()
-			) || [],
-		[ props.wpOrgThemes, props.searchTerm ]
-	);
+			) || []
+		);
+	}, [ props.wpOrgThemes, props.searchTerm, props.themes ] );
+
 	const themes = useMemo(
 		() => [ ...props.themes, ...matchingWpOrgThemes ],
 		[ props.themes, matchingWpOrgThemes ]
