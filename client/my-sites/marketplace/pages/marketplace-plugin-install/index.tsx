@@ -19,6 +19,7 @@ import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/prog
 import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-plugin-install/use-marketplace-additional-steps';
 import theme from 'calypso/my-sites/marketplace/theme';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
+import { initiateAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { getPurchaseFlowState } from 'calypso/state/marketplace/purchase-flow/selectors';
@@ -113,7 +114,7 @@ const MarketplacePluginInstall = ( {
 		enabled: isProductListFetched && isMarketplaceProduct,
 	} );
 
-	const marketplacePluginInstallationInProgress = useSelector( ( state ) => {
+	const marketplaceInstallationInProgress = useSelector( ( state ) => {
 		const { pluginInstallationStatus, productSlugInstalled, primaryDomain } = getPurchaseFlowState(
 			state as IAppState
 		);
@@ -125,7 +126,7 @@ const MarketplacePluginInstall = ( {
 		}
 		return (
 			pluginInstallationStatus !== MARKETPLACE_ASYNC_PROCESS_STATUS.COMPLETED &&
-			productSlugInstalled === productSlug &&
+			productSlugInstalled === ( productSlug || themeSlug ) &&
 			primaryDomain === selectedSiteSlug
 		);
 	} );
@@ -165,12 +166,12 @@ const MarketplacePluginInstall = ( {
 
 	// Check that the site URL and the plugin slug are the same which were selected on the plugin page
 	useEffect( () => {
-		if ( ! marketplacePluginInstallationInProgress ) {
+		if ( ! marketplaceInstallationInProgress ) {
 			waitFor( 2 ).then( () => {
-				! marketplacePluginInstallationInProgress && setNoDirectAccessError( true );
+				! marketplaceInstallationInProgress && setNoDirectAccessError( true );
 			} );
 		}
-	}, [ marketplacePluginInstallationInProgress ] );
+	}, [ marketplaceInstallationInProgress ] );
 
 	// Upload flow startup
 	useEffect( () => {
@@ -185,7 +186,7 @@ const MarketplacePluginInstall = ( {
 	// Installing plugin flow startup
 	useEffect( () => {
 		if (
-			( marketplacePluginInstallationInProgress || directInstallationAllowed ) &&
+			( marketplaceInstallationInProgress || directInstallationAllowed ) &&
 			! isUploadFlow &&
 			! initializeInstallFlow &&
 			( wporgPlugin || wpOrgTheme ) &&
@@ -208,14 +209,18 @@ const MarketplacePluginInstall = ( {
 				triggerInstallFlow();
 			} else if ( hasAtomicFeature ) {
 				// initialize atomic flow
-				setAtomicFlow( true );
-				dispatch( initiateTransfer( siteId, null, productSlug ) );
+				if ( wpOrgTheme ) {
+					dispatch( initiateAtomicTransfer( siteId, { themeSlug } ) );
+				} else {
+					setAtomicFlow( true );
+					dispatch( initiateTransfer( siteId, null, productSlug ) );
+				}
 
 				triggerInstallFlow();
 			}
 		}
 	}, [
-		marketplacePluginInstallationInProgress,
+		marketplaceInstallationInProgress,
 		directInstallationAllowed,
 		isUploadFlow,
 		initializeInstallFlow,
@@ -224,6 +229,7 @@ const MarketplacePluginInstall = ( {
 		wporgPlugin,
 		wpOrgTheme,
 		productSlug,
+		themeSlug,
 		dispatch,
 		hasAtomicFeature,
 	] );

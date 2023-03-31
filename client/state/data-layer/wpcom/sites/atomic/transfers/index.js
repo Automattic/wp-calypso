@@ -40,7 +40,7 @@ const initiateAtomicTransfer = ( action ) =>
 			apiNamespace: 'wpcom/v2',
 			method: 'POST',
 			path: `/sites/${ action.siteId }/atomic/transfers/`,
-			...( action.softwareSet
+			...( action.softwareSet || action.themeSlug
 				? {
 						body: mapToRequestBody( action ),
 				  }
