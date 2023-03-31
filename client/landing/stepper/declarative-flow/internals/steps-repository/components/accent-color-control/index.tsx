@@ -26,7 +26,7 @@ import ColorSwatch from './color-swatch';
 interface AccentColorControlProps {
 	accentColor: AccentColor;
 	setAccentColor: Dispatch< SetStateAction< AccentColor > >;
-	labelText: string;
+	labelText?: string;
 }
 
 interface ColorOption {
@@ -250,7 +250,7 @@ const AccentColorControl = ( {
 				</form>
 			</Popover>
 			<FormFieldset>
-				<FormLabel htmlFor="accentColor">{ labelText }</FormLabel>
+				<FormLabel htmlFor="accentColor">{ labelText ?? __( 'Favorite color' ) }</FormLabel>
 				<SelectDropdown
 					// @ts-expect-error SelectDropdown is defined in .jsx file and has no type definitions generated
 					ref={ accentColorRef }
