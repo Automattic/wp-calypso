@@ -61,7 +61,6 @@ export interface PricedAPIPlan {
 	product_slug: StorePlanSlug;
 	product_name_short: string;
 	product_type?: string;
-	available?: 'yes';
 	bill_period: -1 | ( typeof PERIOD_LIST )[ number ];
 
 	/**
