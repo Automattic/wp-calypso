@@ -1,7 +1,9 @@
+import { SubscriptionManager } from '@automattic/data-stores';
 import { SiteSettings } from '../settings-popover';
 import type { SiteSubscription } from '@automattic/data-stores/src/reader/types';
 
 export default function SiteRow( {
+	blog_ID,
 	name,
 	site_icon,
 	URL,
@@ -10,6 +12,8 @@ export default function SiteRow( {
 }: SiteSubscription ) {
 	const since = new Date( date_subscribed ).toDateString();
 	const deliveryFrequency = delivery_methods?.email?.post_delivery_frequency;
+
+	const { mutate: unFollow } = SubscriptionManager.useSiteUnfollowMutation();
 
 	return (
 		<li className="row" role="row">
@@ -27,7 +31,7 @@ export default function SiteRow( {
 				{ deliveryFrequency }
 			</span>
 			<span className="actions" role="cell">
-				<SiteSettings onUnfollow={ () => null } />
+				<SiteSettings onUnfollow={ () => unFollow( { blog_id: blog_ID } ) } />
 			</span>
 		</li>
 	);
