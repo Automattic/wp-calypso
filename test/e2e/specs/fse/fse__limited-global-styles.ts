@@ -15,7 +15,7 @@ describe( DataHelper.createSuiteTitle( 'Site Editor: Limited Global Styles' ), f
 	beforeAll( async () => {
 		page = await browser.newPage();
 
-		const testAccount = new TestAccount( 'simpleSiteFreePlanUser' );
+		testAccount = new TestAccount( 'simpleSiteFreePlanUser' );
 		await testAccount.authenticate( page );
 
 		fullSiteEditorPage = new FullSiteEditorPage( page );
