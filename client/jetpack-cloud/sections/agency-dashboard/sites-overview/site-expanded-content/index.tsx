@@ -21,6 +21,7 @@ export default function SiteExpandedContent( {
 }: Props ) {
 	const stats = site.site_stats;
 	const boostData = site.jetpack_boost_scores;
+	const siteUrlWithScheme = site.url_with_scheme;
 
 	return (
 		<div
@@ -28,9 +29,16 @@ export default function SiteExpandedContent( {
 				'is-small-screen': isSmallScreen,
 			} ) }
 		>
-			{ columns.includes( 'stats' ) && stats && <InsightsStats stats={ stats } /> }
+			{ columns.includes( 'stats' ) && stats && (
+				<InsightsStats stats={ stats } siteUrlWithScheme={ siteUrlWithScheme } />
+			) }
 			{ columns.includes( 'boost' ) && (
-				<BoostSitePerformance boostData={ boostData } hasBoost={ site.has_boost } />
+				<BoostSitePerformance
+					boostData={ boostData }
+					siteId={ site.blog_id }
+					siteUrlWithScheme={ siteUrlWithScheme }
+					hasBoost={ site.has_boost }
+				/>
 			) }
 			{ columns.includes( 'backup' ) && stats && <BackupStorage site={ site } /> }
 		</div>
