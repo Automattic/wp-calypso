@@ -43,7 +43,7 @@ export const getPostCommentsTree = treeSelect(
 		// Generate a new map of parent ID to an array of chilren IDs
 		// Reverse the order to keep it in chrono order
 		const parentToChildIdMap = mapValues( childrenGroupedByParent, ( _children ) =>
-			map( _children, 'ID' ).reverse()
+			map( _children, 'ID' )
 		);
 
 		// convert all of the comments to comment nodes for our tree structure
@@ -52,11 +52,11 @@ export const getPostCommentsTree = treeSelect(
 			children: parentToChildIdMap[ item.ID ] || [],
 		} );
 
-		const commentsByIdMap = keyBy( map( items, transformItemToNode ), 'data.ID' );
+		const commentsByIdMap = keyBy( map( items, transformItemToNode ).reverse(), 'data.ID' );
 
 		return {
 			...commentsByIdMap,
-			children: map( roots, ( root ) => root.ID ).reverse(),
+			children: map( roots, ( root ) => root.ID ),
 		};
 	}
 );

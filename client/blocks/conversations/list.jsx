@@ -26,6 +26,10 @@ import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 import './list.scss';
+import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
+import { READER_CONVERSATIONS, READER_FULL_POST } from 'calypso/reader/follow-sources';
+import config from '@automattic/calypso-config';
+import Comments from 'calypso/blocks/comments';
 
 /**
  * ConversationsCommentList is the component that represents all of the comments for a conversations-stream
@@ -199,13 +203,14 @@ export class ConversationCommentList extends Component {
 	};
 
 	render() {
-		const { commentsTree, post, enableCaterpillar } = this.props;
+		const { commentsTree, post } = this.props;
+
+		console.log( 'commentsTree', commentsTree );
 
 		if ( ! post ) {
 			return null;
 		}
 
-		const commentsToShow = this.getCommentsToShow();
 		const isDoneLoadingComments =
 			! this.props.commentsFetchingStatus.haveEarlierCommentsToFetch &&
 			! this.props.commentsFetchingStatus.haveLaterCommentsToFetch;
@@ -216,50 +221,21 @@ export class ConversationCommentList extends Component {
 			? filter( commentsTree, ( comment ) => get( comment, 'data.type' ) === 'comment' ).length // filter out pingbacks/trackbacks
 			: post.discussion.comment_count;
 
-		const showCaterpillar = enableCaterpillar && size( commentsToShow ) < commentCount;
-
 		return (
 			<div className="conversations__comment-list">
-				<ul className="conversations__comment-list-ul">
-					{ showCaterpillar && (
-						<ConversationCaterpillar
-							blogId={ post.site_ID }
-							postId={ post.ID }
-							commentCount={ commentCount }
-							commentsToShow={ commentsToShow }
-						/>
-					) }
-					{ map( commentsTree.children, ( commentId ) => {
-						return (
-							<PostComment
-								showNestingReplyArrow
-								hidePingbacksAndTrackbacks
-								enableCaterpillar={ enableCaterpillar }
-								post={ post }
-								commentsTree={ commentsTree }
-								key={ commentId }
-								commentId={ commentId }
-								maxDepth={ 2 }
-								commentsToShow={ commentsToShow }
-								onReplyClick={ this.onReplyClick }
-								onReplyCancel={ this.onReplyCancel }
-								activeReplyCommentId={ this.props.activeReplyCommentId }
-								onUpdateCommentText={ this.onUpdateCommentText }
-								onCommentSubmit={ this.resetActiveReplyComment }
-								commentText={ this.state.commentText }
-								showReadMoreInActions={ true }
-								displayType={ POST_COMMENT_DISPLAY_TYPES.excerpt }
-							/>
-						);
-					} ) }
-					<PostCommentFormRoot
-						post={ this.props.post }
-						commentsTree={ this.props.commentsTree }
-						commentText={ this.state.commentText }
-						onUpdateCommentText={ this.onUpdateCommentText }
-						activeReplyCommentId={ this.props.activeReplyCommentId }
-					/>
-				</ul>
+				<Comments
+					showNestingReplyArrow={ true }
+					post={ post }
+					initialSize={ 5 }
+					pageSize={ 25 }
+					commentCount={ commentCount }
+					maxDepth={ 1 }
+					commentsFilterDisplay={ COMMENTS_FILTER_ALL }
+					showConversationFollowButton={ true }
+					followSource={ READER_CONVERSATIONS }
+					shouldPollForNewComments={ config.isEnabled( 'reader/comment-polling' ) }
+					shouldHighlightNew={ true }
+				/>
 			</div>
 		);
 	}
