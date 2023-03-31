@@ -5,6 +5,7 @@ import moment from 'moment';
 import { render } from 'react-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import setLocale from '../lib/set-locale';
+import Main from './main';
 
 import 'calypso/assets/stylesheets/style.scss';
 import './style.scss';
@@ -22,7 +23,7 @@ export function init() {
 		render(
 			<QueryClientProvider client={ queryClient }>
 				<div>
-					[{ moment().format( 'LLLL' ) }] Stats widget placeholder for site No. { currentSiteId }.
+					<Main siteId={ currentSiteId } />
 				</div>
 			</QueryClientProvider>,
 			document.getElementById( 'dashboard_stats' )
