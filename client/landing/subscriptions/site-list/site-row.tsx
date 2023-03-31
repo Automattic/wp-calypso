@@ -1,4 +1,4 @@
-import { NotificationSettings } from '../notification-settings';
+import { SiteSettings } from '../settings-popover';
 import type { SiteSubscription } from '@automattic/data-stores/src/reader/types';
 
 export default function SiteRow( {
@@ -27,7 +27,7 @@ export default function SiteRow( {
 				{ deliveryFrequency }
 			</span>
 			<span className="actions" role="cell">
-				<NotificationSettings />
+				<SiteSettings onUnfollow={ () => null } />
 			</span>
 		</li>
 	);
