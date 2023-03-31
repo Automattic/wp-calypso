@@ -35,6 +35,7 @@ export const SiteLogsTable = memo( function SiteLogsTable( {
 		<table className={ classnames( 'site-logs-table', { 'is-loading': isLoading } ) }>
 			<thead>
 				<tr>
+					<th />
 					{ columns.map( ( column ) => (
 						<th key={ column }>{ column }</th>
 					) ) }
