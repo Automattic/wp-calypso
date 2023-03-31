@@ -10,7 +10,7 @@ import './style.scss';
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
 
-export const GoldenTokenModal = () => {
+const GoldenTokenModal = () => {
 	const isJetpackGoldenTokenPendingActivation = useSelector(
 		isJetpackGoldenTokenPendingActivationSelector
 	);
@@ -30,3 +30,5 @@ export const GoldenTokenModal = () => {
 		</Dialog>
 	);
 };
+
+export default GoldenTokenModal;
