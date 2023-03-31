@@ -34,6 +34,7 @@ import {
 	getManagePluginsUrl,
 	getPluginsUrl,
 	getSettingsUrl,
+	getSiteLogsUrl,
 	isCustomDomain,
 	isNotAtomicJetpack,
 	isP2Site,
@@ -89,6 +90,19 @@ const SettingsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 			onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_settings_click' ) }
 		>
 			{ __( 'Settings' ) }
+		</MenuItemLink>
+	);
+};
+
+const SiteLogsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
+	const { __ } = useI18n();
+
+	return (
+		<MenuItemLink
+			href={ getSiteLogsUrl( site.slug ) }
+			onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_site_logs_click' ) }
+		>
+			{ __( 'Site logs' ) }
 		</MenuItemLink>
 	);
 };
@@ -289,6 +303,7 @@ function useSubmenuItems( site: SiteExcerptData ) {
 				sectionName: 'cache',
 			},
 			{
+				condition: ! isEnabled( 'woa-logging-moved' ),
 				label: __( 'Web server logs' ),
 				href: `/hosting-config/${ siteSlug }#web-server-logs`,
 				sectionName: 'logs',
@@ -387,7 +402,7 @@ export const SitesEllipsisMenu = ( {
 		recordTracks,
 	};
 
-	const hasHostingPage = ! isNotAtomicJetpack( site ) && ! isP2Site( site );
+	const hasHostingFeatures = ! isNotAtomicJetpack( site ) && ! isP2Site( site );
 	const { shouldShowSiteCopyItem, startSiteCopy } = useSiteCopy( site );
 	const hasCustomDomain = isCustomDomain( site.slug );
 	const isLaunched = site.launch_status !== 'unlaunched';
@@ -403,7 +418,8 @@ export const SitesEllipsisMenu = ( {
 				<SiteMenuGroup>
 					{ ! isWpcomStagingSite && ! isLaunched && <LaunchItem { ...props } /> }
 					<SettingsItem { ...props } />
-					{ hasHostingPage && <HostingConfigurationSubmenu { ...props } /> }
+					{ hasHostingFeatures && <HostingConfigurationSubmenu { ...props } /> }
+					{ hasHostingFeatures && isEnabled( 'woa-logging' ) && <SiteLogsItem { ...props } /> }
 					{ ! isP2Site( site ) && <ManagePluginsItem { ...props } /> }
 					{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
 					{ ! isWpcomStagingSite && shouldShowSiteCopyItem && (
