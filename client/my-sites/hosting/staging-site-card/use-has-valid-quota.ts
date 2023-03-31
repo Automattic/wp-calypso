@@ -7,7 +7,7 @@ export const useHasValidQuotaQuery = ( siteId: number, options: UseQueryOptions 
 	return useQuery< boolean, unknown, boolean >(
 		[ USE_VALID_QUOTA_QUERY_KEY, siteId ],
 		() =>
-			wp.req.get( {
+			wp.req.post( {
 				path: `/sites/${ siteId }/staging-site/validate-quota`,
 				apiNamespace: 'wpcom/v2',
 			} ),
