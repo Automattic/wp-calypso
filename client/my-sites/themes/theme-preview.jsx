@@ -178,6 +178,10 @@ class ThemePreview extends Component {
 
 	renderPrimaryButton = () => {
 		const primaryOption = this.getPrimaryOption();
+		if ( ! primaryOption ) {
+			return;
+		}
+
 		const buttonHref = primaryOption.getUrl ? primaryOption.getUrl( this.props.themeId ) : null;
 
 		return (

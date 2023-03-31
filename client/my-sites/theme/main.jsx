@@ -933,7 +933,14 @@ class ThemeSheet extends Component {
 						? this.appendSelectedStyleVariationToUrl( getUrl( this.props.themeId ) )
 						: null
 				}
-				onClick={ this.onButtonClick }
+				onClick={ () => {
+					this.props.recordTracksEvent( 'calypso_theme_sheet_primary_button_click', {
+						theme: this.props.themeId,
+						...( key && { action: key } ),
+					} );
+
+					this.onButtonClick();
+				} }
 				primary
 				disabled={ this.isLoading() }
 				target={ isActive ? '_blank' : null }
