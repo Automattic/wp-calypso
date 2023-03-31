@@ -201,6 +201,7 @@
 		"wpcom-user-bootstrap": false,
 		"yolo/staging-sites-i1": true,
 		"newsletter/stats": true,
-		"woa-logging": true
+		"woa-logging": true,
+		"woa-logging-moved": true
 	}
 }

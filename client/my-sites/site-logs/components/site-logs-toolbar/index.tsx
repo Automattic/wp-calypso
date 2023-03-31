@@ -49,7 +49,7 @@ export const SiteLogsToolbar = ( {
 }: Props ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
-	const { downloadLogs, state } = useSiteLogsDownloader();
+	const { downloadLogs, state } = useSiteLogsDownloader( { roundDateRangeToWholeDays: false } );
 	const siteGmtOffset = useCurrentSiteGmtOffset();
 
 	const isDownloading = state.status === 'downloading';
@@ -93,7 +93,7 @@ export const SiteLogsToolbar = ( {
 					isPrimary
 					onClick={ () => downloadLogs( { logType, startDateTime, endDateTime } ) }
 				>
-					{ translate( 'Download' ) }
+					{ translate( 'Download logs' ) }
 				</Button>
 
 				{ isDownloading && <SiteLogsToolbarDownloadProgress { ...state } /> }
