@@ -1001,7 +1001,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 			);
 
 			const rawPrice = getPlanRawPrice( state, planProductId, showMonthlyPrice );
-			const isMonthlyObj = { isMonthly: showMonthlyPrice };
+			const isMonthlyObj = { returnMonthly: showMonthlyPrice };
 
 			const discountPrice = siteId
 				? getPlanDiscountedRawPrice( state, siteId, plan, isMonthlyObj )

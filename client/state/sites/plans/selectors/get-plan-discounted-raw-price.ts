@@ -11,14 +11,14 @@ export function getPlanDiscountedRawPrice(
 	siteId: number | undefined,
 	productSlug: string,
 	{
-		isMonthly = false,
+		returnMonthly,
 	}: {
 		/**
 		 * If true, attempt to calculate and return the monthly price. Note that this
 		 * is not precise as it relies on float division and could have rounding
 		 * errors.
 		 */
-		isMonthly?: boolean;
+		returnMonthly?: boolean;
 	} = {}
 ) {
 	const plan = getSitePlan( state, siteId, productSlug );
@@ -30,5 +30,5 @@ export function getPlanDiscountedRawPrice(
 		return null;
 	}
 	const discountPrice = plan.rawPrice;
-	return isMonthly ? calculateMonthlyPriceForPlan( productSlug, discountPrice ) : discountPrice;
+	return returnMonthly ? calculateMonthlyPriceForPlan( productSlug, discountPrice ) : discountPrice;
 }

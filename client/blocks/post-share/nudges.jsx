@@ -42,8 +42,8 @@ export const UpgradeToPremiumNudgePure = ( props ) => {
 };
 
 const getDiscountedOrRegularPrice = ( state, siteId, plan ) =>
-	getPlanDiscountedRawPrice( state, siteId, plan, { isMonthly: true } ) ||
-	getSitePlanRawPrice( state, siteId, plan, { isMonthly: true } );
+	getPlanDiscountedRawPrice( state, siteId, plan, { returnMonthly: true } ) ||
+	getSitePlanRawPrice( state, siteId, plan, { returnMonthly: true } );
 
 export const UpgradeToPremiumNudge = connect( ( state, ownProps ) => {
 	const { siteId } = ownProps;

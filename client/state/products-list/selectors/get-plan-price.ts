@@ -26,7 +26,7 @@ export const getPlanPrice = (
 ): number | null => {
 	return (
 		getPlanDiscountedRawPrice( state, siteId, planObject.getStoreSlug(), {
-			isMonthly: returnMonthly,
+			returnMonthly,
 		} ) || getPlanRawPrice( state, planObject.getProductId(), returnMonthly )
 	);
 };

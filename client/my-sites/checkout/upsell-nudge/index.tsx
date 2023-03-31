@@ -93,7 +93,7 @@ export interface UpsellNudgeAutomaticProps extends WithShoppingCartProps {
 	hasSitePlans?: boolean;
 	product: MinimalRequestCartProduct | undefined;
 	productDisplayCost?: string | null;
-	planRawPrice?: number;
+	planRawPrice?: number | null;
 	planDiscountedRawPrice?: number | null;
 	isLoggedIn?: boolean;
 	siteSlug?: string | null;
@@ -602,10 +602,10 @@ export default connect(
 			props.upgradeItem ?? ''
 		);
 		const annualDiscountPrice = getPlanDiscountedRawPrice( state, selectedSiteId ?? 0, planSlug, {
-			isMonthly: false,
+			returnMonthly: false,
 		} );
 		const annualPrice = getSitePlanRawPrice( state, selectedSiteId ?? 0, planSlug, {
-			isMonthly: false,
+			returnMonthly: false,
 		} );
 
 		const currentPlanTerm = getCurrentPlanTerm( state, selectedSiteId ?? 0 ) ?? TERM_MONTHLY;

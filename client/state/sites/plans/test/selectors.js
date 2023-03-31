@@ -301,24 +301,26 @@ describe( 'selectors', () => {
 		} );
 		test( 'should return a monthly price - annual term', () => {
 			const rawPrice = getSitePlanRawPrice( state, 77203074, 'personal-bundle', {
-				isMonthly: true,
+				returnMonthly: true,
 			} );
 			expect( rawPrice ).toEqual( 16.58 );
 		} );
 		test( 'should return a monthly price - biennial term', () => {
 			const rawPrice = getSitePlanRawPrice( state, 77203074, 'value_bundle-2y', {
-				isMonthly: true,
+				returnMonthly: true,
 			} );
 			expect( rawPrice ).toEqual( 11 );
 		} );
 		test( 'should return a monthly price - monthly term', () => {
 			const rawPrice = getSitePlanRawPrice( state, 77203074, 'jetpack_premium_monthly', {
-				isMonthly: true,
+				returnMonthly: true,
 			} );
 			expect( rawPrice ).toEqual( 40 );
 		} );
 		test( 'should return raw price, if no discount is available', () => {
-			const rawPrice = getSitePlanRawPrice( state, 77203074, 'value_bundle', { isMonthly: false } );
+			const rawPrice = getSitePlanRawPrice( state, 77203074, 'value_bundle', {
+				returnMonthly: false,
+			} );
 			expect( rawPrice ).toEqual( 199 );
 		} );
 	} );
@@ -377,31 +379,31 @@ describe( 'selectors', () => {
 		} );
 		test( 'should return a monthly discount price - annual term', () => {
 			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'personal-bundle', {
-				isMonthly: true,
+				returnMonthly: true,
 			} );
 			expect( discountPrice ).toEqual( 8.25 );
 		} );
 		test( 'should return a monthly discount price - biennial term', () => {
 			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'value_bundle-2y', {
-				isMonthly: true,
+				returnMonthly: true,
 			} );
 			expect( discountPrice ).toEqual( 10 );
 		} );
-		test( 'should return a monthly discount price - monthly term (isMonthly: true)', () => {
+		test( 'should return a monthly discount price - monthly term (returnMonthly: true)', () => {
 			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'jetpack_premium_monthly', {
-				isMonthly: true,
+				returnMonthly: true,
 			} );
 			expect( discountPrice ).toEqual( 30 );
 		} );
-		test( 'should return a monthly discount price - monthly term (isMonthly: false)', () => {
+		test( 'should return a monthly discount price - monthly term (returnMonthly: false)', () => {
 			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'jetpack_premium_monthly', {
-				isMonthly: false,
+				returnMonthly: false,
 			} );
 			expect( discountPrice ).toEqual( 30 );
 		} );
 		test( 'should return null, if no discount is available', () => {
 			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'value_bundle', {
-				isMonthly: true,
+				returnMonthly: true,
 			} );
 			expect( discountPrice ).toBeNull();
 		} );
@@ -457,28 +459,28 @@ describe( 'selectors', () => {
 
 		test( 'should return a monthly raw discount - annual term', () => {
 			const planRawDiscount = getPlanRawDiscount( state, 77203074, 'personal-bundle', {
-				isMonthly: true,
+				returnMonthly: true,
 			} );
 			expect( planRawDiscount ).toEqual( 8.33 );
 		} );
 
 		test( 'should return a monthly raw discount - biennial term', () => {
 			const planRawDiscount = getPlanRawDiscount( state, 77203074, 'value_bundle-2y', {
-				isMonthly: true,
+				returnMonthly: true,
 			} );
 			expect( planRawDiscount ).toEqual( 10 );
 		} );
 
 		test( 'should return a monthly raw discount - monthly term', () => {
 			const planRawDiscount = getPlanRawDiscount( state, 77203074, 'jetpack_premium_monthly', {
-				isMonthly: true,
+				returnMonthly: true,
 			} );
 			expect( planRawDiscount ).toEqual( 240 );
 		} );
 
 		test( 'should return null, if no raw discount is available', () => {
 			const planRawDiscount = getPlanRawDiscount( state, 77203074, 'value_bundle', {
-				isMonthly: true,
+				returnMonthly: true,
 			} );
 			expect( planRawDiscount ).toBeNull();
 		} );

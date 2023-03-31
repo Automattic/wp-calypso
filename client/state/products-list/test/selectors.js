@@ -60,7 +60,7 @@ describe( 'selectors', () => {
 				{ state: 1 },
 				1,
 				'abc',
-				{ isMonthly: false },
+				{ returnMonthly: false },
 			] );
 		} );
 
@@ -79,16 +79,16 @@ describe( 'selectors', () => {
 			expect( getPlanRawPrice.mock.calls[ 0 ] ).toEqual( [ { state: 1 }, 'def', false ] );
 		} );
 
-		test( 'Should pass correct isMonthly value', () => {
+		test( 'Should pass correct returnMonthly value', () => {
 			const plan = { getStoreSlug: () => 'abc', getProductId: () => 'def' };
 			getPlanPrice( {}, 1, plan, false );
-			expect( getPlanDiscountedRawPrice.mock.calls[ 0 ][ 3 ] ).toEqual( { isMonthly: false } );
+			expect( getPlanDiscountedRawPrice.mock.calls[ 0 ][ 3 ] ).toEqual( { returnMonthly: false } );
 
 			getPlanPrice( {}, 1, plan, true );
-			expect( getPlanDiscountedRawPrice.mock.calls[ 1 ][ 3 ] ).toEqual( { isMonthly: true } );
+			expect( getPlanDiscountedRawPrice.mock.calls[ 1 ][ 3 ] ).toEqual( { returnMonthly: true } );
 
 			getPlanPrice( {}, 1, { ...plan, term: TERM_MONTHLY }, true );
-			expect( getPlanDiscountedRawPrice.mock.calls[ 2 ][ 3 ] ).toEqual( { isMonthly: true } );
+			expect( getPlanDiscountedRawPrice.mock.calls[ 2 ][ 3 ] ).toEqual( { returnMonthly: true } );
 		} );
 	} );
 
