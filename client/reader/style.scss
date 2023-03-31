@@ -377,10 +377,6 @@
 		@include break-medium {
 			padding: 24px 108px 36px;
 		}
-
-		&.logged-in {
-			padding-top: 102px;
-		}
 	}
 
 	.masterbar {
@@ -393,6 +389,7 @@
 	header.masterbar {
 		padding: 16px 16px;
 		height: 78px;
+		position: relative;
 	}
 
 	// logged out master bar
