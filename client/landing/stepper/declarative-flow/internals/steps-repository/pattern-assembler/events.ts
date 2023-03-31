@@ -25,6 +25,11 @@ export const PATTERN_ASSEMBLER_EVENTS = {
 	SCREEN_FONTS_DONE_CLICK: 'calypso_signup_pattern_assembler_screen_fonts_done_click',
 
 	/**
+	 * Screen Category List
+	 */
+	SCREEN_CATEGORY_LIST_CATEGORY_CLICK: 'calypso_signup_pattern_assembler_category_click',
+
+	/**
 	 * Pattern Panels
 	 */
 	PATTERN_ADD_CLICK: 'calypso_signup_pattern_assembler_pattern_add_click',
