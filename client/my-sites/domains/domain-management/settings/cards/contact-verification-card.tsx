@@ -62,7 +62,7 @@ const ContactVerificationCard: FunctionComponent< Props > = ( props ) => {
 				{ renderContactInformation() }
 				<p>
 					{ translate(
-						'Please verify that the above infomration is correct and either {{a}}update it{{/a}} or provide a photo of a document on which the above name and address are clearly visible. Some of the accepted documents are:',
+						'Please verify that the above information is correct and either {{a}}update it{{/a}} or provide a photo of a document on which the above name and address are clearly visible. Some of the accepted documents are:',
 						{
 							components: {
 								a: contactInformationUpdateLink ? (
