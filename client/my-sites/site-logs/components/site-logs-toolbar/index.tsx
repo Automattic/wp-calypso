@@ -91,7 +91,9 @@ export const SiteLogsToolbar = ( {
 					disabled={ isDownloading }
 					isBusy={ isDownloading }
 					isPrimary
-					onClick={ () => downloadLogs( { logType, startDateTime, endDateTime } ) }
+					onClick={ () =>
+						downloadLogs( { logType, startDateTime, endDateTime, sortOrder: 'desc' } )
+					}
 				>
 					{ translate( 'Download' ) }
 				</Button>

@@ -81,6 +81,7 @@ interface UseSiteLogsDownloaderArgs {
 	logType: SiteLogsTab;
 	startDateTime: Moment;
 	endDateTime: Moment;
+	sortOrder?: 'asc' | 'desc';
 }
 
 export const useSiteLogsDownloader = () => {
@@ -114,6 +115,7 @@ export const useSiteLogsDownloader = () => {
 		logType,
 		startDateTime,
 		endDateTime,
+		sortOrder = 'asc',
 	}: UseSiteLogsDownloaderArgs ) => {
 		dispatch( {
 			type: 'DOWNLOAD_START',
@@ -132,8 +134,8 @@ export const useSiteLogsDownloader = () => {
 			return;
 		}
 
-		const startMoment = moment.utc( startDateTime, localeDateFormat ).startOf( 'day' );
-		const endMoment = moment.utc( endDateTime, localeDateFormat ).endOf( 'day' );
+		const startMoment = moment.utc( startDateTime, localeDateFormat );
+		const endMoment = moment.utc( endDateTime, localeDateFormat );
 
 		const dateFormat = 'YYYYMMDDHHmmss';
 		const startString = startMoment.format( dateFormat );
@@ -169,6 +171,7 @@ export const useSiteLogsDownloader = () => {
 					{
 						start: startTime,
 						end: endTime,
+						sort_order: sortOrder,
 						page_size: 10000,
 						scroll_id: scrollId,
 					}
