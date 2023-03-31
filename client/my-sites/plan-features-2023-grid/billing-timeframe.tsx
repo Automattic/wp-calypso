@@ -50,7 +50,7 @@ function usePerMonthDescription( {
 	if ( ! isMonthlyPlan ) {
 		const fullTermPriceText =
 			currencyCode && null !== maybeDiscountedFullTermPrice
-				? formatCurrency( maybeDiscountedFullTermPrice, currencyCode )
+				? formatCurrency( maybeDiscountedFullTermPrice, currencyCode, { stripZeros: true } )
 				: null;
 
 		if ( fullTermPriceText ) {

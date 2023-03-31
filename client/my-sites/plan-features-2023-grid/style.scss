@@ -323,6 +323,10 @@
 			font-weight: 600;
 		}
 
+		&.is-bottom-aligned {
+			vertical-align: bottom;
+		}
+
 
 		&.is-top-buttons {
 			padding: 0 20px;
@@ -331,85 +335,6 @@
 
 		@include plans-2023-break-small {
 			border-left: solid 1px #e0e0e0;
-		}
-	}
-
-	.plan-features-2023-grid__pricing {
-		padding: 0 20px;
-		margin: 0;
-
-		.plan-price {
-			color: var(--studio-gray-100);
-			margin-right: 10px;
-			line-height: $font-title-large;
-			display: flex;
-			@include onboarding-font-recoleta;
-			padding: 3px 0 6px;
-		}
-
-		.plan-price__currency-symbol,
-		.plan-price.is-discounted .plan-price__currency-symbol {
-			font-size: $font-title-medium;
-			color: var(--studio-gray-100);
-			position: relative;
-			top: -7px;
-		}
-
-		.plan-price__integer {
-			font-size: 2.75rem;
-		}
-
-		.plan-price__term {
-			font-size: $font-body-extra-small;
-			font-weight: 400;
-		}
-
-		.plan-price.is-original {
-			color: var(--color-neutral-light);
-
-			&::before {
-				left: -1%;
-				top: 43%;
-				right: 80%;
-				transform: rotate(16deg);
-				border-color: #000;
-
-				@include plans-2023-break-small {
-					right: 68%;
-				}
-			}
-
-			.plan-price__currency-symbol,
-			.plan-price__tax-amount {
-				color: var(--color-text-subtle);
-			}
-
-			.plan-price__integer {
-				font-size: $font-title-medium;
-			}
-			.plan-price__currency-symbol {
-				font-size: $font-body-extra-small;
-				top: -4px;
-			}
-		}
-
-		.plan-price.is-discounted {
-			color: var(--color-neutral-70);
-
-			.plan-price__integer-fraction {
-				color: var(--color-success);
-			}
-		}
-
-		.plan-price.is-large-currency {
-			.plan-price__integer {
-				font-size: rem(38px);
-			}
-			&.is-original {
-				.plan-price__integer {
-					font-size: $font-body-small;
-				}
-			}
 		}
 	}
 
@@ -1013,28 +938,6 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 		line-height: 1.2;
 		color: var(--studio-gray-100);
 		font-weight: 400;
-	}
-
-	.plan-features-2023-grid__pricing {
-		padding: 0;
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-		justify-content: flex-end;
-
-		.plan-price.is-discounted {
-			color: var(--color-neutral-70);
-
-			.plan-price__integer-fraction {
-				color: inherit;
-			}
-		}
-
-		.plan-price.is-large-currency {
-			.plan-price__integer {
-				font-size: rem(30px);
-			}
-		}
 	}
 
 	.plan-comparison-grid__billing-info {
