@@ -77,7 +77,7 @@ function wpcom_global_styles_get_wpcom_current_blog_id() {
 		}
 	}
 
-		return null;
+	return null;
 }
 
 /**
