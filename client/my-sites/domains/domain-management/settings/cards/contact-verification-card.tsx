@@ -122,11 +122,21 @@ const ContactVerificationCard: FunctionComponent< Props > = ( props ) => {
 	};
 
 	const submitFiles = () => {
+		if ( ! selectedFiles || selectedFiles.length === 0 ) {
+			setError( true );
+			return;
+		}
+
+		const formData: [ string, File, string ][] = [];
+		[ ...selectedFiles ].forEach( ( file: File ) => {
+			formData.push( [ 'files[]', file, file.name ] );
+		} );
+
 		wpcom.req.post(
 			{
-				path: '/domains/ownership-verification',
+				path: '/domains/contact-verification',
 				apiVersion: '1.1',
-				formData: [ [ 'files', selectedFiles ] ],
+				formData,
 			},
 			( error: Error ) => {
 				setSubmitting( false );
