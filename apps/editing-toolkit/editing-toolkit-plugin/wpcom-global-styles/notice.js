@@ -4,10 +4,7 @@ import { useSelect } from '@wordpress/data';
 import { createInterpolateElement, render, useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import './notice.scss';
-import {
-	recordUpgradePrePublishNoticeClick,
-	recordUpgradeNoticePrePublishShow,
-} from './tracks-events';
+import { recordUpgradePreSaveNoticeClick, recordUpgradeNoticePreSaveShow } from './tracks-events';
 import { useGlobalStylesConfig } from './use-global-styles-config';
 
 function GlobalStylesNoticeComponent() {
@@ -30,7 +27,7 @@ function GlobalStylesNoticeComponent() {
 
 	useEffect( () => {
 		if ( globalStylesInUse ) {
-			recordUpgradeNoticePrePublishShow();
+			recordUpgradeNoticePreSaveShow();
 		}
 	}, [ globalStylesInUse ] );
 
@@ -54,7 +51,7 @@ function GlobalStylesNoticeComponent() {
 						<ExternalLink
 							href={ wpcomGlobalStyles.upgradeUrl }
 							target="_blank"
-							onClick={ () => recordUpgradePrePublishNoticeClick() }
+							onClick={ () => recordUpgradePreSaveNoticeClick() }
 						/>
 					),
 				}

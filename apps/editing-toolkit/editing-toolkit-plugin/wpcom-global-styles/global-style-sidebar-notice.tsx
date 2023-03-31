@@ -9,11 +9,16 @@ import { useGlobalStylesConfig } from './use-global-styles-config';
 
 const GLOBAL_STYLES_SIDEBAR = 'edit-site/global-styles';
 
+type CoreInterfacePlaceholder = {
+	getActiveComplementaryArea: ( area: string ) => string;
+};
+
 export function GlobalStylesSidebarNotice() {
 	const area = useSelect(
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		( select ) => select( 'core/interface' ).getActiveComplementaryArea( 'core/edit-site' ),
+		( select ) =>
+			( select( 'core/interface' ) as CoreInterfacePlaceholder ).getActiveComplementaryArea(
+				'core/edit-site'
+			),
 		[]
 	);
 
@@ -36,7 +41,10 @@ export function GlobalStylesSidebarNotice() {
 				<div className="interface-complementary-area">
 					<Notice status="warning" isDismissible={ false } className="wpcom-global-styles-notice">
 						{ createInterpolateElement(
-							__( '<a>Upgrade your plan</a> to keep your style changes.', 'full-site-editing' ),
+							__(
+								'Your changes include customized styles that will only be visible once you <a>upgrade to a Premium plan</a>.',
+								'full-site-editing'
+							),
 							{
 								a: (
 									<ExternalLink
