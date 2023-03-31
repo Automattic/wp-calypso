@@ -34,30 +34,32 @@ export default function GlobalStylesSidebarNotice(): JSX.Element {
 
 	return (
 		<Fill name="ComplementaryArea/core/edit-site">
-			{ /*
-			We'll need to do the condition here because if we are doing an early return, the fill will be introduced at the bottom of the page, which means some additional CSS magic needs to be done.
-			*/ }
-			{ globalStylesInUse && isGlobalStylesSidebar && (
-				<div className="interface-complementary-area">
-					<Notice status="warning" isDismissible={ false } className="wpcom-global-styles-notice">
-						{ createInterpolateElement(
-							__(
-								'Your changes include customized styles that will only be visible once you <a>upgrade to a Premium plan</a>.',
-								'full-site-editing'
-							),
-							{
-								a: (
-									<ExternalLink
-										href={ wpcomGlobalStyles.upgradeUrl }
-										target="_blank"
-										onClick={ () => recordUpgradeSidebarNoticeClick() }
-									/>
+			<>
+				{ /*
+					We'll need to do the condition here because if we are doing an early return, the fill will be introduced at the bottom of the page, which means some additional CSS magic needs to be done.
+				*/ }
+				{ globalStylesInUse && isGlobalStylesSidebar && (
+					<div className="interface-complementary-area">
+						<Notice status="warning" isDismissible={ false } className="wpcom-global-styles-notice">
+							{ createInterpolateElement(
+								__(
+									'Your changes include customized styles that will only be visible once you <a>upgrade to a Premium plan</a>.',
+									'full-site-editing'
 								),
-							}
-						) }
-					</Notice>
-				</div>
-			) }
+								{
+									a: (
+										<ExternalLink
+											href={ wpcomGlobalStyles.upgradeUrl }
+											target="_blank"
+											onClick={ () => recordUpgradeSidebarNoticeClick() }
+										/>
+									),
+								}
+							) }
+						</Notice>
+					</div>
+				) }
+			</>
 		</Fill>
 	);
 }
