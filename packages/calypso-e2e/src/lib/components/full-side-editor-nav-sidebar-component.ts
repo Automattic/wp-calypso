@@ -2,7 +2,7 @@ import { Page, Locator } from 'playwright';
 
 const selectors = {
 	exitButton: `a[aria-label="Go back to the dashboard"]`,
-	templatePartsItem: 'button[id="/template-parts"]',
+	templatePartsItem: 'button[id="/wp_template_part"]',
 	manageAllTemplatePartsItem: 'button:text("Manage all template parts")',
 };
 
