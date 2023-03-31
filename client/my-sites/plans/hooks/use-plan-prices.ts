@@ -12,22 +12,23 @@ export interface PlanPrices {
 
 interface Props {
 	planSlug: PlanSlug;
-	monthly?: boolean; // defaults to true
+	returnMonthly?: boolean; // defaults to true
 }
 
-const usePlanPrices = ( { planSlug, monthly = true }: Props ): PlanPrices => {
+const usePlanPrices = ( { planSlug, returnMonthly = true }: Props ): PlanPrices => {
 	return useSelector( ( state ) => {
 		const siteId = getSelectedSiteId( state ) ?? undefined;
 		const plan = getPlan( planSlug );
 		const productId = plan?.getProductId();
 
 		return {
-			rawPrice: ( productId && getPlanRawPrice( state, productId, monthly ) ) || 0,
-			discountedRawPrice: ( productId && getDiscountedRawPrice( state, productId, monthly ) ) || 0,
+			rawPrice: ( productId && getPlanRawPrice( state, productId, returnMonthly ) ) || 0,
+			discountedRawPrice:
+				( productId && getDiscountedRawPrice( state, productId, returnMonthly ) ) || 0,
 			planDiscountedRawPrice:
 				( siteId &&
 					planSlug &&
-					getPlanDiscountedRawPrice( state, siteId, planSlug, { isMonthly: monthly } ) ) ||
+					getPlanDiscountedRawPrice( state, siteId, planSlug, { isMonthly: returnMonthly } ) ) ||
 				0,
 		};
 	} );

@@ -20,7 +20,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const planPrices = usePlanPrices( {
 		planSlug: planName as PlanSlug,
-		monthly: showMonthlyPrice,
+		returnMonthly: showMonthlyPrice,
 	} );
 	const shouldShowDiscountedPrice = Boolean(
 		planPrices.planDiscountedRawPrice || planPrices.discountedRawPrice
