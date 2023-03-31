@@ -185,12 +185,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		}
 
 		if ( isNewsletterFlow( flowName ) ) {
-			return hideFreePlan
-				? __( 'Unlock a powerful bundle of features for your Newsletter.' )
-				: translate(
-						`Unlock a powerful bundle of features for your Newsletter. Or {{link}}start with a free plan{{/link}}.`,
-						{ components: { link: freePlanButton } }
-				  );
+			return;
 		}
 
 		if ( isLinkInBioFlow( flowName ) ) {
