@@ -178,13 +178,16 @@ const PatternAssembler = ( {
 
 	const trackEventContinue = () => {
 		const patterns = getPatterns();
+		const categories = patterns.map( ( { category } ) => category?.name );
+
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.CONTINUE_CLICK, {
 			pattern_types: [ header && 'header', sections.length && 'section', footer && 'footer' ]
 				.filter( Boolean )
 				.join( ',' ),
 			pattern_ids: patterns.map( ( { id } ) => id ).join( ',' ),
 			pattern_names: patterns.map( ( { name } ) => name ).join( ',' ),
-			pattern_categories: patterns.map( ( { category } ) => category?.name ).join( ',' ),
+			pattern_categories: categories.join( ',' ),
+			category_count: categories.length,
 			pattern_count: patterns.length,
 		} );
 		patterns.forEach( ( { id, name, category } ) => {
