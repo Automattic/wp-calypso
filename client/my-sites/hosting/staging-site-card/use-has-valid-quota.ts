@@ -8,7 +8,7 @@ export const useHasValidQuotaQuery = ( siteId: number, options: UseQueryOptions 
 		[ USE_VALID_QUOTA_QUERY_KEY, siteId ],
 		() =>
 			wp.req.get( {
-				path: `/sites/${ siteId }/staging-site/valid-quota`,
+				path: `/sites/${ siteId }/staging-site/validate-quota`,
 				apiNamespace: 'wpcom/v2',
 			} ),
 		{
