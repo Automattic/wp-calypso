@@ -23,6 +23,7 @@ $border-color: #d3dae6;
 .site-logs-table th,
 .site-logs-table td {
 	padding: 0.6em 1em;
+	vertical-align: middle;
 }
 
 .site-logs-table__empty-cell::before {
@@ -40,4 +41,27 @@ $border-color: #d3dae6;
 
 .site-logs-table__skeleton-table-cell {
 	height: 24px;
+}
+
+tr.site-logs-table__table-row-expanded {
+	background: var(--studio-gray-0) !important;
+	td {
+		border-top: none;
+	}
+}
+
+.site-logs-table__expanded-content {
+	padding-left: 30px;
+	font-size: 0.875rem;
+	tr {
+		border: none !important;
+	}
+}
+
+.site-logs-table__expanded-content-info {
+	word-break: break-word;
+	word-wrap: break-word;
+	max-width: 70%;
+	white-space: pre-wrap;
+	display: inline-block;
 }
