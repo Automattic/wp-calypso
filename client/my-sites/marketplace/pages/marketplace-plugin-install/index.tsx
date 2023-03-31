@@ -279,16 +279,19 @@ const MarketplacePluginInstall = ( {
 		}
 	}, [ themeSlug, wpOrgTheme, isThemeActive, selectedSiteSlug ] );
 
-	const steps = useMemo(
-		() => [
+	const steps = useMemo( () => {
+		if ( themeSlug ) {
+			return [ translate( 'Setting up theme installation' ), translate( 'Activating theme' ) ];
+		}
+
+		return [
 			isUploadFlow
 				? translate( 'Uploading plugin' )
 				: translate( 'Setting up plugin installation' ),
 			translate( 'Installing plugin' ),
 			translate( 'Activating plugin' ),
-		],
-		[ isUploadFlow, translate ]
-	);
+		];
+	}, [ themeSlug, isUploadFlow, translate ] );
 	const additionalSteps = useMarketplaceAdditionalSteps();
 
 	const renderError = () => {
