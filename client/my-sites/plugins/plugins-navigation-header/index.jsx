@@ -186,7 +186,7 @@ const PluginsNavigationHeader = ( { navigationHeaderRef, categoryName, category,
 				<UploadPluginButton
 					isMobile={ isMobile }
 					siteSlug={ selectedSite?.slug }
-					hasUploadPlugins={ !!selectedSite  }
+					hasUploadPlugins={ !! selectedSite }
 				/>
 			</div>
 		</FixedNavigationHeader>
