@@ -2,7 +2,6 @@ import { FREE_POST_SETUP_FLOW } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import FreePostSetup from './internals/steps-repository/free-post-setup';
 import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
 
@@ -12,7 +11,12 @@ const freePostSetup: Flow = {
 		return translate( 'Free' );
 	},
 	useSteps() {
-		return [ { slug: 'freePostSetup', component: FreePostSetup } ];
+		return [
+			{
+				slug: 'freePostSetup',
+				component: () => import( './internals/steps-repository/free-post-setup' ),
+			},
+		];
 	},
 
 	useStepNavigation( currentStep, navigate ) {

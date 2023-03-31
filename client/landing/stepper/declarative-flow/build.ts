@@ -6,8 +6,6 @@ import wpcom from 'calypso/lib/wp';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import LaunchPad from './internals/steps-repository/launchpad';
-import Processing from './internals/steps-repository/processing-step';
 import { Flow, ProvidedDependencies } from './internals/types';
 
 const build: Flow = {
@@ -17,8 +15,11 @@ const build: Flow = {
 	},
 	useSteps() {
 		return [
-			{ slug: 'launchpad', component: LaunchPad },
-			{ slug: 'processing', component: Processing },
+			{ slug: 'launchpad', component: () => import( './internals/steps-repository/launchpad' ) },
+			{
+				slug: 'processing',
+				component: () => import( './internals/steps-repository/processing-step' ),
+			},
 		];
 	},
 

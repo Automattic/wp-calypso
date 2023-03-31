@@ -7,8 +7,6 @@ import {
 import { useQuery } from '../hooks/use-query';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import DesignSetup from './internals/steps-repository/design-setup';
-import Processing from './internals/steps-repository/processing-step';
 import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
 
@@ -19,8 +17,14 @@ const updateDesign: Flow = {
 	},
 	useSteps() {
 		return [
-			{ slug: 'designSetup', component: DesignSetup },
-			{ slug: 'processing', component: Processing },
+			{
+				slug: 'designSetup',
+				component: () => import( './internals/steps-repository/design-setup' ),
+			},
+			{
+				slug: 'processing',
+				component: () => import( './internals/steps-repository/processing-step' ),
+			},
 		];
 	},
 

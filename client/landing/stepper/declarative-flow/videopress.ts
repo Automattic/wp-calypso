@@ -5,13 +5,6 @@ import { translate } from 'i18n-calypso';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import './internals/videopress.scss';
-import ChooseADomain from './internals/steps-repository/choose-a-domain';
-import ChooseAPlan from './internals/steps-repository/choose-a-plan';
-import Intro from './internals/steps-repository/intro';
-import Launchpad from './internals/steps-repository/launchpad';
-import ProcessingStep from './internals/steps-repository/processing-step';
-import SiteOptions from './internals/steps-repository/site-options';
-import VideomakerSetup from './internals/steps-repository/videomaker-setup';
 import type { Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
 
@@ -22,13 +15,25 @@ const videopress: Flow = {
 	},
 	useSteps() {
 		return [
-			{ slug: 'intro', component: Intro },
-			{ slug: 'videomakerSetup', component: VideomakerSetup },
-			{ slug: 'options', component: SiteOptions },
-			{ slug: 'chooseADomain', component: ChooseADomain },
-			{ slug: 'chooseAPlan', component: ChooseAPlan },
-			{ slug: 'processing', component: ProcessingStep },
-			{ slug: 'launchpad', component: Launchpad },
+			{ slug: 'intro', component: () => import( './internals/steps-repository/intro' ) },
+			{
+				slug: 'videomakerSetup',
+				component: () => import( './internals/steps-repository/videomaker-setup' ),
+			},
+			{ slug: 'options', component: () => import( './internals/steps-repository/site-options' ) },
+			{
+				slug: 'chooseADomain',
+				component: () => import( './internals/steps-repository/choose-a-domain' ),
+			},
+			{
+				slug: 'chooseAPlan',
+				component: () => import( './internals/steps-repository/choose-a-plan' ),
+			},
+			{
+				slug: 'processing',
+				component: () => import( './internals/steps-repository/processing-step' ),
+			},
+			{ slug: 'launchpad', component: () => import( './internals/steps-repository/launchpad' ) },
 		];
 	},
 

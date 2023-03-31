@@ -13,11 +13,6 @@ import {
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import DesignSetup from './internals/steps-repository/design-setup';
-import FreeSetup from './internals/steps-repository/free-setup';
-import LaunchPad from './internals/steps-repository/launchpad';
-import Processing from './internals/steps-repository/processing-step';
-import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import {
 	AssertConditionResult,
 	AssertConditionState,
@@ -39,11 +34,20 @@ const free: Flow = {
 		}, [] );
 
 		return [
-			{ slug: 'freeSetup', component: FreeSetup },
-			{ slug: 'siteCreationStep', component: SiteCreationStep },
-			{ slug: 'processing', component: Processing },
-			{ slug: 'launchpad', component: LaunchPad },
-			{ slug: 'designSetup', component: DesignSetup },
+			{ slug: 'freeSetup', component: () => import( './internals/steps-repository/free-setup' ) },
+			{
+				slug: 'siteCreationStep',
+				component: () => import( './internals/steps-repository/site-creation-step' ),
+			},
+			{
+				slug: 'processing',
+				component: () => import( './internals/steps-repository/processing-step' ),
+			},
+			{ slug: 'launchpad', component: () => import( './internals/steps-repository/launchpad' ) },
+			{
+				slug: 'designSetup',
+				component: () => import( './internals/steps-repository/design-setup' ),
+			},
 		];
 	},
 

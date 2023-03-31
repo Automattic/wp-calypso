@@ -6,7 +6,7 @@ import {
 } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
-import { useEffect, useState, useCallback, Suspense } from 'react';
+import { lazy, useEffect, useState, useCallback, Suspense } from 'react';
 import Modal from 'react-modal';
 import { Switch, Route, Redirect, generatePath, useHistory, useLocation } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -141,13 +141,16 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				throw new Error( assertCondition.message ?? 'An error has occurred.' );
 		}
 
+		const Component = lazy( step.component );
+
 		return (
-			<step.component
+			<Component
 				navigation={ stepNavigation }
 				flow={ flow.name }
 				variantSlug={ flow.variantSlug }
 				stepName={ step.slug }
 				data={ stepData }
+				{ ...step.additionalComponentProps }
 			/>
 		);
 	};

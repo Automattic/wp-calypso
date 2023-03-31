@@ -13,13 +13,6 @@ import {
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import DomainsStep from './internals/steps-repository/domains';
-import LaunchPad from './internals/steps-repository/launchpad';
-import LinkInBioSetup from './internals/steps-repository/link-in-bio-setup';
-import PatternsStep from './internals/steps-repository/patterns';
-import PlansStep from './internals/steps-repository/plans';
-import Processing from './internals/steps-repository/processing-step';
-import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import type { Flow, ProvidedDependencies } from './internals/types';
 import type { UserSelect } from '@automattic/data-stores';
 
@@ -30,13 +23,22 @@ const linkInBio: Flow = {
 	},
 	useSteps() {
 		return [
-			{ slug: 'domains', component: DomainsStep },
-			{ slug: 'patterns', component: PatternsStep },
-			{ slug: 'linkInBioSetup', component: LinkInBioSetup },
-			{ slug: 'plans', component: PlansStep },
-			{ slug: 'siteCreationStep', component: SiteCreationStep },
-			{ slug: 'processing', component: Processing },
-			{ slug: 'launchpad', component: LaunchPad },
+			{ slug: 'domains', component: () => import( './internals/steps-repository/domains' ) },
+			{ slug: 'patterns', component: () => import( './internals/steps-repository/patterns' ) },
+			{
+				slug: 'linkInBioSetup',
+				component: () => import( './internals/steps-repository/link-in-bio-setup' ),
+			},
+			{ slug: 'plans', component: () => import( './internals/steps-repository/plans' ) },
+			{
+				slug: 'siteCreationStep',
+				component: () => import( './internals/steps-repository/site-creation-step' ),
+			},
+			{
+				slug: 'processing',
+				component: () => import( './internals/steps-repository/processing-step' ),
+			},
+			{ slug: 'launchpad', component: () => import( './internals/steps-repository/launchpad' ) },
 		];
 	},
 

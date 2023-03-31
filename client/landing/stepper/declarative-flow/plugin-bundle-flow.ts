@@ -11,9 +11,8 @@ import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import GetCurrentThemeSoftwareSets from './internals/steps-repository/get-current-theme-software-sets';
 import { redirect } from './internals/steps-repository/import/util';
-import { ProcessingResult } from './internals/steps-repository/processing-step';
+import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import {
 	AssertConditionResult,
 	AssertConditionState,
@@ -43,7 +42,7 @@ const pluginBundleFlow: Flow = {
 		const steps = [
 			{
 				slug: 'getCurrentThemeSoftwareSets',
-				component: GetCurrentThemeSoftwareSets,
+				component: () => import( './internals/steps-repository/get-current-theme-software-sets' ),
 			},
 		];
 

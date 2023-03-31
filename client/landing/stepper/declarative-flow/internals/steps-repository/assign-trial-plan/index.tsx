@@ -8,15 +8,11 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
+import { AssignTrialResult } from './constants';
 import type { Step } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 
 import './styles.scss';
-
-export enum AssignTrialResult {
-	SUCCESS = 'success',
-	FAILURE = 'failure',
-}
 
 const AssignTrialPlanStep: Step = function AssignTrialPlanStep( { navigation, data, flow } ) {
 	const { submit } = navigation;

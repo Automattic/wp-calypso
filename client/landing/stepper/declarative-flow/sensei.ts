@@ -4,12 +4,6 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
-import ProcessingStep from './internals/steps-repository/processing-step';
-import SenseiDomain from './internals/steps-repository/sensei-domain';
-import SenseiLaunch from './internals/steps-repository/sensei-launch';
-import SenseiPlan from './internals/steps-repository/sensei-plan';
-import SenseiPurpose from './internals/steps-repository/sensei-purpose';
-import SenseiSetup from './internals/steps-repository/sensei-setup';
 import { AssertConditionState, Flow } from './internals/types';
 import type { UserSelect } from '@automattic/data-stores';
 import './internals/sensei.scss';
@@ -21,12 +15,27 @@ const sensei: Flow = {
 	},
 	useSteps() {
 		return [
-			{ slug: 'senseiSetup', component: SenseiSetup },
-			{ slug: 'senseiDomain', component: SenseiDomain },
-			{ slug: 'senseiPlan', component: SenseiPlan },
-			{ slug: 'senseiPurpose', component: SenseiPurpose },
-			{ slug: 'senseiLaunch', component: SenseiLaunch },
-			{ slug: 'processing', component: ProcessingStep },
+			{
+				slug: 'senseiSetup',
+				component: () => import( './internals/steps-repository/sensei-setup' ),
+			},
+			{
+				slug: 'senseiDomain',
+				component: () => import( './internals/steps-repository/sensei-domain' ),
+			},
+			{ slug: 'senseiPlan', component: () => import( './internals/steps-repository/sensei-plan' ) },
+			{
+				slug: 'senseiPurpose',
+				component: () => import( './internals/steps-repository/sensei-purpose' ),
+			},
+			{
+				slug: 'senseiLaunch',
+				component: () => import( './internals/steps-repository/sensei-launch' ),
+			},
+			{
+				slug: 'processing',
+				component: () => import( './internals/steps-repository/processing-step' ),
+			},
 		];
 	},
 

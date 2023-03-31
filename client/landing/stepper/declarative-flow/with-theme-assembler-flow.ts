@@ -7,8 +7,6 @@ import { useQuery } from '../hooks/use-query';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import PatternAssembler from './internals/steps-repository/pattern-assembler/lazy';
-import Processing from './internals/steps-repository/processing-step';
 import { Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { Design } from '@automattic/design-picker/src/types';
@@ -33,8 +31,14 @@ const withThemeAssemblerFlow: Flow = {
 
 	useSteps() {
 		return [
-			{ slug: 'patternAssembler', component: PatternAssembler },
-			{ slug: 'processing', component: Processing },
+			{
+				slug: 'patternAssembler',
+				component: () => import( './internals/steps-repository/pattern-assembler/lazy' ),
+			},
+			{
+				slug: 'processing',
+				component: () => import( './internals/steps-repository/processing-step' ),
+			},
 		];
 	},
 
