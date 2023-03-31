@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { getPlanRawPrice, getDiscountedRawPrice } from 'calypso/state/plans/selectors';
 import { getPlanDiscountedRawPrice } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import type { IAppState } from 'calypso/state/types';
 
 export interface PlanPrices {
 	rawPrice: number;
@@ -16,7 +17,7 @@ interface Props {
 }
 
 const usePlanPrices = ( { planSlug, returnMonthly }: Props ): PlanPrices => {
-	return useSelector( ( state ) => {
+	return useSelector( ( state: IAppState ) => {
 		const siteId = getSelectedSiteId( state ) ?? undefined;
 		const plan = getPlan( planSlug );
 		const productId = plan?.getProductId();
