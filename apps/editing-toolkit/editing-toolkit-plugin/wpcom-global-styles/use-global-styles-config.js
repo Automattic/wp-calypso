@@ -18,14 +18,14 @@ export function useGlobalStylesConfig() {
 			settings: globalStylesRecord?.settings ?? {},
 		};
 
-		// Do not show the notice if the use is trying to save the default styles.
-		const isVisible =
+		// Determine if the global Styles are in use on the current site.
+		const globalStylesInUse = !! (
 			Object.keys( globalStylesConfig.styles ).length ||
-			Object.keys( globalStylesConfig.settings ).length;
+			Object.keys( globalStylesConfig.settings ).length
+		);
 
 		return {
-			globalStylesConfig,
-			isVisible,
+			globalStylesInUse,
 			siteChanges: __experimentalGetDirtyEntityRecords ? __experimentalGetDirtyEntityRecords() : [],
 		};
 	}, [] );

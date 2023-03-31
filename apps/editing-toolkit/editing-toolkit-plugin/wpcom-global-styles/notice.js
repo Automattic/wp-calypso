@@ -4,11 +4,14 @@ import { useSelect } from '@wordpress/data';
 import { createInterpolateElement, render, useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import './notice.scss';
+import {
+	recordUpgradePrePublishNoticeClick,
+	recordUpgradeNoticePrePublishShow,
+} from './tracks-events';
 import { useGlobalStylesConfig } from './use-global-styles-config';
-import { recordUpgradeNoticeClick, recordUpgradeNoticeShow } from './utils';
 
 function GlobalStylesNoticeComponent() {
-	const { siteChanges, isVisible } = useGlobalStylesConfig();
+	const { siteChanges, globalStylesInUse } = useGlobalStylesConfig();
 
 	// Closes the sidebar if there are no more changes to be saved.
 	useEffect( () => {
@@ -26,17 +29,21 @@ function GlobalStylesNoticeComponent() {
 	}, [ siteChanges ] );
 
 	useEffect( () => {
-		if ( isVisible ) {
-			recordUpgradeNoticeShow( 'site-editor' );
+		if ( globalStylesInUse ) {
+			recordUpgradeNoticePrePublishShow();
 		}
-	}, [ isVisible ] );
+	}, [ globalStylesInUse ] );
 
-	if ( ! isVisible ) {
+	if ( ! globalStylesInUse ) {
 		return null;
 	}
 
 	return (
-		<Notice status="warning" isDismissible={ false } className="wpcom-global-styles-notice">
+		<Notice
+			status="warning"
+			isDismissible={ false }
+			className="wpcom-global-styles-notice notice-margin"
+		>
 			{ createInterpolateElement(
 				__(
 					'Your changes include customized styles that will only be visible once you <a>upgrade to a Premium plan</a>.',
@@ -47,7 +54,7 @@ function GlobalStylesNoticeComponent() {
 						<ExternalLink
 							href={ wpcomGlobalStyles.upgradeUrl }
 							target="_blank"
-							onClick={ () => recordUpgradeNoticeClick( 'site-editor' ) }
+							onClick={ () => recordUpgradePrePublishNoticeClick() }
 						/>
 					),
 				}

@@ -126,6 +126,7 @@ function wpcom_global_styles_enqueue_block_editor_assets() {
 		array(
 			'assetsUrl'  => plugins_url( 'dist/', __FILE__ ),
 			'upgradeUrl' => "$calypso_domain/plans/$site_slug?plan=value_bundle&feature=advanced-design-customization",
+			'blogId'     => get_current_blog_id(),
 		)
 	);
 	wp_enqueue_style(
