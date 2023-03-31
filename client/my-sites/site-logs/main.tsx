@@ -133,12 +133,12 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 
 	const handleDateTimeChange = ( startTime: Moment, endTime: Moment ) => {
 		// check for "clear" pressed
-		if ( ! startTime.isValid() ) {
-			startTime = getLatestDateRange().startTime;
+		if ( ! startTime.isValid() || ! endTime.isValid() ) {
+			const latest = getLatestDateRange();
+			startTime = latest.startTime;
+			endTime = latest.endTime;
 		}
-		if ( ! endTime.isValid() ) {
-			endTime = getLatestDateRange().endTime;
-		}
+
 		setDateRange( { startTime, endTime } );
 		setAutoRefresh( false );
 		updateDateRangeQueryParam( { startTime, endTime } );
