@@ -1,3 +1,4 @@
+import { useTranslate } from 'i18n-calypso';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import Separator from 'calypso/components/popover-menu/separator';
 import SettingsPopover from '../settings-popover';
@@ -15,14 +16,22 @@ const SiteSettings = ( {
 	deliveryFrequency,
 	onDeliveryFrequencyChange,
 	onUnfollow,
-}: SiteSettingsProps ) => (
-	<SettingsPopover>
-		<PopoverMenuItem itemComponent="div">
-			<DeliveryFrequencyInput value={ deliveryFrequency } onChange={ onDeliveryFrequencyChange } />
-		</PopoverMenuItem>
-		<Separator />
-		<UnfollowSiteButton onUnfollow={ onUnfollow } />
-	</SettingsPopover>
-);
+}: SiteSettingsProps ) => {
+	const translate = useTranslate();
+
+	return (
+		<SettingsPopover>
+			<PopoverMenuItem itemComponent="div">
+				<p className="settings-popover__item-label">{ translate( 'Email me new posts' ) }</p>
+				<DeliveryFrequencyInput
+					value={ deliveryFrequency }
+					onChange={ onDeliveryFrequencyChange }
+				/>
+			</PopoverMenuItem>
+			<Separator />
+			<UnfollowSiteButton onUnfollow={ onUnfollow } />
+		</SettingsPopover>
+	);
+};
 
 export default SiteSettings;

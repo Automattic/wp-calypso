@@ -51,9 +51,21 @@
 		fill: $studio-gray-50;
 	}
 
+	.settings-popover__item-label,
+	.settings-popover__item-button {
+		font-size: $font-body-small;
+		line-height: $font-title-small;
+	}
+
+	.settings-popover__item-label {
+		margin-bottom: 8px;
+		text-align: left;
+	}
+
 	.segmented-control__link {
 		padding-top: 10px;
 		padding-bottom: 10px;
+		line-height: $font-body;
 	}
 }
 
