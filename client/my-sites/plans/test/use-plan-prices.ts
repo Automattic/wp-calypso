@@ -27,7 +27,7 @@ import usePlanPrices from '../hooks/use-plan-prices';
 describe( 'usePlanPrices', () => {
 	const defaultProps = {
 		planSlug: PLAN_PREMIUM,
-		monthly: true,
+		returnMonthly: true,
 	} as const;
 
 	beforeEach( () => {

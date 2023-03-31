@@ -12,10 +12,10 @@ export interface PlanPrices {
 
 interface Props {
 	planSlug: PlanSlug;
-	returnMonthly?: boolean; // defaults to true
+	returnMonthly: boolean; // defaults to true
 }
 
-const usePlanPrices = ( { planSlug, returnMonthly = true }: Props ): PlanPrices => {
+const usePlanPrices = ( { planSlug, returnMonthly }: Props ): PlanPrices => {
 	return useSelector( ( state ) => {
 		const siteId = getSelectedSiteId( state ) ?? undefined;
 		const plan = getPlan( planSlug );
