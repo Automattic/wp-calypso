@@ -14,7 +14,6 @@ import AsyncLoad from 'calypso/components/async-load';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
 import { createRecordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import { setActiveTheme } from 'calypso/state/themes/actions';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
@@ -119,9 +118,6 @@ const PatternAssembler = ( {
 		() => [ colorVariation, fontVariation ].filter( Boolean ) as GlobalStylesObject[],
 		[ colorVariation, fontVariation ]
 	);
-
-	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles();
-	const shouldUnlockGlobalStyles = shouldLimitGlobalStyles && selectedVariations.length > 0;
 
 	const syncedGlobalStylesUserConfig = useSyncGlobalStylesUserConfig(
 		selectedVariations,
@@ -365,12 +361,17 @@ const PatternAssembler = ( {
 		submit?.();
 	};
 
-	const { openModal: openGlobalStylesUpgradeModal, ...globalStylesUpgradeModalProps } =
-		useGlobalStylesUpgradeModal( {
-			onCheckout: snapshotRecipe,
-			onSubmit,
-			recordTracksEvent,
-		} );
+	const {
+		isDismissed: isDismissedGlobalStylesUpgradeModal,
+		shouldUnlockGlobalStyles,
+		openModal: openGlobalStylesUpgradeModal,
+		globalStylesUpgradeModalProps,
+	} = useGlobalStylesUpgradeModal( {
+		hasSelectedColorVariation: !! colorVariation,
+		hasSelectedFontVariation: !! fontVariation,
+		onCheckout: snapshotRecipe,
+		recordTracksEvent,
+	} );
 
 	const onPatternSelectorBack = ( type: string ) => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_SELECT_BACK_CLICK, {
@@ -391,7 +392,7 @@ const PatternAssembler = ( {
 	const onContinueClick = () => {
 		trackEventContinue();
 
-		if ( shouldLimitGlobalStyles && selectedVariations.length > 0 ) {
+		if ( shouldUnlockGlobalStyles && ! isDismissedGlobalStylesUpgradeModal ) {
 			openGlobalStylesUpgradeModal();
 			return;
 		}
@@ -478,6 +479,7 @@ const PatternAssembler = ( {
 				<NavigatorScreen path="/">
 					<ScreenMain
 						shouldUnlockGlobalStyles={ shouldUnlockGlobalStyles }
+						isDismissedGlobalStylesUpgradeModal={ isDismissedGlobalStylesUpgradeModal }
 						onSelect={ onMainItemSelect }
 						onContinueClick={ onContinueClick }
 					/>
