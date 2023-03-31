@@ -3,6 +3,7 @@ import { keyBy } from '@automattic/js-utils';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { ONBOARD_STORE } from '../../../../../stores';
+import { decodePatternId } from '../utils';
 import type { Pattern, Category } from '../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { Design } from '@automattic/design-picker/src/types';
@@ -66,25 +67,29 @@ const useRecipe = ( siteId = 0, patterns: Pattern[], categories: Category[] ) =>
 
 		const patternsById = keyBy( patterns, 'id' );
 		const categoriesByName = keyBy( categories, 'name' );
+		const selectedHeader = patternsById[ decodePatternId( header_pattern_ids[ 0 ] ) ];
+		const selectedFooter = patternsById[ decodePatternId( footer_pattern_ids[ 0 ] ) ];
 
-		if ( patternsById[ header_pattern_ids[ 0 ] ] ) {
-			setHeader( patternsById[ header_pattern_ids[ 0 ] ] );
+		if ( selectedHeader ) {
+			setHeader( selectedHeader );
 		}
 
-		if ( patternsById[ footer_pattern_ids[ 0 ] ] ) {
-			setFooter( patternsById[ footer_pattern_ids[ 0 ] ] );
+		if ( selectedFooter ) {
+			setFooter( selectedFooter );
 		}
 
 		setSections(
-			pattern_ids.map( ( patternId: string | number ) => {
-				const pattern = patternsById[ patternId ];
-				const category = categoriesByName[ pattern.categories[ 0 ] ];
-				return {
-					...pattern,
-					key: generateKey( pattern ),
-					category,
-				};
-			} )
+			pattern_ids
+				.map( ( patternId: string | number ) => patternsById[ decodePatternId( patternId ) ] )
+				.filter( Boolean )
+				.map( ( pattern: Pattern ) => {
+					const category = categoriesByName[ pattern?.categories[ 0 ] ];
+					return {
+						...pattern,
+						key: generateKey( pattern ),
+						category,
+					};
+				} )
 		);
 	}, [ patterns.length, categories ] );
 
