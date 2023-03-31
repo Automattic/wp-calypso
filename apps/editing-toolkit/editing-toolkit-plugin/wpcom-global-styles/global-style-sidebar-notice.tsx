@@ -34,6 +34,12 @@ export default function GlobalStylesSidebarNotice(): JSX.Element {
 
 	return (
 		<Fill name="ComplementaryArea/core/edit-site">
+			{ /*
+			The fragment is needed in order to avoid a forceUpdate done by the slot-fill library.
+
+			When a forceUpdate is done, the local state of the components is cleared, which means that when the nudge is displayed/removed,
+			the state of GS is cleared, disrupting the UX, since the user will be redirected to the main GS root screen.
+			*/ }
 			<>
 				{ /*
 					We'll need to do the condition here because if we are doing an early return, the fill will be introduced at the bottom of the page, which means some additional CSS magic needs to be done.
