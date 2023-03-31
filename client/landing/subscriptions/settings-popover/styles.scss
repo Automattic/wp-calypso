@@ -3,10 +3,6 @@
 .settings-popover {
 	width: 305px;
 
-	.popover__arrow {
-		display: none;
-	}
-
 	.popover__inner {
 		border: none;
 		box-shadow: 0 3px 8px rgba($studio-black, 0.12), 0 3px 1px rgba($studio-black, 0.04);
@@ -38,6 +34,8 @@
 		display: flex;
 		align-items: center;
 		gap: 16px;
+		width: 100%;
+		cursor: pointer;
 
 		&:hover,
 		&:focus {
@@ -51,5 +49,21 @@
 
 	.settings-popover__item-icon {
 		fill: $studio-gray-50;
+	}
+}
+
+.settings-popover__container {
+	height: 24px;
+}
+
+.settings-popover__toggle {
+	cursor: pointer;
+
+	.gridicons-ellipsis {
+		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+	}
+
+	&.is-popover-visible .gridicons-ellipsis {
+		transform: rotate(90deg);
 	}
 }
