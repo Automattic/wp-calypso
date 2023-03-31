@@ -53,8 +53,7 @@ describe( DataHelper.createSuiteTitle( 'Site Editor Smoke Test' ), function () {
 
 		await fullSiteEditorPage.prepareForInteraction();
 
-		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Back' );
-		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Back' );
+		await fullSiteEditorPage.ensureNavigationTopLevel();
 		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Templates' );
 		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Page' );
 		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Edit' );

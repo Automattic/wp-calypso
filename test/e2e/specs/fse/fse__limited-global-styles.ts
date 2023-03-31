@@ -24,7 +24,11 @@ describe( DataHelper.createSuiteTitle( 'Site Editor: Limited Global Styles' ), f
 	it( 'Visit the site editor', async function () {
 		await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
 		await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
-		await fullSiteEditorPage.closeNavSidebar();
+
+		await fullSiteEditorPage.ensureNavigationTopLevel();
+		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Templates' );
+		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Page' );
+		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Edit' );
 	} );
 
 	it( 'Open site styles', async function () {

@@ -175,7 +175,14 @@ export class FullSiteEditorPage {
 	 * Clicks on a button with the exact name.
 	 */
 	async clickFullSiteNavigatorButton( text: string ): Promise< void > {
-		await this.editor.getByRole( 'button', { name: text, exact: true } ).click();
+		await this.fullSiteEditorNavSidebarComponent.clickNavButtonByExactText( text );
+	}
+
+	/**
+	 * Ensures the nav sidebar is at the top level ("Design")
+	 */
+	async ensureNavigationTopLevel(): Promise< void > {
+		await this.fullSiteEditorNavSidebarComponent.ensureNavigationTopLevel();
 	}
 
 	//#endregion
@@ -406,9 +413,15 @@ export class FullSiteEditorPage {
 	}
 
 	/**
-	 * Close the navigation sidebar. To do this, you actually just click on the editor canvas!
+	 * Close the navigation sidebar. To do this, you actually just click on the editor canvas! This only works on desktop.
+	 * On mobile, there is not standardized way to close the sidebar.
 	 */
 	async closeNavSidebar(): Promise< void > {
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			throw new Error(
+				'There is no standardized way to close the site editor navigation sidebar on mobile. Navigate to a template or template part instead.'
+			);
+		}
 		const openButton = this.editor.locator( 'button[aria-label="Open Navigation Sidebar"]' );
 
 		await Promise.race( [ openButton.waitFor(), this.editorCanvas.click() ] );
