@@ -1,5 +1,5 @@
 import { Page } from 'playwright';
-import { ElementHelper } from '../..';
+import { EditorPage, ElementHelper } from '../..';
 
 /**
  * Represents the Revisions page used on Atomic sites.
@@ -66,8 +66,9 @@ export class RevisionsPage {
 
 		await restoreButton.click();
 
-		// If the spec is using RevisionsPage, this implies the
-		// account is using WP-Admin.
-		await this.page.waitForURL( /wp-admin\/post.php/, { timeout: 20 * 1000 } );
+		// Wait for the editor to load again. Since the editor is a slow load and render, we use the
+		// editor POM wait function instead of just waiting on a URL.
+		const editorPage = new EditorPage( this.page );
+		await editorPage.waitUntilLoaded();
 	}
 }
