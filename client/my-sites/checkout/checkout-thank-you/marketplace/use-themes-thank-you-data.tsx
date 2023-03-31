@@ -15,6 +15,12 @@ export function useThemesThankYouData( themeSlugs: string[] ): ThankYouData {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
+	// texts
+	const title = translate( 'Congrats on your new theme!' );
+	const subtitle = translate(
+		"Your new theme is a reflection of your unique style and personality, and we're thrilled to see it come to life."
+	);
+
 	const dotComThemes = useSelector( ( state ) => getThemes( state, 'wpcom', themeSlugs ) );
 	const dotOrgThemes = useSelector( ( state ) => getThemes( state, 'wporg', themeSlugs ) );
 	const themesList = useMemo(
@@ -60,5 +66,5 @@ export function useThemesThankYouData( themeSlugs: string[] ): ThankYouData {
 		[ translate ]
 	);
 
-	return [ themesSection, allThemesFetched, goBackSection, thankyouSteps ];
+	return [ themesSection, allThemesFetched, goBackSection, title, subtitle, thankyouSteps ];
 }

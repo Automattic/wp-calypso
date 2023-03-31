@@ -275,7 +275,7 @@ export default function DIFMLanding( {
 		: getPlan( PLAN_PREMIUM )?.getTitle();
 
 	const headerText = translate(
-		'Hire a professional to set up your site for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}{{sup}}*{{/sup}}',
+		'Let us build your site for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}{{sup}}*{{/sup}}',
 		{
 			components: {
 				PriceWrapper: ! hasPriceDataLoaded ? <Placeholder /> : <span />,
@@ -369,7 +369,7 @@ export default function DIFMLanding( {
 					</p>
 					<CTASectionWrapper>
 						<NextButton onClick={ onSubmit } isPrimary={ true }>
-							{ translate( 'Hire a professional' ) }
+							{ translate( 'Get started' ) }
 						</NextButton>
 					</CTASectionWrapper>
 				</ContentSection>
@@ -408,21 +408,11 @@ export default function DIFMLanding( {
 						<FoldableFAQ id="faq-2" question={ translate( 'How do I get started?' ) }>
 							<ul>
 								<li>
-									{ translate( 'Click {{a}}Hire a professional{{/a}} to begin.', {
+									{ translate( 'Click {{a}}Get started{{/a}} to begin.', {
 										components: {
 											a: <LinkButton isLink={ true } onClick={ onSubmit } />,
 										},
 									} ) }
-								</li>
-								<li>
-									{ translate(
-										'Choose {{b}}New site{{/b}} to begin a new site or {{b}}Existing WordPress.com{{/b}} site if you’d like to use an existing site on your account. (Note that all existing website content will be deleted from the site so we can start fresh).',
-										{
-											components: {
-												b: <b />,
-											},
-										}
-									) }
 								</li>
 								<li>
 									{ translate(

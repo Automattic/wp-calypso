@@ -1,6 +1,5 @@
 import { ConfettiAnimation } from '@automattic/components';
 import { ThemeProvider, Global, css } from '@emotion/react';
-import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { ThankYou } from 'calypso/components/thank-you';
@@ -15,6 +14,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { MarketplaceGoBackSection } from './marketplace-go-back-section';
+import { usePageTexts } from './use-page-texts';
 import { usePluginsThankYouData } from './use-plugins-thank-you-data';
 import { useThankYouFoooter } from './use-thank-you-footer';
 import { useThankYouSteps } from './use-thank-you-steps';
@@ -30,19 +30,40 @@ const MarketplaceThankYou = ( {
 	themeSlugs: Array< string >;
 } ) => {
 	const dispatch = useDispatch();
-	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const isRequestingPlugins = useSelector( ( state ) => isRequesting( state, siteId ) );
 
 	const defaultThankYouFooter = useThankYouFoooter( pluginSlugs, themeSlugs );
 
-	const [ pluginsSection, allPluginsFetched, pluginsGoBackSection, pluginsProgressbarSteps ] =
-		usePluginsThankYouData( pluginSlugs );
-	const [ themesSection, allThemesFetched, themesGoBackSection, themesProgressbarSteps ] =
-		useThemesThankYouData( themeSlugs );
+	const [
+		pluginsSection,
+		allPluginsFetched,
+		pluginsGoBackSection,
+		pluginTitle,
+		pluginSubtitle,
+		pluginsProgressbarSteps,
+	] = usePluginsThankYouData( pluginSlugs );
+	const [
+		themesSection,
+		allThemesFetched,
+		themesGoBackSection,
+		themeTitle,
+		themeSubtitle,
+		themesProgressbarSteps,
+	] = useThemesThankYouData( themeSlugs );
+
 	const [ hasPlugins, hasThemes ] = [ pluginSlugs, themeSlugs ].map(
 		( slugs ) => slugs.length !== 0
 	);
+
+	const [ title, subtitle ] = usePageTexts( {
+		pluginSlugs,
+		themeSlugs,
+		pluginTitle,
+		pluginSubtitle,
+		themeTitle,
+		themeSubtitle,
+	} );
 
 	const areAllProductsFetched = allPluginsFetched && allThemesFetched;
 
@@ -150,10 +171,8 @@ const MarketplaceThankYou = ( {
 						containerClassName="marketplace-thank-you"
 						sections={ sections }
 						showSupportSection={ false }
-						thankYouTitle={ translate( "Congrats on your site's new superpowers!" ) }
-						thankYouSubtitle={ translate(
-							"Now you're really getting the most out of WordPress. Dig in and explore more of our favorite plugins."
-						) }
+						thankYouTitle={ title }
+						thankYouSubtitle={ subtitle }
 						headerBackgroundColor="#fff"
 						headerTextColor="#000"
 					/>

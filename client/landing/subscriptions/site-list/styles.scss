@@ -68,6 +68,15 @@ $max-list-width: 1300px;
 			color: $studio-gray-60;
 		}
 
+		.actions {
+			flex-basis: 36px;
+			flex-grow: initial;
+
+			.gridicon {
+				fill: $studio-gray-50;
+			}
+		}
+
 		&:last-child {
 			border-bottom: none;
 		}

@@ -1,10 +1,10 @@
 @import "../style";
 .subscribers {
 	.add-subscriber__title-container {
-		margin-top: 25px;
+		margin: 20px 0 40px 0 !important;
 
-		@include break-medium {
-			margin-top: 36px;
+		@include break-small {
+			margin: 36px auto 58px auto !important;
 		}
 	}
 	.step-container {

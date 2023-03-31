@@ -541,6 +541,12 @@ const sections = [
 		group: 'jetpack-cloud',
 	},
 	{
+		name: 'jetpack-cloud-golden-token',
+		paths: [ '/golden-token' ],
+		module: 'calypso/jetpack-cloud/sections/golden-token',
+		group: 'jetpack-cloud',
+	},
+	{
 		name: 'jetpack-social',
 		paths: [ '/jetpack-social' ],
 		module: 'calypso/jetpack-cloud/sections/jetpack-social',

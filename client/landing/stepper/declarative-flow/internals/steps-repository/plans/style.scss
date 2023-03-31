@@ -6,15 +6,11 @@
 		padding: 0;
 
 		.step-wrapper__header {
-			margin: 9px 20px;
-
-			@include break-large {
-				margin: 8px 20px;
-			}
 
 			.formatted-header {
+				margin: 20px 0 40px 0;
 				@include break-small {
-					margin-top: 28px;
+					margin: 36px 0 58px 0;
 				}
 
 				h1.formatted-header__title {

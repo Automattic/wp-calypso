@@ -4,7 +4,7 @@ import { callApi } from '../helpers';
 import { useIsLoggedIn } from '../hooks';
 import type { SubscriptionManagerUserSettings, EmailSettingsAPIResponse } from '../types';
 
-const useSubscriptionManagerUserSettingsMutation = () => {
+const useUserSettingsMutation = () => {
 	const isLoggedIn = useIsLoggedIn();
 	const queryClient = useQueryClient();
 	return useMutation< SubscriptionManagerUserSettings, Error, SubscriptionManagerUserSettings >(
@@ -36,4 +36,4 @@ const useSubscriptionManagerUserSettingsMutation = () => {
 	);
 };
 
-export { useSubscriptionManagerUserSettingsMutation };
+export default useUserSettingsMutation;

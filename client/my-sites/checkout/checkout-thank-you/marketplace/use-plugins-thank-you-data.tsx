@@ -29,6 +29,12 @@ export function usePluginsThankYouData( pluginSlugs: string[] ): ThankYouData {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
+	// texts
+	const title = translate( "Congrats on your site's new superpowers!" );
+	const subtitle = translate(
+		"Now you're really getting the most out of WordPress. Dig in and explore more of our favorite plugins."
+	);
+
 	// retrieve WPCom plugin data
 	const wpComPluginsDataResults = useWPCOMPlugins( pluginSlugs );
 	const wpComPluginsData: Array< any > = wpComPluginsDataResults.map(
@@ -194,7 +200,7 @@ export function usePluginsThankYouData( pluginSlugs: string[] ): ThankYouData {
 		[ translate ]
 	);
 
-	return [ pluginsSection, allPluginsFetched, goBackSection, thankyouSteps ];
+	return [ pluginsSection, allPluginsFetched, goBackSection, title, subtitle, thankyouSteps ];
 }
 
 type Plugin = {

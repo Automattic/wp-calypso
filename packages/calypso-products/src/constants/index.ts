@@ -1,3 +1,4 @@
+export * from './akismet';
 export * from './domain';
 export * from './features';
 export * from './cancellation-features';
