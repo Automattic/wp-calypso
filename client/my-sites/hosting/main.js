@@ -177,7 +177,6 @@ class Hosting extends Component {
 			const isGithubIntegrationEnabled = isAutomatticTeamMember( teams );
 			const WrapperComponent = isDisabled || isTransferring ? FeatureExample : Fragment;
 			const isStagingSiteEnabled = isEnabled( 'yolo/staging-sites-i1' );
-			const sitePlanSlug = getSitePlanSlug( state, siteId );
 
 			return (
 				<>
@@ -192,9 +191,11 @@ class Hosting extends Component {
 							<Column type="main" className="hosting__main-layout-col">
 								<SFTPCard disabled={ isDisabled } />
 								<PhpMyAdminCard disabled={ isDisabled } />
-								{ isStagingSiteEnabled && ! isWpcomStagingSite && ! isProPlan( sitePlanSlug ) && (
-									<StagingSiteCard disabled={ isDisabled } />
-								) }
+								{ isStagingSiteEnabled &&
+									! isWpcomStagingSite &&
+									! isProPlan( this.props.sitePlanSlug ) && (
+										<StagingSiteCard disabled={ isDisabled } />
+									) }
 								{ isGithubIntegrationEnabled && <GitHubCard /> }
 								<WebServerSettingsCard disabled={ isDisabled } />
 								<RestorePlanSoftwareCard disabled={ isDisabled } />
@@ -239,6 +240,7 @@ export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const hasSftpFeature = siteHasFeature( state, siteId, FEATURE_SFTP );
+		const sitePlanSlug = getSitePlanSlug( state, siteId );
 
 		return {
 			teams: getReaderTeams( state ),
@@ -251,6 +253,7 @@ export default connect(
 			siteSlug: getSelectedSiteSlug( state ),
 			siteId,
 			isWpcomStagingSite: isSiteWpcomStaging( state, siteId ),
+			sitePlanSlug,
 		};
 	},
 	{
