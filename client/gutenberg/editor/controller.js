@@ -294,17 +294,20 @@ export const exitPost = ( context, next ) => {
  * @returns {*}            Whatever the next callback returns.
  */
 export const redirectSiteEditor = ( context, next ) => {
-	// bail if the config for this is not enabled.
-	if ( ! isEnabled( 'block-editor/un-iframed-site-editor' ) ) {
-		return next();
-	}
-
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
-	// We aren't using `getSiteEditorUrl` because it still thinks we should gutenframe the Site Editor.
-	const siteAdminUrl = getSiteAdminUrl( state, siteId );
-	let siteEditorUrl = `${ siteAdminUrl }site-editor.php`;
-	// Helps the Site Editor maintain Calypso environment context.
-	siteEditorUrl = addQueryArgs( { calypso_origin: location.origin }, siteEditorUrl );
-	return location.assign( siteEditorUrl );
+	const isJetpack = isJetpackSite( state, siteId );
+	const configEnabled = isEnabled( 'block-editor/un-iframed-site-editor' );
+
+	// Ditch the iframe for all Jetpack sites, or if the config is enabled.
+	if ( isJetpack || configEnabled ) {
+		// We aren't using `getSiteEditorUrl` because it still thinks we should gutenframe the Site Editor.
+		const siteAdminUrl = getSiteAdminUrl( state, siteId );
+		let siteEditorUrl = `${ siteAdminUrl }site-editor.php`;
+		// Helps the Site Editor maintain Calypso environment context.
+		siteEditorUrl = addQueryArgs( { calypso_origin: location.origin }, siteEditorUrl );
+		return location.assign( siteEditorUrl );
+	}
+
+	return next();
 };
