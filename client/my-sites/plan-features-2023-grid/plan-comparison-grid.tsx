@@ -296,6 +296,7 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 		planProperties: PlanProperties;
 		allVisible: boolean;
 		isLastInRow: boolean;
+		isLargeCurrency: boolean;
 	}
 > = ( {
 	planProperties,
@@ -312,6 +313,7 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 	isLaunchPage,
 	flowName,
 	selectedSiteSlug,
+	isLargeCurrency,
 	onUpgradeClick,
 } ) => {
 	const { planName, planConstantObj, availableForPurchase, current, ...planPropertiesObj } =
@@ -331,7 +333,6 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 		'is-current-plan': current,
 	} );
 	const rawPrice = planPropertiesObj.rawPrice;
-	const isLargeCurrency = rawPrice ? rawPrice > 99000 : false;
 	const showPlanSelect = ! allVisible && ! current;
 
 	return (
@@ -424,6 +425,10 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 } ) => {
 	const allVisible = visiblePlansProperties.length === displayedPlansProperties.length;
 
+	const isLargeCurrency = displayedPlansProperties.some(
+		( properties ) => properties?.rawPrice && properties?.rawPrice > 99000
+	);
+
 	return (
 		<PlanRow>
 			<RowTitleCell
@@ -448,6 +453,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 					selectedSiteSlug={ selectedSiteSlug }
 					onUpgradeClick={ onUpgradeClick }
 					isLaunchPage={ isLaunchPage }
+					isLargeCurrency={ isLargeCurrency }
 				/>
 			) ) }
 		</PlanRow>
