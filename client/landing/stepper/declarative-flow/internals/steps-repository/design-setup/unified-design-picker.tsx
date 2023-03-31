@@ -637,7 +637,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			selectedDesignHasStyleVariations || ( selectedDesign.is_virtual && isXLargeScreen );
 
 		const pickDesignText =
-			selectedDesign.design_type === 'vertical' || hasMoreInfo
+			selectedDesign.design_type === 'vertical' || hasMoreInfo || ! isXLargeScreen
 				? translate( 'Continue' )
 				: translate( 'Start with %(designTitle)s', { args: { designTitle } } );
 
