@@ -74,8 +74,6 @@ function wpcom_global_styles_get_wpcom_current_blog_id() {
 		$jetpack_options = get_option( 'jetpack_options' );
 		if ( is_array( $jetpack_options ) && isset( $jetpack_options['id'] ) ) {
 			return (int) $jetpack_options['id'];
-		} else {
-			return null;
 		}
 	}
 
