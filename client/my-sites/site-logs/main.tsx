@@ -1,9 +1,11 @@
+import { ToggleControl } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
@@ -18,6 +20,12 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SiteLogsTabPanel } from './components/site-logs-tab-panel';
 import { SiteLogsTable } from './components/site-logs-table';
 import { SiteLogsToolbar } from './components/site-logs-toolbar';
+import {
+	getDateRangeQueryParam,
+	getLogTypeQueryParam,
+	updateDateRangeQueryParam,
+} from './site-logs-filter-params';
+import type { Moment } from 'moment';
 
 import './style.scss';
 
@@ -28,24 +36,24 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 	const siteId = useSelector( getSelectedSiteId );
 	const moment = useLocalizedMoment();
 
-	const getDateRange = useCallback( () => {
-		const rangeParam = new URL( window.location.href ).searchParams.get( 'range' );
-		const range = rangeParam && JSON.parse( rangeParam );
-		const startTime = range?.from ? moment( range.from ) : moment().subtract( 7, 'd' );
-		const endTime = range?.to ? moment( range.to ) : moment();
+	const getLatestDateRange = useCallback( () => {
+		const startTime = moment().subtract( 7, 'd' );
+		const endTime = moment();
 		return { startTime, endTime };
 	}, [ moment ] );
 
-	const [ dateRange, setDateRange ] = useState( getDateRange() );
+	const [ dateRange, setDateRange ] = useState( () => {
+		const latest = getLatestDateRange();
+		const dateRangeQuery = getDateRangeQueryParam( moment );
+		return {
+			startTime: dateRangeQuery.startTime || latest.startTime,
+			endTime: dateRangeQuery.endTime || latest.endTime,
+		};
+	} );
 
 	const [ currentPageIndex, setCurrentPageIndex ] = useState( 0 );
 
-	const [ logType, setLogType ] = useState< SiteLogsTab >( () => {
-		const queryParam = new URL( window.location.href ).searchParams.get( 'log-type' );
-		return (
-			queryParam && [ 'php', 'web' ].includes( queryParam ) ? queryParam : 'php'
-		) as SiteLogsTab;
-	} );
+	const [ logType, setLogType ] = useState< SiteLogsTab >( () => getLogTypeQueryParam() || 'php' );
 
 	const { data: latestPageData, isLoading } = useSiteLogsQuery( siteId, {
 		logType,
@@ -56,12 +64,15 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 		pageIndex: currentPageIndex,
 	} );
 
-	const [ autoRefresh, setAutoRefresh ] = useState( true );
+	const [ autoRefresh, setAutoRefresh ] = useState( () => {
+		const { startTime, endTime } = getDateRangeQueryParam( moment );
+		return ! startTime && ! endTime;
+	} );
 
 	const autoRefreshCallback = useCallback( () => {
-		setDateRange( getDateRange() );
+		setDateRange( getLatestDateRange() );
 		setCurrentPageIndex( 0 );
-	}, [ getDateRange ] );
+	}, [ getLatestDateRange ] );
 	useInterval( autoRefreshCallback, autoRefresh && 10 * 1000 );
 
 	// We keep a copy of the most recently shown page so that we can use it as part of the loading state while switching pages.
@@ -80,10 +91,14 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 
 	const handleAutoRefreshClick = ( isChecked: boolean ) => {
 		if ( isChecked ) {
-			setDateRange( getDateRange() );
+			setDateRange( getLatestDateRange() );
+			updateDateRangeQueryParam( null );
+			setCurrentPageIndex( 0 );
+		} else {
+			updateDateRangeQueryParam( dateRange );
 		}
+
 		setAutoRefresh( isChecked );
-		setCurrentPageIndex( 0 );
 	};
 
 	const handlePageClick = ( nextPageNumber: number ) => {
@@ -116,42 +131,39 @@ export function SiteLogs( { pageSize = DEFAULT_PAGE_SIZE }: { pageSize?: number 
 			  } )
 			: null;
 
-	const handleDateRangeCommit = ( startDate: Date, endDate: Date ) => {
-		const formattedStartDate = startDate ? moment( startDate ) : null;
-		const formattedEndDate = endDate ? moment( endDate ) : null;
-
-		if ( ! formattedStartDate && ! formattedEndDate ) {
-			return;
-		}
-
-		setDateRange( {
-			startTime: formattedStartDate ?? dateRange.startTime,
-			endTime: formattedEndDate ?? dateRange.endTime,
-		} );
+	const handleDateTimeChange = ( startTime: Moment, endTime: Moment ) => {
+		setDateRange( { startTime, endTime } );
 		setAutoRefresh( false );
+		updateDateRangeQueryParam( { startTime, endTime } );
 	};
 
 	return (
 		<Main fullWidthLayout className={ classnames( 'site-logs', { 'is-loading': isLoading } ) }>
 			<DocumentHead title={ titleHeader } />
+			{ siteId && <QuerySiteSettings siteId={ siteId } /> }
 			<FormattedHeader
 				brandFont
 				headerText={ titleHeader }
 				subHeaderText={ __( 'View server logs to troubleshoot or debug problems with your site.' ) }
 				align="left"
 				className="site-logs__formatted-header"
-			/>
+			>
+				<ToggleControl
+					className="site-logs__auto-refresh"
+					label={ __( 'Auto-refresh' ) }
+					checked={ autoRefresh }
+					onChange={ handleAutoRefreshClick }
+				/>
+			</FormattedHeader>
 
 			<SiteLogsTabPanel selectedTab={ logType } onSelected={ handleTabSelected }>
 				{ () => (
 					<>
 						<SiteLogsToolbar
-							autoRefresh={ autoRefresh }
-							onAutoRefreshChange={ handleAutoRefreshClick }
 							logType={ logType }
 							startDateTime={ dateRange.startTime }
 							endDateTime={ dateRange.endTime }
-							onDateTimeCommit={ handleDateRangeCommit }
+							onDateTimeChange={ handleDateTimeChange }
 						/>
 						<SiteLogsTable logs={ data?.logs } isLoading={ isLoading } />
 						{ paginationText && (

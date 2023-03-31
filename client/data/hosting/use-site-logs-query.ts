@@ -70,7 +70,7 @@ export function useSiteLogsQuery(
 			);
 		},
 		{
-			enabled: !! siteId,
+			enabled: !! siteId && params.start <= params.end,
 			staleTime: Infinity, // The logs within a specified time range never change.
 			select( { data } ) {
 				return {
