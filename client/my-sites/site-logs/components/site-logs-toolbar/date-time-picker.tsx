@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import type { Moment } from 'moment';
 
@@ -7,7 +6,7 @@ interface Props
 	value: Moment;
 	max?: Moment;
 	min?: Moment;
-	onChange: ( value: Moment | null ) => void;
+	onChange: ( value: Moment ) => void;
 
 	// datetime-local inputs don't understand timezones, but this prop will cause the component
 	// to display values, and return values with onChange, in this timezone.
@@ -20,15 +19,9 @@ const INPUT_DATE_FORMAT = 'YYYY-MM-DDTHH:mm:ss';
 
 export function DateTimePicker( { value, onChange, gmtOffset = 0, max, min, ...rest }: Props ) {
 	const moment = useLocalizedMoment();
-	const [ dateValue, setDateValue ] = useState( value );
 
 	const onDateChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		const newDate = moment( event.currentTarget.value, INPUT_DATE_FORMAT );
-		setDateValue( newDate );
-		if ( ! event.target.validity.valid ) {
-			onChange( null );
-			return;
-		}
 		onChange( newDate );
 	};
 
@@ -36,7 +29,7 @@ export function DateTimePicker( { value, onChange, gmtOffset = 0, max, min, ...r
 		<input
 			className="button"
 			type="datetime-local"
-			value={ dateValue.utcOffset( gmtOffset * 60 ).format( INPUT_DATE_FORMAT ) }
+			value={ value.utcOffset( gmtOffset * 60 ).format( INPUT_DATE_FORMAT ) }
 			{ ...( min && {
 				min: min.utcOffset( gmtOffset * 60 ).format( INPUT_DATE_FORMAT ),
 			} ) }

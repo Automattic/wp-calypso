@@ -35,8 +35,14 @@ export function updateDateRangeQueryParam(
 	const url = new URL( window.location.href );
 
 	if ( dateRange ) {
-		url.searchParams.set( 'from', dateRange.startTime.unix().toString( 10 ) );
-		url.searchParams.set( 'to', dateRange.endTime.unix().toString( 10 ) );
+		const { startTime, endTime } = dateRange;
+		if ( ! startTime.isValid() || ! endTime.isValid() || startTime.isAfter( endTime ) ) {
+			// Don't save invalid date ranges
+			return;
+		}
+
+		url.searchParams.set( 'from', startTime.unix().toString( 10 ) );
+		url.searchParams.set( 'to', endTime.unix().toString( 10 ) );
 	} else {
 		url.searchParams.delete( 'from' );
 		url.searchParams.delete( 'to' );
