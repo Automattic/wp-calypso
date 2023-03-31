@@ -5,16 +5,18 @@ import { ThankYouSteps } from 'calypso/components/thank-you/types';
 import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-plugin-install/use-marketplace-additional-steps';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { usePluginsThankYouData } from './use-plugins-thank-you-data';
-import { useThemesThankYouData } from './use-themes-thank-you-data';
 import { hasMultipleProductTypes } from './utils';
 
 export function useThankYouSteps( {
 	pluginSlugs,
 	themeSlugs,
+	pluginsProgressbarSteps,
+	themesProgressbarSteps,
 }: {
-	pluginSlugs: Array< string >;
-	themeSlugs: Array< string >;
+	pluginSlugs: string[];
+	themeSlugs: string[];
+	pluginsProgressbarSteps: string[];
+	themesProgressbarSteps: string[];
 } ): ThankYouSteps {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
@@ -23,9 +25,6 @@ export function useThankYouSteps( {
 	const multipleProductTypes = hasMultipleProductTypes( [ pluginSlugs, themeSlugs ] );
 	const additionalSteps = useMarketplaceAdditionalSteps();
 	const randomElement = ( arr: string[] ) => arr[ Math.floor( Math.random() * arr.length ) ];
-
-	const [ , , , pluginsProgressbarSteps ] = usePluginsThankYouData( pluginSlugs );
-	const [ , , , themesProgressbarSteps ] = useThemesThankYouData( themeSlugs );
 
 	const defaultSteps = useMemo(
 		() => {

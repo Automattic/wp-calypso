@@ -36,9 +36,9 @@ const MarketplaceThankYou = ( {
 
 	const defaultThankYouFooter = useThankYouFoooter( pluginSlugs, themeSlugs );
 
-	const [ pluginsSection, allPluginsFetched, pluginsGoBackSection ] =
+	const [ pluginsSection, allPluginsFetched, pluginsGoBackSection, pluginsProgressbarSteps ] =
 		usePluginsThankYouData( pluginSlugs );
-	const [ themesSection, allThemesFetched, themesGoBackSection ] =
+	const [ themesSection, allThemesFetched, themesGoBackSection, themesProgressbarSteps ] =
 		useThemesThankYouData( themeSlugs );
 	const [ hasPlugins, hasThemes ] = [ pluginSlugs, themeSlugs ].map(
 		( slugs ) => slugs.length !== 0
@@ -102,7 +102,12 @@ const MarketplaceThankYou = ( {
 		}
 	}, [ transferStatus, areAllProductsFetched, showProgressBar, isJetpack ] );
 
-	const { steps, additionalSteps } = useThankYouSteps( { pluginSlugs, themeSlugs } );
+	const { steps, additionalSteps } = useThankYouSteps( {
+		pluginSlugs,
+		themeSlugs,
+		pluginsProgressbarSteps,
+		themesProgressbarSteps,
+	} );
 
 	const sections = [
 		...( hasThemes ? [ themesSection ] : [] ),
