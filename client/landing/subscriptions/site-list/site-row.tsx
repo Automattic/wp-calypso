@@ -1,10 +1,12 @@
 import { Gridicon } from '@automattic/components';
+import { SubscriptionManager } from '@automattic/data-stores';
 import { useMemo } from '@wordpress/element';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { SiteSettings } from '../settings-popover';
 import type { SiteSubscription } from '@automattic/data-stores/src/reader/types';
 
 export default function SiteRow( {
+	blog_ID,
 	name,
 	site_icon,
 	URL: url,
@@ -25,6 +27,8 @@ export default function SiteRow( {
 		return <Gridicon className="icon" icon="globe" size={ 48 } />;
 	}, [ site_icon, name ] );
 
+	const { mutate: unFollow } = SubscriptionManager.useSiteUnfollowMutation();
+
 	return (
 		<li className="row" role="row">
 			<a href={ url } rel="noreferrer noopener" className="title-box">
@@ -43,7 +47,7 @@ export default function SiteRow( {
 				{ deliveryFrequency }
 			</span>
 			<span className="actions" role="cell">
-				<SiteSettings onUnfollow={ () => null } />
+				<SiteSettings onUnfollow={ () => unFollow( { blog_id: blog_ID } ) } />
 			</span>
 		</li>
 	);
