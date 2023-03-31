@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { makeLayout, render } from 'calypso/controller';
 import { addQueryArgs } from 'calypso/lib/route';
+import wpcom from 'calypso/lib/wp';
 import { EDITOR_START, POST_EDIT } from 'calypso/state/action-types';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { getAdminMenu, getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
@@ -293,7 +294,7 @@ export const exitPost = ( context, next ) => {
  * @param {Function} next  Next registered callback for the route.
  * @returns {*}            Whatever the next callback returns.
  */
-export const redirectSiteEditor = ( context, next ) => {
+export const redirectSiteEditor = async ( context, next ) => {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 	const isJetpack = isJetpackSite( state, siteId );
@@ -301,11 +302,24 @@ export const redirectSiteEditor = ( context, next ) => {
 
 	// Ditch the iframe for all Jetpack sites, or if the config is enabled.
 	if ( isJetpack || configEnabled ) {
+		// We need the home template data
+		const { home_template } = await wpcom.req
+			.get( {
+				path: `/sites/${ siteId }/block-editor`,
+				apiNamespace: 'wpcom/v2',
+			} )
+			.catch( () => {} );
+
+		let queryArgs = {};
+		if ( location.origin !== 'https://wordpress.com' ) {
+			queryArgs.calypso_origin = location.origin;
+		}
+		if ( home_template ) {
+			queryArgs = { ...queryArgs, ...home_template };
+		}
 		// We aren't using `getSiteEditorUrl` because it still thinks we should gutenframe the Site Editor.
 		const siteAdminUrl = getSiteAdminUrl( state, siteId );
-		let siteEditorUrl = `${ siteAdminUrl }site-editor.php`;
-		// Helps the Site Editor maintain Calypso environment context.
-		siteEditorUrl = addQueryArgs( { calypso_origin: location.origin }, siteEditorUrl );
+		const siteEditorUrl = addQueryArgs( queryArgs, `${ siteAdminUrl }site-editor.php` );
 		return location.assign( siteEditorUrl );
 	}
 
