@@ -1,33 +1,30 @@
 import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import useSubscribersQuery from 'calypso/my-sites/stats/hooks/use-subscribers-query';
-import { getSiteStatsSubscribers } from 'calypso/state/stats/subscribers/selectors';
 
 const StatsSubscribers = ( { siteId } ) => {
 	const name = 'subscribers';
-	const { isLoading, error } = useSubscribersQuery( siteId );
-	const data = useSelector( ( state ) => getSiteStatsSubscribers( state, siteId ) );
+	const { isLoading, isError, data, error, status } = useSubscribersQuery( siteId );
 	const chartData = data?.data || [];
 
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 
 	useEffect( () => {
-		if ( error ) {
+		if ( isError && error ) {
 			setErrorMessage( error.message );
 		}
-	}, [ error ] );
+	}, [ status, error, isError ] );
 
 	return (
 		<div>
 			<h1>{ name }</h1>
 			{ errorMessage && <div>Error: { errorMessage }</div> }
 			{ isLoading && <div>Loading...</div> }
-			<ul>
+			<div>
 				{ ! isLoading &&
 					chartData?.map( ( dataSet ) => (
-						<li> { `${ dataSet.period } - ${ dataSet.subscribers }` }</li>
+						<span> { `[${ dataSet.period } - ${ dataSet.subscribers }] ` }</span>
 					) ) }
-			</ul>
+			</div>
 		</div>
 	);
 };

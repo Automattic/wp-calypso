@@ -6,7 +6,6 @@ import highlights from './highlights/reducer';
 import lists from './lists/reducer';
 import posts from './posts/reducer';
 import recentPostViews from './recent-post-views/reducer';
-import subscribers from './subscribers/reducer';
 
 const combinedReducer = combineReducers( {
 	chartTabs,
@@ -15,7 +14,6 @@ const combinedReducer = combineReducers( {
 	posts,
 	emails,
 	recentPostViews,
-	subscribers,
 } );
 const statsReducer = withStorageKey( 'stats', combinedReducer );
 

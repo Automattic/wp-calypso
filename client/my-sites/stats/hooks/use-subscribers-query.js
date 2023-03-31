@@ -1,6 +1,4 @@
 import { useQuery } from 'react-query';
-import { useDispatch } from 'react-redux';
-import { receiveStatSubscribers } from 'calypso/state/stats/subscribers/actions';
 
 const mockData = {
 	items: [
@@ -74,17 +72,12 @@ function selectSubscribers( api ) {
 				};
 			} ),
 		};
-	} );
+	} )?.[ 0 ];
 }
 
 export default function useSubscribersQuery( siteId ) {
-	const dispatch = useDispatch();
-
 	// TODO: Account for other query parameters before release.
 	return useQuery( [ 'stats', 'subscribers', siteId ], querySubscribers, {
 		select: selectSubscribers,
-		onSuccess: ( data ) => {
-			dispatch( receiveStatSubscribers( siteId, data ) );
-		},
 	} );
 }
