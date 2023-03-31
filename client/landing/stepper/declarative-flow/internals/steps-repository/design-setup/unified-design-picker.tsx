@@ -14,7 +14,7 @@ import { StepContainer } from '@automattic/onboarding';
 import { useViewportMatch, useMediaQuery } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import { ReactChild, useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
@@ -583,7 +583,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		recordTracksEvent( eventName, tracksProps );
 	}
 
-	function getPrimaryActionButton( pickDesignText: ReactChild ) {
+	function getPrimaryActionButton() {
 		if ( shouldUpgrade ) {
 			return (
 				<Button primary borderless={ false } onClick={ upgradePlan }>
@@ -606,7 +606,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 		return (
 			<Button primary borderless={ false } onClick={ () => pickDesign() }>
-				{ pickDesignText }
+				{ translate( 'Continue' ) }
 			</Button>
 		);
 	}
@@ -636,15 +636,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		const hasMoreInfo =
 			selectedDesignHasStyleVariations || ( selectedDesign.is_virtual && isXLargeScreen );
 
-		const pickDesignText =
-			selectedDesign.design_type === 'vertical' || hasMoreInfo
-				? translate( 'Continue' )
-				: translate( 'Start with %(designTitle)s', { args: { designTitle } } );
-
 		const actionButtons = (
 			<>
 				{ hasMoreInfo && <div className="action-buttons__title">{ headerDesignTitle }</div> }
-				<div>{ getPrimaryActionButton( pickDesignText ) }</div>
+				<div>{ getPrimaryActionButton() }</div>
 			</>
 		);
 
@@ -732,7 +727,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 				stepContent={ stepContent }
 				hideSkip
 				className="design-setup__preview"
-				nextLabelText={ pickDesignText }
 				goBack={ handleBackClick }
 				goNext={ () => pickDesign() }
 				formattedHeader={

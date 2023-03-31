@@ -83,7 +83,9 @@ interface UseSiteLogsDownloaderArgs {
 	endDateTime: Moment;
 }
 
-export const useSiteLogsDownloader = () => {
+export const useSiteLogsDownloader = ( {
+	roundDateRangeToWholeDays = true,
+}: { roundDateRangeToWholeDays?: boolean } = {} ) => {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 	const localeDateFormat = moment.localeData().longDateFormat( 'L' );
@@ -132,8 +134,12 @@ export const useSiteLogsDownloader = () => {
 			return;
 		}
 
-		const startMoment = moment.utc( startDateTime, localeDateFormat ).startOf( 'day' );
-		const endMoment = moment.utc( endDateTime, localeDateFormat ).endOf( 'day' );
+		const startMoment = roundDateRangeToWholeDays
+			? moment.utc( startDateTime, localeDateFormat ).startOf( 'day' )
+			: moment.utc( startDateTime, localeDateFormat );
+		const endMoment = roundDateRangeToWholeDays
+			? moment.utc( endDateTime, localeDateFormat ).endOf( 'day' )
+			: moment.utc( endDateTime, localeDateFormat );
 
 		const dateFormat = 'YYYYMMDDHHmmss';
 		const startString = startMoment.format( dateFormat );

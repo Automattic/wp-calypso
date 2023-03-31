@@ -4,6 +4,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { useAddStagingSiteMutation } from 'calypso/my-sites/hosting/staging-site-card/use-add-staging-site';
 import { useCheckStagingSiteStatus } from 'calypso/my-sites/hosting/staging-site-card/use-check-staging-site-status';
+import { useHasValidQuotaQuery } from 'calypso/my-sites/hosting/staging-site-card/use-has-valid-quota';
 import { useStagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
 import { StagingSiteCard } from '..';
 import { useHasSiteAccess } from '../use-has-site-access';
@@ -42,6 +43,15 @@ jest.mock( 'calypso/my-sites/hosting/staging-site-card/use-add-staging-site', ()
 	} ),
 } ) );
 
+jest.mock( 'calypso/my-sites/hosting/staging-site-card/use-has-valid-quota', () => ( {
+	__esModule: true,
+	useHasValidQuotaQuery: jest.fn( () => {
+		return {
+			data: true,
+		};
+	} ),
+} ) );
+
 jest.mock( 'calypso/my-sites/hosting/staging-site-card/use-delete-staging-site', () => ( {
 	__esModule: true,
 	useDeleteStagingSite: jest.fn( () => {
@@ -74,7 +84,6 @@ jest.mock( 'calypso/my-sites/hosting/staging-site-card/use-has-site-access', () 
 
 const defaultProps = {
 	disabled: false,
-	spaceQuotaExceededForStaging: false,
 	siteId: 1,
 	translate: ( text ) => text,
 };
@@ -151,13 +160,12 @@ describe( 'StagingSiteCard component', () => {
 	it( 'shows quota exceeded error message', async () => {
 		useStagingSite.mockReturnValue( { data: [], isLoading: false } );
 
-		const { rerender } = render(
-			<StagingSiteCard { ...defaultProps } spaceQuotaExceededForStaging={ false } />
-		);
+		const { rerender } = render( <StagingSiteCard { ...defaultProps } /> );
 
 		expect( screen.queryByTestId( 'quota-message' ) ).not.toBeInTheDocument();
 		expect( screen.getByText( addStagingSiteBtnName ) ).not.toBeDisabled();
-		rerender( <StagingSiteCard { ...defaultProps } spaceQuotaExceededForStaging={ true } /> );
+		useHasValidQuotaQuery.mockReturnValueOnce( { data: false } );
+		rerender( <StagingSiteCard { ...defaultProps } /> );
 
 		expect( screen.getByTestId( 'quota-message' ) ).toBeVisible();
 	} );
