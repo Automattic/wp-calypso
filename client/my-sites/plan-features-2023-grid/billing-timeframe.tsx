@@ -35,7 +35,7 @@ function usePerMonthDescription( {
 	const planYearlyVariantPrices = usePlanPrices( {
 		planSlug:
 			getPlanSlugForTermVariant( planName as PlanSlug, TERM_ANNUALLY ) ?? ( '' as PlanSlug ),
-		monthly: true,
+		returnMonthly: true,
 	} );
 	const maybeDiscountedPrice =
 		planPrices.planDiscountedRawPrice || planPrices.discountedRawPrice || planPrices.rawPrice;
