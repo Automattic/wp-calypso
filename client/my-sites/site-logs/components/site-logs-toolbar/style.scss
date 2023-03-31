@@ -21,3 +21,15 @@
 	color: var(--color-neutral-50);
 	font-size: 0.875rem;
 }
+
+input:invalid {
+	background-color: var(--color-accent-5);
+	color: var(--color-accent-70);
+	border-color: var(--color-accent-60);
+}
+
+input:valid {
+	background-color: var(--color-surface);
+	color: var(--color-neutral-70);
+	border-color: var(--color-neutral-10);
+}
