@@ -16,8 +16,9 @@ import {
 	PLAN_FREE,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	isPremiumPlan,
+	PLAN_BIENNIAL_PERIOD,
+	PLAN_WOOEXPRESS_PLUS,
 	isWooExpressMediumPlan,
-	isWooExpressSmallPlan,
 	isWooExpressPlan,
 	PlanSlug,
 } from '@automattic/calypso-products';
@@ -677,6 +678,7 @@ export class PlanFeatures2023Grid extends Component<
 							className={ getPlanClass( planName ) }
 							freePlan={ isFreePlan( planName ) }
 							isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planName ) }
+							isWooExpressPlusPlan={ planName === PLAN_WOOEXPRESS_PLUS }
 							isPlaceholder={ isPlaceholder ?? false }
 							isInSignup={ isInSignup }
 							isLaunchPage={ isLaunchPage }
@@ -746,44 +748,45 @@ export class PlanFeatures2023Grid extends Component<
 		const { translate } = this.props;
 		let previousPlanShortNameFromProperties: string;
 
-		return planPropertiesObj
-			.filter( ( { isVisible } ) => isVisible )
-			.map( ( properties: PlanProperties ) => {
-				const { planName, product_name_short } = properties;
-				const shouldShowFeatureTitle =
-					! isWpComFreePlan( planName ) && ! isWpcomEnterpriseGridPlan( planName );
-				const planShortName =
-					options?.previousProductNameShort || previousPlanShortNameFromProperties;
-				previousPlanShortNameFromProperties = product_name_short;
-				const title =
-					planShortName &&
-					translate( 'Everything in %(planShortName)s, plus:', {
-						args: { planShortName },
-					} );
-				const classes = classNames(
-					'plan-features-2023-grid__common-title',
-					getPlanClass( planName )
-				);
-				const rowspanProp =
-					! options?.isMobile && isWpcomEnterpriseGridPlan( planName ) ? { rowSpan: '2' } : {};
-				return (
-					<Container
-						key={ planName }
-						isMobile={ options?.isMobile }
-						className="plan-features-2023-grid__table-item"
-						{ ...rowspanProp }
-					>
-						{ shouldShowFeatureTitle && <div className={ classes }>{ title }</div> }
-						{ isWpcomEnterpriseGridPlan( planName ) && this.renderEnterpriseClientLogos() }
-					</Container>
-				);
-			} );
+		return planPropertiesObj.map( ( properties: PlanProperties ) => {
+			const { planName, product_name_short } = properties;
+			const shouldRenderEnterpriseLogos =
+				isWpcomEnterpriseGridPlan( planName ) || planName === PLAN_WOOEXPRESS_PLUS;
+			const shouldShowFeatureTitle = ! isWpComFreePlan( planName ) && ! shouldRenderEnterpriseLogos;
+			const planShortName =
+				options?.previousProductNameShort || previousPlanShortNameFromProperties;
+			previousPlanShortNameFromProperties = product_name_short;
+			const title =
+				planShortName &&
+				translate( 'Everything in %(planShortName)s, plus:', {
+					args: { planShortName },
+				} );
+			const classes = classNames(
+				'plan-features-2023-grid__common-title',
+				getPlanClass( planName )
+			);
+			const rowspanProp =
+				! options?.isMobile && shouldRenderEnterpriseLogos ? { rowSpan: '2' } : {};
+			return (
+				<Container
+					key={ planName }
+					isMobile={ options?.isMobile }
+					className="plan-features-2023-grid__table-item"
+					{ ...rowspanProp }
+				>
+					{ shouldShowFeatureTitle && <div className={ classes }>{ title }</div> }
+					{ shouldRenderEnterpriseLogos && this.renderEnterpriseClientLogos() }
+				</Container>
+			);
+		} );
 	}
 
 	renderPlanFeaturesList( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
 		const { domainName, translate } = this.props;
 		const planProperties = planPropertiesObj.filter(
-			( properties ) => ! isWpcomEnterpriseGridPlan( properties.planName )
+			( properties ) =>
+				! isWpcomEnterpriseGridPlan( properties.planName ) &&
+				! ( properties.planName === PLAN_WOOEXPRESS_PLUS )
 		);
 
 		return planProperties

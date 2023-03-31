@@ -43,6 +43,7 @@ type PlanFeaturesActionsButtonProps = {
 	flowName: string;
 	buttonText?: string;
 	isWpcomEnterpriseGridPlan: boolean;
+	isWooExpressPlusPlan?: boolean;
 	selectedSiteSlug: string | null;
 };
 
@@ -322,6 +323,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	flowName,
 	buttonText,
 	isWpcomEnterpriseGridPlan = false,
+	isWooExpressPlusPlan = false,
 	selectedSiteSlug,
 } ) => {
 	const translate = useTranslate();
@@ -373,6 +375,25 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 					: translate( '{{ExternalLink}}Get in touch{{/ExternalLink}}', {
 							components: translateComponents,
 					  } ) }
+			</Button>
+		);
+	} else if ( isWooExpressPlusPlan ) {
+		const translateComponents = {
+			ExternalLink: (
+				<ExternalLinkWithTracking
+					href="https://woocommerce.com/get-in-touch/"
+					target="_blank"
+					tracksEventName="calypso_plan_step_woo_express_plus_click"
+					tracksEventProps={ { flow: flowName } }
+				/>
+			),
+		};
+
+		return (
+			<Button className={ classNames( classes, 'is-ecommerce-plan' ) }>
+				{ translate( '{{ExternalLink}}Get in touch{{/ExternalLink}}', {
+					components: translateComponents,
+				} ) }
 			</Button>
 		);
 	} else if ( isLaunchPage ) {
