@@ -10,8 +10,16 @@
 		padding-bottom: 16px;
 	}
 
+	@media screen and ( max-width: 600px ) {
+		.site-logs-toolbar__top-row {
+			flex-direction: column;
+			align-items: stretch;
+		}
+	}
+
 	button {
 		height: 42px;
+		justify-content: center;
 	}
 }
 
