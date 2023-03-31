@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 
-declare const wpcomGlobalStyles: { upgradeUrl: string; blogId: string };
+declare const wpcomGlobalStyles: { upgradeUrl: string; wpcomBlogId: string | null };
 
 /**
  * Record an event when a user clicks on the notice from the PrePublish panel.
@@ -8,7 +8,7 @@ declare const wpcomGlobalStyles: { upgradeUrl: string; blogId: string };
 export function recordUpgradePrePublishNoticeClick(): void {
 	recordTracksEvent( 'calypso_global_styles_gating_notice_upgrade_click', {
 		context: 'site-editor',
-		blog_id: wpcomGlobalStyles.blogId,
+		blog_id: wpcomGlobalStyles.wpcomBlogId,
 	} );
 }
 
@@ -18,7 +18,7 @@ export function recordUpgradePrePublishNoticeClick(): void {
 export function recordUpgradeSidebarNoticeClick(): void {
 	recordTracksEvent( 'calypso_global_styles_gating_notice_sidebar_upgrade_click', {
 		context: 'site-editor',
-		blog_id: wpcomGlobalStyles.blogId,
+		blog_id: wpcomGlobalStyles.wpcomBlogId,
 	} );
 }
 
@@ -28,7 +28,7 @@ export function recordUpgradeSidebarNoticeClick(): void {
 export function recordUpgradeNoticePrePublishShow(): void {
 	recordTracksEvent( 'calypso_global_styles_gating_notice_show', {
 		context: 'site-editor',
-		blog_id: wpcomGlobalStyles.blogId,
+		blog_id: wpcomGlobalStyles.wpcomBlogId,
 	} );
 }
 
@@ -38,6 +38,6 @@ export function recordUpgradeNoticePrePublishShow(): void {
 export function recordUpgradeNoticeSidebarShow(): void {
 	recordTracksEvent( 'calypso_global_styles_gating_sidebar_notice_show', {
 		context: 'site-editor',
-		blog_id: wpcomGlobalStyles.blogId,
+		blog_id: wpcomGlobalStyles.wpcomBlogId,
 	} );
 }
