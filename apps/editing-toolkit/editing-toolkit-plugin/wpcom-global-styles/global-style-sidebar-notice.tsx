@@ -13,7 +13,7 @@ type CoreInterfacePlaceholder = {
 	getActiveComplementaryArea: ( area: string ) => string;
 };
 
-export function GlobalStylesSidebarNotice() {
+export default function GlobalStylesSidebarNotice(): JSX.Element {
 	const area = useSelect(
 		( select ) =>
 			( select( 'core/interface' ) as CoreInterfacePlaceholder ).getActiveComplementaryArea(
