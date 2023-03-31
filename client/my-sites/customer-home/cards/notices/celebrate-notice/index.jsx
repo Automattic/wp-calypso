@@ -14,6 +14,7 @@ const CelebrateNotice = ( {
 	noticeId,
 	illustration = fireworksIllustration,
 	onSkip,
+	showAction = true,
 	showSkip = false,
 	skipText,
 	siteId,
@@ -60,13 +61,15 @@ const CelebrateNotice = ( {
 				<h2 className="celebrate-notice__title task__title">{ title }</h2>
 				<p className="celebrate-notice__description task__description">{ description }</p>
 				<div className="celebrate-notice__actions task__actions">
-					<Button
-						className="celebrate-notice__action task__action"
-						primary
-						onClick={ showNextTask }
-					>
-						{ actionText }
-					</Button>
+					{ showAction && (
+						<Button
+							className="celebrate-notice__action task__action"
+							primary
+							onClick={ showNextTask }
+						>
+							{ actionText }
+						</Button>
+					) }
 
 					{ showSkip && (
 						<Button className="celebrate-notice__skip task__skip is-link" onClick={ skip }>

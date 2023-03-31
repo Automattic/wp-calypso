@@ -32,19 +32,17 @@ const TrialUpgradeConfirmation = () => {
 				/>
 				<div className="trial-upgrade-confirmation__header">
 					<h1 className="trial-upgrade-confirmation__title">
-						{ translate( 'Woo! Welcome to Commerce' ) }
+						{ translate( 'Woo! Welcome to Woo Express' ) }
 					</h1>
 					<div className="trial-upgrade-confirmation__subtitle">
 						<span className="trial-upgrade-confirmation__subtitle-line">
 							{ translate(
-								"Your purchase has been completed and you're on the %(planName)s plan.",
+								"Your purchase is complete and you're now on the {{strong}}%(planName)s plan{{/strong}}. Now it's time to take your store to the next level. What would you like to do next?",
 								{
-									args: { planName: 'Commerce' },
+									args: { planName: 'Performance' },
+									components: { strong: <strong /> },
 								}
 							) }
-						</span>
-						<span className="trial-upgrade-confirmation__subtitle-line">
-							{ translate( "Now it's time to get creative. What would you like to do next?" ) }
 						</span>
 					</div>
 				</div>

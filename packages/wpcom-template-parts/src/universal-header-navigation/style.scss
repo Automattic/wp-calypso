@@ -1,3 +1,5 @@
+@import "@automattic/typography/styles/variables";
+
 $lp-font-stack-emoji: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 $lp-font-stack-default: -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica", "Arial", sans-serif, $lp-font-stack-emoji;
 $x-content-font-stack: $lp-font-stack-default;
@@ -776,51 +778,61 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 }
 
 /* Start subscriptions section overrides */
-.is-section-subscriptions {
-	&.has-no-sidebar {
-		.masterbar-menu {
-			.masterbar {
-				position: relative;
+.subscription-manager-header {
+	.masterbar-menu {
+		.masterbar {
+			position: relative;
+			height: 66px;
+			background: $studio-white;
+			border-bottom: 1px solid $studio-white;
+
+			.x-nav-list__left {
+				padding-left: 24px;
+			}
+			.x-nav-list__right {
+				padding-right: 24px;
+
+				.x-nav-item__narrow {
+					display: none;
+				}
+
+				.x-nav-item__wide {
+					display: block;
+				}
+			}
+
+			.x-nav-item {
 				height: 66px;
-				background: $studio-white;
-				border-bottom: 1px solid $studio-white;
 
-				.x-nav-list__left {
-					padding-left: 24px;
-				}
-				.x-nav-list__right {
-					padding-right: 24px;
+				.x-nav-link.x-link:not(.cta-btn-nav) {
+					padding-top: 23px;
 				}
 
-				.x-nav-item {
-					height: 66px;
+				.x-nav-link.x-link.x-nav-link__logo {
+					padding: 14px 0 0 0;
 
-					@media ( min-width: $x-nav-breakpoint-medium-wide ) {
-						.x-nav-link.x-link:not(.cta-btn-nav) {
-							padding-top: 23px;
-						}
+					@media (max-width: calc($x-nav-breakpoint-small + 1px)) {
+						display: block;
+						overflow: hidden;
+						padding-left: 1px;
+						width: 25px;
 					}
-					@media ( min-width: $x-nav-breakpoint-small ) {
-						.x-nav-link.x-link {
-							padding-top: 14px;
-						}
-					}
+				}
 
-					.x-nav-link.x-link.x-nav-link__logo {
-						padding: 14px 0 0 0;
-					}
-
-					.cta-btn-nav {
-						color: $studio-gray-100 !important;
-						background: inherit !important;
-						border: 1px solid $studio-gray-100;
-						filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.05));
-						padding: 12px 24px 12px 24px !important;
-						margin-right: 0;
-					}
+				.cta-btn-nav {
+					color: $studio-gray-100 !important;
+					background: inherit !important;
+					border: 1px solid $studio-gray-100;
+					filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.05));
+					font-size: $font-body-small;
+					font-weight: 500;
+					line-height: $font-title-small;
+					padding: 10px 16px !important;
+					margin-right: 0;
 				}
 			}
 		}
 	}
 }
+
 /* End subscriptions section overrides */

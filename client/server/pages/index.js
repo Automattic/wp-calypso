@@ -19,6 +19,7 @@ import { stringify } from 'qs';
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
+import { SUBSCRIPTIONS_SECTION_DEFINITION } from 'calypso/landing/subscriptions/section';
 import { shouldSeeCookieBanner, parseTrackingPrefs } from 'calypso/lib/analytics/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
@@ -287,6 +288,13 @@ function setUpLoggedOutRoute( req, res, next ) {
 
 	if ( req.context.useTranslationChunks ) {
 		setupRequests.push( setUpLocalLanguageRevisions( req ) );
+	}
+
+	if ( req.cookies?.subkey ) {
+		req.context.user = {
+			...( req.context.user ?? {} ),
+			subscriptionManagementSubkey: req.cookies.subkey,
+		};
 	}
 
 	Promise.all( setupRequests )
@@ -820,6 +828,21 @@ function wpcomPages( app ) {
 				res.send( renderJsx( 'support-user' ) );
 			} );
 	} );
+
+	app.get( [ '/subscriptions', '/subscriptions/*' ], function ( req, res, next ) {
+		if ( req.context.isLoggedIn ) {
+			// We want to show the old subscriptions management portal to the logged-in users, until new one in reader is developped for them
+			return res.redirect( 'https://wordpress.com/email-subscriptions?option=settings' );
+		}
+
+		if ( req.cookies.subkey ) {
+			// If the user is logged out, and has a subkey cookie, they are authorized to view the page
+			return next();
+		}
+
+		// Otherwise, show them email subscriptions external landing page
+		res.redirect( 'https://wordpress.com/email-subscriptions' );
+	} );
 }
 
 export default function pages() {
@@ -896,6 +919,10 @@ export default function pages() {
 	loginRouter( serverRouter( app, setUpRoute, null ) );
 
 	handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper' );
+
+	if ( config.isEnabled( 'subscription-management' ) ) {
+		handleSectionPath( SUBSCRIPTIONS_SECTION_DEFINITION, '/subscriptions', 'entry-subscriptions' );
+	}
 
 	// Redirect legacy `/new` routes to the corresponding `/start`
 	app.get( [ '/new', '/new/*' ], ( req, res ) => {

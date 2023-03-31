@@ -19,13 +19,11 @@ import { useMemo } from '@wordpress/element';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback, useEffect, ChangeEvent } from 'react';
-import { useSelector } from 'react-redux';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { FeatureObject, getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import PlanTypeSelector, {
 	PlanTypeSelectorProps,
 } from 'calypso/my-sites/plans-features-main/plan-type-selector';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import PlanFeatures2023GridActions from './actions';
 import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
 import PopularBadge from './components/popular-badge';
@@ -151,7 +149,7 @@ const Cell = styled.div< { textAlign?: 'start' | 'center' | 'end' } >`
 	text-align: ${ ( props ) => props.textAlign ?? 'start' };
 	display: flex;
 	flex: 1;
-	justify-content: space-between;
+	justify-content: flex-start;
 	flex-direction: column;
 	align-items: center;
 	padding: 33px 20px 0;
@@ -184,6 +182,7 @@ const Cell = styled.div< { textAlign?: 'start' | 'center' | 'end' } >`
 	${ plansBreakSmall( css`
 		padding: 0 14px;
 		border-right: none;
+		justify-content: center;
 
 		&:first-of-type {
 			padding-inline-start: 0;
@@ -199,7 +198,8 @@ const RowTitleCell = styled.div`
 	display: none;
 	font-size: 14px;
 	${ plansBreakSmall( css`
-		display: block;
+		display: flex;
+		align-items: center;
 		flex: 1;
 		min-width: 290px;
 	` ) }
@@ -285,6 +285,12 @@ type PlanComparisonGridHeaderProps = {
 	onUpgradeClick: ( properties: PlanProperties ) => void;
 };
 
+type RestructuredFeatures = {
+	featureMap: Record< string, Set< string > >;
+	conditionalFeatureMap: Record< string, Set< string > >;
+	planStorageOptionsMap: Record< string, string >;
+};
+
 const PlanComparisonGridHeaderCell: React.FunctionComponent<
 	PlanComparisonGridHeaderProps & {
 		planProperties: PlanProperties;
@@ -311,7 +317,6 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 	const { planName, planConstantObj, availableForPurchase, current, ...planPropertiesObj } =
 		planProperties;
 	const highlightLabel = useHighlightLabel( planName );
-	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( visiblePlansProperties );
 	const headerClasses = classNames( 'plan-comparison-grid__header-cell', getPlanClass( planName ), {
 		'popular-plan-parent-class': highlightLabel,
@@ -366,10 +371,7 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 				</h4>
 			</PlanSelector>
 			<PlanFeatures2023GridHeaderPrice
-				currencyCode={ currencyCode }
-				discountPrice={ planPropertiesObj.discountPrice }
-				rawPrice={ rawPrice || 0 }
-				planName={ planName }
+				planProperties={ planProperties }
 				is2023OnboardingPricingGrid={ true }
 				isLargeCurrency={ isLargeCurrency }
 			/>
@@ -456,10 +458,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	feature?: FeatureObject;
 	allJetpackFeatures: Set< string >;
 	visiblePlansProperties: PlanProperties[];
-	restructuredFeatures: {
-		featureMap: Record< string, Set< string > >;
-		planStorageOptionsMap: Record< string, string >;
-	};
+	restructuredFeatures: RestructuredFeatures;
 	planName: string;
 	isStorageFeature: boolean;
 } > = ( { feature, visiblePlansProperties, restructuredFeatures, planName, isStorageFeature } ) => {
@@ -470,6 +469,9 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	const hasFeature =
 		isStorageFeature ||
 		( featureSlug ? restructuredFeatures.featureMap[ planName ].has( featureSlug ) : false );
+	const hasConditionalFeature = featureSlug
+		? restructuredFeatures.conditionalFeatureMap[ planName ].has( featureSlug )
+		: false;
 	const [ storageFeature ] = getPlanFeaturesObject( [
 		restructuredFeatures.planStorageOptionsMap[ planName ],
 	] );
@@ -480,6 +482,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 		{
 			'popular-plan-parent-class': highlightLabel,
 			'has-feature': hasFeature,
+			'has-conditional-feature': hasConditionalFeature,
 			'title-is-subtitle': 'live-chat-support' === featureSlug,
 			'is-left-of-highlight': highlightAdjacencyMatrix[ planName ]?.leftOfHighlight,
 			'is-right-of-highlight': highlightAdjacencyMatrix[ planName ]?.rightOfHighlight,
@@ -509,9 +512,18 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 							{ feature.getCompareTitle() }
 						</span>
 					) }
-					{ hasFeature ? (
-						<Gridicon icon="checkmark" color="#0675C4" />
-					) : (
+					{ hasConditionalFeature && feature?.getConditionalTitle && (
+						<span className="plan-comparison-grid__plan-conditional-title">
+							{ feature?.getConditionalTitle() }
+						</span>
+					) }
+					{ hasFeature && feature?.getCompareSubtitle && (
+						<span className="plan-comparison-grid__plan-subtitle">
+							{ feature.getCompareSubtitle() }
+						</span>
+					) }
+					{ hasFeature && <Gridicon icon="checkmark" color="#0675C4" /> }
+					{ ! hasFeature && ! hasConditionalFeature && (
 						<Gridicon icon="minus-small" color="#C3C4C7" />
 					) }
 				</>
@@ -525,10 +537,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	isHiddenInMobile: boolean;
 	allJetpackFeatures: Set< string >;
 	visiblePlansProperties: PlanProperties[];
-	restructuredFeatures: {
-		featureMap: Record< string, Set< string > >;
-		planStorageOptionsMap: Record< string, string >;
-	};
+	restructuredFeatures: RestructuredFeatures;
 	isStorageFeature: boolean;
 } > = ( {
 	feature,
@@ -653,6 +662,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 	const restructuredFeatures = useMemo( () => {
 		let previousPlan = null;
 		const planFeatureMap: Record< string, Set< string > > = {};
+		const conditionalFeatureMap: Record< string, Set< string > > = {};
 		const planStorageOptionsMap: Record< string, string > = {};
 
 		for ( const plan of planProperties ?? [] ) {
@@ -688,8 +698,12 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 			previousPlan = planName;
 			const [ storageOption ] = planObject.get2023PricingGridSignupStorageOptions?.() ?? [];
 			planStorageOptionsMap[ planName ] = storageOption;
+
+			conditionalFeatureMap[ planName ] = new Set(
+				planObject.get2023PlanComparisonConditionalFeatures?.() ?? []
+			);
 		}
-		return { featureMap: planFeatureMap, planStorageOptionsMap };
+		return { featureMap: planFeatureMap, planStorageOptionsMap, conditionalFeatureMap };
 	}, [ planProperties, isMonthly ] );
 
 	const allJetpackFeatures = useMemo( () => {
@@ -748,6 +762,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 				kind="interval"
 				plans={ displayedPlansProperties.map( ( { planName } ) => planName ) }
 				isInSignup={ planTypeSelectorProps.isInSignup }
+				isStepperUpgradeFlow={ planTypeSelectorProps.isStepperUpgradeFlow }
 				eligibleForWpcomMonthlyPlans={ planTypeSelectorProps.eligibleForWpcomMonthlyPlans }
 				isPlansInsideStepper={ planTypeSelectorProps.isPlansInsideStepper }
 				intervalType={ planTypeSelectorProps.intervalType }

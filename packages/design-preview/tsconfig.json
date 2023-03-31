@@ -1,12 +1,12 @@
 {
 	"extends": "@automattic/calypso-typescript-config/ts-package.json",
 	"compilerOptions": {
-		"allowJs": true,
 		"declarationDir": "dist/types",
 		"outDir": "dist/esm",
 		"rootDir": "src",
 		"types": []
 	},
 	"include": [ "src", "src/*.json" ],
-	"exclude": [ "**/__tests__/*", "**/__mocks__/*" ]
+	"exclude": [ "**/__tests__/*", "**/__mocks__/*" ],
+	"references": [ { "path": "../global-styles" } ]
 }

@@ -1,36 +1,43 @@
-import { isWpcomEnterpriseGridPlan } from '@automattic/calypso-products';
-import PropTypes from 'prop-types';
+import { isWpcomEnterpriseGridPlan, PlanSlug } from '@automattic/calypso-products';
+import { useSelector } from 'react-redux';
 import PlanPrice from 'calypso/my-sites/plan-price';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import usePlanPrices from '../plans/hooks/use-plan-prices';
+import { PlanProperties } from './types';
 
 interface PlanFeatures2023GridHeaderPriceProps {
-	planName: string;
-	discountPrice: number | null;
-	currencyCode: string | null;
-	rawPrice: number;
+	planProperties: PlanProperties;
 	is2023OnboardingPricingGrid: boolean;
 	isLargeCurrency: boolean;
 }
 
 const PlanFeatures2023GridHeaderPrice = ( {
-	planName,
-	discountPrice,
-	currencyCode,
-	rawPrice,
+	planProperties,
 	is2023OnboardingPricingGrid,
 	isLargeCurrency,
 }: PlanFeatures2023GridHeaderPriceProps ) => {
+	const { planName, showMonthlyPrice } = planProperties;
+	const currencyCode = useSelector( getCurrentUserCurrencyCode );
+	const planPrices = usePlanPrices( {
+		planSlug: planName as PlanSlug,
+		returnMonthly: showMonthlyPrice,
+	} );
+	const shouldShowDiscountedPrice = Boolean(
+		planPrices.planDiscountedRawPrice || planPrices.discountedRawPrice
+	);
+
 	if ( isWpcomEnterpriseGridPlan( planName ) ) {
 		return null;
 	}
 
 	return (
 		<div className="plan-features-2023-grid__pricing">
-			{ discountPrice && (
+			{ shouldShowDiscountedPrice && (
 				<span className="plan-features-2023-grid__header-price-group">
 					<div className="plan-features-2023-grid__header-price-group-prices">
 						<PlanPrice
 							currencyCode={ currencyCode }
-							rawPrice={ rawPrice }
+							rawPrice={ planPrices.rawPrice }
 							displayPerMonthNotation={ false }
 							is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 							isLargeCurrency={ isLargeCurrency }
@@ -38,7 +45,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 						/>
 						<PlanPrice
 							currencyCode={ currencyCode }
-							rawPrice={ discountPrice }
+							rawPrice={ planPrices.planDiscountedRawPrice || planPrices.discountedRawPrice }
 							displayPerMonthNotation={ false }
 							is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 							isLargeCurrency={ isLargeCurrency }
@@ -47,10 +54,10 @@ const PlanFeatures2023GridHeaderPrice = ( {
 					</div>
 				</span>
 			) }
-			{ ! discountPrice && (
+			{ ! shouldShowDiscountedPrice && (
 				<PlanPrice
 					currencyCode={ currencyCode }
-					rawPrice={ rawPrice }
+					rawPrice={ planPrices.rawPrice }
 					displayPerMonthNotation={ false }
 					is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 					isLargeCurrency={ isLargeCurrency }
@@ -58,14 +65,6 @@ const PlanFeatures2023GridHeaderPrice = ( {
 			) }
 		</div>
 	);
-};
-
-PlanFeatures2023GridHeaderPrice.propTypes = {
-	planName: PropTypes.string,
-	discountPrice: PropTypes.number,
-	currencyCode: PropTypes.string,
-	rawPrice: PropTypes.number,
-	is2023OnboardingPricingGrid: PropTypes.bool,
 };
 
 export default PlanFeatures2023GridHeaderPrice;

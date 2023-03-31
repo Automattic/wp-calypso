@@ -370,6 +370,13 @@ const sections = [
 		trackLoadPerformance: true,
 	},
 	{
+		name: 'reader',
+		paths: [ '/read/notifications' ],
+		module: 'calypso/reader/notifications',
+		group: 'reader',
+		trackLoadPerformance: true,
+	},
+	{
 		name: 'help',
 		paths: [ '/help' ],
 		module: 'calypso/me/help',
@@ -534,6 +541,12 @@ const sections = [
 		group: 'jetpack-cloud',
 	},
 	{
+		name: 'jetpack-cloud-golden-token',
+		paths: [ '/golden-token' ],
+		module: 'calypso/jetpack-cloud/sections/golden-token',
+		group: 'jetpack-cloud',
+	},
+	{
 		name: 'jetpack-social',
 		paths: [ '/jetpack-social' ],
 		module: 'calypso/jetpack-cloud/sections/jetpack-social',
@@ -562,13 +575,6 @@ const sections = [
 		paths: [ '/advertising', '/advertising/[^\\/]+(/[^\\/])?' ],
 		module: 'calypso/my-sites/promote-post',
 		group: 'sites',
-	},
-	{
-		name: 'subscriptions',
-		paths: [ '/subscriptions' ],
-		module: 'calypso/my-sites/subscriptions',
-		group: 'sites',
-		enableLoggedOut: true,
 	},
 	{
 		name: 'site-logs',

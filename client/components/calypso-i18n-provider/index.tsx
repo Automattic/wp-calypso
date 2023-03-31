@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 import type { I18N } from 'i18n-calypso';
 import type { FunctionComponent } from 'react';
 
-const CalypsoI18nProvider: FunctionComponent< { i18n: I18N } > = ( {
+const CalypsoI18nProvider: FunctionComponent< { i18n?: I18N } > = ( {
 	i18n = defaultCalypsoI18n,
 	children,
 } ) => {

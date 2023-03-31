@@ -61,6 +61,12 @@ export default function SiteSort( {
 		return <span className="site-sort">{ children }</span>;
 	}
 
+	const handleOnKeyDown = ( event: React.KeyboardEvent< HTMLDivElement > ) => {
+		if ( event.key === 'Enter' || event.key === ' ' ) {
+			setSort();
+		}
+	};
+
 	return (
 		<span
 			role="button"
@@ -68,7 +74,7 @@ export default function SiteSort( {
 			className={ classNames( 'site-sort site-sort__clickable', {
 				'site-sort__icon-large_screen': isLargeScreen,
 			} ) }
-			onKeyDown={ setSort }
+			onKeyDown={ handleOnKeyDown }
 			onClick={ setSort }
 		>
 			{ children }

@@ -6,6 +6,7 @@ import wrapInSiteOffsetProvider from 'calypso/lib/wrap-in-site-offset';
 import {
 	backupDownload,
 	backupRestore,
+	backupClone,
 	backups,
 	showJetpackIsDisconnected,
 	showNotAuthorizedForNonAdmins,
@@ -17,7 +18,7 @@ import WPCOMUpsellPage from 'calypso/my-sites/backup/wpcom-backup-upsell';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { backupMainPath, backupRestorePath, backupDownloadPath } from './paths';
+import { backupMainPath, backupRestorePath, backupDownloadPath, backupClonePath } from './paths';
 
 const notFoundIfNotEnabled = ( context, next ) => {
 	const state = context.store.getState();
@@ -55,6 +56,23 @@ export default function () {
 		siteSelection,
 		navigation,
 		backupRestore,
+		wrapInSiteOffsetProvider,
+		wpcomAtomicTransfer( WPCOMUpsellPage ),
+		showUnavailableForVaultPressSites,
+		showJetpackIsDisconnected,
+		showUnavailableForMultisites,
+		showNotAuthorizedForNonAdmins,
+		notFoundIfNotEnabled,
+		makeLayout,
+		clientRender
+	);
+
+	/* handles /backup/:site/clone, see `backupClonePath` */
+	page(
+		backupClonePath( ':site' ),
+		siteSelection,
+		navigation,
+		backupClone,
 		wrapInSiteOffsetProvider,
 		wpcomAtomicTransfer( WPCOMUpsellPage ),
 		showUnavailableForVaultPressSites,

@@ -1,22 +1,23 @@
 import {
 	getProductFromSlug,
-	isJetpackAntiSpam,
 	isJetpackAntiSpamSlug,
-	isJetpackBackup,
 	isJetpackBackupSlug,
 	isJetpackPlanSlug,
-	isJetpackScan,
 	isJetpackScanSlug,
-	planHasFeature,
+	getAllFeaturesForPlan,
+	planHasSuperiorFeature,
 	WPCOM_FEATURES_ANTISPAM,
 	WPCOM_FEATURES_BACKUPS,
 	WPCOM_FEATURES_SCAN,
+	isAkismetProduct,
+	AKISMET_PRODUCTS_LIST,
 } from '@automattic/calypso-products';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { getUserPurchases } from 'calypso/state/purchases/selectors';
 import { requestRewindCapabilities } from 'calypso/state/rewind/capabilities/actions';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
@@ -26,6 +27,7 @@ import {
 	getSiteOption,
 } from 'calypso/state/sites/selectors';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
+import AkismetProductOverlapsOwnedProductNotice from './akismet-product-overlaps-owned-product-notice';
 import CartPlanOverlapsOwnedProductNotice from './cart-plan-overlaps-owned-product-notice';
 import JetpackPluginRequiredVersionNotice from './jetpack-plugin-required-version-notice';
 import SitePlanIncludesCartProductNotice from './site-plan-includes-cart-product-notice';
@@ -39,8 +41,10 @@ const PrePurchaseNotices = () => {
 	const dispatch = useDispatch();
 
 	const selectedSite = useSelector( getSelectedSite );
+	const userActivePurchases = useSelector(
+		( state ) => getUserPurchases( state )?.filter( ( purchase ) => purchase.active ) ?? []
+	);
 	const siteId = selectedSite?.ID;
-
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const cartItemSlugs = responseCart.products.map( ( item ) => item.product_slug );
@@ -72,39 +76,55 @@ const PrePurchaseNotices = () => {
 		return products.filter( ( p ) => ! p.expired );
 	} );
 
-	/**
-	 * The active product on the current site that overlaps/conflicts with the plan currently in the cart.
-	 */
-	const siteProductThatOverlapsCartPlan = useSelector( ( state ) => {
-		const planSlugInCart = cartItemSlugs.find( isJetpackPlanSlug );
+	const akismetPurchaseThatOverlapsCartProduct = useMemo( () => {
+		const productSlugInCart = cartItemSlugs.find( ( productSlug ) =>
+			isAkismetProduct( { productSlug } )
+		);
+		const akismetPurchases = userActivePurchases.filter(
+			( purchase ) => isAkismetProduct( purchase ) && 'siteless.akismet.com' === purchase.domain
+		);
 
-		if ( ! planSlugInCart ) {
+		// Continue only if the cart includes Akismet product
+		if ( ! productSlugInCart ) {
 			return null;
 		}
 
-		if (
-			planHasFeature( planSlugInCart, WPCOM_FEATURES_BACKUPS ) &&
-			siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS )
-		) {
-			return currentSiteProducts.find( isJetpackBackup );
+		const lowerTierProducts = akismetPurchases.filter(
+			( { productSlug } ) =>
+				AKISMET_PRODUCTS_LIST.indexOf( productSlugInCart ) >
+				AKISMET_PRODUCTS_LIST.indexOf( productSlug )
+		);
+
+		if ( lowerTierProducts.length === 0 ) {
+			return null;
 		}
 
-		if (
-			planHasFeature( planSlugInCart, WPCOM_FEATURES_ANTISPAM ) &&
-			siteHasFeature( state, siteId, WPCOM_FEATURES_ANTISPAM )
-		) {
-			return currentSiteProducts.find( isJetpackAntiSpam );
+		return lowerTierProducts[ 0 ];
+	}, [ cartItemSlugs, userActivePurchases ] );
+
+	const siteProductThatOverlapsCartPlan = useMemo( () => {
+		const planSlugInCart = cartItemSlugs.find( isJetpackPlanSlug );
+		if ( ! planSlugInCart || ! currentSiteProducts ) {
+			return null;
 		}
 
-		if (
-			planHasFeature( planSlugInCart, WPCOM_FEATURES_SCAN ) &&
-			siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN )
-		) {
-			return currentSiteProducts.find( isJetpackScan );
-		}
+		const getMatchingProducts = ( siteProducts, planSlug ) => {
+			// Get all features and products for the plan in the cart
+			const planFeatures = getAllFeaturesForPlan( planSlug );
 
-		return null;
-	} );
+			// Filter the site products to only include those in the plan items or are inferior features to the plan feature
+			const matchingProducts = siteProducts.filter(
+				( product ) =>
+					planFeatures.includes( product.productSlug ) ||
+					planHasSuperiorFeature( planSlug, product.productSlug )
+			);
+
+			return matchingProducts;
+		};
+
+		const matchingProducts = getMatchingProducts( currentSiteProducts, planSlugInCart );
+		return matchingProducts?.[ 0 ];
+	}, [ currentSiteProducts, cartItemSlugs ] );
 
 	/**
 	 * The product currently in the cart that overlaps/conflicts with the current active site plan.
@@ -143,6 +163,14 @@ const PrePurchaseNotices = () => {
 			backupPluginActive || isJetpackMinimumVersion( state, siteId, BACKUP_MINIMUM_JETPACK_VERSION )
 		);
 	} );
+
+	if ( akismetPurchaseThatOverlapsCartProduct ) {
+		return (
+			<AkismetProductOverlapsOwnedProductNotice
+				purchase={ akismetPurchaseThatOverlapsCartProduct }
+			/>
+		);
+	}
 
 	// All these notices (and the selectors that drive them)
 	// require a site ID to work. We should *conceptually* always

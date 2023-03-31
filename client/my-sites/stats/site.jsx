@@ -331,6 +331,9 @@ class StatsSite extends Component {
 						}
 					</div>
 				</div>
+				{ config.isEnabled( 'stats/subscribers-section' ) && (
+					<AsyncLoad require="calypso/my-sites/stats/subscribers-section" />
+				) }
 				{ /* Only load Jetpack Upsell Section for Odyssey Stats */ }
 				{ ! isOdysseyStats ? null : (
 					<AsyncLoad require="calypso/my-sites/stats/jetpack-upsell-section" />

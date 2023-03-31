@@ -30,6 +30,10 @@ $color-yellow: var(--studio-yellow-50);
 	}
 }
 
+.expanded-card__clickable:focus-visible {
+	outline: thin dotted;
+}
+
 .expanded-card__header {
 	font-size: 0.875rem;
 	color: var(--studio-gray-80);
@@ -181,4 +185,21 @@ $color-yellow: var(--studio-yellow-50);
 
 .expanded-card__not-enabled {
 	background: none;
+}
+
+.site-expanded-content__php-version {
+	@extend .site-expanded-content__card-content-score-title;
+	padding: 0 16px 16px;
+}
+
+.site-content__small-screen-view {
+	.site-expanded-content__php-version {
+		padding: 1.5px 0;
+	}
+}
+
+.site-expanded-content__license-selected .gridicon {
+	position: relative;
+	inset-block-start: 3px;
+	inset-inline-end: 5px;
 }

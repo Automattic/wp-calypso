@@ -1362,6 +1362,7 @@ class ThemeSheet extends Component {
 		if ( this.props.error ) {
 			return <ThemeNotFoundError />;
 		}
+
 		return this.renderSheet();
 	}
 }
@@ -1445,8 +1446,10 @@ export default connect(
 		const backPath = getBackPath( state );
 		const isCurrentUserPaid = isUserPaid( state );
 		const theme = getCanonicalTheme( state, siteId, themeId );
-		const siteIdOrWpcom = siteId || 'wpcom';
-		const error = theme ? false : getThemeRequestErrors( state, themeId, siteIdOrWpcom );
+		const error = theme
+			? false
+			: getThemeRequestErrors( state, themeId, 'wpcom' ) ||
+			  getThemeRequestErrors( state, themeId, siteId );
 		const englishUrl = 'https://wordpress.com' + getThemeDetailsUrl( state, themeId );
 
 		const isAtomic = isSiteAutomatedTransfer( state, siteId );

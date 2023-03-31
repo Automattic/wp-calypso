@@ -8,15 +8,14 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { Purchase } from 'calypso/lib/purchases/types';
 import PurchasesListHeader from 'calypso/me/purchases/purchases-list/purchases-list-header';
 import PurchasesSite from 'calypso/me/purchases/purchases-site';
+import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-stored-payment-methods';
 import {
 	getSitePurchases,
 	hasLoadedSitePurchasesFromServer,
 	isFetchingSitePurchases,
 } from 'calypso/state/purchases/selectors';
-import { getAllStoredCards } from 'calypso/state/stored-cards/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { StoredCard } from 'calypso/my-sites/checkout/composite-checkout/types/stored-cards';
 
 import './style.scss';
 
@@ -26,17 +25,16 @@ function SubscriptionsContent( {
 	selectedSiteId,
 	selectedSite,
 	purchases,
-	cards,
 }: {
 	isFetchingPurchases: boolean;
 	hasLoadedPurchases: boolean;
 	selectedSiteId: number | null;
 	selectedSite: undefined | null | SiteDetails;
 	purchases: Purchase[];
-	cards: StoredCard[];
 } ) {
 	const getManagePurchaseUrlFor = ( siteSlug: string, purchaseId: number ) =>
 		`/purchases/subscriptions/${ siteSlug }/${ purchaseId }`;
+	const { paymentMethods: cards } = useStoredPaymentMethods( { type: 'card' } );
 
 	// If there is no selected site, show the "no sites" page
 	if ( ! selectedSiteId ) {
@@ -90,7 +88,6 @@ export default function SubscriptionsContentWrapper() {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const selectedSite = useSelector( getSelectedSite );
 	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSiteId ) );
-	const cards = useSelector( getAllStoredCards );
 
 	return (
 		<SubscriptionsContent
@@ -99,7 +96,6 @@ export default function SubscriptionsContentWrapper() {
 			selectedSiteId={ selectedSiteId }
 			selectedSite={ selectedSite }
 			purchases={ purchases }
-			cards={ cards }
 		/>
 	);
 }

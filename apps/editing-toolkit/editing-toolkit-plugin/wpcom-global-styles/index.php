@@ -26,9 +26,16 @@ function wpcom_should_limit_global_styles( $blog_id = 0 ) {
 		if ( defined( 'IS_WPCOM' ) && IS_WPCOM ) {
 			$blog_id = get_current_blog_id();
 		} elseif ( defined( 'IS_ATOMIC' ) && IS_ATOMIC ) {
-			$blog_id = method_exists( 'Jetpack_Options', 'get_option' )
-				? (int) Jetpack_Options::get_option( 'id' )
-				: get_current_blog_id();
+			/*
+			 * Atomic sites have the WP.com blog ID stored as a Jetpack option. This code deliberately
+			 * doesn't use `Jetpack_Options::get_option` so it works even when Jetpack has not been loaded.
+			 */
+			$jetpack_options = get_option( 'jetpack_options' );
+			if ( is_array( $jetpack_options ) && isset( $jetpack_options['id'] ) ) {
+				$blog_id = (int) $jetpack_options['id'];
+			} else {
+				$blog_id = get_current_blog_id();
+			}
 		} else {
 			return false;
 		}

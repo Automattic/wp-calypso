@@ -8,12 +8,31 @@ import NavigatorHeader from './navigator-header';
 
 interface Props {
 	shouldUnlockGlobalStyles: boolean;
+	isDismissedGlobalStylesUpgradeModal?: boolean;
 	onSelect: ( name: string ) => void;
 	onContinueClick: () => void;
 }
 
-const ScreenMain = ( { shouldUnlockGlobalStyles, onSelect, onContinueClick }: Props ) => {
+const ScreenMain = ( {
+	shouldUnlockGlobalStyles,
+	isDismissedGlobalStylesUpgradeModal,
+	onSelect,
+	onContinueClick,
+}: Props ) => {
 	const translate = useTranslate();
+	const getDescription = () => {
+		if ( ! shouldUnlockGlobalStyles ) {
+			return translate( 'Ready? Go to the Site Editor to edit your content.' );
+		}
+
+		if ( isDismissedGlobalStylesUpgradeModal ) {
+			return translate(
+				'Ready? Keep your styles and go to the Site Editor to edit your content. You’ll be able to upgrade to the Premium plan later.'
+			);
+		}
+
+		return translate( "You've selected a premium color or font for your site." );
+	};
 
 	return (
 		<>
@@ -35,20 +54,20 @@ const ScreenMain = ( { shouldUnlockGlobalStyles, onSelect, onContinueClick }: Pr
 						<span className="pattern-layout__list-item-text">{ translate( 'Header' ) }</span>
 					</NavigationButtonAsItem>
 					<NavigationButtonAsItem
+						path="/section"
+						icon={ layout }
+						aria-label={ translate( 'Sections' ) }
+						onClick={ () => onSelect( 'section' ) }
+					>
+						<span className="pattern-layout__list-item-text">{ translate( 'Sections' ) }</span>
+					</NavigationButtonAsItem>
+					<NavigationButtonAsItem
 						path="/footer"
 						icon={ footer }
 						aria-label={ translate( 'Footer' ) }
 						onClick={ () => onSelect( 'footer' ) }
 					>
 						<span className="pattern-layout__list-item-text">{ translate( 'Footer' ) }</span>
-					</NavigationButtonAsItem>
-					<NavigationButtonAsItem
-						path="/homepage"
-						icon={ layout }
-						aria-label={ translate( 'Homepage' ) }
-						onClick={ () => onSelect( 'homepage' ) }
-					>
-						<span className="pattern-layout__list-item-text">{ translate( 'Homepage' ) }</span>
 					</NavigationButtonAsItem>
 					{ isEnabled( 'pattern-assembler/color-and-fonts' ) && (
 						<>
@@ -73,13 +92,11 @@ const ScreenMain = ( { shouldUnlockGlobalStyles, onSelect, onContinueClick }: Pr
 				</ItemGroup>
 			</div>
 			<div className="screen-container__footer">
-				<span className="screen-container__description">
-					{ shouldUnlockGlobalStyles
-						? translate( 'You’ve selected Premium fonts or colors for your site.' )
-						: translate( 'Ready? Go to the Site Editor to edit your content.' ) }
-				</span>
+				<span className="screen-container__description">{ getDescription() }</span>
 				<Button className="pattern-assembler__button" onClick={ onContinueClick } primary>
-					{ shouldUnlockGlobalStyles ? translate( 'Unlock this style' ) : translate( 'Continue' ) }
+					{ shouldUnlockGlobalStyles && ! isDismissedGlobalStylesUpgradeModal
+						? translate( 'Unlock this style' )
+						: translate( 'Continue' ) }
 				</Button>
 			</div>
 		</>

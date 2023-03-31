@@ -16,6 +16,8 @@ import './style.scss';
 interface Props {
 	onFinishUp: () => void;
 	onReview: () => void;
+	redirectOnFinish?: boolean;
+	targetSite: null | string;
 }
 
 const ERROR_CODES_FOR_BLOCKED_REQUEST = [ 'service_unavailable', 'invalid_credentials' ];
@@ -66,7 +68,12 @@ const UpdateErrorView: FunctionComponent< UpdateError > = ( {
 	);
 };
 
-const Verification: FunctionComponent< Props > = ( { onFinishUp, onReview } ) => {
+const Verification: FunctionComponent< Props > = ( {
+	onFinishUp,
+	onReview,
+	redirectOnFinish = true,
+	targetSite = null,
+} ) => {
 	const translate = useTranslate();
 
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -97,9 +104,9 @@ const Verification: FunctionComponent< Props > = ( { onFinishUp, onReview } ) =>
 		<div>
 			<div className="verification__title">
 				<h3>
-					{ translate( 'Establishing a connection to {{strong}}%(siteSlug)s{{/strong}}.', {
+					{ translate( 'Establishing a connection to {{strong}}%(targetSite)s{{/strong}}.', {
 						args: {
-							siteSlug,
+							targetSite: targetSite ? targetSite : siteSlug,
 						},
 						components: {
 							strong: <strong />,
@@ -127,8 +134,12 @@ const Verification: FunctionComponent< Props > = ( { onFinishUp, onReview } ) =>
 			{ updateError && <UpdateErrorView { ...updateError } /> }
 			<div className="verification__buttons">
 				{ showFinishUp && (
-					<Button primary onClick={ onFinishUp } href={ settingsPath( siteSlug ) }>
-						{ translate( 'Finish up' ) }
+					<Button
+						primary
+						onClick={ onFinishUp }
+						href={ redirectOnFinish ? settingsPath( siteSlug ) : '#' }
+					>
+						{ redirectOnFinish ? translate( 'Finish up' ) : translate( 'Continue' ) }
 					</Button>
 				) }
 				{ showReview && (

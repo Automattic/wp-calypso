@@ -163,6 +163,7 @@ export class CommentList extends Component {
 					commentsPage={ comments }
 					counts={ counts }
 					isBulkMode={ isBulkMode }
+					isPostView={ isPostView }
 					isSelectedAll={ this.isSelectedAll() }
 					order={ order }
 					postId={ postId }

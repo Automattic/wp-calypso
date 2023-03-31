@@ -561,6 +561,7 @@ export interface ResponseCartProductExtra {
 
 	afterPurchaseUrl?: string;
 	isJetpackCheckout?: boolean;
+	isAkismetSitelessCheckout?: boolean;
 
 	// Marketplace properties
 	is_marketplace_product?: boolean;

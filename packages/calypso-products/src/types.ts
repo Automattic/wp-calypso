@@ -179,6 +179,12 @@ export type Plan = BillingTerm & {
 	 */
 	get2023PlanComparisonJetpackFeatureOverride?: () => Feature[];
 
+	/**
+	 * Features that are conditionally available and are to be shown in the plans comparison table.
+	 * For example: "Available with plugins"
+	 */
+	get2023PlanComparisonConditionalFeatures?: () => Feature[];
+
 	get2023PricingGridSignupStorageOptions?: () => Feature[];
 	getProductId: () => number;
 	getPathSlug?: () => string;
