@@ -4,4 +4,4 @@
 
 ## 1.1.0
 
-- added `getWpComOrigin` helper
+- added `getCaplysoUrl` helper

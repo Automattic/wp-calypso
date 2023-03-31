@@ -1,8 +1,8 @@
 /**
  * These are the known places that Calypso is allowed to run.
+ * Note that https://wordpress.com is not included as it's the default.
  */
 const ALLOWED_ORIGINS = [
-	'https://wordpress.com',
 	'https://horizon.wordpress.com',
 	'https://wpcalypso.wordpress.com',
 	'http://calypso.localhost:3000',
@@ -30,12 +30,13 @@ function isCalypsoLive( origin: string ) {
 }
 
 /**
- * From wp-admin contexts: gets the Calypso origin from 1. the `wpcom_origin` query arg * and 2. the HTTP referrer and compares it against a list of allowed wpcom origins.
+ * From wp-admin contexts: gets the Calypso origin from 1. the `wpcom_origin` query arg
+ * and 2. the HTTP referrer and compares it against a list of allowed wpcom origins.
  *
  * @param path Optional path to append to the origin
  * @returns The origin if it's allowed, otherwise the default origin (wordpress.com)
  */
-export function getWpComOrigin( path = '' ) {
+export function getCaplysoUrl( path = '' ) {
 	const defaultOrigin = 'https://wordpress.com';
 	const fromQueryArg = new URLSearchParams( window.location.search ).get( 'calypso_origin' ) || '';
 	let origin = defaultOrigin;

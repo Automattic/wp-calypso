@@ -1,4 +1,4 @@
-import { getWpComOrigin } from '@automattic/calypso-url';
+import { getCaplysoUrl } from '@automattic/calypso-url';
 import { select, dispatch } from '@wordpress/data';
 import domReady from '@wordpress/dom-ready';
 
@@ -13,14 +13,14 @@ function makeSiteEditorNavConsistent() {
 		return;
 	}
 	// Don't have to change the origin? Bail.
-	if ( getWpComOrigin() === 'https://wordpress.com' ) {
+	if ( getCaplysoUrl() === 'https://wordpress.com' ) {
 		return;
 	}
 
 	const backButtonUrl = siteEditor.getSettings().__experimentalDashboardLink;
 	const envRespectingBackButtonUrl = backButtonUrl.replace(
 		/^https:\/\/wordpress.com/,
-		getWpComOrigin()
+		getCaplysoUrl()
 	);
 	dispatch( 'core/edit-site' ).updateSettings( {
 		__experimentalDashboardLink: envRespectingBackButtonUrl,
