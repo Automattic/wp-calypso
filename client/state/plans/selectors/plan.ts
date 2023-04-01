@@ -52,3 +52,16 @@ export function getPlanSlug( state: AppState, productId: string | number ): stri
 
 	return get( plan, 'product_slug', null );
 }
+
+/**
+ * Returns a plan bill_period. Useful for comparing plan billing periods
+ *
+ * @param  {Object}  state     global state
+ * @param  {number}  productId the plan productId
+ * @returns {string}  plan product_slug
+ */
+export function getPlanBillPeriod( state: AppState, productId: string | number ): number | null {
+	const plan = getPlan( state, productId );
+
+	return plan?.bill_period ?? null;
+}
