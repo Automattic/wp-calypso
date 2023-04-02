@@ -1,6 +1,6 @@
 import { getUrlParts } from '@automattic/calypso-url';
 import { Dialog } from '@automattic/components';
-import { useLocale } from '@automattic/i18n-utils';
+import { useLocale, useLocalizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { TranslateOptionsText, useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -42,6 +42,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	const widgetContainer = useRef< HTMLDivElement >( null );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate() as BlazePressTranslatable;
+	const localizeUrl = useLocalizeUrl();
 	const previousRoute = useSelector( getPreviousRoute );
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, selectedSiteId ) );
@@ -99,6 +100,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 						// eslint-disable-next-line wpcalypso/i18n-no-variables
 						return translate( original );
 					},
+					localizeUrl,
 					widgetContainer.current,
 					handleShowCancel,
 					handleShowTopBar,
