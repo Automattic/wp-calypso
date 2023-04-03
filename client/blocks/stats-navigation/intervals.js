@@ -45,6 +45,7 @@ Intervals.propTypes = {
 	selected: PropTypes.string.isRequired,
 	standalone: PropTypes.bool,
 	intervalValues: PropTypes.array,
+	onChange: PropTypes.func,
 };
 
 Intervals.defaultProps = {
