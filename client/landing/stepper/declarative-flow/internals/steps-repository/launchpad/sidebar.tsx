@@ -173,7 +173,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 				</div>
 				{ isDomainSSLProcessing && (
 					<div className="launchpad__domain-notification">
-						<div>
+						<div className="launchpad__domain-notification-icon">
 							<Gridicon className="launchpad__domain-checkmark-icon" icon="checkmark" size={ 18 } />
 						</div>
 						<p>
