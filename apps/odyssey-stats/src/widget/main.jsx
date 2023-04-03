@@ -22,17 +22,11 @@ const CHART_VISITORS = {
 
 const CHARTS = [ CHART_VIEWS, CHART_VISITORS ];
 
-const Main = ( { siteId } ) => {
+const Main = ( { siteId, quantity = 7 } ) => {
 	const queryDate = '2023-03-31'; //TODO get site date
 	const [ period, setPeriod ] = useState( 'day' );
 
-	const { isLoading, data } = useVisitsQuery(
-		siteId,
-		period,
-		7,
-		queryDate,
-		[ 'views', 'visitors' ].join( ',' )
-	);
+	const { isLoading, data } = useVisitsQuery( siteId, period, quantity, queryDate );
 
 	const barClick = () => {};
 
