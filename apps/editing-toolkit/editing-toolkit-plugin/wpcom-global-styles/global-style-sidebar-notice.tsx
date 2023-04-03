@@ -57,7 +57,7 @@ export default function GlobalStylesSidebarNotice(): JSX.Element {
 										<ExternalLink
 											href={ wpcomGlobalStyles.upgradeUrl }
 											target="_blank"
-											onClick={ () => recordUpgradeSidebarNoticeClick() }
+											onClick={ recordUpgradeSidebarNoticeClick }
 										/>
 									),
 								}
