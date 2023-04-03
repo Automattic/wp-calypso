@@ -22,7 +22,7 @@ const START_INDEX = 10;
 const MonitorDataContent = ( { siteId }: { siteId: number } ) => {
 	const translate = useTranslate();
 
-	const { data, isLoading } = useFetchMonitorData( siteId, '30 days' );
+	const { data } = useFetchMonitorData( siteId, '30 days' );
 
 	const incidents = data ?? [];
 
@@ -60,9 +60,7 @@ const MonitorDataContent = ( { siteId }: { siteId: number } ) => {
 		<div className="site-expanded-content__card-content">
 			<div className="site-expanded-content__card-content-column">
 				<div className="site-expanded-content__chart">
-					{ isLoading ? (
-						<TextPlaceholder />
-					) : (
+					{ monitorData.length > 0 ? (
 						<ElementChart
 							data={ monitorData }
 							minBarWidth={ 10 }
@@ -71,6 +69,8 @@ const MonitorDataContent = ( { siteId }: { siteId: number } ) => {
 							hideYAxis={ true }
 							hideXAxis={ true }
 						/>
+					) : (
+						<TextPlaceholder />
 					) }
 				</div>
 				<div className="site-expanded-content__x-axis-pointers">
