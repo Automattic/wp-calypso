@@ -8,9 +8,10 @@ import type { SiteStats } from '../types';
 interface Props {
 	stats: SiteStats;
 	siteUrlWithScheme: string;
+	trackEvent: ( eventName: string ) => void;
 }
 
-export default function InsightsStats( { stats, siteUrlWithScheme }: Props ) {
+export default function InsightsStats( { stats, siteUrlWithScheme, trackEvent }: Props ) {
 	const translate = useTranslate();
 
 	const data = {
@@ -82,6 +83,7 @@ export default function InsightsStats( { stats, siteUrlWithScheme }: Props ) {
 					<Button
 						href={ href }
 						target="_blank"
+						onClick={ () => trackEvent( 'expandable_block_see_all_stats_click' ) }
 						className="site-expanded-content__card-button"
 						compact
 					>
