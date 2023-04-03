@@ -18,6 +18,8 @@ class WPCOM_Global_Styles_Test extends TestCase {
 	 */
 	public function test_wpcom_block_global_styles_frontend() {
 		switch_theme( 'twentytwentythree' );
+		WP_Theme_JSON_Resolver::clean_cached_data();
+
 		$user_cpt     = WP_Theme_JSON_Resolver::get_user_data_from_wp_global_styles( wp_get_theme(), true );
 		$decoded_data = json_decode( $user_cpt['post_content'], true );
 		unset( $decoded_data['isGlobalStylesUserThemeJSON'] );
