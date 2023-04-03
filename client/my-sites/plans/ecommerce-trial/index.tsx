@@ -1,6 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
-import { plansLink, PLAN_FREE, PLAN_WOOEXPRESS_MEDIUM } from '@automattic/calypso-products';
+import {
+	plansLink,
+	PLAN_WOOEXPRESS_MEDIUM,
+	PLAN_WOOEXPRESS_SMALL,
+} from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
@@ -45,7 +49,7 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 	);
 
 	const plansTableProps = {
-		plans: [ PLAN_FREE, PLAN_WOOEXPRESS_MEDIUM ],
+		plans: [ PLAN_WOOEXPRESS_SMALL, PLAN_WOOEXPRESS_MEDIUM ],
 		hidePlansFeatureComparison: true,
 	};
 
