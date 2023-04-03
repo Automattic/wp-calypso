@@ -23,11 +23,11 @@ class WPCOM_Global_Styles_Test extends TestCase {
 		unset( $decoded_data['isGlobalStylesUserThemeJSON'] );
 		$config = $decoded_data;
 
-		$config['styles']['color']['background'] = 'hotpink';
+		$config['styles']['color']['background'] = '#000000';
 
 		$theme_json = apply_filters( 'wp_theme_json_data_user', new WP_Theme_JSON_Data( $config, 'custom' ) );
 
-		$this->assertEquals( 'hotpink', $theme_json->get_data()['styles']['color']['background'] );
+		$this->assertEquals( '#000000', $theme_json->get_data()['styles']['color']['background'] );
 
 		add_filter( 'wpcom_force_limit_global_styles', '__return_true' );
 
