@@ -6,6 +6,7 @@ import { useQueryThemes } from 'calypso/components/data/query-theme';
 import { ThankYouData, ThankYouSectionProps } from 'calypso/components/thank-you/types';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getThemes } from 'calypso/state/themes/selectors';
+import { hasExternallyManagedThemes as getHasExternallyManagedThemes } from 'calypso/state/themes/selectors/is-externally-managed-theme';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { ThankYouThemeSection } from './marketplace-thank-you-theme-section';
 import MasterbarStyled from './masterbar-styled';
@@ -66,5 +67,21 @@ export function useThemesThankYouData( themeSlugs: string[] ): ThankYouData {
 		[ translate ]
 	);
 
-	return [ themesSection, allThemesFetched, goBackSection, title, subtitle, thankyouSteps ];
+	// DotOrg and Externay managed themes
+	// needs an atomic site to be installed.
+	const hasDotOrgThemes = dotOrgThemes.some( ( theme: any ) => !! theme );
+	const hasExternallyManagedThemes = useSelector( ( state ) =>
+		getHasExternallyManagedThemes( state, themeSlugs )
+	);
+	const isAtomicNeeded = hasDotOrgThemes || hasExternallyManagedThemes;
+
+	return [
+		themesSection,
+		allThemesFetched,
+		goBackSection,
+		title,
+		subtitle,
+		thankyouSteps,
+		isAtomicNeeded,
+	];
 }

@@ -54,6 +54,14 @@ export type ThankYouProps = {
 	thankYouNotice?: ThankYouNoticeProps;
 };
 
-export type ThankYouData = [ ThankYouSectionProps, boolean, JSX.Element, string, string, string[] ];
+export type ThankYouData = [
+	ThankYouSectionProps,
+	boolean,
+	JSX.Element,
+	string,
+	string,
+	string[],
+	boolean
+];
 
 export type ThankYouSteps = { steps: string[]; additionalSteps: string[] };

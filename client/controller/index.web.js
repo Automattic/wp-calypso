@@ -35,15 +35,20 @@ export const ProviderWrappedLayout = ( {
 	currentQuery,
 	primary,
 	secondary,
+	headerSection,
 	redirectUri,
 } ) => {
 	const state = store.getState();
 	const userLoggedIn = isUserLoggedIn( state );
-
 	const layout = userLoggedIn ? (
-		<Layout primary={ primary } secondary={ secondary } />
+		<Layout primary={ primary } secondary={ secondary } headerSection={ headerSection } />
 	) : (
-		<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
+		<LayoutLoggedOut
+			primary={ primary }
+			secondary={ secondary }
+			redirectUri={ redirectUri }
+			headerSection={ headerSection }
+		/>
 	);
 
 	return (

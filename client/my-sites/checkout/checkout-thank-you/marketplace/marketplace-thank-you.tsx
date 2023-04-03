@@ -1,6 +1,6 @@
 import { ConfettiAnimation } from '@automattic/components';
 import { ThemeProvider, Global, css } from '@emotion/react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { ThankYou } from 'calypso/components/thank-you';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -14,6 +14,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { MarketplaceGoBackSection } from './marketplace-go-back-section';
+import { useAtomicTransfer } from './use-atomic-transfer';
 import { usePageTexts } from './use-page-texts';
 import { usePluginsThankYouData } from './use-plugins-thank-you-data';
 import { useThankYouFoooter } from './use-thank-you-footer';
@@ -42,6 +43,7 @@ const MarketplaceThankYou = ( {
 		pluginTitle,
 		pluginSubtitle,
 		pluginsProgressbarSteps,
+		isAtomicNeededForPlugins,
 	] = usePluginsThankYouData( pluginSlugs );
 	const [
 		themesSection,
@@ -50,6 +52,7 @@ const MarketplaceThankYou = ( {
 		themeTitle,
 		themeSubtitle,
 		themesProgressbarSteps,
+		isAtomicNeededForThemes,
 	] = useThemesThankYouData( themeSlugs );
 
 	const [ hasPlugins, hasThemes ] = [ pluginSlugs, themeSlugs ].map(
@@ -65,17 +68,16 @@ const MarketplaceThankYou = ( {
 		themeSubtitle,
 	} );
 
-	const areAllProductsFetched = allPluginsFetched && allThemesFetched;
+	const isAtomicNeeded = isAtomicNeededForPlugins || isAtomicNeededForThemes;
+	const [ isAtomicTransferCheckComplete, currentStep, showProgressBar, setShowProgressBar ] =
+		useAtomicTransfer( isAtomicNeeded );
+
+	const isPageReady = allPluginsFetched && allThemesFetched && isAtomicTransferCheckComplete;
 
 	const transferStatus = useSelector( ( state ) => getAutomatedTransferStatus( state, siteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 	const isJetpackSelfHosted = isJetpack && ! isAtomic;
-
-	const [ currentStep, setCurrentStep ] = useState( 0 );
-	const [ showProgressBar, setShowProgressBar ] = useState(
-		! new URLSearchParams( document.location.search ).has( 'hide-progress-bar' )
-	);
 
 	// Site is already Atomic (or just transferred).
 	// Poll the plugin installation status.
@@ -85,18 +87,11 @@ const MarketplaceThankYou = ( {
 		}
 
 		// Update the menu after the plugin has been installed, since that might change some menu items.
-		if ( areAllProductsFetched ) {
+		if ( isPageReady ) {
 			dispatch( requestAdminMenu( siteId ) );
 			return;
 		}
-	}, [
-		isRequestingPlugins,
-		areAllProductsFetched,
-		dispatch,
-		siteId,
-		transferStatus,
-		isJetpackSelfHosted,
-	] );
+	}, [ isRequestingPlugins, isPageReady, dispatch, siteId, transferStatus, isJetpackSelfHosted ] );
 
 	// Set progressbar (currentStep) depending on transfer/plugin status.
 	useEffect( () => {
@@ -105,23 +100,8 @@ const MarketplaceThankYou = ( {
 			return;
 		}
 
-		setShowProgressBar( ! areAllProductsFetched );
-
-		// Sites already transferred to Atomic or self-hosted Jetpack sites no longer need to change the current step.
-		if ( isJetpack ) {
-			return;
-		}
-
-		if ( transferStatus === transferStates.ACTIVE ) {
-			setCurrentStep( 0 );
-		} else if ( transferStatus === transferStates.PROVISIONED ) {
-			setCurrentStep( 1 );
-		} else if ( transferStatus === transferStates.RELOCATING ) {
-			setCurrentStep( 2 );
-		} else if ( transferStatus === transferStates.COMPLETE ) {
-			setCurrentStep( 3 );
-		}
-	}, [ transferStatus, areAllProductsFetched, showProgressBar, isJetpack ] );
+		setShowProgressBar( ! isPageReady );
+	}, [ setShowProgressBar, showProgressBar, isPageReady ] );
 
 	const { steps, additionalSteps } = useThankYouSteps( {
 		pluginSlugs,
@@ -152,7 +132,7 @@ const MarketplaceThankYou = ( {
 				pluginsGoBackSection={ pluginsGoBackSection }
 				themeSlugs={ themeSlugs }
 				themesGoBackSection={ themesGoBackSection }
-				areAllProductsFetched={ areAllProductsFetched }
+				areAllProductsFetched={ isPageReady }
 			/>
 			{ showProgressBar && (
 				// eslint-disable-next-line wpcalypso/jsx-classname-namespace

@@ -32,7 +32,7 @@ import {
 	isDIFMProduct,
 	isAkismetProduct,
 	isJetpackBackupT1Slug,
-	AKISMET_UPGADES_PRODUCTS_MAP,
+	AKISMET_UPGRADES_PRODUCTS_MAP,
 } from '@automattic/calypso-products';
 import { Spinner, Button, Card, CompactCard, ProductIcon, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
@@ -386,7 +386,7 @@ class ManagePurchase extends Component {
 			// For the first Iteration of Calypso Akismet checkout we are only suggesting
 			// for immediate upgrades to the next plan. We will change this in the future
 			// with appropriate page.
-			return AKISMET_UPGADES_PRODUCTS_MAP[ purchase.productSlug ];
+			return AKISMET_UPGRADES_PRODUCTS_MAP[ purchase.productSlug ];
 		}
 
 		if ( isUpgradeableBackupProduct || isUpgradeableSecurityPlan ) {

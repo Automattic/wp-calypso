@@ -5,8 +5,8 @@ import type { ReactNode } from 'react';
 import './style.scss';
 
 interface Props {
-	header: ReactNode;
-	children: ReactNode;
+	header?: ReactNode;
+	children?: ReactNode;
 	emptyContent?: ReactNode;
 	isEnabled?: boolean;
 	onClick?: () => void;
