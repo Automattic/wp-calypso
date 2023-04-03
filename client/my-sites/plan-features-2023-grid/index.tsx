@@ -27,6 +27,8 @@ import {
 	getPlanSlugForTermVariant,
 	PlanSlug,
 	PLAN_BIENNIAL_PERIOD,
+	isWooExpressMediumPlan,
+	isWooExpressSmallPlan,
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -643,6 +645,7 @@ export class PlanFeatures2023Grid extends Component<
 			manageHref,
 			currentSitePlanSlug,
 			selectedSiteSlug,
+			translate,
 		} = this.props;
 
 		return planPropertiesObj.map( ( properties: PlanProperties ) => {
@@ -652,6 +655,15 @@ export class PlanFeatures2023Grid extends Component<
 				'is-top-buttons',
 				'is-bottom-aligned'
 			);
+
+			// Leaving it `undefined` makes it use the default label
+			let buttonText;
+
+			if ( isWooExpressMediumPlan( planName ) ) {
+				buttonText = translate( 'Get Performance', { textOnly: true } );
+			} else if ( isWooExpressSmallPlan( planName ) ) {
+				buttonText = translate( 'Get Essential', { textOnly: true } );
+			}
 
 			return (
 				<Container key={ planName } className={ classes } isMobile={ options?.isMobile }>
@@ -672,6 +684,7 @@ export class PlanFeatures2023Grid extends Component<
 						current={ current ?? false }
 						currentSitePlanSlug={ currentSitePlanSlug }
 						selectedSiteSlug={ selectedSiteSlug }
+						buttonText={ buttonText }
 					/>
 				</Container>
 			);
