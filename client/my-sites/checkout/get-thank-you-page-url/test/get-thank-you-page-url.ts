@@ -1789,7 +1789,7 @@ describe( 'getThankYouPageUrl', () => {
 			expect( url ).toBe( '/checkout/gift/thank-you/foo.bar' );
 		} );
 
-		it( '/marketplace/than-you/:productSlug/:site when purchasing a marketplace product', () => {
+		it( '/marketplace/than-you/:productSlug/:site when purchasing marketplace products', () => {
 			const url = getThankYouPageUrl( {
 				...defaultArgs,
 				cart: {
@@ -1799,28 +1799,41 @@ describe( 'getThankYouPageUrl', () => {
 							...getEmptyResponseCartProduct(),
 							extra: {
 								is_marketplace_product: true,
-								plugin_slug: 'slug1',
+								product_type: 'marketplace_plugin',
+								product_slug: 'plugin-slug1',
 							},
 						},
 						{
 							...getEmptyResponseCartProduct(),
 							extra: {
 								is_marketplace_product: true,
-								plugin_slug: 'slug2',
+								product_type: 'marketplace_plugin',
+								product_slug: 'plugin-slug2',
 							},
 						},
 						{
 							...getEmptyResponseCartProduct(),
 							extra: {
-								is_marketplace_product: false,
-								plugin_slug: 'not_marketplace',
+								is_marketplace_product: true,
+								product_type: 'marketplace_theme',
+								product_slug: 'theme-slug1',
+							},
+						},
+						{
+							...getEmptyResponseCartProduct(),
+							extra: {
+								is_marketplace_product: true,
+								product_type: 'marketplace_theme',
+								product_slug: 'theme-slug2',
 							},
 						},
 					],
 				},
 				siteSlug: 'site.slug',
 			} );
-			expect( url ).toBe( '/marketplace/thank-you/site.slug?plugins=slug1%2Cslug2' ); // %2C is a comma
+			expect( url ).toBe(
+				'/marketplace/thank-you/site.slug?plugins=plugin-slug1%2Cplugin-slug2&themes=theme-slug1%2Ctheme-slug2'
+			); // %2C is a comma
 		} );
 
 		it( 'Error when gift purchase missing blog_slug', () => {
