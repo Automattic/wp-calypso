@@ -17,8 +17,6 @@ class WPCOM_Global_Styles_Test extends TestCase {
 	 * Tests that Global Styles are blocked in the frontend.
 	 */
 	public function test_wpcom_block_global_styles_frontend() {
-		add_filter( 'wpcom_force_limit_global_styles', '__return_false' );
-
 		switch_theme( 'twentytwentythree' );
 		$user_cpt     = WP_Theme_JSON_Resolver::get_user_data_from_wp_global_styles( wp_get_theme(), true );
 		$decoded_data = json_decode( $user_cpt['post_content'], true );
