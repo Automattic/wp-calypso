@@ -78,9 +78,6 @@ const AkismetCheckoutThankYou: FunctionComponent< AkismetCheckoutThankYouProps >
 					) }
 				</p>
 
-				<p className="akismet-checkout-thank-you__api-key-header">
-					{ __( 'Your Akismet API Key is:', 'akismet-thank-you' ) }
-				</p>
 				<ThankYouAPIKeyClipboard />
 
 				<Button
@@ -114,7 +111,7 @@ function ThankYouAPIKeyClipboard() {
 		setIsCopied( true );
 	};
 
-	if ( isError ) {
+	if ( isError || isLoading ) {
 		return null;
 	}
 
@@ -122,26 +119,31 @@ function ThankYouAPIKeyClipboard() {
 	const keyInputSize = akismetApiKey ? akismetApiKey.length + 5 : 0;
 
 	return (
-		<div
-			className={ classNames(
-				'akismet-checkout-thank-you__key-clipboard',
-				isLoading ? ' loading' : ''
-			) }
-		>
-			{ ! isLoading && (
-				<>
-					<FormTextInput
-						className="akismet-checkout-thank-you__key-clipboard-input"
-						value={ akismetApiKey }
-						size={ keyInputSize }
-						readOnly
-					/>
-					<ClipboardButton text={ akismetApiKey } onCopy={ showConfirmation } compact>
-						{ isCopied ? translate( 'Copied!' ) : translate( 'Copy', { context: 'verb' } ) }
-					</ClipboardButton>
-				</>
-			) }
-		</div>
+		<>
+			<p className="akismet-checkout-thank-you__api-key-header">
+				{ __( 'Your Akismet API Key is:', 'akismet-thank-you' ) }
+			</p>
+			<div
+				className={ classNames(
+					'akismet-checkout-thank-you__key-clipboard',
+					isLoading ? ' loading' : ''
+				) }
+			>
+				{ ! isLoading && (
+					<>
+						<FormTextInput
+							className="akismet-checkout-thank-you__key-clipboard-input"
+							value={ akismetApiKey }
+							size={ keyInputSize }
+							readOnly
+						/>
+						<ClipboardButton text={ akismetApiKey } onCopy={ showConfirmation } compact>
+							{ isCopied ? translate( 'Copied!' ) : translate( 'Copy', { context: 'verb' } ) }
+						</ClipboardButton>
+					</>
+				) }
+			</div>
+		</>
 	);
 }
 
