@@ -80,6 +80,7 @@ import {
 	isJetpackSite,
 } from 'calypso/state/sites/selectors';
 import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provider';
+import useIsLargeCurrency from '../plans/hooks/use-is-large-currency';
 import { getManagePurchaseUrlFor } from '../purchases/paths';
 import PlanFeatures2023GridActions from './actions';
 import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
@@ -242,6 +243,51 @@ const PlanLogo: React.FunctionComponent< {
 				) }
 			</header>
 		</Container>
+	);
+};
+
+const PlanPricesRow = function ( {
+	planPropertiesObj,
+	options,
+	isReskinned,
+}: {
+	planPropertiesObj: PlanProperties[];
+	options?: PlanRowOptions;
+	isReskinned: boolean;
+} ) {
+	const isLargeCurrency = useIsLargeCurrency(
+		planPropertiesObj.map( ( properties ) => properties.planName as PlanSlug )
+	);
+
+	return (
+		<>
+			{ planPropertiesObj
+				.filter( ( { isVisible } ) => isVisible )
+				.map( ( properties ) => {
+					const { planName, rawPrice } = properties;
+					const classes = classNames( 'plan-features-2023-grid__table-item', 'is-bottom-aligned', {
+						'has-border-top': ! isReskinned,
+					} );
+					const hasNoPrice = rawPrice === undefined || rawPrice === null;
+
+					return (
+						<Container
+							scope="col"
+							key={ planName }
+							className={ classes }
+							isMobile={ options?.isMobile }
+						>
+							{ ! hasNoPrice && (
+								<PlanFeatures2023GridHeaderPrice
+									planProperties={ properties }
+									is2023OnboardingPricingGrid={ true }
+									isLargeCurrency={ isLargeCurrency }
+								/>
+							) }
+						</Container>
+					);
+				} ) }
+		</>
 	);
 };
 
@@ -489,38 +535,15 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanPrice( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { isReskinned, is2023OnboardingPricingGrid } = this.props;
+		const { isReskinned } = this.props;
 
-		const isLargeCurrency = planPropertiesObj.some(
-			( properties ) => properties?.rawPrice && properties?.rawPrice > 99000
+		return (
+			<PlanPricesRow
+				planPropertiesObj={ planPropertiesObj }
+				isReskinned={ isReskinned }
+				options={ options }
+			/>
 		);
-
-		return planPropertiesObj
-			.filter( ( { isVisible } ) => isVisible )
-			.map( ( properties ) => {
-				const { planName, rawPrice } = properties;
-				const classes = classNames( 'plan-features-2023-grid__table-item', 'is-bottom-aligned', {
-					'has-border-top': ! isReskinned,
-				} );
-				const hasNoPrice = rawPrice === undefined || rawPrice === null;
-
-				return (
-					<Container
-						scope="col"
-						key={ planName }
-						className={ classes }
-						isMobile={ options?.isMobile }
-					>
-						{ ! hasNoPrice && (
-							<PlanFeatures2023GridHeaderPrice
-								planProperties={ properties }
-								is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
-								isLargeCurrency={ isLargeCurrency }
-							/>
-						) }
-					</Container>
-				);
-			} );
 	}
 
 	renderBillingTimeframe( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
