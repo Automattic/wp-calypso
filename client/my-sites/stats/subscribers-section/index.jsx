@@ -65,14 +65,22 @@ function transformData( data ) {
 
 export default function SubscribersSection() {
 	const [ isLoading, setIsLoading ] = useState( true );
-	const data = transformData( isLoading ? [] : getData() );
+	const [ data, setData ] = useState( [] );
 
 	// Determines what is shown in the tooltip on hover.
 	const tooltipHelper = ( datum ) => `Changed: ${ datum.diff }`;
 
+	// Runs only once, thus no dependencies.
 	useEffect( () => {
 		setTimeout( () => setIsLoading( false ), 5000 );
 	}, [] );
+
+	// Runs when isLoading changes.
+	useEffect( () => {
+		if ( ! isLoading ) {
+			setData( transformData( getData() ) );
+		}
+	}, [ isLoading ] );
 
 	return (
 		<div className="subscribers-section">
