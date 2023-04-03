@@ -310,7 +310,8 @@ export default function getThankYouPageUrl( {
 	const isDomainOnly =
 		siteSlug === 'no-site' && getAllCartItems( cart ).every( isDomainRegistration );
 	if (
-		( cart?.create_new_blog || signupFlowName === 'domain' ) &&
+		( [ 'no-user', 'no-site' ].includes( String( cart?.cart_key ?? '' ) ) ||
+			signupFlowName === 'domain' ) &&
 		! isDomainOnly &&
 		urlFromCookie &&
 		receiptIdOrPlaceholder &&
