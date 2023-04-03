@@ -5,13 +5,14 @@ import { useSelector } from 'react-redux';
 import { useQueryThemes } from 'calypso/components/data/query-theme';
 import { ThankYouSectionProps } from 'calypso/components/thank-you/types';
 import { getThemes } from 'calypso/state/themes/selectors';
+import { hasExternallyManagedThemes as getHasExternallyManagedThemes } from 'calypso/state/themes/selectors/is-externally-managed-theme';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { ThankYouThemeSection } from './marketplace-thank-you-theme-section';
 import MasterbarStyled from './masterbar-styled';
 
 export function useThemesThankYouData(
 	themeSlugs: string[]
-): [ ThankYouSectionProps, boolean, JSX.Element, string, string ] {
+): [ ThankYouSectionProps, boolean, JSX.Element, string, string, boolean ] {
 	const translate = useTranslate();
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
@@ -49,5 +50,13 @@ export function useThemesThankYouData(
 		/>
 	);
 
-	return [ themesSection, allThemesFetched, goBackSection, title, subtitle ];
+	// DotOrg and Externay managed themes
+	// needs an atomic site to be installed.
+	const hasDotOrgThemes = dotOrgThemes.some( ( theme: any ) => !! theme );
+	const hasExternallyManagedThemes = useSelector( ( state ) =>
+		getHasExternallyManagedThemes( state, themeSlugs )
+	);
+	const isAtomicNeeded = hasDotOrgThemes || hasExternallyManagedThemes;
+
+	return [ themesSection, allThemesFetched, goBackSection, title, subtitle, isAtomicNeeded ];
 }
