@@ -1,9 +1,15 @@
 import { Button, Card } from '@automattic/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
+import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryProducts from 'calypso/components/data/query-products-list';
+import ClipboardButton from 'calypso/components/forms/clipboard-button';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import Main from 'calypso/components/main';
+import useAkismetKeyQuery from 'calypso/data/akismet/use-akismet-key-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isProductsListFetching, getProductName } from 'calypso/state/products-list/selectors';
@@ -72,13 +78,15 @@ const AkismetCheckoutThankYou: FunctionComponent< AkismetCheckoutThankYouProps >
 					) }
 				</p>
 
+				<ThankYouAPIKeyClipboard />
+
 				<Button
 					primary
 					busy={ isLoading }
 					href="https://akismet.com/account/"
 					onClick={ onManagePurchaseClick }
 				>
-					{ __( 'Manage Purchase' ) }
+					{ __( 'Manage Plan' ) }
 				</Button>
 			</Card>
 
@@ -86,5 +94,57 @@ const AkismetCheckoutThankYou: FunctionComponent< AkismetCheckoutThankYouProps >
 		</Main>
 	);
 };
+
+function ThankYouAPIKeyClipboard() {
+	const translate = useTranslate();
+	const [ isCopied, setIsCopied ] = useState( false );
+	const { data, isError, isLoading } = useAkismetKeyQuery();
+
+	useEffect( () => {
+		if ( isCopied ) {
+			const confirmationTimeout = setTimeout( () => setIsCopied( false ), 4000 );
+			return () => clearTimeout( confirmationTimeout );
+		}
+	}, [ isCopied ] );
+
+	const showConfirmation = () => {
+		setIsCopied( true );
+	};
+
+	if ( isError || isLoading ) {
+		return null;
+	}
+
+	const akismetApiKey = data ?? '';
+	const keyInputSize = akismetApiKey ? akismetApiKey.length + 5 : 0;
+
+	return (
+		<>
+			<p className="akismet-checkout-thank-you__api-key-header">
+				{ __( 'Your Akismet API Key is:', 'akismet-thank-you' ) }
+			</p>
+			<div
+				className={ classNames(
+					'akismet-checkout-thank-you__key-clipboard',
+					isLoading ? 'loading' : ''
+				) }
+			>
+				{ ! isLoading && (
+					<>
+						<FormTextInput
+							className="akismet-checkout-thank-you__key-clipboard-input"
+							value={ akismetApiKey }
+							size={ keyInputSize }
+							readOnly
+						/>
+						<ClipboardButton text={ akismetApiKey } onCopy={ showConfirmation } compact>
+							{ isCopied ? translate( 'Copied!' ) : translate( 'Copy', { context: 'verb' } ) }
+						</ClipboardButton>
+					</>
+				) }
+			</div>
+		</>
+	);
+}
 
 export default AkismetCheckoutThankYou;

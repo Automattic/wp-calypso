@@ -120,6 +120,7 @@ export default function () {
 		page(
 			'/checkout/akismet/thank-you/:productSlug',
 			setLocaleMiddleware(),
+			redirectLoggedOut,
 			noSite,
 			akismetCheckoutThankYou,
 			makeLayout,

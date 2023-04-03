@@ -272,7 +272,6 @@ export interface Cart {
 	credits_display: string;
 	credits_integer: number;
 	allowed_payment_methods: unknown[];
-	create_new_blog: boolean;
 	messages: Record< 'errors' | 'success', unknown >;
 }
 
