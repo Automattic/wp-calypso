@@ -89,6 +89,11 @@ function getSiteFilters( siteId ) {
 			id: 'stats-insights',
 		},
 		{
+			title: i18n.translate( 'Subscribers' ),
+			path: '/stats/subscribers/' + siteId,
+			id: 'stats-subscribers',
+		},
+		{
 			title: i18n.translate( 'Hours' ),
 			path: '/stats/hour/' + siteId,
 			id: 'stats-hour',
@@ -220,6 +225,16 @@ export function redirectToDefaultModulePage( context ) {
 export function insights( context, next ) {
 	context.primary = (
 		<AsyncLoad require="calypso/my-sites/stats/stats-insights" placeholder={ PageLoading } />
+	);
+	next();
+}
+
+export function subscribers( context, next ) {
+	context.primary = (
+		<AsyncLoad
+			require="calypso/my-sites/stats/stats-subscribers-page"
+			placeholder={ PageLoading }
+		/>
 	);
 	next();
 }

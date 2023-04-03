@@ -25,6 +25,11 @@ const insights = {
 	path: '/stats/insights',
 	showIntervals: false,
 };
+const subscribers = {
+	label: translate( 'Subscribers' ),
+	path: '/stats/subscribers',
+	showIntervals: false,
+};
 const store = {
 	label: translate( 'Store' ),
 	path: '/store/stats/orders',
@@ -44,6 +49,7 @@ const googleMyBusiness = {
 export const navItems = {
 	traffic,
 	insights,
+	subscribers, // TODO: use FF
 	store,
 	wordads,
 	googleMyBusiness,

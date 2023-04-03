@@ -54,6 +54,8 @@ export default function ( pageBase = '/' ) {
 	// Stat Insights Page
 	statsPage( '/stats/insights/:site', insights );
 
+	// TODO: insert subscribers
+
 	// Stat Site Pages
 	statsPage( `/stats/:period(${ validPeriods })/:site`, site );
 
