@@ -55,9 +55,10 @@ export default function () {
 	// Stat Insights Page
 	statsPage( '/stats/insights/:site', insights );
 
-	// TODO: wrap in a FF
-	// Stat Subscribers Page (do not cofuse with people/subscribers/)
-	statsPage( '/stats/subscribers/:site', subscribers );
+	if ( config.isEnabled( 'stats/subscribers-section' ) ) {
+		// Stat Subscribers Page (do not cofuse with people/subscribers/)
+		statsPage( '/stats/subscribers/:site', subscribers );
+	}
 
 	// Stat Site Pages
 	statsPage( `/stats/:period(${ validPeriods })/:site`, site );

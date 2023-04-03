@@ -22,11 +22,9 @@ import Reach from '../stats-reach';
 const StatsSubscribersPage = ( props ) => {
 	const { siteId, siteSlug, translate, isOdysseyStats, isJetpack } = props;
 
-	// TODO - use new FF
-	const isInsightsPageGridEnabled = config.isEnabled( 'stats/insights-page-grid' );
+	const isSubscribersPageEnabled = config.isEnabled( 'stats/subscribers-section' );
 
 	const statsModuleListClass = classNames( 'stats__module-list stats__module--unified', {
-		'is-insights-page-enabled': isInsightsPageGridEnabled,
 		'is-odyssey-stats': isOdysseyStats,
 		'is-jetpack': isJetpack,
 	} );
@@ -50,22 +48,26 @@ const StatsSubscribersPage = ( props ) => {
 					align="left"
 				/>
 				<StatsNavigation selectedItem="subscribers" siteId={ siteId } slug={ siteSlug } />
-				{ /* TODO: replace annual highlight */ }
-				<AnnualHighlightsSection siteId={ siteId } />
-				{ siteId && (
-					<DomainTip
-						siteId={ siteId }
-						event="stats_subscribers_domain"
-						vendor={ getSuggestionsVendor() }
-					/>
+				{ isSubscribersPageEnabled && (
+					<>
+						{ /* TODO: replace annual highlight */ }
+						<AnnualHighlightsSection siteId={ siteId } />
+						{ siteId && (
+							<DomainTip
+								siteId={ siteId }
+								event="stats_subscribers_domain"
+								vendor={ getSuggestionsVendor() }
+							/>
+						) }
+						{ config.isEnabled( 'stats/subscribers-section' ) && (
+							<AsyncLoad require="calypso/my-sites/stats/subscribers-section" siteId={ siteId } />
+						) }
+						<div className={ statsModuleListClass }>
+							<Followers path="followers" />
+							<Reach />
+						</div>
+					</>
 				) }
-				{ config.isEnabled( 'stats/subscribers-section' ) && (
-					<AsyncLoad require="calypso/my-sites/stats/subscribers-section" siteId={ siteId } />
-				) }
-				<div className={ statsModuleListClass }>
-					<Followers path="followers" />
-					<Reach />
-				</div>
 				<JetpackColophon />
 			</div>
 		</Main>

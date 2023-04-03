@@ -44,7 +44,7 @@ export default function SubscribersSection( { siteId } ) {
 
 	// console.log( data );
 
-	const chartData = transformData( data?.data ) || [];
+	const chartData = transformData( data?.data || [] );
 
 	return (
 		<div className="subscribers-section">

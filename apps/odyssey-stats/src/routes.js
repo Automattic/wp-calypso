@@ -7,6 +7,7 @@ import {
 	site,
 	summary,
 	wordAds,
+	subscribers,
 	redirectToActivity,
 	redirectToDefaultModulePage,
 	redirectToDefaultWordAdsPeriod,
@@ -54,7 +55,10 @@ export default function ( pageBase = '/' ) {
 	// Stat Insights Page
 	statsPage( '/stats/insights/:site', insights );
 
-	// TODO: insert subscribers
+	if ( config.isEnabled( 'stats/subscribers-section' ) ) {
+		// Stat Subscribers Page (do not cofuse with people/subscribers/)
+		statsPage( '/stats/subscribers/:site', subscribers );
+	}
 
 	// Stat Site Pages
 	statsPage( `/stats/:period(${ validPeriods })/:site`, site );
