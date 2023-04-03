@@ -14,6 +14,7 @@ import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query
 import Item from 'calypso/layout/masterbar/item';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { useInterval } from 'calypso/lib/interval';
 import { getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
 import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-plugin-install/use-marketplace-additional-steps';
@@ -43,6 +44,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	activateTheme,
 	initiateThemeTransfer as initiateTransfer,
+	requestActiveTheme,
 } from 'calypso/state/themes/actions';
 import { getTheme, isThemeActive as getThemeActive } from 'calypso/state/themes/selectors';
 import {
@@ -293,6 +295,14 @@ const MarketplacePluginInstall = ( {
 			);
 		}
 	}, [ themeSlug, wpOrgTheme, isThemeActive, selectedSiteSlug ] );
+
+	// Polling for theme activation status
+	useInterval(
+		() => {
+			dispatch( requestActiveTheme( siteId ) );
+		},
+		! themeSlug || currentStep === 0 || ( themeSlug && wpOrgTheme && isThemeActive ) ? null : 3000
+	);
 
 	const steps = useMemo( () => {
 		if ( themeSlug ) {
