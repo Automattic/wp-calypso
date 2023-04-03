@@ -211,7 +211,13 @@ const PatternAssembler = ( {
 		} as Design );
 
 	const updateActivePatternPosition = ( position: number ) => {
-		const patternPosition = header ? position + 1 : position;
+		let patternPosition = position;
+		if ( header ) {
+			patternPosition += 1;
+		}
+		if ( ! footer ) {
+			patternPosition -= 1;
+		}
 		setActivePosition( Math.max( patternPosition, 0 ) );
 	};
 
