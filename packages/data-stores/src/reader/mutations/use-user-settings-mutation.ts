@@ -21,7 +21,7 @@ const useUserSettingsMutation = () => {
 				} else {
 					throw new Error(
 						translate( 'Something went wrong.', {
-							context: 'Something went wrong will saving the user settings',
+							context: 'Something went wrong with saving the user settings',
 						} ) as string
 					);
 				}
