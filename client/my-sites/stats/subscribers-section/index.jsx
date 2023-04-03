@@ -64,7 +64,7 @@ function transformData( data ) {
 }
 
 export default function SubscribersSection() {
-	const { counts: data, isLoading } = useSubscriberCounts();
+	const { counts, isLoading } = useSubscriberCounts();
 
 	// Determines what is shown in the tooltip on hover.
 	const tooltipHelper = ( datum ) => `Changed: ${ datum.diff }`;
@@ -73,11 +73,11 @@ export default function SubscribersSection() {
 		<div className="subscribers-section">
 			<h1 className="highlight-cards-heading">Subscribers</h1>
 			{ isLoading && <StatsModulePlaceholder className="is-chart" isLoading /> }
-			{ ! isLoading && data.length === 0 && (
+			{ ! isLoading && counts.length === 0 && (
 				<p className="subscribers-section__no-data">No data availble for the specified period.</p>
 			) }
-			{ ! isLoading && data.length !== 0 && (
-				<LineChart data={ data } renderTooltipForDatanum={ tooltipHelper }>
+			{ ! isLoading && counts.length !== 0 && (
+				<LineChart data={ counts } renderTooltipForDatanum={ tooltipHelper }>
 					<StatsEmptyState />
 				</LineChart>
 			) }
