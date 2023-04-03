@@ -5,6 +5,7 @@ import { useContext, useState, forwardRef, Ref } from 'react';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import './style.scss';
 import EditButton from '../../dashboard-bulk-actions/edit-button';
+import { useJetpackAgencyDashboardRecordTrackEvent } from '../../hooks';
 import SitesOverviewContext from '../context';
 import SiteBulkSelect from '../site-bulk-select';
 import SiteSort from '../site-sort';
@@ -20,9 +21,15 @@ interface Props {
 const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableElement > ) => {
 	const { isBulkManagementActive } = useContext( SitesOverviewContext );
 
+	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( null, true );
+
 	const [ expandedRow, setExpandedRow ] = useState< number | null >( null );
 
 	const setExpanded = ( blogId: number ) => {
+		recordEvent( 'expandable_block_toggled', {
+			expanded: expandedRow !== blogId,
+			site_id: blogId,
+		} );
 		setExpandedRow( expandedRow === blogId ? null : blogId );
 	};
 

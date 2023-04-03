@@ -42,6 +42,7 @@ const LayoutLoggedOut = ( {
 	oauth2Client,
 	primary,
 	secondary,
+	headerSection,
 	sectionGroup,
 	sectionName,
 	sectionTitle,
@@ -71,6 +72,7 @@ const LayoutLoggedOut = ( {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
 		[ 'is-section-' + sectionName ]: sectionName,
 		'focus-content': true,
+		'has-header-section': headerSection,
 		'has-no-sidebar': ! secondary,
 		'has-no-masterbar': masterbarIsHidden,
 		'is-jetpack-login': isJetpackLogin,
@@ -135,7 +137,10 @@ const LayoutLoggedOut = ( {
 		<div className={ classNames( 'layout', classes ) }>
 			{ 'development' === process.env.NODE_ENV && <SympathyDevWarning /> }
 			<BodySectionCssClass group={ sectionGroup } section={ sectionName } bodyClass={ bodyClass } />
-			{ masterbar }
+			<div className="layout__header-section">
+				{ masterbar }
+				{ headerSection && <div className="layout__header-section-content">{ headerSection }</div> }
+			</div>
 			{ isJetpackCloud() && (
 				<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
 			) }

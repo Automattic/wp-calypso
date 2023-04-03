@@ -19,13 +19,11 @@ import { useMemo } from '@wordpress/element';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback, useEffect, ChangeEvent } from 'react';
-import { useSelector } from 'react-redux';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { FeatureObject, getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import PlanTypeSelector, {
 	PlanTypeSelectorProps,
 } from 'calypso/my-sites/plans-features-main/plan-type-selector';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import PlanFeatures2023GridActions from './actions';
 import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
 import PopularBadge from './components/popular-badge';
@@ -298,6 +296,7 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 		planProperties: PlanProperties;
 		allVisible: boolean;
 		isLastInRow: boolean;
+		isLargeCurrency: boolean;
 	}
 > = ( {
 	planProperties,
@@ -314,12 +313,12 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 	isLaunchPage,
 	flowName,
 	selectedSiteSlug,
+	isLargeCurrency,
 	onUpgradeClick,
 } ) => {
 	const { planName, planConstantObj, availableForPurchase, current, ...planPropertiesObj } =
 		planProperties;
 	const highlightLabel = useHighlightLabel( planName );
-	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( visiblePlansProperties );
 	const headerClasses = classNames( 'plan-comparison-grid__header-cell', getPlanClass( planName ), {
 		'popular-plan-parent-class': highlightLabel,
@@ -334,7 +333,6 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 		'is-current-plan': current,
 	} );
 	const rawPrice = planPropertiesObj.rawPrice;
-	const isLargeCurrency = rawPrice ? rawPrice > 99000 : false;
 	const showPlanSelect = ! allVisible && ! current;
 
 	return (
@@ -374,10 +372,7 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 				</h4>
 			</PlanSelector>
 			<PlanFeatures2023GridHeaderPrice
-				currencyCode={ currencyCode }
-				discountPrice={ planPropertiesObj.discountPrice }
-				rawPrice={ rawPrice || 0 }
-				planName={ planName }
+				planProperties={ planProperties }
 				is2023OnboardingPricingGrid={ true }
 				isLargeCurrency={ isLargeCurrency }
 			/>
@@ -430,6 +425,10 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 } ) => {
 	const allVisible = visiblePlansProperties.length === displayedPlansProperties.length;
 
+	const isLargeCurrency = displayedPlansProperties.some(
+		( properties ) => properties?.rawPrice && properties?.rawPrice > 99000
+	);
+
 	return (
 		<PlanRow>
 			<RowTitleCell
@@ -454,6 +453,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 					selectedSiteSlug={ selectedSiteSlug }
 					onUpgradeClick={ onUpgradeClick }
 					isLaunchPage={ isLaunchPage }
+					isLargeCurrency={ isLargeCurrency }
 				/>
 			) ) }
 		</PlanRow>

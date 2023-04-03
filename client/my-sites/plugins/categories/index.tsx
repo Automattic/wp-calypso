@@ -5,6 +5,8 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { ALLOWED_CATEGORIES, useCategories } from './use-categories';
 import { useGetCategoryUrl } from './use-get-category-url';
 
+import './style.scss';
+
 export type Category = {
 	menu: string;
 	title: string;

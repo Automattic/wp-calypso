@@ -202,7 +202,9 @@ class Hosting extends Component {
 								<WebServerSettingsCard disabled={ isDisabled } />
 								<RestorePlanSoftwareCard disabled={ isDisabled } />
 								<CacheCard disabled={ isDisabled } />
-								<WebServerLogsCard disabled={ isDisabled } />
+								{ ! isEnabled( 'woa-logging-moved' ) && (
+									<WebServerLogsCard disabled={ isDisabled } />
+								) }
 							</Column>
 							<Column type="sidebar">
 								<SiteBackupCard disabled={ isDisabled } />

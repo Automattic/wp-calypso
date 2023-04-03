@@ -336,7 +336,16 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/tags', '/tag' ],
+		paths: [ '/tags' ],
+		module: 'calypso/reader/tags',
+		group: 'reader',
+		trackLoadPerformance: true,
+		enableLoggedOut: true,
+		isomorphic: true,
+	},
+	{
+		name: 'reader',
+		paths: [ '/tag' ],
 		module: 'calypso/reader/tag-stream',
 		group: 'reader',
 		enableLoggedOut: true,
@@ -538,6 +547,12 @@ const sections = [
 		name: 'jetpack-cloud-agency-signup',
 		paths: [ '/agency/signup' ],
 		module: 'calypso/jetpack-cloud/sections/agency-signup',
+		group: 'jetpack-cloud',
+	},
+	{
+		name: 'jetpack-cloud-golden-token',
+		paths: [ '/golden-token' ],
+		module: 'calypso/jetpack-cloud/sections/golden-token',
 		group: 'jetpack-cloud',
 	},
 	{

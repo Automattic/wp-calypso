@@ -155,7 +155,6 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 
 			return {
 				external: showExternalControlPanelLink,
-				disabled: ! canAddMailboxes,
 				path: controlPanelUrl,
 			};
 		}
