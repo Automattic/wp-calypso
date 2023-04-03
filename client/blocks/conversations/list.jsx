@@ -221,14 +221,6 @@ export class ConversationCommentList extends Component {
 		return (
 			<div className="conversations__comment-list">
 				<ul className="conversations__comment-list-ul">
-					{ showCaterpillar && (
-						<ConversationCaterpillar
-							blogId={ post.site_ID }
-							postId={ post.ID }
-							commentCount={ commentCount }
-							commentsToShow={ commentsToShow }
-						/>
-					) }
 					{ map( commentsTree.children, ( commentId ) => {
 						return (
 							<PostComment
@@ -252,6 +244,14 @@ export class ConversationCommentList extends Component {
 							/>
 						);
 					} ) }
+					{ showCaterpillar && (
+						<ConversationCaterpillar
+							blogId={ post.site_ID }
+							postId={ post.ID }
+							commentCount={ commentCount }
+							commentsToShow={ commentsToShow }
+						/>
+					) }
 					<PostCommentFormRoot
 						post={ this.props.post }
 						commentsTree={ this.props.commentsTree }

@@ -1,5 +1,5 @@
 import treeSelect from '@automattic/tree-select';
-import { sortBy } from 'lodash';
+import { orderBy, sortBy } from 'lodash';
 import { getPostCommentItems } from 'calypso/state/comments/selectors/get-post-comment-items';
 
 import 'calypso/state/comments/init';
@@ -7,6 +7,10 @@ import 'calypso/state/comments/init';
 export const getDateSortedPostComments = treeSelect(
 	( state, siteId, postId ) => [ getPostCommentItems( state, siteId, postId ) ],
 	( [ comments ] ) => {
-		return sortBy( comments, ( comment ) => new Date( comment.date ) );
+		return orderBy(
+			sortBy( comments, ( comment ) => new Date( comment.date ) ),
+			'date',
+			'desc'
+		);
 	}
 );

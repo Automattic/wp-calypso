@@ -56,7 +56,7 @@ export const getPostCommentsTree = treeSelect(
 
 		return {
 			...commentsByIdMap,
-			children: map( roots, ( root ) => root.ID ).reverse(),
+			children: map( roots, ( root ) => root.ID ),
 		};
 	}
 );

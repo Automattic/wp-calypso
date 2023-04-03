@@ -383,8 +383,6 @@ class PostCommentList extends Component {
 			? Infinity
 			: this.state.amountOfCommentsToTake;
 
-		console.log( 'commentsTree', commentsTree );
-
 		const { displayedComments, displayedCommentsCount } = this.getDisplayedComments(
 			commentsTree.children,
 			amountOfCommentsToTake
