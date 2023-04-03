@@ -8,7 +8,6 @@ import {
 	TERM_TRIENNIALLY,
 	planMatches,
 	TERM_ANNUALLY,
-	getPlan,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
@@ -165,12 +164,10 @@ const LoggedInPlansFeatureActionButton = ( {
 	const translate = useTranslate();
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 	const currentPlanBillPeriod = useSelector( ( state ) => {
-		const productId = currentSitePlanSlug ? getPlan( currentSitePlanSlug )?.getProductId() : null;
-		return productId ? getPlanBillPeriod( state, productId ) : null;
+		return currentSitePlanSlug ? getPlanBillPeriod( state, currentSitePlanSlug ) : null;
 	} );
 	const gridPlanBillPeriod = useSelector( ( state ) => {
-		const productId = getPlan( planType )?.getProductId();
-		return productId ? getPlanBillPeriod( state, productId ) : null;
+		return planType ? getPlanBillPeriod( state, planType ) : null;
 	} );
 
 	const showDomainUpsellDialog = useCallback( () => {
@@ -213,7 +210,7 @@ const LoggedInPlansFeatureActionButton = ( {
 		);
 	}
 
-	// If the current plan is on a higher-term but lower-tier, then show a contact support button.
+	// If the current plan is on a higher-term but lower-tier, then show a "Contact support" button.
 	if (
 		( availableForPurchase || isPlaceholder ) &&
 		currentSitePlanSlug &&
@@ -230,7 +227,7 @@ const LoggedInPlansFeatureActionButton = ( {
 		);
 	}
 
-	// If the current plan matches on a lower-term, then show an upgrade to... button.
+	// If the current plan matches on a lower-term, then show an "Upgrade to..." button.
 	if (
 		( availableForPurchase || isPlaceholder ) &&
 		currentSitePlanSlug &&
