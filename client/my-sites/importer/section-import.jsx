@@ -64,7 +64,7 @@ const getImporterTypeForEngine = ( engine ) => `importer-type-${ engine }`;
  *
  * @see https://github.com/Automattic/jetpack/pull/28824#issuecomment-1439031413
  */
-const JETPACK_IMPORT_MIN_PLUGIN_VERSION = '11.9-a.5';
+const JETPACK_IMPORT_MIN_PLUGIN_VERSION = '12.0';
 
 class SectionImport extends Component {
 	static propTypes = {
