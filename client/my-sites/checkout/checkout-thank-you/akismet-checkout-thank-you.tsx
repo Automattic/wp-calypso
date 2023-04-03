@@ -126,7 +126,7 @@ function ThankYouAPIKeyClipboard() {
 			<div
 				className={ classNames(
 					'akismet-checkout-thank-you__key-clipboard',
-					isLoading ? ' loading' : ''
+					isLoading ? 'loading' : ''
 				) }
 			>
 				{ ! isLoading && (
