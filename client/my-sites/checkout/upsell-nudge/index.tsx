@@ -113,6 +113,7 @@ interface UpsellNudgeState {
 	cartItem: MinimalRequestCartProduct | null;
 	showPurchaseModal: boolean;
 	isContactInfoValid: boolean;
+	isValidating: boolean;
 }
 
 export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState > {
@@ -122,6 +123,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 		cartItem: null,
 		showPurchaseModal: false,
 		isContactInfoValid: false,
+		isValidating: false,
 	};
 
 	componentDidMount() {
@@ -138,15 +140,20 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 			return;
 		}
 		if ( this.props.paymentMethodsState.isLoading ) {
+			debug( 'not validating contact info because cards are still loading' );
 			return;
 		}
 		if ( ! this.haveCardsChanged() ) {
 			debug( 'cancelling validating contact info; cards have not changed' );
 			return;
 		}
+		if ( this.state.isValidating ) {
+			debug( 'cancelling validating contact info; validation is in-progress' );
+			return;
+		}
 		if ( this.props.paymentMethodsState.paymentMethods.length === 0 ) {
 			debug( 'not validating contact info because there are no cards' );
-			this.setState( { isContactInfoValid: false } );
+			this.setState( { isContactInfoValid: false, isValidating: false } );
 			return;
 		}
 		debug( 'validating contact info' );
@@ -169,10 +176,16 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 			return isContactValidationResponseValid( validationResult );
 		};
 
+		this.setState( {
+			isContactInfoValid: false,
+			isValidating: true,
+		} );
+
 		validateContactDetails().then( ( isValid ) => {
 			debug( 'validation of contact details result is', isValid );
 			this.setState( {
 				isContactInfoValid: isValid,
+				isValidating: false,
 			} );
 		} );
 	};
@@ -205,6 +218,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 			BUSINESS_PLAN_UPGRADE_UPSELL === upsellType
 				? 'business-plan-upgrade-upsell-new-design is-wide-layout'
 				: upsellType;
+
 		return (
 			<Main className={ styleClass }>
 				<QueryPaymentCountries />
@@ -277,8 +291,11 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 			translate,
 			siteSlug,
 			hasSevenDayRefundPeriod,
-			isLoading,
+			isLoading: isFetchingData,
 		} = this.props;
+
+		const isLoading =
+			isFetchingData || this.props.paymentMethodsState.isLoading || this.state.isValidating;
 
 		switch ( upsellType ) {
 			case CONCIERGE_QUICKSTART_SESSION:

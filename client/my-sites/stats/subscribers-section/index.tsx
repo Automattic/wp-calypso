@@ -1,5 +1,5 @@
 import UplotLineChart from '@automattic/components/src/chart-uplot';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 
 import './style.scss';
@@ -8,8 +8,8 @@ import './style.scss';
 // We don't have any data yet so we are just using some test data.
 // Currently using the LineChart component from the Calypso library.
 
-function getData() {
-	// From https://code.a8c.com/D105106 -- Work in progress on new endpoint.
+function getData(): [ string, number, number ][] {
+	// From D105106-code.
 	return [
 		[ '2023-03-01', 51131, 547 ],
 		[ '2023-02-01', 51881, 750 ],
@@ -45,27 +45,46 @@ function getData() {
 	];
 }
 
-export default function SubscribersSection() {
-	const [ isLoading, setIsLoading ] = useState( false );
-	useEffect( () => {
-		setTimeout( () => setIsLoading( false ), 5000 );
-	}, [ isLoading ] );
+function transformData( data: [ string, number, number ][] ): uPlot.AlignedData {
+	// Transform the data into the format required by the chart component.
+	// Note that the data is ordered from newest to oldest.
+	const x: number[] = data.map( ( point ) => Number( new Date( point[ 0 ] ) ) / 1000 );
+	const y: number[] = data.map( ( point ) => Number( point[ 1 ] ) );
+	return [ x, y ];
+}
 
-	const initialState = useMemo< uPlot.AlignedData >( () => {
-		const x: number[] = getData().map( ( point ) => Number( new Date( point[ 0 ] ) ) / 1000 );
-		const y: number[] = getData().map( ( point ) => Number( point[ 1 ] ) );
-		return [ x, y ];
-	}, [] );
-	const [ data ] = useState< uPlot.AlignedData >( initialState );
+export default function SubscribersSection() {
+	const { counts, isLoading } = useSubscriberCounts();
 
 	return (
 		<div className="subscribers-section">
 			<h1 className="highlight-cards-heading">Subscribers</h1>
-			{ isLoading ? (
-				<StatsModulePlaceholder className="is-chart" isLoading />
-			) : (
-				<UplotLineChart data={ data } options={ { legend: { show: false } } } />
+			{ isLoading && <StatsModulePlaceholder className="is-chart" isLoading /> }
+			{ ! isLoading && counts.length === 0 && (
+				<p className="subscribers-section__no-data">No data availble for the specified period.</p>
+			) }
+			{ ! isLoading && counts.length !== 0 && (
+				<UplotLineChart data={ counts } options={ { legend: { show: false } } } />
 			) }
 		</div>
 	);
+}
+
+function useSubscriberCounts() {
+	const [ counts, setCounts ] = useState< uPlot.AlignedData >( [] );
+	const [ isLoading, setIsLoading ] = useState( true );
+
+	// Run a timer to simulate hitting the network.
+	useEffect( () => {
+		setTimeout( () => setIsLoading( false ), 5000 );
+	}, [] );
+
+	// Process the data once the request returns.
+	useEffect( () => {
+		if ( ! isLoading ) {
+			setCounts( transformData( getData() ) );
+		}
+	}, [ isLoading ] );
+
+	return { counts, isLoading };
 }

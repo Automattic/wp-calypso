@@ -27,6 +27,9 @@ import {
 	getPlanSlugForTermVariant,
 	PlanSlug,
 	PLAN_BIENNIAL_PERIOD,
+	isWooExpressMediumPlan,
+	isWooExpressSmallPlan,
+	isWooExpressPlan,
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -211,6 +214,8 @@ const PlanLogo: React.FunctionComponent< {
 		'is-current-plan': current,
 	} );
 
+	const shouldShowWooLogo = isEcommercePlan( planName ) && ! isWooExpressPlan( planName );
+
 	return (
 		<Container key={ planName } className={ tableItemClasses } isMobile={ isMobile }>
 			<PopularBadge
@@ -228,7 +233,7 @@ const PlanLogo: React.FunctionComponent< {
 						imgAlt="WP Cloud logo"
 					/>
 				) }
-				{ isEcommercePlan( planName ) && (
+				{ shouldShowWooLogo && (
 					<ServiceLogo
 						hoverText={ translate(
 							'Make your online store a reality with the power of WooCommerce.'
@@ -500,7 +505,7 @@ export class PlanFeatures2023Grid extends Component<
 		);
 
 		return planPropertiesObj.map( ( properties ) => {
-			const { currencyCode, discountPrice, planName, rawPrice } = properties;
+			const { planName, rawPrice } = properties;
 			const classes = classNames( 'plan-features-2023-grid__table-item', 'is-bottom-aligned', {
 				'has-border-top': ! isReskinned,
 			} );
@@ -515,10 +520,7 @@ export class PlanFeatures2023Grid extends Component<
 				>
 					{ ! hasNoPrice && (
 						<PlanFeatures2023GridHeaderPrice
-							currencyCode={ currencyCode }
-							discountPrice={ discountPrice }
-							rawPrice={ rawPrice }
-							planName={ planName }
+							planProperties={ properties }
 							is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 							isLargeCurrency={ isLargeCurrency }
 						/>
@@ -646,6 +648,7 @@ export class PlanFeatures2023Grid extends Component<
 			manageHref,
 			currentSitePlanSlug,
 			selectedSiteSlug,
+			translate,
 		} = this.props;
 
 		return planPropertiesObj.map( ( properties: PlanProperties ) => {
@@ -655,6 +658,15 @@ export class PlanFeatures2023Grid extends Component<
 				'is-top-buttons',
 				'is-bottom-aligned'
 			);
+
+			// Leaving it `undefined` makes it use the default label
+			let buttonText;
+
+			if ( isWooExpressMediumPlan( planName ) ) {
+				buttonText = translate( 'Get Performance', { textOnly: true } );
+			} else if ( isWooExpressSmallPlan( planName ) ) {
+				buttonText = translate( 'Get Essential', { textOnly: true } );
+			}
 
 			return (
 				<Container key={ planName } className={ classes } isMobile={ options?.isMobile }>
@@ -675,6 +687,7 @@ export class PlanFeatures2023Grid extends Component<
 						current={ current ?? false }
 						currentSitePlanSlug={ currentSitePlanSlug }
 						selectedSiteSlug={ selectedSiteSlug }
+						buttonText={ buttonText }
 					/>
 				</Container>
 			);
@@ -1091,7 +1104,6 @@ const ConnectedPlanFeatures2023Grid = connect(
 				cartItemForPlan: getCartItemForPlan( getPlanSlug( state, planProductId ) ?? '' ),
 				currencyCode: getCurrentUserCurrencyCode( state ),
 				current: isCurrentPlan,
-				discountPrice,
 				features: planFeaturesTransformed,
 				jpFeatures: jetpackFeaturesTransformed,
 				isLandingPage,
@@ -1110,6 +1122,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 				tagline,
 				storageOptions,
 				billingPeriod,
+				showMonthlyPrice,
 			};
 		} );
 

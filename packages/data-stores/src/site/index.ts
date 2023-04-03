@@ -1,5 +1,5 @@
-import { plugins, use, registerStore } from '@wordpress/data';
-import persistOptions from '../one-week-persistence-config';
+import { registerStore } from '@wordpress/data';
+import { registerPlugins } from '../plugins';
 import { controls } from '../wpcom-request-controls';
 import { createActions } from './actions';
 import { STORE_KEY } from './constants';
@@ -15,7 +15,7 @@ export { STORE_KEY };
 let isRegistered = false;
 export function register( clientCreds: WpcomClientCredentials ): typeof STORE_KEY {
 	if ( ! isRegistered ) {
-		use( plugins.persistence, persistOptions );
+		registerPlugins();
 
 		isRegistered = true;
 		registerStore( STORE_KEY, {

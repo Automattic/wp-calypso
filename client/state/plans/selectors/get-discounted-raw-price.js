@@ -15,6 +15,7 @@ export function getDiscountedRawPrice( state, productId, isMonthly = false ) {
 	const plan = getPlan( state, productId );
 	const rawPrice = plan?.raw_price ?? -1;
 	const origCost = plan?.orig_cost ?? -1;
+
 	if ( rawPrice < 0 || origCost < 0 ) {
 		return null;
 	}

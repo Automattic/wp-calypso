@@ -1,13 +1,13 @@
 import { useTranslate } from 'i18n-calypso';
 import SiteRow from './site-row';
-import { SiteType } from './site-types';
 import './styles.scss';
+import type { SiteSubscription } from '@automattic/data-stores/src/reader/types';
 
-type SiteProps = {
-	sites: SiteType[];
+type SiteListProps = {
+	sites?: SiteSubscription[];
 };
 
-export default function SiteList( { sites }: SiteProps ) {
+export default function SiteList( { sites }: SiteListProps ) {
 	const translate = useTranslate();
 
 	return (
@@ -22,10 +22,10 @@ export default function SiteList( { sites }: SiteProps ) {
 				<span className="email-frequency" role="columnheader">
 					{ translate( 'Email frequency' ) }
 				</span>
+				<span className="actions" role="columnheader" />
 			</li>
-			{ sites.map( ( site ) => (
-				<SiteRow key={ site.id } { ...site } />
-			) ) }
+			{ sites &&
+				sites.map( ( site ) => <SiteRow key={ `sites.siterow.${ site.ID }` } { ...site } /> ) }
 		</ul>
 	);
 }

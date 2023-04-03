@@ -1,38 +1,14 @@
 /* global wpcomGlobalStyles */
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { ExternalLink, Notice } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { createInterpolateElement, render, useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-
 import './notice.scss';
+import { recordUpgradePreSaveNoticeClick, recordUpgradeNoticePreSaveShow } from './tracks-events';
+import { useGlobalStylesConfig } from './use-global-styles-config';
 
 function GlobalStylesNoticeComponent() {
-	const { globalStylesConfig, siteChanges } = useSelect( ( select ) => {
-		const {
-			getEditedEntityRecord,
-			__experimentalGetCurrentGlobalStylesId,
-			__experimentalGetDirtyEntityRecords,
-		} = select( 'core' );
-
-		const _globalStylesId = __experimentalGetCurrentGlobalStylesId
-			? __experimentalGetCurrentGlobalStylesId()
-			: null;
-		const globalStylesRecord = getEditedEntityRecord( 'root', 'globalStyles', _globalStylesId );
-
-		return {
-			globalStylesConfig: {
-				styles: globalStylesRecord?.styles ?? {},
-				settings: globalStylesRecord?.settings ?? {},
-			},
-			siteChanges: __experimentalGetDirtyEntityRecords ? __experimentalGetDirtyEntityRecords() : [],
-		};
-	}, [] );
-
-	// Do not show the notice if the use is trying to save the default styles.
-	const isVisible =
-		Object.keys( globalStylesConfig.styles ).length ||
-		Object.keys( globalStylesConfig.settings ).length;
+	const { siteChanges, globalStylesInUse } = useGlobalStylesConfig();
 
 	// Closes the sidebar if there are no more changes to be saved.
 	useEffect( () => {
@@ -50,19 +26,21 @@ function GlobalStylesNoticeComponent() {
 	}, [ siteChanges ] );
 
 	useEffect( () => {
-		if ( isVisible ) {
-			recordTracksEvent( 'calypso_global_styles_gating_notice_show', {
-				context: 'site-editor',
-			} );
+		if ( globalStylesInUse ) {
+			recordUpgradeNoticePreSaveShow();
 		}
-	}, [ isVisible ] );
+	}, [ globalStylesInUse ] );
 
-	if ( ! isVisible ) {
+	if ( ! globalStylesInUse ) {
 		return null;
 	}
 
 	return (
-		<Notice status="warning" isDismissible={ false } className="wpcom-global-styles-notice">
+		<Notice
+			status="warning"
+			isDismissible={ false }
+			className="wpcom-global-styles-notice notice-margin"
+		>
 			{ createInterpolateElement(
 				__(
 					'Your changes include customized styles that will only be visible once you <a>upgrade to a Premium plan</a>.',
@@ -73,11 +51,7 @@ function GlobalStylesNoticeComponent() {
 						<ExternalLink
 							href={ wpcomGlobalStyles.upgradeUrl }
 							target="_blank"
-							onClick={ () =>
-								recordTracksEvent( 'calypso_global_styles_gating_notice_upgrade_click', {
-									context: 'site-editor',
-								} )
-							}
+							onClick={ recordUpgradePreSaveNoticeClick }
 						/>
 					),
 				}

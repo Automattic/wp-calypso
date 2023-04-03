@@ -4,6 +4,7 @@ import { Icon, chevronRight } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
+import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import useCategoriesOrder from './hooks/use-categories-order';
 import NavigatorHeader from './navigator-header';
 import PatternListPanel from './pattern-list-panel';
@@ -53,7 +54,7 @@ const ScreenCategoryList = ( {
 	};
 
 	const trackEventCategoryClick = ( name: string ) => {
-		recordTracksEvent( 'calypso_signup_pattern_assembler_category_click', {
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_CATEGORY_LIST_CATEGORY_CLICK, {
 			pattern_category: name,
 		} );
 	};

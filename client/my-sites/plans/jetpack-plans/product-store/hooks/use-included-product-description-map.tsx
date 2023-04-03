@@ -76,7 +76,7 @@ export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 
 			...setTranslation(
 				JETPACK_SOCIAL_PRODUCTS,
-				translate( 'Engage your social followers. Basic plan with 1,000 shares/mo.' )
+				translate( 'Engage your social followers. Advanced plan with unlimited shares.' )
 			),
 
 			...setTranslation(

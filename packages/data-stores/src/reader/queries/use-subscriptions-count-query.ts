@@ -3,7 +3,7 @@ import { callApi } from '../helpers';
 import { useIsLoggedIn, useIsQueryEnabled } from '../hooks';
 import type { SubscriptionManagerSubscriptionsCount } from '../types';
 
-const useSubscriptionManagerSubscriptionsCountQuery = () => {
+const useSubscriptionsCountQuery = () => {
 	const isLoggedIn = useIsLoggedIn();
 	const enabled = useIsQueryEnabled();
 
@@ -22,4 +22,4 @@ const useSubscriptionManagerSubscriptionsCountQuery = () => {
 	);
 };
 
-export { useSubscriptionManagerSubscriptionsCountQuery };
+export default useSubscriptionsCountQuery;
