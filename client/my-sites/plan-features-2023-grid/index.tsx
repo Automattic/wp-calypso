@@ -29,6 +29,7 @@ import {
 	PLAN_BIENNIAL_PERIOD,
 	isWooExpressMediumPlan,
 	isWooExpressSmallPlan,
+	isWooExpressPlan,
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -213,6 +214,8 @@ const PlanLogo: React.FunctionComponent< {
 		'is-current-plan': current,
 	} );
 
+	const shouldShowWooLogo = isEcommercePlan( planName ) && ! isWooExpressPlan( planName );
+
 	return (
 		<Container key={ planName } className={ tableItemClasses } isMobile={ isMobile }>
 			<PopularBadge
@@ -230,7 +233,7 @@ const PlanLogo: React.FunctionComponent< {
 						imgAlt="WP Cloud logo"
 					/>
 				) }
-				{ isEcommercePlan( planName ) && (
+				{ shouldShowWooLogo && (
 					<ServiceLogo
 						hoverText={ translate(
 							'Make your online store a reality with the power of WooCommerce.'

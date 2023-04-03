@@ -116,6 +116,14 @@ export function getPlanClass( planKey: string ): string {
 		return 'is-business-plan';
 	}
 
+	if ( isWooExpressMediumPlan( planKey ) ) {
+		return 'is-wooexpress-medium-plan';
+	}
+
+	if ( isWooExpressSmallPlan( planKey ) ) {
+		return 'is-wooexpress-small-plan';
+	}
+
 	if ( isEcommercePlan( planKey ) ) {
 		return 'is-ecommerce-plan';
 	}
@@ -313,8 +321,13 @@ export function isWpcomEnterpriseGridPlan( planSlug: string ): boolean {
 export function isWooExpressMediumPlan( planSlug: string ): boolean {
 	return [ PLAN_WOOEXPRESS_MEDIUM, PLAN_WOOEXPRESS_MEDIUM_MONTHLY ].includes( planSlug );
 }
+
 export function isWooExpressSmallPlan( planSlug: string ): boolean {
 	return [ PLAN_WOOEXPRESS_SMALL, PLAN_WOOEXPRESS_SMALL_MONTHLY ].includes( planSlug );
+}
+
+export function isWooExpressPlan( planSlug: string ): boolean {
+	return isWooExpressMediumPlan( planSlug ) || isWooExpressSmallPlan( planSlug );
 }
 
 export function isFlexiblePlan( planSlug: string ): boolean {
