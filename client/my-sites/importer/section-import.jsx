@@ -61,8 +61,6 @@ const getImporterTypeForEngine = ( engine ) => `importer-type-${ engine }`;
 
 /**
  * The minimum version of the Jetpack plugin required to use the Jetpack Importer API.
- *
- * @see https://github.com/Automattic/jetpack/pull/28824#issuecomment-1439031413
  */
 const JETPACK_IMPORT_MIN_PLUGIN_VERSION = '12.0';
 
