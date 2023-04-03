@@ -1,6 +1,7 @@
 import { Button, Card } from '@automattic/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -99,18 +100,18 @@ const AkismetCheckoutThankYou: FunctionComponent< AkismetCheckoutThankYouProps >
 
 function ThankYouAPIKeyClipboard() {
 	const translate = useTranslate();
-	const [ isCopied, setCopied ] = useState( false );
+	const [ isCopied, setIsCopied ] = useState( false );
 	const { data, isError, isLoading } = useAkismetKeyQuery();
 
 	useEffect( () => {
 		if ( isCopied ) {
-			const confirmationTimeout = setTimeout( () => setCopied( false ), 4000 );
+			const confirmationTimeout = setTimeout( () => setIsCopied( false ), 4000 );
 			return () => clearTimeout( confirmationTimeout );
 		}
 	}, [ isCopied ] );
 
 	const showConfirmation = () => {
-		setCopied( true );
+		setIsCopied( true );
 	};
 
 	if ( isError ) {
@@ -122,7 +123,10 @@ function ThankYouAPIKeyClipboard() {
 
 	return (
 		<div
-			className={ 'akismet-checkout-thank-you__key-clipboard' + ( isLoading ? ' loading' : '' ) }
+			className={ classNames(
+				'akismet-checkout-thank-you__key-clipboard',
+				isLoading ? ' loading' : ''
+			) }
 		>
 			{ ! isLoading && (
 				<>

@@ -909,7 +909,7 @@ main.akismet-checkout-thank-you {
 			font-size: 1.25rem;
 		}
 
-		@include breakpoint-deprecated( ">480px" ) {
+		@include break-mobile {
 			margin-top: 0;
 		}
 
