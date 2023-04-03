@@ -1,6 +1,7 @@
 import UplotLineChart from '@automattic/components/src/chart-uplot';
 import { useEffect, useState } from 'react';
 import StatsModulePlaceholder from '../stats-module/placeholder';
+import type uPlot from 'uplot';
 
 import './style.scss';
 
