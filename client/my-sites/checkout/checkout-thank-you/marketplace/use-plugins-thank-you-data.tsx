@@ -2,7 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { ThankYouSectionProps } from 'calypso/components/thank-you/types';
+import { ThankYouData, ThankYouSectionProps } from 'calypso/components/thank-you/types';
 import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
@@ -19,9 +19,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import { ThankYouPluginSection } from './marketplace-thank-you-plugin-section';
 import MasterbarStyled from './masterbar-styled';
 
-export function usePluginsThankYouData(
-	pluginSlugs: string[]
-): [ ThankYouSectionProps, boolean, JSX.Element, string, string, boolean ] {
+export function usePluginsThankYouData( pluginSlugs: string[] ): ThankYouData {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
@@ -157,11 +155,34 @@ export function usePluginsThankYouData(
 		/>
 	);
 
+	const thankyouSteps = useMemo(
+		() =>
+			isJetpack
+				? [ translate( 'Installing plugin' ) ]
+				: [
+						translate( 'Activating the plugin feature' ), // Transferring to Atomic
+						translate( 'Setting up plugin installation' ), // Transferring to Atomic
+						translate( 'Installing plugin' ), // Transferring to Atomic
+						translate( 'Activating plugin' ),
+				  ],
+		// We intentionally don't set `isJetpack` as dependency to keep the same steps after the Atomic transfer.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[ translate ]
+	);
+
 	// Plugins are only installed in atomic sites
 	// so atomic is always needed as long as we have plugins
 	const isAtomicNeeded = pluginSlugs.length > 0;
 
-	return [ pluginsSection, allPluginsFetched, goBackSection, title, subtitle, isAtomicNeeded ];
+	return [
+		pluginsSection,
+		allPluginsFetched,
+		goBackSection,
+		title,
+		subtitle,
+		thankyouSteps,
+		isAtomicNeeded,
+	];
 }
 
 type Plugin = {

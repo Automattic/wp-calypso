@@ -1,12 +1,10 @@
 import { ConfettiAnimation } from '@automattic/components';
 import { ThemeProvider, Global, css } from '@emotion/react';
-import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { ThankYou } from 'calypso/components/thank-you';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
-import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-plugin-install/use-marketplace-additional-steps';
 import theme from 'calypso/my-sites/marketplace/theme';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
@@ -20,6 +18,7 @@ import { useAtomicTransfer } from './use-atomic-transfer';
 import { usePageTexts } from './use-page-texts';
 import { usePluginsThankYouData } from './use-plugins-thank-you-data';
 import { useThankYouFoooter } from './use-thank-you-footer';
+import { useThankYouSteps } from './use-thank-you-steps';
 import { useThemesThankYouData } from './use-themes-thank-you-data';
 
 import './style.scss';
@@ -32,9 +31,10 @@ const MarketplaceThankYou = ( {
 	themeSlugs: Array< string >;
 } ) => {
 	const dispatch = useDispatch();
-	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const isRequestingPlugins = useSelector( ( state ) => isRequesting( state, siteId ) );
+
+	const defaultThankYouFooter = useThankYouFoooter( pluginSlugs, themeSlugs );
 
 	const [
 		pluginsSection,
@@ -42,6 +42,7 @@ const MarketplaceThankYou = ( {
 		pluginsGoBackSection,
 		pluginTitle,
 		pluginSubtitle,
+		pluginsProgressbarSteps,
 		isAtomicNeededForPlugins,
 	] = usePluginsThankYouData( pluginSlugs );
 	const [
@@ -50,6 +51,7 @@ const MarketplaceThankYou = ( {
 		themesGoBackSection,
 		themeTitle,
 		themeSubtitle,
+		themesProgressbarSteps,
 		isAtomicNeededForThemes,
 	] = useThemesThankYouData( themeSlugs );
 
@@ -57,7 +59,6 @@ const MarketplaceThankYou = ( {
 		( slugs ) => slugs.length !== 0
 	);
 
-	const defaultThankYouFooter = useThankYouFoooter( pluginSlugs, themeSlugs );
 	const [ title, subtitle ] = usePageTexts( {
 		pluginSlugs,
 		themeSlugs,
@@ -102,22 +103,13 @@ const MarketplaceThankYou = ( {
 		setShowProgressBar( ! isPageReady );
 	}, [ setShowProgressBar, showProgressBar, isPageReady ] );
 
-	// TODO: Use more general steps (not specific to plugins)
-	const steps = useMemo(
-		() =>
-			isJetpack
-				? [ translate( 'Installing plugin' ) ]
-				: [
-						translate( 'Activating the plugin feature' ), // Transferring to Atomic
-						translate( 'Setting up plugin installation' ), // Transferring to Atomic
-						translate( 'Installing plugin' ), // Transferring to Atomic
-						translate( 'Activating plugin' ),
-				  ],
-		// We intentionally don't set `isJetpack` as dependency to keep the same steps after the Atomic transfer.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[ translate ]
-	);
-	const additionalSteps = useMarketplaceAdditionalSteps();
+	const { steps, additionalSteps } = useThankYouSteps( {
+		pluginSlugs,
+		themeSlugs,
+		pluginsProgressbarSteps,
+		themesProgressbarSteps,
+	} );
+
 	const sections = [
 		...( hasThemes ? [ themesSection ] : [] ),
 		...( hasPlugins ? [ pluginsSection ] : [] ),
