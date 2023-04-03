@@ -198,8 +198,8 @@ class CancelPurchase extends Component {
 
 		const { purchase, isJetpackPurchase } = this.props;
 		const purchaseName = getName( purchase );
-		const plan = getPlan( purchase.productSlug );
-		const planDescription = plan.getPlanCancellationDescription?.();
+		const plan = getPlan( purchase?.productSlug );
+		const planDescription = plan?.getPlanCancellationDescription?.();
 		const { siteName, siteId } = purchase;
 
 		let heading;

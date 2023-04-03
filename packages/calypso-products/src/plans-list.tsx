@@ -1447,7 +1447,7 @@ const getPlanProDetails = (): IncompleteWPcomPlan => ( {
 	],
 	getPlanCancellationDescription: () =>
 		i18n.translate(
-			'Heads up—you’re currently on a legacy plan that is no longer available for new subscribers. ' +
+			'Heads up — you are currently on a legacy plan that is no longer available for new subscribers. ' +
 				'Your Pro plan includes access to all the most popular features WordPress.com has to offer, ' +
 				'including premium themes and access to over 50,000 plugins. As an existing Pro plan subscriber, ' +
 				'you can keep your site on this legacy plan as long as your subscription remains active. ' +
