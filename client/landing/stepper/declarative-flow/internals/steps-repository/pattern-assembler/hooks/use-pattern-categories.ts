@@ -1,5 +1,5 @@
 import { useQuery, UseQueryResult, UseQueryOptions } from 'react-query';
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcom from 'calypso/lib/wp';
 
 const usePatternCategories = (
 	siteId: number | undefined,
@@ -12,9 +12,8 @@ const usePatternCategories = (
 				return [];
 			}
 
-			return wpcomRequest( {
+			return wpcom.req.get( {
 				path: `/sites/${ encodeURIComponent( siteId ) }/block-patterns/categories`,
-				method: 'GET',
 				apiNamespace: 'wp/v2',
 			} );
 		},
