@@ -9,7 +9,7 @@ import './style.scss';
 // Currently using the LineChart component from the Calypso library.
 
 function getData(): [ string, number, number ][] {
-	// From D105106-code.
+	// From https://code.a8c.com/D105106 -- Work in progress on new endpoint.
 	return [
 		[ '2023-03-01', 51131, 547 ],
 		[ '2023-02-01', 51881, 750 ],
