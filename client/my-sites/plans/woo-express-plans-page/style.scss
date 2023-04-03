@@ -40,6 +40,7 @@ body.is-section-plans.is-woo-express-plan {
 
 		&.woo-express-plans-page__price-card-for-grid {
 			background-color: rgba(var(--color-neutral-0-rgb), 0.8);
+			box-shadow: none;
 
 			.woo-express-plans-page__price-card-text .woo-express-plans-page__price-card-label {
 				background-color: var(--color-neutral-5);
