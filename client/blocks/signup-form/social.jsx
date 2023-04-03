@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { isTailoredSignupFlow } from '@automattic/onboarding';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -127,12 +128,16 @@ class SocialSignupForm extends Component {
 							}
 							originalUrlPath={
 								// Set the original URL path for wpcc flow so that we can redirect the user back to /start/wpcc after Apple callback.
-								isWpccFlow( this.props.flowName ) ? window.location.pathname : null
+								isWpccFlow( this.props.flowName ) || isTailoredSignupFlow( this.props.flowName )
+									? window.location.pathname
+									: null
 							}
 							// Attach the query string to the state so we can pass it back to the server to show the correct UI.
 							// We need this because Apple doesn't allow to have dynamic parameters in redirect_uri.
 							queryString={
-								isWpccFlow( this.props.flowName ) ? window.location.search.slice( 1 ) : null
+								isWpccFlow( this.props.flowName ) || isTailoredSignupFlow( this.props.flowName )
+									? window.location.search.slice( 1 )
+									: null
 							}
 						/>
 						{ ! this.props.isWoo && ! this.props.disableTosText && <SocialSignupToS /> }
