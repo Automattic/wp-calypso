@@ -501,6 +501,7 @@ const PatternAssembler = ( {
 						onSelect={ onSelect }
 						onBack={ () => onPatternSelectorBack( 'header' ) }
 						onDoneClick={ () => onDoneClick( 'header' ) }
+						updateActivePatternPosition={ () => updateActivePatternPosition( -1 ) }
 					/>
 				</NavigatorScreen>
 
@@ -510,6 +511,7 @@ const PatternAssembler = ( {
 						onSelect={ onSelect }
 						onBack={ () => onPatternSelectorBack( 'footer' ) }
 						onDoneClick={ () => onDoneClick( 'footer' ) }
+						updateActivePatternPosition={ () => updateActivePatternPosition( sections.length ) }
 					/>
 				</NavigatorScreen>
 
