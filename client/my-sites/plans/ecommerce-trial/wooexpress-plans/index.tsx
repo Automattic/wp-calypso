@@ -82,7 +82,7 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 					use2023PricingGridStyles={ true }
 				/>
 			</div>
-			<div className="is-2023-pricing-grid">
+			<div className="wooexpress-plans__grid is-2023-pricing-grid">
 				<AsyncLoad require="calypso/my-sites/plan-features-2023-grid" { ...plansTableProps } />
 			</div>
 		</>
