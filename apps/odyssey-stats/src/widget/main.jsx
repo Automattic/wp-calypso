@@ -1,8 +1,13 @@
 import { translate } from 'i18n-calypso';
 import { useState } from 'react';
-// import { useSelector } from 'react-redux';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
-import ChartTabs from 'calypso/my-sites/stats/stats-chart-tabs';
+import Chart from 'calypso/components/chart';
+import Legend from 'calypso/components/chart/legend';
+import { buildChartData } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
+import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
+import useVisitsQuery from './hooks/use-visits-query';
+
+import './main.scss';
 
 const CHART_VIEWS = {
 	attr: 'views',
@@ -17,33 +22,47 @@ const CHART_VISITORS = {
 
 const CHARTS = [ CHART_VIEWS, CHART_VISITORS ];
 
-const Main = () => {
-	const activeTab = CHART_VIEWS;
-	const [ activeLegend, setActiveLegend ] = useState( activeTab.legendOptions || [] );
+const Main = ( { siteId } ) => {
+	const queryDate = '2023-03-31'; //TODO get site date
+	const [ period, setPeriod ] = useState( 'day' );
 
-	const getAvailableLegend = () => {
-		return activeTab.legendOptions || [];
-	};
-
-	// const blogId = useSelector( ( state ) => state.ui.selectedSiteId );
-	// const site = useSelector( ( state ) => state.sites.items[ blogId ] );
+	const { isLoading, data } = useVisitsQuery(
+		siteId,
+		period,
+		7,
+		queryDate,
+		[ 'views', 'visitors' ].join( ',' )
+	);
 
 	const barClick = () => {};
 
+	const chartData = buildChartData(
+		CHART_VIEWS.legendOptions,
+		CHART_VIEWS.attr,
+		data,
+		period,
+		queryDate
+	);
+
 	return (
 		<div id="stats-widget-content" className="stats-widget-content">
-			<Intervals selected="day" pathTemplate="" compact={ false } />
-			<ChartTabs
-				activeTab={ CHART_VIEWS }
-				activeLegend={ activeLegend }
-				availableLegend={ getAvailableLegend() }
-				onChangeLegend={ setActiveLegend }
-				barClick={ barClick }
-				charts={ CHARTS }
-				queryDate="2023-03-31"
-				period="day"
-				chartTab={ CHART_VIEWS.attr }
-			/>
+			<div className="stats-widget__chart-head">
+				<Intervals selected={ period } compact={ false } onChange={ setPeriod } />
+				<Legend
+					// What's the difference between these two props?
+					availableCharts={ [ 'visitors' ] }
+					activeCharts={ [ 'visitors' ] }
+					tabs={ CHARTS }
+					activeTab={ CHART_VIEWS }
+					clickHandler={ null }
+				/>
+			</div>
+			{ ( isLoading || ! ( chartData?.length > 0 ) ) && (
+				<StatsModulePlaceholder className="is-chart" isLoading={ true } />
+			) }
+			{ chartData?.length > 0 && (
+				<Chart barClick={ barClick } data={ chartData } minBarWidth={ 35 } />
+			) }
 		</div>
 	);
 };

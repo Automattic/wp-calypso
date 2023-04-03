@@ -1,0 +1,43 @@
+.jp-stats-widget {
+	.stats-widget__chart-head {
+		display: flex;
+		flex-flow: row wrap;
+		justify-content: space-between;
+		align-items: center;
+		width: 100%;
+	}
+
+	.segmented-control.stats-navigation__intervals {
+		height: 36px;
+		min-width: 259px;
+		padding: 16px 0;
+	}
+
+	.chart__legend {
+		margin-bottom: 0;
+		min-width: 178px;
+		padding: 16px 0;
+	}
+
+	.chart__legend-option .chart__legend-checkbox {
+		display: none;
+	}
+
+	// Black segmented controls.
+	.segmented-control .segmented-control__item {
+		.segmented-control__link:hover {
+			background-color: var(--color-neutral-0);
+		}
+
+		&.is-selected .segmented-control__link,
+		&.is-selected .segmented-control__link:hover {
+			background-color: var(--studio-black);
+			border-color: var(--studio-black);
+		}
+
+		&.is-selected + .segmented-control__item .segmented-control__link {
+			border-left-color: var(--studio-black);
+		}
+	}
+
+}
