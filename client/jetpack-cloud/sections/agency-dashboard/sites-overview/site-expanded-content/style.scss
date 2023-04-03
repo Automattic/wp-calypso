@@ -203,3 +203,7 @@ $color-yellow: var(--studio-yellow-50);
 	inset-block-start: 3px;
 	inset-inline-end: 5px;
 }
+
+.site-expanded-content__tooltip .popover__inner {
+	width: 300px;
+}

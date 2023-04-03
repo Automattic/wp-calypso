@@ -14,7 +14,7 @@ import { StepContainer } from '@automattic/onboarding';
 import { useViewportMatch, useMediaQuery } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import { ReactChild, useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
@@ -24,7 +24,6 @@ import WebPreview from 'calypso/components/web-preview/content';
 import { useSiteVerticalQueryById } from 'calypso/data/site-verticals';
 import { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useExperiment } from 'calypso/lib/explat';
 import { urlToSlug } from 'calypso/lib/url';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import { setActiveTheme } from 'calypso/state/themes/actions';
@@ -135,23 +134,17 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		return allDesigns;
 	};
 
-	const [ isLoadingVirtualThemesExperiment, virtualThemesExperiment ] = useExperiment(
-		'calypso_signup_design_picker_virtual_themes_v1'
-	);
-
 	const { data: allDesigns, isLoading: isLoadingDesigns } = useStarterDesignsQuery(
 		{
 			vertical_id: siteVerticalId,
 			intent,
 			seed: siteSlugOrId || undefined,
 			_locale: locale,
-			include_virtual_designs: virtualThemesExperiment?.variationName === 'treatment',
 			include_pattern_virtual_designs: isEnabled( 'virtual-themes/onboarding' ),
 		},
 		{
-			enabled: ! isLoadingVirtualThemesExperiment,
+			enabled: true,
 			select: selectStarterDesigns,
-			shouldLimitGlobalStyles,
 		}
 	);
 
@@ -268,20 +261,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	function previewDesign( design: Design, styleVariation?: StyleVariation ) {
 		recordPreviewedDesign( { flow, intent, design, styleVariation } );
 
-		if ( ! design.preselected_style_variation ) {
-			setSelectedDesign( design );
-		} else {
-			const parentDesign = staticDesigns.find(
-				( staticDesign ) =>
-					staticDesign.slug === design.slug && ! staticDesign.preselected_style_variation
-			);
-			setSelectedDesign( parentDesign );
-		}
-
+		setSelectedDesign( design );
 		if ( styleVariation ) {
 			setSelectedStyleVariation( styleVariation );
-		} else if ( design.preselected_style_variation ) {
-			setSelectedStyleVariation( design.preselected_style_variation );
 		}
 
 		setIsPreviewingDesign( true );
@@ -290,7 +272,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	function onChangeVariation( design: Design, styleVariation?: StyleVariation ) {
 		recordTracksEvent( 'calypso_signup_design_picker_style_variation_button_click', {
 			...getEventPropsByDesign( design, styleVariation ),
-			...getVirtualDesignProps( design, styleVariation ),
+			...getVirtualDesignProps( design ),
 		} );
 	}
 
@@ -484,7 +466,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 				);
 			}
 			setPendingAction( () => {
-				if ( _selectedDesign.is_virtual && _selectedDesign.recipe?.pattern_ids?.length ) {
+				if ( _selectedDesign.is_virtual ) {
 					return applyThemeWithPatterns(
 						siteSlugOrId,
 						_selectedDesign,
@@ -583,7 +565,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		recordTracksEvent( eventName, tracksProps );
 	}
 
-	function getPrimaryActionButton( pickDesignText: ReactChild ) {
+	function getPrimaryActionButton() {
 		if ( shouldUpgrade ) {
 			return (
 				<Button primary borderless={ false } onClick={ upgradePlan }>
@@ -606,7 +588,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 		return (
 			<Button primary borderless={ false } onClick={ () => pickDesign() }>
-				{ pickDesignText }
+				{ translate( 'Continue' ) }
 			</Button>
 		);
 	}
@@ -614,7 +596,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	// ********** Main render logic
 
 	// Don't render until we've done fetching all the data needed for initial render.
-	if ( ! site || isLoadingSiteVertical || isLoadingDesigns || isLoadingVirtualThemesExperiment ) {
+	if ( ! site || isLoadingSiteVertical || isLoadingDesigns ) {
 		return <StepperLoader />;
 	}
 
@@ -636,21 +618,14 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		const hasMoreInfo =
 			selectedDesignHasStyleVariations || ( selectedDesign.is_virtual && isXLargeScreen );
 
-		const pickDesignText =
-			selectedDesign.design_type === 'vertical' || hasMoreInfo
-				? translate( 'Continue' )
-				: translate( 'Start with %(designTitle)s', { args: { designTitle } } );
-
 		const actionButtons = (
 			<>
 				{ hasMoreInfo && <div className="action-buttons__title">{ headerDesignTitle }</div> }
-				<div>{ getPrimaryActionButton( pickDesignText ) }</div>
+				<div>{ getPrimaryActionButton() }</div>
 			</>
 		);
 
-		const showPatternAssemblerCTA =
-			selectedDesign.is_virtual && selectedDesign.recipe?.pattern_ids?.length;
-		const patternAssemblerCTA = showPatternAssemblerCTA && (
+		const patternAssemblerCTA = selectedDesign.is_virtual && (
 			<PatternAssemblerCta
 				compact={ true }
 				hasPrimaryButton={ false }
@@ -732,7 +707,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 				stepContent={ stepContent }
 				hideSkip
 				className="design-setup__preview"
-				nextLabelText={ pickDesignText }
 				goBack={ handleBackClick }
 				goNext={ () => pickDesign() }
 				formattedHeader={

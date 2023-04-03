@@ -41,11 +41,22 @@ interface Props {
 	action?: string;
 	host?: string;
 	role: string;
+	onFinishCallback?: () => void;
+	redirectOnFinish?: boolean;
+	goBackPath?: string;
 }
 
-const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role } ) => {
+const AdvancedCredentials: FunctionComponent< Props > = ( {
+	action,
+	host,
+	role,
+	onFinishCallback = null,
+	redirectOnFinish = true,
+	goBackPath = '',
+} ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const isAlternate = role === 'alternate';
 
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -86,7 +97,8 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 	const [ testCredentialsLoading, setTestCredentialsLoading ] = useState( true );
 	const [ testCredentialsResult, setTestCredentialsResult ] = useState( false );
 
-	const hasCredentials = credentials && Object.keys( credentials ).length > 0;
+	// Don't test credentials or pre-load the formState if we're editing alternate credentials
+	const hasCredentials = ! isAlternate && credentials && Object.keys( credentials ).length > 0;
 
 	const { protocol } = credentials;
 	const isAtomic = hasCredentials && 'dynamic-ssh' === protocol;
@@ -105,7 +117,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 		} else {
 			dispatch( markCredentialsAsInvalid( siteId, role ) );
 		}
-	}, [ hasCredentials ] );
+	}, [ dispatch, hasCredentials, isAlternate, role, siteId ] );
 
 	useEffect(
 		function () {
@@ -145,7 +157,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 			return Step.HostSelection;
 		}
 		return Step.Credentials;
-	}, [ action, formSubmissionStatus, host, statusState ] );
+	}, [ action, formSubmissionStatus, host, isAtomic, statusState ] );
 
 	// suppress the step progress until we are disconnected
 	useEffect( () => {
@@ -245,7 +257,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 			return;
 		}
 
-		const credentials = { role, ...formState };
+		const credentials = { ...formState };
 
 		if ( formMode === FormMode.Password ) {
 			credentials.kpri = '';
@@ -255,26 +267,35 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 
 		dispatch( recordTracksEvent( 'calypso_jetpack_advanced_credentials_flow_credentials_update' ) );
 		dispatch( updateCredentials( siteId, credentials, true, false ) );
-	}, [ formHasErrors, dispatch, siteId, role, formState, formMode ] );
+	}, [ formHasErrors, dispatch, siteId, formState, formMode ] );
 
 	const renderUnconnectedButtons = () => (
 		<>
-			<Button
-				compact
-				borderless
-				disabled={ disableForm }
-				href={ settingsPath( siteSlug ) }
-				onClick={ () => {
-					dispatch(
-						recordTracksEvent( 'calypso_jetpack_advanced_credentials_flow_switch_host', { host } )
-					);
-				} }
-			>
-				<Gridicon icon="arrow-left" size={ 18 } />
-				{ translate( 'Change host' ) }
-			</Button>
+			{ ! isAlternate && (
+				<Button
+					compact
+					borderless
+					disabled={ disableForm }
+					href={ settingsPath( siteSlug ) }
+					onClick={ () => {
+						dispatch(
+							recordTracksEvent( 'calypso_jetpack_advanced_credentials_flow_switch_host', { host } )
+						);
+					} }
+				>
+					<Gridicon icon="arrow-left" size={ 18 } />
+					{ translate( 'Change host' ) }
+				</Button>
+			) }
+			{ isAlternate && goBackPath !== '' && (
+				<Button disabled={ disableForm } href={ goBackPath }>
+					{ translate( 'Go back' ) }
+				</Button>
+			) }
 			<Button primary onClick={ handleUpdateCredentials } disabled={ disableForm || formHasErrors }>
-				{ translate( 'Test and save credentials' ) }
+				{ isAlternate
+					? translate( 'Confirm credentials' )
+					: translate( 'Test and save credentials' ) }
 			</Button>
 		</>
 	);
@@ -297,6 +318,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 			formMode={ formMode }
 			formState={ formState }
 			host={ host ?? 'generic' }
+			role={ role }
 			onFormStateChange={ setFormState }
 			onModeChange={ setFormMode }
 		>
@@ -318,18 +340,24 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 			case Step.Verification:
 				return (
 					<Verification
-						onFinishUp={ () => {
-							dispatch( {
-								type: JETPACK_CREDENTIALS_UPDATE_RESET,
-								siteId,
-							} );
-						} }
+						onFinishUp={
+							onFinishCallback
+								? onFinishCallback
+								: () => {
+										dispatch( {
+											type: JETPACK_CREDENTIALS_UPDATE_RESET,
+											siteId,
+										} );
+								  }
+						}
 						onReview={ () => {
 							dispatch( {
 								type: JETPACK_CREDENTIALS_UPDATE_RESET,
 								siteId,
 							} );
 						} }
+						redirectOnFinish={ redirectOnFinish }
+						targetSite={ formState.site_url ?? null }
 					/>
 				);
 			case Step.Connected:
@@ -369,7 +397,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 	};
 
 	return (
-		<div className="advanced-credentials">
+		<div className={ `advanced-credentials ${ isAlternate ? 'alternate' : '' }` }>
 			<QuerySiteCredentials siteId={ siteId } />
 			<PageViewTracker
 				path={ settingsPath( ':site' ) }

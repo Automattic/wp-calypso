@@ -20,6 +20,7 @@ body.ecommerce-trial-upgraded {
 
 			@media (max-width: $break-mobile) {
 				font-size: $font-title-medium;
+				text-align: left;
 			}
 		}
 
@@ -33,9 +34,12 @@ body.ecommerce-trial-upgraded {
 
 			.trial-upgrade-confirmation__subtitle-line {
 				display: block;
+				max-width: 595px;
+				margin: auto;
 
 				@media (max-width: $break-mobile) {
 					display: inline;
+					text-align: left;
 
 					// Add space between sentences when they are inline
 					&::after {

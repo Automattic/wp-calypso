@@ -6,6 +6,7 @@ type callApiParams = {
 	method?: 'GET' | 'POST';
 	body?: object;
 	isLoggedIn?: boolean;
+	apiVersion?: string;
 };
 
 // Get cookie named subkey
@@ -19,11 +20,12 @@ async function callApi< ReturnType >( {
 	method = 'GET',
 	body,
 	isLoggedIn = false,
+	apiVersion = '1.1',
 }: callApiParams ): Promise< ReturnType > {
 	if ( isLoggedIn ) {
 		const res = await wpcomRequest( {
 			path,
-			apiVersion: '1.1',
+			apiVersion,
 			method,
 			body: method === 'POST' ? body : undefined,
 		} );
@@ -38,8 +40,8 @@ async function callApi< ReturnType >( {
 
 	return apiFetch( {
 		global: true,
-		path: `https://public-api.wordpress.com/rest/v1.1${ path }`,
-		apiVersion: '1.1',
+		path: `https://public-api.wordpress.com/rest/v${ apiVersion }${ path }`,
+		apiVersion,
 		method,
 		body: method === 'POST' ? JSON.stringify( body ) : undefined,
 		credentials: 'same-origin',

@@ -9,6 +9,7 @@ import './style.scss';
 interface Props {
 	width: number | null;
 	height: number;
+	inlineCss?: string;
 	containerResizeListener: JSX.Element;
 	children: JSX.Element;
 }
@@ -16,6 +17,7 @@ interface Props {
 const GlobalStylesVariationContainer = ( {
 	width,
 	height,
+	inlineCss,
 	containerResizeListener,
 	children,
 	...props
@@ -27,6 +29,14 @@ const GlobalStylesVariationContainer = ( {
 		if ( styles ) {
 			return [
 				...styles,
+				...( inlineCss
+					? [
+							{
+								css: inlineCss,
+								isGlobalStyles: true,
+							},
+					  ]
+					: [] ),
 				{
 					css: 'html{overflow:hidden}body{min-width: 0;padding: 0;border: none;transform:scale(1);}',
 					isGlobalStyles: true,
