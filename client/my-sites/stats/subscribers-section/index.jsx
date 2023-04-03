@@ -72,7 +72,7 @@ export default function SubscribersSection() {
 
 	useEffect( () => {
 		setTimeout( () => setIsLoading( false ), 5000 );
-	}, [ isLoading ] );
+	}, [] );
 
 	return (
 		<div className="subscribers-section">
