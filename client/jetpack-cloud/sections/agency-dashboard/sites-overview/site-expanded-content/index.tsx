@@ -5,17 +5,17 @@ import BackupStorage from './backup-storage';
 import BoostSitePerformance from './boost-site-performance';
 import InsightsStats from './insights-stats';
 import MonitorActivity from './monitor-activity';
-import type { Site } from '../types';
+import type { Site, AllowedTypes } from '../types';
 
 import './style.scss';
 
 interface Props {
 	site: Site;
-	columns?: string[];
+	columns?: AllowedTypes[];
 	isSmallScreen?: boolean;
 }
 
-const defaultColumns = siteColumns.map( ( { key } ) => key );
+const defaultColumns: AllowedTypes[] = siteColumns.map( ( { key } ) => key );
 
 export default function SiteExpandedContent( {
 	site,
