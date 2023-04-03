@@ -27,6 +27,7 @@ import usePatternCategories from './hooks/use-pattern-categories';
 import usePatternsMapByCategory from './hooks/use-patterns-map-by-category';
 import { usePrefetchImages } from './hooks/use-prefetch-images';
 import useRecipe from './hooks/use-recipe';
+import { useScreenHandler } from './hooks/use-screen-handler';
 import NavigatorListener from './navigator-listener';
 import Notices, { getNoticeContent } from './notices/notices';
 import PatternAssemblerContainer from './pattern-assembler-container';
@@ -114,6 +115,30 @@ const PatternAssembler = ( {
 		[ flow, stepName, intent, stylesheet, colorVariation, fontVariation ]
 	);
 
+	const updateActivePatternPosition = ( position: number ) => {
+		const patternPosition = header ? position + 1 : position;
+		setActivePosition( Math.max( patternPosition, 0 ) );
+	};
+
+	const showNotice = ( action: string, pattern: Pattern ) => {
+		noticeOperations.createNotice( { content: getNoticeContent( action, pattern ) } );
+	};
+
+	const { onSelect } = useScreenHandler( {
+		categories,
+		footer,
+		generateKey,
+		header,
+		recordTracksEvent,
+		sectionPosition,
+		sections,
+		setFooter,
+		setHeader,
+		setSections,
+		showNotice,
+		updateActivePatternPosition,
+	} );
+
 	const selectedVariations = useMemo(
 		() => [ colorVariation, fontVariation ].filter( Boolean ) as GlobalStylesObject[],
 		[ colorVariation, fontVariation ]
@@ -153,25 +178,6 @@ const PatternAssembler = ( {
 		} );
 	};
 
-	const trackEventPatternSelect = ( {
-		patternType,
-		patternId,
-		patternName,
-		patternCategory,
-	}: {
-		patternType: string;
-		patternId: number;
-		patternName: string;
-		patternCategory: string | undefined;
-	} ) => {
-		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_SELECT_CLICK, {
-			pattern_type: patternType,
-			pattern_id: patternId,
-			pattern_name: patternName,
-			pattern_category: patternCategory,
-		} );
-	};
-
 	const trackEventContinue = () => {
 		const patterns = getPatterns();
 		const categories = Array.from( new Set( patterns.map( ( { category } ) => category?.name ) ) );
@@ -195,10 +201,6 @@ const PatternAssembler = ( {
 		} );
 	};
 
-	const showNotice = ( action: string, pattern: Pattern ) => {
-		noticeOperations.createNotice( { content: getNoticeContent( action, pattern ) } );
-	};
-
 	const getDesign = () =>
 		( {
 			...selectedDesign,
@@ -209,66 +211,6 @@ const PatternAssembler = ( {
 				footer_pattern_ids: footer ? [ encodePatternId( footer.id ) ] : undefined,
 			} as DesignRecipe,
 		} as Design );
-
-	const updateActivePatternPosition = ( position: number ) => {
-		const patternPosition = header ? position + 1 : position;
-		setActivePosition( Math.max( patternPosition, 0 ) );
-	};
-
-	const updateHeader = ( pattern: Pattern | null ) => {
-		setHeader( pattern );
-		updateActivePatternPosition( -1 );
-		if ( pattern ) {
-			if ( header ) {
-				showNotice( 'replace', pattern );
-			} else {
-				showNotice( 'add', pattern );
-			}
-		} else if ( header ) {
-			showNotice( 'remove', header );
-		}
-	};
-
-	const updateFooter = ( pattern: Pattern | null ) => {
-		setFooter( pattern );
-		updateActivePatternPosition( sections.length );
-		if ( pattern ) {
-			if ( footer ) {
-				showNotice( 'replace', pattern );
-			} else {
-				showNotice( 'add', pattern );
-			}
-		} else if ( footer ) {
-			showNotice( 'remove', footer );
-		}
-	};
-
-	const replaceSection = ( pattern: Pattern ) => {
-		if ( sectionPosition !== null ) {
-			setSections( [
-				...sections.slice( 0, sectionPosition ),
-				{
-					...pattern,
-					key: sections[ sectionPosition ].key,
-				},
-				...sections.slice( sectionPosition + 1 ),
-			] );
-			updateActivePatternPosition( sectionPosition );
-			showNotice( 'replace', pattern );
-		}
-	};
-
-	const addSection = ( pattern: Pattern ) => {
-		setSections( [
-			...( sections as Pattern[] ),
-			{
-				...pattern,
-				key: generateKey( pattern ),
-			},
-		] );
-		updateActivePatternPosition( sections.length );
-		showNotice( 'add', pattern );
-	};
 
 	const deleteSection = ( position: number ) => {
 		showNotice( 'remove', sections[ position ] );
@@ -296,42 +238,6 @@ const PatternAssembler = ( {
 			...sections.slice( position + 1 ),
 		] );
 		updateActivePatternPosition( position - 1 );
-	};
-
-	const onSelect = (
-		type: string,
-		selectedPattern: Pattern | null,
-		selectedCategory?: string | null
-	) => {
-		if ( selectedPattern ) {
-			// Inject the selected pattern category or the first category
-			// because it's used in tracks and as pattern name in the list
-			selectedPattern.category = categories.find(
-				( { name } ) => name === ( selectedCategory || selectedPattern.categories[ 0 ] )
-			);
-
-			trackEventPatternSelect( {
-				patternType: type,
-				patternId: selectedPattern.id,
-				patternName: selectedPattern.name,
-				patternCategory: selectedPattern.category?.name,
-			} );
-
-			if ( 'section' === type ) {
-				if ( sectionPosition !== null ) {
-					replaceSection( selectedPattern );
-				} else {
-					addSection( selectedPattern );
-				}
-			}
-		}
-
-		if ( 'header' === type ) {
-			updateHeader( selectedPattern );
-		}
-		if ( 'footer' === type ) {
-			updateFooter( selectedPattern );
-		}
 	};
 
 	const onBack = () => {
