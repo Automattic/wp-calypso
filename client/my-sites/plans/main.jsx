@@ -292,7 +292,7 @@ class Plans extends Component {
 		// Only accept monthly or yearly for the interval; otherwise let the component provide a default.
 		const interval =
 			intervalType === 'monthly' || intervalType === 'yearly' ? intervalType : undefined;
-		return <ECommerceTrialPlansPage interval={ interval } siteSlug={ selectedSite.slug } />;
+		return <ECommerceTrialPlansPage interval={ interval } site={ selectedSite } />;
 	}
 
 	renderWooExpressMediumPage() {

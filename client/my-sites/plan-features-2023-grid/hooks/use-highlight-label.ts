@@ -2,6 +2,7 @@ import {
 	getPlanSlugForTermVariant,
 	isBusinessPlan,
 	isPremiumPlan,
+	isWooExpressMediumPlan,
 	PlanSlug,
 	TERM_BIENNIALLY,
 } from '@automattic/calypso-products';
@@ -23,7 +24,7 @@ const useHighlightLabel = ( planName: string ) => {
 		return translate( 'Your plan' );
 	} else if ( isBusinessPlan( planName ) ) {
 		return translate( 'Best for devs' );
-	} else if ( isPremiumPlan( planName ) ) {
+	} else if ( isPremiumPlan( planName ) || isWooExpressMediumPlan( planName ) ) {
 		return translate( 'Popular' );
 	}
 

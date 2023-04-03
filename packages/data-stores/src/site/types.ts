@@ -462,6 +462,8 @@ export interface GlobalStyles {
 }
 
 export interface LaunchPadCheckListTasksStatuses {
+	newsletter_plan_created: boolean;
+	stripe_connected?: boolean;
 	first_post_published?: boolean;
 	links_edited?: boolean;
 	site_launched?: boolean;

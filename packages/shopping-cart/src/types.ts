@@ -563,9 +563,15 @@ export interface ResponseCartProductExtra {
 	isJetpackCheckout?: boolean;
 	isAkismetSitelessCheckout?: boolean;
 
-	// Marketplace properties
+	/**
+	 * Marketplace properties
+	 *
+	 * These extra properties are always set for marketplace products.
+	 * `product_slug` is for identifying the product, and `product_type` is for identifying the type of the product.
+	 */
 	is_marketplace_product?: boolean;
-	plugin_slug?: boolean;
+	product_slug?: string;
+	product_type?: 'marketplace_plugin' | 'marketplace_theme';
 }
 
 export interface ResponseCartGiftDetails {

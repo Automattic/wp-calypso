@@ -336,7 +336,16 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/tags', '/tag' ],
+		paths: [ '/tags' ],
+		module: 'calypso/reader/tags',
+		group: 'reader',
+		trackLoadPerformance: true,
+		enableLoggedOut: true,
+		isomorphic: true,
+	},
+	{
+		name: 'reader',
+		paths: [ '/tag' ],
 		module: 'calypso/reader/tag-stream',
 		group: 'reader',
 		enableLoggedOut: true,

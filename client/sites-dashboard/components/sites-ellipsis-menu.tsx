@@ -263,7 +263,6 @@ function useSubmenuItems( site: SiteExcerptData ) {
 	const { __ } = useI18n();
 	const siteSlug = site.slug;
 	const isStagingSite = site.is_wpcom_staging_site;
-	const isStagingSiteEnabled = isEnabled( 'yolo/staging-sites-i1' );
 
 	useQueryReaderTeams();
 	const isA12n = useSelector( ( state ) => isAutomatticTeamMember( getReaderTeams( state ) ) );
@@ -281,7 +280,7 @@ function useSubmenuItems( site: SiteExcerptData ) {
 				sectionName: 'database_access',
 			},
 			{
-				condition: ! isStagingSite && isStagingSiteEnabled,
+				condition: ! isStagingSite,
 				label: __( 'Staging site' ),
 				href: `/hosting-config/${ siteSlug }#staging-site`,
 				sectionName: 'staging_site',
@@ -309,7 +308,7 @@ function useSubmenuItems( site: SiteExcerptData ) {
 				sectionName: 'logs',
 			},
 		].filter( ( { condition } ) => condition ?? true );
-	}, [ __, isStagingSiteEnabled, siteSlug, isStagingSite, isA12n ] );
+	}, [ __, siteSlug, isStagingSite, isA12n ] );
 }
 
 function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps ) {
