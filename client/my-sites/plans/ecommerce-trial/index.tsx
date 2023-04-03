@@ -1,6 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
-import { plansLink, PLAN_FREE, PLAN_WOOEXPRESS_MEDIUM } from '@automattic/calypso-products';
+import {
+	plansLink,
+	PLAN_WOOEXPRESS_MEDIUM,
+	PLAN_WOOEXPRESS_SMALL,
+} from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
@@ -8,17 +12,19 @@ import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import ECommercePlanFeatures from 'calypso/my-sites/plans/components/ecommerce-plan-features';
 import ECommerceTrialBanner from './ecommerce-trial-banner';
 import { getWooExpressMediumFeatureSets } from './wx-medium-features';
+import type { Site } from 'calypso/my-sites/scan/types';
 
 import './style.scss';
 
 interface ECommerceTrialPlansPageProps {
 	interval?: 'monthly' | 'yearly';
-	siteSlug: string;
+	site: Site;
 }
 
 const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 	const interval = props.interval ?? 'monthly';
-	const siteSlug = props.siteSlug;
+	const siteSlug = props.site?.slug;
+	const siteId = props.site?.ID;
 
 	const translate = useTranslate();
 
@@ -45,8 +51,9 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 	);
 
 	const plansTableProps = {
-		plans: [ PLAN_FREE, PLAN_WOOEXPRESS_MEDIUM ],
+		plans: [ PLAN_WOOEXPRESS_SMALL, PLAN_WOOEXPRESS_MEDIUM ],
 		hidePlansFeatureComparison: true,
+		siteId,
 	};
 
 	const multiPlanFeatures = (
