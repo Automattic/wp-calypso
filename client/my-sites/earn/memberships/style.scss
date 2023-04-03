@@ -356,3 +356,12 @@
 .memberships__settings-link:visited {
 	color: inherit;
 }
+
+.earn__payments-loading {
+	margin-top: 25px;
+
+	.wpcom__loading-ellipsis {
+		display: block;
+		margin: auto;
+	}
+}
