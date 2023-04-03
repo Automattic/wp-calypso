@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { Icon, help } from '@wordpress/icons';
 import classNames from 'classnames';
@@ -31,7 +30,6 @@ export default function BoostSitePerformance( {
 	const [ showTooltip, setShowTooltip ] = useState( false );
 
 	const { overall: overallScore, mobile: mobileScore, desktop: desktopScore } = boostData;
-	const isBoostEnabled = config.isEnabled( 'jetpack/pro-dashboard-jetpack-boost' );
 
 	const components = {
 		strong: <strong></strong>,

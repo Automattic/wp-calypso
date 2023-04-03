@@ -41,7 +41,7 @@ const boostColumn: SiteColumns = isBoostEnabled
 	  ]
 	: [];
 
-const extraColumns: SiteColumns = isExpandedBlockEnabled
+const statsColumns: SiteColumns = isExpandedBlockEnabled
 	? [
 			{
 				key: 'stats',
@@ -58,7 +58,7 @@ export const siteColumns: SiteColumns = [
 		title: translate( 'Site' ),
 		isSortable: true,
 	},
-	...extraColumns,
+	...statsColumns,
 	...boostColumn,
 	{
 		key: 'backup',
