@@ -3,13 +3,16 @@ import moment from 'moment';
 import ElementChart from 'calypso/components/chart';
 import useFetchMonitorData from 'calypso/data/agency-dashboard/use-fetch-monitor-data';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
+import { useToggleActivateMonitor } from '../../hooks';
 import { getMonitorDowntimeText } from '../utils';
 import ExpandedCard from './expanded-card';
+import type { Site } from '../types';
 import type { ReactChild } from 'react';
 
 interface Props {
 	hasMonitor: boolean;
-	siteId: number;
+	site: Site;
+	trackEvent: ( eventName: string ) => void;
 }
 
 const START_INDEX = 10;
@@ -77,8 +80,15 @@ const MonitorDataContent = ( { siteId }: { siteId: number } ) => {
 	);
 };
 
-export default function MonitorActivity( { hasMonitor, siteId }: Props ) {
+export default function MonitorActivity( { hasMonitor, site, trackEvent }: Props ) {
 	const translate = useTranslate();
+
+	const toggleActivateMonitor = useToggleActivateMonitor( [ site ] );
+
+	const handleOnClick = () => {
+		trackEvent( 'expandable_block_active_monitor_click' );
+		toggleActivateMonitor( true );
+	};
 
 	return (
 		<ExpandedCard
@@ -92,8 +102,9 @@ export default function MonitorActivity( { hasMonitor, siteId }: Props ) {
 					},
 				}
 			) }
+			onClick={ handleOnClick }
 		>
-			{ hasMonitor && <MonitorDataContent siteId={ siteId } /> }
+			{ hasMonitor && <MonitorDataContent siteId={ site.blog_id } /> }
 		</ExpandedCard>
 	);
 }

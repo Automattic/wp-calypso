@@ -59,7 +59,7 @@ export default function SiteExpandedContent( {
 				<BackupStorage site={ site } trackEvent={ trackEvent } />
 			) }
 			{ columns.includes( 'monitor' ) && (
-				<MonitorActivity hasMonitor={ hasMonitor } siteId={ site.blog_id } />
+				<MonitorActivity hasMonitor={ hasMonitor } site={ site } trackEvent={ trackEvent } />
 			) }
 		</div>
 	);
