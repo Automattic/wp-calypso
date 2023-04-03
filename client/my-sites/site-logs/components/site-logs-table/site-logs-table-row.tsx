@@ -3,12 +3,13 @@ import { Icon, chevronDown, chevronRight } from '@wordpress/icons';
 import moment from 'moment';
 import { Fragment, useState } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { SiteLogsData } from 'calypso/data/hosting/use-site-logs-query';
 import SiteLogsExpandedContent from './site-logs-expanded-content';
 import './style.scss';
 
 interface Props {
 	columns: string[];
-	log: Record< string, unknown >;
+	log: SiteLogsData[ 'logs' ][ 0 ];
 	siteGmtOffset: number;
 }
 

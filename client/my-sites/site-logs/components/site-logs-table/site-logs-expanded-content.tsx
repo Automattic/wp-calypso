@@ -1,7 +1,8 @@
+import { SiteLogsData } from 'calypso/data/hosting/use-site-logs-query';
 import './style.scss';
 
 interface Props {
-	log: Record< string, unknown >;
+	log: SiteLogsData[ 'logs' ][ 0 ];
 }
 
 export default function SiteLogsExpandedContent( { log }: Props ) {
@@ -10,7 +11,7 @@ export default function SiteLogsExpandedContent( { log }: Props ) {
 			{ Object.keys( log ).map( ( key ) => (
 				<tr key={ `expanded-row-${ key }` }>
 					<td>
-						<strong>{ key }</strong>{ ' ' }
+						<strong>{ key }</strong>
 					</td>
 					<td>
 						<div className="site-logs-table__expanded-content-info">{ log[ key ] || '-' }</div>
