@@ -13,14 +13,19 @@ interface Props {
 	siteId: number;
 }
 
+const START_INDEX = 10;
+
 const MonitorDataContent = ( { siteId }: { siteId: number } ) => {
 	const translate = useTranslate();
 
-	const { data, isLoading } = useFetchMonitorData( siteId );
+	const { data, isLoading } = useFetchMonitorData( siteId, '30 days' );
 
-	const incidents = data?.incidents ?? [];
+	const incidents = data ?? [];
 
-	const monitorData = incidents.reverse().map( ( { date, status, downtime_in_minutes } ) => {
+	// We need to slice the data because the API returns the latest 30 incidents
+	const monitorData = incidents.slice( START_INDEX ).map( ( data ) => {
+		const { date, status, downtime_in_minutes } = data;
+
 		let className = 'site-expanded-content__chart-bar-no-data';
 		let tooltipLabel: ReactChild = 'No data';
 

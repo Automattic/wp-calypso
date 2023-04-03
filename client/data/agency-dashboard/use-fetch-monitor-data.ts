@@ -1,29 +1,35 @@
-import moment from 'moment';
 import { useQuery } from 'react-query';
+import {
+	AllowedMonitorPeriods,
+	MonitorUptimeAPIResponse,
+} from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import wpcom from 'calypso/lib/wp';
 
-const useFetchMonitorData = ( siteId: number ) => {
+const useFetchMonitorData = ( siteId: number, period: AllowedMonitorPeriods ) => {
 	return useQuery(
-		[ 'jetpack-monitor-incidents', siteId ],
+		[ 'jetpack-monitor-uptime', siteId ],
 		() =>
-			wpcom.req.get( {
-				path: `/sites/${ siteId }/jetpack-monitor-incidents`,
-				apiNamespace: 'wpcom/v2',
-			} ),
-		{
-			select: () => {
-				const dates = new Array( 20 );
-				for ( let i = 0; i < dates.length; i++ ) {
-					dates[ i ] = moment().subtract( i, 'days' ).format( 'YYYY-MM-DDTHH:mm:ss.000[Z]' );
+			wpcom.req.get(
+				{
+					path: `/sites/${ siteId }/jetpack-monitor-uptime`,
+					apiNamespace: 'wpcom/v2',
+				},
+				{
+					period,
 				}
-				return {
-					incidents: dates.map( ( date, index ) => ( {
-						date,
-						// eslint-disable-next-line no-nested-ternary
-						status: index < 10 ? 'down' : index < 15 ? 'up' : 'monitor_inactive',
-						downtime_in_minutes: 10,
-					} ) ),
-				};
+			),
+		{
+			select: ( data: MonitorUptimeAPIResponse ) => {
+				if ( ! data ) {
+					return [];
+				}
+				// Use sort() to ensure the data is always in ascending order
+				// since Object.keys() method does not guarantee the order of the keys.
+				const sortedKeys = Object.keys( data ).sort();
+				return sortedKeys.map( ( date ) => ( {
+					date,
+					...data[ date ],
+				} ) );
 			},
 		}
 	);

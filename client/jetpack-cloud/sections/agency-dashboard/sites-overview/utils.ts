@@ -620,7 +620,11 @@ export const DASHBOARD_LICENSE_TYPES: { [ key: string ]: AllowedTypes } = {
 	BACKUP: 'backup',
 };
 
-export const getMonitorDowntimeText = ( downtime: number ) => {
+export const getMonitorDowntimeText = ( downtime: number | undefined ) => {
+	if ( ! downtime ) {
+		return translate( 'Downtime' );
+	}
+
 	const duration = moment.duration( downtime, 'minutes' );
 
 	const days = duration.days();
