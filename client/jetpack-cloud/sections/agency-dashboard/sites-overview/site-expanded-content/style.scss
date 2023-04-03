@@ -274,3 +274,7 @@ $color-yellow: var(--studio-yellow-50);
 		width: auto !important;
 	}
 }
+
+.expanded-card__loading {
+	opacity: 0.5;
+}

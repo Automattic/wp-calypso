@@ -1,8 +1,10 @@
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
+import { useSelector } from 'react-redux';
 import ElementChart from 'calypso/components/chart';
 import useFetchMonitorData from 'calypso/data/agency-dashboard/use-fetch-monitor-data';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
+import { getSiteMonitorStatuses } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { useToggleActivateMonitor } from '../../hooks';
 import { getMonitorDowntimeText } from '../utils';
 import ExpandedCard from './expanded-card';
@@ -84,6 +86,8 @@ export default function MonitorActivity( { hasMonitor, site, trackEvent }: Props
 	const translate = useTranslate();
 
 	const toggleActivateMonitor = useToggleActivateMonitor( [ site ] );
+	const statuses = useSelector( getSiteMonitorStatuses );
+	const isLoading = statuses?.[ site.blog_id ] === 'loading';
 
 	const handleOnClick = () => {
 		trackEvent( 'expandable_block_active_monitor_click' );
@@ -102,7 +106,9 @@ export default function MonitorActivity( { hasMonitor, site, trackEvent }: Props
 					},
 				}
 			) }
-			onClick={ handleOnClick }
+			isLoading={ isLoading }
+			// Allow to click on the card only if the monitor is not active
+			onClick={ ! hasMonitor ? handleOnClick : undefined }
 		>
 			{ hasMonitor && <MonitorDataContent siteId={ site.blog_id } /> }
 		</ExpandedCard>
