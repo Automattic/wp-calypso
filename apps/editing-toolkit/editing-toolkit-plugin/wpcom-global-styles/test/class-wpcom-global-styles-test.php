@@ -19,6 +19,12 @@ class WPCOM_Global_Styles_Test extends TestCase {
 	public function test_wpcom_block_global_styles_frontend() {
 		switch_theme( 'twentytwentythree' );
 
+		$disable_caching = function ( $wp_query ) {
+			$wp_query->query_vars['cache_results'] = false;
+		};
+
+		add_action( 'parse_query', $disable_caching );
+
 		$user_cpt     = WP_Theme_JSON_Resolver::get_user_data_from_wp_global_styles( wp_get_theme( 'twentytwentythree' ), true );
 		$decoded_data = json_decode( $user_cpt['post_content'], true );
 		unset( $decoded_data['isGlobalStylesUserThemeJSON'] );
@@ -37,5 +43,6 @@ class WPCOM_Global_Styles_Test extends TestCase {
 		$this->assertEmpty( $theme_json->get_data()['styles']['color']['background'] );
 
 		remove_filter( 'wpcom_force_limit_global_styles', '__return_true' );
+		remove_action( 'parse_query', $disable_caching );
 	}
 }
