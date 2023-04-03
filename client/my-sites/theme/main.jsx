@@ -53,6 +53,7 @@ import { getProductsList } from 'calypso/state/products-list/selectors';
 import { isUserPaid } from 'calypso/state/purchases/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -340,8 +341,13 @@ class ThemeSheet extends Component {
 	};
 
 	shouldRenderPreviewButton() {
-		const { isWPForTeamsSite } = this.props;
-		return this.isThemeAvailable() && ! this.isThemeCurrentOne() && ! isWPForTeamsSite;
+		const { isWPForTeamsSite, isWpcomStaging } = this.props;
+		return (
+			this.isThemeAvailable() &&
+			! this.isThemeCurrentOne() &&
+			! isWPForTeamsSite &&
+			! isWpcomStaging
+		);
 	}
 
 	shouldRenderUnlockStyleButton() {
@@ -413,7 +419,7 @@ class ThemeSheet extends Component {
 	}
 
 	renderScreenshot() {
-		const { isWpcomTheme, name: themeName, demoUrl, translate } = this.props;
+		const { isWpcomTheme, name: themeName, demoUrl, translate, isWpcomStaging } = this.props;
 		const screenshotFull = isWpcomTheme ? this.getFullLengthScreenshot() : this.props.screenshot;
 		const width = 735;
 		// Photon may return null, allow fallbacks
@@ -432,7 +438,7 @@ class ThemeSheet extends Component {
 			/>
 		);
 
-		if ( this.isThemeAvailable() ) {
+		if ( this.isThemeAvailable() && ! isWpcomStaging ) {
 			return (
 				<a
 					className="theme__sheet-screenshot is-active"
@@ -567,12 +573,13 @@ class ThemeSheet extends Component {
 	};
 
 	renderHeader = () => {
-		const { author, isWPForTeamsSite, name, retired, softLaunched, translate } = this.props;
+		const { author, isWPForTeamsSite, name, retired, softLaunched, translate, isWpcomStaging } =
+			this.props;
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
 		const tag = author ? translate( 'by %(author)s', { args: { author: author } } ) : placeholder;
 		const shouldRenderButton =
-			! retired && ! this.hasWpOrgThemeUpsellBanner() && ! isWPForTeamsSite;
+			! retired && ! this.hasWpOrgThemeUpsellBanner() && ! isWPForTeamsSite && ! isWpcomStaging;
 
 		return (
 			<div className="theme__sheet-header">
@@ -1125,7 +1132,7 @@ class ThemeSheet extends Component {
 			isBundledSoftwareSet,
 			isSiteBundleEligible,
 			translate,
-			isWPForTeamsSite,
+			isWpcomStaging,
 			isLoggedIn,
 			isExternallyManagedTheme,
 			isSiteEligibleForManagedExternalThemes,
@@ -1187,11 +1194,11 @@ class ThemeSheet extends Component {
 		let previewUpsellBanner;
 
 		// Show theme upsell banner on Simple sites.
-		const hasWpComThemeUpsellBanner = this.hasWpComThemeUpsellBanner();
+		const hasWpComThemeUpsellBanner = this.hasWpComThemeUpsellBanner() && ! isWpcomStaging;
 		// Show theme upsell banner on Jetpack sites.
-		const hasWpOrgThemeUpsellBanner = this.hasWpOrgThemeUpsellBanner();
+		const hasWpOrgThemeUpsellBanner = this.hasWpOrgThemeUpsellBanner() && ! isWpcomStaging;
 		// Show theme upsell banner on Atomic sites.
-		const hasThemeUpsellBannerAtomic = this.hasThemeUpsellBannerAtomic();
+		const hasThemeUpsellBannerAtomic = this.hasThemeUpsellBannerAtomic() && ! isWpcomStaging;
 
 		const hasUpsellBanner =
 			hasWpComThemeUpsellBanner || hasWpOrgThemeUpsellBanner || hasThemeUpsellBannerAtomic;
@@ -1453,6 +1460,7 @@ export default connect(
 		const englishUrl = 'https://wordpress.com' + getThemeDetailsUrl( state, themeId );
 
 		const isAtomic = isSiteAutomatedTransfer( state, siteId );
+		const isWpcomStaging = isSiteWpcomStaging( state, siteId );
 		const isJetpack = isJetpackSite( state, siteId );
 		const isStandaloneJetpack = isJetpack && ! isAtomic;
 
@@ -1475,6 +1483,7 @@ export default connect(
 			isCurrentUserPaid,
 			isWpcomTheme,
 			isWporg: isWporgTheme( state, themeId ),
+			isWpcomStaging,
 			isLoggedIn: isUserLoggedIn( state ),
 			isActive: isThemeActive( state, themeId, siteId ),
 			isJetpack,
