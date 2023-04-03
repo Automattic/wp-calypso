@@ -1,16 +1,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
-import {
-	plansLink,
-	PLAN_WOOEXPRESS_MEDIUM,
-	PLAN_WOOEXPRESS_SMALL,
-} from '@automattic/calypso-products';
+import { plansLink } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
-import AsyncLoad from 'calypso/components/async-load';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import ECommercePlanFeatures from 'calypso/my-sites/plans/components/ecommerce-plan-features';
 import ECommerceTrialBanner from './ecommerce-trial-banner';
+import { WooExpressPlans } from './wooexpress-plans';
 import { getWooExpressMediumFeatureSets } from './wx-medium-features';
 import type { Site } from 'calypso/my-sites/scan/types';
 
@@ -50,17 +46,7 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 		/>
 	);
 
-	const plansTableProps = {
-		plans: [ PLAN_WOOEXPRESS_SMALL, PLAN_WOOEXPRESS_MEDIUM ],
-		hidePlansFeatureComparison: true,
-		siteId,
-	};
-
-	const multiPlanFeatures = (
-		<div className="is-2023-pricing-grid">
-			<AsyncLoad require="calypso/my-sites/plan-features-2023-grid" { ...plansTableProps } />
-		</div>
-	);
+	const multiPlanFeatures = <WooExpressPlans siteId={ siteId } />;
 
 	const availablePlanFeatures = isEnabled( 'plans/wooexpress-small' )
 		? multiPlanFeatures
