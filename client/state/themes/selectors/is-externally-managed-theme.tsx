@@ -35,3 +35,14 @@ export function isExternallyManagedTheme( state = {}, themeId: string ): boolean
 	const themeType: ThemeTypes = theme.theme_type;
 	return themeType === 'managed-external';
 }
+
+/**
+ * Check if any of a list of themes is externally managed.
+ *
+ * @param {Object} state Global state tree
+ * @param {string} themeIds list of theme ids
+ * @returns {boolean} True if the theme is externally managed.
+ */
+export function hasExternallyManagedThemes( state = {}, themeIds: string[] ): boolean {
+	return themeIds.some( ( themeId ) => isExternallyManagedTheme( state, themeId ) );
+}

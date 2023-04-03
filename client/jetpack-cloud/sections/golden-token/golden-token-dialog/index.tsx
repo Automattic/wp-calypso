@@ -53,7 +53,7 @@ export const GoldenTokenDialog = () => {
 					<h2>{ translate( 'Your exclusive Jetpack Experience awaits' ) }</h2>
 					<p>
 						{ translate(
-							'You have been gifted a Jetpack Gold Token. This unlocks a lifetime of Jetpack powers for your website.'
+							'You have been gifted a Jetpack Golden Token. This unlocks a lifetime of Jetpack powers for your website.'
 						) }
 					</p>
 				</div>
@@ -64,7 +64,7 @@ export const GoldenTokenDialog = () => {
 					<h2>{ translate( 'Super powers are ready!' ) }</h2>
 					<p>
 						{ translate(
-							'Your Jetpack Gold Token provides a lifetime license for this website and includes the following products:'
+							'Your Jetpack Golden Token provides a lifetime license for this website and includes the following products:'
 						) }
 					</p>
 				</div>

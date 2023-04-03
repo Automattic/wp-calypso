@@ -260,7 +260,7 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 			<Notice status="is-error" showDismiss={ false }>
 				<div data-testid="staging-sites-access-message">
 					{ translate(
-						'Unable to access the staging site {{a}}%(stagingSiteName)s{{/a}}. Please contact with the site owner.',
+						'Unable to access the staging site {{a}}%(stagingSiteName)s{{/a}}. Please contact the site owner.',
 						{
 							args: {
 								stagingSiteName: stagingSite.url,

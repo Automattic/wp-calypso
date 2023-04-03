@@ -64,26 +64,42 @@ function transformData( data ) {
 }
 
 export default function SubscribersSection() {
-	const [ isLoading, setIsLoading ] = useState( true );
-	const data = transformData( isLoading ? [] : getData() );
+	const { counts, isLoading } = useSubscriberCounts();
 
 	// Determines what is shown in the tooltip on hover.
 	const tooltipHelper = ( datum ) => `Changed: ${ datum.diff }`;
 
-	useEffect( () => {
-		setTimeout( () => setIsLoading( false ), 5000 );
-	}, [ isLoading ] );
-
 	return (
 		<div className="subscribers-section">
 			<h1 className="highlight-cards-heading">Subscribers</h1>
-			{ isLoading ? (
-				<StatsModulePlaceholder className="is-chart" isLoading />
-			) : (
-				<LineChart data={ data } renderTooltipForDatanum={ tooltipHelper }>
+			{ isLoading && <StatsModulePlaceholder className="is-chart" isLoading /> }
+			{ ! isLoading && counts.length === 0 && (
+				<p className="subscribers-section__no-data">No data availble for the specified period.</p>
+			) }
+			{ ! isLoading && counts.length !== 0 && (
+				<LineChart data={ counts } renderTooltipForDatanum={ tooltipHelper }>
 					<StatsEmptyState />
 				</LineChart>
 			) }
 		</div>
 	);
+}
+
+function useSubscriberCounts() {
+	const [ counts, setCounts ] = useState( [] );
+	const [ isLoading, setIsLoading ] = useState( true );
+
+	// Run a timer to simulate hitting the network.
+	useEffect( () => {
+		setTimeout( () => setIsLoading( false ), 5000 );
+	}, [] );
+
+	// Process the data once the request returns.
+	useEffect( () => {
+		if ( ! isLoading ) {
+			setCounts( transformData( getData() ) );
+		}
+	}, [ isLoading ] );
+
+	return { counts, isLoading };
 }
