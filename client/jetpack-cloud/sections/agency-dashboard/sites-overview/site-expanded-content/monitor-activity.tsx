@@ -1,4 +1,3 @@
-import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import ElementChart from 'calypso/components/chart';
@@ -53,35 +52,28 @@ const MonitorDataContent = ( { siteId }: { siteId: number } ) => {
 	} );
 
 	return (
-		<>
-			<div className="site-expanded-content__card-content">
-				<div className="site-expanded-content__card-content-column">
-					<div className="site-expanded-content__chart">
-						{ isLoading ? (
-							<TextPlaceholder />
-						) : (
-							<ElementChart
-								data={ monitorData }
-								minBarWidth={ 10 }
-								sliceFromBeginning={ false }
-								minBarsToBeShown={ 20 }
-								hideYAxis={ true }
-								hideXAxis={ true }
-							/>
-						) }
-					</div>
-					<div className="site-expanded-content__x-axis-pointers">
-						<span>{ translate( '20d ago' ) }</span>
-						<span>{ translate( 'Today' ) }</span>
-					</div>
+		<div className="site-expanded-content__card-content">
+			<div className="site-expanded-content__card-content-column">
+				<div className="site-expanded-content__chart">
+					{ isLoading ? (
+						<TextPlaceholder />
+					) : (
+						<ElementChart
+							data={ monitorData }
+							minBarWidth={ 10 }
+							sliceFromBeginning={ false }
+							minBarsToBeShown={ 20 }
+							hideYAxis={ true }
+							hideXAxis={ true }
+						/>
+					) }
+				</div>
+				<div className="site-expanded-content__x-axis-pointers">
+					<span>{ translate( '20d ago' ) }</span>
+					<span>{ translate( 'Today' ) }</span>
 				</div>
 			</div>
-			<div className="site-expanded-content__card-footer">
-				<Button className="site-expanded-content__card-button" compact>
-					{ translate( 'All activity' ) }
-				</Button>
-			</div>
-		</>
+		</div>
 	);
 };
 
