@@ -2,6 +2,7 @@ import debugFactory from 'debug';
 import { translate } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
 import performanceMark, { PartialContext } from 'calypso/server/lib/performance-mark';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import TagsPage from './main';
 import type { Context as PageJSContext } from 'page';
 
@@ -48,14 +49,16 @@ export const fetchTrendingTags = ( context: PageJSContext, next: ( e?: Error ) =
 	}
 	performanceMark( context as PartialContext, 'fetchTrendingTags' );
 
+	const currentUserLocale = getCurrentUserLocale( context.store.getState() );
+
 	context.queryClient
 		.fetchQuery(
-			[ 'trending-tags' ],
+			[ 'trending-tags', currentUserLocale ?? '' ],
 			() => {
 				return wpcom.req.get( '/read/trending/tags', {
 					apiVersion: '1.2',
 					count: '6',
-					locale: context.lang, // Note: undefined will be omitted by the query string builder.
+					lang: currentUserLocale, // Note: undefined will be omitted by the query string builder.
 				} );
 			},
 			{ staleTime: 86400000 } // 24 hours
