@@ -46,8 +46,8 @@ function getData(): [ string, number, number ][] {
 }
 
 function transformData( data: [ string, number, number ][] ): uPlot.AlignedData {
-	// Transform the data into the format required by the chart component.
-	// Note that the data is ordered from newest to oldest.
+	// Transform the data into the format required by uPlot.
+	// Note that the incoming data is ordered from newest to oldest.
 	const x: number[] = data.map( ( point ) => Number( new Date( point[ 0 ] ) ) / 1000 );
 	const y: number[] = data.map( ( point ) => Number( point[ 1 ] ) );
 	return [ x, y ];
@@ -64,6 +64,7 @@ export default function SubscribersSection() {
 				<p className="subscribers-section__no-data">No data availble for the specified period.</p>
 			) }
 			{ ! isLoading && counts.length !== 0 && (
+				// TODO: Figure out why hover only breaks in the subscriber section and not in Storybook.
 				<UplotLineChart data={ counts } options={ { legend: { show: false } } } />
 			) }
 		</div>
