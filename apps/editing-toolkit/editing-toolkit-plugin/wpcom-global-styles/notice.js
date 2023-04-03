@@ -51,7 +51,7 @@ function GlobalStylesNoticeComponent() {
 						<ExternalLink
 							href={ wpcomGlobalStyles.upgradeUrl }
 							target="_blank"
-							onClick={ () => recordUpgradePreSaveNoticeClick() }
+							onClick={ recordUpgradePreSaveNoticeClick }
 						/>
 					),
 				}
