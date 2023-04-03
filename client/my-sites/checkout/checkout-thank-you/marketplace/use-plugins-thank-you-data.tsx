@@ -25,11 +25,17 @@ import MasterbarStyled from './masterbar-styled';
 
 export function usePluginsThankYouData(
 	pluginSlugs: string[]
-): [ ThankYouSectionProps, boolean, JSX.Element ] {
+): [ ThankYouSectionProps, boolean, JSX.Element, string, string ] {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
+
+	// texts
+	const title = translate( "Congrats on your site's new superpowers!" );
+	const subtitle = translate(
+		"Now you're really getting the most out of WordPress. Dig in and explore more of our favorite plugins."
+	);
 
 	// retrieve WPCom plugin data
 	const wpComPluginsDataResults = useWPCOMPlugins( pluginSlugs );
@@ -181,7 +187,7 @@ export function usePluginsThankYouData(
 		/>
 	);
 
-	return [ pluginsSection, allPluginsFetched, goBackSection ];
+	return [ pluginsSection, allPluginsFetched, goBackSection, title, subtitle ];
 }
 
 type Plugin = {

@@ -193,18 +193,23 @@ $design-button-primary-color: rgb(17, 122, 201);
 
 			.formatted-header {
 				margin-top: 0;
-			}
 
-			.formatted-header__title {
-				@include onboarding-font-recoleta;
-				color: #101517;
-				font-size: 2rem;
-				font-weight: 400;
-				letter-spacing: 0.2px;
-				margin: 0;
+				.formatted-header__title {
+					@include onboarding-font-recoleta;
+					color: #101517;
+					font-size: 2rem;
+					font-weight: 400;
+					letter-spacing: 0.2px;
+					margin: 0;
 
-				@media ( min-width: 1080px ) {
-					padding: 0;
+					@media ( min-width: 1080px ) {
+						padding: 0;
+					}
+
+					@include break-small {
+						margin: 0 auto;
+						max-width: 60%;
+					}
 				}
 			}
 

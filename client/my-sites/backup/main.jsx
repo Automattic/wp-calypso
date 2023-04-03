@@ -1,5 +1,6 @@
 import { WPCOM_FEATURES_REAL_TIME_BACKUPS } from '@automattic/calypso-products';
-import { ExternalLink } from '@wordpress/components';
+import { Button } from '@automattic/components';
+import { ExternalLink, Tooltip } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -38,7 +39,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import BackupDatePicker from './backup-date-picker';
 import BackupsMadeRealtimeBanner from './backups-made-realtime-banner';
 import EnableRestoresBanner from './enable-restores-banner';
-import { backupMainPath } from './paths';
+import { backupMainPath, backupClonePath } from './paths';
 import SearchResults from './search-results';
 import { DailyStatus, RealtimeStatus } from './status';
 
@@ -183,6 +184,8 @@ function BackupStatus( {
 } ) {
 	const isFetchingSiteFeatures = useSelectedSiteSelector( isRequestingSiteFeatures );
 	const isPoliciesInitialized = useSelectedSiteSelector( isRewindPoliciesInitialized );
+	const siteSlug = useSelector( getSelectedSiteSlug );
+	const translate = useTranslate();
 
 	const hasRealtimeBackups = useSelectedSiteSelector(
 		siteHasFeature,
@@ -196,6 +199,30 @@ function BackupStatus( {
 	return (
 		<div className="backup__main-wrap">
 			<div className="backup__last-backup-status">
+				{ isJetpackCloud() && (
+					<div className="backup__header">
+						<div className="backup__header-left">
+							<div className="backup__header-title">{ translate( 'Latest Backups' ) }</div>
+							<div className="backup__header-text">
+								{ translate( 'This is a list of your latest generated backups' ) }
+							</div>
+						</div>
+						<div className="backup__header-right">
+							{ siteSlug && (
+								<Tooltip
+									text={ translate(
+										'To test your site changes, migrate or keep your data safe in another site'
+									) }
+								>
+									<Button className="backup__clone-button" href={ backupClonePath( siteSlug ) }>
+										{ translate( 'Copy this site' ) }
+									</Button>
+								</Tooltip>
+							) }
+						</div>
+					</div>
+				) }
+
 				{ ! isAtomic && ( needCredentials || areCredentialsInvalid ) && <EnableRestoresBanner /> }
 				{ ! needCredentials && ( ! areCredentialsInvalid || isAtomic ) && hasRealtimeBackups && (
 					<BackupsMadeRealtimeBanner />

@@ -9,11 +9,11 @@ import { connect, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import Notice from 'calypso/components/notice';
-import withMediaStorage from 'calypso/data/media-storage/with-media-storage';
 import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
 import { urlToSlug } from 'calypso/lib/url';
 import { useAddStagingSiteMutation } from 'calypso/my-sites/hosting/staging-site-card/use-add-staging-site';
 import { useCheckStagingSiteStatus } from 'calypso/my-sites/hosting/staging-site-card/use-check-staging-site-status';
+import { useHasValidQuotaQuery } from 'calypso/my-sites/hosting/staging-site-card/use-has-valid-quota';
 import { useStagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
@@ -54,17 +54,11 @@ const ExceedQuotaErrorWrapper = styled.div( {
 	marginTop: '1em',
 } );
 
-export const StagingSiteCard = ( {
-	currentUserId,
-	disabled,
-	spaceQuotaExceededForStaging,
-	siteId,
-	siteOwnerId,
-	translate,
-} ) => {
+export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, translate } ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
+	const { data: hasValidQuota } = useHasValidQuotaQuery( siteId );
 	const [ loadingError, setLoadingError ] = useState( false );
 
 	const { data: stagingSites, isLoading: isLoadingStagingSites } = useStagingSite( siteId, {
@@ -174,7 +168,7 @@ export const StagingSiteCard = ( {
 				</p>
 				<Button
 					primary
-					disabled={ disabled || addingStagingSite || spaceQuotaExceededForStaging }
+					disabled={ disabled || addingStagingSite || ! hasValidQuota }
 					onClick={ () => {
 						dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_click' ) );
 						setWasCreating( true );
@@ -184,7 +178,7 @@ export const StagingSiteCard = ( {
 				>
 					<span>{ translate( 'Add staging site' ) }</span>
 				</Button>
-				{ spaceQuotaExceededForStaging && getExceedQuotaErrorContent() }
+				{ ! hasValidQuota && getExceedQuotaErrorContent() }
 			</>
 		);
 	};
@@ -308,24 +302,14 @@ export const StagingSiteCard = ( {
 	);
 };
 
-export default withMediaStorage(
-	connect( ( state, { mediaStorage } ) => {
-		const currentUserId = getCurrentUserId( state );
-		const siteId = getSelectedSiteId( state );
-		const siteOwnerId = getSelectedSite( state )?.site_owner;
+export default connect( ( state ) => {
+	const currentUserId = getCurrentUserId( state );
+	const siteId = getSelectedSiteId( state );
+	const siteOwnerId = getSelectedSite( state )?.site_owner;
 
-		let spaceQuotaExceededForStaging = false;
-		// We check against -1 as this is the default value for sites with
-		// upload_space_check_disabled option.
-		if ( mediaStorage?.storage_used_bytes > -1 && mediaStorage?.max_storage_bytes > -1 ) {
-			spaceQuotaExceededForStaging =
-				mediaStorage.storage_used_bytes > mediaStorage.max_storage_bytes / 2;
-		}
-		return {
-			currentUserId,
-			siteId,
-			spaceQuotaExceededForStaging,
-			siteOwnerId,
-		};
-	} )( localize( StagingSiteCard ) )
-);
+	return {
+		currentUserId,
+		siteId,
+		siteOwnerId,
+	};
+} )( localize( StagingSiteCard ) );

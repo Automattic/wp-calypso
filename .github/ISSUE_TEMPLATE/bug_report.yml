@@ -12,7 +12,7 @@ body:
         Please **do not** link to image hosting services such as Cloudup, Droplr, Imgur, etc…
         Instead, directly embed screenshot(s) or recording(s) in any of the text areas below: click, then drag and drop.
 
-        If you have any questions, please ask in: `#dotcom-pa-triage`.
+        If you have any questions, please ask in: `#dotcom-triage-alerts`.
   - type: markdown
     attributes:
       value: |
@@ -78,10 +78,10 @@ body:
     attributes:
       value: |
         <br>
-        
+
         ## Optional Information
 
-        The following section is optional. 
+        The following section is optional.
   - type: dropdown
     id: site-type
     attributes:

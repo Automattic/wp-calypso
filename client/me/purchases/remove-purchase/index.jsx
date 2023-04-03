@@ -9,6 +9,7 @@ import {
 	isJetpackProduct,
 	isPlan,
 	isTitanMail,
+	isAkismetProduct,
 } from '@automattic/calypso-products';
 import { Button, CompactCard, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
@@ -40,9 +41,12 @@ import { setAllSitesSelected } from 'calypso/state/ui/actions';
 import { MarketPlaceSubscriptionsDialog } from '../marketplace-subscriptions-dialog';
 import { purchasesRoot } from '../paths';
 import { PreCancellationDialog } from '../pre-cancellation-dialog';
-import { isDataLoading } from '../utils';
+import {
+	isDataLoading,
+	isAkismetTemporarySitePurchase,
+	isJetpackTemporarySitePurchase,
+} from '../utils';
 import RemoveDomainDialog from './remove-domain-dialog';
-
 import './style.scss';
 
 class RemovePurchase extends Component {
@@ -194,6 +198,20 @@ class RemovePurchase extends Component {
 			return;
 		}
 
+		successMessage = translate( '%(productName)s was removed from {{siteName/}}.', {
+			args: { productName },
+			components: { siteName: <em>{ purchase.domain }</em> },
+		} );
+
+		if (
+			isAkismetTemporarySitePurchase( purchase ) ||
+			isJetpackTemporarySitePurchase( purchase )
+		) {
+			successMessage = translate( '%(productName)s was removed from your account.', {
+				args: { productName },
+			} );
+		}
+
 		if ( isDomainRegistration( purchase ) ) {
 			if ( isDomainOnlySite ) {
 				this.props.receiveDeletedSite( purchase.siteId );
@@ -202,11 +220,6 @@ class RemovePurchase extends Component {
 
 			successMessage = translate( 'The domain {{domain/}} was removed from your account.', {
 				components: { domain: <em>{ productName }</em> },
-			} );
-		} else {
-			successMessage = translate( '%(productName)s was removed from {{siteName/}}.', {
-				args: { productName },
-				components: { siteName: <em>{ purchase.domain }</em> },
 			} );
 		}
 
@@ -415,8 +428,8 @@ class RemovePurchase extends Component {
 			return null;
 		}
 
-		// If we have a disconnected site that is _not_ a Jetpack purchase, no removal allowed.
-		if ( ! this.props.site && ! this.props.isJetpack ) {
+		// If we have a disconnected site that is _not_ a Jetpack purchase _or_ an Akismet purchase, no removal allowed.
+		if ( ! this.props.site && ! this.props.isJetpack && ! this.props.isAkismet ) {
 			return null;
 		}
 
@@ -474,11 +487,13 @@ class RemovePurchase extends Component {
 export default connect(
 	( state, { purchase } ) => {
 		const isJetpack = purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) );
+		const isAkismet = purchase && isAkismetProduct( purchase );
 		return {
 			isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
 			isAtomicSite: isSiteAutomatedTransfer( state, purchase.siteId ),
 			isChatAvailable: isHappychatAvailable( state ),
 			isJetpack,
+			isAkismet,
 			purchasesError: getPurchasesError( state ),
 			userId: getCurrentUserId( state ),
 			primaryDomain: getPrimaryDomainBySiteId( state, purchase.siteId ),

@@ -55,6 +55,16 @@ export const requestAddProduct = ( siteId, product, noticeText ) => {
 				if ( newProduct.error ) {
 					throw new Error( newProduct.error );
 				}
+				// This is an override for the launchpad flow. If the user is in
+				// the launchpad flow, we want to redirect them to the launchpad
+				// flow after creating a product.  The launchpad flow adds the
+				// `launchpad` param to the URL only when the task has not been completed.
+				const url = new URL( window.location.href );
+				if ( url.searchParams.has( 'launchpad' ) ) {
+					const siteSlug = url.pathname.split( '/' ).pop();
+					window.location.assign( `/setup/newsletter/launchpad?siteSlug=${ siteSlug }` );
+				}
+
 				const membershipProduct = membershipProductFromApi( newProduct.product );
 				dispatch( receiveUpdateProduct( siteId, membershipProduct ) );
 				dispatch(
