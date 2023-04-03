@@ -109,53 +109,54 @@ const WooExpressPlansPage = ( {
 				}
 		  );
 
-	const planFeatures = isEnabled( 'plans/wooexpress-small' ) ? (
-		<WooExpressPlans
-			interval={ interval ? interval : planInterval }
-			monthlyControlProps={ { path: plansLink( '/plans', selectedSite.slug, 'monthly', true ) } }
-			siteId={ selectedSite.ID }
-			yearlyControlProps={ { path: plansLink( '/plans', selectedSite.slug, 'yearly', true ) } }
-		/>
-	) : (
-		<>
-			<h2 className="woo-express-plans-page__section-title">
-				{ translate( 'What’s included in %(planName)s plan', {
-					args: {
-						planName: activePlan.getTitle(),
-					},
-				} ) }
-			</h2>
+	const planFeatures =
+		isEnabled( 'plans/wooexpress-small' ) || isWooExpressSmallPlan( currentPlan.productSlug ) ? (
+			<WooExpressPlans
+				interval={ interval ? interval : planInterval }
+				monthlyControlProps={ { path: plansLink( '/plans', selectedSite.slug, 'monthly', true ) } }
+				siteId={ selectedSite.ID }
+				yearlyControlProps={ { path: plansLink( '/plans', selectedSite.slug, 'yearly', true ) } }
+			/>
+		) : (
+			<>
+				<h2 className="woo-express-plans-page__section-title">
+					{ translate( 'What’s included in %(planName)s plan', {
+						args: {
+							planName: activePlan.getTitle(),
+						},
+					} ) }
+				</h2>
 
-			<div className="woo-express-plans-page__features-wrapper">
-				{ wooExpressMediumPlanFeatureSets.map( ( featureSet ) => (
-					<TrialFeatureCard key={ featureSet.title } { ...featureSet } />
-				) ) }
-			</div>
+				<div className="woo-express-plans-page__features-wrapper">
+					{ wooExpressMediumPlanFeatureSets.map( ( featureSet ) => (
+						<TrialFeatureCard key={ featureSet.title } { ...featureSet } />
+					) ) }
+				</div>
 
-			<Card className="woo-express-plans-page__bottom-banner">
-				<div className="woo-express-plans-page__bottom-banner-content">
-					<p className="woo-express-plans-page__bottom-banner-title">
-						{ translate( 'Want to get the most powerful tools?' ) }
-					</p>
-					<p className="woo-express-plans-page__bottom-banner-subtitle">
-						{ translate(
-							'Get in touch to discuss a custom solution that meet your business needs. '
-						) }
-					</p>
-					<Button className="woo-express-plans-page__bottom-banner-cta" primary>
-						{ translate( 'Get in touch' ) }
-					</Button>
-				</div>
-				<div className="woo-express-plans-page__bottom-banner-img-wrapper">
-					<img
-						src={ getInTouch }
-						alt={ translate( 'Get in touch', { textOnly: true } ) }
-						className="woo-express-plans-page__bottom-banner-img"
-					/>
-				</div>
-			</Card>
-		</>
-	);
+				<Card className="woo-express-plans-page__bottom-banner">
+					<div className="woo-express-plans-page__bottom-banner-content">
+						<p className="woo-express-plans-page__bottom-banner-title">
+							{ translate( 'Want to get the most powerful tools?' ) }
+						</p>
+						<p className="woo-express-plans-page__bottom-banner-subtitle">
+							{ translate(
+								'Get in touch to discuss a custom solution that meet your business needs. '
+							) }
+						</p>
+						<Button className="woo-express-plans-page__bottom-banner-cta" primary>
+							{ translate( 'Get in touch' ) }
+						</Button>
+					</div>
+					<div className="woo-express-plans-page__bottom-banner-img-wrapper">
+						<img
+							src={ getInTouch }
+							alt={ translate( 'Get in touch', { textOnly: true } ) }
+							className="woo-express-plans-page__bottom-banner-img"
+						/>
+					</div>
+				</Card>
+			</>
+		);
 
 	return (
 		<>
