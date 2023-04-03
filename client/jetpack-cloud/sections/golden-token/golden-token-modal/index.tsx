@@ -22,7 +22,7 @@ const GoldenTokenModal = () => {
 	return (
 		<Dialog
 			additionalClassNames="golden-token-modal"
-			isVisible={ true }
+			isVisible
 			isBackdropVisible={ false }
 			onClose={ noop }
 		>
