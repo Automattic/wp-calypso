@@ -46,7 +46,14 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 		/>
 	);
 
-	const multiPlanFeatures = <WooExpressPlans siteId={ siteId } />;
+	const multiPlanFeatures = (
+		<WooExpressPlans
+			siteId={ siteId }
+			interval={ interval }
+			yearlyControlProps={ { path: plansLink( '/plans', siteSlug, 'yearly', true ) } }
+			monthlyControlProps={ { path: plansLink( '/plans', siteSlug, 'monthly', true ) } }
+		/>
+	);
 
 	const availablePlanFeatures = isEnabled( 'plans/wooexpress-small' )
 		? multiPlanFeatures
