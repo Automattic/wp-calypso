@@ -152,15 +152,17 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		return currentSitePlanSlug ? getPlanBillPeriod( state, currentSitePlanSlug ) : null;
 	} );
 
-	if ( ! showBiannualToggle ) {
-		if ( ! eligibleForWpcomMonthlyPlans ) {
+	if ( showBiannualToggle ) {
+		// skip showing toggle if current plan's term is higher than 1 year
+		if ( currentPlanBillingPeriod && PLAN_ANNUAL_PERIOD < currentPlanBillingPeriod ) {
 			return null;
 		}
 	}
 
-	// skip showing toggle if current plan's term is higher than 1 year
-	if ( currentPlanBillingPeriod && PLAN_ANNUAL_PERIOD < currentPlanBillingPeriod ) {
-		return null;
+	if ( ! showBiannualToggle ) {
+		if ( ! eligibleForWpcomMonthlyPlans ) {
+			return null;
+		}
 	}
 
 	const additionalPathProps = props.redirectTo ? { redirect_to: props.redirectTo } : {};
