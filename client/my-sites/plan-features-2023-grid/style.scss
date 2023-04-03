@@ -57,19 +57,19 @@
 			}
 
 			&.is-wooexpress-medium-plan {
-				background-color: var(--studio-pink-50);
-				color: var(--studio-white);
+				background-color: var(--color-accent);
+				color: var(--color-text-inverted);
 				font-weight: 400;
 
 				&:focus {
-					box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-pink-50);
+					box-shadow: 0 0 0 2px var(--color-surface), 0 0 0 4px var(--color-accent);
 				}
 			}
 
 			&.is-wooexpress-small-plan {
-				background-color: var(--studio-white);
-				color: var(--studio-pink-50);
-				border: 1px solid  var(--studio-pink-50);
+				background-color: var(--color-surface);
+				color: var(--color-accent);
+				border: 1px solid  var(--color-accent);
 				font-weight: 400;
 			}
 
