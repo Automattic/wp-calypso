@@ -7,9 +7,11 @@ import type { SiteStats } from '../types';
 
 interface Props {
 	stats: SiteStats;
+	siteUrlWithScheme: string;
+	trackEvent: ( eventName: string ) => void;
 }
 
-export default function InsightsStats( { stats }: Props ) {
+export default function InsightsStats( { stats, siteUrlWithScheme, trackEvent }: Props ) {
 	const translate = useTranslate();
 
 	const data = {
@@ -52,6 +54,8 @@ export default function InsightsStats( { stats }: Props ) {
 		);
 	};
 
+	const href = `${ siteUrlWithScheme }/wp-admin/admin.php?page=stats`;
+
 	return (
 		<ExpandedCard header={ translate( '7 days insights stats' ) }>
 			<div className="site-expanded-content__card-content-container">
@@ -76,7 +80,13 @@ export default function InsightsStats( { stats }: Props ) {
 					</div>
 				</div>
 				<div className="site-expanded-content__card-footer">
-					<Button className="site-expanded-content__card-button" compact>
+					<Button
+						href={ href }
+						target="_blank"
+						onClick={ () => trackEvent( 'expandable_block_see_all_stats_click' ) }
+						className="site-expanded-content__card-button"
+						compact
+					>
 						{ translate( 'See all stats' ) }
 					</Button>
 				</div>

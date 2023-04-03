@@ -12,6 +12,10 @@ export const getSettingsUrl = ( slug: string ) => {
 	return `/settings/general/${ slug }`;
 };
 
+export const getSiteLogsUrl = ( slug: string ) => {
+	return `/site-logs/${ slug }`;
+};
+
 export const getPluginsUrl = ( slug: string ) => {
 	return `/plugins/${ slug }`;
 };

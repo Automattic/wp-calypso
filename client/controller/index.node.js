@@ -36,6 +36,7 @@ const ProviderWrappedLoggedOutLayout = ( {
 	currentQuery,
 	primary,
 	secondary,
+	headerSection,
 	redirectUri,
 	i18n,
 	showGdprBanner,
@@ -51,6 +52,7 @@ const ProviderWrappedLoggedOutLayout = ( {
 					<LayoutLoggedOut
 						primary={ primary }
 						secondary={ secondary }
+						headerSection={ headerSection }
 						redirectUri={ redirectUri }
 						showGdprBanner={ showGdprBanner }
 					/>
