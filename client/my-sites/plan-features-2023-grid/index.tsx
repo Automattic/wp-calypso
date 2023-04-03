@@ -662,9 +662,12 @@ export class PlanFeatures2023Grid extends Component<
 			// Leaving it `undefined` makes it use the default label
 			let buttonText;
 
-			if ( isWooExpressMediumPlan( planName ) ) {
+			if ( isWooExpressMediumPlan( planName ) && ! isWooExpressMediumPlan( currentSitePlanSlug ) ) {
 				buttonText = translate( 'Get Performance', { textOnly: true } );
-			} else if ( isWooExpressSmallPlan( planName ) ) {
+			} else if (
+				isWooExpressSmallPlan( planName ) &&
+				! isWooExpressSmallPlan( currentSitePlanSlug )
+			) {
 				buttonText = translate( 'Get Essential', { textOnly: true } );
 			}
 
