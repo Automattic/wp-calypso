@@ -577,8 +577,8 @@ class HelpContact extends Component {
 								context: 'Holiday name',
 							} ) }
 							compact={ compact }
-							displayAt="2023-04-03 00:01Z"
-							closesAt="2023-04-09 00:01Z"
+							displayAt="2023-04-03 00:00Z"
+							closesAt="2023-04-09 00:00Z"
 							reopensAt="2023-04-10 07:00Z"
 						/>
 					</>
