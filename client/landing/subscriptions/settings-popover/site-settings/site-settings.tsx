@@ -10,12 +10,14 @@ type SiteSettingsProps = {
 	deliveryFrequency: SiteSubscriptionDeliveryFrequency;
 	onDeliveryFrequencyChange: ( value: SiteSubscriptionDeliveryFrequency ) => void;
 	onUnfollow: () => void;
+	unfollowing: boolean;
 };
 
 const SiteSettings = ( {
 	deliveryFrequency,
 	onDeliveryFrequencyChange,
 	onUnfollow,
+	unfollowing,
 }: SiteSettingsProps ) => {
 	const translate = useTranslate();
 
@@ -29,7 +31,7 @@ const SiteSettings = ( {
 				/>
 			</PopoverMenuItem>
 			<Separator />
-			<UnfollowSiteButton onUnfollow={ onUnfollow } />
+			<UnfollowSiteButton unfollowing={ unfollowing } onUnfollow={ onUnfollow } />
 		</SettingsPopover>
 	);
 };

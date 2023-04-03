@@ -33,7 +33,8 @@ export default function SiteRow( {
 
 	const { mutate: updateDeliveryFrequency } =
 		SubscriptionManager.useSiteDeliveryFrequencyMutation();
-	const { mutate: unFollow } = SubscriptionManager.useSiteUnfollowMutation();
+	const { mutate: unFollow, isLoading: unfollowing } =
+		SubscriptionManager.useSiteUnfollowMutation();
 
 	return (
 		<li className="row" role="row">
@@ -59,6 +60,7 @@ export default function SiteRow( {
 						updateDeliveryFrequency( { blog_id: blog_ID, delivery_frequency } )
 					}
 					onUnfollow={ () => unFollow( { blog_id: blog_ID } ) }
+					unfollowing={ unfollowing }
 				/>
 			</span>
 		</li>
