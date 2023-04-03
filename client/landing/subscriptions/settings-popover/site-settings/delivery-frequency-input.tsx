@@ -56,11 +56,12 @@ const DeliveryFrequencyInput = ( {
 
 	return (
 		<SegmentedControl>
-			{ availableFrequencies.map( ( { key, label } ) => (
+			{ availableFrequencies.map( ( { key, label }, index ) => (
 				<DeliveryFrequencyOption
 					selected={ selectedValue === key }
 					value={ key }
 					onChange={ onChange }
+					key={ index }
 				>
 					{ label }
 				</DeliveryFrequencyOption>
