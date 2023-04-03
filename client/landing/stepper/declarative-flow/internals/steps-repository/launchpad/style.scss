@@ -244,11 +244,7 @@
 	display: flex;
 	gap: 8px;
 	font-size: 0.875rem;
-	margin-bottom: 16px;
-
-	@include break-large {
-		margin-bottom: 10px;
-	}
+	margin-bottom: 36px;
 }
 
 .launchpad__domain-checkmark-icon {
