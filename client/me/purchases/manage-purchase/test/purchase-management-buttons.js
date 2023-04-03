@@ -2,6 +2,12 @@
  * @jest-environment jsdom
  */
 
+import {
+	AKISMET_PRODUCTS_LIST,
+	PRODUCT_AKISMET_ENTERPRISE_GT2M_MONTHLY,
+	PRODUCT_AKISMET_ENTERPRISE_GT2M_YEARLY,
+	AKISMET_UPGRADES_PRODUCTS_MAP,
+} from '@automattic/calypso-products';
 import { render, screen } from '@testing-library/react';
 import nock from 'nock';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -193,4 +199,68 @@ describe( 'Purchase Management Buttons', () => {
 		expect( await screen.findByText( /Remove/ ) ).toBeInTheDocument();
 		expect( screen.queryByText( /Cancel/ ) ).not.toBeInTheDocument();
 	} );
+
+	test.each(
+		AKISMET_PRODUCTS_LIST.filter(
+			( product ) =>
+				product !== PRODUCT_AKISMET_ENTERPRISE_GT2M_MONTHLY &&
+				product !== PRODUCT_AKISMET_ENTERPRISE_GT2M_YEARLY
+		)
+	)( 'generates the correct upgrade URL for %s', ( product_slug ) => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me/payment-methods?expired=include' )
+			.reply( 200 );
+
+		const store = createMockReduxStoreForPurchase( {
+			...purchase,
+			domain: 'siteless.akismet.com',
+			product_slug: product_slug,
+		} );
+
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<ManagePurchase
+						purchaseId={ Number( purchase.ID ) }
+						isSiteLevel
+						siteSlug="siteless.akismet.com"
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
+		);
+
+		expect( screen.getByText( /Upgrade/ ) ).toHaveAttribute(
+			'href',
+			AKISMET_UPGRADES_PRODUCTS_MAP[ product_slug ]
+		);
+	} );
+
+	test.each( [ PRODUCT_AKISMET_ENTERPRISE_GT2M_MONTHLY, PRODUCT_AKISMET_ENTERPRISE_GT2M_YEARLY ] )(
+		'does not render an upgrade button for %s',
+		( product_slug ) => {
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.1/me/payment-methods?expired=include' )
+				.reply( 200 );
+
+			const store = createMockReduxStoreForPurchase( {
+				...purchase,
+				domain: 'siteless.akismet.com',
+				product_slug: product_slug,
+			} );
+
+			render(
+				<QueryClientProvider client={ queryClient }>
+					<ReduxProvider store={ store }>
+						<ManagePurchase
+							purchaseId={ Number( purchase.ID ) }
+							isSiteLevel
+							siteSlug="siteless.akismet.com"
+						/>
+					</ReduxProvider>
+				</QueryClientProvider>
+			);
+
+			expect( screen.queryByText( /Upgrade/ ) ).not.toBeInTheDocument();
+		}
+	);
 } );
