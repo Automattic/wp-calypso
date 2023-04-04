@@ -1,7 +1,8 @@
 import { useMemo, useState, useRef } from 'react';
 import UplotReact from 'uplot-react';
+import type uPlot from 'uplot';
 
-import 'uplot/dist/uPlot.min.css';
+import './style.scss';
 
 interface UplotChartProps {
 	data: uPlot.AlignedData;
@@ -62,6 +63,9 @@ export default function UplotChart( { data, options: propOptions }: UplotChartPr
 						},
 					},
 				],
+				legend: {
+					isolate: true,
+				},
 				...( typeof propOptions === 'object' ? propOptions : {} ),
 			} ),
 			[ propOptions ]

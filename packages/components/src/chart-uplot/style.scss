@@ -1,3 +1,25 @@
-.calypso-uplot-line-chart {
-	margin: auto;
+@import "uplot/dist/uPlot.min.css";
+
+.calypso-uplot-chart {
+	.u-legend {
+		border-radius: 4px;
+		border: 1px solid var(--studio-gray-5);
+		color: var(--studio-gray-100);
+		padding: 1em 1.5em;
+
+		th {
+			cursor: initial;
+
+			&::after {
+				vertical-align: baseline;
+			}
+			> .u-marker {
+				// Nudge marker down to align with text.
+				margin-top: -2px;
+			}
+			> .u-label {
+				vertical-align: baseline;
+			}
+		}
+	}
 }

@@ -57,9 +57,7 @@ export default function SubscribersSection( { siteId }: { siteId: string } ) {
 				<p className="subscribers-section__no-data">No data availble for the specified period.</p>
 			) }
 			{ errorMessage && <div>Error: { errorMessage }</div> }
-			{ ! isLoading && chartData.length !== 0 && (
-				<UplotLineChart data={ chartData } options={ { legend: { show: false } } } />
-			) }
+			{ ! isLoading && chartData.length !== 0 && <UplotLineChart data={ chartData } /> }
 		</div>
 	);
 }
