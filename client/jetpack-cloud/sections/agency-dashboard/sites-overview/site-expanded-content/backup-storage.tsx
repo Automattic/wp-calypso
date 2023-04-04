@@ -1,5 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import useGetDisplayDate from 'calypso/components/jetpack/daily-backup-status/use-get-display-date';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useRewindableActivityLogQuery from 'calypso/data/activity-log/use-rewindable-activity-log-query';
@@ -7,6 +8,7 @@ import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-
 import { isSuccessfulRealtimeBackup } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import { urlToSlug } from 'calypso/lib/url';
+import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import { useDashboardAddRemoveLicense } from '../../hooks';
 import { DASHBOARD_LICENSE_TYPES, getExtractedBackupTitle } from '../utils';
 import ExpandedCard from './expanded-card';
@@ -14,11 +16,20 @@ import type { Site, Backup } from '../types';
 
 interface Props {
 	site: Site;
+	trackEvent: ( eventName: string ) => void;
 }
 
 const BACKUP_ERROR_STATUSES = [ 'rewind_backup_error', 'backup_only_error' ];
 
-const BackupStorageContent = ( { siteId, siteUrl }: { siteId: number; siteUrl: string } ) => {
+const BackupStorageContent = ( {
+	siteId,
+	siteUrl,
+	trackEvent,
+}: {
+	siteId: number;
+	siteUrl: string;
+	trackEvent: ( eventName: string ) => void;
+} ) => {
 	const translate = useTranslate();
 
 	const moment = useLocalizedMoment();
@@ -70,6 +81,7 @@ const BackupStorageContent = ( { siteId, siteUrl }: { siteId: number; siteUrl: s
 			</div>
 			<div className="site-expanded-content__card-footer">
 				<Button
+					onClick={ () => trackEvent( 'expandable_block_activity_log_click' ) }
 					href={ `/activity-log/${ siteUrl }` }
 					className="site-expanded-content__card-button"
 					compact
@@ -81,24 +93,30 @@ const BackupStorageContent = ( { siteId, siteUrl }: { siteId: number; siteUrl: s
 	);
 };
 
-export default function BackupStorage( { site }: Props ) {
+export default function BackupStorage( { site, trackEvent }: Props ) {
+	const {
+		blog_id: siteId,
+		url: siteUrl,
+		latest_backup_status: backupStatus,
+		has_backup: hasBackup,
+	} = site;
+
 	const translate = useTranslate();
 
-	const hasBackupError = BACKUP_ERROR_STATUSES.includes( site.latest_backup_status );
+	const hasBackupError = BACKUP_ERROR_STATUSES.includes( backupStatus );
 
 	const components = {
 		strong: <strong></strong>,
 	};
 
-	const hasBackup = site.has_backup;
 	const isBackupEnabled = ! hasBackupError && hasBackup;
 
-	const siteUrlWithMultiSiteSupport = urlToSlug( site.url );
+	const siteUrlWithMultiSiteSupport = urlToSlug( siteUrl );
 	// If the backup has an error, we want to redirect the user to the backup page
 	const link = hasBackupError ? `/backup/${ siteUrlWithMultiSiteSupport }` : '';
 
 	const { isLicenseSelected, handleAddLicenseAction } = useDashboardAddRemoveLicense(
-		site.blog_id,
+		siteId,
 		DASHBOARD_LICENSE_TYPES.BACKUP
 	);
 
@@ -113,12 +131,38 @@ export default function BackupStorage( { site }: Props ) {
 		} )
 	);
 
+	const handleTrackEvent = () => {
+		let trackName;
+		if ( hasBackupError ) {
+			trackName = 'expandable_block_backup_error_click';
+		} else if ( ! hasBackup ) {
+			trackName = isLicenseSelected
+				? 'expandable_block_backup_remove_click'
+				: 'expandable_block_backup_add_click';
+		}
+		if ( trackName ) {
+			return trackEvent( trackName );
+		}
+	};
+
 	const handleOnClick = () => {
+		handleTrackEvent();
 		// If the backup is not enabled, we want to add the license
 		if ( ! hasBackup ) {
 			handleAddLicenseAction();
 		}
 	};
+
+	const isMultiSite = useSelector( ( state ) => isJetpackSiteMultiSite( state, siteId ) );
+	// If the site is a multisite and doesn't already have a backup, we want to show a message that the backup is not supported
+	if ( isMultiSite && ! hasBackup ) {
+		return (
+			<ExpandedCard
+				isEnabled={ false }
+				emptyContent={ translate( 'Backup not supported on multisite' ) }
+			/>
+		);
+	}
 
 	return (
 		<ExpandedCard
@@ -135,7 +179,13 @@ export default function BackupStorage( { site }: Props ) {
 			onClick={ ! isBackupEnabled ? handleOnClick : undefined }
 			href={ link }
 		>
-			{ isBackupEnabled && <BackupStorageContent siteId={ site.blog_id } siteUrl={ site.url } /> }
+			{ isBackupEnabled && (
+				<BackupStorageContent
+					siteId={ site.blog_id }
+					siteUrl={ site.url }
+					trackEvent={ trackEvent }
+				/>
+			) }
 		</ExpandedCard>
 	);
 }

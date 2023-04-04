@@ -10,6 +10,7 @@ import {
 	BillingTransaction,
 	BillingTransactionItem,
 } from 'calypso/state/billing-transactions/types';
+import { getVatVendorInfo } from './vat-vendor-details';
 import type { LocalizeProps } from 'calypso/../packages/i18n-calypso/types';
 
 interface GroupedDomainProduct {
@@ -83,15 +84,35 @@ export function renderTransactionAmount(
 		return transaction.amount;
 	}
 
-	const taxAmount = addingTax
-		? translate( '(+%(taxAmount)s tax)', {
+	const countryTaxInfo = getVatVendorInfo(
+		transaction.tax_country_code,
+		transaction.date,
+		translate
+	);
+
+	const addingTaxString = countryTaxInfo
+		? translate( '(+%(taxAmount)s %(taxName)s)', {
+				args: { taxAmount: transaction.tax, taxName: countryTaxInfo.taxName },
+				comment:
+					'taxAmount is a localized price, like $12.34 | taxName is a localized tax, like VAT or GST',
+		  } )
+		: translate( '(+%(taxAmount)s tax)', {
 				args: { taxAmount: transaction.tax },
 				comment: 'taxAmount is a localized price, like $12.34',
+		  } );
+
+	const includesTaxString = countryTaxInfo
+		? translate( '(includes %(taxAmount)s %(taxName)s)', {
+				args: { taxAmount: transaction.tax, taxName: countryTaxInfo.taxName },
+				comment:
+					'taxAmount is a localized price, like $12.34 | taxName is a localized tax, like VAT or GST',
 		  } )
 		: translate( '(includes %(taxAmount)s tax)', {
 				args: { taxAmount: transaction.tax },
 				comment: 'taxAmount is a localized price, like $12.34',
 		  } );
+
+	const taxAmount = addingTax ? addingTaxString : includesTaxString;
 
 	return (
 		<Fragment>

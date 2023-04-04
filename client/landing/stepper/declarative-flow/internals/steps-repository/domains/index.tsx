@@ -100,6 +100,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 
 			setHideFreePlan( Boolean( suggestion.product_slug ) || shouldHideFreePlan );
 			setDomainCartItem( domainCartItem );
+		} else {
+			setDomainCartItem( undefined );
 		}
 
 		submit?.();

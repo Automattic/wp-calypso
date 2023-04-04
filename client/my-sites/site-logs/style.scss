@@ -7,7 +7,7 @@
 		background: var(--studio-white);
 		top: -47px;
 		right: -32px;
-		bottom: 0;
+		bottom: 20px;
 		left: -33px;
 		z-index: -1;
 	}
@@ -37,4 +37,10 @@
 			opacity: 0.5;
 		}
 	}
+}
+
+.site-logs__auto-refresh {
+	position: absolute;
+	right: 0;
+	bottom: -59px;
 }

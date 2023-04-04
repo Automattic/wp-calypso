@@ -126,7 +126,7 @@ class MembershipsProductsSection extends Component {
 							<div className="memberships__products-product-title">{ product.title }</div>
 							{ product?.subscribe_as_site_subscriber && (
 								<div className="memberships__products-product-badge">
-									<Badge type="info-blue">{ this.props.translate( 'Newsletter' ) }</Badge>
+									<Badge type="info">{ this.props.translate( 'Newsletter' ) }</Badge>
 								</div>
 							) }
 						</div>

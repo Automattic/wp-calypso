@@ -28,18 +28,21 @@ $max-list-width: 1300px;
 			display: flex;
 			align-items: center;
 			flex: 1.83;
+			min-width: 0;
 
 			.icon {
 				fill: var(--color-text-subtle);
 				width: 40px;
 				height: 40px;
-				padding-right: 12px;
 				flex: none;
+				border-radius: 50%;
 			}
 
 			.title-column {
 				display: flex;
 				flex-direction: column;
+				min-width: 0;
+				padding-left: 12px;
 
 				.name {
 					font-weight: 600;
@@ -47,6 +50,10 @@ $max-list-width: 1300px;
 					line-height: 22px;
 					color: $studio-gray-100;
 					letter-spacing: -0.24px;
+					text-overflow: ellipsis;
+					white-space: nowrap;
+					overflow: hidden;
+					padding-right: 10px;
 				}
 
 				.url {
@@ -54,6 +61,9 @@ $max-list-width: 1300px;
 					font-size: $font-body-extra-small;
 					line-height: 18px;
 					color: $studio-gray-40;
+					text-overflow: ellipsis;
+					white-space: nowrap;
+					overflow: hidden;
 				}
 			}
 		}

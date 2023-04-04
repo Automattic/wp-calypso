@@ -2223,7 +2223,8 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 	[ PLAN_WOOEXPRESS_MEDIUM_MONTHLY ]: {
 		...getPlanWooExpressMediumDetails(),
 		...getMonthlyTimeframe(),
-		availableFor: ( plan ) => [ PLAN_FREE, PLAN_ECOMMERCE_TRIAL_MONTHLY ].includes( plan ),
+		availableFor: ( plan ) =>
+			[ PLAN_FREE, PLAN_ECOMMERCE_TRIAL_MONTHLY, PLAN_WOOEXPRESS_SMALL_MONTHLY ].includes( plan ),
 		getProductId: () => 1053,
 		getStoreSlug: () => PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 		getPathSlug: () => 'wooexpress-medium-monthly',
@@ -2234,7 +2235,13 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		term: TERM_ANNUALLY,
 		getBillingTimeFrame: WPComGetBillingTimeframe,
 		availableFor: ( plan ) =>
-			[ PLAN_FREE, PLAN_WOOEXPRESS_MEDIUM_MONTHLY, PLAN_ECOMMERCE_TRIAL_MONTHLY ].includes( plan ),
+			[
+				PLAN_FREE,
+				PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
+				PLAN_ECOMMERCE_TRIAL_MONTHLY,
+				PLAN_WOOEXPRESS_SMALL,
+				PLAN_WOOEXPRESS_SMALL_MONTHLY,
+			].includes( plan ),
 		getProductId: () => 1055,
 		getStoreSlug: () => PLAN_WOOEXPRESS_MEDIUM,
 		getPathSlug: () => 'wooexpress-medium-yearly',

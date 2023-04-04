@@ -2,15 +2,11 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { ThankYouSectionProps } from 'calypso/components/thank-you/types';
+import { ThankYouData, ThankYouSectionProps } from 'calypso/components/thank-you/types';
 import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
-import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
-import {
-	getAutomatedTransferStatus,
-	isFetchingAutomatedTransferStatus,
-} from 'calypso/state/automated-transfer/selectors';
+import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { pluginInstallationStateChange } from 'calypso/state/marketplace/purchase-flow/actions';
 import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
@@ -23,13 +19,17 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import { ThankYouPluginSection } from './marketplace-thank-you-plugin-section';
 import MasterbarStyled from './masterbar-styled';
 
-export function usePluginsThankYouData(
-	pluginSlugs: string[]
-): [ ThankYouSectionProps, boolean, JSX.Element ] {
+export function usePluginsThankYouData( pluginSlugs: string[] ): ThankYouData {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
+
+	// texts
+	const title = translate( "Congrats on your site's new superpowers!" );
+	const subtitle = translate(
+		"Now you're really getting the most out of WordPress. Dig in and explore more of our favorite plugins."
+	);
 
 	// retrieve WPCom plugin data
 	const wpComPluginsDataResults = useWPCOMPlugins( pluginSlugs );
@@ -64,9 +64,6 @@ export function usePluginsThankYouData(
 		areFetching( state, pluginSlugs )
 	);
 	const areAllWporgPluginsFetched = areWporgPluginsFetched.every( Boolean );
-	const isFetchingTransferStatus = useSelector( ( state ) =>
-		isFetchingAutomatedTransferStatus( state, siteId )
-	);
 
 	const allPluginsFetched = pluginsOnSite.every( ( pluginOnSite ) => !! pluginOnSite );
 
@@ -116,29 +113,6 @@ export function usePluginsThankYouData(
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ areAllWporgPluginsFetched, areWporgPluginsFetched, pluginSlugs, dispatch, wporgPlugins ] );
 
-	// Site is transferring to Atomic.
-	// Poll the transfer status.
-	useEffect( () => {
-		if (
-			! siteId ||
-			transferStatus === transferStates.COMPLETE ||
-			isJetpackSelfHosted ||
-			pluginSlugs.length === 0
-		) {
-			return;
-		}
-		if ( ! isFetchingTransferStatus ) {
-			waitFor( 2 ).then( () => dispatch( fetchAutomatedTransferStatus( siteId ) ) );
-		}
-	}, [
-		siteId,
-		dispatch,
-		transferStatus,
-		isFetchingTransferStatus,
-		isJetpackSelfHosted,
-		pluginSlugs,
-	] );
-
 	// Site is already Atomic (or just transferred).
 	// Poll the plugin installation status.
 	useEffect( () => {
@@ -181,7 +155,34 @@ export function usePluginsThankYouData(
 		/>
 	);
 
-	return [ pluginsSection, allPluginsFetched, goBackSection ];
+	const thankyouSteps = useMemo(
+		() =>
+			isJetpack
+				? [ translate( 'Installing plugin' ) ]
+				: [
+						translate( 'Activating the plugin feature' ), // Transferring to Atomic
+						translate( 'Setting up plugin installation' ), // Transferring to Atomic
+						translate( 'Installing plugin' ), // Transferring to Atomic
+						translate( 'Activating plugin' ),
+				  ],
+		// We intentionally don't set `isJetpack` as dependency to keep the same steps after the Atomic transfer.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[ translate ]
+	);
+
+	// Plugins are only installed in atomic sites
+	// so atomic is always needed as long as we have plugins
+	const isAtomicNeeded = pluginSlugs.length > 0;
+
+	return [
+		pluginsSection,
+		allPluginsFetched,
+		goBackSection,
+		title,
+		subtitle,
+		thankyouSteps,
+		isAtomicNeeded,
+	];
 }
 
 type Plugin = {
