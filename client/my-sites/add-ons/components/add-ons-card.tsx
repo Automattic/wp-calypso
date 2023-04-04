@@ -9,7 +9,7 @@ import type { AddOnMeta } from '../hooks/use-add-ons';
 export interface Props {
 	actionPrimary?: {
 		text: string | React.ReactChild;
-		handler: ( productSlug: string ) => void;
+		handler: ( productSlug: string, quantity?: number ) => void;
 	};
 	actionSecondary?: {
 		text: string | React.ReactChild;
@@ -98,7 +98,7 @@ const AddOnCard = ( {
 	const translate = useTranslate();
 	const availabilityStatus = useAddOnAvailabilityStatus?.( addOnMeta );
 	const onActionPrimary = () => {
-		actionPrimary?.handler( addOnMeta.productSlug );
+		actionPrimary?.handler( addOnMeta.productSlug, addOnMeta.quantity );
 	};
 	const onActionSecondary = () => {
 		actionSecondary?.handler( addOnMeta.productSlug );

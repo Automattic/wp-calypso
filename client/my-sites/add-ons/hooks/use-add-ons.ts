@@ -1,6 +1,7 @@
 import {
 	PRODUCT_WPCOM_CUSTOM_DESIGN,
 	PRODUCT_WPCOM_UNLIMITED_THEMES,
+	PRODUCT_1GB_SPACE,
 } from '@automattic/calypso-products';
 import { useSelector } from 'react-redux';
 import {
@@ -19,6 +20,7 @@ export interface AddOnMeta {
 	icon: JSX.Element;
 	featured?: boolean; // irrelevant to "featureSlugs"
 	name: string | React.ReactChild | null;
+	quantity?: number;
 	description: string | React.ReactChild | null;
 	displayCost: string | React.ReactChild | null;
 }
@@ -42,13 +44,36 @@ const useAddOns = (): ( AddOnMeta | null )[] => {
 			displayCost: useAddOnDisplayCost( PRODUCT_WPCOM_CUSTOM_DESIGN ),
 			featured: false,
 		},
+		{
+			productSlug: PRODUCT_1GB_SPACE,
+			icon: customDesignIcon,
+			overrides: {
+				title: '50GB Storage',
+				description: "Increase your site's storage with 50GB of additional storage.",
+			},
+			quantity: 50,
+			displayCost: useAddOnDisplayCost( PRODUCT_1GB_SPACE, 50 ),
+			featured: false,
+		},
+		{
+			productSlug: PRODUCT_1GB_SPACE,
+			icon: customDesignIcon,
+			overrides: {
+				title: '100GB Storage',
+				description: "Increase your site's storage with 100GB of additional storage.",
+			},
+			quantity: 100,
+			displayCost: useAddOnDisplayCost( PRODUCT_1GB_SPACE, 100 ),
+			featured: false,
+		},
 	] as const;
 
 	return useSelector( ( state ): ( AddOnMeta | null )[] => {
 		return addOnsActive.map( ( addOn ) => {
 			const product = getProductBySlug( state, addOn.productSlug );
-			const name = getProductName( state, addOn.productSlug );
-			const description = getProductDescription( state, addOn.productSlug );
+			const name = addOn.overrides?.title ?? getProductName( state, addOn.productSlug );
+			const description =
+				addOn.overrides?.description ?? getProductDescription( state, addOn.productSlug );
 
 			if ( ! product ) {
 				// will not render anything if product not fetched from API
