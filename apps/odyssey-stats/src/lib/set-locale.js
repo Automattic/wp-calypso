@@ -1,9 +1,28 @@
-import config from '@automattic/calypso-config';
 import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
-import { LOCALE_SET } from 'calypso/state/action-types';
+import moment from 'moment';
 
 const debug = debugFactory( 'apps:odyssey' );
+
+const DEFAULT_LOCALE = 'en';
+
+const setMomentLocale = async ( localeSlug ) => {
+	if ( localeSlug === DEFAULT_LOCALE ) {
+		return;
+	}
+
+	debug( 'Loading moment locale for %s', localeSlug );
+	try {
+		// expose the import load promise as instance property. Useful for tests that wait for it
+		import(
+			/* webpackChunkName: "moment-locale-[request]", webpackInclude: /\.js$/ */ `moment/locale/${ localeSlug }`
+		).then( () => moment.locale( localeSlug ) );
+		debug( 'Loaded moment locale for %s', localeSlug );
+	} catch ( error ) {
+		debug( 'Failed to load moment locale for %s', localeSlug, error );
+		return Promise.resolve( error );
+	}
+};
 
 const getLanguageFile = ( localeSlug ) => {
 	const url = `https://widgets.wp.com/odyssey-stats/v1/languages/${ localeSlug }-v1.1.json`;
@@ -16,26 +35,18 @@ const getLanguageFile = ( localeSlug ) => {
 	} );
 };
 
-export default ( dispatch ) => {
-	const defaultLocale = config( 'i18n_default_locale_slug' ) || 'en';
-	const siteLocale = config( 'i18n_locale_slug' );
-	const localeSlug = siteLocale || defaultLocale;
-
-	if ( localeSlug === defaultLocale ) {
+export default async ( localeSlug ) => {
+	if ( localeSlug === DEFAULT_LOCALE ) {
 		return;
 	}
 
-	getLanguageFile( localeSlug ).then(
+	return getLanguageFile( localeSlug ).then(
 		// Success.
 		( body ) => {
 			if ( body ) {
 				i18n.setLocale( body );
 			}
-			// MomentProvider depends on the state to load locale file.
-			dispatch( {
-				type: LOCALE_SET,
-				localeSlug: localeSlug,
-			} );
+			return setMomentLocale( localeSlug );
 		},
 		// Failure.
 		() => {

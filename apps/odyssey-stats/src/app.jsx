@@ -22,6 +22,8 @@ import registerStatsPages from './routes';
 import 'calypso/assets/stylesheets/style.scss';
 import './app.scss';
 
+const localeSlug = config( 'i18n_locale_slug' ) || config( 'i18n_default_locale_slug' ) || 'en';
+
 async function AppBoot() {
 	const siteId = config( 'blog_id' );
 
@@ -36,7 +38,7 @@ async function AppBoot() {
 		...initialState,
 		currentUser: {
 			...initialState.currentUser,
-			user: { ...initialState.currentUser.user, localeSlug: config( 'i18n_locale_slug' ) },
+			user: { ...initialState.currentUser.user, localeSlug },
 		},
 	};
 
@@ -53,7 +55,6 @@ async function AppBoot() {
 	);
 
 	setStore( store );
-	setLocale( store.dispatch );
 	setupContextMiddleware( store, queryClient );
 
 	if ( ! window.location?.hash ) {
@@ -73,4 +74,4 @@ async function AppBoot() {
 	page.show( `${ getPathWithUpdatedQueryString( {}, window.location.hash.substring( 2 ) ) }` );
 }
 
-AppBoot();
+setLocale( localeSlug ).then( AppBoot );
