@@ -351,7 +351,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 						sprintf(
 							/* translators: the first string variable shows CTA button name */
 							translate(
-								'By clicking "%s", you represent that you\'ve obtained the appropriate consent to email each person. <Button>Learn more.</Button>'
+								'By clicking "%s", you represent that you\'ve obtained the appropriate consent to email each person. <Button>Learn more</Button>.'
 							),
 							submitBtnName
 						),
@@ -390,13 +390,13 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		const labelText = isSiteOnFreePlan
 			? createInterpolateElement(
 					translate(
-						'Or <uploadBtn>upload a CSV file</uploadBtn> of up to 100 emails from your existing list. <Button>Learn more.</Button>'
+						'Or <uploadBtn>upload a CSV file</uploadBtn> of up to 100 emails from your existing list. <Button>Learn more</Button>.'
 					),
 					interpolateElement
 			  )
 			: createInterpolateElement(
 					translate(
-						'Or <uploadBtn>upload a CSV file</uploadBtn> of emails from your existing list. <Button>Learn more.</Button>'
+						'Or <uploadBtn>upload a CSV file</uploadBtn> of emails from your existing list. <Button>Learn more</Button>.'
 					),
 					interpolateElement
 			  );
