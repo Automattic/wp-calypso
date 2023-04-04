@@ -57,7 +57,7 @@ const assembleNavItems = () => {
 	};
 
 	if ( config.isEnabled( 'stats/subscribers-section' ) ) {
-		navItems[ subscribers ] = subscribers;
+		navItems.subscribers = subscribers;
 	}
 
 	return navItems;

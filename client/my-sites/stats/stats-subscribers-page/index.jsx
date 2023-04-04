@@ -24,10 +24,14 @@ const StatsSubscribersPage = ( props ) => {
 
 	const isSubscribersPageEnabled = config.isEnabled( 'stats/subscribers-section' );
 
-	const statsModuleListClass = classNames( 'stats__module-list stats__module--unified', {
-		'is-odyssey-stats': isOdysseyStats,
-		'is-jetpack': isJetpack,
-	} );
+	const statsModuleListClass = classNames(
+		'stats__module-list stats__module--unified',
+		{
+			'is-odyssey-stats': isOdysseyStats,
+			'is-jetpack': isJetpack,
+		},
+		'is-insights-page-enabled'
+	);
 
 	// Track the last viewed tab.
 	// Necessary to properly configure the fixed navigation headers.
