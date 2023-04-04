@@ -23,7 +23,7 @@ interface WooExpressPlansProps {
 	interval?: 'monthly' | 'yearly';
 	monthlyControlProps: SegmentedOptionProps;
 	yearlyControlProps: SegmentedOptionProps;
-	showIntervalToggle: boolean;
+	showIntervalToggle?: boolean;
 }
 
 export function WooExpressPlans( props: WooExpressPlansProps ) {
