@@ -1315,7 +1315,7 @@ class ThemeSheet extends Component {
 		const isRemoved = this.isRemoved();
 
 		const className = classNames( 'theme__sheet', {
-			'is-with-upsell-banner': hasUpsellBanner || this.shouldRenderForStaging(),
+			'is-with-upsell-banner': hasUpsellBanner,
 		} );
 		const columnsClassName = classNames( 'theme__sheet-columns', {
 			'is-removed': isRemoved,
