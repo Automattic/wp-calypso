@@ -39,7 +39,7 @@
 			border-color: var(--studio-black);
 		}
 
-		&.is-selected+.segmented-control__item .segmented-control__link {
+		&.is-selected + .segmented-control__item .segmented-control__link {
 			border-left-color: var(--studio-black);
 		}
 	}
