@@ -56,18 +56,19 @@ async function AppBoot() {
 	setStore( store );
 	setupContextMiddleware( store, queryClient );
 
+	if ( ! window.location?.hash ) {
+		// Redirect to the default stats page.
+		window.location.hash = `#!/stats/day/${ siteId }`;
+	} else {
+		// The URL could already gets broken by page.js by the appended `?page=stats`.
+		window.location.hash = `#!${ getPathWithUpdatedQueryString(
+			{},
+			window.location.hash.substring( 2 )
+		) }`;
+	}
+
 	// Ensure locale files are loaded before rendering.
 	setLocale( localeSlug ).then( () => {
-		if ( ! window.location?.hash ) {
-			window.location.hash = `#!/stats/day/${ siteId }`;
-		} else {
-			// The URL could already get broken by page.js by the appended `?page=stats`.
-			window.location.hash = `#!${ getPathWithUpdatedQueryString(
-				{},
-				window.location.hash.substring( 2 )
-			) }`;
-		}
-
 		registerStatsPages( window.location.pathname + window.location.search );
 
 		// HACK: getPathWithUpdatedQueryString filters duplicate query parameters added by `page.js`.
