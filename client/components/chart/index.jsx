@@ -115,6 +115,7 @@ function Chart( {
 	const minWidth = isTouch ? minTouchBarWidth : minBarWidth;
 
 	const width = isTouch && sizing.clientWidth <= 0 ? 350 : sizing.clientWidth - chartXPadding; // mobile safari bug with zero width
+	// Max number of bars that can fit in the chart. If minBarsToBeShown is set, use that instead.
 	const maxBars = minBarsToBeShown ?? Math.floor( width / minWidth );
 
 	useEffect( () => {
