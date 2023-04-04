@@ -31,6 +31,10 @@ const IssueTypeSelector: React.FunctionComponent< Props > = ( props ) => {
 			name: translate( 'Site disconnected' ),
 		},
 		{
+			key: 'site_down',
+			name: translate( 'Site down' ),
+		},
+		{
 			key: 'plugin_updates',
 			name: translate( 'Plugin needs updates' ),
 		},

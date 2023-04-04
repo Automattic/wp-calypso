@@ -34,11 +34,11 @@ import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
+import { creditCardStore } from 'calypso/state/partner-portal/credit-card-form';
 import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
 import { fetchStoredCards } from 'calypso/state/partner-portal/stored-cards/actions';
 import getSites from 'calypso/state/selectors/get-sites';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { CreditCardSelectors } from 'calypso/state/partner-portal/types';
 
 import './style.scss';
 
@@ -63,7 +63,7 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 		[ stripeMethod ]
 	);
 	const useAsPrimaryPaymentMethod: boolean = useSelect(
-		( select ) => ( select( 'credit-card' ) as CreditCardSelectors ).useAsPrimaryPaymentMethod(),
+		( select ) => select( creditCardStore ).useAsPrimaryPaymentMethod(),
 		[]
 	);
 

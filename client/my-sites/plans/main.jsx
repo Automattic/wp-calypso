@@ -187,9 +187,11 @@ class Plans extends Component {
 
 	isInvalidPlanInterval() {
 		const { isSiteEligibleForMonthlyPlan, intervalType, selectedSite } = this.props;
-		const isWpcomMonthly = intervalType === 'monthly';
 
-		return selectedSite && isWpcomMonthly && ! isSiteEligibleForMonthlyPlan;
+		if ( 'monthly' === intervalType && selectedSite ) {
+			// This is the reason isInvalidPlanInterval even exists and the redirection isn't handled at controller level
+			return ! isSiteEligibleForMonthlyPlan;
+		}
 	}
 
 	redirectIfInvalidPlanInterval() {

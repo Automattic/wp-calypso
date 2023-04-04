@@ -199,7 +199,7 @@ describe( 'Sidebar', () => {
 			} );
 
 			const domainProcessingNotification = screen.queryByText(
-				/We are currently setting up your new domain! It may take a few minutes before it is ready./i
+				/We are currently setting up your new domain!/i
 			);
 
 			expect( domainProcessingNotification ).not.toBeInTheDocument();
@@ -232,7 +232,7 @@ describe( 'Sidebar', () => {
 				} );
 
 				const domainProcessingNotification = screen.getByText(
-					/We are currently setting up your new domain! It may take a few minutes before it is ready./i
+					/We are currently setting up your new domain!/i
 				);
 
 				expect( domainProcessingNotification ).toBeInTheDocument();
@@ -266,7 +266,7 @@ describe( 'Sidebar', () => {
 				} );
 
 				const domainProcessingNotification = screen.queryByText(
-					/We are currently setting up your new domain! It may take a few minutes before it is ready./i
+					/We are currently setting up your new domain!/i
 				);
 
 				expect( domainProcessingNotification ).not.toBeInTheDocument();

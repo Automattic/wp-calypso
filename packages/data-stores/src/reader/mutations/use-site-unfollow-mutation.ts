@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from 'react-query';
 import { callApi } from '../helpers';
 import { useIsLoggedIn } from '../hooks';
+import { SiteSubscription, SubscriptionManagerSubscriptionsCount } from '../types';
 
 type SiteSubscriptionUnfollowParams = {
 	blog_id: number | string;
@@ -40,7 +41,63 @@ const useSiteUnfollowMutation = () => {
 			return response;
 		},
 		{
-			onSuccess: () => {
+			onMutate: async ( params ) => {
+				await queryClient.cancelQueries( [ 'read', 'site-subscriptions', isLoggedIn ] );
+				await queryClient.cancelQueries( [ 'read', 'subscriptions-count', isLoggedIn ] );
+
+				const previousSiteSubscriptions = queryClient.getQueryData< SiteSubscription[] >( [
+					'read',
+					'site-subscriptions',
+					isLoggedIn,
+				] );
+
+				// remove blog from site subscriptions
+				if ( previousSiteSubscriptions ) {
+					queryClient.setQueryData< SiteSubscription[] >(
+						[ [ 'read', 'site-subscriptions', isLoggedIn ] ],
+						previousSiteSubscriptions.filter(
+							( siteSubscription ) => siteSubscription.blog_ID !== params.blog_id
+						)
+					);
+				}
+
+				const previousSubscriptionsCount =
+					queryClient.getQueryData< SubscriptionManagerSubscriptionsCount >( [
+						'read',
+						'subscriptions-count',
+						isLoggedIn,
+					] );
+
+				// decrement the blog count
+				if ( previousSubscriptionsCount ) {
+					queryClient.setQueryData< SubscriptionManagerSubscriptionsCount >(
+						[ 'read', 'subscriptions-count', isLoggedIn ],
+						{
+							...previousSubscriptionsCount,
+							blogs: previousSubscriptionsCount?.blogs
+								? previousSubscriptionsCount?.blogs - 1
+								: null,
+						}
+					);
+				}
+
+				return { previousSiteSubscriptions, previousSubscriptionsCount };
+			},
+			onError: ( error, variables, context ) => {
+				if ( context?.previousSiteSubscriptions ) {
+					queryClient.setQueryData< SiteSubscription[] >(
+						[ 'read', 'site-subscriptions', isLoggedIn ],
+						context.previousSiteSubscriptions
+					);
+				}
+				if ( context?.previousSubscriptionsCount ) {
+					queryClient.setQueryData< SubscriptionManagerSubscriptionsCount >(
+						[ 'read', 'subscriptions-count', isLoggedIn ],
+						context.previousSubscriptionsCount
+					);
+				}
+			},
+			onSettled: () => {
 				queryClient.invalidateQueries( [ 'read', 'site-subscriptions', isLoggedIn ] );
 				queryClient.invalidateQueries( [ 'read', 'subscriptions-count', isLoggedIn ] );
 			},
