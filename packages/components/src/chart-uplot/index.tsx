@@ -14,21 +14,24 @@ interface UplotChartProps {
 	options?: Partial< uPlot.Options >;
 }
 
-function useResize( uplot: uPlot | null, containerRef: React.RefObject< HTMLDivElement > ) {
+function useResize(
+	uplotRef: React.RefObject< uPlot >,
+	containerRef: React.RefObject< HTMLDivElement >
+) {
 	useEffect( () => {
-		if ( ! uplot || ! containerRef.current ) {
+		if ( ! uplotRef.current || ! containerRef.current ) {
 			return;
 		}
 
 		const resizeChart = throttle( () => {
 			// Repeat the check since resize can happen much later than event registration.
-			if ( ! uplot || ! containerRef.current ) {
+			if ( ! uplotRef.current || ! containerRef.current ) {
 				return;
 			}
 
 			// Only update width, not height.
-			uplot.setSize( {
-				height: uplot.height,
+			uplotRef.current.setSize( {
+				height: uplotRef.current.height,
 				width: containerRef.current.clientWidth,
 			} );
 		}, 400 );
@@ -37,13 +40,13 @@ function useResize( uplot: uPlot | null, containerRef: React.RefObject< HTMLDivE
 
 		// Cleanup on unmount.
 		return () => window.removeEventListener( 'resize', resizeChart );
-	}, [ uplot, containerRef ] );
+	}, [ uplotRef, containerRef ] );
 }
 
 // NOTE: Do not include this component in the package entry bundle!
 // Doing so will unnecessarily bloat the package bundle size.
 export default function UplotChart( { data, options: propOptions }: UplotChartProps ) {
-	const [ uplot, setUplot ] = useState< uPlot | null >( null );
+	const uplot = useRef< uPlot | null >( null );
 	const uplotContainer = useRef( null );
 	const [ options ] = useState< uPlot.Options >(
 		useMemo(
@@ -104,7 +107,11 @@ export default function UplotChart( { data, options: propOptions }: UplotChartPr
 
 	return (
 		<div className="calypso-uplot-chart-container" ref={ uplotContainer }>
-			<UplotReact options={ options } data={ data } onCreate={ ( chart ) => setUplot( chart ) } />
+			<UplotReact
+				data={ data }
+				onCreate={ ( chart ) => ( uplot.current = chart ) }
+				options={ options }
+			/>
 		</div>
 	);
 }
