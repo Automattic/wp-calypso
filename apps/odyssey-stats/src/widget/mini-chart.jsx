@@ -48,7 +48,6 @@ const MiniChart = ( { siteId, quantity = 7, gmtOffset, odysseyStatsBaseUrl } ) =
 			<div className="stats-widget-minichart__chart-head">
 				<Intervals selected={ period } compact={ false } onChange={ setPeriod } />
 				<Legend
-					// What's the difference between these two props?
 					availableCharts={ [ 'visitors' ] }
 					activeCharts={ [ 'visitors' ] }
 					tabs={ CHARTS }
