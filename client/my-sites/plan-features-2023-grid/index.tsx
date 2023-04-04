@@ -932,12 +932,15 @@ const ConnectedPlanFeatures2023Grid = connect(
 			}
 
 			let planFeatures = [];
-			let jetpackFeatures = [];
+			let jetpackFeatures: FeatureObject[] = [];
+			let tagline = planConstantObj.getPlanTagline?.() ?? '';
 
 			if ( flowName === NEWSLETTER_FLOW ) {
 				planFeatures = getPlanFeaturesObject(
 					planConstantObj?.getNewsletterSignupFeatures?.() ?? []
 				);
+
+				tagline = planConstantObj.getCustomTagline?.( NEWSLETTER_FLOW ) ?? '';
 			} else {
 				planFeatures = getPlanFeaturesObject(
 					planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ?? []
@@ -990,7 +993,6 @@ const ConnectedPlanFeatures2023Grid = connect(
 				);
 			}
 
-			const tagline = planConstantObj.getPlanTagline?.() ?? '';
 			const product_name_short =
 				isWpcomEnterpriseGridPlan( plan ) && planConstantObj.getPathSlug
 					? planConstantObj.getPathSlug()

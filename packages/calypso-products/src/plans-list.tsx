@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { NEWSLETTER_FLOW } from '@automattic/onboarding';
 import i18n, { getLocaleSlug, translate } from 'i18n-calypso';
 import {
 	FEATURE_13GB_STORAGE,
@@ -455,6 +456,15 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 	getStoreAudience: () => i18n.translate( 'Best for students' ),
 	getPlanTagline: () =>
 		i18n.translate( 'Get a taste of the world’s most popular CMS & blogging software.' ),
+	getCustomTagline: ( flowName ) => {
+		if ( flowName === NEWSLETTER_FLOW ) {
+			return i18n.translate(
+				'Start fresh or make the switch, bringing your first 100 readers with you.'
+			);
+		}
+
+		return '';
+	},
 	getDescription: () =>
 		i18n.translate(
 			'Get a free website and be on your way to publishing your ' +
@@ -659,6 +669,13 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	getPortfolioAudience: () => i18n.translate( 'Best for personal use' ),
 	getStoreAudience: () => i18n.translate( 'Best for personal use' ),
 	getPlanTagline: () => i18n.translate( 'Create your home on the web with a custom domain name.' ),
+	getCustomTagline: ( flowName ) => {
+		if ( flowName === NEWSLETTER_FLOW ) {
+			return i18n.translate( 'Monetize your writing, go ad-free, and expand your media content.' );
+		}
+
+		return '';
+	},
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for personal use:{{/strong}} Boost your' +
@@ -1126,6 +1143,15 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	getPortfolioAudience: () => i18n.translate( 'Best for freelancers' ),
 	getStoreAudience: () => i18n.translate( 'Best for freelancers' ),
 	getPlanTagline: () => i18n.translate( 'Build a unique website with powerful design tools.' ),
+	getCustomTagline: ( flowName ) => {
+		if ( flowName === NEWSLETTER_FLOW ) {
+			return i18n.translate(
+				'Make it even more memorable with premium designs and style customization.'
+			);
+		}
+
+		return '';
+	},
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for freelancers:{{/strong}} Build a unique website with advanced design tools, CSS editing, lots of space for audio and video,' +
@@ -1310,6 +1336,15 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	getStoreAudience: () => i18n.translate( 'The plan for small businesses' ),
 	getPlanTagline: () =>
 		i18n.translate( 'Unlock the power of WordPress with plugins and cloud tools.' ),
+	getCustomTagline: ( flowName ) => {
+		if ( flowName === NEWSLETTER_FLOW ) {
+			return i18n.translate(
+				'Reimagine what a newsletter can be with plugins and growth tools to help you scale.'
+			);
+		}
+
+		return '';
+	},
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for small businesses:{{/strong}} Power your' +
