@@ -92,8 +92,7 @@ export const fetchAlphabeticTags = ( context: PageJSContext, next: ( e?: Error )
 
 	context.queryClient
 		.fetchQuery(
-			//fixme: disable caching for dev
-			[ 'alphabetic-tags', currentUserLocale ?? '', new Date().getTime() ],
+			[ 'alphabetic-tags', currentUserLocale ?? '' ],
 			() => {
 				return wpcom.req.get( '/read/tags/alphabetic', {
 					apiVersion: '1.2',

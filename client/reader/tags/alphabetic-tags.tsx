@@ -1,4 +1,7 @@
+import { Button } from '@wordpress/components';
+import { useTranslate } from 'i18n-calypso';
 import titlecase from 'to-title-case';
+import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { AlphabeticTagsResult, Tag } from './controller';
 
 interface AlphabeticTagsProps {
@@ -18,7 +21,7 @@ interface TagsTableProps {
 }
 
 const TagsColumn = ( props: TagsColProps ) => (
-	<div className="alphabetic-tags__column" key={ props.slug }>
+	<div key={ props.slug }>
 		<a href={ `/tag/${ encodeURIComponent( props.slug ) }` }>
 			<span className="alphabetic-tags__title">{ titlecase( props.title ) }</span>
 		</a>
@@ -28,7 +31,7 @@ const TagsColumn = ( props: TagsColProps ) => (
 const TagsRow = ( props: TagsRowProps ) => (
 	<div className="alphabetic-tags__row">
 		{ props.tags.map( ( tag: Tag | undefined, index ) => (
-			<div key={ 'alphabetic-tags-col-' + index }>
+			<div className="alphabetic-tags__col" key={ 'alphabetic-tags-col-' + index }>
 				{ tag && <TagsColumn slug={ tag.slug } title={ tag.title } /> }
 				{ ! tag && <TagsColumn slug="" title="" /> }
 			</div>
@@ -56,7 +59,18 @@ const formatTable = ( tags: Tag[] ): Tag[][] => {
 	return tagRows;
 };
 
+const scrollToLetter = ( letter: string ) => {
+	const element = document.getElementById( 'alphabetic-tags-table-' + letter );
+	if ( element ) {
+		scrollIntoViewport( element, {
+			behavior: 'smooth',
+			scrollMode: 'if-needed',
+		} );
+	}
+};
+
 export default function AlphabeticTags( { alphabeticTags }: AlphabeticTagsProps ) {
+	const translate = useTranslate();
 	if ( ! alphabeticTags ) {
 		return null;
 	}
@@ -70,9 +84,25 @@ export default function AlphabeticTags( { alphabeticTags }: AlphabeticTagsProps 
 
 	return (
 		<>
+			<div className="alphabetic-tags__header">
+				<h2>{ translate( 'Tags from A — Z' ) }</h2>
+				<div className="alphabetic-tags__tag-links">
+					{ Object.keys( tagTables ).map( ( letter: string ) => (
+						<Button
+							isLink
+							key={ 'alphabetic-tags-link-' + letter }
+							onClick={ () => scrollToLetter( letter ) }
+						>
+							{ letter }
+						</Button>
+					) ) }
+				</div>
+			</div>
 			{ Object.keys( tagTables ).map( ( letter: string ) => (
-				<div key={ 'alphabetic-tags-table-' + letter }>
-					<h2>{ letter }</h2>
+				<div className="alphabetic-tags__table" key={ 'alphabetic-tags-table-' + letter }>
+					<h3 className="alphabetic-tags__letter-title" id={ 'alphabetic-tags-table-' + letter }>
+						{ letter }
+					</h3>
 					<TagsTable tags={ tagTables[ letter ] } />
 				</div>
 			) ) }
