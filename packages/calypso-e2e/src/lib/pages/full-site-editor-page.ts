@@ -663,8 +663,10 @@ export class FullSiteEditorPage {
 	 * TODO: Temp check -- we will delete when we un-iframe everywhere
 	 */
 	private shouldUseIframe(): boolean {
-		// We continue to use the iFrame on prod / staging
-		return envVariables.CALYPSO_BASE_URL === 'https://wordpress.com';
+		// The only place we are preserving the Site Editor iFrame is Simple sites on staging/production.
+		return (
+			! envVariables.TEST_ON_ATOMIC && envVariables.CALYPSO_BASE_URL === 'https://wordpress.com'
+		);
 	}
 
 	//#endregion
