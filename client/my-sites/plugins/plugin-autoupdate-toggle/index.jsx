@@ -149,7 +149,7 @@ export class PluginAutoUpdateToggle extends Component {
 	render() {
 		const { inProgress, site, plugin, label, disabled, translate, hideLabel, toggleExtraContent } =
 			this.props;
-		if ( ! site.jetpack ) {
+		if ( ! site.jetpack || ! plugin ) {
 			return null;
 		}
 
@@ -191,7 +191,7 @@ PluginAutoUpdateToggle.defaultProps = {
 
 export default connect(
 	( state, { site, plugin } ) => ( {
-		inProgress: isPluginActionInProgress( state, site.ID, plugin.id, autoUpdateActions ),
+		inProgress: plugin && isPluginActionInProgress( state, site.ID, plugin.id, autoUpdateActions ),
 	} ),
 	{
 		recordGoogleEvent,
