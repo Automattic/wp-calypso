@@ -22,7 +22,13 @@ function transformData(
 }
 
 export default function SubscribersSection( { siteId }: { siteId: string } ) {
-	const { isLoading, isError, data, error, status } = useSubscribersQuery( siteId );
+	const period = 'month';
+	const quantity = 30;
+	const { isLoading, isError, data, error, status } = useSubscribersQuery(
+		siteId,
+		period,
+		quantity
+	);
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 
 	useEffect( () => {
