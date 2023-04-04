@@ -177,7 +177,7 @@
 		"stats/horizontal-bars-everywhere": true,
 		"stats/insights-page-grid": true,
 		"stats/new-video-summary": true,
-		"stats/subscribers-section": false,
+		"stats/subscribers-section": true,
 		"stepper-woocommerce-poc": true,
 		"subscriber-csv-upload": true,
 		"subscriber-importer": true,
