@@ -38,7 +38,7 @@ export default function SiteRow( {
 
 	return (
 		<li className="row" role="row">
-			<a href={ url } rel="noreferrer noopener" className="title-box">
+			<a href={ url } rel="noreferrer noopener" className="title-box" target="_blank">
 				<span className="title-box" role="cell">
 					{ siteIcon }
 					<span className="title-column">
