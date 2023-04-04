@@ -66,7 +66,7 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 		{
 			enabled: ! disabled,
 			onError: ( error ) => {
-				setLoadingValidQuotaError( error );
+				setLoadingValidQuotaError( true );
 			},
 		}
 	);
