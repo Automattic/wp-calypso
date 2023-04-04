@@ -7,8 +7,8 @@ const CircularProgressBar = ( {
 	size,
 	enableDesktopScaling = false,
 }: {
-	currentStep: number;
-	numberOfSteps: number;
+	currentStep: number | undefined;
+	numberOfSteps: number | undefined;
 	size: number;
 	enableDesktopScaling?: boolean;
 } ) => {
@@ -16,6 +16,14 @@ const CircularProgressBar = ( {
 	const STROKE_WIDTH = 4;
 	const RADIUS = SIZE / 2 - STROKE_WIDTH / 2;
 	const FULL_ARC = 2 * Math.PI * RADIUS;
+
+	if (
+		typeof numberOfSteps === 'undefined' ||
+		typeof currentStep === 'undefined' ||
+		numberOfSteps === 0
+	) {
+		return null;
+	}
 
 	return (
 		<div
@@ -41,6 +49,7 @@ const CircularProgressBar = ( {
 				/>
 				<circle
 					style={ {
+						display: currentStep === 0 ? 'none' : 'block',
 						strokeDasharray: `${ FULL_ARC * ( currentStep / numberOfSteps ) }, ${ FULL_ARC }`,
 					} }
 					className="circular__progress-bar-fill-circle"
