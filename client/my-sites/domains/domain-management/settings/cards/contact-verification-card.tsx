@@ -11,6 +11,7 @@ import './style.scss';
 interface Props {
 	contactInformation: WhoisData | undefined;
 	contactInformationUpdateLink: string | undefined;
+	selectedDomainName: string;
 }
 
 const ContactVerificationCard: FunctionComponent< Props > = ( props ) => {
@@ -134,7 +135,7 @@ const ContactVerificationCard: FunctionComponent< Props > = ( props ) => {
 
 		wpcom.req.post(
 			{
-				path: '/domains/contact-verification',
+				path: `/domains/${ props.selectedDomainName }/contact-verification`,
 				apiVersion: '1.1',
 				formData,
 			},

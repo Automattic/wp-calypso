@@ -416,6 +416,7 @@ const Settings = ( {
 				<ContactVerificationCard
 					contactInformation={ contactInformation }
 					contactInformationUpdateLink={ contactInformationUpdateLink }
+					selectedDomainName={ selectedDomainName }
 				/>
 			</Accordion>
 		);
