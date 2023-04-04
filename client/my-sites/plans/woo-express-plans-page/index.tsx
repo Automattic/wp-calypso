@@ -112,10 +112,6 @@ const WooExpressPlansPage = ( {
 				}
 		  );
 
-	const triggerTracksEvent = useCallback( ( planSlug: string ) => {
-		recordTracksEvent( 'calypso_wooexpress_plans_plan_cta_click', { plan_slug: planSlug } );
-	}, [] );
-
 	const triggerPlansGridTracksEvent = useCallback( ( planSlug: string ) => {
 		recordTracksEvent( 'calypso_wooexpress_plans_page_upgrade_cta_clicked', {
 			location: 'plans_grid',
