@@ -8,7 +8,7 @@ import { buildChartData } from 'calypso/my-sites/stats/stats-chart-tabs/utility'
 import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
 import useVisitsQuery from './hooks/use-visits-query';
 
-import './main.scss';
+import './mini-chart.scss';
 
 const CHART_VIEWS = {
 	attr: 'views',
@@ -23,7 +23,7 @@ const CHART_VISITORS = {
 
 const CHARTS = [ CHART_VIEWS, CHART_VISITORS ];
 
-const Main = ( { siteId, quantity = 7, gmtOffset } ) => {
+const MiniChart = ( { siteId, quantity = 7, gmtOffset, odysseyStatsBaseUrl } ) => {
 	const queryDate = moment()
 		.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
 		.format( 'YYYY-MM-DD' );
@@ -31,7 +31,9 @@ const Main = ( { siteId, quantity = 7, gmtOffset } ) => {
 
 	const { isLoading, data } = useVisitsQuery( siteId, period, quantity, queryDate );
 
-	const barClick = () => {};
+	const barClick = ( bar ) => {
+		window.location.href = `${ odysseyStatsBaseUrl }#!/stats/${ period }/${ siteId }?startDate=${ bar.data.period }`;
+	};
 
 	const chartData = buildChartData(
 		CHART_VIEWS.legendOptions,
@@ -42,8 +44,8 @@ const Main = ( { siteId, quantity = 7, gmtOffset } ) => {
 	);
 
 	return (
-		<div id="stats-widget-content" className="stats-widget-content">
-			<div className="stats-widget__chart-head">
+		<div id="stats-widget-minichart" className="stats-widget-minichart">
+			<div className="stats-widget-minichart__chart-head">
 				<Intervals selected={ period } compact={ false } onChange={ setPeriod } />
 				<Legend
 					// What's the difference between these two props?
@@ -64,4 +66,4 @@ const Main = ( { siteId, quantity = 7, gmtOffset } ) => {
 	);
 };
 
-export default Main;
+export default MiniChart;

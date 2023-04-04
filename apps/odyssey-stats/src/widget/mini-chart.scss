@@ -1,5 +1,5 @@
-.jp-stats-widget {
-	.stats-widget__chart-head {
+.stats-widget-minichart {
+	.stats-widget-minichart__chart-head {
 		display: flex;
 		flex-flow: row wrap;
 		justify-content: space-between;
@@ -39,9 +39,8 @@
 			border-color: var(--studio-black);
 		}
 
-		&.is-selected + .segmented-control__item .segmented-control__link {
+		&.is-selected+.segmented-control__item .segmented-control__link {
 			border-left-color: var(--studio-black);
 		}
 	}
-
 }
