@@ -358,6 +358,10 @@ function onload() {
  */
 
 function onmessage( e ) {
+	// If the iframe was never loaded, this message might be unrelated.
+	if ( ! iframe?.contentWindow ) {
+		return;
+	}
 	debug( 'onmessage' );
 
 	// Filter out messages from different origins
