@@ -21,8 +21,9 @@ export default class CheckoutErrorBoundary extends Component< CheckoutErrorBound
 	componentDidCatch( error: Error ): void {
 		if ( this.props.onError ) {
 			const errorContext =
-				typeof this.props.errorMessage === 'string' ? this.props.errorMessage : undefined;
-			this.props.onError( error, errorContext );
+				typeof this.props.errorMessage === 'string' ? this.props.errorMessage : error.message;
+			error = new Error( errorContext, { cause: error } );
+			this.props.onError( error );
 		}
 	}
 
@@ -36,7 +37,7 @@ export default class CheckoutErrorBoundary extends Component< CheckoutErrorBound
 
 interface CheckoutErrorBoundaryProps {
 	errorMessage: ReactNode;
-	onError?: ( error: Error, errorContext?: string ) => void;
+	onError?: ( error: Error ) => void;
 	children?: ReactNode;
 }
 
