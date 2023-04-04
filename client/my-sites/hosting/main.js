@@ -244,7 +244,7 @@ export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const hasSftpFeature = siteHasFeature( state, siteId, FEATURE_SFTP );
-		const hasStagingSites = siteHasFeature( state, siteId, FEATURE_SITE_STAGING_SITES );
+		const hasStagingSitesFeature = siteHasFeature( state, siteId, FEATURE_SITE_STAGING_SITES );
 
 		return {
 			teams: getReaderTeams( state ),
