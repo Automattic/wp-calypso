@@ -6,7 +6,7 @@ const debug = debugFactory( 'apps:odyssey' );
 
 const DEFAULT_LOCALE = 'en';
 
-const loadMomentLocale = async ( localeSlug ) => {
+const loadMomentLocale = ( localeSlug ) => {
 	return import(
 		/* webpackChunkName: "moment-locale-[request]", webpackInclude: /\.js$/ */ `moment/locale/${ localeSlug }`
 	).then( () => moment.locale( localeSlug ) );
@@ -27,7 +27,7 @@ const loadLanguageFile = ( localeSlug ) => {
 	} );
 };
 
-export default async ( localeSlug ) => {
+export default ( localeSlug ) => {
 	if ( localeSlug === DEFAULT_LOCALE ) {
 		return;
 	}
