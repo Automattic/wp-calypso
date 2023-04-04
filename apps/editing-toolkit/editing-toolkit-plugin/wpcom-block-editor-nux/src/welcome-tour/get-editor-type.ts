@@ -1,4 +1,5 @@
 import { select } from '@wordpress/data';
+import { store as editorStore } from '@wordpress/editor';
 
 /**
  * Post (Post Type: ‘post’)
@@ -35,8 +36,8 @@ export const getEditorType = (): EditorType | undefined => {
 		return 'site';
 	}
 
-	if ( select( 'core/editor' ) ) {
-		return select( 'core/editor' ).getCurrentPostType() as PostType;
+	if ( select( editorStore ) ) {
+		return select( editorStore ).getCurrentPostType() as PostType;
 	}
 
 	return undefined;

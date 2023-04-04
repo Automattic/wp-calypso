@@ -1,13 +1,15 @@
-import { select } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
+import { store as editorStore } from '@wordpress/editor';
 import { inIframe, isSimpleSite } from './utils';
-
 const isEditorIFramed = inIframe();
 
 export default function ( { section, children, subsection } ) {
 	const { hostname } = window.location;
-	const editorSelector = select( 'core/editor' );
-	const postId = editorSelector.getCurrentPostId();
-	const postType = editorSelector.getCurrentPostType();
+	const { postId, postType } = useSelect( ( select ) => ( {
+		postId: select( editorStore ).getCurrentPostId(),
+		postType: select( editorStore ).getCurrentPostType(),
+	} ) );
+
 	const returnLink =
 		isEditorIFramed && ! isSimpleSite
 			? '&' +

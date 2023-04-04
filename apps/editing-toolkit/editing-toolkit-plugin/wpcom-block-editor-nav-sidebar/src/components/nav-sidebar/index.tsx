@@ -5,6 +5,7 @@ import {
 	withConstrainedTabbing,
 } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { store as editorStore } from '@wordpress/editor';
 import { forwardRef, useLayoutEffect, useRef, useEffect } from '@wordpress/element';
 import { applyFilters, doAction, hasAction } from '@wordpress/hooks';
 import { decodeEntities } from '@wordpress/html-entities';
@@ -65,9 +66,9 @@ function WpcomBlockEditorNavSidebar() {
 			isOpen: isSidebarOpened(),
 			isClosing: isSidebarClosing(),
 			postType: getPostType(
-				( select( 'core/editor' ) as CoreEditorPlaceholder ).getCurrentPostType()
+				( select( editorStore ) as CoreEditorPlaceholder ).getCurrentPostType()
 			),
-			selectedItemId: ( select( 'core/editor' ) as CoreEditorPlaceholder ).getCurrentPostId(),
+			selectedItemId: ( select( editorStore ) as CoreEditorPlaceholder ).getCurrentPostId(),
 			siteTitle: getSite()?.title,
 		};
 	}, [] );
@@ -326,7 +327,7 @@ function useNavItems(): NavItemRecord {
 			getCurrentPostId,
 			getCurrentPostType,
 			getEditedPostAttribute,
-		}: CoreEditorPlaceholder = select( 'core/editor' );
+		}: CoreEditorPlaceholder = select( editorStore );
 		const statuses = ( select( 'core' ) as CorePlaceholder ).getEntityRecords( 'root', 'status', {
 			context: 'edit',
 		} ) as Array< {

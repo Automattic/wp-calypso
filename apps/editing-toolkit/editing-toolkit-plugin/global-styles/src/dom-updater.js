@@ -1,5 +1,6 @@
 import { subscribe, select } from '@wordpress/data';
 import domReady from '@wordpress/dom-ready';
+import { store as editorStore } from '@wordpress/editor';
 import { isEmpty, isEqual } from 'lodash';
 
 /**
@@ -27,7 +28,7 @@ export default ( options, getOptionValue ) => {
 			 *
 			 * @see https://github.com/Automattic/wp-calypso/pull/40690
 			 */
-			const isEditorReady = select( 'core/editor' ).__unstableIsEditorReady;
+			const isEditorReady = select( editorStore ).__unstableIsEditorReady;
 			if ( isEditorReady && isEditorReady() === false ) {
 				return;
 			}

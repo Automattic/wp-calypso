@@ -1,4 +1,5 @@
 import { select } from '@wordpress/data';
+import { store as editorStore } from '@wordpress/editor';
 import debug from 'debug';
 import { omitBy } from 'lodash';
 import { isE2ETest } from '../../../utils';
@@ -43,7 +44,7 @@ export default ( eventName, eventProperties ) => {
 	 *   We only do this in `post` editor, because it doesn't make sense in `site` editor.
 	 */
 	const editorType = getEditorType();
-	const postType = editorType === 'post' ? select( 'core/editor' ).getCurrentPostType() : undefined;
+	const postType = editorType === 'post' ? select( editorStore ).getCurrentPostType() : undefined;
 	const customProperties = {
 		editor_type: editorType,
 		post_type: postType,

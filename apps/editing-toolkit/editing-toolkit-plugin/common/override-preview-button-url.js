@@ -1,4 +1,5 @@
 import { select, subscribe } from '@wordpress/data';
+import { store as editorStore } from '@wordpress/editor';
 
 const isEditorReady = async () =>
 	new Promise( ( resolve ) => {
@@ -8,9 +9,9 @@ const isEditorReady = async () =>
 			// registered. There is an unstable selector for that, so we use
 			// `isCleanNewPost` otherwise which is triggered when everything is
 			// initialized if the post is new.
-			const editorIsReady = select( 'core/editor' ).__unstableIsEditorReady
-				? select( 'core/editor' ).__unstableIsEditorReady()
-				: select( 'core/editor' ).isCleanNewPost();
+			const editorIsReady = select( editorStore ).__unstableIsEditorReady
+				? select( editorStore ).__unstableIsEditorReady()
+				: select( editorStore ).isCleanNewPost();
 			if ( editorIsReady ) {
 				unsubscribe();
 				resolve();

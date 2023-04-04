@@ -1,4 +1,5 @@
 import { select, subscribe } from '@wordpress/data';
+import { store as editorStore } from '@wordpress/editor';
 
 /**
  * Checks self and top to determine if we are being loaded in an iframe.
@@ -41,9 +42,9 @@ export const isEditorReady = async () =>
 			// registered. There is an unstable selector for that, so we use
 			// `isCleanNewPost` otherwise which is triggered when everything is
 			// initialized if the post is new.
-			const editorIsReady = select( 'core/editor' ).__unstableIsEditorReady
-				? select( 'core/editor' ).__unstableIsEditorReady()
-				: select( 'core/editor' ).isCleanNewPost();
+			const editorIsReady = select( editorStore ).__unstableIsEditorReady
+				? select( editorStore ).__unstableIsEditorReady()
+				: select( editorStore ).isCleanNewPost();
 			if ( editorIsReady ) {
 				unsubscribe();
 				resolve();
@@ -59,14 +60,14 @@ export const isEditorReady = async () =>
 export const isEditorReadyWithBlocks = async () =>
 	new Promise( ( resolve ) => {
 		const unsubscribe = subscribe( () => {
-			const isCleanNewPost = select( 'core/editor' ).isCleanNewPost();
+			const isCleanNewPost = select( editorStore ).isCleanNewPost();
 
 			if ( isCleanNewPost ) {
 				unsubscribe();
 				resolve( false );
 			}
 
-			const blocks = select( 'core/editor' ).getBlocks();
+			const blocks = select( 'core/block-editor' ).getBlocks();
 
 			if ( blocks.length > 0 ) {
 				unsubscribe();

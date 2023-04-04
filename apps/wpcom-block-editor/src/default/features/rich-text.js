@@ -65,7 +65,7 @@ const ConnectedRichTextJustifyButton = compose(
 		};
 	} ),
 	withDispatch( ( dispatch ) => ( {
-		updateBlockAttributes: dispatch( 'core/editor' ).updateBlockAttributes,
+		updateBlockAttributes: dispatch( 'core/block-editor' ).updateBlockAttributes,
 	} ) ),
 	ifCondition( ( props ) => 'core/paragraph' === props.blockName )
 )( RichTextJustifyButton );

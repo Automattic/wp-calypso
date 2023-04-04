@@ -5,6 +5,7 @@ import { Button } from '@wordpress/components';
 import { dispatch, select, subscribe, use } from '@wordpress/data';
 import domReady from '@wordpress/dom-ready';
 import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/edit-post';
+import { store as editorStore } from '@wordpress/editor';
 import { addAction, addFilter, doAction, removeAction } from '@wordpress/hooks';
 import { wordpress } from '@wordpress/icons';
 import { registerPlugin } from '@wordpress/plugins';
@@ -67,7 +68,7 @@ function transmitDraftId( calypsoPort ) {
 	}
 
 	const unsubscribe = subscribe( () => {
-		const currentPost = select( 'core/editor' ).getCurrentPost();
+		const currentPost = select( editorStore ).getCurrentPost();
 
 		if ( currentPost && currentPost.id && currentPost.status !== 'auto-draft' ) {
 			calypsoPort.postMessage( {
@@ -128,8 +129,8 @@ function overrideRevisions( calypsoPort ) {
 
 		if ( action === 'loadRevision' && payload ) {
 			const blocks = parse( payload.content );
-			dispatch( 'core/editor' ).editPost( payload );
-			dispatch( 'core/editor' ).resetBlocks( blocks );
+			dispatch( editorStore ).editPost( payload );
+			dispatch( 'core/block-editor' ).resetBlocks( blocks );
 			dispatch( 'core/notices' ).removeNotice( 'autosave-exists' );
 
 			calypsoPort.removeEventListener( 'message', onLoadRevision, false );
@@ -146,8 +147,8 @@ function overrideRevisions( calypsoPort ) {
  */
 function handlePostLocked( calypsoPort ) {
 	const unsubscribe = subscribe( () => {
-		const isLocked = select( 'core/editor' ).isPostLocked();
-		const isLockTakeover = select( 'core/editor' ).isPostLockTakeover();
+		const isLocked = select( editorStore ).isPostLocked();
+		const isLockTakeover = select( editorStore ).isPostLockTakeover();
 		const lockedDialogButtons = document.querySelectorAll(
 			'div.editor-post-locked-modal__buttons > a'
 		);
@@ -193,8 +194,8 @@ function handlePostLocked( calypsoPort ) {
  */
 function handlePostLockTakeover( calypsoPort ) {
 	const unsubscribe = subscribe( () => {
-		const isLocked = select( 'core/editor' ).isPostLocked();
-		const isLockTakeover = select( 'core/editor' ).isPostLockTakeover();
+		const isLocked = select( editorStore ).isPostLocked();
+		const isLockTakeover = select( editorStore ).isPostLockTakeover();
 		const allPostsButton = document.querySelector( 'div.editor-post-locked-modal__buttons > a' );
 
 		const isPostTakeoverDialog = isLocked && isLockTakeover && allPostsButton;
@@ -223,16 +224,16 @@ function handlePostLockTakeover( calypsoPort ) {
 
 function handlePostStatusChange( calypsoPort ) {
 	// Keep a reference to the current status
-	let status = select( 'core/editor' ).getEditedPostAttribute( 'status' );
+	let status = select( editorStore ).getEditedPostAttribute( 'status' );
 
 	subscribe( () => {
-		const newStatus = select( 'core/editor' ).getEditedPostAttribute( 'status' );
+		const newStatus = select( editorStore ).getEditedPostAttribute( 'status' );
 		if ( status === newStatus ) {
 			// The status has not changed
 			return;
 		}
 
-		if ( select( 'core/editor' ).isEditedPostDirty() ) {
+		if ( select( editorStore ).isEditedPostDirty() ) {
 			// Wait for the status change to be confirmed by the server
 			return;
 		}
@@ -311,7 +312,7 @@ function handleUpdateImageBlocks( calypsoPort ) {
 		attrNames = { ...attrNames, id: 'id', url: 'url' };
 
 		if ( 'deleted' === image.status ) {
-			dispatch( 'core/editor' ).updateBlockAttributes( block.clientId, {
+			dispatch( 'core/block-editor' ).updateBlockAttributes( block.clientId, {
 				[ attrNames.id ]: undefined,
 				[ attrNames.url ]: undefined,
 			} );
@@ -319,7 +320,7 @@ function handleUpdateImageBlocks( calypsoPort ) {
 		}
 
 		preloadImage( image.url ).then( () => {
-			dispatch( 'core/editor' ).updateBlockAttributes( block.clientId, {
+			dispatch( 'core/block-editor' ).updateBlockAttributes( block.clientId, {
 				[ attrNames.id ]: image.id,
 				[ attrNames.url ]: image.url,
 			} );
@@ -335,7 +336,7 @@ function handleUpdateImageBlocks( calypsoPort ) {
 			updatedImages = filter( currentImages, ( currentImage ) => {
 				return currentImage.id !== image.id && currentImage.id !== image.transientId;
 			} );
-			dispatch( 'core/editor' ).updateBlockAttributes( block.clientId, {
+			dispatch( editorStore ).updateBlockAttributes( block.clientId, {
 				[ attrNames.images ]: updatedImages,
 			} );
 			return;
@@ -352,7 +353,7 @@ function handleUpdateImageBlocks( calypsoPort ) {
 					[ attrNames.url ]: image.url,
 				};
 			} );
-			dispatch( 'core/editor' ).updateBlockAttributes( block.clientId, {
+			dispatch( editorStore ).updateBlockAttributes( block.clientId, {
 				[ attrNames.images ]: updatedImages,
 			} );
 		} );
@@ -363,7 +364,7 @@ function handleUpdateImageBlocks( calypsoPort ) {
 	// As a workaround, we call `receiveEntityRecords`, normally used to update the state after a fetch,
 	// which has a handy `invalidateCache` parameter that does exactly what we need.
 	function updateFeaturedImagePreview( image ) {
-		const currentImageId = select( 'core/editor' ).getEditedPostAttribute( 'featured_media' );
+		const currentImageId = select( editorStore ).getEditedPostAttribute( 'featured_media' );
 		if ( currentImageId !== image.id ) {
 			return;
 		}
@@ -387,7 +388,7 @@ function handleUpdateImageBlocks( calypsoPort ) {
 			return;
 		}
 		const image = get( message, 'data.payload' );
-		updateImageBlocks( select( 'core/editor' ).getBlocks(), image );
+		updateImageBlocks( select( 'core/block-editor' ).getBlocks(), image );
 		updateFeaturedImagePreview( image );
 	}
 }
@@ -431,7 +432,7 @@ function handleCloseEditor( calypsoPort ) {
 					payload: {
 						unsavedChanges:
 							select( 'core' ).__experimentalGetDirtyEntityRecords?.().length > 0 ||
-							select( 'core/editor' ).isEditedPostDirty(),
+							select( editorStore ).isEditedPostDirty(),
 						destinationUrl,
 					},
 				},
@@ -727,7 +728,7 @@ function openCustomizer( calypsoPort ) {
 		calypsoPort.postMessage( {
 			action: 'openCustomizer',
 			payload: {
-				unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
+				unsavedChanges: select( editorStore ).isEditedPostDirty(),
 				autofocus: getQueryArg( e.currentTarget.href, 'autofocus' ),
 			},
 		} );
@@ -754,7 +755,7 @@ function openTemplatePartLinks( calypsoPort ) {
 				action: 'openTemplatePart',
 				payload: {
 					templatePartId,
-					unsavedChanges: select( 'core/editor' ).isEditedPostDirty(),
+					unsavedChanges: select( editorStore ).isEditedPostDirty(),
 				},
 			},
 			[ port2 ]
@@ -916,7 +917,7 @@ function getCalypsoUrlInfo( calypsoPort ) {
 
 async function handleEditorLoaded( calypsoPort ) {
 	await isEditorReady();
-	const isNew = select( 'core/editor' ).isCleanNewPost();
+	const isNew = select( editorStore ).isCleanNewPost();
 	const blocks = select( 'core/block-editor' ).getBlocks();
 
 	requestAnimationFrame( () => {
@@ -939,7 +940,7 @@ async function preselectParentPage() {
 		return;
 	}
 
-	const postType = select( 'core/editor' ).getCurrentPostType();
+	const postType = select( editorStore ).getCurrentPostType();
 	if ( 'page' !== postType ) {
 		return;
 	}
@@ -947,7 +948,7 @@ async function preselectParentPage() {
 	const pages = await getPages();
 	const isValidParentId = pages.some( ( page ) => page.id === parentPostId );
 	if ( isValidParentId ) {
-		dispatch( 'core/editor' ).editPost( { parent: parentPostId } );
+		dispatch( editorStore ).editPost( { parent: parentPostId } );
 	}
 }
 

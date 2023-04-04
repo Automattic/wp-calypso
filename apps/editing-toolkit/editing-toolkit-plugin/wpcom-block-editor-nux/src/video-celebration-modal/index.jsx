@@ -1,5 +1,6 @@
 import { Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
+import { store as editorStore } from '@wordpress/editor';
 import { useState, useRef, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import request from 'wpcom-proxy-request';
@@ -37,7 +38,7 @@ const VideoCelebrationModalInner = () => {
 			};
 		}
 
-		const currentPost = select( 'core/editor' ).getCurrentPost();
+		const currentPost = select( editorStore ).getCurrentPost();
 		const isSavingEntity =
 			select( 'core' ).isSavingEntityRecord( 'postType', currentPost?.type, currentPost?.id ) &&
 			! select( 'core' ).isAutosavingEntityRecord( 'postType', currentPost?.type, currentPost?.id );

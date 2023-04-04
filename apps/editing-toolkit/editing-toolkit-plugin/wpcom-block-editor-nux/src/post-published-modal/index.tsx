@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { store as editorStore } from '@wordpress/editor';
 import { useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { isURL } from '@wordpress/url';
@@ -9,6 +10,7 @@ import NuxModal from '../nux-modal';
 import { selectors as wpcomWelcomeGuideSelectors } from '../store';
 import postPublishedImage from './images/post-published.svg';
 import type { SelectFromMap } from '@automattic/data-stores';
+
 import './style.scss';
 
 type WpcomWelcomeGuideSelectors = SelectFromMap< typeof wpcomWelcomeGuideSelectors >;
@@ -23,16 +25,16 @@ type CoreEditorPlaceholder = {
  */
 const PostPublishedModal: React.FC = () => {
 	const { link } = useSelect(
-		( select ) => ( select( 'core/editor' ) as CoreEditorPlaceholder ).getCurrentPost(),
+		( select ) => ( select( editorStore ) as CoreEditorPlaceholder ).getCurrentPost(),
 		[]
 	);
 	const postType = useSelect(
-		( select ) => ( select( 'core/editor' ) as CoreEditorPlaceholder ).getCurrentPostType(),
+		( select ) => ( select( editorStore ) as CoreEditorPlaceholder ).getCurrentPostType(),
 		[]
 	);
 
 	const isCurrentPostPublished = useSelect(
-		( select ) => ( select( 'core/editor' ) as CoreEditorPlaceholder ).isCurrentPostPublished(),
+		( select ) => ( select( editorStore ) as CoreEditorPlaceholder ).isCurrentPostPublished(),
 		[]
 	);
 	const previousIsCurrentPostPublished = useRef( isCurrentPostPublished );
