@@ -2,7 +2,7 @@ import { useQuery, UseQueryOptions } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { Pattern } from '../types';
 
-const useDotcomPatternCategories = (
+const useDotcomPatterns = (
 	lang?: string,
 	queryOptions: UseQueryOptions< any, unknown, Pattern[] > = {}
 ): Pattern[] => {
@@ -37,4 +37,4 @@ const useDotcomPatternCategories = (
 	return data ?? [];
 };
 
-export default useDotcomPatternCategories;
+export default useDotcomPatterns;
