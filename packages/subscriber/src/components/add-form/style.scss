@@ -199,6 +199,7 @@
 		button {
 			color: var(--color-text);
 			text-decoration: underline;
+			height: unset;
 
 			&:hover {
 				color: var(--color-text-subtle);
