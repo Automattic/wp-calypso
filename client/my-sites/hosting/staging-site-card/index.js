@@ -65,8 +65,8 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 		siteId,
 		{
 			enabled: ! disabled,
-			onError: ( error ) => {
-				setLoadingValidQuotaError( true );
+			onError: () => {
+				setIsErrorValidQuota( true );
 			},
 		}
 	);
@@ -292,7 +292,7 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 				'Unable to load staging sites. Please contact support if you believe you are seeing this message in error.'
 			)
 		);
-	} else if ( ! isLoadingQuotaValidation && loadingValidQuotaError ) {
+	} else if ( ! isLoadingQuotaValidation && isErrorValidQuota ) {
 		stagingSiteCardContent = getLoadingErrorContent(
 			__(
 				'Unable to validate your site quota. Please contact support if you believe you are seeing this message in error.'
