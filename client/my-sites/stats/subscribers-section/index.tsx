@@ -7,7 +7,6 @@ import './style.scss';
 
 // New Subscriber Stats
 // We don't have any data yet so we are just using some test data.
-// Currently using the LineChart component from the Calypso library.
 
 function getData(): [ string, number, number ][] {
 	// From https://code.a8c.com/D105106 -- Work in progress on new endpoint.
@@ -66,7 +65,9 @@ export default function SubscribersSection() {
 			{ ! isLoading && counts.length === 0 && (
 				<p className="subscribers-section__no-data">No data availble for the specified period.</p>
 			) }
-			{ ! isLoading && counts.length !== 0 && <UplotLineChart data={ counts } /> }
+			{ ! isLoading && counts.length !== 0 && (
+				<UplotLineChart data={ counts } options={ { legend: { show: false } } } />
+			) }
 		</div>
 	);
 }
