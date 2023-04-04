@@ -7,9 +7,6 @@
  * @package happy-blocks
  */
 
-// these args are passed from the template user.
-global $args;
-
 /**
  * Find the URL of the asset file from happy-blocks.
  *
@@ -23,7 +20,7 @@ function happy_blocks_get_asset( $file ) {
 }
 
 $js  = happy_blocks_get_asset( 'view.js' );
-$css = happy_blocks_get_asset( 'view.css' );
+$css = happy_blocks_get_asset( is_rtl() ? 'view.rtl.css' : 'view.css' );
 
 wp_enqueue_style( 'happy-blocks-search-style', $css['path'], array(), $css['version'] );
 wp_enqueue_script( 'happy-blocks-search-script', $js['path'], array(), $js['version'], true );
@@ -390,19 +387,19 @@ wp_enqueue_script( 'happy-blocks-search-script', $js['path'], array(), $js['vers
 	<div class="wp-block-group alignwide happy-blocks-search-container">
 			<!-- wp:heading {"style":{"typography":{"fontSize":"2.75rem","lineHeight":"3.25rem"},"spacing":{"margin":{"top":"0px","bottom":"1rem"}}},"fontFamily":"recoleta"} -->
 			<h2 class="wp-block-heading has-recoleta-font-family" style="margin-top:0px;margin-bottom:1rem;font-size:2.75rem;line-height:3.25rem">
-				<?php esc_html( $args['title'] ); ?>
+				<?php echo esc_html( $args['title'] ); ?>
 			</h2>
 			<!-- /wp:heading -->
 
 			<!-- wp:paragraph {"style":{"typography":{"fontSize":"small"},"spacing":{"margin":{"top":"0","bottom":"1rem"}}}} -->
 			<p class="has-small-font-size" style="margin-top:0px;margin-bottom:1rem;">
-				<?php esc_html( $args['placeholder'] ); ?>
+				<?php echo esc_html( $args['placeholder'] ); ?>
 			</p>
 			<!-- /wp:paragraph -->
 
 			<!-- wp:group {"className":"header-search__input","layout":{"type":"flex","flexWrap":"nowrap"}} -->
 			<div class="wp-block-group header-search__input">
-				<!-- wp:search {"label":"<?php esc_html( $args['placeholder'] ); ?>","showLabel":false,"placeholder":"<?php esc_html( $args['sub_placeholder'] ); ?>","buttonText":"Search","buttonPosition":"no-button","align":"left","style":{"border":{"width":"0px","style":"none","radius":"4px"}},"fontSize":"x-small"} /-->
+				<!-- wp:search {"label":"<?php echo esc_html( $args['placeholder'] ); ?>","showLabel":false,"placeholder":"<?php echo esc_html( $args['sub_placeholder'] ); ?>","buttonText":"Search","buttonPosition":"no-button","align":"left","style":{"border":{"width":"0px","style":"none","radius":"4px"}},"fontSize":"x-small"} /-->
 			</div>
 			<!-- /wp:group -->
 
