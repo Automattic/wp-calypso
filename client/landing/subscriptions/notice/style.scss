@@ -10,12 +10,13 @@
 		padding: 16px 20px;
 		gap: 16px;
 		margin-bottom: 20px;
-		background: var(--studio-gray-0);
+		background: $studio-gray-0;
 
 		&-content {
-			font-size: var(--font-body-small);
-			line-height: var(--font-title-small);
+			font-size: $font-body;
+			line-height: $font-title-small;
 			letter-spacing: -0.15px;
+			margin-top: -2px;
 		}
 
 		&-close {
