@@ -309,6 +309,14 @@ export const FEATURE_DEV_TOOLS = 'dev-tools';
 export const FEATURE_WP_UPDATES = 'wp-updates';
 export const FEATURE_MULTI_SITE = 'multi-site';
 export const FEATURE_SELL_SHIP = 'sell-ship';
+export const FEATURE_SELL_INTERNATIONALLY = 'sell-internationally';
+export const FEATURE_AUTOMATIC_SALES_TAX = 'automatic-sales-tax';
+export const FEATURE_AUTOMATED_BACKUPS_SECURITY_SCAN = 'automated-backups-security-scan';
+export const FEATURE_INTEGRATED_SHIPMENT_TRACKING = 'integrated-shipment-tracking';
+export const FEATURE_SELL_EGIFTS_AND_VOUCHERS = 'sell-e-gifts-and-vouchers';
+export const FEATURE_EMAIL_MARKETING = 'email-marketing';
+export const FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION =
+	'marketplace-sync-social-media-integration';
 export const FEATURE_CUSTOM_STORE = 'custom-store';
 export const FEATURE_INVENTORY = 'inventory';
 export const FEATURE_CHECKOUT = 'checkout-v1';

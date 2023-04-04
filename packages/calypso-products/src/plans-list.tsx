@@ -329,6 +329,13 @@ import {
 	FEATURE_JETPACK_BOOST_MONTHLY,
 	FEATURE_JETPACK_SOCIAL_BASIC,
 	FEATURE_JETPACK_SOCIAL_BASIC_MONTHLY,
+	FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+	FEATURE_SELL_INTERNATIONALLY,
+	FEATURE_AUTOMATIC_SALES_TAX,
+	FEATURE_AUTOMATED_BACKUPS_SECURITY_SCAN,
+	FEATURE_SELL_EGIFTS_AND_VOUCHERS,
+	FEATURE_EMAIL_MARKETING,
+	FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION,
 } from './constants';
 import { is2023PricingGridEnabled } from './plans-utilities';
 import type {
@@ -888,6 +895,8 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_CANCELLATION_SHIPPING_CARRIERS,
 				FEATURE_CANCELLATION_PREMIUM_DESIGN,
 				FEATURE_CANCELLATION_PLUGINS,
+				FEATURE_PREMIUM_THEMES,
+				FEATURE_SELL_INTERNATIONALLY,
 			],
 			andMore: true,
 		},
@@ -896,9 +905,37 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 const getPlanWooExpressMediumDetails = (): IncompleteWPcomPlan => ( {
 	...getPlanEcommerceDetails(),
 	getTitle: () => i18n.translate( 'Performance' ),
+	getPlanTagline: () => i18n.translate( 'Accelerate your growth with advanced features.' ),
 	getTagline: () =>
 		i18n.translate(
 			'Learn more about everything included with Woo Express Performance and take advantage of its powerful marketplace features.'
+		),
+} );
+
+const getPlanWooExpressSmallDetails = (): IncompleteWPcomPlan => ( {
+	...getPlanEcommerceDetails(),
+	get2023PricingGridSignupWpcomFeatures: () => [
+		FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+		FEATURE_UNLIMITED_ADMINS,
+		FEATURE_200GB_STORAGE,
+		FEATURE_UNLIMITED_PRODUCTS_SERVICES,
+		FEATURE_PREMIUM_THEMES,
+		FEATURE_SELL_INTERNATIONALLY,
+		FEATURE_AUTOMATIC_SALES_TAX,
+		FEATURE_AUTOMATED_BACKUPS_SECURITY_SCAN,
+		FEATURE_REAL_TIME_ANALYTICS,
+		FEATURE_SELL_EGIFTS_AND_VOUCHERS,
+		FEATURE_EMAIL_MARKETING,
+		FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION,
+		FEATURE_ADVANCED_SEO_TOOLS,
+	],
+	get2023PricingGridSignupStorageOptions: () => [],
+	getTitle: () => i18n.translate( 'Essential' ),
+	getPlanTagline: () =>
+		i18n.translate( 'Everything you need to set up your store and start selling your products.' ),
+	getTagline: () =>
+		i18n.translate(
+			'Learn more about everything included with Woo Express Essential and take advantage of its powerful marketplace features.'
 		),
 } );
 
@@ -1359,15 +1396,6 @@ const getPlanProDetails = (): IncompleteWPcomPlan => ( {
 			andMore: true,
 		},
 	} ),
-} );
-
-const getPlanWooExpressSmallDetails = (): IncompleteWPcomPlan => ( {
-	...getPlanBusinessDetails(),
-	getTitle: () => i18n.translate( 'Essential' ),
-	getTagline: () =>
-		i18n.translate(
-			'Learn more about everything included with Woo Express Essential and take advantage of its powerful marketplace features.'
-		),
 } );
 
 // The following is not a real plan, we are adding it here so that

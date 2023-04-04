@@ -196,6 +196,13 @@ import {
 	FEATURE_WP_UPDATES,
 	FEATURE_MULTI_SITE,
 	FEATURE_SELL_SHIP,
+	FEATURE_SELL_INTERNATIONALLY,
+	FEATURE_AUTOMATIC_SALES_TAX,
+	FEATURE_AUTOMATED_BACKUPS_SECURITY_SCAN,
+	FEATURE_INTEGRATED_SHIPMENT_TRACKING,
+	FEATURE_SELL_EGIFTS_AND_VOUCHERS,
+	FEATURE_EMAIL_MARKETING,
+	FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION,
 	FEATURE_CUSTOM_STORE,
 	FEATURE_INVENTORY,
 	FEATURE_CHECKOUT,
@@ -1849,6 +1856,34 @@ export const FEATURES_LIST: FeatureList = {
 		getDescription: () => i18n.translate( 'Sell and ship out physical goods from your site.' ),
 		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
+	},
+	[ FEATURE_SELL_INTERNATIONALLY ]: {
+		getSlug: () => FEATURE_SELL_INTERNATIONALLY,
+		getTitle: () => i18n.translate( 'Sell internationally' ),
+	},
+	[ FEATURE_AUTOMATIC_SALES_TAX ]: {
+		getSlug: () => FEATURE_AUTOMATIC_SALES_TAX,
+		getTitle: () => i18n.translate( 'Automatic sales tax' ),
+	},
+	[ FEATURE_AUTOMATED_BACKUPS_SECURITY_SCAN ]: {
+		getSlug: () => FEATURE_AUTOMATED_BACKUPS_SECURITY_SCAN,
+		getTitle: () => i18n.translate( 'Automated backups and security scans' ),
+	},
+	[ FEATURE_INTEGRATED_SHIPMENT_TRACKING ]: {
+		getSlug: () => FEATURE_INTEGRATED_SHIPMENT_TRACKING,
+		getTitle: () => i18n.translate( 'Integrated shipment tracking' ),
+	},
+	[ FEATURE_SELL_EGIFTS_AND_VOUCHERS ]: {
+		getSlug: () => FEATURE_SELL_EGIFTS_AND_VOUCHERS,
+		getTitle: () => i18n.translate( 'Sell and accept e-gift vouchers' ),
+	},
+	[ FEATURE_EMAIL_MARKETING ]: {
+		getSlug: () => FEATURE_EMAIL_MARKETING,
+		getTitle: () => i18n.translate( 'Email marketing built-in' ),
+	},
+	[ FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION ]: {
+		getSlug: () => FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION,
+		getTitle: () => i18n.translate( 'Marketplace sync and social media integrations' ),
 	},
 	[ FEATURE_CUSTOM_STORE ]: {
 		getSlug: () => FEATURE_CUSTOM_STORE,
