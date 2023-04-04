@@ -1,4 +1,5 @@
 import { translate } from 'i18n-calypso';
+import moment from 'moment';
 import { useState } from 'react';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import Chart from 'calypso/components/chart';
@@ -22,8 +23,10 @@ const CHART_VISITORS = {
 
 const CHARTS = [ CHART_VIEWS, CHART_VISITORS ];
 
-const Main = ( { siteId, quantity = 7 } ) => {
-	const queryDate = '2023-03-31'; //TODO get site date
+const Main = ( { siteId, quantity = 7, gmtOffset } ) => {
+	const queryDate = moment()
+		.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
+		.format( 'YYYY-MM-DD' );
 	const [ period, setPeriod ] = useState( 'day' );
 
 	const { isLoading, data } = useVisitsQuery( siteId, period, quantity, queryDate );
