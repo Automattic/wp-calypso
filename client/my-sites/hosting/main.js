@@ -93,6 +93,7 @@ class Hosting extends Component {
 			translate,
 			transferState,
 			isLoadingSftpData,
+			hasStagingSites,
 		} = this.props;
 
 		const getUpgradeBanner = () => {
@@ -180,7 +181,6 @@ class Hosting extends Component {
 			const isGithubIntegrationEnabled = isAutomatticTeamMember( teams );
 			const WrapperComponent = isDisabled || isTransferring ? FeatureExample : Fragment;
 			const isStagingSiteEnabled = isEnabled( 'yolo/staging-sites-i1' );
-			const { hasStagingSites } = this.props;
 
 			return (
 				<>
