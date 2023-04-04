@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -22,9 +23,12 @@ const TrialUpgradeConfirmation = () => {
 		wooAdminUrl: selectedSite?.URL ? selectedSite.URL + '/wp-admin/admin.php?page=wc-admin' : '',
 	};
 
+	const currentPlanName = selectedSite?.plan?.product_name_short ?? '';
+
 	return (
 		<>
 			<BodySectionCssClass bodyClass={ [ 'ecommerce-trial-upgraded' ] } />
+			<QuerySitePlans siteId={ selectedSite?.ID ?? 0 } />
 			<Main wideLayout>
 				<PageViewTracker
 					path="/plans/my-plan/trial-upgraded/:site"
@@ -39,7 +43,7 @@ const TrialUpgradeConfirmation = () => {
 							{ translate(
 								"Your purchase is complete and you're now on the {{strong}}%(planName)s plan{{/strong}}. Now it's time to take your store to the next level. What would you like to do next?",
 								{
-									args: { planName: 'Performance' },
+									args: { planName: currentPlanName },
 									components: { strong: <strong /> },
 								}
 							) }
