@@ -1187,6 +1187,7 @@ __metadata:
     jest: ^27.2.4
     lodash: ^4.17.21
     mkdirp: ^1.0.4
+    moment: ^2.26.0
     node-fetch: ^2.6.6
     page: ^1.11.5
     path-browserify: ^1.0.1
@@ -1738,6 +1739,7 @@ __metadata:
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
+    "@automattic/calypso-url": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@babel/runtime": ^7.17.2
     "@wordpress/base-styles": ^4.13.0
@@ -33716,6 +33718,7 @@ fsevents@^1.2.7:
     lunr: ^2.3.8
     mixedindentlint: ^1.2.0
     mkdirp: ^1.0.4
+    moment: ^2.26.0
     ncp: ^2.0.0
     nock: ^12.0.3
     node-fetch: ^2.6.6
