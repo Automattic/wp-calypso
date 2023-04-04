@@ -116,6 +116,13 @@ const WooExpressPlansPage = ( {
 		recordTracksEvent( 'calypso_wooexpress_plans_plan_cta_click', { plan_slug: planSlug } );
 	}, [] );
 
+	const triggerPlansGridTracksEvent = useCallback( ( planSlug: string ) => {
+		recordTracksEvent( 'calypso_wooexpress_plans_page_upgrade_cta_clicked', {
+			location: 'plans_grid',
+			plan_slug: planSlug,
+		} );
+	}, [] );
+
 	const planFeatures =
 		isEnabled( 'plans/wooexpress-small' ) || isWooExpressSmallPlan( currentPlan.productSlug ) ? (
 			<WooExpressPlans
@@ -123,7 +130,7 @@ const WooExpressPlansPage = ( {
 				monthlyControlProps={ { path: plansLink( '/plans', selectedSite.slug, 'monthly', true ) } }
 				siteId={ selectedSite.ID }
 				siteSlug={ selectedSite.slug }
-				triggerTracksEvent={ triggerTracksEvent }
+				triggerTracksEvent={ triggerPlansGridTracksEvent }
 				yearlyControlProps={ { path: plansLink( '/plans', selectedSite.slug, 'yearly', true ) } }
 				showIntervalToggle={ showIntervalToggle }
 			/>
