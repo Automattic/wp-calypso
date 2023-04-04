@@ -93,7 +93,7 @@ class Hosting extends Component {
 			translate,
 			transferState,
 			isLoadingSftpData,
-			hasStagingSites,
+			hasStagingSitesFeature,
 		} = this.props;
 
 		const getUpgradeBanner = () => {
@@ -195,7 +195,7 @@ class Hosting extends Component {
 							<Column type="main" className="hosting__main-layout-col">
 								<SFTPCard disabled={ isDisabled } />
 								<PhpMyAdminCard disabled={ isDisabled } />
-								{ isStagingSiteEnabled && ! isWpcomStagingSite && hasStagingSites && (
+								{ isStagingSiteEnabled && ! isWpcomStagingSite && hasStagingSitesFeature && (
 									<StagingSiteCard disabled={ isDisabled } />
 								) }
 								{ isGithubIntegrationEnabled && <GitHubCard /> }
@@ -257,7 +257,7 @@ export default connect(
 			siteSlug: getSelectedSiteSlug( state ),
 			siteId,
 			isWpcomStagingSite: isSiteWpcomStaging( state, siteId ),
-			hasStagingSites,
+			hasStagingSitesFeature,
 		};
 	},
 	{
