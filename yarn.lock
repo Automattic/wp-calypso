@@ -11885,6 +11885,8 @@ __metadata:
     tracekit: ^0.4.5
     twemoji: ^12.1.4
     ua-parser-js: ^0.7.22
+    uplot: ^1.6.24
+    uplot-react: ^1.1.4
     use-debounce: ^3.1.0
     util: ^0.12.3
     utility-types: ^3.10.0
@@ -32383,6 +32385,23 @@ fsevents@^1.2.7:
     semver-diff: ^3.1.1
     xdg-basedir: ^4.0.0
   checksum: 0dde6db5ac1e5244e1f8bf5b26895a0d53c00797ea2bdbc1302623dd1aecab5cfb88b4f324d482cbd4c8b089464383d8c83db64dec5798ec0136820e22478e47
+  languageName: node
+  linkType: hard
+
+"uplot-react@npm:^1.1.4":
+  version: 1.1.4
+  resolution: "uplot-react@npm:1.1.4"
+  peerDependencies:
+    react: ">=16.8.6"
+    uplot: ^1.6.7
+  checksum: 58126a31ed9b16309a1fcd53289649d557c13406f606162d9fbfe824c48cdd9d0daf275fccd69303d3179582bcd93afa9f2d528a65720a8808b1eb86e7d11372
+  languageName: node
+  linkType: hard
+
+"uplot@npm:^1.6.24":
+  version: 1.6.24
+  resolution: "uplot@npm:1.6.24"
+  checksum: 90282fd1ef29440c20b2f73a038a8e5c421adafd1e896ea298739d3a8e687bfd94bbf48d8ed5b98f8dbad2c67d46a1be74f17c4c8bcf171360f216abd5d13f48
   languageName: node
   linkType: hard
 

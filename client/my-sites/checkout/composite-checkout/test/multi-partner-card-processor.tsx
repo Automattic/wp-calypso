@@ -120,7 +120,6 @@ describe( 'multiPartnerCardProcessor', () => {
 			blog_id: '0',
 			cart_key: 'no-site',
 			coupon: '',
-			create_new_blog: true,
 			products: [ product ],
 			tax: {
 				location: {},
@@ -335,7 +334,6 @@ describe( 'multiPartnerCardProcessor', () => {
 					blog_id: '1234567',
 					cart_key: 1234567,
 					coupon: '',
-					create_new_blog: false,
 				},
 			} );
 		} );
@@ -404,7 +402,6 @@ describe( 'multiPartnerCardProcessor', () => {
 					blog_id: '1234567',
 					cart_key: 1234567,
 					coupon: '',
-					create_new_blog: false,
 				},
 			} );
 		} );
@@ -464,7 +461,6 @@ describe( 'multiPartnerCardProcessor', () => {
 					blog_id: '1234567',
 					cart_key: '1234567',
 					coupon: '',
-					create_new_blog: false,
 				},
 			} );
 		} );
@@ -507,7 +503,6 @@ describe( 'multiPartnerCardProcessor', () => {
 					blog_id: '1234567',
 					cart_key: '1234567',
 					coupon: '',
-					create_new_blog: false,
 					tax: { location: { postal_code: 'pr267ry', country_code: 'GB' } },
 				},
 			} );
@@ -540,7 +535,6 @@ describe( 'multiPartnerCardProcessor', () => {
 					blog_id: '1234567',
 					cart_key: '1234567',
 					coupon: '',
-					create_new_blog: false,
 					products: [ domainProduct ],
 				},
 				domain_details: basicExpectedDomainDetails,
@@ -681,7 +675,6 @@ describe( 'multiPartnerCardProcessor', () => {
 					blog_id: '1234567',
 					cart_key: '1234567',
 					coupon: '',
-					create_new_blog: false,
 					products: [ product ],
 				},
 			} );
@@ -711,7 +704,6 @@ describe( 'multiPartnerCardProcessor', () => {
 					blog_id: '1234567',
 					cart_key: '1234567',
 					coupon: '',
-					create_new_blog: false,
 					products: [ domainProduct ],
 				},
 				domain_details: basicExpectedDomainDetails,

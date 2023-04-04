@@ -54,7 +54,7 @@ import DomainUpsellDialog from './components/domain-upsell-dialog';
 import PlansHeader from './components/plans-header';
 import ECommerceTrialPlansPage from './ecommerce-trial';
 import ModernizedLayout from './modernized-layout';
-import WooExpressMediumPlansPage from './wx-medium';
+import WooExpressPlansPage from './woo-express-plans-page';
 
 import './style.scss';
 
@@ -282,22 +282,44 @@ class Plans extends Component {
 		);
 	}
 
+	getIntervalForWooExpressPlans() {
+		const { intervalType } = this.props;
+
+		// Only accept monthly or yearly for the interval; otherwise let the component provide a default.
+		const interval =
+			intervalType === 'monthly' || intervalType === 'yearly' ? intervalType : undefined;
+
+		return interval;
+	}
+
 	renderEcommerceTrialPage() {
-		const { intervalType, selectedSite } = this.props;
+		const { selectedSite } = this.props;
 
 		if ( ! selectedSite ) {
 			return this.renderPlaceholder();
 		}
 
-		// Only accept monthly or yearly for the interval; otherwise let the component provide a default.
-		const interval =
-			intervalType === 'monthly' || intervalType === 'yearly' ? intervalType : undefined;
-		return <ECommerceTrialPlansPage interval={ interval } siteSlug={ selectedSite.slug } />;
+		const interval = this.getIntervalForWooExpressPlans();
+
+		return <ECommerceTrialPlansPage interval={ interval } site={ selectedSite } />;
 	}
 
-	renderWooExpressMediumPage() {
+	renderWooExpressPlansPage() {
 		const { currentPlan, selectedSite } = this.props;
-		return <WooExpressMediumPlansPage currentPlan={ currentPlan } selectedSite={ selectedSite } />;
+
+		if ( ! selectedSite ) {
+			return this.renderPlaceholder();
+		}
+
+		const interval = this.getIntervalForWooExpressPlans();
+
+		return (
+			<WooExpressPlansPage
+				currentPlan={ currentPlan }
+				interval={ interval }
+				selectedSite={ selectedSite }
+			/>
+		);
 	}
 
 	renderMainContent( { isEcommerceTrial, isWooExpressPlan } ) {
@@ -305,7 +327,7 @@ class Plans extends Component {
 			return this.renderEcommerceTrialPage();
 		}
 		if ( isWooExpressPlan ) {
-			return this.renderWooExpressMediumPage();
+			return this.renderWooExpressPlansPage();
 		}
 		return this.renderPlansMain();
 	}
