@@ -320,7 +320,7 @@ class Plans extends Component {
 				currentPlan={ currentPlan }
 				interval={ interval }
 				selectedSite={ selectedSite }
-				isSiteEligibleForMonthlyPlan={ isSiteEligibleForMonthlyPlan }
+				showIntervalToggle={ isSiteEligibleForMonthlyPlan }
 			/>
 		);
 	}

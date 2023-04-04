@@ -23,17 +23,11 @@ interface WooExpressPlansProps {
 	interval?: 'monthly' | 'yearly';
 	monthlyControlProps: SegmentedOptionProps;
 	yearlyControlProps: SegmentedOptionProps;
-	isSiteEligibleForMonthlyPlan: boolean;
+	showIntervalToggle: boolean;
 }
 
 export function WooExpressPlans( props: WooExpressPlansProps ) {
-	const {
-		siteId,
-		interval,
-		monthlyControlProps,
-		yearlyControlProps,
-		isSiteEligibleForMonthlyPlan,
-	} = props;
+	const { siteId, interval, monthlyControlProps, yearlyControlProps, showIntervalToggle } = props;
 	const translate = useTranslate();
 
 	const mediumPlanAnnual = getPlans()[ PLAN_WOOEXPRESS_MEDIUM ];
@@ -79,9 +73,10 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 		hidePlansFeatureComparison: true,
 		siteId,
 	};
+
 	return (
 		<>
-			{ isSiteEligibleForMonthlyPlan && (
+			{ showIntervalToggle && (
 				<div className="wooexpress-plans__interval-toggle-wrapper">
 					<PlanIntervalSelector
 						className="wooexpress-plans__interval-toggle price-toggle"
