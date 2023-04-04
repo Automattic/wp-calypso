@@ -27,6 +27,9 @@ import {
 	getPlanSlugForTermVariant,
 	PlanSlug,
 	PLAN_BIENNIAL_PERIOD,
+	isWooExpressMediumPlan,
+	isWooExpressSmallPlan,
+	isWooExpressPlan,
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -211,6 +214,8 @@ const PlanLogo: React.FunctionComponent< {
 		'is-current-plan': current,
 	} );
 
+	const shouldShowWooLogo = isEcommercePlan( planName ) && ! isWooExpressPlan( planName );
+
 	return (
 		<Container key={ planName } className={ tableItemClasses } isMobile={ isMobile }>
 			<PopularBadge
@@ -228,7 +233,7 @@ const PlanLogo: React.FunctionComponent< {
 						imgAlt="WP Cloud logo"
 					/>
 				) }
-				{ isEcommercePlan( planName ) && (
+				{ shouldShowWooLogo && (
 					<ServiceLogo
 						hoverText={ translate(
 							'Make your online store a reality with the power of WooCommerce.'
@@ -643,6 +648,7 @@ export class PlanFeatures2023Grid extends Component<
 			manageHref,
 			currentSitePlanSlug,
 			selectedSiteSlug,
+			translate,
 		} = this.props;
 
 		return planPropertiesObj.map( ( properties: PlanProperties ) => {
@@ -652,6 +658,18 @@ export class PlanFeatures2023Grid extends Component<
 				'is-top-buttons',
 				'is-bottom-aligned'
 			);
+
+			// Leaving it `undefined` makes it use the default label
+			let buttonText;
+
+			if ( isWooExpressMediumPlan( planName ) && ! isWooExpressMediumPlan( currentSitePlanSlug ) ) {
+				buttonText = translate( 'Get Performance', { textOnly: true } );
+			} else if (
+				isWooExpressSmallPlan( planName ) &&
+				! isWooExpressSmallPlan( currentSitePlanSlug )
+			) {
+				buttonText = translate( 'Get Essential', { textOnly: true } );
+			}
 
 			return (
 				<Container key={ planName } className={ classes } isMobile={ options?.isMobile }>
@@ -672,6 +690,7 @@ export class PlanFeatures2023Grid extends Component<
 						current={ current ?? false }
 						currentSitePlanSlug={ currentSitePlanSlug }
 						selectedSiteSlug={ selectedSiteSlug }
+						buttonText={ buttonText }
 					/>
 				</Container>
 			);

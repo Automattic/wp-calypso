@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import { useJetpackAgencyDashboardRecordTrackEvent } from '../../hooks';
+import { siteColumns } from '../utils';
 import BackupStorage from './backup-storage';
 import BoostSitePerformance from './boost-site-performance';
 import InsightsStats from './insights-stats';
@@ -13,7 +14,7 @@ interface Props {
 	isSmallScreen?: boolean;
 }
 
-const defaultColumns = [ 'stats', 'boost', 'backup' ];
+const defaultColumns = siteColumns.map( ( { key } ) => key );
 
 export default function SiteExpandedContent( {
 	site,
