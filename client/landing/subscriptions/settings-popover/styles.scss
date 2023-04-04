@@ -37,6 +37,12 @@
 		width: 100%;
 		cursor: pointer;
 
+		&.is-loading {
+			cursor: default;
+			opacity: 0.5;
+			pointer-events: none;
+		}
+
 		&:hover,
 		&:focus {
 			color: $studio-blue-50;
