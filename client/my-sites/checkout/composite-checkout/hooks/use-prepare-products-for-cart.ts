@@ -4,6 +4,7 @@ import { decodeProductFromUrl, isValueTruthy } from '@automattic/wpcom-checkout'
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useReducer } from 'react';
+import useCartKey from '../../use-cart-key';
 import getCartFromLocalStorage from '../lib/get-cart-from-local-storage';
 import useStripProductsFromUrl from './use-strip-products-from-url';
 import type { RequestCartProduct, RequestCartProductExtra } from '@automattic/shopping-cart';
@@ -74,6 +75,8 @@ export default function usePrepareProductsForCart( {
 		isLoggedOutCart,
 		'and isAkismetSitelessCheckout',
 		sitelessCheckoutType === 'akismet',
+		'and siteSlug',
+		siteSlug,
 		'and isNoSiteCart',
 		isNoSiteCart,
 		'and isJetpackCheckout',
@@ -279,6 +282,7 @@ function useAddRenewalItems( {
 	isGiftPurchase?: boolean;
 } ) {
 	const translate = useTranslate();
+	const cartKey = useCartKey();
 
 	useEffect( () => {
 		if ( addHandler !== 'addRenewalItems' ) {
@@ -286,6 +290,21 @@ function useAddRenewalItems( {
 		}
 		const productSlugs = productAlias?.split( ',' ) ?? [];
 		const purchaseIds = originalPurchaseId ? String( originalPurchaseId ).split( ',' ) : [];
+
+		// Renewals cannot be purchased without a site.
+		const isThereASite = cartKey && typeof cartKey === 'number';
+		if ( ! isThereASite && ! isGiftPurchase ) {
+			debug( 'creating renewal products failed because there is no site', productAlias );
+			dispatch( {
+				type: 'PRODUCTS_ADD_ERROR',
+				message: String(
+					translate(
+						'This renewal is invalid. Please verify that you are logged into the correct account for the product you want to renew.'
+					)
+				),
+			} );
+			return;
+		}
 
 		const productsForCart = purchaseIds
 			.map( ( subscriptionId, currentIndex ) => {
@@ -320,6 +339,7 @@ function useAddRenewalItems( {
 		debug( 'preparing renewals requested in url', productsForCart );
 		dispatch( { type: 'RENEWALS_ADD', products: productsForCart } );
 	}, [
+		cartKey,
 		addHandler,
 		translate,
 		originalPurchaseId,
