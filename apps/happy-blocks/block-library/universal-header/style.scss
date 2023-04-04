@@ -643,6 +643,7 @@ body.logged-in .x-dropdown {
 			z-index: 10;
 			content: "";
 			background: url($search-icon) 16px no-repeat;
+			background-position: 70% 50%;
 			position: absolute;
 			top: 0;
 			bottom: -1px;
