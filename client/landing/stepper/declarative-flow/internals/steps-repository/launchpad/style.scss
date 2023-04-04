@@ -203,6 +203,8 @@
 
 	.launchpad__url-box-domain {
 		display: flex;
+		flex-direction: row;
+		align-items: center;
 		flex-grow: 1;
 		width: 0;
 	}

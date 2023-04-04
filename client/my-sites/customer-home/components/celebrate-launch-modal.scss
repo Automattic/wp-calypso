@@ -122,3 +122,7 @@
 		text-decoration: underline;
 	}
 }
+
+.tooltip.popover {
+	z-index: 100000;
+}
