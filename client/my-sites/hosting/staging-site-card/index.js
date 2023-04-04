@@ -6,6 +6,7 @@ import { localize } from 'i18n-calypso';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useQueryClient } from 'react-query';
 import { connect, useDispatch } from 'react-redux';
+import SiteIcon from 'calypso/blocks/site-icon';
 import CardHeading from 'calypso/components/card-heading';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import Notice from 'calypso/components/notice';
@@ -186,16 +187,19 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 	const getManageStagingSiteContent = () => {
 		return (
 			<>
-				<p>
-					{ translate( 'Your staging site is available at {{a}}%(stagingSiteName)s{{/a}}.', {
-						args: {
-							stagingSiteName: stagingSite.url,
-						},
-						components: {
-							a: <a href={ stagingSite.url } />,
-						},
-					} ) }
-				</p>
+				<p>{ translate( 'Your staging site is available at:' ) }</p>
+				<div style={ { display: 'flex', alignItems: 'center', marginBottom: 24 } }>
+					<SiteIcon siteId={ stagingSite.id } size={ 40 } style={ { marginLeft: '10px' } } />
+					<div
+						className="site__info"
+						style={ { display: 'flex', flexDirection: 'column', marginLeft: 10 } }
+					>
+						<div>{ stagingSite.name }</div>
+						<div>
+							<a href={ stagingSite.url }>{ stagingSite.url }</a>
+						</div>
+					</div>
+				</div>
 				<ActionButtons>
 					<Button primary href={ `/home/${ urlToSlug( stagingSite.url ) }` } disabled={ disabled }>
 						<span>{ translate( 'Manage staging site' ) }</span>
