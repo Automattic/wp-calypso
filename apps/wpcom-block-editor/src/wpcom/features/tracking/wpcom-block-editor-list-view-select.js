@@ -1,3 +1,4 @@
+import { store as blockEditorStore } from '@wordpress/block-editor';
 import { select } from '@wordpress/data';
 import tracksRecordEvent from './track-record-event';
 
@@ -12,7 +13,7 @@ export default () => ( {
 	type: 'click',
 	capture: true,
 	handler: async () => {
-		const { getSelectedBlock } = select( 'core/block-editor' );
+		const { getSelectedBlock } = select( blockEditorStore );
 
 		const blockBefore = getSelectedBlock();
 		// Wait until the selected block changes.

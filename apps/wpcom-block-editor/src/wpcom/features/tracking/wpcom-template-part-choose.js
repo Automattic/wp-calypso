@@ -1,3 +1,4 @@
+import { store as blockEditorStore } from '@wordpress/block-editor';
 import { select } from '@wordpress/data';
 import tracksRecordEvent from './track-record-event';
 
@@ -23,7 +24,7 @@ export const wpcomTemplatePartChooseCapture = () => ( {
 	capture: true,
 	handler: () => {
 		clearReplaceData();
-		const block = select( 'core/block-editor' ).getSelectedBlock();
+		const block = select( blockEditorStore ).getSelectedBlock();
 		const templatePartId = `${ block.attributes.theme }//${ block.attributes.slug }`;
 		const templatePart = select( 'core' ).getEditedEntityRecord(
 			'postType',
@@ -49,7 +50,7 @@ export const wpcomTemplatePartChooseBubble = () => ( {
 	handler: () => {
 		// If replaced_variation_slug is not defined, we're inserting a new template part.
 		if ( ! replaceData.replaced_variation_slug ) {
-			const block = select( 'core/block-editor' ).getSelectedBlock();
+			const block = select( blockEditorStore ).getSelectedBlock();
 			const templatePartId = `${ block.attributes.theme }//${ block.attributes.slug }`;
 			const templatePart = select( 'core' ).getEditedEntityRecord(
 				'postType',
@@ -81,7 +82,7 @@ export const wpcomTemplatePartReplaceBubble = () => ( {
 	handler: () => {
 		// If replaced_variation_slug is defined, we're replacing a template part.
 		if ( replaceData.replaced_variation_slug ) {
-			const block = select( 'core/block-editor' ).getSelectedBlock();
+			const block = select( blockEditorStore ).getSelectedBlock();
 			const templatePartId = `${ block.attributes.theme }//${ block.attributes.slug }`;
 			const templatePart = select( 'core' ).getEditedEntityRecord(
 				'postType',

@@ -1,3 +1,4 @@
+import { store as blockEditorStore } from '@wordpress/block-editor';
 import { select, subscribe } from '@wordpress/data';
 import { store as editorStore } from '@wordpress/editor';
 
@@ -67,7 +68,7 @@ export const isEditorReadyWithBlocks = async () =>
 				resolve( false );
 			}
 
-			const blocks = select( 'core/block-editor' ).getBlocks();
+			const blocks = select( blockEditorStore ).getBlocks();
 
 			if ( blocks.length > 0 ) {
 				unsubscribe();

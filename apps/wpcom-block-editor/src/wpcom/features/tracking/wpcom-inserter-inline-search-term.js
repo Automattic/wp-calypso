@@ -1,3 +1,4 @@
+import { store as blockEditorStore } from '@wordpress/block-editor';
 import { select } from '@wordpress/data';
 import { debounce, get } from 'lodash';
 import tracksRecordEvent from './track-record-event';
@@ -11,7 +12,7 @@ import tracksRecordEvent from './track-record-event';
 const trackInserterInlineSearchTerm = () => {
 	// Pick up the search term from the `content` block attributes.
 	const search_term = get(
-		select( 'core/block-editor' ).getSelectedBlock(),
+		select( blockEditorStore ).getSelectedBlock(),
 		[ 'attributes', 'content' ],
 		''
 	).substr( 1 );
@@ -54,7 +55,7 @@ const trackInserterInlineSearchTerm = () => {
  * document, etc.
  */
 function selectorHandler() {
-	const selectedBlock = select( 'core/block-editor' ).getSelectedBlock();
+	const selectedBlock = select( blockEditorStore ).getSelectedBlock();
 
 	// Skip If there isn't a selected block.
 	if ( ! selectedBlock ) {

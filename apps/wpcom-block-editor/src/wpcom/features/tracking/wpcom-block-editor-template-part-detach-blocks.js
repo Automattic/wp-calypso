@@ -1,3 +1,4 @@
+import { store as blockEditorStore } from '@wordpress/block-editor';
 import { select } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { getFlattenedBlockNames } from '../utils';
@@ -16,7 +17,7 @@ export default () => ( {
 	handler: ( _event, target ) => {
 		const item = target.querySelector( '.components-menu-item__item' );
 		if ( item?.innerText === __( 'Detach blocks from template part' ) ) {
-			const block = select( 'core/block-editor' ).getSelectedBlock();
+			const block = select( blockEditorStore ).getSelectedBlock();
 			const templatePartId = `${ block.attributes.theme }//${ block.attributes.slug }`;
 			const templatePart = select( 'core' ).getEditedEntityRecord(
 				'postType',

@@ -1,3 +1,4 @@
+import { store as blockEditorStore } from '@wordpress/block-editor';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
 
@@ -21,7 +22,7 @@ const useHasSelectedPaymentBlockOnce = () => {
 			return '';
 		}
 
-		const selectedBlock = select( 'core/block-editor' ).getSelectedBlock();
+		const selectedBlock = select( blockEditorStore ).getSelectedBlock();
 		return selectedBlock?.name ?? '';
 	} );
 
@@ -32,11 +33,11 @@ const useHasSelectedPaymentBlockOnce = () => {
 			return '';
 		}
 
-		const selectedBlock = select( 'core/block-editor' ).getSelectedBlock();
+		const selectedBlock = select( blockEditorStore ).getSelectedBlock();
 		if ( selectedBlock?.clientId ) {
-			const parentIds = select( 'core/block-editor' ).getBlockParents( selectedBlock?.clientId );
+			const parentIds = select( blockEditorStore ).getBlockParents( selectedBlock?.clientId );
 			if ( parentIds && parentIds.length ) {
-				const parent = select( 'core/block-editor' ).getBlock( parentIds[ parentIds.length - 1 ] );
+				const parent = select( blockEditorStore ).getBlock( parentIds[ parentIds.length - 1 ] );
 				return parent?.name ?? '';
 			}
 		}

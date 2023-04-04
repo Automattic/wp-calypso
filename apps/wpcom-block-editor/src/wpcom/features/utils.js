@@ -1,3 +1,4 @@
+import { store as blockEditorStore } from '@wordpress/block-editor';
 import { select } from '@wordpress/data';
 import { isEqual, some } from 'lodash';
 import tracksRecordEvent from './tracking/track-record-event';
@@ -69,7 +70,7 @@ const buildPropsFromContextBlock = ( block ) => {
  * @returns {Object} The block event's context properties.
  */
 export const getBlockEventContextProperties = ( rootClientId ) => {
-	const { getBlockParentsByBlockName, getBlock } = select( 'core/block-editor' );
+	const { getBlockParentsByBlockName, getBlock } = select( blockEditorStore );
 
 	// If this function doesn't exist, we cannot support context tracking.
 	if ( typeof getBlockParentsByBlockName !== 'function' ) {

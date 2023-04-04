@@ -2,6 +2,7 @@ import {
 	__unstableInserterMenuExtension,
 	// eslint-disable-next-line import/named
 	__experimentalInserterMenuExtension,
+	store as blockEditorStore,
 } from '@wordpress/block-editor';
 import { useSelect } from '@wordpress/data';
 import { useState } from '@wordpress/element';
@@ -18,7 +19,7 @@ const InserterMenuExtension =
 const InserterMenuTrackingEvent = function () {
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const { selectedBlock } = useSelect( ( select ) => ( {
-		selectedBlock: select( 'core/block-editor' ).getSelectedBlock(),
+		selectedBlock: select( blockEditorStore ).getSelectedBlock(),
 	} ) );
 
 	const debouncedSetFilterValue = debounce( ( search_term, has_items ) => {

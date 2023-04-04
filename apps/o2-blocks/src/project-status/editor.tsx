@@ -1,4 +1,4 @@
-import { InspectorControls } from '@wordpress/block-editor';
+import { InspectorControls, store as blockEditorStore } from '@wordpress/block-editor';
 import { CustomSelectControl, PanelBody, TextControl } from '@wordpress/components';
 import { withSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
@@ -135,7 +135,7 @@ const edit: FunctionComponent< EditProps > = ( args ) => {
 };
 
 export default withSelect( ( select ) => {
-	const tasks = select( 'core/block-editor' )
+	const tasks = select( blockEditorStore )
 		.getBlocks()
 		.filter( ( block ) => {
 			return block.name === 'a8c/task';

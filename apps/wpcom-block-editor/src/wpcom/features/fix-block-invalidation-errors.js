@@ -1,3 +1,4 @@
+import { store as blockEditorStore } from '@wordpress/block-editor';
 import { createBlock } from '@wordpress/blocks';
 import { select, dispatch } from '@wordpress/data';
 import { isEditorReadyWithBlocks } from '../../utils';
@@ -42,13 +43,13 @@ async function fixInvalidBlocks() {
 	}
 
 	// If any blocks have validation issues auto-fix them for now, until core is less strict.
-	select( 'core/block-editor' )
+	select( blockEditorStore )
 		.getBlocks()
 		.filter( ( block ) => ! block.isValid )
 		.forEach( ( { clientId, name, attributes, innerBlocks } ) => {
 			const replacement = createBlock( name, attributes, innerBlocks );
 			if ( blockHasContent( replacement ) ) {
-				dispatch( 'core/block-editor' ).replaceBlock( clientId, replacement );
+				dispatch( blockEditorStore ).replaceBlock( clientId, replacement );
 			}
 		} );
 }

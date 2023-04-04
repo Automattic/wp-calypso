@@ -1,3 +1,4 @@
+import { store as blockEditorStore } from '@wordpress/block-editor';
 import { use, select } from '@wordpress/data';
 import { applyFilters } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
@@ -63,7 +64,7 @@ function globalEventPropsHandler( block ) {
  * @returns {string|null} Block name if it exists. Otherwise, `null`.
  */
 const getTypeForBlockId = ( blockId ) => {
-	const block = select( 'core/block-editor' ).getBlock( blockId );
+	const block = select( blockEditorStore ).getBlock( blockId );
 	return block ? block.name : null;
 };
 
@@ -105,8 +106,8 @@ const getBlockInserterUsed = ( originalBlockIds = [] ) => {
 	// that case too.
 	if (
 		clientIds.length === 1 &&
-		select( 'core/block-editor' ).getBlockName( clientIds[ 0 ] ) === 'core/paragraph' &&
-		select( 'core/block-editor' ).getBlockAttributes( clientIds[ 0 ] ).content.startsWith( '/' )
+		select( blockEditorStore ).getBlockName( clientIds[ 0 ] ) === 'core/paragraph' &&
+		select( blockEditorStore ).getBlockAttributes( clientIds[ 0 ] ).content.startsWith( '/' )
 	) {
 		return 'slash-inserter';
 	}
@@ -126,7 +127,7 @@ const getBlockInserterUsed = ( originalBlockIds = [] ) => {
 	// This checks validates if we are inserting a block from the Payments Inserter block.
 	if (
 		clientIds.length === 1 &&
-		select( 'core/block-editor' ).getBlockName( clientIds[ 0 ] ) === 'jetpack/payments-intro'
+		select( blockEditorStore ).getBlockName( clientIds[ 0 ] ) === 'jetpack/payments-intro'
 	) {
 		return 'payments-intro-block';
 	}
@@ -145,7 +146,7 @@ const ensureBlockObject = ( block ) => {
 	if ( typeof block === 'object' ) {
 		return block;
 	}
-	return select( 'core/block-editor' ).getBlock( block ) || {};
+	return select( blockEditorStore ).getBlock( block ) || {};
 };
 
 /**
@@ -261,7 +262,7 @@ const maybeTrackPatternInsertion = ( actionData, additionalData ) => {
 	// Quick block inserter doesn't use an object to store the patternName
 	// in the metadata. The pattern name is just directly used as a string.
 	if ( ! patternName ) {
-		const patterns = select( 'core/block-editor' ).getSettings().__experimentalBlockPatterns;
+		const patterns = select( blockEditorStore ).getSettings().__experimentalBlockPatterns;
 		const actionDataToCheck = Object.values( actionData ).filter(
 			( data ) => typeof data === 'string'
 		);
@@ -317,7 +318,7 @@ const trackBlockInsertion = ( blocks, ...args ) => {
  * @returns {void}
  */
 const trackBlockRemoval = ( blocks ) => {
-	const rootClientId = select( 'core/block-editor' ).getBlockRootClientId(
+	const rootClientId = select( blockEditorStore ).getBlockRootClientId(
 		Array.isArray( blocks ) ? blocks[ 0 ] : blocks
 	);
 	const context = getBlockEventContextProperties( rootClientId );
@@ -341,7 +342,7 @@ const trackBlockReplacement = ( originalBlockIds, blocks, ...args ) => {
 		return;
 	}
 
-	const rootClientId = select( 'core/block-editor' ).getBlockRootClientId(
+	const rootClientId = select( blockEditorStore ).getBlockRootClientId(
 		Array.isArray( originalBlockIds ) ? originalBlockIds[ 0 ] : originalBlockIds
 	);
 	const patternName = maybeTrackPatternInsertion( args, { rootClientId, blocks_replaced: true } );
@@ -384,7 +385,7 @@ const trackInnerBlocksReplacement = ( rootClientId, blocks ) => {
 		3. Performing undo or redo related to template parts and reusable blocks
 		   will update the instances via `replaceInnerBlocks`.
 	*/
-	const parentBlock = select( 'core/block-editor' ).getBlocksByClientId( rootClientId )?.[ 0 ];
+	const parentBlock = select( blockEditorStore ).getBlocksByClientId( rootClientId )?.[ 0 ];
 	if ( parentBlock ) {
 		const { name } = parentBlock;
 		if (
@@ -466,8 +467,8 @@ const trackSaveEntityRecord = ( kind, name, record ) => {
 		const variationSlug = record.area !== 'uncategorized' ? record.area : undefined;
 		if ( document.querySelector( '.edit-site-create-template-part-modal' ) ) {
 			ignoreNextReplaceBlocksAction = true;
-			const convertedParentBlocks = select( 'core/block-editor' ).getBlocksByClientId(
-				select( 'core/block-editor' ).getSelectedBlockClientIds()
+			const convertedParentBlocks = select( blockEditorStore ).getBlocksByClientId(
+				select( blockEditorStore ).getSelectedBlockClientIds()
 			);
 			// We fire the event with and without the block names. We do this to
 			// make sure the event is tracked all the time. The block names

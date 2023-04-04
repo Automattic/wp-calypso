@@ -2,7 +2,7 @@
 // disabled CSS class rule due to existing code already
 // that users the non-conformant classnames
 
-import { InnerBlocks, InspectorControls } from '@wordpress/block-editor';
+import { InnerBlocks, InspectorControls, store as blockEditorStore } from '@wordpress/block-editor';
 import { registerBlockType, createBlock } from '@wordpress/blocks';
 import { ToggleControl, PanelBody } from '@wordpress/components';
 import { dispatch } from '@wordpress/data';
@@ -78,7 +78,7 @@ export function registerTimelineBlock() {
 
 			const addItem = () => {
 				const block = createBlock( 'jetpack/timeline-item' );
-				dispatch( 'core/block-editor' ).insertBlock( block, undefined, clientId );
+				dispatch( blockEditorStore ).insertBlock( block, undefined, clientId );
 			};
 
 			const toggleAlternate = () => setAttributes( { isAlternating: ! isAlternating } );

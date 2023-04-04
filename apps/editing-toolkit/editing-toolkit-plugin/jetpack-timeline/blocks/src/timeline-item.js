@@ -3,6 +3,7 @@ import {
 	InnerBlocks,
 	PanelColorSettings,
 	BlockControls,
+	store as blockEditorStore,
 } from '@wordpress/block-editor';
 import { registerBlockType } from '@wordpress/blocks';
 import { ToolbarButton, ToolbarGroup } from '@wordpress/components';
@@ -16,8 +17,8 @@ const DEFAULT_BACKGROUND = '#eeeeee';
 
 function Controls( { alignment, clientId, toggleAlignment } ) {
 	const parentIsAlternating = useSelect( ( select ) => {
-		const parentIds = select( 'core/block-editor' ).getBlockParents( clientId );
-		const parent = select( 'core/block-editor' ).getBlock( parentIds[ 0 ] );
+		const parentIds = select( blockEditorStore ).getBlockParents( clientId );
+		const parent = select( blockEditorStore ).getBlock( parentIds[ 0 ] );
 		return parent?.attributes?.isAlternating;
 	} );
 

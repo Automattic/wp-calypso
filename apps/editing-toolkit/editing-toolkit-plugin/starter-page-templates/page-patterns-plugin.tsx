@@ -1,4 +1,5 @@
 import { PagePatternModal, PatternDefinition } from '@automattic/page-pattern-modal';
+import { store as blockEditorStore } from '@wordpress/block-editor';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { store as editorStore } from '@wordpress/editor';
 import { useCallback } from '@wordpress/element';
@@ -27,7 +28,7 @@ type CoreNuxPlaceholder = {
 export function PagePatternsPlugin( props: PagePatternsPluginProps ) {
 	const { setOpenState } = useDispatch( pageLayoutStore );
 	const { setUsedPageOrPatternsModal } = useDispatch( 'automattic/wpcom-welcome-guide' );
-	const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );
+	const { replaceInnerBlocks } = useDispatch( blockEditorStore );
 	const { editPost } = useDispatch( editorStore );
 	const { toggleFeature } = useDispatch( 'core/edit-post' );
 	const { disableTips } = useDispatch( 'core/nux' );
@@ -55,7 +56,7 @@ export function PagePatternsPlugin( props: PagePatternsPluginProps ) {
 	const { getMeta, postContentBlock } = useSelect( ( select ) => {
 		const getMeta = () =>
 			( select( editorStore ) as CoreEditorPlaceholder ).getEditedPostAttribute( 'meta' );
-		const currentBlocks = ( select( 'core/block-editor' ) as CoreEditorPlaceholder ).getBlocks();
+		const currentBlocks = select( blockEditorStore ).getBlocks();
 		return {
 			getMeta,
 			postContentBlock: currentBlocks.find( ( block ) => block.name === 'a8c/post-content' ),

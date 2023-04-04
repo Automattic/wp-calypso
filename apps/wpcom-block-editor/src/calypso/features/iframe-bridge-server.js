@@ -1,5 +1,6 @@
 /* global calypsoifyGutenberg, Image, requestAnimationFrame */
 
+import { store as blockEditorStore } from '@wordpress/block-editor';
 import { parse } from '@wordpress/blocks';
 import { Button } from '@wordpress/components';
 import { dispatch, select, subscribe, use } from '@wordpress/data';
@@ -130,7 +131,7 @@ function overrideRevisions( calypsoPort ) {
 		if ( action === 'loadRevision' && payload ) {
 			const blocks = parse( payload.content );
 			dispatch( editorStore ).editPost( payload );
-			dispatch( 'core/block-editor' ).resetBlocks( blocks );
+			dispatch( blockEditorStore ).resetBlocks( blocks );
 			dispatch( 'core/notices' ).removeNotice( 'autosave-exists' );
 
 			calypsoPort.removeEventListener( 'message', onLoadRevision, false );
@@ -312,7 +313,7 @@ function handleUpdateImageBlocks( calypsoPort ) {
 		attrNames = { ...attrNames, id: 'id', url: 'url' };
 
 		if ( 'deleted' === image.status ) {
-			dispatch( 'core/block-editor' ).updateBlockAttributes( block.clientId, {
+			dispatch( blockEditorStore ).updateBlockAttributes( block.clientId, {
 				[ attrNames.id ]: undefined,
 				[ attrNames.url ]: undefined,
 			} );
@@ -320,7 +321,7 @@ function handleUpdateImageBlocks( calypsoPort ) {
 		}
 
 		preloadImage( image.url ).then( () => {
-			dispatch( 'core/block-editor' ).updateBlockAttributes( block.clientId, {
+			dispatch( blockEditorStore ).updateBlockAttributes( block.clientId, {
 				[ attrNames.id ]: image.id,
 				[ attrNames.url ]: image.url,
 			} );
@@ -388,7 +389,7 @@ function handleUpdateImageBlocks( calypsoPort ) {
 			return;
 		}
 		const image = get( message, 'data.payload' );
-		updateImageBlocks( select( 'core/block-editor' ).getBlocks(), image );
+		updateImageBlocks( select( blockEditorStore ).getBlocks(), image );
 		updateFeaturedImagePreview( image );
 	}
 }
@@ -918,7 +919,7 @@ function getCalypsoUrlInfo( calypsoPort ) {
 async function handleEditorLoaded( calypsoPort ) {
 	await isEditorReady();
 	const isNew = select( editorStore ).isCleanNewPost();
-	const blocks = select( 'core/block-editor' ).getBlocks();
+	const blocks = select( blockEditorStore ).getBlocks();
 
 	requestAnimationFrame( () => {
 		calypsoPort.postMessage( {

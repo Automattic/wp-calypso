@@ -1,4 +1,4 @@
-import { InspectorControls } from '@wordpress/block-editor';
+import { InspectorControls, store as blockEditorStore } from '@wordpress/block-editor';
 import {
 	registerBlockType,
 	switchToBlockType,
@@ -34,7 +34,7 @@ registerBlockType( metadata.name, {
 	},
 	attributes: metadata.attributes,
 	edit: ( { attributes, setAttributes, clientId, isSelected } ) => {
-		const block = select( 'core/block-editor' ).getBlock( clientId );
+		const block = select( blockEditorStore ).getBlock( clientId );
 
 		// Find if any of possible transformations is into the Homepage Posts block.
 		const possibleTransforms = getPossibleBlockTransformations( [ block ] );
@@ -44,7 +44,7 @@ registerBlockType( metadata.name, {
 		const canBeUpgraded = !! homepagePostsTransform;
 
 		const upgradeBlock = () => {
-			dispatch( 'core/block-editor' ).replaceBlocks(
+			dispatch( blockEditorStore ).replaceBlocks(
 				block.clientId,
 				switchToBlockType( block, homepagePostsTransform.name )
 			);

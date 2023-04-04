@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { store as blockEditorStore } from '@wordpress/block-editor';
 import { Button } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { store as editorStore } from '@wordpress/editor';
@@ -64,9 +65,9 @@ const SellerCelebrationModalInner = () => {
 			// Only check for payment blocks if we haven't seen the celebration modal text yet
 			if ( ! hasSeenSellerCelebrationModal ) {
 				const didCountRecurringPayments =
-					select( 'core/block-editor' ).getGlobalBlockCount( 'jetpack/recurring-payments' ) > 0;
+					select( blockEditorStore ).getGlobalBlockCount( 'jetpack/recurring-payments' ) > 0;
 				const didCountSimplePayments =
-					select( 'core/block-editor' ).getGlobalBlockCount( 'jetpack/simple-payments' ) > 0;
+					select( blockEditorStore ).getGlobalBlockCount( 'jetpack/simple-payments' ) > 0;
 				paymentsBlock =
 					( pageEntity?.content?.raw?.includes( '<!-- wp:jetpack/recurring-payments -->' ) ||
 						pageEntity?.content?.raw?.includes( '<!-- wp:jetpack/simple-payments -->' ) ||
@@ -90,11 +91,11 @@ const SellerCelebrationModalInner = () => {
 		let paymentBlockCount = 0;
 		// Only check for payment blocks if we haven't seen the celebration modal yet
 		if ( ! hasSeenSellerCelebrationModal ) {
-			paymentBlockCount += select( 'core/block-editor' ).getGlobalBlockCount(
+			paymentBlockCount += select( blockEditorStore ).getGlobalBlockCount(
 				'jetpack/recurring-payments'
 			);
 			paymentBlockCount +=
-				select( 'core/block-editor' ).getGlobalBlockCount( 'jetpack/simple-payments' );
+				select( blockEditorStore ).getGlobalBlockCount( 'jetpack/simple-payments' );
 		}
 
 		return {
