@@ -241,7 +241,7 @@ export class ConversationCommentList extends Component {
 								commentsTree={ commentsTree }
 								key={ commentId }
 								commentId={ commentId }
-								maxDepth={ 4 }
+								maxDepth={ 2 }
 								commentsToShow={ commentsToShow }
 								onReplyClick={ this.onReplyClick }
 								onReplyCancel={ this.onReplyCancel }
