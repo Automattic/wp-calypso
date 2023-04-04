@@ -337,6 +337,17 @@ import {
 	FEATURE_EMAIL_MARKETING,
 	FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION,
 	FEATURE_INTEGRATED_SHIPMENT_TRACKING,
+	FEATURE_BACK_IN_STOCK_NOTIFICATIONS,
+	FEATURE_MARKETING_AUTOMATION,
+	FEATURE_AUTOMATED_EMAIL_TRIGGERS,
+	FEATURE_CART_ABANDONMENT_EMAILS,
+	FEATURE_REFERRAL_PROGRAMS,
+	FEATURE_CUSTOMER_BIRTHDAY_EMAILS,
+	FEATURE_LOYALTY_POINTS_PROGRAMS,
+	FEATURE_OFFER_BULK_DISCOUNTS,
+	FEATURE_RECOMMEND_ADD_ONS,
+	FEATURE_ASSEMBLED_PRODUCTS_AND_KITS,
+	FEATURE_MIN_MAX_ORDER_QUANTITY,
 } from './constants';
 import { is2023PricingGridEnabled } from './plans-utilities';
 import type {
@@ -907,6 +918,20 @@ const getPlanWooExpressMediumDetails = (): IncompleteWPcomPlan => ( {
 	...getPlanEcommerceDetails(),
 	getTitle: () => i18n.translate( 'Performance' ),
 	getPlanTagline: () => i18n.translate( 'Accelerate your growth with advanced features.' ),
+	get2023PricingGridSignupWpcomFeatures: () => [
+		FEATURE_BACK_IN_STOCK_NOTIFICATIONS,
+		FEATURE_MARKETING_AUTOMATION,
+		FEATURE_AUTOMATED_EMAIL_TRIGGERS,
+		FEATURE_CART_ABANDONMENT_EMAILS,
+		FEATURE_REFERRAL_PROGRAMS,
+		FEATURE_CUSTOMER_BIRTHDAY_EMAILS,
+		FEATURE_LOYALTY_POINTS_PROGRAMS,
+		FEATURE_OFFER_BULK_DISCOUNTS,
+		FEATURE_RECOMMEND_ADD_ONS,
+		FEATURE_ASSEMBLED_PRODUCTS_AND_KITS,
+		FEATURE_MIN_MAX_ORDER_QUANTITY,
+	],
+	get2023PricingGridSignupStorageOptions: () => [],
 	getTagline: () =>
 		i18n.translate(
 			'Learn more about everything included with Woo Express Performance and take advantage of its powerful marketplace features.'

@@ -203,6 +203,8 @@ import {
 	FEATURE_SELL_EGIFTS_AND_VOUCHERS,
 	FEATURE_EMAIL_MARKETING,
 	FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION,
+	FEATURE_BACK_IN_STOCK_NOTIFICATIONS,
+	FEATURE_MARKETING_AUTOMATION,
 	FEATURE_CUSTOM_STORE,
 	FEATURE_INVENTORY,
 	FEATURE_CHECKOUT,
@@ -226,6 +228,15 @@ import {
 	FEATURE_SITE_ACTIVITY_LOG_JP,
 	FEATURE_GLOBAL_EDGE_CACHING,
 	is2023PricingGridEnabled,
+	FEATURE_AUTOMATED_EMAIL_TRIGGERS,
+	FEATURE_CART_ABANDONMENT_EMAILS,
+	FEATURE_REFERRAL_PROGRAMS,
+	FEATURE_CUSTOMER_BIRTHDAY_EMAILS,
+	FEATURE_LOYALTY_POINTS_PROGRAMS,
+	FEATURE_OFFER_BULK_DISCOUNTS,
+	FEATURE_RECOMMEND_ADD_ONS,
+	FEATURE_ASSEMBLED_PRODUCTS_AND_KITS,
+	FEATURE_MIN_MAX_ORDER_QUANTITY,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n, { TranslateResult } from 'i18n-calypso';
@@ -1884,6 +1895,50 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION ]: {
 		getSlug: () => FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION,
 		getTitle: () => i18n.translate( 'Marketplace sync and social media integrations' ),
+	},
+	[ FEATURE_BACK_IN_STOCK_NOTIFICATIONS ]: {
+		getSlug: () => FEATURE_BACK_IN_STOCK_NOTIFICATIONS,
+		getTitle: () => i18n.translate( 'Back in stock notifications' ),
+	},
+	[ FEATURE_MARKETING_AUTOMATION ]: {
+		getSlug: () => FEATURE_MARKETING_AUTOMATION,
+		getTitle: () => i18n.translate( 'Marketing automation' ),
+	},
+	[ FEATURE_AUTOMATED_EMAIL_TRIGGERS ]: {
+		getSlug: () => FEATURE_AUTOMATED_EMAIL_TRIGGERS,
+		getTitle: () => i18n.translate( 'Automated email triggers' ),
+	},
+	[ FEATURE_CART_ABANDONMENT_EMAILS ]: {
+		getSlug: () => FEATURE_CART_ABANDONMENT_EMAILS,
+		getTitle: () => i18n.translate( 'Cart abandonment emails' ),
+	},
+	[ FEATURE_REFERRAL_PROGRAMS ]: {
+		getSlug: () => FEATURE_REFERRAL_PROGRAMS,
+		getTitle: () => i18n.translate( 'Referral programs' ),
+	},
+	[ FEATURE_CUSTOMER_BIRTHDAY_EMAILS ]: {
+		getSlug: () => FEATURE_CUSTOMER_BIRTHDAY_EMAILS,
+		getTitle: () => i18n.translate( 'Customer birthday emails' ),
+	},
+	[ FEATURE_LOYALTY_POINTS_PROGRAMS ]: {
+		getSlug: () => FEATURE_LOYALTY_POINTS_PROGRAMS,
+		getTitle: () => i18n.translate( 'Loyalty points programs' ),
+	},
+	[ FEATURE_OFFER_BULK_DISCOUNTS ]: {
+		getSlug: () => FEATURE_OFFER_BULK_DISCOUNTS,
+		getTitle: () => i18n.translate( 'Offer bulk discounts' ),
+	},
+	[ FEATURE_RECOMMEND_ADD_ONS ]: {
+		getSlug: () => FEATURE_RECOMMEND_ADD_ONS,
+		getTitle: () => i18n.translate( 'Recommend add-ons' ),
+	},
+	[ FEATURE_ASSEMBLED_PRODUCTS_AND_KITS ]: {
+		getSlug: () => FEATURE_ASSEMBLED_PRODUCTS_AND_KITS,
+		getTitle: () => i18n.translate( 'Assembled products and kits' ),
+	},
+	[ FEATURE_MIN_MAX_ORDER_QUANTITY ]: {
+		getSlug: () => FEATURE_MIN_MAX_ORDER_QUANTITY,
+		getTitle: () => i18n.translate( 'Minimum/maximum order quantity' ),
 	},
 	[ FEATURE_CUSTOM_STORE ]: {
 		getSlug: () => FEATURE_CUSTOM_STORE,

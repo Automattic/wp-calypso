@@ -317,6 +317,17 @@ export const FEATURE_SELL_EGIFTS_AND_VOUCHERS = 'sell-e-gifts-and-vouchers';
 export const FEATURE_EMAIL_MARKETING = 'email-marketing';
 export const FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION =
 	'marketplace-sync-social-media-integration';
+export const FEATURE_BACK_IN_STOCK_NOTIFICATIONS = 'back-in-stock-notifications';
+export const FEATURE_MARKETING_AUTOMATION = 'marketing-automation';
+export const FEATURE_AUTOMATED_EMAIL_TRIGGERS = 'automated-email-triggers';
+export const FEATURE_CART_ABANDONMENT_EMAILS = 'cart-abandonment-emails';
+export const FEATURE_REFERRAL_PROGRAMS = 'referral-programs';
+export const FEATURE_CUSTOMER_BIRTHDAY_EMAILS = 'customer-birthday-emails';
+export const FEATURE_LOYALTY_POINTS_PROGRAMS = 'loyalty-points-programs';
+export const FEATURE_OFFER_BULK_DISCOUNTS = 'offer-bulk-discounts';
+export const FEATURE_RECOMMEND_ADD_ONS = 'recommend-add-ons';
+export const FEATURE_ASSEMBLED_PRODUCTS_AND_KITS = 'assembled-products-and-kits';
+export const FEATURE_MIN_MAX_ORDER_QUANTITY = 'min-max-order-quantity';
 export const FEATURE_CUSTOM_STORE = 'custom-store';
 export const FEATURE_INVENTORY = 'inventory';
 export const FEATURE_CHECKOUT = 'checkout-v1';
