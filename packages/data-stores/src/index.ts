@@ -3,7 +3,6 @@ import * as AutomatedTransferEligibility from './automated-transfer-eligibility'
 import * as DomainSuggestions from './domain-suggestions';
 import * as HelpCenter from './help-center';
 import * as I18n from './i18n';
-import * as Launch from './launch';
 import * as Onboard from './onboard';
 import * as Plans from './plans';
 import * as ProductsList from './products-list';
@@ -44,7 +43,6 @@ export {
 	Site,
 	Plans,
 	WpcomPlansUI,
-	Launch,
 	WPCOMFeatures,
 	Onboard,
 	ProductsList,
