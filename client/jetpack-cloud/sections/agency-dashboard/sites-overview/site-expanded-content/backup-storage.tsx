@@ -51,7 +51,10 @@ const BackupStorageContent = ( {
 	const backup = data?.[ 0 ] ?? null;
 
 	const lastBackupDate = useDateOffsetForSite( backup?.activityTs, siteId );
-	const getDisplayDate = useGetDisplayDate();
+	// Ignore type checking because TypeScript is incorrectly inferring the prop type due to .js usage in use-get-display-date
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// @ts-ignore
+	const getDisplayDate = useGetDisplayDate( siteId );
 	const displayDate = getDisplayDate( lastBackupDate, false );
 
 	// Show plugin name only if it is a activity from a plugin
