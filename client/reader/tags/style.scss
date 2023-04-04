@@ -54,11 +54,19 @@
 			border-top: none;
 			padding: 10px 0;
 		}
+		a:focus {
+			outline: none;
+		}
+		a:focus-visible .trending-tags__title {
+			outline: 2px solid #000;
+			outline-offset: 4px;
+		}
 		.trending-tags__title {
 			font-size: 36px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 			font-weight: 600;
 			color: var(--studio-black);
-			padding-right: 14px;
+			margin-right: 12px;
+			padding-right: 2px;
 		}
 		.trending-tags__count {
 			font-size: 16px; /* stylelint-disable-line declaration-property-unit-allowed-list */
@@ -109,6 +117,16 @@
 			text-decoration: none;
 			font-weight: 500;
 			flex-grow: 1;
+			padding-left: 6px;
+
+			&:focus {
+				border-radius: 0;
+				box-shadow: none;
+				outline: none;
+			}
+			&:focus-visible {
+				outline: 2px solid #000;
+			}
 		}
 	}
 }
@@ -145,6 +163,14 @@
 			a {
 				color: var(--studio-gray-80);
 				font-weight: 400;
+
+				&:focus {
+					outline: none;
+				}
+				&:focus-visible {
+					outline: 2px solid #000;
+					outline-offset: 4px;
+				}
 			}
 		}
 	}
