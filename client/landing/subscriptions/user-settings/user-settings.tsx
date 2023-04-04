@@ -14,8 +14,8 @@ type DeliveryWindowHourType = Reader.DeliveryWindowHourType;
 
 type SubscriptionUserSettings = Partial< {
 	mail_option: EmailFormatType;
-	delivery_day: DeliveryWindowDayType; // 0-6, 0 is Sunday
-	delivery_hour: DeliveryWindowHourType; // 0-23, 0 is midnight
+	delivery_day: DeliveryWindowDayType;
+	delivery_hour: DeliveryWindowHourType;
 	blocked: boolean;
 	email: string;
 } >;
@@ -33,7 +33,7 @@ const DEFAULT_VALUE = {};
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- until we start using any of these props
 const UserSettings = ( { value = DEFAULT_VALUE }: UserSettingsProps ) => {
-	const [ formState, setFormState ] = useState< SubscriptionUserSettings >( value );
+	const [ formState, setFormState ] = useState( value );
 	const { mutate, isLoading, isSuccess, error } = SubscriptionManager.useUserSettingsMutation();
 	const [ notice, setNotice ] = useState< NoticeProps | null >( null );
 
