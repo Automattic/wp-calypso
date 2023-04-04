@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page from 'page';
+import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isJetpackSite, getSiteSlug } from 'calypso/state/sites/selectors';
 import { activateTheme } from 'calypso/state/themes/actions/activate-theme';
@@ -61,6 +62,8 @@ export function activate(
 		const isDotOrgTheme = !! getTheme( getState(), 'wporg', themeId );
 		if ( isDotOrgTheme ) {
 			const siteSlug = getSiteSlug( getState(), siteId );
+
+			dispatch( productToBeInstalled( themeId, siteSlug ) );
 			return page( `/marketplace/theme/${ themeId }/install/${ siteSlug }` );
 		}
 
