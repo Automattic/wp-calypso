@@ -135,10 +135,6 @@ const AddOnsMain: React.FunctionComponent< Props > = () => {
 	}
 
 	const handleActionPrimary = ( addOnSlug: string, quantity?: number ) => {
-		if ( 'no-adverts/no-adverts.php' === addOnSlug ) {
-			page.redirect( `${ checkoutLink( 'no-ads' ) }` );
-			return;
-		}
 		page.redirect( `${ checkoutLink( addOnSlug, quantity ) }` );
 	};
 
