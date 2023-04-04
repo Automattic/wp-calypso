@@ -20,14 +20,13 @@ const chroma = require( 'chroma-js' );
 /**
  * Native Sort - replacement of ._sortBy Lodash function
  *
- * @returns Sorted array. The native sort modifies the array in place. So we use `.concat()` to
- *  copy the array, then sort.
+ * @returns Sorted array.
  */
 const sortBy = () => {
-	return ( a, b ) => {
-		if ( a.to.name > b.to.name ) {
+	return ( objA, objB ) => {
+		if ( objA.to.name > objB.to.name ) {
 			return 1;
-		} else if ( b.to.name > a.to.name ) {
+		} else if ( objB.to.name > objA.to.name ) {
 			return -1;
 		}
 		return 0;
@@ -321,17 +320,19 @@ function printReplacementRules( replacementObjects ) {
 }
 
 function formatReplacementRules( rules ) {
-	/*The native sort modifies the array in place, so we use `.concat()`
-    to copy the array, then sort.*/
-	return rules
-		.concat()
-		.sort( sortBy() )
-		.map( ( rule ) => {
-			const valueFrom = rule.from.value.padEnd( 7 );
-			const valueTo = rule.to.value.padEnd( 7 );
+	if ( rules && rules.length ) {
+		/*The native sort modifies the array in place, so we use `.concat()`
+    	to copy the array, then sort.*/
+		return rules
+			.concat()
+			.sort( sortBy() )
+			.map( ( rule ) => {
+				const valueFrom = rule.from.value.padEnd( 7 );
+				const valueTo = rule.to.value.padEnd( 7 );
 
-			return `${ valueFrom } → ${ valueTo } (${ rule.to.name })`;
-		} );
+				return `${ valueFrom } → ${ valueTo } (${ rule.to.name })`;
+			} );
+	}
 }
 
 function getReplacementPrefixSuffix( replacementObject ) {
