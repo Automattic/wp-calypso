@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { getCalypsoUrl } from '@automattic/calypso-url';
 import {
 	Button as OriginalButton,
 	IsolatedEventContainer,
@@ -128,19 +127,10 @@ function WpcomBlockEditorNavSidebar() {
 	const siteIntent = window?.wpcomBlockEditorNavSidebar?.currentSite?.site_intent;
 
 	if ( launchpadScreenOption === 'full' && siteIntent !== false ) {
-		defaultCloseUrl = getCalypsoUrl( `setup/${ siteIntent }/launchpad?siteSlug=${ siteSlug }` );
+		defaultCloseUrl = `http://wordpress.com/setup/${ siteIntent }/launchpad?siteSlug=${ siteSlug }`;
 		defaultCloseLabel = __( 'Next steps', 'full-site-editing' );
 	} else {
-		// use Calypso for posts and pages, otherwise use edit.php
-		defaultCloseUrl = [ 'post', 'page' ].includes( postType.slug )
-			? getCalypsoUrl( `${ postType.slug }s/${ siteSlug }` )
-			: addQueryArgs( 'edit.php', { post_type: postType.slug } );
-
-		// Jetpack Testimonials still want to link to Calypso, but use a slightly different URL structure
-		if ( [ 'jetpack-testimonials' ].includes( postType.slug ) ) {
-			defaultCloseUrl = getCalypsoUrl( `types/${ postType.slug }s/${ siteSlug }` );
-		}
-
+		defaultCloseUrl = addQueryArgs( 'edit.php', { post_type: postType.slug } );
 		defaultCloseLabel = get(
 			postType,
 			[ 'labels', 'all_items' ],
