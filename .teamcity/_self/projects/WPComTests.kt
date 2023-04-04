@@ -12,7 +12,9 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.BuildFailureOnMetric
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.failOnMetricChange
 import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.buildReportTab
+import jetbrains.buildServer.configs.kotlin.v2019_2.Triggers
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
+import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 
 object WPComTests : Project({
 	id("WPComTests")
@@ -184,6 +186,49 @@ fun editorTrackingBuildType( targetDevice: String, buildUuid: String, atomic: Bo
 fun jetpackPlaywrightBuildType( targetDevice: String, buildUuid: String, jetpackTarget: String = "wpcom-production" ): E2EBuildType {
 	val idSafeJetpackTarget = jetpackTarget.replace( "-", "_" );
 	val targetJestGroup = if (jetpackTarget == "remote-site") "jetpack-remote-site" else "jetpack-wpcom-integration";
+
+	val triggers: Triggers.() -> Unit = {
+		if (jetpackTarget == "wpcom-staging") {
+			vcs {
+				// Trigger only when the "trunk" branch is modified, i.e. -- merges
+				branchFilter = """
+					+:trunk
+				""".trimIndent()
+
+				// Trigger only when changes are made to the Jetpack staging directories in our WPCOM SVN connection
+				triggerRules = """
+					+:root=%WPCOM_VCS_ROOT_ID%:%WPCOM_JETPACK_MU_WPCOM_PLUGIN_PATH%/staging/**
+					+:root=%WPCOM_VCS_ROOT_ID%:%WPCOM_JETPACK_PLUGIN_PATH%/staging/**
+				""".trimIndent()
+			}
+		} else if (jetpackTarget == "wpcom-production") {
+			vcs {
+				// Trigger only when the "trunk" branch is modified, i.e. -- merges
+				branchFilter = """
+					+:trunk
+				""".trimIndent()
+
+				// Trigger only when changes are made to the Jetpack prod directories in our WPCOM SVN connection
+				triggerRules = """
+					+:root=%WPCOM_VCS_ROOT_ID%:%WPCOM_JETPACK_MU_WPCOM_PLUGIN_PATH%/production/**
+					+:root=%WPCOM_VCS_ROOT_ID%:%WPCOM_JETPACK_PLUGIN_PATH%/production/**
+				""".trimIndent()
+			}
+		} else {
+			// For remote-site tests, we are just running daily for now. 
+			schedule {
+				schedulingPolicy = daily {
+					hour = 5
+				}
+				branchFilter = """
+					+:trunk
+				""".trimIndent()
+				triggerBuild = always()
+				withPendingChangesOnly = false
+			}
+		}
+	}
+
 	return E2EBuildType (
 		buildId = "WPComTests_jetpack_Playwright_${idSafeJetpackTarget}_$targetDevice",
 		buildUuid = buildUuid,
@@ -202,18 +247,7 @@ fun jetpackPlaywrightBuildType( targetDevice: String, buildUuid: String, jetpack
 			param("env.JETPACK_TARGET", jetpackTarget)
 		},
 		buildFeatures = {},
-		buildTriggers = {
-		schedule {
-			schedulingPolicy = daily {
-				hour = 5
-			}
-			branchFilter = """
-				+:trunk
-			""".trimIndent()
-			triggerBuild = always()
-			withPendingChangesOnly = false
-		}
-	}
+		buildTriggers = triggers
 	)
 }
 
