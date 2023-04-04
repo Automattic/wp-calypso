@@ -307,7 +307,7 @@ class Plans extends Component {
 	}
 
 	renderWooExpressPlansPage() {
-		const { currentPlan, selectedSite } = this.props;
+		const { currentPlan, selectedSite, isSiteEligibleForMonthlyPlan } = this.props;
 
 		if ( ! selectedSite ) {
 			return this.renderPlaceholder();
@@ -320,6 +320,7 @@ class Plans extends Component {
 				currentPlan={ currentPlan }
 				interval={ interval }
 				selectedSite={ selectedSite }
+				isSiteEligibleForMonthlyPlan={ isSiteEligibleForMonthlyPlan }
 			/>
 		);
 	}

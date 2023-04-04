@@ -23,10 +23,17 @@ interface WooExpressPlansProps {
 	interval?: 'monthly' | 'yearly';
 	monthlyControlProps: SegmentedOptionProps;
 	yearlyControlProps: SegmentedOptionProps;
+	isSiteEligibleForMonthlyPlan: boolean;
 }
 
 export function WooExpressPlans( props: WooExpressPlansProps ) {
-	const { siteId, interval, monthlyControlProps, yearlyControlProps } = props;
+	const {
+		siteId,
+		interval,
+		monthlyControlProps,
+		yearlyControlProps,
+		isSiteEligibleForMonthlyPlan,
+	} = props;
 	const translate = useTranslate();
 
 	const mediumPlanAnnual = getPlans()[ PLAN_WOOEXPRESS_MEDIUM ];
@@ -74,14 +81,16 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 	};
 	return (
 		<>
-			<div className="wooexpress-plans__interval-toggle-wrapper">
-				<PlanIntervalSelector
-					className="wooexpress-plans__interval-toggle price-toggle"
-					intervals={ planIntervals }
-					isPlansInsideStepper={ false }
-					use2023PricingGridStyles={ true }
-				/>
-			</div>
+			{ isSiteEligibleForMonthlyPlan && (
+				<div className="wooexpress-plans__interval-toggle-wrapper">
+					<PlanIntervalSelector
+						className="wooexpress-plans__interval-toggle price-toggle"
+						intervals={ planIntervals }
+						isPlansInsideStepper={ false }
+						use2023PricingGridStyles={ true }
+					/>
+				</div>
+			) }
 			<div className="wooexpress-plans__grid is-2023-pricing-grid">
 				<AsyncLoad require="calypso/my-sites/plan-features-2023-grid" { ...plansTableProps } />
 			</div>
