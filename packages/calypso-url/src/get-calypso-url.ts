@@ -37,7 +37,7 @@ function isCalypsoLive( origin: string ) {
  * @param path Optional path to append to the origin
  * @returns The origin if it's allowed, otherwise the default origin (wordpress.com)
  */
-export function getCaplysoUrl( path = '' ) {
+export function getCalypsoUrl( path = '' ) {
 	const defaultOrigin = 'https://wordpress.com';
 	const fromQueryArg = new URLSearchParams( window.location.search ).get( 'calypso_origin' ) || '';
 	let origin = defaultOrigin;
