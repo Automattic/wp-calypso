@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
 import {
 	getPlans,
@@ -14,7 +15,7 @@ import { formatCurrency } from '@automattic/format-currency';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import getInTouch from 'calypso/assets/images/plans/wpcom/get-in-touch.png';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
@@ -111,12 +112,18 @@ const WooExpressPlansPage = ( {
 				}
 		  );
 
+	const triggerTracksEvent = useCallback( ( planSlug: string ) => {
+		recordTracksEvent( 'calypso_wooexpress_plans_plan_cta_click', { plan_slug: planSlug } );
+	}, [] );
+
 	const planFeatures =
 		isEnabled( 'plans/wooexpress-small' ) || isWooExpressSmallPlan( currentPlan.productSlug ) ? (
 			<WooExpressPlans
 				interval={ interval ? interval : planInterval }
 				monthlyControlProps={ { path: plansLink( '/plans', selectedSite.slug, 'monthly', true ) } }
 				siteId={ selectedSite.ID }
+				siteSlug={ selectedSite.slug }
+				triggerTracksEvent={ triggerTracksEvent }
 				yearlyControlProps={ { path: plansLink( '/plans', selectedSite.slug, 'yearly', true ) } }
 				showIntervalToggle={ showIntervalToggle }
 			/>
