@@ -329,7 +329,6 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 	const popularBadgeClasses = classNames( {
 		'is-current-plan': current,
 	} );
-	const rawPrice = planPropertiesObj.rawPrice;
 	const showPlanSelect = ! allVisible && ! current;
 
 	return (
