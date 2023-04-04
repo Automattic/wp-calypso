@@ -128,7 +128,8 @@ const MarketplacePluginInstall = ( {
 		}
 		return (
 			pluginInstallationStatus !== MARKETPLACE_ASYNC_PROCESS_STATUS.COMPLETED &&
-			productSlugInstalled === ( productSlug || themeSlug ) &&
+			productSlugInstalled &&
+			[ productSlug, themeSlug ].includes( productSlugInstalled ) &&
 			primaryDomain === selectedSiteSlug
 		);
 	} );
