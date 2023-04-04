@@ -403,6 +403,11 @@ const Settings = ( {
 			return null;
 		}
 
+		// Show the card only if the domain requires a verification from Nominet (or if it has been already suspended )
+		if ( ! domain.nominetDomainSuspended || ! domain.nominetPendingContactVerificationRequest ) {
+			return null;
+		}
+
 		const contactInformationUpdateLink =
 			selectedSite && domain && domainManagementEditContactInfo( selectedSite.slug, domain.name );
 

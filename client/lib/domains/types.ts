@@ -101,6 +101,8 @@ export type ResponseDomain = {
 	manualTransferRequired: boolean;
 	mustRemovePrivacyBeforeContactUpdate: boolean;
 	name: string;
+	nominetDomainSuspended: false;
+	nominetPendingContactVerificationRequest: false;
 	owner: string;
 	partnerDomain: boolean;
 	pendingRegistration: boolean;
