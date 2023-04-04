@@ -3,6 +3,7 @@
 import { Title, SubTitle, NextButton, BackButton, Confetti } from '@automattic/onboarding';
 import { ClipboardButton } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { store as editorStore } from '@wordpress/editor';
 import { __ } from '@wordpress/i18n';
 import { Icon, external } from '@wordpress/icons';
 import * as React from 'react';
@@ -32,7 +33,7 @@ const Success: React.FunctionComponent = () => {
 
 	// Save the post before displaying the action buttons and launch succes message
 	const [ isPostSaved, setIsPostSaved ] = React.useState( false );
-	const { savePost } = useDispatch( 'core/editor' );
+	const { savePost } = useDispatch( editorStore );
 
 	React.useEffect( () => {
 		const asyncSavePost = async () => {

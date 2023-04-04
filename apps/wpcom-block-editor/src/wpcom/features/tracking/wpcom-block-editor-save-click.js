@@ -1,4 +1,5 @@
 import { select } from '@wordpress/data';
+import { store as editorStore } from '@wordpress/editor';
 import { getEditorType } from '../utils';
 import tracksRecordEvent from './track-record-event';
 
@@ -14,8 +15,8 @@ export const wpcomBlockEditorSaveClick = () => ( {
 	type: 'click',
 	handler: () => {
 		const isSiteEditor = getEditorType() === 'site';
-		const isCurrentPostPublished = select( 'core/editor' ).isCurrentPostPublished();
-		const isEditedPostBeingScheduled = select( 'core/editor' ).isEditedPostBeingScheduled();
+		const isCurrentPostPublished = select( editorStore ).isCurrentPostPublished();
+		const isEditedPostBeingScheduled = select( editorStore ).isEditedPostBeingScheduled();
 		let actionType = 'publish';
 
 		if ( isSiteEditor ) {

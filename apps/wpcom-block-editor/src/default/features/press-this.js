@@ -1,5 +1,6 @@
 import { createBlock } from '@wordpress/blocks';
 import { dispatch } from '@wordpress/data';
+import { store as editorStore } from '@wordpress/editor';
 import { getQueryArgs } from '@wordpress/url';
 import { isEditorReady } from '../../utils';
 
@@ -36,7 +37,7 @@ if ( url ) {
 			);
 		}
 
-		dispatch( 'core/editor' ).resetEditorBlocks( blocks );
-		dispatch( 'core/editor' ).editPost( { title: title } );
+		dispatch( editorStore ).resetEditorBlocks( blocks );
+		dispatch( editorStore ).editPost( { title: title } );
 	} )();
 }

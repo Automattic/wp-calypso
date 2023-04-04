@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { store as editorStore } from '@wordpress/editor';
 import { useState, useRef, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import useHasSeenSellerCelebrationModal from '../../../dotcom-fse/lib/seller-celebration-modal/use-has-seen-seller-celebration-modal';
@@ -81,7 +82,7 @@ const SellerCelebrationModalInner = () => {
 			};
 		}
 
-		const currentPost = select( 'core/editor' ).getCurrentPost();
+		const currentPost = select( editorStore ).getCurrentPost();
 		const isSavingEntity =
 			select( 'core' ).isSavingEntityRecord( 'postType', currentPost?.type, currentPost?.id ) &&
 			! select( 'core' ).isAutosavingEntityRecord( 'postType', currentPost?.type, currentPost?.id );
