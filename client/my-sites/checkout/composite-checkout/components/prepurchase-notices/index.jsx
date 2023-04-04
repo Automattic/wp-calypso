@@ -63,35 +63,33 @@ const PrePurchaseNotices = () => {
 		const products = getSiteProducts( state, siteId ) || [];
 		return products.filter( ( p ) => ! p.expired );
 	} );
+
+	const getMatchingProducts = ( items, planSlug, isCartItem ) => {
+		const planFeatures = getAllFeaturesForPlan( planSlug );
+
+		return items.filter( ( item ) => {
+			const productSlug = isCartItem ? item.product_slug : item.productSlug;
+			const isBackup = isJetpackBackupSlug( productSlug );
+			const isScan = isJetpackScanSlug( productSlug );
+			const isAntiSpam = isJetpackAntiSpamSlug( productSlug );
+
+			return (
+				planFeatures.includes( productSlug ) ||
+				planHasSuperiorFeature( planSlug, productSlug ) ||
+				isBackup ||
+				isScan ||
+				isAntiSpam
+			);
+		} );
+	};
+
 	const siteProductThatOverlapsCartPlan = useMemo( () => {
 		const planSlugInCart = cartItemSlugs.find( isJetpackPlanSlug );
 		if ( ! planSlugInCart || ! currentSiteProducts ) {
 			return null;
 		}
 
-		const getMatchingProducts = ( siteProducts, planSlug ) => {
-			// Get all features for the plan in the cart
-			const planFeatures = getAllFeaturesForPlan( planSlug );
-
-			// Filter the site products to only include those in the plan items or are inferior features to the plan feature
-			const matchingProducts = siteProducts.filter( ( product ) => {
-				//check for generic backup and scan slugs
-				const isBackup = isJetpackBackupSlug( product.productSlug );
-				const isScan = isJetpackScanSlug( product.productSlug );
-
-				return (
-					planFeatures.includes( product.productSlug ) ||
-					planHasSuperiorFeature( planSlug, product.productSlug ) ||
-					// there are too many variations on the following, so checking against WPCOM_features
-					isBackup ||
-					isScan
-				);
-			} );
-
-			return matchingProducts;
-		};
-
-		const matchingProducts = getMatchingProducts( currentSiteProducts, planSlugInCart );
+		const matchingProducts = getMatchingProducts( currentSiteProducts, planSlugInCart, false );
 		return matchingProducts?.[ 0 ];
 	}, [ currentSiteProducts, cartItemSlugs ] );
 
@@ -102,31 +100,7 @@ const PrePurchaseNotices = () => {
 			return null;
 		}
 
-		const getMatchingProducts = ( cartItems, planSlug ) => {
-			// Get all features for the site plan
-			const planFeatures = getAllFeaturesForPlan( planSlug );
-
-			// Filter the cart items to only include those in the plan items or are inferior features to the plan feature
-			const matchingProducts = cartItems.filter( ( cartItem ) => {
-				const productSlug = cartItem.product_slug;
-				const isBackup = isJetpackBackupSlug( productSlug );
-				const isScan = isJetpackScanSlug( productSlug );
-				const isAntiSpam = isJetpackAntiSpamSlug( productSlug );
-
-				return (
-					planFeatures.includes( productSlug ) ||
-					planHasSuperiorFeature( planSlug, productSlug ) ||
-					// there are too many variations on the following, so checking generic slugs
-					isBackup ||
-					isScan ||
-					isAntiSpam
-				);
-			} );
-
-			return matchingProducts;
-		};
-
-		const matchingProducts = getMatchingProducts( responseCart.products, planSlugOnSite );
+		const matchingProducts = getMatchingProducts( responseCart.products, planSlugOnSite, true );
 		return matchingProducts?.[ 0 ];
 	}, [ currentSitePlan, responseCart.products ] );
 
