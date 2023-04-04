@@ -92,33 +92,43 @@ describe( 'utils', () => {
 					product_slug: 'wp-domains',
 					domain: 'bar.com',
 					variation_slug: 'none',
+					currency: 'USD',
 					raw_amount: 2,
+					amount_integer: 200,
 				},
 				{
 					id: '2',
 					product_slug: 'wp-domains',
 					domain: 'foo.com',
 					variation_slug: 'none',
+					currency: 'USD',
 					raw_amount: 3,
+					amount_integer: 300,
 				},
 				{
 					id: '3',
 					product_slug: 'wp-domains',
 					domain: 'foo.com',
 					variation_slug: 'wp-private-registration',
+					currency: 'USD',
 					raw_amount: 7,
+					amount_integer: 700,
 				},
 				{
 					id: '4',
 					product_slug: 'wp-domains',
 					domain: 'foo.com',
 					variation_slug: 'wp-private-registration',
+					currency: 'USD',
 					raw_amount: 9,
+					amount_integer: 900,
 				},
 			] );
 			const result = groupDomainProducts( items, ident );
 			expect( result[ 1 ].raw_amount ).toEqual( 2 );
+			expect( result[ 1 ].amount_integer ).toEqual( 200 );
 			expect( result[ 2 ].raw_amount ).toEqual( 19 );
+			expect( result[ 2 ].amount_integer ).toEqual( 1900 );
 		} );
 
 		test( 'should include the formatted, summed raw_amount as amount for multiple items with teh same domain', () => {
@@ -130,7 +140,9 @@ describe( 'utils', () => {
 					domain: 'bar.com',
 					variation_slug: 'none',
 					amount: '$2.00',
+					currency: 'USD',
 					raw_amount: 2,
+					amount_integer: 200,
 				},
 				{
 					id: '2',
@@ -138,7 +150,9 @@ describe( 'utils', () => {
 					domain: 'foo.com',
 					variation_slug: 'none',
 					amount: '$3.00',
+					currency: 'USD',
 					raw_amount: 3,
+					amount_integer: 300,
 				},
 				{
 					id: '3',
@@ -146,7 +160,9 @@ describe( 'utils', () => {
 					domain: 'foo.com',
 					variation_slug: 'wp-private-registration',
 					amount: '$7.00',
+					currency: 'USD',
 					raw_amount: 7,
+					amount_integer: 700,
 				},
 				{
 					id: '4',
@@ -154,12 +170,16 @@ describe( 'utils', () => {
 					domain: 'foo.com',
 					variation_slug: 'wp-private-registration',
 					amount: '$9.00',
+					currency: 'USD',
 					raw_amount: 9,
+					amount_integer: 900,
 				},
 			] );
 			const result = groupDomainProducts( items, ident );
 			expect( result[ 1 ].amount ).toEqual( '$2.00' );
-			expect( result[ 2 ].amount ).toEqual( '$19.00' );
+			expect( result[ 1 ].amount_integer ).toEqual( 200 );
+			expect( result[ 2 ].amount ).toEqual( '$19' );
+			expect( result[ 2 ].amount_integer ).toEqual( 1900 );
 		} );
 	} );
 } );
