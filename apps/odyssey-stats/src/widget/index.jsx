@@ -19,7 +19,7 @@ export function init() {
 	const queryClient = new QueryClient();
 
 	// Ensure locale files are loaded before rendering.
-	setLocale( localeSlug ).then( () =>
+	setLocale( localeSlug ).finally( () =>
 		render(
 			<QueryClientProvider client={ queryClient }>
 				<div>
