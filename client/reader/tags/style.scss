@@ -142,6 +142,9 @@
 	.alphabetic-tags__letter-title {
 		font-size: 32px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		margin-bottom: 22px;
+		&:focus-visible {
+			text-decoration: underline;
+		}
 	}
 	.alphabetic-tags__row {
 		display: flex;

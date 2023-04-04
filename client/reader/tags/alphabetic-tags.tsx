@@ -66,6 +66,10 @@ const scrollToLetter = ( letter: string ) => {
 			behavior: 'smooth',
 			scrollMode: 'if-needed',
 		} );
+		// setTimeout so that the focus is set after the scrollIntoViewport has completed.
+		setTimeout( () => {
+			element.focus();
+		}, 500 );
 	}
 };
 
@@ -100,7 +104,12 @@ export default function AlphabeticTags( { alphabeticTags }: AlphabeticTagsProps 
 			</div>
 			{ Object.keys( tagTables ).map( ( letter: string ) => (
 				<div className="alphabetic-tags__table" key={ 'alphabetic-tags-table-' + letter }>
-					<h3 className="alphabetic-tags__letter-title" id={ 'alphabetic-tags-table-' + letter }>
+					{ /* eslint-disable jsx-a11y/no-noninteractive-tabindex */ }
+					<h3
+						tabIndex={ 0 }
+						className="alphabetic-tags__letter-title"
+						id={ 'alphabetic-tags-table-' + letter }
+					>
 						{ letter }
 					</h3>
 					<TagsTable tags={ tagTables[ letter ] } />
