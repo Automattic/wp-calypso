@@ -31,7 +31,7 @@ export default function SiteRow( {
 		return <Gridicon className="icon" icon="globe" size={ 48 } />;
 	}, [ site_icon, name ] );
 
-	const { mutate: updateDeliveryFrequency } =
+	const { mutate: updateDeliveryFrequency, isLoading: updatingFrequency } =
 		SubscriptionManager.useSiteDeliveryFrequencyMutation();
 	const { mutate: unFollow, isLoading: unfollowing } =
 		SubscriptionManager.useSiteUnfollowMutation();
@@ -59,6 +59,7 @@ export default function SiteRow( {
 					onDeliveryFrequencyChange={ ( delivery_frequency ) =>
 						updateDeliveryFrequency( { blog_id: blog_ID, delivery_frequency } )
 					}
+					updatingFrequency={ updatingFrequency }
 					onUnfollow={ () => unFollow( { blog_id: blog_ID } ) }
 					unfollowing={ unfollowing }
 				/>
