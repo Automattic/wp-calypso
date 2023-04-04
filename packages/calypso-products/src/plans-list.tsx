@@ -336,6 +336,7 @@ import {
 	FEATURE_SELL_EGIFTS_AND_VOUCHERS,
 	FEATURE_EMAIL_MARKETING,
 	FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION,
+	FEATURE_INTEGRATED_SHIPMENT_TRACKING,
 } from './constants';
 import { is2023PricingGridEnabled } from './plans-utilities';
 import type {
@@ -915,6 +916,7 @@ const getPlanWooExpressMediumDetails = (): IncompleteWPcomPlan => ( {
 const getPlanWooExpressSmallDetails = (): IncompleteWPcomPlan => ( {
 	...getPlanEcommerceDetails(),
 	get2023PricingGridSignupWpcomFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
 		FEATURE_UNLIMITED_ADMINS,
 		FEATURE_200GB_STORAGE,
@@ -923,6 +925,7 @@ const getPlanWooExpressSmallDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SELL_INTERNATIONALLY,
 		FEATURE_AUTOMATIC_SALES_TAX,
 		FEATURE_AUTOMATED_BACKUPS_SECURITY_SCAN,
+		FEATURE_INTEGRATED_SHIPMENT_TRACKING,
 		FEATURE_REAL_TIME_ANALYTICS,
 		FEATURE_SELL_EGIFTS_AND_VOUCHERS,
 		FEATURE_EMAIL_MARKETING,
