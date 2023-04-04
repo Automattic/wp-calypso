@@ -5,8 +5,9 @@ import { CurrentUser } from '@automattic/calypso-analytics/dist/types/utils/curr
 import config from '@automattic/calypso-config';
 import { User as UserStore } from '@automattic/data-stores';
 import { ECOMMERCE_FLOW, ecommerceFlowRecurTypes } from '@automattic/onboarding';
-import { useDispatch } from '@wordpress/data';
+import { dispatch, useDispatch } from '@wordpress/data';
 import defaultCalypsoI18n from 'i18n-calypso';
+import React from 'react';
 import ReactDom from 'react-dom';
 import { QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
@@ -59,11 +60,7 @@ function determineFlow() {
 /**
  * TODO: this is no longer a switch and should be removed
  */
-const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined; flow: Flow } > = ( {
-	user,
-	flow,
-} ) => {
-	const { receiveCurrentUser } = useDispatch( USER_STORE );
+const FlowSwitch: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const { setEcommerceFlowRecurType } = useDispatch( ONBOARD_STORE );
 
 	const recurType = useQuery().get( 'recur' );
@@ -77,8 +74,6 @@ const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined; flow: Flo
 			setEcommerceFlowRecurType( ecommerceFlowRecurTypes.YEARLY );
 		}
 	}
-
-	user && receiveCurrentUser( user as UserStore.CurrentUser );
 
 	return <FlowRenderer flow={ flow } />;
 };
@@ -104,19 +99,23 @@ window.AppBoot = async () => {
 	// Add accessible-focus listener.
 	accessibleFocus();
 
-	const user = ( await initializeCurrentUser() ) as unknown;
-	const userId = ( user as CurrentUser ).ID;
-
-	const queryClient = await createQueryClient( userId );
-
-	initializeAnalytics( user, getGenericSuperPropsGetter( config ) );
+	// get correct user ID
+	const userId = 69941958; //( user as CurrentUser ).ID;
 
 	const initialState = getInitialState( initialReducer, userId );
 	const reduxStore = createReduxStore( initialState, initialReducer );
 	setStore( reduxStore, getStateFromCache( userId ) );
-	setupLocale( user, reduxStore );
 
-	user && initializeCalypsoUserStore( reduxStore, user as CurrentUser );
+	initializeCurrentUser().then( ( user: CurrentUser ) => {
+		setCurrentUser( user );
+		const { receiveCurrentUser } = dispatch( USER_STORE );
+		receiveCurrentUser( user as unknown as UserStore.CurrentUser );
+		initializeAnalytics( user, getGenericSuperPropsGetter( config ) );
+		setupLocale( user, reduxStore );
+		initializeCalypsoUserStore( reduxStore, user as CurrentUser );
+	} );
+
+	const queryClient = await createQueryClient( userId );
 
 	setupErrorLogger( reduxStore );
 
@@ -129,7 +128,7 @@ window.AppBoot = async () => {
 				<QueryClientProvider client={ queryClient }>
 					<WindowLocaleEffectManager />
 					<BrowserRouter basename="setup">
-						<FlowSwitch user={ user as UserStore.CurrentUser } flow={ flow } />
+						<FlowSwitch flow={ flow } />
 						{ config.isEnabled( 'cookie-banner' ) && (
 							<AsyncLoad require="calypso/blocks/cookie-banner" placeholder={ null } />
 						) }
