@@ -190,12 +190,12 @@ fun jetpackPlaywrightBuildType( targetDevice: String, buildUuid: String, jetpack
 	val triggers: Triggers.() -> Unit = {
 		if (jetpackTarget == "wpcom-staging") {
 			vcs {
-				// Trigger only when the "trunk" branch is modified, i.e. -- merges
+				// Trigger only when the "trunk" branch is modified, i.e. back-end merges
 				branchFilter = """
 					+:trunk
 				""".trimIndent()
 
-				// Trigger only when changes are made to the Jetpack staging directories in our WPCOM SVN connection
+				// Trigger only when changes are made to the Jetpack staging directories in our WPCOM connection
 				triggerRules = """
 					+:root=%WPCOM_VCS_ROOT_ID%:%WPCOM_JETPACK_MU_WPCOM_PLUGIN_PATH%/staging/**
 					+:root=%WPCOM_VCS_ROOT_ID%:%WPCOM_JETPACK_PLUGIN_PATH%/staging/**
@@ -203,19 +203,19 @@ fun jetpackPlaywrightBuildType( targetDevice: String, buildUuid: String, jetpack
 			}
 		} else if (jetpackTarget == "wpcom-production") {
 			vcs {
-				// Trigger only when the "trunk" branch is modified, i.e. -- merges
+				// Trigger only when the "trunk" branch is modified, i.e. back-end merges
 				branchFilter = """
 					+:trunk
 				""".trimIndent()
 
-				// Trigger only when changes are made to the Jetpack prod directories in our WPCOM SVN connection
+				// Trigger only when changes are made to the Jetpack prod directories in our WPCOM connection
 				triggerRules = """
 					+:root=%WPCOM_VCS_ROOT_ID%:%WPCOM_JETPACK_MU_WPCOM_PLUGIN_PATH%/production/**
 					+:root=%WPCOM_VCS_ROOT_ID%:%WPCOM_JETPACK_PLUGIN_PATH%/production/**
 				""".trimIndent()
 			}
 		} else {
-			// For remote-site tests, we are just running daily for now. 
+			// For remote-site tests, we are just running daily for now. They aren't related to Jetpack releases on DotCom.
 			schedule {
 				schedulingPolicy = daily {
 					hour = 5
