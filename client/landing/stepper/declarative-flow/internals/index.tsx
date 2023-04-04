@@ -8,7 +8,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
 import { useEffect, useState, useCallback, Suspense } from 'react';
 import Modal from 'react-modal';
-import { Switch, Route, Redirect, generatePath, useHistory, useLocation } from 'react-router-dom';
+import { Navigate, Route, Routes, generatePath, useNavigate, useLocation } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
@@ -44,7 +44,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const stepPaths = flowSteps.map( ( step ) => step.slug );
 	const location = useLocation();
 	const currentStepRoute = location.pathname.split( '/' )[ 2 ]?.replace( /\/+$/, '' );
-	const history = useHistory();
+	const navigate = useNavigate();
 	const { search } = useLocation();
 	const { setStepData } = useDispatch( STEPPER_INTERNAL_STORE );
 	const intent = useSelect(
@@ -76,8 +76,8 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		return false;
 	}, [ flow, stepProgress ] );
 
-	const navigate = async ( path: string, extraData = {} ) => {
-		// If any extra data is passed to the navigate() function, store it to the stepper-internal store.
+	const _navigate = async ( path: string, extraData = {} ) => {
+		// If any extra data is passed to the navigateTo() function, store it to the stepper-internal store.
 		setStepData( {
 			path: path,
 			intent: intent,
@@ -88,11 +88,11 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 			? generatePath( `/${ flow.variantSlug ?? flow.name }/${ path }` )
 			: generatePath( `/${ flow.variantSlug ?? flow.name }/${ path }${ search }` );
 
-		history.push( _path, stepPaths );
+		navigate( _path, { state: stepPaths } );
 		setPreviousProgress( stepProgress?.progress ?? 0 );
 	};
 
-	const stepNavigation = flow.useStepNavigation( currentStepRoute, navigate );
+	const stepNavigation = flow.useStepNavigation( currentStepRoute, _navigate );
 
 	// Retrieve any extra step data from the stepper-internal store. This will be passed as a prop to the current step.
 	const stepData = useSelect(
@@ -100,7 +100,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		[]
 	);
 
-	flow.useSideEffect?.( currentStepRoute, navigate );
+	flow.useSideEffect?.( currentStepRoute, _navigate );
 
 	useEffect( () => {
 		window.scrollTo( 0, 0 );
@@ -177,7 +177,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	return (
 		<Suspense fallback={ <StepperLoader /> }>
 			<DocumentHead title={ getDocumentHeadTitle() } />
-			<Switch>
+			<Routes>
 				{ flowSteps.map( ( step ) => {
 					return (
 						<Route key={ step.slug } path={ `/${ flow.variantSlug ?? flow.name }/${ step.slug }` }>
@@ -210,9 +210,9 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 					);
 				} ) }
 				<Route>
-					<Redirect to={ `/${ flow.variantSlug ?? flow.name }/${ stepPaths[ 0 ] }${ search }` } />
+					<Navigate to={ `/${ flow.variantSlug ?? flow.name }/${ stepPaths[ 0 ] }${ search }` } />
 				</Route>
-			</Switch>
+			</Routes>
 		</Suspense>
 	);
 };

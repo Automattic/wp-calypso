@@ -6,7 +6,7 @@ import PlansGrid from '@automattic/plans-grid';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import * as React from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { LAUNCH_STORE } from '../../stores';
 import GoBackButton from '../go-back-button';
 import type { LaunchSelect } from '@automattic/data-stores';
@@ -22,14 +22,14 @@ const PlanDetails: React.FunctionComponent = () => {
 		[]
 	);
 
-	const history = useHistory();
+	const navigate = useNavigate();
 
 	const { updatePlan } = useDispatch( LAUNCH_STORE );
 
 	const hasPaidDomain = domain && ! domain.is_free;
 
 	const goBack = () => {
-		history.goBack();
+		navigate( -1 );
 	};
 	const handleSelect = ( planProductId: number | undefined ) => {
 		updatePlan( planProductId );

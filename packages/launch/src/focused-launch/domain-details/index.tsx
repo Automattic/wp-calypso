@@ -9,7 +9,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { Title, SubTitle } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { FOCUSED_LAUNCH_FLOW_ID } from '../../constants';
 import LaunchContext from '../../context';
 import { useDomainSearch, useDomainSelection, useSiteDomains } from '../../hooks';
@@ -25,10 +25,10 @@ const DomainDetails: React.FunctionComponent = () => {
 	const { siteSubdomain } = useSiteDomains();
 	const { domainSearch, setDomainSearch } = useDomainSearch();
 	const { onDomainSelect, onExistingSubdomainSelect, currentDomain } = useDomainSelection();
-	const history = useHistory();
+	const navigate = useNavigate();
 
 	const goBack = () => {
-		history.goBack();
+		navigate( -1 );
 	};
 
 	const launchFlowUrl = getCurrentLaunchFlowUrl();

@@ -4,7 +4,7 @@ import { closeSmall, chevronUp, lineSolid, commentContent, page, Icon } from '@w
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useCallback } from 'react';
-import { Route, Switch, useLocation } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import { HELP_CENTER_STORE } from '../stores';
 import type { Header } from '../types';
 import type { HelpCenterSelect } from '@automattic/data-stores';
@@ -78,18 +78,16 @@ const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize, onDism
 					role="presentation"
 				>
 					{ isMinimized ? (
-						<Switch>
-							<Route path="/" exact>
-								{ __( 'Help Center', __i18n_text_domain__ ) }
-							</Route>
+						<Routes>
+							<Route path="/">{ __( 'Help Center', __i18n_text_domain__ ) }</Route>
 							<Route path="/contact-options">
 								{ __( 'Contact Options', __i18n_text_domain__ ) }
 							</Route>
 							<Route path="/inline-chat">{ __( 'Live Chat', __i18n_text_domain__ ) }</Route>
-							<Route path="/contact-form" component={ SupportModeTitle }></Route>
-							<Route path="/post" component={ ArticleTitle }></Route>
+							<Route path="/contact-form" element={ SupportModeTitle }></Route>
+							<Route path="/post" element={ ArticleTitle }></Route>
 							<Route path="/success">{ __( 'Message Submitted', __i18n_text_domain__ ) }</Route>
-						</Switch>
+						</Routes>
 					) : (
 						__( 'Help Center', __i18n_text_domain__ )
 					) }

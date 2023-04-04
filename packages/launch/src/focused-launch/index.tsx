@@ -1,7 +1,7 @@
 import { ScrollToTop } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import * as React from 'react';
-import { MemoryRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
+import { MemoryRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import { useSite, useDomainSuggestionFromCart, usePlanProductIdFromCart } from '../hooks';
 import { LAUNCH_STORE } from '../stores';
 import DomainDetails from './domain-details';
@@ -14,6 +14,7 @@ import type { LaunchSelect } from '@automattic/data-stores';
 import './style.scss';
 
 const FocusedLaunch: React.FunctionComponent = () => {
+	const navigate = useNavigate();
 	const { hasPaidPlan, isSiteLaunched, isSiteLaunching } = useSite();
 
 	const [ hasSelectedDomain, selectedPlanProductId ] = useSelect( ( select ) => {
@@ -79,11 +80,14 @@ const FocusedLaunch: React.FunctionComponent = () => {
 		}
 	}, [ hasPaidPlan, unsetPlanProductId ] );
 
+	if ( isSiteLaunched || isSiteLaunching ) {
+		navigate( FocusedLaunchRoute.Success );
+	}
+
 	return (
 		<Router>
 			<ScrollToTop selector=".components-modal__content" />
-			{ ( isSiteLaunched || isSiteLaunching ) && <Redirect to={ FocusedLaunchRoute.Success } /> }
-			<Switch>
+			<Routes>
 				<Route path={ FocusedLaunchRoute.DomainDetails }>
 					<DomainDetails />
 				</Route>
@@ -97,7 +101,7 @@ const FocusedLaunch: React.FunctionComponent = () => {
 				<Route path={ FocusedLaunchRoute.Summary }>
 					<Summary />
 				</Route>
-			</Switch>
+			</Routes>
 		</Router>
 	);
 };

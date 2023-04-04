@@ -9,7 +9,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
 import { useState, useRef, FC } from 'react';
 import Draggable, { DraggableProps } from 'react-draggable';
-import { MemoryRouter, Redirect } from 'react-router-dom';
+import { MemoryRouter, useNavigate } from 'react-router-dom';
 /**
  * Internal Dependencies
  */
@@ -34,6 +34,7 @@ const OptionalDraggable: FC< OptionalDraggableProps > = ( { draggable, ...props 
 };
 
 const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) => {
+	const navigate = useNavigate();
 	const { show, isMinimized } = useSelect(
 		( select ) => ( {
 			show: ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
@@ -82,9 +83,12 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) =
 		return null;
 	}
 
+	if ( data?.status === 'assigned' ) {
+		navigate( '/inline-chat?session=continued' );
+	}
+
 	return (
 		<MemoryRouter initialEntries={ history } initialIndex={ index }>
-			{ data?.status === 'assigned' && <Redirect to="/inline-chat?session=continued" /> }
 			<HistoryRecorder />
 			<FeatureFlagProvider>
 				<OptionalDraggable
