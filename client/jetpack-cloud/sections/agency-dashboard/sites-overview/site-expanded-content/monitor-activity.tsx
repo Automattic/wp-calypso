@@ -90,7 +90,7 @@ export default function MonitorActivity( { hasMonitor, site, trackEvent }: Props
 	const isLoading = statuses?.[ site.blog_id ] === 'loading';
 
 	const handleOnClick = () => {
-		trackEvent( 'expandable_block_active_monitor_click' );
+		trackEvent( 'expandable_block_activate_monitor_click' );
 		toggleActivateMonitor( true );
 	};
 
