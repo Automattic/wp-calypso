@@ -6,7 +6,7 @@ import Chart from 'calypso/components/chart';
 import Legend from 'calypso/components/chart/legend';
 import { buildChartData } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
 import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
-import useVisitsQuery from './hooks/use-visits-query';
+import useVisitsQuery from '../hooks/use-visits-query';
 
 import './mini-chart.scss';
 
