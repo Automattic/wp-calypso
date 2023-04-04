@@ -9,14 +9,13 @@ import setLocale from '../lib/set-locale';
 import 'calypso/assets/stylesheets/style.scss';
 import './style.scss';
 
-const localeSlug = config( 'i18n_locale_slug' ) || config( 'i18n_default_locale_slug' ) || 'en';
-
 /**
  * Loads and runs the main chunk for Stats Widget.
  */
 export function init() {
 	const currentSiteId = config( 'blog_id' );
 	const queryClient = new QueryClient();
+	const localeSlug = config( 'i18n_locale_slug' ) || config( 'i18n_default_locale_slug' ) || 'en';
 
 	// Ensure locale files are loaded before rendering.
 	setLocale( localeSlug ).then( () =>
