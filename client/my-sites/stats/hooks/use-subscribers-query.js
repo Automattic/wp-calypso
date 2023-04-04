@@ -4,7 +4,7 @@ import wpcom from 'calypso/lib/wp';
 function querySubscribers( siteId, period = 'month', quantity = 30 ) {
 	return wpcom.req
 		.get( {
-			apiNamespace: 'wpcom/v1.1',
+			apiNamespace: 'rest/v1.1',
 			path: `/sites/${ siteId }/stats/subscribers?unit=${ period }&quantity=${ quantity }`,
 		} )
 		.then( ( data ) => {
@@ -13,7 +13,7 @@ function querySubscribers( siteId, period = 'month', quantity = 30 ) {
 }
 
 function selectSubscribers( api ) {
-	return api.items.map( ( item ) => {
+	return api?.items?.map( ( item ) => {
 		return {
 			date: item.date,
 			unit: item.unit,
