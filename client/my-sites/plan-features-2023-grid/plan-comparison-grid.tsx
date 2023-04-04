@@ -8,9 +8,6 @@ import {
 	FEATURE_GROUP_ESSENTIAL_FEATURES,
 	getPlanFeaturesGrouped,
 	PLAN_ENTERPRISE_GRID_WPCOM,
-	getPlanSlugForTermVariant,
-	PlanSlug,
-	TERM_BIENNIALLY,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { css } from '@emotion/react';
@@ -644,12 +641,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		if ( newVisiblePlans.length !== visibleLength ) {
 			// ensures current plan is first in the list
 			newVisiblePlans.sort( ( visiblePlan ) =>
-				[
-					currentSitePlanSlug,
-					getPlanSlugForTermVariant( currentSitePlanSlug as PlanSlug, TERM_BIENNIALLY ),
-				].includes( visiblePlan )
-					? -1
-					: 1
+				[ currentSitePlanSlug ].includes( visiblePlan ) ? -1 : 1
 			);
 			newVisiblePlans = newVisiblePlans.slice( 0, visibleLength );
 		}
