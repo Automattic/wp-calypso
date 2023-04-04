@@ -31,14 +31,14 @@ interface WooExpressPlansPageProps {
 	currentPlan: SitePlanData;
 	interval?: 'monthly' | 'yearly';
 	selectedSite: SiteDetails;
-	isSiteEligibleForMonthlyPlan: boolean;
+	showIntervalToggle: boolean;
 }
 
 const WooExpressPlansPage = ( {
 	currentPlan,
 	interval,
 	selectedSite,
-	isSiteEligibleForMonthlyPlan,
+	showIntervalToggle,
 }: WooExpressPlansPageProps ) => {
 	const translate = useTranslate();
 
@@ -118,7 +118,7 @@ const WooExpressPlansPage = ( {
 				monthlyControlProps={ { path: plansLink( '/plans', selectedSite.slug, 'monthly', true ) } }
 				siteId={ selectedSite.ID }
 				yearlyControlProps={ { path: plansLink( '/plans', selectedSite.slug, 'yearly', true ) } }
-				isSiteEligibleForMonthlyPlan={ isSiteEligibleForMonthlyPlan }
+				showIntervalToggle={ showIntervalToggle }
 			/>
 		) : (
 			<>
