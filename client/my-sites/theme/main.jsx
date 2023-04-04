@@ -20,6 +20,7 @@ import titlecase from 'to-title-case';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import AsyncLoad from 'calypso/components/async-load';
 import Badge from 'calypso/components/badge';
+import Banner from 'calypso/components/banner';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
@@ -52,6 +53,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { isUserPaid } from 'calypso/state/purchases/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import productionSiteForWpcomStaging from 'calypso/state/selectors/get-production-site-for-wpcom-staging';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -340,13 +342,19 @@ class ThemeSheet extends Component {
 		return preview.action( this.props.themeId );
 	};
 
+	shouldRenderForStaging() {
+		// isExternallyManagedTheme determines if a theme is paid or not
+		const { isExternallyManagedTheme, isWpcomStaging } = this.props;
+		return isExternallyManagedTheme && isWpcomStaging;
+	}
+
 	shouldRenderPreviewButton() {
-		const { isWPForTeamsSite, isWpcomStaging } = this.props;
+		const { isWPForTeamsSite } = this.props;
 		return (
 			this.isThemeAvailable() &&
 			! this.isThemeCurrentOne() &&
 			! isWPForTeamsSite &&
-			! isWpcomStaging
+			! this.shouldRenderForStaging()
 		);
 	}
 
@@ -419,7 +427,7 @@ class ThemeSheet extends Component {
 	}
 
 	renderScreenshot() {
-		const { isWpcomTheme, name: themeName, demoUrl, translate, isWpcomStaging } = this.props;
+		const { isWpcomTheme, name: themeName, demoUrl, translate } = this.props;
 		const screenshotFull = isWpcomTheme ? this.getFullLengthScreenshot() : this.props.screenshot;
 		const width = 735;
 		// Photon may return null, allow fallbacks
@@ -438,7 +446,7 @@ class ThemeSheet extends Component {
 			/>
 		);
 
-		if ( this.isThemeAvailable() && ! isWpcomStaging ) {
+		if ( this.isThemeAvailable() && ! this.shouldRenderForStaging() ) {
 			return (
 				<a
 					className="theme__sheet-screenshot is-active"
@@ -573,13 +581,15 @@ class ThemeSheet extends Component {
 	};
 
 	renderHeader = () => {
-		const { author, isWPForTeamsSite, name, retired, softLaunched, translate, isWpcomStaging } =
-			this.props;
+		const { author, isWPForTeamsSite, name, retired, softLaunched, translate } = this.props;
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
 		const tag = author ? translate( 'by %(author)s', { args: { author: author } } ) : placeholder;
 		const shouldRenderButton =
-			! retired && ! this.hasWpOrgThemeUpsellBanner() && ! isWPForTeamsSite && ! isWpcomStaging;
+			! retired &&
+			! this.hasWpOrgThemeUpsellBanner() &&
+			! isWPForTeamsSite &&
+			! this.shouldRenderForStaging();
 
 		return (
 			<div className="theme__sheet-header">
@@ -638,6 +648,28 @@ class ThemeSheet extends Component {
 		}
 		// description doesn't contain any formatting, so we don't need to dangerouslySetInnerHTML
 		return <div>{ this.props.description }</div>;
+	};
+
+	renderStagingPaidThemeNotice = () => {
+		if ( ! this.shouldRenderForStaging() ) {
+			return null;
+		}
+		const { translate, productionSiteSlug, themeId } = this.props;
+
+		let url = '';
+		if ( productionSiteSlug ) {
+			url = `/theme/${ themeId }/${ productionSiteSlug }`;
+		}
+
+		return (
+			<Banner
+				disableHref={ url === '' }
+				icon="notice"
+				href={ url }
+				title={ translate( 'Paid themes are not available' ) }
+				description={ translate( 'Paid themes are only available for production sites.' ) }
+			/>
+		);
 	};
 
 	renderNextTheme = () => {
@@ -1132,7 +1164,7 @@ class ThemeSheet extends Component {
 			isBundledSoftwareSet,
 			isSiteBundleEligible,
 			translate,
-			isWpcomStaging,
+			isWPForTeamsSite,
 			isLoggedIn,
 			isExternallyManagedTheme,
 			isSiteEligibleForManagedExternalThemes,
@@ -1194,11 +1226,14 @@ class ThemeSheet extends Component {
 		let previewUpsellBanner;
 
 		// Show theme upsell banner on Simple sites.
-		const hasWpComThemeUpsellBanner = this.hasWpComThemeUpsellBanner() && ! isWpcomStaging;
+		const hasWpComThemeUpsellBanner =
+			this.hasWpComThemeUpsellBanner() && ! this.shouldRenderForStaging();
 		// Show theme upsell banner on Jetpack sites.
-		const hasWpOrgThemeUpsellBanner = this.hasWpOrgThemeUpsellBanner() && ! isWpcomStaging;
+		const hasWpOrgThemeUpsellBanner =
+			this.hasWpOrgThemeUpsellBanner() && ! this.shouldRenderForStaging();
 		// Show theme upsell banner on Atomic sites.
-		const hasThemeUpsellBannerAtomic = this.hasThemeUpsellBannerAtomic() && ! isWpcomStaging;
+		const hasThemeUpsellBannerAtomic =
+			this.hasThemeUpsellBannerAtomic() && ! this.shouldRenderForStaging();
 
 		const hasUpsellBanner =
 			hasWpComThemeUpsellBanner || hasWpOrgThemeUpsellBanner || hasThemeUpsellBannerAtomic;
@@ -1279,7 +1314,9 @@ class ThemeSheet extends Component {
 		const isNewDetailsAndPreview = config.isEnabled( 'themes/showcase-i4/details-and-preview' );
 		const isRemoved = this.isRemoved();
 
-		const className = classNames( 'theme__sheet', { 'is-with-upsell-banner': hasUpsellBanner } );
+		const className = classNames( 'theme__sheet', {
+			'is-with-upsell-banner': hasUpsellBanner || this.shouldRenderForStaging(),
+		} );
 		const columnsClassName = classNames( 'theme__sheet-columns', {
 			'is-removed': isRemoved,
 		} );
@@ -1323,6 +1360,7 @@ class ThemeSheet extends Component {
 							! retired &&
 							! hasWpOrgThemeUpsellBanner &&
 							! isWPForTeamsSite &&
+							! this.shouldRenderForStaging() &&
 							this.renderButton() }
 					</HeaderCake>
 				</div>
@@ -1330,6 +1368,7 @@ class ThemeSheet extends Component {
 					{ isNewDetailsAndPreview && (
 						<div className="theme__sheet-column-header">
 							{ pageUpsellBanner }
+							{ this.renderStagingPaidThemeNotice() }
 							{ this.renderHeader() }
 						</div>
 					) }
@@ -1461,6 +1500,8 @@ export default connect(
 
 		const isAtomic = isSiteAutomatedTransfer( state, siteId );
 		const isWpcomStaging = isSiteWpcomStaging( state, siteId );
+		const productionSite = productionSiteForWpcomStaging( state, siteId );
+		const productionSiteSlug = getSiteSlug( state, productionSite?.ID );
 		const isJetpack = isJetpackSite( state, siteId );
 		const isStandaloneJetpack = isJetpack && ! isAtomic;
 
@@ -1484,6 +1525,7 @@ export default connect(
 			isWpcomTheme,
 			isWporg: isWporgTheme( state, themeId ),
 			isWpcomStaging,
+			productionSiteSlug,
 			isLoggedIn: isUserLoggedIn( state ),
 			isActive: isThemeActive( state, themeId, siteId ),
 			isJetpack,
