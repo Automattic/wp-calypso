@@ -295,33 +295,33 @@ export const exitPost = ( context, next ) => {
  * @returns {*}            Whatever the next callback returns.
  */
 export const redirectSiteEditor = async ( context, next ) => {
-	const state = context.store.getState();
-	const siteId = getSelectedSiteId( state );
-	const isJetpack = isJetpackSite( state, siteId );
-	const configEnabled = isEnabled( 'block-editor/un-iframed-site-editor' );
-
-	// Ditch the iframe for all Jetpack sites, or if the config is enabled.
-	if ( isJetpack || configEnabled ) {
-		// We need the home template data
-		const { home_template } = await wpcom.req
-			.get( {
-				path: `/sites/${ siteId }/block-editor`,
-				apiNamespace: 'wpcom/v2',
-			} )
-			.catch( () => {} );
-
-		let queryArgs = {};
-		if ( location.origin !== 'https://wordpress.com' ) {
-			queryArgs.calypso_origin = location.origin;
-		}
-		if ( home_template ) {
-			queryArgs = { ...queryArgs, ...home_template };
-		}
-		// We aren't using `getSiteEditorUrl` because it still thinks we should gutenframe the Site Editor.
-		const siteAdminUrl = getSiteAdminUrl( state, siteId );
-		const siteEditorUrl = addQueryArgs( queryArgs, `${ siteAdminUrl }site-editor.php` );
-		return location.assign( siteEditorUrl );
+	// bail unless the config is enabled
+	if ( ! isEnabled( 'block-editor/un-iframed-site-editor' ) ) {
+		return next();
 	}
 
-	return next();
+	// Let's ditch that iframe!
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
+
+	const { home_template } = await wpcom.req
+		.get( {
+			path: `/sites/${ siteId }/block-editor`,
+			apiNamespace: 'wpcom/v2',
+		} )
+		.catch( () => {} );
+
+	let queryArgs = {};
+	// Only add the origin if it's not wordpress.com.
+	if ( location.origin !== 'https://wordpress.com' ) {
+		queryArgs.calypso_origin = location.origin;
+	}
+	// Adds home_template.post_id and home_template.postType if we received them.
+	if ( home_template ) {
+		queryArgs = { ...queryArgs, ...home_template };
+	}
+	// We aren't using `getSiteEditorUrl` because it still thinks we should gutenframe the Site Editor.
+	const siteAdminUrl = getSiteAdminUrl( state, siteId );
+	const siteEditorUrl = addQueryArgs( queryArgs, `${ siteAdminUrl }site-editor.php` );
+	return location.assign( siteEditorUrl );
 };
