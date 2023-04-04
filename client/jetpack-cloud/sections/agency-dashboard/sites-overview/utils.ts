@@ -23,23 +23,29 @@ import type {
 const INITIAL_UNIX_EPOCH = '1970-01-01 00:00:00';
 
 const isExpandedBlockEnabled = config.isEnabled( 'jetpack/pro-dashboard-expandable-block' );
+const isBoostEnabled = config.isEnabled( 'jetpack/pro-dashboard-jetpack-boost' );
 
 // Mapping the columns to the site data keys
 export const siteColumnKeyMap: { [ key: string ]: string } = {
 	site: 'url',
 };
 
-const extraColumns: SiteColumns = isExpandedBlockEnabled
+const boostColumn: SiteColumns = isBoostEnabled
+	? [
+			{
+				key: 'boost',
+				title: translate( 'Boost' ),
+				className: 'width-fit-content',
+				isExpandable: true,
+			},
+	  ]
+	: [];
+
+const statsColumns: SiteColumns = isExpandedBlockEnabled
 	? [
 			{
 				key: 'stats',
 				title: translate( 'Stats' ),
-				className: 'width-fit-content',
-				isExpandable: true,
-			},
-			{
-				key: 'boost',
-				title: translate( 'Boost' ),
 				className: 'width-fit-content',
 				isExpandable: true,
 			},
@@ -52,7 +58,8 @@ export const siteColumns: SiteColumns = [
 		title: translate( 'Site' ),
 		isSortable: true,
 	},
-	...extraColumns,
+	...statsColumns,
+	...boostColumn,
 	{
 		key: 'backup',
 		title: translate( 'Backup' ),

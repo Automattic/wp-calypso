@@ -7,7 +7,6 @@ import './style.scss';
 
 // New Subscriber Stats
 // We don't have any data yet so we are just using some test data.
-// Currently using the LineChart component from the Calypso library.
 
 function getData(): [ string, number, number ][] {
 	// From https://code.a8c.com/D105106 -- Work in progress on new endpoint.
@@ -48,9 +47,11 @@ function getData(): [ string, number, number ][] {
 
 function transformData( data: [ string, number, number ][] ): uPlot.AlignedData {
 	// Transform the data into the format required by uPlot.
-	// Note that the incoming data is ordered from newest to oldest.
-	const x: number[] = data.map( ( point ) => Number( new Date( point[ 0 ] ) ) / 1000 );
-	const y: number[] = data.map( ( point ) => Number( point[ 1 ] ) );
+	//
+	// Note that the incoming data is ordered ascending (newest to oldest)
+	// but uPlot expects descending in its deafult configuration.
+	const x: number[] = data.map( ( point ) => Number( new Date( point[ 0 ] ) ) / 1000 ).reverse();
+	const y: number[] = data.map( ( point ) => Number( point[ 1 ] ) ).reverse();
 	return [ x, y ];
 }
 
@@ -65,7 +66,6 @@ export default function SubscribersSection() {
 				<p className="subscribers-section__no-data">No data availble for the specified period.</p>
 			) }
 			{ ! isLoading && counts.length !== 0 && (
-				// TODO: Figure out why hover only breaks in the subscriber section and not in Storybook.
 				<UplotLineChart data={ counts } options={ { legend: { show: false } } } />
 			) }
 		</div>

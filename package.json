@@ -193,6 +193,7 @@
 		"jsdom": "^20.0.1",
 		"lodash": "^4.17.21",
 		"lottie-web": "^5.9.6",
+		"moment": "^2.26.0",
 		"photon": "workspace:^",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
