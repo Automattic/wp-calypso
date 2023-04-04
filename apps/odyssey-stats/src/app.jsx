@@ -57,7 +57,7 @@ async function AppBoot() {
 	setupContextMiddleware( store, queryClient );
 
 	// Ensure locale files are loaded before rendering.
-	setLocale( localeSlug ).finally( () => {
+	setLocale( localeSlug ).then( () => {
 		if ( ! window.location?.hash ) {
 			window.location.hash = `#!/stats/day/${ siteId }`;
 		} else {
