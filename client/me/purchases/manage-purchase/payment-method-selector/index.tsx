@@ -43,6 +43,13 @@ const { colors } = colorStudio;
 const jetpackColors = isJetpackCloud() ? { highlight: colors[ 'Jetpack Green 50' ] } : {};
 const theme = { ...checkoutTheme, colors: { ...checkoutTheme.colors, ...jetpackColors } };
 
+function convertErrorToString( error: Error ): string {
+	if ( error.cause ) {
+		return `${ error.message }; ${ error.cause }`;
+	}
+	return error.message;
+}
+
 function useLogError( message: string ): CheckoutPageErrorCallback {
 	return useCallback(
 		( errorType, errorMessage ) => {
@@ -53,7 +60,7 @@ function useLogError( message: string ): CheckoutPageErrorCallback {
 				extra: {
 					env: config( 'env_id' ),
 					type: 'payment_method_selector',
-					message: String( errorMessage ),
+					message: convertErrorToString( errorMessage ),
 					errorType,
 				},
 			} );
