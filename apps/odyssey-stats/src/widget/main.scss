@@ -23,6 +23,10 @@
 		display: none;
 	}
 
+	.chart__y-axis {
+		padding: 0 5px;
+	}
+
 	// Black segmented controls.
 	.segmented-control .segmented-control__item {
 		.segmented-control__link:hover {
