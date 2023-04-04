@@ -26,6 +26,43 @@ import type { OnboardSelect, StepperInternalSelect } from '@automattic/data-stor
 
 const kebabCase = ( value: string ) => value.replace( /([a-z0-9])([A-Z])/g, '$1-$2' ).toLowerCase();
 
+type StepRouteProps = {
+	step: StepperStep;
+	flow: Flow;
+	progressValue: number;
+	progressBarExtraStyle: React.CSSProperties;
+	showWooLogo: boolean;
+	renderStep: ( step: StepperStep ) => JSX.Element;
+};
+
+const StepRoute = ( {
+	step,
+	flow,
+	progressValue,
+	progressBarExtraStyle,
+	showWooLogo,
+	renderStep,
+}: StepRouteProps ) => (
+	<div
+		className={ classnames( flow.name, flow.variantSlug, flow.classnames, kebabCase( step.slug ) ) }
+	>
+		{ 'videopress' === flow.name && 'intro' === step.slug && <VideoPressIntroBackground /> }
+		{ flow.name !== SITE_SETUP_FLOW && (
+			// The progress bar is removed from the site-setup due to its fragility.
+			// See https://github.com/Automattic/wp-calypso/pull/73653
+			<ProgressBar
+				// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+				className="flow-progress"
+				value={ progressValue * 100 }
+				total={ 100 }
+				style={ progressBarExtraStyle }
+			/>
+		) }
+		<SignupHeader pageTitle={ flow.title } showWooLogo={ showWooLogo } />
+		{ renderStep( step ) }
+	</div>
+);
+
 /**
  * This component accepts a single flow property. It does the following:
  *
@@ -158,14 +195,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		}
 	};
 
-	const getShowWooLogo = () => {
-		if ( isWooExpressFlow( flow.name ) ) {
-			return true;
-		}
-
-		return false;
-	};
-
 	let progressBarExtraStyle: React.CSSProperties = {};
 	if ( 'videopress' === flow.name ) {
 		progressBarExtraStyle = {
@@ -178,40 +207,28 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		<Suspense fallback={ <StepperLoader /> }>
 			<DocumentHead title={ getDocumentHeadTitle() } />
 			<Routes>
-				{ flowSteps.map( ( step ) => {
-					return (
-						<Route key={ step.slug } path={ `/${ flow.variantSlug ?? flow.name }/${ step.slug }` }>
-							<div
-								className={ classnames(
-									flow.name,
-									flow.variantSlug,
-									flow.classnames,
-									kebabCase( step.slug )
-								) }
-							>
-								{ 'videopress' === flow.name && 'intro' === step.slug && (
-									<VideoPressIntroBackground />
-								) }
-								{ flow.name !== SITE_SETUP_FLOW && (
-									// The progress bar is removed from the site-setup due to its fragility.
-									// See https://github.com/Automattic/wp-calypso/pull/73653
-									<ProgressBar
-										// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-										className="flow-progress"
-										value={ progressValue * 100 }
-										total={ 100 }
-										style={ progressBarExtraStyle }
-									/>
-								) }
-								<SignupHeader pageTitle={ flow.title } showWooLogo={ getShowWooLogo() } />
-								{ renderStep( step ) }
-							</div>
-						</Route>
-					);
-				} ) }
-				<Route>
-					<Navigate to={ `/${ flow.variantSlug ?? flow.name }/${ stepPaths[ 0 ] }${ search }` } />
-				</Route>
+				{ flowSteps.map( ( step ) => (
+					<Route
+						key={ step.slug }
+						path={ `/${ flow.variantSlug ?? flow.name }/${ step.slug }` }
+						element={
+							<StepRoute
+								step={ step }
+								flow={ flow }
+								progressBarExtraStyle={ progressBarExtraStyle }
+								progressValue={ progressValue }
+								showWooLogo={ isWooExpressFlow( flow.name ) }
+								renderStep={ renderStep }
+							/>
+						}
+					/>
+				) ) }
+				<Route
+					path="*"
+					element={
+						<Navigate to={ `/${ flow.variantSlug ?? flow.name }/${ stepPaths[ 0 ] }${ search }` } />
+					}
+				/>
 			</Routes>
 		</Suspense>
 	);
