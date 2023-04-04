@@ -22,10 +22,9 @@ import registerStatsPages from './routes';
 import 'calypso/assets/stylesheets/style.scss';
 import './app.scss';
 
-const localeSlug = config( 'i18n_locale_slug' ) || config( 'i18n_default_locale_slug' ) || 'en';
-
 async function AppBoot() {
 	const siteId = config( 'blog_id' );
+	const localeSlug = config( 'i18n_locale_slug' ) || config( 'i18n_default_locale_slug' ) || 'en';
 
 	const rootReducer = combineReducers( {
 		currentUser,
@@ -57,21 +56,24 @@ async function AppBoot() {
 	setStore( store );
 	setupContextMiddleware( store, queryClient );
 
-	if ( ! window.location?.hash ) {
-		window.location.hash = `#!/stats/day/${ siteId }`;
-	} else {
-		// The URL could already get broken by page.js by the appended `?page=stats`.
-		window.location.hash = `#!${ getPathWithUpdatedQueryString(
-			{},
-			window.location.hash.substring( 2 )
-		) }`;
-	}
+	// Ensure locale files are loaded before rendering.
+	setLocale( localeSlug ).then( () => {
+		if ( ! window.location?.hash ) {
+			window.location.hash = `#!/stats/day/${ siteId }`;
+		} else {
+			// The URL could already get broken by page.js by the appended `?page=stats`.
+			window.location.hash = `#!${ getPathWithUpdatedQueryString(
+				{},
+				window.location.hash.substring( 2 )
+			) }`;
+		}
 
-	registerStatsPages( window.location.pathname + window.location.search );
+		registerStatsPages( window.location.pathname + window.location.search );
 
-	// HACK: getPathWithUpdatedQueryString filters duplicate query parameters added by `page.js`.
-	// It has to come after `registerStatsPages` because the duplicate string added in the function.
-	page.show( `${ getPathWithUpdatedQueryString( {}, window.location.hash.substring( 2 ) ) }` );
+		// HACK: getPathWithUpdatedQueryString filters duplicate query parameters added by `page.js`.
+		// It has to come after `registerStatsPages` because the duplicate string added in the function.
+		page.show( `${ getPathWithUpdatedQueryString( {}, window.location.hash.substring( 2 ) ) }` );
+	} );
 }
 
-setLocale( localeSlug ).then( AppBoot );
+AppBoot();

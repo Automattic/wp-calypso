@@ -18,14 +18,15 @@ export function init() {
 	const currentSiteId = config( 'blog_id' );
 	const queryClient = new QueryClient();
 
-	render(
-		<QueryClientProvider client={ queryClient }>
-			<div>
-				[{ moment().format( 'LLLL' ) }] Stats widget placeholder for site No. { currentSiteId }.
-			</div>
-		</QueryClientProvider>,
-		document.getElementById( 'dashboard_stats' )
+	// Ensure locale files are loaded before rendering.
+	setLocale( localeSlug ).then( () =>
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<div>
+					[{ moment().format( 'LLLL' ) }] Stats widget placeholder for site No. { currentSiteId }.
+				</div>
+			</QueryClientProvider>,
+			document.getElementById( 'dashboard_stats' )
+		)
 	);
 }
-
-setLocale( localeSlug ).then( init );
