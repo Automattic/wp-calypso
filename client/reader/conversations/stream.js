@@ -11,7 +11,7 @@ export default function ( props ) {
 	const emptyContent = <ConversationsEmptyContent />;
 	const intro = <ConversationsIntro isInternal={ isInternal } />;
 
-	const ConversationTitle = ( props ) => {
+	const ConversationTitle = () => {
 		const translate = useTranslate();
 		return (
 			<DocumentHead
