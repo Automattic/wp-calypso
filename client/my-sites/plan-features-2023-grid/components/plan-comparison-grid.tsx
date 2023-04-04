@@ -370,6 +370,7 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 				isInSignup={ isInSignup }
 				planName={ planName }
 				additionalClassName={ popularBadgeClasses }
+				flowName={ flowName }
 			/>
 			<PlanSelector>
 				{ showPlanSelect && (

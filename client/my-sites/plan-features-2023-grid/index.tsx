@@ -169,7 +169,8 @@ const PlanLogo: React.FunctionComponent< {
 	planProperties: PlanProperties;
 	isMobile?: boolean;
 	isInSignup: boolean;
-} > = ( { planPropertiesObj, planProperties, planIndex, isMobile, isInSignup } ) => {
+	flowName?: string;
+} > = ( { planPropertiesObj, planProperties, planIndex, isMobile, isInSignup, flowName } ) => {
 	const { planName, current } = planProperties;
 	const translate = useTranslate();
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( planPropertiesObj );
@@ -204,6 +205,7 @@ const PlanLogo: React.FunctionComponent< {
 				isInSignup={ isInSignup }
 				planName={ planName }
 				additionalClassName={ popularBadgeClasses }
+				flowName={ flowName }
 			/>
 			<header className={ headerClasses }>
 				{ isBusinessPlan( planName ) && (
@@ -562,7 +564,7 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanLogos( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { isInSignup } = this.props;
+		const { isInSignup, flowName } = this.props;
 
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
@@ -575,6 +577,7 @@ export class PlanFeatures2023Grid extends Component<
 						planProperties={ properties }
 						isMobile={ options?.isMobile }
 						isInSignup={ isInSignup }
+						flowName={ flowName }
 					/>
 				);
 			} );
