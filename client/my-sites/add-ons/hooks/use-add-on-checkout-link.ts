@@ -5,7 +5,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
  * Returns a function that will return a formatted checkout link for the given add-on and quantity.
  * E.g. https://wordpress.com/checkout/<siteSlug>/<addOnSlug>>:-q-<quantity>
  *
- * @returns {Function} formatted checkout link for the given add-on and quantity
+ * @returns {Function} A function returnig a formatted checkout link for the given add-on and quantity
  */
 
 const useAddOnCheckoutLink = (): ( ( addOnSlug: string, quantity?: number ) => string ) => {
