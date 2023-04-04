@@ -55,6 +55,18 @@ const ExceedQuotaErrorWrapper = styled.div( {
 	marginTop: '1em',
 } );
 
+const SiteRow = styled.div( {
+	display: 'flex',
+	alignItems: 'center',
+	marginBottom: 24,
+	'.site-icon': { flexShrink: 0 },
+} );
+
+const SiteInfo = styled.div( {
+	display: 'flex',
+	flexDirection: 'column',
+	marginLeft: 10,
+} );
 export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, translate } ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
@@ -188,18 +200,15 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 		return (
 			<>
 				<p>{ translate( 'Your staging site is available at:' ) }</p>
-				<div style={ { display: 'flex', alignItems: 'center', marginBottom: 24 } }>
-					<SiteIcon siteId={ stagingSite.id } size={ 40 } style={ { marginLeft: '10px' } } />
-					<div
-						className="site__info"
-						style={ { display: 'flex', flexDirection: 'column', marginLeft: 10 } }
-					>
+				<SiteRow>
+					<SiteIcon siteId={ stagingSite.id } size={ 40 } />
+					<SiteInfo>
 						<div>{ stagingSite.name }</div>
 						<div>
 							<a href={ stagingSite.url }>{ stagingSite.url }</a>
 						</div>
-					</div>
-				</div>
+					</SiteInfo>
+				</SiteRow>
 				<ActionButtons>
 					<Button primary href={ `/home/${ urlToSlug( stagingSite.url ) }` } disabled={ disabled }>
 						<span>{ translate( 'Manage staging site' ) }</span>
