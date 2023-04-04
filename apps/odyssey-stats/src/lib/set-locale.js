@@ -13,7 +13,6 @@ const setMomentLocale = async ( localeSlug ) => {
 
 	debug( 'Loading moment locale for %s', localeSlug );
 	try {
-		// expose the import load promise as instance property. Useful for tests that wait for it
 		import(
 			/* webpackChunkName: "moment-locale-[request]", webpackInclude: /\.js$/ */ `moment/locale/${ localeSlug }`
 		).then( () => moment.locale( localeSlug ) );
