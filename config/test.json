@@ -108,6 +108,7 @@
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
+		"virtual-themes/onboarding": true,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
 		"woa-logging": true
