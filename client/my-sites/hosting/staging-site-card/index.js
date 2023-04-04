@@ -59,7 +59,7 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const [ loadingError, setLoadingError ] = useState( false );
-	const [ loadingValidQuotaError, setLoadingValidQuotaError ] = useState( false );
+	const [ isErrorValidQuota, setIsErrorValidQuota ] = useState( false );
 
 	const { data: hasValidQuota, isLoading: isLoadingQuotaValidation } = useHasValidQuotaQuery(
 		siteId,
