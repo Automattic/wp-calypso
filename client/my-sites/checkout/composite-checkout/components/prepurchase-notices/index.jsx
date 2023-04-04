@@ -69,16 +69,13 @@ const PrePurchaseNotices = () => {
 
 		return items.filter( ( item ) => {
 			const productSlug = isCartItem ? item.product_slug : item.productSlug;
-			const isBackup = isJetpackBackupSlug( productSlug );
-			const isScan = isJetpackScanSlug( productSlug );
-			const isAntiSpam = isJetpackAntiSpamSlug( productSlug );
-
+			//some products have had many variations over the years so we need to check an abstraction for backup, scan and Akismet.
 			return (
 				planFeatures.includes( productSlug ) ||
 				planHasSuperiorFeature( planSlug, productSlug ) ||
-				isBackup ||
-				isScan ||
-				isAntiSpam
+				isJetpackBackupSlug( productSlug ) ||
+				isJetpackScanSlug( productSlug ) ||
+				isJetpackAntiSpamSlug( productSlug )
 			);
 		} );
 	};
