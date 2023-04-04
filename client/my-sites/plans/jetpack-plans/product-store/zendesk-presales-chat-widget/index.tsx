@@ -14,7 +14,7 @@ function usePresalesAvailabilityQuery() {
 	return useQuery(
 		'presales-availability',
 		async () => {
-			const url = 'https://public-api.wordpress.com/wpcom/v2/presales/availability';
+			const url = 'https://public-api.wordpress.com/wpcom/v2/presales/chat';
 			const queryObject = {
 				group: 'jp_presales',
 			};
@@ -24,15 +24,9 @@ function usePresalesAvailabilityQuery() {
 				credentials: 'same-origin',
 				mode: 'cors',
 				url: addQueryArgs( url, queryObject as Record< string, string > ),
-				parse: false, // Disable automatic JSON parsing
 			} );
-
-			//the API returns a simple string of "true" so we need to adjust it for not being JSON
-			const textResponse = await response.text(); // Extract plain text from the response
-
-			// Convert the plain text response to a boolean
-			const booleanResponse = textResponse.trim().toLowerCase() === 'true';
-			return booleanResponse;
+			const isAvailable = await response.is_available;
+			return isAvailable;
 		},
 		{
 			meta: { persist: false },
@@ -41,10 +35,9 @@ function usePresalesAvailabilityQuery() {
 }
 
 export const ZendeskPreSalesChat: React.VFC = () => {
-	const isStaffed = usePresalesAvailabilityQuery() ?? false;
+	const { data: isStaffed } = usePresalesAvailabilityQuery();
 	const zendeskChatKey = config( 'zendesk_presales_chat_key' ) as keyof ConfigData;
 	const isLoggedIn = useSelector( isUserLoggedIn );
-
 	const shouldShowZendeskPresalesChat = useMemo( () => {
 		const isEnglishLocale = ( config( 'english_locales' ) as string[] ).includes(
 			getLocaleSlug() ?? ''
