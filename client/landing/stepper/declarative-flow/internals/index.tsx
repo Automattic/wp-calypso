@@ -77,7 +77,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	}, [ flow, stepProgress ] );
 
 	const _navigate = async ( path: string, extraData = {} ) => {
-		// If any extra data is passed to the navigateTo() function, store it to the stepper-internal store.
+		// If any extra data is passed to the navigate() function, store it to the stepper-internal store.
 		setStepData( {
 			path: path,
 			intent: intent,
