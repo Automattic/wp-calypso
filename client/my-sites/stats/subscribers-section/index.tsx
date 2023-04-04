@@ -1,19 +1,24 @@
 import UplotLineChart from '@automattic/components/src/chart-uplot';
 import { useEffect, useState } from 'react';
+import { UseQueryResult } from 'react-query';
 import useSubscribersQuery from 'calypso/my-sites/stats/hooks/use-subscribers-query';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import type uPlot from 'uplot';
 
 import './style.scss';
 
+interface SubscribersData {
+	period: string;
+	subscribers: number;
+	subscribers_change: number;
+}
+
+interface SubscribersDataResult {
+	data: SubscribersData[];
+}
+
 // New Subscriber Stats
-function transformData(
-	data: {
-		period: string;
-		subscribers: number;
-		subscribers_change: number;
-	}[]
-): uPlot.AlignedData {
+function transformData( data: SubscribersData[] ): uPlot.AlignedData {
 	// Transform the data into the format required by uPlot.
 	//
 	// Note that the incoming data is ordered ascending (newest to oldest)
@@ -27,18 +32,20 @@ function transformData(
 export default function SubscribersSection( { siteId }: { siteId: string } ) {
 	const period = 'month';
 	const quantity = 30;
-	const { isLoading, isError, data, error, status } = useSubscribersQuery(
-		siteId,
-		period,
-		quantity
-	);
+	const {
+		isLoading,
+		isError,
+		data,
+		// error,
+		status,
+	}: UseQueryResult< SubscribersDataResult > = useSubscribersQuery( siteId, period, quantity );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 
 	useEffect( () => {
-		if ( isError && error ) {
-			setErrorMessage( error.toString() ); //TODO: check if error had `message` property
+		if ( isError ) {
+			setErrorMessage( 'There was an error!' ); //TODO: check if error has a `message` property and how to handle `error`'s type
 		}
-	}, [ status, error, isError ] );
+	}, [ status, isError ] );
 
 	const chartData = transformData( data?.data || [] );
 
