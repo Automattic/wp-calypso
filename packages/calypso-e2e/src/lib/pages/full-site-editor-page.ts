@@ -119,24 +119,25 @@ export class FullSiteEditorPage {
 	 * @param {string} siteHostWithProtocol Host name of the site, with protocol. (e.g. https://testsite.wordpress.com)
 	 */
 	async visit( siteHostWithProtocol: string ): Promise< void > {
-		let targetUrl: string;
-		if ( this.shouldUseIframe() ) {
-			targetUrl = getCalypsoURL( '/site-editor' );
-		} else {
-			let wpAdminUrl: URL;
-			try {
-				wpAdminUrl = new URL( '/wp-admin/site-editor.php', siteHostWithProtocol );
-			} catch ( error ) {
-				throw new Error(
-					`Invalid site host URL provided: "${ siteHostWithProtocol }". Did you remember to include the protocol?`
-				);
-			}
-
-			wpAdminUrl.searchParams.set( 'calypso_origin', envVariables.CALYPSO_BASE_URL );
-			targetUrl = wpAdminUrl.href;
+		let parsedUrl: URL;
+		try {
+			parsedUrl = new URL( siteHostWithProtocol );
+		} catch ( error ) {
+			throw new Error(
+				`Invalid site host URL provided: "${ siteHostWithProtocol }". Did you remember to include the protocol?`
+			);
 		}
 
-		await this.page.goto( targetUrl, { timeout: 60 * 1000 } );
+		let targetHref: string;
+		if ( this.shouldUseIframe() ) {
+			targetHref = getCalypsoURL( `/site-editor/${ parsedUrl.host }` );
+		} else {
+			parsedUrl.pathname = '/wp-admin/site-editor.php';
+			parsedUrl.searchParams.set( 'calypso_origin', envVariables.CALYPSO_BASE_URL );
+			targetHref = parsedUrl.href;
+		}
+
+		await this.page.goto( targetHref, { timeout: 60 * 1000 } );
 	}
 
 	/**
@@ -659,7 +660,7 @@ export class FullSiteEditorPage {
 	}
 
 	/**
-	 * Temp check -- we will delete when we un-iframe everywhere
+	 * TODO: Temp check -- we will delete when we un-iframe everywhere
 	 */
 	private shouldUseIframe(): boolean {
 		// The only place we are preserving the Site Editor iFrame is Simple sites on staging/production.
