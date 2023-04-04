@@ -229,9 +229,14 @@ const PatternAssembler = ( {
 		}
 	};
 
+	const activateFooterPosition = ( hasFooter: boolean ) => {
+		const lastPosition = hasFooter ? sections.length : sections.length - 1;
+		updateActivePatternPosition( lastPosition );
+	};
+
 	const updateFooter = ( pattern: Pattern | null ) => {
 		setFooter( pattern );
-		updateActivePatternPosition( sections.length );
+		activateFooterPosition( !! pattern );
 		if ( pattern ) {
 			if ( footer ) {
 				showNotice( 'replace', pattern );
@@ -495,6 +500,7 @@ const PatternAssembler = ( {
 						onSelect={ onSelect }
 						onBack={ () => onPatternSelectorBack( 'header' ) }
 						onDoneClick={ () => onDoneClick( 'header' ) }
+						updateActivePatternPosition={ () => updateActivePatternPosition( -1 ) }
 					/>
 				</NavigatorScreen>
 
@@ -504,6 +510,7 @@ const PatternAssembler = ( {
 						onSelect={ onSelect }
 						onBack={ () => onPatternSelectorBack( 'footer' ) }
 						onDoneClick={ () => onDoneClick( 'footer' ) }
+						updateActivePatternPosition={ () => activateFooterPosition( !! footer ) }
 					/>
 				</NavigatorScreen>
 
