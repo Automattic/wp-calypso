@@ -29,7 +29,7 @@ const loadLanguageFile = ( localeSlug ) => {
 
 export default ( localeSlug ) => {
 	if ( localeSlug === DEFAULT_LOCALE ) {
-		return;
+		return Promise.resolve();
 	}
 
 	return Promise.all( loadLanguageFile( localeSlug ), loadMomentLocale( localeSlug ) )
