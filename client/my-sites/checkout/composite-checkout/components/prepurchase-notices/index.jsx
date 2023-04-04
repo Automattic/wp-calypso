@@ -6,9 +6,6 @@ import {
 	isJetpackScanSlug,
 	getAllFeaturesForPlan,
 	planHasSuperiorFeature,
-	WPCOM_FEATURES_ANTISPAM,
-	WPCOM_FEATURES_BACKUPS,
-	WPCOM_FEATURES_SCAN,
 } from '@automattic/calypso-products';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useEffect, useMemo } from 'react';
@@ -16,7 +13,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { requestRewindCapabilities } from 'calypso/state/rewind/capabilities/actions';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	getSitePlan,
 	getSiteProducts,
@@ -59,7 +55,6 @@ const PrePurchaseNotices = () => {
 
 		return getSitePlan( state, siteId );
 	} );
-
 	const currentSiteProducts = useSelector( ( state ) => {
 		if ( ! siteId ) {
 			return null;
@@ -69,52 +64,42 @@ const PrePurchaseNotices = () => {
 		return products.filter( ( p ) => ! p.expired );
 	} );
 
+	const getMatchingProducts = ( items, planSlug, isCartItem ) => {
+		const planFeatures = getAllFeaturesForPlan( planSlug );
+
+		return items.filter( ( item ) => {
+			const productSlug = isCartItem ? item.product_slug : item.productSlug;
+			//some products have had many variations over the years so we need to check an abstraction for backup, scan and Akismet.
+			return (
+				planFeatures.includes( productSlug ) ||
+				planHasSuperiorFeature( planSlug, productSlug ) ||
+				isJetpackBackupSlug( productSlug ) ||
+				isJetpackScanSlug( productSlug ) ||
+				isJetpackAntiSpamSlug( productSlug )
+			);
+		} );
+	};
+
 	const siteProductThatOverlapsCartPlan = useMemo( () => {
 		const planSlugInCart = cartItemSlugs.find( isJetpackPlanSlug );
 		if ( ! planSlugInCart || ! currentSiteProducts ) {
 			return null;
 		}
 
-		const getMatchingProducts = ( siteProducts, planSlug ) => {
-			// Get all features and products for the plan in the cart
-			const planFeatures = getAllFeaturesForPlan( planSlug );
-
-			// Filter the site products to only include those in the plan items or are inferior features to the plan feature
-			const matchingProducts = siteProducts.filter(
-				( product ) =>
-					planFeatures.includes( product.productSlug ) ||
-					planHasSuperiorFeature( planSlug, product.productSlug )
-			);
-
-			return matchingProducts;
-		};
-
-		const matchingProducts = getMatchingProducts( currentSiteProducts, planSlugInCart );
+		const matchingProducts = getMatchingProducts( currentSiteProducts, planSlugInCart, false );
 		return matchingProducts?.[ 0 ];
 	}, [ currentSiteProducts, cartItemSlugs ] );
 
-	/**
-	 * The product currently in the cart that overlaps/conflicts with the current active site plan.
-	 */
-	const cartProductThatOverlapsSitePlan = useSelector( ( state ) => {
-		const backupSlugInCart = cartItemSlugs.find( isJetpackBackupSlug );
-		const antiSpamSlugInCart = cartItemSlugs.find( isJetpackAntiSpamSlug );
-		const scanSlugInCart = cartItemSlugs.find( isJetpackScanSlug );
+	const cartProductThatOverlapsSitePlan = useMemo( () => {
+		const planSlugOnSite = currentSitePlan?.product_slug;
 
-		if ( backupSlugInCart && siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS ) ) {
-			return getProductFromSlug( backupSlugInCart );
+		if ( ! planSlugOnSite || planSlugOnSite === 'jetpack_free' ) {
+			return null;
 		}
 
-		if ( antiSpamSlugInCart && siteHasFeature( state, siteId, WPCOM_FEATURES_ANTISPAM ) ) {
-			return getProductFromSlug( antiSpamSlugInCart );
-		}
-
-		if ( scanSlugInCart && siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN ) ) {
-			return getProductFromSlug( scanSlugInCart );
-		}
-
-		return null;
-	} );
+		const matchingProducts = getMatchingProducts( responseCart.products, planSlugOnSite, true );
+		return matchingProducts?.[ 0 ];
+	}, [ currentSitePlan, responseCart.products ] );
 
 	const BACKUP_MINIMUM_JETPACK_VERSION = '8.5';
 	const siteHasBackupMinimumPluginVersion = useSelector( ( state ) => {
@@ -156,11 +141,7 @@ const PrePurchaseNotices = () => {
 	// We're attempting to buy Jetpack Backup individually,
 	// but this site already has a plan that includes it.
 	// ignore the error on free plans as they do not include any paid features
-	if (
-		currentSitePlan &&
-		cartProductThatOverlapsSitePlan &&
-		currentSitePlan.product_slug !== 'jetpack_free'
-	) {
+	if ( currentSitePlan && cartProductThatOverlapsSitePlan ) {
 		return (
 			<SitePlanIncludesCartProductNotice
 				plan={ currentSitePlan }
