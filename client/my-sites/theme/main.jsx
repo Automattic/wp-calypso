@@ -48,6 +48,7 @@ import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import ThemePreview from 'calypso/my-sites/themes/theme-preview';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { isUserPaid } from 'calypso/state/purchases/selectors';
@@ -1236,11 +1237,12 @@ class ThemeSheet extends Component {
 		}
 
 		if ( hasWpOrgThemeUpsellBanner || hasThemeUpsellBannerAtomic ) {
-			const thisPageUrl = `/theme/${ themeId }/${ siteSlug }`;
+			const themeInstallationURL = `/marketplace/theme/${ themeId }/install/${ siteSlug }`;
 			pageUpsellBanner = (
 				<UpsellNudge
 					plan={ PLAN_BUSINESS }
 					className="theme__page-upsell-banner"
+					onClick={ () => this.props.setProductToBeInstalled( themeId, siteSlug ) }
 					title={ translate( 'Access this third-party theme with the Business plan!' ) }
 					description={ preventWidows(
 						translate(
@@ -1252,7 +1254,7 @@ class ThemeSheet extends Component {
 					forceDisplay
 					href={
 						siteId
-							? `/checkout/${ siteSlug }/business?redirect_to=${ thisPageUrl }`
+							? `/checkout/${ siteSlug }/business?redirect_to=${ themeInstallationURL }`
 							: localizeUrl( 'https://wordpress.com/start/business' )
 					}
 					showIcon
@@ -1511,5 +1513,6 @@ export default connect(
 		recordTracksEvent,
 		themeStartActivationSync: themeStartActivationSyncAction,
 		errorNotice,
+		setProductToBeInstalled: productToBeInstalled,
 	}
 )( withSiteGlobalStylesStatus( localize( ThemeSheetWithOptions ) ) );
