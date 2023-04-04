@@ -15,7 +15,7 @@ const useAddOnCheckoutLink = (): ( ( addOnSlug: string, quantity?: number ) => s
 		const checkoutLinkFormat = `/checkout/${ selectedSite?.slug }/${ addOnSlug }`;
 
 		if ( quantity ) {
-			return checkoutLinkFormat + `:q-${ quantity }`;
+			return checkoutLinkFormat + `:-q-${ quantity }`;
 		}
 		return checkoutLinkFormat;
 	};
