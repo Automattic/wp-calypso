@@ -83,7 +83,10 @@ export default function AlphabeticTags( { alphabeticTags }: AlphabeticTagsProps 
 	const tagTables: { [ key: string ]: Tag[][] } = {};
 
 	for ( const letter in alphabeticTags ) {
-		tagTables[ letter ] = formatTable( alphabeticTags[ letter ] );
+		const sortedTags = alphabeticTags[ letter ].sort( ( a, b ) => {
+			return a.title.localeCompare( b.title );
+		} );
+		tagTables[ letter ] = formatTable( sortedTags );
 	}
 
 	return (
