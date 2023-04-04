@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import SegmentedControl from 'calypso/components/segmented-control';
@@ -24,6 +25,7 @@ const DeliveryFrequencyOption = ( {
 type DeliveryFrequencyInputProps = {
 	onChange: ( value: SiteSubscriptionDeliveryFrequency ) => void;
 	value: SiteSubscriptionDeliveryFrequency;
+	isUpdating: boolean;
 };
 
 type DeliveryFrequencyKeyLabel = {
@@ -34,6 +36,7 @@ type DeliveryFrequencyKeyLabel = {
 const DeliveryFrequencyInput = ( {
 	onChange,
 	value: selectedValue,
+	isUpdating,
 }: DeliveryFrequencyInputProps ) => {
 	const translate = useTranslate();
 	const availableFrequencies = useMemo< DeliveryFrequencyKeyLabel[] >(
@@ -55,7 +58,11 @@ const DeliveryFrequencyInput = ( {
 	);
 
 	return (
-		<SegmentedControl>
+		<SegmentedControl
+			className={ classNames( 'settings-popover__delivery-frequency-control', {
+				'is-loading': isUpdating,
+			} ) }
+		>
 			{ availableFrequencies.map( ( { key, label }, index ) => (
 				<DeliveryFrequencyOption
 					selected={ selectedValue === key }

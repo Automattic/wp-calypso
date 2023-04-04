@@ -994,7 +994,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@automattic/launch@workspace:^, @automattic/launch@workspace:packages/launch":
+"@automattic/launch@workspace:packages/launch":
   version: 0.0.0-use.local
   resolution: "@automattic/launch@workspace:packages/launch"
   dependencies:
@@ -1814,25 +1814,20 @@ __metadata:
     "@automattic/calypso-jest": "workspace:^"
     "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/components": "workspace:^"
-    "@automattic/composite-checkout": "workspace:^"
     "@automattic/data-stores": "workspace:^"
-    "@automattic/domain-picker": "workspace:^"
     "@automattic/format-currency": "workspace:^"
     "@automattic/happychat-connection": "workspace:^"
     "@automattic/help-center": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
-    "@automattic/launch": "workspace:^"
     "@automattic/newspack-blocks": ^1.60.0
     "@automattic/onboarding": "workspace:^"
     "@automattic/page-pattern-modal": "workspace:^"
-    "@automattic/plans-grid": "workspace:^"
     "@automattic/site-picker": "workspace:^"
     "@automattic/tour-kit": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@automattic/whats-new": "workspace:^"
     "@babel/core": ^7.17.5
-    "@emotion/react": ^11.4.1
     "@popperjs/core": ^2.10.2
     "@sentry/browser": ^7.33.0
     "@testing-library/jest-dom": ^5.16.2
@@ -1852,7 +1847,6 @@ __metadata:
     "@wordpress/dependency-extraction-webpack-plugin": ^4.5.0
     "@wordpress/dom-ready": ^3.22.0
     "@wordpress/edit-post": ^6.19.0
-    "@wordpress/editor": ^12.21.0
     "@wordpress/element": ^4.20.0
     "@wordpress/env": ^4.7.0
     "@wordpress/escape-html": ^2.22.0
@@ -1870,7 +1864,6 @@ __metadata:
     "@wordpress/plugins": ^4.20.0
     "@wordpress/primitives": ^3.20.0
     "@wordpress/private-apis": ^0.9.0
-    "@wordpress/react-i18n": ^3.20.0
     "@wordpress/readable-js-assets-webpack-plugin": ^2.5.0
     "@wordpress/rich-text": ^5.20.0
     "@wordpress/scripts": ^24.6.0

@@ -58,8 +58,18 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
-	const { data: hasValidQuota } = useHasValidQuotaQuery( siteId );
 	const [ loadingError, setLoadingError ] = useState( false );
+	const [ isErrorValidQuota, setIsErrorValidQuota ] = useState( false );
+
+	const { data: hasValidQuota, isLoading: isLoadingQuotaValidation } = useHasValidQuotaQuery(
+		siteId,
+		{
+			enabled: ! disabled,
+			onError: () => {
+				setIsErrorValidQuota( true );
+			},
+		}
+	);
 
 	const { data: stagingSites, isLoading: isLoadingStagingSites } = useStagingSite( siteId, {
 		enabled: ! disabled,
@@ -78,8 +88,10 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 	}, [ stagingSites ] );
 	const hasSiteAccess = useHasSiteAccess( stagingSite.id );
 
-	const showAddStagingSite = ! isLoadingStagingSites && stagingSites?.length === 0;
-	const showManageStagingSite = ! isLoadingStagingSites && stagingSites?.length > 0;
+	const showAddStagingSite =
+		! isLoadingStagingSites && ! isLoadingQuotaValidation && stagingSites?.length === 0;
+	const showManageStagingSite =
+		! isLoadingStagingSites && ! isLoadingQuotaValidation && stagingSites?.length > 0;
 
 	const [ wasCreating, setWasCreating ] = useState( false );
 	const [ progress, setProgress ] = useState( 0.1 );
@@ -168,7 +180,7 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 				</p>
 				<Button
 					primary
-					disabled={ disabled || addingStagingSite || ! hasValidQuota }
+					disabled={ disabled || addingStagingSite || isLoadingQuotaValidation || ! hasValidQuota }
 					onClick={ () => {
 						dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_click' ) );
 						setWasCreating( true );
@@ -178,7 +190,7 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 				>
 					<span>{ translate( 'Add staging site' ) }</span>
 				</Button>
-				{ ! hasValidQuota && getExceedQuotaErrorContent() }
+				{ ! hasValidQuota && ! isLoadingQuotaValidation && getExceedQuotaErrorContent() }
 			</>
 		);
 	};
@@ -245,12 +257,10 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 		);
 	};
 
-	const getLoadingErrorContent = () => {
+	const getLoadingErrorContent = ( message ) => {
 		return (
 			<Notice status="is-error" showDismiss={ false }>
-				{ __(
-					'Unable to load staging sites. Please contact support if you believe you are seeing this message in error.'
-				) }
+				{ message }
 			</Notice>
 		);
 	};
@@ -277,7 +287,17 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 
 	let stagingSiteCardContent;
 	if ( ! isLoadingStagingSites && loadingError ) {
-		stagingSiteCardContent = getLoadingErrorContent();
+		stagingSiteCardContent = getLoadingErrorContent(
+			__(
+				'Unable to load staging sites. Please contact support if you believe you are seeing this message in error.'
+			)
+		);
+	} else if ( ! isLoadingQuotaValidation && isErrorValidQuota ) {
+		stagingSiteCardContent = getLoadingErrorContent(
+			__(
+				'Unable to validate your site quota. Please contact support if you believe you are seeing this message in error.'
+			)
+		);
 	} else if ( ! wasCreating && ! hasSiteAccess && transferStatus !== null ) {
 		stagingSiteCardContent = getAccessError();
 	} else if ( addingStagingSite || isTrasferInProgress || isReverting ) {
