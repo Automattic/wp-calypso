@@ -297,9 +297,9 @@ describe( 'UpsellNudge', () => {
 			</ReduxProvider>
 		);
 
-		await user.type( await screen.findByLabelText( 'Enter email address' ), 'testuser' );
+		await user.type( await screen.findByLabelText( /Enter email address/ ), 'testuser' );
 		await user.type(
-			await screen.findByLabelText( 'Set password' ),
+			await screen.findByLabelText( /Set password/ ),
 			'aadjhaduhaidwahdawdhakjdbakdjbw'
 		);
 		await user.click( await screen.findByText( 'Add Professional Email' ) );
@@ -336,9 +336,9 @@ describe( 'UpsellNudge', () => {
 			</ReduxProvider>
 		);
 
-		await user.type( await screen.findByLabelText( 'Enter email address' ), 'testuser' );
+		await user.type( await screen.findByLabelText( /Enter email address/ ), 'testuser' );
 		await user.type(
-			await screen.findByLabelText( 'Set password' ),
+			await screen.findByLabelText( /Set password/ ),
 			'aadjhaduhaidwahdawdhakjdbakdjbw'
 		);
 		await user.click( await screen.findByText( 'Add Professional Email' ) );
