@@ -114,7 +114,9 @@ export function SibylArticles( {
 			const hasPostId = 'post_id' in article && article.post_id;
 			return {
 				...article,
-				url: getPostUrl( article as Article, message, articleCanNavigateBack ) ?? article.link,
+				url: hasPostId
+					? getPostUrl( article as Article, message, articleCanNavigateBack )
+					: article.link,
 				is_external: 'en' !== locale || ! hasPostId,
 			};
 		} );

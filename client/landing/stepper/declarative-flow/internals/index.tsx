@@ -1,11 +1,5 @@
-import { ProgressBar } from '@automattic/components';
-import {
-	isNewsletterOrLinkInBioFlow,
-	isWooExpressFlow,
-	SITE_SETUP_FLOW,
-} from '@automattic/onboarding';
+import { isNewsletterOrLinkInBioFlow, isWooExpressFlow } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
-import classnames from 'classnames';
 import { useEffect, useState, useCallback, Suspense } from 'react';
 import Modal from 'react-modal';
 import { Navigate, Route, Routes, generatePath, useNavigate, useLocation } from 'react-router-dom';
@@ -15,53 +9,14 @@ import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { recordSignupStart } from 'calypso/lib/analytics/signup';
-import SignupHeader from 'calypso/signup/signup-header';
 import { ONBOARD_STORE } from '../../stores';
+import kebabCase from '../../utils/kebabCase';
 import recordStepStart from './analytics/record-step-start';
+import StepRoute from './components/step-route';
 import StepperLoader from './components/stepper-loader';
-import VideoPressIntroBackground from './steps-repository/intro/videopress-intro-background';
 import { AssertConditionState, Flow, StepperStep } from './types';
 import './global.scss';
 import type { OnboardSelect, StepperInternalSelect } from '@automattic/data-stores';
-
-const kebabCase = ( value: string ) => value.replace( /([a-z0-9])([A-Z])/g, '$1-$2' ).toLowerCase();
-
-type StepRouteProps = {
-	step: StepperStep;
-	flow: Flow;
-	progressValue: number;
-	progressBarExtraStyle: React.CSSProperties;
-	showWooLogo: boolean;
-	renderStep: ( step: StepperStep ) => JSX.Element;
-};
-
-const StepRoute = ( {
-	step,
-	flow,
-	progressValue,
-	progressBarExtraStyle,
-	showWooLogo,
-	renderStep,
-}: StepRouteProps ) => (
-	<div
-		className={ classnames( flow.name, flow.variantSlug, flow.classnames, kebabCase( step.slug ) ) }
-	>
-		{ 'videopress' === flow.name && 'intro' === step.slug && <VideoPressIntroBackground /> }
-		{ flow.name !== SITE_SETUP_FLOW && (
-			// The progress bar is removed from the site-setup due to its fragility.
-			// See https://github.com/Automattic/wp-calypso/pull/73653
-			<ProgressBar
-				// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-				className="flow-progress"
-				value={ progressValue * 100 }
-				total={ 100 }
-				style={ progressBarExtraStyle }
-			/>
-		) }
-		<SignupHeader pageTitle={ flow.title } showWooLogo={ showWooLogo } />
-		{ renderStep( step ) }
-	</div>
-);
 
 /**
  * This component accepts a single flow property. It does the following:
