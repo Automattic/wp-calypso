@@ -68,26 +68,28 @@ export default function usePrepareProductsForCart( {
 } ): PreparedProductsForCart {
 	const [ state, dispatch ] = useReducer( preparedProductsReducer, initialPreparedProductsState );
 
-	debug(
-		'preparing products for cart from url string',
-		productAliasFromUrl,
-		'and purchase id',
-		originalPurchaseId,
-		'and isLoggedOutCart',
-		isLoggedOutCart,
-		'and isAkismetSitelessCheckout',
-		sitelessCheckoutType === 'akismet',
-		'and siteSlug',
-		siteSlug,
-		'and isNoSiteCart',
-		isNoSiteCart,
-		'and isJetpackCheckout',
-		sitelessCheckoutType === 'jetpack',
-		'and jetpackSiteSlug',
-		jetpackSiteSlug,
-		'and jetpackPurchaseToken',
-		jetpackPurchaseToken
-	);
+	if ( ! state.isLoading || state.error ) {
+		debug(
+			'preparing products for cart from url string',
+			productAliasFromUrl,
+			'and purchase id',
+			originalPurchaseId,
+			'and isLoggedOutCart',
+			isLoggedOutCart,
+			'and isAkismetSitelessCheckout',
+			sitelessCheckoutType === 'akismet',
+			'and siteSlug',
+			siteSlug,
+			'and isNoSiteCart',
+			isNoSiteCart,
+			'and isJetpackCheckout',
+			sitelessCheckoutType === 'jetpack',
+			'and jetpackSiteSlug',
+			jetpackSiteSlug,
+			'and jetpackPurchaseToken',
+			jetpackPurchaseToken
+		);
+	}
 
 	const addHandler = chooseAddHandler( {
 		isLoading: state.isLoading,
@@ -138,6 +140,9 @@ export default function usePrepareProductsForCart( {
 	);
 	useStripProductsFromUrl( siteSlug, doNotStripProducts );
 
+	if ( ! state.isLoading ) {
+		debug( 'returning loaded data', state );
+	}
 	return state;
 }
 
@@ -210,10 +215,14 @@ function chooseAddHandler( {
 	}
 
 	/*
-	 * As Gifting purchases are actually renewals and validate the subscriptionID + product
-	 * with the server, we have to avoid using localStorage.
+	 * As Gifting purchases are actually renewals and validate the subscriptionID
+	 * and product with the server, we have to avoid using localStorage.
 	 */
-	if ( ( ! isGiftPurchase && isLoggedOutCart ) || isNoSiteCart ) {
+	if ( ! isGiftPurchase && isLoggedOutCart ) {
+		return 'addFromLocalStorage';
+	}
+
+	if ( isNoSiteCart ) {
 		return 'addFromLocalStorage';
 	}
 
