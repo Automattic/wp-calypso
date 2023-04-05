@@ -1,29 +1,25 @@
 import { SubscriptionManager } from '@automattic/data-stores';
-import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { Notice } from '../notice';
 import SiteList from '../site-list/site-list';
+import TabView from './tab-view';
 
-export default function SitesView() {
+const SitesView = () => {
 	const translate = useTranslate();
 	const { data: sites, isLoading, error } = SubscriptionManager.useSiteSubscriptionsQuery();
 
-	if ( error ) {
-		// todo: translate when we have agreed on the error message
-		return <Notice type="error">An error occurred while fetching your subscriptions.</Notice>;
-	}
+	// todo: translate when we have agreed on the error message
+	const errorMessage = error ? 'An error occurred while fetching your subscriptions.' : '';
 
-	if ( isLoading ) {
-		return (
-			<div className="user-settings">
-				<Spinner />
-			</div>
-		);
-	}
-
-	if ( ! sites || ! sites.length ) {
+	if ( ! isLoading && ( ! sites || ! sites.length ) ) {
 		return <Notice type="warning">{ translate( 'You are not subscribed to any sites.' ) }</Notice>;
 	}
 
-	return <SiteList sites={ sites } />;
-}
+	return (
+		<TabView errorMessage={ errorMessage } isLoading={ isLoading }>
+			<SiteList sites={ sites } />
+		</TabView>
+	);
+};
+
+export default SitesView;
