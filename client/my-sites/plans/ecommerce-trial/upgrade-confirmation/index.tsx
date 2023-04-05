@@ -49,13 +49,14 @@ const TrialUpgradeConfirmation = () => {
 					</h1>
 					<div className="trial-upgrade-confirmation__subtitle">
 						<span className="trial-upgrade-confirmation__subtitle-line">
-							{ translate(
-								"Your purchase is complete and you're now on the {{strong}}%(planName)s plan{{/strong}}. Now it's time to take your store to the next level. What would you like to do next?",
-								{
-									args: { planName: currentPlanName },
-									components: { strong: <strong /> },
-								}
-							) }
+							{ currentPlanName &&
+								translate(
+									"Your purchase is complete and you're now on the {{strong}}%(planName)s plan{{/strong}}. Now it's time to take your store to the next level. What would you like to do next?",
+									{
+										args: { planName: currentPlanName },
+										components: { strong: <strong /> },
+									}
+								) }
 						</span>
 					</div>
 				</div>
