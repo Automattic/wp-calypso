@@ -4,7 +4,7 @@ import { Notice } from '../notice';
 import SiteList from '../site-list/site-list';
 import TabView from './tab-view';
 
-const SitesView = () => {
+const Sites = () => {
 	const translate = useTranslate();
 	const { data: sites, isLoading, error } = SubscriptionManager.useSiteSubscriptionsQuery();
 
@@ -22,4 +22,4 @@ const SitesView = () => {
 	);
 };
 
-export default SitesView;
+export default Sites;
