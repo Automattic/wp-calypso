@@ -10,6 +10,7 @@ import {
 	getProductName,
 } from 'calypso/state/products-list/selectors';
 import customDesignIcon from '../icons/custom-design';
+import spaceUpgradeIcon from '../icons/space-addon';
 import unlimitedThemesIcon from '../icons/unlimited-themes';
 import useAddOnDisplayCost from './use-add-on-display-cost';
 import useAddOnFeatureSlugs from './use-add-on-feature-slugs';
@@ -23,6 +24,7 @@ export interface AddOnMeta {
 	quantity?: number;
 	description: string | React.ReactChild | null;
 	displayCost: string | React.ReactChild | null;
+	variations?: Partial< AddOnMeta >[];
 }
 
 // some memoization. executes far too many times
@@ -46,34 +48,31 @@ const useAddOns = (): ( AddOnMeta | null )[] => {
 		},
 		{
 			productSlug: PRODUCT_1GB_SPACE,
-			icon: customDesignIcon,
-			overrides: {
-				title: '50GB Storage',
-				description: "Increase your site's storage with 50GB of additional storage.",
-			},
+			icon: spaceUpgradeIcon,
 			quantity: 50,
 			displayCost: useAddOnDisplayCost( PRODUCT_1GB_SPACE, 50 ),
+			description: 'Add additional high-performance SSD NvME storage space to your site.',
 			featured: false,
+			variations: [
+				{
+					name: '50GB Added Space',
+					quantity: 50,
+					displayCost: useAddOnDisplayCost( PRODUCT_1GB_SPACE, 50 ),
+				},
+				{
+					name: '100GB Added Space',
+					quantity: 100,
+					displayCost: useAddOnDisplayCost( PRODUCT_1GB_SPACE, 100 ),
+				},
+			],
 		},
-		{
-			productSlug: PRODUCT_1GB_SPACE,
-			icon: customDesignIcon,
-			overrides: {
-				title: '100GB Storage',
-				description: "Increase your site's storage with 100GB of additional storage.",
-			},
-			quantity: 100,
-			displayCost: useAddOnDisplayCost( PRODUCT_1GB_SPACE, 100 ),
-			featured: false,
-		},
-	] as const;
+	];
 
 	return useSelector( ( state ): ( AddOnMeta | null )[] => {
 		return addOnsActive.map( ( addOn ) => {
 			const product = getProductBySlug( state, addOn.productSlug );
-			const name = addOn.overrides?.title ?? getProductName( state, addOn.productSlug );
-			const description =
-				addOn.overrides?.description ?? getProductDescription( state, addOn.productSlug );
+			const name = getProductName( state, addOn.productSlug );
+			const description = addOn.description ?? getProductDescription( state, addOn.productSlug );
 
 			if ( ! product ) {
 				// will not render anything if product not fetched from API
