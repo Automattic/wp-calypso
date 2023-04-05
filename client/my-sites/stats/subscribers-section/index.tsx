@@ -1,5 +1,5 @@
-import UplotLineChart from '@automattic/components/src/chart-uplot';
-import { useEffect, useState } from 'react';
+import UplotChart from '@automattic/components/src/chart-uplot';
+import { useEffect, useRef, useState } from 'react';
 import { UseQueryResult } from 'react-query';
 import useSubscribersQuery from 'calypso/my-sites/stats/hooks/use-subscribers-query';
 import StatsModulePlaceholder from '../stats-module/placeholder';
@@ -40,6 +40,7 @@ export default function SubscribersSection( { siteId }: { siteId: string } ) {
 		status,
 	}: UseQueryResult< SubscribersDataResult > = useSubscribersQuery( siteId, period, quantity );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
+	const legendRef = useRef< HTMLDivElement >( null );
 
 	useEffect( () => {
 		if ( isError ) {
@@ -51,13 +52,18 @@ export default function SubscribersSection( { siteId }: { siteId: string } ) {
 
 	return (
 		<div className="subscribers-section">
-			<h1 className="highlight-cards-heading">Subscribers</h1>
+			<div className="subscribers-section-heading">
+				<h1 className="highlight-cards-heading">Subscribers</h1>
+				<div className="subscribers-section-legend" ref={ legendRef }></div>
+			</div>
 			{ isLoading && <StatsModulePlaceholder className="is-chart" isLoading /> }
 			{ ! isLoading && chartData.length === 0 && (
 				<p className="subscribers-section__no-data">No data availble for the specified period.</p>
 			) }
 			{ errorMessage && <div>Error: { errorMessage }</div> }
-			{ ! isLoading && chartData.length !== 0 && <UplotLineChart data={ chartData } /> }
+			{ ! isLoading && chartData.length !== 0 && (
+				<UplotChart data={ chartData } legendContainer={ legendRef } />
+			) }
 		</div>
 	);
 }

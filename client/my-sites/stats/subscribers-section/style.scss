@@ -2,6 +2,22 @@
 	margin: 1em 0;
 }
 
+.subscribers-section-heading {
+	display: flex;
+	justify-content: space-between;
+	align-content: center;
+
+	margin-bottom: 16px;
+
+	> .highlight-cards-heading {
+		margin-bottom: 0;
+	}
+}
+
+.subscribers-section-legend {
+	display: flex;
+}
+
 .subscribers-section__no-data {
 	margin: 3em auto;
 	text-align: center;
