@@ -2,7 +2,6 @@ import * as Analyzer from './analyzer';
 import * as AutomatedTransferEligibility from './automated-transfer-eligibility';
 import * as DomainSuggestions from './domain-suggestions';
 import * as HelpCenter from './help-center';
-import * as I18n from './i18n';
 import * as Onboard from './onboard';
 import * as Plans from './plans';
 import * as ProductsList from './products-list';
@@ -38,7 +37,6 @@ export {
 	User,
 	DomainSuggestions,
 	HelpCenter,
-	I18n,
 	Site,
 	Plans,
 	WpcomPlansUI,
