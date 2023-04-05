@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import { BackButton } from '@automattic/onboarding';
+import { BackButton, LINK_IN_BIO_DOMAIN_FLOW } from '@automattic/onboarding';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
@@ -41,6 +41,7 @@ function ConnectDomainStep( {
 	selectedSite,
 	showErrors,
 	isFirstVisit,
+	flowName,
 	queryError,
 	queryErrorDescription,
 } ) {
@@ -318,6 +319,10 @@ function ConnectDomainStep( {
 	};
 
 	const renderSidebar = () => {
+		if ( LINK_IN_BIO_DOMAIN_FLOW === flowName ) {
+			return null;
+		}
+
 		if ( loadingDomainSetupInfo === true ) {
 			return <div className={ baseClassName + '__sidebar-placeholder' }></div>;
 		}
@@ -364,6 +369,7 @@ ConnectDomainStep.propTypes = {
 	showErrors: PropTypes.bool,
 	hasSiteDomainsLoaded: PropTypes.bool,
 	isFirstVisit: PropTypes.bool,
+	flowName: PropTypes.string,
 	queryError: PropTypes.string,
 	queryErrorDescription: PropTypes.string,
 };
