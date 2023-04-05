@@ -1,8 +1,11 @@
 export type Pattern = {
-	id: number;
+	ID: number;
 	name: string;
+	title: string;
 	category?: Category;
-	categories: string[];
+	categories: {
+		[ key: string ]: Category | undefined;
+	};
 	key?: string;
 };
 
@@ -12,7 +15,8 @@ export interface NavigatorLocation {
 }
 
 export type Category = {
-	name: string;
-	label: string;
-	description: string;
+	name?: string;
+	slug?: string;
+	label?: string;
+	description?: string;
 };
