@@ -241,6 +241,36 @@ describe( 'UpsellNudge', () => {
 		expect( await screen.findByText( 'Pay $144' ) ).toBeInTheDocument();
 	} );
 
+	it( 'redirects to checkout for an business upsell when no stored cards are available', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( new RegExp( '^/rest/v1.2/me/payment-methods' ) )
+			.reply( 200, () => [] );
+		const user = userEvent.setup();
+		const queryClient = new QueryClient();
+		const initialCart = getEmptyResponseCart();
+		const mockCartFunctions = mockCartEndpoint( initialCart, 'USD', 'US' );
+		const shoppingCartClient = createShoppingCartManagerClient( mockCartFunctions );
+
+		render(
+			<ReduxProvider store={ createTestReduxStore() }>
+				<QueryClientProvider client={ queryClient }>
+					<ShoppingCartProvider managerClient={ shoppingCartClient }>
+						<UpsellNudge
+							upsellType={ BUSINESS_PLAN_UPGRADE_UPSELL }
+							upgradeItem="business"
+							receiptId={ 12345 }
+							siteSlugParam="example.com"
+						/>
+					</ShoppingCartProvider>
+				</QueryClientProvider>
+			</ReduxProvider>
+		);
+
+		await user.click( await screen.findByText( 'Upgrade Now' ) );
+		expect( screen.findByText( mockProducts[ 'business-bundle' ].product_name ) ).toNeverAppear();
+		expect( page ).toHaveBeenCalledWith( `/checkout/business/example.com` );
+	} );
+
 	it( 'displays the email purchase modal when a stored card is available', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.persist()
